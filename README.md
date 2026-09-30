@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/freeKC/Immuch360/releases"><b>Android APK (pre-release)</b></a> &nbsp;·&nbsp;
-  iPhone: TestFlight beta, <a href="https://github.com/freeKC/Immuch360/issues">ask for access</a> &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases"><b>Android APK, install it today</b></a> &nbsp;·&nbsp;
+  Google Play and App Store: <a href="#where-to-get-it">submitted, under review</a> &nbsp;·&nbsp;
   <a href="#meta-quest-3">Meta Quest 3</a>
 </p>
 
@@ -43,26 +43,28 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 
 ## Where to get it
 
-| Platform | How |
-|---|---|
-| Android phones and tablets | APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page: take the `arm64-v8a` file for a phone, or the universal `-release.apk` if unsure. It installs next to the official Immich app (package `com.aprogsys.immuch360`). |
-| iPhone and iPad | TestFlight beta, [ask for access](https://github.com/freeKC/Immuch360/issues). |
-| Meta Quest 3 | The universal `-release.apk`, sideloaded in developer mode, see [Meta Quest 3](#meta-quest-3). |
+The app has been submitted to Google Play and to the App Store and is waiting for their review. Until the listings are live, nothing stops you from installing it yourself:
 
-Google Play and App Store listings are in preparation; the links will be added here as soon as they are published. Log in with your usual Immich server URL and account. The current build is based on Immich 3.3.0-rc.0 (Immich `main`, not a stable release yet) and was tested with an Immich 3.2 server. It does not update itself: watch the Releases page. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+| Platform | Today | Soon |
+|---|---|---|
+| Android phones and tablets | APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page: take the `arm64-v8a` file for a phone, or the universal `-release.apk` if unsure. It installs next to the official Immich app (package `com.aprogsys.immuch360`). | Google Play, under review |
+| iPhone and iPad | Waiting for Apple's review. The source builds with Xcode or on Codemagic, see [Build it yourself](#build-it-yourself). | App Store, under review |
+| Meta Quest 3 | The universal `-release.apk`, sideloaded in developer mode, see [Meta Quest 3](#meta-quest-3). | Sideloading only |
+
+The store links will be added here as soon as the listings are published. Log in with your usual Immich server URL and account. The current build is based on Immich 3.3.0-rc.0 (Immich `main`, not a stable release yet) and was tested with an Immich 3.2 server. The APK from GitHub does not update itself: watch the Releases page, and once you have installed the app from a store, take the updates from that store. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
 
 ## What this fork adds compared to Immich, in detail
 
 | Feature | Immich mobile app | Immuch360 | Status |
 |---|---|---|---|
-| 360° photos (equirectangular) shown as an interactive sphere | No, flat image only | **Yes**, drag to look around, pinch to zoom, partial panoramas handled (GPano crop) | Pre-release; tested on a Galaxy S24+, on iOS only in the simulator |
+| 360° photos (equirectangular) shown as an interactive sphere | No, flat image only | **Yes**, drag to look around, pinch to zoom, partial panoramas handled (GPano crop) | Pre-release; tested on a Galaxy S24+ and an iPhone 14 |
 | 360° badge on thumbnails | No | **Yes** | Pre-release |
 | 360° button in the viewer top bar, zoom kept on the flat view, loading indicator | n/a | **Yes** | Pre-release |
-| Gyroscope navigation: look around by moving the phone | No | **Yes**, toggle in the 360 viewer (off by default) | Pre-release; tested on a Galaxy S24+, not yet on an iPhone |
+| Gyroscope navigation: look around by moving the phone | No | **Yes**, toggle in the 360 viewer (off by default) | Pre-release; tested on a Galaxy S24+ and an iPhone 14 |
 | Initial view from GPano metadata, inertia after a drag, double tap zoom, sharper texture when zoomed in | No | **Yes** | Pre-release, device feedback welcome |
 | 360° entry in the Library tab listing every 360° photo and video | No | **Yes** | Pre-release |
-| 360° videos played on a sphere with drag and gyroscope | No, flat video only | **Yes on Android and iOS** (native player opened by the 360° button, Media3 on Android and SceneKit on iOS; plays the file stored on the phone when there is one, otherwise streams it from your server) | Pre-release on Android; iOS in TestFlight testing |
-| Meta Quest 3 viewer with head tracking | No | **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Pre-release, tested on a Quest 3; starting orientation not confirmed yet |
+| 360° videos played on a sphere with drag and gyroscope | No, flat video only | **Yes on Android and iOS** (native player opened by the 360° button, Media3 on Android and SceneKit on iOS; plays the file stored on the phone when there is one, otherwise streams it from your server) | Pre-release; tested on a Galaxy S24+ and an iPhone 14 |
+| Meta Quest 3 viewer with head tracking | No | **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Pre-release, tested on a Quest 3 |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | Shown flat or wrongly | Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
