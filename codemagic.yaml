@@ -1,0 +1,229 @@
+# Codemagic workflows used to build and smoke-test the Immich mobile app for iOS
+# on a Mac mini (no local Mac needed). Manual trigger only, via the Codemagic API.
+workflows:
+  ios-full-check:
+    name: Immich mobile iOS check
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      xcode: latest
+      cocoapods: default
+      vars:
+        MISE_YES: "1"
+        MISE_TRUSTED_CONFIG_PATHS: "/Users/builder/clone"
+    scripts:
+      - name: Toolchains via mise (Flutter 3.47.2, Java 21, OpenAPI generator)
+        script: |
+          set -euxo pipefail
+          curl -fsSL https://mise.run | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          mise --version
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+          mise exec -- flutter doctor -v || true
+          xcodebuild -version
+      - name: Flutter dependencies and code generation
+        script: |
+          set -euxo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          mise //mobile:install:ci
+          mise //mobile:codegen
+      - name: iOS device build (release, no codesign)
+        ignore_failure: true
+        script: |
+          set -euxo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          cd mobile
+          mise exec -- flutter build ios --release --no-codesign
+          APP=$(ls -d build/ios/iphoneos/*.app | head -1)
+          echo "built: $APP"
+          ditto -c -k --keepParent "$APP" "$CM_BUILD_DIR/Immich-iphoneos.app.zip"
+      - name: iOS simulator build (debug)
+        script: |
+          set -euxo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          cd mobile
+          mise exec -- flutter build ios --simulator --debug
+          APP=$(ls -d build/ios/iphonesimulator/*.app | head -1)
+          echo "built: $APP"
+          ditto -c -k --keepParent "$APP" "$CM_BUILD_DIR/Immich-simulator.app.zip"
+      - name: Simulator smoke test (launch + screenshot)
+        script: |
+          set -euxo pipefail
+          APP=$(ls -d "$CM_BUILD_DIR"/mobile/build/ios/iphonesimulator/*.app | head -1)
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import sys,json; d=json.load(sys.stdin); devs=[x for rt,l in d['devices'].items() if 'iOS' in rt for x in l if x.get('isAvailable') and x['name'].startswith('iPhone')]; print(devs[-1]['udid'])")
+          xcrun simctl list devices available | grep -i iphone | tail -3
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" "$APP"
+          BUNDLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
+          echo "bundle: $BUNDLE"
+          xcrun simctl launch "$UDID" "$BUNDLE"
+          sleep 30
+          xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/simulator-launch.png"
+          sleep 15
+          xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/simulator-launch-2.png"
+          xcrun simctl spawn "$UDID" launchctl list | grep -i "$BUNDLE" || echo "process not listed"
+    artifacts:
+      - simulator-launch*.png
+      - simulator-runner.log
+      - Immich-*.app.zip
+      - /tmp/xcodebuild_logs/*.log
+
+  ios-maestro-360:
+    name: Immich mobile iOS simulator, login on demo server and open a 360 photo
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      xcode: latest
+      cocoapods: default
+      vars:
+        MISE_YES: "1"
+        MISE_TRUSTED_CONFIG_PATHS: "/Users/builder/clone"
+        ASSET_ID: "978b62d7-e65f-4568-a520-93cb896b2f83"
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+        - $HOME/.local/share/mise
+        - $HOME/Library/Caches/CocoaPods
+    scripts:
+      - name: Toolchains via mise (Flutter 3.47.2, Java 21, OpenAPI generator)
+        script: |
+          set -euxo pipefail
+          curl -fsSL https://mise.run | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+      - name: Install Maestro
+        script: |
+          set -euxo pipefail
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          export PATH="$PATH:$HOME/.maestro/bin"
+          maestro --version
+      - name: Flutter dependencies and code generation
+        script: |
+          set -euxo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          mise //mobile:install:ci
+          mise //mobile:codegen
+      - name: iOS simulator build (debug)
+        script: |
+          set -euxo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          cd mobile
+          mise exec -- flutter build ios --simulator --debug
+          APP=$(ls -d build/ios/iphonesimulator/*.app | head -1)
+          ditto -c -k --keepParent "$APP" "$CM_BUILD_DIR/Immich-simulator.app.zip"
+      - name: Boot simulator and install
+        script: |
+          set -euxo pipefail
+          APP=$(ls -d "$CM_BUILD_DIR"/mobile/build/ios/iphonesimulator/*.app | head -1)
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import sys,json; d=json.load(sys.stdin); devs=[x for rt,l in d['devices'].items() if 'iOS' in rt for x in l if x.get('isAvailable') and x['name'].startswith('iPhone')]; print(devs[-1]['udid'])")
+          echo "$UDID" > "$CM_BUILD_DIR/udid.txt"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" "$APP"
+      - name: Maestro login on demo server
+        script: |
+          set -euxo pipefail
+          export PATH="$PATH:$HOME/.maestro/bin"
+          UDID=$(cat "$CM_BUILD_DIR/udid.txt")
+          mkdir -p "$CM_BUILD_DIR/maestro-out"
+          maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/01-login-demo.yaml || true
+          ls -la "$CM_BUILD_DIR/maestro-out" || true
+          cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
+          xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s01-after-login-flow.png"
+      - name: Wait for initial sync, then open a 360 photo
+        script: |
+          set -euxo pipefail
+          export PATH="$PATH:$HOME/.maestro/bin"
+          UDID=$(cat "$CM_BUILD_DIR/udid.txt")
+          for i in 1 2 3 4 5 6; do
+            sleep 30
+            xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s02-sync-wait-$i.png"
+          done
+          maestro --device "$UDID" test -e ASSET_ID="$ASSET_ID" --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/02-open-360.yaml || true
+          cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
+          xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s03-final.png"
+          cd "$CM_BUILD_DIR" && zip -qr maestro-out.zip maestro-out
+    artifacts:
+      - maestro-out.zip
+      - maestro-out/*.png
+      - Immich-simulator.app.zip
+
+  ios-testflight:
+    name: Immuch360 iOS signed build and TestFlight upload
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+    integrations:
+      app_store_connect: posiform-asc
+    environment:
+      xcode: latest
+      cocoapods: default
+      vars:
+        MISE_YES: "1"
+        MISE_TRUSTED_CONFIG_PATHS: "/Users/builder/clone"
+        BUNDLE_ID: com.aprogsys.immuch360
+        APP_VERSION: "3.3.0"
+      groups:
+        - apple_signing
+    scripts:
+      - name: Distribution certificate and provisioning profiles (app, share extension, widget)
+        script: |
+          set -euo pipefail
+          keychain initialize
+          for id in "$BUNDLE_ID" "$BUNDLE_ID.ShareExtension" "$BUNDLE_ID.Widget"; do
+            app-store-connect fetch-signing-files "$id" --type IOS_APP_STORE \
+              --certificate-key=@env:CERTIFICATE_PRIVATE_KEY --create
+          done
+          keychain add-certificates
+      - name: Toolchains via mise (Flutter 3.47.2, Java 21, OpenAPI generator)
+        script: |
+          set -euxo pipefail
+          curl -fsSL https://mise.run | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+          xcodebuild -version
+      - name: Flutter dependencies and code generation
+        script: |
+          set -euxo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          mise //mobile:install:ci
+          mise //mobile:codegen
+      - name: Version numbers, bundle identifiers and signing settings
+        script: |
+          set -euxo pipefail
+          cd mobile/ios
+          # The release configurations read their bundle identifiers from Signing.xcconfig;
+          # written as literals here so that the profile matching cannot miss them.
+          sed -i '' "s/\$(IMMICH_BUNDLE_ID_PROD)/$BUNDLE_ID/g" Runner.xcodeproj/project.pbxproj
+          # Same version and build number on the app and its two extensions, as TestFlight requires.
+          agvtool new-marketing-version "$APP_VERSION"
+          agvtool new-version -all "$PROJECT_BUILD_NUMBER"
+          xcode-project use-profiles
+      - name: Flutter iOS release build (compiles the Dart side and installs the pods)
+        script: |
+          set -euxo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          cd mobile
+          mise exec -- flutter build ios --release --no-codesign --build-name="$APP_VERSION" --build-number="$PROJECT_BUILD_NUMBER"
+      - name: Signed archive and IPA
+        script: |
+          set -euxo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          cd mobile
+          xcode-project build-ipa --workspace ios/Runner.xcworkspace --scheme Runner --config Release \
+            --archive-xcargs="-skipMacroValidation -skipPackagePluginValidation" \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - mobile/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false

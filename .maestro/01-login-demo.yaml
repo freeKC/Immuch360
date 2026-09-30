@@ -1,0 +1,57 @@
+# Logs into the public Immich demo server on the iOS simulator.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp:
+    clearState: true
+# iOS asks for notification permission at first launch: dismiss it if it shows up
+- tapOn:
+    text: "Allow"
+    optional: true
+- extendedWaitUntil:
+    visible: "Server Endpoint URL"
+    timeout: 90000
+- tapOn:
+    text: "Allow"
+    optional: true
+- takeScreenshot: m01-server-screen
+- tapOn: "Server Endpoint URL"
+- inputText: "https://demo.immich.app"
+- pressKey: Enter
+- tapOn:
+    text: "Next"
+    optional: true
+- extendedWaitUntil:
+    visible: "Login"
+    timeout: 90000
+- takeScreenshot: m02-login-screen
+# The focused field exposes "Email" plus its hint on iOS, hence the regex
+- tapOn: "Email(\\s.*)?"
+- inputText: "demo@immich.app"
+- tapOn: "Password"
+- inputText: "demo"
+- pressKey: Enter
+- tapOn:
+    text: "Login"
+    optional: true
+- extendedWaitUntil:
+    notVisible: "Login"
+    timeout: 120000
+# iOS may offer to save the password in the keychain
+- tapOn:
+    text: "Not Now"
+    optional: true
+- takeScreenshot: m03-after-login
+# Optional onboarding / permission prompts, if any
+- tapOn:
+    text: "Allow Full Access"
+    optional: true
+- tapOn:
+    text: "Allow"
+    optional: true
+- tapOn:
+    text: "Skip"
+    optional: true
+- tapOn:
+    text: "Done"
+    optional: true
+- takeScreenshot: m04-home
