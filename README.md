@@ -36,7 +36,7 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 
 - **360° photos** open as an interactive sphere: drag to look around, pinch to zoom, double tap, inertia, the initial view the camera recorded, sharper texture when zoomed in. Partial panoramas are handled.
 - **Gyroscope**: turn the phone to look around (toggle in the viewer).
-- **360° videos on Android**: a native spherical player with sound, drag and sensor tracking; it plays the file stored on the phone when there is one, otherwise streams it from your server.
+- **360° videos on Android and iOS**: a native spherical player with sound, drag and gyroscope; it plays the file stored on the phone when there is one, otherwise streams it from your server.
 - **Meta Quest 3**: the same Android app runs on the headset as a window, and the 360° button switches to an immersive view where the photo or video is all around you, and you look around by turning your head.
 - **Find them**: a 360° badge on thumbnails and a **360°** entry in the Library tab listing every 360° photo and video.
 - **Everything else is Immich**, unchanged: backup, timeline, albums, search, sharing, partners, all synced with your server.

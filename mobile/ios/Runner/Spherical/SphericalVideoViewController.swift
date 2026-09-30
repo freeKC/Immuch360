@@ -10,7 +10,7 @@ private let minFieldOfView: CGFloat = 30
 private let maxFieldOfView: CGFloat = 100
 private let maxPitch: Float = 85 * Float.pi / 180
 // Drag speed at the default field of view, slower when zoomed in
-private let radiansPerPoint: Float = 0.2 * Float.pi / 180
+private let radiansPerPoint: Float = 0.12 * Float.pi / 180
 private let controlsHideDelay: TimeInterval = 4
 private let xAxis = SIMD3<Float>(1, 0, 0)
 private let yAxis = SIMD3<Float>(0, 1, 0)
@@ -108,6 +108,12 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       name: UIApplication.didEnterBackgroundNotification,
       object: nil
     )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(appWillEnterForeground),
+      name: UIApplication.willEnterForegroundNotification,
+      object: nil
+    )
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -141,6 +147,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     timeControlObservation?.invalidate()
     player.replaceCurrentItem(with: nil)
     sceneView.isPlaying = false
+    // Lets the music the video interrupted resume
+    try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
   }
 
   override func viewDidLayoutSubviews() {
@@ -256,6 +264,15 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     player.pause()
   }
 
+  // The motion reference frame may have moved while the app was in the background: the view keeps its heading, and
+  // the first sample after the return realigns the phone on it
+  @objc private func appWillEnterForeground() {
+    guard started, motionEnabled, !closing else { return }
+    yaw = Self.heading(of: cameraNode.simdOrientation)
+    staleMotionTimestamp = motionManager.deviceMotion?.timestamp
+    alignHeadingOnNextMotion = true
+  }
+
   /// Stops the playback, the motion and the refresh when the player closes, idempotent
   private func stop() {
     guard !closing else { return }
@@ -367,7 +384,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     alignHeadingOnNextMotion = true
     staleMotionTimestamp = motionManager.deviceMotion?.timestamp
     motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
-    motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical)
+    // The magnetometer corrects the drift of the heading, where there is one
+    let corrected = CMMotionManager.availableAttitudeReferenceFrames().contains(.xArbitraryCorrectedZVertical)
+    motionManager.startDeviceMotionUpdates(using: corrected ? .xArbitraryCorrectedZVertical : .xArbitraryZVertical)
   }
 
   /// Called on every screen refresh: turns the camera with the latest attitude of the phone
@@ -585,7 +604,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
   private func scheduleControlsHiding() {
     NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideControls), object: nil)
-    if player.timeControlStatus == .playing && !failed && !closing {
+    // VoiceOver users keep the controls on screen
+    if player.timeControlStatus == .playing && !failed && !closing && !UIAccessibility.isVoiceOverRunning {
       perform(#selector(hideControls), with: nil, afterDelay: controlsHideDelay)
     }
   }

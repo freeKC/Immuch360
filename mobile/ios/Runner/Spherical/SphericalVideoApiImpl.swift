@@ -10,12 +10,21 @@ class SphericalVideoApiImpl: SphericalVideoApi {
     guard let videoUrl = URL(string: url) else {
       throw PigeonError(code: "INVALID_URL", message: "Cannot read the video URL \(url)", details: nil)
     }
+    let noViewController = PigeonError(
+      code: "NO_VIEW_CONTROLLER",
+      message: "No view controller to show the 360° player",
+      details: nil
+    )
     guard let presenter = topViewController() else {
-      throw PigeonError(code: "NO_VIEW_CONTROLLER", message: "No view controller to show the 360° player", details: nil)
+      throw noViewController
     }
     // A second tap while the player slides in
-    if presenter is SphericalVideoViewController {
+    if presenter is SphericalVideoViewController && !presenter.isBeingDismissed {
       return
+    }
+    // UIKit drops a presentation made during a transition or over another one: the error lets Flutter resume its player
+    if presenter.isBeingPresented || presenter.isBeingDismissed || presenter.presentedViewController != nil {
+      throw noViewController
     }
 
     let player = SphericalVideoViewController(
