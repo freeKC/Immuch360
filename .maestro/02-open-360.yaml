@@ -2,6 +2,14 @@
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - openLink: "immich://asset?id=${ASSET_ID}"
+# iOS asks "Open in Immuch360?" a moment later
+- waitForAnimationToEnd:
+    timeout: 4000
+- tapOn:
+    text: "Open"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 4000
 - tapOn:
     text: "Open"
     optional: true

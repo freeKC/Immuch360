@@ -3,6 +3,10 @@
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - launchApp
+# A leftover system dialog from the deep link of flow 02, if any
+- tapOn:
+    text: "Open"
+    optional: true
 - tapOn:
     text: "Not Now"
     optional: true
