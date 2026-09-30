@@ -159,8 +159,6 @@ workflows:
     name: Immuch360 iOS signed build and TestFlight upload
     instance_type: mac_mini_m2
     max_build_duration: 120
-    integrations:
-      app_store_connect: posiform-asc
     environment:
       xcode: latest
       cocoapods: default
@@ -226,6 +224,9 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
-        auth: integration
+        # The App Store Connect API key lives in the apple_signing variable group of the Codemagic app
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
         submit_to_app_store: false
