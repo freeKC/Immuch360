@@ -1,10 +1,14 @@
-# Shows the Library tab with its 360° entry, then the list of 360° photos and videos.
+# Shows the Library tab with its 360° entry, the list of 360° photos and videos, then opens the first one
+# and its sphere (a second way to the viewer when the deep link of flow 02 did not open it).
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - launchApp
 - tapOn:
     text: "Not Now"
     optional: true
+- extendedWaitUntil:
+    visible: "Library"
+    timeout: 30000
 - tapOn: "Library"
 - waitForAnimationToEnd:
     timeout: 5000
@@ -13,3 +17,19 @@ appId: com.aprogsys.immuch360.dev.debug
 - waitForAnimationToEnd:
     timeout: 8000
 - takeScreenshot: m10-library-360
+# First thumbnail of the list, top left under the app bar
+- tapOn:
+    point: "14%,22%"
+- extendedWaitUntil:
+    visible: "360°"
+    timeout: 20000
+- takeScreenshot: m11-viewer-flat
+- tapOn: "360°"
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: m12-sphere
+- swipe:
+    start: "70%,50%"
+    end: "30%,50%"
+    duration: 800
+- takeScreenshot: m13-sphere-after-swipe

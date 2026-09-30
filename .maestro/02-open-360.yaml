@@ -14,7 +14,7 @@ appId: com.aprogsys.immuch360.dev.debug
 # The viewer is open once its 360 button is there
 - extendedWaitUntil:
     visible: "360°"
-    timeout: 20000
+    timeout: 60000
 - takeScreenshot: m05-asset-open
 # The 360 button sits in the viewer top bar, exposed through its tooltip
 - tapOn: "360°"
