@@ -1,0 +1,21 @@
+# Right after login, before the library is synced: the Library tab and its 360° page (works on iPad too,
+# where the session does not survive a relaunch on the simulator).
+appId: com.aprogsys.immuch360.dev.debug
+---
+- tapOn:
+    text: "Not Now"
+    optional: true
+- extendedWaitUntil:
+    visible: ".*Library.*"
+    timeout: 30000
+- tapOn: ".*Library.*"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: m14-library-early
+- tapOn: ".*360°.*"
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: m15-library-360-early
+- tapOn:
+    text: "Photos"
+    optional: true

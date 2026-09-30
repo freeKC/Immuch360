@@ -132,6 +132,7 @@ workflows:
           UDID=$(cat "$CM_BUILD_DIR/udid.txt")
           mkdir -p "$CM_BUILD_DIR/maestro-out"
           maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/01-login-demo.yaml || true
+          maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/04-library-early.yaml || true
           ls -la "$CM_BUILD_DIR/maestro-out" || true
           cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
           xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s01-after-login-flow.png"
