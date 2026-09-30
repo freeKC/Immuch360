@@ -6,14 +6,15 @@ appId: com.aprogsys.immuch360.dev.debug
 - tapOn:
     text: "Not Now"
     optional: true
+# Tab labels carry extra accessibility text on iOS, hence the regex
 - extendedWaitUntil:
-    visible: "Library"
+    visible: ".*Library.*"
     timeout: 30000
-- tapOn: "Library"
+- tapOn: ".*Library.*"
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: m09-library
-- tapOn: "360°"
+- tapOn: ".*360°.*"
 - waitForAnimationToEnd:
     timeout: 8000
 - takeScreenshot: m10-library-360
