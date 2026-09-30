@@ -4,7 +4,7 @@ Immuch360 is a mobile app that connects to an Immich server that you choose and 
 
 ## What the app does with your data
 
-- The app talks only to the Immich server address you enter at login. Your photos, videos, albums, account and settings are stored on that server and on your device. Nothing is sent to the developer of Immuch360 or to any other party.
+- The app talks to the Immich server address you enter at login, and to the map tile service that server is configured to use when you open the map (by default the tile service of the Immich project). Your photos, videos, albums, account and settings are stored on that server and on your device. Nothing is sent to the developer of Immuch360.
 - With backup enabled, the app uploads the photos and videos you select from your device to your server. Backup is off until you turn it on.
 - The app can read your location and camera metadata only as embedded in your own photos, to display them; it does not track your location.
 - The Meta Quest immersive view downloads the photo or video from your server to the headset for display and keeps nothing afterwards.
@@ -12,7 +12,7 @@ Immuch360 is a mobile app that connects to an Immich server that you choose and 
 
 ## Permissions
 
-Photos and media (to back them up and to show local files), notifications (backup progress), network access (your server), and, on Android, the background upload service. The app asks for each of them when the feature is used.
+Photos and media (to back them up and to show local files), notifications (backup progress), network access (your server), location (only to read the name of the current Wi-Fi network when you restrict backup to a given network), camera (to scan a QR code or take a picture to upload), Face ID or fingerprint (to lock the app if you enable it), and, on Android, the background upload service. The app asks for each of them when the feature is used.
 
 ## Third parties
 

@@ -159,13 +159,13 @@ class _BottomPanelState extends State<_BottomPanel> {
             _ActionLink(
               icon: Icons.chat_bubble_outline,
               label: context.t.discord,
-              onTap: () => launchUrl(Uri.parse('https://discord.immich.app/'), mode: LaunchMode.externalApplication),
+              onTap: () => launchUrl(Uri.parse('https://github.com/freeKC/Immuch360'), mode: LaunchMode.externalApplication),
             ),
             _ActionLink(
               icon: Icons.bug_report_outlined,
               label: context.t.profile_drawer_github,
               onTap: () => launchUrl(
-                Uri.parse('https://github.com/immich-app/immich/issues'),
+                Uri.parse('https://github.com/freeKC/Immuch360/issues'),
                 mode: LaunchMode.externalApplication,
               ),
             ),
