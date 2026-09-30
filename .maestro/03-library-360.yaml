@@ -1,0 +1,15 @@
+# Shows the Library tab with its 360° entry, then the list of 360° photos and videos.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- tapOn:
+    text: "Not Now"
+    optional: true
+- tapOn: "Library"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: m09-library
+- tapOn: "360°"
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: m10-library-360

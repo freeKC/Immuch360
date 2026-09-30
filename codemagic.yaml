@@ -147,6 +147,8 @@ workflows:
           maestro --device "$UDID" test -e ASSET_ID="$ASSET_ID" --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/02-open-360.yaml || true
           cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
           xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s03-final.png"
+          maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/03-library-360.yaml || true
+          cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
           cd "$CM_BUILD_DIR" && zip -qr maestro-out.zip maestro-out
     artifacts:
       - maestro-out.zip
