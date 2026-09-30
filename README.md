@@ -5,7 +5,7 @@
 <p align="center">
   <b>The Immich mobile app, with 360° photos and videos you can look around in.</b><br>
   Android phones, iPhones and the Meta Quest 3. Same server, same account, no server plugin needed.<br>
-  <sub>Unofficial fork, early pre-release. Not affiliated with Immich or FUTO.</sub>
+  <sub>Unofficial fork. Not affiliated with Immich or FUTO.</sub>
 </p>
 
 <p align="center">
@@ -57,14 +57,14 @@ The store links will be added here as soon as the listings are published. Log in
 
 | Feature | Immich mobile app | Immuch360 | Status |
 |---|---|---|---|
-| 360° photos (equirectangular) shown as an interactive sphere | No, flat image only | **Yes**, drag to look around, pinch to zoom, partial panoramas handled (GPano crop) | Pre-release; tested on a Galaxy S24+ and an iPhone 14 |
-| 360° badge on thumbnails | No | **Yes** | Pre-release |
-| 360° button in the viewer top bar, zoom kept on the flat view, loading indicator | n/a | **Yes** | Pre-release |
-| Gyroscope navigation: look around by moving the phone | No | **Yes**, toggle in the 360 viewer (off by default) | Pre-release; tested on a Galaxy S24+ and an iPhone 14 |
-| Initial view from GPano metadata, inertia after a drag, double tap zoom, sharper texture when zoomed in | No | **Yes** | Pre-release, device feedback welcome |
-| 360° entry in the Library tab listing every 360° photo and video | No | **Yes** | Pre-release |
-| 360° videos played on a sphere with drag and gyroscope | No, flat video only | **Yes on Android and iOS** (native player opened by the 360° button, Media3 on Android and SceneKit on iOS; plays the file stored on the phone when there is one, otherwise streams it from your server) | Pre-release; tested on a Galaxy S24+ and an iPhone 14 |
-| Meta Quest 3 viewer with head tracking | No | **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Pre-release, tested on a Quest 3 |
+| 360° photos (equirectangular) shown as an interactive sphere | No, flat image only | **Yes**, drag to look around, pinch to zoom, partial panoramas handled (GPano crop) | Tested on a Galaxy S24+ and an iPhone 14 |
+| 360° badge on thumbnails | No | **Yes** | Done |
+| 360° button in the viewer top bar, zoom kept on the flat view, loading indicator | n/a | **Yes** | Done |
+| Gyroscope navigation: look around by moving the phone | No | **Yes**, toggle in the 360 viewer (off by default) | Tested on a Galaxy S24+ and an iPhone 14 |
+| Initial view from GPano metadata, inertia after a drag, double tap zoom, sharper texture when zoomed in | No | **Yes** | Tested on a Galaxy S24+ and an iPhone 14, device feedback welcome |
+| 360° entry in the Library tab listing every 360° photo and video | No | **Yes** | Done |
+| 360° videos played on a sphere with drag and gyroscope | No, flat video only | **Yes on Android and iOS** (native player opened by the 360° button, Media3 on Android and SceneKit on iOS; plays the file stored on the phone when there is one, otherwise streams it from your server) | Tested on a Galaxy S24+ and an iPhone 14 |
+| Meta Quest 3 viewer with head tracking | No | **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Tested on a Quest 3 |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | Shown flat or wrongly | Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.

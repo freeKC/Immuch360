@@ -86,4 +86,4 @@ jobs:
             mobile/build/app/outputs/flutter-apk/Immuch360-*.apk
             mobile/build/app/outputs/flutter-apk/Immuch360-*.aab
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'preview') }}
+          prerelease: ${{ contains(github.ref_name, 'preview') }}
