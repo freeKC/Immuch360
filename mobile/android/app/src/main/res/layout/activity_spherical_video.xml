@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/spherical_video_root"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/black">
+
+  <!-- The spherical surface turns the view with touch drags and with the orientation sensors -->
+  <androidx.media3.ui.PlayerView
+    android:id="@+id/spherical_video_player"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:shutter_background_color="@android:color/black"
+    app:show_buffering="when_playing"
+    app:show_shuffle_button="false"
+    app:show_subtitle_button="false"
+    app:surface_type="spherical_gl_surface_view"
+    app:use_artwork="false" />
+
+  <LinearLayout
+    android:id="@+id/spherical_video_top_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageButton
+      android:id="@+id/spherical_video_close"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:background="?android:attr/selectableItemBackgroundBorderless"
+      android:contentDescription="@string/spherical_video_close"
+      android:src="@drawable/ic_spherical_video_close" />
+
+    <TextView
+      android:id="@+id/spherical_video_title"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      android:layout_weight="1"
+      android:ellipsize="middle"
+      android:singleLine="true"
+      android:textColor="@android:color/white"
+      android:textSize="16sp" />
+  </LinearLayout>
+</FrameLayout>

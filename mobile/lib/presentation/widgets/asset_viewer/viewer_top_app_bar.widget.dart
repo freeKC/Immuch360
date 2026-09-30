@@ -10,15 +10,20 @@ import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/timezone.dart';
 import 'package:immich_ui/immich_ui.dart';
+import 'package:logging/logging.dart';
 
 class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const ViewerTopAppBar({super.key});
@@ -46,6 +51,27 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ref.watch(assetViewerProvider.select((s) => s.backgroundOpacity)) * (showingControls ? 1 : 0);
 
     final originalTheme = context.themeData;
+
+    // Viewing in 360 changes nothing on the server: available in readonly mode and in the locked folder too.
+    // Photos open the Flutter panorama viewer, videos the native player where the platform has one.
+    // On a Meta Quest, server assets open in the immersive viewer, which also plays 360 videos.
+    final isPanoramaPhoto = ref.watch(isPanoramaProvider(asset));
+    final isEquirectangular = ref.watch(isEquirectangularProvider(asset));
+    final canPlayPanoramaVideo = ref.watch(panorama360VideoSupportedProvider);
+    final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    final opensImmersive = isHorizonOs && asset.remoteId != null;
+    final VoidCallback? onPanoramaPressed = switch (asset.type) {
+      AssetType.image when isPanoramaPhoto && opensImmersive => () => unawaited(_openImmersive(context, ref, asset)),
+      AssetType.image when isPanoramaPhoto => () => unawaited(context.router.push(PanoramaViewerRoute(asset: asset))),
+      AssetType.video when isEquirectangular && opensImmersive => () => unawaited(_openImmersive(context, ref, asset)),
+      AssetType.video when isEquirectangular && canPlayPanoramaVideo => () => unawaited(
+        openPanoramaVideo(context, ref, asset),
+      ),
+      _ => null,
+    };
+    final panoramaButton = onPanoramaPressed != null
+        ? IconButton(icon: const Icon(Icons.threesixty_rounded), tooltip: '360°', onPressed: onPanoramaPressed)
+        : null;
 
     final actions = <Widget>[
       if (asset.isMotionPhoto) const MotionPhotoActionButton(iconOnly: true),
@@ -101,12 +127,15 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     centerMiddle: true,
                     leading: const _AppBarBackButton(),
                     middle: showingDetails ? null : _AssetInfoTitle(asset: asset),
-                    trailing: !showingDetails && !isReadonlyModeEnabled
+                    trailing: !showingDetails && (!isReadonlyModeEnabled || panoramaButton != null)
                         ? ImmichColorOverride(
                             color: Colors.white,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
-                              children: isInLockedView ? lockedViewActions : actions,
+                              children: [
+                                ?panoramaButton,
+                                if (!isReadonlyModeEnabled) ...(isInLockedView ? lockedViewActions : actions),
+                              ],
                             ),
                           )
                         : null,
@@ -122,6 +151,16 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(60.0);
+
+  Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset) async {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    try {
+      await openImmersiveViewer(ref, asset);
+    } catch (error) {
+      Logger('ViewerTopAppBar').warning('Could not open the immersive viewer: $error');
+      messenger?.showSnackBar(const SnackBar(content: Text('Could not open the immersive viewer')));
+    }
+  }
 }
 
 class _AppBarBackButton extends ConsumerWidget {

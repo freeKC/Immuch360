@@ -45,3 +45,10 @@
 -keep class okio.** { *; }
 -keep class com.example.ok_http.** { *; }
 ##---------------End: proguard configuration for ok_http JNI ----------
+
+##---------------Begin: Meta Spatial SDK (Quest immersive viewer) ----------
+# The SDK ships its own consumer rules. Its classes are kept whole on top of that: the native
+# runtime calls back into them, and the immersive viewer only runs on a headset.
+-keep class com.meta.spatial.** { *; }
+-dontwarn com.meta.spatial.**
+##---------------End: Meta Spatial SDK ----------

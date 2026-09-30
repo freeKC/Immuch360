@@ -1,5 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools">
+  xmlns:tools="http://schemas.android.com/tools"
+  xmlns:horizonos="http://schemas.horizonos/sdk">
+
+  <!-- Meta Quest (Horizon OS): the app runs as a 2D panel and opens 360 media in an immersive
+       activity. Nothing here is required, so phones are not filtered out. -->
+  <horizonos:uses-horizonos-sdk horizonos:minSdkVersion="69" horizonos:targetSdkVersion="69" />
+  <uses-feature android:name="android.hardware.vr.headtracking" android:required="false" />
+  <uses-feature android:name="oculus.software.handtracking" android:required="false" />
+  <uses-feature android:name="com.oculus.feature.RENDER_MODEL" android:required="false" />
+  <uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
+  <uses-permission android:name="com.oculus.permission.RENDER_MODEL" />
 
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -32,6 +42,13 @@
 
     <profileable android:shell="true" />
 
+    <!-- Meta Quest (Horizon OS) -->
+    <meta-data android:name="com.oculus.supportedDevices" android:value="quest2|questpro|quest3|quest3s" />
+    <meta-data android:name="com.oculus.handtracking.version" android:value="V2.0" />
+    <meta-data android:name="com.oculus.vr.focusaware" android:value="true" />
+    <!-- Spatial SDK runtime, present on Horizon OS only: not required, phones still install the app -->
+    <uses-native-library android:name="libossdk.oculus.so" android:required="false" />
+
     <service
       android:name="androidx.work.impl.foreground.SystemForegroundService"
       android:directBootAware="false"
@@ -56,9 +73,14 @@
       Window background behind the Flutter UI. -->
       <meta-data android:name="io.flutter.embedding.android.NormalTheme"
         android:resource="@style/NormalTheme" />
+      <!-- Panel size on Meta Quest, ignored on phones -->
+      <layout android:defaultWidth="1024dp" android:defaultHeight="640dp"
+        android:minWidth="480dp" android:minHeight="320dp" />
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
+        <!-- Horizon OS: start as a 2D panel (hybrid app) -->
+        <category android:name="com.oculus.intent.category.2D" />
       </intent-filter>
 
 
@@ -137,6 +159,32 @@
       </intent-filter>
     </activity>
 
+
+    <!-- 360° video player, started from Flutter through SphericalVideoApi -->
+    <activity
+      android:name=".spherical.SphericalVideoActivity"
+      android:configChanges="orientation|screenSize|keyboardHidden"
+      android:exported="false"
+      android:launchMode="singleTop"
+      android:screenOrientation="sensorLandscape"
+      android:theme="@style/SphericalVideoTheme" />
+
+    <!-- Meta Quest immersive viewer for 360 photos and videos (Spatial SDK, see Meta's HybridSample).
+         Started by the app only, on Horizon OS only. Exported like in the sample so Horizon OS can launch
+         it as a VR activity; it ignores intents without the app's launch token. -->
+    <activity
+      android:name=".immersive.ImmersiveViewerActivity"
+      android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+      android:launchMode="singleTask"
+      android:excludeFromRecents="false"
+      android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|uiMode"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="com.oculus.intent.category.VR" />
+        <category android:name="android.intent.category.DEFAULT" />
+      </intent-filter>
+    </activity>
 
     <activity
       android:name="com.linusu.flutter_web_auth_2.CallbackActivity"

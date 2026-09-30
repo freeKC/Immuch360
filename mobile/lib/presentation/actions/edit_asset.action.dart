@@ -7,11 +7,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart';
+import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/server_capability.model.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/pages/edit/editor.provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
@@ -26,7 +28,14 @@ final _stateProvider = Provider.family.autoDispose<RemoteAsset?, ActionSource>((
   }
 
   final assets = ref.watch(ownedAssetsActionProvider(source));
-  return assets.where((asset) => asset.isEditable).singleOrNull;
+  // Panoramas cannot be edited (the server refuses them, same rule as the web app). Raw Insta360 .insp files are not
+  // panoramas for the viewer, but the web treats them as such by file name, so they are not editable either.
+  return assets
+      .where(
+        (asset) =>
+            asset.isEditable && !asset.name.toLowerCase().endsWith('.insp') && !ref.watch(isPanoramaProvider(asset)),
+      )
+      .singleOrNull;
 }, dependencies: [ownedAssetsActionProvider]);
 
 class EditAssetAction extends AssetActionBuilder {
@@ -51,7 +60,8 @@ class EditAssetAction extends AssetActionBuilder {
       // TODO(shenlong): Move all EXIF and Apply Edits logic onto the Route
       final repository = ref.read(driftProvider).remoteAssetRepository;
       final (edits, exif) = await (repository.getAssetEdits(asset.id), repository.watchExif(asset.id).first).wait;
-      if (exif == null || !context.mounted) {
+      // The exif may still have been loading when the action was shown: panoramas cannot be edited
+      if (exif == null || exif.projectionType == ProjectionType.equirectangular || !context.mounted) {
         return;
       }
 

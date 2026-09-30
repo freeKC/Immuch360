@@ -15,6 +15,8 @@ import 'package:immich_mobile/data/db/main/table/remote/album_asset.drift.dart';
 import 'package:immich_mobile/data/db/main/table/remote/album_user.drift.dart';
 import 'package:immich_mobile/data/db/main/table/remote/asset.drift.dart';
 import 'package:immich_mobile/data/db/main/table/remote/cloud_id.drift.dart';
+import 'package:immich_mobile/data/db/main/table/remote/exif.drift.dart';
+import 'package:immich_mobile/data/db/main/table/remote/stack.drift.dart';
 import 'package:immich_mobile/data/db/main/table/user/auth_user.drift.dart';
 import 'package:immich_mobile/data/db/main/table/user/partner.drift.dart';
 import 'package:immich_mobile/data/db/main/table/user/user.drift.dart';
@@ -219,6 +221,25 @@ class MediumRepositoryContext {
     return db
         .into(db.remoteAlbumAssetEntity)
         .insert(RemoteAlbumAssetEntityCompanion(albumId: .new(albumId), assetId: .new(assetId)));
+  }
+
+  /// Seeds the exif of a remote asset, [projectionType] is stored as the server sends it (for example EQUIRECTANGULAR)
+  Future<RemoteExifEntityData> newRemoteExif({required String assetId, String? projectionType}) {
+    return db
+        .into(db.remoteExifEntity)
+        .insertReturning(RemoteExifEntityCompanion(assetId: .new(assetId), projectionType: .new(projectionType)));
+  }
+
+  Future<StackEntityData> newStack({String? id, String? ownerId, required String primaryAssetId}) {
+    return db
+        .into(db.stackEntity)
+        .insertReturning(
+          StackEntityCompanion(
+            id: .new(TestUtils.uuid(id)),
+            ownerId: .new(TestUtils.uuid(ownerId)),
+            primaryAssetId: .new(primaryAssetId),
+          ),
+        );
   }
 
   Future<PersonEntityData> newPerson({String? id, String? ownerId, String? name, bool? isFavorite, bool? isHidden}) {

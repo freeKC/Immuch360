@@ -1,5 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/data/db/main/table/remote/asset.drift.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/timeline.model.dart';
+import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/timeline.repository.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -179,6 +182,137 @@ void main() {
       expect(remote.livePhotoVideoId, 'motion-photo-2');
       expect(remote.isMotionPhoto, isTrue);
       expect(remote.localId, local.id);
+    });
+  });
+
+  group('panorama360 assets', () {
+    late String userId;
+
+    setUp(() async {
+      userId = (await ctx.newUser()).id;
+    });
+
+    Future<RemoteAssetEntityData> newAsset({
+      String? projectionType,
+      bool withExif = true,
+      String? ownerId,
+      AssetType type = .image,
+      AssetVisibility visibility = .timeline,
+      DateTime? createdAt,
+      DateTime? deletedAt,
+      String? checksum,
+      String? stackId,
+    }) async {
+      final asset = await ctx.newRemoteAsset(
+        ownerId: ownerId ?? userId,
+        type: type,
+        visibility: visibility,
+        createdAt: createdAt,
+        deletedAt: deletedAt,
+        checksum: checksum,
+        stackId: stackId,
+      );
+      if (withExif) {
+        await ctx.newRemoteExif(assetId: asset.id, projectionType: projectionType);
+      }
+      return asset;
+    }
+
+    Future<List<String>> listedIds([GroupAssetsBy groupBy = .day]) async {
+      final assets = await sut.panorama360(userId, groupBy).assetSource(0, 100);
+      return assets.map((asset) => (asset as RemoteAsset).id).toList();
+    }
+
+    Future<int> bucketTotal([GroupAssetsBy groupBy = .day]) async {
+      final buckets = await sut.panorama360(userId, groupBy).bucketSource().first;
+      return buckets.fold<int>(0, (total, bucket) => total + bucket.assetCount);
+    }
+
+    test('lists equirectangular photos and videos and nothing else', () async {
+      final photo = await newAsset(projectionType: 'EQUIRECTANGULAR');
+      final video = await newAsset(projectionType: 'EQUIRECTANGULAR', type: .video);
+      await newAsset();
+      await newAsset(withExif: false);
+      await newAsset(projectionType: 'CUBEMAP');
+      await newAsset(projectionType: 'EQUIRECTANGULAR_STEREO');
+      await newAsset(projectionType: 'NONE', type: .video);
+
+      expect(await listedIds(), unorderedEquals([photo.id, video.id]));
+      expect(await bucketTotal(), 2);
+      expect(await listedIds(.month), unorderedEquals([photo.id, video.id]));
+      expect(await bucketTotal(.month), 2);
+      expect(await listedIds(.none), unorderedEquals([photo.id, video.id]));
+      expect(await bucketTotal(.none), 2);
+
+      final assets = await sut.panorama360(userId, .day).assetSource(0, 100);
+      expect(assets.firstWhere((asset) => (asset as RemoteAsset).id == video.id).isVideo, isTrue);
+      expect(sut.panorama360(userId, .day).origin, TimelineOrigin.panorama360);
+    });
+
+    test('keeps archived assets and leaves out trashed, locked and other users assets', () async {
+      final other = await ctx.newUser();
+      final archived = await newAsset(projectionType: 'EQUIRECTANGULAR', visibility: .archive);
+      await newAsset(projectionType: 'EQUIRECTANGULAR', deletedAt: DateTime.utc(2024, 9, 5));
+      await newAsset(projectionType: 'EQUIRECTANGULAR', visibility: .locked);
+      await newAsset(projectionType: 'EQUIRECTANGULAR', visibility: .hidden);
+      await newAsset(projectionType: 'EQUIRECTANGULAR', ownerId: other.id);
+
+      expect(await listedIds(), [archived.id]);
+      expect(await bucketTotal(), 1);
+    });
+
+    test('lists the newest first, one bucket per day', () async {
+      final oldest = await newAsset(projectionType: 'EQUIRECTANGULAR', createdAt: DateTime.utc(2024, 9, 1, 12));
+      final newest = await newAsset(projectionType: 'EQUIRECTANGULAR', createdAt: DateTime.utc(2024, 9, 3, 12));
+      final middle = await newAsset(
+        projectionType: 'EQUIRECTANGULAR',
+        type: .video,
+        createdAt: DateTime.utc(2024, 9, 2, 12),
+      );
+
+      expect(await listedIds(), [newest.id, middle.id, oldest.id]);
+
+      final buckets = await sut.panorama360(userId, .day).bucketSource().first;
+      expect(buckets.map((bucket) => bucket.assetCount), [1, 1, 1]);
+      final dates = buckets.map((bucket) => (bucket as TimeBucket).date).toList();
+      expect(dates, [...dates]..sort((a, b) => b.compareTo(a)));
+    });
+
+    test('shows only the primary asset of a stack', () async {
+      final primary = await newAsset(projectionType: 'EQUIRECTANGULAR', stackId: 'stack-1');
+      await newAsset(projectionType: 'EQUIRECTANGULAR', stackId: 'stack-1');
+      await ctx.newStack(id: 'stack-1', ownerId: userId, primaryAssetId: primary.id);
+
+      expect(await listedIds(), [primary.id]);
+      expect(await bucketTotal(), 1);
+    });
+
+    test('resolves the copy on the device without listing the asset twice', () async {
+      const checksum = 'panorama-checksum';
+      final asset = await newAsset(projectionType: 'EQUIRECTANGULAR', type: .video, checksum: checksum);
+      final local1 = await ctx.newLocalAsset(checksum: checksum);
+      final local2 = await ctx.newLocalAsset(checksum: checksum);
+
+      final assets = await sut.panorama360(userId, .day).assetSource(0, 100);
+
+      expect(assets, hasLength(1));
+      final remote = assets.single as RemoteAsset;
+      expect(remote.id, asset.id);
+      expect([local1.id, local2.id], contains(remote.localId));
+    });
+
+    test('updates the buckets when the exif of an asset arrives after the asset', () async {
+      final asset = await newAsset(withExif: false);
+      final buckets = sut.panorama360(userId, .day).bucketSource();
+
+      final expectation = expectLater(
+        buckets.map((list) => list.fold<int>(0, (total, bucket) => total + bucket.assetCount)),
+        emitsInOrder([0, 1]),
+      );
+      await Future<void>.delayed(Duration.zero);
+      await ctx.newRemoteExif(assetId: asset.id, projectionType: 'EQUIRECTANGULAR');
+
+      await expectation;
     });
   });
 

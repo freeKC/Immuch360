@@ -36,6 +36,7 @@ enum TimelineOrigin {
   albumActivities,
   folder,
   recentlyAdded,
+  panorama360,
 }
 
 class TimelineFactory {
@@ -71,6 +72,8 @@ class TimelineFactory {
   TimelineService lockedFolder(String userId) => TimelineService(_timelineRepository.locked(userId, groupBy));
 
   TimelineService video(String userId) => TimelineService(_timelineRepository.video(userId, groupBy));
+
+  TimelineService panorama360(String userId) => TimelineService(_timelineRepository.panorama360(userId, groupBy));
 
   TimelineService place(String place) => TimelineService(_timelineRepository.place(place, groupBy));
 

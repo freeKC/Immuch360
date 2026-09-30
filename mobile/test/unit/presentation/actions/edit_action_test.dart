@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/models/server_info/server_version.model.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
@@ -32,8 +33,8 @@ void main() {
     await context.dispose();
   });
 
-  RemoteAsset owned({AssetType type = .image}) =>
-      RemoteAssetFactory.create(ownerId: context.currentUser.id, type: type);
+  RemoteAsset owned({AssetType type = .image, String? name}) =>
+      RemoteAssetFactory.create(ownerId: context.currentUser.id, type: type, name: name);
 
   const supportedVersion = ServerVersion(major: 2, minor: 6, patch: 0);
 
@@ -112,6 +113,48 @@ void main() {
 
       verify(() => context.repository.remoteAsset.repo.getAssetEdits(asset.id)).called(1);
       verify(() => context.repository.remoteAsset.repo.watchExif(asset.id)).called(1);
+    });
+
+    /// Calls create() from a Consumer on every build and returns the item of the last one
+    Future<ActionItem?> createFor(WidgetTester tester, RemoteAsset asset, {ProjectionType? projectionType}) async {
+      ActionItem? item;
+      // Stubbed on the service of the outer scope: isPanoramaProvider is not scoped, so it would not see an override
+      // of assetExifProvider in the inner scope, where the selection lives
+      when(
+        () => assetService.watchExif(asset),
+      ).thenAnswer((_) => Stream.value(ExifInfo(projectionType: projectionType)));
+      // Starts from an empty tree so a second call in the same test gets a fresh ProviderScope
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpTestWidget(
+        context,
+        Consumer(
+          builder: (widgetContext, ref, _) {
+            item = const EditAssetAction(source: .timeline).create(widgetContext, ref);
+            return const SizedBox.shrink();
+          },
+        ),
+        overrides: [
+          ...context.selected({asset}),
+          ...reportedVersion(supportedVersion),
+        ],
+      );
+      return item;
+    }
+
+    testWidgets('creates the edit item for a plain image', (tester) async {
+      final item = await createFor(tester, owned());
+
+      expect(item, isNotNull);
+      expect(item!.icon, Icons.tune);
+    });
+
+    testWidgets('creates nothing for an equirectangular panorama', (tester) async {
+      expect(await createFor(tester, owned(), projectionType: .equirectangular), isNull);
+    });
+
+    testWidgets('creates nothing for an Insta360 .insp file, whatever the case of the extension', (tester) async {
+      expect(await createFor(tester, owned(name: 'IMG_20260101_120000_00_001.insp')), isNull);
+      expect(await createFor(tester, owned(name: 'IMG_20260101_120000_00_002.INSP')), isNull);
     });
   });
 

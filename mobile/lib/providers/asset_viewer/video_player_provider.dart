@@ -42,6 +42,13 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   Timer? _seekTimer;
   VideoPlaybackStatus? _holdStatus;
 
+  // Set while the video plays in an external player (the native 360° player): see [suspendForExternalPlayer]
+  bool _suspended = false;
+  VideoSource? _sourceAfterSuspension;
+
+  /// Whether [suspendForExternalPlayer] stopped this player
+  bool get isSuspendedForExternalPlayer => _suspended;
+
   @override
   void dispose() {
     _bufferingTimer?.cancel();
@@ -57,6 +64,11 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   }
 
   Future<void> load(VideoSource source) async {
+    if (_suspended) {
+      _sourceAfterSuspension = source;
+      return;
+    }
+
     _startBufferingTimer();
     try {
       await _controller?.loadVideoSource(source);
@@ -81,7 +93,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   }
 
   Future<void> play() async {
-    if (_controller == null) {
+    if (_controller == null || _suspended) {
       return;
     }
 
@@ -93,6 +105,45 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
 
     _startBufferingTimer();
+  }
+
+  /// Stops the video while it plays in an external player: nothing plays behind that player, even a video that
+  /// becomes ready later, and stopping, unlike pausing, frees the decoder and the buffered data for it.
+  /// [play] does nothing and [load] waits until [resumeAfterExternalPlayer].
+  Future<void> suspendForExternalPlayer() async {
+    if (_suspended) {
+      return;
+    }
+
+    _suspended = true;
+    _bufferingTimer?.cancel();
+    _seekTimer?.cancel();
+
+    final controller = _controller;
+    _sourceAfterSuspension = controller?.videoSource;
+    if (controller == null || _sourceAfterSuspension == null) {
+      return;
+    }
+
+    try {
+      await controller.stop();
+    } catch (e) {
+      _log.severe('Error stopping video: $e');
+    }
+  }
+
+  /// Ends [suspendForExternalPlayer]: loads the video again, stopped at the start like a video that did not autoplay
+  Future<void> resumeAfterExternalPlayer() async {
+    if (!_suspended) {
+      return;
+    }
+
+    _suspended = false;
+    final source = _sourceAfterSuspension;
+    _sourceAfterSuspension = null;
+    if (source != null) {
+      await load(source);
+    }
   }
 
   Future<void> _flushSeek() async {
