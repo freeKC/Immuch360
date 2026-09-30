@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "เบิกหน้าเมิลแบบอิมเมอร์ซีฟออตบาน",
+  "library_360": "360°",
+  "panorama_gyroscope": "ไจโรสโคป",
+  "panorama_no_gyroscope": "อุปกรณ์นิฮออตเมียนไจโรสโคป"
+}

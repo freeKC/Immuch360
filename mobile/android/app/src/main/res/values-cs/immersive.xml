@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Zpět</string>
+  <string name="immersive_play">Přehrát</string>
+  <string name="immersive_pause">Pozastavit</string>
+  <string name="immersive_hint">B nebo Y: zpět do aplikace. Spoušť: přehrát nebo pozastavit. A, X nebo tlačítko úchopu: zobrazit nebo skrýt tento panel. Páčka doleva nebo doprava: otočit obraz.</string>
+  <string name="immersive_yaw">Obraz otočen na %1$d°</string>
+  <string name="immersive_loading">Načítání</string>
+  <string name="immersive_buffering">Ukládání do vyrovnávací paměti</string>
+  <string name="immersive_preview_loading_full">Náhled %1$d x %2$d, načítá se plné rozlišení</string>
+  <string name="immersive_full_resolution">Plné rozlišení %1$d x %2$d</string>
+  <string name="immersive_preview_only">Pouze náhled: %1$s</string>
+  <string name="immersive_error_photo">Tuto fotku nelze zobrazit: %1$s</string>
+  <string name="immersive_error_video">Toto video nelze přehrát (%1$s). Video 5.7K H.264 může přesáhnout možnosti dekodéru headsetu, doporučuje se H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d je nad 4K a přesahuje možnosti dekodéru headsetu (trhané, kostičkované). Ve službě Immich nastavte překódování videa na HEVC nebo omezte rozlišení.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d je nad 4K a přesahuje možnosti dekodéru headsetu (trhané, kostičkované). Překódujte toto video do HEVC.</string>
+  <string name="immersive_video_fallback">Originál se nepodařilo přehrát (%1$s), zkouší se přehrávací stream ze serveru</string>
+  <string name="immersive_video_decoder_switch">%1$s přesahuje možnosti dekodéru headsetu, zkouší se přehrávací stream ze serveru</string>
+  <string name="immersive_error_nothing">Není co zobrazit</string>
+</resources>

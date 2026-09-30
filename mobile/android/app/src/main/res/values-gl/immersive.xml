@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Atrás</string>
+  <string name="immersive_play">Reproducir</string>
+  <string name="immersive_pause">Pausa</string>
+  <string name="immersive_hint">B ou Y: volver á aplicación. Gatillo: reproducir ou pausar. A, X ou botón de agarre: mostrar ou ocultar este panel. Joystick á esquerda ou á dereita: xirar a imaxe.</string>
+  <string name="immersive_yaw">Imaxe xirada a %1$d graos</string>
+  <string name="immersive_loading">Cargando</string>
+  <string name="immersive_buffering">Almacenando en búfer</string>
+  <string name="immersive_preview_loading_full">Vista previa %1$d x %2$d, cargando a resolución completa</string>
+  <string name="immersive_full_resolution">Resolución completa %1$d x %2$d</string>
+  <string name="immersive_preview_only">Só vista previa: %1$s</string>
+  <string name="immersive_error_photo">Non se pode mostrar esta foto: %1$s</string>
+  <string name="immersive_error_video">Non se pode reproducir este vídeo (%1$s). Un vídeo H.264 en 5.7K pode superar o descodificador do casco, recoméndase H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d supera o 4K e o descodificador do casco (entrecortado, pixelado). En Immich, configure a transcodificación de vídeo en HEVC ou limite a resolución.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d supera o 4K e o descodificador do casco (entrecortado, pixelado). Recodifique este vídeo en HEVC.</string>
+  <string name="immersive_video_fallback">Fallou o orixinal (%1$s), probando o fluxo de reprodución do servidor</string>
+  <string name="immersive_video_decoder_switch">%1$s supera o descodificador do casco, probando o fluxo de reprodución do servidor</string>
+  <string name="immersive_error_nothing">Nada que mostrar</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Indietro</string>
+  <string name="immersive_play">Riproduci</string>
+  <string name="immersive_pause">Pausa</string>
+  <string name="immersive_hint">B o Y: torna all\'app. Grilletto: riproduci o metti in pausa. A, X o impugnatura: mostra o nascondi questo pannello. Levetta a sinistra o a destra: ruota l\'immagine.</string>
+  <string name="immersive_yaw">Immagine ruotata a %1$d gradi</string>
+  <string name="immersive_loading">Caricamento</string>
+  <string name="immersive_buffering">Buffering in corso</string>
+  <string name="immersive_preview_loading_full">Anteprima %1$d x %2$d, caricamento della risoluzione completa</string>
+  <string name="immersive_full_resolution">Risoluzione completa %1$d x %2$d</string>
+  <string name="immersive_preview_only">Solo anteprima: %1$s</string>
+  <string name="immersive_error_photo">Impossibile visualizzare questa foto: %1$s</string>
+  <string name="immersive_error_video">Impossibile riprodurre questo video (%1$s). Un video H.264 5.7K può superare le capacità del decoder del visore, si consiglia H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d supera il 4K e le capacità del decoder del visore (scatti, blocchi). In Immich, imposta la transcodifica video su HEVC o limita la risoluzione.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d supera il 4K e le capacità del decoder del visore (scatti, blocchi). Ricodifica questo video in HEVC.</string>
+  <string name="immersive_video_fallback">Impossibile riprodurre l\'originale (%1$s), tentativo con lo stream di riproduzione del server</string>
+  <string name="immersive_video_decoder_switch">%1$s supera le capacità del decoder del visore, tentativo con lo stream di riproduzione del server</string>
+  <string name="immersive_error_nothing">Niente da mostrare</string>
+</resources>

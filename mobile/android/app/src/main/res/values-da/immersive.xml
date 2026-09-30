@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Tilbage</string>
+  <string name="immersive_play">Afspil</string>
+  <string name="immersive_pause">Pause</string>
+  <string name="immersive_hint">B eller Y: tilbage til appen. Aftrækker: afspil eller pause. A, X eller grebknap: vis eller skjul dette panel. Thumbstick til venstre eller højre: drej billedet.</string>
+  <string name="immersive_yaw">Billedet er drejet til %1$d grader</string>
+  <string name="immersive_loading">Indlæser</string>
+  <string name="immersive_buffering">Bufferer</string>
+  <string name="immersive_preview_loading_full">Forhåndsvisning %1$d x %2$d, indlæser fuld opløsning</string>
+  <string name="immersive_full_resolution">Fuld opløsning %1$d x %2$d</string>
+  <string name="immersive_preview_only">Kun forhåndsvisning: %1$s</string>
+  <string name="immersive_error_photo">Dette billede kan ikke vises: %1$s</string>
+  <string name="immersive_error_video">Denne video kan ikke afspilles (%1$s). En 5.7K H.264-video kan overstige headsettets dekoder, H.265 anbefales.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d er over 4K og overstiger headsettets dekoder (hakkende, pixeleret). I Immich skal du indstille videotranskodningen til HEVC eller begrænse opløsningen.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d er over 4K og overstiger headsettets dekoder (hakkende, pixeleret). Genkod denne video i HEVC.</string>
+  <string name="immersive_video_fallback">Originalen mislykkedes (%1$s), prøver serverens afspilningsstream</string>
+  <string name="immersive_video_decoder_switch">%1$s overstiger headsettets dekoder, prøver serverens afspilningsstream</string>
+  <string name="immersive_error_nothing">Intet at vise</string>
+</resources>

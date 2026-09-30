@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Tagasi</string>
+  <string name="immersive_play">Esita</string>
+  <string name="immersive_pause">Peata</string>
+  <string name="immersive_hint">B või Y: tagasi rakendusse. Päästik: esita või peata. A, X või haardenupp: näita või peida see paneel. Juhtkang vasakule või paremale: pööra pilti.</string>
+  <string name="immersive_yaw">Pilt pööratud %1$d kraadini</string>
+  <string name="immersive_loading">Laadimine</string>
+  <string name="immersive_buffering">Puhverdamine</string>
+  <string name="immersive_preview_loading_full">Eelvaade %1$d x %2$d, täisresolutsiooni laadimine</string>
+  <string name="immersive_full_resolution">Täisresolutsioon %1$d x %2$d</string>
+  <string name="immersive_preview_only">Ainult eelvaade: %1$s</string>
+  <string name="immersive_error_photo">Seda fotot ei saa kuvada: %1$s</string>
+  <string name="immersive_error_video">Seda videot ei saa esitada (%1$s). 5.7K H.264 video võib ületada peakomplekti dekoodri võimekuse, soovitatav on H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d on üle 4K ja ületab peakomplekti dekoodri võimekuse (katkendlik, plokiline pilt). Määra Immichis video transkodeerimiseks HEVC või piira resolutsiooni.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d on üle 4K ja ületab peakomplekti dekoodri võimekuse (katkendlik, plokiline pilt). Kodeeri see video uuesti HEVC-vormingusse.</string>
+  <string name="immersive_video_fallback">Originaal ebaõnnestus (%1$s), proovitakse serveri taasesitusvoogu</string>
+  <string name="immersive_video_decoder_switch">%1$s ületab peakomplekti dekoodri võimekuse, proovitakse serveri taasesitusvoogu</string>
+  <string name="immersive_error_nothing">Pole midagi näidata</string>
+</resources>

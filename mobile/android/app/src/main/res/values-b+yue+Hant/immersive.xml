@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">返回</string>
+  <string name="immersive_play">播放</string>
+  <string name="immersive_pause">暫停</string>
+  <string name="immersive_hint">B 或 Y：返回應用程式。扳機鍵：播放或者暫停。A、X 或者握把鍵：顯示或者隱藏呢個面板。搖桿向左或者向右：轉動畫面。</string>
+  <string name="immersive_yaw">畫面轉咗去 %1$d 度</string>
+  <string name="immersive_loading">載入緊</string>
+  <string name="immersive_buffering">緩衝緊</string>
+  <string name="immersive_preview_loading_full">預覽 %1$d x %2$d，載入緊完整解像度</string>
+  <string name="immersive_full_resolution">完整解像度 %1$d x %2$d</string>
+  <string name="immersive_preview_only">淨係得預覽：%1$s</string>
+  <string name="immersive_error_photo">顯示唔到呢張相：%1$s</string>
+  <string name="immersive_error_video">播放唔到呢段影片（%1$s）。5.7K 嘅 H.264 影片可能超出頭戴裝置解碼器嘅能力，建議用 H.265。</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 超過 4K，超出頭戴裝置解碼器嘅能力（會一窒一窒、起格）。喺 Immich 將影片轉碼設定為 HEVC，或者限制解像度。</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 超過 4K，超出頭戴裝置解碼器嘅能力（會一窒一窒、起格）。請將呢段影片重新編碼做 HEVC。</string>
+  <string name="immersive_video_fallback">原檔播放唔到（%1$s），試緊伺服器嘅播放串流</string>
+  <string name="immersive_video_decoder_switch">%1$s 超出頭戴裝置解碼器嘅能力，試緊伺服器嘅播放串流</string>
+  <string name="immersive_error_nothing">冇嘢可以顯示</string>
+</resources>

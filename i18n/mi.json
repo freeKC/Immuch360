@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "Kāore i taea te whakatuwhera i te mātaki rumaki",
+  "library_360": "360°",
+  "panorama_gyroscope": "Pūhurihuri",
+  "panorama_no_gyroscope": "Kāore he pūhurihuri i tēnei pūrere"
+}

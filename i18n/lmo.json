@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "Se pò minga dervì el visor immersiv",
+  "library_360": "360°",
+  "panorama_gyroscope": "Giroscopi",
+  "panorama_no_gyroscope": "Gh'è nissun giroscopi in quest dispositiv"
+}

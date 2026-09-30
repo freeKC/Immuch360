@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "Imeshindwa kufungua kitazamaji cha uhalisia pepe",
+  "library_360": "360°",
+  "panorama_gyroscope": "Jairoskopu",
+  "panorama_no_gyroscope": "Kifaa hiki hakina jairoskopu"
+}

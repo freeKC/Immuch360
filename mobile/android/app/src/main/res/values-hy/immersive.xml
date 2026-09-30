@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Հետ</string>
+  <string name="immersive_play">Նվագարկել</string>
+  <string name="immersive_pause">Դադար</string>
+  <string name="immersive_hint">B կամ Y: վերադառնալ հավելված։ Ձգան: նվագարկել կամ դադար։ A, X կամ բռնակ: ցույց տալ կամ թաքցնել այս վահանակը։ Ջոյսթիքը ձախ կամ աջ: պտտել պատկերը։</string>
+  <string name="immersive_yaw">Պատկերը պտտված է %1$d աստիճան</string>
+  <string name="immersive_loading">Բեռնվում է</string>
+  <string name="immersive_buffering">Բուֆերացում</string>
+  <string name="immersive_preview_loading_full">Նախադիտում %1$d x %2$d, բեռնվում է լրիվ լուծաչափը</string>
+  <string name="immersive_full_resolution">Լրիվ լուծաչափ %1$d x %2$d</string>
+  <string name="immersive_preview_only">Միայն նախադիտում: %1$s</string>
+  <string name="immersive_error_photo">Այս լուսանկարը հնարավոր չէ ցուցադրել: %1$s</string>
+  <string name="immersive_error_video">Այս տեսանյութը հնարավոր չէ նվագարկել (%1$s)։ 5.7K H.264 տեսանյութը կարող է գերազանցել VR սաղավարտի ապակոդավորիչի հնարավորությունները, խորհուրդ է տրվում H.265։</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d տեսանյութը գերազանցում է 4K-ն և VR սաղավարտի ապակոդավորիչի հնարավորությունները (ընդհատումներ, քառակուսիներ)։ Immich-ում տեսանյութի տրանսկոդավորման համար ընտրեք HEVC կամ սահմանափակեք լուծաչափը։</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d տեսանյութը գերազանցում է 4K-ն և VR սաղավարտի ապակոդավորիչի հնարավորությունները (ընդհատումներ, քառակուսիներ)։ Վերակոդավորեք այս տեսանյութը HEVC-ով։</string>
+  <string name="immersive_video_fallback">Բնօրինակը չհաջողվեց նվագարկել (%1$s), փորձում ենք սերվերի նվագարկման հոսքը</string>
+  <string name="immersive_video_decoder_switch">%1$s-ը գերազանցում է VR սաղավարտի ապակոդավորիչի հնարավորությունները, փորձում ենք սերվերի նվագարկման հոսքը</string>
+  <string name="immersive_error_nothing">Ցուցադրելու բան չկա</string>
+</resources>

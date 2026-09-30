@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Voltar</string>
+  <string name="immersive_play">Reproduzir</string>
+  <string name="immersive_pause">Pausa</string>
+  <string name="immersive_hint">B ou Y: voltar à aplicação. Gatilho: reproduzir ou pausar. A, X ou botão lateral: mostrar ou ocultar este painel. Joystick para a esquerda ou para a direita: rodar a imagem.</string>
+  <string name="immersive_yaw">Imagem rodada para %1$d graus</string>
+  <string name="immersive_loading">A carregar</string>
+  <string name="immersive_buffering">A carregar em buffer</string>
+  <string name="immersive_preview_loading_full">Pré-visualização %1$d x %2$d, a carregar a resolução total</string>
+  <string name="immersive_full_resolution">Resolução total %1$d x %2$d</string>
+  <string name="immersive_preview_only">Apenas pré-visualização: %1$s</string>
+  <string name="immersive_error_photo">Não é possível apresentar esta foto: %1$s</string>
+  <string name="immersive_error_video">Não é possível reproduzir este vídeo (%1$s). Um vídeo H.264 5.7K pode exceder o descodificador do headset, recomenda-se H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d está acima de 4K e excede o descodificador do headset (imagem aos solavancos, com blocos). No Immich, defina a transcodificação de vídeo para HEVC ou limite a resolução.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d está acima de 4K e excede o descodificador do headset (imagem aos solavancos, com blocos). Recodifique este vídeo em HEVC.</string>
+  <string name="immersive_video_fallback">O original falhou (%1$s), a tentar o fluxo de reprodução do servidor</string>
+  <string name="immersive_video_decoder_switch">%1$s excede o descodificador do headset, a tentar o fluxo de reprodução do servidor</string>
+  <string name="immersive_error_nothing">Nada a mostrar</string>
+</resources>

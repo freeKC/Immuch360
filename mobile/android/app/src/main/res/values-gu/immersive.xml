@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">પાછા</string>
+  <string name="immersive_play">ચલાવો</string>
+  <string name="immersive_pause">થોભાવો</string>
+  <string name="immersive_hint">B અથવા Y: ઍપ પર પાછા જાઓ. ટ્રિગર: ચલાવો અથવા થોભાવો. A, X અથવા ગ્રિપ: આ પૅનલ બતાવો અથવા છુપાવો. થમ્બસ્ટિક ડાબે અથવા જમણે: છબી ફેરવો.</string>
+  <string name="immersive_yaw">છબી %1$d ડિગ્રી પર ફેરવી</string>
+  <string name="immersive_loading">લોડ થઈ રહ્યું છે</string>
+  <string name="immersive_buffering">બફર થઈ રહ્યું છે</string>
+  <string name="immersive_preview_loading_full">પૂર્વાવલોકન %1$d x %2$d, પૂર્ણ રિઝોલ્યુશન લોડ થઈ રહ્યું છે</string>
+  <string name="immersive_full_resolution">પૂર્ણ રિઝોલ્યુશન %1$d x %2$d</string>
+  <string name="immersive_preview_only">ફક્ત પૂર્વાવલોકન: %1$s</string>
+  <string name="immersive_error_photo">આ ફોટો બતાવી શકાતો નથી: %1$s</string>
+  <string name="immersive_error_video">આ વીડિયો ચલાવી શકાતો નથી (%1$s). 5.7K H.264 વીડિયો હેડસેટના ડીકોડરની ક્ષમતાથી વધી શકે છે, H.265 ભલામણ કરેલ છે.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K કરતાં વધુ છે અને હેડસેટના ડીકોડરની ક્ષમતાથી વધી જાય છે (અટકતું, પિક્સેલવાળું). Immich માં વીડિયો ટ્રાન્સકોડિંગ HEVC પર સેટ કરો અથવા રિઝોલ્યુશન મર્યાદિત કરો.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K કરતાં વધુ છે અને હેડસેટના ડીકોડરની ક્ષમતાથી વધી જાય છે (અટકતું, પિક્સેલવાળું). આ વીડિયોને HEVC માં ફરીથી એન્કોડ કરો.</string>
+  <string name="immersive_video_fallback">મૂળ ફાઇલ નિષ્ફળ ગઈ (%1$s), સર્વરનો પ્લેબેક સ્ટ્રીમ અજમાવી રહ્યા છીએ</string>
+  <string name="immersive_video_decoder_switch">%1$s હેડસેટના ડીકોડરની ક્ષમતાથી વધુ છે, સર્વરનો પ્લેબેક સ્ટ્રીમ અજમાવી રહ્યા છીએ</string>
+  <string name="immersive_error_nothing">બતાવવા માટે કંઈ નથી</string>
+</resources>

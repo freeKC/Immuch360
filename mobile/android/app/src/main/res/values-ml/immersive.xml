@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">തിരികെ</string>
+  <string name="immersive_play">പ്ലേ ചെയ്യുക</string>
+  <string name="immersive_pause">താൽക്കാലികമായി നിർത്തുക</string>
+  <string name="immersive_hint">B അല്ലെങ്കിൽ Y: ആപ്പിലേക്ക് മടങ്ങുക. ട്രിഗർ: പ്ലേ ചെയ്യുക അല്ലെങ്കിൽ താൽക്കാലികമായി നിർത്തുക. A, X അല്ലെങ്കിൽ ഗ്രിപ്പ്: ഈ പാനൽ കാണിക്കുക അല്ലെങ്കിൽ മറയ്ക്കുക. തംബ്സ്റ്റിക്ക് ഇടത്തോട്ടോ വലത്തോട്ടോ: ചിത്രം തിരിക്കുക.</string>
+  <string name="immersive_yaw">ചിത്രം %1$d ഡിഗ്രിയിലേക്ക് തിരിച്ചു</string>
+  <string name="immersive_loading">ലോഡിംഗ്</string>
+  <string name="immersive_buffering">ബഫറിംഗ്</string>
+  <string name="immersive_preview_loading_full">പ്രിവ്യൂ %1$d x %2$d, പൂർണ്ണ റെസല്യൂഷൻ ലോഡ് ചെയ്യുന്നു</string>
+  <string name="immersive_full_resolution">പൂർണ്ണ റെസല്യൂഷൻ %1$d x %2$d</string>
+  <string name="immersive_preview_only">പ്രിവ്യൂ മാത്രം: %1$s</string>
+  <string name="immersive_error_photo">ഈ ഫോട്ടോ പ്രദർശിപ്പിക്കാൻ കഴിയില്ല: %1$s</string>
+  <string name="immersive_error_video">ഈ വീഡിയോ പ്ലേ ചെയ്യാൻ കഴിയില്ല (%1$s). 5.7K H.264 വീഡിയോ ഹെഡ്സെറ്റിന്റെ ഡീകോഡറിന്റെ പരിധി കവിഞ്ഞേക്കാം, H.265 ശുപാർശ ചെയ്യുന്നു.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d, 4K-യ്ക്ക് മുകളിലാണ്, ഹെഡ്സെറ്റിന്റെ ഡീകോഡറിന്റെ പരിധി കവിയുന്നു (ഇടയ്ക്കിടെ നിൽക്കുന്നു, കട്ടകളായി കാണുന്നു). Immich-ൽ വീഡിയോ ട്രാൻസ്കോഡിംഗ് HEVC ആയി സജ്ജമാക്കുക അല്ലെങ്കിൽ റെസല്യൂഷൻ പരിമിതപ്പെടുത്തുക.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d, 4K-യ്ക്ക് മുകളിലാണ്, ഹെഡ്സെറ്റിന്റെ ഡീകോഡറിന്റെ പരിധി കവിയുന്നു (ഇടയ്ക്കിടെ നിൽക്കുന്നു, കട്ടകളായി കാണുന്നു). ഈ വീഡിയോ HEVC-യിൽ വീണ്ടും എൻകോഡ് ചെയ്യുക.</string>
+  <string name="immersive_video_fallback">ഒറിജിനൽ പരാജയപ്പെട്ടു (%1$s), സെർവർ പ്ലേബാക്ക് സ്ട്രീം ശ്രമിക്കുന്നു</string>
+  <string name="immersive_video_decoder_switch">%1$s ഹെഡ്സെറ്റിന്റെ ഡീകോഡറിന്റെ പരിധിക്ക് മുകളിലാണ്, സെർവർ പ്ലേബാക്ക് സ്ട്രീം ശ്രമിക്കുന്നു</string>
+  <string name="immersive_error_nothing">കാണിക്കാൻ ഒന്നുമില്ല</string>
+</resources>

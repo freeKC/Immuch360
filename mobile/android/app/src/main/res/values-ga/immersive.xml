@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Ar ais</string>
+  <string name="immersive_play">Seinn</string>
+  <string name="immersive_pause">Sos</string>
+  <string name="immersive_hint">B nó Y: ar ais chuig an aip. Truicear: seinn nó sos. A, X nó cnaipe greama: taispeáin nó folaigh an painéal seo. Maide ordóige ar chlé nó ar dheis: cas an íomhá.</string>
+  <string name="immersive_yaw">Íomhá casta go %1$d céim</string>
+  <string name="immersive_loading">Ag luchtú</string>
+  <string name="immersive_buffering">Ag maolánú</string>
+  <string name="immersive_preview_loading_full">Réamhamharc %1$d x %2$d, an taifeach iomlán á luchtú</string>
+  <string name="immersive_full_resolution">Taifeach iomlán %1$d x %2$d</string>
+  <string name="immersive_preview_only">Réamhamharc amháin: %1$s</string>
+  <string name="immersive_error_photo">Ní féidir an grianghraf seo a thaispeáint: %1$s</string>
+  <string name="immersive_error_video">Ní féidir an físeán seo a sheinm (%1$s). Féadfaidh físeán H.264 5.7K dul thar chumas díchódóra an tacair cinn, moltar H.265.</string>
+  <string name="immersive_avc_too_large">Tá H.264 %1$d x %2$d os cionn 4K agus téann sé thar chumas díchódóra an tacair cinn (stadach, blocach). In Immich, socraigh traschódú físe go HEVC nó teorannaigh an taifeach.</string>
+  <string name="immersive_avc_too_large_local">Tá H.264 %1$d x %2$d os cionn 4K agus téann sé thar chumas díchódóra an tacair cinn (stadach, blocach). Athionchódaigh an físeán seo i HEVC.</string>
+  <string name="immersive_video_fallback">Theip ar an mbunleagan (%1$s), sruth athsheinm an fhreastalaí á thriail</string>
+  <string name="immersive_video_decoder_switch">Tá %1$s thar chumas díchódóra an tacair cinn, sruth athsheinm an fhreastalaí á thriail</string>
+  <string name="immersive_error_nothing">Níl aon rud le taispeáint</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">חזרה</string>
+  <string name="immersive_play">הפעלה</string>
+  <string name="immersive_pause">השהיה</string>
+  <string name="immersive_hint">B או Y: חזרה לאפליקציה. הדק: הפעלה או השהיה. A, X או לחצן האחיזה: הצגה או הסתרה של החלונית. ג\'ויסטיק שמאלה או ימינה: סיבוב התמונה.</string>
+  <string name="immersive_yaw">התמונה סובבה ל-%1$d מעלות</string>
+  <string name="immersive_loading">טוען</string>
+  <string name="immersive_buffering">אוגר נתונים</string>
+  <string name="immersive_preview_loading_full">תצוגה מקדימה %1$d x %2$d, טוען רזולוציה מלאה</string>
+  <string name="immersive_full_resolution">רזולוציה מלאה %1$d x %2$d</string>
+  <string name="immersive_preview_only">תצוגה מקדימה בלבד: %1$s</string>
+  <string name="immersive_error_photo">לא ניתן להציג את התמונה הזו: %1$s</string>
+  <string name="immersive_error_video">לא ניתן להפעיל את הסרטון הזה (%1$s). סרטון H.264 ב-5.7K עלול לחרוג מיכולת המפענח של משקפי ה-VR, מומלץ H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d הוא מעל 4K וחורג מיכולת המפענח של משקפי ה-VR (מקוטע, מפוקסל). ב-Immich, הגדר את המרת הקידוד של הווידאו ל-HEVC או הגבל את הרזולוציה.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d הוא מעל 4K וחורג מיכולת המפענח של משקפי ה-VR (מקוטע, מפוקסל). קודד מחדש את הסרטון ב-HEVC.</string>
+  <string name="immersive_video_fallback">המקור נכשל (%1$s), מנסה את זרם ההפעלה של השרת</string>
+  <string name="immersive_video_decoder_switch">%1$s חורג מיכולת המפענח של משקפי ה-VR, מנסה את זרם ההפעלה של השרת</string>
+  <string name="immersive_error_nothing">אין מה להציג</string>
+</resources>

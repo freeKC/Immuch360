@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">ถอยเกรา</string>
+  <string name="immersive_play">เลง</string>
+  <string name="immersive_pause">ผะอาก</string>
+  <string name="immersive_hint">B หรือ Y: วิลเตาวแอป. ทริกเกอร์: เลง หรือ ผะอาก. A, X หรือ ปุ่มกริป: บังฮาญ หรือ เลียก แผงนิฮ. จอยสติ๊กเตาวฉเวง หรือ สดำ: บังวิลรูป.</string>
+  <string name="immersive_yaw">บังวิลรูปเตาว %1$d องศาเฮย</string>
+  <string name="immersive_loading">กำปุงโหลด</string>
+  <string name="immersive_buffering">กำปุงบัฟเฟอร์</string>
+  <string name="immersive_preview_loading_full">ตัวอย่าง %1$d x %2$d, กำปุงโหลดความละเอียดเต็ม</string>
+  <string name="immersive_full_resolution">ความละเอียดเต็ม %1$d x %2$d</string>
+  <string name="immersive_preview_only">แตตัวอย่าง: %1$s</string>
+  <string name="immersive_error_photo">บังฮาญรูปนิฮออตบาน: %1$s</string>
+  <string name="immersive_error_video">เลงวิดีโอนิฮออตบาน (%1$s). วิดีโอ 5.7K H.264 อาจเกินกำลังตัวถอดรหัสแว่น VR, แนะนำ H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d เกิน 4K เฮย เกินกำลังตัวถอดรหัสแว่น VR (กระตุก, แตกเป็นบล็อก). โนว Immich, ตั้งการแปลงวิดีโอเป็น HEVC หรือ จำกัดความละเอียด.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d เกิน 4K เฮย เกินกำลังตัวถอดรหัสแว่น VR (กระตุก, แตกเป็นบล็อก). เข้ารหัสวิดีโอนิฮใหม่เป็น HEVC.</string>
+  <string name="immersive_video_fallback">ต้นฉบับเลงออตบาน (%1$s), กำปุงลองสตรีมเลงปีเซิร์ฟเวอร์</string>
+  <string name="immersive_video_decoder_switch">%1$s เกินกำลังตัวถอดรหัสแว่น VR, กำปุงลองสตรีมเลงปีเซิร์ฟเวอร์</string>
+  <string name="immersive_error_nothing">ออตเมียนอเวยบังฮาญ</string>
+</resources>

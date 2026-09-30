@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Uɣal</string>
+  <string name="immersive_play">Urar</string>
+  <string name="immersive_pause">Asteɛfu</string>
+  <string name="immersive_hint">B neɣ Y: uɣal ɣer usnas. Trigger: urar neɣ asteɛfu. A, X neɣ grip: sken neɣ ffer agalis-a. Thumbstick ɣer zelmeḍ neɣ ɣer yefus: zzi tugna.</string>
+  <string name="immersive_yaw">Tugna tezzi ɣer %1$d°</string>
+  <string name="immersive_loading">Asali</string>
+  <string name="immersive_buffering">Asali uzwir</string>
+  <string name="immersive_preview_loading_full">Taskant %1$d x %2$d, asali n tbadut tummidt</string>
+  <string name="immersive_full_resolution">Tabadut tummidt %1$d x %2$d</string>
+  <string name="immersive_preview_only">Taskant kan: %1$s</string>
+  <string name="immersive_error_photo">Ulamek ad d-tettwaskan tewlaft-a: %1$s</string>
+  <string name="immersive_error_video">Ulamek ad teddu tvidyut-a (%1$s). Tavidyut 5.7K s H.264 tezmer ad tɛeddi tazmert n udekudur n headset, H.265 yettwawelleh.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d yugar 4K, yɛedda tazmert n udekudur n headset (yettḥebbis, d iferdisen). Deg Immich, sbadu asenfel n tvidyut ɣer HEVC neɣ sbadu talast i tbadut.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d yugar 4K, yɛedda tazmert n udekudur n headset (yettḥebbis, d iferdisen). Ales asettengel n tvidyut-a s HEVC.</string>
+  <string name="immersive_video_fallback">Aɣbalu ur yeddi ara (%1$s), aɛraḍ n tvidyut n uqeddac</string>
+  <string name="immersive_video_decoder_switch">%1$s yugar tazmert n udekudur n headset, aɛraḍ n tvidyut n uqeddac</string>
+  <string name="immersive_error_nothing">Ulac acu ara d-yettwaskanen</string>
+</resources>

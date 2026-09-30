@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">వెనుకకు</string>
+  <string name="immersive_play">ప్లే</string>
+  <string name="immersive_pause">పాజ్</string>
+  <string name="immersive_hint">B లేదా Y: యాప్‌కి తిరిగి వెళ్ళండి. ట్రిగ్గర్: ప్లే లేదా పాజ్ చేయండి. A, X లేదా గ్రిప్: ఈ ప్యానెల్‌ను చూపించండి లేదా దాచండి. థంబ్‌స్టిక్ ఎడమకు లేదా కుడికి: చిత్రాన్ని తిప్పండి.</string>
+  <string name="immersive_yaw">చిత్రం %1$d డిగ్రీలకు తిప్పబడింది</string>
+  <string name="immersive_loading">లోడ్ అవుతోంది</string>
+  <string name="immersive_buffering">బఫర్ అవుతోంది</string>
+  <string name="immersive_preview_loading_full">ప్రివ్యూ %1$d x %2$d, పూర్తి రిజల్యూషన్ లోడ్ అవుతోంది</string>
+  <string name="immersive_full_resolution">పూర్తి రిజల్యూషన్ %1$d x %2$d</string>
+  <string name="immersive_preview_only">ప్రివ్యూ మాత్రమే: %1$s</string>
+  <string name="immersive_error_photo">ఈ ఫోటోను చూపించడం సాధ్యం కాదు: %1$s</string>
+  <string name="immersive_error_video">ఈ వీడియోను ప్లే చేయడం సాధ్యం కాదు (%1$s). 5.7K H.264 వీడియో హెడ్‌సెట్ డీకోడర్ సామర్థ్యాన్ని మించవచ్చు, H.265 సిఫార్సు చేయబడింది.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K కంటే ఎక్కువ, ఇది హెడ్‌సెట్ డీకోడర్ సామర్థ్యాన్ని మించుతుంది (ఆగి ఆగి ప్లే అవుతుంది, బ్లాక్‌లుగా కనిపిస్తుంది). Immichలో వీడియో ట్రాన్స్‌కోడింగ్‌ను HEVCకి సెట్ చేయండి లేదా రిజల్యూషన్‌ను పరిమితం చేయండి.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K కంటే ఎక్కువ, ఇది హెడ్‌సెట్ డీకోడర్ సామర్థ్యాన్ని మించుతుంది (ఆగి ఆగి ప్లే అవుతుంది, బ్లాక్‌లుగా కనిపిస్తుంది). ఈ వీడియోను HEVCలో మళ్లీ ఎన్‌కోడ్ చేయండి.</string>
+  <string name="immersive_video_fallback">అసలు ఫైల్ విఫలమైంది (%1$s), సర్వర్ ప్లేబ్యాక్ స్ట్రీమ్‌ను ప్రయత్నిస్తోంది</string>
+  <string name="immersive_video_decoder_switch">%1$s హెడ్‌సెట్ డీకోడర్ సామర్థ్యాన్ని మించింది, సర్వర్ ప్లేబ్యాక్ స్ట్రీమ్‌ను ప్రయత్నిస్తోంది</string>
+  <string name="immersive_error_nothing">చూపించడానికి ఏమీ లేదు</string>
+</resources>

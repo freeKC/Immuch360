@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Назад</string>
+  <string name="immersive_play">Пушти</string>
+  <string name="immersive_pause">Паузирај</string>
+  <string name="immersive_hint">B или Y: назад во апликацијата. Тригер: пушти или паузирај. A, X или копчето за фаќање: прикажи или скриј го овој панел. Џојстикот лево или десно: ротирај ја сликата.</string>
+  <string name="immersive_yaw">Сликата е ротирана на %1$d степени</string>
+  <string name="immersive_loading">Вчитување</string>
+  <string name="immersive_buffering">Баферирање</string>
+  <string name="immersive_preview_loading_full">Преглед %1$d x %2$d, се вчитува полната резолуција</string>
+  <string name="immersive_full_resolution">Полна резолуција %1$d x %2$d</string>
+  <string name="immersive_preview_only">Само преглед: %1$s</string>
+  <string name="immersive_error_photo">Оваа слика не може да се прикаже: %1$s</string>
+  <string name="immersive_error_video">Ова видео не може да се пушти (%1$s). 5.7K H.264 видео може да го надмине декодерот на VR очилата, се препорачува H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d е над 4K и го надминува декодерот на VR очилата (сецкање, коцкички). Во Immich, поставете го транскодирањето на видеата на HEVC или ограничете ја резолуцијата.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d е над 4K и го надминува декодерот на VR очилата (сецкање, коцкички). Повторно кодирајте го ова видео во HEVC.</string>
+  <string name="immersive_video_fallback">Оригиналот не успеа (%1$s), се пробува серверскиот стрим за репродукција</string>
+  <string name="immersive_video_decoder_switch">%1$s го надминува декодерот на VR очилата, се пробува серверскиот стрим за репродукција</string>
+  <string name="immersive_error_nothing">Нема што да се прикаже</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">ಹಿಂದೆ</string>
+  <string name="immersive_play">ಪ್ಲೇ ಮಾಡಿ</string>
+  <string name="immersive_pause">ವಿರಾಮ</string>
+  <string name="immersive_hint">B ಅಥವಾ Y: ಆ್ಯಪ್‌ಗೆ ಹಿಂತಿರುಗಿ. ಟ್ರಿಗರ್: ಪ್ಲೇ ಅಥವಾ ವಿರಾಮ. A, X ಅಥವಾ ಗ್ರಿಪ್: ಈ ಪ್ಯಾನೆಲ್ ತೋರಿಸಿ ಅಥವಾ ಮರೆಮಾಡಿ. ಥಂಬ್‌ಸ್ಟಿಕ್ ಎಡಕ್ಕೆ ಅಥವಾ ಬಲಕ್ಕೆ: ಚಿತ್ರವನ್ನು ತಿರುಗಿಸಿ.</string>
+  <string name="immersive_yaw">ಚಿತ್ರವನ್ನು %1$d ಡಿಗ್ರಿಗೆ ತಿರುಗಿಸಲಾಗಿದೆ</string>
+  <string name="immersive_loading">ಲೋಡ್ ಆಗುತ್ತಿದೆ</string>
+  <string name="immersive_buffering">ಬಫರ್ ಆಗುತ್ತಿದೆ</string>
+  <string name="immersive_preview_loading_full">ಪೂರ್ವವೀಕ್ಷಣೆ %1$d x %2$d, ಪೂರ್ಣ ರೆಸಲ್ಯೂಶನ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ</string>
+  <string name="immersive_full_resolution">ಪೂರ್ಣ ರೆಸಲ್ಯೂಶನ್ %1$d x %2$d</string>
+  <string name="immersive_preview_only">ಪೂರ್ವವೀಕ್ಷಣೆ ಮಾತ್ರ: %1$s</string>
+  <string name="immersive_error_photo">ಈ ಫೋಟೋವನ್ನು ತೋರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ: %1$s</string>
+  <string name="immersive_error_video">ಈ ವೀಡಿಯೊವನ್ನು ಪ್ಲೇ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ (%1$s). 5.7K H.264 ವೀಡಿಯೊ ಹೆಡ್‌ಸೆಟ್ ಡಿಕೋಡರ್‌ನ ಸಾಮರ್ಥ್ಯವನ್ನು ಮೀರಬಹುದು, H.265 ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K ಗಿಂತ ಹೆಚ್ಚಾಗಿದೆ ಮತ್ತು ಹೆಡ್‌ಸೆಟ್ ಡಿಕೋಡರ್‌ನ ಸಾಮರ್ಥ್ಯವನ್ನು ಮೀರುತ್ತದೆ (ತುಂಡುತುಂಡಾಗಿ, ಚೌಕಗಳಾಗಿ ಕಾಣುತ್ತದೆ). Immich ನಲ್ಲಿ ವೀಡಿಯೊ ಟ್ರಾನ್ಸ್‌ಕೋಡಿಂಗ್ ಅನ್ನು HEVC ಗೆ ಹೊಂದಿಸಿ ಅಥವಾ ರೆಸಲ್ಯೂಶನ್ ಅನ್ನು ಮಿತಿಗೊಳಿಸಿ.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K ಗಿಂತ ಹೆಚ್ಚಾಗಿದೆ ಮತ್ತು ಹೆಡ್‌ಸೆಟ್ ಡಿಕೋಡರ್‌ನ ಸಾಮರ್ಥ್ಯವನ್ನು ಮೀರುತ್ತದೆ (ತುಂಡುತುಂಡಾಗಿ, ಚೌಕಗಳಾಗಿ ಕಾಣುತ್ತದೆ). ಈ ವೀಡಿಯೊವನ್ನು HEVC ನಲ್ಲಿ ಮರು-ಎನ್‌ಕೋಡ್ ಮಾಡಿ.</string>
+  <string name="immersive_video_fallback">ಮೂಲ ಫೈಲ್ ಪ್ಲೇ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ (%1$s), ಸರ್ವರ್‌ನ ಪ್ಲೇಬ್ಯಾಕ್ ಸ್ಟ್ರೀಮ್ ಅನ್ನು ಪ್ರಯತ್ನಿಸಲಾಗುತ್ತಿದೆ</string>
+  <string name="immersive_video_decoder_switch">%1$s ಹೆಡ್‌ಸೆಟ್ ಡಿಕೋಡರ್‌ನ ಸಾಮರ್ಥ್ಯವನ್ನು ಮೀರುತ್ತದೆ, ಸರ್ವರ್‌ನ ಪ್ಲೇಬ್ಯಾಕ್ ಸ್ಟ್ರೀಮ್ ಅನ್ನು ಪ್ರಯತ್ನಿಸಲಾಗುತ್ತಿದೆ</string>
+  <string name="immersive_error_nothing">ತೋರಿಸಲು ಏನೂ ಇಲ್ಲ</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Atgal</string>
+  <string name="immersive_play">Paleisti</string>
+  <string name="immersive_pause">Pristabdyti</string>
+  <string name="immersive_hint">B arba Y: grįžti į programą. Gaidukas: paleisti arba pristabdyti. A, X arba suėmimo mygtukas: rodyti arba slėpti šį skydelį. Valdymo svirtelė kairėn arba dešinėn: pasukti vaizdą.</string>
+  <string name="immersive_yaw">Vaizdas pasuktas: %1$d°</string>
+  <string name="immersive_loading">Kraunama</string>
+  <string name="immersive_buffering">Buferizuojama</string>
+  <string name="immersive_preview_loading_full">Peržiūra %1$d x %2$d, kraunama visa raiška</string>
+  <string name="immersive_full_resolution">Visa raiška %1$d x %2$d</string>
+  <string name="immersive_preview_only">Tik peržiūra: %1$s</string>
+  <string name="immersive_error_photo">Šios nuotraukos negalima parodyti: %1$s</string>
+  <string name="immersive_error_video">Šio vaizdo įrašo negalima paleisti (%1$s). 5.7K H.264 vaizdo įrašas gali viršyti VR akinių dekoderio galimybes, rekomenduojamas H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d viršija 4K ir VR akinių dekoderio galimybes (trūkčioja, matyti kvadratėliai). Immich nustatymuose pakeiskite vaizdo įrašų perkodavimą į HEVC arba apribokite raišką.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d viršija 4K ir VR akinių dekoderio galimybes (trūkčioja, matyti kvadratėliai). Perkoduokite šį vaizdo įrašą į HEVC.</string>
+  <string name="immersive_video_fallback">Originalo paleisti nepavyko (%1$s), bandomas serverio atkūrimo srautas</string>
+  <string name="immersive_video_decoder_switch">%1$s viršija VR akinių dekoderio galimybes, bandomas serverio atkūrimo srautas</string>
+  <string name="immersive_error_nothing">Nėra ką rodyti</string>
+</resources>

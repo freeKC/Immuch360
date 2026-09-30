@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Malantaŭen</string>
+  <string name="immersive_play">Ludi</string>
+  <string name="immersive_pause">Paŭzi</string>
+  <string name="immersive_hint">B aŭ Y: reen al la aplikaĵo. Ĉano: ludi aŭ paŭzi. A, X aŭ tenbutono: montri aŭ kaŝi ĉi tiun panelon. Stirstangeto maldekstren aŭ dekstren: turni la bildon.</string>
+  <string name="immersive_yaw">Bildo turnita al %1$d gradoj</string>
+  <string name="immersive_loading">Ŝargado</string>
+  <string name="immersive_buffering">Bufrado</string>
+  <string name="immersive_preview_loading_full">Antaŭvido %1$d x %2$d, ŝargado de la plena distingivo</string>
+  <string name="immersive_full_resolution">Plena distingivo %1$d x %2$d</string>
+  <string name="immersive_preview_only">Nur antaŭvido: %1$s</string>
+  <string name="immersive_error_photo">Ne eblas montri ĉi tiun foton: %1$s</string>
+  <string name="immersive_error_video">Ne eblas ludi ĉi tiun videon (%1$s). 5.7K-video en H.264 povas superi la malkodilon de la kasko, H.265 estas rekomendata.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d superas 4K kaj la kapablon de la malkodilo de la kasko (saltanta, blokeca bildo). En Immich, agordu la transkodadon de videoj al HEVC aŭ limigu la distingivon.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d superas 4K kaj la kapablon de la malkodilo de la kasko (saltanta, blokeca bildo). Rekodu ĉi tiun videon en HEVC.</string>
+  <string name="immersive_video_fallback">La originalo malsukcesis (%1$s), provante la ludfluon de la servilo</string>
+  <string name="immersive_video_decoder_switch">%1$s superas la malkodilon de la kasko, provante la ludfluon de la servilo</string>
+  <string name="immersive_error_nothing">Nenio por montri</string>
+</resources>

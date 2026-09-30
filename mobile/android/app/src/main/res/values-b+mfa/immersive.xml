@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Balik</string>
+  <string name="immersive_play">Main</string>
+  <string name="immersive_pause">Henti sekejap</string>
+  <string name="immersive_hint">B atau Y: balik ko aplikasi. Picu: main atau henti sekejap. A, X atau grip: tunjuk atau sorok panel ni. Kayu kawalan kiri atau kanan: pusing gambo.</string>
+  <string name="immersive_yaw">Gambo dipusing ko %1$d darjah</string>
+  <string name="immersive_loading">Tengoh muat</string>
+  <string name="immersive_buffering">Tengoh menimbal</string>
+  <string name="immersive_preview_loading_full">Pratonton %1$d x %2$d, tengoh muat resolusi penuh</string>
+  <string name="immersive_full_resolution">Resolusi penuh %1$d x %2$d</string>
+  <string name="immersive_preview_only">Pratonton jah: %1$s</string>
+  <string name="immersive_error_photo">Gambo ni tok leh papar: %1$s</string>
+  <string name="immersive_error_video">Video ni tok leh main (%1$s). Video 5.7K H.264 buleh melampau had penyahkod headset, H.265 lagi elok.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d lebih dari 4K, melampau had penyahkod headset (tersekat-sekat, berpetak-petak). Dale Immich, tetapke transkod video ko HEVC atau hadke resolusi.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d lebih dari 4K, melampau had penyahkod headset (tersekat-sekat, berpetak-petak). Kod semula video ni dale HEVC.</string>
+  <string name="immersive_video_fallback">Hok asal gagal (%1$s), tengoh cuba strim main dari server</string>
+  <string name="immersive_video_decoder_switch">%1$s melampau had penyahkod headset, tengoh cuba strim main dari server</string>
+  <string name="immersive_error_nothing">Takdok gapo nok tunjuk</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Terug</string>
+  <string name="immersive_play">Speel</string>
+  <string name="immersive_pause">Pouseer</string>
+  <string name="immersive_hint">B of Y: terug na die toep. Sneller: speel of pouseer. A, X of greep: wys of versteek hierdie paneel. Duimstok links of regs: draai die beeld.</string>
+  <string name="immersive_yaw">Beeld na %1$d grade gedraai</string>
+  <string name="immersive_loading">Laai tans</string>
+  <string name="immersive_buffering">Buffer tans</string>
+  <string name="immersive_preview_loading_full">Voorskou %1$d x %2$d, volle resolusie word gelaai</string>
+  <string name="immersive_full_resolution">Volle resolusie %1$d x %2$d</string>
+  <string name="immersive_preview_only">Slegs voorskou: %1$s</string>
+  <string name="immersive_error_photo">Hierdie foto kan nie vertoon word nie: %1$s</string>
+  <string name="immersive_error_video">Hierdie video kan nie gespeel word nie (%1$s). ’n 5.7K H.264-video kan die kopstuk se dekodeerder oorskry, H.265 word aanbeveel.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d is bo 4K en oorskry die kopstuk se dekodeerder (stotterend, blokkerig). Stel in Immich die videotranskodering op HEVC of beperk die resolusie.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d is bo 4K en oorskry die kopstuk se dekodeerder (stotterend, blokkerig). Enkodeer hierdie video weer in HEVC.</string>
+  <string name="immersive_video_fallback">Die oorspronklike het misluk (%1$s), probeer tans die bediener se afspeelstroom</string>
+  <string name="immersive_video_decoder_switch">%1$s oorskry die kopstuk se dekodeerder, probeer tans die bediener se afspeelstroom</string>
+  <string name="immersive_error_nothing">Niks om te wys nie</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">戻る</string>
+  <string name="immersive_play">再生</string>
+  <string name="immersive_pause">一時停止</string>
+  <string name="immersive_hint">B または Y：アプリに戻る。トリガー：再生/一時停止。A、X またはグリップ：このパネルを表示/非表示。サムスティックを左右に倒す：画像を回転。</string>
+  <string name="immersive_yaw">画像を %1$d 度に回転しました</string>
+  <string name="immersive_loading">読み込み中</string>
+  <string name="immersive_buffering">バッファリング中</string>
+  <string name="immersive_preview_loading_full">プレビュー %1$d x %2$d、フル解像度を読み込み中</string>
+  <string name="immersive_full_resolution">フル解像度 %1$d x %2$d</string>
+  <string name="immersive_preview_only">プレビューのみ：%1$s</string>
+  <string name="immersive_error_photo">この写真を表示できません：%1$s</string>
+  <string name="immersive_error_video">この動画を再生できません（%1$s）。5.7K の H.264 動画はヘッドセットのデコーダーの性能を超える場合があります。H.265 を推奨します。</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d は 4K を超えており、ヘッドセットのデコーダーの性能を超えています（カクつき、ブロックノイズ）。Immich で動画の変換を HEVC に設定するか、解像度を制限してください。</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d は 4K を超えており、ヘッドセットのデコーダーの性能を超えています（カクつき、ブロックノイズ）。この動画を HEVC で再エンコードしてください。</string>
+  <string name="immersive_video_fallback">オリジナルを再生できませんでした（%1$s）。サーバーの再生用ストリームを試しています</string>
+  <string name="immersive_video_decoder_switch">%1$s はヘッドセットのデコーダーの性能を超えています。サーバーの再生用ストリームを試しています</string>
+  <string name="immersive_error_nothing">表示するものがありません</string>
+</resources>

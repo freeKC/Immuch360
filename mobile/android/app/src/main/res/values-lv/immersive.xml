@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Atpakaļ</string>
+  <string name="immersive_play">Atskaņot</string>
+  <string name="immersive_pause">Pauzēt</string>
+  <string name="immersive_hint">B vai Y: atpakaļ uz lietotni. Mēlīte: atskaņot vai pauzēt. A, X vai satveršanas poga: rādīt vai paslēpt šo paneli. Vadības svira pa kreisi vai pa labi: pagriezt attēlu.</string>
+  <string name="immersive_yaw">Attēla pagrieziens: %1$d°</string>
+  <string name="immersive_loading">Ielādē</string>
+  <string name="immersive_buffering">Buferizē</string>
+  <string name="immersive_preview_loading_full">Priekšskatījums %1$d x %2$d, ielādē pilnu izšķirtspēju</string>
+  <string name="immersive_full_resolution">Pilna izšķirtspēja %1$d x %2$d</string>
+  <string name="immersive_preview_only">Tikai priekšskatījums: %1$s</string>
+  <string name="immersive_error_photo">Šo fotoattēlu nevar parādīt: %1$s</string>
+  <string name="immersive_error_video">Šo videoklipu nevar atskaņot (%1$s). 5.7K H.264 videoklips var pārsniegt VR briļļu dekodera iespējas, ieteicams H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d pārsniedz 4K un VR briļļu dekodera iespējas (raustās, redzami kvadrātiņi). Programmā Immich iestatiet video pārkodēšanu uz HEVC vai ierobežojiet izšķirtspēju.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d pārsniedz 4K un VR briļļu dekodera iespējas (raustās, redzami kvadrātiņi). Pārkodējiet šo videoklipu HEVC formātā.</string>
+  <string name="immersive_video_fallback">Oriģinālu neizdevās atskaņot (%1$s), mēģina servera atskaņošanas straumi</string>
+  <string name="immersive_video_decoder_switch">%1$s pārsniedz VR briļļu dekodera iespējas, mēģina servera atskaņošanas straumi</string>
+  <string name="immersive_error_nothing">Nav ko rādīt</string>
+</resources>

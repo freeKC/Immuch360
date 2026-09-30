@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Буцах</string>
+  <string name="immersive_play">Тоглуулах</string>
+  <string name="immersive_pause">Түр зогсоох</string>
+  <string name="immersive_hint">B эсвэл Y: апп руу буцах. Гох: тоглуулах эсвэл түр зогсоох. A, X эсвэл барих товч: энэ самбарыг харуулах эсвэл нуух. Жойстикийг зүүн эсвэл баруун тийш: зургийг эргүүлэх.</string>
+  <string name="immersive_yaw">Зургийг %1$d градус руу эргүүллээ</string>
+  <string name="immersive_loading">Ачаалж байна</string>
+  <string name="immersive_buffering">Буферлэж байна</string>
+  <string name="immersive_preview_loading_full">Урьдчилан харах %1$d x %2$d, бүрэн нягтралыг ачаалж байна</string>
+  <string name="immersive_full_resolution">Бүрэн нягтрал %1$d x %2$d</string>
+  <string name="immersive_preview_only">Зөвхөн урьдчилан харах: %1$s</string>
+  <string name="immersive_error_photo">Энэ зургийг харуулах боломжгүй: %1$s</string>
+  <string name="immersive_error_video">Энэ видеог тоглуулах боломжгүй (%1$s). 5.7K H.264 видео нь VR шилний декодерын хүчин чадлаас хэтэрч болзошгүй тул H.265-ыг санал болгож байна.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d нь 4K-аас их бөгөөд VR шилний декодерын хүчин чадлаас хэтэрнэ (гацах, дөрвөлжин болох). Immich дээр видео хөрвүүлэлтийг HEVC болгох эсвэл нягтралыг хязгаарлана уу.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d нь 4K-аас их бөгөөд VR шилний декодерын хүчин чадлаас хэтэрнэ (гацах, дөрвөлжин болох). Энэ видеог HEVC формат руу дахин кодлоно уу.</string>
+  <string name="immersive_video_fallback">Эх файлыг тоглуулж чадсангүй (%1$s), серверийн тоглуулах урсгалыг туршиж байна</string>
+  <string name="immersive_video_decoder_switch">%1$s нь VR шилний декодерын хүчин чадлаас хэтэрч байна, серверийн тоглуулах урсгалыг туршиж байна</string>
+  <string name="immersive_error_nothing">Харуулах зүйл алга</string>
+</resources>

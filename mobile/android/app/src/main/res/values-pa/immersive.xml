@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">ਵਾਪਸ</string>
+  <string name="immersive_play">ਚਲਾਓ</string>
+  <string name="immersive_pause">ਰੋਕੋ</string>
+  <string name="immersive_hint">B ਜਾਂ Y: ਐਪ \'ਤੇ ਵਾਪਸ ਜਾਓ। ਟ੍ਰਿਗਰ: ਚਲਾਓ ਜਾਂ ਰੋਕੋ। A, X ਜਾਂ ਗ੍ਰਿਪ: ਇਹ ਪੈਨਲ ਦਿਖਾਓ ਜਾਂ ਲੁਕਾਓ। ਥੰਬਸਟਿਕ ਖੱਬੇ ਜਾਂ ਸੱਜੇ: ਚਿੱਤਰ ਘੁਮਾਓ।</string>
+  <string name="immersive_yaw">ਚਿੱਤਰ %1$d ਡਿਗਰੀ \'ਤੇ ਘੁਮਾਇਆ ਗਿਆ</string>
+  <string name="immersive_loading">ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ</string>
+  <string name="immersive_buffering">ਬਫ਼ਰ ਹੋ ਰਿਹਾ ਹੈ</string>
+  <string name="immersive_preview_loading_full">ਪ੍ਰੀਵਿਊ %1$d x %2$d, ਪੂਰਾ ਰੈਜ਼ੋਲਿਊਸ਼ਨ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ</string>
+  <string name="immersive_full_resolution">ਪੂਰਾ ਰੈਜ਼ੋਲਿਊਸ਼ਨ %1$d x %2$d</string>
+  <string name="immersive_preview_only">ਸਿਰਫ਼ ਪ੍ਰੀਵਿਊ: %1$s</string>
+  <string name="immersive_error_photo">ਇਹ ਫ਼ੋਟੋ ਦਿਖਾਈ ਨਹੀਂ ਜਾ ਸਕਦੀ: %1$s</string>
+  <string name="immersive_error_video">ਇਹ ਵੀਡੀਓ ਚਲਾਈ ਨਹੀਂ ਜਾ ਸਕਦੀ (%1$s)। 5.7K H.264 ਵੀਡੀਓ ਹੈੱਡਸੈੱਟ ਦੇ ਡੀਕੋਡਰ ਦੀ ਸਮਰੱਥਾ ਤੋਂ ਵੱਧ ਹੋ ਸਕਦੀ ਹੈ, H.265 ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਜਾਂਦੀ ਹੈ।</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K ਤੋਂ ਵੱਧ ਹੈ ਅਤੇ ਹੈੱਡਸੈੱਟ ਦੇ ਡੀਕੋਡਰ ਦੀ ਸਮਰੱਥਾ ਤੋਂ ਬਾਹਰ ਹੈ (ਰੁਕ-ਰੁਕ ਕੇ ਚੱਲਦੀ, ਬਲਾਕਾਂ ਵਾਲੀ)। Immich ਵਿੱਚ ਵੀਡੀਓ ਟ੍ਰਾਂਸਕੋਡਿੰਗ ਨੂੰ HEVC \'ਤੇ ਸੈੱਟ ਕਰੋ ਜਾਂ ਰੈਜ਼ੋਲਿਊਸ਼ਨ ਸੀਮਤ ਕਰੋ।</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K ਤੋਂ ਵੱਧ ਹੈ ਅਤੇ ਹੈੱਡਸੈੱਟ ਦੇ ਡੀਕੋਡਰ ਦੀ ਸਮਰੱਥਾ ਤੋਂ ਬਾਹਰ ਹੈ (ਰੁਕ-ਰੁਕ ਕੇ ਚੱਲਦੀ, ਬਲਾਕਾਂ ਵਾਲੀ)। ਇਸ ਵੀਡੀਓ ਨੂੰ HEVC ਵਿੱਚ ਦੁਬਾਰਾ ਇਨਕੋਡ ਕਰੋ।</string>
+  <string name="immersive_video_fallback">ਮੂਲ ਫ਼ਾਈਲ ਅਸਫਲ ਰਹੀ (%1$s), ਸਰਵਰ ਦੀ ਪਲੇਬੈਕ ਸਟ੍ਰੀਮ ਅਜ਼ਮਾਈ ਜਾ ਰਹੀ ਹੈ</string>
+  <string name="immersive_video_decoder_switch">%1$s ਹੈੱਡਸੈੱਟ ਦੇ ਡੀਕੋਡਰ ਦੀ ਸਮਰੱਥਾ ਤੋਂ ਵੱਧ ਹੈ, ਸਰਵਰ ਦੀ ਪਲੇਬੈਕ ਸਟ੍ਰੀਮ ਅਜ਼ਮਾਈ ਜਾ ਰਹੀ ਹੈ</string>
+  <string name="immersive_error_nothing">ਦਿਖਾਉਣ ਲਈ ਕੁਝ ਨਹੀਂ</string>
+</resources>

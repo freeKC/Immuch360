@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "D'immersive Aasicht hot sich ned aufmacha lassa",
+  "library_360": "360°",
+  "panorama_gyroscope": "Gyroskop",
+  "panorama_no_gyroscope": "Des Gerät hot koi Gyroskop"
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Distreiñ</string>
+  <string name="immersive_play">Lenn</string>
+  <string name="immersive_pause">Ehan</string>
+  <string name="immersive_hint">B pe Y: distreiñ d\'an arload. Dic\'her: lenn pe ehan. A, X pe bouton kregiñ: diskouez pe kuzhat ar banell-mañ. Joystick a-gleiz pe a-zehou: treiñ ar skeudenn.</string>
+  <string name="immersive_yaw">Skeudenn troet da %1$d°</string>
+  <string name="immersive_loading">O kargañ</string>
+  <string name="immersive_buffering">O vufferiñ</string>
+  <string name="immersive_preview_loading_full">Rakwel %1$d x %2$d, o kargañ ar spisder leun</string>
+  <string name="immersive_full_resolution">Spisder leun %1$d x %2$d</string>
+  <string name="immersive_preview_only">Rakwel hepken: %1$s</string>
+  <string name="immersive_error_photo">Ne c\'haller ket diskouez al luc\'hskeudenn-mañ: %1$s</string>
+  <string name="immersive_error_video">Ne c\'haller ket lenn ar video-mañ (%1$s). Ur video 5.7K H.264 a c\'hall mont dreist galloud digoder ar c\'hasked, erbedet eo H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d a zo dreist 4K hag a ya dreist galloud digoder ar c\'hasked (diroll, bloc\'hoù). En Immich, lakait an treuzkodañ video da HEVC pe bevennit ar spisder.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d a zo dreist 4K hag a ya dreist galloud digoder ar c\'hasked (diroll, bloc\'hoù). Adenkodit ar video-mañ e HEVC.</string>
+  <string name="immersive_video_fallback">C\'hwitet eo an orin (%1$s), o klask gant lanv lenn ar servijer</string>
+  <string name="immersive_video_decoder_switch">%1$s a ya dreist galloud digoder ar c\'hasked, o klask gant lanv lenn ar servijer</string>
+  <string name="immersive_error_nothing">Netra da ziskouez</string>
+</resources>

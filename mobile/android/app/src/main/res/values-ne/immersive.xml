@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">पछाडि</string>
+  <string name="immersive_play">प्ले गर्नुहोस्</string>
+  <string name="immersive_pause">रोक्नुहोस्</string>
+  <string name="immersive_hint">B वा Y: एपमा फर्कनुहोस्। ट्रिगर: प्ले वा पज गर्नुहोस्। A, X वा ग्रिप: यो प्यानल देखाउनुहोस् वा लुकाउनुहोस्। थम्बस्टिक बायाँ वा दायाँ: छवि घुमाउनुहोस्।</string>
+  <string name="immersive_yaw">छवि %1$d डिग्रीमा घुमाइयो</string>
+  <string name="immersive_loading">लोड हुँदैछ</string>
+  <string name="immersive_buffering">बफर हुँदैछ</string>
+  <string name="immersive_preview_loading_full">पूर्वावलोकन %1$d x %2$d, पूर्ण रिजोल्युसन लोड हुँदैछ</string>
+  <string name="immersive_full_resolution">पूर्ण रिजोल्युसन %1$d x %2$d</string>
+  <string name="immersive_preview_only">पूर्वावलोकन मात्र: %1$s</string>
+  <string name="immersive_error_photo">यो फोटो देखाउन सकिँदैन: %1$s</string>
+  <string name="immersive_error_video">यो भिडियो प्ले गर्न सकिँदैन (%1$s)। 5.7K H.264 भिडियो हेडसेटको डिकोडरको क्षमताभन्दा बढी हुन सक्छ, H.265 सिफारिस गरिन्छ।</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K भन्दा माथि छ र हेडसेटको डिकोडरको क्षमताभन्दा बढी छ (अड्किने, ब्लक देखिने)। Immich मा भिडियो ट्रान्सकोडिङ HEVC मा सेट गर्नुहोस् वा रिजोल्युसन सीमित गर्नुहोस्।</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K भन्दा माथि छ र हेडसेटको डिकोडरको क्षमताभन्दा बढी छ (अड्किने, ब्लक देखिने)। यो भिडियो HEVC मा पुन: इन्कोड गर्नुहोस्।</string>
+  <string name="immersive_video_fallback">मूल फाइल असफल भयो (%1$s), सर्भरको प्लेब्याक स्ट्रिम प्रयास गर्दै</string>
+  <string name="immersive_video_decoder_switch">%1$s हेडसेटको डिकोडरको क्षमताभन्दा बढी छ, सर्भरको प्लेब्याक स्ट्रिम प्रयास गर्दै</string>
+  <string name="immersive_error_nothing">देखाउन केही छैन</string>
+</resources>

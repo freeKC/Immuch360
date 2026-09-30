@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">பின்</string>
+  <string name="immersive_play">இயக்கு</string>
+  <string name="immersive_pause">இடைநிறுத்து</string>
+  <string name="immersive_hint">B அல்லது Y: பயன்பாட்டுக்குத் திரும்பு. டிரிகர்: இயக்கு அல்லது இடைநிறுத்து. A, X அல்லது கிரிப்: இந்தப் பலகத்தைக் காட்டு அல்லது மறை. தம்ப்ஸ்டிக் இடது அல்லது வலது: படத்தைச் சுழற்று.</string>
+  <string name="immersive_yaw">படம் %1$d டிகிரிக்குச் சுழற்றப்பட்டது</string>
+  <string name="immersive_loading">ஏற்றுகிறது</string>
+  <string name="immersive_buffering">இடையகப்படுத்துகிறது</string>
+  <string name="immersive_preview_loading_full">முன்னோட்டம் %1$d x %2$d, முழுத் தெளிவுத்திறனை ஏற்றுகிறது</string>
+  <string name="immersive_full_resolution">முழுத் தெளிவுத்திறன் %1$d x %2$d</string>
+  <string name="immersive_preview_only">முன்னோட்டம் மட்டும்: %1$s</string>
+  <string name="immersive_error_photo">இந்தப் புகைப்படத்தைக் காட்ட முடியவில்லை: %1$s</string>
+  <string name="immersive_error_video">இந்த வீடியோவை இயக்க முடியவில்லை (%1$s). 5.7K H.264 வீடியோ ஹெட்செட்டின் டிகோடர் திறனைத் தாண்டக்கூடும், H.265 பரிந்துரைக்கப்படுகிறது.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K-ஐ விட அதிகம், ஹெட்செட்டின் டிகோடர் திறனைத் தாண்டுகிறது (தடுமாற்றம், கட்டங்கள்). Immich-இல் வீடியோ டிரான்ஸ்கோடிங்கை HEVC ஆக அமைக்கவும் அல்லது தெளிவுத்திறனைக் கட்டுப்படுத்தவும்.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K-ஐ விட அதிகம், ஹெட்செட்டின் டிகோடர் திறனைத் தாண்டுகிறது (தடுமாற்றம், கட்டங்கள்). இந்த வீடியோவை HEVC-இல் மீண்டும் குறியாக்கம் செய்யவும்.</string>
+  <string name="immersive_video_fallback">அசல் தோல்வியடைந்தது (%1$s), சேவையகத்தின் இயக்க ஸ்ட்ரீமை முயற்சிக்கிறது</string>
+  <string name="immersive_video_decoder_switch">%1$s ஹெட்செட்டின் டிகோடர் திறனைத் தாண்டுகிறது, சேவையகத்தின் இயக்க ஸ்ட்ரீமை முயற்சிக்கிறது</string>
+  <string name="immersive_error_nothing">காட்ட எதுவும் இல்லை</string>
+</resources>

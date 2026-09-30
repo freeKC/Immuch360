@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Πίσω</string>
+  <string name="immersive_play">Αναπαραγωγή</string>
+  <string name="immersive_pause">Παύση</string>
+  <string name="immersive_hint">B ή Y: επιστροφή στην εφαρμογή. Σκανδάλη: αναπαραγωγή ή παύση. A, X ή λαβή: εμφάνιση ή απόκρυψη αυτού του πλαισίου. Μοχλός αριστερά ή δεξιά: περιστροφή της εικόνας.</string>
+  <string name="immersive_yaw">Η εικόνα περιστράφηκε στις %1$d μοίρες</string>
+  <string name="immersive_loading">Φόρτωση</string>
+  <string name="immersive_buffering">Προσωρινή αποθήκευση</string>
+  <string name="immersive_preview_loading_full">Προεπισκόπηση %1$d x %2$d, φόρτωση της πλήρους ανάλυσης</string>
+  <string name="immersive_full_resolution">Πλήρης ανάλυση %1$d x %2$d</string>
+  <string name="immersive_preview_only">Μόνο προεπισκόπηση: %1$s</string>
+  <string name="immersive_error_photo">Δεν είναι δυνατή η εμφάνιση αυτής της φωτογραφίας: %1$s</string>
+  <string name="immersive_error_video">Δεν είναι δυνατή η αναπαραγωγή αυτού του βίντεο (%1$s). Ένα βίντεο 5.7K σε H.264 μπορεί να ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset, συνιστάται H.265.</string>
+  <string name="immersive_avc_too_large">Το H.264 %1$d x %2$d είναι πάνω από 4K και ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset (κολλήματα, τετραγωνάκια). Στο Immich, ορίστε τη μετατροπή βίντεο σε HEVC ή περιορίστε την ανάλυση.</string>
+  <string name="immersive_avc_too_large_local">Το H.264 %1$d x %2$d είναι πάνω από 4K και ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset (κολλήματα, τετραγωνάκια). Κωδικοποιήστε ξανά αυτό το βίντεο σε HEVC.</string>
+  <string name="immersive_video_fallback">Το πρωτότυπο απέτυχε (%1$s), δοκιμή της ροής αναπαραγωγής του διακομιστή</string>
+  <string name="immersive_video_decoder_switch">Το %1$s ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset, δοκιμή της ροής αναπαραγωγής του διακομιστή</string>
+  <string name="immersive_error_nothing">Τίποτα για εμφάνιση</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Quay lại</string>
+  <string name="immersive_play">Phát</string>
+  <string name="immersive_pause">Tạm dừng</string>
+  <string name="immersive_hint">B hoặc Y: quay lại ứng dụng. Nút cò: phát hoặc tạm dừng. A, X hoặc nút nắm: hiện hoặc ẩn bảng này. Cần điều khiển sang trái hoặc phải: xoay ảnh.</string>
+  <string name="immersive_yaw">Đã xoay ảnh đến %1$d độ</string>
+  <string name="immersive_loading">Đang tải</string>
+  <string name="immersive_buffering">Đang tải bộ đệm</string>
+  <string name="immersive_preview_loading_full">Bản xem trước %1$d x %2$d, đang tải độ phân giải đầy đủ</string>
+  <string name="immersive_full_resolution">Độ phân giải đầy đủ %1$d x %2$d</string>
+  <string name="immersive_preview_only">Chỉ có bản xem trước: %1$s</string>
+  <string name="immersive_error_photo">Không thể hiển thị ảnh này: %1$s</string>
+  <string name="immersive_error_video">Không thể phát video này (%1$s). Video H.264 5.7K có thể vượt quá khả năng của bộ giải mã trên kính VR, nên dùng H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d vượt quá 4K và vượt quá khả năng của bộ giải mã trên kính VR (giật, vỡ hình). Trong Immich, hãy đặt chuyển mã video sang HEVC hoặc giới hạn độ phân giải.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d vượt quá 4K và vượt quá khả năng của bộ giải mã trên kính VR (giật, vỡ hình). Hãy mã hóa lại video này sang HEVC.</string>
+  <string name="immersive_video_fallback">Không phát được bản gốc (%1$s), đang thử luồng phát từ máy chủ</string>
+  <string name="immersive_video_decoder_switch">%1$s vượt quá khả năng của bộ giải mã trên kính VR, đang thử luồng phát từ máy chủ</string>
+  <string name="immersive_error_nothing">Không có gì để hiển thị</string>
+</resources>

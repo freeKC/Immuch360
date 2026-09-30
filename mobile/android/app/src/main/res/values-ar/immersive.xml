@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">رجوع</string>
+  <string name="immersive_play">تشغيل</string>
+  <string name="immersive_pause">إيقاف مؤقت</string>
+  <string name="immersive_hint">B أو Y: العودة إلى التطبيق. الزناد: تشغيل أو إيقاف مؤقت. A أو X أو زر القبضة: إظهار هذه اللوحة أو إخفاؤها. عصا التحكم يسارًا أو يمينًا: تدوير الصورة.</string>
+  <string name="immersive_yaw">تم تدوير الصورة إلى %1$d°</string>
+  <string name="immersive_loading">جارٍ التحميل</string>
+  <string name="immersive_buffering">جارٍ التخزين المؤقت</string>
+  <string name="immersive_preview_loading_full">معاينة %1$d x %2$d، جارٍ تحميل الدقة الكاملة</string>
+  <string name="immersive_full_resolution">الدقة الكاملة %1$d x %2$d</string>
+  <string name="immersive_preview_only">معاينة فقط: %1$s</string>
+  <string name="immersive_error_photo">تعذر عرض هذه الصورة: %1$s</string>
+  <string name="immersive_error_video">تعذر تشغيل هذا الفيديو (%1$s). قد يتجاوز فيديو H.264 بدقة 5.7K قدرة مفكك الترميز في النظارة، يُنصح باستخدام H.265.</string>
+  <string name="immersive_avc_too_large">فيديو H.264 بدقة %1$d x %2$d أعلى من 4K ويتجاوز قدرة مفكك الترميز في النظارة (تقطّع وظهور مربعات). في Immich، اضبط تحويل ترميز الفيديو على HEVC أو قلّل الدقة.</string>
+  <string name="immersive_avc_too_large_local">فيديو H.264 بدقة %1$d x %2$d أعلى من 4K ويتجاوز قدرة مفكك الترميز في النظارة (تقطّع وظهور مربعات). أعد ترميز هذا الفيديو بصيغة HEVC.</string>
+  <string name="immersive_video_fallback">تعذر تشغيل الملف الأصلي (%1$s)، جارٍ تجربة بث التشغيل من الخادم</string>
+  <string name="immersive_video_decoder_switch">%1$s يتجاوز قدرة مفكك الترميز في النظارة، جارٍ تجربة بث التشغيل من الخادم</string>
+  <string name="immersive_error_nothing">لا يوجد ما يمكن عرضه</string>
+</resources>

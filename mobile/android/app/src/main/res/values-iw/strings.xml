@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="spherical_video_close">סגור</string>
+  <string name="spherical_video_error">לא ניתן להפעיל את הסרטון הזה</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Back</string>
+  <string name="immersive_play">Play</string>
+  <string name="immersive_pause">Pause</string>
+  <string name="immersive_hint">B or Y: back to the app. Trigger: play or pause. A, X or grip: show or hide this panel. Thumbstick left or right: turn the image.</string>
+  <string name="immersive_yaw">Image turned to %1$d degrees</string>
+  <string name="immersive_loading">Loading</string>
+  <string name="immersive_buffering">Buffering</string>
+  <string name="immersive_preview_loading_full">Preview %1$d x %2$d, loading the full resolution</string>
+  <string name="immersive_full_resolution">Full resolution %1$d x %2$d</string>
+  <string name="immersive_preview_only">Preview only: %1$s</string>
+  <string name="immersive_error_photo">This photo cannot be displayed: %1$s</string>
+  <string name="immersive_error_video">This video cannot be played (%1$s). A 5.7K H.264 video can exceed the headset decoder, H.265 is recommended.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d is above 4K and exceeds the headset decoder (choppy, blocky). In Immich, set the video transcoding to HEVC or limit the resolution.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d is above 4K and exceeds the headset decoder (choppy, blocky). Re-encode this video in HEVC.</string>
+  <string name="immersive_video_fallback">The original failed (%1$s), trying the server playback stream</string>
+  <string name="immersive_video_decoder_switch">%1$s is above the headset decoder, trying the server playback stream</string>
+  <string name="immersive_error_nothing">Nothing to show</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Retour</string>
+  <string name="immersive_play">Lecture</string>
+  <string name="immersive_pause">Pause</string>
+  <string name="immersive_hint">B ou Y : retour à l\'application. Gâchette : lecture ou pause. A, X ou bouton de préhension : afficher ou masquer ce panneau. Joystick à gauche ou à droite : faire pivoter l\'image.</string>
+  <string name="immersive_yaw">Image orientée à %1$d degrés</string>
+  <string name="immersive_loading">Chargement</string>
+  <string name="immersive_buffering">Mise en mémoire tampon</string>
+  <string name="immersive_preview_loading_full">Aperçu %1$d x %2$d, chargement de la pleine résolution</string>
+  <string name="immersive_full_resolution">Pleine résolution %1$d x %2$d</string>
+  <string name="immersive_preview_only">Aperçu uniquement : %1$s</string>
+  <string name="immersive_error_photo">Impossible d\'afficher cette photo : %1$s</string>
+  <string name="immersive_error_video">Impossible de lire cette vidéo (%1$s). Une vidéo H.264 en 5.7K peut dépasser les capacités du décodeur du casque, le H.265 est recommandé.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d dépasse la 4K et les capacités du décodeur du casque (saccades, pixellisation). Dans Immich, réglez le transcodage vidéo sur HEVC ou limitez la résolution.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d dépasse la 4K et les capacités du décodeur du casque (saccades, pixellisation). Réencodez cette vidéo en HEVC.</string>
+  <string name="immersive_video_fallback">Échec de l\'original (%1$s), essai du flux de lecture du serveur</string>
+  <string name="immersive_video_decoder_switch">%1$s dépasse les capacités du décodeur du casque, essai du flux de lecture du serveur</string>
+  <string name="immersive_error_nothing">Rien à afficher</string>
+</resources>

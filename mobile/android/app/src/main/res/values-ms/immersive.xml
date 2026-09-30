@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Kembali</string>
+  <string name="immersive_play">Main</string>
+  <string name="immersive_pause">Jeda</string>
+  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pemicu: main atau jeda. A, X atau butang genggam: tunjukkan atau sembunyikan panel ini. Joystick ke kiri atau kanan: putar gambar.</string>
+  <string name="immersive_yaw">Gambar diputar ke %1$d darjah</string>
+  <string name="immersive_loading">Sedang memuatkan</string>
+  <string name="immersive_buffering">Sedang menimbal</string>
+  <string name="immersive_preview_loading_full">Pratonton %1$d x %2$d, sedang memuatkan resolusi penuh</string>
+  <string name="immersive_full_resolution">Resolusi penuh %1$d x %2$d</string>
+  <string name="immersive_preview_only">Pratonton sahaja: %1$s</string>
+  <string name="immersive_error_photo">Foto ini tidak dapat dipaparkan: %1$s</string>
+  <string name="immersive_error_video">Video ini tidak dapat dimainkan (%1$s). Video H.264 5.7K boleh melebihi keupayaan penyahkod headset, H.265 disyorkan.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d melebihi 4K dan keupayaan penyahkod headset (tersekat-sekat, berblok). Dalam Immich, tetapkan transkod video kepada HEVC atau hadkan resolusi.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d melebihi 4K dan keupayaan penyahkod headset (tersekat-sekat, berblok). Kodkan semula video ini dalam HEVC.</string>
+  <string name="immersive_video_fallback">Fail asal gagal (%1$s), mencuba strim main balik pelayan</string>
+  <string name="immersive_video_decoder_switch">%1$s melebihi keupayaan penyahkod headset, mencuba strim main balik pelayan</string>
+  <string name="immersive_error_nothing">Tiada apa-apa untuk dipaparkan</string>
+</resources>

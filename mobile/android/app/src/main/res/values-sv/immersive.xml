@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Tillbaka</string>
+  <string name="immersive_play">Spela upp</string>
+  <string name="immersive_pause">Pausa</string>
+  <string name="immersive_hint">B eller Y: tillbaka till appen. Avtryckaren: spela upp eller pausa. A, X eller greppknappen: visa eller dölj den här panelen. Tumspaken åt vänster eller höger: vrid bilden.</string>
+  <string name="immersive_yaw">Bilden vriden till %1$d grader</string>
+  <string name="immersive_loading">Läser in</string>
+  <string name="immersive_buffering">Buffrar</string>
+  <string name="immersive_preview_loading_full">Förhandsvisning %1$d x %2$d, läser in full upplösning</string>
+  <string name="immersive_full_resolution">Full upplösning %1$d x %2$d</string>
+  <string name="immersive_preview_only">Endast förhandsvisning: %1$s</string>
+  <string name="immersive_error_photo">Det här fotot kan inte visas: %1$s</string>
+  <string name="immersive_error_video">Den här videon kan inte spelas upp (%1$s). En 5.7K H.264-video kan överskrida headsetets avkodare, H.265 rekommenderas.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d är över 4K och överskrider headsetets avkodare (hackigt, blockigt). Ställ in videoomkodningen på HEVC i Immich eller begränsa upplösningen.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d är över 4K och överskrider headsetets avkodare (hackigt, blockigt). Koda om den här videon till HEVC.</string>
+  <string name="immersive_video_fallback">Originalet misslyckades (%1$s), provar serverns uppspelningsström</string>
+  <string name="immersive_video_decoder_switch">%1$s överskrider headsetets avkodare, provar serverns uppspelningsström</string>
+  <string name="immersive_error_nothing">Inget att visa</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Geri</string>
+  <string name="immersive_play">Oynat</string>
+  <string name="immersive_pause">Duraklat</string>
+  <string name="immersive_hint">B veya Y: uygulamaya dön. Tetik: oynat veya duraklat. A, X veya kavrama tuşu: bu paneli göster veya gizle. Analog çubuğu sola veya sağa: görüntüyü döndür.</string>
+  <string name="immersive_yaw">Görüntü %1$d dereceye döndürüldü</string>
+  <string name="immersive_loading">Yükleniyor</string>
+  <string name="immersive_buffering">Arabelleğe alınıyor</string>
+  <string name="immersive_preview_loading_full">Önizleme %1$d x %2$d, tam çözünürlük yükleniyor</string>
+  <string name="immersive_full_resolution">Tam çözünürlük %1$d x %2$d</string>
+  <string name="immersive_preview_only">Yalnızca önizleme: %1$s</string>
+  <string name="immersive_error_photo">Bu fotoğraf görüntülenemiyor: %1$s</string>
+  <string name="immersive_error_video">Bu video oynatılamıyor (%1$s). 5.7K H.264 bir video gözlüğün kod çözücüsünün sınırını aşabilir, H.265 önerilir.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K\'nın üzerinde ve gözlüğün kod çözücüsünün sınırını aşıyor (takılma, bloklaşma). Immich\'te video dönüştürmeyi HEVC olarak ayarlayın veya çözünürlüğü sınırlayın.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K\'nın üzerinde ve gözlüğün kod çözücüsünün sınırını aşıyor (takılma, bloklaşma). Bu videoyu HEVC ile yeniden kodlayın.</string>
+  <string name="immersive_video_fallback">Orijinal dosya oynatılamadı (%1$s), sunucunun oynatma akışı deneniyor</string>
+  <string name="immersive_video_decoder_switch">%1$s gözlüğün kod çözücüsünün sınırını aşıyor, sunucunun oynatma akışı deneniyor</string>
+  <string name="immersive_error_nothing">Gösterilecek bir şey yok</string>
+</resources>

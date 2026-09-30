@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Til baka</string>
+  <string name="immersive_play">Spila</string>
+  <string name="immersive_pause">Hlé</string>
+  <string name="immersive_hint">B eða Y: aftur í forritið. Gikkur: spila eða gera hlé. A, X eða handfang: sýna eða fela þetta spjald. Stýripinni til vinstri eða hægri: snúa myndinni.</string>
+  <string name="immersive_yaw">Mynd snúið í %1$d gráður</string>
+  <string name="immersive_loading">Hleður inn</string>
+  <string name="immersive_buffering">Hleður í biðminni</string>
+  <string name="immersive_preview_loading_full">Forskoðun %1$d x %2$d, hleður inn fullri upplausn</string>
+  <string name="immersive_full_resolution">Full upplausn %1$d x %2$d</string>
+  <string name="immersive_preview_only">Aðeins forskoðun: %1$s</string>
+  <string name="immersive_error_photo">Ekki er hægt að birta þessa mynd: %1$s</string>
+  <string name="immersive_error_video">Ekki er hægt að spila þetta myndband (%1$s). 5.7K H.264 myndband getur verið ofviða afkóðara VR-gleraugnanna, mælt er með H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d er yfir 4K og ofviða afkóðara VR-gleraugnanna (hikstar, kubbótt mynd). Í Immich skaltu stilla umkóðun myndbanda á HEVC eða takmarka upplausnina.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d er yfir 4K og ofviða afkóðara VR-gleraugnanna (hikstar, kubbótt mynd). Umkóðaðu þetta myndband í HEVC.</string>
+  <string name="immersive_video_fallback">Ekki tókst að spila upprunalegu skrána (%1$s), reyni afspilunarstraum þjónsins</string>
+  <string name="immersive_video_decoder_switch">%1$s er ofviða afkóðara VR-gleraugnanna, reyni afspilunarstraum þjónsins</string>
+  <string name="immersive_error_nothing">Ekkert til að sýna</string>
+</resources>

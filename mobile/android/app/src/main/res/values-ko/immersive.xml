@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">뒤로</string>
+  <string name="immersive_play">재생</string>
+  <string name="immersive_pause">일시 정지</string>
+  <string name="immersive_hint">B 또는 Y: 앱으로 돌아가기. 트리거: 재생 또는 일시 정지. A, X 또는 그립: 이 패널 표시 또는 숨기기. 썸스틱 왼쪽 또는 오른쪽: 이미지 회전.</string>
+  <string name="immersive_yaw">이미지를 %1$d도로 회전했습니다</string>
+  <string name="immersive_loading">로드 중</string>
+  <string name="immersive_buffering">버퍼링 중</string>
+  <string name="immersive_preview_loading_full">미리 보기 %1$d x %2$d, 전체 해상도 로드 중</string>
+  <string name="immersive_full_resolution">전체 해상도 %1$d x %2$d</string>
+  <string name="immersive_preview_only">미리 보기만 가능: %1$s</string>
+  <string name="immersive_error_photo">이 사진을 표시할 수 없습니다: %1$s</string>
+  <string name="immersive_error_video">이 동영상을 재생할 수 없습니다(%1$s). 5.7K H.264 동영상은 헤드셋 디코더의 한계를 넘을 수 있으므로 H.265를 권장합니다.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d는 4K를 넘어 헤드셋 디코더의 한계를 초과합니다(끊김, 블록 현상). Immich에서 동영상 트랜스코딩을 HEVC로 설정하거나 해상도를 제한하세요.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d는 4K를 넘어 헤드셋 디코더의 한계를 초과합니다(끊김, 블록 현상). 이 동영상을 HEVC로 다시 인코딩하세요.</string>
+  <string name="immersive_video_fallback">원본 재생에 실패하여(%1$s) 서버 재생 스트림을 시도하는 중</string>
+  <string name="immersive_video_decoder_switch">%1$s은(는) 헤드셋 디코더의 한계를 넘어 서버 재생 스트림을 시도하는 중</string>
+  <string name="immersive_error_nothing">표시할 항목 없음</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Orqaga</string>
+  <string name="immersive_play">Ijro etish</string>
+  <string name="immersive_pause">Pauza</string>
+  <string name="immersive_hint">B yoki Y: ilovaga qaytish. Tepki: ijro etish yoki pauza. A, X yoki ushlash tugmasi: bu panelni koʻrsatish yoki yashirish. Joystikni chapga yoki oʻngga: tasvirni burish.</string>
+  <string name="immersive_yaw">Tasvir %1$d darajaga burildi</string>
+  <string name="immersive_loading">Yuklanmoqda</string>
+  <string name="immersive_buffering">Buferlanmoqda</string>
+  <string name="immersive_preview_loading_full">Oldindan koʻrish %1$d x %2$d, toʻliq oʻlcham yuklanmoqda</string>
+  <string name="immersive_full_resolution">Toʻliq oʻlcham %1$d x %2$d</string>
+  <string name="immersive_preview_only">Faqat oldindan koʻrish: %1$s</string>
+  <string name="immersive_error_photo">Bu rasmni koʻrsatib boʻlmaydi: %1$s</string>
+  <string name="immersive_error_video">Bu videoni ijro etib boʻlmaydi (%1$s). 5.7K H.264 video shlem dekoderi imkoniyatidan oshib ketishi mumkin, H.265 tavsiya etiladi.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K dan yuqori va shlem dekoderi imkoniyatidan oshadi (qotib qoladi, kvadratchalar paydo boʻladi). Immichda video transkodlashni HEVC ga oʻrnating yoki oʻlchamni cheklang.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K dan yuqori va shlem dekoderi imkoniyatidan oshadi (qotib qoladi, kvadratchalar paydo boʻladi). Bu videoni HEVC formatida qayta kodlang.</string>
+  <string name="immersive_video_fallback">Asl faylni ijro etib boʻlmadi (%1$s), serverning ijro oqimi sinab koʻrilmoqda</string>
+  <string name="immersive_video_decoder_switch">%1$s shlem dekoderi imkoniyatidan yuqori, serverning ijro oqimi sinab koʻrilmoqda</string>
+  <string name="immersive_error_nothing">Koʻrsatadigan hech narsa yoʻq</string>
+</resources>

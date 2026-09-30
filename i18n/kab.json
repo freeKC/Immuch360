@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "Ulamek ad yettwaldi umeskan immersif",
+  "library_360": "360°",
+  "panorama_gyroscope": "Ajiroskop",
+  "panorama_no_gyroscope": "Ulac ajiroskop deg ibenk-a"
+}

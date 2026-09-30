@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Înapoi</string>
+  <string name="immersive_play">Redare</string>
+  <string name="immersive_pause">Pauză</string>
+  <string name="immersive_hint">B sau Y: înapoi la aplicație. Trăgaci: redare sau pauză. A, X sau butonul de prindere: afișați sau ascundeți acest panou. Joystick la stânga sau la dreapta: rotiți imaginea.</string>
+  <string name="immersive_yaw">Imagine rotită la %1$d°</string>
+  <string name="immersive_loading">Se încarcă</string>
+  <string name="immersive_buffering">Se încarcă în buffer</string>
+  <string name="immersive_preview_loading_full">Previzualizare %1$d x %2$d, se încarcă rezoluția completă</string>
+  <string name="immersive_full_resolution">Rezoluție completă %1$d x %2$d</string>
+  <string name="immersive_preview_only">Doar previzualizare: %1$s</string>
+  <string name="immersive_error_photo">Această fotografie nu poate fi afișată: %1$s</string>
+  <string name="immersive_error_video">Acest videoclip nu poate fi redat (%1$s). Un videoclip H.264 5.7K poate depăși capacitatea decodorului din headset, se recomandă H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d depășește 4K și capacitatea decodorului din headset (sacadat, pixelat). În Immich, setați transcodarea video la HEVC sau limitați rezoluția.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d depășește 4K și capacitatea decodorului din headset (sacadat, pixelat). Recodați acest videoclip în HEVC.</string>
+  <string name="immersive_video_fallback">Originalul a eșuat (%1$s), se încearcă fluxul de redare de pe server</string>
+  <string name="immersive_video_decoder_switch">%1$s depășește capacitatea decodorului din headset, se încearcă fluxul de redare de pe server</string>
+  <string name="immersive_error_nothing">Nimic de afișat</string>
+</resources>

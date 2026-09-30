@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Назад</string>
+  <string name="immersive_play">Възпроизвеждане</string>
+  <string name="immersive_pause">Пауза</string>
+  <string name="immersive_hint">B или Y: връщане в приложението. Спусък: възпроизвеждане или пауза. A, X или страничен бутон: показване или скриване на този панел. Джойстик наляво или надясно: завъртане на изображението.</string>
+  <string name="immersive_yaw">Изображението е завъртяно на %1$d°</string>
+  <string name="immersive_loading">Зареждане</string>
+  <string name="immersive_buffering">Буфериране</string>
+  <string name="immersive_preview_loading_full">Преглед %1$d x %2$d, зарежда се пълната резолюция</string>
+  <string name="immersive_full_resolution">Пълна резолюция %1$d x %2$d</string>
+  <string name="immersive_preview_only">Само преглед: %1$s</string>
+  <string name="immersive_error_photo">Тази снимка не може да бъде показана: %1$s</string>
+  <string name="immersive_error_video">Това видео не може да бъде възпроизведено (%1$s). Видео 5.7K H.264 може да надхвърли възможностите на декодера на шлема, препоръчва се H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d е над 4K и надхвърля възможностите на декодера на шлема (накъсано, на блокове). В Immich задайте транскодиране на видеото в HEVC или ограничете резолюцията.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d е над 4K и надхвърля възможностите на декодера на шлема (накъсано, на блокове). Прекодирайте това видео в HEVC.</string>
+  <string name="immersive_video_fallback">Оригиналът не можа да се възпроизведе (%1$s), опитваме потока за възпроизвеждане от сървъра</string>
+  <string name="immersive_video_decoder_switch">%1$s надхвърля възможностите на декодера на шлема, опитваме потока за възпроизвеждане от сървъра</string>
+  <string name="immersive_error_nothing">Няма нищо за показване</string>
+</resources>

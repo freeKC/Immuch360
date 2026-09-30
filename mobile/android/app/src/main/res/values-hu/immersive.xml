@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Vissza</string>
+  <string name="immersive_play">Lejátszás</string>
+  <string name="immersive_pause">Szünet</string>
+  <string name="immersive_hint">B vagy Y: vissza az alkalmazásba. Ravasz: lejátszás vagy szünet. A, X vagy markolatgomb: a panel megjelenítése vagy elrejtése. Joystick balra vagy jobbra: a kép elforgatása.</string>
+  <string name="immersive_yaw">Kép elforgatva %1$d fokra</string>
+  <string name="immersive_loading">Betöltés</string>
+  <string name="immersive_buffering">Pufferelés</string>
+  <string name="immersive_preview_loading_full">Előnézet %1$d x %2$d, a teljes felbontás betöltése</string>
+  <string name="immersive_full_resolution">Teljes felbontás %1$d x %2$d</string>
+  <string name="immersive_preview_only">Csak előnézet: %1$s</string>
+  <string name="immersive_error_photo">Ez a fotó nem jeleníthető meg: %1$s</string>
+  <string name="immersive_error_video">Ez a videó nem játszható le (%1$s). Egy 5.7K-s H.264 videó meghaladhatja a VR-szemüveg dekóderének képességeit, a H.265 ajánlott.</string>
+  <string name="immersive_avc_too_large">A H.264 %1$d x %2$d 4K fölött van, és meghaladja a VR-szemüveg dekóderének képességeit (akadozik, kockás). Az Immichben állítsd a videó átkódolását HEVC-re, vagy korlátozd a felbontást.</string>
+  <string name="immersive_avc_too_large_local">A H.264 %1$d x %2$d 4K fölött van, és meghaladja a VR-szemüveg dekóderének képességeit (akadozik, kockás). Kódold újra ezt a videót HEVC-be.</string>
+  <string name="immersive_video_fallback">Az eredeti nem sikerült (%1$s), a szerver lejátszási streamjének kipróbálása</string>
+  <string name="immersive_video_decoder_switch">%1$s: túl sok a VR-szemüveg dekóderének, a szerver lejátszási streamjének kipróbálása</string>
+  <string name="immersive_error_nothing">Nincs mit megjeleníteni</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">ថយក្រោយ</string>
+  <string name="immersive_play">ចាក់</string>
+  <string name="immersive_pause">ផ្អាក</string>
+  <string name="immersive_hint">B ឬ Y៖ ត្រឡប់ទៅកម្មវិធីវិញ។ Trigger៖ ចាក់ ឬផ្អាក។ A, X ឬ Grip៖ បង្ហាញ ឬលាក់ផ្ទាំងនេះ។ Thumbstick ទៅឆ្វេង ឬស្តាំ៖ បង្វិលរូបភាព។</string>
+  <string name="immersive_yaw">រូបភាពត្រូវបានបង្វិលទៅ %1$d ដឺក្រេ</string>
+  <string name="immersive_loading">កំពុងផ្ទុក</string>
+  <string name="immersive_buffering">កំពុងផ្ទុកទុកមុន</string>
+  <string name="immersive_preview_loading_full">មើលជាមុន %1$d x %2$d កំពុងផ្ទុកកម្រិតភាពច្បាស់ពេញលេញ</string>
+  <string name="immersive_full_resolution">កម្រិតភាពច្បាស់ពេញលេញ %1$d x %2$d</string>
+  <string name="immersive_preview_only">មើលជាមុនតែប៉ុណ្ណោះ៖ %1$s</string>
+  <string name="immersive_error_photo">មិនអាចបង្ហាញរូបថតនេះបានទេ៖ %1$s</string>
+  <string name="immersive_error_video">មិនអាចចាក់វីដេអូនេះបានទេ (%1$s)។ វីដេអូ H.264 5.7K អាចលើសសមត្ថភាពឧបករណ៍ឌិកូដរបស់កាស VR ដូច្នេះគួរប្រើ H.265។</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d លើសពី 4K និងលើសសមត្ថភាពឧបករណ៍ឌិកូដរបស់កាស VR (រអាក់រអួល បែកជាប្លុក)។ នៅក្នុង Immich សូមកំណត់ការបំប្លែងវីដេអូទៅ HEVC ឬកំណត់កម្រិតភាពច្បាស់។</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d លើសពី 4K និងលើសសមត្ថភាពឧបករណ៍ឌិកូដរបស់កាស VR (រអាក់រអួល បែកជាប្លុក)។ សូមអ៊ិនកូដវីដេអូនេះឡើងវិញជា HEVC។</string>
+  <string name="immersive_video_fallback">មិនអាចចាក់ឯកសារដើមបានទេ (%1$s) កំពុងសាកល្បងស្ទ្រីមចាក់ពីម៉ាស៊ីនមេ</string>
+  <string name="immersive_video_decoder_switch">%1$s លើសសមត្ថភាពឧបករណ៍ឌិកូដរបស់កាស VR កំពុងសាកល្បងស្ទ្រីមចាក់ពីម៉ាស៊ីនមេ</string>
+  <string name="immersive_error_nothing">គ្មានអ្វីត្រូវបង្ហាញទេ</string>
+</resources>

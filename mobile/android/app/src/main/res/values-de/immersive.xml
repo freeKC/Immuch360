@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Zurück</string>
+  <string name="immersive_play">Abspielen</string>
+  <string name="immersive_pause">Pause</string>
+  <string name="immersive_hint">B oder Y: zurück zur App. Trigger: Wiedergabe oder Pause. A, X oder Grifftaste: dieses Panel ein- oder ausblenden. Thumbstick nach links oder rechts: Bild drehen.</string>
+  <string name="immersive_yaw">Bild auf %1$d Grad gedreht</string>
+  <string name="immersive_loading">Wird geladen</string>
+  <string name="immersive_buffering">Wird gepuffert</string>
+  <string name="immersive_preview_loading_full">Vorschau %1$d x %2$d, volle Auflösung wird geladen</string>
+  <string name="immersive_full_resolution">Volle Auflösung %1$d x %2$d</string>
+  <string name="immersive_preview_only">Nur Vorschau: %1$s</string>
+  <string name="immersive_error_photo">Dieses Foto kann nicht angezeigt werden: %1$s</string>
+  <string name="immersive_error_video">Dieses Video kann nicht abgespielt werden (%1$s). Ein 5.7K-Video in H.264 kann den Decoder des Headsets überfordern, H.265 wird empfohlen.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d liegt über 4K und überfordert den Decoder des Headsets (ruckelig, verpixelt). Stelle in Immich die Videotranskodierung auf HEVC um oder begrenze die Auflösung.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d liegt über 4K und überfordert den Decoder des Headsets (ruckelig, verpixelt). Kodiere dieses Video in HEVC neu.</string>
+  <string name="immersive_video_fallback">Original fehlgeschlagen (%1$s), Wiedergabe-Stream des Servers wird versucht</string>
+  <string name="immersive_video_decoder_switch">%1$s überfordert den Decoder des Headsets, Wiedergabe-Stream des Servers wird versucht</string>
+  <string name="immersive_error_nothing">Nichts anzuzeigen</string>
+</resources>

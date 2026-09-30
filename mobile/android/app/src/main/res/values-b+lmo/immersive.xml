@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Indree</string>
+  <string name="immersive_play">Fà partì</string>
+  <string name="immersive_pause">Pausa</string>
+  <string name="immersive_hint">B o Y: torna a l\'app. Grilett: fà partì o mett in pausa. A, X o grip: fà vedè o scond quest panell. Levetta a sinistra o a drita: gira l\'imagin.</string>
+  <string name="immersive_yaw">Imagin girada a %1$d grad</string>
+  <string name="immersive_loading">Adree a cargà</string>
+  <string name="immersive_buffering">Adree a bufferizzà</string>
+  <string name="immersive_preview_loading_full">Anteprima %1$d x %2$d, adree a cargà la resoluzion completa</string>
+  <string name="immersive_full_resolution">Resoluzion completa %1$d x %2$d</string>
+  <string name="immersive_preview_only">Domà l\'anteprima: %1$s</string>
+  <string name="immersive_error_photo">Se pò minga mostrà quella fòto chì: %1$s</string>
+  <string name="immersive_error_video">Se pò minga fà andà quell video chì (%1$s). On video 5.7K H.264 el pò passà i limit del decoder del visor, se consilia H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d l\'è sora el 4K e el passa i limit del decoder del visor (a scatt, a quadrett). In Immich, mett la transcodifica di video in HEVC o limita la resoluzion.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d l\'è sora el 4K e el passa i limit del decoder del visor (a scatt, a quadrett). Codifica de noeuv quell video chì in HEVC.</string>
+  <string name="immersive_video_fallback">L\'original l\'è minga andaa (%1$s), se preuva el fluss de riproduzion del server</string>
+  <string name="immersive_video_decoder_switch">%1$s el passa i limit del decoder del visor, se preuva el fluss de riproduzion del server</string>
+  <string name="immersive_error_nothing">Nagott de mostrà</string>
+</resources>

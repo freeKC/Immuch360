@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Go bak</string>
+  <string name="immersive_play">Plei</string>
+  <string name="immersive_pause">Stop smol</string>
+  <string name="immersive_hint">B o Y: go bak long app. Trigger: plei o stop smol. A, X o grip: soem o haedem panel ia. Thumbstick lef o raet: tanem pikja.</string>
+  <string name="immersive_yaw">Pikja i tanem i go long %1$d digri</string>
+  <string name="immersive_loading">I stap lodem</string>
+  <string name="immersive_buffering">I stap bafa</string>
+  <string name="immersive_preview_loading_full">Priviu %1$d x %2$d, i stap lodem ful rezolusen</string>
+  <string name="immersive_full_resolution">Ful rezolusen %1$d x %2$d</string>
+  <string name="immersive_preview_only">Priviu nomo: %1$s</string>
+  <string name="immersive_error_photo">I no save soem foto ia: %1$s</string>
+  <string name="immersive_error_video">I no save pleim video ia (%1$s). Wan video 5.7K H.264 i save bigwan tumas long dekoda blong headset, H.265 i moa gud.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d i antap long 4K mo i bigwan tumas long dekoda blong headset (i stap katkat, i gat ol blok). Long Immich, putem video transcoding long HEVC o mekem rezolusen i smol.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d i antap long 4K mo i bigwan tumas long dekoda blong headset (i stap katkat, i gat ol blok). Enkodem bakegen video ia long HEVC.</string>
+  <string name="immersive_video_fallback">Orijinal i no wok (%1$s), i stap traem stream blong seva</string>
+  <string name="immersive_video_decoder_switch">%1$s i bigwan tumas long dekoda blong headset, i stap traem stream blong seva</string>
+  <string name="immersive_error_nothing">I no gat samting blong soem</string>
+</resources>

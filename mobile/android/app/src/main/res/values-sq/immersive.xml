@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Mbrapa</string>
+  <string name="immersive_play">Luaj</string>
+  <string name="immersive_pause">Pauzë</string>
+  <string name="immersive_hint">B ose Y: kthim te aplikacioni. Këmbëza: luaj ose pauzë. A, X ose butoni i kapjes: shfaq ose fshih këtë panel. Leva majtas ose djathtas: rrotullo imazhin.</string>
+  <string name="immersive_yaw">Imazhi u rrotullua në %1$d gradë</string>
+  <string name="immersive_loading">Po ngarkohet</string>
+  <string name="immersive_buffering">Po buferohet</string>
+  <string name="immersive_preview_loading_full">Pamje paraprake %1$d x %2$d, po ngarkohet rezolucioni i plotë</string>
+  <string name="immersive_full_resolution">Rezolucion i plotë %1$d x %2$d</string>
+  <string name="immersive_preview_only">Vetëm pamje paraprake: %1$s</string>
+  <string name="immersive_error_photo">Kjo foto nuk mund të shfaqet: %1$s</string>
+  <string name="immersive_error_video">Kjo video nuk mund të luhet (%1$s). Një video 5.7K H.264 mund ta tejkalojë dekoderin e syzeve VR, rekomandohet H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d është mbi 4K dhe e tejkalon dekoderin e syzeve VR (ngecje, blloqe). Në Immich, vendos transkodimin e videos në HEVC ose kufizo rezolucionin.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d është mbi 4K dhe e tejkalon dekoderin e syzeve VR (ngecje, blloqe). Rikodoje këtë video në HEVC.</string>
+  <string name="immersive_video_fallback">Origjinali dështoi (%1$s), po provohet transmetimi i luajtjes nga serveri</string>
+  <string name="immersive_video_decoder_switch">%1$s e tejkalon dekoderin e syzeve VR, po provohet transmetimi i luajtjes nga serveri</string>
+  <string name="immersive_error_nothing">Asgjë për të shfaqur</string>
+</resources>

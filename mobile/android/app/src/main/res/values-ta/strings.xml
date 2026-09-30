@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="spherical_video_close">மூடு</string>
+  <string name="spherical_video_error">இந்த வீடியோவை இயக்க முடியவில்லை</string>
+</resources>

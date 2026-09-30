@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Tilbake</string>
+  <string name="immersive_play">Spill av</string>
+  <string name="immersive_pause">Pause</string>
+  <string name="immersive_hint">B eller Y: tilbake til appen. Avtrekker: spill av eller pause. A, X eller grepknapp: vis eller skjul dette panelet. Styrespak til venstre eller høyre: roter bildet.</string>
+  <string name="immersive_yaw">Bildet er rotert til %1$d grader</string>
+  <string name="immersive_loading">Laster</string>
+  <string name="immersive_buffering">Bufrer</string>
+  <string name="immersive_preview_loading_full">Forhåndsvisning %1$d x %2$d, laster full oppløsning</string>
+  <string name="immersive_full_resolution">Full oppløsning %1$d x %2$d</string>
+  <string name="immersive_preview_only">Bare forhåndsvisning: %1$s</string>
+  <string name="immersive_error_photo">Dette bildet kan ikke vises: %1$s</string>
+  <string name="immersive_error_video">Denne videoen kan ikke spilles av (%1$s). En 5.7K H.264-video kan være for tung for dekoderen i headsettet, H.265 anbefales.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d er over 4K og for tung for dekoderen i headsettet (hakkete, blokkete). I Immich, sett videotranskodingen til HEVC eller begrens oppløsningen.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d er over 4K og for tung for dekoderen i headsettet (hakkete, blokkete). Kod om denne videoen til HEVC.</string>
+  <string name="immersive_video_fallback">Originalen feilet (%1$s), prøver avspillingsstrømmen fra serveren</string>
+  <string name="immersive_video_decoder_switch">%1$s er for tung for dekoderen i headsettet, prøver avspillingsstrømmen fra serveren</string>
+  <string name="immersive_error_nothing">Ingenting å vise</string>
+</resources>

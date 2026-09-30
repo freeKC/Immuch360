@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "Tok leh bukak paparan imersif",
+  "library_360": "360°",
+  "panorama_gyroscope": "Giroskop",
+  "panorama_no_gyroscope": "Alat ni takdok giroskop"
+}

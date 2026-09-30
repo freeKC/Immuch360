@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="spherical_video_close">Bağla</string>
+  <string name="spherical_video_error">Bu videonu oynatmaq mümkün deyil</string>
+</resources>

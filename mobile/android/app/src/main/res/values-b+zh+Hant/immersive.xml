@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">返回</string>
+  <string name="immersive_play">播放</string>
+  <string name="immersive_pause">暫停</string>
+  <string name="immersive_hint">B 或 Y：返回應用程式。扳機鍵：播放或暫停。A、X 或握把鍵：顯示或隱藏此面板。搖桿向左或向右：旋轉畫面。</string>
+  <string name="immersive_yaw">畫面已旋轉至 %1$d 度</string>
+  <string name="immersive_loading">載入中</string>
+  <string name="immersive_buffering">緩衝中</string>
+  <string name="immersive_preview_loading_full">預覽 %1$d x %2$d，正在載入完整解析度</string>
+  <string name="immersive_full_resolution">完整解析度 %1$d x %2$d</string>
+  <string name="immersive_preview_only">僅預覽：%1$s</string>
+  <string name="immersive_error_photo">無法顯示此相片：%1$s</string>
+  <string name="immersive_error_video">無法播放此影片（%1$s）。5.7K H.264 影片可能超出頭戴裝置解碼器的能力，建議使用 H.265。</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 超過 4K，超出頭戴裝置解碼器的能力（卡頓、馬賽克）。請在 Immich 中將影片轉碼設定為 HEVC，或限制解析度。</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 超過 4K，超出頭戴裝置解碼器的能力（卡頓、馬賽克）。請將此影片重新編碼為 HEVC。</string>
+  <string name="immersive_video_fallback">原始檔案播放失敗（%1$s），正在嘗試伺服器播放串流</string>
+  <string name="immersive_video_decoder_switch">%1$s 超出頭戴裝置解碼器的能力，正在嘗試伺服器播放串流</string>
+  <string name="immersive_error_nothing">沒有可顯示的內容</string>
+</resources>

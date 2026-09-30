@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Назад</string>
+  <string name="immersive_play">Воспроизвести</string>
+  <string name="immersive_pause">Пауза</string>
+  <string name="immersive_hint">B или Y: назад в приложение. Курок: воспроизведение или пауза. A, X или кнопка захвата: показать или скрыть эту панель. Стик влево или вправо: повернуть изображение.</string>
+  <string name="immersive_yaw">Поворот изображения: %1$d°</string>
+  <string name="immersive_loading">Загрузка</string>
+  <string name="immersive_buffering">Буферизация</string>
+  <string name="immersive_preview_loading_full">Предпросмотр %1$d x %2$d, загружается полное разрешение</string>
+  <string name="immersive_full_resolution">Полное разрешение %1$d x %2$d</string>
+  <string name="immersive_preview_only">Только предпросмотр: %1$s</string>
+  <string name="immersive_error_photo">Не удалось показать это фото: %1$s</string>
+  <string name="immersive_error_video">Не удалось воспроизвести это видео (%1$s). Видео H.264 в 5.7K может оказаться не по силам декодеру шлема, рекомендуется H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d больше 4K и не по силам декодеру шлема (рывки, артефакты). В Immich выберите HEVC для транскодирования видео или ограничьте разрешение.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d больше 4K и не по силам декодеру шлема (рывки, артефакты). Перекодируйте это видео в HEVC.</string>
+  <string name="immersive_video_fallback">Не удалось воспроизвести оригинал (%1$s), пробуем поток воспроизведения с сервера</string>
+  <string name="immersive_video_decoder_switch">%1$s не по силам декодеру шлема, пробуем поток воспроизведения с сервера</string>
+  <string name="immersive_error_nothing">Нечего показать</string>
+</resources>

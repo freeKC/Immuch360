@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Каялла</string>
+  <string name="immersive_play">Выля</string>
+  <string name="immersive_pause">Пауза</string>
+  <string name="immersive_hint">B е Y: приложение патне таврӑн. Курок: выля е пауза. A, X е тытмалли кнопка: ку панеле кӑтарт е пытар. Джойстик сулахая е сылтӑма: ӳкерчӗке ҫавӑр.</string>
+  <string name="immersive_yaw">Ӳкерчӗке %1$d градуса ҫавӑрнӑ</string>
+  <string name="immersive_loading">Тиени</string>
+  <string name="immersive_buffering">Буферлани</string>
+  <string name="immersive_preview_loading_full">Малтанлӑха пӑхни %1$d x %2$d, тулли виҫене тиенет</string>
+  <string name="immersive_full_resolution">Тулли виҫе %1$d x %2$d</string>
+  <string name="immersive_preview_only">Малтанлӑха пӑхни ҫеҫ: %1$s</string>
+  <string name="immersive_error_photo">Ку сӑнӳкерчӗке кӑтартма май ҫук: %1$s</string>
+  <string name="immersive_error_video">Ку видеона выляма май ҫук (%1$s). 5.7K H.264 видео шлем декодерӗн вӑйӗнчен иртме пултарать, H.265 сӗнетпӗр.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K-ран пысӑкрах, шлем декодерӗн вӑйӗнчен иртет (чарӑна-чарӑна пырать, тӑваткалсем курӑнаҫҫӗ). Immich-ра видео транскодланине HEVC ҫине лартӑр е виҫене чакарӑр.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K-ран пысӑкрах, шлем декодерӗн вӑйӗнчен иртет (чарӑна-чарӑна пырать, тӑваткалсем курӑнаҫҫӗ). Ку видеона HEVC-па ҫӗнӗрен кодлӑр.</string>
+  <string name="immersive_video_fallback">Оригинал ӗҫлемерӗ (%1$s), сервер выляну юхӑмне тӗрӗслетпӗр</string>
+  <string name="immersive_video_decoder_switch">%1$s шлем декодерӗн вӑйӗнчен иртет, сервер выляну юхӑмне тӗрӗслетпӗр</string>
+  <string name="immersive_error_nothing">Кӑтартмалли нимӗн те ҫук</string>
+</resources>

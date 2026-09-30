@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">ফিরে যান</string>
+  <string name="immersive_play">চালান</string>
+  <string name="immersive_pause">থামান</string>
+  <string name="immersive_hint">B বা Y: অ্যাপে ফিরে যান। ট্রিগার: চালান বা থামান। A, X বা গ্রিপ: এই প্যানেল দেখান বা লুকান। থাম্বস্টিক বাঁয়ে বা ডানে: ছবি ঘোরান।</string>
+  <string name="immersive_yaw">ছবি %1$d ডিগ্রিতে ঘোরানো হয়েছে</string>
+  <string name="immersive_loading">লোড হচ্ছে</string>
+  <string name="immersive_buffering">বাফার হচ্ছে</string>
+  <string name="immersive_preview_loading_full">প্রিভিউ %1$d x %2$d, পূর্ণ রেজোলিউশন লোড হচ্ছে</string>
+  <string name="immersive_full_resolution">পূর্ণ রেজোলিউশন %1$d x %2$d</string>
+  <string name="immersive_preview_only">শুধু প্রিভিউ: %1$s</string>
+  <string name="immersive_error_photo">এই ছবিটি দেখানো যাচ্ছে না: %1$s</string>
+  <string name="immersive_error_video">এই ভিডিওটি চালানো যাচ্ছে না (%1$s)। 5.7K H.264 ভিডিও হেডসেটের ডিকোডারের সীমা ছাড়িয়ে যেতে পারে, H.265 সুপারিশ করা হয়।</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d 4K-এর বেশি এবং হেডসেটের ডিকোডারের সীমা ছাড়িয়ে যায় (থেমে থেমে চলে, ছবি ব্লক ব্লক দেখায়)। Immich-এ ভিডিও ট্রান্সকোডিং HEVC-তে সেট করুন অথবা রেজোলিউশন সীমিত করুন।</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d 4K-এর বেশি এবং হেডসেটের ডিকোডারের সীমা ছাড়িয়ে যায় (থেমে থেমে চলে, ছবি ব্লক ব্লক দেখায়)। এই ভিডিওটি HEVC-তে আবার এনকোড করুন।</string>
+  <string name="immersive_video_fallback">মূল ফাইলটি চালানো যায়নি (%1$s), সার্ভারের প্লেব্যাক স্ট্রিম চেষ্টা করা হচ্ছে</string>
+  <string name="immersive_video_decoder_switch">%1$s হেডসেটের ডিকোডারের সীমার বেশি, সার্ভারের প্লেব্যাক স্ট্রিম চেষ্টা করা হচ্ছে</string>
+  <string name="immersive_error_nothing">দেখানোর মতো কিছু নেই</string>
+</resources>

@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "Nije moguće otvoriti imerzivni preglednik",
+  "library_360": "360°",
+  "panorama_gyroscope": "Žiroskop",
+  "panorama_no_gyroscope": "Ovaj uređaj nema žiroskop"
+}

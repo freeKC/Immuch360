@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Zrück</string>
+  <string name="immersive_play">Abspiela</string>
+  <string name="immersive_pause">Pause</string>
+  <string name="immersive_hint">B oder Y: zrück zur App. Abzug: abspiela oder aahalta. A, X oder Griff: des Feld zeiga oder verstecka. Stick links oder rechts: s\'Bild dreha.</string>
+  <string name="immersive_yaw">Bild uff %1$d Grad drehd</string>
+  <string name="immersive_loading">Am Lada</string>
+  <string name="immersive_buffering">Am Puffra</string>
+  <string name="immersive_preview_loading_full">Vorschau %1$d x %2$d, volle Auflösung wird glada</string>
+  <string name="immersive_full_resolution">Volle Auflösung %1$d x %2$d</string>
+  <string name="immersive_preview_only">Bloß Vorschau: %1$s</string>
+  <string name="immersive_error_photo">Des Foto ka ned azeigt werda: %1$s</string>
+  <string name="immersive_error_video">Des Video ka ned abgspielt werda (%1$s). A 5.7K H.264-Video ka dr Decoder vom Headset überfordra, H.265 wird empfohla.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d isch über 4K ond überfordert dr Decoder vom Headset (ruckelig, klötzlig). Stell en Immich d\'Video-Transkodierung uff HEVC oder begrenz d\'Auflösung.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d isch über 4K ond überfordert dr Decoder vom Headset (ruckelig, klötzlig). Kodier des Video en HEVC nei.</string>
+  <string name="immersive_video_fallback">S\'Original hot ned klappt (%1$s), jetzt wird dr Wiedergabestream vom Server probiert</string>
+  <string name="immersive_video_decoder_switch">%1$s isch z viel fir dr Decoder vom Headset, jetzt wird dr Wiedergabestream vom Server probiert</string>
+  <string name="immersive_error_nothing">Nix zom Azeiga</string>
+</resources>

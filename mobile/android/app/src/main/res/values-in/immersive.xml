@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Kembali</string>
+  <string name="immersive_play">Putar</string>
+  <string name="immersive_pause">Jeda</string>
+  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pelatuk: putar atau jeda. A, X atau grip: tampilkan atau sembunyikan panel ini. Thumbstick ke kiri atau kanan: rotasi gambar.</string>
+  <string name="immersive_yaw">Gambar diputar ke %1$d derajat</string>
+  <string name="immersive_loading">Memuat</string>
+  <string name="immersive_buffering">Memuat buffer</string>
+  <string name="immersive_preview_loading_full">Pratinjau %1$d x %2$d, memuat resolusi penuh</string>
+  <string name="immersive_full_resolution">Resolusi penuh %1$d x %2$d</string>
+  <string name="immersive_preview_only">Hanya pratinjau: %1$s</string>
+  <string name="immersive_error_photo">Foto ini tidak dapat ditampilkan: %1$s</string>
+  <string name="immersive_error_video">Video ini tidak dapat diputar (%1$s). Video H.264 5.7K dapat melebihi kemampuan dekoder headset, disarankan H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d melebihi 4K dan melampaui kemampuan dekoder headset (tersendat, pecah kotak-kotak). Di Immich, atur transkode video ke HEVC atau batasi resolusinya.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d melebihi 4K dan melampaui kemampuan dekoder headset (tersendat, pecah kotak-kotak). Enkode ulang video ini ke HEVC.</string>
+  <string name="immersive_video_fallback">Gagal memutar file asli (%1$s), mencoba stream pemutaran dari server</string>
+  <string name="immersive_video_decoder_switch">%1$s melampaui kemampuan dekoder headset, mencoba stream pemutaran dari server</string>
+  <string name="immersive_error_nothing">Tidak ada yang dapat ditampilkan</string>
+</resources>

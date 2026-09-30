@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "Den immersive Viewer konnt net opgemaach ginn",
+  "library_360": "360°",
+  "panorama_gyroscope": "Gyroskop",
+  "panorama_no_gyroscope": "Kee Gyroskop op dësem Apparat"
+}

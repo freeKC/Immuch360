@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Wstecz</string>
+  <string name="immersive_play">Odtwórz</string>
+  <string name="immersive_pause">Wstrzymaj</string>
+  <string name="immersive_hint">B lub Y: powrót do aplikacji. Spust: odtwórz lub wstrzymaj. A, X lub przycisk chwytu: pokaż lub ukryj ten panel. Drążek w lewo lub w prawo: obróć obraz.</string>
+  <string name="immersive_yaw">Obraz obrócony do %1$d°</string>
+  <string name="immersive_loading">Ładowanie</string>
+  <string name="immersive_buffering">Buforowanie</string>
+  <string name="immersive_preview_loading_full">Podgląd %1$d x %2$d, ładowanie pełnej rozdzielczości</string>
+  <string name="immersive_full_resolution">Pełna rozdzielczość %1$d x %2$d</string>
+  <string name="immersive_preview_only">Tylko podgląd: %1$s</string>
+  <string name="immersive_error_photo">Nie można wyświetlić tego zdjęcia: %1$s</string>
+  <string name="immersive_error_video">Nie można odtworzyć tego filmu (%1$s). Film 5.7K w H.264 może przekraczać możliwości dekodera headsetu, zalecany jest H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d przekracza 4K i możliwości dekodera headsetu (zacina się, widać bloki). W Immich ustaw transkodowanie wideo na HEVC lub ogranicz rozdzielczość.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d przekracza 4K i możliwości dekodera headsetu (zacina się, widać bloki). Przekoduj ten film do HEVC.</string>
+  <string name="immersive_video_fallback">Nie udało się odtworzyć oryginału (%1$s), próba odtworzenia strumienia z serwera</string>
+  <string name="immersive_video_decoder_switch">%1$s przekracza możliwości dekodera headsetu, próba odtworzenia strumienia z serwera</string>
+  <string name="immersive_error_nothing">Nic do wyświetlenia</string>
+</resources>

@@ -1,1 +1,6 @@
-{}
+{
+  "immersive_viewer_open_failed": "ඉමර්සිව් දසුන විවෘත කළ නොහැකි විය",
+  "library_360": "360°",
+  "panorama_gyroscope": "ගයිරොස්කෝපය",
+  "panorama_no_gyroscope": "මෙම උපාංගයේ ගයිරොස්කෝපයක් නැත"
+}

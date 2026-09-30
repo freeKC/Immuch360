@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) immersive viewer: ImmersiveViewerActivity -->
+<resources>
+  <string name="immersive_back">Bumalik</string>
+  <string name="immersive_play">I-play</string>
+  <string name="immersive_pause">I-pause</string>
+  <string name="immersive_hint">B o Y: bumalik sa app. Trigger: i-play o i-pause. A, X o grip: ipakita o itago ang panel na ito. Thumbstick pakaliwa o pakanan: paikutin ang larawan.</string>
+  <string name="immersive_yaw">Inikot ang larawan sa %1$d digri</string>
+  <string name="immersive_loading">Naglo-load</string>
+  <string name="immersive_buffering">Nagba-buffer</string>
+  <string name="immersive_preview_loading_full">Preview %1$d x %2$d, nilo-load ang buong resolution</string>
+  <string name="immersive_full_resolution">Buong resolution %1$d x %2$d</string>
+  <string name="immersive_preview_only">Preview lamang: %1$s</string>
+  <string name="immersive_error_photo">Hindi maipakita ang larawang ito: %1$s</string>
+  <string name="immersive_error_video">Hindi ma-play ang video na ito (%1$s). Maaaring lumampas ang 5.7K H.264 na video sa kaya ng decoder ng headset, inirerekomenda ang H.265.</string>
+  <string name="immersive_avc_too_large">Ang H.264 %1$d x %2$d ay lampas sa 4K at hindi kaya ng decoder ng headset (paputol-putol, basag-basag). Sa Immich, itakda ang video transcoding sa HEVC o limitahan ang resolution.</string>
+  <string name="immersive_avc_too_large_local">Ang H.264 %1$d x %2$d ay lampas sa 4K at hindi kaya ng decoder ng headset (paputol-putol, basag-basag). I-encode muli ang video na ito sa HEVC.</string>
+  <string name="immersive_video_fallback">Nabigo ang orihinal (%1$s), sinusubukan ang playback stream ng server</string>
+  <string name="immersive_video_decoder_switch">Lampas ang %1$s sa kaya ng decoder ng headset, sinusubukan ang playback stream ng server</string>
+  <string name="immersive_error_nothing">Walang maipapakita</string>
+</resources>

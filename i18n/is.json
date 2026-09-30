@@ -1190,6 +1190,7 @@
   "interval": {
     "day_at_onepm": "Alla daga klukkan 13"
   },
+  "library_360": "360°",
   "map": "Kort",
   "panorama_gyroscope": "Gíróskóp",
   "panorama_no_gyroscope": "Ekkert gíróskóp í þessu tæki",

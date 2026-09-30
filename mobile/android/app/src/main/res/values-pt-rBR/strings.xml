@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="spherical_video_close">Fechar</string>
+  <string name="spherical_video_error">Não é possível reproduzir este vídeo</string>
+</resources>

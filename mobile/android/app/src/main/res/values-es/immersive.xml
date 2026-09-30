@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="immersive_back">Atrás</string>
+  <string name="immersive_play">Reproducir</string>
+  <string name="immersive_pause">Pausar</string>
+  <string name="immersive_hint">B o Y: volver a la aplicación. Gatillo: reproducir o pausar. A, X o botón de agarre: mostrar u ocultar este panel. Joystick a la izquierda o a la derecha: girar la imagen.</string>
+  <string name="immersive_yaw">Imagen girada a %1$d grados</string>
+  <string name="immersive_loading">Cargando</string>
+  <string name="immersive_buffering">Almacenando en búfer</string>
+  <string name="immersive_preview_loading_full">Vista previa %1$d x %2$d, cargando la resolución completa</string>
+  <string name="immersive_full_resolution">Resolución completa %1$d x %2$d</string>
+  <string name="immersive_preview_only">Solo vista previa: %1$s</string>
+  <string name="immersive_error_photo">No se puede mostrar esta foto: %1$s</string>
+  <string name="immersive_error_video">No se puede reproducir este vídeo (%1$s). Un vídeo 5.7K en H.264 puede superar la capacidad del decodificador de las gafas, se recomienda H.265.</string>
+  <string name="immersive_avc_too_large">H.264 %1$d x %2$d supera los 4K y la capacidad del decodificador de las gafas (tirones, pixelado). En Immich, configura la transcodificación de vídeo en HEVC o limita la resolución.</string>
+  <string name="immersive_avc_too_large_local">H.264 %1$d x %2$d supera los 4K y la capacidad del decodificador de las gafas (tirones, pixelado). Vuelve a codificar este vídeo en HEVC.</string>
+  <string name="immersive_video_fallback">El original ha fallado (%1$s), probando el flujo de reproducción del servidor</string>
+  <string name="immersive_video_decoder_switch">%1$s supera la capacidad del decodificador de las gafas, probando el flujo de reproducción del servidor</string>
+  <string name="immersive_error_nothing">Nada que mostrar</string>
+</resources>
