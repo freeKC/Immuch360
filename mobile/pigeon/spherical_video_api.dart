@@ -1,9 +1,12 @@
 import 'package:pigeon/pigeon.dart';
 
-// Android only: iOS has no implementation and the Flutter side never calls it there
+// Native 360° video player: SphericalVideoActivity on Android, SphericalVideoViewController on iOS
+// Not Messages.g.swift on iOS: the Sync API already generates the Messages* types there, and PigeonError
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/platform/spherical_video_api.g.dart',
+    swiftOut: 'ios/Runner/Spherical/SphericalVideo.g.swift',
+    swiftOptions: SwiftOptions(includeErrorClass: false),
     kotlinOut: 'android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideo.g.kt',
     kotlinOptions: KotlinOptions(package: 'app.alextran.immich.spherical'),
     dartOptions: DartOptions(),

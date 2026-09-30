@@ -61,7 +61,7 @@ Google Play and App Store listings are in preparation; the links will be added h
 | Gyroscope navigation: look around by moving the phone | No | **Yes**, toggle in the 360 viewer (off by default) | Pre-release; tested on a Galaxy S24+, not yet on an iPhone |
 | Initial view from GPano metadata, inertia after a drag, double tap zoom, sharper texture when zoomed in | No | **Yes** | Pre-release, device feedback welcome |
 | 360° entry in the Library tab listing every 360° photo and video | No | **Yes** | Pre-release |
-| 360° videos played on a sphere with drag and gyroscope | No, flat video only | **Yes on Android** (native Media3 player opened by the 360 button; plays the file stored on the phone when there is one, otherwise streams it from your server) | Pre-release (Android), device feedback welcome; iOS later |
+| 360° videos played on a sphere with drag and gyroscope | No, flat video only | **Yes on Android and iOS** (native player opened by the 360° button, Media3 on Android and SceneKit on iOS; plays the file stored on the phone when there is one, otherwise streams it from your server) | Pre-release on Android; iOS in TestFlight testing |
 | Meta Quest 3 viewer with head tracking | No | **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Pre-release, tested on a Quest 3; starting orientation not confirmed yet |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | Shown flat or wrongly | Server side stitching under study | Study |
 
