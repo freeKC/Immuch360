@@ -35,8 +35,8 @@ import 'package:openapi/api.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-/// 360° videos play in a native player that only exists on Android (SphericalVideoActivity)
-final panorama360VideoSupportedProvider = Provider<bool>((_) => !kIsWeb && Platform.isAndroid);
+/// 360° videos play in a native player: SphericalVideoActivity on Android, SphericalVideoViewController on iOS
+final panorama360VideoSupportedProvider = Provider<bool>((_) => !kIsWeb && (Platform.isAndroid || Platform.isIOS));
 
 final _log = Logger('PanoramaViewer');
 
@@ -63,7 +63,8 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
     final localFile = localId != null ? await storage.getFileForAsset(localId) : null;
     final url = localFile?.uri.toString() ?? remoteUrl;
     // Stopped before the viewer goes to the background: it neither plays nor buffers behind the 360° player.
-    // The viewer lifts this when the app resumes.
+    // The viewer lifts this when the app resumes, which closing the player brings about on iOS as well: its full
+    // screen presentation hides the Flutter view, and the app lifecycle follows.
     await player.suspendForExternalPlayer();
     await api.open(url, ApiService.getRequestHeaders(), asset.name, closeLabel, errorMessage);
   } catch (error, stackTrace) {

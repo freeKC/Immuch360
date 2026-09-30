@@ -19,7 +19,7 @@
 | 360° button in the viewer top bar, zoom kept on the flat view, loading indicator | n/a | **Yes** | Released |
 | Gyroscope navigation: look around by moving the phone | No | **Yes**, toggle in the 360 viewer (off by default) | Released, verified on a Galaxy S24+ |
 | Initial view from GPano metadata, inertia after a drag, double tap zoom, sharper texture when zoomed in | No | **Yes** | Released, device feedback welcome |
-| 360° videos played on a sphere with drag and head tracking | No, flat video only | **Yes on Android** (native Media3 player opened by the 360 button; plays the copy on the phone when there is one) | Released (Android), device feedback welcome; iOS later |
+| 360° videos played on a sphere with drag and head tracking | No, flat video only | **Yes on Android and iOS** (native player opened by the 360 button, Media3 on Android and SceneKit on iOS, drag or move the phone to look around; plays the copy on the phone when there is one) | Released on Android and iOS, device feedback welcome |
 | Meta Quest 3 viewer with head tracking | No | **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Released in the same APK, not yet verified on a headset |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | Shown flat or wrongly | Server side stitching under study | Study |
 
