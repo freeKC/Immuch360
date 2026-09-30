@@ -547,7 +547,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       return;
     }
     _setGyroEnabled(false);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No gyroscope on this device')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.t.panorama_no_gyroscope)));
   }
 
   // Any touch stops the view where it is
@@ -637,7 +637,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
               isSelected: _gyroEnabled,
               icon: const Icon(Icons.explore_outlined),
               selectedIcon: const Icon(Icons.explore),
-              tooltip: 'Gyroscope',
+              tooltip: context.t.panorama_gyroscope,
               onPressed: () => _setGyroEnabled(!_gyroEnabled),
             ),
         ],

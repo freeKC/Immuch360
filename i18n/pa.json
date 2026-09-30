@@ -27,5 +27,8 @@
   "add_to": "…ਵਿਚ ਜੋੜੋ",
   "add_to_album": "ਐਲਬਮ ਵਿੱਚ ਜੋੜੋ",
   "add_to_album_bottom_sheet_added": "{album} ਵਿਚ ਸ਼ਾਮਿਲ ਕੀਤਾ",
-  "add_to_album_bottom_sheet_already_exists": "ਪਹਿਲਾਂ ਹੀ {album} ਵਿੱਚ"
+  "add_to_album_bottom_sheet_already_exists": "ਪਹਿਲਾਂ ਹੀ {album} ਵਿੱਚ",
+  "immersive_viewer_open_failed": "ਇਮਰਸਿਵ ਵਿਊਅਰ ਨਹੀਂ ਖੋਲ੍ਹਿਆ ਜਾ ਸਕਿਆ",
+  "panorama_gyroscope": "ਜਾਇਰੋਸਕੋਪ",
+  "panorama_no_gyroscope": "ਇਸ ਡਿਵਾਈਸ 'ਤੇ ਕੋਈ ਜਾਇਰੋਸਕੋਪ ਨਹੀਂ ਹੈ"
 }

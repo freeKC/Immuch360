@@ -21,5 +21,8 @@
   "admin": {
     "create_job": "Жұмысты бастау"
   },
+  "immersive_viewer_open_failed": "Иммерсивті көру құралын ашу мүмкін болмады",
+  "panorama_gyroscope": "Гироскоп",
+  "panorama_no_gyroscope": "Бұл құрылғыда гироскоп жоқ",
   "zoom_image": "суретті үлкейту"
 }

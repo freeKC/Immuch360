@@ -1077,6 +1077,7 @@
   "image_alt_text_date_place_2_people": "{isVideo, select, true {Video} other {Bild}} ufgnoo in {city}, {country} mit {person1} und {person2} am {date}",
   "image_alt_text_date_place_3_people": "{isVideo, select, true {Video} other {Bild}} ufgnoo in {city}, {country} mit {person1}, {person2} und {person3} am {date}",
   "image_alt_text_date_place_4_or_more_people": "{isVideo, select, true {Video} other {Bild}} ufgnoo in {city}, {country} mit {person1}, {person2} und {additionalCount, number} andere am {date}",
+  "immersive_viewer_open_failed": "Di immersivi Aazeig het nöd chönne göffnet werde",
   "immich_logo": "Immich-Logo",
   "immich_web_interface": "Immich-Web-Oberflächi",
   "import_from_json": "Us JSON importierä",
@@ -1339,6 +1340,8 @@
   "onboarding": "Iistig",
   "onboarding_locale_description": "Wähl dini bevorzugti Sprooch. Du chasch die au spöter i dine Iistellige ändere.",
   "onboarding_privacy_description": "Diä folgende (optionali) Funktione hänged vo externä Diänscht ab und chönd jederziit i de Iistellige deaktiviärt wärde.",
+  "panorama_gyroscope": "Gyroskop",
+  "panorama_no_gyroscope": "Uf däm Gerät hets kei Gyroskop",
   "upload_finished": "Ufelade beändet",
   "users": "Benutzer",
   "waiting": "Usstehend"

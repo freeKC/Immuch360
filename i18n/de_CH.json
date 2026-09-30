@@ -175,6 +175,9 @@
     "machine_learning_max_detection_distance": "Maximali Erkennigsdistanz",
     "machine_learning_max_detection_distance_description": "Maximali Distanz zwüsche zwei Bilder, um si als Duplikat z erkenne, zwische 0.001 - 0.1. Höcheri Wärt erkenned meh Duplikat, aber chönd Falschpositivi erzüge."
   },
+  "immersive_viewer_open_failed": "Di immersivi Aasicht het nöd chönne göffnet werde",
+  "panorama_gyroscope": "Gyroskop",
+  "panorama_no_gyroscope": "Uf däm Gerät hets kei Gyroskop",
   "video_quality": "Videoqualität",
   "videos": "Videos",
   "view": "Aasicht",

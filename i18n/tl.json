@@ -35,5 +35,8 @@
   "add_upload_to_stack": "Idagdag ang upload sa stack",
   "add_url": "Magdagdag ng URL",
   "added_to_archive": "Isinama sa archive",
-  "added_to_favorites": "Isinama sa favorites"
+  "added_to_favorites": "Isinama sa favorites",
+  "immersive_viewer_open_failed": "Hindi mabuksan ang immersive viewer",
+  "panorama_gyroscope": "Gyroscope",
+  "panorama_no_gyroscope": "Walang gyroscope sa device na ito"
 }

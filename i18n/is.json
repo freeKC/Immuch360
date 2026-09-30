@@ -1172,6 +1172,7 @@
   "image_alt_text_date_place_2_people": "{isVideo, select, true {Myndband} other {Mynd}} í {city}, {country} með {person1} og {person2} á {date}",
   "image_alt_text_date_place_3_people": "{isVideo, select, true {Myndband} other {Mynd}} í {city}, {country} með {person1}, {person2}, og {person3} á {date}",
   "image_alt_text_date_place_4_or_more_people": "{isVideo, select, true {Video} other {Image}} í {city}, {country} með {person1}, {person2}, og {additionalCount, number} öðrum á {date}",
+  "immersive_viewer_open_failed": "Ekki tókst að opna sýndarveruleikaskoðarann",
   "immich_logo": "Immich merkið",
   "immich_web_interface": "Vefviðmót Immich",
   "import_from_json": "Flytja inn úr JSON",
@@ -1190,6 +1191,8 @@
     "day_at_onepm": "Alla daga klukkan 13"
   },
   "map": "Kort",
+  "panorama_gyroscope": "Gíróskóp",
+  "panorama_no_gyroscope": "Ekkert gíróskóp í þessu tæki",
   "photos": "Ljósmyndir",
   "sharing": "Deiling",
   "yes": "Já"

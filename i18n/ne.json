@@ -20,5 +20,8 @@
   "add_exclusion_pattern": "बहिष्करण ढाँचा थप्नुहोस्",
   "add_location": "स्थान थप्नुहोस्",
   "add_partner": "साझेदार थप्नुहोस्",
-  "add_step": "चरण थप्नुहोस्"
+  "add_step": "चरण थप्नुहोस्",
+  "immersive_viewer_open_failed": "इमर्सिभ भ्युअर खोल्न सकिएन",
+  "panorama_gyroscope": "जाइरोस्कोप",
+  "panorama_no_gyroscope": "यो यन्त्रमा जाइरोस्कोप छैन"
 }

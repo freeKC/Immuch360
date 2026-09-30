@@ -798,6 +798,7 @@
     "unable_to_delete_asset": "Gagal membuang aset",
     "unable_to_delete_assets": "Gagal membuang aset-aset"
   },
+  "immersive_viewer_open_failed": "Tidak dapat membuka pemapar imersif",
   "language": "Bahasa",
   "language_search_hint": "Cari bahasa…",
   "last": "Akhir",
@@ -820,6 +821,8 @@
   "linked_oauth_account": "Akaun OAuth yang terpaut",
   "list": "Senarai",
   "loading": "Sedang memuatkan",
+  "panorama_gyroscope": "Giroskop",
+  "panorama_no_gyroscope": "Tiada giroskop pada peranti ini",
   "search_by_description": "Carian secara huraian",
   "search_by_description_example": "Hari mendaki di Sapa",
   "some_assets_already_have_a_location_warning": "Beberapa aset yang dipilih telah memiliki lokasi",

@@ -170,5 +170,8 @@
     "machine_learning_facial_recognition_model": "Üz tanıma modeli"
   },
   "discord": "Discord",
+  "immersive_viewer_open_failed": "İmmersiv görüntüləyicini açmaq mümkün olmadı",
+  "panorama_gyroscope": "Giroskop",
+  "panorama_no_gyroscope": "Bu cihazda giroskop yoxdur",
   "timeline": "Zaman şkalası"
 }

@@ -119,6 +119,7 @@
   "hour": "Se'et",
   "hours": "Se'et",
   "id": "ID",
+  "immersive_viewer_open_failed": "Nîşandera binavbûyî nehat vekirin",
   "in_year_selector": "Di",
   "iso": "ISO",
   "language_search_hint": "Li zimanan bigere...",
@@ -163,6 +164,8 @@
   "options": "'Eyar",
   "owner": "Xwedî",
   "page": "Rûpel",
+  "panorama_gyroscope": "Jîroskop",
+  "panorama_no_gyroscope": "Li ser vê cîhazê jîroskop tune ye",
   "password": "Şîfre",
   "password_required": "Şîfre mecbûrî ye",
   "past_durations": {

@@ -7,6 +7,7 @@ import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
@@ -153,12 +154,14 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60.0);
 
   Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset) async {
+    // Read before the first await: the viewer may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
+    final errorMessage = context.t.immersive_viewer_open_failed;
     try {
       await openImmersiveViewer(ref, asset);
     } catch (error) {
       Logger('ViewerTopAppBar').warning('Could not open the immersive viewer: $error');
-      messenger?.showSnackBar(const SnackBar(content: Text('Could not open the immersive viewer')));
+      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
 }
