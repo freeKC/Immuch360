@@ -29,6 +29,9 @@ workflows:
           export PATH="$HOME/.local/bin:$PATH"
           mise //mobile:install:ci
           mise //mobile:codegen
+      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+        script: |
+          xcodebuild -downloadComponent MetalToolchain
       - name: iOS device build (release, no codesign)
         ignore_failure: true
         script: |
@@ -108,6 +111,9 @@ workflows:
           export PATH="$HOME/.local/bin:$PATH"
           mise //mobile:install:ci
           mise //mobile:codegen
+      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+        script: |
+          xcodebuild -downloadComponent MetalToolchain
       - name: iOS simulator build (debug)
         script: |
           set -euxo pipefail
@@ -206,6 +212,9 @@ workflows:
           agvtool new-marketing-version "$APP_VERSION"
           agvtool new-version -all "$PROJECT_BUILD_NUMBER"
           xcode-project use-profiles
+      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+        script: |
+          xcodebuild -downloadComponent MetalToolchain
       - name: Flutter iOS release build (compiles the Dart side and installs the pods)
         script: |
           set -euxo pipefail
