@@ -199,6 +199,13 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
   // Eye textures, at the output size (capped)
   private var leftEye: GlTarget? = null
   private var rightEye: GlTarget? = null
+  /**
+   * Where the synthesis pass draws when the screen is larger than the eyes (a 3120x1440 screen, eyes capped at
+   * [MAX_EYE_PIXELS]): the view is synthesised at the eye size, then scaled up, which costs about half the time of
+   * three warp iterations per screen pixel. Null when the screen is no larger than the eyes, or when it could not be
+   * created: the synthesis then draws straight to the screen.
+   */
+  private var synthesis: GlTarget? = null
   private var eyeTargetsFailed = false
   private var eyesValid = false
   private var lastLayout: EyeLayout? = null
@@ -563,6 +570,11 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     }
     leftEye = left
     rightEye = right
+    synthesis = if (outWidth.toLong() * outHeight > eyeWidth.toLong() * eyeHeight) {
+      SpatialGl.createTarget(eyeWidth, eyeHeight, TargetFormat.RGBA8, GLES30.GL_LINEAR)
+    } else {
+      null
+    }
     eyesValid = false
     return true
   }
@@ -853,8 +865,13 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
   // Pass 5
 
   private fun drawSynthesis(left: GlTarget, right: GlTarget, map: GlTarget, tier: Tier) {
-    beginScreen()
-    val program = synthesisProgram ?: return drawCopyAfterClear(left)
+    val program = synthesisProgram ?: return drawCopy(left)
+    val scaled = synthesis
+    if (scaled != null) {
+      scaled.bind()
+    } else {
+      beginScreen()
+    }
     program.use()
     program.setInt("u_left", 0)
     program.setInt("u_right", 1)
@@ -868,6 +885,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     bindTexture(1, right.texture)
     bindTexture(2, map.texture)
     drawTriangle()
+    if (scaled != null) drawCopy(scaled)
   }
 
   private fun drawDisparity(map: GlTarget) {
@@ -877,14 +895,6 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     program.setInt("u_map", 0)
     program.setFloat("u_gain", 0.5f / (max(1, searchRange()) * encodeScale()))
     bindTexture(0, map.texture)
-    drawTriangle()
-  }
-
-  private fun drawCopyAfterClear(eye: GlTarget) {
-    val program = copyProgram ?: return
-    program.use()
-    bindTexture(0, eye.texture)
-    program.setInt("u_texture", 0)
     drawTriangle()
   }
 
@@ -1092,8 +1102,10 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
   private fun releaseEyeTargets() {
     leftEye?.release()
     rightEye?.release()
+    synthesis?.release()
     leftEye = null
     rightEye = null
+    synthesis = null
     eyesValid = false
   }
 
