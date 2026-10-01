@@ -129,7 +129,7 @@
 			<string>_CC1AD845._googlecast._tcp</string>
 		</array>
 		<key>NSCameraUsageDescription</key>
-		<string>We need to access the camera to let you take beautiful video using this app</string>
+		<string>The front camera tracks the position of your head for the Spatial 2.5D video mode. The images stay on the device and are never stored or sent.</string>
 		<key>NSFaceIDUsageDescription</key>
 		<string>We need to use FaceID to allow access to your locked folder</string>
 		<key>NSLocalNetworkUsageDescription</key>

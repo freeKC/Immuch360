@@ -25,6 +25,7 @@ import 'package:immich_mobile/presentation/actions/similar_photos.action.dart';
 import 'package:immich_mobile/presentation/actions/slideshow.action.dart';
 import 'package:immich_mobile/presentation/actions/stack.action.dart';
 import 'package:immich_mobile/presentation/actions/upload.action.dart';
+import 'package:immich_mobile/presentation/actions/view_as_360.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/base_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/like_activity_action_button.widget.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -68,6 +69,7 @@ enum ActionButtonType {
   setProfilePicture,
   viewInTimeline,
   slideshow,
+  viewAs360,
   download,
   upload,
   openInBrowser,
@@ -160,6 +162,9 @@ enum ActionButtonType {
             context.isOwner,
       ActionButtonType.cast => context.isCasting || context.asset.hasRemote,
       ActionButtonType.slideshow => true,
+      // The action decides from the exif and the choices kept on the device: "View as 360°", or "Stop treating as
+      // 360°" once chosen. Nothing changes on the server, so it stays in the locked view too.
+      ActionButtonType.viewAs360 => context.asset.isImage || context.asset.isVideo,
     };
   }
 
@@ -219,6 +224,7 @@ enum ActionButtonType {
               },
       ),
       ActionButtonType.cast => const ActionMenuItem(action: CastAction()),
+      ActionButtonType.viewAs360 => ActionMenuItem(action: ViewAs360Action(source: context.source)),
     };
   }
 

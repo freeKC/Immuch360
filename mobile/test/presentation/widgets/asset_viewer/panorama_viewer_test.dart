@@ -138,6 +138,7 @@ void main() {
         final container = ProviderContainer(
           overrides: [
             assetExifProvider(asset).overrideWith((ref) => Stream.value(ExifInfo(projectionType: projectionType))),
+            forcedPanoramaAssetsProvider.overrideWith(_ForcedPanoramas.new),
           ],
         );
         addTearDown(container.dispose);
@@ -165,13 +166,47 @@ void main() {
 
         await tester.pumpConsumerWidget(
           PanoramaBadge(asset: asset),
-          overrides: [assetServiceProvider.overrideWithValue(assetService)],
+          overrides: [
+            assetServiceProvider.overrideWithValue(assetService),
+            forcedPanoramaAssetsProvider.overrideWith(_ForcedPanoramas.new),
+          ],
         );
 
         expect(find.byIcon(Icons.threesixty_rounded), expected);
       }
     });
+
+    testWidgets('shows the 360° badge for a photo the user chose to view as 360°', (tester) async {
+      final photo = RemoteAssetFactory.create();
+      final video = RemoteAssetFactory.create(type: .video);
+      final assetService = MockAssetService();
+      for (final asset in [photo, video]) {
+        when(() => assetService.watchExif(asset)).thenAnswer((_) => Stream.value(const ExifInfo()));
+      }
+
+      for (final (asset, expected) in [(photo, findsOneWidget), (video, findsNothing)]) {
+        await tester.pumpConsumerWidget(
+          PanoramaBadge(asset: asset),
+          overrides: [
+            assetServiceProvider.overrideWithValue(assetService),
+            forcedPanoramaAssetsProvider.overrideWith(() => _ForcedPanoramas({photo.id, video.id})),
+          ],
+        );
+
+        expect(find.byIcon(Icons.threesixty_rounded), expected, reason: '${asset.type}');
+      }
+    });
   });
+}
+
+/// The assets of [keys] viewed as 360°, none by default, without the store
+class _ForcedPanoramas extends ForcedPanoramaAssets {
+  _ForcedPanoramas([this.keys = const {}]);
+
+  final Set<String> keys;
+
+  @override
+  Set<String> build() => keys;
 }
 
 void _rangeTests() {

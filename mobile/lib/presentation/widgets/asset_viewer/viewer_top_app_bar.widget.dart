@@ -5,15 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
-import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
-import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
-import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -21,11 +20,11 @@ import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provid
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/timezone.dart';
 import 'package:immich_ui/immich_ui.dart';
-import 'package:logging/logging.dart';
 
 class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const ViewerTopAppBar({super.key});
@@ -57,22 +56,30 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // Viewing in 360 changes nothing on the server: available in readonly mode and in the locked folder too.
     // Photos open the Flutter panorama viewer, videos the native player where the platform has one.
     // On a Meta Quest, server assets open in the immersive viewer, which also plays 360 videos.
-    final isPanoramaPhoto = ref.watch(isPanoramaProvider(asset));
-    final isEquirectangular = ref.watch(isEquirectangularProvider(asset));
-    final canPlayPanoramaVideo = ref.watch(panorama360VideoSupportedProvider);
-    final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
-    final opensImmersive = isHorizonOs && asset.remoteId != null;
-    final VoidCallback? onPanoramaPressed = switch (asset.type) {
-      AssetType.image when isPanoramaPhoto && opensImmersive => () => unawaited(_openImmersive(context, ref, asset)),
-      AssetType.image when isPanoramaPhoto => () => unawaited(context.router.push(PanoramaViewerRoute(asset: asset))),
-      AssetType.video when isEquirectangular && opensImmersive => () => unawaited(_openImmersive(context, ref, asset)),
-      AssetType.video when isEquirectangular && canPlayPanoramaVideo => () => unawaited(
-        openPanoramaVideo(context, ref, asset),
-      ),
+    // The asset is 360 when the server flags it, or when the user chose "View as 360°" for it.
+    final hasPanoramaView = ref.watch(isEquirectangularProvider(asset)) && ref.watch(can360ViewProvider(asset));
+    final panoramaButton = hasPanoramaView
+        ? IconButton(
+            icon: const Icon(Icons.threesixty_rounded),
+            tooltip: '360°',
+            onPressed: () => unawaited(open360View(context, ref, asset)),
+          )
+        : null;
+
+    // Spatial 2.5D, an experimental setting, plays stereoscopic videos with depth on phones only: never on a Meta
+    // Quest, nor while the platform check is pending. Like 360, it changes nothing on the server.
+    final isSpatialEnabled = ref.watch(appConfigProvider.select((config) => config.viewer.spatial25d));
+    final isPhone = ref.watch(isHorizonOsProvider).valueOrNull == false;
+    final VoidCallback? onSpatialPressed = switch (asset.type) {
+      AssetType.video when isSpatialEnabled && isPhone => () => unawaited(openSpatialVideo(context, ref, asset)),
       _ => null,
     };
-    final panoramaButton = onPanoramaPressed != null
-        ? IconButton(icon: const Icon(Icons.threesixty_rounded), tooltip: '360°', onPressed: onPanoramaPressed)
+    final spatialButton = onSpatialPressed != null
+        ? IconButton(
+            icon: const Icon(Icons.threed_rotation_rounded),
+            tooltip: context.t.spatial_2_5d,
+            onPressed: onSpatialPressed,
+          )
         : null;
 
     final actions = <Widget>[
@@ -129,13 +136,15 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     centerMiddle: true,
                     leading: const _AppBarBackButton(),
                     middle: showingDetails ? null : _AssetInfoTitle(asset: asset),
-                    trailing: !showingDetails && (!isReadonlyModeEnabled || panoramaButton != null)
+                    trailing:
+                        !showingDetails && (!isReadonlyModeEnabled || panoramaButton != null || spatialButton != null)
                         ? ImmichColorOverride(
                             color: Colors.white,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 ?panoramaButton,
+                                ?spatialButton,
                                 if (!isReadonlyModeEnabled) ...(isInLockedView ? lockedViewActions : actions),
                               ],
                             ),
@@ -153,19 +162,6 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(60.0);
-
-  Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset) async {
-    // Read before the first await: the viewer may be gone by then
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    final errorMessage = context.t.immersive_viewer_open_failed;
-    final stereoLabels = stereoLayoutLabels(context.t);
-    try {
-      await openImmersiveViewer(ref, asset, stereoLabels: stereoLabels);
-    } catch (error) {
-      Logger('ViewerTopAppBar').warning('Could not open the immersive viewer: $error');
-      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
-    }
-  }
 }
 
 class _AppBarBackButton extends ConsumerWidget {

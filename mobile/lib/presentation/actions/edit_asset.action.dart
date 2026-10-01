@@ -29,11 +29,14 @@ final _stateProvider = Provider.family.autoDispose<RemoteAsset?, ActionSource>((
 
   final assets = ref.watch(ownedAssetsActionProvider(source));
   // Panoramas cannot be edited (the server refuses them, same rule as the web app). Raw Insta360 .insp files are not
-  // panoramas for the viewer, but the web treats them as such by file name, so they are not editable either.
+  // panoramas for the viewer, but the web treats them as such by file name, so they are not editable either. Photos
+  // the user only chose to view as 360° stay editable: the server does not know them as panoramas.
   return assets
       .where(
         (asset) =>
-            asset.isEditable && !asset.name.toLowerCase().endsWith('.insp') && !ref.watch(isPanoramaProvider(asset)),
+            asset.isEditable &&
+            !asset.name.toLowerCase().endsWith('.insp') &&
+            !ref.watch(hasEquirectangularExifProvider(asset)),
       )
       .singleOrNull;
 }, dependencies: [ownedAssetsActionProvider]);

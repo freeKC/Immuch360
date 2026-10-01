@@ -14,14 +14,19 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
+import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
@@ -32,6 +37,7 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
+import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -44,9 +50,15 @@ class _MockTimelineService extends Mock implements TimelineService {}
 
 class _MockSphericalVideoApi extends Mock implements SphericalVideoApi {}
 
+class _MockSpatialVideoApi extends Mock implements SpatialVideoApi {}
+
 /// Records the viewer's player calls in the same list as the native player calls, to check their order
 class _RecordingVideoPlayer extends VideoPlayerNotifier {
-  _RecordingVideoPlayer(this._calls);
+  _RecordingVideoPlayer(this._calls, {VideoPlayerState? initial}) {
+    if (initial != null) {
+      state = initial;
+    }
+  }
 
   final List<String> _calls;
 
@@ -58,6 +70,10 @@ class _RecordingVideoPlayer extends VideoPlayerNotifier {
 
   @override
   Future<void> resumeAfterExternalPlayer() async => _calls.add('resume');
+
+  @override
+  Future<void> resumeAfterExternalPlayerAt(Duration position, {required bool play}) async =>
+      _calls.add('resume at ${position.inMilliseconds} ${play ? 'playing' : 'paused'}');
 }
 
 class _MockImmersiveApi extends Mock implements ImmersiveApi {}
@@ -88,10 +104,21 @@ class _NoAlbumNotifier extends CurrentAlbumNotifier {
   RemoteAlbum? build() => null;
 }
 
+/// The assets the user chose to view as 360°, seeded rather than read from the store. Changes still go to the store.
+class _SeededForcedPanoramas extends ForcedPanoramaAssets {
+  _SeededForcedPanoramas(this._keys);
+
+  final Set<String> _keys;
+
+  @override
+  Set<String> build() => _keys;
+}
+
 void main() {
   late PresentationContext context;
   late _MockTimelineService timeline;
   late _MockSphericalVideoApi sphericalVideoApi;
+  late _MockSpatialVideoApi spatialVideoApi;
   late MockStorageRepository storage;
   late List<String> calls;
   // Preview requests of the immersive viewer, and the XMP the preview carries: none by default
@@ -105,6 +132,19 @@ void main() {
     registerFallbackValue(<String, String>{});
     registerFallbackValue(StereoLayout.mono);
     registerFallbackValue(ImmersiveStereoLayout.mono);
+    registerFallbackValue(
+      SpatialOpenRequest(
+        url: '',
+        headers: const {},
+        title: '',
+        layout: SpatialStereoLayout.auto,
+        projection: SpatialProjection.flat,
+        startPositionMs: 0,
+        autoplay: false,
+        debugOverlay: false,
+        labels: const {},
+      ),
+    );
   });
 
   const englishStereoLabels = {
@@ -123,6 +163,11 @@ void main() {
     when(
       () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer((_) async => calls.add('open'));
+    spatialVideoApi = _MockSpatialVideoApi();
+    when(
+      spatialVideoApi.capabilities,
+    ).thenAnswer((_) async => SpatialCapabilities(supported: true, frontCamera: true, cameraPermissionGranted: false));
+    when(() => spatialVideoApi.open(any())).thenAnswer((_) async => calls.add('spatial'));
     storage = MockStorageRepository();
     immersiveApi = _MockImmersiveApi();
     when(
@@ -133,6 +178,9 @@ void main() {
   });
 
   tearDown(() async {
+    await StoreService.I.delete(StoreKey.spatialLayoutOverrides);
+    await StoreService.I.delete(StoreKey.forcedPanoramaAssets);
+    await StoreService.I.delete(StoreKey.advancedTroubleshooting);
     await context.dispose();
   });
 
@@ -140,26 +188,31 @@ void main() {
   final kebabMenu = find.byIcon(Icons.more_vert_rounded);
   final favoriteButton = find.byType(ImmichIconButton);
 
-  RemoteAsset owned({AssetType type = .image, String? localId, int? width, int? height}) => RemoteAssetFactory.create(
-    ownerId: context.currentUser.id,
-    type: type,
-    localId: localId,
-    width: width,
-    height: height,
-  );
+  RemoteAsset owned({AssetType type = .image, String? localId, int? width, int? height, String? name}) =>
+      RemoteAssetFactory.create(
+        ownerId: context.currentUser.id,
+        type: type,
+        localId: localId,
+        width: width,
+        height: height,
+        name: name,
+      );
 
   /// Pumps the top bar under a real router whose panorama route renders a stub page, so a push can be observed.
-  /// [panoramaVideoSupported] tells whether the platform has the native 360° video player.
+  /// [panoramaVideoSupported] tells whether the platform has the native 360° video player. [forcedPanoramas], when
+  /// given, are the keys of the assets the user chose to view as 360°, else they come from the store.
   Future<RootStackRouter> pumpTopBar(
     WidgetTester tester,
-    RemoteAsset asset, {
+    BaseAsset asset, {
     ProjectionType? projectionType,
+    Set<String>? forcedPanoramas,
     bool readonly = false,
     bool locked = false,
     bool showingDetails = false,
     bool panoramaVideoSupported = false,
     AppConfig? appConfig,
     bool horizonOs = false,
+    VideoPlayerState? playerState,
   }) async {
     final router = RootStackRouter.build(
       routes: [
@@ -204,10 +257,13 @@ void main() {
             panorama360VideoSupportedProvider.overrideWithValue(panoramaVideoSupported),
             sphericalVideoApiProvider.overrideWithValue(sphericalVideoApi),
             storageRepositoryProvider.overrideWithValue(storage),
-            videoPlayerProvider(asset.id).overrideWith((ref) => _RecordingVideoPlayer(calls)),
+            videoPlayerProvider(asset.id).overrideWith((ref) => _RecordingVideoPlayer(calls, initial: playerState)),
+            spatialVideoApiProvider.overrideWithValue(spatialVideoApi),
             if (appConfig != null) appConfigProvider.overrideWithValue(appConfig),
             isHorizonOsProvider.overrideWith((ref) => horizonOs),
             immersiveApiProvider.overrideWithValue(immersiveApi),
+            if (forcedPanoramas != null)
+              forcedPanoramaAssetsProvider.overrideWith(() => _SeededForcedPanoramas(forcedPanoramas)),
             immersiveGPanoClientProvider.overrideWithValue(
               MockClient((request) async {
                 previewRequests.add(request.url);
@@ -591,6 +647,565 @@ void main() {
 
       expect(calls, ['suspend', 'resume']);
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
+    });
+  });
+
+  group('ViewerTopAppBar 360 button for an asset the user chose to view as 360°', () {
+    testWidgets('is shown for a photo whose exif says nothing, and opens the panorama viewer', (tester) async {
+      final asset = owned();
+      final router = await pumpTopBar(tester, asset, forcedPanoramas: {asset.id});
+
+      expect(panoramaButton, findsOneWidget);
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(router.current.name, PanoramaViewerRoute.name);
+      expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
+    });
+
+    testWidgets('plays such a video in the native 360° player', (tester) async {
+      final asset = owned(type: .video);
+      await pumpTopBar(tester, asset, projectionType: .none, forcedPanoramas: {asset.id}, panoramaVideoSupported: true);
+
+      expect(panoramaButton, findsOneWidget);
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'open']);
+    });
+
+    testWidgets('opens such a photo in the immersive viewer on a Meta Quest', (tester) async {
+      final asset = owned();
+      await pumpTopBar(tester, asset, forcedPanoramas: {asset.id}, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any())).called(1);
+    });
+
+    testWidgets('stays hidden for the other assets', (tester) async {
+      await pumpTopBar(tester, owned(), forcedPanoramas: {'another-asset'});
+
+      expect(panoramaButton, findsNothing);
+    });
+  });
+
+  group('ViewerTopAppBar "View as 360°" action', () {
+    final viewAs360 = find.text('View as 360°');
+    final stopViewingAs360 = find.text('Stop treating as 360°');
+
+    Future<void> openKebabMenu(WidgetTester tester) async {
+      await tester.tap(kebabMenu);
+      await tester.pumpAndSettle();
+      expect(find.text('Slideshow'), findsOneWidget, reason: 'the menu is open');
+    }
+
+    String? stored() => StoreService.I.tryGet(StoreKey.forcedPanoramaAssets);
+
+    testWidgets('is offered for a photo and a video the server does not flag as 360°', (tester) async {
+      for (final (type, projectionType) in [
+        (AssetType.image, null),
+        (AssetType.image, ProjectionType.none),
+        (AssetType.video, null),
+      ]) {
+        await pumpTopBar(tester, owned(type: type), projectionType: projectionType, panoramaVideoSupported: true);
+        await openKebabMenu(tester);
+
+        expect(viewAs360, findsOneWidget, reason: '$type $projectionType');
+        expect(stopViewingAs360, findsNothing, reason: '$type $projectionType');
+      }
+    });
+
+    testWidgets('is not offered for what the server flags as 360°, even once chosen', (tester) async {
+      for (final type in [AssetType.image, AssetType.video]) {
+        final asset = owned(type: type);
+        for (final forced in [
+          <String>{},
+          {asset.id},
+        ]) {
+          await pumpTopBar(
+            tester,
+            asset,
+            projectionType: .equirectangular,
+            forcedPanoramas: forced,
+            panoramaVideoSupported: true,
+          );
+          await openKebabMenu(tester);
+
+          expect(viewAs360, findsNothing, reason: '$type forced $forced');
+          expect(stopViewingAs360, findsNothing, reason: '$type forced $forced');
+        }
+      }
+    });
+
+    testWidgets('is not offered for a video where the device has no 360° view', (tester) async {
+      await pumpTopBar(tester, owned(type: .video));
+      await openKebabMenu(tester);
+
+      expect(viewAs360, findsNothing);
+    });
+
+    testWidgets('views a photo as 360° from now on and opens it in the panorama viewer', (tester) async {
+      final asset = owned();
+      final router = await pumpTopBar(tester, asset);
+      expect(panoramaButton, findsNothing);
+
+      await openKebabMenu(tester);
+      await tester.tap(viewAs360);
+      await tester.pumpAndSettle();
+
+      expect(stored(), '["${asset.id}"]');
+      expect(router.current.name, PanoramaViewerRoute.name);
+      expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
+
+      await router.maybePop();
+      await tester.pumpAndSettle();
+      expect(panoramaButton, findsOneWidget, reason: 'the 360° button is there from now on');
+    });
+
+    testWidgets('views a video as 360° and plays it in the native 360° player', (tester) async {
+      final asset = owned(type: .video);
+      await pumpTopBar(tester, asset, panoramaVideoSupported: true);
+
+      await openKebabMenu(tester);
+      await tester.tap(viewAs360);
+      await tester.pumpAndSettle();
+
+      expect(stored(), '["${asset.id}"]');
+      expect(calls, ['suspend', 'open']);
+      expect(panoramaButton, findsOneWidget);
+      expect(viewAs360, findsNothing, reason: 'the menu closes');
+    });
+
+    testWidgets('plays a video only on the phone from its file', (tester) async {
+      final asset = LocalAsset(
+        id: 'local-1',
+        name: 'VID_360.mp4',
+        type: AssetType.video,
+        createdAt: DateTime(2026),
+        updatedAt: DateTime(2026),
+        playbackStyle: AssetPlaybackStyle.video,
+        isEdited: false,
+      );
+      final file = File('/storage/emulated/0/DCIM/Camera/VID_360.mp4');
+      when(() => storage.getFileForAsset('local-1')).thenAnswer((_) async => file);
+      await pumpTopBar(tester, asset, panoramaVideoSupported: true);
+
+      await openKebabMenu(tester);
+      await tester.tap(viewAs360);
+      await tester.pumpAndSettle();
+
+      expect(stored(), '["local-1"]');
+      final url = verify(
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any()),
+      ).captured.single;
+      expect(url, file.uri.toString());
+    });
+
+    testWidgets('opens a photo in the immersive viewer on a Meta Quest', (tester) async {
+      final asset = owned();
+      final router = await pumpTopBar(tester, asset, horizonOs: true);
+
+      await openKebabMenu(tester);
+      await tester.tap(viewAs360);
+      await tester.pumpAndSettle();
+
+      expect(stored(), '["${asset.id}"]');
+      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any())).called(1);
+      expect(router.current.name, isNot(PanoramaViewerRoute.name));
+    });
+
+    testWidgets('offers to stop once chosen, which hides the 360° button again', (tester) async {
+      final asset = owned();
+      final other = owned();
+      await pumpTopBar(tester, asset, forcedPanoramas: {other.id, asset.id});
+      expect(panoramaButton, findsOneWidget);
+
+      await openKebabMenu(tester);
+      expect(viewAs360, findsNothing);
+      await tester.tap(stopViewingAs360);
+      await tester.pumpAndSettle();
+
+      expect(stored(), '["${other.id}"]');
+      expect(panoramaButton, findsNothing);
+      await openKebabMenu(tester);
+      expect(viewAs360, findsOneWidget);
+    });
+
+    testWidgets('is offered in the locked view too', (tester) async {
+      await pumpTopBar(tester, owned(), locked: true);
+      await openKebabMenu(tester);
+
+      expect(viewAs360, findsOneWidget);
+    });
+  });
+
+  group('ViewerTopAppBar Spatial 2.5D button', () {
+    const server = PresentationContext.serverEndpoint;
+    const spatialOn = AppConfig(viewer: ViewerConfig(spatial25d: true));
+    final spatialButton = find.byTooltip('Spatial 2.5D');
+    const englishSpatialLabels = {
+      'spatial': 'Spatial 2.5D',
+      'normal': 'Normal',
+      'layout': 'Stereo layout',
+      'layoutAuto': 'Auto',
+      'layoutSideBySide': 'Side by side',
+      'layoutTopBottom': 'Top and bottom',
+      'layoutSideBySideSwapped': 'Side by side, eyes swapped',
+      'layoutTopBottomSwapped': 'Top and bottom, eyes swapped',
+      'layoutNone': 'Not stereoscopic',
+      'recenter': 'Recenter',
+      'trackingLost': 'Face not found, looking for it',
+      'cameraDenied': 'Camera access refused: use the slider to move the viewpoint',
+      'unavailable': 'Spatial 2.5D is not available on this device',
+      'sensitivity': 'Head sensitivity',
+      'close': 'Close',
+      'error': 'Unable to play video',
+    };
+
+    SpatialOpenRequest openedRequest() =>
+        verify(() => spatialVideoApi.open(captureAny())).captured.single as SpatialOpenRequest;
+
+    testWidgets('is hidden while the experimental setting is off', (tester) async {
+      await pumpTopBar(tester, owned(type: .video), appConfig: const AppConfig(viewer: ViewerConfig(spatial25d: false)));
+
+      expect(spatialButton, findsNothing);
+      expect(kebabMenu, findsOneWidget);
+    });
+
+    testWidgets('is shown for a video when the setting is on, next to the regular actions', (tester) async {
+      await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
+
+      expect(spatialButton, findsOneWidget);
+      expect(find.byIcon(Icons.threed_rotation_rounded), findsOneWidget);
+      expect(kebabMenu, findsOneWidget);
+      expect(favoriteButton, findsOneWidget);
+      expect(panoramaButton, findsNothing);
+    });
+
+    testWidgets('is hidden for a photo', (tester) async {
+      for (final projectionType in [null, ProjectionType.equirectangular]) {
+        await pumpTopBar(tester, owned(), projectionType: projectionType, appConfig: spatialOn);
+
+        expect(spatialButton, findsNothing, reason: 'projection type $projectionType');
+      }
+    });
+
+    testWidgets('is hidden on a Meta Quest, which keeps its immersive viewer', (tester) async {
+      await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn, horizonOs: true);
+      expect(spatialButton, findsNothing);
+
+      await pumpTopBar(
+        tester,
+        owned(type: .video),
+        projectionType: .equirectangular,
+        appConfig: spatialOn,
+        horizonOs: true,
+      );
+      expect(spatialButton, findsNothing);
+      expect(panoramaButton, findsOneWidget);
+    });
+
+    testWidgets('sits next to the 360° button of a 360° video', (tester) async {
+      await pumpTopBar(
+        tester,
+        owned(type: .video),
+        projectionType: .equirectangular,
+        panoramaVideoSupported: true,
+        appConfig: spatialOn,
+      );
+
+      expect(spatialButton, findsOneWidget);
+      expect(panoramaButton, findsOneWidget);
+    });
+
+    testWidgets('stays available in readonly mode and in the locked view', (tester) async {
+      await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn, readonly: true);
+      expect(spatialButton, findsOneWidget);
+      expect(kebabMenu, findsNothing);
+
+      await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn, locked: true);
+      expect(spatialButton, findsOneWidget);
+      expect(favoriteButton, findsNothing);
+    });
+
+    testWidgets('is hidden while the details are showing', (tester) async {
+      await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn, showingDetails: true);
+
+      expect(spatialButton, findsNothing);
+    });
+
+    testWidgets('stops the video, then opens the player where the viewer was, playing, with the labels', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      await pumpTopBar(
+        tester,
+        asset,
+        appConfig: spatialOn,
+        playerState: const VideoPlayerState(
+          position: Duration(milliseconds: 83500),
+          duration: Duration(minutes: 3),
+          status: VideoPlaybackStatus.playing,
+        ),
+      );
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'spatial'], reason: 'the viewer must not play nor buffer behind the Spatial player');
+      final request = openedRequest();
+      expect(request.url, '$server/assets/${asset.id}/video/playback');
+      expect(request.headers, <String, String>{});
+      expect(request.title, asset.name);
+      expect(request.layout, SpatialStereoLayout.auto);
+      expect(request.projection, SpatialProjection.flat);
+      expect(request.startPositionMs, 83500);
+      expect(request.autoplay, isTrue);
+      expect(request.debugOverlay, isFalse);
+      expect(request.labels, englishSpatialLabels);
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any()));
+    });
+
+    testWidgets('keeps a paused video paused in the player', (tester) async {
+      await pumpTopBar(
+        tester,
+        owned(type: .video),
+        appConfig: spatialOn,
+        playerState: const VideoPlayerState(
+          position: Duration(seconds: 12),
+          duration: Duration(minutes: 1),
+          status: VideoPlaybackStatus.paused,
+        ),
+      );
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      final request = openedRequest();
+      expect(request.startPositionMs, 12000);
+      expect(request.autoplay, isFalse);
+    });
+
+    testWidgets('shows the diagnostics with the advanced troubleshooting setting', (tester) async {
+      await StoreService.I.put(StoreKey.advancedTroubleshooting, true);
+      await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      expect(openedRequest().debugOverlay, isTrue);
+    });
+
+    testWidgets('plays the original or the copy on the phone, like the viewer', (tester) async {
+      final asset = owned(type: .video);
+      await pumpTopBar(
+        tester,
+        asset,
+        appConfig: const AppConfig(viewer: ViewerConfig(spatial25d: true, loadOriginalVideo: true)),
+      );
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+      expect(openedRequest().url, '$server/assets/${asset.id}/original');
+
+      final onPhone = owned(type: .video, localId: 'local-1');
+      final file = File('/storage/emulated/0/DCIM/Camera/VID_3D.mp4');
+      when(() => storage.getFileForAsset('local-1')).thenAnswer((_) async => file);
+      await pumpTopBar(tester, onPhone, appConfig: spatialOn);
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+      expect(openedRequest().url, file.uri.toString());
+    });
+
+    testWidgets('guesses the stereo layout from the frame and the file name', (tester) async {
+      for (final (width, height, name, projection, expected) in [
+        (3840, 1080, 'clip.mp4', null, SpatialStereoLayout.sideBySide),
+        (1920, 2160, 'clip.mp4', null, SpatialStereoLayout.topBottom),
+        (1920, 1080, 'Movie.Half-OU.mp4', null, SpatialStereoLayout.topBottom),
+        (1920, 1080, 'VID_20240101.mp4', null, SpatialStereoLayout.auto),
+        (5760, 5760, 'clip.mp4', ProjectionType.equirectangular, SpatialStereoLayout.topBottom),
+        (7680, 1920, 'clip.mp4', ProjectionType.equirectangular, SpatialStereoLayout.sideBySide),
+      ]) {
+        clearInteractions(spatialVideoApi);
+        final asset = owned(type: .video, width: width, height: height, name: name);
+        await pumpTopBar(tester, asset, projectionType: projection, appConfig: spatialOn);
+
+        await tester.tap(spatialButton);
+        await tester.pumpAndSettle();
+
+        final request = openedRequest();
+        final reason = '$width x $height $name $projection';
+        expect(request.layout, expected, reason: reason);
+        expect(
+          request.projection,
+          projection == ProjectionType.equirectangular ? SpatialProjection.equirectangular : SpatialProjection.flat,
+          reason: reason,
+        );
+      }
+    });
+
+    testWidgets('prefers the layout the user picked last time for the asset', (tester) async {
+      final asset = owned(type: .video, width: 3840, height: 1080);
+      await SpatialLayoutOverrides(StoreService.I).set(asset.id, SpatialStereoLayout.sideBySideSwapped);
+      await pumpTopBar(tester, asset, appConfig: spatialOn);
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      expect(openedRequest().layout, SpatialStereoLayout.sideBySideSwapped);
+    });
+
+    testWidgets('leaves the video alone and says so where the device cannot run the player', (tester) async {
+      for (final unsupported in [true, false]) {
+        calls.clear();
+        if (unsupported) {
+          when(spatialVideoApi.capabilities).thenAnswer(
+            (_) async => SpatialCapabilities(
+              supported: false,
+              frontCamera: false,
+              cameraPermissionGranted: false,
+              reason: 'no front camera',
+            ),
+          );
+        } else {
+          when(spatialVideoApi.capabilities).thenThrow(PlatformException(code: 'channel-error'));
+        }
+        await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
+
+        await tester.tap(spatialButton);
+        await tester.pumpAndSettle();
+
+        expect(calls, isEmpty, reason: 'unsupported $unsupported: the viewer goes on playing');
+        verifyNever(() => spatialVideoApi.open(any()));
+        expect(find.text('Spatial 2.5D is not available on this device'), findsOneWidget);
+      }
+    });
+
+    testWidgets('gives the viewer its video back where and as it was when the player cannot open', (tester) async {
+      when(() => spatialVideoApi.open(any())).thenThrow(PlatformException(code: 'channel-error'));
+      await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'resume at 0 paused']);
+      expect(find.text('Could not open the Spatial 2.5D player'), findsOneWidget);
+
+      calls.clear();
+      await pumpTopBar(
+        tester,
+        owned(type: .video),
+        appConfig: spatialOn,
+        playerState: const VideoPlayerState(
+          position: Duration(milliseconds: 83500),
+          duration: Duration(minutes: 3),
+          status: VideoPlaybackStatus.playing,
+        ),
+      );
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'resume at 83500 playing'], reason: 'not back at the start, nor paused');
+    });
+
+    testWidgets('leaves the viewer\'s video alone when there is no file to play', (tester) async {
+      // Opened with "Open with", but the temporary copy is gone
+      final transient = LocalAsset(
+        id: '-1234567',
+        name: 'clip.mp4',
+        type: AssetType.video,
+        createdAt: DateTime(2026),
+        updatedAt: DateTime(2026),
+        playbackStyle: .video,
+        isEdited: false,
+      );
+      when(() => storage.getFileForAsset(transient.id)).thenAnswer((_) async => null);
+      await pumpTopBar(tester, transient, appConfig: spatialOn);
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, isEmpty, reason: 'nothing stopped it, so nothing resumes it');
+      verifyNever(() => spatialVideoApi.open(any()));
+      expect(find.text('Could not open the Spatial 2.5D player'), findsOneWidget);
+    });
+
+    testWidgets('plays a video opened with "Open with" from the file the viewer plays', (tester) async {
+      // Not in the library: a transient asset, played from a temporary copy (see ViewIntentAssetResolver)
+      const path = '/data/user/0/app.alextran.immich/cache/view_intent/clip 3D #1.sbs.mp4';
+      final transient = LocalAsset(
+        id: '-1234567',
+        name: 'clip 3D #1.sbs.mp4',
+        type: AssetType.video,
+        createdAt: DateTime(2026),
+        updatedAt: DateTime(2026),
+        playbackStyle: .video,
+        isEdited: false,
+      );
+      when(() => timeline.origin).thenReturn(TimelineOrigin.deepLink);
+      await pumpTopBar(tester, transient, appConfig: spatialOn);
+      ProviderScope.containerOf(
+        tester.element(find.byType(ViewerTopAppBar)),
+      ).read(viewIntentFilePathProvider.notifier).setPath(path);
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'spatial']);
+      final request = openedRequest();
+      expect(request.url, File(path).uri.toString());
+      expect(request.title, transient.name);
+      expect(request.layout, SpatialStereoLayout.sideBySide);
+      verifyNever(() => storage.getFileForAsset(any()));
+      expect(find.text('Could not open the Spatial 2.5D player'), findsNothing);
+    });
+
+    testWidgets('takes the video back where the player closed, and remembers the layout picked there', (tester) async {
+      final asset = owned(type: .video);
+      await pumpTopBar(tester, asset, appConfig: spatialOn);
+      // The video viewer keeps its player alive meanwhile
+      final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+      final subscription = container.listen(videoPlayerProvider(asset.id), (_, _) {});
+      addTearDown(subscription.close);
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      // The native player closes: it calls the Flutter API it was given
+      await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+        'dev.flutter.pigeon.immich_mobile.SpatialVideoEvents.closed',
+        SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[42000, true, SpatialStereoLayout.topBottom]),
+        (_) {},
+      );
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'spatial', 'resume at 42000 playing']);
+      expect(SpatialLayoutOverrides(StoreService.I).get(asset.id), SpatialStereoLayout.topBottom);
+    });
+
+    testWidgets('remembers Auto picked over a wrong guess, and opens with it next time', (tester) async {
+      // Guessed side by side from its frame
+      final asset = owned(type: .video, width: 3840, height: 1080);
+      await pumpTopBar(tester, asset, appConfig: spatialOn);
+      final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+      final subscription = container.listen(videoPlayerProvider(asset.id), (_, _) {});
+      addTearDown(subscription.close);
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+      expect(openedRequest().layout, SpatialStereoLayout.sideBySide);
+
+      await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+        'dev.flutter.pigeon.immich_mobile.SpatialVideoEvents.closed',
+        SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[0, false, SpatialStereoLayout.auto]),
+        (_) {},
+      );
+      await tester.pumpAndSettle();
+      expect(SpatialLayoutOverrides(StoreService.I).get(asset.id), SpatialStereoLayout.auto);
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+      expect(openedRequest().layout, SpatialStereoLayout.auto);
     });
   });
 }

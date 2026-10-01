@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart' show AppLifecycleState, WidgetsBinding;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
@@ -46,6 +47,13 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   bool _suspended = false;
   VideoSource? _sourceAfterSuspension;
 
+  // Whether the native player reported the video ready since it was last loaded
+  bool _ready = false;
+  // Where to take the video once it is ready again after an external player: see [resumeAfterExternalPlayerAt]
+  ({Duration position, bool play})? _pendingRestore;
+  // A restore that should have played, but came while the app was in the background: see [takePlayOnForeground]
+  bool _playOnForeground = false;
+
   /// Whether [suspendForExternalPlayer] stopped this player
   bool get isSuspendedForExternalPlayer => _suspended;
 
@@ -69,6 +77,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       return;
     }
 
+    _ready = false;
+    _playOnForeground = false;
     _startBufferingTimer();
     try {
       await _controller?.loadVideoSource(source);
@@ -78,6 +88,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   }
 
   Future<void> pause() async {
+    _playOnForeground = false;
     if (_controller == null) {
       return;
     }
@@ -116,6 +127,9 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
 
     _suspended = true;
+    _ready = false;
+    _pendingRestore = null;
+    _playOnForeground = false;
     _bufferingTimer?.cancel();
     _seekTimer?.cancel();
 
@@ -146,6 +160,63 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
   }
 
+  /// Ends [suspendForExternalPlayer] after an external player that played the video on (the Spatial 2.5D player):
+  /// once the video is loaded again, goes to [position], where that player stopped, and plays when [play].
+  ///
+  /// Coming back to the foreground also ends the suspension, see [resumeAfterExternalPlayer], and may happen before
+  /// or after the external player reports where it stopped: either way, the video goes to [position] as soon as the
+  /// native player reports it ready, or right away when it already did.
+  Future<void> resumeAfterExternalPlayerAt(Duration position, {required bool play}) async {
+    final restore = (position: position, play: play);
+    if (_suspended) {
+      _pendingRestore = restore;
+      await resumeAfterExternalPlayer();
+      return;
+    }
+
+    if (_ready) {
+      await _restore(restore);
+    } else {
+      _pendingRestore = restore;
+    }
+  }
+
+  Future<void> _restore(({Duration position, bool play}) restore) async {
+    final controller = _controller;
+    if (controller == null || !mounted) {
+      return;
+    }
+
+    // Straight to the native player: the video came back at its start, whatever the state still says
+    _seekTimer?.cancel();
+    state = state.copyWith(position: restore.position);
+    try {
+      await controller.seekTo(restore.position.inMilliseconds);
+    } catch (e) {
+      _log.severe('Error seeking video: $e');
+    }
+
+    if (restore.play) {
+      // Same rule as the viewer's autoplay: nothing plays behind another app. The viewer plays it once the app is
+      // back in the foreground, see [takePlayOnForeground].
+      final lifecycleState = WidgetsBinding.instance.lifecycleState;
+      if (lifecycleState == AppLifecycleState.paused || lifecycleState == AppLifecycleState.hidden) {
+        _playOnForeground = true;
+      } else {
+        await play();
+      }
+    }
+  }
+
+  /// Whether a video taken back from an external player should play now that the app is in the foreground again:
+  /// it was playing there, but became ready while the app was in the background, so it stayed paused. True once
+  /// only, and no longer after the video is paused, toggled, loaded again or suspended meanwhile.
+  bool takePlayOnForeground() {
+    final play = _playOnForeground;
+    _playOnForeground = false;
+    return play;
+  }
+
   Future<void> _flushSeek() async {
     final timer = _seekTimer;
     if (timer == null || !timer.isActive) {
@@ -174,6 +245,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
   void toggle() {
     _holdStatus = null;
+    _playOnForeground = false;
 
     switch (state.status) {
       case VideoPlaybackStatus.paused:
@@ -245,6 +317,13 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       duration: Duration(milliseconds: videoInfo.duration),
       status: _mapStatus(playbackInfo.status),
     );
+
+    _ready = true;
+    final restore = _pendingRestore;
+    if (restore != null) {
+      _pendingRestore = null;
+      unawaited(_restore(restore));
+    }
   }
 
   void onNativePositionChanged() {

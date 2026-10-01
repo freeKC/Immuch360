@@ -844,6 +844,41 @@ void main() {
         expect(ActionButtonType.advancedInfo.shouldShow(context), isFalse);
       });
     });
+
+    group('viewAs360 button', () {
+      ActionButtonContext contextFor(BaseAsset asset, {bool isInLockedView = false}) => ActionButtonContext(
+        asset: asset,
+        isOwner: false,
+        isArchived: false,
+        isInLockedView: isInLockedView,
+        currentAlbum: null,
+        advancedTroubleshooting: false,
+        isStacked: false,
+        source: ActionSource.viewer,
+      );
+
+      test('should show for photos and videos, on the device or on the server, in the locked view too', () {
+        for (final asset in [
+          createLocalAsset(),
+          createLocalAsset(type: AssetType.video),
+          createRemoteAsset(),
+          createRemoteAsset(type: AssetType.video),
+        ]) {
+          expect(ActionButtonType.viewAs360.shouldShow(contextFor(asset)), isTrue, reason: '$asset');
+          expect(
+            ActionButtonType.viewAs360.shouldShow(contextFor(asset, isInLockedView: true)),
+            isTrue,
+            reason: '$asset',
+          );
+        }
+      });
+
+      test('should not show for other media', () {
+        for (final type in [AssetType.audio, AssetType.other]) {
+          expect(ActionButtonType.viewAs360.shouldShow(contextFor(createRemoteAsset(type: type))), isFalse);
+        }
+      });
+    });
   });
 
   group('unstack button', () {

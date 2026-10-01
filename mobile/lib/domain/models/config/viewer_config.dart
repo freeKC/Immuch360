@@ -10,5 +10,8 @@ abstract class ViewerConfig with _$ViewerConfig {
     @Default(false) bool loadOriginalVideo,
     @Default(true) bool autoPlayVideo,
     @Default(false) bool tapToNavigate,
+
+    /// Experimental Spatial 2.5D player for stereoscopic videos on phones, off by default
+    @Default(true) bool spatial25d,
   }) = _ViewerConfig;
 }

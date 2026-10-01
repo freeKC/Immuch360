@@ -21,6 +21,15 @@ enum StoreKey<T> {
 
   syncMigrationStatus<String>._(1013),
 
+  // Keys of this fork start at 5000, away from the ranges upstream uses (0 to 16, 100 to 141, 1000 to 1013)
+  /// Stereo layout the user picked in the Spatial 2.5D player, per asset: a JSON map from the asset id (the server
+  /// id when there is one, else the id on the device) to a SpatialStereoLayout name
+  spatialLayoutOverrides<String>._(5000),
+
+  /// Assets the user chose to view as 360° although the server does not flag them: a JSON list of asset keys, the
+  /// same as for the stereo layouts above, the latest choice last
+  forcedPanoramaAssets<String>._(5001),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

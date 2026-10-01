@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/models/server_info/server_version.model.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
@@ -118,8 +120,8 @@ void main() {
     /// Calls create() from a Consumer on every build and returns the item of the last one
     Future<ActionItem?> createFor(WidgetTester tester, RemoteAsset asset, {ProjectionType? projectionType}) async {
       ActionItem? item;
-      // Stubbed on the service of the outer scope: isPanoramaProvider is not scoped, so it would not see an override
-      // of assetExifProvider in the inner scope, where the selection lives
+      // Stubbed on the service of the outer scope: hasEquirectangularExifProvider is not scoped, so it would not see an
+      // override of assetExifProvider in the inner scope, where the selection lives
       when(
         () => assetService.watchExif(asset),
       ).thenAnswer((_) => Stream.value(ExifInfo(projectionType: projectionType)));
@@ -150,6 +152,15 @@ void main() {
 
     testWidgets('creates nothing for an equirectangular panorama', (tester) async {
       expect(await createFor(tester, owned(), projectionType: .equirectangular), isNull);
+    });
+
+    testWidgets('creates the edit item for a photo the user only chose to view as 360°', (tester) async {
+      final asset = owned();
+      await StoreService.I.put(StoreKey.forcedPanoramaAssets, '["${asset.id}"]');
+      addTearDown(() => StoreService.I.delete(StoreKey.forcedPanoramaAssets));
+
+      // The server does not know it as a panorama, so it does not refuse the edit
+      expect(await createFor(tester, asset), isNotNull);
     });
 
     testWidgets('creates nothing for an Insta360 .insp file, whatever the case of the extension', (tester) async {

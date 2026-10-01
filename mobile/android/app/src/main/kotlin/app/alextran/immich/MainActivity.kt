@@ -22,6 +22,8 @@ import app.alextran.immich.images.RemoteImageApi
 import app.alextran.immich.images.RemoteImagesImpl
 import app.alextran.immich.permission.PermissionApi
 import app.alextran.immich.permission.PermissionApiImpl
+import app.alextran.immich.spatial.SpatialVideoApi
+import app.alextran.immich.spatial.SpatialVideoApiImpl
 import app.alextran.immich.spherical.SphericalVideoApi
 import app.alextran.immich.spherical.SphericalVideoApiImpl
 import app.alextran.immich.sync.NativeSyncApi
@@ -35,6 +37,14 @@ class MainActivity : FlutterFragmentActivity() {
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
     registerPlugins(this, flutterEngine)
+    // Only the engine of the app UI hears when the Spatial 2.5D player closes, not the background engines
+    SpatialVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
+  }
+
+  override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
+    // The engine goes away: the Spatial 2.5D player must not keep it alive
+    SpatialVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    super.cleanUpFlutterEngine(flutterEngine)
   }
 
   override fun onNewIntent(intent: Intent) {
@@ -66,6 +76,7 @@ class MainActivity : FlutterFragmentActivity() {
       BackgroundWorkerFgHostApi.setUp(messenger, BackgroundWorkerApiImpl(ctx))
       ConnectivityApi.setUp(messenger, ConnectivityApiImpl(ctx))
       SphericalVideoApi.setUp(messenger, SphericalVideoApiImpl(ctx))
+      SpatialVideoApi.setUp(messenger, SpatialVideoApiImpl(ctx))
       ImmersiveApi.setUp(messenger, ImmersiveApiImpl(ctx))
 
       flutterEngine.plugins.add(ViewIntentPlugin())

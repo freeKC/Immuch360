@@ -14,6 +14,10 @@ Immuch360 is a mobile app that connects to an Immich server that you choose and 
 
 Photos and media (to back them up and to show local files), notifications (backup progress), network access (your server), location (only to read the name of the current Wi-Fi network when you restrict backup to a given network), camera (to scan a QR code or take a picture to upload), Face ID or fingerprint (to lock the app if you enable it), and, on Android, the background upload service. The app asks for each of them when the feature is used.
 
+## Camera
+
+The front camera is used only while the experimental Spatial 2.5D mode is active, to follow the position of your head so the video can show depth. The images are processed on the device, are never stored, and are never sent to your server or anywhere else. The permission is asked when you first use the mode, and you can revoke it at any time in the system settings.
+
 ## Third parties
 
 Your Immich server is operated by you or by the person who gave you an account; its own privacy rules apply. The app contains no third party advertising or tracking SDK. On Meta Quest headsets it uses the Meta Spatial SDK to render the immersive view; that library runs locally.

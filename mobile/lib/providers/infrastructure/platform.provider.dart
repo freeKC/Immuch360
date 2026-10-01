@@ -8,6 +8,7 @@ import 'package:immich_mobile/platform/native_sync_api.g.dart';
 import 'package:immich_mobile/platform/network_api.g.dart';
 import 'package:immich_mobile/platform/permission_api.g.dart';
 import 'package:immich_mobile/platform/remote_image_api.g.dart';
+import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 
 final backgroundWorkerFgServiceProvider = Provider((_) => BackgroundWorkerFgService(BackgroundWorkerFgHostApi()));
@@ -23,6 +24,8 @@ final permissionApiProvider = Provider<PermissionApi>((_) => PermissionApi());
 final connectivityApiProvider = Provider<ConnectivityApi>((_) => ConnectivityApi());
 
 final sphericalVideoApiProvider = Provider<SphericalVideoApi>((_) => SphericalVideoApi());
+
+final spatialVideoApiProvider = Provider<SpatialVideoApi>((_) => SpatialVideoApi());
 
 final localImageApi = LocalImageApi();
 

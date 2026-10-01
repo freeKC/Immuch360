@@ -47,7 +47,8 @@ final _log = Logger('PanoramaViewer');
 /// the left eye of a 3D video, with the layout guessed from the video dimensions until the user picks another one.
 Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset asset) async {
   final remoteId = asset.remoteId;
-  if (remoteId == null) {
+  final localId = asset.localId;
+  if (remoteId == null && localId == null) {
     return;
   }
   // Read before the first await: the viewer may be gone by then
@@ -55,17 +56,21 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final storage = ref.read(storageRepositoryProvider);
   final player = ref.read(videoPlayerProvider(asset.id).notifier);
   final postfix = ref.read(appConfigProvider).viewer.loadOriginalVideo ? 'original' : 'video/playback';
-  final remoteUrl = '${Store.get(StoreKey.serverEndpoint)}/assets/$remoteId/$postfix';
+  // A video only on the phone, which the user chose to view as 360°, has no server copy
+  final remoteUrl = remoteId == null ? null : '${Store.get(StoreKey.serverEndpoint)}/assets/$remoteId/$postfix';
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
   final stereoLabels = stereoLayoutLabels(context.t);
   final stereoLayout = guessStereoLayout(width: asset.width, height: asset.height);
-  final localId = asset.localId;
 
   try {
     // The native player reads file:// URIs too, and ignores the headers for them
     final localFile = localId != null ? await storage.getFileForAsset(localId) : null;
     final url = localFile?.uri.toString() ?? remoteUrl;
+    if (url == null) {
+      _log.warning('No file to play in 360° for ${asset.name}');
+      return;
+    }
     // Stopped before the viewer goes to the background: it neither plays nor buffers behind the 360° player.
     // The viewer lifts this when the app resumes, which closing the player brings about on iOS as well: its full
     // screen presentation hides the Flutter view, and the app lifecycle follows.

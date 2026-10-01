@@ -91,7 +91,10 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       case AppLifecycleState.resumed:
         // Back from the native 360° player, if it was opened on this video
         await _notifier.resumeAfterExternalPlayer();
-        if (_shouldPlayOnForeground) {
+        // Read first, so that it is used up even when the video plays anyway. Back from the Spatial 2.5D player,
+        // a video that it left playing but that became ready in the background waits for this to play.
+        final playAfterExternalPlayer = _notifier.takePlayOnForeground();
+        if (_shouldPlayOnForeground || playAfterExternalPlayer) {
           await _notifier.play();
         }
       case AppLifecycleState.paused:

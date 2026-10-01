@@ -23,6 +23,7 @@ enum SettingsKey<T> {
   viewerLoadOriginalVideo<bool>(),
   viewerAutoPlayVideo<bool>(),
   viewerTapToNavigate<bool>(),
+  viewerSpatial25d<bool>(),
 
   // Network
   networkAutoEndpointSwitching<bool>(),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
@@ -16,6 +17,9 @@ class VideoViewerSettings extends HookConsumerWidget {
     final useAutoPlayVideo = useState(viewer.autoPlayVideo);
     final useLoopVideo = useState(viewer.loopVideo);
     final useOriginalVideo = useState(viewer.loadOriginalVideo);
+    final useSpatial25d = useState(viewer.spatial25d);
+    // The Spatial 2.5D player is for phones: a Meta Quest has no use for it
+    final isPhone = ref.watch(isHorizonOsProvider).valueOrNull == false;
 
     useValueChanged<bool, void>(useAutoPlayVideo.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerAutoPlayVideo, useAutoPlayVideo.value));
@@ -25,6 +29,9 @@ class VideoViewerSettings extends HookConsumerWidget {
     });
     useValueChanged<bool, void>(useOriginalVideo.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerLoadOriginalVideo, useOriginalVideo.value));
+    });
+    useValueChanged<bool, void>(useSpatial25d.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerSpatial25d, useSpatial25d.value));
     });
 
     return Column(
@@ -46,6 +53,12 @@ class VideoViewerSettings extends HookConsumerWidget {
           title: context.t.setting_video_viewer_original_video_title,
           subtitle: context.t.setting_video_viewer_original_video_subtitle,
         ),
+        if (isPhone)
+          SettingsSwitchListTile(
+            valueNotifier: useSpatial25d,
+            title: context.t.spatial_2_5d_experimental_title,
+            subtitle: context.t.spatial_2_5d_experimental_subtitle,
+          ),
       ],
     );
   }

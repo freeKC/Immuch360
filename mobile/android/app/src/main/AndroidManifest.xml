@@ -29,6 +29,11 @@
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
   <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
   <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+  <!-- Spatial 2.5D video player: the front camera follows the head, on the device only. Asked in the player, on first
+       use. Not required, so devices without a camera still install the app. -->
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+  <uses-feature android:name="android.hardware.camera" android:required="false" />
 
   <!-- Foreground service permission -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -164,6 +169,15 @@
     <activity
       android:name=".spherical.SphericalVideoActivity"
       android:configChanges="orientation|screenSize|keyboardHidden"
+      android:exported="false"
+      android:launchMode="singleTop"
+      android:screenOrientation="sensorLandscape"
+      android:theme="@style/SphericalVideoTheme" />
+
+    <!-- Spatial 2.5D video player (phones only), started from Flutter through SpatialVideoApi -->
+    <activity
+      android:name=".spatial.SpatialVideoActivity"
+      android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
       android:exported="false"
       android:launchMode="singleTop"
       android:screenOrientation="sensorLandscape"

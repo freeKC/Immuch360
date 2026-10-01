@@ -9,10 +9,27 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/freeKC/Immuch360/releases"><b>Android APK, install it today</b></a> &nbsp;·&nbsp;
-  Google Play and App Store: <a href="#where-to-get-it">submitted, under review</a> &nbsp;·&nbsp;
+  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
+  App Store: <a href="#where-to-get-it">under review</a> &nbsp;·&nbsp;
   <a href="#meta-quest-3">Meta Quest 3</a>
 </p>
+
+## Why this fork exists, in one table
+
+Everything the official Immich mobile app does is here, unchanged. On top of it, Immuch360 adds what the official app still lacks for 360° and 3D media:
+
+| | Immich mobile app | Immuch360 |
+|---|:---:|:---:|
+| 360° photos as a sphere you can look around in | ❌ flat strip | ✅ drag, pinch, double tap, inertia |
+| Gyroscope: look around by moving the phone | ❌ | ✅ |
+| 360° videos in a spherical player (Android and iOS) | ❌ flat video | ✅ with sound and gyroscope |
+| 3D (stereoscopic) 360° photos and videos | ❌ doubled picture | ✅ left eye on phones, true 3D on the Quest 3 |
+| Meta Quest 3 immersive view with head tracking | ❌ | ✅ same APK |
+| 360° badge on thumbnails and a 360° list in the Library tab | ❌ | ✅ |
+| "View as 360°" for files the server does not flag | ❌ | ✅ remembered on the phone |
+| Spatial 2.5D: depth on a flat screen, the view follows your head (front camera, on device) | ❌ | ✅ experimental |
+| Same server, same account, installs next to the official app | | ✅ |
 
 ## Who it is for
 
@@ -37,37 +54,68 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 - **360° photos** open as an interactive sphere: drag to look around, pinch to zoom, double tap, inertia, the initial view the camera recorded, sharper texture when zoomed in. Partial panoramas are handled.
 - **Gyroscope**: turn the phone to look around (toggle in the viewer).
 - **360° videos on Android and iOS**: a native spherical player with sound, drag and gyroscope; it plays the file stored on the phone when there is one, otherwise streams it from your server.
+- **View as 360°**: some 360° files carry no projection tag, so the server shows them flat. The viewer menu can force the 360° view for a photo or a video; the choice is remembered on the phone and changes nothing on the server.
 - **3D (stereoscopic) 360° photos and videos**: top and bottom or side by side layouts are recognised from the file (or guessed from its shape) and can be changed with the 3D button in every viewer. A phone shows the left eye; the Meta Quest 3 shows each eye its own half, in real 3D.
 - **Meta Quest 3**: the same Android app runs on the headset as a window, and the 360° button switches to an immersive view where the photo or video is all around you, and you look around by turning your head.
 - **Find them**: a 360° badge on thumbnails and a **360°** entry in the Library tab listing every 360° photo and video.
 - **Everything else is Immich**, unchanged: backup, timeline, albums, search, sharing, partners, all synced with your server.
 
+## Spatial 2.5D (experimental)
+
+A stereoscopic video can gain depth on a flat screen. The two eyes of the video give the depth, the front camera follows your head, and the app synthesises the view in between, so the screen behaves like a window on the scene: move your head and nearby objects shift against the background.
+
+- **Formats**: side by side and top and bottom, full or half width, flat and 360°. The layout is read from the file, or chosen by hand in the player when the file does not say it.
+- **How to enable**: it is on by default; the switch is in Settings, Video viewer, "Spatial 2.5D (experimental)". While it is on, a Spatial button appears in the viewer of stereoscopic videos. The camera is only used once you press that button.
+- **Camera**: the front camera permission is asked only when you use the mode. Images are processed on the device only, never stored and never sent anywhere.
+- **Limitations**: experimental, phones and tablets only (not on the Meta Quest), needs OpenGL ES 3.0 or Metal. The depth is an estimate. It works best in landscape with your face well lit.
+- **Fallback**: if anything goes wrong (no camera, unsupported device, unreadable layout), you are back in the normal player.
+
+## Where things are, in pictures
+
+Screenshots from the Android build on an emulator, with synthetic test media.
+
+| In the viewer | In the ⋮ menu |
+|---|---|
+| <img src=".github/readme/video-viewer-spatial-button.png" width="220" alt="The viewer top bar of a stereoscopic video: the Spatial button (a rotating 3D icon) next to the favourite button and the menu"> | <img src=".github/readme/menu-view-as-360.png" width="220" alt="The viewer menu with the View as 360 degrees entry between Slideshow and Download"> |
+| The top bar of a stereoscopic video. From the left: back, date, the **Spatial** button (rotating 3D icon, only on stereoscopic videos when the setting is on), favourite, and the ⋮ menu. On a 360° photo or video the **360°** button takes the place of the Spatial one. | The ⋮ menu of a photo the server does not flag as 360°: **View as 360°** sits between Slideshow and Download. Once chosen, the entry becomes **Stop treating as 360°** and the 360° button appears in the top bar. The rest of the menu is stock Immich. |
+
+| The sphere viewer | The settings |
+|---|---|
+| <img src=".github/readme/sphere-3d-button.png" width="220" alt="The sphere viewer: close at the top left, the 3D layout button and the gyroscope button at the top right"> | <img src=".github/readme/settings-spatial.png" width="220" alt="The Asset Viewer settings page with the Spatial 2.5D (experimental) switch under the video settings"> |
+| A 360° photo opened as a sphere: close at the top left; at the top right the **3D** button (cycles mono, top and bottom, side by side; its label reads the current layout) and the **gyroscope** toggle. The same two buttons are in the Android and iOS 360° video players. | Settings, Asset Viewer, under the video settings: **Spatial 2.5D (experimental)**, on by default, and below it the troubleshooting overlay switch. Turning Spatial off removes the Spatial button everywhere. |
+
+<img src=".github/readme/spatial-player.png" width="760" alt="The Spatial player in landscape with the troubleshooting overlay: layout and Recenter buttons at the top right, the viewpoint slider and the head sensitivity at the bottom">
+
+The Spatial player, here with the troubleshooting overlay on. Top right: the current **layout** (tap to cycle) and **Recenter** (takes your current head position as the centre). Bottom: play, the timeline, then the **viewpoint slider** from L to R (moves the viewpoint by hand, which also works without a camera), the **head sensitivity**, and the **Disparity map** check box that shows the estimated depth instead of the picture. The overlay at the top left lists the render and disparity rates, the quality tier, the viewpoint and the tracking state. Close with the cross or the system back.
+
 ## Where to get it
 
-The app has been submitted to Google Play and to the App Store and is waiting for their review. Until the listings are live, nothing stops you from installing it yourself:
+The app is on Google Play; the App Store version is waiting for Apple's review. The GitHub release is always the newest build:
 
 | Platform | Today | Soon |
 |---|---|---|
-| Android phones and tablets | APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page: take the `arm64-v8a` file for a phone, or the universal `-release.apk` if unsure. It installs next to the official Immich app (package `com.aprogsys.immuch360`). | Google Play, under review |
+| Android phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page (take the `arm64-v8a` file for a phone, or the universal `-release.apk` if unsure; the GitHub build is usually ahead of the store). Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`). | |
 | iPhone and iPad | Waiting for Apple's review. The source builds with Xcode or on Codemagic, see [Build it yourself](#build-it-yourself). | App Store, under review |
 | Meta Quest 3 | The universal `-release.apk`, sideloaded in developer mode, see [Meta Quest 3](#meta-quest-3). | Sideloading only |
 
-The store links will be added here as soon as the listings are published. Log in with your usual Immich server URL and account. The current build is based on Immich 3.3.0-rc.0 (Immich `main`, not a stable release yet) and was tested with an Immich 3.2 server. The APK from GitHub does not update itself: watch the Releases page, and once you have installed the app from a store, take the updates from that store. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+The App Store link will be added here as soon as the listing is published. Log in with your usual Immich server URL and account. The current build is based on Immich 3.3.0-rc.0 (Immich `main`, not a stable release yet) and was tested with an Immich 3.2 server. The APK from GitHub does not update itself: watch the Releases page, and once you have installed the app from a store, take the updates from that store. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
 
 ## What this fork adds compared to Immich, in detail
 
 | Feature | Immich mobile app | Immuch360 | Status |
 |---|---|---|---|
-| 360° photos (equirectangular) shown as an interactive sphere | No, flat image only | **Yes**, drag to look around, pinch to zoom, partial panoramas handled (GPano crop) | Tested on a Galaxy S24+ and an iPhone 14 |
-| 360° badge on thumbnails | No | **Yes** | Done |
-| 360° button in the viewer top bar, zoom kept on the flat view, loading indicator | n/a | **Yes** | Done |
-| Gyroscope navigation: look around by moving the phone | No | **Yes**, toggle in the 360 viewer (off by default) | Tested on a Galaxy S24+ and an iPhone 14 |
-| Initial view from GPano metadata, inertia after a drag, double tap zoom, sharper texture when zoomed in | No | **Yes** | Tested on a Galaxy S24+ and an iPhone 14, device feedback welcome |
-| 360° entry in the Library tab listing every 360° photo and video | No | **Yes** | Done |
-| 3D (stereoscopic) 360° photos and videos, top and bottom or side by side | No | **Yes**: layout read from the file (st3d) or guessed from its shape, 3D button to change it; left eye on phones, true 3D on the Quest | Tested on an Android emulator with synthetic media; device feedback welcome |
-| 360° videos played on a sphere with drag and gyroscope | No, flat video only | **Yes on Android and iOS** (native player opened by the 360° button, Media3 on Android and SceneKit on iOS; plays the file stored on the phone when there is one, otherwise streams it from your server) | Tested on a Galaxy S24+ and an iPhone 14 |
-| Meta Quest 3 viewer with head tracking | No | **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Tested on a Quest 3 |
-| Native Insta360 files (.insp, .insv, .dng dual fisheye) | Shown flat or wrongly | Server side stitching under study | Study |
+| 360° photos (equirectangular) shown as an interactive sphere | ❌ No, flat image only | ✅ **Yes**, drag to look around, pinch to zoom, partial panoramas handled (GPano crop) | Tested on a Galaxy S24+ and an iPhone 14 |
+| 360° badge on thumbnails | ❌ No | ✅ **Yes** | Done |
+| 360° button in the viewer top bar, zoom kept on the flat view, loading indicator | ❌ n/a | ✅ **Yes** | Done |
+| Gyroscope navigation: look around by moving the phone | ❌ No | ✅ **Yes**, toggle in the 360 viewer (off by default) | Tested on a Galaxy S24+ and an iPhone 14 |
+| Initial view from GPano metadata, inertia after a drag, double tap zoom, sharper texture when zoomed in | ❌ No | ✅ **Yes** | Tested on a Galaxy S24+ and an iPhone 14, device feedback welcome |
+| 360° entry in the Library tab listing every 360° photo and video | ❌ No | ✅ **Yes** | Done |
+| 3D (stereoscopic) 360° photos and videos, top and bottom or side by side | ❌ No | ✅ **Yes**: layout read from the file (st3d) or guessed from its shape, 3D button to change it; left eye on phones, true 3D on the Quest | Tested on an Android emulator with synthetic media; device feedback welcome |
+| 360° videos played on a sphere with drag and gyroscope | ❌ No, flat video only | ✅ **Yes on Android and iOS** (native player opened by the 360° button, Media3 on Android and SceneKit on iOS; plays the file stored on the phone when there is one, otherwise streams it from your server) | Tested on a Galaxy S24+ and an iPhone 14 |
+| Meta Quest 3 viewer with head tracking | ❌ No | ✅ **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Tested on a Quest 3 |
+| Spatial 2.5D for stereoscopic videos (head coupled depth on a flat screen) | ❌ No | ✅ **Yes**, experimental, on by default, switch in the settings | Experimental, feedback welcome |
+| "View as 360°" for photos and videos the server does not flag as 360° | ❌ No | ✅ **Yes**, in the viewer menu, remembered on the phone | Done |
+| Native Insta360 files (.insp, .insv, .dng dual fisheye) | ❌ Shown flat or wrongly | ❌ Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
 
