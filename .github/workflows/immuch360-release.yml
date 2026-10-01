@@ -58,16 +58,18 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
         run: |
-          mise exec -- flutter build apk --release
-          mise exec -- flutter build apk --release --split-per-abi --target-platform android-arm,android-arm64,android-x64
-          mise exec -- flutter build appbundle --release
-          ls -la build/app/outputs/flutter-apk/ build/app/outputs/bundle/release/
+          mise exec -- flutter build apk --release --flavor phone
+          mise exec -- flutter build apk --release --flavor phone --split-per-abi --target-platform android-arm,android-arm64,android-x64
+          mise exec -- flutter build appbundle --release --flavor phone
+          mise exec -- flutter build apk --release --flavor quest --target-platform android-arm64
+          ls -la build/app/outputs/flutter-apk/ build/app/outputs/bundle/phoneRelease/
 
       - name: Rename APKs
         run: |
           cd mobile/build/app/outputs/flutter-apk
-          for f in app-*.apk; do mv "$f" "Immuch360-${GITHUB_REF_NAME}-${f#app-}"; done
-          mv ../bundle/release/app-release.aab "Immuch360-${GITHUB_REF_NAME}.aab"
+          for f in app-phone-*.apk; do mv "$f" "Immuch360-${GITHUB_REF_NAME}-${f#app-phone-}"; done
+          mv app-quest-release.apk "Immuch360-${GITHUB_REF_NAME}-quest-release.apk"
+          mv ../bundle/phoneRelease/app-phone-release.aab "Immuch360-${GITHUB_REF_NAME}.aab"
           ls -la
 
       - name: Upload artifacts

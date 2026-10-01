@@ -45,6 +45,23 @@ android {
     resValue "string", "app_name", "Immuch360"
   }
 
+  // Two store flavours of the same app: "phone" for Google Play and the GitHub releases, "quest" for the Meta
+  // Horizon Store, whose upload checks refuse a target SDK above 34, the MANAGE_MEDIA and background location
+  // permissions and 32 bit libraries (see src/quest/AndroidManifest.xml)
+  flavorDimensions = ["store"]
+  productFlavors {
+    phone {
+      dimension "store"
+    }
+    quest {
+      dimension "store"
+      targetSdk = 34
+      ndk {
+        abiFilters "arm64-v8a"
+      }
+    }
+  }
+
   signingConfigs {
     release {
       def keyAliasVal = System.getenv("ALIAS")

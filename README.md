@@ -221,10 +221,11 @@ cd Immuch360/mobile
 mise install
 mise run install
 mise run codegen
-flutter build apk --release
+flutter build apk --release --flavor phone                                   # phones, the Google Play and GitHub build
+flutter build apk --release --flavor quest --target-platform android-arm64   # Meta Quest 3, the Horizon Store build
 ```
 
-iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository, no Mac needed. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).
+The two Android flavours are the same app. The `quest` one targets SDK 34, drops the two permissions the Meta Horizon Store refuses (media management and background location) and is 64 bit only; the `phone` one is what Google Play requires. iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository, no Mac needed. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 No secret lives in this repository: the Android signing key is stored as encrypted GitHub Actions secrets, and the Apple signing material is stored as encrypted variables on Codemagic. The workflow files only reference them by name.
 
