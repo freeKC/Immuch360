@@ -4,7 +4,7 @@
   <string name="immersive_back">Til baka</string>
   <string name="immersive_play">Spila</string>
   <string name="immersive_pause">Hlé</string>
-  <string name="immersive_hint">B eða Y: aftur í forritið. Gikkur: spila eða gera hlé. A, X eða handfang: sýna eða fela þetta spjald. Stýripinni til vinstri eða hægri: snúa myndinni.</string>
+  <string name="immersive_hint">B eða Y: aftur í forritið. Gikkur: spila eða gera hlé. A, X eða handfang: sýna eða fela þetta spjald. Stýripinni til vinstri eða hægri: snúa myndinni, upp eða niður: 3D-uppsetning.</string>
   <string name="immersive_yaw">Mynd snúið í %1$d gráður</string>
   <string name="immersive_loading">Hleður inn</string>
   <string name="immersive_buffering">Hleður í biðminni</string>

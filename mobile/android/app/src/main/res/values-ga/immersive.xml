@@ -4,7 +4,7 @@
   <string name="immersive_back">Ar ais</string>
   <string name="immersive_play">Seinn</string>
   <string name="immersive_pause">Sos</string>
-  <string name="immersive_hint">B nó Y: ar ais chuig an aip. Truicear: seinn nó sos. A, X nó cnaipe greama: taispeáin nó folaigh an painéal seo. Maide ordóige ar chlé nó ar dheis: cas an íomhá.</string>
+  <string name="immersive_hint">B nó Y: ar ais chuig an aip. Truicear: seinn nó sos. A, X nó cnaipe greama: taispeáin nó folaigh an painéal seo. Maide ordóige ar chlé nó ar dheis: cas an íomhá, suas nó síos: leagan amach 3D.</string>
   <string name="immersive_yaw">Íomhá casta go %1$d céim</string>
   <string name="immersive_loading">Ag luchtú</string>
   <string name="immersive_buffering">Ag maolánú</string>

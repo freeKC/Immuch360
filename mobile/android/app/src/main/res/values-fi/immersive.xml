@@ -4,7 +4,7 @@
   <string name="immersive_back">Takaisin</string>
   <string name="immersive_play">Toista</string>
   <string name="immersive_pause">Tauko</string>
-  <string name="immersive_hint">B tai Y: takaisin sovellukseen. Liipaisin: toista tai tauko. A, X tai sivupainike: näytä tai piilota tämä paneeli. Ohjainsauva vasemmalle tai oikealle: käännä kuvaa.</string>
+  <string name="immersive_hint">B tai Y: takaisin sovellukseen. Liipaisin: toista tai tauko. A, X tai sivupainike: näytä tai piilota tämä paneeli. Ohjainsauva vasemmalle tai oikealle: käännä kuvaa, ylös tai alas: 3D-asettelu.</string>
   <string name="immersive_yaw">Kuva käännetty %1$d asteeseen</string>
   <string name="immersive_loading">Ladataan</string>
   <string name="immersive_buffering">Puskuroidaan</string>

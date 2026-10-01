@@ -4,7 +4,7 @@
   <string name="immersive_back">ថយក្រោយ</string>
   <string name="immersive_play">ចាក់</string>
   <string name="immersive_pause">ផ្អាក</string>
-  <string name="immersive_hint">B ឬ Y៖ ត្រឡប់ទៅកម្មវិធីវិញ។ Trigger៖ ចាក់ ឬផ្អាក។ A, X ឬ Grip៖ បង្ហាញ ឬលាក់ផ្ទាំងនេះ។ Thumbstick ទៅឆ្វេង ឬស្តាំ៖ បង្វិលរូបភាព។</string>
+  <string name="immersive_hint">B ឬ Y៖ ត្រឡប់ទៅកម្មវិធីវិញ។ Trigger៖ ចាក់ ឬផ្អាក។ A, X ឬ Grip៖ បង្ហាញ ឬលាក់ផ្ទាំងនេះ។ Thumbstick ទៅឆ្វេង ឬស្តាំ៖ បង្វិលរូបភាព ឡើងលើ ឬចុះក្រោម៖ ប្លង់ 3D។</string>
   <string name="immersive_yaw">រូបភាពត្រូវបានបង្វិលទៅ %1$d ដឺក្រេ</string>
   <string name="immersive_loading">កំពុងផ្ទុក</string>
   <string name="immersive_buffering">កំពុងផ្ទុកទុកមុន</string>

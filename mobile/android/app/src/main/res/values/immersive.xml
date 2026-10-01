@@ -15,7 +15,7 @@
   <string name="immersive_back">Back</string>
   <string name="immersive_play">Play</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B or Y: back to the app. Trigger: play or pause. A, X or grip: show or hide this panel. Thumbstick left or right: turn the image.</string>
+  <string name="immersive_hint">B or Y: back to the app. Trigger: play or pause. A, X or grip: show or hide this panel. Thumbstick left or right: turn the image, up or down: 3D layout.</string>
   <string name="immersive_yaw">Image turned to %1$d degrees</string>
   <string name="immersive_loading">Loading</string>
   <string name="immersive_buffering">Buffering</string>

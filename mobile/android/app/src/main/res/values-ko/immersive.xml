@@ -4,7 +4,7 @@
   <string name="immersive_back">뒤로</string>
   <string name="immersive_play">재생</string>
   <string name="immersive_pause">일시 정지</string>
-  <string name="immersive_hint">B 또는 Y: 앱으로 돌아가기. 트리거: 재생 또는 일시 정지. A, X 또는 그립: 이 패널 표시 또는 숨기기. 썸스틱 왼쪽 또는 오른쪽: 이미지 회전.</string>
+  <string name="immersive_hint">B 또는 Y: 앱으로 돌아가기. 트리거: 재생 또는 일시 정지. A, X 또는 그립: 이 패널 표시 또는 숨기기. 썸스틱 왼쪽 또는 오른쪽: 이미지 회전, 위 또는 아래: 3D 레이아웃.</string>
   <string name="immersive_yaw">이미지를 %1$d도로 회전했습니다</string>
   <string name="immersive_loading">로드 중</string>
   <string name="immersive_buffering">버퍼링 중</string>

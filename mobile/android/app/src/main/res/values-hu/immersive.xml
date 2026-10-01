@@ -4,7 +4,7 @@
   <string name="immersive_back">Vissza</string>
   <string name="immersive_play">Lejátszás</string>
   <string name="immersive_pause">Szünet</string>
-  <string name="immersive_hint">B vagy Y: vissza az alkalmazásba. Ravasz: lejátszás vagy szünet. A, X vagy markolatgomb: a panel megjelenítése vagy elrejtése. Joystick balra vagy jobbra: a kép elforgatása.</string>
+  <string name="immersive_hint">B vagy Y: vissza az alkalmazásba. Ravasz: lejátszás vagy szünet. A, X vagy markolatgomb: a panel megjelenítése vagy elrejtése. Joystick balra vagy jobbra: a kép elforgatása, fel vagy le: 3D elrendezés.</string>
   <string name="immersive_yaw">Kép elforgatva %1$d fokra</string>
   <string name="immersive_loading">Betöltés</string>
   <string name="immersive_buffering">Pufferelés</string>

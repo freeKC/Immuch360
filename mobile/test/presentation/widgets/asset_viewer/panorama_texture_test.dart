@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 
 /// What the decoders make of a [width] x [height] image asked to decode at [request]: the smallest size that covers
@@ -55,6 +56,18 @@ void main() {
         final (decodedWidth, decodedHeight) = _texture(width, height, preview: preview);
         expect(decodedWidth, lessThanOrEqualTo(8192), reason: '$width x $height');
         expect(decodedHeight, lessThanOrEqualTo(4096 * 1.01), reason: '$width x $height');
+      }
+    });
+
+    test('leaves each eye of a large 3D panorama about 4096 x 2048 pixels', () {
+      for (final (layout, width, height) in [
+        (StereoLayout.topBottom, 11520, 11520),
+        (StereoLayout.leftRight, 15360, 3840),
+      ]) {
+        final (decodedWidth, decodedHeight) = _texture(width, height);
+        final eye = layout.leftEyeRect;
+        expect(decodedWidth * eye.width, inInclusiveRange(4094, 4096), reason: '$layout');
+        expect(decodedHeight * eye.height, inInclusiveRange(2047, 2048), reason: '$layout');
       }
     });
   });

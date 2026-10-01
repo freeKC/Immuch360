@@ -13,6 +13,8 @@ class RemoteAssetFactory {
     String? stackId,
     DateTime? deletedAt,
     String? localId,
+    int? width,
+    int? height,
   }) {
     final assetId = TestUtils.uuid(id);
 
@@ -30,6 +32,8 @@ class RemoteAssetFactory {
       isEdited: false,
       deletedAt: deletedAt,
       localId: localId,
+      width: width,
+      height: height,
     );
   }
 }

@@ -3,7 +3,7 @@
   <string name="immersive_back">Tilbake</string>
   <string name="immersive_play">Spel av</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B eller Y: tilbake til appen. Avtrekkar: spel av eller pause. A, X eller grepknapp: vis eller skjul dette panelet. Styrespak til venstre eller høgre: roter biletet.</string>
+  <string name="immersive_hint">B eller Y: tilbake til appen. Avtrekkar: spel av eller pause. A, X eller grepknapp: vis eller skjul dette panelet. Styrespak til venstre eller høgre: roter biletet, opp eller ned: 3D-oppsett.</string>
   <string name="immersive_yaw">Biletet er rotert til %1$d grader</string>
   <string name="immersive_loading">Lastar</string>
   <string name="immersive_buffering">Bufrar</string>

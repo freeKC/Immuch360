@@ -4,7 +4,7 @@
   <string name="immersive_back">Rudi</string>
   <string name="immersive_play">Cheza</string>
   <string name="immersive_pause">Sitisha</string>
-  <string name="immersive_hint">B au Y: rudi kwenye programu. Kifyatulio: cheza au sitisha. A, X au kitufe cha kushika: onyesha au ficha paneli hii. Kijiti kushoto au kulia: zungusha picha.</string>
+  <string name="immersive_hint">B au Y: rudi kwenye programu. Kifyatulio: cheza au sitisha. A, X au kitufe cha kushika: onyesha au ficha paneli hii. Kijiti kushoto au kulia: zungusha picha, juu au chini: mpangilio wa 3D.</string>
   <string name="immersive_yaw">Picha imezungushwa hadi digrii %1$d</string>
   <string name="immersive_loading">Inapakia</string>
   <string name="immersive_buffering">Inaakibisha</string>

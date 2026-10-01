@@ -4,7 +4,7 @@
   <string name="immersive_back">Назад</string>
   <string name="immersive_play">Прайграць</string>
   <string name="immersive_pause">Прыпыніць</string>
-  <string name="immersive_hint">B або Y: назад у праграму. Курок: прайграць або прыпыніць. A, X або кнопка хвату: паказаць або схаваць гэту панэль. Джойсцік улева або ўправа: павярнуць выяву.</string>
+  <string name="immersive_hint">B або Y: назад у праграму. Курок: прайграць або прыпыніць. A, X або кнопка хвату: паказаць або схаваць гэту панэль. Джойсцік улева або ўправа: павярнуць выяву, уверх або ўніз: размяшчэнне 3D.</string>
   <string name="immersive_yaw">Выява павернута на %1$d°</string>
   <string name="immersive_loading">Загрузка</string>
   <string name="immersive_buffering">Буферызацыя</string>

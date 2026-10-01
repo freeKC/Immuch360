@@ -4,7 +4,7 @@
   <string name="immersive_back">પાછા</string>
   <string name="immersive_play">ચલાવો</string>
   <string name="immersive_pause">થોભાવો</string>
-  <string name="immersive_hint">B અથવા Y: ઍપ પર પાછા જાઓ. ટ્રિગર: ચલાવો અથવા થોભાવો. A, X અથવા ગ્રિપ: આ પૅનલ બતાવો અથવા છુપાવો. થમ્બસ્ટિક ડાબે અથવા જમણે: છબી ફેરવો.</string>
+  <string name="immersive_hint">B અથવા Y: ઍપ પર પાછા જાઓ. ટ્રિગર: ચલાવો અથવા થોભાવો. A, X અથવા ગ્રિપ: આ પૅનલ બતાવો અથવા છુપાવો. થમ્બસ્ટિક ડાબે અથવા જમણે: છબી ફેરવો, ઉપર અથવા નીચે: 3D લેઆઉટ.</string>
   <string name="immersive_yaw">છબી %1$d ડિગ્રી પર ફેરવી</string>
   <string name="immersive_loading">લોડ થઈ રહ્યું છે</string>
   <string name="immersive_buffering">બફર થઈ રહ્યું છે</string>

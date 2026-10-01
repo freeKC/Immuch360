@@ -4,7 +4,7 @@
   <string name="immersive_back">Zpět</string>
   <string name="immersive_play">Přehrát</string>
   <string name="immersive_pause">Pozastavit</string>
-  <string name="immersive_hint">B nebo Y: zpět do aplikace. Spoušť: přehrát nebo pozastavit. A, X nebo tlačítko úchopu: zobrazit nebo skrýt tento panel. Páčka doleva nebo doprava: otočit obraz.</string>
+  <string name="immersive_hint">B nebo Y: zpět do aplikace. Spoušť: přehrát nebo pozastavit. A, X nebo tlačítko úchopu: zobrazit nebo skrýt tento panel. Páčka doleva nebo doprava: otočit obraz, nahoru nebo dolů: rozložení 3D.</string>
   <string name="immersive_yaw">Obraz otočen na %1$d°</string>
   <string name="immersive_loading">Načítání</string>
   <string name="immersive_buffering">Ukládání do vyrovnávací paměti</string>

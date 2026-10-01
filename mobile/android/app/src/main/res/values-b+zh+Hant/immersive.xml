@@ -4,7 +4,7 @@
   <string name="immersive_back">返回</string>
   <string name="immersive_play">播放</string>
   <string name="immersive_pause">暫停</string>
-  <string name="immersive_hint">B 或 Y：返回應用程式。扳機鍵：播放或暫停。A、X 或握把鍵：顯示或隱藏此面板。搖桿向左或向右：旋轉畫面。</string>
+  <string name="immersive_hint">B 或 Y：返回應用程式。扳機鍵：播放或暫停。A、X 或握把鍵：顯示或隱藏此面板。搖桿向左或向右：旋轉畫面，向上或向下：3D 版面配置。</string>
   <string name="immersive_yaw">畫面已旋轉至 %1$d 度</string>
   <string name="immersive_loading">載入中</string>
   <string name="immersive_buffering">緩衝中</string>

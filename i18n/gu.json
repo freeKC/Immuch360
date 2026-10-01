@@ -94,5 +94,9 @@
   "immersive_viewer_open_failed": "ઇમર્સિવ વ્યૂઅર ખોલી શકાયું નથી",
   "library_360": "360°",
   "panorama_gyroscope": "જાયરોસ્કોપ",
-  "panorama_no_gyroscope": "આ ઉપકરણમાં જાયરોસ્કોપ નથી"
+  "panorama_no_gyroscope": "આ ઉપકરણમાં જાયરોસ્કોપ નથી",
+  "panorama_stereo_layout": "3D લેઆઉટ",
+  "panorama_stereo_left_right": "3D, બાજુ-બાજુમાં",
+  "panorama_stereo_mono": "મોનો (3D નહીં)",
+  "panorama_stereo_top_bottom": "3D, ઉપર અને નીચે"
 }

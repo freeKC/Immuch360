@@ -45,6 +45,21 @@
     android:gravity="end"
     android:orientation="horizontal">
 
+    <!-- 3D layout of the media on screen, shown while a media is loaded. A click (controller ray or hand
+         pinch) switches to the next layout: mono, top and bottom, side by side -->
+    <Button
+      android:id="@+id/immersive_stereo"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginEnd="12dp"
+      android:layout_weight="1"
+      android:ellipsize="end"
+      android:maxLines="2"
+      android:textAllCaps="false"
+      android:textSize="17sp"
+      android:visibility="gone" />
+
     <Button
       android:id="@+id/immersive_play_pause"
       android:layout_width="wrap_content"

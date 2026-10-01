@@ -4,7 +4,7 @@
   <string name="immersive_back">തിരികെ</string>
   <string name="immersive_play">പ്ലേ ചെയ്യുക</string>
   <string name="immersive_pause">താൽക്കാലികമായി നിർത്തുക</string>
-  <string name="immersive_hint">B അല്ലെങ്കിൽ Y: ആപ്പിലേക്ക് മടങ്ങുക. ട്രിഗർ: പ്ലേ ചെയ്യുക അല്ലെങ്കിൽ താൽക്കാലികമായി നിർത്തുക. A, X അല്ലെങ്കിൽ ഗ്രിപ്പ്: ഈ പാനൽ കാണിക്കുക അല്ലെങ്കിൽ മറയ്ക്കുക. തംബ്സ്റ്റിക്ക് ഇടത്തോട്ടോ വലത്തോട്ടോ: ചിത്രം തിരിക്കുക.</string>
+  <string name="immersive_hint">B അല്ലെങ്കിൽ Y: ആപ്പിലേക്ക് മടങ്ങുക. ട്രിഗർ: പ്ലേ ചെയ്യുക അല്ലെങ്കിൽ താൽക്കാലികമായി നിർത്തുക. A, X അല്ലെങ്കിൽ ഗ്രിപ്പ്: ഈ പാനൽ കാണിക്കുക അല്ലെങ്കിൽ മറയ്ക്കുക. തംബ്സ്റ്റിക്ക് ഇടത്തോട്ടോ വലത്തോട്ടോ: ചിത്രം തിരിക്കുക, മുകളിലേക്കോ താഴേക്കോ: 3D ലേഔട്ട്.</string>
   <string name="immersive_yaw">ചിത്രം %1$d ഡിഗ്രിയിലേക്ക് തിരിച്ചു</string>
   <string name="immersive_loading">ലോഡിംഗ്</string>
   <string name="immersive_buffering">ബഫറിംഗ്</string>

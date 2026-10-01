@@ -4,7 +4,7 @@
   <string name="immersive_back">Indietro</string>
   <string name="immersive_play">Riproduci</string>
   <string name="immersive_pause">Pausa</string>
-  <string name="immersive_hint">B o Y: torna all\'app. Grilletto: riproduci o metti in pausa. A, X o impugnatura: mostra o nascondi questo pannello. Levetta a sinistra o a destra: ruota l\'immagine.</string>
+  <string name="immersive_hint">B o Y: torna all\'app. Grilletto: riproduci o metti in pausa. A, X o impugnatura: mostra o nascondi questo pannello. Levetta a sinistra o a destra: ruota l\'immagine, in alto o in basso: disposizione 3D.</string>
   <string name="immersive_yaw">Immagine ruotata a %1$d gradi</string>
   <string name="immersive_loading">Caricamento</string>
   <string name="immersive_buffering">Buffering in corso</string>

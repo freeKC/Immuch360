@@ -1194,6 +1194,10 @@
   "map": "Kort",
   "panorama_gyroscope": "Gíróskóp",
   "panorama_no_gyroscope": "Ekkert gíróskóp í þessu tæki",
+  "panorama_stereo_layout": "3D-uppsetning",
+  "panorama_stereo_left_right": "3D, hlið við hlið",
+  "panorama_stereo_mono": "Mónó (ekki 3D)",
+  "panorama_stereo_top_bottom": "3D, efst og neðst",
   "photos": "Ljósmyndir",
   "sharing": "Deiling",
   "yes": "Já"

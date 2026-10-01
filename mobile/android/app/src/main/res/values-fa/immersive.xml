@@ -3,7 +3,7 @@
   <string name="immersive_back">بازگشت</string>
   <string name="immersive_play">پخش</string>
   <string name="immersive_pause">مکث</string>
-  <string name="immersive_hint">B یا Y: بازگشت به برنامه. ماشه: پخش یا مکث. A، X یا دکمهٔ گرفتن: نمایش یا پنهان کردن این پنل. جوی‌استیک به چپ یا راست: چرخاندن تصویر.</string>
+  <string name="immersive_hint">B یا Y: بازگشت به برنامه. ماشه: پخش یا مکث. A، X یا دکمهٔ گرفتن: نمایش یا پنهان کردن این پنل. جوی‌استیک به چپ یا راست: چرخاندن تصویر، بالا یا پایین: چیدمان 3D.</string>
   <string name="immersive_yaw">تصویر به %1$d درجه چرخید</string>
   <string name="immersive_loading">در حال بارگذاری</string>
   <string name="immersive_buffering">در حال بافر شدن</string>

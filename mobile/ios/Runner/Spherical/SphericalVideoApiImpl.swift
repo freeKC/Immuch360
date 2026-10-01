@@ -6,7 +6,15 @@ import UIKit
 /// The full screen presentation hides the Flutter view, which sends the app lifecycle to paused, and closing the
 /// player brings it back to resumed: that is what lets the asset viewer restart its own player, as on Android.
 class SphericalVideoApiImpl: SphericalVideoApi {
-  func open(url: String, headers: [String: String], title: String, closeLabel: String?, errorMessage: String?) throws {
+  func open(
+    url: String,
+    headers: [String: String],
+    title: String,
+    closeLabel: String?,
+    errorMessage: String?,
+    stereoLayout: StereoLayout,
+    stereoLabels: [String: String]
+  ) throws {
     guard let videoUrl = URL(string: url) else {
       throw PigeonError(code: "INVALID_URL", message: "Cannot read the video URL \(url)", details: nil)
     }
@@ -32,7 +40,9 @@ class SphericalVideoApiImpl: SphericalVideoApi {
       headers: headers,
       title: title,
       closeLabel: closeLabel,
-      errorMessage: errorMessage
+      errorMessage: errorMessage,
+      stereoLayout: stereoLayout,
+      stereoLabels: stereoLabels
     )
     player.modalPresentationStyle = .fullScreen
     player.modalTransitionStyle = .crossDissolve

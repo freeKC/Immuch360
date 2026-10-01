@@ -4,7 +4,7 @@
   <string name="immersive_back">กลับ</string>
   <string name="immersive_play">เล่น</string>
   <string name="immersive_pause">หยุดชั่วคราว</string>
-  <string name="immersive_hint">B หรือ Y: กลับไปที่แอป ทริกเกอร์: เล่นหรือหยุดชั่วคราว A, X หรือปุ่มกริป: แสดงหรือซ่อนแผงนี้ จอยสติ๊กไปทางซ้ายหรือขวา: หมุนภาพ</string>
+  <string name="immersive_hint">B หรือ Y: กลับไปที่แอป ทริกเกอร์: เล่นหรือหยุดชั่วคราว A, X หรือปุ่มกริป: แสดงหรือซ่อนแผงนี้ จอยสติ๊กไปทางซ้ายหรือขวา: หมุนภาพ ขึ้นหรือลง: เลย์เอาต์ 3D</string>
   <string name="immersive_yaw">หมุนภาพไปที่ %1$d องศาแล้ว</string>
   <string name="immersive_loading">กำลังโหลด</string>
   <string name="immersive_buffering">กำลังบัฟเฟอร์</string>

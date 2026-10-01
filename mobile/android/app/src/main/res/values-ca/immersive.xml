@@ -4,7 +4,7 @@
   <string name="immersive_back">Endarrere</string>
   <string name="immersive_play">Reprodueix</string>
   <string name="immersive_pause">Pausa</string>
-  <string name="immersive_hint">B o Y: torna a l’aplicació. Gallet: reprodueix o posa en pausa. A, X o botó lateral: mostra o amaga aquest tauler. Joystick a l’esquerra o a la dreta: gira la imatge.</string>
+  <string name="immersive_hint">B o Y: torna a l’aplicació. Gallet: reprodueix o posa en pausa. A, X o botó lateral: mostra o amaga aquest tauler. Joystick a l’esquerra o a la dreta: gira la imatge, amunt o avall: disposició 3D.</string>
   <string name="immersive_yaw">Imatge girada a %1$d graus</string>
   <string name="immersive_loading">S’està carregant</string>
   <string name="immersive_buffering">S’està emmagatzemant a la memòria intermèdia</string>

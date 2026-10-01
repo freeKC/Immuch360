@@ -3,7 +3,7 @@
   <string name="immersive_back">पछाडि</string>
   <string name="immersive_play">प्ले गर्नुहोस्</string>
   <string name="immersive_pause">रोक्नुहोस्</string>
-  <string name="immersive_hint">B वा Y: एपमा फर्कनुहोस्। ट्रिगर: प्ले वा पज गर्नुहोस्। A, X वा ग्रिप: यो प्यानल देखाउनुहोस् वा लुकाउनुहोस्। थम्बस्टिक बायाँ वा दायाँ: छवि घुमाउनुहोस्।</string>
+  <string name="immersive_hint">B वा Y: एपमा फर्कनुहोस्। ट्रिगर: प्ले वा पज गर्नुहोस्। A, X वा ग्रिप: यो प्यानल देखाउनुहोस् वा लुकाउनुहोस्। थम्बस्टिक बायाँ वा दायाँ: छवि घुमाउनुहोस्, माथि वा तल: 3D लेआउट।</string>
   <string name="immersive_yaw">छवि %1$d डिग्रीमा घुमाइयो</string>
   <string name="immersive_loading">लोड हुँदैछ</string>
   <string name="immersive_buffering">बफर हुँदैछ</string>

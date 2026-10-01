@@ -4,7 +4,7 @@
   <string name="immersive_back">Հետ</string>
   <string name="immersive_play">Նվագարկել</string>
   <string name="immersive_pause">Դադար</string>
-  <string name="immersive_hint">B կամ Y: վերադառնալ հավելված։ Ձգան: նվագարկել կամ դադար։ A, X կամ բռնակ: ցույց տալ կամ թաքցնել այս վահանակը։ Ջոյսթիքը ձախ կամ աջ: պտտել պատկերը։</string>
+  <string name="immersive_hint">B կամ Y: վերադառնալ հավելված։ Ձգան: նվագարկել կամ դադար։ A, X կամ բռնակ: ցույց տալ կամ թաքցնել այս վահանակը։ Ջոյսթիքը ձախ կամ աջ: պտտել պատկերը, վեր կամ վար: 3D դասավորություն։</string>
   <string name="immersive_yaw">Պատկերը պտտված է %1$d աստիճան</string>
   <string name="immersive_loading">Բեռնվում է</string>
   <string name="immersive_buffering">Բուֆերացում</string>

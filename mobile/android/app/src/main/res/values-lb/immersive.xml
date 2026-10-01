@@ -4,7 +4,7 @@
   <string name="immersive_back">Zréck</string>
   <string name="immersive_play">Ofspillen</string>
   <string name="immersive_pause">Paus</string>
-  <string name="immersive_hint">B oder Y: zréck an d\'App. Trigger: ofspillen oder pauséieren. A, X oder Grip: dëse Panel weisen oder verstoppen. Joystick lénks oder riets: d\'Bild dréinen.</string>
+  <string name="immersive_hint">B oder Y: zréck an d\'App. Trigger: ofspillen oder pauséieren. A, X oder Grip: dëse Panel weisen oder verstoppen. Joystick lénks oder riets: d\'Bild dréinen, erop oder erof: 3D-Layout.</string>
   <string name="immersive_yaw">Bild op %1$d Grad gedréint</string>
   <string name="immersive_loading">Gëtt gelueden</string>
   <string name="immersive_buffering">Gëtt gebuffert</string>

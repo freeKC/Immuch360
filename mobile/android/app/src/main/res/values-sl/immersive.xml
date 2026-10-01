@@ -4,7 +4,7 @@
   <string name="immersive_back">Nazaj</string>
   <string name="immersive_play">Predvajaj</string>
   <string name="immersive_pause">Premor</string>
-  <string name="immersive_hint">B ali Y: nazaj v aplikacijo. Sprožilec: predvajaj ali premor. A, X ali gumb za oprijem: prikaži ali skrij to ploščo. Palčka levo ali desno: zasukaj sliko.</string>
+  <string name="immersive_hint">B ali Y: nazaj v aplikacijo. Sprožilec: predvajaj ali premor. A, X ali gumb za oprijem: prikaži ali skrij to ploščo. Palčka levo ali desno: zasukaj sliko, gor ali dol: postavitev 3D.</string>
   <string name="immersive_yaw">Zasuk slike: %1$d°</string>
   <string name="immersive_loading">Nalaganje</string>
   <string name="immersive_buffering">Medpomnjenje</string>

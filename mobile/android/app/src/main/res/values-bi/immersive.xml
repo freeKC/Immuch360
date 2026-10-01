@@ -4,7 +4,7 @@
   <string name="immersive_back">Go bak</string>
   <string name="immersive_play">Plei</string>
   <string name="immersive_pause">Stop smol</string>
-  <string name="immersive_hint">B o Y: go bak long app. Trigger: plei o stop smol. A, X o grip: soem o haedem panel ia. Thumbstick lef o raet: tanem pikja.</string>
+  <string name="immersive_hint">B o Y: go bak long app. Trigger: plei o stop smol. A, X o grip: soem o haedem panel ia. Thumbstick lef o raet: tanem pikja, antap o daon: 3D leaot.</string>
   <string name="immersive_yaw">Pikja i tanem i go long %1$d digri</string>
   <string name="immersive_loading">I stap lodem</string>
   <string name="immersive_buffering">I stap bafa</string>

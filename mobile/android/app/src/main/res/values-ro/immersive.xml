@@ -3,7 +3,7 @@
   <string name="immersive_back">Înapoi</string>
   <string name="immersive_play">Redare</string>
   <string name="immersive_pause">Pauză</string>
-  <string name="immersive_hint">B sau Y: înapoi la aplicație. Trăgaci: redare sau pauză. A, X sau butonul de prindere: afișați sau ascundeți acest panou. Joystick la stânga sau la dreapta: rotiți imaginea.</string>
+  <string name="immersive_hint">B sau Y: înapoi la aplicație. Trăgaci: redare sau pauză. A, X sau butonul de prindere: afișați sau ascundeți acest panou. Joystick la stânga sau la dreapta: rotiți imaginea, în sus sau în jos: aranjament 3D.</string>
   <string name="immersive_yaw">Imagine rotită la %1$d°</string>
   <string name="immersive_loading">Se încarcă</string>
   <string name="immersive_buffering">Se încarcă în buffer</string>

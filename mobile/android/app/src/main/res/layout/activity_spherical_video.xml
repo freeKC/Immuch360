@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/spherical_video_root"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
@@ -45,5 +46,24 @@
       android:singleLine="true"
       android:textColor="@android:color/white"
       android:textSize="16sp" />
+
+    <!-- 3D control: cycles the stereoscopic layout (regular 360, 3D top and bottom, 3D side by side). Its description,
+         tooltip and state come from the activity; "3D" reads the same in every language. -->
+    <Button
+      android:id="@+id/spherical_video_stereo"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_marginStart="8dp"
+      android:background="?android:attr/selectableItemBackgroundBorderless"
+      android:minWidth="0dp"
+      android:minHeight="0dp"
+      android:padding="0dp"
+      android:stateListAnimator="@null"
+      android:text="3D"
+      android:textAllCaps="false"
+      android:textColor="@android:color/white"
+      android:textSize="16sp"
+      android:textStyle="bold"
+      tools:ignore="HardcodedText" />
   </LinearLayout>
 </FrameLayout>

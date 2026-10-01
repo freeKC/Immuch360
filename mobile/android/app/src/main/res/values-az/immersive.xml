@@ -4,7 +4,7 @@
   <string name="immersive_back">Geri</string>
   <string name="immersive_play">Oynat</string>
   <string name="immersive_pause">Fasilə</string>
-  <string name="immersive_hint">B və ya Y: tətbiqə qayıt. Tətik: oynat və ya fasilə ver. A, X və ya tutma düyməsi: bu paneli göstər və ya gizlət. Coystik sola və ya sağa: şəkli döndər.</string>
+  <string name="immersive_hint">B və ya Y: tətbiqə qayıt. Tətik: oynat və ya fasilə ver. A, X və ya tutma düyməsi: bu paneli göstər və ya gizlət. Coystik sola və ya sağa: şəkli döndər, yuxarı və ya aşağı: 3D düzülüşü.</string>
   <string name="immersive_yaw">Şəkil %1$d dərəcəyə döndərildi</string>
   <string name="immersive_loading">Yüklənir</string>
   <string name="immersive_buffering">Buferə yüklənir</string>

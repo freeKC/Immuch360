@@ -3,7 +3,7 @@
   <string name="immersive_back">Zrugg</string>
   <string name="immersive_play">Abspiele</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B oder Y: zrugg zur App. Trigger: abspiele oder pausiere. A, X oder Grifftaschte: das Panel aazeige oder verstecke. Thumbstick nach links oder rächts: s Bild dräie.</string>
+  <string name="immersive_hint">B oder Y: zrugg zur App. Trigger: abspiele oder pausiere. A, X oder Grifftaschte: das Panel aazeige oder verstecke. Thumbstick nach links oder rächts: s Bild dräie, ufe oder abe: 3D-Layout.</string>
   <string name="immersive_yaw">Bild uf %1$d Grad dräit</string>
   <string name="immersive_loading">Wird glade</string>
   <string name="immersive_buffering">Wird pufferet</string>

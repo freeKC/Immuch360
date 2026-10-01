@@ -4,7 +4,7 @@
   <string name="immersive_back">Retour</string>
   <string name="immersive_play">Lecture</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B ou Y : retour à l\'application. Gâchette : lecture ou pause. A, X ou bouton de préhension : afficher ou masquer ce panneau. Joystick à gauche ou à droite : faire pivoter l\'image.</string>
+  <string name="immersive_hint">B ou Y : retour à l\'application. Gâchette : lecture ou pause. A, X ou bouton de préhension : afficher ou masquer ce panneau. Joystick à gauche ou à droite : faire pivoter l\'image, vers le haut ou le bas : disposition 3D.</string>
   <string name="immersive_yaw">Image orientée à %1$d degrés</string>
   <string name="immersive_loading">Chargement</string>
   <string name="immersive_buffering">Mise en mémoire tampon</string>

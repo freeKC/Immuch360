@@ -3,7 +3,7 @@
   <string name="immersive_back">Wstecz</string>
   <string name="immersive_play">Odtwórz</string>
   <string name="immersive_pause">Wstrzymaj</string>
-  <string name="immersive_hint">B lub Y: powrót do aplikacji. Spust: odtwórz lub wstrzymaj. A, X lub przycisk chwytu: pokaż lub ukryj ten panel. Drążek w lewo lub w prawo: obróć obraz.</string>
+  <string name="immersive_hint">B lub Y: powrót do aplikacji. Spust: odtwórz lub wstrzymaj. A, X lub przycisk chwytu: pokaż lub ukryj ten panel. Drążek w lewo lub w prawo: obróć obraz, w górę lub w dół: układ 3D.</string>
   <string name="immersive_yaw">Obraz obrócony do %1$d°</string>
   <string name="immersive_loading">Ładowanie</string>
   <string name="immersive_buffering">Buforowanie</string>

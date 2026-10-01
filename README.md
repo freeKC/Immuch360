@@ -37,6 +37,7 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 - **360° photos** open as an interactive sphere: drag to look around, pinch to zoom, double tap, inertia, the initial view the camera recorded, sharper texture when zoomed in. Partial panoramas are handled.
 - **Gyroscope**: turn the phone to look around (toggle in the viewer).
 - **360° videos on Android and iOS**: a native spherical player with sound, drag and gyroscope; it plays the file stored on the phone when there is one, otherwise streams it from your server.
+- **3D (stereoscopic) 360° photos and videos**: top and bottom or side by side layouts are recognised from the file (or guessed from its shape) and can be changed with the 3D button in every viewer. A phone shows the left eye; the Meta Quest 3 shows each eye its own half, in real 3D.
 - **Meta Quest 3**: the same Android app runs on the headset as a window, and the 360° button switches to an immersive view where the photo or video is all around you, and you look around by turning your head.
 - **Find them**: a 360° badge on thumbnails and a **360°** entry in the Library tab listing every 360° photo and video.
 - **Everything else is Immich**, unchanged: backup, timeline, albums, search, sharing, partners, all synced with your server.
@@ -63,6 +64,7 @@ The store links will be added here as soon as the listings are published. Log in
 | Gyroscope navigation: look around by moving the phone | No | **Yes**, toggle in the 360 viewer (off by default) | Tested on a Galaxy S24+ and an iPhone 14 |
 | Initial view from GPano metadata, inertia after a drag, double tap zoom, sharper texture when zoomed in | No | **Yes** | Tested on a Galaxy S24+ and an iPhone 14, device feedback welcome |
 | 360° entry in the Library tab listing every 360° photo and video | No | **Yes** | Done |
+| 3D (stereoscopic) 360° photos and videos, top and bottom or side by side | No | **Yes**: layout read from the file (st3d) or guessed from its shape, 3D button to change it; left eye on phones, true 3D on the Quest | Tested on an Android emulator with synthetic media; device feedback welcome |
 | 360° videos played on a sphere with drag and gyroscope | No, flat video only | **Yes on Android and iOS** (native player opened by the 360° button, Media3 on Android and SceneKit on iOS; plays the file stored on the phone when there is one, otherwise streams it from your server) | Tested on a Galaxy S24+ and an iPhone 14 |
 | Meta Quest 3 viewer with head tracking | No | **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Tested on a Quest 3 |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | Shown flat or wrongly | Server side stitching under study | Study |
@@ -130,7 +132,7 @@ If the image does not face you the right way when it opens, turn it with the thu
   `-tag:v hvc1` labels the HEVC track the way Apple devices and browsers expect, `-c:a copy` keeps the audio as it is. ffmpeg drops the 360° tag of the export, the exiftool line copies it back; without it, Immich shows the video as a flat one.
 - **Originals that cannot stream:** when the server ignores HTTP Range requests on the original and the MP4 index (moov) is at the end of the file, the whole file would have to download before the first frame, so the app falls back to the server playback stream. A reverse proxy in front of Immich that buffers the responses or strips the Range headers can cause this.
 - **Not in the store:** sideloading only.
-- **Mono only:** stereo 3D media show both eyes in one sphere.
+- **3D layouts:** top and bottom and side by side 360° media are shown in 3D, each eye getting its own half of the frame. The layout is guessed from the file's shape (square: top and bottom, 4:1: side by side); when the guess is wrong, push the thumbstick up or down, or use the 3D button of the info panel, to change it.
 - **Starting orientation not confirmed yet:** if a photo or video does not face you when it opens, turn it with the thumbstick and report the value (see above).
 - **APK size:** the Spatial SDK adds about 56 MB of 64-bit ARM native code, on phones too, where it is never loaded.
 - **License:** the immersive view uses the Meta Spatial SDK, distributed under the Meta Platform Technologies SDK License Agreement.

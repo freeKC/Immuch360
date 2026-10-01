@@ -10,11 +10,25 @@ import 'package:pigeon/pigeon.dart';
     dartPackageName: 'immich_mobile',
   ),
 )
+/// How the two eyes of a stereoscopic (3D) 360° media are laid out in the frame: one above the other (left eye on
+/// top) or side by side (left eye on the left). [mono] is a regular 360° media. Same values as the player API.
+enum ImmersiveStereoLayout { mono, topBottom, leftRight }
+
 @HostApi()
 abstract class ImmersiveApi {
   /// True on a Meta Quest headset (Horizon OS).
   bool isHorizonOs();
 
-  /// Opens the immersive head tracked viewer for an equirectangular photo or video.
-  void open(String url, Map<String, String> headers, bool isVideo, String title);
+  /// Opens the immersive head tracked viewer for an equirectangular photo or video. [stereoLayout] is the layout
+  /// Flutter guessed from the media dimensions; the headset shows each eye its own half of a stereoscopic media,
+  /// and the user can change the layout in the viewer. [stereoLabels] are the translated labels of the 3D control,
+  /// keyed "stereo", "mono", "topBottom", "leftRight".
+  void open(
+    String url,
+    Map<String, String> headers,
+    bool isVideo,
+    String title,
+    ImmersiveStereoLayout stereoLayout,
+    Map<String, String> stereoLabels,
+  );
 }

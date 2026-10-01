@@ -12,6 +12,7 @@ private let maxPitch: Float = 85 * Float.pi / 180
 // Drag speed at the default field of view, slower when zoomed in
 private let radiansPerPoint: Float = 0.12 * Float.pi / 180
 private let controlsHideDelay: TimeInterval = 4
+private let messageDuration: TimeInterval = 2
 private let xAxis = SIMD3<Float>(1, 0, 0)
 private let yAxis = SIMD3<Float>(0, 1, 0)
 private let zAxis = SIMD3<Float>(0, 0, 1)
@@ -21,28 +22,35 @@ private let zAxis = SIMD3<Float>(0, 0, 1)
 /// Drags turn the view (the picture follows the finger, so a drag to the left turns the view to the right), a pinch
 /// zooms. While the gyroscope button is on, the motion of the phone turns the view and drags only turn it around the
 /// vertical axis. A tap on the video shows or hides the controls, which also hide on their own while the video plays.
+/// The 3D button tells how a stereoscopic video lays out its two eyes: the phone shows the left eye only.
 final class SphericalVideoViewController: UIViewController, UIGestureRecognizerDelegate {
   private let videoUrl: URL
   private let headers: [String: String]
   private let videoTitle: String
   private let closeLabel: String?
   private let errorMessage: String
+  private let stereoLabels: [String: String]
 
   private let player = AVPlayer()
   private let sceneView = SCNView(frame: .zero)
   private let cameraNode = SCNNode()
+  private let videoMaterial = SCNMaterial()
   private let motionManager = CMMotionManager()
   private var displayLink: CADisplayLink?
   private var statusObservation: NSKeyValueObservation?
   private var timeControlObservation: NSKeyValueObservation?
+  private var presentationSizeObservation: NSKeyValueObservation?
 
   private let topBar = UIView()
   private let closeButton = UIButton(type: .system)
   private let titleLabel = UILabel()
+  private let stereoButton = UIButton(type: .system)
   private let motionButton = UIButton(type: .system)
   private let playPauseButton = UIButton(type: .system)
   private let spinner = UIActivityIndicatorView(style: .large)
   private let errorLabel = UILabel()
+  private let messageView = UIView()
+  private let messageLabel = UILabel()
 
   // Where the view looks, in radians: yaw around the vertical axis, growing to the left, and pitch, growing upwards,
   // which only drags set (the phone's attitude replaces it while the motion drives the view)
@@ -55,6 +63,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private var staleMotionTimestamp: TimeInterval?
   private var alignHeadingOnNextMotion = false
   private var screenOrientation = UIInterfaceOrientation.portrait
+  // The guess of Flutter from the dimensions of the video at first, what the 3D button picks once the user taps it
+  private var stereoLayout: StereoLayout
+  private var stereoLayoutChosen = false
 
   private var controlsVisible = true
   private var failed = false
@@ -63,13 +74,24 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private var closing = false
   private var idleTimerWasDisabled = false
 
-  /// [errorMessage] comes translated from Flutter, English is the fallback
-  init(url: URL, headers: [String: String], title: String, closeLabel: String?, errorMessage: String?) {
+  /// [errorMessage] and [stereoLabels] come translated from Flutter, English is the fallback. [stereoLayout] is the
+  /// layout Flutter guessed from the dimensions of the video.
+  init(
+    url: URL,
+    headers: [String: String],
+    title: String,
+    closeLabel: String?,
+    errorMessage: String?,
+    stereoLayout: StereoLayout,
+    stereoLabels: [String: String]
+  ) {
     videoUrl = url
     self.headers = headers
     videoTitle = title
     self.closeLabel = closeLabel
     self.errorMessage = errorMessage ?? "This video cannot be played"
+    self.stereoLayout = stereoLayout
+    self.stereoLabels = stereoLabels
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -100,6 +122,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     motionEnabled = motionManager.isDeviceMotionAvailable
     motionButton.isHidden = !motionManager.isDeviceMotionAvailable
     updateMotionButton()
+    applyStereoLayout()
     updateCamera()
 
     NotificationCenter.default.addObserver(
@@ -145,6 +168,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     // Frees the decoder and the buffered video
     statusObservation?.invalidate()
     timeControlObservation?.invalidate()
+    presentationSizeObservation?.invalidate()
     player.replaceCurrentItem(with: nil)
     sceneView.isPlaying = false
     // Lets the music the video interrupted resume
@@ -178,6 +202,15 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     timeControlObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] _, _ in
       Task { @MainActor [weak self] in
         self?.playbackStateChanged()
+      }
+    }
+    // Zero until the first frame is known
+    presentationSizeObservation = item.observe(\.presentationSize, options: [.initial, .new]) {
+      [weak self] observed, _ in
+      let size = observed.presentationSize
+      guard size.width > 0, size.height > 0 else { return }
+      Task { @MainActor [weak self] in
+        self?.frameSizeKnown(size)
       }
     }
     NotificationCenter.default.addObserver(
@@ -299,10 +332,13 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
     // SceneKit draws the current frame of the player straight onto the sphere: no SpriteKit scene in between, so no
     // vertical flip to undo
-    let material = SCNMaterial()
+    let material = videoMaterial
     material.diffuse.contents = player
     material.lightingModel = .constant
     material.isDoubleSided = true
+    // Clamped, an edge of the frame does not blend with the opposite one, the other eye of a stereoscopic video
+    material.diffuse.wrapS = .clamp
+    material.diffuse.wrapT = .clamp
 
     let sphere = Self.makeSphere(radius: 50, rings: 64, segments: 128)
     sphere.materials = [material]
@@ -440,6 +476,74 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     return atan2(-direction.x, -direction.z)
   }
 
+  // MARK: - Stereo layout
+
+  /// A phone has one picture for both eyes: a stereoscopic video shows its left eye only, the top half of a top and
+  /// bottom frame, the left half of a side by side one. Texture coordinates start at the top left corner of the frame,
+  /// so halving them keeps that half, stretched over the whole sphere.
+  private func applyStereoLayout() {
+    switch stereoLayout {
+    case .mono:
+      videoMaterial.diffuse.contentsTransform = SCNMatrix4Identity
+    case .topBottom:
+      videoMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(1, 0.5, 1)
+    case .leftRight:
+      videoMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(0.5, 1, 1)
+    }
+    stereoButton.tintColor = stereoLayout == .mono ? UIColor(white: 1, alpha: 0.4) : UIColor.white
+    stereoButton.accessibilityValue = stereoLayoutName(stereoLayout)
+  }
+
+  /// AVFoundation does not read the stereo metadata of the file, but the size of the frame tells a stereoscopic video
+  /// apart even where Flutter did not know the dimensions. A choice of the user stays.
+  private func frameSizeKnown(_ size: CGSize) {
+    guard !stereoLayoutChosen, !closing else { return }
+    let guess = Self.guessStereoLayout(size)
+    guard guess != .mono, guess != stereoLayout else { return }
+    stereoLayout = guess
+    applyStereoLayout()
+  }
+
+  /// The guess of Flutter: two 2:1 images one above the other make a square frame, side by side a 4:1 one
+  private static func guessStereoLayout(_ size: CGSize) -> StereoLayout {
+    let ratio = size.width / size.height
+    if ratio >= 0.9 && ratio <= 1.1 {
+      return .topBottom
+    }
+    if ratio >= 3.6 && ratio <= 4.4 {
+      return .leftRight
+    }
+    return .mono
+  }
+
+  private static func nextStereoLayout(after layout: StereoLayout) -> StereoLayout {
+    switch layout {
+    case .mono:
+      return .topBottom
+    case .topBottom:
+      return .leftRight
+    case .leftRight:
+      return .mono
+    }
+  }
+
+  /// A label from Flutter, or its English fallback
+  private func stereoText(_ key: String, fallback: String) -> String {
+    guard let text = stereoLabels[key], !text.isEmpty else { return fallback }
+    return text
+  }
+
+  private func stereoLayoutName(_ layout: StereoLayout) -> String {
+    switch layout {
+    case .mono:
+      return stereoText("mono", fallback: "Mono (not 3D)")
+    case .topBottom:
+      return stereoText("topBottom", fallback: "3D, top and bottom")
+    case .leftRight:
+      return stereoText("leftRight", fallback: "3D, side by side")
+    }
+  }
+
   // MARK: - Gestures
 
   private func setUpGestures() {
@@ -532,9 +636,39 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     topBar.addSubview(titleLabel)
 
+    // view.3d is in the SF Symbols of iOS 14, the cube is the safety net
+    let stereoSymbol = UIImage(systemName: "view.3d") == nil ? "cube" : "view.3d"
+    configure(stereoButton, symbol: stereoSymbol, pointSize: 20, action: #selector(stereoTapped))
+    stereoButton.accessibilityLabel = stereoText("stereo", fallback: "3D layout")
+
     configure(motionButton, symbol: "gyroscope", pointSize: 20, action: #selector(motionTapped))
     motionButton.accessibilityLabel = "Gyroscope"
-    topBar.addSubview(motionButton)
+
+    // A hidden gyroscope button gives its room to the title
+    let trailingButtons = UIStackView(arrangedSubviews: [stereoButton, motionButton])
+    trailingButtons.axis = .horizontal
+    trailingButtons.translatesAutoresizingMaskIntoConstraints = false
+    topBar.addSubview(trailingButtons)
+
+    messageView.backgroundColor = UIColor(white: 0, alpha: 0.6)
+    messageView.layer.cornerRadius = 8
+    messageView.alpha = 0
+    messageView.isUserInteractionEnabled = false
+    // VoiceOver reads the message out when it shows
+    messageView.accessibilityElementsHidden = true
+    messageView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(messageView)
+
+    messageLabel.textColor = .white
+    messageLabel.font = .preferredFont(forTextStyle: .subheadline)
+    messageLabel.textAlignment = .center
+    messageLabel.numberOfLines = 0
+    messageLabel.translatesAutoresizingMaskIntoConstraints = false
+    messageView.addSubview(messageLabel)
+
+    // Below required, else it fights the zero width the stack view gives the button when it hides
+    let motionButtonWidth = motionButton.widthAnchor.constraint(equalToConstant: 44)
+    motionButtonWidth.priority = UILayoutPriority(999)
 
     let safeArea = view.safeAreaLayoutGuide
     NSLayoutConstraint.activate([
@@ -561,14 +695,28 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       closeButton.widthAnchor.constraint(equalToConstant: 44),
       closeButton.heightAnchor.constraint(equalToConstant: 44),
 
-      motionButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -8),
-      motionButton.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
-      motionButton.widthAnchor.constraint(equalToConstant: 44),
+      trailingButtons.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -8),
+      trailingButtons.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
+
+      stereoButton.widthAnchor.constraint(equalToConstant: 44),
+      stereoButton.heightAnchor.constraint(equalToConstant: 44),
+
+      motionButtonWidth,
       motionButton.heightAnchor.constraint(equalToConstant: 44),
 
       titleLabel.leadingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 8),
-      titleLabel.trailingAnchor.constraint(equalTo: motionButton.leadingAnchor, constant: -8),
+      titleLabel.trailingAnchor.constraint(equalTo: trailingButtons.leadingAnchor, constant: -8),
       titleLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
+
+      messageView.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: 16),
+      messageView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+      messageView.leadingAnchor.constraint(greaterThanOrEqualTo: safeArea.leadingAnchor, constant: 32),
+      messageView.trailingAnchor.constraint(lessThanOrEqualTo: safeArea.trailingAnchor, constant: -32),
+
+      messageLabel.topAnchor.constraint(equalTo: messageView.topAnchor, constant: 8),
+      messageLabel.bottomAnchor.constraint(equalTo: messageView.bottomAnchor, constant: -8),
+      messageLabel.leadingAnchor.constraint(equalTo: messageView.leadingAnchor, constant: 12),
+      messageLabel.trailingAnchor.constraint(equalTo: messageView.trailingAnchor, constant: -12),
     ])
   }
 
@@ -614,6 +762,23 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     setControlsVisible(false)
   }
 
+  /// Shows [text] under the top bar for a moment
+  private func showMessage(_ text: String) {
+    NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMessage), object: nil)
+    messageLabel.text = text
+    UIView.animate(withDuration: 0.2) {
+      self.messageView.alpha = 1
+    }
+    perform(#selector(hideMessage), with: nil, afterDelay: messageDuration)
+    UIAccessibility.post(notification: .announcement, argument: text)
+  }
+
+  @objc private func hideMessage() {
+    UIView.animate(withDuration: 0.3) {
+      self.messageView.alpha = 0
+    }
+  }
+
   @objc private func closeTapped() {
     stop()
     dismiss(animated: true)
@@ -646,6 +811,14 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       startMotion()
     }
     updateMotionButton()
+    scheduleControlsHiding()
+  }
+
+  @objc private func stereoTapped() {
+    stereoLayoutChosen = true
+    stereoLayout = Self.nextStereoLayout(after: stereoLayout)
+    applyStereoLayout()
+    showMessage(stereoLayoutName(stereoLayout))
     scheduleControlsHiding()
   }
 }

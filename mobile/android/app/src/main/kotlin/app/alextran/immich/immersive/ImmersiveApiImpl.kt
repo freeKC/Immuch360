@@ -12,12 +12,23 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
   /**
    * [headers] stays in the pigeon signature but is ignored: HttpClientManager already adds the user's custom
    * headers (and the session cookie) to every OkHttp and Cronet request, adding them again would duplicate them.
+   * [stereoLayout] is the 3D layout Flutter guessed from the media size, [stereoLabels] the translated labels of
+   * the 3D control.
    */
-  override fun open(url: String, headers: Map<String, String>, isVideo: Boolean, title: String) {
+  override fun open(
+    url: String,
+    headers: Map<String, String>,
+    isVideo: Boolean,
+    title: String,
+    stereoLayout: ImmersiveStereoLayout,
+    stereoLabels: Map<String, String>,
+  ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
     }
-    Log.i(TAG, "open immersive viewer, video=$isVideo")
-    appContext.startActivity(ImmersiveViewerActivity.intent(appContext, url, isVideo, title))
+    Log.i(TAG, "open immersive viewer, video=$isVideo, 3D layout=$stereoLayout")
+    appContext.startActivity(
+      ImmersiveViewerActivity.intent(appContext, url, isVideo, title, stereoLayout, stereoLabels),
+    )
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -157,8 +158,9 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // Read before the first await: the viewer may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
+    final stereoLabels = stereoLayoutLabels(context.t);
     try {
-      await openImmersiveViewer(ref, asset);
+      await openImmersiveViewer(ref, asset, stereoLabels: stereoLabels);
     } catch (error) {
       Logger('ViewerTopAppBar').warning('Could not open the immersive viewer: $error');
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));

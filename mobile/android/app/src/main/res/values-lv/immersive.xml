@@ -4,7 +4,7 @@
   <string name="immersive_back">Atpakaļ</string>
   <string name="immersive_play">Atskaņot</string>
   <string name="immersive_pause">Pauzēt</string>
-  <string name="immersive_hint">B vai Y: atpakaļ uz lietotni. Mēlīte: atskaņot vai pauzēt. A, X vai satveršanas poga: rādīt vai paslēpt šo paneli. Vadības svira pa kreisi vai pa labi: pagriezt attēlu.</string>
+  <string name="immersive_hint">B vai Y: atpakaļ uz lietotni. Mēlīte: atskaņot vai pauzēt. A, X vai satveršanas poga: rādīt vai paslēpt šo paneli. Vadības svira pa kreisi vai pa labi: pagriezt attēlu, uz augšu vai uz leju: 3D izkārtojums.</string>
   <string name="immersive_yaw">Attēla pagrieziens: %1$d°</string>
   <string name="immersive_loading">Ielādē</string>
   <string name="immersive_buffering">Buferizē</string>

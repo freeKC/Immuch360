@@ -13,9 +13,24 @@ import 'package:pigeon/pigeon.dart';
     dartPackageName: 'immich_mobile',
   ),
 )
+/// How the two eyes of a stereoscopic (3D) 360° media are laid out in the frame: one above the other (left eye on
+/// top) or side by side (left eye on the left). [mono] is a regular 360° media.
+enum StereoLayout { mono, topBottom, leftRight }
+
 @HostApi()
 abstract class SphericalVideoApi {
   /// Plays an equirectangular video full screen in a native 360° player. [closeLabel] and [errorMessage] are
-  /// translated by Flutter; the player falls back to its English resources without them.
-  void open(String url, Map<String, String> headers, String title, String? closeLabel, String? errorMessage);
+  /// translated by Flutter; the player falls back to its English resources without them. [stereoLayout] is the
+  /// layout Flutter guessed from the video dimensions (the player prefers the layout the file declares, when it
+  /// does); the user can change it in the player. [stereoLabels] are the translated labels of the 3D control,
+  /// keyed "stereo", "mono", "topBottom", "leftRight".
+  void open(
+    String url,
+    Map<String, String> headers,
+    String title,
+    String? closeLabel,
+    String? errorMessage,
+    StereoLayout stereoLayout,
+    Map<String, String> stereoLabels,
+  );
 }

@@ -3,7 +3,7 @@
   <string name="immersive_back">Atrás</string>
   <string name="immersive_play">Reproducir</string>
   <string name="immersive_pause">Pausar</string>
-  <string name="immersive_hint">B o Y: volver a la aplicación. Gatillo: reproducir o pausar. A, X o botón de agarre: mostrar u ocultar este panel. Joystick a la izquierda o a la derecha: girar la imagen.</string>
+  <string name="immersive_hint">B o Y: volver a la aplicación. Gatillo: reproducir o pausar. A, X o botón de agarre: mostrar u ocultar este panel. Joystick a la izquierda o a la derecha: girar la imagen, arriba o abajo: disposición 3D.</string>
   <string name="immersive_yaw">Imagen girada a %1$d grados</string>
   <string name="immersive_loading">Cargando</string>
   <string name="immersive_buffering">Almacenando en búfer</string>

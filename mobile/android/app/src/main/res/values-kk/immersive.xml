@@ -4,7 +4,7 @@
   <string name="immersive_back">Артқа</string>
   <string name="immersive_play">Ойнату</string>
   <string name="immersive_pause">Кідірту</string>
-  <string name="immersive_hint">B немесе Y: қолданбаға оралу. Триггер: ойнату немесе кідірту. A, X немесе ұстағыш: осы панельді көрсету немесе жасыру. Джойстик солға немесе оңға: суретті бұру.</string>
+  <string name="immersive_hint">B немесе Y: қолданбаға оралу. Триггер: ойнату немесе кідірту. A, X немесе ұстағыш: осы панельді көрсету немесе жасыру. Джойстик солға немесе оңға: суретті бұру, жоғары немесе төмен: 3D орналасуы.</string>
   <string name="immersive_yaw">Сурет %1$d градусқа бұрылды</string>
   <string name="immersive_loading">Жүктелуде</string>
   <string name="immersive_buffering">Буферлеу</string>

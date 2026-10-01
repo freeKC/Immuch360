@@ -4,7 +4,7 @@
   <string name="immersive_back">Orqaga</string>
   <string name="immersive_play">Ijro etish</string>
   <string name="immersive_pause">Pauza</string>
-  <string name="immersive_hint">B yoki Y: ilovaga qaytish. Tepki: ijro etish yoki pauza. A, X yoki ushlash tugmasi: bu panelni koʻrsatish yoki yashirish. Joystikni chapga yoki oʻngga: tasvirni burish.</string>
+  <string name="immersive_hint">B yoki Y: ilovaga qaytish. Tepki: ijro etish yoki pauza. A, X yoki ushlash tugmasi: bu panelni koʻrsatish yoki yashirish. Joystikni chapga yoki oʻngga: tasvirni burish, yuqoriga yoki pastga: 3D joylashuvi.</string>
   <string name="immersive_yaw">Tasvir %1$d darajaga burildi</string>
   <string name="immersive_loading">Yuklanmoqda</string>
   <string name="immersive_buffering">Buferlanmoqda</string>

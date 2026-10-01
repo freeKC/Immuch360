@@ -31,5 +31,9 @@
   "immersive_viewer_open_failed": "ਇਮਰਸਿਵ ਵਿਊਅਰ ਨਹੀਂ ਖੋਲ੍ਹਿਆ ਜਾ ਸਕਿਆ",
   "library_360": "360°",
   "panorama_gyroscope": "ਜਾਇਰੋਸਕੋਪ",
-  "panorama_no_gyroscope": "ਇਸ ਡਿਵਾਈਸ 'ਤੇ ਕੋਈ ਜਾਇਰੋਸਕੋਪ ਨਹੀਂ ਹੈ"
+  "panorama_no_gyroscope": "ਇਸ ਡਿਵਾਈਸ 'ਤੇ ਕੋਈ ਜਾਇਰੋਸਕੋਪ ਨਹੀਂ ਹੈ",
+  "panorama_stereo_layout": "3D ਲੇਆਉਟ",
+  "panorama_stereo_left_right": "3D, ਨਾਲ-ਨਾਲ",
+  "panorama_stereo_mono": "ਮੋਨੋ (3D ਨਹੀਂ)",
+  "panorama_stereo_top_bottom": "3D, ਉੱਪਰ ਅਤੇ ਹੇਠਾਂ"
 }

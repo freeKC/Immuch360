@@ -4,7 +4,7 @@
   <string name="immersive_back">Kembali</string>
   <string name="immersive_play">Putar</string>
   <string name="immersive_pause">Jeda</string>
-  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pelatuk: putar atau jeda. A, X atau grip: tampilkan atau sembunyikan panel ini. Thumbstick ke kiri atau kanan: rotasi gambar.</string>
+  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pelatuk: putar atau jeda. A, X atau grip: tampilkan atau sembunyikan panel ini. Thumbstick ke kiri atau kanan: rotasi gambar, ke atas atau bawah: tata letak 3D.</string>
   <string name="immersive_yaw">Gambar diputar ke %1$d derajat</string>
   <string name="immersive_loading">Memuat</string>
   <string name="immersive_buffering">Memuat buffer</string>

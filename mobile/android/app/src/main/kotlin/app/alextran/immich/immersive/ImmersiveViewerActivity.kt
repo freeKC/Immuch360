@@ -33,6 +33,7 @@ import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.SpatialFeature
 import com.meta.spatial.core.Vector3
 import com.meta.spatial.runtime.ButtonBits
+import com.meta.spatial.runtime.PanelSceneObject
 import com.meta.spatial.runtime.ReferenceSpace
 import com.meta.spatial.runtime.SceneMaterial
 import com.meta.spatial.runtime.SceneTexture
@@ -93,14 +94,23 @@ import okhttp3.Request
  *
  * Controllers: trigger plays or pauses a video, B or Y goes back to the 2D app, A, X, grip or menu
  * show or hide the info panel, thumbstick left or right turns the image by 90 degrees (logged, to find
- * the right SKYBOX_YAW_DEGREES and VIDEO_YAW_DEGREES). Hands: the Back button of the info panel, the
- * menu gesture toggles it.
+ * the right SKYBOX_YAW_DEGREES and VIDEO_YAW_DEGREES), thumbstick up or down changes the 3D layout
+ * (mono, top and bottom, side by side), like the 3D layout button of the info panel. Hands: the Back and
+ * 3D layout buttons of the info panel, the menu gesture toggles it.
+ *
+ * Stereoscopic (3D) 360 media hold one equirectangular image per eye, one above the other (left eye on
+ * top) or side by side (left eye on the left). Each eye gets its own half: through the stereo mode of
+ * the skybox material for photos, through the stereo mode of the equirect compositor layer for videos.
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
     val url: String,
     val isVideo: Boolean,
     val title: String,
+    /** The 3D layout Flutter guessed from the media size. */
+    val stereoLayout: ImmersiveStereoLayout,
+    /** Translated labels of the 3D control, keyed "stereo", "mono", "topBottom", "leftRight". */
+    val stereoLabels: Map<String, String>,
   )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -127,15 +137,27 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** Rotation of each sphere around the vertical axis, in degrees, changed with the thumbstick. */
   private var photoYaw = SKYBOX_YAW_DEGREES
   private var videoYaw = VIDEO_YAW_DEGREES
+  /**
+   * 3D layout of the current media: the one Flutter guessed, then the one the user picked with the thumbstick or
+   * the 3D layout button.
+   */
+  private var stereoLayout = ImmersiveStereoLayout.MONO
+  /** Stereo mode set on the skybox material. Stays None (never set) as long as only mono photos are shown. */
+  private var skyboxStereoMode = StereoMode.None
+  /** Scene object of the video panel, to change the stereo mode of its compositor layer. */
+  private var videoPanel: PanelSceneObject? = null
 
   // Info panel views
   private var titleView: TextView? = null
   private var statusView: TextView? = null
+  private var stereoView: Button? = null
   private var playPauseButton: Button? = null
 
   // Loading
   private var loadJob: Job? = null
   private var hideInfoJob: Job? = null
+  /** Delay of the last hide scheduled: INFO_AUTO_HIDE_MS for the plain auto hide, longer for the decoder warning. */
+  private var hideInfoDelayMs = 0L
   private val decodeMutex = Mutex()
   private val httpClient: OkHttpClient by lazy {
     // Same session as the rest of the app, without the API response cache (originals are large)
@@ -214,7 +236,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         },
         panelSetupWithRootView = { rootView, _, _ -> bindInfoPanel(rootView) },
       ),
-      // 360 video: mono equirectangular compositor layer, as in MediaPlayerSample
+      // 360 video: equirectangular compositor layer, as in MediaPlayerSample. Created mono, a stereoscopic
+      // video changes the stereo mode of the layer afterwards (applyVideoStereoMode).
       VideoSurfacePanelRegistration(
         R.id.immersive_video_panel,
         surfaceConsumer = { _, surface ->
@@ -228,6 +251,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             display = PixelDisplayOptions(width = 3840, height = 1920),
             rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = -1),
           )
+        },
+        panelSetup = { panel, _ ->
+          videoPanel = panel
+          // After the panel creation returns: a stereoscopic video may already be waiting for this panel
+          scope.launch(Dispatchers.Main) { applyVideoStereoMode() }
         },
       ),
     )
@@ -246,10 +274,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.e(TAG, "immersive viewer started without a url")
       return null
     }
+    val labels =
+      intent.getBundleExtra(EXTRA_STEREO_LABELS)?.let { bundle ->
+        bundle.keySet().mapNotNull { key -> bundle.getString(key)?.let { key to it } }.toMap()
+      }
     return MediaRequest(
       url = url,
       isVideo = intent.getBooleanExtra(EXTRA_IS_VIDEO, false),
       title = intent.getStringExtra(EXTRA_TITLE).orEmpty(),
+      stereoLayout =
+        ImmersiveStereoLayout.ofRaw(intent.getIntExtra(EXTRA_STEREO_LAYOUT, ImmersiveStereoLayout.MONO.raw))
+          ?: ImmersiveStereoLayout.MONO,
+      stereoLabels = labels.orEmpty(),
     )
   }
 
@@ -261,8 +297,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     Log.i(TAG, "show ${if (media.isVideo) "video" else "photo"}")
+    stereoLayout = media.stereoLayout
+    if (media.stereoLayout != ImmersiveStereoLayout.MONO) {
+      Log.i(TAG, "stereoscopic media, 3D layout ${media.stereoLayout}")
+    }
     titleView?.text = media.title
     playPauseButton?.visibility = if (media.isVideo) View.VISIBLE else View.GONE
+    updateStereoView()
     setInfoVisible(true, reposition = true)
     if (media.isVideo) showVideo(media) else showPhoto(media)
   }
@@ -273,17 +314,33 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun bindInfoPanel(root: View) {
     titleView = root.findViewById(R.id.immersive_title)
     statusView = root.findViewById(R.id.immersive_status)
+    stereoView = root.findViewById(R.id.immersive_stereo)
     playPauseButton = root.findViewById(R.id.immersive_play_pause)
     root.findViewById<Button>(R.id.immersive_back)?.setOnClickListener { close() }
     playPauseButton?.setOnClickListener { togglePlayPause() }
+    // A click from the controller ray or a hand pinch: the panel is on screen, it stays where it is
+    stereoView?.setOnClickListener { cycleStereoLayout(1, fromPanel = true) }
     request?.let { media ->
       titleView?.text = media.title
       playPauseButton?.visibility = if (media.isVideo) View.VISIBLE else View.GONE
     }
+    updateStereoView()
   }
 
   private fun setStatus(text: String) {
     statusView?.text = text
+  }
+
+  /** The 3D layout button, "3D layout: 3D, top and bottom": shown whenever a media is loaded, mono ones included. */
+  private fun updateStereoView() {
+    val view = stereoView ?: return
+    val media = request
+    if (media == null) {
+      view.visibility = View.GONE
+      return
+    }
+    view.text = ImmersiveMedia.stereoLayoutText(stereoLayout, media.stereoLabels)
+    view.visibility = View.VISIBLE
   }
 
   private fun showError(text: String) {
@@ -296,6 +353,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** Hides the info panel a few seconds after the media is on screen. */
   private fun scheduleInfoHide(delayMs: Long = INFO_AUTO_HIDE_MS) {
     hideInfoJob?.cancel()
+    hideInfoDelayMs = delayMs
     hideInfoJob =
       scope.launch {
         delay(delayMs)
@@ -368,6 +426,39 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     setStatus(getString(R.string.immersive_yaw, yaw.toInt()))
   }
 
+  /**
+   * Thumbstick up (next) or down (previous), or the 3D layout button of the info panel (next, [fromPanel]): mono,
+   * top and bottom, side by side. Applies the layout to the media on screen and shows it on the info panel. A hidden
+   * panel shows up for a few seconds. On a panel already on screen only the plain auto hide restarts: an error, the
+   * loading or buffering status, the decoder warning and a panel opened by the user keep their own hide rules.
+   */
+  private fun cycleStereoLayout(step: Int, fromPanel: Boolean = false) {
+    val media = request ?: return
+    stereoLayout = ImmersiveMedia.cycleStereoLayout(stereoLayout, step)
+    val mode = stereoModeFor(stereoLayout)
+    Log.i(TAG, "3D layout is now $stereoLayout (${if (media.isVideo) "video" else "photo"} stereo mode $mode)")
+    if (media.isVideo) {
+      applyVideoStereoMode()
+    } else if (photoTexture != null) {
+      // While the first image loads the idle sky stays mono, applySkyboxBitmap applies the layout
+      setSkyboxStereoMode(mode)
+    }
+    updateStereoView()
+    if (!infoVisible) {
+      hideInfoJob?.cancel()
+      setInfoVisible(true, reposition = true)
+      // While a photo or the video probe loads, the end of the loading hides the panel
+      if (loadJob?.isActive != true) scheduleInfoHide()
+      return
+    }
+    // The thumbstick brings the panel in front of the user, a click on the panel leaves it where it is
+    if (!fromPanel) setInfoVisible(true, reposition = true)
+    // No decoder warning pending: its own hide uses the longer DECODER_WARNING_HIDE_MS
+    val plainAutoHide = hideInfoJob?.isActive == true && hideInfoDelayMs == INFO_AUTO_HIDE_MS
+    if (plainAutoHide) scheduleInfoHide()
+    // Otherwise (error, panel opened by the user, loading, buffering) the timers stay as they are
+  }
+
   private fun normalizeDegrees(value: Float): Float {
     val wrapped = ((value % 360f) + 360f) % 360f
     return if (wrapped > 180f) wrapped - 360f else wrapped
@@ -390,6 +481,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       rotateSphere(-YAW_STEP_DEGREES)
     } else if ((controllerBits and (ButtonBits.ButtonThumbLR or ButtonBits.ButtonThumbRR)) != 0) {
       rotateSphere(YAW_STEP_DEGREES)
+    } else if ((controllerBits and (ButtonBits.ButtonThumbLU or ButtonBits.ButtonThumbRU)) != 0) {
+      cycleStereoLayout(1)
+    } else if ((controllerBits and (ButtonBits.ButtonThumbLD or ButtonBits.ButtonThumbRD)) != 0) {
+      cycleStereoLayout(-1)
     }
     val toggle =
       ButtonBits.ButtonA or ButtonBits.ButtonX or ButtonBits.ButtonMenu or ButtonBits.ButtonSqueezeL or
@@ -510,8 +605,26 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
     if (texture == null) throw IOException("texture creation failed")
     material.setAlbedoTexture(texture)
+    setSkyboxStereoMode(stereoModeFor(stereoLayout))
     photoTexture?.destroy()
     photoTexture = texture
+  }
+
+  /**
+   * Stereoscopic photos: the stereo mode of the skybox material. SceneMaterial.setStereoMode sets the
+   * stereoParams of the material, and the SDK default vertex shader (metaSpatialSdkDefaultVertex.glsl)
+   * samples the albedo texture at viewIndex * offset + uv * scale: UpDown gives the left eye the top half
+   * and the right eye the bottom half, LeftRight the left and the right half. The same full resolution
+   * texture and the same skybox serve mono and 3D photos, and the layout changes without a new upload.
+   * A second equirect media panel drawn through lockCanvas was the other option: an extra swapchain,
+   * a CPU copy of the image and a surface that arrives later, for the same result.
+   */
+  private fun setSkyboxStereoMode(mode: StereoMode) {
+    val material = skyboxMaterial ?: return
+    if (mode == skyboxStereoMode) return
+    material.setStereoMode(mode)
+    skyboxStereoMode = mode
+    Log.i(TAG, "skybox stereo mode is now $mode")
   }
 
   private fun resetSkyboxToIdle() {
@@ -525,6 +638,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     material.setAlbedoTexture(idle)
+    setSkyboxStereoMode(StereoMode.None)
     photoTexture?.destroy()
     photoTexture = null
   }
@@ -753,10 +867,38 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     scheduleInfoHide(DECODER_WARNING_HIDE_MS)
   }
 
+  /**
+   * Stereoscopic videos: the stereo mode of the equirect compositor layer (UpDown for top and bottom,
+   * LeftRight for side by side, None for mono). The SDK reads it only when it creates the layer
+   * (SceneEquirectLayer has no setter), and PanelSceneObject.reshape destroys the layer and creates a
+   * new one from the panel config, on the same swapchain: the Surface ExoPlayer draws on stays valid,
+   * so the layout changes while the video plays. A mono video never reshapes the panel.
+   */
+  private fun applyVideoStereoMode() {
+    val panel = videoPanel ?: return
+    if (request?.isVideo != true) return
+    val mode = stereoModeFor(stereoLayout)
+    val config = panel.panelShapeConfig
+    if (config == null) {
+      Log.w(TAG, "video panel without a shape config, stereo mode $mode not applied")
+      return
+    }
+    val previous = config.stereoMode
+    if (previous == mode) return
+    try {
+      config.stereoMode = mode
+      panel.reshape(config)
+      Log.i(TAG, "video stereo mode is now $mode (was $previous)")
+    } catch (e: Exception) {
+      Log.e(TAG, "could not set the video stereo mode to $mode", e)
+    }
+  }
+
   private fun showVideo(media: MediaRequest) {
     resetSkyboxToIdle()
     skyboxEntity?.setComponent(Visible(false))
     videoEntity?.setComponent(Visible(true))
+    applyVideoStereoMode()
     player?.stop()
     videoFallbackTried = false
     setStatus(getString(R.string.immersive_loading))
@@ -874,6 +1016,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     scope.cancel()
     player?.release()
     player = null
+    videoPanel = null
     pendingBitmap?.recycle()
     pendingBitmap = null
     // Textures still bound to the skybox material are released with the scene, as in the samples
@@ -888,6 +1031,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_TOKEN = "app.alextran.immich.immersive.TOKEN"
     private const val EXTRA_IS_VIDEO = "app.alextran.immich.immersive.IS_VIDEO"
     private const val EXTRA_TITLE = "app.alextran.immich.immersive.TITLE"
+    private const val EXTRA_STEREO_LAYOUT = "app.alextran.immich.immersive.STEREO_LAYOUT"
+    private const val EXTRA_STEREO_LABELS = "app.alextran.immich.immersive.STEREO_LABELS"
     private const val ORIGINAL_PREFIX = "immersive_original_"
     private const val INFO_DISTANCE = 1.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
@@ -906,9 +1051,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** Token of the last intent built by [intent], checked by parse. Lives as long as the process. */
     @Volatile private var launchToken: String? = null
 
-    fun intent(context: Context, url: String, isVideo: Boolean, title: String): Intent {
+    fun intent(
+      context: Context,
+      url: String,
+      isVideo: Boolean,
+      title: String,
+      stereoLayout: ImmersiveStereoLayout,
+      stereoLabels: Map<String, String>,
+    ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
+      val labels = Bundle().apply { stereoLabels.forEach { (key, value) -> putString(key, value) } }
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -916,7 +1069,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putExtra(EXTRA_URL, url)
         putExtra(EXTRA_IS_VIDEO, isVideo)
         putExtra(EXTRA_TITLE, title)
+        putExtra(EXTRA_STEREO_LAYOUT, stereoLayout.raw)
+        putExtra(EXTRA_STEREO_LABELS, labels)
       }
     }
+
+    /** Compositor layer and material stereo mode of a 3D layout: each eye gets its own half of the frame. */
+    private fun stereoModeFor(layout: ImmersiveStereoLayout): StereoMode =
+      when (layout) {
+        ImmersiveStereoLayout.MONO -> StereoMode.None
+        ImmersiveStereoLayout.TOP_BOTTOM -> StereoMode.UpDown
+        ImmersiveStereoLayout.LEFT_RIGHT -> StereoMode.LeftRight
+      }
   }
 }

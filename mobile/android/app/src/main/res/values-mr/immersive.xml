@@ -3,7 +3,7 @@
   <string name="immersive_back">मागे</string>
   <string name="immersive_play">प्ले करा</string>
   <string name="immersive_pause">थांबवा</string>
-  <string name="immersive_hint">B किंवा Y: अ‍ॅपवर परत जा. ट्रिगर: प्ले करा किंवा थांबवा. A, X किंवा ग्रिप: हे पॅनेल दाखवा किंवा लपवा. थंबस्टिक डावीकडे किंवा उजवीकडे: प्रतिमा फिरवा.</string>
+  <string name="immersive_hint">B किंवा Y: अ‍ॅपवर परत जा. ट्रिगर: प्ले करा किंवा थांबवा. A, X किंवा ग्रिप: हे पॅनेल दाखवा किंवा लपवा. थंबस्टिक डावीकडे किंवा उजवीकडे: प्रतिमा फिरवा, वर किंवा खाली: 3D मांडणी.</string>
   <string name="immersive_yaw">प्रतिमा %1$d अंशांवर फिरवली</string>
   <string name="immersive_loading">लोडिंग सुरू आहे</string>
   <string name="immersive_buffering">बफरिंग सुरू आहे</string>

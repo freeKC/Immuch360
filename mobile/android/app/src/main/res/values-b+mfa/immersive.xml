@@ -4,7 +4,7 @@
   <string name="immersive_back">Balik</string>
   <string name="immersive_play">Main</string>
   <string name="immersive_pause">Henti sekejap</string>
-  <string name="immersive_hint">B atau Y: balik ko aplikasi. Picu: main atau henti sekejap. A, X atau grip: tunjuk atau sorok panel ni. Kayu kawalan kiri atau kanan: pusing gambo.</string>
+  <string name="immersive_hint">B atau Y: balik ko aplikasi. Picu: main atau henti sekejap. A, X atau grip: tunjuk atau sorok panel ni. Kayu kawalan kiri atau kanan: pusing gambo, atas atau bawoh: susune 3D.</string>
   <string name="immersive_yaw">Gambo dipusing ko %1$d darjah</string>
   <string name="immersive_loading">Tengoh muat</string>
   <string name="immersive_buffering">Tengoh menimbal</string>

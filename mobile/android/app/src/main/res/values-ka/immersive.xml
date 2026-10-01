@@ -4,7 +4,7 @@
   <string name="immersive_back">უკან</string>
   <string name="immersive_play">დაკვრა</string>
   <string name="immersive_pause">პაუზა</string>
-  <string name="immersive_hint">B ან Y: აპლიკაციაში დაბრუნება. ტრიგერი: დაკვრა ან პაუზა. A, X ან სახელური: ამ პანელის ჩვენება ან დამალვა. ჯოისტიკი მარცხნივ ან მარჯვნივ: სურათის შემობრუნება.</string>
+  <string name="immersive_hint">B ან Y: აპლიკაციაში დაბრუნება. ტრიგერი: დაკვრა ან პაუზა. A, X ან სახელური: ამ პანელის ჩვენება ან დამალვა. ჯოისტიკი მარცხნივ ან მარჯვნივ: სურათის შემობრუნება, ზემოთ ან ქვემოთ: 3D განლაგება.</string>
   <string name="immersive_yaw">სურათი შემობრუნებულია %1$d გრადუსზე</string>
   <string name="immersive_loading">იტვირთება</string>
   <string name="immersive_buffering">ბუფერიზაცია</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">Vegere</string>
   <string name="immersive_play">Lê bide</string>
   <string name="immersive_pause">Bisekinîne</string>
-  <string name="immersive_hint">B an Y: vegere aplîkasyonê. Tetik: lê bide an bisekinîne. A, X an destik: vê panelê nîşan bide an veşêre. Joystick ber bi çep an rast: wêneyê bizivirîne.</string>
+  <string name="immersive_hint">B an Y: vegere aplîkasyonê. Tetik: lê bide an bisekinîne. A, X an destik: vê panelê nîşan bide an veşêre. Joystick ber bi çep an rast: wêneyê bizivirîne, ber bi jor an jêr: rêzkirina 3D.</string>
   <string name="immersive_yaw">Wêne %1$d pile hat zivirandin</string>
   <string name="immersive_loading">Tê barkirin</string>
   <string name="immersive_buffering">Tê tamponkirin</string>

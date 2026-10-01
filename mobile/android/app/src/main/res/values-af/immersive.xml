@@ -4,7 +4,7 @@
   <string name="immersive_back">Terug</string>
   <string name="immersive_play">Speel</string>
   <string name="immersive_pause">Pouseer</string>
-  <string name="immersive_hint">B of Y: terug na die toep. Sneller: speel of pouseer. A, X of greep: wys of versteek hierdie paneel. Duimstok links of regs: draai die beeld.</string>
+  <string name="immersive_hint">B of Y: terug na die toep. Sneller: speel of pouseer. A, X of greep: wys of versteek hierdie paneel. Duimstok links of regs: draai die beeld, op of af: 3D-uitleg.</string>
   <string name="immersive_yaw">Beeld na %1$d grade gedraai</string>
   <string name="immersive_loading">Laai tans</string>
   <string name="immersive_buffering">Buffer tans</string>

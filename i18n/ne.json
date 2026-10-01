@@ -24,5 +24,9 @@
   "immersive_viewer_open_failed": "इमर्सिभ भ्युअर खोल्न सकिएन",
   "library_360": "360°",
   "panorama_gyroscope": "जाइरोस्कोप",
-  "panorama_no_gyroscope": "यो यन्त्रमा जाइरोस्कोप छैन"
+  "panorama_no_gyroscope": "यो यन्त्रमा जाइरोस्कोप छैन",
+  "panorama_stereo_layout": "3D लेआउट",
+  "panorama_stereo_left_right": "3D, छेउछेउमा",
+  "panorama_stereo_mono": "मोनो (3D होइन)",
+  "panorama_stereo_top_bottom": "3D, माथि र तल"
 }

@@ -3,7 +3,7 @@
   <string name="immersive_back">Kembali</string>
   <string name="immersive_play">Main</string>
   <string name="immersive_pause">Jeda</string>
-  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pemicu: main atau jeda. A, X atau butang genggam: tunjukkan atau sembunyikan panel ini. Joystick ke kiri atau kanan: putar gambar.</string>
+  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pemicu: main atau jeda. A, X atau butang genggam: tunjukkan atau sembunyikan panel ini. Joystick ke kiri atau kanan: putar gambar, ke atas atau bawah: susun atur 3D.</string>
   <string name="immersive_yaw">Gambar diputar ke %1$d darjah</string>
   <string name="immersive_loading">Sedang memuatkan</string>
   <string name="immersive_buffering">Sedang menimbal</string>

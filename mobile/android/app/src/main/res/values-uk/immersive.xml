@@ -4,7 +4,7 @@
   <string name="immersive_back">Назад</string>
   <string name="immersive_play">Відтворити</string>
   <string name="immersive_pause">Пауза</string>
-  <string name="immersive_hint">B або Y: повернутися до застосунку. Курок: відтворити або призупинити. A, X або кнопка захвату: показати або приховати цю панель. Стік вліво або вправо: повернути зображення.</string>
+  <string name="immersive_hint">B або Y: повернутися до застосунку. Курок: відтворити або призупинити. A, X або кнопка захвату: показати або приховати цю панель. Стік вліво або вправо: повернути зображення, вгору або вниз: розкладка 3D.</string>
   <string name="immersive_yaw">Зображення повернуто на %1$d°</string>
   <string name="immersive_loading">Завантаження</string>
   <string name="immersive_buffering">Буферизація</string>

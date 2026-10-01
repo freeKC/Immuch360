@@ -3,7 +3,7 @@
   <string name="immersive_back">Zurück</string>
   <string name="immersive_play">Abspielen</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B oder Y: zurück zur App. Trigger: Wiedergabe oder Pause. A, X oder Grifftaste: dieses Panel ein- oder ausblenden. Thumbstick nach links oder rechts: Bild drehen.</string>
+  <string name="immersive_hint">B oder Y: zurück zur App. Trigger: Wiedergabe oder Pause. A, X oder Grifftaste: dieses Panel ein- oder ausblenden. Thumbstick nach links oder rechts: Bild drehen, nach oben oder unten: 3D-Layout.</string>
   <string name="immersive_yaw">Bild auf %1$d Grad gedreht</string>
   <string name="immersive_loading">Wird geladen</string>
   <string name="immersive_buffering">Wird gepuffert</string>

@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -42,7 +43,8 @@ final _log = Logger('PanoramaViewer');
 
 /// Plays [asset] full screen in the native 360° player, from the file the viewer plays: the copy on the phone when
 /// there is one, else the server's original file when the settings ask for it, else its transcoded playback.
-/// Meanwhile the viewer's player is stopped, see [VideoPlayerNotifier.suspendForExternalPlayer].
+/// Meanwhile the viewer's player is stopped, see [VideoPlayerNotifier.suspendForExternalPlayer]. The player shows
+/// the left eye of a 3D video, with the layout guessed from the video dimensions until the user picks another one.
 Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset asset) async {
   final remoteId = asset.remoteId;
   if (remoteId == null) {
@@ -56,6 +58,8 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final remoteUrl = '${Store.get(StoreKey.serverEndpoint)}/assets/$remoteId/$postfix';
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
+  final stereoLabels = stereoLayoutLabels(context.t);
+  final stereoLayout = guessStereoLayout(width: asset.width, height: asset.height);
   final localId = asset.localId;
 
   try {
@@ -66,7 +70,15 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
     // The viewer lifts this when the app resumes, which closing the player brings about on iOS as well: its full
     // screen presentation hides the Flutter view, and the app lifecycle follows.
     await player.suspendForExternalPlayer();
-    await api.open(url, ApiService.getRequestHeaders(), asset.name, closeLabel, errorMessage);
+    await api.open(
+      url,
+      ApiService.getRequestHeaders(),
+      asset.name,
+      closeLabel,
+      errorMessage,
+      stereoLayout,
+      stereoLabels,
+    );
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for ${asset.name}', error, stackTrace);
     // Nothing else would bring the viewer's player back
@@ -119,6 +131,11 @@ GPanoInitialView? parseGPanoInitialView(String xmp) {
 /// covers, normalised to [0, 1], null for a full sphere.
 typedef GPano = ({Rect? crop, GPanoInitialView? initialView});
 
+/// Whether a GPano [crop] leaves part of the sphere out. Many cameras write the crop tags on full spheres too, 3D
+/// ones included: within 1%, such a crop is no partial panorama.
+bool isPartialSphere(Rect crop) =>
+    crop.left.abs() > 0.01 || crop.top.abs() > 0.01 || (crop.width - 1).abs() > 0.01 || (crop.height - 1).abs() > 0.01;
+
 /// Where the viewer looks first for a GPano initial view, as its longitude and latitude in degrees.
 ///
 /// The viewer's longitude is 0 at the center column of the full panorama and grows to the right, and the center
@@ -131,7 +148,6 @@ typedef GPano = ({Rect? crop, GPanoInitialView? initialView});
 /// Reads the GPano tags from the XMP of a preview image with byte range requests: JPEG previews carry
 /// the XMP at the head of the file, WebP previews at the tail. Returns null when there is neither a crop
 /// nor an initial view.
-@visibleForTesting
 Future<GPano?> fetchGPano(http.Client client, Uri url, {Duration timeout = const Duration(seconds: 5)}) async {
   const window = 131072;
   for (final range in const ['bytes=0-${window - 1}', 'bytes=-$window']) {
@@ -304,6 +320,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   Rect _crop = const Rect.fromLTWH(0, 0, 1, 1);
   // Painting waits for the GPano tags, so the first frame already shows the initial view
   bool _gpanoLoaded = false;
+  // Layout of a 3D panorama picked with the 3D button, null until then: see _stereoLayout
+  StereoLayout? _chosenStereoLayout;
 
   // View direction and vertical field of view, in degrees
   double _longitude = 0;
@@ -403,6 +421,30 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     _imageStream?.removeListener(_imageListener);
     _imageInfo?.dispose();
     super.dispose();
+  }
+
+  /// How the eyes of a 3D panorama are laid out. A phone shows the left eye only. The layout the user picked, else
+  /// a guess from the asset dimensions, or from the image while those are unknown. Partial panoramas are mono.
+  StereoLayout get _stereoLayout {
+    final chosen = _chosenStereoLayout;
+    if (chosen != null) {
+      return chosen;
+    }
+    final asset = widget.asset;
+    final image = _imageInfo?.image;
+    final (width, height) = (asset.width ?? 0) > 0 && (asset.height ?? 0) > 0
+        ? (asset.width, asset.height)
+        : (image?.width, image?.height);
+    return guessStereoLayout(width: width, height: height, hasGPanoCrop: isPartialSphere(_crop));
+  }
+
+  // The guess can be wrong both ways: a square panorama that is not 3D, or a 3D one of another size
+  void _showNextStereoLayout() {
+    final layout = _stereoLayout.next;
+    setState(() => _chosenStereoLayout = layout);
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(layout.label(context.t)), duration: const Duration(seconds: 2)));
   }
 
   // Called for every image the provider yields (thumbnail, preview, original)
@@ -624,6 +666,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     final showsSphere = image != null && _gpanoLoaded;
     // On a Meta Quest the panel is fixed in space: following the head makes no sense there
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    final stereoLayout = _stereoLayout;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -633,6 +676,14 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
         foregroundColor: Colors.white,
         leading: const CloseButton(),
         actions: [
+          if (showsSphere)
+            IconButton(
+              isSelected: stereoLayout != StereoLayout.mono,
+              icon: const Icon(Icons.view_in_ar_outlined),
+              selectedIcon: const Icon(Icons.view_in_ar),
+              tooltip: stereoLayout.label(context.t),
+              onPressed: _showNextStereoLayout,
+            ),
           if (showsSphere && !isHorizonOs)
             IconButton(
               isSelected: _gyroEnabled,
@@ -666,6 +717,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                   painter: _SpherePainter(
                     image: image,
                     crop: _crop,
+                    textureRect: stereoLayout.leftEyeRect,
                     longitude: _longitude,
                     latitude: _latitude,
                     fov: _fov,
@@ -678,7 +730,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   }
 }
 
-/// Paints a sphere textured with an equirectangular image, as seen from its centre.
+/// Paints a sphere textured with an equirectangular image, as seen from its centre. Only the [textureRect] part of
+/// the image textures it: the left eye of a 3D panorama.
 class _SpherePainter extends CustomPainter {
   static const _rows = 32;
   static const _columns = 64;
@@ -689,6 +742,8 @@ class _SpherePainter extends CustomPainter {
 
   final ui.Image image;
   final Rect crop;
+  // Part of the image the sphere shows, normalised to [0, 1]
+  final Rect textureRect;
   final double longitude;
   final double latitude;
   final double fov;
@@ -696,6 +751,7 @@ class _SpherePainter extends CustomPainter {
   const _SpherePainter({
     required this.image,
     required this.crop,
+    required this.textureRect,
     required this.longitude,
     required this.latitude,
     required this.fov,
@@ -725,8 +781,8 @@ class _SpherePainter extends CustomPainter {
       depths[i] = depth;
       positions[i * 2] = center.dx + focalLength * x / depth;
       positions[i * 2 + 1] = center.dy - focalLength * y / depth;
-      textureCoordinates[i * 2] = image.width * column / _columns;
-      textureCoordinates[i * 2 + 1] = image.height * row / _rows;
+      textureCoordinates[i * 2] = image.width * (textureRect.left + textureRect.width * column / _columns);
+      textureCoordinates[i * 2 + 1] = image.height * (textureRect.top + textureRect.height * row / _rows);
     }
 
     // Keep only the triangles in front of the viewer

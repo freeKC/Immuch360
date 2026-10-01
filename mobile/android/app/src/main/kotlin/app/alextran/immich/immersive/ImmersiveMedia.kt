@@ -53,6 +53,47 @@ internal object ImmersiveMedia {
 
   private val originalPath = Regex("/assets/([^/?#]+)/original(?=$|[?#])")
 
+  /** Key of the title of the 3D control in the stereo labels sent by Flutter. */
+  const val STEREO_LABEL_TITLE = "stereo"
+
+  /** English labels of the 3D control, used for a key Flutter did not send. */
+  private val defaultStereoLabels =
+    mapOf(
+      STEREO_LABEL_TITLE to "3D layout",
+      "mono" to "Mono (not 3D)",
+      "topBottom" to "3D, top and bottom",
+      "leftRight" to "3D, side by side",
+    )
+
+  /** Order of the layouts when the user cycles them, the same in every viewer. */
+  private val stereoOrder =
+    listOf(ImmersiveStereoLayout.MONO, ImmersiveStereoLayout.TOP_BOTTOM, ImmersiveStereoLayout.LEFT_RIGHT)
+
+  /** Key of [layout] in the stereo labels sent by Flutter. */
+  fun stereoLabelKey(layout: ImmersiveStereoLayout): String =
+    when (layout) {
+      ImmersiveStereoLayout.MONO -> "mono"
+      ImmersiveStereoLayout.TOP_BOTTOM -> "topBottom"
+      ImmersiveStereoLayout.LEFT_RIGHT -> "leftRight"
+    }
+
+  /** Label of [key] from the translated [labels], the English one when it is missing or blank. */
+  fun stereoLabel(labels: Map<String, String>, key: String): String =
+    labels[key]?.takeIf { it.isNotBlank() } ?: defaultStereoLabels[key] ?: key
+
+  /** "3D layout: 3D, top and bottom" for [layout], with the translated [labels]. */
+  fun stereoLayoutText(layout: ImmersiveStereoLayout, labels: Map<String, String>): String =
+    "${stereoLabel(labels, STEREO_LABEL_TITLE)}: ${stereoLabel(labels, stereoLabelKey(layout))}"
+
+  /**
+   * The layout after [layout] in the order mono, top and bottom, side by side for a positive [step], the one before
+   * it for a negative [step], wrapping around.
+   */
+  fun cycleStereoLayout(layout: ImmersiveStereoLayout, step: Int): ImmersiveStereoLayout {
+    val index = stereoOrder.indexOf(layout).coerceAtLeast(0)
+    return stereoOrder[(index + step).mod(stereoOrder.size)]
+  }
+
   /** ".../assets/{id}/original?edited=true" gives ".../assets/{id}/thumbnail?size=preview&edited=true". */
   fun previewUrlFor(originalUrl: String): String? {
     val match = originalPath.find(originalUrl) ?: return null

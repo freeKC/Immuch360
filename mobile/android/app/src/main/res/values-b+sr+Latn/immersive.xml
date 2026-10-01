@@ -4,7 +4,7 @@
   <string name="immersive_back">Nazad</string>
   <string name="immersive_play">Pokreni</string>
   <string name="immersive_pause">Pauza</string>
-  <string name="immersive_hint">B ili Y: nazad u aplikaciju. Okidač: pokreni ili pauziraj. A, X ili dugme za hvatanje: prikaži ili sakrij ovaj panel. Palica levo ili desno: okreni sliku.</string>
+  <string name="immersive_hint">B ili Y: nazad u aplikaciju. Okidač: pokreni ili pauziraj. A, X ili dugme za hvatanje: prikaži ili sakrij ovaj panel. Palica levo ili desno: okreni sliku, gore ili dole: 3D raspored.</string>
   <string name="immersive_yaw">Rotacija slike: %1$d°</string>
   <string name="immersive_loading">Učitavanje</string>
   <string name="immersive_buffering">Baferovanje</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">वापस</string>
   <string name="immersive_play">चलाएं</string>
   <string name="immersive_pause">रोकें</string>
-  <string name="immersive_hint">B या Y: ऐप पर वापस जाएं। ट्रिगर: चलाएं या रोकें। A, X या ग्रिप: यह पैनल दिखाएं या छिपाएं। थंबस्टिक बाएं या दाएं: छवि घुमाएं।</string>
+  <string name="immersive_hint">B या Y: ऐप पर वापस जाएं। ट्रिगर: चलाएं या रोकें। A, X या ग्रिप: यह पैनल दिखाएं या छिपाएं। थंबस्टिक बाएं या दाएं: छवि घुमाएं, ऊपर या नीचे: 3D लेआउट।</string>
   <string name="immersive_yaw">छवि %1$d डिग्री पर घुमाई गई</string>
   <string name="immersive_loading">लोड हो रहा है</string>
   <string name="immersive_buffering">बफ़र हो रहा है</string>

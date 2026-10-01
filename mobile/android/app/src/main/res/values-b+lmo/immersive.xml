@@ -4,7 +4,7 @@
   <string name="immersive_back">Indree</string>
   <string name="immersive_play">Fà partì</string>
   <string name="immersive_pause">Pausa</string>
-  <string name="immersive_hint">B o Y: torna a l\'app. Grilett: fà partì o mett in pausa. A, X o grip: fà vedè o scond quest panell. Levetta a sinistra o a drita: gira l\'imagin.</string>
+  <string name="immersive_hint">B o Y: torna a l\'app. Grilett: fà partì o mett in pausa. A, X o grip: fà vedè o scond quest panell. Levetta a sinistra o a drita: gira l\'imagin, in sù o in giò: disposizion 3D.</string>
   <string name="immersive_yaw">Imagin girada a %1$d grad</string>
   <string name="immersive_loading">Adree a cargà</string>
   <string name="immersive_buffering">Adree a bufferizzà</string>

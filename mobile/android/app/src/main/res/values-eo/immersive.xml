@@ -3,7 +3,7 @@
   <string name="immersive_back">Malantaŭen</string>
   <string name="immersive_play">Ludi</string>
   <string name="immersive_pause">Paŭzi</string>
-  <string name="immersive_hint">B aŭ Y: reen al la aplikaĵo. Ĉano: ludi aŭ paŭzi. A, X aŭ tenbutono: montri aŭ kaŝi ĉi tiun panelon. Stirstangeto maldekstren aŭ dekstren: turni la bildon.</string>
+  <string name="immersive_hint">B aŭ Y: reen al la aplikaĵo. Ĉano: ludi aŭ paŭzi. A, X aŭ tenbutono: montri aŭ kaŝi ĉi tiun panelon. Stirstangeto maldekstren aŭ dekstren: turni la bildon, supren aŭ malsupren: 3D-aranĝo.</string>
   <string name="immersive_yaw">Bildo turnita al %1$d gradoj</string>
   <string name="immersive_loading">Ŝargado</string>
   <string name="immersive_buffering">Bufrado</string>

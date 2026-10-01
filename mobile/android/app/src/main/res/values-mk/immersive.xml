@@ -4,7 +4,7 @@
   <string name="immersive_back">Назад</string>
   <string name="immersive_play">Пушти</string>
   <string name="immersive_pause">Паузирај</string>
-  <string name="immersive_hint">B или Y: назад во апликацијата. Тригер: пушти или паузирај. A, X или копчето за фаќање: прикажи или скриј го овој панел. Џојстикот лево или десно: ротирај ја сликата.</string>
+  <string name="immersive_hint">B или Y: назад во апликацијата. Тригер: пушти или паузирај. A, X или копчето за фаќање: прикажи или скриј го овој панел. Џојстикот лево или десно: ротирај ја сликата, горе или долу: 3D распоред.</string>
   <string name="immersive_yaw">Сликата е ротирана на %1$d степени</string>
   <string name="immersive_loading">Вчитување</string>
   <string name="immersive_buffering">Баферирање</string>

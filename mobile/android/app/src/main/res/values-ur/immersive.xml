@@ -4,7 +4,7 @@
   <string name="immersive_back">واپس</string>
   <string name="immersive_play">چلائیں</string>
   <string name="immersive_pause">روکیں</string>
-  <string name="immersive_hint">B یا Y: ایپ پر واپس جائیں۔ ٹریگر: چلائیں یا روکیں۔ A، X یا گرپ بٹن: یہ پینل دکھائیں یا چھپائیں۔ تھمب اسٹک بائیں یا دائیں: تصویر گھمائیں۔</string>
+  <string name="immersive_hint">B یا Y: ایپ پر واپس جائیں۔ ٹریگر: چلائیں یا روکیں۔ A، X یا گرپ بٹن: یہ پینل دکھائیں یا چھپائیں۔ تھمب اسٹک بائیں یا دائیں: تصویر گھمائیں، اوپر یا نیچے: 3D ترتیب۔</string>
   <string name="immersive_yaw">تصویر %1$d ڈگری پر گھما دی گئی</string>
   <string name="immersive_loading">لوڈ ہو رہا ہے</string>
   <string name="immersive_buffering">بفر ہو رہا ہے</string>

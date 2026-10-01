@@ -3,7 +3,7 @@
   <string name="immersive_back">Atzera</string>
   <string name="immersive_play">Erreproduzitu</string>
   <string name="immersive_pause">Pausatu</string>
-  <string name="immersive_hint">B edo Y: itzuli aplikaziora. Katua: erreproduzitu edo pausatu. A, X edo heltzeko botoia: erakutsi edo ezkutatu panel hau. Joystick-a ezkerrera edo eskuinera: biratu irudia.</string>
+  <string name="immersive_hint">B edo Y: itzuli aplikaziora. Katua: erreproduzitu edo pausatu. A, X edo heltzeko botoia: erakutsi edo ezkutatu panel hau. Joystick-a ezkerrera edo eskuinera: biratu irudia, gora edo behera: 3D diseinua.</string>
   <string name="immersive_yaw">Irudia %1$d gradura biratuta</string>
   <string name="immersive_loading">Kargatzen</string>
   <string name="immersive_buffering">Bufferra betetzen</string>

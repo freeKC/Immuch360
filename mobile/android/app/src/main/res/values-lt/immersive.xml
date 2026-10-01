@@ -4,7 +4,7 @@
   <string name="immersive_back">Atgal</string>
   <string name="immersive_play">Paleisti</string>
   <string name="immersive_pause">Pristabdyti</string>
-  <string name="immersive_hint">B arba Y: grįžti į programą. Gaidukas: paleisti arba pristabdyti. A, X arba suėmimo mygtukas: rodyti arba slėpti šį skydelį. Valdymo svirtelė kairėn arba dešinėn: pasukti vaizdą.</string>
+  <string name="immersive_hint">B arba Y: grįžti į programą. Gaidukas: paleisti arba pristabdyti. A, X arba suėmimo mygtukas: rodyti arba slėpti šį skydelį. Valdymo svirtelė kairėn arba dešinėn: pasukti vaizdą, aukštyn arba žemyn: 3D išdėstymas.</string>
   <string name="immersive_yaw">Vaizdas pasuktas: %1$d°</string>
   <string name="immersive_loading">Kraunama</string>
   <string name="immersive_buffering">Buferizuojama</string>

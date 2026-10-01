@@ -3,7 +3,7 @@
   <string name="immersive_back">Πίσω</string>
   <string name="immersive_play">Αναπαραγωγή</string>
   <string name="immersive_pause">Παύση</string>
-  <string name="immersive_hint">B ή Y: επιστροφή στην εφαρμογή. Σκανδάλη: αναπαραγωγή ή παύση. A, X ή λαβή: εμφάνιση ή απόκρυψη αυτού του πλαισίου. Μοχλός αριστερά ή δεξιά: περιστροφή της εικόνας.</string>
+  <string name="immersive_hint">B ή Y: επιστροφή στην εφαρμογή. Σκανδάλη: αναπαραγωγή ή παύση. A, X ή λαβή: εμφάνιση ή απόκρυψη αυτού του πλαισίου. Μοχλός αριστερά ή δεξιά: περιστροφή της εικόνας, πάνω ή κάτω: διάταξη 3D.</string>
   <string name="immersive_yaw">Η εικόνα περιστράφηκε στις %1$d μοίρες</string>
   <string name="immersive_loading">Φόρτωση</string>
   <string name="immersive_buffering">Προσωρινή αποθήκευση</string>

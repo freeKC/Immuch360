@@ -4,7 +4,7 @@
   <string name="immersive_back">பின்</string>
   <string name="immersive_play">இயக்கு</string>
   <string name="immersive_pause">இடைநிறுத்து</string>
-  <string name="immersive_hint">B அல்லது Y: பயன்பாட்டுக்குத் திரும்பு. டிரிகர்: இயக்கு அல்லது இடைநிறுத்து. A, X அல்லது கிரிப்: இந்தப் பலகத்தைக் காட்டு அல்லது மறை. தம்ப்ஸ்டிக் இடது அல்லது வலது: படத்தைச் சுழற்று.</string>
+  <string name="immersive_hint">B அல்லது Y: பயன்பாட்டுக்குத் திரும்பு. டிரிகர்: இயக்கு அல்லது இடைநிறுத்து. A, X அல்லது கிரிப்: இந்தப் பலகத்தைக் காட்டு அல்லது மறை. தம்ப்ஸ்டிக் இடது அல்லது வலது: படத்தைச் சுழற்று, மேலே அல்லது கீழே: 3D தளவமைப்பு.</string>
   <string name="immersive_yaw">படம் %1$d டிகிரிக்குச் சுழற்றப்பட்டது</string>
   <string name="immersive_loading">ஏற்றுகிறது</string>
   <string name="immersive_buffering">இடையகப்படுத்துகிறது</string>

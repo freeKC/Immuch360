@@ -101,5 +101,9 @@
   "immersive_viewer_open_failed": "មិនអាចបើកកម្មវិធីមើលបែបជ្រមុជបានទេ",
   "library_360": "360°",
   "panorama_gyroscope": "ជីរ៉ូស្កុប",
-  "panorama_no_gyroscope": "គ្មានជីរ៉ូស្កុបនៅលើឧបករណ៍នេះទេ"
+  "panorama_no_gyroscope": "គ្មានជីរ៉ូស្កុបនៅលើឧបករណ៍នេះទេ",
+  "panorama_stereo_layout": "ប្លង់ 3D",
+  "panorama_stereo_left_right": "3D, ចំហៀងគ្នា",
+  "panorama_stereo_mono": "ម៉ូណូ (មិនមែន 3D)",
+  "panorama_stereo_top_bottom": "3D, ខាងលើ និងខាងក្រោម"
 }

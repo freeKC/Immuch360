@@ -2,5 +2,9 @@
   "immersive_viewer_open_failed": "เบิกหน้าเมิลแบบอิมเมอร์ซีฟออตบาน",
   "library_360": "360°",
   "panorama_gyroscope": "ไจโรสโคป",
-  "panorama_no_gyroscope": "อุปกรณ์นิฮออตเมียนไจโรสโคป"
+  "panorama_no_gyroscope": "อุปกรณ์นิฮออตเมียนไจโรสโคป",
+  "panorama_stereo_layout": "เลย์เอาต์ 3D",
+  "panorama_stereo_left_right": "3D, เคียงข้างกัน",
+  "panorama_stereo_mono": "โมโน (บ่แม่น 3D)",
+  "panorama_stereo_top_bottom": "3D, บนแล้วก็ล่าง"
 }

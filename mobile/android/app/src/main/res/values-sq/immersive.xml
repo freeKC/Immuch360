@@ -4,7 +4,7 @@
   <string name="immersive_back">Mbrapa</string>
   <string name="immersive_play">Luaj</string>
   <string name="immersive_pause">Pauzë</string>
-  <string name="immersive_hint">B ose Y: kthim te aplikacioni. Këmbëza: luaj ose pauzë. A, X ose butoni i kapjes: shfaq ose fshih këtë panel. Leva majtas ose djathtas: rrotullo imazhin.</string>
+  <string name="immersive_hint">B ose Y: kthim te aplikacioni. Këmbëza: luaj ose pauzë. A, X ose butoni i kapjes: shfaq ose fshih këtë panel. Leva majtas ose djathtas: rrotullo imazhin, lart ose poshtë: paraqitja 3D.</string>
   <string name="immersive_yaw">Imazhi u rrotullua në %1$d gradë</string>
   <string name="immersive_loading">Po ngarkohet</string>
   <string name="immersive_buffering">Po buferohet</string>

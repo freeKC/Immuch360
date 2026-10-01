@@ -2,17 +2,26 @@
 // tracking (ImmersiveViewerActivity, Meta Spatial SDK). Phones keep the in-app panorama viewer.
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
 import 'package:logging/logging.dart';
+import 'package:openapi/api.dart';
 
 final _log = Logger('ImmersiveViewer');
+
+/// Client of the request for the GPano tags of a photo that looks 3D: the app's shared client, with its native SSL
+/// setup. Tests replace it.
+final immersiveGPanoClientProvider = Provider<http.Client>((_) => NetworkRepository.client);
 
 /// URL on the server loaded by the immersive viewer, or null for an asset that is not on the server.
 /// Photos: the original (the viewer shows the preview first and keeps it if the original fails).
@@ -32,7 +41,12 @@ String? immersiveMediaUrl(BaseAsset asset) {
 
 /// Stops the in-app video player, then opens the asset in the immersive viewer. A video plays from the copy on the
 /// device when there is one, like in the in-app player, else from its original on the server.
-Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset) async {
+///
+/// The headset shows each eye its own half of a 3D media, with the layout guessed from the asset dimensions until
+/// the user picks another one with the 3D control, labelled with [stereoLabels] (see [stereoLayoutLabels]). Like the
+/// phone viewer, a partial panorama stays mono whatever its aspect ratio: for a photo that looks 3D, the GPano crop
+/// the server copies into the preview's XMP tells. The guess stands when that request fails.
+Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset, {required Map<String, String> stereoLabels}) async {
   final remoteUrl = immersiveMediaUrl(asset);
   if (remoteUrl == null) {
     throw StateError('The asset is not on the server');
@@ -42,6 +56,24 @@ Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset) async {
   final storage = ref.read(storageRepositoryProvider);
   final player = asset.isVideo ? ref.read(videoPlayerProvider(asset.id).notifier) : null;
   final localId = asset.isVideo ? asset.localId : null;
+  var stereoLayout = guessStereoLayout(width: asset.width, height: asset.height);
+  // Only a photo that looks 3D needs its GPano crop
+  final gpanoClient = !asset.isVideo && stereoLayout != StereoLayout.mono
+      ? ref.read(immersiveGPanoClientProvider)
+      : null;
+
+  final remoteId = asset.remoteId;
+  if (gpanoClient != null && remoteId != null) {
+    final gpano = await fetchGPano(
+      gpanoClient,
+      Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview)),
+    );
+    final crop = gpano?.crop;
+    if (crop != null && isPartialSphere(crop)) {
+      _log.fine('${asset.name} is a partial panorama, shown mono');
+      stereoLayout = StereoLayout.mono;
+    }
+  }
 
   var url = remoteUrl;
   if (localId != null) {
@@ -58,7 +90,14 @@ Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset) async {
   // view. The viewer lifts this when the app resumes.
   await player?.suspendForExternalPlayer();
   try {
-    await api.open(url, ApiService.getRequestHeaders(), asset.isVideo, asset.name);
+    await api.open(
+      url,
+      ApiService.getRequestHeaders(),
+      asset.isVideo,
+      asset.name,
+      stereoLayout.toImmersive(),
+      stereoLabels,
+    );
   } catch (_) {
     // Nothing else would bring the viewer's player back
     await player?.resumeAfterExternalPlayer();

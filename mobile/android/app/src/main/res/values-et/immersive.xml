@@ -3,7 +3,7 @@
   <string name="immersive_back">Tagasi</string>
   <string name="immersive_play">Esita</string>
   <string name="immersive_pause">Peata</string>
-  <string name="immersive_hint">B või Y: tagasi rakendusse. Päästik: esita või peata. A, X või haardenupp: näita või peida see paneel. Juhtkang vasakule või paremale: pööra pilti.</string>
+  <string name="immersive_hint">B või Y: tagasi rakendusse. Päästik: esita või peata. A, X või haardenupp: näita või peida see paneel. Juhtkang vasakule või paremale: pööra pilti, üles või alla: 3D paigutus.</string>
   <string name="immersive_yaw">Pilt pööratud %1$d kraadini</string>
   <string name="immersive_loading">Laadimine</string>
   <string name="immersive_buffering">Puhverdamine</string>

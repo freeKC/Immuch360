@@ -4,7 +4,7 @@
   <string name="immersive_back">ফিরে যান</string>
   <string name="immersive_play">চালান</string>
   <string name="immersive_pause">থামান</string>
-  <string name="immersive_hint">B বা Y: অ্যাপে ফিরে যান। ট্রিগার: চালান বা থামান। A, X বা গ্রিপ: এই প্যানেল দেখান বা লুকান। থাম্বস্টিক বাঁয়ে বা ডানে: ছবি ঘোরান।</string>
+  <string name="immersive_hint">B বা Y: অ্যাপে ফিরে যান। ট্রিগার: চালান বা থামান। A, X বা গ্রিপ: এই প্যানেল দেখান বা লুকান। থাম্বস্টিক বাঁয়ে বা ডানে: ছবি ঘোরান, উপরে বা নিচে: 3D বিন্যাস।</string>
   <string name="immersive_yaw">ছবি %1$d ডিগ্রিতে ঘোরানো হয়েছে</string>
   <string name="immersive_loading">লোড হচ্ছে</string>
   <string name="immersive_buffering">বাফার হচ্ছে</string>

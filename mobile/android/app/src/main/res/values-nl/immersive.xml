@@ -3,7 +3,7 @@
   <string name="immersive_back">Terug</string>
   <string name="immersive_play">Afspelen</string>
   <string name="immersive_pause">Pauzeren</string>
-  <string name="immersive_hint">B of Y: terug naar de app. Trigger: afspelen of pauzeren. A, X of grip: dit paneel tonen of verbergen. Thumbstick naar links of rechts: de afbeelding draaien.</string>
+  <string name="immersive_hint">B of Y: terug naar de app. Trigger: afspelen of pauzeren. A, X of grip: dit paneel tonen of verbergen. Thumbstick naar links of rechts: de afbeelding draaien, omhoog of omlaag: 3D-indeling.</string>
   <string name="immersive_yaw">Afbeelding gedraaid naar %1$d graden</string>
   <string name="immersive_loading">Laden</string>
   <string name="immersive_buffering">Bufferen</string>

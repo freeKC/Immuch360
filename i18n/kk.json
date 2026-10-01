@@ -25,5 +25,9 @@
   "library_360": "360°",
   "panorama_gyroscope": "Гироскоп",
   "panorama_no_gyroscope": "Бұл құрылғыда гироскоп жоқ",
+  "panorama_stereo_layout": "3D орналасуы",
+  "panorama_stereo_left_right": "3D, қатар",
+  "panorama_stereo_mono": "Моно (3D емес)",
+  "panorama_stereo_top_bottom": "3D, жоғары және төмен",
   "zoom_image": "суретті үлкейту"
 }

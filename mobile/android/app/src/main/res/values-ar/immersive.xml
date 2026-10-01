@@ -4,7 +4,7 @@
   <string name="immersive_back">رجوع</string>
   <string name="immersive_play">تشغيل</string>
   <string name="immersive_pause">إيقاف مؤقت</string>
-  <string name="immersive_hint">B أو Y: العودة إلى التطبيق. الزناد: تشغيل أو إيقاف مؤقت. A أو X أو زر القبضة: إظهار هذه اللوحة أو إخفاؤها. عصا التحكم يسارًا أو يمينًا: تدوير الصورة.</string>
+  <string name="immersive_hint">B أو Y: العودة إلى التطبيق. الزناد: تشغيل أو إيقاف مؤقت. A أو X أو زر القبضة: إظهار هذه اللوحة أو إخفاؤها. عصا التحكم يسارًا أو يمينًا: تدوير الصورة، لأعلى أو لأسفل: تخطيط 3D.</string>
   <string name="immersive_yaw">تم تدوير الصورة إلى %1$d°</string>
   <string name="immersive_loading">جارٍ التحميل</string>
   <string name="immersive_buffering">جارٍ التخزين المؤقت</string>

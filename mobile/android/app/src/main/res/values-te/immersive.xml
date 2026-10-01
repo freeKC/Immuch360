@@ -4,7 +4,7 @@
   <string name="immersive_back">వెనుకకు</string>
   <string name="immersive_play">ప్లే</string>
   <string name="immersive_pause">పాజ్</string>
-  <string name="immersive_hint">B లేదా Y: యాప్‌కి తిరిగి వెళ్ళండి. ట్రిగ్గర్: ప్లే లేదా పాజ్ చేయండి. A, X లేదా గ్రిప్: ఈ ప్యానెల్‌ను చూపించండి లేదా దాచండి. థంబ్‌స్టిక్ ఎడమకు లేదా కుడికి: చిత్రాన్ని తిప్పండి.</string>
+  <string name="immersive_hint">B లేదా Y: యాప్‌కి తిరిగి వెళ్ళండి. ట్రిగ్గర్: ప్లే లేదా పాజ్ చేయండి. A, X లేదా గ్రిప్: ఈ ప్యానెల్‌ను చూపించండి లేదా దాచండి. థంబ్‌స్టిక్ ఎడమకు లేదా కుడికి: చిత్రాన్ని తిప్పండి, పైకి లేదా కిందికి: 3D లేఅవుట్.</string>
   <string name="immersive_yaw">చిత్రం %1$d డిగ్రీలకు తిప్పబడింది</string>
   <string name="immersive_loading">లోడ్ అవుతోంది</string>
   <string name="immersive_buffering">బఫర్ అవుతోంది</string>

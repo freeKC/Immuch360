@@ -4,7 +4,7 @@
   <string name="immersive_back">חזרה</string>
   <string name="immersive_play">הפעלה</string>
   <string name="immersive_pause">השהיה</string>
-  <string name="immersive_hint">B או Y: חזרה לאפליקציה. הדק: הפעלה או השהיה. A, X או לחצן האחיזה: הצגה או הסתרה של החלונית. ג\'ויסטיק שמאלה או ימינה: סיבוב התמונה.</string>
+  <string name="immersive_hint">B או Y: חזרה לאפליקציה. הדק: הפעלה או השהיה. A, X או לחצן האחיזה: הצגה או הסתרה של החלונית. ג\'ויסטיק שמאלה או ימינה: סיבוב התמונה, למעלה או למטה: פריסת 3D.</string>
   <string name="immersive_yaw">התמונה סובבה ל-%1$d מעלות</string>
   <string name="immersive_loading">טוען</string>
   <string name="immersive_buffering">אוגר נתונים</string>

@@ -11,8 +11,19 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
     title: String,
     closeLabel: String?,
     errorMessage: String?,
+    stereoLayout: StereoLayout,
+    stereoLabels: Map<String, String>,
   ) {
-    val intent = SphericalVideoActivity.intent(context, url, headers, title, closeLabel, errorMessage)
+    val intent = SphericalVideoActivity.intent(
+      context,
+      url,
+      headers,
+      title,
+      closeLabel,
+      errorMessage,
+      stereoLayout,
+      stereoLabels,
+    )
     if (context !is Activity) {
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
