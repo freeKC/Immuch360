@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "Tok leh bukak paparan imersif",
   "library_360": "360°",
+  "panorama_coverage": "Medan pandang",
+  "panorama_coverage_full": "360°, sfera penoh",
+  "panorama_coverage_half": "180°, setengoh sfera (VR180)",
   "panorama_gyroscope": "Giroskop",
   "panorama_no_gyroscope": "Alat ni takdok giroskop",
   "panorama_stereo_layout": "Susune 3D",

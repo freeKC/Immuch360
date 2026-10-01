@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "Den immersive Viewer konnt net opgemaach ginn",
   "library_360": "360°",
+  "panorama_coverage": "Siichtfeld",
+  "panorama_coverage_full": "360°, ganz Kugel",
+  "panorama_coverage_half": "180°, hallef Kugel (VR180)",
   "panorama_gyroscope": "Gyroskop",
   "panorama_no_gyroscope": "Kee Gyroskop op dësem Apparat",
   "panorama_stereo_layout": "3D-Layout",

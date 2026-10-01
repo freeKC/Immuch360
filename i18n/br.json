@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "Ne c'haller ket digeriñ ar gweler soubus",
   "library_360": "360°",
+  "panorama_coverage": "Maez-gwel",
+  "panorama_coverage_full": "360°, sferenn a-bezh",
+  "panorama_coverage_half": "180°, hanter-sferenn (VR180)",
   "panorama_gyroscope": "Jiroskop",
   "panorama_no_gyroscope": "N'eus jiroskop ebet war an trobarzhell-mañ",
   "panorama_stereo_layout": "Aozadur 3D",

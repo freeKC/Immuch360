@@ -47,6 +47,29 @@
       android:textColor="@android:color/white"
       android:textSize="16sp" />
 
+    <!-- Field of view control: switches between the full sphere and the half sphere (VR180). Its text, description,
+         tooltip and state come from the activity; "360°" and "180°" read the same in every language. -->
+    <Button
+      android:id="@+id/spherical_video_coverage"
+      android:layout_width="wrap_content"
+      android:layout_height="48dp"
+      android:layout_marginStart="8dp"
+      android:background="?android:attr/selectableItemBackgroundBorderless"
+      android:minWidth="48dp"
+      android:minHeight="0dp"
+      android:paddingStart="4dp"
+      android:paddingTop="0dp"
+      android:paddingEnd="4dp"
+      android:paddingBottom="0dp"
+      android:singleLine="true"
+      android:stateListAnimator="@null"
+      android:text="360°"
+      android:textAllCaps="false"
+      android:textColor="@android:color/white"
+      android:textSize="16sp"
+      android:textStyle="bold"
+      tools:ignore="HardcodedText" />
+
     <!-- 3D control: cycles the stereoscopic layout (regular 360, 3D top and bottom, 3D side by side). Its description,
          tooltip and state come from the activity; "3D" reads the same in every language. -->
     <Button

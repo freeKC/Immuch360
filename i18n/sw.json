@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "Imeshindwa kufungua kitazamaji cha uhalisia pepe",
   "library_360": "360°",
+  "panorama_coverage": "Uwanja wa mwonekano",
+  "panorama_coverage_full": "360°, tufe kamili",
+  "panorama_coverage_half": "180°, nusu tufe (VR180)",
   "panorama_gyroscope": "Jairoskopu",
   "panorama_no_gyroscope": "Kifaa hiki hakina jairoskopu",
   "panorama_stereo_layout": "Mpangilio wa 3D",

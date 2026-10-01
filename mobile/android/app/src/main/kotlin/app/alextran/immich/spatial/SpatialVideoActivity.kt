@@ -111,8 +111,12 @@ private const val SENSITIVITY_STEP = 0.1f
  * of each frame into a view from an in between viewpoint; the front camera follows the head of the user and moves that
  * viewpoint, so the screen behaves like a window on the scene. Nothing from the camera leaves the device.
  *
+ * A 360° video covers the full sphere, or only its front half for a VR180 video
+ * ([SpatialProjection.EQUIRECTANGULAR180]); the field of view button switches between the two.
+ *
  * Opened from Flutter through [SpatialVideoApi]. On close (button, system back, or the system destroying the
- * activity) Flutter gets [SpatialVideoEvents.closed] once, with the position, so that the normal player takes over.
+ * activity) Flutter gets [SpatialVideoEvents.closed] once, with the position, so that the normal player takes over,
+ * and with the layout and the projection shown last, so that the choices of the user can be remembered for the asset.
  * A playback error or a GPU that cannot render closes the player the same way, after a short message.
  */
 @OptIn(UnstableApi::class)
@@ -135,6 +139,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     private const val STATE_FIELD_OF_VIEW = "field_of_view"
     private const val STATE_VIEWPOINT = "viewpoint"
     private const val STATE_MANUAL_HOLD = "manual_hold"
+    private const val STATE_HALF_SPHERE = "half_sphere"
 
     private const val LABEL_LAYOUT = "layout"
     private const val LABEL_LAYOUT_AUTO = "layoutAuto"
@@ -150,6 +155,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     private const val LABEL_SENSITIVITY = "sensitivity"
     private const val LABEL_CLOSE = "close"
     private const val LABEL_ERROR = "error"
+    private const val LABEL_COVERAGE = "coverage"
+    private const val LABEL_COVERAGE_FULL = "coverage_full"
+    private const val LABEL_COVERAGE_HALF = "coverage_half"
 
     /** English labels, used for the keys Flutter does not send */
     private val DEFAULT_LABELS = mapOf(
@@ -169,6 +177,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       LABEL_SENSITIVITY to "Head sensitivity",
       LABEL_CLOSE to "Close",
       LABEL_ERROR to "Unable to play this video",
+      LABEL_COVERAGE to "Field of view",
+      LABEL_COVERAGE_FULL to "360°, full sphere",
+      LABEL_COVERAGE_HALF to "180°, half sphere (VR180)",
     )
 
     private val SpatialStereoLayout.labelKey: String
@@ -206,6 +217,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
 
     private fun stereoLayoutNamed(name: String?): SpatialStereoLayout? =
       SpatialStereoLayout.entries.firstOrNull { it.name == name }
+
+    private fun projectionNamed(name: String?): SpatialProjection? =
+      SpatialProjection.entries.firstOrNull { it.name == name }
   }
 
   private val handler = Handler(Looper.getMainLooper())
@@ -220,6 +234,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
   private lateinit var durationText: TextView
   private lateinit var seekBar: SeekBar
   private lateinit var layoutButton: Button
+  private lateinit var coverageButton: Button
   private lateinit var recenterButton: Button
   private lateinit var sensitivityLabel: TextView
   private lateinit var sensitivityBar: SeekBar
@@ -234,6 +249,12 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
 
   private var labels = emptyMap<String, String>()
   private var projection = Projection.FLAT
+
+  /**
+   * 360° videos: the image covers the front half of the sphere only (VR180), as Flutter asked or as the field of view
+   * button set it
+   */
+  private var halfSphere = false
   private var debugOverlay = false
   private var hasFrontCamera = false
 
@@ -432,13 +453,16 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     // The player shares the process with Flutter: an uncaught exception here would close the whole app. Any failure
     // closes this player alone and the normal player takes over.
     try {
+      // First, so that even a failed start tells Flutter the projection it asked for
+      val requestedProjection = projectionNamed(intent.getStringExtra(EXTRA_PROJECTION)) ?: SpatialProjection.FLAT
+      projection = if (requestedProjection == SpatialProjection.FLAT) Projection.FLAT else Projection.EQUIRECTANGULAR
+      halfSphere = savedInstanceState?.getBoolean(STATE_HALF_SPHERE)
+        ?: (requestedProjection == SpatialProjection.EQUIRECTANGULAR180)
+
       // The system may restore this activity alone after the process died
       HttpClientManager.initialize(this)
 
       labels = intent.getBundleExtra(EXTRA_LABELS)?.toStringMap() ?: emptyMap()
-      projection = Projection.entries.firstOrNull {
-        it.name == intent.getStringExtra(EXTRA_PROJECTION)
-      } ?: Projection.FLAT
       debugOverlay = intent.getBooleanExtra(EXTRA_DEBUG_OVERLAY, false)
       hasFrontCamera = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)
       selectedLayout = stereoLayoutNamed(savedInstanceState?.getString(STATE_LAYOUT))
@@ -465,6 +489,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
 
       renderer = SpatialRenderer { surface -> onVideoSurface(surface) }
       renderer.projection = projection
+      renderer.halfSphere = halfSphere
       renderer.quality = Quality.MEDIUM
       renderer.adaptiveQuality = true
       // The viewpoint of before a recreation; updateTrackingUi below sets the manual slider from it
@@ -494,7 +519,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
           it.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR) ?: it.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
         }
       }
-      applyLayout()
+      applyCoverage()
       updateTrackingUi()
 
       onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -517,7 +542,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     startFailed = true
     if (!closedSent) {
       closedSent = true
-      SpatialVideoApiImpl.notifyClosed(startPosition, playWhenReady, selectedLayout)
+      SpatialVideoApiImpl.notifyClosed(startPosition, playWhenReady, selectedLayout, spatialProjection())
     }
     // Releases what was created before the failure; onDestroy then finds everything released
     released = true
@@ -606,6 +631,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       outState.putFloat(STATE_VIEWPOINT, renderer.viewpoint)
     }
     outState.putBoolean(STATE_MANUAL_HOLD, manualHold)
+    outState.putBoolean(STATE_HALF_SPHERE, halfSphere)
   }
 
   override fun onDestroy() {
@@ -627,6 +653,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     durationText = findViewById(R.id.spatial_video_duration)
     seekBar = findViewById(R.id.spatial_video_seek)
     layoutButton = findViewById(R.id.spatial_video_layout)
+    coverageButton = findViewById(R.id.spatial_video_coverage)
     recenterButton = findViewById(R.id.spatial_video_recenter)
     sensitivityLabel = findViewById(R.id.spatial_video_sensitivity_label)
     sensitivityBar = findViewById(R.id.spatial_video_sensitivity)
@@ -676,6 +703,13 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     })
 
     layoutButton.setOnClickListener { showLayoutMenu() }
+
+    coverageButton.setOnClickListener {
+      halfSphere = !halfSphere
+      applyCoverage()
+      showMessage(coverageLabel())
+      scheduleHideControls()
+    }
 
     recenterButton.text = label(LABEL_RECENTER)
     recenterButton.setOnClickListener {
@@ -850,7 +884,14 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       stopped -> resumeOnStart
       else -> current.playWhenReady && current.playbackState != Player.STATE_ENDED
     }
-    SpatialVideoApiImpl.notifyClosed(positionMs, wasPlaying, selectedLayout)
+    SpatialVideoApiImpl.notifyClosed(positionMs, wasPlaying, selectedLayout, spatialProjection())
+  }
+
+  /** The projection shown, as Flutter names it */
+  private fun spatialProjection(): SpatialProjection = when {
+    projection == Projection.FLAT -> SpatialProjection.FLAT
+    halfSphere -> SpatialProjection.EQUIRECTANGULAR180
+    else -> SpatialProjection.EQUIRECTANGULAR
   }
 
   /** Releases the player, the camera and the renderer, once. The renderer releases on the GL thread. */
@@ -888,17 +929,20 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
 
   /**
    * A guess from the frame shape for a video that declares nothing. A 360° video has two 2:1 eyes: stacked they make
-   * a square, side by side a 4:1 frame. A flat 16:9 video stacked makes 16:18. Anything else is taken as side by side,
-   * the most common stereo layout; the layout button tells the user what was picked.
+   * a square, side by side a 4:1 frame. A 180° video has two square eyes: stacked they make a 1:2 frame, side by side
+   * a 2:1 frame. A flat 16:9 video stacked makes 16:18. Anything else is taken as side by side, the most common stereo
+   * layout; the layout button tells the user what was picked.
    */
   private fun guessedLayout(): EyeLayout {
     val ratio = videoAspect
     if (ratio <= 0f) {
       return EyeLayout.SIDE_BY_SIDE
     }
+    val fullSphere = projection == Projection.EQUIRECTANGULAR && !halfSphere
     return when {
-      projection == Projection.EQUIRECTANGULAR && ratio in 0.9f..1.1f -> EyeLayout.TOP_BOTTOM
-      projection == Projection.EQUIRECTANGULAR && ratio in 3.2f..3.9f -> EyeLayout.SIDE_BY_SIDE
+      fullSphere && ratio in 0.9f..1.1f -> EyeLayout.TOP_BOTTOM
+      fullSphere && ratio in 3.2f..3.9f -> EyeLayout.SIDE_BY_SIDE
+      projection == Projection.EQUIRECTANGULAR && halfSphere && ratio in 0.45f..0.55f -> EyeLayout.TOP_BOTTOM
       projection == Projection.FLAT && ratio in 0.8f..0.95f -> EyeLayout.TOP_BOTTOM
       else -> EyeLayout.SIDE_BY_SIDE
     }
@@ -927,6 +971,22 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     layoutButton.contentDescription = "${label(LABEL_LAYOUT)}: $text"
     layoutButton.tooltipText = label(LABEL_LAYOUT)
   }
+
+  /**
+   * Hands the coverage to the renderer and shows it on the field of view button, which only 360° videos have:
+   * "360°" or "180°", which read the same in every language. The guessed layout depends on the coverage too.
+   */
+  private fun applyCoverage() {
+    renderer.halfSphere = halfSphere
+    coverageButton.visibility = if (projection == Projection.EQUIRECTANGULAR) View.VISIBLE else View.GONE
+    coverageButton.text = if (halfSphere) "180°" else "360°"
+    coverageButton.contentDescription = "${label(LABEL_COVERAGE)}: ${coverageLabel()}"
+    coverageButton.tooltipText = label(LABEL_COVERAGE)
+    // Redraws, and estimates the disparity again for the new eyes
+    applyLayout()
+  }
+
+  private fun coverageLabel(): String = label(if (halfSphere) LABEL_COVERAGE_HALF else LABEL_COVERAGE_FULL)
 
   private fun showLayoutMenu() {
     handler.removeCallbacks(hideControlsRunnable)

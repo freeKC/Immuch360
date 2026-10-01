@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "Se pò minga dervì el visor immersiv",
   "library_360": "360°",
+  "panorama_coverage": "Camp visiv",
+  "panorama_coverage_full": "360°, sfera intrega",
+  "panorama_coverage_half": "180°, meza sfera (VR180)",
   "panorama_gyroscope": "Giroscopi",
   "panorama_no_gyroscope": "Gh'è nissun giroscopi in quest dispositiv",
   "panorama_stereo_layout": "Disposizion 3D",

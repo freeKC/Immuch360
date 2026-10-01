@@ -32,7 +32,10 @@ import native_video_player
     BackgroundWorkerFgHostApiSetup.setUp(binaryMessenger: messenger, api: BackgroundWorkerApiImpl())
     ConnectivityApiSetup.setUp(binaryMessenger: messenger, api: ConnectivityApiImpl())
     NetworkApiSetup.setUp(binaryMessenger: messenger, api: NetworkApiImpl())
-    SphericalVideoApiSetup.setUp(binaryMessenger: messenger, api: SphericalVideoApiImpl())
+    SphericalVideoApiSetup.setUp(
+      binaryMessenger: messenger,
+      api: SphericalVideoApiImpl(events: SphericalVideoEvents(binaryMessenger: messenger))
+    )
     SpatialVideoApiSetup.setUp(
       binaryMessenger: messenger,
       api: SpatialVideoApiImpl(events: SpatialVideoEvents(binaryMessenger: messenger))

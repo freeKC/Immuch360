@@ -10,7 +10,9 @@ package app.alextran.immich.spatial
  * - the eye textures hold one eye each, at the output size, and every disparity texture covers a whole eye;
  * - a disparity d is xLeft - xRight (positive for near objects) and is stored encoded as d * scale + 0.5, so that
  *   RGBA8 and RGBA16F targets work alike;
- * - a disparity map holds the left map in r (disparity) and g (validity), the right map in b and a.
+ * - a disparity map holds the left map in r (disparity) and g (validity), the right map in b and a;
+ * - the alpha of an eye texture is 1 where the eye shows the image, 0 for the directions a half sphere (VR180)
+ *   video does not cover, which are black.
  */
 internal object SpatialShaders {
   private const val VERSION = "#version 300 es\n"
@@ -94,7 +96,8 @@ internal object SpatialShaders {
   /**
    * Pass 1, 360 video: renders the viewport of one eye from its equirectangular image. u_rotation holds the right,
    * up and forward directions of the camera as columns, u_tanHalfFov the tangents of the half fields of view.
-   * u_longitudeSpan is 2 pi for a full 360 image, pi for a 180 image; directions outside the image are black.
+   * u_longitudeSpan is 2 pi for a full 360 image, pi for a 180 image; directions outside the image are black,
+   * with an alpha of 0 that keeps them black through the synthesis.
    */
   private val EYE_EQUIRECT_BODY = """
     uniform samplerExternalOES u_video;
@@ -115,7 +118,7 @@ internal object SpatialShaders {
       float u = 0.5 + longitude / u_longitudeSpan;
       if (u_longitudeSpan > 4.0) u = fract(u);
       if (u < 0.0 || u > 1.0) {
-        fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        fragColor = vec4(0.0, 0.0, 0.0, 0.0);
         return;
       }
       // Stay half a texel away from the edges so that filtering never reads the other eye
@@ -372,7 +375,8 @@ internal object SpatialShaders {
    * occluded point and is left out. A source outside the eye texture (beyond half a texel) is left out too: the
    * clamped border column it would read shows another part of the scene. When both eyes fail, the nearest neighbour
    * along the row where one eye works gives the colour, preferring the background, so a hole is never black.
-   * Disparities decode to texture units with (encoded - 0.5) * u_decode.
+   * Disparities decode to texture units with (encoded - 0.5) * u_decode. Pixels outside a half sphere (alpha 0 in the
+   * left eye) stay black: the warp would otherwise pull the edge of the image into them.
    */
   val SYNTHESIS: String = fragment(
     """
@@ -424,6 +428,10 @@ internal object SpatialShaders {
 
     void main() {
       vec2 uv = v_uv;
+      if (texture(u_left, uv).a < 0.5) {
+        fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        return;
+      }
       float p = u_viewpoint;
       vec3 left = solveLeft(uv);
       vec3 right = solveRight(uv, left);

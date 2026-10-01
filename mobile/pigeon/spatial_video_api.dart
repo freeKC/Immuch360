@@ -19,7 +19,8 @@ enum SpatialStereoLayout { auto, sideBySide, topBottom, sideBySideSwapped, topBo
 
 /// [flat] is a regular video; [equirectangular] is a 360° video, which the player shows through a viewport that the
 /// user turns by touch or with the sensors.
-enum SpatialProjection { flat, equirectangular }
+/// [equirectangular180] is the front half of the sphere only (VR180 files)
+enum SpatialProjection { flat, equirectangular, equirectangular180 }
 
 /// What the device can do. [reason] is a short English diagnostic for the logs when [supported] is false.
 class SpatialCapabilities {
@@ -74,5 +75,5 @@ abstract class SpatialVideoApi {
 abstract class SpatialVideoEvents {
   /// The player closed: where playback was, whether it was playing, and the stereo layout in use, so that the
   /// normal player resumes at the same place and the choice can be remembered for the asset.
-  void closed(int positionMs, bool wasPlaying, SpatialStereoLayout layout);
+  void closed(int positionMs, bool wasPlaying, SpatialStereoLayout layout, SpatialProjection projection);
 }

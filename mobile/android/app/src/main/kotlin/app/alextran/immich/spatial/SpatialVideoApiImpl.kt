@@ -48,17 +48,23 @@ class SpatialVideoApiImpl(private val context: Context) : SpatialVideoApi {
     }
 
     /**
-     * Tells Flutter the player closed, on the main thread as the Flutter API requires. The result is ignored. Without
-     * an engine for the app UI the event is dropped: a new engine has no Spatial session to end.
+     * Tells Flutter the player closed, on the main thread as the Flutter API requires. [projection] is the one shown
+     * last, with the coverage the user may have changed. The result is ignored. Without an engine for the app UI the
+     * event is dropped: a new engine has no Spatial session to end.
      */
-    fun notifyClosed(positionMs: Long, wasPlaying: Boolean, layout: SpatialStereoLayout) {
+    fun notifyClosed(
+      positionMs: Long,
+      wasPlaying: Boolean,
+      layout: SpatialStereoLayout,
+      projection: SpatialProjection,
+    ) {
       val send = Runnable {
         val current = events
         if (current == null) {
           Log.i(TAG, "No Flutter engine to tell that the player closed")
           return@Runnable
         }
-        current.closed(positionMs, wasPlaying, layout) { result ->
+        current.closed(positionMs, wasPlaying, layout, projection) { result ->
           result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the closed event", it) }
         }
       }

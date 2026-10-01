@@ -15,6 +15,7 @@ import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
@@ -27,6 +28,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_b
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
@@ -104,6 +106,27 @@ class _NoAlbumNotifier extends CurrentAlbumNotifier {
   RemoteAlbum? build() => null;
 }
 
+/// What the files of the videos declare (see [SphericalProbeService]): [result] for every video, nothing by default.
+/// Records the probes, with the file on the device they were given.
+class _FakeSphericalProbes extends SphericalProbeService {
+  _FakeSphericalProbes()
+    : super(
+        storage: MockStorageRepository(),
+        client: () => throw UnimplementedError('no network in these tests'),
+        serverEndpoint: () => null,
+        headers: () => const {},
+      );
+
+  SphericalProbe? result;
+  final probed = <(BaseAsset, File?)>[];
+
+  @override
+  Future<SphericalProbe?> probe(BaseAsset asset, {File? localFile}) async {
+    probed.add((asset, localFile));
+    return asset.isVideo ? result : null;
+  }
+}
+
 /// The assets the user chose to view as 360°, seeded rather than read from the store. Changes still go to the store.
 class _SeededForcedPanoramas extends ForcedPanoramaAssets {
   _SeededForcedPanoramas(this._keys);
@@ -120,6 +143,7 @@ void main() {
   late _MockSphericalVideoApi sphericalVideoApi;
   late _MockSpatialVideoApi spatialVideoApi;
   late MockStorageRepository storage;
+  late _FakeSphericalProbes probes;
   late List<String> calls;
   // Preview requests of the immersive viewer, and the XMP the preview carries: none by default
   late List<Uri> previewRequests;
@@ -132,6 +156,8 @@ void main() {
     registerFallbackValue(<String, String>{});
     registerFallbackValue(StereoLayout.mono);
     registerFallbackValue(ImmersiveStereoLayout.mono);
+    registerFallbackValue(SphereCoverage.full);
+    registerFallbackValue(ImmersiveSphereCoverage.full);
     registerFallbackValue(
       SpatialOpenRequest(
         url: '',
@@ -147,11 +173,17 @@ void main() {
     );
   });
 
-  const englishStereoLabels = {
+  const englishCoverageLabels = {
+    'coverage': 'Field of view',
+    'coverage_full': '360°, full sphere',
+    'coverage_half': '180°, half sphere (VR180)',
+  };
+  const englishViewerLabels = {
     'stereo': '3D layout',
     'mono': 'Mono (not 3D)',
     'topBottom': '3D, top and bottom',
     'leftRight': '3D, side by side',
+    ...englishCoverageLabels,
   };
 
   setUp(() async {
@@ -161,7 +193,7 @@ void main() {
     calls = [];
     sphericalVideoApi = _MockSphericalVideoApi();
     when(
-      () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any()),
+      () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer((_) async => calls.add('open'));
     spatialVideoApi = _MockSpatialVideoApi();
     when(
@@ -169,9 +201,10 @@ void main() {
     ).thenAnswer((_) async => SpatialCapabilities(supported: true, frontCamera: true, cameraPermissionGranted: false));
     when(() => spatialVideoApi.open(any())).thenAnswer((_) async => calls.add('spatial'));
     storage = MockStorageRepository();
+    probes = _FakeSphericalProbes();
     immersiveApi = _MockImmersiveApi();
     when(
-      () => immersiveApi.open(any(), any(), any(), any(), any(), any()),
+      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer((_) async => calls.add('immersive'));
     previewRequests = [];
     previewXmp = null;
@@ -180,6 +213,7 @@ void main() {
   tearDown(() async {
     await StoreService.I.delete(StoreKey.spatialLayoutOverrides);
     await StoreService.I.delete(StoreKey.forcedPanoramaAssets);
+    await StoreService.I.delete(StoreKey.sphereCoverageOverrides);
     await StoreService.I.delete(StoreKey.advancedTroubleshooting);
     await context.dispose();
   });
@@ -257,6 +291,7 @@ void main() {
             panorama360VideoSupportedProvider.overrideWithValue(panoramaVideoSupported),
             sphericalVideoApiProvider.overrideWithValue(sphericalVideoApi),
             storageRepositoryProvider.overrideWithValue(storage),
+            sphericalProbeServiceProvider.overrideWithValue(probes),
             videoPlayerProvider(asset.id).overrideWith((ref) => _RecordingVideoPlayer(calls, initial: playerState)),
             spatialVideoApiProvider.overrideWithValue(spatialVideoApi),
             if (appConfig != null) appConfigProvider.overrideWithValue(appConfig),
@@ -375,8 +410,8 @@ void main() {
       expect(router.current.name, PanoramaViewerRoute.name);
       expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
       expect(find.text('panorama ${asset.id}'), findsOneWidget);
-      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any()));
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any()));
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('stops a video, then plays its transcoded stream in the native 360° player', (tester) async {
@@ -396,6 +431,7 @@ void main() {
           captureAny(),
           captureAny(),
           captureAny(),
+          captureAny(),
         ),
       ).captured;
       expect(captured, [
@@ -405,7 +441,8 @@ void main() {
         'Close',
         'Unable to play video',
         StereoLayout.mono,
-        englishStereoLabels,
+        englishViewerLabels,
+        SphereCoverage.full,
       ]);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the photo viewer is for images only');
       verifyNever(() => storage.getFileForAsset(any()));
@@ -421,7 +458,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, file.uri.toString());
       expect(url, startsWith('file:///'));
@@ -436,14 +473,14 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, '${PresentationContext.serverEndpoint}/assets/${asset.id}/video/playback');
     });
 
     testWidgets('gives the viewer its video back when the native 360° player cannot open', (tester) async {
       when(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(tester, owned(type: .video), projectionType: .equirectangular, panoramaVideoSupported: true);
 
@@ -467,7 +504,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, '${PresentationContext.serverEndpoint}/assets/${asset.id}/original');
     });
@@ -486,10 +523,92 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), captureAny()),
+          () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), captureAny(), captureAny()),
         ).captured;
-        expect(captured, [expected, englishStereoLabels], reason: '$width x $height');
+        expect(captured, [expected, englishViewerLabels, SphereCoverage.full], reason: '$width x $height');
       }
+    });
+
+    testWidgets('tells the native 360° player a VR180 video by its name: two eyes side by side, the front half', (
+      tester,
+    ) async {
+      final asset = owned(type: .video, width: 5760, height: 2880, name: 'trip_VR180.mp4');
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      final captured = verify(
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny()),
+      ).captured;
+      expect(captured, [StereoLayout.leftRight, SphereCoverage.half]);
+    });
+
+    testWidgets('tells the native 360° player what the file declares, read from the copy on the phone', (tester) async {
+      final asset = owned(type: .video, localId: 'local-1', width: 4096, height: 2048);
+      final file = File('/storage/emulated/0/DCIM/Camera/VID_VR.mp4');
+      when(() => storage.getFileForAsset('local-1')).thenAnswer((_) async => file);
+      probes.result = const SphericalProbe(
+        stereo: StereoLayout.topBottom,
+        halfSphere: true,
+        hasSphericalMetadata: true,
+      );
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      final captured = verify(
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny()),
+      ).captured;
+      expect(captured, [StereoLayout.topBottom, SphereCoverage.half]);
+      expect(probes.probed, [(asset, file)]);
+    });
+
+    testWidgets('prefers the coverage the user picked for the asset', (tester) async {
+      final asset = owned(type: .video, width: 5760, height: 2880, name: 'trip_VR180.mp4');
+      await StoreService.I.put(StoreKey.sphereCoverageOverrides, '{"${asset.id}":"full"}');
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      final captured = verify(
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny()),
+      ).captured;
+      expect(captured, [StereoLayout.mono, SphereCoverage.full]);
+    });
+
+    testWidgets('remembers the coverage picked in the native 360° player, and forgets it back on the guess', (
+      tester,
+    ) async {
+      final asset = owned(type: .video, width: 5760, height: 2880);
+      Future<void> closePlayer(SphereCoverage coverage) async {
+        await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+          'dev.flutter.pigeon.immich_mobile.SphericalVideoEvents.closed',
+          SphericalVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[StereoLayout.leftRight, coverage]),
+          (_) {},
+        );
+        await tester.pumpAndSettle();
+      }
+
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, panoramaVideoSupported: true);
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+      await closePlayer(SphereCoverage.half);
+
+      expect(StoreService.I.tryGet(StoreKey.sphereCoverageOverrides), '{"${asset.id}":"half"}');
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+      expect(
+        verify(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), captureAny())).captured,
+        [SphereCoverage.full, SphereCoverage.half],
+        reason: 'opens with the coverage picked last time',
+      );
+      await closePlayer(SphereCoverage.full);
+
+      expect(StoreService.I.tryGet(StoreKey.sphereCoverageOverrides), '{}');
     });
   });
 
@@ -526,6 +645,7 @@ void main() {
           asset.name,
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -547,9 +667,13 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), captureAny()),
+          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), captureAny(), captureAny()),
         ).captured;
-        expect(captured, [expected, englishStereoLabels], reason: '$type $width x $height');
+        expect(captured, [
+          expected,
+          englishViewerLabels,
+          ImmersiveSphereCoverage.full,
+        ], reason: '$type $width x $height');
         // Only a photo that looks 3D is checked for a partial panorama
         final checked = type == AssetType.image && expected != ImmersiveStereoLayout.mono;
         expect(previewRequests, hasLength(checked ? 1 : 0), reason: '$type $width x $height');
@@ -568,7 +692,9 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      final layout = verify(() => immersiveApi.open(any(), any(), any(), any(), captureAny(), any())).captured.single;
+      final layout = verify(
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any()),
+      ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
       expect(previewRequests, [Uri.parse('$server/assets/${asset.id}/thumbnail?size=preview&edited=true')]);
     });
@@ -583,8 +709,69 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      final layout = verify(() => immersiveApi.open(any(), any(), any(), any(), captureAny(), any())).captured.single;
+      final layout = verify(
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any()),
+      ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
+    });
+
+    testWidgets('tells the immersive viewer the coverage: a VR180 photo by its name, a video by its file', (
+      tester,
+    ) async {
+      const declaredHalf = SphericalProbe(halfSphere: true, hasSphericalMetadata: true);
+      for (final (asset, probe, layout, coverage) in [
+        (
+          owned(width: 5760, height: 2880, name: 'IMG_VR180.jpg'),
+          null,
+          ImmersiveStereoLayout.leftRight,
+          ImmersiveSphereCoverage.half,
+        ),
+        (
+          owned(type: .video, width: 4096, height: 2048),
+          declaredHalf,
+          ImmersiveStereoLayout.leftRight,
+          ImmersiveSphereCoverage.half,
+        ),
+        (
+          owned(type: .video, width: 4096, height: 2048),
+          null,
+          ImmersiveStereoLayout.mono,
+          ImmersiveSphereCoverage.full,
+        ),
+        // A half sphere crop: the left eye of a Google VR180 photo
+        (owned(width: 4096, height: 4096), null, ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.half),
+      ]) {
+        clearInteractions(immersiveApi);
+        probes.result = probe;
+        previewXmp = asset.width == asset.height
+            ? '<rdf:Description GPano:FullPanoWidthPixels="8192" GPano:FullPanoHeightPixels="4096" '
+                  'GPano:CroppedAreaLeftPixels="2048" GPano:CroppedAreaTopPixels="0" '
+                  'GPano:CroppedAreaImageWidthPixels="4096" GPano:CroppedAreaImageHeightPixels="4096"/>'
+            : null;
+        await pumpTopBar(tester, asset, projectionType: .equirectangular, horizonOs: true);
+
+        await tester.tap(panoramaButton);
+        await tester.pumpAndSettle();
+
+        final captured = verify(
+          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny()),
+        ).captured;
+        expect(captured, [layout, coverage], reason: asset.name);
+      }
+    });
+
+    testWidgets('prefers the coverage the user picked for the asset in the immersive viewer', (tester) async {
+      final asset = owned(type: .video, width: 5760, height: 2880, name: 'trip_VR180.mp4');
+      await StoreService.I.put(StoreKey.sphereCoverageOverrides, '{"${asset.id}":"full"}');
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      final captured = verify(
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny()),
+      ).captured;
+      expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
     });
 
     testWidgets('stops a video, then opens its original in the immersive viewer whatever the setting', (tester) async {
@@ -605,9 +792,9 @@ void main() {
 
         expect(calls, ['suspend', 'immersive'], reason: 'loadOriginalVideo $loadOriginalVideo');
         verify(
-          () => immersiveApi.open('$server/assets/${asset.id}/original', any(), true, asset.name, any(), any()),
+          () => immersiveApi.open('$server/assets/${asset.id}/original', any(), true, asset.name, any(), any(), any()),
         ).called(1);
-        verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any()));
+        verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()));
       }
     });
 
@@ -620,7 +807,7 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      verify(() => immersiveApi.open(file.uri.toString(), any(), true, asset.name, any(), any())).called(1);
+      verify(() => immersiveApi.open(file.uri.toString(), any(), true, asset.name, any(), any(), any())).called(1);
     });
 
     testWidgets('opens the original when the copy on the headset cannot be read', (tester) async {
@@ -632,13 +819,13 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => immersiveApi.open('$server/assets/${asset.id}/original', any(), true, asset.name, any(), any()),
+        () => immersiveApi.open('$server/assets/${asset.id}/original', any(), true, asset.name, any(), any(), any()),
       ).called(1);
     });
 
     testWidgets('gives the viewer its video back when the immersive viewer cannot open', (tester) async {
       when(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any()),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(tester, owned(type: .video), projectionType: .equirectangular, horizonOs: true);
 
@@ -681,7 +868,7 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any())).called(1);
+      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any())).called(1);
     });
 
     testWidgets('stays hidden for the other assets', (tester) async {
@@ -798,7 +985,7 @@ void main() {
 
       expect(stored(), '["local-1"]');
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, file.uri.toString());
     });
@@ -812,7 +999,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(stored(), '["${asset.id}"]');
-      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any())).called(1);
+      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any())).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
     });
 
@@ -862,13 +1049,18 @@ void main() {
       'sensitivity': 'Head sensitivity',
       'close': 'Close',
       'error': 'Unable to play video',
+      ...englishCoverageLabels,
     };
 
     SpatialOpenRequest openedRequest() =>
         verify(() => spatialVideoApi.open(captureAny())).captured.single as SpatialOpenRequest;
 
     testWidgets('is hidden while the experimental setting is off', (tester) async {
-      await pumpTopBar(tester, owned(type: .video), appConfig: const AppConfig(viewer: ViewerConfig(spatial25d: false)));
+      await pumpTopBar(
+        tester,
+        owned(type: .video),
+        appConfig: const AppConfig(viewer: ViewerConfig(spatial25d: false)),
+      );
 
       expect(spatialButton, findsNothing);
       expect(kebabMenu, findsOneWidget);
@@ -965,7 +1157,7 @@ void main() {
       expect(request.autoplay, isTrue);
       expect(request.debugOverlay, isFalse);
       expect(request.labels, englishSpatialLabels);
-      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('keeps a paused video paused in the player', (tester) async {
@@ -1175,7 +1367,12 @@ void main() {
       // The native player closes: it calls the Flutter API it was given
       await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
         'dev.flutter.pigeon.immich_mobile.SpatialVideoEvents.closed',
-        SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[42000, true, SpatialStereoLayout.topBottom]),
+        SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[
+          42000,
+          true,
+          SpatialStereoLayout.topBottom,
+          SpatialProjection.flat,
+        ]),
         (_) {},
       );
       await tester.pumpAndSettle();
@@ -1197,7 +1394,12 @@ void main() {
 
       await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
         'dev.flutter.pigeon.immich_mobile.SpatialVideoEvents.closed',
-        SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[0, false, SpatialStereoLayout.auto]),
+        SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[
+          0,
+          false,
+          SpatialStereoLayout.auto,
+          SpatialProjection.flat,
+        ]),
         (_) {},
       );
       await tester.pumpAndSettle();
@@ -1206,6 +1408,60 @@ void main() {
       await tester.tap(spatialButton);
       await tester.pumpAndSettle();
       expect(openedRequest().layout, SpatialStereoLayout.auto);
+    });
+
+    testWidgets('opens a VR180 video over the front half, and remembers the coverage picked in the player', (
+      tester,
+    ) async {
+      final asset = owned(type: .video, width: 5760, height: 2880, name: 'trip_vr180.mp4');
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, appConfig: spatialOn);
+      final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+      final subscription = container.listen(videoPlayerProvider(asset.id), (_, _) {});
+      addTearDown(subscription.close);
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+      final request = openedRequest();
+      expect(request.projection, SpatialProjection.equirectangular180);
+      expect(request.layout, SpatialStereoLayout.sideBySide);
+
+      // The user tells the player that the video covers the whole sphere
+      await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+        'dev.flutter.pigeon.immich_mobile.SpatialVideoEvents.closed',
+        SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[
+          0,
+          false,
+          SpatialStereoLayout.sideBySide,
+          SpatialProjection.equirectangular,
+        ]),
+        (_) {},
+      );
+      await tester.pumpAndSettle();
+      expect(StoreService.I.tryGet(StoreKey.sphereCoverageOverrides), '{"${asset.id}":"full"}');
+      expect(SpatialLayoutOverrides(StoreService.I).get(asset.id), isNull, reason: 'the layout did not change');
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+      expect(openedRequest().projection, SpatialProjection.equirectangular);
+    });
+
+    testWidgets('reads what a 360° video declares, and nothing of a flat one', (tester) async {
+      probes.result = const SphericalProbe(halfSphere: true, hasSphericalMetadata: true);
+      await pumpTopBar(tester, owned(type: .video, width: 5760, height: 2880), appConfig: spatialOn);
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+      expect(openedRequest().projection, SpatialProjection.flat);
+      expect(probes.probed, isEmpty);
+
+      final asset = owned(type: .video, width: 5760, height: 2880);
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, appConfig: spatialOn);
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+      final request = openedRequest();
+      expect(request.projection, SpatialProjection.equirectangular180);
+      expect(request.layout, SpatialStereoLayout.sideBySide);
+      expect(probes.probed.single.$1, asset);
     });
   });
 }

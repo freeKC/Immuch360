@@ -37,12 +37,14 @@ class MainActivity : FlutterFragmentActivity() {
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
     registerPlugins(this, flutterEngine)
-    // Only the engine of the app UI hears when the Spatial 2.5D player closes, not the background engines
+    // Only the engine of the app UI hears when the 360° and Spatial 2.5D players close, not the background engines
+    SphericalVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SpatialVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
   }
 
   override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
-    // The engine goes away: the Spatial 2.5D player must not keep it alive
+    // The engine goes away: the 360° and Spatial 2.5D players must not keep it alive
+    SphericalVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SpatialVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     super.cleanUpFlutterEngine(flutterEngine)
   }

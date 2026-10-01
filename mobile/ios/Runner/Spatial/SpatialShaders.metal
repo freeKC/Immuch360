@@ -26,6 +26,7 @@ struct SpatialViewportUniforms {
   float4x4 rotation;  // camera space to world, the camera looks towards -z with +y up
   float4 rect;        // the eye in the frame, in texture coordinates: origin xy, size zw
   float4 lens;        // x: tangent of half the horizontal field of view, y: of half the vertical one
+  float4 sphere;      // x: longitude span of the eye, in radians: 2 pi for a full sphere, pi for a half one (VR180)
 };
 
 // Same layout as SpatialSynthesisUniforms in SpatialRenderer.swift
@@ -79,7 +80,8 @@ fragment half4 spatialPassthroughFragment(SpatialQuadOut in [[stage_in]],
 }
 
 // The view of a 360 degree eye through a pinhole camera: screen pixel, then direction, then equirectangular
-// coordinates. Longitude 0 is the middle of the eye, growing to the right; the top row is the zenith.
+// coordinates. Longitude 0 is the middle of the eye, growing to the right; the top row is the zenith. The eye of a
+// half sphere (VR180) spans the longitudes from -pi/2 to pi/2 only: it does not wrap, and behind it is black.
 fragment half4 spatialViewportFragment(SpatialQuadOut in [[stage_in]],
                                        texture2d<half> frame [[texture(0)]],
                                        constant SpatialViewportUniforms &uniforms [[buffer(0)]]) {
@@ -88,7 +90,15 @@ fragment half4 spatialViewportFragment(SpatialQuadOut in [[stage_in]],
   float3 direction = (uniforms.rotation * float4(ray, 0.0)).xyz;
   float longitude = atan2(direction.x, -direction.z);
   float latitude = asin(clamp(direction.y, -1.0, 1.0));
-  float2 equirect = float2(fract(0.5 + longitude / (2.0 * M_PI_F)), 0.5 - latitude / M_PI_F);
+  float longitudeSpan = max(uniforms.sphere.x, 0.01);
+  float u = 0.5 + longitude / longitudeSpan;
+  if (longitudeSpan > 1.5 * M_PI_F) {
+    // A full sphere wraps around behind the viewer
+    u = fract(u);
+  } else if (u < 0.0 || u > 1.0) {
+    return half4(0.0h, 0.0h, 0.0h, 1.0h);
+  }
+  float2 equirect = float2(u, 0.5 - latitude / M_PI_F);
   return half4(spatialSampleEye(frame, uniforms.rect, equirect).rgb, 1.0h);
 }
 

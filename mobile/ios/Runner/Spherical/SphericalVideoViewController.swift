@@ -22,7 +22,10 @@ private let zAxis = SIMD3<Float>(0, 0, 1)
 /// Drags turn the view (the picture follows the finger, so a drag to the left turns the view to the right), a pinch
 /// zooms. While the gyroscope button is on, the motion of the phone turns the view and drags only turn it around the
 /// vertical axis. A tap on the video shows or hides the controls, which also hide on their own while the video plays.
-/// The 3D button tells how a stereoscopic video lays out its two eyes: the phone shows the left eye only.
+/// The 3D button tells how a stereoscopic video lays out its two eyes: the phone shows the left eye only. The coverage
+/// button (360° or 180°) tells whether the video covers the whole sphere or only its front half, as VR180 videos do;
+/// the back half is then black. Flutter hears about the close through [SphericalVideoEvents], with the layout and the
+/// coverage shown last.
 final class SphericalVideoViewController: UIViewController, UIGestureRecognizerDelegate {
   private let videoUrl: URL
   private let headers: [String: String]
@@ -30,11 +33,15 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let closeLabel: String?
   private let errorMessage: String
   private let stereoLabels: [String: String]
+  private let events: SphericalVideoEvents
 
   private let player = AVPlayer()
   private let sceneView = SCNView(frame: .zero)
   private let cameraNode = SCNNode()
+  private let sphereNode = SCNNode()
   private let videoMaterial = SCNMaterial()
+  // The back half of a half sphere
+  private let backMaterial = SCNMaterial()
   private let motionManager = CMMotionManager()
   private var displayLink: CADisplayLink?
   private var statusObservation: NSKeyValueObservation?
@@ -44,6 +51,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let topBar = UIView()
   private let closeButton = UIButton(type: .system)
   private let titleLabel = UILabel()
+  private let coverageButton = UIButton(type: .system)
   private let stereoButton = UIButton(type: .system)
   private let motionButton = UIButton(type: .system)
   private let playPauseButton = UIButton(type: .system)
@@ -66,6 +74,12 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   // The guess of Flutter from the dimensions of the video at first, what the 3D button picks once the user taps it
   private var stereoLayout: StereoLayout
   private var stereoLayoutChosen = false
+  // The layout Flutter gave, kept while the shape of the frame tells nothing more for the coverage in use
+  private let initialStereoLayout: StereoLayout
+  // Zero until the first frame is known
+  private var frameSize = CGSize.zero
+  // What Flutter gave at first, what the coverage button picks once the user taps it
+  private var coverage: SphereCoverage
 
   private var controlsVisible = true
   private var failed = false
@@ -73,9 +87,11 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private var started = false
   private var closing = false
   private var idleTimerWasDisabled = false
+  private var closedReported = false
 
-  /// [errorMessage] and [stereoLabels] come translated from Flutter, English is the fallback. [stereoLayout] is the
-  /// layout Flutter guessed from the dimensions of the video.
+  /// [errorMessage] and [stereoLabels] come translated from Flutter, English is the fallback; [stereoLabels] also
+  /// holds the labels of the coverage button. [stereoLayout] is the layout Flutter guessed from the dimensions of the
+  /// video, [coverage] how much of the sphere it covers. [events] is told once when the player closes.
   init(
     url: URL,
     headers: [String: String],
@@ -83,7 +99,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     closeLabel: String?,
     errorMessage: String?,
     stereoLayout: StereoLayout,
-    stereoLabels: [String: String]
+    stereoLabels: [String: String],
+    coverage: SphereCoverage,
+    events: SphericalVideoEvents
   ) {
     videoUrl = url
     self.headers = headers
@@ -91,7 +109,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     self.closeLabel = closeLabel
     self.errorMessage = errorMessage ?? "This video cannot be played"
     self.stereoLayout = stereoLayout
+    initialStereoLayout = stereoLayout
     self.stereoLabels = stereoLabels
+    self.coverage = coverage
+    self.events = events
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -122,6 +143,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     motionEnabled = motionManager.isDeviceMotionAvailable
     motionButton.isHidden = !motionManager.isDeviceMotionAvailable
     updateMotionButton()
+    updateCoverageButton()
     applyStereoLayout()
     updateCamera()
 
@@ -173,6 +195,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     sceneView.isPlaying = false
     // Lets the music the video interrupted resume
     try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    reportClosed()
   }
 
   override func viewDidLayoutSubviews() {
@@ -320,6 +343,17 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     }
   }
 
+  /// Tells Flutter, once, the stereo layout and the coverage the player showed last, after the corrections of the user
+  private func reportClosed() {
+    guard !closedReported else { return }
+    closedReported = true
+    events.closed(stereoLayout: stereoLayout, coverage: coverage) { result in
+      if case .failure(let error) = result {
+        print("Cannot tell Flutter that the 360° player closed: \(error.code)")
+      }
+    }
+  }
+
   // MARK: - Scene
 
   private func setUpScene() {
@@ -340,11 +374,15 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     material.diffuse.wrapS = .clamp
     material.diffuse.wrapT = .clamp
 
-    let sphere = Self.makeSphere(radius: 50, rings: 64, segments: 128)
-    sphere.materials = [material]
+    // Behind a half sphere there is no picture: black, never the clamped edge of the frame
+    backMaterial.diffuse.contents = UIColor.black
+    backMaterial.lightingModel = .constant
+    backMaterial.isDoubleSided = true
+
+    rebuildSphere()
 
     let scene = SCNScene()
-    scene.rootNode.addChildNode(SCNNode(geometry: sphere))
+    scene.rootNode.addChildNode(sphereNode)
     scene.rootNode.addChildNode(cameraNode)
 
     sceneView.scene = scene
@@ -363,48 +401,81 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     ])
   }
 
+  /// Gives the sphere the geometry of the coverage in use. The elements of a geometry take its materials in turn: the
+  /// back of a half sphere, its second element, is drawn with the black material.
+  private func rebuildSphere() {
+    let sphere = Self.makeSphere(radius: 50, rings: 64, segments: 128, coverage: coverage)
+    switch coverage {
+    case .full:
+      sphere.materials = [videoMaterial]
+    case .half:
+      sphere.materials = [videoMaterial, backMaterial]
+    }
+    sphereNode.geometry = sphere
+  }
+
   /// A sphere made to be seen from its centre, with the whole frame on it and not mirrored: the middle of the frame
   /// straight ahead of a camera at rest (towards -z), the right of the frame to its right (+x), the top row at the
   /// zenith. SCNSphere is not used because where its texture seam falls is not documented. SceneKit texture
   /// coordinates start at the top left corner of the image.
-  private static func makeSphere(radius: Float, rings: Int, segments: Int) -> SCNGeometry {
-    var vertices: [SCNVector3] = []
-    var textureCoordinates: [CGPoint] = []
-    vertices.reserveCapacity((rings + 1) * (segments + 1))
-    textureCoordinates.reserveCapacity((rings + 1) * (segments + 1))
-    for ring in 0...rings {
-      let v = Float(ring) / Float(rings)
-      // 0 at the zenith, pi at the nadir
-      let polar = v * Float.pi
-      let y = radius * cos(polar)
-      let ringRadius = radius * sin(polar)
-      for segment in 0...segments {
-        let u = Float(segment) / Float(segments)
-        // 0 straight ahead, growing to the right
-        let azimuth = (u - 0.5) * 2 * Float.pi
-        let x = ringRadius * sin(azimuth)
-        let z = -ringRadius * cos(azimuth)
-        vertices.append(SCNVector3(x: x, y: y, z: z))
-        textureCoordinates.append(CGPoint(x: CGFloat(u), y: CGFloat(v)))
-      }
+  ///
+  /// A full sphere is one element, with the frame all around. A half sphere (VR180) is two: the frame over the front
+  /// half only, from 90 degrees on the left to 90 degrees on the right, then the back half, for a plain material.
+  private static func makeSphere(radius: Float, rings: Int, segments: Int, coverage: SphereCoverage) -> SCNGeometry {
+    // Each band of the sphere: the azimuth where it starts, the azimuth it spans and its number of segments. The
+    // azimuth is 0 straight ahead and grows to the right.
+    let bands: [(start: Float, span: Float, segments: Int)]
+    switch coverage {
+    case .full:
+      bands = [(start: -Float.pi, span: 2 * Float.pi, segments: segments)]
+    case .half:
+      let halfSegments = max(segments / 2, 1)
+      bands = [
+        (start: -Float.pi / 2, span: Float.pi, segments: halfSegments),
+        (start: Float.pi / 2, span: Float.pi, segments: halfSegments),
+      ]
     }
 
-    var indices: [UInt32] = []
-    indices.reserveCapacity(rings * segments * 6)
-    let columns = UInt32(segments + 1)
-    for ring in 0..<UInt32(rings) {
-      for segment in 0..<UInt32(segments) {
-        let topLeft = ring * columns + segment
-        let topRight = topLeft + 1
-        let bottomLeft = topLeft + columns
-        let bottomRight = bottomLeft + 1
-        indices.append(contentsOf: [topLeft, bottomLeft, topRight, topRight, bottomLeft, bottomRight])
+    var vertices: [SCNVector3] = []
+    var textureCoordinates: [CGPoint] = []
+    var elements: [SCNGeometryElement] = []
+    for band in bands {
+      // The indices of the band count from its first vertex
+      let firstVertex = UInt32(vertices.count)
+      for ring in 0...rings {
+        let v = Float(ring) / Float(rings)
+        // 0 at the zenith, pi at the nadir
+        let polar = v * Float.pi
+        let y = radius * cos(polar)
+        let ringRadius = radius * sin(polar)
+        for segment in 0...band.segments {
+          let u = Float(segment) / Float(band.segments)
+          let azimuth = band.start + u * band.span
+          let x = ringRadius * sin(azimuth)
+          let z = -ringRadius * cos(azimuth)
+          vertices.append(SCNVector3(x: x, y: y, z: z))
+          textureCoordinates.append(CGPoint(x: CGFloat(u), y: CGFloat(v)))
+        }
       }
+
+      var indices: [UInt32] = []
+      indices.reserveCapacity(rings * band.segments * 6)
+      let columns = UInt32(band.segments + 1)
+      for ring in 0..<UInt32(rings) {
+        for segment in 0..<UInt32(band.segments) {
+          let topLeft = firstVertex + ring * columns + segment
+          let topRight = topLeft + 1
+          let bottomLeft = topLeft + columns
+          let bottomRight = bottomLeft + 1
+          indices.append(contentsOf: [topLeft, bottomLeft, topRight, topRight, bottomLeft, bottomRight])
+        }
+      }
+      elements.append(SCNGeometryElement(indices: indices, primitiveType: .triangles))
     }
 
     return SCNGeometry(
       sources: [SCNGeometrySource(vertices: vertices), SCNGeometrySource(textureCoordinates: textureCoordinates)],
-      elements: [SCNGeometryElement(indices: indices, primitiveType: .triangles)]
+      elements: elements
     )
   }
 
@@ -480,7 +551,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
   /// A phone has one picture for both eyes: a stereoscopic video shows its left eye only, the top half of a top and
   /// bottom frame, the left half of a side by side one. Texture coordinates start at the top left corner of the frame,
-  /// so halving them keeps that half, stretched over the whole sphere.
+  /// so halving them keeps that half, stretched over the whole sphere or over its front half.
   private func applyStereoLayout() {
     switch stereoLayout {
     case .mono:
@@ -495,23 +566,43 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   }
 
   /// AVFoundation does not read the stereo metadata of the file, but the size of the frame tells a stereoscopic video
-  /// apart even where Flutter did not know the dimensions. A choice of the user stays.
+  /// apart even where Flutter did not know the dimensions
   private func frameSizeKnown(_ size: CGSize) {
-    guard !stereoLayoutChosen, !closing else { return }
-    let guess = Self.guessStereoLayout(size)
-    guard guess != .mono, guess != stereoLayout else { return }
-    stereoLayout = guess
+    guard !closing else { return }
+    frameSize = size
+    guessStereoLayoutFromFrame()
+  }
+
+  /// Until the user picks a layout: the stereoscopic layout the shape of the frame tells for the coverage in use, else
+  /// the layout Flutter gave. A choice of the user stays.
+  private func guessStereoLayoutFromFrame() {
+    guard !stereoLayoutChosen, !closing, frameSize.width > 0, frameSize.height > 0 else { return }
+    let guess = Self.guessStereoLayout(frameSize, coverage: coverage)
+    let layout = guess == .mono ? initialStereoLayout : guess
+    guard layout != stereoLayout else { return }
+    stereoLayout = layout
     applyStereoLayout()
   }
 
-  /// The guess of Flutter: two 2:1 images one above the other make a square frame, side by side a 4:1 one
-  private static func guessStereoLayout(_ size: CGSize) -> StereoLayout {
+  /// The guess of Flutter for a full sphere: two 2:1 images one above the other make a square frame, side by side a
+  /// 4:1 one. Each eye of a half sphere is square: one above the other they make a 1:2 frame, side by side a 2:1 one.
+  private static func guessStereoLayout(_ size: CGSize, coverage: SphereCoverage) -> StereoLayout {
     let ratio = size.width / size.height
-    if ratio >= 0.9 && ratio <= 1.1 {
-      return .topBottom
-    }
-    if ratio >= 3.6 && ratio <= 4.4 {
-      return .leftRight
+    switch coverage {
+    case .full:
+      if ratio >= 0.9 && ratio <= 1.1 {
+        return .topBottom
+      }
+      if ratio >= 3.6 && ratio <= 4.4 {
+        return .leftRight
+      }
+    case .half:
+      if ratio >= 0.45 && ratio <= 0.55 {
+        return .topBottom
+      }
+      if ratio >= 1.8 && ratio <= 2.2 {
+        return .leftRight
+      }
     }
     return .mono
   }
@@ -542,6 +633,27 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     case .leftRight:
       return stereoText("leftRight", fallback: "3D, side by side")
     }
+  }
+
+  // MARK: - Coverage
+
+  private func coverageName(_ coverage: SphereCoverage) -> String {
+    switch coverage {
+    case .full:
+      return stereoText("coverage_full", fallback: "360°, full sphere")
+    case .half:
+      return stereoText("coverage_half", fallback: "180°, half sphere (VR180)")
+    }
+  }
+
+  /// The button shows the coverage in use, without the fade of a system button
+  private func updateCoverageButton() {
+    let title = coverage == .half ? "180°" : "360°"
+    UIView.performWithoutAnimation {
+      self.coverageButton.setTitle(title, for: .normal)
+      self.coverageButton.layoutIfNeeded()
+    }
+    coverageButton.accessibilityValue = coverageName(coverage)
   }
 
   // MARK: - Gestures
@@ -644,8 +756,15 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     configure(motionButton, symbol: "gyroscope", pointSize: 20, action: #selector(motionTapped))
     motionButton.accessibilityLabel = "Gyroscope"
 
+    // A text button, 360° or 180°: see updateCoverageButton
+    coverageButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+    coverageButton.tintColor = .white
+    coverageButton.translatesAutoresizingMaskIntoConstraints = false
+    coverageButton.addTarget(self, action: #selector(coverageTapped), for: .touchUpInside)
+    coverageButton.accessibilityLabel = stereoText("coverage", fallback: "Field of view")
+
     // A hidden gyroscope button gives its room to the title
-    let trailingButtons = UIStackView(arrangedSubviews: [stereoButton, motionButton])
+    let trailingButtons = UIStackView(arrangedSubviews: [coverageButton, stereoButton, motionButton])
     trailingButtons.axis = .horizontal
     trailingButtons.translatesAutoresizingMaskIntoConstraints = false
     topBar.addSubview(trailingButtons)
@@ -697,6 +816,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
       trailingButtons.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -8),
       trailingButtons.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
+
+      coverageButton.widthAnchor.constraint(equalToConstant: 52),
+      coverageButton.heightAnchor.constraint(equalToConstant: 44),
 
       stereoButton.widthAnchor.constraint(equalToConstant: 44),
       stereoButton.heightAnchor.constraint(equalToConstant: 44),
@@ -819,6 +941,17 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     stereoLayout = Self.nextStereoLayout(after: stereoLayout)
     applyStereoLayout()
     showMessage(stereoLayoutName(stereoLayout))
+    scheduleControlsHiding()
+  }
+
+  /// Switches between the whole sphere and its front half, at once
+  @objc private func coverageTapped() {
+    coverage = coverage == .full ? .half : .full
+    rebuildSphere()
+    updateCoverageButton()
+    // The shape of the frame may tell another stereo layout for the new coverage
+    guessStereoLayoutFromFrame()
+    showMessage(coverageName(coverage))
     scheduleControlsHiding()
   }
 }

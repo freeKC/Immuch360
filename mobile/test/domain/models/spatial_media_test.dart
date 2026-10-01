@@ -157,6 +157,34 @@ void main() {
     });
   });
 
+  group('guessSpatialLayout for a VR180 video', () {
+    const equirectangular180 = SpatialProjection.equirectangular180;
+
+    test('takes two square eyes side by side or stacked', () {
+      for (final (width, height, expected) in [
+        (5760, 2880, SpatialStereoLayout.sideBySide),
+        (8192, 4096, SpatialStereoLayout.sideBySide),
+        (2880, 5760, SpatialStereoLayout.topBottom),
+        (4096, 4096, SpatialStereoLayout.auto),
+        (7680, 1920, SpatialStereoLayout.auto),
+        (null, null, SpatialStereoLayout.auto),
+      ]) {
+        expect(
+          guessSpatialLayout(width: width, height: height, projection: equirectangular180),
+          expected,
+          reason: '$width x $height',
+        );
+      }
+    });
+
+    test('reads the file name of a frame that does not tell', () {
+      expect(
+        guessSpatialLayout(width: 4096, height: 4096, fileName: 'clip_vr180_TB.mp4', projection: equirectangular180),
+        SpatialStereoLayout.topBottom,
+      );
+    });
+  });
+
   test('spatialLayoutOf maps every layout of the 360° viewers', () {
     expect(spatialLayoutOf(StereoLayout.topBottom), SpatialStereoLayout.topBottom);
     expect(spatialLayoutOf(StereoLayout.leftRight), SpatialStereoLayout.sideBySide);
@@ -245,6 +273,9 @@ void main() {
       'sensitivity',
       'close',
       'error',
+      'coverage',
+      'coverage_full',
+      'coverage_half',
     });
   });
 }

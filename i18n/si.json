@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "ඉමර්සිව් දසුන විවෘත කළ නොහැකි විය",
   "library_360": "360°",
+  "panorama_coverage": "දර්ශන ක්ෂේත්‍රය",
+  "panorama_coverage_full": "360°, සම්පූර්ණ ගෝලය",
+  "panorama_coverage_half": "180°, අර්ධ ගෝලය (VR180)",
   "panorama_gyroscope": "ගයිරොස්කෝපය",
   "panorama_no_gyroscope": "මෙම උපාංගයේ ගයිරොස්කෝපයක් නැත",
   "panorama_stereo_layout": "3D පිරිසැලසුම",

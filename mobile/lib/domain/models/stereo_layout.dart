@@ -12,18 +12,28 @@ export 'package:immich_mobile/platform/spherical_video_api.g.dart' show StereoLa
 
 /// Guesses how the eyes of a 360° photo or video of [width] x [height] pixels are laid out.
 ///
-/// Each eye is a full 2:1 equirectangular image: stacked, they make a square frame (left eye on top), side by side a
-/// 4:1 frame (left eye on the left). Anything else is mono, as are unknown dimensions and partial panoramas, whose
-/// GPano crop ([hasGPanoCrop]) gives the image any aspect ratio.
-StereoLayout guessStereoLayout({required int? width, required int? height, bool hasGPanoCrop = false}) {
+/// Each eye of a full sphere is a 2:1 equirectangular image: stacked, they make a square frame (left eye on top),
+/// side by side a 4:1 frame (left eye on the left). Each eye of a half sphere ([coverage], VR180 media) is a square
+/// 180° image: stacked, they make a 1:2 frame, side by side a 2:1 frame. Within 10% of those. Anything else is mono, as
+/// are unknown dimensions and partial panoramas, whose GPano crop ([hasGPanoCrop]) gives the image any aspect ratio.
+StereoLayout guessStereoLayout({
+  required int? width,
+  required int? height,
+  bool hasGPanoCrop = false,
+  SphereCoverage coverage = SphereCoverage.full,
+}) {
   if (hasGPanoCrop || width == null || height == null || width <= 0 || height <= 0) {
     return StereoLayout.mono;
   }
-  final aspectRatio = width / height;
-  if (aspectRatio >= 0.9 && aspectRatio <= 1.1) {
+  final eyeAspectRatio = switch (coverage) {
+    SphereCoverage.full => 2.0,
+    SphereCoverage.half => 1.0,
+  };
+  bool near(double aspectRatio) => (width / height - aspectRatio).abs() <= aspectRatio * 0.1 + 1e-9;
+  if (near(eyeAspectRatio / 2)) {
     return StereoLayout.topBottom;
   }
-  if (aspectRatio >= 3.6 && aspectRatio <= 4.4) {
+  if (near(eyeAspectRatio * 2)) {
     return StereoLayout.leftRight;
   }
   return StereoLayout.mono;

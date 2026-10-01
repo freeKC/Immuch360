@@ -17,6 +17,9 @@ import 'package:pigeon/pigeon.dart';
 /// top) or side by side (left eye on the left). [mono] is a regular 360° media.
 enum StereoLayout { mono, topBottom, leftRight }
 
+/// How much of the sphere the image covers: all of it (360°), or the front half (180°, VR180 files)
+enum SphereCoverage { full, half }
+
 @HostApi()
 abstract class SphericalVideoApi {
   /// Plays an equirectangular video full screen in a native 360° player. [closeLabel] and [errorMessage] are
@@ -32,5 +35,12 @@ abstract class SphericalVideoApi {
     String? errorMessage,
     StereoLayout stereoLayout,
     Map<String, String> stereoLabels,
+    SphereCoverage coverage,
   );
+}
+
+@FlutterApi()
+abstract class SphericalVideoEvents {
+  /// The player closed; [stereoLayout] and [coverage] are what it showed last, after the user's corrections
+  void closed(StereoLayout stereoLayout, SphereCoverage coverage);
 }

@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
@@ -24,6 +25,8 @@ import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
@@ -43,8 +46,12 @@ final _log = Logger('PanoramaViewer');
 
 /// Plays [asset] full screen in the native 360° player, from the file the viewer plays: the copy on the phone when
 /// there is one, else the server's original file when the settings ask for it, else its transcoded playback.
-/// Meanwhile the viewer's player is stopped, see [VideoPlayerNotifier.suspendForExternalPlayer]. The player shows
-/// the left eye of a 3D video, with the layout guessed from the video dimensions until the user picks another one.
+/// Meanwhile the viewer's player is stopped, see [VideoPlayerNotifier.suspendForExternalPlayer].
+///
+/// The player shows the left eye of a 3D video, over the whole sphere or its front half (VR180), as the file declares
+/// (see [SphericalProbeService]) or else as guessed from the video dimensions and name (see [resolveSphereView]),
+/// until the user picks another layout or coverage. The coverage the user picked is remembered for the asset, see
+/// [SphericalVideoSession].
 Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset asset) async {
   final remoteId = asset.remoteId;
   final localId = asset.localId;
@@ -53,6 +60,9 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   }
   // Read before the first await: the viewer may be gone by then
   final api = ref.read(sphericalVideoApiProvider);
+  final session = ref.read(sphericalVideoSessionProvider);
+  final coverageOverrides = ref.read(sphereCoverageOverridesProvider.notifier);
+  final probeService = ref.read(sphericalProbeServiceProvider);
   final storage = ref.read(storageRepositoryProvider);
   final player = ref.read(videoPlayerProvider(asset.id).notifier);
   final postfix = ref.read(appConfigProvider).viewer.loadOriginalVideo ? 'original' : 'video/playback';
@@ -60,8 +70,7 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final remoteUrl = remoteId == null ? null : '${Store.get(StoreKey.serverEndpoint)}/assets/$remoteId/$postfix';
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
-  final stereoLabels = stereoLayoutLabels(context.t);
-  final stereoLayout = guessStereoLayout(width: asset.width, height: asset.height);
+  final labels = sphereViewerLabels(context.t);
 
   try {
     // The native player reads file:// URIs too, and ignores the headers for them
@@ -71,6 +80,14 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       _log.warning('No file to play in 360° for ${asset.name}');
       return;
     }
+    final view = resolveSphereView(
+      fileName: asset.name,
+      width: asset.width,
+      height: asset.height,
+      probe: await probeService.probe(asset, localFile: localFile),
+      chosenCoverage: coverageOverrides.get(asset),
+    );
+    session.start(asset: asset, coverage: view.coverage, coverageGuess: view.coverageGuess);
     // Stopped before the viewer goes to the background: it neither plays nor buffers behind the 360° player.
     // The viewer lifts this when the app resumes, which closing the player brings about on iOS as well: its full
     // screen presentation hides the Flutter view, and the app lifecycle follows.
@@ -81,11 +98,13 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       asset.name,
       closeLabel,
       errorMessage,
-      stereoLayout,
-      stereoLabels,
+      view.layout,
+      labels,
+      view.coverage,
     );
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for ${asset.name}', error, stackTrace);
+    session.cancel();
     // Nothing else would bring the viewer's player back
     await player.resumeAfterExternalPlayer();
   }
@@ -133,13 +152,8 @@ GPanoInitialView? parseGPanoInitialView(String xmp) {
 }
 
 /// What the viewer takes from the GPano XMP of a panorama: [crop] is the part of the full sphere the image
-/// covers, normalised to [0, 1], null for a full sphere.
+/// covers, normalised to [0, 1], null for a full sphere. See [isPartialSphere] for crops covering the whole sphere.
 typedef GPano = ({Rect? crop, GPanoInitialView? initialView});
-
-/// Whether a GPano [crop] leaves part of the sphere out. Many cameras write the crop tags on full spheres too, 3D
-/// ones included: within 1%, such a crop is no partial panorama.
-bool isPartialSphere(Rect crop) =>
-    crop.left.abs() > 0.01 || crop.top.abs() > 0.01 || (crop.width - 1).abs() > 0.01 || (crop.height - 1).abs() > 0.01;
 
 /// Where the viewer looks first for a GPano initial view, as its longitude and latitude in degrees.
 ///
@@ -299,8 +313,20 @@ class PanoramaBadge extends ConsumerWidget {
   }
 }
 
+/// Image the panorama viewer shows for an asset, at most [size] on screen: the thumbnail, then the preview, then the
+/// original when the provider gets there. Tests replace it.
+final panoramaImageProvider = Provider<ImageProvider Function(BaseAsset asset, Size size)>(
+  (_) =>
+      (asset, size) => getFullImageProvider(asset, size: size),
+);
+
+/// Client of the request for the GPano tags of a panorama: the app's shared client, with its native SSL setup. Tests
+/// replace it.
+final panoramaGPanoClientProvider = Provider<http.Client>((_) => NetworkRepository.client);
+
 /// Full-screen viewer for equirectangular (360°) photos: drag or flick to look around, pinch or double tap
-/// to zoom, or turn on the gyroscope and move the phone.
+/// to zoom, or turn on the gyroscope and move the phone. VR180 photos cover the front half of the sphere only; the
+/// coverage control switches between that and the whole sphere.
 @RoutePage()
 class PanoramaViewerPage extends ConsumerStatefulWidget {
   final BaseAsset asset;
@@ -321,11 +347,11 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   // Sharper texture for zoomed in views, requested once
   bool _highResolutionRequested = false;
   RemoteImageRequest? _highResolutionRequest;
-  // Part of the full sphere the image covers, normalised to [0, 1]
-  Rect _crop = const Rect.fromLTWH(0, 0, 1, 1);
+  // Part of the full sphere the image covers, normalised to [0, 1], as its GPano tags say: null without them
+  Rect? _gpanoCrop;
   // Painting waits for the GPano tags, so the first frame already shows the initial view
   bool _gpanoLoaded = false;
-  // Layout of a 3D panorama picked with the 3D button, null until then: see _stereoLayout
+  // Layout of a 3D panorama picked with the 3D button, null until then: see _view
   StereoLayout? _chosenStereoLayout;
 
   // View direction and vertical field of view, in degrees
@@ -371,10 +397,9 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     _orientation = MediaQuery.orientationOf(context);
     if (!_loadStarted) {
       _loadStarted = true;
-      _imageStream = getFullImageProvider(
-        widget.asset,
-        size: MediaQuery.sizeOf(context),
-      ).resolve(ImageConfiguration.empty)..addListener(_imageListener);
+      _imageStream =
+          ref.read(panoramaImageProvider)(widget.asset, MediaQuery.sizeOf(context)).resolve(ImageConfiguration.empty)
+            ..addListener(_imageListener);
       _loadGPano().whenComplete(() {
         if (mounted) {
           setState(() => _gpanoLoaded = true);
@@ -390,7 +415,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       return;
     }
     final gpano = await fetchGPano(
-      NetworkRepository.client,
+      ref.read(panoramaGPanoClientProvider),
       Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview)),
     );
     if (gpano == null || !mounted) {
@@ -399,7 +424,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     setState(() {
       final crop = gpano.crop;
       if (crop != null) {
-        _crop = crop;
+        _gpanoCrop = crop;
         // Without an initial view, start looking at the center of the captured area
         _longitude = 360 * (crop.left + crop.width / 2 - 0.5);
         _latitude = 90 - 180 * (crop.top + crop.height / 2);
@@ -428,28 +453,53 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     super.dispose();
   }
 
-  /// How the eyes of a 3D panorama are laid out. A phone shows the left eye only. The layout the user picked, else
-  /// a guess from the asset dimensions, or from the image while those are unknown. Partial panoramas are mono.
-  StereoLayout get _stereoLayout {
-    final chosen = _chosenStereoLayout;
-    if (chosen != null) {
-      return chosen;
-    }
+  /// How the eyes of a 3D panorama are laid out, and how much of the sphere it covers (see [resolveSphereView]). A
+  /// phone shows the left eye only. The layout the user picked, and the coverage the user picked for the asset
+  /// ([chosenCoverage]), else guesses from the asset dimensions, or from the image while those are unknown, its name
+  /// and its GPano crop. Partial panoramas are mono.
+  SphereView _view(SphereCoverage? chosenCoverage) {
     final asset = widget.asset;
     final image = _imageInfo?.image;
     final (width, height) = (asset.width ?? 0) > 0 && (asset.height ?? 0) > 0
         ? (asset.width, asset.height)
         : (image?.width, image?.height);
-    return guessStereoLayout(width: width, height: height, hasGPanoCrop: isPartialSphere(_crop));
+    return resolveSphereView(
+      fileName: asset.name,
+      width: width,
+      height: height,
+      gpanoCrop: _gpanoCrop,
+      chosenLayout: _chosenStereoLayout,
+      chosenCoverage: chosenCoverage,
+    );
   }
 
   // The guess can be wrong both ways: a square panorama that is not 3D, or a 3D one of another size
-  void _showNextStereoLayout() {
-    final layout = _stereoLayout.next;
+  void _showNextStereoLayout(StereoLayout current) {
+    final layout = current.next;
     setState(() => _chosenStereoLayout = layout);
+    _showChoice(layout.label(context.t));
+  }
+
+  // The guess can be wrong both ways too: a VR180 file that nothing marks, or a 360° one whose name looks like VR180.
+  // The choice is remembered for the asset.
+  void _showNextCoverage(SphereView view) {
+    final coverage = view.coverage.next;
+    // Back to the front, from behind the half sphere
+    if (coverage == SphereCoverage.half && ((_longitude + 180) % 360 - 180).abs() > 90) {
+      setState(() => _longitude = 0);
+    }
+    unawaited(
+      ref
+          .read(sphereCoverageOverridesProvider.notifier)
+          .remember(widget.asset, coverage, opened: view.coverage, guess: view.coverageGuess),
+    );
+    _showChoice(coverage.label(context.t));
+  }
+
+  void _showChoice(String label) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(layout.label(context.t)), duration: const Duration(seconds: 2)));
+      ..showSnackBar(SnackBar(content: Text(label), duration: const Duration(seconds: 2)));
   }
 
   // Called for every image the provider yields (thumbnail, preview, original)
@@ -671,7 +721,11 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     final showsSphere = image != null && _gpanoLoaded;
     // On a Meta Quest the panel is fixed in space: following the head makes no sense there
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
-    final stereoLayout = _stereoLayout;
+    final view = _view(ref.watch(sphereCoverageOverrideProvider(widget.asset)));
+    final stereoLayout = view.layout;
+    final gpanoCrop = _gpanoCrop;
+    // A partial panorama covers what its GPano crop says, whatever the coverage
+    final hasGPanoCrop = gpanoCrop != null && isPartialSphere(gpanoCrop);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -681,13 +735,23 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
         foregroundColor: Colors.white,
         leading: const CloseButton(),
         actions: [
+          if (showsSphere && !hasGPanoCrop)
+            IconButton(
+              isSelected: view.coverage == SphereCoverage.half,
+              icon: Text(
+                view.coverage.shortLabel,
+                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              tooltip: context.t.panorama_coverage,
+              onPressed: () => _showNextCoverage(view),
+            ),
           if (showsSphere)
             IconButton(
               isSelected: stereoLayout != StereoLayout.mono,
               icon: const Icon(Icons.view_in_ar_outlined),
               selectedIcon: const Icon(Icons.view_in_ar),
               tooltip: stereoLayout.label(context.t),
-              onPressed: _showNextStereoLayout,
+              onPressed: () => _showNextStereoLayout(stereoLayout),
             ),
           if (showsSphere && !isHorizonOs)
             IconButton(
@@ -721,7 +785,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                 child: CustomPaint(
                   painter: _SpherePainter(
                     image: image,
-                    crop: _crop,
+                    crop: sphereCrop(view.coverage, gpanoCrop: gpanoCrop),
                     textureRect: stereoLayout.leftEyeRect,
                     longitude: _longitude,
                     latitude: _latitude,
@@ -736,7 +800,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
 }
 
 /// Paints a sphere textured with an equirectangular image, as seen from its centre. Only the [textureRect] part of
-/// the image textures it: the left eye of a 3D panorama.
+/// the image textures it, the left eye of a 3D panorama, and only the [crop] part of the sphere: the rest, the back
+/// of a VR180 photo for example, stays the black of the background.
 class _SpherePainter extends CustomPainter {
   static const _rows = 32;
   static const _columns = 64;

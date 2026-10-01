@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
-import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 
 void main() {
   group('guessStereoLayout', () {
@@ -49,6 +49,28 @@ void main() {
     test('a partial panorama is mono, whatever its aspect ratio', () {
       expect(guessStereoLayout(width: 4096, height: 4096, hasGPanoCrop: true), StereoLayout.mono);
       expect(guessStereoLayout(width: 7680, height: 1920, hasGPanoCrop: true), StereoLayout.mono);
+    });
+
+    test('a half sphere (VR180) has square eyes: side by side in a 2:1 frame, stacked in a 1:2 frame', () {
+      const half = SphereCoverage.half;
+      for (final (width, height, expected) in [
+        (5760, 2880, StereoLayout.leftRight),
+        (8192, 4096, StereoLayout.leftRight),
+        // Within 10% of 2:1
+        (7600, 4096, StereoLayout.leftRight),
+        (2880, 5760, StereoLayout.topBottom),
+        (4096, 4096, StereoLayout.mono),
+        (7680, 1920, StereoLayout.mono),
+        (3000, 2000, StereoLayout.mono),
+      ]) {
+        expect(
+          guessStereoLayout(width: width, height: height, coverage: half),
+          expected,
+          reason: '$width x $height',
+        );
+      }
+      expect(guessStereoLayout(width: 5760, height: 2880, hasGPanoCrop: true, coverage: half), StereoLayout.mono);
+      expect(guessStereoLayout(width: null, height: null, coverage: half), StereoLayout.mono);
     });
   });
 

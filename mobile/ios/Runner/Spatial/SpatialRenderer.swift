@@ -69,6 +69,7 @@ private struct SpatialViewportUniforms {
   var rotation: simd_float4x4
   var rect: SIMD4<Float>
   var lens: SIMD4<Float>
+  var sphere: SIMD4<Float>
 }
 
 private struct SpatialSynthesisUniforms {
@@ -155,7 +156,16 @@ final class SpatialRenderer {
       }
     }
   }
-  var projection: SpatialProjection = .flat
+  /// A 360 degree video ([SpatialProjection.equirectangular]) or a 180 degree one
+  /// ([SpatialProjection.equirectangular180], VR180: the front half of the sphere, black behind) is shown through a
+  /// viewport
+  var projection: SpatialProjection = .flat {
+    didSet {
+      if projection != oldValue {
+        resetHistory()
+      }
+    }
+  }
   /// 0 is the left eye, 0.5 the middle, 1 the right eye
   var viewpoint: Float = 0.5
   /// 360 degree videos: yaw around the vertical axis (radians, growing to the left), pitch (growing upwards), and the
@@ -326,7 +336,7 @@ final class SpatialRenderer {
     )
     var monoViewport = false
 
-    if projection == .equirectangular, viewportPipeline != nil {
+    if projection != .flat, viewportPipeline != nil {
       contentAspect = drawableAspect
       if stereo, let viewports = eyeViewportTextures(for: drawableSize, pixelFormat: view.colorPixelFormat) {
         encodeViewport(commandBuffer, source: source, rect: eyes.left, target: viewports.left)
@@ -548,10 +558,13 @@ final class SpatialRenderer {
     } else {
       horizontal = halfTangent * aspect
     }
+    // The eye of a half sphere spans half the longitudes of a full one
+    let longitudeSpan: Float = projection == .equirectangular180 ? Float.pi : 2 * Float.pi
     return SpatialViewportUniforms(
       rotation: simd_float4x4(cameraOrientation()),
       rect: rect,
-      lens: SIMD4<Float>(horizontal, vertical, 0, 0)
+      lens: SIMD4<Float>(horizontal, vertical, 0, 0),
+      sphere: SIMD4<Float>(longitudeSpan, 0, 0, 0)
     )
   }
 

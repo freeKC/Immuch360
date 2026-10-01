@@ -42,13 +42,17 @@ private enum HeadTracking {
 /// two eyes of the video that matches the head (see SpatialRenderer). Landscape only, like the 360 degree player.
 ///
 /// The controls hide on their own after 3 seconds of playback, a tap on the video shows or hides them. A swipe down
-/// closes a flat video; 360 degree videos turn with drags, the motion of the phone, and zoom with a pinch. Flutter
-/// hears about the close through [SpatialVideoEvents], with the position, so that its normal player resumes there.
+/// closes a flat video; 360 degree videos turn with drags, the motion of the phone, and zoom with a pinch. Their
+/// coverage button (360° or 180°) tells whether they cover the whole sphere or only its front half, as VR180 videos
+/// do. Flutter hears about the close through [SpatialVideoEvents], with the position, so that its normal player
+/// resumes there, and with the layout and the projection shown last.
 final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGestureRecognizerDelegate {
   private let videoUrl: URL
   private let headers: [String: String]
   private let videoTitle: String
-  private let projection: SpatialProjection
+  // A flat video stays flat; a 360 degree one switches between the full sphere and its front half with the coverage
+  // button
+  private var projection: SpatialProjection
   private let startPositionMs: Int64
   private let autoplay: Bool
   private let debugOverlay: Bool
@@ -110,6 +114,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   private let topBar = UIView()
   private let closeButton = UIButton(type: .system)
   private let titleLabel = UILabel()
+  private let coverageButton = UIButton(type: .system)
   private let layoutButton = UIButton(type: .system)
   private let recenterButton = UIButton(type: .system)
   private let disparityButton = UIButton(type: .system)
@@ -190,7 +195,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     applyLayout()
     updateViewpointControls()
 
-    if projection == .equirectangular {
+    if isSpherical {
       motionEnabled = motionManager.isDeviceMotionAvailable
     }
 
@@ -435,7 +440,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
 
     lastViewpoint = currentViewpoint(now: now)
     renderer.viewpoint = Float(lastViewpoint)
-    if projection == .equirectangular {
+    if isSpherical {
       updateViewDirection()
       renderer.yaw = yaw
       renderer.pitch = pitch
@@ -696,12 +701,17 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     return (positionMs, wasPlaying)
   }
 
-  /// Tells Flutter where playback was, once
+  /// Tells Flutter, once, where playback was, and the layout and the projection in use
   private func reportClosed() {
     guard !closedReported else { return }
     closedReported = true
     let state = closeState ?? captureCloseState()
-    events.closed(positionMs: state.positionMs, wasPlaying: state.wasPlaying, layout: selectedLayout) { result in
+    events.closed(
+      positionMs: state.positionMs,
+      wasPlaying: state.wasPlaying,
+      layout: selectedLayout,
+      projection: projection
+    ) { result in
       if case .failure(let error) = result {
         print("Cannot tell Flutter that the Spatial player closed: \(error.code)")
       }
@@ -729,6 +739,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   /// layout menu still offers.
   private static func guessLayout(_ size: CGSize, projection: SpatialProjection) -> SpatialStereoLayout {
     guard size.width > 0, size.height > 0 else {
+      // VR180 videos are side by side far more often than not
       return projection == .equirectangular ? .topBottom : .sideBySide
     }
     let ratio = size.width / size.height
@@ -753,6 +764,15 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
       }
       if ratio >= 3.6 && ratio <= 4.4 {
         return .sideBySide
+      }
+      return SpatialStereoLayout.none
+    case .equirectangular180:
+      // The eyes of a half sphere are square: side by side they make a 2:1 frame, one above the other a 1:2 one
+      if ratio >= 1.8 && ratio <= 2.2 {
+        return .sideBySide
+      }
+      if ratio >= 0.45 && ratio <= 0.55 {
+        return .topBottom
       }
       return SpatialStereoLayout.none
     }
@@ -825,6 +845,28 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   private func text(_ key: String, _ fallback: String) -> String {
     guard let value = labels[key], !value.isEmpty else { return fallback }
     return value
+  }
+
+  // MARK: - Coverage (360 degree videos)
+
+  /// A 360 or 180 degree video, seen through a viewport, rather than a flat one
+  private var isSpherical: Bool { projection != .flat }
+
+  private func coverageName(_ projection: SpatialProjection) -> String {
+    if projection == .equirectangular180 {
+      return text("coverage_half", "180°, half sphere (VR180)")
+    }
+    return text("coverage_full", "360°, full sphere")
+  }
+
+  /// The button shows the coverage in use, without the fade of a system button
+  private func updateCoverageButton() {
+    let title = projection == .equirectangular180 ? "180°" : "360°"
+    UIView.performWithoutAnimation {
+      self.coverageButton.setTitle(title, for: .normal)
+      self.coverageButton.layoutIfNeeded()
+    }
+    coverageButton.accessibilityValue = coverageName(projection)
   }
 
   // MARK: - Head tracking and viewpoint
@@ -1007,7 +1049,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
     tap.delegate = self
     surface.addGestureRecognizer(tap)
-    if projection == .equirectangular {
+    if isSpherical {
       let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
       let pinch = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
       pan.delegate = self
@@ -1080,7 +1122,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     errorLabel.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(errorLabel)
 
-    // Top bar: close, title, then the layout menu, Recenter and, in the debug overlay, the disparity view
+    // Top bar: close, title, then the coverage of a 360 degree video, the layout menu, Recenter and, in the debug
+    // overlay, the disparity view
     topBar.backgroundColor = UIColor(white: 0, alpha: 0.45)
     topBar.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(topBar)
@@ -1111,7 +1154,16 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     disparityButton.isHidden = !debugOverlay
     updateDisparityButton()
 
-    let trailingButtons = UIStackView(arrangedSubviews: [disparityButton, layoutButton, recenterButton])
+    // A text button, 360° or 180°: see updateCoverageButton. A flat video has no coverage to choose.
+    coverageButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+    coverageButton.tintColor = .white
+    coverageButton.translatesAutoresizingMaskIntoConstraints = false
+    coverageButton.addTarget(self, action: #selector(coverageTapped), for: .touchUpInside)
+    coverageButton.accessibilityLabel = text("coverage", "Field of view")
+    coverageButton.isHidden = !isSpherical
+    updateCoverageButton()
+
+    let trailingButtons = UIStackView(arrangedSubviews: [disparityButton, coverageButton, layoutButton, recenterButton])
     trailingButtons.axis = .horizontal
     trailingButtons.spacing = 4
     trailingButtons.translatesAutoresizingMaskIntoConstraints = false
@@ -1217,6 +1269,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     // Below required, else they fight the zero width the stack views give hidden items
     let disparityButtonWidth = disparityButton.widthAnchor.constraint(equalToConstant: 44)
     disparityButtonWidth.priority = UILayoutPriority(999)
+    let coverageButtonWidth = coverageButton.widthAnchor.constraint(equalToConstant: 52)
+    coverageButtonWidth.priority = UILayoutPriority(999)
     let sensitivitySliderWidth = sensitivitySlider.widthAnchor.constraint(equalToConstant: 160)
     sensitivitySliderWidth.priority = UILayoutPriority(999)
 
@@ -1244,6 +1298,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
       trailingButtons.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
       disparityButtonWidth,
       disparityButton.heightAnchor.constraint(equalToConstant: 44),
+      coverageButtonWidth,
+      coverageButton.heightAnchor.constraint(equalToConstant: 44),
       layoutButton.widthAnchor.constraint(equalToConstant: 44),
       layoutButton.heightAnchor.constraint(equalToConstant: 44),
       recenterButton.widthAnchor.constraint(equalToConstant: 44),
@@ -1484,6 +1540,18 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     guard let renderer else { return }
     renderer.showDisparity.toggle()
     updateDisparityButton()
+    scheduleControlsHiding()
+  }
+
+  /// Switches a 360 degree video between the whole sphere and its front half, at once
+  @objc private func coverageTapped() {
+    guard isSpherical else { return }
+    projection = projection == .equirectangular180 ? .equirectangular : .equirectangular180
+    renderer?.projection = projection
+    // The shape of the frame may tell another stereo layout for the new coverage, when the layout is automatic
+    applyLayout()
+    updateCoverageButton()
+    showMessage(coverageName(projection), duration: messageDuration)
     scheduleControlsHiding()
   }
 }

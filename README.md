@@ -25,6 +25,7 @@ Everything the official Immich mobile app does is here, unchanged. On top of it,
 | Gyroscope: look around by moving the phone | ❌ | ✅ |
 | 360° videos in a spherical player (Android and iOS) | ❌ flat video | ✅ with sound and gyroscope |
 | 3D (stereoscopic) 360° photos and videos | ❌ doubled picture | ✅ left eye on phones, true 3D on the Quest 3 |
+| VR180 (half sphere) photos and videos | ❌ stretched around the sphere | ✅ half sphere, 360°/180° button |
 | Meta Quest 3 immersive view with head tracking | ❌ | ✅ same APK |
 | 360° badge on thumbnails and a 360° list in the Library tab | ❌ | ✅ |
 | "View as 360°" for files the server does not flag | ❌ | ✅ remembered on the phone |
@@ -56,6 +57,7 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 - **360° videos on Android and iOS**: a native spherical player with sound, drag and gyroscope; it plays the file stored on the phone when there is one, otherwise streams it from your server.
 - **View as 360°**: some 360° files carry no projection tag, so the server shows them flat. The viewer menu can force the 360° view for a photo or a video; the choice is remembered on the phone and changes nothing on the server.
 - **3D (stereoscopic) 360° photos and videos**: top and bottom or side by side layouts are recognised from the file (or guessed from its shape) and can be changed with the 3D button in every viewer. A phone shows the left eye; the Meta Quest 3 shows each eye its own half, in real 3D.
+- **VR180 (half sphere)**: files that cover only the front half are drawn on a half sphere, with the back black instead of a stretched picture. Recognised from the file (spherical bounds or mesh, GPano crop) or from a "vr180" or "180" in the name, and switchable with a 360°/180° button in every viewer; the choice is remembered on the phone.
 - **Meta Quest 3**: the same Android app runs on the headset as a window, and the 360° button switches to an immersive view where the photo or video is all around you, and you look around by turning your head.
 - **Find them**: a 360° badge on thumbnails and a **360°** entry in the Library tab listing every 360° photo and video.
 - **Everything else is Immich**, unchanged: backup, timeline, albums, search, sharing, partners, all synced with your server.
@@ -115,6 +117,7 @@ The App Store link will be added here as soon as the listing is published. Log i
 | Meta Quest 3 viewer with head tracking | ❌ No | ✅ **Yes**, the same APK opens 360 photos and videos in an immersive view (Meta Spatial SDK) | Tested on a Quest 3 |
 | Spatial 2.5D for stereoscopic videos (head coupled depth on a flat screen) | ❌ No | ✅ **Yes**, experimental, on by default, switch in the settings | Experimental, feedback welcome |
 | "View as 360°" for photos and videos the server does not flag as 360° | ❌ No | ✅ **Yes**, in the viewer menu, remembered on the phone | Done |
+| VR180 (half sphere) photos and videos | ❌ No, stretched around the sphere | ✅ **Yes**: spherical bounds, mesh, GPano crop or file name, 360°/180° button in every viewer, remembered on the phone | Tested on an Android emulator with synthetic media; device feedback welcome |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | ❌ Shown flat or wrongly | ❌ Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
@@ -195,6 +198,18 @@ adb logcat -c
 adb logcat -d -v time -s Immuch360
 adb logcat -d -v time > quest-full.log      # everything, including crashes and decoder errors (it can contain your server address, check before sharing)
 ```
+
+## Roadmap
+
+What is planned next, in rough order. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
+
+- **App Store**: the iOS listing is under review; the link will be added here when it is live.
+- **Use without a server**: open the app on the phone's own gallery, with the 360°, 3D, VR180 and Spatial viewers, and no Immich server at all. The server becomes an option you can add later from the settings.
+- **Network shares**: browse SMB (Samba) and WebDAV shares, for example a NAS, straight from the Library tab, and play their photos and videos live from the share, without downloading or copying anything to the device, in the same viewers, on phones and on the Meta Quest 3. The app reads the share through a local bridge that serves the bytes the players ask for, so seeking works and every player stays unchanged.
+- **Meta Horizon Store**: a headset listing, so the Quest 3 build no longer needs sideloading.
+- **Store listings**: the 3D, VR180 and Spatial features described on Google Play and the App Store.
+- **Raw 360° camera files**: Insta360 .insp and .insv, GoPro .360, dual fisheye .dng. Stitching belongs on the server side; under study.
+- **Upstream**: small pull requests to Immich for the parts the maintainers want, starting with the 360° photo viewer.
 
 ## Build it yourself
 

@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "Ulamek ad yettwaldi umeskan immersif",
   "library_360": "360°",
+  "panorama_coverage": "Urti n tmuɣli",
+  "panorama_coverage_full": "360°, tasfirt tummidt",
+  "panorama_coverage_half": "180°, azgen n tsfirt (VR180)",
   "panorama_gyroscope": "Ajiroskop",
   "panorama_no_gyroscope": "Ulac ajiroskop deg ibenk-a",
   "panorama_stereo_layout": "Asefrek 3D",

@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "D'immersive Aasicht hot sich ned aufmacha lassa",
   "library_360": "360°",
+  "panorama_coverage": "Sichtfeld",
+  "panorama_coverage_full": "360°, ganze Kugl",
+  "panorama_coverage_half": "180°, halbe Kugl (VR180)",
   "panorama_gyroscope": "Gyroskop",
   "panorama_no_gyroscope": "Des Gerät hot koi Gyroskop",
   "panorama_stereo_layout": "3D-Layout",

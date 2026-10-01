@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "Nije moguće otvoriti imerzivni preglednik",
   "library_360": "360°",
+  "panorama_coverage": "Vidno polje",
+  "panorama_coverage_full": "360°, puna sfera",
+  "panorama_coverage_half": "180°, polusfera (VR180)",
   "panorama_gyroscope": "Žiroskop",
   "panorama_no_gyroscope": "Ovaj uređaj nema žiroskop",
   "panorama_stereo_layout": "3D raspored",

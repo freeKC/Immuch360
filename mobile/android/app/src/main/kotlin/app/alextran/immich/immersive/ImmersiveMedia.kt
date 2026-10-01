@@ -56,13 +56,19 @@ internal object ImmersiveMedia {
   /** Key of the title of the 3D control in the stereo labels sent by Flutter. */
   const val STEREO_LABEL_TITLE = "stereo"
 
-  /** English labels of the 3D control, used for a key Flutter did not send. */
+  /** Key of the title of the field of view control (360° or 180°) in the labels sent by Flutter. */
+  const val COVERAGE_LABEL_TITLE = "coverage"
+
+  /** English labels of the 3D and field of view controls, used for a key Flutter did not send. */
   private val defaultStereoLabels =
     mapOf(
       STEREO_LABEL_TITLE to "3D layout",
       "mono" to "Mono (not 3D)",
       "topBottom" to "3D, top and bottom",
       "leftRight" to "3D, side by side",
+      COVERAGE_LABEL_TITLE to "Field of view",
+      "coverage_full" to "360°, full sphere",
+      "coverage_half" to "180°, half sphere (VR180)",
     )
 
   /** Order of the layouts when the user cycles them, the same in every viewer. */
@@ -93,6 +99,31 @@ internal object ImmersiveMedia {
     val index = stereoOrder.indexOf(layout).coerceAtLeast(0)
     return stereoOrder[(index + step).mod(stereoOrder.size)]
   }
+
+  /** Key of [coverage] in the labels sent by Flutter. */
+  fun coverageLabelKey(coverage: ImmersiveSphereCoverage): String =
+    when (coverage) {
+      ImmersiveSphereCoverage.FULL -> "coverage_full"
+      ImmersiveSphereCoverage.HALF -> "coverage_half"
+    }
+
+  /** Text of the field of view button: "360°" or "180°", the same in every language. */
+  fun coverageButtonText(coverage: ImmersiveSphereCoverage): String =
+    when (coverage) {
+      ImmersiveSphereCoverage.FULL -> "360°"
+      ImmersiveSphereCoverage.HALF -> "180°"
+    }
+
+  /** "Field of view: 180°, half sphere (VR180)" for [coverage], with the translated [labels]. */
+  fun coverageText(coverage: ImmersiveSphereCoverage, labels: Map<String, String>): String =
+    "${stereoLabel(labels, COVERAGE_LABEL_TITLE)}: ${stereoLabel(labels, coverageLabelKey(coverage))}"
+
+  /** 180° after 360° and 360° after 180°: the field of view button toggles between the two. */
+  fun toggleCoverage(coverage: ImmersiveSphereCoverage): ImmersiveSphereCoverage =
+    when (coverage) {
+      ImmersiveSphereCoverage.FULL -> ImmersiveSphereCoverage.HALF
+      ImmersiveSphereCoverage.HALF -> ImmersiveSphereCoverage.FULL
+    }
 
   /** ".../assets/{id}/original?edited=true" gives ".../assets/{id}/thumbnail?size=preview&edited=true". */
   fun previewUrlFor(originalUrl: String): String? {

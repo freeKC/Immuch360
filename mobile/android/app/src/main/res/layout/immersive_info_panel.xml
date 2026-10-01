@@ -60,6 +60,19 @@
       android:textSize="17sp"
       android:visibility="gone" />
 
+    <!-- Field of view of the media on screen, "360°" (full sphere) or "180°" (VR180, front half), shown while a
+         media is loaded. A click switches to the other one -->
+    <Button
+      android:id="@+id/immersive_coverage"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginEnd="12dp"
+      android:maxLines="1"
+      android:textAllCaps="false"
+      android:textSize="17sp"
+      android:visibility="gone" />
+
     <Button
       android:id="@+id/immersive_play_pause"
       android:layout_width="wrap_content"

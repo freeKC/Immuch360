@@ -6,6 +6,7 @@
 import 'dart:convert';
 
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
@@ -21,7 +22,8 @@ const _topBottomWords = {'ou', 'hou', 'fou', 'tb', 'htb', 'ftb', 'tab', 'htab', 
 /// Guesses how the eyes of a stereoscopic video of [width] x [height] pixels named [fileName] are laid out, in that
 /// order:
 /// - the frame shape. For a 360° video ([projection] equirectangular), the guess of the 360° viewers (see
-///   [guessStereoLayout]): a square frame holds two eyes stacked, a 4:1 frame two eyes side by side. For a flat video,
+///   [guessStereoLayout]): a square frame holds two eyes stacked, a 4:1 frame two eyes side by side; for a VR180 one
+///   (equirectangular180), a 1:2 frame two eyes stacked, a 2:1 frame two eyes side by side. For a flat video,
 ///   a frame about twice as wide as a regular one (ratio 3.2 to 3.9, for example 3840x1080) holds two full eyes side
 ///   by side, and a frame a little taller than wide (ratio above 0.8, up to 0.95, for example 1920x2160) two full
 ///   eyes stacked. Portrait 4:5 videos (ratio 0.8) are left out.
@@ -42,8 +44,9 @@ SpatialStereoLayout guessSpatialLayout({
   if (declaredStereo) {
     return SpatialStereoLayout.auto;
   }
-  if (projection == SpatialProjection.equirectangular) {
-    final layout = spatialLayoutOf(guessStereoLayout(width: width, height: height));
+  final coverage = sphereCoverageOfSpatialProjection(projection);
+  if (coverage != null) {
+    final layout = spatialLayoutOf(guessStereoLayout(width: width, height: height, coverage: coverage));
     if (layout != SpatialStereoLayout.auto) {
       return layout;
     }
@@ -112,8 +115,8 @@ Map<String, SpatialStereoLayout> decodeSpatialLayouts(String? json) {
 String encodeSpatialLayouts(Map<String, SpatialStereoLayout> layouts) =>
     jsonEncode({for (final MapEntry(:key, :value) in layouts.entries) key: value.name});
 
-/// Translated labels of the Spatial 2.5D player, under the keys it reads. It falls back to its English texts for a
-/// missing key.
+/// Translated labels of the Spatial 2.5D player, under the keys it reads, those of its coverage control included (see
+/// [sphereCoverageLabels]). It falls back to its English texts for a missing key.
 Map<String, String> spatialLabels(Translations t) => {
   'spatial': t.spatial_2_5d,
   'normal': t.spatial_normal,
@@ -131,4 +134,5 @@ Map<String, String> spatialLabels(Translations t) => {
   'sensitivity': t.spatial_sensitivity,
   'close': t.close,
   'error': t.errors.unable_to_play_video,
+  ...sphereCoverageLabels(t),
 };

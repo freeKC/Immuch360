@@ -1,6 +1,9 @@
 {
   "immersive_viewer_open_failed": "เบิกหน้าเมิลแบบอิมเมอร์ซีฟออตบาน",
   "library_360": "360°",
+  "panorama_coverage": "ขอบเขตการมองเห็น",
+  "panorama_coverage_full": "360°, ทรงกลมเต็ม",
+  "panorama_coverage_half": "180°, ครึ่งทรงกลม (VR180)",
   "panorama_gyroscope": "ไจโรสโคป",
   "panorama_no_gyroscope": "อุปกรณ์นิฮออตเมียนไจโรสโคป",
   "panorama_stereo_layout": "เลย์เอาต์ 3D",

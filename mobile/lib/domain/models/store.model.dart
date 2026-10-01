@@ -30,6 +30,10 @@ enum StoreKey<T> {
   /// same as for the stereo layouts above, the latest choice last
   forcedPanoramaAssets<String>._(5001),
 
+  /// Coverage of the sphere the user picked in a 360° viewer, per asset: a JSON map from the asset key, the same as
+  /// for the stereo layouts above, to a SphereCoverage name ("full" or "half"), the latest choice last
+  sphereCoverageOverrides<String>._(5002),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

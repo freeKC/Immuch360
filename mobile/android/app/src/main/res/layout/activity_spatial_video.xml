@@ -109,6 +109,24 @@
         android:textColor="@android:color/white"
         android:textSize="14sp" />
 
+      <!-- Field of view of a 360° video: switches between the full sphere and the half sphere (VR180). Its text,
+           "360°" or "180°", comes from the activity, which hides it for flat videos. -->
+      <Button
+        android:id="@+id/spatial_video_coverage"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:minWidth="48dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:singleLine="true"
+        android:stateListAnimator="@null"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
       <Button
         android:id="@+id/spatial_video_recenter"
         android:layout_width="wrap_content"

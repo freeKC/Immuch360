@@ -120,6 +120,12 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
   @Volatile var layout: EyeLayout = EyeLayout.SIDE_BY_SIDE
   @Volatile var projection: Projection = Projection.FLAT
 
+  /**
+   * 360 only: each eye image covers the front half of the sphere (VR180), longitude -90 to +90 degrees, instead of
+   * the whole sphere. Directions outside the image are black.
+   */
+  @Volatile var halfSphere: Boolean = false
+
   /** 0 = left camera, 0.5 = between the cameras, 1 = right camera */
   @Volatile var viewpoint: Float = 0.5f
 
@@ -197,6 +203,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
   private var eyesValid = false
   private var lastLayout: EyeLayout? = null
   private var lastProjection: Projection? = null
+  private var lastHalfSphere: Boolean? = null
   private var lastYaw = Float.NaN
   private var lastPitch = Float.NaN
   private var lastFov = Float.NaN
@@ -396,6 +403,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
 
     val layout = this.layout
     val projection = this.projection
+    val halfSphere = this.halfSphere
     val quality = this.quality
     val yaw = yawDegrees
     val pitch = pitchDegrees
@@ -404,24 +412,25 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     val left = leftEye
     val right = rightEye
     if (left == null || right == null) {
-      drawEyeDirect(layout, projection, yaw, pitch, fov)
+      drawEyeDirect(layout, projection, halfSphere, yaw, pitch, fov)
       return
     }
 
-    // Pass 1: the eyes only change with a new frame, a new layout, or a new view direction for a 360 video
-    val sourceChanged = layout != lastLayout || projection != lastProjection
+    // Pass 1: the eyes only change with a new frame, a new layout or coverage, or a new view direction for a 360 video
+    val sourceChanged = layout != lastLayout || projection != lastProjection || halfSphere != lastHalfSphere
     val viewMoved = projection == Projection.EQUIRECTANGULAR &&
       (yaw != lastYaw || pitch != lastPitch || fov != lastFov)
     val eyesChanged = newFrame || sourceChanged || viewMoved || eyesRecreated || !eyesValid
     val stereo = layout != EyeLayout.NONE && spatialReady && !disparityFailed
     if (eyesChanged) {
-      if (!renderEyes(left, right, layout, projection, yaw, pitch, fov, stereo)) {
-        drawEyeDirect(layout, projection, yaw, pitch, fov)
+      if (!renderEyes(left, right, layout, projection, halfSphere, yaw, pitch, fov, stereo)) {
+        drawEyeDirect(layout, projection, halfSphere, yaw, pitch, fov)
         return
       }
       eyesValid = true
       lastLayout = layout
       lastProjection = projection
+      lastHalfSphere = halfSphere
       lastYaw = yaw
       lastPitch = pitch
       lastFov = fov
@@ -497,13 +506,12 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
   }
 
   /**
-   * Longitude covered by each eye of an equirectangular video. Always the full circle, like the inline 360 player,
-   * the photo viewer and the iOS renderer: a square eye is not taken for a 180 video, since side by side 360 files
-   * squeezed into a 2:1 frame (3840x1920 and the like) have square eyes too and would lose the back half of the
-   * sphere, with the picture turning black past 90 degrees to each side. VR180 is not recognised anywhere in the app.
+   * Longitude covered by each eye of an equirectangular video: half the circle for a half sphere (VR180), the whole
+   * circle otherwise. Only the explicit [halfSphere] flag decides, never the shape of the eyes: side by side 360
+   * files squeezed into a 2:1 frame (3840x1920 and the like) have square eyes like VR180 files.
    */
-  @Suppress("UNUSED_PARAMETER")
-  private fun longitudeSpan(layout: EyeLayout): Float = (2.0 * Math.PI).toFloat()
+  private fun longitudeSpan(halfSphere: Boolean): Float =
+    if (halfSphere) Math.PI.toFloat() else (2.0 * Math.PI).toFloat()
 
   private fun eyeRects(layout: EyeLayout): Pair<FloatArray, FloatArray> = when (layout) {
     EyeLayout.SIDE_BY_SIDE -> LEFT_HALF to RIGHT_HALF
@@ -583,8 +591,8 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
 
   /** Selects and sets up the program that reads the video for [projection], or null when it failed to build */
   private fun useEyeProgram(
-    layout: EyeLayout,
     projection: Projection,
+    halfSphere: Boolean,
     yaw: Float,
     pitch: Float,
     fov: Float,
@@ -600,7 +608,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
       val tanX = tan(Math.toRadians(fov / 2.0)).toFloat()
       program.setMat3("u_rotation", rotationColumns(yaw, pitch))
       program.setVec2("u_tanHalfFov", tanX, tanX / aspect)
-      program.setFloat("u_longitudeSpan", longitudeSpan(layout))
+      program.setFloat("u_longitudeSpan", longitudeSpan(halfSphere))
     }
     return program
   }
@@ -635,13 +643,14 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     right: GlTarget,
     layout: EyeLayout,
     projection: Projection,
+    halfSphere: Boolean,
     yaw: Float,
     pitch: Float,
     fov: Float,
     stereo: Boolean,
   ): Boolean {
     val aspect = left.width.toFloat() / left.height
-    val program = useEyeProgram(layout, projection, yaw, pitch, fov, aspect) ?: return false
+    val program = useEyeProgram(projection, halfSphere, yaw, pitch, fov, aspect) ?: return false
     val (leftRect, rightRect) = eyeRects(layout)
     left.bind()
     setRect(program, leftRect)
@@ -655,10 +664,17 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
   }
 
   /** Safe fallback: the left eye straight from the video to the screen */
-  private fun drawEyeDirect(layout: EyeLayout, projection: Projection, yaw: Float, pitch: Float, fov: Float) {
+  private fun drawEyeDirect(
+    layout: EyeLayout,
+    projection: Projection,
+    halfSphere: Boolean,
+    yaw: Float,
+    pitch: Float,
+    fov: Float,
+  ) {
     beginScreen()
     val aspect = outWidth.toFloat() / max(1, outHeight)
-    val program = useEyeProgram(layout, projection, yaw, pitch, fov, aspect) ?: return
+    val program = useEyeProgram(projection, halfSphere, yaw, pitch, fov, aspect) ?: return
     setRect(program, eyeRects(layout).first)
     drawTriangle()
   }

@@ -14,6 +14,9 @@ import 'package:pigeon/pigeon.dart';
 /// top) or side by side (left eye on the left). [mono] is a regular 360° media. Same values as the player API.
 enum ImmersiveStereoLayout { mono, topBottom, leftRight }
 
+/// How much of the sphere the image covers: all of it (360°), or the front half (180°, VR180 files)
+enum ImmersiveSphereCoverage { full, half }
+
 @HostApi()
 abstract class ImmersiveApi {
   /// True on a Meta Quest headset (Horizon OS).
@@ -30,5 +33,6 @@ abstract class ImmersiveApi {
     String title,
     ImmersiveStereoLayout stereoLayout,
     Map<String, String> stereoLabels,
+    ImmersiveSphereCoverage coverage,
   );
 }

@@ -10,6 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/setting.model.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
@@ -17,6 +18,8 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/setting.provider.dart';
@@ -34,7 +37,9 @@ final _log = Logger('SpatialViewer');
 /// The file is the one the viewer plays: the file a video opened with "Open with" came as, else the copy on the
 /// phone when there is one, else the server's original when the settings ask for it, else its transcoded playback.
 /// The stereo layout is the one the user picked for this asset last time, else a guess (see [guessSpatialLayout]);
-/// a 360° video opens through a viewport.
+/// a 360° video opens through a viewport, over the whole sphere or its front half (VR180): the coverage the user
+/// picked for the asset, else the one the file declares or a guess (see [resolveSphereView]). The coverage picked in
+/// the player is remembered for the asset.
 ///
 /// When the device cannot run the player, a message says so and the viewer's player goes on untouched. Otherwise
 /// that player is stopped meanwhile (see [VideoPlayerNotifier.suspendForExternalPlayer]), and takes the video back
@@ -45,6 +50,8 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
   final api = ref.read(spatialVideoApiProvider);
   final session = ref.read(spatialVideoSessionProvider);
   final overrides = ref.read(spatialLayoutOverridesProvider);
+  final coverageOverrides = ref.read(sphereCoverageOverridesProvider.notifier);
+  final probeService = ref.read(sphericalProbeServiceProvider);
   final storage = ref.read(storageRepositoryProvider);
   // A video opened with "Open with" that is not in the library plays from a temporary copy (see AssetPage)
   final viewIntentPath = ref.read(timelineServiceProvider).origin == TimelineOrigin.deepLink
@@ -60,15 +67,7 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
   final unavailableMessage = context.t.spatial_unavailable;
   final errorMessage = context.t.spatial_open_failed;
 
-  final projection = isEquirectangular ? SpatialProjection.equirectangular : SpatialProjection.flat;
   final layoutKey = spatialLayoutKey(asset);
-  final guess = guessSpatialLayout(
-    width: asset.width,
-    height: asset.height,
-    fileName: asset.name,
-    projection: projection,
-  );
-  final layout = overrides.get(layoutKey) ?? guess;
   final wasPlaying = playback.status == VideoPlaybackStatus.playing || playback.status == VideoPlaybackStatus.buffering;
 
   final SpatialCapabilities capabilities;
@@ -95,11 +94,12 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
     final remoteUrl = remoteId == null
         ? null
         : '${Store.get(StoreKey.serverEndpoint)}/assets/$remoteId/${loadOriginalVideo ? 'original' : 'video/playback'}';
-    String? url = viewIntentPath != null ? File(viewIntentPath).uri.toString() : remoteUrl;
+    File? localFile = viewIntentPath != null ? File(viewIntentPath) : null;
+    String? url = localFile?.uri.toString() ?? remoteUrl;
     if (viewIntentPath == null && localId != null) {
       try {
         // The native player reads file:// URIs too, and ignores the headers for them
-        final localFile = await storage.getFileForAsset(localId);
+        localFile = await storage.getFileForAsset(localId);
         url = localFile?.uri.toString() ?? remoteUrl;
       } catch (error) {
         _log.warning('Copy on the device of ${asset.name} unreadable, playing the server copy: $error');
@@ -109,7 +109,32 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
       throw StateError('No file to play for ${asset.name}');
     }
 
-    session.start(layoutKey: layoutKey, layout: layout, guess: guess, player: player);
+    // Only a 360° video has a coverage that its file may declare. The coverage of a flat one only counts when the
+    // user turns it into a 360° one in the player.
+    final sphereView = resolveSphereView(
+      fileName: asset.name,
+      width: asset.width,
+      height: asset.height,
+      probe: isEquirectangular ? await probeService.probe(asset, localFile: localFile) : null,
+      chosenCoverage: coverageOverrides.get(asset),
+    );
+    final projection = isEquirectangular ? sphereView.coverage.toSpatialProjection() : SpatialProjection.flat;
+    final guess = guessSpatialLayout(
+      width: asset.width,
+      height: asset.height,
+      fileName: asset.name,
+      projection: projection,
+    );
+    final layout = overrides.get(layoutKey) ?? guess;
+
+    session.start(
+      asset: asset,
+      layout: layout,
+      guess: guess,
+      coverage: sphereView.coverage,
+      coverageGuess: sphereView.coverageGuess,
+      player: player,
+    );
     // Stopped before the viewer goes to the background: it neither plays nor buffers behind the Spatial player
     suspended = true;
     await player.suspendForExternalPlayer();

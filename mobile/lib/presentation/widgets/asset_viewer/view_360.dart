@@ -7,7 +7,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
-import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
@@ -54,7 +54,7 @@ Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset
   // Read before the first await: the viewer may be gone by then
   final messenger = ScaffoldMessenger.maybeOf(context);
   final errorMessage = context.t.immersive_viewer_open_failed;
-  final stereoLabels = stereoLayoutLabels(context.t);
+  final stereoLabels = sphereViewerLabels(context.t);
   try {
     await openImmersiveViewer(ref, asset, stereoLabels: stereoLabels);
   } catch (error) {

@@ -4,13 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+
+import '../../unit/factories/remote_asset_factory.dart';
 
 /// Records how the session gives the viewer's player its video back
 class _RecordingVideoPlayer extends VideoPlayerNotifier {
@@ -106,27 +110,42 @@ void main() {
 
   group('SpatialVideoSession', () {
     late SpatialLayoutOverrides overrides;
+    late SphereCoverageOverrides coverageOverrides;
     late SpatialVideoSession session;
     late _RecordingVideoPlayer player;
+    final asset = RemoteAssetFactory.create(id: 'asset-1', type: .video);
 
     setUp(() {
       overrides = SpatialLayoutOverrides(store);
-      session = SpatialVideoSession(overrides);
+      final container = ProviderContainer(overrides: [storeServiceProvider.overrideWithValue(store)]);
+      addTearDown(container.dispose);
+      coverageOverrides = container.read(sphereCoverageOverridesProvider.notifier);
+      session = SpatialVideoSession(overrides, coverageOverrides);
       player = _RecordingVideoPlayer();
     });
+
+    /// Opens the player on the asset, with a full sphere unless said otherwise
+    void start({
+      required SpatialStereoLayout layout,
+      required SpatialStereoLayout guess,
+      SphereCoverage coverage = SphereCoverage.full,
+      SphereCoverage coverageGuess = SphereCoverage.full,
+    }) => session.start(
+      asset: asset,
+      layout: layout,
+      guess: guess,
+      coverage: coverage,
+      coverageGuess: coverageGuess,
+      player: player,
+    );
 
     test('gives the viewer its video back where the player left it, playing or not', () async {
       for (final wasPlaying in [true, false]) {
         player.calls.clear();
-        session.start(
-          layoutKey: 'asset-1',
-          layout: SpatialStereoLayout.sideBySide,
-          guess: SpatialStereoLayout.sideBySide,
-          player: player,
-        );
+        start(layout: SpatialStereoLayout.sideBySide, guess: SpatialStereoLayout.sideBySide);
         expect(session.isOpen, isTrue);
 
-        session.closed(83500, wasPlaying, SpatialStereoLayout.sideBySide);
+        session.closed(83500, wasPlaying, SpatialStereoLayout.sideBySide, SpatialProjection.flat);
         await pumpEventQueue();
 
         expect(player.calls, ['resume at 83500 ${wasPlaying ? 'playing' : 'paused'}']);
@@ -135,28 +154,18 @@ void main() {
     });
 
     test('remembers the layout the user picked in the player', () async {
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.auto,
-        guess: SpatialStereoLayout.auto,
-        player: player,
-      );
+      start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto);
 
-      session.closed(0, false, SpatialStereoLayout.topBottomSwapped);
+      session.closed(0, false, SpatialStereoLayout.topBottomSwapped, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(overrides.get('asset-1'), SpatialStereoLayout.topBottomSwapped);
     });
 
     test('remembers nothing when the layout did not change', () async {
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.sideBySide,
-        guess: SpatialStereoLayout.sideBySide,
-        player: player,
-      );
+      start(layout: SpatialStereoLayout.sideBySide, guess: SpatialStereoLayout.sideBySide);
 
-      session.closed(0, false, SpatialStereoLayout.sideBySide);
+      session.closed(0, false, SpatialStereoLayout.sideBySide, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(overrides.get('asset-1'), isNull);
@@ -165,28 +174,18 @@ void main() {
 
     test('forgets the layout picked before when the user goes back to Auto, the guess', () async {
       await overrides.set('asset-1', SpatialStereoLayout.sideBySide);
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.sideBySide,
-        guess: SpatialStereoLayout.auto,
-        player: player,
-      );
+      start(layout: SpatialStereoLayout.sideBySide, guess: SpatialStereoLayout.auto);
 
-      session.closed(0, false, SpatialStereoLayout.auto);
+      session.closed(0, false, SpatialStereoLayout.auto, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(overrides.get('asset-1'), isNull);
     });
 
     test('remembers Auto picked over a wrong guess, so that the guess does not come back', () async {
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.sideBySide,
-        guess: SpatialStereoLayout.sideBySide,
-        player: player,
-      );
+      start(layout: SpatialStereoLayout.sideBySide, guess: SpatialStereoLayout.sideBySide);
 
-      session.closed(0, false, SpatialStereoLayout.auto);
+      session.closed(0, false, SpatialStereoLayout.auto, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(overrides.get('asset-1'), SpatialStereoLayout.auto);
@@ -194,29 +193,19 @@ void main() {
 
     test('forgets Auto picked before when the user goes back to the guess', () async {
       await overrides.set('asset-1', SpatialStereoLayout.auto);
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.auto,
-        guess: SpatialStereoLayout.sideBySide,
-        player: player,
-      );
+      start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.sideBySide);
 
-      session.closed(0, false, SpatialStereoLayout.sideBySide);
+      session.closed(0, false, SpatialStereoLayout.sideBySide, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(overrides.get('asset-1'), isNull);
     });
 
     test('ignores a close it did not see open, and a second close', () async {
-      session.closed(1000, true, SpatialStereoLayout.topBottom);
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.auto,
-        guess: SpatialStereoLayout.auto,
-        player: player,
-      );
-      session.closed(2000, true, SpatialStereoLayout.auto);
-      session.closed(3000, true, SpatialStereoLayout.topBottom);
+      session.closed(1000, true, SpatialStereoLayout.topBottom, SpatialProjection.flat);
+      start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto);
+      session.closed(2000, true, SpatialStereoLayout.auto, SpatialProjection.flat);
+      session.closed(3000, true, SpatialStereoLayout.topBottom, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(player.calls, ['resume at 2000 playing']);
@@ -224,15 +213,10 @@ void main() {
     });
 
     test('leaves the viewer alone once its player is gone', () async {
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.auto,
-        guess: SpatialStereoLayout.auto,
-        player: player,
-      );
+      start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto);
       player.gone = true;
 
-      session.closed(1000, true, SpatialStereoLayout.sideBySide);
+      session.closed(1000, true, SpatialStereoLayout.sideBySide, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(player.calls, isEmpty);
@@ -240,15 +224,10 @@ void main() {
     });
 
     test('a cancelled session ignores a late close', () async {
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.auto,
-        guess: SpatialStereoLayout.auto,
-        player: player,
-      );
+      start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto);
       session.cancel();
 
-      session.closed(1000, true, SpatialStereoLayout.sideBySide);
+      session.closed(1000, true, SpatialStereoLayout.sideBySide, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(player.calls, isEmpty);
@@ -256,43 +235,108 @@ void main() {
     });
 
     test('clamps a negative position to the start', () async {
-      session.start(
-        layoutKey: 'asset-1',
-        layout: SpatialStereoLayout.auto,
-        guess: SpatialStereoLayout.auto,
-        player: player,
-      );
+      start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto);
 
-      session.closed(-40, false, SpatialStereoLayout.auto);
+      session.closed(-40, false, SpatialStereoLayout.auto, SpatialProjection.flat);
       await pumpEventQueue();
 
       expect(player.calls, ['resume at 0 paused']);
+    });
+
+    test('remembers the half sphere picked in the player for a 360° video', () async {
+      start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto);
+
+      session.closed(0, false, SpatialStereoLayout.auto, SpatialProjection.equirectangular180);
+      await pumpEventQueue();
+
+      expect(coverageOverrides.get(asset), SphereCoverage.half);
+      expect(store.tryGet(StoreKey.sphereCoverageOverrides), '{"asset-1":"half"}');
+      expect(overrides.get('asset-1'), isNull, reason: 'the layout did not change');
+    });
+
+    test('remembers the full sphere picked over a wrong guess of a half sphere', () async {
+      start(
+        layout: SpatialStereoLayout.sideBySide,
+        guess: SpatialStereoLayout.sideBySide,
+        coverage: SphereCoverage.half,
+        coverageGuess: SphereCoverage.half,
+      );
+
+      session.closed(0, false, SpatialStereoLayout.sideBySide, SpatialProjection.equirectangular);
+      await pumpEventQueue();
+
+      expect(coverageOverrides.get(asset), SphereCoverage.full);
+    });
+
+    test('forgets the coverage picked before when the user goes back to the guess', () async {
+      await coverageOverrides.set(asset, SphereCoverage.half);
+      start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto, coverage: SphereCoverage.half);
+
+      session.closed(0, false, SpatialStereoLayout.auto, SpatialProjection.equirectangular);
+      await pumpEventQueue();
+
+      expect(coverageOverrides.get(asset), isNull);
+    });
+
+    test('remembers no coverage when it did not change, nor for a flat projection', () async {
+      for (final (coverage, projection) in [
+        (SphereCoverage.half, SpatialProjection.equirectangular180),
+        (SphereCoverage.full, SpatialProjection.equirectangular),
+        (SphereCoverage.half, SpatialProjection.flat),
+      ]) {
+        start(layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto, coverage: coverage);
+
+        session.closed(0, false, SpatialStereoLayout.auto, projection);
+        await pumpEventQueue();
+
+        expect(coverageOverrides.get(asset), isNull, reason: '$coverage $projection');
+      }
+      expect(store.tryGet(StoreKey.sphereCoverageOverrides), isNull);
     });
   });
 
   test('the session provider receives the closed event of the native player', () async {
     final container = ProviderContainer(overrides: [storeServiceProvider.overrideWithValue(store)]);
     final player = _RecordingVideoPlayer();
+    final asset = RemoteAssetFactory.create(id: 'asset-1', type: .video);
     container
         .read(spatialVideoSessionProvider)
-        .start(layoutKey: 'asset-1', layout: SpatialStereoLayout.auto, guess: SpatialStereoLayout.auto, player: player);
+        .start(
+          asset: asset,
+          layout: SpatialStereoLayout.auto,
+          guess: SpatialStereoLayout.auto,
+          coverage: SphereCoverage.full,
+          coverageGuess: SphereCoverage.full,
+          player: player,
+        );
 
     await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.immich_mobile.SpatialVideoEvents.closed',
-      SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[42000, true, SpatialStereoLayout.topBottom]),
+      SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[
+        42000,
+        true,
+        SpatialStereoLayout.topBottom,
+        SpatialProjection.equirectangular180,
+      ]),
       (_) {},
     );
     await pumpEventQueue();
 
     expect(player.calls, ['resume at 42000 playing']);
     expect(container.read(spatialLayoutOverridesProvider).get('asset-1'), SpatialStereoLayout.topBottom);
+    expect(container.read(sphereCoverageOverridesProvider.notifier).get(asset), SphereCoverage.half);
 
     // Disposing the provider unregisters it
     container.dispose();
     ByteData? reply;
     await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.immich_mobile.SpatialVideoEvents.closed',
-      SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[1000, false, SpatialStereoLayout.auto]),
+      SpatialVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[
+        1000,
+        false,
+        SpatialStereoLayout.auto,
+        SpatialProjection.flat,
+      ]),
       (data) => reply = data,
     );
     expect(reply, isNull);

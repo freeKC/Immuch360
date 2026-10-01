@@ -33,14 +33,18 @@ import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.SpatialFeature
 import com.meta.spatial.core.Vector3
 import com.meta.spatial.runtime.ButtonBits
+import com.meta.spatial.runtime.EquirectLayerConfig
 import com.meta.spatial.runtime.PanelSceneObject
+import com.meta.spatial.runtime.PanelShapeType
 import com.meta.spatial.runtime.ReferenceSpace
 import com.meta.spatial.runtime.SceneMaterial
+import com.meta.spatial.runtime.SceneMesh
 import com.meta.spatial.runtime.SceneTexture
 import com.meta.spatial.runtime.SessionState
 import com.meta.spatial.runtime.StereoMode
 import com.meta.spatial.toolkit.AppSystemActivity
 import com.meta.spatial.toolkit.DpDisplayOptions
+import com.meta.spatial.toolkit.Equirect180ShapeOptions
 import com.meta.spatial.toolkit.Equirect360ShapeOptions
 import com.meta.spatial.toolkit.LayoutXMLPanelRegistration
 import com.meta.spatial.toolkit.Material
@@ -66,6 +70,7 @@ import java.io.IOException
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.coroutineContext
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlinx.coroutines.CancellationException
@@ -95,12 +100,18 @@ import okhttp3.Request
  * Controllers: trigger plays or pauses a video, B or Y goes back to the 2D app, A, X, grip or menu
  * show or hide the info panel, thumbstick left or right turns the image by 90 degrees (logged, to find
  * the right SKYBOX_YAW_DEGREES and VIDEO_YAW_DEGREES), thumbstick up or down changes the 3D layout
- * (mono, top and bottom, side by side), like the 3D layout button of the info panel. Hands: the Back and
- * 3D layout buttons of the info panel, the menu gesture toggles it.
+ * (mono, top and bottom, side by side), like the 3D layout button of the info panel. Hands: the Back,
+ * 3D layout and field of view buttons of the info panel, the menu gesture toggles it.
  *
  * Stereoscopic (3D) 360 media hold one equirectangular image per eye, one above the other (left eye on
  * top) or side by side (left eye on the left). Each eye gets its own half: through the stereo mode of
  * the skybox material for photos, through the stereo mode of the equirect compositor layer for videos.
+ *
+ * VR180 media cover the front half of the sphere only: longitude -90 to +90 degrees, full latitude, and
+ * the back half stays black. Photos then use a half sphere mesh (the equirect surface an Equirect180
+ * panel draws) instead of the skybox, videos an Equirect180 layer instead of the Equirect360 one. Each
+ * eye of a stereoscopic VR180 media gets its own half the same way. The field of view button of the
+ * info panel (360° or 180°) switches between the full sphere and the half sphere.
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -109,8 +120,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val title: String,
     /** The 3D layout Flutter guessed from the media size. */
     val stereoLayout: ImmersiveStereoLayout,
-    /** Translated labels of the 3D control, keyed "stereo", "mono", "topBottom", "leftRight". */
+    /**
+     * Translated labels of the 3D control, keyed "stereo", "mono", "topBottom", "leftRight", and of the field of
+     * view control, keyed "coverage", "coverage_full", "coverage_half".
+     */
     val stereoLabels: Map<String, String>,
+    /** How much of the sphere the media covers: all of it, or the front half (VR180). */
+    val coverage: ImmersiveSphereCoverage,
   )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -123,6 +139,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var videoEntity: Entity? = null
   private var infoEntity: Entity? = null
   private var skyboxMaterial: SceneMaterial? = null
+  /** Half sphere of 180° photos, shown instead of the skybox. Its material gets the same photo texture. */
+  private var halfSphereEntity: Entity? = null
+  private var halfSphereMaterial: SceneMaterial? = null
   /** Our own small copy of the idle gradient. The Material component texture is cached by the SDK. */
   private var idleTexture: SceneTexture? = null
   /** The photo texture we created and own. At most one at a time. */
@@ -144,13 +163,21 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var stereoLayout = ImmersiveStereoLayout.MONO
   /** Stereo mode set on the skybox material. Stays None (never set) as long as only mono photos are shown. */
   private var skyboxStereoMode = StereoMode.None
-  /** Scene object of the video panel, to change the stereo mode of its compositor layer. */
+  /** Stereo mode set on the half sphere material, kept in step with the skybox one. */
+  private var halfSphereStereoMode = StereoMode.None
+  /**
+   * How much of the sphere the current media covers: the value Flutter sent, then the one the user picked with the
+   * field of view button.
+   */
+  private var coverage = ImmersiveSphereCoverage.FULL
+  /** Scene object of the video panel, to change the stereo mode and the shape of its compositor layer. */
   private var videoPanel: PanelSceneObject? = null
 
   // Info panel views
   private var titleView: TextView? = null
   private var statusView: TextView? = null
   private var stereoView: Button? = null
+  private var coverageView: Button? = null
   private var playPauseButton: Button? = null
 
   // Loading
@@ -207,6 +234,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         Log.w(TAG, "could not disable locomotion", e)
       }
       createSkybox()
+      createHalfSphere()
       videoEntity = Entity.create(Panel(R.id.immersive_video_panel), Transform(), Visible(false))
       infoEntity =
         Entity.createPanelEntity(
@@ -236,8 +264,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         },
         panelSetupWithRootView = { rootView, _, _ -> bindInfoPanel(rootView) },
       ),
-      // 360 video: equirectangular compositor layer, as in MediaPlayerSample. Created mono, a stereoscopic
-      // video changes the stereo mode of the layer afterwards (applyVideoStereoMode).
+      // 360 video: equirectangular compositor layer, as in MediaPlayerSample. Created mono, with the coverage of
+      // the first media, a stereoscopic video or another coverage reshapes the layer afterwards (applyVideoShape).
       VideoSurfacePanelRegistration(
         R.id.immersive_video_panel,
         surfaceConsumer = { _, surface ->
@@ -247,15 +275,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         },
         settingsCreator = {
           MediaPanelSettings(
-            shape = Equirect360ShapeOptions(radius = VIDEO_SPHERE_RADIUS),
+            shape =
+              if (coverage == ImmersiveSphereCoverage.HALF) Equirect180ShapeOptions(radius = VIDEO_SPHERE_RADIUS)
+              else Equirect360ShapeOptions(radius = VIDEO_SPHERE_RADIUS),
             display = PixelDisplayOptions(width = 3840, height = 1920),
             rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = -1),
           )
         },
         panelSetup = { panel, _ ->
           videoPanel = panel
-          // After the panel creation returns: a stereoscopic video may already be waiting for this panel
-          scope.launch(Dispatchers.Main) { applyVideoStereoMode() }
+          // After the panel creation returns: a stereoscopic or VR180 video may already be waiting for this panel
+          scope.launch(Dispatchers.Main) { applyVideoShape() }
         },
       ),
     )
@@ -286,6 +316,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         ImmersiveStereoLayout.ofRaw(intent.getIntExtra(EXTRA_STEREO_LAYOUT, ImmersiveStereoLayout.MONO.raw))
           ?: ImmersiveStereoLayout.MONO,
       stereoLabels = labels.orEmpty(),
+      coverage =
+        ImmersiveSphereCoverage.ofRaw(intent.getIntExtra(EXTRA_COVERAGE, ImmersiveSphereCoverage.FULL.raw))
+          ?: ImmersiveSphereCoverage.FULL,
     )
   }
 
@@ -298,12 +331,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     Log.i(TAG, "show ${if (media.isVideo) "video" else "photo"}")
     stereoLayout = media.stereoLayout
+    coverage = media.coverage
     if (media.stereoLayout != ImmersiveStereoLayout.MONO) {
       Log.i(TAG, "stereoscopic media, 3D layout ${media.stereoLayout}")
+    }
+    if (media.coverage != ImmersiveSphereCoverage.FULL) {
+      Log.i(TAG, "half sphere media (VR180), coverage ${media.coverage}")
     }
     titleView?.text = media.title
     playPauseButton?.visibility = if (media.isVideo) View.VISIBLE else View.GONE
     updateStereoView()
+    updateCoverageView()
     setInfoVisible(true, reposition = true)
     if (media.isVideo) showVideo(media) else showPhoto(media)
   }
@@ -315,16 +353,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     titleView = root.findViewById(R.id.immersive_title)
     statusView = root.findViewById(R.id.immersive_status)
     stereoView = root.findViewById(R.id.immersive_stereo)
+    coverageView = root.findViewById(R.id.immersive_coverage)
     playPauseButton = root.findViewById(R.id.immersive_play_pause)
     root.findViewById<Button>(R.id.immersive_back)?.setOnClickListener { close() }
     playPauseButton?.setOnClickListener { togglePlayPause() }
     // A click from the controller ray or a hand pinch: the panel is on screen, it stays where it is
     stereoView?.setOnClickListener { cycleStereoLayout(1, fromPanel = true) }
+    coverageView?.setOnClickListener { toggleCoverage() }
     request?.let { media ->
       titleView?.text = media.title
       playPauseButton?.visibility = if (media.isVideo) View.VISIBLE else View.GONE
     }
     updateStereoView()
+    updateCoverageView()
   }
 
   private fun setStatus(text: String) {
@@ -340,6 +381,24 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     view.text = ImmersiveMedia.stereoLayoutText(stereoLayout, media.stereoLabels)
+    view.visibility = View.VISIBLE
+  }
+
+  /**
+   * The field of view button, "360°" or "180°", with "Field of view: 180°, half sphere (VR180)" as tooltip and
+   * description: shown whenever a media is loaded.
+   */
+  private fun updateCoverageView() {
+    val view = coverageView ?: return
+    val media = request
+    if (media == null) {
+      view.visibility = View.GONE
+      return
+    }
+    val description = ImmersiveMedia.coverageText(coverage, media.stereoLabels)
+    view.text = ImmersiveMedia.coverageButtonText(coverage)
+    view.tooltipText = description
+    view.contentDescription = description
     view.visibility = View.VISIBLE
   }
 
@@ -412,6 +471,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     skyboxEntity?.setComponent(
       Transform(Pose(Vector3(center.x, center.y, center.z), Quaternion(0f, photoYaw, 0f))),
     )
+    halfSphereEntity?.setComponent(
+      Transform(Pose(Vector3(center.x, center.y, center.z), Quaternion(0f, photoYaw, 0f))),
+    )
     videoEntity?.setComponent(Transform(Pose(Vector3(center.x, center.y, center.z), Quaternion(0f, videoYaw, 0f))))
   }
 
@@ -438,12 +500,34 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val mode = stereoModeFor(stereoLayout)
     Log.i(TAG, "3D layout is now $stereoLayout (${if (media.isVideo) "video" else "photo"} stereo mode $mode)")
     if (media.isVideo) {
-      applyVideoStereoMode()
+      applyVideoShape()
     } else if (photoTexture != null) {
       // While the first image loads the idle sky stays mono, applySkyboxBitmap applies the layout
       setSkyboxStereoMode(mode)
     }
     updateStereoView()
+    showControlChange(fromPanel)
+  }
+
+  /**
+   * The field of view button of the info panel: 360° (full sphere) or 180° (VR180, the front half, black behind).
+   * Photos switch between the skybox and the half sphere, videos reshape their equirect layer. The panel stays where
+   * it is, as after a click on the 3D layout button.
+   */
+  private fun toggleCoverage() {
+    val media = request ?: return
+    coverage = ImmersiveMedia.toggleCoverage(coverage)
+    Log.i(TAG, "field of view is now $coverage (${if (media.isVideo) "video" else "photo"})")
+    if (media.isVideo) applyVideoShape() else showPhotoSphere()
+    updateCoverageView()
+    showControlChange(fromPanel = true)
+  }
+
+  /**
+   * After a change of the 3D layout or of the field of view: a hidden panel shows up for a few seconds. On a panel
+   * already on screen only the plain auto hide restarts, and a click on the panel ([fromPanel]) leaves it where it is.
+   */
+  private fun showControlChange(fromPanel: Boolean) {
     if (!infoVisible) {
       hideInfoJob?.cancel()
       setInfoVisible(true, reposition = true)
@@ -585,6 +669,65 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     } ?: Log.e(TAG, "skybox scene object not available")
   }
 
+  /**
+   * Half sphere of 180° photos: the equirect surface of an Equirect180 panel (SceneMesh.equirectSurface, 180 degrees
+   * around the forward axis, 180 degrees from the bottom to the top) with an unlit material made like the skybox
+   * one, so its stereo mode works the same way. The image covers it from edge to edge, and nothing is drawn behind
+   * it: the back half stays black while the skybox is hidden, never the stretched or clamped edge of the photo.
+   */
+  private fun createHalfSphere() {
+    registerMeshCreator(HALF_SPHERE_MESH) { entity ->
+      SceneMesh.equirectSurface(
+        HALF_SPHERE_RADIUS,
+        PI.toFloat(),
+        (PI / 2).toFloat(),
+        (-PI / 2).toFloat(),
+        entity.getComponent<Material>().generateSceneMaterial(entity, this),
+      )
+    }
+    val entity =
+      Entity.create(
+        listOf(
+          Mesh(Uri.parse(HALF_SPHERE_MESH), hittable = MeshCollision.NoCollision),
+          Material().apply {
+            baseTextureAndroidResourceId = R.drawable.immersive_idle_sky
+            unlit = true
+          },
+          Transform(Pose(Vector3(0f, 0f, 0f), Quaternion(0f, photoYaw, 0f))),
+          Visible(false),
+        ),
+      )
+    halfSphereEntity = entity
+    systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
+      runOnUiThread {
+        val material = sceneObject.mesh?.materials?.firstOrNull()
+        if (material == null) {
+          Log.e(TAG, "half sphere material not found, 180 degree photos stay on the full sphere")
+          return@runOnUiThread
+        }
+        Log.i(TAG, "half sphere material ready")
+        halfSphereMaterial = material
+        // A photo may already be on the skybox
+        photoTexture?.let { texture ->
+          material.setAlbedoTexture(texture)
+          setSkyboxStereoMode(stereoModeFor(stereoLayout))
+        }
+        showPhotoSphere()
+      }
+    } ?: Log.e(TAG, "half sphere scene object not available")
+  }
+
+  /**
+   * Shows the sphere of the photo: the half sphere for a 180° photo once its texture and the half sphere are ready,
+   * the skybox otherwise (360° photos, and the idle sky while the first image loads). Nothing changes for a video.
+   */
+  private fun showPhotoSphere() {
+    if (request?.isVideo == true) return
+    val half = coverage == ImmersiveSphereCoverage.HALF && photoTexture != null && halfSphereMaterial != null
+    halfSphereEntity?.setComponent(Visible(half))
+    skyboxEntity?.setComponent(Visible(!half))
+  }
+
   /** Uploads the bitmap as the skybox texture, recycles it, destroys the previous photo texture. */
   private fun applySkyboxBitmap(bitmap: Bitmap) {
     val material = skyboxMaterial
@@ -605,9 +748,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
     if (texture == null) throw IOException("texture creation failed")
     material.setAlbedoTexture(texture)
+    halfSphereMaterial?.setAlbedoTexture(texture)
     setSkyboxStereoMode(stereoModeFor(stereoLayout))
     photoTexture?.destroy()
     photoTexture = texture
+    showPhotoSphere()
   }
 
   /**
@@ -617,14 +762,23 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * and the right eye the bottom half, LeftRight the left and the right half. The same full resolution
    * texture and the same skybox serve mono and 3D photos, and the layout changes without a new upload.
    * A second equirect media panel drawn through lockCanvas was the other option: an extra swapchain,
-   * a CPU copy of the image and a surface that arrives later, for the same result.
+   * a CPU copy of the image and a surface that arrives later, for the same result. The half sphere of
+   * 180° photos uses the same default shader and gets the same stereo mode.
    */
   private fun setSkyboxStereoMode(mode: StereoMode) {
-    val material = skyboxMaterial ?: return
-    if (mode == skyboxStereoMode) return
-    material.setStereoMode(mode)
-    skyboxStereoMode = mode
-    Log.i(TAG, "skybox stereo mode is now $mode")
+    skyboxMaterial?.let { material ->
+      if (mode != skyboxStereoMode) {
+        material.setStereoMode(mode)
+        skyboxStereoMode = mode
+        Log.i(TAG, "skybox stereo mode is now $mode")
+      }
+    }
+    halfSphereMaterial?.let { material ->
+      if (mode != halfSphereStereoMode) {
+        material.setStereoMode(mode)
+        halfSphereStereoMode = mode
+      }
+    }
   }
 
   private fun resetSkyboxToIdle() {
@@ -638,6 +792,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     material.setAlbedoTexture(idle)
+    halfSphereMaterial?.setAlbedoTexture(idle)
     setSkyboxStereoMode(StereoMode.None)
     photoTexture?.destroy()
     photoTexture = null
@@ -645,7 +800,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   private fun showPhoto(media: MediaRequest) {
     stopVideo()
-    skyboxEntity?.setComponent(Visible(true))
+    showPhotoSphere()
     setStatus(getString(R.string.immersive_loading))
     loadJob =
       scope.launch {
@@ -868,37 +1023,52 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * Stereoscopic videos: the stereo mode of the equirect compositor layer (UpDown for top and bottom,
-   * LeftRight for side by side, None for mono). The SDK reads it only when it creates the layer
-   * (SceneEquirectLayer has no setter), and PanelSceneObject.reshape destroys the layer and creates a
-   * new one from the panel config, on the same swapchain: the Surface ExoPlayer draws on stays valid,
-   * so the layout changes while the video plays. A mono video never reshapes the panel.
+   * Stereoscopic and VR180 videos: the stereo mode of the equirect compositor layer (UpDown for top and
+   * bottom, LeftRight for side by side, None for mono) and its shape (EQUIRECT over 360 degrees, or
+   * EQUIRECT180 over the front 180 degrees). The SDK reads them only when it creates the layer
+   * (SceneEquirectLayer has no setter), and PanelSceneObject.reshape destroys the layer and the panel
+   * mesh and creates new ones from the panel config, on the same swapchain: the Surface ExoPlayer draws
+   * on stays valid, so the layout and the field of view change while the video plays. The config of
+   * Equirect180ShapeOptions only differs from the Equirect360ShapeOptions one by its shape type and the
+   * central horizontal angle of its layer (pi instead of 2 pi), the stereo mode works the same for both.
+   * Nothing is drawn outside the 180 degree layer: the back half stays black. A mono 360 video never
+   * reshapes the panel.
    */
-  private fun applyVideoStereoMode() {
+  private fun applyVideoShape() {
     val panel = videoPanel ?: return
     if (request?.isVideo != true) return
     val mode = stereoModeFor(stereoLayout)
+    val shape = panelShapeTypeFor(coverage)
     val config = panel.panelShapeConfig
     if (config == null) {
-      Log.w(TAG, "video panel without a shape config, stereo mode $mode not applied")
+      Log.w(TAG, "video panel without a shape config, stereo mode $mode and shape $shape not applied")
       return
     }
-    val previous = config.stereoMode
-    if (previous == mode) return
+    val previousMode = config.stereoMode
+    val previousShape = config.panelShapeType
+    if (previousMode == mode && previousShape == shape) return
     try {
       config.stereoMode = mode
+      config.panelShapeType = shape
+      val layer = config.layerConfig
+      if (layer is EquirectLayerConfig) {
+        layer.centralHorizontalAngle = horizontalAngleFor(coverage)
+      } else {
+        Log.w(TAG, "video panel without an equirect layer config, only its mesh follows the shape $shape")
+      }
       panel.reshape(config)
-      Log.i(TAG, "video stereo mode is now $mode (was $previous)")
+      Log.i(TAG, "video stereo mode is now $mode (was $previousMode), shape $shape (was $previousShape)")
     } catch (e: Exception) {
-      Log.e(TAG, "could not set the video stereo mode to $mode", e)
+      Log.e(TAG, "could not set the video stereo mode to $mode and the shape to $shape", e)
     }
   }
 
   private fun showVideo(media: MediaRequest) {
     resetSkyboxToIdle()
     skyboxEntity?.setComponent(Visible(false))
+    halfSphereEntity?.setComponent(Visible(false))
     videoEntity?.setComponent(Visible(true))
-    applyVideoStereoMode()
+    applyVideoShape()
     player?.stop()
     videoFallbackTried = false
     setStatus(getString(R.string.immersive_loading))
@@ -1023,6 +1193,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     photoTexture = null
     idleTexture = null
     skyboxMaterial = null
+    halfSphereMaterial = null
     super.onSpatialShutdown()
   }
 
@@ -1033,11 +1204,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_TITLE = "app.alextran.immich.immersive.TITLE"
     private const val EXTRA_STEREO_LAYOUT = "app.alextran.immich.immersive.STEREO_LAYOUT"
     private const val EXTRA_STEREO_LABELS = "app.alextran.immich.immersive.STEREO_LABELS"
+    private const val EXTRA_COVERAGE = "app.alextran.immich.immersive.COVERAGE"
     private const val ORIGINAL_PREFIX = "immersive_original_"
     private const val INFO_DISTANCE = 1.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
     private const val DECODER_WARNING_HIDE_MS = 10000L
     private const val VIDEO_SPHERE_RADIUS = 300f
+    /** Mesh of the half sphere of 180° photos, and its radius: the distance of the video sphere. */
+    private const val HALF_SPHERE_MESH = "mesh://immersive_half_sphere"
+    private const val HALF_SPHERE_RADIUS = 300f
 
     /**
      * Starting rotation of the photo sphere and of the video sphere around the vertical axis. Not verified
@@ -1058,6 +1233,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       title: String,
       stereoLayout: ImmersiveStereoLayout,
       stereoLabels: Map<String, String>,
+      coverage: ImmersiveSphereCoverage,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -1071,6 +1247,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putExtra(EXTRA_TITLE, title)
         putExtra(EXTRA_STEREO_LAYOUT, stereoLayout.raw)
         putExtra(EXTRA_STEREO_LABELS, labels)
+        putExtra(EXTRA_COVERAGE, coverage.raw)
       }
     }
 
@@ -1080,6 +1257,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         ImmersiveStereoLayout.MONO -> StereoMode.None
         ImmersiveStereoLayout.TOP_BOTTOM -> StereoMode.UpDown
         ImmersiveStereoLayout.LEFT_RIGHT -> StereoMode.LeftRight
+      }
+
+    /** Shape of the video panel for a coverage, the one Equirect360ShapeOptions or Equirect180ShapeOptions sets. */
+    private fun panelShapeTypeFor(coverage: ImmersiveSphereCoverage): PanelShapeType =
+      when (coverage) {
+        ImmersiveSphereCoverage.FULL -> PanelShapeType.EQUIRECT
+        ImmersiveSphereCoverage.HALF -> PanelShapeType.EQUIRECT180
+      }
+
+    /** Central horizontal angle of the equirect layer for a coverage, in radians, as the shape options set it. */
+    private fun horizontalAngleFor(coverage: ImmersiveSphereCoverage): Float =
+      when (coverage) {
+        ImmersiveSphereCoverage.FULL -> (2 * PI).toFloat()
+        ImmersiveSphereCoverage.HALF -> PI.toFloat()
       }
   }
 }
