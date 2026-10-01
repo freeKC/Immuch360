@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  android:installLocation="auto"
   xmlns:tools="http://schemas.android.com/tools"
   xmlns:horizonos="http://schemas.horizonos/sdk">
 
