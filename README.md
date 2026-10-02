@@ -15,6 +15,19 @@
   <a href="#meta-quest-3">Meta Quest 3</a>
 </p>
 
+<table align="center">
+  <tr>
+    <td align="center" width="33%"><h3>🌐 Native 360°</h3>Photos and videos as a sphere you look around in, with the gyroscope</td>
+    <td align="center" width="33%"><h3>👓 Native 3D</h3>Stereoscopic 360° and VR180, top/bottom or side by side</td>
+    <td align="center" width="33%"><h3>🎥 Native 2.5D</h3>Spatial depth on a flat screen, the view follows your head</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>One app, three platforms, true 3D in the headset</td>
+    <td align="center"><h3>🔌 With or without a server</h3>Your Immich server, or the phone's own gallery, no account needed</td>
+    <td align="center"><h3>🗄️ Network shares</h3>Samba (SMB) and WebDAV read live, nothing downloaded. Next release, in progress</td>
+  </tr>
+</table>
+
 ## Why this fork exists, in one table
 
 Everything the official Immich mobile app does is here, unchanged. On top of it, Immuch360 adds what the official app still lacks for 360° and 3D media:
