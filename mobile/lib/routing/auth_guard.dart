@@ -19,6 +19,12 @@ class AuthGuard extends AutoRouteGuard {
   AuthGuard(this._apiService, this._authService);
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
+    // A session without a server has no token to check
+    if (Store.get(StoreKey.localSession, false)) {
+      resolver.next(true);
+      return;
+    }
+
     // Synchronously check for the access token. auto_route awaits async
     // guards, so we keep this function fully sync and validate the token in
     // the background — otherwise a slow validateAccessToken() request would

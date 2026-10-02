@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "Den immersive Viewer konnt net opgemaach ginn",
   "library_360": "360°",
+  "local_session_connect_server": "Mat engem Server verbannen",
+  "local_session_connect_server_subtitle": "Mat engem Immich-Server synchroniséieren, fir ze sécheren, ze sichen an ze deelen",
+  "local_session_description": "D'App weist d'Fotoen a Videoe vun dësem Apparat. Näischt gëtt iergendwouhin geschéckt.",
+  "local_session_title": "Nëmmen dësen Apparat",
+  "login_form_use_without_server": "Ouni Server benotzen",
   "panorama_coverage": "Siichtfeld",
   "panorama_coverage_full": "360°, ganz Kugel",
   "panorama_coverage_half": "180°, hallef Kugel (VR180)",

@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "D'immersive Aasicht hot sich ned aufmacha lassa",
   "library_360": "360°",
+  "local_session_connect_server": "Mit ma Server verbinda",
+  "local_session_connect_server_subtitle": "Mit ma Immich-Server synchronisiera zom Sichera, Sucha ond Teila",
+  "local_session_description": "D'App zeigt d'Fotos ond Videos vo dem Gerät. Nix wird irgendwohi gschickt.",
+  "local_session_title": "Bloß des Gerät",
+  "login_form_use_without_server": "Ohne Server nutza",
   "panorama_coverage": "Sichtfeld",
   "panorama_coverage_full": "360°, ganze Kugl",
   "panorama_coverage_half": "180°, halbe Kugl (VR180)",

@@ -12,6 +12,7 @@ import 'package:immich_mobile/models/auth/auth_state.model.dart';
 import 'package:immich_mobile/platform/view_intent_api.g.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler_android.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_pending.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -22,6 +23,8 @@ import 'package:immich_mobile/services/view_intent.service.dart';
 import 'package:immich_mobile/services/view_intent_asset_resolver.service.dart';
 import 'package:immich_mobile/services/widget.service.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../infrastructure/local_session.fake.dart';
 
 class MockViewIntentHostApi extends Mock implements ViewIntentHostApi {}
 
@@ -125,6 +128,7 @@ void main() {
           return authNotifier;
         }),
         assetServiceProvider.overrideWithValue(FakeAssetService()),
+        localSessionProvider.overrideWith(FakeLocalSessionNotifier.new),
       ],
     );
 
@@ -139,6 +143,38 @@ void main() {
 
   test('handle defers unauthenticated attachment', () async {
     authNotifier.setAuthenticated(false);
+
+    await handler.handle(payload);
+
+    expect(container.read(viewIntentPendingProvider), payload);
+    verifyNever(() => resolver.resolve(any()));
+  });
+
+  testWidgets('handle opens the viewer in a session without a server instead of deferring', (tester) async {
+    authNotifier.setAuthenticated(false);
+    await container.read(localSessionProvider.notifier).enter();
+    when(
+      () => resolver.resolve(payload),
+    ).thenAnswer((_) async => ViewIntentResolvedAsset(asset: deepLinkAsset, timelineService: deepLinkTimelineService));
+
+    unawaited(handler.handle(payload));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump();
+    await tester.idle();
+
+    expect(container.read(viewIntentPendingProvider), isNull);
+    verify(() => resolver.resolve(payload)).called(1);
+    final captured = verify(() => router.replaceAll(captureAny())).captured;
+    expect(captured, hasLength(1));
+    final routes = captured.single as List<PageRouteInfo<dynamic>>;
+    expect(routes.map((route) => route.routeName), [TabShellRoute.name, AssetViewerRoute.name]);
+  });
+
+  test('handle defers again once the session without a server has ended', () async {
+    authNotifier.setAuthenticated(false);
+    await container.read(localSessionProvider.notifier).enter();
+    await container.read(localSessionProvider.notifier).leave();
 
     await handler.handle(payload);
 

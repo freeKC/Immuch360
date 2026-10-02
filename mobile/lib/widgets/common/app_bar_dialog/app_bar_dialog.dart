@@ -10,12 +10,14 @@ import 'package:immich_mobile/models/server_info/server_disk_info.model.dart';
 import 'package:immich_mobile/pages/common/settings.page.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/backup/backup_server.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
+import 'package:immich_mobile/widgets/common/app_bar_dialog/app_bar_local_session_info.dart';
 import 'package:immich_mobile/widgets/common/app_bar_dialog/app_bar_profile_info.dart';
 import 'package:immich_mobile/widgets/common/app_bar_dialog/app_bar_server_info.dart';
 import 'package:immich_mobile/widgets/common/confirm_dialog.dart';
@@ -36,12 +38,15 @@ class ImmichAppBarDialog extends HookConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final isLoggingOut = useState(false);
     final isReadonlyModeEnabled = ref.watch(readonlyModeProvider);
+    final hasServer = ref.watch(hasServerProvider);
 
     useEffect(() {
-      unawaited(ref.read(backupServerProvider.notifier).updateDiskInfo());
-      unawaited(ref.read(currentUserProvider.notifier).refresh());
+      if (hasServer) {
+        unawaited(ref.read(backupServerProvider.notifier).updateDiskInfo());
+        unawaited(ref.read(currentUserProvider.notifier).refresh());
+      }
       return null;
-    }, []);
+    }, [hasServer]);
 
     SizedBox buildTopRow() {
       return SizedBox(
@@ -147,6 +152,14 @@ class ImmichAppBarDialog extends HookConsumerWidget {
         trailing: isLoggingOut.value
             ? const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2))
             : null,
+      );
+    }
+
+    ListTile buildConnectServerButton() {
+      return buildActionButton(
+        Icons.login_rounded,
+        context.t.local_session_connect_server,
+        () => context.pushRoute(const LoginRoute()),
       );
     }
 
@@ -278,19 +291,22 @@ class ImmichAppBarDialog extends HookConsumerWidget {
                   margin: const EdgeInsets.only(left: 12, right: 12, bottom: 8),
                   child: Column(
                     children: [
-                      const AppBarProfileInfoBox(),
-                      Divider(thickness: 4, color: context.colorScheme.surfaceContainer),
-                      buildStorageInformation(),
-                      Divider(thickness: 4, color: context.colorScheme.surfaceContainer),
-                      const AppBarServerInfo(),
+                      if (hasServer) ...[
+                        const AppBarProfileInfoBox(),
+                        Divider(thickness: 4, color: context.colorScheme.surfaceContainer),
+                        buildStorageInformation(),
+                        Divider(thickness: 4, color: context.colorScheme.surfaceContainer),
+                        const AppBarServerInfo(),
+                      ] else
+                        const AppBarLocalSessionInfo(),
                     ],
                   ),
                 ),
                 if (isReadonlyModeEnabled) buildReadonlyMessage(),
                 buildAppLogButton(),
-                buildFreeUpSpaceButton(),
+                if (hasServer) buildFreeUpSpaceButton(),
                 buildSettingButton(),
-                buildSignOutButton(),
+                if (hasServer) buildSignOutButton() else buildConnectServerButton(),
                 buildFooter(),
               ],
             ),

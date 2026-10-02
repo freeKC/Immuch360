@@ -805,7 +805,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     loadJob =
       scope.launch {
         var shown = false
-        val previewUrl = ImmersiveMedia.previewUrlFor(media.url)
+        // A photo on the headset has no preview: the file itself is right there
+        val isLocal = ImmersiveMedia.localFileFor(media.url) != null
+        val previewUrl = if (isLocal) null else ImmersiveMedia.previewUrlFor(media.url)
         if (previewUrl != null) {
           try {
             val bytes = download(previewUrl)
@@ -838,6 +840,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   private suspend fun loadFullResolution(media: MediaRequest): Pair<Int, Int> {
+    // A photo on the headset (no server, or not uploaded) is decoded where it is: neither copied nor deleted
+    ImmersiveMedia.localFileFor(media.url)?.let { local ->
+      Log.i(TAG, "original on the headset")
+      return decodeAndApply { ImmersiveMedia.decodeFile(local) }
+        ?: throw IOException("this image cannot be read or decoded")
+    }
     val file = File(cacheDir, "$ORIGINAL_PREFIX${System.nanoTime()}")
     try {
       val bytes = downloadTo(media.url, file)

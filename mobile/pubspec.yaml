@@ -2,7 +2,7 @@ name: immich_mobile
 description: Immich - selfhosted backup media file on mobile phone
 
 publish_to: 'none'
-version: 3.3.0-rc.0+3030005
+version: 3.3.0-rc.0+3030006
 
 environment:
   sdk: '>=3.12.0 <4.0.0'
@@ -116,6 +116,10 @@ dev_dependencies:
 # cast 2.1.0 declares a loose bonsoir range but its code targets the 5.x API.
 # Pin bonsoir to 5.x until cast releases a version compatible with bonsoir 6.x.
 dependency_overrides:
+  # Copy of background_downloader 9.5.6 (MIT) with the "trust every certificate" code replaced by a log line: the
+  # Meta Horizon Store security scan flags it and Immuch360 never enables it (see packages/background_downloader)
+  background_downloader:
+    path: packages/background_downloader
   bonsoir: ^5.1.11
   objective_c:
     git:

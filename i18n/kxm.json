@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "เบิกหน้าเมิลแบบอิมเมอร์ซีฟออตบาน",
   "library_360": "360°",
+  "local_session_connect_server": "เชื่อมต่อกับเซิร์ฟเวอร์",
+  "local_session_connect_server_subtitle": "ซิงค์กับเซิร์ฟเวอร์ Immich เพื่อสำรองข้อมูล ค้นหา แล้วก็แชร์",
+  "local_session_description": "แอปแสดงรูปภาพแล้วก็วิดีโอของเครื่องนี้ บ่มีอะไรถูกส่งไปไหน",
+  "local_session_title": "เครื่องนี้เท่านั้น",
+  "login_form_use_without_server": "ใช้โดยบ่มีเซิร์ฟเวอร์",
   "panorama_coverage": "ขอบเขตการมองเห็น",
   "panorama_coverage_full": "360°, ทรงกลมเต็ม",
   "panorama_coverage_half": "180°, ครึ่งทรงกลม (VR180)",

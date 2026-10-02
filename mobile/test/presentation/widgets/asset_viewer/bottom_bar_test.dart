@@ -5,7 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/bottom_bar.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
@@ -20,7 +23,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 import '../../../service.mocks.dart';
+import '../../../unit/factories/local_asset_factory.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
+import '../../../unit/presentation/presentation_context.dart';
 import '../../../widget_tester_extensions.dart';
 
 class MockNativeVideoPlayerController extends Mock implements NativeVideoPlayerController {}
@@ -30,6 +35,23 @@ class MockTimelineService extends Mock implements TimelineService {}
 class TestReadOnlyModeNotifier extends ReadOnlyModeNotifier {
   @override
   bool build() => true;
+}
+
+class _ReadOnlyModeOffNotifier extends ReadOnlyModeNotifier {
+  @override
+  bool build() => false;
+}
+
+class _SeededAssetViewerNotifier extends AssetViewerStateNotifier {
+  _SeededAssetViewerNotifier(this._asset);
+
+  final BaseAsset _asset;
+
+  @override
+  AssetViewerState build() {
+    super.build();
+    return AssetViewerState(currentAsset: _asset);
+  }
 }
 
 void main() {
@@ -81,5 +103,42 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
     unawaited(updates.close());
+  });
+
+  group('ViewerBottomBar for a photo only on the device, in a session without a server', () {
+    late PresentationContext context;
+
+    setUp(() async {
+      context = await PresentationContext.create();
+      // Nobody is signed in, and the session is the one the login page starts without a server
+      when(context.service.user.tryGetMyUser).thenReturn(null);
+      await StoreService.I.put(StoreKey.localSession, true);
+    });
+
+    tearDown(() async {
+      await StoreService.I.delete(StoreKey.localSession);
+      await context.dispose();
+    });
+
+    testWidgets('offers share and delete, but no upload, with nobody signed in', (tester) async {
+      final timeline = MockTimelineService();
+      when(() => timeline.origin).thenReturn(.main);
+
+      await tester.pumpConsumerWidget(
+        const ViewerBottomBar(),
+        overrides: [
+          ...context.overrides,
+          timelineServiceProvider.overrideWithValue(timeline),
+          assetViewerProvider.overrideWith(() => _SeededAssetViewerNotifier(LocalAssetFactory.create())),
+          readonlyModeProvider.overrideWith(_ReadOnlyModeOffNotifier.new),
+        ],
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text(StaticTranslations.instance.share), findsOneWidget);
+      expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+      expect(find.text(StaticTranslations.instance.upload), findsNothing);
+      expect(find.byIcon(Icons.backup_outlined), findsNothing);
+    });
   });
 }

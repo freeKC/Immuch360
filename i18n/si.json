@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "ඉමර්සිව් දසුන විවෘත කළ නොහැකි විය",
   "library_360": "360°",
+  "local_session_connect_server": "සේවාදායකයකට සම්බන්ධ වන්න",
+  "local_session_connect_server_subtitle": "උපස්ථ කිරීමට, සෙවීමට සහ බෙදා ගැනීමට Immich සේවාදායකයක් සමඟ සමමුහුර්ත කරන්න",
+  "local_session_description": "යෙදුම මෙම උපාංගයේ ඡායාරූප සහ වීඩියෝ පෙන්වයි. කිසිවක් කොතැනකටවත් යවනු නොලැබේ.",
+  "local_session_title": "මෙම උපාංගය පමණි",
+  "login_form_use_without_server": "සේවාදායකයක් නොමැතිව භාවිතා කරන්න",
   "panorama_coverage": "දර්ශන ක්ෂේත්‍රය",
   "panorama_coverage_full": "360°, සම්පූර්ණ ගෝලය",
   "panorama_coverage_half": "180°, අර්ධ ගෝලය (VR180)",

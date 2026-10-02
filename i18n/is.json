@@ -1191,6 +1191,11 @@
     "day_at_onepm": "Alla daga klukkan 13"
   },
   "library_360": "360°",
+  "local_session_connect_server": "Tengjast vélþjóni",
+  "local_session_connect_server_subtitle": "Samstilltu við Immich-vélþjón til að taka afrit, leita og deila",
+  "local_session_description": "Forritið sýnir myndir og myndskeið þessa tækis. Ekkert er sent neitt.",
+  "local_session_title": "Aðeins þetta tæki",
+  "login_form_use_without_server": "Nota án vélþjóns",
   "map": "Kort",
   "panorama_coverage": "Sjónsvið",
   "panorama_coverage_full": "360°, heil kúla",

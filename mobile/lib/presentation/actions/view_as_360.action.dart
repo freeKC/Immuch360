@@ -7,13 +7,14 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
+import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 
-/// Views a photo or a video as 360° although the server does not flag it, for 360° files that carry no projection
-/// tag, then opens it in 360°. Once chosen, the action offers to stop treating it as 360° instead. The choice stays
-/// on the device (see [ForcedPanoramaAssets]) and changes nothing on the server, so it is offered wherever the 360°
-/// view is, in the locked folder too.
+/// Views a photo or a video as 360° although the server does not flag it, nor its file on the device, for 360° files
+/// that carry no projection tag, then opens it in 360°. Once chosen, the action offers to stop treating it as 360°
+/// instead. The choice stays on the device (see [ForcedPanoramaAssets]) and changes nothing on the server, so it is
+/// offered wherever the 360° view is, in the locked folder too.
 class ViewAs360Action extends AssetActionBuilder {
   const ViewAs360Action({required super.source});
 
@@ -23,8 +24,11 @@ class ViewAs360Action extends AssetActionBuilder {
     if (asset == null) {
       return null;
     }
-    // Until the exif has loaded, nothing tells whether the server flags the asset as 360°. When it does, the asset is
-    // 360° already, and the choice of the user would change nothing.
+    // Until the exif has loaded, nothing tells whether the server flags the asset as 360°. When it does, or when the
+    // file on the device declares it, the asset is 360° already, and the choice of the user would change nothing.
+    if (ref.watch(isFoundLocalPanoramaProvider(asset))) {
+      return null;
+    }
     final isExifLoading = ref.watch(assetExifProvider(asset).select((exif) => exif.isLoading && !exif.hasValue));
     if (isExifLoading || ref.watch(hasEquirectangularExifProvider(asset))) {
       return null;

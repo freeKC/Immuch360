@@ -20,7 +20,8 @@ typedef _State = ({List<String> localIds, List<String> remoteIds, bool trash, bo
 
 final _stateProvider = Provider.family.autoDispose<_State?, ActionSource>((ref, source) {
   final assets = ref.watch(assetsActionProvider(source));
-  final authUserId = ref.watch(authUserProvider).id;
+  // No user in a session without a server: nothing is owned there, so only the device copies are deleted
+  final authUserId = ref.watch(currentUserProvider.select((user) => user?.id));
 
   final localIds = <String>[];
   final ownedRemote = <RemoteAsset>[];

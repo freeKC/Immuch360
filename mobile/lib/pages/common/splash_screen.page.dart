@@ -16,6 +16,7 @@ import 'package:immich_mobile/infrastructure/repositories/settings.repository.da
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
@@ -159,7 +160,8 @@ class _BottomPanelState extends State<_BottomPanel> {
             _ActionLink(
               icon: Icons.chat_bubble_outline,
               label: context.t.discord,
-              onTap: () => launchUrl(Uri.parse('https://github.com/freeKC/Immuch360'), mode: LaunchMode.externalApplication),
+              onTap: () =>
+                  launchUrl(Uri.parse('https://github.com/freeKC/Immuch360'), mode: LaunchMode.externalApplication),
             ),
             _ActionLink(
               icon: Icons.bug_report_outlined,
@@ -284,6 +286,11 @@ class SplashScreenPageState extends ConsumerState<SplashScreenPage> {
   @override
   void initState() {
     super.initState();
+    if (Store.tryGet(StoreKey.accessToken) == null && ref.read(localSessionProvider)) {
+      _resumeLocalSession();
+      return;
+    }
+
     unawaited(
       ref
           .read(authProvider.notifier)
@@ -307,6 +314,11 @@ class SplashScreenPageState extends ConsumerState<SplashScreenPage> {
     final accessToken = Store.tryGet(StoreKey.accessToken);
 
     if (accessToken != null && serverUrl != null && endpoint != null) {
+      if (ref.read(localSessionProvider)) {
+        // A server login stopped before it could end the session without a server: the server wins
+        unawaited(ref.read(localSessionProvider.notifier).leave());
+      }
+
       final infoProvider = ref.read(serverInfoProvider.notifier);
       final wsProvider = ref.read(websocketProvider.notifier);
       final backgroundManager = ref.read(backgroundSyncProvider);
@@ -373,6 +385,29 @@ class SplashScreenPageState extends ConsumerState<SplashScreenPage> {
     if (context.router.current.name == SplashScreenRoute.name) {
       unawaited(context.replaceRoute(const TabShellRoute()));
     }
+  }
+
+  /// Opens a session without a server: the photos and videos of this device, indexed then searched for 360° ones in
+  /// the background. No account, websocket, server info, remote sync, hashing or backup.
+  ///
+  /// Runs from [initState], before any wait: a file opened with the app is shown at once in such a session, and may
+  /// replace this page at any time.
+  void _resumeLocalSession() {
+    log.info('Resuming a session without a server');
+    final refreshLocalSession = ref.read(localSessionRefreshProvider);
+    final viewIntentHandler = ref.read(viewIntentHandlerProvider);
+
+    unawaited(
+      refreshLocalSession(full: true).then((_) => viewIntentHandler.flushDeferredViewIntent()).catchError((Object e) {
+        log.severe('Failed to open a file shared with the app: $e');
+      }),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && context.router.current.name == SplashScreenRoute.name) {
+        unawaited(context.replaceRoute(const TabShellRoute()));
+      }
+    });
   }
 
   Future<void> _resumeBackup(BackupNotifier notifier) async {

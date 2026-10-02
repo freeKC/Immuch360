@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "Nije moguće otvoriti imerzivni preglednik",
   "library_360": "360°",
+  "local_session_connect_server": "Poveži se sa serverom",
+  "local_session_connect_server_subtitle": "Sinhronizuj sa Immich serverom za sigurnosnu kopiju, pretragu i dijeljenje",
+  "local_session_description": "Aplikacija prikazuje fotografije i videozapise s ovog uređaja. Ništa se nikamo ne šalje.",
+  "local_session_title": "Samo ovaj uređaj",
+  "login_form_use_without_server": "Koristi bez servera",
   "panorama_coverage": "Vidno polje",
   "panorama_coverage_full": "360°, puna sfera",
   "panorama_coverage_half": "180°, polusfera (VR180)",

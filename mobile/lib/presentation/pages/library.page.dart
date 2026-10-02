@@ -11,6 +11,7 @@ import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/people/partner_user_avatar.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/user.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
@@ -41,6 +42,7 @@ class LibraryPage extends StatelessWidget {
 }
 
 /// The shortcut buttons at the top of the Library tab: favorites, 360° photos and videos, archive, shared links, trash.
+/// Without a server only the 360° one is left, the others list server assets.
 @visibleForTesting
 class LibraryActionButtonGrid extends ConsumerWidget {
   const LibraryActionButtonGrid({super.key});
@@ -48,6 +50,20 @@ class LibraryActionButtonGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTrashEnable = ref.watch(serverInfoProvider.select((state) => state.serverFeatures.trash));
+    final hasServer = ref.watch(hasServerProvider);
+
+    final panoramaButton = _ActionButton(
+      icon: Icons.threesixty_rounded,
+      onTap: () => context.pushRoute(const Panorama360Route()),
+      label: context.t.library_360,
+    );
+
+    if (!hasServer) {
+      return SliverPadding(
+        padding: const EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 12),
+        sliver: SliverToBoxAdapter(child: Row(children: [panoramaButton])),
+      );
+    }
 
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 12),
@@ -62,11 +78,7 @@ class LibraryActionButtonGrid extends ConsumerWidget {
                   label: context.t.favorites,
                 ),
                 const SizedBox(width: 8),
-                _ActionButton(
-                  icon: Icons.threesixty_rounded,
-                  onTap: () => context.pushRoute(const Panorama360Route()),
-                  label: context.t.library_360,
-                ),
+                panoramaButton,
               ],
             ),
             const SizedBox(height: 8),
@@ -136,22 +148,24 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-class _CollectionCards extends StatelessWidget {
+class _CollectionCards extends ConsumerWidget {
   const _CollectionCards();
 
   @override
-  Widget build(BuildContext context) {
-    return const SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+  Widget build(BuildContext context, WidgetRef ref) {
+    // People, places and memories come from the server; the device albums do not
+    final hasServer = ref.watch(hasServerProvider);
+
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverToBoxAdapter(
         child: Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
-            _PeopleCollectionCard(),
-            _PlacesCollectionCard(),
-            _LocalAlbumsCollectionCard(),
-            _MemoriesCollectionCard(),
+            if (hasServer) ...const [_PeopleCollectionCard(), _PlacesCollectionCard()],
+            const _LocalAlbumsCollectionCard(),
+            if (hasServer) const _MemoriesCollectionCard(),
           ],
         ),
       ),
@@ -434,6 +448,11 @@ class _QuickAccessButtonList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Folders, the locked folder and the partners all live on the server
+    if (!ref.watch(hasServerProvider)) {
+      return const SliverPadding(padding: EdgeInsets.only(bottom: 32));
+    }
+
     final partnerSharedWithAsync = ref.watch(sharedWithPartnerProvider);
     final partners = partnerSharedWithAsync.valueOrNull ?? [];
 

@@ -44,10 +44,15 @@ final clearSelectionProvider = Provider.family.autoDispose<VoidCallback, ActionS
   return () {};
 }, dependencies: [multiSelectProvider]);
 
-final ownedAssetsActionProvider = Provider.family.autoDispose<AssetFilter<RemoteAsset>, ActionSource>(
-  (ref, source) => ref.watch(assetsActionProvider(source)).owned(ref.watch(authUserProvider).id),
-  dependencies: [assetsActionProvider],
-);
+final ownedAssetsActionProvider = Provider.family.autoDispose<AssetFilter<RemoteAsset>, ActionSource>((ref, source) {
+  // There is no user in a session without a server: nothing is owned, so the actions on owned assets hide
+  final userId = ref.watch(currentUserProvider.select((user) => user?.id));
+  if (userId == null) {
+    return const AssetFilter<RemoteAsset>({});
+  }
+
+  return ref.watch(assetsActionProvider(source)).owned(userId);
+}, dependencies: [assetsActionProvider]);
 
 abstract class AssetActionBuilder extends ActionBuilder {
   final ActionSource source;

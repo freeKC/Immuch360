@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "Imeshindwa kufungua kitazamaji cha uhalisia pepe",
   "library_360": "360°",
+  "local_session_connect_server": "Unganisha kwenye seva",
+  "local_session_connect_server_subtitle": "Sawazisha na seva ya Immich ili kuhifadhi nakala, kutafuta na kushiriki",
+  "local_session_description": "Programu inaonyesha picha na video za kifaa hiki. Hakuna kinachotumwa popote.",
+  "local_session_title": "Kifaa hiki pekee",
+  "login_form_use_without_server": "Tumia bila seva",
   "panorama_coverage": "Uwanja wa mwonekano",
   "panorama_coverage_full": "360°, tufe kamili",
   "panorama_coverage_half": "180°, nusu tufe (VR180)",

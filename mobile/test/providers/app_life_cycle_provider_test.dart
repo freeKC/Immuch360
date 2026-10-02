@@ -15,6 +15,7 @@ import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -28,6 +29,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../infrastructure/repository.mock.dart';
 import '../repository.mocks.dart';
 import '../service.mocks.dart';
+import 'infrastructure/local_session.fake.dart';
 
 class FakeLogMessage extends Fake implements LogMessage {}
 
@@ -54,6 +56,10 @@ class TestAuthNotifier extends AuthNotifier {
 
   @override
   Future<String?> setOpenApiServiceEndpoint() async => 'http://test-server.com';
+
+  void setAuthenticated(bool isAuthenticated) {
+    state = state.copyWith(isAuthenticated: isAuthenticated);
+  }
 }
 
 class TestWebsocketNotifier extends WebsocketNotifier {
@@ -107,6 +113,7 @@ void main() {
   late AppLifeCycleNotifier lifeCycle;
   late int serverVersionCount;
   late int memoryLaneBuilds;
+  late List<String> localSessionCalls;
 
   setUpAll(() async {
     final logRepository = MockLogRepository();
@@ -132,6 +139,7 @@ void main() {
     backgroundSync = MockBackgroundSyncManager();
     serverVersionCount = 0;
     memoryLaneBuilds = 0;
+    localSessionCalls = [];
 
     when(() => serverInfoService.getServerVersion()).thenAnswer((_) {
       serverVersionCount++;
@@ -163,6 +171,8 @@ void main() {
           memoryLaneBuilds++;
           return const [];
         }),
+        localSessionProvider.overrideWith(FakeLocalSessionNotifier.new),
+        localPanoramaScanProvider.overrideWithValue(() async => localSessionCalls.add('scan')),
       ],
     );
     lifeCycle = container.read(appStateProvider.notifier);
@@ -281,6 +291,57 @@ void main() {
     await lifeCycle.handleAppResume();
 
     verify(() => backgroundSync.syncLocal(full: true)).called(1);
+  });
+
+  group('without a server', () {
+    setUp(() async {
+      (container.read(authProvider.notifier) as TestAuthNotifier).setAuthenticated(false);
+      await container.read(localSessionProvider.notifier).enter();
+      when(() => backgroundSync.syncLocal(full: any(named: 'full'))).thenAnswer((invocation) async {
+        localSessionCalls.add('syncLocal');
+      });
+    });
+
+    test('resume only indexes the device, then looks for 360° media', () async {
+      await lifeCycle.handleAppPause();
+      await lifeCycle.handleAppResume();
+
+      expect(lifeCycle.state, AppLifeCycleEnum.resumed);
+      expect(localSessionCalls, ['syncLocal', 'scan']);
+      verify(() => backgroundSync.syncLocal(full: false)).called(1);
+      verifyNever(() => backgroundSync.syncRemote());
+      verifyNever(() => backgroundSync.hashAssets());
+      verifyNever(() => backgroundSync.syncCloudIds());
+      verifyNever(() => backgroundSync.syncLinkedAlbum());
+      expect(serverVersionCount, 0);
+      expect(websocket.connectCount, 0);
+    });
+
+    test('a background launch still gets its full sync', () async {
+      when(() => fgService.wasLaunchedInBackground()).thenAnswer((_) async => true);
+
+      await lifeCycle.handleAppResume();
+
+      expect(localSessionCalls, ['syncLocal', 'scan']);
+      verify(() => backgroundSync.syncLocal(full: true)).called(1);
+      verifyNever(() => backgroundSync.syncRemote());
+    });
+
+    test('connecting a server brings the whole resume back', () async {
+      await container.read(localSessionProvider.notifier).leave();
+      (container.read(authProvider.notifier) as TestAuthNotifier).setAuthenticated(true);
+      websocket.throwOnConnect = false;
+      serverVersion.complete();
+
+      await lifeCycle.handleAppPause();
+      await lifeCycle.handleAppResume();
+
+      expect(localSessionCalls, ['syncLocal'], reason: 'no scan for 360° media of the device');
+      verify(() => backgroundSync.syncRemote()).called(1);
+      verify(() => backgroundSync.hashAssets()).called(1);
+      expect(serverVersionCount, 1);
+      expect(websocket.connectCount, 1);
+    });
   });
 
   test('first resume is skipped on a normal launch', () async {

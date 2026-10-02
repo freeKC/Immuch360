@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/data/data_controller.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/hash.service.dart';
 import 'package:immich_mobile/domain/services/local_sync.service.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
@@ -112,6 +113,10 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
 
   bool get _isBackupEnabled => SettingsRepository.instance.appConfig.backup.enabled;
 
+  /// False in a session without a server and before any login: there is no server to sync with or back up to, only
+  /// the index of the device to keep fresh
+  bool get _hasServerSession => dbStore.Store.tryGet(StoreKey.accessToken) != null;
+
   Future<void> init() async {
     try {
       await Future.wait(
@@ -175,9 +180,7 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
       // whole batch; no phase needs its own timeout.
       final all = Future.wait<dynamic>([
         _localSyncService.sync(),
-        _remoteSyncService.sync(),
-        _hashService.hashAssets(),
-        _handleBackup(),
+        if (_hasServerSession) ...[_remoteSyncService.sync(), _hashService.hashAssets(), _handleBackup()],
       ]);
       if (budget != null) {
         await all.timeout(
@@ -212,6 +215,13 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
     );
     final sw = Stopwatch()..start();
     try {
+      if (!_hasServerSession) {
+        _logger.info("No server session, only syncing the assets of the device");
+        await _localSyncService.sync();
+        // Nothing failed that a retry would fix
+        return false;
+      }
+
       if (!await _syncAssets(hashTimeout: hashTimeout)) {
         _logger.warning("Remote sync did not complete successfully, skipping backup");
         return true;

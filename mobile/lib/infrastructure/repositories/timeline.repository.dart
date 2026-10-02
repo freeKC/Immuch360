@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/data/db/main/table/local/asset.dart';
+import 'package:immich_mobile/data/db/main/table/local/asset.drift.dart';
 import 'package:immich_mobile/data/db/main/table/remote/asset.dart';
 import 'package:immich_mobile/data/db/main/table/remote/asset.drift.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
@@ -163,6 +164,67 @@ class TimelineRepository extends DatabaseAccessor<Drift> with $TimelineRepositor
     return query
         .map((row) => row.readTable(_db.localAssetEntity).toDto(remoteId: row.read(_db.remoteAssetEntity.id)))
         .get();
+  }
+
+  /// Every photo and video of this device, newest first, for a session without a server (see localSessionProvider).
+  /// The main timeline only lists the device albums selected for backup; this one lists them all.
+  TimelineQuery localDevice(GroupAssetsBy groupBy) => _localQueryBuilder(groupBy: groupBy, origin: TimelineOrigin.main);
+
+  /// The photos and videos of this device whose local id is in [ids], newest first: the 360° ones of a session
+  /// without a server, found by reading the files since there is no server exif to filter on
+  TimelineQuery localPanorama360(Set<String> ids, GroupAssetsBy groupBy) =>
+      _localQueryBuilder(filter: (row) => row.id.isIn(ids), groupBy: groupBy, origin: TimelineOrigin.panorama360);
+
+  TimelineQuery _localQueryBuilder({
+    Expression<bool> Function($LocalAssetEntityTable row)? filter,
+    required TimelineOrigin origin,
+    GroupAssetsBy groupBy = GroupAssetsBy.day,
+  }) => (
+    bucketSource: () => _watchLocalBucket(filter: filter, groupBy: groupBy),
+    assetSource: (offset, count) => _getLocalAssets(filter: filter, offset: offset, count: count),
+    origin: origin,
+  );
+
+  Stream<List<Bucket>> _watchLocalBucket({
+    Expression<bool> Function($LocalAssetEntityTable row)? filter,
+    GroupAssetsBy groupBy = GroupAssetsBy.day,
+  }) {
+    if (groupBy == GroupAssetsBy.none) {
+      return _db.localAssetEntity.count(where: filter).map(_generateBuckets).watchSingle();
+    }
+
+    final assetCountExp = _db.localAssetEntity.id.count();
+    final dateExp = _db.localAssetEntity.createdAt.dateFmt(groupBy, toLocal: true);
+
+    final query = _db.localAssetEntity.selectOnly()
+      ..addColumns([assetCountExp, dateExp])
+      ..groupBy([dateExp])
+      ..orderBy([OrderingTerm.desc(dateExp)]);
+    if (filter != null) {
+      query.where(filter(_db.localAssetEntity));
+    }
+
+    return query.map((row) {
+      final timeline = row.read(dateExp)!.truncateDate(groupBy);
+      final assetCount = row.read(assetCountExp)!;
+      return TimeBucket(date: timeline, assetCount: assetCount);
+    }).watch();
+  }
+
+  Future<List<BaseAsset>> _getLocalAssets({
+    Expression<bool> Function($LocalAssetEntityTable row)? filter,
+    required int offset,
+    required int count,
+  }) {
+    // The id breaks ties so that pages of assets taken in the same instant neither overlap nor skip one
+    final query = _db.localAssetEntity.select()
+      ..orderBy([(row) => OrderingTerm.desc(row.createdAt), (row) => OrderingTerm.desc(row.id)])
+      ..limit(count, offset: offset);
+    if (filter != null) {
+      query.where(filter);
+    }
+
+    return query.map((row) => row.toDto()).get();
   }
 
   TimelineQuery remoteAlbum(String albumId, GroupAssetsBy groupBy) => (

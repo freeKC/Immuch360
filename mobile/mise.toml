@@ -134,7 +134,7 @@ run = "flutter build appbundle --flavor phone"
 
 [tasks."build:quest"]
 description = "Build the Meta Quest release APK (quest flavour, arm64 only)"
-run = "flutter build apk --release --flavor quest --target-platform android-arm64"
+run = "flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true"
 
 [tasks.install]
 alias = "install"

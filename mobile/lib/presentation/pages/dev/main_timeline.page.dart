@@ -5,6 +5,7 @@ import 'package:immich_mobile/presentation/widgets/feature_message/feature_messa
 import 'package:immich_mobile/presentation/widgets/memory/memory_lane.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 
 @RoutePage()
@@ -40,10 +41,12 @@ class _MainTimelinePageState extends ConsumerState<MainTimelinePage> {
   @override
   Widget build(BuildContext context) {
     final hasMemories = ref.watch(memoryLaneProvider.select((state) => state.value?.isNotEmpty ?? false));
+    final hasServer = ref.watch(hasServerProvider);
     return Timeline(
       topSliverWidget: const SliverToBoxAdapter(child: MemoryLane()),
       topSliverWidgetHeight: hasMemories ? 200 : 0,
-      showStorageIndicator: true,
+      // Every asset is on the device without a server, so the indicator would mark them all
+      showStorageIndicator: hasServer,
     );
   }
 }

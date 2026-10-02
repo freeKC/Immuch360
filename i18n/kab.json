@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "Ulamek ad yettwaldi umeskan immersif",
   "library_360": "360°",
+  "local_session_connect_server": "Qqen ɣer uqeddac",
+  "local_session_connect_server_subtitle": "Mtawi d uqeddac Immich i weḥraz, anadi d beṭṭu",
+  "local_session_description": "Asnas yeskanay-d tugniwin d tvidyutin n yibenk-a. Ulac ayen yettwaznen ɣer wanda nniḍen.",
+  "local_session_title": "Ibenk-a kan",
+  "login_form_use_without_server": "Seqdec war aqeddac",
   "panorama_coverage": "Urti n tmuɣli",
   "panorama_coverage_full": "360°, tasfirt tummidt",
   "panorama_coverage_half": "180°, azgen n tsfirt (VR180)",

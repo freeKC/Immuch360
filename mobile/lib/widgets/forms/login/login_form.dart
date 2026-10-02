@@ -19,6 +19,7 @@ import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/oauth.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
@@ -71,6 +72,7 @@ class LoginForm extends HookConsumerWidget {
     final isPasswordLoginEnable = useState<bool>(false);
     final oAuthButtonLabel = useState<String>('OAuth');
     final serverInfo = ref.watch(serverInfoProvider);
+    final isLocalSession = ref.watch(localSessionProvider);
     final warningMessage = useState<String?>(null);
     final loginFormKey = GlobalKey<FormState>();
     final ValueNotifier<String?> serverEndpoint = useState<String?>(null);
@@ -275,6 +277,7 @@ class LoginForm extends HookConsumerWidget {
 
           ref.read(websocketProvider.notifier).connect();
           unawaited(ref.read(featureMessageServiceProvider).markSeen());
+          await ref.read(localSessionProvider.notifier).leave();
           if (!context.mounted) {
             return;
           }
@@ -294,6 +297,28 @@ class LoginForm extends HookConsumerWidget {
           gravity: ToastGravity.TOP,
         );
       }
+    }
+
+    /// Opens the photos and videos of this device without a server; one can be connected later from the settings
+    Future<void> useWithoutServer() async {
+      final localSession = ref.read(localSessionProvider.notifier);
+      final refreshLocalSession = ref.read(localSessionRefreshProvider);
+      final viewIntentHandler = ref.read(viewIntentHandlerProvider);
+      final featureMessageService = ref.read(featureMessageServiceProvider);
+
+      await ref.read(galleryPermissionNotifier.notifier).requestGalleryPermission();
+      await localSession.enter();
+      unawaited(
+        refreshLocalSession(full: true).then((_) => viewIntentHandler.flushDeferredViewIntent()).catchError((Object e) {
+          log.severe('Failed to open a file shared with the app: $e');
+        }),
+      );
+      unawaited(featureMessageService.markSeen());
+      if (!context.mounted) {
+        return;
+      }
+
+      unawaited(context.router.replaceAll([const TabShellRoute()]));
     }
 
     String generateRandomString(int length) {
@@ -379,6 +404,11 @@ class LoginForm extends HookConsumerWidget {
             }
 
             unawaited(ref.read(featureMessageServiceProvider).markSeen());
+            await ref.read(localSessionProvider.notifier).leave();
+            if (!context.mounted) {
+              return;
+            }
+
             unawaited(context.router.replaceAll([const TabShellRoute()]));
             return;
           }
@@ -467,6 +497,13 @@ class LoginForm extends HookConsumerWidget {
                   variant: ImmichVariant.ghost,
                   onPressed: () => context.pushRoute(const SettingsRoute()),
                 ),
+                if (!isLocalSession)
+                  ImmichTextButton(
+                    labelText: context.t.login_form_use_without_server,
+                    icon: Icons.cloud_off_rounded,
+                    variant: ImmichVariant.ghost,
+                    onPressed: useWithoutServer,
+                  ),
               ],
             ),
           )

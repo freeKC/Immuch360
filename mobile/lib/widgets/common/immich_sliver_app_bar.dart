@@ -10,6 +10,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/server_info/server_info.model.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
@@ -46,6 +47,7 @@ class ImmichSliverAppBar extends ConsumerWidget {
     final isCasting = ref.watch(castProvider.select((c) => c.isCasting));
     final isReadonlyModeEnabled = ref.watch(readonlyModeProvider);
     final isMultiSelectEnabled = ref.watch(multiSelectProvider.select((s) => s.isEnabled));
+    final hasServer = ref.watch(hasServerProvider);
 
     return SliverIgnorePointer(
       ignoring: isMultiSelectEnabled,
@@ -73,7 +75,7 @@ class ImmichSliverAppBar extends ConsumerWidget {
                 icon: Icon(isCasting ? Icons.cast_connected_rounded : Icons.cast_rounded),
               ),
             ...?actions,
-            if (showUploadButton && !isReadonlyModeEnabled) const _BackupIndicator(),
+            if (showUploadButton && !isReadonlyModeEnabled && hasServer) const _BackupIndicator(),
             const _ProfileIndicator(),
             const SizedBox(width: 8),
           ],
@@ -103,8 +105,10 @@ class _ProfileIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Without a server there is no user, so the face icon stands in for the avatar, and no version to compare
     final user = ref.watch(currentUserProvider);
-    final bool versionWarningPresent = ref.watch(versionWarningPresentProvider(user));
+    final hasServer = ref.watch(hasServerProvider);
+    final bool versionWarningPresent = hasServer && ref.watch(versionWarningPresentProvider(user));
     final serverInfoState = ref.watch(serverInfoProvider);
 
     const widgetSize = 32.0;
@@ -150,7 +154,7 @@ class _ProfileIndicator extends ConsumerWidget {
         alignment: Alignment.bottomRight,
         isLabelVisible: versionWarningPresent,
         offset: const Offset(-2, -12),
-        child: user == null
+        child: user == null || !hasServer
             ? const Icon(Icons.face_outlined, size: widgetSize)
             : Semantics(
                 label: context.t.logged_in_as(user: user.name),

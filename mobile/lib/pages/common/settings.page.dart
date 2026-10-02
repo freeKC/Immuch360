@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
 import 'package:immich_mobile/widgets/settings/asset_list_settings/asset_list_settings.dart';
@@ -69,8 +71,22 @@ enum SettingSection {
     SettingSection.beta => const SyncStatusAndActions(),
   };
 
+  /// Whether the section is about the server (backup, connection, sync), so pointless in a session without one
+  bool get needsServer => switch (this) {
+    SettingSection.backup ||
+    SettingSection.freeUpSpace ||
+    SettingSection.networking ||
+    SettingSection.notifications ||
+    SettingSection.beta => true,
+    _ => false,
+  };
+
   const SettingSection(this.icon);
 }
+
+/// The sections to list, without the server ones when there is no server
+List<SettingSection> _visibleSections(bool hasServer) =>
+    hasServer ? SettingSection.values : SettingSection.values.where((section) => !section.needsServer).toList();
 
 @RoutePage()
 class SettingsPage extends StatelessWidget {
@@ -85,11 +101,12 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-class _MobileLayout extends StatelessWidget {
+class _MobileLayout extends ConsumerWidget {
   const _MobileLayout();
   @override
-  Widget build(BuildContext context) {
-    final List<Widget> settings = SettingSection.values
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasServer = ref.watch(hasServerProvider);
+    final List<Widget> settings = _visibleSections(hasServer)
         .expand(
           (setting) => setting == SettingSection.beta
               ? [
@@ -110,6 +127,17 @@ class _MobileLayout extends StatelessWidget {
                 ],
         )
         .toList();
+    if (!hasServer) {
+      settings.insert(
+        0,
+        SettingsCard(
+          icon: Icons.login_rounded,
+          title: context.t.local_session_connect_server,
+          subtitle: context.t.local_session_connect_server_subtitle,
+          onTap: () => context.pushRoute(const LoginRoute()),
+        ),
+      );
+    }
     settings.add(
       SettingsCard(
         icon: Icons.auto_awesome_outlined,
@@ -122,11 +150,14 @@ class _MobileLayout extends StatelessWidget {
   }
 }
 
-class _TabletLayout extends HookWidget {
+class _TabletLayout extends HookConsumerWidget {
   const _TabletLayout();
   @override
-  Widget build(BuildContext context) {
-    final selectedSection = useState<SettingSection>(SettingSection.values.first);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasServer = ref.watch(hasServerProvider);
+    final sections = _visibleSections(hasServer);
+    final selectedSection = useState<SettingSection>(sections.first);
+    final shownSection = sections.contains(selectedSection.value) ? selectedSection.value : sections.first;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -135,12 +166,20 @@ class _TabletLayout extends HookWidget {
           flex: 2,
           child: CustomScrollView(
             slivers: [
-              ...SettingSection.values.map(
+              if (!hasServer)
+                SliverToBoxAdapter(
+                  child: ListTile(
+                    title: Text(context.t.local_session_connect_server),
+                    leading: const Icon(Icons.login_rounded),
+                    onTap: () => context.pushRoute(const LoginRoute()),
+                  ),
+                ),
+              ...sections.map(
                 (s) => SliverToBoxAdapter(
                   child: ListTile(
                     title: Text(s.title(context.t)),
                     leading: Icon(s.icon),
-                    selected: s.index == selectedSection.value.index,
+                    selected: s.index == shownSection.index,
                     selectedColor: context.primaryColor,
                     selectedTileColor: context.themeData.highlightColor,
                     onTap: () => selectedSection.value = s,
@@ -158,7 +197,7 @@ class _TabletLayout extends HookWidget {
           ),
         ),
         const VerticalDivider(width: 1),
-        Expanded(flex: 4, child: selectedSection.value.widget),
+        Expanded(flex: 4, child: shownSection.widget),
       ],
     );
   }

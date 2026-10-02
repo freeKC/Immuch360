@@ -837,6 +837,148 @@ void main() {
     });
   });
 
+  group('ViewerTopAppBar 360 button on a Meta Quest, for a media only on the headset', () {
+    LocalAsset onHeadset({AssetType type = .image, int? width, int? height}) => LocalAsset(
+      id: 'local-1',
+      name: type == AssetType.video ? 'VID_360.mp4' : 'IMG_360.jpg',
+      type: type,
+      width: width,
+      height: height,
+      createdAt: DateTime(2026),
+      updatedAt: DateTime(2026),
+      playbackStyle: type == AssetType.video ? .video : .image,
+      isEdited: false,
+    );
+
+    testWidgets('is shown for a video too, without the native 360° player of phones', (tester) async {
+      final asset = onHeadset(type: .video);
+      await pumpTopBar(tester, asset, forcedPanoramas: {asset.id}, horizonOs: true);
+
+      expect(panoramaButton, findsOneWidget);
+    });
+
+    testWidgets('opens a photo in the immersive viewer from its file', (tester) async {
+      final asset = onHeadset();
+      final file = File('/storage/emulated/0/Pictures/IMG 360 #1.jpg');
+      when(() => storage.getFileForAsset(asset.id)).thenAnswer((_) async => file);
+      final router = await pumpTopBar(tester, asset, forcedPanoramas: {asset.id}, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      verify(() => immersiveApi.open(file.uri.toString(), any(), false, asset.name, any(), any(), any())).called(1);
+      expect(file.uri.toString(), startsWith('file:///'));
+      expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
+      expect(previewRequests, isEmpty, reason: 'nothing to ask the server');
+    });
+
+    testWidgets('stops a video, then plays it in the immersive viewer from its file, as the file declares', (
+      tester,
+    ) async {
+      probes.result = const SphericalProbe(halfSphere: true, hasSphericalMetadata: true);
+      final asset = onHeadset(type: .video, width: 4096, height: 2048);
+      final file = File('/storage/emulated/0/Oculus/VideoShots/VID_360.mp4');
+      when(() => storage.getFileForAsset(asset.id)).thenAnswer((_) async => file);
+      await pumpTopBar(tester, asset, forcedPanoramas: {asset.id}, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'immersive']);
+      final captured = verify(
+        () => immersiveApi.open(file.uri.toString(), any(), true, asset.name, captureAny(), any(), captureAny()),
+      ).captured;
+      expect(captured, [ImmersiveStereoLayout.leftRight, ImmersiveSphereCoverage.half]);
+      expect(probes.probed, [(asset, file)], reason: 'probed from the file it plays');
+    });
+
+    testWidgets('reads the GPano crop of a photo that looks 3D from its file, at its head or at its tail', (
+      tester,
+    ) async {
+      final directory = Directory.systemTemp.createTempSync('immersive_viewer_test');
+      addTearDown(() => directory.deleteSync(recursive: true));
+      // A 4:1 band of the sphere, which its dimensions alone would take for a side by side 3D photo
+      const band =
+          '<rdf:Description GPano:FullPanoWidthPixels="8704" GPano:FullPanoHeightPixels="4352" '
+          'GPano:CroppedAreaLeftPixels="0" GPano:CroppedAreaTopPixels="1088" '
+          'GPano:CroppedAreaImageWidthPixels="8704" GPano:CroppedAreaImageHeightPixels="2176"/>';
+      // The left eye of a Google VR180 photo, which its dimensions alone would take for a top and bottom 3D photo
+      const halfSphere =
+          '<rdf:Description GPano:FullPanoWidthPixels="8192" GPano:FullPanoHeightPixels="4096" '
+          'GPano:CroppedAreaLeftPixels="2048" GPano:CroppedAreaTopPixels="0" '
+          'GPano:CroppedAreaImageWidthPixels="4096" GPano:CroppedAreaImageHeightPixels="4096"/>';
+      final padding = List.filled(300000, 0x20);
+      for (final (width, height, content, coverage) in [
+        // JPEG keeps its XMP at the head of the file
+        (8704, 2176, [...band.codeUnits, ...padding], ImmersiveSphereCoverage.full),
+        // Past the head window, at the tail
+        (4096, 4096, [...padding, ...halfSphere.codeUnits], ImmersiveSphereCoverage.half),
+      ]) {
+        calls.clear();
+        clearInteractions(immersiveApi);
+        final asset = onHeadset(width: width, height: height);
+        final file = File('${directory.path}/IMG_${width}x$height.jpg')..writeAsBytesSync(content);
+        when(() => storage.getFileForAsset(asset.id)).thenAnswer((_) async => file);
+        await pumpTopBar(tester, asset, forcedPanoramas: {asset.id}, horizonOs: true);
+
+        // The file is read for real, away from the fake clock of the test, until the viewer opens
+        await tester.runAsync(() async {
+          await tester.tap(panoramaButton);
+          for (var i = 0; i < 200 && calls.isEmpty; i++) {
+            await Future<void>.delayed(const Duration(milliseconds: 10));
+          }
+        });
+        await tester.pumpAndSettle();
+
+        final captured = verify(
+          () => immersiveApi.open(file.uri.toString(), any(), false, asset.name, captureAny(), any(), captureAny()),
+        ).captured;
+        expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
+      }
+      expect(previewRequests, isEmpty);
+    });
+
+    testWidgets('opens a photo opened with "Open with" from its temporary copy', (tester) async {
+      // Not in the library: a transient asset, with a temporary copy (see ViewIntentAssetResolver)
+      const path = '/data/user/0/app.alextran.immich/cache/view_intent/IMG 360 #1.jpg';
+      final transient = LocalAsset(
+        id: '-1234567',
+        name: 'IMG 360 #1.jpg',
+        type: AssetType.image,
+        createdAt: DateTime(2026),
+        updatedAt: DateTime(2026),
+        playbackStyle: .image,
+        isEdited: false,
+      );
+      when(() => timeline.origin).thenReturn(TimelineOrigin.deepLink);
+      await pumpTopBar(tester, transient, forcedPanoramas: {transient.id}, horizonOs: true);
+      ProviderScope.containerOf(
+        tester.element(find.byType(ViewerTopAppBar)),
+      ).read(viewIntentFilePathProvider.notifier).setPath(path);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      verify(
+        () => immersiveApi.open(File(path).uri.toString(), any(), false, transient.name, any(), any(), any()),
+      ).called(1);
+      verifyNever(() => storage.getFileForAsset(any()));
+    });
+
+    testWidgets('says so and leaves the video alone when its file cannot be read', (tester) async {
+      final asset = onHeadset(type: .video);
+      when(() => storage.getFileForAsset(asset.id)).thenAnswer((_) async => null);
+      await pumpTopBar(tester, asset, forcedPanoramas: {asset.id}, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, isEmpty, reason: 'nothing stopped the viewer\'s player, so nothing resumes it');
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any()));
+      expect(find.text('Could not open the immersive viewer'), findsOneWidget);
+    });
+  });
+
   group('ViewerTopAppBar 360 button for an asset the user chose to view as 360°', () {
     testWidgets('is shown for a photo whose exif says nothing, and opens the panorama viewer', (tester) async {
       final asset = owned();
@@ -1462,6 +1604,52 @@ void main() {
       expect(request.projection, SpatialProjection.equirectangular180);
       expect(request.layout, SpatialStereoLayout.sideBySide);
       expect(probes.probed.single.$1, asset);
+    });
+  });
+
+  group('ViewerTopAppBar for a photo only on the device, in a session without a server', () {
+    LocalAsset onDevice() => LocalAsset(
+      id: 'local-1',
+      name: 'IMG_0001.jpg',
+      type: AssetType.image,
+      createdAt: DateTime(2026),
+      updatedAt: DateTime(2026),
+      playbackStyle: .image,
+      isEdited: false,
+    );
+
+    setUp(() async {
+      // Nobody is signed in, and the session is the one the login page starts without a server
+      when(context.service.user.tryGetMyUser).thenReturn(null);
+      await StoreService.I.put(StoreKey.localSession, true);
+    });
+
+    tearDown(() => StoreService.I.delete(StoreKey.localSession));
+
+    testWidgets('shows no favorite and no upload, and keeps the menu, with nobody signed in', (tester) async {
+      await pumpTopBar(tester, onDevice());
+
+      expect(tester.takeException(), isNull);
+      expect(favoriteButton, findsNothing);
+      await tester.tap(kebabMenu);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Slideshow'), findsOneWidget);
+      expect(find.text('View as 360°'), findsOneWidget);
+      for (final label in ['Upload', 'Archive', 'Move to locked folder']) {
+        expect(find.text(label), findsNothing, reason: label);
+      }
+    });
+
+    testWidgets('opens a photo chosen as 360° in the panorama viewer', (tester) async {
+      final asset = onDevice();
+      final router = await pumpTopBar(tester, asset, forcedPanoramas: {asset.id});
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(router.current.name, PanoramaViewerRoute.name);
+      expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
     });
   });
 }

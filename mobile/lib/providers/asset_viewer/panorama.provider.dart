@@ -5,6 +5,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:logging/logging.dart';
@@ -21,14 +22,17 @@ final isPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>(
 );
 
 /// Whether the asset, photo or video, is viewed as 360°: its exif carries an equirectangular projection (see
-/// [hasEquirectangularExifProvider]), or the user chose to view it as 360° (see [ForcedPanoramaAssets]). False while
-/// the exif is loading, unless the user chose so. Videos are only playable in 360° where a native player exists (see
-/// panorama360VideoSupportedProvider).
+/// [hasEquirectangularExifProvider]), or the user chose to view it as 360° (see [ForcedPanoramaAssets]), or its file
+/// on the device declares a 360° projection (see [localPanoramaIdsProvider]), which is all there is to tell without
+/// a server. False while the exif is loading, unless the user chose so or the file was read. Videos are only playable
+/// in 360° where a native player exists (see panorama360VideoSupportedProvider).
 final isEquirectangularProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
-  // Both watched, so that the exif is at hand when the user stops viewing the asset as 360°
+  // All watched, so that the exif is at hand when the user stops viewing the asset as 360°
   final isForced = ref.watch(isForcedPanoramaProvider(asset));
   final isFlagged = ref.watch(hasEquirectangularExifProvider(asset));
-  return isForced || isFlagged;
+  final localId = asset.localId;
+  final isFoundOnDevice = localId != null && ref.watch(localPanoramaIdsProvider.select((ids) => ids.contains(localId)));
+  return isForced || isFlagged || isFoundOnDevice;
 });
 
 /// Whether the exif of the asset, photo or video, carries an equirectangular projection: the server flags it as 360°,

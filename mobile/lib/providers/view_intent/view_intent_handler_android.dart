@@ -7,6 +7,7 @@ import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/platform/view_intent_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_pending.provider.dart';
@@ -62,11 +63,14 @@ class AndroidViewIntentHandler implements ViewIntentHandler {
 
   @override
   Future<void> handle(ViewIntentPayload attachment) async {
+    final isAuthenticated = _ref.read(authProvider).isAuthenticated;
+    // A session without a server needs no login to open a file
+    final isLocalSession = _ref.read(localSessionProvider);
     _logger.info(
-      'handle attachment, mimeType:${attachment.mimeType}, localAssetId=${attachment.localAssetId}, path=${attachment.path}, isAuthenticated:${_ref.read(authProvider).isAuthenticated}',
+      'handle attachment, mimeType:${attachment.mimeType}, localAssetId=${attachment.localAssetId}, path=${attachment.path}, isAuthenticated:$isAuthenticated, isLocalSession:$isLocalSession',
     );
 
-    if (!_ref.read(authProvider).isAuthenticated) {
+    if (!isAuthenticated && !isLocalSession) {
       _ref.read(viewIntentPendingProvider.notifier).defer(attachment);
       return;
     }

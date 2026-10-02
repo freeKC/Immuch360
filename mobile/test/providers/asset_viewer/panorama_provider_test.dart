@@ -6,6 +6,7 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -196,6 +197,28 @@ void main() {
       final container = createContainer(exif: {photo: null}, forced: () => _SeededForcedPanoramas({photo.id}));
 
       expect(container.read(isPanoramaProvider(photo)), isTrue);
+    });
+
+    test('view as 360° a photo or a video whose file on the device declares it', () async {
+      await store.put(
+        StoreKey.localPanoramaAssets,
+        encodeLocalPanoramaRecords({
+          'photo': LocalPanoramaRecord(isPanorama: true, checkedAt: DateTime(2024)),
+          'video': LocalPanoramaRecord(isPanorama: true, halfSphere: true, checkedAt: DateTime(2024)),
+          'flat': LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2024)),
+        }),
+      );
+      final photo = LocalAssetFactory.create(id: 'photo');
+      final video = RemoteAssetFactory.create(type: .video, localId: 'video');
+      final flat = LocalAssetFactory.create(id: 'flat');
+      final container = createContainer(exif: {photo: null, video: ProjectionType.none, flat: null});
+
+      expect(container.read(isEquirectangularProvider(photo)), isTrue);
+      expect(container.read(isPanoramaProvider(photo)), isTrue);
+      expect(container.read(isEquirectangularProvider(video)), isTrue, reason: 'found under its id on the device');
+      expect(container.read(isEquirectangularProvider(flat)), isFalse);
+      expect(container.read(hasEquirectangularExifProvider(photo)), isFalse, reason: 'the file is not the server');
+      expect(container.read(isForcedPanoramaProvider(photo)), isFalse);
     });
 
     test('still view as 360° what the server flags, whatever the user chose', () async {

@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import java.io.File
+import java.net.URI
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -124,6 +125,15 @@ internal object ImmersiveMedia {
       ImmersiveSphereCoverage.FULL -> ImmersiveSphereCoverage.HALF
       ImmersiveSphereCoverage.HALF -> ImmersiveSphereCoverage.FULL
     }
+
+  /**
+   * The file of a file:// URL, which Flutter sends for a media on the headset (no server, or not uploaded), or null
+   * for any other URL. Escapes are decoded: "file:///DCIM/IMG%20360.jpg" gives "/DCIM/IMG 360.jpg".
+   */
+  fun localFileFor(url: String): File? {
+    if (!url.startsWith("file:", ignoreCase = true)) return null
+    return runCatching { File(URI(url)) }.getOrNull()
+  }
 
   /** ".../assets/{id}/original?edited=true" gives ".../assets/{id}/thumbnail?size=preview&edited=true". */
   fun previewUrlFor(originalUrl: String): String? {

@@ -17,27 +17,23 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('View360');
 
-// On a Meta Quest, server assets open in the immersive viewer, which also plays 360° videos
-bool _opensImmersive(bool isHorizonOs, BaseAsset asset) => isHorizonOs && asset.remoteId != null;
-
 /// Whether this device has a 360° view for [asset], whatever its projection: the panorama viewer for a photo, and
 /// for a video the native 360° player where the platform has one. On a Meta Quest, the immersive viewer for both,
-/// when the asset is on the server.
+/// from the server or from the file on the headset (see [openImmersiveViewer]).
 final can360ViewProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
   final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
   return switch (asset.type) {
     AssetType.image => true,
-    AssetType.video => _opensImmersive(isHorizonOs, asset) || ref.watch(panorama360VideoSupportedProvider),
+    AssetType.video => isHorizonOs || ref.watch(panorama360VideoSupportedProvider),
     _ => false,
   };
 });
 
-/// Opens [asset] in 360°, as the 360° button of the viewer does: in the immersive viewer on a Meta Quest when the
-/// asset is on the server, else a photo in the panorama viewer and a video in the native 360° player (see
-/// [openPanoramaVideo]). Returns once the view is open, or could not open; a photo returns right away.
+/// Opens [asset] in 360°, as the 360° button of the viewer does: in the immersive viewer on a Meta Quest, else a
+/// photo in the panorama viewer and a video in the native 360° player (see [openPanoramaVideo]). Returns once the
+/// view is open, or could not open; a photo returns right away.
 Future<void> open360View(BuildContext context, WidgetRef ref, BaseAsset asset) async {
-  final isHorizonOs = ref.read(isHorizonOsProvider).valueOrNull ?? false;
-  if (_opensImmersive(isHorizonOs, asset)) {
+  if (ref.read(isHorizonOsProvider).valueOrNull ?? false) {
     return _openImmersive(context, ref, asset);
   }
   switch (asset.type) {

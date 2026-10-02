@@ -11,6 +11,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/search/paginated_search.provider.dart';
 import 'package:immich_mobile/providers/haptic_feedback.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/search/search_input_focus.provider.dart';
@@ -30,6 +31,8 @@ class _TabShellPageState extends ConsumerState<TabShellPage> {
   Widget build(BuildContext context) {
     final isScreenLandscape = context.orientation == Orientation.landscape;
     final isReadonlyModeEnabled = ref.watch(readonlyModeProvider);
+    // Search and the albums come from the server; the tabs build lazily, so the pages never build without one
+    final hasServer = ref.watch(hasServerProvider);
 
     final navigationDestinations = [
       NavigationDestination(
@@ -41,13 +44,13 @@ class _TabShellPageState extends ConsumerState<TabShellPage> {
         label: context.t.search,
         icon: const Icon(Icons.search_rounded),
         selectedIcon: Icon(Icons.search, color: context.primaryColor),
-        enabled: !isReadonlyModeEnabled,
+        enabled: !isReadonlyModeEnabled && hasServer,
       ),
       NavigationDestination(
         label: context.t.albums,
         icon: const Icon(Icons.photo_album_outlined),
         selectedIcon: Icon(Icons.photo_album_rounded, color: context.primaryColor),
-        enabled: !isReadonlyModeEnabled,
+        enabled: !isReadonlyModeEnabled && hasServer,
       ),
       NavigationDestination(
         label: context.t.library$,

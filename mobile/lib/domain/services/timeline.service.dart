@@ -56,6 +56,13 @@ class TimelineFactory {
   TimelineService localAlbum({required String albumId}) =>
       TimelineService(_timelineRepository.localAlbum(albumId, groupBy));
 
+  /// Every photo and video of this device, the Photos tab of a session without a server
+  TimelineService localDevice() => TimelineService(_timelineRepository.localDevice(groupBy));
+
+  /// The 360° photos and videos of this device among [ids] (local asset ids), for a session without a server
+  TimelineService localPanorama360(Set<String> ids) =>
+      TimelineService(_timelineRepository.localPanorama360(ids, groupBy));
+
   TimelineService remoteAlbum({required String albumId}) =>
       TimelineService(_timelineRepository.remoteAlbum(albumId, groupBy));
 

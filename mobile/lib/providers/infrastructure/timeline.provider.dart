@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.state.dart';
 import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 
@@ -12,8 +13,15 @@ final timelineArgsProvider = Provider.autoDispose<TimelineArgs>(
 
 final timelineServiceProvider = Provider<TimelineService>(
   (ref) {
-    final timelineUsers = ref.watch(timelineUsersProvider).valueOrNull ?? [];
-    final timelineService = ref.watch(timelineFactoryProvider).main(timelineUsers);
+    final factory = ref.watch(timelineFactoryProvider);
+    // Without a server there is no user and no backup selection: the Photos tab lists everything on the device
+    final TimelineService timelineService;
+    if (ref.watch(localSessionProvider)) {
+      timelineService = factory.localDevice();
+    } else {
+      final timelineUsers = ref.watch(timelineUsersProvider).valueOrNull ?? [];
+      timelineService = factory.main(timelineUsers);
+    }
     ref.onDispose(timelineService.dispose);
     return timelineService;
   },

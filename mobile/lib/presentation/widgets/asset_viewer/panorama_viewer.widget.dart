@@ -19,6 +19,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
@@ -151,9 +152,61 @@ GPanoInitialView? parseGPanoInitialView(String xmp) {
   return (heading: heading, pitch: pitch, poseHeading: _gpanoTag(xmp, 'PoseHeadingDegrees') ?? 0);
 }
 
+// The GPano projection, as written: "equirectangular" for a 360° panorama, the value the server flags 360° assets
+// by in their exif (ProjectionType), "cylindrical" for a flat one
+@visibleForTesting
+String? parseGPanoProjectionType(String xmp) =>
+    RegExp(r'''GPano:ProjectionType(?:\s*=\s*["']|>)\s*([A-Za-z_-]+)''').firstMatch(xmp)?.group(1);
+
 /// What the viewer takes from the GPano XMP of a panorama: [crop] is the part of the full sphere the image
 /// covers, normalised to [0, 1], null for a full sphere. See [isPartialSphere] for crops covering the whole sphere.
 typedef GPano = ({Rect? crop, GPanoInitialView? initialView});
+
+/// The GPano tags of a file: its [projectionType] as written (see [isEquirectangularGPano]), and what the viewer
+/// takes from them (see [GPano])
+typedef GPanoTags = ({String? projectionType, Rect? crop, GPanoInitialView? initialView});
+
+/// Whether [tags] declare a 360° panorama: an equirectangular projection, in any case, as the server rules on exif
+bool isEquirectangularGPano(GPanoTags tags) => tags.projectionType?.toLowerCase() == 'equirectangular';
+
+// Length of the windows at the head and at the tail of a file where the GPano XMP is looked for
+const _gpanoWindow = 131072;
+
+GPanoTags? _parseGPanoTags(String xmp) {
+  final projectionType = parseGPanoProjectionType(xmp);
+  final crop = parseGPanoCrop(xmp);
+  final initialView = parseGPanoInitialView(xmp);
+  if (projectionType == null && crop == null && initialView == null) {
+    return null;
+  }
+  return (projectionType: projectionType, crop: crop, initialView: initialView);
+}
+
+/// Reads the GPano tags of a file [length] bytes long through [read], from the same windows as [fetchGPano] reads
+/// on the server: the head of the file, where JPEG files carry their XMP, else its tail. Null when neither holds
+/// GPano tags. Errors of [read] are not caught.
+Future<GPanoTags?> readGPanoTags(ByteRangeReader read, int length) async {
+  for (final offset in {0, if (length > _gpanoWindow) length - _gpanoWindow}) {
+    final tags = _parseGPanoTags(String.fromCharCodes(await read(offset, _gpanoWindow)));
+    if (tags != null) {
+      return tags;
+    }
+  }
+  return null;
+}
+
+/// Reads the GPano tags of a photo on the device, see [readGPanoTags]. Errors are not caught.
+Future<GPanoTags?> readGPanoFile(File file) async {
+  final handle = await file.open();
+  try {
+    return await readGPanoTags((offset, length) async {
+      await handle.setPosition(offset);
+      return handle.read(length);
+    }, await handle.length());
+  } finally {
+    await handle.close();
+  }
+}
 
 /// Where the viewer looks first for a GPano initial view, as its longitude and latitude in degrees.
 ///
@@ -408,16 +461,19 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     }
   }
 
-  // Partial spheres and initial views: the server copies the GPano tags into the preview's XMP (same source as web)
+  // Partial spheres and initial views: the server copies the GPano tags into the preview's XMP (same source as web);
+  // a photo only on the device has them in its file
   Future<void> _loadGPano() async {
     final remoteId = widget.asset.remoteId;
-    if (remoteId == null) {
-      return;
-    }
-    final gpano = await fetchGPano(
-      ref.read(panoramaGPanoClientProvider),
-      Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview)),
-    );
+    final localId = widget.asset.localId;
+    final gpano = remoteId != null
+        ? await fetchGPano(
+            ref.read(panoramaGPanoClientProvider),
+            Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview)),
+          )
+        : localId != null
+        ? await _readLocalGPano(localId)
+        : null;
     if (gpano == null || !mounted) {
       return;
     }
@@ -436,6 +492,23 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
         _latitude = direction.latitude;
       }
     });
+  }
+
+  // The GPano tags of the file on the device, from the same windows as on the server. Painting waits for them, so a
+  // file that does not come within a few seconds (one still in the cloud, on iOS) keeps the full sphere.
+  Future<GPano?> _readLocalGPano(String localId) async {
+    final storage = ref.read(storageRepositoryProvider);
+    try {
+      final file = await storage.getFileForAsset(localId).timeout(const Duration(seconds: 5));
+      final tags = file == null ? null : await readGPanoFile(file).timeout(const Duration(seconds: 5));
+      if (tags == null || (tags.crop == null && tags.initialView == null)) {
+        return null;
+      }
+      return (crop: tags.crop, initialView: tags.initialView);
+    } catch (error) {
+      _log.info('Could not read the GPano tags of ${widget.asset.name}: $error');
+      return null; // keep the full sphere
+    }
   }
 
   @override

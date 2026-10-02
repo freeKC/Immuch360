@@ -9,6 +9,7 @@ import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -91,8 +92,11 @@ class AppLifeCycleNotifier extends StateNotifier<AppLifeCycleEnum> {
       _wasPaused = true;
       return;
     }
-    _ref.read(websocketProvider.notifier).connect();
-    await _handleBetaTimelineResume();
+    final hasServer = _ref.read(hasServerProvider);
+    if (hasServer) {
+      _ref.read(websocketProvider.notifier).connect();
+    }
+    await _handleBetaTimelineResume(hasServer: hasServer);
 
     await _ref.read(notificationPermissionProvider.notifier).getNotificationPermission();
 
@@ -111,7 +115,8 @@ class AppLifeCycleNotifier extends StateNotifier<AppLifeCycleEnum> {
     }
   }
 
-  Future<void> _handleBetaTimelineResume() async {
+  /// Without a server ([hasServer] false) only the assets of this device are indexed and searched for 360° ones
+  Future<void> _handleBetaTimelineResume({required bool hasServer}) async {
     unawaited(_ref.read(backgroundWorkerLockServiceProvider).lock());
 
     // Give isolates time to complete any ongoing database transactions
@@ -127,6 +132,15 @@ class AppLifeCycleNotifier extends StateNotifier<AppLifeCycleEnum> {
     final isAlbumLinkedSyncEnable = _ref.read(appConfigProvider).backup.syncAlbums;
 
     try {
+      if (!hasServer) {
+        await _safeRun(() {
+          final full = CurrentPlatform.isAndroid || _fullSyncPending;
+          _fullSyncPending = false;
+          return _ref.read(localSessionRefreshProvider)(full: full);
+        }, "syncLocal");
+        return;
+      }
+
       bool syncSuccess = false;
       await Future.wait([
         _safeRun(() {

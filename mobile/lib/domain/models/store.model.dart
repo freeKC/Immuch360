@@ -34,6 +34,14 @@ enum StoreKey<T> {
   /// for the stereo layouts above, to a SphereCoverage name ("full" or "half"), the latest choice last
   sphereCoverageOverrides<String>._(5002),
 
+  /// The app runs without an Immich server: the photos and videos of this device only, no account, no sync, no
+  /// backup. Set by "Use without a server" on the login page, cleared when a server is connected
+  localSession<bool>._(5003),
+
+  /// 360° photos and videos found on this device by reading their files (the server knows nothing about them):
+  /// a JSON map from the local asset id to what was found, the latest entries last
+  localPanoramaAssets<String>._(5004),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

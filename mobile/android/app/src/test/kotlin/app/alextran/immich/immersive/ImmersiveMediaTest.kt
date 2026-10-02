@@ -1,6 +1,9 @@
 package app.alextran.immich.immersive
 
+import java.io.File
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -45,5 +48,25 @@ class ImmersiveMediaTest {
   fun `unknown sizes do not exceed`() {
     assertFalse(ImmersiveMedia.exceedsAvcDecoder("video/avc", -1, -1))
     assertFalse(ImmersiveMedia.exceedsAvcDecoder("video/avc", 0, 0))
+  }
+
+  @Test
+  fun `a file URL from Flutter gives the file on the headset, its escapes decoded`() {
+    assertEquals(
+      File("/storage/emulated/0/DCIM/Camera/IMG 360 #1.jpg"),
+      ImmersiveMedia.localFileFor("file:///storage/emulated/0/DCIM/Camera/IMG%20360%20%231.jpg"),
+    )
+    assertEquals(
+      File("/storage/emulated/0/Oculus/VideoShots/été.mp4"),
+      ImmersiveMedia.localFileFor("file:///storage/emulated/0/Oculus/VideoShots/%C3%A9t%C3%A9.mp4"),
+    )
+  }
+
+  @Test
+  fun `server URLs and malformed file URLs give no file`() {
+    assertNull(ImmersiveMedia.localFileFor("https://immich.example/api/assets/abc/original?edited=true"))
+    assertNull(ImmersiveMedia.localFileFor("content://media/external/images/media/12"))
+    assertNull(ImmersiveMedia.localFileFor("file:IMG_360.jpg"))
+    assertNull(ImmersiveMedia.localFileFor("file:"))
   }
 }

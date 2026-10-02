@@ -20,6 +20,7 @@ import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/presentation/widgets/album/album_selector.widget.dart';
 import 'package:immich_mobile/presentation/widgets/bottom_sheet/base_bottom_sheet.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/action.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
 
 class GeneralBottomSheet extends ConsumerStatefulWidget {
@@ -46,6 +47,8 @@ class _GeneralBottomSheetState extends ConsumerState<GeneralBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final hasServer = ref.watch(hasServerProvider);
+
     Future<void> addToAlbum(RemoteAlbum album) async {
       final result = await ref.read(actionProvider.notifier).addToAlbum(ActionSource.timeline, album);
 
@@ -91,9 +94,12 @@ class _GeneralBottomSheetState extends ConsumerState<GeneralBottomSheet> {
         .new(action: CleanupLocalAction(source: .timeline)),
         .new(action: UploadAction(source: .timeline)),
       ],
+      // Albums live on the server: none to add to in a session without one
       slivers: [
-        const AddToAlbumHeader(),
-        AlbumSelector(onAlbumSelected: addToAlbum, onKeyboardExpanded: onKeyboardExpand),
+        if (hasServer) ...[
+          const AddToAlbumHeader(),
+          AlbumSelector(onAlbumSelected: addToAlbum, onKeyboardExpanded: onKeyboardExpand),
+        ],
       ],
     );
   }

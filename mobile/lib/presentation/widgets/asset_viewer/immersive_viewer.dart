@@ -11,6 +11,7 @@ import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
@@ -19,6 +20,8 @@ import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.da
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
 import 'package:logging/logging.dart';
@@ -47,27 +50,32 @@ String? immersiveMediaUrl(BaseAsset asset) {
 }
 
 /// Stops the in-app video player, then opens the asset in the immersive viewer. A video plays from the copy on the
-/// device when there is one, like in the in-app player, else from its original on the server.
+/// device when there is one, like in the in-app player, else from its original on the server. A photo opens from its
+/// original on the server, and an asset only on the device (no server, or not uploaded) from its file there, photo or
+/// video alike. A media opened with "Open with" that is not in the library opens from its temporary copy. Throws when
+/// there is no file to open.
 ///
 /// The headset shows each eye its own half of a 3D media, over the whole sphere or its front half (VR180): the
 /// coverage the user picked for the asset, else the layout and the coverage the file declares for a video (see
 /// [SphericalProbeService]), else guesses from the asset dimensions and name (see [resolveSphereView]), until the user
 /// picks others with the controls of the viewer, labelled with [stereoLabels] (see [sphereViewerLabels]). Like the
 /// phone viewer, a partial panorama stays mono whatever its aspect ratio, and covers what its GPano crop says: for a
-/// photo that looks 3D, the GPano crop the server copies into the preview's XMP tells. The guess stands when that
-/// request fails.
+/// photo that looks 3D, the GPano crop the server copies into the preview's XMP tells, or for a photo only on the
+/// device the one in its file. The guess stands when that read fails.
 Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset, {required Map<String, String> stereoLabels}) async {
   final remoteUrl = immersiveMediaUrl(asset);
-  if (remoteUrl == null) {
-    throw StateError('The asset is not on the server');
-  }
   // Read before the first await: the viewer may be gone by then
   final api = ref.read(immersiveApiProvider);
   final storage = ref.read(storageRepositoryProvider);
   final coverageOverrides = ref.read(sphereCoverageOverridesProvider.notifier);
   final probeService = asset.isVideo ? ref.read(sphericalProbeServiceProvider) : null;
   final player = asset.isVideo ? ref.read(videoPlayerProvider(asset.id).notifier) : null;
-  final localId = asset.isVideo ? asset.localId : null;
+  // Opened with "Open with" and not in the library: its temporary copy (see AssetPage)
+  final viewIntentPath = ref.read(timelineServiceProvider).origin == TimelineOrigin.deepLink
+      ? ref.read(viewIntentFilePathProvider)
+      : null;
+  // A photo on the server opens from its original there
+  final localId = asset.isVideo || remoteUrl == null ? asset.localId : null;
   SphereView view({Rect? gpanoCrop, SphericalProbe? probe}) => resolveSphereView(
     fileName: asset.name,
     width: asset.width,
@@ -77,9 +85,22 @@ Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset, {required Map<S
     chosenCoverage: coverageOverrides.get(asset),
   );
   // Only a photo that looks 3D needs its GPano crop
-  final gpanoClient = !asset.isVideo && view().layout != StereoLayout.mono
-      ? ref.read(immersiveGPanoClientProvider)
-      : null;
+  final needsGPanoCrop = !asset.isVideo && view().layout != StereoLayout.mono;
+  final gpanoClient = needsGPanoCrop && remoteUrl != null ? ref.read(immersiveGPanoClientProvider) : null;
+
+  var localFile = viewIntentPath == null ? null : File(viewIntentPath);
+  if (localFile == null && localId != null) {
+    try {
+      localFile = await storage.getFileForAsset(localId);
+    } catch (error) {
+      _log.warning('Copy on the device of ${asset.name} unreadable: $error');
+    }
+  }
+  // The immersive viewer reads file:// URIs too
+  final url = localFile?.uri.toString() ?? remoteUrl;
+  if (url == null) {
+    throw StateError('No file to open for ${asset.name}');
+  }
 
   Rect? gpanoCrop;
   final remoteId = asset.remoteId;
@@ -89,21 +110,16 @@ Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset, {required Map<S
       Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview)),
     );
     gpanoCrop = gpano?.crop;
-    if (gpanoCrop != null && isPartialSphere(gpanoCrop)) {
-      _log.fine('${asset.name} is a partial panorama, shown mono');
+  } else if (needsGPanoCrop && localFile != null) {
+    try {
+      final tags = await readGPanoFile(localFile).timeout(const Duration(seconds: 5));
+      gpanoCrop = tags?.crop;
+    } catch (error) {
+      _log.info('Could not read the GPano tags of ${asset.name}: $error');
     }
   }
-
-  var url = remoteUrl;
-  File? localFile;
-  if (localId != null) {
-    try {
-      // The immersive player reads file:// URIs too
-      localFile = await storage.getFileForAsset(localId);
-      url = localFile?.uri.toString() ?? remoteUrl;
-    } catch (error) {
-      _log.warning('Copy on the device of ${asset.name} unreadable, playing the server original: $error');
-    }
+  if (gpanoCrop != null && isPartialSphere(gpanoCrop)) {
+    _log.fine('${asset.name} is a partial panorama, shown mono');
   }
   final sphereView = view(
     gpanoCrop: gpanoCrop,

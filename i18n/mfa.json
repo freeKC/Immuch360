@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "Tok leh bukak paparan imersif",
   "library_360": "360°",
+  "local_session_connect_server": "Sambung ko server",
+  "local_session_connect_server_subtitle": "Selaraske nga server Immich nok buat sandare, cari nga kongsi",
+  "local_session_description": "Aplikasi tunjuk gambo nga video dale peranti ni. Takdok gapo hok dihanta ko mano-mano.",
+  "local_session_title": "Peranti ni jah",
+  "login_form_use_without_server": "Guno tanpo server",
   "panorama_coverage": "Medan pandang",
   "panorama_coverage_full": "360°, sfera penoh",
   "panorama_coverage_half": "180°, setengoh sfera (VR180)",

@@ -30,6 +30,7 @@ Everything the official Immich mobile app does is here, unchanged. On top of it,
 | 360° badge on thumbnails and a 360° list in the Library tab | ❌ | ✅ |
 | "View as 360°" for files the server does not flag | ❌ | ✅ remembered on the phone |
 | Spatial 2.5D: depth on a flat screen, the view follows your head (front camera, on device) | ❌ | ✅ experimental |
+| Works without any server, on the phone's own gallery | ❌ login required | ✅ "Use without a server" on the login page |
 | Same server, same account, installs next to the official app | | ✅ |
 
 ## Who it is for
@@ -60,6 +61,7 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 - **VR180 (half sphere)**: files that cover only the front half are drawn on a half sphere, with the back black instead of a stretched picture. Recognised from the file (spherical bounds or mesh, GPano crop) or from a "vr180" or "180" in the name, and switchable with a 360°/180° button in every viewer; the choice is remembered on the phone.
 - **Meta Quest 3**: the same Android app runs on the headset as a window, and the 360° button switches to an immersive view where the photo or video is all around you, and you look around by turning your head.
 - **Find them**: a 360° badge on thumbnails and a **360°** entry in the Library tab listing every 360° photo and video.
+- **Use without a server**: on the login page, "Use without a server" opens the app on the phone's own gallery, with the 360°, 3D, VR180 and Spatial viewers and the 360° list, no Immich account needed. The server features stay hidden until you connect a server from the settings; nothing leaves the device.
 - **Everything else is Immich**, unchanged: backup, timeline, albums, search, sharing, partners, all synced with your server.
 
 ## Spatial 2.5D (experimental)
@@ -98,7 +100,7 @@ The app is on Google Play; the App Store version is waiting for Apple's review. 
 |---|---|---|
 | Android phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page (take the `arm64-v8a` file for a phone, or the universal `-release.apk` if unsure; the GitHub build is usually ahead of the store). Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`). | |
 | iPhone and iPad | Waiting for Apple's review. The source builds with Xcode or on Codemagic, see [Build it yourself](#build-it-yourself). | App Store, under review |
-| Meta Quest 3 | The universal `-release.apk`, sideloaded in developer mode, see [Meta Quest 3](#meta-quest-3). | Sideloading only |
+| Meta Quest 3 | The `-quest-release.apk` file of the [Releases](https://github.com/freeKC/Immuch360/releases) page (from build 7; the universal `-release.apk` works too), sideloaded in developer mode, see [Meta Quest 3](#meta-quest-3). | Meta Horizon Store, first build uploaded to the alpha channel, listing in preparation |
 
 The App Store link will be added here as soon as the listing is published. Log in with your usual Immich server URL and account. The current build is based on Immich 3.3.0-rc.0 (Immich `main`, not a stable release yet) and was tested with an Immich 3.2 server. The APK from GitHub does not update itself: watch the Releases page, and once you have installed the app from a store, take the updates from that store. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
 
@@ -118,6 +120,7 @@ The App Store link will be added here as soon as the listing is published. Log i
 | Spatial 2.5D for stereoscopic videos (head coupled depth on a flat screen) | ❌ No | ✅ **Yes**, experimental, on by default, switch in the settings | Experimental, feedback welcome |
 | "View as 360°" for photos and videos the server does not flag as 360° | ❌ No | ✅ **Yes**, in the viewer menu, remembered on the phone | Done |
 | VR180 (half sphere) photos and videos | ❌ No, stretched around the sphere | ✅ **Yes**: spherical bounds, mesh, GPano crop or file name, 360°/180° button in every viewer, remembered on the phone | Tested on an Android emulator with synthetic media; device feedback welcome |
+| Use without an Immich server (local gallery, 360° detection on the device, all viewers) | ❌ No | ✅ **Yes**, from the login page; connect a server later from the settings | Tested on an Android emulator; device feedback welcome |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | ❌ Shown flat or wrongly | ❌ Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
@@ -128,7 +131,7 @@ The 360° photo viewer is based on the upstream pull request [immich-app/immich#
 
 ## Meta Quest 3
 
-The main Immuch360 APK also runs on the Meta Quest 3 (Horizon OS v69 or later; other Quest models are untested). Sideload the universal file, the one ending in `-release.apk` with no ABI name. It is not in the Meta Horizon Store.
+Immuch360 also runs on the Meta Quest 3 (Horizon OS v69 or later; other Quest models are untested). The headset build only talks to servers over HTTPS, or over plain HTTP to names of the home network (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) and to the headset itself, as the Horizon Store requires; phones keep Immich's open policy. Sideload the `-quest-release.apk` file of a release (built for the headset: 64 bit, target SDK 34, without the two permissions the Horizon Store refuses), or the universal `-release.apk`. The headset build has been uploaded to the Meta Horizon Store alpha channel; the store listing is in preparation.
 
 ### Install
 
@@ -182,7 +185,7 @@ If the image does not face you the right way when it opens, turn it with the thu
 
   `-tag:v hvc1` labels the HEVC track the way Apple devices and browsers expect, `-c:a copy` keeps the audio as it is. ffmpeg drops the 360° tag of the export, the exiftool line copies it back; without it, Immich shows the video as a flat one.
 - **Originals that cannot stream:** when the server ignores HTTP Range requests on the original and the MP4 index (moov) is at the end of the file, the whole file would have to download before the first frame, so the app falls back to the server playback stream. A reverse proxy in front of Immich that buffers the responses or strips the Range headers can cause this.
-- **Not in the store:** sideloading only.
+- **Store:** the Horizon Store listing is in preparation (alpha channel today); until then, sideloading.
 - **3D layouts:** top and bottom and side by side 360° media are shown in 3D, each eye getting its own half of the frame. The layout is guessed from the file's shape (square: top and bottom, 4:1: side by side); when the guess is wrong, push the thumbstick up or down, or use the 3D button of the info panel, to change it.
 - **Starting orientation not confirmed yet:** if a photo or video does not face you when it opens, turn it with the thumbstick and report the value (see above).
 - **APK size:** the Spatial SDK adds about 56 MB of 64-bit ARM native code, on phones too, where it is never loaded.
@@ -204,9 +207,8 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 What is planned next, in rough order. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
 - **App Store**: the iOS listing is under review; the link will be added here when it is live.
-- **Use without a server**: open the app on the phone's own gallery, with the 360°, 3D, VR180 and Spatial viewers, and no Immich server at all. The server becomes an option you can add later from the settings.
-- **Network shares**: browse SMB (Samba) and WebDAV shares, for example a NAS, straight from the Library tab, and play their photos and videos live from the share, without downloading or copying anything to the device, in the same viewers, on phones and on the Meta Quest 3. The app reads the share through a local bridge that serves the bytes the players ask for, so seeking works and every player stays unchanged.
-- **Meta Horizon Store**: a headset listing, so the Quest 3 build no longer needs sideloading.
+- **Network shares** (next): browse SMB (Samba) and WebDAV shares, for example a NAS, straight from the Library tab, and play their photos and videos live from the share, without downloading or copying anything to the device, in the same viewers, on phones and on the Meta Quest 3. The app reads the share through a local bridge that serves the bytes the players ask for, so seeking works and every player stays unchanged.
+- **Meta Horizon Store**: the headset build is on the store's alpha channel; the public listing (store page, data use and age questionnaires, review) comes next, so the Quest 3 no longer needs sideloading.
 - **Store listings**: the 3D, VR180 and Spatial features described on Google Play and the App Store.
 - **Raw 360° camera files**: Insta360 .insp and .insv, GoPro .360, dual fisheye .dng. Stitching belongs on the server side; under study.
 - **Upstream**: small pull requests to Immich for the parts the maintainers want, starting with the 360° photo viewer.
@@ -222,7 +224,7 @@ mise install
 mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones, the Google Play and GitHub build
-flutter build apk --release --flavor quest --target-platform android-arm64   # Meta Quest 3, the Horizon Store build
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3, the Horizon Store build
 ```
 
 The two Android flavours are the same app. The `quest` one targets SDK 34, drops the two permissions the Meta Horizon Store refuses (media management and background location) and is 64 bit only; the `phone` one is what Google Play requires. iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository, no Mac needed. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).

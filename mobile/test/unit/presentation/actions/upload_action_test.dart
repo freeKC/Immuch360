@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -183,6 +186,33 @@ void main() {
       await pumpUpload(tester, {LocalAssetFactory.create(remoteId: 'already-there')});
 
       expect(find.byType(ImmichIconButton), findsNothing);
+    });
+  });
+
+  group('UploadAction in a session without a server', () {
+    setUp(() async {
+      // Nobody is signed in, and the session is the one the login page starts without a server
+      when(context.service.user.tryGetMyUser).thenReturn(null);
+      await StoreService.I.put(StoreKey.localSession, true);
+    });
+
+    tearDown(() => StoreService.I.delete(StoreKey.localSession));
+
+    testWidgets('is hidden, with no server to upload to', (tester) async {
+      await pumpUpload(tester, {LocalAssetFactory.create()});
+
+      expect(find.byType(ImmichIconButton), findsNothing);
+    });
+
+    testWidgets('comes back once a server is connected', (tester) async {
+      await pumpUpload(tester, {LocalAssetFactory.create()});
+      expect(find.byType(ImmichIconButton), findsNothing);
+
+      final scope = ProviderScope.containerOf(tester.element(find.byType(ActionIconButton)), listen: false);
+      await scope.read(localSessionProvider.notifier).leave();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ImmichIconButton), findsOneWidget);
     });
   });
 

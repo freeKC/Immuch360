@@ -61,7 +61,7 @@ jobs:
           mise exec -- flutter build apk --release --flavor phone
           mise exec -- flutter build apk --release --flavor phone --split-per-abi --target-platform android-arm,android-arm64,android-x64
           mise exec -- flutter build appbundle --release --flavor phone
-          mise exec -- flutter build apk --release --flavor quest --target-platform android-arm64
+          mise exec -- flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true
           ls -la build/app/outputs/flutter-apk/ build/app/outputs/bundle/phoneRelease/
 
       - name: Rename APKs

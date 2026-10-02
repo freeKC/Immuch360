@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "Kāore i taea te whakatuwhera i te mātaki rumaki",
   "library_360": "360°",
+  "local_session_connect_server": "Tūhono ki tētahi tūmau",
+  "local_session_connect_server_subtitle": "Tukutahi ki tētahi tūmau Immich hei taurua, hei rapu, hei tiri",
+  "local_session_description": "Ka whakaatu te taupānga i ngā whakaahua me ngā ataata o tēnei pūrere. Kāore he mea e tukuna ki hea.",
+  "local_session_title": "Ko tēnei pūrere anake",
+  "login_form_use_without_server": "Whakamahia me te kore tūmau",
   "panorama_coverage": "Āpure tirohanga",
   "panorama_coverage_full": "360°, pōro katoa",
   "panorama_coverage_half": "180°, haurua pōro (VR180)",

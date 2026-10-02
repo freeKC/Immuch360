@@ -56,8 +56,16 @@ android {
     quest {
       dimension "store"
       targetSdk = 34
-      ndk {
-        abiFilters "arm64-v8a"
+    }
+  }
+
+  // The Horizon Store build is 64 bit only: pass -Parm64only=true (flutter build apk --android-project-arg
+  // arm64only=true) to drop the other native libraries that plugins ship. A flavour level ndk abiFilters cannot
+  // be used, it conflicts with Flutter's split per ABI builds of the phone flavour.
+  if (project.hasProperty('arm64only')) {
+    packagingOptions {
+      jniLibs {
+        excludes += ['**/armeabi-v7a/**', '**/x86/**', '**/x86_64/**']
       }
     }
   }

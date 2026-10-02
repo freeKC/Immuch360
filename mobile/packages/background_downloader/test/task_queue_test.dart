@@ -1,0 +1,315 @@
+@Timeout(Duration(minutes: 2))
+library;
+
+// ignore_for_file: avoid_print
+
+import 'dart:math';
+
+import 'package:background_downloader/background_downloader.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+final class TestTaskQueue extends MemoryTaskQueue {
+  double probFailure = 0;
+
+  @override
+  Future<bool> enqueue(Task task) async {
+    debugPrint('${task.taskId} - enqueueing');
+    Future.delayed(const Duration(milliseconds: 200));
+    debugPrint('${task.taskId} - enqueued');
+    Future.delayed(const Duration(seconds: 4)).then((_) {
+      // complete the task after 4 seconds
+      debugPrint('${task.taskId} - finished');
+      taskFinished(task);
+      debugPrint('Remaining tasks: ${waiting.length}, $numActive active');
+    });
+    return Random().nextDouble() > probFailure;
+  }
+}
+
+const workingUrl = 'https://google.com';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  late TestTaskQueue tq;
+
+  var task = DownloadTask(url: 'testUrl');
+
+  setUp(() {
+    tq = TestTaskQueue();
+    tq.probFailure = 0;
+    tq.maxConcurrent = 10000000;
+    tq.minInterval = const Duration(milliseconds: 550);
+  });
+
+  group('Add to queue', () {
+    test('add', () async {
+      expect(tq.isEmpty, isTrue);
+      tq.add(task);
+      await Future.delayed(const Duration(seconds: 5));
+      expect(tq.isEmpty, isTrue);
+    });
+
+    test('add multiple', () async {
+      expect(tq.isEmpty, isTrue);
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: '$n', url: 'testUrl');
+        tq.add(task);
+      }
+      expect(tq.isEmpty, isFalse);
+      await Future.delayed(const Duration(seconds: 10));
+      expect(tq.isEmpty, isTrue);
+      tq.add(DownloadTask(url: 'testUrl'));
+      expect(tq.isEmpty, isTrue);
+      await Future.delayed(const Duration(seconds: 5));
+      expect(tq.isEmpty, isTrue);
+    });
+
+    test('addAll', () async {
+      expect(tq.isEmpty, isTrue);
+      final tasks = <Task>[];
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: '$n', url: 'testUrl');
+        tasks.add(task);
+      }
+      tq.addAll(tasks);
+      expect(tq.isEmpty, isFalse);
+      await Future.delayed(const Duration(seconds: 10));
+      expect(tq.isEmpty, isTrue);
+    });
+  });
+
+  group('Concurrent', () {
+    test('maxConcurrent', () async {
+      tq.maxConcurrent = 2;
+      expect(tq.isEmpty, isTrue);
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: '$n', url: 'testUrl');
+        tq.add(task);
+      }
+      expect(tq.isEmpty, isFalse);
+      await Future.delayed(const Duration(seconds: 10));
+      expect(tq.isEmpty, isFalse);
+      expect(tq.waiting.length, greaterThan(0));
+      await Future.delayed(const Duration(seconds: 20));
+      expect(tq.isEmpty, isTrue);
+    });
+
+    test('numActiveWithHostname', () async {
+      expect(
+        () => DownloadTask(url: '::invalid::').hostName,
+        throwsFormatException,
+      );
+      expect(DownloadTask(url: 'empty').hostName, equals(''));
+      expect(DownloadTask(url: workingUrl).hostName, equals('google.com'));
+      task = DownloadTask(taskId: '1', url: workingUrl);
+      tq.add(task);
+      expect(tq.numActive, equals(1));
+      expect(tq.numActiveWithHostname('google.com'), equals(1));
+      expect(tq.numActiveWithHostname('somethingElse.com'), equals(0));
+      await Future.delayed(const Duration(seconds: 5));
+      expect(tq.isEmpty, isTrue);
+    });
+
+    test('maxConcurrentByHost', () async {
+      tq.maxConcurrentByHost = 2;
+      expect(tq.isEmpty, isTrue);
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: '$n', url: workingUrl);
+        tq.add(task);
+      }
+      expect(tq.isEmpty, isFalse);
+      await Future.delayed(const Duration(seconds: 10));
+      expect(tq.isEmpty, isFalse);
+      expect(tq.waiting.length, greaterThan(0));
+      await Future.delayed(const Duration(seconds: 20));
+      expect(tq.isEmpty, isTrue);
+    });
+
+    test('numActiveWithGroup', () async {
+      task = DownloadTask(taskId: '1', url: workingUrl);
+      tq.add(task);
+      expect(tq.numActive, equals(1));
+      expect(tq.numActiveWithGroup('default'), equals(1));
+      expect(tq.numActiveWithGroup('other'), equals(0));
+      await Future.delayed(const Duration(seconds: 5));
+      expect(tq.isEmpty, isTrue);
+    });
+
+    test('maxConcurrentByGroup', () async {
+      tq.maxConcurrentByGroup = 2;
+      expect(tq.isEmpty, isTrue);
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: '$n', url: workingUrl);
+        tq.add(task);
+      }
+      expect(tq.isEmpty, isFalse);
+      await Future.delayed(const Duration(seconds: 10));
+      expect(tq.isEmpty, isFalse);
+      expect(tq.waiting.length, greaterThan(0));
+      await Future.delayed(const Duration(seconds: 20));
+      expect(tq.isEmpty, isTrue);
+    });
+
+    test('combine maxConcurrent with limit from ByHost', () async {
+      // we load only two urls, so the maxConcurrentByHost is going to be
+      // the limiting factor
+      tq.maxConcurrentByHost = 2;
+      tq.maxConcurrent = 5;
+      expect(tq.isEmpty, isTrue);
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: 'google-$n', url: workingUrl);
+        tq.add(task);
+      }
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: 'other-$n', url: 'http://netflix.com');
+        tq.add(task);
+      }
+      expect(tq.isEmpty, isFalse);
+      await Future.delayed(const Duration(seconds: 10));
+      expect(tq.isEmpty, isFalse);
+      expect(tq.waiting.length, greaterThan(0));
+      await Future.delayed(const Duration(seconds: 35));
+      expect(tq.isEmpty, isTrue);
+    });
+
+    test('combine maxConcurrent without limit from ByHost', () async {
+      // now we load only multiple urls, so the maxConcurrentByHost is not
+      // going to be the limiting factor
+      tq.maxConcurrentByHost = 2;
+      tq.maxConcurrent = 5;
+      expect(tq.isEmpty, isTrue);
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: 'google-$n', url: workingUrl);
+        tq.add(task);
+      }
+      for (var n = 0; n < 10; n++) {
+        // different url for each
+        task = DownloadTask(taskId: 'other-$n', url: 'http://netflix$n.com');
+        tq.add(task);
+      }
+      expect(tq.isEmpty, isFalse);
+      await Future.delayed(const Duration(seconds: 10));
+      expect(tq.isEmpty, isFalse);
+      expect(tq.waiting.length, greaterThan(0));
+      await Future.delayed(const Duration(seconds: 35));
+      expect(tq.isEmpty, isTrue);
+    });
+  });
+
+  group('errors', () {
+    test('enqueueErrors', () async {
+      tq.probFailure = 0.8; // 80% failure rate
+      var errorCount = 0;
+      tq.enqueueErrors.listen((task) {
+        errorCount += 1;
+        print('${task.taskId} failed to enqueue');
+      });
+      expect(tq.isEmpty, isTrue);
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: '$n', url: 'testUrl');
+        tq.add(task);
+      }
+      expect(tq.isEmpty, isFalse);
+      await Future.delayed(const Duration(seconds: 25));
+      expect(tq.isEmpty, isTrue);
+      print('$errorCount enqueue errors');
+      expect(errorCount, greaterThan(3));
+    });
+  });
+
+  group('Pause and Resume', () {
+    test('pauseAll global', () async {
+      tq.maxConcurrent = 2;
+      for (var n = 0; n < 10; n++) {
+        task = DownloadTask(taskId: '$n', url: 'testUrl');
+        tq.add(task);
+      }
+      expect(tq.waiting.length, equals(9));
+
+      // Initial processing
+      await Future.delayed(const Duration(seconds: 1));
+      // Should have dequeued 2 tasks
+      expect(tq.waiting.length, lessThan(10));
+      expect(tq.numActive, equals(2));
+
+      await tq.pauseAll();
+
+      // Wait a bit - queue should not advance
+      final waitingBefore = tq.waiting.length;
+      await Future.delayed(
+        const Duration(seconds: 6),
+      ); // wait for active tasks to finish
+      // Active tasks finish, but no new tasks should be dequeued
+      expect(tq.waiting.length, equals(waitingBefore));
+      expect(tq.numActive, equals(0));
+
+      await tq.resumeAll();
+      await Future.delayed(const Duration(seconds: 1));
+      expect(tq.numActive, equals(2));
+    });
+
+    test('pauseAll by group', () async {
+      tq.maxConcurrent = 4;
+      for (var n = 0; n < 5; n++) {
+        task = DownloadTask(taskId: 'A-$n', url: 'testUrl', group: 'A');
+        tq.add(task);
+      }
+      for (var n = 0; n < 5; n++) {
+        task = DownloadTask(taskId: 'B-$n', url: 'testUrl', group: 'B');
+        tq.add(task);
+      }
+
+      // Pause group A immediately
+      await tq.pauseAll(group: 'A');
+
+      // Wait for queue to process
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Tasks from group A should be waiting, group B should be active
+      expect(tq.numActiveWithGroup('B'), greaterThan(0));
+      expect(tq.numActiveWithGroup('A'), lessThan(2)); // A-0 may be active
+
+      // Wait for B to finish
+      await Future.delayed(const Duration(seconds: 10));
+      expect(tq.numActiveWithGroup('B'), equals(0));
+
+      // A should still be waiting
+      expect(tq.numWaitingWithGroup('A'), equals(4));
+
+      await tq.resumeAll(group: 'A');
+      await Future.delayed(const Duration(seconds: 1));
+      expect(tq.numActiveWithGroup('A'), greaterThan(0));
+    });
+
+    test('pauseAll by specific tasks', () async {
+      tq.maxConcurrent = 5;
+      final tasksA = <DownloadTask>[];
+      final tasksB = <DownloadTask>[];
+
+      for (var n = 0; n < 5; n++) {
+        var t = DownloadTask(taskId: 'A-$n', url: 'testUrl', group: 'A');
+        tasksA.add(t);
+        tq.add(t);
+      }
+      for (var n = 0; n < 5; n++) {
+        var t = DownloadTask(taskId: 'B-$n', url: 'testUrl', group: 'B');
+        tasksB.add(t);
+        tq.add(t);
+      }
+
+      // Pause specific tasks from group A
+      await tq.pauseAll(tasks: tasksA);
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Group B should be running, Group A should be paused
+      expect(tq.numActiveWithGroup('B'), greaterThan(0));
+      expect(tq.numActiveWithGroup('A'), lessThan(2)); // A-0 may be active
+
+      await tq.resumeAll(tasks: tasksA);
+      await Future.delayed(const Duration(seconds: 2));
+      expect(tq.numActiveWithGroup('A'), greaterThan(0));
+    });
+  });
+}

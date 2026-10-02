@@ -316,6 +316,124 @@ void main() {
     });
   });
 
+  group('localDevice assets', () {
+    Future<List<String>> listedIds([GroupAssetsBy groupBy = .day]) async {
+      final assets = await sut.localDevice(groupBy).assetSource(0, 100);
+      return assets.map((asset) => (asset as LocalAsset).id).toList();
+    }
+
+    Future<int> bucketTotal([GroupAssetsBy groupBy = .day]) async {
+      final buckets = await sut.localDevice(groupBy).bucketSource().first;
+      return buckets.fold<int>(0, (total, bucket) => total + bucket.assetCount);
+    }
+
+    test('lists every asset of the device, in a device album or not, newest first', () async {
+      final album = await ctx.newLocalAlbum();
+      final oldest = await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 1, 12));
+      final newest = await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 3, 12), type: .video);
+      final middle = await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 2, 12));
+      await ctx.newLocalAlbumAsset(albumId: album.id, assetId: middle.id);
+
+      expect(await listedIds(), [newest.id, middle.id, oldest.id]);
+      expect(await listedIds(.month), [newest.id, middle.id, oldest.id]);
+      expect(await listedIds(.none), [newest.id, middle.id, oldest.id]);
+      expect(await bucketTotal(), 3);
+      expect(await bucketTotal(.month), 3);
+      expect(await bucketTotal(.none), 3);
+
+      final assets = await sut.localDevice(.day).assetSource(0, 100);
+      expect(assets.first.isVideo, isTrue);
+      expect(sut.localDevice(.day).origin, TimelineOrigin.main);
+    });
+
+    test('groups the assets by day and by month, newest first', () async {
+      await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 8, 20, 12));
+      await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 1, 12));
+      await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 3, 12));
+      await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 3, 12, 30));
+
+      final days = await sut.localDevice(.day).bucketSource().first;
+      expect(days.map((bucket) => bucket.assetCount), [2, 1, 1]);
+      final dates = days.map((bucket) => (bucket as TimeBucket).date).toList();
+      expect(dates, [...dates]..sort((a, b) => b.compareTo(a)));
+
+      final months = await sut.localDevice(.month).bucketSource().first;
+      expect(months.map((bucket) => bucket.assetCount), [3, 1]);
+    });
+
+    test('pages through assets taken in the same instant without repeating or skipping one', () async {
+      final createdAt = DateTime.utc(2024, 9, 1, 12);
+      final seeded = [for (var i = 0; i < 5; i++) await ctx.newLocalAsset(createdAt: createdAt)];
+
+      final query = sut.localDevice(.day);
+      final pages = [
+        ...await query.assetSource(0, 2),
+        ...await query.assetSource(2, 2),
+        ...await query.assetSource(4, 2),
+      ];
+
+      expect(pages.map((asset) => (asset as LocalAsset).id), unorderedEquals(seeded.map((asset) => asset.id)));
+    });
+
+    test('is empty on a device without assets', () async {
+      expect(await listedIds(), isEmpty);
+      expect(await sut.localDevice(.day).bucketSource().first, isEmpty);
+      expect(await sut.localDevice(.none).bucketSource().first, isEmpty);
+    });
+
+    test('updates the buckets when the device index grows', () async {
+      final buckets = sut.localDevice(.day).bucketSource();
+
+      final expectation = expectLater(
+        buckets.map((list) => list.fold<int>(0, (total, bucket) => total + bucket.assetCount)),
+        emitsInOrder([0, 1]),
+      );
+      await Future<void>.delayed(Duration.zero);
+      await ctx.newLocalAsset();
+
+      await expectation;
+    });
+  });
+
+  group('localPanorama360 assets', () {
+    Future<List<String>> listedIds(Set<String> ids, [GroupAssetsBy groupBy = .day]) async {
+      final assets = await sut.localPanorama360(ids, groupBy).assetSource(0, 100);
+      return assets.map((asset) => (asset as LocalAsset).id).toList();
+    }
+
+    Future<int> bucketTotal(Set<String> ids, [GroupAssetsBy groupBy = .day]) async {
+      final buckets = await sut.localPanorama360(ids, groupBy).bucketSource().first;
+      return buckets.fold<int>(0, (total, bucket) => total + bucket.assetCount);
+    }
+
+    test('lists only the given assets, photos and videos, newest first', () async {
+      final photo = await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 1, 12));
+      final video = await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 3, 12), type: .video);
+      await ctx.newLocalAsset(createdAt: DateTime.utc(2024, 9, 2, 12));
+      final ids = {photo.id, video.id, 'gone-from-the-device'};
+
+      for (final groupBy in [GroupAssetsBy.day, GroupAssetsBy.month, GroupAssetsBy.none]) {
+        expect(await listedIds(ids, groupBy), [video.id, photo.id], reason: groupBy.name);
+        expect(await bucketTotal(ids, groupBy), 2, reason: groupBy.name);
+      }
+
+      final buckets = await sut.localPanorama360(ids, .day).bucketSource().first;
+      expect(buckets.map((bucket) => bucket.assetCount), [1, 1]);
+
+      final assets = await sut.localPanorama360(ids, .day).assetSource(0, 100);
+      expect(assets.first.isVideo, isTrue);
+      expect(sut.localPanorama360(ids, .day).origin, TimelineOrigin.panorama360);
+    });
+
+    test('is empty when no asset was found to be 360', () async {
+      await ctx.newLocalAsset();
+
+      expect(await listedIds(const {}), isEmpty);
+      expect(await bucketTotal(const {}), 0);
+      expect(await bucketTotal(const {}, .none), 0);
+    });
+  });
+
   group('localAlbum assets', () {
     late String userId;
     late String otherUserId;

@@ -203,6 +203,48 @@ void main() {
       });
     });
 
+    group('in a session without a server', () {
+      setUp(() async {
+        // Nobody is signed in, and the session is the one the login page starts without a server
+        when(context.service.user.tryGetMyUser).thenReturn(null);
+        await StoreService.I.put(StoreKey.localSession, true);
+      });
+
+      tearDown(() => StoreService.I.delete(StoreKey.localSession));
+
+      testWidgets('deletes an asset on the device from the device', (tester) async {
+        final asset = LocalAssetFactory.create();
+
+        await pumpDelete(tester, {asset});
+        await tester.pumpAndSettle();
+
+        verify(() => cleanupService.deleteLocalAssets([asset.id])).called(1);
+        verifyNever(() => assetService.trash(any()));
+        verifyNever(() => assetService.delete(any()));
+      });
+
+      testWidgets('leaves the server alone for an asset that also has a server copy', (tester) async {
+        final asset = owned(localId: 'local');
+
+        await pumpDelete(tester, {asset});
+        await tester.pumpAndSettle();
+
+        verify(() => cleanupService.deleteLocalAssets(['local'])).called(1);
+        verifyNever(() => assetService.trash(any()));
+        verifyNever(() => assetService.delete(any()));
+      });
+
+      testWidgets('is hidden for an asset only on the server', (tester) async {
+        await tester.pumpTestWidget(
+          context,
+          const ActionIconButton(action: DeleteAction(source: .timeline)),
+          overrides: context.selected({owned()}),
+        );
+
+        expect(find.byType(ImmichIconButton), findsNothing);
+      });
+    });
+
     group('prompt handling', () {
       testWidgets('permanent delete shows a single app dialog', (tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;

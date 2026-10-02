@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "Ne c'haller ket digeriñ ar gweler soubus",
   "library_360": "360°",
+  "local_session_connect_server": "Kevreañ ouzh ur servijer",
+  "local_session_connect_server_subtitle": "Goubredañ gant ur servijer Immich evit gwareziñ, klask ha rannañ",
+  "local_session_description": "An arload a ziskouez luc'hskeudennoù ha videoioù an trobarzhell-mañ. Netra ne vez kaset e lec'h ebet.",
+  "local_session_title": "An trobarzhell-mañ hepken",
+  "login_form_use_without_server": "Implijout hep servijer",
   "panorama_coverage": "Maez-gwel",
   "panorama_coverage_full": "360°, sferenn a-bezh",
   "panorama_coverage_half": "180°, hanter-sferenn (VR180)",

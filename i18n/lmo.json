@@ -1,6 +1,11 @@
 {
   "immersive_viewer_open_failed": "Se pò minga dervì el visor immersiv",
   "library_360": "360°",
+  "local_session_connect_server": "Conètes a on server",
+  "local_session_connect_server_subtitle": "Sincronizza cont on server Immich per fà la còpia de segurezza, cercà e condivid",
+  "local_session_description": "L'app la mostra i foto e i video de sto dispositiv. Nient el vegn mandaa de nissuna part.",
+  "local_session_title": "Domà sto dispositiv",
+  "login_form_use_without_server": "Dovra senza server",
   "panorama_coverage": "Camp visiv",
   "panorama_coverage_full": "360°, sfera intrega",
   "panorama_coverage_half": "180°, meza sfera (VR180)",
