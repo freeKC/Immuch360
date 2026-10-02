@@ -119,6 +119,8 @@ dev_dependencies:
 # cast 2.1.0 declares a loose bonsoir range but its code targets the 5.x API.
 # Pin bonsoir to 5.x until cast releases a version compatible with bonsoir 6.x.
 dependency_overrides:
+  dart_smb2:
+    path: packages/dart_smb2
   # Copy of background_downloader 9.5.6 (MIT) with the "trust every certificate" code replaced by a log line: the
   # Meta Horizon Store security scan flags it and Immuch360 never enables it (see packages/background_downloader)
   background_downloader:

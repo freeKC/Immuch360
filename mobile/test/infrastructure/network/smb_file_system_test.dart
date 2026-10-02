@@ -375,6 +375,20 @@ void main() {
       expect(fileSystem.source.id, 'smb1');
     });
 
+    test('logs on with an empty password when a user name is given (Freebox Server)', () async {
+      await open(
+        source: _smbSource().copyWith(username: 'freebox'),
+        password: '',
+      );
+      expect(connections.single.user, 'freebox');
+      expect(connections.single.password, '');
+    });
+
+    test('logs on with an empty password when the password is missing but a user name is given', () async {
+      await open(source: _smbSource().copyWith(username: 'freebox'), password: null);
+      expect(connections.single.password, '');
+    });
+
     test('logs on anonymously without user name nor password', () async {
       await open(
         source: _smbSource(username: ''),
@@ -625,6 +639,12 @@ void main() {
 
       expect(shares, ['archive', 'Media', 'photos']);
       expect(calls.single, (server: 'nas.local:1445', user: 'alice', password: 'secret', domain: 'HOME', timeout: 7));
+    });
+
+    test('lists the shares with an empty password when a user name is given', () async {
+      await SmbFileSystem.listShares(_smbSource(username: 'freebox'), '', connect: enumerator(const []));
+      expect(calls.single.user, 'freebox');
+      expect(calls.single.password, '');
     });
 
     test('logs on as a guest without a user name nor a password', () async {

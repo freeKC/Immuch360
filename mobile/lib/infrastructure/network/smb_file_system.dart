@@ -43,7 +43,8 @@ class SmbFileSystem implements NetworkFileSystem {
   /// [NetworkFileSystemException] when the server cannot be reached, refuses the credentials, has no such share or
   /// no such folder.
   ///
-  /// A user name written "DOMAIN\user" logs on to that domain. With no password the logon is anonymous (guest).
+  /// A user name written "DOMAIN\user" logs on to that domain. Without a user name the logon is anonymous (guest); a
+  /// user name with an empty password logs on with that empty password (a Freebox Server wants "freebox" and nothing).
   static Future<SmbFileSystem> open(
     NetworkSource source,
     String? password, {
@@ -76,7 +77,7 @@ class SmbFileSystem implements NetworkFileSystem {
           server: server,
           share: share,
           user: user,
-          password: password == null || password.isEmpty ? null : password,
+          password: logonPassword(user, password),
           domain: domain,
           timeoutSeconds: timeoutSeconds,
         ),
@@ -134,7 +135,7 @@ class SmbFileSystem implements NetworkFileSystem {
       () => connect(
         server: server,
         user: user,
-        password: password == null || password.isEmpty ? null : password,
+        password: logonPassword(user, password),
         domain: domain,
         timeoutSeconds: timeoutSeconds,
       ),
@@ -449,6 +450,16 @@ class SmbFileSystem implements NetworkFileSystem {
   /// The share name without slashes around it
   @visibleForTesting
   static String shareNameOf(String share) => share.trim().replaceAll(RegExp(r'^[\\/]+|[\\/]+$'), '');
+
+  /// The password handed to libsmb2: null (anonymous logon) without a user name, otherwise the password as typed, an
+  /// empty one included. libsmb2 treats a missing password as an anonymous session, which servers such as the Freebox
+  /// Server refuse for their disk shares while they accept "freebox" with an empty password.
+  static String? logonPassword(String? user, String? password) {
+    if (user == null || user.isEmpty) {
+      return null;
+    }
+    return password ?? '';
+  }
 
   /// "DOMAIN\user" gives the user and the domain; an empty name gives none (anonymous logon)
   @visibleForTesting

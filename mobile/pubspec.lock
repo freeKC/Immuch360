@@ -316,10 +316,9 @@ packages:
   dart_smb2:
     dependency: "direct main"
     description:
-      name: dart_smb2
-      sha256: cd7fbb5e21b188e2b098c16fea18ef2a8028e937592259f57b1c3eccfd63d85a
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/dart_smb2"
+      relative: true
+    source: path
     version: "0.1.3"
   dart_style:
     dependency: transitive
