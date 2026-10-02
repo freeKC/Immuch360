@@ -67,7 +67,9 @@ jobs:
       - name: Rename APKs
         run: |
           cd mobile/build/app/outputs/flutter-apk
-          for f in app-phone-*.apk; do mv "$f" "Immuch360-${GITHUB_REF_NAME}-${f#app-phone-}"; done
+          # Flutter names the flavour builds app-phone-release.apk (universal) and app-<abi>-phone-release.apk (split)
+          mv app-phone-release.apk "Immuch360-${GITHUB_REF_NAME}-release.apk"
+          for f in app-*-phone-release.apk; do abi="${f#app-}"; abi="${abi%-phone-release.apk}"; mv "$f" "Immuch360-${GITHUB_REF_NAME}-${abi}-release.apk"; done
           mv app-quest-release.apk "Immuch360-${GITHUB_REF_NAME}-quest-release.apk"
           mv ../bundle/phoneRelease/app-phone-release.aab "Immuch360-${GITHUB_REF_NAME}.aab"
           ls -la

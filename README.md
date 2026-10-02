@@ -98,7 +98,7 @@ The app is on Google Play; the App Store version is waiting for Apple's review. 
 
 | Platform | Today | Soon |
 |---|---|---|
-| Android phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page (take the `arm64-v8a` file for a phone, or the universal `-release.apk` if unsure; the GitHub build is usually ahead of the store). Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`). | |
+| Android phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page (take the `arm64-v8a` file for a phone when the release has one, else the universal `-release.apk`; the GitHub build is usually ahead of the store). Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`). | |
 | iPhone and iPad | Waiting for Apple's review. The source builds with Xcode or on Codemagic, see [Build it yourself](#build-it-yourself). | App Store, under review |
 | Meta Quest 3 | The `-quest-release.apk` file of the [Releases](https://github.com/freeKC/Immuch360/releases) page (from build 7; the universal `-release.apk` works too), sideloaded in developer mode, see [Meta Quest 3](#meta-quest-3). | Meta Horizon Store, first build uploaded to the alpha channel, listing in preparation |
 
