@@ -4,6 +4,10 @@
   "local_session_connect_server": "Qqen ɣer uqeddac",
   "local_session_connect_server_subtitle": "Mtawi d uqeddac Immich i weḥraz, anadi d beṭṭu",
   "local_session_description": "Asnas yeskanay-d tugniwin d tvidyutin n yibenk-a. Ulac ayen yettwaznen ɣer wanda nniḍen.",
+  "local_session_permission_allow": "Sireg anekcum",
+  "local_session_permission_body": "Sireg anekcum ɣer tugniwin d tvidyutin-ik i wakken ad d-banent da. War aqeddac, ulac ayen ara d-yeffɣen seg yibenk.",
+  "local_session_permission_settings": "Ldi iɣewwaṛen",
+  "local_session_permission_title": "Asnas ur yezmir ara ad iwali tugniwin n yibenk-a",
   "local_session_title": "Ibenk-a kan",
   "login_form_use_without_server": "Seqdec war aqeddac",
   "network_share_add": "Rnu afaylu yettwabḍan",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Abrid {track}",
   "video_audio_track_stereo": "Stiriyu",
+  "video_buffering": "Asali {percent}%",
+  "video_buffering_simple": "Asali",
   "view_as_360": "Wali am 360°",
   "view_as_360_remove": "Ḥbes asemres am 360°"
 }

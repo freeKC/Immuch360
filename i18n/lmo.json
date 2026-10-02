@@ -4,6 +4,10 @@
   "local_session_connect_server": "Conètes a on server",
   "local_session_connect_server_subtitle": "Sincronizza cont on server Immich per fà la còpia de segurezza, cercà e condivid",
   "local_session_description": "L'app la mostra i foto e i video de sto dispositiv. Nient el vegn mandaa de nissuna part.",
+  "local_session_permission_allow": "Permett l'access",
+  "local_session_permission_body": "Permett l'access ai tò foto e video per fai vedè chì. Senza on server, nient el va foeura del dispositiv.",
+  "local_session_permission_settings": "Dervì i impostazion",
+  "local_session_permission_title": "L'app la pò minga vedè i foto de sto dispositiv",
   "local_session_title": "Domà sto dispositiv",
   "login_form_use_without_server": "Dovra senza server",
   "network_share_add": "Giontà ona condivision",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Traccia {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Cargament {percent}%",
+  "video_buffering_simple": "Cargament",
   "view_as_360": "Varda 'me 360°",
   "view_as_360_remove": "Smett de tratà 'me 360°"
 }

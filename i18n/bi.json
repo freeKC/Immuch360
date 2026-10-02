@@ -17,6 +17,10 @@
   "local_session_connect_server": "Konek long wan server",
   "local_session_connect_server_subtitle": "Sync wetem wan Immich server blong sevem kopi, lukaotem mo serem",
   "local_session_description": "App ia i soem ol foto mo video blong divaes ia. I no sendem eni samting i go long eni ples.",
+  "local_session_permission_allow": "Letem akses",
+  "local_session_permission_body": "Letem app i luk ol foto mo video blong yu blong soem olgeta long ples ia. Sapos i no gat server, i no gat samting i aot long divaes.",
+  "local_session_permission_settings": "Openem ol seting",
+  "local_session_permission_title": "App ia i no save luk ol foto blong divaes ia",
   "local_session_title": "Divaes ia nomo",
   "login_form_use_without_server": "Yusum wetaot wan server",
   "network_share_add": "Ademap wan sea",
@@ -109,6 +113,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Trak {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "I stap lodem {percent}%",
+  "video_buffering_simple": "I stap lodem",
   "view_as_360": "Lukum olsem 360°",
   "view_as_360_remove": "Stop blong tritim olsem 360°"
 }

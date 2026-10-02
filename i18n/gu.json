@@ -96,6 +96,10 @@
   "local_session_connect_server": "સર્વર સાથે કનેક્ટ કરો",
   "local_session_connect_server_subtitle": "બેકઅપ, શોધ અને શેર કરવા માટે Immich સર્વર સાથે સિંક કરો",
   "local_session_description": "ઍપ આ ઉપકરણના ફોટા અને વીડિયો બતાવે છે. ક્યાંય કંઈ મોકલવામાં આવતું નથી.",
+  "local_session_permission_allow": "ઍક્સેસની મંજૂરી આપો",
+  "local_session_permission_body": "તમારા ફોટા અને વીડિયો અહીં બતાવવા માટે તેમની ઍક્સેસની મંજૂરી આપો. સર્વર વિના, કંઈ પણ ઉપકરણની બહાર જતું નથી.",
+  "local_session_permission_settings": "સેટિંગ્સ ખોલો",
+  "local_session_permission_title": "ઍપ આ ઉપકરણના ફોટા જોઈ શકતી નથી",
   "local_session_title": "ફક્ત આ ઉપકરણ",
   "login_form_use_without_server": "સર્વર વિના ઉપયોગ કરો",
   "network_share_add": "શેર ઉમેરો",
@@ -168,6 +172,8 @@
   "video_audio_track_mono": "મોનો",
   "video_audio_track_number": "ટ્રૅક {track}",
   "video_audio_track_stereo": "સ્ટીરિયો",
+  "video_buffering": "લોડ થઈ રહ્યું છે {percent}%",
+  "video_buffering_simple": "લોડ થઈ રહ્યું છે",
   "view_as_360": "360° તરીકે જુઓ",
   "view_as_360_remove": "360° તરીકે ગણવાનું બંધ કરો"
 }

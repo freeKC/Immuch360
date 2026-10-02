@@ -4,6 +4,10 @@
   "local_session_connect_server": "Mit ma Server verbinda",
   "local_session_connect_server_subtitle": "Mit ma Immich-Server synchronisiera zom Sichera, Sucha ond Teila",
   "local_session_description": "D'App zeigt d'Fotos ond Videos vo dem Gerät. Nix wird irgendwohi gschickt.",
+  "local_session_permission_allow": "Zuagriff erlauba",
+  "local_session_permission_body": "Erlaub da Zuagriff auf deine Fotos ond Videos, damit se do azeigt werdet. Ohne Server verlässt nix des Gerät.",
+  "local_session_permission_settings": "Eistellunga aufmacha",
+  "local_session_permission_title": "D'App ko d'Fotos vo dem Gerät ned seha",
   "local_session_title": "Bloß des Gerät",
   "login_form_use_without_server": "Ohne Server nutza",
   "network_share_add": "A Freigab hinzufüega",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Spur {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Lada {percent} %",
+  "video_buffering_simple": "Lada",
   "view_as_360": "Als 360° aazeiga",
   "view_as_360_remove": "Nemme als 360° behandla"
 }

@@ -26,6 +26,10 @@
   "local_session_connect_server": "सर्भरमा जडान गर्नुहोस्",
   "local_session_connect_server_subtitle": "ब्याकअप, खोज र सेयर गर्न Immich सर्भरसँग सिंक गर्नुहोस्",
   "local_session_description": "एपले यो उपकरणका फोटो र भिडियोहरू देखाउँछ। केही पनि कतै पठाइँदैन।",
+  "local_session_permission_allow": "पहुँचको अनुमति दिनुहोस्",
+  "local_session_permission_body": "तपाईंका फोटो र भिडियोहरू यहाँ देखाउन तिनीहरूमा पहुँचको अनुमति दिनुहोस्। सर्भरबिना, केही पनि उपकरणबाट बाहिर जाँदैन।",
+  "local_session_permission_settings": "सेटिङहरू खोल्नुहोस्",
+  "local_session_permission_title": "एपले यो उपकरणका फोटोहरू देख्न सक्दैन",
   "local_session_title": "यो उपकरण मात्र",
   "login_form_use_without_server": "सर्भर बिना प्रयोग गर्नुहोस्",
   "network_share_add": "सेयर थप्नुहोस्",
@@ -98,6 +102,8 @@
   "video_audio_track_mono": "मोनो",
   "video_audio_track_number": "ट्र्याक {track}",
   "video_audio_track_stereo": "स्टेरियो",
+  "video_buffering": "लोड हुँदैछ {percent}%",
+  "video_buffering_simple": "लोड हुँदैछ",
   "view_as_360": "360° को रूपमा हेर्नुहोस्",
   "view_as_360_remove": "360° को रूपमा मान्न बन्द गर्नुहोस्"
 }

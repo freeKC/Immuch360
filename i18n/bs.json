@@ -4,6 +4,10 @@
   "local_session_connect_server": "Poveži se sa serverom",
   "local_session_connect_server_subtitle": "Sinhronizuj sa Immich serverom za sigurnosnu kopiju, pretragu i dijeljenje",
   "local_session_description": "Aplikacija prikazuje fotografije i videozapise s ovog uređaja. Ništa se nikamo ne šalje.",
+  "local_session_permission_allow": "Dozvoli pristup",
+  "local_session_permission_body": "Dozvolite pristup svojim fotografijama i videozapisima da bi se prikazali ovdje. Bez servera ništa ne napušta uređaj.",
+  "local_session_permission_settings": "Otvori postavke",
+  "local_session_permission_title": "Aplikacija ne može vidjeti fotografije s ovog uređaja",
   "local_session_title": "Samo ovaj uređaj",
   "login_form_use_without_server": "Koristi bez servera",
   "network_share_add": "Dodaj dijeljeni resurs",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Zapis {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Učitavanje {percent} %",
+  "video_buffering_simple": "Učitavanje",
   "view_as_360": "Prikaži kao 360°",
   "view_as_360_remove": "Prestani tretirati kao 360°"
 }

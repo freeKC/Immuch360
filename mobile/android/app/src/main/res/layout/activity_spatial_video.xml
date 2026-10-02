@@ -21,6 +21,24 @@
     android:indeterminate="true"
     android:visibility="gone" />
 
+  <!-- "Buffering 42%" while the player buffers, at the bottom centre above the controls; its text comes from the
+       activity, see BufferingIndicator. Not clickable, so taps reach the video below. -->
+  <TextView
+    android:id="@+id/spatial_video_buffering_label"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|center_horizontal"
+    android:layout_marginBottom="120dp"
+    android:background="@drawable/video_buffering_label_background"
+    android:paddingStart="12dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="4dp"
+    android:singleLine="true"
+    android:textColor="@android:color/white"
+    android:textSize="14sp"
+    android:visibility="gone" />
+
   <!-- Diagnostics, only with the debug overlay. Stays on screen when the controls hide. -->
   <TextView
     android:id="@+id/spatial_video_stats"

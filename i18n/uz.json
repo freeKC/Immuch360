@@ -17,6 +17,10 @@
   "local_session_connect_server": "Serverga ulanish",
   "local_session_connect_server_subtitle": "Zaxira nusxa olish, qidirish va ulashish uchun Immich serveri bilan sinxronlang",
   "local_session_description": "Ilova shu qurilmadagi rasm va videolarni koʻrsatadi. Hech narsa hech qayerga yuborilmaydi.",
+  "local_session_permission_allow": "Kirishga ruxsat berish",
+  "local_session_permission_body": "Rasm va videolaringizni shu yerda ko'rsatish uchun ularga kirishga ruxsat bering. Serversiz hech narsa qurilmadan chiqmaydi.",
+  "local_session_permission_settings": "Sozlamalarni ochish",
+  "local_session_permission_title": "Ilova shu qurilmadagi rasmlarni ko'ra olmaydi",
   "local_session_title": "Faqat shu qurilma",
   "login_form_use_without_server": "Serversiz foydalanish",
   "network_share_add": "Ulashma qo'shish",
@@ -89,6 +93,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Trek {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Yuklanmoqda {percent}%",
+  "video_buffering_simple": "Yuklanmoqda",
   "view_as_360": "360° sifatida ko‘rish",
   "view_as_360_remove": "360° sifatida hisoblashni to‘xtatish"
 }

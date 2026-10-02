@@ -103,6 +103,10 @@
   "local_session_connect_server": "ភ្ជាប់ទៅម៉ាស៊ីនមេ",
   "local_session_connect_server_subtitle": "ធ្វើសមកាលកម្មជាមួយម៉ាស៊ីនមេ Immich ដើម្បីបម្រុងទុក ស្វែងរក និងចែករំលែក",
   "local_session_description": "កម្មវិធីបង្ហាញរូបថត និងវីដេអូនៅលើឧបករណ៍នេះ។ គ្មានអ្វីត្រូវបានផ្ញើទៅកន្លែងណាទេ។",
+  "local_session_permission_allow": "អនុញ្ញាតឱ្យចូលប្រើ",
+  "local_session_permission_body": "អនុញ្ញាតឱ្យចូលប្រើរូបថត និងវីដេអូរបស់អ្នក ដើម្បីបង្ហាញពួកវានៅទីនេះ។ បើគ្មានម៉ាស៊ីនមេ គ្មានអ្វីចេញពីឧបករណ៍ទេ។",
+  "local_session_permission_settings": "បើកការកំណត់",
+  "local_session_permission_title": "កម្មវិធីមិនអាចមើលឃើញរូបថតនៅលើឧបករណ៍នេះទេ",
   "local_session_title": "តែឧបករណ៍នេះប៉ុណ្ណោះ",
   "login_form_use_without_server": "ប្រើដោយគ្មានម៉ាស៊ីនមេ",
   "network_share_add": "បន្ថែមការចែករំលែក",
@@ -175,6 +179,8 @@
   "video_audio_track_mono": "ម៉ូណូ",
   "video_audio_track_number": "បទ {track}",
   "video_audio_track_stereo": "ស្តេរ៉េអូ",
+  "video_buffering": "កំពុងផ្ទុក {percent}%",
+  "video_buffering_simple": "កំពុងផ្ទុក",
   "view_as_360": "មើលជា 360°",
   "view_as_360_remove": "ឈប់ចាត់ទុកជា 360°"
 }

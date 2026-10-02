@@ -69,6 +69,10 @@
   "local_session_connect_server": "Сервера ҫыхӑн",
   "local_session_connect_server_subtitle": "Сыхлӑх копийӗ тума, шырама тата пайлама Immich серверӗпе синхронлӑр",
   "local_session_description": "Приложени ҫак хатӗрти сӑнӳкерчӗксемпе видеосене кӑтартать. Нимӗн те ниҫта та ярӑнмасть.",
+  "local_session_permission_allow": "Ирӗк пар",
+  "local_session_permission_body": "Кунта кӑтартма хӑвӑрӑн сӑнӳкерчӗксемпе видеосене курма ирӗк парӑр. Сервер ҫук чухне нимӗн те хатӗртен тухмасть.",
+  "local_session_permission_settings": "Ӗнерленӳсене уҫ",
+  "local_session_permission_title": "Приложени ҫак хатӗрти сӑнӳкерчӗксене кураймасть",
   "local_session_title": "Ҫак хатӗр ҫеҫ",
   "login_form_use_without_server": "Серверсӑр усӑ кур",
   "manage_sharing_with_partners": "Партнерсемпе пайланассине йӗркелесе пырӑр",
@@ -164,6 +168,8 @@
   "video_audio_track_mono": "Моно",
   "video_audio_track_number": "Йӗр {track}",
   "video_audio_track_stereo": "Стерео",
+  "video_buffering": "Тиени {percent}%",
+  "video_buffering_simple": "Тиени",
   "view_as_360": "360° евĕр пăх",
   "view_as_360_remove": "360° евĕр шутлама пăрах"
 }

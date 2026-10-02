@@ -25,7 +25,8 @@ private let zAxis = SIMD3<Float>(0, 0, 1)
 /// The 3D button tells how a stereoscopic video lays out its two eyes: the phone shows the left eye only. The coverage
 /// button (360° or 180°) tells whether the video covers the whole sphere or only its front half, as VR180 videos do;
 /// the back half is then black. A video with several audio tracks (languages, commentary) shows an audio track button,
-/// see [AudioTrackChooser]. Flutter hears about the close through [SphericalVideoEvents], with the layout and the
+/// see [AudioTrackChooser]. While the video loads or stalls, a label tells how far the buffer is filled, see
+/// [BufferingIndicator]. Flutter hears about the close through [SphericalVideoEvents], with the layout and the
 /// coverage shown last.
 final class SphericalVideoViewController: UIViewController, UIGestureRecognizerDelegate {
   private let videoUrl: URL
@@ -62,6 +63,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let errorLabel = UILabel()
   private let messageView = UIView()
   private let messageLabel = UILabel()
+  private let bufferingIndicator: BufferingIndicator
 
   // Where the view looks, in radians: yaw around the vertical axis, growing to the left, and pitch, growing upwards,
   // which only drags set (the phone's attitude replaces it while the motion drives the view)
@@ -94,9 +96,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private var audioTracksRequested = false
 
   /// [errorMessage] and [stereoLabels] come translated from Flutter, English is the fallback; [stereoLabels] also
-  /// holds the labels of the coverage button and of the audio track button. [stereoLayout] is the layout Flutter
-  /// guessed from the dimensions of the video, [coverage] how much of the sphere it covers. [events] is told once
-  /// when the player closes.
+  /// holds the labels of the coverage button, of the audio track button and of the buffering label. [stereoLayout]
+  /// is the layout Flutter guessed from the dimensions of the video, [coverage] how much of the sphere it covers.
+  /// [events] is told once when the player closes.
   init(
     url: URL,
     headers: [String: String],
@@ -119,6 +121,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     self.coverage = coverage
     self.events = events
     audioTracks = AudioTrackChooser(labels: stereoLabels)
+    bufferingIndicator = BufferingIndicator(labels: stereoLabels)
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -183,6 +186,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     let link = CADisplayLink(target: self, selector: #selector(step(_:)))
     link.add(to: .main, forMode: .common)
     displayLink = link
+    // "Buffering 42%" while the video loads or stalls
+    bufferingIndicator.start(player)
     player.play()
   }
 
@@ -339,6 +344,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     print("Cannot play the 360° video: \(reason ?? "unknown error")")
     player.pause()
     spinner.stopAnimating()
+    bufferingIndicator.stop()
     errorLabel.isHidden = false
     playPauseButton.isHidden = true
     setControlsVisible(true)
@@ -379,6 +385,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     NSObject.cancelPreviousPerformRequests(withTarget: self)
     displayLink?.invalidate()
     displayLink = nil
+    bufferingIndicator.stop()
     player.pause()
     motionManager.stopDeviceMotionUpdates()
     if started {
@@ -774,6 +781,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     playPauseButton.layer.cornerRadius = 32
     view.addSubview(playPauseButton)
 
+    // Stays on screen when the controls hide
+    view.addSubview(bufferingIndicator.view)
+
     topBar.backgroundColor = UIColor(white: 0, alpha: 0.45)
     topBar.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(topBar)
@@ -854,6 +864,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       playPauseButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -24),
       playPauseButton.widthAnchor.constraint(equalToConstant: 64),
       playPauseButton.heightAnchor.constraint(equalToConstant: 64),
+
+      // At the bottom centre, above the play button
+      bufferingIndicator.view.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+      bufferingIndicator.view.bottomAnchor.constraint(equalTo: playPauseButton.topAnchor, constant: -12),
 
       // The bar runs under the status bar area, its content stays in the safe area
       topBar.topAnchor.constraint(equalTo: view.topAnchor),

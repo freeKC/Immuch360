@@ -4,6 +4,10 @@
   "local_session_connect_server": "Sambung ko server",
   "local_session_connect_server_subtitle": "Selaraske nga server Immich nok buat sandare, cari nga kongsi",
   "local_session_description": "Aplikasi tunjuk gambo nga video dale peranti ni. Takdok gapo hok dihanta ko mano-mano.",
+  "local_session_permission_allow": "Bui kebenara",
+  "local_session_permission_body": "Bui kebenara ko gambo nga video demo supayo buleh tunjuk sini. Takdok server, takdok gapo hok kelua dari peranti.",
+  "local_session_permission_settings": "Bukak tetapa",
+  "local_session_permission_title": "Aplikasi tak leh tengok gambo dale peranti ni",
   "local_session_title": "Peranti ni jah",
   "login_form_use_without_server": "Guno tanpo server",
   "network_share_add": "Tambah kongsi",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Trek {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Tengoh muat {percent}%",
+  "video_buffering_simple": "Tengoh muat",
   "view_as_360": "Lihat sebagai 360°",
   "view_as_360_remove": "Berhenti anggap sebagai 360°"
 }

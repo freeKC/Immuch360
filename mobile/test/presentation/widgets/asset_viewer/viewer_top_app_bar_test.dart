@@ -195,7 +195,9 @@ void main() {
     'audioTrackChannels': '{channels} channels',
     'audioTrackLocale': 'en',
   };
-  const englishVideoPlayerLabels = {...englishViewerLabels, ...englishAudioTrackLabels};
+  // The buffering indicator of the native video players, which fill in the percentage
+  const englishBufferingLabels = {'buffering': 'Buffering {percent}%'};
+  const englishVideoPlayerLabels = {...englishViewerLabels, ...englishAudioTrackLabels, ...englishBufferingLabels};
 
   setUp(() async {
     context = await PresentationContext.create();
@@ -1204,6 +1206,7 @@ void main() {
       'error': 'Unable to play video',
       ...englishCoverageLabels,
       ...englishAudioTrackLabels,
+      ...englishBufferingLabels,
     };
 
     SpatialOpenRequest openedRequest() =>

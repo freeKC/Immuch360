@@ -4,6 +4,10 @@
   "local_session_connect_server": "Kevreañ ouzh ur servijer",
   "local_session_connect_server_subtitle": "Goubredañ gant ur servijer Immich evit gwareziñ, klask ha rannañ",
   "local_session_description": "An arload a ziskouez luc'hskeudennoù ha videoioù an trobarzhell-mañ. Netra ne vez kaset e lec'h ebet.",
+  "local_session_permission_allow": "Aotren an haeziñ",
+  "local_session_permission_body": "Aotreit an haeziñ d'ho luc'hskeudennoù ha d'ho videoioù evit o diskouez amañ. Hep servijer, ne guita netra an trobarzhell.",
+  "local_session_permission_settings": "Digeriñ an arventennoù",
+  "local_session_permission_title": "N'hall ket an arload gwelet luc'hskeudennoù an trobarzhell-mañ",
   "local_session_title": "An trobarzhell-mañ hepken",
   "login_form_use_without_server": "Implijout hep servijer",
   "network_share_add": "Ouzhpennañ ur rannadenn",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Roudenn {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "O kargañ {percent} %",
+  "video_buffering_simple": "O kargañ",
   "view_as_360": "Gwelet evel 360°",
   "view_as_360_remove": "Paouez da dretiñ evel 360°"
 }

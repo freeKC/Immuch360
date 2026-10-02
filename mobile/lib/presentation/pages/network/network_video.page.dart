@@ -13,6 +13,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_video_buffering.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -321,7 +322,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   @override
   Widget build(BuildContext context) {
     // Watched so that the player lives as long as the page
-    final status = ref.watch(videoPlayerProvider(_playerKey).select((v) => v.status));
+    ref.watch(videoPlayerProvider(_playerKey).select((v) => v.status));
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
     final can360 = (isHorizonOs ?? false) || ref.watch(panorama360VideoSupportedProvider);
     // Like in the asset viewer: an experimental setting, on phones only, never while the platform check is pending
@@ -385,7 +386,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
             ],
           ),
           body: video != null
-              ? _buildPlayer(status)
+              ? _buildPlayer()
               : snapshot.connectionState != ConnectionState.done
               ? const NetworkLoadingView(color: Colors.white70)
               : NetworkErrorView(error: snapshot.error ?? 'unknown error', onRetry: _retry, color: Colors.white70),
@@ -394,7 +395,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     );
   }
 
-  Widget _buildPlayer(VideoPlaybackStatus status) {
+  Widget _buildPlayer() {
     // https://github.com/flutter/flutter/issues/97499: iOS platform views are only disposed in frames containing
     // platform views. The player leaves the tree as soon as the route transitions away, as in the asset viewer.
     final isRouteActive = ModalRoute.of(context)?.isActive ?? true;
@@ -418,8 +419,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
             Positioned.fill(
               child: NetworkErrorView(error: error, onRetry: _retry, color: Colors.white70),
             )
-          else if (!_isVideoReady || status == VideoPlaybackStatus.buffering)
-            const Positioned.fill(child: NetworkLoadingView(color: Colors.white70)),
+          else
+            // "Buffering…" while the video loads, and while it stalls (its position stands still as it plays)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: NetworkVideoBufferingIndicator(playerKey: _playerKey, loading: !_isVideoReady),
+              ),
+            ),
           if (_showControls && error == null)
             Positioned(
               left: 0,

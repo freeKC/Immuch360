@@ -175,6 +175,10 @@
   "local_session_connect_server": "Serverə qoşul",
   "local_session_connect_server_subtitle": "Ehtiyat nüsxə, axtarış və paylaşım üçün Immich serveri ilə sinxronlaşdırın",
   "local_session_description": "Tətbiq bu cihazdakı foto və videoları göstərir. Heç nə heç yerə göndərilmir.",
+  "local_session_permission_allow": "Girişə icazə ver",
+  "local_session_permission_body": "Foto və videolarınızı burada göstərmək üçün onlara giriş icazəsi verin. Server olmadan heç nə cihazdan çıxmır.",
+  "local_session_permission_settings": "Ayarları aç",
+  "local_session_permission_title": "Tətbiq bu cihazın fotolarını görə bilmir",
   "local_session_title": "Yalnız bu cihaz",
   "login_form_use_without_server": "Serversiz istifadə et",
   "network_share_add": "Paylaşım əlavə et",
@@ -248,6 +252,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Trek {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Yüklənir {percent}%",
+  "video_buffering_simple": "Yüklənir",
   "view_as_360": "360° kimi bax",
   "view_as_360_remove": "360° kimi qəbul etməyi dayandır"
 }

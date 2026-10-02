@@ -4,6 +4,10 @@
   "local_session_connect_server": "Mat engem Server verbannen",
   "local_session_connect_server_subtitle": "Mat engem Immich-Server synchroniséieren, fir ze sécheren, ze sichen an ze deelen",
   "local_session_description": "D'App weist d'Fotoen a Videoe vun dësem Apparat. Näischt gëtt iergendwouhin geschéckt.",
+  "local_session_permission_allow": "Zougrëff erlaben",
+  "local_session_permission_body": "Erlaabt den Zougrëff op Är Fotoen a Videoen, da kënne se hei gewise ginn. Ouni Server verléisst näischt den Apparat.",
+  "local_session_permission_settings": "Astellungen opmaachen",
+  "local_session_permission_title": "D'App gesäit d'Fotoen vun dësem Apparat net",
   "local_session_title": "Nëmmen dësen Apparat",
   "login_form_use_without_server": "Ouni Server benotzen",
   "network_share_add": "Eng Freeginn derbäisetzen",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Spur {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Lueden {percent} %",
+  "video_buffering_simple": "Lueden",
   "view_as_360": "Als 360° weisen",
   "view_as_360_remove": "Net méi als 360° behandelen"
 }

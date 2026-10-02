@@ -1,10 +1,14 @@
 // A share reached over SMB 2 or 3 (Samba on a NAS or a Linux computer, Windows file sharing) through dart_smb2, which
-// binds libsmb2. Each file system keeps up to two connections, each held by a worker isolate of its own so that the
-// calls never block the interface: one for listing, stat and thumbnails, opened with the file system, and one kept for
-// the video being streamed, opened the first time one is, so that the browser and the player never wait for each
-// other. When a connection drops or the server ends the session, the call opens it again once and is tried again. A
-// read asks the server for the bytes wanted only, a file is never transferred whole; a file read stays open for the
-// next reads of it.
+// binds libsmb2. Each connection is held by a worker isolate of its own so that the calls never block the interface.
+// The general connection, opened with the file system, serves the listings, the stats, the thumbnails and the reads
+// out of sequence. The video being streamed gets a pool of up to [SmbFileSystem.defaultStreamConnections] connections
+// of its own, opened one after the other the first time a file is read in sequence and released once it is no longer
+// read: libsmb2 sends the parts of one read one after the other, each waiting for its answer, so that a slow server (a
+// Freebox Server answers 4.5 MiB/s to one read at a time) only reaches the rate of a 5.7K video when several reads run
+// at once; a read of the streamed file is split in pieces read in parallel, one per connection, and put back in order.
+// When a connection drops or the server ends the session, the call opens it again once and is tried again. A read asks
+// the server for the bytes wanted only, a file is never transferred whole; a file read stays open for the next reads
+// of it.
 
 import 'dart:async';
 import 'dart:math';
@@ -43,8 +47,14 @@ typedef SmbShareEnumerator =
 
 /// A [NetworkFileSystem] over SMB, see [open]
 class SmbFileSystem implements NetworkFileSystem {
-  SmbFileSystem._(this.source, Smb2Pool pool, this._serverLabel, this._share, this._connectAgain)
-    : _general = _Link('general')..pool = pool;
+  SmbFileSystem._(
+    this.source,
+    Smb2Pool pool,
+    this._serverLabel,
+    this._share,
+    this._connectAgain,
+    this.streamConnections,
+  ) : _general = _Link('general')..pool = pool;
 
   /// Connects to the share of [source] and lists its start folder (the root path of the source) once. Throws a
   /// [NetworkFileSystemException] when the server cannot be reached, refuses the credentials, has no such share or
@@ -52,15 +62,20 @@ class SmbFileSystem implements NetworkFileSystem {
   ///
   /// A user name written "DOMAIN\user" logs on to that domain. Without a user name the logon is anonymous (guest); a
   /// user name with an empty password logs on with that empty password (a Freebox Server wants "freebox" and nothing).
+  ///
+  /// [streamConnections] is the most connections the file being streamed reads on at once, none to read everything on
+  /// the general connection.
   static Future<SmbFileSystem> open(
     NetworkSource source,
     String? password, {
     @visibleForTesting SmbConnector connect = _connectPool,
     int timeoutSeconds = defaultTimeoutSeconds,
+    int streamConnections = defaultStreamConnections,
   }) async {
     if (source.type != NetworkSourceType.smb) {
       throw ArgumentError.value(source.type, 'source.type', 'Not an SMB source');
     }
+    RangeError.checkNotNegative(streamConnections, 'streamConnections');
     final (host, typedPort) = _splitHost(source.host);
     if (host.isEmpty) {
       throw const NetworkFileSystemException('Enter the name or the address of the server');
@@ -103,7 +118,7 @@ class SmbFileSystem implements NetworkFileSystem {
       }
     }
 
-    final fileSystem = SmbFileSystem._(source, await connectOnce(), serverLabel, share, connectOnce);
+    final fileSystem = SmbFileSystem._(source, await connectOnce(), serverLabel, share, connectOnce, streamConnections);
     try {
       await fileSystem.list(source.rootPath);
     } catch (_) {
@@ -183,25 +198,44 @@ class SmbFileSystem implements NetworkFileSystem {
   /// The connection for listing, stat, thumbnails and any read that is not the file being streamed
   final _Link _general;
 
-  /// The connection kept for the file being streamed (see [readRange]), opened the first time a file is streamed
-  final _Link _stream = _Link('stream');
+  /// The most connections of the stream pool, see [open]
+  final int streamConnections;
+
+  /// The stream pool: the connections open for the file being streamed, opened one after the other the first time a
+  /// file is read in sequence (see [readRange]) and released once none was read for [streamPoolIdle]
+  final List<_Link> _streamLinks = [];
+
+  /// The opening under way of the next connection of the stream pool
+  Future<void>? _streamOpening;
+
+  /// Changed when the stream pool is released: a connection opened for the previous one is closed again
+  int _streamGeneration = 0;
+
+  /// Releases the stream pool once it was not read for [streamPoolIdle]
+  Timer? _streamIdle;
 
   bool _closed = false;
   final String _serverLabel;
   final String _share;
 
-  /// Opens a new connection like the first one: the stream connection, or one that replaces a connection whose session
-  /// the server ended
+  /// Opens a new connection like the first one: one of the stream pool, or one that replaces a connection whose
+  /// session the server ended
   final Future<Smb2Pool> Function() _connectAgain;
 
-  /// When the stream connection last failed to open; the reads stay on the general connection for a while
+  /// When a connection of the stream pool last failed to open, or the pool was given up because none of its
+  /// connections could read; the pool does not grow for [streamRetryDelay]. A connection dropped alone is replaced
+  /// at the next read.
   DateTime? _streamFailedAt;
 
-  /// The files kept open, the least recently used first (a map literal keeps the insertion order)
+  /// The reads in a row whose pieces no connection of the stream pool could read, while the general one could
+  int _streamPoolFailures = 0;
+
+  /// The files kept open on the general connection, the least recently used first (a map literal keeps the insertion
+  /// order)
   final Map<String, _OpenFile> _openFiles = {};
 
-  /// The file that has the stream connection, null when it is free
-  String? _streamPath;
+  /// The file that has the stream pool, null when it is free
+  _StreamedFile? _streamed;
 
   int _fileOpens = 0;
 
@@ -217,6 +251,25 @@ class SmbFileSystem implements NetworkFileSystem {
   /// Largest read asked of the worker at once; a larger window is read in several parts on one open file
   static const maxReadChunk = 4 * 1024 * 1024;
 
+  /// Most connections of the stream pool by default: six reads at once take a Freebox Server from 4.5 MiB/s to the
+  /// rate its disk gives, above the 16.6 MiB/s of a 5.7K video
+  static const defaultStreamConnections = 6;
+
+  /// The pieces a read of the streamed file is split in start and end on multiples of this size (but for the first
+  /// and the last), and are as long at least: a smaller read is one piece
+  static const streamPieceAlignment = 256 * 1024;
+
+  /// A read of a video from its start of this size at least, the first chunk the media bridge asks for a player, opens
+  /// the stream pool at once; a smaller one (the browser looking for the spherical metadata) waits for a second read in
+  /// sequence
+  static const streamStartRead = 1024 * 1024;
+
+  /// A connection of the stream pool that is the only one to fail in this many reads in a row is dropped from it (and
+  /// replaced); the pool is given up when none of its connections could read in this many reads in a row. Connections
+  /// that fail together in one read (the network was cut a moment) are not counted against: dart_smb2 starts their
+  /// worker again at the next call.
+  static const streamConnectionMaxFailures = 2;
+
   /// Most files kept open per share
   static const maxOpenFiles = 4;
 
@@ -224,33 +277,41 @@ class SmbFileSystem implements NetworkFileSystem {
   @visibleForTesting
   static Duration openFileIdle = const Duration(seconds: 10);
 
-  /// The file that has the stream connection keeps it while it was read less than this long ago
+  /// The file that has the stream pool keeps it while it was read less than this long ago
   @visibleForTesting
   static Duration streamHoldIdle = const Duration(seconds: 3);
 
-  /// After a failure, how long the stream connection is not tried again
+  /// The stream pool is released once it was not read for this long
+  @visibleForTesting
+  static Duration streamPoolIdle = const Duration(seconds: 10);
+
+  /// After a connection of the stream pool failed to open, or the pool was given up, how long it does not grow
   @visibleForTesting
   static Duration streamRetryDelay = const Duration(minutes: 1);
 
-  /// Files from this size on are streamed on the stream connection whatever their type (videos are, whatever their
-  /// size): larger than the photos the browser loads whole for their thumbnail
+  /// Files from this size on are streamed on the stream pool whatever their type (videos are, whatever their size):
+  /// larger than the photos the browser loads whole for their thumbnail
   static const streamMinSize = 32 * 1024 * 1024;
 
   /// How many files were opened on the server, for the tests and the measures
   @visibleForTesting
   int get fileOpens => _fileOpens;
 
-  /// How many files are kept open now
+  /// How many files are kept open on the general connection now
   @visibleForTesting
   int get openFileCount => _openFiles.length;
 
-  /// Whether the stream connection is open
+  /// Whether the stream pool has a connection open
   @visibleForTesting
-  bool get hasStreamConnection => _stream.pool != null;
+  bool get hasStreamConnection => _streamLinks.isNotEmpty;
 
-  /// The file that has the stream connection, null when it is free
+  /// The connections of the stream pool open now
   @visibleForTesting
-  String? get streamedPath => _streamPath;
+  int get streamConnectionCount => _streamLinks.length;
+
+  /// The file that has the stream pool, null when it is free
+  @visibleForTesting
+  String? get streamedPath => _streamed?.path;
 
   @override
   Future<List<NetworkEntry>> list(String path) {
@@ -276,8 +337,8 @@ class SmbFileSystem implements NetworkFileSystem {
   /// The file stays open after the read, so that the next read of it (the media bridge reads a video in sequence)
   /// asks the server for its bytes only: it is closed once not read for [openFileIdle], when more than
   /// [maxOpenFiles] are open, and by [close]. A file read in sequence that is a video or a large file gets the stream
-  /// connection, so that the thumbnails and listings of the browser never wait behind it, and it never waits behind
-  /// them; one file at a time has it.
+  /// pool, so that the thumbnails and listings of the browser never wait behind it, and it never waits behind them;
+  /// one file at a time has it. Its reads are split in pieces read at once on the connections of the pool.
   @override
   Future<Uint8List> readRange(String path, int offset, int length) {
     RangeError.checkNotNegative(offset, 'offset');
@@ -287,12 +348,18 @@ class SmbFileSystem implements NetworkFileSystem {
       return Future.value(Uint8List(0));
     }
     final file = smbPathOf(target);
-    final link = _linkFor(target, offset);
-    return _guard(link, target, (pool) => _readOpenFile(link, pool, target, file, offset, length));
+    final streamed = _streamedFor(target, offset, length);
+    if (streamed != null) {
+      return _readStreamed(streamed, file, offset, length);
+    }
+    return _readGeneral(target, file, offset, length);
   }
 
-  Future<Uint8List> _readOpenFile(_Link link, Smb2Pool pool, String target, String file, int offset, int length) async {
-    var open = _openFileFor(link, pool, target, file);
+  Future<Uint8List> _readGeneral(String target, String file, int offset, int length) =>
+      _guard(_general, target, (pool) => _readOpenFile(pool, target, file, offset, length));
+
+  Future<Uint8List> _readOpenFile(Smb2Pool pool, String target, String file, int offset, int length) async {
+    var open = _openFileFor(pool, target, file);
     var reused = open.size != null;
     while (true) {
       open.reading++;
@@ -311,7 +378,7 @@ class SmbFileSystem implements NetworkFileSystem {
         open.reading--;
         _released(open);
       }
-      open = _openFileFor(link, pool, target, file);
+      open = _openFileFor(pool, target, file);
       reused = false;
     }
   }
@@ -338,71 +405,366 @@ class SmbFileSystem implements NetworkFileSystem {
     return bytes.length > length ? Uint8List.sublistView(bytes, 0, length) : bytes;
   }
 
-  /// The connection a read of [target] at [offset] goes to: the stream connection for the file that has it, and for a
-  /// video or a large file read in sequence when no other file read it lately; the general connection otherwise
-  _Link _linkFor(String target, int offset) {
-    if (_streamPath == target) {
-      if (_stream.pool != null) {
-        return _stream;
+  /// The streamed file a read of [target] at [offset] goes to: the file that has the stream pool, or a video or a
+  /// large file read in sequence that takes it when no other file read it lately. Null for the general connection.
+  _StreamedFile? _streamedFor(String target, int offset, int length) {
+    final current = _streamed;
+    if (current != null && current.path == target) {
+      // In place of a connection dropped, or of one that could not open, after a while
+      _growStreamPool();
+      if (_streamLinks.isNotEmpty) {
+        return current;
       }
-      _streamPath = null;
+      // Every connection of the pool was dropped: on the general connection until the pool opens again
+      _releaseStreamed();
+    }
+    if (streamConnections == 0) {
+      return null;
+    }
+    if (offset == 0 && length >= streamStartRead && _isVideo(target)) {
+      // A player starts: the pool opens meanwhile, so that it is there when the reads go on in sequence
+      _growStreamPool();
     }
     final open = _openFiles[target];
     final size = open?.size;
     if (open == null || size == null || open.next != offset || !_isStreamed(target, size)) {
-      return _general;
+      return null;
     }
-    final holderPath = _streamPath;
-    final holder = holderPath == null ? null : _openFiles[holderPath];
-    if (holder != null &&
-        (holder.reading > 0 || DateTime.now().difference(holder.lastUsed) < streamHoldIdle) &&
-        identical(holder.link, _stream)) {
-      return _general;
+    final holder = _streamed;
+    if (holder != null && (holder.reading > 0 || DateTime.now().difference(holder.lastUsed) < streamHoldIdle)) {
+      return null;
     }
-    if (_stream.pool == null) {
+    if (_streamLinks.isEmpty) {
       // Opened meanwhile, for the next reads
-      _openStreamConnection();
-      return _general;
+      _growStreamPool();
+      return null;
     }
-    _streamPath = target;
-    return _stream;
+    _releaseStreamed();
+    // Closed on the general connection, once its reads under way end
+    _retire(open);
+    final streamed = _streamed = _StreamedFile(target, size);
+    _growStreamPool();
+    return streamed;
   }
 
-  static bool _isStreamed(String path, int size) =>
-      size >= streamMinSize || NetworkEntry(sourceId: '', path: path, isDirectory: false).isVideo;
+  static bool _isStreamed(String path, int size) => size >= streamMinSize || _isVideo(path);
 
-  void _openStreamConnection() {
-    if (_closed || _stream.pool != null || _stream.opening != null) {
+  static bool _isVideo(String path) => NetworkEntry(sourceId: '', path: path, isDirectory: false).isVideo;
+
+  /// Opens the next connection of the stream pool, then the next ones one after the other up to
+  /// [streamConnections]
+  void _growStreamPool() {
+    if (_closed || _streamOpening != null || _streamLinks.length >= streamConnections) {
       return;
     }
     final failedAt = _streamFailedAt;
     if (failedAt != null && DateTime.now().difference(failedAt) < streamRetryDelay) {
       return;
     }
-    final opening = _stream.opening = _connectAgain();
-    unawaited(
-      opening
-          .then<void>(
-            (pool) {
-              if (_closed) {
-                unawaited(_serialized(const Duration(seconds: 10), pool.disconnect).catchError((Object _) {}));
-                return;
-              }
-              _stream.pool = pool;
-              _streamFailedAt = null;
-            },
-            onError: (Object error) {
-              _streamFailedAt = DateTime.now();
-              _log.info('No stream connection to ${source.name} ($_serverLabel), the reads share one: $error');
-            },
-          )
-          .whenComplete(() => _stream.opening = null),
-    );
+    final generation = _streamGeneration;
+    var opened = false;
+    final opening = _streamOpening = _connectAgain()
+        .then<void>(
+          (pool) {
+            if (_closed || generation != _streamGeneration) {
+              unawaited(_disconnect(pool));
+              return;
+            }
+            _streamLinks.add(_Link('stream')..pool = pool);
+            _streamFailedAt = null;
+            opened = true;
+            _scheduleStreamRelease();
+          },
+          onError: (Object error) {
+            _streamFailedAt = DateTime.now();
+            _log.info(
+              'The stream pool of ${source.name} ($_serverLabel) stays at ${_streamLinks.length} connections: $error',
+            );
+          },
+        )
+        .whenComplete(() {
+          _streamOpening = null;
+          if (opened) {
+            _growStreamPool();
+          }
+        });
+    unawaited(opening);
   }
 
-  /// The file kept open for [target] on [pool], opened when there is none. One kept open on another connection is
-  /// closed: the file moved to the stream connection or away from it, or its connection was replaced.
-  _OpenFile _openFileFor(_Link link, Smb2Pool pool, String target, String file) {
+  /// [length] bytes of [file] from [offset], in pieces read at once on the connections of the stream pool and put
+  /// back in order
+  Future<Uint8List> _readStreamed(_StreamedFile file, String smbPath, int offset, int length) async {
+    file.reading++;
+    _streamIdle?.cancel();
+    try {
+      // Not past the end of the file, which the pieces would ask for nothing; a read that starts there asks anyway
+      final end = offset < file.size ? min(offset + length, file.size) : offset + length;
+      // The least busy connections first, for a read that comes while another one is under way
+      final links = _streamLinks.toList();
+      mergeSort(links, compare: (a, b) => a.busy.compareTo(b.busy));
+      final pieces = streamPiecesOf(offset, end - offset, links.length);
+      final outcome = _StreamReadOutcome();
+      final Uint8List bytes;
+      if (pieces.length == 1) {
+        bytes = await _readPiece(file, smbPath, links.first, offset, end - offset, outcome);
+      } else {
+        final parts = await Future.wait([
+          for (var i = 0; i < pieces.length; i++)
+            _readPiece(file, smbPath, links[i % links.length], pieces[i].offset, pieces[i].length, outcome),
+        ]);
+        // Up to the first piece that came short: the end of the file
+        final builder = BytesBuilder(copy: false);
+        for (var i = 0; i < parts.length; i++) {
+          builder.add(parts[i]);
+          if (parts[i].length < pieces[i].length) {
+            break;
+          }
+        }
+        bytes = builder.takeBytes();
+      }
+      // Counted once the read gave its bytes: a read that failed whole met a network down, no connection of its own
+      _streamReadDone(outcome);
+      return bytes;
+    } finally {
+      file.reading--;
+      file.lastUsed = DateTime.now();
+      _scheduleStreamRelease();
+    }
+  }
+
+  /// The pieces a read of [length] bytes at [offset] is split in for [connections] connections: as many as the
+  /// connections at most, each of whole multiples of [streamPieceAlignment] (but for the first and the last, which
+  /// start and end where the read does), as even as can be, the first ones longer by one multiple. A read shorter than
+  /// two multiples is one piece.
+  @visibleForTesting
+  static List<({int offset, int length})> streamPiecesOf(int offset, int length, int connections) {
+    const unit = streamPieceAlignment;
+    final end = offset + length;
+    final firstUnit = offset ~/ unit;
+    // The multiples the read touches
+    final units = (end + unit - 1) ~/ unit - firstUnit;
+    final count = max(1, min(connections, min(units, length ~/ unit)));
+    if (count == 1) {
+      return [(offset: offset, length: length)];
+    }
+    final pieces = <({int offset, int length})>[];
+    var start = offset;
+    var cut = firstUnit;
+    for (var i = 0; i < count; i++) {
+      cut += units ~/ count + (i < units % count ? 1 : 0);
+      final stop = i == count - 1 ? end : min(end, cut * unit);
+      pieces.add((offset: start, length: stop - start));
+      start = stop;
+    }
+    return pieces;
+  }
+
+  /// A piece of [file] read on [link], once again on another connection of the pool when it fails, and last on the
+  /// general connection; the connections that read it or failed to are noted in [outcome]
+  Future<Uint8List> _readPiece(
+    _StreamedFile file,
+    String smbPath,
+    _Link link,
+    int offset,
+    int length,
+    _StreamReadOutcome outcome,
+  ) async {
+    final tried = <_Link>{};
+    _Link? current = link;
+    while (current != null && tried.length < 2) {
+      tried.add(current);
+      try {
+        final bytes = await _readOnStreamLink(current, file, smbPath, offset, length);
+        outcome.read.add(current);
+        return bytes;
+      } catch (error) {
+        if (_closed || (error is NetworkFileSystemException && (error.isNotFound || error.isAuthentication))) {
+          rethrow;
+        }
+        _log.fine('A read of the stream pool of ${source.name} ($_serverLabel) failed: $error');
+        outcome.failed[current] = error;
+      }
+      current = _streamLinks
+          .where((other) => !tried.contains(other))
+          .fold<_Link?>(null, (best, other) => best == null || other.busy < best.busy ? other : best);
+    }
+    return _readGeneral(file.path, smbPath, offset, length);
+  }
+
+  Future<Uint8List> _readOnStreamLink(_Link link, _StreamedFile file, String smbPath, int offset, int length) async {
+    link.busy++;
+    try {
+      return await _guard(link, file.path, (pool) => _readStreamHandle(link, pool, file, smbPath, offset, length));
+    } finally {
+      link.busy--;
+    }
+  }
+
+  Future<Uint8List> _readStreamHandle(
+    _Link link,
+    Smb2Pool pool,
+    _StreamedFile file,
+    String smbPath,
+    int offset,
+    int length,
+  ) async {
+    var open = _streamHandleFor(file, link, pool, smbPath);
+    var reused = open.size != null;
+    while (true) {
+      open.reading++;
+      try {
+        return await _readFrom(open, pool, offset, length);
+      } catch (error) {
+        // As on the general connection: once again on a file opened anew when the handle was kept from before
+        if (identical(file.handles[link], open)) {
+          file.handles.remove(link);
+        }
+        _retireHandle(open);
+        if (!reused || error is! Smb2Exception || _closed) {
+          rethrow;
+        }
+      } finally {
+        open.reading--;
+        if (open.retired && open.reading == 0) {
+          _closeHandle(open);
+        }
+      }
+      open = _streamHandleFor(file, link, pool, smbPath);
+      reused = false;
+    }
+  }
+
+  /// The handle of [file] on [link], opened when there is none on its current connection
+  _OpenFile _streamHandleFor(_StreamedFile file, _Link link, Smb2Pool pool, String smbPath) {
+    final kept = file.handles[link];
+    if (kept != null && identical(kept.pool, pool) && !kept.retired) {
+      return kept;
+    }
+    if (kept != null) {
+      _retireHandle(kept);
+    }
+    _fileOpens++;
+    final open = _OpenFile(file.path, link, pool, pool.openFileWithSize(smbPath));
+    unawaited(open.opened.then<void>((opened) => open.size = opened.$2, onError: (Object _) {}));
+    if (file.released) {
+      // Read once, then closed
+      open.retired = true;
+    } else {
+      file.handles[link] = open;
+    }
+    return open;
+  }
+
+  /// A read of the streamed file gave its bytes: a connection is counted against only when it is the only one that
+  /// failed in it, the others read; the pool as a whole when none of its connections read and the general one did.
+  /// Connections that failed together (the network was cut a moment, the server was slow to answer them all) are
+  /// neither counted against nor dropped.
+  void _streamReadDone(_StreamReadOutcome outcome) {
+    if (_closed) {
+      return;
+    }
+    final failed = outcome.failed.keys.where(_streamLinks.contains).toList();
+    final read = outcome.read.where((link) => _streamLinks.contains(link) && !outcome.failed.containsKey(link));
+    for (final link in read) {
+      link.failures = 0;
+    }
+    if (outcome.failed.isEmpty || outcome.read.isNotEmpty) {
+      _streamPoolFailures = 0;
+    }
+    if (outcome.failed.isEmpty) {
+      return;
+    }
+    if (outcome.read.isEmpty) {
+      // Every piece came from the general connection
+      _streamPoolFailures++;
+      _log.fine('No connection of the stream pool of ${source.name} ($_serverLabel) could read ($_streamPoolFailures)');
+      if (_streamPoolFailures >= streamConnectionMaxFailures && _streamLinks.isNotEmpty) {
+        _log.info(
+          'The stream pool of ${source.name} ($_serverLabel) is given up for $streamRetryDelay after '
+          '${outcome.failed.values.first}',
+        );
+        _releaseStreamPool();
+        _streamFailedAt = DateTime.now();
+      }
+      return;
+    }
+    if (outcome.failed.length > 1) {
+      return;
+    }
+    for (final link in failed) {
+      _streamLinkFailed(link, outcome.failed[link]!);
+    }
+  }
+
+  /// [link] alone failed a read: dropped from the stream pool when it did in too many reads in a row, the next read
+  /// opens a new one in its place
+  void _streamLinkFailed(_Link link, Object error) {
+    link.failures++;
+    if (link.failures < streamConnectionMaxFailures || !_streamLinks.remove(link)) {
+      return;
+    }
+    _log.info('A connection of the stream pool of ${source.name} ($_serverLabel) is dropped after $error');
+    _closeStreamLink(link);
+  }
+
+  void _closeStreamLink(_Link link) {
+    link.dropped = true;
+    final handle = _streamed?.handles.remove(link);
+    if (handle != null) {
+      _retireHandle(handle);
+    }
+    final pool = link.pool;
+    link.pool = null;
+    if (pool != null) {
+      unawaited(_disconnect(pool));
+    }
+  }
+
+  /// Releases the stream pool once it is not read for [streamPoolIdle]
+  void _scheduleStreamRelease() {
+    _streamIdle?.cancel();
+    _streamIdle = null;
+    if (_closed || (_streamed?.reading ?? 0) > 0 || (_streamLinks.isEmpty && _streamOpening == null)) {
+      return;
+    }
+    _streamIdle = Timer(streamPoolIdle, () {
+      _streamIdle = null;
+      if ((_streamed?.reading ?? 0) == 0) {
+        _releaseStreamPool();
+      }
+    });
+  }
+
+  /// Closes the connections of the stream pool, and the handles of the streamed file
+  void _releaseStreamPool() {
+    _streamIdle?.cancel();
+    _streamIdle = null;
+    _streamGeneration++;
+    _streamPoolFailures = 0;
+    _releaseStreamed();
+    for (final link in _streamLinks.toList()) {
+      _closeStreamLink(link);
+    }
+    _streamLinks.clear();
+  }
+
+  /// The streamed file gives the stream pool up: its handles are closed once their reads under way end
+  void _releaseStreamed() {
+    final streamed = _streamed;
+    if (streamed == null) {
+      return;
+    }
+    _streamed = null;
+    streamed.released = true;
+    for (final handle in streamed.handles.values) {
+      _retireHandle(handle);
+    }
+    streamed.handles.clear();
+  }
+
+  /// The file kept open for [target] on the general connection [pool], opened when there is none. One kept open on a
+  /// connection since replaced is closed.
+  _OpenFile _openFileFor(Smb2Pool pool, String target, String file) {
     final kept = _openFiles.remove(target);
     if (kept != null) {
       if (identical(kept.pool, pool)) {
@@ -413,28 +775,25 @@ class SmbFileSystem implements NetworkFileSystem {
       _retire(kept);
     }
     while (_openFiles.length >= maxOpenFiles) {
-      // The least recently read, the file being streamed last
-      final oldest = _openFiles.values.firstWhere(
-        (open) => open.path != _streamPath,
-        orElse: () => _openFiles.values.first,
-      );
-      _retire(oldest);
+      // The least recently read
+      _retire(_openFiles.values.first);
     }
     _fileOpens++;
-    final open = _OpenFile(target, link, pool, pool.openFileWithSize(file));
+    final open = _OpenFile(target, _general, pool, pool.openFileWithSize(file));
     _openFiles[target] = open;
     unawaited(open.opened.then<void>((opened) => open.size = opened.$2, onError: (Object _) {}));
     return open;
   }
 
-  /// No longer kept: closed now, or once its reads under way end
+  /// No longer kept on the general connection: closed now, or once its reads under way end
   void _retire(_OpenFile open) {
     if (identical(_openFiles[open.path], open)) {
       _openFiles.remove(open.path);
     }
-    if (_streamPath == open.path && identical(open.link, _stream)) {
-      _streamPath = null;
-    }
+    _retireHandle(open);
+  }
+
+  void _retireHandle(_OpenFile open) {
     open.idle?.cancel();
     if (open.retired) {
       return;
@@ -471,25 +830,32 @@ class SmbFileSystem implements NetworkFileSystem {
     unawaited(open.opened.then<void>((opened) => open.pool.closeHandle(opened.$1), onError: (Object _) {}));
   }
 
+  static Future<void> _disconnect(Smb2Pool pool) =>
+      _serialized(const Duration(seconds: 10), pool.disconnect).catchError((Object _) {});
+
   @override
   Future<void> close() async {
     if (_closed) {
       return;
     }
     _closed = true;
+    _streamIdle?.cancel();
+    _streamIdle = null;
     for (final open in _openFiles.values.toList()) {
       _retire(open);
     }
-    _streamPath = null;
-    final pools = [_general.pool, _stream.pool].nonNulls.toList();
+    _releaseStreamed();
+    final pools = [_general.pool, for (final link in _streamLinks) link.pool].nonNulls.toList();
     _general.pool = null;
-    _stream.pool = null;
+    for (final link in _streamLinks) {
+      link
+        ..dropped = true
+        ..pool = null;
+    }
+    _streamLinks.clear();
     for (final pool in pools) {
-      try {
-        await _serialized(const Duration(seconds: 10), pool.disconnect);
-      } catch (_) {
-        // The worker is gone either way
-      }
+      // The worker is gone either way when it fails
+      await _disconnect(pool);
     }
   }
 
@@ -534,8 +900,8 @@ class SmbFileSystem implements NetworkFileSystem {
     final reconnecting = link.reconnecting ??= () async {
       try {
         final fresh = await _connectAgain();
-        if (_closed) {
-          unawaited(_serialized(const Duration(seconds: 10), fresh.disconnect).catchError((Object _) {}));
+        if (_closed || link.dropped) {
+          unawaited(_disconnect(fresh));
           throw _closedError();
         }
         link.pool = fresh;
@@ -543,7 +909,12 @@ class SmbFileSystem implements NetworkFileSystem {
         for (final open in _openFiles.values.where((open) => identical(open.pool, stale)).toList()) {
           _retire(open);
         }
-        unawaited(_serialized(const Duration(seconds: 10), stale.disconnect).catchError((Object _) {}));
+        final streamed = _streamed?.handles[link];
+        if (streamed != null && identical(streamed.pool, stale)) {
+          _streamed?.handles.remove(link);
+          _retireHandle(streamed);
+        }
+        unawaited(_disconnect(stale));
         return fresh;
       } finally {
         link.reconnecting = null;
@@ -817,21 +1188,52 @@ class SmbFileSystem implements NetworkFileSystem {
       .trim();
 }
 
-/// One of the two connections of a share: [pool] is null until it is opened, and once the file system is closed
+/// A connection of a share, the general one or one of the stream pool: [pool] is null until it is opened, once it is
+/// dropped from the pool, and once the file system is closed
 class _Link {
   _Link(this.name);
 
   final String name;
   Smb2Pool? pool;
 
-  /// The first opening under way
-  Future<Smb2Pool>? opening;
-
   /// The replacement under way of a connection the server ended the session of
   Future<Smb2Pool>? reconnecting;
 
+  /// Reads of the streamed file under way on it
+  int busy = 0;
+
+  /// Reads of the streamed file in a row in which it was the only connection of the pool to fail
+  int failures = 0;
+
+  /// No longer part of the file system: a replacement opened meanwhile is closed again
+  bool dropped = false;
+
   @override
   String toString() => '_Link($name)';
+}
+
+/// The connections of the stream pool that read the pieces of one read, and those that failed to, with their error
+class _StreamReadOutcome {
+  final Set<_Link> read = {};
+  final Map<_Link, Object> failed = {};
+}
+
+/// The file that has the stream pool, with its handle on each connection of the pool
+class _StreamedFile {
+  _StreamedFile(this.path, this.size);
+
+  final String path;
+
+  /// The size when it took the pool
+  final int size;
+  final Map<_Link, _OpenFile> handles = {};
+
+  /// Reads under way
+  int reading = 0;
+  DateTime lastUsed = DateTime.now();
+
+  /// Gave the pool up: a handle opened by a read under way is closed after it
+  bool released = false;
 }
 
 /// A file kept open between reads, on one connection

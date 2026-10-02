@@ -4,6 +4,10 @@
   "local_session_connect_server": "Unganisha kwenye seva",
   "local_session_connect_server_subtitle": "Sawazisha na seva ya Immich ili kuhifadhi nakala, kutafuta na kushiriki",
   "local_session_description": "Programu inaonyesha picha na video za kifaa hiki. Hakuna kinachotumwa popote.",
+  "local_session_permission_allow": "Ruhusu ufikiaji",
+  "local_session_permission_body": "Ruhusu ufikiaji wa picha na video zako ili zionyeshwe hapa. Bila seva, hakuna kinachotoka kwenye kifaa.",
+  "local_session_permission_settings": "Fungua mipangilio",
+  "local_session_permission_title": "Programu haiwezi kuona picha za kifaa hiki",
   "local_session_title": "Kifaa hiki pekee",
   "login_form_use_without_server": "Tumia bila seva",
   "network_share_add": "Ongeza hifadhi",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Wimbo {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Inapakia {percent}%",
+  "video_buffering_simple": "Inapakia",
   "view_as_360": "Tazama kama 360°",
   "view_as_360_remove": "Acha kuchukulia kama 360°"
 }

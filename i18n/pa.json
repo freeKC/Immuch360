@@ -33,6 +33,10 @@
   "local_session_connect_server": "ਸਰਵਰ ਨਾਲ ਕਨੈਕਟ ਕਰੋ",
   "local_session_connect_server_subtitle": "ਬੈਕਅੱਪ, ਖੋਜ ਅਤੇ ਸਾਂਝਾ ਕਰਨ ਲਈ Immich ਸਰਵਰ ਨਾਲ ਸਿੰਕ ਕਰੋ",
   "local_session_description": "ਐਪ ਇਸ ਡਿਵਾਈਸ ਦੀਆਂ ਫ਼ੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਦਿਖਾਉਂਦੀ ਹੈ। ਕੁਝ ਵੀ ਕਿਤੇ ਨਹੀਂ ਭੇਜਿਆ ਜਾਂਦਾ।",
+  "local_session_permission_allow": "ਪਹੁੰਚ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ",
+  "local_session_permission_body": "ਆਪਣੀਆਂ ਫ਼ੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਇੱਥੇ ਦਿਖਾਉਣ ਲਈ ਉਹਨਾਂ ਤੱਕ ਪਹੁੰਚ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ। ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ, ਕੁਝ ਵੀ ਡਿਵਾਈਸ ਤੋਂ ਬਾਹਰ ਨਹੀਂ ਜਾਂਦਾ।",
+  "local_session_permission_settings": "ਸੈਟਿੰਗਾਂ ਖੋਲ੍ਹੋ",
+  "local_session_permission_title": "ਐਪ ਇਸ ਡਿਵਾਈਸ ਦੀਆਂ ਫ਼ੋਟੋਆਂ ਨਹੀਂ ਦੇਖ ਸਕਦੀ",
   "local_session_title": "ਸਿਰਫ਼ ਇਹ ਡਿਵਾਈਸ",
   "login_form_use_without_server": "ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ ਵਰਤੋ",
   "network_share_add": "ਸ਼ੇਅਰ ਸ਼ਾਮਲ ਕਰੋ",
@@ -105,6 +109,8 @@
   "video_audio_track_mono": "ਮੋਨੋ",
   "video_audio_track_number": "ਟਰੈਕ {track}",
   "video_audio_track_stereo": "ਸਟੀਰੀਓ",
+  "video_buffering": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ {percent}%",
+  "video_buffering_simple": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ",
   "view_as_360": "360° ਵਜੋਂ ਵੇਖੋ",
   "view_as_360_remove": "360° ਵਜੋਂ ਮੰਨਣਾ ਬੰਦ ਕਰੋ"
 }

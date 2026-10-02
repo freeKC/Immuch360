@@ -4,6 +4,10 @@
   "local_session_connect_server": "เชื่อมต่อกับเซิร์ฟเวอร์",
   "local_session_connect_server_subtitle": "ซิงค์กับเซิร์ฟเวอร์ Immich เพื่อสำรองข้อมูล ค้นหา แล้วก็แชร์",
   "local_session_description": "แอปแสดงรูปภาพแล้วก็วิดีโอของเครื่องนี้ บ่มีอะไรถูกส่งไปไหน",
+  "local_session_permission_allow": "อนุญาตให้เข้าถึง",
+  "local_session_permission_body": "อนุญาตให้เข้าถึงรูปภาพแล้วก็วิดีโอของเจ้าเพื่อแสดงอยู่นี่ ถ้าบ่มีเซิร์ฟเวอร์ บ่มีอะไรออกจากเครื่อง",
+  "local_session_permission_settings": "เปิดการตั้งค่า",
+  "local_session_permission_title": "แอปเห็นรูปภาพของเครื่องนี้บ่ได้",
   "local_session_title": "เครื่องนี้เท่านั้น",
   "login_form_use_without_server": "ใช้โดยบ่มีเซิร์ฟเวอร์",
   "network_share_add": "เพิ่มแชร์",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "โมโน",
   "video_audio_track_number": "แทร็ก {track}",
   "video_audio_track_stereo": "สเตอริโอ",
+  "video_buffering": "กำลังโหลด {percent}%",
+  "video_buffering_simple": "กำลังโหลด",
   "view_as_360": "ดูเป็น 360°",
   "view_as_360_remove": "เลิกถือเป็น 360°"
 }

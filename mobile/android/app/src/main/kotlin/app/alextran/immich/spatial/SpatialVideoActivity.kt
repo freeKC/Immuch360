@@ -58,6 +58,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import app.alextran.immich.R
 import app.alextran.immich.core.AudioTrackChooser
+import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
 import java.util.Locale
@@ -117,6 +118,7 @@ private const val SENSITIVITY_STEP = 0.1f
  * ([SpatialProjection.EQUIRECTANGULAR180]); the field of view button switches between the two.
  *
  * A video with several audio tracks (languages, commentary) shows an audio track button, see [AudioTrackChooser].
+ * While the video loads or stalls, a label tells how far the buffer is filled, see [BufferingIndicator].
  *
  * Opened from Flutter through [SpatialVideoApi]. On close (button, system back, or the system destroying the
  * activity) Flutter gets [SpatialVideoEvents.closed] once, with the position, so that the normal player takes over,
@@ -251,6 +253,8 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
   private lateinit var statsText: TextView
   private lateinit var messageText: TextView
   private lateinit var bufferingView: ProgressBar
+  private lateinit var bufferingLabel: TextView
+  private lateinit var bufferingIndicator: BufferingIndicator
   private lateinit var windowDisplay: Display
   private lateinit var headTracker: HeadTracker
 
@@ -686,6 +690,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     statsText = findViewById(R.id.spatial_video_stats)
     messageText = findViewById(R.id.spatial_video_message)
     bufferingView = findViewById(R.id.spatial_video_buffering)
+    bufferingLabel = findViewById(R.id.spatial_video_buffering_label)
+    val streamed = StreamingLoadControl.isStreamed(intent.getStringExtra(EXTRA_URL).orEmpty())
+    bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed)
   }
 
   private fun setUpControls() {
@@ -868,6 +875,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
         it.addListener(playerListener)
         // The language picked last, and the track picked for this video before a recreation
         audioTracks.attach(it)
+        bufferingIndicator.attach(it)
         videoSurface?.let { surface -> it.setVideoSurface(surface) }
         it.setMediaItem(MediaItem.fromUri(url), startPosition)
         it.playWhenReady = playWhenReady
@@ -925,6 +933,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     }
     released = true
     audioTracks.dismissDialog()
+    if (::bufferingIndicator.isInitialized) {
+      bufferingIndicator.detach()
+    }
     renderer.onFrameAvailable = null
     handler.removeCallbacksAndMessages(null)
     Choreographer.getInstance().removeFrameCallback(frameCallback)
@@ -1440,6 +1451,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
 
     // The video fills the whole screen, the controls stay clear of the camera cutout and of the system bars
     val baseStatsMargin = (statsText.layoutParams as FrameLayout.LayoutParams).leftMargin
+    val bufferingMargin = (bufferingLabel.layoutParams as FrameLayout.LayoutParams).bottomMargin
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.spatial_video_root)) { _, insets ->
       val safe = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
       topBar.updateLayoutParams<FrameLayout.LayoutParams> {
@@ -1453,6 +1465,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
         bottomMargin = safe.bottom
       }
       statsText.updateLayoutParams<FrameLayout.LayoutParams> { leftMargin = baseStatsMargin + safe.left }
+      bufferingLabel.updateLayoutParams<FrameLayout.LayoutParams> { bottomMargin = bufferingMargin + safe.bottom }
       insets
     }
   }

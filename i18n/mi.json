@@ -4,6 +4,10 @@
   "local_session_connect_server": "Tūhono ki tētahi tūmau",
   "local_session_connect_server_subtitle": "Tukutahi ki tētahi tūmau Immich hei taurua, hei rapu, hei tiri",
   "local_session_description": "Ka whakaatu te taupānga i ngā whakaahua me ngā ataata o tēnei pūrere. Kāore he mea e tukuna ki hea.",
+  "local_session_permission_allow": "Tukuna te urunga",
+  "local_session_permission_body": "Tukuna te urunga ki ō whakaahua me ō ataata kia whakaaturia ki konei. Ki te kore he tūmau, kāore he mea e wehe atu i te pūrere.",
+  "local_session_permission_settings": "Whakatuwheratia ngā tautuhinga",
+  "local_session_permission_title": "Kāore e taea e te taupānga te kite i ngā whakaahua o tēnei pūrere",
   "local_session_title": "Ko tēnei pūrere anake",
   "login_form_use_without_server": "Whakamahia me te kore tūmau",
   "network_share_add": "Tāpiri tiritiri",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Ara {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "E uta ana {percent}%",
+  "video_buffering_simple": "E uta ana",
   "view_as_360": "Tirohia hei 360°",
   "view_as_360_remove": "Kaua e kī hei 360°"
 }

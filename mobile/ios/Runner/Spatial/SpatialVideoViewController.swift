@@ -45,7 +45,8 @@ private enum HeadTracking {
 /// closes a flat video; 360 degree videos turn with drags, the motion of the phone, and zoom with a pinch. Their
 /// coverage button (360° or 180°) tells whether they cover the whole sphere or only its front half, as VR180 videos
 /// do. A video with several audio tracks (languages, commentary) shows an audio track button, see
-/// [AudioTrackChooser]. Flutter hears about the close through [SpatialVideoEvents], with the position, so that its
+/// [AudioTrackChooser]. While the video loads or stalls, a label tells how far the buffer is filled, see
+/// [BufferingIndicator]. Flutter hears about the close through [SpatialVideoEvents], with the position, so that its
 /// normal player resumes there, and with the layout and the projection shown last.
 final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGestureRecognizerDelegate {
   private let videoUrl: URL
@@ -131,6 +132,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   private let viewpointSlider = UISlider()
   private let statsLabel = UILabel()
   private let spinner = UIActivityIndicatorView(style: .large)
+  private let bufferingIndicator: BufferingIndicator
   private let errorLabel = UILabel()
   private let messageView = UIView()
   private let messageLabel = UILabel()
@@ -164,6 +166,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     selectedLayout = request.layout
     self.events = events
     audioTracks = AudioTrackChooser(labels: request.labels)
+    bufferingIndicator = BufferingIndicator(labels: request.labels)
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -238,6 +241,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
         }
       }
     }
+    // "Buffering 42%" while the video loads or stalls
+    bufferingIndicator.start(player)
     // The item may have become ready before the player showed: the spinner, the play button and the idle timer
     // follow the playback state from now on
     playbackStateChanged()
@@ -652,6 +657,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     print("Cannot play the Spatial video: \(reason ?? "unknown error")")
     player.pause()
     spinner.stopAnimating()
+    bufferingIndicator.stop()
     errorLabel.isHidden = false
     playPauseButton.isEnabled = false
     seekSlider.isEnabled = false
@@ -717,6 +723,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     NSObject.cancelPreviousPerformRequests(withTarget: self)
     statsTimer?.invalidate()
     statsTimer = nil
+    bufferingIndicator.stop()
     metalView?.isPaused = true
     player.pause()
     motionManager.stopDeviceMotionUpdates()
@@ -1219,6 +1226,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     bottomBar.backgroundColor = UIColor(white: 0, alpha: 0.45)
     bottomBar.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(bottomBar)
+    // Over the bars, and on screen when they hide
+    view.addSubview(bufferingIndicator.view)
 
     configure(playPauseButton, symbol: "play.fill", pointSize: 22, action: #selector(playPauseTapped))
     playPauseButton.accessibilityLabel = "Play"
@@ -1385,6 +1394,10 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
       trackingView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
       trackingView.leadingAnchor.constraint(greaterThanOrEqualTo: safeArea.leadingAnchor, constant: 32),
       trackingView.trailingAnchor.constraint(lessThanOrEqualTo: safeArea.trailingAnchor, constant: -32),
+
+      // At the bottom centre, above the bottom bar and the face tracking message
+      bufferingIndicator.view.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+      bufferingIndicator.view.bottomAnchor.constraint(equalTo: bottomBar.topAnchor, constant: -60),
     ])
   }
 

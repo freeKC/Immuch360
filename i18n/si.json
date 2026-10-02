@@ -4,6 +4,10 @@
   "local_session_connect_server": "සේවාදායකයකට සම්බන්ධ වන්න",
   "local_session_connect_server_subtitle": "උපස්ථ කිරීමට, සෙවීමට සහ බෙදා ගැනීමට Immich සේවාදායකයක් සමඟ සමමුහුර්ත කරන්න",
   "local_session_description": "යෙදුම මෙම උපාංගයේ ඡායාරූප සහ වීඩියෝ පෙන්වයි. කිසිවක් කොතැනකටවත් යවනු නොලැබේ.",
+  "local_session_permission_allow": "ප්‍රවේශයට ඉඩ දෙන්න",
+  "local_session_permission_body": "ඔබගේ ඡායාරූප සහ වීඩියෝ මෙහි පෙන්වීමට ඒවාට ප්‍රවේශ වීමට ඉඩ දෙන්න. සේවාදායකයක් නොමැතිව, කිසිවක් උපාංගයෙන් පිටතට නොයයි.",
+  "local_session_permission_settings": "සැකසීම් විවෘත කරන්න",
+  "local_session_permission_title": "යෙදුමට මෙම උපාංගයේ ඡායාරූප දැකිය නොහැක",
   "local_session_title": "මෙම උපාංගය පමණි",
   "login_form_use_without_server": "සේවාදායකයක් නොමැතිව භාවිතා කරන්න",
   "network_share_add": "බෙදාගැනීමක් එක් කරන්න",
@@ -76,6 +80,8 @@
   "video_audio_track_mono": "මොනෝ",
   "video_audio_track_number": "ධාවන පථය {track}",
   "video_audio_track_stereo": "ස්ටීරියෝ",
+  "video_buffering": "පූරණය වෙමින් {percent}%",
+  "video_buffering_simple": "පූරණය වෙමින්",
   "view_as_360": "360° ලෙස බලන්න",
   "view_as_360_remove": "360° ලෙස සැලකීම නවත්වන්න"
 }

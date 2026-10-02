@@ -40,6 +40,7 @@ import androidx.media3.exoplayer.video.spherical.SphericalGLSurfaceView
 import androidx.media3.ui.PlayerView
 import app.alextran.immich.R
 import app.alextran.immich.core.AudioTrackChooser
+import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
 
@@ -62,6 +63,7 @@ private const val MONO_ALPHA = 0.6f
  * spherical metadata starts with it, any other with the guess of Flutter.
  *
  * A video with several audio tracks (languages, commentary) shows an audio track button, see [AudioTrackChooser].
+ * While the video loads or stalls, a label tells how far the buffer is filled, see [BufferingIndicator].
  *
  * On close (button, system back, or the system destroying the activity), Flutter gets [SphericalVideoEvents.closed]
  * with the layout and the coverage shown last, so that the corrections of the user can be remembered for the asset.
@@ -123,8 +125,9 @@ class SphericalVideoActivity : ComponentActivity() {
      * [closeLabel] and [errorMessage] come translated from Flutter; null falls back to the English resources.
      * [stereoLayout] is the layout Flutter guessed from the video dimensions and [stereoLabels] are the translated
      * labels of the 3D control, keyed "stereo", "mono", "topBottom" and "leftRight", and of the field of view
-     * control, keyed "coverage", "coverage_full" and "coverage_half", and of the audio track control (see
-     * [AudioTrackChooser]). [coverage] is the part of the sphere Flutter expects the video to cover.
+     * control, keyed "coverage", "coverage_full" and "coverage_half", of the audio track control (see
+     * [AudioTrackChooser]) and of the buffering label (see [BufferingIndicator]). [coverage] is the part of the sphere
+     * Flutter expects the video to cover.
      */
     fun intent(
       context: Context,
@@ -179,6 +182,8 @@ class SphericalVideoActivity : ComponentActivity() {
   private lateinit var coverageButton: TextView
   private lateinit var audioButton: View
   private lateinit var audioTracks: AudioTrackChooser
+  private lateinit var bufferingLabel: TextView
+  private lateinit var bufferingIndicator: BufferingIndicator
 
   /** The spherical surface of [playerView] */
   private var sphericalView: SphericalGLSurfaceView? = null
@@ -313,6 +318,10 @@ class SphericalVideoActivity : ComponentActivity() {
       setOnClickListener { showAudioTracks() }
     }
 
+    bufferingLabel = findViewById(R.id.spherical_video_buffering_label)
+    val streamed = StreamingLoadControl.isStreamed(intent.getStringExtra(EXTRA_URL).orEmpty())
+    bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed)
+
     enterFullScreen(topBar)
   }
 
@@ -393,6 +402,7 @@ class SphericalVideoActivity : ComponentActivity() {
         it.addListener(playerListener)
         // The language picked last, and the track picked for this video before a stop
         audioTracks.attach(it)
+        bufferingIndicator.attach(it)
         it.setMediaItem(MediaItem.fromUri(url), startPosition)
         it.playWhenReady = playWhenReady
         playerView.player = it
@@ -418,6 +428,7 @@ class SphericalVideoActivity : ComponentActivity() {
   private fun releasePlayer() {
     val current = player ?: return
     audioTracks.dismissDialog()
+    bufferingIndicator.detach()
     startPosition = current.currentPosition
     playWhenReady = current.playWhenReady
     current.removeListener(playerListener)
@@ -592,6 +603,7 @@ class SphericalVideoActivity : ComponentActivity() {
 
     // The video fills the whole screen, the controls stay clear of the camera cutout and of the system bars
     val controller = playerView.findViewById<View>(androidx.media3.ui.R.id.exo_controller)
+    val bufferingMargin = (bufferingLabel.layoutParams as FrameLayout.LayoutParams).bottomMargin
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.spherical_video_root)) { _, insets ->
       val safe = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
       topBar.updateLayoutParams<FrameLayout.LayoutParams> {
@@ -600,6 +612,7 @@ class SphericalVideoActivity : ComponentActivity() {
         rightMargin = safe.right
       }
       controller?.updatePadding(left = safe.left, right = safe.right, bottom = safe.bottom)
+      bufferingLabel.updateLayoutParams<FrameLayout.LayoutParams> { bottomMargin = bufferingMargin + safe.bottom }
       insets
     }
   }

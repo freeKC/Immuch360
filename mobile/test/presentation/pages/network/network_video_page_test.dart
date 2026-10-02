@@ -243,6 +243,7 @@ void main() {
     expect(find.byType(NetworkVideoControls), findsOneWidget);
     expect(find.byTooltip('Play'), findsOneWidget);
     expect(find.byType(Slider), findsOneWidget);
+    expect(find.text('Buffering…'), findsOneWidget, reason: 'no native player gets ready here');
 
     await endRealIo(tester);
   });

@@ -132,6 +132,10 @@
   "local_session_connect_server": "Bi serverekê ve girê bide",
   "local_session_connect_server_subtitle": "Bi servera Immich re hevdem bike da ku paşeke bigirî, lê bigerî û parve bikî",
   "local_session_description": "Sepan wêne û vîdyoyên vê cîhazê nîşan dide. Tu tişt ji tu derê re nayê şandin.",
+  "local_session_permission_allow": "Destûra gihîştinê bide",
+  "local_session_permission_body": "Destûrê bide ku sepan bigihîje wêne û vîdyoyên te da ku ew li vir werin nîşandan. Bê server, tu tişt ji cîhazê dernakeve.",
+  "local_session_permission_settings": "Eyaran veke",
+  "local_session_permission_title": "Sepan nikare wêneyên vê cîhazê bibîne",
   "local_session_title": "Tenê ev cîhaz",
   "location": "Dever",
   "location_permission": "Destûra deverê",
@@ -295,6 +299,8 @@
   "video_audio_track_mono": "Mono",
   "video_audio_track_number": "Şop {track}",
   "video_audio_track_stereo": "Stereo",
+  "video_buffering": "Tê barkirin {percent}%",
+  "video_buffering_simple": "Tê barkirin",
   "view_as_360": "Wek 360° bibîne",
   "view_as_360_remove": "Êdî wek 360° nehesibîne"
 }
