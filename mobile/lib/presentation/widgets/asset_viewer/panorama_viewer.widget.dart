@@ -111,6 +111,43 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   }
 }
 
+/// Plays the video at [url] full screen in the native 360° player, like [openPanoramaVideo] for a video that is no
+/// asset: a file of a network share, streamed through the local media bridge for example. [title] names it in the
+/// player, [layout] and [coverage] are what the player opens with (see [resolveSphereView]); the user can change them
+/// there, and nothing is remembered.
+///
+/// Meanwhile [player], the page's own player when there is one, is stopped (see
+/// [VideoPlayerNotifier.suspendForExternalPlayer]): the page lifts this when the app resumes, which closing the 360°
+/// player brings about, and a failure to open gives it back right away. Returns whether the 360° player opened.
+Future<bool> openSphericalVideoUrl(
+  BuildContext context,
+  WidgetRef ref, {
+  required String url,
+  Map<String, String> headers = const {},
+  required String title,
+  required StereoLayout layout,
+  required SphereCoverage coverage,
+  VideoPlayerNotifier? player,
+}) async {
+  // Read before the first await: the page may be gone by then
+  final api = ref.read(sphericalVideoApiProvider);
+  // The session takes the events of the player; without an asset, it has nothing to remember when it closes
+  ref.read(sphericalVideoSessionProvider).cancel();
+  final closeLabel = context.t.close;
+  final errorMessage = context.t.errors.unable_to_play_video;
+  final labels = sphereViewerLabels(context.t);
+
+  try {
+    await player?.suspendForExternalPlayer();
+    await api.open(url, headers, title, closeLabel, errorMessage, layout, labels, coverage);
+    return true;
+  } catch (error, stackTrace) {
+    _log.severe('Cannot open the 360° video player for $title', error, stackTrace);
+    await player?.resumeAfterExternalPlayer();
+    return false;
+  }
+}
+
 // Value of a GPano tag, written as an attribute (GPano:Name="1.5", as cameras do) or as an element
 // (<GPano:Name>1.5</GPano:Name>, as the server's copy into previews does)
 double? _gpanoTag(String xmp, String name) {
@@ -377,14 +414,25 @@ final panoramaImageProvider = Provider<ImageProvider Function(BaseAsset asset, S
 /// replace it.
 final panoramaGPanoClientProvider = Provider<http.Client>((_) => NetworkRepository.client);
 
+/// A photo the panorama viewer shows that is no asset: a file of a network share, for example. [image] is the photo,
+/// [name] its file name (see [resolveSphereView]), [length] its size in bytes when known, and [read] reads its bytes
+/// for its GPano tags (see [readGPanoTags]), null when they cannot be read.
+typedef PanoramaSource = ({ImageProvider image, String name, int? length, ByteRangeReader? read});
+
 /// Full-screen viewer for equirectangular (360°) photos: drag or flick to look around, pinch or double tap
 /// to zoom, or turn on the gyroscope and move the phone. VR180 photos cover the front half of the sphere only; the
 /// coverage control switches between that and the whole sphere.
 @RoutePage()
 class PanoramaViewerPage extends ConsumerStatefulWidget {
-  final BaseAsset asset;
+  /// The asset shown, null for a [source]
+  final BaseAsset? asset;
 
-  const PanoramaViewerPage({super.key, required this.asset});
+  /// The photo shown when it is no asset, null for an [asset]. The coverage the user picks for it is not remembered.
+  final PanoramaSource? source;
+
+  const PanoramaViewerPage({super.key, required BaseAsset this.asset}) : source = null;
+
+  const PanoramaViewerPage.source({super.key, required PanoramaSource this.source}) : asset = null;
 
   @override
   ConsumerState<PanoramaViewerPage> createState() => _PanoramaViewerPageState();
@@ -406,6 +454,9 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   bool _gpanoLoaded = false;
   // Layout of a 3D panorama picked with the 3D button, null until then: see _view
   StereoLayout? _chosenStereoLayout;
+  // Coverage picked with the coverage button for a photo that is no asset, null until then. That of an asset is
+  // remembered for it, see sphereCoverageOverrideProvider.
+  SphereCoverage? _chosenSourceCoverage;
 
   // View direction and vertical field of view, in degrees
   double _longitude = 0;
@@ -450,9 +501,11 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     _orientation = MediaQuery.orientationOf(context);
     if (!_loadStarted) {
       _loadStarted = true;
-      _imageStream =
-          ref.read(panoramaImageProvider)(widget.asset, MediaQuery.sizeOf(context)).resolve(ImageConfiguration.empty)
-            ..addListener(_imageListener);
+      final asset = widget.asset;
+      final image = asset != null
+          ? ref.read(panoramaImageProvider)(asset, MediaQuery.sizeOf(context))
+          : widget.source!.image;
+      _imageStream = image.resolve(ImageConfiguration.empty)..addListener(_imageListener);
       _loadGPano().whenComplete(() {
         if (mounted) {
           setState(() => _gpanoLoaded = true);
@@ -461,12 +514,18 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     }
   }
 
+  /// The file name of the photo
+  String get _name => widget.asset?.name ?? widget.source!.name;
+
   // Partial spheres and initial views: the server copies the GPano tags into the preview's XMP (same source as web);
-  // a photo only on the device has them in its file
+  // a photo only on the device has them in its file, and so does a photo that is no asset
   Future<void> _loadGPano() async {
-    final remoteId = widget.asset.remoteId;
-    final localId = widget.asset.localId;
-    final gpano = remoteId != null
+    final source = widget.source;
+    final remoteId = widget.asset?.remoteId;
+    final localId = widget.asset?.localId;
+    final gpano = source != null
+        ? await _readSourceGPano(source)
+        : remoteId != null
         ? await fetchGPano(
             ref.read(panoramaGPanoClientProvider),
             Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview)),
@@ -506,7 +565,26 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       }
       return (crop: tags.crop, initialView: tags.initialView);
     } catch (error) {
-      _log.info('Could not read the GPano tags of ${widget.asset.name}: $error');
+      _log.info('Could not read the GPano tags of $_name: $error');
+      return null; // keep the full sphere
+    }
+  }
+
+  // The GPano tags of a photo that is no asset, from the same windows of its file. Painting waits for them, so a file
+  // that cannot be read within a few seconds keeps the full sphere.
+  Future<GPano?> _readSourceGPano(PanoramaSource source) async {
+    final read = source.read;
+    if (read == null) {
+      return null;
+    }
+    try {
+      final tags = await readGPanoTags(read, source.length ?? 0).timeout(const Duration(seconds: 5));
+      if (tags == null || (tags.crop == null && tags.initialView == null)) {
+        return null;
+      }
+      return (crop: tags.crop, initialView: tags.initialView);
+    } catch (error) {
+      _log.info('Could not read the GPano tags of $_name: $error');
       return null; // keep the full sphere
     }
   }
@@ -533,11 +611,11 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   SphereView _view(SphereCoverage? chosenCoverage) {
     final asset = widget.asset;
     final image = _imageInfo?.image;
-    final (width, height) = (asset.width ?? 0) > 0 && (asset.height ?? 0) > 0
+    final (width, height) = asset != null && (asset.width ?? 0) > 0 && (asset.height ?? 0) > 0
         ? (asset.width, asset.height)
         : (image?.width, image?.height);
     return resolveSphereView(
-      fileName: asset.name,
+      fileName: _name,
       width: width,
       height: height,
       gpanoCrop: _gpanoCrop,
@@ -554,18 +632,23 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   }
 
   // The guess can be wrong both ways too: a VR180 file that nothing marks, or a 360° one whose name looks like VR180.
-  // The choice is remembered for the asset.
+  // The choice is remembered for the asset; for a photo that is no asset, only while the viewer is open.
   void _showNextCoverage(SphereView view) {
     final coverage = view.coverage.next;
     // Back to the front, from behind the half sphere
     if (coverage == SphereCoverage.half && ((_longitude + 180) % 360 - 180).abs() > 90) {
       setState(() => _longitude = 0);
     }
-    unawaited(
-      ref
-          .read(sphereCoverageOverridesProvider.notifier)
-          .remember(widget.asset, coverage, opened: view.coverage, guess: view.coverageGuess),
-    );
+    final asset = widget.asset;
+    if (asset == null) {
+      setState(() => _chosenSourceCoverage = coverage);
+    } else {
+      unawaited(
+        ref
+            .read(sphereCoverageOverridesProvider.notifier)
+            .remember(asset, coverage, opened: view.coverage, guess: view.coverageGuess),
+      );
+    }
     _showChoice(coverage.label(context.t));
   }
 
@@ -595,7 +678,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   // Not edited, as panoramas cannot be edited. Straight from the server, outside the image cache, where a texture
   // this large would push out the thumbnails of the timeline.
   void _loadHighResolutionIfZoomedIn() {
-    final remoteId = widget.asset.remoteId;
+    final remoteId = widget.asset?.remoteId;
     final image = _imageInfo?.image;
     if (_highResolutionRequested || _fov > _highResolutionFov || remoteId == null || image == null) {
       return;
@@ -794,7 +877,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     final showsSphere = image != null && _gpanoLoaded;
     // On a Meta Quest the panel is fixed in space: following the head makes no sense there
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
-    final view = _view(ref.watch(sphereCoverageOverrideProvider(widget.asset)));
+    final asset = widget.asset;
+    final view = _view(asset != null ? ref.watch(sphereCoverageOverrideProvider(asset)) : _chosenSourceCoverage);
     final stereoLayout = view.layout;
     final gpanoCrop = _gpanoCrop;
     // A partial panorama covers what its GPano crop says, whatever the coverage

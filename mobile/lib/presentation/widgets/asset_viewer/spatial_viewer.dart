@@ -3,7 +3,9 @@
 // on Android, SpatialVideoViewController on iOS, never on a Meta Quest. The viewer's own player stays as it is, and
 // takes the video back where the Spatial player left it.
 
+import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -49,6 +51,9 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
   // Read before the first await: the viewer may be gone by then
   final api = ref.read(spatialVideoApiProvider);
   final session = ref.read(spatialVideoSessionProvider);
+  // The session takes the events of the player, even after a player opened on a URL that never told it closed (see
+  // openSpatialVideoUrl)
+  SpatialVideoEvents.setUp(session);
   final overrides = ref.read(spatialLayoutOverridesProvider);
   final coverageOverrides = ref.read(sphereCoverageOverridesProvider.notifier);
   final probeService = ref.read(sphericalProbeServiceProvider);
@@ -160,5 +165,121 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
       await player.resumeAfterExternalPlayerAt(playback.position, play: wasPlaying);
     }
     messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+  }
+}
+
+/// Plays the video at [url] full screen in the Spatial 2.5D player, like [openSpatialVideo] for a video that is no
+/// asset: a file of a network share, streamed through the local media bridge for example.
+///
+/// [title] names it, its file name, which the layout guess reads too (see [guessSpatialLayout]), along with [width]
+/// and [height], its frame size when known. [coverage] is the part of the sphere a 360° video covers, null for a flat
+/// video, and [declaredStereo] tells that the file declares its stereo layout, which the player then reads. Nothing
+/// the user picks in the player is remembered. The player starts at [startPosition], playing when [autoplay].
+///
+/// When the device cannot run the player, a message says so and [player], the page's own player when there is one,
+/// goes on untouched. Otherwise that player is stopped meanwhile (see [VideoPlayerNotifier.suspendForExternalPlayer])
+/// and takes the video back where the Spatial player left it; a failure to open gives it back where and as it was,
+/// with a message. Returns whether the Spatial player opened.
+Future<bool> openSpatialVideoUrl(
+  BuildContext context,
+  WidgetRef ref, {
+  required String url,
+  Map<String, String> headers = const {},
+  required String title,
+  int? width,
+  int? height,
+  SphereCoverage? coverage,
+  bool declaredStereo = false,
+  Duration startPosition = Duration.zero,
+  bool autoplay = false,
+  VideoPlayerNotifier? player,
+}) async {
+  // Read before the first await: the page may be gone by then
+  final api = ref.read(spatialVideoApiProvider);
+  final session = ref.read(spatialVideoSessionProvider);
+  final debugOverlay = ref.read(settingsProvider.notifier).get(Setting.advancedTroubleshooting);
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final labels = spatialLabels(context.t);
+  final unavailableMessage = context.t.spatial_unavailable;
+  final errorMessage = context.t.spatial_open_failed;
+
+  final SpatialCapabilities capabilities;
+  try {
+    capabilities = await api.capabilities();
+  } catch (error) {
+    // No player on this platform
+    _log.warning('Cannot ask whether the Spatial 2.5D player runs here: $error');
+    messenger?.showSnackBar(SnackBar(content: Text(unavailableMessage)));
+    return false;
+  }
+  if (!capabilities.supported) {
+    _log.info('The Spatial 2.5D player does not run here: ${capabilities.reason ?? 'no reason given'}');
+    messenger?.showSnackBar(SnackBar(content: Text(unavailableMessage)));
+    return false;
+  }
+
+  final projection = coverage?.toSpatialProjection() ?? SpatialProjection.flat;
+  final layout = guessSpatialLayout(
+    width: width,
+    height: height,
+    fileName: title,
+    projection: projection,
+    declaredStereo: declaredStereo,
+  );
+  final events = _UrlSpatialPlayback(session, player);
+  // Whether this call stopped the page's player, and so has to give it back on a failure
+  var suspended = false;
+
+  try {
+    // The closing of this player goes to the page's player, then the session of the asset viewer takes the events again
+    SpatialVideoEvents.setUp(events);
+    if (player != null) {
+      suspended = true;
+      await player.suspendForExternalPlayer();
+    }
+    await api.open(
+      SpatialOpenRequest(
+        url: url,
+        headers: headers,
+        title: title,
+        layout: layout,
+        projection: projection,
+        startPositionMs: startPosition.inMilliseconds,
+        autoplay: autoplay,
+        debugOverlay: debugOverlay,
+        labels: labels,
+      ),
+    );
+    return true;
+  } catch (error, stackTrace) {
+    _log.severe('Cannot open the Spatial 2.5D player for $title', error, stackTrace);
+    events.release();
+    if (suspended && player != null && player.mounted) {
+      await player.resumeAfterExternalPlayerAt(startPosition, play: autoplay);
+    }
+    messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    return false;
+  }
+}
+
+/// Takes the closing of a Spatial 2.5D player opened on a URL (see [openSpatialVideoUrl]): gives the page's player
+/// the video back where the Spatial player left it, and the events back to the session of the asset viewer.
+class _UrlSpatialPlayback implements SpatialVideoEvents {
+  _UrlSpatialPlayback(this._session, this._player);
+
+  final SpatialVideoSession _session;
+  final VideoPlayerNotifier? _player;
+
+  /// Hands the events back to the session of the asset viewer
+  void release() => SpatialVideoEvents.setUp(_session);
+
+  @override
+  void closed(int positionMs, bool wasPlaying, SpatialStereoLayout layout, SpatialProjection projection) {
+    release();
+    final player = _player;
+    // The page may be gone, if the user left it some other way than through the player
+    if (player != null && player.mounted) {
+      unawaited(player.resumeAfterExternalPlayerAt(Duration(milliseconds: math.max(0, positionMs)), play: wasPlaying));
+    }
   }
 }

@@ -2,7 +2,7 @@ name: immich_mobile
 description: Immich - selfhosted backup media file on mobile phone
 
 publish_to: 'none'
-version: 3.3.0-rc.0+3030006
+version: 3.3.0-rc.0+3030007
 
 environment:
   sdk: '>=3.12.0 <4.0.0'
@@ -17,6 +17,7 @@ dependencies:
   connectivity_plus: ^7.3.0
   crop_image: ^1.0.17
   crypto: ^3.0.7
+  dart_smb2: ^0.1.3
   device_info_plus: ^12.4.0
   diacritic: ^0.1.6
   drift: ^2.34.0

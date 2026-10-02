@@ -1,0 +1,196 @@
+// Network shares (SMB and WebDAV): a source is a share the user added, an entry is a file or a folder on it.
+// Media of a share play straight from it through the local media bridge; nothing is copied to the device.
+
+import 'dart:convert';
+
+enum NetworkSourceType { smb, webdav }
+
+/// A share the user added. The password lives in the secure storage under [secretKey], never in the Store.
+class NetworkSource {
+  const NetworkSource({
+    required this.id,
+    required this.type,
+    required this.name,
+    required this.host,
+    this.port,
+    this.share = '',
+    this.rootPath = '/',
+    this.username = '',
+    this.useTls = false,
+  });
+
+  /// Random id, stable for the life of the source; also the key of its password in the secure storage
+  final String id;
+  final NetworkSourceType type;
+
+  /// What the user calls it
+  final String name;
+
+  /// SMB: the server name or address. WebDAV: the server name or address of the base URL.
+  final String host;
+
+  /// Null for the default port of the type (445 for SMB, 80 or 443 for WebDAV)
+  final int? port;
+
+  /// SMB share name. WebDAV: the path of the base URL (for example "/remote.php/dav/files/alice").
+  final String share;
+
+  /// Folder inside the share the browser starts from, "/" for its root
+  final String rootPath;
+  final String username;
+
+  /// WebDAV over HTTPS
+  final bool useTls;
+
+  String get secretKey => 'network_source_password_$id';
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'type': type.name,
+    'name': name,
+    'host': host,
+    'port': port,
+    'share': share,
+    'rootPath': rootPath,
+    'username': username,
+    'useTls': useTls,
+  };
+
+  static NetworkSource? fromJson(Object? json) {
+    if (json is! Map) {
+      return null;
+    }
+    final id = json['id'];
+    final type = NetworkSourceType.values.where((t) => t.name == json['type']).firstOrNull;
+    final name = json['name'];
+    final host = json['host'];
+    if (id is! String || type == null || name is! String || host is! String) {
+      return null;
+    }
+    return NetworkSource(
+      id: id,
+      type: type,
+      name: name,
+      host: host,
+      port: json['port'] is int ? json['port'] as int : null,
+      share: json['share'] is String ? json['share'] as String : '',
+      rootPath: json['rootPath'] is String ? json['rootPath'] as String : '/',
+      username: json['username'] is String ? json['username'] as String : '',
+      useTls: json['useTls'] == true,
+    );
+  }
+
+  static String encodeList(List<NetworkSource> sources) => jsonEncode(sources.map((s) => s.toJson()).toList());
+
+  static List<NetworkSource> decodeList(String? json) {
+    if (json == null || json.isEmpty) {
+      return const [];
+    }
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(json);
+    } on FormatException {
+      return const [];
+    }
+    return decoded is List ? decoded.map(fromJson).whereType<NetworkSource>().toList() : const [];
+  }
+
+  NetworkSource copyWith({
+    String? name,
+    String? host,
+    int? port,
+    bool clearPort = false,
+    String? share,
+    String? rootPath,
+    String? username,
+    bool? useTls,
+  }) => NetworkSource(
+    id: id,
+    type: type,
+    name: name ?? this.name,
+    host: host ?? this.host,
+    port: clearPort ? null : (port ?? this.port),
+    share: share ?? this.share,
+    rootPath: rootPath ?? this.rootPath,
+    username: username ?? this.username,
+    useTls: useTls ?? this.useTls,
+  );
+}
+
+/// A file or folder on a share. [path] is absolute inside the share, "/" separated, starting with "/".
+class NetworkEntry {
+  const NetworkEntry({
+    required this.sourceId,
+    required this.path,
+    required this.isDirectory,
+    this.size,
+    this.modified,
+    this.mimeType,
+  });
+
+  final String sourceId;
+  final String path;
+  final bool isDirectory;
+  final int? size;
+  final DateTime? modified;
+
+  /// From the server when it gives one, else from the extension (see [guessedMimeType])
+  final String? mimeType;
+
+  String get name =>
+      path.endsWith('/') && path.length > 1 ? path.substring(0, path.length - 1).split('/').last : path.split('/').last;
+
+  String get extension {
+    final dot = name.lastIndexOf('.');
+    return dot < 0 ? '' : name.substring(dot + 1).toLowerCase();
+  }
+
+  static const imageExtensions = {
+    'jpg',
+    'jpeg',
+    'png',
+    'webp',
+    'heic',
+    'heif',
+    'avif',
+    'gif',
+    'bmp',
+    'tif',
+    'tiff',
+    'insp',
+    'dng',
+  };
+  static const videoExtensions = {'mp4', 'mov', 'm4v', 'mkv', 'webm', 'avi', '3gp', 'mts', 'm2ts', 'insv'};
+
+  bool get isImage => !isDirectory && imageExtensions.contains(extension);
+  bool get isVideo => !isDirectory && videoExtensions.contains(extension);
+  bool get isMedia => isImage || isVideo;
+
+  /// A content type for the bridge and the players, from [mimeType] or the extension
+  String get guessedMimeType {
+    final given = mimeType;
+    if (given != null && given.isNotEmpty && given != 'application/octet-stream') {
+      return given;
+    }
+    return switch (extension) {
+      'jpg' || 'jpeg' => 'image/jpeg',
+      'png' => 'image/png',
+      'webp' => 'image/webp',
+      'heic' || 'heif' => 'image/heic',
+      'avif' => 'image/avif',
+      'gif' => 'image/gif',
+      'bmp' => 'image/bmp',
+      'tif' || 'tiff' => 'image/tiff',
+      'dng' => 'image/x-adobe-dng',
+      'insp' => 'image/jpeg',
+      'mp4' || 'm4v' || 'insv' => 'video/mp4',
+      'mov' => 'video/quicktime',
+      'mkv' => 'video/x-matroska',
+      'webm' => 'video/webm',
+      'avi' => 'video/x-msvideo',
+      '3gp' => 'video/3gpp',
+      'mts' || 'm2ts' => 'video/mp2t',
+      _ => 'application/octet-stream',
+    };
+  }
+}

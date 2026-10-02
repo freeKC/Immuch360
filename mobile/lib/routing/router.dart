@@ -8,6 +8,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/memory.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/person.model.dart';
 import 'package:immich_mobile/domain/models/user.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
@@ -56,6 +57,11 @@ import 'package:immich_mobile/presentation/pages/locked_folder.page.dart';
 import 'package:immich_mobile/presentation/pages/map.page.dart';
 import 'package:immich_mobile/presentation/pages/memory.page.dart';
 import 'package:immich_mobile/presentation/pages/memory_list.page.dart';
+import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
+import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
+import 'package:immich_mobile/presentation/pages/network/network_share_edit.page.dart';
+import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
+import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/pages/panorama_360.page.dart';
 import 'package:immich_mobile/presentation/pages/partner_detail.page.dart';
 import 'package:immich_mobile/presentation/pages/people_collection.page.dart';
@@ -201,6 +207,13 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CleanupPreviewRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: SlideshowRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: MemoryListRoute.page, guards: [_authGuard, _duplicateGuard]),
+    // Network shares, with or without a server. The browser opens itself for each subfolder, and a photo or a video
+    // may give way to the next one of its folder, so these three have no duplicate guard
+    AutoRoute(page: NetworkSharesRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: NetworkShareEditRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: NetworkBrowserRoute.page, guards: [_authGuard]),
+    AutoRoute(page: NetworkPhotoRoute.page, guards: [_authGuard]),
+    AutoRoute(page: NetworkVideoRoute.page, guards: [_authGuard]),
     // required to handle all deeplinks in deep_link.service.dart
     // auto_route_library#1722
     RedirectRoute(path: '*', redirectTo: '/'),

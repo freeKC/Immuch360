@@ -42,6 +42,10 @@ enum StoreKey<T> {
   /// a JSON map from the local asset id to what was found, the latest entries last
   localPanoramaAssets<String>._(5004),
 
+  /// The network shares (SMB and WebDAV) the user added: a JSON list of NetworkSource, in the order they were added.
+  /// Never holds a password, those live in the secure storage
+  networkSources<String>._(5005),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

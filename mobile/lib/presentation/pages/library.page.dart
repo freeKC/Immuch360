@@ -6,6 +6,7 @@ import 'package:immich_mobile/domain/models/user.model.dart';
 import 'package:immich_mobile/extensions/asyncvalue_extensions.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_album_thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
@@ -14,6 +15,7 @@ import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/user.provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -153,7 +155,7 @@ class _CollectionCards extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // People, places and memories come from the server; the device albums do not
+    // People, places and memories come from the server; the device albums and the network shares do not
     final hasServer = ref.watch(hasServerProvider);
 
     return SliverPadding(
@@ -165,6 +167,7 @@ class _CollectionCards extends ConsumerWidget {
           children: [
             if (hasServer) ...const [_PeopleCollectionCard(), _PlacesCollectionCard()],
             const _LocalAlbumsCollectionCard(),
+            const _NetworkSharesCollectionCard(),
             if (hasServer) const _MemoriesCollectionCard(),
           ],
         ),
@@ -348,6 +351,92 @@ class _LocalAlbumsCollectionCard extends ConsumerWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   context.t.on_this_device,
+                  style: context.textTheme.titleSmall?.copyWith(
+                    color: context.colorScheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// The network shares (SMB and WebDAV): up to four of them by name, or a network icon while there is none
+class _NetworkSharesCollectionCard extends ConsumerWidget {
+  const _NetworkSharesCollectionCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sources = ref.watch(networkSourcesProvider);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isTablet = constraints.maxWidth > 600;
+        final widthFactor = isTablet ? 0.25 : 0.5;
+        final size = context.width * widthFactor - 20.0;
+
+        return GestureDetector(
+          onTap: () => context.pushRoute(const NetworkSharesRoute()),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: size,
+                width: size,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    gradient: LinearGradient(
+                      colors: [context.colorScheme.primary.withAlpha(30), context.colorScheme.primary.withAlpha(25)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: sources.isEmpty
+                      ? Center(
+                          child: Icon(Icons.lan_outlined, size: size / 3, color: context.primaryColor),
+                        )
+                      : GridView.count(
+                          crossAxisCount: 2,
+                          padding: const EdgeInsets.all(12),
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: sources.take(4).map((source) {
+                            return DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                color: context.colorScheme.surfaceContainerLow,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(networkSourceIcon(source.type), color: context.primaryColor),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      source.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: context.textTheme.labelSmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  context.t.network_shares,
                   style: context.textTheme.titleSmall?.copyWith(
                     color: context.colorScheme.onSurface,
                     fontWeight: FontWeight.w500,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
+import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
@@ -10,6 +11,7 @@ import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -34,9 +36,25 @@ class AppLifeCycleNotifier extends StateNotifier<AppLifeCycleEnum> {
 
   AppLifeCycleNotifier(this._ref) : super(AppLifeCycleEnum.active);
 
+  /// A suspended app can lose the listening socket of the network share bridge without any event: once back in the
+  /// foreground the bridge is bound again on the same port, so the URLs the players hold stay valid.
+  Future<void> _rebindMediaBridge() async {
+    try {
+      final bridge = _ref.read(mediaBridgeProvider);
+      if (bridge is! LocalMediaBridge || !bridge.isRunning) {
+        return;
+      }
+      await bridge.stop();
+      await bridge.start();
+    } catch (error, stackTrace) {
+      _log.warning("Could not bind the network share bridge again", error, stackTrace);
+    }
+  }
+
   Future<void> handleAppResume() async {
     state = AppLifeCycleEnum.resumed;
     _log.info("App resumed");
+    unawaited(_rebindMediaBridge());
 
     // Prevent overlapping resume operations
     if (_resumeOperation != null && !_resumeOperation!.isCompleted) {

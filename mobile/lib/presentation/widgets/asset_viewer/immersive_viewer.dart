@@ -145,3 +145,33 @@ Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset, {required Map<S
     rethrow;
   }
 }
+
+/// Opens the photo or video at [url] in the immersive viewer, like [openImmersiveViewer] for a media that is no asset:
+/// a file of a network share, streamed through the local media bridge for example. [title] names it, [layout] and
+/// [coverage] are what the viewer opens with (see [resolveSphereView]), and [stereoLabels] label its controls (see
+/// [sphereViewerLabels]); the user can change them there, and nothing is remembered.
+///
+/// Meanwhile [player], the page's own player for a video, is stopped (see
+/// [VideoPlayerNotifier.suspendForExternalPlayer]): the page lifts this when the app resumes. A failure to open gives
+/// it back right away, and is rethrown.
+Future<void> openImmersiveUrl(
+  WidgetRef ref, {
+  required String url,
+  Map<String, String> headers = const {},
+  required bool isVideo,
+  required String title,
+  required StereoLayout layout,
+  required SphereCoverage coverage,
+  required Map<String, String> stereoLabels,
+  VideoPlayerNotifier? player,
+}) async {
+  // Read before the first await: the page may be gone by then
+  final api = ref.read(immersiveApiProvider);
+  await player?.suspendForExternalPlayer();
+  try {
+    await api.open(url, headers, isVideo, title, layout.toImmersive(), stereoLabels, coverage.toImmersive());
+  } catch (_) {
+    await player?.resumeAfterExternalPlayer();
+    rethrow;
+  }
+}
