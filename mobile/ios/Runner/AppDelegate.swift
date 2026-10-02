@@ -40,6 +40,7 @@ import native_video_player
       binaryMessenger: messenger,
       api: SpatialVideoApiImpl(events: SpatialVideoEvents(binaryMessenger: messenger))
     )
+    VideoThumbnailApiSetup.setUp(binaryMessenger: messenger, api: VideoThumbnailApiImpl())
   }
 
   public static func cancelPlugins(with engine: FlutterEngine) {

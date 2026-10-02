@@ -70,6 +70,12 @@
   "spatial_sensitivity": "Kepekaan kepalo",
   "spatial_tracking_lost": "Muko tok jumpo, tengoh cari",
   "spatial_unavailable": "Spatial 2.5D tok ado dale peranti ni",
+  "video_audio_track": "Trek audio",
+  "video_audio_track_channels": "{channels} saluran",
+  "video_audio_track_default": "Lalai",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Trek {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Lihat sebagai 360°",
   "view_as_360_remove": "Berhenti anggap sebagai 360°"
 }

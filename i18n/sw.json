@@ -70,6 +70,12 @@
   "spatial_sensitivity": "Unyeti wa kichwa",
   "spatial_tracking_lost": "Uso haujapatikana, unatafutwa",
   "spatial_unavailable": "Spatial 2.5D haipatikani kwenye kifaa hiki",
+  "video_audio_track": "Wimbo wa sauti",
+  "video_audio_track_channels": "Chaneli {channels}",
+  "video_audio_track_default": "Chaguomsingi",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Wimbo {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Tazama kama 360°",
   "view_as_360_remove": "Acha kuchukulia kama 360°"
 }

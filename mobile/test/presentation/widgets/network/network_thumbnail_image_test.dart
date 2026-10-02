@@ -131,4 +131,68 @@ void main() {
 
     await endRealIo(tester);
   });
+
+  testWidgets('tells when no photo thumbnail is loading any more, for the video frames to come after', (tester) async {
+    share.files['/a.png'] = await png(tester, 16, 16);
+    share.files['/b.png'] = await png(tester, 16, 16);
+    server.gate = Completer<void>();
+    var loaded = 0;
+    final listener = ImageStreamListener((info, _) {
+      loaded++;
+      info.dispose();
+    });
+    final streams = [
+      for (final path in ['/a.png', '/b.png'])
+        NetworkThumbnailImage(server.urlOf(path)).resolve(ImageConfiguration.empty)..addListener(listener),
+    ];
+    var idle = false;
+    unawaited(NetworkThumbnailImage.whenIdle().then((_) => idle = true));
+
+    await pumpRealIo(tester, () => server.inFlight == 2);
+    // The end of the frame under way, whose photos it waits for too
+    await tester.pump(Duration.zero);
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pump();
+    expect(idle, isFalse);
+
+    server.gate!.complete();
+    await pumpRealIo(tester, () => idle);
+    expect(idle, isTrue);
+    await pumpRealIo(tester, () => loaded == 2);
+    expect(loaded, 2);
+    for (final stream in streams) {
+      stream.removeListener(listener);
+    }
+
+    var idleAgain = false;
+    unawaited(NetworkThumbnailImage.whenIdle().then((_) => idleAgain = true));
+    await tester.pump(Duration.zero);
+    expect(idleAgain, isTrue, reason: 'nothing loading');
+
+    await endRealIo(tester);
+  });
+
+  group('NetworkVideoThumbnailImage', () {
+    const key = (sourceId: 'nas', path: '/trip.mp4', size: 1000, modified: null);
+
+    testWidgets('decodes the frame of a video at most 400 pixels wide', (tester) async {
+      final bytes = await png(tester, 800, 400);
+
+      expect(await load(tester, NetworkVideoThumbnailImage(key, bytes: bytes)), const Size(400, 200));
+      expect(NetworkVideoThumbnailImage.isInMemory(key), isTrue);
+      expect(const NetworkVideoThumbnailImage(key), NetworkVideoThumbnailImage(key, bytes: bytes), reason: 'by video');
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('fails without its bytes, and leaves the image cache', (tester) async {
+      final error = await load(tester, const NetworkVideoThumbnailImage(key));
+      await tester.pump();
+
+      expect(error, isA<StateError>());
+      expect(NetworkVideoThumbnailImage.isInMemory(key), isFalse);
+
+      await endRealIo(tester);
+    });
+  });
 }

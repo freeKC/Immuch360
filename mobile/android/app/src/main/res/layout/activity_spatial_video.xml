@@ -93,6 +93,18 @@
         android:textColor="@android:color/white"
         android:textSize="16sp" />
 
+      <!-- Audio track: lists the audio tracks (languages, commentary) to pick one. Shown by the activity for a video
+           with two audio tracks or more; its description and tooltip come from the activity. -->
+      <ImageButton
+        android:id="@+id/spatial_video_audio"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/ic_video_audio_track"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
       <!-- Stereo layout: opens a menu with the six layouts. Its text comes from the activity. -->
       <Button
         android:id="@+id/spatial_video_layout"

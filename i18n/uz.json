@@ -83,6 +83,12 @@
   "spatial_sensitivity": "Bosh harakati sezgirligi",
   "spatial_tracking_lost": "Yuz topilmadi, qidirilmoqda",
   "spatial_unavailable": "Spatial 2.5D bu qurilmada mavjud emas",
+  "video_audio_track": "Audio trek",
+  "video_audio_track_channels": "{channels} kanal",
+  "video_audio_track_default": "Standart",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Trek {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "360° sifatida ko‘rish",
   "view_as_360_remove": "360° sifatida hisoblashni to‘xtatish"
 }

@@ -169,6 +169,12 @@
   "spatial_sensitivity": "ភាពរសើបនៃក្បាល",
   "spatial_tracking_lost": "រកមិនឃើញមុខ, កំពុងស្វែងរក",
   "spatial_unavailable": "Spatial 2.5D មិនមាននៅលើឧបករណ៍នេះទេ",
+  "video_audio_track": "បទសំឡេង",
+  "video_audio_track_channels": "{channels} ឆានែល",
+  "video_audio_track_default": "លំនាំដើម",
+  "video_audio_track_mono": "ម៉ូណូ",
+  "video_audio_track_number": "បទ {track}",
+  "video_audio_track_stereo": "ស្តេរ៉េអូ",
   "view_as_360": "មើលជា 360°",
   "view_as_360_remove": "ឈប់ចាត់ទុកជា 360°"
 }

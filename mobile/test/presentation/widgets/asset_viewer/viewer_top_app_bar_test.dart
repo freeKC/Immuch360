@@ -185,6 +185,17 @@ void main() {
     'leftRight': '3D, side by side',
     ...englishCoverageLabels,
   };
+  // The audio track control of the native video players, with the language of the app to name the track languages in
+  const englishAudioTrackLabels = {
+    'audioTrack': 'Audio track',
+    'audioTrackDefault': 'Default',
+    'audioTrackNumber': 'Track {track}',
+    'audioTrackMono': 'Mono',
+    'audioTrackStereo': 'Stereo',
+    'audioTrackChannels': '{channels} channels',
+    'audioTrackLocale': 'en',
+  };
+  const englishVideoPlayerLabels = {...englishViewerLabels, ...englishAudioTrackLabels};
 
   setUp(() async {
     context = await PresentationContext.create();
@@ -441,7 +452,7 @@ void main() {
         'Close',
         'Unable to play video',
         StereoLayout.mono,
-        englishViewerLabels,
+        englishVideoPlayerLabels,
         SphereCoverage.full,
       ]);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the photo viewer is for images only');
@@ -525,7 +536,7 @@ void main() {
         final captured = verify(
           () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), captureAny(), captureAny()),
         ).captured;
-        expect(captured, [expected, englishViewerLabels, SphereCoverage.full], reason: '$width x $height');
+        expect(captured, [expected, englishVideoPlayerLabels, SphereCoverage.full], reason: '$width x $height');
       }
     });
 
@@ -1192,6 +1203,7 @@ void main() {
       'close': 'Close',
       'error': 'Unable to play video',
       ...englishCoverageLabels,
+      ...englishAudioTrackLabels,
     };
 
     SpatialOpenRequest openedRequest() =>

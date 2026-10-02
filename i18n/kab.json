@@ -70,6 +70,12 @@
   "spatial_sensitivity": "Taḥssast n uqerru",
   "spatial_tracking_lost": "Ur d-yettwaf ara wudem, anadi",
   "spatial_unavailable": "Spatial 2.5D ulac-it deg yibenk-a",
+  "video_audio_track": "Abrid n umeslaw",
+  "video_audio_track_channels": "{channels} n tqenwatin",
+  "video_audio_track_default": "Amezwer",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Abrid {track}",
+  "video_audio_track_stereo": "Stiriyu",
   "view_as_360": "Wali am 360°",
   "view_as_360_remove": "Ḥbes asemres am 360°"
 }

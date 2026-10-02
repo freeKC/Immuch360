@@ -107,6 +107,12 @@
   "spatial_sensitivity": "Sensitivity ng ulo",
   "spatial_tracking_lost": "Hindi makita ang mukha, hinahanap ito",
   "spatial_unavailable": "Hindi available ang Spatial 2.5D sa device na ito",
+  "video_audio_track": "Audio track",
+  "video_audio_track_channels": "{channels} na channel",
+  "video_audio_track_default": "Default",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Track {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Tingnan bilang 360°",
   "view_as_360_remove": "Huwag nang ituring bilang 360°"
 }

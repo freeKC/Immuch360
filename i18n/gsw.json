@@ -1412,6 +1412,12 @@
   "spatial_unavailable": "Spatial 2.5D isch uf dem Gerät nöd verfüegbar",
   "upload_finished": "Ufelade beändet",
   "users": "Benutzer",
+  "video_audio_track": "Tonspur",
+  "video_audio_track_channels": "{channels} Kanäl",
+  "video_audio_track_default": "Standard",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Spur {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Als 360° aazeige",
   "view_as_360_remove": "Nümme als 360° behandle",
   "waiting": "Usstehend"

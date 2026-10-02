@@ -47,6 +47,18 @@
       android:textColor="@android:color/white"
       android:textSize="16sp" />
 
+    <!-- Audio track control: lists the audio tracks (languages, commentary) to pick one. Shown by the activity for a
+         video with two audio tracks or more; its description and tooltip come from the activity. -->
+    <ImageButton
+      android:id="@+id/spherical_video_audio"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_marginStart="8dp"
+      android:background="?android:attr/selectableItemBackgroundBorderless"
+      android:src="@drawable/ic_video_audio_track"
+      android:visibility="gone"
+      tools:ignore="ContentDescription" />
+
     <!-- Field of view control: switches between the full sphere and the half sphere (VR180). Its text, description,
          tooltip and state come from the activity; "360°" and "180°" read the same in every language. -->
     <Button

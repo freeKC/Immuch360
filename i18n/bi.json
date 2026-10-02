@@ -103,6 +103,12 @@
   "trash_count": "Toti {count, number}",
   "trash_no_results_message": "Foto mo video lo basket blo toti yu save lukem lo plaes ia.",
   "trash_page_delete_all": "Delete oli ol",
+  "video_audio_track": "Odio trak",
+  "video_audio_track_channels": "{channels} janel",
+  "video_audio_track_default": "Defolt",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Trak {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Lukum olsem 360°",
   "view_as_360_remove": "Stop blong tritim olsem 360°"
 }

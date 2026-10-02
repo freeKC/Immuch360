@@ -99,6 +99,12 @@
   "spatial_sensitivity": "ਸਿਰ ਦੀ ਸੰਵੇਦਨਸ਼ੀਲਤਾ",
   "spatial_tracking_lost": "ਚਿਹਰਾ ਨਹੀਂ ਮਿਲਿਆ, ਲੱਭਿਆ ਜਾ ਰਿਹਾ ਹੈ",
   "spatial_unavailable": "ਇਸ ਡਿਵਾਈਸ 'ਤੇ Spatial 2.5D ਉਪਲਬਧ ਨਹੀਂ ਹੈ",
+  "video_audio_track": "ਆਡੀਓ ਟਰੈਕ",
+  "video_audio_track_channels": "{channels} ਚੈਨਲ",
+  "video_audio_track_default": "ਡਿਫਾਲਟ",
+  "video_audio_track_mono": "ਮੋਨੋ",
+  "video_audio_track_number": "ਟਰੈਕ {track}",
+  "video_audio_track_stereo": "ਸਟੀਰੀਓ",
   "view_as_360": "360° ਵਜੋਂ ਵੇਖੋ",
   "view_as_360_remove": "360° ਵਜੋਂ ਮੰਨਣਾ ਬੰਦ ਕਰੋ"
 }

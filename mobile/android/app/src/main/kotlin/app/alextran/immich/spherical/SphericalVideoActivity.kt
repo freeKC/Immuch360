@@ -39,7 +39,9 @@ import androidx.media3.exoplayer.video.VideoFrameMetadataListener
 import androidx.media3.exoplayer.video.spherical.SphericalGLSurfaceView
 import androidx.media3.ui.PlayerView
 import app.alextran.immich.R
+import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.HttpClientManager
+import app.alextran.immich.core.StreamingLoadControl
 
 private const val TAG = "SphericalVideoActivity"
 
@@ -58,6 +60,8 @@ private const val MONO_ALPHA = 0.6f
  * The image of each eye covers the full sphere (360°) or its front half only (180°, VR180 videos), the back half then
  * staying black. The field of view control switches between the two. A video that declares its coverage in its
  * spherical metadata starts with it, any other with the guess of Flutter.
+ *
+ * A video with several audio tracks (languages, commentary) shows an audio track button, see [AudioTrackChooser].
  *
  * On close (button, system back, or the system destroying the activity), Flutter gets [SphericalVideoEvents.closed]
  * with the layout and the coverage shown last, so that the corrections of the user can be remembered for the asset.
@@ -78,6 +82,7 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val STATE_STEREO_LAYOUT = "stereo_layout"
     private const val STATE_COVERAGE = "coverage"
     private const val STATE_DECLARED_COVERAGE = "declared_coverage"
+    private const val STATE_AUDIO_TRACK = "audio_track"
 
     /** Key of the label of the 3D control itself, in the labels from Flutter */
     private const val LABEL_STEREO = "stereo"
@@ -118,8 +123,8 @@ class SphericalVideoActivity : ComponentActivity() {
      * [closeLabel] and [errorMessage] come translated from Flutter; null falls back to the English resources.
      * [stereoLayout] is the layout Flutter guessed from the video dimensions and [stereoLabels] are the translated
      * labels of the 3D control, keyed "stereo", "mono", "topBottom" and "leftRight", and of the field of view
-     * control, keyed "coverage", "coverage_full" and "coverage_half". [coverage] is the part of the sphere Flutter
-     * expects the video to cover.
+     * control, keyed "coverage", "coverage_full" and "coverage_half", and of the audio track control (see
+     * [AudioTrackChooser]). [coverage] is the part of the sphere Flutter expects the video to cover.
      */
     fun intent(
       context: Context,
@@ -172,6 +177,8 @@ class SphericalVideoActivity : ComponentActivity() {
   private lateinit var playerView: PlayerView
   private lateinit var stereoButton: View
   private lateinit var coverageButton: TextView
+  private lateinit var audioButton: View
+  private lateinit var audioTracks: AudioTrackChooser
 
   /** The spherical surface of [playerView] */
   private var sphericalView: SphericalGLSurfaceView? = null
@@ -235,6 +242,9 @@ class SphericalVideoActivity : ComponentActivity() {
       if (format != null) {
         applyDeclaredCoverage(DeclaredProjection.of(format.projectionData)?.coverage)
       }
+      // The audio track button shows when there is a choice
+      val options = player?.let { audioTracks.onTracksChanged(it, tracks) }.orEmpty()
+      audioButton.visibility = if (options.size >= 2) View.VISIBLE else View.GONE
     }
 
     override fun onPlayerError(error: PlaybackException) {
@@ -257,7 +267,8 @@ class SphericalVideoActivity : ComponentActivity() {
     }
     val errorMessage = intent.getStringExtra(EXTRA_ERROR_MESSAGE) ?: getString(R.string.spherical_video_error)
 
-    // The close button, the title, the field of view control and the 3D control come and go with the playback controls
+    // The close button, the title and the audio track, field of view and 3D controls come and go with the playback
+    // controls
     playerView.setControllerVisibilityListener(PlayerView.ControllerVisibilityListener { visibility ->
       topBar.visibility = visibility
     })
@@ -294,6 +305,14 @@ class SphericalVideoActivity : ComponentActivity() {
     }
     updateCoverageButton()
 
+    audioTracks = AudioTrackChooser(this, labels)
+    audioTracks.chosenIndex = savedInstanceState?.getInt(STATE_AUDIO_TRACK, -1) ?: -1
+    audioButton = findViewById<View>(R.id.spherical_video_audio).apply {
+      contentDescription = audioTracks.buttonLabel
+      tooltipText = audioTracks.buttonLabel
+      setOnClickListener { showAudioTracks() }
+    }
+
     enterFullScreen(topBar)
   }
 
@@ -329,6 +348,7 @@ class SphericalVideoActivity : ComponentActivity() {
     outState.putString(STATE_STEREO_LAYOUT, stereoLayout.name)
     outState.putString(STATE_COVERAGE, coverage.name)
     declaredCoverage?.let { outState.putString(STATE_DECLARED_COVERAGE, it.name) }
+    outState.putInt(STATE_AUDIO_TRACK, audioTracks.chosenIndex)
   }
 
   override fun onDestroy() {
@@ -363,13 +383,16 @@ class SphericalVideoActivity : ComponentActivity() {
       .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
       .build()
 
-    player = ExoPlayer.Builder(this)
+    // Larger buffers for a video read over HTTP (the media bridge of a network share, a server); local files as before
+    player = StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
       .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
       .setAudioAttributes(audioAttributes, /* handleAudioFocus= */ true)
       .setHandleAudioBecomingNoisy(true)
       .build()
       .also {
         it.addListener(playerListener)
+        // The language picked last, and the track picked for this video before a stop
+        audioTracks.attach(it)
         it.setMediaItem(MediaItem.fromUri(url), startPosition)
         it.playWhenReady = playWhenReady
         playerView.player = it
@@ -394,6 +417,7 @@ class SphericalVideoActivity : ComponentActivity() {
 
   private fun releasePlayer() {
     val current = player ?: return
+    audioTracks.dismissDialog()
     startPosition = current.currentPosition
     playWhenReady = current.playWhenReady
     current.removeListener(playerListener)
@@ -401,6 +425,13 @@ class SphericalVideoActivity : ComponentActivity() {
     current.release()
     player = null
     playerView.keepScreenOn = false
+  }
+
+  /** Lists the audio tracks of the video to pick one */
+  private fun showAudioTracks() {
+    val current = player ?: return
+    playerView.showController()
+    audioTracks.showDialog(this, current)
   }
 
   /** Cycles mono, top and bottom, side by side, unless the video declares its own layout */

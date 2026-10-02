@@ -70,6 +70,12 @@
   "spatial_sensitivity": "Te pāwera o te māhunga",
   "spatial_tracking_lost": "Kāore i kitea te kanohi, e rapu ana",
   "spatial_unavailable": "Kāore a Spatial 2.5D e wātea ana i tēnei pūrere",
+  "video_audio_track": "Ara ororongo",
+  "video_audio_track_channels": "Ngā hongere: {channels}",
+  "video_audio_track_default": "Taunoa",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Ara {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Tirohia hei 360°",
   "view_as_360_remove": "Kaua e kī hei 360°"
 }

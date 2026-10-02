@@ -70,6 +70,12 @@
   "spatial_sensitivity": "ความไวต่อหัว",
   "spatial_tracking_lost": "บ่เห็นหน้า, กำลังซอก",
   "spatial_unavailable": "Spatial 2.5D บ่มีในเครื่องนี้",
+  "video_audio_track": "แทร็กเสียง",
+  "video_audio_track_channels": "{channels} ช่องสัญญาณ",
+  "video_audio_track_default": "ค่าเริ่มต้น",
+  "video_audio_track_mono": "โมโน",
+  "video_audio_track_number": "แทร็ก {track}",
+  "video_audio_track_stereo": "สเตอริโอ",
   "view_as_360": "ดูเป็น 360°",
   "view_as_360_remove": "เลิกถือเป็น 360°"
 }

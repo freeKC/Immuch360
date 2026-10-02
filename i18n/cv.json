@@ -158,6 +158,12 @@
   "user_usage_stats": "Шута ҫырни усӑ курмалли статистика",
   "user_usage_stats_description": "Шута ҫырни усӑ курмалли статистикӑна пӑхасси",
   "utilities": "Пулӑшакансем",
+  "video_audio_track": "Сасӑ йӗрӗ",
+  "video_audio_track_channels": "{channels} канал",
+  "video_audio_track_default": "Стандартлӑ",
+  "video_audio_track_mono": "Моно",
+  "video_audio_track_number": "Йӗр {track}",
+  "video_audio_track_stereo": "Стерео",
   "view_as_360": "360° евĕр пăх",
   "view_as_360_remove": "360° евĕр шутлама пăрах"
 }

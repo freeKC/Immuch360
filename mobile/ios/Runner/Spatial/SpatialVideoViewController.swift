@@ -44,8 +44,9 @@ private enum HeadTracking {
 /// The controls hide on their own after 3 seconds of playback, a tap on the video shows or hides them. A swipe down
 /// closes a flat video; 360 degree videos turn with drags, the motion of the phone, and zoom with a pinch. Their
 /// coverage button (360° or 180°) tells whether they cover the whole sphere or only its front half, as VR180 videos
-/// do. Flutter hears about the close through [SpatialVideoEvents], with the position, so that its normal player
-/// resumes there, and with the layout and the projection shown last.
+/// do. A video with several audio tracks (languages, commentary) shows an audio track button, see
+/// [AudioTrackChooser]. Flutter hears about the close through [SpatialVideoEvents], with the position, so that its
+/// normal player resumes there, and with the layout and the projection shown last.
 final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGestureRecognizerDelegate {
   private let videoUrl: URL
   private let headers: [String: String]
@@ -58,6 +59,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   private let debugOverlay: Bool
   private let labels: [String: String]
   private let events: SpatialVideoEvents
+  private let audioTracks: AudioTrackChooser
 
   private let player = AVPlayer()
   private var videoOutput: AVPlayerItemVideoOutput?
@@ -116,6 +118,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   private let titleLabel = UILabel()
   private let coverageButton = UIButton(type: .system)
   private let layoutButton = UIButton(type: .system)
+  private let audioButton = UIButton(type: .system)
   private let recenterButton = UIButton(type: .system)
   private let disparityButton = UIButton(type: .system)
   private let bottomBar = UIView()
@@ -146,6 +149,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   // Where playback was when the player stopped, sent to Flutter once the audio session is dealt with
   private var closeState: (positionMs: Int64, wasPlaying: Bool)?
   private var closedReported = false
+  private var audioTracksRequested = false
 
   /// [request] carries the translated labels, English is the fallback. [events] is told once when the player closes.
   init(url: URL, request: SpatialOpenRequest, events: SpatialVideoEvents) {
@@ -159,6 +163,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     labels = request.labels
     selectedLayout = request.layout
     self.events = events
+    audioTracks = AudioTrackChooser(labels: request.labels)
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -474,9 +479,17 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
 
   // MARK: - Player
 
+  /// Seconds of media buffered ahead for a video read over HTTP
+  private static let streamingForwardBufferDuration: TimeInterval = 15
+
   private func setUpPlayer() {
     let asset = makeAsset()
     let item = AVPlayerItem(asset: asset)
+    if !videoUrl.isFileURL {
+      // Read over HTTP (the media bridge of a network share, a server): more media buffered ahead, so that a share
+      // that answers in bursts does not stall the playback every few seconds. Local files keep the defaults.
+      item.preferredForwardBufferDuration = Self.streamingForwardBufferDuration
+    }
     if renderer != nil {
       let output = AVPlayerItemVideoOutput(pixelBufferAttributes: [
         kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
@@ -485,6 +498,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
       item.add(output)
       videoOutput = output
     }
+    // The audio track of the language picked last, where the video has one
+    AudioTrackChooser.preferSavedLanguage(player)
     player.replaceCurrentItem(with: item)
     detectMultiview(asset)
 
@@ -556,6 +571,7 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   private func itemReady() {
     guard !readyHandled, !closing else { return }
     readyHandled = true
+    loadAudioTracks()
     updateTimeDisplay()
     guard startPositionMs > 0 else {
       startPlayback()
@@ -567,6 +583,29 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
         self?.startPlayback()
       }
     }
+  }
+
+  /// Shows the audio track button for a video with a choice of audio tracks
+  private func loadAudioTracks() {
+    guard !audioTracksRequested, !closing, let item = player.currentItem else { return }
+    audioTracksRequested = true
+    Task { @MainActor [weak self] in
+      guard let self else { return }
+      let hasChoice = await self.audioTracks.load(item)
+      guard hasChoice, !self.closing else { return }
+      self.audioButton.menu = self.audioTracks.menu { [weak self] name in
+        self?.audioTrackPicked(name)
+      }
+      self.audioButton.showsMenuAsPrimaryAction = true
+      self.audioButton.accessibilityValue = self.audioTracks.selectedName
+      self.audioButton.isHidden = false
+    }
+  }
+
+  private func audioTrackPicked(_ name: String) {
+    audioButton.accessibilityValue = name
+    showMessage(name, duration: messageDuration)
+    scheduleControlsHiding()
   }
 
   private func startPlayback() {
@@ -1122,8 +1161,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     errorLabel.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(errorLabel)
 
-    // Top bar: close, title, then the coverage of a 360 degree video, the layout menu, Recenter and, in the debug
-    // overlay, the disparity view
+    // Top bar: close, title, then, in the debug overlay, the disparity view, the audio tracks of a video with a
+    // choice of them, the coverage of a 360 degree video, the layout menu and Recenter
     topBar.backgroundColor = UIColor(white: 0, alpha: 0.45)
     topBar.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(topBar)
@@ -1146,6 +1185,11 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     configure(layoutButton, symbol: layoutSymbol, pointSize: 20, action: nil)
     layoutButton.accessibilityLabel = text("layout", "Stereo layout")
 
+    // Opens the menu of the audio tracks; hidden unless the video has a choice of them
+    configure(audioButton, symbol: "waveform", pointSize: 20, action: nil)
+    audioButton.accessibilityLabel = audioTracks.buttonLabel
+    audioButton.isHidden = true
+
     configure(recenterButton, symbol: "scope", pointSize: 20, action: #selector(recenterTapped))
     recenterButton.accessibilityLabel = text("recenter", "Recenter")
 
@@ -1163,7 +1207,9 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     coverageButton.isHidden = !isSpherical
     updateCoverageButton()
 
-    let trailingButtons = UIStackView(arrangedSubviews: [disparityButton, coverageButton, layoutButton, recenterButton])
+    let trailingButtons = UIStackView(arrangedSubviews: [
+      disparityButton, audioButton, coverageButton, layoutButton, recenterButton,
+    ])
     trailingButtons.axis = .horizontal
     trailingButtons.spacing = 4
     trailingButtons.translatesAutoresizingMaskIntoConstraints = false
@@ -1271,6 +1317,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     disparityButtonWidth.priority = UILayoutPriority(999)
     let coverageButtonWidth = coverageButton.widthAnchor.constraint(equalToConstant: 52)
     coverageButtonWidth.priority = UILayoutPriority(999)
+    let audioButtonWidth = audioButton.widthAnchor.constraint(equalToConstant: 44)
+    audioButtonWidth.priority = UILayoutPriority(999)
     let sensitivitySliderWidth = sensitivitySlider.widthAnchor.constraint(equalToConstant: 160)
     sensitivitySliderWidth.priority = UILayoutPriority(999)
 
@@ -1300,6 +1348,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
       disparityButton.heightAnchor.constraint(equalToConstant: 44),
       coverageButtonWidth,
       coverageButton.heightAnchor.constraint(equalToConstant: 44),
+      audioButtonWidth,
+      audioButton.heightAnchor.constraint(equalToConstant: 44),
       layoutButton.widthAnchor.constraint(equalToConstant: 44),
       layoutButton.heightAnchor.constraint(equalToConstant: 44),
       recenterButton.widthAnchor.constraint(equalToConstant: 44),

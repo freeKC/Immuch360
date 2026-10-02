@@ -1263,6 +1263,12 @@
   "spatial_sensitivity": "Næmi fyrir höfuðhreyfingum",
   "spatial_tracking_lost": "Andlit fannst ekki, leitar að því",
   "spatial_unavailable": "Spatial 2.5D er ekki í boði á þessu tæki",
+  "video_audio_track": "Hljóðrás",
+  "video_audio_track_channels": "{channels} rásir",
+  "video_audio_track_default": "Sjálfgefin",
+  "video_audio_track_mono": "Mónó",
+  "video_audio_track_number": "Hljóðrás {track}",
+  "video_audio_track_stereo": "Steríó",
   "view_as_360": "Skoða sem 360°",
   "view_as_360_remove": "Hætta að meðhöndla sem 360°",
   "yes": "Já"

@@ -92,6 +92,12 @@
   "spatial_sensitivity": "टाउकोको संवेदनशीलता",
   "spatial_tracking_lost": "अनुहार भेटिएन, खोजिँदै छ",
   "spatial_unavailable": "यो यन्त्रमा Spatial 2.5D उपलब्ध छैन",
+  "video_audio_track": "अडियो ट्र्याक",
+  "video_audio_track_channels": "{channels} च्यानल",
+  "video_audio_track_default": "पूर्वनिर्धारित",
+  "video_audio_track_mono": "मोनो",
+  "video_audio_track_number": "ट्र्याक {track}",
+  "video_audio_track_stereo": "स्टेरियो",
   "view_as_360": "360° को रूपमा हेर्नुहोस्",
   "view_as_360_remove": "360° को रूपमा मान्न बन्द गर्नुहोस्"
 }

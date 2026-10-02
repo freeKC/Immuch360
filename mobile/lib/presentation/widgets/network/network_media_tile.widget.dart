@@ -1,5 +1,5 @@
-// The tiles of the network share browser: a photo with its thumbnail, a video with a placeholder (a frame of the video
-// is for later), a 360° badge on the files that declare a 360° projection, and the folder rows.
+// The tiles of the network share browser: a photo with its thumbnail, a video with a frame of it, a 360° badge on the
+// files that declare a 360° projection, and the folder rows.
 
 import 'dart:async';
 import 'dart:collection';
@@ -11,8 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
+import 'package:immich_mobile/platform/video_thumbnail_api.g.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 /// Width the photo thumbnails of the browser are decoded at
 const networkThumbnailWidth = 400;
@@ -37,7 +42,20 @@ class NetworkThumbnailImage extends ImageProvider<NetworkThumbnailImage> {
 
   static int _loading = 0;
   static final _waiting = Queue<Completer<void>>();
+  static final _idle = <Completer<void>>[];
   static HttpClient? _client;
+
+  /// Completes once no photo thumbnail is loading nor waiting to, counting those asked for by the frame under way:
+  /// the video thumbnails come after the photos on screen
+  static Future<void> whenIdle() async {
+    // The tiles built in the same frame resolve their photos before this goes on
+    await Future<void>.delayed(Duration.zero);
+    while (_loading > 0) {
+      final idle = Completer<void>();
+      _idle.add(idle);
+      await idle.future;
+    }
+  }
 
   @override
   Future<NetworkThumbnailImage> obtainKey(ImageConfiguration configuration) => SynchronousFuture(this);
@@ -88,8 +106,15 @@ class NetworkThumbnailImage extends ImageProvider<NetworkThumbnailImage> {
   static void _endTurn() {
     if (_waiting.isNotEmpty) {
       _waiting.removeFirst().complete();
-    } else {
-      _loading--;
+      return;
+    }
+    _loading--;
+    if (_loading == 0 && _idle.isNotEmpty) {
+      final idle = _idle.toList();
+      _idle.clear();
+      for (final waiter in idle) {
+        waiter.complete();
+      }
     }
   }
 
@@ -103,8 +128,83 @@ class NetworkThumbnailImage extends ImageProvider<NetworkThumbnailImage> {
   String toString() => 'NetworkThumbnailImage($url, width: $width)';
 }
 
-/// Keeps the last [maxEntries] photo thumbnails of the browser decoded in memory, whatever else the image cache of
-/// the app holds meanwhile, so that scrolling back to them does not stream their files from the share again.
+/// The thumbnail of a video of a share, [bytes] being the JPEG frame [NetworkVideoThumbnailService] gave. Known to the
+/// image cache by the video alone ([key]), so that a tile shown again finds it there without its bytes, see
+/// [NetworkVideoThumbnailImage.isInMemory].
+class NetworkVideoThumbnailImage extends ImageProvider<NetworkVideoThumbnailImage> {
+  const NetworkVideoThumbnailImage(this.key, {this.bytes});
+
+  final NetworkMediaKey key;
+  final Uint8List? bytes;
+
+  /// Whether the thumbnail of the video [key] is in the image cache, loaded or loading
+  static bool isInMemory(NetworkMediaKey key) =>
+      PaintingBinding.instance.imageCache.statusForKey(NetworkVideoThumbnailImage(key)).tracked;
+
+  @override
+  Future<NetworkVideoThumbnailImage> obtainKey(ImageConfiguration configuration) => SynchronousFuture(this);
+
+  @override
+  ImageStreamCompleter loadImage(NetworkVideoThumbnailImage key, ImageDecoderCallback decode) =>
+      MultiFrameImageStreamCompleter(codec: _load(key, decode), scale: 1, debugLabel: key.key.path);
+
+  Future<ui.Codec> _load(NetworkVideoThumbnailImage key, ImageDecoderCallback decode) async {
+    try {
+      final bytes = key.bytes;
+      if (bytes == null || bytes.isEmpty) {
+        // Dropped from the image cache between the look and the load: the tile asks again
+        throw StateError('No thumbnail bytes for ${key.key.path}');
+      }
+      final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+      return await decode(
+        buffer,
+        getTargetSize: (intrinsicWidth, _) => intrinsicWidth > NetworkVideoThumbnailService.maxWidth
+            ? const ui.TargetImageSize(width: NetworkVideoThumbnailService.maxWidth)
+            : const ui.TargetImageSize(),
+      );
+    } catch (_) {
+      scheduleMicrotask(() => PaintingBinding.instance.imageCache.evict(key));
+      rethrow;
+    }
+  }
+
+  @override
+  bool operator ==(Object other) => other is NetworkVideoThumbnailImage && other.key == key;
+
+  @override
+  int get hashCode => key.hashCode;
+
+  @override
+  String toString() => 'NetworkVideoThumbnailImage(${key.path})';
+}
+
+/// Where the video thumbnails are kept on disk, under the cache folder of the app (the system may empty it)
+Future<Directory> networkVideoThumbnailDirectory() async =>
+    Directory(p.join((await getApplicationCacheDirectory()).path, 'network_video_thumbnails'));
+
+final networkVideoThumbnailServiceProvider = Provider<NetworkVideoThumbnailService>(
+  (_) => NetworkVideoThumbnailService(
+    api: VideoThumbnailApi(),
+    diskCache: VideoThumbnailDiskCache(networkVideoThumbnailDirectory),
+    waitForPhotos: NetworkThumbnailImage.whenIdle,
+  ),
+);
+
+/// The JPEG thumbnail of a video of a share served by the media bridge at [NetworkVideoThumbnailRequest.url], null
+/// while there is none. Not taken at all once the tile is gone before its turn.
+final networkVideoThumbnailProvider = FutureProvider.autoDispose.family<Uint8List?, NetworkVideoThumbnailRequest>((
+  ref,
+  request,
+) {
+  var wanted = true;
+  ref.onDispose(() => wanted = false);
+  return ref.read(networkVideoThumbnailServiceProvider).thumbnail(request.key, request.url, isWanted: () => wanted);
+});
+
+typedef NetworkVideoThumbnailRequest = ({NetworkMediaKey key, Uri url});
+
+/// Keeps the last [maxEntries] photo and video thumbnails of the browser decoded in memory, whatever else the image
+/// cache of the app holds meanwhile, so that scrolling back to them does not read their files from the share again.
 ///
 /// A thumbnail stays known to the image cache as long as something listens to it: the cache listens to the ones it
 /// keeps, until they are dropped.
@@ -194,6 +294,7 @@ class NetworkMediaTile extends ConsumerWidget {
     );
     final url = this.url;
     final hasThumbnail = entry.isImage && url != null && (entry.size ?? 0) <= networkThumbnailMaxFileSize;
+    final hasFrame = entry.isVideo && url != null;
 
     return Semantics(
       label: entry.name,
@@ -210,6 +311,8 @@ class NetworkMediaTile extends ConsumerWidget {
               ColoredBox(color: context.colorScheme.surfaceContainerHighest),
               if (hasThumbnail)
                 _PhotoThumbnail(url: url, name: entry.name)
+              else if (hasFrame)
+                _VideoThumbnail(entry: entry, url: url)
               else
                 _Placeholder(icon: entry.isVideo ? Icons.movie_outlined : Icons.image_outlined, name: entry.name),
               if (entry.isVideo)
@@ -255,6 +358,45 @@ class _PhotoThumbnail extends ConsumerWidget {
         return child;
       },
       errorBuilder: (context, _, _) => _Placeholder(icon: Icons.broken_image_outlined, name: name),
+    );
+  }
+}
+
+/// A frame of the video, the placeholder until it comes and when there is none
+class _VideoThumbnail extends ConsumerWidget {
+  const _VideoThumbnail({required this.entry, required this.url});
+
+  final NetworkEntry entry;
+  final Uri url;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final key = networkMediaKey(entry);
+    final placeholder = _Placeholder(icon: Icons.movie_outlined, name: entry.name);
+    // Shown before: decoded in memory still, no need for its bytes
+    if (NetworkVideoThumbnailImage.isInMemory(key)) {
+      return _image(ref, NetworkVideoThumbnailImage(key), placeholder);
+    }
+    final bytes = ref.watch(networkVideoThumbnailProvider((key: key, url: url))).valueOrNull;
+    if (bytes == null) {
+      return placeholder;
+    }
+    return _image(ref, NetworkVideoThumbnailImage(key, bytes: bytes), placeholder);
+  }
+
+  Widget _image(WidgetRef ref, NetworkVideoThumbnailImage image, Widget placeholder) {
+    return Image(
+      image: image,
+      fit: BoxFit.cover,
+      gaplessPlayback: true,
+      frameBuilder: (context, child, frame, _) {
+        if (frame == null) {
+          return placeholder;
+        }
+        ref.read(networkThumbnailCacheProvider).retain(image);
+        return child;
+      },
+      errorBuilder: (context, _, _) => placeholder,
     );
   }
 }

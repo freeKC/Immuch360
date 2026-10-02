@@ -8,7 +8,21 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 
-const _chunk = LocalMediaBridge.defaultChunkSize;
+const _minChunk = LocalMediaBridge.defaultMinChunkSize;
+const _maxChunk = LocalMediaBridge.defaultMaxChunkSize;
+const _mib = 1024 * 1024;
+
+// The sizes of the reads of a body of [length] bytes: the first chunk, then twice as many each time up to the largest
+List<int> _chunksOf(int length) {
+  final sizes = <int>[];
+  var size = _minChunk;
+  for (var done = 0; done < length; done += sizes.last) {
+    sizes.add(size < length - done ? size : length - done);
+    size = size * 2 < _maxChunk ? size * 2 : _maxChunk;
+  }
+  return sizes;
+}
+
 final _modified = DateTime.utc(2024, 6, 1, 12);
 
 // Bytes that differ from one offset to the next, so that a misplaced range shows
@@ -17,6 +31,21 @@ Uint8List _bytes(int length, {int seed = 0}) =>
 
 // The byte at [offset] of a virtual file, too big to hold in memory
 int _virtualByte(int offset) => offset % 251;
+
+final _virtualPattern = Uint8List.fromList(List.generate(251, (i) => i));
+
+// The bytes of a virtual file from [start] to [end], quickly
+Uint8List _virtualBytes(int start, int end) {
+  final bytes = Uint8List(end > start ? end - start : 0);
+  var at = 0;
+  while (at < bytes.length) {
+    final phase = _virtualByte(start + at);
+    final count = (251 - phase) < bytes.length - at ? 251 - phase : bytes.length - at;
+    bytes.setRange(at, at + count, _virtualPattern, phase);
+    at += count;
+  }
+  return bytes;
+}
 
 // A share held in memory, counting what the bridge asks of it
 class _MemoryShare implements NetworkFileSystem {
@@ -52,6 +81,8 @@ class _MemoryShare implements NetworkFileSystem {
   final reads = <({String path, int offset, int length})>[];
 
   int readsOf(String path) => reads.where((read) => read.path == path).length;
+
+  int bytesAskedOf(String path) => reads.where((read) => read.path == path).fold(0, (sum, read) => sum + read.length);
 
   @override
   Future<List<NetworkEntry>> list(String path) async => [
@@ -96,7 +127,7 @@ class _MemoryShare implements NetworkFileSystem {
     final virtualSize = virtualFiles[path];
     if (virtualSize != null) {
       final end = (offset + length).clamp(0, virtualSize);
-      return Uint8List.fromList([for (var i = offset; i < end; i++) _virtualByte(i)]);
+      return _virtualBytes(offset, end);
     }
     final bytes = files[path];
     if (bytes == null) {
@@ -214,6 +245,44 @@ Future<_Reply> _send(Uri url, {String method = 'GET', String? range, String? ifR
 
 // The same URL with another first segment
 Uri _withToken(Uri url, String token) => url.replace(pathSegments: [token, ...url.pathSegments.skip(1)]);
+
+// A GET sent on a raw socket and left paused once the first bytes came: a player that does not read for now
+class _PausedRequest {
+  late final Socket _socket;
+  late final StreamSubscription<Uint8List> _subscription;
+
+  static Future<_PausedRequest> open(LocalMediaBridge bridge, Uri url, {String? range}) async {
+    final request = _PausedRequest();
+    await request._open(bridge, url, range);
+    return request;
+  }
+
+  Future<void> _open(LocalMediaBridge bridge, Uri url, String? range) async {
+    _socket = await Socket.connect(InternetAddress.loopbackIPv4, bridge.port!);
+    final firstBytes = Completer<void>();
+    _subscription = _socket.listen((_) {
+      if (!firstBytes.isCompleted) {
+        firstBytes.complete();
+      }
+    });
+    _socket.write('GET ${url.path} HTTP/1.1\r\nHost: 127.0.0.1\r\n${range == null ? '' : 'Range: $range\r\n'}\r\n');
+    await _socket.flush();
+    await firstBytes.future;
+    _subscription.pause();
+  }
+
+  Future<void> close() async {
+    await _subscription.cancel();
+    _socket.destroy();
+  }
+}
+
+// Waits until [condition] holds, 10 seconds at most
+Future<void> _until(bool Function() condition) async {
+  for (var i = 0; i < 200 && !condition(); i++) {
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+  }
+}
 
 // Waits until [count] stops changing
 Future<int> _settled(int Function() count) async {
@@ -602,10 +671,13 @@ void main() {
     });
 
     test('a read that fails in the middle cuts the body, and the bridge serves the next request', () async {
-      share.failReadsFrom['/big.mp4'] = 3 * _chunk;
+      const failFrom = 5 * _mib;
+      share.failReadsFrom['/big.mp4'] = failFrom;
       await expectLater(_send(bridge.urlFor('nas1', '/big.mp4')), throwsA(isA<HttpException>()));
-      // Three chunks sent, the fourth failed
-      expect(share.readsOf('/big.mp4'), 4);
+      // 1 MiB, then 2 MiB sent, the read of the next 4 MiB failed and none was asked after it
+      expect(share.reads.map((read) => read.length), [_minChunk, 2 * _mib, _maxChunk]);
+      expect(share.reads.last.offset + share.reads.last.length, greaterThan(failFrom));
+      expect(await _settled(() => bridge.bufferedSize), 0);
 
       final next = await _send(bridge.urlFor('nas1', '/photo.jpg'));
       expect(next.body, photo);
@@ -613,13 +685,14 @@ void main() {
   });
 
   group('streaming', () {
-    test('a 10 MB file read whole and by ranges, never more than a chunk asked at a time', () async {
+    test('a 10 MB file read whole and by ranges, in chunks of 1 MiB growing to 4 MiB', () async {
       final url = bridge.urlFor('nas1', '/big.mp4');
       final whole = await _send(url);
       expect(whole.status, HttpStatus.ok);
       expect(whole.body.length, big.length);
       expect(whole.body, big);
-      expect(share.readsOf('/big.mp4'), big.length ~/ _chunk);
+      expect(share.reads.map((read) => read.length), _chunksOf(big.length));
+      expect(share.reads.map((read) => read.length), [_mib, 2 * _mib, 4 * _mib, 3 * _mib]);
 
       final client = HttpClient();
       try {
@@ -638,8 +711,10 @@ void main() {
         client.close();
       }
 
-      expect(share.reads.every((read) => read.length <= _chunk), isTrue);
+      expect(share.reads.every((read) => read.length <= _maxChunk), isTrue);
       expect(share.statCount, 1);
+      // Nothing left read ahead once the bodies are sent
+      expect(bridge.bufferedSize, 0);
     });
 
     test('an open range of a big file is streamed to the end', () async {
@@ -653,9 +728,9 @@ void main() {
       }
     });
 
-    test('a client that does not read pauses the reading', () async {
+    test('a client that does not read pauses the reading, past what is read ahead', () async {
       // Far more than the socket buffers hold
-      share.virtualFiles['/huge.mp4'] = 512 * 1024 * 1024;
+      share.virtualFiles['/huge.mp4'] = 512 * _mib;
       final url = bridge.urlFor('nas1', '/huge.mp4');
       final socket = await Socket.connect(InternetAddress.loopbackIPv4, bridge.port!);
       try {
@@ -670,13 +745,118 @@ void main() {
         await firstBytes.future;
         subscription.pause();
 
-        final reads = await _settled(() => share.readsOf('/huge.mp4'));
-        // 1024 chunks in the file; what was read fits in the socket buffers
-        expect(reads, lessThan(200));
+        await _until(() => bridge.bufferedSize > 8 * _mib);
+        await _settled(() => share.bytesAskedOf('/huge.mp4') + bridge.bufferedSize);
+        // Up to 16 MiB waits for the client, besides what fits in the socket buffers
+        expect(bridge.bufferedSize, greaterThan(8 * _mib));
+        expect(bridge.bufferedSize, lessThanOrEqualTo(LocalMediaBridge.defaultReadAheadSize));
+        expect(share.bytesAskedOf('/huge.mp4'), lessThan(64 * _mib));
+
+        // Gone: what was read ahead is dropped
         await subscription.cancel();
+        socket.destroy();
+        expect(await _settled(() => bridge.bufferedSize), 0);
       } finally {
         socket.destroy();
       }
+    });
+
+    test('a stream elsewhere in the file takes the reading ahead, and gives it back when it closes', () async {
+      share.virtualFiles['/huge.mp4'] = 512 * _mib;
+      final url = bridge.urlFor('nas1', '/huge.mp4');
+      const offset = 300 * _mib;
+      int bytesBelow() => share.reads
+          .where((read) => read.path == '/huge.mp4' && read.offset < offset)
+          .fold(0, (sum, read) => sum + read.length);
+      final first = await _PausedRequest.open(bridge, url);
+      try {
+        await _until(() => bridge.bufferedSize > 8 * _mib);
+        await _settled(() => share.reads.length + bridge.bufferedSize);
+        expect(bridge.bufferedSize, greaterThan(8 * _mib));
+
+        // The player seeks: a new request to the end of the file, the first one left open and not read
+        final second = await _PausedRequest.open(bridge, url, range: 'bytes=$offset-');
+        try {
+          await _settled(() => share.reads.length + bridge.bufferedSize);
+          // What the first one read ahead is dropped, the second one reads ahead
+          expect(bridge.bufferedSize, greaterThan(8 * _mib));
+          expect(bridge.bufferedSize, lessThanOrEqualTo(LocalMediaBridge.defaultReadAheadSize));
+        } finally {
+          await second.close();
+        }
+
+        // The second one closed: the first one reads ahead again
+        final asked = bytesBelow();
+        await _until(() => bytesBelow() > asked + 8 * _mib);
+        await _settled(() => share.reads.length + bridge.bufferedSize);
+        expect(bytesBelow(), greaterThan(asked + 8 * _mib));
+        expect(bridge.bufferedSize, greaterThan(8 * _mib));
+        expect(bridge.bufferedSize, lessThanOrEqualTo(LocalMediaBridge.defaultReadAheadSize));
+      } finally {
+        await first.close();
+      }
+      expect(await _settled(() => bridge.bufferedSize), 0);
+    });
+
+    test('a short request elsewhere in the file leaves the reading ahead to the stream', () async {
+      share.virtualFiles['/huge.mp4'] = 512 * _mib;
+      final url = bridge.urlFor('nas1', '/huge.mp4');
+      final stream = await _PausedRequest.open(bridge, url);
+      try {
+        await _until(() => bridge.bufferedSize > 8 * _mib);
+        await _settled(() => share.reads.length + bridge.bufferedSize);
+        final buffered = bridge.bufferedSize;
+        expect(buffered, greaterThan(8 * _mib));
+        final reads = share.reads.length;
+
+        // A probe of the metadata reads 4 MiB at the end of the file while the player streams
+        const offset = 500 * _mib;
+        final reply = await _send(url, range: 'bytes=$offset-${offset + 4 * _mib - 1}');
+        expect(reply.body.length, 4 * _mib);
+        expect(reply.body[12345], _virtualByte(offset + 12345));
+
+        // The stream kept what it read ahead, and the probe gave back what it held
+        expect(await _settled(() => bridge.bufferedSize), buffered);
+        expect(share.reads.skip(reads).every((read) => read.offset >= offset), isTrue);
+      } finally {
+        await stream.close();
+      }
+      expect(await _settled(() => bridge.bufferedSize), 0);
+    });
+
+    test('the bridge holds at most 32 MiB read ahead, all files together', () async {
+      final sockets = <Socket>[];
+      final subscriptions = <StreamSubscription<Uint8List>>[];
+      try {
+        for (final name in ['a', 'b', 'c']) {
+          share.virtualFiles['/$name.mp4'] = 256 * _mib;
+          final socket = await Socket.connect(InternetAddress.loopbackIPv4, bridge.port!);
+          sockets.add(socket);
+          final firstBytes = Completer<void>();
+          final subscription = socket.listen((_) {
+            if (!firstBytes.isCompleted) {
+              firstBytes.complete();
+            }
+          });
+          socket.write('GET ${bridge.urlFor('nas1', '/$name.mp4').path} HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n');
+          await socket.flush();
+          await firstBytes.future;
+          subscription.pause();
+          subscriptions.add(subscription);
+        }
+        await _until(() => bridge.bufferedSize > 16 * _mib);
+        await _settled(() => share.reads.length + bridge.bufferedSize);
+        expect(bridge.bufferedSize, greaterThan(16 * _mib));
+        expect(bridge.bufferedSize, lessThanOrEqualTo(LocalMediaBridge.defaultMaxBufferedSize));
+      } finally {
+        for (final subscription in subscriptions) {
+          await subscription.cancel();
+        }
+        for (final socket in sockets) {
+          socket.destroy();
+        }
+      }
+      expect(await _settled(() => bridge.bufferedSize), 0);
     });
 
     test('a client that leaves stops the reading, and the bridge keeps serving the others', () async {
@@ -703,10 +883,12 @@ void main() {
       expect(reply.status, HttpStatus.partialContent);
       expect(reply.body, big);
 
-      // The other reader took all 20 chunks; the one that left far fewer, and no read started since
+      // The other reader took the whole file; the one that left far less, and no read started since
+      final whole = _chunksOf(big.length).length;
       final reads = await _settled(() => share.readsOf('/big.mp4'));
-      expect(reads, lessThan(2 * big.length ~/ _chunk));
-      expect(reads, greaterThanOrEqualTo(big.length ~/ _chunk + 1));
+      expect(reads, lessThan(2 * whole));
+      expect(reads, greaterThanOrEqualTo(whole + 1));
+      expect(bridge.bufferedSize, 0);
 
       share.readDelay = Duration.zero;
       expect((await _send(bridge.urlFor('nas1', '/photo.jpg'))).body, photo);

@@ -289,6 +289,12 @@
   "user_purchase_settings": "Bikire",
   "user_usage_stats": "Statîstîkên şuẍilandina ḧesêb",
   "username": "Nav",
+  "video_audio_track": "Şopa dengî",
+  "video_audio_track_channels": "{channels} kanal",
+  "video_audio_track_default": "Standard",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Şop {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Wek 360° bibîne",
   "view_as_360_remove": "Êdî wek 360° nehesibîne"
 }

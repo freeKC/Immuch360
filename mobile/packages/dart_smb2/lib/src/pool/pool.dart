@@ -14,6 +14,7 @@ import '../smb2_client.dart';
 import '../smb2_error_type.dart';
 import '../smb2_exceptions.dart';
 import '../smb2_types.dart';
+import 'context_lock.dart';
 import 'handle.dart';
 import 'messages.dart';
 import 'worker.dart';
@@ -57,7 +58,9 @@ class Smb2Pool {
   /// list (init.c) without internal locking, so concurrent
   /// `smb2_init_context` calls from multiple isolates would race on it.
   /// Sequencing the spawns guarantees that at most one isolate is inside
-  /// `smb2_init_context` at any given moment within this pool.
+  /// `smb2_init_context` at any given moment within this pool; going
+  /// through [Smb2ContextLock] extends that to every pool of the isolate,
+  /// their respawns and their disconnects included.
   ///
   /// The startup cost is N × per-worker connect latency instead of
   /// max(per-worker latency). For typical `workers = 4` and a local SMB
@@ -89,7 +92,7 @@ class Smb2Pool {
     final workerList = <Worker>[];
     try {
       for (var i = 0; i < workers; i++) {
-        workerList.add(await Worker.spawn(params));
+        workerList.add(await _spawnWorker(params));
       }
     } catch (_) {
       // Spawn failure: tear down any workers that already came up so we
@@ -97,7 +100,7 @@ class Smb2Pool {
       // here because the caller is about to see `rethrow` and we don't
       // want to mask the original error with a teardown timeout.
       for (final w in workerList) {
-        w.close().ignore();
+        _closeWorker(w).ignore();
       }
       rethrow;
     }
@@ -128,18 +131,41 @@ class Smb2Pool {
     // doesn't inherit the main isolate's static fields) can re-apply
     // it before opening libsmb2.
     final override = debugLibSmb2PathOverride;
-    return await Isolate.run(() {
-      if (override != null) debugLibSmb2PathOverride = override;
-      final client = Smb2Client.open();
-      return client.listShares(
-        host: host,
-        user: user,
-        password: password,
-        domain: domain,
-        timeoutSeconds: timeoutSeconds,
-      );
-    });
+    // Its own libsmb2 context: created and destroyed under the lock
+    return await Smb2ContextLock.run(
+      () => Isolate.run(() {
+        if (override != null) debugLibSmb2PathOverride = override;
+        final client = Smb2Client.open();
+        return client.listShares(
+          host: host,
+          user: user,
+          password: password,
+          domain: domain,
+          timeoutSeconds: timeoutSeconds,
+        );
+      }),
+      limit: Duration(seconds: timeoutSeconds) + _lockGrace,
+    );
   }
+
+  /// How long a spawn holds [Smb2ContextLock] past the libsmb2 timeout of
+  /// its connection (name resolution, isolate start), at most.
+  static const _lockGrace = Duration(seconds: 15);
+
+  /// How long a close holds [Smb2ContextLock] at most: [Worker.close]
+  /// gives the worker 5 seconds to log off before it kills it.
+  static const _closeLockLimit = Duration(seconds: 10);
+
+  /// Spawns a worker, which creates its libsmb2 context, under the lock.
+  static Future<Worker> _spawnWorker(ConnectParams params) =>
+      Smb2ContextLock.run(
+        () => Worker.spawn(params),
+        limit: Duration(seconds: params.timeoutSeconds) + _lockGrace,
+      );
+
+  /// Closes [worker], which destroys its libsmb2 context, under the lock.
+  static Future<void> _closeWorker(Worker worker) =>
+      Smb2ContextLock.run(worker.close, limit: _closeLockLimit);
 
   Worker get _nextWorker {
     if (_closed || _workers.isEmpty) {
@@ -657,7 +683,7 @@ class Smb2Pool {
   /// Disconnect all workers and release resources.
   Future<void> disconnect() async {
     _closed = true;
-    await Future.wait(_workers.map((w) => w.close()));
+    await Future.wait(_workers.map(_closeWorker));
     _workers.clear();
   }
 
@@ -736,9 +762,9 @@ class Smb2Pool {
     final idx = _workers.indexOf(worker);
     if (idx < 0) return worker;
     try {
-      await worker.close();
+      await _closeWorker(worker);
     } catch (_) {}
-    final newWorker = await Worker.spawn(_params);
+    final newWorker = await _spawnWorker(_params);
     _workers[idx] = newWorker;
     return newWorker;
   }

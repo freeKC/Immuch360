@@ -57,7 +57,9 @@ import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import app.alextran.immich.R
+import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.HttpClientManager
+import app.alextran.immich.core.StreamingLoadControl
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.max
@@ -114,6 +116,8 @@ private const val SENSITIVITY_STEP = 0.1f
  * A 360° video covers the full sphere, or only its front half for a VR180 video
  * ([SpatialProjection.EQUIRECTANGULAR180]); the field of view button switches between the two.
  *
+ * A video with several audio tracks (languages, commentary) shows an audio track button, see [AudioTrackChooser].
+ *
  * Opened from Flutter through [SpatialVideoApi]. On close (button, system back, or the system destroying the
  * activity) Flutter gets [SpatialVideoEvents.closed] once, with the position, so that the normal player takes over,
  * and with the layout and the projection shown last, so that the choices of the user can be remembered for the asset.
@@ -140,6 +144,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     private const val STATE_VIEWPOINT = "viewpoint"
     private const val STATE_MANUAL_HOLD = "manual_hold"
     private const val STATE_HALF_SPHERE = "half_sphere"
+    private const val STATE_AUDIO_TRACK = "audio_track"
 
     private const val LABEL_LAYOUT = "layout"
     private const val LABEL_LAYOUT_AUTO = "layoutAuto"
@@ -234,6 +239,8 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
   private lateinit var durationText: TextView
   private lateinit var seekBar: SeekBar
   private lateinit var layoutButton: Button
+  private lateinit var audioButton: ImageButton
+  private lateinit var audioTracks: AudioTrackChooser
   private lateinit var coverageButton: Button
   private lateinit var recenterButton: Button
   private lateinit var sensitivityLabel: TextView
@@ -300,6 +307,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
   private var draggingSensitivity = false
   private var userSeeking = false
   private var layoutMenuOpen = false
+  private var audioDialogOpen = false
   private var frameLoopPosted = false
 
   // 360° view direction: touch offsets plus the device orientation, in degrees
@@ -430,6 +438,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
         declaredStereoMode = stereoMode
         applyLayout()
       }
+      // The audio track button shows when there is a choice
+      val options = player?.let { audioTracks.onTracksChanged(it, tracks) }.orEmpty()
+      audioButton.visibility = if (options.size >= 2) View.VISIBLE else View.GONE
     }
 
     override fun onPlayerError(error: PlaybackException) {
@@ -463,6 +474,8 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       HttpClientManager.initialize(this)
 
       labels = intent.getBundleExtra(EXTRA_LABELS)?.toStringMap() ?: emptyMap()
+      audioTracks = AudioTrackChooser(this, labels)
+      audioTracks.chosenIndex = savedInstanceState?.getInt(STATE_AUDIO_TRACK, -1) ?: -1
       debugOverlay = intent.getBooleanExtra(EXTRA_DEBUG_OVERLAY, false)
       hasFrontCamera = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)
       selectedLayout = stereoLayoutNamed(savedInstanceState?.getString(STATE_LAYOUT))
@@ -632,6 +645,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     }
     outState.putBoolean(STATE_MANUAL_HOLD, manualHold)
     outState.putBoolean(STATE_HALF_SPHERE, halfSphere)
+    if (::audioTracks.isInitialized) {
+      outState.putInt(STATE_AUDIO_TRACK, audioTracks.chosenIndex)
+    }
   }
 
   override fun onDestroy() {
@@ -653,6 +669,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     durationText = findViewById(R.id.spatial_video_duration)
     seekBar = findViewById(R.id.spatial_video_seek)
     layoutButton = findViewById(R.id.spatial_video_layout)
+    audioButton = findViewById(R.id.spatial_video_audio)
     coverageButton = findViewById(R.id.spatial_video_coverage)
     recenterButton = findViewById(R.id.spatial_video_recenter)
     sensitivityLabel = findViewById(R.id.spatial_video_sensitivity_label)
@@ -703,6 +720,10 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     })
 
     layoutButton.setOnClickListener { showLayoutMenu() }
+
+    audioButton.contentDescription = audioTracks.buttonLabel
+    audioButton.tooltipText = audioTracks.buttonLabel
+    audioButton.setOnClickListener { showAudioTracks() }
 
     coverageButton.setOnClickListener {
       halfSphere = !halfSphere
@@ -837,13 +858,16 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
       .build()
 
-    player = ExoPlayer.Builder(this)
+    // Larger buffers for a video read over HTTP (the media bridge of a network share, a server); local files as before
+    player = StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
       .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
       .setAudioAttributes(audioAttributes, /* handleAudioFocus= */ true)
       .setHandleAudioBecomingNoisy(true)
       .build()
       .also {
         it.addListener(playerListener)
+        // The language picked last, and the track picked for this video before a recreation
+        audioTracks.attach(it)
         videoSurface?.let { surface -> it.setVideoSurface(surface) }
         it.setMediaItem(MediaItem.fromUri(url), startPosition)
         it.playWhenReady = playWhenReady
@@ -900,6 +924,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       return
     }
     released = true
+    audioTracks.dismissDialog()
     renderer.onFrameAvailable = null
     handler.removeCallbacksAndMessages(null)
     Choreographer.getInstance().removeFrameCallback(frameCallback)
@@ -1008,6 +1033,17 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
         scheduleHideControls()
       }
       show()
+    }
+  }
+
+  /** Lists the audio tracks of the video to pick one; the controls stay while the list is open */
+  private fun showAudioTracks() {
+    val current = player ?: return
+    handler.removeCallbacks(hideControlsRunnable)
+    audioDialogOpen = true
+    audioTracks.showDialog(this, current) {
+      audioDialogOpen = false
+      scheduleHideControls()
     }
   }
 
@@ -1328,7 +1364,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
   /** The controls hide after 3 s while the video plays and nothing is being dragged; a paused video keeps them */
   private fun scheduleHideControls() {
     handler.removeCallbacks(hideControlsRunnable)
-    val busy = userSeeking || draggingViewpoint || draggingSensitivity || layoutMenuOpen
+    val busy = userSeeking || draggingViewpoint || draggingSensitivity || layoutMenuOpen || audioDialogOpen
     if (player?.isPlaying == true && !busy) {
       handler.postDelayed(hideControlsRunnable, CONTROLS_TIMEOUT_MS)
     }

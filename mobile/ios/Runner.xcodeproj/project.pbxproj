@@ -173,6 +173,13 @@
 			path = Spatial;
 			sourceTree = "<group>";
 		};
+		B26C3E5A7D1F4A2B9C8E0F14 /* VideoThumbnail */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			path = VideoThumbnail;
+			sourceTree = "<group>";
+		};
 		B2CF7F8C2DDE4EBB00744BF6 /* Sync */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -309,6 +316,7 @@
 				B2CF7F8C2DDE4EBB00744BF6 /* Sync */,
 				B24E70DD0EBD99B249D8B253 /* Spherical */,
 				B25A7A1D3C9E4F6B8D2E0A51 /* Spatial */,
+				B26C3E5A7D1F4A2B9C8E0F14 /* VideoThumbnail */,
 				B2EE00052E72CA15008B6CA7 /* Permission */,
 				FA9973382CF6DF4B000EF859 /* Runner.entitlements */,
 				FAC7416727DB9F5500C668D8 /* RunnerProfile.entitlements */,
@@ -407,6 +415,7 @@
 				FEE084F22EC172080045228E /* Schemas */,
 				B24E70DD0EBD99B249D8B253 /* Spherical */,
 				B25A7A1D3C9E4F6B8D2E0A51 /* Spatial */,
+				B26C3E5A7D1F4A2B9C8E0F14 /* VideoThumbnail */,
 			);
 			name = Runner;
 			packageProductDependencies = (

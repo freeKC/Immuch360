@@ -14,6 +14,7 @@ import 'package:immich_mobile/domain/models/setting.model.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -68,7 +69,7 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
   final debugOverlay = ref.read(settingsProvider.notifier).get(Setting.advancedTroubleshooting);
   final isEquirectangular = ref.read(isEquirectangularProvider(asset));
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final labels = spatialLabels(context.t);
+  final labels = {...spatialLabels(context.t), ...audioTrackLabels(context.t, Localizations.localeOf(context))};
   final unavailableMessage = context.t.spatial_unavailable;
   final errorMessage = context.t.spatial_open_failed;
 
@@ -199,7 +200,7 @@ Future<bool> openSpatialVideoUrl(
   final session = ref.read(spatialVideoSessionProvider);
   final debugOverlay = ref.read(settingsProvider.notifier).get(Setting.advancedTroubleshooting);
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final labels = spatialLabels(context.t);
+  final labels = {...spatialLabels(context.t), ...audioTrackLabels(context.t, Localizations.localeOf(context))};
   final unavailableMessage = context.t.spatial_unavailable;
   final errorMessage = context.t.spatial_open_failed;
 

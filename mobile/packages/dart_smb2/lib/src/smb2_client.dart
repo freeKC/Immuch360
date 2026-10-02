@@ -17,11 +17,13 @@
 /// **Thread-safety caveat**: `smb2_init_context` / `smb2_destroy_context`
 /// mutate a global `active_contexts` linked list in libsmb2's `init.c`
 /// without internal locking, so concurrent calls from multiple isolates
-/// can corrupt it. The mitigation is purely Dart-side ordering:
-/// `Smb2Pool.connect` spawns its workers sequentially, so at most one
-/// isolate is inside `smb2_init_context` at a time within a pool. Building
-/// multiple pools concurrently, or running parallel
-/// `Isolate.run(() => client.listShares(...))`, is still unprotected.
+/// can corrupt it. The mitigation is purely Dart-side ordering: every
+/// worker spawn and close of every `Smb2Pool` (respawns of the
+/// auto-reconnect included) and `Smb2Pool.listSharesOn` go through
+/// `Smb2ContextLock`, one at a time per isolate. An `Smb2Client` used
+/// directly from isolates of your own is unprotected unless its
+/// `connect` / `listShares` / `disconnect` run through
+/// `Smb2ContextLock.run` as well.
 library;
 
 import 'dart:ffi';

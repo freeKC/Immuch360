@@ -70,6 +70,12 @@
   "spatial_sensitivity": "Kopfempfindlichkeit",
   "spatial_tracking_lost": "Gsicht net gfonda, mr suachad's",
   "spatial_unavailable": "Spatial 2.5D gibt's uff dem Gerät net",
+  "video_audio_track": "Tonspur",
+  "video_audio_track_channels": "{channels} Kanäl",
+  "video_audio_track_default": "Standard",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Spur {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Als 360° aazeiga",
   "view_as_360_remove": "Nemme als 360° behandla"
 }

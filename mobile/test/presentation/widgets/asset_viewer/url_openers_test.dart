@@ -8,7 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
@@ -193,7 +195,8 @@ void main() {
         'title': 'trip.mp4',
         'close': 'Close',
         'layout': StereoLayout.leftRight,
-        'labels': sphereViewerLabels(context.t),
+        // The labels of the audio track control too, with the language of the app to name the track languages in
+        'labels': {...sphereViewerLabels(context.t), ...audioTrackLabels(context.t, const Locale('en'))},
         'coverage': SphereCoverage.half,
       });
       expect(player.calls, ['suspend'], reason: 'the page lifts this when the app resumes');
@@ -242,6 +245,10 @@ void main() {
       expect(request.projection, SpatialProjection.flat);
       expect(request.startPositionMs, 12000);
       expect(request.autoplay, isTrue);
+      // The labels of the audio track control too, with the language of the app to name the track languages in
+      expect(request.labels, {...spatialLabels(context.t), ...audioTrackLabels(context.t, const Locale('en'))});
+      expect(request.labels['audioTrackNumber'], 'Track {track}', reason: 'the player fills in the number');
+      expect(request.labels['audioTrackChannels'], '{channels} channels', reason: 'the player fills in the count');
       expect(player.calls, ['suspend']);
     });
 

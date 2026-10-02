@@ -24,7 +24,8 @@ private let zAxis = SIMD3<Float>(0, 0, 1)
 /// vertical axis. A tap on the video shows or hides the controls, which also hide on their own while the video plays.
 /// The 3D button tells how a stereoscopic video lays out its two eyes: the phone shows the left eye only. The coverage
 /// button (360° or 180°) tells whether the video covers the whole sphere or only its front half, as VR180 videos do;
-/// the back half is then black. Flutter hears about the close through [SphericalVideoEvents], with the layout and the
+/// the back half is then black. A video with several audio tracks (languages, commentary) shows an audio track button,
+/// see [AudioTrackChooser]. Flutter hears about the close through [SphericalVideoEvents], with the layout and the
 /// coverage shown last.
 final class SphericalVideoViewController: UIViewController, UIGestureRecognizerDelegate {
   private let videoUrl: URL
@@ -34,6 +35,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let errorMessage: String
   private let stereoLabels: [String: String]
   private let events: SphericalVideoEvents
+  private let audioTracks: AudioTrackChooser
 
   private let player = AVPlayer()
   private let sceneView = SCNView(frame: .zero)
@@ -52,6 +54,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let closeButton = UIButton(type: .system)
   private let titleLabel = UILabel()
   private let coverageButton = UIButton(type: .system)
+  private let audioButton = UIButton(type: .system)
   private let stereoButton = UIButton(type: .system)
   private let motionButton = UIButton(type: .system)
   private let playPauseButton = UIButton(type: .system)
@@ -88,10 +91,12 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private var closing = false
   private var idleTimerWasDisabled = false
   private var closedReported = false
+  private var audioTracksRequested = false
 
   /// [errorMessage] and [stereoLabels] come translated from Flutter, English is the fallback; [stereoLabels] also
-  /// holds the labels of the coverage button. [stereoLayout] is the layout Flutter guessed from the dimensions of the
-  /// video, [coverage] how much of the sphere it covers. [events] is told once when the player closes.
+  /// holds the labels of the coverage button and of the audio track button. [stereoLayout] is the layout Flutter
+  /// guessed from the dimensions of the video, [coverage] how much of the sphere it covers. [events] is told once
+  /// when the player closes.
   init(
     url: URL,
     headers: [String: String],
@@ -113,6 +118,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     self.stereoLabels = stereoLabels
     self.coverage = coverage
     self.events = events
+    audioTracks = AudioTrackChooser(labels: stereoLabels)
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -211,15 +217,29 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
   // MARK: - Player
 
+  /// Seconds of media buffered ahead for a video read over HTTP
+  private static let streamingForwardBufferDuration: TimeInterval = 15
+
   private func setUpPlayer() {
     let item = AVPlayerItem(asset: makeAsset())
+    if !videoUrl.isFileURL {
+      // Read over HTTP (the media bridge of a network share, a server): more media buffered ahead, so that a share
+      // that answers in bursts does not stall the playback every few seconds. Local files keep the defaults.
+      item.preferredForwardBufferDuration = Self.streamingForwardBufferDuration
+    }
+    // The audio track of the language picked last, where the video has one
+    AudioTrackChooser.preferSavedLanguage(player)
     player.replaceCurrentItem(with: item)
 
     statusObservation = item.observe(\.status, options: [.new]) { [weak self] observed, _ in
-      guard observed.status == .failed else { return }
+      let status = observed.status
       let reason = observed.error?.localizedDescription
       Task { @MainActor [weak self] in
-        self?.showError(reason)
+        if status == .failed {
+          self?.showError(reason)
+        } else if status == .readyToPlay {
+          self?.loadAudioTracks()
+        }
       }
     }
     timeControlObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] _, _ in
@@ -288,6 +308,29 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     } else if paused && !controlsVisible {
       setControlsVisible(true)
     }
+  }
+
+  /// Shows the audio track button once the item can play, for a video with a choice of audio tracks
+  private func loadAudioTracks() {
+    guard !audioTracksRequested, !closing, let item = player.currentItem else { return }
+    audioTracksRequested = true
+    Task { @MainActor [weak self] in
+      guard let self else { return }
+      let hasChoice = await self.audioTracks.load(item)
+      guard hasChoice, !self.closing else { return }
+      self.audioButton.menu = self.audioTracks.menu { [weak self] name in
+        self?.audioTrackPicked(name)
+      }
+      self.audioButton.showsMenuAsPrimaryAction = true
+      self.audioButton.accessibilityValue = self.audioTracks.selectedName
+      self.audioButton.isHidden = false
+    }
+  }
+
+  private func audioTrackPicked(_ name: String) {
+    audioButton.accessibilityValue = name
+    showMessage(name)
+    scheduleControlsHiding()
   }
 
   private func showError(_ reason: String?) {
@@ -763,8 +806,15 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     coverageButton.addTarget(self, action: #selector(coverageTapped), for: .touchUpInside)
     coverageButton.accessibilityLabel = stereoText("coverage", fallback: "Field of view")
 
-    // A hidden gyroscope button gives its room to the title
-    let trailingButtons = UIStackView(arrangedSubviews: [coverageButton, stereoButton, motionButton])
+    // Opens the menu of the audio tracks; hidden unless the video has a choice of them
+    setSymbol(of: audioButton, to: "waveform", pointSize: 20)
+    audioButton.tintColor = .white
+    audioButton.translatesAutoresizingMaskIntoConstraints = false
+    audioButton.accessibilityLabel = audioTracks.buttonLabel
+    audioButton.isHidden = true
+
+    // A hidden audio track or gyroscope button gives its room to the title
+    let trailingButtons = UIStackView(arrangedSubviews: [audioButton, coverageButton, stereoButton, motionButton])
     trailingButtons.axis = .horizontal
     trailingButtons.translatesAutoresizingMaskIntoConstraints = false
     topBar.addSubview(trailingButtons)
@@ -788,6 +838,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     // Below required, else it fights the zero width the stack view gives the button when it hides
     let motionButtonWidth = motionButton.widthAnchor.constraint(equalToConstant: 44)
     motionButtonWidth.priority = UILayoutPriority(999)
+    let audioButtonWidth = audioButton.widthAnchor.constraint(equalToConstant: 44)
+    audioButtonWidth.priority = UILayoutPriority(999)
 
     let safeArea = view.safeAreaLayoutGuide
     NSLayoutConstraint.activate([
@@ -825,6 +877,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
       motionButtonWidth,
       motionButton.heightAnchor.constraint(equalToConstant: 44),
+
+      audioButtonWidth,
+      audioButton.heightAnchor.constraint(equalToConstant: 44),
 
       titleLabel.leadingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 8),
       titleLabel.trailingAnchor.constraint(equalTo: trailingButtons.leadingAnchor, constant: -8),

@@ -70,6 +70,12 @@
   "spatial_sensitivity": "Sensibilitaa de la testa",
   "spatial_tracking_lost": "Faccia minga trovada, la sto cercand",
   "spatial_unavailable": "Spatial 2.5D l'è minga disponibil in su sto dispositiv",
+  "video_audio_track": "Traccia audio",
+  "video_audio_track_channels": "{channels} canai",
+  "video_audio_track_default": "Predefinida",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Traccia {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Varda 'me 360°",
   "view_as_360_remove": "Smett de tratà 'me 360°"
 }

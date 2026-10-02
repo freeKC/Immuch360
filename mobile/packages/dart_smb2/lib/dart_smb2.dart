@@ -11,6 +11,7 @@
 ///   [Smb2Pool.downloadToFile]). The recommended entry point.
 library;
 
+export 'src/pool/context_lock.dart';
 export 'src/pool/pool.dart';
 export 'src/smb2_client.dart' show Smb2Client, Smb2Handle;
 export 'src/smb2_error_type.dart';

@@ -11,6 +11,8 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
@@ -19,6 +21,7 @@ import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
+import '../../../domain/services/video_thumbnail_fakes.dart';
 import 'network_viewer_fakes.dart';
 
 /// An image that never comes: the thumbnails stay blank, and the test sees which ones were asked for
@@ -68,6 +71,8 @@ void main() {
   late MemoryShare share;
   late FakeConnections connections;
   late List<Uri> thumbnails;
+  late FakeVideoThumbnailHost videoHost;
+  late Completer<void>? photosLoading;
 
   const source = NetworkSource(
     id: 'nas',
@@ -82,6 +87,8 @@ void main() {
     store = await StoreService.create(storeRepository: StoreRepository(db), listenUpdates: false);
     await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [source]));
     thumbnails = [];
+    videoHost = FakeVideoThumbnailHost();
+    photosLoading = null;
     share = MemoryShare(
       source,
       files: {
@@ -109,6 +116,9 @@ void main() {
   });
 
   tearDown(() async {
+    PaintingBinding.instance.imageCache
+      ..clear()
+      ..clearLiveImages();
     await store.dispose();
     await db.close();
   });
@@ -116,6 +126,12 @@ void main() {
   /// The tile of the photo or video named [name]
   Finder tileOf(String name) =>
       find.byWidgetPredicate((widget) => widget is NetworkMediaTile && widget.entry.name == name);
+
+  /// The frame shown in the tile of the video at [path]
+  Finder videoFrameOf(String path) => find.descendant(
+    of: tileOf(path.substring(1)),
+    matching: find.byWidgetPredicate((widget) => widget is Image && widget.image is NetworkVideoThumbnailImage),
+  );
 
   Future<RootStackRouter> pumpBrowser(WidgetTester tester, {String path = '/', bool settle = true}) {
     return pumpNetworkRouter(
@@ -129,6 +145,13 @@ void main() {
           thumbnails.add(url);
           return _PendingImage(url);
         }),
+        networkVideoThumbnailServiceProvider.overrideWith(
+          (_) => NetworkVideoThumbnailService(
+            api: videoHost,
+            waitForPhotos: () async => photosLoading?.future,
+            retryDelay: Duration.zero,
+          ),
+        ),
       ],
     );
   }
@@ -149,17 +172,82 @@ void main() {
     expect(share.listed, ['/']);
   });
 
-  testWidgets('shows photo thumbnails through the media bridge, and a placeholder for videos', (tester) async {
+  testWidgets('shows photo thumbnails and frames of the videos through the media bridge', (tester) async {
     await pumpBrowser(tester);
 
     expect(thumbnails.toSet(), {
       Uri.parse('http://127.0.0.1:1234/token/nas/flat.jpg'),
       Uri.parse('http://127.0.0.1:1234/token/nas/pano.jpg'),
     });
-    final video = find.ancestor(of: find.text('trip.mp4'), matching: find.byType(NetworkMediaTile));
-    expect(video, findsOneWidget);
-    expect(find.descendant(of: video, matching: find.byIcon(Icons.movie_outlined)), findsOneWidget);
-    expect(find.descendant(of: video, matching: find.byIcon(Icons.play_circle_outline_rounded)), findsOneWidget);
+    expect(videoHost.urls, ['http://127.0.0.1:1234/token/nas/trip.mp4']);
+    final frame = videoFrameOf('/trip.mp4');
+    expect(frame, findsOneWidget);
+    final image = tester.widget<Image>(frame).image as NetworkVideoThumbnailImage;
+    expect(image.key, networkMediaKey(share.file('/trip.mp4')));
+    expect(image.bytes, videoHost.frameOf('http://127.0.0.1:1234/token/nas/trip.mp4'));
+    expect(
+      find.descendant(of: tileOf('trip.mp4'), matching: find.byIcon(Icons.play_circle_outline_rounded)),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('shows the placeholder of a video until its frame comes, after the photo thumbnails', (tester) async {
+    photosLoading = Completer<void>();
+    videoHost.gated = true;
+    await pumpBrowser(tester);
+
+    expect(thumbnails.toSet(), hasLength(2));
+    expect(videoHost.calls, isEmpty, reason: 'the photos on screen first');
+    expect(find.descendant(of: tileOf('trip.mp4'), matching: find.byIcon(Icons.movie_outlined)), findsOneWidget);
+    expect(find.descendant(of: tileOf('trip.mp4'), matching: find.text('trip.mp4')), findsOneWidget);
+
+    photosLoading!.complete();
+    await tester.pumpAndSettle();
+    expect(videoHost.urls, ['http://127.0.0.1:1234/token/nas/trip.mp4']);
+    expect(videoFrameOf('/trip.mp4'), findsNothing);
+
+    videoHost.answer('http://127.0.0.1:1234/token/nas/trip.mp4');
+    await tester.pumpAndSettle();
+    expect(videoFrameOf('/trip.mp4'), findsOneWidget);
+  });
+
+  testWidgets('keeps the placeholder of a video whose frame cannot be taken', (tester) async {
+    videoHost.frameOf = (_) => null;
+    await pumpBrowser(tester);
+
+    expect(videoHost.calls, hasLength(2), reason: 'tried once more');
+    expect(videoFrameOf('/trip.mp4'), findsNothing);
+    expect(find.descendant(of: tileOf('trip.mp4'), matching: find.byIcon(Icons.movie_outlined)), findsOneWidget);
+  });
+
+  testWidgets('tries a video that had no frame again when the folder is pulled down', (tester) async {
+    final frame = videoHost.frameOf;
+    videoHost.frameOf = (_) => null;
+    await pumpBrowser(tester);
+    expect(videoFrameOf('/trip.mp4'), findsNothing);
+
+    videoHost.frameOf = frame;
+    await tester.fling(find.text('Holidays'), const Offset(0, 400), 1000);
+    await tester.pumpAndSettle();
+
+    expect(videoHost.calls, hasLength(3));
+    expect(videoFrameOf('/trip.mp4'), findsOneWidget);
+  });
+
+  testWidgets('shows a video frame still in memory without taking it again', (tester) async {
+    final image = (await tester.runAsync(() => createTestImage(width: 4, height: 4)))!;
+    addTearDown(image.dispose);
+    final key = networkMediaKey(share.file('/trip.mp4'));
+    PaintingBinding.instance.imageCache.putIfAbsent(
+      NetworkVideoThumbnailImage(key),
+      () => OneFrameImageStreamCompleter(SynchronousFuture(ImageInfo(image: image.clone()))),
+    );
+
+    await pumpBrowser(tester);
+
+    expect(videoHost.calls, isEmpty);
+    expect(videoFrameOf('/trip.mp4'), findsOneWidget);
+    expect(find.descendant(of: tileOf('trip.mp4'), matching: find.byIcon(Icons.movie_outlined)), findsNothing);
   });
 
   testWidgets('a photo too large to stream for a thumbnail gets a placeholder', (tester) async {

@@ -18,8 +18,10 @@ import 'dart:typed_data';
 import 'package:dart_smb2/dart_smb2.dart';
 import 'package:dart_smb2/src/ffi/native_lib.dart';
 import 'package:dart_smb2/src/pool/test_hooks.dart';
+import 'package:dart_smb2/src/pool/worker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/smb_file_system.dart';
 
@@ -38,7 +40,15 @@ class _FakePool extends Fake implements Smb2Pool {
   final List<(String, int, int)> reads = [];
   final List<String> listed = [];
   int fileOpens = 0;
+  int handleCloses = 0;
   int disconnects = 0;
+
+  /// The handles open, with their path
+  final Map<int, String> openHandles = {};
+  int _nextHandle = 1;
+
+  /// Called before each read of an open file, may hold it
+  Future<void> Function(String path)? beforeRead;
 
   /// Thrown by the next call instead of answering
   Smb2Exception? failNext;
@@ -126,17 +136,37 @@ class _FakePool extends Fake implements Smb2Pool {
   }
 
   @override
-  Future<Uint8List> readFileRange(String path, {int offset = 0, required int length}) async {
+  Future<(Smb2PoolHandle, int)> openFileWithSize(String path) async {
     _maybeFail();
-    return _read(path, offset, length);
+    fileOpens++;
+    if (!files.containsKey(path)) {
+      throw const Smb2Exception(
+        'Open failed: Open failed with (0xc0000034) STATUS_OBJECT_NAME_NOT_FOUND.',
+        2,
+        Smb2ErrorType.fileNotFound,
+      );
+    }
+    final handle = Smb2PoolHandle(_FakeWorker(), _nextHandle++, path);
+    openHandles[handle.id] = path;
+    return (handle, files[path]!.length);
   }
 
   @override
-  Future<T> withFile<T>(String path, FutureOr<T> Function(Smb2File file) body, {int? knownSize}) async {
+  Future<Uint8List> readFromHandle(Smb2PoolHandle handle, {int offset = 0, required int length}) async {
     _maybeFail();
-    fileOpens++;
-    final size = _statOf(path).size;
-    return body(_FakeFile(this, path, size));
+    if (!openHandles.containsKey(handle.id)) {
+      throw const Smb2Exception('Invalid handle');
+    }
+    await beforeRead?.call(handle.path);
+    return _read(handle.path, offset, length);
+  }
+
+  @override
+  Future<void> closeHandle(Smb2PoolHandle handle) async {
+    handle.markClosed();
+    if (openHandles.remove(handle.id) != null) {
+      handleCloses++;
+    }
   }
 
   @override
@@ -145,17 +175,84 @@ class _FakePool extends Fake implements Smb2Pool {
   }
 }
 
-class _FakeFile extends Fake implements Smb2File {
-  _FakeFile(this._pool, this._path, this.size);
+class _FakeWorker extends Fake implements Worker {}
 
-  final _FakePool _pool;
-  final String _path;
+/// Counts the reads the media bridge asks of a file system
+class _CountingFileSystem implements NetworkFileSystem {
+  _CountingFileSystem(this.inner);
+
+  final NetworkFileSystem inner;
+  int reads = 0;
 
   @override
-  final int size;
+  NetworkSource get source => inner.source;
 
   @override
-  Future<Uint8List> read({int offset = 0, required int length}) async => _pool._read(_path, offset, length);
+  Future<List<NetworkEntry>> list(String path) => inner.list(path);
+
+  @override
+  Future<NetworkEntry> stat(String path) => inner.stat(path);
+
+  @override
+  Future<Uint8List> readRange(String path, int offset, int length) {
+    reads++;
+    return inner.readRange(path, offset, length);
+  }
+
+  @override
+  Future<void> close() => inner.close();
+}
+
+/// A TCP relay to [port] on this machine that holds every packet [delay] long each way, like a Wi-Fi network between
+/// the phone and its NAS
+class _LatencyProxy {
+  _LatencyProxy._(this._server);
+
+  final ServerSocket _server;
+  final _sockets = <Socket>[];
+
+  int get port => _server.port;
+
+  static Future<_LatencyProxy> start(int port, Duration delay) async {
+    final proxy = _LatencyProxy._(await ServerSocket.bind(InternetAddress.loopbackIPv4, 0));
+    proxy._server.listen((client) async {
+      final Socket upstream;
+      try {
+        upstream = await Socket.connect(InternetAddress.loopbackIPv4, port);
+      } catch (_) {
+        client.destroy();
+        return;
+      }
+      proxy._sockets.addAll([client, upstream]);
+      for (final socket in [client, upstream]) {
+        socket.setOption(SocketOption.tcpNoDelay, true);
+        // A side that resets the connection fails the writes to it: nothing to report
+        unawaited(socket.done.then<void>((_) {}, onError: (Object _) {}));
+      }
+      void relay(Socket from, Socket to) => from.listen(
+        (data) => Future<void>.delayed(delay, () {
+          try {
+            to.add(data);
+          } catch (_) {
+            // The other side is gone
+          }
+        }),
+        onDone: () => Future<void>.delayed(delay, to.destroy),
+        onError: (Object _) => to.destroy(),
+        cancelOnError: true,
+      );
+      relay(client, upstream);
+      relay(upstream, client);
+    });
+    return proxy;
+  }
+
+  Future<void> close() async {
+    await _server.close();
+    for (final socket in _sockets) {
+      socket.destroy();
+    }
+  }
 }
 
 typedef _Connection = ({String server, String share, String? user, String? password, String? domain, int timeout});
@@ -503,13 +600,13 @@ void main() {
       );
     });
 
-    test('reads a window in one call when the server gives it whole', () async {
+    test('reads a window in one request when the server gives it whole', () async {
       final fileSystem = await open();
       pool.reads.clear();
       final bytes = await fileSystem.readRange('/A.mp4', 100, 200);
       expect(bytes, pool.files['A.mp4']!.sublist(100, 300));
       expect(pool.reads, [('A.mp4', 100, 200)]);
-      expect(pool.fileOpens, 0);
+      expect(pool.fileOpens, 1);
     });
 
     test('reads the end of a file, and nothing past it', () async {
@@ -543,6 +640,264 @@ void main() {
       expect(bytes.length, SmbFileSystem.maxReadChunk * 2);
       expect(bytes, pool.files['big.mp4']!.sublist(50, 50 + SmbFileSystem.maxReadChunk * 2));
       expect(pool.reads.every((read) => read.$3 <= SmbFileSystem.maxReadChunk), isTrue);
+    });
+
+    group('open files', () {
+      late Duration previousIdle;
+
+      setUp(() {
+        previousIdle = SmbFileSystem.openFileIdle;
+        pool.files['v1.mp4'] = _bytes(100000);
+      });
+
+      tearDown(() => SmbFileSystem.openFileIdle = previousIdle);
+
+      test('reads in sequence on one open file, and a seek reads on it as well', () async {
+        final fileSystem = await open();
+        final data = pool.files['v1.mp4']!;
+        for (var offset = 0; offset < 30000; offset += 10000) {
+          expect(await fileSystem.readRange('/v1.mp4', offset, 10000), data.sublist(offset, offset + 10000));
+        }
+        expect(await fileSystem.readRange('/v1.mp4', 90000, 10000), data.sublist(90000));
+        expect(await fileSystem.readRange('/v1.mp4', 5, 10), data.sublist(5, 15));
+        expect(pool.fileOpens, 1);
+        expect(pool.handleCloses, 0);
+        expect(fileSystem.fileOpens, 1);
+      });
+
+      test('reads of the same file at the same time open it once', () async {
+        final fileSystem = await open();
+        final data = pool.files['v1.mp4']!;
+        final windows = await Future.wait([
+          for (var offset = 0; offset < 50000; offset += 10000) fileSystem.readRange('/v1.mp4', offset, 10000),
+        ]);
+        expect(windows.expand((window) => window), data.sublist(0, 50000));
+        expect(pool.fileOpens, 1);
+      });
+
+      test('closes a file not read for a while', () async {
+        SmbFileSystem.openFileIdle = const Duration(milliseconds: 50);
+        final fileSystem = await open();
+        await fileSystem.readRange('/v1.mp4', 0, 10);
+        await fileSystem.readRange('/b.jpg', 0, 10);
+        expect(pool.openHandles, hasLength(2));
+        for (var i = 0; i < 100 && pool.openHandles.isNotEmpty; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+        expect(pool.openHandles, isEmpty);
+        expect(fileSystem.openFileCount, 0);
+
+        await fileSystem.readRange('/v1.mp4', 10, 10);
+        expect(pool.fileOpens, 3);
+      });
+
+      test('keeps at most four files open, the least recently read closed first', () async {
+        final fileSystem = await open();
+        final paths = ['/v1.mp4', '/A.mp4', '/b.jpg', '/c.JPG', '/photos/x.jpg', '/photos/2026/y.mp4'];
+        for (final path in paths) {
+          await fileSystem.readRange(path, 0, 4);
+        }
+        await pumpEventQueue();
+        expect(fileSystem.openFileCount, SmbFileSystem.maxOpenFiles);
+        expect(pool.openHandles.values.toSet(), {'b.jpg', 'c.JPG', 'photos/x.jpg', 'photos/2026/y.mp4'});
+
+        // Still open
+        await fileSystem.readRange('/b.jpg', 4, 4);
+        expect(pool.fileOpens, paths.length);
+      });
+
+      test('closes the open files with the connection', () async {
+        final fileSystem = await open();
+        await fileSystem.readRange('/v1.mp4', 0, 10);
+        await fileSystem.readRange('/A.mp4', 0, 10);
+        await fileSystem.close();
+        await pumpEventQueue();
+        expect(pool.openHandles, isEmpty);
+        expect(pool.disconnects, 1);
+      });
+
+      test('opens a file again when its handle was lost', () async {
+        final fileSystem = await open();
+        await fileSystem.readRange('/v1.mp4', 0, 10);
+        // A worker replaced after a transport failure forgets the handles of the old one
+        pool.openHandles.clear();
+        expect(await fileSystem.readRange('/v1.mp4', 10, 10), pool.files['v1.mp4']!.sublist(10, 20));
+        expect(pool.fileOpens, 2);
+      });
+
+      test('a failed read does not keep its file open', () async {
+        final fileSystem = await open();
+        await fileSystem.readRange('/v1.mp4', 0, 10);
+        pool.failAlways = const Smb2Exception('Read failed: something odd');
+        await expectLater(fileSystem.readRange('/v1.mp4', 10, 10), throwsA(isA<NetworkFileSystemException>()));
+        pool.failAlways = null;
+        await pumpEventQueue();
+        expect(fileSystem.openFileCount, 0);
+        expect(await fileSystem.readRange('/v1.mp4', 10, 10), pool.files['v1.mp4']!.sublist(10, 20));
+      });
+    });
+
+    group('stream connection', () {
+      late List<_FakePool> pools;
+      late Duration previousHold;
+
+      // The first connection is [pool], each next one a new pool of the same files
+      Future<SmbFileSystem> openWithPools() {
+        pools = [];
+        Future<Smb2Pool> connectNew({
+          required String server,
+          required String share,
+          String? user,
+          String? password,
+          String? domain,
+          required int timeoutSeconds,
+        }) async {
+          final next = pools.isEmpty
+              ? pool
+              : (_FakePool()
+                  ..files.addAll(pool.files)
+                  ..folders.addAll(pool.folders));
+          pools.add(next);
+          return next;
+        }
+
+        return SmbFileSystem.open(_smbSource(), 'secret', connect: connectNew);
+      }
+
+      setUp(() {
+        previousHold = SmbFileSystem.streamHoldIdle;
+        pool.files['v1.mp4'] = _bytes(100000);
+        pool.files['v2.mkv'] = _bytes(100000);
+        pool.files['pano.jpg'] = _bytes(100000);
+      });
+
+      tearDown(() => SmbFileSystem.streamHoldIdle = previousHold);
+
+      test('a video read in sequence moves to a connection of its own, the listings stay on the first', () async {
+        final fileSystem = await openWithPools();
+        final data = pool.files['v1.mp4']!;
+        final read = BytesBuilder();
+        read.add(await fileSystem.readRange('/v1.mp4', 0, 10000));
+        expect(pools, hasLength(1));
+        // In sequence: the stream connection opens meanwhile
+        read.add(await fileSystem.readRange('/v1.mp4', 10000, 10000));
+        await pumpEventQueue();
+        expect(pools, hasLength(2));
+        expect(fileSystem.hasStreamConnection, isTrue);
+        final general = pools[0];
+        final stream = pools[1];
+
+        for (var offset = 20000; offset < 60000; offset += 10000) {
+          read.add(await fileSystem.readRange('/v1.mp4', offset, 10000));
+        }
+        expect(read.takeBytes(), data.sublist(0, 60000));
+        expect(fileSystem.streamedPath, '/v1.mp4');
+        expect(stream.reads.map((r) => r.$2), [20000, 30000, 40000, 50000]);
+        expect(stream.fileOpens, 1);
+        // The file was closed on the first connection
+        await pumpEventQueue();
+        expect(general.openHandles, isEmpty);
+
+        // A seek stays on the stream connection
+        expect(await fileSystem.readRange('/v1.mp4', 90000, 100), data.sublist(90000, 90100));
+        expect(stream.reads.last, ('v1.mp4', 90000, 100));
+
+        // Listings, stats and photos go to the first connection
+        await fileSystem.list('/');
+        await fileSystem.stat('/b.jpg');
+        await fileSystem.readRange('/b.jpg', 0, 5);
+        await fileSystem.readRange('/b.jpg', 5, 5);
+        expect(general.listed, ['', '']);
+        expect(stream.listed, isEmpty);
+        expect(stream.reads.where((r) => r.$1 != 'v1.mp4'), isEmpty);
+
+        await fileSystem.close();
+        expect(general.disconnects, 1);
+        expect(stream.disconnects, 1);
+      });
+
+      test('the photos read in sequence stay on the first connection', () async {
+        final fileSystem = await openWithPools();
+        for (var offset = 0; offset < 100000; offset += 10000) {
+          await fileSystem.readRange('/pano.jpg', offset, 10000);
+        }
+        await pumpEventQueue();
+        expect(pools, hasLength(1));
+        expect(fileSystem.streamedPath, isNull);
+      });
+
+      test('one video at a time has the stream connection, another takes it once the first is idle', () async {
+        final fileSystem = await openWithPools();
+        Future<void> readTwice(String path, int from) async {
+          await fileSystem.readRange(path, from, 1000);
+          await fileSystem.readRange(path, from + 1000, 1000);
+        }
+
+        await readTwice('/v1.mp4', 0);
+        await pumpEventQueue();
+        await readTwice('/v1.mp4', 2000);
+        expect(fileSystem.streamedPath, '/v1.mp4');
+        final stream = pools[1];
+
+        // The first video was read just now: the second stays on the first connection
+        await readTwice('/v2.mkv', 0);
+        await readTwice('/v2.mkv', 2000);
+        expect(fileSystem.streamedPath, '/v1.mp4');
+        expect(stream.reads.where((r) => r.$1 == 'v2.mkv'), isEmpty);
+
+        SmbFileSystem.streamHoldIdle = Duration.zero;
+        await fileSystem.readRange('/v2.mkv', 4000, 1000);
+        expect(fileSystem.streamedPath, '/v2.mkv');
+        expect(stream.reads.last, ('v2.mkv', 4000, 1000));
+        // The first video, read again, goes to the first connection
+        await fileSystem.readRange('/v1.mp4', 0, 1000);
+        expect(pools[0].reads.last, ('v1.mp4', 0, 1000));
+        expect(pools, hasLength(2));
+      });
+
+      test('the reads share the first connection when the stream one cannot open', () async {
+        var calls = 0;
+        Future<Smb2Pool> failSecond({
+          required String server,
+          required String share,
+          String? user,
+          String? password,
+          String? domain,
+          required int timeoutSeconds,
+        }) async {
+          calls++;
+          if (calls > 1) {
+            throw const Smb2Exception('Worker failed to start: too many connections');
+          }
+          return pool;
+        }
+
+        final fileSystem = await SmbFileSystem.open(_smbSource(), 'secret', connect: failSecond);
+        final data = pool.files['v1.mp4']!;
+        for (var offset = 0; offset < 50000; offset += 10000) {
+          expect(await fileSystem.readRange('/v1.mp4', offset, 10000), data.sublist(offset, offset + 10000));
+          await pumpEventQueue();
+        }
+        expect(calls, 2);
+        expect(fileSystem.hasStreamConnection, isFalse);
+        expect(pool.fileOpens, 1);
+      });
+
+      test('a stream connection the server ended is opened again', () async {
+        final fileSystem = await openWithPools();
+        await fileSystem.readRange('/v1.mp4', 0, 1000);
+        await fileSystem.readRange('/v1.mp4', 1000, 1000);
+        await pumpEventQueue();
+        await fileSystem.readRange('/v1.mp4', 2000, 1000);
+        final stream = pools[1];
+        stream.failAlways = const Smb2Exception('Read failed: STATUS_USER_SESSION_DELETED', 5, Smb2ErrorType.io);
+        expect(await fileSystem.readRange('/v1.mp4', 3000, 1000), pool.files['v1.mp4']!.sublist(3000, 4000));
+        expect(pools, hasLength(3));
+        expect(pools[2].reads.single, ('v1.mp4', 3000, 1000));
+        await pumpEventQueue();
+        expect(stream.disconnects, 1);
+        expect(pools[0].disconnects, 0);
+      });
     });
 
     test('reports a missing file to read as not found', () async {
@@ -673,6 +1028,79 @@ void main() {
         throwsA(isA<NetworkFileSystemException>()),
       );
       expect(calls, hasLength(1));
+    });
+  });
+
+  group('Smb2ContextLock', () {
+    const limit = Duration(seconds: 5);
+
+    test('runs the actions one at a time, in the order they came', () async {
+      final events = <String>[];
+      Future<int> action(String name, int value) async {
+        events.add('$name start');
+        await Future<void>.delayed(const Duration(milliseconds: 30));
+        events.add('$name end');
+        return value;
+      }
+
+      final results = await Future.wait([
+        Smb2ContextLock.run(() => action('a', 1), limit: limit),
+        Smb2ContextLock.run(() => action('b', 2), limit: limit),
+        Smb2ContextLock.run(() => action('c', 3), limit: limit),
+      ]);
+
+      expect(results, [1, 2, 3]);
+      expect(events, ['a start', 'a end', 'b start', 'b end', 'c start', 'c end']);
+    });
+
+    test('an action that runs again under the lock it holds goes on at once', () async {
+      final events = <String>[];
+      final outer = Smb2ContextLock.run(() async {
+        events.add('outer');
+        // A pool that spawns its worker inside the connect of the file system
+        final inner = await Smb2ContextLock.run(() async {
+          events.add('inner');
+          return 2;
+        }, limit: limit);
+        return inner + 1;
+      }, limit: limit);
+      final next = Smb2ContextLock.run(() async => events.add('next'), limit: limit);
+
+      expect(await outer.timeout(const Duration(seconds: 1)), 3);
+      await next;
+      expect(events, ['outer', 'inner', 'next']);
+    });
+
+    test('an action that fails, or runs past its limit, no longer holds the others', () async {
+      await expectLater(
+        Smb2ContextLock.run<void>(() async => throw StateError('no context'), limit: limit),
+        throwsStateError,
+      );
+      expect(await Smb2ContextLock.run(() async => 1, limit: limit).timeout(const Duration(seconds: 1)), 1);
+
+      final never = Completer<void>();
+      unawaited(Smb2ContextLock.run(() => never.future, limit: const Duration(milliseconds: 100)));
+      final watch = Stopwatch()..start();
+      expect(await Smb2ContextLock.run(() async => 2, limit: limit).timeout(const Duration(seconds: 2)), 2);
+      expect(watch.elapsed, greaterThanOrEqualTo(const Duration(milliseconds: 90)));
+      never.complete();
+    });
+
+    test('the limit counts from the start of the action, not from its call', () async {
+      final events = <String>[];
+      final first = Smb2ContextLock.run(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+        events.add('first');
+      }, limit: limit);
+      // Queued behind the first one for 300 ms, it runs for 200 ms within its limit of 250 ms
+      final second = Smb2ContextLock.run(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+        events.add('second');
+      }, limit: const Duration(milliseconds: 250));
+      final third = Smb2ContextLock.run(() async => events.add('third'), limit: limit);
+
+      await Future.wait([first, second, third]);
+      expect(events, ['first', 'second', 'third']);
     });
   });
 
@@ -831,5 +1259,128 @@ void main() {
         ),
       );
     }, skip: !enabled);
+  });
+
+  // Streams videos of the Samba test server through the media bridge the way the players read them, straight and
+  // through a relay that adds the latency of a Wi-Fi network, alone and while the browser loads photos and lists the
+  // folder, and prints the throughput and the number of files opened on the server.
+  group('SmbFileSystem streaming through the media bridge against Samba', () {
+    final enabled = Platform.environment['IMMUCH_NET_TESTS'] == '1';
+    late LocalMediaBridge bridge;
+    final proxies = <_LatencyProxy>[];
+
+    setUpAll(() {
+      if (enabled) {
+        debugLibSmb2PathOverride = libsmb2TestPath();
+      }
+    });
+
+    setUp(() async {
+      bridge = LocalMediaBridge();
+      await bridge.start();
+    });
+
+    tearDown(() async {
+      await bridge.stop();
+      for (final proxy in proxies) {
+        await proxy.close();
+      }
+      proxies.clear();
+    });
+
+    Future<SmbFileSystem> connect({Duration? latency}) async {
+      var port = 1445;
+      if (latency != null) {
+        final proxy = await _LatencyProxy.start(port, latency);
+        proxies.add(proxy);
+        port = proxy.port;
+      }
+      return SmbFileSystem.open(
+        NetworkSource(
+          id: 'samba-${latency?.inMilliseconds ?? 0}',
+          type: NetworkSourceType.smb,
+          name: 'Samba',
+          host: 'localhost',
+          port: port,
+          share: 'media',
+          username: 'tester',
+        ),
+        'testpass',
+      );
+    }
+
+    Future<Uint8List> get(Uri url, {String? range}) async {
+      final client = HttpClient();
+      try {
+        final request = await client.getUrl(url);
+        if (range != null) {
+          request.headers.set(HttpHeaders.rangeHeader, range);
+        }
+        final response = await request.close();
+        final body = BytesBuilder(copy: false);
+        await response.forEach(body.add);
+        return body.takeBytes();
+      } finally {
+        client.close();
+      }
+    }
+
+    Future<void> measure(String path, {Duration? latency, bool browsing = false}) async {
+      final smb = await connect(latency: latency);
+      final counted = _CountingFileSystem(smb);
+      bridge.register(counted);
+      addTearDown(smb.close);
+      final expected = await smb.readRange(path, 0, (await smb.stat(path)).size!);
+      final opensBefore = smb.fileOpens;
+
+      // The browser meanwhile: photos loaded whole through the bridge, and the folder listed
+      var browsingDone = false;
+      var photos = 0;
+      final browser = browsing
+          ? () async {
+              while (!browsingDone) {
+                await get(bridge.urlFor(smb.source.id, '/mono-photo.jpg'));
+                await smb.list('/');
+                photos++;
+              }
+            }()
+          : Future<void>.value();
+
+      final watch = Stopwatch()..start();
+      // As the players do: the first two bytes, then the file from its start to its end
+      await get(bridge.urlFor(smb.source.id, path), range: 'bytes=0-1');
+      final body = await get(bridge.urlFor(smb.source.id, path), range: 'bytes=0-');
+      watch.stop();
+      browsingDone = true;
+      await browser;
+
+      expect(body, expected);
+      final megabytes = body.length / (1024 * 1024);
+      final seconds = watch.elapsedMicroseconds / 1e6;
+      // ignore: avoid_print
+      print(
+        'MEASURE $path${latency == null ? '' : ' latency ${latency.inMilliseconds} ms each way'}'
+        '${browsing ? ' while browsing ($photos photos)' : ''}: ${megabytes.toStringAsFixed(1)} MiB in '
+        '${seconds.toStringAsFixed(2)} s = ${(megabytes / seconds).toStringAsFixed(1)} MiB/s, '
+        '${counted.reads} reads asked by the bridge, ${smb.fileOpens - opensBefore} files opened on the server, '
+        'stream connection ${smb.hasStreamConnection}',
+      );
+    }
+
+    test('mono-video.mp4 straight', () => measure('/mono-video.mp4'), skip: !enabled);
+
+    test('stereo-tb-video.mp4 straight', () => measure('/stereo-tb-video.mp4'), skip: !enabled);
+
+    test(
+      'stereo-tb-video.mp4 with 3 ms of latency each way',
+      () => measure('/stereo-tb-video.mp4', latency: const Duration(milliseconds: 3)),
+      skip: !enabled,
+    );
+
+    test(
+      'stereo-tb-video.mp4 with 3 ms of latency each way, while browsing',
+      () => measure('/stereo-tb-video.mp4', latency: const Duration(milliseconds: 3), browsing: true),
+      skip: !enabled,
+    );
   });
 }

@@ -19,6 +19,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -71,7 +72,7 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final remoteUrl = remoteId == null ? null : '${Store.get(StoreKey.serverEndpoint)}/assets/$remoteId/$postfix';
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
-  final labels = sphereViewerLabels(context.t);
+  final labels = {...sphereViewerLabels(context.t), ...audioTrackLabels(context.t, Localizations.localeOf(context))};
 
   try {
     // The native player reads file:// URIs too, and ignores the headers for them
@@ -135,7 +136,7 @@ Future<bool> openSphericalVideoUrl(
   ref.read(sphericalVideoSessionProvider).cancel();
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
-  final labels = sphereViewerLabels(context.t);
+  final labels = {...sphereViewerLabels(context.t), ...audioTrackLabels(context.t, Localizations.localeOf(context))};
 
   try {
     await player?.suspendForExternalPlayer();

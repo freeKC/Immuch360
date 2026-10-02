@@ -70,6 +70,12 @@
   "spatial_sensitivity": "Osjetljivost na pokrete glave",
   "spatial_tracking_lost": "Lice nije pronađeno, traži se",
   "spatial_unavailable": "Spatial 2.5D nije dostupan na ovom uređaju",
+  "video_audio_track": "Audio zapis",
+  "video_audio_track_channels": "{channels} kanala",
+  "video_audio_track_default": "Zadani",
+  "video_audio_track_mono": "Mono",
+  "video_audio_track_number": "Zapis {track}",
+  "video_audio_track_stereo": "Stereo",
   "view_as_360": "Prikaži kao 360°",
   "view_as_360_remove": "Prestani tretirati kao 360°"
 }

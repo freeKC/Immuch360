@@ -47,6 +47,9 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
 
   /// Reads the folder again; what was shown stays until the new list comes
   Future<void> _refresh() async {
+    // The videos that had no frame are tried again
+    ref.read(networkVideoThumbnailServiceProvider).forgetFailures();
+    ref.invalidate(networkVideoThumbnailProvider);
     final folder = _load();
     setState(() {
       _folder = folder;

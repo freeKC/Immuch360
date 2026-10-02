@@ -162,6 +162,12 @@
   "spatial_sensitivity": "માથાની સંવેદનશીલતા",
   "spatial_tracking_lost": "ચહેરો મળ્યો નથી, શોધી રહ્યા છીએ",
   "spatial_unavailable": "આ ઉપકરણ પર Spatial 2.5D ઉપલબ્ધ નથી",
+  "video_audio_track": "ઑડિયો ટ્રૅક",
+  "video_audio_track_channels": "{channels} ચેનલ",
+  "video_audio_track_default": "ડિફૉલ્ટ",
+  "video_audio_track_mono": "મોનો",
+  "video_audio_track_number": "ટ્રૅક {track}",
+  "video_audio_track_stereo": "સ્ટીરિયો",
   "view_as_360": "360° તરીકે જુઓ",
   "view_as_360_remove": "360° તરીકે ગણવાનું બંધ કરો"
 }
