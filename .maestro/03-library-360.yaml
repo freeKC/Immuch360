@@ -1,6 +1,8 @@
 # Shows the Library tab with its 360° entry, the list of 360° photos and videos, then opens the first one
 # and its sphere (a second way to the viewer when the deep link of flow 02 did not open it).
 appId: com.aprogsys.immuch360.dev.debug
+env:
+  TILE_POINT: "14%,22%"
 ---
 - launchApp
 # A leftover system dialog from the deep link of flow 02, if any
@@ -22,9 +24,9 @@ appId: com.aprogsys.immuch360.dev.debug
 - waitForAnimationToEnd:
     timeout: 8000
 - takeScreenshot: m10-library-360
-# First thumbnail of the list, top left under the app bar
+# First thumbnail of the list, top left under the app bar (iPhone by default, "12%,43%" on an iPad Pro 13)
 - tapOn:
-    point: "14%,22%"
+    point: "${TILE_POINT}"
 - extendedWaitUntil:
     visible: "360°"
     timeout: 20000

@@ -46,6 +46,10 @@ const String kImmichAppStoreLink = "https://github.com/freeKC/Immuch360/releases
 const String kImmichPlayStoreLink = "https://github.com/freeKC/Immuch360/releases";
 const String kImmichLatestRelease = "https://github.com/freeKC/Immuch360/releases/latest";
 
+/// Hides the debug banner of debug builds, for store screenshots taken on a simulator
+/// (`--dart-define=IMMUCH_SCREENSHOTS=true`).
+const bool kScreenshotMode = bool.fromEnvironment("IMMUCH_SCREENSHOTS");
+
 const int kPhotoTabIndex = 0;
 const int kSearchTabIndex = 1;
 const int kAlbumTabIndex = 2;

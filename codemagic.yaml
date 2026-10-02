@@ -47,7 +47,7 @@ workflows:
           set -euxo pipefail
           export PATH="$HOME/.local/bin:$PATH"
           cd mobile
-          mise exec -- flutter build ios --simulator --debug
+          mise exec -- flutter build ios --simulator --debug --dart-define=IMMUCH_SCREENSHOTS=true
           APP=$(ls -d build/ios/iphonesimulator/*.app | head -1)
           echo "built: $APP"
           ditto -c -k --keepParent "$APP" "$CM_BUILD_DIR/Immich-simulator.app.zip"
@@ -85,6 +85,8 @@ workflows:
         MISE_YES: "1"
         MISE_TRUSTED_CONFIG_PATHS: "/Users/builder/clone"
         ASSET_ID: "978b62d7-e65f-4568-a520-93cb896b2f83"
+        # Centre of the first thumbnail of the 360 list (iPhone); pass "12%,43%" for an iPad Pro 13
+        TILE_POINT: "14%,22%"
     cache:
       cache_paths:
         - $HOME/.pub-cache
@@ -119,7 +121,7 @@ workflows:
           set -euxo pipefail
           export PATH="$HOME/.local/bin:$PATH"
           cd mobile
-          mise exec -- flutter build ios --simulator --debug
+          mise exec -- flutter build ios --simulator --debug --dart-define=IMMUCH_SCREENSHOTS=true
           APP=$(ls -d build/ios/iphonesimulator/*.app | head -1)
           ditto -c -k --keepParent "$APP" "$CM_BUILD_DIR/Immich-simulator.app.zip"
       - name: Boot simulator and install
@@ -154,7 +156,7 @@ workflows:
           maestro --device "$UDID" test -e ASSET_ID="$ASSET_ID" --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/02-open-360.yaml || true
           cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
           xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s03-final.png"
-          maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/03-library-360.yaml || true
+          maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" -e TILE_POINT="$TILE_POINT" .maestro/03-library-360.yaml || true
           cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
           cd "$CM_BUILD_DIR" && zip -qr maestro-out.zip maestro-out
     artifacts:

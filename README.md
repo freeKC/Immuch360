@@ -227,7 +227,7 @@ flutter build apk --release --flavor phone                                   # p
 flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3, the Horizon Store build
 ```
 
-The two Android flavours are the same app. The `quest` one targets SDK 34, drops the two permissions the Meta Horizon Store refuses (media management and background location) and is 64 bit only; the `phone` one is what Google Play requires. iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository, no Mac needed. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Store screenshots are taken on debug simulator builds made with `--dart-define=IMMUCH_SCREENSHOTS=true`, which only hides the debug banner. The two Android flavours are the same app. The `quest` one targets SDK 34, drops the two permissions the Meta Horizon Store refuses (media management and background location) and is 64 bit only; the `phone` one is what Google Play requires. iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository, no Mac needed. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 No secret lives in this repository: the Android signing key is stored as encrypted GitHub Actions secrets, and the Apple signing material is stored as encrypted variables on Codemagic. The workflow files only reference them by name.
 
