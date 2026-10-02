@@ -44,7 +44,7 @@ const int kMinMonthsToEnableScrubberSnap = 12;
 
 const String kImmichAppStoreLink = "https://github.com/freeKC/Immuch360/releases";
 const String kImmichPlayStoreLink = "https://github.com/freeKC/Immuch360/releases";
-const String kImmichLatestRelease = "https://github.com/immich-app/immich/releases/latest";
+const String kImmichLatestRelease = "https://github.com/freeKC/Immuch360/releases/latest";
 
 const int kPhotoTabIndex = 0;
 const int kSearchTabIndex = 1;

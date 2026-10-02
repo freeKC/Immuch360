@@ -2,9 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/presentation/widgets/feature_message/feature_message_dialog.widget.dart';
+import 'package:immich_mobile/presentation/widgets/local_session/local_session_permission_banner.dart';
 import 'package:immich_mobile/presentation/widgets/memory/memory_lane.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
+import 'package:immich_mobile/providers/gallery_permission.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 
@@ -42,9 +44,13 @@ class _MainTimelinePageState extends ConsumerState<MainTimelinePage> {
   Widget build(BuildContext context) {
     final hasMemories = ref.watch(memoryLaneProvider.select((state) => state.value?.isNotEmpty ?? false));
     final hasServer = ref.watch(hasServerProvider);
+    // Without a server, a refused photo permission would leave an empty gallery with no way to ask again
+    final needsPermission = !hasServer && !ref.watch(galleryPermissionNotifier).hasAccess;
     return Timeline(
-      topSliverWidget: const SliverToBoxAdapter(child: MemoryLane()),
-      topSliverWidgetHeight: hasMemories ? 200 : 0,
+      topSliverWidget: SliverToBoxAdapter(
+        child: needsPermission ? const LocalSessionPermissionBanner() : const MemoryLane(),
+      ),
+      topSliverWidgetHeight: needsPermission ? 190 : (hasMemories ? 200 : 0),
       // Every asset is on the device without a server, so the indicator would mark them all
       showStorageIndicator: hasServer,
     );
