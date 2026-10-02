@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <b>The Immich mobile app, with 360° photos and videos you can look around in.</b><br>
-  Android phones, iPhones and the Meta Quest 3. Same server, same account, no server plugin needed.<br>
+  <b>The Immich mobile app, with 360° photos and videos you can look around in, and a free video player for flat, 360°, 3D and VR180 videos.</b><br>
+  Android phones, iPhones and the Meta Quest 3. From your Immich server, your phone or a NAS share. Same server, same account, no server plugin needed.<br>
   <sub>Unofficial fork. Not affiliated with Immich or FUTO.</sub>
 </p>
 
@@ -17,7 +17,7 @@
 
 <table align="center">
   <tr>
-    <td align="center" width="33%"><h3>🌐 Native 360°</h3>Photos and videos as a sphere you look around in, with the gyroscope</td>
+    <td align="center" width="33%"><h3>🌐 Native 360°</h3>Photos and videos as a sphere you look around in, with the gyroscope. A free video player too: flat, 360°, 3D, VR180</td>
     <td align="center" width="33%"><h3>👓 Native 3D</h3>Stereoscopic 360° and VR180, top/bottom or side by side</td>
     <td align="center" width="33%"><h3>🎥 Native 2.5D</h3>Spatial depth on a flat screen, the view follows your head</td>
   </tr>
@@ -45,6 +45,7 @@ Everything the official Immich mobile app does is here, unchanged. On top of it,
 | Spatial 2.5D: depth on a flat screen, the view follows your head (front camera, on device) | ❌ | ✅ experimental |
 | Works without any server, on the phone's own gallery | ❌ login required | ✅ "Use without a server" on the login page |
 | Network shares (SMB, WebDAV): photos and videos of a NAS played live, nothing downloaded | ❌ | ✅ in every viewer, phones and Quest 3 |
+| A video player for flat, 360°, 3D and VR180 files, from the server, the phone or a NAS, free | ❌ flat only | ✅ (the Quest 3 store players are paid) |
 | Same server, same account, installs next to the official app | | ✅ |
 
 ## Who it is for
@@ -76,6 +77,7 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 - **Meta Quest 3**: the same Android app runs on the headset as a window, and the 360° button switches to an immersive view where the photo or video is all around you, and you look around by turning your head.
 - **Find them**: a 360° badge on thumbnails and a **360°** entry in the Library tab listing every 360° photo and video.
 - **Use without a server**: on the login page, "Use without a server" opens the app on the phone's own gallery, with the 360°, 3D, VR180 and Spatial viewers and the 360° list, no Immich account needed. The server features stay hidden until you connect a server from the settings; nothing leaves the device.
+- **A video player, free**: flat, 360°, 3D (side by side, top and bottom) and VR180 videos play in the native players with sound, seeking, gyroscope and head tracking, whether they come from the Immich server, the phone's own gallery or a network share. On the Meta Quest 3 this replaces the paid players of the store for your own files.
 - **Network shares**: Library tab, "Network shares": add a Samba (SMB) or WebDAV share, browse its folders, and play its photos and videos live in the same viewers (360°, 3D, VR180, Spatial 2.5D, Quest immersive view), with or without an Immich server, nothing downloaded. See [Network shares](#network-shares).
 - **Everything else is Immich**, unchanged: backup, timeline, albums, search, sharing, partners, all synced with your server.
 
@@ -235,7 +237,7 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 What is planned next, in rough order. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
 - **App Store**: the iOS listing is under review; the link will be added here when it is live.
-- **Network shares, next steps**: video thumbnails, a thumbnail cache, swiping from one file of a folder to the next, Digest authentication for WebDAV, the user name from the Bonjour record.
+- **Network shares, next steps** (feedback from the first day on a Freebox): a read ahead buffer of a few seconds so that playback over SMB stops pausing, the audio track selection in the players, video thumbnails in the browser (like the photos), a thumbnail cache, swiping from one file of a folder to the next, Digest authentication for WebDAV, the user name from the Bonjour record.
 - **Meta Horizon Store**: the headset build is on the store's alpha channel; the public listing (store page, data use and age questionnaires, review) comes next, so the Quest 3 no longer needs sideloading.
 - **Store listings**: the 3D, VR180 and Spatial features described on Google Play and the App Store.
 - **Raw 360° camera files**: Insta360 .insp and .insv, GoPro .360, dual fisheye .dng. Stitching belongs on the server side; under study.
