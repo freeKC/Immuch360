@@ -232,16 +232,21 @@ final class HeadTracker: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     }
   }
 
-  /// Sets the connection of the orientation output to an upright picture for the interface, mirrored like a mirror.
-  /// Mirroring must be taken off its automatic mode first, else setting it raises an exception.
+  /// Sets the connections of the metadata output and of the orientation output to an upright picture for the
+  /// interface, mirrored like a mirror. The face detector looks for upright faces in the orientation of its own
+  /// connection: left at the sensor's, a face in a landscape interface is turned by 90 degrees and is not found at
+  /// all (TestFlight build 14 on an iPhone 14). With both connections alike, the conversion between them is the
+  /// identity. Mirroring must be taken off its automatic mode first, else setting it raises an exception.
   private func applyOrientation() {
-    guard let connection = orientationOutput.connection(with: .video) else { return }
-    if connection.isVideoOrientationSupported {
-      connection.videoOrientation = videoOrientation
-    }
-    if connection.isVideoMirroringSupported {
-      connection.automaticallyAdjustsVideoMirroring = false
-      connection.isVideoMirrored = true
+    for connection in [metadataOutput.connection(with: .video), orientationOutput.connection(with: .video)] {
+      guard let connection else { continue }
+      if connection.isVideoOrientationSupported {
+        connection.videoOrientation = videoOrientation
+      }
+      if connection.isVideoMirroringSupported {
+        connection.automaticallyAdjustsVideoMirroring = false
+        connection.isVideoMirrored = true
+      }
     }
   }
 
@@ -284,10 +289,14 @@ final class HeadTracker: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     {
       return Self.clampedHalf(Double(transformed.bounds.midX) - 0.5)
     }
-    // Without the conversion, the raw sensor coordinates. The front sensor gives an upright, unmirrored picture
+    let rawX = Double(face.bounds.midX)
+    if metadataOutput.connection(with: .video)?.isVideoOrientationSupported == true {
+      // The metadata connection is upright and mirrored like the picture: nothing to convert
+      return Self.clampedHalf(rawX - 0.5)
+    }
+    // Without any conversion, the raw sensor coordinates. The front sensor gives an upright, unmirrored picture
     // with the interface in landscape left (as seen by the camera, the user's right is on the left of the
     // picture), and the same picture upside down in landscape right.
-    let rawX = Double(face.bounds.midX)
     switch videoOrientation {
     case .landscapeLeft:
       return Self.clampedHalf(0.5 - rawX)
