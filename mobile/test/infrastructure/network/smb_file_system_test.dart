@@ -12,7 +12,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -23,6 +22,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/smb_file_system.dart';
+
+import 'libsmb2_test_path.dart';
 
 /// An in memory share behind the [Smb2Pool] interface, reading at most [maxRead] bytes at once like a real server
 class _FakePool extends Fake implements Smb2Pool {
@@ -592,6 +593,69 @@ void main() {
     });
   });
 
+  group('SmbFileSystem.listShares', () {
+    late List<({String server, String? user, String? password, String? domain, int timeout})> calls;
+
+    SmbShareEnumerator enumerator(List<Smb2ShareInfo> shares, {Exception? error}) =>
+        ({required String server, String? user, String? password, String? domain, required int timeoutSeconds}) async {
+          calls.add((server: server, user: user, password: password, domain: domain, timeout: timeoutSeconds));
+          if (error != null) {
+            throw error;
+          }
+          return shares;
+        };
+
+    setUp(() => calls = []);
+
+    test('gives the disk shares sorted, without the hidden, administrative and printer ones', () async {
+      final shares = await SmbFileSystem.listShares(
+        _smbSource(host: 'smb://nas.local', port: 1445, share: '', username: r'HOME\alice'),
+        'secret',
+        connect: enumerator(const [
+          Smb2ShareInfo(name: 'photos', type: Smb2ShareType.diskTree),
+          Smb2ShareInfo(name: r'IPC$', type: Smb2ShareType.ipc | Smb2ShareType.hidden),
+          Smb2ShareInfo(name: r'C$', type: Smb2ShareType.diskTree),
+          Smb2ShareInfo(name: 'hidden', type: Smb2ShareType.diskTree | Smb2ShareType.hidden),
+          Smb2ShareInfo(name: 'Laser', type: Smb2ShareType.printQueue),
+          Smb2ShareInfo(name: 'Media', type: Smb2ShareType.diskTree),
+          Smb2ShareInfo(name: 'archive', type: Smb2ShareType.diskTree),
+        ]),
+        timeoutSeconds: 7,
+      );
+
+      expect(shares, ['archive', 'Media', 'photos']);
+      expect(calls.single, (server: 'nas.local:1445', user: 'alice', password: 'secret', domain: 'HOME', timeout: 7));
+    });
+
+    test('logs on as a guest without a user name nor a password', () async {
+      await SmbFileSystem.listShares(_smbSource(username: ''), '', connect: enumerator(const []));
+
+      expect(calls.single.user, isNull);
+      expect(calls.single.password, isNull);
+      expect(calls.single.server, 'nas.local:445');
+    });
+
+    test('reports the errors like a connection', () async {
+      await expectLater(
+        SmbFileSystem.listShares(
+          _smbSource(),
+          'wrong',
+          connect: enumerator(const [], error: const Smb2Exception('Connect to IPC\$ failed: STATUS_LOGON_FAILURE')),
+        ),
+        throwsA(
+          isA<NetworkFileSystemException>()
+              .having((e) => e.isAuthentication, 'isAuthentication', isTrue)
+              .having((e) => e.message, 'message', 'nas.local refused the user name or password'),
+        ),
+      );
+      await expectLater(
+        SmbFileSystem.listShares(_smbSource(host: ' '), null, connect: enumerator(const [])),
+        throwsA(isA<NetworkFileSystemException>()),
+      );
+      expect(calls, hasLength(1));
+    });
+  });
+
   group('SmbFileSystem against Samba', () {
     const host = 'localhost';
     const port = 1445;
@@ -616,7 +680,7 @@ void main() {
       if (!enabled) {
         return;
       }
-      debugLibSmb2PathOverride = _libsmb2Path();
+      debugLibSmb2PathOverride = libsmb2TestPath();
       fileSystem = await SmbFileSystem.open(source(), password);
     });
 
@@ -731,6 +795,12 @@ void main() {
       await expectLater(SmbFileSystem.open(source(share: 'nope'), password), notFound);
     }, skip: !enabled);
 
+    test('lists the shares of the server', () async {
+      final shares = await SmbFileSystem.listShares(source(share: ''), password);
+      expect(shares, contains('media'));
+      expect(shares.where((name) => name.endsWith(r'$')), isEmpty);
+    }, skip: !enabled);
+
     test('reports a server that does not listen', () async {
       await expectLater(
         SmbFileSystem.open(source(p: 1446), password),
@@ -742,28 +812,4 @@ void main() {
       );
     }, skip: !enabled);
   });
-}
-
-/// The libsmb2 to load in the tests, null to let the loader find "libsmb2.so"
-String? _libsmb2Path() {
-  final given = Platform.environment['IMMUCH_LIBSMB2'];
-  if (given != null && given.isNotEmpty) {
-    return given;
-  }
-  final home = Platform.environment['HOME'];
-  if (home != null) {
-    final cached = File('$home/.cache/immuch-net-tests/libsmb2.so');
-    if (cached.existsSync()) {
-      return cached.path;
-    }
-  }
-  final library = Isolate.resolvePackageUriSync(Uri.parse('package:dart_smb2/dart_smb2.dart'));
-  if (library != null) {
-    final arch = Platform.version.contains('arm64') ? 'aarch64' : 'x86_64';
-    final bundled = File.fromUri(library.resolve('../linux/libs/$arch/libsmb2.so'));
-    if (bundled.existsSync()) {
-      return bundled.path;
-    }
-  }
-  return null;
 }

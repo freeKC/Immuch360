@@ -12,6 +12,8 @@ dependencies:
   async: ^2.13.1
   auto_route: ^11.1.0
   background_downloader: ^9.5.6
+  # mDNS / DNS-SD: the cast devices and the network shares that announce themselves (pinned to 5.x below)
+  bonsoir: ^5.1.11
   cast: ^2.1.0
   collection: ^1.19.1
   connectivity_plus: ^7.3.0

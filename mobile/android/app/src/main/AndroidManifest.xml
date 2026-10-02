@@ -28,6 +28,9 @@
   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
   <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+  <!-- mDNS: bonsoir holds a Wi-Fi multicast lock while it looks for cast devices and network shares (its own manifest
+       declares it as well; written here so that it is not lost in a manifest merge) -->
+  <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
   <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
   <uses-permission android:name="android.permission.USE_BIOMETRIC" />
   <!-- Spatial 2.5D video player: the front camera follows the head, on the device only. Asked in the player, on first

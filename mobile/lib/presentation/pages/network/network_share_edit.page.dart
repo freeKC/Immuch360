@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/widgets/common/confirm_dialog.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
@@ -116,6 +119,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   late final _username = TextEditingController(text: widget.source?.username ?? '');
   final _password = TextEditingController();
   final _hostFocus = FocusNode();
+  final _usernameFocus = FocusNode();
 
   /// False until the stored password of an existing share is in the field; saving before keeps the stored one
   late bool _passwordLoaded = widget.source == null;
@@ -127,6 +131,24 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   String? _testMessage;
   bool _testSucceeded = false;
 
+  /// The servers found on the network, for a new share only
+  List<DiscoveredServer> _servers = const [];
+  StreamSubscription<List<DiscoveredServer>>? _discovery;
+  bool _scanning = false;
+
+  /// Whether a scan ended, so that "nothing found" is not told before
+  bool _scanned = false;
+
+  bool _listingShares = false;
+
+  /// Why the shares of the server could not be listed, null when they could or were not asked
+  String? _shareListError;
+
+  /// What [_fillFrom] last put in the name and share fields (the share picked in the list of the server counts too):
+  /// the next server tapped replaces a field that still holds it, and leaves alone what the user typed instead
+  String? _filledName;
+  String? _filledShare;
+
   bool get _isNew => widget.source == null;
 
   @override
@@ -137,8 +159,126 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
         _expandAddress();
       }
     });
-    if (!_isNew) {
+    if (_isNew) {
+      _scan();
+    } else {
       unawaited(_loadPassword());
+    }
+  }
+
+  /// Looks for the SMB and WebDAV servers of the network, again when called again
+  void _scan() {
+    unawaited(_discovery?.cancel());
+    void ended() {
+      if (mounted) {
+        setState(() {
+          _scanning = false;
+          _scanned = true;
+        });
+      }
+    }
+
+    setState(() {
+      _servers = const [];
+      _scanning = true;
+      _scanned = false;
+    });
+    try {
+      _discovery = ref
+          .read(networkDiscoveryServiceProvider)
+          .discover()
+          .listen(
+            (servers) {
+              if (mounted) {
+                setState(() => _servers = servers);
+              }
+            },
+            onError: (Object error, StackTrace stackTrace) =>
+                _log.warning('The search for network servers failed', error, stackTrace),
+            onDone: ended,
+          );
+    } catch (error, stackTrace) {
+      _log.warning('The search for network servers failed to start', error, stackTrace);
+      _discovery = null;
+      ended();
+    }
+  }
+
+  /// Fills the form with a server found on the network, then asks for the user name
+  void _fillFrom(DiscoveredServer server) {
+    setState(() {
+      // A share name and a WebDAV path do not mean the same, and what was filled in for another server is not right
+      // for this one. The path is "" for SMB.
+      if (server.type != _type || _share.text.trim().isEmpty || _share.text == _filledShare) {
+        _share.text = server.path;
+        _filledShare = server.path;
+      }
+      _type = server.type;
+      _host.text = server.host;
+      _port.text = '${server.port}';
+      if (server.type == NetworkSourceType.webdav) {
+        _useTls = server.useTls;
+      }
+      if (_name.text.trim().isEmpty || _name.text == _filledName) {
+        _name.text = server.displayName;
+        _filledName = server.displayName;
+      }
+      _testMessage = null;
+      _shareListError = null;
+    });
+    _usernameFocus.requestFocus();
+  }
+
+  /// Lists the shares of the SMB server of the fields and puts the one chosen in the share field
+  Future<void> _chooseShare() async {
+    _expandAddress();
+    final host = _host.text.trim();
+    // A pasted WebDAV address turns the form into a WebDAV one
+    if (host.isEmpty || _type != NetworkSourceType.smb) {
+      return;
+    }
+    final source = NetworkSource(
+      id: _id,
+      type: NetworkSourceType.smb,
+      name: host,
+      host: host,
+      port: _port.text.trim().isEmpty || !_portIsValid ? null : _portValue,
+      username: _username.text.trim(),
+    );
+    setState(() {
+      _listingShares = true;
+      _shareListError = null;
+    });
+    final List<String> shares;
+    try {
+      shares = await ref.read(networkShareListerProvider)(source, _password.text.isEmpty ? null : _password.text);
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _listingShares = false;
+          _shareListError = context.t.network_share_scan_shares_error(
+            error: error is NetworkFileSystemException ? error.message : error,
+          );
+        });
+      }
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() => _listingShares = false);
+    final chosen = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => _SharePicker(host: host, shares: shares),
+    );
+    if (chosen != null && mounted) {
+      setState(() {
+        _share.text = chosen;
+        // A share of this server: another server tapped then replaces it
+        _filledShare = chosen;
+        _testMessage = null;
+      });
     }
   }
 
@@ -165,6 +305,8 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       controller.dispose();
     }
     _hostFocus.dispose();
+    _usernameFocus.dispose();
+    unawaited(_discovery?.cancel());
     super.dispose();
   }
 
@@ -364,6 +506,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   Widget build(BuildContext context) {
     final isSmb = _type == NetworkSourceType.smb;
     final canSubmit = _formSource() != null && !_testing && !_saving;
+    final canListShares = _host.text.trim().isNotEmpty && _username.text.trim().isNotEmpty && !_listingShares;
     final labelStyle = context.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold);
 
     return Scaffold(
@@ -378,6 +521,16 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           children: [
             const SizedBox(height: 20),
+            if (_isNew) ...[
+              _DiscoverySection(
+                servers: _servers,
+                scanning: _scanning,
+                scanned: _scanned,
+                onScan: _scan,
+                onSelected: _fillFrom,
+              ),
+              const SizedBox(height: 20),
+            ],
             Text(context.t.network_share_type, style: labelStyle),
             RadioGroup<NetworkSourceType>(
               groupValue: _type,
@@ -438,6 +591,24 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
               hint: isSmb ? 'media' : '/remote.php/dav/files/alice',
               keyboardType: TextInputType.url,
             ),
+            if (isSmb) ...[
+              const SizedBox(height: 4),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  key: const Key('network_share_choose_share'),
+                  onPressed: canListShares ? _chooseShare : null,
+                  icon: _listingShares
+                      ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(Icons.folder_shared_outlined),
+                  label: Text(
+                    context.t.network_share_scan_choose_share,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              if (_shareListError != null) _TestResult(message: _shareListError!, succeeded: false),
+            ],
             const SizedBox(height: 16),
             _field(
               _rootPath,
@@ -451,6 +622,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
               _username,
               context.t.network_share_username,
               key: const Key('network_share_username'),
+              focusNode: _usernameFocus,
               autofillHints: const [AutofillHints.username],
             ),
             const SizedBox(height: 16),
@@ -555,6 +727,137 @@ class _TestResult extends StatelessWidget {
           child: Text(message, style: context.textTheme.bodyMedium?.copyWith(color: color)),
         ),
       ],
+    );
+  }
+}
+
+/// The servers found on the network, above the fields of a new share
+class _DiscoverySection extends StatelessWidget {
+  const _DiscoverySection({
+    required this.servers,
+    required this.scanning,
+    required this.scanned,
+    required this.onScan,
+    required this.onSelected,
+  });
+
+  final List<DiscoveredServer> servers;
+  final bool scanning;
+  final bool scanned;
+  final VoidCallback onScan;
+  final ValueChanged<DiscoveredServer> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final labelStyle = context.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold);
+    final hintStyle = context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant);
+    return Column(
+      key: const Key('network_share_discovery'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(child: Text(context.t.network_share_scan_title, style: labelStyle)),
+            if (scanning)
+              const SizedBox.square(
+                key: Key('network_share_scan_progress'),
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else
+              TextButton.icon(
+                key: const Key('network_share_scan_again'),
+                onPressed: onScan,
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(
+                  context.t.network_share_scan_again,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        if (servers.isNotEmpty)
+          Text(context.t.network_share_scan_tap_to_fill, style: hintStyle)
+        else if (scanning)
+          Text(context.t.network_share_scan_scanning, style: hintStyle)
+        else if (scanned)
+          Text(context.t.network_share_scan_none_found, style: hintStyle),
+        for (final server in servers)
+          ListTile(
+            key: Key('network_share_found_${server.type.name}_${server.host}_${server.port}'),
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(networkSourceIcon(server.type)),
+            title: Text(server.displayName, maxLines: 1, overflow: TextOverflow.ellipsis),
+            subtitle: Text(
+              server.host.contains(':') ? '[${server.host}]:${server.port}' : '${server.host}:${server.port}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Text(
+              switch (server.type) {
+                NetworkSourceType.smb => context.t.network_share_scan_type_smb,
+                NetworkSourceType.webdav => context.t.network_share_scan_type_webdav,
+              },
+              style: context.textTheme.labelMedium?.copyWith(color: context.primaryColor, fontWeight: FontWeight.bold),
+            ),
+            onTap: () => onSelected(server),
+          ),
+        const SizedBox(height: 8),
+        Text(context.t.network_share_scan_enter_by_hand, style: hintStyle),
+        const Divider(height: 24),
+      ],
+    );
+  }
+}
+
+/// The shares of an SMB server to choose from, in a bottom sheet that gives back the name chosen
+class _SharePicker extends StatelessWidget {
+  const _SharePicker({required this.host, required this.shares});
+
+  final String host;
+  final List<String> shares;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: context.height * 0.7),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              child: Text(
+                context.t.network_share_scan_shares_title(host: host),
+                style: context.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            if (shares.isEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                child: Text(context.t.network_share_scan_shares_none),
+              )
+            else
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final share in shares)
+                      ListTile(
+                        key: Key('network_share_pick_$share'),
+                        leading: const Icon(Icons.folder_shared_outlined),
+                        title: Text(share),
+                        onTap: () => Navigator.of(context).pop(share),
+                      ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
     );
   }
 }

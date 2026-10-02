@@ -24,6 +24,17 @@ typedef SmbConnector =
       required int timeoutSeconds,
     });
 
+/// Lists the shares of [server] ("host:port") over its IPC$ share. The default one runs dart_smb2 in an isolate of its
+/// own; tests give one of their own.
+typedef SmbShareEnumerator =
+    Future<List<Smb2ShareInfo>> Function({
+      required String server,
+      String? user,
+      String? password,
+      String? domain,
+      required int timeoutSeconds,
+    });
+
 /// A [NetworkFileSystem] over SMB, see [open]
 class SmbFileSystem implements NetworkFileSystem {
   SmbFileSystem._(this.source, this._pool, this._serverLabel, this._share, this._connectAgain);
@@ -92,6 +103,70 @@ class SmbFileSystem implements NetworkFileSystem {
       rethrow;
     }
     return fileSystem;
+  }
+
+  /// The names of the shares of the server of [source] (its share is not used), sorted without case, without the
+  /// hidden and administrative ones (names ending with "$", such as IPC$ or C$) nor the printers. dart_smb2 connects to
+  /// the IPC$ share of the server and asks its share list through SRVSVC. Throws a [NetworkFileSystemException] like
+  /// [open].
+  static Future<List<String>> listShares(
+    NetworkSource source,
+    String? password, {
+    @visibleForTesting SmbShareEnumerator connect = _enumerateShares,
+    int timeoutSeconds = defaultTimeoutSeconds,
+  }) async {
+    if (source.type != NetworkSourceType.smb) {
+      throw ArgumentError.value(source.type, 'source.type', 'Not an SMB source');
+    }
+    final (host, typedPort) = _splitHost(source.host);
+    if (host.isEmpty) {
+      throw const NetworkFileSystemException('Enter the name or the address of the server');
+    }
+    final server = serverAddressOf(source.host, source.port);
+    final port = source.port ?? typedPort ?? defaultPort;
+    final serverLabel = port == defaultPort ? host : '$host:$port';
+    final (user, domain) = splitUserName(source.username);
+
+    final limit = Duration(seconds: timeoutSeconds) + connectGrace;
+    // Its own libsmb2 context, opened and closed like a connection: one at a time with the others
+    final pending = _serialized(
+      limit,
+      () => connect(
+        server: server,
+        user: user,
+        password: password == null || password.isEmpty ? null : password,
+        domain: domain,
+        timeoutSeconds: timeoutSeconds,
+      ),
+    );
+    final List<Smb2ShareInfo> shares;
+    try {
+      shares = await pending.timeout(limit);
+    } on TimeoutException {
+      throw NetworkFileSystemException('The server at $serverLabel did not answer in time');
+    } on NetworkFileSystemException {
+      rethrow;
+    } on Smb2Exception catch (error) {
+      throw describeError(error, server: serverLabel, share: r'IPC$', connecting: true);
+    } catch (error) {
+      throw NetworkFileSystemException('Cannot connect to $serverLabel: $error');
+    }
+    return shareNamesOf(shares);
+  }
+
+  /// The names [listShares] keeps: disk shares that are neither hidden nor administrative, sorted without case
+  @visibleForTesting
+  static List<String> shareNamesOf(Iterable<Smb2ShareInfo> shares) {
+    final names = {
+      for (final share in shares)
+        if (share.name.trim().isNotEmpty && share.isDisk && !share.isHidden && !share.name.endsWith(r'$'))
+          share.name.trim(),
+    }.toList();
+    names.sort((a, b) {
+      final byName = a.toLowerCase().compareTo(b.toLowerCase());
+      return byName != 0 ? byName : a.compareTo(b);
+    });
+    return names;
   }
 
   @override
@@ -269,6 +344,23 @@ class SmbFileSystem implements NetworkFileSystem {
       password: password,
       domain: domain,
       workers: 1,
+      timeoutSeconds: timeoutSeconds,
+    );
+  }
+
+  static Future<List<Smb2ShareInfo>> _enumerateShares({
+    required String server,
+    String? user,
+    String? password,
+    String? domain,
+    required int timeoutSeconds,
+  }) {
+    _checkLibrary();
+    return Smb2Pool.listSharesOn(
+      host: server,
+      user: user,
+      password: password,
+      domain: domain,
       timeoutSeconds: timeoutSeconds,
     );
   }

@@ -24,7 +24,7 @@
   <tr>
     <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>One app, three platforms, true 3D in the headset</td>
     <td align="center"><h3>🔌 With or without a server</h3>Your Immich server, or the phone's own gallery, no account needed</td>
-    <td align="center"><h3>🗄️ Network shares</h3>Samba (SMB) and WebDAV read live, nothing downloaded, from build 9</td>
+    <td align="center"><h3>🗄️ Network shares</h3>Samba (SMB) and WebDAV found on the network and read live, nothing downloaded, from build 9</td>
   </tr>
 </table>
 
@@ -93,12 +93,12 @@ A stereoscopic video can gain depth on a flat screen. The two eyes of the video 
 
 The photos and videos of a NAS, a computer or any server that speaks SMB (Samba, Windows) or WebDAV can be browsed and played straight from the share, with or without an Immich server, on phones and on the Meta Quest 3.
 
-- **Add a share**: Library tab, **Network shares**, then the + button. Pick SMB or WebDAV, give the server (a name or an address; a full address such as `smb://nas/photos`, `\\nas\photos` or `https://nas:5006/photos` fills the other fields), the port if it is not the usual one, the share name (SMB) or the path (WebDAV), an optional start folder, the user name and password, and TLS for WebDAV. **Test** checks the connection before you save.
+- **Add a share**: Library tab, **Network shares**, then the + button. The form first looks for the servers of your network by itself (Bonjour/mDNS and a scan of the local network, confirmed by a real SMB or WebDAV exchange) and lists them under **Found on the network**: tap one and the type, server, port and path are filled. Otherwise pick SMB or WebDAV, give the server (a name or an address; a full address such as `smb://nas/photos`, `\\nas\photos` or `https://nas:5006/photos` fills the other fields), the port if it is not the usual one, the share name (SMB) or the path (WebDAV), an optional start folder, the user name and password, and TLS for WebDAV. For SMB, **Choose a share** lists the shares of the server once the user name and password are typed. **Test** checks the connection before you save.
 - **Browse**: folders first, then the photos and videos as a grid with thumbnails; the ones recognised as 360° carry the badge. Pull down to refresh.
 - **Play**: a photo opens full screen (pinch, double tap), and its **360°** button opens the sphere viewer; a video plays in the native player with the **360°**, **3D** and **Spatial** buttons; on the Quest 3 the 360° button opens the immersive view. **View as 360°** is in the menu for files without a tag. 360°, 3D and VR180 are recognised from the GPano or spherical metadata of the file, read with range requests.
 - **Nothing is downloaded**: the players read the bytes they need through a bridge inside the app (loopback address only, random token per session, byte ranges), so seeking in a video works, only a few hundred KiB are in memory at a time, and nothing is copied to the device.
 - **Privacy**: the share list is kept on the device and never sent to a server; passwords go to the device keychain or keystore.
-- **Limitations**: SMB 2 and 3 only (no SMB 1); WebDAV with Basic authentication (Digest is not supported yet); a self signed HTTPS certificate must be installed on the device; photo thumbnails decode the whole file (none for photos over 30 MB) and videos get a plain tile; one connection per SMB share, so thumbnails and playback of the same share wait on each other; no swiping from one file of a folder to the next yet, and the 3D or 180° choice made on a network file is not remembered.
+- **Limitations**: SMB 2 and 3 only (no SMB 1); WebDAV with Basic authentication (Digest is not supported yet); a self signed HTTPS certificate must be installed on the device; the network scan looks at the local /24 network only and needs the local network permission on iOS; photo thumbnails decode the whole file (none for photos over 30 MB) and videos get a plain tile; one connection per SMB share, so thumbnails and playback of the same share wait on each other; no swiping from one file of a folder to the next yet, and the 3D or 180° choice made on a network file is not remembered.
 
 ## Where things are, in pictures
 
@@ -147,7 +147,7 @@ The App Store link will be added here as soon as the listing is published. Log i
 | "View as 360°" for photos and videos the server does not flag as 360° | ❌ No | ✅ **Yes**, in the viewer menu, remembered on the phone | Done |
 | VR180 (half sphere) photos and videos | ❌ No, stretched around the sphere | ✅ **Yes**: spherical bounds, mesh, GPano crop or file name, 360°/180° button in every viewer, remembered on the phone | Tested on an Android emulator with synthetic media; device feedback welcome |
 | Use without an Immich server (local gallery, 360° detection on the device, all viewers) | ❌ No | ✅ **Yes**, from the login page; connect a server later from the settings | Tested on an Android emulator; device feedback welcome |
-| Network shares: SMB (Samba) and WebDAV browsed and played live, nothing downloaded | ❌ No | ✅ **Yes**: from the Library tab, every viewer, with or without a server, phones and Quest 3 | Tested against Samba and WebDAV test servers on an Android emulator; device and NAS feedback welcome |
+| Network shares: SMB (Samba) and WebDAV browsed and played live, nothing downloaded; servers found by themselves on the network | ❌ No | ✅ **Yes**: from the Library tab, every viewer, with or without a server, phones and Quest 3 | Tested against Samba and WebDAV test servers on an Android emulator; device and NAS feedback welcome |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | ❌ Shown flat or wrongly | ❌ Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
@@ -234,7 +234,7 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 What is planned next, in rough order. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
 - **App Store**: the iOS listing is under review; the link will be added here when it is live.
-- **Network shares, next steps**: find the SMB and WebDAV servers of the network by themselves (Bonjour/mDNS and a scan of the local network) so that a tap fills the form, pick the SMB share from a list, video thumbnails, a thumbnail cache, swiping from one file of a folder to the next, Digest authentication for WebDAV.
+- **Network shares, next steps**: video thumbnails, a thumbnail cache, swiping from one file of a folder to the next, Digest authentication for WebDAV, the user name from the Bonjour record.
 - **Meta Horizon Store**: the headset build is on the store's alpha channel; the public listing (store page, data use and age questionnaires, review) comes next, so the Quest 3 no longer needs sideloading.
 - **Store listings**: the 3D, VR180 and Spatial features described on Google Play and the App Store.
 - **Raw 360° camera files**: Insta360 .insp and .insv, GoPro .360, dual fisheye .dng. Stitching belongs on the server side; under study.
