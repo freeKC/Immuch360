@@ -105,7 +105,7 @@ Immuch360 is a gallery, and it is also a free media player: it plays what the of
 | <img src=".github/readme/quest-immersive-360-photo.jpg" width="300" alt="A 360° photo all around you in the Quest 3, with the info panel: layout, 360° and Back buttons"> | <img src=".github/readme/quest-immersive-360-video.jpg" width="300" alt="A 360° video of a lake playing in the Quest 3, with the info panel: layout, 360°, Pause and Back buttons"> | <img src=".github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="A stereoscopic 360° video in the Quest 3, the info panel reading 3D, top and bottom"> |
 | The immersive view of a photo, with the info panel (layout, 360°/180°, Back) | A video playing, with Pause | A top and bottom stereoscopic video, each eye served (the Kandao Obsidian sample) |
 
-Coming in the next build (13): a time bar with seeking and skip buttons in the immersive video playback, and previous/next media without leaving the immersive view. See the [Roadmap](#roadmap).
+Coming in build 14: a time bar with seeking and skip buttons in the immersive video playback, and previous/next media without leaving the immersive view. See the [Roadmap](#roadmap).
 
 ## Spatial 2.5D (experimental)
 
@@ -177,7 +177,7 @@ The App Store link will be added here as soon as the listing is published. Log i
 | VR180 (half sphere) photos and videos | ❌ No, stretched around the sphere | ✅ **Yes**: spherical bounds, mesh, GPano crop or file name, 360°/180° button in every viewer, remembered on the phone | Tested on an Android emulator with synthetic media; device feedback welcome |
 | Use without an Immich server (local gallery, 360° detection on the device, all viewers) | ❌ No | ✅ **Yes**, from the login page; connect a server later from the settings | Tested on an Android emulator; device feedback welcome |
 | Network shares: SMB (Samba) and WebDAV browsed and played live, nothing downloaded; servers found by themselves on the network | ❌ No | ✅ **Yes**: from the Library tab, every viewer, with or without a server, phones and Quest 3 | Tested against Samba and WebDAV test servers on an Android emulator; device and NAS feedback welcome |
-| Media player controls: seeking, audio track choice, buffering indicator in the 360° and Spatial players; seeking and buffering in the flat player of network shares | ❌ n/a | ✅ **Yes**, Android and iOS | Done; the immersive view of the Quest 3 gets seeking and previous/next in build 13 |
+| Media player controls: seeking, audio track choice, buffering indicator in the 360° and Spatial players; seeking and buffering in the flat player of network shares | ❌ n/a | ✅ **Yes**, Android and iOS | Done; the immersive view of the Quest 3 gets seeking and previous/next in build 14 |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | ❌ Shown flat or wrongly | ❌ Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
@@ -188,7 +188,7 @@ The 360° photo viewer is based on the upstream pull request [immich-app/immich#
 
 ## Meta Quest 3
 
-Immuch360 also runs on the Meta Quest 3 (Horizon OS v69 or later; other Quest models are untested). The headset build only talks to servers over HTTPS, or over plain HTTP to names of the home network (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) and to the headset itself, as the Horizon Store requires; phones keep Immich's open policy. Sideload the `-quest-release.apk` file of a release (built for the headset: 64 bit, target SDK 34, without the two permissions the Horizon Store refuses), or the universal `-release.apk`. The headset build has been uploaded to the Meta Horizon Store alpha channel; the store listing is in preparation.
+Immuch360 also runs on the Meta Quest 3 and 3S (Horizon OS v69 or later; the Horizon Store build is listed for these two only, from build 13; the universal phone APK sideloads on other Quest models, untested). The headset build only talks to servers over HTTPS, or over plain HTTP to names of the home network (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) and to the headset itself, as the Horizon Store requires; phones keep Immich's open policy. Sideload the `-quest-release.apk` file of a release (built for the headset: 64 bit, target SDK 34, without the two permissions the Horizon Store refuses), or the universal `-release.apk`. The headset build has been uploaded to the Meta Horizon Store alpha channel; the store listing is in preparation.
 
 ### Install
 
@@ -280,7 +280,8 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 
 What is planned next, in rough order. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
-- **Immersive view, build 13 (in progress)**: a time bar with seeking and skip buttons while a video plays in the headset, and previous/next media without leaving the immersive view.
+- **Immersive view, build 14 (in progress)**: a time bar with seeking and skip buttons while a video plays in the headset, and previous/next media without leaving the immersive view.
+- **Upload to Immich from a share or the device**: send the photos and videos you browse on a network share, or on the device in the Library tab, to the Immich account you are connected to.
 - **App Store**: the iOS listing is under review; the link will be added here when it is live.
 - **Network shares, next steps**: the audio track choice in the flat player, swiping from one file of a folder to the next, Digest authentication for WebDAV, the user name from the Bonjour record.
 - **Meta Horizon Store**: the headset build is on the store's alpha and production channels and the listing is being submitted (screenshots done, permissions trimmed in build 12, questionnaires and review next), so the Quest 3 no longer needs sideloading.

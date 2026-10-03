@@ -27,6 +27,11 @@
 
   <!-- No cleartext HTTP on the headset (the Horizon Store security scan flags it); the exceptions are in
        res/xml/network_security_config.xml of this flavour, which replaces the phone one by resource merging -->
-  <application android:usesCleartextTraffic="false" tools:replace="android:usesCleartextTraffic" />
+  <application android:usesCleartextTraffic="false" tools:replace="android:usesCleartextTraffic">
+    <!-- The Horizon Store lists the app for the devices named here (the dashboard has no setting for it). Only the
+         Quest 3 and 3S are tested: the headset decoder limits and the 8192x4096 textures of the immersive view were
+         measured on them. The phone build keeps the wider list for sideloading. -->
+    <meta-data android:name="com.oculus.supportedDevices" android:value="quest3|quest3s" tools:replace="android:value" />
+  </application>
 
 </manifest>
