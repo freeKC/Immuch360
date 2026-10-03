@@ -1,5 +1,6 @@
 package app.alextran.immich.immersive
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,8 @@ import android.util.Log
 import android.view.Surface
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
@@ -27,6 +30,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import app.alextran.immich.MainActivity
 import app.alextran.immich.R
 import app.alextran.immich.core.HttpClientManager
+import app.alextran.immich.core.StreamingLoadControl
 import com.meta.spatial.core.Entity
 import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
@@ -75,10 +79,13 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -87,6 +94,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
 /**
  * Immersive (Horizon OS) viewer for one equirectangular photo or video, started from the 2D Flutter
@@ -97,11 +105,14 @@ import okhttp3.Request
  * client certificate). The activity is exported like in HybridSample, so it only accepts intents that
  * carry the launch token of the last intent built by [intent]: anything else shows nothing.
  *
- * Controllers: trigger plays or pauses a video, B or Y goes back to the 2D app, A, X, grip or menu
- * show or hide the info panel, thumbstick left or right turns the image by 90 degrees (logged, to find
- * the right SKYBOX_YAW_DEGREES and VIDEO_YAW_DEGREES), thumbstick up or down changes the 3D layout
- * (mono, top and bottom, side by side), like the 3D layout button of the info panel. Hands: the Back,
- * 3D layout and field of view buttons of the info panel, the menu gesture toggles it.
+ * Controllers: trigger plays or pauses a video while the info panel is hidden (on the panel it clicks),
+ * B or Y goes back to the 2D app, A, X, grip or menu show or hide the info panel. Thumbstick left or
+ * right opens the previous or the next media of the app without leaving the immersive view: Flutter
+ * picks it and the viewer shows it in place (see [navigate]). Thumbstick up or down seeks 10 seconds forward or
+ * back in a video, and turns a photo by 90 degrees (logged, to find the right SKYBOX_YAW_DEGREES).
+ * The 3D layout is on the info panel only. Hands and controller rays: the buttons of the info panel
+ * (time bar and its 10 second buttons for a video, previous, play or pause, next, turn by 90 degrees,
+ * 3D layout, field of view, back), the menu gesture toggles it.
  *
  * Stereoscopic (3D) 360 media hold one equirectangular image per eye, one above the other (left eye on
  * top) or side by side (left eye on the left). Each eye gets its own half: through the stereo mode of
@@ -127,12 +138,27 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val stereoLabels: Map<String, String>,
     /** How much of the sphere the media covers: all of it, or the front half (VR180). */
     val coverage: ImmersiveSphereCoverage,
+    /** Where a video starts, so that the immersive view carries on from the flat player. 0 for a photo. */
+    val startPositionMs: Long,
+    /**
+     * The opening of the viewer by Flutter this media belongs to, sent back with every event so that Flutter ignores
+     * the events of an opening it no longer follows. A previous or next media keeps the id of the opening it was
+     * reached from; a fresh open from the app (onNewIntent) brings its own.
+     */
+    val openingId: Long,
   )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
   private var request: MediaRequest? = null
   private var sceneReady = false
   private var closing = false
+  /** Flutter got the closed event of this viewer: sent once, from close() or when the system closes the viewer. */
+  private var closedSent = false
+  /**
+   * Playback position of the current video when the viewer last paused, for a closed event sent once the player is
+   * gone (the system closing the viewer). Null for a photo and for a video that has not played yet.
+   */
+  private var lastKnownPositionMs: Long? = null
 
   // Scene
   private var skyboxEntity: Entity? = null
@@ -153,12 +179,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var lastHeadPosition: Vector3? = null
   private var lastHeadForward: Vector3? = null
   private var sphereCenter: Vector3? = null
-  /** Rotation of each sphere around the vertical axis, in degrees, changed with the thumbstick. */
+  /**
+   * Rotation of each sphere around the vertical axis, in degrees, changed with the Turn button or the thumbstick.
+   * Back to the starting value for every new media (showRequest).
+   */
   private var photoYaw = SKYBOX_YAW_DEGREES
   private var videoYaw = VIDEO_YAW_DEGREES
   /**
-   * 3D layout of the current media: the one Flutter guessed, then the one the user picked with the thumbstick or
-   * the 3D layout button.
+   * 3D layout of the current media: the one Flutter guessed, then the one the user picked with the 3D layout button.
    */
   private var stereoLayout = ImmersiveStereoLayout.MONO
   /** Stereo mode set on the skybox material. Stays None (never set) as long as only mono photos are shown. */
@@ -179,12 +207,57 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var stereoView: Button? = null
   private var coverageView: Button? = null
   private var playPauseButton: Button? = null
+  /** Time bar row of a video: 10 seconds back, the bar, the time, 10 seconds forward. Hidden for a photo. */
+  private var seekRow: View? = null
+  private var seekBar: SeekBar? = null
+  private var timeView: TextView? = null
+  private var seekBackButton: ImageButton? = null
+  private var seekForwardButton: ImageButton? = null
+  private var previousButton: Button? = null
+  private var nextButton: Button? = null
+
+  // Time bar
+  /** Refreshes the time bar while the panel is on screen with a video, see [updateProgressTicker]. */
+  private var progressJob: Job? = null
+  /**
+   * The user is dragging the time bar: the bar follows the pointer rather than the player, and the auto hide waits
+   * for the end of the drag (see [scheduleInfoHide]). Dropped when the panel hides or the bar is disabled, since the
+   * bar may then never report the end of the drag.
+   */
+  private var userSeeking = false
+  /** "This video cannot be seeked" was shown for the current video: once is enough. */
+  private var notSeekableShown = false
+
+  // Previous and next media
+  /**
+   * Number of the previous or next request waiting for Flutter, null when none is. Only the media Flutter shows for
+   * this number (ImmersiveApiImpl.showAdjacent) is accepted. The number is dropped when that media arrives, when the
+   * request fails or times out, and when the viewer closes, so that a late answer shows nothing.
+   */
+  private var pendingRequestId: Long? = null
+  /** Number of the last request whose media was shown, to tell Flutter's true answer for it from a late one. */
+  private var appliedRequestId: Long? = null
+  /** Gives the buttons back if Flutter never answers, see ADJACENT_TIMEOUT_MS. */
+  private var navigationTimeoutJob: Job? = null
+  /** "Looking for the next media", as shown for the pending request. */
+  private var navigationStatus = ""
+  /**
+   * The status line held back under "Looking for the next media": the one shown before the request, then whatever
+   * the current media reported meanwhile (see [setStatus]). Shown again if the request times out.
+   */
+  private var statusBeforeNavigation = ""
 
   // Loading
   private var loadJob: Job? = null
   private var hideInfoJob: Job? = null
   /** Delay of the last hide scheduled: INFO_AUTO_HIDE_MS for the plain auto hide, longer for the decoder warning. */
   private var hideInfoDelayMs = 0L
+  /**
+   * Delay of an auto hide held back while the user drags the time bar or a previous or next request is pending: the
+   * panel must not vanish under the pointer, nor before the answer can be read. [runDeferredHide] starts it once
+   * both are over.
+   */
+  private var deferredHideMs: Long? = null
   private val decodeMutex = Mutex()
   private val httpClient: OkHttpClient by lazy {
     // Same session as the rest of the app, without the API response cache (originals are large)
@@ -193,10 +266,34 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   // Video
   private var player: ExoPlayer? = null
+  /**
+   * The current player was built with the streaming buffers (a video read over HTTP). The buffers are fixed when the
+   * player is built, so a local video after a streamed one, or the other way round, gets a new player.
+   */
+  private var playerStreamed = false
+  /** The next STATE_READY is the first one of the current url: the end of the loading hides the panel. */
+  private var hideWhenReady = false
+  /**
+   * The video panel shows the current video. It stays hidden from the start of a video to its first frame, so that
+   * the last frame of the previous video does not show up with the 3D layout or the field of view of the new one.
+   */
+  private var videoRevealed = false
   private var videoSurface: Surface? = null
   private var currentVideoUrl: String? = null
   private var videoFallbackTried = false
-  private var wasPlayingBeforeMenu = false
+  /** Between onResume and onPause: the viewer is the activity in front. */
+  private var resumed = false
+  /**
+   * The session has the input focus (FOCUSED): headset on, no system menu over the viewer. True until the session
+   * reports a state, so that a session that never reports one does not keep every video paused.
+   */
+  private var focused = true
+  /**
+   * The video was playing, or about to start, when the viewer lost the front (onPause, system menu, headset off), or
+   * was shown meanwhile: it plays once the viewer is resumed and focused again, never before, so that no sound comes
+   * out of a headset nobody wears or from behind the system menu.
+   */
+  private var playOnReturn = false
   /** The video track of the current url was checked against the headset decoder limit. */
   private var decoderChecked = false
   /** Shown instead of the video format while a video above the decoder limit plays. */
@@ -209,16 +306,40 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     Log.i(TAG, "immersive viewer onCreate, max heap ${Runtime.getRuntime().maxMemory() / 1048576} MB")
     HttpClientManager.initialize(applicationContext)
     cacheDir.listFiles()?.filter { it.name.startsWith(ORIGINAL_PREFIX) }?.forEach { it.delete() }
-    request = parse(intent)
+    // A recreation goes on with the media shown last: the system hands back the intent that first started the viewer,
+    // which knows neither a previous or next media nor a fresh open received in onNewIntent
+    request = savedInstanceState?.getBundle(STATE_REQUEST)?.let(::requestOf) ?: parse(intent)
+    liveViewer = this
   }
 
+  /**
+   * Keeps the media shown now for a recreation (see onCreate), with the 3D layout and the field of view on screen (the
+   * user's corrections) and, for a video, the position it reached, so that the new viewer carries on with the same
+   * opening as if nothing happened.
+   */
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    val media = request ?: return
+    val shown =
+      media.copy(
+        stereoLayout = shownStereoLayout(media),
+        coverage = shownCoverage(media),
+        startPositionMs = currentPositionMs(media),
+      )
+    outState.putBundle(STATE_REQUEST, extrasOf(shown))
+  }
+
+  /**
+   * A fresh open from the app while the viewer is in front (ImmersiveApiImpl.open): a new opening, whose id the events
+   * carry from now on. Previous and next never come this way: they arrive through ImmersiveApiImpl.showAdjacent.
+   */
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
     // singleTask: other apps can reach this method too, an intent without the launch token changes nothing
     val parsed = parse(intent) ?: return
     setIntent(intent)
     request = parsed
-    Log.i(TAG, "immersive viewer onNewIntent")
+    Log.i(TAG, "immersive viewer onNewIntent, opening ${parsed.openingId}")
     if (sceneReady) showRequest()
   }
 
@@ -227,7 +348,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     Log.i(TAG, "immersive viewer onSceneReady")
     try {
       scene.setReferenceSpace(ReferenceSpace.LOCAL_FLOOR)
-      // The thumbsticks turn the image instead of moving or snap turning the user
+      // The thumbsticks change the media, seek and turn the image instead of moving or snap turning the user
       try {
         systemManager.findSystem<LocomotionSystem>().enableLocomotion(false)
       } catch (e: Exception) {
@@ -257,9 +378,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         layoutIdCreator = { R.layout.immersive_info_panel },
         settingsCreator = {
           UIPanelSettings(
-            shape = QuadShapeOptions(width = 1.0f, height = 0.36f),
+            shape = QuadShapeOptions(width = INFO_PANEL_WIDTH_M, height = INFO_PANEL_HEIGHT_M),
             style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
-            display = DpDisplayOptions(width = 720f, height = 260f, dpi = 260),
+            display = DpDisplayOptions(width = INFO_PANEL_WIDTH_DP, height = INFO_PANEL_HEIGHT_DP, dpi = 260),
           )
         },
         panelSetupWithRootView = { rootView, _, _ -> bindInfoPanel(rootView) },
@@ -299,39 +420,41 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.w(TAG, "immersive viewer intent without a valid launch token, ignored")
       return null
     }
-    val url = intent.getStringExtra(EXTRA_URL)
-    if (url.isNullOrBlank()) {
+    val extras = intent.extras
+    if (extras == null) {
       Log.e(TAG, "immersive viewer started without a url")
       return null
     }
-    val labels =
-      intent.getBundleExtra(EXTRA_STEREO_LABELS)?.let { bundle ->
-        bundle.keySet().mapNotNull { key -> bundle.getString(key)?.let { key to it } }.toMap()
-      }
-    return MediaRequest(
-      url = url,
-      isVideo = intent.getBooleanExtra(EXTRA_IS_VIDEO, false),
-      title = intent.getStringExtra(EXTRA_TITLE).orEmpty(),
-      stereoLayout =
-        ImmersiveStereoLayout.ofRaw(intent.getIntExtra(EXTRA_STEREO_LAYOUT, ImmersiveStereoLayout.MONO.raw))
-          ?: ImmersiveStereoLayout.MONO,
-      stereoLabels = labels.orEmpty(),
-      coverage =
-        ImmersiveSphereCoverage.ofRaw(intent.getIntExtra(EXTRA_COVERAGE, ImmersiveSphereCoverage.FULL.raw))
-          ?: ImmersiveSphereCoverage.FULL,
-    )
+    return requestOf(extras)
   }
 
+  /**
+   * Shows [request]: the first media, a new one the app opened while the viewer is in front (onNewIntent), or the
+   * previous or next one Flutter picked (applyAdjacent). Whatever the previous media left running stops first: its
+   * loading (downloads included), its auto hide, held back or not, a pending previous or next request (this media is
+   * its answer, or replaces it) and the drag of the time bar.
+   */
   private fun showRequest() {
     val media = request
     loadJob?.cancel()
+    hideInfoJob?.cancel()
+    hideInfoJob = null
+    endNavigation()
+    userSeeking = false
+    deferredHideMs = null
+    lastKnownPositionMs = null
     if (media == null) {
       showError(getString(R.string.immersive_error_nothing))
       return
     }
-    Log.i(TAG, "show ${if (media.isVideo) "video" else "photo"}")
+    Log.i(TAG, "show ${if (media.isVideo) "video" else "photo"}, start at ${media.startPositionMs} ms")
     stereoLayout = media.stereoLayout
     coverage = media.coverage
+    // Each file has its own orientation: a turn that brought the center of the previous media in front of the user
+    // means nothing for this one, which starts from the default rotation
+    photoYaw = SKYBOX_YAW_DEGREES
+    videoYaw = VIDEO_YAW_DEGREES
+    applySphereTransforms()
     if (media.stereoLayout != ImmersiveStereoLayout.MONO) {
       Log.i(TAG, "stereoscopic media, 3D layout ${media.stereoLayout}")
     }
@@ -339,7 +462,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.i(TAG, "half sphere media (VR180), coverage ${media.coverage}")
     }
     titleView?.text = media.title
-    playPauseButton?.visibility = if (media.isVideo) View.VISIBLE else View.GONE
+    updateVideoControls()
     updateStereoView()
     updateCoverageView()
     setInfoVisible(true, reposition = true)
@@ -355,20 +478,74 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoView = root.findViewById(R.id.immersive_stereo)
     coverageView = root.findViewById(R.id.immersive_coverage)
     playPauseButton = root.findViewById(R.id.immersive_play_pause)
+    seekRow = root.findViewById(R.id.immersive_seek_row)
+    seekBar = root.findViewById(R.id.immersive_seek_bar)
+    timeView = root.findViewById(R.id.immersive_time)
+    seekBackButton = root.findViewById(R.id.immersive_seek_back)
+    seekForwardButton = root.findViewById(R.id.immersive_seek_forward)
+    previousButton = root.findViewById(R.id.immersive_previous)
+    nextButton = root.findViewById(R.id.immersive_next)
     root.findViewById<Button>(R.id.immersive_back)?.setOnClickListener { close() }
-    playPauseButton?.setOnClickListener { togglePlayPause() }
-    // A click from the controller ray or a hand pinch: the panel is on screen, it stays where it is
-    stereoView?.setOnClickListener { cycleStereoLayout(1, fromPanel = true) }
-    coverageView?.setOnClickListener { toggleCoverage() }
-    request?.let { media ->
-      titleView?.text = media.title
-      playPauseButton?.visibility = if (media.isVideo) View.VISIBLE else View.GONE
-    }
+    // A click from the controller ray or a hand pinch: the panel is on screen, it stays where it is, and a pending
+    // auto hide starts again so that the panel does not vanish while the user is using it
+    onPanelClick(playPauseButton) { togglePlayPause() }
+    onPanelClick(stereoView) { cycleStereoLayout(1, fromPanel = true) }
+    onPanelClick(coverageView) { toggleCoverage() }
+    onPanelClick(root.findViewById(R.id.immersive_turn)) { rotateSphere(YAW_STEP_DEGREES) }
+    onPanelClick(seekBackButton) { seekBy(-1) }
+    onPanelClick(seekForwardButton) { seekBy(1) }
+    // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
+    previousButton?.setOnClickListener { navigate(-1) }
+    nextButton?.setOnClickListener { navigate(1) }
+    seekBar?.setOnSeekBarChangeListener(seekBarListener)
+    request?.let { media -> titleView?.text = media.title }
+    updateVideoControls()
+    updateNavigationButtons()
     updateStereoView()
     updateCoverageView()
   }
 
+  /** Runs [action] on a click on [view], then restarts a pending auto hide (see [restartPendingHide]). */
+  private fun onPanelClick(view: View?, action: () -> Unit) {
+    view?.setOnClickListener {
+      action()
+      restartPendingHide()
+    }
+  }
+
+  /**
+   * Play or pause and the time bar row are there for a video only. The row starts empty and disabled, the ticker
+   * fills it once the player knows the duration.
+   */
+  private fun updateVideoControls() {
+    val visibility = if (request?.isVideo == true) View.VISIBLE else View.GONE
+    playPauseButton?.visibility = visibility
+    seekRow?.visibility = visibility
+    updateProgress()
+  }
+
+  /** Previous and next are disabled while a request waits for its answer. */
+  private fun updateNavigationButtons() {
+    val enabled = pendingRequestId == null
+    previousButton?.isEnabled = enabled
+    nextButton?.isEnabled = enabled
+  }
+
+  /**
+   * The status line of the media and of the controls. While a previous or next request is pending the line keeps
+   * saying "Looking for the next media", which the user waits for: [text] is held back instead, and shown if the
+   * request times out (see [timeoutNavigation]). Errors and the decoder warning do not wait, see [showError].
+   */
   private fun setStatus(text: String) {
+    if (pendingRequestId != null) {
+      statusBeforeNavigation = text
+      return
+    }
+    showStatus(text)
+  }
+
+  /** Writes the status line whatever is pending: the request itself and its answer. */
+  private fun showStatus(text: String) {
     statusView?.text = text
   }
 
@@ -402,29 +579,75 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     view.visibility = View.VISIBLE
   }
 
+  /**
+   * An error stays on screen: no auto hide, not even one held back for a drag or a pending request. It shows at once,
+   * even over "Looking for the next media": held back, the answer to the request (often "no next media") would
+   * overwrite it unread. The request goes on, and its answer leaves the error in place (see [finishNavigation]).
+   */
   private fun showError(text: String) {
     Log.w(TAG, "shown to the user: $text")
-    hideInfoJob?.cancel()
-    setStatus(text)
+    cancelInfoHide()
+    showStatus(text)
     setInfoVisible(true, reposition = true)
   }
 
-  /** Hides the info panel a few seconds after the media is on screen. */
+  /**
+   * Hides the info panel [delayMs] after the media is on screen. While the user drags the time bar or a previous or
+   * next request is pending, the hide is held back instead (see [deferredHideMs]): the end of a load must not take
+   * the panel away from under the pointer, nor before the answer to the request can be read.
+   */
   private fun scheduleInfoHide(delayMs: Long = INFO_AUTO_HIDE_MS) {
     hideInfoJob?.cancel()
+    hideInfoJob = null
     hideInfoDelayMs = delayMs
+    if (userSeeking || pendingRequestId != null) {
+      deferredHideMs = delayMs
+      return
+    }
+    deferredHideMs = null
     hideInfoJob =
       scope.launch {
         delay(delayMs)
+        hideInfoJob = null
         setInfoVisible(false, reposition = false)
       }
   }
 
+  /** Starts the auto hide held back by a drag or a pending request, once neither holds it any more. */
+  private fun runDeferredHide() {
+    if (userSeeking || pendingRequestId != null) return
+    val delayMs = deferredHideMs ?: return
+    scheduleInfoHide(delayMs)
+  }
+
+  /** No auto hide any more, running or held back: an error, or the user showing or hiding the panel with a button. */
+  private fun cancelInfoHide() {
+    hideInfoJob?.cancel()
+    hideInfoJob = null
+    deferredHideMs = null
+  }
+
+  /**
+   * A click or a drag on the info panel: a pending auto hide starts again from now, with its own delay, so that the
+   * panel does not vanish while the user is using it. A panel without a pending hide (opened by the user, showing an
+   * error, or loading) keeps its own rules.
+   */
+  private fun restartPendingHide() {
+    if (hideInfoJob?.isActive == true) scheduleInfoHide(hideInfoDelayMs)
+  }
+
   private fun setInfoVisible(visible: Boolean, reposition: Boolean) {
+    if (!visible) {
+      // A hidden panel has nothing left to hide, and the drag of its time bar is over even if the bar never reports
+      // the end of the touch: a drag left on would hold every later auto hide back
+      cancelInfoHide()
+      userSeeking = false
+    }
     val panel = infoEntity ?: return
     if (visible && reposition) placeInfoInFront()
     panel.setComponent(Visible(visible && infoPlaced))
     infoVisible = visible
+    updateProgressTicker()
   }
 
   /** Puts the info panel in front of the user, like SplatSample.positionPanelInFrontOfUser. */
@@ -489,9 +712,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * Thumbstick up (next) or down (previous), or the 3D layout button of the info panel (next, [fromPanel]): mono,
-   * top and bottom, side by side. Applies the layout to the media on screen and shows it on the info panel. A hidden
-   * panel shows up for a few seconds. On a panel already on screen only the plain auto hide restarts: an error, the
+   * The 3D layout button of the info panel ([step] 1, [fromPanel]): mono, top and bottom, side by side, [step] -1
+   * goes the other way. Applies the layout to the media on screen and shows it on the info panel. A hidden panel
+   * shows up for a few seconds. On a panel already on screen only the plain auto hide restarts: an error, the
    * loading or buffering status, the decoder warning and a panel opened by the user keep their own hide rules.
    */
   private fun cycleStereoLayout(step: Int, fromPanel: Boolean = false) {
@@ -561,20 +784,22 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       close()
       return
     }
+    // Left and right change the media, up and down move in a video or turn a photo. The 3D layout stays on the panel
+    val isVideo = request?.isVideo == true
     if ((controllerBits and (ButtonBits.ButtonThumbLL or ButtonBits.ButtonThumbRL)) != 0) {
-      rotateSphere(-YAW_STEP_DEGREES)
+      navigate(-1)
     } else if ((controllerBits and (ButtonBits.ButtonThumbLR or ButtonBits.ButtonThumbRR)) != 0) {
-      rotateSphere(YAW_STEP_DEGREES)
+      navigate(1)
     } else if ((controllerBits and (ButtonBits.ButtonThumbLU or ButtonBits.ButtonThumbRU)) != 0) {
-      cycleStereoLayout(1)
+      if (isVideo) seekFromThumbstick(1) else rotateSphere(YAW_STEP_DEGREES)
     } else if ((controllerBits and (ButtonBits.ButtonThumbLD or ButtonBits.ButtonThumbRD)) != 0) {
-      cycleStereoLayout(-1)
+      if (isVideo) seekFromThumbstick(-1) else rotateSphere(-YAW_STEP_DEGREES)
     }
     val toggle =
       ButtonBits.ButtonA or ButtonBits.ButtonX or ButtonBits.ButtonMenu or ButtonBits.ButtonSqueezeL or
         ButtonBits.ButtonSqueezeR
     if ((controllerBits and toggle) != 0) {
-      hideInfoJob?.cancel()
+      cancelInfoHide()
       setInfoVisible(!infoVisible, reposition = true)
     }
     // With the panel shown, the trigger clicks its buttons instead
@@ -588,12 +813,307 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     close()
   }
 
+  // ---------------------------------------------------------------------------------------------
+  // Previous and next media
+
+  /**
+   * Previous ([step] -1) or next ([step] 1) media, from the panel buttons or the thumbstick. The viewer does not know
+   * the app's list of media: it asks Flutter (ImmersiveEvents.requestAdjacent) under a new request number, with the 3D
+   * layout and the field of view shown now so that the app keeps the user's corrections. Flutter looks for the nearest
+   * media that can be shown immersively in that direction and hands it to [applyAdjacent] under the same number, then
+   * answers true. Until then the buttons are disabled, a second request is ignored, and neither the end of a load nor
+   * the auto hide takes "Looking for the next media" away. The status line tells when there is no such media, or when
+   * no app window can answer; a timeout gives the buttons back if Flutter never answers.
+   */
+  private fun navigate(step: Int) {
+    if (closing || isFinishing || pendingRequestId != null) return
+    // Without a media there is no opening for Flutter to move in
+    val openingId = request?.openingId ?: return
+    val id = nextRequestId()
+    pendingRequestId = id
+    statusBeforeNavigation = statusView?.text?.toString().orEmpty()
+    // The answer must stay readable: a hidden panel shows up for it and hides again afterwards, a running auto hide
+    // waits for it. A hide already held back by a drag stays as it is
+    when {
+      hideInfoJob?.isActive == true -> deferredHideMs = hideInfoDelayMs
+      !infoVisible -> deferredHideMs = INFO_AUTO_HIDE_MS
+    }
+    hideInfoJob?.cancel()
+    hideInfoJob = null
+    if (!infoVisible) setInfoVisible(true, reposition = true)
+    val label = getString(if (step < 0) R.string.immersive_previous else R.string.immersive_next)
+    navigationStatus = getString(R.string.immersive_adjacent_loading, label)
+    showStatus(navigationStatus)
+    updateNavigationButtons()
+    navigationTimeoutJob?.cancel()
+    navigationTimeoutJob =
+      scope.launch {
+        delay(ADJACENT_TIMEOUT_MS)
+        navigationTimeoutJob = null
+        timeoutNavigation(id, step)
+      }
+    Log.i(TAG, "asking the app for the media at step $step, opening $openingId, request $id")
+    ImmersiveApiImpl.requestAdjacent(openingId, id, step, stereoLayout, coverage) { found ->
+      val noneStatus = getString(if (step < 0) R.string.immersive_no_previous else R.string.immersive_no_next)
+      when (found) {
+        // Flutter answers true after applyAdjacent accepted the media, which ended the request: nothing left to do.
+        // A true without that media (refused, or never sent) leaves the request pending and counts as none found
+        true ->
+          when {
+            pendingRequestId == id -> {
+              Log.w(TAG, "the app found the media at step $step but did not show it, request $id")
+              finishNavigation(id, noneStatus)
+            }
+            appliedRequestId == id -> Log.i(TAG, "the app showed the media at step $step, request $id")
+            else -> Log.i(TAG, "the app answered request $id after it ended")
+          }
+        false -> finishNavigation(id, noneStatus)
+        null -> finishNavigation(id, getString(R.string.immersive_no_app))
+      }
+    }
+  }
+
+  /**
+   * Flutter's answer to request [requestId] (ImmersiveApiImpl.showAdjacent): shows the media in place of the current
+   * one, from its start, with the labels of the controls the app sent when it opened the viewer. Returns false and
+   * shows nothing when the viewer is closing or no longer waits for this request (Back, a timeout, a newer media from
+   * the app), so that Flutter does not count the media as shown.
+   */
+  private fun applyAdjacent(
+    requestId: Long,
+    url: String,
+    isVideo: Boolean,
+    title: String,
+    mediaLayout: ImmersiveStereoLayout,
+    mediaCoverage: ImmersiveSphereCoverage,
+  ): Boolean {
+    if (closing || isFinishing || isDestroyed) {
+      Log.i(TAG, "adjacent media for request $requestId refused, the viewer is closing")
+      return false
+    }
+    if (pendingRequestId != requestId) {
+      Log.i(TAG, "adjacent media for request $requestId refused, the viewer waits for ${pendingRequestId ?: "none"}")
+      return false
+    }
+    if (url.isBlank()) {
+      Log.w(TAG, "adjacent media for request $requestId refused, no url")
+      return false
+    }
+    // navigate only asks with a media on screen, which a pending request keeps
+    val current = request ?: return false
+    Log.i(TAG, "show adjacent ${if (isVideo) "video" else "photo"} for request $requestId")
+    appliedRequestId = requestId
+    // Still the same opening: Flutter follows it, and the events of the new media keep its id
+    request =
+      MediaRequest(
+        url = url,
+        isVideo = isVideo,
+        title = title,
+        stereoLayout = mediaLayout,
+        stereoLabels = current.stereoLabels,
+        coverage = mediaCoverage,
+        startPositionMs = 0L,
+        openingId = current.openingId,
+      )
+    // showRequest ends the request, so that Flutter's true answer finds nothing left to do. The scene is ready
+    // whenever a request could start, onSceneReady would show the media otherwise
+    if (sceneReady) showRequest() else endNavigation()
+    return true
+  }
+
+  /**
+   * Ends request [id] without a new media: previous and next work again, [status] replaces "Looking for the next
+   * media" (an error or the decoder warning shown meanwhile stays), and an auto hide held back for the request starts.
+   * A late answer to an older request, or one that arrives after the new media, changes nothing.
+   */
+  private fun finishNavigation(id: Long, status: String) {
+    if (closing || isDestroyed || pendingRequestId != id) return
+    endNavigation()
+    replaceNavigationStatus(status)
+    runDeferredHide()
+  }
+
+  /**
+   * Flutter did not answer request [id] in time (it gives up after 12 seconds itself, so this covers an answer that
+   * never comes). The request is dropped, so that a late media for it is refused, and "Looking for the next media"
+   * gives way to the status held back meanwhile, unless something else replaced it already.
+   */
+  private fun timeoutNavigation(id: Long, step: Int) {
+    if (closing || isDestroyed || pendingRequestId != id) return
+    Log.w(TAG, "no answer from the app $ADJACENT_TIMEOUT_MS ms after request $id for step $step")
+    endNavigation()
+    replaceNavigationStatus(statusBeforeNavigation)
+    runDeferredHide()
+  }
+
+  /** Shows [text] in place of "Looking for the next media", unless an error or a warning replaced it meanwhile. */
+  private fun replaceNavigationStatus(text: String) {
+    val shown = statusView?.text?.toString() ?: return
+    showStatus(ImmersiveMedia.statusAfterNavigation(shown, navigationStatus, text))
+  }
+
+  /** Forgets the request in progress, if any: no timeout left, previous and next enabled again. */
+  private fun endNavigation() {
+    pendingRequestId = null
+    navigationTimeoutJob?.cancel()
+    navigationTimeoutJob = null
+    updateNavigationButtons()
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // Time bar of a video
+
+  /**
+   * The 10 second buttons ([direction] 1 forward, -1 back): Media3 adds or removes SEEK_INCREMENT_MS from the
+   * position, within the video. Nothing happens before the player knows the duration; a video that cannot be seeked
+   * says so in the status line.
+   */
+  private fun seekBy(direction: Int) {
+    val p = player ?: return
+    if (currentVideoUrl == null || p.duration == C.TIME_UNSET) return
+    if (!p.isCurrentMediaItemSeekable) {
+      setStatus(getString(R.string.immersive_not_seekable))
+      return
+    }
+    if (direction > 0) p.seekForward() else p.seekBack()
+    updateProgress()
+  }
+
+  /**
+   * Thumbstick up or down on a video: the same seek as the 10 second buttons, and the panel shows up for a few seconds
+   * (or comes in front of the user) so that the new position can be read on the time bar.
+   */
+  private fun seekFromThumbstick(direction: Int) {
+    seekBy(direction)
+    showControlChange(fromPanel = false)
+  }
+
+  /**
+   * Starts the time bar ticker while the panel is on screen with a video loaded, stops it otherwise: nobody reads the
+   * bar on a hidden panel. While the user drags the bar the ticker skips its updates, the bar then follows the pointer.
+   */
+  private fun updateProgressTicker() {
+    val wanted = infoVisible && !closing && request?.isVideo == true && currentVideoUrl != null
+    if (!wanted) {
+      stopProgressTicker()
+      return
+    }
+    if (progressJob?.isActive == true) return
+    progressJob =
+      scope.launch {
+        while (true) {
+          if (!userSeeking) updateProgress()
+          delay(PROGRESS_INTERVAL_MS)
+        }
+      }
+  }
+
+  private fun stopProgressTicker() {
+    progressJob?.cancel()
+    progressJob = null
+  }
+
+  /**
+   * The time bar and its label from the player: the position, the duration and the buffered part (the secondary
+   * progress, which shows how far a stream over a network share is loaded). Until the player is ready the duration
+   * is unknown (C.TIME_UNSET): the label reads 0:00 and the bar and its buttons are disabled. They stay disabled for a
+   * video that cannot be seeked, which the status line says once.
+   */
+  private fun updateProgress() {
+    val bar = seekBar ?: return
+    val p = player
+    val duration = if (p != null && currentVideoUrl != null) p.duration else C.TIME_UNSET
+    if (p == null || duration == C.TIME_UNSET || duration <= 0) {
+      setSeekControlsEnabled(false)
+      bar.max = 0
+      bar.progress = 0
+      bar.secondaryProgress = 0
+      timeView?.text = getString(R.string.immersive_time, ImmersiveMedia.formatTime(0), ImmersiveMedia.formatTime(0))
+      return
+    }
+    val seekable = p.isCurrentMediaItemSeekable
+    if (!seekable && !notSeekableShown) {
+      notSeekableShown = true
+      Log.i(TAG, "the video cannot be seeked")
+      // The decoder warning matters more, the status says it instead; a seek attempt still explains it
+      if (decoderWarning == null) setStatus(getString(R.string.immersive_not_seekable))
+    }
+    setSeekControlsEnabled(seekable)
+    // The bar under the user's pointer follows the drag, not the player: the end of the drag updates it
+    if (userSeeking) return
+    val max = duration.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+    val position = p.currentPosition.coerceIn(0L, duration)
+    if (bar.max != max) bar.max = max
+    bar.progress = position.toInt()
+    bar.secondaryProgress = p.bufferedPosition.coerceIn(0L, duration).toInt()
+    timeView?.text =
+      getString(R.string.immersive_time, ImmersiveMedia.formatTime(position), ImmersiveMedia.formatTime(duration))
+  }
+
+  private fun setSeekControlsEnabled(enabled: Boolean) {
+    seekBar?.isEnabled = enabled
+    seekBackButton?.isEnabled = enabled
+    seekForwardButton?.isEnabled = enabled
+    if (!enabled && userSeeking) {
+      // A disabled bar may never report the end of the drag: the drag is over, and the hide it held back can start
+      userSeeking = false
+      runDeferredHide()
+    }
+  }
+
+  /**
+   * Dragging the time bar: the label follows the pointer, the video seeks once at the end of the drag (a seek on each
+   * move would restart the loading over the network at every step), and the auto hide waits for the end of the drag.
+   */
+  private val seekBarListener =
+    object : SeekBar.OnSeekBarChangeListener {
+      override fun onStartTrackingTouch(bar: SeekBar) {
+        userSeeking = true
+        if (hideInfoJob?.isActive == true) {
+          deferredHideMs = hideInfoDelayMs
+          hideInfoJob?.cancel()
+          hideInfoJob = null
+        }
+      }
+
+      override fun onProgressChanged(bar: SeekBar, progress: Int, fromUser: Boolean) {
+        if (!fromUser) return
+        val duration = player?.duration ?: return
+        if (duration == C.TIME_UNSET) return
+        timeView?.text =
+          getString(
+            R.string.immersive_time,
+            ImmersiveMedia.formatTime(progress.toLong()),
+            ImmersiveMedia.formatTime(duration),
+          )
+      }
+
+      override fun onStopTrackingTouch(bar: SeekBar) {
+        // A drag dropped meanwhile (panel hidden, bar disabled, another media) does not seek: the bar may no longer
+        // match the video that plays now
+        val dragging = userSeeking
+        userSeeking = false
+        val p = player
+        if (dragging && p != null && currentVideoUrl != null && p.isCurrentMediaItemSeekable) {
+          Log.i(TAG, "seek to ${bar.progress} ms")
+          p.seekTo(bar.progress.toLong())
+        }
+        runDeferredHide()
+        updateProgress()
+      }
+    }
+
   /** Back to the 2D Flutter activity, the way HybridSample goes back to its panel. */
   private fun close() {
     if (closing) return
     closing = true
     Log.i(TAG, "immersive viewer closing")
     loadJob?.cancel()
+    hideInfoJob?.cancel()
+    stopProgressTicker()
+    // A media Flutter sends for a request from now on is refused, and the closed event stops its search
+    endNavigation()
+    reportClosed()
     player?.stop()
     if (isHorizonOsDevice()) {
       try {
@@ -620,6 +1140,47 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
     }
     finish()
+  }
+
+  /**
+   * Tells Flutter, once per viewer, that it closed on the media shown last: its url, the 3D layout and the field of
+   * view shown (the user's corrections, which the app keeps for that media), and where a video stopped, so that the
+   * flat player resumes there. Sent by close(), and by onStop or onDestroy when the system closes the viewer. Nothing
+   * to report for an intent that showed nothing.
+   */
+  private fun reportClosed() {
+    if (closedSent) return
+    val media = request ?: return
+    closedSent = true
+    val shownLayout = shownStereoLayout(media)
+    val shownCoverage = shownCoverage(media)
+    val positionMs = currentPositionMs(media)
+    Log.i(
+      TAG,
+      "immersive viewer closed, opening ${media.openingId}, 3D layout=$shownLayout, coverage=$shownCoverage, " +
+        "position=$positionMs ms",
+    )
+    ImmersiveApiImpl.notifyClosed(media.openingId, media.url, shownLayout, shownCoverage, positionMs)
+  }
+
+  /** The 3D layout on screen. Before the scene is ready nothing was applied yet: still the one of [media]. */
+  private fun shownStereoLayout(media: MediaRequest): ImmersiveStereoLayout =
+    if (sceneReady) stereoLayout else media.stereoLayout
+
+  /** The field of view on screen. Before the scene is ready nothing was applied yet: still the one of [media]. */
+  private fun shownCoverage(media: MediaRequest): ImmersiveSphereCoverage =
+    if (sceneReady) coverage else media.coverage
+
+  /** Where the video of [media] is now, 0 for a photo, see ImmersiveMedia.closingPositionMs. */
+  private fun currentPositionMs(media: MediaRequest): Long {
+    val playerPositionMs = player?.takeIf { currentVideoUrl != null }?.currentPosition
+    return ImmersiveMedia.closingPositionMs(media.isVideo, playerPositionMs, lastKnownPositionMs, media.startPositionMs)
+  }
+
+  /** Keeps the position of the video that plays, for a closed event sent after the player is gone. */
+  private fun rememberPosition() {
+    val p = player ?: return
+    if (request?.isVideo == true && currentVideoUrl != null) lastKnownPositionMs = p.currentPosition.coerceAtLeast(0L)
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -800,7 +1361,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   private fun showPhoto(media: MediaRequest) {
     stopVideo()
-    showPhotoSphere()
+    // Back to the idle sky until the new photo is decoded: the previous photo must not show up with the field of view
+    // or the 3D layout of this one (a 360° photo cut in half, or the two eyes of a 3D photo shown on a mono one)
+    resetSkyboxToIdle()
+    if (photoTexture != null) {
+      // No idle texture to fall back on: nothing at all is better than the previous photo, applySkyboxBitmap shows
+      // the sphere again with the new texture
+      skyboxEntity?.setComponent(Visible(false))
+      halfSphereEntity?.setComponent(Visible(false))
+    } else {
+      showPhotoSphere()
+    }
     setStatus(getString(R.string.immersive_loading))
     loadJob =
       scope.launch {
@@ -830,7 +1401,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         } catch (e: Throwable) {
           Log.e(TAG, "full resolution failed", e)
           if (shown) {
-            setStatus(getString(R.string.immersive_preview_only, e.message ?: e.javaClass.simpleName))
+            // A failure notice shows at once, even while a previous/next request holds the other statuses back
+            showStatus(getString(R.string.immersive_preview_only, e.message ?: e.javaClass.simpleName))
             scheduleInfoHide()
           } else {
             showError(getString(R.string.immersive_error_photo, e.message ?: e.javaClass.simpleName))
@@ -880,59 +1452,104 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun httpRequest(url: String, range: String? = null): Request =
     Request.Builder().url(url).get().apply { if (range != null) header("Range", range) }.build()
 
-  private suspend fun download(url: String): ByteArray =
-    withContext(Dispatchers.IO) {
-      httpClient.newCall(httpRequest(url)).execute().use { response ->
-        if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
-        response.body?.bytes() ?: throw IOException("empty response")
+  /**
+   * Runs [request] on the IO dispatcher and hands the response to [read], which runs there too; the response is
+   * closed afterwards. OkHttp's execute() and the reads of a body block their thread and do not see the cancellation
+   * of the coroutine: a load cancelled for the next media would go on downloading a large original to the end, and a
+   * few quick "next" would pile up downloads. The watcher cancels the call as soon as the coroutine is cancelled,
+   * which makes the blocked execute() or read throw right away.
+   */
+  private suspend fun <T> fetch(request: Request, read: CoroutineScope.(Response) -> T): T =
+    coroutineScope {
+      val call = httpClient.newCall(request)
+      // Started undispatched, so that it waits before the call starts even if the coroutine is cancelled at once
+      val watcher =
+        launch(start = CoroutineStart.UNDISPATCHED) {
+          try {
+            awaitCancellation()
+          } finally {
+            call.cancel()
+          }
+        }
+      try {
+        withContext(Dispatchers.IO) { call.execute().use { response -> read(response) } }
+      } catch (e: IOException) {
+        // A call cancelled with the coroutine fails with an IOException: report the cancellation instead, so that the
+        // loading of the previous media does not show an error over the new one
+        ensureActive()
+        throw e
+      } finally {
+        watcher.cancel()
       }
     }
 
+  private suspend fun download(url: String): ByteArray =
+    fetch(httpRequest(url)) { response ->
+      if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+      response.body?.bytes() ?: throw IOException("empty response")
+    }
+
   private suspend fun downloadTo(url: String, file: File): Long =
-    withContext(Dispatchers.IO) {
-      httpClient.newCall(httpRequest(url)).execute().use { response ->
-        if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
-        val body = response.body ?: throw IOException("empty response")
-        var total = 0L
-        body.byteStream().use { input ->
-          file.outputStream().use { output ->
-            val buffer = ByteArray(256 * 1024)
-            while (true) {
-              ensureActive()
-              val read = input.read(buffer)
-              if (read < 0) break
-              output.write(buffer, 0, read)
-              total += read
-            }
+    fetch(httpRequest(url)) { response ->
+      if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+      val body = response.body ?: throw IOException("empty response")
+      var total = 0L
+      body.byteStream().use { input ->
+        file.outputStream().use { output ->
+          val buffer = ByteArray(256 * 1024)
+          while (true) {
+            ensureActive()
+            val read = input.read(buffer)
+            if (read < 0) break
+            output.write(buffer, 0, read)
+            total += read
           }
         }
-        total
       }
+      total
     }
 
   // ---------------------------------------------------------------------------------------------
   // Videos: equirectangular layer fed by ExoPlayer
 
+  /**
+   * The player for a video at [url]. A video read over HTTP (the server, or the media bridge of a network share) gets
+   * the larger buffers of StreamingLoadControl, as in the 360° player of the phone app, so that a seek over a share
+   * that answers in bursts does not stall again a few seconds later; a file on the headset keeps the Media3 defaults.
+   * The buffers are fixed when the player is built: a video read the other way than the previous one gets a new
+   * player, on the same video surface.
+   */
   @OptIn(UnstableApi::class)
-  private fun ensurePlayer(): ExoPlayer? {
-    player?.let {
-      return it
+  private fun ensurePlayer(url: String): ExoPlayer? {
+    val streamed = StreamingLoadControl.isStreamed(url)
+    player?.let { current ->
+      if (playerStreamed == streamed) return current
+      Log.i(TAG, "new player for a ${if (streamed) "streamed" else "local"} video")
+      current.removeListener(playerListener)
+      current.release()
+      player = null
     }
     return try {
       // Server: the app session (cookie, custom headers, client certificate), same as the in-app player.
       // file:// and content:// (the copy on the headset) are read locally by DefaultDataSource.
       val dataSourceFactory = DefaultDataSource.Factory(this, HttpClientManager.createDataSourceFactory(emptyMap()))
       val audio = AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build()
-      ExoPlayer.Builder(this)
+      StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
         .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
         .setAudioAttributes(audio, true)
+        // The 10 second buttons and the thumbstick up and down
+        .setSeekBackIncrementMs(SEEK_INCREMENT_MS)
+        .setSeekForwardIncrementMs(SEEK_INCREMENT_MS)
         .build()
         .apply {
           repeatMode = Player.REPEAT_MODE_ONE
           addListener(playerListener)
           videoSurface?.let { setVideoSurface(it) }
         }
-        .also { player = it }
+        .also {
+          player = it
+          playerStreamed = streamed
+        }
     } catch (e: Exception) {
       Log.e(TAG, "player creation failed", e)
       null
@@ -946,26 +1563,40 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         when (playbackState) {
           Player.STATE_BUFFERING -> setStatus(getString(R.string.immersive_buffering))
           Player.STATE_READY -> {
+            // Normally the first frame did it already; a video that renders no frame still shows its panel
+            revealVideo()
+            // Only the end of the loading hides the panel: a seek also goes through BUFFERING and READY, and the panel
+            // the user is seeking on must not vanish
+            val firstReady = hideWhenReady
+            hideWhenReady = false
             val format = player?.videoFormat
             val description =
               if (format != null) "${format.sampleMimeType} ${format.codecs ?: ""} ${format.width}x${format.height}"
               else "no video track"
             Log.i(TAG, "video format: $description")
             val warning = decoderWarning
+            // A video held until the viewer is back in front (playOnReturn) starts then: its loading is over all the
+            // same. A video the user paused keeps the panel
+            val starting = player?.playWhenReady == true || playOnReturn
+            // During a drag or a pending previous or next request scheduleInfoHide holds the hide back, and setStatus
+            // keeps "Looking for the next media" on screen
             if (warning != null) {
               // Keeps the warning on screen for its own, longer delay, counted from the moment the video plays
               setStatus(warning)
-              if (player?.playWhenReady == true) {
-                hideInfoJob?.cancel()
-                scheduleInfoHide(DECODER_WARNING_HIDE_MS)
-              }
+              if (firstReady && starting) scheduleInfoHide(DECODER_WARNING_HIDE_MS)
             } else {
               setStatus(description.trim())
-              if (player?.playWhenReady == true) scheduleInfoHide()
+              if (firstReady && starting) scheduleInfoHide()
             }
+            // A seek during a drag also ends with READY: the bar stays under the pointer until the drag ends
+            if (!userSeeking) updateProgress()
           }
           else -> Unit
         }
+      }
+
+      override fun onRenderedFirstFrame() {
+        revealVideo()
       }
 
       override fun onTracksChanged(tracks: Tracks) {
@@ -982,7 +1613,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         if (!videoFallbackTried && fallback != null) {
           videoFallbackTried = true
           setStatus(getString(R.string.immersive_video_fallback, error.errorCodeName))
-          playUrl(fallback)
+          playUrl(fallback, resumePositionMs())
         } else {
           showError(getString(R.string.immersive_error_video, error.errorCodeName))
         }
@@ -1016,7 +1647,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (!videoFallbackTried && playback != null) {
       videoFallbackTried = true
       setStatus(getString(R.string.immersive_video_decoder_switch, "H.264 $size"))
-      playUrl(playback)
+      playUrl(playback, resumePositionMs())
       return
     }
     val message =
@@ -1025,7 +1656,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     Log.w(TAG, "shown to the user: $warning")
     decoderWarning = warning
     hideInfoJob?.cancel()
-    setStatus(warning)
+    // At once, like an error: held back under a pending request, the answer would overwrite it unread
+    showStatus(warning)
     setInfoVisible(true, reposition = true)
     scheduleInfoHide(DECODER_WARNING_HIDE_MS)
   }
@@ -1075,12 +1707,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     resetSkyboxToIdle()
     skyboxEntity?.setComponent(Visible(false))
     halfSphereEntity?.setComponent(Visible(false))
-    videoEntity?.setComponent(Visible(true))
-    applyVideoShape()
+    // Hidden until the first frame of this video: the surface still holds the last frame of the previous one
+    videoRevealed = false
+    videoEntity?.setComponent(Visible(false))
     player?.stop()
+    // playUrl decides again for this video whether it starts now or once the viewer is back in front
+    playOnReturn = false
+    // No video until playUrl: the time bar must not show the duration of the previous one meanwhile
+    currentVideoUrl = null
+    updateProgress()
+    applyVideoShape()
     videoFallbackTried = false
     setStatus(getString(R.string.immersive_loading))
-    if (ensurePlayer() == null) {
+    if (ensurePlayer(media.url) == null) {
       showError(getString(R.string.immersive_error_video, "player"))
       return
     }
@@ -1095,30 +1734,38 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           videoFallbackTried = true
           url = playback
         }
-        playUrl(url)
+        playUrl(url, media.startPositionMs)
       }
   }
+
+  /** Shows the video panel once the current video has a frame on it, see [videoRevealed]. */
+  private fun revealVideo() {
+    if (videoRevealed || request?.isVideo != true || currentVideoUrl == null) return
+    videoRevealed = true
+    videoEntity?.setComponent(Visible(true))
+  }
+
+  /** Where a fallback url starts: where the failed one stopped, or the start position it was given. */
+  private fun resumePositionMs(): Long = player?.currentPosition?.coerceAtLeast(0L) ?: 0L
 
   /** Reads the first 64 KB of the original: streamable unless the server ignores Range and moov is last. */
   private suspend fun isStreamable(media: MediaRequest): Boolean =
     try {
-      withContext(Dispatchers.IO) {
-        httpClient.newCall(httpRequest(media.url, range = "bytes=0-65535")).execute().use { response ->
-          if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
-          val buffer = ByteArray(65536)
-          var total = 0
-          response.body?.byteStream()?.use { input ->
-            while (total < buffer.size) {
-              val read = input.read(buffer, total, buffer.size - total)
-              if (read < 0) break
-              total += read
-            }
+      fetch(httpRequest(media.url, range = "bytes=0-65535")) { response ->
+        if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+        val buffer = ByteArray(65536)
+        var total = 0
+        response.body?.byteStream()?.use { input ->
+          while (total < buffer.size) {
+            val read = input.read(buffer, total, buffer.size - total)
+            if (read < 0) break
+            total += read
           }
-          val ranged = response.code == 206
-          val moovFirst = ImmersiveMedia.mp4MoovBeforeMdat(buffer, total)
-          Log.i(TAG, "video probe: range=$ranged moovFirst=$moovFirst")
-          ranged || moovFirst != false
         }
+        val ranged = response.code == 206
+        val moovFirst = ImmersiveMedia.mp4MoovBeforeMdat(buffer, total)
+        Log.i(TAG, "video probe: range=$ranged moovFirst=$moovFirst")
+        ranged || moovFirst != false
       }
     } catch (e: CancellationException) {
       throw e
@@ -1127,70 +1774,149 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       true
     }
 
-  private fun playUrl(url: String) {
+  /** Plays [url] from [startPositionMs] (0 from the beginning). */
+  private fun playUrl(url: String, startPositionMs: Long) {
     val p = player ?: return
     currentVideoUrl = url
     decoderChecked = false
     decoderWarning = null
+    notSeekableShown = false
+    hideWhenReady = true
     val kind =
       when {
         !url.startsWith("http") -> "local copy"
         url.contains("/video/playback") -> "playback"
         else -> "original"
       }
-    Log.i(TAG, "play $kind")
-    p.setMediaItem(MediaItem.fromUri(url))
+    Log.i(TAG, "play $kind from $startPositionMs ms")
+    p.setMediaItem(MediaItem.fromUri(url), startPositionMs.coerceAtLeast(0L))
     p.prepare()
-    p.playWhenReady = true
+    // A video that arrives while the viewer is paused or behind the system menu (a previous or next media Flutter
+    // answered meanwhile, a fallback url, a recreation) loads but waits, see [playOnReturn]
+    val allowed = playbackAllowed()
+    p.playWhenReady = allowed
+    playOnReturn = !allowed
+    if (!allowed) Log.i(TAG, "the viewer is not in front, the video starts once it is")
+    updateProgress()
+    updateProgressTicker()
   }
 
   private fun stopVideo() {
     currentVideoUrl = null
+    playOnReturn = false
+    stopProgressTicker()
     player?.let {
       it.stop()
       it.clearMediaItems()
     }
+    videoRevealed = false
     videoEntity?.setComponent(Visible(false))
+    updateProgress()
   }
 
   private fun togglePlayPause() {
     val p = player ?: return
     if (currentVideoUrl == null) return
-    if (p.isPlaying) p.pause() else p.play()
+    when {
+      p.isPlaying -> p.pause()
+      playbackAllowed() -> p.play()
+      // Not in front: the press decides whether the video starts once the viewer is back, it never plays behind the
+      // menu or in a headset nobody wears
+      else -> playOnReturn = !playOnReturn
+    }
+  }
+
+  /** A video plays only while the viewer is resumed and the session focused, see [playOnReturn]. */
+  private fun playbackAllowed(): Boolean = resumed && focused
+
+  /**
+   * The viewer lost the front: the video pauses, and plays again once the viewer is back if it was playing or about to
+   * start. playWhenReady rather than isPlaying, which is false while the video buffers: a menu opened during the
+   * loading must not leave the video paused afterwards. A second loss (session state and onPause both report it)
+   * keeps what the first one noted, since the player is paused by then.
+   */
+  private fun holdPlayback() {
+    val p = player ?: return
+    if (currentVideoUrl != null && p.playWhenReady) playOnReturn = true
+    p.pause()
+  }
+
+  /** Plays the video held by [holdPlayback] or [playUrl] once the viewer is both resumed and focused. */
+  private fun resumeHeldPlayback() {
+    if (!playOnReturn || !playbackAllowed()) return
+    playOnReturn = false
+    if (currentVideoUrl != null) player?.play()
   }
 
   // ---------------------------------------------------------------------------------------------
   // Lifecycle
 
-  /** Pauses the video while the system menu is open, as recommended in MediaPlayerSample. */
+  /**
+   * Pauses the video while the session has no input focus (system menu open, headset off), as recommended in
+   * MediaPlayerSample, and plays it again once the focus is back, if the viewer is resumed too.
+   */
   override fun onSessionStateChanged(state: SessionState) {
     super.onSessionStateChanged(state)
     Log.i(TAG, "session state $state")
     when (state) {
-      SessionState.VISIBLE -> {
-        wasPlayingBeforeMenu = player?.isPlaying == true
-        player?.pause()
-      }
       SessionState.FOCUSED -> {
-        if (wasPlayingBeforeMenu) player?.play()
-        wasPlayingBeforeMenu = false
+        focused = true
+        resumeHeldPlayback()
       }
-      else -> Unit
+      // A state this SDK does not know says nothing about the focus
+      SessionState.UNKNOWN -> Unit
+      // Every other OpenXR state is without input focus: VISIBLE behind the system menu, the rest not even visible
+      else -> {
+        focused = false
+        holdPlayback()
+      }
     }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    resumed = true
+    resumeHeldPlayback()
   }
 
   override fun onPause() {
     super.onPause()
-    player?.pause()
+    resumed = false
+    // The system may close the viewer from here on without close(): the closed event then reports this position
+    rememberPosition()
+    holdPlayback()
+  }
+
+  override fun onStop() {
+    // Closed by the system (not through Back): Flutter still learns which media was shown last and where it stopped
+    if (isFinishing) {
+      endNavigation()
+      reportClosed()
+    }
+    super.onStop()
   }
 
   override fun onDestroy() {
+    // Last chance for the closed event when the viewer is finishing (onStop already sent it when it was stopped first).
+    // A destroy that is not a finish (a recreation for a configuration change the manifest does not list, or the system
+    // tearing down the stopped viewer while keeping its record) is no close: the viewer comes back from its saved
+    // state under the same opening, and sends the event when it closes
+    if (isFinishing) reportClosed()
+    pendingRequestId = null
+    navigationTimeoutJob?.cancel()
+    navigationTimeoutJob = null
+    if (liveViewer === this) liveViewer = null
     scope.cancel()
     super.onDestroy()
   }
 
   override fun onSpatialShutdown() {
     Log.i(TAG, "immersive viewer shutdown")
+    rememberPosition()
+    stopProgressTicker()
+    pendingRequestId = null
+    navigationTimeoutJob?.cancel()
+    navigationTimeoutJob = null
     scope.cancel()
     player?.release()
     player = null
@@ -1213,19 +1939,47 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_STEREO_LAYOUT = "app.alextran.immich.immersive.STEREO_LAYOUT"
     private const val EXTRA_STEREO_LABELS = "app.alextran.immich.immersive.STEREO_LABELS"
     private const val EXTRA_COVERAGE = "app.alextran.immich.immersive.COVERAGE"
+    private const val EXTRA_START_POSITION_MS = "app.alextran.immich.immersive.START_POSITION_MS"
+    private const val EXTRA_OPENING_ID = "app.alextran.immich.immersive.OPENING_ID"
+    /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
+    private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     private const val ORIGINAL_PREFIX = "immersive_original_"
     private const val INFO_DISTANCE = 1.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
     private const val DECODER_WARNING_HIDE_MS = 10000L
+
+    /**
+     * Size of the info panel: its layout in dp, and its quad in meters. Both keep the 1 m for 720 dp of the first
+     * panel (720 x 260 dp on 1.0 x 0.36 m) so that the text keeps its size in the headset; the height grew for the
+     * time bar and the previous and next buttons (see immersive_info_panel.xml).
+     */
+    private const val INFO_PANEL_WIDTH_DP = 720f
+    private const val INFO_PANEL_HEIGHT_DP = 400f
+    private const val INFO_PANEL_WIDTH_M = 1.0f
+    private const val INFO_PANEL_HEIGHT_M = INFO_PANEL_WIDTH_M * INFO_PANEL_HEIGHT_DP / INFO_PANEL_WIDTH_DP
+
+    /** Refresh interval of the time bar while the panel is on screen. */
+    private const val PROGRESS_INTERVAL_MS = 500L
+
+    /** Step of the 10 second buttons and of the thumbstick up and down on a video. */
+    private const val SEEK_INCREMENT_MS = 10_000L
+
+    /**
+     * How long previous and next wait for Flutter's answer before working again. Longer than the 12 seconds Flutter
+     * searches at most, so that its own answer (none found) normally comes first: this only covers an answer that
+     * never comes, from an app window that is busy, paused or gone.
+     */
+    private const val ADJACENT_TIMEOUT_MS = 20_000L
     private const val VIDEO_SPHERE_RADIUS = 300f
     /** Mesh of the half sphere of 180° photos, and its radius: the distance of the video sphere. */
     private const val HALF_SPHERE_MESH = "mesh://immersive_half_sphere"
     private const val HALF_SPHERE_RADIUS = 300f
 
     /**
-     * Starting rotation of the photo sphere and of the video sphere around the vertical axis. Not verified
-     * on a headset: turn the image with the thumbstick until its center faces you, then use the value
-     * logged as "photo yaw is now ..." or "video yaw is now ...".
+     * Starting rotation of the photo sphere and of the video sphere around the vertical axis, for every
+     * new media. Not verified on a headset: turn the image with the Turn button (or the thumbstick up or
+     * down on a photo) until its center faces you, then use the value logged as "photo yaw is now ..." or
+     * "video yaw is now ...".
      */
     private const val SKYBOX_YAW_DEGREES = 0f
     private const val VIDEO_YAW_DEGREES = 0f
@@ -1233,6 +1987,43 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
     /** Token of the last intent built by [intent], checked by parse. Lives as long as the process. */
     @Volatile private var launchToken: String? = null
+
+    /**
+     * The viewer on screen, set in onCreate and cleared in onDestroy, so that [showAdjacent] reaches the viewer that
+     * asked. A static reference to an activity is acceptable here: there is one viewer at a time (singleTask), in the
+     * process of the app engine that answers, it is only read and written on the main thread, and onDestroy clears
+     * it, so a destroyed viewer is never kept alive. A new viewer may start before the old one is destroyed: the old
+     * one only clears the reference while it still points to itself.
+     */
+    @SuppressLint("StaticFieldLeak") private var liveViewer: ImmersiveViewerActivity? = null
+
+    /**
+     * Number of the last previous or next request. Counted for the whole process rather than per viewer, so that a
+     * late answer meant for a viewer that closed never matches a request of the next one. Main thread only.
+     */
+    private var lastRequestId = 0L
+
+    private fun nextRequestId(): Long = ++lastRequestId
+
+    /**
+     * Flutter's answer to a previous or next request ([ImmersiveApiImpl.showAdjacent]), on the main thread: shows the
+     * media in the viewer on screen if it still waits for [requestId]. False, and nothing shown, without such a viewer.
+     */
+    fun showAdjacent(
+      requestId: Long,
+      url: String,
+      isVideo: Boolean,
+      title: String,
+      stereoLayout: ImmersiveStereoLayout,
+      coverage: ImmersiveSphereCoverage,
+    ): Boolean {
+      val viewer = liveViewer
+      if (viewer == null) {
+        Log.i(TAG, "adjacent media for request $requestId refused, no immersive viewer")
+        return false
+      }
+      return viewer.applyAdjacent(requestId, url, isVideo, title, stereoLayout, coverage)
+    }
 
     fun intent(
       context: Context,
@@ -1242,21 +2033,70 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       stereoLayout: ImmersiveStereoLayout,
       stereoLabels: Map<String, String>,
       coverage: ImmersiveSphereCoverage,
+      startPositionMs: Long,
+      openingId: Long,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
-      val labels = Bundle().apply { stereoLabels.forEach { (key, value) -> putString(key, value) } }
+      val media =
+        MediaRequest(
+          url = url,
+          isVideo = isVideo,
+          title = title,
+          stereoLayout = stereoLayout,
+          stereoLabels = stereoLabels,
+          coverage = coverage,
+          startPositionMs = startPositionMs,
+          openingId = openingId,
+        )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        putExtras(extrasOf(media))
         putExtra(EXTRA_TOKEN, token)
-        putExtra(EXTRA_URL, url)
-        putExtra(EXTRA_IS_VIDEO, isVideo)
-        putExtra(EXTRA_TITLE, title)
-        putExtra(EXTRA_STEREO_LAYOUT, stereoLayout.raw)
-        putExtra(EXTRA_STEREO_LABELS, labels)
-        putExtra(EXTRA_COVERAGE, coverage.raw)
       }
+    }
+
+    /** [media] as extras: those of the intent that opens the viewer, and the saved state of a recreation. */
+    private fun extrasOf(media: MediaRequest): Bundle {
+      val labels = Bundle().apply { media.stereoLabels.forEach { (key, value) -> putString(key, value) } }
+      return Bundle().apply {
+        putString(EXTRA_URL, media.url)
+        putBoolean(EXTRA_IS_VIDEO, media.isVideo)
+        putString(EXTRA_TITLE, media.title)
+        putInt(EXTRA_STEREO_LAYOUT, media.stereoLayout.raw)
+        putBundle(EXTRA_STEREO_LABELS, labels)
+        putInt(EXTRA_COVERAGE, media.coverage.raw)
+        putLong(EXTRA_START_POSITION_MS, media.startPositionMs)
+        putLong(EXTRA_OPENING_ID, media.openingId)
+      }
+    }
+
+    /** The media [extrasOf] wrote in [extras], or null without a url. */
+    private fun requestOf(extras: Bundle): MediaRequest? {
+      val url = extras.getString(EXTRA_URL)
+      if (url.isNullOrBlank()) {
+        Log.e(TAG, "immersive viewer started without a url")
+        return null
+      }
+      val labels =
+        extras.getBundle(EXTRA_STEREO_LABELS)?.let { bundle ->
+          bundle.keySet().mapNotNull { key -> bundle.getString(key)?.let { key to it } }.toMap()
+        }
+      return MediaRequest(
+        url = url,
+        isVideo = extras.getBoolean(EXTRA_IS_VIDEO, false),
+        title = extras.getString(EXTRA_TITLE).orEmpty(),
+        stereoLayout =
+          ImmersiveStereoLayout.ofRaw(extras.getInt(EXTRA_STEREO_LAYOUT, ImmersiveStereoLayout.MONO.raw))
+            ?: ImmersiveStereoLayout.MONO,
+        stereoLabels = labels.orEmpty(),
+        coverage =
+          ImmersiveSphereCoverage.ofRaw(extras.getInt(EXTRA_COVERAGE, ImmersiveSphereCoverage.FULL.raw))
+            ?: ImmersiveSphereCoverage.FULL,
+        startPositionMs = extras.getLong(EXTRA_START_POSITION_MS, 0L).coerceAtLeast(0L),
+        openingId = extras.getLong(EXTRA_OPENING_ID, 0L),
+      )
     }
 
     /** Compositor layer and material stereo mode of a 3D layout: each eye gets its own half of the frame. */

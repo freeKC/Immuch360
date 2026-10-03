@@ -1,6 +1,7 @@
 // The photo page against a tiny HTTP server standing in for the media bridge: the photo and its GPano tags come from
 // it, with real HTTP requests.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -10,6 +11,7 @@ import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -18,6 +20,7 @@ import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
+import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -28,6 +31,12 @@ import 'network_viewer_fakes.dart';
 /// Records what the immersive viewer is asked to open
 class _RecordingImmersiveApi extends ImmersiveApi {
   final List<Map<String, Object?>> opened = [];
+
+  /// Where each media opened was asked to start, in milliseconds
+  final List<int> startPositions = [];
+
+  /// The opening ids the viewer was given, which it sends back with its events
+  final List<int> openingIds = [];
 
   @override
   Future<bool> isHorizonOs() async => true;
@@ -41,8 +50,28 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveStereoLayout stereoLayout,
     Map<String, String> stereoLabels,
     ImmersiveSphereCoverage coverage,
+    int startPositionMs,
+    int openingId,
   ) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
+    startPositions.add(startPositionMs);
+    openingIds.add(openingId);
+  }
+
+  /// What the viewer was asked to show in place, for previous and next
+  final List<Map<String, Object?>> shown = [];
+
+  @override
+  Future<bool> showAdjacent(
+    int requestId,
+    String url,
+    bool isVideo,
+    String title,
+    ImmersiveStereoLayout stereoLayout,
+    ImmersiveSphereCoverage coverage,
+  ) async {
+    shown.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
+    return true;
   }
 }
 
@@ -98,10 +127,15 @@ void main() {
     return bytes!;
   }
 
-  Future<void> pumpPhotoPage(WidgetTester tester, String path, {_RecordingImmersiveApi? immersiveApi}) async {
+  Future<void> pumpPhotoPage(
+    WidgetTester tester,
+    String path, {
+    _RecordingImmersiveApi? immersiveApi,
+    NetworkFolderMedia? folder,
+  }) async {
     await pumpNetworkRouter(
       tester,
-      home: NetworkPhotoPage(sourceId: _source.id, path: path),
+      home: NetworkPhotoPage(sourceId: _source.id, path: path, folder: folder),
       settle: false,
       overrides: [
         storeServiceProvider.overrideWithValue(store),
@@ -219,6 +253,51 @@ void main() {
         'coverage': ImmersiveSphereCoverage.half,
       },
     ]);
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('on a Meta Quest, the immersive viewer goes to the next 360° photo of the folder', (tester) async {
+    final immersiveApi = _RecordingImmersiveApi();
+    png = await makePng(tester);
+    share.files['/vr180_trip.png'] = withXmp(png, equirectangularXmp);
+    share.files['/flat.png'] = png;
+    share.files['/pano.png'] = withXmp(png, equirectangularXmp);
+    final entries = [
+      for (final path in ['/vr180_trip.png', '/flat.png', '/pano.png']) share.file(path),
+    ];
+    final folder = NetworkFolderMedia(
+      entries: entries,
+      urls: {for (final entry in entries) entry.path: server.urlOf(entry.path)},
+      index: 0,
+    );
+    await pumpPhotoPage(tester, '/vr180_trip.png', immersiveApi: immersiveApi, folder: folder);
+    await pumpRealIo(tester, () => shows360Button() && showsDecodedPhoto());
+    await tester.tap(find.byTooltip('360°'));
+    await tester.pump();
+
+    final session = ProviderScope.containerOf(
+      tester.element(find.byType(NetworkPhotoPage)),
+    ).read(immersiveSessionProvider);
+    bool? shown;
+    unawaited(
+      session
+          .requestAdjacent(
+            immersiveApi.openingIds.single,
+            1,
+            1,
+            ImmersiveStereoLayout.mono,
+            ImmersiveSphereCoverage.full,
+          )
+          .then((result) => shown = result),
+    );
+    await pumpRealIo(tester, () => shown != null);
+
+    expect(shown, isTrue);
+    expect(immersiveApi.opened.map((media) => media['title']), ['vr180_trip.png']);
+    expect(immersiveApi.startPositions, [0]);
+    expect(immersiveApi.shown.map((media) => media['title']), ['pano.png']);
+    expect(immersiveApi.shown.single['url'], server.urlOf('/pano.png').toString());
 
     await endRealIo(tester);
   });

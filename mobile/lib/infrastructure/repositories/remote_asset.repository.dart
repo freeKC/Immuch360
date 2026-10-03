@@ -69,6 +69,22 @@ class RemoteAssetRepository extends DatabaseAccessor<Drift> with $RemoteAssetRep
       .map((row) => row.toDto())
       .watchSingleOrNull();
 
+  /// The ids among [ids] of the remote assets whose exif projection is equirectangular, the rule of the 360° timeline
+  /// (see TimelineRepository.panorama360), in one query: the immersive viewer checks a chunk of a timeline at once
+  /// when it looks for the previous or next 360° media.
+  Future<Set<String>> equirectangularRemoteIds(Iterable<String> ids) async {
+    final wanted = ids.toSet();
+    if (wanted.isEmpty) {
+      return const {};
+    }
+    final exif = _db.remoteExifEntity;
+    final query = exif.selectOnly()
+      ..addColumns([exif.assetId])
+      ..where(exif.assetId.isIn(wanted) & exif.projectionType.equals(ProjectionType.equirectangular.value));
+    final rows = await query.get();
+    return {for (final row in rows) ?row.read(exif.assetId)};
+  }
+
   Future<List<(String, String)>> getPlaces(String userId) {
     final asset = Subquery(
       _db.remoteAssetEntity.select()

@@ -133,11 +133,17 @@ void main() {
     matching: find.byWidgetPredicate((widget) => widget is Image && widget.image is NetworkVideoThumbnailImage),
   );
 
-  Future<RootStackRouter> pumpBrowser(WidgetTester tester, {String path = '/', bool settle = true}) {
+  Future<RootStackRouter> pumpBrowser(
+    WidgetTester tester, {
+    String path = '/',
+    bool settle = true,
+    Map<String, Widget Function(RouteData data)> pages = const {},
+  }) {
     return pumpNetworkRouter(
       tester,
       home: NetworkBrowserPage(sourceId: source.id, path: path),
       settle: settle,
+      pages: pages,
       overrides: [
         storeServiceProvider.overrideWithValue(store),
         overrideConnections((ref) => connections = FakeConnections(ref, share)),
@@ -307,6 +313,41 @@ void main() {
     await tester.tap(tileOf('trip.mp4'));
     await tester.pumpAndSettle();
     expect(find.text('video nas /trip.mp4'), findsOneWidget);
+  });
+
+  testWidgets('gives the photo and video pages the media of the folder around the file, for the immersive viewer', (
+    tester,
+  ) async {
+    String describe(String kind, NetworkFolderMedia? folder) {
+      if (folder == null) {
+        return '$kind alone';
+      }
+      final names = folder.entries.map((entry) => entry.name).join(',');
+      final urls = folder.entries.map((entry) => folder.urls[entry.path]?.path).join(',');
+      return '$kind ${folder.index} of $names at $urls';
+    }
+
+    final router = await pumpBrowser(
+      tester,
+      pages: {
+        NetworkPhotoRoute.name: (data) => Text(describe('photo', data.argsAs<NetworkPhotoRouteArgs>().folder)),
+        NetworkVideoRoute.name: (data) => Text(describe('video', data.argsAs<NetworkVideoRouteArgs>().folder)),
+      },
+    );
+
+    await tester.tap(tileOf('pano.jpg'));
+    await tester.pumpAndSettle();
+    final base = connections.baseUrl.path;
+    final urls = [
+      for (final name in ['flat.jpg', 'pano.jpg', 'trip.mp4']) '$base/$name',
+    ].join(',');
+    expect(find.text('photo 1 of flat.jpg,pano.jpg,trip.mp4 at $urls'), findsOneWidget);
+
+    await router.maybePop();
+    await tester.pumpAndSettle();
+    await tester.tap(tileOf('trip.mp4'));
+    await tester.pumpAndSettle();
+    expect(find.text('video 2 of flat.jpg,pano.jpg,trip.mp4 at $urls'), findsOneWidget);
   });
 
   testWidgets('tells an empty folder', (tester) async {

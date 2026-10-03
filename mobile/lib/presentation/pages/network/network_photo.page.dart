@@ -8,6 +8,7 @@ import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
@@ -35,15 +36,19 @@ typedef _Photo = ({NetworkEntry entry, Uri url});
 
 /// A photo of a network share, shown straight from it through the media bridge: pinch or double tap to zoom. A photo
 /// whose file declares a 360° projection gets a 360° button, and any photo can be viewed as 360° from the menu: in
-/// the panorama viewer, or in the immersive viewer on a Meta Quest.
+/// the panorama viewer, or in the immersive viewer on a Meta Quest, which goes from there to the previous and next
+/// 360° photos and videos of [folder].
 @RoutePage()
 class NetworkPhotoPage extends ConsumerStatefulWidget {
-  const NetworkPhotoPage({super.key, required this.sourceId, required this.path});
+  const NetworkPhotoPage({super.key, required this.sourceId, required this.path, this.folder});
 
   final String sourceId;
 
   /// Absolute inside the share, "/" separated, starting with "/"
   final String path;
+
+  /// The photos and videos of the folder the photo was opened from, null when it was opened on its own
+  final NetworkFolderMedia? folder;
 
   @override
   ConsumerState<NetworkPhotoPage> createState() => _NetworkPhotoPageState();
@@ -156,17 +161,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
-    final stereoLabels = sphereViewerLabels(context.t);
+    final request = ImmersiveRequest(url: photo.url.toString(), isVideo: false, title: photo.entry.name, view: view);
+    final around = widget.folder?.around(photo.entry, photo.url) ?? (items: [photo], index: 0);
+    // Given the request too: the photo shows again as it opens now, whatever its file declares
+    final navigator = FolderImmersiveNavigator.read(ref, items: around.items, index: around.index, request: request);
     try {
-      await openImmersiveUrl(
-        ref,
-        url: photo.url.toString(),
-        isVideo: false,
-        title: photo.entry.name,
-        layout: view.layout,
-        coverage: view.coverage,
-        stereoLabels: stereoLabels,
-      );
+      await openImmersiveUrl(ref, request: request, stereoLabels: sphereViewerLabels(context.t), navigator: navigator);
     } catch (error) {
       _log.warning('Could not open the immersive viewer: $error');
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));

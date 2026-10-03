@@ -80,6 +80,12 @@ class _SpatialVideoApi extends SpatialVideoApi {
 
 class _ImmersiveApi extends ImmersiveApi {
   final List<Map<String, Object?>> opened = [];
+
+  /// Where each media opened was asked to start, in milliseconds
+  final List<int> startPositions = [];
+
+  /// The opening ids the viewer was given, failed openings included
+  final List<int> openingIds = [];
   Exception? failure;
 
   @override
@@ -91,12 +97,16 @@ class _ImmersiveApi extends ImmersiveApi {
     ImmersiveStereoLayout stereoLayout,
     Map<String, String> stereoLabels,
     ImmersiveSphereCoverage coverage,
+    int startPositionMs,
+    int openingId,
   ) async {
+    openingIds.add(openingId);
     final failure = this.failure;
     if (failure != null) {
       throw failure;
     }
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
+    startPositions.add(startPositionMs);
   }
 }
 
@@ -331,11 +341,12 @@ void main() {
 
       await openImmersiveUrl(
         ref,
-        url: _url,
-        isVideo: true,
-        title: 'trip.mp4',
-        layout: StereoLayout.topBottom,
-        coverage: SphereCoverage.half,
+        request: const ImmersiveRequest(
+          url: _url,
+          isVideo: true,
+          title: 'trip.mp4',
+          view: (layout: StereoLayout.topBottom, coverage: SphereCoverage.half, coverageGuess: SphereCoverage.full),
+        ),
         stereoLabels: const {},
         player: player,
       );
@@ -348,6 +359,27 @@ void main() {
         'coverage': ImmersiveSphereCoverage.half,
       });
       expect(player.calls, ['suspend']);
+      // The session follows this opening: the viewer sends its id back with its events
+      expect(ref.read(immersiveSessionProvider).isCurrent(immersiveApi.openingIds.single), isTrue);
+    });
+
+    testWidgets('opens each time as a new opening, the session following the last one only', (tester) async {
+      await pump(tester);
+      const request = ImmersiveRequest(
+        url: _url,
+        isVideo: false,
+        title: 'trip.jpg',
+        view: (layout: StereoLayout.mono, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full),
+      );
+
+      await openImmersiveUrl(ref, request: request, stereoLabels: const {});
+      await openImmersiveUrl(ref, request: request, stereoLabels: const {});
+
+      final [first, second] = immersiveApi.openingIds;
+      expect(second, isNot(first));
+      final session = ref.read(immersiveSessionProvider);
+      expect(session.isCurrent(first), isFalse);
+      expect(session.isCurrent(second), isTrue);
     });
 
     testWidgets('gives the player back and tells when the immersive viewer does not open', (tester) async {
@@ -357,17 +389,22 @@ void main() {
       await expectLater(
         openImmersiveUrl(
           ref,
-          url: _url,
-          isVideo: true,
-          title: 'trip.mp4',
-          layout: StereoLayout.mono,
-          coverage: SphereCoverage.full,
+          request: const ImmersiveRequest(
+            url: _url,
+            isVideo: true,
+            title: 'trip.mp4',
+            view: (layout: StereoLayout.mono, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full),
+          ),
           stereoLabels: const {},
           player: player,
         ),
         throwsA(isA<PlatformException>()),
       );
       expect(player.calls, ['suspend', 'resume']);
+      // Nothing will close: the session no longer follows that opening
+      final session = ref.read(immersiveSessionProvider);
+      expect(session.isCurrent(immersiveApi.openingIds.single), isFalse);
+      expect(session.isOpen, isFalse);
     });
   });
 }

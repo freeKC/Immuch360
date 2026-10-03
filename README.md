@@ -105,7 +105,7 @@ Immuch360 is a gallery, and it is also a free media player: it plays what the of
 | <img src=".github/readme/quest-immersive-360-photo.jpg" width="300" alt="A 360° photo all around you in the Quest 3, with the info panel: layout, 360° and Back buttons"> | <img src=".github/readme/quest-immersive-360-video.jpg" width="300" alt="A 360° video of a lake playing in the Quest 3, with the info panel: layout, 360°, Pause and Back buttons"> | <img src=".github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="A stereoscopic 360° video in the Quest 3, the info panel reading 3D, top and bottom"> |
 | The immersive view of a photo, with the info panel (layout, 360°/180°, Back) | A video playing, with Pause | A top and bottom stereoscopic video, each eye served (the Kandao Obsidian sample) |
 
-Coming in build 14: a time bar with seeking and skip buttons in the immersive video playback, and previous/next media without leaving the immersive view. See the [Roadmap](#roadmap).
+Build 14 adds, in the headset, a time bar with seeking and 10 second skip buttons while a video plays, and previous/next media without leaving the immersive view (the 360° media of the timeline, the 360° list, an album, a share folder or the headset's own media). See [Meta Quest 3](#immersive-view).
 
 ## Spatial 2.5D (experimental)
 
@@ -177,7 +177,7 @@ The App Store link will be added here as soon as the listing is published. Log i
 | VR180 (half sphere) photos and videos | ❌ No, stretched around the sphere | ✅ **Yes**: spherical bounds, mesh, GPano crop or file name, 360°/180° button in every viewer, remembered on the phone | Tested on an Android emulator with synthetic media; device feedback welcome |
 | Use without an Immich server (local gallery, 360° detection on the device, all viewers) | ❌ No | ✅ **Yes**, from the login page; connect a server later from the settings | Tested on an Android emulator; device feedback welcome |
 | Network shares: SMB (Samba) and WebDAV browsed and played live, nothing downloaded; servers found by themselves on the network | ❌ No | ✅ **Yes**: from the Library tab, every viewer, with or without a server, phones and Quest 3 | Tested against Samba and WebDAV test servers on an Android emulator; device and NAS feedback welcome |
-| Media player controls: seeking, audio track choice, buffering indicator in the 360° and Spatial players; seeking and buffering in the flat player of network shares | ❌ n/a | ✅ **Yes**, Android and iOS | Done; the immersive view of the Quest 3 gets seeking and previous/next in build 14 |
+| Media player controls: seeking, audio track choice, buffering indicator in the 360° and Spatial players; seeking and buffering in the flat player of network shares; time bar, 10 s skips, previous/next media in the Quest immersive view | ❌ n/a | ✅ **Yes**, Android, iOS and Quest 3 (immersive controls from build 14) | Done; headset feedback welcome on the immersive controls |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | ❌ Shown flat or wrongly | ❌ Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
@@ -218,9 +218,11 @@ The whole app runs as a resizable 2D window: login, timeline, albums, search, th
 | Back to the app | B or Y | Back button of the info panel |
 | Play or pause a video | Trigger, when the info panel is hidden | Play or Pause button of the info panel |
 | Show or hide the info panel | A, X, grip or menu | Menu gesture, or pinch when the panel is hidden |
-| Turn the image by 90° | Thumbstick left or right | |
+| Previous or next media (from build 14) | Thumbstick left or right | Previous and Next buttons of the info panel |
+| 10 seconds back or forward in a video (from build 14) | Thumbstick down or up | The two skip buttons, or drag the time bar of the info panel |
+| Turn the image by 90° | Thumbstick down or up on a photo (from build 14; left or right before) | Turn button of the info panel (from build 14) |
 
-Seeking in a video and stepping to the previous or next media without leaving the immersive view are not there yet: they are the next build's work (see the [Roadmap](#roadmap)).
+From build 14 the info panel of a video has a time bar (position, duration, how much is buffered) with two 10 second skip buttons, and every media has Previous, Next and Turn buttons. Previous and next move through the 360° media of the place you came from, without leaving the immersive view: the timeline, the 360° list, an album, a folder of a network share, or the headset's own media in the mode without a server; flat photos and videos are skipped. When you go back to the app from the timeline, an album or the 360° list, it lands on the media you were looking at (a share folder page stays on the file you opened), and the video you opened the immersive view on resumes where it left it. The 3D layout is only on the panel's button from build 14 (it was on the thumbstick before).
 
 ### In pictures
 
@@ -280,7 +282,7 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 
 What is planned next, in rough order. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
-- **Immersive view, build 14 (in progress)**: a time bar with seeking and skip buttons while a video plays in the headset, and previous/next media without leaving the immersive view.
+- **Immersive view, next**: previous/next and a time bar in the 360° players of phones too (Android has the time bar already, iOS not yet), and photos in the native 360° video player.
 - **Upload to Immich from a share or the device**: send the photos and videos you browse on a network share, or on the device in the Library tab, to the Immich account you are connected to.
 - **App Store**: the iOS listing is under review; the link will be added here when it is live.
 - **Network shares, next steps**: the audio track choice in the flat player, swiping from one file of a folder to the next, Digest authentication for WebDAV, the user name from the Bonjour record.

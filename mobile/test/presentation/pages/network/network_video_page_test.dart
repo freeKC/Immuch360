@@ -1,6 +1,7 @@
 // The video page against a tiny HTTP server standing in for the media bridge: what the video declares comes from it,
 // with real range requests. The native players are fakes that record what they are asked to open.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show DatabaseConnection;
@@ -8,6 +9,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
@@ -20,6 +22,7 @@ import 'package:immich_mobile/infrastructure/repositories/store.repository.dart'
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
+import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
@@ -68,6 +71,12 @@ class _RecordingSpatialVideoApi extends SpatialVideoApi {
 class _RecordingImmersiveApi extends ImmersiveApi {
   final List<Map<String, Object?>> opened = [];
 
+  /// Where each media opened was asked to start, in milliseconds
+  final List<int> startPositions = [];
+
+  /// The opening ids the viewer was given, which it sends back with its events
+  final List<int> openingIds = [];
+
   @override
   Future<bool> isHorizonOs() async => true;
 
@@ -80,14 +89,38 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveStereoLayout stereoLayout,
     Map<String, String> stereoLabels,
     ImmersiveSphereCoverage coverage,
+    int startPositionMs,
+    int openingId,
   ) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
+    startPositions.add(startPositionMs);
+    openingIds.add(openingId);
+  }
+
+  /// What the viewer was asked to show in place, for previous and next
+  final List<Map<String, Object?>> shown = [];
+
+  @override
+  Future<bool> showAdjacent(
+    int requestId,
+    String url,
+    bool isVideo,
+    String title,
+    ImmersiveStereoLayout stereoLayout,
+    ImmersiveSphereCoverage coverage,
+  ) async {
+    shown.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
+    return true;
   }
 }
 
 /// Records what the page asks of its player, which has no native player behind it here
 class _RecordingVideoPlayer extends VideoPlayerNotifier {
-  _RecordingVideoPlayer(this.calls);
+  _RecordingVideoPlayer(this.calls, {VideoPlayerState? initial}) {
+    if (initial != null) {
+      state = initial;
+    }
+  }
 
   final List<String> calls;
 
@@ -186,10 +219,12 @@ void main() {
     bool isHorizonOs = false,
     bool spatial25d = true,
     _RecordingSpatialVideoApi? spatial,
+    NetworkFolderMedia? folder,
+    VideoPlayerState? playerState,
   }) async {
     await pumpNetworkRouter(
       tester,
-      home: NetworkVideoPage(sourceId: _source.id, path: path),
+      home: NetworkVideoPage(sourceId: _source.id, path: path, folder: folder),
       settle: false,
       overrides: [
         storeServiceProvider.overrideWithValue(store),
@@ -200,7 +235,9 @@ void main() {
         sphericalVideoApiProvider.overrideWithValue(sphericalApi),
         spatialVideoApiProvider.overrideWithValue(spatial ?? spatialApi),
         immersiveApiProvider.overrideWithValue(immersiveApi),
-        videoPlayerProvider('network:nas:$path').overrideWith((ref) => _RecordingVideoPlayer(playerCalls)),
+        videoPlayerProvider(
+          'network:nas:$path',
+        ).overrideWith((ref) => _RecordingVideoPlayer(playerCalls, initial: playerState)),
         // A fresh cache per test
         networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
       ],
@@ -394,6 +431,82 @@ void main() {
       },
     ]);
     expect(playerCalls, ['suspend']);
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('on a Meta Quest, the immersive viewer carries on from the page player, goes through the 360° videos of '
+      'the folder, and gives the video back where it stopped', (tester) async {
+    final entries = [
+      for (final path in ['/holiday.mp4', '/trip360.mp4', '/movie_sbs.mp4', '/stereo360.mp4']) share.file(path),
+    ];
+    final folder = NetworkFolderMedia(
+      entries: entries,
+      urls: {for (final entry in entries) entry.path: server.urlOf(entry.path)},
+      index: 1,
+    );
+    await pumpVideoPage(
+      tester,
+      '/trip360.mp4',
+      isHorizonOs: true,
+      folder: folder,
+      playerState: const VideoPlayerState(
+        position: Duration(seconds: 12),
+        duration: Duration(minutes: 1),
+        status: VideoPlaybackStatus.playing,
+      ),
+    );
+    await pumpUntilDetected(tester);
+    await tester.tap(find.byTooltip('360°'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(immersiveApi.opened.single['url'], server.urlOf('/trip360.mp4').toString());
+    expect(immersiveApi.startPositions, [12000]);
+
+    // The headset asks for the next media, then the previous one
+    final session = ProviderScope.containerOf(
+      tester.element(find.byType(NetworkVideoPage)),
+    ).read(immersiveSessionProvider);
+    final openingId = immersiveApi.openingIds.single;
+    var requestId = 0;
+    Future<bool?> request(int step) async {
+      bool? shown;
+      unawaited(
+        session
+            .requestAdjacent(openingId, ++requestId, step, ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full)
+            .then((result) => shown = result),
+      );
+      await pumpRealIo(tester, () => shown != null);
+      return shown;
+    }
+
+    expect(await request(1), isTrue);
+    expect(immersiveApi.shown.last['url'], server.urlOf('/stereo360.mp4').toString(), reason: 'a flat video between');
+    expect(immersiveApi.shown.last['layout'], ImmersiveStereoLayout.topBottom);
+    expect(await request(1), isFalse);
+    expect(await request(-1), isTrue);
+    expect(immersiveApi.shown.last['url'], server.urlOf('/trip360.mp4').toString());
+    expect(immersiveApi.opened, hasLength(1), reason: 'navigation never starts the viewer');
+
+    // A closing of another opening, a viewer gone long ago, leaves the page player alone
+    session.closed(
+      openingId - 1,
+      server.urlOf('/trip360.mp4').toString(),
+      ImmersiveStereoLayout.mono,
+      ImmersiveSphereCoverage.full,
+      5000,
+    );
+    expect(playerCalls, ['suspend']);
+
+    session.closed(
+      openingId,
+      server.urlOf('/trip360.mp4').toString(),
+      ImmersiveStereoLayout.mono,
+      ImmersiveSphereCoverage.full,
+      30000,
+    );
+    expect(playerCalls, ['suspend', 'resume at 30000 paused']);
 
     await endRealIo(tester);
   });

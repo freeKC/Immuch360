@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Info panel of the Meta Quest immersive viewer -->
+<!-- Info panel of the Meta Quest immersive viewer. Its size in dp is set in ImmersiveViewerActivity.registerPanels:
+     the rows below must fit in INFO_PANEL_HEIGHT_DP, with a status of three lines and a hint of four -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
@@ -26,24 +27,124 @@
     android:textColor="#FFB0B8CC"
     android:textSize="17sp" />
 
+  <!-- The controller mapping. It wraps over up to four lines in the longer languages, hence a smaller text -->
   <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="6dp"
+    android:maxLines="4"
+    android:ellipsize="end"
     android:text="@string/immersive_hint"
     android:textColor="#FF8A93A8"
-    android:textSize="14sp" />
+    android:textSize="13sp" />
 
   <View
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1" />
 
+  <!-- Time bar of a video, shown for videos only: 10 seconds back, the position (the buffered part in the
+       secondary progress), the time, 10 seconds forward. Disabled while the duration is unknown or when the
+       video cannot be seeked -->
+  <LinearLayout
+    android:id="@+id/immersive_seek_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:visibility="gone">
+
+    <ImageButton
+      android:id="@+id/immersive_seek_back"
+      android:layout_width="64dp"
+      android:layout_height="48dp"
+      android:contentDescription="@string/immersive_seek_back"
+      android:src="@android:drawable/ic_media_rew"
+      android:tooltipText="@string/immersive_seek_back" />
+
+    <SeekBar
+      android:id="@+id/immersive_seek_bar"
+      android:layout_width="0dp"
+      android:layout_height="48dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_weight="1"
+      android:enabled="false"
+      android:max="0" />
+
+    <TextView
+      android:id="@+id/immersive_time"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="8dp"
+      android:fontFeatureSettings="tnum"
+      android:maxLines="1"
+      android:textColor="#FFE8EEFF"
+      android:textSize="16sp" />
+
+    <ImageButton
+      android:id="@+id/immersive_seek_forward"
+      android:layout_width="64dp"
+      android:layout_height="48dp"
+      android:contentDescription="@string/immersive_seek_forward"
+      android:src="@android:drawable/ic_media_ff"
+      android:tooltipText="@string/immersive_seek_forward" />
+  </LinearLayout>
+
+  <!-- Previous and next media of the app (photos and videos), and play or pause for a video -->
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <Button
+      android:id="@+id/immersive_previous"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="12dp"
+      android:maxLines="1"
+      android:text="@string/immersive_previous"
+      android:textSize="18sp" />
+
+    <Button
+      android:id="@+id/immersive_play_pause"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="12dp"
+      android:maxLines="1"
+      android:text="@string/immersive_pause"
+      android:textSize="18sp"
+      android:visibility="gone" />
+
+    <Button
+      android:id="@+id/immersive_next"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:maxLines="1"
+      android:text="@string/immersive_next"
+      android:textSize="18sp" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
     android:gravity="end"
     android:orientation="horizontal">
+
+    <!-- Turns the image by 90 degrees, photos and videos alike, to bring its center in front of the user -->
+    <Button
+      android:id="@+id/immersive_turn"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginEnd="12dp"
+      android:maxLines="1"
+      android:text="@string/immersive_turn"
+      android:textSize="17sp" />
 
     <!-- 3D layout of the media on screen, shown while a media is loaded. A click (controller ray or hand
          pinch) switches to the next layout: mono, top and bottom, side by side -->
@@ -74,18 +175,10 @@
       android:visibility="gone" />
 
     <Button
-      android:id="@+id/immersive_play_pause"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginEnd="12dp"
-      android:text="@string/immersive_pause"
-      android:textSize="18sp"
-      android:visibility="gone" />
-
-    <Button
       android:id="@+id/immersive_back"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
       android:text="@string/immersive_back"
       android:textSize="18sp" />
   </LinearLayout>

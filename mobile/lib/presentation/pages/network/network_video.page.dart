@@ -9,6 +9,7 @@ import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
@@ -31,15 +32,19 @@ typedef _Video = ({NetworkEntry entry, Uri url});
 /// A video of a network share, played straight from it through the media bridge, with play, pause and seek. A video
 /// whose file declares a 360° projection gets a 360° button, which opens the native 360° player, or the immersive
 /// viewer on a Meta Quest; a stereoscopic one a Spatial 2.5D button on a phone where the setting is on. Both are in
-/// the menu for any other video.
+/// the menu for any other video. The immersive viewer goes from there to the previous and next 360° photos and
+/// videos of [folder].
 @RoutePage()
 class NetworkVideoPage extends ConsumerStatefulWidget {
-  const NetworkVideoPage({super.key, required this.sourceId, required this.path});
+  const NetworkVideoPage({super.key, required this.sourceId, required this.path, this.folder});
 
   final String sourceId;
 
   /// Absolute inside the share, "/" separated, starting with "/"
   final String path;
+
+  /// The photos and videos of the folder the video was opened from, null when it was opened on its own
+  final NetworkFolderMedia? folder;
 
   @override
   ConsumerState<NetworkVideoPage> createState() => NetworkVideoPageState();
@@ -267,16 +272,28 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final messenger = ScaffoldMessenger.maybeOf(context);
     if (isHorizonOs) {
       final errorMessage = context.t.immersive_viewer_open_failed;
+      final player = _notifier;
+      final request = ImmersiveRequest(url: video.url.toString(), isVideo: true, title: video.entry.name, view: view);
+      final around = widget.folder?.around(video.entry, video.url) ?? (items: [video], index: 0);
+      // Given the request too: the video shows again as it opens now, whatever its file declares
+      final navigator = FolderImmersiveNavigator.read(
+        ref,
+        items: around.items,
+        index: around.index,
+        request: request,
+        player: player,
+      );
+      // The viewer carries on from where the page's player is, unless it reached the end: read right before
+      // openImmersiveUrl stops the player, nothing awaited in between
+      final playback = ref.read(videoPlayerProvider(_playerKey));
       try {
         await openImmersiveUrl(
           ref,
-          url: video.url.toString(),
-          isVideo: true,
-          title: video.entry.name,
-          layout: view.layout,
-          coverage: view.coverage,
+          request: request,
           stereoLabels: sphereViewerLabels(context.t),
-          player: _notifier,
+          startPosition: playback.status == VideoPlaybackStatus.completed ? Duration.zero : playback.position,
+          player: player,
+          navigator: navigator,
         );
       } catch (error) {
         _log.warning('Could not open the immersive viewer: $error');

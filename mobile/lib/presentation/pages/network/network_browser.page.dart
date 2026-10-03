@@ -14,6 +14,44 @@ import 'package:immich_mobile/routing/router.dart';
 /// What the browser shows of a folder: its folders, then its photos and videos with their media bridge URLs
 typedef _Folder = ({List<NetworkEntry> folders, List<NetworkEntry> media, Map<String, Uri> urls});
 
+/// The photos and videos of a share folder in the order the browser shows them ([entries]), with their media bridge
+/// URLs by path ([urls]), and the one opened among them ([index]): the immersive viewer goes from it to the previous
+/// and next ones.
+class NetworkFolderMedia {
+  const NetworkFolderMedia({required this.entries, required this.urls, required this.index});
+
+  final List<NetworkEntry> entries;
+  final Map<String, Uri> urls;
+  final int index;
+
+  /// The photos and videos of the folder with their URLs, and the index among them of [entry], the file a page shows
+  /// from [url]: the one at [index], else the one at its path. [entry] alone when it is not in the folder.
+  ({List<({NetworkEntry entry, Uri url})> items, int index}) around(NetworkEntry entry, Uri url) {
+    final opened = index >= 0 && index < entries.length && entries[index].path == entry.path
+        ? index
+        : entries.indexWhere((media) => media.path == entry.path);
+    if (opened < 0) {
+      return (items: [(entry: entry, url: url)], index: 0);
+    }
+    final items = <({NetworkEntry entry, Uri url})>[];
+    var position = 0;
+    for (final (i, media) in entries.indexed) {
+      if (i == opened) {
+        // The page's own entry and URL for the file it shows
+        position = items.length;
+        items.add((entry: entry, url: url));
+        continue;
+      }
+      // A file without a URL cannot be opened
+      final mediaUrl = urls[media.path];
+      if (mediaUrl != null) {
+        items.add((entry: media, url: mediaUrl));
+      }
+    }
+    return (items: items, index: position);
+  }
+}
+
 /// The folders and the photos and videos of a network share, from [path]: tap a folder to go into it, a photo or a
 /// video to open it. Files of other kinds are left out.
 @RoutePage()
@@ -61,12 +99,16 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     }
   }
 
-  void _open(NetworkEntry entry) {
+  void _open(NetworkEntry entry, _Folder folder) {
+    // The photo and video pages get the folder around the file, for previous and next in the immersive viewer
+    final media = entry.isDirectory
+        ? null
+        : NetworkFolderMedia(entries: folder.media, urls: folder.urls, index: folder.media.indexOf(entry));
     final PageRouteInfo route = entry.isDirectory
         ? NetworkBrowserRoute(sourceId: widget.sourceId, path: _withoutTrailingSlash(entry.path))
         : entry.isVideo
-        ? NetworkVideoRoute(sourceId: widget.sourceId, path: entry.path)
-        : NetworkPhotoRoute(sourceId: widget.sourceId, path: entry.path);
+        ? NetworkVideoRoute(sourceId: widget.sourceId, path: entry.path, folder: media)
+        : NetworkPhotoRoute(sourceId: widget.sourceId, path: entry.path, folder: media);
     unawaited(context.pushRoute(route));
   }
 
@@ -100,7 +142,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
               // A refresh keeps the folder on screen until the new list comes
               final folder = snapshot.data;
               if (folder != null) {
-                return _FolderView(folder: folder, onOpen: _open);
+                return _FolderView(folder: folder, onOpen: (entry) => _open(entry, folder));
               }
               if (snapshot.connectionState != ConnectionState.done) {
                 return _Filled(child: NetworkLoadingView(message: context.t.network_share_loading));

@@ -69,4 +69,75 @@ class ImmersiveMediaTest {
     assertNull(ImmersiveMedia.localFileFor("file:IMG_360.jpg"))
     assertNull(ImmersiveMedia.localFileFor("file:"))
   }
+
+  @Test
+  fun `times under an hour show minutes and seconds`() {
+    assertEquals("0:00", ImmersiveMedia.formatTime(0))
+    assertEquals("0:00", ImmersiveMedia.formatTime(999))
+    assertEquals("0:01", ImmersiveMedia.formatTime(1_000))
+    assertEquals("0:59", ImmersiveMedia.formatTime(59_999))
+    assertEquals("1:00", ImmersiveMedia.formatTime(60_000))
+    assertEquals("12:34", ImmersiveMedia.formatTime(754_000))
+    assertEquals("59:59", ImmersiveMedia.formatTime(3_599_999))
+  }
+
+  @Test
+  fun `times from an hour on show hours, minutes and seconds`() {
+    assertEquals("1:00:00", ImmersiveMedia.formatTime(3_600_000))
+    assertEquals("1:02:03", ImmersiveMedia.formatTime(3_723_000))
+    assertEquals("10:00:05", ImmersiveMedia.formatTime(36_005_000))
+  }
+
+  @Test
+  fun `unknown and negative times show zero`() {
+    // Media3 C.TIME_UNSET, the duration before the player is ready
+    assertEquals("0:00", ImmersiveMedia.formatTime(Long.MIN_VALUE + 1))
+    assertEquals("0:00", ImmersiveMedia.formatTime(-5_000))
+  }
+
+  @Test
+  fun `a photo closes at position zero`() {
+    assertEquals(0L, ImmersiveMedia.closingPositionMs(false, 12_000L, 8_000L, 5_000L))
+    assertEquals(0L, ImmersiveMedia.closingPositionMs(false, null, null, 5_000L))
+  }
+
+  @Test
+  fun `a video that plays closes at the position of its player`() {
+    assertEquals(42_000L, ImmersiveMedia.closingPositionMs(true, 42_000L, 30_000L, 5_000L))
+    assertEquals(0L, ImmersiveMedia.closingPositionMs(true, 0L, 30_000L, 5_000L))
+  }
+
+  @Test
+  fun `a video whose player is gone closes at the last position known`() {
+    assertEquals(30_000L, ImmersiveMedia.closingPositionMs(true, null, 30_000L, 5_000L))
+  }
+
+  @Test
+  fun `a video closed before its player started keeps its start position`() {
+    assertEquals(5_000L, ImmersiveMedia.closingPositionMs(true, null, null, 5_000L))
+    assertEquals(0L, ImmersiveMedia.closingPositionMs(true, null, null, 0L))
+  }
+
+  @Test
+  fun `the answer to a previous or next request replaces the request text`() {
+    val looking = "Looking for the next media"
+    assertEquals("No next media", ImmersiveMedia.statusAfterNavigation(looking, looking, "No next media"))
+    // A timeout gives back the status held back during the request
+    assertEquals("Full resolution", ImmersiveMedia.statusAfterNavigation(looking, looking, "Full resolution"))
+  }
+
+  @Test
+  fun `an error shown while a request is pending stays after the answer`() {
+    val looking = "Looking for the next media"
+    val error = "The video cannot be played"
+    assertEquals(error, ImmersiveMedia.statusAfterNavigation(error, looking, "No next media"))
+    assertEquals(error, ImmersiveMedia.statusAfterNavigation(error, looking, "Full resolution"))
+  }
+
+  @Test
+  fun `a closing position is never negative`() {
+    // Flutter resumes its flat player at this position, which must be a real one
+    assertEquals(0L, ImmersiveMedia.closingPositionMs(true, -1_000L, null, 5_000L))
+    assertEquals(0L, ImmersiveMedia.closingPositionMs(true, null, null, -1L))
+  }
 }

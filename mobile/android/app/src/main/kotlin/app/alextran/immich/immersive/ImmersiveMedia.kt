@@ -127,6 +127,47 @@ internal object ImmersiveMedia {
     }
 
   /**
+   * A playback position or a duration for the time label of the info panel: "m:ss" under an hour, "h:mm:ss" from
+   * an hour on, rounded down to the second. Negative values, Media3's C.TIME_UNSET included (a duration not known
+   * yet), give "0:00". Built by hand rather than with String.format, whose digits follow the locale, so that the
+   * label keeps the plain digits of the other numbers of the panel.
+   */
+  fun formatTime(ms: Long): String {
+    if (ms <= 0) return "0:00"
+    val totalSeconds = ms / 1000
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    val ss = seconds.toString().padStart(2, '0')
+    return if (hours > 0) "$hours:${minutes.toString().padStart(2, '0')}:$ss" else "$minutes:$ss"
+  }
+
+  /**
+   * Playback position to report when the viewer closes: 0 for a photo. For a video, the position of the player while
+   * it has the video ([playerPositionMs]), else the last one known before the player went away
+   * ([lastKnownPositionMs]), else [startPositionMs], where the video was asked to start: a video closed before its
+   * player started must not send the flat player back to the beginning. Never negative.
+   */
+  fun closingPositionMs(
+    isVideo: Boolean,
+    playerPositionMs: Long?,
+    lastKnownPositionMs: Long?,
+    startPositionMs: Long,
+  ): Long {
+    if (!isVideo) return 0L
+    return (playerPositionMs ?: lastKnownPositionMs ?: startPositionMs).coerceAtLeast(0L)
+  }
+
+  /**
+   * The status line once a previous or next request ends without a new media: [answer] (none found, no app, or the
+   * status held back during the request) replaces the line only while it still reads [requestText], the "Looking for
+   * the next media" of the request. Otherwise the line ([shown]) holds an error or the decoder warning, which show at
+   * once even while a request is pending: the user must still read them, they matter more than the answer.
+   */
+  fun statusAfterNavigation(shown: String, requestText: String, answer: String): String =
+    if (shown == requestText) answer else shown
+
+  /**
    * The file of a file:// URL, which Flutter sends for a media on the headset (no server, or not uploaded), or null
    * for any other URL. Escapes are decoded: "file:///DCIM/IMG%20360.jpg" gives "/DCIM/IMG 360.jpg".
    */

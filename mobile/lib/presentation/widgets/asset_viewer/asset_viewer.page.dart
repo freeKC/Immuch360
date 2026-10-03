@@ -26,6 +26,42 @@ import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/utils/system_ui.utils.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 
+/// Moves the asset viewer on screen to another asset of its timeline, for what follows the timeline away from the
+/// viewer: the immersive viewer of the Meta Quest goes through it on its own (see TimelineImmersiveNavigator), and the
+/// asset viewer shows the asset it closed on. Each asset viewer route has its own (see [AssetViewerPage]), read when
+/// the immersive viewer opens: a viewer stacked over another one later does not take its place.
+///
+/// The immersive viewer searches the very timeline of the asset viewer, whose buffer the pages are built from (see
+/// TimelineService.getAssetSafe): a search leaves that buffer where it looked, possibly far from the page on screen.
+/// Both moves load the timeline around their page first, see [jumpTo] and [recenter].
+class AssetViewerJump {
+  _AssetViewerState? _viewer;
+
+  /// The index in the timeline of the asset on screen, null when no viewer is there
+  int? get currentIndex => _viewer?._currentPage;
+
+  /// Shows the asset at [index] of the timeline, as a tap on the side of the viewer does, once the timeline is loaded
+  /// around it. When it cannot go there (the timeline no longer has that index), and for the asset already on screen,
+  /// the viewer stays where it is and loads the timeline around its page again, as [recenter] does. Nothing once the
+  /// viewer is gone.
+  Future<void> jumpTo(int index) async => _viewer?._jumpToLoaded(index);
+
+  /// Loads the timeline around the asset on screen again, and what the viewer preloads around it, after something
+  /// else read the timeline elsewhere
+  Future<void> recenter() async => _viewer?._recenter();
+
+  void _attach(_AssetViewerState viewer) => _viewer = viewer;
+
+  void _detach(_AssetViewerState viewer) {
+    if (identical(_viewer, viewer)) {
+      _viewer = null;
+    }
+  }
+}
+
+/// The [AssetViewerJump] of the asset viewer on screen, overridden in each asset viewer route
+final assetViewerJumpProvider = Provider<AssetViewerJump>((_) => AssetViewerJump());
+
 @RoutePage()
 class AssetViewerPage extends StatelessWidget {
   final int initialIndex;
@@ -49,6 +85,7 @@ class AssetViewerPage extends StatelessWidget {
       overrides: [
         timelineServiceProvider.overrideWithValue(timelineService),
         currentRemoteAlbumScopedProvider.overrideWithValue(currentAlbum),
+        assetViewerJumpProvider.overrideWith((_) => AssetViewerJump()),
       ],
       child: AssetViewer(initialIndex: initialIndex, heroOffset: heroOffset),
     );
@@ -93,17 +130,67 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
   StreamSubscription? _reloadSubscription;
   KeepAliveLink? _stackChildrenKeepAlive;
+  // Read once: the provider is scoped to this route, and dispose may no longer read it
+  late final _jump = ref.read(assetViewerJumpProvider);
 
   void _onTapNavigate(int direction) {
     final page = _pageController.page?.toInt();
     if (page == null) {
       return;
     }
-    final target = page + direction;
+    _jumpTo(page + direction);
+  }
+
+  // Whether the viewer moved to [target]: not when the timeline has no such page, nor before the pages are laid out
+  bool _jumpTo(int target) {
     final maxPage = _totalAssets - 1;
-    if (target >= 0 && target <= maxPage) {
-      _pageController.jumpToPage(target);
-      unawaited(_onAssetChanged(target));
+    if (target < 0 || target > maxPage || !_pageController.hasClients) {
+      return false;
+    }
+    _pageController.jumpToPage(target);
+    unawaited(_onAssetChanged(target));
+    return true;
+  }
+
+  // See AssetViewerJump.jumpTo: unlike a tap, the target may be far from the buffer of the timeline, and its page would
+  // find no asset to show (see AssetPage) if it was built before the buffer got there
+  Future<void> _jumpToLoaded(int target) async {
+    if (target != _currentPage && await _loadAround(target) && mounted && _jumpTo(target)) {
+      return;
+    }
+    // No move: whatever read the timeline before (a search of the immersive viewer, or the load above) left its buffer
+    // away from the page on screen, whose AssetPage would be left on its spinner by the next reload of the timeline.
+    // Through the hook rather than this state, which may be gone now: the viewer attached in its place, if any, loads
+    // around its own page.
+    await _jump.recenter();
+  }
+
+  // See AssetViewerJump.recenter
+  Future<void> _recenter() async {
+    final page = _currentPage;
+    if (!await _loadAround(page) || !mounted || page != _currentPage) {
+      return;
+    }
+    // Only what the viewer does on a page change that has to do with the buffer: the asset on screen is the same, and
+    // a cast going on is left alone
+    _preloader.preload(page, context.sizeData, thumbnailSize: ref.read(assetViewerProvider).thumbnailSize);
+    // A reload of the timeline while its buffer was elsewhere left the page on screen without its asset, which it
+    // reads again from the buffer on this event only. The event is the one every reload of a timeline sends, cheap
+    // for the pages that had theirs.
+    EventStream.shared.emit(const TimelineReloadEvent());
+  }
+
+  // Loads the timeline around [index], as a page change does; false when it has no such index now
+  Future<bool> _loadAround(int index) async {
+    if (index < 0 || index >= _totalAssets) {
+      return false;
+    }
+    try {
+      await ref.read(timelineServiceProvider).preloadAssets(index);
+      return true;
+    } catch (_) {
+      // The timeline shrank meanwhile: the reload that follows sets the viewer again
+      return false;
     }
   }
 
@@ -118,6 +205,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     }
 
     _reloadSubscription = EventStream.shared.listen(_onEvent);
+    _jump._attach(this);
 
     WidgetsBinding.instance.addPostFrameCallback(_onAssetInit);
 
@@ -127,6 +215,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
   @override
   void dispose() {
+    _jump._detach(this);
     _pageController.dispose();
     _preloader.dispose();
     unawaited(_reloadSubscription?.cancel());

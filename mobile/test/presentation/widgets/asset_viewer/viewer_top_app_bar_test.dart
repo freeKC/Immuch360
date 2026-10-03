@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
@@ -28,6 +29,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_b
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
@@ -151,6 +153,9 @@ void main() {
 
   setUpAll(() => registerFallbackValue(<String, String>{}));
   late _MockImmersiveApi immersiveApi;
+  // The URLs the immersive viewer was opened with, in order, and the opening ids it was given with them
+  late List<String> immersiveUrls;
+  late List<int> immersiveOpeningIds;
 
   setUpAll(() {
     registerFallbackValue(<String, String>{});
@@ -216,9 +221,17 @@ void main() {
     storage = MockStorageRepository();
     probes = _FakeSphericalProbes();
     immersiveApi = _MockImmersiveApi();
+    immersiveUrls = [];
+    immersiveOpeningIds = [];
+    Future<void> openImmersive(Invocation invocation) async {
+      calls.add('immersive');
+      immersiveUrls.add(invocation.positionalArguments[0] as String);
+      immersiveOpeningIds.add(invocation.positionalArguments[8] as int);
+    }
+
     when(
-      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any()),
-    ).thenAnswer((_) async => calls.add('immersive'));
+      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()),
+    ).thenAnswer(openImmersive);
     previewRequests = [];
     previewXmp = null;
   });
@@ -230,6 +243,28 @@ void main() {
     await StoreService.I.delete(StoreKey.advancedTroubleshooting);
     await context.dispose();
   });
+
+  /// The immersive viewer closes on the media it opened last, with [coverage], a video at [positionMs]: it calls the
+  /// Flutter API of the app window, with the opening id it was given, or [openingId]
+  Future<void> closeImmersiveViewer(
+    WidgetTester tester,
+    ImmersiveSphereCoverage coverage, {
+    int positionMs = 0,
+    int? openingId,
+  }) async {
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'dev.flutter.pigeon.immich_mobile.ImmersiveEvents.closed',
+      ImmersiveEvents.pigeonChannelCodec.encodeMessage(<Object?>[
+        openingId ?? immersiveOpeningIds.last,
+        immersiveUrls.last,
+        ImmersiveStereoLayout.mono,
+        coverage,
+        positionMs,
+      ]),
+      (_) {},
+    );
+    await tester.pumpAndSettle();
+  }
 
   final panoramaButton = find.byTooltip('360°');
   final kebabMenu = find.byIcon(Icons.more_vert_rounded);
@@ -424,7 +459,7 @@ void main() {
       expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
       expect(find.text('panorama ${asset.id}'), findsOneWidget);
       verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()));
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('stops a video, then plays its transcoded stream in the native 360° player', (tester) async {
@@ -659,6 +694,8 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
+          any(),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -680,7 +717,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), captureAny(), captureAny()),
+          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), captureAny(), captureAny(), any(), any()),
         ).captured;
         expect(captured, [
           expected,
@@ -706,7 +743,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final layout = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any()),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
       expect(previewRequests, [Uri.parse('$server/assets/${asset.id}/thumbnail?size=preview&edited=true')]);
@@ -723,7 +760,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final layout = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any()),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
     });
@@ -767,7 +804,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny()),
+          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any()),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
       }
@@ -782,7 +819,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny()),
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any()),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
     });
@@ -805,7 +842,17 @@ void main() {
 
         expect(calls, ['suspend', 'immersive'], reason: 'loadOriginalVideo $loadOriginalVideo');
         verify(
-          () => immersiveApi.open('$server/assets/${asset.id}/original', any(), true, asset.name, any(), any(), any()),
+          () => immersiveApi.open(
+            '$server/assets/${asset.id}/original',
+            any(),
+            true,
+            asset.name,
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+          ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()));
       }
@@ -820,7 +867,9 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      verify(() => immersiveApi.open(file.uri.toString(), any(), true, asset.name, any(), any(), any())).called(1);
+      verify(
+        () => immersiveApi.open(file.uri.toString(), any(), true, asset.name, any(), any(), any(), any(), any()),
+      ).called(1);
     });
 
     testWidgets('opens the original when the copy on the headset cannot be read', (tester) async {
@@ -832,20 +881,128 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => immersiveApi.open('$server/assets/${asset.id}/original', any(), true, asset.name, any(), any(), any()),
+        () => immersiveApi.open(
+          '$server/assets/${asset.id}/original',
+          any(),
+          true,
+          asset.name,
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).called(1);
     });
 
-    testWidgets('gives the viewer its video back when the immersive viewer cannot open', (tester) async {
+    testWidgets('carries a video on in the immersive viewer from where the viewer plays it, and takes it back where '
+        'the immersive viewer stopped', (tester) async {
+      for (final (status, expected) in [
+        (VideoPlaybackStatus.playing, 12000),
+        (VideoPlaybackStatus.paused, 12000),
+        (VideoPlaybackStatus.completed, 0),
+      ]) {
+        calls.clear();
+        clearInteractions(immersiveApi);
+        final asset = owned(type: .video);
+        await pumpTopBar(
+          tester,
+          asset,
+          projectionType: .equirectangular,
+          horizonOs: true,
+          playerState: VideoPlayerState(
+            position: const Duration(seconds: 12),
+            duration: const Duration(minutes: 1),
+            status: status,
+          ),
+        );
+
+        // The video viewer keeps its player alive meanwhile
+        final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+        final subscription = container.listen(videoPlayerProvider(asset.id), (_, _) {});
+        await tester.tap(panoramaButton);
+        await tester.pumpAndSettle();
+
+        final startPosition = verify(
+          () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any()),
+        ).captured.single;
+        expect(startPosition, expected, reason: '$status');
+
+        await closeImmersiveViewer(tester, ImmersiveSphereCoverage.full, positionMs: 30000);
+        expect(calls, ['suspend', 'immersive', 'resume at 30000 paused'], reason: '$status');
+        subscription.close();
+      }
+    });
+
+    testWidgets('takes the video back only for the immersive viewer it opened last', (tester) async {
+      final asset = owned(type: .video);
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .equirectangular,
+        horizonOs: true,
+        playerState: const VideoPlayerState(
+          position: Duration(seconds: 12),
+          duration: Duration(minutes: 1),
+          status: VideoPlaybackStatus.paused,
+        ),
+      );
+      final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+      final subscription = container.listen(videoPlayerProvider(asset.id), (_, _) {});
+      addTearDown(subscription.close);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+      final [first, second] = immersiveOpeningIds;
+      expect(second, isNot(first), reason: 'each opening has its own id');
+
+      // The first viewer closes long after the second one replaced it
+      await closeImmersiveViewer(tester, ImmersiveSphereCoverage.half, positionMs: 5000, openingId: first);
+      expect(calls, ['suspend', 'immersive', 'suspend', 'immersive']);
+      expect(container.read(sphereCoverageOverridesProvider.notifier).get(asset), isNull);
+
+      await closeImmersiveViewer(tester, ImmersiveSphereCoverage.full, positionMs: 30000);
+      expect(calls, ['suspend', 'immersive', 'suspend', 'immersive', 'resume at 30000 paused']);
+    });
+
+    testWidgets('remembers the coverage the user picked in the immersive viewer', (tester) async {
+      final asset = owned(width: 6080, height: 3040);
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+      await closeImmersiveViewer(tester, ImmersiveSphereCoverage.half);
+
+      final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+      expect(container.read(sphereCoverageOverridesProvider.notifier).get(asset), SphereCoverage.half);
+      expect(calls, ['immersive'], reason: 'no video to give back');
+    });
+
+    testWidgets('gives the viewer its video back where and as it was when the immersive viewer cannot open', (
+      tester,
+    ) async {
       when(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).thenThrow(PlatformException(code: 'channel-error'));
-      await pumpTopBar(tester, owned(type: .video), projectionType: .equirectangular, horizonOs: true);
+      await pumpTopBar(
+        tester,
+        owned(type: .video),
+        projectionType: .equirectangular,
+        horizonOs: true,
+        playerState: const VideoPlayerState(
+          position: Duration(milliseconds: 83500),
+          duration: Duration(minutes: 2),
+          status: VideoPlaybackStatus.playing,
+        ),
+      );
 
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      expect(calls, ['suspend', 'resume']);
+      // Stopped before the slow steps, the video does not start over
+      expect(calls, ['suspend', 'resume at 83500 playing']);
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
     });
   });
@@ -879,7 +1036,9 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      verify(() => immersiveApi.open(file.uri.toString(), any(), false, asset.name, any(), any(), any())).called(1);
+      verify(
+        () => immersiveApi.open(file.uri.toString(), any(), false, asset.name, any(), any(), any(), any(), any()),
+      ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
       expect(previewRequests, isEmpty, reason: 'nothing to ask the server');
@@ -899,7 +1058,17 @@ void main() {
 
       expect(calls, ['suspend', 'immersive']);
       final captured = verify(
-        () => immersiveApi.open(file.uri.toString(), any(), true, asset.name, captureAny(), any(), captureAny()),
+        () => immersiveApi.open(
+          file.uri.toString(),
+          any(),
+          true,
+          asset.name,
+          captureAny(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+        ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.leftRight, ImmersiveSphereCoverage.half]);
       expect(probes.probed, [(asset, file)], reason: 'probed from the file it plays');
@@ -944,7 +1113,17 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => immersiveApi.open(file.uri.toString(), any(), false, asset.name, captureAny(), any(), captureAny()),
+          () => immersiveApi.open(
+            file.uri.toString(),
+            any(),
+            false,
+            asset.name,
+            captureAny(),
+            any(),
+            captureAny(),
+            any(),
+            any(),
+          ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
       }
@@ -973,12 +1152,54 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => immersiveApi.open(File(path).uri.toString(), any(), false, transient.name, any(), any(), any()),
+        () => immersiveApi.open(
+          File(path).uri.toString(),
+          any(),
+          false,
+          transient.name,
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
     });
 
-    testWidgets('says so and leaves the video alone when its file cannot be read', (tester) async {
+    testWidgets('stops the video before looking for its file, and starts the immersive viewer where it stopped', (
+      tester,
+    ) async {
+      final asset = onHeadset(type: .video);
+      final file = Completer<File?>();
+      when(() => storage.getFileForAsset(asset.id)).thenAnswer((_) => file.future);
+      await pumpTopBar(
+        tester,
+        asset,
+        forcedPanoramas: {asset.id},
+        horizonOs: true,
+        playerState: const VideoPlayerState(
+          position: Duration(seconds: 12),
+          duration: Duration(minutes: 1),
+          status: VideoPlaybackStatus.playing,
+        ),
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pump();
+      expect(calls, ['suspend'], reason: 'the copy on the headset may take a while to find');
+
+      file.complete(File('/storage/emulated/0/Oculus/VideoShots/VID_360.mp4'));
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'immersive']);
+      final startPosition = verify(
+        () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any()),
+      ).captured.single;
+      expect(startPosition, 12000);
+    });
+
+    testWidgets('says so and gives the video back where and as it was when its file cannot be read', (tester) async {
       final asset = onHeadset(type: .video);
       when(() => storage.getFileForAsset(asset.id)).thenAnswer((_) async => null);
       await pumpTopBar(tester, asset, forcedPanoramas: {asset.id}, horizonOs: true);
@@ -986,8 +1207,9 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      expect(calls, isEmpty, reason: 'nothing stopped the viewer\'s player, so nothing resumes it');
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any()));
+      // Stopped before the file is looked for, so that the immersive viewer starts where the video was
+      expect(calls, ['suspend', 'resume at 0 paused']);
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
     });
   });
@@ -1023,7 +1245,7 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any())).called(1);
+      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any())).called(1);
     });
 
     testWidgets('stays hidden for the other assets', (tester) async {
@@ -1154,7 +1376,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(stored(), '["${asset.id}"]');
-      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any())).called(1);
+      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any())).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
     });
 

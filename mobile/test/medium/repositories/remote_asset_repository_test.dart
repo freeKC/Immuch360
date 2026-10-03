@@ -64,4 +64,33 @@ void main() {
       expect(result[0].id, remote.id);
     });
   });
+
+  group('equirectangularRemoteIds', () {
+    late String userId;
+
+    setUp(() async {
+      userId = (await ctx.newUser()).id;
+    });
+
+    Future<String> newAsset({String? projectionType, bool withExif = true}) async {
+      final asset = await ctx.newRemoteAsset(ownerId: userId);
+      if (withExif) {
+        await ctx.newRemoteExif(assetId: asset.id, projectionType: projectionType);
+      }
+      return asset.id;
+    }
+
+    test('keeps the assets asked for whose exif projection is equirectangular, like the 360° timeline', () async {
+      final photo = await newAsset(projectionType: 'EQUIRECTANGULAR');
+      final other = await newAsset(projectionType: 'EQUIRECTANGULAR');
+      final flat = await newAsset();
+      final withoutExif = await newAsset(withExif: false);
+      final stereo = await newAsset(projectionType: 'EQUIRECTANGULAR_STEREO');
+      final cubemap = await newAsset(projectionType: 'CUBEMAP');
+
+      expect(await sut.equirectangularRemoteIds([photo, flat, withoutExif, stereo, cubemap, 'unknown']), {photo});
+      expect(await sut.equirectangularRemoteIds([photo, other]), {photo, other});
+      expect(await sut.equirectangularRemoteIds([]), isEmpty);
+    });
+  });
 }
