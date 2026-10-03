@@ -87,7 +87,7 @@ A stereoscopic video can gain depth on a flat screen. The two eyes of the video 
 
 - **Formats**: side by side and top and bottom, full or half width, flat and 360°. The layout is read from the file, or chosen by hand in the player when the file does not say it.
 - **How to enable**: it is on by default; the switch is in Settings, Video viewer, "Spatial 2.5D (experimental)". While it is on, a Spatial button appears in the viewer of stereoscopic videos. The camera is only used once you press that button.
-- **Camera**: the front camera permission is asked only when you use the mode. Images are processed on the device only, never stored and never sent anywhere.
+- **Camera**: the front camera permission is asked only when you use the mode. Images are processed on the device only, never stored and never sent anywhere. The Quest 3 build has no camera permission at all (the headset has no camera an app may use), so the player there runs without head tracking.
 - **Limitations**: experimental, phones and tablets only (not on the Meta Quest), needs OpenGL ES 3.0 or Metal. The depth is an estimate. It works best in landscape with your face well lit.
 - **Fallback**: if anything goes wrong (no camera, unsupported device, unreadable layout), you are back in the normal player.
 
@@ -215,7 +215,8 @@ If the image does not face you the right way when it opens, turn it with the thu
 
   `-tag:v hvc1` labels the HEVC track the way Apple devices and browsers expect, `-c:a copy` keeps the audio as it is. ffmpeg drops the 360° tag of the export, the exiftool line copies it back; without it, Immich shows the video as a flat one.
 - **Originals that cannot stream:** when the server ignores HTTP Range requests on the original and the MP4 index (moov) is at the end of the file, the whole file would have to download before the first frame, so the app falls back to the server playback stream. A reverse proxy in front of Immich that buffers the responses or strips the Range headers can cause this.
-- **Store:** the Horizon Store listing is in preparation (alpha channel today); until then, sideloading.
+- **Store:** the Horizon Store listing is being submitted (build on the alpha and production channels, screenshots and questionnaires in progress); until it is approved, sideloading.
+- **Permissions:** the headset build asks only for photos and videos (the mode without a server) and notifications (backup progress). It has no storage, audio, location or camera permission, unlike the phone build; the Wi-Fi name based server switching is therefore not available on the headset.
 - **3D layouts:** top and bottom and side by side 360° media are shown in 3D, each eye getting its own half of the frame. The layout is guessed from the file's shape (square: top and bottom, 4:1: side by side); when the guess is wrong, push the thumbstick up or down, or use the 3D button of the info panel, to change it.
 - **Starting orientation not confirmed yet:** if a photo or video does not face you when it opens, turn it with the thumbstick and report the value (see above).
 - **APK size:** the Spatial SDK adds about 56 MB of 64-bit ARM native code, on phones too, where it is never loaded.
@@ -238,7 +239,7 @@ What is planned next, in rough order. Nothing here is a promise, and feedback on
 
 - **App Store**: the iOS listing is under review; the link will be added here when it is live.
 - **Network shares, next steps**: the audio track choice in the flat player, swiping from one file of a folder to the next, Digest authentication for WebDAV, the user name from the Bonjour record.
-- **Meta Horizon Store**: the headset build is on the store's alpha channel; the public listing (store page, data use and age questionnaires, review) comes next, so the Quest 3 no longer needs sideloading.
+- **Meta Horizon Store**: the headset build is on the store's alpha and production channels and the listing is being submitted (screenshots done, permissions trimmed in build 12, questionnaires and review next), so the Quest 3 no longer needs sideloading.
 - **Store listings**: the 3D, VR180 and Spatial features described on Google Play and the App Store.
 - **Raw 360° camera files**: Insta360 .insp and .insv, GoPro .360, dual fisheye .dng. Stitching belongs on the server side; under study.
 - **Upstream**: small pull requests to Immich for the parts the maintainers want, starting with the 360° photo viewer.
@@ -257,7 +258,7 @@ flutter build apk --release --flavor phone                                   # p
 flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3, the Horizon Store build
 ```
 
-Store screenshots are taken on debug simulator builds made with `--dart-define=IMMUCH_SCREENSHOTS=true`, which only hides the debug banner. The two Android flavours are the same app. The `quest` one targets SDK 34, drops the two permissions the Meta Horizon Store refuses (media management and background location) and is 64 bit only; the `phone` one is what Google Play requires. iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository, no Mac needed. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Store screenshots are taken on debug simulator builds made with `--dart-define=IMMUCH_SCREENSHOTS=true`, which only hides the debug banner. The two Android flavours are the same app. The `quest` one targets SDK 34, is 64 bit only and keeps only the permissions the headset uses (photos, videos, notifications): media management, background location, legacy storage, audio, media location, device location and camera are removed in `android/app/src/quest/AndroidManifest.xml`, because the Meta Horizon Store refuses the first two and asks for a justification of every other sensitive one; the `phone` one is what Google Play requires. iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository, no Mac needed. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 No secret lives in this repository: the Android signing key is stored as encrypted GitHub Actions secrets, and the Apple signing material is stored as encrypted variables on Codemagic. The workflow files only reference them by name.
 

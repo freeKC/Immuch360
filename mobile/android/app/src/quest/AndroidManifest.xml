@@ -5,6 +5,24 @@
        state a GLES version (the Spatial player needs ES 3.0 anyway) -->
   <uses-permission android:name="android.permission.MANAGE_MEDIA" tools:node="remove" />
   <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" tools:node="remove" />
+
+  <!-- Horizon Store submission: every sensitive permission has to be justified, so the headset build keeps only
+       what it uses there: photos and videos (mode without a server) and notifications (backup progress).
+       Dropped: the legacy storage permissions (inert from Android 13, the headset runs 14), audio files (never
+       listed), the location of the media and the device location (Wi-Fi name based server switching, not used
+       on the headset) and the camera (the Spatial player's face tracking: the headset has no app camera, the
+       player then runs without head tracking, as it already did). The permission requests of the app get an
+       immediate refusal for these and every caller already handles it. -->
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
+  <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove" />
+  <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" tools:node="remove" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" tools:node="remove" />
+  <uses-permission android:name="android.permission.CAMERA" tools:node="remove" />
+  <uses-feature android:name="android.hardware.camera.front" tools:node="remove" />
+  <uses-feature android:name="android.hardware.camera" tools:node="remove" />
   <uses-feature android:glEsVersion="0x00030000" android:required="true" />
 
   <!-- No cleartext HTTP on the headset (the Horizon Store security scan flags it); the exceptions are in
