@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <b>The Immich mobile app, with 360° photos and videos you can look around in, and a free video player for flat, 360°, 3D and VR180 videos.</b><br>
+  <b>The Immich mobile app, with 360° photos and videos you can look around in, and a free media player for flat, 360°, 3D and VR180 photos and videos.</b><br>
   Android phones, iPhones and the Meta Quest 3. From your Immich server, your phone or a NAS share. Same server, same account, no server plugin needed.<br>
   <sub>Unofficial fork. Not affiliated with Immich or FUTO.</sub>
 </p>
@@ -63,10 +63,10 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 | <img src=".github/readme/phone-flat.png" width="170" alt="The same photo in the regular viewer, flat"> | <img src=".github/readme/phone-sphere.png" width="170" alt="The photo as a sphere in Immuch360"> |
 | A 360° photo shown flat | The same photo as a sphere you can turn, zoom, and follow with the phone's gyroscope |
 
-| Library tab | 360° list |
-|---|---|
-| <img src=".github/readme/library-360.png" width="170" alt="The 360° entry of the Library tab"> | <img src=".github/readme/library-360-list.png" width="170" alt="Only the 360° photos and videos"> |
-| A 360° entry next to Favorites | Only your 360° photos and videos, newest first |
+| Library tab | 360° list | On an iPad | 360° list on an iPad |
+|---|---|---|---|
+| <img src=".github/readme/library-360.png" width="170" alt="The 360° entry of the Library tab"> | <img src=".github/readme/library-360-list.png" width="170" alt="Only the 360° photos and videos"> | <img src=".github/readme/ipad-sphere.jpg" width="200" alt="A 360° photo as a sphere on an iPad"> | <img src=".github/readme/ipad-library-360.jpg" width="200" alt="The 360° list on an iPad"> |
+| A 360° entry next to Favorites | Only your 360° photos and videos, newest first | The sphere viewer on an iPad (App Store build) | The 360° list on an iPad |
 
 - **360° photos** open as an interactive sphere: drag to look around, pinch to zoom, double tap, inertia, the initial view the camera recorded, sharper texture when zoomed in. Partial panoramas are handled.
 - **Gyroscope**: turn the phone to look around (toggle in the viewer).
@@ -80,6 +80,32 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 - **A video player, free**: flat, 360°, 3D (side by side, top and bottom) and VR180 videos play in the native players with sound, seeking, the audio track of your choice (languages, commentary, in the 360° and Spatial players), gyroscope and head tracking, whether they come from the Immich server, the phone's own gallery or a network share. On the Meta Quest 3 this replaces the paid players of the store for your own files.
 - **Network shares**: Library tab, "Network shares": add a Samba (SMB) or WebDAV share, browse its folders, and play its photos and videos live in the same viewers (360°, 3D, VR180, Spatial 2.5D, Quest immersive view), with or without an Immich server, nothing downloaded. See [Network shares](#network-shares).
 - **Everything else is Immich**, unchanged: backup, timeline, albums, search, sharing, partners, all synced with your server.
+
+## A media player too
+
+Immuch360 is a gallery, and it is also a free media player: it plays what the official app cannot, from three sources, in the player that fits the file. On the Quest 3 the store players for 360° and 3D video are paid; this one is free and open source.
+
+| What | Android phones | iPhone, iPad | Meta Quest 3 |
+|---|---|---|---|
+| Flat videos (MP4, MOV, MKV, what the device decodes) | Immich player, and a native player for network shares | Same | In the window |
+| 360° photos | Sphere viewer, gyroscope | Same | Immersive, all around you |
+| 360° videos | Native Media3 player on a sphere, gyroscope, seeking, audio track choice, buffering indicator | Native SceneKit player, same controls | Immersive, true 3D for stereoscopic files |
+| 3D 360° (top and bottom, side by side) | Left eye, layout button | Same | Each eye gets its own half of the frame |
+| VR180 (half sphere) photos and videos | Half sphere, 360°/180° button | Same | Immersive half sphere |
+| Spatial 2.5D (flat screen depth from a stereoscopic video) | Native player, head tracking with the front camera | Same | Not needed, the headset is 3D |
+
+| From | How |
+|---|---|
+| Your Immich server | Streams the original when the server lets it, else the transcoded stream; same account as the web app |
+| The phone or headset itself | "Use without a server" on the login page, or the "On this device" entry of the Library tab |
+| A NAS or a computer | Samba (SMB) and WebDAV shares, found on the network, read live over several connections, nothing copied |
+
+| 360° photo in the headset | 360° video in the headset | 3D 360° video in the headset |
+|---|---|---|
+| <img src=".github/readme/quest-immersive-360-photo.jpg" width="300" alt="A 360° photo all around you in the Quest 3, with the info panel: layout, 360° and Back buttons"> | <img src=".github/readme/quest-immersive-360-video.jpg" width="300" alt="A 360° video of a lake playing in the Quest 3, with the info panel: layout, 360°, Pause and Back buttons"> | <img src=".github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="A stereoscopic 360° video in the Quest 3, the info panel reading 3D, top and bottom"> |
+| The immersive view of a photo, with the info panel (layout, 360°/180°, Back) | A video playing, with Pause | A top and bottom stereoscopic video, each eye served (the Kandao Obsidian sample) |
+
+Coming in the next build (13): a time bar with seeking and skip buttons in the immersive video playback, and previous/next media without leaving the immersive view. See the [Roadmap](#roadmap).
 
 ## Spatial 2.5D (experimental)
 
@@ -151,6 +177,7 @@ The App Store link will be added here as soon as the listing is published. Log i
 | VR180 (half sphere) photos and videos | ❌ No, stretched around the sphere | ✅ **Yes**: spherical bounds, mesh, GPano crop or file name, 360°/180° button in every viewer, remembered on the phone | Tested on an Android emulator with synthetic media; device feedback welcome |
 | Use without an Immich server (local gallery, 360° detection on the device, all viewers) | ❌ No | ✅ **Yes**, from the login page; connect a server later from the settings | Tested on an Android emulator; device feedback welcome |
 | Network shares: SMB (Samba) and WebDAV browsed and played live, nothing downloaded; servers found by themselves on the network | ❌ No | ✅ **Yes**: from the Library tab, every viewer, with or without a server, phones and Quest 3 | Tested against Samba and WebDAV test servers on an Android emulator; device and NAS feedback welcome |
+| Media player controls: seeking, audio track choice, buffering indicator in the 360° and Spatial players; seeking and buffering in the flat player of network shares | ❌ n/a | ✅ **Yes**, Android and iOS | Done; the immersive view of the Quest 3 gets seeking and previous/next in build 13 |
 | Native Insta360 files (.insp, .insv, .dng dual fisheye) | ❌ Shown flat or wrongly | ❌ Server side stitching under study | Study |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
@@ -192,6 +219,22 @@ The whole app runs as a resizable 2D window: login, timeline, albums, search, th
 | Play or pause a video | Trigger, when the info panel is hidden | Play or Pause button of the info panel |
 | Show or hide the info panel | A, X, grip or menu | Menu gesture, or pinch when the panel is hidden |
 | Turn the image by 90° | Thumbstick left or right | |
+
+Seeking in a video and stepping to the previous or next media without leaving the immersive view are not there yet: they are the next build's work (see the [Roadmap](#roadmap)).
+
+### In pictures
+
+Captures taken in the headset with the capture button (Meta button and trigger), on a Quest 3 with the mode without a server.
+
+| The timeline | View as 360° |
+|---|---|
+| <img src=".github/readme/quest-timeline-360.jpg" width="380" alt="The Immuch360 window in the headset showing a month of 360° photos"> | <img src=".github/readme/quest-view-as-360.jpg" width="380" alt="A top and bottom 3D photo with the viewer menu open on View as 360°"> |
+| The app window floating in the room, a month of 360° photos | A stereoscopic photo the server does not flag as 360°: the ⋮ menu offers View as 360° |
+
+| Without a server | Network shares |
+|---|---|
+| <img src=".github/readme/quest-library-without-server.jpg" width="380" alt="The Library tab without a server: On this device and Network shares"> | <img src=".github/readme/quest-network-shares.jpg" width="380" alt="The Network shares page with a Freebox Server SMB share"> |
+| The Library tab in the mode without a server: the headset's own media and the network shares | A Samba share of a Freebox Server, read live from the headset |
 
 Photos show a preview first, then the original, downscaled to at most 8192x4096 (the app's limit). Videos play the file stored on the headset when there is one; otherwise they stream from your server: the original, or the server's transcoded version when the original cannot stream or is too large for the headset.
 
@@ -237,6 +280,7 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 
 What is planned next, in rough order. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
+- **Immersive view, build 13 (in progress)**: a time bar with seeking and skip buttons while a video plays in the headset, and previous/next media without leaving the immersive view.
 - **App Store**: the iOS listing is under review; the link will be added here when it is live.
 - **Network shares, next steps**: the audio track choice in the flat player, swiping from one file of a folder to the next, Digest authentication for WebDAV, the user name from the Bonjour record.
 - **Meta Horizon Store**: the headset build is on the store's alpha and production channels and the listing is being submitted (screenshots done, permissions trimmed in build 12, questionnaires and review next), so the Quest 3 no longer needs sideloading.
