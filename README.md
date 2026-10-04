@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360° photos and videos for your Immich library, on Android, iOS and Meta Quest 3">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D and VR180 photos and videos, from Immich, your phone or a NAS. Android, iOS and Meta Quest 3, with or without a server">
 </p>
 
 <p align="center">
