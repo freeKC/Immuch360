@@ -184,6 +184,19 @@ internal object ImmersiveMedia {
     return base + "?size=preview" + if (query.isNotEmpty()) "&$query" else ""
   }
 
+  /**
+   * True for a media read from the headset (file://, content://) or through the media bridge of the app, which serves
+   * the files of a network share on 127.0.0.1: no Immich server can transcode it, so the advice for a video the headset
+   * cannot decode is to re-encode the file rather than to change the transcoding settings of the server.
+   */
+  fun isFileMedia(url: String): Boolean {
+    val uri = runCatching { URI(url) }.getOrNull() ?: return !url.startsWith("http", ignoreCase = true)
+    val scheme = uri.scheme?.lowercase()
+    if (scheme != "http" && scheme != "https") return true
+    val host = uri.host?.lowercase()?.removePrefix("[")?.removeSuffix("]") ?: return false
+    return host == "localhost" || host.startsWith("127.") || host == "::1"
+  }
+
   /** ".../assets/{id}/original?..." gives ".../assets/{id}/video/playback". */
   fun playbackUrlFor(originalUrl: String): String? {
     val match = originalPath.find(originalUrl) ?: return null
@@ -192,7 +205,8 @@ internal object ImmersiveMedia {
 
   /**
    * True for an H.264 video larger than 4096x2304 in either orientation: its long side above 4096 or
-   * its short side above 2304. An unknown side (-1) never counts as too large.
+   * its short side above 2304. An unknown side (-1) never counts as too large. The rule VideoDecoders applies on a
+   * Meta Quest over what the decoder list says.
    */
   fun exceedsAvcDecoder(mimeType: String?, width: Int, height: Int): Boolean =
     mimeType.equals(MIME_AVC, ignoreCase = true) &&

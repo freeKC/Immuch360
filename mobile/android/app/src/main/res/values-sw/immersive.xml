@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Faili asili imeshindwa (%1$s), inajaribu mtiririko wa kucheza wa seva</string>
   <string name="immersive_video_decoder_switch">%1$s inazidi uwezo wa kisimbuzi cha headset, inajaribu mtiririko wa kucheza wa seva</string>
   <string name="immersive_error_nothing">Hakuna cha kuonyesha</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d inazidi uwezo wa kisimbuzi cha headset (inakwama, ina miraba). Katika Immich, weka ubadilishaji wa video kuwa HEVC au punguza ubora.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d inazidi uwezo wa kisimbuzi cha headset (inakwama, ina miraba). Simba upya faili hii kwa HEVC au kwa ubora wa chini zaidi.</string>
 </resources>

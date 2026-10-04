@@ -48,15 +48,23 @@ private enum HeadTracking {
 /// [AudioTrackChooser]. While the video loads or stalls, a label tells how far the buffer is filled, see
 /// [BufferingIndicator]. Flutter hears about the close through [SpatialVideoEvents], with the position, so that its
 /// normal player resumes there, and with the layout and the projection shown last.
+///
+/// With a fallback URL (the server's transcoded stream), the original gives way to it once: when its codec and size
+/// are above what the device decodes (see [VideoDecoderSupport]), read as soon as its tracks are known, or when it
+/// fails. The fallback stream starts where the original stopped; the error label only shows if it fails too.
 final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGestureRecognizerDelegate {
   private let videoUrl: URL
+  // The server's transcoded stream, nil when there is none
+  private let fallbackUrl: URL?
   private let headers: [String: String]
   private let videoTitle: String
   // A flat video stays flat; a 360 degree one switches between the full sphere and its front half with the coverage
   // button
   private var projection: SpatialProjection
-  private let startPositionMs: Int64
-  private let autoplay: Bool
+  // What Flutter asked at first; after a switch to the fallback stream, where the original stopped and whether the
+  // user had it playing, so that the fallback stream starts the same way
+  private var startPositionMs: Int64
+  private var autoplay: Bool
   private let debugOverlay: Bool
   private let labels: [String: String]
   private let events: SpatialVideoEvents
@@ -152,15 +160,24 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   private var closeState: (positionMs: Int64, wasPlaying: Bool)?
   private var closedReported = false
   private var audioTracksRequested = false
+  // The last tap on play or pause, Flutter's autoplay before that: a switch to the fallback stream keeps the video
+  // playing or paused
+  private var playRequested: Bool
+  // The original gave way to the fallback stream, which happens once
+  private var fallbackPlaying = false
 
-  /// [request] carries the translated labels, English is the fallback. [events] is told once when the player closes.
-  init(url: URL, request: SpatialOpenRequest, events: SpatialVideoEvents) {
+  /// [request] carries the translated labels, English is the fallback; "sourceSwitched" is the message of a switch to
+  /// the fallback stream. [fallbackUrl] is the server's transcoded stream, read from [request] by the caller and
+  /// played with the same headers. [events] is told once when the player closes.
+  init(url: URL, fallbackUrl: URL?, request: SpatialOpenRequest, events: SpatialVideoEvents) {
     videoUrl = url
+    self.fallbackUrl = fallbackUrl
     headers = request.headers
     videoTitle = request.title
     projection = request.projection
     startPositionMs = max(request.startPositionMs, 0)
     autoplay = request.autoplay
+    playRequested = request.autoplay
     debugOverlay = request.debugOverlay
     labels = request.labels
     selectedLayout = request.layout
@@ -488,49 +505,15 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   private static let streamingForwardBufferDuration: TimeInterval = 15
 
   private func setUpPlayer() {
-    let asset = makeAsset()
-    let item = AVPlayerItem(asset: asset)
-    if !videoUrl.isFileURL {
-      // Read over HTTP (the media bridge of a network share, a server): more media buffered ahead, so that a share
-      // that answers in bursts does not stall the playback every few seconds. Local files keep the defaults.
-      item.preferredForwardBufferDuration = Self.streamingForwardBufferDuration
-    }
-    if renderer != nil {
-      let output = AVPlayerItemVideoOutput(pixelBufferAttributes: [
-        kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
-        kCVPixelBufferMetalCompatibilityKey as String: true,
-      ])
-      item.add(output)
-      videoOutput = output
-    }
     // The audio track of the language picked last, where the video has one
     AudioTrackChooser.preferSavedLanguage(player)
-    player.replaceCurrentItem(with: item)
+    let asset = loadItem(videoUrl)
     detectMultiview(asset)
+    checkDecoder(asset)
 
-    statusObservation = item.observe(\.status, options: [.initial, .new]) { [weak self] observed, _ in
-      let status = observed.status
-      let reason = observed.error?.localizedDescription
-      Task { @MainActor [weak self] in
-        if status == .failed {
-          self?.showError(reason)
-        } else if status == .readyToPlay {
-          self?.itemReady()
-        }
-      }
-    }
     timeControlObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] _, _ in
       Task { @MainActor [weak self] in
         self?.playbackStateChanged()
-      }
-    }
-    // Zero until the first frame is known
-    presentationSizeObservation = item.observe(\.presentationSize, options: [.initial, .new]) {
-      [weak self] observed, _ in
-      let size = observed.presentationSize
-      guard size.width > 0, size.height > 0 else { return }
-      Task { @MainActor [weak self] in
-        self?.frameSizeKnown(size)
       }
     }
     timeObserver = player.addPeriodicTimeObserver(
@@ -539,6 +522,65 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     ) { [weak self] _ in
       Task { @MainActor [weak self] in
         self?.updateTimeDisplay()
+      }
+    }
+  }
+
+  /// Makes [url] the item of the player, with its video output and its observations: the original at first, the
+  /// fallback stream after a switch. Returns the asset of the item.
+  @discardableResult
+  private func loadItem(_ url: URL) -> AVURLAsset {
+    let asset = makeAsset(for: url)
+    let item = AVPlayerItem(asset: asset)
+    if !url.isFileURL {
+      // Read over HTTP (the media bridge of a network share, a server): more media buffered ahead, so that a share
+      // that answers in bursts does not stall the playback every few seconds. Local files keep the defaults.
+      item.preferredForwardBufferDuration = Self.streamingForwardBufferDuration
+    }
+    // The item replaced, if any, gives its video output back and tells nothing more
+    statusObservation?.invalidate()
+    presentationSizeObservation?.invalidate()
+    if let previous = player.currentItem {
+      if let videoOutput {
+        previous.remove(videoOutput)
+      }
+      NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: previous)
+      NotificationCenter.default.removeObserver(self, name: .AVPlayerItemFailedToPlayToEndTime, object: previous)
+    }
+    videoOutput = nil
+    if renderer != nil {
+      let output = AVPlayerItemVideoOutput(pixelBufferAttributes: [
+        kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
+        kCVPixelBufferMetalCompatibilityKey as String: true,
+      ])
+      item.add(output)
+      videoOutput = output
+    }
+    player.replaceCurrentItem(with: item)
+
+    statusObservation = item.observe(\.status, options: [.initial, .new]) { [weak self] observed, _ in
+      let status = observed.status
+      let reason = observed.error?.localizedDescription
+      let itemId = ObjectIdentifier(observed)
+      Task { @MainActor [weak self] in
+        // A late change of an item the fallback stream replaced
+        guard let self, self.isCurrentItem(itemId) else { return }
+        if status == .failed {
+          self.itemFailed(reason)
+        } else if status == .readyToPlay {
+          self.itemReady()
+        }
+      }
+    }
+    // Zero until the first frame is known
+    presentationSizeObservation = item.observe(\.presentationSize, options: [.initial, .new]) {
+      [weak self] observed, _ in
+      let size = observed.presentationSize
+      guard size.width > 0, size.height > 0 else { return }
+      let itemId = ObjectIdentifier(observed)
+      Task { @MainActor [weak self] in
+        guard let self, self.isCurrentItem(itemId) else { return }
+        self.frameSizeKnown(size)
       }
     }
     NotificationCenter.default.addObserver(
@@ -553,23 +595,81 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
       name: .AVPlayerItemFailedToPlayToEndTime,
       object: item
     )
+    return asset
   }
 
   /// Local files play as they are. Server videos take the route of the Flutter video player (native_video_player):
   /// through its local proxy when the server asks for a client certificate or basic auth, else straight to the
   /// server with the custom headers and the session cookies. Those cookies live in the app group storage, which
-  /// AVFoundation does not read by itself.
-  private func makeAsset() -> AVURLAsset {
-    if videoUrl.isFileURL {
-      return AVURLAsset(url: videoUrl)
+  /// AVFoundation does not read by itself. The fallback stream takes the same route as the original.
+  private func makeAsset(for url: URL) -> AVURLAsset {
+    if url.isFileURL {
+      return AVURLAsset(url: url)
     }
-    if let proxyUrl = VideoProxyServer.shared.proxyURL(for: videoUrl) {
+    if let proxyUrl = VideoProxyServer.shared.proxyURL(for: url) {
       return AVURLAsset(url: proxyUrl)
     }
-    let cookies = URLSessionManager.cookieStorage.cookies(for: videoUrl) ?? []
+    let cookies = URLSessionManager.cookieStorage.cookies(for: url) ?? []
     var httpHeaders = HTTPCookie.requestHeaderFields(with: cookies)
     httpHeaders.merge(headers) { _, custom in custom }
-    return AVURLAsset(url: videoUrl, options: ["AVURLAssetHTTPHeaderFieldsKey": httpHeaders])
+    return AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": httpHeaders])
+  }
+
+  /// Whether [itemId] is the item the player plays, and not one the fallback stream replaced
+  private func isCurrentItem(_ itemId: ObjectIdentifier) -> Bool {
+    guard let item = player.currentItem else { return false }
+    return ObjectIdentifier(item) == itemId
+  }
+
+  /// Reads the codec and the coded size of the original as soon as its tracks are known, while the item loads, so
+  /// that a video above what the device decodes gives way to the fallback stream before it stutters. Without a
+  /// fallback, the original plays anyway and the log tells why it may stutter.
+  private func checkDecoder(_ asset: AVURLAsset) {
+    Task { @MainActor [weak self] in
+      guard let format = await VideoDecoderSupport.videoFormat(of: asset) else { return }
+      let verdict = VideoDecoderSupport.verdict(for: format)
+      guard !verdict.supported else { return }
+      guard let self, !self.closing, !self.fallbackPlaying else { return }
+      let reason = verdict.reason ?? "above what this device decodes"
+      if !self.switchToFallback(because: reason, format: format) {
+        print("The Spatial video may not play smoothly: \(reason)")
+      }
+    }
+  }
+
+  /// The original gives way to the fallback stream once, the error label shows when there is none or it fails too
+  private func itemFailed(_ reason: String?) {
+    if switchToFallback(because: "the original failed: \(reason ?? "unknown error")") {
+      return
+    }
+    showError(reason)
+  }
+
+  /// Plays the fallback stream in place of the original, from where it stopped and in the state the user left it
+  /// (playing or paused): the new item goes through itemReady as the original did, with the start position and the
+  /// autoplay of that moment. False when there is no fallback, when it already plays, or when the player failed or
+  /// closes.
+  @discardableResult
+  private func switchToFallback(because reason: String, format: CMFormatDescription? = nil) -> Bool {
+    guard let fallbackUrl, !fallbackPlaying, !failed, !closing else { return false }
+    fallbackPlaying = true
+    print("The Spatial player switches to the transcoded stream: \(reason)")
+    if playbackStarted {
+      startPositionMs = captureCloseState().positionMs
+    }
+    autoplay = playRequested
+    // Paused until the fallback stream is ready and in place, else it would start from its beginning
+    player.pause()
+    readyHandled = false
+    playbackStarted = false
+    reachedEnd = false
+    // The fallback stream may have other audio tracks: they are read again once it is ready
+    audioTracksRequested = false
+    audioButton.isHidden = true
+    loadItem(fallbackUrl)
+    playbackStateChanged()
+    showMessage(VideoDecoderSupport.switchedMessage(text("sourceSwitched", "Playing the transcoded stream"), format: format), duration: longMessageDuration)
+    return true
   }
 
   /// Once the item can play: the start position first, then the playback if asked
@@ -583,9 +683,15 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
       return
     }
     let start = CMTime(value: CMTimeValue(startPositionMs), timescale: 1000)
+    // The seek of an item the fallback stream replaced meanwhile must not start the playback of the new one
+    let itemId = player.currentItem.map { ObjectIdentifier($0) }
     player.seek(to: start, toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
       Task { @MainActor [weak self] in
-        self?.startPlayback()
+        guard let self else { return }
+        if let itemId, !self.isCurrentItem(itemId) {
+          return
+        }
+        self.startPlayback()
       }
     }
   }
@@ -597,7 +703,8 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
     Task { @MainActor [weak self] in
       guard let self else { return }
       let hasChoice = await self.audioTracks.load(item)
-      guard hasChoice, !self.closing else { return }
+      // Not for an item the fallback stream replaced meanwhile
+      guard hasChoice, !self.closing, self.player.currentItem === item else { return }
       self.audioButton.menu = self.audioTracks.menu { [weak self] name in
         self?.audioTrackPicked(name)
       }
@@ -674,8 +781,14 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
   @objc private nonisolated func playerItemFailedToPlayToEnd(_ notification: Notification) {
     let error = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error
     let reason = error?.localizedDescription
+    let itemId = (notification.object as? AVPlayerItem).map { ObjectIdentifier($0) }
     Task { @MainActor [weak self] in
-      self?.showError(reason)
+      guard let self else { return }
+      // A late failure of an item the fallback stream replaced
+      if let itemId, !self.isCurrentItem(itemId) {
+        return
+      }
+      self.itemFailed(reason)
     }
   }
 
@@ -1539,8 +1652,10 @@ final class SpatialVideoViewController: UIViewController, MTKViewDelegate, UIGes
         player.seek(to: .zero)
         renderer?.resetHistory()
       }
+      playRequested = true
       player.play()
     } else {
+      playRequested = false
       player.pause()
     }
   }

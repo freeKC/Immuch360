@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">原始檔案播放失敗（%1$s），正在嘗試伺服器播放串流</string>
   <string name="immersive_video_decoder_switch">%1$s 超出頭戴裝置解碼器的能力，正在嘗試伺服器播放串流</string>
   <string name="immersive_error_nothing">沒有可顯示的內容</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d 超出頭戴裝置解碼器的能力（卡頓、馬賽克）。請在 Immich 中將影片轉碼設定為 HEVC，或限制解析度。</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d 超出頭戴裝置解碼器的能力（卡頓、馬賽克）。請將此檔案重新編碼為 HEVC，或降低解析度。</string>
 </resources>

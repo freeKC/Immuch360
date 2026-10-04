@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Izvirnik ni uspel (%1$s), poskus s pretokom za predvajanje s strežnika</string>
   <string name="immersive_video_decoder_switch">%1$s presega zmožnosti dekoderja naglavnega kompleta, poskus s pretokom za predvajanje s strežnika</string>
   <string name="immersive_error_nothing">Ni ničesar za prikaz</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d presega zmožnosti dekoderja naglavnega kompleta (zatikanje, kockasta slika). V Immichu nastavite prekodiranje videa na HEVC ali omejite ločljivost.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d presega zmožnosti dekoderja naglavnega kompleta (zatikanje, kockasta slika). To datoteko znova kodirajte v HEVC ali v nižji ločljivosti.</string>
 </resources>

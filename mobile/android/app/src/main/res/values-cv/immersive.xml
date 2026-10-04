@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Оригинал ӗҫлемерӗ (%1$s), сервер выляну юхӑмне тӗрӗслетпӗр</string>
   <string name="immersive_video_decoder_switch">%1$s шлем декодерӗн вӑйӗнчен иртет, сервер выляну юхӑмне тӗрӗслетпӗр</string>
   <string name="immersive_error_nothing">Кӑтартмалли нимӗн те ҫук</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d шлем декодерӗн вӑйӗнчен иртет (чарӑна-чарӑна пырать, тӑваткалсем курӑнаҫҫӗ). Immich-ра видео транскодланине HEVC ҫине лартӑр е виҫене чакарӑр.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d шлем декодерӗн вӑйӗнчен иртет (чарӑна-чарӑна пырать, тӑваткалсем курӑнаҫҫӗ). Ку файла HEVC-па е пӗчӗкрех виҫепе ҫӗнӗрен кодлӑр.</string>
 </resources>

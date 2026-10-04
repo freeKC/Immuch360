@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">D\'Original huet net funktionéiert (%1$s), de Playback-Stream vum Server gëtt probéiert</string>
   <string name="immersive_video_decoder_switch">%1$s iwwerfuerdert den Decoder vum Headset, de Playback-Stream vum Server gëtt probéiert</string>
   <string name="immersive_error_nothing">Näischt ze weisen</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d iwwerfuerdert den Decoder vum Headset (ruckeleg, pixeleg). Setzt am Immich d\'Video-Transkodéierung op HEVC oder limitéiert d\'Opléisung.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d iwwerfuerdert den Decoder vum Headset (ruckeleg, pixeleg). Kodéiert dëse Fichier nei an HEVC oder mat enger méi klenger Opléisung.</string>
 </resources>

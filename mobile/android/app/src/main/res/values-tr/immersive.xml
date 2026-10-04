@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Orijinal dosya oynatılamadı (%1$s), sunucunun oynatma akışı deneniyor</string>
   <string name="immersive_video_decoder_switch">%1$s gözlüğün kod çözücüsünün sınırını aşıyor, sunucunun oynatma akışı deneniyor</string>
   <string name="immersive_error_nothing">Gösterilecek bir şey yok</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d gözlüğün kod çözücüsünün sınırını aşıyor (takılma, bloklaşma). Immich\'te video dönüştürmeyi HEVC olarak ayarlayın veya çözünürlüğü sınırlayın.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d gözlüğün kod çözücüsünün sınırını aşıyor (takılma, bloklaşma). Bu dosyayı HEVC ile veya daha düşük bir çözünürlükte yeniden kodlayın.</string>
 </resources>

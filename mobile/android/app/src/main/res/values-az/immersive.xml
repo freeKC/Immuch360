@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Orijinal alınmadı (%1$s), serverin oynatma axını sınanır</string>
   <string name="immersive_video_decoder_switch">%1$s eynəyin dekoderinin imkanlarını aşır, serverin oynatma axını sınanır</string>
   <string name="immersive_error_nothing">Göstəriləcək heç nə yoxdur</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d eynəyin dekoderinin imkanlarını aşır (qırıq-qırıq, bloklu). Immich-də video transkodlaşdırmanı HEVC olaraq təyin edin və ya çözümlülüyü məhdudlaşdırın.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d eynəyin dekoderinin imkanlarını aşır (qırıq-qırıq, bloklu). Bu faylı HEVC formatında və ya daha aşağı çözümlülükdə yenidən kodlaşdırın.</string>
 </resources>

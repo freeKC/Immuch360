@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Fallou o orixinal (%1$s), probando o fluxo de reprodución do servidor</string>
   <string name="immersive_video_decoder_switch">%1$s supera o descodificador do casco, probando o fluxo de reprodución do servidor</string>
   <string name="immersive_error_nothing">Nada que mostrar</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d supera o descodificador do casco (entrecortado, pixelado). En Immich, configure a transcodificación de vídeo en HEVC ou limite a resolución.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d supera o descodificador do casco (entrecortado, pixelado). Recodifique este ficheiro en HEVC ou cunha resolución máis baixa.</string>
 </resources>

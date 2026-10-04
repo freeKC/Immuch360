@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Échec de l\'original (%1$s), essai du flux de lecture du serveur</string>
   <string name="immersive_video_decoder_switch">%1$s dépasse les capacités du décodeur du casque, essai du flux de lecture du serveur</string>
   <string name="immersive_error_nothing">Rien à afficher</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d dépasse les capacités du décodeur du casque (saccades, pixellisation). Dans Immich, réglez le transcodage vidéo sur HEVC ou limitez la résolution.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d dépasse les capacités du décodeur du casque (saccades, pixellisation). Réencodez ce fichier en HEVC ou dans une résolution plus basse.</string>
 </resources>

@@ -13,6 +13,7 @@ import 'dart:ui';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -22,6 +23,7 @@ import 'package:immich_mobile/domain/services/immersive_navigation.service.dart'
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/storage.repository.dart';
@@ -33,8 +35,10 @@ import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
@@ -51,8 +55,10 @@ final immersiveGPanoClientProvider = Provider<http.Client>((_) => NetworkReposit
 
 /// URL on the server loaded by the immersive viewer, or null for an asset that is not on the server.
 /// Photos: the original (the viewer shows the preview first and keeps it if the original fails).
-/// Videos: always the original, whatever the viewer setting: the server transcode defaults to 720p H.264, too
-/// blurry for 360°. The viewer falls back to the playback stream by itself when the original cannot stream or play.
+/// Videos: the original, the server transcode defaulting to 720p H.264, too blurry for 360°; the resolver plays the
+/// transcoded stream instead when the user chose it (see [ImmersiveAssetResolver.resolve]). The viewer falls back to
+/// the transcoded stream by itself when the headset cannot decode the original, or when the original cannot stream or
+/// play, unless the user chose the original whatever happens.
 String? immersiveMediaUrl(BaseAsset asset) {
   final remoteId = asset.remoteId;
   if (remoteId == null) {
@@ -61,13 +67,20 @@ String? immersiveMediaUrl(BaseAsset asset) {
   if (!asset.isVideo) {
     return getOriginalUrlForRemoteId(remoteId);
   }
-  final videoId = (asset is RemoteAsset ? asset.livePhotoVideoId : null) ?? remoteId;
-  return '${Store.get(StoreKey.serverEndpoint)}/assets/$videoId/original';
+  return '${Store.get(StoreKey.serverEndpoint)}/assets/${_immersiveVideoId(asset, remoteId)}/original';
 }
+
+// The video of an asset on the server: the motion part of a live photo has an id of its own
+String _immersiveVideoId(BaseAsset asset, String remoteId) =>
+    (asset is RemoteAsset ? asset.livePhotoVideoId : null) ?? remoteId;
 
 /// A media as the immersive viewer opens it: where it reads it ([url], with [headers]), whether it is a video, its
 /// [title], and how it shows it at first ([view], see [resolveSphereView]), whose guessed coverage tells a correction
 /// of the user from a return to the guess once the viewer closes.
+///
+/// [fallbackUrl] is the server's transcoded stream of a video, which the viewer plays instead of [url] when the
+/// headset cannot decode the original or the original fails; null when there is none. [sourceNotice] is what to tell
+/// the user about the file chosen, null for nothing (see [chooseVideoSource]).
 class ImmersiveRequest {
   const ImmersiveRequest({
     required this.url,
@@ -75,6 +88,8 @@ class ImmersiveRequest {
     required this.isVideo,
     required this.title,
     required this.view,
+    this.fallbackUrl,
+    this.sourceNotice,
   });
 
   final String url;
@@ -82,9 +97,15 @@ class ImmersiveRequest {
   final bool isVideo;
   final String title;
   final SphereView view;
+  final String? fallbackUrl;
+  final VideoSourceNotice? sourceNotice;
+
+  /// Whether the viewer may be showing this media at [url]: the URL it was given, or the stream it switched to
+  bool isShownAt(String url) => this.url == url || fallbackUrl == url;
 
   @override
-  String toString() => 'ImmersiveRequest(url: $url, isVideo: $isVideo, title: $title, view: $view)';
+  String toString() =>
+      'ImmersiveRequest(url: $url, fallbackUrl: $fallbackUrl, isVideo: $isVideo, title: $title, view: $view)';
 }
 
 /// Opens [request] in the immersive viewer through [api], a video from [startPosition], with the controls labelled
@@ -107,6 +128,7 @@ Future<void> openImmersiveRequest(
   request.view.coverage.toImmersive(),
   math.max(0, startPosition.inMilliseconds),
   openingId,
+  request.fallbackUrl,
 );
 
 /// Shows [request] in place of the media of the immersive viewer that asked for another one with [requestId] (see
@@ -118,6 +140,7 @@ Future<bool> showImmersiveRequest(ImmersiveApi api, int requestId, ImmersiveRequ
   request.title,
   request.view.layout.toImmersive(),
   request.view.coverage.toImmersive(),
+  request.fallbackUrl,
 );
 
 /// Turns assets into what the immersive viewer opens (see [resolve]) and opens them, with the services an opener
@@ -131,6 +154,8 @@ class ImmersiveAssetResolver {
     required this._storage,
     required this._probeService,
     required this._gpanoClient,
+    required this._videoSources,
+    this.videoSourcePolicy = VideoSourcePolicy.preferOriginalWithinDecoder,
   });
 
   /// Reads the services from the providers. Call it before the first await of an opener: the widget may be gone after.
@@ -142,6 +167,8 @@ class ImmersiveAssetResolver {
         storage: ref.read(storageRepositoryProvider),
         probeService: ref.read(sphericalProbeServiceProvider),
         gpanoClient: ref.read(immersiveGPanoClientProvider),
+        videoSources: ref.read(videoSourceServiceProvider),
+        videoSourcePolicy: ref.read(appConfigProvider).viewer.immersiveVideoSourcePolicy,
       );
 
   final ImmersiveApi api;
@@ -152,15 +179,23 @@ class ImmersiveAssetResolver {
   /// The coverages the user picked, which win over the guess, and where the one picked in the viewer goes
   final SphereCoverageOverrides coverageOverrides;
 
+  /// Which file of a server video plays, as the settings said when the viewer opened
+  final VideoSourcePolicy videoSourcePolicy;
+
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
   final http.Client _gpanoClient;
+  final VideoSourceService _videoSources;
 
   /// What the viewer opens for [asset]. A video plays from the copy on the device when there is one, like in the
-  /// in-app player, else from its original on the server. A photo opens from its original on the server, and an asset
-  /// only on the device (no server, or not uploaded) from its file there, photo or video alike. [localPath] is the
-  /// file of a media opened with "Open with" that is not in the library, which opens from there. Throws when there
-  /// is no file to open.
+  /// in-app player, else from the server as [videoSourcePolicy] says: the server's transcoded stream when the user
+  /// chose it, else its original. Under the original within the decoders, the transcoded stream goes along as the
+  /// fallback, which the viewer switches to by itself when its decoder check at the first frames refuses the original;
+  /// under the original whatever happens, the decoder check of the app tells the user beforehand (see
+  /// [chooseVideoSource]). A photo opens from its original on the server, and an asset only on
+  /// the device (no server, or not uploaded) from its file there, photo or video alike. [localPath] is the file of a
+  /// media opened with "Open with" that is not in the library, which opens from there. Throws when there is no file
+  /// to open.
   ///
   /// The headset shows each eye its own half of a 3D media, over the whole sphere or its front half (VR180): the
   /// coverage the user picked for the asset, else the layout and the coverage the file declares for a video (see
@@ -218,15 +253,32 @@ class ImmersiveAssetResolver {
       _log.fine('${asset.name} is a partial panorama, shown mono');
     }
 
+    final probe = asset.isVideo ? await _probeService.probe(asset, localFile: localFile) : null;
+    // A file on the headset plays as it is: only the server has a transcoded stream to choose
+    var source = ChosenVideoSource(url: url);
+    if (asset.isVideo && localFile == null && remoteId != null) {
+      final videoId = _immersiveVideoId(asset, remoteId);
+      source = videoSourcePolicy == VideoSourcePolicy.preferOriginalWithinDecoder
+          // The viewer checks the decoders of the headset at the first frames and switches to the transcoded stream
+          // itself, saying so in the headset: a message of the app would stay hidden behind the viewer, and a media
+          // the viewer moves to from there comes without one. No fallback when the server has no transcoded stream
+          // (its playback stream is then the original itself): the viewer would reload the same file and say it
+          // tries the server's stream
+          ? ChosenVideoSource(
+              url: serverOriginalVideoUrl(videoId),
+              fallbackUrl: await _videoSources.transcodeIsOriginal(videoId) ? null : serverTranscodedVideoUrl(videoId),
+            )
+          : await _videoSources.serverSource(videoId: videoId, policy: videoSourcePolicy, probe: probe);
+    }
+
     return ImmersiveRequest(
-      url: url,
+      url: source.url,
       headers: ApiService.getRequestHeaders(),
       isVideo: asset.isVideo,
       title: asset.name,
-      view: view(
-        gpanoCrop: gpanoCrop,
-        probe: asset.isVideo ? await _probeService.probe(asset, localFile: localFile) : null,
-      ),
+      view: view(gpanoCrop: gpanoCrop, probe: probe),
+      fallbackUrl: source.fallbackUrl,
+      sourceNotice: source.notice,
     );
   }
 
@@ -249,7 +301,16 @@ class ImmersiveAssetResolver {
 /// The viewer then goes to the previous and next 360° assets of the timeline on its own (see
 /// [TimelineImmersiveNavigator]); once it closes, the asset viewer shows the asset it showed last, and the in-app
 /// player of a video takes it back where the viewer left it.
-Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset, {required Map<String, String> stereoLabels}) async {
+///
+/// [onSourceNotice] is given what to tell the user about the file of a video, when there is something to tell: the
+/// original plays although the headset cannot decode it, as the user asked. A switch to the transcoded stream is the
+/// viewer's own, which tells it in the headset.
+Future<void> openImmersiveViewer(
+  WidgetRef ref,
+  BaseAsset asset, {
+  required Map<String, String> stereoLabels,
+  void Function(VideoSourceNotice notice)? onSourceNotice,
+}) async {
   // Read before the first await: the viewer may be gone by then
   final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels);
   final session = ref.read(immersiveSessionProvider);
@@ -277,6 +338,10 @@ Future<void> openImmersiveViewer(WidgetRef ref, BaseAsset asset, {required Map<S
   int? openingId;
   try {
     final request = await resolver.resolve(asset, localPath: viewIntentPath);
+    final notice = request.sourceNotice;
+    if (notice != null) {
+      onSourceNotice?.call(notice);
+    }
     final navigator = TimelineImmersiveNavigator(
       resolver: resolver,
       timeline: timeline,
@@ -549,10 +614,11 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
   }
 
   /// The asset shown at [url]: the current one, else the one before it or the one the viewer opened on, which it may
-  /// report when it closed as Flutter moved on; null for none of them
+  /// report when it closed as Flutter moved on; null for none of them. A video the viewer switched to its transcoded
+  /// stream is reported at that stream.
   _ShownAsset? _shownAt(String url) {
     for (final shown in [_current, ?_previous, _start]) {
-      if (shown.request.url == url) {
+      if (shown.request.isShownAt(url)) {
         return shown;
       }
     }

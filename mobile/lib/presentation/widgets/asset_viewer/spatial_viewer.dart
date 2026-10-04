@@ -13,11 +13,10 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/setting.model.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
-import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/models/video_buffering.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -25,6 +24,7 @@ import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/setting.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart' show appConfigProvider;
@@ -39,7 +39,10 @@ final _log = Logger('SpatialViewer');
 /// Plays [asset], a video, full screen in the Spatial 2.5D player, from where and as the viewer plays it.
 ///
 /// The file is the one the viewer plays: the file a video opened with "Open with" came as, else the copy on the
-/// phone when there is one, else the server's original when the settings ask for it, else its transcoded playback.
+/// phone when there is one, else the server's original or its transcoded stream, as the settings and the decoders of
+/// the phone say (see [chooseVideoSource]); the player switches to the transcoded stream by itself when it cannot play
+/// the original, unless the user chose the original whatever happens. A message tells when the choice went against
+/// the original, or when the original plays although the phone cannot decode it.
 /// The stereo layout is the one the user picked for this asset last time, else a guess (see [guessSpatialLayout]);
 /// a 360° video opens through a viewport, over the whole sphere or its front half (VR180): the coverage the user
 /// picked for the asset, else the one the file declares or a guess (see [resolveSphereView]). The coverage picked in
@@ -66,7 +69,8 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
       : null;
   final player = ref.read(videoPlayerProvider(asset.id).notifier);
   final playback = ref.read(videoPlayerProvider(asset.id));
-  final loadOriginalVideo = ref.read(appConfigProvider).viewer.loadOriginalVideo;
+  final videoSources = ref.read(videoSourceServiceProvider);
+  final policy = ref.read(appConfigProvider).viewer.videoSourcePolicy;
   final debugOverlay = ref.read(settingsProvider.notifier).get(Setting.advancedTroubleshooting);
   final isEquirectangular = ref.read(isEquirectangularProvider(asset));
   final messenger = ScaffoldMessenger.maybeOf(context);
@@ -74,6 +78,7 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
     ...spatialLabels(context.t),
     ...audioTrackLabels(context.t, Localizations.localeOf(context)),
     ...videoBufferingLabels(context.t),
+    ...videoSourceLabels(context.t),
   };
   final unavailableMessage = context.t.spatial_unavailable;
   final errorMessage = context.t.spatial_open_failed;
@@ -102,23 +107,26 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
   var suspended = false;
 
   try {
-    final remoteUrl = remoteId == null
-        ? null
-        : '${Store.get(StoreKey.serverEndpoint)}/assets/$remoteId/${loadOriginalVideo ? 'original' : 'video/playback'}';
     File? localFile = viewIntentPath != null ? File(viewIntentPath) : null;
-    String? url = localFile?.uri.toString() ?? remoteUrl;
     if (viewIntentPath == null && localId != null) {
       try {
         // The native player reads file:// URIs too, and ignores the headers for them
         localFile = await storage.getFileForAsset(localId);
-        url = localFile?.uri.toString() ?? remoteUrl;
       } catch (error) {
         _log.warning('Copy on the device of ${asset.name} unreadable, playing the server copy: $error');
       }
     }
-    if (url == null) {
+    if (localFile == null && remoteId == null) {
       throw StateError('No file to play for ${asset.name}');
     }
+    // The file is read for what a 360° video declares, and for the decoder check of a server video when the
+    // settings let the device choose: a flat video always played transcoded needs nothing of it
+    final needsProbe = isEquirectangular || (localFile == null && policy.readsTheFile);
+    final probe = needsProbe ? await probeService.probe(asset, localFile: localFile) : null;
+    // A file on the phone plays as it is: only the server has a transcoded stream to choose
+    final source = localFile != null
+        ? ChosenVideoSource(url: localFile.uri.toString())
+        : await videoSources.serverSource(videoId: remoteId!, policy: policy, probe: probe);
 
     // Only a 360° video has a coverage that its file may declare. The coverage of a flat one only counts when the
     // user turns it into a 360° one in the player.
@@ -126,7 +134,7 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
       fileName: asset.name,
       width: asset.width,
       height: asset.height,
-      probe: isEquirectangular ? await probeService.probe(asset, localFile: localFile) : null,
+      probe: isEquirectangular ? probe : null,
       chosenCoverage: coverageOverrides.get(asset),
     );
     final projection = isEquirectangular ? sphereView.coverage.toSpatialProjection() : SpatialProjection.flat;
@@ -149,9 +157,13 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
     // Stopped before the viewer goes to the background: it neither plays nor buffers behind the Spatial player
     suspended = true;
     await player.suspendForExternalPlayer();
+    final notice = source.notice;
+    if (notice != null) {
+      messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance))));
+    }
     await api.open(
       SpatialOpenRequest(
-        url: url,
+        url: source.url,
         headers: ApiService.getRequestHeaders(),
         title: asset.name,
         layout: layout,
@@ -160,6 +172,7 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
         autoplay: wasPlaying,
         debugOverlay: debugOverlay,
         labels: labels,
+        fallbackUrl: source.fallbackUrl,
       ),
     );
   } catch (error, stackTrace) {
@@ -258,6 +271,8 @@ Future<bool> openSpatialVideoUrl(
         autoplay: autoplay,
         debugOverlay: debugOverlay,
         labels: labels,
+        // A file of a share plays as it is: there is no transcoded stream to switch to
+        fallbackUrl: null,
       ),
     );
     return true;

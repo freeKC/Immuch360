@@ -49,6 +49,7 @@ class _RecordingSphericalVideoApi extends SphericalVideoApi {
     StereoLayout stereoLayout,
     Map<String, String> stereoLabels,
     SphereCoverage coverage,
+    String? fallbackUrl,
   ) async {
     opened.add({'url': url, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
   }
@@ -91,6 +92,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     int startPositionMs,
     int openingId,
+    String? fallbackUrl,
   ) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
@@ -108,6 +110,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String title,
     ImmersiveStereoLayout stereoLayout,
     ImmersiveSphereCoverage coverage,
+    String? fallbackUrl,
   ) async {
     shown.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     return true;

@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Nie udało się odtworzyć oryginału (%1$s), próba odtworzenia strumienia z serwera</string>
   <string name="immersive_video_decoder_switch">%1$s przekracza możliwości dekodera headsetu, próba odtworzenia strumienia z serwera</string>
   <string name="immersive_error_nothing">Nic do wyświetlenia</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d przekracza możliwości dekodera headsetu (zacina się, widać bloki). W Immich ustaw transkodowanie wideo na HEVC lub ogranicz rozdzielczość.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d przekracza możliwości dekodera headsetu (zacina się, widać bloki). Przekoduj ten plik do HEVC lub do niższej rozdzielczości.</string>
 </resources>

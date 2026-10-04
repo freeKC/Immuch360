@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">S\'Original hot ned klappt (%1$s), jetzt wird dr Wiedergabestream vom Server probiert</string>
   <string name="immersive_video_decoder_switch">%1$s isch z viel fir dr Decoder vom Headset, jetzt wird dr Wiedergabestream vom Server probiert</string>
   <string name="immersive_error_nothing">Nix zom Azeiga</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d überfordert dr Decoder vom Headset (ruckelig, klötzlig). Stell en Immich d\'Video-Transkodierung uff HEVC oder begrenz d\'Auflösung.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d überfordert dr Decoder vom Headset (ruckelig, klötzlig). Kodier die Datei en HEVC oder mit ra kleinere Auflösung nei.</string>
 </resources>

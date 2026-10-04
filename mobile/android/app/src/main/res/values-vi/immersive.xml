@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Không phát được bản gốc (%1$s), đang thử luồng phát từ máy chủ</string>
   <string name="immersive_video_decoder_switch">%1$s vượt quá khả năng của bộ giải mã trên kính VR, đang thử luồng phát từ máy chủ</string>
   <string name="immersive_error_nothing">Không có gì để hiển thị</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d vượt quá khả năng của bộ giải mã trên kính VR (giật, vỡ hình). Trong Immich, hãy đặt chuyển mã video sang HEVC hoặc giới hạn độ phân giải.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d vượt quá khả năng của bộ giải mã trên kính VR (giật, vỡ hình). Hãy mã hóa lại tệp này sang HEVC hoặc ở độ phân giải thấp hơn.</string>
 </resources>

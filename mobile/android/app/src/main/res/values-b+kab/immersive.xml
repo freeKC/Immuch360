@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Aɣbalu ur yeddi ara (%1$s), aɛraḍ n tvidyut n uqeddac</string>
   <string name="immersive_video_decoder_switch">%1$s yugar tazmert n udekudur n headset, aɛraḍ n tvidyut n uqeddac</string>
   <string name="immersive_error_nothing">Ulac acu ara d-yettwaskanen</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d yɛedda tazmert n udekudur n headset (yettḥebbis, d iferdisen). Deg Immich, sbadu asenfel n tvidyut ɣer HEVC neɣ sbadu talast i tbadut.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d yɛedda tazmert n udekudur n headset (yettḥebbis, d iferdisen). Ales asettengel n ufaylu-a s HEVC neɣ s tbadut taddayt.</string>
 </resources>

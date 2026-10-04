@@ -28,8 +28,14 @@ private let zAxis = SIMD3<Float>(0, 0, 1)
 /// see [AudioTrackChooser]. While the video loads or stalls, a label tells how far the buffer is filled, see
 /// [BufferingIndicator]. Flutter hears about the close through [SphericalVideoEvents], with the layout and the
 /// coverage shown last.
+///
+/// With a fallback URL (the server's transcoded stream), the original gives way to it once: when its codec and size
+/// are above what the device decodes (see [VideoDecoderSupport]), read as soon as its tracks are known, or when it
+/// fails. The fallback stream starts where the original stopped; the error label only shows if it fails too.
 final class SphericalVideoViewController: UIViewController, UIGestureRecognizerDelegate {
   private let videoUrl: URL
+  // The server's transcoded stream, nil when there is none
+  private let fallbackUrl: URL?
   private let headers: [String: String]
   private let videoTitle: String
   private let closeLabel: String?
@@ -94,13 +100,22 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private var idleTimerWasDisabled = false
   private var closedReported = false
   private var audioTracksRequested = false
+  // The last tap on play or pause: a switch to the fallback stream keeps the video playing or paused
+  private var playRequested = true
+  // The original gave way to the fallback stream, which happens once
+  private var fallbackPlaying = false
+  // Where the fallback stream resumes and whether it plays then, applied once it is ready: an item cannot seek
+  // before that. The spinner turns meanwhile.
+  private var pendingResume: (time: CMTime?, play: Bool)?
 
   /// [errorMessage] and [stereoLabels] come translated from Flutter, English is the fallback; [stereoLabels] also
-  /// holds the labels of the coverage button, of the audio track button and of the buffering label. [stereoLayout]
-  /// is the layout Flutter guessed from the dimensions of the video, [coverage] how much of the sphere it covers.
-  /// [events] is told once when the player closes.
+  /// holds the labels of the coverage button, of the audio track button, of the buffering label and of the message
+  /// of a switch to the fallback stream ("sourceSwitched"). [stereoLayout] is the layout Flutter guessed from the
+  /// dimensions of the video, [coverage] how much of the sphere it covers. [fallbackUrl] is the server's transcoded
+  /// stream, played with the same headers. [events] is told once when the player closes.
   init(
     url: URL,
+    fallbackUrl: URL?,
     headers: [String: String],
     title: String,
     closeLabel: String?,
@@ -111,6 +126,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     events: SphericalVideoEvents
   ) {
     videoUrl = url
+    self.fallbackUrl = fallbackUrl
     self.headers = headers
     videoTitle = title
     self.closeLabel = closeLabel
@@ -226,30 +242,50 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private static let streamingForwardBufferDuration: TimeInterval = 15
 
   private func setUpPlayer() {
-    let item = AVPlayerItem(asset: makeAsset())
-    if !videoUrl.isFileURL {
+    // The audio track of the language picked last, where the video has one
+    AudioTrackChooser.preferSavedLanguage(player)
+    let asset = loadItem(videoUrl)
+    checkDecoder(asset)
+
+    timeControlObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] _, _ in
+      Task { @MainActor [weak self] in
+        self?.playbackStateChanged()
+      }
+    }
+  }
+
+  /// Makes [url] the item of the player, with its observations: the original at first, the fallback stream after a
+  /// switch. Returns the asset of the item.
+  @discardableResult
+  private func loadItem(_ url: URL) -> AVURLAsset {
+    let asset = makeAsset(for: url)
+    let item = AVPlayerItem(asset: asset)
+    if !url.isFileURL {
       // Read over HTTP (the media bridge of a network share, a server): more media buffered ahead, so that a share
       // that answers in bursts does not stall the playback every few seconds. Local files keep the defaults.
       item.preferredForwardBufferDuration = Self.streamingForwardBufferDuration
     }
-    // The audio track of the language picked last, where the video has one
-    AudioTrackChooser.preferSavedLanguage(player)
+    // The item replaced, if any, tells nothing more
+    statusObservation?.invalidate()
+    presentationSizeObservation?.invalidate()
+    if let previous = player.currentItem {
+      NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: previous)
+      NotificationCenter.default.removeObserver(self, name: .AVPlayerItemFailedToPlayToEndTime, object: previous)
+    }
     player.replaceCurrentItem(with: item)
 
     statusObservation = item.observe(\.status, options: [.new]) { [weak self] observed, _ in
       let status = observed.status
       let reason = observed.error?.localizedDescription
+      let itemId = ObjectIdentifier(observed)
       Task { @MainActor [weak self] in
+        // A late change of an item the fallback stream replaced
+        guard let self, self.isCurrentItem(itemId) else { return }
         if status == .failed {
-          self?.showError(reason)
+          self.itemFailed(reason)
         } else if status == .readyToPlay {
-          self?.loadAudioTracks()
+          self.itemReady()
         }
-      }
-    }
-    timeControlObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] _, _ in
-      Task { @MainActor [weak self] in
-        self?.playbackStateChanged()
       }
     }
     // Zero until the first frame is known
@@ -257,8 +293,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       [weak self] observed, _ in
       let size = observed.presentationSize
       guard size.width > 0, size.height > 0 else { return }
+      let itemId = ObjectIdentifier(observed)
       Task { @MainActor [weak self] in
-        self?.frameSizeKnown(size)
+        guard let self, self.isCurrentItem(itemId) else { return }
+        self.frameSizeKnown(size)
       }
     }
     NotificationCenter.default.addObserver(
@@ -273,23 +311,93 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       name: .AVPlayerItemFailedToPlayToEndTime,
       object: item
     )
+    return asset
   }
 
   /// Local files play as they are. Server videos take the route of the Flutter video player (native_video_player):
   /// through its local proxy when the server asks for a client certificate or basic auth, else straight to the
   /// server with the custom headers and the session cookies. Those cookies live in the app group storage, which
-  /// AVFoundation does not read by itself.
-  private func makeAsset() -> AVURLAsset {
-    if videoUrl.isFileURL {
-      return AVURLAsset(url: videoUrl)
+  /// AVFoundation does not read by itself. The fallback stream takes the same route as the original.
+  private func makeAsset(for url: URL) -> AVURLAsset {
+    if url.isFileURL {
+      return AVURLAsset(url: url)
     }
-    if let proxyUrl = VideoProxyServer.shared.proxyURL(for: videoUrl) {
+    if let proxyUrl = VideoProxyServer.shared.proxyURL(for: url) {
       return AVURLAsset(url: proxyUrl)
     }
-    let cookies = URLSessionManager.cookieStorage.cookies(for: videoUrl) ?? []
+    let cookies = URLSessionManager.cookieStorage.cookies(for: url) ?? []
     var httpHeaders = HTTPCookie.requestHeaderFields(with: cookies)
     httpHeaders.merge(headers) { _, custom in custom }
-    return AVURLAsset(url: videoUrl, options: ["AVURLAssetHTTPHeaderFieldsKey": httpHeaders])
+    return AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": httpHeaders])
+  }
+
+  /// Whether [itemId] is the item the player plays, and not one the fallback stream replaced
+  private func isCurrentItem(_ itemId: ObjectIdentifier) -> Bool {
+    guard let item = player.currentItem else { return false }
+    return ObjectIdentifier(item) == itemId
+  }
+
+  /// Reads the codec and the coded size of the original as soon as its tracks are known, while the item loads, so
+  /// that a video above what the device decodes gives way to the fallback stream before it stutters. Without a
+  /// fallback, the original plays anyway and the log tells why it may stutter.
+  private func checkDecoder(_ asset: AVURLAsset) {
+    Task { @MainActor [weak self] in
+      guard let format = await VideoDecoderSupport.videoFormat(of: asset) else { return }
+      let verdict = VideoDecoderSupport.verdict(for: format)
+      guard !verdict.supported else { return }
+      guard let self, !self.closing, !self.fallbackPlaying else { return }
+      let reason = verdict.reason ?? "above what this device decodes"
+      if !self.switchToFallback(because: reason, format: format) {
+        print("The 360° video may not play smoothly: \(reason)")
+      }
+    }
+  }
+
+  /// The item can play: its audio tracks and, after a switch to the fallback stream, the position and the state
+  /// the original was in
+  private func itemReady() {
+    loadAudioTracks()
+    guard let resume = pendingResume else { return }
+    pendingResume = nil
+    if let time = resume.time {
+      player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
+    }
+    // Not before the player shows, which starts the playback itself, nor in the background, which pauses it
+    if resume.play && started && !closing && UIApplication.shared.applicationState != .background {
+      player.play()
+    }
+    playbackStateChanged()
+  }
+
+  /// The original gives way to the fallback stream once, the error label shows when there is none or it fails too
+  private func itemFailed(_ reason: String?) {
+    if switchToFallback(because: "the original failed: \(reason ?? "unknown error")") {
+      return
+    }
+    showError(reason)
+  }
+
+  /// Plays the fallback stream in place of the original, from where it stopped and in the state the user left it
+  /// (playing or paused). False when there is no fallback, when it already plays, or when the player failed or
+  /// closes.
+  @discardableResult
+  private func switchToFallback(because reason: String, format: CMFormatDescription? = nil) -> Bool {
+    guard let fallbackUrl, !fallbackPlaying, !failed, !closing else { return false }
+    fallbackPlaying = true
+    print("The 360° player switches to the transcoded stream: \(reason)")
+    let position = player.currentTime()
+    let resumeTime: CMTime? = position.isNumeric && position.seconds > 0 ? position : nil
+    pendingResume = (time: resumeTime, play: playRequested)
+    // Paused until the fallback stream is ready and in place, else it would start from its beginning
+    player.pause()
+    reachedEnd = false
+    // The fallback stream may have other audio tracks: they are read again once it is ready
+    audioTracksRequested = false
+    audioButton.isHidden = true
+    loadItem(fallbackUrl)
+    playbackStateChanged()
+    showMessage(VideoDecoderSupport.switchedMessage(stereoText("sourceSwitched", fallback: "Playing the transcoded stream"), format: format))
+    return true
   }
 
   private func playbackStateChanged() {
@@ -298,7 +406,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     let paused = status == .paused
     setSymbol(of: playPauseButton, to: paused ? "play.fill" : "pause.fill", pointSize: 28)
     playPauseButton.accessibilityLabel = paused ? "Play" : "Pause"
-    if status == .waitingToPlayAtSpecifiedRate && !failed {
+    // The fallback stream loads paused, see pendingResume
+    if (status == .waitingToPlayAtSpecifiedRate || pendingResume != nil) && !failed {
       spinner.startAnimating()
     } else {
       spinner.stopAnimating()
@@ -322,7 +431,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     Task { @MainActor [weak self] in
       guard let self else { return }
       let hasChoice = await self.audioTracks.load(item)
-      guard hasChoice, !self.closing else { return }
+      // Not for an item the fallback stream replaced meanwhile
+      guard hasChoice, !self.closing, self.player.currentItem === item else { return }
       self.audioButton.menu = self.audioTracks.menu { [weak self] name in
         self?.audioTrackPicked(name)
       }
@@ -360,8 +470,14 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   @objc private nonisolated func playerItemFailedToPlayToEnd(_ notification: Notification) {
     let error = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error
     let reason = error?.localizedDescription
+    let itemId = (notification.object as? AVPlayerItem).map { ObjectIdentifier($0) }
     Task { @MainActor [weak self] in
-      self?.showError(reason)
+      guard let self else { return }
+      // A late failure of an item the fallback stream replaced
+      if let itemId, !self.isCurrentItem(itemId) {
+        return
+      }
+      self.itemFailed(reason)
     }
   }
 
@@ -981,8 +1097,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
         reachedEnd = false
         player.seek(to: .zero)
       }
+      playRequested = true
       player.play()
     } else {
+      playRequested = false
       player.pause()
     }
   }

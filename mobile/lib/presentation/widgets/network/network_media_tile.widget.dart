@@ -1,5 +1,6 @@
 // The tiles of the network share browser: a photo with its thumbnail, a video with a frame of it, a 360° badge on the
-// files that declare a 360° projection, and the folder rows.
+// files that declare a 360° projection, a badge on the files sent to the server before, the selection mark and the
+// progress of an upload, and the folder rows.
 
 import 'dart:async';
 import 'dart:collection';
@@ -12,10 +13,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
+import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
 import 'package:immich_mobile/platform/video_thumbnail_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_upload.provider.dart';
+import 'package:immich_mobile/services/foreground_upload.service.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -281,28 +287,47 @@ final networkMediaInfoProvider = FutureProvider.autoDispose.family<NetworkMediaI
 
 /// A photo or a video of a share in the grid of the browser. [url] is its media bridge URL, null when there is none.
 class NetworkMediaTile extends ConsumerWidget {
-  const NetworkMediaTile({super.key, required this.entry, required this.url, required this.onTap});
+  const NetworkMediaTile({
+    super.key,
+    required this.entry,
+    required this.url,
+    required this.onTap,
+    this.onLongPress,
+    this.isSelected,
+  });
 
   final NetworkEntry entry;
   final Uri? url;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+
+  /// Whether the file is picked, null when the browser is not picking files
+  final bool? isSelected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final is360 = ref.watch(
       networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.is360 ?? false),
     );
+    final wasSent = ref.watch(
+      networkUploadRecordsProvider.select((records) => records.containsKey(UploadRecordStore.keyOf(entry))),
+    );
+    final uploadProgress = ref.watch(networkUploadProvider.select((upload) => upload.progress[networkUploadId(entry)]));
     final url = this.url;
     final hasThumbnail = entry.isImage && url != null && (entry.size ?? 0) <= networkThumbnailMaxFileSize;
     final hasFrame = entry.isVideo && url != null;
+    final isSelected = this.isSelected;
 
     return Semantics(
-      label: entry.name,
+      label: wasSent ? '${entry.name}, ${context.t.network_upload_sent_before}' : entry.name,
       button: true,
+      selected: isSelected ?? false,
       onTap: onTap,
+      onLongPress: onLongPress,
       excludeSemantics: true,
       child: GestureDetector(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(4)),
           child: Stack(
@@ -328,7 +353,55 @@ class NetworkMediaTile extends ConsumerWidget {
                   top: 6,
                   child: Icon(Icons.threesixty_rounded, color: Colors.white, size: 18, shadows: _shadows),
                 ),
+              if (wasSent)
+                Positioned(
+                  key: const Key('network_media_sent_badge'),
+                  right: 6,
+                  bottom: 6,
+                  child: Tooltip(
+                    message: context.t.network_upload_sent_before,
+                    child: const Icon(Icons.cloud_done_outlined, color: Colors.white, size: 18, shadows: _shadows),
+                  ),
+                ),
+              if (uploadProgress != null)
+                Positioned.fill(child: NetworkUploadProgressOverlay(progress: uploadProgress)),
+              if (isSelected != null) _SelectionMark(isSelected: isSelected),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The mark of a tile while the browser is picking files: a check on a tinted tile once picked, an empty circle before
+class _SelectionMark extends StatelessWidget {
+  const _SelectionMark({required this.isSelected});
+
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: ColoredBox(
+        color: isSelected ? context.primaryColor.withValues(alpha: 0.3) : Colors.transparent,
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: isSelected
+                ? DecoratedBox(
+                    key: const Key('network_media_selected'),
+                    decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                    child: Icon(Icons.check_circle_rounded, color: context.primaryColor, size: 22),
+                  )
+                : const Icon(
+                    Icons.radio_button_unchecked_rounded,
+                    key: Key('network_media_unselected'),
+                    color: Colors.white,
+                    size: 22,
+                    shadows: _shadows,
+                  ),
           ),
         ),
       ),

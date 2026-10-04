@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Origjinali dështoi (%1$s), po provohet transmetimi i luajtjes nga serveri</string>
   <string name="immersive_video_decoder_switch">%1$s e tejkalon dekoderin e syzeve VR, po provohet transmetimi i luajtjes nga serveri</string>
   <string name="immersive_error_nothing">Asgjë për të shfaqur</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d e tejkalon dekoderin e syzeve VR (ngecje, blloqe). Në Immich, vendos transkodimin e videos në HEVC ose kufizo rezolucionin.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d e tejkalon dekoderin e syzeve VR (ngecje, blloqe). Rikodoje këtë skedar në HEVC ose në një rezolucion më të ulët.</string>
 </resources>

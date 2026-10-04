@@ -31,7 +31,10 @@ abstract class ImmersiveApi {
   /// so that Flutter ignores the events of a viewer it is no longer following (a closed event can arrive long
   /// after the user left through the system). Previous and next never go through open: the viewer asks with
   /// [ImmersiveEvents.requestAdjacent] and Flutter answers with [showAdjacent]. Calling open while the viewer is
-  /// already in front replaces the media in place as a fresh opening.
+  /// already in front replaces the media in place as a fresh opening. [fallbackUrl] is the server's transcoded
+  /// stream of a video, played instead of [url] when the headset's decoder cannot take the original (checked at
+  /// the first frames) or when the original fails; null when there is none or when the user chose to always play
+  /// the original.
   void open(
     String url,
     Map<String, String> headers,
@@ -42,6 +45,7 @@ abstract class ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     int startPositionMs,
     int openingId,
+    String? fallbackUrl,
   );
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
@@ -55,6 +59,7 @@ abstract class ImmersiveApi {
     String title,
     ImmersiveStereoLayout stereoLayout,
     ImmersiveSphereCoverage coverage,
+    String? fallbackUrl,
   );
 }
 

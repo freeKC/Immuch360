@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Originalen feila (%1$s), prøver avspelingsstraumen frå tenaren</string>
   <string name="immersive_video_decoder_switch">%1$s er for tung for dekodaren i headsettet, prøver avspelingsstraumen frå tenaren</string>
   <string name="immersive_error_nothing">Ingenting å vise</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d er for tung for dekodaren i headsettet (hakkete, blokkete). I Immich, set videotranskodinga til HEVC eller avgrens oppløysinga.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d er for tung for dekodaren i headsettet (hakkete, blokkete). Kod om denne fila til HEVC eller til ei lågare oppløysing.</string>
 </resources>

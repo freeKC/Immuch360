@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/asset_metadata.model.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart' hide AssetVisibility;
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/asset.service.dart';
+import 'package:immich_mobile/domain/services/network_file_reader.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/network_capability_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -35,6 +39,95 @@ class UploadCallbacks {
   final void Function(String id, double progress)? onICloudProgress;
 
   const UploadCallbacks({this.onProgress, this.onSuccess, this.onError, this.onICloudProgress});
+}
+
+/// Callbacks of the uploads of files that are not assets of this device, by the id of their [UploadSource]
+class SourceUploadCallbacks {
+  /// A file of a share as it is right before it is sent: [entry] has the size and the date the request announces
+  final void Function(String id, NetworkEntry entry)? onSending;
+  final void Function(String id, int bytes, int totalBytes)? onProgress;
+
+  /// [isDuplicate] when the server already had the file, [remoteId] being the asset it had
+  final void Function(String id, String remoteId, {required bool isDuplicate})? onSuccess;
+  final void Function(String id, String errorMessage)? onError;
+
+  const SourceUploadCallbacks({this.onSending, this.onProgress, this.onSuccess, this.onError});
+}
+
+/// A file to send that is not an asset of this device: a file shared to the app, a file of a network share
+class UploadSource {
+  const UploadSource({
+    required this.id,
+    required this.filename,
+    required this.length,
+    required this.openRead,
+    required this.createdAt,
+    required this.modifiedAt,
+    required this.deviceAssetId,
+    this.isFavorite = false,
+  });
+
+  /// What the callbacks get
+  final String id;
+  final String filename;
+  final int length;
+
+  /// A new stream of the [length] bytes of the file from the first one, each time it is called: a request sent again
+  /// reads the file again
+  final Stream<List<int>> Function() openRead;
+  final DateTime createdAt;
+  final DateTime modifiedAt;
+  final String deviceAssetId;
+  final bool isFavorite;
+}
+
+/// A file of a network share to send to the server, read on [fileSystem]
+class NetworkUploadItem {
+  const NetworkUploadItem({required this.fileSystem, required this.entry});
+
+  final NetworkFileSystem fileSystem;
+  final NetworkEntry entry;
+
+  /// What the callbacks get for this file: its share and its path
+  String get id => networkUploadId(entry);
+}
+
+/// The id of a file of a share in the callbacks and the progress of its upload
+String networkUploadId(NetworkEntry entry) => '${entry.sourceId}:${entry.path}';
+
+/// The deviceAssetId of a file of a share: stable for the file at this place, whatever device sends it, and apart from
+/// the ids of the assets of the device
+String networkDeviceAssetId(NetworkEntry entry) =>
+    'share-${sha1.convert(utf8.encode('${entry.sourceId}${entry.path}'))}';
+
+/// The share of a file being sent, noting whether it gave fewer bytes than asked: the reader never asks past the size
+/// announced, so the file got shorter since its stat
+class _ShortReadWatch implements NetworkFileSystem {
+  _ShortReadWatch(this._share);
+
+  final NetworkFileSystem _share;
+  bool fellShort = false;
+
+  @override
+  NetworkSource get source => _share.source;
+
+  @override
+  Future<List<NetworkEntry>> list(String path) => _share.list(path);
+
+  @override
+  Future<NetworkEntry> stat(String path) => _share.stat(path);
+
+  @override
+  Future<Uint8List> readRange(String path, int offset, int length) async {
+    final bytes = await _share.readRange(path, offset, length);
+    if (bytes.length < length) {
+      fellShort = true;
+    }
+    return bytes;
+  }
+
+  @override
+  Future<void> close() => _share.close();
 }
 
 final foregroundUploadServiceProvider = Provider((ref) {
@@ -72,7 +165,12 @@ class ForegroundUploadService {
   final AssetService _assetService;
   final Logger _logger = Logger('ForegroundUploadService');
 
+  /// Set to stop the uploads of the assets of this device and of the files shared to the app
   bool shouldAbortUpload = false;
+
+  /// Set to stop the uploads of the files of the network shares. Apart from [shouldAbortUpload]: a backup that is
+  /// cancelled or that starts must not stop nor restart an upload from a share, and the other way round.
+  bool shouldAbortNetworkUpload = false;
 
   Future<({int total, int remainder, int processing})> getBackupCounts(String userId) {
     return _backupRepository.getAllCounts(userId);
@@ -172,12 +270,28 @@ class ForegroundUploadService {
       processItem: (file) async {
         final fileId = p.hash(file.path).toString();
 
-        final result = await _uploadSingleFile(
-          file,
-          deviceAssetId: fileId,
-          cancelToken: cancelToken,
-          onProgress: (bytes, totalBytes) => onProgress?.call(fileId, bytes, totalBytes),
-        );
+        final UploadResult result;
+        try {
+          // ignore: avoid_slow_async_io
+          final stats = await file.stat();
+          result = await _uploadSingleFile(
+            UploadSource(
+              id: fileId,
+              filename: p.basename(file.path),
+              length: stats.size,
+              openRead: file.openRead,
+              createdAt: stats.changed,
+              modifiedAt: stats.modified,
+              deviceAssetId: fileId,
+            ),
+            cancelToken: cancelToken,
+            onProgress: (bytes, totalBytes) => onProgress?.call(fileId, bytes, totalBytes),
+            logContext: 'shareIntent[$fileId]',
+          );
+        } catch (error) {
+          onError?.call(fileId, error.toString());
+          return;
+        }
 
         if (result.isSuccess) {
           onSuccess?.call(fileId, result.remoteAssetId!);
@@ -188,8 +302,114 @@ class ForegroundUploadService {
     );
   }
 
+  /// Sends files of the network shares, one at a time: a video or a large file of an SMB share takes the stream pool
+  /// of its connection (six reads at once) for itself, which a second file read meanwhile would only slow down.
+  /// Stopped by [cancelToken] and by [cancelNetworkUploads], never by the cancel of a backup.
+  Future<void> uploadNetworkFiles(
+    List<NetworkUploadItem> items, {
+    required Completer<void> cancelToken,
+    SourceUploadCallbacks callbacks = const SourceUploadCallbacks(),
+  }) async {
+    if (items.isEmpty) {
+      return;
+    }
+
+    await _executeWithWorkerPool<NetworkUploadItem>(
+      items: items,
+      cancelToken: cancelToken,
+      fromNetworkShares: true,
+      concurrentWorkers: 1,
+      processItem: (item) => _uploadNetworkFile(item, cancelToken, callbacks),
+    );
+  }
+
+  Future<void> _uploadNetworkFile(
+    NetworkUploadItem item,
+    Completer<void> cancelToken,
+    SourceUploadCallbacks callbacks,
+  ) async {
+    final entry = item.entry;
+    final id = item.id;
+    final deviceAssetId = networkDeviceAssetId(entry);
+    try {
+      // The listing may be older than the file: one still being copied to the share has grown since, and would go
+      // out cut at its listed size. The size and the date of now are what the request announces, what the reader
+      // reads and what the record keeps; the listing stands in for what a share leaves out of its stat.
+      final current = await item.fileSystem.stat(entry.path);
+      final size = current.size ?? entry.size;
+      if (size == null) {
+        callbacks.onError?.call(id, 'The share gives no size for ${entry.name}');
+        return;
+      }
+      final modified = current.modified ?? entry.modified;
+      callbacks.onSending?.call(
+        id,
+        NetworkEntry(
+          sourceId: entry.sourceId,
+          path: entry.path,
+          isDirectory: false,
+          size: size,
+          modified: modified,
+          mimeType: entry.mimeType,
+        ),
+      );
+
+      // A share knows when a file was last changed only; the server reads the date the photo was taken from the file
+      final date = (modified ?? DateTime.now()).toUtc();
+      final share = _ShortReadWatch(item.fileSystem);
+      final source = UploadSource(
+        id: id,
+        filename: entry.name,
+        length: size,
+        openRead: () => readWholeFile(share, entry.path, size, isCancelled: () => cancelToken.isCompleted),
+        createdAt: date,
+        modifiedAt: date,
+        deviceAssetId: deviceAssetId,
+      );
+
+      // No x-immich-checksum header: hashing the file first would read it from the share twice. The server hashes
+      // what it receives and answers "duplicate" for a file it already has, once the whole file went over.
+      final result = await _uploadSingleFile(
+        source,
+        cancelToken: cancelToken,
+        onProgress: (bytes, totalBytes) => callbacks.onProgress?.call(id, bytes, totalBytes),
+        logContext: 'networkShare[$deviceAssetId]',
+      );
+
+      if (result.isSuccess && result.remoteAssetId != null) {
+        callbacks.onSuccess?.call(id, result.remoteAssetId!, isDuplicate: result.isDuplicate);
+      } else if (result.isCancelled || cancelToken.isCompleted) {
+        // The reader may stop the request before the abort does: either way the user cancelled, nothing failed
+        shouldAbortNetworkUpload = true;
+      } else {
+        // The listing and the stat disagree, then the share gave fewer bytes than the stat: the file is still being
+        // written. Said plainly, whatever the HTTP client made of the error of the reader.
+        final isBeingWritten = share.fellShort && entry.size != null && entry.size != size;
+        final errorMessage = isBeingWritten
+            ? '${entry.name} is still being written on the share (${entry.size} bytes listed, $size when its upload '
+                  'started, then fewer could be read): send it again once it is complete'
+            : result.errorMessage ?? 'Upload failed with status ${result.statusCode}';
+        _logger.warning("Error(${result.statusCode}) uploading ${entry.path} from a share: $errorMessage");
+        callbacks.onError?.call(id, errorMessage);
+        if (errorMessage == "Quota has been exceeded!") {
+          shouldAbortNetworkUpload = true;
+        }
+      }
+    } catch (error, stackTrace) {
+      _logger.warning("Error uploading ${entry.path} from a share", error, stackTrace);
+      callbacks.onError?.call(id, error.toString());
+    }
+  }
+
+  /// Stops the uploads of the assets of this device, and with them those of the network shares: called on logout
   void cancel() {
     shouldAbortUpload = true;
+    shouldAbortNetworkUpload = true;
+  }
+
+  /// Stops the uploads of the files of the network shares only
+  void cancelNetworkUploads() {
+    shouldAbortNetworkUpload = true;
   }
 
   /// Generic worker pool for concurrent uploads
@@ -199,21 +419,30 @@ class ForegroundUploadService {
   /// [processItem] - Function to process each item with an HTTP client
   /// [shouldSkip] - Optional function to skip items (e.g., WiFi requirement check)
   /// [concurrentWorkers] - Number of concurrent workers (default: 3)
+  /// [fromNetworkShares] - Files of the network shares, stopped by [shouldAbortNetworkUpload] instead of
+  /// [shouldAbortUpload]
   Future<void> _executeWithWorkerPool<T>({
     required List<T> items,
     required Completer<void>? cancelToken,
     required Future<void> Function(T item) processItem,
     bool Function(T item)? shouldSkip,
     int concurrentWorkers = 3,
+    bool fromNetworkShares = false,
   }) async {
-    await _storageRepository.clearCache();
-    shouldAbortUpload = false;
+    if (fromNetworkShares) {
+      // The files of a share are not in the cache of the assets of the device, which a backup running meanwhile uses
+      shouldAbortNetworkUpload = false;
+    } else {
+      await _storageRepository.clearCache();
+      shouldAbortUpload = false;
+    }
+    bool isAborted() => fromNetworkShares ? shouldAbortNetworkUpload : shouldAbortUpload;
 
     int currentIndex = 0;
 
     Future<void> worker() async {
       while (true) {
-        if (shouldAbortUpload || (cancelToken != null && cancelToken.isCompleted)) {
+        if (isAborted() || (cancelToken != null && cancelToken.isCompleted)) {
           break;
         }
 
@@ -418,36 +647,32 @@ class ForegroundUploadService {
     }
   }
 
+  /// Sends one file that is not an asset of this device, from [source]
   Future<UploadResult> _uploadSingleFile(
-    File file, {
-    required String deviceAssetId,
+    UploadSource source, {
     required Completer<void>? cancelToken,
     void Function(int bytes, int totalBytes)? onProgress,
+    required String logContext,
   }) async {
     try {
-      // ignore: avoid_slow_async_io
-      final stats = await file.stat();
-      final fileCreatedAt = stats.changed;
-      final fileModifiedAt = stats.modified;
-      final filename = p.basename(file.path);
-
       final fields = {
         // deviceAssetId/deviceId required by server v2.7.5 and below (drop in v4.0 per #27818).
-        'deviceAssetId': deviceAssetId,
+        'deviceAssetId': source.deviceAssetId,
         'deviceId': Store.get(StoreKey.deviceId),
-        'fileCreatedAt': fileCreatedAt.toUtc().toIso8601String(),
-        'fileModifiedAt': fileModifiedAt.toUtc().toIso8601String(),
-        'isFavorite': 'false',
+        'fileCreatedAt': source.createdAt.toUtc().toIso8601String(),
+        'fileModifiedAt': source.modifiedAt.toUtc().toIso8601String(),
+        'isFavorite': source.isFavorite.toString(),
         'duration': '0',
       };
 
-      return await _uploadRepository.uploadFile(
-        file: file,
-        originalFileName: filename,
+      return await _uploadRepository.uploadStream(
+        openRead: source.openRead,
+        length: source.length,
+        filename: source.filename,
         fields: fields,
         cancelToken: cancelToken,
         onProgress: onProgress,
-        logContext: 'shareIntent[$deviceAssetId]',
+        logContext: logContext,
       );
     } catch (e) {
       return UploadResult.error(errorMessage: e.toString());

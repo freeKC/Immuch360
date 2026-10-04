@@ -124,4 +124,118 @@ void main() {
     expect(result.errorMessage, 'boom');
     verify(() => client.send(any())).called(1);
   });
+
+  test('a file the server already had is a duplicate', () async {
+    stubSend((_) => response(200, '{"id":"remote-1","status":"duplicate"}'));
+
+    final result = await upload();
+
+    expect(result.isSuccess, isTrue);
+    expect(result.isDuplicate, isTrue);
+    expect(result.remoteAssetId, 'remote-1');
+  });
+
+  group('uploadStream', () {
+    final bytes = utf8.encode('the bytes of a video');
+    late List<http.BaseRequest> sent;
+    late List<List<int>> bodies;
+    late int opened;
+
+    // Records each request and its body as a real client would send it
+    void stubStreamSend(FutureOr<http.StreamedResponse> Function(int attempt) answer) {
+      var attempt = 0;
+      when(() => client.send(any())).thenAnswer((invocation) async {
+        final request = invocation.positionalArguments.single as http.BaseRequest;
+        sent.add(request);
+        bodies.add(await request.finalize().expand((chunk) => chunk).toList());
+        return answer(++attempt);
+      });
+    }
+
+    Future<UploadResult> uploadStream({Map<String, String> headers = const {}}) => sut.uploadStream(
+      openRead: () {
+        opened++;
+        return Stream.fromIterable([bytes.sublist(0, 4), bytes.sublist(4)]);
+      },
+      length: bytes.length,
+      filename: 'trip.mp4',
+      fields: const {'deviceAssetId': 'share-1'},
+      headers: headers,
+      cancelToken: null,
+      logContext: 'share-1',
+      httpClient: client,
+    );
+
+    setUp(() {
+      sent = [];
+      bodies = [];
+      opened = 0;
+    });
+
+    test('sends the stream as the asset data, with the fields and the headers', () async {
+      stubStreamSend((_) => response(201, '{"id":"remote-1","status":"created"}'));
+
+      final result = await uploadStream(headers: const {'x-test': 'yes'});
+
+      expect(result.isSuccess, isTrue);
+      expect(result.isDuplicate, isFalse);
+      expect(result.remoteAssetId, 'remote-1');
+      final request = sent.single as http.MultipartRequest;
+      expect(request.url.toString(), 'http://demo.immich.app/api/assets');
+      expect(request.fields, {'deviceAssetId': 'share-1'});
+      expect(request.headers, containsPair('x-test', 'yes'));
+      final file = request.files.single;
+      expect(file.field, 'assetData');
+      expect(file.filename, 'trip.mp4');
+      expect(file.length, bytes.length);
+      expect(utf8.decode(bodies.single, allowMalformed: true), contains('the bytes of a video'));
+    });
+
+    test('opens the stream again from its start when the first send dies before a response', () async {
+      stubStreamSend((attempt) {
+        if (attempt == 1) {
+          throw http.ClientException('Broken pipe');
+        }
+        return response(201, '{"id":"remote-1"}');
+      });
+
+      final result = await uploadStream();
+
+      expect(result.isSuccess, isTrue);
+      expect(opened, 2);
+      // Each request has its own multipart boundary: the same length, the whole file in both
+      expect(bodies[1].length, bodies[0].length);
+      expect(utf8.decode(bodies[1], allowMalformed: true), contains('the bytes of a video'));
+    });
+
+    test('tells a duplicate from the status code when the body does not say', () async {
+      stubStreamSend((_) => response(200, '{"id":"remote-1"}'));
+
+      final result = await uploadStream();
+
+      expect(result.isDuplicate, isTrue);
+    });
+
+    test('is an error when the stream fails', () async {
+      when(() => client.send(any())).thenAnswer((invocation) async {
+        final request = invocation.positionalArguments.single as http.BaseRequest;
+        await request.finalize().drain<void>();
+        return response(201, '{"id":"remote-1"}');
+      });
+
+      final result = await sut.uploadStream(
+        openRead: () => Stream.error(const FileSystemException('short read')),
+        length: 10,
+        filename: 'trip.mp4',
+        fields: const {},
+        cancelToken: null,
+        logContext: 'share-1',
+        httpClient: client,
+      );
+
+      expect(result.isSuccess, isFalse);
+      expect(result.isCancelled, isFalse);
+      expect(result.errorMessage, contains('short read'));
+    });
+  });
 }

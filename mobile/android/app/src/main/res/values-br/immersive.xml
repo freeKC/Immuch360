@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">C\'hwitet eo an orin (%1$s), o klask gant lanv lenn ar servijer</string>
   <string name="immersive_video_decoder_switch">%1$s a ya dreist galloud digoder ar c\'hasked, o klask gant lanv lenn ar servijer</string>
   <string name="immersive_error_nothing">Netra da ziskouez</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d a ya dreist galloud digoder ar c\'hasked (diroll, bloc\'hoù). En Immich, lakait an treuzkodañ video da HEVC pe bevennit ar spisder.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d a ya dreist galloud digoder ar c\'hasked (diroll, bloc\'hoù). Adenkodit ar restr-mañ e HEVC pe gant ur spisder izeloc\'h.</string>
 </resources>

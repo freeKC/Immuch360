@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Originalen mislykkedes (%1$s), prøver serverens afspilningsstream</string>
   <string name="immersive_video_decoder_switch">%1$s overstiger headsettets dekoder, prøver serverens afspilningsstream</string>
   <string name="immersive_error_nothing">Intet at vise</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d overstiger headsettets dekoder (hakkende, pixeleret). I Immich skal du indstille videotranskodningen til HEVC eller begrænse opløsningen.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d overstiger headsettets dekoder (hakkende, pixeleret). Genkod denne fil i HEVC eller i en lavere opløsning.</string>
 </resources>

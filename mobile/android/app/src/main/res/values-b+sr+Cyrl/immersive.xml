@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Оригинал није успео (%1$s), покушава се стрим за репродукцију са сервера</string>
   <string name="immersive_video_decoder_switch">%1$s премашује могућности декодера VR наочара, покушава се стрим за репродукцију са сервера</string>
   <string name="immersive_error_nothing">Нема ничега за приказ</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d премашује могућности декодера VR наочара (сецкање, коцкице). У Immich-у подесите транскодирање видеа на HEVC или ограничите резолуцију.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d премашује могућности декодера VR наочара (сецкање, коцкице). Поново кодирајте ову датотеку у HEVC или у нижој резолуцији.</string>
 </resources>

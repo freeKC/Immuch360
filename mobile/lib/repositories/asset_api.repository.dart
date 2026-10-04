@@ -70,6 +70,23 @@ class AssetApiRepository extends ApiRepository {
     return (await checkNull(_api.getAssetInfo(id))).checksum;
   }
 
+  /// Whether the server still has the asset [id], out of its trash. It answers 400 ("Not found or no access") or 404
+  /// for an asset deleted since; any other failure is thrown.
+  Future<bool> isInLibrary(String id) async {
+    try {
+      // A trashed asset still counts: the server answers "duplicate" with its id to a new upload of the same file
+      // and leaves it in the trash, so sending the file again would only cost the transfer (restore it from the
+      // trash instead)
+      await checkNull(_api.getAssetInfo(id));
+      return true;
+    } on ApiException catch (error) {
+      if (error.code == 400 || error.code == 404) {
+        return false;
+      }
+      rethrow;
+    }
+  }
+
   Future<void> updateDescription(String assetId, String description) {
     return _api.updateAsset(assetId, UpdateAssetDto(description: Optional.present(description)));
   }

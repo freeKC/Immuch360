@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Hok asal gagal (%1$s), tengoh cuba strim main dari server</string>
   <string name="immersive_video_decoder_switch">%1$s melampau had penyahkod headset, tengoh cuba strim main dari server</string>
   <string name="immersive_error_nothing">Takdok gapo nok tunjuk</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d melampau had penyahkod headset (tersekat-sekat, berpetak-petak). Dale Immich, tetapke transkod video ko HEVC atau hadke resolusi.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d melampau had penyahkod headset (tersekat-sekat, berpetak-petak). Kod semula fail ni dale HEVC atau resolusi hok lebih rendoh.</string>
 </resources>

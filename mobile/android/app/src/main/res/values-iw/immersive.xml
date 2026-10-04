@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">המקור נכשל (%1$s), מנסה את זרם ההפעלה של השרת</string>
   <string name="immersive_video_decoder_switch">%1$s חורג מיכולת המפענח של משקפי ה-VR, מנסה את זרם ההפעלה של השרת</string>
   <string name="immersive_error_nothing">אין מה להציג</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d חורג מיכולת המפענח של משקפי ה-VR (מקוטע, מפוקסל). ב-Immich, הגדר את המרת הקידוד של הווידאו ל-HEVC או הגבל את הרזולוציה.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d חורג מיכולת המפענח של משקפי ה-VR (מקוטע, מפוקסל). קודד מחדש את הקובץ ב-HEVC או ברזולוציה נמוכה יותר.</string>
 </resources>

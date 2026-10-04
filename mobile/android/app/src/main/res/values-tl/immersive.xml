@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Nabigo ang orihinal (%1$s), sinusubukan ang playback stream ng server</string>
   <string name="immersive_video_decoder_switch">Lampas ang %1$s sa kaya ng decoder ng headset, sinusubukan ang playback stream ng server</string>
   <string name="immersive_error_nothing">Walang maipapakita</string>
+  <string name="immersive_codec_too_large">Ang %1$s %2$d x %3$d ay hindi kaya ng decoder ng headset (paputol-putol, basag-basag). Sa Immich, itakda ang video transcoding sa HEVC o limitahan ang resolution.</string>
+  <string name="immersive_codec_too_large_file">Ang %1$s %2$d x %3$d ay hindi kaya ng decoder ng headset (paputol-putol, basag-basag). I-encode muli ang file na ito sa HEVC o sa mas mababang resolution.</string>
 </resources>

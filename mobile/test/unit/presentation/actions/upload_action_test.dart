@@ -176,6 +176,21 @@ void main() {
       await settleUpload(tester);
     });
 
+    testWidgets('says where the assets go and how many there are', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const ActionButton(action: UploadAction(source: .timeline)),
+        overrides: [
+          ...context.selected({LocalAssetFactory.create(), LocalAssetFactory.create()}),
+          ...uploadOverrides(),
+        ],
+      );
+
+      final label = StaticTranslations.instance.upload_to_immich(count: 2);
+      expect(label, 'Upload to Immich (2)');
+      expect(find.text(label), findsOneWidget);
+    });
+
     testWidgets('is hidden for a remote asset, which has nothing to upload', (tester) async {
       await pumpUpload(tester, {RemoteAssetFactory.create()});
 

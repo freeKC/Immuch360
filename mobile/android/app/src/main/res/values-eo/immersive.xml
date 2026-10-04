@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">La originalo malsukcesis (%1$s), provante la ludfluon de la servilo</string>
   <string name="immersive_video_decoder_switch">%1$s superas la malkodilon de la kasko, provante la ludfluon de la servilo</string>
   <string name="immersive_error_nothing">Nenio por montri</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d superas la kapablon de la malkodilo de la kasko (saltanta, blokeca bildo). En Immich, agordu la transkodadon de videoj al HEVC aŭ limigu la distingivon.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d superas la kapablon de la malkodilo de la kasko (saltanta, blokeca bildo). Rekodu ĉi tiun dosieron en HEVC aŭ je pli malalta distingivo.</string>
 </resources>

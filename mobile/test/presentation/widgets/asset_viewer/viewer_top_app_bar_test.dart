@@ -23,6 +23,7 @@ import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
+import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
@@ -32,6 +33,7 @@ import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -55,6 +57,8 @@ class _MockTimelineService extends Mock implements TimelineService {}
 class _MockSphericalVideoApi extends Mock implements SphericalVideoApi {}
 
 class _MockSpatialVideoApi extends Mock implements SpatialVideoApi {}
+
+class _MockVideoDecoderApi extends Mock implements VideoDecoderApi {}
 
 /// Records the viewer's player calls in the same list as the native player calls, to check their order
 class _RecordingVideoPlayer extends VideoPlayerNotifier {
@@ -146,10 +150,16 @@ void main() {
   late _MockSpatialVideoApi spatialVideoApi;
   late MockStorageRepository storage;
   late _FakeSphericalProbes probes;
+  late _MockVideoDecoderApi decoderApi;
   late List<String> calls;
   // Preview requests of the immersive viewer, and the XMP the preview carries: none by default
   late List<Uri> previewRequests;
   String? previewXmp;
+  // The size requests asked before a switch to the transcoded stream, and the sizes the server gives: a transcoded
+  // stream of its own by default
+  late List<http.Request> sizeRequests;
+  var originalSize = 1000;
+  var transcodedSize = 100;
 
   setUpAll(() => registerFallbackValue(<String, String>{}));
   late _MockImmersiveApi immersiveApi;
@@ -202,7 +212,19 @@ void main() {
   };
   // The buffering indicator of the native video players, which fill in the percentage
   const englishBufferingLabels = {'buffering': 'Buffering {percent}%'};
-  const englishVideoPlayerLabels = {...englishViewerLabels, ...englishAudioTrackLabels, ...englishBufferingLabels};
+  // The message of a switch to the transcoded stream of the native video players, which fill in the track they could
+  // not decode
+  const englishSourceLabels = {
+    'sourceSwitched':
+        'Playing the transcoded stream: the original ({codec} {width} x {height}) exceeds what this '
+        'device decodes',
+  };
+  const englishVideoPlayerLabels = {
+    ...englishViewerLabels,
+    ...englishAudioTrackLabels,
+    ...englishBufferingLabels,
+    ...englishSourceLabels,
+  };
 
   setUp(() async {
     context = await PresentationContext.create();
@@ -211,7 +233,7 @@ void main() {
     calls = [];
     sphericalVideoApi = _MockSphericalVideoApi();
     when(
-      () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()),
+      () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer((_) async => calls.add('open'));
     spatialVideoApi = _MockSpatialVideoApi();
     when(
@@ -220,6 +242,11 @@ void main() {
     when(() => spatialVideoApi.open(any())).thenAnswer((_) async => calls.add('spatial'));
     storage = MockStorageRepository();
     probes = _FakeSphericalProbes();
+    // The device decodes every video, unless a test says otherwise
+    decoderApi = _MockVideoDecoderApi();
+    when(
+      () => decoderApi.canDecode(any(), any(), any(), any(), any()),
+    ).thenAnswer((_) async => DecodeVerdict(supported: true, hardware: true, maxWidth: 8192, maxHeight: 4320));
     immersiveApi = _MockImmersiveApi();
     immersiveUrls = [];
     immersiveOpeningIds = [];
@@ -230,10 +257,13 @@ void main() {
     }
 
     when(
-      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer(openImmersive);
     previewRequests = [];
     previewXmp = null;
+    sizeRequests = [];
+    originalSize = 1000;
+    transcodedSize = 100;
   });
 
   tearDown(() async {
@@ -342,6 +372,7 @@ void main() {
             sphericalProbeServiceProvider.overrideWithValue(probes),
             videoPlayerProvider(asset.id).overrideWith((ref) => _RecordingVideoPlayer(calls, initial: playerState)),
             spatialVideoApiProvider.overrideWithValue(spatialVideoApi),
+            videoDecoderApiProvider.overrideWithValue(decoderApi),
             if (appConfig != null) appConfigProvider.overrideWithValue(appConfig),
             isHorizonOsProvider.overrideWith((ref) => horizonOs),
             immersiveApiProvider.overrideWithValue(immersiveApi),
@@ -351,6 +382,13 @@ void main() {
               MockClient((request) async {
                 previewRequests.add(request.url);
                 return http.Response.bytes((previewXmp ?? '').codeUnits, 206);
+              }),
+            ),
+            videoSourceClientProvider.overrideWithValue(
+              MockClient((request) async {
+                sizeRequests.add(request);
+                final size = request.url.path.endsWith('/original') ? originalSize : transcodedSize;
+                return http.Response('', 200, headers: {'content-length': '$size'});
               }),
             ),
           ],
@@ -458,8 +496,8 @@ void main() {
       expect(router.current.name, PanoramaViewerRoute.name);
       expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
       expect(find.text('panorama ${asset.id}'), findsOneWidget);
-      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()));
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('stops a video, then plays its transcoded stream in the native 360° player', (tester) async {
@@ -480,6 +518,7 @@ void main() {
           captureAny(),
           captureAny(),
           captureAny(),
+          any(),
         ),
       ).captured;
       expect(captured, [
@@ -506,7 +545,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, file.uri.toString());
       expect(url, startsWith('file:///'));
@@ -521,14 +560,14 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, '${PresentationContext.serverEndpoint}/assets/${asset.id}/video/playback');
     });
 
     testWidgets('gives the viewer its video back when the native 360° player cannot open', (tester) async {
       when(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(tester, owned(type: .video), projectionType: .equirectangular, panoramaVideoSupported: true);
 
@@ -552,7 +591,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, '${PresentationContext.serverEndpoint}/assets/${asset.id}/original');
     });
@@ -571,7 +610,17 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), captureAny(), captureAny()),
+          () => sphericalVideoApi.open(
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            captureAny(),
+            captureAny(),
+            captureAny(),
+            any(),
+          ),
         ).captured;
         expect(captured, [expected, englishVideoPlayerLabels, SphereCoverage.full], reason: '$width x $height');
       }
@@ -587,7 +636,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny()),
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any()),
       ).captured;
       expect(captured, [StereoLayout.leftRight, SphereCoverage.half]);
     });
@@ -607,7 +656,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny()),
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any()),
       ).captured;
       expect(captured, [StereoLayout.topBottom, SphereCoverage.half]);
       expect(probes.probed, [(asset, file)]);
@@ -622,7 +671,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny()),
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any()),
       ).captured;
       expect(captured, [StereoLayout.mono, SphereCoverage.full]);
     });
@@ -650,7 +699,9 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
       expect(
-        verify(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), captureAny())).captured,
+        verify(
+          () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), captureAny(), any()),
+        ).captured,
         [SphereCoverage.full, SphereCoverage.half],
         reason: 'opens with the coverage picked last time',
       );
@@ -696,6 +747,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -717,7 +769,18 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), captureAny(), captureAny(), any(), any()),
+          () => immersiveApi.open(
+            any(),
+            any(),
+            any(),
+            any(),
+            captureAny(),
+            captureAny(),
+            captureAny(),
+            any(),
+            any(),
+            any(),
+          ),
         ).captured;
         expect(captured, [
           expected,
@@ -743,7 +806,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final layout = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
       expect(previewRequests, [Uri.parse('$server/assets/${asset.id}/thumbnail?size=preview&edited=true')]);
@@ -760,7 +823,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final layout = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
     });
@@ -804,7 +867,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any()),
+          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any(), any()),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
       }
@@ -819,7 +882,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any(), any()),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
     });
@@ -852,9 +915,10 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).called(1);
-        verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()));
+        verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
       }
     });
 
@@ -868,7 +932,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => immersiveApi.open(file.uri.toString(), any(), true, asset.name, any(), any(), any(), any(), any()),
+        () => immersiveApi.open(file.uri.toString(), any(), true, asset.name, any(), any(), any(), any(), any(), any()),
       ).called(1);
     });
 
@@ -886,6 +950,7 @@ void main() {
           any(),
           true,
           asset.name,
+          any(),
           any(),
           any(),
           any(),
@@ -924,7 +989,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final startPosition = verify(
-          () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any()),
+          () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any(), any()),
         ).captured.single;
         expect(startPosition, expected, reason: '$status');
 
@@ -984,7 +1049,7 @@ void main() {
       tester,
     ) async {
       when(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
         tester,
@@ -1037,7 +1102,8 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => immersiveApi.open(file.uri.toString(), any(), false, asset.name, any(), any(), any(), any(), any()),
+        () =>
+            immersiveApi.open(file.uri.toString(), any(), false, asset.name, any(), any(), any(), any(), any(), any()),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -1066,6 +1132,7 @@ void main() {
           captureAny(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
         ),
@@ -1123,6 +1190,7 @@ void main() {
             captureAny(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1162,6 +1230,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
@@ -1194,7 +1263,7 @@ void main() {
 
       expect(calls, ['suspend', 'immersive']);
       final startPosition = verify(
-        () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any()),
+        () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any(), any()),
       ).captured.single;
       expect(startPosition, 12000);
     });
@@ -1209,7 +1278,7 @@ void main() {
 
       // Stopped before the file is looked for, so that the immersive viewer starts where the video was
       expect(calls, ['suspend', 'resume at 0 paused']);
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
     });
   });
@@ -1245,7 +1314,9 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
-      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any())).called(1);
+      verify(
+        () => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any()),
+      ).called(1);
     });
 
     testWidgets('stays hidden for the other assets', (tester) async {
@@ -1362,7 +1433,7 @@ void main() {
 
       expect(stored(), '["local-1"]');
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, file.uri.toString());
     });
@@ -1376,7 +1447,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(stored(), '["${asset.id}"]');
-      verify(() => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any())).called(1);
+      verify(
+        () => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any()),
+      ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
     });
 
@@ -1429,6 +1502,7 @@ void main() {
       ...englishCoverageLabels,
       ...englishAudioTrackLabels,
       ...englishBufferingLabels,
+      ...englishSourceLabels,
     };
 
     SpatialOpenRequest openedRequest() =>
@@ -1536,7 +1610,7 @@ void main() {
       expect(request.autoplay, isTrue);
       expect(request.debugOverlay, isFalse);
       expect(request.labels, englishSpatialLabels);
-      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('keeps a paused video paused in the player', (tester) async {
@@ -1887,6 +1961,273 @@ void main() {
 
       expect(router.current.name, PanoramaViewerRoute.name);
       expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
+    });
+  });
+
+  group('ViewerTopAppBar video source', () {
+    const server = PresentationContext.serverEndpoint;
+    // An 8K HEVC 360° video, beyond the decoders of a Meta Quest 3
+    const probe8k = SphericalProbe(
+      hasSphericalMetadata: true,
+      codec: 'hvc1',
+      codecs: 'hvc1.1.6.L183',
+      codedWidth: 7680,
+      codedHeight: 3840,
+      frameRate: 30,
+    );
+    // The frame size without grouping separators, as the native players write it
+    const switchedMessage =
+        'Playing the transcoded stream: the original (HEVC 7680 x 3840) exceeds what this device decodes';
+    const forcedMessage = 'Playing the original although it exceeds what this device decodes (HEVC 7680 x 3840)';
+    final spatialButton = find.byTooltip('Spatial 2.5D');
+
+    void cannotDecode() => when(() => decoderApi.canDecode(any(), any(), any(), any(), any())).thenAnswer(
+      (_) async => DecodeVerdict(supported: false, hardware: true, maxWidth: 4096, maxHeight: 4096, reason: 'test'),
+    );
+
+    /// The URL and the stream to fall back to that the immersive viewer was opened with
+    (String, String?) immersiveOpened() {
+      final captured = verify(
+        () => immersiveApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any(), captureAny()),
+      ).captured;
+      return (captured[0] as String, captured[1] as String?);
+    }
+
+    /// The URL and the stream to fall back to that the native 360° player was opened with
+    (String, String?) sphericalOpened() {
+      final captured = verify(
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), captureAny()),
+      ).captured;
+      return (captured[0] as String, captured[1] as String?);
+    }
+
+    testWidgets('opens the original in the immersive viewer, with the transcoded stream to fall back to', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(immersiveOpened(), ('$server/assets/${asset.id}/original', '$server/assets/${asset.id}/video/playback'));
+      expect(find.byType(SnackBar), findsNothing);
+    });
+
+    testWidgets('leaves the switch to the immersive viewer when the headset cannot decode the original', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      cannotDecode();
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      // The viewer checks its decoders at the first frames and says so in the headset, where a message of the app
+      // would stay hidden
+      expect(immersiveOpened(), ('$server/assets/${asset.id}/original', '$server/assets/${asset.id}/video/playback'));
+      verifyNever(() => decoderApi.canDecode(any(), any(), any(), any(), any()));
+      expect(find.byType(SnackBar), findsNothing);
+      // Only the sizes are asked, to hand out the transcoded stream when it is a file of its own
+      expect(sizeRequests, isNotEmpty);
+    });
+
+    testWidgets('opens the original in the immersive viewer when the user asks for it, and says it may not play', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      cannotDecode();
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .equirectangular,
+        horizonOs: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(videoSource: .alwaysOriginal)),
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(immersiveOpened(), ('$server/assets/${asset.id}/original', null));
+      expect(find.text(forcedMessage), findsOneWidget);
+    });
+
+    testWidgets('opens the transcoded stream in the immersive viewer when the user picks it, without any check', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .equirectangular,
+        horizonOs: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(videoSource: .alwaysTranscoded)),
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(immersiveOpened(), ('$server/assets/${asset.id}/video/playback', null));
+      verifyNever(() => decoderApi.canDecode(any(), any(), any(), any(), any()));
+    });
+
+    testWidgets('keeps the original in the immersive viewer when the decoder check fails', (tester) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      when(
+        () => decoderApi.canDecode(any(), any(), any(), any(), any()),
+      ).thenThrow(PlatformException(code: 'channel-error'));
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(immersiveOpened(), ('$server/assets/${asset.id}/original', '$server/assets/${asset.id}/video/playback'));
+    });
+
+    testWidgets('gives the immersive viewer nothing to fall back to for the copy on the headset', (tester) async {
+      final asset = owned(type: .video, localId: 'local-1');
+      final file = File('/storage/emulated/0/Oculus/VideoShots/VID_360.mp4');
+      when(() => storage.getFileForAsset('local-1')).thenAnswer((_) async => file);
+      probes.result = probe8k;
+      cannotDecode();
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(immersiveOpened(), (file.uri.toString(), null));
+      expect(find.byType(SnackBar), findsNothing);
+    });
+
+    testWidgets('gives the native 360° player the transcoded stream to fall back to when the phone chooses', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .equirectangular,
+        panoramaVideoSupported: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(loadOriginalVideo: true)),
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(sphericalOpened(), ('$server/assets/${asset.id}/original', '$server/assets/${asset.id}/video/playback'));
+    });
+
+    testWidgets('plays the transcoded stream in the native 360° player when the phone cannot decode the original', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      cannotDecode();
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .equirectangular,
+        panoramaVideoSupported: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(videoSource: .preferOriginalWithinDecoder)),
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(sphericalOpened(), ('$server/assets/${asset.id}/video/playback', null));
+      expect(find.text(switchedMessage), findsOneWidget);
+      expect(
+        [for (final request in sizeRequests) (request.method, request.url.toString())],
+        unorderedEquals([
+          ('HEAD', '$server/assets/${asset.id}/original'),
+          ('HEAD', '$server/assets/${asset.id}/video/playback'),
+        ]),
+        reason: 'the server may have transcoded nothing',
+      );
+    });
+
+    testWidgets('keeps the original in the native 360° player when the server transcoded nothing, and says it may not '
+        'play', (tester) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      cannotDecode();
+      transcodedSize = originalSize;
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .equirectangular,
+        panoramaVideoSupported: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(videoSource: .preferOriginalWithinDecoder)),
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(sphericalOpened(), ('$server/assets/${asset.id}/original', null));
+      expect(find.text(switchedMessage), findsNothing);
+      expect(find.text(forcedMessage), findsOneWidget);
+    });
+
+    testWidgets('gives the native 360° player nothing to fall back to when it plays the transcoded stream', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(sphericalOpened(), ('$server/assets/${asset.id}/video/playback', null));
+    });
+
+    testWidgets('gives the Spatial player the transcoded stream to fall back to, after checking a flat video', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = const SphericalProbe(codec: 'avc1', codedWidth: 3840, codedHeight: 1080, frameRate: 30);
+      await pumpTopBar(
+        tester,
+        asset,
+        appConfig: const AppConfig(viewer: ViewerConfig(spatial25d: true, videoSource: .preferOriginalWithinDecoder)),
+      );
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      final request = verify(() => spatialVideoApi.open(captureAny())).captured.single as SpatialOpenRequest;
+      expect(request.url, '$server/assets/${asset.id}/original');
+      expect(request.fallbackUrl, '$server/assets/${asset.id}/video/playback');
+      expect(request.projection, SpatialProjection.flat, reason: 'what the file declares of a sphere is not read');
+      expect(probes.probed.single.$1, asset);
+      verify(() => decoderApi.canDecode('avc1', null, 3840, 1080, 30)).called(1);
+    });
+
+    testWidgets('plays the transcoded stream in the Spatial player when the phone cannot decode the original', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      cannotDecode();
+      await pumpTopBar(
+        tester,
+        asset,
+        appConfig: const AppConfig(viewer: ViewerConfig(spatial25d: true, loadOriginalVideo: true)),
+      );
+
+      await tester.tap(spatialButton);
+      await tester.pumpAndSettle();
+
+      final request = verify(() => spatialVideoApi.open(captureAny())).captured.single as SpatialOpenRequest;
+      expect(request.url, '$server/assets/${asset.id}/video/playback');
+      expect(request.fallbackUrl, isNull);
+      expect(find.text(switchedMessage), findsOneWidget);
     });
   });
 }

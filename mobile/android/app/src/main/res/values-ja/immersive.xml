@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">オリジナルを再生できませんでした（%1$s）。サーバーの再生用ストリームを試しています</string>
   <string name="immersive_video_decoder_switch">%1$s はヘッドセットのデコーダーの性能を超えています。サーバーの再生用ストリームを試しています</string>
   <string name="immersive_error_nothing">表示するものがありません</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d はヘッドセットのデコーダーの性能を超えています（カクつき、ブロックノイズ）。Immich で動画の変換を HEVC に設定するか、解像度を制限してください。</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d はヘッドセットのデコーダーの性能を超えています（カクつき、ブロックノイズ）。このファイルを HEVC で、または低い解像度で再エンコードしてください。</string>
 </resources>

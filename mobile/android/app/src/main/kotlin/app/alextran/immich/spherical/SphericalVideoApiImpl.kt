@@ -62,6 +62,10 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
     }
   }
 
+  /**
+   * Starts the 360° player on [url]. [fallbackUrl] is the server's transcoded stream, played once instead of [url]
+   * when the device cannot decode the original or when it fails; null when there is none.
+   */
   override fun open(
     url: String,
     headers: Map<String, String>,
@@ -71,6 +75,7 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
     stereoLayout: StereoLayout,
     stereoLabels: Map<String, String>,
     coverage: SphereCoverage,
+    fallbackUrl: String?,
   ) {
     val intent = SphericalVideoActivity.intent(
       context,
@@ -82,6 +87,7 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
       stereoLayout,
       stereoLabels,
       coverage,
+      fallbackUrl,
     )
     if (context !is Activity) {
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

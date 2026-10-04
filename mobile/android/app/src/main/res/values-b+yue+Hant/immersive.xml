@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">原檔播放唔到（%1$s），試緊伺服器嘅播放串流</string>
   <string name="immersive_video_decoder_switch">%1$s 超出頭戴裝置解碼器嘅能力，試緊伺服器嘅播放串流</string>
   <string name="immersive_error_nothing">冇嘢可以顯示</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d 超出頭戴裝置解碼器嘅能力（會一窒一窒、起格）。喺 Immich 將影片轉碼設定為 HEVC，或者限制解像度。</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d 超出頭戴裝置解碼器嘅能力（會一窒一窒、起格）。請將呢個檔案重新編碼做 HEVC，或者用較低嘅解像度。</string>
 </resources>

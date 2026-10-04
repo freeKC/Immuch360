@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">เล่นไฟล์ต้นฉบับไม่สำเร็จ (%1$s) กำลังลองสตรีมการเล่นจากเซิร์ฟเวอร์</string>
   <string name="immersive_video_decoder_switch">%1$s เกินขีดความสามารถของตัวถอดรหัสในเฮดเซ็ต กำลังลองสตรีมการเล่นจากเซิร์ฟเวอร์</string>
   <string name="immersive_error_nothing">ไม่มีอะไรให้แสดง</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d เกินขีดความสามารถของตัวถอดรหัสในเฮดเซ็ต (ภาพกระตุก แตกเป็นบล็อก) ใน Immich ให้ตั้งค่าการแปลงรหัสวิดีโอเป็น HEVC หรือจำกัดความละเอียด</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d เกินขีดความสามารถของตัวถอดรหัสในเฮดเซ็ต (ภาพกระตุก แตกเป็นบล็อก) ให้เข้ารหัสไฟล์นี้ใหม่เป็น HEVC หรือที่ความละเอียดต่ำลง</string>
 </resources>

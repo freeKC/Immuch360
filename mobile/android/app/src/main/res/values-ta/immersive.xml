@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">அசல் தோல்வியடைந்தது (%1$s), சேவையகத்தின் இயக்க ஸ்ட்ரீமை முயற்சிக்கிறது</string>
   <string name="immersive_video_decoder_switch">%1$s ஹெட்செட்டின் டிகோடர் திறனைத் தாண்டுகிறது, சேவையகத்தின் இயக்க ஸ்ட்ரீமை முயற்சிக்கிறது</string>
   <string name="immersive_error_nothing">காட்ட எதுவும் இல்லை</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d ஹெட்செட்டின் டிகோடர் திறனைத் தாண்டுகிறது (தடுமாற்றம், கட்டங்கள்). Immich-இல் வீடியோ டிரான்ஸ்கோடிங்கை HEVC ஆக அமைக்கவும் அல்லது தெளிவுத்திறனைக் கட்டுப்படுத்தவும்.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d ஹெட்செட்டின் டிகோடர் திறனைத் தாண்டுகிறது (தடுமாற்றம், கட்டங்கள்). இந்தக் கோப்பை HEVC-இல் அல்லது குறைந்த தெளிவுத்திறனில் மீண்டும் குறியாக்கம் செய்யவும்.</string>
 </resources>

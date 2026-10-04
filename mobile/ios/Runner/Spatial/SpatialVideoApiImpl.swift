@@ -7,6 +7,9 @@ import UIKit
 ///
 /// [events] tells Flutter when the player closes, with the position and the layout, so that the normal player
 /// resumes where the Spatial one stopped.
+///
+/// The fallbackUrl of the request is the server's transcoded stream: the player switches to it when the device
+/// cannot decode the original or when the original fails.
 class SpatialVideoApiImpl: SpatialVideoApi {
   private let events: SpatialVideoEvents
 
@@ -36,6 +39,11 @@ class SpatialVideoApiImpl: SpatialVideoApi {
     guard let videoUrl = URL(string: request.url) else {
       throw PigeonError(code: "INVALID_URL", message: "Cannot read the video URL \(request.url)", details: nil)
     }
+    // An unreadable fallback, or the original itself, is no fallback
+    var fallback = request.fallbackUrl.flatMap { URL(string: $0) }
+    if fallback == videoUrl {
+      fallback = nil
+    }
     let noViewController = PigeonError(
       code: "NO_VIEW_CONTROLLER",
       message: "No view controller to show the Spatial player",
@@ -53,7 +61,7 @@ class SpatialVideoApiImpl: SpatialVideoApi {
       throw noViewController
     }
 
-    let player = SpatialVideoViewController(url: videoUrl, request: request, events: events)
+    let player = SpatialVideoViewController(url: videoUrl, fallbackUrl: fallback, request: request, events: events)
     player.modalPresentationStyle = .fullScreen
     player.modalTransitionStyle = .crossDissolve
     presenter.present(player, animated: true)

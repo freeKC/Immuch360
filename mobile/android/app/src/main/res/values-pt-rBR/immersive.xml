@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">O original falhou (%1$s), tentando o stream de reprodução do servidor</string>
   <string name="immersive_video_decoder_switch">%1$s excede o decodificador do headset, tentando o stream de reprodução do servidor</string>
   <string name="immersive_error_nothing">Nada para mostrar</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d excede o decodificador do headset (travando, com blocos). No Immich, defina a transcodificação de vídeo como HEVC ou limite a resolução.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d excede o decodificador do headset (travando, com blocos). Recodifique este arquivo em HEVC ou em uma resolução menor.</string>
 </resources>

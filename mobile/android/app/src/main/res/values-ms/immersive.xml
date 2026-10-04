@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Fail asal gagal (%1$s), mencuba strim main balik pelayan</string>
   <string name="immersive_video_decoder_switch">%1$s melebihi keupayaan penyahkod headset, mencuba strim main balik pelayan</string>
   <string name="immersive_error_nothing">Tiada apa-apa untuk dipaparkan</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d melebihi keupayaan penyahkod headset (tersekat-sekat, berblok). Dalam Immich, tetapkan transkod video kepada HEVC atau hadkan resolusi.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d melebihi keupayaan penyahkod headset (tersekat-sekat, berblok). Kodkan semula fail ini dalam HEVC atau pada resolusi yang lebih rendah.</string>
 </resources>

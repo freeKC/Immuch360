@@ -12,9 +12,12 @@ import 'package:immich_mobile/presentation/pages/network/network_browser.page.da
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('NetworkPhotoPage');
@@ -37,7 +40,7 @@ typedef _Photo = ({NetworkEntry entry, Uri url});
 /// A photo of a network share, shown straight from it through the media bridge: pinch or double tap to zoom. A photo
 /// whose file declares a 360° projection gets a 360° button, and any photo can be viewed as 360° from the menu: in
 /// the panorama viewer, or in the immersive viewer on a Meta Quest, which goes from there to the previous and next
-/// 360° photos and videos of [folder].
+/// 360° photos and videos of [folder]. The menu also sends the photo to the Immich server, when there is one.
 @RoutePage()
 class NetworkPhotoPage extends ConsumerStatefulWidget {
   const NetworkPhotoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -177,6 +180,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   Widget build(BuildContext context) {
     // Asked early, so that the 360° button knows where to open the photo right away
     ref.watch(isHorizonOsProvider);
+    final canUpload = ref.watch(hasServerProvider);
+    final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
     return FutureBuilder<_Photo>(
       future: _photo,
       builder: (context, snapshot) {
@@ -198,18 +203,30 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                   tooltip: '360°',
                   onPressed: () => unawaited(_open360(photo)),
                 ),
-              if (photo != null && !is360)
+              if (photo != null && (!is360 || canUpload))
                 PopupMenuButton<void>(
                   tooltip: context.t.more,
                   itemBuilder: (context) => [
-                    PopupMenuItem<void>(
-                      onTap: () => unawaited(_open360(photo)),
-                      child: ListTile(
-                        leading: const Icon(Icons.threesixty_rounded),
-                        title: Text(context.t.view_as_360),
-                        contentPadding: EdgeInsets.zero,
+                    if (!is360)
+                      PopupMenuItem<void>(
+                        onTap: () => unawaited(_open360(photo)),
+                        child: ListTile(
+                          leading: const Icon(Icons.threesixty_rounded),
+                          title: Text(context.t.view_as_360),
+                          contentPadding: EdgeInsets.zero,
+                        ),
                       ),
-                    ),
+                    if (canUpload)
+                      PopupMenuItem<void>(
+                        // One upload from the shares at a time
+                        enabled: !isUploading,
+                        onTap: () => unawaited(uploadNetworkEntries(this.context, ref, widget.sourceId, [photo.entry])),
+                        child: ListTile(
+                          leading: const Icon(Icons.backup_outlined),
+                          title: Text(context.t.network_upload_action),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
                   ],
                 ),
             ],

@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Orîjînal nehat lêxistin (%1$s), herikîna lêxistinê ya serverê tê ceribandin</string>
   <string name="immersive_video_decoder_switch">%1$s ji kapasîteya dekoderê ya headsetê zêdetir e, herikîna lêxistinê ya serverê tê ceribandin</string>
   <string name="immersive_error_nothing">Tiştek tune ye ku were nîşandan</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d ji kapasîteya dekoderê ya headsetê zêdetir e (diqute, blok blok xuya dike). Di Immich de, veguherîna vîdyoyê bike HEVC an çareseriyê sînordar bike.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d ji kapasîteya dekoderê ya headsetê zêdetir e (diqute, blok blok xuya dike). Vê pelê bi HEVC an bi çareseriyeke kêmtir ji nû ve kod bike.</string>
 </resources>

@@ -102,6 +102,14 @@ const _kParamTypeOverrides = <String, String>{
   'backup_controller_page_storage_format.total': 'String',
   'backup_controller_page_storage_format.used': 'String',
   'cleanup_found_assets_with_size.size': 'String',
+  // Frame sizes, which an int would write with grouping separators ("8,192 x 4,320"): the callers and the native
+  // players give the digits alone
+  'video_decoders_max.height': 'String',
+  'video_decoders_max.width': 'String',
+  'video_source_original_forced.height': 'String',
+  'video_source_original_forced.width': 'String',
+  'video_source_switched.height': 'String',
+  'video_source_switched.width': 'String',
 };
 
 final _usedParamTypeOverrides = <String>{};

@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Түпнұсқаны ойнату сәтсіз аяқталды (%1$s), сервердің ойнату ағыны сыналуда</string>
   <string name="immersive_video_decoder_switch">%1$s гарнитура декодерінің мүмкіндігінен асады, сервердің ойнату ағыны сыналуда</string>
   <string name="immersive_error_nothing">Көрсететін ештеңе жоқ</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d гарнитура декодерінің мүмкіндігінен асып кетеді (кідіріп, шаршы-шаршы болып көрінеді). Immich-те бейне транскодтауын HEVC етіп орнатыңыз немесе ажыратымдылықты шектеңіз.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d гарнитура декодерінің мүмкіндігінен асып кетеді (кідіріп, шаршы-шаршы болып көрінеді). Бұл файлды HEVC форматында немесе төменірек ажыратымдылықпен қайта кодтаңыз.</string>
 </resources>

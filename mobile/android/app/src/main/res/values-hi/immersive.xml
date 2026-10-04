@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">मूल फ़ाइल विफल रही (%1$s), सर्वर की प्लेबैक स्ट्रीम आज़माई जा रही है</string>
   <string name="immersive_video_decoder_switch">%1$s हेडसेट के डिकोडर की क्षमता से अधिक है, सर्वर की प्लेबैक स्ट्रीम आज़माई जा रही है</string>
   <string name="immersive_error_nothing">दिखाने के लिए कुछ नहीं</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d हेडसेट के डिकोडर की क्षमता से अधिक है (अटकता है, पिक्सलेटेड दिखता है)। Immich में वीडियो ट्रांसकोडिंग को HEVC पर सेट करें या रिज़ॉल्यूशन सीमित करें।</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d हेडसेट के डिकोडर की क्षमता से अधिक है (अटकता है, पिक्सलेटेड दिखता है)। इस फ़ाइल को HEVC में या कम रिज़ॉल्यूशन पर फिर से एन्कोड करें।</string>
 </resources>

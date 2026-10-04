@@ -61,6 +61,7 @@ import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
+import app.alextran.immich.core.VideoDecoders
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.max
@@ -73,6 +74,9 @@ private const val CONTROLS_TIMEOUT_MS = 3000L
 
 /** How long a message (camera refused) stays on screen */
 private const val MESSAGE_DURATION_MS = 3000L
+
+/** How long the message of a switch to the transcoded stream stays on screen: a longer text, read while it plays */
+private const val LONG_MESSAGE_DURATION_MS = 6000L
 
 private const val PROGRESS_INTERVAL_MS = 250L
 private const val STATS_INTERVAL_MS = 500L
@@ -120,10 +124,15 @@ private const val SENSITIVITY_STEP = 0.1f
  * A video with several audio tracks (languages, commentary) shows an audio track button, see [AudioTrackChooser].
  * While the video loads or stalls, a label tells how far the buffer is filled, see [BufferingIndicator].
  *
+ * With a fallback URL (the server's transcoded stream), the original gives way to it once: when its codec and size are
+ * above what the device decodes (see [VideoDecoders]), checked as soon as its tracks are known, or when it fails. The
+ * transcoded stream starts where the original stopped.
+ *
  * Opened from Flutter through [SpatialVideoApi]. On close (button, system back, or the system destroying the
  * activity) Flutter gets [SpatialVideoEvents.closed] once, with the position, so that the normal player takes over,
  * and with the layout and the projection shown last, so that the choices of the user can be remembered for the asset.
- * A playback error or a GPU that cannot render closes the player the same way, after a short message.
+ * A playback error (of the transcoded stream too, when there is one) or a GPU that cannot render closes the player the
+ * same way, after a short message.
  */
 @OptIn(UnstableApi::class)
 class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
@@ -137,6 +146,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     private const val EXTRA_AUTOPLAY = "autoplay"
     private const val EXTRA_DEBUG_OVERLAY = "debug_overlay"
     private const val EXTRA_LABELS = "labels"
+    private const val EXTRA_FALLBACK_URL = "fallback_url"
     private const val STATE_POSITION = "position"
     private const val STATE_PLAY_WHEN_READY = "play_when_ready"
     private const val STATE_LAYOUT = "layout"
@@ -147,6 +157,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     private const val STATE_MANUAL_HOLD = "manual_hold"
     private const val STATE_HALF_SPHERE = "half_sphere"
     private const val STATE_AUDIO_TRACK = "audio_track"
+    private const val STATE_PLAYING_FALLBACK = "playing_fallback"
+    private const val STATE_DECODER_CHECKED = "decoder_checked"
+    private const val STATE_DECLARED_STEREO_MODE = "declared_stereo_mode"
 
     private const val LABEL_LAYOUT = "layout"
     private const val LABEL_LAYOUT_AUTO = "layoutAuto"
@@ -220,6 +233,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
         .putExtra(EXTRA_AUTOPLAY, request.autoplay)
         .putExtra(EXTRA_DEBUG_OVERLAY, request.debugOverlay)
         .putExtra(EXTRA_LABELS, request.labels.toBundle())
+        .putExtra(EXTRA_FALLBACK_URL, request.fallbackUrl)
     }
 
     private fun stereoLayoutNamed(name: String?): SpatialStereoLayout? =
@@ -288,6 +302,18 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
 
   /** Stereo mode the video declares (st3d box or Matroska StereoMode), [Format.NO_VALUE] when it declares none */
   private var declaredStereoMode = Format.NO_VALUE
+
+  /** The server's transcoded stream, null when Flutter sent none */
+  private var fallbackUrl: String? = null
+
+  /**
+   * The transcoded stream plays in place of the original: the device cannot decode the original, or it failed. Once
+   * per opening, kept across a recreation.
+   */
+  private var playingFallback = false
+
+  /** The video track of the URL that plays was checked against the decoders of the device */
+  private var decoderChecked = false
 
   /** Display aspect ratio of the whole frame, 0 until the video size is known */
   private var videoAspect = 0f
@@ -437,7 +463,10 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     }
 
     override fun onTracksChanged(tracks: Tracks) {
-      val stereoMode = selectedVideoFormat(tracks)?.stereoMode ?: Format.NO_VALUE
+      val format = selectedVideoFormat(tracks)
+      val declared = format?.stereoMode ?: Format.NO_VALUE
+      // The transcoded stream may lose the stereo metadata of the original: the layout the original declared stays
+      val stereoMode = if (playingFallback && declared == Format.NO_VALUE) declaredStereoMode else declared
       if (stereoMode != declaredStereoMode) {
         declaredStereoMode = stereoMode
         applyLayout()
@@ -445,10 +474,16 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       // The audio track button shows when there is a choice
       val options = player?.let { audioTracks.onTracksChanged(it, tracks) }.orEmpty()
       audioButton.visibility = if (options.size >= 2) View.VISIBLE else View.GONE
+      // Last: a switch to the transcoded stream replaces these tracks
+      format?.let(::checkDecoder)
     }
 
     override fun onPlayerError(error: PlaybackException) {
       Log.e(TAG, "Cannot play the video in Spatial 2.5D", error)
+      // The transcoded stream gets its chance before the player gives up
+      if (switchToFallback("the original failed (${error.errorCodeName})")) {
+        return
+      }
       Toast.makeText(this@SpatialVideoActivity, label(LABEL_ERROR), Toast.LENGTH_LONG).show()
       // The normal player takes over. Posted, so the player is not released inside its own callback.
       handler.post { close() }
@@ -478,6 +513,13 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       HttpClientManager.initialize(this)
 
       labels = intent.getBundleExtra(EXTRA_LABELS)?.toStringMap() ?: emptyMap()
+      fallbackUrl = intent.getStringExtra(EXTRA_FALLBACK_URL)?.takeIf { it.isNotBlank() }
+      playingFallback = savedInstanceState?.getBoolean(STATE_PLAYING_FALLBACK) == true && fallbackUrl != null
+      decoderChecked = savedInstanceState?.getBoolean(STATE_DECODER_CHECKED) == true
+      if (playingFallback) {
+        // What the original declared, which the transcoded stream may have lost
+        declaredStereoMode = savedInstanceState?.getInt(STATE_DECLARED_STEREO_MODE, Format.NO_VALUE) ?: Format.NO_VALUE
+      }
       audioTracks = AudioTrackChooser(this, labels)
       audioTracks.chosenIndex = savedInstanceState?.getInt(STATE_AUDIO_TRACK, -1) ?: -1
       debugOverlay = intent.getBooleanExtra(EXTRA_DEBUG_OVERLAY, false)
@@ -652,6 +694,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     if (::audioTracks.isInitialized) {
       outState.putInt(STATE_AUDIO_TRACK, audioTracks.chosenIndex)
     }
+    outState.putBoolean(STATE_PLAYING_FALLBACK, playingFallback)
+    outState.putBoolean(STATE_DECODER_CHECKED, decoderChecked)
+    outState.putInt(STATE_DECLARED_STEREO_MODE, declaredStereoMode)
   }
 
   override fun onDestroy() {
@@ -691,7 +736,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     messageText = findViewById(R.id.spatial_video_message)
     bufferingView = findViewById(R.id.spatial_video_buffering)
     bufferingLabel = findViewById(R.id.spatial_video_buffering_label)
-    val streamed = StreamingLoadControl.isStreamed(intent.getStringExtra(EXTRA_URL).orEmpty())
+    val streamed = StreamingLoadControl.isStreamed(playbackUrl().orEmpty())
     bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed)
   }
 
@@ -846,7 +891,7 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
   }
 
   private fun initializePlayer() {
-    val url = intent.getStringExtra(EXTRA_URL)
+    val url = playbackUrl()
     if (url == null) {
       close()
       return
@@ -882,6 +927,55 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
         it.prepare()
       }
     updatePlayPause()
+  }
+
+  /** The URL that plays: the original, or the transcoded stream once the player switched to it */
+  private fun playbackUrl(): String? =
+    if (playingFallback) fallbackUrl else intent.getStringExtra(EXTRA_URL)
+
+  /**
+   * A video above what the device decodes stutters or shows blocks: the transcoded stream plays instead, once, from
+   * the same position, and the user reads why when Flutter sent the label. Without a transcoded stream the original
+   * plays anyway, and the log tells why it may stutter.
+   */
+  private fun checkDecoder(format: Format) {
+    if (decoderChecked || format.width <= 0 || format.height <= 0) {
+      return
+    }
+    decoderChecked = true
+    val verdict = VideoDecoders.canDecode(format)
+    if (verdict.supported) {
+      return
+    }
+    val codec = VideoDecoders.codecName(format.sampleMimeType)
+    Log.w(TAG, "$codec ${format.width}x${format.height} is above what this device decodes: ${verdict.reason}")
+    if (!switchToFallback("the device cannot decode the original")) {
+      return
+    }
+    val message = VideoDecoders.decoderLabel(labels, VideoDecoders.LABEL_SWITCHED, codec, format.width, format.height)
+    if (message != null) {
+      showMessage(message, LONG_MESSAGE_DURATION_MS)
+    } else {
+      Log.i(TAG, "No label from Flutter for the switch to the transcoded stream")
+    }
+  }
+
+  /**
+   * Plays the transcoded stream in place of the original, from where it stopped and as it was (playing or paused),
+   * once. False when there is none, when it already plays, or without a player.
+   */
+  private fun switchToFallback(reason: String): Boolean {
+    val fallback = fallbackUrl ?: return false
+    val current = player ?: return false
+    if (playingFallback || released) {
+      return false
+    }
+    playingFallback = true
+    decoderChecked = false
+    Log.i(TAG, "Switching to the transcoded stream: $reason")
+    current.setMediaItem(MediaItem.fromUri(fallback), current.currentPosition.coerceAtLeast(0L))
+    current.prepare()
+    return true
   }
 
   /** Called by the renderer on the main thread once its video texture exists, and again after a new GL context */
@@ -1381,10 +1475,10 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     }
   }
 
-  private fun showMessage(text: String) {
+  private fun showMessage(text: String, durationMs: Long = MESSAGE_DURATION_MS) {
     transientMessage = text
     handler.removeCallbacks(clearMessageRunnable)
-    handler.postDelayed(clearMessageRunnable, MESSAGE_DURATION_MS)
+    handler.postDelayed(clearMessageRunnable, durationMs)
     updateMessage()
   }
 

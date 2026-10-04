@@ -11,6 +11,7 @@ import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
@@ -52,7 +53,14 @@ Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset
   final errorMessage = context.t.immersive_viewer_open_failed;
   final stereoLabels = sphereViewerLabels(context.t);
   try {
-    await openImmersiveViewer(ref, asset, stereoLabels: stereoLabels);
+    await openImmersiveViewer(
+      ref,
+      asset,
+      stereoLabels: stereoLabels,
+      // Comes once the file is chosen, after the slow steps: the static translations do not need the viewer then
+      onSourceNotice: (notice) =>
+          messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance)))),
+    );
   } catch (error) {
     _log.warning('Could not open the immersive viewer: $error');
     messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));

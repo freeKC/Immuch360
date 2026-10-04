@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">ਮੂਲ ਫ਼ਾਈਲ ਅਸਫਲ ਰਹੀ (%1$s), ਸਰਵਰ ਦੀ ਪਲੇਬੈਕ ਸਟ੍ਰੀਮ ਅਜ਼ਮਾਈ ਜਾ ਰਹੀ ਹੈ</string>
   <string name="immersive_video_decoder_switch">%1$s ਹੈੱਡਸੈੱਟ ਦੇ ਡੀਕੋਡਰ ਦੀ ਸਮਰੱਥਾ ਤੋਂ ਵੱਧ ਹੈ, ਸਰਵਰ ਦੀ ਪਲੇਬੈਕ ਸਟ੍ਰੀਮ ਅਜ਼ਮਾਈ ਜਾ ਰਹੀ ਹੈ</string>
   <string name="immersive_error_nothing">ਦਿਖਾਉਣ ਲਈ ਕੁਝ ਨਹੀਂ</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d ਹੈੱਡਸੈੱਟ ਦੇ ਡੀਕੋਡਰ ਦੀ ਸਮਰੱਥਾ ਤੋਂ ਬਾਹਰ ਹੈ (ਰੁਕ-ਰੁਕ ਕੇ ਚੱਲਦੀ, ਬਲਾਕਾਂ ਵਾਲੀ)। Immich ਵਿੱਚ ਵੀਡੀਓ ਟ੍ਰਾਂਸਕੋਡਿੰਗ ਨੂੰ HEVC \'ਤੇ ਸੈੱਟ ਕਰੋ ਜਾਂ ਰੈਜ਼ੋਲਿਊਸ਼ਨ ਸੀਮਤ ਕਰੋ।</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d ਹੈੱਡਸੈੱਟ ਦੇ ਡੀਕੋਡਰ ਦੀ ਸਮਰੱਥਾ ਤੋਂ ਬਾਹਰ ਹੈ (ਰੁਕ-ਰੁਕ ਕੇ ਚੱਲਦੀ, ਬਲਾਕਾਂ ਵਾਲੀ)। ਇਸ ਫ਼ਾਈਲ ਨੂੰ HEVC ਵਿੱਚ ਜਾਂ ਘੱਟ ਰੈਜ਼ੋਲਿਊਸ਼ਨ \'ਤੇ ਦੁਬਾਰਾ ਇਨਕੋਡ ਕਰੋ।</string>
 </resources>

@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">تعذر تشغيل الملف الأصلي (%1$s)، جارٍ تجربة بث التشغيل من الخادم</string>
   <string name="immersive_video_decoder_switch">%1$s يتجاوز قدرة مفكك الترميز في النظارة، جارٍ تجربة بث التشغيل من الخادم</string>
   <string name="immersive_error_nothing">لا يوجد ما يمكن عرضه</string>
+  <string name="immersive_codec_too_large">فيديو %1$s بدقة %2$d x %3$d يتجاوز قدرة مفكك الترميز في النظارة (تقطّع وظهور مربعات). في Immich، اضبط تحويل ترميز الفيديو على HEVC أو قلّل الدقة.</string>
+  <string name="immersive_codec_too_large_file">فيديو %1$s بدقة %2$d x %3$d يتجاوز قدرة مفكك الترميز في النظارة (تقطّع وظهور مربعات). أعد ترميز هذا الملف بصيغة HEVC أو بدقة أقل.</string>
 </resources>

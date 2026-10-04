@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Het origineel is mislukt (%1$s), de afspeelstream van de server wordt geprobeerd</string>
   <string name="immersive_video_decoder_switch">%1$s is te zwaar voor de decoder van de headset, de afspeelstream van de server wordt geprobeerd</string>
   <string name="immersive_error_nothing">Niets om te tonen</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d is te zwaar voor de decoder van de headset (schokkerig, blokkerig). Stel in Immich de videotranscodering in op HEVC of beperk de resolutie.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d is te zwaar voor de decoder van de headset (schokkerig, blokkerig). Codeer dit bestand opnieuw in HEVC of in een lagere resolutie.</string>
 </resources>

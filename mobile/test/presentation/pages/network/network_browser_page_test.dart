@@ -14,14 +14,24 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/domain/services/upload_record_store.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
+import 'package:immich_mobile/providers/network/network_upload.provider.dart';
+import 'package:immich_mobile/repositories/upload.repository.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/services/foreground_upload.service.dart';
+import 'package:immich_mobile/services/toast.service.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
 import '../../../domain/services/video_thumbnail_fakes.dart';
+import '../../../service.mocks.dart';
 import 'network_viewer_fakes.dart';
 
 /// An image that never comes: the thumbnails stay blank, and the test sees which ones were asked for
@@ -65,6 +75,37 @@ class _LoadedImage extends ImageProvider<_LoadedImage> {
   int get hashCode => id.hashCode;
 }
 
+/// The record of the files sent, in memory: widget tests do not wait for real file reads
+class _MemoryRecords extends UploadRecordStore {
+  _MemoryRecords() : super(() => throw UnimplementedError('in memory'));
+
+  final Map<String, UploadRecord> records = {};
+
+  @override
+  Future<Map<String, UploadRecord>> load() async => records;
+
+  @override
+  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt}) async {
+    records[UploadRecordStore.keyOf(entry)] = UploadRecord(remoteId: remoteId, sentAt: DateTime.utc(2026, 10, 2));
+  }
+}
+
+/// The toasts shown
+class _Toasts extends ToastService {
+  final List<String> successes = [];
+  final List<String> errors = [];
+
+  @override
+  FutureOr<void> success(String message, {ToastOption? toast}) {
+    successes.add(message);
+  }
+
+  @override
+  FutureOr<void> error(String message, {ToastOption? toast}) {
+    errors.add(message);
+  }
+}
+
 void main() {
   late Drift db;
   late StoreService store;
@@ -73,6 +114,14 @@ void main() {
   late List<Uri> thumbnails;
   late FakeVideoThumbnailHost videoHost;
   late Completer<void>? photosLoading;
+  late _MemoryRecords records;
+  late _Toasts toasts;
+  late MockForegroundUploadService uploads;
+
+  setUpAll(() {
+    registerFallbackValue(Completer<void>());
+    registerFallbackValue(const SourceUploadCallbacks());
+  });
 
   const source = NetworkSource(
     id: 'nas',
@@ -89,6 +138,9 @@ void main() {
     thumbnails = [];
     videoHost = FakeVideoThumbnailHost();
     photosLoading = null;
+    records = _MemoryRecords();
+    toasts = _Toasts();
+    uploads = MockForegroundUploadService();
     share = MemoryShare(
       source,
       files: {
@@ -158,6 +210,9 @@ void main() {
             retryDelay: Duration.zero,
           ),
         ),
+        uploadRecordStoreProvider.overrideWithValue(records),
+        foregroundUploadServiceProvider.overrideWithValue(uploads),
+        toastServiceProvider.overrideWithValue(toasts),
       ],
     );
   }
@@ -422,6 +477,198 @@ void main() {
 
     expect(find.text('Holidays'), findsOneWidget);
     expect(find.text('Home NAS'), findsNothing);
+  });
+
+  group('upload to Immich', () {
+    final t = StaticTranslations.instance;
+
+    /// The paths sent by each upload, answered by [answer] for each file: a new asset by default
+    List<List<String>> stubUploads({
+      Completer<void>? until,
+      UploadResult Function(String path)? answer,
+      void Function(Completer<void> cancelToken)? onStart,
+    }) {
+      final sent = <List<String>>[];
+      when(
+        () => uploads.uploadNetworkFiles(
+          any(),
+          cancelToken: any(named: 'cancelToken'),
+          callbacks: any(named: 'callbacks'),
+        ),
+      ).thenAnswer((invocation) async {
+        final items = invocation.positionalArguments.single as List<NetworkUploadItem>;
+        final callbacks = invocation.namedArguments[#callbacks] as SourceUploadCallbacks;
+        onStart?.call(invocation.namedArguments[#cancelToken] as Completer<void>);
+        sent.add([for (final item in items) item.entry.path]);
+        for (final item in items) {
+          callbacks.onProgress?.call(item.id, 50, 100);
+          if (until != null) {
+            await until.future;
+          }
+          final result = answer?.call(item.entry.path) ?? UploadResult.success(remoteAssetId: 'remote');
+          if (result.isSuccess) {
+            callbacks.onSuccess?.call(item.id, result.remoteAssetId!, isDuplicate: result.isDuplicate);
+          } else if (!result.isCancelled) {
+            callbacks.onError?.call(item.id, result.errorMessage!);
+          }
+        }
+      });
+      return sent;
+    }
+
+    Finder selectedMarkOf(String name) =>
+        find.descendant(of: tileOf(name), matching: find.byKey(const Key('network_media_selected')));
+
+    Finder sentBadgeOf(String name) =>
+        find.descendant(of: tileOf(name), matching: find.byKey(const Key('network_media_sent_badge')));
+
+    testWidgets('a long press picks a file, then a tap picks another instead of opening it', (tester) async {
+      final router = await pumpBrowser(tester);
+
+      await tester.longPress(tileOf('flat.jpg'));
+      await tester.pumpAndSettle();
+      expect(find.text(t.network_upload_selected(count: 1)), findsOneWidget);
+      expect(selectedMarkOf('flat.jpg'), findsOneWidget);
+      expect(find.byKey(const Key('network_media_unselected')), findsNWidgets(2));
+
+      await tester.tap(tileOf('trip.mp4'));
+      await tester.pumpAndSettle();
+      expect(find.text(t.network_upload_selected(count: 2)), findsOneWidget);
+      expect(router.current.name, 'HomeRoute', reason: 'nothing opened');
+
+      await tester.tap(tileOf('flat.jpg'));
+      await tester.pumpAndSettle();
+      expect(find.text(t.network_upload_selected(count: 1)), findsOneWidget);
+      expect(selectedMarkOf('flat.jpg'), findsNothing);
+    });
+
+    testWidgets('Select starts picking, and every photo and video of the folder can be picked at once', (tester) async {
+      await pumpBrowser(tester);
+
+      await tester.tap(find.byTooltip(t.network_upload_select));
+      await tester.pumpAndSettle();
+      expect(find.text(t.network_upload_selected(count: 0)), findsOneWidget);
+      final upload = find.widgetWithText(FilledButton, t.network_upload_action);
+      expect(tester.widget<FilledButton>(upload).onPressed, isNull, reason: 'nothing picked yet');
+
+      await tester.tap(find.byTooltip(t.network_upload_select_all));
+      await tester.pumpAndSettle();
+      expect(find.text(t.network_upload_selected(count: 3)), findsOneWidget);
+      expect(tester.widget<FilledButton>(upload).onPressed, isNotNull);
+
+      await tester.tap(find.byTooltip(t.network_upload_select_all));
+      await tester.pumpAndSettle();
+      expect(find.text(t.network_upload_selected(count: 0)), findsOneWidget, reason: 'all were picked: none now');
+    });
+
+    testWidgets('closing the selection, or going back, stops picking', (tester) async {
+      await pumpBrowser(tester);
+      await tester.longPress(tileOf('flat.jpg'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byTooltip(t.cancel));
+      await tester.pumpAndSettle();
+      expect(find.text('Home NAS'), findsOneWidget);
+      expect(find.byKey(const Key('network_media_unselected')), findsNothing);
+
+      await tester.longPress(tileOf('flat.jpg'));
+      await tester.pumpAndSettle();
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Home NAS'), findsOneWidget);
+      expect(find.byKey(const Key('network_media_unselected')), findsNothing);
+      expect(tileOf('flat.jpg'), findsOneWidget, reason: 'still on the browser');
+    });
+
+    testWidgets('sends the picked files, says how it went, and marks them as sent', (tester) async {
+      final sent = stubUploads(
+        answer: (path) => path == '/trip.mp4'
+            ? UploadResult.success(remoteAssetId: 'old', isDuplicate: true)
+            : UploadResult.success(remoteAssetId: 'new'),
+      );
+      await pumpBrowser(tester);
+      await tester.longPress(tileOf('flat.jpg'));
+      await tester.tap(tileOf('trip.mp4'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(t.network_upload_action));
+      await tester.pumpAndSettle();
+
+      expect(sent, [
+        ['/flat.jpg', '/trip.mp4'],
+      ]);
+      expect(toasts.successes, ['${t.network_upload_done(count: 1)} · ${t.network_upload_duplicates(count: 1)}']);
+      expect(sentBadgeOf('flat.jpg'), findsOneWidget);
+      expect(sentBadgeOf('trip.mp4'), findsOneWidget);
+      expect(sentBadgeOf('pano.jpg'), findsNothing);
+      expect(find.byKey(const Key('network_media_unselected')), findsNothing, reason: 'no longer picking');
+    });
+
+    testWidgets('shows the progress over the tiles, and a line with a cancel button while sending', (tester) async {
+      final until = Completer<void>();
+      Completer<void>? cancelToken;
+      stubUploads(until: until, onStart: (token) => cancelToken = token);
+      await pumpBrowser(tester);
+      await tester.longPress(tileOf('flat.jpg'));
+      await tester.tap(tileOf('pano.jpg'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(t.network_upload_action));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.descendant(of: tileOf('flat.jpg'), matching: find.text('50%')), findsOneWidget);
+      expect(
+        find.descendant(of: tileOf('pano.jpg'), matching: find.text('0%')),
+        findsOneWidget,
+        reason: 'waiting',
+      );
+      expect(find.text(t.network_upload_progress(done: 1, total: 2)), findsOneWidget);
+      expect(find.text(t.network_upload_keep_open), findsOneWidget);
+      expect(find.byType(NetworkUploadProgressBar), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(TextButton, t.cancel));
+      expect(cancelToken?.isCompleted, isTrue);
+      until.complete();
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.network_upload_keep_open), findsNothing);
+      expect(find.byType(NetworkUploadProgressOverlay), findsNothing);
+    });
+
+    testWidgets('marks a file that could not be sent, and tells why', (tester) async {
+      stubUploads(answer: (_) => UploadResult.error(errorMessage: 'Quota has been exceeded!'));
+      await pumpBrowser(tester);
+      await tester.longPress(tileOf('flat.jpg'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(t.network_upload_action));
+      await tester.pumpAndSettle();
+
+      expect(toasts.errors, [t.network_upload_error(error: 'Quota has been exceeded!')]);
+      expect(find.descendant(of: tileOf('flat.jpg'), matching: find.byIcon(Icons.error_outline)), findsOneWidget);
+      expect(sentBadgeOf('flat.jpg'), findsNothing);
+    });
+
+    testWidgets('marks the files sent before', (tester) async {
+      await records.add(share.file('/pano.jpg'), 'earlier');
+
+      await pumpBrowser(tester);
+
+      expect(sentBadgeOf('pano.jpg'), findsOneWidget);
+      expect(sentBadgeOf('flat.jpg'), findsNothing);
+    });
+
+    testWidgets('without a server, says that one is needed instead of offering to send', (tester) async {
+      await store.put(StoreKey.localSession, true);
+      await pumpBrowser(tester);
+
+      await tester.longPress(tileOf('flat.jpg'));
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.network_upload_needs_server), findsOneWidget);
+      expect(find.text(t.network_upload_action), findsNothing);
+    });
   });
 
   group('NetworkThumbnailCache', () {

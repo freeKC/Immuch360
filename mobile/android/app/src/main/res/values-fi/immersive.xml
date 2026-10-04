@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Alkuperäinen epäonnistui (%1$s), kokeillaan palvelimen toistovirtaa</string>
   <string name="immersive_video_decoder_switch">%1$s ylittää VR-lasien dekooderin rajat, kokeillaan palvelimen toistovirtaa</string>
   <string name="immersive_error_nothing">Ei näytettävää</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d ylittää VR-lasien dekooderin rajat (nykivä, palikkainen kuva). Aseta Immichissä videon transkoodaukseksi HEVC tai rajoita resoluutiota.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d ylittää VR-lasien dekooderin rajat (nykivä, palikkainen kuva). Koodaa tämä tiedosto uudelleen HEVC-muotoon tai pienemmällä resoluutiolla.</string>
 </resources>

@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Не ўдалося прайграць арыгінал (%1$s), спрабуем струмень прайгравання з сервера</string>
   <string name="immersive_video_decoder_switch">%1$s перавышае магчымасці дэкодэра шлема, спрабуем струмень прайгравання з сервера</string>
   <string name="immersive_error_nothing">Няма чаго паказаць</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d перавышае магчымасці дэкодэра шлема (рыўкі, квадраты). У Immich задайце транскадаванне відэа ў HEVC або абмяжуйце раздзяляльнасць.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d перавышае магчымасці дэкодэра шлема (рыўкі, квадраты). Перакадуйце гэты файл у HEVC або ў меншай раздзяляльнасці.</string>
 </resources>

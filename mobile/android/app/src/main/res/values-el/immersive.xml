@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Το πρωτότυπο απέτυχε (%1$s), δοκιμή της ροής αναπαραγωγής του διακομιστή</string>
   <string name="immersive_video_decoder_switch">Το %1$s ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset, δοκιμή της ροής αναπαραγωγής του διακομιστή</string>
   <string name="immersive_error_nothing">Τίποτα για εμφάνιση</string>
+  <string name="immersive_codec_too_large">Το %1$s %2$d x %3$d ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset (κολλήματα, τετραγωνάκια). Στο Immich, ορίστε τη μετατροπή βίντεο σε HEVC ή περιορίστε την ανάλυση.</string>
+  <string name="immersive_codec_too_large_file">Το %1$s %2$d x %3$d ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset (κολλήματα, τετραγωνάκια). Κωδικοποιήστε ξανά αυτό το αρχείο σε HEVC ή σε χαμηλότερη ανάλυση.</string>
 </resources>

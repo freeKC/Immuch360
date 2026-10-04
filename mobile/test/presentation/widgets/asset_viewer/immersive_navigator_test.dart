@@ -21,12 +21,14 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
+import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:mocktail/mocktail.dart';
@@ -51,6 +53,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
 
   final shown = <_Shown>[];
 
+  /// The transcoded stream given with each media shown, null for none
+  final shownFallbackUrls = <String?>[];
+
   /// What the viewer answers when asked to show a media: false once it no longer waits for the request
   bool answer = true;
 
@@ -65,6 +70,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     int startPositionMs,
     int openingId,
+    String? fallbackUrl,
   ) async => opened.add(url);
 
   @override
@@ -75,7 +81,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String title,
     ImmersiveStereoLayout stereoLayout,
     ImmersiveSphereCoverage coverage,
+    String? fallbackUrl,
   ) async {
+    shownFallbackUrls.add(fallbackUrl);
     shown.add((
       requestId: requestId,
       url: url,
@@ -238,6 +246,8 @@ void main() {
       storage: storage,
       probeService: _NoProbes(),
       gpanoClient: MockClient((_) async => http.Response('', 404)),
+      // Without a probe, no decoder check: the original plays, with the transcoded stream to fall back to
+      videoSources: VideoSourceService(VideoDecoderApi()),
     );
 
     TimelineImmersiveNavigator open(
@@ -245,13 +255,20 @@ void main() {
       Set<String> forced = const {},
       Set<String> localIds = const {},
       VideoPlayerNotifier? player,
+      String? fallbackUrl,
     }) {
       final asset = assets[index];
       final navigator = TimelineImmersiveNavigator(
         resolver: resolver(),
         timeline: timeline,
         asset: asset,
-        request: ImmersiveRequest(url: 'start', isVideo: asset.isVideo, title: asset.name, view: _fullSphere),
+        request: ImmersiveRequest(
+          url: 'start',
+          isVideo: asset.isVideo,
+          title: asset.name,
+          view: _fullSphere,
+          fallbackUrl: fallbackUrl,
+        ),
         index: index,
         forced: forced,
         localIds: localIds,
@@ -509,6 +526,28 @@ void main() {
       expect(coverages.get(assets[2]), SphereCoverage.half);
       expect(coverages.get(assets[4]), isNull);
       expect(jump.calls, ['jump 2']);
+    });
+
+    test('attributes the closing on the transcoded stream the viewer switched to, to the video it opened on', () async {
+      assets[2] = RemoteAssetFactory.create(id: 'a2', type: .video);
+      final player = _RecordingVideoPlayer();
+      open(2, player: player, fallbackUrl: 'start, transcoded');
+
+      close('start, transcoded', positionMs: 42000);
+      await pumpEventQueue();
+
+      expect(player.calls, ['resume at 42000 paused']);
+      expect(jump.calls, ['jump 2']);
+    });
+
+    test('shows a video found with the transcoded stream of the server to fall back to', () async {
+      assets[4] = RemoteAssetFactory.create(id: 'a4', type: .video);
+      flagged = {'a4'};
+      open(1);
+
+      expect(await request(1), isTrue);
+      expect(api.shown.single.url, '$_server/assets/a4/original');
+      expect(api.shownFallbackUrls, ['$_server/assets/a4/video/playback']);
     });
 
     test('attributes nothing for a media it did not show', () async {

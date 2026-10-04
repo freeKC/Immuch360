@@ -42,6 +42,7 @@ class SpatialOpenRequest {
     required this.autoplay,
     required this.debugOverlay,
     required this.labels,
+    this.fallbackUrl,
   });
 
   String url;
@@ -60,6 +61,10 @@ class SpatialOpenRequest {
   /// layoutSideBySideSwapped, layoutTopBottomSwapped, layoutNone, recenter, trackingLost, cameraDenied, unavailable,
   /// sensitivity, close, error. English fallbacks live in the native code.
   Map<String, String> labels;
+
+  /// The server's transcoded stream, played instead of the original when the device cannot decode it or when
+  /// the original fails; null when there is none.
+  final String? fallbackUrl;
 }
 
 @HostApi()

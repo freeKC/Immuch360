@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Ekki tókst að spila upprunalegu skrána (%1$s), reyni afspilunarstraum þjónsins</string>
   <string name="immersive_video_decoder_switch">%1$s er ofviða afkóðara VR-gleraugnanna, reyni afspilunarstraum þjónsins</string>
   <string name="immersive_error_nothing">Ekkert til að sýna</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d er ofviða afkóðara VR-gleraugnanna (hikstar, kubbótt mynd). Í Immich skaltu stilla umkóðun myndbanda á HEVC eða takmarka upplausnina.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d er ofviða afkóðara VR-gleraugnanna (hikstar, kubbótt mynd). Umkóðaðu þessa skrá í HEVC eða í lægri upplausn.</string>
 </resources>

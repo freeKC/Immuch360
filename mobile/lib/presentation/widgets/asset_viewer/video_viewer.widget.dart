@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
-import 'package:immich_mobile/domain/models/store.model.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -49,6 +51,8 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   Timer? _loadTimer;
   bool _isVideoReady = false;
   bool _shouldPlayOnForeground = true;
+  // What to tell the user about the file chosen for a server video, once the video is the one on screen
+  VideoSourceNotice? _sourceNotice;
 
   VideoPlayerNotifier get _notifier => ref.read(videoPlayerProvider(widget.asset.id).notifier);
 
@@ -161,18 +165,28 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
 
       final remoteAsset = videoAsset as RemoteAsset;
 
-      final serverEndpoint = Store.get(StoreKey.serverEndpoint);
       if (!context.mounted) {
         return null;
       }
 
-      final isOriginalVideo = ref.read(appConfigProvider).viewer.loadOriginalVideo;
-      final String postfixUrl = isOriginalVideo ? 'original' : 'video/playback';
-      final String assetId = remoteAsset.livePhotoVideoId ?? remoteAsset.id;
-      final String videoUrl = '$serverEndpoint/assets/$assetId/$postfixUrl';
+      // The original or the server's transcoded stream, as the settings and the decoders of the device say. This
+      // player has no stream to fall back to: when the device cannot decode the original, the choice is made here.
+      final policy = ref.read(appConfigProvider).viewer.videoSourcePolicy;
+      final probes = ref.read(sphericalProbeServiceProvider);
+      final videoSources = ref.read(videoSourceServiceProvider);
+      final probe = policy.readsTheFile ? await probes.probe(remoteAsset) : null;
+      final source = await videoSources.serverSource(
+        videoId: remoteAsset.livePhotoVideoId ?? remoteAsset.id,
+        policy: policy,
+        probe: probe,
+      );
+      if (!mounted) {
+        return null;
+      }
+      _sourceNotice = source.notice;
 
       return await VideoSource.init(
-        path: videoUrl,
+        path: source.url,
         type: VideoSourceType.network,
         headers: ApiService.getRequestHeaders(),
       );
@@ -293,6 +307,12 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     final source = await videoSource;
     if (source == null || !mounted) {
       return;
+    }
+    // Told once, when the video is the one on screen: the pages around it prepare their video too
+    final notice = _sourceNotice;
+    _sourceNotice = null;
+    if (notice != null) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(notice.message(context.t))));
     }
 
     // Grab refs to prevent reading after dispose

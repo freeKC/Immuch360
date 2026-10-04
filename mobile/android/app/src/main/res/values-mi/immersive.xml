@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">I rahua te taketake (%1$s), e whakamātau ana i te rere pūrei a te tūmau</string>
   <string name="immersive_video_decoder_switch">Kei runga ake a %1$s i te wetewete waehere o te pōtae VR, e whakamātau ana i te rere pūrei a te tūmau</string>
   <string name="immersive_error_nothing">Kāore he mea hei whakaatu</string>
+  <string name="immersive_codec_too_large">Ka hipa a %1$s %2$d x %3$d i te wetewete waehere o te pōtae VR (ka tūtatari, ka poraka). I Immich, tautuhia te whakawhiti ataata ki te HEVC, whakawhāitihia rānei te whakataunga.</string>
+  <string name="immersive_codec_too_large_file">Ka hipa a %1$s %2$d x %3$d i te wetewete waehere o te pōtae VR (ka tūtatari, ka poraka). Whakawaeherehia anō tēnei kōnae ki te HEVC, ki tētahi whakataunga iti iho rānei.</string>
 </resources>

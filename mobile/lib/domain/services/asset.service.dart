@@ -210,6 +210,11 @@ class AssetService {
     } finally {
       // the upload went through even when the stack call did not, so this version is the new base
       await _localRepository.updatePreviousChecksum(localId, uploadedChecksum);
+      if (checksum == null) {
+        // an asset outside of the albums picked for backup is never hashed: without its checksum it never merges
+        // with what was just uploaded, and the Upload action keeps offering it. The server hashed the same bytes.
+        await _localRepository.updateHashes({localId: uploadedChecksum});
+      }
     }
   }
 }

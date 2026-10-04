@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Original fehlgeschlagen (%1$s), Wiedergabe-Stream des Servers wird versucht</string>
   <string name="immersive_video_decoder_switch">%1$s überfordert den Decoder des Headsets, Wiedergabe-Stream des Servers wird versucht</string>
   <string name="immersive_error_nothing">Nichts anzuzeigen</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d überfordert den Decoder des Headsets (ruckelig, verpixelt). Stelle in Immich die Videotranskodierung auf HEVC um oder begrenze die Auflösung.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d überfordert den Decoder des Headsets (ruckelig, verpixelt). Kodiere diese Datei in HEVC oder mit geringerer Auflösung neu.</string>
 </resources>

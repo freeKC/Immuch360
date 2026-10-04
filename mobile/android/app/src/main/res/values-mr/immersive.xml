@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">मूळ फाइल अयशस्वी झाली (%1$s), सर्व्हरचा प्लेबॅक स्ट्रीम वापरून पाहत आहे</string>
   <string name="immersive_video_decoder_switch">%1$s हेडसेटच्या डीकोडरच्या क्षमतेबाहेर आहे, सर्व्हरचा प्लेबॅक स्ट्रीम वापरून पाहत आहे</string>
   <string name="immersive_error_nothing">दाखवण्यासाठी काहीही नाही</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d हे हेडसेटच्या डीकोडरच्या क्षमतेबाहेर आहे (अडखळणारा, चौकोनी ठोकळे). Immich मध्ये व्हिडिओ ट्रान्सकोडिंग HEVC वर सेट करा किंवा रेझोल्यूशन मर्यादित करा.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d हे हेडसेटच्या डीकोडरच्या क्षमतेबाहेर आहे (अडखळणारा, चौकोनी ठोकळे). ही फाइल HEVC मध्ये किंवा कमी रेझोल्यूशनमध्ये पुन्हा एन्कोड करा.</string>
 </resources>

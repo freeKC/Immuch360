@@ -23,6 +23,10 @@ enum SlideshowLook { contain, cover, blurredBackground }
 
 enum SlideshowDirection { forward, backward, shuffle }
 
+/// Which file of a server video the players load: the original when this device decodes it, else the server's
+/// transcoded stream; always the original, whatever the device; or always the transcoded stream
+enum VideoSourcePolicy { preferOriginalWithinDecoder, alwaysOriginal, alwaysTranscoded }
+
 enum PartnerDirection { sharedBy, sharedWith }
 
 enum DevicePermission { photos, videos, storage, mediaLocation }

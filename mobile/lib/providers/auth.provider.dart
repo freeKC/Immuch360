@@ -12,6 +12,7 @@ import 'package:immich_mobile/models/auth/login_response.model.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/user.provider.dart';
+import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/services/auth.service.dart';
 import 'package:immich_mobile/services/background_upload.service.dart';
@@ -94,6 +95,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await _authService.logout();
       await _ref.read(backgroundUploadServiceProvider).cancel();
       _ref.read(foregroundUploadServiceProvider).cancel();
+      // The abort flag above only stops before the next file; this ends the request in flight too
+      _ref.read(networkUploadProvider.notifier).stop();
     } finally {
       await _cleanUp();
     }

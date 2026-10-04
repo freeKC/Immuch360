@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">ต้นฉบับเลงออตบาน (%1$s), กำปุงลองสตรีมเลงปีเซิร์ฟเวอร์</string>
   <string name="immersive_video_decoder_switch">%1$s เกินกำลังตัวถอดรหัสแว่น VR, กำปุงลองสตรีมเลงปีเซิร์ฟเวอร์</string>
   <string name="immersive_error_nothing">ออตเมียนอเวยบังฮาญ</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d เกินกำลังตัวถอดรหัสแว่น VR (กระตุก, แตกเป็นบล็อก). โนว Immich, ตั้งการแปลงวิดีโอเป็น HEVC หรือ จำกัดความละเอียด.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d เกินกำลังตัวถอดรหัสแว่น VR (กระตุก, แตกเป็นบล็อก). เข้ารหัสไฟล์นิฮใหม่เป็น HEVC หรือ ใช้ความละเอียดต่ำกว่า.</string>
 </resources>

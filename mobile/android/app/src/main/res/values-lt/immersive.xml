@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Originalo paleisti nepavyko (%1$s), bandomas serverio atkūrimo srautas</string>
   <string name="immersive_video_decoder_switch">%1$s viršija VR akinių dekoderio galimybes, bandomas serverio atkūrimo srautas</string>
   <string name="immersive_error_nothing">Nėra ką rodyti</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d viršija VR akinių dekoderio galimybes (trūkčioja, matyti kvadratėliai). Immich nustatymuose pakeiskite vaizdo įrašų perkodavimą į HEVC arba apribokite raišką.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d viršija VR akinių dekoderio galimybes (trūkčioja, matyti kvadratėliai). Perkoduokite šį failą į HEVC arba mažesne raiška.</string>
 </resources>

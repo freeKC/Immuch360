@@ -38,7 +38,11 @@ void main() {
           ),
         );
 
-        expect(probe, SphericalProbe(stereo: expected), reason: 'stereo_mode $mode');
+        expect(
+          probe,
+          SphericalProbe(stereo: expected, codec: 'hvc1'),
+          reason: 'stereo_mode $mode',
+        );
       }
     });
 
@@ -51,7 +55,15 @@ void main() {
         ),
       );
 
-      expect(probe, const SphericalProbe(stereo: StereoLayout.leftRight, halfSphere: true, hasSphericalMetadata: true));
+      expect(
+        probe,
+        const SphericalProbe(
+          stereo: StereoLayout.leftRight,
+          halfSphere: true,
+          hasSphericalMetadata: true,
+          codec: 'hvc1',
+        ),
+      );
     });
 
     test('takes an equirectangular projection with full bounds for a full sphere', () async {
@@ -65,7 +77,12 @@ void main() {
 
       expect(
         probe,
-        const SphericalProbe(stereo: StereoLayout.topBottom, halfSphere: false, hasSphericalMetadata: true),
+        const SphericalProbe(
+          stereo: StereoLayout.topBottom,
+          halfSphere: false,
+          hasSphericalMetadata: true,
+          codec: 'hvc1',
+        ),
       );
     });
 
@@ -101,7 +118,15 @@ void main() {
         ),
       );
 
-      expect(probe, const SphericalProbe(stereo: StereoLayout.leftRight, halfSphere: true, hasSphericalMetadata: true));
+      expect(
+        probe,
+        const SphericalProbe(
+          stereo: StereoLayout.leftRight,
+          halfSphere: true,
+          hasSphericalMetadata: true,
+          codec: 'hvc1',
+        ),
+      );
     });
 
     test('takes a cube map for no half sphere', () async {
@@ -113,13 +138,13 @@ void main() {
         ),
       );
 
-      expect(probe, const SphericalProbe(halfSphere: false, hasSphericalMetadata: true));
+      expect(probe, const SphericalProbe(halfSphere: false, hasSphericalMetadata: true, codec: 'hvc1'));
     });
 
     test('finds nothing declared in a regular video', () async {
       final probe = await _probe(mp4File(mp4Moov([mp4VideoTrack([]), mp4AudioTrack()])));
 
-      expect(probe, const SphericalProbe());
+      expect(probe, const SphericalProbe(codec: 'hvc1'));
       expect(probe.hasSphericalMetadata, isFalse);
       expect(probe.halfSphere, isNull);
       expect(probe.stereo, isNull);
@@ -263,7 +288,12 @@ void main() {
 
       expect(
         await _probe(file),
-        const SphericalProbe(stereo: StereoLayout.leftRight, halfSphere: true, hasSphericalMetadata: true),
+        const SphericalProbe(
+          stereo: StereoLayout.leftRight,
+          halfSphere: true,
+          hasSphericalMetadata: true,
+          codec: 'hvc1',
+        ),
       );
     });
 
@@ -301,7 +331,12 @@ void main() {
 
       expect(
         await _probe(file),
-        const SphericalProbe(stereo: StereoLayout.leftRight, halfSphere: true, hasSphericalMetadata: true),
+        const SphericalProbe(
+          stereo: StereoLayout.leftRight,
+          halfSphere: true,
+          hasSphericalMetadata: true,
+          codec: 'hvc1',
+        ),
       );
     });
 
@@ -366,6 +401,201 @@ void main() {
 
       expect(await _probe(file, reads: reads), const SphericalProbe());
       expect(reads.length, lessThanOrEqualTo(64));
+    });
+
+    test('reads the codec, the coded frame size and the frame rate of the video track', () async {
+      final probe = await _probe(
+        mp4File(
+          mp4Moov([
+            mp4AudioTrack(),
+            mp4VideoTrack(
+              [mp4St3d(1), mp4Sv3dEquirectangular()],
+              width: 5760,
+              height: 5760,
+              config: mp4HvcC(profile: 2, flags: 0x20000000, level: 153),
+              timescale: 30000,
+              timeToSample: [(300, 1001)],
+            ),
+          ]),
+          moovAtEnd: true,
+        ),
+      );
+
+      expect(
+        probe,
+        const SphericalProbe(
+          stereo: StereoLayout.topBottom,
+          halfSphere: false,
+          hasSphericalMetadata: true,
+          codec: 'hvc1',
+          codecs: 'hvc1.2.4.L153',
+          codedWidth: 5760,
+          codedHeight: 5760,
+          frameRate: 30000 / 1001,
+        ),
+      );
+    });
+
+    test('writes the codecs string of H.264, HEVC and AV1 as RFC 6381 does', () async {
+      for (final (codec, config, expected) in [
+        ('avc1', mp4AvcC(profile: 0x64, compatibility: 0, level: 0x33), 'avc1.640033'),
+        ('avc3', mp4AvcC(profile: 0x42, compatibility: 0xe0, level: 0x1e), 'avc3.42E01E'),
+        ('hvc1', mp4HvcC(profile: 1, flags: 0x60000000, level: 93), 'hvc1.1.6.L93'),
+        ('hev1', mp4HvcC(profile: 2, highTier: true, flags: 0x20000000, level: 153), 'hev1.2.4.H153'),
+        ('hvc1', mp4HvcC(space: 1, profile: 1, flags: 0x40000000, level: 120), 'hvc1.A1.2.L120'),
+        // The profile, the level and the tier, then the bit depth: Media3 reads no profile without all four
+        ('av01', mp4Av1C(profile: 0, level: 13), 'av01.0.13M.08'),
+        ('av01', mp4Av1C(profile: 0, level: 16, highBitDepth: true), 'av01.0.16M.10'),
+        ('av01', mp4Av1C(profile: 1, level: 8, highTier: true), 'av01.1.08H.08'),
+        ('av01', mp4Av1C(profile: 2, level: 19, highBitDepth: true, twelveBit: true), 'av01.2.19M.12'),
+      ]) {
+        final probe = await _probe(mp4File(mp4Moov([mp4VideoTrack([], codec: codec, config: config)])));
+
+        expect(probe.codec, codec, reason: expected);
+        expect(probe.codecs, expected);
+      }
+    });
+
+    test('gives no codecs string for a configuration missing, damaged, or of another codec', () async {
+      for (final (codec, config) in [
+        // Version 0: zeros, not a configuration
+        ('hvc1', mp4Box('hvcC', mp4Zeros(30))),
+        ('dvh1', mp4Box('hvcC', mp4Zeros(30))),
+        ('vp09', mp4FullBox('vpcC', mp4Zeros(8))),
+        ('avc1', mp4HvcC()),
+        ('avc1', mp4Box('avcC', [1, 0x64])),
+        ('hvc1', mp4Box('hvcC', [1, 1, 0x60, 0, 0, 0])),
+        ('av01', mp4Box('av1C', [0x01, 0x0d, 0, 0])),
+        // Without the byte of the tier and the bit depth
+        ('av01', mp4Box('av1C', [0x81, 0x0d])),
+      ]) {
+        final probe = await _probe(mp4File(mp4Moov([mp4VideoTrack([], codec: codec, config: config)])));
+
+        expect(probe.codec, codec);
+        expect(probe.codecs, isNull, reason: '$codec with ${String.fromCharCodes(config.sublist(4, 8))}');
+      }
+    });
+
+    test('writes the codecs string of Dolby Vision from its own configuration, profile and level', () async {
+      for (final (codec, dovi, expected) in [
+        ('dvh1', mp4DoviC(type: 'dvvC', profile: 8, level: 6), 'dvh1.08.06'),
+        ('dvhe', mp4DoviC(type: 'dvcC', profile: 5, level: 9), 'dvhe.05.09'),
+        // The level spans the two bytes
+        ('dvh1', mp4DoviC(type: 'dvcC', profile: 7, level: 13), 'dvh1.07.13'),
+        ('dvh1', mp4DoviC(type: 'dvvC', profile: 10, level: 32), 'dvh1.10.32'),
+      ]) {
+        final probe = await _probe(
+          mp4File(
+            mp4Moov([
+              mp4VideoTrack([dovi], codec: codec, config: mp4HvcC(profile: 2, flags: 0x20000000)),
+            ]),
+          ),
+        );
+
+        expect(probe.codec, codec, reason: expected);
+        expect(probe.codecs, expected);
+      }
+    });
+
+    test('gives the HEVC base layer of a Dolby Vision track without its own configuration', () async {
+      for (final (codec, children, expected) in [
+        ('dvh1', <List<int>>[], 'hvc1.2.4.L153'),
+        ('dvhe', <List<int>>[], 'hev1.2.4.L153'),
+        // Cut short, or without a level
+        (
+          'dvh1',
+          [
+            mp4Box('dvvC', [1, 0, 0x10]),
+          ],
+          'hvc1.2.4.L153',
+        ),
+        ('dvh1', [mp4DoviC(level: 0)], 'hvc1.2.4.L153'),
+      ]) {
+        final probe = await _probe(
+          mp4File(
+            mp4Moov([
+              mp4VideoTrack(children, codec: codec, config: mp4HvcC(profile: 2, flags: 0x20000000, level: 153)),
+            ]),
+          ),
+        );
+
+        expect(probe.codec, codec, reason: '$codec with ${children.length} Dolby Vision boxes');
+        expect(probe.codecs, expected, reason: '$codec with ${children.length} Dolby Vision boxes');
+      }
+    });
+
+    test('keeps HEVC for an HEVC track that carries a Dolby Vision configuration, as iPhones write', () async {
+      final probe = await _probe(
+        mp4File(
+          mp4Moov([
+            mp4VideoTrack([
+              mp4DoviC(type: 'dvvC', profile: 8, level: 6),
+            ], config: mp4HvcC(profile: 2, flags: 0x20000000, level: 153)),
+          ]),
+        ),
+      );
+
+      expect(probe.codec, 'hvc1');
+      expect(probe.codecs, 'hvc1.2.4.L153');
+    });
+
+    test('reads the mean frame rate of a variable frame rate track, and of a version 1 media header', () async {
+      final variable = await _probe(
+        mp4File(
+          mp4Moov([
+            mp4VideoTrack([], timescale: 90000, timeToSample: [(10, 3000), (20, 3003)]),
+          ]),
+        ),
+      );
+      expect(variable.frameRate, closeTo(29.98, 0.01));
+
+      final version1 = await _probe(
+        mp4File(
+          mp4Moov([
+            mp4VideoTrack([], timescale: 600, mdhdVersion: 1, timeToSample: [(60, 20)]),
+          ]),
+        ),
+      );
+      expect(version1.frameRate, 30);
+    });
+
+    test('gives no frame size nor frame rate when the file does not say', () async {
+      for (final track in [
+        // Zeros in the sample entry, no time scale, no sample
+        mp4VideoTrack([]),
+        mp4VideoTrack([], width: 1920, timescale: 30000),
+        mp4VideoTrack([], height: 1080, timeToSample: [(30, 1000)]),
+        mp4VideoTrack([], timescale: 30000, timeToSample: [(0, 1000)]),
+      ]) {
+        final probe = await _probe(mp4File(mp4Moov([track])));
+
+        expect(probe.frameRate, isNull);
+        expect(probe.codedWidth == null || probe.codedHeight == null, isTrue);
+      }
+    });
+
+    test('reads the frame size and the codec from a moov box cut in its tables', () async {
+      final file = mp4File(
+        mp4Moov([
+          mp4VideoTrack(
+            [],
+            codec: 'avc1',
+            config: mp4AvcC(),
+            width: 3840,
+            height: 2160,
+            timescale: 30,
+            timeToSample: [for (var i = 0; i < 50; i++) (1, 1)],
+          ),
+        ]),
+        moovAtEnd: true,
+      );
+      // Cut in the stsz box: the sample description and the time to sample table are whole
+      final probe = await _probe(Uint8List.sublistView(file, 0, file.length - 300));
+
+      expect(probe.codec, 'avc1');
+      expect(probe.codecs, 'avc1.640033');
+      expect((probe.codedWidth, probe.codedHeight), (3840, 2160));
+      expect(probe.frameRate, 30);
     });
 
     test('lets the errors of the reader through', () async {

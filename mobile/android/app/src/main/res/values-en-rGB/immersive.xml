@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">The original failed (%1$s), trying the server playback stream</string>
   <string name="immersive_video_decoder_switch">%1$s is above the headset decoder, trying the server playback stream</string>
   <string name="immersive_error_nothing">Nothing to show</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d is above what this headset decodes (choppy, blocky). In Immich, set the video transcoding to HEVC or limit the resolution.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d is above what this headset decodes (choppy, blocky). Re-encode this file in HEVC or at a lower resolution.</string>
 </resources>

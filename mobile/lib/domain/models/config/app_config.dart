@@ -59,6 +59,7 @@ abstract class AppConfig with _$AppConfig {
             .viewerAutoPlayVideo => viewer.autoPlayVideo,
             .viewerTapToNavigate => viewer.tapToNavigate,
             .viewerSpatial25d => viewer.spatial25d,
+            .viewerVideoSource => viewer.videoSource,
             .networkAutoEndpointSwitching => network.autoEndpointSwitching,
             .networkPreferredWifiName => network.preferredWifiName,
             .networkLocalEndpoint => network.localEndpoint,
@@ -114,6 +115,7 @@ abstract class AppConfig with _$AppConfig {
       .viewerAutoPlayVideo => copyWith(viewer: viewer.copyWith(autoPlayVideo: value as bool)),
       .viewerTapToNavigate => copyWith(viewer: viewer.copyWith(tapToNavigate: value as bool)),
       .viewerSpatial25d => copyWith(viewer: viewer.copyWith(spatial25d: value as bool)),
+      .viewerVideoSource => copyWith(viewer: viewer.copyWith(videoSource: value as VideoSourcePolicy?)),
       .networkAutoEndpointSwitching => copyWith(network: network.copyWith(autoEndpointSwitching: value as bool)),
       .networkPreferredWifiName => copyWith(
         network: network.copyWith(preferredWifiName: .fromNullable(value as String?)),

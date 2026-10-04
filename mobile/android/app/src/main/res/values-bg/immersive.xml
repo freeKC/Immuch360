@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Оригиналът не можа да се възпроизведе (%1$s), опитваме потока за възпроизвеждане от сървъра</string>
   <string name="immersive_video_decoder_switch">%1$s надхвърля възможностите на декодера на шлема, опитваме потока за възпроизвеждане от сървъра</string>
   <string name="immersive_error_nothing">Няма нищо за показване</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d надхвърля възможностите на декодера на шлема (накъсано, на блокове). В Immich задайте транскодиране на видеото в HEVC или ограничете резолюцията.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d надхвърля възможностите на декодера на шлема (накъсано, на блокове). Прекодирайте този файл в HEVC или с по-ниска резолюция.</string>
 </resources>

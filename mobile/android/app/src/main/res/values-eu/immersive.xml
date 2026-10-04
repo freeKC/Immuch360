@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Jatorrizkoak huts egin du (%1$s), zerbitzariaren erreprodukzio-fluxua probatzen</string>
   <string name="immersive_video_decoder_switch">%1$s handiegia da betaurrekoen deskodetzailearentzat, zerbitzariaren erreprodukzio-fluxua probatzen</string>
   <string name="immersive_error_nothing">Ez dago ezer erakusteko</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d handiegia da betaurrekoen deskodetzailearentzat (etenak eta blokeak). Immich-en, ezarri bideoen transkodetzea HEVC formatura edo mugatu bereizmena.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d handiegia da betaurrekoen deskodetzailearentzat (etenak eta blokeak). Kodetu berriro fitxategi hau HEVC formatuan edo bereizmen txikiagoan.</string>
 </resources>

@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">اصل فائل نہیں چل سکی (%1$s)، سرور کی پلے بیک اسٹریم آزمائی جا رہی ہے</string>
   <string name="immersive_video_decoder_switch">%1$s ہیڈسیٹ کے ڈی کوڈر کی حد سے زیادہ ہے، سرور کی پلے بیک اسٹریم آزمائی جا رہی ہے</string>
   <string name="immersive_error_nothing">دکھانے کے لیے کچھ نہیں</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d، ہیڈسیٹ کے ڈی کوڈر کی حد سے تجاوز کرتی ہے (رک رک کر چلتی ہے، چوکور دھبے نظر آتے ہیں)۔ Immich میں ویڈیو ٹرانس کوڈنگ کو HEVC پر سیٹ کریں یا ریزولوشن محدود کریں۔</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d، ہیڈسیٹ کے ڈی کوڈر کی حد سے تجاوز کرتی ہے (رک رک کر چلتی ہے، چوکور دھبے نظر آتے ہیں)۔ اس فائل کو HEVC میں یا کم ریزولوشن پر دوبارہ انکوڈ کریں۔</string>
 </resources>

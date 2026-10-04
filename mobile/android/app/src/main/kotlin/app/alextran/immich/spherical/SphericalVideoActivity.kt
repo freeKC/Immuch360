@@ -43,6 +43,7 @@ import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
+import app.alextran.immich.core.VideoDecoders
 
 private const val TAG = "SphericalVideoActivity"
 
@@ -65,6 +66,10 @@ private const val MONO_ALPHA = 0.6f
  * A video with several audio tracks (languages, commentary) shows an audio track button, see [AudioTrackChooser].
  * While the video loads or stalls, a label tells how far the buffer is filled, see [BufferingIndicator].
  *
+ * With a fallback URL (the server's transcoded stream), the original gives way to it once: when its codec and size are
+ * above what the device decodes (see [VideoDecoders]), checked as soon as its tracks are known, or when it fails. The
+ * transcoded stream starts where the original stopped; the error shows only if it fails too.
+ *
  * On close (button, system back, or the system destroying the activity), Flutter gets [SphericalVideoEvents.closed]
  * with the layout and the coverage shown last, so that the corrections of the user can be remembered for the asset.
  */
@@ -79,12 +84,15 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val EXTRA_STEREO_LAYOUT = "stereo_layout"
     private const val EXTRA_STEREO_LABELS = "stereo_labels"
     private const val EXTRA_COVERAGE = "coverage"
+    private const val EXTRA_FALLBACK_URL = "fallback_url"
     private const val STATE_POSITION = "position"
     private const val STATE_PLAY_WHEN_READY = "play_when_ready"
     private const val STATE_STEREO_LAYOUT = "stereo_layout"
     private const val STATE_COVERAGE = "coverage"
     private const val STATE_DECLARED_COVERAGE = "declared_coverage"
     private const val STATE_AUDIO_TRACK = "audio_track"
+    private const val STATE_PLAYING_FALLBACK = "playing_fallback"
+    private const val STATE_DECODER_CHECKED = "decoder_checked"
 
     /** Key of the label of the 3D control itself, in the labels from Flutter */
     private const val LABEL_STEREO = "stereo"
@@ -126,8 +134,9 @@ class SphericalVideoActivity : ComponentActivity() {
      * [stereoLayout] is the layout Flutter guessed from the video dimensions and [stereoLabels] are the translated
      * labels of the 3D control, keyed "stereo", "mono", "topBottom" and "leftRight", and of the field of view
      * control, keyed "coverage", "coverage_full" and "coverage_half", of the audio track control (see
-     * [AudioTrackChooser]) and of the buffering label (see [BufferingIndicator]). [coverage] is the part of the sphere
-     * Flutter expects the video to cover.
+     * [AudioTrackChooser]), of the buffering label (see [BufferingIndicator]) and of the switch to the transcoded
+     * stream (see [VideoDecoders.LABEL_SWITCHED]). [coverage] is the part of the sphere Flutter expects the video to
+     * cover. [fallbackUrl] is the server's transcoded stream, null when there is none.
      */
     fun intent(
       context: Context,
@@ -139,6 +148,7 @@ class SphericalVideoActivity : ComponentActivity() {
       stereoLayout: StereoLayout,
       stereoLabels: Map<String, String>,
       coverage: SphereCoverage,
+      fallbackUrl: String?,
     ): Intent {
       return Intent(context, SphericalVideoActivity::class.java)
         .putExtra(EXTRA_URL, url)
@@ -149,6 +159,7 @@ class SphericalVideoActivity : ComponentActivity() {
         .putExtra(EXTRA_STEREO_LAYOUT, stereoLayout.name)
         .putExtra(EXTRA_STEREO_LABELS, stereoLabels.toBundle())
         .putExtra(EXTRA_COVERAGE, coverage.name)
+        .putExtra(EXTRA_FALLBACK_URL, fallbackUrl)
     }
 
     private fun stereoLayoutNamed(name: String?): StereoLayout? = StereoLayout.entries.firstOrNull { it.name == name }
@@ -209,6 +220,18 @@ class SphericalVideoActivity : ComponentActivity() {
   /** Coverage the video declares in its spherical metadata, null when it declares none or until its tracks are known */
   private var declaredCoverage: SphereCoverage? = null
 
+  /** The server's transcoded stream, null when Flutter sent none */
+  private var fallbackUrl: String? = null
+
+  /**
+   * The transcoded stream plays in place of the original: the device cannot decode the original, or it failed. Once
+   * per opening, kept across a stop and a recreation.
+   */
+  private var playingFallback = false
+
+  /** The video track of the URL that plays was checked against the decoders of the device */
+  private var decoderChecked = false
+
   /** Sets the clear colour of the renderer, on its GL thread: black, the back of a half sphere */
   private val clearToBlack = Runnable { GLES20.glClearColor(0f, 0f, 0f, 1f) }
 
@@ -250,10 +273,14 @@ class SphericalVideoActivity : ComponentActivity() {
       // The audio track button shows when there is a choice
       val options = player?.let { audioTracks.onTracksChanged(it, tracks) }.orEmpty()
       audioButton.visibility = if (options.size >= 2) View.VISIBLE else View.GONE
+      // Last: a switch to the transcoded stream replaces these tracks
+      format?.let(::checkDecoder)
     }
 
     override fun onPlayerError(error: PlaybackException) {
       Log.e(TAG, "Cannot play the 360° video", error)
+      // PlayerView shows the error while the player stays in error: the transcoded stream gets its chance first
+      switchToFallback("the original failed (${error.errorCodeName})")
     }
   }
 
@@ -285,6 +312,9 @@ class SphericalVideoActivity : ComponentActivity() {
       startPosition = savedInstanceState.getLong(STATE_POSITION)
       playWhenReady = savedInstanceState.getBoolean(STATE_PLAY_WHEN_READY, true)
     }
+    fallbackUrl = intent.getStringExtra(EXTRA_FALLBACK_URL)?.takeIf { it.isNotBlank() }
+    playingFallback = savedInstanceState?.getBoolean(STATE_PLAYING_FALLBACK) == true && fallbackUrl != null
+    decoderChecked = savedInstanceState?.getBoolean(STATE_DECODER_CHECKED) == true
 
     labels = intent.getBundleExtra(EXTRA_STEREO_LABELS)?.toStringMap() ?: emptyMap()
     sphericalView = (playerView.videoSurfaceView as? SphericalGLSurfaceView)?.also {
@@ -319,7 +349,7 @@ class SphericalVideoActivity : ComponentActivity() {
     }
 
     bufferingLabel = findViewById(R.id.spherical_video_buffering_label)
-    val streamed = StreamingLoadControl.isStreamed(intent.getStringExtra(EXTRA_URL).orEmpty())
+    val streamed = StreamingLoadControl.isStreamed(playbackUrl().orEmpty())
     bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed)
 
     enterFullScreen(topBar)
@@ -358,6 +388,8 @@ class SphericalVideoActivity : ComponentActivity() {
     outState.putString(STATE_COVERAGE, coverage.name)
     declaredCoverage?.let { outState.putString(STATE_DECLARED_COVERAGE, it.name) }
     outState.putInt(STATE_AUDIO_TRACK, audioTracks.chosenIndex)
+    outState.putBoolean(STATE_PLAYING_FALLBACK, playingFallback)
+    outState.putBoolean(STATE_DECODER_CHECKED, decoderChecked)
   }
 
   override fun onDestroy() {
@@ -373,7 +405,7 @@ class SphericalVideoActivity : ComponentActivity() {
     if (player != null) {
       return
     }
-    val url = intent.getStringExtra(EXTRA_URL)
+    val url = playbackUrl()
     if (url == null) {
       finish()
       return
@@ -423,6 +455,60 @@ class SphericalVideoActivity : ComponentActivity() {
     player.setVideoSurface(view.videoSurface)
     player.setVideoFrameMetadataListener(CoverageFrameListener(view.videoFrameMetadataListener))
     player.setCameraMotionListener(view.cameraMotionListener)
+  }
+
+  /** The URL that plays: the original, or the transcoded stream once the player switched to it */
+  private fun playbackUrl(): String? =
+    if (playingFallback) fallbackUrl else intent.getStringExtra(EXTRA_URL)
+
+  /**
+   * A video above what the device decodes stutters or shows blocks: the transcoded stream plays instead, once, from
+   * the same position, and the user reads why when Flutter sent the label. Without a transcoded stream the original
+   * plays anyway, and the log tells why it may stutter.
+   */
+  private fun checkDecoder(format: Format) {
+    if (decoderChecked || format.width <= 0 || format.height <= 0) {
+      return
+    }
+    decoderChecked = true
+    val verdict = VideoDecoders.canDecode(format)
+    if (verdict.supported) {
+      return
+    }
+    val codec = VideoDecoders.codecName(format.sampleMimeType)
+    Log.w(TAG, "$codec ${format.width}x${format.height} is above what this device decodes: ${verdict.reason}")
+    if (!switchToFallback("the device cannot decode the original")) {
+      return
+    }
+    val message = VideoDecoders.decoderLabel(labels, VideoDecoders.LABEL_SWITCHED, codec, format.width, format.height)
+    if (message != null) {
+      showToast(message, Toast.LENGTH_LONG)
+    } else {
+      Log.i(TAG, "No label from Flutter for the switch to the transcoded stream")
+    }
+  }
+
+  /**
+   * Plays the transcoded stream in place of the original, from where it stopped, once. False when there is none, when
+   * it already plays, or without a player.
+   */
+  private fun switchToFallback(reason: String): Boolean {
+    val fallback = fallbackUrl ?: return false
+    val current = player ?: return false
+    if (playingFallback) {
+      return false
+    }
+    playingFallback = true
+    decoderChecked = false
+    Log.i(TAG, "Switching to the transcoded stream: $reason")
+    // The transcoded stream may lose the stereo metadata of the original: the layout the original declared becomes the
+    // layout of the 3D control, which the renderer applies to a video that declares none
+    currentStereoLayout()?.let { stereoLayout = it }
+    declaredStereoMode = Format.NO_VALUE
+    applyStereoLayout()
+    current.setMediaItem(MediaItem.fromUri(fallback), current.currentPosition.coerceAtLeast(0L))
+    current.prepare()
+    return true
   }
 
   private fun releasePlayer() {
@@ -547,9 +633,9 @@ class SphericalVideoActivity : ComponentActivity() {
   private fun label(key: String): String = labels[key]?.takeIf { it.isNotBlank() } ?: DEFAULT_LABELS.getValue(key)
 
   /** One message at a time: a new one replaces the one on screen */
-  private fun showToast(text: String) {
+  private fun showToast(text: String, duration: Int = Toast.LENGTH_SHORT) {
     toast?.cancel()
-    toast = Toast.makeText(this, text, Toast.LENGTH_SHORT).also { it.show() }
+    toast = Toast.makeText(this, text, duration).also { it.show() }
   }
 
   private fun selectedVideoFormat(tracks: Tracks): Format? {

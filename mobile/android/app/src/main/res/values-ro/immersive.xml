@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Originalul a eșuat (%1$s), se încearcă fluxul de redare de pe server</string>
   <string name="immersive_video_decoder_switch">%1$s depășește capacitatea decodorului din headset, se încearcă fluxul de redare de pe server</string>
   <string name="immersive_error_nothing">Nimic de afișat</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d depășește capacitatea decodorului din headset (sacadat, pixelat). În Immich, setați transcodarea video la HEVC sau limitați rezoluția.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d depășește capacitatea decodorului din headset (sacadat, pixelat). Recodați acest fișier în HEVC sau la o rezoluție mai mică.</string>
 </resources>

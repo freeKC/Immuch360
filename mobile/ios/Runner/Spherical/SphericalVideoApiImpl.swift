@@ -8,6 +8,9 @@ import UIKit
 ///
 /// [events] tells Flutter when the player closes, with the stereo layout and the coverage it showed last, so that the
 /// corrections of the user can be remembered for the asset.
+///
+/// The fallback URL of [open] is the server's transcoded stream: the player switches to it when the device cannot
+/// decode the original or when the original fails.
 class SphericalVideoApiImpl: SphericalVideoApi {
   private let events: SphericalVideoEvents
 
@@ -23,10 +26,16 @@ class SphericalVideoApiImpl: SphericalVideoApi {
     errorMessage: String?,
     stereoLayout: StereoLayout,
     stereoLabels: [String: String],
-    coverage: SphereCoverage
+    coverage: SphereCoverage,
+    fallbackUrl: String?
   ) throws {
     guard let videoUrl = URL(string: url) else {
       throw PigeonError(code: "INVALID_URL", message: "Cannot read the video URL \(url)", details: nil)
+    }
+    // An unreadable fallback, or the original itself, is no fallback
+    var fallback = fallbackUrl.flatMap { URL(string: $0) }
+    if fallback == videoUrl {
+      fallback = nil
     }
     let noViewController = PigeonError(
       code: "NO_VIEW_CONTROLLER",
@@ -47,6 +56,7 @@ class SphericalVideoApiImpl: SphericalVideoApi {
 
     let player = SphericalVideoViewController(
       url: videoUrl,
+      fallbackUrl: fallback,
       headers: headers,
       title: title,
       closeLabel: closeLabel,

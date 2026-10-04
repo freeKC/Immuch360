@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">මුල් ගොනුව අසාර්ථක විය (%1$s), සේවාදායකයේ වාදන ප්‍රවාහය උත්සාහ කරමින්</string>
   <string name="immersive_video_decoder_switch">%1$s හෙඩ්සෙට් විකේතකයේ හැකියාව ඉක්මවයි, සේවාදායකයේ වාදන ප්‍රවාහය උත්සාහ කරමින්</string>
   <string name="immersive_error_nothing">පෙන්වීමට කිසිවක් නැත</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d හෙඩ්සෙට් විකේතකයේ හැකියාව ඉක්මවයි (ඇනහිටීම්, කොටු). Immich හි වීඩියෝ පරිවර්තනය HEVC ලෙස සකසන්න හෝ විභේදනය සීමා කරන්න.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d හෙඩ්සෙට් විකේතකයේ හැකියාව ඉක්මවයි (ඇනහිටීම්, කොටු). මෙම ගොනුව HEVC වලින් හෝ අඩු විභේදනයකින් නැවත කේතනය කරන්න.</string>
 </resources>

@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Theip ar an mbunleagan (%1$s), sruth athsheinm an fhreastalaí á thriail</string>
   <string name="immersive_video_decoder_switch">Tá %1$s thar chumas díchódóra an tacair cinn, sruth athsheinm an fhreastalaí á thriail</string>
   <string name="immersive_error_nothing">Níl aon rud le taispeáint</string>
+  <string name="immersive_codec_too_large">Téann %1$s %2$d x %3$d thar chumas díchódóra an tacair cinn (stadach, blocach). In Immich, socraigh traschódú físe go HEVC nó teorannaigh an taifeach.</string>
+  <string name="immersive_codec_too_large_file">Téann %1$s %2$d x %3$d thar chumas díchódóra an tacair cinn (stadach, blocach). Athionchódaigh an comhad seo i HEVC nó ag taifeach níos ísle.</string>
 </resources>

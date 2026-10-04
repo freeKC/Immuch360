@@ -29,6 +29,8 @@ import app.alextran.immich.spherical.SphericalVideoApiImpl
 import app.alextran.immich.sync.NativeSyncApi
 import app.alextran.immich.sync.NativeSyncApiImpl26
 import app.alextran.immich.sync.NativeSyncApiImpl30
+import app.alextran.immich.videodecoder.VideoDecoderApi
+import app.alextran.immich.videodecoder.VideoDecoderApiImpl
 import app.alextran.immich.videothumbnail.VideoThumbnailApi
 import app.alextran.immich.videothumbnail.VideoThumbnailApiImpl
 import app.alextran.immich.viewintent.ViewIntentPlugin
@@ -85,6 +87,7 @@ class MainActivity : FlutterFragmentActivity() {
       SpatialVideoApi.setUp(messenger, SpatialVideoApiImpl(ctx))
       ImmersiveApi.setUp(messenger, ImmersiveApiImpl(ctx))
       VideoThumbnailApi.setUp(messenger, VideoThumbnailApiImpl())
+      VideoDecoderApi.setUp(messenger, VideoDecoderApiImpl())
 
       flutterEngine.plugins.add(ViewIntentPlugin())
       flutterEngine.plugins.add(backgroundEngineLockImpl)

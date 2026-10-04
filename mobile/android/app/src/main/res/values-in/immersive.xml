@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Gagal memutar file asli (%1$s), mencoba stream pemutaran dari server</string>
   <string name="immersive_video_decoder_switch">%1$s melampaui kemampuan dekoder headset, mencoba stream pemutaran dari server</string>
   <string name="immersive_error_nothing">Tidak ada yang dapat ditampilkan</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d melampaui kemampuan dekoder headset (tersendat, pecah kotak-kotak). Di Immich, atur transkode video ke HEVC atau batasi resolusinya.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d melampaui kemampuan dekoder headset (tersendat, pecah kotak-kotak). Enkode ulang file ini ke HEVC atau dengan resolusi lebih rendah.</string>
 </resources>

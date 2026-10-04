@@ -27,6 +27,8 @@ abstract class SphericalVideoApi {
   /// layout Flutter guessed from the video dimensions (the player prefers the layout the file declares, when it
   /// does); the user can change it in the player. [stereoLabels] are the translated labels of the 3D control,
   /// keyed "stereo", "mono", "topBottom", "leftRight".
+  /// [fallbackUrl] is the server's transcoded stream, played instead of the original when the device cannot
+  /// decode it (checked when the tracks are known) or when the original fails; null when there is none.
   void open(
     String url,
     Map<String, String> headers,
@@ -36,6 +38,7 @@ abstract class SphericalVideoApi {
     StereoLayout stereoLayout,
     Map<String, String> stereoLabels,
     SphereCoverage coverage,
+    String? fallbackUrl,
   );
 }
 

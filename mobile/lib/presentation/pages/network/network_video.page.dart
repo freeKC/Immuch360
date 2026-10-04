@@ -14,13 +14,16 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_buffering.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
 
@@ -33,7 +36,7 @@ typedef _Video = ({NetworkEntry entry, Uri url});
 /// whose file declares a 360° projection gets a 360° button, which opens the native 360° player, or the immersive
 /// viewer on a Meta Quest; a stereoscopic one a Spatial 2.5D button on a phone where the setting is on. Both are in
 /// the menu for any other video. The immersive viewer goes from there to the previous and next 360° photos and
-/// videos of [folder].
+/// videos of [folder]. The menu also sends the video to the Immich server, when there is one.
 @RoutePage()
 class NetworkVideoPage extends ConsumerStatefulWidget {
   const NetworkVideoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -344,6 +347,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final can360 = (isHorizonOs ?? false) || ref.watch(panorama360VideoSupportedProvider);
     // Like in the asset viewer: an experimental setting, on phones only, never while the platform check is pending
     final canSpatial = isHorizonOs == false && ref.watch(appConfigProvider.select((c) => c.viewer.spatial25d));
+    final canUpload = ref.watch(hasServerProvider);
+    final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
 
     return FutureBuilder<_Video>(
       future: _video,
@@ -376,7 +381,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                   tooltip: context.t.spatial_2_5d,
                   onPressed: () => unawaited(_openSpatial(video)),
                 ),
-              if (video != null && (menu360 || menuSpatial))
+              if (video != null && (menu360 || menuSpatial || canUpload))
                 PopupMenuButton<void>(
                   tooltip: context.t.more,
                   itemBuilder: (context) => [
@@ -395,6 +400,17 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                         child: ListTile(
                           leading: const Icon(Icons.threed_rotation_rounded),
                           title: Text(context.t.spatial_2_5d),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    if (canUpload)
+                      PopupMenuItem<void>(
+                        // One upload from the shares at a time
+                        enabled: !isUploading,
+                        onTap: () => unawaited(uploadNetworkEntries(this.context, ref, widget.sourceId, [video.entry])),
+                        child: ListTile(
+                          leading: const Icon(Icons.backup_outlined),
+                          title: Text(context.t.network_upload_action),
                           contentPadding: EdgeInsets.zero,
                         ),
                       ),

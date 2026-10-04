@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">S Original isch fählgschlage (%1$s), dr Wiedergabe-Stream vom Server wird probiert</string>
   <string name="immersive_video_decoder_switch">%1$s isch z viel für dr Decoder vom Headset, dr Wiedergabe-Stream vom Server wird probiert</string>
   <string name="immersive_error_nothing">Nüt zum Aazeige</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d überforderet dr Decoder vom Headset (ruckelig, klötzlig). Stell in Immich s Video-Transkodiere uf HEVC oder begränz d Uflösig.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d überforderet dr Decoder vom Headset (ruckelig, klötzlig). Kodier die Datei nomol in HEVC oder mit ere chlinere Uflösig.</string>
 </resources>

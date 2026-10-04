@@ -36,7 +36,12 @@ class UploadAction extends AssetActionBuilder {
       return null;
     }
 
-    return .new(icon: Icons.backup_outlined, label: context.t.upload, onAction: () => _upload(context, ref, assets));
+    // Says where the assets go and how many: "Upload" alone reads like the share sheet
+    return .new(
+      icon: Icons.backup_outlined,
+      label: context.t.upload_to_immich(count: assets.length),
+      onAction: () => _upload(context, ref, assets),
+    );
   }
 
   Future<void> _upload(BuildContext context, WidgetRef ref, List<LocalAsset> assets) async {

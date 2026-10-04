@@ -116,7 +116,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * opening: the viewer sends it back with every event, so that Flutter can tell the events of the viewer it follows
    * from those of an earlier one. While the viewer is in front, a new open from the app replaces its media in place
    * as a fresh opening, with its own id (the activity is single task and gets the intent in onNewIntent). Previous
-   * and next never come this way, see [showAdjacent].
+   * and next never come this way, see [showAdjacent]. [fallbackUrl] is the server's transcoded stream of a video,
+   * played once instead of [url] when the headset cannot decode the original or when it fails.
    */
   override fun open(
     url: String,
@@ -128,6 +129,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     coverage: ImmersiveSphereCoverage,
     startPositionMs: Long,
     openingId: Long,
+    fallbackUrl: String?,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -135,7 +137,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     Log.i(
       TAG,
       "open immersive viewer, opening $openingId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
-        "start=$startPositionMs ms",
+        "start=$startPositionMs ms, fallback=${fallbackUrl != null}",
     )
     appContext.startActivity(
       ImmersiveViewerActivity.intent(
@@ -148,6 +150,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         coverage,
         startPositionMs,
         openingId,
+        fallbackUrl,
       ),
     )
   }
@@ -156,7 +159,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * Answers ImmersiveEvents.requestAdjacent: shows the media in place in the viewer that asked, if it still waits for
    * [requestId], and never starts the viewer. The answer must be known before returning, which the main thread gives:
    * Pigeon calls a host API there (no task queue), the thread the viewer lives on. Called from another thread, the
-   * media is refused rather than shown from the wrong thread.
+   * media is refused rather than shown from the wrong thread. [fallbackUrl] is the transcoded stream of a video, as
+   * for [open].
    */
   override fun showAdjacent(
     requestId: Long,
@@ -165,12 +169,17 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     title: String,
     stereoLayout: ImmersiveStereoLayout,
     coverage: ImmersiveSphereCoverage,
+    fallbackUrl: String?,
   ): Boolean {
     if (Looper.myLooper() != Looper.getMainLooper()) {
       Log.e(TAG, "showAdjacent called off the main thread, request $requestId refused")
       return false
     }
-    Log.i(TAG, "adjacent media for request $requestId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage")
-    return ImmersiveViewerActivity.showAdjacent(requestId, url, isVideo, title, stereoLayout, coverage)
+    Log.i(
+      TAG,
+      "adjacent media for request $requestId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
+        "fallback=${fallbackUrl != null}",
+    )
+    return ImmersiveViewerActivity.showAdjacent(requestId, url, isVideo, title, stereoLayout, coverage, fallbackUrl)
   }
 }

@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -70,6 +71,16 @@ class AdvancedSettings extends HookConsumerWidget {
         valueNotifier: advancedTroubleshooting,
         title: context.t.advanced_settings_troubleshooting_title,
         subtitle: context.t.advanced_settings_troubleshooting_subtitle,
+      ),
+      // With the troubleshooting: what the device decodes tells why a large video stutters or plays transcoded
+      ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+        leading: const Icon(Icons.memory_rounded),
+        title: Text(context.t.video_decoders_title, style: const TextStyle(fontWeight: FontWeight.w500)),
+        subtitle: Text(context.t.video_decoders_subtitle),
+        trailing: const Icon(Icons.chevron_right_rounded),
+        onTap: () =>
+            unawaited(Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const VideoDecodersPage()))),
       ),
       if (isManageMediaSupported.value)
         Column(

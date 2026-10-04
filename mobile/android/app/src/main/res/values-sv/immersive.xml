@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Originalet misslyckades (%1$s), provar serverns uppspelningsström</string>
   <string name="immersive_video_decoder_switch">%1$s överskrider headsetets avkodare, provar serverns uppspelningsström</string>
   <string name="immersive_error_nothing">Inget att visa</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d överskrider headsetets avkodare (hackigt, blockigt). Ställ in videoomkodningen på HEVC i Immich eller begränsa upplösningen.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d överskrider headsetets avkodare (hackigt, blockigt). Koda om den här filen till HEVC eller till en lägre upplösning.</string>
 </resources>

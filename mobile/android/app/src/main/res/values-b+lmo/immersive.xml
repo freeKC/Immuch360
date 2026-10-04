@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">L\'original l\'è minga andaa (%1$s), se preuva el fluss de riproduzion del server</string>
   <string name="immersive_video_decoder_switch">%1$s el passa i limit del decoder del visor, se preuva el fluss de riproduzion del server</string>
   <string name="immersive_error_nothing">Nagott de mostrà</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d el passa i limit del decoder del visor (a scatt, a quadrett). In Immich, mett la transcodifica di video in HEVC o limita la resoluzion.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d el passa i limit del decoder del visor (a scatt, a quadrett). Codifica de noeuv quell file chì in HEVC o a una resoluzion pussee bassa.</string>
 </resources>

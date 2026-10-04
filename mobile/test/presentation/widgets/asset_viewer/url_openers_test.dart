@@ -23,6 +23,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -31,6 +32,9 @@ import '../../../widget_tester_extensions.dart';
 
 class _SphericalVideoApi extends SphericalVideoApi {
   final List<Map<String, Object?>> opened = [];
+
+  /// The stream given with each video opened to fall back to, null for none
+  final List<String?> fallbackUrls = [];
   Exception? failure;
 
   @override
@@ -43,11 +47,13 @@ class _SphericalVideoApi extends SphericalVideoApi {
     StereoLayout stereoLayout,
     Map<String, String> stereoLabels,
     SphereCoverage coverage,
+    String? fallbackUrl,
   ) async {
     final failure = this.failure;
     if (failure != null) {
       throw failure;
     }
+    fallbackUrls.add(fallbackUrl);
     opened.add({
       'url': url,
       'headers': headers,
@@ -86,6 +92,9 @@ class _ImmersiveApi extends ImmersiveApi {
 
   /// The opening ids the viewer was given, failed openings included
   final List<int> openingIds = [];
+
+  /// The stream given with each media opened to fall back to, null for none
+  final List<String?> fallbackUrls = [];
   Exception? failure;
 
   @override
@@ -99,6 +108,7 @@ class _ImmersiveApi extends ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     int startPositionMs,
     int openingId,
+    String? fallbackUrl,
   ) async {
     openingIds.add(openingId);
     final failure = this.failure;
@@ -107,6 +117,7 @@ class _ImmersiveApi extends ImmersiveApi {
     }
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
+    fallbackUrls.add(fallbackUrl);
   }
 }
 
@@ -206,16 +217,39 @@ void main() {
         'title': 'trip.mp4',
         'close': 'Close',
         'layout': StereoLayout.leftRight,
-        // The labels of the audio track control and of the buffering indicator too, with the language of the app to
-        // name the track languages in
+        // The labels of the audio track control, of the buffering indicator and of a switch to the stream to fall
+        // back to too, with the language of the app to name the track languages in
         'labels': {
           ...sphereViewerLabels(context.t),
           ...audioTrackLabels(context.t, const Locale('en')),
           ...videoBufferingLabels(context.t),
+          ...videoSourceLabels(context.t),
         },
         'coverage': SphereCoverage.half,
       });
+      expect(
+        (sphericalApi.opened.single['labels']! as Map<String, String>)['sourceSwitched'],
+        'Playing the transcoded stream: the original ({codec} {width} x {height}) exceeds what this device decodes',
+        reason: 'the player fills in the track it could not decode',
+      );
       expect(player.calls, ['suspend'], reason: 'the page lifts this when the app resumes');
+      expect(sphericalApi.fallbackUrls, [null], reason: 'a file of a share has nothing to fall back to');
+    });
+
+    testWidgets('gives the native 360° player the stream to fall back to', (tester) async {
+      await pump(tester);
+
+      await openSphericalVideoUrl(
+        context,
+        ref,
+        url: _url,
+        title: 'trip.mp4',
+        layout: StereoLayout.mono,
+        coverage: SphereCoverage.full,
+        fallbackUrl: '$_url.transcoded',
+      );
+
+      expect(sphericalApi.fallbackUrls, ['$_url.transcoded']);
     });
 
     testWidgets('gives the player back when the 360° player does not open', (tester) async {
@@ -271,6 +305,7 @@ void main() {
       expect(request.labels['buffering'], 'Buffering {percent}%', reason: 'the player fills in the percentage');
       expect(request.labels['audioTrackNumber'], 'Track {track}', reason: 'the player fills in the number');
       expect(request.labels['audioTrackChannels'], '{channels} channels', reason: 'the player fills in the count');
+      expect(request.fallbackUrl, isNull, reason: 'a file of a share has nothing to fall back to');
       expect(player.calls, ['suspend']);
     });
 
@@ -358,6 +393,7 @@ void main() {
         'layout': ImmersiveStereoLayout.topBottom,
         'coverage': ImmersiveSphereCoverage.half,
       });
+      expect(immersiveApi.fallbackUrls, [null], reason: 'a file of a share has nothing to fall back to');
       expect(player.calls, ['suspend']);
       // The session follows this opening: the viewer sends its id back with its events
       expect(ref.read(immersiveSessionProvider).isCurrent(immersiveApi.openingIds.single), isTrue);

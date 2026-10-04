@@ -47,7 +47,12 @@ void main() {
     moovAtEnd: true,
     mdat: mp4Box('mdat', mp4Zeros(300000)),
   );
-  const vr180Probe = SphericalProbe(stereo: StereoLayout.leftRight, halfSphere: true, hasSphericalMetadata: true);
+  const vr180Probe = SphericalProbe(
+    stereo: StereoLayout.leftRight,
+    halfSphere: true,
+    hasSphericalMetadata: true,
+    codec: 'hvc1',
+  );
 
   late MockStorageRepository storage;
   late List<http.Request> requests;

@@ -126,6 +126,7 @@ void main() {
 
     setUp(() {
       when(() => mocks.localAsset.repo.updatePreviousChecksum(any(), any())).thenAnswer((_) async {});
+      when(mocks.localAsset.updateHashes).thenAnswer((_) async {});
     });
 
     test('stacks over the previous version, then records the uploaded checksum', () async {
@@ -139,6 +140,7 @@ void main() {
         () => mocks.localAsset.repo.updatePreviousChecksum('local', 'sha'),
       ]);
       verifyNever(() => apiRepository.getChecksum(any()));
+      verifyNever(mocks.localAsset.updateHashes);
     });
 
     test('records the uploaded checksum when there is nothing to stack on', () async {
@@ -177,6 +179,34 @@ void main() {
 
       verify(() => apiRepository.stack(['remote', 'previous'])).called(1);
       verify(() => mocks.localAsset.repo.updatePreviousChecksum('local', 'srv')).called(1);
+    });
+
+    test('gives a never hashed asset the checksum of its upload, so that it merges with it', () async {
+      when(() => mocks.localAsset.repo.getPreviousRemoteId('local')).thenAnswer((_) async => null);
+      when(() => apiRepository.getChecksum('remote')).thenAnswer((_) async => 'srv');
+
+      await sut.stackEditedUpload('local', 'remote', null);
+
+      verify(() => mocks.localAsset.repo.updateHashes({'local': 'srv'})).called(1);
+      verify(() => mocks.localAsset.repo.updatePreviousChecksum('local', 'srv')).called(1);
+    });
+
+    test('gives a never hashed asset its checksum even when the stack call fails', () async {
+      when(() => mocks.localAsset.repo.getPreviousRemoteId('local')).thenAnswer((_) async => 'previous');
+      when(() => apiRepository.getChecksum('remote')).thenAnswer((_) async => 'srv');
+      when(() => apiRepository.stack(any())).thenThrow(Exception('offline'));
+
+      await expectLater(sut.stackEditedUpload('local', 'remote', null), throwsException);
+
+      verify(() => mocks.localAsset.repo.updateHashes({'local': 'srv'})).called(1);
+    });
+
+    test('leaves the checksum of a hashed asset alone', () async {
+      when(() => mocks.localAsset.repo.getPreviousRemoteId('local')).thenAnswer((_) async => null);
+
+      await sut.stackEditedUpload('local', 'remote', 'sha');
+
+      verifyNever(mocks.localAsset.updateHashes);
     });
   });
 }

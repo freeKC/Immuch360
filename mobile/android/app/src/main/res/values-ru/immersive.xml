@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Не удалось воспроизвести оригинал (%1$s), пробуем поток воспроизведения с сервера</string>
   <string name="immersive_video_decoder_switch">%1$s не по силам декодеру шлема, пробуем поток воспроизведения с сервера</string>
   <string name="immersive_error_nothing">Нечего показать</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d не по силам декодеру шлема (рывки, артефакты). В Immich выберите HEVC для транскодирования видео или ограничьте разрешение.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d не по силам декодеру шлема (рывки, артефакты). Перекодируйте этот файл в HEVC или в меньшем разрешении.</string>
 </resources>

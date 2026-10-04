@@ -31,6 +31,7 @@ import app.alextran.immich.MainActivity
 import app.alextran.immich.R
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
+import app.alextran.immich.core.VideoDecoders
 import com.meta.spatial.core.Entity
 import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
@@ -146,6 +147,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * reached from; a fresh open from the app (onNewIntent) brings its own.
      */
     val openingId: Long,
+    /**
+     * The server's transcoded stream of a video, played instead of [url] once when the headset cannot decode the
+     * original (checked at its first tracks) or when the original fails. Null for a photo, for a media without one
+     * (a file of a network share) and when the user chose to always play the original.
+     */
+    val fallbackUrl: String?,
   )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -886,6 +893,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     title: String,
     mediaLayout: ImmersiveStereoLayout,
     mediaCoverage: ImmersiveSphereCoverage,
+    fallbackUrl: String?,
   ): Boolean {
     if (closing || isFinishing || isDestroyed) {
       Log.i(TAG, "adjacent media for request $requestId refused, the viewer is closing")
@@ -914,6 +922,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         coverage = mediaCoverage,
         startPositionMs = 0L,
         openingId = current.openingId,
+        fallbackUrl = fallbackUrl,
       )
     // showRequest ends the request, so that Flutter's true answer finds nothing left to do. The scene is ready
     // whenever a request could start, onSceneReady would show the media otherwise
@@ -1609,7 +1618,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
       override fun onPlayerError(error: PlaybackException) {
         Log.e(TAG, "video error ${error.errorCodeName}: ${error.message}", error)
-        val fallback = currentVideoUrl?.let { ImmersiveMedia.playbackUrlFor(it) }
+        val fallback = currentVideoUrl?.let(::fallbackFor)
         if (!videoFallbackTried && fallback != null) {
           videoFallbackTried = true
           setStatus(getString(R.string.immersive_video_fallback, error.errorCodeName))
@@ -1632,27 +1641,34 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
-   * H.264 above 4K plays at a fraction of its frame rate on the Quest 3, with block artifacts. From the
-   * original, tries the server playback stream (the Immich transcode when there is one), otherwise tells
-   * the user what to change.
+   * A video above what the headset decodes plays at a fraction of its frame rate, with block artifacts: H.264 above 4K
+   * on the Quest 3, whatever its decoder list says, or anything the list refuses (see VideoDecoders). From the
+   * original, tries the transcoded stream Flutter sent once; otherwise tells the user what to change: the transcoding
+   * settings for a server media, a re-encode for a file of the headset or of a network share.
    */
   private fun checkDecoderLimit(format: Format) {
     val url = currentVideoUrl ?: return
     if (decoderChecked || format.width <= 0 || format.height <= 0) return
     decoderChecked = true
-    if (!ImmersiveMedia.exceedsAvcDecoder(format.sampleMimeType, format.width, format.height)) return
+    val verdict = VideoDecoders.canDecode(format)
+    if (verdict.supported) return
+    val codec = VideoDecoders.codecName(format.sampleMimeType)
     val size = "${format.width}x${format.height}"
-    Log.w(TAG, "H.264 $size is above the headset decoder limit, expect dropped frames and block artifacts")
-    val playback = ImmersiveMedia.playbackUrlFor(url)
-    if (!videoFallbackTried && playback != null) {
+    Log.w(TAG, "$codec $size is above what the headset decodes (${verdict.reason}), expect dropped frames")
+    val fallback = request?.fallbackUrl?.takeIf { it != url }
+    if (!videoFallbackTried && fallback != null) {
       videoFallbackTried = true
-      setStatus(getString(R.string.immersive_video_decoder_switch, "H.264 $size"))
-      playUrl(playback, resumePositionMs())
+      setStatus(getString(R.string.immersive_video_decoder_switch, "$codec $size"))
+      playUrl(fallback, resumePositionMs())
       return
     }
     val message =
-      if (url.startsWith("http")) R.string.immersive_avc_too_large else R.string.immersive_avc_too_large_local
-    val warning = getString(message, format.width, format.height)
+      if (ImmersiveMedia.isFileMedia(url)) {
+        R.string.immersive_codec_too_large_file
+      } else {
+        R.string.immersive_codec_too_large
+      }
+    val warning = getString(message, codec, format.width, format.height)
     Log.w(TAG, "shown to the user: $warning")
     decoderWarning = warning
     hideInfoJob?.cancel()
@@ -1661,6 +1677,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     setInfoVisible(true, reposition = true)
     scheduleInfoHide(DECODER_WARNING_HIDE_MS)
   }
+
+  /**
+   * The stream to play when [url] fails or cannot stream: the transcoded stream Flutter sent. Null when [url] is that
+   * stream already, or when Flutter sent none: the user chose to always play the original, or the media has no
+   * transcoded stream (a file of a network share). The viewer then shows the error rather than play, unasked, the
+   * stream the user turned down.
+   */
+  private fun fallbackFor(url: String): String? = request?.fallbackUrl?.takeIf { it != url }
 
   /**
    * Stereoscopic and VR180 videos: the stereo mode of the equirect compositor layer (UpDown for top and
@@ -1725,12 +1749,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     loadJob =
       scope.launch {
-        val playback = ImmersiveMedia.playbackUrlFor(media.url)
+        val playback = fallbackFor(media.url)
         var url = media.url
-        if (playback != null && !isStreamable(media)) {
+        if (playback != null && StreamingLoadControl.isStreamed(media.url) && !isStreamable(media)) {
           // No Range support on /original and the MP4 index at the end: the whole file would have to
-          // download before the first frame, the playback endpoint streams
-          Log.i(TAG, "original not streamable, using /video/playback")
+          // download before the first frame, the transcoded stream streams
+          Log.i(TAG, "original not streamable, using the transcoded stream")
           videoFallbackTried = true
           url = playback
         }
@@ -1784,8 +1808,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     hideWhenReady = true
     val kind =
       when {
+        url == request?.fallbackUrl || url.contains("/video/playback") -> "playback"
         !url.startsWith("http") -> "local copy"
-        url.contains("/video/playback") -> "playback"
         else -> "original"
       }
     Log.i(TAG, "play $kind from $startPositionMs ms")
@@ -1941,6 +1965,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_COVERAGE = "app.alextran.immich.immersive.COVERAGE"
     private const val EXTRA_START_POSITION_MS = "app.alextran.immich.immersive.START_POSITION_MS"
     private const val EXTRA_OPENING_ID = "app.alextran.immich.immersive.OPENING_ID"
+    private const val EXTRA_FALLBACK_URL = "app.alextran.immich.immersive.FALLBACK_URL"
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     private const val ORIGINAL_PREFIX = "immersive_original_"
@@ -2016,13 +2041,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       title: String,
       stereoLayout: ImmersiveStereoLayout,
       coverage: ImmersiveSphereCoverage,
+      fallbackUrl: String?,
     ): Boolean {
       val viewer = liveViewer
       if (viewer == null) {
         Log.i(TAG, "adjacent media for request $requestId refused, no immersive viewer")
         return false
       }
-      return viewer.applyAdjacent(requestId, url, isVideo, title, stereoLayout, coverage)
+      return viewer.applyAdjacent(requestId, url, isVideo, title, stereoLayout, coverage, fallbackUrl)
     }
 
     fun intent(
@@ -2035,6 +2061,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       coverage: ImmersiveSphereCoverage,
       startPositionMs: Long,
       openingId: Long,
+      fallbackUrl: String?,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -2048,6 +2075,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           coverage = coverage,
           startPositionMs = startPositionMs,
           openingId = openingId,
+          fallbackUrl = fallbackUrl,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -2069,6 +2097,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putInt(EXTRA_COVERAGE, media.coverage.raw)
         putLong(EXTRA_START_POSITION_MS, media.startPositionMs)
         putLong(EXTRA_OPENING_ID, media.openingId)
+        putString(EXTRA_FALLBACK_URL, media.fallbackUrl)
       }
     }
 
@@ -2096,6 +2125,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             ?: ImmersiveSphereCoverage.FULL,
         startPositionMs = extras.getLong(EXTRA_START_POSITION_MS, 0L).coerceAtLeast(0L),
         openingId = extras.getLong(EXTRA_OPENING_ID, 0L),
+        fallbackUrl = extras.getString(EXTRA_FALLBACK_URL)?.takeIf { it.isNotBlank() },
       )
     }
 

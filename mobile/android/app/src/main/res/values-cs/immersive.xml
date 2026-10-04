@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Originál se nepodařilo přehrát (%1$s), zkouší se přehrávací stream ze serveru</string>
   <string name="immersive_video_decoder_switch">%1$s přesahuje možnosti dekodéru headsetu, zkouší se přehrávací stream ze serveru</string>
   <string name="immersive_error_nothing">Není co zobrazit</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d přesahuje možnosti dekodéru headsetu (trhané, kostičkované). Ve službě Immich nastavte překódování videa na HEVC nebo omezte rozlišení.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d přesahuje možnosti dekodéru headsetu (trhané, kostičkované). Překódujte tento soubor do HEVC nebo do nižšího rozlišení.</string>
 </resources>

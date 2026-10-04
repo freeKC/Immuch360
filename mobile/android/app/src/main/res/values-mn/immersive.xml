@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Эх файлыг тоглуулж чадсангүй (%1$s), серверийн тоглуулах урсгалыг туршиж байна</string>
   <string name="immersive_video_decoder_switch">%1$s нь VR шилний декодерын хүчин чадлаас хэтэрч байна, серверийн тоглуулах урсгалыг туршиж байна</string>
   <string name="immersive_error_nothing">Харуулах зүйл алга</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d нь VR шилний декодерын хүчин чадлаас хэтэрнэ (гацах, дөрвөлжин болох). Immich дээр видео хөрвүүлэлтийг HEVC болгох эсвэл нягтралыг хязгаарлана уу.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d нь VR шилний декодерын хүчин чадлаас хэтэрнэ (гацах, дөрвөлжин болох). Энэ файлыг HEVC формат руу эсвэл бага нягтралтайгаар дахин кодлоно уу.</string>
 </resources>

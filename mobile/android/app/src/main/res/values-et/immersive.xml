@@ -28,4 +28,6 @@
   <string name="immersive_video_fallback">Originaal ebaõnnestus (%1$s), proovitakse serveri taasesitusvoogu</string>
   <string name="immersive_video_decoder_switch">%1$s ületab peakomplekti dekoodri võimekuse, proovitakse serveri taasesitusvoogu</string>
   <string name="immersive_error_nothing">Pole midagi näidata</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d ületab peakomplekti dekoodri võimekuse (katkendlik, plokiline pilt). Määra Immichis video transkodeerimiseks HEVC või piira resolutsiooni.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d ületab peakomplekti dekoodri võimekuse (katkendlik, plokiline pilt). Kodeeri see fail uuesti HEVC-vormingusse või madalama resolutsiooniga.</string>
 </resources>

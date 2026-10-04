@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">원본 재생에 실패하여(%1$s) 서버 재생 스트림을 시도하는 중</string>
   <string name="immersive_video_decoder_switch">%1$s은(는) 헤드셋 디코더의 한계를 넘어 서버 재생 스트림을 시도하는 중</string>
   <string name="immersive_error_nothing">표시할 항목 없음</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d 영상은 헤드셋 디코더의 한계를 초과합니다(끊김, 블록 현상). Immich에서 동영상 트랜스코딩을 HEVC로 설정하거나 해상도를 제한하세요.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d 영상은 헤드셋 디코더의 한계를 초과합니다(끊김, 블록 현상). 이 파일을 HEVC 또는 더 낮은 해상도로 다시 인코딩하세요.</string>
 </resources>

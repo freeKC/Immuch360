@@ -18,11 +18,10 @@ import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
-import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/models/video_buffering.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
@@ -31,6 +30,7 @@ import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -48,8 +48,11 @@ final panorama360VideoSupportedProvider = Provider<bool>((_) => !kIsWeb && (Plat
 final _log = Logger('PanoramaViewer');
 
 /// Plays [asset] full screen in the native 360° player, from the file the viewer plays: the copy on the phone when
-/// there is one, else the server's original file when the settings ask for it, else its transcoded playback.
-/// Meanwhile the viewer's player is stopped, see [VideoPlayerNotifier.suspendForExternalPlayer].
+/// there is one, else the server's original or its transcoded stream, as the settings and the decoders of the phone
+/// say (see [chooseVideoSource]); the player switches to the transcoded stream by itself when it cannot play the
+/// original, unless the user chose the original whatever happens. A message tells when the choice went against the
+/// original, or when the original plays although the phone cannot decode it. Meanwhile the viewer's player is
+/// stopped, see [VideoPlayerNotifier.suspendForExternalPlayer].
 ///
 /// The player shows the left eye of a 3D video, over the whole sphere or its front half (VR180), as the file declares
 /// (see [SphericalProbeService]) or else as guessed from the video dimensions and name (see [resolveSphereView]),
@@ -68,30 +71,36 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final probeService = ref.read(sphericalProbeServiceProvider);
   final storage = ref.read(storageRepositoryProvider);
   final player = ref.read(videoPlayerProvider(asset.id).notifier);
-  final postfix = ref.read(appConfigProvider).viewer.loadOriginalVideo ? 'original' : 'video/playback';
-  // A video only on the phone, which the user chose to view as 360°, has no server copy
-  final remoteUrl = remoteId == null ? null : '${Store.get(StoreKey.serverEndpoint)}/assets/$remoteId/$postfix';
+  final videoSources = ref.read(videoSourceServiceProvider);
+  final policy = ref.read(appConfigProvider).viewer.videoSourcePolicy;
+  final messenger = ScaffoldMessenger.maybeOf(context);
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
   final labels = {
     ...sphereViewerLabels(context.t),
     ...audioTrackLabels(context.t, Localizations.localeOf(context)),
     ...videoBufferingLabels(context.t),
+    ...videoSourceLabels(context.t),
   };
 
   try {
     // The native player reads file:// URIs too, and ignores the headers for them
     final localFile = localId != null ? await storage.getFileForAsset(localId) : null;
-    final url = localFile?.uri.toString() ?? remoteUrl;
-    if (url == null) {
+    // A video only on the phone, which the user chose to view as 360°, has no server copy
+    if (localFile == null && remoteId == null) {
       _log.warning('No file to play in 360° for ${asset.name}');
       return;
     }
+    final probe = await probeService.probe(asset, localFile: localFile);
+    // A file on the phone plays as it is: only the server has a transcoded stream to choose
+    final source = localFile != null
+        ? ChosenVideoSource(url: localFile.uri.toString())
+        : await videoSources.serverSource(videoId: remoteId!, policy: policy, probe: probe);
     final view = resolveSphereView(
       fileName: asset.name,
       width: asset.width,
       height: asset.height,
-      probe: await probeService.probe(asset, localFile: localFile),
+      probe: probe,
       chosenCoverage: coverageOverrides.get(asset),
     );
     session.start(asset: asset, coverage: view.coverage, coverageGuess: view.coverageGuess);
@@ -99,8 +108,12 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
     // The viewer lifts this when the app resumes, which closing the player brings about on iOS as well: its full
     // screen presentation hides the Flutter view, and the app lifecycle follows.
     await player.suspendForExternalPlayer();
+    final notice = source.notice;
+    if (notice != null) {
+      messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance))));
+    }
     await api.open(
-      url,
+      source.url,
       ApiService.getRequestHeaders(),
       asset.name,
       closeLabel,
@@ -108,6 +121,7 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       view.layout,
       labels,
       view.coverage,
+      source.fallbackUrl,
     );
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for ${asset.name}', error, stackTrace);
@@ -120,7 +134,8 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
 /// Plays the video at [url] full screen in the native 360° player, like [openPanoramaVideo] for a video that is no
 /// asset: a file of a network share, streamed through the local media bridge for example. [title] names it in the
 /// player, [layout] and [coverage] are what the player opens with (see [resolveSphereView]); the user can change them
-/// there, and nothing is remembered.
+/// there, and nothing is remembered. [fallbackUrl] is a stream the player switches to when it cannot play [url], null
+/// for none.
 ///
 /// Meanwhile [player], the page's own player when there is one, is stopped (see
 /// [VideoPlayerNotifier.suspendForExternalPlayer]): the page lifts this when the app resumes, which closing the 360°
@@ -134,6 +149,7 @@ Future<bool> openSphericalVideoUrl(
   required StereoLayout layout,
   required SphereCoverage coverage,
   VideoPlayerNotifier? player,
+  String? fallbackUrl,
 }) async {
   // Read before the first await: the page may be gone by then
   final api = ref.read(sphericalVideoApiProvider);
@@ -145,11 +161,12 @@ Future<bool> openSphericalVideoUrl(
     ...sphereViewerLabels(context.t),
     ...audioTrackLabels(context.t, Localizations.localeOf(context)),
     ...videoBufferingLabels(context.t),
+    ...videoSourceLabels(context.t),
   };
 
   try {
     await player?.suspendForExternalPlayer();
-    await api.open(url, headers, title, closeLabel, errorMessage, layout, labels, coverage);
+    await api.open(url, headers, title, closeLabel, errorMessage, layout, labels, coverage, fallbackUrl);
     return true;
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for $title', error, stackTrace);

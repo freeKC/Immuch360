@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">ორიგინალის დაკვრა ვერ მოხერხდა (%1$s), ვცდით სერვერის დაკვრის ნაკადს</string>
   <string name="immersive_video_decoder_switch">%1$s აღემატება VR სათვალის დეკოდერის შესაძლებლობებს, ვცდით სერვერის დაკვრის ნაკადს</string>
   <string name="immersive_error_nothing">საჩვენებელი არაფერია</string>
+  <string name="immersive_codec_too_large">%1$s %2$d x %3$d აღემატება VR სათვალის დეკოდერის შესაძლებლობებს (წყვეტილი, კვადრატებად დაშლილი). Immich-ში ვიდეოს ტრანსკოდირებისთვის აირჩიეთ HEVC ან შეზღუდეთ გარჩევადობა.</string>
+  <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d აღემატება VR სათვალის დეკოდერის შესაძლებლობებს (წყვეტილი, კვადრატებად დაშლილი). ხელახლა დაკოდეთ ეს ფაილი HEVC-ში ან უფრო დაბალი გარჩევადობით.</string>
 </resources>

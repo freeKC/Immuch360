@@ -29,4 +29,6 @@
   <string name="immersive_video_fallback">Az eredeti nem sikerült (%1$s), a szerver lejátszási streamjének kipróbálása</string>
   <string name="immersive_video_decoder_switch">%1$s: túl sok a VR-szemüveg dekóderének, a szerver lejátszási streamjének kipróbálása</string>
   <string name="immersive_error_nothing">Nincs mit megjeleníteni</string>
+  <string name="immersive_codec_too_large">A(z) %1$s %2$d x %3$d meghaladja a VR-szemüveg dekóderének képességeit (akadozik, kockás). Az Immichben állítsd a videó átkódolását HEVC-re, vagy korlátozd a felbontást.</string>
+  <string name="immersive_codec_too_large_file">A(z) %1$s %2$d x %3$d meghaladja a VR-szemüveg dekóderének képességeit (akadozik, kockás). Kódold újra ezt a fájlt HEVC-be vagy kisebb felbontásra.</string>
 </resources>
