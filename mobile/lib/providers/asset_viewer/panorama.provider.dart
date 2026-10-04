@@ -5,6 +5,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -12,27 +13,60 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('Panorama');
 
-/// Whether the asset is a 360° photo: an image viewed as 360° (see [isEquirectangularProvider]).
-///
-/// Raw Insta360 .insp files are the exception: the web opens them as panoramas by file name, but they are unstitched
-/// dual fisheye images that no sphere viewer can display correctly, so mobile shows them flat unless the user asks
-/// otherwise. Equirectangular videos are ignored, like on the web. False while the exif is loading.
+/// Whether the asset is a 360° photo: an image viewed as 360° (see [isEquirectangularProvider]), or a raw dual fisheye
+/// photo of an Insta360 camera (.insp), which the panorama viewer stitches itself (see [raw360LayoutProvider]).
+/// Equirectangular videos are ignored, like on the web. False while the exif is loading, unless the photo is raw.
 final isPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>(
-  (ref, asset) => asset.isImage && ref.watch(isEquirectangularProvider(asset)),
+  (ref, asset) =>
+      asset.isImage &&
+      (ref.watch(isEquirectangularProvider(asset)) ||
+          ref.watch(raw360LayoutProvider(asset)) == Raw360Layout.dualFisheye),
 );
+
+/// What kind of raw 360° file of a dual fisheye camera the asset is (see [Raw360Layout]), null for any other: an
+/// Insta360 .insp photo, or a .insv video whose frame holds both lenses side by side unless its size says one lens
+/// (see [raw360LayoutOf]); or a file of the device found raw by reading it, a photo renamed from .insp for example (see
+/// [LocalPanoramaRecord.rawDualFisheye]).
+///
+/// The server sees a JPEG or an MP4 in them and flags no projection: the viewers stitch them, with the calibration the
+/// file carries (see dualFisheyeCalibrationProvider). Kept apart from [isEquirectangularProvider], which tells the
+/// players to read the frame as equirectangular: false for those, the ones the scan of the device found raw included.
+final raw360LayoutProvider = Provider.autoDispose.family<Raw360Layout?, BaseAsset>(
+  (ref, asset) => raw360LayoutOfAsset(
+    asset,
+    isFoundRaw: (localId) =>
+        ref.watch(localPanoramaAssetsProvider.select((records) => records[localId]?.rawDualFisheye ?? false)),
+  ),
+);
+
+/// What [raw360LayoutProvider] says of [asset], [isFoundRaw] telling whether the scan of the device found the file of
+/// an id on the device raw: for those who read the records once, the immersive viewer that moves on to other assets
+Raw360Layout? raw360LayoutOfAsset(BaseAsset asset, {required bool Function(String localId) isFoundRaw}) {
+  final byName = raw360LayoutOf(name: asset.name, isVideo: asset.isVideo, width: asset.width, height: asset.height);
+  final localId = asset.localId;
+  if (byName != null || localId == null || !(asset.isImage || asset.isVideo)) {
+    return byName;
+  }
+  return isFoundRaw(localId) ? Raw360Layout.dualFisheye : null;
+}
 
 /// Whether the asset, photo or video, is viewed as 360°: its exif carries an equirectangular projection (see
 /// [hasEquirectangularExifProvider]), or the user chose to view it as 360° (see [ForcedPanoramaAssets]), or its file
 /// on the device declares a 360° projection (see [localPanoramaIdsProvider]), which is all there is to tell without
 /// a server. False while the exif is loading, unless the user chose so or the file was read. Videos are only playable
 /// in 360° where a native player exists (see panorama360VideoSupportedProvider).
+///
+/// Never for a raw file of a dual fisheye camera (see [raw360LayoutProvider]), though the scan of the device finds it
+/// 360° and lists it among the others: its frame holds the images of the lenses, which a player reading it as
+/// equirectangular would wrap on the sphere as they are.
 final isEquirectangularProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
   // All watched, so that the exif is at hand when the user stops viewing the asset as 360°
   final isForced = ref.watch(isForcedPanoramaProvider(asset));
   final isFlagged = ref.watch(hasEquirectangularExifProvider(asset));
   final localId = asset.localId;
   final isFoundOnDevice = localId != null && ref.watch(localPanoramaIdsProvider.select((ids) => ids.contains(localId)));
-  return isForced || isFlagged || isFoundOnDevice;
+  final isRaw = ref.watch(raw360LayoutProvider(asset)) != null;
+  return !isRaw && (isForced || isFlagged || isFoundOnDevice);
 });
 
 /// Whether the exif of the asset, photo or video, carries an equirectangular projection: the server flags it as 360°,

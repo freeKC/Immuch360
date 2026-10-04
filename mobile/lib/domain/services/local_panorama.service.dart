@@ -1,11 +1,14 @@
 // Finds the 360° photos and videos of this device by reading their files. Without a server nothing else tells: the
 // server flags 360° assets from their exif (see hasEquirectangularExifProvider), and the database of the device has
 // no exif. The rules are the server's: a photo is 360° when its GPano XMP declares an equirectangular projection, a
-// video when it declares a spherical projection (see probeSphericalMetadata).
+// video when it declares a spherical projection (see probeSphericalMetadata). The raw dual fisheye files of Insta360
+// cameras, which the app stitches itself, are 360° too: a photo named .insp or ending with the trailer of the camera, a
+// video named .insv whose frame holds both lenses side by side (see raw_360_detection.dart).
 //
 // Reading a file costs a 128 KiB window or two, but there may be thousands of them: only the assets whose shape or
 // name hints at 360° are read (see isLocalPanoramaCandidate), the newest first, a few hundred per run, and what was
-// read is remembered so that no file is read twice unless it changed.
+// read is remembered so that no file is read twice unless it changed, or the rules changed since in a way that may
+// tell otherwise of it (see LocalPanoramaRecord.version).
 
 import 'dart:async';
 import 'dart:convert';
@@ -13,38 +16,67 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 
 final _log = Logger('LocalPanoramaService');
 
 /// What reading the file of an asset of the device told about its projection
 class LocalPanoramaRecord {
-  const LocalPanoramaRecord({required this.isPanorama, this.halfSphere, required this.checkedAt});
+  const LocalPanoramaRecord({
+    required this.isPanorama,
+    this.halfSphere,
+    this.rawDualFisheye = false,
+    required this.checkedAt,
+    this.version = currentVersion,
+  });
 
-  /// Whether the file declares a 360° projection
+  /// The rules the scan reads the files with now, see [version]
+  static const currentVersion = 1;
+
+  /// Whether the file declares a 360° projection, or is a raw dual fisheye file the app stitches
   final bool isPanorama;
 
   /// Whether it covers the front half of the sphere only (VR180), as the file declares it: null when it does not say
   final bool? halfSphere;
 
+  /// Whether it is the raw file of a dual fisheye camera, both lenses side by side (see raw_360_detection.dart)
+  final bool rawDualFisheye;
+
   /// When the file was read, or its modification date when that is later (a clock set wrong): it is read again
   /// once it changed after that
   final DateTime checkedAt;
 
-  /// The record as kept in the store: a small JSON object, the half sphere left out when the file does not say
-  Map<String, Object> toJson() => {'p': isPanorama, 'h': ?halfSphere, 't': checkedAt.millisecondsSinceEpoch};
+  /// The rules the file was read with: 0 for the records written before the raw files of Insta360 cameras were told,
+  /// 1 since. A record of older rules is read again once when the current ones may tell otherwise of its file (see
+  /// [LocalPanoramaService.scan]).
+  final int version;
+
+  /// The record as kept in the store: a small JSON object, the half sphere left out when the file does not say, the raw
+  /// flag when it is not set and the version when it is 0 (the records written before them read the same)
+  Map<String, Object> toJson() => {
+    'p': isPanorama,
+    'h': ?halfSphere,
+    if (rawDualFisheye) 'r': true,
+    't': checkedAt.millisecondsSinceEpoch,
+    if (version > 0) 'v': version,
+  };
 
   /// Reads a record back from [toJson], null for anything else
   static LocalPanoramaRecord? fromJson(Object? json) {
     if (json case {'p': final bool isPanorama, 't': final int checkedAt}) {
       final halfSphere = json['h'];
+      final version = json['v'];
       return LocalPanoramaRecord(
         isPanorama: isPanorama,
         halfSphere: halfSphere is bool ? halfSphere : null,
+        rawDualFisheye: json['r'] == true,
         checkedAt: DateTime.fromMillisecondsSinceEpoch(checkedAt),
+        version: version is int && version > 0 ? version : 0,
       );
     }
     return null;
@@ -55,13 +87,28 @@ class LocalPanoramaRecord {
       other is LocalPanoramaRecord &&
       other.isPanorama == isPanorama &&
       other.halfSphere == halfSphere &&
-      other.checkedAt == checkedAt;
+      other.rawDualFisheye == rawDualFisheye &&
+      other.checkedAt == checkedAt &&
+      other.version == version;
 
   @override
-  int get hashCode => Object.hash(isPanorama, halfSphere, checkedAt);
+  int get hashCode => Object.hash(isPanorama, halfSphere, rawDualFisheye, checkedAt, version);
 
   @override
-  String toString() => 'LocalPanoramaRecord(isPanorama: $isPanorama, halfSphere: $halfSphere, checkedAt: $checkedAt)';
+  String toString() =>
+      'LocalPanoramaRecord(isPanorama: $isPanorama, halfSphere: $halfSphere, rawDualFisheye: $rawDualFisheye, '
+      'checkedAt: $checkedAt, version: $version)';
+}
+
+/// Whether [record], the record of [asset] read with older rules (see [LocalPanoramaRecord.version]), may say
+/// otherwise once its file is read with the current ones. Version 1 tells the raw files of Insta360 cameras: a photo
+/// named .insp is one, a photo found flat may end with the trailer of the camera, and a video named .insv is read for
+/// the layout of its frame. Any other file reads the same.
+bool _mayReadOtherwise(LocalAsset asset, LocalPanoramaRecord record) {
+  if (record.version >= 1) {
+    return false;
+  }
+  return asset.isImage ? !record.isPanorama || isRawPhotoName(asset.name) : isRawVideoName(asset.name);
 }
 
 /// Reads the records from their JSON form, a map from the id of an asset on the device to its record (see
@@ -128,7 +175,10 @@ bool isLocalPanoramaCandidate(BaseAsset asset) {
 }
 
 /// What a file declares about its projection, see [LocalPanoramaRecord]
-typedef LocalPanoramaProbe = ({bool isPanorama, bool? halfSphere});
+typedef LocalPanoramaProbe = ({bool isPanorama, bool? halfSphere, bool rawDualFisheye});
+
+const LocalPanoramaProbe _flat = (isPanorama: false, halfSphere: null, rawDualFisheye: false);
+const LocalPanoramaProbe _rawDualFisheye = (isPanorama: true, halfSphere: null, rawDualFisheye: true);
 
 // The GPano crop of a VR180 photo: about half the width of the full panorama, and all of its height
 bool _isHalfSphereCrop(GPanoTags tags) {
@@ -137,22 +187,37 @@ bool _isHalfSphereCrop(GPanoTags tags) {
 }
 
 /// Reads the projection a photo [length] bytes long declares in its GPano XMP, through [read] (see [readGPanoTags]).
-/// The half sphere comes from its crop, unknown without one. Errors of [read] are not caught.
+/// The half sphere comes from its crop, unknown without one. Without GPano, a photo that ends with the trailer of an
+/// Insta360 camera is a raw dual fisheye photo (see [hasInsta360Trailer]): a .insp renamed to be seen as a JPEG. Errors
+/// of [read] are not caught.
 Future<LocalPanoramaProbe> probeLocalPanoramaPhoto(ByteRangeReader read, int length) async {
   final tags = await readGPanoTags(read, length);
   if (tags == null || !isEquirectangularGPano(tags)) {
-    return (isPanorama: false, halfSphere: null);
+    return await hasInsta360Trailer(read, length) ? _rawDualFisheye : _flat;
   }
-  return (isPanorama: true, halfSphere: tags.crop == null ? null : _isHalfSphereCrop(tags));
+  return (isPanorama: true, halfSphere: tags.crop == null ? null : _isHalfSphereCrop(tags), rawDualFisheye: false);
 }
 
 /// Reads the projection a file of the device declares: the GPano XMP of a photo (see [probeLocalPanoramaPhoto]),
-/// the spherical metadata of a video (see [probeSphericalFile]). Errors are not caught.
+/// the spherical metadata of a video (see [probeSphericalFile]). A photo named .insp is a raw dual fisheye photo, and
+/// so is a video named .insv whose first video track holds both lenses side by side (see [rawVideoLayout]); one whose
+/// frames hold one lens is not shown in 360°. Errors are not caught.
 Future<LocalPanoramaProbe> probeLocalPanoramaFile(String path, {required bool isVideo}) async {
   final file = File(path);
+  final name = p.basename(path);
   if (isVideo) {
     final probe = await probeSphericalFile(file);
-    return (isPanorama: probe.hasSphericalMetadata, halfSphere: probe.hasSphericalMetadata ? probe.halfSphere : null);
+    if (isRawVideoName(name)) {
+      return rawVideoLayout(probe.codedWidth, probe.codedHeight) == Raw360Layout.dualFisheye ? _rawDualFisheye : _flat;
+    }
+    return (
+      isPanorama: probe.hasSphericalMetadata,
+      halfSphere: probe.hasSphericalMetadata ? probe.halfSphere : null,
+      rawDualFisheye: false,
+    );
+  }
+  if (isRawPhotoName(name)) {
+    return _rawDualFisheye;
   }
   final handle = await file.open();
   try {
@@ -228,8 +293,9 @@ class LocalPanoramaService {
   /// Reads the files of the assets of the device that may be 360° (see [isLocalPanoramaCandidate]), the newest
   /// first, and gives [records] (see [LocalPanoramaRecord]) updated with them, the latest last.
   ///
-  /// A file is read once, and again only when the asset changed since; at most [maxFilesPerRun] per run. On iOS,
-  /// the files only in the cloud are left for later. The records of the assets that are gone, or past the newest
+  /// A file is read once, and again only when the asset changed since, or when its record was read with older rules
+  /// that may tell otherwise of it (see [LocalPanoramaRecord.version]); at most [maxFilesPerRun] per run. On iOS, the
+  /// files only in the cloud are left for later. The records of the assets that are gone, or past the newest
   /// [maxEntries] candidates, are dropped. [onProgress] gets the records each time a batch of files was read.
   Future<Map<String, LocalPanoramaRecord>> scan(
     Map<String, LocalPanoramaRecord> records, {
@@ -261,10 +327,11 @@ class LocalPanoramaService {
           ..[asset.id] = LocalPanoramaRecord(
             isPanorama: probe.isPanorama,
             halfSphere: probe.halfSphere,
+            rawDualFisheye: probe.rawDualFisheye,
             checkedAt: checkedAt,
           );
         if (probe.isPanorama) {
-          _log.fine('${asset.name} is 360°');
+          _log.fine('${asset.name} is 360°${probe.rawDualFisheye ? ', raw dual fisheye' : ''}');
         }
       }
       batch.clear();
@@ -284,7 +351,8 @@ class LocalPanoramaService {
         }
         candidates.add(asset.id);
         final known = updated[asset.id];
-        if ((known != null && !asset.updatedAt.isAfter(known.checkedAt)) || budget <= 0) {
+        final isKnown = known != null && !asset.updatedAt.isAfter(known.checkedAt) && !_mayReadOtherwise(asset, known);
+        if (isKnown || budget <= 0) {
           continue;
         }
         final file = await _fileToRead(asset);

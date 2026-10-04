@@ -3,6 +3,7 @@
 <resources>
   <item type="id" name="immersive_info_panel" />
   <item type="id" name="immersive_video_panel" />
+  <item type="id" name="immersive_feedback_panel" />
 
   <style name="ImmersivePanelTheme" parent="@android:style/Theme.Material.NoActionBar">
     <item name="android:windowIsTranslucent">true</item>

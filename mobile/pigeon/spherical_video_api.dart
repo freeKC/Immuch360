@@ -27,6 +27,9 @@ abstract class SphericalVideoApi {
   /// layout Flutter guessed from the video dimensions (the player prefers the layout the file declares, when it
   /// does); the user can change it in the player. [stereoLabels] are the translated labels of the 3D control,
   /// keyed "stereo", "mono", "topBottom", "leftRight".
+  /// [rawProjection] is null for an equirectangular video, or the JSON of a dual fisheye calibration (see
+  /// docs 16-dual-fisheye-spec.md section 5) when the frame holds the two fisheye circles of a raw camera file, which
+  /// the player then maps on the sphere itself.
   /// [fallbackUrl] is the server's transcoded stream, played instead of the original when the device cannot
   /// decode it (checked when the tracks are known) or when the original fails; null when there is none.
   void open(
@@ -39,6 +42,7 @@ abstract class SphericalVideoApi {
     Map<String, String> stereoLabels,
     SphereCoverage coverage,
     String? fallbackUrl,
+    String? rawProjection,
   );
 }
 

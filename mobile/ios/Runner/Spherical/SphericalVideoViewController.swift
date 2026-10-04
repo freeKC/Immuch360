@@ -32,6 +32,11 @@ private let zAxis = SIMD3<Float>(0, 0, 1)
 /// With a fallback URL (the server's transcoded stream), the original gives way to it once: when its codec and size
 /// are above what the device decodes (see [VideoDecoderSupport]), read as soon as its tracks are known, or when it
 /// fails. The fallback stream starts where the original stopped; the error label only shows if it fails too.
+///
+/// With a dual fisheye calibration, the frame is the raw recording of a two lens camera (Insta360 .insv): the two
+/// fisheye circles side by side. A shader stitches them on the sphere for every pixel, levelled with the gravity the
+/// camera measured, see [applyDualFisheye]. Such a frame covers the whole sphere and holds no stereo pair: the coverage
+/// and 3D buttons hide, and the coverage and the layout Flutter gave go back to it unchanged.
 final class SphericalVideoViewController: UIViewController, UIGestureRecognizerDelegate {
   private let videoUrl: URL
   // The server's transcoded stream, nil when there is none
@@ -43,6 +48,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let stereoLabels: [String: String]
   private let events: SphericalVideoEvents
   private let audioTracks: AudioTrackChooser
+  // The calibration of a raw dual fisheye frame, nil for an equirectangular video
+  private let dualFisheye: DualFisheyeCalibration?
 
   private let player = AVPlayer()
   private let sceneView = SCNView(frame: .zero)
@@ -112,7 +119,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   /// holds the labels of the coverage button, of the audio track button, of the buffering label and of the message
   /// of a switch to the fallback stream ("sourceSwitched"). [stereoLayout] is the layout Flutter guessed from the
   /// dimensions of the video, [coverage] how much of the sphere it covers. [fallbackUrl] is the server's transcoded
-  /// stream, played with the same headers. [events] is told once when the player closes.
+  /// stream, played with the same headers. [dualFisheye] is the calibration of a raw dual fisheye frame, nil for an
+  /// equirectangular video. [events] is told once when the player closes.
   init(
     url: URL,
     fallbackUrl: URL?,
@@ -123,6 +131,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     stereoLayout: StereoLayout,
     stereoLabels: [String: String],
     coverage: SphereCoverage,
+    dualFisheye: DualFisheyeCalibration?,
     events: SphericalVideoEvents
   ) {
     videoUrl = url
@@ -135,6 +144,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     initialStereoLayout = stereoLayout
     self.stereoLabels = stereoLabels
     self.coverage = coverage
+    self.dualFisheye = dualFisheye
     self.events = events
     audioTracks = AudioTrackChooser(labels: stereoLabels)
     bufferingIndicator = BufferingIndicator(labels: stereoLabels)
@@ -167,6 +177,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     // The motion drives the view from the start where the phone has the sensors for it
     motionEnabled = motionManager.isDeviceMotionAvailable
     motionButton.isHidden = !motionManager.isDeviceMotionAvailable
+    // A raw dual fisheye frame always covers the whole sphere and is never a stereo pair
+    coverageButton.isHidden = dualFisheye != nil
+    stereoButton.isHidden = dualFisheye != nil
     updateMotionButton()
     updateCoverageButton()
     applyStereoLayout()
@@ -540,6 +553,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     material.diffuse.wrapS = .clamp
     material.diffuse.wrapT = .clamp
 
+    if let dualFisheye {
+      applyDualFisheye(dualFisheye)
+    }
+
     // Behind a half sphere there is no picture: black, never the clamped edge of the frame
     backMaterial.diffuse.contents = UIColor.black
     backMaterial.lightingModel = .constant
@@ -568,10 +585,12 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   }
 
   /// Gives the sphere the geometry of the coverage in use. The elements of a geometry take its materials in turn: the
-  /// back of a half sphere, its second element, is drawn with the black material.
+  /// back of a half sphere, its second element, is drawn with the black material. A raw dual fisheye frame covers the
+  /// whole sphere, whatever coverage Flutter gave.
   private func rebuildSphere() {
-    let sphere = Self.makeSphere(radius: 50, rings: 64, segments: 128, coverage: coverage)
-    switch coverage {
+    let shape: SphereCoverage = dualFisheye == nil ? coverage : .full
+    let sphere = Self.makeSphere(radius: 50, rings: 64, segments: 128, coverage: shape)
+    switch shape {
     case .full:
       sphere.materials = [videoMaterial]
     case .half:
@@ -644,6 +663,153 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       elements: elements
     )
   }
+
+  // MARK: - Raw dual fisheye
+
+  /// Stitches the two fisheye circles of a raw frame on the sphere: the player stays as it is (the geometry, the
+  /// player as the diffuse contents), and a surface shader modifier picks, for every pixel, the point of the frame each
+  /// lens sees in its direction (see [dualFisheyeShader]). The calibration becomes the arguments of the modifier.
+  private func applyDualFisheye(_ calibration: DualFisheyeCalibration) {
+    // The modifier first, so that the material observes the keys of its arguments
+    videoMaterial.shaderModifiers = [.surface: Self.dualFisheyeShader]
+    let leveling = calibration.levelingMatrix
+    for index in 0..<2 {
+      // From the view to the lens: G levels the view in the body frame, R_i turns the body into the lens. The
+      // columns of the transpose are the rows of the product.
+      let rows = (calibration.lensRotation(index) * leveling).transpose
+      setShaderArgument("rawLens\(index)Row0", Self.vector4(rows.columns.0))
+      setShaderArgument("rawLens\(index)Row1", Self.vector4(rows.columns.1))
+      setShaderArgument("rawLens\(index)Row2", Self.vector4(rows.columns.2))
+      setShaderArgument("rawLens\(index)Projection", calibration.textureProjection(index))
+      let lens = calibration.lenses[index]
+      setShaderArgument("rawLens\(index)Distortion", SIMD4<Float>(lens.k1, lens.k2, lens.k3, lens.xi ?? 0))
+    }
+    let lenses = calibration.lenses
+    setShaderArgument("rawTangential", SIMD4<Float>(lenses[0].p1, lenses[0].p2, lenses[1].p1, lenses[1].p2))
+    let equidistant: Float = calibration.model == .equidistant ? 1 : 0
+    setShaderArgument("rawSettings", SIMD4<Float>(equidistant, calibration.squareWidth, 0, 0))
+    print("The 360° player stitches a dual fisheye frame, \(calibration.model.rawValue) lens model")
+  }
+
+  /// Every argument of the modifier is a float4, which SceneKit binds from an NSValue of an SCNVector4
+  private func setShaderArgument(_ key: String, _ value: SIMD4<Float>) {
+    let vector = SCNVector4(x: value.x, y: value.y, z: value.z, w: value.w)
+    videoMaterial.setValue(NSValue(scnVector4: vector), forKey: key)
+  }
+
+  private static func vector4(_ vector: SIMD3<Float>) -> SIMD4<Float> {
+    SIMD4<Float>(vector.x, vector.y, vector.z, 0)
+  }
+
+  /// The shader maps the calibration on the proportions of the frame it was written for (the fallback stream may be
+  /// smaller, not of other proportions): another shape is not the recording the calibration describes, and the log
+  /// tells why the stitch then looks wrong
+  private func checkDualFisheyeFrame(_ size: CGSize, calibration: DualFisheyeCalibration) {
+    let expected = CGFloat(calibration.frameWidth / calibration.frameHeight)
+    let ratio = size.width / size.height
+    if abs(ratio - expected) > expected * 0.01 {
+      print(
+        "The dual fisheye frame is \(Int(size.width))x\(Int(size.height)), the calibration was written for "
+          + "\(Int(calibration.frameWidth))x\(Int(calibration.frameHeight))"
+      )
+    }
+  }
+
+  /// The surface shader modifier (Metal) of a raw dual fisheye frame, after docs 16-dual-fisheye-spec.md section 3.
+  ///
+  /// The texture coordinates of the sphere are those of an equirectangular frame (see makeSphere), and the contents
+  /// transform stays the identity for a raw frame: they give the direction a pixel shows, in the axes of the spec (x
+  /// right, y down, z ahead), exactly where an equirectangular video would show it. For each lens, the direction turns
+  /// into the frame of the lens, goes through the Mei projection (or the equidistant one) and lands in the frame, in
+  /// texture coordinates from its top left corner, as the frame of the player has them. A lens counts only within its
+  /// own square and up to 100 degrees off axis; the two samples blend across the seam, from 85 to 95 degrees off axis
+  /// (1 - smoothstep). Where neither lens has a weight, the lens nearer the direction gives the pixel. The samples read
+  /// the first level of the texture: the point jumps from one lens to the other at the seam, where the derivatives
+  /// would pick a blurred level.
+  ///
+  /// Arguments, all float4, set by setShaderArgument:
+  /// - rawLens0Row0, rawLens0Row1, rawLens0Row2 (and rawLens1...): the rows of R_i * G, from the view to lens i, w
+  ///   unused. Rows rather than a float3x3 argument, so that no matrix layout convention stands between Swift and
+  ///   Metal: the shader takes dot products.
+  /// - rawLens0Projection, rawLens1Projection: (fx, fy, cx, cy) in texture coordinates, see
+  ///   DualFisheyeCalibration.textureProjection.
+  /// - rawLens0Distortion, rawLens1Distortion: (k1, k2, k3, xi), Mei only.
+  /// - rawTangential: (p1, p2) of lens 0, then (p1, p2) of lens 1, Mei only.
+  /// - rawSettings: (1 for the equidistant model, 0 for Mei; the width of one lens square in texture coordinates;
+  ///   unused; unused).
+  ///
+  /// The body sits in its own block, so that its names cannot clash with those of the code SceneKit puts around it.
+  /// The arguments section holds declarations only: SceneKit reads it line by line.
+  private static let dualFisheyeShader = """
+    #pragma arguments
+    float4 rawLens0Row0;
+    float4 rawLens0Row1;
+    float4 rawLens0Row2;
+    float4 rawLens1Row0;
+    float4 rawLens1Row1;
+    float4 rawLens1Row2;
+    float4 rawLens0Projection;
+    float4 rawLens1Projection;
+    float4 rawLens0Distortion;
+    float4 rawLens1Distortion;
+    float4 rawTangential;
+    float4 rawSettings;
+    #pragma body
+    {
+      float2 sphereUv = _surface.diffuseTexcoord;
+      float longitude = (sphereUv.x * 2.0 - 1.0) * M_PI_F;
+      float latitude = M_PI_2_F - sphereUv.y * M_PI_F;
+      float3 viewDirection = float3(cos(latitude) * sin(longitude), -sin(latitude), cos(latitude) * cos(longitude));
+      float4 colorSum = float4(0.0);
+      float weightSum = 0.0;
+      float nearestAngle = 4.0;
+      float2 nearestUv = float2(0.0);
+      for (int lensIndex = 0; lensIndex < 2; lensIndex++) {
+        bool firstLens = lensIndex == 0;
+        float4 row0 = firstLens ? rawLens0Row0 : rawLens1Row0;
+        float4 row1 = firstLens ? rawLens0Row1 : rawLens1Row1;
+        float4 row2 = firstLens ? rawLens0Row2 : rawLens1Row2;
+        float3 lensDirection = normalize(
+          float3(dot(row0.xyz, viewDirection), dot(row1.xyz, viewDirection), dot(row2.xyz, viewDirection)));
+        float offAxis = acos(clamp(lensDirection.z, -1.0f, 1.0f));
+        float2 lensPoint;
+        if (rawSettings.x > 0.5) {
+          float planar = length(lensDirection.xy);
+          lensPoint = planar > 0.000001 ? lensDirection.xy * (offAxis / planar) : float2(0.0);
+        } else {
+          float4 distortion = firstLens ? rawLens0Distortion : rawLens1Distortion;
+          float2 tangential = firstLens ? rawTangential.xy : rawTangential.zw;
+          float2 unified = lensDirection.xy / max(lensDirection.z + distortion.w, 0.001f);
+          float r2 = dot(unified, unified);
+          float radial = 1.0 + r2 * (distortion.x + r2 * (distortion.y + r2 * distortion.z));
+          lensPoint = float2(
+            radial * unified.x + 2.0 * tangential.x * unified.x * unified.y
+              + tangential.y * (r2 + 2.0 * unified.x * unified.x),
+            radial * unified.y + tangential.x * (r2 + 2.0 * unified.y * unified.y)
+              + 2.0 * tangential.y * unified.x * unified.y);
+        }
+        float4 projection = firstLens ? rawLens0Projection : rawLens1Projection;
+        float2 lensUv = projection.xy * lensPoint + projection.zw;
+        float squareStart = float(lensIndex) * rawSettings.y;
+        float squareEnd = squareStart + rawSettings.y;
+        bool inSquare = lensUv.x >= squareStart && lensUv.x < squareEnd && lensUv.y >= 0.0 && lensUv.y < 1.0;
+        float weight = (inSquare && offAxis < 1.7453293) ? 1.0 - smoothstep(1.4835299f, 1.6580628f, offAxis) : 0.0;
+        if (weight > 0.0) {
+          colorSum += weight * float4(u_diffuseTexture.sample(u_diffuseTextureSampler, lensUv, metal::level(0.0f)));
+          weightSum += weight;
+        }
+        if (offAxis < nearestAngle) {
+          nearestAngle = offAxis;
+          nearestUv = clamp(lensUv, float2(squareStart, 0.0f), float2(squareEnd, 1.0f));
+        }
+      }
+      if (weightSum > 0.0) {
+        _surface.diffuse = colorSum / weightSum;
+      } else {
+        _surface.diffuse = float4(u_diffuseTexture.sample(u_diffuseTextureSampler, nearestUv, metal::level(0.0f)));
+      }
+    }
+    """
 
   // MARK: - View direction
 
@@ -719,6 +885,11 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   /// bottom frame, the left half of a side by side one. Texture coordinates start at the top left corner of the frame,
   /// so halving them keeps that half, stretched over the whole sphere or over its front half.
   private func applyStereoLayout() {
+    // The shader of a raw dual fisheye frame reads the whole frame, see applyDualFisheye
+    guard dualFisheye == nil else {
+      videoMaterial.diffuse.contentsTransform = SCNMatrix4Identity
+      return
+    }
     switch stereoLayout {
     case .mono:
       videoMaterial.diffuse.contentsTransform = SCNMatrix4Identity
@@ -736,6 +907,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private func frameSizeKnown(_ size: CGSize) {
     guard !closing else { return }
     frameSize = size
+    if let dualFisheye {
+      checkDualFisheyeFrame(size, calibration: dualFisheye)
+      return
+    }
     guessStereoLayoutFromFrame()
   }
 
@@ -966,6 +1141,11 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     motionButtonWidth.priority = UILayoutPriority(999)
     let audioButtonWidth = audioButton.widthAnchor.constraint(equalToConstant: 44)
     audioButtonWidth.priority = UILayoutPriority(999)
+    // These two hide for a raw dual fisheye frame
+    let coverageButtonWidth = coverageButton.widthAnchor.constraint(equalToConstant: 52)
+    coverageButtonWidth.priority = UILayoutPriority(999)
+    let stereoButtonWidth = stereoButton.widthAnchor.constraint(equalToConstant: 44)
+    stereoButtonWidth.priority = UILayoutPriority(999)
 
     let safeArea = view.safeAreaLayoutGuide
     NSLayoutConstraint.activate([
@@ -999,10 +1179,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       trailingButtons.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -8),
       trailingButtons.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
 
-      coverageButton.widthAnchor.constraint(equalToConstant: 52),
+      coverageButtonWidth,
       coverageButton.heightAnchor.constraint(equalToConstant: 44),
 
-      stereoButton.widthAnchor.constraint(equalToConstant: 44),
+      stereoButtonWidth,
       stereoButton.heightAnchor.constraint(equalToConstant: 44),
 
       motionButtonWidth,

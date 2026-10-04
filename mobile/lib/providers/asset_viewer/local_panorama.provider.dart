@@ -83,8 +83,10 @@ final localPanoramaAssetsProvider = NotifierProvider<LocalPanoramaAssets, Map<St
   LocalPanoramaAssets.new,
 );
 
-/// Ids (on the device) of the local assets whose files declare a 360° projection, see [LocalPanoramaAssets]. Its
-/// listeners hear of a change only when the ids change, not at every file a scan reads.
+/// Ids (on the device) of the local assets whose files declare a 360° projection, or are raw dual fisheye files, see
+/// [LocalPanoramaAssets]. The latter are listed with the others, on the 360° page and by the immersive viewer, but
+/// their frame is no equirectangular one: see raw360LayoutProvider. Its listeners hear of a change only when the ids
+/// change, not at every file a scan reads.
 class FoundLocalPanoramaIds extends Notifier<Set<String>> {
   @override
   Set<String> build() => Set.unmodifiable({

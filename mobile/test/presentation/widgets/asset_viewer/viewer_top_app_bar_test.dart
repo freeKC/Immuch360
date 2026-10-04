@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
@@ -15,7 +16,10 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
+import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
@@ -42,6 +46,7 @@ import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.da
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -133,6 +138,26 @@ class _FakeSphericalProbes extends SphericalProbeService {
   }
 }
 
+/// The nominal calibration of an X3 for every raw file, recording the assets asked for
+class _NominalCalibrations extends DualFisheyeCalibrationService {
+  _NominalCalibrations()
+    : super(
+        store: DualFisheyeCalibrationStore(() async => null),
+        storage: MockStorageRepository(),
+        client: () => throw UnimplementedError('no network in these tests'),
+        serverEndpoint: () => null,
+        headers: () => const {},
+      );
+
+  final asked = <BaseAsset>[];
+
+  @override
+  Future<DualFisheyeCalibration> forAsset(BaseAsset asset, {File? localFile}) async {
+    asked.add(asset);
+    return nominalX3(2880);
+  }
+}
+
 /// The assets the user chose to view as 360°, seeded rather than read from the store. Changes still go to the store.
 class _SeededForcedPanoramas extends ForcedPanoramaAssets {
   _SeededForcedPanoramas(this._keys);
@@ -150,6 +175,7 @@ void main() {
   late _MockSpatialVideoApi spatialVideoApi;
   late MockStorageRepository storage;
   late _FakeSphericalProbes probes;
+  late _NominalCalibrations calibrations;
   late _MockVideoDecoderApi decoderApi;
   late List<String> calls;
   // Preview requests of the immersive viewer, and the XMP the preview carries: none by default
@@ -233,7 +259,7 @@ void main() {
     calls = [];
     sphericalVideoApi = _MockSphericalVideoApi();
     when(
-      () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer((_) async => calls.add('open'));
     spatialVideoApi = _MockSpatialVideoApi();
     when(
@@ -242,6 +268,7 @@ void main() {
     when(() => spatialVideoApi.open(any())).thenAnswer((_) async => calls.add('spatial'));
     storage = MockStorageRepository();
     probes = _FakeSphericalProbes();
+    calibrations = _NominalCalibrations();
     // The device decodes every video, unless a test says otherwise
     decoderApi = _MockVideoDecoderApi();
     when(
@@ -257,7 +284,7 @@ void main() {
     }
 
     when(
-      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer(openImmersive);
     previewRequests = [];
     previewXmp = null;
@@ -370,6 +397,7 @@ void main() {
             sphericalVideoApiProvider.overrideWithValue(sphericalVideoApi),
             storageRepositoryProvider.overrideWithValue(storage),
             sphericalProbeServiceProvider.overrideWithValue(probes),
+            dualFisheyeCalibrationServiceProvider.overrideWithValue(calibrations),
             videoPlayerProvider(asset.id).overrideWith((ref) => _RecordingVideoPlayer(calls, initial: playerState)),
             spatialVideoApiProvider.overrideWithValue(spatialVideoApi),
             videoDecoderApiProvider.overrideWithValue(decoderApi),
@@ -496,8 +524,8 @@ void main() {
       expect(router.current.name, PanoramaViewerRoute.name);
       expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
       expect(find.text('panorama ${asset.id}'), findsOneWidget);
-      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('stops a video, then plays its transcoded stream in the native 360° player', (tester) async {
@@ -518,6 +546,7 @@ void main() {
           captureAny(),
           captureAny(),
           captureAny(),
+          any(),
           any(),
         ),
       ).captured;
@@ -545,7 +574,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, file.uri.toString());
       expect(url, startsWith('file:///'));
@@ -560,14 +589,14 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, '${PresentationContext.serverEndpoint}/assets/${asset.id}/video/playback');
     });
 
     testWidgets('gives the viewer its video back when the native 360° player cannot open', (tester) async {
       when(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(tester, owned(type: .video), projectionType: .equirectangular, panoramaVideoSupported: true);
 
@@ -591,7 +620,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, '${PresentationContext.serverEndpoint}/assets/${asset.id}/original');
     });
@@ -620,6 +649,7 @@ void main() {
             captureAny(),
             captureAny(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [expected, englishVideoPlayerLabels, SphereCoverage.full], reason: '$width x $height');
@@ -636,7 +666,8 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any()),
+        () =>
+            sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any()),
       ).captured;
       expect(captured, [StereoLayout.leftRight, SphereCoverage.half]);
     });
@@ -656,7 +687,8 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any()),
+        () =>
+            sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any()),
       ).captured;
       expect(captured, [StereoLayout.topBottom, SphereCoverage.half]);
       expect(probes.probed, [(asset, file)]);
@@ -671,7 +703,8 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any()),
+        () =>
+            sphericalVideoApi.open(any(), any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any()),
       ).captured;
       expect(captured, [StereoLayout.mono, SphereCoverage.full]);
     });
@@ -700,7 +733,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         verify(
-          () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), captureAny(), any()),
+          () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), captureAny(), any(), any()),
         ).captured,
         [SphereCoverage.full, SphereCoverage.half],
         reason: 'opens with the coverage picked last time',
@@ -708,6 +741,106 @@ void main() {
       await closePlayer(SphereCoverage.full);
 
       expect(StoreService.I.tryGet(StoreKey.sphereCoverageOverrides), '{}');
+    });
+  });
+
+  group('ViewerTopAppBar 360 button for the raw files of Insta360 cameras', () {
+    const unsupportedMessage =
+        'This raw video is split in two files or two tracks (one per lens): not supported yet. Export it from the '
+        'camera app, or play a single file recording.';
+
+    testWidgets('is shown for a .insp photo the server flags nothing for, and opens the panorama viewer', (
+      tester,
+    ) async {
+      final asset = owned(name: 'IMG_20240908_133036_00_001.insp', width: 11968, height: 5984);
+      final router = await pumpTopBar(tester, asset, projectionType: .none);
+
+      expect(panoramaButton, findsOneWidget);
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(router.current.name, PanoramaViewerRoute.name);
+    });
+
+    testWidgets('plays a side by side .insv in the native 360° player with its calibration, as one picture', (
+      tester,
+    ) async {
+      final asset = owned(type: .video, name: 'VID_20240908_133036_00_002.insv', width: 5760, height: 2880);
+      await pumpTopBar(tester, asset, projectionType: .none, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      final captured = verify(
+        () => sphericalVideoApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+          captureAny(),
+          any(),
+          captureAny(),
+        ),
+      ).captured;
+      expect(captured[0], StereoLayout.mono);
+      expect(captured[1], SphereCoverage.full);
+      final json = jsonDecode(captured[2] as String) as Map;
+      expect(json['kind'], 'dualFisheye');
+      expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
+      expect(calibrations.asked, [asset]);
+    });
+
+    testWidgets('says that a .insv of one lens per file does not open, and opens nothing', (tester) async {
+      final asset = owned(type: .video, name: 'VID_20240908_133036_10_002.insv', width: 2880, height: 2880);
+      await pumpTopBar(tester, asset, projectionType: .none, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(unsupportedMessage), findsOneWidget);
+      expect(calls, isEmpty, reason: 'the viewer keeps playing');
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+    });
+
+    testWidgets('says so too when the file declares one lens though the server gave no size', (tester) async {
+      probes.result = const SphericalProbe(codec: 'hvc1', codedWidth: 2880, codedHeight: 2880);
+      final asset = owned(type: .video, name: 'VID_20240908_133036_10_002.insv');
+      await pumpTopBar(tester, asset, projectionType: .none, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(unsupportedMessage), findsOneWidget);
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+    });
+
+    testWidgets('opens a raw video in the immersive viewer of a Meta Quest with its calibration', (tester) async {
+      final asset = owned(type: .video, name: 'VID_20240908_133036_00_002.insv', width: 5760, height: 2880);
+      await pumpTopBar(tester, asset, projectionType: .none, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      final captured = verify(
+        () =>
+            immersiveApi.open(any(), any(), true, any(), captureAny(), any(), any(), any(), any(), any(), captureAny()),
+      ).captured;
+      expect(captured[0], ImmersiveStereoLayout.mono);
+      expect((jsonDecode(captured[1] as String) as Map)['frameWidth'], 5760);
+    });
+
+    testWidgets('says that a raw video of one lens per file does not open on a Meta Quest either', (tester) async {
+      final asset = owned(type: .video, name: 'VID_20240908_133036_10_002.insv', width: 2880, height: 2880);
+      await pumpTopBar(tester, asset, projectionType: .none, horizonOs: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(unsupportedMessage), findsOneWidget);
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
     });
   });
 
@@ -748,6 +881,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -780,6 +914,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [
@@ -806,7 +941,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final layout = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
       expect(previewRequests, [Uri.parse('$server/assets/${asset.id}/thumbnail?size=preview&edited=true')]);
@@ -823,7 +958,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final layout = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
     });
@@ -867,7 +1002,19 @@ void main() {
         await tester.pumpAndSettle();
 
         final captured = verify(
-          () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any(), any()),
+          () => immersiveApi.open(
+            any(),
+            any(),
+            any(),
+            any(),
+            captureAny(),
+            any(),
+            captureAny(),
+            any(),
+            any(),
+            any(),
+            any(),
+          ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
       }
@@ -882,7 +1029,19 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), captureAny(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
     });
@@ -916,9 +1075,10 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).called(1);
-        verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
+        verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
       }
     });
 
@@ -932,7 +1092,19 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => immersiveApi.open(file.uri.toString(), any(), true, asset.name, any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          file.uri.toString(),
+          any(),
+          true,
+          asset.name,
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).called(1);
     });
 
@@ -950,6 +1122,7 @@ void main() {
           any(),
           true,
           asset.name,
+          any(),
           any(),
           any(),
           any(),
@@ -989,7 +1162,8 @@ void main() {
         await tester.pumpAndSettle();
 
         final startPosition = verify(
-          () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any(), any()),
+          () =>
+              immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any(), any(), any()),
         ).captured.single;
         expect(startPosition, expected, reason: '$status');
 
@@ -1049,7 +1223,7 @@ void main() {
       tester,
     ) async {
       when(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
         tester,
@@ -1102,8 +1276,19 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () =>
-            immersiveApi.open(file.uri.toString(), any(), false, asset.name, any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          file.uri.toString(),
+          any(),
+          false,
+          asset.name,
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -1132,6 +1317,7 @@ void main() {
           captureAny(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1191,6 +1377,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1231,6 +1418,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
@@ -1263,7 +1451,7 @@ void main() {
 
       expect(calls, ['suspend', 'immersive']);
       final startPosition = verify(
-        () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any(), any()),
+        () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any(), any(), any()),
       ).captured.single;
       expect(startPosition, 12000);
     });
@@ -1278,7 +1466,7 @@ void main() {
 
       // Stopped before the file is looked for, so that the immersive viewer starts where the video was
       expect(calls, ['suspend', 'resume at 0 paused']);
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
     });
   });
@@ -1315,7 +1503,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any(), any()),
       ).called(1);
     });
 
@@ -1433,7 +1621,7 @@ void main() {
 
       expect(stored(), '["local-1"]');
       final url = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).captured.single;
       expect(url, file.uri.toString());
     });
@@ -1448,7 +1636,7 @@ void main() {
 
       expect(stored(), '["${asset.id}"]');
       verify(
-        () => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any(), any()),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
     });
@@ -1610,7 +1798,7 @@ void main() {
       expect(request.autoplay, isTrue);
       expect(request.debugOverlay, isFalse);
       expect(request.labels, englishSpatialLabels);
-      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('keeps a paused video paused in the player', (tester) async {
@@ -1988,7 +2176,19 @@ void main() {
     /// The URL and the stream to fall back to that the immersive viewer was opened with
     (String, String?) immersiveOpened() {
       final captured = verify(
-        () => immersiveApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any(), captureAny()),
+        () => immersiveApi.open(
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+        ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
     }
@@ -1996,7 +2196,8 @@ void main() {
     /// The URL and the stream to fall back to that the native 360° player was opened with
     (String, String?) sphericalOpened() {
       final captured = verify(
-        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), captureAny()),
+        () =>
+            sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), captureAny(), any()),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
     }

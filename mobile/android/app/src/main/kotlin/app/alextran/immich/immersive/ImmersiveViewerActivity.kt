@@ -29,6 +29,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import app.alextran.immich.MainActivity
 import app.alextran.immich.R
+import app.alextran.immich.core.DualFisheyeCalibration
+import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
@@ -37,7 +39,6 @@ import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.SpatialFeature
 import com.meta.spatial.core.Vector3
-import com.meta.spatial.runtime.ButtonBits
 import com.meta.spatial.runtime.EquirectLayerConfig
 import com.meta.spatial.runtime.PanelSceneObject
 import com.meta.spatial.runtime.PanelShapeType
@@ -111,8 +112,10 @@ import okhttp3.Response
  * right opens the previous or the next media of the app without leaving the immersive view: Flutter
  * picks it and the viewer shows it in place (see [navigate]). Thumbstick up or down seeks 10 seconds forward or
  * back in a video, and turns a photo by 90 degrees (logged, to find the right SKYBOX_YAW_DEGREES).
- * The 3D layout is on the info panel only. Hands and controller rays: the buttons of the info panel
- * (time bar and its 10 second buttons for a video, previous, play or pause, next, turn by 90 degrees,
+ * The thumbstick never brings the info panel up: with the panel hidden, a one line feedback panel shows the new
+ * time, the title of the new media or the angle for a moment (see [showFeedback]). The decisions are in
+ * [ImmersiveControls]. The 3D layout is on the info panel only. Hands and controller rays: the buttons of the info
+ * panel (time bar and its 10 second buttons for a video, previous, play or pause, next, turn by 90 degrees,
  * 3D layout, field of view, back), the menu gesture toggles it.
  *
  * Stereoscopic (3D) 360 media hold one equirectangular image per eye, one above the other (left eye on
@@ -124,6 +127,10 @@ import okhttp3.Response
  * panel draws) instead of the skybox, videos an Equirect180 layer instead of the Equirect360 one. Each
  * eye of a stereoscopic VR180 media gets its own half the same way. The field of view button of the
  * info panel (360° or 180°) switches between the full sphere and the half sphere.
+ *
+ * A raw dual fisheye video (an Insta360 .insv, the two fisheye circles side by side) comes with the calibration of
+ * its camera: [DualFisheyeEffect] stitches each frame into an equirectangular one before it reaches the video panel,
+ * which stays a mono 360° layer; the 3D and field of view buttons hide for it. Raw photos arrive stitched by Flutter.
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -153,7 +160,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * (a file of a network share) and when the user chose to always play the original.
      */
     val fallbackUrl: String?,
-  )
+    /**
+     * JSON calibration of a raw dual fisheye video (docs 16-dual-fisheye-spec.md section 5), which the player
+     * stitches with [DualFisheyeEffect]. Null for an equirectangular media, and ignored for a photo (Flutter sends raw
+     * photos already stitched).
+     */
+    val rawProjection: String? = null,
+  ) {
+    /** A raw dual fisheye video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
+    val isRawVideo: Boolean
+      get() = isVideo && rawProjection != null
+  }
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
   private var request: MediaRequest? = null
@@ -171,6 +188,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var skyboxEntity: Entity? = null
   private var videoEntity: Entity? = null
   private var infoEntity: Entity? = null
+  /** One line panel below the line of sight for the thumbstick actions, see [showFeedback]. */
+  private var feedbackEntity: Entity? = null
   private var skyboxMaterial: SceneMaterial? = null
   /** Half sphere of 180° photos, shown instead of the skybox. Its material gets the same photo texture. */
   private var halfSphereEntity: Entity? = null
@@ -223,6 +242,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var previousButton: Button? = null
   private var nextButton: Button? = null
 
+  // Feedback panel
+  private var feedbackView: TextView? = null
+  /** The text of the feedback panel, kept for a panel bound after it was asked for. */
+  private var feedbackText = ""
+  /** Hides the feedback panel FEEDBACK_SHOW_MS after its last text. */
+  private var feedbackJob: Job? = null
+
   // Time bar
   /** Refreshes the time bar while the panel is on screen with a video, see [updateProgressTicker]. */
   private var progressJob: Job? = null
@@ -248,6 +274,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var navigationTimeoutJob: Job? = null
   /** "Looking for the next media", as shown for the pending request. */
   private var navigationStatus = ""
+  /**
+   * The pending request came from the thumbstick with the info panel hidden: the panel stays hidden, the feedback panel
+   * says what happens instead (the request, then the title of the new media or why there is none).
+   */
+  private var navigationQuiet = false
+  /** Direction of the last request: -1 previous, 1 next. */
+  private var navigationStep = 0
   /**
    * The status line held back under "Looking for the next media": the one shown before the request, then whatever
    * the current media reported meanwhile (see [setStatus]). Shown again if the request times out.
@@ -278,6 +311,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * player is built, so a local video after a streamed one, or the other way round, gets a new player.
    */
   private var playerStreamed = false
+  /**
+   * The calibration the current player stitches with, null for a player without [DualFisheyeEffect]. The effects are
+   * set up before prepare, so a raw video after an equirectangular one, or the other way round, gets a new player.
+   */
+  private var playerRawProjection: String? = null
+  /** The stitching of the current raw video failed while playing: its frames now play as they are. */
+  private var rawEffectFailed = false
   /** The next STATE_READY is the first one of the current url: the end of the loading hides the panel. */
   private var hideWhenReady = false
   /**
@@ -370,6 +410,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           Transform(Pose(Vector3(0f, 1.1f, INFO_DISTANCE), Quaternion(0f, 0f, 0f))),
           Visible(false),
         )
+      feedbackEntity =
+        Entity.createPanelEntity(
+          R.id.immersive_feedback_panel,
+          Transform(Pose(Vector3(0f, 1.1f - FEEDBACK_DROP, FEEDBACK_DISTANCE), Quaternion(0f, 0f, 0f))),
+          Visible(false),
+        )
       systemManager.registerSystem(ImmersiveInputSystem(this))
       sceneReady = true
       showRequest()
@@ -392,6 +438,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         },
         panelSetupWithRootView = { rootView, _, _ -> bindInfoPanel(rootView) },
       ),
+      // One line under the line of sight, closer than the info panel, same theme and the same dp per meter
+      LayoutXMLPanelRegistration(
+        R.id.immersive_feedback_panel,
+        layoutIdCreator = { R.layout.immersive_feedback_panel },
+        settingsCreator = {
+          UIPanelSettings(
+            shape = QuadShapeOptions(width = FEEDBACK_PANEL_WIDTH_M, height = FEEDBACK_PANEL_HEIGHT_M),
+            style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
+            display = DpDisplayOptions(width = FEEDBACK_PANEL_WIDTH_DP, height = FEEDBACK_PANEL_HEIGHT_DP, dpi = 260),
+          )
+        },
+        panelSetupWithRootView = { rootView, _, _ -> bindFeedbackPanel(rootView) },
+      ),
       // 360 video: equirectangular compositor layer, as in MediaPlayerSample. Created mono, with the coverage of
       // the first media, a stereoscopic video or another coverage reshapes the layer afterwards (applyVideoShape).
       VideoSurfacePanelRegistration(
@@ -399,14 +458,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         surfaceConsumer = { _, surface ->
           Log.i(TAG, "video surface ready")
           videoSurface = surface
-          player?.setVideoSurface(surface)
+          player?.let { attachVideoSurface(it, surface) }
         },
         settingsCreator = {
           MediaPanelSettings(
             shape =
-              if (coverage == ImmersiveSphereCoverage.HALF) Equirect180ShapeOptions(radius = VIDEO_SPHERE_RADIUS)
-              else Equirect360ShapeOptions(radius = VIDEO_SPHERE_RADIUS),
-            display = PixelDisplayOptions(width = 3840, height = 1920),
+              if (shownVideoCoverage() == ImmersiveSphereCoverage.HALF) {
+                Equirect180ShapeOptions(radius = VIDEO_SPHERE_RADIUS)
+              } else {
+                Equirect360ShapeOptions(radius = VIDEO_SPHERE_RADIUS)
+              },
+            display = PixelDisplayOptions(width = VIDEO_PANEL_WIDTH_PX, height = VIDEO_PANEL_HEIGHT_PX),
             rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = -1),
           )
         },
@@ -439,9 +501,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * Shows [request]: the first media, a new one the app opened while the viewer is in front (onNewIntent), or the
    * previous or next one Flutter picked (applyAdjacent). Whatever the previous media left running stops first: its
    * loading (downloads included), its auto hide, held back or not, a pending previous or next request (this media is
-   * its answer, or replaces it) and the drag of the time bar.
+   * its answer, or replaces it) and the drag of the time bar. The info panel comes in front of the user for the
+   * loading, unless [revealInfo] is false: a media reached with the thumbstick while the panel was hidden, which the
+   * feedback panel announces instead.
    */
-  private fun showRequest() {
+  private fun showRequest(revealInfo: Boolean = true) {
     val media = request
     loadJob?.cancel()
     hideInfoJob?.cancel()
@@ -450,6 +514,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     userSeeking = false
     deferredHideMs = null
     lastKnownPositionMs = null
+    rawEffectFailed = false
     if (media == null) {
       showError(getString(R.string.immersive_error_nothing))
       return
@@ -468,11 +533,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (media.coverage != ImmersiveSphereCoverage.FULL) {
       Log.i(TAG, "half sphere media (VR180), coverage ${media.coverage}")
     }
+    if (media.isRawVideo) Log.i(TAG, "raw dual fisheye video, stitched on the headset")
     titleView?.text = media.title
     updateVideoControls()
     updateStereoView()
     updateCoverageView()
-    setInfoVisible(true, reposition = true)
+    if (revealInfo) setInfoVisible(true, reposition = true)
     if (media.isVideo) showVideo(media) else showPhoto(media)
   }
 
@@ -560,7 +626,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun updateStereoView() {
     val view = stereoView ?: return
     val media = request
-    if (media == null) {
+    // A stitched frame is mono: the layout would change nothing
+    if (media == null || media.isRawVideo) {
       view.visibility = View.GONE
       return
     }
@@ -575,7 +642,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun updateCoverageView() {
     val view = coverageView ?: return
     val media = request
-    if (media == null) {
+    // A stitched frame covers the full sphere
+    if (media == null || media.isRawVideo) {
       view.visibility = View.GONE
       return
     }
@@ -650,6 +718,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       cancelInfoHide()
       userSeeking = false
     }
+    // The panel says it all: the feedback line below it would only cover its buttons
+    if (visible) hideFeedback()
     val panel = infoEntity ?: return
     if (visible && reposition) placeInfoInFront()
     panel.setComponent(Visible(visible && infoPlaced))
@@ -666,6 +736,52 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
     val position = head + (direction * INFO_DISTANCE)
     position.y = head.y - 0.3f
+    panel.setComponent(Transform(Pose(position, Quaternion.lookRotation(direction))))
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // Feedback panel
+
+  private fun bindFeedbackPanel(root: View) {
+    feedbackView = root.findViewById(R.id.immersive_feedback_text)
+    feedbackView?.text = feedbackText
+  }
+
+  /**
+   * Shows [text] on the one line feedback panel for FEEDBACK_SHOW_MS, lower and closer than the info panel, in front
+   * of where the user looks now: the answer to a thumbstick action while the info panel is hidden, which it neither
+   * shows nor moves. A new text restarts the delay.
+   */
+  private fun showFeedback(text: String) {
+    if (text.isBlank()) return
+    feedbackText = text
+    feedbackView?.text = text
+    val panel = feedbackEntity ?: return
+    placeFeedbackInFront(panel)
+    panel.setComponent(Visible(infoPlaced))
+    feedbackJob?.cancel()
+    feedbackJob =
+      scope.launch {
+        delay(FEEDBACK_SHOW_MS)
+        feedbackJob = null
+        hideFeedback()
+      }
+  }
+
+  private fun hideFeedback() {
+    feedbackJob?.cancel()
+    feedbackJob = null
+    feedbackEntity?.setComponent(Visible(false))
+  }
+
+  /** Like [placeInfoInFront], at FEEDBACK_DISTANCE and FEEDBACK_DROP below the eyes. */
+  private fun placeFeedbackInFront(panel: Entity) {
+    val head = lastHeadPosition ?: return
+    val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
+    val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
+    val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
+    val position = head + (direction * FEEDBACK_DISTANCE)
+    position.y = head.y - FEEDBACK_DROP
     panel.setComponent(Transform(Pose(position, Quaternion.lookRotation(direction))))
   }
 
@@ -707,15 +823,23 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     videoEntity?.setComponent(Transform(Pose(Vector3(center.x, center.y, center.z), Quaternion(0f, videoYaw, 0f))))
   }
 
-  /** Turns the sphere of the current media by [degrees] and logs the value to report. */
-  private fun rotateSphere(degrees: Float) {
+  /** Turns the sphere of the current media by [degrees] and logs the value to report. Returns the status shown. */
+  private fun rotateSphere(degrees: Float): String {
     val isVideo = request?.isVideo == true
     val yaw = normalizeDegrees((if (isVideo) videoYaw else photoYaw) + degrees)
     if (isVideo) videoYaw = yaw else photoYaw = yaw
     applySphereTransforms()
     val constant = if (isVideo) "VIDEO_YAW_DEGREES" else "SKYBOX_YAW_DEGREES"
     Log.i(TAG, "${if (isVideo) "video" else "photo"} yaw is now ${yaw.toInt()} degrees ($constant)")
-    setStatus(getString(R.string.immersive_yaw, yaw.toInt()))
+    val status = getString(R.string.immersive_yaw, yaw.toInt())
+    setStatus(status)
+    return status
+  }
+
+  /** Thumbstick up or down on a photo: the turn, told by the feedback panel while the info panel is hidden. */
+  private fun turnFromThumbstick(degrees: Float) {
+    val status = rotateSphere(degrees)
+    if (!infoVisible) showFeedback(status)
   }
 
   /**
@@ -726,6 +850,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun cycleStereoLayout(step: Int, fromPanel: Boolean = false) {
     val media = request ?: return
+    if (media.isRawVideo) return
     stereoLayout = ImmersiveMedia.cycleStereoLayout(stereoLayout, step)
     val mode = stereoModeFor(stereoLayout)
     Log.i(TAG, "3D layout is now $stereoLayout (${if (media.isVideo) "video" else "photo"} stereo mode $mode)")
@@ -746,6 +871,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun toggleCoverage() {
     val media = request ?: return
+    if (media.isRawVideo) return
     coverage = ImmersiveMedia.toggleCoverage(coverage)
     Log.i(TAG, "field of view is now $coverage (${if (media.isVideo) "video" else "photo"})")
     if (media.isVideo) applyVideoShape() else showPhotoSphere()
@@ -778,40 +904,45 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     return if (wrapped > 180f) wrapped - 360f else wrapped
   }
 
+  /**
+   * The buttons just pressed, see [ImmersiveControls] for what each one does. The info panel only comes up for A, X,
+   * grip, menu and the menu gesture; the thumbstick answers on the feedback panel. A press also proves that the
+   * session has the input focus (OpenXR only hands input to the focused session): a FOCUSED state that never came back
+   * after a sleep of the headset would otherwise leave the trigger unable to play.
+   */
   override fun onButtonsPressed(controllerBits: Int, handBits: Int) {
-    if (handBits != 0) {
-      if ((handBits and ButtonBits.ButtonMenu) != 0) {
-        setInfoVisible(!infoVisible, reposition = true)
-      } else if (!infoVisible && (handBits and (ButtonBits.ButtonA or ButtonBits.ButtonX)) != 0) {
-        setInfoVisible(true, reposition = true)
-      }
+    val panel = if (infoVisible) "shown" else "hidden"
+    val controller = Integer.toHexString(controllerBits)
+    Log.d(TAG, "buttons pressed: controller 0x$controller, hand 0x${Integer.toHexString(handBits)}, panel $panel")
+    val actions = ImmersiveControls.actionsFor(controllerBits, handBits, infoVisible)
+    if (!focused) {
+      Log.w(TAG, "button press while the session was not reported focused: taken as focused (resumed=$resumed)")
+      focused = true
+      // The trigger of this very press decides about the held video itself: resuming it here would make the same
+      // press pause it again
+      if (ImmersiveControls.Action.PLAY_PAUSE in actions) playOnReturn = false else resumeHeldPlayback()
     }
-    if (controllerBits == 0) return
-    if ((controllerBits and (ButtonBits.ButtonB or ButtonBits.ButtonY)) != 0) {
-      close()
-      return
-    }
-    // Left and right change the media, up and down move in a video or turn a photo. The 3D layout stays on the panel
     val isVideo = request?.isVideo == true
-    if ((controllerBits and (ButtonBits.ButtonThumbLL or ButtonBits.ButtonThumbRL)) != 0) {
-      navigate(-1)
-    } else if ((controllerBits and (ButtonBits.ButtonThumbLR or ButtonBits.ButtonThumbRR)) != 0) {
-      navigate(1)
-    } else if ((controllerBits and (ButtonBits.ButtonThumbLU or ButtonBits.ButtonThumbRU)) != 0) {
-      if (isVideo) seekFromThumbstick(1) else rotateSphere(YAW_STEP_DEGREES)
-    } else if ((controllerBits and (ButtonBits.ButtonThumbLD or ButtonBits.ButtonThumbRD)) != 0) {
-      if (isVideo) seekFromThumbstick(-1) else rotateSphere(-YAW_STEP_DEGREES)
-    }
-    val toggle =
-      ButtonBits.ButtonA or ButtonBits.ButtonX or ButtonBits.ButtonMenu or ButtonBits.ButtonSqueezeL or
-        ButtonBits.ButtonSqueezeR
-    if ((controllerBits and toggle) != 0) {
-      cancelInfoHide()
-      setInfoVisible(!infoVisible, reposition = true)
-    }
-    // With the panel shown, the trigger clicks its buttons instead
-    if (!infoVisible && (controllerBits and (ButtonBits.ButtonTriggerL or ButtonBits.ButtonTriggerR)) != 0) {
-      togglePlayPause()
+    for (action in actions) {
+      when (action) {
+        ImmersiveControls.Action.CLOSE -> {
+          close()
+          return
+        }
+        ImmersiveControls.Action.PREVIOUS -> navigate(-1, fromThumbstick = true)
+        ImmersiveControls.Action.NEXT -> navigate(1, fromThumbstick = true)
+        ImmersiveControls.Action.STICK_UP ->
+          if (isVideo) seekFromThumbstick(1) else turnFromThumbstick(YAW_STEP_DEGREES)
+        ImmersiveControls.Action.STICK_DOWN ->
+          if (isVideo) seekFromThumbstick(-1) else turnFromThumbstick(-YAW_STEP_DEGREES)
+        ImmersiveControls.Action.TOGGLE_PANEL -> {
+          // A panel opened by the user stays until the user hides it
+          cancelInfoHide()
+          setInfoVisible(!infoVisible, reposition = true)
+        }
+        ImmersiveControls.Action.SHOW_PANEL -> setInfoVisible(true, reposition = true)
+        ImmersiveControls.Action.PLAY_PAUSE -> togglePlayPause()
+      }
     }
   }
 
@@ -830,27 +961,38 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * media that can be shown immersively in that direction and hands it to [applyAdjacent] under the same number, then
    * answers true. Until then the buttons are disabled, a second request is ignored, and neither the end of a load nor
    * the auto hide takes "Looking for the next media" away. The status line tells when there is no such media, or when
-   * no app window can answer; a timeout gives the buttons back if Flutter never answers.
+   * no app window can answer; a timeout gives the buttons back if Flutter never answers. From the thumbstick
+   * ([fromThumbstick]) with the panel hidden, the panel stays hidden and the feedback panel tells all that instead.
    */
-  private fun navigate(step: Int) {
-    if (closing || isFinishing || pendingRequestId != null) return
+  private fun navigate(step: Int, fromThumbstick: Boolean = false) {
+    if (closing || isFinishing) return
+    if (pendingRequestId != null) {
+      // Still looking: the feedback says so again rather than nothing happening
+      if (fromThumbstick && !infoVisible) showFeedback(navigationStatus)
+      return
+    }
     // Without a media there is no opening for Flutter to move in
     val openingId = request?.openingId ?: return
     val id = nextRequestId()
     pendingRequestId = id
+    navigationStep = step
+    navigationQuiet = fromThumbstick && !infoVisible
     statusBeforeNavigation = statusView?.text?.toString().orEmpty()
-    // The answer must stay readable: a hidden panel shows up for it and hides again afterwards, a running auto hide
-    // waits for it. A hide already held back by a drag stays as it is
-    when {
-      hideInfoJob?.isActive == true -> deferredHideMs = hideInfoDelayMs
-      !infoVisible -> deferredHideMs = INFO_AUTO_HIDE_MS
+    if (!navigationQuiet) {
+      // The answer must stay readable: a hidden panel shows up for it and hides again afterwards, a running auto hide
+      // waits for it. A hide already held back by a drag stays as it is
+      when {
+        hideInfoJob?.isActive == true -> deferredHideMs = hideInfoDelayMs
+        !infoVisible -> deferredHideMs = INFO_AUTO_HIDE_MS
+      }
+      hideInfoJob?.cancel()
+      hideInfoJob = null
+      if (!infoVisible) setInfoVisible(true, reposition = true)
     }
-    hideInfoJob?.cancel()
-    hideInfoJob = null
-    if (!infoVisible) setInfoVisible(true, reposition = true)
     val label = getString(if (step < 0) R.string.immersive_previous else R.string.immersive_next)
     navigationStatus = getString(R.string.immersive_adjacent_loading, label)
     showStatus(navigationStatus)
+    if (navigationQuiet) showFeedback(navigationStatus)
     updateNavigationButtons()
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob =
@@ -894,6 +1036,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     mediaLayout: ImmersiveStereoLayout,
     mediaCoverage: ImmersiveSphereCoverage,
     fallbackUrl: String?,
+    rawProjection: String?,
   ): Boolean {
     if (closing || isFinishing || isDestroyed) {
       Log.i(TAG, "adjacent media for request $requestId refused, the viewer is closing")
@@ -923,10 +1066,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         startPositionMs = 0L,
         openingId = current.openingId,
         fallbackUrl = fallbackUrl,
+        rawProjection = rawProjection,
       )
+    // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
+    val quiet = navigationQuiet && !infoVisible
+    val label = getString(if (navigationStep < 0) R.string.immersive_previous else R.string.immersive_next)
     // showRequest ends the request, so that Flutter's true answer finds nothing left to do. The scene is ready
     // whenever a request could start, onSceneReady would show the media otherwise
-    if (sceneReady) showRequest() else endNavigation()
+    if (sceneReady) showRequest(revealInfo = !quiet) else endNavigation()
+    // showRequest may have opened the info panel itself (an error): the feedback line never shows over it
+    if (quiet && !infoVisible) showFeedback(title.ifBlank { label })
     return true
   }
 
@@ -937,9 +1086,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun finishNavigation(id: Long, status: String) {
     if (closing || isDestroyed || pendingRequestId != id) return
+    val quiet = navigationQuiet && !infoVisible
     endNavigation()
     replaceNavigationStatus(status)
     runDeferredHide()
+    if (quiet) showFeedback(status)
   }
 
   /**
@@ -964,6 +1115,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** Forgets the request in progress, if any: no timeout left, previous and next enabled again. */
   private fun endNavigation() {
     pendingRequestId = null
+    navigationQuiet = false
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
     updateNavigationButtons()
@@ -975,26 +1127,37 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /**
    * The 10 second buttons ([direction] 1 forward, -1 back): Media3 adds or removes SEEK_INCREMENT_MS from the
    * position, within the video. Nothing happens before the player knows the duration; a video that cannot be seeked
-   * says so in the status line.
+   * says so in the status line. Returns the line for the feedback panel: the new position, why there was no seek, or
+   * null before the video is known.
    */
-  private fun seekBy(direction: Int) {
-    val p = player ?: return
-    if (currentVideoUrl == null || p.duration == C.TIME_UNSET) return
+  private fun seekBy(direction: Int): String? {
+    val p = player ?: return null
+    if (currentVideoUrl == null || p.duration == C.TIME_UNSET) return null
     if (!p.isCurrentMediaItemSeekable) {
-      setStatus(getString(R.string.immersive_not_seekable))
-      return
+      val status = getString(R.string.immersive_not_seekable)
+      setStatus(status)
+      return status
     }
     if (direction > 0) p.seekForward() else p.seekBack()
     updateProgress()
+    // The player reports the new position at once, before the seek is done
+    val duration = p.duration
+    val position = p.currentPosition.coerceIn(0L, duration.coerceAtLeast(0L))
+    return getString(R.string.immersive_time, ImmersiveMedia.formatTime(position), ImmersiveMedia.formatTime(duration))
   }
 
   /**
-   * Thumbstick up or down on a video: the same seek as the 10 second buttons, and the panel shows up for a few seconds
-   * (or comes in front of the user) so that the new position can be read on the time bar.
+   * Thumbstick up or down on a video: the same seek as the 10 second buttons. The info panel is left as it is: on
+   * screen its time bar shows the new position and its auto hide starts again, hidden it stays hidden and the
+   * feedback panel shows the new position instead.
    */
   private fun seekFromThumbstick(direction: Int) {
-    seekBy(direction)
-    showControlChange(fromPanel = false)
+    val feedback = seekBy(direction)
+    if (infoVisible) {
+      restartPendingHide()
+    } else if (feedback != null) {
+      showFeedback(feedback)
+    }
   }
 
   /**
@@ -1526,14 +1689,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * the larger buffers of StreamingLoadControl, as in the 360° player of the phone app, so that a seek over a share
    * that answers in bursts does not stall again a few seconds later; a file on the headset keeps the Media3 defaults.
    * The buffers are fixed when the player is built: a video read the other way than the previous one gets a new
-   * player, on the same video surface.
+   * player, on the same video surface. So is the stitching of a raw dual fisheye video [media] (see
+   * [DualFisheyeEffect]), set up before prepare: a raw video after another kind of video, or the other way round, gets
+   * a new player too, and only a raw video pays for the effect pipeline.
    */
   @OptIn(UnstableApi::class)
-  private fun ensurePlayer(url: String): ExoPlayer? {
+  private fun ensurePlayer(url: String, media: MediaRequest): ExoPlayer? {
     val streamed = StreamingLoadControl.isStreamed(url)
+    val raw = rawCalibrationFor(media)
+    val rawProjection = if (raw != null) media.rawProjection else null
     player?.let { current ->
-      if (playerStreamed == streamed) return current
-      Log.i(TAG, "new player for a ${if (streamed) "streamed" else "local"} video")
+      if (playerStreamed == streamed && playerRawProjection == rawProjection) return current
+      val kind = if (raw != null) "raw dual fisheye video" else "video"
+      Log.i(TAG, "new player for a ${if (streamed) "streamed" else "local"} $kind")
       current.removeListener(playerListener)
       current.release()
       player = null
@@ -1550,19 +1718,68 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         .setSeekBackIncrementMs(SEEK_INCREMENT_MS)
         .setSeekForwardIncrementMs(SEEK_INCREMENT_MS)
         .build()
-        .apply {
-          repeatMode = Player.REPEAT_MODE_ONE
-          addListener(playerListener)
-          videoSurface?.let { setVideoSurface(it) }
-        }
         .also {
           player = it
           playerStreamed = streamed
+          playerRawProjection = rawProjection
+          // Before the surface and before prepare, which sets up the effect pipeline
+          if (raw != null) {
+            it.setVideoEffects(listOf(DualFisheyeEffect(raw, VIDEO_PANEL_WIDTH_PX, VIDEO_PANEL_HEIGHT_PX)))
+          }
+          it.repeatMode = Player.REPEAT_MODE_ONE
+          it.addListener(playerListener)
+          videoSurface?.let { surface -> attachVideoSurface(it, surface) }
         }
     } catch (e: Exception) {
       Log.e(TAG, "player creation failed", e)
       null
     }
+  }
+
+  /**
+   * Hands the surface of the video panel to [p]. A player that stitches draws the frames itself with OpenGL and must
+   * be told the size of the surface, the one of its swapchain: the stitched frame is scaled to it.
+   */
+  @OptIn(UnstableApi::class)
+  private fun attachVideoSurface(p: ExoPlayer, surface: Surface) {
+    p.setVideoSurface(surface)
+    if (p === player && playerRawProjection != null) {
+      DualFisheyeEffect.setOutputResolution(p, VIDEO_PANEL_WIDTH_PX, VIDEO_PANEL_HEIGHT_PX)
+    }
+  }
+
+  /**
+   * The calibration to stitch the video of [media] with, or null: not a raw video, the stitching failed already for
+   * this media, or a calibration that cannot be read (logged), which plays the frame as it is.
+   */
+  private fun rawCalibrationFor(media: MediaRequest): DualFisheyeCalibration? {
+    val json = media.rawProjection
+    if (!media.isVideo || json == null || rawEffectFailed) return null
+    return try {
+      DualFisheyeCalibration.parse(json)
+    } catch (e: IllegalArgumentException) {
+      Log.e(TAG, "unreadable dual fisheye calibration, the raw frame plays as it is: ${e.message}")
+      null
+    }
+  }
+
+  /**
+   * The stitching failed while playing (a GL error in the effect): the same video plays again from where it stopped
+   * on a player without the effect, the frame as it is, rather than ending on an error. False when the current player
+   * does not stitch.
+   */
+  private fun playWithoutStitching(): Boolean {
+    val url = currentVideoUrl ?: return false
+    val media = request ?: return false
+    if (playerRawProjection == null || rawEffectFailed) return false
+    rawEffectFailed = true
+    Log.w(TAG, "the dual fisheye stitching failed, the raw frame plays as it is")
+    val position = resumePositionMs()
+    // Posted, not run from within the listener of the player being replaced
+    scope.launch(Dispatchers.Main) {
+      if (request === media && ensurePlayer(url, media) != null) playUrl(url, position)
+    }
+    return true
   }
 
   private val playerListener =
@@ -1618,6 +1835,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
       override fun onPlayerError(error: PlaybackException) {
         Log.e(TAG, "video error ${error.errorCodeName}: ${error.message}", error)
+        if (DualFisheyeEffect.isStitchingError(error) && playWithoutStitching()) {
+          return
+        }
         val fallback = currentVideoUrl?.let(::fallbackFor)
         if (!videoFallbackTried && fallback != null) {
           videoFallbackTried = true
@@ -1701,8 +1921,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun applyVideoShape() {
     val panel = videoPanel ?: return
     if (request?.isVideo != true) return
-    val mode = stereoModeFor(stereoLayout)
-    val shape = panelShapeTypeFor(coverage)
+    val mode = stereoModeFor(shownVideoLayout())
+    val shape = panelShapeTypeFor(shownVideoCoverage())
     val config = panel.panelShapeConfig
     if (config == null) {
       Log.w(TAG, "video panel without a shape config, stereo mode $mode and shape $shape not applied")
@@ -1716,7 +1936,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       config.panelShapeType = shape
       val layer = config.layerConfig
       if (layer is EquirectLayerConfig) {
-        layer.centralHorizontalAngle = horizontalAngleFor(coverage)
+        layer.centralHorizontalAngle = horizontalAngleFor(shownVideoCoverage())
       } else {
         Log.w(TAG, "video panel without an equirect layer config, only its mesh follows the shape $shape")
       }
@@ -1726,6 +1946,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.e(TAG, "could not set the video stereo mode to $mode and the shape to $shape", e)
     }
   }
+
+  /** The 3D layout the video layer shows: mono for a stitched raw video, the current layout otherwise. */
+  private fun shownVideoLayout(): ImmersiveStereoLayout =
+    if (request?.isRawVideo == true) ImmersiveStereoLayout.MONO else stereoLayout
+
+  /** The coverage the video layer shows: the full sphere for a stitched raw video, the current coverage otherwise. */
+  private fun shownVideoCoverage(): ImmersiveSphereCoverage =
+    if (request?.isRawVideo == true) ImmersiveSphereCoverage.FULL else coverage
 
   private fun showVideo(media: MediaRequest) {
     resetSkyboxToIdle()
@@ -1743,7 +1971,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     applyVideoShape()
     videoFallbackTried = false
     setStatus(getString(R.string.immersive_loading))
-    if (ensurePlayer(media.url) == null) {
+    if (ensurePlayer(media.url, media) == null) {
       showError(getString(R.string.immersive_error_video, "player"))
       return
     }
@@ -1966,6 +2194,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_START_POSITION_MS = "app.alextran.immich.immersive.START_POSITION_MS"
     private const val EXTRA_OPENING_ID = "app.alextran.immich.immersive.OPENING_ID"
     private const val EXTRA_FALLBACK_URL = "app.alextran.immich.immersive.FALLBACK_URL"
+    private const val EXTRA_RAW_PROJECTION = "app.alextran.immich.immersive.RAW_PROJECTION"
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     private const val ORIGINAL_PREFIX = "immersive_original_"
@@ -1982,6 +2211,25 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val INFO_PANEL_HEIGHT_DP = 400f
     private const val INFO_PANEL_WIDTH_M = 1.0f
     private const val INFO_PANEL_HEIGHT_M = INFO_PANEL_WIDTH_M * INFO_PANEL_HEIGHT_DP / INFO_PANEL_WIDTH_DP
+
+    /**
+     * The feedback panel: one line, at the same 1 m for 720 dp as the info panel so that the text keeps its size,
+     * shown FEEDBACK_SHOW_MS, closer than the info panel and lower, under the line of sight rather than over the image.
+     */
+    private const val FEEDBACK_PANEL_WIDTH_DP = 420f
+    private const val FEEDBACK_PANEL_HEIGHT_DP = 60f
+    private const val FEEDBACK_PANEL_WIDTH_M = INFO_PANEL_WIDTH_M * FEEDBACK_PANEL_WIDTH_DP / INFO_PANEL_WIDTH_DP
+    private const val FEEDBACK_PANEL_HEIGHT_M = INFO_PANEL_WIDTH_M * FEEDBACK_PANEL_HEIGHT_DP / INFO_PANEL_WIDTH_DP
+    private const val FEEDBACK_DISTANCE = 1.0f
+    private const val FEEDBACK_DROP = 0.45f
+    private const val FEEDBACK_SHOW_MS = 1500L
+
+    /**
+     * Size of the swapchain of the video panel. A player that stitches draws into it with OpenGL and is told this size
+     * (see attachVideoSurface); the decoder of any other video writes its own size there.
+     */
+    private const val VIDEO_PANEL_WIDTH_PX = 3840
+    private const val VIDEO_PANEL_HEIGHT_PX = 1920
 
     /** Refresh interval of the time bar while the panel is on screen. */
     private const val PROGRESS_INTERVAL_MS = 500L
@@ -2042,13 +2290,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       stereoLayout: ImmersiveStereoLayout,
       coverage: ImmersiveSphereCoverage,
       fallbackUrl: String?,
+      rawProjection: String?,
     ): Boolean {
       val viewer = liveViewer
       if (viewer == null) {
         Log.i(TAG, "adjacent media for request $requestId refused, no immersive viewer")
         return false
       }
-      return viewer.applyAdjacent(requestId, url, isVideo, title, stereoLayout, coverage, fallbackUrl)
+      return viewer.applyAdjacent(requestId, url, isVideo, title, stereoLayout, coverage, fallbackUrl, rawProjection)
     }
 
     fun intent(
@@ -2062,6 +2311,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       startPositionMs: Long,
       openingId: Long,
       fallbackUrl: String?,
+      rawProjection: String?,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -2076,6 +2326,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           startPositionMs = startPositionMs,
           openingId = openingId,
           fallbackUrl = fallbackUrl,
+          rawProjection = rawProjection,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -2098,6 +2349,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putLong(EXTRA_START_POSITION_MS, media.startPositionMs)
         putLong(EXTRA_OPENING_ID, media.openingId)
         putString(EXTRA_FALLBACK_URL, media.fallbackUrl)
+        putString(EXTRA_RAW_PROJECTION, media.rawProjection)
       }
     }
 
@@ -2126,6 +2378,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         startPositionMs = extras.getLong(EXTRA_START_POSITION_MS, 0L).coerceAtLeast(0L),
         openingId = extras.getLong(EXTRA_OPENING_ID, 0L),
         fallbackUrl = extras.getString(EXTRA_FALLBACK_URL)?.takeIf { it.isNotBlank() },
+        rawProjection = extras.getString(EXTRA_RAW_PROJECTION)?.takeIf { it.isNotBlank() },
       )
     }
 

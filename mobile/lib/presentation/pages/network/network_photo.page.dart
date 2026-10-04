@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
@@ -41,6 +42,10 @@ typedef _Photo = ({NetworkEntry entry, Uri url});
 /// whose file declares a 360° projection gets a 360° button, and any photo can be viewed as 360° from the menu: in
 /// the panorama viewer, or in the immersive viewer on a Meta Quest, which goes from there to the previous and next
 /// 360° photos and videos of [folder]. The menu also sends the photo to the Immich server, when there is one.
+///
+/// A raw dual fisheye photo of an Insta360 camera (.insp, or a photo ending with the trailer of the camera) is 360°:
+/// the panorama viewer stitches it, and for the immersive viewer it is stitched into a picture of the cache first, with
+/// the calibration read from the share.
 @RoutePage()
 class NetworkPhotoPage extends ConsumerStatefulWidget {
   const NetworkPhotoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -63,6 +68,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   /// What the file declares, null until read
   NetworkMediaInfo? _info;
 
+  /// Reads the file straight from the share, for the calibration of a raw photo; null until the share is open
+  ByteRangeReader? _shareReader;
+
   // The size of the photo, once the flat view decoded it (scaled down, but with its aspect ratio): the 3D layout of
   // the immersive viewer is guessed from it
   ImageStream? _imageStream;
@@ -82,6 +90,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final fileSystem = await connections.fileSystem(widget.sourceId);
     final entry = await fileSystem.stat(widget.path);
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
+    _shareReader = networkFileReader(fileSystem, widget.path);
     unawaited(_detect(service, entry, httpRangeReader(client, url)));
     return (entry: entry, url: url);
   }
@@ -164,12 +173,22 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
-    final request = ImmersiveRequest(url: photo.url.toString(), isVideo: false, title: photo.entry.name, view: view);
-    final around = widget.folder?.around(photo.entry, photo.url) ?? (items: [photo], index: 0);
-    // Given the request too: the photo shows again as it opens now, whatever its file declares
-    final navigator = FolderImmersiveNavigator.read(ref, items: around.items, index: around.index, request: request);
+    final stereoLabels = sphereViewerLabels(context.t);
+    final isRaw = _info?.raw == Raw360Layout.dualFisheye || isRawPhotoName(photo.entry.name);
+    final raw = isRaw ? RawImmersiveMedia.read(ref) : null;
+    final read = _shareReader ?? httpRangeReader(ref.read(networkBridgeClientProvider), photo.url);
     try {
-      await openImmersiveUrl(ref, request: request, stereoLabels: sphereViewerLabels(context.t), navigator: navigator);
+      // The viewer opens a raw photo stitched, from a picture of the cache
+      final request = raw != null
+          ? await raw.sharedMedia(photo.entry, photo.url, read: read)
+          : ImmersiveRequest(url: photo.url.toString(), isVideo: false, title: photo.entry.name, view: view);
+      if (!mounted) {
+        return;
+      }
+      final around = widget.folder?.around(photo.entry, photo.url) ?? (items: [photo], index: 0);
+      // Given the request too: the photo shows again as it opens now, whatever its file declares
+      final navigator = FolderImmersiveNavigator.read(ref, items: around.items, index: around.index, request: request);
+      await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels, navigator: navigator);
     } catch (error) {
       _log.warning('Could not open the immersive viewer: $error');
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));

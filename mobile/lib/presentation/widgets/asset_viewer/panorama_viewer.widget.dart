@@ -1,6 +1,8 @@
 // 360° panoramas, ported from web. Kept in one file on purpose, apart from the rule deciding
 // what is a panorama (isPanoramaProvider), shared with the top bar and the edit action. The
-// only new dependency is sensors_plus, for the optional gyroscope mode.
+// only new dependency is sensors_plus, for the optional gyroscope mode. The raw dual fisheye
+// photos of Insta360 cameras are stitched into equirect images before the sphere shows them
+// (see dual_fisheye_stitcher.dart).
 
 import 'dart:async';
 import 'dart:io';
@@ -16,10 +18,13 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/models/video_buffering.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -35,6 +40,7 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
+import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
 import 'package:logging/logging.dart';
@@ -58,6 +64,11 @@ final _log = Logger('PanoramaViewer');
 /// (see [SphericalProbeService]) or else as guessed from the video dimensions and name (see [resolveSphereView]),
 /// until the user picks another layout or coverage. The coverage the user picked is remembered for the asset, see
 /// [SphericalVideoSession].
+///
+/// A raw dual fisheye video (an Insta360 .insv whose frame holds both lenses side by side, see [raw360LayoutProvider])
+/// goes with the calibration of its file (see [DualFisheyeCalibrationService]), which the player maps on the sphere
+/// itself, one picture over the whole sphere. One whose frame holds one lens (a split recording, or one track per lens)
+/// does not open: a message says so.
 Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset asset) async {
   final remoteId = asset.remoteId;
   final localId = asset.localId;
@@ -73,9 +84,12 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final player = ref.read(videoPlayerProvider(asset.id).notifier);
   final videoSources = ref.read(videoSourceServiceProvider);
   final policy = ref.read(appConfigProvider).viewer.videoSourcePolicy;
+  final rawLayout = ref.read(raw360LayoutProvider(asset));
+  final calibrations = ref.read(dualFisheyeCalibrationServiceProvider);
   final messenger = ScaffoldMessenger.maybeOf(context);
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
+  final unsupportedRawMessage = context.t.raw_video_split_unsupported;
   final labels = {
     ...sphereViewerLabels(context.t),
     ...audioTrackLabels(context.t, Localizations.localeOf(context)),
@@ -92,17 +106,31 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       return;
     }
     final probe = await probeService.probe(asset, localFile: localFile);
+    String? rawProjection;
+    if (rawLayout != null) {
+      // The frame the file declares settles it when the server did not give its size
+      final frame = rawVideoFrameSize(probe: probe, width: asset.width, height: asset.height);
+      if (rawLayout == Raw360Layout.separateLenses ||
+          rawVideoLayout(frame?.width, frame?.height) == Raw360Layout.separateLenses) {
+        _log.info('${asset.name} holds one lens per file or per track: not shown in 360°');
+        messenger?.showSnackBar(SnackBar(content: Text(unsupportedRawMessage)));
+        return;
+      }
+      rawProjection = rawVideoProjectionJson(await calibrations.forAsset(asset, localFile: localFile), frame);
+    }
     // A file on the phone plays as it is: only the server has a transcoded stream to choose
     final source = localFile != null
         ? ChosenVideoSource(url: localFile.uri.toString())
         : await videoSources.serverSource(videoId: remoteId!, policy: policy, probe: probe);
-    final view = resolveSphereView(
-      fileName: asset.name,
-      width: asset.width,
-      height: asset.height,
-      probe: probe,
-      chosenCoverage: coverageOverrides.get(asset),
-    );
+    final view = rawProjection != null
+        ? raw360SphereView
+        : resolveSphereView(
+            fileName: asset.name,
+            width: asset.width,
+            height: asset.height,
+            probe: probe,
+            chosenCoverage: coverageOverrides.get(asset),
+          );
     session.start(asset: asset, coverage: view.coverage, coverageGuess: view.coverageGuess);
     // Stopped before the viewer goes to the background: it neither plays nor buffers behind the 360° player.
     // The viewer lifts this when the app resumes, which closing the player brings about on iOS as well: its full
@@ -122,6 +150,7 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       labels,
       view.coverage,
       source.fallbackUrl,
+      rawProjection,
     );
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for ${asset.name}', error, stackTrace);
@@ -135,7 +164,8 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
 /// asset: a file of a network share, streamed through the local media bridge for example. [title] names it in the
 /// player, [layout] and [coverage] are what the player opens with (see [resolveSphereView]); the user can change them
 /// there, and nothing is remembered. [fallbackUrl] is a stream the player switches to when it cannot play [url], null
-/// for none.
+/// for none. [rawProjection] is the calibration of a raw dual fisheye video (see [rawVideoProjectionJson]), null for
+/// an equirectangular one.
 ///
 /// Meanwhile [player], the page's own player when there is one, is stopped (see
 /// [VideoPlayerNotifier.suspendForExternalPlayer]): the page lifts this when the app resumes, which closing the 360°
@@ -150,6 +180,7 @@ Future<bool> openSphericalVideoUrl(
   required SphereCoverage coverage,
   VideoPlayerNotifier? player,
   String? fallbackUrl,
+  String? rawProjection,
 }) async {
   // Read before the first await: the page may be gone by then
   final api = ref.read(sphericalVideoApiProvider);
@@ -166,7 +197,7 @@ Future<bool> openSphericalVideoUrl(
 
   try {
     await player?.suspendForExternalPlayer();
-    await api.open(url, headers, title, closeLabel, errorMessage, layout, labels, coverage, fallbackUrl);
+    await api.open(url, headers, title, closeLabel, errorMessage, layout, labels, coverage, fallbackUrl, rawProjection);
     return true;
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for $title', error, stackTrace);
@@ -406,6 +437,18 @@ Size textureDecodeSize(double aspectRatio) => aspectRatio >= _maxTextureSize.asp
     ? Size(_maxTextureSize.width - 1, 1)
     : Size(1, _maxTextureSize.height - 1);
 
+/// URL of the sharp image of the photo [remoteId] on the server that the viewers load, not edited: panoramas cannot be
+/// edited, and the calibration of a raw photo places the lenses in the frame as the camera wrote it.
+///
+/// For most photos, the full size image of the server: the original when browsers read its format, else its full size
+/// conversion, or the preview when that conversion is off, as it is by default. A raw dual fisheye photo
+/// ([isRawDualFisheye]) loads its original instead: .insp is no format browsers read, so a 72 MP photo would come as
+/// its 2880 x 1440 preview, while the original is a plain JPEG followed by the trailer of the camera, which the
+/// decoders stop before.
+String sharpPanoramaUrl(String remoteId, {required bool isRawDualFisheye}) => isRawDualFisheye
+    ? getOriginalUrlForRemoteId(remoteId, edited: false)
+    : getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.fullsize, edited: false);
+
 // 360° badge on grid thumbnails, same as web:
 // https://github.com/immich-app/immich/blob/main/web/src/lib/components/assets/thumbnail/Thumbnail.svelte
 class PanoramaBadge extends ConsumerWidget {
@@ -449,6 +492,11 @@ typedef PanoramaSource = ({ImageProvider image, String name, int? length, ByteRa
 /// Full-screen viewer for equirectangular (360°) photos: drag or flick to look around, pinch or double tap
 /// to zoom, or turn on the gyroscope and move the phone. VR180 photos cover the front half of the sphere only; the
 /// coverage control switches between that and the whole sphere.
+///
+/// A raw dual fisheye photo of an Insta360 camera (.insp, or a photo that ends with the trailer of the camera) is
+/// stitched into an equirect image with the calibration of its file before the sphere shows it, each image the
+/// provider yields in turn; a label tells where the calibration came from. It is one picture over the whole sphere:
+/// no 3D or coverage control then.
 @RoutePage()
 class PanoramaViewerPage extends ConsumerStatefulWidget {
   /// The asset shown, null for a [source]
@@ -484,6 +532,21 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   // Coverage picked with the coverage button for a photo that is no asset, null until then. That of an asset is
   // remembered for it, see sphereCoverageOverrideProvider.
   SphereCoverage? _chosenSourceCoverage;
+  // Size of the image decoded last: the image of a raw photo is let go once stitched
+  Size? _frameSize;
+
+  // Whether the photo is a raw dual fisheye one, whose images are stitched before the sphere shows them, with its
+  // calibration (see _startRaw). Null until known: a photo that is no asset is found raw by reading its file, and
+  // painting waits for that.
+  bool? _isRaw;
+  Future<DualFisheyeCalibration>? _calibration;
+  // Where the calibration came from, for the label, once known
+  DualFisheyeSource? _calibrationSource;
+  // The equirect image stitched last, and the stitches started and shown, counted, so that a slower stitch of an
+  // earlier image never replaces a later one
+  ui.Image? _stitched;
+  int _stitchesStarted = 0;
+  int _stitchShown = 0;
 
   // View direction and vertical field of view, in degrees
   double _longitude = 0;
@@ -533,11 +596,111 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
           ? ref.read(panoramaImageProvider)(asset, MediaQuery.sizeOf(context))
           : widget.source!.image;
       _imageStream = image.resolve(ImageConfiguration.empty)..addListener(_imageListener);
-      _loadGPano().whenComplete(() {
-        if (mounted) {
-          setState(() => _gpanoLoaded = true);
+      _startRaw();
+      // A raw photo has no GPano tags: a stitch looks ahead at the horizon
+      if (_isRaw ?? false) {
+        _gpanoLoaded = true;
+      } else {
+        _loadGPano().whenComplete(() {
+          if (mounted) {
+            setState(() => _gpanoLoaded = true);
+          }
+        }).ignore();
+      }
+    }
+  }
+
+  // Whether the photo is raw dual fisheye: an asset as its name or the scan of the device says (see
+  // raw360LayoutProvider), a photo that is no asset as its name or the end of its file says (see hasInsta360Trailer)
+  void _startRaw() {
+    final asset = widget.asset;
+    final calibrations = ref.read(dualFisheyeCalibrationServiceProvider);
+    if (asset != null) {
+      final isRaw = asset.isImage && ref.read(raw360LayoutProvider(asset)) == Raw360Layout.dualFisheye;
+      _setRaw(isRaw ? calibrations.forAsset(asset) : null);
+      return;
+    }
+    final source = widget.source!;
+    // Read anew at each opening: the name and the size do not tell two files of two shares apart
+    Future<DualFisheyeCalibration> calibration() => calibrations.forReader(
+      'source:${source.name}:${source.length}:${identityHashCode(source.image)}',
+      read: source.read,
+      fileSize: source.length,
+      isPhoto: true,
+    );
+    final read = source.read;
+    final length = source.length;
+    if (isRawPhotoName(source.name) || read == null || length == null) {
+      _setRaw(isRawPhotoName(source.name) ? calibration() : null);
+      return;
+    }
+    unawaited(_readSourceTrailer(read, length, calibration));
+  }
+
+  Future<void> _readSourceTrailer(
+    ByteRangeReader read,
+    int length,
+    Future<DualFisheyeCalibration> Function() calibration,
+  ) async {
+    var isRaw = false;
+    try {
+      isRaw = await hasInsta360Trailer(read, length).timeout(const Duration(seconds: 5));
+    } catch (error) {
+      _log.info('Could not read the end of $_name: $error');
+    }
+    if (mounted) {
+      setState(() => _setRaw(isRaw ? calibration() : null));
+    }
+  }
+
+  void _setRaw(Future<DualFisheyeCalibration>? calibration) {
+    _isRaw = calibration != null;
+    _calibration = calibration;
+    if (calibration != null) {
+      unawaited(_stitchFrame());
+    }
+  }
+
+  // Stitches the image decoded last into the equirect image the sphere shows, once the calibration is known. A
+  // stitch that fails before any was shown shows the error.
+  Future<void> _stitchFrame() async {
+    final calibration = _calibration;
+    final frame = _imageInfo?.image;
+    if (calibration == null || frame == null) {
+      return;
+    }
+    final stitch = ++_stitchesStarted;
+    final source = frame.clone();
+    try {
+      final resolved = await calibration;
+      if (!mounted) {
+        return;
+      }
+      if (_calibrationSource != resolved.source) {
+        setState(() => _calibrationSource = resolved.source);
+      }
+      final stitched = await stitchDualFisheye(source, resolved);
+      if (!mounted || stitch <= _stitchShown) {
+        stitched.dispose();
+        return;
+      }
+      setState(() {
+        _stitched?.dispose();
+        _stitched = stitched;
+        _stitchShown = stitch;
+        // Not needed once stitched, unless a later image is on its way: a 8192 pixel wide image takes 128 MB
+        if (stitch == _stitchesStarted) {
+          _imageInfo?.dispose();
+          _imageInfo = null;
         }
-      }).ignore();
+      });
+    } catch (error, stackTrace) {
+      _log.warning('Could not stitch $_name', error, stackTrace);
+      if (mounted && _stitched == null && stitch == _stitchesStarted) {
+        setState(() => _imageError = error);
+      }
+    } finally {
+      source.dispose();
     }
   }
 
@@ -628,14 +791,18 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     _highResolutionRequest?.cancel();
     _imageStream?.removeListener(_imageListener);
     _imageInfo?.dispose();
+    _stitched?.dispose();
     super.dispose();
   }
 
   /// How the eyes of a 3D panorama are laid out, and how much of the sphere it covers (see [resolveSphereView]). A
   /// phone shows the left eye only. The layout the user picked, and the coverage the user picked for the asset
   /// ([chosenCoverage]), else guesses from the asset dimensions, or from the image while those are unknown, its name
-  /// and its GPano crop. Partial panoramas are mono.
+  /// and its GPano crop. Partial panoramas are mono. A raw photo once stitched is one picture over the whole sphere.
   SphereView _view(SphereCoverage? chosenCoverage) {
+    if (_isRaw ?? false) {
+      return raw360SphereView;
+    }
     final asset = widget.asset;
     final image = _imageInfo?.image;
     final (width, height) = asset != null && (asset.width ?? 0) > 0 && (asset.height ?? 0) > 0
@@ -685,35 +852,39 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       ..showSnackBar(SnackBar(content: Text(label), duration: const Duration(seconds: 2)));
   }
 
-  // Called for every image the provider yields (thumbnail, preview, original)
+  // Called for every image the provider yields (thumbnail, preview, original), and for the sharp one loaded once
+  // zoomed in
   void _onImage(ImageInfo imageInfo, bool _) {
     _imageInfo?.dispose();
     setState(() {
       _imageInfo = imageInfo;
+      _frameSize = Size(imageInfo.image.width.toDouble(), imageInfo.image.height.toDouble());
       _imageError = null;
     });
+    if (_isRaw ?? false) {
+      unawaited(_stitchFrame());
+    }
   }
 
   void _onImageError(Object error, StackTrace? _) {
-    if (_imageInfo == null && mounted) {
+    if (_imageInfo == null && _stitched == null && mounted) {
       setState(() => _imageError = error);
     }
   }
 
-  // The preview is blurry once zoomed in: load the full size image. The server sends the original when it is a JPEG
-  // or another format browsers read, its full size conversion otherwise, or the preview when that conversion is off.
-  // Not edited, as panoramas cannot be edited. Straight from the server, outside the image cache, where a texture
-  // this large would push out the thumbnails of the timeline.
+  // The preview is blurry once zoomed in: load the sharp image of the server (see sharpPanoramaUrl), the original of a
+  // raw photo, which is then stitched like the preview. Straight from the server, with the headers of the session,
+  // outside the image cache, where a texture this large would push out the thumbnails of the timeline.
   void _loadHighResolutionIfZoomedIn() {
     final remoteId = widget.asset?.remoteId;
-    final image = _imageInfo?.image;
-    if (_highResolutionRequested || _fov > _highResolutionFov || remoteId == null || image == null) {
+    final frame = _frameSize;
+    if (_highResolutionRequested || _fov > _highResolutionFov || remoteId == null || frame == null) {
       return;
     }
     _highResolutionRequested = true;
     final request = _highResolutionRequest = RemoteImageRequest(
-      uri: getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.fullsize, edited: false),
-      decodeSize: textureDecodeSize(image.width / image.height),
+      uri: sharpPanoramaUrl(remoteId, isRawDualFisheye: _isRaw ?? false),
+      decodeSize: textureDecodeSize(frame.width / frame.height),
     );
     unawaited(_loadHighResolution(request));
   }
@@ -735,7 +906,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       return;
     }
     // The server may send the preview again, and the provider may have loaded the original meanwhile
-    final current = _imageInfo?.image;
+    final current = _frameSize;
     if (current != null && imageInfo.image.width <= current.width) {
       imageInfo.dispose();
       return;
@@ -900,14 +1071,16 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
 
   @override
   Widget build(BuildContext context) {
-    final image = _imageInfo?.image;
-    final showsSphere = image != null && _gpanoLoaded;
+    final isRaw = _isRaw ?? false;
+    final image = isRaw ? _stitched : _imageInfo?.image;
+    final showsSphere = image != null && _gpanoLoaded && _isRaw != null;
+    final calibrationSource = _calibrationSource;
     // On a Meta Quest the panel is fixed in space: following the head makes no sense there
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     final asset = widget.asset;
     final view = _view(asset != null ? ref.watch(sphereCoverageOverrideProvider(asset)) : _chosenSourceCoverage);
     final stereoLayout = view.layout;
-    final gpanoCrop = _gpanoCrop;
+    final gpanoCrop = isRaw ? null : _gpanoCrop;
     // A partial panorama covers what its GPano crop says, whatever the coverage
     final hasGPanoCrop = gpanoCrop != null && isPartialSphere(gpanoCrop);
 
@@ -919,7 +1092,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
         foregroundColor: Colors.white,
         leading: const CloseButton(),
         actions: [
-          if (showsSphere && !hasGPanoCrop)
+          if (showsSphere && !hasGPanoCrop && !isRaw)
             IconButton(
               isSelected: view.coverage == SphereCoverage.half,
               icon: Text(
@@ -929,7 +1102,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
               tooltip: context.t.panorama_coverage,
               onPressed: () => _showNextCoverage(view),
             ),
-          if (showsSphere)
+          if (showsSphere && !isRaw)
             IconButton(
               isSelected: stereoLayout != StereoLayout.mono,
               icon: const Icon(Icons.view_in_ar_outlined),
@@ -947,7 +1120,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
             ),
         ],
       ),
-      body: image == null || !_gpanoLoaded
+      body: !showsSphere
           ? Center(
               child: _imageError != null
                   ? Padding(
@@ -966,19 +1139,58 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                 onScaleUpdate: _onScaleUpdate,
                 onScaleEnd: _onScaleEnd,
                 onDoubleTap: _onDoubleTap,
-                child: CustomPaint(
-                  painter: _SpherePainter(
-                    image: image,
-                    crop: sphereCrop(view.coverage, gpanoCrop: gpanoCrop),
-                    textureRect: stereoLayout.leftEyeRect,
-                    longitude: _longitude,
-                    latitude: _latitude,
-                    fov: _fov,
-                  ),
-                  size: Size.infinite,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CustomPaint(
+                      painter: _SpherePainter(
+                        image: image,
+                        crop: sphereCrop(view.coverage, gpanoCrop: gpanoCrop),
+                        textureRect: stereoLayout.leftEyeRect,
+                        longitude: _longitude,
+                        latitude: _latitude,
+                        fov: _fov,
+                      ),
+                      size: Size.infinite,
+                    ),
+                    if (isRaw && calibrationSource != null)
+                      Positioned(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                        child: SafeArea(top: false, child: _RawStitchLabel(source: calibrationSource)),
+                      ),
+                  ],
                 ),
               ),
             ),
+    );
+  }
+}
+
+/// Tells that the app stitched a raw photo itself, and where the calibration of its lenses came from: the seams of
+/// nominal values may show
+class _RawStitchLabel extends StatelessWidget {
+  const _RawStitchLabel({required this.source});
+
+  final DualFisheyeSource source;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Center(
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            child: Text(
+              context.t.raw_360_stitched_by_app(source: dualFisheyeSourceLabel(context.t, source)),
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

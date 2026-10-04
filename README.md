@@ -54,7 +54,7 @@ You back up your photos to an [Immich](https://github.com/immich-app/immich) ser
 
 Immuch360 is that mobile app with the missing parts added. The name reads as "I am much 360".
 
-Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro Player, Ricoh Theta, and phone photo spheres. Raw camera files (.insp, .insv, dual fisheye .dng, GoPro .360) still show flat.
+Stitched 360° files work everywhere: exports from the Insta360 app or Studio, GoPro Player, Ricoh Theta, and phone photo spheres. From build 16 the raw Insta360 files work too, without the Insta360 app: .insp photos and the .insv videos that keep both lenses in one track are stitched by the app itself (see [Raw 360° camera files](#raw-360-camera-files)). Raw files split in two tracks or two files, GoPro .360, DJI .osv and dual fisheye .dng still show flat.
 
 ## What you get
 
@@ -73,6 +73,7 @@ Only stitched 360° files work: exports from the Insta360 app or Studio, GoPro P
 - **360° videos on Android and iOS**: a native spherical player with sound, drag and gyroscope; it plays the file stored on the phone when there is one, otherwise streams it from your server.
 - **View as 360°**: some 360° files carry no projection tag, so the server shows them flat. The viewer menu can force the 360° view for a photo or a video; the choice is remembered on the phone and changes nothing on the server.
 - **3D (stereoscopic) 360° photos and videos**: top and bottom or side by side layouts are recognised from the file (or guessed from its shape) and can be changed with the 3D button in every viewer. A phone shows the left eye; the Meta Quest 3 shows each eye its own half, in real 3D.
+- **Raw Insta360 files (from build 16)**: .insp photos and single track .insv videos straight from the camera's card open as a 360° sphere, stitched on the device from the lens calibration the camera writes at the end of the file and levelled with its accelerometer. See [Raw 360° camera files](#raw-360-camera-files).
 - **VR180 (half sphere)**: files that cover only the front half are drawn on a half sphere, with the back black instead of a stretched picture. Recognised from the file (spherical bounds or mesh, GPano crop) or from a "vr180" or "180" in the name, and switchable with a 360°/180° button in every viewer; the choice is remembered on the phone.
 - **Meta Quest 3**: the same Android app runs on the headset as a window, and the 360° button switches to an immersive view where the photo or video is all around you, and you look around by turning your head.
 - **Find them**: a 360° badge on thumbnails and a **360°** entry in the Library tab listing every 360° photo and video.
@@ -93,6 +94,7 @@ Immuch360 is a gallery, and it is also a free media player: it plays what the of
 | 3D 360° (top and bottom, side by side) | Left eye, layout button | Same | Each eye gets its own half of the frame |
 | VR180 (half sphere) photos and videos | Half sphere, 360°/180° button | Same | Immersive half sphere |
 | Spatial 2.5D (flat screen depth from a stereoscopic video) | Native player, head tracking with the front camera | Same | Not needed, the headset is 3D |
+| Raw Insta360 .insv (both lenses in one track, from build 16) | Stitched by a GPU effect in the Media3 player | Stitched by a SceneKit shader | Immersive, stitched by the same GPU effect |
 
 | From | How |
 |---|---|
@@ -106,6 +108,16 @@ Immuch360 is a gallery, and it is also a free media player: it plays what the of
 | The immersive view of a photo, with the info panel (layout, 360°/180°, Back) | A video playing, with Pause | A top and bottom stereoscopic video, each eye served (the Kandao Obsidian sample) |
 
 Build 14 adds, in the headset, a time bar with seeking and 10 second skip buttons while a video plays, and previous/next media without leaving the immersive view (the 360° media of the timeline, the 360° list, an album, a share folder or the headset's own media). See [Meta Quest 3](#immersive-view).
+
+## Raw 360° camera files
+
+Insta360 cameras write two fisheye circles side by side (an .insp is a JPEG, an .insv an MP4) and the official way to get a 360° picture out of them is the Insta360 app or Studio. Immich takes any .insp for an equirectangular picture, so it shows the two circles stretched around the sphere. From build 16 Immuch360 stitches those files itself, on the phone, the tablet or the headset, with nothing to install on the server.
+
+- **What the app reads**: the calibration block the camera appends to every file (lens model, centres, orientation of each lens, size of the calibration canvas) and the accelerometer record, used to level the horizon. The Mei (unified camera) model of the calibration string V3 is used first, V6 (X6 and later firmware) with its first terms next, the older equidistant string V1 last. Nothing is guessed from the camera model when the file has its calibration.
+- **Where it works**: the server (original file, read with a range request for its last bytes), the device's own gallery, SMB and WebDAV shares. Photos are stitched by a Flutter fragment shader before the sphere viewer, at up to 8192x4096, with a CPU fallback at a smaller size. Videos go to the native players with the calibration: a Media3 GL effect on Android and the Quest, a SceneKit shader on iOS. The Quest immersive view gets a stitched temporary picture for photos and the GL effect for videos.
+- **What the label says**: the viewer shows "stitched by the app" with the source of the calibration: this file, a calibration cached from another file of the same camera (keyed by its serial number), or the nominal values of an X3 when nothing better is available (seams may show then).
+- **What is refused**: .insv files split in two files (X3 and older at 5.7K and above, one lens per file) or holding two video tracks (X4, X5, X6) show a message instead of a wrong picture; stitch them in the Insta360 app for now. GoPro .360 and DJI .osv are planned.
+- **Known limits**: the stitch uses the camera's calibration only, without seam optimisation, so objects close to the camera can show a seam, as in the camera's own preview. Levelling relies on the accelerometer sample of the file; a photo taken with the camera lying flat may need the Turn control. A file without its calibration block (some members of an HDR group) uses the nominal values. The check against Insta360 Studio was done on X3 photos (same framing, level horizon, a yaw offset under a degree); other models are read with the same rules but have not been checked, feedback welcome.
 
 ## Spatial 2.5D (experimental)
 
@@ -179,7 +191,8 @@ The App Store link will be added here as soon as the listing is published. Log i
 | Use without an Immich server (local gallery, 360° detection on the device, all viewers) | ❌ No | ✅ **Yes**, from the login page; connect a server later from the settings | Tested on an Android emulator; device feedback welcome |
 | Network shares: SMB (Samba) and WebDAV browsed and played live, nothing downloaded; servers found by themselves on the network | ❌ No | ✅ **Yes**: from the Library tab, every viewer, with or without a server, phones and Quest 3 | Tested against Samba and WebDAV test servers on an Android emulator; device and NAS feedback welcome |
 | Media player controls: seeking, audio track choice, buffering indicator in the 360° and Spatial players; seeking and buffering in the flat player of network shares; time bar, 10 s skips, previous/next media in the Quest immersive view | ❌ n/a | ✅ **Yes**, Android, iOS and Quest 3 (immersive controls from build 14) | Done; headset feedback welcome on the immersive controls |
-| Native Insta360 files (.insp, .insv, .dng dual fisheye) | ❌ Shown flat or wrongly | ❌ Server side stitching under study | Study |
+| Raw Insta360 files (.insp photos, single track .insv videos) | ❌ Shown flat (the server takes any .insp for an equirectangular picture) | ✅ **Yes** from build 16: stitched on the device from the calibration in the file, levelled with the camera's accelerometer, no server change; two track or split videos refused with a message | Checked against Insta360 Studio exports of X3 photos; device and other camera feedback welcome |
+| Raw GoPro .360, DJI .osv, dual fisheye .dng | ❌ Shown flat or wrongly | ❌ Not yet | Planned |
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
 
@@ -219,11 +232,13 @@ The whole app runs as a resizable 2D window: login, timeline, albums, search, th
 | Back to the app | B or Y | Back button of the info panel |
 | Play or pause a video | Trigger, when the info panel is hidden | Play or Pause button of the info panel |
 | Show or hide the info panel | A, X, grip or menu | Menu gesture, or pinch when the panel is hidden |
-| Previous or next media (from build 14) | Thumbstick left or right | Previous and Next buttons of the info panel |
-| 10 seconds back or forward in a video (from build 14) | Thumbstick down or up | The two skip buttons, or drag the time bar of the info panel |
+| Previous or next media (from build 14) | Thumbstick left or right (from build 16 a one line overlay names the media, the info panel stays hidden) | Previous and Next buttons of the info panel |
+| 10 seconds back or forward in a video (from build 14) | Thumbstick down or up (from build 16 a one line overlay shows the time, the info panel stays hidden) | The two skip buttons, or drag the time bar of the info panel |
 | Turn the image by 90° | Thumbstick down or up on a photo (from build 14; left or right before) | Turn button of the info panel (from build 14) |
 
 From build 14 the info panel of a video has a time bar (position, duration, how much is buffered) with two 10 second skip buttons, and every media has Previous, Next and Turn buttons. Previous and next move through the 360° media of the place you came from, without leaving the immersive view: the timeline, the 360° list, an album, a folder of a network share, or the headset's own media in the mode without a server; flat photos and videos are skipped. When you go back to the app from the timeline, an album or the 360° list, it lands on the media you were looking at (a share folder page stays on the file you opened), and the video you opened the immersive view on resumes where it left it. The 3D layout is only on the panel's button from build 14 (it was on the thumbstick before).
+
+Build 16 follows a user's feedback on the headset: a thumbstick seek or a previous/next no longer brings the whole info panel up, only a small one line overlay (time position, or the title of the media) that fades after a second or so; the panel still comes with A, X, the grip or the menu button. The same build makes the panel toggle robust when the controllers go to sleep, wake up or give way to hand tracking (the viewer tracks each controller's buttons itself and resets that state on every transition), and logs those transitions under the `Immuch360` tag (`adb logcat -s Immuch360`), for the next report of a panel that stops appearing.
 
 ### In pictures
 
@@ -245,7 +260,7 @@ If the image does not face you the right way when it opens, turn it with the thu
 
 ### Limitations
 
-- **Video codecs:** HEVC (H.265) is the safe choice: an Insta360 X4 8K HEVC video plays smoothly, in 3D, at its native resolution and without transcoding (reported by a user on a Quest 3, build 13). The H.264 hardware decoder of the Quest 3 (XR2 Gen 2) tops out around 4096x2304. A 5760x2880 H.264 video (level 6.0, about 200 Mbit/s, the usual Insta360 export) decodes at about 17 fps on the headset, with block artifacts, while the same file plays fine on a phone. The same video in HEVC (H.265) plays well on the headset. From build 15 the app asks the device what it decodes before playing (codec, size and frame rate read from the file, checked against the hardware decoders) and picks the original or the server's transcoded stream accordingly, with a message when it switches; the setting **Video source** (Settings, Asset viewer, video) can force the original or the transcoded stream, and **Video decoders of this device** (Settings, Advanced) lists what the headset or phone decodes, with a Copy button for bug reports. Before build 15, when the original is H.264 above that size, the immersive view switches to the server playback stream (the Immich transcode, when there is one), and if that one is still too large the info panel says so for 10 seconds. To give the headset a video it can decode, in Immich go to Administration, Settings, Video Transcoding Settings, and pick one of these:
+- **Video codecs:** HEVC (H.265) is the safe choice: an Insta360 X4 8K HEVC video (7680x3840, 29.97 fps, 210 Mbit/s, Main profile level 6.1, 8 bit) plays smoothly, in 3D, at its native resolution and without transcoding (reported by a user on a Quest 3). The H.264 hardware decoder of the Quest 3 (XR2 Gen 2) tops out around 4096x2304. A 5760x2880 H.264 video (level 6.0, about 200 Mbit/s, the usual Insta360 export) decodes at about 17 fps on the headset, with block artifacts, while the same file plays fine on a phone. The same video in HEVC (H.265) plays well on the headset. From build 15 the app asks the device what it decodes before playing (codec, size and frame rate read from the file, checked against the hardware decoders) and picks the original or the server's transcoded stream accordingly, with a message when it switches; the setting **Video source** (Settings, Asset viewer, video) can force the original or the transcoded stream, and **Video decoders of this device** (Settings, Advanced) lists what the headset or phone decodes, with a Copy button for bug reports. Before build 15, when the original is H.264 above that size, the immersive view switches to the server playback stream (the Immich transcode, when there is one), and if that one is still too large the info panel says so for 10 seconds. To give the headset a video it can decode, in Immich go to Administration, Settings, Video Transcoding Settings, and pick one of these:
   - **Every H.264 video re-encoded in HEVC:** set Video codec to HEVC and Target resolution to Original (the default 720p would shrink a 360° video to 1440x720), and keep only HEVC in Accepted video codecs. Every H.264 video of the library is transcoded, not only the 360° ones, and the headset gets HEVC at full resolution.
   - **Only what is larger than 1440p:** keep H.264 in Accepted video codecs, set Transcode policy to "Videos higher than target resolution or not in an accepted format" and Target resolution to 1440p, preferably with Video codec set to HEVC. Anything larger is transcoded and the headset gets 2880x1440. Regular 4K videos are transcoded to 1440p too.
 
@@ -284,12 +299,11 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 What is planned next, in rough order. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
 - **Immersive view, next**: previous/next and a time bar in the 360° players of phones too (Android has the time bar already, iOS not yet), and photos in the native 360° video player.
-- **Raw 360° camera files on the device (build 16, in progress)**: Insta360 .insp photos and single track .insv videos shown stitched by the app itself (the lens calibration is read from the file, levelled with the camera's accelerometer), without any server change; GoPro .360 and DJI .osv next. Raw files are shown flat today.
+- **Raw 360° camera files, next**: Insta360 videos with two tracks (X4, X5, X6) or split in two files (X3 at 5.7K and above), GoPro .360 (MAX, MAX 2), DJI .osv, dual fisheye .dng; the raw files of the server's 360° list (today the list only knows the files the server flags as 360°); a progress indicator while a raw photo is prepared for the headset.
 - **App Store**: the iOS listing is under review; the link will be added here when it is live.
 - **Network shares, next steps**: the audio track choice in the flat player, swiping from one file of a folder to the next, Digest authentication for WebDAV, the user name from the Bonjour record.
 - **Meta Horizon Store**: the headset build is on the store's alpha and production channels and the listing is being submitted (screenshots done, permissions trimmed in build 12, questionnaires and review next), so the Quest 3 no longer needs sideloading.
 - **Store listings**: the 3D, VR180 and Spatial features described on Google Play and the App Store.
-- **Raw 360° camera files**: Insta360 .insp and .insv, GoPro .360, dual fisheye .dng. Stitching belongs on the server side; under study.
 - **Upstream**: small pull requests to Immich for the parts the maintainers want, starting with the 360° photo viewer.
 
 ## Build it yourself

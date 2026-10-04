@@ -2,6 +2,7 @@ package app.alextran.immich.spherical
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.SurfaceTexture
 import android.media.MediaFormat
 import android.opengl.GLES20
 import android.os.Build
@@ -30,6 +31,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
+import androidx.media3.common.util.Size
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
@@ -41,9 +43,14 @@ import androidx.media3.ui.PlayerView
 import app.alextran.immich.R
 import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
+import app.alextran.immich.core.DualFisheyeCalibration
+import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
+import java.lang.reflect.Field
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 private const val TAG = "SphericalVideoActivity"
 
@@ -72,6 +79,10 @@ private const val MONO_ALPHA = 0.6f
  *
  * On close (button, system back, or the system destroying the activity), Flutter gets [SphericalVideoEvents.closed]
  * with the layout and the coverage shown last, so that the corrections of the user can be remembered for the asset.
+ *
+ * A raw dual fisheye video (an Insta360 .insv, the two fisheye circles side by side) comes with the calibration of its
+ * camera: [DualFisheyeEffect] stitches each frame into an equirectangular one, drawn as a mono full sphere whatever
+ * the file or the controls say, so the 3D and field of view controls hide. See [rawCalibration].
  */
 @OptIn(UnstableApi::class)
 class SphericalVideoActivity : ComponentActivity() {
@@ -85,6 +96,7 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val EXTRA_STEREO_LABELS = "stereo_labels"
     private const val EXTRA_COVERAGE = "coverage"
     private const val EXTRA_FALLBACK_URL = "fallback_url"
+    private const val EXTRA_RAW_PROJECTION = "raw_projection"
     private const val STATE_POSITION = "position"
     private const val STATE_PLAY_WHEN_READY = "play_when_ready"
     private const val STATE_STEREO_LAYOUT = "stereo_layout"
@@ -93,6 +105,28 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val STATE_AUDIO_TRACK = "audio_track"
     private const val STATE_PLAYING_FALLBACK = "playing_fallback"
     private const val STATE_DECODER_CHECKED = "decoder_checked"
+    private const val STATE_RAW_EFFECT_FAILED = "raw_effect_failed"
+
+    /**
+     * Largest stitched frame drawn on the sphere: the surface of the spherical view gets this size at most (keeping the
+     * 2:1 shape of the frame), below the texture limit of every GPU the app runs on. A phone shows about a quarter of
+     * the sphere's width, so 4096 pixels around still give about one pixel per screen pixel.
+     */
+    private const val MAX_RAW_OUTPUT_WIDTH = 4096
+    private const val MAX_RAW_OUTPUT_HEIGHT = 2048
+
+    /**
+     * The SurfaceTexture behind the video surface of the spherical view, private in Media3, found by its type so that
+     * R8 renaming the field does not matter. Null when this Media3 has none, the raw video then plays unstitched.
+     * See [sizeRawSurface] for why it is needed.
+     */
+    private val surfaceTextureField: Field? by lazy {
+      runCatching {
+        SphericalGLSurfaceView::class.java.declaredFields
+          .firstOrNull { it.type == SurfaceTexture::class.java }
+          ?.apply { isAccessible = true }
+      }.getOrNull()
+    }
 
     /** Key of the label of the 3D control itself, in the labels from Flutter */
     private const val LABEL_STEREO = "stereo"
@@ -136,7 +170,9 @@ class SphericalVideoActivity : ComponentActivity() {
      * control, keyed "coverage", "coverage_full" and "coverage_half", of the audio track control (see
      * [AudioTrackChooser]), of the buffering label (see [BufferingIndicator]) and of the switch to the transcoded
      * stream (see [VideoDecoders.LABEL_SWITCHED]). [coverage] is the part of the sphere Flutter expects the video to
-     * cover. [fallbackUrl] is the server's transcoded stream, null when there is none.
+     * cover. [fallbackUrl] is the server's transcoded stream, null when there is none. [rawProjection] is the JSON
+     * calibration of a raw dual fisheye video (docs 16-dual-fisheye-spec.md section 5), null for an equirectangular
+     * one.
      */
     fun intent(
       context: Context,
@@ -149,6 +185,7 @@ class SphericalVideoActivity : ComponentActivity() {
       stereoLabels: Map<String, String>,
       coverage: SphereCoverage,
       fallbackUrl: String?,
+      rawProjection: String?,
     ): Intent {
       return Intent(context, SphericalVideoActivity::class.java)
         .putExtra(EXTRA_URL, url)
@@ -160,6 +197,7 @@ class SphericalVideoActivity : ComponentActivity() {
         .putExtra(EXTRA_STEREO_LABELS, stereoLabels.toBundle())
         .putExtra(EXTRA_COVERAGE, coverage.name)
         .putExtra(EXTRA_FALLBACK_URL, fallbackUrl)
+        .putExtra(EXTRA_RAW_PROJECTION, rawProjection)
     }
 
     private fun stereoLayoutNamed(name: String?): StereoLayout? = StereoLayout.entries.firstOrNull { it.name == name }
@@ -185,6 +223,18 @@ class SphericalVideoActivity : ComponentActivity() {
         coverage == SphereCoverage.FULL && mesh -> format.buildUpon().setProjectionData(null).build()
         else -> format
       }
+    }
+
+    /** A stitched frame is a plain mono equirectangular frame: no mesh, no eye split, the full sphere. */
+    private fun stitchedFormat(format: Format): Format =
+      format.buildUpon().setProjectionData(null).setStereoMode(C.STEREO_MODE_MONO).build()
+
+    /** The surface size for the stitched frame of [calibration]: the probed frame, within the output limit. */
+    private fun rawOutputSize(calibration: DualFisheyeCalibration): Size {
+      val width = calibration.frameWidth.toDouble()
+      val height = calibration.frameHeight.toDouble()
+      val scale = min(1.0, min(MAX_RAW_OUTPUT_WIDTH / width, MAX_RAW_OUTPUT_HEIGHT / height))
+      return Size((width * scale).roundToInt().coerceAtLeast(1), (height * scale).roundToInt().coerceAtLeast(1))
     }
   }
 
@@ -232,6 +282,17 @@ class SphericalVideoActivity : ComponentActivity() {
   /** The video track of the URL that plays was checked against the decoders of the device */
   private var decoderChecked = false
 
+  /**
+   * Calibration of a raw dual fisheye video, which [DualFisheyeEffect] stitches; null for an equirectangular video, for
+   * an unreadable calibration and when the surface of the spherical view cannot be sized (the frame then plays as it
+   * is). Read on the playback thread too.
+   */
+  @Volatile
+  private var rawCalibration: DualFisheyeCalibration? = null
+
+  /** The stitching failed while playing: the frames go through unstitched from then on, see [disableRawEffect] */
+  private var rawEffectFailed = false
+
   /** Sets the clear colour of the renderer, on its GL thread: black, the back of a half sphere */
   private val clearToBlack = Runnable { GLES20.glClearColor(0f, 0f, 0f, 1f) }
 
@@ -241,7 +302,7 @@ class SphericalVideoActivity : ComponentActivity() {
    */
   private val videoSurfaceListener = object : SphericalGLSurfaceView.VideoSurfaceListener {
     override fun onVideoSurfaceCreated(surface: Surface) {
-      player?.setVideoSurface(surface)
+      player?.let { setPlayerSurface(it, surface) }
       // The renderer has just started and set its clear colour, gray; queued, this runs after it
       sphericalView?.queueEvent(clearToBlack)
     }
@@ -266,8 +327,8 @@ class SphericalVideoActivity : ComponentActivity() {
         declaredStereoMode = stereoMode
         updateStereoButton()
       }
-      // Tracks without a selected video say nothing about the coverage
-      if (format != null) {
+      // Tracks without a selected video say nothing about the coverage; a stitched frame always covers the full sphere
+      if (format != null && rawCalibration == null) {
         applyDeclaredCoverage(DeclaredProjection.of(format.projectionData)?.coverage)
       }
       // The audio track button shows when there is a choice
@@ -279,6 +340,9 @@ class SphericalVideoActivity : ComponentActivity() {
 
     override fun onPlayerError(error: PlaybackException) {
       Log.e(TAG, "Cannot play the 360° video", error)
+      if (DualFisheyeEffect.isStitchingError(error) && disableRawEffect()) {
+        return
+      }
       // PlayerView shows the error while the player stays in error: the transcoded stream gets its chance first
       switchToFallback("the original failed (${error.errorCodeName})")
     }
@@ -315,11 +379,13 @@ class SphericalVideoActivity : ComponentActivity() {
     fallbackUrl = intent.getStringExtra(EXTRA_FALLBACK_URL)?.takeIf { it.isNotBlank() }
     playingFallback = savedInstanceState?.getBoolean(STATE_PLAYING_FALLBACK) == true && fallbackUrl != null
     decoderChecked = savedInstanceState?.getBoolean(STATE_DECODER_CHECKED) == true
+    rawEffectFailed = savedInstanceState?.getBoolean(STATE_RAW_EFFECT_FAILED) == true
 
     labels = intent.getBundleExtra(EXTRA_STEREO_LABELS)?.toStringMap() ?: emptyMap()
     sphericalView = (playerView.videoSurfaceView as? SphericalGLSurfaceView)?.also {
       it.addVideoSurfaceListener(videoSurfaceListener)
     }
+    rawCalibration = rawCalibrationOf(intent.getStringExtra(EXTRA_RAW_PROJECTION))
     stereoLayout = stereoLayoutNamed(savedInstanceState?.getString(STATE_STEREO_LAYOUT))
       ?: stereoLayoutNamed(intent.getStringExtra(EXTRA_STEREO_LAYOUT))
       ?: StereoLayout.MONO
@@ -339,6 +405,11 @@ class SphericalVideoActivity : ComponentActivity() {
       setOnClickListener { cycleCoverage() }
     }
     updateCoverageButton()
+    // A stitched frame is mono and covers the full sphere: neither control would change what shows
+    if (rawCalibration != null) {
+      stereoButton.visibility = View.GONE
+      coverageButton.visibility = View.GONE
+    }
 
     audioTracks = AudioTrackChooser(this, labels)
     audioTracks.chosenIndex = savedInstanceState?.getInt(STATE_AUDIO_TRACK, -1) ?: -1
@@ -390,6 +461,7 @@ class SphericalVideoActivity : ComponentActivity() {
     outState.putInt(STATE_AUDIO_TRACK, audioTracks.chosenIndex)
     outState.putBoolean(STATE_PLAYING_FALLBACK, playingFallback)
     outState.putBoolean(STATE_DECODER_CHECKED, decoderChecked)
+    outState.putBoolean(STATE_RAW_EFFECT_FAILED, rawEffectFailed)
   }
 
   override fun onDestroy() {
@@ -435,6 +507,13 @@ class SphericalVideoActivity : ComponentActivity() {
         // The language picked last, and the track picked for this video before a stop
         audioTracks.attach(it)
         bufferingIndicator.attach(it)
+        // Before the surface and before prepare, which sets up the effect pipeline. Once the stitching failed, the
+        // player is built without any effect: an empty list would still route the frames through the GL pipeline
+        val raw = rawCalibration
+        if (raw != null && !rawEffectFailed) {
+          val size = rawOutputSize(raw)
+          it.setVideoEffects(listOf(DualFisheyeEffect(raw, size.width, size.height)))
+        }
         it.setMediaItem(MediaItem.fromUri(url), startPosition)
         it.playWhenReady = playWhenReady
         playerView.player = it
@@ -452,9 +531,83 @@ class SphericalVideoActivity : ComponentActivity() {
    */
   private fun attachSphericalView(player: ExoPlayer) {
     val view = sphericalView ?: return
-    player.setVideoSurface(view.videoSurface)
+    val surface = view.videoSurface
+    if (surface != null) setPlayerSurface(player, surface) else player.setVideoSurface(null)
     player.setVideoFrameMetadataListener(CoverageFrameListener(view.videoFrameMetadataListener))
     player.setCameraMotionListener(view.cameraMotionListener)
+  }
+
+  /**
+   * Hands [surface] to [player]. With the stitching on, Media3 draws the frames into it with OpenGL and must be told
+   * its size, and the SurfaceTexture behind it must get that size first (see [sizeRawSurface]).
+   */
+  private fun setPlayerSurface(player: ExoPlayer, surface: Surface) {
+    val raw = rawCalibration
+    if (raw == null || rawEffectFailed) {
+      player.setVideoSurface(surface)
+      return
+    }
+    val size = rawOutputSize(raw)
+    sizeRawSurface(size.width, size.height)
+    player.setVideoSurface(surface)
+    DualFisheyeEffect.setOutputResolution(player, size.width, size.height)
+  }
+
+  /**
+   * The SurfaceTexture of the spherical view has buffers of 1x1 pixel unless told otherwise: the decoder sets its own
+   * size when it renders there, OpenGL does not. Media3 draws the stitched frames with OpenGL, so the texture gets the
+   * size of the output first, before Media3 creates its EGL surface on it.
+   */
+  private fun sizeRawSurface(width: Int, height: Int) {
+    val texture = sphericalView?.let { view -> runCatching { surfaceTextureField?.get(view) }.getOrNull() }
+    if (texture is SurfaceTexture) {
+      texture.setDefaultBufferSize(width, height)
+    } else {
+      Log.w(TAG, "No SurfaceTexture to size for the stitched frame, it may not show")
+    }
+  }
+
+  /**
+   * The calibration of a raw dual fisheye video from [json], or null for an equirectangular video. A calibration that
+   * cannot be read, or a spherical view whose surface cannot be sized, plays the frame as it is (the two circles on
+   * the sphere): the log tells why.
+   */
+  private fun rawCalibrationOf(json: String?): DualFisheyeCalibration? {
+    if (json.isNullOrBlank()) return null
+    val calibration =
+      try {
+        DualFisheyeCalibration.parse(json)
+      } catch (e: IllegalArgumentException) {
+        Log.e(TAG, "Unreadable dual fisheye calibration, the raw frame plays as it is: ${e.message}")
+        return null
+      }
+    if (sphericalView == null || surfaceTextureField == null) {
+      Log.w(TAG, "The spherical view cannot take a stitched frame here, the raw frame plays as it is")
+      return null
+    }
+    Log.i(TAG, "Raw dual fisheye video (${calibration.model}), stitched on the device")
+    return calibration
+  }
+
+  /**
+   * The stitching failed while playing or while its pipeline was set up (a GL error in the effect): the same video
+   * plays again from where it stopped on a player built without the effect, the frames unstitched, rather than ending
+   * on an error. A new player, because removing the effects from the current one keeps its GL pipeline. False when
+   * the stitching is off already.
+   */
+  private fun disableRawEffect(): Boolean {
+    if (player == null || rawCalibration == null || rawEffectFailed) {
+      return false
+    }
+    rawEffectFailed = true
+    Log.w(TAG, "The dual fisheye stitching failed, the raw frame plays as it is")
+    // Posted, not run from within the listener of the player being replaced
+    playerView.post {
+      if (isFinishing || isDestroyed) return@post
+      releasePlayer()
+      initializePlayer()
+    }
+    return true
   }
 
   /** The URL that plays: the original, or the transcoded stream once the player switched to it */
@@ -644,14 +797,17 @@ class SphericalVideoActivity : ComponentActivity() {
   }
 
   /**
-   * Passes each video frame on to [scene], the renderer of the spherical view, with the format of [projectedFormat].
-   * Called on the playback thread. Frames of the same format and coverage reuse the format built for the first one.
+   * Passes each video frame on to [scene], the renderer of the spherical view, with the format of [projectedFormat],
+   * or of [stitchedFormat] for a raw dual fisheye video (the effect stitched the frame: whatever the file declares no
+   * longer applies). Called on the playback thread. Frames of the same format and coverage reuse the format built for
+   * the first one.
    */
   private inner class CoverageFrameListener(private val scene: VideoFrameMetadataListener) :
     VideoFrameMetadataListener {
     private var lastFormat: Format? = null
     private var lastCoverage: SphereCoverage? = null
     private var lastProjected: Format? = null
+    private var lastRaw = false
 
     override fun onVideoFrameAboutToBeRendered(
       presentationTimeUs: Long,
@@ -660,9 +816,11 @@ class SphericalVideoActivity : ComponentActivity() {
       mediaFormat: MediaFormat?,
     ) {
       val coverage = this@SphericalVideoActivity.coverage
+      val raw = rawCalibration != null
       var projected = lastProjected
-      if (projected == null || format !== lastFormat || coverage != lastCoverage) {
-        projected = projectedFormat(format, coverage)
+      if (projected == null || format !== lastFormat || coverage != lastCoverage || raw != lastRaw) {
+        projected = if (raw) stitchedFormat(format) else projectedFormat(format, coverage)
+        lastRaw = raw
         lastFormat = format
         lastCoverage = coverage
         lastProjected = projected

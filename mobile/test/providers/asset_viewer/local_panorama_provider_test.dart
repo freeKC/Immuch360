@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -59,7 +60,8 @@ void main() {
     List<int>? pageReads,
   }) {
     Future<List<LocalPanoramaProbe?>> defaultProbe(List<LocalPanoramaFile> files) async => [
-      for (final file in files) (isPanorama: panoramas.contains(file.path.split('/').last), halfSphere: null),
+      for (final file in files)
+        (isPanorama: panoramas.contains(file.path.split('/').last), halfSphere: null, rawDualFisheye: false),
     ];
     final container = ProviderContainer(
       overrides: [
@@ -110,6 +112,36 @@ void main() {
       expect(container.read(foundLocalPanoramaIdsProvider), {'pano'});
     });
 
+    test('reads again once a record of the store written before the raw files were told, and finds it raw', () async {
+      // A photo of an X3 renamed .jpg, which build 15 found flat: no version, no raw flag
+      await store.put(
+        StoreKey.localPanoramaAssets,
+        jsonEncode({
+          'renamed': {'p': false, 't': _checkedAt.millisecondsSinceEpoch},
+        }),
+      );
+      final probed = <String>[];
+      final container = createContainer(
+        assets: [_candidate('renamed')],
+        probe: (files) async {
+          probed.addAll([for (final file in files) file.path.split('/').last]);
+          return [for (final _ in files) (isPanorama: true, halfSphere: null, rawDualFisheye: true)];
+        },
+      );
+      expect(container.read(foundLocalPanoramaIdsProvider), isEmpty);
+
+      await scanLocalPanoramasFor(container);
+
+      final expected = {'renamed': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: _checkedAt)};
+      expect(probed, ['renamed']);
+      expect(container.read(localPanoramaAssetsProvider), expected);
+      expect(decodeLocalPanoramaRecords(store.tryGet(StoreKey.localPanoramaAssets)), expected);
+      expect(container.read(foundLocalPanoramaIdsProvider), {'renamed'});
+
+      await scanLocalPanoramasFor(container);
+      expect(probed, ['renamed'], reason: 'read again once');
+    });
+
     test('runs one scan at a time, and another one after it when asked meanwhile', () async {
       final gate = Completer<void>();
       final pageReads = <int>[];
@@ -118,7 +150,7 @@ void main() {
         pageReads: pageReads,
         probe: (files) async {
           await gate.future;
-          return [for (final _ in files) (isPanorama: true, halfSphere: null)];
+          return [for (final _ in files) (isPanorama: true, halfSphere: null, rawDualFisheye: false)];
         },
       );
       final notifier = container.read(localPanoramaAssetsProvider.notifier);

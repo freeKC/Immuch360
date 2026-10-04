@@ -1,7 +1,9 @@
 // What the photos and videos of a network share are, read from their files: whether they are 360°, and what they
 // declare about their eyes and their coverage of the sphere. The rules are the server's, as for the files of the
 // device (see LocalPanoramaService): a photo is 360° when its GPano XMP declares an equirectangular projection, a video
-// when it declares a spherical projection (see probeSphericalMetadata). The viewers then show a file with the rules of
+// when it declares a spherical projection (see probeSphericalMetadata). The raw files of Insta360 cameras are 360° too,
+// stitched by the app: a photo named .insp or ending with the trailer of the camera, a video named .insv whose frame
+// holds both lenses side by side (see raw_360_detection.dart). The viewers then show a file with the rules of
 // resolveSphereView, from what it declares and its name.
 //
 // Reading a file costs a 128 KiB window or two for a photo, a few small reads for a video, with range reads on the
@@ -9,6 +11,8 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +20,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:logging/logging.dart';
@@ -24,7 +29,7 @@ final _log = Logger('NetworkMediaService');
 
 /// What the file of a photo or a video of a share declares
 class NetworkMediaInfo {
-  const NetworkMediaInfo({this.gpano, this.probe});
+  const NetworkMediaInfo({this.gpano, this.probe, this.raw});
 
   /// The GPano tags of a photo, null for a video and for a photo without any
   final GPanoTags? gpano;
@@ -32,11 +37,19 @@ class NetworkMediaInfo {
   /// What a video declares (see [probeSphericalMetadata]), null for a photo
   final SphericalProbe? probe;
 
-  /// Whether the file declares a 360° projection
+  /// What kind of raw file of a dual fisheye camera it is, null for any other file
+  final Raw360Layout? raw;
+
+  /// Whether the file declares a 360° projection, or is a raw dual fisheye file the app stitches
   bool get is360 {
     final gpano = this.gpano;
-    return (gpano != null && isEquirectangularGPano(gpano)) || (probe?.hasSphericalMetadata ?? false);
+    return (gpano != null && isEquirectangularGPano(gpano)) ||
+        (probe?.hasSphericalMetadata ?? false) ||
+        raw == Raw360Layout.dualFisheye;
   }
+
+  /// Whether it is a raw video of one lens per file or per track, which no viewer shows in 360° yet
+  bool get isUnsupportedRaw => raw == Raw360Layout.separateLenses;
 
   /// Whether a video declares two eyes (its st3d box), which the players then read
   bool get declaresStereo {
@@ -45,25 +58,27 @@ class NetworkMediaInfo {
   }
 
   /// How the 360° viewers show the file named [fileName], of [width] x [height] pixels when known: see
-  /// [resolveSphereView]
+  /// [resolveSphereView]. A raw file is one picture over the whole sphere once stitched (see [raw360SphereView]).
   SphereView sphereView(
     String fileName, {
     int? width,
     int? height,
     StereoLayout? chosenLayout,
     SphereCoverage? chosenCoverage,
-  }) => resolveSphereView(
-    fileName: fileName,
-    width: width,
-    height: height,
-    gpanoCrop: gpano?.crop,
-    probe: probe,
-    chosenLayout: chosenLayout,
-    chosenCoverage: chosenCoverage,
-  );
+  }) => raw != null
+      ? raw360SphereView
+      : resolveSphereView(
+          fileName: fileName,
+          width: width,
+          height: height,
+          gpanoCrop: gpano?.crop,
+          probe: probe,
+          chosenLayout: chosenLayout,
+          chosenCoverage: chosenCoverage,
+        );
 
   @override
-  String toString() => 'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe)';
+  String toString() => 'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe, raw: $raw)';
 }
 
 /// A file of a share as the results are kept: they hold until its size or its date changes
@@ -203,10 +218,20 @@ class NetworkMediaService {
         read,
         maxMoovLength: thorough ? sphericalProbeMaxMoovLength : quickMoovLength,
       );
-      return NetworkMediaInfo(probe: probe);
+      final raw = isRawVideoName(entry.name) ? rawVideoLayout(probe.codedWidth, probe.codedHeight) : null;
+      return NetworkMediaInfo(probe: probe, raw: raw);
     }
-    // Without a size, the head of the file only, where JPEG files carry their XMP
-    return NetworkMediaInfo(gpano: await readGPanoTags(read, entry.size ?? 0));
+    // Without a size, the head of the file only, where JPEG files carry their XMP. The tail read for the GPano tags
+    // holds the trailer of a raw photo: telling one costs no read more.
+    final size = entry.size;
+    final remembering = _LastReadReader(read);
+    final gpano = await readGPanoTags(remembering.read, size ?? 0);
+    final isRaw =
+        isRawPhotoName(entry.name) ||
+        (size != null &&
+            (gpano == null || !isEquirectangularGPano(gpano)) &&
+            await hasInsta360Trailer(remembering.read, size));
+    return NetworkMediaInfo(gpano: gpano, raw: isRaw ? Raw360Layout.dualFisheye : null);
   }
 
   void _remember(NetworkMediaKey key, _Detected detected) {
@@ -236,6 +261,26 @@ class NetworkMediaService {
     } else {
       _running--;
     }
+  }
+}
+
+/// Reads through [_read], and answers from the bytes read last when they hold the range asked
+class _LastReadReader {
+  _LastReadReader(this._read);
+
+  final ByteRangeReader _read;
+  Uint8List _last = Uint8List(0);
+  int _lastOffset = 0;
+
+  Future<Uint8List> read(int offset, int length) async {
+    final local = offset - _lastOffset;
+    if (local >= 0 && local + length <= _last.length) {
+      return Uint8List.sublistView(_last, local, local + length);
+    }
+    final bytes = await _read(offset, length);
+    _last = bytes;
+    _lastOffset = offset;
+    return Uint8List.sublistView(bytes, 0, math.min(length, bytes.length));
   }
 }
 

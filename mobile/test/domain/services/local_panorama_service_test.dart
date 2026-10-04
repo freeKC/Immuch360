@@ -9,6 +9,7 @@ import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 
+import '../../fixtures/raw/insta360.stub.dart';
 import 'spherical_probe_fixtures.dart';
 
 // GPano XMP as cameras write it, attributes on rdf:Description
@@ -162,22 +163,45 @@ void main() {
     Future<LocalPanoramaProbe> probe(Uint8List bytes) => probeLocalPanoramaPhoto(_reader(bytes), bytes.length);
 
     test('takes an equirectangular projection for 360°, in any case', () async {
-      expect(await probe(_photo(_cameraXmp())), (isPanorama: true, halfSphere: null));
-      expect(await probe(_photo(_cameraXmp(projection: 'Equirectangular'))), (isPanorama: true, halfSphere: null));
+      expect(await probe(_photo(_cameraXmp())), (isPanorama: true, halfSphere: null, rawDualFisheye: false));
+      expect(await probe(_photo(_cameraXmp(projection: 'Equirectangular'))), (
+        isPanorama: true,
+        halfSphere: null,
+        rawDualFisheye: false,
+      ));
     });
 
     test('tells the half sphere from the crop', () async {
-      expect(await probe(_photo(_cameraXmp(crop: _halfSphereCrop))), (isPanorama: true, halfSphere: true));
-      expect(await probe(_photo(_cameraXmp(crop: _fullSphereCrop))), (isPanorama: true, halfSphere: false));
+      expect(await probe(_photo(_cameraXmp(crop: _halfSphereCrop))), (
+        isPanorama: true,
+        halfSphere: true,
+        rawDualFisheye: false,
+      ));
+      expect(await probe(_photo(_cameraXmp(crop: _fullSphereCrop))), (
+        isPanorama: true,
+        halfSphere: false,
+        rawDualFisheye: false,
+      ));
     });
 
     test('takes other projections, and no GPano tags, for no 360°', () async {
-      expect(await probe(_photo(_cameraXmp(projection: 'cylindrical'))), (isPanorama: false, halfSphere: null));
+      expect(await probe(_photo(_cameraXmp(projection: 'cylindrical'))), (
+        isPanorama: false,
+        halfSphere: null,
+        rawDualFisheye: false,
+      ));
       expect(await probe(_photo('<GPano:CroppedAreaLeftPixels>0</GPano:CroppedAreaLeftPixels>')), (
         isPanorama: false,
         halfSphere: null,
+        rawDualFisheye: false,
       ));
-      expect(await probe(_photo('')), (isPanorama: false, halfSphere: null));
+      expect(await probe(_photo('')), (isPanorama: false, halfSphere: null, rawDualFisheye: false));
+    });
+
+    test('takes a photo that ends with the trailer of an Insta360 camera for a raw dual fisheye one', () async {
+      final raw = insta360File([insta360Record(1, x3Metadata(), format: 1)], body: _photo('', length: 200000));
+
+      expect(await probe(raw), (isPanorama: true, halfSphere: null, rawDualFisheye: true));
     });
   });
 
@@ -200,7 +224,11 @@ void main() {
     test('reads the GPano XMP of a photo', () async {
       final path = write('pano.jpg', _photo(_cameraXmp(crop: _halfSphereCrop), length: 200000));
 
-      expect(await probeLocalPanoramaFile(path, isVideo: false), (isPanorama: true, halfSphere: true));
+      expect(await probeLocalPanoramaFile(path, isVideo: false), (
+        isPanorama: true,
+        halfSphere: true,
+        rawDualFisheye: false,
+      ));
     });
 
     test('reads the GPano tags the panorama viewer needs from a photo only on the device', () async {
@@ -213,6 +241,19 @@ void main() {
       expect(tags?.crop, isNull);
       expect(tags?.initialView, (heading: 90.0, pitch: 10.0, poseHeading: 0.0));
       expect(await readGPanoFile(File(write('flat.jpg', _photo('')))), isNull);
+    });
+
+    test('takes a photo named .insp, and a video named .insv side by side, for raw dual fisheye files', () async {
+      const raw = (isPanorama: true, halfSphere: null, rawDualFisheye: true);
+      const flat = (isPanorama: false, halfSphere: null, rawDualFisheye: false);
+      // A copy whose trailer was cut is still raw by its name
+      final photo = write('IMG_001.insp', _photo(''));
+      final sideBySide = write('VID_00_002.insv', mp4File(mp4Moov([mp4VideoTrack([], width: 5760, height: 2880)])));
+      final split = write('VID_10_002.insv', mp4File(mp4Moov([mp4VideoTrack([], width: 2880, height: 2880)])));
+
+      expect(await probeLocalPanoramaFile(photo, isVideo: false), raw);
+      expect(await probeLocalPanoramaFile(sideBySide, isVideo: true), raw);
+      expect(await probeLocalPanoramaFile(split, isVideo: true), flat);
     });
 
     test('reads the spherical metadata of a video', () async {
@@ -235,9 +276,21 @@ void main() {
       );
       final flat = write('flat.mp4', mp4File(mp4Moov([mp4VideoTrack([])])));
 
-      expect(await probeLocalPanoramaFile(full, isVideo: true), (isPanorama: true, halfSphere: false));
-      expect(await probeLocalPanoramaFile(half, isVideo: true), (isPanorama: true, halfSphere: true));
-      expect(await probeLocalPanoramaFile(flat, isVideo: true), (isPanorama: false, halfSphere: null));
+      expect(await probeLocalPanoramaFile(full, isVideo: true), (
+        isPanorama: true,
+        halfSphere: false,
+        rawDualFisheye: false,
+      ));
+      expect(await probeLocalPanoramaFile(half, isVideo: true), (
+        isPanorama: true,
+        halfSphere: true,
+        rawDualFisheye: false,
+      ));
+      expect(await probeLocalPanoramaFile(flat, isVideo: true), (
+        isPanorama: false,
+        halfSphere: null,
+        rawDualFisheye: false,
+      ));
     });
 
     test('reads files in a background isolate, null for a file that cannot be read', () async {
@@ -250,7 +303,11 @@ void main() {
         (path: video, isVideo: true),
       ]);
 
-      expect(probes, [(isPanorama: true, halfSphere: null), null, (isPanorama: false, halfSphere: null)]);
+      expect(probes, [
+        (isPanorama: true, halfSphere: null, rawDualFisheye: false),
+        null,
+        (isPanorama: false, halfSphere: null, rawDualFisheye: false),
+      ]);
     });
   });
 
@@ -264,12 +321,46 @@ void main() {
       final json = encodeLocalPanoramaRecords(records);
 
       expect(jsonDecode(json), {
-        'b': {'p': true, 'h': true, 't': DateTime(2024, 1, 2).millisecondsSinceEpoch},
-        'a': {'p': false, 't': DateTime(2024, 1, 1).millisecondsSinceEpoch},
+        'b': {'p': true, 'h': true, 't': DateTime(2024, 1, 2).millisecondsSinceEpoch, 'v': 1},
+        'a': {'p': false, 't': DateTime(2024, 1, 1).millisecondsSinceEpoch, 'v': 1},
       });
       final decoded = decodeLocalPanoramaRecords(json);
       expect(decoded, records);
       expect(decoded.keys, ['b', 'a']);
+    });
+
+    test('keeps the raw flag of a raw dual fisheye file, and reads the records written before it', () {
+      final records = {
+        'raw': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: DateTime(2024, 1, 3)),
+      };
+
+      final json = encodeLocalPanoramaRecords(records);
+
+      expect(jsonDecode(json), {
+        'raw': {'p': true, 'r': true, 't': DateTime(2024, 1, 3).millisecondsSinceEpoch, 'v': 1},
+      });
+      expect(decodeLocalPanoramaRecords(json), records);
+      expect(decodeLocalPanoramaRecords('{"a":{"p":true,"t":5}}')['a']?.rawDualFisheye, isFalse);
+    });
+
+    test('keeps the version of the rules, 0 for the records written before it, and writes those back the same', () {
+      final records = {
+        'new': LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2024, 1, 4)),
+        'old': LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2024, 1, 3), version: 0),
+      };
+
+      expect(records['new']?.version, LocalPanoramaRecord.currentVersion);
+      expect(jsonDecode(encodeLocalPanoramaRecords(records)), {
+        'new': {'p': false, 't': DateTime(2024, 1, 4).millisecondsSinceEpoch, 'v': 1},
+        'old': {'p': false, 't': DateTime(2024, 1, 3).millisecondsSinceEpoch},
+      });
+      expect(decodeLocalPanoramaRecords(encodeLocalPanoramaRecords(records)), records);
+      expect(decodeLocalPanoramaRecords('{"a":{"p":false,"t":5}}')['a']?.version, 0);
+      expect(decodeLocalPanoramaRecords('{"a":{"p":false,"t":5,"v":"x"}}')['a']?.version, 0);
+      expect(
+        LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2024), version: 0),
+        isNot(LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2024))),
+      );
     });
 
     test('skips a damaged value, and anything but records in it', () {
@@ -277,7 +368,7 @@ void main() {
       expect(decodeLocalPanoramaRecords('not json'), isEmpty);
       expect(decodeLocalPanoramaRecords('["a"]'), isEmpty);
       expect(decodeLocalPanoramaRecords('{"a":{"p":true,"t":5,"h":"x"},"b":{"p":"yes","t":5},"c":3}'), {
-        'a': LocalPanoramaRecord(isPanorama: true, checkedAt: DateTime.fromMillisecondsSinceEpoch(5)),
+        'a': LocalPanoramaRecord(isPanorama: true, checkedAt: DateTime.fromMillisecondsSinceEpoch(5), version: 0),
       });
     });
   });
@@ -319,7 +410,8 @@ void main() {
         final names = [for (final file in files) file.path.split('/').last];
         read.addAll(names);
         return [
-          for (final name in names) probes.containsKey(name) ? probes[name] : (isPanorama: false, halfSphere: null),
+          for (final name in names)
+            probes.containsKey(name) ? probes[name] : (isPanorama: false, halfSphere: null, rawDualFisheye: false),
         ];
       },
       now: () => now,
@@ -336,7 +428,10 @@ void main() {
         _asset('video', type: AssetType.video, width: 3840, height: 1920, age: 1),
         _asset('new-pano', age: 0),
       ];
-      probes = {'old-pano': (isPanorama: true, halfSphere: null), 'video': (isPanorama: true, halfSphere: true)};
+      probes = {
+        'old-pano': (isPanorama: true, halfSphere: null, rawDualFisheye: false),
+        'video': (isPanorama: true, halfSphere: true, rawDualFisheye: false),
+      };
       final progress = <Map<String, LocalPanoramaRecord>>[];
 
       final records = await service().scan({}, onProgress: progress.add);
@@ -344,7 +439,7 @@ void main() {
       expect(read, ['new-pano', 'video', 'old-pano']);
       expect(records, {
         'new-pano': LocalPanoramaRecord(isPanorama: false, checkedAt: now),
-        'video': LocalPanoramaRecord(isPanorama: true, halfSphere: true, checkedAt: now),
+        'video': LocalPanoramaRecord(isPanorama: true, halfSphere: true, checkedAt: now, rawDualFisheye: false),
         'old-pano': LocalPanoramaRecord(isPanorama: true, checkedAt: now),
       });
       expect(records.keys, ['new-pano', 'video', 'old-pano']);
@@ -363,12 +458,63 @@ void main() {
 
       now = DateTime(2024, 8, 1);
       assets = [_asset('a', age: 0, updatedAt: DateTime(2024, 7, 15)), _asset('b', age: 1)];
-      probes = {'a': (isPanorama: true, halfSphere: null)};
+      probes = {'a': (isPanorama: true, halfSphere: null, rawDualFisheye: false)};
       final second = await scanner.scan(first);
 
       expect(read, ['a']);
       expect(second['a'], LocalPanoramaRecord(isPanorama: true, checkedAt: now));
       expect(second.keys, ['b', 'a'], reason: 'the latest record goes last');
+    });
+
+    test('reads again once the records of older rules that the raw files of Insta360 cameras may change', () async {
+      assets = [
+        // A photo of an X3 renamed .jpg, its trailer kept, that build 15 found flat
+        _asset('renamed', name: 'IMG_20240908_133036_00_001.jpg', width: 11968, height: 5984, age: 0),
+        _asset(
+          'insv',
+          name: 'VID_20240908_133036_00_002.insv',
+          type: AssetType.video,
+          width: 5760,
+          height: 2880,
+          age: 1,
+        ),
+        _asset('insp', name: 'IMG_20240908_133036_00_003.insp', width: 6080, height: 3040, age: 2),
+        // Read the same now: a photo whose GPano declared 360°, a video that is no raw one, a record of the current rules
+        _asset('pano', age: 3),
+        _asset('video', name: 'VID_20240908_140000.mp4', type: AssetType.video, width: 3840, height: 1920, age: 4),
+        _asset('current', age: 5),
+      ];
+      // The store as build 15 left it: no version, no raw flag
+      final checkedAt = DateTime(2024, 6, 15).millisecondsSinceEpoch;
+      final known = decodeLocalPanoramaRecords(
+        jsonEncode({
+          'renamed': {'p': false, 't': checkedAt},
+          'insv': {'p': false, 't': checkedAt},
+          'insp': {'p': false, 't': checkedAt},
+          'pano': {'p': true, 't': checkedAt},
+          'video': {'p': false, 't': checkedAt},
+          'current': {'p': false, 't': checkedAt, 'v': 1},
+        }),
+      );
+      expect(known.values.map((record) => record.version), [0, 0, 0, 0, 0, 1]);
+      probes = {
+        for (final id in ['renamed', 'insv', 'insp']) id: (isPanorama: true, halfSphere: null, rawDualFisheye: true),
+      };
+      final scanner = service();
+
+      final records = await scanner.scan(known);
+
+      expect(read, ['renamed', 'insv', 'insp']);
+      for (final id in ['renamed', 'insv', 'insp']) {
+        expect(records[id], LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: now), reason: id);
+      }
+      for (final id in ['pano', 'video', 'current']) {
+        expect(records[id], known[id], reason: id);
+      }
+
+      read.clear();
+      expect(await scanner.scan(records), records);
+      expect(read, isEmpty, reason: 'read again once');
     });
 
     test('takes the modification date for the check date when it is later, a clock set wrong', () async {

@@ -5,26 +5,35 @@
 // asks Flutter (see ImmersiveSession), which finds the media and shows it in place (ImmersiveApi.showAdjacent), with
 // what the opener read from the providers when the viewer opened, the widget that opened it being possibly gone by
 // then.
+//
+// The raw dual fisheye files of Insta360 cameras go to it ready to show (see RawImmersiveMedia): a photo stitched
+// into an equirect PNG in the cache, a video with the JSON of its calibration, which the viewer maps on the sphere.
 
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
-import 'dart:ui';
+import 'dart:ui' as ui;
 
+import 'package:flutter/painting.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
+import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/immersive_navigation.service.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/storage.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
@@ -41,6 +50,7 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
@@ -80,7 +90,9 @@ String _immersiveVideoId(BaseAsset asset, String remoteId) =>
 ///
 /// [fallbackUrl] is the server's transcoded stream of a video, which the viewer plays instead of [url] when the
 /// headset cannot decode the original or the original fails; null when there is none. [sourceNotice] is what to tell
-/// the user about the file chosen, null for nothing (see [chooseVideoSource]).
+/// the user about the file chosen, null for nothing (see [chooseVideoSource]). [rawProjection] is the calibration of
+/// a raw dual fisheye video (see [rawVideoProjectionJson]), null for an equirectangular media and for a raw photo,
+/// which comes stitched.
 class ImmersiveRequest {
   const ImmersiveRequest({
     required this.url,
@@ -90,6 +102,7 @@ class ImmersiveRequest {
     required this.view,
     this.fallbackUrl,
     this.sourceNotice,
+    this.rawProjection,
   });
 
   final String url;
@@ -99,13 +112,15 @@ class ImmersiveRequest {
   final SphereView view;
   final String? fallbackUrl;
   final VideoSourceNotice? sourceNotice;
+  final String? rawProjection;
 
   /// Whether the viewer may be showing this media at [url]: the URL it was given, or the stream it switched to
   bool isShownAt(String url) => this.url == url || fallbackUrl == url;
 
   @override
   String toString() =>
-      'ImmersiveRequest(url: $url, fallbackUrl: $fallbackUrl, isVideo: $isVideo, title: $title, view: $view)';
+      'ImmersiveRequest(url: $url, fallbackUrl: $fallbackUrl, isVideo: $isVideo, title: $title, view: $view, '
+      'raw: ${rawProjection != null})';
 }
 
 /// Opens [request] in the immersive viewer through [api], a video from [startPosition], with the controls labelled
@@ -129,6 +144,7 @@ Future<void> openImmersiveRequest(
   math.max(0, startPosition.inMilliseconds),
   openingId,
   request.fallbackUrl,
+  request.rawProjection,
 );
 
 /// Shows [request] in place of the media of the immersive viewer that asked for another one with [requestId] (see
@@ -141,7 +157,174 @@ Future<bool> showImmersiveRequest(ImmersiveApi api, int requestId, ImmersiveRequ
   request.view.layout.toImmersive(),
   request.view.coverage.toImmersive(),
   request.fallbackUrl,
+  request.rawProjection,
 );
+
+// Decoded width of a raw photo before it is stitched: one pixel under the largest texture, as for the panorama viewer
+const _rawPhotoDecodeWidth = dualFisheyeMaxOutputWidth - 1;
+
+/// The image of a photo on the device for the stitcher: [file] decoded at most [maxWidth] pixels wide
+Future<ui.Image> decodeImageFile(File file, {int maxWidth = _rawPhotoDecodeWidth}) async {
+  final buffer = await ui.ImmutableBuffer.fromFilePath(file.path);
+  final codec = await ui.instantiateImageCodecWithSize(
+    buffer,
+    getTargetSize: (width, height) => width > maxWidth
+        ? ui.TargetImageSize(width: maxWidth, height: math.max(1, (height * maxWidth / width).round()))
+        : ui.TargetImageSize(width: width, height: height),
+  );
+  try {
+    return (await codec.getNextFrame()).image;
+  } finally {
+    codec.dispose();
+  }
+}
+
+/// The first image [provider] yields, for the stitcher (the caller disposes it)
+Future<ui.Image> loadProvidedImage(ImageProvider provider) {
+  final completer = Completer<ui.Image>();
+  final stream = provider.resolve(ImageConfiguration.empty);
+  late final ImageStreamListener listener;
+  listener = ImageStreamListener(
+    (info, _) {
+      stream.removeListener(listener);
+      if (!completer.isCompleted) {
+        completer.complete(info.image.clone());
+      }
+      info.dispose();
+    },
+    onError: (error, stackTrace) {
+      stream.removeListener(listener);
+      if (!completer.isCompleted) {
+        completer.completeError(error, stackTrace);
+      }
+    },
+  );
+  stream.addListener(listener);
+  return completer.future;
+}
+
+/// The photo of [asset] for the stitcher: [localFile] when there is one, else the original on the server (see
+/// [sharpPanoramaUrl]: its full size image is the preview on a default server) through the image loader of the app,
+/// which sends the headers of the session; at most 8191 pixels wide either way
+Future<ui.Image> loadRawAssetImage(BaseAsset asset, File? localFile) async {
+  if (localFile != null) {
+    return decodeImageFile(localFile);
+  }
+  final remoteId = asset.remoteId;
+  if (remoteId == null) {
+    throw StateError('No file to stitch for ${asset.name}');
+  }
+  final request = RemoteImageRequest(
+    uri: sharpPanoramaUrl(remoteId, isRawDualFisheye: true),
+    // A height of 1 is always covered: the width is capped (see textureDecodeSize)
+    decodeSize: ui.Size(_rawPhotoDecodeWidth.toDouble(), 1),
+  );
+  final info = await request.load(PaintingBinding.instance.instantiateImageCodecWithSize);
+  if (info == null) {
+    throw StateError('The original of ${asset.name} did not load');
+  }
+  final image = info.image.clone();
+  info.dispose();
+  return image;
+}
+
+/// The key of the calibration of [entry], a file of a share: its path, its size and its date tell it from any other
+String rawShareKey(NetworkEntry entry) =>
+    'share:${entry.sourceId}:${entry.path}:${entry.size}:${entry.modified?.millisecondsSinceEpoch}';
+
+/// The raw dual fisheye media of Insta360 cameras (.insp photos, .insv videos) for the immersive viewer, which opens
+/// photos from files and URLs, and maps a raw video on the sphere itself from the JSON of its calibration: which assets
+/// are raw ([layoutOf], see raw360LayoutProvider), their calibrations, and the equirect PNG a raw photo is stitched
+/// into in the cache ([files], see [stitchedPhotoFile]).
+class RawImmersiveMedia {
+  RawImmersiveMedia({
+    required this.calibrations,
+    required this.layoutOf,
+    StitchedPhotoFiles? files,
+    this.loadAssetImage = loadRawAssetImage,
+    this.loadImage = loadProvidedImage,
+    this.stitchPhoto = stitchedPhotoFile,
+  }) : files = files ?? StitchedPhotoFiles.temporary();
+
+  /// Reads the services from the providers, and what the scan of the device found raw as it is now. Call it before the
+  /// first await of an opener: the widget may be gone after.
+  factory RawImmersiveMedia.read(WidgetRef ref) {
+    final records = ref.read(localPanoramaAssetsProvider);
+    return RawImmersiveMedia(
+      calibrations: ref.read(dualFisheyeCalibrationServiceProvider),
+      layoutOf: (asset) =>
+          raw360LayoutOfAsset(asset, isFoundRaw: (localId) => records[localId]?.rawDualFisheye ?? false),
+    );
+  }
+
+  final DualFisheyeCalibrationService calibrations;
+
+  /// What kind of raw file an asset is, null for any other
+  final Raw360Layout? Function(BaseAsset asset) layoutOf;
+
+  /// Where the stitched photos go
+  final StitchedPhotoFiles files;
+
+  /// The photo of an asset to stitch, from its file on the device when given (see [loadRawAssetImage])
+  final Future<ui.Image> Function(BaseAsset asset, File? localFile) loadAssetImage;
+
+  /// The first image of a provider (see [loadProvidedImage])
+  final Future<ui.Image> Function(ImageProvider image) loadImage;
+
+  /// Stitches a photo into [files] unless it is there already (see [stitchedPhotoFile])
+  final Future<File> Function(
+    StitchedPhotoFiles files,
+    String key,
+    DualFisheyeCalibration calibration,
+    Future<ui.Image> Function() load,
+  )
+  stitchPhoto;
+
+  /// The file:// URL of the equirect picture of the raw photo named by [key], stitched with [calibration] from the
+  /// image [load] gives, unless it was already
+  Future<String> photoUrl(String key, DualFisheyeCalibration calibration, Future<ui.Image> Function() load) async =>
+      (await stitchPhoto(files, key, calibration, load)).uri.toString();
+
+  /// What the viewer opens for [asset], a raw photo: its stitched picture, from [localFile] when given, else from the
+  /// original on the server
+  Future<ImmersiveRequest> assetPhoto(BaseAsset asset, {File? localFile}) async {
+    final calibration = await calibrations.forAsset(asset, localFile: localFile);
+    final key = '${spatialLayoutKey(asset)}:${asset.updatedAt.millisecondsSinceEpoch}:${calibration.source.name}';
+    final url = await photoUrl(key, calibration, () => loadAssetImage(asset, localFile));
+    return ImmersiveRequest(url: url, isVideo: false, title: asset.name, view: raw360SphereView);
+  }
+
+  /// What the viewer opens for [entry], a raw photo or video of a share that [read] reads and the media bridge serves
+  /// at [url]: the stitched picture of a photo, or the video with its calibration for frames of [frame] pixels (the
+  /// size of its first video track as [probe] read it, when [frame] is not given)
+  Future<ImmersiveRequest> sharedMedia(
+    NetworkEntry entry,
+    Uri url, {
+    required ByteRangeReader read,
+    SphericalProbe? probe,
+    ({int width, int height})? frame,
+  }) async {
+    final key = rawShareKey(entry);
+    final calibration = await calibrations.forReader(key, read: read, fileSize: entry.size, isPhoto: !entry.isVideo);
+    if (entry.isVideo) {
+      return ImmersiveRequest(
+        url: url.toString(),
+        isVideo: true,
+        title: entry.name,
+        view: raw360SphereView,
+        rawProjection: rawVideoProjectionJson(calibration, frame ?? rawVideoFrameSize(probe: probe)),
+      );
+    }
+    final image = ResizeImage(
+      NetworkImage(url.toString()),
+      width: _rawPhotoDecodeWidth,
+      height: _rawPhotoDecodeWidth ~/ 2,
+      policy: ResizeImagePolicy.fit,
+    );
+    final photo = await photoUrl('$key:${calibration.source.name}', calibration, () => loadImage(image));
+    return ImmersiveRequest(url: photo, isVideo: false, title: entry.name, view: raw360SphereView);
+  }
+}
 
 /// Turns assets into what the immersive viewer opens (see [resolve]) and opens them, with the services an opener
 /// reads from the providers before the viewer opens (see [ImmersiveAssetResolver.read]): the viewer shows more assets
@@ -156,6 +339,7 @@ class ImmersiveAssetResolver {
     required this._gpanoClient,
     required this._videoSources,
     this.videoSourcePolicy = VideoSourcePolicy.preferOriginalWithinDecoder,
+    this.raw,
   });
 
   /// Reads the services from the providers. Call it before the first await of an opener: the widget may be gone after.
@@ -169,9 +353,13 @@ class ImmersiveAssetResolver {
         gpanoClient: ref.read(immersiveGPanoClientProvider),
         videoSources: ref.read(videoSourceServiceProvider),
         videoSourcePolicy: ref.read(appConfigProvider).viewer.immersiveVideoSourcePolicy,
+        raw: RawImmersiveMedia.read(ref),
       );
 
   final ImmersiveApi api;
+
+  /// The raw dual fisheye media, stitched or with their calibration; null to take them as any other media
+  final RawImmersiveMedia? raw;
 
   /// Labels of the controls of the viewer, see [sphereViewerLabels]
   final Map<String, String> stereoLabels;
@@ -204,7 +392,19 @@ class ImmersiveAssetResolver {
   /// its aspect ratio, and covers what its GPano crop says: for a photo that looks 3D, the GPano crop the server copies
   /// into the preview's XMP tells, or for a photo only on the device the one in its file. The guess stands when that
   /// read fails.
+  ///
+  /// A raw dual fisheye photo opens stitched into a picture of the cache (see [RawImmersiveMedia.assetPhoto]), from
+  /// its copy on the device when there is one, and a raw video with its calibration; both are one picture over the
+  /// whole sphere. A raw video of one lens per file or per track throws a [RawVideoUnsupportedException].
   Future<ImmersiveRequest> resolve(BaseAsset asset, {String? localPath}) async {
+    final raw = this.raw;
+    final rawLayout = raw?.layoutOf(asset);
+    if (rawLayout == Raw360Layout.separateLenses) {
+      throw RawVideoUnsupportedException(asset.name);
+    }
+    if (raw != null && rawLayout != null && !asset.isVideo) {
+      return raw.assetPhoto(asset, localFile: await _rawPhotoFile(asset, localPath));
+    }
     final remoteUrl = immersiveMediaUrl(asset);
     // A photo on the server opens from its original there
     final localId = asset.isVideo || remoteUrl == null ? asset.localId : null;
@@ -254,6 +454,14 @@ class ImmersiveAssetResolver {
     }
 
     final probe = asset.isVideo ? await _probeService.probe(asset, localFile: localFile) : null;
+    String? rawProjection;
+    if (raw != null && rawLayout != null && asset.isVideo) {
+      final frame = rawVideoFrameSize(probe: probe, width: asset.width, height: asset.height);
+      if (rawVideoLayout(frame?.width, frame?.height) == Raw360Layout.separateLenses) {
+        throw RawVideoUnsupportedException(asset.name);
+      }
+      rawProjection = rawVideoProjectionJson(await raw.calibrations.forAsset(asset, localFile: localFile), frame);
+    }
     // A file on the headset plays as it is: only the server has a transcoded stream to choose
     var source = ChosenVideoSource(url: url);
     if (asset.isVideo && localFile == null && remoteId != null) {
@@ -276,10 +484,32 @@ class ImmersiveAssetResolver {
       headers: ApiService.getRequestHeaders(),
       isVideo: asset.isVideo,
       title: asset.name,
-      view: view(gpanoCrop: gpanoCrop, probe: probe),
+      view: rawProjection != null ? raw360SphereView : view(gpanoCrop: gpanoCrop, probe: probe),
       fallbackUrl: source.fallbackUrl,
       sourceNotice: source.notice,
+      rawProjection: rawProjection,
     );
+  }
+
+  // The file of a raw photo to stitch: the one of "Open with", else the copy on the device, which saves downloading
+  // the original; null to stitch the original on the server. Throws when there is neither.
+  Future<File?> _rawPhotoFile(BaseAsset asset, String? localPath) async {
+    if (localPath != null) {
+      return File(localPath);
+    }
+    final localId = asset.localId;
+    File? file;
+    if (localId != null) {
+      try {
+        file = await _storage.getFileForAsset(localId);
+      } catch (error) {
+        _log.warning('Copy on the device of ${asset.name} unreadable: $error');
+      }
+    }
+    if (file == null && asset.remoteId == null) {
+      throw StateError('No file to open for ${asset.name}');
+    }
+    return file;
   }
 
   /// Opens [request] in the viewer as the opening [openingId], see [openImmersiveRequest]
@@ -570,13 +800,16 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
   }
 
   Future<List<bool>> _areCapable(List<BaseAsset> assets) async {
-    bool isCapable(BaseAsset asset, [Set<String> equirectangularIds = const {}]) => isImmersiveCandidate(
-      asset,
-      all360: _all360,
-      forced: _forced,
-      localIds: _localIds,
-      equirectangularIds: equirectangularIds,
-    );
+    // A raw dual fisheye file is shown stitched; one of a lens per file or per track is not shown
+    bool isCapable(BaseAsset asset, [Set<String> equirectangularIds = const {}]) =>
+        isImmersiveCandidate(
+          asset,
+          all360: _all360,
+          forced: _forced,
+          localIds: _localIds,
+          equirectangularIds: equirectangularIds,
+        ) ||
+        _resolver.raw?.layoutOf(asset) == Raw360Layout.dualFisheye;
 
     // Only the assets that nothing at hand tells are asked to the database, all at once
     final remoteIds = {
@@ -687,6 +920,9 @@ typedef ImmersiveFolderItem = ({NetworkEntry entry, Uri url});
 ///
 /// Nothing the user picks in the viewer is remembered, as on the pages. When the viewer closes on the video it opened
 /// on, [player], the page's player, takes it back where the viewer left it.
+///
+/// A raw dual fisheye file found on the way is shown stitched or with its calibration (see
+/// [RawImmersiveMedia.sharedMedia]), read through the media bridge; without [raw], such files are skipped.
 class FolderImmersiveNavigator implements ImmersiveNavigator {
   FolderImmersiveNavigator({
     required this._api,
@@ -697,6 +933,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
     required ImmersiveRequest request,
     this._player,
     this.fileTimeout = immersiveFolderFileTimeout,
+    this._raw,
   }) : _items = List.unmodifiable(items),
        _start = index,
        _startRequest = request,
@@ -717,6 +954,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
     index: index,
     request: request,
     player: player,
+    raw: RawImmersiveMedia.read(ref),
   );
 
   /// Longest wait for what a file declares, see [immersiveFolderFileTimeout]
@@ -729,9 +967,12 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
   final int _start;
   final ImmersiveRequest _startRequest;
   final VideoPlayerNotifier? _player;
+  final RawImmersiveMedia? _raw;
   int _index;
   // The file shown before the current one, see [_indexAt]
   int? _previous;
+  // The URLs the viewer was given for the files it showed, which for a raw photo is its stitched picture
+  final _shownUrls = <int, String>{};
 
   /// The file the viewer shows, as far as this navigator knows
   NetworkEntry get currentEntry => _items[_index].entry;
@@ -752,23 +993,39 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
         if (info != null) {
           infos[index] = info;
         }
-        return info?.is360 ?? false;
+        return (info?.is360 ?? false) && (info?.raw == null || _raw != null);
       },
       isCancelled: () => request.isCancelled,
     );
     if (found == null) {
       return false;
     }
-    final shownRequest = found.index == _start
-        ? _startRequest
-        : folderImmersiveRequest(_items[found.index], infos[found.index] ?? const NetworkMediaInfo());
+    final ImmersiveRequest shownRequest;
+    try {
+      shownRequest = found.index == _start
+          ? _startRequest
+          : await _requestFor(_items[found.index], infos[found.index] ?? const NetworkMediaInfo());
+    } catch (error, stackTrace) {
+      _log.warning('Could not prepare ${_items[found.index].entry.name} for the immersive viewer', error, stackTrace);
+      return false;
+    }
     final shown = await request.show((requestId) => showImmersiveRequest(_api, requestId, shownRequest));
     if (shown) {
       // Only once the viewer said it shows it: what it reports on closing goes to the file it shows
       _previous = _index;
       _index = found.index;
+      _shownUrls[found.index] = shownRequest.url;
     }
     return shown;
+  }
+
+  // What the viewer opens for [item], which declares [info]: a raw file stitched or with its calibration
+  Future<ImmersiveRequest> _requestFor(ImmersiveFolderItem item, NetworkMediaInfo info) async {
+    final raw = _raw;
+    if (raw == null || info.raw != Raw360Layout.dualFisheye) {
+      return folderImmersiveRequest(item, info);
+    }
+    return raw.sharedMedia(item.entry, item.url, read: httpRangeReader(_client, item.url), probe: info.probe);
   }
 
   /// What [item] declares, null when that is unknown
@@ -818,7 +1075,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
   }
 
   // The URL the viewer was given for the file at [index]
-  String _urlOf(int index) => index == _start ? _startRequest.url : _items[index].url.toString();
+  String _urlOf(int index) => index == _start ? _startRequest.url : _shownUrls[index] ?? _items[index].url.toString();
 }
 
 /// What the immersive viewer opens for [item], a file of a share whose file declares [info]: its layout and coverage

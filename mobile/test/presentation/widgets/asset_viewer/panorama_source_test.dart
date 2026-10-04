@@ -7,17 +7,22 @@ import 'dart:ui' as ui;
 
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 
+import '../../../fixtures/raw/insta360.stub.dart';
 import '../../../widget_tester_extensions.dart';
 
 /// Yields [image] once, a little later, as an image from the network would
@@ -108,11 +113,12 @@ void main() {
         '<rdf:Description GPano:ProjectionType="equirectangular" GPano:FullPanoWidthPixels="9202" '
         'GPano:FullPanoHeightPixels="4601" GPano:CroppedAreaLeftPixels="0" GPano:CroppedAreaTopPixels="2035" '
         'GPano:CroppedAreaImageWidthPixels="4460" GPano:CroppedAreaImageHeightPixels="1667"/>';
-    // Longer than a GPano window, with the XMP at its tail: the head, then the tail are read
+    // Longer than a GPano window, with the XMP at its tail: the head, then the tail are read, after the last 72 bytes,
+    // which tell a raw Insta360 photo
     final file = Uint8List.fromList([...List.filled(200 * 1024, 0), ...ascii.encode(xmp)]);
     await pumpViewer(tester, name: 'partial.jpg', file: file);
 
-    expect(reads, [(0, 131072), (file.length - 131072, 131072)]);
+    expect(reads, [(file.length - 72, 72), (0, 131072), (file.length - 131072, 131072)]);
     expect(find.byType(CustomPaint), findsWidgets);
     expect(coverageButton, findsNothing);
     expect(find.byTooltip('Mono (not 3D)'), findsOneWidget);
@@ -139,5 +145,88 @@ void main() {
     await tester.tap(coverageButton);
     await tester.pumpAndSettle();
     expect(find.text('360°'), findsOneWidget);
+  });
+
+  group('raw dual fisheye photos', () {
+    final stereoButton = find.byTooltip('Mono (not 3D)');
+
+    // An X3 photo: the JPEG, then the trailer of the camera with its calibration
+    final x3Photo = insta360File([insta360Record(1, x3Metadata(), format: 1)], body: insta360PhotoHead());
+
+    /// Pumps the viewer on the photo [name], whose file is [file], and lets the shader stitch it until [label] shows.
+    /// The shader runs outside the fake time of the test: the spinner meanwhile would never let the frames settle.
+    Future<void> pumpRawViewer(
+      WidgetTester tester, {
+      required String name,
+      required Uint8List file,
+      required Finder label,
+    }) async {
+      final image = (await tester.runAsync(() => createTestImage(width: 128, height: 64)))!;
+      addTearDown(image.dispose);
+      final PanoramaSource source = (
+        image: _TestImageProvider(image),
+        name: name,
+        length: file.length,
+        read: reader(file),
+      );
+      await tester.pumpWidget(
+        EasyLocalization(
+          supportedLocales: locales.values.toList(),
+          path: translationsPath,
+          startLocale: locales.values.first,
+          fallbackLocale: locales.values.first,
+          saveLocale: false,
+          useFallbackTranslations: true,
+          assetLoader: const CodegenLoader(),
+          child: ProviderScope(
+            overrides: [
+              storeServiceProvider.overrideWithValue(store),
+              isHorizonOsProvider.overrideWith((ref) => false),
+            ],
+            child: Builder(
+              builder: (context) => MaterialApp(
+                localizationsDelegates: context.localizationDelegates,
+                supportedLocales: context.supportedLocales,
+                locale: context.locale,
+                home: Material(child: PanoramaViewerPage.source(source: source)),
+              ),
+            ),
+          ),
+        ),
+      );
+      for (var i = 0; i < 100 && label.evaluate().isEmpty; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pump();
+      }
+    }
+
+    testWidgets('stitches a .insp photo with the calibration of its file, over the whole sphere, and says so', (
+      tester,
+    ) async {
+      final label = find.text('Raw 360° file, stitched by the app (lens calibration read from the file)');
+      await pumpRawViewer(tester, name: 'IMG_20240908_133036_00_001.insp', file: x3Photo, label: label);
+
+      expect(label, findsOneWidget);
+      expect(find.byType(CustomPaint), findsWidgets);
+      expect(coverageButton, findsNothing, reason: 'a stitch covers the whole sphere');
+      expect(stereoButton, findsNothing, reason: 'two lenses side by side are no 3D layout');
+      expect(reads, isNot(contains((0, 131072))), reason: 'a raw photo has no GPano tags to read');
+    });
+
+    testWidgets('finds a photo renamed from .insp by the end of its file', (tester) async {
+      final label = find.text('Raw 360° file, stitched by the app (lens calibration read from the file)');
+      await pumpRawViewer(tester, name: 'IMG_001.jpg', file: x3Photo, label: label);
+
+      expect(label, findsOneWidget);
+      expect(coverageButton, findsNothing);
+    });
+
+    testWidgets('stitches a .insp photo whose trailer was cut with the nominal values of an X3', (tester) async {
+      final label = find.text('Raw 360° file, stitched by the app (nominal lens values, seams possible)');
+      final cut = Uint8List.fromList([...insta360PhotoHead(), 0xff, 0xd9]);
+      await pumpRawViewer(tester, name: 'IMG_001.insp', file: cut, label: label);
+
+      expect(label, findsOneWidget);
+    });
   });
 }

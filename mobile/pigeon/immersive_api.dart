@@ -26,6 +26,9 @@ abstract class ImmersiveApi {
   /// Flutter guessed from the media dimensions; the headset shows each eye its own half of a stereoscopic media,
   /// and the user can change the layout in the viewer. [stereoLabels] are the translated labels of the 3D control,
   /// keyed "stereo", "mono", "topBottom", "leftRight".
+  /// [rawProjection] is null for an equirectangular media, or the JSON of a dual fisheye calibration (docs
+  /// 16-dual-fisheye-spec.md section 5) for a raw camera video whose frame holds the two fisheye circles; raw photos
+  /// arrive already stitched as a file.
   /// [startPositionMs] is where a video starts (0 from the beginning), so the immersive view carries on from
   /// where the flat player was. [openingId] identifies this opening: the viewer sends it back with every event,
   /// so that Flutter ignores the events of a viewer it is no longer following (a closed event can arrive long
@@ -46,6 +49,7 @@ abstract class ImmersiveApi {
     int startPositionMs,
     int openingId,
     String? fallbackUrl,
+    String? rawProjection,
   );
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
@@ -60,6 +64,7 @@ abstract class ImmersiveApi {
     ImmersiveStereoLayout stereoLayout,
     ImmersiveSphereCoverage coverage,
     String? fallbackUrl,
+    String? rawProjection,
   );
 }
 

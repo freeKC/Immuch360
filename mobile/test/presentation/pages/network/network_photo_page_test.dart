@@ -26,6 +26,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 
+import '../../../fixtures/raw/insta360.stub.dart';
 import 'network_viewer_fakes.dart';
 
 /// Records what the immersive viewer is asked to open
@@ -53,6 +54,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     int startPositionMs,
     int openingId,
     String? fallbackUrl,
+    String? rawProjection,
   ) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
@@ -71,6 +73,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveStereoLayout stereoLayout,
     ImmersiveSphereCoverage coverage,
     String? fallbackUrl,
+    String? rawProjection,
   ) async {
     shown.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     return true;
@@ -206,6 +209,28 @@ void main() {
     await pumpRealIo(tester, () => find.byTooltip('Field of view').evaluate().isNotEmpty);
     expect(find.byTooltip('Field of view'), findsOneWidget);
     expect(find.text('360°'), findsOneWidget, reason: 'a 2:1 photo with no other sign: the whole sphere');
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('a photo renamed from .insp gets a 360° button, and the viewer stitches it with its calibration', (
+    tester,
+  ) async {
+    png = await makePng(tester);
+    share.files['/IMG_20240908_133036_00_001.jpg'] = insta360File([
+      insta360Record(1, x3Metadata(), format: 1),
+    ], body: png);
+    await pumpPhotoPage(tester, '/IMG_20240908_133036_00_001.jpg');
+    await pumpRealIo(tester, shows360Button);
+
+    await tester.tap(find.byTooltip('360°'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    final label = find.text('Raw 360° file, stitched by the app (lens calibration read from the file)');
+    await pumpRealIo(tester, () => label.evaluate().isNotEmpty);
+
+    expect(label, findsOneWidget);
+    expect(find.byTooltip('Field of view'), findsNothing, reason: 'a stitch covers the whole sphere');
 
     await endRealIo(tester);
   });

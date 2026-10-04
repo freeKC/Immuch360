@@ -2,6 +2,7 @@
 // with real range requests. The native players are fakes that record what they are asked to open.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show DatabaseConnection;
@@ -34,10 +35,14 @@ import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
+import '../../../fixtures/raw/insta360.stub.dart';
 import 'network_viewer_fakes.dart';
 
 class _RecordingSphericalVideoApi extends SphericalVideoApi {
   final List<Map<String, Object?>> opened = [];
+
+  /// The calibration each video was opened with, null for an equirectangular one
+  final List<String?> rawProjections = [];
 
   @override
   Future<void> open(
@@ -50,8 +55,10 @@ class _RecordingSphericalVideoApi extends SphericalVideoApi {
     Map<String, String> stereoLabels,
     SphereCoverage coverage,
     String? fallbackUrl,
+    String? rawProjection,
   ) async {
     opened.add({'url': url, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
+    rawProjections.add(rawProjection);
   }
 }
 
@@ -93,6 +100,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     int startPositionMs,
     int openingId,
     String? fallbackUrl,
+    String? rawProjection,
   ) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
@@ -111,6 +119,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveStereoLayout stereoLayout,
     ImmersiveSphereCoverage coverage,
     String? fallbackUrl,
+    String? rawProjection,
   ) async {
     shown.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     return true;
@@ -164,6 +173,11 @@ void main() {
     ]),
   );
   final flat = mp4File(mp4Moov([mp4VideoTrack(const []), mp4AudioTrack()]));
+  // Raw X3 videos: both lenses side by side, with the trailer of the camera; one lens, a file of a split recording
+  final rawSideBySide = insta360File([
+    insta360Record(1, x3Metadata(), format: 1),
+  ], body: mp4File(mp4Moov([mp4VideoTrack(const [], width: 5760, height: 2880)])));
+  final rawOneLens = mp4File(mp4Moov([mp4VideoTrack(const [], width: 2880, height: 2880)]));
 
   setUpAll(() async {
     // Real HTTP to the test server: the widget tests answer every request with an error otherwise
@@ -184,7 +198,14 @@ void main() {
     await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [_source]));
     share = MemoryShare(
       _source,
-      files: {'/trip360.mp4': mono360, '/stereo360.mp4': stereo360, '/movie_sbs.mp4': flat, '/holiday.mp4': flat},
+      files: {
+        '/trip360.mp4': mono360,
+        '/stereo360.mp4': stereo360,
+        '/movie_sbs.mp4': flat,
+        '/holiday.mp4': flat,
+        '/VID_20240908_00_002.insv': rawSideBySide,
+        '/VID_20240908_10_003.insv': rawOneLens,
+      },
     );
     server.share = share;
     server.requests.clear();
@@ -308,6 +329,49 @@ void main() {
       },
     ]);
     expect(playerCalls, ['suspend'], reason: 'the page player stops meanwhile');
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('opens a raw Insta360 video in the native 360° player with the calibration of its trailer', (
+    tester,
+  ) async {
+    await pumpVideoPage(tester, '/VID_20240908_00_002.insv');
+    await pumpUntilDetected(tester);
+
+    expect(find.byTooltip('Spatial 2.5D'), findsNothing, reason: 'two lenses side by side are no 3D layout');
+    await tester.tap(find.byTooltip('360°'));
+    for (var i = 0; i < 10 && sphericalApi.opened.isEmpty; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+
+    expect(sphericalApi.opened.single['layout'], StereoLayout.mono);
+    expect(sphericalApi.opened.single['coverage'], SphereCoverage.full);
+    final json = jsonDecode(sphericalApi.rawProjections.single!) as Map;
+    expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
+    expect(((json['lenses'] as List).first as Map)['fx'], closeTo(4627.54, 1e-6), reason: 'read from the share');
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('says that a raw video of one lens per file does not open', (tester) async {
+    await pumpVideoPage(tester, '/VID_20240908_10_003.insv');
+    await pumpUntilDetected(tester);
+
+    await tester.tap(find.byTooltip('360°'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(
+      find.text(
+        'This raw video is split in two files or two tracks (one per lens): not supported yet. Export it from the '
+        'camera app, or play a single file recording.',
+      ),
+      findsOneWidget,
+    );
+    expect(sphericalApi.opened, isEmpty);
+    expect(playerCalls, isEmpty);
 
     await endRealIo(tester);
   });

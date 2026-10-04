@@ -11,6 +11,9 @@ import UIKit
 ///
 /// The fallback URL of [open] is the server's transcoded stream: the player switches to it when the device cannot
 /// decode the original or when the original fails.
+///
+/// The raw projection of [open] is the JSON of a dual fisheye calibration (see [DualFisheyeCalibration]) when the
+/// frame holds the two fisheye circles of a raw camera file: the player stitches them on the sphere itself.
 class SphericalVideoApiImpl: SphericalVideoApi {
   private let events: SphericalVideoEvents
 
@@ -27,7 +30,8 @@ class SphericalVideoApiImpl: SphericalVideoApi {
     stereoLayout: StereoLayout,
     stereoLabels: [String: String],
     coverage: SphereCoverage,
-    fallbackUrl: String?
+    fallbackUrl: String?,
+    rawProjection: String?
   ) throws {
     guard let videoUrl = URL(string: url) else {
       throw PigeonError(code: "INVALID_URL", message: "Cannot read the video URL \(url)", details: nil)
@@ -54,6 +58,16 @@ class SphericalVideoApiImpl: SphericalVideoApi {
       throw noViewController
     }
 
+    // An unreadable calibration leaves the frame as it is, the two circles side by side, rather than no video at all
+    var calibration: DualFisheyeCalibration?
+    if let rawProjection {
+      do {
+        calibration = try DualFisheyeCalibration.parse(rawProjection)
+      } catch {
+        print("Cannot read the dual fisheye calibration, the 360° video plays unstitched: \(error)")
+      }
+    }
+
     let player = SphericalVideoViewController(
       url: videoUrl,
       fallbackUrl: fallback,
@@ -64,6 +78,7 @@ class SphericalVideoApiImpl: SphericalVideoApi {
       stereoLayout: stereoLayout,
       stereoLabels: stereoLabels,
       coverage: coverage,
+      dualFisheye: calibration,
       events: events
     )
     player.modalPresentationStyle = .fullScreen

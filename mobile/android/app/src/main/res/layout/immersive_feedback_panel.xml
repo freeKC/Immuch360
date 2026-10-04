@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Feedback line of the Meta Quest immersive viewer, under the line of sight: the time after a thumbstick seek, the
+     title after a thumbstick previous or next, the angle after a turn, shown for a moment while the info panel stays
+     hidden. Its size in dp is set in ImmersiveViewerActivity.registerPanels -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/immersive_panel_background"
+  android:paddingStart="16dp"
+  android:paddingEnd="16dp">
+
+  <TextView
+    android:id="@+id/immersive_feedback_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:ellipsize="end"
+    android:fontFeatureSettings="tnum"
+    android:gravity="center"
+    android:maxLines="1"
+    android:textColor="#FFE8EEFF"
+    android:textSize="20sp" />
+</FrameLayout>

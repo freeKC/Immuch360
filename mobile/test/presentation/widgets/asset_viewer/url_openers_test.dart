@@ -48,6 +48,7 @@ class _SphericalVideoApi extends SphericalVideoApi {
     Map<String, String> stereoLabels,
     SphereCoverage coverage,
     String? fallbackUrl,
+    String? rawProjection,
   ) async {
     final failure = this.failure;
     if (failure != null) {
@@ -109,6 +110,7 @@ class _ImmersiveApi extends ImmersiveApi {
     int startPositionMs,
     int openingId,
     String? fallbackUrl,
+    String? rawProjection,
   ) async {
     openingIds.add(openingId);
     final failure = this.failure;

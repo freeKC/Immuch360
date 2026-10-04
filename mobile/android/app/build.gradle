@@ -124,6 +124,8 @@ dependencies {
   // 360° video player (SphericalVideoActivity)
   implementation libs.media3.exoplayer
   implementation libs.media3.ui
+  // GL effect that maps the two fisheye circles of a raw 360 camera video on the sphere (DualFisheyeEffect)
+  implementation libs.media3.effect
   implementation libs.kotlinx.coroutines.android
   implementation libs.work.runtime.ktx
   implementation libs.concurrent.futures

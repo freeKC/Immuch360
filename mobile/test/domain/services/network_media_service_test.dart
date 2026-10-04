@@ -9,8 +9,10 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 
+import '../../fixtures/raw/insta360.stub.dart';
 import 'spherical_probe_fixtures.dart';
 
 /// Files in memory, read by ranges, counting the reads
@@ -232,6 +234,54 @@ void main() {
       await detect(service, '/flat.mp4', thorough: true);
 
       expect(files.reads.length, reads);
+    });
+  });
+
+  group('raw dual fisheye files', () {
+    // An X3 photo longer than the GPano windows: the JPEG, then the trailer of the camera
+    Uint8List rawPhoto() => insta360File(
+      [insta360Record(1, x3Metadata(), format: 1)],
+      body: [0xff, 0xd8, ...List.filled(300 * 1024, 0), 0xff, 0xd9],
+    );
+
+    test('a photo named .insp is a raw photo, 360° once stitched', () async {
+      final info = await detect(NetworkMediaService(), '/IMG_001.insp', bytes: rawPhoto());
+
+      expect(info?.raw, Raw360Layout.dualFisheye);
+      expect(info?.is360, isTrue);
+      expect(info?.isUnsupportedRaw, isFalse);
+      expect(info?.sphereView('IMG_001.insp', width: 11968, height: 5984), raw360SphereView);
+    });
+
+    test('a photo renamed from .insp is found by its trailer, with no read more than for its GPano tags', () async {
+      final info = await detect(NetworkMediaService(), '/IMG_001.jpg', bytes: rawPhoto());
+
+      expect(info?.raw, Raw360Layout.dualFisheye);
+      expect(info?.is360, isTrue);
+      expect(files.readsOf('/IMG_001.jpg'), 2);
+    });
+
+    test('a photo without the trailer is not raw', () async {
+      final info = await detect(NetworkMediaService(), '/IMG_001.jpg', bytes: _photo('', atTail: true));
+
+      expect(info?.raw, isNull);
+      expect(info?.is360, isFalse);
+    });
+
+    test('a video named .insv is raw: 360° side by side, not shown with a lens per file', () async {
+      Uint8List video(int width, int height) => mp4File(mp4Moov([mp4VideoTrack([], width: width, height: height)]));
+
+      final sideBySide = await detect(NetworkMediaService(), '/VID_00_002.insv', bytes: video(5760, 2880));
+      final split = await detect(NetworkMediaService(), '/VID_10_002.insv', bytes: video(2880, 2880));
+      final flat = await detect(NetworkMediaService(), '/VID_002.mp4', bytes: video(5760, 2880));
+
+      expect(sideBySide?.raw, Raw360Layout.dualFisheye);
+      expect(sideBySide?.is360, isTrue);
+      expect(split?.raw, Raw360Layout.separateLenses);
+      expect(split?.is360, isFalse);
+      expect(split?.isUnsupportedRaw, isTrue);
+      expect(flat?.raw, isNull);
+      expect(flat?.is360, isFalse);
     });
   });
 

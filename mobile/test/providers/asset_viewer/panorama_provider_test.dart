@@ -6,9 +6,12 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/immersive_navigation.service.dart';
 import 'package:immich_mobile/domain/services/local_panorama.service.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
+import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -233,6 +236,94 @@ void main() {
 
       await container.read(forcedPanoramaAssetsProvider.notifier).remove(photo);
       expect(isPanorama.read(), isTrue);
+    });
+  });
+
+  group('raw360LayoutProvider', () {
+    test('tells the raw files of Insta360 cameras by their name, and a video by its frame', () {
+      final photo = RemoteAssetFactory.create(name: 'IMG_20240908_133036_00_001.insp');
+      final video = RemoteAssetFactory.create(type: .video, name: 'VID_00_002.insv', width: 5760, height: 2880);
+      final split = RemoteAssetFactory.create(type: .video, name: 'VID_10_002.insv', width: 2880, height: 2880);
+      final jpeg = RemoteAssetFactory.create(name: 'IMG_001.jpg');
+      final container = createContainer(exif: {photo: null, video: null, split: null, jpeg: null});
+
+      expect(container.read(raw360LayoutProvider(photo)), Raw360Layout.dualFisheye);
+      expect(container.read(raw360LayoutProvider(video)), Raw360Layout.dualFisheye);
+      expect(container.read(raw360LayoutProvider(split)), Raw360Layout.separateLenses);
+      expect(container.read(raw360LayoutProvider(jpeg)), isNull);
+    });
+
+    test('makes a raw photo a 360° photo before its exif has loaded, and not a raw video', () {
+      final photo = RemoteAssetFactory.create(name: 'IMG_001.insp');
+      final video = RemoteAssetFactory.create(type: .video, name: 'VID_002.insv', width: 5760, height: 2880);
+      final container = createContainer(exif: {photo: null, video: null});
+
+      expect(container.read(isPanoramaProvider(photo)), isTrue);
+      expect(container.read(isPanoramaProvider(video)), isFalse);
+      expect(
+        container.read(isEquirectangularProvider(photo)),
+        isFalse,
+        reason: 'no player reads it as equirectangular',
+      );
+    });
+
+    test('tells a file of the device found raw by reading it, renamed from .insp', () async {
+      await store.put(
+        StoreKey.localPanoramaAssets,
+        encodeLocalPanoramaRecords({
+          'renamed': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: DateTime(2024)),
+          'pano': LocalPanoramaRecord(isPanorama: true, checkedAt: DateTime(2024)),
+        }),
+      );
+      final renamed = LocalAssetFactory.create(id: 'renamed', name: 'IMG_001.jpg');
+      final pano = LocalAssetFactory.create(id: 'pano', name: 'PANO_001.jpg');
+      final container = createContainer(exif: {renamed: null, pano: null});
+
+      expect(container.read(raw360LayoutProvider(renamed)), Raw360Layout.dualFisheye);
+      expect(container.read(raw360LayoutProvider(pano)), isNull);
+    });
+
+    test('never takes for equirectangular the raw files the scan of the device found, which it lists still', () async {
+      await store.put(
+        StoreKey.localPanoramaAssets,
+        encodeLocalPanoramaRecords({
+          'insv': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: DateTime(2024)),
+          'renamed': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: DateTime(2024)),
+        }),
+      );
+      // A 2:1 video of the device, both lenses side by side
+      final video = LocalAsset(
+        id: 'insv',
+        name: 'VID_20240908_133036_00_002.insv',
+        type: AssetType.video,
+        createdAt: DateTime(2024),
+        updatedAt: DateTime(2024),
+        width: 5760,
+        height: 2880,
+        playbackStyle: .video,
+        isEdited: false,
+      );
+      final renamed = RemoteAssetFactory.create(localId: 'renamed', name: 'IMG_001.jpg');
+      final container = createContainer(exif: {video: null, renamed: null});
+
+      expect(container.read(raw360LayoutProvider(video)), Raw360Layout.dualFisheye);
+      expect(
+        container.read(isEquirectangularProvider(video)),
+        isFalse,
+        reason: 'the Spatial 2.5D player would wrap the lenses on the sphere as they are',
+      );
+      expect(container.read(isEquirectangularProvider(renamed)), isFalse);
+
+      await container.read(forcedPanoramaAssetsProvider.notifier).add(video);
+      expect(container.read(isEquirectangularProvider(video)), isFalse, reason: 'whatever the user chose');
+
+      // Still a 360° photo for its badge, still on the 360° page of the device, still where the immersive viewer goes
+      expect(container.read(isPanoramaProvider(renamed)), isTrue);
+      final localIds = container.read(localPanoramaIdsProvider);
+      expect(localIds, containsAll(['insv', 'renamed']));
+      for (final asset in [video, renamed]) {
+        expect(isImmersiveCandidate(asset, all360: false, forced: const {}, localIds: localIds), isTrue);
+      }
     });
   });
 }
