@@ -4,7 +4,7 @@
   <string name="immersive_back">ถอยเกรา</string>
   <string name="immersive_play">เลง</string>
   <string name="immersive_pause">ผะอาก</string>
-  <string name="immersive_hint">B หรือ Y: วิลเตาวแอป. ทริกเกอร์: เลง หรือ ผะอาก. A, X หรือ ปุ่มกริป: บังฮาญ หรือ เลียก แผงนิฮ. จอยสติ๊กเตาวฉเวง หรือ สดำ: มีเดียมุน หรือ บันโตบ. เตาวเลอ หรือ กรอม: 10 วินาที เตาวมุก หรือ ถอยเกรา โนวกนงวิดีโอ, บังวิลรูป 90 องศา.</string>
+  <string name="immersive_hint">B หรือ Y: วิลเตาวแอป. ทริกเกอร์: เลง หรือ ผะอาก. A, X หรือ ปุ่มกริป: บังฮาญ หรือ เลียก แผงนิฮ. จอยสติ๊กสดำเตาวฉเวง หรือ สดำ: บังวิลมุมมอง, กันเวียเดิมเบ็ยบังวิลต่อ. จอยสติ๊กฉเวงเตาวฉเวง หรือ สดำ: มีเดียมุน หรือ บันโตบ. เตาวเลอ หรือ กรอม: 10 วินาที เตาวมุก หรือ ถอยเกรา โนวกนงวิดีโอ, บังวิลรูป 90 องศา.</string>
   <string name="immersive_previous">มุน</string>
   <string name="immersive_next">บันโตบ</string>
   <string name="immersive_turn">บังวิล</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">חזרה</string>
   <string name="immersive_play">הפעלה</string>
   <string name="immersive_pause">השהיה</string>
-  <string name="immersive_hint">B או Y: חזרה לאפליקציה. הדק: הפעלה או השהיה. A, X או לחצן האחיזה: הצגה או הסתרה של החלונית. ג\'ויסטיק שמאלה או ימינה: המדיה הקודמת או הבאה. למעלה או למטה: 10 שניות קדימה או אחורה בסרטון, סיבוב תמונה ב-90 מעלות.</string>
+  <string name="immersive_hint">B או Y: חזרה לאפליקציה. הדק: הפעלה או השהיה. A, X או לחצן האחיזה: הצגה או הסתרה של החלונית. ג\'ויסטיק ימני שמאלה או ימינה: סיבוב התצוגה, החזקה להמשך הסיבוב. ג\'ויסטיק שמאלי שמאלה או ימינה: המדיה הקודמת או הבאה. למעלה או למטה: 10 שניות קדימה או אחורה בסרטון, סיבוב תמונה ב-90 מעלות.</string>
   <string name="immersive_previous">הקודם</string>
   <string name="immersive_next">הבא</string>
   <string name="immersive_turn">סיבוב</string>

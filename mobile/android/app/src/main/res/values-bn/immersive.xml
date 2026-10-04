@@ -4,7 +4,7 @@
   <string name="immersive_back">ফিরে যান</string>
   <string name="immersive_play">চালান</string>
   <string name="immersive_pause">থামান</string>
-  <string name="immersive_hint">B বা Y: অ্যাপে ফিরে যান। ট্রিগার: চালান বা থামান। A, X বা গ্রিপ: এই প্যানেল দেখান বা লুকান। থাম্বস্টিক বাঁয়ে বা ডানে: আগের বা পরের মিডিয়া। উপরে বা নিচে: ভিডিওতে 10 সেকেন্ড সামনে বা পিছনে, ছবি 90 ডিগ্রি ঘোরান।</string>
+  <string name="immersive_hint">B বা Y: অ্যাপে ফিরে যান। ট্রিগার: চালান বা থামান। A, X বা গ্রিপ: এই প্যানেল দেখান বা লুকান। ডান থাম্বস্টিক বাঁয়ে বা ডানে: দৃশ্য ঘোরান, ঘোরানো চালিয়ে যেতে ধরে রাখুন। বাঁ থাম্বস্টিক বাঁয়ে বা ডানে: আগের বা পরের মিডিয়া। উপরে বা নিচে: ভিডিওতে 10 সেকেন্ড সামনে বা পিছনে, ছবি 90 ডিগ্রি ঘোরান।</string>
   <string name="immersive_previous">আগের</string>
   <string name="immersive_next">পরের</string>
   <string name="immersive_turn">ঘোরান</string>

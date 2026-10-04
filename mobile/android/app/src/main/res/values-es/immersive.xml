@@ -3,7 +3,7 @@
   <string name="immersive_back">Atrás</string>
   <string name="immersive_play">Reproducir</string>
   <string name="immersive_pause">Pausar</string>
-  <string name="immersive_hint">B o Y: volver a la aplicación. Gatillo: reproducir o pausar. A, X o botón de agarre: mostrar u ocultar este panel. Joystick a la izquierda o a la derecha: contenido anterior o siguiente. Arriba o abajo: avanzar o retroceder 10 segundos en un vídeo, girar una foto 90 grados.</string>
+  <string name="immersive_hint">B o Y: volver a la aplicación. Gatillo: reproducir o pausar. A, X o botón de agarre: mostrar u ocultar este panel. Joystick derecho a la izquierda o a la derecha: girar la vista, mantenerlo para seguir girando. Joystick izquierdo a la izquierda o a la derecha: contenido anterior o siguiente. Arriba o abajo: avanzar o retroceder 10 segundos en un vídeo, girar una foto 90 grados.</string>
   <string name="immersive_previous">Anterior</string>
   <string name="immersive_next">Siguiente</string>
   <string name="immersive_turn">Girar</string>

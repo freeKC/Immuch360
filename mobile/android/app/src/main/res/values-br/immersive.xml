@@ -4,7 +4,7 @@
   <string name="immersive_back">Distreiñ</string>
   <string name="immersive_play">Lenn</string>
   <string name="immersive_pause">Ehan</string>
-  <string name="immersive_hint">B pe Y: distreiñ d\'an arload. Dic\'her: lenn pe ehan. A, X pe bouton kregiñ: diskouez pe kuzhat ar banell-mañ. Joystick a-gleiz pe a-zehou: media kent pe da-heul. D\'an nec\'h pe d\'an traoñ: 10 eilenn war-raok pe war-gil en ur video, treiñ ul luc\'hskeudenn 90 derez.</string>
+  <string name="immersive_hint">B pe Y: distreiñ d\'an arload. Dic\'her: lenn pe ehan. A, X pe bouton kregiñ: diskouez pe kuzhat ar banell-mañ. Joystick dehou a-gleiz pe a-zehou: treiñ ar gwel, derc\'hel anezhañ evit kenderc\'hel da dreiñ. Joystick kleiz a-gleiz pe a-zehou: media kent pe da-heul. D\'an nec\'h pe d\'an traoñ: 10 eilenn war-raok pe war-gil en ur video, treiñ ul luc\'hskeudenn 90 derez.</string>
   <string name="immersive_previous">Kent</string>
   <string name="immersive_next">Da-heul</string>
   <string name="immersive_turn">Treiñ</string>

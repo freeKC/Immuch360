@@ -4,7 +4,7 @@
   <string name="immersive_back">واپس</string>
   <string name="immersive_play">چلائیں</string>
   <string name="immersive_pause">روکیں</string>
-  <string name="immersive_hint">B یا Y: ایپ پر واپس جائیں۔ ٹریگر: چلائیں یا روکیں۔ A، X یا گرپ بٹن: یہ پینل دکھائیں یا چھپائیں۔ تھمب اسٹک بائیں یا دائیں: پچھلا یا اگلا میڈیا۔ اوپر یا نیچے: ویڈیو میں 10 سیکنڈ آگے یا پیچھے، تصویر کو 90 ڈگری گھمائیں۔</string>
+  <string name="immersive_hint">B یا Y: ایپ پر واپس جائیں۔ ٹریگر: چلائیں یا روکیں۔ A، X یا گرپ بٹن: یہ پینل دکھائیں یا چھپائیں۔ دائیں تھمب اسٹک بائیں یا دائیں: منظر گھمائیں، گھماتے رہنے کے لیے پکڑے رکھیں۔ بائیں تھمب اسٹک بائیں یا دائیں: پچھلا یا اگلا میڈیا۔ اوپر یا نیچے: ویڈیو میں 10 سیکنڈ آگے یا پیچھے، تصویر کو 90 ڈگری گھمائیں۔</string>
   <string name="immersive_previous">پچھلا</string>
   <string name="immersive_next">اگلا</string>
   <string name="immersive_turn">گھمائیں</string>

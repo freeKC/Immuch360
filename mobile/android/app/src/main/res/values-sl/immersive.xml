@@ -4,7 +4,7 @@
   <string name="immersive_back">Nazaj</string>
   <string name="immersive_play">Predvajaj</string>
   <string name="immersive_pause">Premor</string>
-  <string name="immersive_hint">B ali Y: nazaj v aplikacijo. Sprožilec: predvajaj ali premor. A, X ali gumb za oprijem: prikaži ali skrij to ploščo. Palčka levo ali desno: prejšnji ali naslednji medij. Gor ali dol: 10 sekund naprej ali nazaj v videu, zasukaj fotografijo za 90 stopinj.</string>
+  <string name="immersive_hint">B ali Y: nazaj v aplikacijo. Sprožilec: predvajaj ali premor. A, X ali gumb za oprijem: prikaži ali skrij to ploščo. Desna palčka levo ali desno: zasukaj pogled, pridrži za neprekinjeno sukanje. Leva palčka levo ali desno: prejšnji ali naslednji medij. Gor ali dol: 10 sekund naprej ali nazaj v videu, zasukaj fotografijo za 90 stopinj.</string>
   <string name="immersive_previous">Prejšnji</string>
   <string name="immersive_next">Naslednji</string>
   <string name="immersive_turn">Zasukaj</string>

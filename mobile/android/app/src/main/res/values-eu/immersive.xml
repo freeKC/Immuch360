@@ -3,7 +3,7 @@
   <string name="immersive_back">Atzera</string>
   <string name="immersive_play">Erreproduzitu</string>
   <string name="immersive_pause">Pausatu</string>
-  <string name="immersive_hint">B edo Y: itzuli aplikaziora. Katua: erreproduzitu edo pausatu. A, X edo heltzeko botoia: erakutsi edo ezkutatu panel hau. Joystick-a ezkerrera edo eskuinera: aurreko edo hurrengo multimedia-elementua. Gora edo behera: 10 segundo aurrera edo atzera bideo batean, biratu argazki bat 90 gradu.</string>
+  <string name="immersive_hint">B edo Y: itzuli aplikaziora. Katua: erreproduzitu edo pausatu. A, X edo heltzeko botoia: erakutsi edo ezkutatu panel hau. Eskuineko joystick-a ezkerrera edo eskuinera: biratu ikuspegia, eutsi biratzen jarraitzeko. Ezkerreko joystick-a ezkerrera edo eskuinera: aurreko edo hurrengo multimedia-elementua. Gora edo behera: 10 segundo aurrera edo atzera bideo batean, biratu argazki bat 90 gradu.</string>
   <string name="immersive_previous">Aurrekoa</string>
   <string name="immersive_next">Hurrengoa</string>
   <string name="immersive_turn">Biratu</string>

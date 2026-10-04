@@ -4,7 +4,7 @@
   <string name="immersive_back">Geri</string>
   <string name="immersive_play">Oynat</string>
   <string name="immersive_pause">Fasilə</string>
-  <string name="immersive_hint">B və ya Y: tətbiqə qayıt. Tətik: oynat və ya fasilə ver. A, X və ya tutma düyməsi: bu paneli göstər və ya gizlət. Coystik sola və ya sağa: əvvəlki və ya növbəti media. Yuxarı və ya aşağı: videoda 10 saniyə irəli və ya geri, şəkli 90 dərəcə döndər.</string>
+  <string name="immersive_hint">B və ya Y: tətbiqə qayıt. Tətik: oynat və ya fasilə ver. A, X və ya tutma düyməsi: bu paneli göstər və ya gizlət. Sağ coystik sola və ya sağa: görünüşü döndər, döndərməyə davam etmək üçün saxla. Sol coystik sola və ya sağa: əvvəlki və ya növbəti media. Yuxarı və ya aşağı: videoda 10 saniyə irəli və ya geri, şəkli 90 dərəcə döndər.</string>
   <string name="immersive_previous">Əvvəlki</string>
   <string name="immersive_next">Növbəti</string>
   <string name="immersive_turn">Döndər</string>

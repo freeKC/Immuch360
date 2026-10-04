@@ -4,7 +4,7 @@
   <string name="immersive_back">Retour</string>
   <string name="immersive_play">Lecture</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B ou Y : retour à l\'application. Gâchette : lecture ou pause. A, X ou bouton de préhension : afficher ou masquer ce panneau. Joystick à gauche ou à droite : média précédent ou suivant. Vers le haut ou le bas : avancer ou reculer de 10 secondes dans une vidéo, faire pivoter une photo de 90 degrés.</string>
+  <string name="immersive_hint">B ou Y : retour à l\'application. Gâchette : lecture ou pause. A, X ou bouton de préhension : afficher ou masquer ce panneau. Joystick droit à gauche ou à droite : faire pivoter la vue, maintenir pour continuer à pivoter. Joystick gauche à gauche ou à droite : média précédent ou suivant. Vers le haut ou le bas : avancer ou reculer de 10 secondes dans une vidéo, faire pivoter une photo de 90 degrés.</string>
   <string name="immersive_previous">Précédent</string>
   <string name="immersive_next">Suivant</string>
   <string name="immersive_turn">Pivoter</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">Indree</string>
   <string name="immersive_play">Fà partì</string>
   <string name="immersive_pause">Pausa</string>
-  <string name="immersive_hint">B o Y: torna a l\'app. Grilett: fà partì o mett in pausa. A, X o grip: fà vedè o scond quest panell. Levetta a sinistra o a drita: media precedent o seguent. In sù o in giò: 10 second inanz o indree in d\'on video, gira ona foto de 90 grad.</string>
+  <string name="immersive_hint">B o Y: torna a l\'app. Grilett: fà partì o mett in pausa. A, X o grip: fà vedè o scond quest panell. Levetta de drita a sinistra o a drita: gira la vista, tegnila per continuà a girà. Levetta de sinistra a sinistra o a drita: media precedent o seguent. In sù o in giò: 10 second inanz o indree in d\'on video, gira ona foto de 90 grad.</string>
   <string name="immersive_previous">Precedent</string>
   <string name="immersive_next">Seguent</string>
   <string name="immersive_turn">Gira</string>

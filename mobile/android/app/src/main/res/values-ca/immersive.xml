@@ -4,7 +4,7 @@
   <string name="immersive_back">Endarrere</string>
   <string name="immersive_play">Reprodueix</string>
   <string name="immersive_pause">Pausa</string>
-  <string name="immersive_hint">B o Y: torna a l’aplicació. Gallet: reprodueix o posa en pausa. A, X o botó lateral: mostra o amaga aquest tauler. Joystick a l’esquerra o a la dreta: contingut anterior o següent. Amunt o avall: 10 segons endavant o enrere en un vídeo, gira una foto 90 graus.</string>
+  <string name="immersive_hint">B o Y: torna a l’aplicació. Gallet: reprodueix o posa en pausa. A, X o botó lateral: mostra o amaga aquest tauler. Joystick dret a l’esquerra o a la dreta: gira la vista, mantén-lo per continuar girant. Joystick esquerre a l’esquerra o a la dreta: contingut anterior o següent. Amunt o avall: 10 segons endavant o enrere en un vídeo, gira una foto 90 graus.</string>
   <string name="immersive_previous">Anterior</string>
   <string name="immersive_next">Següent</string>
   <string name="immersive_turn">Gira</string>

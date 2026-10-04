@@ -3,7 +3,7 @@
   <string name="immersive_back">Tilbake</string>
   <string name="immersive_play">Spill av</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B eller Y: tilbake til appen. Avtrekker: spill av eller pause. A, X eller grepknapp: vis eller skjul dette panelet. Styrespak til venstre eller høyre: forrige eller neste medium. Opp eller ned: 10 sekunder frem eller tilbake i en video, roter et bilde 90 grader.</string>
+  <string name="immersive_hint">B eller Y: tilbake til appen. Avtrekker: spill av eller pause. A, X eller grepknapp: vis eller skjul dette panelet. Høyre styrespak til venstre eller høyre: roter visningen, hold den for å fortsette å rotere. Venstre styrespak til venstre eller høyre: forrige eller neste medium. Opp eller ned: 10 sekunder frem eller tilbake i en video, roter et bilde 90 grader.</string>
   <string name="immersive_previous">Forrige</string>
   <string name="immersive_next">Neste</string>
   <string name="immersive_turn">Roter</string>

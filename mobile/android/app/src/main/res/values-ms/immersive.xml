@@ -3,7 +3,7 @@
   <string name="immersive_back">Kembali</string>
   <string name="immersive_play">Main</string>
   <string name="immersive_pause">Jeda</string>
-  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pemicu: main atau jeda. A, X atau butang genggam: tunjukkan atau sembunyikan panel ini. Joystick ke kiri atau kanan: media sebelumnya atau seterusnya. Ke atas atau bawah: 10 saat ke hadapan atau ke belakang dalam video, putar gambar sebanyak 90 darjah.</string>
+  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pemicu: main atau jeda. A, X atau butang genggam: tunjukkan atau sembunyikan panel ini. Joystick kanan ke kiri atau kanan: putar paparan, tahan untuk terus memutar. Joystick kiri ke kiri atau kanan: media sebelumnya atau seterusnya. Ke atas atau bawah: 10 saat ke hadapan atau ke belakang dalam video, putar gambar sebanyak 90 darjah.</string>
   <string name="immersive_previous">Sebelumnya</string>
   <string name="immersive_next">Seterusnya</string>
   <string name="immersive_turn">Putar</string>

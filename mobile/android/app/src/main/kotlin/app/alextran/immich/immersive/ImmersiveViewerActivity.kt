@@ -836,7 +836,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     return status
   }
 
-  /** Thumbstick up or down on a photo: the turn, told by the feedback panel while the info panel is hidden. */
+  /**
+   * A turn from the thumbstick (the right one left or right on any media, either one up or down on a photo), told by
+   * the feedback panel while the info panel is hidden.
+   */
   private fun turnFromThumbstick(degrees: Float) {
     val status = rotateSphere(degrees)
     if (!infoVisible) showFeedback(status)
@@ -931,6 +934,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         ImmersiveControls.Action.PREVIOUS -> navigate(-1, fromThumbstick = true)
         ImmersiveControls.Action.NEXT -> navigate(1, fromThumbstick = true)
+        ImmersiveControls.Action.TURN_LEFT -> turnFromThumbstick(-SNAP_TURN_DEGREES)
+        ImmersiveControls.Action.TURN_RIGHT -> turnFromThumbstick(SNAP_TURN_DEGREES)
         ImmersiveControls.Action.STICK_UP ->
           if (isVideo) seekFromThumbstick(1) else turnFromThumbstick(YAW_STEP_DEGREES)
         ImmersiveControls.Action.STICK_DOWN ->
@@ -2257,6 +2262,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val SKYBOX_YAW_DEGREES = 0f
     private const val VIDEO_YAW_DEGREES = 0f
     private const val YAW_STEP_DEGREES = 90f
+
+    /**
+     * The turn of one push of the right thumbstick: a snap turn of the size most headset apps use, small enough to
+     * keep the bearings and repeated while the stick is held, so that looking behind takes one long push.
+     */
+    private const val SNAP_TURN_DEGREES = 30f
 
     /** Token of the last intent built by [intent], checked by parse. Lives as long as the process. */
     @Volatile private var launchToken: String? = null

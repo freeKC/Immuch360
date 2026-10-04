@@ -100,11 +100,50 @@ class ImmersiveInputTest {
   @Test
   fun `the thumbstick never touches the info panel`() {
     for (visible in listOf(false, true)) {
-      assertEquals(listOf(Action.PREVIOUS), actions(controller = ButtonBits.ButtonThumbRL, panelVisible = visible))
+      assertEquals(listOf(Action.PREVIOUS), actions(controller = ButtonBits.ButtonThumbLL, panelVisible = visible))
       assertEquals(listOf(Action.NEXT), actions(controller = ButtonBits.ButtonThumbLR, panelVisible = visible))
+      assertEquals(listOf(Action.TURN_LEFT), actions(controller = ButtonBits.ButtonThumbRL, panelVisible = visible))
+      assertEquals(listOf(Action.TURN_RIGHT), actions(controller = ButtonBits.ButtonThumbRR, panelVisible = visible))
       assertEquals(listOf(Action.STICK_UP), actions(controller = ButtonBits.ButtonThumbRU, panelVisible = visible))
       assertEquals(listOf(Action.STICK_DOWN), actions(controller = ButtonBits.ButtonThumbLD, panelVisible = visible))
     }
+  }
+
+  @Test
+  fun `the right thumbstick held left or right turns again after a delay, then at an interval`() {
+    val held = ButtonBits.ButtonThumbRR
+    assertEquals(0, edges.pressed(1, true, "CONTROLLER", 0, nowMs = 1000))
+    assertEquals(held, edges.pressed(1, true, "CONTROLLER", held, nowMs = 1000))
+    // Held, but not for long enough yet
+    assertEquals(0, edges.pressed(1, true, "CONTROLLER", held, nowMs = 1000 + ControllerEdges.TURN_REPEAT_DELAY_MS - 1))
+    assertEquals(held, edges.pressed(1, true, "CONTROLLER", held, nowMs = 1000 + ControllerEdges.TURN_REPEAT_DELAY_MS))
+    val second = 1000 + ControllerEdges.TURN_REPEAT_DELAY_MS + ControllerEdges.TURN_REPEAT_INTERVAL_MS
+    assertEquals(0, edges.pressed(1, true, "CONTROLLER", held, nowMs = second - 1))
+    assertEquals(held, edges.pressed(1, true, "CONTROLLER", held, nowMs = second))
+    // Released: nothing more, and a new push starts over with its own delay
+    assertEquals(0, edges.pressed(1, true, "CONTROLLER", 0, nowMs = second + 1000))
+    assertEquals(0, edges.pressed(1, true, "CONTROLLER", 0, nowMs = second + 2000))
+    assertEquals(held, edges.pressed(1, true, "CONTROLLER", held, nowMs = second + 3000))
+    assertEquals(0, edges.pressed(1, true, "CONTROLLER", held, nowMs = second + 3000 + 100))
+  }
+
+  @Test
+  fun `the other thumbstick directions and the buttons do not repeat`() {
+    for (bit in listOf(ButtonBits.ButtonThumbLL, ButtonBits.ButtonThumbRU, ButtonBits.ButtonA)) {
+      val own = ControllerEdges()
+      own.pressed(2, true, "CONTROLLER", 0, nowMs = 0)
+      assertEquals(bit, own.pressed(2, true, "CONTROLLER", bit, nowMs = 0))
+      assertEquals(0, own.pressed(2, true, "CONTROLLER", bit, nowMs = 5000))
+    }
+  }
+
+  @Test
+  fun `a turn held across a controller reset does not repeat`() {
+    val held = ButtonBits.ButtonThumbRL
+    edges.pressed(1, true, "CONTROLLER", 0, nowMs = 0)
+    assertEquals(held, edges.pressed(1, true, "CONTROLLER", held, nowMs = 0))
+    assertEquals(0, edges.pressed(1, false, "CONTROLLER", held, nowMs = 100))
+    assertEquals(0, edges.pressed(1, false, "CONTROLLER", held, nowMs = 5000))
   }
 
   @Test
@@ -148,7 +187,7 @@ class ImmersiveInputTest {
   @Test
   fun `controller buttons the SDK files under a hand still work`() {
     assertEquals(listOf(Action.CLOSE), actions(hand = ButtonBits.ButtonB))
-    assertEquals(listOf(Action.NEXT), actions(hand = ButtonBits.ButtonThumbRR))
+    assertEquals(listOf(Action.TURN_RIGHT), actions(hand = ButtonBits.ButtonThumbRR))
     assertEquals(
       listOf(Action.STICK_UP, Action.SHOW_PANEL),
       actions(hand = ButtonBits.ButtonThumbRU or ButtonBits.ButtonA),
@@ -162,7 +201,7 @@ class ImmersiveInputTest {
       actions(controller = ButtonBits.ButtonThumbRD or ButtonBits.ButtonX, panelVisible = true),
     )
     assertEquals(
-      listOf(Action.NEXT, Action.TOGGLE_PANEL, Action.PLAY_PAUSE),
+      listOf(Action.TURN_RIGHT, Action.TOGGLE_PANEL, Action.PLAY_PAUSE),
       actions(
         controller = ButtonBits.ButtonThumbRR or ButtonBits.ButtonX or ButtonBits.ButtonTriggerL,
         panelVisible = true,

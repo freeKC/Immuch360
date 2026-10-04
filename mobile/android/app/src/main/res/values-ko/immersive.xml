@@ -4,7 +4,7 @@
   <string name="immersive_back">뒤로</string>
   <string name="immersive_play">재생</string>
   <string name="immersive_pause">일시 정지</string>
-  <string name="immersive_hint">B 또는 Y: 앱으로 돌아가기. 트리거: 재생 또는 일시 정지. A, X 또는 그립: 이 패널 표시 또는 숨기기. 썸스틱 왼쪽 또는 오른쪽: 이전 또는 다음 미디어. 위 또는 아래: 동영상에서 10초 앞으로 또는 뒤로, 사진 90도 회전.</string>
+  <string name="immersive_hint">B 또는 Y: 앱으로 돌아가기. 트리거: 재생 또는 일시 정지. A, X 또는 그립: 이 패널 표시 또는 숨기기. 오른쪽 썸스틱 왼쪽 또는 오른쪽: 시점 회전, 길게 밀면 계속 회전. 왼쪽 썸스틱 왼쪽 또는 오른쪽: 이전 또는 다음 미디어. 위 또는 아래: 동영상에서 10초 앞으로 또는 뒤로, 사진 90도 회전.</string>
   <string name="immersive_previous">이전</string>
   <string name="immersive_next">다음</string>
   <string name="immersive_turn">회전</string>

@@ -3,7 +3,7 @@
   <string name="immersive_back">Wstecz</string>
   <string name="immersive_play">Odtwórz</string>
   <string name="immersive_pause">Wstrzymaj</string>
-  <string name="immersive_hint">B lub Y: powrót do aplikacji. Spust: odtwórz lub wstrzymaj. A, X lub przycisk chwytu: pokaż lub ukryj ten panel. Drążek w lewo lub w prawo: poprzednie lub następne multimedia. W górę lub w dół: 10 sekund do przodu lub do tyłu w filmie, obrót zdjęcia o 90 stopni.</string>
+  <string name="immersive_hint">B lub Y: powrót do aplikacji. Spust: odtwórz lub wstrzymaj. A, X lub przycisk chwytu: pokaż lub ukryj ten panel. Prawy drążek w lewo lub w prawo: obrót widoku, przytrzymaj, aby obracać dalej. Lewy drążek w lewo lub w prawo: poprzednie lub następne multimedia. W górę lub w dół: 10 sekund do przodu lub do tyłu w filmie, obrót zdjęcia o 90 stopni.</string>
   <string name="immersive_previous">Poprzednie</string>
   <string name="immersive_next">Następne</string>
   <string name="immersive_turn">Obróć</string>

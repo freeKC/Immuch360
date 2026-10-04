@@ -4,7 +4,7 @@
   <string name="immersive_back">Späť</string>
   <string name="immersive_play">Prehrať</string>
   <string name="immersive_pause">Pozastaviť</string>
-  <string name="immersive_hint">B alebo Y: späť do aplikácie. Spúšť: prehrať alebo pozastaviť. A, X alebo tlačidlo úchopu: zobraziť alebo skryť tento panel. Páčka doľava alebo doprava: predchádzajúce alebo ďalšie médium. Nahor alebo nadol: 10 sekúnd dopredu alebo dozadu vo videu, otočenie fotky o 90 stupňov.</string>
+  <string name="immersive_hint">B alebo Y: späť do aplikácie. Spúšť: prehrať alebo pozastaviť. A, X alebo tlačidlo úchopu: zobraziť alebo skryť tento panel. Pravá páčka doľava alebo doprava: otočiť pohľad, podržať pre plynulé otáčanie. Ľavá páčka doľava alebo doprava: predchádzajúce alebo ďalšie médium. Nahor alebo nadol: 10 sekúnd dopredu alebo dozadu vo videu, otočenie fotky o 90 stupňov.</string>
   <string name="immersive_previous">Predchádzajúce</string>
   <string name="immersive_next">Ďalšie</string>
   <string name="immersive_turn">Otočiť</string>

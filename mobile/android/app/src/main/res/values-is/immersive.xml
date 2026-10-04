@@ -4,7 +4,7 @@
   <string name="immersive_back">Til baka</string>
   <string name="immersive_play">Spila</string>
   <string name="immersive_pause">Hlé</string>
-  <string name="immersive_hint">B eða Y: aftur í forritið. Gikkur: spila eða gera hlé. A, X eða handfang: sýna eða fela þetta spjald. Stýripinni til vinstri eða hægri: fyrra eða næsta efni. Upp eða niður: 10 sekúndur áfram eða aftur á bak í myndbandi, snúa mynd um 90 gráður.</string>
+  <string name="immersive_hint">B eða Y: aftur í forritið. Gikkur: spila eða gera hlé. A, X eða handfang: sýna eða fela þetta spjald. Hægri stýripinni til vinstri eða hægri: snúa sjónarhorninu, halda honum til að halda áfram að snúa. Vinstri stýripinni til vinstri eða hægri: fyrra eða næsta efni. Upp eða niður: 10 sekúndur áfram eða aftur á bak í myndbandi, snúa mynd um 90 gráður.</string>
   <string name="immersive_previous">Fyrra</string>
   <string name="immersive_next">Næsta</string>
   <string name="immersive_turn">Snúa</string>

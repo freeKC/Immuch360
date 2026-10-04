@@ -3,7 +3,7 @@
   <string name="immersive_back">Terug</string>
   <string name="immersive_play">Afspelen</string>
   <string name="immersive_pause">Pauzeren</string>
-  <string name="immersive_hint">B of Y: terug naar de app. Trigger: afspelen of pauzeren. A, X of grip: dit paneel tonen of verbergen. Thumbstick naar links of rechts: vorige of volgende media. Omhoog of omlaag: 10 seconden vooruit of terug in een video, een foto 90 graden draaien.</string>
+  <string name="immersive_hint">B of Y: terug naar de app. Trigger: afspelen of pauzeren. A, X of grip: dit paneel tonen of verbergen. Rechter thumbstick naar links of rechts: weergave draaien, vasthouden om door te draaien. Linker thumbstick naar links of rechts: vorige of volgende media. Omhoog of omlaag: 10 seconden vooruit of terug in een video, een foto 90 graden draaien.</string>
   <string name="immersive_previous">Vorige</string>
   <string name="immersive_next">Volgende</string>
   <string name="immersive_turn">Draaien</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">Hoki</string>
   <string name="immersive_play">Pūrei</string>
   <string name="immersive_pause">Tatari</string>
-  <string name="immersive_hint">B, Y rānei: hoki ki te taupānga. Keu: pūrei, tatari rānei. A, X, te pātene pupuri rānei: whakaatu, huna rānei i tēnei pae. Rākau kōnui ki mauī, ki matau rānei: te pāpāho o mua, o muri rānei. Ki runga, ki raro rānei: 10 hēkona whakamua, whakamuri rānei i tētahi ataata, hurihia tētahi whakaahua kia 90 putu.</string>
+  <string name="immersive_hint">B, Y rānei: hoki ki te taupānga. Keu: pūrei, tatari rānei. A, X, te pātene pupuri rānei: whakaatu, huna rānei i tēnei pae. Rākau kōnui matau ki mauī, ki matau rānei: hurihia te tirohanga, puritia kia huri tonu ai. Rākau kōnui mauī ki mauī, ki matau rānei: te pāpāho o mua, o muri rānei. Ki runga, ki raro rānei: 10 hēkona whakamua, whakamuri rānei i tētahi ataata, hurihia tētahi whakaahua kia 90 putu.</string>
   <string name="immersive_previous">O mua</string>
   <string name="immersive_next">O muri</string>
   <string name="immersive_turn">Hurihia</string>

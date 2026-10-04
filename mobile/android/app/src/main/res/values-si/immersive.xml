@@ -4,7 +4,7 @@
   <string name="immersive_back">ආපසු</string>
   <string name="immersive_play">වාදනය</string>
   <string name="immersive_pause">විරාමය</string>
-  <string name="immersive_hint">B හෝ Y: යෙදුමට ආපසු. ට්‍රිගරය: වාදනය හෝ විරාමය. A, X හෝ ග්‍රිප් බොත්තම: මෙම පැනලය පෙන්වන්න හෝ සඟවන්න. තම්බ්ස්ටික් වමට හෝ දකුණට: පෙර හෝ ඊළඟ මාධ්‍ය. ඉහළට හෝ පහළට: වීඩියෝවක තත්පර 10ක් ඉදිරියට හෝ පසුපසට, ඡායාරූපයක් අංශක 90කින් කරකවන්න.</string>
+  <string name="immersive_hint">B හෝ Y: යෙදුමට ආපසු. ට්‍රිගරය: වාදනය හෝ විරාමය. A, X හෝ ග්‍රිප් බොත්තම: මෙම පැනලය පෙන්වන්න හෝ සඟවන්න. දකුණු තම්බ්ස්ටික් වමට හෝ දකුණට: දර්ශනය කරකවන්න, දිගටම කරකවීමට අල්ලාගෙන සිටින්න. වම් තම්බ්ස්ටික් වමට හෝ දකුණට: පෙර හෝ ඊළඟ මාධ්‍ය. ඉහළට හෝ පහළට: වීඩියෝවක තත්පර 10ක් ඉදිරියට හෝ පසුපසට, ඡායාරූපයක් අංශක 90කින් කරකවන්න.</string>
   <string name="immersive_previous">පෙර</string>
   <string name="immersive_next">ඊළඟ</string>
   <string name="immersive_turn">කරකවන්න</string>

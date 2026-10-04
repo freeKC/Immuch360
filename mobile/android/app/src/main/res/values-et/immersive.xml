@@ -3,7 +3,7 @@
   <string name="immersive_back">Tagasi</string>
   <string name="immersive_play">Esita</string>
   <string name="immersive_pause">Peata</string>
-  <string name="immersive_hint">B või Y: tagasi rakendusse. Päästik: esita või peata. A, X või haardenupp: näita või peida see paneel. Juhtkang vasakule või paremale: eelmine või järgmine meediafail. Üles või alla: videos 10 sekundit edasi või tagasi, foto pööramine 90 kraadi võrra.</string>
+  <string name="immersive_hint">B või Y: tagasi rakendusse. Päästik: esita või peata. A, X või haardenupp: näita või peida see paneel. Parem juhtkang vasakule või paremale: pööra vaadet, hoia seda, et pööramist jätkata. Vasak juhtkang vasakule või paremale: eelmine või järgmine meediafail. Üles või alla: videos 10 sekundit edasi või tagasi, foto pööramine 90 kraadi võrra.</string>
   <string name="immersive_previous">Eelmine</string>
   <string name="immersive_next">Järgmine</string>
   <string name="immersive_turn">Pööra</string>

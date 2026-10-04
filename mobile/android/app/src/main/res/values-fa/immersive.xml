@@ -3,7 +3,7 @@
   <string name="immersive_back">بازگشت</string>
   <string name="immersive_play">پخش</string>
   <string name="immersive_pause">مکث</string>
-  <string name="immersive_hint">B یا Y: بازگشت به برنامه. ماشه: پخش یا مکث. A، X یا دکمهٔ گرفتن: نمایش یا پنهان کردن این پنل. جوی‌استیک به چپ یا راست: رسانهٔ قبلی یا بعدی. بالا یا پایین: 10 ثانیه جلو یا عقب در ویدیو، چرخاندن عکس به اندازهٔ 90 درجه.</string>
+  <string name="immersive_hint">B یا Y: بازگشت به برنامه. ماشه: پخش یا مکث. A، X یا دکمهٔ گرفتن: نمایش یا پنهان کردن این پنل. جوی‌استیک راست به چپ یا راست: چرخاندن نما، نگه داشتن برای چرخش پیوسته. جوی‌استیک چپ به چپ یا راست: رسانهٔ قبلی یا بعدی. بالا یا پایین: 10 ثانیه جلو یا عقب در ویدیو، چرخاندن عکس به اندازهٔ 90 درجه.</string>
   <string name="immersive_previous">قبلی</string>
   <string name="immersive_next">بعدی</string>
   <string name="immersive_turn">چرخاندن</string>

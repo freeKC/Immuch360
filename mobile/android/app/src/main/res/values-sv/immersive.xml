@@ -4,7 +4,7 @@
   <string name="immersive_back">Tillbaka</string>
   <string name="immersive_play">Spela upp</string>
   <string name="immersive_pause">Pausa</string>
-  <string name="immersive_hint">B eller Y: tillbaka till appen. Avtryckaren: spela upp eller pausa. A, X eller greppknappen: visa eller dölj den här panelen. Tumspaken åt vänster eller höger: föregående eller nästa media. Uppåt eller nedåt: 10 sekunder framåt eller bakåt i en video, vrid ett foto 90 grader.</string>
+  <string name="immersive_hint">B eller Y: tillbaka till appen. Avtryckaren: spela upp eller pausa. A, X eller greppknappen: visa eller dölj den här panelen. Högra tumspaken åt vänster eller höger: vrid vyn, håll kvar för att fortsätta vrida. Vänstra tumspaken åt vänster eller höger: föregående eller nästa media. Uppåt eller nedåt: 10 sekunder framåt eller bakåt i en video, vrid ett foto 90 grader.</string>
   <string name="immersive_previous">Föregående</string>
   <string name="immersive_next">Nästa</string>
   <string name="immersive_turn">Vrid</string>

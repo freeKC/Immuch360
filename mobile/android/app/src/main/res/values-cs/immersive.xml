@@ -4,7 +4,7 @@
   <string name="immersive_back">Zpět</string>
   <string name="immersive_play">Přehrát</string>
   <string name="immersive_pause">Pozastavit</string>
-  <string name="immersive_hint">B nebo Y: zpět do aplikace. Spoušť: přehrát nebo pozastavit. A, X nebo tlačítko úchopu: zobrazit nebo skrýt tento panel. Páčka doleva nebo doprava: předchozí nebo další médium. Nahoru nebo dolů: 10 sekund vpřed nebo zpět ve videu, otočit fotku o 90 stupňů.</string>
+  <string name="immersive_hint">B nebo Y: zpět do aplikace. Spoušť: přehrát nebo pozastavit. A, X nebo tlačítko úchopu: zobrazit nebo skrýt tento panel. Pravá páčka doleva nebo doprava: otočit pohled, podržet pro plynulé otáčení. Levá páčka doleva nebo doprava: předchozí nebo další médium. Nahoru nebo dolů: 10 sekund vpřed nebo zpět ve videu, otočit fotku o 90 stupňů.</string>
   <string name="immersive_previous">Předchozí</string>
   <string name="immersive_next">Další</string>
   <string name="immersive_turn">Otočit</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">પાછા</string>
   <string name="immersive_play">ચલાવો</string>
   <string name="immersive_pause">થોભાવો</string>
-  <string name="immersive_hint">B અથવા Y: ઍપ પર પાછા જાઓ. ટ્રિગર: ચલાવો અથવા થોભાવો. A, X અથવા ગ્રિપ: આ પૅનલ બતાવો અથવા છુપાવો. થમ્બસ્ટિક ડાબે અથવા જમણે: પાછલું અથવા આગલું મીડિયા. ઉપર અથવા નીચે: વીડિયોમાં 10 સેકન્ડ આગળ અથવા પાછળ, ફોટોને 90 ડિગ્રી ફેરવો.</string>
+  <string name="immersive_hint">B અથવા Y: ઍપ પર પાછા જાઓ. ટ્રિગર: ચલાવો અથવા થોભાવો. A, X અથવા ગ્રિપ: આ પૅનલ બતાવો અથવા છુપાવો. જમણી થમ્બસ્ટિક ડાબે અથવા જમણે: દૃશ્ય ફેરવો, ફેરવતા રહેવા માટે પકડી રાખો. ડાબી થમ્બસ્ટિક ડાબે અથવા જમણે: પાછલું અથવા આગલું મીડિયા. ઉપર અથવા નીચે: વીડિયોમાં 10 સેકન્ડ આગળ અથવા પાછળ, ફોટોને 90 ડિગ્રી ફેરવો.</string>
   <string name="immersive_previous">પાછલું</string>
   <string name="immersive_next">આગલું</string>
   <string name="immersive_turn">ફેરવો</string>

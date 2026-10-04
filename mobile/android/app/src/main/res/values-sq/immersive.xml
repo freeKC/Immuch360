@@ -4,7 +4,7 @@
   <string name="immersive_back">Mbrapa</string>
   <string name="immersive_play">Luaj</string>
   <string name="immersive_pause">Pauzë</string>
-  <string name="immersive_hint">B ose Y: kthim te aplikacioni. Këmbëza: luaj ose pauzë. A, X ose butoni i kapjes: shfaq ose fshih këtë panel. Leva majtas ose djathtas: media e mëparshme ose e radhës. Lart ose poshtë: 10 sekonda përpara ose prapa në një video, rrotullo një foto me 90 gradë.</string>
+  <string name="immersive_hint">B ose Y: kthim te aplikacioni. Këmbëza: luaj ose pauzë. A, X ose butoni i kapjes: shfaq ose fshih këtë panel. Leva e djathtë majtas ose djathtas: rrotullo pamjen, mbaje për ta rrotulluar vazhdimisht. Leva e majtë majtas ose djathtas: media e mëparshme ose e radhës. Lart ose poshtë: 10 sekonda përpara ose prapa në një video, rrotullo një foto me 90 gradë.</string>
   <string name="immersive_previous">E mëparshmja</string>
   <string name="immersive_next">Tjetra</string>
   <string name="immersive_turn">Rrotullo</string>

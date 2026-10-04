@@ -4,7 +4,7 @@
   <string name="immersive_back">Kembali</string>
   <string name="immersive_play">Putar</string>
   <string name="immersive_pause">Jeda</string>
-  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pelatuk: putar atau jeda. A, X atau grip: tampilkan atau sembunyikan panel ini. Thumbstick ke kiri atau kanan: media sebelumnya atau berikutnya. Ke atas atau bawah: maju atau mundur 10 detik dalam video, rotasi foto 90 derajat.</string>
+  <string name="immersive_hint">B atau Y: kembali ke aplikasi. Pelatuk: putar atau jeda. A, X atau grip: tampilkan atau sembunyikan panel ini. Thumbstick kanan ke kiri atau kanan: putar tampilan, tahan untuk terus memutar. Thumbstick kiri ke kiri atau kanan: media sebelumnya atau berikutnya. Ke atas atau bawah: maju atau mundur 10 detik dalam video, rotasi foto 90 derajat.</string>
   <string name="immersive_previous">Sebelumnya</string>
   <string name="immersive_next">Berikutnya</string>
   <string name="immersive_turn">Rotasi</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">Ar ais</string>
   <string name="immersive_play">Seinn</string>
   <string name="immersive_pause">Sos</string>
-  <string name="immersive_hint">B nó Y: ar ais chuig an aip. Truicear: seinn nó sos. A, X nó cnaipe greama: taispeáin nó folaigh an painéal seo. Maide ordóige ar chlé nó ar dheis: an meán roimhe seo nó an chéad mheán eile. Suas nó síos: 10 soicind ar aghaidh nó siar i bhfíseán, cas grianghraf 90 céim.</string>
+  <string name="immersive_hint">B nó Y: ar ais chuig an aip. Truicear: seinn nó sos. A, X nó cnaipe greama: taispeáin nó folaigh an painéal seo. Maide ordóige deas ar chlé nó ar dheis: cas an radharc, coinnigh ann é chun leanúint ag casadh. Maide ordóige clé ar chlé nó ar dheis: an meán roimhe seo nó an chéad mheán eile. Suas nó síos: 10 soicind ar aghaidh nó siar i bhfíseán, cas grianghraf 90 céim.</string>
   <string name="immersive_previous">Roimhe seo</string>
   <string name="immersive_next">Ar aghaidh</string>
   <string name="immersive_turn">Cas</string>

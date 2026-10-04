@@ -4,7 +4,7 @@
   <string name="immersive_back">Vissza</string>
   <string name="immersive_play">Lejátszás</string>
   <string name="immersive_pause">Szünet</string>
-  <string name="immersive_hint">B vagy Y: vissza az alkalmazásba. Ravasz: lejátszás vagy szünet. A, X vagy markolatgomb: a panel megjelenítése vagy elrejtése. Joystick balra vagy jobbra: előző vagy következő média. Fel vagy le: videóban 10 másodperc előre vagy vissza, fotó elforgatása 90 fokkal.</string>
+  <string name="immersive_hint">B vagy Y: vissza az alkalmazásba. Ravasz: lejátszás vagy szünet. A, X vagy markolatgomb: a panel megjelenítése vagy elrejtése. Jobb oldali joystick balra vagy jobbra: a nézet elforgatása, megtartva folyamatos forgatás. Bal oldali joystick balra vagy jobbra: előző vagy következő média. Fel vagy le: videóban 10 másodperc előre vagy vissza, fotó elforgatása 90 fokkal.</string>
   <string name="immersive_previous">Előző</string>
   <string name="immersive_next">Következő</string>
   <string name="immersive_turn">Forgatás</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">ថយក្រោយ</string>
   <string name="immersive_play">ចាក់</string>
   <string name="immersive_pause">ផ្អាក</string>
-  <string name="immersive_hint">B ឬ Y៖ ត្រឡប់ទៅកម្មវិធីវិញ។ Trigger៖ ចាក់ ឬផ្អាក។ A, X ឬ Grip៖ បង្ហាញ ឬលាក់ផ្ទាំងនេះ។ Thumbstick ទៅឆ្វេង ឬស្តាំ៖ មេឌៀមុន ឬបន្ទាប់។ ឡើងលើ ឬចុះក្រោម៖ ទៅមុខ ឬថយក្រោយ 10 វិនាទីក្នុងវីដេអូ បង្វិលរូបថត 90 ដឺក្រេ។</string>
+  <string name="immersive_hint">B ឬ Y៖ ត្រឡប់ទៅកម្មវិធីវិញ។ Trigger៖ ចាក់ ឬផ្អាក។ A, X ឬ Grip៖ បង្ហាញ ឬលាក់ផ្ទាំងនេះ។ Thumbstick ខាងស្តាំ ទៅឆ្វេង ឬស្តាំ៖ បង្វិលទិដ្ឋភាព កាន់ជាប់ដើម្បីបន្តបង្វិល។ Thumbstick ខាងឆ្វេង ទៅឆ្វេង ឬស្តាំ៖ មេឌៀមុន ឬបន្ទាប់។ ឡើងលើ ឬចុះក្រោម៖ ទៅមុខ ឬថយក្រោយ 10 វិនាទីក្នុងវីដេអូ បង្វិលរូបថត 90 ដឺក្រេ។</string>
   <string name="immersive_previous">មុន</string>
   <string name="immersive_next">បន្ទាប់</string>
   <string name="immersive_turn">បង្វិល</string>

@@ -3,7 +3,7 @@
   <string name="immersive_back">Tilbage</string>
   <string name="immersive_play">Afspil</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B eller Y: tilbage til appen. Aftrækker: afspil eller pause. A, X eller grebknap: vis eller skjul dette panel. Thumbstick til venstre eller højre: forrige eller næste medie. Op eller ned: 10 sekunder frem eller tilbage i en video, drej et foto 90 grader.</string>
+  <string name="immersive_hint">B eller Y: tilbage til appen. Aftrækker: afspil eller pause. A, X eller grebknap: vis eller skjul dette panel. Højre thumbstick til venstre eller højre: drej visningen, hold den for at blive ved med at dreje. Venstre thumbstick til venstre eller højre: forrige eller næste medie. Op eller ned: 10 sekunder frem eller tilbage i en video, drej et foto 90 grader.</string>
   <string name="immersive_previous">Forrige</string>
   <string name="immersive_next">Næste</string>
   <string name="immersive_turn">Drej</string>

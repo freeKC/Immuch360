@@ -4,7 +4,7 @@
   <string name="immersive_back">戻る</string>
   <string name="immersive_play">再生</string>
   <string name="immersive_pause">一時停止</string>
-  <string name="immersive_hint">B または Y：アプリに戻る。トリガー：再生/一時停止。A、X またはグリップ：このパネルを表示/非表示。サムスティックを左右に倒す：前/次のメディア。上下に倒す：動画では 10 秒進む/戻る、写真では 90 度回転。</string>
+  <string name="immersive_hint">B または Y：アプリに戻る。トリガー：再生/一時停止。A、X またはグリップ：このパネルを表示/非表示。右サムスティックを左右に倒す：視点を回転、倒したままで連続回転。左サムスティックを左右に倒す：前/次のメディア。上下に倒す：動画では 10 秒進む/戻る、写真では 90 度回転。</string>
   <string name="immersive_previous">前へ</string>
   <string name="immersive_next">次へ</string>
   <string name="immersive_turn">回転</string>

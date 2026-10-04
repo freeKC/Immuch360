@@ -4,7 +4,7 @@
   <string name="immersive_back">Geri</string>
   <string name="immersive_play">Oynat</string>
   <string name="immersive_pause">Duraklat</string>
-  <string name="immersive_hint">B veya Y: uygulamaya dön. Tetik: oynat veya duraklat. A, X veya kavrama tuşu: bu paneli göster veya gizle. Analog çubuğu sola veya sağa: önceki veya sonraki medya. Yukarı veya aşağı: videoda 10 saniye ileri veya geri, fotoğrafı 90 derece döndür.</string>
+  <string name="immersive_hint">B veya Y: uygulamaya dön. Tetik: oynat veya duraklat. A, X veya kavrama tuşu: bu paneli göster veya gizle. Sağ analog çubuğu sola veya sağa: görünümü döndür, döndürmeye devam etmek için tut. Sol analog çubuğu sola veya sağa: önceki veya sonraki medya. Yukarı veya aşağı: videoda 10 saniye ileri veya geri, fotoğrafı 90 derece döndür.</string>
   <string name="immersive_previous">Önceki</string>
   <string name="immersive_next">Sonraki</string>
   <string name="immersive_turn">Döndür</string>

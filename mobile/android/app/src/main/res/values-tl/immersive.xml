@@ -4,7 +4,7 @@
   <string name="immersive_back">Bumalik</string>
   <string name="immersive_play">I-play</string>
   <string name="immersive_pause">I-pause</string>
-  <string name="immersive_hint">B o Y: bumalik sa app. Trigger: i-play o i-pause. A, X o grip: ipakita o itago ang panel na ito. Thumbstick pakaliwa o pakanan: nakaraan o susunod na media. Pataas o pababa: 10 segundong pasulong o paatras sa video, paikutin ang larawan nang 90 digri.</string>
+  <string name="immersive_hint">B o Y: bumalik sa app. Trigger: i-play o i-pause. A, X o grip: ipakita o itago ang panel na ito. Kanang thumbstick pakaliwa o pakanan: paikutin ang tanaw, hawakan para patuloy na umikot. Kaliwang thumbstick pakaliwa o pakanan: nakaraan o susunod na media. Pataas o pababa: 10 segundong pasulong o paatras sa video, paikutin ang larawan nang 90 digri.</string>
   <string name="immersive_previous">Nakaraan</string>
   <string name="immersive_next">Susunod</string>
   <string name="immersive_turn">Paikutin</string>

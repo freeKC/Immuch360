@@ -4,7 +4,7 @@
   <string name="immersive_back">返回</string>
   <string name="immersive_play">播放</string>
   <string name="immersive_pause">暂停</string>
-  <string name="immersive_hint">B 或 Y：返回应用。扳机键：播放或暂停。A、X 或握把键：显示或隐藏此面板。摇杆向左或向右：上一个或下一个媒体。向上或向下：视频快进或快退 10 秒，照片旋转 90 度。</string>
+  <string name="immersive_hint">B 或 Y：返回应用。扳机键：播放或暂停。A、X 或握把键：显示或隐藏此面板。右摇杆向左或向右：旋转视角，保持推动可持续旋转。左摇杆向左或向右：上一个或下一个媒体。向上或向下：视频快进或快退 10 秒，照片旋转 90 度。</string>
   <string name="immersive_previous">上一个</string>
   <string name="immersive_next">下一个</string>
   <string name="immersive_turn">旋转</string>

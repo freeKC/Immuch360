@@ -4,7 +4,7 @@
   <string name="immersive_back">Nazad</string>
   <string name="immersive_play">Reproduciraj</string>
   <string name="immersive_pause">Pauza</string>
-  <string name="immersive_hint">B ili Y: povratak u aplikaciju. Okidač: reprodukcija ili pauza. A, X ili tipka za hvat: prikaz ili skrivanje ove ploče. Palica lijevo ili desno: prethodni ili sljedeći medij. Gore ili dolje: 10 sekundi naprijed ili natrag u videozapisu, okretanje fotografije za 90 stupnjeva.</string>
+  <string name="immersive_hint">B ili Y: povratak u aplikaciju. Okidač: reprodukcija ili pauza. A, X ili tipka za hvat: prikaz ili skrivanje ove ploče. Desna palica lijevo ili desno: okretanje prikaza, držanjem se okretanje nastavlja. Lijeva palica lijevo ili desno: prethodni ili sljedeći medij. Gore ili dolje: 10 sekundi naprijed ili natrag u videozapisu, okretanje fotografije za 90 stupnjeva.</string>
   <string name="immersive_previous">Prethodno</string>
   <string name="immersive_next">Sljedeće</string>
   <string name="immersive_turn">Okreni</string>

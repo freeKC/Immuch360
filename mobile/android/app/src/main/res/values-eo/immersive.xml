@@ -3,7 +3,7 @@
   <string name="immersive_back">Malantaŭen</string>
   <string name="immersive_play">Ludi</string>
   <string name="immersive_pause">Paŭzi</string>
-  <string name="immersive_hint">B aŭ Y: reen al la aplikaĵo. Ĉano: ludi aŭ paŭzi. A, X aŭ tenbutono: montri aŭ kaŝi ĉi tiun panelon. Stirstangeto maldekstren aŭ dekstren: antaŭa aŭ sekva aŭdvidaĵo. Supren aŭ malsupren: 10 sekundojn antaŭen aŭ malantaŭen en video, turni foton je 90 gradoj.</string>
+  <string name="immersive_hint">B aŭ Y: reen al la aplikaĵo. Ĉano: ludi aŭ paŭzi. A, X aŭ tenbutono: montri aŭ kaŝi ĉi tiun panelon. Dekstra stirstangeto maldekstren aŭ dekstren: turni la vidon, teni ĝin por daŭre turni. Maldekstra stirstangeto maldekstren aŭ dekstren: antaŭa aŭ sekva aŭdvidaĵo. Supren aŭ malsupren: 10 sekundojn antaŭen aŭ malantaŭen en video, turni foton je 90 gradoj.</string>
   <string name="immersive_previous">Antaŭa</string>
   <string name="immersive_next">Sekva</string>
   <string name="immersive_turn">Turni</string>

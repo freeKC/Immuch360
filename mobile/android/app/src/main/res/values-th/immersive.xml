@@ -4,7 +4,7 @@
   <string name="immersive_back">กลับ</string>
   <string name="immersive_play">เล่น</string>
   <string name="immersive_pause">หยุดชั่วคราว</string>
-  <string name="immersive_hint">B หรือ Y: กลับไปที่แอป ทริกเกอร์: เล่นหรือหยุดชั่วคราว A, X หรือปุ่มกริป: แสดงหรือซ่อนแผงนี้ จอยสติ๊กไปทางซ้ายหรือขวา: สื่อก่อนหน้าหรือถัดไป ขึ้นหรือลง: เดินหน้าหรือย้อนกลับ 10 วินาทีในวิดีโอ หมุนภาพ 90 องศา</string>
+  <string name="immersive_hint">B หรือ Y: กลับไปที่แอป ทริกเกอร์: เล่นหรือหยุดชั่วคราว A, X หรือปุ่มกริป: แสดงหรือซ่อนแผงนี้ จอยสติ๊กขวาไปทางซ้ายหรือขวา: หมุนมุมมอง ดันค้างไว้เพื่อหมุนต่อเนื่อง จอยสติ๊กซ้ายไปทางซ้ายหรือขวา: สื่อก่อนหน้าหรือถัดไป ขึ้นหรือลง: เดินหน้าหรือย้อนกลับ 10 วินาทีในวิดีโอ หมุนภาพ 90 องศา</string>
   <string name="immersive_previous">ก่อนหน้า</string>
   <string name="immersive_next">ถัดไป</string>
   <string name="immersive_turn">หมุน</string>

@@ -4,7 +4,7 @@
   <string name="immersive_back">Indietro</string>
   <string name="immersive_play">Riproduci</string>
   <string name="immersive_pause">Pausa</string>
-  <string name="immersive_hint">B o Y: torna all\'app. Grilletto: riproduci o metti in pausa. A, X o impugnatura: mostra o nascondi questo pannello. Levetta a sinistra o a destra: contenuto precedente o successivo. In alto o in basso: avanti o indietro di 10 secondi in un video, ruota una foto di 90 gradi.</string>
+  <string name="immersive_hint">B o Y: torna all\'app. Grilletto: riproduci o metti in pausa. A, X o impugnatura: mostra o nascondi questo pannello. Levetta destra a sinistra o a destra: ruota la visuale, tienila per continuare a ruotare. Levetta sinistra a sinistra o a destra: contenuto precedente o successivo. In alto o in basso: avanti o indietro di 10 secondi in un video, ruota una foto di 90 gradi.</string>
   <string name="immersive_previous">Precedente</string>
   <string name="immersive_next">Successivo</string>
   <string name="immersive_turn">Ruota</string>

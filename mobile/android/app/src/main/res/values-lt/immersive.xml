@@ -4,7 +4,7 @@
   <string name="immersive_back">Atgal</string>
   <string name="immersive_play">Paleisti</string>
   <string name="immersive_pause">Pristabdyti</string>
-  <string name="immersive_hint">B arba Y: grįžti į programą. Gaidukas: paleisti arba pristabdyti. A, X arba suėmimo mygtukas: rodyti arba slėpti šį skydelį. Valdymo svirtelė kairėn arba dešinėn: ankstesnis arba kitas medijos failas. Aukštyn arba žemyn: vaizdo įraše 10 sekundžių pirmyn arba atgal, pasukti nuotrauką 90 laipsnių.</string>
+  <string name="immersive_hint">B arba Y: grįžti į programą. Gaidukas: paleisti arba pristabdyti. A, X arba suėmimo mygtukas: rodyti arba slėpti šį skydelį. Dešinioji valdymo svirtelė kairėn arba dešinėn: pasukti vaizdą, laikyti, kad sukimas tęstųsi. Kairioji valdymo svirtelė kairėn arba dešinėn: ankstesnis arba kitas medijos failas. Aukštyn arba žemyn: vaizdo įraše 10 sekundžių pirmyn arba atgal, pasukti nuotrauką 90 laipsnių.</string>
   <string name="immersive_previous">Ankstesnis</string>
   <string name="immersive_next">Kitas</string>
   <string name="immersive_turn">Pasukti</string>

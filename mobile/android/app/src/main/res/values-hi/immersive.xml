@@ -4,7 +4,7 @@
   <string name="immersive_back">वापस</string>
   <string name="immersive_play">चलाएं</string>
   <string name="immersive_pause">रोकें</string>
-  <string name="immersive_hint">B या Y: ऐप पर वापस जाएं। ट्रिगर: चलाएं या रोकें। A, X या ग्रिप: यह पैनल दिखाएं या छिपाएं। थंबस्टिक बाएं या दाएं: पिछला या अगला मीडिया। ऊपर या नीचे: वीडियो में 10 सेकंड आगे या पीछे, फ़ोटो को 90 डिग्री घुमाएं।</string>
+  <string name="immersive_hint">B या Y: ऐप पर वापस जाएं। ट्रिगर: चलाएं या रोकें। A, X या ग्रिप: यह पैनल दिखाएं या छिपाएं। दायां थंबस्टिक बाएं या दाएं: दृश्य घुमाएं, घुमाते रहने के लिए पकड़े रखें। बायां थंबस्टिक बाएं या दाएं: पिछला या अगला मीडिया। ऊपर या नीचे: वीडियो में 10 सेकंड आगे या पीछे, फ़ोटो को 90 डिग्री घुमाएं।</string>
   <string name="immersive_previous">पिछला</string>
   <string name="immersive_next">अगला</string>
   <string name="immersive_turn">घुमाएं</string>

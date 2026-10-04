@@ -3,7 +3,7 @@
   <string name="immersive_back">Înapoi</string>
   <string name="immersive_play">Redare</string>
   <string name="immersive_pause">Pauză</string>
-  <string name="immersive_hint">B sau Y: înapoi la aplicație. Trăgaci: redare sau pauză. A, X sau butonul de prindere: afișați sau ascundeți acest panou. Joystick la stânga sau la dreapta: elementul media anterior sau următor. În sus sau în jos: 10 secunde înainte sau înapoi într-un videoclip, rotiți o fotografie cu 90 de grade.</string>
+  <string name="immersive_hint">B sau Y: înapoi la aplicație. Trăgaci: redare sau pauză. A, X sau butonul de prindere: afișați sau ascundeți acest panou. Joystick drept la stânga sau la dreapta: rotiți vizualizarea, mențineți pentru a continua rotirea. Joystick stâng la stânga sau la dreapta: elementul media anterior sau următor. În sus sau în jos: 10 secunde înainte sau înapoi într-un videoclip, rotiți o fotografie cu 90 de grade.</string>
   <string name="immersive_previous">Anterior</string>
   <string name="immersive_next">Următor</string>
   <string name="immersive_turn">Rotiți</string>

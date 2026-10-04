@@ -4,7 +4,7 @@
   <string name="immersive_back">Takaisin</string>
   <string name="immersive_play">Toista</string>
   <string name="immersive_pause">Tauko</string>
-  <string name="immersive_hint">B tai Y: takaisin sovellukseen. Liipaisin: toista tai tauko. A, X tai sivupainike: näytä tai piilota tämä paneeli. Ohjainsauva vasemmalle tai oikealle: edellinen tai seuraava media. Ylös tai alas: videossa 10 sekuntia eteen- tai taaksepäin, kuvan kääntö 90 astetta.</string>
+  <string name="immersive_hint">B tai Y: takaisin sovellukseen. Liipaisin: toista tai tauko. A, X tai sivupainike: näytä tai piilota tämä paneeli. Oikea ohjainsauva vasemmalle tai oikealle: käännä näkymää, pidä paikallaan, niin kääntö jatkuu. Vasen ohjainsauva vasemmalle tai oikealle: edellinen tai seuraava media. Ylös tai alas: videossa 10 sekuntia eteen- tai taaksepäin, kuvan kääntö 90 astetta.</string>
   <string name="immersive_previous">Edellinen</string>
   <string name="immersive_next">Seuraava</string>
   <string name="immersive_turn">Käännä</string>

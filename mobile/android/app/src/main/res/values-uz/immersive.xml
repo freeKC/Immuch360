@@ -4,7 +4,7 @@
   <string name="immersive_back">Orqaga</string>
   <string name="immersive_play">Ijro etish</string>
   <string name="immersive_pause">Pauza</string>
-  <string name="immersive_hint">B yoki Y: ilovaga qaytish. Tepki: ijro etish yoki pauza. A, X yoki ushlash tugmasi: bu panelni koʻrsatish yoki yashirish. Joystikni chapga yoki oʻngga: oldingi yoki keyingi media. Yuqoriga yoki pastga: videoda 10 soniya oldinga yoki orqaga, suratni 90 daraja burish.</string>
+  <string name="immersive_hint">B yoki Y: ilovaga qaytish. Tepki: ijro etish yoki pauza. A, X yoki ushlash tugmasi: bu panelni koʻrsatish yoki yashirish. Oʻng joystikni chapga yoki oʻngga: koʻrinishni burish, burishni davom ettirish uchun ushlab turish. Chap joystikni chapga yoki oʻngga: oldingi yoki keyingi media. Yuqoriga yoki pastga: videoda 10 soniya oldinga yoki orqaga, suratni 90 daraja burish.</string>
   <string name="immersive_previous">Oldingi</string>
   <string name="immersive_next">Keyingi</string>
   <string name="immersive_turn">Burish</string>

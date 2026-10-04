@@ -3,7 +3,7 @@
   <string name="immersive_back">Zurück</string>
   <string name="immersive_play">Abspielen</string>
   <string name="immersive_pause">Pause</string>
-  <string name="immersive_hint">B oder Y: zurück zur App. Trigger: Wiedergabe oder Pause. A, X oder Grifftaste: dieses Panel ein- oder ausblenden. Thumbstick nach links oder rechts: vorheriges oder nächstes Medium. Nach oben oder unten: 10 Sekunden vor oder zurück in einem Video, Foto um 90 Grad drehen.</string>
+  <string name="immersive_hint">B oder Y: zurück zur App. Trigger: Wiedergabe oder Pause. A, X oder Grifftaste: dieses Panel ein- oder ausblenden. Rechter Thumbstick nach links oder rechts: Ansicht drehen, festhalten zum Weiterdrehen. Linker Thumbstick nach links oder rechts: vorheriges oder nächstes Medium. Nach oben oder unten: 10 Sekunden vor oder zurück in einem Video, Foto um 90 Grad drehen.</string>
   <string name="immersive_previous">Vorheriges</string>
   <string name="immersive_next">Nächstes</string>
   <string name="immersive_turn">Drehen</string>
