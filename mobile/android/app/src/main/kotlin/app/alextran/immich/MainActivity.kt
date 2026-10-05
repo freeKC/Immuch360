@@ -22,6 +22,9 @@ import app.alextran.immich.images.RemoteImageApi
 import app.alextran.immich.images.RemoteImagesImpl
 import app.alextran.immich.permission.PermissionApi
 import app.alextran.immich.permission.PermissionApiImpl
+import app.alextran.immich.phoneshare.PhoneShareApi
+import app.alextran.immich.phoneshare.PhoneShareApiImpl
+import app.alextran.immich.phoneshare.PhoneShareService
 import app.alextran.immich.spatial.SpatialVideoApi
 import app.alextran.immich.spatial.SpatialVideoApiImpl
 import app.alextran.immich.spherical.SphericalVideoApi
@@ -45,6 +48,8 @@ class MainActivity : FlutterFragmentActivity() {
     SphericalVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SpatialVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     ImmersiveApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    // The Stop action of the phone share notification, for the engine that runs the share
+    PhoneShareApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
   }
 
   override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
@@ -52,7 +57,16 @@ class MainActivity : FlutterFragmentActivity() {
     SphericalVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SpatialVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     ImmersiveApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    PhoneShareApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     super.cleanUpFlutterEngine(flutterEngine)
+  }
+
+  override fun onDestroy() {
+    // The app is closed: the phone share served from its engine is gone, its foreground service must not stay
+    if (isFinishing) {
+      PhoneShareService.stop(this)
+    }
+    super.onDestroy()
   }
 
   override fun onNewIntent(intent: Intent) {
@@ -86,6 +100,7 @@ class MainActivity : FlutterFragmentActivity() {
       SphericalVideoApi.setUp(messenger, SphericalVideoApiImpl(ctx))
       SpatialVideoApi.setUp(messenger, SpatialVideoApiImpl(ctx))
       ImmersiveApi.setUp(messenger, ImmersiveApiImpl(ctx))
+      PhoneShareApi.setUp(messenger, PhoneShareApiImpl(ctx))
       VideoThumbnailApi.setUp(messenger, VideoThumbnailApiImpl())
       VideoDecoderApi.setUp(messenger, VideoDecoderApiImpl())
 

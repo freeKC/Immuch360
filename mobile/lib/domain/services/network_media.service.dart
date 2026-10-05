@@ -8,6 +8,9 @@
 // 2:1 JPEG whose EXIF names a 360° camera, or a photo whose Insta360 trailer says the camera stitched it. The viewers
 // then show a file with the rules of resolveSphereView, from what it declares and its name.
 //
+// The same reads tell the Apple spatial media: a HEIF photo holding a stereo pair (see probeHeicStereoPair), a video
+// holding two MV-HEVC layers (see SphericalProbe.multiview).
+//
 // Reading a file costs a 128 KiB window or two for a photo, a few small reads for a video, with range reads on the
 // share or on the media bridge. The results are kept in memory per file, until it changes.
 
@@ -18,9 +21,11 @@ import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immich_mobile/domain/services/apple_spatial/heic_stereo_probe.dart';
 import 'package:immich_mobile/domain/services/exif_head.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
@@ -32,7 +37,7 @@ final _log = Logger('NetworkMediaService');
 
 /// What the file of a photo or a video of a share declares
 class NetworkMediaInfo {
-  const NetworkMediaInfo({this.gpano, this.probe, this.rawKind, this.cameraEquirect = false});
+  const NetworkMediaInfo({this.gpano, this.probe, this.rawKind, this.cameraEquirect = false, this.stereoPair});
 
   /// The GPano tags of a photo, null for a video and for a photo without any
   final GPanoTags? gpano;
@@ -47,6 +52,15 @@ class NetworkMediaInfo {
   /// EXIF names a 360° camera (see [isEquirectCameraPhoto]), or a photo whose Insta360 trailer says the camera stitched
   /// it (see isInsta360StitchedPhoto)
   final bool cameraEquirect;
+
+  /// The two eyes of an Apple spatial photo (a HEIF file), null for any other file
+  final HeicStereoPair? stereoPair;
+
+  /// The two layers of an Apple spatial video, null for any other file
+  MultiviewInfo? get multiview => probe?.multiview;
+
+  /// Whether it is an Apple spatial photo or video, which the browser marks with a 3D badge
+  bool get isAppleSpatial => stereoPair != null || multiview != null;
 
   /// Whether the file declares a 360° projection, is a raw file the app stitches, or a camera equirect photo
   bool get is360 {
@@ -86,7 +100,7 @@ class NetworkMediaInfo {
   @override
   String toString() =>
       'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe, rawKind: $rawKind, '
-      'cameraEquirect: $cameraEquirect)';
+      'cameraEquirect: $cameraEquirect, stereoPair: $stereoPair)';
 }
 
 /// A file of a share as the results are kept: they hold until its size or its date changes
@@ -209,6 +223,9 @@ class NetworkMediaService {
       if (info.is360) {
         _log.fine('${entry.name} is 360°: $info');
       }
+      if (info.isAppleSpatial) {
+        _log.info('${entry.name} is an Apple spatial media: ${info.stereoPair ?? info.multiview}');
+      }
       return info;
     } catch (error) {
       _log.info('Could not read what ${entry.name} declares: $error');
@@ -234,8 +251,10 @@ class NetworkMediaService {
     final size = entry.size;
     final remembering = _LastReadReader(read);
     final gpano = await readGPanoTags(remembering.read, size ?? 0);
+    // A HEIF photo keeps its meta box at its head, which the GPano read just went through: the bytes are there
+    final stereoPair = isHeifName(entry.name) ? await probeHeicStereoPair(remembering.read) : null;
     if (gpano != null && isEquirectangularGPano(gpano)) {
-      return NetworkMediaInfo(gpano: gpano);
+      return NetworkMediaInfo(gpano: gpano, stereoPair: stereoPair);
     }
     if (isRawPhotoName(entry.name)) {
       return NetworkMediaInfo(gpano: gpano, rawKind: RawMediaKind.insta360Photo);
@@ -257,7 +276,7 @@ class NetworkMediaService {
         height: exif?.pixelHeight,
       );
     }
-    return NetworkMediaInfo(gpano: gpano, cameraEquirect: cameraEquirect);
+    return NetworkMediaInfo(gpano: gpano, cameraEquirect: cameraEquirect, stereoPair: stereoPair);
   }
 
   void _remember(NetworkMediaKey key, _Detected detected) {

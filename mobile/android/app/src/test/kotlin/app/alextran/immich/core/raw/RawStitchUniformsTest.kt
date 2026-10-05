@@ -103,4 +103,13 @@ class RawStitchUniformsTest {
     assertArrayEquals(floatArrayOf(1f, 1f), RawStitchUniforms.enabled(listOf(0, 1)), 0f)
     assertArrayEquals(floatArrayOf(0f, 1f), RawStitchUniforms.enabled(listOf(1)), 0f)
   }
+
+  @Test
+  fun `each texture unit holds the texture of its own stream, the decoded one for a missing stream`() {
+    // Stream 0 on unit 0 and stream 1 on unit 1, whatever texture was created or latched last
+    assertArrayEquals(intArrayOf(0, 1), RawStitchUniforms.samplerStreams(listOf(0, 1)))
+    // One lens mode: both units hold the decoded stream, uEnabled leaves the missing one out
+    assertArrayEquals(intArrayOf(1, 1), RawStitchUniforms.samplerStreams(listOf(1)))
+    assertArrayEquals(intArrayOf(0, 0), RawStitchUniforms.samplerStreams(listOf(0)))
+  }
 }

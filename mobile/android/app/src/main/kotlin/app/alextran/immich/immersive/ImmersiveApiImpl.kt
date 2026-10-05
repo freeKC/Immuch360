@@ -119,7 +119,9 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * and next never come this way, see [showAdjacent]. [fallbackUrl] is the server's transcoded stream of a video,
    * played once instead of [url] when the headset cannot decode the original or when it fails. [rawProjection] is the
    * JSON calibration of a raw dual fisheye video, which the viewer stitches on the headset; null for an
-   * equirectangular media and for a raw photo, which Flutter stitched already.
+   * equirectangular media and for a raw photo, which Flutter stitched already. [stereoPair] is the JSON of the two eyes
+   * of an Apple spatial photo, null for any other media; it travels as an extra of the intent so that the viewer can
+   * show both eyes on a flat quad.
    */
   override fun open(
     url: String,
@@ -133,6 +135,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     openingId: Long,
     fallbackUrl: String?,
     rawProjection: String?,
+    stereoPair: String?,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -140,9 +143,10 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     Log.i(
       TAG,
       "open immersive viewer, opening $openingId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
-        "start=$startPositionMs ms, fallback=${fallbackUrl != null}, raw=${rawProjection != null}",
+        "start=$startPositionMs ms, fallback=${fallbackUrl != null}, raw=${rawProjection != null}, " +
+        "stereo pair=${stereoPair != null}",
     )
-    appContext.startActivity(
+    val intent =
       ImmersiveViewerActivity.intent(
         appContext,
         url,
@@ -155,16 +159,17 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         openingId,
         fallbackUrl,
         rawProjection,
-      ),
-    )
+      )
+    appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }
 
   /**
    * Answers ImmersiveEvents.requestAdjacent: shows the media in place in the viewer that asked, if it still waits for
    * [requestId], and never starts the viewer. The answer must be known before returning, which the main thread gives:
    * Pigeon calls a host API there (no task queue), the thread the viewer lives on. Called from another thread, the
-   * media is refused rather than shown from the wrong thread. [fallbackUrl] is the transcoded stream of a video and
-   * [rawProjection] the calibration of a raw dual fisheye video, as for [open].
+   * media is refused rather than shown from the wrong thread. [fallbackUrl] is the transcoded stream of a video,
+   * [rawProjection] the calibration of a raw dual fisheye video and [stereoPair] the two eyes of an Apple spatial
+   * photo, as for [open].
    */
   override fun showAdjacent(
     requestId: Long,
@@ -175,6 +180,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     coverage: ImmersiveSphereCoverage,
     fallbackUrl: String?,
     rawProjection: String?,
+    stereoPair: String?,
   ): Boolean {
     if (Looper.myLooper() != Looper.getMainLooper()) {
       Log.e(TAG, "showAdjacent called off the main thread, request $requestId refused")
@@ -183,7 +189,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     Log.i(
       TAG,
       "adjacent media for request $requestId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
-        "fallback=${fallbackUrl != null}, raw=${rawProjection != null}",
+        "fallback=${fallbackUrl != null}, raw=${rawProjection != null}, stereo pair=${stereoPair != null}",
     )
     return ImmersiveViewerActivity.showAdjacent(
       requestId,
@@ -194,6 +200,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       coverage,
       fallbackUrl,
       rawProjection,
+      stereoPair,
     )
   }
 }

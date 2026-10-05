@@ -24,6 +24,9 @@
   <uses-feature android:name="android.hardware.camera.front" tools:node="remove" />
   <uses-feature android:name="android.hardware.camera" tools:node="remove" />
   <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+  <!-- Share this phone on the network is for phones: the headset is the one that reads the share. WAKE_LOCK stays,
+       Media3 and WorkManager declare and use it as well. -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" tools:node="remove" />
 
   <!-- No cleartext HTTP on the headset (the Horizon Store security scan flags it); the exceptions are in
        res/xml/network_security_config.xml of this flavour, which replaces the phone one by resource merging -->
@@ -32,6 +35,7 @@
          Quest 3 and 3S are tested: the headset decoder limits and the 8192x4096 textures of the immersive view were
          measured on them. The phone build keeps the wider list for sideloading. -->
     <meta-data android:name="com.oculus.supportedDevices" android:value="quest3|quest3s" tools:replace="android:value" />
+    <service android:name=".phoneshare.PhoneShareService" tools:node="remove" />
   </application>
 
 </manifest>

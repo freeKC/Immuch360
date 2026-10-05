@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Открыть доступ к этому телефону в сети</string>
   <string name="spherical_video_close">Закрыть</string>
   <string name="spherical_video_error">Не удалось воспроизвести это видео</string>
 </resources>

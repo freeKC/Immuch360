@@ -122,6 +122,9 @@ object VideoDecoders {
   /** Frame rate a question about several streams counts with when the video does not tell its own. */
   private const val DEFAULT_INSTANCES_FRAME_RATE = 30.0
 
+  /** Pixels per stream above which several streams at once are refused to a software decoder: 2048x2048. */
+  const val SOFTWARE_INSTANCES_MAX_PIXELS = 2048L * 2048L
+
   /**
    * Pixels per second the H.264 decoder of the Meta Quest 3 was measured to sustain: 4096x2304 at 30 fps. Two streams
    * decoded at once share it, see [exceedsMeasuredLimit].
@@ -237,6 +240,16 @@ object VideoDecoders {
       null -> "?"
       else -> mime
     }
+
+  /**
+   * Whether [instances] streams of [width]x[height] at once are too much for a software decoder ([hardware] false):
+   * the lens renderers of a raw 360° video take a software decoder only when the device has no hardware one (an
+   * emulator, a TV box), and a software HEVC decoder at 3840x3840 would give a few frames per second and starve the
+   * frame pairing without any error. Up to [SOFTWARE_INSTANCES_MAX_PIXELS] per stream it keeps up (the proxies and
+   * the small test files). One stream is never refused here: the plain player plays it as any other video.
+   */
+  fun softwareTooHeavy(hardware: Boolean, width: Int, height: Int, instances: Int): Boolean =
+    !hardware && instances > 1 && width > 0 && height > 0 && width.toLong() * height > SOFTWARE_INSTANCES_MAX_PIXELS
 
   /**
    * True when [width] x [height] of [mime] is above what was measured on a Meta Quest ([horizonOs]), whatever its
@@ -491,6 +504,10 @@ object VideoDecoders {
         continue
       }
       val hardware = isHardware(info)
+      if (softwareTooHeavy(hardware, question.width, question.height, question.instances)) {
+        refusals += "${info.name} runs in software: ${question.instances} x $size is too heavy for it"
+        continue
+      }
       val (maxWidth, maxHeight) = largestSize(video, mime, horizonOs)
       return Verdict(
         supported = true,

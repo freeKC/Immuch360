@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">この電話をネットワークで共有</string>
   <string name="spherical_video_close">閉じる</string>
   <string name="spherical_video_error">この動画を再生できません</string>
 </resources>

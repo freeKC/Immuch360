@@ -99,9 +99,23 @@ const _kIntParamNames = [
 
 const _kParamTypeOverrides = <String, String>{
   'advanced_settings_clear_image_cache_success.size': 'String',
+  // A length in millimetres, which the caller writes with its decimals for the locale
+  'apple_spatial_baseline.mm': 'String',
+  // The size of each eye of a spatial photo: the digits alone, as for the frame sizes below
+  'apple_spatial_details_photo.height': 'String',
+  'apple_spatial_details_photo.width': 'String',
+  // An angle in degrees, written with its decimals by the caller as the baseline above
+  'apple_spatial_fov.deg': 'String',
   'backup_controller_page_storage_format.total': 'String',
   'backup_controller_page_storage_format.used': 'String',
   'cleanup_found_assets_with_size.size': 'String',
+  // Names and addresses written out by the caller (a Bonjour name, "http://192.168.1.20:8360"), so that an
+  // InternetAddress or a Uri, whose text is not the one shown, cannot be passed instead
+  'network_share_relocating.name': 'String',
+  'phone_share_headset_steps.name': 'String',
+  'phone_share_notification_text.address': 'String',
+  'phone_share_notification_text.user': 'String',
+  'phone_share_subtitle_on.address': 'String',
   // The codec and the frame size of a lens, filled in by the native players: the digits alone, as for the frame sizes
   // below
   'raw_video_one_lens_decoder.codec': 'String',
@@ -195,9 +209,11 @@ abstract class _BaseTranslations {
     if (key.isEmpty) return '';
     try {
       final translated = key.tr(context: _context);
-      return args != null
-          ? MessageFormat(translated, locale: Intl.defaultLocale ?? 'en').format(args)
-          : translated;
+      if (args == null) return translated;
+      // The default locale is the language tag of the app locale, and intl has no number data for some of them (kab,
+      // mi, swg...): MessageFormat would throw on those and the key would show instead of the sentence
+      final locale = Intl.verifiedLocale(Intl.defaultLocale, NumberFormat.localeExists, onFailure: (_) => 'en')!;
+      return MessageFormat(translated, locale: locale).format(args);
     } catch (e) {
       return key;
     }

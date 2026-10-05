@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Rannañ ar pellgomzer-mañ war ar rouedad</string>
   <string name="spherical_video_close">Serriñ</string>
   <string name="spherical_video_error">Ne c\'haller ket lenn ar video-mañ</string>
 </resources>

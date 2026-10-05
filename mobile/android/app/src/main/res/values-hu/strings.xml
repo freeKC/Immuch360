@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">A telefon megosztása a hálózaton</string>
   <string name="spherical_video_close">Bezárás</string>
   <string name="spherical_video_error">Ez a videó nem játszható le</string>
 </resources>

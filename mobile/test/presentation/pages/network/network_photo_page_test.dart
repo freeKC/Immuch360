@@ -39,6 +39,9 @@ class _RecordingImmersiveApi extends ImmersiveApi {
   /// The opening ids the viewer was given, which it sends back with its events
   final List<int> openingIds = [];
 
+  /// The stereoPair JSON of each media opened, null for any but an Apple spatial photo
+  final List<String?> stereoPairs = [];
+
   @override
   Future<bool> isHorizonOs() async => true;
 
@@ -55,10 +58,12 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     int openingId,
     String? fallbackUrl,
     String? rawProjection,
+    String? stereoPair,
   ) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
     openingIds.add(openingId);
+    stereoPairs.add(stereoPair);
   }
 
   /// What the viewer was asked to show in place, for previous and next
@@ -74,6 +79,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     String? fallbackUrl,
     String? rawProjection,
+    String? stereoPair,
   ) async {
     shown.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     return true;
@@ -359,5 +365,51 @@ void main() {
     expect(find.text('Could not open this file: HTTP 404'), findsOneWidget);
 
     await endRealIo(tester);
+  });
+
+  group('Apple spatial photos', () {
+    // The head of an Apple ImageIO spatial photo (MIT licensed, see the note next to it), then zeros for its image data
+    final spatialPhoto = Uint8List.fromList([
+      ...File('test/fixtures/apple_spatial/udibr_fisheye_0S9A9186_head.bin').readAsBytesSync(),
+      ...List.filled(200 * 1024, 0),
+    ]);
+    final view3dButton = find.byKey(const Key('apple_spatial_view_3d'));
+
+    testWidgets('on a Meta Quest, "View in 3D" opens both eyes in the immersive viewer from the media bridge', (
+      tester,
+    ) async {
+      final immersiveApi = _RecordingImmersiveApi();
+      share.files['/IMG_0001.HEIC'] = spatialPhoto;
+      await pumpPhotoPage(tester, '/IMG_0001.HEIC', immersiveApi: immersiveApi);
+      await pumpRealIo(tester, () => view3dButton.evaluate().isNotEmpty);
+
+      expect(find.byTooltip('View in 3D'), findsOneWidget);
+      expect(find.byTooltip('360°'), findsNothing, reason: 'a spatial photo is no 360° photo');
+
+      await tester.tap(view3dButton);
+      await tester.pump();
+
+      expect(immersiveApi.opened.single['url'], server.urlOf('/IMG_0001.HEIC').toString());
+      expect(immersiveApi.opened.single['isVideo'], isFalse);
+      final pair = jsonDecode(immersiveApi.stereoPairs.single!) as Map<String, dynamic>;
+      expect(pair['kind'], 'heicStereoPair');
+      expect(pair['leftItemId'], 37);
+      expect(pair['rightItemId'], 74);
+      expect(pair['pitmIdOffset'], 129);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('on a phone, a spatial photo gets no "View in 3D" button', (tester) async {
+      share.files['/IMG_0001.HEIC'] = spatialPhoto;
+      await pumpPhotoPage(tester, '/IMG_0001.HEIC');
+      await pumpRealIo(tester, () => server.requests.any((request) => request.range != null));
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await tester.pump();
+
+      expect(view3dButton, findsNothing);
+
+      await endRealIo(tester);
+    });
   });
 }

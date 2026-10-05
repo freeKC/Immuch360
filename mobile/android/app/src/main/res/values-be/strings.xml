@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Абагуліць гэты тэлефон у сетцы</string>
   <string name="spherical_video_close">Закрыць</string>
   <string name="spherical_video_error">Немагчыма прайграць гэта відэа</string>
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Koplietot šo tālruni tīklā</string>
   <string name="spherical_video_close">Aizvērt</string>
   <string name="spherical_video_error">Šo videoklipu nevar atskaņot</string>
 </resources>

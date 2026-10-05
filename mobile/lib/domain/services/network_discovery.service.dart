@@ -1,6 +1,7 @@
-// Finds the SMB and WebDAV servers of the local network for the form that adds a share. Several probes run side by
-// side (mDNS / DNS-SD, a scan of the subnet, see network_discovery_probes.dart); what they find is merged into one list
-// that grows while they run. A probe that fails, or a platform without what it needs, only means fewer servers.
+// Finds the SMB, WebDAV and DLNA servers of the local network for the form that adds a share. Several probes run side
+// by side (mDNS / DNS-SD, a scan of the subnet, SSDP, see network_discovery_probes.dart); what they find is merged into
+// one list that grows while they run. A probe that fails, or a platform without what it needs, only means fewer
+// servers.
 
 import 'dart:async';
 
@@ -10,7 +11,7 @@ import 'package:logging/logging.dart';
 final _log = Logger('NetworkDiscovery');
 
 /// How a server was found
-enum DiscoveryOrigin { mdns, scan }
+enum DiscoveryOrigin { mdns, scan, ssdp }
 
 /// A server found on the network, with what the form needs to reach it
 class DiscoveredServer {
@@ -23,6 +24,9 @@ class DiscoveredServer {
     this.path = '',
     required this.origin,
     this.address,
+    this.discoveryId,
+    this.username,
+    this.isPhoneShare = false,
   });
 
   /// The IP address or the host name to put in the server field
@@ -36,7 +40,8 @@ class DiscoveredServer {
   /// WebDAV over HTTPS
   final bool useTls;
 
-  /// The path of the WebDAV root when known, "" otherwise (and always for SMB)
+  /// The path of the WebDAV root when known, "" otherwise (and always for SMB). DLNA: the path of the device
+  /// description URL with its query.
   final String path;
   final DiscoveryOrigin origin;
 
@@ -44,11 +49,28 @@ class DiscoveredServer {
   /// once. Not part of the equality.
   final String? address;
 
-  /// What tells two finds of the same server apart from two servers: [address] when known, else [host]
-  (String, NetworkSourceType, int) get mergeKey => ((address ?? host).toLowerCase(), type, port);
+  /// What the server tells about itself, to find it again when its address changes: the UPnP UDN of a DLNA media
+  /// server, the TXT id of a phone share. Not part of the equality.
+  final String? discoveryId;
+
+  /// The user name the server announces (a phone share), for the form to fill in
+  final String? username;
+
+  /// The gallery of a phone running this app, shared on the network ("Share this phone on the network")
+  final bool isPhoneShare;
+
+  /// What tells two finds of the same server apart from two servers: [address] when known, else [host]. One address
+  /// and port may serve several DLNA media servers (a NAS, a server with embedded devices): each is told apart by its
+  /// UDN, else by its description path.
+  (String, NetworkSourceType, int, String) get mergeKey => (
+    (address ?? host).toLowerCase(),
+    type,
+    port,
+    type == NetworkSourceType.dlna ? (discoveryId ?? path).toLowerCase() : '',
+  );
 
   /// The same server as found by two probes: the mDNS find wins (it has the name the server gives itself), a known
-  /// WebDAV path is kept
+  /// WebDAV path, discovery id and user name are kept
   DiscoveredServer mergedWith(DiscoveredServer other) {
     final preferred = other.origin == DiscoveryOrigin.mdns && origin != DiscoveryOrigin.mdns ? other : this;
     final second = identical(preferred, this) ? other : this;
@@ -61,6 +83,9 @@ class DiscoveredServer {
       path: preferred.path.isNotEmpty ? preferred.path : second.path,
       origin: preferred.origin,
       address: preferred.address ?? second.address,
+      discoveryId: preferred.discoveryId ?? second.discoveryId,
+      username: preferred.username ?? second.username,
+      isPhoneShare: preferred.isPhoneShare || second.isPhoneShare,
     );
   }
 
@@ -72,7 +97,9 @@ class DiscoveredServer {
   int get hashCode => Object.hash(host, type, port);
 
   @override
-  String toString() => 'DiscoveredServer(${type.name} $displayName $host:$port${useTls ? ' tls' : ''} $path)';
+  String toString() =>
+      'DiscoveredServer(${type.name} $displayName $host:$port${useTls ? ' tls' : ''} $path'
+      '${discoveryId == null ? '' : ' $discoveryId'}${isPhoneShare ? ' phone' : ''})';
 
   /// By name without case, then by host
   static int compare(DiscoveredServer a, DiscoveredServer b) {
@@ -118,7 +145,7 @@ class NetworkDiscoveryService {
   /// subnet by these hosts.
   Stream<List<DiscoveredServer>> discover({Duration timeout = defaultTimeout, List<String>? hosts}) {
     final done = Completer<void>();
-    final found = <(String, NetworkSourceType, int), DiscoveredServer>{};
+    final found = <(String, NetworkSourceType, int, String), DiscoveredServer>{};
     final subscriptions = <StreamSubscription<DiscoveredServer>>[];
     late final StreamController<List<DiscoveredServer>> controller;
     Timer? timer;
@@ -152,7 +179,10 @@ class NetworkDiscoveryService {
           merged == known &&
           merged.displayName == known.displayName &&
           merged.path == known.path &&
-          merged.useTls == known.useTls) {
+          merged.useTls == known.useTls &&
+          merged.discoveryId == known.discoveryId &&
+          merged.username == known.username &&
+          merged.isPhoneShare == known.isPhoneShare) {
         return;
       }
       found[key] = merged;

@@ -62,6 +62,7 @@ import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart
 import 'package:immich_mobile/presentation/pages/network/network_share_edit.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
+import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
 import 'package:immich_mobile/presentation/pages/panorama_360.page.dart';
 import 'package:immich_mobile/presentation/pages/partner_detail.page.dart';
 import 'package:immich_mobile/presentation/pages/people_collection.page.dart';
@@ -214,6 +215,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: NetworkBrowserRoute.page, guards: [_authGuard]),
     AutoRoute(page: NetworkPhotoRoute.page, guards: [_authGuard]),
     AutoRoute(page: NetworkVideoRoute.page, guards: [_authGuard]),
+    // Share this phone on the network (phones only)
+    AutoRoute(page: PhoneShareRoute.page, guards: [_authGuard, _duplicateGuard]),
     // required to handle all deeplinks in deep_link.service.dart
     // auto_route_library#1722
     RedirectRoute(path: '*', redirectTo: '/'),

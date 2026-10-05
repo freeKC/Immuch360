@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Bḍu tiliɣri-a deg uẓeṭṭa</string>
   <string name="spherical_video_close">Mdel</string>
   <string name="spherical_video_error">Ulamek ad teddu tvidyut-a</string>
 </resources>

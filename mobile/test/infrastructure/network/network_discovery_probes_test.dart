@@ -621,6 +621,37 @@ void main() {
       expect(await probe.serverOf(service('_ipp._tcp', port: 631)), isNull);
     });
 
+    test('tells a phone sharing its gallery by its TXT record, and leaves the own share of this device out', () async {
+      final probe = MdnsProbe(confirmer: confirmer, ownPhoneShareId: () => 'own0000000000000');
+      MdnsService phone(String id) => MdnsService(
+        name: 'Immuch360 on Pixel',
+        type: '_webdav._tcp',
+        host: '192.168.1.42',
+        port: 8360,
+        attributes: {'path': '/', 'u': 'phone1234', 'app': 'immuch360', 'id': id, 'v': '1'},
+      );
+
+      final found = (await probe.serverOf(phone('a1b2c3d4e5f60718')))!;
+      expect(found.isPhoneShare, isTrue);
+      expect(found.type, NetworkSourceType.webdav);
+      expect(found.displayName, 'Immuch360 on Pixel');
+      expect(found.username, 'phone1234');
+      expect(found.discoveryId, 'a1b2c3d4e5f60718');
+      expect(found.port, 8360);
+      expect(found.path, '');
+
+      expect(await probe.serverOf(phone('own0000000000000')), isNull, reason: 'this phone');
+
+      final plain = (await probe.serverOf(service('_webdav._tcp', port: 5005, txt: {'u': 'admin', 'id': 'x'})))!;
+      expect(plain.isPhoneShare, isFalse);
+      expect(plain.username, isNull, reason: 'only a phone share announces its user name');
+      expect(plain.discoveryId, isNull);
+    });
+
+    test('reads the id of its own phone share from the store, none without a store', () {
+      expect(storedPhoneShareId(), isNull);
+    });
+
     test('keeps a web server announced over _http._tcp only when it speaks WebDAV', () async {
       final dav = await _FakeHttpServer.start(_davHandler);
       addTearDown(dav.close);

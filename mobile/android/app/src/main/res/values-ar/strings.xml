@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">مشاركة هذا الهاتف على الشبكة</string>
   <string name="spherical_video_close">إغلاق</string>
   <string name="spherical_video_error">تعذر تشغيل هذا الفيديو</string>
 </resources>

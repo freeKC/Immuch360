@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
@@ -12,7 +13,8 @@ String networkSourceAddress(NetworkSource source) {
   final port = source.port == null ? '' : ':${source.port}';
   return switch (source.type) {
     NetworkSourceType.smb => 'smb://${source.host}$port/${source.share}',
-    NetworkSourceType.webdav =>
+    // DLNA: the device description URL
+    NetworkSourceType.webdav || NetworkSourceType.dlna =>
       '${source.useTls ? 'https' : 'http'}://${source.host}$port'
           '${source.share.isEmpty || source.share.startsWith('/') ? '' : '/'}${source.share}',
   };
@@ -21,9 +23,10 @@ String networkSourceAddress(NetworkSource source) {
 IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
   NetworkSourceType.smb => Icons.dns_outlined,
   NetworkSourceType.webdav => Icons.cloud_outlined,
+  NetworkSourceType.dlna => Icons.perm_media_outlined,
 };
 
-/// The network shares the user added (SMB and WebDAV): tap one to browse it, add one, edit one
+/// The network shares the user added (SMB, WebDAV, DLNA media servers): tap one to browse it, add one, edit one
 @RoutePage()
 class NetworkSharesPage extends ConsumerWidget {
   const NetworkSharesPage({super.key});
@@ -45,10 +48,17 @@ class NetworkSharesPage extends ConsumerWidget {
       ),
       body: SafeArea(
         child: sources.isEmpty
-            ? _NoShares(onAdd: addShare)
+            // The tile of the phone share first, on phones (it hides itself elsewhere)
+            ? Column(
+                children: [
+                  const PhoneShareTile(),
+                  Expanded(child: _NoShares(onAdd: addShare)),
+                ],
+              )
             : ListView(
                 padding: const EdgeInsets.only(top: 8, bottom: 32),
                 children: [
+                  const PhoneShareTile(),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
                     child: Text(

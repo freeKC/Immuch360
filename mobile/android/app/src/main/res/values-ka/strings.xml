@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">ამ ტელეფონის გაზიარება ქსელში</string>
   <string name="spherical_video_close">დახურვა</string>
   <string name="spherical_video_error">ამ ვიდეოს დაკვრა შეუძლებელია</string>
 </resources>

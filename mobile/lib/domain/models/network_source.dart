@@ -1,9 +1,10 @@
-// Network shares (SMB and WebDAV): a source is a share the user added, an entry is a file or a folder on it.
-// Media of a share play straight from it through the local media bridge; nothing is copied to the device.
+// Network shares (SMB, WebDAV, DLNA media servers): a source is a share the user added, an entry is a file or a folder
+// on it. Media of a share play straight from it through the local media bridge; nothing is copied to the device.
 
 import 'dart:convert';
 
-enum NetworkSourceType { smb, webdav }
+/// The stored name of each type is its [Enum.name]: an older build drops a source of a type it does not know
+enum NetworkSourceType { smb, webdav, dlna }
 
 /// A share the user added. The password lives in the secure storage under [secretKey], never in the Store.
 class NetworkSource {
@@ -17,6 +18,7 @@ class NetworkSource {
     this.rootPath = '/',
     this.username = '',
     this.useTls = false,
+    this.discoveryId,
   });
 
   /// Random id, stable for the life of the source; also the key of its password in the secure storage
@@ -26,21 +28,30 @@ class NetworkSource {
   /// What the user calls it
   final String name;
 
-  /// SMB: the server name or address. WebDAV: the server name or address of the base URL.
+  /// SMB: the server name or address. WebDAV: the server name or address of the base URL. DLNA: the one of the device
+  /// description URL.
   final String host;
 
-  /// Null for the default port of the type (445 for SMB, 80 or 443 for WebDAV)
+  /// Null for the default port of the type (445 for SMB, 80 or 443 for WebDAV and DLNA)
   final int? port;
 
-  /// SMB share name. WebDAV: the path of the base URL (for example "/remote.php/dav/files/alice").
+  /// SMB share name. WebDAV: the path of the base URL (for example "/remote.php/dav/files/alice"). DLNA: the path of
+  /// the device description URL with its query ("/rootDesc.xml", "/dlna/7d2c.../description.xml").
   final String share;
 
   /// Folder inside the share the browser starts from, "/" for its root
   final String rootPath;
+
+  /// Empty for DLNA, which has no authentication
   final String username;
 
-  /// WebDAV over HTTPS
+  /// WebDAV over HTTPS, DLNA with an https description URL
   final bool useTls;
+
+  /// What the server tells about itself on the network, to find it again when its address changes (see
+  /// NetworkSourceRelocator): the UPnP UDN ("uuid:...") of a DLNA media server, the TXT id of a phone share. Null for
+  /// a share typed in by hand.
+  final String? discoveryId;
 
   String get secretKey => 'network_source_password_$id';
 
@@ -54,6 +65,7 @@ class NetworkSource {
     'rootPath': rootPath,
     'username': username,
     'useTls': useTls,
+    if (discoveryId != null) 'discoveryId': discoveryId,
   };
 
   static NetworkSource? fromJson(Object? json) {
@@ -67,6 +79,7 @@ class NetworkSource {
     if (id is! String || type == null || name is! String || host is! String) {
       return null;
     }
+    final discoveryId = json['discoveryId'];
     return NetworkSource(
       id: id,
       type: type,
@@ -77,6 +90,7 @@ class NetworkSource {
       rootPath: json['rootPath'] is String ? json['rootPath'] as String : '/',
       username: json['username'] is String ? json['username'] as String : '',
       useTls: json['useTls'] == true,
+      discoveryId: discoveryId is String && discoveryId.isNotEmpty ? discoveryId : null,
     );
   }
 
@@ -104,6 +118,8 @@ class NetworkSource {
     String? rootPath,
     String? username,
     bool? useTls,
+    String? discoveryId,
+    bool clearDiscoveryId = false,
   }) => NetworkSource(
     id: id,
     type: type,
@@ -114,6 +130,7 @@ class NetworkSource {
     rootPath: rootPath ?? this.rootPath,
     username: username ?? this.username,
     useTls: useTls ?? this.useTls,
+    discoveryId: clearDiscoveryId ? null : (discoveryId ?? this.discoveryId),
   );
 }
 
@@ -126,6 +143,10 @@ class NetworkEntry {
     this.size,
     this.modified,
     this.mimeType,
+    this.thumbnailUrl,
+    this.width,
+    this.height,
+    this.durationMs,
   });
 
   final String sourceId;
@@ -136,6 +157,20 @@ class NetworkEntry {
 
   /// From the server when it gives one, else from the extension (see [guessedMimeType])
   final String? mimeType;
+
+  // What a server that indexes its media tells in its listings (a DLNA media server); null when it does not. Not
+  // stored anywhere: an entry lives as long as the listing it came from.
+
+  /// A small picture of the entry made by the server, a direct http URL of the share. Read in Dart only, never handed
+  /// to the native players (they only ever get bridge URLs).
+  final String? thumbnailUrl;
+
+  /// Size of the picture or of the video frame, in pixels
+  final int? width;
+  final int? height;
+
+  /// Length of a video
+  final int? durationMs;
 
   String get name =>
       path.endsWith('/') && path.length > 1 ? path.substring(0, path.length - 1).split('/').last : path.split('/').last;

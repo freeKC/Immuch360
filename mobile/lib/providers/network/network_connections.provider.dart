@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/smb_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/upnp/dlna_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
@@ -16,7 +17,11 @@ final _log = Logger('NetworkConnections');
 
 /// How to open a share of each type. A provider so tests can replace the real clients.
 final networkFileSystemOpenersProvider = Provider<Map<NetworkSourceType, NetworkFileSystemOpener>>((ref) {
-  return const {NetworkSourceType.smb: SmbFileSystem.open, NetworkSourceType.webdav: WebDavFileSystem.open};
+  return const {
+    NetworkSourceType.smb: SmbFileSystem.open,
+    NetworkSourceType.webdav: WebDavFileSystem.open,
+    NetworkSourceType.dlna: DlnaFileSystem.open,
+  };
 });
 
 class NetworkConnections {

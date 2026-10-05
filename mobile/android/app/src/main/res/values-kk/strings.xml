@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Бұл телефонды желіде бөлісу</string>
   <string name="spherical_video_close">Жабу</string>
   <string name="spherical_video_error">Бұл бейнені ойнату мүмкін емес</string>
 </resources>

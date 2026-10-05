@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Udostępnij ten telefon w sieci</string>
   <string name="spherical_video_close">Zamknij</string>
   <string name="spherical_video_error">Nie można odtworzyć tego filmu</string>
 </resources>

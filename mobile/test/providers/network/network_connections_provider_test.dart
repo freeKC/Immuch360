@@ -98,6 +98,13 @@ void main() {
     return container;
   }
 
+  test('opens the shares of each type with their client, DLNA media servers included', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    expect(container.read(networkFileSystemOpenersProvider).keys.toSet(), NetworkSourceType.values.toSet());
+  });
+
   group('NetworkConnections', () {
     test('opens a share on first use with its stored password, once, and registers it on the bridge', () async {
       final container = await withSources();

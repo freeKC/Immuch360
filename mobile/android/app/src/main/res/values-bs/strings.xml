@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Dijeli ovaj telefon na mreži</string>
   <string name="spherical_video_close">Zatvori</string>
   <string name="spherical_video_error">Ovaj video se ne može reprodukovati</string>
 </resources>

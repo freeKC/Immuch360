@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Deel hierdie foon op die netwerk</string>
   <string name="spherical_video_close">Sluit</string>
   <string name="spherical_video_error">Hierdie video kan nie gespeel word nie</string>
 </resources>

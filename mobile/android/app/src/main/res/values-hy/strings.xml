@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Համօգտագործել այս հեռախոսը ցանցում</string>
   <string name="spherical_video_close">Փակել</string>
   <string name="spherical_video_error">Այս տեսանյութը հնարավոր չէ նվագարկել</string>
 </resources>

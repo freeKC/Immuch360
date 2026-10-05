@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">แชร์โทรศัพท์นี้บนเครือข่าย</string>
   <string name="spherical_video_close">ปิด</string>
   <string name="spherical_video_error">ไม่สามารถเล่นวิดีโอนี้ได้</string>
 </resources>

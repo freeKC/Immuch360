@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Jaa tämä puhelin verkossa</string>
   <string name="spherical_video_close">Sulje</string>
   <string name="spherical_video_error">Tätä videota ei voi toistaa</string>
 </resources>

@@ -3,10 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/apple_spatial/apple_spatial.service.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
@@ -19,6 +22,19 @@ import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
+
+/// Tells the user that [asset], an Apple spatial video, plays one eye here: no player of the app shows its second
+/// layer (MV-HEVC), on any device. Once per video in the session (see [AppleSpatialService.takeVideoNotice]), for
+/// nothing else, and not once the viewer of [context] is gone; true when it told.
+Future<bool> noticeAppleSpatialVideo(BuildContext context, AppleSpatialService spatial, BaseAsset asset) async {
+  final info = await spatial.detect(asset);
+  // A video swiped away meanwhile tells nothing, and keeps its notice for when it plays again
+  if (!context.mounted || info?.kind != AppleSpatialKind.multiviewVideo || !spatial.takeVideoNotice(asset)) {
+    return false;
+  }
+  ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.t.apple_spatial_video_2d_notice)));
+  return true;
+}
 
 class NativeVideoViewer extends ConsumerStatefulWidget {
   final BaseAsset asset;
@@ -248,6 +264,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     }
 
     setState(() => _isVideoReady = true);
+    unawaited(_noticeSpatialVideo());
 
     if (ref.read(assetViewerProvider).showingDetails) {
       return;
@@ -262,6 +279,17 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     final autoPlayVideo = ref.read(appConfigProvider).viewer.autoPlayVideo;
     if (autoPlayVideo || widget.asset.isMotionPhoto) {
       await _notifier.play();
+    }
+  }
+
+  /// Tells the user, once per video in the session, that an Apple spatial video plays one eye here (see
+  /// [noticeAppleSpatialVideo])
+  Future<void> _noticeSpatialVideo() async {
+    final asset = widget.asset;
+    try {
+      await noticeAppleSpatialVideo(context, ref.read(appleSpatialServiceProvider), asset);
+    } catch (error) {
+      _log.info('Could not tell whether ${asset.name} is a spatial video: $error');
     }
   }
 

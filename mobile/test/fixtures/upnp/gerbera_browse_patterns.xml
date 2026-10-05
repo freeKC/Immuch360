@@ -1,0 +1,41 @@
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+<u:BrowseResponse xmlns:u="urn:schemas-upnp-org:service:ContentDirectory:1">
+<Result>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;DIDL-Lite xmlns=&quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:upnp=&quot;urn:schemas-upnp-org:metadata-1-0/upnp/&quot; xmlns:sec=&quot;http://www.sec.co.kr/dlna&quot;&gt;
+&lt;item id=&quot;19&quot; parentID=&quot;3&quot; restricted=&quot;1&quot;&gt;
+&lt;dc:title&gt;tone&lt;/dc:title&gt;
+&lt;upnp:class&gt;object.item.audioItem.musicTrack&lt;/upnp:class&gt;
+&lt;dc:date&gt;2026-10-05T06:23:48+0000&lt;/dc:date&gt;
+&lt;res id=&quot;19.0&quot; size=&quot;8586&quot; duration=&quot;0:00:01.000&quot; bitrate=&quot;8000&quot; sampleFrequency=&quot;44100&quot; nrAudioChannels=&quot;1&quot; protocolInfo=&quot;http-get:*:audio/mpeg:DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000&quot; sec:acodec=&quot;mp3&quot;&gt;http://172.17.0.5:49494/media/object_id/19/res_id/0/group/default/ext/file.mp3&lt;/res&gt;
+&lt;/item&gt;
+&lt;item id=&quot;4&quot; parentID=&quot;3&quot; restricted=&quot;1&quot;&gt;
+&lt;dc:title&gt;pattern&lt;/dc:title&gt;
+&lt;upnp:class&gt;object.item.imageItem&lt;/upnp:class&gt;
+&lt;dc:date&gt;2026-10-05T06:23:47+0000&lt;/dc:date&gt;
+&lt;upnp:albumArtURI xmlns:dlna=&quot;urn:schemas-dlna-org:metadata-1-0&quot; dlna:profileID=&quot;JPEG_TN&quot;&gt;http://172.17.0.5:49494/media/object_id/4/res_id/1/ext/file.jpg&lt;/upnp:albumArtURI&gt;
+&lt;res id=&quot;4.0&quot; size=&quot;16877&quot; resolution=&quot;640x480&quot; protocolInfo=&quot;http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_SM;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=00800000000000000000000000000000&quot;&gt;http://172.17.0.5:49494/media/object_id/4/res_id/0/group/default/ext/file.jpg&lt;/res&gt;
+&lt;res id=&quot;4.1&quot; resolution=&quot;160x120&quot; protocolInfo=&quot;http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=00800000000000000000000000000000&quot;&gt;http://172.17.0.5:49494/media/object_id/4/res_id/1/ext/file.jpg&lt;/res&gt;
+&lt;/item&gt;
+&lt;item id=&quot;49&quot; parentID=&quot;3&quot; restricted=&quot;1&quot;&gt;
+&lt;dc:title&gt;bars&lt;/dc:title&gt;
+&lt;upnp:class&gt;object.item.videoItem&lt;/upnp:class&gt;
+&lt;dc:date&gt;2026-10-05T06:23:47+0000&lt;/dc:date&gt;
+&lt;upnp:albumArtURI xmlns:dlna=&quot;urn:schemas-dlna-org:metadata-1-0&quot; dlna:profileID=&quot;JPEG_TN&quot;&gt;http://172.17.0.5:49494/media/object_id/49/res_id/1/ext/file.jpg&lt;/upnp:albumArtURI&gt;
+&lt;res id=&quot;49.0&quot; size=&quot;3652&quot; duration=&quot;0:00:02.000&quot; bitrate=&quot;1115&quot; resolution=&quot;320x240&quot; protocolInfo=&quot;http-get:*:video/quicktime:DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000&quot; sec:vcodec=&quot;h264&quot;&gt;http://172.17.0.5:49494/media/object_id/49/res_id/0/group/default/ext/file.mov&lt;/res&gt;
+&lt;res id=&quot;49.1&quot; resolution=&quot;160x120&quot; protocolInfo=&quot;http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=00800000000000000000000000000000&quot;&gt;http://172.17.0.5:49494/media/object_id/49/res_id/1/ext/file.jpg&lt;/res&gt;
+&lt;/item&gt;
+&lt;item id=&quot;57&quot; parentID=&quot;3&quot; restricted=&quot;1&quot;&gt;
+&lt;dc:title&gt;clip&lt;/dc:title&gt;
+&lt;upnp:class&gt;object.item.videoItem&lt;/upnp:class&gt;
+&lt;dc:date&gt;2026-10-05T06:23:47+0000&lt;/dc:date&gt;
+&lt;upnp:albumArtURI xmlns:dlna=&quot;urn:schemas-dlna-org:metadata-1-0&quot; dlna:profileID=&quot;JPEG_TN&quot;&gt;http://172.17.0.5:49494/media/object_id/57/res_id/1/ext/file.jpg&lt;/upnp:albumArtURI&gt;
+&lt;res id=&quot;57.0&quot; size=&quot;12712&quot; duration=&quot;0:00:02.000&quot; bitrate=&quot;5634&quot; resolution=&quot;320x240&quot; protocolInfo=&quot;http-get:*:video/mp4:DLNA.ORG_PN=AVC_MP4_EU;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000&quot; dc:language=&quot;und&quot; sec:vcodec=&quot;h264&quot;&gt;http://172.17.0.5:49494/media/object_id/57/res_id/0/group/default/ext/file.und.mp4&lt;/res&gt;
+&lt;res id=&quot;57.1&quot; resolution=&quot;160x120&quot; protocolInfo=&quot;http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=00800000000000000000000000000000&quot;&gt;http://172.17.0.5:49494/media/object_id/57/res_id/1/ext/file.jpg&lt;/res&gt;
+&lt;/item&gt;
+&lt;/DIDL-Lite&gt;
+</Result>
+<NumberReturned>4</NumberReturned>
+<TotalMatches>4</TotalMatches>
+<UpdateID>1</UpdateID>
+</u:BrowseResponse>
+</s:Body> </s:Envelope>

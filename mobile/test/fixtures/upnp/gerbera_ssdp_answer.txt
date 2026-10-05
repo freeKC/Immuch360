@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+CACHE-CONTROL: max-age=180
+Date: Mon, 05 Oct 2026 06:28:06 GMT
+EXT:
+LOCATION: http://172.17.0.5:49494/upnp/description.xml
+OPT: "http://schemas.upnp.org/upnp/1/0/"; ns=01
+01-NLS: 79e70920-c085-11f1-a6c0-cd5dc0ae254a
+Server: Linux/6.1.0, UPnP/1.0, Portable SDK for UPnP devices/22.1.0
+X-User-Agent: redsonic
+ST: urn:schemas-upnp-org:device:MediaServer:1
+USN: uuid:96dea31c-d605-4ef0-aeb8-0af1c9fd4d26::urn:schemas-upnp-org:device:MediaServer:1
+

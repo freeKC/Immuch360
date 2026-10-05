@@ -23,8 +23,10 @@ import androidx.media3.exoplayer.video.VideoRendererEventListener
  * renderer reports the formats of the other streams as an unsupported subtype: lens A's track reaches renderer A with
  * its real support and renderer B with 1, and the other way round ([LensAssignment] tells the formats apart).
  *
- * Hardware decoders only: a software HEVC decoder at 3840x3840 would decode a few frames per second and starve the
- * pairing without an error, where failing at once sends the fallback ladder to one lens.
+ * Hardware decoders first, and a software one only when the device has none for the type (an emulator, a TV box): a
+ * software HEVC decoder at 3840x3840 would decode a few frames per second and starve the pairing without an error, so
+ * [app.alextran.immich.core.VideoDecoders.softwareTooHeavy] refuses such frames before the player is built, and the
+ * fallback ladder goes to one lens or to the transcoded stream at once.
  */
 @OptIn(UnstableApi::class)
 class LensVideoRenderer private constructor(
@@ -61,11 +63,10 @@ class LensVideoRenderer private constructor(
     /** Name Media3 reports for the renderer of [stream], which [TwoLensTrackSelector] finds it by. */
     fun nameOf(stream: Int): String = "LensVideoRenderer$stream"
 
-    /** The decoders of a MIME type, hardware ones only. */
-    val hardwareOnly = MediaCodecSelector { mimeType, requiresSecureDecoder, requiresTunnelingDecoder ->
-      MediaCodecUtil.getDecoderInfos(mimeType, requiresSecureDecoder, requiresTunnelingDecoder).filter {
-        it.hardwareAccelerated && !it.softwareOnly
-      }
+    /** The decoders of a MIME type: the hardware ones when there are any, else the software ones. */
+    val hardwareFirst = MediaCodecSelector { mimeType, requiresSecureDecoder, requiresTunnelingDecoder ->
+      val infos = MediaCodecUtil.getDecoderInfos(mimeType, requiresSecureDecoder, requiresTunnelingDecoder)
+      infos.filter { it.hardwareAccelerated && !it.softwareOnly }.ifEmpty { infos }
     }
 
     fun create(
@@ -79,7 +80,7 @@ class LensVideoRenderer private constructor(
     ): LensVideoRenderer {
       val builder =
         MediaCodecVideoRenderer.Builder(context)
-          .setMediaCodecSelector(hardwareOnly)
+          .setMediaCodecSelector(hardwareFirst)
           .setEnableDecoderFallback(false)
           .setAllowedJoiningTimeMs(allowedJoiningTimeMs)
           .setMaxDroppedFramesToNotify(maxDroppedFramesToNotify)

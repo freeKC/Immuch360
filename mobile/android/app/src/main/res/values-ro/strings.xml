@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Partajați acest telefon în rețea</string>
   <string name="spherical_video_close">Închideți</string>
   <string name="spherical_video_error">Acest videoclip nu poate fi redat</string>
 </resources>

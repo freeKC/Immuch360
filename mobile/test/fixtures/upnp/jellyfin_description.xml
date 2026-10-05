@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hand-written: a media server as an embedded device of the root device, with control URLs relative to the
+     description (LOCATION http://<ip>:8096/dlna/<server id>/description.xml), as Jellyfin and some NAS describe it;
+     to be replaced by a capture -->
+<root xmlns:dlna="urn:schemas-dlna-org:device-1-0" xmlns="urn:schemas-upnp-org:device-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <device>
+    <deviceType>urn:schemas-upnp-org:device:Basic:1</deviceType>
+    <friendlyName>Jellyfin host</friendlyName>
+    <manufacturer>Jellyfin</manufacturer>
+    <modelName>Jellyfin Server</modelName>
+    <UDN>uuid:11111111-2222-3333-4444-555555555555</UDN>
+    <deviceList>
+      <device>
+        <deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType>
+        <friendlyName>Jellyfin renderer</friendlyName>
+        <UDN>uuid:22222222-3333-4444-5555-666666666666</UDN>
+        <serviceList>
+          <service>
+            <serviceType>urn:schemas-upnp-org:service:AVTransport:1</serviceType>
+            <serviceId>urn:upnp-org:serviceId:AVTransport</serviceId>
+            <controlURL>avtransport/control</controlURL>
+          </service>
+        </serviceList>
+      </device>
+      <device>
+        <dlna:X_DLNADOC>DMS-1.50</dlna:X_DLNADOC>
+        <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+        <friendlyName> Jellyfin - media </friendlyName>
+        <manufacturer>Jellyfin</manufacturer>
+        <manufacturerURL>https://github.com/jellyfin/jellyfin</manufacturerURL>
+        <modelName>Jellyfin Server</modelName>
+        <modelNumber>01e2a6c7f0d24c1b9f3a5e7d9c1b3a5e</modelNumber>
+        <UDN>uuid:01e2a6c7-f0d2-4c1b-9f3a-5e7d9c1b3a5e</UDN>
+        <serviceList>
+          <service>
+            <serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+            <serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
+            <SCPDURL>connectionmanager/connectionmanager.xml</SCPDURL>
+            <controlURL>connectionmanager/control</controlURL>
+            <eventSubURL>connectionmanager/events</eventSubURL>
+          </service>
+          <service>
+            <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+            <serviceId>urn:upnp-org:serviceId:ContentDirectory</serviceId>
+            <SCPDURL>contentdirectory/contentdirectory.xml</SCPDURL>
+            <controlURL> contentdirectory/control </controlURL>
+            <eventSubURL>contentdirectory/events</eventSubURL>
+          </service>
+        </serviceList>
+      </device>
+    </deviceList>
+  </device>
+</root>

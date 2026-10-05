@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Kunhavigi ĉi tiun telefonon en la reto</string>
   <string name="spherical_video_close">Fermi</string>
   <string name="spherical_video_error">Ne eblas ludi ĉi tiun videon</string>
 </resources>

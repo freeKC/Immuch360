@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Энэ утсыг сүлжээнд хуваалцах</string>
   <string name="spherical_video_close">Хаах</string>
   <string name="spherical_video_error">Энэ видеог тоглуулах боломжгүй</string>
 </resources>

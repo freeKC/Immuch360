@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">এই ফোনটি নেটওয়ার্কে শেয়ার করুন</string>
   <string name="spherical_video_close">বন্ধ</string>
   <string name="spherical_video_error">এই ভিডিওটি চালানো যাচ্ছে না</string>
 </resources>

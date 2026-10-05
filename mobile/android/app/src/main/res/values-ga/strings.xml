@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Comhroinn an fón seo ar an líonra</string>
   <string name="spherical_video_close">Dún</string>
   <string name="spherical_video_error">Ní féidir an físeán seo a sheinm</string>
 </resources>

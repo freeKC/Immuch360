@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">在网络上共享此手机</string>
   <string name="spherical_video_close">关闭</string>
   <string name="spherical_video_error">无法播放此视频</string>
 </resources>

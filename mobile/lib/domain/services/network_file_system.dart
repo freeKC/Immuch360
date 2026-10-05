@@ -1,5 +1,5 @@
-// What a network share looks like to the app, whatever its protocol (SMB through dart_smb2, WebDAV through plain
-// HTTP). Implementations read on demand and never copy a whole file to the device.
+// What a network share looks like to the app, whatever its protocol (SMB through dart_smb2, WebDAV and DLNA through
+// plain HTTP). Implementations read on demand and never copy a whole file to the device.
 
 import 'dart:typed_data';
 
@@ -36,6 +36,16 @@ abstract class NetworkFileSystem {
 
   /// Closes the connection; the object is not used again
   Future<void> close();
+}
+
+/// The order of [NetworkFileSystem.list]: folders first, then files, both by name without case (then with case, so
+/// that two names differing by case only keep one order)
+int compareNetworkEntries(NetworkEntry a, NetworkEntry b) {
+  if (a.isDirectory != b.isDirectory) {
+    return a.isDirectory ? -1 : 1;
+  }
+  final byName = a.name.toLowerCase().compareTo(b.name.toLowerCase());
+  return byName != 0 ? byName : a.name.compareTo(b.name);
 }
 
 /// Opens a [NetworkFileSystem] for a source with its password (null when none was stored)

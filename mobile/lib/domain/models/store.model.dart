@@ -46,6 +46,15 @@ enum StoreKey<T> {
   /// Never holds a password, those live in the secure storage
   networkSources<String>._(5005),
 
+  /// Apple spatial media found by reading their files (the server tells nothing about them), so that a photo is read
+  /// once: a JSON map from `r:<remote id>:<checksum>` or `l:<local id>:<updatedAt ms>` to what was found, the latest
+  /// entries last
+  appleSpatialAssets<String>._(5020),
+
+  /// Install id of this phone in "Share this phone on the network", 16 hex digits generated once: the headset knows
+  /// the share by it when the address changes, and the phone skips its own share when it looks for others
+  phoneShareId<String>._(5021),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

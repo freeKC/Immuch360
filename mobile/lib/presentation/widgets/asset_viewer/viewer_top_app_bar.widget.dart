@@ -4,16 +4,20 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
+import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
@@ -25,6 +29,9 @@ import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/timezone.dart';
 import 'package:immich_ui/immich_ui.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('ViewerTopAppBar');
 
 class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const ViewerTopAppBar({super.key});
@@ -86,6 +93,21 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
           )
         : null;
 
+    // An Apple spatial photo shows its two eyes in the immersive viewer of a Meta Quest; the other devices show the left
+    // eye, as for any photo. Only HEIF photos are read for a pair, and only on the headset.
+    final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    final stereoPair = isHorizonOs && asset.isImage && isHeifName(asset.name)
+        ? ref.watch(appleSpatialInfoProvider(asset)).valueOrNull?.photo
+        : null;
+    final view3dButton = stereoPair != null
+        ? IconButton(
+            key: const Key('apple_spatial_view_3d'),
+            icon: const Icon(Icons.view_in_ar_rounded),
+            tooltip: context.t.apple_spatial_view_3d,
+            onPressed: () => unawaited(_openStereoPhoto(context, ref, asset, stereoPair)),
+          )
+        : null;
+
     final actions = <Widget>[
       if (asset.isMotionPhoto) const MotionPhotoActionButton(iconOnly: true),
       if (album != null && album.isActivityEnabled && album.isShared)
@@ -141,12 +163,17 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     leading: const _AppBarBackButton(),
                     middle: showingDetails ? null : _AssetInfoTitle(asset: asset),
                     trailing:
-                        !showingDetails && (!isReadonlyModeEnabled || panoramaButton != null || spatialButton != null)
+                        !showingDetails &&
+                            (!isReadonlyModeEnabled ||
+                                panoramaButton != null ||
+                                spatialButton != null ||
+                                view3dButton != null)
                         ? ImmichColorOverride(
                             color: Colors.white,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                ?view3dButton,
                                 ?panoramaButton,
                                 ?spatialButton,
                                 if (!isReadonlyModeEnabled) ...(isInLockedView ? lockedViewActions : actions),
@@ -166,6 +193,21 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(60.0);
+}
+
+/// Opens [asset], an Apple spatial photo, in 3D in the immersive viewer (see [openStereoPhotoViewer]); a message says
+/// when it could not open
+Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset asset, HeicStereoPair pair) async {
+  // Read before the first await: the viewer may be gone by then
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final errorMessage = context.t.immersive_viewer_open_failed;
+  final stereoLabels = sphereViewerLabels(context.t);
+  try {
+    await openStereoPhotoViewer(ref, asset, pair, stereoLabels: stereoLabels);
+  } catch (error) {
+    _log.warning('Could not open ${asset.name} in 3D: $error');
+    messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+  }
 }
 
 class _AppBarBackButton extends ConsumerWidget {

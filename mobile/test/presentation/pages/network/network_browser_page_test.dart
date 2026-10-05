@@ -7,11 +7,13 @@ import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/network_source_relocator.dart';
 import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
@@ -22,6 +24,7 @@ import 'package:immich_mobile/presentation/widgets/network/network_media_tile.wi
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
+import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/repositories/upload.repository.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -73,6 +76,20 @@ class _LoadedImage extends ImageProvider<_LoadedImage> {
 
   @override
   int get hashCode => id.hashCode;
+}
+
+/// Finds the share at [result] (null: nowhere else), once [answer] completes when set; remembers what it was asked
+class _FakeRelocator implements NetworkSourceRelocator {
+  final List<NetworkSource> asked = [];
+  NetworkSource? result;
+  Completer<void>? answer;
+
+  @override
+  Future<NetworkSource?> relocate(NetworkSource source, {Duration timeout = const Duration(seconds: 5)}) async {
+    asked.add(source);
+    await answer?.future;
+    return result;
+  }
 }
 
 /// The record of the files sent, in memory: widget tests do not wait for real file reads
@@ -190,6 +207,7 @@ void main() {
     String path = '/',
     bool settle = true,
     Map<String, Widget Function(RouteData data)> pages = const {},
+    List<Override> overrides = const [],
   }) {
     return pumpNetworkRouter(
       tester,
@@ -197,6 +215,7 @@ void main() {
       settle: settle,
       pages: pages,
       overrides: [
+        ...overrides,
         storeServiceProvider.overrideWithValue(store),
         overrideConnections((ref) => connections = FakeConnections(ref, share)),
         networkThumbnailImageProvider.overrideWithValue((url) {
@@ -668,6 +687,183 @@ void main() {
 
       expect(find.text(t.network_upload_needs_server), findsOneWidget);
       expect(find.text(t.network_upload_action), findsNothing);
+    });
+  });
+
+  testWidgets('shows the picture a media server gives for a file, else the bridge picture or video frame', (
+    tester,
+  ) async {
+    const art = 'http://192.168.1.10:8200/AlbumArt/22-1.jpg';
+    NetworkEntry withArt(NetworkEntry entry, String? url) => NetworkEntry(
+      sourceId: entry.sourceId,
+      path: entry.path,
+      isDirectory: false,
+      size: entry.size,
+      modified: entry.modified,
+      thumbnailUrl: url,
+    );
+    share.folders['/'] = [
+      withArt(share.file('/flat.jpg'), art),
+      withArt(share.file('/pano.jpg'), null),
+      withArt(share.file('/trip.mp4'), 'http://192.168.1.10:8200/AlbumArt/23-1.jpg'),
+      // Too large for a thumbnail read through the bridge
+      NetworkEntry(
+        sourceId: source.id,
+        path: '/huge.jpg',
+        isDirectory: false,
+        size: networkThumbnailMaxFileSize + 1,
+        thumbnailUrl: 'http://192.168.1.10:8200/AlbumArt/24-1.jpg',
+      ),
+    ];
+    // Not settled: the server pictures and the bridge one stay pending, as on a slow network
+    await pumpBrowser(tester, settle: false);
+    await tester.pump();
+    await tester.pump();
+
+    final server = find.byKey(const Key('network_media_server_thumbnail'));
+    expect(server, findsNWidgets(3));
+    expect(find.descendant(of: tileOf('huge.jpg'), matching: server), findsOneWidget);
+    final image = tester.widget<Image>(find.descendant(of: tileOf('flat.jpg'), matching: server)).image as ResizeImage;
+    expect(image.width, 256);
+    expect((image.imageProvider as NetworkImage).url, art);
+    expect(thumbnails, [
+      Uri.parse('http://127.0.0.1:1234/token/nas/pano.jpg'),
+    ], reason: 'no bridge read for the others');
+    expect(videoHost.urls, isEmpty, reason: 'no frame taken while the server picture comes');
+  });
+
+  group('a share found on the network, at a new address', () {
+    const found = NetworkSource(
+      id: 'nas',
+      type: NetworkSourceType.dlna,
+      name: 'Home NAS',
+      host: '192.168.1.10',
+      port: 8200,
+      share: '/rootDesc.xml',
+      discoveryId: 'uuid:nas',
+    );
+    late _FakeRelocator relocator;
+
+    setUp(() async {
+      await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [found]));
+      relocator = _FakeRelocator();
+    });
+
+    List<NetworkSource> stored() => NetworkSource.decodeList(store.tryGet(StoreKey.networkSources));
+
+    Future<void> pump(WidgetTester tester, {bool settle = true}) =>
+        pumpBrowser(tester, settle: settle, overrides: [networkSourceRelocatorProvider.overrideWithValue(relocator)]);
+
+    testWidgets('is looked for once its first reading failed, saved at its new address and read there', (tester) async {
+      share.error = const NetworkFileSystemException('Cannot reach 192.168.1.10: No route to host');
+      relocator
+        ..answer = Completer<void>()
+        ..result = found.copyWith(host: '192.168.1.11', port: 8201);
+      await pump(tester, settle: false);
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Looking for Home NAS on the network'), findsOneWidget);
+      expect(relocator.asked.single.host, '192.168.1.10');
+
+      share.error = null;
+      relocator.answer!.complete();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Holidays'), findsOneWidget);
+      expect(find.byType(AlertDialog), findsNothing, reason: 'a media server sends no credentials: nothing to ask');
+      expect(share.listed, ['/', '/']);
+      final saved = stored().single;
+      expect(saved.host, '192.168.1.11');
+      expect(saved.port, 8201);
+      expect(saved.discoveryId, 'uuid:nas');
+    });
+
+    testWidgets('tells why the folder could not be read when it is not found elsewhere, and is looked for once', (
+      tester,
+    ) async {
+      share.error = const NetworkFileSystemException('Cannot reach 192.168.1.10: No route to host');
+      await pump(tester);
+
+      expect(relocator.asked, hasLength(1));
+      expect(find.text('Could not open this file: Cannot reach 192.168.1.10: No route to host'), findsOneWidget);
+      expect(stored().single.host, '192.168.1.10');
+
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Retry'));
+      await tester.pumpAndSettle();
+      expect(relocator.asked, hasLength(1), reason: 'once per page');
+    });
+
+    testWidgets('is not looked for when its credentials are refused or its folder is missing', (tester) async {
+      share.error = const NetworkFileSystemException('Refused', isAuthentication: true);
+      await pump(tester);
+      expect(relocator.asked, isEmpty);
+    });
+
+    testWidgets('a share typed by hand is not looked for', (tester) async {
+      await store.put(StoreKey.networkSources, NetworkSource.encodeList([found.copyWith(clearDiscoveryId: true)]));
+      share.error = const NetworkFileSystemException('Cannot reach 192.168.1.10: No route to host');
+      await pump(tester);
+      expect(relocator.asked, isEmpty);
+    });
+
+    group('with a user name and a password', () {
+      const phone = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.webdav,
+        name: 'Pixel',
+        host: '192.168.1.56',
+        port: 8361,
+        share: '/',
+        username: 'phone1234',
+        discoveryId: '0f1e2d3c4b5a6978',
+      );
+      const question =
+          'Pixel no longer answers at http://192.168.1.56:8361/, and a device of the network that announces it '
+          'answers at http://192.168.1.57:8361/. Saving this address sends the user name and password of the share to '
+          'that device: only do it if you trust it.';
+
+      setUp(() async {
+        await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [phone]));
+        share.error = const NetworkFileSystemException('Cannot reach 192.168.1.56: No route to host');
+        relocator.result = phone.copyWith(host: '192.168.1.57');
+      });
+
+      /// Up to the question; not settled, the page waiting behind it
+      Future<void> pumpToQuestion(WidgetTester tester) async {
+        await pump(tester, settle: false);
+        for (var i = 0; i < 4; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+      }
+
+      testWidgets('is moved once the user accepts the new address, which the question names', (tester) async {
+        await pumpToQuestion(tester);
+
+        expect(find.text('Use the new address?'), findsOneWidget);
+        expect(find.text(question), findsOneWidget);
+        expect(stored().single.host, '192.168.1.56', reason: 'nothing saved before the answer');
+
+        share.error = null;
+        await tester.tap(find.widgetWithText(TextButton, 'Save'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Holidays'), findsOneWidget);
+        expect(stored().single.host, '192.168.1.57');
+        expect(stored().single.username, 'phone1234');
+      });
+
+      testWidgets('stays where it was when the user declines, and tells why it could not be read', (tester) async {
+        await pumpToQuestion(tester);
+
+        await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+        await tester.pumpAndSettle();
+
+        expect(find.text(question), findsNothing);
+        expect(find.text('Could not open this file: Cannot reach 192.168.1.56: No route to host'), findsOneWidget);
+        expect(stored().single.host, '192.168.1.56');
+        expect(share.listed, ['/'], reason: 'not read at the new address');
+      });
     });
   });
 

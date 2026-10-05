@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">喺網絡上分享呢部電話</string>
   <string name="spherical_video_close">閂</string>
   <string name="spherical_video_error">播放唔到呢段影片</string>
 </resources>

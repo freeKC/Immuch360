@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Vê telefonê li ser torê parve bike</string>
   <string name="spherical_video_close">Bigire</string>
   <string name="spherical_video_error">Ev vîdyo nayê lêxistin</string>
 </resources>

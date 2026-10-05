@@ -249,6 +249,10 @@ void main() {
       'coverage',
       'coverage_full',
       'coverage_half',
+      'spatial3d',
+      'spatial2d',
+      'spatialNoNavigation',
+      'spatialSecondEyeFailed',
     });
   });
 

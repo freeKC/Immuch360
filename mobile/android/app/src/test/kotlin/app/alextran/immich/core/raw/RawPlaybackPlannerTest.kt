@@ -19,9 +19,30 @@ class RawPlaybackPlannerTest {
       RawFixtures.C.replace("\"secondFallbackUrl\":null", "\"secondFallbackUrl\":\"$secondFallback\""),
     )
 
-  private val all: RawDecoderCheck = { _, _ -> true }
-  private val oneOnly: RawDecoderCheck = { _, instances -> instances == 1 }
-  private val none: RawDecoderCheck = { _, _ -> false }
+  private val osmo = RawProjection.parse(RawFixtures.D)
+
+  /** Example C with lens 1 in the second file. */
+  private val swapped =
+    RawProjection.parse(
+      RawFixtures.C.replace("\"trackOrder\":[1,0]", "\"trackOrder\":[0,1]")
+        .replace("{\"file\":0,\"videoTrack\":0", "{\"file\":2,\"videoTrack\":0")
+        .replace("{\"file\":1,\"videoTrack\":0", "{\"file\":0,\"videoTrack\":0")
+        .replace("{\"file\":2,\"videoTrack\":0", "{\"file\":1,\"videoTrack\":0"),
+    )
+
+  /** A refusal for the size or the rate, where the decoder list may be pessimistic. */
+  private val tooLarge =
+    RawDecoderVerdict.Refused("c2.qti.hevc.decoder has no performance point for 2 x 3840x3840 at 30.0 fps", false)
+
+  /** The refusal of an emulator whose HEVC decoder lacks Main 10, for one stream as for two. */
+  private val lacksMain10 = RawDecoderVerdict.Refused("c2.android.hevc.decoder lacks profile Main 10", true)
+
+  private val all: RawDecoderCheck = { _, _ -> RawDecoderVerdict.Decodable }
+  private val oneOnly: RawDecoderCheck = { _, instances ->
+    if (instances == 1) RawDecoderVerdict.Decodable else tooLarge
+  }
+  private val none: RawDecoderCheck = { _, _ -> tooLarge }
+  private val noProfile: RawDecoderCheck = { _, _ -> lacksMain10 }
 
   private fun initial(
     projection: RawProjection?,
@@ -72,7 +93,7 @@ class RawPlaybackPlannerTest {
     val plan =
       initial(unknown, { _, _ ->
         asked = true
-        false
+        tooLarge
       })
     assertEquals(listOf(0, 1), plan.streams)
     assertFalse(asked)
@@ -83,7 +104,7 @@ class RawPlaybackPlannerTest {
     val questions = mutableListOf<Pair<Int, Int>>()
     initial(b, { track, instances ->
       questions += track.width to instances
-      instances == 1
+      oneOnly(track, instances)
     })
     assertEquals(listOf(3840 to 2, 3840 to 1), questions)
   }
@@ -105,13 +126,6 @@ class RawPlaybackPlannerTest {
   @Test
   fun `one lens of the second file opens that file alone`() {
     // Lens 1 moved to the second file: the primary stream is texture 1, in file 1
-    val swapped =
-      RawProjection.parse(
-        RawFixtures.C.replace("\"trackOrder\":[1,0]", "\"trackOrder\":[0,1]")
-          .replace("{\"file\":0,\"videoTrack\":0", "{\"file\":2,\"videoTrack\":0")
-          .replace("{\"file\":1,\"videoTrack\":0", "{\"file\":0,\"videoTrack\":0")
-          .replace("{\"file\":2,\"videoTrack\":0", "{\"file\":1,\"videoTrack\":0"),
-      )
     val plan = initial(swapped, oneOnly)
     assertEquals(listOf(0), plan.streams)
     assertEquals(listOf(RawFixtures.C_SECOND_URL), plan.urls)
@@ -135,13 +149,105 @@ class RawPlaybackPlannerTest {
   }
 
   @Test
-  fun `one refused without any fallback tries the primary lens anyway`() {
+  fun `one refused for its size without any fallback tries the primary lens anyway, without the one lens message`() {
     val plan = initial(b, none)
     assertEquals(RawMode.LENSES, plan.mode)
     assertEquals(listOf(0), plan.streams)
-    assertEquals(RawMessage.ONE_LENS_DECODER, plan.message)
+    assertEquals(listOf(url), plan.urls)
+    assertFalse(plan.fromFallback)
+    // The decoder list says even one lens is too much: the one lens message waits for the first frame of that lens
+    assertNull(plan.message)
+    assertEquals(RawMessage.ONE_LENS_DECODER, plan.firstFrameMessage)
     // A pair with one fallback only gets none
-    assertEquals(listOf(0), initial(c, none, fallbackUrl = fallback).streams)
+    val pair = initial(c, none, fallbackUrl = fallback)
+    assertEquals(listOf(0), pair.streams)
+    assertNull(pair.message)
+    assertEquals(RawMessage.ONE_LENS_DECODER, pair.firstFrameMessage)
+    // The DJI front lens, stream 1
+    val dji = initial(osmo, none)
+    assertEquals(RawMode.LENSES, dji.mode)
+    assertEquals(listOf(1), dji.streams)
+    assertNull(dji.message)
+    assertEquals(RawMessage.ONE_LENS_DECODER, dji.firstFrameMessage)
+  }
+
+  @Test
+  fun `only the lens tried against the decoder list tells its message on its first frame`() {
+    val tried = initial(b, none)
+    // The activities drop the message once shown: the same player still plays the plan
+    assertEquals(tried.key, tried.copy(firstFrameMessage = null).key)
+    // Every other plan tells its message at once, or has none
+    val others =
+      listOf(
+        initial(null, all, json = false),
+        initial(null, all),
+        initial(RawProjection.parse(RawFixtures.A), all),
+        initial(b, all),
+        initial(b, oneOnly),
+        initial(b, none, fallbackUrl = fallback),
+        initial(cWithFallbacks, none, fallbackUrl = fallback),
+        initial(osmo, noProfile),
+        initial(osmo, noProfile, fallbackUrl = fallback),
+        RawPlaybackPlanner.afterDecoderFailure(initial(b, all), b, url, null)!!,
+        RawPlaybackPlanner.afterDecoderFailure(tried, b, url, null)!!,
+        RawPlaybackPlanner.afterSourceError(initial(c, all), c, url)!!,
+        RawPlaybackPlanner.afterSourceFailure(tried, b, url, fallback)!!,
+        RawPlaybackPlanner.afterStitchFailure(tried)!!,
+      )
+    for (plan in others) assertNull(plan.reason, plan.firstFrameMessage)
+  }
+
+  @Test
+  fun `a missing profile or no decoder at all is a certain refusal, a refused size or rate is not`() {
+    assertEquals(RawDecoderVerdict.Decodable, RawDecoderVerdict.of(true, "c2.qti.hevc.decoder (hardware)", null))
+    assertEquals(lacksMain10, RawDecoderVerdict.of(false, lacksMain10.reason, "Main 10"))
+    val noDecoder = RawDecoderVerdict.of(false, "no decoder for video/hevc", null)
+    assertEquals(RawDecoderVerdict.Refused("no decoder for video/hevc", true), noDecoder)
+    assertEquals(tooLarge, RawDecoderVerdict.of(false, tooLarge.reason, null))
+    // A device without any HEVC decoder skips the lens player, as for a missing profile
+    val plan = initial(osmo, { _, _ -> noDecoder })
+    assertEquals(RawMode.UNSTITCHED, plan.mode)
+    assertEquals(listOf(url), plan.urls)
+    assertNull(plan.message)
+    assertTrue(plan.reason, plan.reason.contains("no decoder for video/hevc"))
+    assertEquals(listOf(fallback), initial(osmo, { _, _ -> noDecoder }, fallbackUrl = fallback).urls)
+  }
+
+  @Test
+  fun `a missing profile without any fallback plays the original in the plain player, without a raw message`() {
+    // The DJI Osmo 360 opened from a network share on a device whose HEVC decoder lacks Main 10: no lens can play, and
+    // the plain player's own decoder check and fallback take over
+    val plan = initial(osmo, noProfile)
+    assertEquals(RawMode.UNSTITCHED, plan.mode)
+    assertEquals(emptyList<Int>(), plan.streams)
+    assertEquals(listOf(url), plan.urls)
+    assertFalse(plan.fromFallback)
+    assertNull(plan.message)
+    assertTrue(plan.reason, plan.reason.contains("lacks profile Main 10"))
+    // A pair with one transcoded stream only: the original too, whose plain player can switch to that stream
+    val pair = initial(c, noProfile, fallbackUrl = fallback)
+    assertEquals(RawMode.UNSTITCHED, pair.mode)
+    assertEquals(listOf(url), pair.urls)
+    assertNull(pair.message)
+    // The original as its own fallback is no fallback
+    assertEquals(listOf(url), initial(osmo, noProfile, fallbackUrl = url).urls)
+  }
+
+  @Test
+  fun `a missing profile with the transcoded streams plays them`() {
+    // A two track file: the transcoded stream holds one lens and plays unstitched
+    val tracks = initial(osmo, noProfile, fallbackUrl = fallback)
+    assertEquals(RawMode.UNSTITCHED, tracks.mode)
+    assertEquals(listOf(fallback), tracks.urls)
+    assertTrue(tracks.fromFallback)
+    assertEquals(RawMessage.UNSTITCHED, tracks.message)
+    // A split pair: the transcoded streams of both files, stitched
+    val pair = initial(cWithFallbacks, noProfile, fallbackUrl = fallback)
+    assertEquals(RawMode.LENSES, pair.mode)
+    assertEquals(listOf(0, 1), pair.streams)
+    assertEquals(listOf(fallback, secondFallback), pair.urls)
+    assertTrue(pair.fromFallback)
+    assertNull(pair.message)
   }
 
   @Test
@@ -155,11 +261,35 @@ class RawPlaybackPlannerTest {
     assertTrue(transcoded.fromFallback)
     assertEquals(listOf(fallback, secondFallback), transcoded.urls)
     assertNull(RawPlaybackPlanner.afterDecoderFailure(transcoded, cWithFallbacks, url, fallback))
-    // Without fallbacks, one lens is the last step
+    // Without fallbacks, one lens goes on to the original unstitched, the last step
     val bOne = RawPlaybackPlanner.afterDecoderFailure(initial(b, all), b, url, null)!!
-    assertNull(RawPlaybackPlanner.afterDecoderFailure(bOne, b, url, null))
+    val bUnstitched = RawPlaybackPlanner.afterDecoderFailure(bOne, b, url, null)!!
+    assertEquals(RawMode.UNSTITCHED, bUnstitched.mode)
+    assertNull(RawPlaybackPlanner.afterDecoderFailure(bUnstitched, b, url, null))
     // Other modes are not the ladder's
     assertNull(RawPlaybackPlanner.afterDecoderFailure(initial(null, all, json = false), b, url, null))
+  }
+
+  @Test
+  fun `a lens decoder that fails without the transcoded streams plays the original unstitched`() {
+    // The lens tried anyway on a pessimistic list, then refused by its decoder
+    val tried = initial(osmo, none)
+    val plan = RawPlaybackPlanner.afterDecoderFailure(tried, osmo, url, null)!!
+    assertEquals(RawMode.UNSTITCHED, plan.mode)
+    assertEquals(emptyList<Int>(), plan.streams)
+    assertEquals(listOf(url), plan.urls)
+    assertFalse(plan.fromFallback)
+    assertEquals(RawMessage.UNSTITCHED, plan.message)
+    // The original as its own fallback, or a pair with one transcoded stream only: the original too
+    assertEquals(plan, RawPlaybackPlanner.afterDecoderFailure(tried, osmo, url, url))
+    val pairOne = initial(c, none, fallbackUrl = fallback)
+    assertEquals(listOf(url), RawPlaybackPlanner.afterDecoderFailure(pairOne, c, url, fallback)!!.urls)
+    // The lens of the second file of a pair failed: the opened file plays, where the plain player has its fallback
+    val second = initial(swapped, none)
+    assertEquals(listOf(RawFixtures.C_SECOND_URL), second.urls)
+    assertEquals(listOf(url), RawPlaybackPlanner.afterDecoderFailure(second, swapped, url, null)!!.urls)
+    // Unstitched already: the error shows
+    assertNull(RawPlaybackPlanner.afterDecoderFailure(plan, osmo, url, null))
   }
 
   @Test

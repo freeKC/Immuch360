@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">આ ફોનને નેટવર્ક પર શેર કરો</string>
   <string name="spherical_video_close">બંધ કરો</string>
   <string name="spherical_video_error">આ વીડિયો ચલાવી શકાતો નથી</string>
 </resources>

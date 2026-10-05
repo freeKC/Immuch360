@@ -6,6 +6,7 @@ import android.opengl.EGLContext
 import android.opengl.EGLDisplay
 import android.opengl.EGLExt
 import android.opengl.EGLSurface
+import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.os.Handler
 import android.os.HandlerThread
@@ -390,9 +391,9 @@ class TwoLensCompositor(
     val program = useProgram(colorOf(draw.format ?: formats.get(streams[0])), draw.format)
     GlUtil.focusEglSurface(display, context, window, outputWidth, outputHeight)
     program.use()
+    val samplerStreams = RawStitchUniforms.samplerStreams(streams)
     for (index in 0..1) {
-      // One lens mode: the sampler of the missing stream reads the decoded one, which uEnabled leaves out
-      val stream = if (index in streams) index else streams[0]
+      val stream = samplerStreams[index]
       if (program.getUniformLocation("uTex$index") >= 0) {
         program.setSamplerTexIdUniform("uTex$index", textureIds[stream], index)
       }
@@ -412,6 +413,14 @@ class TwoLensCompositor(
       )
     }
     program.bindAttributesAndUniforms()
+    // GlProgram binds a sampler on the target of the type the driver reports, and the emulator reports sampler2D for
+    // samplerExternalOES: its GL_TEXTURE_2D binding of an external texture never reaches the host GPU, and a unit kept
+    // what the texture creation or updateTexImage last bound there, often the other stream's (the opposite lens
+    // flashing in). Binding the external target changes nothing where the type was right.
+    for (index in 0..1) {
+      GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + index)
+      GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureIds[samplerStreams[index]])
+    }
     // The four vertex triangle strip forms the quad
     GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
     GlUtil.checkGlError()

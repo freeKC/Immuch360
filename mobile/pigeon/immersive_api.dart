@@ -25,7 +25,8 @@ abstract class ImmersiveApi {
   /// Opens the immersive head tracked viewer for an equirectangular photo or video. [stereoLayout] is the layout
   /// Flutter guessed from the media dimensions; the headset shows each eye its own half of a stereoscopic media,
   /// and the user can change the layout in the viewer. [stereoLabels] are the translated labels of the 3D control,
-  /// keyed "stereo", "mono", "topBottom", "leftRight".
+  /// keyed "stereo", "mono", "topBottom", "leftRight", and for a spatial photo "spatial3d", "spatial2d",
+  /// "spatialNoNavigation", "spatialSecondEyeFailed".
   /// [rawProjection] is null for an equirectangular media, or the JSON of a dual fisheye calibration (docs
   /// 16-dual-fisheye-spec.md section 5) for a raw camera video whose frame holds the two fisheye circles; raw photos
   /// arrive already stitched as a file.
@@ -37,7 +38,9 @@ abstract class ImmersiveApi {
   /// already in front replaces the media in place as a fresh opening. [fallbackUrl] is the server's transcoded
   /// stream of a video, played instead of [url] when the headset's decoder cannot take the original (checked at
   /// the first frames) or when the original fails; null when there is none or when the user chose to always play
-  /// the original.
+  /// the original. [stereoPair] is null, or the JSON of an Apple spatial photo (docs
+  /// 18-design-build19-sources-and-spatial.md section 5.6): the viewer then shows both eyes on a flat quad in front of
+  /// the user instead of a sphere.
   void open(
     String url,
     Map<String, String> headers,
@@ -50,12 +53,13 @@ abstract class ImmersiveApi {
     int openingId,
     String? fallbackUrl,
     String? rawProjection,
+    String? stereoPair,
   );
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
   /// by [requestId]. Returns false, and shows nothing, when that viewer is gone, closing, or no longer waiting for
   /// this request (the user pressed Back, or the request timed out meanwhile), so that Flutter does not count the
-  /// media as shown. Never starts the viewer.
+  /// media as shown. Never starts the viewer. [stereoPair] is the JSON of an Apple spatial photo, as for [open].
   bool showAdjacent(
     int requestId,
     String url,
@@ -65,6 +69,7 @@ abstract class ImmersiveApi {
     ImmersiveSphereCoverage coverage,
     String? fallbackUrl,
     String? rawProjection,
+    String? stereoPair,
   );
 }
 

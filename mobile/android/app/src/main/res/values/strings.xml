@@ -10,6 +10,7 @@
   <string name="bg_downloader_notification_channel_description">Progress updates for uploads and downloads</string>
 
   <string name="background_worker_notification_channel_name">Background backup</string>
+  <string name="phone_share_channel">Share this phone on the network</string>
 
   <string name="spherical_video_close">Close</string>
   <string name="spherical_video_error">This video cannot be played</string>

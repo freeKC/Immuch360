@@ -1,6 +1,7 @@
 // A share reached over WebDAV (a NAS, Nextcloud, a computer running a WebDAV server) with nothing but plain HTTP:
-// PROPFIND to list a folder and to stat an entry, GET with a Range header to read a part of a file. No file is ever
-// downloaded whole: a read asks for its bytes only, and stops the transfer once they arrived.
+// PROPFIND to list a folder and to stat an entry, GET with a Range header to read a part of a file (see
+// http_range_reader.dart, shared with the DLNA client). No file is ever downloaded whole: a read asks for its bytes
+// only, and stops the transfer once they arrived.
 //
 // Authentication is Basic, sent with every request. A server that only offers Digest is reported as an authentication
 // failure for now. Redirects are followed on the same host only, so that the credentials never leave it.
@@ -9,13 +10,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/http_range_reader.dart';
+import 'package:immich_mobile/infrastructure/network/lite_xml.dart';
 
 /// A [NetworkFileSystem] over WebDAV, see [open]
 class WebDavFileSystem implements NetworkFileSystem {
@@ -57,25 +59,13 @@ class WebDavFileSystem implements NetworkFileSystem {
   final bool _ownsClient;
   bool _closed = false;
 
-  /// Null until a read tells, false once the server answered a range request with the whole file
-  bool? _rangesHonoured;
-
-  /// Transfers left open on a server that ignores ranges, per path, so that the next read further in the file goes on
-  /// from where the last one stopped instead of downloading the start of the file again
-  final Map<String, List<_SequentialRead>> _openReads = {};
+  /// The reads of the files, keyed by path
+  late final _ranges = HttpRangeReader(send: _send, fail: _fail, isClosed: () => _closed);
 
   /// Longest wait for the answer of the server, then between two parts of a body
-  static const answerTimeout = Duration(seconds: 30);
-
-  /// How long a transfer left open on a server that ignores ranges waits for the next read
-  static const openReadTimeout = Duration(seconds: 15);
+  static const answerTimeout = HttpRangeReader.answerTimeout;
 
   static const _maxRedirects = 5;
-  static const _maxOpenReadsPerPath = 3;
-
-  /// Past this size, an error or redirect body is not read to its end (which lets its connection serve again) but
-  /// dropped with its connection
-  static const _maxDiscardedBody = 64 * 1024;
 
   /// Past this size, a multistatus answer is parsed in another isolate, away from the interface
   static const _isolateParseSize = 256 * 1024;
@@ -88,7 +78,7 @@ class WebDavFileSystem implements NetworkFileSystem {
 
   /// Whether the server honours range requests: null until a read tells, false when it answers them with the whole
   /// file (reads still work, but each one transfers the file from its start up to the bytes asked for)
-  bool? get supportsRanges => _rangesHonoured;
+  bool? get supportsRanges => _ranges.supportsRanges;
 
   @override
   Future<List<NetworkEntry>> list(String path) {
@@ -131,7 +121,7 @@ class WebDavFileSystem implements NetworkFileSystem {
           entries.add(_entryOf(entryPath, resources[i]));
         }
       }
-      entries.sort(_compareEntries);
+      entries.sort(compareNetworkEntries);
       return entries;
     });
   }
@@ -150,63 +140,7 @@ class WebDavFileSystem implements NetworkFileSystem {
     if (length == 0) {
       return Future.value(Uint8List(0));
     }
-    return _guard(() async {
-      final open = _takeOpenRead(target, offset);
-      if (open != null) {
-        try {
-          final bytes = await open.read(offset, length);
-          _keepOpenRead(target, open);
-          return bytes;
-        } catch (_) {
-          // The server dropped the transfer while it waited: a new request below
-          await open.cancel();
-        }
-      }
-
-      final (response, _) = await _send(
-        'GET',
-        _uriOf(target),
-        headers: {'range': 'bytes=$offset-${offset + length - 1}', 'accept-encoding': 'identity'},
-      );
-      final _SequentialRead transfer;
-      switch (response.statusCode) {
-        case 206:
-          _rangesHonoured = true;
-          final start = _contentRangeStart(response.headers['content-range']) ?? offset;
-          if (start > offset) {
-            await _discard(response);
-            throw NetworkFileSystemException('The server sent another part of $target than the one asked for');
-          }
-          transfer = _SequentialRead(response.stream, start);
-        case 200:
-          // The whole file, the range ignored; a file that fits in the bytes asked for proves nothing
-          final contentLength = response.contentLength;
-          if (offset > 0 || contentLength == null || contentLength > length) {
-            _rangesHonoured = false;
-          }
-          transfer = _SequentialRead(response.stream, 0);
-        case 416:
-          // Past the end of the file
-          await _discard(response);
-          return Uint8List(0);
-        default:
-          return _fail(response, target);
-      }
-
-      final Uint8List bytes;
-      try {
-        bytes = await transfer.read(offset, length);
-      } catch (_) {
-        await transfer.cancel();
-        rethrow;
-      }
-      if (_rangesHonoured == false) {
-        _keepOpenRead(target, transfer);
-      } else {
-        await transfer.finish();
-      }
-      return bytes;
-    });
+    return _guard(() => _ranges.read(_uriOf(target), target, offset, length));
   }
 
   @override
@@ -215,9 +149,7 @@ class WebDavFileSystem implements NetworkFileSystem {
       return;
     }
     _closed = true;
-    final openReads = _openReads.values.expand((reads) => reads).toList();
-    _openReads.clear();
-    await Future.wait(openReads.map((read) => read.cancel()));
+    await _ranges.close();
     if (_ownsClient) {
       _client.close();
     }
@@ -387,7 +319,7 @@ class WebDavFileSystem implements NetworkFileSystem {
       if (!const {301, 302, 303, 307, 308}.contains(response.statusCode) || location == null) {
         return (response, current);
       }
-      await _discard(response);
+      await discardHttpBody(response);
       if (redirects >= _maxRedirects) {
         throw NetworkFileSystemException('Too many redirects from ${uri.path}');
       }
@@ -413,7 +345,7 @@ class WebDavFileSystem implements NetworkFileSystem {
   Future<Never> _fail(http.StreamedResponse response, String path, {String method = 'GET'}) async {
     final status = response.statusCode;
     final challenge = (response.headers['www-authenticate'] ?? '').toLowerCase();
-    await _discard(response);
+    await discardHttpBody(response);
     if (status == 401) {
       if (challenge.contains('digest') && !challenge.contains('basic')) {
         throw const NetworkFileSystemException(
@@ -461,73 +393,6 @@ class WebDavFileSystem implements NetworkFileSystem {
     }
   }
 
-  _SequentialRead? _takeOpenRead(String path, int offset) {
-    final reads = _openReads[path];
-    if (reads == null) {
-      return null;
-    }
-    // The one that went the furthest without going past the offset
-    _SequentialRead? best;
-    for (final read in reads) {
-      if (read.position <= offset && (best == null || read.position > best.position)) {
-        best = read;
-      }
-    }
-    if (best != null) {
-      best.stopWaiting();
-      reads.remove(best);
-      if (reads.isEmpty) {
-        _openReads.remove(path);
-      }
-    }
-    return best;
-  }
-
-  void _keepOpenRead(String path, _SequentialRead read) {
-    if (_closed || read.isDone) {
-      unawaited(read.cancel());
-      return;
-    }
-    final reads = _openReads.putIfAbsent(path, () => []);
-    reads.add(read);
-    while (reads.length > _maxOpenReadsPerPath) {
-      unawaited(reads.removeAt(0).cancel());
-    }
-    read.waitFor(openReadTimeout, () {
-      final current = _openReads[path];
-      if (current != null && current.remove(read)) {
-        if (current.isEmpty) {
-          _openReads.remove(path);
-        }
-        unawaited(read.cancel());
-      }
-    });
-  }
-
-  /// Reads and drops a small body so that its connection serves the next request; stops a large or slow one
-  static Future<void> _discard(http.StreamedResponse response) async {
-    var length = 0;
-    try {
-      // Leaving the loop stops the transfer
-      await for (final chunk in response.stream.timeout(_SequentialRead.endTimeout)) {
-        length += chunk.length;
-        if (length > _maxDiscardedBody) {
-          break;
-        }
-      }
-    } catch (_) {
-      // Nothing to do with a failure to drop a body nobody reads
-    }
-  }
-
-  static int? _contentRangeStart(String? header) {
-    if (header == null) {
-      return null;
-    }
-    final match = RegExp(r'bytes\s+(\d+)-\d+').firstMatch(header);
-    return match == null ? null : int.parse(match.group(1)!);
-  }
-
   /// The decoded path of an href, made absolute against [requested] (a folder) when it is relative
   static String _resolveHref(String href, String requested) {
     if (href.startsWith('/')) {
@@ -545,120 +410,6 @@ class WebDavFileSystem implements NetworkFileSystem {
   static String _parentOf(String path) {
     final slash = path.lastIndexOf('/');
     return slash <= 0 ? '/' : path.substring(0, slash);
-  }
-
-  /// Folders first, then files, both by name without case
-  static int _compareEntries(NetworkEntry a, NetworkEntry b) {
-    if (a.isDirectory != b.isDirectory) {
-      return a.isDirectory ? -1 : 1;
-    }
-    final byName = a.name.toLowerCase().compareTo(b.name.toLowerCase());
-    return byName != 0 ? byName : a.name.compareTo(b.name);
-  }
-}
-
-/// A response body read in order: [read] skips up to the offset asked for, then takes the bytes asked for and keeps
-/// what came beyond them for the next read
-class _SequentialRead {
-  _SequentialRead(this._stream, this.position);
-
-  /// Longest wait for the end of a body once its last byte arrived
-  static const endTimeout = Duration(seconds: 5);
-
-  final Stream<List<int>> _stream;
-  StreamIterator<List<int>>? _iterator;
-
-  /// Offset in the file of the next byte to take
-  int position;
-
-  /// Bytes received and not taken yet, from [position]
-  Uint8List? _pending;
-  bool _done = false;
-  Timer? _waiting;
-
-  /// The body ended
-  bool get isDone => _done && _pending == null;
-
-  /// [length] bytes from [offset] (not before [position]), fewer when the body ends first
-  Future<Uint8List> read(int offset, int length) async {
-    assert(offset >= position);
-    final iterator = _iterator ??= StreamIterator(_stream);
-    final bytes = BytesBuilder(copy: false);
-    while (bytes.length < length) {
-      var chunk = _pending;
-      _pending = null;
-      if (chunk == null) {
-        if (_done) {
-          break;
-        }
-        if (!await iterator.moveNext().timeout(WebDavFileSystem.answerTimeout)) {
-          _done = true;
-          break;
-        }
-        final data = iterator.current;
-        chunk = data is Uint8List ? data : Uint8List.fromList(data);
-      }
-      if (position < offset) {
-        final skip = min(offset - position, chunk.length);
-        position += skip;
-        if (skip == chunk.length) {
-          continue;
-        }
-        chunk = Uint8List.sublistView(chunk, skip);
-      }
-      final take = min(length - bytes.length, chunk.length);
-      bytes.add(take == chunk.length ? chunk : Uint8List.sublistView(chunk, 0, take));
-      position += take;
-      if (take < chunk.length) {
-        _pending = Uint8List.sublistView(chunk, take);
-      }
-    }
-    return bytes.takeBytes();
-  }
-
-  /// Calls [onTimeout] unless the next read comes within [timeout]
-  void waitFor(Duration timeout, void Function() onTimeout) {
-    _waiting?.cancel();
-    _waiting = Timer(timeout, onTimeout);
-  }
-
-  void stopWaiting() {
-    _waiting?.cancel();
-    _waiting = null;
-  }
-
-  /// Waits for the end of a body read up to its last byte, so that its connection serves the next request (stopping
-  /// a transfer drops its connection); stops the transfer when more than the bytes asked for comes
-  Future<void> finish() async {
-    if (!_done && _pending == null) {
-      try {
-        final iterator = _iterator ??= StreamIterator(_stream);
-        if (!await iterator.moveNext().timeout(endTimeout)) {
-          _done = true;
-          return;
-        }
-      } catch (_) {
-        // Stopped below
-      }
-    }
-    await cancel();
-  }
-
-  /// Stops the transfer
-  Future<void> cancel() async {
-    stopWaiting();
-    _done = true;
-    _pending = null;
-    try {
-      final iterator = _iterator;
-      if (iterator == null) {
-        await _stream.listen(null).cancel();
-      } else {
-        await iterator.cancel();
-      }
-    } catch (_) {
-      // Nothing to do with a failure to stop a transfer nobody reads any more
-    }
   }
 }
 
@@ -690,7 +441,7 @@ const _davNamespace = 'DAV:';
 /// well as elements without a namespace from servers that do not declare it. Only the properties of a propstat with a
 /// successful status are read, and the responses with a failed status are left out.
 List<WebDavResource>? parseWebDavMultistatus(String xml) {
-  final multistatus = _parseXml(xml).davChild('multistatus');
+  final multistatus = parseLiteXml(xml).davChild('multistatus');
   if (multistatus == null) {
     return null;
   }
@@ -799,164 +550,12 @@ String _percentDecode(String text) {
   });
 }
 
-/// An element of the small XML parser below: its local name, its namespace, its children and its text
-class _XmlElement {
-  _XmlElement(this.qualifiedName, this.namespace, this.name);
-
-  final String qualifiedName;
-  final String? namespace;
-  final String name;
-  final List<_XmlElement> children = [];
-  final StringBuffer _text = StringBuffer();
-
-  String get text => _text.toString();
-
+/// The elements of the DAV: namespace, whatever their prefix, and those without a namespace from servers that do not
+/// declare it
+extension _DavElement on LiteXmlElement {
   bool get isDav => namespace == _davNamespace || namespace == null;
 
-  Iterable<_XmlElement> davChildren(String name) => children.where((c) => c.name == name && c.isDav);
+  Iterable<LiteXmlElement> davChildren(String name) => children.where((c) => c.name == name && c.isDav);
 
-  _XmlElement? davChild(String name) => davChildren(name).firstOrNull;
-}
-
-final _tagName = RegExp(r'^\s*([^\s/>]+)');
-final _attribute = RegExp(r'''([^\s=]+)\s*=\s*(?:"([^"]*)"|'([^']*)')''');
-final _entity = RegExp(r'&(#[xX][0-9a-fA-F]+|#[0-9]+|[a-zA-Z]+);');
-
-/// A forgiving XML parser for multistatus answers: elements with their namespaces resolved, text with its entities
-/// and CDATA sections; comments, processing instructions and doctypes skipped. Malformed parts are skipped rather
-/// than refused, and an end tag closes the matching open element.
-_XmlElement _parseXml(String xml) {
-  final document = _XmlElement('', null, '');
-  final elements = [document];
-  final scopes = <Map<String, String>>[const {}];
-  final length = xml.length;
-  var i = xml.startsWith('\uFEFF') ? 1 : 0;
-  while (i < length) {
-    final open = xml.indexOf('<', i);
-    final textEnd = open < 0 ? length : open;
-    if (textEnd > i) {
-      elements.last._text.write(_decodeEntities(xml.substring(i, textEnd)));
-    }
-    if (open < 0) {
-      break;
-    }
-    if (xml.startsWith('<!--', open)) {
-      final end = xml.indexOf('-->', open + 4);
-      i = end < 0 ? length : end + 3;
-      continue;
-    }
-    if (xml.startsWith('<![CDATA[', open)) {
-      final end = xml.indexOf(']]>', open + 9);
-      elements.last._text.write(xml.substring(open + 9, end < 0 ? length : end));
-      i = end < 0 ? length : end + 3;
-      continue;
-    }
-    if (xml.startsWith('<?', open)) {
-      final end = xml.indexOf('?>', open + 2);
-      i = end < 0 ? length : end + 2;
-      continue;
-    }
-    if (xml.startsWith('<!', open)) {
-      // A doctype, with its internal subset between brackets when there is one
-      var end = xml.indexOf('>', open);
-      final bracket = xml.indexOf('[', open);
-      if (bracket >= 0 && end >= 0 && bracket < end) {
-        final subsetEnd = xml.indexOf(']', bracket);
-        end = subsetEnd < 0 ? -1 : xml.indexOf('>', subsetEnd);
-      }
-      i = end < 0 ? length : end + 1;
-      continue;
-    }
-
-    // A start or end tag, up to the ">" outside of the quoted attribute values
-    var end = open + 1;
-    String? quote;
-    while (end < length) {
-      final c = xml[end];
-      if (quote != null) {
-        if (c == quote) {
-          quote = null;
-        }
-      } else if (c == '"' || c == "'") {
-        quote = c;
-      } else if (c == '>') {
-        break;
-      }
-      end++;
-    }
-    if (end >= length) {
-      break;
-    }
-    final tag = xml.substring(open + 1, end);
-    i = end + 1;
-
-    if (tag.startsWith('/')) {
-      final qualifiedName = tag.substring(1).trim();
-      for (var k = elements.length - 1; k > 0; k--) {
-        if (elements[k].qualifiedName == qualifiedName) {
-          elements.length = k;
-          scopes.length = k;
-          break;
-        }
-      }
-      continue;
-    }
-
-    final selfClosing = tag.endsWith('/');
-    final content = selfClosing ? tag.substring(0, tag.length - 1) : tag;
-    final nameMatch = _tagName.firstMatch(content);
-    if (nameMatch == null) {
-      continue;
-    }
-    final qualifiedName = nameMatch.group(1)!;
-    var scope = scopes.last;
-    for (final attribute in _attribute.allMatches(content, nameMatch.end)) {
-      final name = attribute.group(1)!;
-      if (name == 'xmlns' || name.startsWith('xmlns:')) {
-        if (identical(scope, scopes.last)) {
-          scope = Map.of(scope);
-        }
-        scope[name == 'xmlns' ? '' : name.substring(6)] = _decodeEntities(
-          attribute.group(2) ?? attribute.group(3) ?? '',
-        );
-      }
-    }
-    final colon = qualifiedName.indexOf(':');
-    final prefix = colon < 0 ? '' : qualifiedName.substring(0, colon);
-    final namespace = scope[prefix];
-    final element = _XmlElement(
-      qualifiedName,
-      namespace == null || namespace.isEmpty ? null : namespace,
-      colon < 0 ? qualifiedName : qualifiedName.substring(colon + 1),
-    );
-    elements.last.children.add(element);
-    if (!selfClosing) {
-      elements.add(element);
-      scopes.add(scope);
-    }
-  }
-  return document;
-}
-
-String _decodeEntities(String text) {
-  if (!text.contains('&')) {
-    return text;
-  }
-  return text.replaceAllMapped(_entity, (match) {
-    final entity = match.group(1)!;
-    if (entity.startsWith('#')) {
-      final code = entity.length > 1 && (entity[1] == 'x' || entity[1] == 'X')
-          ? int.tryParse(entity.substring(2), radix: 16)
-          : int.tryParse(entity.substring(1));
-      return code != null && code >= 0 && code <= 0x10FFFF ? String.fromCharCode(code) : match[0]!;
-    }
-    return switch (entity) {
-      'lt' => '<',
-      'gt' => '>',
-      'amp' => '&',
-      'quot' => '"',
-      'apos' => "'",
-      _ => match[0]!,
-    };
-  });
+  LiteXmlElement? davChild(String name) => davChildren(name).firstOrNull;
 }

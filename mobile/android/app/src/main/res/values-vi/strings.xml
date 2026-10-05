@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Chia sẻ điện thoại này trên mạng</string>
   <string name="spherical_video_close">Đóng</string>
   <string name="spherical_video_error">Không thể phát video này</string>
 </resources>

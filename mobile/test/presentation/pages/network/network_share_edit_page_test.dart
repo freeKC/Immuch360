@@ -61,6 +61,28 @@ const _office = DiscoveredServer(
   origin: DiscoveryOrigin.scan,
 );
 
+const _media = DiscoveredServer(
+  host: '192.168.1.50',
+  displayName: 'Media box',
+  type: NetworkSourceType.dlna,
+  port: 8200,
+  path: '/rootDesc.xml',
+  origin: DiscoveryOrigin.ssdp,
+  address: '192.168.1.50',
+  discoveryId: 'uuid:4d696e69-444c-164e-9d41-000000000001',
+);
+
+const _phone = DiscoveredServer(
+  host: '192.168.1.42',
+  displayName: 'Immuch360 on Pixel',
+  type: NetworkSourceType.webdav,
+  port: 8360,
+  origin: DiscoveryOrigin.mdns,
+  discoveryId: 'a1b2c3d4e5f60718',
+  username: 'phone1234',
+  isPhoneShare: true,
+);
+
 const _cloud = DiscoveredServer(
   host: '192.168.1.30',
   displayName: 'Cloud',
@@ -137,6 +159,7 @@ void main() {
         networkFileSystemOpenersProvider.overrideWithValue({
           NetworkSourceType.smb: fakeOpen,
           NetworkSourceType.webdav: fakeOpen,
+          NetworkSourceType.dlna: fakeOpen,
         }),
         networkDiscoveryServiceProvider.overrideWithValue(discovery),
         networkShareListerProvider.overrideWithValue((source, password) {
@@ -644,6 +667,209 @@ void main() {
     });
   });
 
+  group('NetworkShareEditPage, DLNA media servers and phone shares', () {
+    Finder found(DiscoveredServer server) =>
+        find.byKey(Key('network_share_found_${server.type.name}_${server.host}_${server.port}'));
+    final dlnaRadio = find.byKey(const Key('network_share_type_dlna'));
+
+    Future<void> pumpWithServers(WidgetTester tester, List<DiscoveredServer> servers) async {
+      discovery.keepOpen = true;
+      await pumpEditPage(tester, settle: false);
+      discovery.scans.single.add(servers);
+      await discovery.scans.single.close();
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('saves a DLNA media server: a description path and no credentials', (tester) async {
+      await pumpEditPage(tester);
+
+      await tapButton(tester, dlnaRadio);
+
+      expect(find.text('DLNA media server (Plex, Jellyfin, NAS, TV box)'), findsOneWidget);
+      expect(find.text('Description path'), findsOneWidget);
+      expect(find.byKey(const Key('network_share_dlna_hint')), findsOneWidget);
+      expect(find.textContaining('minidlna on Linux are not found'), findsOneWidget);
+      expect(
+        find.descendant(of: field('host'), matching: find.text('http://192.168.1.10:8200/rootDesc.xml')),
+        findsOneWidget,
+        reason: 'the whole address of minidlna, which iOS does not find, as the example of the server field',
+      );
+      expect(field('username'), findsNothing);
+      expect(field('password'), findsNothing);
+      expect(find.byKey(const Key('network_share_use_tls')), findsNothing);
+      expect(find.byKey(const Key('network_share_choose_share')), findsNothing);
+      expect(field('root_path'), findsOneWidget);
+
+      await enter(tester, 'host', '192.168.1.10');
+      expect(isEnabled(tester, saveButton), isFalse, reason: 'a DLNA share needs its description path');
+      await enter(tester, 'port', '8200');
+      await enter(tester, 'share', 'rootDesc.xml');
+      await enter(tester, 'name', 'Media box');
+      await tapButton(tester, testButton);
+      expect(opened.single.source.type, NetworkSourceType.dlna);
+      await tapButton(tester, saveButton);
+
+      final saved = storedSources().single;
+      expect(saved.type, NetworkSourceType.dlna);
+      expect(saved.name, 'Media box');
+      expect(saved.host, '192.168.1.10');
+      expect(saved.port, 8200);
+      expect(saved.share, '/rootDesc.xml');
+      expect(saved.username, '');
+      expect(saved.useTls, isFalse);
+      expect(saved.discoveryId, isNull);
+      expect(secureStorage.values, isEmpty);
+    });
+
+    testWidgets('spreads a pasted description address over the fields, its query kept', (tester) async {
+      await pumpEditPage(tester);
+      await tapButton(tester, dlnaRadio);
+
+      await enter(tester, 'host', 'http://nas:8200/rootDesc.xml');
+      await tester.tap(field('name'));
+      await tester.pumpAndSettle();
+
+      expect(textOf(tester, 'host'), 'nas');
+      expect(textOf(tester, 'port'), '8200');
+      expect(textOf(tester, 'share'), '/rootDesc.xml');
+
+      await enter(tester, 'host', 'https://192.168.1.13:8920/dlna/abc/description?client=1');
+      await tapButton(tester, saveButton);
+
+      final saved = storedSources().single;
+      expect(saved.type, NetworkSourceType.dlna);
+      expect(saved.host, '192.168.1.13');
+      expect(saved.port, 8920);
+      expect(saved.share, '/dlna/abc/description?client=1');
+      expect(saved.useTls, isTrue);
+    });
+
+    testWidgets('takes a pasted address of an XML file for a DLNA description, even on the WebDAV form', (
+      tester,
+    ) async {
+      await pumpEditPage(tester);
+      await tapButton(tester, find.byKey(const Key('network_share_type_webdav')));
+
+      await enter(tester, 'host', 'http://192.168.1.10:8200/rootDesc.xml');
+      await tester.tap(field('name'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Description path'), findsOneWidget);
+      expect(textOf(tester, 'share'), '/rootDesc.xml');
+    });
+
+    testWidgets('lists two DLNA servers found at one address and port', (tester) async {
+      const second = DiscoveredServer(
+        host: '192.168.1.50',
+        displayName: 'Second box',
+        type: NetworkSourceType.dlna,
+        port: 8200,
+        path: '/second.xml',
+        origin: DiscoveryOrigin.ssdp,
+        address: '192.168.1.50',
+        discoveryId: 'uuid:4d696e69-444c-164e-9d41-000000000002',
+      );
+      await pumpWithServers(tester, const [_media, second]);
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Media box'), findsOneWidget);
+      expect(find.text('Second box'), findsOneWidget);
+
+      await tester.tap(find.text('Second box'));
+      await tester.pumpAndSettle();
+      expect(textOf(tester, 'share'), '/second.xml');
+    });
+
+    testWidgets('a DLNA server found on the network fills the form and is saved with its id', (tester) async {
+      await pumpWithServers(tester, const [_media, _nas]);
+
+      expect(find.descendant(of: found(_media), matching: find.text('DLNA')), findsOneWidget);
+      expect(find.descendant(of: found(_media), matching: find.byIcon(Icons.perm_media_outlined)), findsOneWidget);
+
+      await tapButton(tester, found(_media));
+
+      expect(find.text('Description path'), findsOneWidget);
+      expect(textOf(tester, 'host'), '192.168.1.50');
+      expect(textOf(tester, 'port'), '8200');
+      expect(textOf(tester, 'share'), '/rootDesc.xml');
+      expect(textOf(tester, 'name'), 'Media box');
+
+      await tapButton(tester, saveButton);
+
+      final saved = storedSources().single;
+      expect(saved.type, NetworkSourceType.dlna);
+      expect(saved.share, '/rootDesc.xml');
+      expect(saved.discoveryId, 'uuid:4d696e69-444c-164e-9d41-000000000001');
+    });
+
+    testWidgets('drops the id of the server tapped once the server field is edited', (tester) async {
+      await pumpWithServers(tester, const [_media]);
+      await tapButton(tester, found(_media));
+
+      await enter(tester, 'host', '192.168.1.51');
+      await tapButton(tester, saveButton);
+
+      final saved = storedSources().single;
+      expect(saved.host, '192.168.1.51');
+      expect(saved.discoveryId, isNull);
+    });
+
+    testWidgets('a phone share fills the WebDAV form with its user name and asks for the password', (tester) async {
+      await pumpWithServers(tester, const [_phone, _media]);
+
+      expect(find.descendant(of: found(_phone), matching: find.text('Phone')), findsOneWidget);
+      expect(find.descendant(of: found(_phone), matching: find.byIcon(Icons.smartphone)), findsOneWidget);
+
+      await tapButton(tester, found(_media));
+      await tapButton(tester, found(_phone));
+
+      expect(find.text('Path of the WebDAV address'), findsOneWidget);
+      expect(textOf(tester, 'host'), '192.168.1.42');
+      expect(textOf(tester, 'port'), '8360');
+      expect(textOf(tester, 'share'), '/');
+      expect(textOf(tester, 'username'), 'phone1234');
+      expect(textOf(tester, 'name'), 'Immuch360 on Pixel');
+      expect(tester.widget<TextField>(field('password')).focusNode!.hasFocus, isTrue);
+
+      await enter(tester, 'password', 'k7m3x9p2');
+      await tapButton(tester, saveButton);
+
+      final saved = storedSources().single;
+      expect(saved.type, NetworkSourceType.webdav);
+      expect(saved.username, 'phone1234');
+      expect(saved.share, '');
+      expect(saved.port, 8360);
+      expect(saved.discoveryId, 'a1b2c3d4e5f60718');
+      expect(secureStorage.values, {saved.secretKey: 'k7m3x9p2'});
+    });
+
+    testWidgets('keeps the id of an existing DLNA share, and forgets a password left from another type', (
+      tester,
+    ) async {
+      const source = NetworkSource(
+        id: 'dlna-1',
+        type: NetworkSourceType.dlna,
+        name: 'Media box',
+        host: '192.168.1.50',
+        port: 8200,
+        share: '/rootDesc.xml',
+        discoveryId: 'uuid:media',
+      );
+      await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [source]));
+      secureStorage.values[source.secretKey] = 'old';
+      await pumpEditPage(tester, source: source);
+
+      expect(find.text('Description path'), findsOneWidget);
+      await enter(tester, 'name', 'Living room box');
+      await tapButton(tester, saveButton);
+
+      final saved = storedSources().single;
+      expect(saved.name, 'Living room box');
+      expect(saved.discoveryId, 'uuid:media');
+      expect(secureStorage.values, isEmpty);
+    });
+  });
+
   group('parseNetworkAddress', () {
     test('leaves a plain server name or address alone', () {
       expect(parseNetworkAddress('nas.local'), isNull);
@@ -678,6 +904,43 @@ void main() {
       expect(plain.port, 1880);
       expect(plain.share, '');
       expect(plain.useTls, isFalse);
+    });
+  });
+
+  group('parseNetworkAddress, DLNA', () {
+    test('reads a device description address', () {
+      final xml = parseNetworkAddress('http://nas:8200/rootDesc.xml')!;
+      expect(xml.type, NetworkSourceType.dlna, reason: 'an XML file');
+      expect(xml.host, 'nas');
+      expect(xml.port, 8200);
+      expect(xml.share, '/rootDesc.xml');
+      expect(xml.useTls, isFalse);
+
+      final current = parseNetworkAddress(
+        'https://192.168.1.13:8920/dlna/abc/description?client=1',
+        current: NetworkSourceType.dlna,
+      )!;
+      expect(current.type, NetworkSourceType.dlna, reason: 'the form is for a DLNA server');
+      expect(current.share, '/dlna/abc/description?client=1');
+      expect(current.useTls, isTrue);
+
+      for (final scheme in ['upnp', 'dlna']) {
+        final upnp = parseNetworkAddress('$scheme://192.168.1.10:8200/rootDesc.xml', current: NetworkSourceType.smb)!;
+        expect(upnp.type, NetworkSourceType.dlna, reason: scheme);
+        expect(upnp.useTls, isFalse, reason: scheme);
+      }
+
+      expect(
+        parseNetworkAddress('http://nas:5005/photos', current: NetworkSourceType.webdav)!.type,
+        NetworkSourceType.webdav,
+      );
+      expect(parseNetworkAddress('http://nas:5005/photos')!.type, NetworkSourceType.webdav);
+    });
+
+    test('normalizeDescriptionPath starts with a slash and keeps the rest', () {
+      expect(normalizeDescriptionPath(''), '');
+      expect(normalizeDescriptionPath(' rootDesc.xml '), '/rootDesc.xml');
+      expect(normalizeDescriptionPath('/dlna/a/description.xml?x=1'), '/dlna/a/description.xml?x=1');
     });
   });
 

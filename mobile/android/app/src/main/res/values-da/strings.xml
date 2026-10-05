@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Del denne telefon på netværket</string>
   <string name="spherical_video_close">Luk</string>
   <string name="spherical_video_error">Denne video kan ikke afspilles</string>
 </resources>

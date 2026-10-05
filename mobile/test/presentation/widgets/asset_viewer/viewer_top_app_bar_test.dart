@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
+import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
@@ -32,6 +33,7 @@ import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
@@ -233,12 +235,20 @@ void main() {
     'coverage_full': '360°, full sphere',
     'coverage_half': '180°, half sphere (VR180)',
   };
+  // The stereo photo mode of the immersive viewer, for Apple spatial photos
+  const englishSpatialLabels = {
+    'spatial3d': '3D',
+    'spatial2d': '2D (left eye)',
+    'spatialNoNavigation': 'Previous and next are not available for spatial photos yet',
+    'spatialSecondEyeFailed': 'The second eye could not be decoded: shown in 2D',
+  };
   const englishViewerLabels = {
     'stereo': '3D layout',
     'mono': 'Mono (not 3D)',
     'topBottom': '3D, top and bottom',
     'leftRight': '3D, side by side',
     ...englishCoverageLabels,
+    ...englishSpatialLabels,
   };
   // The audio track control of the native video players, with the language of the app to name the track languages in
   const englishAudioTrackLabels = {
@@ -314,7 +324,7 @@ void main() {
     }
 
     when(
-      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer(openImmersive);
     previewRequests = [];
     previewXmp = null;
@@ -382,6 +392,7 @@ void main() {
     AppConfig? appConfig,
     bool horizonOs = false,
     VideoPlayerState? playerState,
+    List<Override> extraOverrides = const [],
   }) async {
     final router = RootStackRouter.build(
       routes: [
@@ -461,6 +472,7 @@ void main() {
                 return http.Response('', 200, headers: {'content-length': '$size'});
               }),
             ),
+            ...extraOverrides,
           ],
           child: Builder(
             builder: (context) => MaterialApp.router(
@@ -567,7 +579,9 @@ void main() {
       expect(router.current.argsAs<PanoramaViewerRouteArgs>().asset, asset);
       expect(find.text('panorama ${asset.id}'), findsOneWidget);
       verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(
+        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      );
     });
 
     testWidgets('stops a video, then plays its transcoded stream in the native 360° player', (tester) async {
@@ -874,8 +888,20 @@ void main() {
       await tester.pumpAndSettle();
 
       final captured = verify(
-        () =>
-            immersiveApi.open(any(), any(), true, any(), captureAny(), any(), any(), any(), any(), any(), captureAny()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          true,
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+        ),
       ).captured;
       expect(captured[0], ImmersiveStereoLayout.mono);
       expect((jsonDecode(captured[1] as String) as Map)['frameWidth'], 5760);
@@ -889,7 +915,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(unsupportedMessage), findsOneWidget);
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(
+        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      );
     });
   });
 
@@ -931,6 +959,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -964,6 +993,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [
@@ -990,7 +1020,20 @@ void main() {
       await tester.pumpAndSettle();
 
       final layout = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
       expect(previewRequests, [Uri.parse('$server/assets/${asset.id}/thumbnail?size=preview&edited=true')]);
@@ -1007,7 +1050,20 @@ void main() {
       await tester.pumpAndSettle();
 
       final layout = verify(
-        () => immersiveApi.open(any(), any(), any(), any(), captureAny(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
     });
@@ -1063,6 +1119,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
@@ -1086,6 +1143,7 @@ void main() {
           captureAny(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1125,6 +1183,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
@@ -1153,6 +1212,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
     });
@@ -1171,6 +1231,7 @@ void main() {
           any(),
           true,
           asset.name,
+          any(),
           any(),
           any(),
           any(),
@@ -1211,8 +1272,20 @@ void main() {
         await tester.pumpAndSettle();
 
         final startPosition = verify(
-          () =>
-              immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any(), any(), any()),
+          () => immersiveApi.open(
+            any(),
+            any(),
+            true,
+            asset.name,
+            any(),
+            any(),
+            any(),
+            captureAny(),
+            any(),
+            any(),
+            any(),
+            any(),
+          ),
         ).captured.single;
         expect(startPosition, expected, reason: '$status');
 
@@ -1272,7 +1345,7 @@ void main() {
       tester,
     ) async {
       when(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
         tester,
@@ -1337,6 +1410,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
@@ -1366,6 +1440,7 @@ void main() {
           captureAny(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1427,6 +1502,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1468,6 +1544,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
@@ -1500,7 +1577,20 @@ void main() {
 
       expect(calls, ['suspend', 'immersive']);
       final startPosition = verify(
-        () => immersiveApi.open(any(), any(), true, asset.name, any(), any(), any(), captureAny(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          true,
+          asset.name,
+          any(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).captured.single;
       expect(startPosition, 12000);
     });
@@ -1515,7 +1605,9 @@ void main() {
 
       // Stopped before the file is looked for, so that the immersive viewer starts where the video was
       expect(calls, ['suspend', 'resume at 0 paused']);
-      verifyNever(() => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      verifyNever(
+        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      );
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
     });
   });
@@ -1552,7 +1644,8 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any(), any()),
+        () =>
+            immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any(), any(), any()),
       ).called(1);
     });
 
@@ -1685,7 +1778,8 @@ void main() {
 
       expect(stored(), '["${asset.id}"]');
       verify(
-        () => immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any(), any()),
+        () =>
+            immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any(), any(), any()),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
     });
@@ -2241,6 +2335,7 @@ void main() {
           any(),
           captureAny(),
           any(),
+          any(),
         ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
@@ -2486,6 +2581,79 @@ void main() {
       expect(request.url, '$server/assets/${asset.id}/video/playback');
       expect(request.fallbackUrl, isNull);
       expect(find.text(switchedMessage), findsOneWidget);
+    });
+  });
+
+  group('ViewerTopAppBar "View in 3D" button for Apple spatial photos', () {
+    const server = PresentationContext.serverEndpoint;
+    const pair = HeicStereoPair(
+      primaryItemId: 37,
+      leftItemId: 37,
+      rightItemId: 74,
+      pitmIdOffset: 129,
+      pitmIdBytes: 2,
+      width: 3072,
+      height: 3072,
+      disparityAdjustment: -1000,
+      horizontalFovDegrees: 59.98,
+    );
+    final view3dButton = find.byKey(const Key('apple_spatial_view_3d'));
+
+    // What the file of [asset] says, without reading it
+    Override spatial(BaseAsset asset, AppleSpatialInfo? info) =>
+        appleSpatialInfoProvider(asset).overrideWith((ref) async => info);
+
+    testWidgets('opens a spatial photo in 3D in the immersive viewer of a Meta Quest', (tester) async {
+      final asset = owned(name: 'IMG_0001.HEIC');
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        extraOverrides: [spatial(asset, const AppleSpatialInfo.photo(pair))],
+      );
+
+      expect(view3dButton, findsOneWidget);
+      expect(find.byTooltip('View in 3D'), findsOneWidget);
+      expect(find.byIcon(Icons.view_in_ar_rounded), findsOneWidget);
+
+      await tester.tap(view3dButton);
+      await tester.pumpAndSettle();
+
+      final captured = verify(
+        () => immersiveApi.open(
+          captureAny(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          captureAny(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          captureAny(),
+        ),
+      ).captured;
+      // The original the pair was read from, not an edit of it
+      expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
+      expect(captured[1], isFalse, reason: 'a photo');
+      expect((captured[2] as Map<String, String>)['spatial3d'], '3D');
+      expect(jsonDecode(captured[3] as String), pair.toImmersiveMap());
+    });
+
+    testWidgets('is not shown on a phone, which shows the left eye as for any photo', (tester) async {
+      final asset = owned(name: 'IMG_0001.HEIC');
+      await pumpTopBar(tester, asset, extraOverrides: [spatial(asset, const AppleSpatialInfo.photo(pair))]);
+
+      expect(view3dButton, findsNothing);
+    });
+
+    testWidgets('is not shown for a HEIF photo that holds no pair', (tester) async {
+      final asset = owned(name: 'IMG_0002.HEIC');
+      await pumpTopBar(tester, asset, horizonOs: true, extraOverrides: [spatial(asset, null)]);
+
+      expect(view3dButton, findsNothing);
     });
   });
 }

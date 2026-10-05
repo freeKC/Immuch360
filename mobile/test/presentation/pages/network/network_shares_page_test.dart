@@ -59,6 +59,19 @@ void main() {
         'http://cloud.example.com:1880',
       );
     });
+
+    test('writes a DLNA media server as the URL of its description, with its icon', () {
+      const dlna = NetworkSource(
+        id: 'dlna-1',
+        type: NetworkSourceType.dlna,
+        name: 'Media box',
+        host: '192.168.1.10',
+        port: 8200,
+        share: '/dlna/abc/description.xml?client=1',
+      );
+      expect(networkSourceAddress(dlna), 'http://192.168.1.10:8200/dlna/abc/description.xml?client=1');
+      expect(networkSourceIcon(NetworkSourceType.dlna), Icons.perm_media_outlined);
+    });
   });
 
   group('NetworkSharesPage', () {

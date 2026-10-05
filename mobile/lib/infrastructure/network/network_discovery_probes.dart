@@ -6,6 +6,8 @@
 //   Synology (5005, 5006 over TLS) and of the usual web servers (80, 443, 8080, 8443).
 // - The confirmation of what answers: an SMB2 NEGOTIATE on a raw socket for SMB, an HTTP OPTIONS or PROPFIND for
 //   WebDAV, so that a router or a printer is not offered as a share.
+// - SSDP for the DLNA media servers, see upnp/ssdp.dart. They are not scanned for by port: the path of their device
+//   description cannot be guessed (Jellyfin, Windows and Synology put an id in it).
 //
 // Nothing is sent with credentials, and the probes stop when the discovery ends.
 
@@ -20,21 +22,35 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
+import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/infrastructure/network/upnp/ssdp.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('NetworkDiscoveryProbes');
 
-/// The discovery of the app: mDNS and the scan of the subnet, with [extraPorts] scanned as well (by default those of
-/// IMMUCH_SCAN_PORTS, see [ScanPort.fromEnvironment])
+/// The discovery of the app: mDNS, the scan of the subnet, with [extraPorts] scanned as well (by default those of
+/// IMMUCH_SCAN_PORTS, see [ScanPort.fromEnvironment]), and SSDP
 NetworkDiscoveryService createNetworkDiscoveryService({List<ScanPort>? extraPorts}) {
   const confirmer = ServerConfirmer();
   return NetworkDiscoveryService(
     probes: [
       const MdnsProbe(confirmer: confirmer).call,
       SubnetScanProbe(confirmer: confirmer, extraPorts: extraPorts ?? ScanPort.fromEnvironment()).call,
+      const SsdpProbe().call,
     ],
   );
+}
+
+/// The install id this device announces when it shares its gallery (see StoreKey.phoneShareId), null when it never
+/// did or the store is not there
+String? storedPhoneShareId() {
+  try {
+    return StoreService.I.tryGet(StoreKey.phoneShareId);
+  } on UnsupportedError {
+    return null;
+  }
 }
 
 /// A port the scan tries, and what a server answering on it would be
@@ -348,13 +364,24 @@ typedef MdnsBrowser = Stream<MdnsService> Function(String type, Future<void> unt
 
 /// Finds the servers that announce themselves over mDNS / DNS-SD
 class MdnsProbe {
-  const MdnsProbe({required this.confirmer, this.browse = bonsoirBrowse, this.lookup = lookupIPv4});
+  const MdnsProbe({
+    required this.confirmer,
+    this.browse = bonsoirBrowse,
+    this.lookup = lookupIPv4,
+    this.ownPhoneShareId = storedPhoneShareId,
+  });
 
   final ServerConfirmer confirmer;
   final MdnsBrowser browse;
 
   /// The IPv4 address of a host name, null when unknown (see [DiscoveredServer.address])
   final Future<String?> Function(String host) lookup;
+
+  /// The id this device announces when it shares its gallery, so that it does not find itself
+  final String? Function() ownPhoneShareId;
+
+  /// The TXT "app" value of a phone sharing its gallery with this app ("Share this phone on the network")
+  static const phoneShareApp = 'immuch360';
 
   static const serviceTypes = ['_smb._tcp', '_webdav._tcp', '_webdavs._tcp', '_http._tcp', '_https._tcp'];
 
@@ -414,12 +441,18 @@ class MdnsProbe {
   }
 
   /// The server a resolved service stands for, null when it is not an SMB or WebDAV server, or once [request] ended
-  /// (the confirmation and the lookup of the address stop then)
+  /// (the confirmation and the lookup of the address stop then). A phone sharing its gallery tells it in its TXT
+  /// record, with its user name and its install id; this device's own share is left out.
   @visibleForTesting
   Future<DiscoveredServer?> serverOf(MdnsService service, {DiscoveryRequest? request}) async {
     final type = service.type.toLowerCase().replaceAll(RegExp(r'\.(local\.?)?$'), '');
     final host = service.host.endsWith('.') ? service.host.substring(0, service.host.length - 1) : service.host;
     if (host.isEmpty || service.port <= 0) {
+      return null;
+    }
+    final isPhoneShare = type == '_webdav._tcp' && service.attributes['app'] == phoneShareApp;
+    final phoneShareId = isPhoneShare ? _nonEmpty(service.attributes['id']) : null;
+    if (phoneShareId != null && phoneShareId == ownPhoneShareId()) {
       return null;
     }
     final useTls = type == '_webdavs._tcp' || type == '_https._tcp';
@@ -458,7 +491,15 @@ class MdnsProbe {
       path: path,
       origin: DiscoveryOrigin.mdns,
       address: address,
+      discoveryId: phoneShareId,
+      username: isPhoneShare ? _nonEmpty(service.attributes['u']) : null,
+      isPhoneShare: isPhoneShare,
     );
+  }
+
+  static String? _nonEmpty(String? value) {
+    final trimmed = value?.trim() ?? '';
+    return trimmed.isEmpty ? null : trimmed;
   }
 }
 
@@ -851,8 +892,7 @@ class SubnetScanProbe {
     );
   }
 
-  /// The other hosts of the /24 subnet of [address]
-  @visibleForTesting
+  /// The other hosts of the /24 subnet of [address], for this scan and the SSDP sweep
   static List<String> subnetHostsOf(String address) {
     final parts = address.split('.');
     if (parts.length != 4) {

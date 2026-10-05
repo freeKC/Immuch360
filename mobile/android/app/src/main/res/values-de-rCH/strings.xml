@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Das Telefon im Netzwerk freigä</string>
   <string name="spherical_video_close">Schliesse</string>
   <string name="spherical_video_error">Das Video chan nöd abgspillt werde</string>
 </resources>

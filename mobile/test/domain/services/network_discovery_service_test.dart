@@ -12,6 +12,9 @@ DiscoveredServer _server(
   DiscoveryOrigin origin = DiscoveryOrigin.scan,
   String path = '',
   String? address,
+  String? discoveryId,
+  String? username,
+  bool isPhoneShare = false,
 }) => DiscoveredServer(
   host: host,
   displayName: name,
@@ -20,6 +23,9 @@ DiscoveredServer _server(
   path: path,
   origin: origin,
   address: address,
+  discoveryId: discoveryId,
+  username: username,
+  isPhoneShare: isPhoneShare,
 );
 
 /// A probe that gives [servers], one per [interval], then ends unless [endless]
@@ -70,6 +76,68 @@ void main() {
         expect(merged.address, '192.168.1.20');
       }
     });
+
+    test('is equal whatever its discovery id, user name and phone share mark', () {
+      final plain = _server('Pixel', '192.168.1.23', type: NetworkSourceType.webdav, port: 8360);
+      final announced = _server(
+        'Immuch360 on Pixel',
+        '192.168.1.23',
+        type: NetworkSourceType.webdav,
+        port: 8360,
+        origin: DiscoveryOrigin.mdns,
+        discoveryId: '0f1e2d3c4b5a6978',
+        username: 'phone1234',
+        isPhoneShare: true,
+      );
+
+      expect(plain, announced);
+      expect(plain.hashCode, announced.hashCode);
+    });
+
+    test('merging keeps the discovery id, the user name and the phone share mark of either find', () {
+      final scanned = _server('192.168.1.23', '192.168.1.23', type: NetworkSourceType.webdav, port: 8360);
+      final announced = _server(
+        'Immuch360 on Pixel',
+        'Pixel.local',
+        type: NetworkSourceType.webdav,
+        port: 8360,
+        origin: DiscoveryOrigin.mdns,
+        address: '192.168.1.23',
+        discoveryId: '0f1e2d3c4b5a6978',
+        username: 'phone1234',
+        isPhoneShare: true,
+      );
+      for (final merged in [scanned.mergedWith(announced), announced.mergedWith(scanned)]) {
+        expect(merged.discoveryId, '0f1e2d3c4b5a6978');
+        expect(merged.username, 'phone1234');
+        expect(merged.isPhoneShare, isTrue);
+        expect(merged.origin, DiscoveryOrigin.mdns);
+      }
+
+      // The preferred find first, the other one when it has none
+      final other = _server('NAS', '192.168.1.23', type: NetworkSourceType.webdav, port: 8360, discoveryId: 'other');
+      expect(announced.mergedWith(other).discoveryId, '0f1e2d3c4b5a6978');
+      expect(other.mergedWith(scanned).discoveryId, 'other');
+      expect(scanned.mergedWith(scanned).isPhoneShare, isFalse);
+    });
+
+    test('a DLNA media server found by SSDP keeps its UDN and description path', () {
+      final server = _server(
+        'minidlna',
+        '192.168.1.10',
+        type: NetworkSourceType.dlna,
+        port: 8200,
+        origin: DiscoveryOrigin.ssdp,
+        path: '/rootDesc.xml',
+        discoveryId: 'uuid:4d696e69-444c-164e-9d41-b827eb000001',
+      );
+
+      final merged = server.mergedWith(server);
+      expect(merged.origin, DiscoveryOrigin.ssdp);
+      expect(merged.path, '/rootDesc.xml');
+      expect(merged.discoveryId, 'uuid:4d696e69-444c-164e-9d41-b827eb000001');
+      expect(merged.toString(), contains('uuid:4d696e69'));
+    });
   });
 
   group('NetworkDiscoveryService', () {
@@ -114,6 +182,79 @@ void main() {
       expect(last, hasLength(1));
       expect(last.single.displayName, 'NAS');
       expect(last.single.host, 'nas.local');
+    });
+
+    test('keeps apart two DLNA media servers at one address and port, and merges the finds of each', () async {
+      DiscoveredServer media(String name, String path, String? udn) => _server(
+        name,
+        '192.168.1.10',
+        type: NetworkSourceType.dlna,
+        port: 8200,
+        origin: DiscoveryOrigin.ssdp,
+        path: path,
+        discoveryId: udn,
+      );
+      final service = NetworkDiscoveryService(
+        probes: [
+          _probe([
+            media('Photos', '/photos.xml', 'uuid:AAAA'),
+            media('Videos', '/videos.xml', 'uuid:bbbb'),
+            media('Music', '/music.xml', null),
+            media('Radio', '/radio.xml', null),
+          ]),
+          _probe([media('Photos', '/photos.xml', 'uuid:aaaa')], interval: const Duration(milliseconds: 10)),
+        ],
+      );
+
+      final last = (await service.discover().toList()).last;
+
+      expect(last.map((s) => s.displayName), ['Music', 'Photos', 'Radio', 'Videos']);
+      expect(media('Photos', '/a.xml', 'uuid:AAAA').mergeKey, media('Other', '/b.xml', 'uuid:aaaa').mergeKey);
+      expect(
+        _server('NAS', '192.168.1.20', discoveryId: 'one').mergeKey,
+        _server('NAS', '192.168.1.20', discoveryId: 'two').mergeKey,
+        reason: 'only DLNA servers are told apart by their device',
+      );
+    });
+
+    test('gives a new list when a second find of a server brings its discovery id', () async {
+      final service = NetworkDiscoveryService(
+        probes: [
+          _probe([_server('192.168.1.23', '192.168.1.23', type: NetworkSourceType.webdav, port: 8360)]),
+          _probe([
+            _server(
+              'Immuch360 on Pixel',
+              '192.168.1.23',
+              type: NetworkSourceType.webdav,
+              port: 8360,
+              origin: DiscoveryOrigin.mdns,
+              discoveryId: '0f1e2d3c4b5a6978',
+              username: 'phone1234',
+              isPhoneShare: true,
+            ),
+            // Found again, with nothing new
+            _server(
+              'Immuch360 on Pixel',
+              '192.168.1.23',
+              type: NetworkSourceType.webdav,
+              port: 8360,
+              origin: DiscoveryOrigin.mdns,
+              discoveryId: '0f1e2d3c4b5a6978',
+              username: 'phone1234',
+              isPhoneShare: true,
+            ),
+          ], interval: const Duration(milliseconds: 10)),
+        ],
+      );
+
+      final lists = await service.discover(timeout: const Duration(seconds: 5)).toList();
+
+      expect(lists, hasLength(2));
+      expect(lists.first.single.discoveryId, isNull);
+      final last = lists.last.single;
+      expect(last.discoveryId, '0f1e2d3c4b5a6978');
+      expect(last.username, 'phone1234');
+      expect(last.isPhoneShare, isTrue);
     });
 
     test('ends at the timeout and stops the probes that still run', () async {

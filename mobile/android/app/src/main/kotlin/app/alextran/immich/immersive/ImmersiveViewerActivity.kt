@@ -34,6 +34,7 @@ import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.PlaybackStatsLogger
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
+import app.alextran.immich.core.raw.RawDecoderVerdict
 import app.alextran.immich.core.raw.RawMessage
 import app.alextran.immich.core.raw.RawMode
 import app.alextran.immich.core.raw.RawPlan
@@ -47,10 +48,14 @@ import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.SpatialFeature
 import com.meta.spatial.core.Vector3
+import com.meta.spatial.runtime.AddressMode
 import com.meta.spatial.runtime.EquirectLayerConfig
+import com.meta.spatial.runtime.Filter
+import com.meta.spatial.runtime.MaterialSidedness
 import com.meta.spatial.runtime.PanelSceneObject
 import com.meta.spatial.runtime.PanelShapeType
 import com.meta.spatial.runtime.ReferenceSpace
+import com.meta.spatial.runtime.SamplerConfig
 import com.meta.spatial.runtime.SceneMaterial
 import com.meta.spatial.runtime.SceneMesh
 import com.meta.spatial.runtime.SceneTexture
@@ -71,6 +76,7 @@ import com.meta.spatial.toolkit.PanelRegistration
 import com.meta.spatial.toolkit.PanelStyleOptions
 import com.meta.spatial.toolkit.PixelDisplayOptions
 import com.meta.spatial.toolkit.QuadShapeOptions
+import com.meta.spatial.toolkit.Scale
 import com.meta.spatial.toolkit.SceneObjectSystem
 import com.meta.spatial.toolkit.Transform
 import com.meta.spatial.toolkit.UIPanelSettings
@@ -86,6 +92,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.coroutineContext
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -145,6 +152,12 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
  * pairs, GoPro .360, DJI .osv): [TwoLensPlayback] decodes both streams and its compositor draws the stitched frame
  * into the panel Surface. [RawPlaybackPlanner] decides how it plays and falls back (one lens, the transcoded streams,
  * unstitched), see [ensurePlayer]. Raw photos arrive stitched by Flutter.
+ *
+ * An Apple spatial photo comes with its stereoPair JSON (see [StereoPairSpec]): no sphere for it, both eyes are
+ * decoded ([StereoHeicDecoder]) and shown side by side on a flat quad 2 m in front of the user, whose material gives
+ * each eye its half (StereoMode.LeftRight, the mechanism of the 3D photos on the skybox). The 3D button switches to the
+ * left eye for both eyes (MonoLeft), the thumbstick up or down resizes the quad and left or right brings it in front
+ * of the gaze again; previous and next are not available for it yet. See [showStereoPhoto].
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -180,11 +193,32 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * sends raw photos already stitched).
      */
     val rawProjection: String? = null,
+    /**
+     * The stereoPair JSON of an Apple spatial photo (see [StereoPairSpec]), shown on the stereo quad rather than on a
+     * sphere. Null for any other media, and ignored for a video.
+     */
+    val stereoPairJson: String? = null,
   ) {
     /** A raw 360° video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
     val isRawVideo: Boolean
       get() = isVideo && rawProjection != null
+
+    /** An Apple spatial photo: on the stereo quad, in 3D when its pair reads, flat otherwise. */
+    val isStereoPhoto: Boolean
+      get() = !isVideo && stereoPairJson != null
+
+    /** The two eyes of a spatial photo, null when its JSON does not read (the photo then shows flat on the quad). */
+    val stereoPair: StereoPairSpec? by lazy { if (isStereoPhoto) StereoPairSpec.parse(stereoPairJson) else null }
   }
+
+  /** The texture of a spatial photo: both eyes of [eyeWidth] x [eyeHeight] side by side, see StereoComposer. */
+  private class StereoTexture(
+    val bitmap: Bitmap,
+    val eyeWidth: Int,
+    val eyeHeight: Int,
+    /** Both eyes were decoded: false shows the left eye in 2D. */
+    val hasSecondEye: Boolean,
+  )
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
   private var request: MediaRequest? = null
@@ -241,11 +275,35 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** Scene object of the video panel, to change the stereo mode and the shape of its compositor layer. */
   private var videoPanel: PanelSceneObject? = null
 
+  // Stereo quad of the spatial photos, see showStereoPhoto
+  private var stereoQuadEntity: Entity? = null
+  private var stereoQuadMaterial: SceneMaterial? = null
+  /** The texture of the spatial photo on the quad, ours: the previous one is destroyed once a new one is set. */
+  private var stereoTexture: SceneTexture? = null
+  /** A texture decoded before the material of the quad was ready, set once it is. */
+  private var pendingStereo: StereoTexture? = null
+  /** Size of an eye on the texture shown, without its gutter; null before the first spatial photo. */
+  private var stereoEyeSize: Pair<Int, Int>? = null
+  /** Angular width of the quad, from the field of view of the photo, then the thumbstick. */
+  private var stereoAngleDeg = StereoComposer.DEFAULT_ANGLE_DEG
+  /** 3D (each eye its own) or 2D (the left eye for both), the 3D button of the info panel. */
+  private var stereo3d = true
+  /** Both eyes of the photo shown were decoded. */
+  private var stereoHasSecondEye = false
+  /** The quad was placed in front of a known head pose: until then the first pose places it again. */
+  private var stereoPlacedWithHead = false
+  /** Url and opening of the spatial photo that stereo3d and stereoAngleDeg belong to, null before the first one. */
+  private var stereoChoicesFor: Pair<String, Long>? = null
+  /** The choices on the spatial photo shown before a recreation (see onCreate), taken back once by showStereoPhoto. */
+  private var restoredStereoChoices: StereoPhotoChoices? = null
+
   // Info panel views
   private var titleView: TextView? = null
   private var statusView: TextView? = null
   private var stereoView: Button? = null
   private var coverageView: Button? = null
+  /** Turns the sphere by 90 degrees; hidden for a spatial photo, which has no sphere. */
+  private var turnButton: View? = null
   private var playPauseButton: Button? = null
   /** Time bar row of a video: 10 seconds back, the bar, the time, 10 seconds forward. Hidden for a photo. */
   private var seekRow: View? = null
@@ -339,6 +397,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var rawPlanOverride: RawPlan? = null
   /** A plan whose message shows once its url plays (playUrl clears the status of the previous url first). */
   private var pendingRawMessage: RawPlan? = null
+  /** The message of a lens tried against the decoder list, shown once its first stitched frame is drawn. */
+  private var pendingFirstFrameMessage: RawMessage? = null
   /** The stitching of the current raw video failed while playing: its frames now play as they are. */
   private var rawEffectFailed = false
   /** A new plan is posted for the current media: errors that follow from the same failure do not post another. */
@@ -395,14 +455,25 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     cacheDir.listFiles()?.filter { it.name.startsWith(ORIGINAL_PREFIX) }?.forEach { it.delete() }
     // A recreation goes on with the media shown last: the system hands back the intent that first started the viewer,
     // which knows neither a previous or next media nor a fresh open received in onNewIntent
-    request = savedInstanceState?.getBundle(STATE_REQUEST)?.let(::requestOf) ?: parse(intent)
+    val saved = savedInstanceState?.getBundle(STATE_REQUEST)?.let(::requestOf)
+    request = saved ?: parse(intent)
+    // A spatial photo comes back in 3D or 2D and as wide as the user left it, which showStereoPhoto would reset
+    if (savedInstanceState != null && saved != null && savedInstanceState.containsKey(STATE_STEREO_ANGLE_DEG)) {
+      restoredStereoChoices =
+        StereoPhotoChoices(
+          saved.url,
+          saved.openingId,
+          threeD = savedInstanceState.getBoolean(STATE_STEREO_3D, true),
+          angleDeg = savedInstanceState.getFloat(STATE_STEREO_ANGLE_DEG),
+        )
+    }
     liveViewer = this
   }
 
   /**
    * Keeps the media shown now for a recreation (see onCreate), with the 3D layout and the field of view on screen (the
-   * user's corrections) and, for a video, the position it reached, so that the new viewer carries on with the same
-   * opening as if nothing happened.
+   * user's corrections), for a video the position it reached and for a spatial photo its 3D or 2D choice and the width
+   * of its quad, so that the new viewer carries on with the same opening as if nothing happened.
    */
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
@@ -414,6 +485,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         startPositionMs = currentPositionMs(media),
       )
     outState.putBundle(STATE_REQUEST, extrasOf(shown))
+    // The choices on screen once its showStereoPhoto ran (before, they are those of another photo or the defaults),
+    // else those of a recreation that did not show it yet
+    val choices =
+      when {
+        !media.isStereoPhoto -> null
+        stereoChoicesFor == media.url to media.openingId ->
+          StereoPhotoChoices(media.url, media.openingId, stereo3d, stereoAngleDeg)
+        else -> restoredStereoChoices?.forPhoto(media.url, media.openingId)
+      }
+    if (choices != null) {
+      outState.putBoolean(STATE_STEREO_3D, choices.threeD)
+      outState.putFloat(STATE_STEREO_ANGLE_DEG, choices.angleDeg)
+    }
   }
 
   /**
@@ -443,6 +527,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
       createSkybox()
       createHalfSphere()
+      createStereoQuad()
       videoEntity = Entity.create(Panel(R.id.immersive_video_panel), Transform(), Visible(false))
       infoEntity =
         Entity.createPanelEntity(
@@ -557,6 +642,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     rawEffectFailed = false
     rawPlanOverride = null
     pendingRawMessage = null
+    pendingFirstFrameMessage = null
     reprepareOnReturn = false
     if (media == null) {
       showError(getString(R.string.immersive_error_nothing))
@@ -577,12 +663,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.i(TAG, "half sphere media (VR180), coverage ${media.coverage}")
     }
     if (media.isRawVideo) Log.i(TAG, "raw 360 video, stitched on the headset")
+    if (media.isStereoPhoto) Log.i(TAG, "spatial photo, on the stereo quad: ${media.stereoPair ?: "pair unreadable"}")
     titleView?.text = media.title
     updateVideoControls()
     updateStereoView()
     updateCoverageView()
+    updateTurnButton()
     if (revealInfo) setInfoVisible(true, reposition = true)
-    if (media.isVideo) showVideo(media) else showPhoto(media)
+    when {
+      media.isVideo -> showVideo(media)
+      media.isStereoPhoto -> showStereoPhoto(media)
+      else -> showPhoto(media)
+    }
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -593,6 +685,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     statusView = root.findViewById(R.id.immersive_status)
     stereoView = root.findViewById(R.id.immersive_stereo)
     coverageView = root.findViewById(R.id.immersive_coverage)
+    turnButton = root.findViewById(R.id.immersive_turn)
     playPauseButton = root.findViewById(R.id.immersive_play_pause)
     seekRow = root.findViewById(R.id.immersive_seek_row)
     seekBar = root.findViewById(R.id.immersive_seek_bar)
@@ -607,7 +700,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(playPauseButton) { togglePlayPause() }
     onPanelClick(stereoView) { cycleStereoLayout(1, fromPanel = true) }
     onPanelClick(coverageView) { toggleCoverage() }
-    onPanelClick(root.findViewById(R.id.immersive_turn)) { rotateSphere(YAW_STEP_DEGREES) }
+    onPanelClick(turnButton) { rotateSphere(YAW_STEP_DEGREES) }
     onPanelClick(seekBackButton) { seekBy(-1) }
     onPanelClick(seekForwardButton) { seekBy(1) }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
@@ -619,6 +712,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateNavigationButtons()
     updateStereoView()
     updateCoverageView()
+    updateTurnButton()
+  }
+
+  /** The turn button is there for the media shown on a sphere only. */
+  private fun updateTurnButton() {
+    turnButton?.visibility = if (request?.isStereoPhoto == true) View.GONE else View.VISIBLE
   }
 
   /** Runs [action] on a click on [view], then restarts a pending auto hide (see [restartPendingHide]). */
@@ -674,6 +773,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       view.visibility = View.GONE
       return
     }
+    if (media.isStereoPhoto) {
+      // 3D or 2D (left eye): what the quad shows now
+      val key = if (stereo3d && stereoHasSecondEye) StereoComposer.LABEL_3D else StereoComposer.LABEL_2D
+      view.text = StereoComposer.label(media.stereoLabels, key)
+      view.visibility = View.VISIBLE
+      return
+    }
     view.text = ImmersiveMedia.stereoLayoutText(stereoLayout, media.stereoLabels)
     view.visibility = View.VISIBLE
   }
@@ -685,8 +791,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun updateCoverageView() {
     val view = coverageView ?: return
     val media = request
-    // A stitched frame covers the full sphere
-    if (media == null || media.isRawVideo) {
+    // A stitched frame covers the full sphere, a spatial photo no sphere at all
+    if (media == null || media.isRawVideo || media.isStereoPhoto) {
       view.visibility = View.GONE
       return
     }
@@ -836,6 +942,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       lastHeadPosition = Vector3(head.t.x, head.t.y, head.t.z)
       lastHeadForward = head.forward()
       centerSpheresOnHead(head.t)
+      // A spatial photo shown before the first head pose goes in front of the user once it is known
+      if (!stereoPlacedWithHead && stereoEyeSize != null && request?.isStereoPhoto == true) placeStereoQuad()
     }
     if (infoPlaced) return
     if (lastHeadPosition != null || ++framesWithoutHead > 180) {
@@ -897,6 +1005,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun cycleStereoLayout(step: Int, fromPanel: Boolean = false) {
     val media = request ?: return
     if (media.isRawVideo) return
+    if (media.isStereoPhoto) {
+      toggleStereoPhotoMode(fromPanel)
+      return
+    }
     stereoLayout = ImmersiveMedia.cycleStereoLayout(stereoLayout, step)
     val mode = stereoModeFor(stereoLayout)
     Log.i(TAG, "3D layout is now $stereoLayout (${if (media.isVideo) "video" else "photo"} stereo mode $mode)")
@@ -917,7 +1029,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun toggleCoverage() {
     val media = request ?: return
-    if (media.isRawVideo) return
+    if (media.isRawVideo || media.isStereoPhoto) return
     coverage = ImmersiveMedia.toggleCoverage(coverage)
     Log.i(TAG, "field of view is now $coverage (${if (media.isVideo) "video" else "photo"})")
     if (media.isVideo) applyVideoShape() else showPhotoSphere()
@@ -969,6 +1081,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       if (ImmersiveControls.Action.PLAY_PAUSE in actions) playOnReturn = false else resumeHeldPlayback()
     }
     val isVideo = request?.isVideo == true
+    // A spatial photo has no sphere to turn: the thumbstick sizes and places its quad instead
+    val isStereoPhoto = request?.isStereoPhoto == true
     for (action in actions) {
       when (action) {
         ImmersiveControls.Action.CLOSE -> {
@@ -977,12 +1091,22 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         ImmersiveControls.Action.PREVIOUS -> navigate(-1, fromThumbstick = true)
         ImmersiveControls.Action.NEXT -> navigate(1, fromThumbstick = true)
-        ImmersiveControls.Action.TURN_LEFT -> turnFromThumbstick(-SNAP_TURN_DEGREES)
-        ImmersiveControls.Action.TURN_RIGHT -> turnFromThumbstick(SNAP_TURN_DEGREES)
+        ImmersiveControls.Action.TURN_LEFT ->
+          if (isStereoPhoto) placeStereoQuad() else turnFromThumbstick(-SNAP_TURN_DEGREES)
+        ImmersiveControls.Action.TURN_RIGHT ->
+          if (isStereoPhoto) placeStereoQuad() else turnFromThumbstick(SNAP_TURN_DEGREES)
         ImmersiveControls.Action.STICK_UP ->
-          if (isVideo) seekFromThumbstick(1) else turnFromThumbstick(YAW_STEP_DEGREES)
+          when {
+            isVideo -> seekFromThumbstick(1)
+            isStereoPhoto -> resizeStereoQuad(1)
+            else -> turnFromThumbstick(YAW_STEP_DEGREES)
+          }
         ImmersiveControls.Action.STICK_DOWN ->
-          if (isVideo) seekFromThumbstick(-1) else turnFromThumbstick(-YAW_STEP_DEGREES)
+          when {
+            isVideo -> seekFromThumbstick(-1)
+            isStereoPhoto -> resizeStereoQuad(-1)
+            else -> turnFromThumbstick(-YAW_STEP_DEGREES)
+          }
         ImmersiveControls.Action.TOGGLE_PANEL -> {
           // A panel opened by the user stays until the user hides it
           cancelInfoHide()
@@ -1014,6 +1138,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun navigate(step: Int, fromThumbstick: Boolean = false) {
     if (closing || isFinishing) return
+    val shown = request
+    if (shown != null && shown.isStereoPhoto) {
+      // Flutter finds no spatial photo before or after this one yet: said rather than asked
+      val text = StereoComposer.label(shown.stereoLabels, StereoComposer.LABEL_NO_NAVIGATION)
+      Log.i(TAG, "no previous or next from a spatial photo (step $step)")
+      if (fromThumbstick && !infoVisible) showFeedback(text) else setStatus(text)
+      return
+    }
     if (pendingRequestId != null) {
       // Still looking: the feedback says so again rather than nothing happening
       if (fromThumbstick && !infoVisible) showFeedback(navigationStatus)
@@ -1085,6 +1217,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     mediaCoverage: ImmersiveSphereCoverage,
     fallbackUrl: String?,
     rawProjection: String?,
+    stereoPair: String?,
   ): Boolean {
     if (closing || isFinishing || isDestroyed) {
       Log.i(TAG, "adjacent media for request $requestId refused, the viewer is closing")
@@ -1115,6 +1248,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         openingId = current.openingId,
         fallbackUrl = fallbackUrl,
         rawProjection = rawProjection,
+        stereoPairJson = stereoPair,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -1500,10 +1634,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * Shows the sphere of the photo: the half sphere for a 180° photo once its texture and the half sphere are ready,
-   * the skybox otherwise (360° photos, and the idle sky while the first image loads). Nothing changes for a video.
+   * the skybox otherwise (360° photos, and the idle sky while the first image loads). Nothing changes for a video, nor
+   * for a spatial photo, which has black around its quad: the half sphere material may only be ready after it shows.
    */
   private fun showPhotoSphere() {
-    if (request?.isVideo == true) return
+    if (request?.isVideo == true || request?.isStereoPhoto == true) return
     val half = coverage == ImmersiveSphereCoverage.HALF && photoTexture != null && halfSphereMaterial != null
     halfSphereEntity?.setComponent(Visible(half))
     skyboxEntity?.setComponent(Visible(!half))
@@ -1579,8 +1714,302 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     photoTexture = null
   }
 
+  // ---------------------------------------------------------------------------------------------
+  // Spatial photos: stereo quad
+
+  /**
+   * The flat quad of the spatial photos: the unit quad of SceneMesh.singleSidedQuad (normal +z, u along +x) with an
+   * unlit material made like the half sphere one, so that its stereo mode works as the skybox one does: the SDK default
+   * vertex shader samples uv * (0.5, 1) + viewIndex * (0.5, 0) under LeftRight, the left half for both eyes under
+   * MonoLeft. Sized by its Scale component, placed by [placeStereoQuad], hidden until a spatial photo is shown.
+   */
+  private fun createStereoQuad() {
+    registerMeshCreator(STEREO_QUAD_MESH) { entity ->
+      // The user faces the side opposite to the +z normal (see StereoComposer.quadRotation), the side a front sided
+      // material may cull: the SDK sets a sidedness per material (its cylinder panels set FRONT_SIDED on the front
+      // material and BACK_SIDED on the back one, and its shaders call the faces turned away "normally culled"), and
+      // which winding its native renderer takes as the front does not show from Kotlin. Double sided, the quad shows
+      // whatever that winding is; seen from behind its eyes would be mirrored, but it is placed facing the user at
+      // every photo and every recentering.
+      val material =
+        entity.getComponent<Material>().generateSceneMaterial(entity, this).apply {
+          setSidedness(MaterialSidedness.DOUBLE_SIDED)
+        }
+      SceneMesh.singleSidedQuad(0.5f, 0.5f, material)
+    }
+    val entity =
+      Entity.create(
+        listOf(
+          Mesh(Uri.parse(STEREO_QUAD_MESH), hittable = MeshCollision.NoCollision),
+          Material().apply { unlit = true },
+          Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
+          Scale(Vector3(1f, 1f, 1f)),
+          Visible(false),
+        ),
+      )
+    stereoQuadEntity = entity
+    systemManager.findSystem<SceneObjectSystem>().getSceneObject(entity)?.thenAccept { sceneObject ->
+      runOnUiThread {
+        val material = sceneObject.mesh?.materials?.firstOrNull()
+        if (material == null) {
+          Log.e(TAG, "stereo quad material not found, spatial photos cannot be displayed")
+          return@runOnUiThread
+        }
+        Log.i(TAG, "stereo quad material ready")
+        stereoQuadMaterial = material
+        // A spatial photo decoded before the material was there
+        pendingStereo?.let {
+          pendingStereo = null
+          if (request?.isStereoPhoto == true) applyStereoTexture(it) else it.bitmap.recycle()
+        }
+      }
+    } ?: Log.e(TAG, "stereo quad scene object not available")
+  }
+
+  /**
+   * Shows [media], an Apple spatial photo, on the stereo quad: no sphere around (black), its file read whole (a few MB:
+   * the bridge or the server original, or the file on the headset), both eyes decoded (see [decodeStereo]) and set
+   * side by side on one texture. A pair that does not read, or a second eye that does not decode, shows the left eye
+   * in 2D.
+   */
+  private fun showStereoPhoto(media: MediaRequest) {
+    stopVideo()
+    resetSkyboxToIdle()
+    skyboxEntity?.setComponent(Visible(false))
+    halfSphereEntity?.setComponent(Visible(false))
+    hideStereoQuad()
+    val spec = media.stereoPair
+    // A new photo starts in 3D at the width its field of view gives; the photo of a recreation as the user left it
+    val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId)
+    restoredStereoChoices = null
+    stereo3d = restored?.threeD ?: true
+    stereoHasSecondEye = false
+    stereoAngleDeg = restored?.angleDeg ?: StereoComposer.initialAngle(spec?.horizontalFovDeg)
+    stereoChoicesFor = media.url to media.openingId
+    updateStereoView()
+    setStatus(getString(R.string.immersive_loading))
+    loadJob =
+      scope.launch {
+        try {
+          val local = ImmersiveMedia.localFileFor(media.url)
+          val bytes = if (local != null) withContext(Dispatchers.IO) { local.readBytes() } else download(media.url)
+          Log.i(TAG, "spatial photo: ${bytes.size} bytes")
+          val holder = AtomicReference<StereoTexture?>()
+          try {
+            decodeMutex.withLock { withContext(Dispatchers.Default) { holder.set(decodeStereo(bytes, spec)) } }
+            ensureActive()
+            val texture = holder.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
+            applyStereoTexture(texture)
+          } finally {
+            holder.getAndSet(null)?.bitmap?.recycle()
+          }
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Throwable) {
+          Log.e(TAG, "spatial photo failed", e)
+          showError(getString(R.string.immersive_error_photo, e.message ?: e.javaClass.simpleName))
+        }
+      }
+  }
+
+  /**
+   * Both eyes of a spatial photo of [bytes] on one texture, off the main thread: the left eye, then the right one by
+   * the pitm patch, else by the index of MediaMetadataRetriever when the platform gave the left eye again (their
+   * difference tells), else none. Without a [spec], or without a right eye, the left eye goes in both halves. Logs the
+   * item ids, the sizes, the path that gave the right eye and the difference, for the headset checks.
+   */
+  private fun decodeStereo(bytes: ByteArray, spec: StereoPairSpec?): StereoTexture? {
+    if (spec == null) {
+      val single = ImmersiveMedia.decodeBytes(bytes) ?: return null
+      val (width, height) =
+        StereoComposer.fitWithin(
+          single.width,
+          single.height,
+          StereoHeicDecoder.MAX_EYE_WIDTH,
+          StereoHeicDecoder.MAX_EYE_HEIGHT,
+        )
+      val eye =
+        if (width != single.width || height != single.height) {
+          Bitmap.createScaledBitmap(single, width, height, true).also { if (it !== single) single.recycle() }
+        } else {
+          single
+        }
+      try {
+        val crop = StereoComposer.Crop(0, 0, eye.width)
+        return StereoTexture(StereoComposer.compose(eye, eye, crop), eye.width, eye.height, hasSecondEye = false)
+      } finally {
+        eye.recycle()
+      }
+    }
+    val left = StereoHeicDecoder.decodeEye(bytes, spec, spec.leftItemId)
+    Log.i(TAG, "spatial photo: left eye item ${spec.leftItemId} decoded ${left.width}x${left.height}")
+    var right: Bitmap? = null
+    try {
+      try {
+        val patched = StereoHeicDecoder.decodeEye(bytes, spec, spec.rightItemId)
+        val sized =
+          if (patched.width != left.width || patched.height != left.height) {
+            Log.w(TAG, "spatial photo: right eye ${patched.width}x${patched.height}, scaled to the left one")
+            Bitmap.createScaledBitmap(patched, left.width, left.height, true).also {
+              if (it !== patched) patched.recycle()
+            }
+          } else {
+            patched
+          }
+        val difference = StereoHeicDecoder.meanDifference(left, sized)
+        Log.i(TAG, "spatial photo: right eye item ${spec.rightItemId} by pitm patch, difference $difference")
+        if (difference >= StereoHeicDecoder.SAME_IMAGE_DIFFERENCE) right = sized else sized.recycle()
+      } catch (e: Exception) {
+        Log.w(TAG, "spatial photo: pitm patch failed: ${e.message}")
+      }
+      if (right == null) {
+        Log.i(TAG, "spatial photo: the pitm patch gave the left eye again, trying the images by index")
+        right = StereoHeicDecoder.decodeRightByIndex(bytes, left)
+        val found = if (right != null) "found" else "not found, shown in 2D"
+        Log.i(TAG, "spatial photo: right eye by image index $found")
+      }
+      val crop =
+        if (right != null) StereoComposer.crop(left.width, spec.disparityAdjustment)
+        else StereoComposer.Crop(0, 0, left.width)
+      Log.i(
+        TAG,
+        "spatial photo: eyes ${crop.width}x${left.height} (disparity ${spec.disparityAdjustment}, left from " +
+          "${crop.leftStart}, right from ${crop.rightStart}), rotation ${spec.rotation}",
+      )
+      val texture = StereoComposer.compose(left, right ?: left, crop)
+      return StereoTexture(texture, crop.width, left.height, hasSecondEye = right != null)
+    } finally {
+      left.recycle()
+      right?.recycle()
+    }
+  }
+
+  /**
+   * Uploads [stereo] as the texture of the quad, recycles its bitmap, destroys the previous texture, then shows the
+   * quad in front of the user with the mode and the size of this photo. Kept for later while the material is not
+   * ready.
+   */
+  private fun applyStereoTexture(stereo: StereoTexture) {
+    val material = stereoQuadMaterial
+    if (material == null) {
+      Log.w(TAG, "stereo quad not ready yet, keeping the spatial photo for later")
+      pendingStereo?.bitmap?.recycle()
+      pendingStereo = stereo
+      return
+    }
+    val bitmap = stereo.bitmap
+    val texture =
+      try {
+        SceneTexture(
+          bitmap,
+          SamplerConfig(
+            Filter.LINEAR,
+            Filter.LINEAR,
+            Filter.LINEAR,
+            AddressMode.CLAMP_TO_EDGE,
+            AddressMode.CLAMP_TO_EDGE,
+            0f,
+          ),
+        )
+      } catch (e: Throwable) {
+        Log.e(TAG, "stereo texture creation failed for ${bitmap.width}x${bitmap.height}", e)
+        null
+      } finally {
+        bitmap.recycle()
+      }
+    if (texture == null) {
+      showError(getString(R.string.immersive_error_photo, "texture"))
+      return
+    }
+    material.setAlbedoTexture(texture)
+    stereoTexture?.destroy()
+    stereoTexture = texture
+    stereoEyeSize = stereo.eyeWidth to stereo.eyeHeight
+    stereoHasSecondEye = stereo.hasSecondEye
+    applyStereoMode()
+    placeStereoQuad()
+    stereoQuadEntity?.setComponent(Visible(true))
+    updateStereoView()
+    val media = request
+    if (media?.stereoPair != null && !stereo.hasSecondEye) {
+      // Shown at once and longer, as the decoder warning: the user expected 3D
+      showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
+      scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+    } else {
+      setStatus(getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight))
+      scheduleInfoHide()
+    }
+  }
+
+  /** LeftRight in 3D, each eye its half of the texture; MonoLeft in 2D or without a second eye. */
+  private fun applyStereoMode() {
+    val mode = if (stereo3d && stereoHasSecondEye) StereoMode.LeftRight else StereoMode.MonoLeft
+    stereoQuadMaterial?.setStereoMode(mode)
+    Log.i(TAG, "stereo quad mode is now $mode")
+  }
+
+  /** The 3D button on a spatial photo: 3D, or the left eye in 2D. Nothing to switch without a second eye. */
+  private fun toggleStereoPhotoMode(fromPanel: Boolean) {
+    if (!stereoHasSecondEye) {
+      Log.i(TAG, "spatial photo without a second eye: stays in 2D")
+      return
+    }
+    stereo3d = !stereo3d
+    applyStereoMode()
+    updateStereoView()
+    showControlChange(fromPanel)
+  }
+
+  /**
+   * Puts the quad 2 m in front of where the user looks, at the height of the eyes, facing them the way the info panel
+   * does (see StereoComposer.quadRotation): the horizontal gaze. Before the first head pose, in front of the default
+   * eye position; [onFrame] places it again once the pose is known.
+   */
+  private fun placeStereoQuad() {
+    val entity = stereoQuadEntity ?: return
+    val head = lastHeadPosition
+    val eyes = head ?: Vector3(0f, DEFAULT_EYE_HEIGHT, 0f)
+    val forward = lastHeadForward ?: Vector3(0f, 0f, 1f)
+    val flat = sqrt(forward.x * forward.x + forward.z * forward.z)
+    val direction = if (flat < 1e-3f) Vector3(0f, 0f, 1f) else Vector3(forward.x / flat, 0f, forward.z / flat)
+    val position = eyes + (direction * StereoComposer.DISTANCE_M)
+    position.y = eyes.y
+    entity.setComponent(Transform(Pose(position, StereoComposer.quadRotation(direction))))
+    stereoPlacedWithHead = head != null
+    applyStereoScale()
+    Log.i(
+      TAG,
+      "stereo quad placed at $position, gaze $direction, head ${if (head != null) "known" else "unknown"}",
+    )
+  }
+
+  /** The size of the quad for the angular width chosen and the eyes of the photo shown. */
+  private fun applyStereoScale() {
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
+    val (width, height) = StereoComposer.quadSize(stereoAngleDeg, eyeWidth, eyeHeight)
+    stereoQuadEntity?.setComponent(Scale(Vector3(width, height, 1f)))
+  }
+
+  /** The thumbstick up ([step] 1) or down (-1) on a spatial photo: a wider or narrower quad, where it is. */
+  private fun resizeStereoQuad(step: Int) {
+    stereoAngleDeg = StereoComposer.nextAngle(stereoAngleDeg, step)
+    applyStereoScale()
+    Log.i(TAG, "stereo quad is now $stereoAngleDeg degrees wide")
+    val text = "${stereoAngleDeg.roundToInt()}°"
+    if (infoVisible) setStatus(text) else showFeedback(text)
+  }
+
+  /** Any other media: the quad goes away (its texture stays until the next spatial photo replaces it). */
+  private fun hideStereoQuad() {
+    stereoQuadEntity?.setComponent(Visible(false))
+    pendingStereo?.bitmap?.recycle()
+    pendingStereo = null
+    stereoPlacedWithHead = false
+  }
+
   private fun showPhoto(media: MediaRequest) {
     stopVideo()
+    hideStereoQuad()
     // Back to the idle sky until the new photo is decoded: the previous photo must not show up with the field of view
     // or the 3D layout of this one (a 360° photo cut in half, or the two eyes of a 3D photo shown on a mono one)
     resetSkyboxToIdle()
@@ -1782,6 +2211,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
       // Told once the url plays: the decoder message of a pre-check, a fallback step, the stitching that failed
       pendingRawMessage = plan.takeIf { it.message != null }
+      pendingFirstFrameMessage = plan.firstFrameMessage
       (lens?.player ?: builder.build()).also {
         player = it
         twoLens = lens
@@ -1839,8 +2269,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     var playback: TwoLensPlayback? = null
 
     override fun onFirstFrameDrawn() {
+      if (playback == null || playback !== twoLens) return
       // A lens renderer's first frame is not on the panel yet: the compositor's is
-      if (playback != null && playback === twoLens) revealVideo()
+      revealVideo()
+      // The lens tried against the decoder list plays: the viewer reads why half of the sphere stays black, once
+      pendingFirstFrameMessage?.let {
+        pendingFirstFrameMessage = null
+        showRawWarning(it)
+      }
     }
 
     override fun onStitchError(error: Exception) {
@@ -1930,9 +2366,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     )
   }
 
-  /** Whether the headset decodes [instances] streams like [track] at once, null when the JSON cannot tell. */
-  private fun canDecodeRaw(track: RawTrack, instances: Int): Boolean? {
-    val codec = track.codecs ?: track.codec ?: return null
+  /**
+   * Whether the headset decodes [instances] streams like [track] at once, unknown when the JSON cannot tell. A refusal
+   * says whether it is certain (a missing profile, no decoder for the codec), see [RawDecoderVerdict.of].
+   */
+  private fun canDecodeRaw(track: RawTrack, instances: Int): RawDecoderVerdict {
+    val codec = track.codecs ?: track.codec ?: return RawDecoderVerdict.Unknown
     val verdict =
       VideoDecoders.canDecode(
         codec,
@@ -1944,7 +2383,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         transferCharacteristics = 0,
         instances = instances,
       )
-    return verdict.supported
+    return RawDecoderVerdict.of(verdict.supported, verdict.reason, verdict.missingProfile)
   }
 
   /** The next step of the ladder after a decoder failure of the current lens player, or null. */
@@ -1998,10 +2437,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     return if (plan.mode == RawMode.PLAIN) media.url else plan.urls.firstOrNull() ?: media.url
   }
 
-  /** The message of [plan], if it has one, on the status line for a while, like the decoder warning. */
+  /** The message of [plan], if it has one, see the other [showRawWarning]. */
   private fun showRawWarning(plan: RawPlan) {
+    showRawWarning(plan.message ?: return)
+  }
+
+  /** [message] on the status line for a while, like the decoder warning. */
+  private fun showRawWarning(message: RawMessage) {
     val text =
-      when (plan.message ?: return) {
+      when (message) {
         RawMessage.ONE_LENS_DECODER -> {
           val track = projectionFor(request ?: return)?.tracks?.maxByOrNull { it.pixels }
           val codec = VideoDecoders.codecName(VideoDecoders.mimeFor(track?.codecs ?: track?.codec ?: ""))
@@ -2250,6 +2694,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (request?.isRawVideo == true) ImmersiveSphereCoverage.FULL else coverage
 
   private fun showVideo(media: MediaRequest) {
+    hideStereoQuad()
     resetSkyboxToIdle()
     skyboxEntity?.setComponent(Visible(false))
     halfSphereEntity?.setComponent(Visible(false))
@@ -2507,6 +2952,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     idleTexture = null
     skyboxMaterial = null
     halfSphereMaterial = null
+    pendingStereo?.bitmap?.recycle()
+    pendingStereo = null
+    stereoTexture = null
+    stereoQuadMaterial = null
     super.onSpatialShutdown()
   }
 
@@ -2522,8 +2971,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_OPENING_ID = "app.alextran.immich.immersive.OPENING_ID"
     private const val EXTRA_FALLBACK_URL = "app.alextran.immich.immersive.FALLBACK_URL"
     private const val EXTRA_RAW_PROJECTION = "app.alextran.immich.immersive.RAW_PROJECTION"
+    /** The JSON of the two eyes of an Apple spatial photo, absent for any other media; put by ImmersiveApiImpl.open */
+    internal const val EXTRA_STEREO_PAIR = "app.alextran.immich.immersive.STEREO_PAIR"
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
+    /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */
+    private const val STATE_STEREO_3D = "app.alextran.immich.immersive.STEREO_3D"
+    private const val STATE_STEREO_ANGLE_DEG = "app.alextran.immich.immersive.STEREO_ANGLE_DEG"
     private const val ORIGINAL_PREFIX = "immersive_original_"
     private const val INFO_DISTANCE = 1.3f
     private const val INFO_AUTO_HIDE_MS = 4000L
@@ -2575,6 +3029,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val HALF_SPHERE_MESH = "mesh://immersive_half_sphere"
     private const val HALF_SPHERE_RADIUS = 300f
 
+    /** Mesh of the stereo quad of the spatial photos: a unit quad, sized with its Scale component. */
+    private const val STEREO_QUAD_MESH = "mesh://immuch_stereo_quad"
+
+    /** Eye height used to place the quad before the first head pose. */
+    private const val DEFAULT_EYE_HEIGHT = 1.6f
+
     /**
      * Starting rotation of the photo sphere and of the video sphere around the vertical axis, for every
      * new media. Not verified on a headset: turn the image with the Turn button (or the thumbstick up or
@@ -2624,13 +3084,24 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       coverage: ImmersiveSphereCoverage,
       fallbackUrl: String?,
       rawProjection: String?,
+      stereoPair: String? = null,
     ): Boolean {
       val viewer = liveViewer
       if (viewer == null) {
         Log.i(TAG, "adjacent media for request $requestId refused, no immersive viewer")
         return false
       }
-      return viewer.applyAdjacent(requestId, url, isVideo, title, stereoLayout, coverage, fallbackUrl, rawProjection)
+      return viewer.applyAdjacent(
+        requestId,
+        url,
+        isVideo,
+        title,
+        stereoLayout,
+        coverage,
+        fallbackUrl,
+        rawProjection,
+        stereoPair,
+      )
     }
 
     fun intent(
@@ -2683,6 +3154,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putLong(EXTRA_OPENING_ID, media.openingId)
         putString(EXTRA_FALLBACK_URL, media.fallbackUrl)
         putString(EXTRA_RAW_PROJECTION, media.rawProjection)
+        putString(EXTRA_STEREO_PAIR, media.stereoPairJson)
       }
     }
 
@@ -2712,6 +3184,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         openingId = extras.getLong(EXTRA_OPENING_ID, 0L),
         fallbackUrl = extras.getString(EXTRA_FALLBACK_URL)?.takeIf { it.isNotBlank() },
         rawProjection = extras.getString(EXTRA_RAW_PROJECTION)?.takeIf { it.isNotBlank() },
+        stereoPairJson = extras.getString(EXTRA_STEREO_PAIR)?.takeIf { it.isNotBlank() },
       )
     }
 

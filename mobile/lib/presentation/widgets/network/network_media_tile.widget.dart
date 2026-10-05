@@ -309,6 +309,10 @@ class NetworkMediaTile extends ConsumerWidget {
     final is360 = ref.watch(
       networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.is360 ?? false),
     );
+    // Apple spatial photos and videos, told by the same read
+    final isSpatial = ref.watch(
+      networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.isAppleSpatial ?? false),
+    );
     final wasSent = ref.watch(
       networkUploadRecordsProvider.select((records) => records.containsKey(UploadRecordStore.keyOf(entry))),
     );
@@ -335,16 +339,31 @@ class NetworkMediaTile extends ConsumerWidget {
             children: [
               ColoredBox(color: context.colorScheme.surfaceContainerHighest),
               if (hasThumbnail)
-                _PhotoThumbnail(url: url, name: entry.name)
+                _withServerThumbnail(entry, _PhotoThumbnail(url: url, name: entry.name))
               else if (hasFrame)
-                _VideoThumbnail(entry: entry, url: url)
+                _withServerThumbnail(entry, _VideoThumbnail(entry: entry, url: url))
               else
-                _Placeholder(icon: entry.isVideo ? Icons.movie_outlined : Icons.image_outlined, name: entry.name),
+                // A photo too large to read for a thumbnail still shows the picture its server made of it
+                _withServerThumbnail(
+                  entry,
+                  _Placeholder(icon: entry.isVideo ? Icons.movie_outlined : Icons.image_outlined, name: entry.name),
+                ),
               if (entry.isVideo)
                 const Positioned(
                   left: 6,
                   bottom: 6,
                   child: Icon(Icons.play_circle_outline_rounded, color: Colors.white, size: 20, shadows: _shadows),
+                ),
+              if (isSpatial)
+                Positioned(
+                  key: const Key('network_media_spatial_badge'),
+                  // Left of the 360° badge when both show
+                  right: is360 ? 28 : 6,
+                  top: 6,
+                  child: const Text(
+                    '3D',
+                    style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700, shadows: _shadows),
+                  ),
                 ),
               if (is360)
                 const Positioned(
@@ -370,6 +389,43 @@ class NetworkMediaTile extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The picture the server made of [entry] when it tells one (a DLNA media server), else [picture]
+Widget _withServerThumbnail(NetworkEntry entry, Widget picture) {
+  final thumbnailUrl = entry.thumbnailUrl;
+  return thumbnailUrl == null ? picture : _ServerThumbnail(url: thumbnailUrl, fallback: picture);
+}
+
+/// The picture a media server made of a file (DLNA album art or thumbnail resource), read in Dart straight from the
+/// server: no read of the file through the bridge, no video frame to take. [fallback] (the bridge picture, the video
+/// frame) when the server does not give it.
+class _ServerThumbnail extends ConsumerWidget {
+  const _ServerThumbnail({required this.url, required this.fallback});
+
+  final String url;
+  final Widget fallback;
+
+  /// The server pictures are small already (160 pixels for JPEG_TN): this only bounds a large album art
+  static const width = 256;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final image = ResizeImage(NetworkImage(url), width: width);
+    return Image(
+      key: const Key('network_media_server_thumbnail'),
+      image: image,
+      fit: BoxFit.cover,
+      gaplessPlayback: true,
+      frameBuilder: (context, child, frame, _) {
+        if (frame != null) {
+          ref.read(networkThumbnailCacheProvider).retain(image);
+        }
+        return child;
+      },
+      errorBuilder: (context, _, _) => fallback,
     );
   }
 }

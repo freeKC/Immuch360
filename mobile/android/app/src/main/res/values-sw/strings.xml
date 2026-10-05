@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Shiriki simu hii kwenye mtandao</string>
   <string name="spherical_video_close">Funga</string>
   <string name="spherical_video_error">Video hii haiwezi kuchezwa</string>
 </resources>

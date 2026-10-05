@@ -1,6 +1,10 @@
 // The video decoders of the device and their limits, opened from Settings > Advanced: what tells why a large 360°
 // video stutters or does not play, and what the players check before they pick the original of a video (see
 // chooseVideoSource). The copy button puts a plain text report on the clipboard, for a bug report.
+//
+// It always tells about MV-HEVC, the codec of the Apple spatial videos: the players of the app show their base layer
+// (one eye) with the HEVC decoder, unless the device has a decoder of its own for them (video/x-mvhevc on Qualcomm
+// chips), which Media3 would then pick.
 
 import 'dart:async';
 import 'dart:io';
@@ -16,6 +20,14 @@ import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 
 const _separator = '  •  ';
+
+/// The MIME type of the vendor MV-HEVC decoders Media3 knows (c2.qti.mvhevc.decoder), and the one of Media3 itself
+const mvHevcDecoderMimeType = 'video/x-mvhevc';
+const _mvHevcMimeTypes = {mvHevcDecoderMimeType, 'video/mv-hevc'};
+
+/// A name for the codec [codec] of a decoder: MV-HEVC, which the players name nowhere else, then those of
+/// videoCodecName
+String _codecName(String codec) => _mvHevcMimeTypes.contains(codec.toLowerCase()) ? 'MV-HEVC' : videoCodecName(codec);
 
 /// Every video decoder of the device (see [videoDecodersProvider]), grouped by codec: its name, whether it is a
 /// hardware decoder, its largest frame, the frame rate it reaches at that size when the system tells, and the profiles
@@ -84,7 +96,7 @@ class _DecoderList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
             child: Text(
-              [videoCodecName(codec), if (videoCodecName(codec) != codec) codec].join(_separator),
+              [_codecName(codec), if (_codecName(codec) != codec) codec].join(_separator),
               style: context.textTheme.titleSmall?.copyWith(color: context.primaryColor),
             ),
           ),
@@ -116,6 +128,24 @@ class _DecoderList extends StatelessWidget {
               ),
             ),
         ],
+        // Said even when there is none, so that a spatial video that shows one eye tells why
+        if (!groups.any((group) => _mvHevcMimeTypes.contains(group.$1.toLowerCase()))) ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+            child: Text(
+              ['MV-HEVC', mvHevcDecoderMimeType].join(_separator),
+              style: context.textTheme.titleSmall?.copyWith(color: context.primaryColor),
+            ),
+          ),
+          ListTile(
+            key: const Key('video_decoders_mvhevc_none'),
+            dense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+            leading: const Icon(Icons.view_in_ar_outlined),
+            title: Text(context.t.none, style: context.textTheme.labelLarge),
+            subtitle: Text(context.t.apple_spatial_video_2d_notice, style: secondary),
+          ),
+        ],
       ],
     );
   }
@@ -141,7 +171,7 @@ List<(String, List<DecoderInfo>)> groupVideoDecoders(List<DecoderInfo> decoders)
 String videoDecodersReport(List<DecoderInfo> decoders, {String? system}) {
   final lines = ['Video decoders${system == null ? '' : ' ($system)'}'];
   for (final (codec, group) in groupVideoDecoders(decoders)) {
-    lines.add('${videoCodecName(codec)} ($codec)');
+    lines.add('${_codecName(codec)} ($codec)');
     for (final decoder in group) {
       lines.add(
         [

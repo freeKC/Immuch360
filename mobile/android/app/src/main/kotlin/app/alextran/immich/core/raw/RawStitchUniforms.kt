@@ -98,6 +98,12 @@ object RawStitchUniforms {
   fun enabled(streams: Collection<Int>): FloatArray =
     floatArrayOf(if (0 in streams) 1f else 0f, if (1 in streams) 1f else 0f)
 
+  /**
+   * The stream whose texture each sampler (uTex0, uTex1) reads, bound on the texture unit of the same index: its own,
+   * or in one lens mode the decoded one for the missing stream, which [enabled] leaves out.
+   */
+  fun samplerStreams(streams: List<Int>): IntArray = IntArray(2) { if (it in streams) it else streams[0] }
+
   /** A row major 3x3 matrix as GLSL reads a mat3 uniform (column major, no transpose in GLES 2). */
   fun columnMajor(rowMajor: DoubleArray): FloatArray = FloatArray(9) { rowMajor[(it % 3) * 3 + it / 3].toFloat() }
 

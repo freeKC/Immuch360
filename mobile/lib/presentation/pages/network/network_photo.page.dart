@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
@@ -46,6 +47,9 @@ typedef _Photo = ({NetworkEntry entry, Uri url});
 /// A raw dual fisheye photo of an Insta360 camera (.insp, or a photo ending with the trailer of the camera) is 360°:
 /// the panorama viewer stitches it, and for the immersive viewer it is stitched into a picture of the cache first, with
 /// the calibration read from the share.
+///
+/// On a Meta Quest, an Apple spatial photo (a HEIF file holding a stereo pair, see [NetworkMediaInfo.stereoPair]) gets
+/// a "View in 3D" button, which shows both eyes in the immersive viewer.
 @RoutePage()
 class NetworkPhotoPage extends ConsumerStatefulWidget {
   const NetworkPhotoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -169,6 +173,28 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     ).push(MaterialPageRoute<void>(builder: (_) => PanoramaViewerPage.source(source: source)));
   }
 
+  /// Shows both eyes of [photo], an Apple spatial photo whose pair is [pair], in the immersive viewer: read through the
+  /// media bridge, like any photo of a share. No previous or next from there yet: the viewer says so itself.
+  Future<void> _openStereo(_Photo photo, HeicStereoPair pair) async {
+    // Read before the first await: the page may be gone by then
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final errorMessage = context.t.immersive_viewer_open_failed;
+    final stereoLabels = sphereViewerLabels(context.t);
+    final request = ImmersiveRequest(
+      url: photo.url.toString(),
+      isVideo: false,
+      title: photo.entry.name,
+      view: stereoPhotoSphereView,
+      stereoPair: pair.toImmersiveJson(),
+    );
+    try {
+      await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels);
+    } catch (error) {
+      _log.warning('Could not open ${photo.entry.name} in 3D: $error');
+      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    }
+  }
+
   Future<void> _openImmersive(_Photo photo, SphereView view) async {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
@@ -198,7 +224,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   @override
   Widget build(BuildContext context) {
     // Asked early, so that the 360° button knows where to open the photo right away
-    ref.watch(isHorizonOsProvider);
+    final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     final canUpload = ref.watch(hasServerProvider);
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
     return FutureBuilder<_Photo>(
@@ -206,6 +232,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       builder: (context, snapshot) {
         final photo = snapshot.data;
         final is360 = _info?.is360 ?? false;
+        final stereoPair = isHorizonOs ? _info?.stereoPair : null;
         return Scaffold(
           backgroundColor: Colors.black,
           extendBodyBehindAppBar: true,
@@ -216,6 +243,13 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
             centerTitle: false,
             title: Text(_name, maxLines: 1, overflow: TextOverflow.ellipsis),
             actions: [
+              if (photo != null && stereoPair != null)
+                IconButton(
+                  key: const Key('apple_spatial_view_3d'),
+                  icon: const Icon(Icons.view_in_ar_rounded),
+                  tooltip: context.t.apple_spatial_view_3d,
+                  onPressed: () => unawaited(_openStereo(photo, stereoPair)),
+                ),
               if (photo != null && is360)
                 IconButton(
                   icon: const Icon(Icons.threesixty_rounded),

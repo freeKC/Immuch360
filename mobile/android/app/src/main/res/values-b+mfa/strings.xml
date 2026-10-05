@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Kongsi fon ni dale rangkaie</string>
   <string name="spherical_video_close">Tutup</string>
   <string name="spherical_video_error">Video ni tok leh main</string>
 </resources>

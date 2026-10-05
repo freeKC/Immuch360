@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- Hand-written: a UPnP 1.0 description with a URLBase and a control URL relative to it, as some NAS and TV boxes
+     send it -->
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <URLBase>http://192.168.1.50:49152/</URLBase>
+  <device>
+    <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+    <friendlyName>Box &amp; NAS media</friendlyName>
+    <manufacturer>Example</manufacturer>
+    <modelName>Media Box</modelName>
+    <UDN>uuid:33333333-4444-5555-6666-777777777777</UDN>
+    <serviceList>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:ContentDirectory:2</serviceType>
+        <serviceId>urn:upnp-org:serviceId:ContentDirectory</serviceId>
+        <SCPDURL>cds.xml</SCPDURL>
+        <controlURL>upnp/control/content_directory</controlURL>
+        <eventSubURL>upnp/event/content_directory</eventSubURL>
+      </service>
+    </serviceList>
+  </device>
+</root>

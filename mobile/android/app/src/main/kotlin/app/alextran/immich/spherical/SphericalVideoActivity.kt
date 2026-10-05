@@ -48,6 +48,7 @@ import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
+import app.alextran.immich.core.raw.RawDecoderVerdict
 import app.alextran.immich.core.raw.RawMessage
 import app.alextran.immich.core.raw.RawMode
 import app.alextran.immich.core.raw.RawPlan
@@ -123,6 +124,7 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val STATE_RAW_PLAN_STREAMS = "raw_plan_streams"
     private const val STATE_RAW_PLAN_URLS = "raw_plan_urls"
     private const val STATE_RAW_PLAN_FALLBACK = "raw_plan_fallback"
+    private const val STATE_RAW_PLAN_FIRST_FRAME_MESSAGE = "raw_plan_first_frame_message"
 
     /**
      * Keys of the messages of the raw fallbacks, in the labels from Flutter: one lens because the device cannot decode
@@ -567,6 +569,7 @@ class SphericalVideoActivity : ComponentActivity() {
     outState.putIntArray(STATE_RAW_PLAN_STREAMS, plan.streams.toIntArray())
     outState.putStringArrayList(STATE_RAW_PLAN_URLS, ArrayList(plan.urls))
     outState.putBoolean(STATE_RAW_PLAN_FALLBACK, plan.fromFallback)
+    outState.putString(STATE_RAW_PLAN_FIRST_FRAME_MESSAGE, plan.firstFrameMessage?.name)
   }
 
   override fun onDestroy() {
@@ -679,6 +682,12 @@ class SphericalVideoActivity : ComponentActivity() {
       // it again: a lens player never reports one, its renderers draw into the compositor rather than into the
       // player's surface. The stitched frame opens it; the next player closes it again, as for any player
       playerView.findViewById<View>(androidx.media3.ui.R.id.exo_shutter)?.visibility = View.INVISIBLE
+      // The lens tried against the decoder list plays: the user reads why half of the sphere stays black. Once: the
+      // plan drops the message, so that the lens player of the same plan after a stop does not tell it again
+      plan.firstFrameMessage?.let { message ->
+        plan = plan.copy(firstFrameMessage = null)
+        showRawMessage(message)
+      }
     }
 
     override fun onStitchError(error: Exception) {
@@ -793,9 +802,12 @@ class SphericalVideoActivity : ComponentActivity() {
     return projection
   }
 
-  /** Whether the device decodes [instances] streams like [track] at once, null when the JSON cannot tell. */
-  private fun canDecodeRaw(track: RawTrack, instances: Int): Boolean? {
-    val codec = track.codecs ?: track.codec ?: return null
+  /**
+   * Whether the device decodes [instances] streams like [track] at once, unknown when the JSON cannot tell. A refusal
+   * says whether it is certain (a missing profile, no decoder for the codec), see [RawDecoderVerdict.of].
+   */
+  private fun canDecodeRaw(track: RawTrack, instances: Int): RawDecoderVerdict {
+    val codec = track.codecs ?: track.codec ?: return RawDecoderVerdict.Unknown
     val verdict =
       VideoDecoders.canDecode(
         codec,
@@ -807,7 +819,7 @@ class SphericalVideoActivity : ComponentActivity() {
         transferCharacteristics = 0,
         instances = instances,
       )
-    return verdict.supported
+    return RawDecoderVerdict.of(verdict.supported, verdict.reason, verdict.missingProfile)
   }
 
   /** The plan saved by [onSaveInstanceState], or null without one. */
@@ -821,6 +833,8 @@ class SphericalVideoActivity : ComponentActivity() {
       state.getBoolean(STATE_RAW_PLAN_FALLBACK),
       null,
       "restored",
+      // A lens recreated before its first frame still owes the user its message
+      RawMessage.entries.firstOrNull { it.name == state.getString(STATE_RAW_PLAN_FIRST_FRAME_MESSAGE) },
     )
   }
 
@@ -863,10 +877,15 @@ class SphericalVideoActivity : ComponentActivity() {
     return true
   }
 
-  /** The message of [plan], if it has one, translated by Flutter or in English. */
+  /** The message of [plan], if it has one. */
   private fun showRawMessage(plan: RawPlan) {
+    showRawMessage(plan.message ?: return)
+  }
+
+  /** [message] translated by Flutter or in English. */
+  private fun showRawMessage(message: RawMessage) {
     val text =
-      when (plan.message ?: return) {
+      when (message) {
         RawMessage.ONE_LENS_DECODER -> {
           val track = rawProjection?.tracks?.maxByOrNull { it.pixels }
           val codec = VideoDecoders.codecName(VideoDecoders.mimeFor(track?.codecs ?: track?.codec ?: ""))

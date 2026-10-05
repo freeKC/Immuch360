@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Sdílet tento telefon v síti</string>
   <string name="spherical_video_close">Zavřít</string>
   <string name="spherical_video_error">Toto video nelze přehrát</string>
 </resources>

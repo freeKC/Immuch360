@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Dësen Telefon am Netzwierk deelen</string>
   <string name="spherical_video_close">Zoumaachen</string>
   <string name="spherical_video_error">Dëse Video kann net ofgespillt ginn</string>
 </resources>

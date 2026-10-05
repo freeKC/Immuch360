@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Ку телефона тетелте пайла</string>
   <string name="spherical_video_close">Хуп</string>
   <string name="spherical_video_error">Ку видеона выляма май ҫук</string>
 </resources>

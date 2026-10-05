@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Bendrinti šį telefoną tinkle</string>
   <string name="spherical_video_close">Uždaryti</string>
   <string name="spherical_video_error">Šio vaizdo įrašo negalima paleisti</string>
 </resources>

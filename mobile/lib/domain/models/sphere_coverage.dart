@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -135,9 +136,13 @@ Map<String, String> sphereCoverageLabels(Translations t) => {
   'coverage_half': t.panorama_coverage_half,
 };
 
-/// Translated labels of the native 360° viewers: their 3D control (see [stereoLayoutLabels]) and their coverage
-/// control (see [sphereCoverageLabels])
-Map<String, String> sphereViewerLabels(Translations t) => {...stereoLayoutLabels(t), ...sphereCoverageLabels(t)};
+/// Translated labels of the native 360° viewers: their 3D control (see [stereoLayoutLabels]), their coverage control
+/// (see [sphereCoverageLabels]) and the stereo photo mode of the immersive viewer (see [appleSpatialViewerLabels])
+Map<String, String> sphereViewerLabels(Translations t) => {
+  ...stereoLayoutLabels(t),
+  ...sphereCoverageLabels(t),
+  ...appleSpatialViewerLabels(t),
+};
 
 extension SphereCoverageExtension on SphereCoverage {
   /// The coverage the coverage control switches to: the full sphere and the front half, in turn

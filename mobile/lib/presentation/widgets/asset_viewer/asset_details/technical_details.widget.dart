@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -10,6 +11,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
+import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/repositories/asset_media.repository.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
@@ -36,6 +38,8 @@ class TechnicalDetails extends ConsumerWidget {
           titleStyle: context.textTheme.labelLarge?.copyWith(color: context.colorScheme.onSurfaceSecondary),
         ),
         _buildFileInfoTile(context, ref, asset, exifInfo),
+        // Only a HEIF photo may hold a stereo pair: no other photo is read for one
+        if (asset.isImage && isHeifName(asset.name)) _SpatialPhotoTile(asset: asset),
         if (asset.isVideo) _VideoDecodeTiles(asset: asset),
         if (cameraTitle != null) ...[
           const SizedBox(height: 16),
@@ -175,10 +179,13 @@ class _VideoDecodeTiles extends ConsumerWidget {
     final hdr =
         probe?.dolbyVision == true || dynamicRange == VideoDynamicRange.hlg || dynamicRange == VideoDynamicRange.pq;
     final missingProfile = verdict?.missingProfile;
+    final multiview = probe?.multiview;
     final titleStyle = context.textTheme.labelLarge;
     final subtitleStyle = context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary);
     return Column(
       children: [
+        // The same probe tells an Apple spatial video, whose base layer plays: one eye
+        if (multiview != null) _AppleSpatialTile(info: AppleSpatialInfo.video(multiview)),
         const SizedBox(height: 16),
         SheetTile(
           title: t.technical_details_codec,
@@ -232,6 +239,47 @@ class _VideoDecodeTiles extends ConsumerWidget {
             subtitleStyle: subtitleStyle,
           ),
         ],
+      ],
+    );
+  }
+}
+
+/// An Apple spatial photo of [asset], a HEIF photo: what its file says of its two eyes, nothing until it was read, nor
+/// for a photo holding no pair (see AppleSpatialService)
+class _SpatialPhotoTile extends ConsumerWidget {
+  const _SpatialPhotoTile({required this.asset});
+
+  final BaseAsset asset;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final info = ref.watch(appleSpatialInfoProvider(asset)).valueOrNull;
+    return info == null ? const SizedBox.shrink() : _AppleSpatialTile(info: info);
+  }
+}
+
+/// The row of an Apple spatial photo or video: "Apple spatial photo, two views of 3072 x 3072" or "Apple spatial video
+/// (MV-HEVC), shown in 2D", then what the file tells (see [appleSpatialDetails])
+class _AppleSpatialTile extends StatelessWidget {
+  const _AppleSpatialTile({required this.info});
+
+  final AppleSpatialInfo info;
+
+  @override
+  Widget build(BuildContext context) {
+    final details = appleSpatialDetails(info, context.t);
+    final titleStyle = context.textTheme.labelLarge;
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        SheetTile(
+          key: const Key('apple_spatial_details'),
+          title: details.title,
+          titleStyle: titleStyle,
+          leading: Icon(Icons.view_in_ar_outlined, size: 24, color: titleStyle?.color),
+          subtitle: details.subtitle,
+          subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
+        ),
       ],
     );
   }

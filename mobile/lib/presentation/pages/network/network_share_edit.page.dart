@@ -19,7 +19,8 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('NetworkShareEditPage');
 
-/// What a pasted address says: smb://nas/media/photos, \\nas\media, https://cloud.example.com/remote.php/dav
+/// What a pasted address says: smb://nas/media/photos, \\nas\media, https://cloud.example.com/remote.php/dav,
+/// http://192.168.1.10:8200/rootDesc.xml
 @visibleForTesting
 class NetworkAddress {
   const NetworkAddress({
@@ -35,7 +36,7 @@ class NetworkAddress {
   final String host;
   final int? port;
 
-  /// SMB share name, or the path of the WebDAV address
+  /// SMB share name, the path of the WebDAV address, or the path and query of the DLNA device description
   final String share;
 
   /// SMB: the folder after the share name, null when there is none
@@ -43,9 +44,11 @@ class NetworkAddress {
   final bool useTls;
 }
 
-/// Reads a full address typed or pasted in the server field; null when it is a plain server name or address
+/// Reads a full address typed or pasted in the server field; null when it is a plain server name or address. An http
+/// or https address is the device description of a DLNA media server when the form is for one ([current]) or when it
+/// names an XML file, else a WebDAV address.
 @visibleForTesting
-NetworkAddress? parseNetworkAddress(String input) {
+NetworkAddress? parseNetworkAddress(String input, {NetworkSourceType? current}) {
   var text = input.trim();
   if (text.startsWith(r'\\')) {
     // A Windows path: \\server\share\folder
@@ -59,16 +62,29 @@ NetworkAddress? parseNetworkAddress(String input) {
     return null;
   }
   final scheme = uri.scheme.toLowerCase();
+  final segments = uri.pathSegments.where((segment) => segment.isNotEmpty).toList();
   final type = switch (scheme) {
     'smb' || 'cifs' => NetworkSourceType.smb,
+    'upnp' || 'dlna' => NetworkSourceType.dlna,
+    'http' || 'https'
+        when current == NetworkSourceType.dlna || (segments.lastOrNull ?? '').toLowerCase().endsWith('.xml') =>
+      NetworkSourceType.dlna,
     'http' || 'https' || 'dav' || 'davs' || 'webdav' || 'webdavs' => NetworkSourceType.webdav,
     _ => null,
   };
   if (type == null) {
     return null;
   }
-  final segments = uri.pathSegments.where((segment) => segment.isNotEmpty).toList();
   final port = uri.hasPort ? uri.port : null;
+  if (type == NetworkSourceType.dlna) {
+    return NetworkAddress(
+      type: type,
+      host: uri.host,
+      port: port,
+      share: uri.hasQuery ? '${uri.path}?${uri.query}' : uri.path,
+      useTls: scheme == 'https',
+    );
+  }
   if (type == NetworkSourceType.smb) {
     return NetworkAddress(
       type: type,
@@ -92,6 +108,14 @@ NetworkAddress? parseNetworkAddress(String input) {
 String normalizeNetworkPath(String input, {String empty = '/'}) {
   final segments = input.trim().replaceAll(r'\', '/').split('/').where((segment) => segment.isNotEmpty);
   return segments.isEmpty ? empty : '/${segments.join('/')}';
+}
+
+/// The path and query of a DLNA device description as the sources keep it: starting with "/", the rest as typed (the
+/// query of Jellyfin or Plex matters); "" when nothing was typed
+@visibleForTesting
+String normalizeDescriptionPath(String input) {
+  final text = input.trim();
+  return text.isEmpty || text.startsWith('/') ? text : '/$text';
 }
 
 /// Adds a network share, or edits or removes one when [source] is given
@@ -120,6 +144,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   final _password = TextEditingController();
   final _hostFocus = FocusNode();
   final _usernameFocus = FocusNode();
+  final _passwordFocus = FocusNode();
 
   /// False until the stored password of an existing share is in the field; saving before keeps the stored one
   late bool _passwordLoaded = widget.source == null;
@@ -149,6 +174,13 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   String? _filledName;
   String? _filledShare;
 
+  /// The id the server tapped announces (see NetworkSource.discoveryId), saved with a share of its type; dropped when
+  /// the user edits the server field, the share being then the server typed
+  late ({NetworkSourceType type, String id})? _filledDiscovery = switch (widget.source) {
+    NetworkSource(:final type, discoveryId: final String id) => (type: type, id: id),
+    _ => null,
+  };
+
   bool get _isNew => widget.source == null;
 
   @override
@@ -166,7 +198,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
     }
   }
 
-  /// Looks for the SMB and WebDAV servers of the network, again when called again
+  /// Looks for the SMB, WebDAV and DLNA servers and the phone shares of the network, again when called again
   void _scan() {
     unawaited(_discovery?.cancel());
     void ended() {
@@ -204,29 +236,47 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
     }
   }
 
-  /// Fills the form with a server found on the network, then asks for the user name
+  /// Fills the form with a server found on the network, then asks for what is missing: the user name, the password
+  /// of a phone share (its user name is announced), nothing for a DLNA media server
   void _fillFrom(DiscoveredServer server) {
+    final isDlna = server.type == NetworkSourceType.dlna;
     setState(() {
       // A share name and a WebDAV path do not mean the same, and what was filled in for another server is not right
-      // for this one. The path is "" for SMB.
-      if (server.type != _type || _share.text.trim().isEmpty || _share.text == _filledShare) {
-        _share.text = server.path;
-        _filledShare = server.path;
+      // for this one. The path is "" for SMB. The description path of a DLNA server and the root of a phone share
+      // belong to the server.
+      final share = server.isPhoneShare ? '/' : server.path;
+      if (isDlna ||
+          server.isPhoneShare ||
+          server.type != _type ||
+          _share.text.trim().isEmpty ||
+          _share.text == _filledShare) {
+        _share.text = share;
+        _filledShare = share;
       }
       _type = server.type;
       _host.text = server.host;
       _port.text = '${server.port}';
-      if (server.type == NetworkSourceType.webdav) {
+      if (server.type != NetworkSourceType.smb) {
         _useTls = server.useTls;
+      }
+      final username = server.username;
+      if (server.isPhoneShare && username != null) {
+        _username.text = username;
       }
       if (_name.text.trim().isEmpty || _name.text == _filledName) {
         _name.text = server.displayName;
         _filledName = server.displayName;
       }
+      final discoveryId = server.discoveryId;
+      _filledDiscovery = discoveryId == null ? null : (type: server.type, id: discoveryId);
       _testMessage = null;
       _shareListError = null;
     });
-    _usernameFocus.requestFocus();
+    if (server.isPhoneShare) {
+      _passwordFocus.requestFocus();
+    } else if (!isDlna) {
+      _usernameFocus.requestFocus();
+    }
   }
 
   /// Lists the shares of the SMB server of the fields and puts the one chosen in the share field
@@ -306,13 +356,14 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
     }
     _hostFocus.dispose();
     _usernameFocus.dispose();
+    _passwordFocus.dispose();
     unawaited(_discovery?.cancel());
     super.dispose();
   }
 
   /// Spreads a full address typed in the server field over the other fields
   void _expandAddress() {
-    final address = parseNetworkAddress(_host.text);
+    final address = parseNetworkAddress(_host.text, current: _type);
     if (address == null) {
       return;
     }
@@ -329,7 +380,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       if (rootPath != null) {
         _rootPath.text = rootPath;
       }
-      if (address.type == NetworkSourceType.webdav) {
+      if (address.type != NetworkSourceType.smb) {
         _useTls = address.useTls;
       }
       _testMessage = null;
@@ -353,18 +404,20 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   /// field counts as spread over the other fields (see [_expandAddress]), so the buttons are ready as soon as it is
   /// typed.
   NetworkSource? _formSource() {
-    final address = parseNetworkAddress(_host.text);
+    final address = parseNetworkAddress(_host.text, current: _type);
     final type = address?.type ?? _type;
     final host = address?.host ?? _host.text.trim();
     final shareText = address != null && address.share.isNotEmpty ? address.share : _share.text;
     final share = switch (type) {
       NetworkSourceType.smb => shareText.trim().replaceAll(RegExp(r'^[/\\]+|[/\\]+$'), ''),
       NetworkSourceType.webdav => normalizeNetworkPath(shareText, empty: ''),
+      NetworkSourceType.dlna => normalizeDescriptionPath(shareText),
     };
-    if (host.isEmpty || !_portIsValid || (type == NetworkSourceType.smb && share.isEmpty)) {
+    if (host.isEmpty || !_portIsValid || (type != NetworkSourceType.webdav && share.isEmpty)) {
       return null;
     }
     final name = _name.text.trim();
+    final discovery = _filledDiscovery;
     return NetworkSource(
       id: _id,
       type: type,
@@ -373,8 +426,10 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       port: address?.port ?? (_port.text.trim().isEmpty ? null : _portValue),
       share: share,
       rootPath: normalizeNetworkPath(address?.rootPath ?? _rootPath.text),
-      username: _username.text.trim(),
-      useTls: type == NetworkSourceType.webdav && (address?.useTls ?? _useTls),
+      // DLNA has no authentication
+      username: type == NetworkSourceType.dlna ? '' : _username.text.trim(),
+      useTls: type != NetworkSourceType.smb && (address?.useTls ?? _useTls),
+      discoveryId: discovery != null && discovery.type == type ? discovery.id : null,
     );
   }
 
@@ -418,8 +473,13 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
     }
     setState(() => _saving = true);
     final sources = ref.read(networkSourcesProvider.notifier);
-    // An empty field forgets the password, unless the stored one was not read yet
-    final password = _passwordLoaded || _password.text.isNotEmpty ? _password.text : null;
+    // An empty field forgets the password, unless the stored one was not read yet. DLNA has no password: one left
+    // from another type of share is forgotten.
+    final password = source.type == NetworkSourceType.dlna
+        ? ''
+        : _passwordLoaded || _password.text.isNotEmpty
+        ? _password.text
+        : null;
     try {
       if (_isNew) {
         await sources.add(source, password: password);
@@ -485,6 +545,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
     bool obscureText = false,
     Widget? suffixIcon,
     Iterable<String>? autofillHints,
+    ValueChanged<String>? onChanged,
   }) {
     return TextField(
       key: key,
@@ -498,13 +559,17 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       autofillHints: autofillHints,
       textInputAction: TextInputAction.next,
       decoration: _decoration(label, hint: hint, errorText: errorText, suffixIcon: suffixIcon),
-      onChanged: (_) => _changed(),
+      onChanged: (value) {
+        onChanged?.call(value);
+        _changed();
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final isSmb = _type == NetworkSourceType.smb;
+    final isDlna = _type == NetworkSourceType.dlna;
     final canSubmit = _formSource() != null && !_testing && !_saving;
     final canListShares = _host.text.trim().isNotEmpty && _username.text.trim().isNotEmpty && !_listingShares;
     final labelStyle = context.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold);
@@ -538,6 +603,10 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                 if (type != null && type != _type) {
                   setState(() {
                     _type = type;
+                    if (type == NetworkSourceType.dlna) {
+                      // The switch is not shown for DLNA: an https description address sets it again
+                      _useTls = false;
+                    }
                     _testMessage = null;
                   });
                 }
@@ -558,9 +627,24 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                     dense: true,
                     title: Text(context.t.network_share_type_webdav),
                   ),
+                  RadioListTile<NetworkSourceType>(
+                    key: const Key('network_share_type_dlna'),
+                    value: NetworkSourceType.dlna,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    title: Text(context.t.network_share_type_dlna),
+                  ),
                 ],
               ),
             ),
+            if (isDlna) ...[
+              const SizedBox(height: 4),
+              Text(
+                context.t.network_share_dlna_hint,
+                key: const Key('network_share_dlna_hint'),
+                style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),
+              ),
+            ],
             const SizedBox(height: 16),
             _field(_name, context.t.network_share_name, key: const Key('network_share_name')),
             const SizedBox(height: 16),
@@ -568,10 +652,18 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
               _host,
               context.t.network_share_host,
               key: const Key('network_share_host'),
-              hint: isSmb ? 'nas.local, 192.168.1.20' : 'cloud.example.com',
+              // The whole description address fits here and fills port and path: what a DLNA server that is not found
+              // needs (minidlna on Linux, never found on iOS, see ssdp.dart)
+              hint: isSmb
+                  ? 'nas.local, 192.168.1.20'
+                  : isDlna
+                  ? 'http://192.168.1.10:8200/rootDesc.xml'
+                  : 'cloud.example.com',
               focusNode: _hostFocus,
               keyboardType: TextInputType.url,
               autofillHints: const [AutofillHints.url],
+              // Another server: the id of the one tapped no longer goes with it
+              onChanged: (_) => _filledDiscovery = null,
             ),
             const SizedBox(height: 16),
             _field(
@@ -586,9 +678,17 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
             const SizedBox(height: 16),
             _field(
               _share,
-              isSmb ? context.t.network_share_share_name : context.t.network_share_url_path,
+              isSmb
+                  ? context.t.network_share_share_name
+                  : isDlna
+                  ? context.t.network_share_description_path
+                  : context.t.network_share_url_path,
               key: const Key('network_share_share'),
-              hint: isSmb ? 'media' : '/remote.php/dav/files/alice',
+              hint: isSmb
+                  ? 'media'
+                  : isDlna
+                  ? '/rootDesc.xml'
+                  : '/remote.php/dav/files/alice',
               keyboardType: TextInputType.url,
             ),
             if (isSmb) ...[
@@ -617,27 +717,31 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
               hint: '/',
               keyboardType: TextInputType.url,
             ),
-            const SizedBox(height: 16),
-            _field(
-              _username,
-              context.t.network_share_username,
-              key: const Key('network_share_username'),
-              focusNode: _usernameFocus,
-              autofillHints: const [AutofillHints.username],
-            ),
-            const SizedBox(height: 16),
-            _field(
-              _password,
-              context.t.network_share_password,
-              key: const Key('network_share_password'),
-              obscureText: !_showPassword,
-              autofillHints: const [AutofillHints.password],
-              suffixIcon: IconButton(
-                icon: Icon(_showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
-                onPressed: () => setState(() => _showPassword = !_showPassword),
+            // DLNA has no authentication
+            if (!isDlna) ...[
+              const SizedBox(height: 16),
+              _field(
+                _username,
+                context.t.network_share_username,
+                key: const Key('network_share_username'),
+                focusNode: _usernameFocus,
+                autofillHints: const [AutofillHints.username],
               ),
-            ),
-            if (!isSmb) ...[
+              const SizedBox(height: 16),
+              _field(
+                _password,
+                context.t.network_share_password,
+                key: const Key('network_share_password'),
+                focusNode: _passwordFocus,
+                obscureText: !_showPassword,
+                autofillHints: const [AutofillHints.password],
+                suffixIcon: IconButton(
+                  icon: Icon(_showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                  onPressed: () => setState(() => _showPassword = !_showPassword),
+                ),
+              ),
+            ],
+            if (!isSmb && !isDlna) ...[
               const SizedBox(height: 8),
               SwitchListTile.adaptive(
                 key: const Key('network_share_use_tls'),
@@ -784,24 +888,34 @@ class _DiscoverySection extends StatelessWidget {
         else if (scanned)
           Text(context.t.network_share_scan_none_found, style: hintStyle),
         for (final server in servers)
-          ListTile(
-            key: Key('network_share_found_${server.type.name}_${server.host}_${server.port}'),
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(networkSourceIcon(server.type)),
-            title: Text(server.displayName, maxLines: 1, overflow: TextOverflow.ellipsis),
-            subtitle: Text(
-              server.host.contains(':') ? '[${server.host}]:${server.port}' : '${server.host}:${server.port}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          // One address and port may serve several DLNA media servers, whose tiles have the same key
+          KeyedSubtree(
+            key: ValueKey(server.mergeKey),
+            child: ListTile(
+              key: Key('network_share_found_${server.type.name}_${server.host}_${server.port}'),
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(server.isPhoneShare ? Icons.smartphone : networkSourceIcon(server.type)),
+              title: Text(server.displayName, maxLines: 1, overflow: TextOverflow.ellipsis),
+              subtitle: Text(
+                server.host.contains(':') ? '[${server.host}]:${server.port}' : '${server.host}:${server.port}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: Text(
+                server.isPhoneShare
+                    ? context.t.network_share_scan_type_phone
+                    : switch (server.type) {
+                        NetworkSourceType.smb => context.t.network_share_scan_type_smb,
+                        NetworkSourceType.webdav => context.t.network_share_scan_type_webdav,
+                        NetworkSourceType.dlna => context.t.network_share_scan_type_dlna,
+                      },
+                style: context.textTheme.labelMedium?.copyWith(
+                  color: context.primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () => onSelected(server),
             ),
-            trailing: Text(
-              switch (server.type) {
-                NetworkSourceType.smb => context.t.network_share_scan_type_smb,
-                NetworkSourceType.webdav => context.t.network_share_scan_type_webdav,
-              },
-              style: context.textTheme.labelMedium?.copyWith(color: context.primaryColor, fontWeight: FontWeight.bold),
-            ),
-            onTap: () => onSelected(server),
           ),
         const SizedBox(height: 8),
         Text(context.t.network_share_scan_enter_by_hand, style: hintStyle),

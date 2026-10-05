@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hand-written after the layout of the DLNA server of Plex Media Server (LOCATION http://<ip>:32469/DeviceDescription.xml); to be replaced by a capture -->
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:dlna="urn:schemas-dlna-org:device-1-0" xmlns:sec="http://www.sec.co.kr/dlna">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <device>
+    <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+    <friendlyName>Plex Media Server: living-room</friendlyName>
+    <manufacturer>Plex, Inc.</manufacturer>
+    <manufacturerURL>https://plex.tv/</manufacturerURL>
+    <modelDescription>Plex Media Server</modelDescription>
+    <modelName>Plex Media Server</modelName>
+    <modelURL>https://plex.tv</modelURL>
+    <modelNumber>1.41.0</modelNumber>
+    <serialNumber/>
+    <UDN>uuid:0b1c2d3e-4f50-6172-8394-a5b6c7d8e9f0</UDN>
+    <dlna:X_DLNADOC>DMS-1.50</dlna:X_DLNADOC>
+    <sec:ProductCap>smi,DCM10,getMediaInfo.sec,getCaptionInfo.sec</sec:ProductCap>
+    <iconList>
+      <icon>
+        <mimetype>image/png</mimetype>
+        <width>120</width>
+        <height>120</height>
+        <depth>24</depth>
+        <url>/images/plex-icon-120.png</url>
+      </icon>
+    </iconList>
+    <serviceList>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
+        <SCPDURL>/ConnectionManager/scpd.xml</SCPDURL>
+        <controlURL>/ConnectionManager/control.xml</controlURL>
+        <eventSubURL>/ConnectionManager/event.xml</eventSubURL>
+      </service>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:ContentDirectory</serviceId>
+        <SCPDURL>/ContentDirectory/scpd.xml</SCPDURL>
+        <controlURL>/ContentDirectory/control.xml</controlURL>
+        <eventSubURL>/ContentDirectory/event.xml</eventSubURL>
+      </service>
+      <service>
+        <serviceType>urn:microsoft.com:service:X_MS_MediaReceiverRegistrar:1</serviceType>
+        <serviceId>urn:microsoft.com:serviceId:X_MS_MediaReceiverRegistrar</serviceId>
+        <SCPDURL>/X_MS_MediaReceiverRegistrar/scpd.xml</SCPDURL>
+        <controlURL>/X_MS_MediaReceiverRegistrar/control.xml</controlURL>
+        <eventSubURL>/X_MS_MediaReceiverRegistrar/event.xml</eventSubURL>
+      </service>
+    </serviceList>
+  </device>
+</root>

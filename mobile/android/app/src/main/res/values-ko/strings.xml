@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">이 휴대폰을 네트워크에서 공유</string>
   <string name="spherical_video_close">닫기</string>
   <string name="spherical_video_error">이 동영상을 재생할 수 없습니다</string>
 </resources>

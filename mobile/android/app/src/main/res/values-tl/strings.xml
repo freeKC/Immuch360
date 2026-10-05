@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">Ibahagi ang teleponong ito sa network</string>
   <string name="spherical_video_close">Isara</string>
   <string name="spherical_video_error">Hindi ma-play ang video na ito</string>
 </resources>

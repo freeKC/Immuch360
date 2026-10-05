@@ -9,6 +9,9 @@
 // The raw files of 360° cameras go to it ready to show (see RawImmersiveMedia): an Insta360 photo stitched into an
 // equirect PNG in the cache, a video with the rawProjection JSON of its plan (see RawVideoResolver), which the viewer
 // maps on the sphere.
+//
+// An Apple spatial photo goes to it with the stereoPair JSON of its two eyes (see HeicStereoPair.toImmersiveJson): the
+// viewer decodes both and shows them on a flat quad in front of the user (see ImmersiveAssetResolver.resolveStereoPhoto).
 
 import 'dart:async';
 import 'dart:io';
@@ -19,6 +22,7 @@ import 'package:flutter/painting.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
@@ -96,7 +100,8 @@ String _immersiveVideoId(BaseAsset asset, String remoteId) =>
 /// headset cannot decode the original or the original fails; null when there is none. [sourceNotice] is what to tell
 /// the user about the file chosen, null for nothing (see [chooseVideoSource]). [rawProjection] is the rawProjection
 /// JSON of a raw video (see [RawVideoPlan.toNativeJson]), null for an equirectangular media and for a raw photo, which
-/// comes stitched.
+/// comes stitched. [stereoPair] is the JSON of the two eyes of an Apple spatial photo, which the viewer shows on a flat
+/// quad in front of the user rather than on a sphere; null for any other media.
 class ImmersiveRequest {
   const ImmersiveRequest({
     required this.url,
@@ -107,6 +112,7 @@ class ImmersiveRequest {
     this.fallbackUrl,
     this.sourceNotice,
     this.rawProjection,
+    this.stereoPair,
   });
 
   final String url;
@@ -117,6 +123,7 @@ class ImmersiveRequest {
   final String? fallbackUrl;
   final VideoSourceNotice? sourceNotice;
   final String? rawProjection;
+  final String? stereoPair;
 
   /// Whether the viewer may be showing this media at [url]: the URL it was given, or the stream it switched to
   bool isShownAt(String url) => this.url == url || fallbackUrl == url;
@@ -124,7 +131,7 @@ class ImmersiveRequest {
   @override
   String toString() =>
       'ImmersiveRequest(url: $url, fallbackUrl: $fallbackUrl, isVideo: $isVideo, title: $title, view: $view, '
-      'raw: ${rawProjection != null})';
+      'raw: ${rawProjection != null}, stereo pair: ${stereoPair != null})';
 }
 
 /// Opens [request] in the immersive viewer through [api], a video from [startPosition], with the controls labelled
@@ -149,6 +156,7 @@ Future<void> openImmersiveRequest(
   openingId,
   request.fallbackUrl,
   request.rawProjection,
+  request.stereoPair,
 );
 
 /// Shows [request] in place of the media of the immersive viewer that asked for another one with [requestId] (see
@@ -162,6 +170,7 @@ Future<bool> showImmersiveRequest(ImmersiveApi api, int requestId, ImmersiveRequ
   request.view.coverage.toImmersive(),
   request.fallbackUrl,
   request.rawProjection,
+  request.stereoPair,
 );
 
 // Decoded width of a raw photo before it is stitched: one pixel under the largest texture, as for the panorama viewer
@@ -528,6 +537,38 @@ class ImmersiveAssetResolver {
     );
   }
 
+  /// What the viewer opens for [asset], an Apple spatial photo whose two eyes [pair] describes: its copy on the device
+  /// when there is one, which saves downloading the original, else the original on the server with the headers of the
+  /// session, and the stereoPair JSON, from which the viewer decodes both eyes and shows them on a flat quad. The
+  /// sphere view is a plain mono one: the viewer shows no sphere for it. Throws when there is no file to open.
+  Future<ImmersiveRequest> resolveStereoPhoto(BaseAsset asset, HeicStereoPair pair) async {
+    File? localFile;
+    final localId = asset.localId;
+    if (localId != null) {
+      try {
+        localFile = await _storage.getFileForAsset(localId);
+      } catch (error) {
+        _log.warning('Copy on the device of ${asset.name} unreadable: $error');
+      }
+    }
+    final remoteId = asset.remoteId;
+    // The original as it was read for the pair, never an edit the server made of it: the offset of pitm is the one of
+    // that file, and an edited picture holds one view only
+    final url =
+        localFile?.uri.toString() ?? (remoteId == null ? null : getOriginalUrlForRemoteId(remoteId, edited: false));
+    if (url == null) {
+      throw StateError('No file to open for ${asset.name}');
+    }
+    return ImmersiveRequest(
+      url: url,
+      headers: localFile == null ? ApiService.getRequestHeaders() : const {},
+      isVideo: false,
+      title: asset.name,
+      view: stereoPhotoSphereView,
+      stereoPair: pair.toImmersiveJson(),
+    );
+  }
+
   // The file of a raw photo to stitch: the one of "Open with", else the copy on the device, which saves downloading
   // the original; null to stitch the original on the server. Throws when there is neither.
   Future<File?> _rawPhotoFile(BaseAsset asset, String? localPath) async {
@@ -634,6 +675,37 @@ Future<void> openImmersiveViewer(
           playback.status == VideoPlaybackStatus.playing || playback.status == VideoPlaybackStatus.buffering;
       await player.resumeAfterExternalPlayerAt(playback.position, play: wasPlaying);
     }
+    rethrow;
+  }
+}
+
+/// The sphere view of an Apple spatial photo: the viewer shows it on a flat quad, the layout and the coverage tell it
+/// nothing
+const SphereView stereoPhotoSphereView = (
+  layout: StereoLayout.mono,
+  coverage: SphereCoverage.full,
+  coverageGuess: SphereCoverage.full,
+);
+
+/// Opens [asset], an Apple spatial photo whose two eyes [pair] describes, in the immersive viewer in stereo photo mode
+/// (see [ImmersiveAssetResolver.resolveStereoPhoto]), the controls labelled with [stereoLabels]. Previous and next do
+/// not lead from there to other photos yet: the viewer says so itself. Throws when there is no file to open or the
+/// viewer does not open.
+Future<void> openStereoPhotoViewer(
+  WidgetRef ref,
+  BaseAsset asset,
+  HeicStereoPair pair, {
+  required Map<String, String> stereoLabels,
+}) async {
+  // Read before the first await: the viewer may be gone by then
+  final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels);
+  final session = ref.read(immersiveSessionProvider);
+  final request = await resolver.resolveStereoPhoto(asset, pair);
+  final openingId = session.start(null);
+  try {
+    await resolver.open(request, openingId: openingId);
+  } catch (_) {
+    session.cancel(openingId);
     rethrow;
   }
 }

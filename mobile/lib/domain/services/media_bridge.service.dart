@@ -15,13 +15,11 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/http_byte_range.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('MediaBridge');
-
-/// Bytes of a file, [start] included, [end] excluded
-typedef _ByteRange = ({int start, int end});
 
 /// The [MediaBridge] of the app: URLs are `http://127.0.0.1:<port>/<token>/<sourceId>/<path>`, the token random per
 /// bridge so that the other apps of the device cannot read the shares through it.
@@ -221,7 +219,7 @@ class LocalMediaBridge implements MediaBridge {
     // A range asked on the condition that the file did not change since the client saw it: the whole file otherwise
     final ifRange = request.headers.value(HttpHeaders.ifRangeHeader);
     if (size != null && rangeHeader != null && (ifRange == null || ifRange == lastModified)) {
-      final asked = _parseRange(rangeHeader, size);
+      final asked = parseSingleByteRange(rangeHeader, size);
       if (asked != null && asked.start >= asked.end) {
         response.headers.set(HttpHeaders.contentRangeHeader, 'bytes */$size');
         return _fail(response, HttpStatus.requestedRangeNotSatisfiable, 'Range not satisfiable');
@@ -407,44 +405,6 @@ String _contentType(NetworkEntry entry) {
     return given;
   }
   return NetworkEntry(sourceId: entry.sourceId, path: entry.path, isDirectory: false).guessedMimeType;
-}
-
-/// What a Range header asks of a file of [size] bytes. Null to ignore it and send the whole file: another unit,
-/// several ranges, or a header that does not parse. An empty range when no byte of it is in the file.
-_ByteRange? _parseRange(String header, int size) {
-  final match = RegExp(r'^\s*bytes\s*=\s*(\d*)\s*-\s*(\d*)\s*$', caseSensitive: false).firstMatch(header);
-  if (match == null) {
-    return null;
-  }
-  final first = match.group(1)!;
-  final last = match.group(2)!;
-  const unsatisfiable = (start: 0, end: 0);
-
-  if (first.isEmpty) {
-    // The last bytes of the file: bytes=-n
-    if (last.isEmpty) {
-      return null;
-    }
-    // Too many digits for an int: more bytes than any file has
-    final suffix = int.tryParse(last) ?? size;
-    if (suffix == 0 || size == 0) {
-      return unsatisfiable;
-    }
-    return (start: max(0, size - suffix), end: size);
-  }
-
-  final start = int.tryParse(first);
-  if (start == null || start >= size) {
-    return unsatisfiable;
-  }
-  if (last.isEmpty) {
-    return (start: start, end: size);
-  }
-  final lastByte = int.tryParse(last);
-  if (lastByte != null && lastByte < start) {
-    return null;
-  }
-  return (start: start, end: lastByte == null ? size : min(lastByte + 1, size));
 }
 
 String _randomToken() {

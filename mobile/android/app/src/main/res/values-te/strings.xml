@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="phone_share_channel">ఈ ఫోన్‌ను నెట్‌వర్క్‌లో షేర్ చేయండి</string>
   <string name="spherical_video_close">మూసివేయి</string>
   <string name="spherical_video_error">ఈ వీడియోను ప్లే చేయడం సాధ్యం కాదు</string>
 </resources>

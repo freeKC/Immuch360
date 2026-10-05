@@ -318,4 +318,19 @@ class VideoDecodersTest {
     assertEquals("HLG", VideoDecoders.transferName(C.COLOR_TRANSFER_HLG))
     assertEquals("unknown", VideoDecoders.transferName(Format.NO_VALUE))
   }
+
+  @Test
+  fun `several streams at once are refused to a software decoder above 2048x2048`() {
+    assertTrue(VideoDecoders.softwareTooHeavy(hardware = false, width = 3840, height = 3840, instances = 2))
+    assertTrue(VideoDecoders.softwareTooHeavy(hardware = false, width = 2880, height = 2880, instances = 2))
+    assertFalse(VideoDecoders.softwareTooHeavy(hardware = false, width = 2048, height = 2048, instances = 2))
+    assertFalse(VideoDecoders.softwareTooHeavy(hardware = false, width = 512, height = 512, instances = 2))
+  }
+
+  @Test
+  fun `one stream, a hardware decoder or an unknown size are never too heavy`() {
+    assertFalse(VideoDecoders.softwareTooHeavy(hardware = false, width = 3840, height = 3840, instances = 1))
+    assertFalse(VideoDecoders.softwareTooHeavy(hardware = true, width = 3840, height = 3840, instances = 2))
+    assertFalse(VideoDecoders.softwareTooHeavy(hardware = false, width = 0, height = 0, instances = 2))
+  }
 }

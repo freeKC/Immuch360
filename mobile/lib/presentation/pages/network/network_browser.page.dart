@@ -4,17 +4,24 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_selection.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/widgets/common/confirm_dialog.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('NetworkBrowserPage');
 
 /// What the browser shows of a folder: its folders, then its photos and videos with their media bridge URLs
 typedef _Folder = ({List<NetworkEntry> folders, List<NetworkEntry> media, Map<String, Uri> urls});
@@ -79,9 +86,82 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   /// The photos and videos of the folder last read, for the selection
   List<NetworkEntry> _media = const [];
 
+  /// Whether the folder was read once, so that a share found on the network is looked for once only (see [_relocate])
+  bool _readOnce = false;
+
+  /// Whether the share is being looked for on the network, for the message of the page
+  bool _relocating = false;
+
   NetworkFolderKey get _folderKey => (sourceId: widget.sourceId, path: widget.path);
 
   Future<_Folder> _load() async {
+    final first = !_readOnce;
+    _readOnce = true;
+    try {
+      return await _read();
+    } on NetworkFileSystemException catch (error) {
+      if (!first || !await _relocate(error)) {
+        rethrow;
+      }
+      return _read();
+    }
+  }
+
+  /// Looks for the share on the network when it was found there (it has a discovery id) and its first reading failed
+  /// for another reason than the credentials or a missing folder: a phone or a box given another address by the
+  /// router, a media server restarted on another port. True once it answered elsewhere and was saved with its new
+  /// address; a share with credentials only once the user accepted the new address (see [_acceptsAddress]).
+  Future<bool> _relocate(NetworkFileSystemException error) async {
+    final source = ref.read(networkSourceProvider(widget.sourceId));
+    if (source == null || source.discoveryId == null || error.isAuthentication || error.isNotFound) {
+      return false;
+    }
+    if (mounted) {
+      setState(() => _relocating = true);
+    }
+    try {
+      final relocated = await ref.read(networkSourceRelocatorProvider).relocate(source);
+      if (relocated == null || !mounted) {
+        return false;
+      }
+      // DLNA has no authentication; any other share would send its user name and password to the new address
+      if (relocated.type != NetworkSourceType.dlna && !await _acceptsAddress(source, relocated)) {
+        _log.info('${source.name} was not moved to ${relocated.host}:${relocated.port ?? ''}: the user declined');
+        return false;
+      }
+      _log.info('${source.name} answers at ${relocated.host}:${relocated.port ?? ''} now');
+      // A null password keeps the stored one. The source changing closes the connection to the old address.
+      await ref.read(networkSourcesProvider.notifier).update(relocated);
+      return true;
+    } catch (relocationError, stackTrace) {
+      _log.warning('Could not look for ${source.name} on the network', relocationError, stackTrace);
+      return false;
+    } finally {
+      if (mounted) {
+        setState(() => _relocating = false);
+      }
+    }
+  }
+
+  /// Whether the user accepts to move [source] to the address of [relocated]. The id the share was found by is only
+  /// what a device of the network announces, which any other device may announce as well.
+  Future<bool> _acceptsAddress(NetworkSource source, NetworkSource relocated) async {
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (context) => ConfirmDialog(
+        title: context.t.network_share_relocate_title,
+        content: context.t.network_share_relocate_confirm(
+          name: source.name,
+          previous: networkSourceAddress(source),
+          address: networkSourceAddress(relocated),
+        ),
+        ok: context.t.network_share_save,
+      ),
+    );
+    return accepted == true && mounted;
+  }
+
+  Future<_Folder> _read() async {
     final connections = ref.read(networkConnectionsProvider);
     final fileSystem = await connections.fileSystem(widget.sourceId);
     // Hidden entries (".DS_Store", "._IMG.JPG" resource forks, ".thumbnails") are not media of the share
@@ -191,7 +271,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
             : selection.isActive
             ? _SelectionBar(count: selection.paths.length, onUpload: () => unawaited(_upload()))
             : null,
-        body: _buildBody(selection),
+        body: _buildBody(selection, source),
       ),
     );
   }
@@ -228,7 +308,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     );
   }
 
-  Widget _buildBody(NetworkSelection selection) {
+  Widget _buildBody(NetworkSelection selection, NetworkSource? source) {
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _refresh,
@@ -246,7 +326,13 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
               );
             }
             if (snapshot.connectionState != ConnectionState.done) {
-              return _Filled(child: NetworkLoadingView(message: context.t.network_share_loading));
+              return _Filled(
+                child: NetworkLoadingView(
+                  message: _relocating && source != null
+                      ? context.t.network_share_relocating(name: source.name)
+                      : context.t.network_share_loading,
+                ),
+              );
             }
             return _Filled(
               child: NetworkErrorView(error: snapshot.error ?? 'unknown error', onRetry: () => unawaited(_refresh())),

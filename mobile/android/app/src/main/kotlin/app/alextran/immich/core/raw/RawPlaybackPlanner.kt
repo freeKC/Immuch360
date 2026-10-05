@@ -21,9 +21,11 @@ enum class RawMessage { ONE_LENS_DECODER, ONE_LENS_FILE, UNSTITCHED }
 /**
  * How a raw video plays now: [mode], the decoded [streams] (indices of the JSON's tracks) in LENSES mode, the [urls]
  * the player opens (two for both files of a split pair, url first), whether they are the server's transcoded streams
- * ([fromFallback]), the [message] to show, and the [reason] for the logs. Two plans with the same [key] can play with
- * the same player: a lens player is built for its streams and its files, any other player only for its mode (the
- * side by side effect also for its projection, which the caller adds).
+ * ([fromFallback]), the [message] to show, and the [reason] for the logs. [firstFrameMessage] is shown once the first
+ * frame of the plan is drawn rather than at once: a lens tried against the decoder list may fail before, and the next
+ * step then tells its own message. Two plans with the same [key] can play with the same player: a lens player is
+ * built for its streams and its files, any other player only for its mode (the side by side effect also for its
+ * projection, which the caller adds).
  */
 data class RawPlan(
   val mode: RawMode,
@@ -32,22 +34,50 @@ data class RawPlan(
   val fromFallback: Boolean,
   val message: RawMessage?,
   val reason: String,
+  val firstFrameMessage: RawMessage? = null,
 ) {
   val key: String
     get() = if (mode == RawMode.LENSES) "$mode $streams ${urls.joinToString(" ")}" else mode.name
 }
 
-/**
- * Whether the device decodes [instances] streams like [track] at once: true, false, or null when it cannot be told
- * (the JSON lacks the size or the codec).
- */
-typealias RawDecoderCheck = (track: RawTrack, instances: Int) -> Boolean?
+/** What the decoders of the device say about some streams of a track, see [RawDecoderCheck]. */
+sealed interface RawDecoderVerdict {
+  /** A decoder takes them. */
+  data object Decodable : RawDecoderVerdict
+
+  /**
+   * No decoder takes them, for [reason]. A [certain] refusal (no decoder lists the profile of the track, or the device
+   * has no decoder at all for its codec) fails even for one stream. Otherwise the size or the rate was refused, where
+   * the decoder list may be pessimistic.
+   */
+  data class Refused(val reason: String, val certain: Boolean) : RawDecoderVerdict
+
+  /** It cannot be told: the JSON lacks the size or the codec. */
+  data object Unknown : RawDecoderVerdict
+
+  companion object {
+    /**
+     * The verdict of the decoder list (the fields of VideoDecoders.Verdict): [supported], its [reason], and the
+     * [missingProfile] no decoder lists. A refusal whose reason starts with "no decoder for", as VideoDecoders words a
+     * codec the device has no decoder for, is as certain as a missing profile.
+     */
+    fun of(supported: Boolean, reason: String, missingProfile: String?): RawDecoderVerdict =
+      if (supported) {
+        Decodable
+      } else {
+        Refused(reason, certain = missingProfile != null || reason.startsWith("no decoder for"))
+      }
+  }
+}
+
+/** Whether the device decodes [instances] streams like [track] at once. */
+typealias RawDecoderCheck = (track: RawTrack, instances: Int) -> RawDecoderVerdict
 
 /**
  * The fallback ladder of raw 360° videos, pure so that every step is unit tested: two lenses stitched, then one lens
  * stitched (half the sphere black, a message), then the server's transcoded streams, then the frame unstitched. A
- * plan change always means a new player from the current position (the activities post it, never build it inside a
- * player listener).
+ * lens the decoders cannot take at all (a profile none of them lists) skips the lens steps. A plan change always means
+ * a new player from the current position (the activities post it, never build it inside a player listener).
  */
 object RawPlaybackPlanner {
   /**
@@ -76,33 +106,51 @@ object RawPlaybackPlanner {
     }
     val largest = projection.tracks.maxByOrNull { it.pixels } ?: projection.tracks.first()
     val both = check(largest, 2, canDecode)
-    if (both != false) {
+    if (both !is RawDecoderVerdict.Refused) {
       return lenses(
         projection,
         listOf(0, 1),
         url,
         null,
-        if (both == null) "two streams, decoders not checked (size or codec unknown)" else "two streams decodable",
+        if (both == RawDecoderVerdict.Unknown) {
+          "two streams, decoders not checked (size or codec unknown)"
+        } else {
+          "two streams decodable"
+        },
       )
     }
     val primary = projection.primaryStream()
     val one = check(projection.tracks[primary], 1, canDecode)
-    if (one != false) {
-      return lenses(projection, listOf(primary), url, RawMessage.ONE_LENS_DECODER, "two streams refused, one decodable")
+    if (one !is RawDecoderVerdict.Refused) {
+      val checked = if (one == RawDecoderVerdict.Unknown) "not checked" else "decodable"
+      return lenses(projection, listOf(primary), url, RawMessage.ONE_LENS_DECODER, "two streams refused, one $checked")
     }
+    if (one.certain) {
+      // A lens player would fail on the first frame, and the one lens message would promise half a sphere the device
+      // cannot show. Without the transcoded streams, the plain player plays the original: its own decoder check and
+      // its fallback apply, as for any other video, and the user reads its message rather than a raw one
+      val cause = "one stream refused for sure (${one.reason})"
+      return transcoded(projection, url, fallbackUrl, cause)
+        ?: RawPlan(RawMode.UNSTITCHED, emptyList(), listOf(url), false, null, "$cause, no transcoded streams")
+    }
+    // Refused for its size or its rate only: the decoder list may be pessimistic, so the lens is tried. The one lens
+    // message waits for its first frame, the proof that the device decodes one lens; if the lens fails before, the
+    // unstitched step tells the user instead
     return transcoded(projection, url, fallbackUrl, "originals not decodable")
       ?: lenses(
         projection,
         listOf(primary),
         url,
-        RawMessage.ONE_LENS_DECODER,
+        null,
         "one stream refused and no fallback: trying it anyway (the decoder list may be pessimistic)",
-      )
+      ).copy(firstFrameMessage = RawMessage.ONE_LENS_DECODER)
   }
 
   /**
    * After a decoder failure (init failed, format refused, resources reclaimed in front, no decodable track): two
-   * lenses become one, one lens becomes the transcoded streams, the transcoded streams become the error (null).
+   * lenses become one, one lens becomes the transcoded streams, or without them the original unstitched (the last
+   * step: a plain player, whose own decoder check and fallbacks then apply). Null on the transcoded streams already
+   * and in any other mode: the error shows.
    */
   fun afterDecoderFailure(plan: RawPlan, projection: RawProjection, url: String, fallbackUrl: String?): RawPlan? {
     if (plan.mode != RawMode.LENSES || plan.fromFallback) return null
@@ -116,6 +164,14 @@ object RawPlaybackPlanner {
       )
     }
     return transcoded(projection, url, fallbackUrl, "originals not decodable")
+      ?: RawPlan(
+        RawMode.UNSTITCHED,
+        emptyList(),
+        listOf(url),
+        false,
+        RawMessage.UNSTITCHED,
+        "the decoder of one lens failed, no transcoded streams: unstitched",
+      )
   }
 
   /**
@@ -176,8 +232,10 @@ object RawPlaybackPlanner {
     }
 
   /** The decoder check, skipped (unknown) when the track lacks its size or codec. */
-  private fun check(track: RawTrack, instances: Int, canDecode: RawDecoderCheck): Boolean? {
-    if (track.width <= 0 || track.height <= 0 || (track.codecs ?: track.codec).isNullOrBlank()) return null
+  private fun check(track: RawTrack, instances: Int, canDecode: RawDecoderCheck): RawDecoderVerdict {
+    if (track.width <= 0 || track.height <= 0 || (track.codecs ?: track.codec).isNullOrBlank()) {
+      return RawDecoderVerdict.Unknown
+    }
     return canDecode(track, instances)
   }
 

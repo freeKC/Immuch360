@@ -9,6 +9,9 @@
 // codec: raw 360° videos hold one lens per video track (Insta360 X4 and later, DJI Osmo 360) or six cube faces in two
 // tracks (GoPro .360), and the players pick their tracks by what the probe lists.
 //
+// It tells the Apple spatial videos too (MV-HEVC: a second layer for the other eye, see [MultiviewInfo]), which every
+// player of the app shows in 2D, from their base layer.
+//
 // Pure Dart: the caller reads the bytes, from a file on the device or with HTTP range requests.
 
 import 'dart:convert';
@@ -23,6 +26,52 @@ typedef ByteRangeReader = Future<Uint8List> Function(int offset, int length);
 /// The transfer function of a video: standard dynamic range, or one of the two HDR ones (hybrid log-gamma, which the
 /// 360° cameras record, and PQ of HDR10 and Dolby Vision)
 enum VideoDynamicRange { sdr, hlg, pq }
+
+/// What an Apple spatial video declares about its two eyes: an MV-HEVC track (hvcC for the base layer, lhvC for the
+/// second one) whose vexu box says both eyes are there ("ISO Base Media File Format and Apple HEVC Stereo Video Format
+/// additions" v1.0). A plain HEVC decoder plays the base layer, one eye.
+class MultiviewInfo {
+  const MultiviewInfo({
+    required this.heroEye,
+    this.baselineMicrometres,
+    this.disparityAdjustment,
+    this.horizontalFovDegrees,
+    this.eyesReversed = false,
+  });
+
+  /// The eye the file prefers to show in 2D (hero): 0 none said, 1 left, 2 right
+  final int heroEye;
+
+  /// Distance between the two cameras (cams/blin), in micrometres
+  final int? baselineMicrometres;
+
+  /// How far apart the eyes are shown (cmfy/dadj), in [-10000, 10000] of the width of an eye, half to each eye
+  final int? disparityAdjustment;
+
+  /// Horizontal field of view of the camera (hfov), in degrees
+  final double? horizontalFovDegrees;
+
+  /// Whether the layers hold the eyes the other way round (stri)
+  final bool eyesReversed;
+
+  @override
+  bool operator ==(Object other) =>
+      other is MultiviewInfo &&
+      other.heroEye == heroEye &&
+      other.baselineMicrometres == baselineMicrometres &&
+      other.disparityAdjustment == disparityAdjustment &&
+      other.horizontalFovDegrees == horizontalFovDegrees &&
+      other.eyesReversed == eyesReversed;
+
+  @override
+  int get hashCode =>
+      Object.hash(heroEye, baselineMicrometres, disparityAdjustment, horizontalFovDegrees, eyesReversed);
+
+  @override
+  String toString() =>
+      'MultiviewInfo(hero: $heroEye, baseline: $baselineMicrometres µm, disparity: $disparityAdjustment, '
+      'fov: $horizontalFovDegrees, reversed: $eyesReversed)';
+}
 
 /// A track of the moov box, in moov order
 class ProbedTrack {
@@ -133,6 +182,7 @@ class SphericalProbe {
     this.declaredBitRate,
     this.mediaBitRate,
     this.tracks = const [],
+    this.multiview,
   });
 
   /// Layout of the eyes the file declares (st3d box), null when it does not say
@@ -191,6 +241,10 @@ class SphericalProbe {
   /// Every track of the moov box, in moov order (up to 16): the fields above describe the first video track only
   final List<ProbedTrack> tracks;
 
+  /// The two eyes of an Apple spatial video (MV-HEVC), null for any other video: set when the first video track has a
+  /// second layer (lhvC) and its vexu box says both eyes are there, the rule of Media3 1.10
+  final MultiviewInfo? multiview;
+
   /// The tracks the players take for videos, in moov order
   List<ProbedTrack> get videoTracks => [
     for (final track in tracks)
@@ -223,7 +277,8 @@ class SphericalProbe {
       other.videoBitRate == videoBitRate &&
       other.declaredBitRate == declaredBitRate &&
       other.mediaBitRate == mediaBitRate &&
-      _sameTracks(other.tracks, tracks);
+      _sameTracks(other.tracks, tracks) &&
+      other.multiview == multiview;
 
   @override
   int get hashCode => Object.hash(
@@ -243,6 +298,7 @@ class SphericalProbe {
     declaredBitRate,
     mediaBitRate,
     Object.hashAll(tracks),
+    multiview,
   );
 
   @override
@@ -251,7 +307,7 @@ class SphericalProbe {
       'codec: $codec, codecs: $codecs, codedWidth: $codedWidth, codedHeight: $codedHeight, frameRate: $frameRate, '
       'bitDepth: $bitDepth, colourPrimaries: $colourPrimaries, transferCharacteristics: $transferCharacteristics, '
       'dolbyVision: $dolbyVision, videoBitRate: $videoBitRate, declaredBitRate: $declaredBitRate, '
-      'mediaBitRate: $mediaBitRate, tracks: $tracks)';
+      'mediaBitRate: $mediaBitRate, tracks: $tracks, multiview: $multiview)';
 }
 
 bool _sameTracks(List<ProbedTrack> a, List<ProbedTrack> b) {
@@ -528,6 +584,7 @@ class _MoovContent {
       declaredBitRate: head.declaredBitRate,
       mediaBitRate: mediaBitRate,
       tracks: [for (final track in tracks) track.track],
+      multiview: head.multiview,
     );
   }
 }
@@ -774,6 +831,7 @@ _ParsedTrack _parseTrack(Uint8List data, _Box track, int index) {
       transferCharacteristics: entry.transferCharacteristics,
       dolbyVision: entry.dolbyVision,
       declaredBitRate: entry.declaredBitRate,
+      multiview: entry.multiview,
     ),
     isVisual: true,
     bitRate: timing == null ? null : _sampleBitRate(data, stbl, timing),
@@ -853,6 +911,7 @@ typedef _VisualSampleEntry = ({
   int? transferCharacteristics,
   bool dolbyVision,
   int? declaredBitRate,
+  MultiviewInfo? multiview,
 });
 
 _VisualSampleEntry _parseVisualSampleEntry(Uint8List data, _Box sampleEntry) {
@@ -866,6 +925,9 @@ _VisualSampleEntry _parseVisualSampleEntry(Uint8List data, _Box sampleEntry) {
   (int, int)? vp9Colour;
   var dolbyVision = false;
   int? declaredBitRate;
+  var hasLayeredHevc = false;
+  _Box? vexu;
+  double? horizontalFov;
   final codec = sampleEntry.type;
   final childrenStart = sampleEntry.start + _visualSampleEntryLength;
   if (childrenStart <= sampleEntry.end) {
@@ -896,6 +958,14 @@ _VisualSampleEntry _parseVisualSampleEntry(Uint8List data, _Box sampleEntry) {
           colour ??= _colour(data, box);
         case 'btrt':
           declaredBitRate ??= _averageBitRate(data, box);
+        // The second layer of an MV-HEVC track, the other eye of an Apple spatial video
+        case 'lhvC':
+          hasLayeredHevc = true;
+        case 'vexu':
+          vexu ??= box;
+        // Beside vexu: the field of view in thousandths of a degree
+        case 'hfov' when box.start + 4 <= box.end:
+          horizontalFov ??= ByteData.sublistView(data).getUint32(box.start) / 1000;
       }
     }
   }
@@ -910,6 +980,60 @@ _VisualSampleEntry _parseVisualSampleEntry(Uint8List data, _Box sampleEntry) {
     transferCharacteristics: transferCharacteristics,
     dolbyVision: dolbyVision,
     declaredBitRate: declaredBitRate,
+    multiview: hasLayeredHevc && vexu != null ? _multiview(data, vexu, horizontalFov) : null,
+  );
+}
+
+// The child boxes of eyes the stereo video format lists; free for the padding of some writers
+const _eyesChildren = {'must', 'stri', 'hero', 'cams', 'cmfy', 'proj', 'free'};
+
+/// The eyes the vexu box [vexu] of an MV-HEVC track declares, with [horizontalFov] (its hfov sibling); null unless its
+/// stri box says both eyes are there. vexu holds eyes, which holds stri (a full box, then one byte: 4 reserved bits,
+/// then whether the eyes are reversed, whether there are more views, the right eye, the left eye), hero (a full box,
+/// then the eye on a byte), cams with blin (a full box, then the baseline in micrometres on 32 bits) and cmfy with dadj
+/// (a full box, then the disparity adjustment, signed on 32 bits). A reserved bit set makes stri unusable.
+MultiviewInfo? _multiview(Uint8List data, _Box vexu, double? horizontalFov) {
+  final eyes = _child(data, vexu, 'eyes');
+  if (eyes == null) {
+    return null;
+  }
+  // A plain box by the specification; some writers made it a full box, its children 4 bytes further
+  var children = _boxes(data, eyes.start, eyes.end).toList();
+  if (children.isEmpty || !_eyesChildren.contains(children.first.type)) {
+    children = eyes.start + 4 <= eyes.end ? _boxes(data, eyes.start + 4, eyes.end).toList() : const [];
+  }
+  final bytes = ByteData.sublistView(data);
+  int? flags;
+  var hero = 0;
+  int? baseline;
+  int? disparity;
+  for (final box in children) {
+    switch (box.type) {
+      case 'stri' when box.start + 5 <= box.end:
+        flags ??= data[box.start + 4];
+      case 'hero' when box.start + 5 <= box.end:
+        hero = data[box.start + 4];
+      case 'cams':
+        final blin = _child(data, box, 'blin');
+        if (blin != null && blin.start + 8 <= blin.end) {
+          baseline ??= bytes.getUint32(blin.start + 4);
+        }
+      case 'cmfy':
+        final dadj = _child(data, box, 'dadj');
+        if (dadj != null && dadj.start + 8 <= dadj.end) {
+          disparity ??= bytes.getInt32(dadj.start + 4);
+        }
+    }
+  }
+  if (flags == null || flags & 0xf0 != 0 || flags & 0x03 != 0x03) {
+    return null;
+  }
+  return MultiviewInfo(
+    heroEye: hero <= 2 ? hero : 0,
+    baselineMicrometres: baseline,
+    disparityAdjustment: disparity,
+    horizontalFovDegrees: horizontalFov,
+    eyesReversed: flags & 0x08 != 0,
   );
 }
 

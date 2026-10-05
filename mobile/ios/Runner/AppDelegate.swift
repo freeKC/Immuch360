@@ -42,6 +42,7 @@ import native_video_player
     )
     VideoThumbnailApiSetup.setUp(binaryMessenger: messenger, api: VideoThumbnailApiImpl())
     VideoDecoderApiSetup.setUp(binaryMessenger: messenger, api: VideoDecoderApiImpl())
+    PhoneShareApiSetup.setUp(binaryMessenger: messenger, api: PhoneShareApiImpl())
   }
 
   public static func cancelPlugins(with engine: FlutterEngine) {

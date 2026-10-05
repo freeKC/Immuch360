@@ -112,6 +112,7 @@ class _ImmersiveApi extends ImmersiveApi {
     int openingId,
     String? fallbackUrl,
     String? rawProjection,
+    String? stereoPair,
   ) async {
     openingIds.add(openingId);
     final failure = this.failure;
