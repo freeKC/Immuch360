@@ -25,16 +25,31 @@ class VideoDecoderApiImpl : VideoDecoderApi {
     width: Long,
     height: Long,
     frameRate: Double,
+    bitDepth: Long,
+    transferCharacteristics: Long,
+    instances: Long,
     callback: (Result<DecodeVerdict>) -> Unit,
   ) {
     answer(callback) {
-      val verdict = VideoDecoders.canDecode(codec, codecs, width.toInt(), height.toInt(), frameRate)
+      val verdict =
+        VideoDecoders.canDecode(
+          codec,
+          codecs,
+          width.toInt(),
+          height.toInt(),
+          frameRate,
+          bitDepth.toInt(),
+          transferCharacteristics.toInt(),
+          instances.toInt(),
+        )
       DecodeVerdict(
         supported = verdict.supported,
         hardware = verdict.hardware,
         maxWidth = verdict.maxWidth.toLong(),
         maxHeight = verdict.maxHeight.toLong(),
         reason = verdict.reason,
+        profile = verdict.profile,
+        missingProfile = verdict.missingProfile,
       )
     }
   }
@@ -49,6 +64,7 @@ class VideoDecoderApiImpl : VideoDecoderApi {
           maxWidth = decoder.maxWidth.toLong(),
           maxHeight = decoder.maxHeight.toLong(),
           maxFrameRate = decoder.maxFrameRate,
+          profiles = decoder.profiles,
         )
       }
     }

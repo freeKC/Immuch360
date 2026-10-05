@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Tidak ada yang dapat ditampilkan</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d melampaui kemampuan dekoder headset (tersendat, pecah kotak-kotak). Di Immich, atur transkode video ke HEVC atau batasi resolusinya.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d melampaui kemampuan dekoder headset (tersendat, pecah kotak-kotak). Enkode ulang file ini ke HEVC atau dengan resolusi lebih rendah.</string>
+  <string name="immersive_raw_one_lens_decoder">Headset ini tidak dapat mendekode dua lensa video ini sekaligus (%1$s %2$d x %3$d, dua kali). Satu lensa ditampilkan: separuh bola tetap hitam.</string>
+  <string name="immersive_raw_one_lens_file">File lensa lainnya tidak dapat dibaca. Satu lensa ditampilkan: separuh bola tetap hitam.</string>
+  <string name="immersive_raw_unstitched">Penggabungan 360° gagal di perangkat ini. Video ditampilkan seperti yang direkam kamera.</string>
 </resources>

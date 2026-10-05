@@ -85,6 +85,36 @@ class RemoteAssetRepository extends DatabaseAccessor<Drift> with $RemoteAssetRep
     return {for (final row in rows) ?row.read(exif.assetId)};
   }
 
+  /// The video named [name], case aside, of the owner of the video [remoteId], not in the trash, created the closest to
+  /// it and within [maxApart]: the other file of a split Insta360 recording uploaded with it. Null when there is none.
+  Future<RemoteAsset?> findSiblingByName(
+    String remoteId,
+    String name, {
+    Duration maxApart = const Duration(seconds: 60),
+  }) async {
+    final opened = await (_db.remoteAssetEntity.select()..where((row) => row.id.equals(remoteId))).getSingleOrNull();
+    if (opened == null) {
+      return null;
+    }
+    final candidates =
+        await (_db.remoteAssetEntity.select()..where(
+              (row) =>
+                  row.ownerId.equals(opened.ownerId) &
+                  row.deletedAt.isNull() &
+                  row.type.equalsValue(AssetType.video) &
+                  row.name.lower().equals(name.toLowerCase()) &
+                  row.id.equals(remoteId).not(),
+            ))
+            .map((row) => row.toDto())
+            .get();
+    Duration apart(RemoteAsset asset) => asset.createdAt.difference(opened.createdAt).abs();
+    final near = [
+      for (final candidate in candidates)
+        if (apart(candidate) <= maxApart) candidate,
+    ]..sort((a, b) => apart(a).compareTo(apart(b)));
+    return near.isEmpty ? null : near.first;
+  }
+
   Future<List<(String, String)>> getPlaces(String userId) {
     final asset = Subquery(
       _db.remoteAssetEntity.select()

@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Není co zobrazit</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d přesahuje možnosti dekodéru headsetu (trhané, kostičkované). Ve službě Immich nastavte překódování videa na HEVC nebo omezte rozlišení.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d přesahuje možnosti dekodéru headsetu (trhané, kostičkované). Překódujte tento soubor do HEVC nebo do nižšího rozlišení.</string>
+  <string name="immersive_raw_one_lens_decoder">Tento headset nedokáže současně dekódovat oba objektivy tohoto videa (%1$s %2$d x %3$d, dvakrát). Zobrazuje se jeden objektiv: polovina koule zůstává černá.</string>
+  <string name="immersive_raw_one_lens_file">Soubor druhého objektivu nelze přečíst. Zobrazuje se jeden objektiv: polovina koule zůstává černá.</string>
+  <string name="immersive_raw_unstitched">Spojení do 360° na tomto zařízení selhalo. Video se zobrazuje tak, jak ho kamera nahrála.</string>
 </resources>

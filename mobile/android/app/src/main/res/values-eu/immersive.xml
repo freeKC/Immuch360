@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Ez dago ezer erakusteko</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d handiegia da betaurrekoen deskodetzailearentzat (etenak eta blokeak). Immich-en, ezarri bideoen transkodetzea HEVC formatura edo mugatu bereizmena.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d handiegia da betaurrekoen deskodetzailearentzat (etenak eta blokeak). Kodetu berriro fitxategi hau HEVC formatuan edo bereizmen txikiagoan.</string>
+  <string name="immersive_raw_one_lens_decoder">Betaurreko hauek ezin dituzte bideo honen bi objektiboak aldi berean deskodetu (%1$s %2$d x %3$d, bi aldiz). Objektibo bat erakusten da: esferaren erdia beltz geratzen da.</string>
+  <string name="immersive_raw_one_lens_file">Ezin da beste objektiboaren fitxategia irakurri. Objektibo bat erakusten da: esferaren erdia beltz geratzen da.</string>
+  <string name="immersive_raw_unstitched">360° josketak huts egin du gailu honetan. Bideoa kamerak grabatu zuen bezala erakusten da.</string>
 </resources>

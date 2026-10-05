@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Nema ničega za prikaz</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d premašuje mogućnosti dekodera VR naočara (seckanje, kockice). U Immich-u podesite transkodiranje videa na HEVC ili ograničite rezoluciju.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d premašuje mogućnosti dekodera VR naočara (seckanje, kockice). Ponovo kodirajte ovu datoteku u HEVC ili u nižoj rezoluciji.</string>
+  <string name="immersive_raw_one_lens_decoder">Ove VR naočare ne mogu istovremeno da dekodiraju oba sočiva ovog videa (%1$s %2$d x %3$d, dvaput). Prikazuje se jedno sočivo: polovina sfere ostaje crna.</string>
+  <string name="immersive_raw_one_lens_file">Datoteka drugog sočiva ne može da se pročita. Prikazuje se jedno sočivo: polovina sfere ostaje crna.</string>
+  <string name="immersive_raw_unstitched">Spajanje u 360° nije uspelo na ovom uređaju. Video se prikazuje onako kako ga je kamera snimila.</string>
 </resources>

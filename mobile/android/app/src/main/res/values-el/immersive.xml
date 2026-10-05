@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Τίποτα για εμφάνιση</string>
   <string name="immersive_codec_too_large">Το %1$s %2$d x %3$d ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset (κολλήματα, τετραγωνάκια). Στο Immich, ορίστε τη μετατροπή βίντεο σε HEVC ή περιορίστε την ανάλυση.</string>
   <string name="immersive_codec_too_large_file">Το %1$s %2$d x %3$d ξεπερνά τις δυνατότητες του αποκωδικοποιητή του headset (κολλήματα, τετραγωνάκια). Κωδικοποιήστε ξανά αυτό το αρχείο σε HEVC ή σε χαμηλότερη ανάλυση.</string>
+  <string name="immersive_raw_one_lens_decoder">Αυτό το headset δεν μπορεί να αποκωδικοποιήσει ταυτόχρονα τους δύο φακούς αυτού του βίντεο (%1$s %2$d x %3$d, δύο φορές). Εμφανίζεται ένας φακός: το μισό της σφαίρας μένει μαύρο.</string>
+  <string name="immersive_raw_one_lens_file">Το αρχείο του άλλου φακού δεν μπορεί να διαβαστεί. Εμφανίζεται ένας φακός: το μισό της σφαίρας μένει μαύρο.</string>
+  <string name="immersive_raw_unstitched">Η ένωση 360° απέτυχε σε αυτή τη συσκευή. Το βίντεο εμφανίζεται όπως το κατέγραψε η κάμερα.</string>
 </resources>

@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Ni ničesar za prikaz</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d presega zmožnosti dekoderja naglavnega kompleta (zatikanje, kockasta slika). V Immichu nastavite prekodiranje videa na HEVC ali omejite ločljivost.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d presega zmožnosti dekoderja naglavnega kompleta (zatikanje, kockasta slika). To datoteko znova kodirajte v HEVC ali v nižji ločljivosti.</string>
+  <string name="immersive_raw_one_lens_decoder">Ta naglavni komplet ne more hkrati dekodirati obeh objektivov tega videoposnetka (%1$s %2$d x %3$d, dvakrat). Prikazan je en objektiv: polovica krogle ostane črna.</string>
+  <string name="immersive_raw_one_lens_file">Datoteke drugega objektiva ni mogoče prebrati. Prikazan je en objektiv: polovica krogle ostane črna.</string>
+  <string name="immersive_raw_unstitched">Sestavljanje v 360° na tej napravi ni uspelo. Videoposnetek je prikazan tako, kot ga je posnela kamera.</string>
 </resources>

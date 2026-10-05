@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Nüt zum Aazeige</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d überforderet de Decoder vom Headset (ruckelig, verpixlet). Stell in Immich d Videotranskodierig uf HEVC um oder begränz d Uflösig.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d überforderet de Decoder vom Headset (ruckelig, verpixlet). Kodier die Datei neu in HEVC oder mit ere tüüfere Uflösig.</string>
+  <string name="immersive_raw_one_lens_decoder">S Headset cha di zwei Objektiv vo dem Video nid gliichziitig dekodiere (%1$s %2$d x %3$d, zweimal). Es zeigt eis Objektiv: d Hälfti vo de Chugle bliibt schwarz.</string>
+  <string name="immersive_raw_one_lens_file">D Datei vom andere Objektiv cha nid gläse werde. Eis Objektiv wird zeigt: d Hälfti vo de Chugle bliibt schwarz.</string>
+  <string name="immersive_raw_unstitched">S 360°-Zämesetze isch uf dem Gerät fehlgschlage. S Video wird so zeigt, wie d Kamera s ufgnoh het.</string>
 </resources>

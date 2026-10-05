@@ -1,16 +1,43 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
+import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
+import 'package:mocktail/mocktail.dart';
 
+import '../../infrastructure/repository.mock.dart';
+import '../../unit/factories/remote_asset_factory.dart';
 import '../../unit/presentation/presentation_context.dart';
+
+/// What the file of every video declares: [result]
+class _FakeSphericalProbes extends SphericalProbeService {
+  _FakeSphericalProbes(this.result)
+    : super(
+        storage: MockStorageRepository(),
+        client: () => throw UnimplementedError('no network in these tests'),
+        serverEndpoint: () => null,
+        headers: () => const {},
+      );
+
+  final SphericalProbe? result;
+
+  @override
+  Future<SphericalProbe?> probe(BaseAsset asset, {File? localFile}) async => result;
+}
 
 /// Answers the decoder check with [supported], or fails with [failure], or never answers when [hangs]. Records the
 /// questions.
@@ -20,9 +47,22 @@ class _FakeVideoDecoderApi extends VideoDecoderApi {
   bool hangs = false;
   final questions = <(String, String?, int, int, double)>[];
 
+  /// The bit depth, the transfer and the number of streams of each question, in the order of [questions]
+  final colours = <(int, int, int)>[];
+
   @override
-  Future<DecodeVerdict> canDecode(String codec, String? codecs, int width, int height, double frameRate) async {
+  Future<DecodeVerdict> canDecode(
+    String codec,
+    String? codecs,
+    int width,
+    int height,
+    double frameRate,
+    int bitDepth,
+    int transferCharacteristics, {
+    int instances = 1,
+  }) async {
     questions.add((codec, codecs, width, height, frameRate));
+    colours.add((bitDepth, transferCharacteristics, instances));
     if (hangs) {
       return Completer<DecodeVerdict>().future;
     }
@@ -84,6 +124,49 @@ void main() {
 
       expect(verdict?.supported, isTrue);
       expect(api.questions, [('hvc1', 'hvc1.1.6.L183', 7680, 3840, 30.0)]);
+      expect(api.colours, [(0, 0, 1)], reason: 'bit depth and transfer unknown, one stream');
+    });
+
+    test('asks the decoders with the bit depth and the transfer of the probe', () async {
+      await service.verdict(
+        const SphericalProbe(
+          codec: 'hvc1',
+          codecs: 'hvc1.2.4.L153',
+          codedWidth: 7680,
+          codedHeight: 3840,
+          frameRate: 30,
+          bitDepth: 10,
+          transferCharacteristics: 18,
+        ),
+      );
+
+      expect(api.questions, [('hvc1', 'hvc1.2.4.L153', 7680, 3840, 30.0)]);
+      expect(api.colours, [(10, 18, 1)]);
+    });
+
+    test('keeps a verdict per bit depth and transfer', () async {
+      const hlg = SphericalProbe(
+        codec: 'hvc1',
+        codecs: 'hvc1.2.4.L153',
+        codedWidth: 7680,
+        codedHeight: 3840,
+        bitDepth: 10,
+        transferCharacteristics: 18,
+      );
+      const pq = SphericalProbe(
+        codec: 'hvc1',
+        codecs: 'hvc1.2.4.L153',
+        codedWidth: 7680,
+        codedHeight: 3840,
+        bitDepth: 10,
+        transferCharacteristics: 16,
+      );
+
+      await service.verdict(hlg);
+      await service.verdict(pq);
+      await service.verdict(hlg);
+
+      expect(api.colours, [(10, 18, 1), (10, 16, 1)]);
     });
 
     test('asks with a frame rate of 0 when the file does not tell it', () async {
@@ -136,6 +219,48 @@ void main() {
       api.hangs = false;
       expect((await service.verdict(probe))?.supported, isTrue);
       expect(api.questions, hasLength(3));
+    });
+  });
+
+  group('VideoSourceService.twoStreamVerdict', () {
+    test('asks about two streams of the size of one lens at once', () async {
+      api.supported = false;
+
+      final verdict = await service.twoStreamVerdict(
+        codec: 'hvc1',
+        codecs: 'hvc1.1.6.L153',
+        width: 3840,
+        height: 3840,
+        frameRate: 30,
+        bitDepth: 8,
+      );
+
+      expect(verdict?.supported, isFalse);
+      expect(api.questions, [('hvc1', 'hvc1.1.6.L153', 3840, 3840, 30.0)]);
+      expect(api.colours, [(8, 0, 2)]);
+    });
+
+    test('keeps its answers apart from the ones about a single stream', () async {
+      const lens = SphericalProbe(codec: 'avc1', codecs: 'avc1.640033', codedWidth: 2880, codedHeight: 2880);
+
+      await service.verdict(lens);
+      await service.twoStreamVerdict(codec: 'avc1', codecs: 'avc1.640033', width: 2880, height: 2880);
+      await service.twoStreamVerdict(codec: 'avc1', codecs: 'avc1.640033', width: 2880, height: 2880);
+
+      expect(api.colours, [(0, 0, 1), (0, 0, 2)]);
+    });
+
+    test('asks nothing without the codec or the size of a lens', () async {
+      expect(await service.twoStreamVerdict(codec: null, width: 3840, height: 3840), isNull);
+      expect(await service.twoStreamVerdict(codec: 'hvc1', width: null, height: 3840), isNull);
+      expect(await service.twoStreamVerdict(codec: 'hvc1', width: 0, height: 0), isNull);
+      expect(api.questions, isEmpty);
+    });
+
+    test('gives null when the check takes too long', () async {
+      api.hangs = true;
+
+      expect(await service.twoStreamVerdict(codec: 'hvc1', width: 3840, height: 3840), isNull);
     });
   });
 
@@ -264,6 +389,61 @@ void main() {
       expect(source.fallbackUrl, isNull);
       expect(source.notice, isNull);
       expect(api.questions, isEmpty);
+    });
+  });
+
+  group('videoDecodeDetailsProvider', () {
+    final video = RemoteAssetFactory.create(type: .video).copyWith(durationMs: 20000);
+    late MockStorageRepository storage;
+    late List<BaseAsset> exifRead;
+
+    Future<VideoDecodeDetails> details(SphericalProbe? probe, {int? fileSize}) async {
+      final container = ProviderContainer(
+        overrides: [
+          sphericalProbeServiceProvider.overrideWithValue(_FakeSphericalProbes(probe)),
+          videoSourceServiceProvider.overrideWithValue(service),
+          storageRepositoryProvider.overrideWithValue(storage),
+          assetExifProvider.overrideWith((ref, asset) {
+            exifRead.add(asset);
+            return Stream.value(ExifInfo(fileSize: fileSize));
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+      return container.read(videoDecodeDetailsProvider(video).future);
+    }
+
+    setUp(() {
+      storage = MockStorageRepository();
+      exifRead = [];
+    });
+
+    test('gives the bit rate of the probe, without asking for the size of the file', () async {
+      final result = await details(
+        const SphericalProbe(codec: 'hvc1', codedWidth: 7680, codedHeight: 3840, videoBitRate: 210000000),
+        fileSize: 50000000,
+      );
+
+      expect(result.bitRate, (bitsPerSecond: 210000000, source: VideoBitRateSource.videoTracks));
+      expect(result.verdict?.supported, isTrue);
+      expect(exifRead, isEmpty);
+    });
+
+    test('estimates the bit rate from the size of the file when the probe tells none', () async {
+      final result = await details(
+        const SphericalProbe(codec: 'hvc1', codedWidth: 7680, codedHeight: 3840),
+        fileSize: 50000000,
+      );
+
+      expect(result.bitRate, (bitsPerSecond: 20000000, source: VideoBitRateSource.fileSize));
+    });
+
+    test('gives no bit rate when neither the probe nor the file size tells it', () async {
+      final result = await details(null);
+
+      expect(result.probe, isNull);
+      expect(result.bitRate, isNull);
+      verifyNever(() => storage.getFileForAsset(any()));
     });
   });
 }

@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Nav ko rādīt</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d pārsniedz VR briļļu dekodera iespējas (raustās, redzami kvadrātiņi). Programmā Immich iestatiet video pārkodēšanu uz HEVC vai ierobežojiet izšķirtspēju.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d pārsniedz VR briļļu dekodera iespējas (raustās, redzami kvadrātiņi). Pārkodējiet šo failu HEVC formātā vai zemākā izšķirtspējā.</string>
+  <string name="immersive_raw_one_lens_decoder">Šīs VR brilles nevar vienlaikus dekodēt abus šī video objektīvus (%1$s %2$d x %3$d, divreiz). Tiek rādīts viens objektīvs: puse sfēras paliek melna.</string>
+  <string name="immersive_raw_one_lens_file">Otra objektīva failu nevar nolasīt. Tiek rādīts viens objektīvs: puse sfēras paliek melna.</string>
+  <string name="immersive_raw_unstitched">360° sašūšana šajā ierīcē neizdevās. Video tiek rādīts tā, kā kamera to ierakstīja.</string>
 </resources>

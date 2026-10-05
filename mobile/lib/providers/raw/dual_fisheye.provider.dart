@@ -4,6 +4,9 @@
 // calibration kept for the same camera, from another of its files; else the last one kept for the same camera model;
 // else the nominal values of an X3, with seams a few pixels off. A calibration read from a file is kept for its camera
 // and its model (see DualFisheyeCalibrationStore). See docs/16-dual-fisheye-spec.md, sections 2 and 4.
+//
+// The DJI Osmo 360 writes the calibration of its two lenses in a camd box at the end of each .osv file (see
+// readDjiOsvCalibration): read the same way, never kept for the camera, the nominal values of the Osmo 360 otherwise.
 
 import 'dart:async';
 import 'dart:io';
@@ -15,9 +18,11 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/raw/dji_osv.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -50,8 +55,10 @@ typedef ResolvedDualFisheyeCalibration = ({DualFisheyeCalibration calibration, b
 /// - else the nominal values of an X3 (see [nominalX3]) on squares of [frameSquare] pixels.
 ///
 /// Gravity comes from the IMU samples of the trailer, else, for a photo ([isPhoto]), from the sample of its MakerNote
-/// (see [readInsta360PhotoHead]), else the camera is taken as upright. An error of [read] counts as a file without a
-/// trailer, and is told in [ResolvedDualFisheyeCalibration.readFailed].
+/// (see [readInsta360PhotoHead]), else the camera is taken as upright; [DualFisheyeCalibration.gravity] tells which.
+/// The fields of the trailer about the layout of a video go with whatever calibration is given
+/// ([DualFisheyeCalibration.layoutHints]), a cached or nominal one included. An error of [read] counts as a file without
+/// a trailer, and is told in [ResolvedDualFisheyeCalibration.readFailed].
 Future<ResolvedDualFisheyeCalibration> resolveDualFisheyeCalibration({
   required ByteRangeReader? read,
   required int? fileSize,
@@ -85,9 +92,18 @@ Future<ResolvedDualFisheyeCalibration> resolveDualFisheyeCalibration({
   final serial = _named(trailer?.serial) ?? _named(head?.serial);
   final cameraModel = _named(trailer?.cameraModel) ?? _named(head?.cameraModel);
   final accelerometer = head?.imu?.accelerometer;
+  final gravity = trailer?.meanAccelerometer != null
+      ? GravitySource.imu
+      : accelerometer != null
+      ? GravitySource.makerNote
+      : GravitySource.none;
+  final hints = insta360LayoutHintsOf(trailer);
   final fromFile = trailer == null
       ? null
-      : calibrationOf(trailer, accelerometer: accelerometer)?.copyWith(serial: serial, cameraModel: cameraModel);
+      : calibrationOf(
+          trailer,
+          accelerometer: accelerometer,
+        )?.copyWith(serial: serial, cameraModel: cameraModel, gravity: gravity, layoutHints: hints);
   if (fromFile != null) {
     if (serial != null) {
       // Kept for the files of the camera, and of its model, without one; the viewer does not wait for the write
@@ -102,12 +118,41 @@ Future<ResolvedDualFisheyeCalibration> resolveDualFisheyeCalibration({
       (serial == null ? null : await store.forSerial(serial, downBody: downBody)) ??
       (cameraModel == null ? null : await store.forModel(cameraModel, downBody: downBody));
   if (cached != null) {
-    return (calibration: cached, readFailed: readFailed);
+    return (calibration: cached.copyWith(gravity: gravity, layoutHints: hints), readFailed: readFailed);
   }
   final square = frameSquare != null && frameSquare > 0 ? frameSquare : _nominalSquare;
   return (
-    calibration: nominalX3(square).copyWith(downBody: downBody, serial: serial, cameraModel: cameraModel),
+    calibration: nominalX3(
+      square,
+    ).copyWith(downBody: downBody, serial: serial, cameraModel: cameraModel, gravity: gravity, layoutHints: hints),
     readFailed: readFailed,
+  );
+}
+
+/// What [trailer] says of the layout of a video: its lens order, its files or tracks, the recording it belongs to and
+/// the window of the sensor its frames show; null without a trailer
+Insta360LayoutHints? insta360LayoutHintsOf(Insta360Trailer? trailer) {
+  if (trailer == null) {
+    return null;
+  }
+  final crop = trailer.crop;
+  final hasWindow = crop != null && crop.sourceWidth > 0 && crop.sourceHeight > 0 && crop.width > 0 && crop.height > 0;
+  return Insta360LayoutHints(
+    fileLayout: trailer.fileLayout,
+    trackOrder: trailer.trackOrder,
+    streamLayout: trailer.streamLayout,
+    imageCategory: trailer.imageCategory,
+    groupIdentity: trailer.groupIdentity,
+    videoWindow: hasWindow
+        ? (
+            areaWidth: crop.sourceWidth,
+            areaHeight: crop.sourceHeight,
+            width: crop.width,
+            height: crop.height,
+            offsetX: crop.offsetX,
+            offsetY: crop.offsetY,
+          )
+        : null,
   );
 }
 
@@ -117,24 +162,12 @@ String? _named(String? value) {
   return trimmed == null || trimmed.isEmpty ? null : trimmed;
 }
 
-/// The JSON a native player draws a raw dual fisheye video with (see [DualFisheyeCalibration.toNativeJson]), for
-/// frames of [frame] pixels; the frames of the calibration canvas when the frame size is unknown, which the players
-/// replace with the size they decode
-String rawVideoProjectionJson(DualFisheyeCalibration calibration, ({int width, int height})? frame) {
-  final square = calibration.canvasSquare.round();
-  return calibration.toNativeJson(frameWidth: frame?.width ?? 2 * square, frameHeight: frame?.height ?? square);
-}
-
 /// The translated name of where a calibration came from, for the label of the panorama viewer
 String dualFisheyeSourceLabel(Translations t, DualFisheyeSource source) => switch (source) {
   DualFisheyeSource.file => t.raw_360_calibration_file,
   DualFisheyeSource.cachedSerial => t.raw_360_calibration_cached,
   DualFisheyeSource.nominal => t.raw_360_calibration_nominal,
 };
-
-/// A file read by ranges: its size (null when unknown: its end cannot be read), and its reader. [close] releases it
-/// once read.
-typedef _OpenedFile = ({int? size, ByteRangeReader read, Future<void> Function() close});
 
 /// Opens the file at [url] for range reads through [client], with [headers]: its last [tailLength] bytes are read at
 /// once with a suffix range, whose answer tells the size of the file, and kept for the reads that fall in them (the
@@ -198,10 +231,10 @@ ByteRangeReader _keptBytesReader(Uint8List kept, int start, ByteRangeReader read
   return read(offset, length);
 };
 
-/// Finds the calibration of raw dual fisheye files (see [resolveDualFisheyeCalibration]) and keeps it in memory, per
-/// file, as long as the app runs. A read that fails or takes longer than [timeout] gives the fallbacks, and is tried
-/// again next time.
-class DualFisheyeCalibrationService {
+/// Finds the calibration of raw dual fisheye files (see [resolveDualFisheyeCalibration], and [readDjiOsvCalibration]
+/// for a DJI video) and keeps it in memory, per file, as long as the app runs. A read that fails or takes longer than
+/// [timeout] gives the fallbacks, and is tried again next time.
+class DualFisheyeCalibrationService implements RawVideoCalibrations {
   DualFisheyeCalibrationService({
     required this.store,
     required this._storage,
@@ -232,11 +265,66 @@ class DualFisheyeCalibrationService {
   /// The calibration of [asset], a raw dual fisheye photo or video: read from [localFile] when given, else from the
   /// copy on the device when there is one, else from the original on the server
   Future<DualFisheyeCalibration> forAsset(BaseAsset asset, {File? localFile}) => _remembered(
-    'asset:${spatialLayoutKey(asset)}:${asset.updatedAt.millisecondsSinceEpoch}',
-    () => _openAsset(asset, localFile),
+    rawAssetKey(asset),
+    () => openAsset(asset, localFile: localFile),
     isPhoto: !asset.isVideo,
     frameSquare: asset.height,
   );
+
+  /// The calibration of [input], an Insta360 video (see [RawVideoResolver]): read from the file it opens, cached under
+  /// its key; [frameSquare] is the height of its frames when known
+  @override
+  Future<DualFisheyeCalibration> forInput(RawVideoInput input, {int? frameSquare}) =>
+      _remembered(input.key, input.open, isPhoto: false, frameSquare: frameSquare);
+
+  /// The calibration of [input], a DJI .osv video: from its camd box (see [readDjiOsvCalibration]), else the nominal
+  /// values of the Osmo 360. Kept in memory under its key, unless the read failed: the next opening tries again.
+  @override
+  Future<DualFisheyeCalibration> forDji(RawVideoInput input) async {
+    final key = 'dji:${input.key}';
+    final known = _results[key];
+    if (known != null) {
+      return known;
+    }
+    final pending = _pending[key] ??= _resolveDji(key, input);
+    try {
+      return await pending;
+    } finally {
+      unawaited(_pending.remove(key));
+    }
+  }
+
+  Future<DualFisheyeCalibration> _resolveDji(String key, RawVideoInput input) async {
+    DjiOsvCalibration? read;
+    var readFailed = false;
+    try {
+      read = await _readDji(input).timeout(timeout);
+    } catch (error) {
+      _log.info('Could not read the calibration of $key: $error');
+      readFailed = true;
+    }
+    final calibration = read?.calibration ?? nominalOsmo360();
+    _log.fine(
+      '$key: ${calibration.source.name} calibration of ${read?.model ?? 'an Osmo 360'}'
+      '${read == null ? '' : ', serial ${read.serial}, firmware ${read.firmware}'}',
+    );
+    if (!readFailed) {
+      _keep(key, calibration);
+    }
+    return calibration;
+  }
+
+  Future<DjiOsvCalibration?> _readDji(RawVideoInput input) async {
+    final file = await input.open();
+    if (file == null) {
+      throw StateError('no file to read');
+    }
+    try {
+      return await readDjiOsvCalibration(file.read);
+    } finally {
+      await file.close();
+    }
+  }
 
   /// The calibration of the file named by [key] (unique to it and to its version: a path with its size and date),
   /// [fileSize] bytes that [read] reads; [frameSquare] is the height of its frames when known
@@ -255,7 +343,7 @@ class DualFisheyeCalibrationService {
 
   Future<DualFisheyeCalibration> _remembered(
     String key,
-    Future<_OpenedFile?> Function() open, {
+    Future<RawFileReader?> Function() open, {
     required bool isPhoto,
     int? frameSquare,
   }) async {
@@ -273,7 +361,7 @@ class DualFisheyeCalibrationService {
 
   Future<DualFisheyeCalibration> _resolve(
     String key,
-    Future<_OpenedFile?> Function() open, {
+    Future<RawFileReader?> Function() open, {
     required bool isPhoto,
     int? frameSquare,
   }) async {
@@ -294,18 +382,22 @@ class DualFisheyeCalibrationService {
     final calibration = resolved.calibration;
     _log.fine('$key: ${calibration.source.name} calibration of ${calibration.cameraModel ?? 'an unknown camera'}');
     if (!resolved.readFailed) {
-      _results
-        ..remove(key)
-        ..[key] = calibration;
-      while (_results.length > maxEntries) {
-        _results.remove(_results.keys.first);
-      }
+      _keep(key, calibration);
     }
     return calibration;
   }
 
+  void _keep(String key, DualFisheyeCalibration calibration) {
+    _results
+      ..remove(key)
+      ..[key] = calibration;
+    while (_results.length > maxEntries) {
+      _results.remove(_results.keys.first);
+    }
+  }
+
   Future<ResolvedDualFisheyeCalibration> _read(
-    Future<_OpenedFile?> Function() open, {
+    Future<RawFileReader?> Function() open, {
     required bool isPhoto,
     int? frameSquare,
   }) async {
@@ -323,8 +415,9 @@ class DualFisheyeCalibrationService {
     }
   }
 
-  // The copy on the device when it can be read, else the original on the server; null when neither can
-  Future<_OpenedFile?> _openAsset(BaseAsset asset, File? localFile) async {
+  /// Range reads of the file of [asset]: [localFile] when given, else the copy on the device when it can be read, else
+  /// the original on the server; null when neither can
+  Future<RawFileReader?> openAsset(BaseAsset asset, {File? localFile}) async {
     var file = localFile;
     final localId = asset.localId;
     if (file == null && localId != null) {
@@ -380,6 +473,10 @@ final dualFisheyeCalibrationServiceProvider = Provider<DualFisheyeCalibrationSer
     headers: ApiService.getRequestHeaders,
   ),
 );
+
+/// The key of the calibration of [asset]: its key among the spatial layouts and its update time tell it from any other
+/// file and version
+String rawAssetKey(BaseAsset asset) => 'asset:${spatialLayoutKey(asset)}:${asset.updatedAt.millisecondsSinceEpoch}';
 
 /// The calibration of [asset], a raw dual fisheye photo or video (see [DualFisheyeCalibrationService.forAsset])
 final dualFisheyeCalibrationProvider = FutureProvider.autoDispose.family<DualFisheyeCalibration, BaseAsset>(

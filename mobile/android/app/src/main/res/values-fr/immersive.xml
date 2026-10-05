@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Rien à afficher</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d dépasse les capacités du décodeur du casque (saccades, pixellisation). Dans Immich, réglez le transcodage vidéo sur HEVC ou limitez la résolution.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d dépasse les capacités du décodeur du casque (saccades, pixellisation). Réencodez ce fichier en HEVC ou dans une résolution plus basse.</string>
+  <string name="immersive_raw_one_lens_decoder">Ce casque ne peut pas décoder les deux objectifs de cette vidéo en même temps (%1$s %2$d x %3$d, deux fois). Un seul objectif est affiché : la moitié de la sphère reste noire.</string>
+  <string name="immersive_raw_one_lens_file">Le fichier de l\'autre objectif est illisible. Un seul objectif est affiché : la moitié de la sphère reste noire.</string>
+  <string name="immersive_raw_unstitched">L\'assemblage 360° a échoué sur cet appareil. La vidéo s\'affiche telle que la caméra l\'a enregistrée.</string>
 </resources>

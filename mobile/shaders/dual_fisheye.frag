@@ -3,8 +3,8 @@
 // Stitches the frame of a raw dual fisheye camera (an Insta360 .insp photo: lens 0 in the left square, lens 1 in the
 // right one) into an equirect picture, one output pixel at a time, with the same steps as dual_fisheye_math.dart
 // (docs/16-dual-fisheye-spec.md, section 3): the view direction of the pixel, levelled into the body frame of the
-// camera (G), turned into the frame of each lens (R_i), projected with the Mei model (V3 calibration) or as an
-// equidistant fisheye (V1), and the two lenses blended between 85 and 95 degrees off their axes.
+// camera (G), turned into the frame of each lens (R_i), projected with the Mei model (V3 and V6 calibrations, five
+// radial terms) or as an equidistant fisheye (V1), and the two lenses blended between 85 and 95 degrees off their axes.
 //
 // The two lenses are written out rather than kept in uniform arrays: Impeller and the SkSL backend do not index
 // uniform arrays dynamically. Matrices and vectors go as vec4, whose layout is the same on every backend; the Dart side
@@ -29,13 +29,16 @@ uniform vec4 uR02;
 uniform vec4 uR10;
 uniform vec4 uR11;
 uniform vec4 uR12;
-// Per lens, in canvas pixels: (xi, fx, fy, radius), (cx, cy, p1, p2), (k1, k2, k3, index of its square)
+// Per lens, in canvas pixels: (xi, fx, fy, radius), (cx, cy, p1, p2), (k1, k2, k3, index of its square), (k4, k5 of the
+// V6 strings, 0 otherwise, unused, unused)
 uniform vec4 uLens0Mei;
 uniform vec4 uLens0Centre;
 uniform vec4 uLens0K;
+uniform vec4 uLens0K45;
 uniform vec4 uLens1Mei;
 uniform vec4 uLens1Centre;
 uniform vec4 uLens1K;
+uniform vec4 uLens1K45;
 
 uniform sampler2D uSource;
 
@@ -55,7 +58,7 @@ vec3 rotate(vec4 row0, vec4 row1, vec4 row2, vec3 v) {
 // Where the unit direction d of the frame of a lens lands in the frame (xy, frame pixels), how far it is off the axis
 // of the lens (z, degrees), and whether the lens sees it there (w, 1 or 0): less than MAX_THETA off axis, and inside
 // the square of the lens in the frame
-vec4 project(vec3 d, vec4 mei, vec4 centre, vec4 k) {
+vec4 project(vec3 d, vec4 mei, vec4 centre, vec4 k, vec4 k45) {
   float theta = acos(clamp(d.z, -1.0, 1.0)) / DEGREE;
   if (theta >= MAX_THETA) {
     return vec4(0.0, 0.0, theta, 0.0);
@@ -69,7 +72,7 @@ vec4 project(vec3 d, vec4 mei, vec4 centre, vec4 k) {
     }
     vec2 m = d.xy / depth;
     float r2 = dot(m, m);
-    float radial = 1.0 + r2 * (k.x + r2 * (k.y + r2 * k.z));
+    float radial = 1.0 + r2 * (k.x + r2 * (k.y + r2 * (k.z + r2 * (k45.x + r2 * k45.y))));
     vec2 distorted = vec2(
       radial * m.x + 2.0 * centre.z * m.x * m.y + centre.w * (r2 + 2.0 * m.x * m.x),
       radial * m.y + centre.z * (r2 + 2.0 * m.y * m.y) + 2.0 * centre.w * m.x * m.y
@@ -97,8 +100,8 @@ void main() {
   vec3 view = vec3(cos(lat) * sin(lon), -sin(lat), cos(lat) * cos(lon));
   vec3 body = rotate(uG0, uG1, uG2, view);
 
-  vec4 sample0 = project(rotate(uR00, uR01, uR02, body), uLens0Mei, uLens0Centre, uLens0K);
-  vec4 sample1 = project(rotate(uR10, uR11, uR12, body), uLens1Mei, uLens1Centre, uLens1K);
+  vec4 sample0 = project(rotate(uR00, uR01, uR02, body), uLens0Mei, uLens0Centre, uLens0K, uLens0K45);
+  vec4 sample1 = project(rotate(uR10, uR11, uR12, body), uLens1Mei, uLens1Centre, uLens1K, uLens1K45);
 
   float weight0 = sample0.w * (1.0 - smoothstep(BLEND_START, BLEND_END, sample0.z));
   float weight1 = sample1.w * (1.0 - smoothstep(BLEND_START, BLEND_END, sample1.z));

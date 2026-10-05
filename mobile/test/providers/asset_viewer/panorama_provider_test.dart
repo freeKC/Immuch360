@@ -36,10 +36,12 @@ void main() {
   });
 
   /// A container on [storeService], or the store of the test, where the exif of each asset of [exif] carries the
-  /// projection given for it, and every other asset has no exif
+  /// projection given for it, the exif of each asset of [cameraExif] the camera and the size given for it, and every
+  /// other asset has no exif
   ProviderContainer createContainer({
     StoreService? storeService,
     Map<BaseAsset, ProjectionType?> exif = const {},
+    Map<BaseAsset, ExifInfo> cameraExif = const {},
     ForcedPanoramaAssets Function()? forced,
   }) {
     final container = ProviderContainer(
@@ -47,6 +49,8 @@ void main() {
         storeServiceProvider.overrideWithValue(storeService ?? store),
         for (final MapEntry(key: asset, value: projectionType) in exif.entries)
           assetExifProvider(asset).overrideWith((ref) => Stream.value(ExifInfo(projectionType: projectionType))),
+        for (final MapEntry(key: asset, value: info) in cameraExif.entries)
+          assetExifProvider(asset).overrideWith((ref) => Stream.value(info)),
         if (forced != null) forcedPanoramaAssetsProvider.overrideWith(forced),
       ],
     );
@@ -239,18 +243,28 @@ void main() {
     });
   });
 
-  group('raw360LayoutProvider', () {
-    test('tells the raw files of Insta360 cameras by their name, and a video by its frame', () {
+  group('rawMediaKindProvider', () {
+    test('tells the raw files of 360° cameras by their name, whatever the frame of a video', () {
       final photo = RemoteAssetFactory.create(name: 'IMG_20240908_133036_00_001.insp');
       final video = RemoteAssetFactory.create(type: .video, name: 'VID_00_002.insv', width: 5760, height: 2880);
       final split = RemoteAssetFactory.create(type: .video, name: 'VID_10_002.insv', width: 2880, height: 2880);
+      final goPro = LocalAssetFactory.create(id: 'gopro', name: 'GS010013.360');
+      final dji = LocalAssetFactory.create(id: 'dji', name: 'CAM_20250715191201_0003_D.OSV');
       final jpeg = RemoteAssetFactory.create(name: 'IMG_001.jpg');
-      final container = createContainer(exif: {photo: null, video: null, split: null, jpeg: null});
+      final proxy = RemoteAssetFactory.create(type: .video, name: 'LRV_20240908_193126_11_004.lrv');
+      final container = createContainer(exif: {photo: null, video: null, split: null, jpeg: null, proxy: null});
 
-      expect(container.read(raw360LayoutProvider(photo)), Raw360Layout.dualFisheye);
-      expect(container.read(raw360LayoutProvider(video)), Raw360Layout.dualFisheye);
-      expect(container.read(raw360LayoutProvider(split)), Raw360Layout.separateLenses);
-      expect(container.read(raw360LayoutProvider(jpeg)), isNull);
+      expect(container.read(rawMediaKindProvider(photo)), RawMediaKind.insta360Photo);
+      expect(container.read(rawMediaKindProvider(video)), RawMediaKind.insta360Video);
+      expect(container.read(rawMediaKindProvider(split)), RawMediaKind.insta360Video);
+      expect(
+        rawMediaKindOfAsset(_video(goPro), isFoundRaw: (_) => false),
+        RawMediaKind.goProVideo,
+        reason: 'by its name on the device',
+      );
+      expect(rawMediaKindOfAsset(_video(dji), isFoundRaw: (_) => false), RawMediaKind.djiVideo);
+      expect(container.read(rawMediaKindProvider(jpeg)), isNull);
+      expect(container.read(rawMediaKindProvider(proxy)), isNull);
     });
 
     test('makes a raw photo a 360° photo before its exif has loaded, and not a raw video', () {
@@ -271,7 +285,7 @@ void main() {
       await store.put(
         StoreKey.localPanoramaAssets,
         encodeLocalPanoramaRecords({
-          'renamed': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: DateTime(2024)),
+          'renamed': LocalPanoramaRecord(isPanorama: true, raw360: true, checkedAt: DateTime(2024)),
           'pano': LocalPanoramaRecord(isPanorama: true, checkedAt: DateTime(2024)),
         }),
       );
@@ -279,16 +293,16 @@ void main() {
       final pano = LocalAssetFactory.create(id: 'pano', name: 'PANO_001.jpg');
       final container = createContainer(exif: {renamed: null, pano: null});
 
-      expect(container.read(raw360LayoutProvider(renamed)), Raw360Layout.dualFisheye);
-      expect(container.read(raw360LayoutProvider(pano)), isNull);
+      expect(container.read(rawMediaKindProvider(renamed)), RawMediaKind.insta360Photo);
+      expect(container.read(rawMediaKindProvider(pano)), isNull);
     });
 
     test('never takes for equirectangular the raw files the scan of the device found, which it lists still', () async {
       await store.put(
         StoreKey.localPanoramaAssets,
         encodeLocalPanoramaRecords({
-          'insv': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: DateTime(2024)),
-          'renamed': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: DateTime(2024)),
+          'insv': LocalPanoramaRecord(isPanorama: true, raw360: true, checkedAt: DateTime(2024)),
+          'renamed': LocalPanoramaRecord(isPanorama: true, raw360: true, checkedAt: DateTime(2024)),
         }),
       );
       // A 2:1 video of the device, both lenses side by side
@@ -306,7 +320,7 @@ void main() {
       final renamed = RemoteAssetFactory.create(localId: 'renamed', name: 'IMG_001.jpg');
       final container = createContainer(exif: {video: null, renamed: null});
 
-      expect(container.read(raw360LayoutProvider(video)), Raw360Layout.dualFisheye);
+      expect(container.read(rawMediaKindProvider(video)), RawMediaKind.insta360Video);
       expect(
         container.read(isEquirectangularProvider(video)),
         isFalse,
@@ -326,6 +340,77 @@ void main() {
       }
     });
   });
+
+  group('hasEquirectCameraExifProvider', () {
+    test('views a 2:1 photo of a 360° camera without GPano tags as 360°, and a .36p by its name', () async {
+      final dji = RemoteAssetFactory.create(name: 'DJI_20250715191201_0001_D.JPG', width: 15520, height: 7760);
+      final goPro = RemoteAssetFactory.create(name: 'GS__0010.JPG');
+      final single = RemoteAssetFactory.create(name: 'DJI_20250715191201_0002_D.JPG', width: 6400, height: 4800);
+      final phone = RemoteAssetFactory.create(name: 'IMG_0001.JPG', width: 8000, height: 4000);
+      final maxTwo = RemoteAssetFactory.create(name: 'GS__0001.36P');
+      final container = createContainer(
+        cameraExif: {
+          dji: const ExifInfo(make: 'DJI', model: 'Osmo 360', width: 15520, height: 7760),
+          goPro: const ExifInfo(make: 'GoPro', model: 'GoPro Max', width: 5760, height: 2880),
+          single: const ExifInfo(make: 'DJI', model: 'Osmo 360', width: 6400, height: 4800),
+          phone: const ExifInfo(make: 'Apple', model: 'iPhone 15', width: 8000, height: 4000),
+        },
+        exif: {maxTwo: null},
+      );
+
+      // Not before the exif has loaded, but a .36p by its name
+      expect(container.read(hasEquirectCameraExifProvider(dji)), isFalse);
+      expect(container.read(hasEquirectCameraExifProvider(maxTwo)), isTrue);
+      for (final asset in [dji, goPro, single, phone]) {
+        container.listen(hasEquirectCameraExifProvider(asset), (_, _) {});
+        await container.read(assetExifProvider(asset).future);
+      }
+
+      expect(container.read(hasEquirectCameraExifProvider(dji)), isTrue);
+      expect(container.read(hasEquirectCameraExifProvider(goPro)), isTrue);
+      expect(container.read(hasEquirectCameraExifProvider(single)), isFalse);
+      expect(container.read(hasEquirectCameraExifProvider(phone)), isFalse);
+      expect(container.read(isEquirectangularProvider(dji)), isTrue);
+      expect(container.read(isPanoramaProvider(goPro)), isTrue);
+      expect(container.read(isEquirectangularProvider(maxTwo)), isTrue);
+      expect(container.read(isEquirectangularProvider(phone)), isFalse);
+    });
+
+    test('never takes a video, nor a raw photo', () async {
+      final video = RemoteAssetFactory.create(type: .video, name: 'GS010001.MP4', width: 5760, height: 2880);
+      final insp = RemoteAssetFactory.create(name: 'IMG_001.insp', width: 11968, height: 5984);
+      final container = createContainer(
+        cameraExif: {
+          video: const ExifInfo(make: 'GoPro', model: 'GoPro Max', width: 5760, height: 2880),
+          insp: const ExifInfo(make: 'Arashi Vision', model: 'Insta360 X3', width: 11968, height: 5984),
+        },
+      );
+      for (final asset in [video, insp]) {
+        container.listen(hasEquirectCameraExifProvider(asset), (_, _) {});
+        await container.read(assetExifProvider(asset).future);
+      }
+
+      expect(container.read(hasEquirectCameraExifProvider(video)), isFalse);
+      expect(container.read(hasEquirectCameraExifProvider(insp)), isFalse);
+      expect(container.read(isEquirectangularProvider(insp)), isFalse);
+    });
+
+    test('never takes an Insta360 photo by its exif: a raw one renamed .jpg reads the same', () async {
+      // Only on the server: no trailer read, which alone tells a raw photo from one the camera stitched
+      final renamed = RemoteAssetFactory.create(name: 'IMG_20240101_120000_00_001.jpg', width: 11968, height: 5984);
+      final container = createContainer(
+        cameraExif: {
+          renamed: const ExifInfo(make: ' Arashi Vision ', model: 'Insta360 X4', width: 11968, height: 5984),
+        },
+      );
+      container.listen(hasEquirectCameraExifProvider(renamed), (_, _) {});
+      await container.read(assetExifProvider(renamed).future);
+
+      expect(container.read(hasEquirectCameraExifProvider(renamed)), isFalse);
+      expect(container.read(isEquirectangularProvider(renamed)), isFalse);
+      expect(container.read(isPanoramaProvider(renamed)), isFalse);
+    });
+  });
 }
 
 class _SeededForcedPanoramas extends ForcedPanoramaAssets {
@@ -336,3 +421,14 @@ class _SeededForcedPanoramas extends ForcedPanoramaAssets {
   @override
   Set<String> build() => _keys;
 }
+
+/// [asset] as a video
+LocalAsset _video(LocalAsset asset) => LocalAsset(
+  id: asset.id,
+  name: asset.name,
+  type: AssetType.video,
+  createdAt: asset.createdAt,
+  updatedAt: asset.updatedAt,
+  playbackStyle: .video,
+  isEdited: false,
+);

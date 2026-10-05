@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Niente da mostrare</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d supera le capacità del decoder del visore (scatti, blocchi). In Immich, imposta la transcodifica video su HEVC o limita la risoluzione.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d supera le capacità del decoder del visore (scatti, blocchi). Ricodifica questo file in HEVC o a una risoluzione più bassa.</string>
+  <string name="immersive_raw_one_lens_decoder">Questo visore non riesce a decodificare contemporaneamente i due obiettivi di questo video (%1$s %2$d x %3$d, due volte). Mostra un obiettivo: metà della sfera resta nera.</string>
+  <string name="immersive_raw_one_lens_file">Il file dell\'altro obiettivo non può essere letto. Viene mostrato un obiettivo: metà della sfera resta nera.</string>
+  <string name="immersive_raw_unstitched">L\'unione a 360° non è riuscita su questo dispositivo. Il video viene mostrato come la fotocamera lo ha registrato.</string>
 </resources>

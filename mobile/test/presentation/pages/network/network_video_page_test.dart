@@ -18,6 +18,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
@@ -32,6 +33,7 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
@@ -178,6 +180,8 @@ void main() {
     insta360Record(1, x3Metadata(), format: 1),
   ], body: mp4File(mp4Moov([mp4VideoTrack(const [], width: 5760, height: 2880)])));
   final rawOneLens = mp4File(mp4Moov([mp4VideoTrack(const [], width: 2880, height: 2880)]));
+  // The first lens file of a split pair: the trailer of the camera is on it only
+  final rawFirstLens = insta360File([insta360Record(1, x3Metadata(), format: 1)], body: rawOneLens);
 
   setUpAll(() async {
     // Real HTTP to the test server: the widget tests answer every request with an error otherwise
@@ -205,8 +209,12 @@ void main() {
         '/holiday.mp4': flat,
         '/VID_20240908_00_002.insv': rawSideBySide,
         '/VID_20240908_10_003.insv': rawOneLens,
+        '/VID_20240908_00_004.insv': rawFirstLens,
+        '/VID_20240908_10_004.insv': rawOneLens,
       },
     );
+    // The folder of the files, where the other file of a split pair is looked for
+    share.folders['/'] = [for (final path in share.files.keys) share.file(path)];
     server.share = share;
     server.requests.clear();
     // The native video view: created, with nothing behind it
@@ -245,6 +253,7 @@ void main() {
     _RecordingSpatialVideoApi? spatial,
     NetworkFolderMedia? folder,
     VideoPlayerState? playerState,
+    bool twoStreams = true,
   }) async {
     await pumpNetworkRouter(
       tester,
@@ -264,6 +273,8 @@ void main() {
         ).overrideWith((ref) => _RecordingVideoPlayer(playerCalls, initial: playerState)),
         // A fresh cache per test
         networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
+        // The players of the phones and the headset play two streams; the test runs on neither
+        rawVideoPlaybackSupportProvider.overrideWithValue(RawVideoPlaybackSupport(twoStreams: twoStreams)),
       ],
     );
   }
@@ -349,29 +360,68 @@ void main() {
     expect(sphericalApi.opened.single['layout'], StereoLayout.mono);
     expect(sphericalApi.opened.single['coverage'], SphereCoverage.full);
     final json = jsonDecode(sphericalApi.rawProjections.single!) as Map;
+    expect((json['version'], json['layout']), (2, 'sideBySide'));
     expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
     expect(((json['lenses'] as List).first as Map)['fx'], closeTo(4627.54, 1e-6), reason: 'read from the share');
 
     await endRealIo(tester);
   });
 
-  testWidgets('says that a raw video of one lens per file does not open', (tester) async {
+  /// Taps the 360° button, and waits for the plan of a raw video, which reads the share, then for its outcome
+  Future<void> tapRaw360(WidgetTester tester, bool Function() done) async {
+    await tester.tap(find.byTooltip('360°'));
+    for (var i = 0; i < 50 && !done(); i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+  }
+
+  testWidgets('opens a file of a split pair with the other file of its folder, from the media bridge', (tester) async {
+    await pumpVideoPage(tester, '/VID_20240908_10_004.insv');
+    await pumpUntilDetected(tester);
+
+    await tapRaw360(tester, () => sphericalApi.opened.isNotEmpty);
+
+    expect(sphericalApi.opened.single['url'], server.urlOf('/VID_20240908_10_004.insv').toString());
+    final json = jsonDecode(sphericalApi.rawProjections.single!) as Map;
+    expect((json['version'], json['layout'], json['trackOrderSource']), (2, 'twoFiles', 'fileName'));
+    expect(json['secondUrl'], server.urlOf('/VID_20240908_00_004.insv').toString());
+    expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
+    expect(json['trackOrder'], [1, 0]);
+    expect(json['calibrationSource'], 'file', reason: 'the trailer of the first lens file');
+    expect(playerCalls, ['suspend']);
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('says which file of a split pair is missing next to it', (tester) async {
     await pumpVideoPage(tester, '/VID_20240908_10_003.insv');
     await pumpUntilDetected(tester);
 
-    await tester.tap(find.byTooltip('360°'));
-    await tester.pump();
-    await tester.pump();
-
-    expect(
-      find.text(
-        'This raw video is split in two files or two tracks (one per lens): not supported yet. Export it from the '
-        'camera app, or play a single file recording.',
-      ),
-      findsOneWidget,
+    final message = find.text(
+      'This recording is split in two files, one per lens, and VID_20240908_00_003.insv was not found next to it. '
+      'Keep both files together (same folder, or both on the server), or export the video from the camera app.',
     );
+    await tapRaw360(tester, () => message.evaluate().isNotEmpty);
+
+    expect(message, findsOneWidget);
     expect(sphericalApi.opened, isEmpty);
     expect(playerCalls, isEmpty);
+
+    await endRealIo(tester);
+  });
+
+  testWidgets('says that the app cannot stitch two streams where the player does not play them', (tester) async {
+    await pumpVideoPage(tester, '/VID_20240908_10_004.insv', twoStreams: false);
+    await pumpUntilDetected(tester);
+
+    final message = find.text(
+      'The app cannot stitch this raw video yet. Export it from the camera app to watch it in 360°.',
+    );
+    await tapRaw360(tester, () => message.evaluate().isNotEmpty);
+
+    expect(message, findsOneWidget);
+    expect(sphericalApi.opened, isEmpty);
 
     await endRealIo(tester);
   });

@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Tiştek tune ye ku were nîşandan</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d ji kapasîteya dekoderê ya headsetê zêdetir e (diqute, blok blok xuya dike). Di Immich de, veguherîna vîdyoyê bike HEVC an çareseriyê sînordar bike.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d ji kapasîteya dekoderê ya headsetê zêdetir e (diqute, blok blok xuya dike). Vê pelê bi HEVC an bi çareseriyeke kêmtir ji nû ve kod bike.</string>
+  <string name="immersive_raw_one_lens_decoder">Ev headset nikare herdu lensên vê vîdyoyê di heman demê de dekod bike (%1$s %2$d x %3$d, du caran). Lensek tê nîşandan: nîvê gogê reş dimîne.</string>
+  <string name="immersive_raw_one_lens_file">Pela lensa din nayê xwendin. Lensek tê nîşandan: nîvê gogê reş dimîne.</string>
+  <string name="immersive_raw_unstitched">Dirûtina 360° li ser vê cîhazê bi ser neket. Vîdyo wekî ku kamerayê tomar kiriye tê nîşandan.</string>
 </resources>

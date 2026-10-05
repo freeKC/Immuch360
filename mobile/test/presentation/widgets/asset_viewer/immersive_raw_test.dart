@@ -1,5 +1,5 @@
-// The raw dual fisheye files of Insta360 cameras in the immersive viewer of the Meta Quest: a photo goes to it stitched
-// into a PNG of the cache, a video with the JSON of its calibration; a video of a lens per file is refused.
+// The raw files of 360° cameras in the immersive viewer of the Meta Quest: a photo goes to it stitched into a PNG of the
+// cache, a video with the rawProjection JSON of its plan; a video that does not open says why.
 
 import 'dart:convert';
 import 'dart:io';
@@ -23,18 +23,22 @@ import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/platform/remote_image_api.g.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
+import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
 import '../../../fixtures/raw/dual_fisheye_frames.dart';
@@ -94,12 +98,22 @@ class _FixedCalibrations extends DualFisheyeCalibrationService {
 
   final DualFisheyeCalibration calibration;
   final asked = <(BaseAsset, File?)>[];
+  final askedInputs = <String>[];
 
   @override
   Future<DualFisheyeCalibration> forAsset(BaseAsset asset, {File? localFile}) async {
     asked.add((asset, localFile));
     return calibration;
   }
+
+  @override
+  Future<DualFisheyeCalibration> forInput(RawVideoInput input, {int? frameSquare}) async {
+    askedInputs.add(input.key);
+    return calibration;
+  }
+
+  @override
+  Future<RawFileReader?> openAsset(BaseAsset asset, {File? localFile}) async => null;
 }
 
 /// What the file of each video declares: [result] for every video
@@ -129,12 +143,15 @@ void main() {
   late ProviderContainer container;
   late _RecordingImmersiveApi api;
   late Directory directory;
+  late MockRemoteAssetRepository remoteAssets;
 
   setUp(() async {
     await PresentationContext.create();
     container = ProviderContainer(overrides: [storeServiceProvider.overrideWithValue(StoreService.I)]);
     api = _RecordingImmersiveApi();
     directory = Directory.systemTemp.createTempSync('immersive_raw');
+    remoteAssets = MockRemoteAssetRepository();
+    when(() => remoteAssets.findSiblingByName(any(), any())).thenAnswer((_) async => null);
   });
 
   tearDown(() async {
@@ -153,10 +170,22 @@ void main() {
       Future<ui.Image> Function() load,
     )?
     stitchPhoto,
+    SphericalProbe? probe,
+    bool twoStreams = true,
   }) => RawImmersiveMedia(
     calibrations: calibrations,
-    layoutOf: (asset) =>
-        raw360LayoutOf(name: asset.name, isVideo: asset.isVideo, width: asset.width, height: asset.height),
+    kindOf: (asset) => rawMediaKindOfAsset(asset, isFoundRaw: (_) => false),
+    resolver: RawVideoResolver(
+      calibrations: calibrations,
+      support: RawVideoPlaybackSupport(twoStreams: twoStreams),
+    ),
+    assetInputs: RawAssetInputs(
+      local: MockLocalAssetRepository.new,
+      remote: () => remoteAssets,
+      storage: MockStorageRepository(),
+      probes: _FixedProbes(probe),
+      calibrations: calibrations,
+    ),
     files: StitchedPhotoFiles(() async => directory),
     loadAssetImage: loadAssetImage ?? (asset, file) => throw UnimplementedError('no image to load'),
     stitchPhoto: stitchPhoto ?? stitchedPhotoFile,
@@ -208,11 +237,19 @@ void main() {
       });
     });
 
-    test('opens a raw video with the calibration for its frame, over the whole sphere', () async {
+    test('opens a raw video with the rawProjection JSON of its plan, over the whole sphere', () async {
       final calibrations = _FixedCalibrations(_x3());
+      const probe = SphericalProbe(
+        codec: 'hvc1',
+        codedWidth: 5760,
+        codedHeight: 2880,
+        tracks: [
+          ProbedTrack(index: 0, trackId: 1, handlerType: 'vide', codec: 'hvc1', codedWidth: 5760, codedHeight: 2880),
+        ],
+      );
       final resolve = resolver(
-        rawMedia: raw(calibrations),
-        probe: const SphericalProbe(codec: 'hvc1', codedWidth: 5760, codedHeight: 2880),
+        rawMedia: raw(calibrations, probe: probe),
+        probe: probe,
       );
       final asset = RemoteAssetFactory.create(type: .video, name: 'VID_00_002.insv');
 
@@ -220,33 +257,125 @@ void main() {
       await resolve.open(request, openingId: 1);
 
       final json = jsonDecode(request.rawProjection!) as Map;
+      expect(json['version'], 2);
       expect(json['kind'], 'dualFisheye');
+      expect(json['layout'], 'sideBySide');
       expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
       expect(json['canvasSquare'], 5952);
+      expect(json['tracks'], [
+        {
+          'file': 0,
+          'videoTrack': 0,
+          'trackId': 1,
+          'width': 5760,
+          'height': 2880,
+          'codec': 'hvc1',
+          'codecs': null,
+          'bitDepth': null,
+        },
+      ]);
       expect(request.view, raw360SphereView);
       expect(request.isVideo, isTrue);
+      expect(request.url, endsWith('/assets/${asset.id}/original'));
+      expect(request.fallbackUrl, endsWith('/assets/${asset.id}/video/playback'), reason: 'side by side transcodes');
       expect(api.opened.single.rawProjection, request.rawProjection);
       expect(api.opened.single.layout, ImmersiveStereoLayout.mono);
-      expect(calibrations.asked.single.$1, asset);
+      expect(calibrations.askedInputs.single, startsWith('asset:'));
     });
 
-    test('refuses a raw video of a lens per file, by its size or by what the file declares', () async {
+    test('opens two tracks of one file from the original, without the transcoded stream of one lens', () async {
+      final calibrations = _FixedCalibrations(_x3());
+      ProbedTrack lens(int index) => ProbedTrack(
+        index: index,
+        trackId: index + 1,
+        handlerType: 'vide',
+        codec: 'hvc1',
+        codedWidth: 3840,
+        codedHeight: 3840,
+      );
+      final probe = SphericalProbe(codec: 'hvc1', codedWidth: 3840, codedHeight: 3840, tracks: [lens(0), lens(1)]);
+      final asset = RemoteAssetFactory.create(type: .video, name: 'VID_20240414_135511_00_027.insv');
+
+      final request = await resolver(
+        rawMedia: raw(calibrations, probe: probe),
+        probe: probe,
+      ).resolve(asset);
+
+      final json = jsonDecode(request.rawProjection!) as Map;
+      expect(json['layout'], 'twoTracks');
+      expect((json['frameWidth'], json['frameHeight']), (7680, 3840));
+      expect(request.url, endsWith('/assets/${asset.id}/original'));
+      expect(request.fallbackUrl, isNull);
+    });
+
+    test('refuses a file of a split pair whose other file is not found, naming it', () async {
       final calibrations = _FixedCalibrations(_x3());
       final square = RemoteAssetFactory.create(type: .video, name: 'VID_10_002.insv', width: 2880, height: 2880);
       final unknown = RemoteAssetFactory.create(type: .video, name: 'VID_10_002.insv');
+      const squareProbe = SphericalProbe(
+        codedWidth: 2880,
+        codedHeight: 2880,
+        tracks: [ProbedTrack(index: 0, handlerType: 'vide', codec: 'hvc1', codedWidth: 2880, codedHeight: 2880)],
+      );
 
       await expectLater(
         resolver(rawMedia: raw(calibrations)).resolve(square),
-        throwsA(isA<RawVideoUnsupportedException>()),
+        throwsA(
+          isA<RawVideoUnsupportedException>()
+              .having((e) => e.reason, 'reason', RawUnsupportedReason.siblingMissing)
+              .having((e) => e.siblingName, 'siblingName', 'VID_00_002.insv'),
+        ),
       );
       await expectLater(
         resolver(
-          rawMedia: raw(calibrations),
-          probe: const SphericalProbe(codedWidth: 2880, codedHeight: 2880),
+          rawMedia: raw(calibrations, probe: squareProbe),
+          probe: squareProbe,
         ).resolve(unknown),
         throwsA(isA<RawVideoUnsupportedException>()),
       );
-      expect(calibrations.asked, isEmpty);
+      expect(calibrations.askedInputs, isEmpty);
+    });
+
+    test('opens a split pair of the server with the original of the other file', () async {
+      final calibrations = _FixedCalibrations(_x3());
+      const probe = SphericalProbe(
+        codedWidth: 2880,
+        codedHeight: 2880,
+        tracks: [ProbedTrack(index: 0, handlerType: 'vide', codec: 'hvc1', codedWidth: 2880, codedHeight: 2880)],
+      );
+      final opened = RemoteAssetFactory.create(type: .video, name: 'VID_20240908_193126_10_004.insv');
+      final sibling = RemoteAssetFactory.create(type: .video, name: 'VID_20240908_193126_00_004.insv');
+      when(() => remoteAssets.findSiblingByName(opened.id, sibling.name)).thenAnswer((_) async => sibling);
+
+      final request = await resolver(
+        rawMedia: raw(calibrations, probe: probe),
+        probe: probe,
+      ).resolve(opened);
+
+      final json = jsonDecode(request.rawProjection!) as Map;
+      expect(json['layout'], 'twoFiles');
+      expect(json['trackOrder'], [1, 0]);
+      expect(json['trackOrderSource'], 'fileName');
+      expect(json['secondUrl'], endsWith('/assets/${sibling.id}/original'));
+      expect(request.url, endsWith('/assets/${opened.id}/original'));
+      expect([for (final lens in json['lenses'] as List) (lens as Map)['texture']], [1, 0]);
+    });
+
+    test('refuses two streams where the players do not play them', () async {
+      ProbedTrack lens(int index) =>
+          ProbedTrack(index: index, handlerType: 'vide', codec: 'hvc1', codedWidth: 3840, codedHeight: 3840);
+      final probe = SphericalProbe(tracks: [lens(0), lens(1)]);
+      final asset = RemoteAssetFactory.create(type: .video, name: 'CAM_20250715191201_0003_D.OSV');
+
+      await expectLater(
+        resolver(
+          rawMedia: raw(_FixedCalibrations(_x3()), probe: probe, twoStreams: false),
+          probe: probe,
+        ).resolve(asset),
+        throwsA(
+          isA<RawVideoUnsupportedException>().having((e) => e.reason, 'reason', RawUnsupportedReason.unknownLayout),
+        ),
+      );
     });
 
     test('opens a video that is no raw file as before, without calibration', () async {
@@ -369,6 +498,7 @@ void main() {
       expect(api.shown.last.url, '$bridge/VID_00_002.insv');
       expect(api.shown.last.isVideo, isTrue);
       final json = jsonDecode(api.shown.last.rawProjection!) as Map;
+      expect(json['version'], 2);
       expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
       expect(((json['lenses'] as List).first as Map)['fx'], closeTo(4627.54, 1e-6));
       expect(api.opened, isEmpty, reason: 'navigation never starts the viewer');

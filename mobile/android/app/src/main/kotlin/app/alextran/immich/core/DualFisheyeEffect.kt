@@ -18,15 +18,21 @@ import androidx.media3.effect.GlShaderProgram
 import androidx.media3.effect.MatrixTransformation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer
+import app.alextran.immich.core.raw.RawKind
+import app.alextran.immich.core.raw.RawLayout
+import app.alextran.immich.core.raw.RawProjection
+import app.alextran.immich.core.raw.RawStitchShaders
+import app.alextran.immich.core.raw.RawStitchUniforms
 import kotlin.math.roundToInt
 
 /**
- * Media3 video effect that stitches the frame of a raw dual fisheye video (an Insta360 .insv: the two fisheye circles
- * side by side, lens 0 on the left half) into an equirectangular frame of the same size, which the players then map
- * on the sphere like any 360° video. The mapping is the one of docs 16-dual-fisheye-spec.md section 3, see
- * [DualFisheyeCalibration]: for every output texel the view direction, rotated into each lens, the Mei (or
- * equidistant) projection to a pixel of that lens' square, and a blend of the two lenses between 85 and 95 degrees off
- * their axes.
+ * Media3 video effect that stitches the frame of a raw 360° video whose two fisheye lenses are side by side in one
+ * track (an Insta360 .insv of the X3 and earlier: lens 0 on the left half) into an equirectangular frame, which the
+ * players then map on the sphere like any 360° video. The mapping is the one of section 4.1 of the projections design,
+ * see [RawProjection]: for every output texel the view direction, rotated into each lens, the Mei, equidistant or
+ * Kannala-Brandt projection to a pixel of that lens' square, the square's region of the frame, and a blend of the two
+ * lenses by angle off their axes. The shader is the GLSL ES 1.00 emission of [RawStitchShaders], the same mapping the
+ * lens compositor draws for two tracks or two files.
  *
  * ExoPlayer runs it on its own GL thread once [ExoPlayer.setVideoEffects] got it before prepare. A shader that cannot
  * be built (a GL error on an unusual GPU) logs and lets the frame through as it is, the two circles then show on the
@@ -34,7 +40,7 @@ import kotlin.math.roundToInt
  */
 @OptIn(UnstableApi::class)
 class DualFisheyeEffect(
-  private val calibration: DualFisheyeCalibration,
+  private val projection: RawProjection,
   /**
    * The largest stitched frame worth drawing, the size of the surface it ends on (0 for the decoded size): a 5.7K
    * frame stitched at its own size and scaled down to a 4K surface afterwards would cost twice the fragment work.
@@ -42,9 +48,15 @@ class DualFisheyeEffect(
   private val maxOutputWidth: Int = 0,
   private val maxOutputHeight: Int = 0,
 ) : GlEffect {
+  init {
+    require(projection.kind == RawKind.DUAL_FISHEYE && projection.layout == RawLayout.SIDE_BY_SIDE) {
+      "the effect stitches side by side fisheye frames only"
+    }
+  }
+
   override fun toGlShaderProgram(context: Context, useHdr: Boolean): GlShaderProgram =
     try {
-      DualFisheyeShaderProgram(calibration, useHdr, maxOutputWidth, maxOutputHeight)
+      DualFisheyeShaderProgram(projection, useHdr, maxOutputWidth, maxOutputHeight)
     } catch (e: Exception) {
       // A GL error (GlUtil.GlException), or a uniform the driver optimized away (a null from GlProgram)
       Log.e(TAG, "cannot build the dual fisheye shader, the raw frame shows as it is", e)
@@ -66,11 +78,14 @@ class DualFisheyeEffect(
       error.errorCode == PlaybackException.ERROR_CODE_VIDEO_FRAME_PROCESSOR_INIT_FAILED ||
         error.errorCode == PlaybackException.ERROR_CODE_VIDEO_FRAME_PROCESSING_FAILED
 
-    /** The effect for the rawProjection JSON of Flutter, or null (logged) when it cannot be read. */
+    /**
+     * The effect for the rawProjection JSON of Flutter, or null (logged) when it cannot be read or is not a side by
+     * side fisheye frame.
+     */
     fun fromJson(json: String?): DualFisheyeEffect? {
       if (json.isNullOrBlank()) return null
       return try {
-        DualFisheyeEffect(DualFisheyeCalibration.parse(json))
+        DualFisheyeEffect(RawProjection.parse(json))
       } catch (e: IllegalArgumentException) {
         Log.e(TAG, "unreadable dual fisheye calibration, the raw frame shows as it is: ${e.message}")
         null
@@ -97,25 +112,24 @@ class DualFisheyeEffect(
 }
 
 /**
- * The shader of [DualFisheyeEffect]. Uniforms: the two view to lens rotations (R_i * G, computed once on the CPU,
- * the same as multiplying by G then R_i in the shader), the intrinsics of each lens in canvas pixels, the canvas to
- * frame scale and the frame size (set in [configure] from the decoded size, so that a transcoded stream at another
- * resolution maps the same way), and the lens model.
+ * The shader of [DualFisheyeEffect], with the uniforms of [RawStitchUniforms]: the two view to lens rotations, the
+ * intrinsics of each lens in lens-local canvas pixels, the region of each lens in the frame, the lens model and
+ * limits, and the half texel of the decoded frame (set in [configure], so that a transcoded stream at another
+ * resolution maps the same way).
  *
  * Texture orientation: Media3 hands each effect a GL_TEXTURE_2D in the OpenGL convention, the texture of the decoder
  * already turned by the SurfaceTexture transform: t = 0 is the bottom row of the picture and t = 1 its top, and the
- * output is drawn the same way (t = 1 at the top of the frame, latitude +90 degrees). The canvas pixels of the
- * calibration count rows from the top, hence the 1 - y flip when sampling.
+ * output is drawn the same way (t = 1 at the top of the frame, latitude +90 degrees). The regions count rows from the
+ * top, hence the 1 - y flip when sampling.
  */
 @OptIn(UnstableApi::class)
 private class DualFisheyeShaderProgram(
-  calibration: DualFisheyeCalibration,
+  private val projection: RawProjection,
   useHdr: Boolean,
   private val maxOutputWidth: Int,
   private val maxOutputHeight: Int,
 ) : BaseGlShaderProgram(/* useHighPrecisionColorComponents= */ useHdr, /* texturePoolCapacity= */ 1) {
-  private val glProgram = GlProgram(VERTEX_SHADER, FRAGMENT_SHADER)
-  private val canvasSquare = calibration.canvasSquare
+  private val glProgram = GlProgram(RawStitchShaders.vertexEs1(), RawStitchShaders.fragmentEs1SideBySide())
 
   init {
     // The quad covers the whole output, from -1 to 1 in normalized device coordinates
@@ -124,35 +138,14 @@ private class DualFisheyeShaderProgram(
       GlUtil.getNormalizedCoordinateBounds(),
       GlUtil.HOMOGENEOUS_COORDINATE_VECTOR_SIZE,
     )
-    glProgram.setFloatsUniform("uViewToLens0", columnMajor(calibration.viewToLens(0)))
-    glProgram.setFloatsUniform("uViewToLens1", columnMajor(calibration.viewToLens(1)))
-    val equidistant = calibration.model == DualFisheyeModel.EQUIDISTANT
-    calibration.lenses.forEachIndexed { index, lens ->
-      // An equidistant lens uses its focal length in both fx and fy and no distortion
-      val focal = DualFisheyeCalibration.equidistantFocal(lens)
-      val fx = if (equidistant) focal else lens.fx
-      val fy = if (equidistant) focal else lens.fy
-      glProgram.setFloatsUniform(
-        "uIntrinsics$index",
-        floatArrayOf(fx.toFloat(), fy.toFloat(), lens.cx.toFloat(), lens.cy.toFloat()),
-      )
-      glProgram.setFloatsUniform(
-        "uDistortion$index",
-        floatArrayOf(lens.k1.toFloat(), lens.k2.toFloat(), lens.k3.toFloat(), lens.xi.toFloat()),
-      )
-      glProgram.setFloatsUniform("uTangential$index", floatArrayOf(lens.p1.toFloat(), lens.p2.toFloat()))
-    }
-    glProgram.setFloatUniform("uEquidistant", if (equidistant) 1f else 0f)
+    // Uniforms a driver folds away (the texture index of each lens, both 0 here) are skipped
+    for ((name, value) in RawStitchUniforms.fisheye(projection)) glProgram.setFloatsUniformIfPresent(name, value)
   }
 
   override fun configure(inputWidth: Int, inputHeight: Int): Size {
-    // Two squares side by side: the square of one lens is half the width, the whole height. Each axis scales on its
-    // own, so that a frame that is not exactly 2:1 still maps the whole square of each lens
-    glProgram.setFloatsUniform(
-      "uCanvasToFrame",
-      floatArrayOf((inputWidth / 2.0 / canvasSquare).toFloat(), (inputHeight / canvasSquare).toFloat()),
-    )
-    glProgram.setFloatsUniform("uFrameSize", floatArrayOf(inputWidth.toFloat(), inputHeight.toFloat()))
+    for ((name, value) in RawStitchUniforms.halfTexels(projection, listOf(inputWidth to inputHeight))) {
+      glProgram.setFloatsUniformIfPresent(name, value)
+    }
     // The stitched frame is drawn straight at the size of the surface it ends on, no larger than the decoded frame,
     // keeping its shape: the shader only works in normalized output coordinates
     var scale = 1.0
@@ -166,7 +159,7 @@ private class DualFisheyeShaderProgram(
   override fun drawFrame(inputTexId: Int, presentationTimeUs: Long) {
     try {
       glProgram.use()
-      glProgram.setSamplerTexIdUniform("uTexSampler", inputTexId, /* texUnitIndex= */ 0)
+      glProgram.setSamplerTexIdUniform(RawStitchShaders.SIDE_BY_SIDE_SAMPLER, inputTexId, /* texUnitIndex= */ 0)
       glProgram.bindAttributesAndUniforms()
       // The four vertex triangle strip forms the quad
       GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, /* first= */ 0, /* count= */ 4)
@@ -182,120 +175,5 @@ private class DualFisheyeShaderProgram(
     } catch (e: GlUtil.GlException) {
       throw VideoFrameProcessingException(e)
     }
-  }
-
-  private companion object {
-    /** A row major 3x3 matrix as GLSL reads a mat3 uniform (column major, no transpose in GLES 2). */
-    fun columnMajor(rowMajor: FloatArray): FloatArray = FloatArray(9) { rowMajor[(it % 3) * 3 + it / 3] }
-
-    /** The texture coordinate of each corner of the quad, from 0 to 1 */
-    val VERTEX_SHADER =
-      """
-      attribute vec4 aFramePosition;
-      varying vec2 vTexSamplingCoord;
-      void main() {
-        gl_Position = aFramePosition;
-        vTexSamplingCoord = aFramePosition.xy * 0.5 + 0.5;
-      }
-      """
-        .trimIndent()
-
-    /**
-     * GLSL ES 1.00, in high precision where the GPU has it: the Mei projection divides small numbers and the canvas
-     * holds about 12000 pixels, beyond what medium precision keeps to the pixel. Angles are in radians: 100, 85 and
-     * 95 degrees.
-     */
-    val FRAGMENT_SHADER =
-      """
-      #ifdef GL_FRAGMENT_PRECISION_HIGH
-      precision highp float;
-      #else
-      precision mediump float;
-      #endif
-
-      uniform sampler2D uTexSampler;
-      // View direction to the frame of each lens: R_i * G
-      uniform mat3 uViewToLens0;
-      uniform mat3 uViewToLens1;
-      // fx, fy, cx, cy of each lens, in canvas pixels
-      uniform vec4 uIntrinsics0;
-      uniform vec4 uIntrinsics1;
-      // k1, k2, k3, xi of each lens
-      uniform vec4 uDistortion0;
-      uniform vec4 uDistortion1;
-      // p1, p2 of each lens
-      uniform vec2 uTangential0;
-      uniform vec2 uTangential1;
-      // Frame pixels per canvas pixel, horizontally and vertically
-      uniform vec2 uCanvasToFrame;
-      // Width and height of the decoded frame, in pixels
-      uniform vec2 uFrameSize;
-      // 1 for the equidistant model, 0 for Mei
-      uniform float uEquidistant;
-      varying vec2 vTexSamplingCoord;
-
-      const float PI = 3.14159265358979;
-      const float MAX_THETA = 1.74532925;
-      const float BLEND_START = 1.48352986;
-      const float BLEND_END = 1.65806279;
-
-      // Canvas pixel (x right, y down from the top) that sees the direction d of the lens frame
-      vec2 project(vec3 d, vec4 intrinsics, vec4 distortion, vec2 tangential) {
-        if (uEquidistant > 0.5) {
-          float theta = acos(clamp(d.z, -1.0, 1.0));
-          float off = length(d.xy);
-          vec2 direction = off > 1e-6 ? d.xy / off : vec2(0.0);
-          return intrinsics.zw + intrinsics.xy * theta * direction;
-        }
-        vec2 m = d.xy / max(d.z + distortion.w, 1e-3);
-        float r2 = dot(m, m);
-        float radial = 1.0 + r2 * (distortion.x + r2 * (distortion.y + r2 * distortion.z));
-        float p1 = tangential.x;
-        float p2 = tangential.y;
-        vec2 distorted = vec2(
-          radial * m.x + 2.0 * p1 * m.x * m.y + p2 * (r2 + 2.0 * m.x * m.x),
-          radial * m.y + p1 * (r2 + 2.0 * m.y * m.y) + 2.0 * p2 * m.x * m.y);
-        return intrinsics.xy * distorted + intrinsics.zw;
-      }
-
-      // Texture coordinate of the canvas pixel, kept inside the square of the lens (index 0 left, 1 right) so that
-      // bilinear sampling never reaches the other lens; inside is 1 when the pixel lies in that square, else 0
-      vec2 textureCoord(vec2 canvas, float index, out float inside) {
-        vec2 pixel = canvas * uCanvasToFrame;
-        float side = uFrameSize.x * 0.5;
-        float left = index * side;
-        inside = step(left, pixel.x) * step(pixel.x, left + side - 1.0)
-          * step(0.0, pixel.y) * step(pixel.y, uFrameSize.y - 1.0);
-        vec2 kept = clamp(pixel, vec2(left, 0.0), vec2(left + side - 1.0, uFrameSize.y - 1.0));
-        // A pixel value is the centre of that pixel; texture rows count from the bottom
-        return vec2((kept.x + 0.5) / uFrameSize.x, 1.0 - (kept.y + 0.5) / uFrameSize.y);
-      }
-
-      void main() {
-        float lon = (vTexSamplingCoord.x * 2.0 - 1.0) * PI;
-        float lat = (vTexSamplingCoord.y - 0.5) * PI;
-        vec3 view = vec3(cos(lat) * sin(lon), -sin(lat), cos(lat) * cos(lon));
-        vec3 d0 = uViewToLens0 * view;
-        vec3 d1 = uViewToLens1 * view;
-        float theta0 = acos(clamp(d0.z, -1.0, 1.0));
-        float theta1 = acos(clamp(d1.z, -1.0, 1.0));
-        float inside0;
-        float inside1;
-        vec2 uv0 = textureCoord(project(d0, uIntrinsics0, uDistortion0, uTangential0), 0.0, inside0);
-        vec2 uv1 = textureCoord(project(d1, uIntrinsics1, uDistortion1, uTangential1), 1.0, inside1);
-        float w0 = inside0 * step(theta0, MAX_THETA) * (1.0 - smoothstep(BLEND_START, BLEND_END, theta0));
-        float w1 = inside1 * step(theta1, MAX_THETA) * (1.0 - smoothstep(BLEND_START, BLEND_END, theta1));
-        vec4 color0 = texture2D(uTexSampler, uv0);
-        vec4 color1 = texture2D(uTexSampler, uv1);
-        float sum = w0 + w1;
-        if (sum > 0.0) {
-          gl_FragColor = (w0 * color0 + w1 * color1) / sum;
-        } else {
-          // Outside both blends (past 95 degrees, or off the squares): the nearer lens
-          gl_FragColor = theta0 <= theta1 ? color0 : color1;
-        }
-      }
-      """
-        .trimIndent()
   }
 }

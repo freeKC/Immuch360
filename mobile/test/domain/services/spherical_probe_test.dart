@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
@@ -6,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 
+import '../../fixtures/raw/insta360.stub.dart';
 import 'spherical_probe_fixtures.dart';
 
 /// Reads [file] as a local file or a server does: fewer bytes at the end, none past it. Records each read.
@@ -17,9 +19,30 @@ ByteRangeReader _reader(Uint8List file, [List<(int, int)>? reads]) => (offset, l
   return Uint8List.sublistView(file, offset, math.min(file.length, offset + length));
 };
 
-Future<SphericalProbe> _probe(Uint8List file, {List<(int, int)>? reads, int? maxMoovLength}) => maxMoovLength == null
-    ? probeSphericalMetadata(_reader(file, reads))
-    : probeSphericalMetadata(_reader(file, reads), maxMoovLength: maxMoovLength);
+/// The probe of [file] without its list of tracks: the fields of the first video track, which the tests compare whole.
+/// The tracks are checked by the tests of the group 'tracks', on [probeSphericalMetadata] itself.
+Future<SphericalProbe> _probe(Uint8List file, {List<(int, int)>? reads, int? maxMoovLength}) async {
+  final probe = maxMoovLength == null
+      ? await probeSphericalMetadata(_reader(file, reads))
+      : await probeSphericalMetadata(_reader(file, reads), maxMoovLength: maxMoovLength);
+  return SphericalProbe(
+    stereo: probe.stereo,
+    halfSphere: probe.halfSphere,
+    hasSphericalMetadata: probe.hasSphericalMetadata,
+    codec: probe.codec,
+    codecs: probe.codecs,
+    codedWidth: probe.codedWidth,
+    codedHeight: probe.codedHeight,
+    frameRate: probe.frameRate,
+    bitDepth: probe.bitDepth,
+    colourPrimaries: probe.colourPrimaries,
+    transferCharacteristics: probe.transferCharacteristics,
+    dolbyVision: probe.dolbyVision,
+    videoBitRate: probe.videoBitRate,
+    declaredBitRate: probe.declaredBitRate,
+    mediaBitRate: probe.mediaBitRate,
+  );
+}
 
 void main() {
   group('probeSphericalMetadata', () {
@@ -371,7 +394,9 @@ void main() {
       final probe = await _probe(file, reads: reads, maxMoovLength: 100000);
 
       expect(probe.stereo, StereoLayout.topBottom);
-      expect(reads.last, (moovContent, 100000));
+      // The head of the moov box, then the header of the box after the long one, at its end (the udta box)
+      expect(reads[reads.length - 2], (moovContent, 100000));
+      expect(reads.last, (moovContent + moov.length - 8 - 36, 36));
       expect(reads.every((read) => read.$2 <= 100000), isTrue, reason: '$reads');
     });
 
@@ -432,6 +457,7 @@ void main() {
           codedWidth: 5760,
           codedHeight: 5760,
           frameRate: 30000 / 1001,
+          bitDepth: 8,
         ),
       );
     });
@@ -603,5 +629,569 @@ void main() {
 
       await expectLater(probeSphericalMetadata(failing), throwsStateError);
     });
+
+    test('reads the bit depth of HEVC, H.264, AV1 and VP9 configurations', () async {
+      for (final (codec, config, expected) in [
+        ('hvc1', mp4HvcC(profile: 2, bitDepth: 10), 10),
+        ('hvc1', mp4HvcC(), 8),
+        // The profile of H.264, or the bit depth of its high profile extension
+        ('avc1', mp4AvcC(profile: 0x6e), 10),
+        ('avc1', mp4AvcC(profile: 0x64, highExtension: [0xfd, 0xfa, 0xf8, 0x00]), 10),
+        ('avc1', mp4AvcC(profile: 0x64), 8),
+        ('avc1', mp4AvcC(profile: 0x42), 8),
+        ('av01', mp4Av1C(highBitDepth: true), 10),
+        ('av01', mp4Av1C(highBitDepth: true, twelveBit: true), 12),
+        ('vp09', mp4VpcC(bitDepth: 10), 10),
+        // A configuration of zeros, or one of another codec
+        ('hvc1', mp4Box('hvcC', mp4Zeros(30)), null),
+        ('avc1', mp4HvcC(bitDepth: 10), null),
+      ]) {
+        final probe = await probeSphericalMetadata(
+          _reader(mp4File(mp4Moov([mp4VideoTrack([], codec: codec, config: config)]))),
+        );
+
+        expect(probe.bitDepth, expected, reason: '$codec ${String.fromCharCodes(config.sublist(4, 8))}');
+        expect(probe.tracks.single.bitDepth, expected);
+      }
+    });
+
+    test('takes the bit depth of HEVC from its profile when the reserved bits are not set', () async {
+      for (final (profile, expected) in [(2, 10), (1, 8), (4, null)]) {
+        final probe = await _probe(
+          mp4File(mp4Moov([mp4VideoTrack([], config: mp4HvcC(profile: profile, reservedBits: false))])),
+        );
+
+        expect(probe.bitDepth, expected, reason: 'profile $profile');
+      }
+    });
+
+    group('an hvcC whose profile and level are zeros, as the Insta360 X4 writes it (docs/18-test-media.md, F6)', () {
+      Future<SphericalProbe> probeOf(List<int> config) => probeSphericalMetadata(
+        _reader(mp4File(mp4Moov([mp4VideoTrack([], width: 3840, height: 3840, config: config)]))),
+      );
+
+      test('the fixture is laid out as the SPS of the X4: one sub layer more, emulation prevention bytes', () {
+        expect(hevcSpsNal(maxSubLayersMinus1: 1).sublist(0, 9), [0x42, 0x01, 0x02, 0x01, 0x60, 0x00, 0x00, 0x03, 0x00]);
+      });
+
+      test('gives the profile, the level and the bit depth of the sequence parameter set', () async {
+        for (final (sps, codecs, bitDepth) in [
+          (hevcSpsNal(maxSubLayersMinus1: 1), 'hvc1.1.6.L183', 8),
+          (hevcSpsNal(), 'hvc1.1.6.L183', 8),
+          (
+            hevcSpsNal(
+              profile: 2,
+              flags: 0x20000000,
+              highTier: true,
+              level: 156,
+              conformanceWindow: [0, 0, 0, 4],
+              bitDepth: 10,
+            ),
+            'hvc1.2.4.H156',
+            10,
+          ),
+          (
+            hevcSpsNal(
+              space: 1,
+              profile: 4,
+              flags: 0x08000000,
+              level: 153,
+              maxSubLayersMinus1: 2,
+              subLayers: [(true, true), (false, true)],
+              chromaFormat: 3,
+              width: 7680,
+              height: 3840,
+              bitDepth: 12,
+            ),
+            'hvc1.A4.10.L153',
+            12,
+          ),
+        ]) {
+          final probe = await probeOf(mp4HvcCOfX4(sps));
+
+          expect(probe.codecs, codecs);
+          expect(probe.bitDepth, bitDepth, reason: codecs);
+          expect(probe.videoTracks.single.codecs, codecs);
+          expect(probe.videoTracks.single.bitDepth, bitDepth);
+        }
+      });
+
+      test('keeps the profile of a set cut short after it, and the zeros without a set to read', () async {
+        // The NAL header, a byte, the profile_tier_level with its three emulation prevention bytes, and no more
+        final cut = await probeOf(mp4HvcCOfX4(hevcSpsNal(maxSubLayersMinus1: 1, length: 18)));
+        expect((cut.codecs, cut.bitDepth), ('hvc1.1.6.L183', null));
+
+        final short = await probeOf(mp4HvcCOfX4(hevcSpsNal(length: 10)));
+        expect((short.codecs, short.bitDepth), ('hvc1.0.0.L0', null));
+
+        final none = await probeOf(mp4HvcC(profile: 0, flags: 0, level: 0, reservedBits: false, blank: true));
+        expect((none.codecs, none.bitDepth), ('hvc1.0.0.L0', null));
+      });
+
+      test('reads no set behind an hvcC that gives its profile or its level', () async {
+        final probe = await probeOf(
+          mp4HvcC(profile: 2, flags: 0x20000000, level: 153, bitDepth: 10, parameterSets: [hevcSpsNal()]),
+        );
+
+        expect((probe.codecs, probe.bitDepth), ('hvc1.2.4.L153', 10));
+      });
+
+      // The real file of F6, read in place when IMMUCH_X4_SAMPLE names it
+      // (VID_20240414_135511_00_027.insv of the test media, never committed)
+      test(
+        'reads hvc1.1.6.L183 and 8 bits for both tracks of a real X4 file',
+        () async {
+          final file = await File(Platform.environment['IMMUCH_X4_SAMPLE']!).open();
+          addTearDown(file.close);
+          final probe = await probeSphericalMetadata((offset, length) async {
+            await file.setPosition(offset);
+            return file.read(length);
+          });
+
+          expect(probe.videoTracks.map((track) => (track.codecs, track.bitDepth, track.codedWidth)), [
+            ('hvc1.1.6.L183', 8, 3840),
+            ('hvc1.1.6.L183', 8, 3840),
+          ]);
+          expect((probe.codecs, probe.bitDepth), ('hvc1.1.6.L183', 8));
+        },
+        skip: Platform.environment['IMMUCH_X4_SAMPLE'] == null
+            ? 'Set IMMUCH_X4_SAMPLE to the path of the X4 file'
+            : false,
+      );
+    });
+
+    test('reads the colour of an nclx and an nclc colr box, and ignores an ICC one', () async {
+      for (final (colr, primaries, transfer, range) in [
+        (mp4Colr(), 9, 18, VideoDynamicRange.hlg),
+        (mp4Colr(type: 'nclc', primaries: 1, transfer: 1), 1, 1, VideoDynamicRange.sdr),
+        (mp4Colr(transfer: 16), 9, 16, VideoDynamicRange.pq),
+        (mp4Box('colr', [...ascii.encode('prof'), ...mp4Zeros(20)]), null, null, null),
+      ]) {
+        final probe = await _probe(
+          mp4File(
+            mp4Moov([
+              mp4VideoTrack([colr], config: mp4HvcC(profile: 2, bitDepth: 10)),
+            ]),
+          ),
+        );
+
+        expect((probe.colourPrimaries, probe.transferCharacteristics), (primaries, transfer));
+        expect(probe.dynamicRange, range);
+      }
+    });
+
+    test('takes the colour of a VP9 configuration when there is no colr box', () async {
+      final vp9 = await _probe(
+        mp4File(mp4Moov([mp4VideoTrack([], codec: 'vp09', config: mp4VpcC(bitDepth: 10, primaries: 9, transfer: 16))])),
+      );
+      expect((vp9.bitDepth, vp9.colourPrimaries, vp9.transferCharacteristics), (10, 9, 16));
+
+      final both = await _probe(
+        mp4File(
+          mp4Moov([
+            mp4VideoTrack(
+              [mp4Colr(primaries: 1, transfer: 1)],
+              codec: 'vp09',
+              config: mp4VpcC(primaries: 9, transfer: 16),
+            ),
+          ]),
+        ),
+      );
+      expect((both.colourPrimaries, both.transferCharacteristics), (1, 1));
+    });
+
+    test(
+      'flags Dolby Vision for an HEVC sample entry that carries a dvvC box, and keeps its HEVC codecs string',
+      () async {
+        final probe = await _probe(
+          mp4File(
+            mp4Moov([
+              mp4VideoTrack([mp4DoviC()], config: mp4HvcC(profile: 2, flags: 0x20000000, level: 153, bitDepth: 10)),
+            ]),
+          ),
+        );
+
+        expect(probe.dolbyVision, isTrue);
+        expect(probe.codecs, 'hvc1.2.4.L153');
+        expect(probe.bitDepth, 10);
+
+        final dvh1 = await _probe(
+          mp4File(
+            mp4Moov([
+              mp4VideoTrack([mp4DoviC()], codec: 'dvh1', config: mp4HvcC(profile: 2, bitDepth: 10)),
+            ]),
+          ),
+        );
+        expect(dvh1.dolbyVision, isTrue);
+        expect(dvh1.bitDepth, 10, reason: 'from the hvcC box of its base layer');
+
+        final plain = await _probe(mp4File(mp4Moov([mp4VideoTrack([], config: mp4HvcC())])));
+        expect(plain.dolbyVision, isFalse);
+      },
+    );
+
+    test('reads the average bit rate a btrt box declares', () async {
+      for (final (avg, expected) in [(120000000, 120000000), (0, null)]) {
+        final probe = await _probe(
+          mp4File(
+            mp4Moov([
+              mp4VideoTrack([mp4Btrt(buffer: 1000, max: 200000000, avg: avg)]),
+            ]),
+          ),
+        );
+
+        expect(probe.declaredBitRate, expected);
+      }
+    });
+
+    test('computes the bit rate of the video track from its sample sizes', () async {
+      final sizes = await _probe(
+        mp4File(
+          mp4Moov([
+            mp4VideoTrack(
+              [],
+              stsz: mp4Stsz(sizes: [1000, 2000, 3000]),
+              timescale: 30,
+              timeToSample: [(3, 1)],
+            ),
+          ]),
+        ),
+      );
+      expect(sizes.videoBitRate, 480000);
+
+      final constant = await _probe(
+        mp4File(
+          mp4Moov([
+            mp4VideoTrack([], stsz: mp4Stsz(sampleSize: 500, count: 30), timescale: 30, timeToSample: [(30, 1)]),
+          ]),
+        ),
+      );
+      expect(constant.videoBitRate, 120000);
+    });
+
+    test('adds the bit rates of two video tracks, and leaves out the other tracks', () async {
+      List<int> track() => mp4VideoTrack(
+        [],
+        stsz: mp4Stsz(sizes: [1000, 2000, 3000]),
+        timescale: 30,
+        timeToSample: [(3, 1)],
+      );
+
+      final probe = await _probe(mp4File(mp4Moov([track(), mp4AudioTrack(), track()])));
+
+      expect(probe.videoBitRate, 960000);
+    });
+
+    test('gives no video bit rate for a sample size table cut short', () async {
+      for (final stsz in [
+        mp4Stsz(sizes: [1000, 2000, 3000], count: 100),
+        null,
+      ]) {
+        final probe = await _probe(
+          mp4File(
+            mp4Moov([
+              mp4VideoTrack([], stsz: stsz, timescale: 30, timeToSample: [(3, 1)]),
+            ]),
+          ),
+        );
+
+        expect(probe.videoBitRate, isNull);
+      }
+      // One track of two without a usable table: no sum
+      final probe = await _probe(
+        mp4File(
+          mp4Moov([
+            mp4VideoTrack(
+              [],
+              stsz: mp4Stsz(sizes: [1000, 2000, 3000]),
+              timescale: 30,
+              timeToSample: [(3, 1)],
+            ),
+            mp4VideoTrack([], timescale: 30, timeToSample: [(3, 1)]),
+          ]),
+        ),
+      );
+      expect(probe.videoBitRate, isNull);
+    });
+
+    test('computes the media bit rate from the mdat boxes before a moov box at the end', () async {
+      for (final version in [0, 1]) {
+        final probe = await _probe(
+          mp4File(
+            mp4Moov([mp4VideoTrack([])], mvhd: mp4Mvhd(timescale: 1000, duration: 2000, version: version)),
+            moovAtEnd: true,
+            mdat: mp4Box('mdat', mp4Zeros(100000)),
+          ),
+        );
+
+        expect(probe.mediaBitRate, 400000, reason: 'mvhd version $version');
+      }
+    });
+
+    test('reads the header of the mdat box after a moov box at the head, in the same single read', () async {
+      final reads = <(int, int)>[];
+
+      final probe = await _probe(
+        mp4File(mp4Moov([mp4VideoTrack([])], mvhd: mp4Mvhd(timescale: 1000, duration: 1000))),
+        reads: reads,
+      );
+
+      expect(probe.mediaBitRate, 32768);
+      expect(reads, [(0, 65536)]);
+    });
+
+    test('gives no media bit rate without a movie duration, or with media data of unknown length', () async {
+      final noDuration = await _probe(mp4File(mp4Moov([mp4VideoTrack([])]), moovAtEnd: true));
+      expect(noDuration.mediaBitRate, isNull);
+
+      final file = mp4File(mp4Moov([mp4VideoTrack([])], mvhd: mp4Mvhd(timescale: 1000, duration: 1000)))
+        ..setAll(mp4Ftyp.length + mp4Moov([mp4VideoTrack([])], mvhd: mp4Mvhd()).length, mp4Uint32(0));
+      expect((await _probe(file)).mediaBitRate, isNull);
+    });
+  });
+
+  group('tracks', () {
+    // The tracks of a DJI Osmo 360 file: two square HEVC Main 10 videos, the sound, two djmd and two dbgi metadata
+    // tracks
+    List<int> osmoVideo(int trackId) => mp4VideoTrack(
+      [],
+      width: 3840,
+      height: 3840,
+      config: mp4HvcC(profile: 2, highTier: true, flags: 0x20000000, level: 156, bitDepth: 10),
+      timescale: 25000,
+      timeToSample: [(585, 1000)],
+      trackId: trackId,
+      handlerType: 'vide',
+      handlerName: 'VideoHandler',
+      durationTicks: 585000,
+    );
+
+    final osmoMoov = mp4Moov([
+      osmoVideo(1),
+      osmoVideo(2),
+      mp4AudioTrack(trackId: 3, handlerType: 'soun', handlerName: 'SoundHandler'),
+      mp4MetaTrack('djmd', trackId: 4),
+      mp4MetaTrack('djmd', trackId: 5),
+      mp4MetaTrack('dbgi', handlerName: 'CAM dbgi', trackId: 6),
+      mp4MetaTrack('dbgi', handlerName: 'CAM dbgi', trackId: 7),
+    ]);
+
+    test('lists every track in moov order, two of them videos, as an Osmo 360 file has them', () async {
+      final probe = await probeSphericalMetadata(_reader(mp4File(osmoMoov, moovAtEnd: true)));
+
+      ProbedTrack video(int index) => ProbedTrack(
+        index: index,
+        trackId: index + 1,
+        handlerType: 'vide',
+        handlerName: 'VideoHandler',
+        codec: 'hvc1',
+        codecs: 'hvc1.2.4.H156',
+        codedWidth: 3840,
+        codedHeight: 3840,
+        frameRate: 25,
+        durationMs: 23400,
+        bitDepth: 10,
+      );
+      expect(probe.tracks, [
+        video(0),
+        video(1),
+        const ProbedTrack(index: 2, trackId: 3, handlerType: 'soun', handlerName: 'SoundHandler', codec: 'mp4a'),
+        const ProbedTrack(index: 3, trackId: 4, handlerType: 'meta', handlerName: 'CAM meta', codec: 'djmd'),
+        const ProbedTrack(index: 4, trackId: 5, handlerType: 'meta', handlerName: 'CAM meta', codec: 'djmd'),
+        const ProbedTrack(index: 5, trackId: 6, handlerType: 'meta', handlerName: 'CAM dbgi', codec: 'dbgi'),
+        const ProbedTrack(index: 6, trackId: 7, handlerType: 'meta', handlerName: 'CAM dbgi', codec: 'dbgi'),
+      ]);
+      expect(probe.videoTracks, [video(0), video(1)]);
+      expect(probe.tracks.map((track) => track.isVideo), [true, true, false, false, false, false, false]);
+      // The fields of the probe are those of the first video track
+      expect((probe.codec, probe.codecs, probe.codedWidth, probe.bitDepth), ('hvc1', 'hvc1.2.4.H156', 3840, 10));
+    });
+
+    test('decodes counted handler names, as QuickTime writes them, and NUL terminated ones', () async {
+      final probe = await probeSphericalMetadata(
+        _reader(
+          mp4File(
+            mp4Moov([
+              mp4VideoTrack([], handlerType: 'vide', handlerName: 'GoPro H.265', countedHandlerName: true),
+              mp4AudioTrack(handlerType: 'soun', handlerName: 'Ambarella AAC', countedHandlerName: true),
+              mp4AudioTrack(handlerType: 'soun', handlerName: 'Lens 0'),
+              mp4AudioTrack(handlerType: 'soun', handlerName: '  GoPro AAC  '),
+            ]),
+          ),
+        ),
+      );
+
+      expect(probe.tracks.map((track) => track.handlerName), ['GoPro H.265', 'Ambarella AAC', 'Lens 0', 'GoPro AAC']);
+    });
+
+    test('reads a counted handler name without a NUL, to the end of its box', () async {
+      // "\x0bGoPro AAC  ": the length, then the name and its padding, as the GoPro MAX writes it
+      final hdlr = mp4FullBox('hdlr', [
+        ...mp4Zeros(4),
+        ...ascii.encode('soun'),
+        ...mp4Zeros(12),
+        11,
+        ...ascii.encode('GoPro AAC  '),
+      ]);
+      final trak = mp4Box('trak', [
+        ...mp4Tkhd(trackId: 2),
+        ...mp4Box('mdia', [
+          ...mp4Mdhd(),
+          ...hdlr,
+          ...mp4Box('minf', [
+            ...mp4Box('stbl', [
+              ...mp4FullBox('stsd', [...mp4Uint32(1), ...mp4Box('mp4a', mp4Zeros(28))]),
+            ]),
+          ]),
+        ]),
+      ]);
+
+      final probe = await probeSphericalMetadata(_reader(mp4File(mp4Moov([trak]))));
+
+      expect(probe.tracks.single.handlerName, 'GoPro AAC');
+      expect(probe.tracks.single.handlerType, 'soun');
+      expect(probe.tracks.single.trackId, 2);
+    });
+
+    test('takes a track without a handler type for a video when its sample entry is a visual one', () async {
+      final probe = await probeSphericalMetadata(_reader(mp4File(mp4Moov([mp4VideoTrack([]), mp4AudioTrack()]))));
+
+      expect(probe.tracks.map((track) => (track.handlerType, track.codec, track.isVideo)), [
+        (null, 'hvc1', true),
+        (null, 'mp4a', false),
+      ]);
+      expect(probe.tracks.first.trackId, isNull, reason: 'a track_ID of 0 is no ID');
+      // A handler that says something else wins over the sample entry
+      final other = await probeSphericalMetadata(_reader(mp4File(mp4Moov([mp4VideoTrack([], handlerType: 'auxv')]))));
+      expect(other.tracks.single.isVideo, isFalse);
+      expect(other.videoTracks, isEmpty);
+    });
+
+    test('lists the tracks of a moov box longer than the bytes read, with one more read for the second', () async {
+      final file = mp4File(
+        mp4Moov([
+          mp4VideoTrack(
+            [],
+            width: 3840,
+            height: 3840,
+            config: mp4HvcC(profile: 2, bitDepth: 10),
+            trackId: 1,
+            handlerType: 'vide',
+            stsz: mp4Stsz(sizes: List.filled(512 * 1024, 100000)),
+            timescale: 30,
+            timeToSample: [(512 * 1024, 1)],
+          ),
+          mp4VideoTrack(
+            [],
+            width: 3840,
+            height: 3840,
+            config: mp4HvcC(profile: 2, bitDepth: 10),
+            trackId: 2,
+            handlerType: 'vide',
+          ),
+        ]),
+        moovAtEnd: true,
+      );
+      const maxMoovLength = 1024 * 1024;
+      final reads = <(int, int)>[];
+
+      final probe = await probeSphericalMetadata(_reader(file, reads), maxMoovLength: maxMoovLength);
+
+      expect(probe.videoTracks.map((track) => (track.trackId, track.codedWidth, track.bitDepth)), [
+        (1, 3840, 10),
+        (2, 3840, 10),
+      ]);
+      expect(probe.codecs, 'hvc1.2.6.L153');
+      expect(probe.videoBitRate, isNull, reason: 'the first size table is cut');
+      final moovRead = reads.indexWhere((read) => read.$2 == maxMoovLength);
+      expect(moovRead, isNot(-1), reason: '$reads');
+      expect(reads.sublist(moovRead + 1), hasLength(1), reason: '$reads');
+      expect(reads.last.$2, lessThanOrEqualTo(256 * 1024));
+    });
+
+    test('lists at most 16 tracks', () async {
+      final probe = await probeSphericalMetadata(
+        _reader(mp4File(mp4Moov([for (var i = 0; i < 20; i++) mp4AudioTrack(trackId: i + 1)]))),
+      );
+
+      expect(probe.tracks, hasLength(16));
+      expect(probe.tracks.last.trackId, 16);
+    });
+
+    test('tells probes with other tracks apart', () async {
+      final one = await probeSphericalMetadata(_reader(mp4File(mp4Moov([mp4VideoTrack([])]))));
+      final two = await probeSphericalMetadata(_reader(mp4File(mp4Moov([mp4VideoTrack([]), mp4AudioTrack()]))));
+
+      expect(one, isNot(two));
+      expect(one, await probeSphericalMetadata(_reader(mp4File(mp4Moov([mp4VideoTrack([])])))));
+      expect(one.hashCode, (await probeSphericalMetadata(_reader(mp4File(mp4Moov([mp4VideoTrack([])]))))).hashCode);
+    });
+  });
+
+  group('listTopLevelBoxes', () {
+    final moov = mp4Moov([mp4VideoTrack([], handlerType: 'vide')]);
+    final camd = mp4Box('camd', [...mp4Ftyp, ...mp4Box('mdat', mp4Zeros(100))]);
+
+    test('lists the boxes of a file to its end, a trailing camd box included', () async {
+      final file = Uint8List.fromList([
+        ...mp4Ftyp,
+        ...mp4Box('free'),
+        ...mp4LargeBox('mdat', mp4Zeros(100000)),
+        ...moov,
+        ...camd,
+      ]);
+      final reads = <(int, int)>[];
+
+      final boxes = await listTopLevelBoxes(_reader(file, reads));
+
+      final mdatAt = mp4Ftyp.length + 8;
+      final moovAt = mdatAt + 100016;
+      expect(boxes, [
+        (type: 'ftyp', offset: 0, size: mp4Ftyp.length, headerLength: 8),
+        (type: 'free', offset: mp4Ftyp.length, size: 8, headerLength: 8),
+        (type: 'mdat', offset: mdatAt, size: 100016, headerLength: 16),
+        (type: 'moov', offset: moovAt, size: moov.length, headerLength: 8),
+        (type: 'camd', offset: moovAt + moov.length, size: camd.length, headerLength: 8),
+      ]);
+      // The head of the file, then a header each past it, the last one at the end of the file
+      expect(reads, [
+        (0, 64 * 1024),
+        (moovAt, 16),
+        (moovAt + moov.length, 16),
+        (moovAt + moov.length + camd.length, 16),
+      ]);
+    });
+
+    test('stops cleanly at the bare trailer an Insta360 X3 appends after its moov box', () async {
+      final mp4 = mp4File(moov, moovAtEnd: true);
+      final file = insta360File([
+        insta360Record(3, rawImuSamples([(32768, 32768, 32768), (32768, 32768, 32768)])),
+        insta360Record(1, x3Metadata(), format: 1),
+      ], body: mp4);
+
+      final boxes = await listTopLevelBoxes(_reader(file));
+
+      expect(boxes.map((box) => box.type), ['ftyp', 'mdat', 'moov']);
+      // The probe reads such a file as any other
+      expect((await probeSphericalMetadata(_reader(file))).videoTracks, hasLength(1));
+    });
+
+    test(
+      'stops at a box that runs to the end of the file, at a damaged header, and after the most boxes asked',
+      () async {
+        final toEnd = Uint8List.fromList([...mp4Ftyp, ...mp4Uint32(0), ...ascii.encode('mdat'), ...mp4Zeros(100)]);
+        expect(await listTopLevelBoxes(_reader(toEnd)), [
+          (type: 'ftyp', offset: 0, size: mp4Ftyp.length, headerLength: 8),
+          (type: 'mdat', offset: mp4Ftyp.length, size: null, headerLength: 8),
+        ]);
+
+        final damaged = Uint8List.fromList([...mp4Ftyp, ...mp4Uint32(4), ...ascii.encode('free'), ...mp4Zeros(100)]);
+        expect((await listTopLevelBoxes(_reader(damaged))).map((box) => box.type), ['ftyp']);
+
+        final many = Uint8List.fromList([for (var i = 0; i < 10; i++) ...mp4Box('free')]);
+        expect(await listTopLevelBoxes(_reader(many), maxBoxes: 4), hasLength(4));
+        expect(await listTopLevelBoxes(_reader(Uint8List(0))), isEmpty);
+      },
+    );
   });
 }

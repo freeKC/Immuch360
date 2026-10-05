@@ -2,6 +2,32 @@ package app.alextran.immich.core
 
 import android.media.MediaCodecInfo
 import android.media.MediaCodecInfo.CodecCapabilities
+import android.media.MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10
+import android.media.MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10HDR10
+import android.media.MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10HDR10Plus
+import android.media.MediaCodecInfo.CodecProfileLevel.AV1ProfileMain8
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileBaseline
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileConstrainedBaseline
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileConstrainedHigh
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileExtended
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileHigh
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileHigh10
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileHigh422
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileHigh444
+import android.media.MediaCodecInfo.CodecProfileLevel.AVCProfileMain
+import android.media.MediaCodecInfo.CodecProfileLevel.HEVCProfileMain
+import android.media.MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10
+import android.media.MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10
+import android.media.MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10Plus
+import android.media.MediaCodecInfo.CodecProfileLevel.HEVCProfileMainStill
+import android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile0
+import android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile1
+import android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile2
+import android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile2HDR
+import android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile2HDR10Plus
+import android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile3
+import android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile3HDR
+import android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile3HDR10Plus
 import android.media.MediaCodecInfo.VideoCapabilities
 import android.media.MediaCodecInfo.VideoCapabilities.PerformancePoint
 import android.media.MediaCodecList
@@ -10,6 +36,7 @@ import android.util.Log
 import androidx.annotation.OptIn
 import androidx.annotation.RequiresApi
 import androidx.media3.common.C
+import androidx.media3.common.ColorInfo
 import androidx.media3.common.Format
 import androidx.media3.common.util.CodecSpecificDataUtil
 import androidx.media3.common.util.UnstableApi
@@ -19,6 +46,7 @@ import app.alextran.immich.immersive.ImmersiveMedia
 import app.alextran.immich.immersive.isHorizonOsDevice
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.floor
+import kotlin.math.max
 
 /**
  * What the video decoders of the device take. Asked before a video plays (by Flutter through VideoDecoderApi, to
@@ -30,6 +58,10 @@ import kotlin.math.floor
  * The list does not change while the app runs, so each answer is cached per question. The players ask on the main
  * thread: by then Media3 has read the list on its playback thread, and the system keeps it for the whole process, so
  * the question costs little there.
+ *
+ * A question may be about several streams of the same size decoded at once (the two lenses of a raw 360° video, each
+ * in a decoder of its own): the decoder must then allow that many instances, and its level and performance points
+ * must take the summed rate.
  */
 object VideoDecoders {
   private const val TAG = "VideoDecoders"
@@ -80,22 +112,42 @@ object VideoDecoders {
 
   /**
    * Codecs whose profile is checked against the profiles a decoder lists: there the profile is mostly the bit depth
-   * (HEVC Main 10, AV1 10 bit, VP9 profile 2), which a decoder either has or not. H.264 is left out: decoders list
-   * their profiles unevenly (constrained baseline without baseline, for one) and every one of them takes the 8 bit
-   * profiles that cameras and phones write.
+   * (HEVC Main 10, AV1 10 bit, VP9 profile 2) or the HDR transfer (Main 10 HDR10), which a decoder either has or not.
+   * H.264 is only checked for its 10 bit, 4:2:2 and 4:4:4 profiles (see [requiredProfile]): decoders list their 8 bit
+   * profiles unevenly (constrained baseline without baseline, for one) and every one of them takes the 8 bit profiles
+   * that cameras and phones write, while hardly any takes High 10.
    */
-  private val profileCheckedMimes = setOf(MIME_HEVC, MIME_AV1, MIME_VP9)
+  private val profileCheckedMimes = setOf(MIME_HEVC, MIME_AV1, MIME_VP9, MIME_AVC)
 
-  /** The answer for a video: see the VideoDecoderApi pigeon, whose DecodeVerdict carries the same fields. */
+  /** Frame rate a question about several streams counts with when the video does not tell its own. */
+  private const val DEFAULT_INSTANCES_FRAME_RATE = 30.0
+
+  /**
+   * Pixels per second the H.264 decoder of the Meta Quest 3 was measured to sustain: 4096x2304 at 30 fps. Two streams
+   * decoded at once share it, see [exceedsMeasuredLimit].
+   */
+  private val maxAvcPixelRate =
+    ImmersiveMedia.MAX_AVC_LONG_SIDE.toDouble() * ImmersiveMedia.MAX_AVC_SHORT_SIDE * DEFAULT_INSTANCES_FRAME_RATE
+
+  /**
+   * The answer for a video: see the VideoDecoderApi pigeon, whose DecodeVerdict carries the same fields. [profile] is
+   * the profile the decoders were checked for, named as on the decoders page; [missingProfile] the same name when no
+   * decoder of the device lists it, so that the user learns the refusal comes from it.
+   */
   data class Verdict(
     val supported: Boolean,
     val hardware: Boolean,
     val maxWidth: Int,
     val maxHeight: Int,
     val reason: String,
+    val profile: String? = null,
+    val missingProfile: String? = null,
   )
 
-  /** One video decoder of the device for one MIME type it decodes, with its largest frame and its rate there. */
+  /**
+   * One video decoder of the device for one MIME type it decodes, with its largest frame and its rate there, and the
+   * profiles it lists with their highest level (see [profilesSummary]).
+   */
   data class Decoder(
     val name: String,
     val mime: String,
@@ -103,6 +155,7 @@ object VideoDecoders {
     val maxWidth: Int,
     val maxHeight: Int,
     val maxFrameRate: Double,
+    val profiles: List<String> = emptyList(),
   )
 
   private data class Question(
@@ -111,6 +164,12 @@ object VideoDecoders {
     val width: Int,
     val height: Int,
     val frameRate: Double,
+    // Bits per luma sample, 0 when unknown
+    val bitDepth: Int,
+    // Media3 C.COLOR_TRANSFER_* value, Format.NO_VALUE when unknown
+    val colorTransfer: Int,
+    // Streams of this size decoded at once, each by a decoder instance of its own
+    val instances: Int,
   )
 
   private val answers = ConcurrentHashMap<Question, Verdict>()
@@ -181,11 +240,25 @@ object VideoDecoders {
 
   /**
    * True when [width] x [height] of [mime] is above what was measured on a Meta Quest ([horizonOs]), whatever its
-   * decoder list says: H.264 above 4096x2304, see [ImmersiveMedia.exceedsAvcDecoder]. Other devices and codecs follow
-   * their list.
+   * decoder list says: H.264 above 4096x2304, see [ImmersiveMedia.exceedsAvcDecoder]. With [instances] streams of that
+   * size at once, H.264 also exceeds when their summed pixel rate, at [frameRate] (30 when unknown or lower), is above
+   * the 4096x2304 at 30 fps measured there: the two 2880x2880 lenses of an Insta360 X3 recording are refused, two
+   * 1080x1080 transcoded ones pass. Other devices and codecs follow their list.
    */
-  fun exceedsMeasuredLimit(mime: String?, width: Int, height: Int, horizonOs: Boolean): Boolean =
-    horizonOs && ImmersiveMedia.exceedsAvcDecoder(mime, width, height)
+  fun exceedsMeasuredLimit(
+    mime: String?,
+    width: Int,
+    height: Int,
+    horizonOs: Boolean,
+    instances: Int = 1,
+    frameRate: Double = 0.0,
+  ): Boolean {
+    if (!horizonOs) return false
+    if (ImmersiveMedia.exceedsAvcDecoder(mime, width, height)) return true
+    if (instances < 2 || !mime.equals(MIME_AVC, ignoreCase = true) || width <= 0 || height <= 0) return false
+    val rate = max(frameRate, DEFAULT_INSTANCES_FRAME_RATE)
+    return instances.toDouble() * width * height * rate > maxAvcPixelRate
+  }
 
   /**
    * The largest frame to report for a decoder of [mime] whose list says [width] x [height]: on a Meta Quest
@@ -246,10 +319,65 @@ object VideoDecoders {
   /**
    * Whether the device decodes a video of [codec] (MIME type, four character code or codec name, see [mimeFor]) with
    * the RFC 6381 [codecs] when known, of [width] x [height] (0 or less when unknown: the codec alone is checked) at
-   * [frameRate] frames per second (0 or less when unknown). An unknown codec is not checked and counts as supported:
-   * the player still falls back on the transcoded stream if the original fails.
+   * [frameRate] frames per second (0 or less when unknown), of [bitDepth] bits per luma sample and of the ITU-T H.273
+   * [transferCharacteristics] (1 BT.709, 16 PQ, 18 HLG), each 0 when unknown, [instances] streams of that size at once.
+   * An unknown codec is not checked and counts as supported: the player still falls back on the transcoded stream if
+   * the original fails. For Flutter, see VideoDecoderApi.
    */
-  fun canDecode(codec: String, codecs: String?, width: Int, height: Int, frameRate: Double): Verdict {
+  @OptIn(UnstableApi::class)
+  fun canDecode(
+    codec: String,
+    codecs: String?,
+    width: Int,
+    height: Int,
+    frameRate: Double,
+    bitDepth: Int = 0,
+    transferCharacteristics: Int = 0,
+    instances: Int = 1,
+  ): Verdict =
+    canDecodeTransfer(
+      codec,
+      codecs,
+      width,
+      height,
+      frameRate,
+      bitDepth,
+      if (transferCharacteristics > 0) {
+        ColorInfo.isoTransferCharacteristicsToColorTransfer(transferCharacteristics)
+      } else {
+        Format.NO_VALUE
+      },
+      instances,
+    )
+
+  /**
+   * [canDecode] for the video track [format] the player selected, with the colour Media3 read from the container or
+   * the bitstream, [instances] tracks of that size at once.
+   */
+  @OptIn(UnstableApi::class)
+  fun canDecode(format: Format, instances: Int = 1): Verdict =
+    canDecodeTransfer(
+      format.sampleMimeType ?: format.codecs.orEmpty(),
+      format.codecs,
+      format.width,
+      format.height,
+      format.frameRate.toDouble(),
+      (format.colorInfo?.lumaBitdepth ?: Format.NO_VALUE).coerceAtLeast(0),
+      format.colorInfo?.colorTransfer ?: Format.NO_VALUE,
+      instances,
+    )
+
+  /** [canDecode] with the transfer as Media3 counts it ([colorTransfer], a C.COLOR_TRANSFER_* value or NO_VALUE). */
+  private fun canDecodeTransfer(
+    codec: String,
+    codecs: String?,
+    width: Int,
+    height: Int,
+    frameRate: Double,
+    bitDepth: Int,
+    colorTransfer: Int,
+    instances: Int,
+  ): Verdict {
     val mime = mimeFor(codec) ?: codecs?.let(::mimeFor)
     if (mime == null) {
       return Verdict(supported = true, hardware = false, maxWidth = 0, maxHeight = 0, reason = "unknown codec '$codec'")
@@ -261,6 +389,9 @@ object VideoDecoders {
         width = width.coerceAtLeast(0),
         height = height.coerceAtLeast(0),
         frameRate = if (frameRate > 0) frameRate else 0.0,
+        bitDepth = bitDepth.coerceAtLeast(0),
+        colorTransfer = if (colorTransfer > 0) colorTransfer else Format.NO_VALUE,
+        instances = instances.coerceAtLeast(1),
       )
     answers[question]?.let { return it }
     val verdict =
@@ -271,20 +402,30 @@ object VideoDecoders {
         Log.e(TAG, "cannot check $question", e)
         Verdict(supported = true, hardware = false, maxWidth = 0, maxHeight = 0, reason = "check failed: $e")
       }
-    Log.i(TAG, "${codecName(mime)} ${question.width}x${question.height} at ${question.frameRate} fps: $verdict")
+    Log.i(
+      TAG,
+      "${streamsOf(question.instances)}${codecName(mime)} ${question.width}x${question.height} at " +
+        "${question.frameRate} fps, " +
+        "${if (question.bitDepth > 0) "${question.bitDepth} bit" else "bit depth unknown"}, " +
+        "transfer ${transferName(question.colorTransfer)}: $verdict",
+    )
     answers[question] = verdict
     return verdict
   }
 
-  /** [canDecode] for the video track [format] the player selected. */
-  fun canDecode(format: Format): Verdict =
-    canDecode(
-      format.sampleMimeType ?: format.codecs.orEmpty(),
-      format.codecs,
-      format.width,
-      format.height,
-      format.frameRate.toDouble(),
-    )
+  /** "2 x " before the size of a question about two streams, nothing for one. */
+  private fun streamsOf(instances: Int): String = if (instances > 1) "$instances x " else ""
+
+  /** Name of a Media3 C.COLOR_TRANSFER_* value for the logs. */
+  fun transferName(colorTransfer: Int): String =
+    when (colorTransfer) {
+      C.COLOR_TRANSFER_SDR -> "SDR"
+      C.COLOR_TRANSFER_ST2084 -> "PQ"
+      C.COLOR_TRANSFER_HLG -> "HLG"
+      C.COLOR_TRANSFER_SRGB -> "sRGB"
+      C.COLOR_TRANSFER_GAMMA_2_2 -> "gamma 2.2"
+      else -> "unknown"
+    }
 
   /**
    * Every video decoder of the device, once per MIME type it decodes, with its largest frame (the widest it takes,
@@ -298,10 +439,13 @@ object VideoDecoders {
       val hardware = isHardware(info)
       for (type in info.supportedTypes) {
         if (!type.startsWith("video/", ignoreCase = true)) continue
-        val video = capabilitiesOf(info, type)?.videoCapabilities ?: continue
+        val capabilities = capabilitiesOf(info, type) ?: continue
+        val video = capabilities.videoCapabilities ?: continue
         val (width, height) = largestSize(video, type, horizonOs)
         val rate = runCatching { video.getSupportedFrameRatesFor(width, height).upper }.getOrDefault(0.0)
-        decoders += Decoder(info.name, type.lowercase(), hardware, width, height, rate)
+        val profiles =
+          profilesSummary(type.lowercase(), capabilities.profileLevels.orEmpty().map { it.profile to it.level })
+        decoders += Decoder(info.name, type.lowercase(), hardware, width, height, rate, profiles)
       }
     }
     return decoders.sortedWith(compareBy({ it.mime }, { if (it.hardware) 0 else 1 }))
@@ -313,21 +457,35 @@ object VideoDecoders {
     val horizonOs = isHorizonOsDevice()
     val sized = question.width > 0 && question.height > 0
     val size = "${question.width}x${question.height}"
-    if (sized && exceedsMeasuredLimit(mime, question.width, question.height, horizonOs)) {
+    val required =
+      requiredProfile(
+        mime,
+        codecsProfileOf(mime, question.codecs, question.colorTransfer),
+        question.bitDepth,
+        question.colorTransfer,
+      )
+    val acceptable = required?.let { acceptableProfiles(mime, it) }
+    val profile = required?.let { profileName(mime, it) }
+    if (
+      sized &&
+        exceedsMeasuredLimit(mime, question.width, question.height, horizonOs, question.instances, question.frameRate)
+    ) {
+      val streams = streamsOf(question.instances)
+      val rate = if (question.instances > 1) " at ${max(question.frameRate, DEFAULT_INSTANCES_FRAME_RATE)} fps" else ""
       return Verdict(
         supported = false,
         hardware = false,
         maxWidth = ImmersiveMedia.MAX_AVC_LONG_SIDE,
         maxHeight = ImmersiveMedia.MAX_AVC_SHORT_SIDE,
-        reason = "H.264 $size is above the 4096x2304 measured on the Meta Quest 3",
+        reason = "${streams}H.264 $size$rate is above the 4096x2304 at 30 fps measured on the Meta Quest 3",
+        profile = profile,
       )
     }
-    val profile = profileOf(mime, question.codecs)
     val refusals = mutableListOf<String>()
     for (info in candidates) {
       val capabilities = capabilitiesOf(info, mime) ?: continue
       val video = capabilities.videoCapabilities ?: continue
-      val refusal = refusalOf(capabilities, video, question, profile)
+      val refusal = refusalOf(capabilities, video, question, acceptable, profile)
       if (refusal != null) {
         refusals += "${info.name} $refusal"
         continue
@@ -340,6 +498,7 @@ object VideoDecoders {
         maxWidth = maxWidth,
         maxHeight = maxHeight,
         reason = "${info.name} (${if (hardware) "hardware" else "software"})",
+        profile = profile,
       )
     }
     alternativeFor(question)?.let { alternative ->
@@ -352,39 +511,75 @@ object VideoDecoders {
     val best = candidates.first()
     val (maxWidth, maxHeight) =
       capabilitiesOf(best, mime)?.videoCapabilities?.let { largestSize(it, mime, horizonOs) } ?: (0 to 0)
+    // The profile is the reason only when every decoder lists its profiles and none lists one that takes the video: a
+    // decoder that lists nothing, or the right profile, was refused for something else
+    val profileMissing =
+      acceptable != null &&
+        candidates.none { info ->
+          capabilitiesOf(info, mime)?.profileLevels?.let { levels ->
+            levels.isEmpty() || levels.any { it.profile in acceptable }
+          } ?: false
+        }
     return Verdict(
       supported = false,
       hardware = false,
       maxWidth = maxWidth,
       maxHeight = maxHeight,
       reason = refusals.joinToString("; ").ifEmpty { "no decoder for $mime" },
+      profile = profile,
+      missingProfile = if (profileMissing) profile else null,
     )
   }
 
-  /** Why [video] cannot take [question], or null when it can. */
+  /**
+   * Why [video] cannot take [question], or null when it can: a decoder that lists profiles must list one of
+   * [acceptable] (named [profile]), then take the size at the rate. For several streams at once, the decoder must also
+   * allow that many instances, and its level and its performance points must take their summed rate.
+   */
   private fun refusalOf(
     capabilities: CodecCapabilities,
     video: VideoCapabilities,
     question: Question,
-    profile: Int?,
+    acceptable: Set<Int>?,
+    profile: String?,
   ): String? {
     val levels = capabilities.profileLevels
-    if (profile != null && levels.isNotEmpty() && levels.none { it.profile == profile }) {
+    if (acceptable != null && levels.isNotEmpty() && levels.none { it.profile in acceptable }) {
       return "lacks profile $profile"
+    }
+    val instances = question.instances
+    if (instances > 1 && capabilities.maxSupportedInstances < instances) {
+      return "allows ${capabilities.maxSupportedInstances} instances, not $instances"
     }
     if (question.width <= 0 || question.height <= 0) return null
     val width = question.width
     val height = question.height
     val rate = question.frameRate
-    val fits = sizeFits(video, width, height, rate) || (width < height && sizeFits(video, height, width, rate))
-    if (!fits) {
+    if (!sizeFitsEitherWay(video, width, height, rate)) {
       return "does not take ${width}x$height" + if (rate > 0) " at $rate fps" else ""
     }
     if (rate > 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !performanceCovers(video, width, height, rate)) {
       return "has no performance point for ${width}x$height at $rate fps"
     }
+    if (instances <= 1) return null
+    // The streams share the decoder hardware: the level must allow their summed macroblock rate
+    val streamRate = if (rate > 0) rate else DEFAULT_INSTANCES_FRAME_RATE
+    val summedRate = streamRate * instances
+    if (!sizeFitsEitherWay(video, width, height, summedRate)) {
+      return "does not take $instances x ${width}x$height at $streamRate fps"
+    }
+    if (
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+        !performanceCoversInstances(video, width, height, streamRate, instances)
+    ) {
+      return "has no performance point for $instances x ${width}x$height at $streamRate fps"
+    }
     return null
   }
+
+  /** [sizeFits], also turned a quarter for a portrait frame, which a decoder may only take as landscape. */
+  private fun sizeFitsEitherWay(video: VideoCapabilities, width: Int, height: Int, rate: Double): Boolean =
+    sizeFits(video, width, height, rate) || (width < height && sizeFits(video, height, width, rate))
 
   /**
    * Whether the size (and the rate, when known) is within the ranges of [video], asked the way Media3 asks before it
@@ -409,6 +604,29 @@ object VideoDecoders {
     if (points.isNullOrEmpty()) return true
     val wanted = PerformancePoint(width, height, rate.toInt().coerceAtLeast(1))
     if (points.any { it.covers(wanted) }) return true
+    return !performancePointsTrusted
+  }
+
+  /**
+   * Whether the performance points of [video] cover [instances] streams of [width] x [height] at [rate] at once: a
+   * point for frames that many times as large at the same rate (an 8K30 point covers two 3840x3840 at 30), or one for
+   * the same frames that many times as often. Without points, or untrusted ones, the ranges decide, as in
+   * [performanceCovers].
+   */
+  @RequiresApi(Build.VERSION_CODES.Q)
+  private fun performanceCoversInstances(
+    video: VideoCapabilities,
+    width: Int,
+    height: Int,
+    rate: Double,
+    instances: Int,
+  ): Boolean {
+    val points = video.supportedPerformancePoints
+    if (points.isNullOrEmpty()) return true
+    val frameRate = rate.toInt().coerceAtLeast(1)
+    val taller = PerformancePoint(width, height * instances, frameRate)
+    val faster = PerformancePoint(width, height, (rate * instances).toInt().coerceAtLeast(1))
+    if (points.any { it.covers(taller) || it.covers(faster) }) return true
     return !performancePointsTrusted
   }
 
@@ -443,14 +661,186 @@ object VideoDecoders {
   private fun isAlias(info: MediaCodecInfo): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && info.isAlias
 
-  /** The profile the RFC 6381 [codecs] name, as MediaCodecInfo.CodecProfileLevel counts them, for checked codecs. */
+  /**
+   * The profile the RFC 6381 [codecs] name, as MediaCodecInfo.CodecProfileLevel counts them, for checked codecs: what
+   * Media3 derives before it plays the track, with [colorTransfer] set on the format so that a PQ HEVC or AV1 Main 10
+   * video gives the HDR10 profile, as Media3 asks the decoder for.
+   */
   @OptIn(UnstableApi::class)
-  private fun profileOf(mime: String, codecs: String?): Int? {
+  private fun codecsProfileOf(mime: String, codecs: String?, colorTransfer: Int): Int? {
     if (codecs == null || mime !in profileCheckedMimes) return null
     val videoCodecs = Util.getCodecsOfType(codecs, C.TRACK_TYPE_VIDEO) ?: return null
-    val format = Format.Builder().setSampleMimeType(mime).setCodecs(videoCodecs).build()
-    return runCatching { CodecSpecificDataUtil.getCodecProfileAndLevel(format)?.first }.getOrNull()
+    val builder = Format.Builder().setSampleMimeType(mime).setCodecs(videoCodecs)
+    if (colorTransfer != Format.NO_VALUE) {
+      builder.setColorInfo(ColorInfo.Builder().setColorTransfer(colorTransfer).build())
+    }
+    return runCatching { CodecSpecificDataUtil.getCodecProfileAndLevel(builder.build())?.first }.getOrNull()
   }
+
+  /**
+   * The profile a decoder must list for the video: the one of its codecs string ([codecsProfile], from Media3), else
+   * one its [bitDepth] implies. HEVC and AV1 Main 10 with a PQ transfer need Main 10 HDR10, an HLG one Main 10. H.264
+   * is only checked for its 10 bit, 4:2:2 and 4:4:4 profiles. Null when nothing is checked.
+   */
+  fun requiredProfile(mime: String, codecsProfile: Int?, bitDepth: Int, colorTransfer: Int): Int? {
+    val pq = colorTransfer == C.COLOR_TRANSFER_ST2084
+    return when (mime) {
+      MIME_HEVC ->
+        when {
+          codecsProfile == HEVCProfileMain10 && pq -> HEVCProfileMain10HDR10
+          codecsProfile != null -> codecsProfile
+          bitDepth >= 10 -> if (pq) HEVCProfileMain10HDR10 else HEVCProfileMain10
+          else -> null
+        }
+      MIME_AV1 ->
+        when {
+          codecsProfile == AV1ProfileMain10 && pq -> AV1ProfileMain10HDR10
+          codecsProfile != null -> codecsProfile
+          bitDepth >= 10 -> if (pq) AV1ProfileMain10HDR10 else AV1ProfileMain10
+          else -> null
+        }
+      MIME_VP9 -> codecsProfile
+      MIME_AVC ->
+        when {
+          codecsProfile == AVCProfileHigh10 || codecsProfile == AVCProfileHigh422 || codecsProfile == AVCProfileHigh444 ->
+            codecsProfile
+          codecsProfile == null && bitDepth >= 10 -> AVCProfileHigh10
+          else -> null
+        }
+      else -> null
+    }
+  }
+
+  /**
+   * The profiles of which a decoder must list one to take a video of the [required] profile: an HDR profile also plays
+   * on its base 10 bit decoder (Media3 plays such a track, past the capabilities it reports), so a PQ video is not sent
+   * to the transcoded stream for that alone.
+   */
+  fun acceptableProfiles(mime: String, required: Int): Set<Int> =
+    when {
+      mime == MIME_HEVC && (required == HEVCProfileMain10HDR10 || required == HEVCProfileMain10HDR10Plus) ->
+        setOf(required, HEVCProfileMain10)
+      mime == MIME_AV1 && (required == AV1ProfileMain10HDR10 || required == AV1ProfileMain10HDR10Plus) ->
+        setOf(required, AV1ProfileMain10)
+      mime == MIME_VP9 && required == VP9Profile2HDR -> setOf(required, VP9Profile2)
+      else -> setOf(required)
+    }
+
+  private val hevcProfileNames =
+    mapOf(
+      HEVCProfileMain to "Main",
+      HEVCProfileMain10 to "Main 10",
+      HEVCProfileMainStill to "Main Still",
+      HEVCProfileMain10HDR10 to "Main 10 HDR10",
+      HEVCProfileMain10HDR10Plus to "Main 10 HDR10+",
+    )
+
+  private val avcProfileNames =
+    mapOf(
+      AVCProfileBaseline to "Baseline",
+      AVCProfileMain to "Main",
+      AVCProfileExtended to "Extended",
+      AVCProfileHigh to "High",
+      AVCProfileHigh10 to "High 10",
+      AVCProfileHigh422 to "High 4:2:2",
+      AVCProfileHigh444 to "High 4:4:4",
+      AVCProfileConstrainedBaseline to "Constrained Baseline",
+      AVCProfileConstrainedHigh to "Constrained High",
+    )
+
+  private val av1ProfileNames =
+    mapOf(
+      AV1ProfileMain8 to "Main 8",
+      AV1ProfileMain10 to "Main 10",
+      AV1ProfileMain10HDR10 to "Main 10 HDR10",
+      AV1ProfileMain10HDR10Plus to "Main 10 HDR10+",
+    )
+
+  private val vp9ProfileNames =
+    mapOf(
+      VP9Profile0 to "Profile 0",
+      VP9Profile1 to "Profile 1",
+      VP9Profile2 to "Profile 2",
+      VP9Profile3 to "Profile 3",
+      VP9Profile2HDR to "Profile 2 HDR",
+      VP9Profile3HDR to "Profile 3 HDR",
+      VP9Profile2HDR10Plus to "Profile 2 HDR10+",
+      VP9Profile3HDR10Plus to "Profile 3 HDR10+",
+    )
+
+  // The Dolby Vision profile constants are powers of two in the order of the profile numbers: dvav.per (profile 0)
+  // is 1, dav1.10 (profile 10) is 1024
+  private val dolbyVisionProfileNames = (0..10).associate { (1 shl it) to "Profile $it" }
+
+  /**
+   * HEVC levels as the codecs strings write them: L for the main tier, H for the high tier. The constants double from
+   * Main tier level 1 (1) to High tier level 6.2 (33554432), main before high at each level.
+   */
+  private val hevcLevelNames =
+    listOf("1", "2", "2.1", "3", "3.1", "4", "4.1", "5", "5.1", "5.2", "6", "6.1", "6.2")
+      .flatMapIndexed { index, level ->
+        listOf((1 shl (2 * index)) to "L$level", (1 shl (2 * index + 1)) to "H$level")
+      }
+      .toMap()
+
+  private val avcLevelNames =
+    listOf("1", "1b", "1.1", "1.2", "1.3", "2", "2.1", "2.2", "3", "3.1")
+      .plus(listOf("3.2", "4", "4.1", "4.2", "5", "5.1", "5.2", "6", "6.1", "6.2"))
+      .mapIndexed { index, level -> (1 shl index) to level }
+      .toMap()
+
+  private val vp9LevelNames =
+    listOf("1", "1.1", "2", "2.1", "3", "3.1", "4", "4.1", "5", "5.1", "5.2", "6", "6.1", "6.2")
+      .mapIndexed { index, level -> (1 shl index) to level }
+      .toMap()
+
+  /** Name of the [profile] constant of [mime] for the decoders page and the verdicts: "Main 10", "High 10". */
+  fun profileName(mime: String, profile: Int): String {
+    val names =
+      when (mime.lowercase()) {
+        MIME_HEVC -> hevcProfileNames
+        MIME_AVC -> avcProfileNames
+        MIME_AV1 -> av1ProfileNames
+        MIME_VP9 -> vp9ProfileNames
+        MIME_DOLBY_VISION -> dolbyVisionProfileNames
+        else -> emptyMap()
+      }
+    return names[profile] ?: "profile $profile"
+  }
+
+  /** Name of the [level] constant of [mime] ("L6.1", "5.1"), null when unknown or not named (Dolby Vision). */
+  fun levelName(mime: String, level: Int): String? =
+    when (mime.lowercase()) {
+      MIME_HEVC -> hevcLevelNames[level]
+      MIME_AVC -> avcLevelNames[level]
+      MIME_VP9 -> vp9LevelNames[level]
+      MIME_AV1 -> av1LevelName(level)
+      else -> null
+    }
+
+  /** AV1 levels 2.0 to 7.3 are the powers of two from 1, four minor levels to a major one: "6.1", or "5" for 5.0. */
+  private fun av1LevelName(level: Int): String? {
+    if (level <= 0 || (level and (level - 1)) != 0) return null
+    val k = Integer.numberOfTrailingZeros(level)
+    if (k > 23) return null
+    val minor = k % 4
+    return if (minor == 0) "${2 + k / 4}" else "${2 + k / 4}.$minor"
+  }
+
+  /**
+   * One entry per profile a decoder of [mime] lists in [levels] (profile to level pairs), with its highest level:
+   * "Main 10 L6.1". The level constants grow with the level (and, for HEVC, the high tier above the main tier at the
+   * same level), so the highest is the largest value. In the order of the profile constants.
+   */
+  fun profilesSummary(mime: String, levels: List<Pair<Int, Int>>): List<String> =
+    levels
+      .groupBy({ it.first }, { it.second })
+      .toSortedMap()
+      .map { (profile, profileLevels) ->
+        val name = profileName(mime, profile)
+        val level = levelName(mime, profileLevels.max())
+        if (level == null) name else "$name $level"
+      }
 
   /**
    * For Dolby Vision, the question about its base layer (HEVC for profile 8, H.264 for 9, AV1 for 10), which Media3

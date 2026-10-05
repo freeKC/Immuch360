@@ -12,8 +12,10 @@ import UIKit
 /// The fallback URL of [open] is the server's transcoded stream: the player switches to it when the device cannot
 /// decode the original or when the original fails.
 ///
-/// The raw projection of [open] is the JSON of a dual fisheye calibration (see [DualFisheyeCalibration]) when the
-/// frame holds the two fisheye circles of a raw camera file: the player stitches them on the sphere itself.
+/// The raw projection of [open] describes a raw camera file the player stitches itself (see [RawProjection]): version
+/// 1 is the dual fisheye calibration of a frame that holds the two fisheye circles side by side (see
+/// [DualFisheyeCalibration]), version 2 a recording whose lenses are in one frame, in two tracks or in two files (see
+/// [RawStitchSpec]). A projection the player rejects leaves the video as it is.
 class SphericalVideoApiImpl: SphericalVideoApi {
   private let events: SphericalVideoEvents
 
@@ -58,13 +60,13 @@ class SphericalVideoApiImpl: SphericalVideoApi {
       throw noViewController
     }
 
-    // An unreadable calibration leaves the frame as it is, the two circles side by side, rather than no video at all
-    var calibration: DualFisheyeCalibration?
+    // An unreadable or rejected projection leaves the frame as it is, rather than no video at all
+    var raw: RawProjection?
     if let rawProjection {
       do {
-        calibration = try DualFisheyeCalibration.parse(rawProjection)
+        raw = try RawProjection.parse(rawProjection)
       } catch {
-        print("Cannot read the dual fisheye calibration, the 360° video plays unstitched: \(error)")
+        print("RawStitch: rawProjection rejected: \(error), the 360° video plays unstitched")
       }
     }
 
@@ -78,7 +80,7 @@ class SphericalVideoApiImpl: SphericalVideoApi {
       stereoLayout: stereoLayout,
       stereoLabels: stereoLabels,
       coverage: coverage,
-      dualFisheye: calibration,
+      raw: raw,
       events: events
     )
     player.modalPresentationStyle = .fullScreen

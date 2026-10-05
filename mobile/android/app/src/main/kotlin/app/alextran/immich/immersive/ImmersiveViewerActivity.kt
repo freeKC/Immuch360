@@ -29,11 +29,19 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import app.alextran.immich.MainActivity
 import app.alextran.immich.R
-import app.alextran.immich.core.DualFisheyeCalibration
 import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
+import app.alextran.immich.core.PlaybackStatsLogger
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
+import app.alextran.immich.core.raw.RawMessage
+import app.alextran.immich.core.raw.RawMode
+import app.alextran.immich.core.raw.RawPlan
+import app.alextran.immich.core.raw.RawPlaybackPlanner
+import app.alextran.immich.core.raw.RawProjection
+import app.alextran.immich.core.raw.RawStitchException
+import app.alextran.immich.core.raw.RawTrack
+import app.alextran.immich.core.raw.TwoLensPlayback
 import com.meta.spatial.core.Entity
 import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
@@ -98,6 +106,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
+/** Log tag of the rawProjection parse result and of its refusals, shared with the phone player. */
+private const val RAW_PROJECTION_TAG = "RawProjection"
+
 /**
  * Immersive (Horizon OS) viewer for one equirectangular photo or video, started from the 2D Flutter
  * activity through ImmersiveApi. Follows Meta's HybridSample for the switch between the 2D panel and
@@ -128,9 +139,12 @@ import okhttp3.Response
  * eye of a stereoscopic VR180 media gets its own half the same way. The field of view button of the
  * info panel (360° or 180°) switches between the full sphere and the half sphere.
  *
- * A raw dual fisheye video (an Insta360 .insv, the two fisheye circles side by side) comes with the calibration of
- * its camera: [DualFisheyeEffect] stitches each frame into an equirectangular one before it reaches the video panel,
- * which stays a mono 360° layer; the 3D and field of view buttons hide for it. Raw photos arrive stitched by Flutter.
+ * A raw 360° video comes with its rawProjection JSON (see [RawProjection]); the video panel stays a mono 360° layer
+ * and the 3D and field of view buttons hide for it. Both lenses side by side in one track: [DualFisheyeEffect]
+ * stitches each frame before it reaches the panel. Lenses in two tracks or two files (Insta360 X4 and later, split
+ * pairs, GoPro .360, DJI .osv): [TwoLensPlayback] decodes both streams and its compositor draws the stitched frame
+ * into the panel Surface. [RawPlaybackPlanner] decides how it plays and falls back (one lens, the transcoded streams,
+ * unstitched), see [ensurePlayer]. Raw photos arrive stitched by Flutter.
  */
 class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listener {
   private data class MediaRequest(
@@ -161,13 +175,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     val fallbackUrl: String?,
     /**
-     * JSON calibration of a raw dual fisheye video (docs 16-dual-fisheye-spec.md section 5), which the player
-     * stitches with [DualFisheyeEffect]. Null for an equirectangular media, and ignored for a photo (Flutter sends raw
-     * photos already stitched).
+     * The rawProjection JSON of a raw 360° video (see [RawProjection]), which the player stitches with
+     * [DualFisheyeEffect] or [TwoLensPlayback]. Null for an equirectangular media, and ignored for a photo (Flutter
+     * sends raw photos already stitched).
      */
     val rawProjection: String? = null,
   ) {
-    /** A raw dual fisheye video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
+    /** A raw 360° video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
     val isRawVideo: Boolean
       get() = isVideo && rawProjection != null
   }
@@ -312,12 +326,38 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private var playerStreamed = false
   /**
-   * The calibration the current player stitches with, null for a player without [DualFisheyeEffect]. The effects are
-   * set up before prepare, so a raw video after an equirectangular one, or the other way round, gets a new player.
+   * [RawPlan.key] of the current player: its mode (plain, side by side effect, lens player, unstitched), its decoded
+   * streams and its URLs. The effects and the lens renderers are set up before prepare, so a video of another plan
+   * gets a new player.
    */
-  private var playerRawProjection: String? = null
+  private var playerPlanKey: String? = null
+  /** How the current player plays the current video, see [RawPlaybackPlanner]; PLAIN for an equirectangular one. */
+  private var playerPlan: RawPlan? = null
+  /** The lens player of a LENSES plan, whose [TwoLensPlayback.player] is [player]; null otherwise. */
+  private var twoLens: TwoLensPlayback? = null
+  /** The plan a fallback step chose for the current media, which [ensurePlayer] keeps until the next media. */
+  private var rawPlanOverride: RawPlan? = null
+  /** A plan whose message shows once its url plays (playUrl clears the status of the previous url first). */
+  private var pendingRawMessage: RawPlan? = null
   /** The stitching of the current raw video failed while playing: its frames now play as they are. */
   private var rawEffectFailed = false
+  /** A new plan is posted for the current media: errors that follow from the same failure do not post another. */
+  private var rawReplanPending = false
+  /** The JSON parsed last and its projection (null when refused), so that each media is parsed once. */
+  private var parsedRawJson: String? = null
+  private var parsedRawProjection: RawProjection? = null
+  /** The lens tracks of the current url were checked against the headset decoders, the instance count included. */
+  private var lensDecodersChecked = false
+  /**
+   * The headset took the decoders back while the viewer was not in front (system menu, headset off): the player
+   * prepares again at the same position once the viewer is back, in the same plan, see [resumeHeldPlayback].
+   */
+  private var reprepareOnReturn = false
+  /**
+   * Decoder, input format, dropped frames and per loop counts of the current player, for the device checks. One per
+   * player: it tells the renderers of a lens player apart by the order they are enabled in, see PlaybackStatsLogger.
+   */
+  private var playbackStats: PlaybackStatsLogger? = null
   /** The next STATE_READY is the first one of the current url: the end of the loading hides the panel. */
   private var hideWhenReady = false
   /**
@@ -515,6 +555,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     deferredHideMs = null
     lastKnownPositionMs = null
     rawEffectFailed = false
+    rawPlanOverride = null
+    pendingRawMessage = null
+    reprepareOnReturn = false
     if (media == null) {
       showError(getString(R.string.immersive_error_nothing))
       return
@@ -533,7 +576,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (media.coverage != ImmersiveSphereCoverage.FULL) {
       Log.i(TAG, "half sphere media (VR180), coverage ${media.coverage}")
     }
-    if (media.isRawVideo) Log.i(TAG, "raw dual fisheye video, stitched on the headset")
+    if (media.isRawVideo) Log.i(TAG, "raw 360 video, stitched on the headset")
     titleView?.text = media.title
     updateVideoControls()
     updateStereoView()
@@ -1694,47 +1737,69 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * the larger buffers of StreamingLoadControl, as in the 360° player of the phone app, so that a seek over a share
    * that answers in bursts does not stall again a few seconds later; a file on the headset keeps the Media3 defaults.
    * The buffers are fixed when the player is built: a video read the other way than the previous one gets a new
-   * player, on the same video surface. So is the stitching of a raw dual fisheye video [media] (see
-   * [DualFisheyeEffect]), set up before prepare: a raw video after another kind of video, or the other way round, gets
-   * a new player too, and only a raw video pays for the effect pipeline.
+   * player, on the same video surface. So is a raw video of another plan ([RawPlaybackPlanner]): the side by side
+   * effect ([DualFisheyeEffect]) and the lens renderers ([TwoLensPlayback]) are set up before prepare, so a raw video
+   * after another kind of video, two raw files with different plans, or the other way round, get a new player, and
+   * only a raw video pays for the stitching.
+   *
+   * The previous player and its compositor go first, in that order: the old decoders and the old EGL surface must
+   * leave the panel Surface before anything else connects to it.
    */
   @OptIn(UnstableApi::class)
   private fun ensurePlayer(url: String, media: MediaRequest): ExoPlayer? {
     val streamed = StreamingLoadControl.isStreamed(url)
-    val raw = rawCalibrationFor(media)
-    val rawProjection = if (raw != null) media.rawProjection else null
+    var plan = rawPlanOverride ?: planFor(media)
     player?.let { current ->
-      if (playerStreamed == streamed && playerRawProjection == rawProjection) return current
-      val kind = if (raw != null) "raw dual fisheye video" else "video"
-      Log.i(TAG, "new player for a ${if (streamed) "streamed" else "local"} $kind")
-      current.removeListener(playerListener)
-      current.release()
-      player = null
+      if (playerStreamed == streamed && playerPlanKey == playerKeyOf(plan, media)) {
+        playerPlan = plan
+        return current
+      }
+      Log.i(TAG, "new player for a ${if (streamed) "streamed" else "local"} video, plan ${plan.mode} ${plan.streams}")
+      releasePlayer()
     }
     return try {
       // Server: the app session (cookie, custom headers, client certificate), same as the in-app player.
       // file:// and content:// (the copy on the headset) are read locally by DefaultDataSource.
       val dataSourceFactory = DefaultDataSource.Factory(this, HttpClientManager.createDataSourceFactory(emptyMap()))
+      val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
       val audio = AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build()
-      StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
-        .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
-        .setAudioAttributes(audio, true)
-        // The 10 second buttons and the thumbstick up and down
-        .setSeekBackIncrementMs(SEEK_INCREMENT_MS)
-        .setSeekForwardIncrementMs(SEEK_INCREMENT_MS)
-        .build()
-        .also {
-          player = it
-          playerStreamed = streamed
-          playerRawProjection = rawProjection
-          // Before the surface and before prepare, which sets up the effect pipeline
-          if (raw != null) {
-            it.setVideoEffects(listOf(DualFisheyeEffect(raw, VIDEO_PANEL_WIDTH_PX, VIDEO_PANEL_HEIGHT_PX)))
-          }
-          it.repeatMode = Player.REPEAT_MODE_ONE
-          it.addListener(playerListener)
-          videoSurface?.let { surface -> attachVideoSurface(it, surface) }
+      val builder =
+        StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
+          .setMediaSourceFactory(mediaSourceFactory)
+          .setAudioAttributes(audio, true)
+          // The 10 second buttons and the thumbstick up and down
+          .setSeekBackIncrementMs(SEEK_INCREMENT_MS)
+          .setSeekForwardIncrementMs(SEEK_INCREMENT_MS)
+      val projection = projectionFor(media)
+      var lens: TwoLensPlayback? = null
+      if (plan.mode == RawMode.LENSES && projection != null) {
+        lens = createLensPlayback(projection, plan, builder, mediaSourceFactory)
+        if (lens == null) {
+          rawEffectFailed = true
+          plan = RawPlaybackPlanner.afterStitchFailure(plan) ?: plan
+          rawPlanOverride = plan
         }
+      }
+      // Told once the url plays: the decoder message of a pre-check, a fallback step, the stitching that failed
+      pendingRawMessage = plan.takeIf { it.message != null }
+      (lens?.player ?: builder.build()).also {
+        player = it
+        twoLens = lens
+        playerStreamed = streamed
+        playerPlanKey = playerKeyOf(plan, media)
+        playerPlan = plan
+        if (plan.mode != RawMode.PLAIN) Log.i(TAG, "raw plan ${plan.mode} ${plan.streams}: ${plan.reason}")
+        // Before the surface and before prepare, which sets up the effect pipeline
+        if (plan.mode == RawMode.EFFECT_SIDE_BY_SIDE && projection != null) {
+          it.setVideoEffects(listOf(DualFisheyeEffect(projection, VIDEO_PANEL_WIDTH_PX, VIDEO_PANEL_HEIGHT_PX)))
+        }
+        it.repeatMode = Player.REPEAT_MODE_ONE
+        it.addListener(playerListener)
+        playbackStats = PlaybackStatsLogger(TAG, lens?.streams.orEmpty()).also(it::addAnalyticsListener)
+        // Each lens renderer gets its own Surface of the compositor, never the player's surface API
+        lens?.bindRendererOutputs()
+        videoSurface?.let { surface -> attachVideoSurface(it, surface) }
+      }
     } catch (e: Exception) {
       Log.e(TAG, "player creation failed", e)
       null
@@ -1742,49 +1807,248 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
+   * The lens player of [plan], or null when its compositor cannot start (no OpenGL ES 3, a shader the driver
+   * refuses): the video then plays unstitched.
+   */
+  @OptIn(UnstableApi::class)
+  private fun createLensPlayback(
+    projection: RawProjection,
+    plan: RawPlan,
+    builder: ExoPlayer.Builder,
+    mediaSourceFactory: DefaultMediaSourceFactory,
+  ): TwoLensPlayback? {
+    val listener = LensListener()
+    return try {
+      TwoLensPlayback.create(
+        this,
+        projection,
+        plan.streams,
+        RawPlaybackPlanner.assignmentOf(plan, projection),
+        builder,
+        mediaSourceFactory,
+        listener,
+      ).also { listener.playback = it }
+    } catch (e: RawStitchException) {
+      Log.e(TAG, "the lens compositor cannot start, the raw video plays unstitched", e)
+      null
+    }
+  }
+
+  /** What the lens player tells, on the main thread; ignored once that player is replaced. */
+  private inner class LensListener : TwoLensPlayback.Listener {
+    var playback: TwoLensPlayback? = null
+
+    override fun onFirstFrameDrawn() {
+      // A lens renderer's first frame is not on the panel yet: the compositor's is
+      if (playback != null && playback === twoLens) revealVideo()
+    }
+
+    override fun onStitchError(error: Exception) {
+      if (playback == null || playback !== twoLens) return
+      Log.e(TAG, "the lens compositor failed while playing", error)
+      playWithoutStitching()
+    }
+
+    override fun onStreamsMissing(streams: List<Int>) {
+      if (playback == null || playback !== twoLens) return
+      Log.w(TAG, "no decodable track for streams $streams")
+      // Without a next step there is no error to show either (no track, no decoder error): the frame plays unstitched,
+      // where the default renderers may still find a decoder, or fail with an error the viewer shows
+      replanRaw(rawDecoderFailurePlan() ?: playerPlan?.let(RawPlaybackPlanner::afterStitchFailure))
+    }
+  }
+
+  /** Releases the current player, and then its compositor when it is a lens player. */
+  private fun releasePlayer() {
+    val current = player ?: return
+    current.removeListener(playerListener)
+    playbackStats?.let(current::removeAnalyticsListener)
+    playbackStats = null
+    val lens = twoLens
+    twoLens = null
+    if (lens != null) lens.release() else current.release()
+    player = null
+    playerPlanKey = null
+    playerPlan = null
+  }
+
+  /**
    * Hands the surface of the video panel to [p]. A player that stitches draws the frames itself with OpenGL and must
-   * be told the size of the surface, the one of its swapchain: the stitched frame is scaled to it.
+   * be told the size of the surface, the one of its swapchain: the stitched frame is scaled to it. A lens player draws
+   * through its compositor.
    */
   @OptIn(UnstableApi::class)
   private fun attachVideoSurface(p: ExoPlayer, surface: Surface) {
+    val lens = twoLens
+    if (p === player && lens != null) {
+      lens.setOutput(surface, VIDEO_PANEL_WIDTH_PX, VIDEO_PANEL_HEIGHT_PX)
+      return
+    }
     p.setVideoSurface(surface)
-    if (p === player && playerRawProjection != null) {
+    if (p === player && playerPlan?.mode == RawMode.EFFECT_SIDE_BY_SIDE) {
       DualFisheyeEffect.setOutputResolution(p, VIDEO_PANEL_WIDTH_PX, VIDEO_PANEL_HEIGHT_PX)
     }
   }
 
   /**
-   * The calibration to stitch the video of [media] with, or null: not a raw video, the stitching failed already for
-   * this media, or a calibration that cannot be read (logged), which plays the frame as it is.
+   * What a player is built for: the plan's key, and for the side by side effect its projection too (the effect holds
+   * the calibration of one camera).
    */
-  private fun rawCalibrationFor(media: MediaRequest): DualFisheyeCalibration? {
+  private fun playerKeyOf(plan: RawPlan, media: MediaRequest): String =
+    if (plan.mode == RawMode.EFFECT_SIDE_BY_SIDE) "${plan.key} ${media.rawProjection}" else plan.key
+
+  /** The rawProjection of [media] parsed, or null for an equirectangular media and a JSON the parser refuses. */
+  private fun projectionFor(media: MediaRequest): RawProjection? {
     val json = media.rawProjection
-    if (!media.isVideo || json == null || rawEffectFailed) return null
-    return try {
-      DualFisheyeCalibration.parse(json)
-    } catch (e: IllegalArgumentException) {
-      Log.e(TAG, "unreadable dual fisheye calibration, the raw frame plays as it is: ${e.message}")
-      null
-    }
+    if (!media.isVideo || json == null) return null
+    if (json == parsedRawJson) return parsedRawProjection
+    val projection =
+      try {
+        RawProjection.parse(json).also { Log.i(RAW_PROJECTION_TAG, it.summary()) }
+      } catch (e: IllegalArgumentException) {
+        Log.e(RAW_PROJECTION_TAG, "rawProjection rejected: ${e.message}")
+        null
+      }
+    parsedRawJson = json
+    parsedRawProjection = projection
+    return projection
   }
 
   /**
-   * The stitching failed while playing (a GL error in the effect): the same video plays again from where it stopped
-   * on a player without the effect, the frame as it is, rather than ending on an error. False when the current player
-   * does not stitch.
+   * How [media] starts, see [RawPlaybackPlanner.initial]: plain for an equirectangular video, unstitched once its
+   * stitching failed, otherwise as its rawProjection and the headset decoders allow.
    */
-  private fun playWithoutStitching(): Boolean {
-    val url = currentVideoUrl ?: return false
+  private fun planFor(media: MediaRequest): RawPlan {
+    val json = if (media.isVideo) media.rawProjection else null
+    return RawPlaybackPlanner.initial(
+      json != null,
+      projectionFor(media),
+      media.url,
+      media.fallbackUrl,
+      rawEffectFailed,
+      ::canDecodeRaw,
+    )
+  }
+
+  /** Whether the headset decodes [instances] streams like [track] at once, null when the JSON cannot tell. */
+  private fun canDecodeRaw(track: RawTrack, instances: Int): Boolean? {
+    val codec = track.codecs ?: track.codec ?: return null
+    val verdict =
+      VideoDecoders.canDecode(
+        codec,
+        track.codecs,
+        track.width,
+        track.height,
+        track.frameRate,
+        track.bitDepth,
+        transferCharacteristics = 0,
+        instances = instances,
+      )
+    return verdict.supported
+  }
+
+  /** The next step of the ladder after a decoder failure of the current lens player, or null. */
+  private fun rawDecoderFailurePlan(): RawPlan? {
+    val plan = playerPlan ?: return null
+    val media = request ?: return null
+    val projection = projectionFor(media) ?: return null
+    return RawPlaybackPlanner.afterDecoderFailure(plan, projection, media.url, media.fallbackUrl)
+  }
+
+  /**
+   * The next step of the ladder after any other failure of the current lens player, or null: a read error of a split
+   * pair keeps the lens of the opened file first; any other failure (a container the extractor refuses, a timeout)
+   * plays the transcoded streams, once, like the fallback of other videos.
+   */
+  private fun rawSourceFailurePlan(plan: RawPlan, error: PlaybackException): RawPlan? {
+    val media = request ?: return null
+    val projection = projectionFor(media) ?: return null
+    val oneFile =
+      if (error.errorCode in 2000..2999) RawPlaybackPlanner.afterSourceError(plan, projection, media.url) else null
+    return oneFile ?: RawPlaybackPlanner.afterSourceFailure(plan, projection, media.url, media.fallbackUrl)
+  }
+
+  /**
+   * Plays the current raw video again from where it stopped with [newPlan] (one lens, the transcoded streams,
+   * unstitched), on a new player, and tells the user why. False without a new plan: the error then shows.
+   */
+  private fun replanRaw(newPlan: RawPlan?): Boolean {
+    if (newPlan == null) return false
     val media = request ?: return false
-    if (playerRawProjection == null || rawEffectFailed) return false
-    rawEffectFailed = true
-    Log.w(TAG, "the dual fisheye stitching failed, the raw frame plays as it is")
+    if (currentVideoUrl == null) return false
+    if (rawReplanPending) return true
+    rawReplanPending = true
+    val from = playerPlan
+    Log.i(TAG, "raw plan ${from?.mode} ${from?.streams} -> ${newPlan.mode} ${newPlan.streams}: ${newPlan.reason}")
+    rawPlanOverride = newPlan
     val position = resumePositionMs()
     // Posted, not run from within the listener of the player being replaced
     scope.launch(Dispatchers.Main) {
-      if (request === media && ensurePlayer(url, media) != null) playUrl(url, position)
+      rawReplanPending = false
+      if (request !== media) return@launch
+      // The new player shows the message of its plan once it plays, see pendingRawMessage
+      if (ensurePlayer(media.url, media) != null) playUrl(plannedUrl(media), position)
     }
     return true
+  }
+
+  /** The url to play for [media]: the original, or the first url of a raw plan (the transcoded stream for one). */
+  private fun plannedUrl(media: MediaRequest): String {
+    val plan = playerPlan ?: return media.url
+    return if (plan.mode == RawMode.PLAIN) media.url else plan.urls.firstOrNull() ?: media.url
+  }
+
+  /** The message of [plan], if it has one, on the status line for a while, like the decoder warning. */
+  private fun showRawWarning(plan: RawPlan) {
+    val text =
+      when (plan.message ?: return) {
+        RawMessage.ONE_LENS_DECODER -> {
+          val track = projectionFor(request ?: return)?.tracks?.maxByOrNull { it.pixels }
+          val codec = VideoDecoders.codecName(VideoDecoders.mimeFor(track?.codecs ?: track?.codec ?: ""))
+          getString(R.string.immersive_raw_one_lens_decoder, codec, track?.width ?: 0, track?.height ?: 0)
+        }
+        RawMessage.ONE_LENS_FILE -> getString(R.string.immersive_raw_one_lens_file)
+        RawMessage.UNSTITCHED -> getString(R.string.immersive_raw_unstitched)
+      }
+    Log.w(TAG, "shown to the user: $text")
+    decoderWarning = text
+    hideInfoJob?.cancel()
+    showStatus(text)
+    setInfoVisible(true, reposition = true)
+    scheduleInfoHide(DECODER_WARNING_HIDE_MS)
+  }
+
+  /**
+   * The stitching failed while playing (a GL error in the effect or in the lens compositor): the same video plays
+   * again from where it stopped, the frame as it is, rather than ending on an error. False when the current player
+   * does not stitch.
+   */
+  private fun playWithoutStitching(): Boolean {
+    val plan = playerPlan ?: return false
+    if (rawEffectFailed) return false
+    val next = RawPlaybackPlanner.afterStitchFailure(plan) ?: return false
+    rawEffectFailed = true
+    Log.w(TAG, "the raw stitching failed, the raw frame plays as it is")
+    return replanRaw(next)
+  }
+
+  /**
+   * Once per url of a lens player with two streams: the selected lens tracks against the headset decoders, the
+   * instance count included. Two streams the headset refuses become one lens, with a message.
+   */
+  @OptIn(UnstableApi::class)
+  private fun checkLensDecoders(tracks: Tracks) {
+    val plan = playerPlan ?: return
+    if (lensDecodersChecked || plan.streams.size < 2) return
+    val formats =
+      tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO && it.isSelected }.flatMap { group ->
+        (0 until group.length).filter { group.isTrackSelected(it) }.map { group.getTrackFormat(it) }
+      }
+    val largest = formats.filter { it.width > 0 && it.height > 0 }.maxByOrNull { it.width * it.height } ?: return
+    lensDecodersChecked = true
+    val verdict = VideoDecoders.canDecode(largest, instances = plan.streams.size)
+    Log.i(TAG, "lens decoders: ${formats.size} tracks selected, ${verdict.reason}")
+    if (!verdict.supported) replanRaw(rawDecoderFailurePlan())
   }
 
   private val playerListener =
@@ -1794,8 +2058,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         when (playbackState) {
           Player.STATE_BUFFERING -> setStatus(getString(R.string.immersive_buffering))
           Player.STATE_READY -> {
-            // Normally the first frame did it already; a video that renders no frame still shows its panel
-            revealVideo()
+            // Normally the first frame did it already; a video that renders no frame still shows its panel. A lens
+            // player's panel waits for the compositor's first frame, see LensListener
+            if (twoLens == null) revealVideo()
             // Only the end of the loading hides the panel: a seek also goes through BUFFERING and READY, and the panel
             // the user is seeking on must not vanish
             val firstReady = hideWhenReady
@@ -1827,11 +2092,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
 
       override fun onRenderedFirstFrame() {
-        revealVideo()
+        // A lens renderer's first frame is still to be stitched: the compositor reveals the panel, see LensListener
+        if (twoLens == null) revealVideo()
       }
 
       override fun onTracksChanged(tracks: Tracks) {
-        selectedVideoFormat(tracks)?.let(::checkDecoderLimit)
+        if (twoLens != null) checkLensDecoders(tracks) else selectedVideoFormat(tracks)?.let(::checkDecoderLimit)
       }
 
       override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -1840,7 +2106,23 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
       override fun onPlayerError(error: PlaybackException) {
         Log.e(TAG, "video error ${error.errorCodeName}: ${error.message}", error)
-        if (DualFisheyeEffect.isStitchingError(error) && playWithoutStitching()) {
+        // The headset took the decoders back for another app while the viewer was away: the same player prepares
+        // again once the viewer is back, rather than falling back to one lens or to the transcoded stream
+        if (error.errorCode == PlaybackException.ERROR_CODE_DECODING_RESOURCES_RECLAIMED && !playbackAllowed()) {
+          Log.i(TAG, "decoders reclaimed while the viewer is away, preparing again on return")
+          reprepareOnReturn = true
+          return
+        }
+        val plan = playerPlan
+        if (plan?.mode == RawMode.EFFECT_SIDE_BY_SIDE && DualFisheyeEffect.isStitchingError(error) &&
+          playWithoutStitching()
+        ) {
+          return
+        }
+        if (plan?.mode == RawMode.LENSES) {
+          // The ladder replaces the fallback of other videos: a lens player shows the error once it has nothing left
+          val next = if (isDecoderError(error)) rawDecoderFailurePlan() else rawSourceFailurePlan(plan, error)
+          if (!replanRaw(next)) showError(getString(R.string.immersive_error_video, error.errorCodeName))
           return
         }
         val fallback = currentVideoUrl?.let(::fallbackFor)
@@ -1853,6 +2135,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
       }
     }
+
+  /** Media3 errors of a decoder that cannot run (or no longer runs) the lens streams: the ladder's decoder step. */
+  private fun isDecoderError(error: PlaybackException): Boolean =
+    error.errorCode == PlaybackException.ERROR_CODE_DECODER_INIT_FAILED ||
+      error.errorCode == PlaybackException.ERROR_CODE_DECODING_FORMAT_EXCEEDS_CAPABILITIES ||
+      error.errorCode == PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED ||
+      error.errorCode == PlaybackException.ERROR_CODE_DECODING_RESOURCES_RECLAIMED
 
   /** Format of the video track the player selected, or null without one. */
   private fun selectedVideoFormat(tracks: Tracks): Format? {
@@ -1983,8 +2272,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     loadJob =
       scope.launch {
         val playback = fallbackFor(media.url)
-        var url = media.url
-        if (playback != null && StreamingLoadControl.isStreamed(media.url) && !isStreamable(media)) {
+        // A raw plan may start on the transcoded stream, a lens plan opens its own urls
+        var url = plannedUrl(media)
+        val plain = playerPlan?.mode != RawMode.LENSES
+        if (plain && playback != null && url == media.url && StreamingLoadControl.isStreamed(media.url) &&
+          !isStreamable(media)
+        ) {
           // No Range support on /original and the MP4 index at the end: the whole file would have to
           // download before the first frame, the transcoded stream streams
           Log.i(TAG, "original not streamable, using the transcoded stream")
@@ -2036,6 +2329,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val p = player ?: return
     currentVideoUrl = url
     decoderChecked = false
+    lensDecodersChecked = false
+    reprepareOnReturn = false
     decoderWarning = null
     notSeekableShown = false
     hideWhenReady = true
@@ -2046,7 +2341,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         else -> "original"
       }
     Log.i(TAG, "play $kind from $startPositionMs ms")
-    p.setMediaItem(MediaItem.fromUri(url), startPositionMs.coerceAtLeast(0L))
+    val lens = twoLens
+    val plan = playerPlan
+    if (lens != null && plan != null) {
+      lens.setMedia(plan.urls, startPositionMs.coerceAtLeast(0L))
+    } else {
+      p.setMediaItem(MediaItem.fromUri(url), startPositionMs.coerceAtLeast(0L))
+    }
     p.prepare()
     // A video that arrives while the viewer is paused or behind the system menu (a previous or next media Flutter
     // answered meanwhile, a fallback url, a recreation) loads but waits, see [playOnReturn]
@@ -2056,6 +2357,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (!allowed) Log.i(TAG, "the viewer is not in front, the video starts once it is")
     updateProgress()
     updateProgressTicker()
+    // After the reset of decoderWarning above, so that the READY state keeps the message on screen
+    pendingRawMessage?.let {
+      pendingRawMessage = null
+      showRawWarning(it)
+    }
   }
 
   private fun stopVideo() {
@@ -2098,9 +2404,25 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     p.pause()
   }
 
-  /** Plays the video held by [holdPlayback] or [playUrl] once the viewer is both resumed and focused. */
+  /**
+   * Plays the video held by [holdPlayback] or [playUrl] once the viewer is both resumed and focused. A player whose
+   * decoders the headset took back meanwhile prepares again first, at the position it had.
+   */
   private fun resumeHeldPlayback() {
-    if (!playOnReturn || !playbackAllowed()) return
+    if (!playbackAllowed()) return
+    if (reprepareOnReturn) {
+      reprepareOnReturn = false
+      val p = player
+      if (p != null && currentVideoUrl != null) {
+        // The player keeps its position in the error state. The one remembered at the last onPause is stale when the
+        // viewer only lost the focus (system menu, headset off) and played on since
+        val position = p.currentPosition.coerceAtLeast(0L)
+        Log.i(TAG, "preparing again after the decoders were reclaimed, at $position ms")
+        p.prepare()
+        p.seekTo(position)
+      }
+    }
+    if (!playOnReturn) return
     playOnReturn = false
     if (currentVideoUrl != null) player?.play()
   }
@@ -2175,8 +2497,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob?.cancel()
     navigationTimeoutJob = null
     scope.cancel()
-    player?.release()
-    player = null
+    // The player first, then the lens compositor, before the panel goes
+    releasePlayer()
     videoPanel = null
     pendingBitmap?.recycle()
     pendingBitmap = null

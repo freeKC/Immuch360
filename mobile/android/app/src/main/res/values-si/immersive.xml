@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">පෙන්වීමට කිසිවක් නැත</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d හෙඩ්සෙට් විකේතකයේ හැකියාව ඉක්මවයි (ඇනහිටීම්, කොටු). Immich හි වීඩියෝ පරිවර්තනය HEVC ලෙස සකසන්න හෝ විභේදනය සීමා කරන්න.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d හෙඩ්සෙට් විකේතකයේ හැකියාව ඉක්මවයි (ඇනහිටීම්, කොටු). මෙම ගොනුව HEVC වලින් හෝ අඩු විභේදනයකින් නැවත කේතනය කරන්න.</string>
+  <string name="immersive_raw_one_lens_decoder">මෙම හෙඩ්සෙට් එකට මෙම වීඩියෝවේ කාච දෙකම එකවර විකේතනය කළ නොහැක (%1$s %2$d x %3$d, දෙවරක්). එක් කාචයක් පෙන්වයි: ගෝලයෙන් අඩක් කළු පැහැයෙන් පවතී.</string>
+  <string name="immersive_raw_one_lens_file">අනෙක් කාචයේ ගොනුව කියවිය නොහැක. එක් කාචයක් පෙන්වයි: ගෝලයෙන් අඩක් කළු පැහැයෙන් පවතී.</string>
+  <string name="immersive_raw_unstitched">මෙම උපාංගයේ 360° එකට මැසීම අසාර්ථක විය. කැමරාව පටිගත කළ ආකාරයටම වීඩියෝව පෙන්වයි.</string>
 </resources>

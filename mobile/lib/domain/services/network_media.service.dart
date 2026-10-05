@@ -1,10 +1,12 @@
 // What the photos and videos of a network share are, read from their files: whether they are 360°, and what they
 // declare about their eyes and their coverage of the sphere. The rules are the server's, as for the files of the
 // device (see LocalPanoramaService): a photo is 360° when its GPano XMP declares an equirectangular projection, a video
-// when it declares a spherical projection (see probeSphericalMetadata). The raw files of Insta360 cameras are 360° too,
-// stitched by the app: a photo named .insp or ending with the trailer of the camera, a video named .insv whose frame
-// holds both lenses side by side (see raw_360_detection.dart). The viewers then show a file with the rules of
-// resolveSphereView, from what it declares and its name.
+// when it declares a spherical projection (see probeSphericalMetadata). The raw files of 360° cameras are 360° too,
+// stitched by the app: an Insta360 photo named .insp or ending with the trailer of the camera, a video named .insv,
+// .360 (GoPro) or .osv (DJI), whose layout is settled when it opens (see raw_360_detection.dart and
+// raw_video_plan.dart). So are the equirect photos a 360° camera stitched itself without GPano tags: a GoPro .36p, a
+// 2:1 JPEG whose EXIF names a 360° camera, or a photo whose Insta360 trailer says the camera stitched it. The viewers
+// then show a file with the rules of resolveSphereView, from what it declares and its name.
 //
 // Reading a file costs a 128 KiB window or two for a photo, a few small reads for a video, with range reads on the
 // share or on the media bridge. The results are kept in memory per file, until it changes.
@@ -19,6 +21,7 @@ import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immich_mobile/domain/services/exif_head.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -29,27 +32,30 @@ final _log = Logger('NetworkMediaService');
 
 /// What the file of a photo or a video of a share declares
 class NetworkMediaInfo {
-  const NetworkMediaInfo({this.gpano, this.probe, this.raw});
+  const NetworkMediaInfo({this.gpano, this.probe, this.rawKind, this.cameraEquirect = false});
 
   /// The GPano tags of a photo, null for a video and for a photo without any
   final GPanoTags? gpano;
 
-  /// What a video declares (see [probeSphericalMetadata]), null for a photo
+  /// What a video declares (see [probeSphericalMetadata]), its tracks included; null for a photo
   final SphericalProbe? probe;
 
-  /// What kind of raw file of a dual fisheye camera it is, null for any other file
-  final Raw360Layout? raw;
+  /// What kind of raw file of a 360° camera it is, null for any other file
+  final RawMediaKind? rawKind;
 
-  /// Whether the file declares a 360° projection, or is a raw dual fisheye file the app stitches
+  /// Whether it is an equirect photo a 360° camera stitched itself, without GPano tags: a GoPro .36p, a 2:1 JPEG whose
+  /// EXIF names a 360° camera (see [isEquirectCameraPhoto]), or a photo whose Insta360 trailer says the camera stitched
+  /// it (see isInsta360StitchedPhoto)
+  final bool cameraEquirect;
+
+  /// Whether the file declares a 360° projection, is a raw file the app stitches, or a camera equirect photo
   bool get is360 {
     final gpano = this.gpano;
     return (gpano != null && isEquirectangularGPano(gpano)) ||
         (probe?.hasSphericalMetadata ?? false) ||
-        raw == Raw360Layout.dualFisheye;
+        rawKind != null ||
+        cameraEquirect;
   }
-
-  /// Whether it is a raw video of one lens per file or per track, which no viewer shows in 360° yet
-  bool get isUnsupportedRaw => raw == Raw360Layout.separateLenses;
 
   /// Whether a video declares two eyes (its st3d box), which the players then read
   bool get declaresStereo {
@@ -65,7 +71,7 @@ class NetworkMediaInfo {
     int? height,
     StereoLayout? chosenLayout,
     SphereCoverage? chosenCoverage,
-  }) => raw != null
+  }) => rawKind != null
       ? raw360SphereView
       : resolveSphereView(
           fileName: fileName,
@@ -78,7 +84,9 @@ class NetworkMediaInfo {
         );
 
   @override
-  String toString() => 'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe, raw: $raw)';
+  String toString() =>
+      'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe, rawKind: $rawKind, '
+      'cameraEquirect: $cameraEquirect)';
 }
 
 /// A file of a share as the results are kept: they hold until its size or its date changes
@@ -218,20 +226,38 @@ class NetworkMediaService {
         read,
         maxMoovLength: thorough ? sphericalProbeMaxMoovLength : quickMoovLength,
       );
-      final raw = isRawVideoName(entry.name) ? rawVideoLayout(probe.codedWidth, probe.codedHeight) : null;
-      return NetworkMediaInfo(probe: probe, raw: raw);
+      // Its layout is settled when it opens (see RawVideoResolver), from the tracks listed here
+      return NetworkMediaInfo(probe: probe, rawKind: rawMediaKindOfName(entry.name, isVideo: true));
     }
-    // Without a size, the head of the file only, where JPEG files carry their XMP. The tail read for the GPano tags
-    // holds the trailer of a raw photo: telling one costs no read more.
+    // Without a size, the head of the file only, where JPEG files carry their XMP and their EXIF. The tail read for the
+    // GPano tags holds the trailer of a raw photo: telling one costs no read more, nor does the EXIF of the head.
     final size = entry.size;
     final remembering = _LastReadReader(read);
     final gpano = await readGPanoTags(remembering.read, size ?? 0);
-    final isRaw =
-        isRawPhotoName(entry.name) ||
-        (size != null &&
-            (gpano == null || !isEquirectangularGPano(gpano)) &&
-            await hasInsta360Trailer(remembering.read, size));
-    return NetworkMediaInfo(gpano: gpano, raw: isRaw ? Raw360Layout.dualFisheye : null);
+    if (gpano != null && isEquirectangularGPano(gpano)) {
+      return NetworkMediaInfo(gpano: gpano);
+    }
+    if (isRawPhotoName(entry.name)) {
+      return NetworkMediaInfo(gpano: gpano, rawKind: RawMediaKind.insta360Photo);
+    }
+    if (size != null && await hasInsta360Trailer(remembering.read, size)) {
+      // Raw by its trailer only: one the camera stitched itself keeps the trailer, and is a 360° photo as it is
+      return await isInsta360StitchedPhoto(remembering.read, size)
+          ? NetworkMediaInfo(gpano: gpano, cameraEquirect: true)
+          : NetworkMediaInfo(gpano: gpano, rawKind: RawMediaKind.insta360Photo);
+    }
+    var cameraEquirect = isEquirectCameraPhoto(name: entry.name);
+    if (!cameraEquirect) {
+      final exif = parseExifHead(await remembering.read(0, exifHeadLength));
+      cameraEquirect = isEquirectCameraPhoto(
+        name: entry.name,
+        make: exif?.make,
+        model: exif?.model,
+        width: exif?.pixelWidth,
+        height: exif?.pixelHeight,
+      );
+    }
+    return NetworkMediaInfo(gpano: gpano, cameraEquirect: cameraEquirect);
   }
 
   void _remember(NetworkMediaKey key, _Detected detected) {
@@ -264,22 +290,38 @@ class NetworkMediaService {
   }
 }
 
-/// Reads through [_read], and answers from the bytes read last when they hold the range asked
+/// Reads through [_read], and answers from the bytes read last, or from those read at the start of the file, when they
+/// hold the range asked: the GPano tags read the head and the tail, the trailer of a raw photo is in the tail, its EXIF
+/// in the head
 class _LastReadReader {
   _LastReadReader(this._read);
 
   final ByteRangeReader _read;
   Uint8List _last = Uint8List(0);
   int _lastOffset = 0;
+  Uint8List _head = Uint8List(0);
+
+  // Whether the read at the start of the file ended before the length asked, at the end of the file
+  bool _headIsWhole = false;
 
   Future<Uint8List> read(int offset, int length) async {
-    final local = offset - _lastOffset;
-    if (local >= 0 && local + length <= _last.length) {
-      return Uint8List.sublistView(_last, local, local + length);
+    for (final (bytes, start) in [(_last, _lastOffset), (_head, 0)]) {
+      final local = offset - start;
+      if (local >= 0 && local + length <= bytes.length) {
+        return Uint8List.sublistView(bytes, local, local + length);
+      }
+    }
+    // The head of a short file is all of it: what was read from its start holds whatever it can give
+    if (offset == 0 && _head.isNotEmpty && _head.length < length && _headIsWhole) {
+      return _head;
     }
     final bytes = await _read(offset, length);
     _last = bytes;
     _lastOffset = offset;
+    if (offset == 0) {
+      _head = bytes;
+      _headIsWhole = bytes.length < length;
+    }
     return Uint8List.sublistView(bytes, 0, math.min(length, bytes.length));
   }
 }

@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Nie je čo zobraziť</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d prekračuje možnosti dekodéra headsetu (sekanie, kockovanie). V Immichu nastavte prekódovanie videa na HEVC alebo obmedzte rozlíšenie.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d prekračuje možnosti dekodéra headsetu (sekanie, kockovanie). Prekódujte tento súbor do HEVC alebo do nižšieho rozlíšenia.</string>
+  <string name="immersive_raw_one_lens_decoder">Tento headset nedokáže súčasne dekódovať oba objektívy tohto videa (%1$s %2$d x %3$d, dvakrát). Zobrazuje sa jeden objektív: polovica gule zostáva čierna.</string>
+  <string name="immersive_raw_one_lens_file">Súbor druhého objektívu sa nedá prečítať. Zobrazuje sa jeden objektív: polovica gule zostáva čierna.</string>
+  <string name="immersive_raw_unstitched">Spojenie do 360° na tomto zariadení zlyhalo. Video sa zobrazuje tak, ako ho kamera nahrala.</string>
 </resources>

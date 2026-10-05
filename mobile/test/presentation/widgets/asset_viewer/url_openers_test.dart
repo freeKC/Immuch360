@@ -27,6 +27,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart'
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 
 import '../../../widget_tester_extensions.dart';
 
@@ -219,13 +220,15 @@ void main() {
         'title': 'trip.mp4',
         'close': 'Close',
         'layout': StereoLayout.leftRight,
-        // The labels of the audio track control, of the buffering indicator and of a switch to the stream to fall
-        // back to too, with the language of the app to name the track languages in
+        // The labels of the audio track control, of the buffering indicator, of a switch to the stream to fall back
+        // to and of a raw video too heavy for the decoders too, with the language of the app to name the track
+        // languages in
         'labels': {
           ...sphereViewerLabels(context.t),
           ...audioTrackLabels(context.t, const Locale('en')),
           ...videoBufferingLabels(context.t),
           ...videoSourceLabels(context.t),
+          ...rawVideoLabels(context.t),
         },
         'coverage': SphereCoverage.half,
       });
@@ -233,6 +236,25 @@ void main() {
         (sphericalApi.opened.single['labels']! as Map<String, String>)['sourceSwitched'],
         'Playing the transcoded stream: the original ({codec} {width} x {height}) exceeds what this device decodes',
         reason: 'the player fills in the track it could not decode',
+      );
+      // The messages of the fallbacks of a raw video, which the Android player reads: a file of a share is one too
+      expect(
+        sphericalApi.opened.single['labels'],
+        allOf(
+          containsPair(
+            'rawOneLensDecoder',
+            'This device cannot decode the two lenses of this video at once ({codec} {width}x{height}, twice). It '
+                'shows one lens: half of the sphere stays black.',
+          ),
+          containsPair(
+            'rawOneLensFile',
+            'The file of the other lens cannot be read. One lens shows: half of the sphere stays black.',
+          ),
+          containsPair(
+            'rawUnstitched',
+            'The 360° stitching failed on this device. The video shows as the camera recorded it.',
+          ),
+        ),
       );
       expect(player.calls, ['suspend'], reason: 'the page lifts this when the app resumes');
       expect(sphericalApi.fallbackUrls, [null], reason: 'a file of a share has nothing to fall back to');

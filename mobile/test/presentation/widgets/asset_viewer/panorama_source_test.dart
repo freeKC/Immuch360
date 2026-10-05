@@ -221,6 +221,24 @@ void main() {
       expect(coverageButton, findsNothing);
     });
 
+    testWidgets('shows as it is a photo whose trailer says the camera stitched it (field 129, 6)', (tester) async {
+      final stitched = insta360File([
+        insta360Record(1, x5Metadata(imageCategory: 6), format: 1),
+      ], body: insta360PhotoHead());
+      final raw = find.textContaining('stitched by the app');
+      await pumpRawViewer(tester, name: 'IMG_001.jpg', file: stitched, label: raw);
+      // The reads of the trailer and of the GPano tags, past the time the stitch would have taken
+      for (var i = 0; i < 10; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pump();
+      }
+
+      expect(raw, findsNothing);
+      expect(coverageButton, findsOneWidget, reason: 'an equirect photo, which may be a VR180 one');
+      expect(find.text('360°'), findsOneWidget);
+      expect(reads, contains((0, 131072)), reason: 'its GPano tags are read as for any equirect photo');
+    });
+
     testWidgets('stitches a .insp photo whose trailer was cut with the nominal values of an X3', (tester) async {
       final label = find.text('Raw 360° file, stitched by the app (nominal lens values, seams possible)');
       final cut = Uint8List.fromList([...insta360PhotoHead(), 0xff, 0xd9]);

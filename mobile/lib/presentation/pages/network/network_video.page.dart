@@ -8,6 +8,7 @@ import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
@@ -21,12 +22,13 @@ import 'package:immich_mobile/presentation/widgets/network/network_video_bufferi
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
-import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
 
@@ -41,9 +43,9 @@ typedef _Video = ({NetworkEntry entry, Uri url});
 /// the menu for any other video. The immersive viewer goes from there to the previous and next 360° photos and
 /// videos of [folder]. The menu also sends the video to the Immich server, when there is one.
 ///
-/// A raw dual fisheye video of an Insta360 camera (.insv, both lenses side by side in its frame) is 360°: the players
-/// map it on the sphere with the calibration read from the share. One of a lens per file or per track gets the 360°
-/// button too, which says it does not open.
+/// A raw video of a 360° camera (Insta360 .insv, GoPro .360, DJI .osv) is 360° by its name: the players map it on the
+/// sphere with the rawProjection JSON of its plan (see RawVideoResolver), the calibration read from the share, the
+/// other file of a split pair looked for next to it. One that does not open says why when its 360° button is pressed.
 @RoutePage()
 class NetworkVideoPage extends ConsumerStatefulWidget {
   const NetworkVideoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -70,7 +72,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// What the file declares, null until read
   NetworkMediaInfo? _info;
 
-  /// Reads the file straight from the share, for the calibration of a raw video; null until the share is open
+  /// Reads the file straight from the share, for the plan of a raw video; null until the share is open
   ByteRangeReader? _shareReader;
 
   NativeVideoPlayerController? _controller;
@@ -260,17 +262,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     height: _videoSize?.height,
   );
 
-  /// What kind of raw dual fisheye video it is: as read from the file, else by its name and the frame size the player
-  /// read; null for any other video
-  Raw360Layout? _rawLayout(_Video video) =>
-      _info?.raw ??
-      raw360LayoutOf(name: video.entry.name, isVideo: true, width: _videoSize?.width, height: _videoSize?.height);
+  /// What kind of raw video of a 360° camera it is, by its name; null for any other video
+  RawMediaKind? _rawKind(_Video video) => _info?.rawKind ?? rawMediaKindOfName(video.entry.name, isVideo: true);
 
   /// Whether the video looks stereoscopic: it declares two eyes, or its frame shape or its name tell (see
-  /// [guessSpatialLayout]). A raw dual fisheye video has two lenses side by side, not two eyes.
+  /// [guessSpatialLayout]). A raw video has two lenses or six cube faces, not two eyes.
   bool _isStereo(_Video video) {
     final info = _info;
-    if (_rawLayout(video) != null) {
+    if (_rawKind(video) != null) {
       return false;
     }
     if (info?.declaresStereo ?? false) {
@@ -293,23 +292,32 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
     final view = _sphereView(video);
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final rawLayout = _rawLayout(video);
-    // The frame the file declares, else the one the player read, settles a raw video read by its name only
-    final frame = rawVideoFrameSize(probe: _info?.probe, width: _videoSize?.width, height: _videoSize?.height);
-    if (rawLayout == Raw360Layout.separateLenses ||
-        (rawLayout != null && rawVideoLayout(frame?.width, frame?.height) == Raw360Layout.separateLenses)) {
-      showRawVideoUnsupported(messenger, context.t);
-      return;
-    }
+    final t = context.t;
+    final rawKind = _rawKind(video);
     final read = _shareReader ?? httpRangeReader(ref.read(networkBridgeClientProvider), video.url);
+    // The other file of a split pair, in the folder the page was opened from, else in a listing of its folder
+    final siblings = shareSiblingFinder(
+      entry: video.entry,
+      folder: widget.folder?.around(video.entry, video.url).items,
+      connections: ref.read(networkConnectionsProvider),
+      bridgeClient: ref.read(networkBridgeClientProvider),
+      media: ref.read(networkMediaServiceProvider),
+    );
     if (isHorizonOs) {
-      final errorMessage = context.t.immersive_viewer_open_failed;
-      final stereoLabels = sphereViewerLabels(context.t);
+      final errorMessage = t.immersive_viewer_open_failed;
+      final stereoLabels = sphereViewerLabels(t);
       final ImmersiveRequest request;
       try {
-        request = rawLayout != null
-            ? await RawImmersiveMedia.read(ref).sharedMedia(video.entry, video.url, read: read, frame: frame)
+        request = rawKind != null
+            ? await RawImmersiveMedia.read(
+                ref,
+                forAssets: false,
+              ).sharedMedia(video.entry, video.url, read: read, probe: _info?.probe, siblings: siblings)
             : ImmersiveRequest(url: video.url.toString(), isVideo: true, title: video.entry.name, view: view);
+      } on RawVideoUnsupportedException catch (error) {
+        _log.info('$_name does not open in 360°: $error');
+        showRawVideoUnsupported(messenger, t, error);
+        return;
       } catch (error) {
         _log.warning('Could not read the calibration of $_name: $error');
         messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
@@ -346,26 +354,49 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       }
       return;
     }
-    final errorMessage = context.t.errors.unable_to_play_video;
-    String? rawProjection;
-    if (rawLayout != null) {
-      final calibration = await ref
-          .read(dualFisheyeCalibrationServiceProvider)
-          .forReader(rawShareKey(video.entry), read: read, fileSize: video.entry.size, isPhoto: false);
+    final errorMessage = t.errors.unable_to_play_video;
+    RawVideoPlan? plan;
+    if (rawKind != null) {
+      final resolver = ref.read(rawVideoResolverProvider);
+      final videoSources = ref.read(videoSourceServiceProvider);
+      try {
+        plan = await resolver.resolve(
+          kind: rawKind,
+          input: RawVideoInput(
+            name: video.entry.name,
+            key: rawShareKey(video.entry),
+            url: video.url.toString(),
+            open: () async => (size: video.entry.size, read: read, close: () async {}),
+            probe: _info?.probe,
+            width: _videoSize?.width,
+            height: _videoSize?.height,
+          ),
+          findSibling: siblings,
+        );
+      } on RawVideoUnsupportedException catch (error) {
+        _log.info('$_name does not open in 360°: $error');
+        showRawVideoUnsupported(messenger, t, error);
+        return;
+      } catch (error) {
+        _log.warning('Could not prepare $_name for the 360° player: $error');
+        messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+        return;
+      }
+      await warnOfTwoRawStreams(plan, videoSources, messenger, t);
       if (!mounted) {
         return;
       }
-      rawProjection = rawVideoProjectionJson(calibration, frame);
     }
     final opened = await openSphericalVideoUrl(
       context,
       ref,
-      url: video.url.toString(),
+      url: plan?.url ?? video.url.toString(),
       title: video.entry.name,
       layout: view.layout,
       coverage: view.coverage,
       player: _notifier,
-      rawProjection: rawProjection,
+      fallbackUrl: plan?.fallbackUrl,
+      rawProjection: plan?.toNativeJson(),
     );
     if (!opened) {
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
@@ -407,8 +438,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       future: _video,
       builder: (context, snapshot) {
         final video = snapshot.data;
-        // A raw video read by its name only is 360° too, until its file says otherwise
-        final isRaw = video != null && _rawLayout(video) != null;
+        // A raw video is 360° by its name; whether it opens is known when its 360° button is pressed
+        final isRaw = video != null && _rawKind(video) != null;
         final is360 = (_info?.is360 ?? false) || isRaw;
         final isStereo = video != null && _isStereo(video);
         final menu360 = can360 && !is360;

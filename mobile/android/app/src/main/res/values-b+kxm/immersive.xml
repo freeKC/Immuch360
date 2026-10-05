@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">ออตเมียนอเวยบังฮาญ</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d เกินกำลังตัวถอดรหัสแว่น VR (กระตุก, แตกเป็นบล็อก). โนว Immich, ตั้งการแปลงวิดีโอเป็น HEVC หรือ จำกัดความละเอียด.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d เกินกำลังตัวถอดรหัสแว่น VR (กระตุก, แตกเป็นบล็อก). เข้ารหัสไฟล์นิฮใหม่เป็น HEVC หรือ ใช้ความละเอียดต่ำกว่า.</string>
+  <string name="immersive_raw_one_lens_decoder">แว่น VR นี้ถอดรหัสสองเลนส์ของวิดีโอนี้พร้อมกันบ่ได้ (%1$s %2$d x %3$d, สองเทื่อ) สะแดงเลนส์เดียว: เคิ่งหนึ่งของทรงกลมยังดำ</string>
+  <string name="immersive_raw_one_lens_file">อ่านไฟล์ของเลนส์อีกอันบ่ได้ สะแดงเลนส์เดียว: เคิ่งหนึ่งของทรงกลมยังดำ</string>
+  <string name="immersive_raw_unstitched">การต่อภาพ 360° บ่สำเร็จในอุปกรณ์นี้ วิดีโอสะแดงตามที่กล้องบันทึกไว้</string>
 </resources>

@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Нечего показать</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d не по силам декодеру шлема (рывки, артефакты). В Immich выберите HEVC для транскодирования видео или ограничьте разрешение.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d не по силам декодеру шлема (рывки, артефакты). Перекодируйте этот файл в HEVC или в меньшем разрешении.</string>
+  <string name="immersive_raw_one_lens_decoder">Этот шлем не может одновременно декодировать оба объектива этого видео (%1$s %2$d x %3$d, дважды). Показан один объектив: половина сферы остаётся чёрной.</string>
+  <string name="immersive_raw_one_lens_file">Не удаётся прочитать файл другого объектива. Показан один объектив: половина сферы остаётся чёрной.</string>
+  <string name="immersive_raw_unstitched">Сшивка 360° на этом устройстве не удалась. Видео показано так, как его записала камера.</string>
 </resources>

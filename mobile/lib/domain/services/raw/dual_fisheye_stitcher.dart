@@ -18,6 +18,7 @@ import 'dart:ui' as ui;
 import 'package:crypto/crypto.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
+import 'package:immich_mobile/domain/services/raw/raw_sampler.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -44,8 +45,10 @@ const dualFisheyeCpuOutputWidth = 1024;
 
 /// The uniforms of the shader, by name, four values each (see shaders/dual_fisheye.frag): the sizes, the scale from
 /// canvas to frame pixels and the model, the rows of G and of the rotation of each lens, and the intrinsics of each lens
-/// in canvas pixels. For a frame of [frameWidth] x [frameHeight] pixels drawn with [calibration], stitched into an
-/// equirect picture of [outputWidth] x [outputHeight]. Throws an [ArgumentError] for a calibration without two lenses.
+/// in canvas pixels, the radial terms k4 and k5 of V6 strings included. For a frame of [frameWidth] x [frameHeight]
+/// pixels drawn with [calibration], stitched into an equirect picture of [outputWidth] x [outputHeight]. A calibration
+/// whose lenses give their rotation whole (see [DualFisheyeLens.viewToLens]) gets G as the identity. Throws an
+/// [ArgumentError] for a calibration without two lenses.
 Map<String, List<double>> dualFisheyeShaderUniforms(
   DualFisheyeCalibration calibration, {
   required int frameWidth,
@@ -57,11 +60,14 @@ Map<String, List<double>> dualFisheyeShaderUniforms(
   if (lenses.length < 2) {
     throw ArgumentError.value(lenses.length, 'calibration.lenses', 'two lenses expected');
   }
-  final g = bodyFrame(calibration.downBody);
+  // Levelling then posing each lens, as the photos of Insta360 cameras are; or the whole rotation each lens gives
+  final givesRotations = lenses.any((lens) => lens.viewToLens != null);
+  final g = givesRotations ? Mat3.identity : bodyFrame(calibration.downBody);
+  final rotations = givesRotations ? viewToLens(calibration) : null;
   List<double> row(Mat3 matrix, int index) => [matrix.at(index, 0), matrix.at(index, 1), matrix.at(index, 2), 0];
   Map<String, List<double>> lens(int index) {
     final lens = lenses[index];
-    final pose = lensPose(lens, index);
+    final pose = rotations?[index] ?? lensPose(lens, index);
     final name = 'uLens$index';
     return {
       'uR${index}0': row(pose, 0),
@@ -70,6 +76,7 @@ Map<String, List<double>> dualFisheyeShaderUniforms(
       '${name}Mei': [lens.xi ?? 0, lens.fx ?? 0, lens.fy ?? 0, lens.radius ?? 0],
       '${name}Centre': [lens.cx, lens.cy, lens.p1, lens.p2],
       '${name}K': [lens.k1, lens.k2, lens.k3, index.toDouble()],
+      '${name}K45': [lens.k4, lens.k5, 0, 0],
     };
   }
 
@@ -136,8 +143,9 @@ class DualFisheyeStitcher {
 }
 
 /// The RGBA pixels of an equirect picture of [width] x [height] stitched from the RGBA pixels [rgba] of a frame of
-/// [frameWidth] x [frameHeight] drawn with [calibration], with the pure Dart math (see [DualFisheyeSampler]): what the
-/// shader does, pixel for pixel, sampled bilinearly as the GPU does. Opaque; black where no lens sees.
+/// [frameWidth] x [frameHeight] drawn with [calibration], both lenses side by side, with the pure Dart math (see
+/// [stitchRawRgba] and [FisheyePairSampler.sideBySideRegions]): what the shader does, pixel for pixel, sampled
+/// bilinearly as the GPU does. Opaque; black where no lens sees.
 Uint8List stitchDualFisheyeRgba(
   Uint8List rgba, {
   required int frameWidth,
@@ -146,44 +154,13 @@ Uint8List stitchDualFisheyeRgba(
   required int width,
   required int height,
 }) {
-  final sampler = DualFisheyeSampler(calibration, frameWidth: frameWidth, frameHeight: frameHeight);
-  final output = Uint8List(width * height * 4);
-  final colour = Float64List(3);
-  for (var j = 0; j < height; j++) {
-    for (var i = 0; i < width; i++) {
-      final (:lon, :lat) = equirectAngles(i, j, width, height);
-      colour.fillRange(0, 3, 0);
-      for (final sample in sampler.sample(lon, lat)) {
-        _addBilinear(rgba, frameWidth, frameHeight, sample.x, sample.y, sample.weight, colour);
-      }
-      final at = (j * width + i) * 4;
-      output[at] = colour[0].round().clamp(0, 255);
-      output[at + 1] = colour[1].round().clamp(0, 255);
-      output[at + 2] = colour[2].round().clamp(0, 255);
-      output[at + 3] = 255;
-    }
-  }
-  return output;
-}
-
-// Adds [weight] times the colour at frame position ([x], [y]) to [colour], interpolated between the four nearest
-// pixels whose centres are at half pixels, the edges clamped: GPU texture sampling with a linear filter
-void _addBilinear(Uint8List rgba, int width, int height, double x, double y, double weight, Float64List colour) {
-  final tx = x - 0.5;
-  final ty = y - 0.5;
-  final x0 = tx.floor();
-  final y0 = ty.floor();
-  final fx = tx - x0;
-  final fy = ty - y0;
-  final left = x0.clamp(0, width - 1);
-  final right = (x0 + 1).clamp(0, width - 1);
-  final top = y0.clamp(0, height - 1);
-  final bottom = (y0 + 1).clamp(0, height - 1);
-  for (var c = 0; c < 3; c++) {
-    final upper = rgba[(top * width + left) * 4 + c] * (1 - fx) + rgba[(top * width + right) * 4 + c] * fx;
-    final lower = rgba[(bottom * width + left) * 4 + c] * (1 - fx) + rgba[(bottom * width + right) * 4 + c] * fx;
-    colour[c] += weight * (upper * (1 - fy) + lower * fy);
-  }
+  final size = (width: frameWidth, height: frameHeight);
+  return stitchRawRgba(
+    [(rgba: rgba, width: frameWidth, height: frameHeight)],
+    FisheyePairSampler(calibration, regions: FisheyePairSampler.sideBySideRegions(), textureSizes: [size]),
+    width: width,
+    height: height,
+  );
 }
 
 /// [source], a frame drawn with [calibration], stitched with the pure Dart math in a background isolate (see

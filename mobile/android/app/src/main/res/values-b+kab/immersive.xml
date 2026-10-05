@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Ulac acu ara d-yettwaskanen</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d yɛedda tazmert n udekudur n headset (yettḥebbis, d iferdisen). Deg Immich, sbadu asenfel n tvidyut ɣer HEVC neɣ sbadu talast i tbadut.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d yɛedda tazmert n udekudur n headset (yettḥebbis, d iferdisen). Ales asettengel n ufaylu-a s HEVC neɣ s tbadut taddayt.</string>
+  <string name="immersive_raw_one_lens_decoder">Aheadset-a ur yezmir ara ad yekkes asettengel i snat n tlentilin n tvidyut-a deg yiwet n tikkelt (%1$s %2$d x %3$d, snat n tikkal). Yettban-d yiwet n talentilt: azgen n tkurt yeqqim d aberkan.</string>
+  <string name="immersive_raw_one_lens_file">Afaylu n tlentilt-nniḍen ur yettwaɣra ara. Tettban-d yiwet n talentilt: azgen n tkurt yeqqim d aberkan.</string>
+  <string name="immersive_raw_unstitched">Asdukkel 360° ur yeddi ara ɣef yibenk-a. Tavidyut tettban-d akken i tt-tesekles tkamirat.</string>
 </resources>

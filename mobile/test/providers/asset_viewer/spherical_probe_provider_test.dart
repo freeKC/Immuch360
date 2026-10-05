@@ -52,6 +52,7 @@ void main() {
     halfSphere: true,
     hasSphericalMetadata: true,
     codec: 'hvc1',
+    tracks: [ProbedTrack(index: 0, codec: 'hvc1')],
   );
 
   late MockStorageRepository storage;
@@ -116,6 +117,22 @@ void main() {
       final count = requests.length;
       expect(await probes.probe(asset), vr180Probe);
 
+      expect(requests, hasLength(count));
+    });
+
+    test('cached gives a probe already read, and nothing before', () async {
+      final asset = RemoteAssetFactory.create(type: .video);
+      final other = RemoteAssetFactory.create(type: .video);
+      final probes = service(_server(vr180, requests));
+
+      expect(probes.cached(asset), isNull);
+      expect(requests, isEmpty, reason: 'cached reads nothing');
+
+      expect(await probes.probe(asset), vr180Probe);
+      final count = requests.length;
+
+      expect(probes.cached(asset), vr180Probe);
+      expect(probes.cached(other), isNull);
       expect(requests, hasLength(count));
     });
 

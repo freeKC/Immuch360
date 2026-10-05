@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Takdok gapo nok tunjuk</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d melampau had penyahkod headset (tersekat-sekat, berpetak-petak). Dale Immich, tetapke transkod video ko HEVC atau hadke resolusi.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d melampau had penyahkod headset (tersekat-sekat, berpetak-petak). Kod semula fail ni dale HEVC atau resolusi hok lebih rendoh.</string>
+  <string name="immersive_raw_one_lens_decoder">Headset ni tak leh nyahkod duo lensa video ni samo gak (%1$s %2$d x %3$d, duo kali). Dio tunjuk satu lensa jah: separuh sfera kekal hitam.</string>
+  <string name="immersive_raw_one_lens_file">Fail lensa satu lagi tak leh baco. Satu lensa jah ditunjuk: separuh sfera kekal hitam.</string>
+  <string name="immersive_raw_unstitched">Cantuma 360° gagal dale peranti ni. Video ditunjuk macam kamera rakam.</string>
 </resources>

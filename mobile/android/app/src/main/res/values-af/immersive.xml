@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Niks om te wys nie</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d oorskry die kopstuk se dekodeerder (stotterend, blokkerig). Stel in Immich die videotranskodering op HEVC of beperk die resolusie.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d oorskry die kopstuk se dekodeerder (stotterend, blokkerig). Enkodeer hierdie lêer weer in HEVC of teen \'n laer resolusie.</string>
+  <string name="immersive_raw_one_lens_decoder">Hierdie kopstuk kan nie die twee lense van hierdie video tegelyk dekodeer nie (%1$s %2$d x %3$d, twee keer). Dit wys een lens: die helfte van die sfeer bly swart.</string>
+  <string name="immersive_raw_one_lens_file">Die lêer van die ander lens kan nie gelees word nie. Een lens word gewys: die helfte van die sfeer bly swart.</string>
+  <string name="immersive_raw_unstitched">Die 360°-aanmekaarwerk het op hierdie toestel misluk. Die video word gewys soos die kamera dit opgeneem het.</string>
 </resources>

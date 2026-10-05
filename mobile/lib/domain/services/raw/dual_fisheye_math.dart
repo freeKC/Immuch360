@@ -12,6 +12,7 @@
 import 'dart:math' as math;
 
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
+import 'package:immich_mobile/domain/services/raw/raw_sampler.dart';
 
 /// A direction, or a point, in 3D
 typedef Vec3 = ({double x, double y, double z});
@@ -58,9 +59,14 @@ class Mat3 {
 
 const _degree = math.pi / 180;
 
-/// Largest angle off the optical axis, in degrees, a lens is read at: the image circle of the X3 ends about there (the
-/// Mei model of a real X3 puts 100 degrees 2886 canvas pixels off centre, in a half square of 2976)
+/// Largest angle off the optical axis, in degrees, a lens of an Insta360 camera is read at: the image circle of the X3
+/// ends about there (the Mei model of a real X3 puts 100 degrees 2886 canvas pixels off centre, in a half square of
+/// 2976). A calibration says its own (see [DualFisheyeCalibration.maxTheta]).
 const dualFisheyeMaxTheta = 100.0;
+
+/// The angle off axis, in degrees, the radius of an equidistant lens (V1 strings) is given at, whatever angle the
+/// calibration reads its lenses up to
+const equidistantRadiusDegrees = 100.0;
 
 /// The blend of the two lenses runs between these angles off axis, in degrees: one lens alone up to 85, the other alone
 /// past 95
@@ -151,10 +157,17 @@ Mat3 bodyFrame(List<double> downBody) {
 }
 
 /// The rotations from the view to the frame of each lens of [calibration], levelled by its gravity: what a shader needs
-/// with the lenses' intrinsics
+/// with the lenses' intrinsics. A lens that gives its rotation whole ([DualFisheyeLens.viewToLens], a DJI lens) is
+/// taken as it is; the others are posed the Insta360 way, levelled by [DualFisheyeCalibration.downBody].
 List<Mat3> viewToLens(DualFisheyeCalibration calibration) {
   final body = bodyFrame(calibration.downBody);
-  return [for (var i = 0; i < calibration.lenses.length; i++) lensPose(calibration.lenses[i], i) * body];
+  return [
+    for (final (i, lens) in calibration.lenses.indexed)
+      switch (lens.viewToLens) {
+        final List<double> given when given.length == 9 => Mat3(given),
+        _ => lensPose(lens, i) * body,
+      },
+  ];
 }
 
 /// The longitude and the latitude, in radians, of the centre of pixel ([i], [j]) of an equirect picture of [width] x
@@ -176,14 +189,14 @@ Vec3 directionForEquirect(int i, int j, int width, int height) {
 double offAxisDegrees(Vec3 d) => math.acos(d.z.clamp(-1.0, 1.0)) / _degree;
 
 /// Where the unit direction [d], in the frame of [lens], lands on the calibration canvas with the unified camera model of
-/// Mei (V3 calibration strings): the direction is projected from a point [DualFisheyeLens.xi] behind the centre of the
-/// unit sphere, then goes through a radial (k1 to k3) and a tangential (p1, p2) distortion. Null past
-/// [dualFisheyeMaxTheta] off axis, or for a lens without the Mei intrinsics.
-Pixel? meiProject(DualFisheyeLens lens, Vec3 d) {
+/// Mei (V3 and V6 calibration strings): the direction is projected from a point [DualFisheyeLens.xi] behind the centre
+/// of the unit sphere, then goes through a radial (k1 to k5, the last two from V6 strings only) and a tangential (p1,
+/// p2) distortion. Null [maxTheta] degrees off axis and beyond, or for a lens without the Mei intrinsics.
+Pixel? meiProject(DualFisheyeLens lens, Vec3 d, {double maxTheta = dualFisheyeMaxTheta}) {
   final xi = lens.xi;
   final fx = lens.fx;
   final fy = lens.fy;
-  if (xi == null || fx == null || fy == null || offAxisDegrees(d) >= dualFisheyeMaxTheta) {
+  if (xi == null || fx == null || fy == null || offAxisDegrees(d) >= maxTheta) {
     return null;
   }
   final depth = d.z + xi;
@@ -193,34 +206,108 @@ Pixel? meiProject(DualFisheyeLens lens, Vec3 d) {
   final mx = d.x / depth;
   final my = d.y / depth;
   final r2 = mx * mx + my * my;
-  final radial = 1 + r2 * (lens.k1 + r2 * (lens.k2 + r2 * lens.k3));
+  final radial = 1 + r2 * (lens.k1 + r2 * (lens.k2 + r2 * (lens.k3 + r2 * (lens.k4 + r2 * lens.k5))));
   final dx = radial * mx + 2 * lens.p1 * mx * my + lens.p2 * (r2 + 2 * mx * mx);
   final dy = radial * my + lens.p1 * (r2 + 2 * my * my) + 2 * lens.p2 * mx * my;
   return (x: fx * dx + lens.cx, y: fy * dy + lens.cy);
 }
 
 /// Where the unit direction [d], in the frame of [lens], lands on the calibration canvas with an equidistant fisheye (V1
-/// calibration strings): the distance to the centre grows with the angle off axis, [DualFisheyeLens.radius] at 100
-/// degrees (where the V1 radius sits on the X3). Null past [dualFisheyeMaxTheta] off axis, or without a radius.
-Pixel? equidistantProject(DualFisheyeLens lens, Vec3 d) {
+/// calibration strings): the distance to the centre grows with the angle off axis, [DualFisheyeLens.radius] at
+/// [equidistantRadiusDegrees] (where the V1 radius sits on the X3). Null [maxTheta] degrees off axis and beyond, or
+/// without a radius.
+Pixel? equidistantProject(DualFisheyeLens lens, Vec3 d, {double maxTheta = dualFisheyeMaxTheta}) {
   final radius = lens.radius;
   final theta = offAxisDegrees(d);
-  if (radius == null || theta >= dualFisheyeMaxTheta) {
+  if (radius == null || theta >= maxTheta) {
     return null;
   }
   final planar = math.sqrt(d.x * d.x + d.y * d.y);
   if (planar < 1e-12) {
     return (x: lens.cx, y: lens.cy);
   }
-  final r = radius * theta / dualFisheyeMaxTheta;
+  final r = radius * theta / equidistantRadiusDegrees;
   return (x: lens.cx + r * d.x / planar, y: lens.cy + r * d.y / planar);
 }
 
-/// Where [d] lands on the canvas for a lens of the [model]
-Pixel? projectLens(DualFisheyeModel model, DualFisheyeLens lens, Vec3 d) => switch (model) {
-  DualFisheyeModel.mei => meiProject(lens, d),
-  DualFisheyeModel.equidistant => equidistantProject(lens, d),
+/// Where the unit direction [d], in the frame of [lens], lands on the calibration canvas with the polynomial fisheye of
+/// Kannala and Brandt (DJI Osmo 360): the distance to the centre is theta (1 + k1 theta^2 + ... + k5 theta^10), theta
+/// the angle off axis in radians, times the focal lengths. Null past [maxTheta] degrees off axis, or without focal
+/// lengths.
+Pixel? kannalaBrandtProject(DualFisheyeLens lens, Vec3 d, {double maxTheta = 94}) {
+  final fx = lens.fx;
+  final fy = lens.fy;
+  final thetaDegrees = offAxisDegrees(d);
+  if (fx == null || fy == null || thetaDegrees >= maxTheta) {
+    return null;
+  }
+  final theta = thetaDegrees * _degree;
+  final t2 = theta * theta;
+  final thetaD = theta * (1 + t2 * (lens.k1 + t2 * (lens.k2 + t2 * (lens.k3 + t2 * (lens.k4 + t2 * lens.k5)))));
+  final planar = math.sqrt(d.x * d.x + d.y * d.y);
+  if (planar < 1e-12) {
+    return (x: lens.cx, y: lens.cy);
+  }
+  return (x: lens.cx + fx * thetaD * d.x / planar, y: lens.cy + fy * thetaD * d.y / planar);
+}
+
+/// Where [d] lands on the canvas for a lens of the [model], read up to [maxTheta] degrees off its axis
+Pixel? projectLens(DualFisheyeModel model, DualFisheyeLens lens, Vec3 d, {required double maxTheta}) => switch (model) {
+  DualFisheyeModel.mei => meiProject(lens, d, maxTheta: maxTheta),
+  DualFisheyeModel.equidistant => equidistantProject(lens, d, maxTheta: maxTheta),
+  DualFisheyeModel.kannalaBrandt => kannalaBrandtProject(lens, d, maxTheta: maxTheta),
 };
+
+/// The rotation from the view frame (x right, y down, z forward) to the world frame of a DJI calibration (x forward,
+/// along the axis of the front lens, y left, z up): view right is world -y, view down world -z, view forward world +x
+const djiViewToWorld = Mat3([0, 0, 1, -1, 0, 0, 0, -1, 0]);
+
+/// The rotation from the world frame of a DJI calibration to the frame of a lens of [yaw], [pitch] and [roll] degrees
+/// (DewarpParams of the camd box), whose rows are the lens x, y and optical axis in the world frame: azimuth yaw,
+/// elevation 90 - pitch for the axis, x level and to its right, then turned by the roll about the axis. OSVplat's
+/// world_to_cam without its last mirroring, which flips the picture in this right handed view frame (checked on a
+/// real Osmo 360 file: unmirrored without it).
+Mat3 djiLensRotation(double yaw, double pitch, double roll) {
+  final az = yaw * _degree;
+  final el = (90 - pitch) * _degree;
+  final z = (x: math.cos(el) * math.cos(az), y: math.cos(el) * math.sin(az), z: math.sin(el));
+  final x = _normalized((x: math.sin(az), y: -math.cos(az), z: 0.0))!;
+  final y = _cross(z, x);
+  final c = math.cos(roll * _degree);
+  final s = math.sin(roll * _degree);
+  return Mat3([
+    c * x.x + s * y.x,
+    c * x.y + s * y.y,
+    c * x.z + s * y.z,
+    -s * x.x + c * y.x,
+    -s * x.y + c * y.y,
+    -s * x.z + c * y.z,
+    z.x,
+    z.y,
+    z.z,
+  ]);
+}
+
+/// The rotation matrix of the Hamilton quaternion [w], [x], [y], [z], normalized first; null for a quaternion too short
+/// to have a direction
+Mat3? quaternionMatrix(double w, double x, double y, double z) {
+  final norm = math.sqrt(w * w + x * x + y * y + z * z);
+  if (!norm.isFinite || norm < 1e-9) {
+    return null;
+  }
+  final (qw, qx, qy, qz) = (w / norm, x / norm, y / norm, z / norm);
+  return Mat3([
+    1 - 2 * (qy * qy + qz * qz),
+    2 * (qx * qy - qz * qw),
+    2 * (qx * qz + qy * qw),
+    2 * (qx * qy + qz * qw),
+    1 - 2 * (qx * qx + qz * qz),
+    2 * (qy * qz - qx * qw),
+    2 * (qx * qz - qy * qw),
+    2 * (qy * qz + qx * qw),
+    1 - 2 * (qx * qx + qy * qy),
+  ]);
+}
 
 /// 0 below [edge0], 1 above [edge1], a smooth S between
 double smoothstep(double edge0, double edge1, double x) {
@@ -229,62 +316,40 @@ double smoothstep(double edge0, double edge1, double x) {
 }
 
 /// How much a lens counts for a direction [thetaDegrees] off its axis, before the weights of the two lenses are made to
-/// add up to 1: 1 up to 85 degrees, 0.5 at 90 (the middle of the seam), 0 from 95
-double blendWeight(double thetaDegrees) => 1 - smoothstep(dualFisheyeBlendStart, dualFisheyeBlendEnd, thetaDegrees);
+/// add up to 1: 1 up to [start], 0 from [end], a smooth S between. By default the blend of the Insta360 cameras: 0.5
+/// at 90 degrees, the middle of the seam.
+double blendWeight(double thetaDegrees, {double start = dualFisheyeBlendStart, double end = dualFisheyeBlendEnd}) =>
+    1 - smoothstep(start, end, thetaDegrees);
 
 /// The ratio of a frame pixel to a canvas pixel, for a frame [frameHeight] pixels high (one square per lens): the
 /// calibration covers the whole square of the canvas, not the crop window of the sensor
 double canvasToFrameScale(DualFisheyeCalibration calibration, int frameHeight) =>
     frameHeight / calibration.canvasSquare;
 
-/// Samples a frame of [frameWidth] x [frameHeight] pixels drawn with [calibration], for one direction after another
+/// Samples a frame of [frameWidth] x [frameHeight] pixels drawn with [calibration], both lenses side by side, for one
+/// direction after another: a [FisheyePairSampler] of [FisheyePairSampler.sideBySideRegions] that tells the lens of
+/// each sample
 class DualFisheyeSampler {
   DualFisheyeSampler(this.calibration, {required this.frameWidth, required this.frameHeight})
-    : _viewToLens = viewToLens(calibration),
-      _scale = canvasToFrameScale(calibration, frameHeight);
+    : _pair = FisheyePairSampler(
+        calibration,
+        regions: FisheyePairSampler.sideBySideRegions(),
+        textureSizes: [(width: frameWidth, height: frameHeight)],
+      );
 
   final DualFisheyeCalibration calibration;
   final int frameWidth;
   final int frameHeight;
-  final List<Mat3> _viewToLens;
-  final double _scale;
+  final FisheyePairSampler _pair;
 
-  /// What each lens gives to the direction of longitude [lon] and latitude [lat] (radians): lens i is read only inside
-  /// its own square of the frame and less than [dualFisheyeMaxTheta] off axis, with the weight of [blendWeight]; the
-  /// weights are made to add up to 1. Where no lens has weight (both past 95 degrees, or the other one off its square),
-  /// the lens closer to its axis is taken alone. Empty when no lens sees the direction.
-  List<LensSample> sample(double lon, double lat) {
-    final v = viewDirection(lon, lat);
-    final square = frameHeight.toDouble();
-    final found = <({LensSample sample, double theta})>[];
-    for (var i = 0; i < _viewToLens.length; i++) {
-      final d = _viewToLens[i].apply(v);
-      final canvas = projectLens(calibration.model, calibration.lenses[i], d);
-      if (canvas == null) {
-        continue;
-      }
-      final x = canvas.x * _scale;
-      final y = canvas.y * _scale;
-      if (x < i * square || x >= math.min((i + 1) * square, frameWidth.toDouble()) || y < 0 || y >= square) {
-        continue;
-      }
-      final theta = offAxisDegrees(d);
-      found.add((sample: (lens: i, x: x, y: y, weight: blendWeight(theta)), theta: theta));
-    }
-    final total = found.fold(0.0, (sum, entry) => sum + entry.sample.weight);
-    // A lens past 95 degrees adds nothing to the pixel: it is left out rather than read for nothing
-    if (total > 0) {
-      return [
-        for (final (:sample, theta: _) in found)
-          if (sample.weight > 0) (lens: sample.lens, x: sample.x, y: sample.y, weight: sample.weight / total),
-      ];
-    }
-    if (found.isEmpty) {
-      return const [];
-    }
-    final closest = found.reduce((a, b) => b.theta < a.theta ? b : a).sample;
-    return [(lens: closest.lens, x: closest.x, y: closest.y, weight: 1.0)];
-  }
+  /// What each lens gives to the direction of longitude [lon] and latitude [lat] (radians), in frame pixels: lens i is
+  /// read only inside its own half of the frame and less than [DualFisheyeCalibration.maxTheta] off axis, with the
+  /// weight of [blendWeight]; the weights are made to add up to 1. Where no lens has weight (both past the blend, or
+  /// the other one off its square), the lens closer to its axis is taken alone. Empty when no lens sees the direction.
+  List<LensSample> sample(double lon, double lat) => [
+    for (final (:lens, :sample) in _pair.sampleLenses(lon, lat))
+      (lens: lens, x: sample.x, y: sample.y, weight: sample.weight),
+  ];
 }
 
 /// What each lens of [calibration] gives to the direction of longitude [lon] and latitude [lat] (radians), in a frame of
@@ -345,9 +410,12 @@ DualFisheyeCalibration calibrationForFrame(DualFisheyeCalibration calibration, i
           k1: lens.k1,
           k2: lens.k2,
           k3: lens.k3,
+          k4: lens.k4,
+          k5: lens.k5,
           p1: lens.p1,
           p2: lens.p2,
           radius: scaled(lens.radius),
+          viewToLens: lens.viewToLens,
         ),
     ],
   );
@@ -363,6 +431,11 @@ extension DualFisheyeCalibrationCopy on DualFisheyeCalibration {
     String? serial,
     String? cameraModel,
     DualFisheyeSource? source,
+    double? maxTheta,
+    double? blendStart,
+    double? blendEnd,
+    GravitySource? gravity,
+    Insta360LayoutHints? layoutHints,
   }) => DualFisheyeCalibration(
     model: model ?? this.model,
     lenses: lenses ?? this.lenses,
@@ -371,5 +444,10 @@ extension DualFisheyeCalibrationCopy on DualFisheyeCalibration {
     serial: serial ?? this.serial,
     cameraModel: cameraModel ?? this.cameraModel,
     source: source ?? this.source,
+    maxTheta: maxTheta ?? this.maxTheta,
+    blendStart: blendStart ?? this.blendStart,
+    blendEnd: blendEnd ?? this.blendEnd,
+    gravity: gravity ?? this.gravity,
+    layoutHints: layoutHints ?? this.layoutHints,
   );
 }

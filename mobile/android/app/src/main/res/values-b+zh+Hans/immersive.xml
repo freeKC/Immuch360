@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">没有可显示的内容</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d 超出头显解码器的能力（卡顿、马赛克）。请在 Immich 中将视频转码设置为 HEVC，或限制分辨率。</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d 超出头显解码器的能力（卡顿、马赛克）。请将此文件重新编码为 HEVC，或降低分辨率。</string>
+  <string name="immersive_raw_one_lens_decoder">此头显无法同时解码此视频的两个镜头（%1$s %2$d x %3$d，两路）。仅显示一个镜头：球面的一半保持黑色。</string>
+  <string name="immersive_raw_one_lens_file">无法读取另一个镜头的文件。仅显示一个镜头：球面的一半保持黑色。</string>
+  <string name="immersive_raw_unstitched">此设备上的 360° 拼接失败。视频按相机录制的原样显示。</string>
 </resources>

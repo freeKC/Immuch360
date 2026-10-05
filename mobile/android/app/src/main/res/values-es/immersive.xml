@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Nada que mostrar</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d supera la capacidad del decodificador de las gafas (tirones, pixelado). En Immich, configura la transcodificación de vídeo en HEVC o limita la resolución.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d supera la capacidad del decodificador de las gafas (tirones, pixelado). Vuelve a codificar este archivo en HEVC o a una resolución más baja.</string>
+  <string name="immersive_raw_one_lens_decoder">Estas gafas no pueden decodificar a la vez los dos objetivos de este vídeo (%1$s %2$d x %3$d, dos veces). Se muestra un objetivo: la mitad de la esfera queda negra.</string>
+  <string name="immersive_raw_one_lens_file">No se puede leer el archivo del otro objetivo. Se muestra un objetivo: la mitad de la esfera queda negra.</string>
+  <string name="immersive_raw_unstitched">La unión 360° ha fallado en este dispositivo. El vídeo se muestra tal como lo grabó la cámara.</string>
 </resources>

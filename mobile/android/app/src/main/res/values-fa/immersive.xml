@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">چیزی برای نمایش وجود ندارد</string>
   <string name="immersive_codec_too_large">%1$s با ابعاد %2$d x %3$d از توان رمزگشای هدست بیشتر است (پرش تصویر، پیکسلی شدن). در Immich، تبدیل ویدیو را روی HEVC تنظیم کنید یا وضوح را محدود کنید.</string>
   <string name="immersive_codec_too_large_file">%1$s با ابعاد %2$d x %3$d از توان رمزگشای هدست بیشتر است (پرش تصویر، پیکسلی شدن). این فایل را دوباره با HEVC یا با وضوح پایین‌تر رمزگذاری کنید.</string>
+  <string name="immersive_raw_one_lens_decoder">این هدست نمی‌تواند دو لنز این ویدیو را هم‌زمان رمزگشایی کند (%1$s %2$d x %3$d، دو بار). یک لنز نمایش داده می‌شود: نیمی از کره سیاه می‌ماند.</string>
+  <string name="immersive_raw_one_lens_file">فایل لنز دیگر خوانده نمی‌شود. یک لنز نمایش داده می‌شود: نیمی از کره سیاه می‌ماند.</string>
+  <string name="immersive_raw_unstitched">دوخت 360° روی این دستگاه ناموفق بود. ویدیو همان‌طور که دوربین ضبط کرده نمایش داده می‌شود.</string>
 </resources>

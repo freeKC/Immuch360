@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Niets om te tonen</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d is te zwaar voor de decoder van de headset (schokkerig, blokkerig). Stel in Immich de videotranscodering in op HEVC of beperk de resolutie.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d is te zwaar voor de decoder van de headset (schokkerig, blokkerig). Codeer dit bestand opnieuw in HEVC of in een lagere resolutie.</string>
+  <string name="immersive_raw_one_lens_decoder">Deze headset kan de twee lenzen van deze video niet tegelijk decoderen (%1$s %2$d x %3$d, twee keer). Hij toont één lens: de helft van de bol blijft zwart.</string>
+  <string name="immersive_raw_one_lens_file">Het bestand van de andere lens kan niet worden gelezen. Eén lens wordt getoond: de helft van de bol blijft zwart.</string>
+  <string name="immersive_raw_unstitched">Het samenvoegen in 360° is mislukt op dit apparaat. De video wordt getoond zoals de camera hem heeft opgenomen.</string>
 </resources>

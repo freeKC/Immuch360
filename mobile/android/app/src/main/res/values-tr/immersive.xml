@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Gösterilecek bir şey yok</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d gözlüğün kod çözücüsünün sınırını aşıyor (takılma, bloklaşma). Immich\'te video dönüştürmeyi HEVC olarak ayarlayın veya çözünürlüğü sınırlayın.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d gözlüğün kod çözücüsünün sınırını aşıyor (takılma, bloklaşma). Bu dosyayı HEVC ile veya daha düşük bir çözünürlükte yeniden kodlayın.</string>
+  <string name="immersive_raw_one_lens_decoder">Bu gözlük bu videonun iki merceğini aynı anda çözemiyor (%1$s %2$d x %3$d, iki kez). Tek mercek gösteriliyor: kürenin yarısı siyah kalıyor.</string>
+  <string name="immersive_raw_one_lens_file">Diğer merceğin dosyası okunamıyor. Tek mercek gösteriliyor: kürenin yarısı siyah kalıyor.</string>
+  <string name="immersive_raw_unstitched">360° birleştirme bu cihazda başarısız oldu. Video, kameranın kaydettiği gibi gösteriliyor.</string>
 </resources>

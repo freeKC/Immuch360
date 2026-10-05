@@ -76,6 +76,31 @@ Vec3? _equidistantUnproject(DualFisheyeLens lens, double u, double v) {
   return (x: math.sin(theta) * dx / r, y: math.sin(theta) * dy / r, z: math.cos(theta));
 }
 
+// The unit direction, in the frame of [lens], that the Kannala-Brandt model of [lens] projects to canvas pixel ([u],
+// [v]): theta solved from the distorted radius by Newton's method, from theta = radius. Null where it does not settle.
+Vec3? _kannalaBrandtUnproject(DualFisheyeLens lens, double u, double v) {
+  final a = (u - lens.cx) / lens.fx!;
+  final b = (v - lens.cy) / lens.fy!;
+  final rho = math.sqrt(a * a + b * b);
+  if (rho < 1e-12) {
+    return (x: 0.0, y: 0.0, z: 1.0);
+  }
+  var theta = rho;
+  for (var i = 0; i < 30; i++) {
+    final t2 = theta * theta;
+    final thetaD = theta * (1 + t2 * (lens.k1 + t2 * (lens.k2 + t2 * (lens.k3 + t2 * (lens.k4 + t2 * lens.k5)))));
+    final slope =
+        1 + t2 * (3 * lens.k1 + t2 * (5 * lens.k2 + t2 * (7 * lens.k3 + t2 * (9 * lens.k4 + t2 * 11 * lens.k5))));
+    theta -= (thetaD - rho) / slope;
+  }
+  final t2 = theta * theta;
+  final thetaD = theta * (1 + t2 * (lens.k1 + t2 * (lens.k2 + t2 * (lens.k3 + t2 * (lens.k4 + t2 * lens.k5)))));
+  if (!theta.isFinite || theta < 0 || (thetaD - rho).abs() > 1e-10) {
+    return null;
+  }
+  return (x: math.sin(theta) * a / rho, y: math.sin(theta) * b / rho, z: math.cos(theta));
+}
+
 /// The RGBA pixels of a dual fisheye frame of 2 [square] x [square] drawn with [calibration] (lens 0 in the left
 /// square) from the pattern: black where the lens sees nothing, or further than [dualFisheyeMaxTheta] off its axis
 Uint8List patternDualFisheye(DualFisheyeCalibration calibration, int square) {
@@ -93,6 +118,7 @@ Uint8List patternDualFisheye(DualFisheyeCalibration calibration, int square) {
       final d = switch (calibration.model) {
         DualFisheyeModel.mei => _meiUnproject(lens, u, v),
         DualFisheyeModel.equidistant => _equidistantUnproject(lens, u, v),
+        DualFisheyeModel.kannalaBrandt => _kannalaBrandtUnproject(lens, u, v),
       };
       final at = (y * width + x) * 4;
       rgba[at + 3] = 255;

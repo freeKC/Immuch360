@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Netra da ziskouez</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d a ya dreist galloud digoder ar c\'hasked (diroll, bloc\'hoù). En Immich, lakait an treuzkodañ video da HEVC pe bevennit ar spisder.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d a ya dreist galloud digoder ar c\'hasked (diroll, bloc\'hoù). Adenkodit ar restr-mañ e HEVC pe gant ur spisder izeloc\'h.</string>
+  <string name="immersive_raw_one_lens_decoder">N\'hall ket ar c\'hask-mañ diskodañ div lunedenn ar video-mañ war un dro (%1$s %2$d x %3$d, div wech). Ul lunedenn a vez diskouezet: an hanter eus ar sferenn a chom du.</string>
+  <string name="immersive_raw_one_lens_file">N\'haller ket lenn restr al lunedenn all. Ul lunedenn a vez diskouezet: an hanter eus ar sferenn a chom du.</string>
+  <string name="immersive_raw_unstitched">C\'hwitet eo ar gwriañ 360° war ar benveg-mañ. Diskouezet eo ar video evel m\'en deus enrollet anezhañ ar c\'hamera.</string>
 </resources>

@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
@@ -148,9 +150,10 @@ class TechnicalDetails extends ConsumerWidget {
   }
 }
 
-/// The codec of a video, its coded frame size and its frame rate, as its file declares them (the server tells neither),
-/// and whether this device decodes it: what decides between the original and the transcoded stream (see
-/// chooseVideoSource). Nothing until the file was read, and nothing of what it does not tell.
+/// The codec of a video with its profile, its coded frame size and its frame rate, its bit rate and its picture (bit
+/// depth, HDR transfer, colour primaries), as its file declares them (the server tells none of it), and whether this
+/// device decodes it: what decides between the original and the transcoded stream (see chooseVideoSource). Nothing
+/// until the file was read, and nothing of what it does not tell.
 class _VideoDecodeTiles extends ConsumerWidget {
   const _VideoDecodeTiles({required this.asset});
 
@@ -159,23 +162,55 @@ class _VideoDecodeTiles extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final details = ref.watch(videoDecodeDetailsProvider(asset)).valueOrNull;
-    final codec = videoCodecSummary(details?.probe);
+    final probe = details?.probe;
+    final codec = videoCodecSummary(probe);
     if (codec == null) {
       return const SizedBox.shrink();
     }
+    final t = context.t;
     final verdict = details?.verdict;
+    final bitRate = details?.bitRate;
+    final picture = videoPictureSummary(probe, t);
+    final dynamicRange = probe?.dynamicRange;
+    final hdr =
+        probe?.dolbyVision == true || dynamicRange == VideoDynamicRange.hlg || dynamicRange == VideoDynamicRange.pq;
+    final missingProfile = verdict?.missingProfile;
     final titleStyle = context.textTheme.labelLarge;
     final subtitleStyle = context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary);
     return Column(
       children: [
         const SizedBox(height: 16),
         SheetTile(
-          title: context.t.technical_details_codec,
+          title: t.technical_details_codec,
           titleStyle: titleStyle,
           leading: Icon(Icons.movie_outlined, size: 24, color: titleStyle?.color),
           subtitle: codec,
           subtitleStyle: subtitleStyle,
         ),
+        if (bitRate != null) ...[
+          const SizedBox(height: 16),
+          SheetTile(
+            title: t.technical_details_bit_rate,
+            titleStyle: titleStyle,
+            leading: Icon(Icons.speed_outlined, size: 24, color: titleStyle?.color),
+            subtitle: [
+              formatBitRate(bitRate.bitsPerSecond, t, locale: context.locale.toLanguageTag()),
+              if (bitRate.source == VideoBitRateSource.mediaData) t.technical_details_bit_rate_whole_file,
+              if (bitRate.source == VideoBitRateSource.fileSize) t.technical_details_bit_rate_estimated,
+            ].join(_kSeparator),
+            subtitleStyle: subtitleStyle,
+          ),
+        ],
+        if (picture != null) ...[
+          const SizedBox(height: 16),
+          SheetTile(
+            title: t.technical_details_picture,
+            titleStyle: titleStyle,
+            leading: Icon(hdr ? Icons.hdr_on_outlined : Icons.palette_outlined, size: 24, color: titleStyle?.color),
+            subtitle: picture,
+            subtitleStyle: subtitleStyle,
+          ),
+        ],
         if (verdict != null) ...[
           const SizedBox(height: 16),
           SheetTile(
@@ -188,6 +223,7 @@ class _VideoDecodeTiles extends ConsumerWidget {
             ),
             subtitle: [
               verdict.supported ? context.t.yes : context.t.no,
+              if (missingProfile != null) t.technical_details_missing_profile(profile: missingProfile),
               if (verdict.supported)
                 verdict.hardware ? context.t.video_decoders_hardware : context.t.video_decoders_software,
               if (verdict.maxWidth > 0 && verdict.maxHeight > 0)
@@ -201,8 +237,9 @@ class _VideoDecodeTiles extends ConsumerWidget {
   }
 }
 
-/// The codec of the video track [probe] describes, with its profile and level, its coded frame size and its frame rate
-/// when known ("HEVC (hvc1.2.4.L153)  •  5760 x 2880  •  29.97 fps"); null when the probe found no video track
+/// The codec of the video track [probe] describes, with the name of its profile and its codecs string, its coded frame
+/// size and its frame rate when known ("HEVC Main 10 (hvc1.2.4.L153)  •  5760 x 2880  •  29.97 fps"); null when the
+/// probe found no video track
 @visibleForTesting
 String? videoCodecSummary(SphericalProbe? probe) {
   final codec = probe?.codec;
@@ -210,11 +247,13 @@ String? videoCodecSummary(SphericalProbe? probe) {
     return null;
   }
   final codecs = probe.codecs;
+  final profile = videoProfileName(codecs);
+  final name = profile == null ? videoCodecName(codec) : '${videoCodecName(codec)} $profile';
   final width = probe.codedWidth;
   final height = probe.codedHeight;
   final frameRate = probe.frameRate;
   return [
-    codecs == null ? videoCodecName(codec) : '${videoCodecName(codec)} ($codecs)',
+    codecs == null ? name : '$name ($codecs)',
     if (width != null && height != null) '$width x $height',
     if (frameRate != null) '${formatFrameRate(frameRate)} fps',
   ].join(_kSeparator);

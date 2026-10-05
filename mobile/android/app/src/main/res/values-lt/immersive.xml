@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Nėra ką rodyti</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d viršija VR akinių dekoderio galimybes (trūkčioja, matyti kvadratėliai). Immich nustatymuose pakeiskite vaizdo įrašų perkodavimą į HEVC arba apribokite raišką.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d viršija VR akinių dekoderio galimybes (trūkčioja, matyti kvadratėliai). Perkoduokite šį failą į HEVC arba mažesne raiška.</string>
+  <string name="immersive_raw_one_lens_decoder">Šie VR akiniai negali vienu metu dekoduoti abiejų šio vaizdo įrašo objektyvų (%1$s %2$d x %3$d, du kartus). Rodomas vienas objektyvas: pusė sferos lieka juoda.</string>
+  <string name="immersive_raw_one_lens_file">Kito objektyvo failo nepavyksta perskaityti. Rodomas vienas objektyvas: pusė sferos lieka juoda.</string>
+  <string name="immersive_raw_unstitched">360° sujungimas šiame įrenginyje nepavyko. Vaizdo įrašas rodomas taip, kaip jį įrašė kamera.</string>
 </resources>

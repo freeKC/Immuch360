@@ -96,6 +96,63 @@ class LocalAssetRepository extends DatabaseAccessor<Drift> with $LocalAssetRepos
     return _db.managers.localAssetEntity.count();
   }
 
+  /// The video of the device named [name], case aside, most likely recorded with the video [localId]: the other file
+  /// of a split Insta360 recording, which the gallery lists as a video of its own. One that shares an album with
+  /// [localId] first, then the closest in creation time; null when none shares an album with it or was created within
+  /// [maxApart] of it, as a file of the same name from another day would be no part of the recording.
+  Future<LocalAsset?> findSiblingByName(
+    String localId,
+    String name, {
+    Duration maxApart = const Duration(seconds: 60),
+  }) async {
+    final opened = await getById(localId);
+    if (opened == null) {
+      return null;
+    }
+    final candidates =
+        await (_db.localAssetEntity.select()..where(
+              (row) =>
+                  row.name.lower().equals(name.toLowerCase()) &
+                  row.id.equals(localId).not() &
+                  row.type.equalsValue(AssetType.video),
+            ))
+            .map((row) => row.toDto())
+            .get();
+    if (candidates.isEmpty) {
+      return null;
+    }
+    final albumsOf = _db.localAlbumAssetEntity;
+    final albums =
+        await (albumsOf.selectOnly()
+              ..addColumns([albumsOf.albumId])
+              ..where(albumsOf.assetId.equals(localId)))
+            .map((row) => row.read(albumsOf.albumId))
+            .get();
+    final sharing = albums.isEmpty
+        ? const <String>{}
+        : {
+            for (final row
+                in await (albumsOf.selectOnly()
+                      ..addColumns([albumsOf.assetId])
+                      ..where(
+                        albumsOf.assetId.isIn([for (final candidate in candidates) candidate.id]) &
+                            albumsOf.albumId.isIn(albums.nonNulls),
+                      ))
+                    .get())
+              ?row.read(albumsOf.assetId),
+          };
+    Duration apart(LocalAsset asset) => asset.createdAt.difference(opened.createdAt).abs();
+    final ranked =
+        [
+          for (final candidate in candidates)
+            if (sharing.contains(candidate.id) || apart(candidate) <= maxApart) candidate,
+        ]..sort((a, b) {
+          final album = (sharing.contains(a.id) ? 0 : 1).compareTo(sharing.contains(b.id) ? 0 : 1);
+          return album != 0 ? album : apart(a).compareTo(apart(b));
+        });
+    return ranked.firstOrNull;
+  }
+
   Future<int> getHashedCount() {
     return _db.managers.localAssetEntity.filter((e) => e.checksum.isNull().not()).count();
   }

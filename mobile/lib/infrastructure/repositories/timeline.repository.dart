@@ -9,7 +9,6 @@ import 'package:immich_mobile/data/db/main/table/remote/asset.dart';
 import 'package:immich_mobile/data/db/main/table/remote/asset.drift.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
-import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/map.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
@@ -169,11 +168,6 @@ class TimelineRepository extends DatabaseAccessor<Drift> with $TimelineRepositor
   /// Every photo and video of this device, newest first, for a session without a server (see localSessionProvider).
   /// The main timeline only lists the device albums selected for backup; this one lists them all.
   TimelineQuery localDevice(GroupAssetsBy groupBy) => _localQueryBuilder(groupBy: groupBy, origin: TimelineOrigin.main);
-
-  /// The photos and videos of this device whose local id is in [ids], newest first: the 360° ones of a session
-  /// without a server, found by reading the files since there is no server exif to filter on
-  TimelineQuery localPanorama360(Set<String> ids, GroupAssetsBy groupBy) =>
-      _localQueryBuilder(filter: (row) => row.id.isIn(ids), groupBy: groupBy, origin: TimelineOrigin.panorama360);
 
   TimelineQuery _localQueryBuilder({
     Expression<bool> Function($LocalAssetEntityTable row)? filter,
@@ -422,53 +416,6 @@ class TimelineRepository extends DatabaseAccessor<Drift> with $TimelineRepositor
     origin: TimelineOrigin.video,
     groupBy: groupBy,
   );
-
-  /// The 360° photos and videos of the user: remote assets whose exif projection is equirectangular, the rule the
-  /// viewer uses to offer the 360° view (see isEquirectangularProvider). Archived assets are listed like in the
-  /// favorites, locked ones are not. A stack shows only its primary asset, like the main timeline.
-  TimelineQuery panorama360(String userId, GroupAssetsBy groupBy) {
-    Expression<bool> filter($RemoteAssetEntityTable row) =>
-        row.deletedAt.isNull() &
-        row.ownerId.equals(userId) &
-        (row.visibility.equalsValue(AssetVisibility.timeline) | row.visibility.equalsValue(AssetVisibility.archive)) &
-        row.id.isInQuery(
-          _db.remoteExifEntity.selectOnly()
-            ..addColumns([_db.remoteExifEntity.assetId])
-            ..where(_db.remoteExifEntity.projectionType.equals(ProjectionType.equirectangular.value)),
-        ) &
-        (row.stackId.isNull() |
-            row.id.isInQuery(_db.stackEntity.selectOnly()..addColumns([_db.stackEntity.primaryAssetId])));
-
-    return (
-      bucketSource: () => _watchRemoteBucket(filter: filter, groupBy: groupBy),
-      assetSource: (offset, count) => _getPanorama360Assets(filter, groupBy: groupBy, offset: offset, count: count),
-      origin: TimelineOrigin.panorama360,
-    );
-  }
-
-  Future<List<BaseAsset>> _getPanorama360Assets(
-    Expression<bool> Function($RemoteAssetEntityTable row) filter, {
-    required int offset,
-    required int count,
-    GroupAssetsBy groupBy = GroupAssetsBy.day,
-  }) {
-    // The copy on the device, if any, lets the 360° players read the local file. Picked with a correlated subquery
-    // like in the remote album, so a photo present in several device albums is not listed twice (#23273).
-    final localId = subqueryExpression<String>(
-      _db.localAssetEntity.selectOnly()
-        ..addColumns([_db.localAssetEntity.id])
-        ..where(_db.localAssetEntity.checksum.equalsExp(_db.remoteAssetEntity.checksum))
-        ..limit(1),
-    );
-
-    // Same order as the buckets, so an asset whose local date differs from its creation date lands in its day
-    final query = _db.remoteAssetEntity.select().addColumns([localId])
-      ..where(filter(_db.remoteAssetEntity))
-      ..orderBy(_assetDateOrder(groupBy).map((order) => order(_db.remoteAssetEntity)).toList())
-      ..limit(count, offset: offset);
-
-    return query.map((row) => row.readTable(_db.remoteAssetEntity).toDto(localId: row.read(localId))).get();
-  }
 
   TimelineQuery place(String place, GroupAssetsBy groupBy) => (
     bucketSource: () => _watchPlaceBucket(place, groupBy: groupBy),

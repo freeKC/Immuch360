@@ -112,10 +112,12 @@ Future<ImmersiveCandidate<T>?> findAdjacentImmersiveInFolder<T extends Object>({
 );
 
 /// Whether the immersive viewer shows [asset] as a 360° media, as far as what is at hand tells without reading its
-/// file: any photo or video of the 360° timeline ([all360]); elsewhere, one the user chose to view as 360° ([forced],
-/// keys as [spatialLayoutKey] makes them, or ids on the device), one whose file on the device declares it ([localIds],
-/// ids on the device), or one the server flags as equirectangular ([equirectangularIds], server ids). The same rules
-/// as the 360° button of the asset viewer (see isEquirectangularProvider), which shows only for those.
+/// file: any photo or video of the 360° page, as filtered ([all360]: its list holds only those, device and raw files
+/// included, so the headset moves through what the page shows, in its order); elsewhere, one the user chose to view
+/// as 360° ([forced], keys as [spatialLayoutKey] makes them, or ids on the device), one whose file on the device
+/// declares it ([localIds], ids on the device), or one the server flags as equirectangular ([equirectangularIds],
+/// server ids). The same rules as the 360° button of the asset viewer (see isEquirectangularProvider), which shows
+/// only for those.
 bool isImmersiveCandidate(
   BaseAsset asset, {
   required bool all360,

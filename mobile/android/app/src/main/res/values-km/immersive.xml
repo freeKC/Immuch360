@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">គ្មានអ្វីត្រូវបង្ហាញទេ</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d លើសសមត្ថភាពឧបករណ៍ឌិកូដរបស់កាស VR (រអាក់រអួល បែកជាប្លុក)។ នៅក្នុង Immich សូមកំណត់ការបំប្លែងវីដេអូទៅ HEVC ឬកំណត់កម្រិតភាពច្បាស់។</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d លើសសមត្ថភាពឧបករណ៍ឌិកូដរបស់កាស VR (រអាក់រអួល បែកជាប្លុក)។ សូមអ៊ិនកូដឯកសារនេះឡើងវិញជា HEVC ឬក្នុងកម្រិតភាពច្បាស់ទាបជាងនេះ។</string>
+  <string name="immersive_raw_one_lens_decoder">កាស VR នេះមិនអាចឌិកូដកញ្ចក់ទាំងពីររបស់វីដេអូនេះក្នុងពេលតែមួយបានទេ (%1$s %2$d x %3$d ពីរដង)។ វាបង្ហាញកញ្ចក់មួយ៖ ពាក់កណ្ដាលនៃស្វ៊ែរនៅតែខ្មៅ។</string>
+  <string name="immersive_raw_one_lens_file">មិនអាចអានឯកសាររបស់កញ្ចក់មួយទៀតបានទេ។ កញ្ចក់មួយត្រូវបានបង្ហាញ៖ ពាក់កណ្ដាលនៃស្វ៊ែរនៅតែខ្មៅ។</string>
+  <string name="immersive_raw_unstitched">ការតភ្ជាប់ 360° បានបរាជ័យនៅលើឧបករណ៍នេះ។ វីដេអូបង្ហាញដូចដែលកាមេរ៉ាបានថត។</string>
 </resources>

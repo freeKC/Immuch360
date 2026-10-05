@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Hakuna cha kuonyesha</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d inazidi uwezo wa kisimbuzi cha headset (inakwama, ina miraba). Katika Immich, weka ubadilishaji wa video kuwa HEVC au punguza ubora.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d inazidi uwezo wa kisimbuzi cha headset (inakwama, ina miraba). Simba upya faili hii kwa HEVC au kwa ubora wa chini zaidi.</string>
+  <string name="immersive_raw_one_lens_decoder">Headset hii haiwezi kusimbua lenzi mbili za video hii kwa wakati mmoja (%1$s %2$d x %3$d, mara mbili). Inaonyesha lenzi moja: nusu ya tufe inabaki nyeusi.</string>
+  <string name="immersive_raw_one_lens_file">Faili ya lenzi nyingine haiwezi kusomwa. Lenzi moja inaonyeshwa: nusu ya tufe inabaki nyeusi.</string>
+  <string name="immersive_raw_unstitched">Uunganishaji wa 360° umeshindwa kwenye kifaa hiki. Video inaonyeshwa kama kamera ilivyoirekodi.</string>
 </resources>

@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Nagott de mostrà</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d el passa i limit del decoder del visor (a scatt, a quadrett). In Immich, mett la transcodifica di video in HEVC o limita la resoluzion.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d el passa i limit del decoder del visor (a scatt, a quadrett). Codifica de noeuv quell file chì in HEVC o a una resoluzion pussee bassa.</string>
+  <string name="immersive_raw_one_lens_decoder">Sto visor el riess minga a decodificà a la volta i duu obietiv de sto video (%1$s %2$d x %3$d, dò volte). El mostra un obietiv: metà de la sfera la resta negra.</string>
+  <string name="immersive_raw_one_lens_file">El file de l\'alter obietiv el se pò minga legg. L\'è mostraa un obietiv: metà de la sfera la resta negra.</string>
+  <string name="immersive_raw_unstitched">La giontadura a 360° l\'è minga riessida su sto dispositiv. El video l\'è mostraa come l\'ha registraa la fotocamera.</string>
 </resources>

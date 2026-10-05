@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">אין מה להציג</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d חורג מיכולת המפענח של משקפי ה-VR (מקוטע, מפוקסל). ב-Immich, הגדר את המרת הקידוד של הווידאו ל-HEVC או הגבל את הרזולוציה.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d חורג מיכולת המפענח של משקפי ה-VR (מקוטע, מפוקסל). קודד מחדש את הקובץ ב-HEVC או ברזולוציה נמוכה יותר.</string>
+  <string name="immersive_raw_one_lens_decoder">משקפי ה-VR האלה לא יכולים לפענח בו-זמנית את שתי העדשות של הסרטון הזה (%1$s %2$d x %3$d, פעמיים). מוצגת עדשה אחת: חצי מהכדור נשאר שחור.</string>
+  <string name="immersive_raw_one_lens_file">לא ניתן לקרוא את הקובץ של העדשה השנייה. מוצגת עדשה אחת: חצי מהכדור נשאר שחור.</string>
+  <string name="immersive_raw_unstitched">חיבור ה-360° נכשל במכשיר הזה. הסרטון מוצג כפי שהמצלמה הקליטה אותו.</string>
 </resources>

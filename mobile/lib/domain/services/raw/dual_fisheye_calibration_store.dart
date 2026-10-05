@@ -40,13 +40,19 @@ class DualFisheyeCalibrationStore {
   Future<void> _writing = Future.value();
 
   /// Keeps [calibration], read from a file of the camera [serial], for the files of that camera without one, and as
-  /// the last calibration of its camera model (see [forModel]). Only a calibration from the file itself is kept: a
-  /// cached or nominal one would hide a later real one. Gravity is not kept, it belongs to the shot.
+  /// the last calibration of its camera model (see [forModel]). Only a calibration of an Insta360 camera from the file
+  /// itself is kept: a cached or nominal one would hide a later real one, and every file of a DJI camera carries its
+  /// own (its nominal values are close enough for one that does not). Gravity is not kept, it belongs to the shot.
   Future<void> remember(String serial, DualFisheyeCalibration calibration) async {
-    if (serial.isEmpty || calibration.source != DualFisheyeSource.file) {
+    if (serial.isEmpty ||
+        calibration.source != DualFisheyeSource.file ||
+        calibration.model == DualFisheyeModel.kannalaBrandt) {
       return;
     }
-    final kept = calibration.copyWith(serial: serial, downBody: const [1.0, 0.0, 0.0]);
+    // As the file keeps it: the layout of the video and the gravity of the shot belong to the file it came from
+    final kept = DualFisheyeCalibration.fromJson(
+      calibration.copyWith(serial: serial, downBody: const [1.0, 0.0, 0.0]).toJson(),
+    );
     final model = calibration.cameraModel?.trim() ?? '';
     final calibrations = await _load();
     var changed = _put(calibrations.cameras, serial, kept);

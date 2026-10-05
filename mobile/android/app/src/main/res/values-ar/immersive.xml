@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">لا يوجد ما يمكن عرضه</string>
   <string name="immersive_codec_too_large">فيديو %1$s بدقة %2$d x %3$d يتجاوز قدرة مفكك الترميز في النظارة (تقطّع وظهور مربعات). في Immich، اضبط تحويل ترميز الفيديو على HEVC أو قلّل الدقة.</string>
   <string name="immersive_codec_too_large_file">فيديو %1$s بدقة %2$d x %3$d يتجاوز قدرة مفكك الترميز في النظارة (تقطّع وظهور مربعات). أعد ترميز هذا الملف بصيغة HEVC أو بدقة أقل.</string>
+  <string name="immersive_raw_one_lens_decoder">لا تستطيع هذه النظارة فك ترميز عدستي هذا الفيديو في الوقت نفسه (%1$s %2$d x %3$d، مرتين). تُعرض عدسة واحدة: يبقى نصف الكرة أسود.</string>
+  <string name="immersive_raw_one_lens_file">تعذّرت قراءة ملف العدسة الأخرى. تُعرض عدسة واحدة: يبقى نصف الكرة أسود.</string>
+  <string name="immersive_raw_unstitched">فشل دمج 360° على هذا الجهاز. يُعرض الفيديو كما سجّلته الكاميرا.</string>
 </resources>

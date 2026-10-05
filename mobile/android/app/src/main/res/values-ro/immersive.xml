@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Nimic de afișat</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d depășește capacitatea decodorului din headset (sacadat, pixelat). În Immich, setați transcodarea video la HEVC sau limitați rezoluția.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d depășește capacitatea decodorului din headset (sacadat, pixelat). Recodați acest fișier în HEVC sau la o rezoluție mai mică.</string>
+  <string name="immersive_raw_one_lens_decoder">Acest headset nu poate decoda simultan cele două obiective ale acestui videoclip (%1$s %2$d x %3$d, de două ori). Afișează un obiectiv: jumătate din sferă rămâne neagră.</string>
+  <string name="immersive_raw_one_lens_file">Fișierul celuilalt obiectiv nu poate fi citit. Se afișează un obiectiv: jumătate din sferă rămâne neagră.</string>
+  <string name="immersive_raw_unstitched">Îmbinarea 360° a eșuat pe acest dispozitiv. Videoclipul este afișat așa cum l-a înregistrat camera.</string>
 </resources>

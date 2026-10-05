@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Няма чаго паказаць</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d перавышае магчымасці дэкодэра шлема (рыўкі, квадраты). У Immich задайце транскадаванне відэа ў HEVC або абмяжуйце раздзяляльнасць.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d перавышае магчымасці дэкодэра шлема (рыўкі, квадраты). Перакадуйце гэты файл у HEVC або ў меншай раздзяляльнасці.</string>
+  <string name="immersive_raw_one_lens_decoder">Гэты шлем не можа адначасова дэкадаваць два аб’ектывы гэтага відэа (%1$s %2$d x %3$d, двойчы). Паказваецца адзін аб’ектыў: палова сферы застаецца чорнай.</string>
+  <string name="immersive_raw_one_lens_file">Не ўдаецца прачытаць файл іншага аб’ектыва. Паказваецца адзін аб’ектыў: палова сферы застаецца чорнай.</string>
+  <string name="immersive_raw_unstitched">Сшыванне 360° не ўдалося на гэтай прыладзе. Відэа паказваецца так, як яго запісала камера.</string>
 </resources>

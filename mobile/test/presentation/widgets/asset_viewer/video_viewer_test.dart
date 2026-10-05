@@ -45,8 +45,16 @@ class _FakeVideoDecoderApi extends VideoDecoderApi {
   bool supported = true;
 
   @override
-  Future<DecodeVerdict> canDecode(String codec, String? codecs, int width, int height, double frameRate) async =>
-      DecodeVerdict(supported: supported, hardware: true, maxWidth: 4096, maxHeight: 4096);
+  Future<DecodeVerdict> canDecode(
+    String codec,
+    String? codecs,
+    int width,
+    int height,
+    double frameRate,
+    int bitDepth,
+    int transferCharacteristics, {
+    int instances = 1,
+  }) async => DecodeVerdict(supported: supported, hardware: true, maxWidth: 4096, maxHeight: 4096);
 }
 
 void main() {

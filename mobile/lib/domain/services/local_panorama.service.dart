@@ -1,9 +1,11 @@
 // Finds the 360° photos and videos of this device by reading their files. Without a server nothing else tells: the
 // server flags 360° assets from their exif (see hasEquirectangularExifProvider), and the database of the device has
 // no exif. The rules are the server's: a photo is 360° when its GPano XMP declares an equirectangular projection, a
-// video when it declares a spherical projection (see probeSphericalMetadata). The raw dual fisheye files of Insta360
-// cameras, which the app stitches itself, are 360° too: a photo named .insp or ending with the trailer of the camera, a
-// video named .insv whose frame holds both lenses side by side (see raw_360_detection.dart).
+// video when it declares a spherical projection (see probeSphericalMetadata). The raw files of 360° cameras, which the
+// app stitches itself, are 360° too: an Insta360 photo named .insp or ending with the trailer of the camera, a video
+// named .insv, .360 (GoPro) or .osv (DJI), whose layout is settled when it opens (see raw_360_detection.dart). So are
+// the equirect photos a 360° camera stitched itself without GPano tags: a GoPro .36p, or a 2:1 photo whose EXIF names
+// a 360° camera (see isEquirectCameraPhoto).
 //
 // Reading a file costs a 128 KiB window or two, but there may be thousands of them: only the assets whose shape or
 // name hints at 360° are read (see isLocalPanoramaCandidate), the newest first, a few hundred per run, and what was
@@ -16,6 +18,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/exif_head.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
@@ -30,30 +33,32 @@ class LocalPanoramaRecord {
   const LocalPanoramaRecord({
     required this.isPanorama,
     this.halfSphere,
-    this.rawDualFisheye = false,
+    this.raw360 = false,
     required this.checkedAt,
     this.version = currentVersion,
   });
 
   /// The rules the scan reads the files with now, see [version]
-  static const currentVersion = 1;
+  static const currentVersion = 2;
 
-  /// Whether the file declares a 360° projection, or is a raw dual fisheye file the app stitches
+  /// Whether the file declares a 360° projection, is a raw file of a 360° camera the app stitches, or an equirect photo
+  /// a 360° camera stitched itself
   final bool isPanorama;
 
   /// Whether it covers the front half of the sphere only (VR180), as the file declares it: null when it does not say
   final bool? halfSphere;
 
-  /// Whether it is the raw file of a dual fisheye camera, both lenses side by side (see raw_360_detection.dart)
-  final bool rawDualFisheye;
+  /// Whether it is the raw file of a 360° camera, which the app stitches (see raw_360_detection.dart)
+  final bool raw360;
 
   /// When the file was read, or its modification date when that is later (a clock set wrong): it is read again
   /// once it changed after that
   final DateTime checkedAt;
 
   /// The rules the file was read with: 0 for the records written before the raw files of Insta360 cameras were told,
-  /// 1 since. A record of older rules is read again once when the current ones may tell otherwise of its file (see
-  /// [LocalPanoramaService.scan]).
+  /// 1 since, 2 since the raw videos of every camera are told by their name and the equirect photos of 360° cameras
+  /// by their name or their EXIF. A record of older rules is read again once when the current ones may tell otherwise
+  /// of its file (see [LocalPanoramaService.scan]).
   final int version;
 
   /// The record as kept in the store: a small JSON object, the half sphere left out when the file does not say, the raw
@@ -61,7 +66,7 @@ class LocalPanoramaRecord {
   Map<String, Object> toJson() => {
     'p': isPanorama,
     'h': ?halfSphere,
-    if (rawDualFisheye) 'r': true,
+    if (raw360) 'r': true,
     't': checkedAt.millisecondsSinceEpoch,
     if (version > 0) 'v': version,
   };
@@ -74,7 +79,7 @@ class LocalPanoramaRecord {
       return LocalPanoramaRecord(
         isPanorama: isPanorama,
         halfSphere: halfSphere is bool ? halfSphere : null,
-        rawDualFisheye: json['r'] == true,
+        raw360: json['r'] == true,
         checkedAt: DateTime.fromMillisecondsSinceEpoch(checkedAt),
         version: version is int && version > 0 ? version : 0,
       );
@@ -87,28 +92,39 @@ class LocalPanoramaRecord {
       other is LocalPanoramaRecord &&
       other.isPanorama == isPanorama &&
       other.halfSphere == halfSphere &&
-      other.rawDualFisheye == rawDualFisheye &&
+      other.raw360 == raw360 &&
       other.checkedAt == checkedAt &&
       other.version == version;
 
   @override
-  int get hashCode => Object.hash(isPanorama, halfSphere, rawDualFisheye, checkedAt, version);
+  int get hashCode => Object.hash(isPanorama, halfSphere, raw360, checkedAt, version);
 
   @override
   String toString() =>
-      'LocalPanoramaRecord(isPanorama: $isPanorama, halfSphere: $halfSphere, rawDualFisheye: $rawDualFisheye, '
+      'LocalPanoramaRecord(isPanorama: $isPanorama, halfSphere: $halfSphere, raw360: $raw360, '
       'checkedAt: $checkedAt, version: $version)';
 }
 
 /// Whether [record], the record of [asset] read with older rules (see [LocalPanoramaRecord.version]), may say
 /// otherwise once its file is read with the current ones. Version 1 tells the raw files of Insta360 cameras: a photo
-/// named .insp is one, a photo found flat may end with the trailer of the camera, and a video named .insv is read for
-/// the layout of its frame. Any other file reads the same.
+/// named .insp is one, a photo found flat may end with the trailer of the camera. Version 2 tells a raw video by its
+/// name, whatever its frame (a split recording or two tracks were flat in version 1, a GoPro .360 or a DJI .osv
+/// unknown), and the equirect photos of 360° cameras without GPano tags: named .36p, or 2:1 with the EXIF of such a
+/// camera. Any other file reads the same.
 bool _mayReadOtherwise(LocalAsset asset, LocalPanoramaRecord record) {
-  if (record.version >= 1) {
+  if (record.version >= LocalPanoramaRecord.currentVersion) {
     return false;
   }
-  return asset.isImage ? !record.isPanorama || isRawPhotoName(asset.name) : isRawVideoName(asset.name);
+  if (asset.isVideo) {
+    return isRawVideoName(asset.name);
+  }
+  if (record.version < 1 && (!record.isPanorama || isRawPhotoName(asset.name))) {
+    return true;
+  }
+  final width = asset.width;
+  final height = asset.height;
+  final looksEquirect = width != null && height != null && width > 0 && height > 0 && _isAbout(width / height, 2);
+  return !record.isPanorama && (isEquirectCameraPhoto(name: asset.name) || looksEquirect);
 }
 
 /// Reads the records from their JSON form, a map from the id of an asset on the device to its record (see
@@ -141,8 +157,9 @@ String encodeLocalPanoramaRecords(Map<String, LocalPanoramaRecord> records) =>
     jsonEncode({for (final MapEntry(:key, :value) in records.entries) key: value.toJson()});
 
 // "360" on its own, not within a longer number ("IMG_1360.JPG", "20240613_103600.jpg"), "pano" ("PANO_0001.jpg",
-// "PXL_20240101_PANO.jpg", "panorama"), "vr180", and the raw files of Insta360 cameras
-final _panoramaName = RegExp(r'(?<![0-9])360(?![0-9])|pano|vr180|\.ins[pv]$', caseSensitive: false);
+// "PXL_20240101_PANO.jpg", "panorama"), "vr180", the raw files of 360° cameras (Insta360 .insp and .insv, GoPro .360,
+// DJI .osv) and the equirect photos of the GoPro MAX 2 (.36p)
+final _panoramaName = RegExp(r'(?<![0-9])360(?![0-9])|pano|vr180|\.(ins[pv]|osv|36p)$', caseSensitive: false);
 
 // "3d" on its own ("trip_3D.jpg", but not "IMG_3D41.JPG") and the VR180 words: two eyes stacked or side by side
 final _stereoName = RegExp(r'(?<![a-z0-9])3d(?![a-z0-9])|vr180|180x180', caseSensitive: false);
@@ -153,7 +170,7 @@ bool _isAbout(double ratio, double target) => (ratio / target - 1).abs() <= 0.02
 /// Whether [asset], a photo or a video of the device, may be 360°, so that its file is worth reading: a 2:1 frame
 /// (within 2 percent), the shape of an equirectangular image, or a name that says so ("360", "pano", "vr180", the
 /// .insp and .insv files of Insta360 cameras), or a square or 1:2 frame, where two 360° or VR180 eyes are stacked,
-/// with a name that tells 3D or VR180.
+/// with a name that tells 3D or VR180. Raw .osv and .36p files too.
 bool isLocalPanoramaCandidate(BaseAsset asset) {
   if (!asset.isImage && !asset.isVideo) {
     return false;
@@ -175,10 +192,12 @@ bool isLocalPanoramaCandidate(BaseAsset asset) {
 }
 
 /// What a file declares about its projection, see [LocalPanoramaRecord]
-typedef LocalPanoramaProbe = ({bool isPanorama, bool? halfSphere, bool rawDualFisheye});
+typedef LocalPanoramaProbe = ({bool isPanorama, bool? halfSphere, bool raw360});
 
-const LocalPanoramaProbe _flat = (isPanorama: false, halfSphere: null, rawDualFisheye: false);
-const LocalPanoramaProbe _rawDualFisheye = (isPanorama: true, halfSphere: null, rawDualFisheye: true);
+const LocalPanoramaProbe _flat = (isPanorama: false, halfSphere: null, raw360: false);
+const LocalPanoramaProbe _raw360 = (isPanorama: true, halfSphere: null, raw360: true);
+// An equirect photo a 360° camera stitched itself: the whole sphere, as GoPro, DJI and Insta360 cameras stitch it
+const LocalPanoramaProbe _cameraEquirect = (isPanorama: true, halfSphere: false, raw360: false);
 
 // The GPano crop of a VR180 photo: about half the width of the full panorama, and all of its height
 bool _isHalfSphereCrop(GPanoTags tags) {
@@ -188,50 +207,81 @@ bool _isHalfSphereCrop(GPanoTags tags) {
 
 /// Reads the projection a photo [length] bytes long declares in its GPano XMP, through [read] (see [readGPanoTags]).
 /// The half sphere comes from its crop, unknown without one. Without GPano, a photo that ends with the trailer of an
-/// Insta360 camera is a raw dual fisheye photo (see [hasInsta360Trailer]): a .insp renamed to be seen as a JPEG. Errors
-/// of [read] are not caught.
-Future<LocalPanoramaProbe> probeLocalPanoramaPhoto(ByteRangeReader read, int length) async {
+/// Insta360 camera is a raw dual fisheye photo (see [hasInsta360Trailer]): a .insp renamed to be seen as a JPEG; unless
+/// it is named otherwise than .insp and its trailer says the camera stitched it, which makes it an equirect photo (see
+/// [isInsta360StitchedPhoto]). Else one whose EXIF names a 360° camera and whose frame is 2:1 is an equirect photo the
+/// camera stitched itself (see [isEquirectCameraPhoto]), its frame of [width] x [height] (the size the device gives) or
+/// else the one its EXIF gives. Errors of [read] are not caught.
+Future<LocalPanoramaProbe> probeLocalPanoramaPhoto(
+  ByteRangeReader read,
+  int length, {
+  String name = '',
+  int? width,
+  int? height,
+}) async {
   final tags = await readGPanoTags(read, length);
-  if (tags == null || !isEquirectangularGPano(tags)) {
-    return await hasInsta360Trailer(read, length) ? _rawDualFisheye : _flat;
+  if (tags != null && isEquirectangularGPano(tags)) {
+    return (isPanorama: true, halfSphere: tags.crop == null ? null : _isHalfSphereCrop(tags), raw360: false);
   }
-  return (isPanorama: true, halfSphere: tags.crop == null ? null : _isHalfSphereCrop(tags), rawDualFisheye: false);
+  if (await hasInsta360Trailer(read, length)) {
+    // Raw by its trailer only: one the camera stitched itself keeps the trailer, and is a 360° photo as it is
+    return !isRawPhotoName(name) && await isInsta360StitchedPhoto(read, length) ? _cameraEquirect : _raw360;
+  }
+  final exif = parseExifHead(await read(0, exifHeadLength));
+  final isCameraEquirect = isEquirectCameraPhoto(
+    name: name,
+    make: exif?.make,
+    model: exif?.model,
+    width: width ?? exif?.pixelWidth,
+    height: height ?? exif?.pixelHeight,
+  );
+  return isCameraEquirect ? _cameraEquirect : _flat;
 }
 
 /// Reads the projection a file of the device declares: the GPano XMP of a photo (see [probeLocalPanoramaPhoto]),
-/// the spherical metadata of a video (see [probeSphericalFile]). A photo named .insp is a raw dual fisheye photo, and
-/// so is a video named .insv whose first video track holds both lenses side by side (see [rawVideoLayout]); one whose
-/// frames hold one lens is not shown in 360°. Errors are not caught.
-Future<LocalPanoramaProbe> probeLocalPanoramaFile(String path, {required bool isVideo}) async {
+/// the spherical metadata of a video (see [probeSphericalFile]). A video named .insv, .360 or .osv is a raw video
+/// without a read: its layout is settled when it opens. A photo named .insp is a raw dual fisheye photo, one named .36p
+/// an equirect photo of the GoPro MAX 2. [width] and [height] are the size of the frame the device gives. Errors are not
+/// caught.
+Future<LocalPanoramaProbe> probeLocalPanoramaFile(String path, {required bool isVideo, int? width, int? height}) async {
   final file = File(path);
   final name = p.basename(path);
   if (isVideo) {
-    final probe = await probeSphericalFile(file);
     if (isRawVideoName(name)) {
-      return rawVideoLayout(probe.codedWidth, probe.codedHeight) == Raw360Layout.dualFisheye ? _rawDualFisheye : _flat;
+      return _raw360;
     }
+    final probe = await probeSphericalFile(file);
     return (
       isPanorama: probe.hasSphericalMetadata,
       halfSphere: probe.hasSphericalMetadata ? probe.halfSphere : null,
-      rawDualFisheye: false,
+      raw360: false,
     );
   }
   if (isRawPhotoName(name)) {
-    return _rawDualFisheye;
+    return _raw360;
+  }
+  if (isEquirectCameraPhoto(name: name)) {
+    return _cameraEquirect;
   }
   final handle = await file.open();
   try {
-    return await probeLocalPanoramaPhoto((offset, length) async {
-      await handle.setPosition(offset);
-      return handle.read(length);
-    }, await handle.length());
+    return await probeLocalPanoramaPhoto(
+      (offset, length) async {
+        await handle.setPosition(offset);
+        return handle.read(length);
+      },
+      await handle.length(),
+      name: name,
+      width: width,
+      height: height,
+    );
   } finally {
     await handle.close();
   }
 }
 
-/// A file of the device to read, see [probeLocalPanoramaFile]
-typedef LocalPanoramaFile = ({String path, bool isVideo});
+/// A file of the device to read, with the size of its frame as the device gives it, see [probeLocalPanoramaFile]
+typedef LocalPanoramaFile = ({String path, bool isVideo, int? width, int? height});
 
 /// Reads [files] (see [probeLocalPanoramaFile]) in a background isolate, so that the UI stays smooth meanwhile. A
 /// file that cannot be read gives null, in its place.
@@ -245,7 +295,9 @@ Future<List<LocalPanoramaProbe?>> _probeFiles(List<LocalPanoramaFile> files) asy
   final probes = <LocalPanoramaProbe?>[];
   for (final file in files) {
     try {
-      probes.add(await probeLocalPanoramaFile(file.path, isVideo: file.isVideo));
+      probes.add(
+        await probeLocalPanoramaFile(file.path, isVideo: file.isVideo, width: file.width, height: file.height),
+      );
     } catch (error) {
       _log.fine('Could not read ${file.path}: $error');
       probes.add(null);
@@ -312,7 +364,10 @@ class LocalPanoramaService {
       if (batch.isEmpty) {
         return;
       }
-      final probes = await _probe([for (final (asset, file) in batch) (path: file.path, isVideo: asset.isVideo)]);
+      final probes = await _probe([
+        for (final (asset, file) in batch)
+          (path: file.path, isVideo: asset.isVideo, width: asset.width, height: asset.height),
+      ]);
       final now = _now();
       for (final (index, (asset, _)) in batch.indexed) {
         final probe = index < probes.length ? probes[index] : null;
@@ -327,11 +382,11 @@ class LocalPanoramaService {
           ..[asset.id] = LocalPanoramaRecord(
             isPanorama: probe.isPanorama,
             halfSphere: probe.halfSphere,
-            rawDualFisheye: probe.rawDualFisheye,
+            raw360: probe.raw360,
             checkedAt: checkedAt,
           );
         if (probe.isPanorama) {
-          _log.fine('${asset.name} is 360°${probe.rawDualFisheye ? ', raw dual fisheye' : ''}');
+          _log.fine('${asset.name} is 360°${probe.raw360 ? ', raw' : ''}');
         }
       }
       batch.clear();

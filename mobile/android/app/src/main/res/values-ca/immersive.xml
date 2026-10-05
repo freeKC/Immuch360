@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">No hi ha res a mostrar</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d supera el descodificador de les ulleres (a salts, amb blocs). A l’Immich, configureu la transcodificació de vídeo a HEVC o limiteu la resolució.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d supera el descodificador de les ulleres (a salts, amb blocs). Torneu a codificar aquest fitxer en HEVC o a una resolució més baixa.</string>
+  <string name="immersive_raw_one_lens_decoder">Aquestes ulleres no poden descodificar alhora els dos objectius d’aquest vídeo (%1$s %2$d x %3$d, dues vegades). Es mostra un objectiu: la meitat de l’esfera queda negra.</string>
+  <string name="immersive_raw_one_lens_file">No es pot llegir el fitxer de l’altre objectiu. Es mostra un objectiu: la meitat de l’esfera queda negra.</string>
+  <string name="immersive_raw_unstitched">La unió 360° ha fallat en aquest dispositiu. El vídeo es mostra tal com l’ha enregistrat la càmera.</string>
 </resources>

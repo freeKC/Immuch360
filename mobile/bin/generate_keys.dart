@@ -102,6 +102,13 @@ const _kParamTypeOverrides = <String, String>{
   'backup_controller_page_storage_format.total': 'String',
   'backup_controller_page_storage_format.used': 'String',
   'cleanup_found_assets_with_size.size': 'String',
+  // The codec and the frame size of a lens, filled in by the native players: the digits alone, as for the frame sizes
+  // below
+  'raw_video_one_lens_decoder.codec': 'String',
+  'raw_video_one_lens_decoder.height': 'String',
+  'raw_video_one_lens_decoder.width': 'String',
+  // A frame size such as "3840x3840", not a count
+  'raw_video_two_decoders_heavy.size': 'String',
   // Frame sizes, which an int would write with grouping separators ("8,192 x 4,320"): the callers and the native
   // players give the digits alone
   'video_decoders_max.height': 'String',

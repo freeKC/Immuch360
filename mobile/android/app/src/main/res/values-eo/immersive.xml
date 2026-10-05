@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Nenio por montri</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d superas la kapablon de la malkodilo de la kasko (saltanta, blokeca bildo). En Immich, agordu la transkodadon de videoj al HEVC aŭ limigu la distingivon.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d superas la kapablon de la malkodilo de la kasko (saltanta, blokeca bildo). Rekodu ĉi tiun dosieron en HEVC aŭ je pli malalta distingivo.</string>
+  <string name="immersive_raw_one_lens_decoder">Ĉi tiu kasko ne povas samtempe malkodi la du objektivojn de ĉi tiu video (%1$s %2$d x %3$d, dufoje). Ĝi montras unu objektivon: duono de la sfero restas nigra.</string>
+  <string name="immersive_raw_one_lens_file">La dosiero de la alia objektivo ne legeblas. Unu objektivo montriĝas: duono de la sfero restas nigra.</string>
+  <string name="immersive_raw_unstitched">La 360°-kunkudrado malsukcesis en ĉi tiu aparato. La video montriĝas tiel, kiel la fotilo registris ĝin.</string>
 </resources>

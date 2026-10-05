@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">देखाउन केही छैन</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d हेडसेटको डिकोडरको क्षमताभन्दा बढी छ (अड्किने, ब्लक देखिने)। Immich मा भिडियो ट्रान्सकोडिङ HEVC मा सेट गर्नुहोस् वा रिजोल्युसन सीमित गर्नुहोस्।</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d हेडसेटको डिकोडरको क्षमताभन्दा बढी छ (अड्किने, ब्लक देखिने)। यो फाइल HEVC मा वा कम रिजोल्युसनमा पुन: इन्कोड गर्नुहोस्।</string>
+  <string name="immersive_raw_one_lens_decoder">यो हेडसेटले यस भिडियोका दुवै लेन्स एकैसाथ डिकोड गर्न सक्दैन (%1$s %2$d x %3$d, दुई पटक)। एउटा लेन्स देखाइन्छ: गोलाको आधा भाग कालो रहन्छ।</string>
+  <string name="immersive_raw_one_lens_file">अर्को लेन्सको फाइल पढ्न सकिँदैन। एउटा लेन्स देखाइन्छ: गोलाको आधा भाग कालो रहन्छ।</string>
+  <string name="immersive_raw_unstitched">यो यन्त्रमा 360° जोड्ने काम असफल भयो। भिडियो क्यामेराले रेकर्ड गरेजस्तै देखाइन्छ।</string>
 </resources>

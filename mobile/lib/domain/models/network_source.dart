@@ -158,9 +158,31 @@ class NetworkEntry {
     'tif',
     'tiff',
     'insp',
+    // The equirect JPEG of the GoPro MAX 2
+    '36p',
     'dng',
   };
-  static const videoExtensions = {'mp4', 'mov', 'm4v', 'mkv', 'webm', 'avi', '3gp', 'mts', 'm2ts', 'insv'};
+
+  /// The raw videos of 360° cameras are MP4 files under names of their own: Insta360 .insv, GoPro .360, DJI .osv
+  static const videoExtensions = {
+    'mp4',
+    'mov',
+    'm4v',
+    'mkv',
+    'webm',
+    'avi',
+    '3gp',
+    'mts',
+    'm2ts',
+    'insv',
+    '360',
+    'osv',
+  };
+
+  // MP4 files under the names of 360° cameras, the low resolution proxies (.lrv, .lrf) included, which are no media of
+  // their own on the shares. The players decide by the content type for an extension they do not know: AVPlayer and
+  // Media3 need video/mp4 for them, whatever the server says.
+  static const _cameraMp4Extensions = {'insv', '360', 'osv', 'lrv', 'lrf'};
 
   bool get isImage => !isDirectory && imageExtensions.contains(extension);
   bool get isVideo => !isDirectory && videoExtensions.contains(extension);
@@ -168,6 +190,9 @@ class NetworkEntry {
 
   /// A content type for the bridge and the players, from [mimeType] or the extension
   String get guessedMimeType {
+    if (_cameraMp4Extensions.contains(extension)) {
+      return 'video/mp4';
+    }
     final given = mimeType;
     if (given != null && given.isNotEmpty && given != 'application/octet-stream') {
       return given;
@@ -182,8 +207,8 @@ class NetworkEntry {
       'bmp' => 'image/bmp',
       'tif' || 'tiff' => 'image/tiff',
       'dng' => 'image/x-adobe-dng',
-      'insp' => 'image/jpeg',
-      'mp4' || 'm4v' || 'insv' => 'video/mp4',
+      'insp' || '36p' => 'image/jpeg',
+      'mp4' || 'm4v' => 'video/mp4',
       'mov' => 'video/quicktime',
       'mkv' => 'video/x-matroska',
       'webm' => 'video/webm',

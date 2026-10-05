@@ -18,7 +18,8 @@ import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart'
 const _separator = '  •  ';
 
 /// Every video decoder of the device (see [videoDecodersProvider]), grouped by codec: its name, whether it is a
-/// hardware decoder, its largest frame, and the frame rate it reaches at that size when the system tells.
+/// hardware decoder, its largest frame, the frame rate it reaches at that size when the system tells, and the profiles
+/// it lists with their highest level (what tells whether a 10 bit or HDR video plays).
 class VideoDecodersPage extends ConsumerWidget {
   const VideoDecodersPage({super.key});
 
@@ -90,16 +91,28 @@ class _DecoderList extends StatelessWidget {
           for (final decoder in decoders)
             ListTile(
               dense: true,
+              isThreeLine: _profilesOf(decoder).isNotEmpty,
               contentPadding: const EdgeInsets.symmetric(horizontal: 20),
               leading: Icon(decoder.hardware ? Icons.memory_rounded : Icons.code_rounded),
               title: Text(decoder.name, style: context.textTheme.labelLarge),
-              subtitle: Text(
-                [
-                  decoder.hardware ? context.t.video_decoders_hardware : context.t.video_decoders_software,
-                  context.t.video_decoders_max(width: '${decoder.maxWidth}', height: '${decoder.maxHeight}'),
-                  if (decoder.maxFrameRate > 0) '${formatFrameRate(decoder.maxFrameRate)} fps',
-                ].join(_separator),
-                style: secondary,
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    [
+                      decoder.hardware ? context.t.video_decoders_hardware : context.t.video_decoders_software,
+                      context.t.video_decoders_max(width: '${decoder.maxWidth}', height: '${decoder.maxHeight}'),
+                      if (decoder.maxFrameRate > 0) '${formatFrameRate(decoder.maxFrameRate)} fps',
+                    ].join(_separator),
+                    style: secondary,
+                  ),
+                  if (_profilesOf(decoder).isNotEmpty)
+                    Text(
+                      context.t.video_decoders_profiles(profiles: _profilesOf(decoder).join(', ')),
+                      style: secondary,
+                    ),
+                ],
               ),
             ),
         ],
@@ -107,6 +120,9 @@ class _DecoderList extends StatelessWidget {
     );
   }
 }
+
+// The profiles [decoder] lists, none when the system does not tell
+List<String> _profilesOf(DecoderInfo decoder) => decoder.profiles ?? const [];
 
 /// [decoders] grouped by the codec they decode, the codecs and the decoders of each in the order the system lists
 /// them: its preferred decoder first
@@ -132,6 +148,7 @@ String videoDecodersReport(List<DecoderInfo> decoders, {String? system}) {
           '  ${decoder.name}: ${decoder.hardware ? 'hardware' : 'software'}',
           'up to ${decoder.maxWidth} x ${decoder.maxHeight}',
           if (decoder.maxFrameRate > 0) '${formatFrameRate(decoder.maxFrameRate)} fps',
+          if (_profilesOf(decoder).isNotEmpty) 'profiles: ${_profilesOf(decoder).join(', ')}',
         ].join(', '),
       );
     }

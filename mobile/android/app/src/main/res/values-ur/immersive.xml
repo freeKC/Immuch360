@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">دکھانے کے لیے کچھ نہیں</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d، ہیڈسیٹ کے ڈی کوڈر کی حد سے تجاوز کرتی ہے (رک رک کر چلتی ہے، چوکور دھبے نظر آتے ہیں)۔ Immich میں ویڈیو ٹرانس کوڈنگ کو HEVC پر سیٹ کریں یا ریزولوشن محدود کریں۔</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d، ہیڈسیٹ کے ڈی کوڈر کی حد سے تجاوز کرتی ہے (رک رک کر چلتی ہے، چوکور دھبے نظر آتے ہیں)۔ اس فائل کو HEVC میں یا کم ریزولوشن پر دوبارہ انکوڈ کریں۔</string>
+  <string name="immersive_raw_one_lens_decoder">یہ ہیڈسیٹ اس ویڈیو کے دونوں لینز ایک ساتھ ڈی کوڈ نہیں کر سکتا (%1$s %2$d x %3$d، دو بار)۔ ایک لینز دکھایا جا رہا ہے: کرے کا آدھا حصہ سیاہ رہتا ہے۔</string>
+  <string name="immersive_raw_one_lens_file">دوسرے لینز کی فائل پڑھی نہیں جا سکتی۔ ایک لینز دکھایا جا رہا ہے: کرے کا آدھا حصہ سیاہ رہتا ہے۔</string>
+  <string name="immersive_raw_unstitched">اس ڈیوائس پر 360° جوڑنا ناکام ہو گیا۔ ویڈیو ویسے ہی دکھائی جا رہی ہے جیسے کیمرے نے ریکارڈ کی تھی۔</string>
 </resources>

@@ -1,5 +1,11 @@
 package app.alextran.immich.core
 
+import androidx.media3.common.C
+import androidx.media3.common.Format
+import app.alextran.immich.core.VideoDecoders.MIME_AV1
+import app.alextran.immich.core.VideoDecoders.MIME_AVC
+import app.alextran.immich.core.VideoDecoders.MIME_HEVC
+import app.alextran.immich.core.VideoDecoders.MIME_VP9
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -195,5 +201,121 @@ class VideoDecodersTest {
     assertNull(VideoDecoders.decoderLabel(emptyMap(), VideoDecoders.LABEL_SWITCHED, "H.264", 5760, 2880))
     val blank = mapOf(VideoDecoders.LABEL_SWITCHED to " ")
     assertNull(VideoDecoders.decoderLabel(blank, VideoDecoders.LABEL_SWITCHED, "H.264", 5760, 2880))
+  }
+
+  @Test
+  fun `on Horizon OS, two H264 streams are refused above the measured pixel rate`() {
+    // Two Insta360 X3 lenses: 497 M pixels per second against the 283 M measured
+    assertTrue(VideoDecoders.exceedsMeasuredLimit("video/avc", 2880, 2880, horizonOs = true, instances = 2))
+    assertTrue(
+      VideoDecoders.exceedsMeasuredLimit("video/avc", 2880, 2880, horizonOs = true, instances = 2, frameRate = 30.0),
+    )
+    // Two transcoded 1080x1080 streams
+    assertFalse(VideoDecoders.exceedsMeasuredLimit("video/avc", 1080, 1080, horizonOs = true, instances = 2))
+    // A rate below 30 counts as 30, the measured one; a higher one counts as it is
+    assertFalse(
+      VideoDecoders.exceedsMeasuredLimit("video/avc", 2560, 1440, horizonOs = true, instances = 2, frameRate = 24.0),
+    )
+    assertTrue(
+      VideoDecoders.exceedsMeasuredLimit("video/avc", 2560, 1440, horizonOs = true, instances = 2, frameRate = 60.0),
+    )
+  }
+
+  @Test
+  fun `the pixel rate rule of two streams only concerns H264 on Horizon OS`() {
+    // One 2304x2304 stream is within the measured size, two at once are above the measured rate
+    assertFalse(VideoDecoders.exceedsMeasuredLimit("video/avc", 2304, 2304, horizonOs = true))
+    assertTrue(VideoDecoders.exceedsMeasuredLimit("video/avc", 2304, 2304, horizonOs = true, instances = 2))
+    assertFalse(VideoDecoders.exceedsMeasuredLimit("video/avc", 2880, 2880, horizonOs = false, instances = 2))
+    assertFalse(VideoDecoders.exceedsMeasuredLimit("video/hevc", 3840, 3840, horizonOs = true, instances = 2))
+    assertFalse(VideoDecoders.exceedsMeasuredLimit("video/avc", 0, 0, horizonOs = true, instances = 2))
+  }
+
+  @Test
+  fun `the profile required for HEVC follows the codecs string, the bit depth and the transfer`() {
+    assertEquals(2, VideoDecoders.requiredProfile(MIME_HEVC, 2, 10, C.COLOR_TRANSFER_HLG))
+    assertEquals(4096, VideoDecoders.requiredProfile(MIME_HEVC, 2, 10, C.COLOR_TRANSFER_ST2084))
+    assertEquals(4096, VideoDecoders.requiredProfile(MIME_HEVC, 4096, 10, C.COLOR_TRANSFER_ST2084))
+    assertEquals(2, VideoDecoders.requiredProfile(MIME_HEVC, null, 10, Format.NO_VALUE))
+    assertEquals(4096, VideoDecoders.requiredProfile(MIME_HEVC, null, 10, C.COLOR_TRANSFER_ST2084))
+    assertNull(VideoDecoders.requiredProfile(MIME_HEVC, null, 8, Format.NO_VALUE))
+    assertEquals(1, VideoDecoders.requiredProfile(MIME_HEVC, 1, 8, Format.NO_VALUE))
+  }
+
+  @Test
+  fun `H264 is only checked for its 10 bit profiles`() {
+    assertNull(VideoDecoders.requiredProfile(MIME_AVC, 8, 8, Format.NO_VALUE))
+    assertEquals(16, VideoDecoders.requiredProfile(MIME_AVC, 16, 10, Format.NO_VALUE))
+    assertEquals(16, VideoDecoders.requiredProfile(MIME_AVC, null, 10, Format.NO_VALUE))
+    assertNull(VideoDecoders.requiredProfile(MIME_AVC, null, 0, Format.NO_VALUE))
+  }
+
+  @Test
+  fun `AV1 and VP9 profiles, and none for other codecs`() {
+    assertEquals(4096, VideoDecoders.requiredProfile(MIME_AV1, null, 10, C.COLOR_TRANSFER_ST2084))
+    assertEquals(2, VideoDecoders.requiredProfile(MIME_AV1, null, 10, C.COLOR_TRANSFER_HLG))
+    assertEquals(4, VideoDecoders.requiredProfile(MIME_VP9, 4, 10, Format.NO_VALUE))
+    assertNull(VideoDecoders.requiredProfile(MIME_VP9, null, 10, Format.NO_VALUE))
+    assertNull(VideoDecoders.requiredProfile("video/mp4v-es", null, 10, Format.NO_VALUE))
+  }
+
+  @Test
+  fun `an HDR profile also plays on the base 10 bit decoder`() {
+    assertEquals(setOf(4096, 2), VideoDecoders.acceptableProfiles(MIME_HEVC, 4096))
+    assertEquals(setOf(8192, 2), VideoDecoders.acceptableProfiles(MIME_HEVC, 8192))
+    assertEquals(setOf(2), VideoDecoders.acceptableProfiles(MIME_HEVC, 2))
+    assertEquals(setOf(4096, 2), VideoDecoders.acceptableProfiles(MIME_AV1, 4096))
+    assertEquals(setOf(4096, 4), VideoDecoders.acceptableProfiles(MIME_VP9, 4096))
+    assertEquals(setOf(16), VideoDecoders.acceptableProfiles(MIME_AVC, 16))
+  }
+
+  @Test
+  fun `profiles and levels are named as the codecs strings write them`() {
+    assertEquals("Main 10", VideoDecoders.profileName(MIME_HEVC, 2))
+    assertEquals("Main 10 HDR10", VideoDecoders.profileName(MIME_HEVC, 4096))
+    assertEquals("L6.1", VideoDecoders.levelName(MIME_HEVC, 4194304))
+    assertEquals("H6.1", VideoDecoders.levelName(MIME_HEVC, 8388608))
+    assertEquals("L1", VideoDecoders.levelName(MIME_HEVC, 1))
+    assertEquals("H6.2", VideoDecoders.levelName(MIME_HEVC, 33554432))
+    assertEquals("Constrained Baseline", VideoDecoders.profileName(MIME_AVC, 65536))
+    assertEquals("High 10", VideoDecoders.profileName(MIME_AVC, 16))
+    assertEquals("6.1", VideoDecoders.levelName(MIME_AVC, 262144))
+    assertEquals("1b", VideoDecoders.levelName(MIME_AVC, 2))
+    assertEquals("Main 8", VideoDecoders.profileName(MIME_AV1, 1))
+    assertEquals("6.1", VideoDecoders.levelName(MIME_AV1, 131072))
+    assertEquals("2", VideoDecoders.levelName(MIME_AV1, 1))
+    assertEquals("5", VideoDecoders.levelName(MIME_AV1, 4096))
+    assertEquals("7", VideoDecoders.levelName(MIME_AV1, 1048576))
+    assertEquals("6.1", VideoDecoders.levelName(MIME_VP9, 4096))
+    assertEquals("Profile 2 HDR", VideoDecoders.profileName(MIME_VP9, 4096))
+    assertEquals("Profile 8", VideoDecoders.profileName("video/dolby-vision", 256))
+    assertNull(VideoDecoders.levelName("video/dolby-vision", 256))
+  }
+
+  @Test
+  fun `unknown profiles keep their value and unknown levels are left out`() {
+    assertEquals("profile 12345", VideoDecoders.profileName(MIME_HEVC, 12345))
+    assertEquals("profile 3", VideoDecoders.profileName("video/mp4v-es", 3))
+    assertNull(VideoDecoders.levelName(MIME_HEVC, 3))
+    assertNull(VideoDecoders.levelName(MIME_AV1, 3))
+    assertNull(VideoDecoders.levelName(MIME_AV1, 0))
+  }
+
+  @Test
+  fun `a decoder's profiles are summed up with their highest level, in the order of the constants`() {
+    assertEquals(
+      listOf("Main L6.1", "Main 10 L6.1", "Main 10 HDR10 L5.1"),
+      VideoDecoders.profilesSummary(MIME_HEVC, listOf(1 to 4194304, 2 to 1048576, 2 to 4194304, 4096 to 65536)),
+    )
+    assertEquals(listOf("profile 12345"), VideoDecoders.profilesSummary(MIME_HEVC, listOf(12345 to 3)))
+    assertEquals(emptyList<String>(), VideoDecoders.profilesSummary(MIME_HEVC, emptyList()))
+  }
+
+  @Test
+  fun `transfers are named for the logs`() {
+    assertEquals("SDR", VideoDecoders.transferName(C.COLOR_TRANSFER_SDR))
+    assertEquals("PQ", VideoDecoders.transferName(C.COLOR_TRANSFER_ST2084))
+    assertEquals("HLG", VideoDecoders.transferName(C.COLOR_TRANSFER_HLG))
+    assertEquals("unknown", VideoDecoders.transferName(Format.NO_VALUE))
   }
 }

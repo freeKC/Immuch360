@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Không có gì để hiển thị</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d vượt quá khả năng của bộ giải mã trên kính VR (giật, vỡ hình). Trong Immich, hãy đặt chuyển mã video sang HEVC hoặc giới hạn độ phân giải.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d vượt quá khả năng của bộ giải mã trên kính VR (giật, vỡ hình). Hãy mã hóa lại tệp này sang HEVC hoặc ở độ phân giải thấp hơn.</string>
+  <string name="immersive_raw_one_lens_decoder">Kính VR này không thể giải mã cùng lúc hai ống kính của video này (%1$s %2$d x %3$d, hai lần). Chỉ hiển thị một ống kính: một nửa hình cầu vẫn màu đen.</string>
+  <string name="immersive_raw_one_lens_file">Không thể đọc tệp của ống kính còn lại. Chỉ hiển thị một ống kính: một nửa hình cầu vẫn màu đen.</string>
+  <string name="immersive_raw_unstitched">Ghép nối 360° thất bại trên thiết bị này. Video được hiển thị như máy ảnh đã ghi.</string>
 </resources>

@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Göstəriləcək heç nə yoxdur</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d eynəyin dekoderinin imkanlarını aşır (qırıq-qırıq, bloklu). Immich-də video transkodlaşdırmanı HEVC olaraq təyin edin və ya çözümlülüyü məhdudlaşdırın.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d eynəyin dekoderinin imkanlarını aşır (qırıq-qırıq, bloklu). Bu faylı HEVC formatında və ya daha aşağı çözümlülükdə yenidən kodlaşdırın.</string>
+  <string name="immersive_raw_one_lens_decoder">Bu eynək bu videonun iki linzasını eyni anda dekodlaya bilmir (%1$s %2$d x %3$d, iki dəfə). Bir linza göstərilir: sferanın yarısı qara qalır.</string>
+  <string name="immersive_raw_one_lens_file">Digər linzanın faylı oxuna bilmir. Bir linza göstərilir: sferanın yarısı qara qalır.</string>
+  <string name="immersive_raw_unstitched">Bu cihazda 360° birləşdirmə alınmadı. Video kameranın yazdığı kimi göstərilir.</string>
 </resources>

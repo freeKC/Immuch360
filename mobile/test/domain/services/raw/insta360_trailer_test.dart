@@ -207,6 +207,153 @@ void main() {
     });
   });
 
+  group('indexed trailers', () {
+    // An MP4 of no consequence before the trailer, as an .insv has it
+    final mp4 = List.generate(5000, (i) => i * 7 % 251);
+
+    test('reads the 98 byte minimal indexed tail of insta360-rs after an MP4', () async {
+      final trailer = await _trailer(Uint8List.fromList([...mp4, ...insta360MinimalIndexedTail]));
+
+      expect(trailer, isNotNull);
+      expect(trailer!.indexed, isTrue);
+      expect(trailer.cameraModel, 'X5');
+      expect(trailer.serial, isNull);
+      expect(calibrationOf(trailer), isNull);
+    });
+
+    test('reads the metadata and the IMU records padded to 128 KiB boundaries, in at most 4 reads', () async {
+      final file = Uint8List.fromList([
+        ...mp4,
+        ...insta360IndexedTail(
+          metadata: x5Metadata(),
+          imu: rawImuSamples([(32768 - 1024, 32768, 32768), (32768 - 1024, 32768, 32768)]),
+          padTo: 128 * 1024,
+        ),
+      ]);
+      final reads = <(int, int)>[];
+
+      final trailer = await _trailer(file, reads: reads);
+
+      expect(trailer!.indexed, isTrue);
+      expect(trailer.cameraModel, x5Model);
+      expect(trailer.offsetV6, x5OffsetV6);
+      // The metadata says nothing of the IMU: samples of doubles, read as such
+      expect(trailer.imuSampleCount, 0);
+      expect(reads, hasLength(lessThanOrEqualTo(4)), reason: '$reads');
+
+      final raw = Uint8List.fromList([
+        ...mp4,
+        ...insta360IndexedTail(
+          metadata: [...x5Metadata(), ...pbVarintField(62, 1)],
+          imu: rawImuSamples([(32768 - 1024, 32768, 32768), (32768 - 1024, 32768, 32768)]),
+          padTo: 128 * 1024,
+        ),
+      ]);
+      final rawReads = <(int, int)>[];
+      final withImu = await _trailer(raw, reads: rawReads);
+      expect(withImu!.imuSampleCount, 2);
+      expect(withImu.meanAccelerometer, _closeToList([-1 / 32, 0, 0]));
+      expect(rawReads, hasLength(lessThanOrEqualTo(4)), reason: '$rawReads');
+    });
+
+    test('skips an entry of zeros, and ignores a record whose footer does not match its entry', () async {
+      final zeroEntry = await _trailer(
+        Uint8List.fromList([...mp4, ...insta360IndexedTail(metadata: x5Metadata(), zeroEntry: true)]),
+      );
+      expect(zeroEntry!.cameraModel, x5Model);
+
+      final badFooter = await _trailer(
+        Uint8List.fromList([...mp4, ...insta360IndexedTail(metadata: x5Metadata(), badMetadataFooter: true)]),
+      );
+      expect(badFooter, isNotNull);
+      expect(badFooter!.indexed, isTrue);
+      expect(badFooter.cameraModel, isNull);
+    });
+
+    test('recognises a tail whose directory cannot be read, with nothing in it', () async {
+      for (final length in [11, 64 * 1024 + 10, 1 << 30]) {
+        final trailer = await _trailer(
+          Uint8List.fromList([...mp4, ...insta360IndexedTail(metadata: x5Metadata(), directoryLength: length)]),
+        );
+
+        expect(trailer, isNotNull, reason: 'directory of $length bytes');
+        expect(trailer!.indexed, isTrue);
+        expect(trailer.cameraModel, isNull);
+        expect(trailer.offsetV6, isNull);
+      }
+    });
+
+    test('decodes the fields of the newer cameras, and ignores those of another wire type', () async {
+      final trailer = await _trailer(
+        Uint8List.fromList([...mp4, ...insta360IndexedTail(metadata: x5Metadata(groupIndex: 1))]),
+      );
+
+      expect(trailer!.groupIdentity, x5GroupIdentity);
+      expect(trailer.groupIndex, 1);
+      expect(trailer.fileLayout, 2);
+      expect(trailer.trackOrder, 1);
+      expect(trailer.imageCategory, 2);
+      expect(trailer.streamLayout, 3);
+
+      final wrongTypes = await _trailer(
+        insta360File([
+          _metadataRecord([
+            ...pbStringField(2, x5Model),
+            ...pbVarintField(26, 5),
+            ...pbStringField(79, '2'),
+            ...pbFloatField(80, 1),
+            ...pbBytesField(129, [1]),
+            ...pbStringField(131, '3'),
+            // The first of each field of the right type is kept
+            ...pbVarintField(80, 2),
+            ...pbVarintField(80, 1),
+          ]),
+        ]),
+      );
+      expect(wrongTypes!.cameraModel, x5Model);
+      expect(wrongTypes.indexed, isFalse);
+      expect(wrongTypes.groupIdentity, isNull);
+      expect(wrongTypes.fileLayout, isNull);
+      expect(wrongTypes.trackOrder, 2);
+      expect(wrongTypes.imageCategory, isNull);
+      expect(wrongTypes.streamLayout, isNull);
+    });
+
+    test('has none of these fields in the trailer of an X3', () async {
+      final trailer = await _trailer(_x3Photo());
+
+      expect(trailer!.indexed, isFalse);
+      expect([
+        trailer.groupIdentity,
+        trailer.groupIndex,
+        trailer.fileLayout,
+        trailer.trackOrder,
+        trailer.streamLayout,
+      ], everyElement(isNull));
+    });
+  });
+
+  group('insta360TrackOrder', () {
+    test('takes field 80, else field 131, else lens 0', () {
+      for (final (trackOrder, streamLayout, expected) in [
+        (1, null, (lensOfTrack0: 1, source: 'field80')),
+        (2, 4, (lensOfTrack0: 0, source: 'field80')),
+        (0, 4, (lensOfTrack0: 1, source: 'field131')),
+        (null, 3, (lensOfTrack0: 0, source: 'field131')),
+        (0, 0, (lensOfTrack0: 0, source: 'default')),
+        (null, 2, (lensOfTrack0: 0, source: 'default')),
+        (null, null, (lensOfTrack0: 0, source: 'default')),
+      ]) {
+        expect(
+          insta360TrackOrder(Insta360Trailer(trackOrder: trackOrder, streamLayout: streamLayout)),
+          expected,
+          reason: 'field 80 $trackOrder, field 131 $streamLayout',
+        );
+      }
+      expect(insta360TrackOrder(null), (lensOfTrack0: 0, source: 'default'));
+    });
+  });
+
   group('calibrationOf', () {
     test('builds the Mei model of the V3 string of an X3, levelled by the accelerometer of the trailer', () async {
       final calibration = calibrationOf((await _trailer(_x3Photo()))!);
@@ -272,6 +419,14 @@ void main() {
       }
     });
 
+    test('skips a V3 string whose packed word names another version, for the V1 one', () async {
+      final otherVersion = x3OffsetV3.replaceFirst(RegExp(r'_199424$'), '_${(4 << 16) | 0x0b00}');
+      final calibration = calibrationOf((await _trailer(_x3Photo(metadata: x3Metadata(offsetV3: otherVersion))))!);
+
+      expect(parseInsta360OffsetV3(otherVersion), isNull);
+      expect(calibration!.model, DualFisheyeModel.equidistant);
+    });
+
     test('has no calibration without a calibration string', () async {
       final trailer = await _trailer(_x3Photo(metadata: x3Metadata(offsetV1: null, offsetV3: null)));
 
@@ -305,7 +460,7 @@ void main() {
       expect(parseInsta360OffsetV6(x3OffsetV3), isNull);
     });
 
-    test('reads a V6 string with the first terms of the Mei model', () {
+    test('reads a V6 string with the five radial terms of the Mei model, and leaves the others out', () {
       // A V6 string built from the X3 V3 values: k4 k5 after k3, p3 p4 after p2, then s1..s4, per lens
       final v3 = x3OffsetV3.split('_');
       String v6Lens(int index) {
@@ -333,9 +488,31 @@ void main() {
       expect(fromV6.model, DualFisheyeModel.mei);
       expect(fromV6.canvasSquare, fromV3.canvasSquare);
       for (var i = 0; i < 2; i++) {
-        expect(fromV6.lenses[i].toJson(), fromV3.lenses[i].toJson(), reason: 'lens $i');
+        expect(fromV6.lenses[i].k4, 0.01, reason: 'lens $i');
+        expect(fromV6.lenses[i].k5, 0.02, reason: 'lens $i');
+        // p3 and p4 (0.03 and 0.04) are read nowhere: the rest is the V3 lens
+        expect({...fromV6.lenses[i].toJson(), 'k4': 0.0, 'k5': 0.0}, fromV3.lenses[i].toJson(), reason: 'lens $i');
       }
       expect(parseInsta360OffsetV3(v6), isNull);
+    });
+
+    test('reads the V6 string of an X5 trailer when there is no V3 one', () async {
+      final trailer = await _trailer(
+        Uint8List.fromList([...List.filled(100, 0), ...insta360IndexedTail(metadata: x5Metadata())]),
+      );
+      final calibration = calibrationOf(trailer!)!;
+
+      expect(calibration.model, DualFisheyeModel.mei);
+      expect(calibration.cameraModel, x5Model);
+      expect(calibration.canvasSquare, 5952);
+      expect(calibration.lenses.map((lens) => (lens.k4, lens.k5)), [(x5K4, x5K5), (x5K4, x5K5)]);
+      expect(calibration.lenses[1].fx, 4615.53);
+      expect(calibration.lenses[1].p2, 0.00090004);
+    });
+
+    test('skips a V6 string whose packed word names another version', () {
+      expect(parseInsta360OffsetV6(x5OffsetV6), isNotNull);
+      expect(parseInsta360OffsetV6(x5OffsetV6.replaceFirst(RegExp(r'_394240$'), '_199424')), isNull);
     });
   });
 

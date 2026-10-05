@@ -91,6 +91,10 @@ class SphericalProbeService {
   final _results = <String, SphericalProbe>{};
   final _pending = <String, Future<SphericalProbe?>>{};
 
+  /// What an earlier probe of [asset] found, without reading anything; null when it was not probed or forgotten. For
+  /// the lists that guess from what is at hand, the 360° page for one, where a read per video would take too long.
+  SphericalProbe? cached(BaseAsset asset) => _results[spatialLayoutKey(asset)];
+
   /// What the file of [asset], a video, declares; null for a photo, and when the probe fails or times out.
   ///
   /// Reads [localFile] when given, else the copy on the device when there is one, else the original on the server.

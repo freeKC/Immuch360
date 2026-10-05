@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Koʻrsatadigan hech narsa yoʻq</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d shlem dekoderi imkoniyatidan oshadi (qotib qoladi, kvadratchalar paydo boʻladi). Immichda video transkodlashni HEVC ga oʻrnating yoki oʻlchamni cheklang.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d shlem dekoderi imkoniyatidan oshadi (qotib qoladi, kvadratchalar paydo boʻladi). Bu faylni HEVC formatida yoki pastroq oʻlchamda qayta kodlang.</string>
+  <string name="immersive_raw_one_lens_decoder">Bu shlem ushbu videoning ikki obyektivini bir vaqtda dekodlay olmaydi (%1$s %2$d x %3$d, ikki marta). Bitta obyektiv koʻrsatiladi: sferaning yarmi qora qoladi.</string>
+  <string name="immersive_raw_one_lens_file">Boshqa obyektiv faylini oʻqib boʻlmaydi. Bitta obyektiv koʻrsatiladi: sferaning yarmi qora qoladi.</string>
+  <string name="immersive_raw_unstitched">Bu qurilmada 360° tikish amalga oshmadi. Video kamera yozib olgandek koʻrsatiladi.</string>
 </resources>

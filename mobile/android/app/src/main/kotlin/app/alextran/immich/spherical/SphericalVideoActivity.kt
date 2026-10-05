@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.ErrorMessageProvider
@@ -43,16 +44,26 @@ import androidx.media3.ui.PlayerView
 import app.alextran.immich.R
 import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
-import app.alextran.immich.core.DualFisheyeCalibration
 import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
+import app.alextran.immich.core.raw.RawMessage
+import app.alextran.immich.core.raw.RawMode
+import app.alextran.immich.core.raw.RawPlan
+import app.alextran.immich.core.raw.RawPlaybackPlanner
+import app.alextran.immich.core.raw.RawProjection
+import app.alextran.immich.core.raw.RawStitchException
+import app.alextran.immich.core.raw.RawTrack
+import app.alextran.immich.core.raw.TwoLensPlayback
 import java.lang.reflect.Field
 import kotlin.math.min
 import kotlin.math.roundToInt
 
 private const val TAG = "SphericalVideoActivity"
+
+/** Log tag of the rawProjection parse result and of its refusals, shared with the Quest viewer. */
+private const val RAW_PROJECTION_TAG = "RawProjection"
 
 /** Opacity of the 3D control while the video shows as a regular 360° video */
 private const val MONO_ALPHA = 0.6f
@@ -80,9 +91,12 @@ private const val MONO_ALPHA = 0.6f
  * On close (button, system back, or the system destroying the activity), Flutter gets [SphericalVideoEvents.closed]
  * with the layout and the coverage shown last, so that the corrections of the user can be remembered for the asset.
  *
- * A raw dual fisheye video (an Insta360 .insv, the two fisheye circles side by side) comes with the calibration of its
- * camera: [DualFisheyeEffect] stitches each frame into an equirectangular one, drawn as a mono full sphere whatever
- * the file or the controls say, so the 3D and field of view controls hide. See [rawCalibration].
+ * A raw 360° video comes with its rawProjection JSON (see [RawProjection]) and is drawn as a mono full sphere
+ * whatever the file or the controls say, so the 3D and field of view controls hide. Both lenses side by side in one
+ * track: [DualFisheyeEffect] stitches each frame. Lenses in two tracks of one file or in two files (an Insta360 split
+ * pair, a GoPro .360, a DJI .osv): [TwoLensPlayback] decodes both streams and its compositor draws the stitched frame
+ * into the surface of the spherical view. [RawPlaybackPlanner] decides how it plays and falls back (one lens, the
+ * transcoded streams, the frame unstitched), see [plan].
  */
 @OptIn(UnstableApi::class)
 class SphericalVideoActivity : ComponentActivity() {
@@ -105,7 +119,18 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val STATE_AUDIO_TRACK = "audio_track"
     private const val STATE_PLAYING_FALLBACK = "playing_fallback"
     private const val STATE_DECODER_CHECKED = "decoder_checked"
-    private const val STATE_RAW_EFFECT_FAILED = "raw_effect_failed"
+    private const val STATE_RAW_PLAN_MODE = "raw_plan_mode"
+    private const val STATE_RAW_PLAN_STREAMS = "raw_plan_streams"
+    private const val STATE_RAW_PLAN_URLS = "raw_plan_urls"
+    private const val STATE_RAW_PLAN_FALLBACK = "raw_plan_fallback"
+
+    /**
+     * Keys of the messages of the raw fallbacks, in the labels from Flutter: one lens because the device cannot decode
+     * both ("{codec}", "{width}" and "{height}" filled in), one lens because the other file cannot be read, unstitched.
+     */
+    const val LABEL_RAW_ONE_LENS_DECODER = "rawOneLensDecoder"
+    const val LABEL_RAW_ONE_LENS_FILE = "rawOneLensFile"
+    const val LABEL_RAW_UNSTITCHED = "rawUnstitched"
 
     /**
      * Largest stitched frame drawn on the sphere: the surface of the spherical view gets this size at most (keeping the
@@ -145,6 +170,13 @@ class SphericalVideoActivity : ComponentActivity() {
       LABEL_COVERAGE to "Field of view",
       LABEL_COVERAGE_FULL to "360°, full sphere",
       LABEL_COVERAGE_HALF to "180°, half sphere (VR180)",
+      LABEL_RAW_ONE_LENS_DECODER to
+        "This device cannot decode the two lenses of this video at once ({codec} {width}x{height}, twice). It shows " +
+        "one lens: half of the sphere stays black.",
+      LABEL_RAW_ONE_LENS_FILE to
+        "The file of the other lens cannot be read. One lens shows: half of the sphere stays black.",
+      LABEL_RAW_UNSTITCHED to
+        "The 360° stitching failed on this device. The video shows as the camera recorded it.",
     )
 
     /** Key of the name of the layout, in the labels from Flutter */
@@ -229,13 +261,30 @@ class SphericalVideoActivity : ComponentActivity() {
     private fun stitchedFormat(format: Format): Format =
       format.buildUpon().setProjectionData(null).setStereoMode(C.STEREO_MODE_MONO).build()
 
-    /** The surface size for the stitched frame of [calibration]: the probed frame, within the output limit. */
-    private fun rawOutputSize(calibration: DualFisheyeCalibration): Size {
-      val width = calibration.frameWidth.toDouble()
-      val height = calibration.frameHeight.toDouble()
-      val scale = min(1.0, min(MAX_RAW_OUTPUT_WIDTH / width, MAX_RAW_OUTPUT_HEIGHT / height))
+    /**
+     * The surface size for the stitched frame of [projection]: the natural equirectangular size of its lenses, within
+     * the output limit and within [gpuLimit] (the viewport and texture limits of the compositor's GPU), keeping its
+     * shape.
+     */
+    private fun rawOutputSize(projection: RawProjection, gpuLimit: Size? = null): Size {
+      val width = projection.frameWidth.toDouble()
+      val height = projection.frameHeight.toDouble()
+      var scale = min(1.0, min(MAX_RAW_OUTPUT_WIDTH / width, MAX_RAW_OUTPUT_HEIGHT / height))
+      if (gpuLimit != null && gpuLimit.width > 0 && gpuLimit.height > 0) {
+        scale = min(scale, min(gpuLimit.width / width, gpuLimit.height / height))
+      }
       return Size((width * scale).roundToInt().coerceAtLeast(1), (height * scale).roundToInt().coerceAtLeast(1))
     }
+
+    /** Media3 errors of a decoder that cannot run (or no longer runs) the lens streams: the ladder's decoder step. */
+    private fun isDecoderError(error: PlaybackException): Boolean =
+      error.errorCode == PlaybackException.ERROR_CODE_DECODER_INIT_FAILED ||
+        error.errorCode == PlaybackException.ERROR_CODE_DECODING_FORMAT_EXCEEDS_CAPABILITIES ||
+        error.errorCode == PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED ||
+        error.errorCode == PlaybackException.ERROR_CODE_DECODING_RESOURCES_RECLAIMED
+
+    /** Media3 errors of reading the media (2000 to 2999): the ladder's step for one file of a split pair. */
+    private fun isSourceError(error: PlaybackException): Boolean = error.errorCode in 2000..2999
   }
 
   private lateinit var playerView: PlayerView
@@ -282,16 +331,33 @@ class SphericalVideoActivity : ComponentActivity() {
   /** The video track of the URL that plays was checked against the decoders of the device */
   private var decoderChecked = false
 
+  /** Flutter sent a rawProjection: a raw 360° video, drawn as a mono full sphere whatever happens */
+  private var rawJsonPresent = false
+
   /**
-   * Calibration of a raw dual fisheye video, which [DualFisheyeEffect] stitches; null for an equirectangular video, for
-   * an unreadable calibration and when the surface of the spherical view cannot be sized (the frame then plays as it
-   * is). Read on the playback thread too.
+   * The rawProjection of a raw 360° video, parsed; null for an equirectangular video, for a JSON the parser refused
+   * and when the surface of the spherical view cannot be sized (the frame then plays as it is).
+   */
+  private var rawProjection: RawProjection? = null
+
+  /**
+   * How the video plays, see [RawPlaybackPlanner]: PLAIN for an equirectangular video. Kept across a stop and a
+   * recreation, so that a mode that failed is not tried again. Read on the playback and compositor threads too.
    */
   @Volatile
-  private var rawCalibration: DualFisheyeCalibration? = null
+  private var plan = RawPlan(RawMode.PLAIN, emptyList(), emptyList(), false, null, "")
 
-  /** The stitching failed while playing: the frames go through unstitched from then on, see [disableRawEffect] */
-  private var rawEffectFailed = false
+  /** The lens player of a LENSES plan, null otherwise */
+  private var twoLens: TwoLensPlayback? = null
+
+  /** The decoders of the current lens player were checked against the selected lens tracks */
+  private var lensDecodersChecked = false
+
+  /** A new plan is posted: errors that follow from the same failure do not post another one */
+  private var replanPending = false
+
+  /** A new plan was applied while the activity was stopped: its message shows once onStart has built its player */
+  private var rawMessageOnStart = false
 
   /** Sets the clear colour of the renderer, on its GL thread: black, the back of a half sphere */
   private val clearToBlack = Runnable { GLES20.glClearColor(0f, 0f, 0f, 1f) }
@@ -302,13 +368,15 @@ class SphericalVideoActivity : ComponentActivity() {
    */
   private val videoSurfaceListener = object : SphericalGLSurfaceView.VideoSurfaceListener {
     override fun onVideoSurfaceCreated(surface: Surface) {
-      player?.let { setPlayerSurface(it, surface) }
+      if (twoLens != null) attachLensOutput(surface) else player?.let { setPlayerSurface(it, surface) }
       // The renderer has just started and set its clear colour, gray; queued, this runs after it
       sphericalView?.queueEvent(clearToBlack)
     }
 
     override fun onVideoSurfaceDestroyed(surface: Surface) {
-      player?.clearVideoSurface(surface)
+      // Synchronous for the compositor: the view releases its SurfaceTexture right after
+      val lens = twoLens
+      if (lens != null) lens.clearOutput() else player?.clearVideoSurface(surface)
     }
   }
 
@@ -327,20 +395,34 @@ class SphericalVideoActivity : ComponentActivity() {
         declaredStereoMode = stereoMode
         updateStereoButton()
       }
-      // Tracks without a selected video say nothing about the coverage; a stitched frame always covers the full sphere
-      if (format != null && rawCalibration == null) {
+      // Tracks without a selected video say nothing about the coverage; a raw frame always covers the full sphere
+      if (format != null && !rawJsonPresent) {
         applyDeclaredCoverage(DeclaredProjection.of(format.projectionData)?.coverage)
       }
       // The audio track button shows when there is a choice
       val options = player?.let { audioTracks.onTracksChanged(it, tracks) }.orEmpty()
       audioButton.visibility = if (options.size >= 2) View.VISIBLE else View.GONE
-      // Last: a switch to the transcoded stream replaces these tracks
-      format?.let(::checkDecoder)
+      // Last: a switch to the transcoded stream, or to one lens, replaces these tracks
+      if (plan.mode == RawMode.LENSES) checkLensDecoders(tracks) else format?.let(::checkDecoder)
     }
 
     override fun onPlayerError(error: PlaybackException) {
       Log.e(TAG, "Cannot play the 360° video", error)
-      if (DualFisheyeEffect.isStitchingError(error) && disableRawEffect()) {
+      if (plan.mode == RawMode.EFFECT_SIDE_BY_SIDE && DualFisheyeEffect.isStitchingError(error)) {
+        if (replan(RawPlaybackPlanner.afterStitchFailure(plan))) return
+      }
+      if (plan.mode == RawMode.LENSES) {
+        // The ladder replaces the fallback of other videos: a lens player shows the error once it has nothing left
+        val projection = rawProjection ?: return
+        val url = intent.getStringExtra(EXTRA_URL) ?: return
+        if (isDecoderError(error)) {
+          replan(RawPlaybackPlanner.afterDecoderFailure(plan, projection, url, fallbackUrl))
+        } else {
+          // A read error of a split pair keeps the lens of the opened file first; any other failure (a container the
+          // extractor refuses, a timeout) plays the transcoded streams, once, like the switch of other videos
+          val oneFile = if (isSourceError(error)) RawPlaybackPlanner.afterSourceError(plan, projection, url) else null
+          replan(oneFile ?: RawPlaybackPlanner.afterSourceFailure(plan, projection, url, fallbackUrl))
+        }
         return
       }
       // PlayerView shows the error while the player stays in error: the transcoded stream gets its chance first
@@ -379,13 +461,26 @@ class SphericalVideoActivity : ComponentActivity() {
     fallbackUrl = intent.getStringExtra(EXTRA_FALLBACK_URL)?.takeIf { it.isNotBlank() }
     playingFallback = savedInstanceState?.getBoolean(STATE_PLAYING_FALLBACK) == true && fallbackUrl != null
     decoderChecked = savedInstanceState?.getBoolean(STATE_DECODER_CHECKED) == true
-    rawEffectFailed = savedInstanceState?.getBoolean(STATE_RAW_EFFECT_FAILED) == true
 
     labels = intent.getBundleExtra(EXTRA_STEREO_LABELS)?.toStringMap() ?: emptyMap()
     sphericalView = (playerView.videoSurfaceView as? SphericalGLSurfaceView)?.also {
       it.addVideoSurfaceListener(videoSurfaceListener)
     }
-    rawCalibration = rawCalibrationOf(intent.getStringExtra(EXTRA_RAW_PROJECTION))
+    val rawJson = intent.getStringExtra(EXTRA_RAW_PROJECTION)?.takeIf { it.isNotBlank() }
+    rawJsonPresent = rawJson != null
+    rawProjection = rawProjectionOf(rawJson)
+    val restored = savedInstanceState?.let(::restoredPlan)
+    if (restored != null) {
+      plan = restored
+    } else {
+      val url = intent.getStringExtra(EXTRA_URL).orEmpty()
+      plan = RawPlaybackPlanner.initial(rawJsonPresent, rawProjection, url, fallbackUrl, false, ::canDecodeRaw)
+      if (plan.mode != RawMode.PLAIN) Log.i(TAG, "raw plan ${plan.mode} streams ${plan.streams}: ${plan.reason}")
+      // A raw plan may start on the transcoded stream (a two track file the device cannot decode at all)
+      if (plan.mode != RawMode.LENSES && fallbackUrl != null && plan.urls.firstOrNull() == fallbackUrl) {
+        playingFallback = true
+      }
+    }
     stereoLayout = stereoLayoutNamed(savedInstanceState?.getString(STATE_STEREO_LAYOUT))
       ?: stereoLayoutNamed(intent.getStringExtra(EXTRA_STEREO_LAYOUT))
       ?: StereoLayout.MONO
@@ -405,8 +500,9 @@ class SphericalVideoActivity : ComponentActivity() {
       setOnClickListener { cycleCoverage() }
     }
     updateCoverageButton()
-    // A stitched frame is mono and covers the full sphere: neither control would change what shows
-    if (rawCalibration != null) {
+    // A raw frame (stitched, one lens or unstitched) is mono and covers the full sphere: neither control would change
+    // what shows
+    if (rawJsonPresent) {
       stereoButton.visibility = View.GONE
       coverageButton.visibility = View.GONE
     }
@@ -424,11 +520,17 @@ class SphericalVideoActivity : ComponentActivity() {
     bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed)
 
     enterFullScreen(topBar)
+    // The first plan of this opening may already be a fallback: the user reads why (a recreation said it already)
+    if (restored == null) showRawMessage(plan)
   }
 
   override fun onStart() {
     super.onStart()
     initializePlayer()
+    if (rawMessageOnStart) {
+      rawMessageOnStart = false
+      showRawMessage(plan)
+    }
     // Starts the rendering thread and the orientation sensors of the spherical surface
     playerView.onResume()
   }
@@ -461,7 +563,10 @@ class SphericalVideoActivity : ComponentActivity() {
     outState.putInt(STATE_AUDIO_TRACK, audioTracks.chosenIndex)
     outState.putBoolean(STATE_PLAYING_FALLBACK, playingFallback)
     outState.putBoolean(STATE_DECODER_CHECKED, decoderChecked)
-    outState.putBoolean(STATE_RAW_EFFECT_FAILED, rawEffectFailed)
+    outState.putString(STATE_RAW_PLAN_MODE, plan.mode.name)
+    outState.putIntArray(STATE_RAW_PLAN_STREAMS, plan.streams.toIntArray())
+    outState.putStringArrayList(STATE_RAW_PLAN_URLS, ArrayList(plan.urls))
+    outState.putBoolean(STATE_RAW_PLAN_FALLBACK, plan.fromFallback)
   }
 
   override fun onDestroy() {
@@ -491,17 +596,27 @@ class SphericalVideoActivity : ComponentActivity() {
         dataSpec.withAdditionalHeaders(headers)
       }
     val dataSourceFactory = DefaultDataSource.Factory(this, httpDataSourceFactory)
+    val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
     val audioAttributes = AudioAttributes.Builder()
       .setUsage(C.USAGE_MEDIA)
       .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
       .build()
 
     // Larger buffers for a video read over HTTP (the media bridge of a network share, a server); local files as before
-    player = StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
-      .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+    val builder = StreamingLoadControl.applyTo(ExoPlayer.Builder(this), url)
+      .setMediaSourceFactory(mediaSourceFactory)
       .setAudioAttributes(audioAttributes, /* handleAudioFocus= */ true)
       .setHandleAudioBecomingNoisy(true)
-      .build()
+    val projection = rawProjection
+    val lens =
+      if (plan.mode == RawMode.LENSES && projection != null) {
+        createLensPlayback(projection, builder, mediaSourceFactory)
+      } else {
+        null
+      }
+    twoLens = lens
+    lensDecodersChecked = false
+    player = (lens?.player ?: builder.build())
       .also {
         it.addListener(playerListener)
         // The language picked last, and the track picked for this video before a stop
@@ -509,12 +624,15 @@ class SphericalVideoActivity : ComponentActivity() {
         bufferingIndicator.attach(it)
         // Before the surface and before prepare, which sets up the effect pipeline. Once the stitching failed, the
         // player is built without any effect: an empty list would still route the frames through the GL pipeline
-        val raw = rawCalibration
-        if (raw != null && !rawEffectFailed) {
-          val size = rawOutputSize(raw)
-          it.setVideoEffects(listOf(DualFisheyeEffect(raw, size.width, size.height)))
+        if (plan.mode == RawMode.EFFECT_SIDE_BY_SIDE && projection != null) {
+          val size = rawOutputSize(projection)
+          it.setVideoEffects(listOf(DualFisheyeEffect(projection, size.width, size.height)))
         }
-        it.setMediaItem(MediaItem.fromUri(url), startPosition)
+        if (lens != null) {
+          lens.setMedia(plan.urls, startPosition)
+        } else {
+          it.setMediaItem(MediaItem.fromUri(url), startPosition)
+        }
         it.playWhenReady = playWhenReady
         playerView.player = it
         attachSphericalView(it)
@@ -523,14 +641,88 @@ class SphericalVideoActivity : ComponentActivity() {
   }
 
   /**
+   * The lens player of the LENSES plan, or null when its compositor cannot start (no OpenGL ES 3, a shader the
+   * driver refuses): the plan then becomes the unstitched one, built by the caller as a plain player.
+   */
+  private fun createLensPlayback(
+    projection: RawProjection,
+    builder: ExoPlayer.Builder,
+    mediaSourceFactory: DefaultMediaSourceFactory,
+  ): TwoLensPlayback? {
+    val listener = LensListener()
+    return try {
+      TwoLensPlayback.create(
+        this,
+        projection,
+        plan.streams,
+        RawPlaybackPlanner.assignmentOf(plan, projection),
+        builder,
+        mediaSourceFactory,
+        listener,
+      ).also { listener.playback = it }
+    } catch (e: RawStitchException) {
+      Log.e(TAG, "The lens compositor cannot start, the raw video plays unstitched", e)
+      RawPlaybackPlanner.afterStitchFailure(plan)?.let { applyPlan(it) }
+      if (!replanPending) showRawMessage(plan)
+      null
+    }
+  }
+
+  /** What the lens player tells, on the main thread; ignored once that player is replaced. */
+  private inner class LensListener : TwoLensPlayback.Listener {
+    var playback: TwoLensPlayback? = null
+
+    override fun onFirstFrameDrawn() {
+      if (playback == null || playback !== twoLens) return
+      Log.i(TAG, "First stitched frame on the sphere (${plan.mode} ${plan.streams})")
+      // PlayerView.setPlayer closes the black shutter over the video, and only the player's first rendered frame opens
+      // it again: a lens player never reports one, its renderers draw into the compositor rather than into the
+      // player's surface. The stitched frame opens it; the next player closes it again, as for any player
+      playerView.findViewById<View>(androidx.media3.ui.R.id.exo_shutter)?.visibility = View.INVISIBLE
+    }
+
+    override fun onStitchError(error: Exception) {
+      if (playback !== twoLens || playback == null) return
+      Log.e(TAG, "The lens compositor failed while playing", error)
+      replan(RawPlaybackPlanner.afterStitchFailure(plan))
+    }
+
+    override fun onStreamsMissing(streams: List<Int>) {
+      if (playback !== twoLens || playback == null) return
+      val projection = rawProjection ?: return
+      val url = intent.getStringExtra(EXTRA_URL) ?: return
+      Log.w(TAG, "No decodable track for streams $streams")
+      // Without a next step there is no error to show either (no track, no decoder error): the frame plays unstitched,
+      // where the default renderers may still find a decoder, or fail with an error the user sees
+      replan(
+        RawPlaybackPlanner.afterDecoderFailure(plan, projection, url, fallbackUrl)
+          ?: RawPlaybackPlanner.afterStitchFailure(plan),
+      )
+    }
+  }
+
+  /**
    * PlayerView hands the spherical view to the player, which then gives the renderer of the view the projection of
    * the file with every frame, whatever else listens to the frames. Instead, the player renders into the surface of
    * the view alone (setting the surface drops the link of the player to the view), and the frames reach the renderer
    * through [CoverageFrameListener], which gives it the projection of the coverage. The camera motion track of a
    * video, if any, still turns the view.
+   *
+   * A lens player never renders into the view itself: clearVideoSurface undoes what PlayerView.setPlayer did (the
+   * view's surface given to every video renderer, the link to the view), then each lens renderer gets its own
+   * Surface of the compositor, which draws into the view's surface and tells the view's renderer about each frame.
    */
   private fun attachSphericalView(player: ExoPlayer) {
     val view = sphericalView ?: return
+    val lens = twoLens
+    if (lens != null) {
+      player.clearVideoSurface()
+      lens.bindRendererOutputs()
+      lens.setDownstream(CoverageFrameListener(view.videoFrameMetadataListener))
+      player.setCameraMotionListener(view.cameraMotionListener)
+      view.videoSurface?.let(::attachLensOutput)
+      return
+    }
     val surface = view.videoSurface
     if (surface != null) setPlayerSurface(player, surface) else player.setVideoSurface(null)
     player.setVideoFrameMetadataListener(CoverageFrameListener(view.videoFrameMetadataListener))
@@ -538,12 +730,24 @@ class SphericalVideoActivity : ComponentActivity() {
   }
 
   /**
+   * Hands [surface] to the lens compositor, the SurfaceTexture behind it sized first (see [sizeRawSurface]) to the
+   * stitched frame within the limits of the phone and of the GPU.
+   */
+  private fun attachLensOutput(surface: Surface) {
+    val lens = twoLens ?: return
+    val projection = rawProjection ?: return
+    val size = rawOutputSize(projection, lens.maxOutputSize)
+    sizeRawSurface(size.width, size.height)
+    lens.setOutput(surface, size.width, size.height)
+  }
+
+  /**
    * Hands [surface] to [player]. With the stitching on, Media3 draws the frames into it with OpenGL and must be told
    * its size, and the SurfaceTexture behind it must get that size first (see [sizeRawSurface]).
    */
   private fun setPlayerSurface(player: ExoPlayer, surface: Surface) {
-    val raw = rawCalibration
-    if (raw == null || rawEffectFailed) {
+    val raw = rawProjection
+    if (raw == null || plan.mode != RawMode.EFFECT_SIDE_BY_SIDE) {
       player.setVideoSurface(surface)
       return
     }
@@ -568,51 +772,144 @@ class SphericalVideoActivity : ComponentActivity() {
   }
 
   /**
-   * The calibration of a raw dual fisheye video from [json], or null for an equirectangular video. A calibration that
-   * cannot be read, or a spherical view whose surface cannot be sized, plays the frame as it is (the two circles on
-   * the sphere): the log tells why.
+   * The rawProjection of a raw 360° video from [json], or null for an equirectangular video. A JSON the parser refuses,
+   * or a spherical view whose surface cannot be sized, plays the frame as it is (the lenses on the sphere): the log
+   * tells why.
    */
-  private fun rawCalibrationOf(json: String?): DualFisheyeCalibration? {
-    if (json.isNullOrBlank()) return null
-    val calibration =
+  private fun rawProjectionOf(json: String?): RawProjection? {
+    if (json == null) return null
+    val projection =
       try {
-        DualFisheyeCalibration.parse(json)
+        RawProjection.parse(json)
       } catch (e: IllegalArgumentException) {
-        Log.e(TAG, "Unreadable dual fisheye calibration, the raw frame plays as it is: ${e.message}")
+        Log.e(RAW_PROJECTION_TAG, "rawProjection rejected: ${e.message}")
         return null
       }
     if (sphericalView == null || surfaceTextureField == null) {
       Log.w(TAG, "The spherical view cannot take a stitched frame here, the raw frame plays as it is")
       return null
     }
-    Log.i(TAG, "Raw dual fisheye video (${calibration.model}), stitched on the device")
-    return calibration
+    Log.i(RAW_PROJECTION_TAG, projection.summary())
+    return projection
+  }
+
+  /** Whether the device decodes [instances] streams like [track] at once, null when the JSON cannot tell. */
+  private fun canDecodeRaw(track: RawTrack, instances: Int): Boolean? {
+    val codec = track.codecs ?: track.codec ?: return null
+    val verdict =
+      VideoDecoders.canDecode(
+        codec,
+        track.codecs,
+        track.width,
+        track.height,
+        track.frameRate,
+        track.bitDepth,
+        transferCharacteristics = 0,
+        instances = instances,
+      )
+    return verdict.supported
+  }
+
+  /** The plan saved by [onSaveInstanceState], or null without one. */
+  private fun restoredPlan(state: Bundle): RawPlan? {
+    val mode = RawMode.entries.firstOrNull { it.name == state.getString(STATE_RAW_PLAN_MODE) } ?: return null
+    if (mode == RawMode.LENSES && rawProjection == null) return null
+    return RawPlan(
+      mode,
+      state.getIntArray(STATE_RAW_PLAN_STREAMS)?.toList().orEmpty(),
+      state.getStringArrayList(STATE_RAW_PLAN_URLS).orEmpty(),
+      state.getBoolean(STATE_RAW_PLAN_FALLBACK),
+      null,
+      "restored",
+    )
+  }
+
+  /** Makes [newPlan] the plan: a plain player plays the transcoded stream when the plan says so. */
+  private fun applyPlan(newPlan: RawPlan) {
+    plan = newPlan
+    if (newPlan.mode != RawMode.LENSES) {
+      playingFallback = fallbackUrl != null && newPlan.urls.firstOrNull() == fallbackUrl
+      decoderChecked = false
+    }
   }
 
   /**
-   * The stitching failed while playing or while its pipeline was set up (a GL error in the effect): the same video
-   * plays again from where it stopped on a player built without the effect, the frames unstitched, rather than ending
-   * on an error. A new player, because removing the effects from the current one keeps its GL pipeline. False when
-   * the stitching is off already.
+   * Plays the video again from where it stopped with [newPlan] (one lens, the transcoded streams, unstitched), on a
+   * new player: the renderers and the effects of a player are fixed when it is built. False when there is no new plan
+   * (the error then shows), or no player.
    */
-  private fun disableRawEffect(): Boolean {
-    if (player == null || rawCalibration == null || rawEffectFailed) {
-      return false
-    }
-    rawEffectFailed = true
-    Log.w(TAG, "The dual fisheye stitching failed, the raw frame plays as it is")
+  private fun replan(newPlan: RawPlan?): Boolean {
+    if (newPlan == null || player == null) return false
+    if (replanPending) return true
+    replanPending = true
+    Log.i(TAG, "Raw plan ${plan.mode} ${plan.streams} -> ${newPlan.mode} ${newPlan.streams}: ${newPlan.reason}")
     // Posted, not run from within the listener of the player being replaced
     playerView.post {
+      replanPending = false
       if (isFinishing || isDestroyed) return@post
+      // Stopped meanwhile: onStop released the player, and a new one built now would play in the background. onStart
+      // builds the player of the plan, from where onStop left it, and tells why
+      if (!lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+        applyPlan(newPlan)
+        rawMessageOnStart = true
+        return@post
+      }
       releasePlayer()
+      applyPlan(newPlan)
       initializePlayer()
+      // The plan that plays: a lens compositor that cannot start made it the unstitched one meanwhile
+      showRawMessage(plan)
     }
     return true
   }
 
-  /** The URL that plays: the original, or the transcoded stream once the player switched to it */
+  /** The message of [plan], if it has one, translated by Flutter or in English. */
+  private fun showRawMessage(plan: RawPlan) {
+    val text =
+      when (plan.message ?: return) {
+        RawMessage.ONE_LENS_DECODER -> {
+          val track = rawProjection?.tracks?.maxByOrNull { it.pixels }
+          val codec = VideoDecoders.codecName(VideoDecoders.mimeFor(track?.codecs ?: track?.codec ?: ""))
+          val template = label(LABEL_RAW_ONE_LENS_DECODER)
+          VideoDecoders.decoderLabel(
+            mapOf(LABEL_RAW_ONE_LENS_DECODER to template),
+            LABEL_RAW_ONE_LENS_DECODER,
+            codec,
+            track?.width ?: 0,
+            track?.height ?: 0,
+          ) ?: template
+        }
+        RawMessage.ONE_LENS_FILE -> label(LABEL_RAW_ONE_LENS_FILE)
+        RawMessage.UNSTITCHED -> label(LABEL_RAW_UNSTITCHED)
+      }
+    Log.i(TAG, "Shown to the user: $text")
+    showToast(text, Toast.LENGTH_LONG)
+  }
+
+  /**
+   * Once per lens player: the selected lens tracks against the decoders, the instance count included (the JSON's
+   * sizes were checked before; the decoded formats tell the frame rate and the colour for sure). Two streams the
+   * device refuses become one lens.
+   */
+  private fun checkLensDecoders(tracks: Tracks) {
+    if (lensDecodersChecked || plan.streams.size < 2) return
+    val formats = tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO && it.isSelected }.flatMap { group ->
+      (0 until group.length).filter { group.isTrackSelected(it) }.map { group.getTrackFormat(it) }
+    }
+    val largest = formats.filter { it.width > 0 && it.height > 0 }.maxByOrNull { it.width * it.height } ?: return
+    lensDecodersChecked = true
+    val verdict = VideoDecoders.canDecode(largest, instances = plan.streams.size)
+    Log.i(TAG, "Lens decoders: ${formats.size} tracks selected, ${verdict.reason}")
+    if (verdict.supported) return
+    val projection = rawProjection ?: return
+    val url = intent.getStringExtra(EXTRA_URL) ?: return
+    replan(RawPlaybackPlanner.afterDecoderFailure(plan, projection, url, fallbackUrl))
+  }
+
+  /** The URL that plays: the plan's first in lens mode, else the original or the transcoded stream once switched */
   private fun playbackUrl(): String? =
-    if (playingFallback) fallbackUrl else intent.getStringExtra(EXTRA_URL)
+    if (plan.mode == RawMode.LENSES) plan.urls.firstOrNull()
+    else if (playingFallback) fallbackUrl else intent.getStringExtra(EXTRA_URL)
 
   /**
    * A video above what the device decodes stutters or shows blocks: the transcoded stream plays instead, once, from
@@ -672,7 +969,10 @@ class SphericalVideoActivity : ComponentActivity() {
     playWhenReady = current.playWhenReady
     current.removeListener(playerListener)
     playerView.player = null
-    current.release()
+    // The lens player first, then its compositor (the decoders leave the compositor's Surfaces before they go)
+    val lens = twoLens
+    twoLens = null
+    if (lens != null) lens.release() else current.release()
     player = null
     playerView.keepScreenOn = false
   }
@@ -798,9 +1098,9 @@ class SphericalVideoActivity : ComponentActivity() {
 
   /**
    * Passes each video frame on to [scene], the renderer of the spherical view, with the format of [projectedFormat],
-   * or of [stitchedFormat] for a raw dual fisheye video (the effect stitched the frame: whatever the file declares no
-   * longer applies). Called on the playback thread. Frames of the same format and coverage reuse the format built for
-   * the first one.
+   * or of [stitchedFormat] for a raw 360° video (stitched, one lens or unstitched: whatever the file declares no
+   * longer applies). Called on the playback thread, or on the compositor's thread for a lens player. Frames of the
+   * same format and coverage reuse the format built for the first one.
    */
   private inner class CoverageFrameListener(private val scene: VideoFrameMetadataListener) :
     VideoFrameMetadataListener {
@@ -816,7 +1116,7 @@ class SphericalVideoActivity : ComponentActivity() {
       mediaFormat: MediaFormat?,
     ) {
       val coverage = this@SphericalVideoActivity.coverage
-      val raw = rawCalibration != null
+      val raw = plan.mode != RawMode.PLAIN
       var projected = lastProjected
       if (projected == null || format !== lastFormat || coverage != lastCoverage || raw != lastRaw) {
         projected = if (raw) stitchedFormat(format) else projectedFormat(format, coverage)

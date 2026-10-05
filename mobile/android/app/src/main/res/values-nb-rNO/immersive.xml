@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Ingenting å vise</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d er for tung for dekoderen i headsettet (hakkete, blokkete). I Immich, sett videotranskodingen til HEVC eller begrens oppløsningen.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d er for tung for dekoderen i headsettet (hakkete, blokkete). Kod om denne filen til HEVC eller til en lavere oppløsning.</string>
+  <string name="immersive_raw_one_lens_decoder">Dette headsettet kan ikke dekode de to objektivene i denne videoen samtidig (%1$s %2$d x %3$d, to ganger). Det viser ett objektiv: halvparten av kulen forblir svart.</string>
+  <string name="immersive_raw_one_lens_file">Filen til det andre objektivet kan ikke leses. Ett objektiv vises: halvparten av kulen forblir svart.</string>
+  <string name="immersive_raw_unstitched">360°-sammensettingen mislyktes på denne enheten. Videoen vises slik kameraet tok den opp.</string>
 </resources>

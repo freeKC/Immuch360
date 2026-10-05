@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Níl aon rud le taispeáint</string>
   <string name="immersive_codec_too_large">Téann %1$s %2$d x %3$d thar chumas díchódóra an tacair cinn (stadach, blocach). In Immich, socraigh traschódú físe go HEVC nó teorannaigh an taifeach.</string>
   <string name="immersive_codec_too_large_file">Téann %1$s %2$d x %3$d thar chumas díchódóra an tacair cinn (stadach, blocach). Athionchódaigh an comhad seo i HEVC nó ag taifeach níos ísle.</string>
+  <string name="immersive_raw_one_lens_decoder">Ní féidir leis an tacar cinn seo dhá lionsa an fhíseáin seo a dhíchódú ag an am céanna (%1$s %2$d x %3$d, faoi dhó). Taispeántar lionsa amháin: fanann leath den sféar dubh.</string>
+  <string name="immersive_raw_one_lens_file">Ní féidir comhad an lionsa eile a léamh. Taispeántar lionsa amháin: fanann leath den sféar dubh.</string>
+  <string name="immersive_raw_unstitched">Theip ar fhuáil 360° ar an ngléas seo. Taispeántar an físeán mar a thaifead an ceamara é.</string>
 </resources>

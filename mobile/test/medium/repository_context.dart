@@ -107,6 +107,7 @@ class MediumRepositoryContext {
 
   Future<RemoteAssetEntityData> newRemoteAsset({
     String? id,
+    String? name,
     String? checksum,
     String? ownerId,
     DateTime? createdAt,
@@ -132,7 +133,7 @@ class MediumRepositoryContext {
         .insertReturning(
           RemoteAssetEntityCompanion(
             id: .new(id),
-            name: .new('remote_$id.jpg'),
+            name: .new(name ?? 'remote_$id.jpg'),
             checksum: .new(TestUtils.uuid(checksum)),
             type: .new(type ?? .image),
             createdAt: .new(createdAt),
@@ -224,10 +225,22 @@ class MediumRepositoryContext {
   }
 
   /// Seeds the exif of a remote asset, [projectionType] is stored as the server sends it (for example EQUIRECTANGULAR)
-  Future<RemoteExifEntityData> newRemoteExif({required String assetId, String? projectionType}) {
+  Future<RemoteExifEntityData> newRemoteExif({
+    required String assetId,
+    String? projectionType,
+    String? make,
+    String? model,
+  }) {
     return db
         .into(db.remoteExifEntity)
-        .insertReturning(RemoteExifEntityCompanion(assetId: .new(assetId), projectionType: .new(projectionType)));
+        .insertReturning(
+          RemoteExifEntityCompanion(
+            assetId: .new(assetId),
+            projectionType: .new(projectionType),
+            make: .new(make),
+            model: .new(model),
+          ),
+        );
   }
 
   Future<StackEntityData> newStack({String? id, String? ownerId, required String primaryAssetId}) {

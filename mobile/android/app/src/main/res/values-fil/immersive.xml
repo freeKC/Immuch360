@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Walang maipapakita</string>
   <string name="immersive_codec_too_large">Ang %1$s %2$d x %3$d ay hindi kaya ng decoder ng headset (paputol-putol, blocky). Sa Immich, itakda sa HEVC ang video transcoding o limitahan ang resolution.</string>
   <string name="immersive_codec_too_large_file">Ang %1$s %2$d x %3$d ay hindi kaya ng decoder ng headset (paputol-putol, blocky). I-re-encode ang file na ito sa HEVC o sa mas mababang resolution.</string>
+  <string name="immersive_raw_one_lens_decoder">Hindi kayang i-decode ng headset na ito nang sabay ang dalawang lens ng video na ito (%1$s %2$d x %3$d, dalawang beses). Isang lens ang ipinapakita: nananatiling itim ang kalahati ng sphere.</string>
+  <string name="immersive_raw_one_lens_file">Hindi mabasa ang file ng kabilang lens. Isang lens ang ipinapakita: nananatiling itim ang kalahati ng sphere.</string>
+  <string name="immersive_raw_unstitched">Nabigo ang 360° na pagdugtong sa device na ito. Ipinapakita ang video kung paano ito ni-record ng camera.</string>
 </resources>

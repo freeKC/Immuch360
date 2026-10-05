@@ -10,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 
 final _sample = Platform.environment['IMMUCH_INSTA_SAMPLE'];
@@ -55,7 +57,17 @@ void main() {
     // Field 19 is one lens's square for a video recorded as a split pair: a side by side frame is two squares
     final frameHeight = trailer.imageHeight ?? calibration.canvasSquare.round();
     final frameWidth = 2 * frameHeight;
-    _print('rawProjection: ${calibration.toNativeJson(frameWidth: frameWidth, frameHeight: frameHeight)}');
+    final plan = RawVideoPlan(
+      kind: RawMediaKind.insta360Video,
+      layout: RawVideoLayout.sideBySide,
+      camera: calibration.cameraModel,
+      tracks: [RawVideoTrack(file: 0, videoTrack: 0, width: frameWidth, height: frameHeight)],
+      calibration: calibration,
+      textureOfLens: const [0, 0],
+      url: Uri.file(path).toString(),
+      trackOrderSource: 'single',
+    );
+    _print('rawProjection: ${plan.toNativeJson()}');
 
     expect(calibration.lenses, hasLength(2));
     expect(calibration.source, DualFisheyeSource.file);

@@ -174,8 +174,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
     final stereoLabels = sphereViewerLabels(context.t);
-    final isRaw = _info?.raw == Raw360Layout.dualFisheye || isRawPhotoName(photo.entry.name);
-    final raw = isRaw ? RawImmersiveMedia.read(ref) : null;
+    final isRaw = _info?.rawKind == RawMediaKind.insta360Photo || isRawPhotoName(photo.entry.name);
+    final raw = isRaw ? RawImmersiveMedia.read(ref, forAssets: false) : null;
     final read = _shareReader ?? httpRangeReader(ref.read(networkBridgeClientProvider), photo.url);
     try {
       // The viewer opens a raw photo stitched, from a picture of the cache

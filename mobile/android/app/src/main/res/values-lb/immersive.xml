@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Näischt ze weisen</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d iwwerfuerdert den Decoder vum Headset (ruckeleg, pixeleg). Setzt am Immich d\'Video-Transkodéierung op HEVC oder limitéiert d\'Opléisung.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d iwwerfuerdert den Decoder vum Headset (ruckeleg, pixeleg). Kodéiert dëse Fichier nei an HEVC oder mat enger méi klenger Opléisung.</string>
+  <string name="immersive_raw_one_lens_decoder">Dësen Headset kann déi zwee Objektiver vun dësem Video net gläichzäiteg dekodéieren (%1$s %2$d x %3$d, zweemol). En weist een Objektiv: d\'Halschent vun der Kugel bleift schwaarz.</string>
+  <string name="immersive_raw_one_lens_file">De Fichier vum aneren Objektiv kann net gelies ginn. Een Objektiv gëtt gewisen: d\'Halschent vun der Kugel bleift schwaarz.</string>
+  <string name="immersive_raw_unstitched">D\'360°-Zesummesetzen ass op dësem Apparat feelgeschloen. De Video gëtt esou gewisen, wéi d\'Kamera en opgeholl huet.</string>
 </resources>

@@ -134,10 +134,14 @@ struct DualFisheyeCalibration: Decodable {
   /// where Insta360 Studio centres its exports, with the horizon level. Its columns are the body directions of the
   /// right of the view, of gravity and of the front of the view.
   var levelingMatrix: simd_float3x3 {
-    let down = downBody
+    Self.levelingMatrix(downBody: downBody)
+  }
+
+  /// G for the gravity [downBody] (unit length, body frame), see the instance member
+  static func levelingMatrix(downBody down: SIMD3<Float>) -> simd_float3x3 {
     // Lens 1 straight up or down has no level direction: body x is the fallback, the same one as the Dart and the
     // Kotlin side, so the picture opens on the same heading on every platform
-    let front = Self.levelled(SIMD3<Float>(0, 0, -1), down: down) ?? Self.levelled(SIMD3<Float>(1, 0, 0), down: down)
+    let front = levelled(SIMD3<Float>(0, 0, -1), down: down) ?? levelled(SIMD3<Float>(1, 0, 0), down: down)
       ?? SIMD3<Float>(0, 0, -1)
     let right = simd_cross(down, front)
     return simd_float3x3(columns: (right, down, front))
@@ -156,9 +160,14 @@ struct DualFisheyeCalibration: Decodable {
   /// quarter turn, which is how the sensors sit sideways in the body.
   func lensRotation(_ index: Int) -> simd_float3x3 {
     let lens = lenses[index]
-    let roll = 2 * (lens.roll / 90).rounded() * 90 - lens.roll
-    return Self.rotationZ(degrees: roll) * Self.rotationX(degrees: 180 * Float(index))
-      * Self.rotationX(degrees: lens.pitch) * Self.rotationY(degrees: lens.yaw)
+    return Self.lensRotation(yaw: lens.yaw, pitch: lens.pitch, roll: lens.roll, index: index)
+  }
+
+  /// R_i for the pose of lens [index] in degrees, see the instance member
+  static func lensRotation(yaw: Float, pitch: Float, roll: Float, index: Int) -> simd_float3x3 {
+    let mirroredRoll = 2 * (roll / 90).rounded() * 90 - roll
+    return rotationZ(degrees: mirroredRoll) * rotationX(degrees: 180 * Float(index))
+      * rotationX(degrees: pitch) * rotationY(degrees: yaw)
   }
 
   /// Puts the projected point of lens [index] in the frame: (fx, fy, cx, cy) such that the texture coordinates are

@@ -24,6 +24,11 @@ class ViewAs360Action extends AssetActionBuilder {
     if (asset == null) {
       return null;
     }
+    // A raw file of a 360° camera has the 360° button, which stitches it: viewed as 360° it would be read as an
+    // equirect picture
+    if (ref.watch(rawMediaKindProvider(asset)) != null) {
+      return null;
+    }
     // Until the exif has loaded, nothing tells whether the server flags the asset as 360°. When it does, or when the
     // file on the device declares it, the asset is 360° already, and the choice of the user would change nothing.
     if (ref.watch(isFoundLocalPanoramaProvider(asset))) {

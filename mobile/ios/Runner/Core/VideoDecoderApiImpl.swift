@@ -1,6 +1,8 @@
 import AVFoundation
 import CoreMedia
+import CoreVideo
 import Foundation
+import Metal
 import VideoToolbox
 
 /// Answers Flutter's questions about the video decoders of the device, from the table of [VideoDecoderSupport].
@@ -13,11 +15,21 @@ class VideoDecoderApiImpl: VideoDecoderApi {
     width: Int64,
     height: Int64,
     frameRate: Double,
+    bitDepth: Int64,
+    transferCharacteristics: Int64,
+    instances: Int64,
     completion: @escaping (Result<DecodeVerdict, Error>) -> Void
   ) {
     // VideoToolbox publishes no frame rate limit: the sizes of the table are low enough for 60 frames per second,
-    // so the frame rate does not change the verdict
-    completion(.success(VideoDecoderSupport.verdict(codec: codec, codecs: codecs, width: width, height: height)))
+    // so the frame rate only counts for several streams, against the pixel rate the native player uses
+    let verdict = VideoDecoderSupport.verdict(
+      codec: codec, codecs: codecs, width: width, height: height, bitDepth: bitDepth,
+      transfer: transferCharacteristics)
+    let known = VideoDecoderCodec(name: codec) ?? codecs.flatMap { VideoDecoderCodec(codecs: $0) }
+    completion(
+      .success(
+        VideoDecoderSupport.verdict(
+          verdict, codec: known, instances: instances, width: width, height: height, frameRate: frameRate)))
   }
 
   func listDecoders(completion: @escaping (Result<[DecoderInfo], Error>) -> Void) {
@@ -29,7 +41,8 @@ class VideoDecoderApiImpl: VideoDecoderApi {
         maxWidth: decoder.maxWidth,
         maxHeight: decoder.maxHeight,
         // VideoToolbox does not tell
-        maxFrameRate: 0
+        maxFrameRate: 0,
+        profiles: VideoDecoderSupport.profiles(of: decoder)
       )
     }
     completion(.success(decoders))
@@ -173,6 +186,34 @@ enum VideoDecoderSupport {
   // 'av01', spelled out: kCMVideoCodecType_AV1 is missing from older SDKs
   private static let av1CodecType: CMVideoCodecType = 0x6176_3031
 
+  /// A9 and A9X devices (iOS 15 and iPadOS 16 still run there) decode 8 bit HEVC in hardware, 10 bit in software
+  private static let a9Models: Set<String> = [
+    "iPhone8,1", "iPhone8,2", "iPhone8,4", "iPad6,3", "iPad6,4", "iPad6,7", "iPad6,8", "iPad6,11", "iPad6,12",
+  ]
+  private static let isA9: Bool = {
+    var info = utsname()
+    uname(&info)
+    let machine = withUnsafeBytes(of: &info.machine) { bytes in
+      String(decoding: bytes.prefix(while: { $0 != 0 }), as: UTF8.self)
+    }
+    return VideoDecoderSupport.a9Models.contains(machine)
+  }()
+
+  /// The profiles the decoders page shows for [decoder]: what the decoders of Apple chips take, VideoToolbox does
+  /// not list them
+  static func profiles(of decoder: VideoDecoderLimit) -> [String] {
+    switch decoder.codec {
+    case .h264:
+      return ["Baseline", "Main", "High"]
+    case .hevc:
+      return decoder.hardware && isA9 ? ["Main"] : ["Main", "Main 10"]
+    case .av1:
+      return ["Main 8", "Main 10"]
+    case .vp9:
+      return []
+    }
+  }
+
   /// The best decoder of each codec this device decodes, for the decoders page
   static var decoders: [VideoDecoderLimit] {
     VideoDecoderCodec.allCases.compactMap { VideoDecoderSupport.decoder(for: $0) }
@@ -198,18 +239,76 @@ enum VideoDecoderSupport {
   }
 
   /// The answer to Flutter: [name] is the codec as Flutter knows it, [codecs] the RFC 6381 string when known, the
-  /// first of the two the table knows decides
-  static func verdict(codec name: String, codecs: String?, width: Int64, height: Int64) -> DecodeVerdict {
+  /// first of the two the table knows decides. [bitDepth] is the bits per luma sample and [transfer] the ITU-T H.273
+  /// transfer (16 PQ, 18 HLG), each 0 when unknown; the profile of [codecs] tells the bit depth too.
+  static func verdict(
+    codec name: String, codecs: String?, width: Int64, height: Int64, bitDepth: Int64 = 0, transfer: Int64 = 0
+  ) -> DecodeVerdict {
     if let codec = VideoDecoderCodec(name: name) ?? codecs.flatMap({ VideoDecoderCodec(codecs: $0) }) {
-      return verdict(codec, width: width, height: height)
+      let depth = max(bitDepth, codecs.flatMap { codecsBitDepth(codec, codecs: $0) } ?? 0)
+      if codec == .h264 {
+        var profile = codecs.flatMap { highAvcProfile(codecs: $0) }
+        if profile == nil && depth >= 10 {
+          profile = "High 10"
+        }
+        if let profile {
+          return DecodeVerdict(
+            supported: false, hardware: false, maxWidth: 0, maxHeight: 0,
+            reason: "H.264 10 bit is not decoded on iOS", profile: profile, missingProfile: profile)
+        }
+      }
+      return verdict(codec, width: width, height: height, bitDepth: depth, transfer: transfer)
     }
     return verdictOutsideTable(name: name, codecs: codecs)
   }
 
-  /// Whether the best decoder of [codec] takes a [width] x [height] frame. An unknown size (0) never counts as too
-  /// large, as on Android.
-  static func verdict(_ codec: VideoDecoderCodec, width: Int64, height: Int64) -> DecodeVerdict {
-    guard let best = decoder(for: codec) else {
+  /// The name of an H.264 profile of more than 8 bit 4:2:0 in [codecs] ("avc1.6E0033" is High 10), which no decoder
+  /// of iOS takes; nil for the others
+  private static func highAvcProfile(codecs: String) -> String? {
+    let parts = codecs.split(separator: ",").first?.trimmingCharacters(in: .whitespaces).split(separator: ".") ?? []
+    guard parts.count > 1, parts[1].count >= 2 else { return nil }
+    switch parts[1].prefix(2).uppercased() {
+    case "6E":
+      return "High 10"
+    case "7A":
+      return "High 4:2:2"
+    case "F4":
+      return "High 4:4:4"
+    default:
+      return nil
+    }
+  }
+
+  /// The bit depth the profile of [codecs] implies: 10 for HEVC Main 10 ("hvc1.2.4.L153") and H.264 High 10
+  /// ("avc1.6E0033"), nil when it does not tell
+  private static func codecsBitDepth(_ codec: VideoDecoderCodec, codecs: String) -> Int64? {
+    let parts = codecs.split(separator: ",").first?.trimmingCharacters(in: .whitespaces).split(separator: ".") ?? []
+    guard parts.count > 1 else { return nil }
+    switch codec {
+    case .hevc:
+      // The profile space comes as a letter before the profile number: "A2" is profile 2 too
+      let profile = parts[1].drop(while: { "ABCabc".contains($0) })
+      return profile == "2" ? 10 : nil
+    case .h264:
+      return highAvcProfile(codecs: codecs) == "High 10" ? 10 : nil
+    case .av1, .vp9:
+      return nil
+    }
+  }
+
+  /// Whether the best decoder of [codec] takes a [width] x [height] frame of [bitDepth] bits per luma sample (0 when
+  /// unknown). An unknown size (0) never counts as too large, as on Android. 10 bit HEVC runs in software on A9 chips,
+  /// held to 1080p like any software decoder; [transfer] (16 PQ) only names the profile, the verdict stays the same.
+  static func verdict(
+    _ codec: VideoDecoderCodec, width: Int64, height: Int64, bitDepth: Int64 = 0, transfer: Int64 = 0
+  ) -> DecodeVerdict {
+    let tenBitHevc = codec == .hevc && bitDepth >= 10
+    let profile: String? = tenBitHevc ? (transfer == 16 ? "Main 10 HDR10" : "Main 10") : nil
+    var candidate = decoder(for: codec)
+    if tenBitHevc, let hardware = candidate, hardware.hardware, isA9 {
+      candidate = VideoDecoderLimit(codec: codec, hardware: false, maxWidth: 1920, maxHeight: 1080)
+    }
+    guard let best = candidate else {
       let reason =
         codec == .vp9
         ? "AVPlayer does not play VP9 on iOS"
@@ -224,7 +323,8 @@ enum VideoDecoderSupport {
         hardware: best.hardware,
         maxWidth: best.maxWidth,
         maxHeight: best.maxHeight,
-        reason: "\(codec.displayName) of unknown size, \(kind) decoder up to \(limit)"
+        reason: "\(codec.displayName) of unknown size, \(kind) decoder up to \(limit)",
+        profile: profile
       )
     }
     let fits = best.fits(width: width, height: height)
@@ -234,8 +334,45 @@ enum VideoDecoderSupport {
       hardware: best.hardware,
       maxWidth: best.maxWidth,
       maxHeight: best.maxHeight,
-      reason: "\(codec.displayName) \(width)x\(height) \(relation) the \(kind) decoder (up to \(limit))"
+      reason: "\(codec.displayName) \(width)x\(height) \(relation) the \(kind) decoder (up to \(limit))",
+      profile: profile
     )
+  }
+
+  /// The verdict for [instances] streams of [codec] at [width] x [height] decoded at once (the two lenses of a raw
+  /// 360° video) at [frameRate] frames per second (0 when unknown, read as 30), from [single], the verdict for one:
+  /// VideoToolbox tells no instance count, so the streams share the [pixelRate] of the codec. The rule of
+  /// [verdict(forLensFormats:frameRate:)], so that Flutter warns before the player opens where the player itself
+  /// would. One stream, an unknown size or a codec outside the table keeps [single].
+  static func verdict(
+    _ single: DecodeVerdict, codec: VideoDecoderCodec?, instances: Int64, width: Int64, height: Int64,
+    frameRate: Double
+  ) -> DecodeVerdict {
+    guard instances > 1, single.supported, width > 0, height > 0, let codec else {
+      return single
+    }
+    return pixelRateVerdict(
+      single, codec: codec, streams: Int(instances), width: width, height: height,
+      pixels: Double(instances) * Double(width) * Double(height), frameRate: frameRate)
+  }
+
+  /// [answer] once [pixels] per frame, of [streams] streams of [codec] (the first one [width] x [height]), are
+  /// measured at [frameRate] (0 when unknown, read as 30) against the [pixelRate] of the codec
+  private static func pixelRateVerdict(
+    _ answer: DecodeVerdict, codec: VideoDecoderCodec, streams: Int, width: Int64, height: Int64, pixels: Double,
+    frameRate: Double
+  ) -> DecodeVerdict {
+    let fps = frameRate.isFinite && frameRate >= 1 ? frameRate : 30
+    let rate = pixels * fps
+    let budget = pixelRate(codec, hardware: answer.hardware)
+    var result = answer
+    result.supported = rate <= budget
+    let relation = result.supported ? "within" : "above"
+    result.reason =
+      "\(streams) x \(codec.displayName) \(width)x\(height) at \(Int(fps.rounded())) fps: "
+      + "\(Int((rate / 1_000_000).rounded())) Mpx/s \(relation) the \(Int((budget / 1_000_000).rounded())) Mpx/s of "
+      + "this device"
+    return result
   }
 
   /// A codec outside the table (ProRes, MPEG-4 Part 2...): AVFoundation tells whether it plays such a stream at
@@ -256,13 +393,30 @@ enum VideoDecoderSupport {
     return DecodeVerdict(supported: playable, hardware: false, maxWidth: 0, maxHeight: 0, reason: reason)
   }
 
-  /// The verdict for a video track, from its format description: the codec type and the coded size. A codec
-  /// outside the table counts as supported: AVPlayer tries it, and a failure plays the fallback stream.
+  /// The verdict for a video track, from its format description: the codec type, the coded size, the bit depth and
+  /// the transfer. A codec outside the table counts as supported: AVPlayer tries it, and a failure plays the fallback
+  /// stream.
   static func verdict(for format: CMFormatDescription) -> DecodeVerdict {
     let codecType = CMFormatDescriptionGetMediaSubType(format)
     let dimensions = CMVideoFormatDescriptionGetDimensions(format)
     let width = Int64(dimensions.width)
     let height = Int64(dimensions.height)
+    let bits =
+      (CMFormatDescriptionGetExtension(format, extensionKey: kCMFormatDescriptionExtension_BitsPerComponent)
+        as? NSNumber)?.int64Value ?? 0
+    let function =
+      CMFormatDescriptionGetExtension(format, extensionKey: kCMFormatDescriptionExtension_TransferFunction) as? String
+    // As ITU-T H.273 numbers them, like the probe of the Flutter side
+    let transfer: Int64
+    if function == (kCVImageBufferTransferFunction_ITU_R_2100_HLG as String) {
+      transfer = 18
+    } else if function == (kCVImageBufferTransferFunction_SMPTE_ST_2084_PQ as String) {
+      transfer = 16
+    } else if function == (kCVImageBufferTransferFunction_ITU_R_709_2 as String) {
+      transfer = 1
+    } else {
+      transfer = 0
+    }
     guard let codec = VideoDecoderCodec(codecType: codecType) else {
       return DecodeVerdict(
         supported: true,
@@ -272,7 +426,78 @@ enum VideoDecoderSupport {
         reason: "\(fourCharacterCode(codecType)) \(width)x\(height) is outside the decoder table"
       )
     }
-    return verdict(codec, width: width, height: height)
+    if codec == .h264 && bits >= 10 {
+      return DecodeVerdict(
+        supported: false, hardware: false, maxWidth: 0, maxHeight: 0,
+        reason: "H.264 10 bit is not decoded on iOS", profile: "High 10", missingProfile: "High 10")
+    }
+    return verdict(codec, width: width, height: height, bitDepth: bits, transfer: transfer)
+  }
+
+  /// The GPU family of the device, which tells the generation of its video decoder: 7 from the A14, 5 from the A12,
+  /// 0 before or without Metal
+  private static let gpuFamily: Int = {
+    guard let device = MTLCreateSystemDefaultDevice() else { return 0 }
+    if device.supportsFamily(.apple7) {
+      return 7
+    }
+    if device.supportsFamily(.apple5) {
+      return 5
+    }
+    return 0
+  }()
+
+  /// The pixels per second the decoder of [codec] keeps up with, all streams together: a table like the one of the
+  /// sizes, not a measurement, that the device tests of the raw 360° player adjust
+  static func pixelRate(_ codec: VideoDecoderCodec, hardware: Bool) -> Double {
+    guard hardware else {
+      return 1920 * 1080 * 30
+    }
+    switch codec {
+    case .h264:
+      return 4096 * 2304 * 60
+    case .hevc, .av1:
+      if gpuFamily >= 7 {
+        return 8192 * 4320 * 30
+      }
+      if gpuFamily >= 5 {
+        return 4096 * 2160 * 60
+      }
+      return 3840 * 2160 * 30
+    case .vp9:
+      return 0
+    }
+  }
+
+  /// The verdict for the lens tracks of a raw 360° video decoded at once, at [frameRate] frames per second (0 when
+  /// unknown, read as 30): each one must pass [verdict(for:)], the first refusal is the answer; then their pixels
+  /// per second together must stay within [pixelRate] of the codec of the first one.
+  static func verdict(forLensFormats formats: [CMFormatDescription], frameRate: Float) -> DecodeVerdict {
+    var single: DecodeVerdict?
+    for format in formats {
+      let answer = verdict(for: format)
+      guard answer.supported else {
+        return answer
+      }
+      if single == nil {
+        single = answer
+      }
+    }
+    guard let first = formats.first, let answer = single,
+      let codec = VideoDecoderCodec(codecType: CMFormatDescriptionGetMediaSubType(first))
+    else {
+      return single
+        ?? DecodeVerdict(supported: true, hardware: false, maxWidth: 0, maxHeight: 0, reason: "no lens track")
+    }
+    var pixels: Double = 0
+    for format in formats {
+      let dimensions = CMVideoFormatDescriptionGetDimensions(format)
+      pixels += Double(dimensions.width) * Double(dimensions.height)
+    }
+    let dimensions = CMVideoFormatDescriptionGetDimensions(first)
+    return pixelRateVerdict(
+      answer, codec: codec, streams: formats.count, width: Int64(dimensions.width), height: Int64(dimensions.height),
+      pixels: pixels, frameRate: Double(frameRate))
   }
 
   /// The verdict for the first video track of [asset], once its format description is loaded. Nil without a video

@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Nada a mostrar</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d excede o descodificador do headset (imagem aos solavancos, com blocos). No Immich, defina a transcodificação de vídeo para HEVC ou limite a resolução.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d excede o descodificador do headset (imagem aos solavancos, com blocos). Recodifique este ficheiro em HEVC ou numa resolução mais baixa.</string>
+  <string name="immersive_raw_one_lens_decoder">Este headset não consegue descodificar as duas lentes deste vídeo ao mesmo tempo (%1$s %2$d x %3$d, duas vezes). Mostra uma lente: metade da esfera fica preta.</string>
+  <string name="immersive_raw_one_lens_file">Não é possível ler o ficheiro da outra lente. É mostrada uma lente: metade da esfera fica preta.</string>
+  <string name="immersive_raw_unstitched">A união 360° falhou neste dispositivo. O vídeo é mostrado tal como a câmara o gravou.</string>
 </resources>

@@ -61,7 +61,7 @@ void main() {
   }) {
     Future<List<LocalPanoramaProbe?>> defaultProbe(List<LocalPanoramaFile> files) async => [
       for (final file in files)
-        (isPanorama: panoramas.contains(file.path.split('/').last), halfSphere: null, rawDualFisheye: false),
+        (isPanorama: panoramas.contains(file.path.split('/').last), halfSphere: null, raw360: false),
     ];
     final container = ProviderContainer(
       overrides: [
@@ -125,14 +125,14 @@ void main() {
         assets: [_candidate('renamed')],
         probe: (files) async {
           probed.addAll([for (final file in files) file.path.split('/').last]);
-          return [for (final _ in files) (isPanorama: true, halfSphere: null, rawDualFisheye: true)];
+          return [for (final _ in files) (isPanorama: true, halfSphere: null, raw360: true)];
         },
       );
       expect(container.read(foundLocalPanoramaIdsProvider), isEmpty);
 
       await scanLocalPanoramasFor(container);
 
-      final expected = {'renamed': LocalPanoramaRecord(isPanorama: true, rawDualFisheye: true, checkedAt: _checkedAt)};
+      final expected = {'renamed': LocalPanoramaRecord(isPanorama: true, raw360: true, checkedAt: _checkedAt)};
       expect(probed, ['renamed']);
       expect(container.read(localPanoramaAssetsProvider), expected);
       expect(decodeLocalPanoramaRecords(store.tryGet(StoreKey.localPanoramaAssets)), expected);
@@ -150,7 +150,7 @@ void main() {
         pageReads: pageReads,
         probe: (files) async {
           await gate.future;
-          return [for (final _ in files) (isPanorama: true, halfSphere: null, rawDualFisheye: false)];
+          return [for (final _ in files) (isPanorama: true, halfSphere: null, raw360: false)];
         },
       );
       final notifier = container.read(localPanoramaAssetsProvider.notifier);

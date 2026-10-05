@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Tiada apa-apa untuk dipaparkan</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d melebihi keupayaan penyahkod headset (tersekat-sekat, berblok). Dalam Immich, tetapkan transkod video kepada HEVC atau hadkan resolusi.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d melebihi keupayaan penyahkod headset (tersekat-sekat, berblok). Kodkan semula fail ini dalam HEVC atau pada resolusi yang lebih rendah.</string>
+  <string name="immersive_raw_one_lens_decoder">Headset ini tidak dapat menyahkod dua lensa video ini serentak (%1$s %2$d x %3$d, dua kali). Satu lensa dipaparkan: separuh sfera kekal hitam.</string>
+  <string name="immersive_raw_one_lens_file">Fail lensa yang satu lagi tidak dapat dibaca. Satu lensa dipaparkan: separuh sfera kekal hitam.</string>
+  <string name="immersive_raw_unstitched">Pencantuman 360° gagal pada peranti ini. Video dipaparkan seperti yang dirakam oleh kamera.</string>
 </resources>

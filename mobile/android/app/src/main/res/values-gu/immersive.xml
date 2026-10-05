@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">બતાવવા માટે કંઈ નથી</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d હેડસેટના ડીકોડરની ક્ષમતાથી વધી જાય છે (અટકતું, પિક્સેલવાળું). Immich માં વીડિયો ટ્રાન્સકોડિંગ HEVC પર સેટ કરો અથવા રિઝોલ્યુશન મર્યાદિત કરો.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d હેડસેટના ડીકોડરની ક્ષમતાથી વધી જાય છે (અટકતું, પિક્સેલવાળું). આ ફાઇલને HEVC માં અથવા ઓછા રિઝોલ્યુશનમાં ફરીથી એન્કોડ કરો.</string>
+  <string name="immersive_raw_one_lens_decoder">આ હેડસેટ આ વીડિયોના બે લેન્સ એકસાથે ડીકોડ કરી શકતો નથી (%1$s %2$d x %3$d, બે વાર). એક લેન્સ બતાવાય છે: ગોળાનો અડધો ભાગ કાળો રહે છે.</string>
+  <string name="immersive_raw_one_lens_file">બીજા લેન્સની ફાઇલ વાંચી શકાતી નથી. એક લેન્સ બતાવાય છે: ગોળાનો અડધો ભાગ કાળો રહે છે.</string>
+  <string name="immersive_raw_unstitched">આ ડિવાઇસ પર 360° જોડાણ નિષ્ફળ ગયું. વીડિયો કેમેરાએ રેકોર્ડ કર્યો હતો તે રીતે બતાવાય છે.</string>
 </resources>

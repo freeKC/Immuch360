@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Nothing to show</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d is above what this headset decodes (choppy, blocky). In Immich, set the video transcoding to HEVC or limit the resolution.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d is above what this headset decodes (choppy, blocky). Re-encode this file in HEVC or at a lower resolution.</string>
+  <string name="immersive_raw_one_lens_decoder">This headset cannot decode the two lenses of this video at once (%1$s %2$d x %3$d, twice). It shows one lens: half of the sphere stays black.</string>
+  <string name="immersive_raw_one_lens_file">The file of the other lens cannot be read. One lens shows: half of the sphere stays black.</string>
+  <string name="immersive_raw_unstitched">The 360° stitching failed on this device. The video shows as the camera recorded it.</string>
 </resources>

@@ -120,6 +120,57 @@ void main() {
     expect(find.text('Copy'), findsNothing);
   });
 
+  testWidgets('lists the profiles of a decoder', (tester) async {
+    final withProfiles = [
+      DecoderInfo(
+        name: 'c2.qti.hevc.decoder',
+        codec: 'video/hevc',
+        hardware: true,
+        maxWidth: 8192,
+        maxHeight: 4320,
+        maxFrameRate: 30,
+        profiles: const ['Main L6.1', 'Main 10 L6.1'],
+      ),
+      ...decoders,
+    ];
+    await pumpPage(tester, _FakeVideoDecoderApi(withProfiles));
+
+    expect(find.text('Profiles: Main L6.1, Main 10 L6.1'), findsOneWidget);
+    expect(find.textContaining('Profiles:'), findsOneWidget, reason: 'no line for a decoder that lists none');
+    expect(find.text('Hardware  •  Up to 8192 x 4320  •  30 fps'), findsNWidgets(2));
+  });
+
+  test('puts the profiles in the report', () {
+    final hevc = DecoderInfo(
+      name: 'c2.qti.hevc.decoder',
+      codec: 'video/hevc',
+      hardware: true,
+      maxWidth: 8192,
+      maxHeight: 4320,
+      maxFrameRate: 30,
+      profiles: const ['Main L6.1', 'Main 10 L6.1'],
+    );
+
+    expect(
+      videoDecodersReport([
+        hevc,
+        DecoderInfo(
+          name: 'sw',
+          codec: 'video/hevc',
+          hardware: false,
+          maxWidth: 1920,
+          maxHeight: 1080,
+          maxFrameRate: 0,
+          profiles: const [],
+        ),
+      ]),
+      'Video decoders\n'
+      'HEVC (video/hevc)\n'
+      '  c2.qti.hevc.decoder: hardware, up to 8192 x 4320, 30 fps, profiles: Main L6.1, Main 10 L6.1\n'
+      '  sw: software, up to 1920 x 1080',
+    );
+  });
+
   test('writes the report by codec, in the order the system lists the decoders', () {
     expect(
       videoDecodersReport(decoders, system: 'android 14'),

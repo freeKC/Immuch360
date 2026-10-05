@@ -33,10 +33,23 @@ private let zAxis = SIMD3<Float>(0, 0, 1)
 /// are above what the device decodes (see [VideoDecoderSupport]), read as soon as its tracks are known, or when it
 /// fails. The fallback stream starts where the original stopped; the error label only shows if it fails too.
 ///
-/// With a dual fisheye calibration, the frame is the raw recording of a two lens camera (Insta360 .insv): the two
-/// fisheye circles side by side. A shader stitches them on the sphere for every pixel, levelled with the gravity the
-/// camera measured, see [applyDualFisheye]. Such a frame covers the whole sphere and holds no stereo pair: the coverage
-/// and 3D buttons hide, and the coverage and the layout Flutter gave go back to it unchanged.
+/// With a rawProjection of version 1 (a dual fisheye calibration), the frame is the raw recording of a two lens camera
+/// (Insta360 .insv): the two fisheye circles side by side. A shader stitches them on the sphere for every pixel,
+/// levelled with the gravity the camera measured, see [applyDualFisheye].
+///
+/// With a rawProjection of version 2 ([RawStitchSpec]), the raw recording may hold its lenses in one side by side
+/// frame, in two video tracks of one file (Insta360 X4, X5, X6, DJI Osmo 360, the EAC strips of a GoPro .360) or in
+/// two files (Insta360 split pairs): a video composition hands the frames of both lenses, paired by AVFoundation, to
+/// [RawStitchCompositor], which stitches them with Metal into an equirectangular frame that the sphere shows as any
+/// 360° video. AVPlayer keeps the clock, the sound, the buffering and the seeking. The item is built by
+/// [RawStitchItemBuilder]: one file plays directly (its own tracks, read once), else through an AVMutableComposition.
+/// When a source fails, the next one plays from where it stopped: the composition after the direct mode, then the
+/// server's transcoded streams where they keep the lenses (a side by side frame, or both files of a pair), else the
+/// error label. Lens tracks above what the decoder keeps up with go to the transcoded streams before they play, or
+/// play anyway with a message.
+///
+/// A raw recording covers the whole sphere and holds no stereo pair: the coverage and 3D buttons hide, and the coverage
+/// and the layout Flutter gave go back to it unchanged.
 final class SphericalVideoViewController: UIViewController, UIGestureRecognizerDelegate {
   private let videoUrl: URL
   // The server's transcoded stream, nil when there is none
@@ -48,8 +61,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let stereoLabels: [String: String]
   private let events: SphericalVideoEvents
   private let audioTracks: AudioTrackChooser
-  // The calibration of a raw dual fisheye frame, nil for an equirectangular video
-  private let dualFisheye: DualFisheyeCalibration?
+  // What the rawProjection asks for, nil for an equirectangular video
+  private let raw: RawProjection?
 
   private let player = AVPlayer()
   private let sceneView = SCNView(frame: .zero)
@@ -115,12 +128,57 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   // before that. The spinner turns meanwhile.
   private var pendingResume: (time: CMTime?, play: Bool)?
 
+  /// Where the frames of a stitched raw video come from
+  private enum StitchAttempt: Equatable {
+    /// The original file or files: through the asset itself (direct) or through an AVMutableComposition
+    case original(composition: Bool)
+    /// The server's transcoded streams, for a side by side frame or both files of a pair
+    case transcoded
+  }
+
+  // The source of the stitched item in use or being built, and every source tried for this opening
+  private var stitchAttempt: StitchAttempt?
+  private var stitchAttemptsTried: [StitchAttempt] = []
+  private var stitchItem: RawStitchItem?
+  // While the item of a stitched raw video is built: the spinner turns
+  private var preparingStitch = false
+  // Counts the builds, so that a build overtaken by another one (or by the close) is dropped
+  private var stitchGeneration = 0
+  // The GPU valve lowers the render size once per item
+  private var valveUsed = false
+  private var heavyNoticeShown = false
+  private var lastStatisticsPoll: CFTimeInterval = 0
+  // The frame count of the stitched item at the last poll and since when it has stayed so, while the player tries to
+  // play; nil while it does not (see stitchProducesNoFrame)
+  private var stitchFrameWatch: (frames: Int, since: CFTimeInterval)?
+  private var tracksObservation: NSKeyValueObservation?
+  // Links named .mp4 to local raw files, for iOS 16 and earlier: removed when the player closes
+  private var temporaryLinks: [URL] = []
+
+  /// The calibration of a raw frame of version 1, stitched by the shader modifier
+  private var dualFisheye: DualFisheyeCalibration? {
+    if case .sideBySide(let calibration)? = raw {
+      return calibration
+    }
+    return nil
+  }
+
+  private var isRaw: Bool { raw != nil }
+
+  /// The rawProjection of version 2, stitched by RawStitchCompositor
+  private var stitched: (spec: RawStitchSpec, geometry: RawStitchGeometry)? {
+    if case .stitched(let spec, let geometry)? = raw {
+      return (spec: spec, geometry: geometry)
+    }
+    return nil
+  }
+
   /// [errorMessage] and [stereoLabels] come translated from Flutter, English is the fallback; [stereoLabels] also
-  /// holds the labels of the coverage button, of the audio track button, of the buffering label and of the message
-  /// of a switch to the fallback stream ("sourceSwitched"). [stereoLayout] is the layout Flutter guessed from the
-  /// dimensions of the video, [coverage] how much of the sphere it covers. [fallbackUrl] is the server's transcoded
-  /// stream, played with the same headers. [dualFisheye] is the calibration of a raw dual fisheye frame, nil for an
-  /// equirectangular video. [events] is told once when the player closes.
+  /// holds the labels of the coverage button, of the audio track button, of the buffering label, of the message of a
+  /// switch to the fallback stream ("sourceSwitched") and of the message of a raw video heavier than the decoder
+  /// ("rawHeavy"). [stereoLayout] is the layout Flutter guessed from the dimensions of the video, [coverage] how much
+  /// of the sphere it covers. [fallbackUrl] is the server's transcoded stream, played with the same headers. [raw] is
+  /// what the rawProjection asks for, nil for an equirectangular video. [events] is told once when the player closes.
   init(
     url: URL,
     fallbackUrl: URL?,
@@ -131,7 +189,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     stereoLayout: StereoLayout,
     stereoLabels: [String: String],
     coverage: SphereCoverage,
-    dualFisheye: DualFisheyeCalibration?,
+    raw: RawProjection?,
     events: SphericalVideoEvents
   ) {
     videoUrl = url
@@ -144,7 +202,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     initialStereoLayout = stereoLayout
     self.stereoLabels = stereoLabels
     self.coverage = coverage
-    self.dualFisheye = dualFisheye
+    self.raw = raw
     self.events = events
     audioTracks = AudioTrackChooser(labels: stereoLabels)
     bufferingIndicator = BufferingIndicator(labels: stereoLabels)
@@ -177,9 +235,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     // The motion drives the view from the start where the phone has the sensors for it
     motionEnabled = motionManager.isDeviceMotionAvailable
     motionButton.isHidden = !motionManager.isDeviceMotionAvailable
-    // A raw dual fisheye frame always covers the whole sphere and is never a stereo pair
-    coverageButton.isHidden = dualFisheye != nil
-    stereoButton.isHidden = dualFisheye != nil
+    // A raw recording always covers the whole sphere and is never a stereo pair
+    coverageButton.isHidden = isRaw
+    stereoButton.isHidden = isRaw
     updateMotionButton()
     updateCoverageButton()
     applyStereoLayout()
@@ -231,8 +289,15 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     statusObservation?.invalidate()
     timeControlObservation?.invalidate()
     presentationSizeObservation?.invalidate()
+    tracksObservation?.invalidate()
+    // A stitched item still being built is dropped
+    stitchGeneration += 1
     player.replaceCurrentItem(with: nil)
     sceneView.isPlaying = false
+    for link in temporaryLinks {
+      try? FileManager.default.removeItem(at: link)
+    }
+    temporaryLinks = []
     // Lets the music the video interrupted resume
     try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     reportClosed()
@@ -257,8 +322,23 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private func setUpPlayer() {
     // The audio track of the language picked last, where the video has one
     AudioTrackChooser.preferSavedLanguage(player)
-    let asset = loadItem(videoUrl)
-    checkDecoder(asset)
+    if let stitched {
+      if fallbackUrl != nil && stitched.spec.layout == .twoTracks {
+        print("RawStitch: the transcoded stream holds one lens of this recording, it is not used")
+      }
+      if RawStitchRenderer.shared == nil {
+        // Once viewDidLoad has made the controls
+        Task { @MainActor [weak self] in
+          self?.showError("RawStitch: Metal is not available")
+        }
+      } else {
+        // A pair of files only plays through a composition
+        startStitch(.original(composition: stitched.spec.layout == .twoFiles))
+      }
+    } else {
+      let asset = loadItem(videoUrl)
+      checkDecoder(asset)
+    }
 
     timeControlObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] _, _ in
       Task { @MainActor [weak self] in
@@ -278,13 +358,27 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       // that answers in bursts does not stall the playback every few seconds. Local files keep the defaults.
       item.preferredForwardBufferDuration = Self.streamingForwardBufferDuration
     }
-    // The item replaced, if any, tells nothing more
+    install(item)
+    return asset
+  }
+
+  /// Forgets the observations of the item the player plays, before another one replaces it
+  private func detachItem() {
     statusObservation?.invalidate()
     presentationSizeObservation?.invalidate()
+    tracksObservation?.invalidate()
+    tracksObservation = nil
     if let previous = player.currentItem {
       NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: previous)
       NotificationCenter.default.removeObserver(self, name: .AVPlayerItemFailedToPlayToEndTime, object: previous)
     }
+  }
+
+  /// Makes [item] the item of the player, with its observations. A stitched item read directly from its file also
+  /// gets its lens tracks enabled, see [enableLensTracks].
+  private func install(_ item: AVPlayerItem) {
+    // The item replaced, if any, tells nothing more
+    detachItem()
     player.replaceCurrentItem(with: item)
 
     statusObservation = item.observe(\.status, options: [.new]) { [weak self] observed, _ in
@@ -324,15 +418,28 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       name: .AVPlayerItemFailedToPlayToEndTime,
       object: item
     )
-    return asset
+    if let stitchItem, stitchItem.mode == .direct, stitchItem.item === item {
+      // The tracks of the item are listed once it loads
+      tracksObservation = item.observe(\.tracks, options: [.initial, .new]) { [weak self] observed, _ in
+        let itemId = ObjectIdentifier(observed)
+        Task { @MainActor [weak self] in
+          guard let self, self.isCurrentItem(itemId) else { return }
+          self.enableLensTracks()
+        }
+      }
+    }
   }
 
-  /// Local files play as they are. Server videos take the route of the Flutter video player (native_video_player):
-  /// through its local proxy when the server asks for a client certificate or basic auth, else straight to the
-  /// server with the custom headers and the session cookies. Those cookies live in the app group storage, which
-  /// AVFoundation does not read by itself. The fallback stream takes the same route as the original.
+  /// Local files play as they are, those with the extension of a raw camera file as MP4 (see [rawFileAsset]). Server
+  /// videos take the route of the Flutter video player (native_video_player): through its local proxy when the server
+  /// asks for a client certificate or basic auth, else straight to the server with the custom headers and the session
+  /// cookies. Those cookies live in the app group storage, which AVFoundation does not read by itself. The fallback
+  /// stream and the second file of a raw pair take the same route as the original.
   private func makeAsset(for url: URL) -> AVURLAsset {
     if url.isFileURL {
+      if Self.rawFileExtensions.contains(url.pathExtension.lowercased()) {
+        return rawFileAsset(url)
+      }
       return AVURLAsset(url: url)
     }
     if let proxyUrl = VideoProxyServer.shared.proxyURL(for: url) {
@@ -342,6 +449,45 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     var httpHeaders = HTTPCookie.requestHeaderFields(with: cookies)
     httpHeaders.merge(headers) { _, custom in custom }
     return AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": httpHeaders])
+  }
+
+  /// The extensions of raw camera files, MP4 inside: Insta360 .insv and .lrv, GoPro .360, DJI .osv and .lrf
+  private static let rawFileExtensions: Set<String> = ["insv", "360", "osv", "lrv", "lrf"]
+
+  /// AVFoundation picks the type of a local file from its extension, which a raw camera file does not tell: it is
+  /// given as MP4, by its MIME type from iOS 17, else through a link named .mp4 in the temporary folder (the file
+  /// itself when no link can be made). A hard link comes first: the media server, in another process, may not follow
+  /// a symbolic link from the temporary folder to a file elsewhere in the sandbox, while a hard link is the file
+  /// itself. It only works on the same volume, hence the symbolic link after it.
+  private func rawFileAsset(_ url: URL) -> AVURLAsset {
+    if #available(iOS 17.0, *) {
+      return AVURLAsset(url: url, options: [AVURLAssetOverrideMIMETypeKey: "video/mp4"])
+    }
+    let folder = FileManager.default.temporaryDirectory.appendingPathComponent("raw360", isDirectory: true)
+    let link = folder.appendingPathComponent("\(UUID().uuidString).mp4")
+    do {
+      try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+    } catch {
+      print("RawStitch: no .mp4 link to \(url.lastPathComponent), the file plays as it is: \(error)")
+      return AVURLAsset(url: url)
+    }
+    do {
+      try FileManager.default.linkItem(at: url, to: link)
+      temporaryLinks.append(link)
+      print("RawStitch: \(url.lastPathComponent) plays through a hard link named .mp4")
+      return AVURLAsset(url: link)
+    } catch {
+      print("RawStitch: no hard link to \(url.lastPathComponent): \(error)")
+    }
+    do {
+      try FileManager.default.createSymbolicLink(at: link, withDestinationURL: url)
+      temporaryLinks.append(link)
+      print("RawStitch: \(url.lastPathComponent) plays through a symbolic link named .mp4")
+      return AVURLAsset(url: link)
+    } catch {
+      print("RawStitch: no .mp4 link to \(url.lastPathComponent), the file plays as it is: \(error)")
+      return AVURLAsset(url: url)
+    }
   }
 
   /// Whether [itemId] is the item the player plays, and not one the fallback stream replaced
@@ -382,8 +528,13 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     playbackStateChanged()
   }
 
-  /// The original gives way to the fallback stream once, the error label shows when there is none or it fails too
+  /// The original gives way to the fallback stream once, the error label shows when there is none or it fails too. A
+  /// stitched raw video moves to its next source instead, see [stitchFailed].
   private func itemFailed(_ reason: String?) {
+    if stitched != nil {
+      stitchFailed(reason ?? "unknown error")
+      return
+    }
     if switchToFallback(because: "the original failed: \(reason ?? "unknown error")") {
       return
     }
@@ -419,8 +570,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     let paused = status == .paused
     setSymbol(of: playPauseButton, to: paused ? "play.fill" : "pause.fill", pointSize: 28)
     playPauseButton.accessibilityLabel = paused ? "Play" : "Pause"
-    // The fallback stream loads paused, see pendingResume
-    if (status == .waitingToPlayAtSpecifiedRate || pendingResume != nil) && !failed {
+    // The fallback stream loads paused, see pendingResume; a stitched item is built before it loads
+    if (status == .waitingToPlayAtSpecifiedRate || pendingResume != nil || preparingStitch) && !failed {
       spinner.startAnimating()
     } else {
       spinner.stopAnimating()
@@ -585,10 +736,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   }
 
   /// Gives the sphere the geometry of the coverage in use. The elements of a geometry take its materials in turn: the
-  /// back of a half sphere, its second element, is drawn with the black material. A raw dual fisheye frame covers the
-  /// whole sphere, whatever coverage Flutter gave.
+  /// back of a half sphere, its second element, is drawn with the black material. A raw recording covers the whole
+  /// sphere, whatever coverage Flutter gave.
   private func rebuildSphere() {
-    let shape: SphereCoverage = dualFisheye == nil ? coverage : .full
+    let shape: SphereCoverage = isRaw ? .full : coverage
     let sphere = Self.makeSphere(radius: 50, rings: 64, segments: 128, coverage: shape)
     switch shape {
     case .full:
@@ -662,6 +813,257 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       sources: [SCNGeometrySource(vertices: vertices), SCNGeometrySource(textureCoordinates: textureCoordinates)],
       elements: elements
     )
+  }
+
+  // MARK: - Stitched raw video
+
+  /// Builds the stitched item of [attempt] and plays it, or moves to the next source when it cannot be built. While it
+  /// is built the spinner turns and the player keeps no item.
+  private func startStitch(_ attempt: StitchAttempt) {
+    guard let stitched, !closing, !failed else { return }
+    stitchAttempt = attempt
+    stitchAttemptsTried.append(attempt)
+    valveUsed = false
+    stitchFrameWatch = nil
+    preparingStitch = true
+    stitchGeneration += 1
+    let generation = stitchGeneration
+    playbackStateChanged()
+    Task { @MainActor [weak self] in
+      guard let self else { return }
+      do {
+        let built = try await self.buildStitchItem(attempt, spec: stitched.spec, geometry: stitched.geometry)
+        guard generation == self.stitchGeneration, !self.closing, !self.failed else { return }
+        self.preparingStitch = false
+        if case .original = attempt, let next = self.heavyStitchFallback(built) {
+          self.switchStitch(to: next, because: "above what the decoder keeps up with", format: built.formats.first)
+          return
+        }
+        self.stitchItem = built
+        if built.mode == .composition && attempt == .original(composition: false) {
+          // The builder fell back to the composition by itself (a disabled lens track, or lens tracks in one
+          // alternate group): a failure of this item must not try the composition again
+          self.stitchAttempt = .original(composition: true)
+        }
+        let size = built.renderSizes[0]
+        print(
+          "RawStitch: \(built.mode.rawValue), \(built.sourceTrackIDs.count) source(s), "
+            + "output \(Int(size.width))x\(Int(size.height))")
+        self.install(built.item)
+        // A switch resumes once the item is ready (see itemReady); not in the background, which pauses the playback
+        if self.pendingResume == nil && self.playRequested && self.started
+          && UIApplication.shared.applicationState != .background
+        {
+          self.player.play()
+        }
+        self.playbackStateChanged()
+      } catch {
+        guard generation == self.stitchGeneration, !self.closing else { return }
+        self.preparingStitch = false
+        self.stitchFailed("\(error)")
+      }
+    }
+  }
+
+  /// The item of [attempt]: the original file (and the second one of a pair), or the server's transcoded streams
+  private func buildStitchItem(_ attempt: StitchAttempt, spec: RawStitchSpec, geometry: RawStitchGeometry) async throws
+    -> RawStitchItem
+  {
+    let mainUrl: URL
+    let secondUrl: URL?
+    let allowDirect: Bool
+    switch attempt {
+    case .original(let composition):
+      mainUrl = videoUrl
+      secondUrl = spec.secondUrl.flatMap { URL(string: $0) }
+      allowDirect = !composition
+    case .transcoded:
+      guard let fallbackUrl else {
+        throw RawStitchError(reason: "no transcoded stream")
+      }
+      mainUrl = fallbackUrl
+      secondUrl = secondFallbackUrl(spec)
+      allowDirect = true
+    }
+    if spec.layout == .twoFiles && secondUrl == nil {
+      throw RawStitchError(reason: "the second file of the pair has no URL")
+    }
+    let built = try await RawStitchItemBuilder.build(
+      geometry: geometry,
+      mainAsset: makeAsset(for: mainUrl),
+      secondAsset: spec.layout == .twoFiles ? secondUrl.map { makeAsset(for: $0) } : nil,
+      allowDirect: allowDirect
+    )
+    if !mainUrl.isFileURL {
+      // Read over HTTP, as in loadItem
+      built.item.preferredForwardBufferDuration = Self.streamingForwardBufferDuration
+    }
+    return built
+  }
+
+  /// The transcoded stream of the second file of a pair, nil when there is none or it is the original itself
+  private func secondFallbackUrl(_ spec: RawStitchSpec) -> URL? {
+    guard let url = spec.secondFallbackUrl.flatMap({ URL(string: $0) }) else { return nil }
+    if let second = spec.secondUrl.flatMap({ URL(string: $0) }), second == url {
+      return nil
+    }
+    return url
+  }
+
+  /// Whether the server's transcoded streams keep the lenses: a side by side frame keeps both, each file of a pair
+  /// keeps its own; the server transcodes one video track of a file, so one lens of the other layouts
+  private func canPlayTranscoded(_ spec: RawStitchSpec) -> Bool {
+    guard fallbackUrl != nil, !stitchAttemptsTried.contains(.transcoded) else { return false }
+    switch spec.layout {
+    case .sideBySide:
+      return true
+    case .twoFiles:
+      return secondFallbackUrl(spec) != nil
+    case .twoTracks:
+      return false
+    }
+  }
+
+  /// The source to play instead of the original when its lens tracks are above what the decoder keeps up with, nil to
+  /// play it anyway (with a message for two streams, once per opening)
+  private func heavyStitchFallback(_ built: RawStitchItem) -> StitchAttempt? {
+    guard let stitched else { return nil }
+    let verdict = VideoDecoderSupport.verdict(forLensFormats: built.formats, frameRate: built.frameRate)
+    guard !verdict.supported else { return nil }
+    let reason = verdict.reason ?? "above what this device decodes"
+    if canPlayTranscoded(stitched.spec) {
+      print("RawStitch: the original is too heavy, the transcoded streams play: \(reason)")
+      return .transcoded
+    }
+    print("RawStitch: the raw video may not play smoothly: \(reason)")
+    if built.formats.count == 2 && !heavyNoticeShown {
+      heavyNoticeShown = true
+      let template = stereoText(
+        "rawHeavy",
+        fallback: "This raw video may not play smoothly on this device ({codec}, two {width}x{height} streams)")
+      showMessage(VideoDecoderSupport.switchedMessage(template, format: built.formats.first))
+    }
+    return nil
+  }
+
+  /// A source of the stitched video failed (its item could not be built, AVFoundation failed it, or a lens track
+  /// stays without frames): the next source plays from where it stopped, the error label shows after the last one
+  private func stitchFailed(_ reason: String) {
+    guard let stitched, let attempt = stitchAttempt, !preparingStitch, !failed, !closing else { return }
+    print("RawStitch: \(attempt) failed: \(reason)")
+    if attempt == .original(composition: false) && stitched.spec.layout == .twoTracks {
+      switchStitch(to: .original(composition: true), because: reason, format: nil)
+    } else if canPlayTranscoded(stitched.spec) {
+      switchStitch(to: .transcoded, because: reason, format: nil)
+    } else {
+      showError(reason)
+    }
+  }
+
+  /// Leaves the item in use for [next], keeping the position and the state the user left it in (playing or paused)
+  private func switchStitch(to next: StitchAttempt, because reason: String, format: CMFormatDescription?) {
+    print("RawStitch: switching to \(next): \(reason)")
+    let position = player.currentTime()
+    let resumeTime: CMTime? = position.isNumeric && position.seconds > 0 ? position : nil
+    pendingResume = (time: resumeTime, play: playRequested)
+    player.pause()
+    reachedEnd = false
+    // The next source may have other audio tracks: they are read again once it is ready
+    audioTracksRequested = false
+    audioButton.isHidden = true
+    // A late failure of the item left behind must not move to yet another source
+    detachItem()
+    player.replaceCurrentItem(with: nil)
+    stitchItem = nil
+    if next == .transcoded {
+      showMessage(
+        VideoDecoderSupport.switchedMessage(
+          stereoText("sourceSwitched", fallback: "Playing the transcoded stream"), format: format))
+    }
+    startStitch(next)
+  }
+
+  /// Direct mode: a lens track the item leaves disabled is enabled, so that the player decodes it for the compositor.
+  /// A track the file marks disabled (the second lens of an Osmo 360 .OSV) already goes through the composition, see
+  /// RawStitchItemBuilder.
+  private func enableLensTracks() {
+    guard let stitchItem, stitchItem.mode == .direct, let item = player.currentItem, item === stitchItem.item else {
+      return
+    }
+    for track in item.tracks {
+      guard let trackId = track.assetTrack?.trackID, stitchItem.sourceTrackIDs.contains(trackId), !track.isEnabled
+      else {
+        continue
+      }
+      track.isEnabled = true
+      print("RawStitch: enabled lens track \(trackId)")
+    }
+  }
+
+  /// Once a second while a stitched video is shown: an item that renders no frame, or a lens track without frames in
+  /// direct mode, moves to the next source; while it plays, a GPU slower than the frame rate lowers the render size
+  /// once
+  private func pollStitchStatistics(_ now: CFTimeInterval) {
+    guard stitched != nil, !preparingStitch, !failed, !closing, now - lastStatisticsPoll >= 1 else { return }
+    lastStatisticsPoll = now
+    guard let stitchItem, let item = player.currentItem, item === stitchItem.item else {
+      stitchFrameWatch = nil
+      return
+    }
+    let compositor = item.customVideoCompositor as? RawStitchCompositor
+    // Before AVFoundation makes the compositor, no frame was rendered either
+    let snapshot =
+      compositor?.statistics.snapshot()
+      ?? RawStitchStatistics.Snapshot(frames: 0, meanGpuMs: 0, missingSourceStreak: 0)
+    if stitchProducesNoFrame(item, frames: snapshot.frames, now: now) {
+      stitchFailed("no stitched frame")
+      return
+    }
+    if stitchItem.mode == .direct && stitchItem.sourceTrackIDs.count == 2 && snapshot.missingSourceStreak >= 45 {
+      stitchFailed("a lens track is not decoded")
+      return
+    }
+    guard player.timeControlStatus == .playing, !valveUsed, snapshot.frames >= 90, stitchItem.renderSizes.count > 1
+    else {
+      return
+    }
+    // The nominal frame rate, as for the render sizes: the composition's frame duration may be shorter
+    let frameMs = 1000 / Double(stitchItem.frameRate)
+    guard frameMs.isFinite, frameMs > 0, snapshot.meanGpuMs > 0.85 * frameMs else { return }
+    valveUsed = true
+    let smaller = stitchItem.renderSizes[1]
+    item.videoComposition = RawStitchItemBuilder.videoComposition(
+      instruction: stitchItem.instruction, renderSize: smaller, frameDuration: stitchItem.frameDuration)
+    compositor?.statistics.reset()
+    stitchFrameWatch = nil
+    print(
+      "RawStitch: GPU \(String(format: "%.1f", snapshot.meanGpuMs)) ms per frame, render size lowered to "
+        + "\(Int(smaller.width))x\(Int(smaller.height))")
+  }
+
+  /// Seconds the player may try to play a stitched item without a new frame from the compositor
+  private static let stitchFrameTimeout: CFTimeInterval = 4.5
+
+  /// Whether the player has tried to play [item] for stitchFrameTimeout seconds while the compositor's frame count
+  /// ([frames]) stayed the same: a lens track AVFoundation never decodes, or SceneKit never pulling the composed
+  /// frames, leaves the spinner or a black sphere with the player waiting or even playing. The clock only runs while
+  /// the item is ready, the user wants it to play and the player does (not paused by the user, the end or the
+  /// background), the app is in the foreground and enough media is loaded, so that a slow network is not taken for a
+  /// failure.
+  private func stitchProducesNoFrame(_ item: AVPlayerItem, frames: Int, now: CFTimeInterval) -> Bool {
+    let trying =
+      item.status == .readyToPlay && pendingResume == nil && playRequested && !reachedEnd
+      && player.timeControlStatus != .paused && UIApplication.shared.applicationState == .active
+      && (item.isPlaybackLikelyToKeepUp || item.isPlaybackBufferFull)
+    guard trying else {
+      stitchFrameWatch = nil
+      return false
+    }
+    guard let watch = stitchFrameWatch, watch.frames == frames else {
+      stitchFrameWatch = (frames: frames, since: now)
+      return false
+    }
+    return now - watch.since >= Self.stitchFrameTimeout
   }
 
   // MARK: - Raw dual fisheye
@@ -830,6 +1232,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
   /// Called on every screen refresh: turns the camera with the latest attitude of the phone
   @objc private func step(_ link: CADisplayLink) {
+    pollStitchStatistics(link.timestamp)
     guard motionEnabled, let motion = motionManager.deviceMotion, motion.timestamp != staleMotionTimestamp else {
       return
     }
@@ -885,8 +1288,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   /// bottom frame, the left half of a side by side one. Texture coordinates start at the top left corner of the frame,
   /// so halving them keeps that half, stretched over the whole sphere or over its front half.
   private func applyStereoLayout() {
-    // The shader of a raw dual fisheye frame reads the whole frame, see applyDualFisheye
-    guard dualFisheye == nil else {
+    // The shader of a raw dual fisheye frame reads the whole frame (see applyDualFisheye), a stitched one is mono
+    guard !isRaw else {
       videoMaterial.diffuse.contentsTransform = SCNMatrix4Identity
       return
     }
@@ -907,6 +1310,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private func frameSizeKnown(_ size: CGSize) {
     guard !closing else { return }
     frameSize = size
+    // A stitched frame is the render size of the composition: nothing to guess
+    if stitched != nil {
+      return
+    }
     if let dualFisheye {
       checkDualFisheyeFrame(size, calibration: dualFisheye)
       return

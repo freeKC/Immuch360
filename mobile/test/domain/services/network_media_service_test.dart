@@ -204,11 +204,12 @@ void main() {
     });
 
     test('the browser reads the head of the moov box, a viewer all of it when that found nothing', () async {
-      // An audio track with large tables before the video track: its spherical metadata is past the head
+      // An audio track with large tables before the video track, and a large box at the head of the video track: its
+      // spherical metadata is past the head, and past the first 256 KiB of the track that the quick probe reads too
       final bytes = mp4File(
         mp4Moov([
           mp4Track(mp4FullBox('stsd', [...mp4Uint32(1), ...mp4Box('mp4a', mp4Zeros(4000))])),
-          mp4VideoTrack([mp4Sv3dEquirectangular()]),
+          mp4VideoTrack([mp4Sv3dEquirectangular()], trackBoxes: [mp4Box('free', mp4Zeros(300 * 1024))]),
         ]),
       );
       final service = NetworkMediaService(quickMoovLength: 1024);
@@ -237,7 +238,7 @@ void main() {
     });
   });
 
-  group('raw dual fisheye files', () {
+  group('raw files of 360° cameras', () {
     // An X3 photo longer than the GPano windows: the JPEG, then the trailer of the camera
     Uint8List rawPhoto() => insta360File(
       [insta360Record(1, x3Metadata(), format: 1)],
@@ -247,41 +248,104 @@ void main() {
     test('a photo named .insp is a raw photo, 360° once stitched', () async {
       final info = await detect(NetworkMediaService(), '/IMG_001.insp', bytes: rawPhoto());
 
-      expect(info?.raw, Raw360Layout.dualFisheye);
+      expect(info?.rawKind, RawMediaKind.insta360Photo);
       expect(info?.is360, isTrue);
-      expect(info?.isUnsupportedRaw, isFalse);
+      expect(info?.cameraEquirect, isFalse);
       expect(info?.sphereView('IMG_001.insp', width: 11968, height: 5984), raw360SphereView);
     });
 
     test('a photo renamed from .insp is found by its trailer, with no read more than for its GPano tags', () async {
       final info = await detect(NetworkMediaService(), '/IMG_001.jpg', bytes: rawPhoto());
 
-      expect(info?.raw, Raw360Layout.dualFisheye);
+      expect(info?.rawKind, RawMediaKind.insta360Photo);
       expect(info?.is360, isTrue);
       expect(files.readsOf('/IMG_001.jpg'), 2);
     });
 
-    test('a photo without the trailer is not raw', () async {
-      final info = await detect(NetworkMediaService(), '/IMG_001.jpg', bytes: _photo('', atTail: true));
+    test('a photo whose trailer says the camera stitched it is a 360° photo as it is, unless named .insp', () async {
+      // Field 129 of the metadata: 6 an equirect picture stitched in the camera, 2 a double fisheye
+      Uint8List photo(int imageCategory) => insta360File(
+        [insta360Record(1, x5Metadata(imageCategory: imageCategory), format: 1)],
+        body: [0xff, 0xd8, ...List.filled(300 * 1024, 0), 0xff, 0xd9],
+      );
 
-      expect(info?.raw, isNull);
-      expect(info?.is360, isFalse);
+      final stitched = await detect(NetworkMediaService(), '/IMG_002.jpg', bytes: photo(6));
+      final fisheye = await detect(NetworkMediaService(), '/IMG_003.jpg', bytes: photo(2));
+      final named = await detect(NetworkMediaService(), '/IMG_004.insp', bytes: photo(6));
+
+      expect(stitched?.rawKind, isNull);
+      expect(stitched?.cameraEquirect, isTrue);
+      expect(stitched?.is360, isTrue);
+      expect(stitched?.sphereView('IMG_002.jpg', width: 11904, height: 5952).coverage, SphereCoverage.full);
+      expect(files.readsOf('/IMG_002.jpg'), 2, reason: 'the trailer is in the tail read for the GPano tags');
+      expect(fisheye?.rawKind, RawMediaKind.insta360Photo);
+      expect(fisheye?.cameraEquirect, isFalse);
+      expect(named?.rawKind, RawMediaKind.insta360Photo, reason: 'a .insp is raw by its name');
     });
 
-    test('a video named .insv is raw: 360° side by side, not shown with a lens per file', () async {
+    test('a photo without the trailer is not raw, and its EXIF costs no read more', () async {
+      final info = await detect(NetworkMediaService(), '/IMG_001.jpg', bytes: _photo('', atTail: true));
+
+      expect(info?.rawKind, isNull);
+      expect(info?.cameraEquirect, isFalse);
+      expect(info?.is360, isFalse);
+      expect(files.readsOf('/IMG_001.jpg'), 2, reason: 'the head and the tail of its GPano tags');
+    });
+
+    test('a video named .insv, .360 or .osv is raw by its name, whatever its frame, with its tracks listed', () async {
       Uint8List video(int width, int height) => mp4File(mp4Moov([mp4VideoTrack([], width: width, height: height)]));
 
       final sideBySide = await detect(NetworkMediaService(), '/VID_00_002.insv', bytes: video(5760, 2880));
       final split = await detect(NetworkMediaService(), '/VID_10_002.insv', bytes: video(2880, 2880));
+      final goPro = await detect(NetworkMediaService(), '/GS010013.360', bytes: video(4096, 1344));
+      final dji = await detect(NetworkMediaService(), '/CAM_20250715191201_0003_D.OSV', bytes: video(3840, 3840));
       final flat = await detect(NetworkMediaService(), '/VID_002.mp4', bytes: video(5760, 2880));
 
-      expect(sideBySide?.raw, Raw360Layout.dualFisheye);
-      expect(sideBySide?.is360, isTrue);
-      expect(split?.raw, Raw360Layout.separateLenses);
-      expect(split?.is360, isFalse);
-      expect(split?.isUnsupportedRaw, isTrue);
-      expect(flat?.raw, isNull);
+      expect(sideBySide?.rawKind, RawMediaKind.insta360Video);
+      expect(split?.rawKind, RawMediaKind.insta360Video);
+      expect(goPro?.rawKind, RawMediaKind.goProVideo);
+      expect(dji?.rawKind, RawMediaKind.djiVideo);
+      for (final info in [sideBySide, split, goPro, dji]) {
+        expect(info?.is360, isTrue);
+        expect(info?.sphereView('x', width: 2880, height: 2880), raw360SphereView);
+        expect(info?.probe?.videoTracks, hasLength(1));
+      }
+      expect(flat?.rawKind, isNull);
       expect(flat?.is360, isFalse);
+    });
+
+    test('a .36p photo of the GoPro MAX 2 is a 360° photo by its name, not raw', () async {
+      final info = await detect(NetworkMediaService(), '/GS__0001.36P', bytes: _photo('', atTail: true));
+
+      expect(info?.cameraEquirect, isTrue);
+      expect(info?.rawKind, isNull);
+      expect(info?.is360, isTrue);
+      expect(info?.sphereView('GS__0001.36P', width: 7680, height: 3840).coverage, SphereCoverage.full);
+    });
+
+    test('a 2:1 JPEG of a 360° camera without GPano tags is a 360° photo by its EXIF', () async {
+      // The fixture writes every text out of its EXIF entry: a make of more than 3 letters ("DJI" fits in the entry)
+      Uint8List jpeg(String make, String model, int width, int height) => Uint8List.fromList([
+        ...insta360PhotoHead(make: make, model: model, pixelWidth: width, pixelHeight: height),
+        ...List.filled(1024, 0),
+      ]);
+
+      final dji = await detect(NetworkMediaService(), '/DJI_0001.JPG', bytes: jpeg('DJI Ltd', 'Osmo 360', 15520, 7760));
+      final goPro = await detect(NetworkMediaService(), '/GS_0001.JPG', bytes: jpeg('GoPro', 'GoPro Max', 5760, 2880));
+      final single = await detect(
+        NetworkMediaService(),
+        '/DJI_0002.JPG',
+        bytes: jpeg('DJI Ltd', 'Osmo 360', 6400, 4800),
+      );
+      final phone = await detect(NetworkMediaService(), '/IMG_0003.JPG', bytes: jpeg('Apple', 'iPhone', 8000, 4000));
+
+      expect(dji?.cameraEquirect, isTrue);
+      expect(dji?.is360, isTrue);
+      expect(goPro?.cameraEquirect, isTrue);
+      expect(single?.cameraEquirect, isFalse, reason: 'a single lens photo is 4:3');
+      expect(phone?.cameraEquirect, isFalse);
+      expect(phone?.is360, isFalse);
+      expect(files.readsOf('/DJI_0001.JPG'), 1, reason: 'the EXIF is in the head read for the GPano tags');
     });
   });
 

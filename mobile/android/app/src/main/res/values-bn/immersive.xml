@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">দেখানোর মতো কিছু নেই</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d হেডসেটের ডিকোডারের সীমা ছাড়িয়ে যায় (থেমে থেমে চলে, ছবি ব্লক ব্লক দেখায়)। Immich-এ ভিডিও ট্রান্সকোডিং HEVC-তে সেট করুন অথবা রেজোলিউশন সীমিত করুন।</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d হেডসেটের ডিকোডারের সীমা ছাড়িয়ে যায় (থেমে থেমে চলে, ছবি ব্লক ব্লক দেখায়)। এই ফাইলটি HEVC-তে বা কম রেজোলিউশনে আবার এনকোড করুন।</string>
+  <string name="immersive_raw_one_lens_decoder">এই হেডসেট এই ভিডিওর দুটি লেন্স একসাথে ডিকোড করতে পারে না (%1$s %2$d x %3$d, দুইবার)। একটি লেন্স দেখানো হচ্ছে: গোলকের অর্ধেক কালো থাকে।</string>
+  <string name="immersive_raw_one_lens_file">অন্য লেন্সের ফাইলটি পড়া যাচ্ছে না। একটি লেন্স দেখানো হচ্ছে: গোলকের অর্ধেক কালো থাকে।</string>
+  <string name="immersive_raw_unstitched">এই ডিভাইসে 360° জোড়া লাগানো ব্যর্থ হয়েছে। ক্যামেরা যেভাবে রেকর্ড করেছে ভিডিওটি সেভাবেই দেখানো হচ্ছে।</string>
 </resources>

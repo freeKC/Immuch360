@@ -56,11 +56,11 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // Viewing in 360 changes nothing on the server: available in readonly mode and in the locked folder too.
     // Photos open the Flutter panorama viewer, videos the native player where the platform has one.
     // On a Meta Quest, server assets open in the immersive viewer, which also plays 360 videos.
-    // The asset is 360 when the server flags it, or when the user chose "View as 360°" for it. Raw dual fisheye files
-    // of Insta360 cameras are stitched by the app; the button of one with a lens per file or per track says it does
-    // not open.
+    // The asset is 360 when the server flags it, or when the user chose "View as 360°" for it. Raw files of 360°
+    // cameras are stitched by the app; the button of one that does not open (the other file of a split pair missing,
+    // a layout this device does not play) says why.
     final hasPanoramaView =
-        (ref.watch(isEquirectangularProvider(asset)) || ref.watch(raw360LayoutProvider(asset)) != null) &&
+        (ref.watch(isEquirectangularProvider(asset)) || ref.watch(rawMediaKindProvider(asset)) != null) &&
         ref.watch(can360ViewProvider(asset));
     final panoramaButton = hasPanoramaView
         ? IconButton(

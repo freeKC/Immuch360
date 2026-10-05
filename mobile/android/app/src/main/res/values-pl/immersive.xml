@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Nic do wyświetlenia</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d przekracza możliwości dekodera headsetu (zacina się, widać bloki). W Immich ustaw transkodowanie wideo na HEVC lub ogranicz rozdzielczość.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d przekracza możliwości dekodera headsetu (zacina się, widać bloki). Przekoduj ten plik do HEVC lub do niższej rozdzielczości.</string>
+  <string name="immersive_raw_one_lens_decoder">Ten headset nie może jednocześnie dekodować obu obiektywów tego filmu (%1$s %2$d x %3$d, dwa razy). Wyświetla jeden obiektyw: połowa sfery pozostaje czarna.</string>
+  <string name="immersive_raw_one_lens_file">Nie można odczytać pliku drugiego obiektywu. Wyświetlany jest jeden obiektyw: połowa sfery pozostaje czarna.</string>
+  <string name="immersive_raw_unstitched">Łączenie w 360° nie powiodło się na tym urządzeniu. Film jest wyświetlany tak, jak nagrała go kamera.</string>
 </resources>

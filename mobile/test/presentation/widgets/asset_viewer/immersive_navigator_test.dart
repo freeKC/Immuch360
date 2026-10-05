@@ -13,10 +13,14 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
@@ -31,8 +35,10 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../domain/services/spherical_probe_fixtures.dart';
 import '../../../infrastructure/repository.mock.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
@@ -99,6 +105,35 @@ class _RecordingImmersiveApi extends ImmersiveApi {
 }
 
 class _MockTimelineService extends Mock implements TimelineService {}
+
+/// No calibration: the raw videos of these tests are refused for their tracks before one is asked for
+class _NoCalibrations implements RawVideoCalibrations {
+  @override
+  Future<DualFisheyeCalibration> forInput(RawVideoInput input, {int? frameSquare}) =>
+      throw UnimplementedError('no calibration in these tests');
+
+  @override
+  Future<DualFisheyeCalibration> forDji(RawVideoInput input) =>
+      throw UnimplementedError('no calibration in these tests');
+}
+
+/// The resolver of a device that plays two streams, recording the raw videos it was asked to resolve
+class _RecordingRawVideoResolver extends RawVideoResolver {
+  _RecordingRawVideoResolver()
+    : super(calibrations: _NoCalibrations(), support: const RawVideoPlaybackSupport(twoStreams: true));
+
+  final resolved = <String>[];
+
+  @override
+  Future<RawVideoPlan> resolve({
+    required RawMediaKind kind,
+    required RawVideoInput input,
+    required RawSiblingFinder findSibling,
+  }) {
+    resolved.add(input.name);
+    return super.resolve(kind: kind, input: input, findSibling: findSibling);
+  }
+}
 
 class _NoProbes extends SphericalProbeService {
   _NoProbes()
@@ -333,6 +368,37 @@ void main() {
       expect(api.shown.single.url, originalOf('a6'));
       expect(await request(-1), isTrue);
       expect(api.shown.last.url, originalOf('a5'));
+      expect(queries, isEmpty);
+    });
+
+    test('in the 360° page, moves to the next asset of the filtered list, a device asset and a raw file included, '
+        'without asking the database', () async {
+      when(() => timeline.origin).thenReturn(TimelineOrigin.panorama360);
+      final deviceFile = File('${Directory.systemTemp.path}/IMG_20240914_175112.jpg');
+      when(() => storage.getFileForAsset('local-1')).thenAnswer((_) async => deviceFile);
+      // The list of the page, as filtered: a flagged asset, a file on the device only, a raw file on the server
+      assets = [
+        RemoteAssetFactory.create(id: 'a0'),
+        LocalAsset(
+          id: 'local-1',
+          name: 'IMG_20240914_175112.jpg',
+          type: .image,
+          createdAt: DateTime(2024, 9, 14),
+          updatedAt: DateTime(2024, 9, 14),
+          playbackStyle: .image,
+          isEdited: false,
+        ),
+        RemoteAssetFactory.create(id: 'a2', name: 'VID_1.insv', type: .video),
+      ];
+      final navigator = open(0);
+
+      expect(await request(1), isTrue);
+      expect(api.shown.single.url, deviceFile.uri.toString());
+      expect(navigator.currentAsset, assets[1]);
+      expect(await request(1), isTrue);
+      expect(api.shown.last.url, '$_server/assets/a2/original');
+      expect(navigator.currentAsset, assets[2]);
+      expect(await request(1), isFalse, reason: 'the end of the list');
       expect(queries, isEmpty);
     });
 
@@ -715,6 +781,7 @@ void main() {
       VideoPlayerNotifier? player,
       SphereView view = _fullSphere,
       Duration fileTimeout = const Duration(seconds: 5),
+      RawImmersiveMedia? raw,
     }) {
       final all = items();
       final item = all[index];
@@ -732,6 +799,7 @@ void main() {
         ),
         player: player,
         fileTimeout: fileTimeout,
+        raw: raw,
       );
       openingId = session.start(navigator);
       return navigator;
@@ -811,6 +879,40 @@ void main() {
 
       expect(await request(1), isTrue);
       expect(api.shown.single.url, urlOf('/d.jpg'));
+    });
+
+    test('skips a raw video the resolver refuses, and leaves it out of the next searches', () async {
+      // An Insta360 video of one 16:9 track: likely playable by its tracks, which the resolver does not read as lenses
+      const raw = '/VID_20240101_120000_00_001.insv';
+      files = {
+        '/a.jpg': photo(),
+        raw: mp4File(mp4Moov([mp4VideoTrack([], width: 1920, height: 1080)])),
+        '/d.jpg': photo(equirectangular),
+      };
+      final resolver = _RecordingRawVideoResolver();
+      final calibrations = DualFisheyeCalibrationService(
+        store: DualFisheyeCalibrationStore(() async => null),
+        storage: MockStorageRepository(),
+        client: () => throw UnimplementedError('no network in these tests'),
+        serverEndpoint: () => null,
+        headers: () => const {},
+      );
+      final navigator = open(
+        0,
+        raw: RawImmersiveMedia(calibrations: calibrations, kindOf: (_) => null, resolver: resolver),
+      );
+
+      expect(await request(1), isTrue);
+      expect(api.shown.single.url, urlOf('/d.jpg'), reason: 'the search went on past the refused video');
+      expect(navigator.currentEntry.name, 'd.jpg');
+      expect(resolver.resolved, ['VID_20240101_120000_00_001.insv']);
+
+      expect(await request(-1), isTrue);
+      expect(api.shown.last.url, urlOf('/a.jpg'));
+      expect(resolver.resolved, hasLength(1), reason: 'not resolved again');
+      expect(await request(1), isTrue);
+      expect(api.shown.last.url, urlOf('/d.jpg'));
+      expect(resolver.resolved, hasLength(1));
     });
 
     test('gives the video it opened on back to the page player where the viewer left it', () async {

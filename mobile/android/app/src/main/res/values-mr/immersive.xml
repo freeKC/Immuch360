@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">दाखवण्यासाठी काहीही नाही</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d हे हेडसेटच्या डीकोडरच्या क्षमतेबाहेर आहे (अडखळणारा, चौकोनी ठोकळे). Immich मध्ये व्हिडिओ ट्रान्सकोडिंग HEVC वर सेट करा किंवा रेझोल्यूशन मर्यादित करा.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d हे हेडसेटच्या डीकोडरच्या क्षमतेबाहेर आहे (अडखळणारा, चौकोनी ठोकळे). ही फाइल HEVC मध्ये किंवा कमी रेझोल्यूशनमध्ये पुन्हा एन्कोड करा.</string>
+  <string name="immersive_raw_one_lens_decoder">हा हेडसेट या व्हिडिओच्या दोन्ही लेन्स एकाच वेळी डीकोड करू शकत नाही (%1$s %2$d x %3$d, दोनदा). एक लेन्स दाखवली जाते: गोलाचा अर्धा भाग काळा राहतो.</string>
+  <string name="immersive_raw_one_lens_file">दुसऱ्या लेन्सची फाइल वाचता येत नाही. एक लेन्स दाखवली जाते: गोलाचा अर्धा भाग काळा राहतो.</string>
+  <string name="immersive_raw_unstitched">या डिव्हाइसवर 360° जोडणी अयशस्वी झाली. कॅमेऱ्याने रेकॉर्ड केल्याप्रमाणे व्हिडिओ दाखवला जातो.</string>
 </resources>

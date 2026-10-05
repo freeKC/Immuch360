@@ -2,7 +2,6 @@
 // its camera model, or the nominal values of an X3, read from a reader, the copy on the device, or the server with range
 // requests (its head only when the server ignores them).
 
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -14,10 +13,12 @@ import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../fixtures/raw/dji_osv.stub.dart';
 import '../../fixtures/raw/insta360.stub.dart';
 import '../../infrastructure/repository.mock.dart';
 import '../../unit/factories/remote_asset_factory.dart';
@@ -432,18 +433,156 @@ void main() {
     });
   });
 
-  group('rawVideoProjectionJson', () {
-    test('gives the frame of the video, else the frames of the canvas', () {
-      final calibration = nominalX3(2880);
+  group('gravity and layout hints', () {
+    Future<DualFisheyeCalibration> resolve(
+      Uint8List file, {
+      bool isPhoto = false,
+      DualFisheyeCalibrationStore? within,
+    }) async => (await resolveDualFisheyeCalibration(
+      read: _reader(file),
+      fileSize: file.length,
+      isPhoto: isPhoto,
+      store: within ?? store,
+      frameSquare: 3840,
+    )).calibration;
 
-      final json = jsonDecode(rawVideoProjectionJson(calibration, (width: 5760, height: 2880))) as Map;
-      expect(json['kind'], 'dualFisheye');
-      expect(json['model'], 'mei');
-      expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
-      expect(json['lenses'], hasLength(2));
+    test('tell where gravity came from: the IMU of the trailer, the MakerNote of a photo, or nowhere', () async {
+      expect((await resolve(_x3Photo(), isPhoto: true)).gravity, GravitySource.imu);
+      expect((await resolve(_x3Photo(imu: false), isPhoto: true)).gravity, GravitySource.makerNote);
+      final upright = await resolve(Uint8List.fromList(List.filled(1000, 0)));
+      expect(upright.gravity, GravitySource.none);
+      expect(upright.source, DualFisheyeSource.nominal);
+      expect(upright.layoutHints, isNull);
+    });
 
-      final unknown = jsonDecode(rawVideoProjectionJson(calibration, null)) as Map;
-      expect((unknown['frameWidth'], unknown['frameHeight']), (5760, 2880));
+    test('give the layout fields of the trailer to a calibration of the file, of the cache or nominal', () async {
+      final x5 = insta360File([insta360Record(1, x5Metadata(), format: 1)], body: List.filled(100, 0));
+      final withoutCalibration = insta360File([
+        insta360Record(1, x5Metadata(offsetV6: '1_2_3'), format: 1),
+      ], body: List.filled(100, 0));
+
+      final fromFile = await resolve(x5);
+      // The same camera: the calibration kept for it
+      await pumpEventQueue();
+      final cached = await resolve(withoutCalibration);
+      final nominal = await resolve(withoutCalibration, within: DualFisheyeCalibrationStore(() async => null));
+
+      expect(fromFile.source, DualFisheyeSource.file);
+      expect(fromFile.lenses.first.k4, x5K4);
+      expect(cached.source, DualFisheyeSource.cachedSerial);
+      expect(nominal.source, DualFisheyeSource.nominal);
+      for (final calibration in [fromFile, cached, nominal]) {
+        final hints = calibration.layoutHints!;
+        expect(
+          (hints.fileLayout, hints.trackOrder, hints.streamLayout, hints.imageCategory, hints.groupIdentity),
+          (2, 1, 3, 2, x5GroupIdentity),
+        );
+      }
+      // Never kept with the calibration of the camera
+      await resolve(x5);
+      await pumpEventQueue();
+      expect((await store.forModel(x5Model))?.layoutHints, isNull);
+    });
+
+    test('give the window of the sensor a video frame shows (field 27)', () async {
+      final video = insta360File([
+        insta360Record(1, [
+          ...pbBytesField(27, [
+            ...pbVarintField(1, 5952),
+            ...pbVarintField(2, 5952),
+            ...pbVarintField(3, 5760),
+            ...pbVarintField(4, 5760),
+          ]),
+          ...x3Metadata(),
+        ], format: 1),
+      ], body: List.filled(100, 0));
+
+      final hints = (await resolve(video)).layoutHints!;
+
+      expect(hints.videoWindow, (areaWidth: 5952, areaHeight: 5952, width: 5760, height: 5760, offsetX: 0, offsetY: 0));
+    });
+  });
+
+  group('calibrations of raw video inputs', () {
+    RawVideoInput input(String key, Uint8List? file, {List<(int, int)>? reads, String name = 'VID_00_001.insv'}) =>
+        RawVideoInput(
+          name: name,
+          key: key,
+          url: 'file:///$name',
+          open: () async => file == null ? null : (size: file.length, read: _reader(file, reads), close: () async {}),
+        );
+
+    DualFisheyeCalibrationService service() => DualFisheyeCalibrationService(
+      store: store,
+      storage: MockStorageRepository(),
+      client: () => throw UnimplementedError('no server'),
+      serverEndpoint: () => null,
+      headers: () => const {},
+    );
+
+    test('forInput reads the trailer of the file the input opens, once per key', () async {
+      final reads = <(int, int)>[];
+      final calibrations = service();
+      final file = insta360File([insta360Record(1, x3Metadata(), format: 1)], body: List.filled(100, 0));
+
+      final calibration = await calibrations.forInput(input('share:a', file, reads: reads), frameSquare: 2880);
+      final count = reads.length;
+      final again = await calibrations.forInput(input('share:a', file, reads: reads), frameSquare: 2880);
+
+      expect(calibration.source, DualFisheyeSource.file);
+      expect(calibration.cameraModel, x3Model);
+      expect(again, same(calibration));
+      expect(reads, hasLength(count));
+      expect((await calibrations.forInput(input('share:b', null), frameSquare: 2880)).canvasSquare, 2880);
+    });
+
+    test('forDji reads the camd box of an Osmo 360 file, else gives its nominal values', () async {
+      final calibrations = service();
+      final osv = djiOsvFile();
+      final reads = <(int, int)>[];
+
+      final read = await calibrations.forDji(input('share:osv', osv, reads: reads, name: 'CAM_0003_D.OSV'));
+      final count = reads.length;
+      expect(await calibrations.forDji(input('share:osv', osv, reads: reads, name: 'CAM_0003_D.OSV')), same(read));
+      final nominal = await calibrations.forDji(
+        input('share:none', djiOsvFile(camd: const []), name: 'CAM_0004_D.OSV'),
+      );
+
+      expect(read.model, DualFisheyeModel.kannalaBrandt);
+      expect(read.source, DualFisheyeSource.file);
+      expect(read.cameraModel, djiModel);
+      expect(read.canvasSquare, 3840);
+      expect(reads, hasLength(count), reason: 'kept in memory');
+      expect(nominal.source, DualFisheyeSource.nominal);
+      expect(nominal.cameraModel, 'Osmo 360');
+      // Never kept for the camera: every file carries its own
+      await pumpEventQueue();
+      expect(await store.forModel(djiModel), isNull);
+    });
+
+    test('forDji tries again after a failed read', () async {
+      final calibrations = service();
+      var fail = true;
+      final osv = djiOsvFile();
+      final failing = RawVideoInput(
+        name: 'CAM_0003_D.OSV',
+        key: 'share:osv',
+        url: 'file:///CAM_0003_D.OSV',
+        open: () async => (
+          size: osv.length,
+          read: (int offset, int length) async {
+            if (fail) {
+              throw const SocketException('share gone');
+            }
+            return _reader(osv)(offset, length);
+          },
+          close: () async {},
+        ),
+      );
+
+      expect((await calibrations.forDji(failing)).source, DualFisheyeSource.nominal);
+      fail = false;
+      expect((await calibrations.forDji(failing)).source, DualFisheyeSource.file);
     });
   });
 }

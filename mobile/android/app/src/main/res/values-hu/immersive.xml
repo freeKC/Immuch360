@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Nincs mit megjeleníteni</string>
   <string name="immersive_codec_too_large">A(z) %1$s %2$d x %3$d meghaladja a VR-szemüveg dekóderének képességeit (akadozik, kockás). Az Immichben állítsd a videó átkódolását HEVC-re, vagy korlátozd a felbontást.</string>
   <string name="immersive_codec_too_large_file">A(z) %1$s %2$d x %3$d meghaladja a VR-szemüveg dekóderének képességeit (akadozik, kockás). Kódold újra ezt a fájlt HEVC-be vagy kisebb felbontásra.</string>
+  <string name="immersive_raw_one_lens_decoder">Ez a VR-szemüveg nem tudja egyszerre dekódolni a videó két objektívét (%1$s %2$d x %3$d, kétszer). Egy objektív látszik: a gömb fele fekete marad.</string>
+  <string name="immersive_raw_one_lens_file">A másik objektív fájlja nem olvasható. Egy objektív látszik: a gömb fele fekete marad.</string>
+  <string name="immersive_raw_unstitched">A 360°-os összeillesztés nem sikerült ezen az eszközön. A videó úgy jelenik meg, ahogy a kamera rögzítette.</string>
 </resources>

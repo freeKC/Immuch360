@@ -20,6 +20,7 @@ import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
@@ -47,6 +48,7 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -150,12 +152,22 @@ class _NominalCalibrations extends DualFisheyeCalibrationService {
       );
 
   final asked = <BaseAsset>[];
+  final askedInputs = <String>[];
 
   @override
   Future<DualFisheyeCalibration> forAsset(BaseAsset asset, {File? localFile}) async {
     asked.add(asset);
     return nominalX3(2880);
   }
+
+  @override
+  Future<DualFisheyeCalibration> forInput(RawVideoInput input, {int? frameSquare}) async {
+    askedInputs.add(input.key);
+    return nominalX3(frameSquare ?? 2880);
+  }
+
+  @override
+  Future<RawFileReader?> openAsset(BaseAsset asset, {File? localFile}) async => null;
 }
 
 /// The assets the user chose to view as 360°, seeded rather than read from the store. Changes still go to the store.
@@ -176,6 +188,8 @@ void main() {
   late MockStorageRepository storage;
   late _FakeSphericalProbes probes;
   late _NominalCalibrations calibrations;
+  late MockLocalAssetRepository noSiblingsOnDevice;
+  late MockRemoteAssetRepository noSiblingsOnServer;
   late _MockVideoDecoderApi decoderApi;
   late List<String> calls;
   // Preview requests of the immersive viewer, and the XMP the preview carries: none by default
@@ -245,11 +259,23 @@ void main() {
         'Playing the transcoded stream: the original ({codec} {width} x {height}) exceeds what this '
         'device decodes',
   };
+  // The messages of the native 360° players about raw videos: the decoders may not keep up with the two streams, then
+  // what the player shows when it falls back, the codec and the frame size of a lens left for it to fill in
+  const englishRawLabels = {
+    'rawHeavy':
+        'This raw video needs two {width}x{height} video decoders at once: it may not play smoothly on this device.',
+    'rawOneLensDecoder':
+        'This device cannot decode the two lenses of this video at once ({codec} {width}x{height}, twice). It shows '
+        'one lens: half of the sphere stays black.',
+    'rawOneLensFile': 'The file of the other lens cannot be read. One lens shows: half of the sphere stays black.',
+    'rawUnstitched': 'The 360° stitching failed on this device. The video shows as the camera recorded it.',
+  };
   const englishVideoPlayerLabels = {
     ...englishViewerLabels,
     ...englishAudioTrackLabels,
     ...englishBufferingLabels,
     ...englishSourceLabels,
+    ...englishRawLabels,
   };
 
   setUp(() async {
@@ -269,10 +295,14 @@ void main() {
     storage = MockStorageRepository();
     probes = _FakeSphericalProbes();
     calibrations = _NominalCalibrations();
+    noSiblingsOnDevice = MockLocalAssetRepository();
+    noSiblingsOnServer = MockRemoteAssetRepository();
+    when(() => noSiblingsOnDevice.findSiblingByName(any(), any())).thenAnswer((_) async => null);
+    when(() => noSiblingsOnServer.findSiblingByName(any(), any())).thenAnswer((_) async => null);
     // The device decodes every video, unless a test says otherwise
     decoderApi = _MockVideoDecoderApi();
     when(
-      () => decoderApi.canDecode(any(), any(), any(), any(), any()),
+      () => decoderApi.canDecode(any(), any(), any(), any(), any(), any(), any(), instances: any(named: 'instances')),
     ).thenAnswer((_) async => DecodeVerdict(supported: true, hardware: true, maxWidth: 8192, maxHeight: 4320));
     immersiveApi = _MockImmersiveApi();
     immersiveUrls = [];
@@ -398,6 +428,18 @@ void main() {
             storageRepositoryProvider.overrideWithValue(storage),
             sphericalProbeServiceProvider.overrideWithValue(probes),
             dualFisheyeCalibrationServiceProvider.overrideWithValue(calibrations),
+            // The players of the phones and the headset play two streams; the test runs on neither. No other file of
+            // a split pair on the device nor on the server.
+            rawVideoPlaybackSupportProvider.overrideWithValue(const RawVideoPlaybackSupport(twoStreams: true)),
+            rawAssetInputsProvider.overrideWith(
+              (ref) => RawAssetInputs(
+                local: () => noSiblingsOnDevice,
+                remote: () => noSiblingsOnServer,
+                storage: storage,
+                probes: probes,
+                calibrations: calibrations,
+              ),
+            ),
             videoPlayerProvider(asset.id).overrideWith((ref) => _RecordingVideoPlayer(calls, initial: playerState)),
             spatialVideoApiProvider.overrideWithValue(spatialVideoApi),
             videoDecoderApiProvider.overrideWithValue(decoderApi),
@@ -746,8 +788,9 @@ void main() {
 
   group('ViewerTopAppBar 360 button for the raw files of Insta360 cameras', () {
     const unsupportedMessage =
-        'This raw video is split in two files or two tracks (one per lens): not supported yet. Export it from the '
-        'camera app, or play a single file recording.';
+        'This recording is split in two files, one per lens, and VID_20240908_133036_00_002.insv was not found next '
+        'to it. Keep both files together (same folder, or both on the server), or export the video from the camera '
+        'app.';
 
     testWidgets('is shown for a .insp photo the server flags nothing for, and opens the panorama viewer', (
       tester,
@@ -789,11 +832,12 @@ void main() {
       expect(captured[1], SphereCoverage.full);
       final json = jsonDecode(captured[2] as String) as Map;
       expect(json['kind'], 'dualFisheye');
+      expect((json['version'], json['layout']), (2, 'sideBySide'));
       expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
-      expect(calibrations.asked, [asset]);
+      expect(calibrations.askedInputs, hasLength(1));
     });
 
-    testWidgets('says that a .insv of one lens per file does not open, and opens nothing', (tester) async {
+    testWidgets('says which file of a split recording is missing, and opens nothing', (tester) async {
       final asset = owned(type: .video, name: 'VID_20240908_133036_10_002.insv', width: 2880, height: 2880);
       await pumpTopBar(tester, asset, projectionType: .none, panoramaVideoSupported: true);
 
@@ -806,7 +850,12 @@ void main() {
     });
 
     testWidgets('says so too when the file declares one lens though the server gave no size', (tester) async {
-      probes.result = const SphericalProbe(codec: 'hvc1', codedWidth: 2880, codedHeight: 2880);
+      probes.result = const SphericalProbe(
+        codec: 'hvc1',
+        codedWidth: 2880,
+        codedHeight: 2880,
+        tracks: [ProbedTrack(index: 0, handlerType: 'vide', codec: 'hvc1', codedWidth: 2880, codedHeight: 2880)],
+      );
       final asset = owned(type: .video, name: 'VID_20240908_133036_10_002.insv');
       await pumpTopBar(tester, asset, projectionType: .none, panoramaVideoSupported: true);
 
@@ -832,7 +881,7 @@ void main() {
       expect((jsonDecode(captured[1] as String) as Map)['frameWidth'], 5760);
     });
 
-    testWidgets('says that a raw video of one lens per file does not open on a Meta Quest either', (tester) async {
+    testWidgets('says which file of a split recording is missing on a Meta Quest too', (tester) async {
       final asset = owned(type: .video, name: 'VID_20240908_133036_10_002.insv', width: 2880, height: 2880);
       await pumpTopBar(tester, asset, projectionType: .none, horizonOs: true);
 
@@ -2169,9 +2218,13 @@ void main() {
     const forcedMessage = 'Playing the original although it exceeds what this device decodes (HEVC 7680 x 3840)';
     final spatialButton = find.byTooltip('Spatial 2.5D');
 
-    void cannotDecode() => when(() => decoderApi.canDecode(any(), any(), any(), any(), any())).thenAnswer(
-      (_) async => DecodeVerdict(supported: false, hardware: true, maxWidth: 4096, maxHeight: 4096, reason: 'test'),
-    );
+    void cannotDecode() =>
+        when(
+          () =>
+              decoderApi.canDecode(any(), any(), any(), any(), any(), any(), any(), instances: any(named: 'instances')),
+        ).thenAnswer(
+          (_) async => DecodeVerdict(supported: false, hardware: true, maxWidth: 4096, maxHeight: 4096, reason: 'test'),
+        );
 
     /// The URL and the stream to fall back to that the immersive viewer was opened with
     (String, String?) immersiveOpened() {
@@ -2230,7 +2283,9 @@ void main() {
       // The viewer checks its decoders at the first frames and says so in the headset, where a message of the app
       // would stay hidden
       expect(immersiveOpened(), ('$server/assets/${asset.id}/original', '$server/assets/${asset.id}/video/playback'));
-      verifyNever(() => decoderApi.canDecode(any(), any(), any(), any(), any()));
+      verifyNever(
+        () => decoderApi.canDecode(any(), any(), any(), any(), any(), any(), any(), instances: any(named: 'instances')),
+      );
       expect(find.byType(SnackBar), findsNothing);
       // Only the sizes are asked, to hand out the transcoded stream when it is a file of its own
       expect(sizeRequests, isNotEmpty);
@@ -2274,14 +2329,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(immersiveOpened(), ('$server/assets/${asset.id}/video/playback', null));
-      verifyNever(() => decoderApi.canDecode(any(), any(), any(), any(), any()));
+      verifyNever(
+        () => decoderApi.canDecode(any(), any(), any(), any(), any(), any(), any(), instances: any(named: 'instances')),
+      );
     });
 
     testWidgets('keeps the original in the immersive viewer when the decoder check fails', (tester) async {
       final asset = owned(type: .video);
       probes.result = probe8k;
       when(
-        () => decoderApi.canDecode(any(), any(), any(), any(), any()),
+        () => decoderApi.canDecode(any(), any(), any(), any(), any(), any(), any(), instances: any(named: 'instances')),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(tester, asset, projectionType: .equirectangular, horizonOs: true);
 
@@ -2407,7 +2464,7 @@ void main() {
       expect(request.fallbackUrl, '$server/assets/${asset.id}/video/playback');
       expect(request.projection, SpatialProjection.flat, reason: 'what the file declares of a sphere is not read');
       expect(probes.probed.single.$1, asset);
-      verify(() => decoderApi.canDecode('avc1', null, 3840, 1080, 30)).called(1);
+      verify(() => decoderApi.canDecode('avc1', null, 3840, 1080, 30, 0, 0)).called(1);
     });
 
     testWidgets('plays the transcoded stream in the Spatial player when the phone cannot decode the original', (

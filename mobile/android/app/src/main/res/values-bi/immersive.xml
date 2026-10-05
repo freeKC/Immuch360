@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">I no gat samting blong soem</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d i bigwan tumas long dekoda blong headset (i stap katkat, i gat ol blok). Long Immich, putem video transcoding long HEVC o mekem rezolusen i smol.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d i bigwan tumas long dekoda blong headset (i stap katkat, i gat ol blok). Enkodem bakegen fael ia long HEVC o long wan rezolusen we i smol moa.</string>
+  <string name="immersive_raw_one_lens_decoder">Hedset ia i no save ridim tu lens blong video ia long sem taem (%1$s %2$d x %3$d, tu taem). I soem wan lens nomo: haf blong sfea i stap blak.</string>
+  <string name="immersive_raw_one_lens_file">Ap i no save ridim fael blong narafala lens. I soem wan lens nomo: haf blong sfea i stap blak.</string>
+  <string name="immersive_raw_unstitched">Joinem 360° i no wok long divaes ia. Video i soem olsem we kamera i rekodem.</string>
 </resources>

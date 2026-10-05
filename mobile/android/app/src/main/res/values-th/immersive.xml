@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">ไม่มีอะไรให้แสดง</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d เกินขีดความสามารถของตัวถอดรหัสในเฮดเซ็ต (ภาพกระตุก แตกเป็นบล็อก) ใน Immich ให้ตั้งค่าการแปลงรหัสวิดีโอเป็น HEVC หรือจำกัดความละเอียด</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d เกินขีดความสามารถของตัวถอดรหัสในเฮดเซ็ต (ภาพกระตุก แตกเป็นบล็อก) ให้เข้ารหัสไฟล์นี้ใหม่เป็น HEVC หรือที่ความละเอียดต่ำลง</string>
+  <string name="immersive_raw_one_lens_decoder">เฮดเซ็ตนี้ถอดรหัสเลนส์ทั้งสองของวิดีโอนี้พร้อมกันไม่ได้ (%1$s %2$d x %3$d สองชุด) จึงแสดงเลนส์เดียว: ครึ่งหนึ่งของทรงกลมยังคงเป็นสีดำ</string>
+  <string name="immersive_raw_one_lens_file">อ่านไฟล์ของอีกเลนส์หนึ่งไม่ได้ แสดงเลนส์เดียว: ครึ่งหนึ่งของทรงกลมยังคงเป็นสีดำ</string>
+  <string name="immersive_raw_unstitched">การต่อภาพ 360° ล้มเหลวบนอุปกรณ์นี้ วิดีโอจะแสดงตามที่กล้องบันทึกไว้</string>
 </resources>

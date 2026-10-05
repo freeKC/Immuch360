@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Ekkert til að sýna</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d er ofviða afkóðara VR-gleraugnanna (hikstar, kubbótt mynd). Í Immich skaltu stilla umkóðun myndbanda á HEVC eða takmarka upplausnina.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d er ofviða afkóðara VR-gleraugnanna (hikstar, kubbótt mynd). Umkóðaðu þessa skrá í HEVC eða í lægri upplausn.</string>
+  <string name="immersive_raw_one_lens_decoder">Þessi VR-gleraugu geta ekki afkóðað báðar linsur þessa myndskeiðs samtímis (%1$s %2$d x %3$d, tvisvar). Ein linsa er sýnd: helmingur kúlunnar er áfram svartur.</string>
+  <string name="immersive_raw_one_lens_file">Ekki er hægt að lesa skrá hinnar linsunnar. Ein linsa er sýnd: helmingur kúlunnar er áfram svartur.</string>
+  <string name="immersive_raw_unstitched">360° samskeyting mistókst í þessu tæki. Myndskeiðið er sýnt eins og myndavélin tók það upp.</string>
 </resources>

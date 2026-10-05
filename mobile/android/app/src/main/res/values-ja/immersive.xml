@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">表示するものがありません</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d はヘッドセットのデコーダーの性能を超えています（カクつき、ブロックノイズ）。Immich で動画の変換を HEVC に設定するか、解像度を制限してください。</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d はヘッドセットのデコーダーの性能を超えています（カクつき、ブロックノイズ）。このファイルを HEVC で、または低い解像度で再エンコードしてください。</string>
+  <string name="immersive_raw_one_lens_decoder">このヘッドセットは、この動画の2つのレンズを同時にデコードできません（%1$s %2$d x %3$d、2本）。1つのレンズを表示します。球の半分は黒いままです。</string>
+  <string name="immersive_raw_one_lens_file">もう一方のレンズのファイルを読み込めません。1つのレンズを表示します。球の半分は黒いままです。</string>
+  <string name="immersive_raw_unstitched">このデバイスでは360°のスティッチに失敗しました。動画はカメラが記録したままの状態で表示されます。</string>
 </resources>

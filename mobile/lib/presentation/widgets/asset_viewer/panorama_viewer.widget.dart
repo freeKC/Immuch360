@@ -24,7 +24,9 @@ import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/models/video_buffering.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
+import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -41,6 +43,7 @@ import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
 import 'package:logging/logging.dart';
@@ -65,10 +68,11 @@ final _log = Logger('PanoramaViewer');
 /// until the user picks another layout or coverage. The coverage the user picked is remembered for the asset, see
 /// [SphericalVideoSession].
 ///
-/// A raw dual fisheye video (an Insta360 .insv whose frame holds both lenses side by side, see [raw360LayoutProvider])
-/// goes with the calibration of its file (see [DualFisheyeCalibrationService]), which the player maps on the sphere
-/// itself, one picture over the whole sphere. One whose frame holds one lens (a split recording, or one track per lens)
-/// does not open: a message says so.
+/// A raw video of a 360° camera (see [rawMediaKindProvider]) goes with the rawProjection JSON of its plan (see
+/// [RawVideoResolver]): the tracks to decode, the other file of a split pair, and the calibration or the cube faces
+/// the player maps on the sphere itself, one picture over the whole sphere. One that does not open (the other file of
+/// its pair missing, a layout the player does not play) says why (see [rawVideoUnsupportedMessage]). One of two
+/// streams that the decoders of the phone may not keep up with says so, and opens anyway.
 Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset asset) async {
   final remoteId = asset.remoteId;
   final localId = asset.localId;
@@ -84,17 +88,19 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final player = ref.read(videoPlayerProvider(asset.id).notifier);
   final videoSources = ref.read(videoSourceServiceProvider);
   final policy = ref.read(appConfigProvider).viewer.videoSourcePolicy;
-  final rawLayout = ref.read(raw360LayoutProvider(asset));
-  final calibrations = ref.read(dualFisheyeCalibrationServiceProvider);
+  final rawKind = ref.read(rawMediaKindProvider(asset));
+  final rawResolver = ref.read(rawVideoResolverProvider);
+  final rawInputs = ref.read(rawAssetInputsProvider);
   final messenger = ScaffoldMessenger.maybeOf(context);
+  final t = context.t;
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
-  final unsupportedRawMessage = context.t.raw_video_split_unsupported;
   final labels = {
     ...sphereViewerLabels(context.t),
     ...audioTrackLabels(context.t, Localizations.localeOf(context)),
     ...videoBufferingLabels(context.t),
     ...videoSourceLabels(context.t),
+    ...rawVideoLabels(context.t),
   };
 
   try {
@@ -106,23 +112,25 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       return;
     }
     final probe = await probeService.probe(asset, localFile: localFile);
-    String? rawProjection;
-    if (rawLayout != null) {
-      // The frame the file declares settles it when the server did not give its size
-      final frame = rawVideoFrameSize(probe: probe, width: asset.width, height: asset.height);
-      if (rawLayout == Raw360Layout.separateLenses ||
-          rawVideoLayout(frame?.width, frame?.height) == Raw360Layout.separateLenses) {
-        _log.info('${asset.name} holds one lens per file or per track: not shown in 360°');
-        messenger?.showSnackBar(SnackBar(content: Text(unsupportedRawMessage)));
-        return;
-      }
-      rawProjection = rawVideoProjectionJson(await calibrations.forAsset(asset, localFile: localFile), frame);
-    }
     // A file on the phone plays as it is: only the server has a transcoded stream to choose
     final source = localFile != null
         ? ChosenVideoSource(url: localFile.uri.toString())
         : await videoSources.serverSource(videoId: remoteId!, policy: policy, probe: probe);
-    final view = rawProjection != null
+    RawVideoPlan? plan;
+    if (rawKind != null && asset.isVideo) {
+      try {
+        plan = await rawResolver.resolve(
+          kind: rawKind,
+          input: rawInputs.input(asset, localFile: localFile, source: source, probe: probe),
+          findSibling: rawInputs.siblings(asset, localFile: localFile, source: source),
+        );
+      } on RawVideoUnsupportedException catch (error) {
+        _log.info('${asset.name} does not open in 360°: $error');
+        messenger?.showSnackBar(SnackBar(content: Text(rawVideoUnsupportedMessage(t, error))));
+        return;
+      }
+    }
+    final view = plan != null
         ? raw360SphereView
         : resolveSphereView(
             fileName: asset.name,
@@ -136,12 +144,16 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
     // The viewer lifts this when the app resumes, which closing the player brings about on iOS as well: its full
     // screen presentation hides the Flutter view, and the app lifecycle follows.
     await player.suspendForExternalPlayer();
-    final notice = source.notice;
+    // A raw video of two tracks plays its original whatever was chosen: a word about the choice would be wrong
+    final notice = plan == null || plan.url == source.url ? source.notice : null;
     if (notice != null) {
       messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance))));
     }
+    if (plan != null) {
+      await warnOfTwoRawStreams(plan, videoSources, messenger, t);
+    }
     await api.open(
-      source.url,
+      plan?.url ?? source.url,
       ApiService.getRequestHeaders(),
       asset.name,
       closeLabel,
@@ -149,8 +161,8 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       view.layout,
       labels,
       view.coverage,
-      source.fallbackUrl,
-      rawProjection,
+      plan != null ? plan.fallbackUrl : source.fallbackUrl,
+      plan?.toNativeJson(),
     );
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for ${asset.name}', error, stackTrace);
@@ -164,8 +176,8 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
 /// asset: a file of a network share, streamed through the local media bridge for example. [title] names it in the
 /// player, [layout] and [coverage] are what the player opens with (see [resolveSphereView]); the user can change them
 /// there, and nothing is remembered. [fallbackUrl] is a stream the player switches to when it cannot play [url], null
-/// for none. [rawProjection] is the calibration of a raw dual fisheye video (see [rawVideoProjectionJson]), null for
-/// an equirectangular one.
+/// for none. [rawProjection] is the rawProjection JSON of a raw video (see [RawVideoPlan.toNativeJson]), null for an
+/// equirectangular one.
 ///
 /// Meanwhile [player], the page's own player when there is one, is stopped (see
 /// [VideoPlayerNotifier.suspendForExternalPlayer]): the page lifts this when the app resumes, which closing the 360°
@@ -193,6 +205,7 @@ Future<bool> openSphericalVideoUrl(
     ...audioTrackLabels(context.t, Localizations.localeOf(context)),
     ...videoBufferingLabels(context.t),
     ...videoSourceLabels(context.t),
+    ...rawVideoLabels(context.t),
   };
 
   try {
@@ -203,6 +216,38 @@ Future<bool> openSphericalVideoUrl(
     _log.severe('Cannot open the 360° video player for $title', error, stackTrace);
     await player?.resumeAfterExternalPlayer();
     return false;
+  }
+}
+
+/// Tells the user, before the player opens, when the phone may not decode the two streams of [plan] at once (two
+/// tracks of one file, or the two files of a split pair): the decoder check of [videoSources] asked about two streams
+/// of its largest track (see [VideoSourceService.twoStreamVerdict]). The player opens anyway, and falls back by itself
+/// when the decoders fail. Nothing for one stream, nor when the check does not answer.
+Future<void> warnOfTwoRawStreams(
+  RawVideoPlan plan,
+  VideoSourceService videoSources,
+  ScaffoldMessengerState? messenger,
+  Translations t,
+) async {
+  if (plan.tracks.length < 2) {
+    return;
+  }
+  final track = plan.tracks.reduce(
+    (a, b) => (b.width ?? 0) * (b.height ?? 0) > (a.width ?? 0) * (a.height ?? 0) ? b : a,
+  );
+  final verdict = await videoSources.twoStreamVerdict(
+    codec: track.codec,
+    codecs: track.codecs,
+    width: track.width,
+    height: track.height,
+    frameRate: track.frameRate,
+    bitDepth: track.bitDepth,
+  );
+  if (verdict?.supported == false) {
+    _log.info('Two streams of ${track.width} x ${track.height} may be too much: ${verdict?.reason}');
+    messenger?.showSnackBar(
+      SnackBar(content: Text(t.raw_video_two_decoders_heavy(size: '${track.width}x${track.height}'))),
+    );
   }
 }
 
@@ -302,6 +347,17 @@ Future<GPanoTags?> readGPanoFile(File file) async {
     await handle.close();
   }
 }
+
+/// The image category (field 129 of the trailer, see [Insta360Trailer.imageCategory]) of a photo an Insta360 camera
+/// stitched into an equirect picture itself
+const insta360StitchedImageCategory = 6;
+
+/// Whether the photo of [length] bytes that [read] reads, which ends with the trailer of an Insta360 camera (see
+/// hasInsta360Trailer), is an equirect picture the camera stitched itself rather than its two fisheye circles: its
+/// trailer says so (see [insta360StitchedImageCategory]). For a photo found raw by its trailer only: a .insp is raw
+/// whatever. Reads the metadata of the trailer, not its IMU samples. Errors of [read] are not caught.
+Future<bool> isInsta360StitchedPhoto(ByteRangeReader read, int length) async =>
+    (await readInsta360Trailer(read, length, maxImuLength: 0))?.imageCategory == insta360StitchedImageCategory;
 
 /// Where the viewer looks first for a GPano initial view, as its longitude and latitude in degrees.
 ///
@@ -611,12 +667,13 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   }
 
   // Whether the photo is raw dual fisheye: an asset as its name or the scan of the device says (see
-  // raw360LayoutProvider), a photo that is no asset as its name or the end of its file says (see hasInsta360Trailer)
+  // rawMediaKindProvider), a photo that is no asset as its name or the end of its file says (see hasInsta360Trailer),
+  // unless that trailer says the camera stitched it (see isInsta360StitchedPhoto)
   void _startRaw() {
     final asset = widget.asset;
     final calibrations = ref.read(dualFisheyeCalibrationServiceProvider);
     if (asset != null) {
-      final isRaw = asset.isImage && ref.read(raw360LayoutProvider(asset)) == Raw360Layout.dualFisheye;
+      final isRaw = asset.isImage && ref.read(rawMediaKindProvider(asset)) == RawMediaKind.insta360Photo;
       _setRaw(isRaw ? calibrations.forAsset(asset) : null);
       return;
     }
@@ -645,6 +702,12 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     var isRaw = false;
     try {
       isRaw = await hasInsta360Trailer(read, length).timeout(const Duration(seconds: 5));
+      // Found raw by its trailer only: the camera may have stitched it, the trailer staying. A read that fails leaves
+      // it raw, as before the category was read.
+      if (isRaw && await isInsta360StitchedPhoto(read, length).timeout(const Duration(seconds: 5))) {
+        _log.info('$_name was stitched by the camera: shown as an equirect photo');
+        isRaw = false;
+      }
     } catch (error) {
       _log.info('Could not read the end of $_name: $error');
     }

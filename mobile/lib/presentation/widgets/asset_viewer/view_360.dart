@@ -1,5 +1,5 @@
 // Where an asset opens in 360°, shared by the 360° button of the viewer and its "View as 360°" action. Whether an
-// asset is 360° at all is another rule, see isEquirectangularProvider and raw360LayoutProvider.
+// asset is 360° at all is another rule, see isEquirectangularProvider and rawMediaKindProvider.
 
 import 'dart:async';
 
@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
-import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
-import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 
@@ -36,13 +36,9 @@ final can360ViewProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, as
 /// photo in the panorama viewer and a video in the native 360° player (see [openPanoramaVideo]). Returns once the
 /// view is open, or could not open; a photo returns right away.
 ///
-/// A raw dual fisheye video that holds one lens per file or per track (see [Raw360Layout.separateLenses]) opens
-/// nowhere: a message says so.
+/// A raw video whose layout does not open (the other file of a split pair missing, a layout the players do not play)
+/// opens nowhere: a message says why (see [rawVideoUnsupportedMessage]).
 Future<void> open360View(BuildContext context, WidgetRef ref, BaseAsset asset) async {
-  if (ref.read(raw360LayoutProvider(asset)) == Raw360Layout.separateLenses) {
-    showRawVideoUnsupported(ScaffoldMessenger.maybeOf(context), context.t);
-    return;
-  }
   if (ref.read(isHorizonOsProvider).valueOrNull ?? false) {
     return _openImmersive(context, ref, asset);
   }
@@ -56,15 +52,15 @@ Future<void> open360View(BuildContext context, WidgetRef ref, BaseAsset asset) a
   }
 }
 
-/// Tells the user that a raw video of one lens per file or per track is not shown in 360°
-void showRawVideoUnsupported(ScaffoldMessengerState? messenger, Translations t) =>
-    messenger?.showSnackBar(SnackBar(content: Text(t.raw_video_split_unsupported)));
+/// Tells the user why the raw video of [error] does not open in 360° (see [rawVideoUnsupportedMessage])
+void showRawVideoUnsupported(ScaffoldMessengerState? messenger, Translations t, RawVideoUnsupportedException error) =>
+    messenger?.showSnackBar(SnackBar(content: Text(rawVideoUnsupportedMessage(t, error))));
 
 Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset) async {
   // Read before the first await: the viewer may be gone by then
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final errorMessage = context.t.immersive_viewer_open_failed;
-  final unsupportedMessage = context.t.raw_video_split_unsupported;
+  final t = context.t;
+  final errorMessage = t.immersive_viewer_open_failed;
   final stereoLabels = sphereViewerLabels(context.t);
   try {
     await openImmersiveViewer(
@@ -75,9 +71,10 @@ Future<void> _openImmersive(BuildContext context, WidgetRef ref, BaseAsset asset
       onSourceNotice: (notice) =>
           messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance)))),
     );
-  } on RawVideoUnsupportedException {
-    // Found out from the frame the file declares, the server not giving its size
-    messenger?.showSnackBar(SnackBar(content: Text(unsupportedMessage)));
+  } on RawVideoUnsupportedException catch (error) {
+    // Found out from the tracks the file declares, when the viewer was about to open it
+    _log.info('${asset.name} does not open in the immersive viewer: $error');
+    showRawVideoUnsupported(messenger, t, error);
   } catch (error) {
     _log.warning('Could not open the immersive viewer: $error');
     messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));

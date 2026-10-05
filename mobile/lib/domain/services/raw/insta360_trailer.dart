@@ -1,14 +1,20 @@
 // The trailer Insta360 cameras append to their files. A .insp photo is a JPEG with both fisheye circles side by side
 // (lens 0 on the left), a .insv video an MP4, and both end with the same records. The last 72 bytes are 32 reserved
 // bytes, the size of the trailer (u32 LE, these 72 bytes included), its version (u32 LE, 3) and the ASCII magic
-// 8db42d694ccc418790edff439fe026bf. The records are walked backwards from there: each one is its payload followed by a
-// footer of 6 bytes, its format (u8), its id (u8) and the length of its payload (u32 LE). Record 1 holds the metadata
-// as protobuf, the calibration strings among them; record 3 the samples of the accelerometer and the gyroscope. On the
-// X3 the metadata record comes last, so the calibration sits in the last 2 KB of the file. Older trailers (version 2,
-// another magic) are not read: such a file is taken as a flat picture.
+// 8db42d694ccc418790edff439fe026bf. Each record is its payload followed by a footer of 6 bytes, its format (u8), its id
+// (u8) and the length of its payload (u32 LE). Record 1 holds the metadata as protobuf, the calibration strings among
+// them; record 3 the samples of the accelerometer and the gyroscope. Older trailers (version 2, another magic) are not
+// read: such a file is taken as a flat picture.
 //
-// The field numbers are those of telemetry-parser (MIT/Apache-2.0), checked on X3 files; see
-// docs/16-dual-fisheye-spec.md, sections 1, 2 and 4.
+// Two layouts of the records exist. On the X3 and older cameras they are walked backwards from the tail, the metadata
+// record last, so the calibration sits in the last 2 KB of the file. From the X4 on (verified on X5 files by GyroView,
+// documented by insta360-rs as "indexed records") the record before the tail is a directory, id 0 and format 0, of 10
+// byte entries that give the place of every record: the records are padded to 128 KiB boundaries and cannot be walked
+// backwards. The trailer may then sit in an MP4 box of type inst, whose 8 byte header the trailer size leaves out.
+//
+// The field numbers are those of telemetry-parser (MIT/Apache-2.0), checked on X3 files, and of insta360-rs and
+// GyroView for the fields of the newer cameras (26, 79, 80, 129, 131), which no file at hand has; see
+// docs/16-dual-fisheye-spec.md, sections 1, 2 and 4, and docs/18-design-projections-and-parsers.md, section 5.3.
 //
 // Pure Dart: the caller reads the bytes, from a file on the device or with HTTP range requests.
 
@@ -17,8 +23,13 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
+import 'package:immich_mobile/domain/services/exif_head.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
+import 'package:immich_mobile/domain/services/raw/protobuf_reader.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart' show ByteRangeReader;
+import 'package:logging/logging.dart';
+
+final _log = Logger('Insta360Trailer');
 
 /// The ASCII magic that ends a version 3 Insta360 trailer
 const insta360TrailerMagic = '8db42d694ccc418790edff439fe026bf';
@@ -33,6 +44,11 @@ const _footerLength = 6;
 const _metadataRecord = 1;
 const _imuRecord = 3;
 const _protobufFormat = 1;
+
+// The directory of an indexed trailer: the record of id 0 and format 0 right before the tail, entries of 10 bytes (id,
+// format, length and offset from the start of the records)
+const _directoryEntryLength = 10;
+const _maxDirectoryLength = 64 * 1024;
 
 // Bytes read at once from the end of the file: on the X3 they hold the metadata record whole, and the footer of the
 // record before it, so that a photo costs two reads (three with its accelerometer)
@@ -109,6 +125,13 @@ class Insta360Trailer {
     this.isRawGyro = false,
     this.meanAccelerometer,
     this.imuSampleCount = 0,
+    this.groupIdentity,
+    this.groupIndex,
+    this.fileLayout,
+    this.trackOrder,
+    this.imageCategory,
+    this.streamLayout,
+    this.indexed = false,
   });
 
   /// Serial number of the camera (field 1)
@@ -152,21 +175,66 @@ class Insta360Trailer {
   /// Number of accelerometer samples in [meanAccelerometer]
   final int imuSampleCount;
 
+  /// The recording a file belongs to (field 26.3): the two files of a split pair carry the same
+  final String? groupIdentity;
+
+  /// Index of the file in its recording (field 26.2)
+  final int? groupIndex;
+
+  /// How the camera stored the video (field 79): 0 unknown, 1 one file per lens, 2 one track per lens
+  final int? fileLayout;
+
+  /// Which lens the first video track holds (field 80): 0 unknown, 1 the track of stream 10 (lens 1), 2 the one of
+  /// stream 00 (lens 0); see [insta360TrackOrder]
+  final int? trackOrder;
+
+  /// What the picture is (field 129): 2 a double fisheye, 6 an equirect the camera stitched itself
+  final int? imageCategory;
+
+  /// How the lenses are laid out (field 131): 1 one stream, 2 separate files, 3 two tracks, 4 two tracks reversed
+  final int? streamLayout;
+
+  /// Whether the records were found through the directory of an indexed trailer (X4 and later) rather than walked
+  /// backwards (X3 and older)
+  final bool indexed;
+
   @override
   String toString() =>
       'Insta360Trailer(serial: $serial, cameraModel: $cameraModel, firmware: $firmware, '
       'image: $imageWidth x $imageHeight, crop: $crop, accelerometerRange: $accelerometerRange, '
       'gyroscopeRange: $gyroscopeRange, isRawGyro: $isRawGyro, meanAccelerometer: $meanAccelerometer '
-      '($imuSampleCount samples), offsetV1: $offsetV1, offsetV3: $offsetV3, offsetV6: $offsetV6)';
+      '($imuSampleCount samples), offsetV1: $offsetV1, offsetV3: $offsetV3, offsetV6: $offsetV6, '
+      'group: $groupIdentity #$groupIndex, fileLayout: $fileLayout, trackOrder: $trackOrder, '
+      'imageCategory: $imageCategory, streamLayout: $streamLayout, indexed: $indexed)';
+}
+
+/// The lens that video track 0 of a two-track Insta360 file holds, and what said so: field 80 of [trailer] (1: lens 1,
+/// 2: lens 0), else field 131 (4: lens 1, 3: lens 0), else lens 0. Neither field is checked on a real file yet
+/// (GyroView marks them provisional): the source goes to the logs so that the first real X4 or X5 file tells.
+({int lensOfTrack0, String source}) insta360TrackOrder(Insta360Trailer? trailer) {
+  switch (trailer?.trackOrder) {
+    case 1:
+      return (lensOfTrack0: 1, source: 'field80');
+    case 2:
+      return (lensOfTrack0: 0, source: 'field80');
+  }
+  switch (trailer?.streamLayout) {
+    case 4:
+      return (lensOfTrack0: 1, source: 'field131');
+    case 3:
+      return (lensOfTrack0: 0, source: 'field131');
+  }
+  return (lensOfTrack0: 0, source: 'default');
 }
 
 /// Reads the trailer of the Insta360 file of [fileSize] bytes that [read] reads; null for a file without a version 3
 /// trailer.
 ///
-/// Reads the end of the file first, then walks the records backwards, a footer at a time, as far as the metadata and
-/// the IMU records only. Reads at most [insta360MaxMetadataLength] bytes of metadata and [maxImuLength] bytes of IMU
-/// samples, from the first ones. A damaged record ends the walk: the trailer then has what was read before it. Errors
-/// of [read] are not caught.
+/// Reads the end of the file first. An indexed trailer (X4 and later) gives the place of the metadata and the IMU
+/// records in its directory; an older one is walked backwards, a footer at a time, as far as these two records only.
+/// Reads at most [insta360MaxMetadataLength] bytes of metadata and [maxImuLength] bytes of IMU samples, from the first
+/// ones. A damaged record ends the walk, and a damaged directory the reading: the trailer then has what was read before
+/// it, nothing at worst. Errors of [read] are not caught.
 Future<Insta360Trailer?> readInsta360Trailer(
   ByteRangeReader read,
   int fileSize, {
@@ -189,6 +257,82 @@ Future<Insta360Trailer?> readInsta360Trailer(
   final payloadStart = fileSize - trailerLength;
   final bytes = _CachedBytes(read, tailStart, tail);
 
+  final lastFooter = fileSize - _tailLength - _footerLength >= payloadStart
+      ? await bytes.at(fileSize - _tailLength - _footerLength, _footerLength)
+      : null;
+  final indexed = lastFooter != null && lastFooter[0] == 0 && lastFooter[1] == 0;
+  final records = indexed
+      ? await _indexedRecords(bytes, lastFooter, fileSize: fileSize, payloadStart: payloadStart)
+      : await _walkedRecords(bytes, fileSize: fileSize, payloadStart: payloadStart);
+  final _Records(:metadataRecord, :imuRecord) = records;
+
+  final metadata = _Metadata();
+  if (metadataRecord != null &&
+      metadataRecord.format == _protobufFormat &&
+      metadataRecord.length <= insta360MaxMetadataLength) {
+    final payload = indexed
+        ? _checkedPayload(
+            await bytes.at(metadataRecord.start, metadataRecord.length + _footerLength),
+            metadataRecord,
+            _metadataRecord,
+          )
+        : await bytes.at(metadataRecord.start, metadataRecord.length);
+    if (payload != null) {
+      metadata.decode(payload);
+    }
+  }
+
+  List<double>? meanAccelerometer;
+  var sampleCount = 0;
+  if (imuRecord != null) {
+    final sampleLength = metadata.isRawGyro ? _rawImuSampleLength : _imuSampleLength;
+    final count = math.min(imuRecord.length, math.max(0, maxImuLength)) ~/ sampleLength;
+    Uint8List? samples;
+    if (count > 0) {
+      // The footer of a record found through the directory tells that the directory is right, when it is read anyway
+      samples = indexed && imuRecord.length <= maxImuLength
+          ? _checkedPayload(await bytes.at(imuRecord.start, imuRecord.length + _footerLength), imuRecord, _imuRecord)
+          : await bytes.at(imuRecord.start, count * sampleLength);
+    }
+    if (samples != null) {
+      meanAccelerometer = metadata.isRawGyro
+          ? _meanRawAccelerometer(samples, count, metadata.accelerometerRange)
+          : _meanAccelerometer(samples, count);
+      sampleCount = meanAccelerometer == null ? 0 : count;
+    }
+  }
+
+  return Insta360Trailer(
+    serial: metadata.serial,
+    cameraModel: metadata.cameraModel,
+    firmware: metadata.firmware,
+    offsetV1: metadata.offsetV1 ?? metadata.offsetV1Factory,
+    offsetV3: metadata.offsetV3 ?? metadata.offsetV3Copy,
+    offsetV6: metadata.offsetV6 ?? metadata.offsetV6Copy,
+    imageWidth: metadata.imageWidth,
+    imageHeight: metadata.imageHeight,
+    crop: metadata.crop,
+    accelerometerRange: metadata.accelerometerRange,
+    gyroscopeRange: metadata.gyroscopeRange,
+    isRawGyro: metadata.isRawGyro,
+    meanAccelerometer: meanAccelerometer,
+    imuSampleCount: sampleCount,
+    groupIdentity: metadata.groupIdentity,
+    groupIndex: metadata.groupIndex,
+    fileLayout: metadata.fileLayout,
+    trackOrder: metadata.trackOrder,
+    imageCategory: metadata.imageCategory,
+    streamLayout: metadata.streamLayout,
+    indexed: indexed,
+  );
+}
+
+/// The metadata and the IMU records of a trailer, the first of each
+typedef _Records = ({_Record? metadataRecord, _Record? imuRecord});
+
+// The records of a sequential trailer, walked backwards from the tail: each footer gives the length of the payload
+// before it
+Future<_Records> _walkedRecords(_CachedBytes bytes, {required int fileSize, required int payloadStart}) async {
   _Record? metadataRecord;
   _Record? imuRecord;
   var recordEnd = fileSize - _tailLength;
@@ -215,58 +359,78 @@ Future<Insta360Trailer?> readInsta360Trailer(
     }
     recordEnd = start;
   }
-
-  final metadata = _Metadata();
-  if (metadataRecord != null &&
-      metadataRecord.format == _protobufFormat &&
-      metadataRecord.length <= insta360MaxMetadataLength) {
-    final payload = await bytes.at(metadataRecord.start, metadataRecord.length);
-    if (payload != null) {
-      metadata.decode(payload);
-    }
-  }
-
-  List<double>? meanAccelerometer;
-  var sampleCount = 0;
-  if (imuRecord != null) {
-    final sampleLength = metadata.isRawGyro ? _rawImuSampleLength : _imuSampleLength;
-    final count = math.min(imuRecord.length, math.max(0, maxImuLength)) ~/ sampleLength;
-    final samples = count > 0 ? await bytes.at(imuRecord.start, count * sampleLength) : null;
-    if (samples != null) {
-      meanAccelerometer = metadata.isRawGyro
-          ? _meanRawAccelerometer(samples, count, metadata.accelerometerRange)
-          : _meanAccelerometer(samples, count);
-      sampleCount = meanAccelerometer == null ? 0 : count;
-    }
-  }
-
-  return Insta360Trailer(
-    serial: metadata.serial,
-    cameraModel: metadata.cameraModel,
-    firmware: metadata.firmware,
-    offsetV1: metadata.offsetV1 ?? metadata.offsetV1Factory,
-    offsetV3: metadata.offsetV3 ?? metadata.offsetV3Copy,
-    offsetV6: metadata.offsetV6 ?? metadata.offsetV6Copy,
-    imageWidth: metadata.imageWidth,
-    imageHeight: metadata.imageHeight,
-    crop: metadata.crop,
-    accelerometerRange: metadata.accelerometerRange,
-    gyroscopeRange: metadata.gyroscopeRange,
-    isRawGyro: metadata.isRawGyro,
-    meanAccelerometer: meanAccelerometer,
-    imuSampleCount: sampleCount,
-  );
+  return (metadataRecord: metadataRecord, imuRecord: imuRecord);
 }
 
-/// The calibration of the file whose trailer is [trailer]: the Mei model of its V3 string, else the equidistant model
-/// of its V1 string; null when it has neither. Gravity comes from the mean accelerometer of the trailer, else from
-/// [accelerometer] (the sample of the MakerNote of a photo, see [readInsta360PhotoHead]), else the camera is taken as
-/// upright.
+// The records of an indexed trailer, from its directory, the record whose footer [directoryFooter] ends next to the
+// tail. Each entry is the id, the format, the length of the payload and its offset from [payloadStart], all little
+// endian, id first unlike a footer; an entry of zeros is padding. An entry that points out of the records is left out,
+// and a directory of a length that is no whole number of entries gives no record at all.
+Future<_Records> _indexedRecords(
+  _CachedBytes bytes,
+  Uint8List directoryFooter, {
+  required int fileSize,
+  required int payloadStart,
+}) async {
+  const none = (metadataRecord: null, imuRecord: null);
+  final length = ByteData.sublistView(directoryFooter).getUint32(2, Endian.little);
+  final directoryStart = fileSize - _tailLength - _footerLength - length;
+  if (length % _directoryEntryLength != 0 || length > _maxDirectoryLength || directoryStart < payloadStart) {
+    _log.warning('Insta360 trailer: an indexed directory of $length bytes that cannot be read');
+    return none;
+  }
+  final directory = await bytes.at(directoryStart, length);
+  if (directory == null) {
+    return none;
+  }
+  final data = ByteData.sublistView(directory);
+  _Record? metadataRecord;
+  _Record? imuRecord;
+  for (var entry = 0; entry < length; entry += _directoryEntryLength) {
+    if (directory.sublist(entry, entry + _directoryEntryLength).every((byte) => byte == 0)) {
+      continue;
+    }
+    final id = data.getUint8(entry);
+    final format = data.getUint8(entry + 1);
+    final recordLength = data.getUint32(entry + 2, Endian.little);
+    final start = payloadStart + data.getUint32(entry + 6, Endian.little);
+    if (start + recordLength + _footerLength > directoryStart) {
+      continue;
+    }
+    if (id == _metadataRecord) {
+      metadataRecord ??= (format: format, start: start, length: recordLength);
+    } else if (id == _imuRecord) {
+      imuRecord ??= (format: format, start: start, length: recordLength);
+    }
+  }
+  return (metadataRecord: metadataRecord, imuRecord: imuRecord);
+}
+
+// The payload of the record [id] out of [bytes], its payload and its footer, when the footer agrees with the directory
+// entry that gave [record]; null otherwise
+Uint8List? _checkedPayload(Uint8List? bytes, _Record record, int id) {
+  if (bytes == null) {
+    return null;
+  }
+  final footer = ByteData.sublistView(bytes, record.length);
+  if (footer.getUint8(0) != record.format ||
+      footer.getUint8(1) != id ||
+      footer.getUint32(2, Endian.little) != record.length) {
+    _log.warning('Insta360 trailer: the footer of record $id does not match its directory entry');
+    return null;
+  }
+  return Uint8List.sublistView(bytes, 0, record.length);
+}
+
+/// The calibration of the file whose trailer is [trailer]: the Mei model of its V3 string, else of its V6 string, else
+/// the equidistant model of its V1 string; null when it has none of them. Gravity comes from the mean accelerometer of
+/// the trailer, else from [accelerometer] (the sample of the MakerNote of a photo, see [readInsta360PhotoHead]), else
+/// the camera is taken as upright.
 DualFisheyeCalibration? calibrationOf(Insta360Trailer trailer, {List<double>? accelerometer}) {
   final v3 = trailer.offsetV3;
   final v6 = trailer.offsetV6;
   final v1 = trailer.offsetV1;
-  // V3 first (validated against Insta360 Studio on the X3), then V6 read with its first terms (the only string of the
+  // V3 first (validated against Insta360 Studio on the X3), then V6 with its five radial terms (the only string of the
   // X6), then the equidistant V1 as a last resort
   final lenses =
       (v3 == null ? null : parseInsta360OffsetV3(v3)) ??
@@ -289,9 +453,9 @@ DualFisheyeCalibration? calibrationOf(Insta360Trailer trailer, {List<double>? ac
 const _v3LensTokens = 19;
 
 // Tokens per lens of a V6 string: xi fx fy cx cy yaw pitch roll tx ty tz k1 k2 k3 k4 k5 p1 p2 p3 p4 s1 s2 s3 s4 w h
-// type, 56 tokens for two lenses (packed >> 16 = 6). The extra radial, tangential and thin prism terms are small
-// corrections the stitch does not apply: the Mei model is read from the first terms, which is the same approximation as
-// reading V3 on a camera that writes both.
+// type, 56 tokens for two lenses (packed >> 16 = 6). The Mei model takes the five radial terms; p3, p4 and the thin
+// prism terms s1 to s4 stay unread: GyroView (ADR 0032) measured that every reading of them makes the V6 of an X5 agree
+// less with its V3.
 const _v6LensTokens = 27;
 
 // Tokens per lens of a V1 string: radius cx cy yaw pitch roll; then the canvas width and height and a packed word, 16
@@ -299,10 +463,10 @@ const _v6LensTokens = 27;
 const _v1LensTokens = 6;
 
 /// The Mei model of the V3 calibration string [offset] of a two lens camera, in canvas pixels and degrees; null when it
-/// is not one
+/// is not one, its packed word included
 DualFisheyeCalibration? parseInsta360OffsetV3(String offset) {
   final tokens = _numbers(offset);
-  if (tokens == null || tokens.length != 2 + 2 * _v3LensTokens || tokens[0] != 2) {
+  if (tokens == null || tokens.length != 2 + 2 * _v3LensTokens || tokens[0] != 2 || !_packedVersion(tokens, 3)) {
     return null;
   }
   final canvasSquare = tokens[1 + 17];
@@ -332,11 +496,11 @@ DualFisheyeCalibration? parseInsta360OffsetV3(String offset) {
   return DualFisheyeCalibration(model: DualFisheyeModel.mei, lenses: [lens(0), lens(1)], canvasSquare: canvasSquare);
 }
 
-/// The Mei model read from the first terms of the V6 calibration string [offset] of a two lens camera (k4, k5, p3, p4
-/// and the thin prism terms are ignored), in canvas pixels and degrees; null when it is not one
+/// The Mei model of the V6 calibration string [offset] of a two lens camera, with its five radial terms (p3, p4 and the
+/// thin prism terms are left out), in canvas pixels and degrees; null when it is not one, its packed word included
 DualFisheyeCalibration? parseInsta360OffsetV6(String offset) {
   final tokens = _numbers(offset);
-  if (tokens == null || tokens.length != 2 + 2 * _v6LensTokens || tokens[0] != 2) {
+  if (tokens == null || tokens.length != 2 + 2 * _v6LensTokens || tokens[0] != 2 || !_packedVersion(tokens, 6)) {
     return null;
   }
   final canvasSquare = tokens[1 + 25];
@@ -357,6 +521,8 @@ DualFisheyeCalibration? parseInsta360OffsetV6(String offset) {
       k1: t[11],
       k2: t[12],
       k3: t[13],
+      k4: t[14],
+      k5: t[15],
       p1: t[16],
       p2: t[17],
     );
@@ -387,6 +553,17 @@ DualFisheyeCalibration? parseInsta360OffsetV1(String offset) {
     lenses: [lens(0), lens(1)],
     canvasSquare: canvasSquare,
   );
+}
+
+// Whether the packed word that ends the calibration string [tokens] names [version] in its high 16 bits: a string
+// of the right length whose word names another version is another layout, read wrongly token by token
+bool _packedVersion(List<double> tokens, int version) {
+  final packed = tokens.last;
+  if (packed == packed.roundToDouble() && packed >= 0 && packed.toInt() >> 16 == version) {
+    return true;
+  }
+  _log.warning('Insta360 calibration string V$version skipped: its packed word $packed names another version');
+  return false;
 }
 
 // The underscore separated numbers of [text], null when one is not a finite number
@@ -433,7 +610,7 @@ class Insta360PhotoHead {
 }
 
 /// Bytes of the head of a photo read for its EXIF
-const insta360PhotoHeadLength = 4 * 1024;
+const insta360PhotoHeadLength = exifHeadLength;
 
 /// Reads the EXIF head of the Insta360 photo that [read] reads (see [parseInsta360PhotoHead]): a fallback for leveling
 /// when the trailer has no IMU record, and for naming the camera when there is no trailer. Errors of [read] are not
@@ -441,125 +618,27 @@ const insta360PhotoHeadLength = 4 * 1024;
 Future<Insta360PhotoHead?> readInsta360PhotoHead(ByteRangeReader read) async =>
     parseInsta360PhotoHead(await read(0, insta360PhotoHeadLength));
 
-// EXIF tags of the head of a photo
-const _modelTag = 0x0110;
-const _exifIfdTag = 0x8769;
-const _makerNoteTag = 0x927c;
-const _bodySerialNumberTag = 0xa431;
-
-/// The camera and the IMU sample of the EXIF of an Insta360 photo whose first bytes are [head]; null when it has none
-/// of them there.
+/// The camera and the IMU sample of the EXIF of an Insta360 photo whose first bytes are [head] (see [parseExifHead]);
+/// null when it has none of them there.
 ///
-/// It is read the way EXIF is: the APP1 segment of the JPEG, its TIFF header, then IFD0, with the Model (tag 0x0110)
-/// and the Exif IFD it points to (tag 0x8769), with the BodySerialNumber (tag 0xA431, absent on the X3) and the
-/// MakerNote (tag 0x927C). The camera writes in the MakerNote one IMU sample as ASCII, six underscore separated numbers,
-/// accelerometer then gyroscope, padded with zeros: "-1.003906_-0.124023_0.082031_0.024501_0.007457_0.053263". On the
-/// X3 that value starts at byte 1211 of the file, right after the ASCII values of IFD0 (Make "Arashi Vision", Model
-/// "Insta360 X3", firmware, dates), so the first 4 KB of the file hold it all.
+/// The camera writes in the MakerNote one IMU sample as ASCII, six underscore separated numbers, accelerometer then
+/// gyroscope, padded with zeros: "-1.003906_-0.124023_0.082031_0.024501_0.007457_0.053263". On the X3 that value starts
+/// at byte 1211 of the file, right after the ASCII values of IFD0 (Make "Arashi Vision", Model "Insta360 X3", firmware,
+/// dates), so the first 4 KB of the file hold it all. The X3 writes no BodySerialNumber.
 Insta360PhotoHead? parseInsta360PhotoHead(Uint8List head) {
-  final tiff = _exifTiffStart(head);
-  if (tiff == null || tiff + 8 > head.length) {
+  final exif = parseExifHead(head);
+  if (exif == null) {
     return null;
   }
-  final data = ByteData.sublistView(head);
-  final Endian endian;
-  switch (String.fromCharCodes(head, tiff, tiff + 2)) {
-    case 'II':
-      endian = Endian.little;
-    case 'MM':
-      endian = Endian.big;
-    default:
-      return null;
-  }
-  if (data.getUint16(tiff + 2, endian) != 42) {
-    return null;
-  }
-  String? text(int ifd, int tag) {
-    final value = _ifdEntry(data, tiff, ifd, tag, endian);
-    return value == null ? null : _exifText(head, data, tiff, value, endian);
-  }
-
-  final ifd0 = data.getUint32(tiff + 4, endian);
-  final cameraModel = text(ifd0, _modelTag);
-  final exifEntry = _ifdEntry(data, tiff, ifd0, _exifIfdTag, endian);
-  final exifIfd = exifEntry == null ? null : data.getUint32(exifEntry, endian);
-  final serial = exifIfd == null ? null : text(exifIfd, _bodySerialNumberTag);
-  final makerNote = exifIfd == null ? null : text(exifIfd, _makerNoteTag);
+  final makerNote = exif.makerNote;
   final numbers = makerNote == null ? null : _numbers(makerNote);
   final imu = numbers == null || numbers.length != 6
       ? null
       : Insta360ImuSample(accelerometer: numbers.sublist(0, 3), gyroscope: numbers.sublist(3));
-  if (cameraModel == null && serial == null && imu == null) {
+  if (exif.model == null && exif.serial == null && imu == null) {
     return null;
   }
-  return Insta360PhotoHead(cameraModel: cameraModel, serial: serial, imu: imu);
-}
-
-// Where the TIFF header of the EXIF of the JPEG [head] starts: the segments are walked from the start of the image to the
-// APP1 segment that begins with "Exif\0\0". Null for a file that is not a JPEG, or without EXIF in [head].
-int? _exifTiffStart(Uint8List head) {
-  if (head.length < 4 || head[0] != 0xff || head[1] != 0xd8) {
-    return null;
-  }
-  var offset = 2;
-  while (offset + 4 <= head.length) {
-    if (head[offset] != 0xff) {
-      return null;
-    }
-    final marker = head[offset + 1];
-    if (marker == 0xff) {
-      // Fill byte before a marker
-      offset++;
-      continue;
-    }
-    // Start of the scan or end of the image: no EXIF before the picture data
-    if (marker == 0xda || marker == 0xd9) {
-      return null;
-    }
-    final length = head[offset + 2] << 8 | head[offset + 3];
-    if (marker == 0xe1 && offset + 10 <= head.length && String.fromCharCodes(head, offset + 4, offset + 8) == 'Exif') {
-      return offset + 10;
-    }
-    offset += 2 + length;
-  }
-  return null;
-}
-
-// The position of the value field (its last 4 bytes) of the entry [tag] of the IFD at [ifdOffset] from the TIFF header
-// at [tiff], null when that IFD is not in [data] or has no such entry
-int? _ifdEntry(ByteData data, int tiff, int ifdOffset, int tag, Endian endian) {
-  final ifd = tiff + ifdOffset;
-  if (ifdOffset < 8 || ifd + 2 > data.lengthInBytes) {
-    return null;
-  }
-  final count = data.getUint16(ifd, endian);
-  for (var i = 0; i < count; i++) {
-    final entry = ifd + 2 + 12 * i;
-    if (entry + 12 > data.lengthInBytes) {
-      return null;
-    }
-    if (data.getUint16(entry, endian) == tag) {
-      return entry + 8;
-    }
-  }
-  return null;
-}
-
-// The text of the EXIF entry whose value field is at [value] (see [_ifdEntry]): its printable ASCII up to the first NUL
-// or other control byte, trimmed; null when it is empty or not in [head]
-String? _exifText(Uint8List head, ByteData data, int tiff, int value, Endian endian) {
-  final count = data.getUint32(value - 4, endian);
-  // A value of more than 4 bytes sits at the offset the entry gives, from the TIFF header
-  final start = count <= 4 ? value : tiff + data.getUint32(value, endian);
-  if (start >= head.length) {
-    return null;
-  }
-  var stop = start;
-  while (stop < head.length && stop < start + count && head[stop] >= 0x20 && head[stop] < 0x7f) {
-    stop++;
-  }
-  final text = String.fromCharCodes(head, start, stop).trim();
-  return text.isEmpty ? null : text;
+  return Insta360PhotoHead(cameraModel: exif.model, serial: exif.serial, imu: imu);
 }
 
 bool _endsWithMagic(Uint8List bytes) {
@@ -632,76 +711,6 @@ List<double>? _meanAccelerometer(Uint8List samples, int count) {
   return used == 0 ? null : [x / used, y / used, z / used];
 }
 
-// Protobuf wire types
-const _varint = 0;
-const _fixed64 = 1;
-const _lengthDelimited = 2;
-const _fixed32 = 5;
-
-/// A field of a protobuf message: its number, its wire type, and its value: the integer of a varint, the bytes of the
-/// other wire types (8 for a 64 bit field, 4 for a 32 bit one)
-class _ProtoField {
-  const _ProtoField(this.number, this.wireType, {this.integer = 0, this.bytes});
-
-  final int number;
-  final int wireType;
-  final int integer;
-  final Uint8List? bytes;
-
-  String? get string => wireType == _lengthDelimited ? utf8.decode(bytes!, allowMalformed: true) : null;
-
-  /// The value as a number whatever its encoding: a varint, a float or a double
-  double? get asDouble => switch (wireType) {
-    _varint => integer.toDouble(),
-    _fixed32 => ByteData.sublistView(bytes!).getFloat32(0, Endian.little),
-    _fixed64 => ByteData.sublistView(bytes!).getFloat64(0, Endian.little),
-    _ => null,
-  };
-}
-
-/// The fields of the protobuf message [bytes], in their order. A truncated field, or a group (wire types 3 and 4, long
-/// deprecated and not in these messages), ends the message with a [FormatException].
-Iterable<_ProtoField> _protoFields(Uint8List bytes) sync* {
-  var offset = 0;
-
-  int varint() {
-    var value = 0;
-    for (var shift = 0; shift < 64; shift += 7) {
-      if (offset >= bytes.length) {
-        throw const FormatException('Truncated varint');
-      }
-      final byte = bytes[offset++];
-      value |= (byte & 0x7f) << shift;
-      if (byte & 0x80 == 0) {
-        return value;
-      }
-    }
-    throw const FormatException('Varint too long');
-  }
-
-  Uint8List take(int length) {
-    if (length < 0 || offset + length > bytes.length) {
-      throw const FormatException('Truncated field');
-    }
-    final field = Uint8List.sublistView(bytes, offset, offset + length);
-    offset += length;
-    return field;
-  }
-
-  while (offset < bytes.length) {
-    final key = varint();
-    final number = key >> 3;
-    final wireType = key & 7;
-    yield switch (wireType) {
-      _varint => _ProtoField(number, wireType, integer: varint()),
-      _fixed64 => _ProtoField(number, wireType, bytes: take(8)),
-      _lengthDelimited => _ProtoField(number, wireType, bytes: take(varint())),
-      _fixed32 => _ProtoField(number, wireType, bytes: take(4)),
-      _ => throw FormatException('Unsupported wire type $wireType'),
-    };
-  }
-}
-
 /// The fields of the metadata record the reader keeps, the first of each
 class _Metadata {
   String? serial;
@@ -719,11 +728,17 @@ class _Metadata {
   double? accelerometerRange;
   double? gyroscopeRange;
   bool isRawGyro = false;
+  String? groupIdentity;
+  int? groupIndex;
+  int? fileLayout;
+  int? trackOrder;
+  int? imageCategory;
+  int? streamLayout;
 
   /// Reads the protobuf message [bytes]; a damaged message keeps the fields before the damage
   void decode(Uint8List bytes) {
     try {
-      for (final field in _protoFields(bytes)) {
+      for (final field in protoFields(bytes)) {
         switch (field.number) {
           case 1:
             serial ??= field.string;
@@ -735,22 +750,32 @@ class _Metadata {
             offsetV1 ??= field.string;
           case 17:
             offsetV1Factory ??= field.string;
-          case 19 when field.wireType == _lengthDelimited:
+          case 19 when field.wireType == protoLengthDelimited:
             _decodeDimension(field.bytes!);
-          case 27 when field.wireType == _lengthDelimited:
+          case 26 when field.wireType == protoLengthDelimited && groupIdentity == null && groupIndex == null:
+            _decodeGroup(field.bytes!);
+          case 27 when field.wireType == protoLengthDelimited:
             crop ??= _decodeCrop(field.bytes!);
           case 54:
             offsetV3 ??= field.string;
           case 56:
             offsetV3Copy ??= field.string;
-          case 62 when field.wireType == _varint:
+          case 62 when field.wireType == protoVarint:
             isRawGyro = field.integer != 0;
-          case 65 when field.wireType == _lengthDelimited:
+          case 65 when field.wireType == protoLengthDelimited:
             _decodeImuRanges(field.bytes!);
+          case 79 when field.wireType == protoVarint:
+            fileLayout ??= field.integer;
+          case 80 when field.wireType == protoVarint:
+            trackOrder ??= field.integer;
           case 111:
             offsetV6 ??= field.string;
           case 112:
             offsetV6Copy ??= field.string;
+          case 129 when field.wireType == protoVarint:
+            imageCategory ??= field.integer;
+          case 131 when field.wireType == protoVarint:
+            streamLayout ??= field.integer;
         }
       }
     } on FormatException {
@@ -759,8 +784,8 @@ class _Metadata {
   }
 
   void _decodeDimension(Uint8List bytes) {
-    for (final field in _protoFields(bytes)) {
-      if (field.wireType != _varint) {
+    for (final field in protoFields(bytes)) {
+      if (field.wireType != protoVarint) {
         continue;
       }
       switch (field.number) {
@@ -772,10 +797,26 @@ class _Metadata {
     }
   }
 
+  // The recording a file belongs to: its type (1), the index of the file (2), the identity of the recording (3) and
+  // the number of its files (4)
+  void _decodeGroup(Uint8List bytes) {
+    for (final field in protoFieldsLenient(bytes)) {
+      switch (field.number) {
+        case 2 when field.wireType == protoVarint:
+          groupIndex ??= field.integer;
+        case 3 when field.wireType == protoLengthDelimited:
+          final identity = field.string?.trim();
+          if (identity != null && identity.isNotEmpty) {
+            groupIdentity ??= identity;
+          }
+      }
+    }
+  }
+
   Insta360Crop _decodeCrop(Uint8List bytes) {
     final values = List.filled(6, 0);
-    for (final field in _protoFields(bytes)) {
-      if (field.wireType == _varint && field.number >= 1 && field.number <= 6) {
+    for (final field in protoFields(bytes)) {
+      if (field.wireType == protoVarint && field.number >= 1 && field.number <= 6) {
         values[field.number - 1] = field.integer;
       }
     }
@@ -791,7 +832,7 @@ class _Metadata {
 
   // The X3 writes both ranges as varints (32 g, 2000 degrees per second); the schema has them as floats
   void _decodeImuRanges(Uint8List bytes) {
-    for (final field in _protoFields(bytes)) {
+    for (final field in protoFields(bytes)) {
       switch (field.number) {
         case 1:
           accelerometerRange ??= field.asDouble;

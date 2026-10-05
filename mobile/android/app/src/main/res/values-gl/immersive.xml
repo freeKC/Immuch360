@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Nada que mostrar</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d supera o descodificador do casco (entrecortado, pixelado). En Immich, configure a transcodificación de vídeo en HEVC ou limite a resolución.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d supera o descodificador do casco (entrecortado, pixelado). Recodifique este ficheiro en HEVC ou cunha resolución máis baixa.</string>
+  <string name="immersive_raw_one_lens_decoder">Este casco non pode descodificar á vez as dúas lentes deste vídeo (%1$s %2$d x %3$d, dúas veces). Móstrase unha lente: a metade da esfera queda negra.</string>
+  <string name="immersive_raw_one_lens_file">Non se pode ler o ficheiro da outra lente. Móstrase unha lente: a metade da esfera queda negra.</string>
+  <string name="immersive_raw_unstitched">A unión 360° fallou neste dispositivo. O vídeo móstrase tal como o gravou a cámara.</string>
 </resources>

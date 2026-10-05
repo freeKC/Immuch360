@@ -8,13 +8,16 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('VideoSource');
@@ -67,8 +70,10 @@ class VideoSourceService {
   // Whether the transcoded stream of a video is its original, by video id
   final _transcodeIsOriginal = <String, bool>{};
 
-  /// Whether the device decodes the video track [probe] describes. Null when the probe misses its codec or its frame
-  /// size, and when the check fails or takes longer than [timeout]: the check is tried again next time.
+  /// Whether the device decodes the video track [probe] describes, with its bit depth and its HDR transfer when the
+  /// file tells them (they decide the 10 bit and HDR10 profiles a decoder must list). Null when the probe misses its
+  /// codec or its frame size, and when the check fails or takes longer than [timeout]: the check is tried again next
+  /// time.
   Future<DecodeVerdict?> verdict(SphericalProbe? probe) async {
     final codec = probe?.codec;
     final width = probe?.codedWidth;
@@ -76,18 +81,69 @@ class VideoSourceService {
     if (probe == null || codec == null || width == null || height == null) {
       return null;
     }
-    final codecs = probe.codecs;
+    return _ask(
+      codec: codec,
+      codecs: probe.codecs,
+      width: width,
+      height: height,
+      frameRate: probe.frameRate ?? 0,
+      bitDepth: probe.bitDepth ?? 0,
+      transfer: probe.transferCharacteristics ?? 0,
+    );
+  }
+
+  /// Whether the device decodes two video streams of [codec] (with its RFC 6381 [codecs] when known) of [width] x
+  /// [height] at [frameRate] and [bitDepth] at once, one decoder each: the two lenses of a raw 360° video whose plan
+  /// has two tracks (two tracks of one file, or the two files of a split pair). On a phone, a refusal is worth a word
+  /// before the player opens anyway; the native players fall back by themselves when the decoders fail. Null when the
+  /// codec or the size is unknown, or when the check fails or takes longer than [timeout].
+  Future<DecodeVerdict?> twoStreamVerdict({
+    required String? codec,
+    String? codecs,
+    required int? width,
+    required int? height,
+    double? frameRate,
+    int? bitDepth,
+  }) async {
+    if (codec == null || width == null || height == null || width <= 0 || height <= 0) {
+      return null;
+    }
+    return _ask(
+      codec: codec,
+      codecs: codecs,
+      width: width,
+      height: height,
+      frameRate: frameRate ?? 0,
+      bitDepth: bitDepth ?? 0,
+      transfer: 0,
+      instances: 2,
+    );
+  }
+
+  // Asks the decoder check, once per question
+  Future<DecodeVerdict?> _ask({
+    required String codec,
+    required String? codecs,
+    required int width,
+    required int height,
+    required double frameRate,
+    required int bitDepth,
+    required int transfer,
+    int instances = 1,
+  }) async {
     // The codec the codecs string names, which is another one for the HEVC base layer of a Dolby Vision track
     // without its own configuration (see SphericalProbe.codecs): the decoders are asked about that layer
     final asked = codecs?.split('.').first ?? codec;
-    final frameRate = probe.frameRate ?? 0;
-    final key = '$asked $codecs ${width}x$height $frameRate';
+    final streams = instances > 1 ? ' x$instances' : '';
+    final key = '$asked $codecs ${width}x$height $frameRate $bitDepth $transfer$streams';
     final known = _verdicts[key];
     if (known != null) {
       return known;
     }
     try {
-      final verdict = await _api.canDecode(asked, codecs, width, height, frameRate).timeout(timeout);
+      final verdict = await _api
+          .canDecode(asked, codecs, width, height, frameRate, bitDepth, transfer, instances: instances)
+          .timeout(timeout);
       _log.fine('$key: $verdict');
       return _verdicts[key] = verdict;
     } catch (error) {
@@ -180,18 +236,43 @@ final videoSourceServiceProvider = Provider<VideoSourceService>(
   ),
 );
 
-/// What the details of a video tell about its file: what its probe found and whether the device decodes it, each
-/// null when unknown
-typedef VideoDecodeDetails = ({SphericalProbe? probe, DecodeVerdict? verdict});
+/// What the details of a video tell about its file: what its probe found, whether the device decodes it, and its bit
+/// rate, each null when unknown
+typedef VideoDecodeDetails = ({SphericalProbe? probe, DecodeVerdict? verdict, VideoBitRate? bitRate});
 
 /// The file of [asset], a video, as its details show it: from the probe of the copy on the device when there is one,
-/// else of the original on the server
+/// else of the original on the server. Its bit rate comes from the probe, else from the size of the file over the
+/// duration of the asset.
 final videoDecodeDetailsProvider = FutureProvider.autoDispose.family<VideoDecodeDetails, BaseAsset>((ref, asset) async {
   final probes = ref.watch(sphericalProbeServiceProvider);
   final sources = ref.watch(videoSourceServiceProvider);
   final probe = await probes.probe(asset);
-  return (probe: probe, verdict: await sources.verdict(probe));
+  final verdict = await sources.verdict(probe);
+  // The size of the file is only asked when the probe tells no rate: for a file on the device, the system may have to
+  // fetch it
+  final fileSize = videoBitRateOf(probe: probe) == null ? await _fileSizeOf(ref, asset) : null;
+  final bitRate = videoBitRateOf(probe: probe, fileSize: fileSize, durationMs: asset.durationMs);
+  return (probe: probe, verdict: verdict, bitRate: bitRate);
 });
+
+// The size in bytes of the file of [asset]: as the server or the database records it, else of its copy on the device;
+// null when neither tells
+Future<int?> _fileSizeOf(Ref ref, BaseAsset asset) async {
+  try {
+    final recorded = (await ref.watch(assetExifProvider(asset).future))?.fileSize;
+    if (recorded != null && recorded > 0) {
+      return recorded;
+    }
+    final localId = asset.localId;
+    if (localId == null) {
+      return null;
+    }
+    return await (await ref.read(storageRepositoryProvider).getFileForAsset(localId))?.length();
+  } catch (error) {
+    _log.fine('No file size for ${asset.name}: $error');
+    return null;
+  }
+}
 
 /// Every video decoder of the device, for the decoders page of the settings
 final videoDecodersProvider = FutureProvider.autoDispose<List<DecoderInfo>>(

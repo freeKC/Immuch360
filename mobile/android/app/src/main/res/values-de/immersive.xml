@@ -30,4 +30,7 @@
   <string name="immersive_error_nothing">Nichts anzuzeigen</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d überfordert den Decoder des Headsets (ruckelig, verpixelt). Stelle in Immich die Videotranskodierung auf HEVC um oder begrenze die Auflösung.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d überfordert den Decoder des Headsets (ruckelig, verpixelt). Kodiere diese Datei in HEVC oder mit geringerer Auflösung neu.</string>
+  <string name="immersive_raw_one_lens_decoder">Dieses Headset kann die zwei Objektive dieses Videos nicht gleichzeitig dekodieren (%1$s %2$d x %3$d, zweimal). Es zeigt ein Objektiv: Die Hälfte der Kugel bleibt schwarz.</string>
+  <string name="immersive_raw_one_lens_file">Die Datei des anderen Objektivs kann nicht gelesen werden. Ein Objektiv wird gezeigt: Die Hälfte der Kugel bleibt schwarz.</string>
+  <string name="immersive_raw_unstitched">Das 360°-Zusammenfügen ist auf diesem Gerät fehlgeschlagen. Das Video wird so gezeigt, wie die Kamera es aufgenommen hat.</string>
 </resources>

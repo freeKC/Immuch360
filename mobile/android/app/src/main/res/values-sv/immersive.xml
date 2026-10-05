@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">Inget att visa</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d överskrider headsetets avkodare (hackigt, blockigt). Ställ in videoomkodningen på HEVC i Immich eller begränsa upplösningen.</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d överskrider headsetets avkodare (hackigt, blockigt). Koda om den här filen till HEVC eller till en lägre upplösning.</string>
+  <string name="immersive_raw_one_lens_decoder">Det här headsetet kan inte avkoda videons två objektiv samtidigt (%1$s %2$d x %3$d, två gånger). Det visar ett objektiv: halva sfären förblir svart.</string>
+  <string name="immersive_raw_one_lens_file">Filen för det andra objektivet kan inte läsas. Ett objektiv visas: halva sfären förblir svart.</string>
+  <string name="immersive_raw_unstitched">360°-hopfogningen misslyckades på den här enheten. Videon visas som kameran spelade in den.</string>
 </resources>

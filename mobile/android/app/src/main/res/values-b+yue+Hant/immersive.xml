@@ -31,4 +31,7 @@
   <string name="immersive_error_nothing">冇嘢可以顯示</string>
   <string name="immersive_codec_too_large">%1$s %2$d x %3$d 超出頭戴裝置解碼器嘅能力（會一窒一窒、起格）。喺 Immich 將影片轉碼設定為 HEVC，或者限制解像度。</string>
   <string name="immersive_codec_too_large_file">%1$s %2$d x %3$d 超出頭戴裝置解碼器嘅能力（會一窒一窒、起格）。請將呢個檔案重新編碼做 HEVC，或者用較低嘅解像度。</string>
+  <string name="immersive_raw_one_lens_decoder">呢個頭戴裝置唔可以同時解碼呢段影片嘅兩個鏡頭（%1$s %2$d x %3$d，兩條）。只會顯示一個鏡頭：球面有一半會保持黑色。</string>
+  <string name="immersive_raw_one_lens_file">讀唔到另一個鏡頭嘅檔案。只會顯示一個鏡頭：球面有一半會保持黑色。</string>
+  <string name="immersive_raw_unstitched">呢部裝置拼接 360° 失敗。影片會照相機錄落嘅樣顯示。</string>
 </resources>
