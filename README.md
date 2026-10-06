@@ -643,7 +643,7 @@ From build 19 the DLNA client, the phone share and the detection of Apple spatia
 ## Privacy
 
 - **Nothing goes to the developer**: the app talks to the Immich server you choose (and, when you open the map, to the map tile service that server uses), has no advertising, no analytics and no crash reporting service run by the developer, and sends nothing to the developer of Immuch360.
-- **Without a server**, nothing leaves the device.
+- **Without a server**, no server is contacted: the app uses the network only for the shares you open and for the phone share, if you turn it on.
 - **Network shares**: the share list is kept on the device and never sent to a server; passwords go to the device keychain or keystore.
 - **Phone share**: local network only, with a user name and password, over plain HTTP (see [Share this phone on the network](#share-this-phone-on-the-network)).
 - **Camera**: used only by the Spatial 2.5D player, on the device; the images are never stored and never sent anywhere.
