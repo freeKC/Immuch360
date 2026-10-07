@@ -9,6 +9,7 @@ import 'package:immich_mobile/models/cast/cast_manager_state.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
 
 class VideoControls extends ConsumerStatefulWidget {
@@ -102,54 +103,69 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
     final notifier = ref.watch(_provider.notifier);
     final isLoaded = duration != Duration.zero;
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-      child: Column(
-        spacing: 4,
-        children: [
-          Row(
-            children: [
-              IconButton(
-                iconSize: 32,
-                padding: const EdgeInsets.all(12),
-                constraints: const BoxConstraints(),
-                icon: isFinished
-                    ? const Icon(Icons.replay, color: Colors.white, shadows: VideoControls._controlShadows)
-                    : AnimatedPlayPause(
-                        color: Colors.white,
-                        playing: isPlaying,
-                        shadows: VideoControls._controlShadows,
-                      ),
-                onPressed: () => _toggle(isCasting),
-              ),
-              const Spacer(),
-              IgnorePointer(
-                child: Text(
-                  "${position.format()} / ${duration.format()}",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontFeatures: [FontFeature.tabularFigures()],
-                    shadows: VideoControls._controlShadows,
+    // Every key that reaches the controls (a remote moving between them) starts the 5 s again: they hide 5 s after the
+    // last key, not under a user who is still using them
+    return Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      onKeyEvent: (_, _) {
+        _hideTimer.reset();
+        return KeyEventResult.ignored;
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+        child: Column(
+          spacing: 4,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  iconSize: 32,
+                  padding: const EdgeInsets.all(12),
+                  constraints: const BoxConstraints(),
+                  icon: isFinished
+                      ? const Icon(Icons.replay, color: Colors.white, shadows: VideoControls._controlShadows)
+                      : AnimatedPlayPause(
+                          color: Colors.white,
+                          playing: isPlaying,
+                          shadows: VideoControls._controlShadows,
+                        ),
+                  onPressed: () => _toggle(isCasting),
+                ),
+                const Spacer(),
+                IgnorePointer(
+                  child: Text(
+                    "${position.format()} / ${duration.format()}",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                      shadows: VideoControls._controlShadows,
+                    ),
                   ),
                 ),
+                const SizedBox(width: 12),
+              ],
+            ),
+            // On a TV the viewer seeks with left and right: a focused slider would keep the arrows (Flutter issue
+            // 54984)
+            ExcludeFocus(
+              excluding: ref.watch(tvModeProvider),
+              child: Slider(
+                value: min(position.inMicroseconds.toDouble(), duration.inMicroseconds.toDouble()),
+                min: 0,
+                max: max(duration.inMicroseconds.toDouble(), 1),
+                thumbColor: Colors.white,
+                activeColor: Colors.white,
+                inactiveColor: whiteOpacity75,
+                padding: EdgeInsets.zero,
+                onChangeStart: (_) => notifier.hold(),
+                onChangeEnd: (_) => notifier.release(),
+                onChanged: isLoaded ? (value) => _onSeek(isCasting, value) : null,
               ),
-              const SizedBox(width: 12),
-            ],
-          ),
-          Slider(
-            value: min(position.inMicroseconds.toDouble(), duration.inMicroseconds.toDouble()),
-            min: 0,
-            max: max(duration.inMicroseconds.toDouble(), 1),
-            thumbColor: Colors.white,
-            activeColor: Colors.white,
-            inactiveColor: whiteOpacity75,
-            padding: EdgeInsets.zero,
-            onChangeStart: (_) => notifier.hold(),
-            onChangeEnd: (_) => notifier.release(),
-            onChanged: isLoaded ? (value) => _onSeek(isCasting, value) : null,
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

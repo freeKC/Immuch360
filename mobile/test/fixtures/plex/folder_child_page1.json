@@ -1,0 +1,148 @@
+{
+  "MediaContainer": {
+    "size": 2,
+    "totalSize": 3,
+    "offset": 0,
+    "allowSync": true,
+    "art": "/:/resources/movie-fanart.jpg",
+    "content": "secondary",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "00000000-0000-0000-0000-000000000001",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1700000000,
+    "thumb": "/:/resources/movie.png",
+    "title1": "Movies",
+    "title2": "By Folder",
+    "viewGroup": "secondary",
+    "Metadata": [
+      {
+        "ratingKey": "301",
+        "key": "/library/metadata/301",
+        "guid": "plex://movie/00000000000000000000012d",
+        "slug": "beach-360",
+        "studio": "Test Studio",
+        "type": "movie",
+        "title": "Beach 360",
+        "contentRating": "G",
+        "summary": "Made up for the tests.",
+        "audienceRating": 7.5,
+        "year": 2020,
+        "tagline": "",
+        "thumb": "/library/metadata/301/thumb/1700000000",
+        "art": "/library/metadata/301/art/1700000000",
+        "duration": 30000,
+        "originallyAvailableAt": "2020-01-01",
+        "addedAt": 1600000301,
+        "updatedAt": 1700000301,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "Image": [
+          {
+            "alt": "Beach 360",
+            "type": "coverPoster",
+            "url": "/library/metadata/301/thumb/1700000000"
+          }
+        ],
+        "UltraBlurColors": {
+          "topLeft": "000000",
+          "topRight": "000000",
+          "bottomRight": "000000",
+          "bottomLeft": "000000"
+        },
+        "Media": [
+          {
+            "id": 3010,
+            "duration": 30000,
+            "bitrate": 8000,
+            "width": 5760,
+            "height": 2880,
+            "aspectRatio": 1.78,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mp4",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "hasVoiceActivity": false,
+            "Part": [
+              {
+                "id": 3010,
+                "key": "/library/parts/3010/1700000000/file.mp4",
+                "duration": 30000,
+                "file": "/data/movies/Holidays/beach_360.mp4",
+                "size": 4096,
+                "container": "mp4",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "ratingKey": "302",
+        "key": "/library/metadata/302",
+        "guid": "plex://movie/00000000000000000000012e",
+        "slug": "beach-360-copy",
+        "studio": "Test Studio",
+        "type": "movie",
+        "title": "Beach 360 copy",
+        "contentRating": "G",
+        "summary": "Made up for the tests.",
+        "audienceRating": 7.5,
+        "year": 2020,
+        "tagline": "",
+        "thumb": "/library/metadata/302/thumb/1700000000",
+        "art": "/library/metadata/302/art/1700000000",
+        "duration": 30000,
+        "originallyAvailableAt": "2020-01-01",
+        "addedAt": 1600000302,
+        "updatedAt": 1700000302,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "Image": [
+          {
+            "alt": "Beach 360 copy",
+            "type": "coverPoster",
+            "url": "/library/metadata/302/thumb/1700000000"
+          }
+        ],
+        "UltraBlurColors": {
+          "topLeft": "000000",
+          "topRight": "000000",
+          "bottomRight": "000000",
+          "bottomLeft": "000000"
+        },
+        "Media": [
+          {
+            "id": 3020,
+            "duration": 30000,
+            "bitrate": 8000,
+            "width": 5760,
+            "height": 2880,
+            "aspectRatio": 1.78,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mp4",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "hasVoiceActivity": false,
+            "Part": [
+              {
+                "id": 3020,
+                "key": "/library/parts/3020/1700000000/file.mp4",
+                "duration": 30000,
+                "file": "D:\\Plex\\Holidays\\beach_360.mp4",
+                "size": 4096,
+                "container": "mp4",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

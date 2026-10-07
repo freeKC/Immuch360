@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 isch d Immich-App fürs Telefon mit 360°-Fotos ond -Videos, en dene mr sich omgucka ko, ond a kostaloser Player fir flache, 360°-, 3D- ond VR180-Fotos ond -Videos, uff Android-Telefon ond -Tablets, iPhone ond iPad, ond uff dr Meta Quest 3 ond 3S. Se isch fir Leit, die mit ra 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) oder em Fotosphäre-Modus vom Telefon fotografieret, oder die a Headset hen, ond ihre eigene Aufnahma vom Immich-Server, vom Telefon selber, vom NAS oder vom Medieserver aagucka wellet: gleicher Server, gleichs Konto, koi Server-Plugin, oder gar koi Server.
+Immuch360 isch d Immich-App fürs Telefon mit 360°-Fotos ond -Videos, en dene mr sich omgucka ko, ond a kostaloser Player fir flache, 360°-, 3D- ond VR180-Fotos ond -Videos, uff Android-Telefon ond -Tablets, iPhone ond iPad, uff dr Meta Quest 3 ond 3S, ond ab Build 20 uff Android TV ond Google TV. Se isch fir Leit, die mit ra 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) oder em Fotosphäre-Modus vom Telefon fotografieret, oder die a Headset hen, ond ihre eigene Aufnahma vom Immich-Server, vom Telefon selber, vom NAS, vom Medieserver oder vom Plex-Server aagucka wellet: gleicher Server, gleichs Konto, koi Server-Plugin, oder gar koi Server. Ab Build 20 zeigt se au Tapo-Kameras, live ond d Aufnahma vo ihrer Speicherkart.
 
 <p align="center">
   <sub>Inoffizieller Fork. Ghört ned zu Immich ond ned zu FUTO. Dr Nama liest sich wia "I am much 360".</sub>
@@ -15,7 +15,8 @@ Immuch360 isch d Immich-App fürs Telefon mit 360°-Fotos ond -Videos, en dene m
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">en dr Prüfong</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store en dr Prüfong
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store en dr Prüfong &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 isch d Immich-App fürs Telefon mit 360°-Fotos ond -Videos, en dene m
     <td align="center" width="33%"><h3>🎥 2.5D direkt drin</h3>Diafe uff ma flacha Bildschirm aus ma stereoskopischa Video, d Aasicht folgt deim Kopf (experimentell, Telefon ond Tablets)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Oi App, drei Plattforma, echts 3D em Headset</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Oi App uffm Telefon, uffm Tablet ond em Headset, echts 3D em Headset, ond ab Build 20 uff Android TV mit dr Fernbedienong</td>
     <td align="center"><h3>🔌 Mit oder ohne Server</h3>Dei Immich-Server, oder d Galerie vom Telefon selber, koi Konto nötig</td>
     <td align="center"><h3>🗄️ Netzwerkfreigaba</h3>Samba (SMB), WebDAV ond, ab Build 19, DLNA-Medieserver, die em Netzwerk gfonda ond direkt glesa werdet, nix wird ronterglada, ond die an Immich gschickt werdet, wenn du des willsch. Ab Build 19 teilt a Telefon au sei eigene Galerie mit em Headset</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Uffm Fernseher</h3>Ab Build 20 die gleiche APK uff Android TV ond Google TV: 360°-Fotos ond -Videos, dei Server ond deine Freigaba, mit dr Fernbedienong</td>
+    <td align="center"><h3>🎬 Plex, ohne plex.tv</h3>Ab Build 20 deine Plex-Bibliotheka, vo de Originaldateia abgspielt, damit 360° au 360° bleibt, drhoim ond onderwegs</td>
+    <td align="center"><h3>📹 Tapo-Kameras</h3>Ab Build 20 s Live-Bild ond d Aufnahma vo dr Speicherkart, bloß en deim Netzwerk, ond a Clip, der an Immich goht, wenn du des willsch</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 isch d Immich-App fürs Telefon mit 360°-Fotos ond -Videos, en dene m
 - **"Meine 360°-Fotos sehet aus wia a flachr, auseinanderzogener Streifa, ond meine 360°-Videos laufet flach."** Guck bei [360°-Fotos ond -Videos als Kugl](#360-photos-and-videos-as-a-sphere).
 - **"I han koin Server, ond i will koi Konto."** Guck bei [Ohne Server ond ohne Konto](#without-a-server-or-an-account).
 - **"I will d Videos vo meim NAS aagucka, uffm Telefon oder em Headset, ohne dass i se kopier."** Guck bei [Netzwerkfreigaba](#network-shares-a-nas-a-computer-or-a-media-server).
+- **"Plex spielt meine 360°-Videos flach ab, ond i will mei Plex-Bibliothek em Headset, uffm Fernseher ond onderwegs."** Guck bei [Plex Media Server, ohne plex.tv](#plex-media-server-without-plextv).
 - **"Meine Fotos send uffm Telefon, ond i han koin Computer ond koi NAS, wo i se fürs Headset drufdua ko."** Guck bei [Des Telefon em Netzwerk freigeba](#share-this-phone-on-the-network).
+- **"I will mei Tapo-Kamera ond d Clips vo dr letschta Nacht ohne d Tapo-App seha, ond an Clip en Immich bhalta."** Guck bei [Tapo-Kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"Fir meine Insta360-Dateia brauch i d Insta360-App, bevor i se aagucka ko"** (ond fir d GoPro-.360- ond DJI-.osv-Dateia au). Guck bei [Rohdateia vo 360°-Kameras](#raw-360-camera-files-without-the-cameras-app).
 - **"Meine 3D-Videos sehet doppelt aus, ond meine VR180-Videos send rondrom auseinanderzoga."** Guck bei [3D ond VR180](#3d-and-vr180-photos-and-videos) ond [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"I han räumliche Fotos vo meim iPhone."** Guck bei [Räumliche Fotos ond Videos vo Apple](#apple-spatial-photos-and-videos).
 - **"Uffm Telefon goht's, aber i will's en dr Quest."** Guck bei [Em Headset Meta Quest 3](#in-the-meta-quest-3-headset).
+- **"I will meine 360°-Fotos ond -Videos, ond d Videos vo meim NAS oder meim Plex-Server, uffm Fernseher aagucka, mit dr Fernbedienong."** Guck bei [Uffm Fernseher aagucka](#watch-on-your-tv-android-tv-and-google-tv).
 - **"I find meine 360°-Aufnahma zwischa älle andre ned."** Guck bei [D 360°-Lischte](#find-your-360-shots-the-360-list).
 - **"Mei 360°-Video ruckelt, oder es lauft a verschwommene Kopie."** Guck bei [Videodetails ond Decoder](#video-details-decoders-and-why-a-video-stutters).
 - **"Bhalt i des, was d Immich-App ko?"** Ja, mit zwoi kleine Änderonga, guck bei [Älles andre isch Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ D Auswahl wird uffm Telefon gmerkt ond ändert nix uffm Server. Bei ra Datei vo 
 
 Du hosch koin Immich-Server, oder du willsch koi Konto: du willsch bloß, dass d 360°-Fotos vo deim Telefon als Kugl aufganget, die du mit em Gyroskop dreha kosch. D Immich-App will zerscht a Aameldong.
 
-Uff dr Aamelde-Seite macht "Ohne Server nutza" Immuch360 mit de Fotos ond Videos vom Gerät selber auf, mit de Aasichta fir 360°, 3D, VR180 ond Spatial, dr 360°-Lischte ond de Netzwerkfreigaba, ohne Immich-Konto. D Server-Funktiona bleibet versteckt oder grau, bis du an Server verbindsch; nix verlässt s Gerät. Uff dr Meta Quest 3 goht's mit de Fotos ond Videos vom Headset selber auf.
+Uff dr Aamelde-Seite macht "Ohne Server nutza" Immuch360 mit de Fotos ond Videos vom Gerät selber auf, mit de Aasichta fir 360°, 3D, VR180 ond Spatial, dr 360°-Lischte ond de Netzwerkfreigaba (ab Build 20 au de Plex-Server ond de Tapo-Kameras), ohne Immich-Konto. D Server-Funktiona bleibet versteckt oder grau, bis du an Server verbindsch; nix verlässt s Gerät. Uff dr Meta Quest 3 goht's mit de Fotos ond Videos vom Headset selber auf; uffm Fernseher, der koine hot, zeigt se uff d Netzwerkfreigaba (guck bei [Uffm Fernseher aagucka](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Dr Reiter Bibliothek ohne Server: dr Eintrag 360° ganz oba, dann On this device mit zwoi 360°-Fotos, ond Netzwerkfreigaba mit ra Freigab, die NAS hoißt">
 
@@ -126,7 +135,7 @@ Uff dr Aamelde-Seite macht "Ohne Server nutza" Immuch360 mit de Fotos ond Videos
 
 Deine 360°-Videos liegat uff ma NAS oder ma Computer, ond du willsch se uffm Telefon oder em Headset aagucka, ohne se vorher zom kopiera. Fürs Headset kopieret d Leit am End jede Datei übers Kabel; Medieserver wia Plex ond Jellyfin spielet 360°-Videos flach ab, wia's en de Wünsch en ihre Foren schtoht; d Immich-App liest bloß dein Immich-Server.
 
-Immuch360 durchsucht ond spielt d Fotos ond Videos vo jedem Server ab, der SMB (Samba, Windows), WebDAV oder, ab Build 19, DLNA/UPnP schwätzt (a Medieserver: Plex, Jellyfin, minidlna, Gerbera, Emby, a NAS oder a TV-Box), direkt vo dr Freigab. D App findet d Server en deim Netzwerk selber ond spielt d Dateia direkt en de gleiche Aasichta ab wia dr Rescht vo dr App (360°, 3D, VR180, Spatial 2.5D, immersive Aasicht vo dr Quest), mit oder ohne Immich-Server, uffm Telefon ond uff dr Meta Quest 3. Nix wird ronterglada. Wenn a Server verbonda isch, kennet d Dateia, die du aussuachsch, an dei Immich-Konto gschickt werda (ab Build 15).
+Immuch360 durchsucht ond spielt d Fotos ond Videos vo jedem Server ab, der SMB (Samba, Windows), WebDAV oder, ab Build 19, DLNA/UPnP schwätzt (a Medieserver: Jellyfin, minidlna, Gerbera, Emby, a NAS oder a TV-Box), direkt vo dr Freigab. Ab Build 20 hot a Plex Media Server an eigena Typ, guck bei [Plex Media Server, ohne plex.tv](#plex-media-server-without-plextv). D App findet d Server en deim Netzwerk selber ond spielt d Dateia direkt en de gleiche Aasichta ab wia dr Rescht vo dr App (360°, 3D, VR180, Spatial 2.5D, immersive Aasicht vo dr Quest), mit oder ohne Immich-Server, uffm Telefon ond uff dr Meta Quest 3. Nix wird ronterglada. Wenn a Server verbonda isch, kennet d Dateia, die du aussuachsch, an dei Immich-Konto gschickt werda (ab Build 15).
 
 | A Freigab hinzufüega | A Ordner vo ra Freigab |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 durchsucht ond spielt d Fotos ond Videos vo jedem Server ab, der SMB (
 
 ### A Freigab hinzufüega
 
-1. Mach da Reiter Bibliothek auf, dann Netzwerkfreigaba. S erschte Mol sagt d Seite "No koi Freigab" mit ma Knopf "A Freigab hinzufüega"; + oba rechts macht jederzeit s Gleiche.
-2. D Seite "A Freigab hinzufüega" sucht zerscht d Server en deim Netzwerk ond listet se onder "Em Netzwerk gfonda" auf, mit ihrem Typ (SMB, WebDAV, DLNA, Telefon). D Suche dauert bis zu ongefähr sechs Sekonda; "Nomol sucha" fangt se nei aa. Se nemmt Bonjour/mDNS ond an Scan vom lokala Netzwerk, der durch an echta SMB- oder WebDAV-Austausch bschtätigt wird, ond ab Build 19 a SSDP-Suche nach DLNA-Medieserver.
-3. Tipp uff an Server: Typ, Server, Port ond Pfad werdet eitraga.
-4. Ned en dr Lischte? Füll s Formular vo Hand aus. Typ: "SMB (Samba, Windows-Freigab)", "WebDAV (Nextcloud, Synology ond andre)" oder "DLNA-Medieserver (Plex, Jellyfin, NAS, TV-Box)". Dann Nama, "Servername oder Adress" (a Nama oder a Adress; a vollschtändige Adress wia `smb://nas/photos`, `\\nas\photos` oder `https://nas:5006/photos` füllt d andre Felder aus), "Port (optional)", wenn's ned dr übliche isch, "Freigab" fir SMB oder "Pfad vo dr WebDAV-Adress" fir WebDAV, "Startordner (optional)", "Benutzernama" ond "Passwort", ond "Sichere Verbindong (HTTPS)" fir WebDAV.
+1. Mach da Reiter Bibliothek auf, dann Netzwerkfreigaba. S erschte Mol sagt d Seite "No koi Freigab" mit ma Knopf "A Freigab hinzufüega"; + oba rechts macht jederzeit s Gleiche. Ab Build 20 froget beide, was du dazuamacha willsch: "A Netzwerkfreigab (NAS, Computer, Medieserver)", "A Plex Media Server" oder "A Tapo-Kamera". Nemm s Erschte.
+2. D Seite "A Freigab hinzufüega" sucht zerscht d Server en deim Netzwerk ond listet se onder "Em Netzwerk gfonda" auf, mit ihrem Typ (SMB, WebDAV, DLNA, Telefon, ond ab Build 20 Plex ond Tapo). D Suche dauert bis zu ongefähr sechs Sekonda; "Nomol sucha" fangt se nei aa. Se nemmt Bonjour/mDNS ond an Scan vom lokala Netzwerk, der durch an echta SMB- oder WebDAV-Austausch bschtätigt wird, ab Build 19 a SSDP-Suche nach DLNA-Medieserver, ond ab Build 20 GDM, d Suche vo Plex, ond s Suchprotokoll vo TP-Link fir d Tapo-Kameras.
+3. Tipp uff an Server: Typ, Server, Port ond Pfad werdet eitraga. A Plex-Server oder a Tapo-Kamera macht stattdessa sei eigene Seite auf, scho ausgfüllt.
+4. Ned en dr Lischte? Füll s Formular vo Hand aus. Typ: "SMB (Samba, Windows-Freigab)", "WebDAV (Nextcloud, Synology ond andre)", "DLNA-Medieserver (Jellyfin, NAS, TV-Box)" oder, ab Build 20, "Plex Media Server", des d Seite vo [Plex Media Server, ohne plex.tv](#plex-media-server-without-plextv) aufmacht. Dann Nama, "Servername oder Adress" (a Nama oder a Adress; a vollschtändige Adress wia `smb://nas/photos`, `\\nas\photos` oder `https://nas:5006/photos` füllt d andre Felder aus), "Port (optional)", wenn's ned dr übliche isch, "Freigab" fir SMB oder "Pfad vo dr WebDAV-Adress" fir WebDAV, "Startordner (optional)", "Benutzernama" ond "Passwort", ond "Sichere Verbindong (HTTPS)" fir WebDAV.
 5. SMB: sobald Server ond Benutzernama eitippt send, listet "A Freigab aussuacha" d Freigaba vom Server auf.
 6. DLNA: a Medieserver hot koin Benutzernama ond koi Passwort. Gib da Server, da Port ond da "Beschreibungspfad" vo seiner Gerätebeschreibong aa (`/rootDesc.xml` fir minidlna), oder füg die ganze Adress, wia `http://192.168.1.10:8200/rootDesc.xml`, ens Serverfeld ei.
 7. Tipp uff "Verbindong teschta". D Antwort isch "Verbonda, N Eiträg em Startordner", oder es schtoht do, warom's ned klappt hot. Dann tipp onda em Formular uff Speichera.
@@ -155,6 +164,7 @@ A Benutzernama mit ma leera Passwort wird so gschickt: a Freebox Server will fir
 
 360°, 3D ond VR180 werdet aus de GPano- oder Kugl-Metadata vo dr Datei erkannt, die mit Bereichsaafroga (range requests) glesa werdet, ond VR180 au am Dateinama. Ab Build 16 werdet au rohe Insta360-Dateia erkannt (a .insp-Foto am Nama oder am Kalibrierongsblock vo dr Kamera, a .insv-Video am Nama ond am Bild) ond zammagsetzt.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Dateia vo ra Freigab an Immich schicka
 
 Ab Build 15, wenn du mit ma Server verbonda bisch:
@@ -177,17 +187,67 @@ Ab Build 19 schickt d App d SSDP-Suche nach Medieserver an d Multicast-Gruppe vo
 <a id="a-share-that-moved"></a>
 ### A Freigab, die omzoga isch
 
-Ab Build 19 bhaltet a DLNA-Freigab ond a Telefon-Freigab (guck bei [Des Telefon em Netzwerk freigeba](#share-this-phone-on-the-network)) d ID, die ihr Server aakündigt. Wenn oine nemme onder ihrer Adress antwortet (a neie Adress vom Router, a Server, der uff ma andre Port nei gstartet isch), zeigt ihr Ordnerseite "Such (Nama) em Netzwerk" ond verlegt d Freigab dohi, wo se jetzt antwortet: sofort bei ma DLNA-Server, der koi Passwort hot, ond nach ra Bschtätigong, "Die neie Adress nemma?", die beide Adressa zeigt, bei ra Freigab mit Benutzernama ond Passwort, weil die an die neie Adress gschickt werda dätet.
+Ab Build 19 bhaltet a DLNA-Freigab ond a Telefon-Freigab (guck bei [Des Telefon em Netzwerk freigeba](#share-this-phone-on-the-network)) d ID, die ihr Server aakündigt. Wenn oine nemme onder ihrer Adress antwortet (a neie Adress vom Router, a Server, der uff ma andre Port nei gstartet isch), zeigt ihr Ordnerseite "Such (Nama) em Netzwerk" ond verlegt d Freigab dohi, wo se jetzt antwortet: sofort bei ma DLNA-Server, der koi Passwort hot, ond nach ra Bschtätigong, "Die neie Adress nemma?", die beide Adressa zeigt, bei ra Freigab mit Benutzernama ond Passwort, weil die an die neie Adress gschickt werda dätet. Ab Build 20 zieht au a Plex-Server, der onder ra andre Adress em Netzwerk wieder gfonda wird, sofort mit om: sei Zertifikat beweist, dass es dr gleiche Server isch, bevor s Token gschickt wird. A Tapo-Kamera wird vo ihrer eigene Seite aus über ihre MAC-Adress gsucht, guck bei [Tapo-Kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Grenza
 
 - **SMB**: bloß SMB 2 ond 3, koi SMB 1.
 - **WebDAV**: bloß Basic-Aameldong (Digest goht no ned); a selbersignierts HTTPS-Zertifikat muss uffm Gerät installiert sei.
-- **Server fenda**: dr Netzwerkscan ond d DLNA-Suche guckat bloß em lokala /24-Netzwerk ond brauchet uff iOS d Berechtigong fürs lokale Netzwerk. Uffm iPhone ond iPad schickt d DLNA-Suche bloß d Unicast-Aafroga, bis Apple dr App d Multicast-Berechtigong (Entitlement) gibt, ond manche Server antwortet do ned druff (minidlna uff Linux): füg die über ihre Beschreibongsadress hinzu.
+- **Server fenda**: dr Netzwerkscan ond d DLNA-, Plex- ond Tapo-Suche guckat bloß em lokala /24-Netzwerk ond brauchet uff iOS d Berechtigong fürs lokale Netzwerk. Uffm iPhone ond iPad schickt d DLNA-Suche bloß d Unicast-Aafroga, bis Apple dr App d Multicast-Berechtigong (Entitlement) gibt, ond manche Server antwortet do ned druff (minidlna uff Linux): füg die über ihre Beschreibongsadress hinzu.
 - **DLNA**: a Server, der bloß a umgwandelte Kopie vo ra Datei aabietet, liefert die Kopie; a Ordner listet höchstens 20.000 Eiträg auf.
 - **Vorschaubildla**: Vorschaubildla vo Fotos dekodieret d ganze Datei, ond Fotos über 30 MB kriaget koins.
 - **Player**: d Auswahl vo dr Tonspur isch no ned em flacha Player. Uffm Telefon ko mr no ned vo oiner Datei vom Ordner zur nägschta wischa (d immersive Aasicht vo dr Quest hot vorigs ond nägschts fir d 360°-Dateia vom Ordner). D Wahl vo 3D oder 180° bei ra Netzwerkdatei wird ned gmerkt.
 - **Hochlada**: lauft bloß, solang d App offa isch, ond a Datei, die dr Server scho hot, wird ganz gschickt, bevor dr Server se als doppelt meldet.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, ohne plex.tv
+
+Deine Videos send en Plex, ond Plex zeigt deine 360°-Fotos ond -Videos flach aa, wia's en Wünsch en seim Forum schtoht (oiner isch seit 2017 offa). Du willsch die Bibliothek au em Headset, uffm Fernseher ond onderwegs. D Immich-App liest bloß dein Immich-Server, ond dr DLNA-Typ vo Build 19 kommt bloß drhoim an d DLNA-Seite vo Plex na.
+
+Ab Build 20 koppelt sich Immuch360 direkt mit deim Plex Media Server, ohne plex.tv: d App findet da Server em Netzwerk, du fügsch oimol a Token ei, ond d App liest d Originaldateia vo deine Bibliotheka direkt, en jeder Aasicht vo dr App (360°, 3D, VR180, Spatial 2.5D, d immersive Aasicht vo dr Quest, d Fernbedienong vom Fernseher), drhoim ond, über dei Portweiterleitong, au onderwegs. Nix wird kopiert, ond d Dateia, die du aussuachsch, kennet an Immich gschickt werda.
+
+### A Plex-Server dazuamacha
+
+1. Mach da Reiter Bibliothek auf, dann Netzwerkfreigaba, dann + ond "A Plex Media Server". Dr Typ "Plex Media Server" em Freigab-Formular, ond a Server mit em Plex-Schild onder "Em Netzwerk gfonda", machet die gleiche Seite auf.
+2. D Seite "A Plex-Server dazuamacha" sucht d Plex-Server en deim Netzwerk ("Such noch Plex-Server en deim Netzwerk") ond listet se onder "Em Netzwerk gfonda" auf. Tipp uff dein: a Karte zeigt sein Nama, sei Plex-Version ond a kurze ID.
+3. Ned en dr Lischte? Gib sei "Serveradress" ei, wia `192.168.1.20`, `192.168.1.20:32400` oder `https://...plex.direct:32400`, ond tipp dann uff "Nochgucka". D App liest s Zertifikat vom Server ond schickt sonscht nix.
+4. Hol dr s Token, uff ma Computer: mach Plex en ma Webbrowser auf ond meld di a, mach irgend a Foto oder Video aus deiner Bibliothek auf, dann "...", "Get Info", "View XML". A neis Tab goht auf mit ra Adress, wo uff `X-Plex-Token=...` aufhört. Kopier die ganze Adress.
+5. Füg se en "Zugriffstoken" ei, oder schick se ans Telefon ond tipp uff "Aus dr Zwischaablag eifüga": d App holt sich dr Server ond s Token drausa. Bloß dr Text noch `X-Plex-Token=` goht au. "So kriagsch's", uff dr Seite, sagt s Gleiche; Server-Admins kennet au da Wert `PlexOnlineToken` aus dr Datei `Preferences.xml` vom Server nemma, der ned abläuft. Uffm Fernseher macht OK da Tastatur-Dialog auf: tipp s Token do ei (meischtens isch's 20 Zeicha lang).
+6. Tipp uff "Verbindong teschta". D Antwort isch "Verbonda: N Bibliotheka", oder se sagt, was ned stimmt, wia "Dr Plex-Server hot des Token ned gnomma."
+7. "Zugriff vo außerhalb" zeigt dann, was dr Server sagt: "Dr Server sagt, er isch onter (Adress):(Port) erreichbar.", oder "Dr Server hot sei Adress außerhalb vo drhoim ned gsagt." Om da Server onderwegs zom nutza, gib dei öffentliche Adress oder dein DynDNS-Nama en "Adress außerhalb vo drhoim (IP oder Nama)" ei, ond da Port, der en Plex weitergleitet wird (Eistellunga, Fernzugriff), en "Port außerhalb vo drhoim". Was du eigibsch, gwinnt emmer gega des, was dr Server sagt.
+8. "Nama" isch dr Nama vom Server, wenn du'n ned änderscht, ond "Startordner (optional)" ko direkt a Bibliothek aufmacha. Tipp uff Speichera. Dr Server schtoht no bei de Freigaba, als `plex://` mit seiner Adress.
+
+### Deine Plex-Bibliotheka durchsucha
+
+1. Tipp uff da Server en Netzwerkfreigaba. D erschte Ebene listet d Bibliotheka auf, die d App zeigt: Fotos, Filme ond andre Videos, Serien. Musik bleibt draußa.
+2. Onder ra Bibliothek kommet ihre Ordner so, wia se uff dr Platte vom Server send (d Aasicht "by folder" vo Plex), dann d Fotos ond Videos onder ihre Dateinama, mit de Vorschaubilder, die Plex macht. A Fotobibliothek, deren Ordneraasicht ned antwortet, zeigt stattdessa ihre Alba.
+3. 360° ond 3D werdet erkannt, indem d Dateia selber glesa werdet, wia uff jeder Freigab: 360°-Fotos kriaget s 360°-Schild, räumliche vo Apple s 3D-Schild.
+4. Mach a Foto oder Video auf wia uff jeder Freigab: 360°, 3D, 360°/180°, Spatial 2.5D uffm Telefon, d immersive Aasicht en dr Quest, d Fernbedienong uffm Fernseher. A Video wird als Originaldatei glesa, mit Byte-Bereich über d lokale Brück vo dr App, drom goht s Spula ond seine 360°- ond 3D-Metadata kommet heil bei de Player aa.
+5. Wähl Dateia aus ond tipp uff "Zu Immich hochlada", om se an dein Server zom schicka, wia vo jeder Freigab (guck bei [Dateia vo ra Freigab an Immich schicka](#send-files-of-a-share-to-immich)).
+
+### Onderwegs
+
+Jedes Mol, wenn se da Server aufmacht, probiert d App zerscht d Adress drhoim ond, 400 ms schpäter, d Adress außerhalb vo drhoim. Die erschte, die mit deim Server antwortet, wird gnomma; wenn's d Adress außerhalb vo drhoim isch, zeigt d Ordnerseite a Globus-Symbol mit "Über d Adress außerhalb vo drhoim verbonda". Dafür muss en Plex dr Fernzugriff eigschaltet sei (Eistellunga, Fernzugriff), mit ma Port, den dei Router weiterleitet: ohne plex.tv ko d App s Relay vo Plex ned nutza, drom goht a Server ohne Portweiterleitong bloß drhoim auf, ond onderwegs sagt d Seite "Dei Plex-Server isch außerhalb vo deim Hoimnetzwerk ned erreichbar. Schalt en Plex dr Fernzugriff mit ra Portweiterleitong ei (Eistellunga, Fernzugriff), oder gib sei öffentliche Adress ei."
+
+D Adress, die dr Server sagt, wird bei jeder Verbindong drhoim nei glernt. Wenn se vo draußa ned antwortet (a Router, der sei Adress wechselt, zwoi Router hinteranander), gib dei eigene uff dr Seite vom Server ei. Wenn s Token nemme goht (zom Beispiel, weil du di vo dr Browsersitzong abgmeldet hosch, aus dr du's kopiert hosch), sagt des d Ordnerseite ond bietet "A neis Token eifüga" aa, des d Seite vom Server beim Token-Feld aufmacht.
+
+### Em Vergleich mit Plex ond mit em DLNA-Typ
+
+- **D Originaldateia**: d App liest d Dateia selber, nie a Kopie, die Plex omgwandelt hot, drom bleibet d 360°-, 3D- ond VR180-Metadata heil ond d Aasichta vo dr App nemmet se, wo d Plex-Apps die Dateia flach zeiget.
+- **Koi plex.tv**: d App schwätzt bloß mit deim Server, emmer über HTTPS. Dr Server wird über sei eigens plex.direct-Zertifikat prüft, des an d ID vom Server bonda isch, bevor s Token gschickt wird. S Token bleibt uffm Gerät, en seim sichera Speicher, ond goht bloß an dein Server, en ma Request-Header.
+- **Em Vergleich dazu, da gleicha Server als DLNA dazuazmacha**: d Ordner wia uff dr Platte, d Vorschaubilder vo Plex, Zugriff vo außerhalb ond a sichere Verbindong.
+
+### Grenza
+
+- **Bloß beanspruchte Server**: dr Server muss en Plex beansprucht sei (oimol bei ma Plex-Konto agmeldet), des gibt ihm sei plex.direct-Zertifikat. Sonscht sagt d Seite "Die Adress antwortet ohne Plex-Zertifikat. Beanspruch dr Server en Plex, oder mach'n als SMB-, WebDAV- oder DLNA-Freigab dazua."
+- **Bloß IPv4**: "IPv6-Adressa gangat no ned. Gib d IPv4-Adress vom Server ei."
+- **S Token** gibt volla Zugriff uff dein Plex-Server. Wenn du da Server en dr App wegmachsch, vergisst s Gerät s Token, aber's wird ned widerrufa: "S Token bleibt auf em Server gültig, bis du di vo dr Browsersitzong abmeldsch, aus dr du's kopiert hosch." A Token mit ma Ablaufdatum zeigt des Datum, ond d App ko's ned verlängera.
+- **Onderwegs**: bloß über a Portweiterleitong, a Relay gibt's ned.
+- **Bibliotheka**: Musik wird ned zeigt, a Ordner listet höchstens 20.000 Eiträg auf, ond a eigschränkter Benutzer kriagt vielleicht "Des Token ka d Bibliotheka vom Server ned lesa."
+- **Rohdateia vo 360°-Kameras** (.insv, .insp, .360, .osv) zeiget sich bloß, wenn Plex se auflistet; sonscht mach da gleicha NAS-Ordner als SMB- oder WebDAV-Freigab dazua, guck bei [Rohdateia vo 360°-Kameras](#raw-360-camera-files-without-the-cameras-app).
+- **Da Server fenda**: a Server, bei dem d Eistellong "Enable local network discovery (GDM)" aus isch, wird ned gfonda, drom gib sei Adress ei. Uffm iPhone ond iPad schickt d Suche bloß Unicast-Aafroga. D DLNA-Seite vom gleicha Server ko au en dr Lischte auftaucha, mit em DLNA-Schild: nemm d Zeil mit em Plex-Schild.
+- **No ned uffm Gerät prüft**: s Koppla, d Ordner, d Byte-Bereich vo ma Video, d Vorschaubilder, a falschs Token ond d Adress außerhalb vo drhoim send vo ma Computer aus gega an echta Plex Media Server 1.42.1 prüft worra, ond Foto- ond Serien-Bibliotheka bloß gega an simulierta Server. S Abspiela uffm Telefon, en dr Quest, uffm iPhone ond uffm Fernseher, ond dr Wechsel zur Adress außerhalb vo drhoim, send dr Gerätetescht vo Build 20.
+- Immuch360 ghört ned zu Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Des Telefon em Netzwerk freigeba
@@ -219,6 +279,63 @@ Ab do isch des a WebDAV-Freigab wia jede andre: 360°-Erkennong, Rohdateia, d im
 - **Sicherheit**: bloß lokals Netzwerk. D Freigab horcht bloß uff d WLAN-, Ethernet- ond Hotspot-Adressa vom Telefon, nie uff sei Mobilfunk- oder VPN-Adress, ond antwortet bloß Geräte mit ra lokala Adress. Jede Aafrog braucht Benutzernama ond Passwort (HTTP Basic); zehn falsche Passwörter vo oim Gerät en oiner Minut sperret des für a Minut. S Passwort goht unverschlüsselt durchs WLAN (eifachs HTTP): nemm d Freigab en ma Netzwerk, dem du traust, ond schalt se aus, wenn du fertig bisch.
 - **Dr Hotspot vom Telefon selber**: s Headset ko sich dort eiwähla; wenn's s Telefon dort ned findet, tipp d Adress ei, die uff dr Seite schtoht.
 - **No ned uffm Gerät prüft**: dr Server isch mit Unit-Teschts ond mit End-to-End-Teschts mit em eigene WebDAV-Client ond dr Medienbrück vom Headset prüft worra, uff ma Computer. A Telefon, des a Quest 3 versorgt (Suche, a 4-GB-Video abgspielt ond gspult, dr Bildschirm 30 Minuta aus, dr Hotspot, Aufhöra aus dr Benachrichtigong), ond d iPhone-Seite, die no nie uff ma iPhone glaufa isch, send dr Gerätetescht vo Build 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo-Kameras: Live-Bild ond d Aufnahma vo dr Speicherkart
+
+Du hosch drhoim Tapo-Kameras, ond du willsch d Gartakamera ond d Clips vo dr letschta Nacht nebe deine Fotos seha, ohne d Tapo-App aufzmacha, ond an Clip en Immich bhalta. D Immich-App hot nix fir Kameras, ond d Tapo-App isch a eigene App, bei deim TP-Link-Konto agmeldet, mit de Clips weit weg vo deine Fotos.
+
+Ab Build 20 stellt Immuch360 a Tapo-Kamera nebe d Netzwerkfreigaba. Se zeigt d Kamera live uff Android-Telefon ond -Tablets, Android TV ond dr Meta Quest 3, ond uff älle Plattforma d Aufnahma vo ihrer Speicherkart, Tag fir Tag: a Clip wird vo dr Kamera gholt, lauft dann wia jedes andre Video ond ko an Immich gschickt werda. D App schwätzt bloß en deim Netzwerk mit dr Kamera, nie mit de Server vo TP-Link, ond ändert nie ebbes an dr Kamera.
+
+### A Kamera dazuamacha
+
+1. Zerscht en dr Tapo-App: leg s Kamerakonto a, en de Eistellunga vo dr Kamera, Erweiterte Eistellunga, Kamerakonto (a Benutzernama ond a Passwort fir die Kamera, fürs Live-Bild), ond schalt d Drittanbieter-Kompatibilität ei, onder Ich, dann Tapo Lab.
+2. En Immuch360 mach da Reiter Bibliothek auf, dann Netzwerkfreigaba, dann + ond "A Tapo-Kamera".
+3. D Seite "A Kamera dazuamacha" sucht Kameras ("Such noch Tapo-Kameras en deim Netzwerk") ond listet se onder "Em Netzwerk gfonda" mit em Tapo-Schild auf. Tipp uff deine, om "Adress vo dr Kamera" auszfülla, oder gib ihre Adress ei. A Kamera mit em Tapo-Schild em Freigab-Formular macht die gleiche Seite auf.
+4. "Nama": wia d Kamera en dr Lischte schtoht.
+5. Onder "Aufnahma auf dr Speicherkart", "Passwort vom TP-Link-Konto": s Passwort vom Konto, des du en dr Tapo-App nemmsch. Des macht d Aufnahma auf; dei E-Mail-Adress brauchts ned.
+6. Onder "Live", "Benutzername vom Kamerakonto" ond "Passwort vom Kamerakonto": s Kamerakonto aus Schritt 1.
+7. Oins vo de zwoi langt ("Gib s Passwort vom TP-Link-Konto ei, s Kamerakonto oder beides."): s TP-Link-Passwort alloi gibt d Aufnahma, s Kamerakonto alloi s Live-Bild.
+8. Tipp uff "Kamera teschta". Se zeigt "Aufnahma: (Modell), Firmware (Version)" mit em Zuastand vo dr Speicherkart, ond "Live-Bild: (Video), Ton (Audio)", oder was jeweils schiefganga isch.
+9. Tipp uff Speichera. D Kamera schtoht onder "Kameras", noch de Freigaba, mit ihrem Modell, sobald des bekannt isch, ond `tapo://` mit ihrer Adress.
+
+### Live aagucka
+
+1. Tipp uff d Kamera. Ihr Live-Bild isch oba uff ihrer Seite: "Verbindong zur Kamera", dann s Bild mit em Live-Schild.
+2. D Knöpf uffm Bild: dr Ton, am Aafang aus ("Ton eischalta"; "Koin Ton auf dem Gerät", wenn s Gerät'n ned abspiela ko), SD oder HD, ond "Vollbild".
+3. A Telefon zeigt SD uff dr Seite ond HD em Vollbild; d Quest zeigt HD. Zrück verlässt zerscht s Vollbild.
+4. Onder em Bild kommet s Modell ond d Firmware ond d Speicherkart, wia "Speicherkart: (belegt) vo (gesamt) belegt" oder "Koi Speicherkart".
+
+Uffm iPhone ond iPad sagt s Live-Bild "S Live-Bild kommt en ra schpätera Version auf iPhone ond iPad. D Aufnahma laufat do scho." Ohne Kamerakonto sagt d Seite "Mach s Kamerakonto dazua, no siehsch s Live-Bild."
+
+### D Aufnahma abspiela ond bhalta
+
+1. Onder "Aufnahma auf dr Speicherkart" listet d Kameraseite d Täg mit Aufnahma auf, d neischte zerscht, nach Monat. Ohne s Passwort vom TP-Link-Konto sagt se "Mach s Passwort vom TP-Link-Konto dazua, no siehsch d Aufnahma."
+2. Tipp uff an Tag. Seine Clips kommet onder de Stonda noch dr eigene Zeit vo dr Kamera, jeder mit seim Aafang, seiner Läng, em Vorschaubild vo dr Kamera bei ma Ereignis, ond seiner Art: Bewegong, Person, Haustier, Fahrzeug, Baby heilt, Viech, Durchgehend oder Ereignis.
+3. Tipp uff an Clip. D App holt'n vo dr Kamera ("S Video wird vo dr Kamera gholt: N %", mit Cancel (Abbrecha)), ond spielt'n dann em Videoplayer ab, mit Ton ond Spula. A gholter Clip hot "Auf dem Gerät" dran ond goht s nägschte Mol sofort auf.
+4. Om an Clip en Immich zom bhalta, mit verbondenem Server: s Menü ⋮ vom Video, "Zu Immich hochlada".
+5. Om Platz zom macha: a langer Druck uff an gholta Clip bietet "D Kopie auf dem Gerät lösche" aa (uffm Telefon), ond d Kameraseite hot "D Videos lösche, wo vo dera Kamera gholt worra send", mit ihrer Größe.
+6. Dr Aktualisiera-Knopf oba rechts, oder d Seite ronterzieha, fragt d Kamera nomol.
+
+Wenn d Kamera nemme onder ihrer Adress antwortet, sucht ihre Seite se em Netzwerk über ihre MAC-Adress ond verlegt se dohi, wo se jetzt antwortet, sobald se s gleiche Zertifikat zeigt. A Kamera, die a anders Zertifikat zeigt wia des, wo d App zerscht gseha hot, kriagt stattdessa a Frog: "D Kamera onter (Adress) zeigt a anders Zertifikat wia vorher. Mach bloß weiter, wenn du se zrückgsetzt oder ausgwechselt hosch."
+
+### Em Vergleich mit dr Tapo-App
+
+- **Bloß en deim Netzwerk**: d App schwätzt mit dr Kamera selber, em lokala Netzwerk, ond nie mit de Server vo TP-Link. Se meldet sich bei koim TP-Link-Konto a, drom brauchts dei E-Mail-Adress ned.
+- **Aufnahma werdet normale Videos**: a gholter Clip isch a H.264-Video mit seim Ton, des du an Immich schicka kosch, wo's bleibt, au wenn d Speicherkart scho drüber gnomma hot.
+- **Nebe em Rescht**: mit oder ohne Immich-Server, uffm Telefon, uffm Fernseher oder en dr Quest (em Fenschter), em Netzwerk gfonda wia a Freigab.
+- **Bloß lesa**: d App fragt d Kamera bloß noch dem, was se zeigt; se ändert nie a Eistellong ond löscht nie ebbes uff dr Kamera.
+
+### Grenza
+
+- **No ned uffm Gerät prüft**: Build 20 isch no nie mit ra echta Kamera glaufa. S Protokoll isch noch Mitschnitt vo ra C510W mit Firmware 1.3.4 gschrieba worra (dr V4-Login vo Mitte 2026), ond d App isch en ihre Teschts gega a simulierte Kamera prüft worra. Berichte send willkomma, mit em Modell ond dr Firmware, die "Kamera teschta" zeigt, ond de Zeila aus [Protokoll](#logs).
+- **Live-Bild**: bloß uff Android-Telefon ond -Tablets, Android TV ond dr Quest, no ned uffm iPhone ond iPad. D Grenza vo TP-Link geltet: höchstens zwoi HD- ond zwoi SD-Streams gleichzeitig pro Kamera, d Tapo-App mitzählt, ond Tapo Care, d Speicherkart ond a Rekorder, der RTSP oder ONVIF nemmt, kennet ned älle gleichzeitig laufa.
+- **Kameras**: Akku-Kameras ond Kameras hinter ma Tapo-Hub gangat ned.
+- **Aufnahma**: oi Download uff oimol pro Kamera. Solang d Tapo-App d Speicherkart durchsucht, probiert's d App noch 4, 8 ond 12 Sekonda nomol, ond sagt dann "D Kamera isch grad mit ma andra Zuaguckr beschäftigt, z. B. dr Tapo-App. Probier's en ra Minut nomol." Aufnahma en H.265 werdet no ned omgwandelt ("Die Aufnahm isch en H.265, ond des ka die Version no ned omwandla."), durchgehende Aufnahma hen koi Vorschaubild, ond a Clip lauft erscht, wenn er ganz gholt isch.
+- **Passwörter**: jeds falsche Passwort zählt, ond noch a paar sperrt sich d Kamera a Weile ("D Kamera isch noch z viel falsche Passwörter gsperrt. Probier's en N Minuta nomol."). D App probiert a abglehnts Passwort nie vo selber nomol: bloß "Kamera teschta" oder Retry (Nomol probiera) fraget d Kamera nomol. Wenn d Kamera s Passwort fir ihre Eistellunga nemmt, aber ned fir ihre Videos, schalt en dr Tapo-App d Drittanbieter-Kompatibilität aus ond wieder ei, ond start no d Kamera nei.
+- **Platz**: gholte Clips bleibet em Cache vo dr App, höchstens 1 GB fir älle Kameras zamma (die, wo am längschta nemme glaufa send, ganget zerscht); s System ko den Cache leera, ond wenn du a Kamera wegmachsch, werdet ihre Clips glöscht.
+- **Onderwegs**: d App erreicht d Kamera onder ihrer Adress en deim Netzwerk, also ned vo draußa.
+- Immuch360 ghört ned zu TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Rohdateia vo 360°-Kameras, ohne d App vo dr Kamera
@@ -349,7 +466,7 @@ D Erkennong isch an ma Beispiel-Foto prüft worra, des Apples eigene Bildbibliot
 
 D Leit kaufet a Quest 3, om ihre eigene 360°-Fotos ond -Videos aazgucka, ond frogat dann, wo se d Dateia hidua sollet, wia se ohne Kabel uffs Headset kommet, ond welchen Player se nemma sollet: d Player aus em Store fir 360°- ond 3D-Video koschtet Geld.
 
-Die gleiche Android-App lauft uff dr Quest 3 ond 3S als Fenschter, mit deiner ganze Bibliothek. Ihr 360°-Knopf macht a immersive Aasicht auf, en dr s Foto oder Video rondrom om di isch ond du di durch Kopfdreha omguckt, en echtem 3D fir stereoskopische Dateia (Meta Spatial SDK). D Medien kommet vo deim Immich-Server, vom Headset selber, vo ma NAS, ma Medieserver oder ma Telefon, ond werdet direkt dort abgspielt, wo se liegat (a Medieserver ond a Telefon ab Build 19, no ned em Headset prüft). Se isch kostalos ond Open Source. Prüft uff ra Quest 3, ond vo ma Nutzer mit 8K-HEVC-Videos vo ra Insta360 X4.
+Die gleiche Android-App lauft uff dr Quest 3 ond 3S als Fenschter, mit deiner ganze Bibliothek. Ihr 360°-Knopf macht a immersive Aasicht auf, en dr s Foto oder Video rondrom om di isch ond du di durch Kopfdreha omguckt, en echtem 3D fir stereoskopische Dateia (Meta Spatial SDK). D Medien kommet vo deim Immich-Server, vom Headset selber, vo ma NAS, ma Medieserver, ma Telefon oder ma Plex-Server, ond werdet direkt dort abgspielt, wo se liegat (a Medieserver ond a Telefon ab Build 19, a Plex-Server ab Build 20, no ned em Headset prüft), ond ab Build 20 zeigt s Fenschter au d Tapo-Kameras. Se isch kostalos ond Open Source. Prüft uff ra Quest 3, ond vo ma Nutzer mit 8K-HEVC-Videos vo ra Insta360 X4.
 
 ### D immersive Aasicht aufmacha
 
@@ -408,6 +525,56 @@ Dreh's mit em rechta Stick (oder em Knopf Dreha uffm Infofeld), bis sei Mitte vo
 - **Spula**: a Video, dessa Quelle uff Byte-Bereichsaafroga ned antwortet, ko mr ned spula; s Feld sagt des.
 - **Flache Videos**: a flachs (ned 360°) stereoskopischs Video lauft em Fenschter mit beide Auga sichtbar; d immersive 3D-Aasicht isch fir 360°- ond VR180-Medien.
 - **Meh**: d Codecs, die s Headset dekodiert, dr Store, d Berechtigonga ond d APK-Größe schtehet bei [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Uffm Fernseher aagucka (Android TV ond Google TV)
+
+Du willsch d 360°-Fotos ond -Videos, deine Alba ond d Videos vo deim NAS oder Plex-Server uffm großa Bildschirm, fir d Familie uffm Sofa, mit dr Fernbedienong vom Fernseher. D Immich-App fürs Telefon isch koi Fernseher-App: a Nutzer, der se uff ma Fernseher installiert hot, hot gmerkt, dass se mit ra Maus goht, ned mit dr Fernbedienong ([Diskussion #1614](https://github.com/immich-app/immich/discussions/1614)), ond s Immich-Team plant koi offizielle Fernseher-App ([Diskussion #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Ab Build 20 lauft die gleiche Android-App uff Android TV ond Google TV, mit dr Fernbedienong als oizige Eingab: oi APK fir Telefon ond Fernseher, d 360°- ond 3D-Aasichta, die mr mit de Pfeil dreht, ond d Netzwerkfreigaba, Plex ond d Tapo-Kameras uffm Fernseher, mit oder ohne Immich-Server.
+
+<a id="install-it-on-the-tv"></a>
+### Uffm Fernseher installiera
+
+1. Bis Google Play d App uff Fernseher aabietet, was uff d Prüfong vom Fernseher-Release durch Google wartet, nemm d universelle `Immuch360-v<version>-release.apk` vo dr Seite [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Schalt uffm Fernseher d Entwickleroptiona ond s USB-Debugging ei (uff ma Google TV: Eistellunga, System, Info, siebamol uff "Android TV OS build" drücka, dann Eistellunga, System, Entwickleroptiona; d Nama send vo Fernseher zu Fernseher verschieda).
+3. Vo ma Computer em gleicha Netzwerk, mit adb (Android SDK Platform Tools): `adb connect <address of the TV>`, d Abfrog uffm Fernseher bschtätiga, dann `adb install -r Immuch360-v<version>-release.apk`.
+4. D App taucht bei de Apps vom Fernseher auf, mit ihrem Banner. S nägschte Release installiersch gnauso: `-r` bhält d Aameldong ond d Eistellunga.
+
+### S erschte Mol starta
+
+1. Meld di a wia uffm Telefon: d Pfeil schiebet an Rahma vo Feld zu Feld, ond OK uff ma Feld ("OK drücka zom Tippa") macht d Tastatur vom Fernseher en ma Dialog auf, fir d Serveradress, d E-Mail ond s Passwort.
+2. Oder nemm "Ohne Server nutza". A Fernseher hot koine eigene Fotos, drom sagt dr Reiter Photos (Fotos) "Dr Fernseher hot koine eigene Fotos oder Videos: Mach a Netzwerkfreigab aus dr Bibliothek auf." mit ma Knopf Netzwerkfreigaba. Mach do a Freigab, an Plex-Server oder a Kamera dazua, wia uffm Telefon (guck bei [Netzwerkfreigaba](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Mit dr Fernbedienong navigiera
+
+- D Pfeil schiebet da Rahma, OK macht des auf, wo er drauf isch, Zrück goht zrück. Vo ma Reiter aus goht Zrück zom Seitamenü, dann zu Photos (Fotos), dann aus dr App naus.
+- Kanal hoch ond ronter blätteret a Seite uff oimol.
+- En de Aasichta gangat d Tasta vo dr Fernbedienong fir Abspiela ond Pause, Vorspula, Zrückspula, nägschts ond vorigs, ond d Info-Taste zeigt d Details vo ma Foto oder Video.
+
+### Fotos ond Videos mit dr Fernbedienong
+
+1. **A Foto**: links ond rechts ganget zom vorige oder nägschta, OK zeigt oder versteckt d Bedienelement, Hoch goht zur obera Leiste (wo dr 360°-Knopf isch) ond Ronter zur untera Leiste.
+2. **A Video**: OK pausiert ond zeigt d Bedienelement, oder spielt ab. Solang's lauft, springet links ond rechts 10 Sekonda zrück oder vor; solang's pausiert isch, ganget se zom vorige oder nägschta Element, wia dr Hinweis sagt: "Pausiert: D Pfeil ganga zom vorherige oder nächschte Element".
+3. **A 360°-Foto**, vom 360°-Knopf aus: mit de Pfeil guckt mr rom, schneller, solang mr se druckt hält, ond d Aasicht lauft sanft aus. OK goht zu de Knöpf vo dr obera Leiste, uff "Vergrößra", nebe "Verkloinra", em Blickfeld ond 3D; Kanal hoch ond ronter zoomet au. Zrück goht vo de Knöpf zrück zom Bild, ond macht dann zua. Dr Hinweis lautet "Pfeil zom Romgucka, OK für d Bedienelement, Zrück zom Zuamacha".
+4. **A 360°-Video**, vom 360°-Knopf aus: mit de Pfeil guckt mr rom, solang d Bedienelement versteckt send, OK pausiert ond zeigt se, Zrück versteckt se, ond macht dann zua. Dr Hinweis lautet "Pfeil zom Romgucka, OK zom Pausiera ond Bedienelement azoiga, Zrück zom Zuamacha".
+5. **Memories (Erinnerunga)**: links ond rechts ganget durch d Fotos ond weiter zur nägschta Erinnerong, Hoch goht zom Zuamacha-Knopf ond Ronter zu "View in timeline (En dr Zeitleischte aagucka)".
+6. **Freigaba ond Plex**: die gleiche Tasta uff de Foto- ond Videoseita vo ra Freigab, wo links ond rechts d vorige oder nägschte Datei vom Ordner aufmachet.
+
+### D Eistellong Layout für d Fernbedienong
+
+Settings (Eistellunga), Preferences (Vorlieba), "Layout für d Fernbedienong": "Große Fokusrahma ond Tasta vo dr Fernbedienong, ohne d Bedienelement, wo an Touchscreen brauchat. Automatisch schaltet's auf Android TV ond Google TV ei." Automatisch isch dr Standard; Ei passt fir a Tablet, des mr mit ra Tastatur oder ma Gamepad bedient; Aus schaltet's uffm Fernseher aus. D Eistellong gibt's bloß uff Android. D Pfeil ond OK gangat en de Aasichta mit ra Tastatur oder ma Gamepad, egal wia d Eistellong isch.
+
+### Grenza
+
+- **A Aasicht**: uffm Fernseher zeigt d App aa ond spielt ab. Sicherong, Hochlada, Bearbeita, Lösche, Teila, mehrere Element auswähla, Cast, Spatial 2.5D, dr Gyroskop, d Kart ond Places (Orte), ond "Des Telefon em Netzwerk freigeba" send versteckt.
+- **Aameldong**: OAuth macht a Webseit auf, ond des ko a Fernseher ned: "D Amäldong mit (Anbieter) macht a Webseit auf, ond des ka dr Fernseher ned. Meld di liabr mit E-Mail ond Passwort a."
+- **Links** zeiget ihre Adress onder "Auf ma andra Gerät aufmacha", statt an Browser aufzmacha, ond Text wird em Tastatur-Dialog vom System eitippt.
+- **Speicher**: uff ma Fernseher mit wenig Speicher werdet 360°-Fotos höchstens mit 4096x2048 zeigt, ohne s schärfere Bild beim Zooma.
+- **Videos**: d Decoder vom Fernseher entscheidet, was lauft, mit dr gleicha Eistellong Videoquelle ond dr gleicha Decoder-Prüfong wia uffm Telefon (guck bei [Videodetails ond Decoder](#video-details-decoders-and-why-a-video-stutters)); uff ma Fernseher no ned gmessa.
+- **No ned uffm Gerät prüft**: d Fernseher-Unterstützong isch bloß mit automatische Teschts prüft worra ond isch no nie uff ma Fernseher oder ma Fernseher-Emulator glaufa. No zom bschtätiga: en welche Richtong d Pfeil a 360°-Video drehet, d Tastatur vom Fernseher (Gboard) em Text-Dialog, d OK-Taste vo Infrarot-Fernbedienonga, d Ränder ond s Banner uffm Startbildschirm vom Fernseher. Berichte send willkomma.
+- **Google Play uff Fernseher** wartet uff d Prüfong vom Fernseher-Release durch Google; bis dohi d APK.
+- **Andre Fernseher**: Fire TV isch ned teschtet, ond a Version fir Apple TV gibt's ned.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Fend deine 360°-Aufnahma: d 360°-Lischte
@@ -488,11 +655,11 @@ Wenn dr Server HTTP-Range-Aafroga fürs Original ignoriert ond dr MP4-Index (moo
 <a id="everything-else-is-immich"></a>
 ## Älles andre isch Immich
 
-Älles, was d offizielle Immich-App fürs Telefon ko, isch do drin: Sicherong, Zeitleischte, Alba, Suche, Teila, Partner, älles mit deim Server synchronisiert, mit em gleicha Server ond em gleicha Konto wia d Web-App. Immuch360 wird nebe dr offizielle App installiert (Paket `com.aprogsys.immuch360`). Es gibt zwoi Unterschied, ab Build 15: dr Schalter "Force original video" isch zur Wahl Videoquelle worra, die oba beschrieba isch, ond Fotos ond Videos, die du vo Hand aus ma Gerätealbum hochlädsch, zählet als gsichert.
+Älles, was d offizielle Immich-App fürs Telefon ko, isch do drin: Sicherong, Zeitleischte, Alba, Suche, Teila, Partner, älles mit deim Server synchronisiert, mit em gleicha Server ond em gleicha Konto wia d Web-App. Immuch360 wird nebe dr offizielle App installiert (Paket `com.aprogsys.immuch360`). Es gibt zwoi Unterschied, ab Build 15: dr Schalter "Force original video" isch zur Wahl Videoquelle worra, die oba beschrieba isch, ond Fotos ond Videos, die du vo Hand aus ma Gerätealbum hochlädsch, zählet als gsichert. Uffm Fernseher isch d App ab Build 20 a reine Aasicht, guck bei [Uffm Fernseher aagucka](#watch-on-your-tv-android-tv-and-google-tv).
 
 Om a 360°-Foto ebber zom zeiga, der d App ned hot, teil's mit ma gteilte Immich-Link: d Immich-Web-App zeigt a 360°-Foto en seim Browser als Kugl.
 
-Dr aktuelle Build, Build 19 (Version 3.3.0-rc.0, Buildnummer 3030017), basiert uff Immich 3.3.0-rc.0 (Immich `main`, no koi stabile Version) ond isch mit ma Immich-3.2-Server teschtet worra. Meld Probleme bitte onder [Issues](https://github.com/freeKC/Immuch360/issues), ned beim Immich-Projekt. D vollschtändige Doku vo Immich selber fendsch onder [immich.app](https://immich.app).
+Dr aktuelle Build, Build 20 (Version 3.3.0-rc.0, Buildnummer 3030018), basiert uff Immich 3.3.0-rc.0 (Immich `main`, no koi stabile Version). Build 19 isch mit ma Immich-3.2-Server teschtet worra, ond Build 20 ändert nix an dem, was d App vom Server will. Meld Probleme bitte onder [Issues](https://github.com/freeKC/Immuch360/issues), ned beim Immich-Projekt. D vollschtändige Doku vo Immich selber fendsch onder [immich.app](https://immich.app).
 
 ## Im Vergleich mit dr Immich-App ond andre Apps
 
@@ -515,6 +682,9 @@ Dr aktuelle Build, Build 19 (Version 3.3.0-rc.0, Buildnummer 3030017), basiert u
 | DLNA-Medieserver als Freigab-Typ | ❌ | ✅ ab Build 19 | Prüft gega minidlna ond Gerbera en Docker; Plex, Jellyfin, a NAS, dr Freebox Server, a iPhone ond d Quest send dr Gerätetescht vo Build 19 |
 | D Dateia vo ra Freigab an Immich schicka; vo Hand gschickte Gerätedateia zählet als gsichert | ❌ bloß Gerätedateia | ✅ ab Build 15 | Teschtet uff ma Android-Emulator gega an Samba-Teschtserver ond an Immich-3.2-Server |
 | Des Telefon em Netzwerk freigeba, fürs Headset | ❌ | ✅ ab Build 19, Android ond iOS | Unit-Teschts ond End-to-End-Teschts mit em WebDAV-Client vom Headset, uff ma Computer; a Telefon, des a Quest versorgt, ond d iPhone-Seite send dr Gerätetescht vo Build 19 |
+| Plex-Media-Server-Bibliotheka, vo de Originaldateia abgspielt, drhoim ond onderwegs, ohne plex.tv | ❌ | ✅ ab Build 20, jede Aasicht, uff Telefon, Tablets, dr Quest 3 ond Fernseher | Vo ma Computer aus gega an echta Plex Media Server 1.42.1 prüft (Koppla, Ordner, Byte-Bereich, Vorschaubilder, d Adress außerhalb vo drhoim); no ned uffm Gerät prüft |
+| Tapo-Kameras: s Live-Bild, ond d Aufnahma vo dr Speicherkart, die an Immich ganget, wenn du des willsch | ❌ | ✅ ab Build 20: Aufnahma überall, live uff Android, Android TV ond dr Quest 3 | Gega a simulierte Kamera prüft; no ned mit ra echta Kamera prüft |
+| Android TV ond Google TV, mit dr Fernbedienong bedient, en dr gleicha APK | ❌ koi Fernseher-App | ✅ ab Build 20 | Mit automatische Teschts prüft; no ned uff ma Fernseher prüft |
 | Rohe Insta360-.insp-Fotos ond .insv-Videos mit oiner Spur | ❌ flach | ✅ ab Build 16 | Fotos gega Exporte vo X3-Dateia aus em Insta360 Studio prüft, Videos uff ma Android-Emulator mit ra X3-Datei en niedriger Auflösong; no ned uff ma iPhone glaufa |
 | Rohvideos mit oim Objektiv pro Spur oder pro Datei (Insta360 X4, X4 Air, X5, X6, X3-Paare, GoPro .360, DJI .osv) | ❌ flach oder falsch | ✅ ab Build 18 | Parser ond Zammasetza an echte Dateia vo X4, X3-Paar, GoPro MAX ond Osmo 360 prüft; s Abspiela isch dr Gerätetescht vo de Builds 18 ond 19 |
 | Doppel-Fischaug als .dng | ❌ flach | ❌ no ned | Plant |
@@ -529,27 +699,33 @@ Dr aktuelle Build, Build 19 (Version 3.3.0-rc.0, Buildnummer 3030017), basiert u
 |---|---|---|
 | D Immich-Web-App | Se zeigt a 360°-Foto als Kugl, hält aber a rohe .insp fir a fertigs Panorama ond wickelt ihre zwoi Kreis om d Kugl; a VR-Aasicht isch emmer no a Wunsch ([Diskussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Setzt Rohdateia uffm Gerät zamma ond macht a immersive Aasicht en dr Quest 3 auf |
 | D Insta360-App oder s Studio | Mr braucht se, om d Rohdateia vo dr Karte en a 360°-Bild zom verwandla, bevor mr's aagucka ko | Macht d rohe .insp- ond .insv-Dateia direkt auf, ond d GoPro-.360- ond DJI-.osv-Dateia |
-| Plex, Jellyfin, Synology Photos | 360°-Fotos ond -Videos werdet flach aazeigt oder ned erkannt, wia's en Beiträg en ihre Foren schtoht (a Wunsch bei Plex isch seit 2017 offa) | Liest die gleiche Ordner über SMB, WebDAV oder DLNA ond spielt se als Kugl ab, ohne uffm Server ebbes zom ändera |
+| Plex, Jellyfin, Synology Photos | 360°-Fotos ond -Videos werdet flach aazeigt oder ned erkannt, wia's en Beiträg en ihre Foren schtoht (a Wunsch bei Plex isch seit 2017 offa) | Liest ab Build 20 d Plex-Bibliothek selber, oder die gleiche Ordner über SMB, WebDAV oder DLNA, ond spielt se als Kugl ab, ohne uffm Server ebbes zom ändera |
+| D Tapo-App | A eigene App, bei deim TP-Link-Konto agmeldet, mit de Clips weit weg vo deine Fotos | Zeigt d Kamera nebe deine Fotos, schwätzt bloß en deim Netzwerk mit ihr, ond bhält an Clip als Video, des du an Immich schicka kosch (ab Build 20) |
+| D Immich-App fürs Telefon uff ma Fernseher | Koi Fernseher-App: a Nutzer berichtet, dass se mit ra Maus goht, ned mit dr Fernbedienong | Die gleiche App, gmacht fir d Fernbedienong (ab Build 20) |
 | Dateia uffs Headset kopiera | Jede Datei wird übers Kabel kopiert, bevor mr se aagucka ko | Spielt direkt vo Immich, ma NAS, ma Medieserver oder ma Telefon ab |
 | D 360°- ond 3D-Player em Quest-Store | Koschtet Geld | Kostalos ond Open Source (AGPL) |
 
 ## Formate ond Quella, nach Plattform
 
-Immuch360 isch a Galerie, ond au a kostaloser Medieplayer: er spielt des ab, was d offizielle App ned ko, aus vier Quella, en dem Player, der zur Datei passt.
+Immuch360 isch a Galerie, ond au a kostaloser Medieplayer: er spielt des ab, was d offizielle App ned ko, aus de Quella vo dr zwoita Tabelle, en dem Player, der zur Datei passt.
 
-| Was | Android-Telefon | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Flache Videos (MP4, MOV, MKV, was s Gerät dekodiert) | Immich-Player, ond a eigener Player fir Netzwerkfreigaba | S Gleiche, außer de MKV- ond AVI-Dateia vo ra Freigab, die iOS ned aufmacht (uffm Server laufet se umkodiert) | Em Fenschter |
-| 360°-Fotos | Kugl-Aasicht, Gyroskop | S Gleiche | Immersiv, rondrom om di |
-| 360°-Videos | Eigener Media3-Player uff ra Kugl, Gyroskop, Spula, Wahl vo dr Tonspur, Puffer-Aazeig | Eigener SceneKit-Player uff ra Kugl, Gyroskop, Wahl vo dr Tonspur, Puffer-Aazeig; abspiela ond aahalta, no koi Zeitleischte | Immersiv, echts 3D fir stereoskopische Dateia, Zeitleischte mit 10-Sekonda-Sprüng, vorigs ond nägschts Medium |
-| 3D-360° (oba ond onda, nebanander) | Links Aug, Layout-Knopf | S Gleiche | Jedes Aug kriagt sei Hälfte vom Bild |
-| VR180-Fotos ond -Videos (Halbkugl) | Halbkugl, 360°/180°-Knopf | S Gleiche | Immersive Halbkugl |
-| Spatial 2.5D (Diafe uff ma flacha Bildschirm aus ma stereoskopischa Video) | Eigener Player, Kopfverfolgong mit dr Frontkamera | S Gleiche | Ned aagebota |
-| Räumliche Fotos vo Apple (HEIC-Stereopaare, ab Build 19) | Links Aug, a Detailzeil sagt, dass es räumlich isch | S Gleiche | En 3D aagucka: beide Auga uff ma Foto, des en dr immersive Aasicht schwebt, 3D oder 2D, Größe veränderbar |
-| Räumliche Videos vo Apple (MV-HEVC, ab Build 19) | Oi Aug (d Basisebene), mit ma Hinweis | S Gleiche | Oi Aug em Fenschter, mit ma Hinweis |
-| Rohe Insta360-.insp-Fotos (ab Build 16) | Uff dr GPU zammagsetzt, bevor d Kugl-Aasicht kommt, bis 8192x4096 | S Gleiche | Immersiv, aus ma zammagsetzta Bild, des fürs Headset vorbereitet isch |
-| Rohe Insta360-.insv, beide Objektiv en oiner Spur (ab Build 16) | Vo ma GPU-Effekt em Media3-Player zammagsetzt | Vo ma SceneKit-Shader zammagsetzt | Immersiv, vom gleicha GPU-Effekt zammagsetzt |
-| Rohvideos mit oim Objektiv pro Spur oder pro Datei (ab Build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-Paare, GoPro .360, DJI .osv | Zwoi Hardware-Decoder gleichzeitig, oiner pro Objektiv (ab Build 19 Software-Decoder uff ma Gerät ohne Hardware-Decoder, bis 2048x2048 pro Objektiv), ond a GL-Kompositor, der se zur Kugl zammasetzt; oi Objektiv, dann dr umkodierte Stream, dann s Video ned zammagsetzt, wenn s Gerät koine zwoi schafft | A eigener AVFoundation-Kompositor mit Metal | Immersiv, gleiche zwoi Decoder ond Kompositor (Panel mit 3840x1920) |
+| Was | Android-Telefon | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (ab Build 20) |
+|---|---|---|---|---|
+| Flache Videos (MP4, MOV, MKV, was s Gerät dekodiert) | Immich-Player, ond a eigener Player fir Netzwerkfreigaba | S Gleiche, außer de MKV- ond AVI-Dateia vo ra Freigab, die iOS ned aufmacht (uffm Server laufet se umkodiert) | Em Fenschter | Wia uffm Telefon; OK pausiert, links ond rechts springet 10 s |
+| 360°-Fotos | Kugl-Aasicht, Gyroskop | S Gleiche | Immersiv, rondrom om di | Kugl-Aasicht, mit de Pfeil dreht, mit de Kanaltasta zoomt |
+| 360°-Videos | Eigener Media3-Player uff ra Kugl, Gyroskop, Spula, Wahl vo dr Tonspur, Puffer-Aazeig | Eigener SceneKit-Player uff ra Kugl, Gyroskop, Wahl vo dr Tonspur, Puffer-Aazeig; abspiela ond aahalta, no koi Zeitleischte | Immersiv, echts 3D fir stereoskopische Dateia, Zeitleischte mit 10-Sekonda-Sprüng, vorigs ond nägschts Medium | Dr Media3-Player vom Telefon, mit de Pfeil dreht |
+| 3D-360° (oba ond onda, nebanander) | Links Aug, Layout-Knopf | S Gleiche | Jedes Aug kriagt sei Hälfte vom Bild | Links Aug, Layout-Knopf |
+| VR180-Fotos ond -Videos (Halbkugl) | Halbkugl, 360°/180°-Knopf | S Gleiche | Immersive Halbkugl | Halbkugl, 360°/180°-Knopf |
+| Spatial 2.5D (Diafe uff ma flacha Bildschirm aus ma stereoskopischa Video) | Eigener Player, Kopfverfolgong mit dr Frontkamera | S Gleiche | Ned aagebota | Ned aagebota |
+| Räumliche Fotos vo Apple (HEIC-Stereopaare, ab Build 19) | Links Aug, a Detailzeil sagt, dass es räumlich isch | S Gleiche | En 3D aagucka: beide Auga uff ma Foto, des en dr immersive Aasicht schwebt, 3D oder 2D, Größe veränderbar | Links Aug, a Detailzeil |
+| Räumliche Videos vo Apple (MV-HEVC, ab Build 19) | Oi Aug (d Basisebene), mit ma Hinweis | S Gleiche | Oi Aug em Fenschter, mit ma Hinweis | Oi Aug, mit ma Hinweis |
+| Rohe Insta360-.insp-Fotos (ab Build 16) | Uff dr GPU zammagsetzt, bevor d Kugl-Aasicht kommt, bis 8192x4096 | S Gleiche | Immersiv, aus ma zammagsetzta Bild, des fürs Headset vorbereitet isch | Wia uffm Telefon |
+| Rohe Insta360-.insv, beide Objektiv en oiner Spur (ab Build 16) | Vo ma GPU-Effekt em Media3-Player zammagsetzt | Vo ma SceneKit-Shader zammagsetzt | Immersiv, vom gleicha GPU-Effekt zammagsetzt | Wia uffm Telefon |
+| Rohvideos mit oim Objektiv pro Spur oder pro Datei (ab Build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-Paare, GoPro .360, DJI .osv | Zwoi Hardware-Decoder gleichzeitig, oiner pro Objektiv (ab Build 19 Software-Decoder uff ma Gerät ohne Hardware-Decoder, bis 2048x2048 pro Objektiv), ond a GL-Kompositor, der se zur Kugl zammasetzt; oi Objektiv, dann dr umkodierte Stream, dann s Video ned zammagsetzt, wenn s Gerät koine zwoi schafft | A eigener AVFoundation-Kompositor mit Metal | Immersiv, gleiche zwoi Decoder ond Kompositor (Panel mit 3840x1920) | Wia uffm Telefon, wenn dr Fernseher zwoi Decoder gleichzeitig laufa lassa ko |
+| Live-Bild vo dr Tapo-Kamera (ab Build 20) | Media3-RTSP-Player: SD uff dr Seite, HD em Vollbild, Ton-Knopf | No ned: a Karte sagt, dass es schpäter kommt | Em Fenschter, en HD | Wia uffm Telefon |
+| Aufnahma vo dr Tapo-Kamera (ab Build 20) | Vo dr Speicherkart en a H.264-Video mit seim Ton gholt, dann mit Spula abgspielt | S Gleiche | S Gleiche, em Fenschter | S Gleiche |
+
+D Fernseher-Spalte isch no ned uff ma Fernseher prüft, guck bei [Uffm Fernseher aagucka](#watch-on-your-tv-android-tv-and-google-tv); d Kamera-Zeila send no ned mit ra echta Kamera prüft.
 
 | Vo wo | Wia |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 isch a Galerie, ond au a kostaloser Medieplayer: er spielt des ab, was
 | S Telefon oder Headset selber | "Ohne Server nutza" uff dr Aamelde-Seite, oder dr Eintrag On this device em Reiter Bibliothek |
 | A NAS oder a Computer | SMB- ond WebDAV-Freigaba, ond ab Build 19 DLNA-Medieserver, em Netzwerk gfonda, direkt glesa (a SMB-Video über bis zu sechs Verbindonga), nix kopiert; ab Build 15 kennet d Dateia, die du aussuachsch, an dei Immich-Konto gschickt werda |
 | A andrs Telefon (ab Build 19) | "Des Telefon em Netzwerk freigeba" uff dem Telefon: s Headset, oder jeder WebDAV-Client em Netzwerk, liest seine Alba, Monat ond 360°-Medien |
+| A Plex Media Server (ab Build 20) | Seine Foto-, Film- ond Serien-Bibliotheka nach Ordner, d Originaldateia direkt über HTTPS glesa, gega s eigene Zertifikat vom Server prüft, drhoim oder über d Adress außerhalb vo drhoim, uff älle Plattforma; guck bei [Plex Media Server, ohne plex.tv](#plex-media-server-without-plextv) |
+| A Tapo-Kamera (ab Build 20) | S Live-Bild mit em Kamerakonto (Android, Android TV, d Quest), ond d Aufnahma vo ihrer Speicherkart mit em Passwort vom TP-Link-Konto (älle Plattforma), bloß em lokala Netzwerk; guck bei [Tapo-Kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 lauft au uff dr Meta Quest 3 ond 3S (Horizon OS v69 oder neier; dr Build em Horizon Store isch bloß fir die zwoi glistet; d universelle `-release.apk` sott sich au uff ra Quest 2 oder Quest Pro installiera lassa, ungteschtet). Wia mr se benutzt, schtoht en [Em Headset Meta Quest 3](#in-the-meta-quest-3-headset); der Abschnitt goht oms Installiera ond om des, was em Headset anders isch.
 
-Dr Headset-Build schwätzt mit Server bloß über HTTPS, oder über eifachs HTTP mit Nama vom Heimnetz (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ond mit em Headset selber, so wia's dr Horizon Store verlangt. A Server, der als eifache HTTP-Adress mit ra IP eitippt isch, wia `http://192.168.1.10:2283`, wird vo dem Build abglehnt: nemm HTTPS, an Nama vom Heimnetz (`nas.local`), oder d universelle `-release.apk`, die d offene Regel vo de Telefon bhält. WebDAV-, DLNA- ond Telefon-Freigaba onder ra eifacha HTTP-Adress vom lokala Netzwerk send ned betroffa: d App liest se selber ond gibt ihre Player bloß d Adress vo ihrer lokala Brück (em Headset fir DLNA ond d Telefon-Freigab no zom bschtätiga, beides nei en Build 19).
+Dr Headset-Build schwätzt mit Server bloß über HTTPS, oder über eifachs HTTP mit Nama vom Heimnetz (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ond mit em Headset selber, so wia's dr Horizon Store verlangt. A Server, der als eifache HTTP-Adress mit ra IP eitippt isch, wia `http://192.168.1.10:2283`, wird vo dem Build abglehnt: nemm HTTPS, an Nama vom Heimnetz (`nas.local`), oder d universelle `-release.apk`, die d offene Regel vo de Telefon bhält. WebDAV-, DLNA- ond Telefon-Freigaba onder ra eifacha HTTP-Adress vom lokala Netzwerk send ned betroffa: d App liest se selber ond gibt ihre Player bloß d Adress vo ihrer lokala Brück (em Headset fir DLNA ond d Telefon-Freigab no zom bschtätiga, beides nei en Build 19). Ab Build 20 wird a Plex-Server über HTTPS erreicht, ond a Tapo-Kamera vo dr App selber, ihr Live-Bild über RTSP, des koi HTTP isch: koins vo beide sott betroffa sei (em Headset no zom bschtätiga).
 
 <a id="install"></a>
 ### Installiera
@@ -576,7 +754,7 @@ Dr Eintrag em Horizon Store wartet uff d Prüfong vo Meta, eigreicht mit Build 1
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Em Headset mach d Library auf, wähl da Filter "Unknown sources" (Unbekannte Quella) ond start Immuch360.
@@ -584,7 +762,7 @@ Dr Eintrag em Horizon Store wartet uff d Prüfong vo Meta, eigreicht mit Build 1
 
 ### Em Fenschter
 
-D ganze App lauft als 2D-Fenschter, dessa Größe mr ändera ko: Aameldong, Zeitleischte, Alba, Suche, dr Reiter Bibliothek (360°-Lischte, On this device, Netzwerkfreigaba), d Eistellunga, ond d Foto- ond Videoaasichta, wo flache Fotos ond Videos laufet. Em Headset machet dr 360°-Knopf ond Als 360° aazeiga em Menü ⋮ direkt d immersive Aasicht auf statt dr Kugl-Aasicht vom Telefon, ond dr Spatial-2.5D-Knopf ond sei Eistellong werdet ned aazeigt. Ab Build 19 hot a räumlichs Foto vo Apple an Knopf En 3D aagucka, ond d Kachel Des Telefon em Netzwerk freigeba wird ned aazeigt: s Headset isch des, wo d Freigab vo ma Telefon liest.
+D ganze App lauft als 2D-Fenschter, dessa Größe mr ändera ko: Aameldong, Zeitleischte, Alba, Suche, dr Reiter Bibliothek (360°-Lischte, On this device, Netzwerkfreigaba), d Eistellunga, ond d Foto- ond Videoaasichta, wo flache Fotos ond Videos laufet. Em Headset machet dr 360°-Knopf ond Als 360° aazeiga em Menü ⋮ direkt d immersive Aasicht auf statt dr Kugl-Aasicht vom Telefon, ond dr Spatial-2.5D-Knopf ond sei Eistellong werdet ned aazeigt. Ab Build 19 hot a räumlichs Foto vo Apple an Knopf En 3D aagucka, ond d Kachel Des Telefon em Netzwerk freigeba wird ned aazeigt: s Headset isch des, wo d Freigab vo ma Telefon liest. Ab Build 20 ganget au d Plex-Server ond d Tapo-Kameras em Fenschter auf, s Live-Bild vo dr Kamera en HD; d Eistellong "Layout für d Fernbedienong" bleibt uff Automatisch, ond des lässt se em Headset aus.
 
 ### En Bilder
 
@@ -598,7 +776,7 @@ Bildschirmfotos em Headset mit em Aufnahmeknopf (Meta-Knopf ond Abzug), uff ra Q
 ### Grenza em Headset
 
 - **Videocodecs**: HEVC (H.265) isch d sichere Wahl; H.264 hört bei ongefähr 4096x2304 auf. Was d App prüft, ond wia mr em Headset a Video gibt, des's dekodiert, schtoht en [Videodetails ond Decoder](#video-details-decoders-and-why-a-video-stutters).
-- **Store**: d Store-Version fangt bei Build 14 aa. D Funktiona mit "ab Build 15" ond "ab Build 16" kommet mit ihrem nägschta Update (Build 16, scho uffm Alpha-Tescht-Kanal), d schpätere drnach; d GitHub-APK hot jetzt scho älle.
+- **Store**: d Store-Version fangt bei Build 14 aa. D Funktiona mit "ab Build 15" ond schpäter kommet mit ihre nägschte Updates (dr Alpha-Tescht-Kanal vom Store, fir Teschter, kriagt jeden neie Build); d GitHub-APK hot jetzt scho älle.
 - **Berechtigonga**: dr Headset-Build frogt bloß nach Fotos ond Videos (dr Modus ohne Server) ond Benachrichtigonga (Fortschritt vo dr Sicherong). Er hot koi Berechtigong fir Speicher, Audio, Standort oder Kamera, anders als dr Telefon-Build; drom gibt's em Headset koin Serverwechsel noch em WLAN-Nama.
 - **APK-Größe**: s Spatial SDK bringt ongefähr 56 MB nativa 64-Bit-ARM-Code mit, au uff de Telefon, wo's nie glada wird.
 - **Lizenz**: d immersive Aasicht nemmt s Meta Spatial SDK, des onder em Meta Platform Technologies SDK License Agreement verteilt wird.
@@ -606,13 +784,14 @@ Bildschirmfotos em Headset mit em Aufnahmeknopf (Meta-Knopf ond Abzug), uff ra Q
 <a id="where-to-get-it"></a>
 ## Wo mr's kriagt
 
-D App gibt's uff Google Play; d Version fürn App Store wartet uff d Prüfong vo Apple, ond d Version fürn Meta Horizon Store uff die vo Meta. S GitHub-Release isch emmer dr neischte Build:
+D App gibt's uff Google Play fir Telefon ond Tablets; d Version fürn App Store wartet uff d Prüfong vo Apple, d Version fürn Meta Horizon Store uff die vo Meta, ond d Google-Play-Version fir Fernseher uff d Prüfong vom Fernseher-Release durch Google. S GitHub-Release isch emmer dr neischte Build:
 
 | Plattform | Heit | Bald |
 |---|---|---|
-| Android-Telefon ond -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder d APK uff dr Seite [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fir a Telefon (d universelle `Immuch360-v<version>-release.apk` goht überall, `-armeabi-v7a` isch fir ältere 32-Bit-Telefon, ond d Datei `.aab` isch fir Google Play, ned zom seitlich Lada). Dr GitHub-Build isch meischtens em Store voraus. So oder so wird er nebe dr offizielle Immich-App installiert (Paket `com.aprogsys.immuch360`). | Google Play: d Builds 15 ond 16 send am 4. Oktober 2026 zur Prüfong an Google gschickt worra (dr letschte Build, der dort bschtätigt online isch, isch Build 11) |
+| Android-Telefon ond -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder d APK uff dr Seite [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fir a Telefon (d universelle `Immuch360-v<version>-release.apk` goht überall, `-armeabi-v7a` isch fir ältere 32-Bit-Telefon, ond d Datei `.aab` isch fir Google Play, ned zom seitlich Lada). Dr GitHub-Build isch meischtens em Store voraus. So oder so wird er nebe dr offizielle Immich-App installiert (Paket `com.aprogsys.immuch360`). | Google Play: Build 18 isch online, Build 19 seit em 6. Oktober 2026 en dr Prüfong vo Google, Build 20 als nägschts |
 | iPhone ond iPad | Wartet uff d Prüfong vo Apple. D Version en dr Prüfong hot d Funktiona vo Build 11: s Hochlada zu Immich ond d Wahl Videoquelle (Build 15) ond d rohe Insta360-Dateia (Build 16) kommet mit ma schpätera Update em App Store. Dr Quellcode baut sich mit Xcode oder uff Codemagic, guck bei [Selber baua](#build-it-yourself). | App Store, en dr Prüfong |
-| Meta Quest 3 ond 3S | D Datei `-quest-release.apk` vo dr Seite [Releases](https://github.com/freeKC/Immuch360/releases) (d universelle `-release.apk` goht au), seitlich glada em Entwicklermodus, guck bei [Installiera](#install). Dr Store-Build ond d GitHub-APK send mit verschiedene Schlüssel signiert: om vom oina zom andre zom wechsla, erscht d App deinstalliera (ihre Eistellunga ond gspeicherte Freigaba ganget mit). | Meta Horizon Store: Build 14 seit em 3. Oktober 2026 en dr Prüfong vo Meta; Build 16 isch uffm Alpha-Kanal vom Store (bloß Teschter) |
+| Meta Quest 3 ond 3S | D Datei `-quest-release.apk` vo dr Seite [Releases](https://github.com/freeKC/Immuch360/releases) (d universelle `-release.apk` goht au), seitlich glada em Entwicklermodus, guck bei [Installiera](#install). Dr Store-Build ond d GitHub-APK send mit verschiedene Schlüssel signiert: om vom oina zom andre zom wechsla, erscht d App deinstalliera (ihre Eistellunga ond gspeicherte Freigaba ganget mit). | Meta Horizon Store: Build 14 seit em 3. Oktober 2026 en dr Prüfong vo Meta; dr Alpha-Kanal vom Store (bloß Teschter) kriagt jeden neie Build |
+| Android TV ond Google TV (ab Build 20) | D universelle `Immuch360-v<version>-release.apk` vo dr Seite [Releases](https://github.com/freeKC/Immuch360/releases), seitlich glada mit adb, guck bei [Uffm Fernseher installiera](#install-it-on-the-tv). Des isch die gleiche App wia uffm Telefon. | Google Play uff Fernseher, noch dr Prüfong vom Fernseher-Release durch Google |
 
 D Links zom App Store ond zom Meta Horizon Store kommet do nei, sobald d Einträg veröffentlicht send. Meld di mit dr üblicha Adress vo deim Immich-Server ond deim Konto aa, oder tipp uff dr Aamelde-Seite uff "Ohne Server nutza", om mit de Fotos ond Videos vom Gerät selber aazfanga. D APK vo GitHub aktualisiert sich ned selber: guck uff d Seite Releases, ond wenn du d App aus ma Store installiert hosch, hol d Updates aus dem Store.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-D Store-Bildschirmfotos werdet uff Debug-Builds fürn Simulator gmacht, die mit `--dart-define=IMMUCH_SCREENSHOTS=true` baut send, des bloß s Debug-Banner versteckt. D zwoi Android-Varianta (Flavours) send die gleiche App. D Variante `quest` zielt uff SDK 34 ond bhält bloß d Berechtigonga, die s Headset braucht (Fotos, Videos, Benachrichtigonga): Medienverwaltong, Standort em Hintergrund, alter Speicher, Audio, Medienstandort, Gerätestandort ond Kamera werdet en `android/app/src/quest/AndroidManifest.xml` rausgnomma, weil dr Meta Horizon Store die erschte zwoi ablehnt ond fir jede andre heikle Berechtigong a Begründong will; die gleiche Datei nennt d Quest 3 ond 3S als unterstützte Geräte ond beschränkt eifachs HTTP uffs Headset selber ond uff Nama vom Heimnetz. D APK isch bloß 64 Bit wega de zwoi extra Argument en ihrer Befehlszeil (`--target-platform android-arm64 --android-project-arg arm64only=true`). D Variante `phone` isch die, die Google Play verlangt. Om fir iOS uff deim eigene Mac zom baua, nemm Xcode ond dei eigens Signier-Team; mit Xcode 26 lass vorher oimol `xcodebuild -downloadComponent MetalToolchain` laufa, weil d Spatial-Shader des brauchet. Ohne Mac laufet iOS-Builds uff Codemagic (a gmieteter Mac) aus dr Datei `codemagic.yaml` vo dem Repository. Android-Release-Builds laufet uff GitHub Actions (`.github/workflows/immuch360-release.yml`).
+D Store-Bildschirmfotos werdet uff Debug-Builds fürn Simulator gmacht, die mit `--dart-define=IMMUCH_SCREENSHOTS=true` baut send, des bloß s Debug-Banner versteckt. D zwoi Android-Varianta (Flavours) send die gleiche App. Ab Build 20 gibt sich d Variante `phone` au als Fernseher-App aus (a Eintrag em Launcher vom Fernseher ond a Banner, koi Touchscreen nötig), des lässt d Variante `quest` weg. D Variante `quest` zielt uff SDK 34 ond bhält bloß d Berechtigonga, die s Headset braucht (Fotos, Videos, Benachrichtigonga): Medienverwaltong, Standort em Hintergrund, alter Speicher, Audio, Medienstandort, Gerätestandort ond Kamera werdet en `android/app/src/quest/AndroidManifest.xml` rausgnomma, weil dr Meta Horizon Store die erschte zwoi ablehnt ond fir jede andre heikle Berechtigong a Begründong will; die gleiche Datei nennt d Quest 3 ond 3S als unterstützte Geräte ond beschränkt eifachs HTTP uffs Headset selber ond uff Nama vom Heimnetz. D APK isch bloß 64 Bit wega de zwoi extra Argument en ihrer Befehlszeil (`--target-platform android-arm64 --android-project-arg arm64only=true`). D Variante `phone` isch die, die Google Play verlangt. Om fir iOS uff deim eigene Mac zom baua, nemm Xcode ond dei eigens Signier-Team; mit Xcode 26 lass vorher oimol `xcodebuild -downloadComponent MetalToolchain` laufa, weil d Spatial-Shader des brauchet. Ohne Mac laufet iOS-Builds uff Codemagic (a gmieteter Mac) aus dr Datei `codemagic.yaml` vo dem Repository. Android-Release-Builds laufet uff GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 En dem Repository liegt koi Geheimnis: dr Android-Signierschlüssel isch als verschlüsselte GitHub-Actions-Secrets gspeichert, ond s Apple-Signiermaterial als verschlüsselte Variable uff Codemagic. D Workflow-Dateia nennet se bloß beim Nama. Ohne dei eigene `android/key.jks` wird a Release-Build mit em Debug-Schlüssel signiert ond lässt sich ned über a Kopie vo GitHub oder aus ma Store installiera (die erscht deinstalliera); a Debug-Build installiert sich drneba als Immuch360 debug. D Kopie em Meta Horizon Store isch d `quest`-APK vom Release, signiert mit ma andre Schlüssel, dem, mit dem d Store-App s erschte Mol registriert worra isch, drom lässt die sich au ned über a seitlich gladene APK installiera, ond andersrom au ned.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Ab Build 19 schreibet dr DLNA-Client, d Telefon-Freigab ond d Erkennong vo räumliche Medien vo Apple au ens eigene Protokoll vo dr App (Logs (Protokoll), em Menü vom Profilbild oba rechts), onder `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ond `NetworkMediaService`. D Protokollzeila bleibet uffm Gerät, außer du kopiersch se selber.
+Ab Build 19 schreibet dr DLNA-Client, d Telefon-Freigab ond d Erkennong vo räumliche Medien vo Apple au ens eigene Protokoll vo dr App (Logs (Protokoll), em Menü vom Profilbild oba rechts), onder `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ond `NetworkMediaService`. Ab Build 20 schreibt dr Fernseher-Modus dort onder `TvMode` ond `TvTextEntry`, d Plex-Server onder `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ond `PlexServerEditPage`, ond d Tapo-Kameras onder `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ond `CameraLiveView`; d Plex-Zeila enthaltet nie s Token, a Adress oder an Titel, ond d Kamera-Zeila lasset d Passwörter weg. D Protokollzeila bleibet uffm Gerät, außer du kopiersch se selber.
 
 ## Datenschutz
 
 - **Nix goht an da Entwickler**: d App schwätzt mit em Immich-Server, den du aussuachsch (ond, wenn du d Karte aufmachsch, mit em Kartakachel-Dienscht, den der Server nemmt), hot koi Werbong, koi Analyse ond koin Absturzbericht-Dienscht vom Entwickler, ond schickt nix an da Entwickler vo Immuch360.
-- **Ohne Server** verlässt nix s Gerät.
+- **Ohne Server** wird koi Server kontaktiert: d App nemmt s Netzwerk bloß fir d Freigaba, Plex-Server ond Kameras, die du aufmachsch, ond fir d Telefon-Freigab, wenn du se eischaltsch.
 - **Netzwerkfreigaba**: d Lischte vo de Freigaba bleibt uffm Gerät ond wird nie an an Server gschickt; d Passwörter kommet en d Schlüsselbund oder da Keystore vom Gerät.
+- **Plex** (ab Build 20): s Token bleibt em sichera Speicher vom Gerät ond wird bloß an dein eigena Server gschickt, en ma Request-Header über HTTPS; d App kontaktiert nie plex.tv.
+- **Tapo-Kameras** (ab Build 20): s Passwort vom TP-Link-Konto ond s Passwort vom Kamerakonto bleibet em sichera Speicher vom Gerät; d App schwätzt bloß em lokala Netzwerk mit dr Kamera, nie mit de Server vo TP-Link; gholte Clips bleibet em Cache vo dr App ond werdet mit dr Kamera glöscht.
+- **Fernseher**: ob s Gerät a Fernseher isch, wird uffm Gerät festgstellt; nix wird gschickt.
 - **Telefon-Freigab**: bloß lokals Netzwerk, mit Benutzernama ond Passwort, über eifachs HTTP (guck bei [Des Telefon em Netzwerk freigeba](#share-this-phone-on-the-network)).
 - **Kamera**: bloß vom Spatial-2.5D-Player gnutzt, uffm Gerät; d Bilder werdet nie gspeichert ond nie irgendwohi gschickt.
 
@@ -675,20 +857,25 @@ Des Projekt isch a Fork vo Immich ond bleibt onder dr [GNU AGPL v3](LICENSE). Je
 
 Was no ned fertig isch, s Wahrscheinlichschte zerscht. Nix dovo isch a Versprecha, ond Rückmeldonga em [Issue-Tracker](https://github.com/freeKC/Immuch360/issues) helfet zom entscheida, was zerscht kommt.
 
-- **Google Play**: d Builds 15 ond 16 send am 4. Oktober 2026 zur Prüfong an Google gschickt worra ond ganget online, sobald se freigeba send; dr letschte Build, der dort bschtätigt online isch, isch Build 11.
+- **Google Play**: Build 18 isch online; Build 19 isch seit em 6. Oktober 2026 en dr Prüfong vo Google, ond Build 20 kommt drnach.
 - **App Store**: d Version 3.3.0 wartet uff d Prüfong vo Apple; se hot d Funktiona vo Build 11, drom kommet s Hochlada zu Immich ond d Prüfong vo de Videodecoder (Build 15) ond d rohe Insta360-Dateia (Build 16) mit em nägschta Update em App Store. Dr Link kommt do nei, wenn se online isch.
-- **Meta Horizon Store**: dr Eintrag isch am 3. Oktober 2026 mit Build 14 zur Prüfong an Meta gschickt worra, ond Build 16 isch uffm Alpha-Kanal vom Store fürs nägschte Update. Sobald dr Eintrag freigeba isch, braucht d Quest 3 koi seitlichs Lada meh ond dr Store-Link kommt do nei; a seitlich gladene Kopie muss erscht deinstalliert werda (guck bei [Installiera](#install)).
-- **Store-Einträg**: d Texte uff Google Play ond em App Store beschreibet no d erschte Builds (360°-Fotos ond -Videos, Rohdateia flach aazeigt); se werdet d Aasichta fir 3D, VR180 ond Spatial, da Modus ohne Server, d Netzwerkfreigaba, da Medieplayer ond d rohe Insta360-Dateia vorstella. Dr Text em Meta Horizon Store stellt da Medieplayer scho vor.
+- **Meta Horizon Store**: dr Eintrag isch am 3. Oktober 2026 mit Build 14 zur Prüfong an Meta gschickt worra, ond dr Alpha-Kanal vom Store kriagt jeden neie Build fürs nägschte Update. Sobald dr Eintrag freigeba isch, braucht d Quest 3 koi seitlichs Lada meh ond dr Store-Link kommt do nei; a seitlich gladene Kopie muss erscht deinstalliert werda (guck bei [Installiera](#install)).
+- **Store-Einträg**: dr Eintrag uff Google Play isch em Oktober 2026 mit neie Bildschirmfotos nei gschrieba worra, ond kriagt mit em Fernseher-Release Fernseher-Bildschirmfotos ond a Fernseher-Banner. Dr Text em App Store beschreibt no d erschte Builds (360°-Fotos ond -Videos, Rohdateia flach aazeigt); er wird d Aasichta fir 3D, VR180 ond Spatial, da Modus ohne Server, d Netzwerkfreigaba, da Medieplayer ond d rohe Insta360-Dateia vorstella. Dr Text em Meta Horizon Store stellt da Medieplayer scho vor.
 - **Rohdateia vo 360°-Kameras, als nägschts**: a Fortschrittsaazeig, solang a rohs Foto fürs Headset vorbereitet wird; Graderichta vo GoPro- ond DJI-Videos aus ihre eigene Bewegongsdata; Doppel-Fischaug als .dng; Berichte vo Geräte zom Abspiela mit zwoi Objektiv vo Build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360), om Nähte ond Decoder-Budgets zom bschtätiga.
 - **DLNA, Telefon-Freigab ond räumliche Medien vo Apple, als nägschts**: d Geräteberichte vo Build 19 (Plex, Jellyfin, a NAS ond dr Freebox Server über DLNA; a Telefon, des a Quest versorgt, au über sein Hotspot; echte räumliche Fotos ond Videos vom iPhone em Headset); d Multicast-Berechtigong, die bei Apple aagfrogt isch, damit iPhones jeden DLNA-Server findet; vorigs ond nägschts zwischa räumliche Fotos em Headset; a räumlichs Abzeicha uff Server-Fotos en dr Zeitleischte; räumliche Videos en 3D uff dr Quest, wenn ihre Decoder des zulasset.
 - **360°-Player uffm Telefon, als nägschts**: a Zeitleischte em iOS-360°-Videoplayer (dr vo Android hot oine), vorigs/nägschts en de 360°-Player vom Telefon wia en dr immersive Aasicht vo dr Quest, ond Fotos em eigene 360°-Videoplayer.
 - **Netzwerkfreigaba, nägschte Schritt**: wischa vo oiner Datei vom Ordner zur nägschta uff de Foto- ond Videoseita (d immersive Aasicht vo dr Quest goht scho durch d 360°-Dateia vo ma Ordner), Digest-Aameldong fir WebDAV, dr Benutzernama aus em Bonjour-Eintrag.
 - **Flache Videos**: d Wahl vo dr Tonspur em flacha Player, fir Server-, Geräte- ond Freigab-Videos gleichermaßa (dr 360°- ond dr Spatial-Player hen se).
+- **Android TV, als nägschts**: dr Gerätetescht vo Build 20 uffm Google-TV-Emulator ond uff ma echta Fernseher, dann s Fernseher-Release uff Google Play (Fernseher-Bildschirmfotos, s Fernseher-Banner, d Prüfong vo Google); schpäter Kanäl uffm Startbildschirm vom Fernseher.
+- **Tapo-Kameras, als nägschts**: dr Gerätetescht vo Build 20 mit echte Kameras; s Live-Bild uffm iPhone ond iPad; H.265-Aufnahma; an Clip abspiela, während er no gholt wird; d Aufnahma vo ma ganza Tag uff oiner Zeitleischte.
+- **Plex, als nägschts**: dr Gerätetescht vo Build 20 (Telefon, d Quest, a iPhone, a Fernseher, onderwegs); s Token mit ma QR-Code vom Computer rüberhola; d DLNA-Seite vo ma Plex-Server en dr Lischte vo de gfondene Server verstecka; IPv6.
 - **Upstream**: kleine Pull Requests an Immich fir d Teil, die d Maintainer wellet, aagfanga mit dr 360°-Fotoaasicht.
 
 ## Dank
 
 D 360°-Fotoaasicht basiert uff em Upstream-Pull-Request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) vo dmitry-brazhenko, der selber uff em Prototyp vo bencefr en [#30192](https://github.com/immich-app/immich/pull/30192) uffbaut. Dank an älle zwoi.
+
+D Tapo-Kameras vo Build 20 send noch dem gschrieba worra, was d Open-Source-Projekte [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ond [python-kasa](https://github.com/python-kasa/python-kasa) über die Kameras dokumentieret.
 
 Warom a Fork: 360°-Aagucka uffm Telefon wird seit Januar 2024 gwünscht ond isch no ned en dr offizielle App; d Fotoaasicht isch upstream en [#31169](https://github.com/immich-app/immich/pull/31169) en dr Prüfong. Der Fork liefert se jetzt, sammelt Rückmeldonga vo echte Geräte, ond wird Immich en kleine Pull Requests des zrückgebe, was d Maintainer wellet. D Aasicht fir d Meta Quest hängt am Meta Spatial SDK, des ned Open Source isch, drom bleibt se en dem Fork.
 

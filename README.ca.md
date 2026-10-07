@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 és l'aplicació mòbil de l'Immich amb fotos i vídeos 360° on pots mirar al voltant, i un reproductor gratuït per a fotos i vídeos plans, 360°, 3D i VR180, en telèfons i tauletes Android, iPhone i iPad, i les Meta Quest 3 i 3S. És per a qui fa fotos amb una càmera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) o amb el mode d'esfera fotogràfica d'un telèfon, o qui té un casc, i vol veure les seves pròpies preses des d'un servidor Immich, el mateix telèfon, un NAS o un servidor multimèdia: el mateix servidor, el mateix compte, cap connector al servidor, o cap servidor.
+Immuch360 és l'aplicació mòbil de l'Immich amb fotos i vídeos 360° on pots mirar al voltant, i un reproductor gratuït per a fotos i vídeos plans, 360°, 3D i VR180, en telèfons i tauletes Android, iPhone i iPad, les Meta Quest 3 i 3S i, des de la compilació 20, Android TV i Google TV. És per a qui fa fotos amb una càmera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) o amb el mode d'esfera fotogràfica d'un telèfon, o qui té un casc, i vol veure les seves pròpies preses des d'un servidor Immich, el mateix telèfon, un NAS, un servidor multimèdia o un servidor Plex: el mateix servidor, el mateix compte, cap connector al servidor, o cap servidor. Des de la compilació 20 també mostra les càmeres Tapo, en directe i els enregistraments de la seva targeta de memòria.
 
 <p align="center">
   <sub>Fork no oficial. No està afiliat a l'Immich ni a FUTO. El nom es llegeix com «I am much 360».</sub>
@@ -15,7 +15,8 @@ Immuch360 és l'aplicació mòbil de l'Immich amb fotos i vídeos 360° on pots 
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">APK d'Android</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">en revisió</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store en revisió
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store en revisió &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 és l'aplicació mòbil de l'Immich amb fotos i vídeos 360° on pots 
     <td align="center" width="33%"><h3>🎥 2.5D natiu</h3>Profunditat en una pantalla plana a partir d'un vídeo estereoscòpic, la vista segueix el teu cap (experimental, telèfons i tauletes)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Una aplicació, tres plataformes, 3D real al casc</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Una aplicació en telèfons, tauletes i el casc, 3D real al casc, i des de la compilació 20 a Android TV amb el comandament</td>
     <td align="center"><h3>🔌 Amb servidor o sense</h3>El teu servidor Immich, o la galeria del mateix telèfon, sense compte</td>
     <td align="center"><h3>🗄️ Recursos compartits de xarxa</h3>Samba (SMB), WebDAV i, des de la compilació 19, servidors multimèdia DLNA, trobats a la xarxa i llegits en directe, sense descarregar res, i enviats a l'Immich quan tu vulguis. Des de la compilació 19 un telèfon també comparteix la seva pròpia galeria amb el casc</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Al televisor</h3>Des de la compilació 20, el mateix APK a Android TV i Google TV: fotos i vídeos 360°, el teu servidor i els teus recursos compartits, amb el comandament</td>
+    <td align="center"><h3>🎬 Plex, sense plex.tv</h3>Des de la compilació 20, les teves biblioteques de Plex, reproduïdes des dels fitxers originals perquè el 360° continuï sent 360°, a casa i fora de casa</td>
+    <td align="center"><h3>📹 Càmeres Tapo</h3>Des de la compilació 20, la visualització en directe i els enregistraments de la targeta de memòria, només a la teva xarxa, i un clip enviat a l'Immich quan tu vulguis</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 és l'aplicació mòbil de l'Immich amb fotos i vídeos 360° on pots 
 - **«Les meves fotos 360° es veuen com una franja plana i estirada, i els meus vídeos 360° es reprodueixen plans.»** Consulta [Fotos i vídeos 360° com una esfera](#360-photos-and-videos-as-a-sphere).
 - **«No tinc servidor i no vull cap compte.»** Consulta [Sense servidor ni compte](#without-a-server-or-an-account).
 - **«Vull veure els vídeos del meu NAS, al telèfon o al casc, sense copiar-los.»** Consulta [Recursos compartits de xarxa](#network-shares-a-nas-a-computer-or-a-media-server).
+- **«El Plex reprodueix els meus vídeos 360° plans, i vull la meva biblioteca de Plex al casc, al televisor i fora de casa.»** Consulta [Plex Media Server, sense plex.tv](#plex-media-server-without-plextv).
 - **«Les meves fotos són al telèfon i no tinc cap ordinador ni NAS on posar-les per al casc.»** Consulta [Comparteix aquest telèfon a la xarxa](#share-this-phone-on-the-network).
+- **«Vull veure la meva càmera Tapo i els clips d'ahir a la nit sense l'app Tapo, i guardar un clip a l'Immich.»** Consulta [Càmeres Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **«Els meus fitxers d'Insta360 necessiten l'aplicació Insta360 abans de poder-los veure»** (i els fitxers GoPro .360 i DJI .osv també). Consulta [Fitxers en brut de càmeres 360°](#raw-360-camera-files-without-the-cameras-app).
 - **«Els meus vídeos 3D es veuen duplicats i els meus vídeos VR180 estan estirats tot al voltant.»** Consulta [3D i VR180](#3d-and-vr180-photos-and-videos) i [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **«Tinc fotos espacials del meu iPhone.»** Consulta [Fotos i vídeos espacials d'Apple](#apple-spatial-photos-and-videos).
 - **«Funciona al telèfon, però ho vull a les Quest.»** Consulta [Al casc Meta Quest 3](#in-the-meta-quest-3-headset).
+- **«Vull veure les meves fotos i vídeos 360°, i els vídeos del meu NAS o del meu servidor Plex, al televisor, amb el comandament.»** Consulta [Mira-ho al televisor](#watch-on-your-tv-android-tv-and-google-tv).
 - **«No trobo les meves preses 360° entre totes les altres.»** Consulta [La llista 360°](#find-your-360-shots-the-360-list).
 - **«El meu vídeo 360° va a batzegades o reprodueix una còpia borrosa.»** Consulta [Detalls del vídeo i descodificadors](#video-details-decoders-and-why-a-video-stutters).
 - **«Conservo tot el que fa l'aplicació Immich?»** Sí, amb dos petits canvis, consulta [Tota la resta és Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ L'elecció es recorda al telèfon i no canvia res al servidor. En un fitxer d'un
 
 No tens servidor Immich, o no vols cap compte: només vols que les fotos 360° del teu telèfon s'obrin com una esfera que pots girar amb el giroscopi. L'aplicació Immich primer demana iniciar la sessió.
 
-A la pàgina d'inici de sessió, «Utilitza sense servidor» obre Immuch360 amb les fotos i vídeos del mateix dispositiu, amb els visualitzadors 360°, 3D, VR180 i Spatial, la llista 360° i els recursos compartits de xarxa, sense cap compte d'Immich. Les funcions del servidor queden amagades o en gris fins que connectes un servidor; res surt del dispositiu. En unes Meta Quest 3 obre les fotos i vídeos del mateix casc.
+A la pàgina d'inici de sessió, «Utilitza sense servidor» obre Immuch360 amb les fotos i vídeos del mateix dispositiu, amb els visualitzadors 360°, 3D, VR180 i Spatial, la llista 360° i els recursos compartits de xarxa (des de la compilació 20 també els servidors Plex i les càmeres Tapo), sense cap compte d'Immich. Les funcions del servidor queden amagades o en gris fins que connectes un servidor; res surt del dispositiu. En unes Meta Quest 3 obre les fotos i vídeos del mateix casc; en un televisor, que no en té, remet als recursos compartits de xarxa (consulta [Mira-ho al televisor](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="La pestanya Biblioteca sense servidor: l'entrada 360° a dalt, després En aquest dispositiu amb dues fotos 360° i Recursos compartits de xarxa amb un recurs compartit anomenat NAS">
 
@@ -126,7 +135,7 @@ A la pàgina d'inici de sessió, «Utilitza sense servidor» obre Immuch360 amb 
 
 Els teus vídeos 360° són en un NAS o en un ordinador, i els vols veure al telèfon o al casc sense haver-los de copiar abans. Amb el casc, la gent acaba copiant cada fitxer per cable; servidors multimèdia com Plex i Jellyfin reprodueixen els vídeos 360° plans, tal com descriuen peticions als seus fòrums; l'aplicació Immich només llegeix el teu servidor Immich.
 
-Immuch360 navega i reprodueix les fotos i vídeos de qualsevol servidor que parli SMB (Samba, Windows), WebDAV o, des de la compilació 19, DLNA/UPnP (un servidor multimèdia: Plex, Jellyfin, minidlna, Gerbera, Emby, un NAS o una caixa de TV), directament des del recurs compartit. Troba sola els servidors de la teva xarxa i reprodueix els fitxers en directe als mateixos visualitzadors que la resta de l'aplicació (360°, 3D, VR180, Spatial 2.5D, vista immersiva de les Quest), amb servidor Immich o sense, en telèfons i a les Meta Quest 3. No es baixa res. Quan hi ha un servidor connectat, els fitxers que triïs es poden enviar al teu compte d'Immich (des de la compilació 15).
+Immuch360 navega i reprodueix les fotos i vídeos de qualsevol servidor que parli SMB (Samba, Windows), WebDAV o, des de la compilació 19, DLNA/UPnP (un servidor multimèdia: Jellyfin, minidlna, Gerbera, Emby, un NAS o una caixa de TV), directament des del recurs compartit. Des de la compilació 20, un Plex Media Server té un tipus propi, consulta [Plex Media Server, sense plex.tv](#plex-media-server-without-plextv). Troba sola els servidors de la teva xarxa i reprodueix els fitxers en directe als mateixos visualitzadors que la resta de l'aplicació (360°, 3D, VR180, Spatial 2.5D, vista immersiva de les Quest), amb servidor Immich o sense, en telèfons i a les Meta Quest 3. No es baixa res. Quan hi ha un servidor connectat, els fitxers que triïs es poden enviar al teu compte d'Immich (des de la compilació 15).
 
 | Afegir un recurs compartit | Una carpeta d'un recurs compartit |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 navega i reprodueix les fotos i vídeos de qualsevol servidor que parl
 
 ### Afegeix un recurs compartit
 
-1. Obre la pestanya Biblioteca, després Recursos compartits de xarxa. La primera vegada, la pàgina diu «Encara no hi ha cap recurs compartit» amb un botó «Afegeix un recurs compartit»; el + de dalt a la dreta fa el mateix en qualsevol moment.
-2. La pàgina «Afegeix un recurs compartit» primer busca els servidors de la teva xarxa i els llista a «Trobats a la xarxa», amb el seu tipus (SMB, WebDAV, DLNA, Telèfon). La cerca dura fins a uns sis segons; «Torna a cercar» la torna a començar. Fa servir Bonjour/mDNS i un escaneig de la xarxa local confirmat per un intercanvi SMB o WebDAV real, i des de la compilació 19 una cerca SSDP de servidors multimèdia DLNA.
-3. Toca un servidor: s'omplen el tipus, el servidor, el port i el camí.
-4. No és a la llista? Omple el formulari a mà. Tipus: «SMB (Samba, recurs compartit de Windows)», «WebDAV (Nextcloud, Synology i altres)» o «Servidor multimèdia DLNA (Plex, Jellyfin, NAS, caixa de TV)». Després Nom, «Nom o adreça del servidor» (un nom o una adreça; una adreça completa com `smb://nas/photos`, `\\nas\photos` o `https://nas:5006/photos` omple els altres camps), «Port (opcional)» quan no és l'habitual, «Recurs compartit» per a SMB o «Camí de l'adreça WebDAV» per a WebDAV, «Carpeta inicial (opcional)», «Nom d’usuari» i «Contrasenya», i «Connexió segura (HTTPS)» per a WebDAV.
+1. Obre la pestanya Biblioteca, després Recursos compartits de xarxa. La primera vegada, la pàgina diu «Encara no hi ha cap recurs compartit» amb un botó «Afegeix un recurs compartit»; el + de dalt a la dreta fa el mateix en qualsevol moment. Des de la compilació 20 tots dos pregunten què vols afegir: «Un recurs compartit de xarxa (NAS, ordinador, servidor multimèdia)», «Un Plex Media Server» o «Una càmera Tapo». Tria el primer.
+2. La pàgina «Afegeix un recurs compartit» primer busca els servidors de la teva xarxa i els llista a «Trobats a la xarxa», amb el seu tipus (SMB, WebDAV, DLNA, Telèfon i, des de la compilació 20, Plex i Tapo). La cerca dura fins a uns sis segons; «Torna a cercar» la torna a començar. Fa servir Bonjour/mDNS i un escaneig de la xarxa local confirmat per un intercanvi SMB o WebDAV real, des de la compilació 19 una cerca SSDP de servidors multimèdia DLNA, i des de la compilació 20 GDM, el descobriment de Plex, i el protocol de descobriment de TP-Link per a les càmeres Tapo.
+3. Toca un servidor: s'omplen el tipus, el servidor, el port i el camí. Un servidor Plex o una càmera Tapo obre en canvi la seva pròpia pàgina, ja emplenada.
+4. No és a la llista? Omple el formulari a mà. Tipus: «SMB (Samba, recurs compartit de Windows)», «WebDAV (Nextcloud, Synology i altres)», «Servidor multimèdia DLNA (Jellyfin, NAS, caixa de TV)» o, des de la compilació 20, «Plex Media Server», que obre la pàgina de [Plex Media Server, sense plex.tv](#plex-media-server-without-plextv). Després Nom, «Nom o adreça del servidor» (un nom o una adreça; una adreça completa com `smb://nas/photos`, `\\nas\photos` o `https://nas:5006/photos` omple els altres camps), «Port (opcional)» quan no és l'habitual, «Recurs compartit» per a SMB o «Camí de l'adreça WebDAV» per a WebDAV, «Carpeta inicial (opcional)», «Nom d’usuari» i «Contrasenya», i «Connexió segura (HTTPS)» per a WebDAV.
 5. SMB: un cop escrits el servidor i el nom d'usuari, «Tria un recurs compartit» llista els recursos compartits del servidor.
 6. DLNA: un servidor multimèdia no té nom d'usuari ni contrasenya. Indica el servidor, el port i el «Camí de la descripció» de la seva descripció de dispositiu (`/rootDesc.xml` per a minidlna), o enganxa l'adreça sencera, com ara `http://192.168.1.10:8200/rootDesc.xml`, al camp del servidor.
 7. Toca «Prova la connexió». Respon «Connectat, N elements a la carpeta inicial», o diu per què ha fallat. Després toca Desa, a la part inferior del formulari.
@@ -155,6 +164,7 @@ Un nom d'usuari amb la contrasenya buida s'envia tal qual: un Freebox Server vol
 
 El 360°, el 3D i el VR180 es reconeixen per les metadades GPano o esfèriques del fitxer, llegides amb peticions de rang, i el VR180 també pel nom del fitxer. Des de la compilació 16 també es reconeixen els fitxers en brut d'Insta360 (una foto .insp pel nom o pel bloc de calibratge de la càmera, un vídeo .insv pel nom i pel format del fotograma) i s'uneixen.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Envia fitxers d'un recurs compartit a l'Immich
 
 Des de la compilació 15, quan estàs connectat a un servidor:
@@ -177,17 +187,67 @@ Des de la compilació 19, l'aplicació envia la cerca SSDP de servidors multimè
 <a id="a-share-that-moved"></a>
 ### Un recurs compartit que s'ha mogut
 
-Des de la compilació 19, un recurs compartit DLNA i un recurs compartit de telèfon (consulta [Comparteix aquest telèfon a la xarxa](#share-this-phone-on-the-network)) conserven l'identificador que anuncia el seu servidor. Quan un d'ells ja no respon a la seva adreça (una adreça nova donada per l'encaminador, un servidor reiniciat en un altre port), la pàgina de la seva carpeta mostra «S'està cercant (nom) a la xarxa» i mou el recurs compartit allà on ara respon: de seguida per a un servidor DLNA, que no té contrasenya, i després d'una confirmació, «Vols fer servir l'adreça nova?», que mostra totes dues adreces, per a un recurs compartit amb nom d'usuari i contrasenya, ja que s'enviarien a l'adreça nova.
+Des de la compilació 19, un recurs compartit DLNA i un recurs compartit de telèfon (consulta [Comparteix aquest telèfon a la xarxa](#share-this-phone-on-the-network)) conserven l'identificador que anuncia el seu servidor. Quan un d'ells ja no respon a la seva adreça (una adreça nova donada per l'encaminador, un servidor reiniciat en un altre port), la pàgina de la seva carpeta mostra «S'està cercant (nom) a la xarxa» i mou el recurs compartit allà on ara respon: de seguida per a un servidor DLNA, que no té contrasenya, i després d'una confirmació, «Vols fer servir l'adreça nova?», que mostra totes dues adreces, per a un recurs compartit amb nom d'usuari i contrasenya, ja que s'enviarien a l'adreça nova. Des de la compilació 20, un servidor Plex retrobat en una altra adreça de la xarxa també es mou de seguida: el seu certificat demostra que és el mateix servidor abans que s'enviï el testimoni. Una càmera Tapo es cerca per la seva adreça MAC des de la seva pròpia pàgina, consulta [Càmeres Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Limitacions
 
 - **SMB**: només SMB 2 i 3, no SMB 1.
 - **WebDAV**: només autenticació Basic (Digest encara no és compatible); cal instal·lar al dispositiu un certificat HTTPS autosignat.
-- **Trobar servidors**: l'escaneig de xarxa i la cerca DLNA només miren la xarxa local /24, i a iOS necessiten el permís de xarxa local. A l'iPhone i l'iPad la cerca DLNA només envia les peticions unicast, fins que Apple concedeixi a l'aplicació el dret de multicast, i alguns servidors no hi responen (minidlna a Linux): afegeix-los per la seva adreça de descripció.
+- **Trobar servidors**: l'escaneig de xarxa i les cerques DLNA, Plex i Tapo només miren la xarxa local /24, i a iOS necessiten el permís de xarxa local. A l'iPhone i l'iPad la cerca DLNA només envia les peticions unicast, fins que Apple concedeixi a l'aplicació el dret de multicast, i alguns servidors no hi responen (minidlna a Linux): afegeix-los per la seva adreça de descripció.
 - **DLNA**: un servidor que només ofereix una còpia convertida d'un fitxer dona aquesta còpia; una carpeta llista com a màxim 20.000 elements.
 - **Miniatures**: les miniatures de les fotos descodifiquen el fitxer sencer, i les fotos de més de 30 MB no en tenen.
 - **Reproductors**: l'elecció de pista d'àudio encara no és al reproductor pla. En un telèfon encara no es pot lliscar d'un fitxer d'una carpeta al següent (la vista immersiva de les Quest té anterior i següent per als fitxers 360° de la carpeta). L'elecció de 3D o 180° en un fitxer de xarxa no es recorda.
 - **Pujades**: només s'executen mentre l'aplicació està oberta, i un fitxer que el servidor ja té s'envia sencer abans que el servidor l'informi com a duplicat.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, sense plex.tv
+
+Els teus vídeos són al Plex, i el Plex mostra les teves fotos i vídeos 360° plans, tal com descriuen peticions al seu fòrum (n'hi ha una oberta des del 2017). També vols aquesta biblioteca al casc, al televisor i fora de casa. L'aplicació de l'Immich només llegeix el teu servidor Immich, i el tipus DLNA de la compilació 19 només arriba a la part DLNA del Plex quan ets a casa.
+
+Des de la compilació 20, Immuch360 s'emparella directament amb el teu Plex Media Server, sense plex.tv: troba el servidor a la xarxa, hi enganxes un testimoni una vegada, i l'aplicació llegeix en directe els fitxers originals de les teves biblioteques, a tots els visualitzadors de l'aplicació (360°, 3D, VR180, Spatial 2.5D, la vista immersiva de les Quest, el comandament del televisor), a casa i, gràcies a la teva redirecció de ports, fora de casa. No es copia res, i els fitxers que triïs es poden enviar a l'Immich.
+
+### Afegeix un servidor Plex
+
+1. Obre la pestanya Biblioteca, després Recursos compartits de xarxa, després + i «Un Plex Media Server». El tipus «Plex Media Server» del formulari de recurs compartit, i un servidor amb l'etiqueta Plex a «Trobats a la xarxa», obren la mateixa pàgina.
+2. La pàgina «Afegeix un servidor Plex» busca els servidors Plex de la teva xarxa («S'estan cercant servidors Plex a la teva xarxa») i els llista a «Trobats a la xarxa». Toca el teu: una targeta en mostra el nom, la versió de Plex i un identificador curt.
+3. No és a la llista? Escriu la seva «Adreça del servidor», com ara `192.168.1.20`, `192.168.1.20:32400` o `https://...plex.direct:32400`, i després toca «Cerca». L'aplicació llegeix el certificat del servidor i no envia res més.
+4. Obtén el testimoni en un ordinador: obre el Plex en un navegador web i inicia la sessió, obre qualsevol foto o vídeo de la teva biblioteca, després «...», «Get Info», «View XML». S'obre una pestanya nova amb una adreça que acaba amb `X-Plex-Token=...`. Copia tota aquesta adreça.
+5. Enganxa-la a «Testimoni d'accés», o envia-la al telèfon i toca «Enganxa des del porta-retalls»: l'aplicació n'extreu el servidor i el testimoni. També funciona només el text que hi ha després de `X-Plex-Token=`. «Com obtenir-lo», a la pàgina, diu el mateix; els administradors del servidor també poden fer servir el valor `PlexOnlineToken` del fitxer `Preferences.xml` del servidor, que no caduca. En un televisor, OK obre el diàleg del teclat: escriu-hi el testimoni (normalment té 20 caràcters).
+6. Toca «Prova la connexió». Respon «Connectat: N biblioteques», o diu què falla, com ara «El servidor Plex ha rebutjat aquest testimoni.»
+7. «Accés des de fora de casa» mostra llavors el que diu el servidor: «El servidor diu que és accessible a (adreça):(port).» o «El servidor no ha indicat la seva adreça de fora de casa.» Per fer servir el servidor fora de casa, escriu la teva adreça pública o el teu nom DynDNS a «Adreça de fora de casa (IP o nom)», i el port redirigit al Plex (Configuració, Accés remot) a «Port de fora de casa». El que escrius sempre té prioritat sobre el que diu el servidor.
+8. «Nom» és el nom del servidor tret que el canviïs, i «Carpeta inicial (opcional)» pot obrir directament una biblioteca. Toca Desa. El servidor apareix amb els recursos compartits, com a `plex://` i la seva adreça.
+
+### Navega per les teves biblioteques de Plex
+
+1. Toca el servidor a Recursos compartits de xarxa. El primer nivell llista les biblioteques que mostra l'aplicació: fotos, pel·lícules i altres vídeos, sèries. La música queda fora.
+2. Sota una biblioteca hi ha les seves carpetes tal com són al disc del servidor (la vista «per carpeta» del Plex), després les fotos i vídeos amb els seus noms de fitxer, amb les miniatures que fa el Plex. Una biblioteca de fotos la vista per carpetes de la qual no respon mostra en canvi els seus àlbums.
+3. El 360° i el 3D es detecten llegint els mateixos fitxers, com a qualsevol recurs compartit: les fotos 360° reben el distintiu 360°, les espacials d'Apple el distintiu 3D.
+4. Obre una foto o un vídeo com a qualsevol recurs compartit: 360°, 3D, 360°/180°, Spatial 2.5D en un telèfon, la vista immersiva a les Quest, el comandament en un televisor. Un vídeo es llegeix com el fitxer original, amb intervals de bytes a través del pont local de l'aplicació, de manera que el desplaçament funciona i les seves metadades 360° i 3D arriben intactes als reproductors.
+5. Selecciona fitxers i toca «Puja a l’Immich» per enviar-los al teu servidor, com des de qualsevol recurs compartit (consulta [Envia fitxers d'un recurs compartit a l'Immich](#send-files-of-a-share-to-immich)).
+
+### Fora de casa
+
+Cada vegada que obre el servidor, l'aplicació prova primer l'adreça de casa i, 400 ms després, l'adreça de fora de casa. Es fa servir la primera que respon amb el teu servidor; quan és l'adreça de fora de casa, la pàgina de la carpeta mostra una icona de globus amb el text «Connectat a través de l'adreça de fora de casa». Cal tenir l'Accés remot activat al Plex (Configuració, Accés remot) amb un port redirigit per l'encaminador: sense plex.tv l'aplicació no pot fer servir el relé del Plex, de manera que un servidor sense redirecció de ports només s'obre a casa, i fora de casa la pàgina diu «No es pot accedir al teu servidor Plex des de fora de la xarxa de casa. Activa l'accés remot amb una redirecció de ports a Plex (Configuració, Accés remot) o escriu-ne l'adreça pública.»
+
+L'adreça que indica el servidor es torna a aprendre a cada connexió des de casa. Quan no respon des de fora (un encaminador que canvia d'adreça, dos encaminadors en cadena), escriu la teva a la pàgina del servidor. Quan el testimoni deixa de funcionar (per exemple, has tancat la sessió del navegador d'on l'havies copiat), la pàgina de la carpeta ho diu i ofereix «Enganxa un testimoni nou», que obre la pàgina del servidor al camp del testimoni.
+
+### Comparat amb el Plex i amb el tipus DLNA
+
+- **Els fitxers originals**: l'aplicació llegeix els mateixos fitxers, mai una còpia convertida pel Plex, de manera que les metadades 360°, 3D i VR180 queden intactes i els visualitzadors de l'aplicació les fan servir, mentre que les aplicacions del Plex mostren aquests fitxers plans.
+- **Sense plex.tv**: l'aplicació només parla amb el teu servidor, sempre per HTTPS. El servidor es verifica amb el seu propi certificat plex.direct, lligat a l'identificador del servidor, abans d'enviar el testimoni. El testimoni es queda al dispositiu, al seu emmagatzematge segur, i només va al teu servidor, en una capçalera de la petició.
+- **Comparat amb afegir el mateix servidor com a DLNA**: les carpetes tal com són al disc, les miniatures del Plex, l'accés des de fora de casa i una connexió segura.
+
+### Limitacions
+
+- **Només servidors reclamats**: el servidor ha d'estar reclamat al Plex (amb la sessió iniciada en un compte de Plex una vegada), cosa que li dona el seu certificat plex.direct. Si no, la pàgina diu «Aquesta adreça respon sense un certificat de Plex. Reclama el servidor a Plex o afegeix-lo com a recurs compartit SMB, WebDAV o DLNA.»
+- **Només IPv4**: «Les adreces IPv6 encara no són compatibles. Escriu l'adreça IPv4 del servidor.»
+- **El testimoni** dona accés complet al teu servidor Plex. Treure el servidor de l'aplicació oblida el testimoni al dispositiu però no el revoca: «El testimoni continua sent vàlid al servidor fins que tanquis la sessió del navegador d'on l'has copiat.» Un testimoni amb data de caducitat mostra aquesta data, i l'aplicació no el pot renovar.
+- **Fora de casa**: només amb una redirecció de ports, no hi ha relé.
+- **Biblioteques**: la música no es mostra, una carpeta llista com a màxim 20.000 entrades, i un usuari restringit pot rebre «Aquest testimoni no pot llegir les biblioteques del servidor.»
+- **Fitxers en brut de càmeres 360°** (.insv, .insp, .360, .osv): només apareixen si el Plex els llista; si no, afegeix la mateixa carpeta del NAS com a recurs compartit SMB o WebDAV, consulta [Fitxers en brut de càmeres 360°](#raw-360-camera-files-without-the-cameras-app).
+- **Trobar el servidor**: un servidor amb el paràmetre «Enable local network discovery (GDM)» desactivat no es troba, així que escriu-ne l'adreça. A l'iPhone i l'iPad la cerca només envia peticions unicast. La part DLNA del mateix servidor també pot aparèixer a la llista, amb l'etiqueta DLNA: tria la línia amb l'etiqueta Plex.
+- **Encara no comprovat en un dispositiu**: l'emparellament, les carpetes, els intervals de bytes d'un vídeo, les miniatures, un testimoni incorrecte i l'adreça de fora de casa s'han comprovat des d'un ordinador amb un Plex Media Server 1.42.1 real, i les biblioteques de fotos i de sèries només amb un servidor simulat. La reproducció en un telèfon, a les Quest, en un iPhone i en un televisor, i el pas a l'adreça de fora de casa, són la prova en dispositius de la compilació 20.
+- Immuch360 no està afiliat a Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Comparteix aquest telèfon a la xarxa
@@ -219,6 +279,63 @@ A partir d'aquí és un recurs compartit WebDAV com qualsevol altre: detecció d
 - **Seguretat**: només xarxa local. El recurs compartit només escolta a les adreces Wi-Fi, Ethernet i de punt d'accés del telèfon, mai a la seva adreça de dades mòbils o de VPN, i només respon a dispositius amb una adreça local. Cada petició necessita el nom d'usuari i la contrasenya (HTTP Basic); deu contrasenyes errònies des d'un dispositiu en un minut el bloquegen durant un minut. La contrasenya viatja sense xifrar per la Wi-Fi (HTTP simple): fes servir el recurs compartit en una xarxa de confiança i desactiva'l quan acabis.
 - **El punt d'accés del mateix telèfon**: el casc s'hi pot connectar; quan no hi troba el telèfon, escriu l'adreça que es mostra a la pàgina.
 - **Encara no comprovat en un dispositiu**: el servidor s'ha comprovat amb proves unitàries i amb proves d'extrem a extrem amb el client WebDAV i el pont multimèdia del mateix casc, en un ordinador. Un telèfon que serveix unes Quest 3 (descobriment, un vídeo de 4 GB reproduït i desplaçat, la pantalla apagada durant 30 minuts, el punt d'accés, Atura des de la notificació) i la part de l'iPhone, que encara no s'ha executat en cap iPhone, són la prova en dispositius de la compilació 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Càmeres Tapo: visualització en directe i els enregistraments de la targeta de memòria
+
+Tens càmeres Tapo a casa, i vols veure la càmera del jardí i els clips d'ahir a la nit al costat de les teves fotos sense obrir l'app Tapo, i guardar un clip a l'Immich. L'aplicació de l'Immich no té res per a càmeres, i l'app Tapo és una aplicació a part, amb la sessió iniciada al teu compte de TP-Link, amb els clips separats de les teves fotos.
+
+Des de la compilació 20, Immuch360 afegeix una càmera Tapo al costat dels recursos compartits de xarxa. Mostra la càmera en directe en telèfons i tauletes Android, Android TV i les Meta Quest 3, i a totes les plataformes els enregistraments de la seva targeta de memòria, dia a dia: un clip s'obté de la càmera, després es reprodueix com qualsevol vídeo i es pot enviar a l'Immich. L'aplicació parla amb la càmera només a la teva xarxa, mai amb els servidors de TP-Link, i mai no canvia res de la càmera.
+
+### Afegeix una càmera
+
+1. Primer a l'app Tapo: crea el compte de la càmera, a la configuració de la càmera, Configuració avançada, Compte de la càmera (un nom d'usuari i una contrasenya per a aquesta càmera, que serveixen per a la visualització en directe), i activa la compatibilitat amb tercers, a Jo i després Tapo Lab.
+2. A Immuch360, obre la pestanya Biblioteca, després Recursos compartits de xarxa, després + i «Una càmera Tapo».
+3. La pàgina «Afegeix una càmera» busca càmeres («S'estan cercant càmeres Tapo a la teva xarxa») i les llista a «Trobats a la xarxa» amb l'etiqueta Tapo. Toca la teva per emplenar «Adreça de la càmera», o escriu-ne l'adreça. Una càmera amb l'etiqueta Tapo al formulari de recurs compartit obre la mateixa pàgina.
+4. «Nom»: com apareix la càmera a la llista.
+5. A «Enregistraments a la targeta de memòria», «Contrasenya del compte de TP-Link»: la contrasenya del compte que fas servir a l'app Tapo. Obre els enregistraments; no cal la teva adreça de correu.
+6. A «En directe», «Nom d'usuari del compte de la càmera» i «Contrasenya del compte de la càmera»: el compte de la càmera del pas 1.
+7. N'hi ha prou amb un dels dos («Introdueix la contrasenya del compte de TP-Link, el compte de la càmera o tots dos.»): la contrasenya de TP-Link sola dona els enregistraments, el compte de la càmera sol la visualització en directe.
+8. Toca «Prova la càmera». Mostra «Enregistraments: (model), microprogramari (versió)» amb l'estat de la targeta de memòria, i «Visualització en directe: (vídeo), so (àudio)», o què ha fallat en cada cas.
+9. Toca Desa. La càmera apareix a «Càmeres», després dels recursos compartits, amb el seu model un cop conegut i `tapo://` amb la seva adreça.
+
+### Mira-la en directe
+
+1. Toca la càmera. La seva visualització en directe és a dalt de la seva pàgina: «S'està connectant a la càmera», després la imatge amb el distintiu En directe.
+2. Els botons sobre la imatge: el so, desactivat al principi («Activa el so»; «Sense so en aquest dispositiu» quan el dispositiu no el pot reproduir), SD o HD, i «Pantalla completa».
+3. Un telèfon mostra SD a la pàgina i HD a pantalla completa; les Quest mostren HD. Enrere surt primer de la pantalla completa.
+4. Sota la imatge apareixen el model i el microprogramari i la targeta de memòria, com ara «Targeta de memòria: (usats) usats de (total)» o «Sense targeta de memòria».
+
+A l'iPhone i l'iPad, la visualització en directe diu «La visualització en directe arribarà a l'iPhone i l'iPad en una versió posterior. Els enregistraments ja es reprodueixen aquí.» Sense el compte de la càmera, la pàgina diu «Afegeix el compte de la càmera per veure la visualització en directe.»
+
+### Reprodueix i guarda els enregistraments
+
+1. A «Enregistraments a la targeta de memòria», la pàgina de la càmera llista els dies amb enregistraments, els més recents primer, per mesos. Sense la contrasenya del compte de TP-Link diu «Afegeix la contrasenya del compte de TP-Link per veure els enregistraments.»
+2. Toca un dia. Els seus clips apareixen sota les hores de l'hora pròpia de la càmera, cadascun amb el seu inici, la seva durada, la miniatura de la càmera per a un esdeveniment i el seu tipus: Moviment, Persona, Mascota, Vehicle, Plor de nadó, Animal, Continu o Esdeveniment.
+3. Toca un clip. L'aplicació l'obté de la càmera («S'està obtenint el vídeo de la càmera: N%», amb Cancel·la) i després el reprodueix al reproductor de vídeo, amb so i desplaçament. Un clip obtingut porta «En aquest dispositiu» i s'obre de seguida la vegada següent.
+4. Per guardar un clip a l'Immich, amb un servidor connectat: el menú ⋮ del vídeo, «Puja a l’Immich».
+5. Per alliberar espai: una pulsació llarga sobre un clip obtingut ofereix «Elimina la còpia d'aquest dispositiu» (en un telèfon), i la pàgina de la càmera té «Elimina els vídeos obtinguts d'aquesta càmera», amb la seva mida.
+6. El botó d'actualitzar de dalt a la dreta, o estirar la pàgina cap avall, torna a consultar la càmera.
+
+Quan la càmera ja no respon a la seva adreça, la seva pàgina la cerca a la xarxa per la seva adreça MAC i la mou allà on ara respon, un cop mostra el mateix certificat. Una càmera que mostra un certificat diferent del que l'aplicació va veure primer rep en canvi una pregunta: «La càmera a (adreça) mostra un certificat diferent del d'abans. Continua només si l'has restablerta o substituïda.»
+
+### Comparat amb l'app Tapo
+
+- **Només a la teva xarxa**: l'aplicació parla amb la mateixa càmera, a la xarxa local, i mai amb els servidors de TP-Link. No inicia la sessió en cap compte de TP-Link, així que no cal la teva adreça de correu.
+- **Els enregistraments es tornen vídeos normals**: un clip obtingut és un vídeo H.264 amb el seu so, que pots enviar a l'Immich, on es queda després que la targeta de memòria hi hagi gravat a sobre.
+- **Al costat de la resta**: amb servidor Immich o sense, en un telèfon, un televisor o a les Quest (a la finestra), trobada a la xarxa com un recurs compartit.
+- **Només lectura**: l'aplicació només demana a la càmera el que mostra; mai no canvia cap paràmetre ni elimina res de la càmera.
+
+### Limitacions
+
+- **Encara no comprovat en un dispositiu**: la compilació 20 encara no ha funcionat amb una càmera real. El protocol es va escriure a partir de captures d'una C510W amb el microprogramari 1.3.4 (l'inici de sessió V4 de mitjan 2026), i l'aplicació es va comprovar amb una càmera simulada a les seves proves. S'agraeixen informes, amb el model i el microprogramari que mostra «Prova la càmera» i les línies dels [Registres](#logs).
+- **Visualització en directe**: en telèfons i tauletes Android, Android TV i les Quest, encara no a l'iPhone i l'iPad. S'apliquen els límits de TP-Link: com a màxim dos fluxos HD i dos SD alhora per càmera, l'app Tapo inclosa, i Tapo Care, la targeta de memòria i un enregistrador que faci servir RTSP o ONVIF no poden funcionar tots alhora.
+- **Càmeres**: les càmeres amb bateria i les càmeres darrere d'un concentrador Tapo no són compatibles.
+- **Enregistraments**: una baixada alhora per càmera. Mentre l'app Tapo navega per la targeta de memòria, l'aplicació ho torna a provar després de 4, 8 i 12 segons, i després diu «La càmera està ocupada amb un altre visor, com ara l'app Tapo. Torna-ho a provar d'aquí a un minut.» Els enregistraments en H.265 encara no es converteixen («Aquest enregistrament és en H.265, que aquesta versió encara no pot convertir.»), els enregistraments continus no tenen miniatura, i un clip es reprodueix un cop s'ha obtingut del tot.
+- **Contrasenyes**: cada contrasenya incorrecta compta, i després d'unes quantes la càmera es bloqueja una estona («La càmera està bloquejada després de massa contrasenyes incorrectes. Torna-ho a provar d'aquí a N minuts.»). L'aplicació mai no torna a provar sola una contrasenya rebutjada: només «Prova la càmera» o Torna-ho a provar tornen a consultar la càmera. Quan la càmera accepta la contrasenya per a la configuració però no per als vídeos, desactiva i torna a activar la compatibilitat amb tercers a l'app Tapo, i després reinicia la càmera.
+- **Espai**: els clips obtinguts es queden a la memòria cau de l'aplicació, com a màxim 1 GB per a totes les càmeres juntes (primer se'n van els que fa més temps que no es reprodueixen); el sistema pot buidar aquesta memòria cau, i treure una càmera n'elimina els clips.
+- **Fora de casa**: l'aplicació arriba a la càmera a la seva adreça de la teva xarxa, així que no des de fora.
+- Immuch360 no està afiliat a TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Fitxers en brut de càmeres 360°, sense l'aplicació de la càmera
@@ -349,7 +466,7 @@ La detecció s'ha comprovat amb una foto espacial de mostra escrita per la matei
 
 Hi ha qui es compra unes Quest 3 per veure les seves pròpies fotos i vídeos 360° i després pregunta on posar els fitxers, com passar-los al casc sense cable i quin reproductor fer servir: els reproductors de vídeo 360° i 3D de la botiga són de pagament.
 
-La mateixa aplicació d'Android funciona a les Quest 3 i 3S com una finestra, amb tota la teva biblioteca. El seu botó 360° obre una vista immersiva on la foto o el vídeo t'envolta i mires al voltant girant el cap, en 3D real per als fitxers estereoscòpics (Meta Spatial SDK). El contingut ve del teu servidor Immich, del mateix casc, d'un NAS, d'un servidor multimèdia o d'un telèfon, i es reprodueix on és (un servidor multimèdia i un telèfon des de la compilació 19, encara no comprovat al casc). És gratuïta i de codi obert. Comprovat en unes Quest 3, i per un usuari amb vídeos d'Insta360 X4 en 8K HEVC.
+La mateixa aplicació d'Android funciona a les Quest 3 i 3S com una finestra, amb tota la teva biblioteca. El seu botó 360° obre una vista immersiva on la foto o el vídeo t'envolta i mires al voltant girant el cap, en 3D real per als fitxers estereoscòpics (Meta Spatial SDK). El contingut ve del teu servidor Immich, del mateix casc, d'un NAS, d'un servidor multimèdia, d'un telèfon o d'un servidor Plex, i es reprodueix on és (un servidor multimèdia i un telèfon des de la compilació 19, un servidor Plex des de la compilació 20, encara no comprovat al casc), i des de la compilació 20 la finestra també mostra les càmeres Tapo. És gratuïta i de codi obert. Comprovat en unes Quest 3, i per un usuari amb vídeos d'Insta360 X4 en 8K HEVC.
 
 ### Obre la vista immersiva
 
@@ -408,6 +525,56 @@ Gira-la amb la palanca dreta (o el botó Gira del tauler d'informació) fins que
 - **Desplaçament**: un vídeo la font del qual no respon a peticions de rang de bytes no es pot desplaçar; el tauler ho diu.
 - **Vídeos plans**: un vídeo estereoscòpic pla (no 360°) es reprodueix a la finestra amb els dos ulls visibles; la vista immersiva 3D és per a contingut 360° i VR180.
 - **Més**: els còdecs que descodifica el casc, la botiga, els permisos i la mida de l'APK són a [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Mira-ho al televisor (Android TV i Google TV)
+
+Vols les fotos i vídeos 360°, els teus àlbums i els vídeos del teu NAS o servidor Plex a la pantalla gran, per a la família al sofà, amb el comandament del televisor. L'aplicació mòbil de l'Immich no és una aplicació de televisor: un usuari que la va instal·lar en un televisor va veure que funciona amb un ratolí, no amb el comandament ([discussió #1614](https://github.com/immich-app/immich/discussions/1614)), i l'equip de l'Immich no té previst cap aplicació oficial de televisor ([discussió #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Des de la compilació 20, la mateixa aplicació d'Android funciona a Android TV i Google TV, amb el comandament com a única entrada: un sol APK per a telèfons i televisors, els visualitzadors 360° i 3D girats amb les fletxes, i els recursos compartits de xarxa, el Plex i les càmeres Tapo al televisor, amb servidor Immich o sense.
+
+<a id="install-it-on-the-tv"></a>
+### Instal·la-la al televisor
+
+1. Fins que Google Play ofereixi l'aplicació als televisors, cosa que espera la revisió de Google de la versió per a televisor, agafa l'`Immuch360-v<version>-release.apk` universal de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Al televisor, activa les opcions per a desenvolupadors i la depuració USB (en un Google TV: Configuració, Sistema, Informació, selecciona set vegades «Android TV OS build», després Configuració, Sistema, Opcions per a desenvolupadors; els noms varien segons el televisor).
+3. Des d'un ordinador de la mateixa xarxa, amb adb (Android SDK Platform Tools): `adb connect <address of the TV>`, accepta l'avís al televisor, després `adb install -r Immuch360-v<version>-release.apk`.
+4. L'aplicació apareix entre les aplicacions del televisor, amb la seva bandera. Instal·la la versió següent de la mateixa manera: `-r` conserva la sessió i la configuració.
+
+### Primer inici
+
+1. Inicia la sessió com en un telèfon: les fletxes mouen un marc de camp en camp, i OK sobre un camp («Prem OK per escriure») obre el teclat del televisor en un diàleg, per a l'adreça del servidor, el correu i la contrasenya.
+2. O tria «Utilitza sense servidor». Un televisor no té fotos pròpies, així que la pestanya Fotos diu «Aquest televisor no té fotos ni vídeos propis: obre un recurs compartit de xarxa des de la Biblioteca.» amb un botó Recursos compartits de xarxa. Afegeix-hi un recurs compartit, un servidor Plex o una càmera, com en un telèfon (consulta [Recursos compartits de xarxa](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Mou-te amb el comandament
+
+- Les fletxes mouen el marc, OK obre allò on és, Enrere torna enrere. Des d'una pestanya, Enrere va al menú lateral, després a Fotos, després fora de l'aplicació.
+- Canal amunt i avall desplacen una pàgina cada vegada.
+- Als visualitzadors funcionen les tecles de reproducció i pausa, avançament ràpid, rebobinat, següent i anterior del comandament, i la tecla d'informació mostra els detalls d'una foto o d'un vídeo.
+
+### Fotos i vídeos amb el comandament
+
+1. **Una foto**: esquerra i dreta van a l'anterior o a la següent, OK mostra o amaga els controls, Amunt va a la barra superior (on hi ha el botó 360°) i Avall a la barra inferior.
+2. **Un vídeo**: OK posa en pausa, mostrant els controls, o reprodueix. Mentre es reprodueix, esquerra i dreta salten 10 segons enrere o endavant; mentre està en pausa van a l'element anterior o següent, tal com diu el missatge: «En pausa: les fletxes van a l'element anterior o següent».
+3. **Una foto 360°**, des del botó 360°: les fletxes miren al voltant, més de pressa mentre es mantenen premudes, i la vista s'atura suaument. OK va als botons de la barra superior, sobre «Amplia», al costat de «Redueix», el camp de visió i el 3D; canal amunt i avall també fan zoom. Enrere torna dels botons a la imatge, i després tanca. El missatge diu «Fletxes per mirar al voltant, OK per als controls, Enrere per tancar».
+4. **Un vídeo 360°**, des del botó 360°: les fletxes miren al voltant mentre els controls estan amagats, OK posa en pausa i els mostra, Enrere els amaga, i després tanca. El missatge diu «Fletxes per mirar al voltant, OK per posar en pausa i mostrar els controls, Enrere per tancar».
+5. **Records**: esquerra i dreta passen per les fotos i fins al record següent, Amunt va al botó de tancar i Avall a «Mostra a la cronologia».
+6. **Recursos compartits i Plex**: les mateixes tecles a les pàgines de fotos i vídeos d'un recurs compartit, on esquerra i dreta obren el fitxer anterior o següent de la carpeta.
+
+### El paràmetre Disposició per a comandament a distància
+
+Configuració, Preferències, «Disposició per a comandament a distància»: «Marcs de focus grans i tecles del comandament, sense els controls que necessiten pantalla tàctil. Automàtica l'activa a Android TV i Google TV.» Automàtica és el valor per defecte; Activada va bé per a una tauleta controlada amb un teclat o un comandament de joc; Desactivada la desactiva en un televisor. El paràmetre només existeix a Android. Les fletxes i OK funcionen als visualitzadors amb un teclat o un comandament de joc sigui quin sigui el paràmetre.
+
+### Limitacions
+
+- **Un visualitzador**: en un televisor l'aplicació mostra i reprodueix. La còpia de seguretat, les pujades, l'edició, l'eliminació, la compartició, la selecció de diversos elements, Cast, Spatial 2.5D, el giroscopi, el mapa i Llocs, i «Comparteix aquest telèfon a la xarxa» estan amagats.
+- **Inici de sessió**: l'OAuth obre una pàgina web, cosa que un televisor no pot fer: «Iniciar la sessió amb (proveïdor) obre una pàgina web, cosa que aquest televisor no pot fer. Inicia la sessió amb un correu i una contrasenya.»
+- **Els enllaços** mostren la seva adreça a «Obre en un altre dispositiu» en lloc d'obrir un navegador, i el text s'escriu al diàleg de teclat del sistema.
+- **Memòria**: en un televisor amb poca memòria, les fotos 360° es mostren com a màxim a 4096x2048, sense la imatge més nítida en fer zoom.
+- **Vídeos**: els descodificadors del televisor decideixen què es reprodueix, amb el mateix paràmetre Font del vídeo i la mateixa comprovació de descodificadors que en un telèfon (consulta [Detalls del vídeo i descodificadors](#video-details-decoders-and-why-a-video-stutters)); encara no s'ha mesurat en un televisor.
+- **Encara no comprovat en un dispositiu**: la compatibilitat amb televisors només s'ha comprovat amb proves automatitzades, i encara no ha funcionat en cap televisor ni en cap emulador de televisor. Cal confirmar: el sentit en què les fletxes giren un vídeo 360°, el teclat del televisor (Gboard) al diàleg de text, la tecla OK dels comandaments d'infrarojos, els marges i la bandera a la pantalla d'inici del televisor. S'agraeixen informes.
+- **Google Play als televisors** espera la revisió de Google de la versió per a televisor; fins llavors, l'APK.
+- **Altres televisors**: el Fire TV no s'ha provat, i no hi ha versió per a Apple TV.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Troba les teves preses 360°: la llista 360°
@@ -488,11 +655,11 @@ Quan el servidor ignora les peticions HTTP Range sobre l'original i l'índex MP4
 <a id="everything-else-is-immich"></a>
 ## Tota la resta és Immich
 
-Tot el que fa l'aplicació mòbil oficial de l'Immich és aquí: còpia de seguretat, cronologia, àlbums, cerca, compartició, companys, tot sincronitzat amb el teu servidor, amb el mateix servidor i el mateix compte que l'aplicació web. Immuch360 s'instal·la al costat de l'aplicació oficial (paquet `com.aprogsys.immuch360`). Hi ha dues diferències, des de la compilació 15: l'interruptor «Força el vídeo original» s'ha convertit en l'elecció Font del vídeo descrita més amunt, i les fotos i vídeos que puges a mà des d'un àlbum del dispositiu compten com a copiats.
+Tot el que fa l'aplicació mòbil oficial de l'Immich és aquí: còpia de seguretat, cronologia, àlbums, cerca, compartició, companys, tot sincronitzat amb el teu servidor, amb el mateix servidor i el mateix compte que l'aplicació web. Immuch360 s'instal·la al costat de l'aplicació oficial (paquet `com.aprogsys.immuch360`). Hi ha dues diferències, des de la compilació 15: l'interruptor «Força el vídeo original» s'ha convertit en l'elecció Font del vídeo descrita més amunt, i les fotos i vídeos que puges a mà des d'un àlbum del dispositiu compten com a copiats. En un televisor, des de la compilació 20, l'aplicació és un visualitzador, consulta [Mira-ho al televisor](#watch-on-your-tv-android-tv-and-google-tv).
 
 Per ensenyar una foto 360° a algú que no té l'aplicació, comparteix-la amb un enllaç compartit de l'Immich: l'aplicació web de l'Immich mostra una foto 360° com una esfera al seu navegador.
 
-La compilació actual, la compilació 19 (versió 3.3.0-rc.0, número de compilació 3030017), es basa en l'Immich 3.3.0-rc.0 (Immich `main`, encara no és una versió estable) i s'ha provat amb un servidor Immich 3.2. Informa dels problemes a [Issues](https://github.com/freeKC/Immuch360/issues), no al projecte Immich. Per a la documentació completa de l'Immich, consulta [immich.app](https://immich.app).
+La compilació actual, la compilació 20 (versió 3.3.0-rc.0, número de compilació 3030018), es basa en l'Immich 3.3.0-rc.0 (Immich `main`, encara no és una versió estable). La compilació 19 es va provar amb un servidor Immich 3.2, i la compilació 20 no canvia res del que l'aplicació demana al servidor. Informa dels problemes a [Issues](https://github.com/freeKC/Immuch360/issues), no al projecte Immich. Per a la documentació completa de l'Immich, consulta [immich.app](https://immich.app).
 
 ## Comparat amb l'aplicació Immich i altres aplicacions
 
@@ -515,6 +682,9 @@ La compilació actual, la compilació 19 (versió 3.3.0-rc.0, número de compila
 | Servidors multimèdia DLNA com a tipus de recurs compartit | ❌ | ✅ des de la compilació 19 | Comprovat amb minidlna i Gerbera a Docker; Plex, Jellyfin, un NAS, el Freebox Server, un iPhone i les Quest són la prova en dispositius de la compilació 19 |
 | Enviar els fitxers d'un recurs compartit a l'Immich; els fitxers del dispositiu enviats a mà compten com a copiats | ❌ només fitxers del dispositiu | ✅ des de la compilació 15 | Provat en un emulador d'Android amb un servidor de prova Samba i un servidor Immich 3.2 |
 | Compartir aquest telèfon a la xarxa, per al casc | ❌ | ✅ des de la compilació 19, Android i iOS | Proves unitàries i proves d'extrem a extrem amb el client WebDAV del casc, en un ordinador; un telèfon que serveix unes Quest, i la part de l'iPhone, són la prova en dispositius de la compilació 19 |
+| Biblioteques de Plex Media Server reproduïdes des dels fitxers originals, a casa i fora, sense plex.tv | ❌ | ✅ des de la compilació 20, tots els visualitzadors, en telèfons, tauletes, les Quest 3 i televisors | Comprovat des d'un ordinador amb un Plex Media Server 1.42.1 real (emparellament, carpetes, intervals de bytes, miniatures, l'adreça de fora de casa); encara no comprovat en un dispositiu |
+| Càmeres Tapo: la visualització en directe i els enregistraments de la targeta de memòria enviats a l'Immich quan tu vulguis | ❌ | ✅ des de la compilació 20: enregistraments a tot arreu, en directe a Android, Android TV i les Quest 3 | Comprovat amb una càmera simulada; encara no comprovat amb una càmera real |
+| Android TV i Google TV, controlats amb el comandament, en el mateix APK | ❌ no és una aplicació de televisor | ✅ des de la compilació 20 | Comprovat amb proves automatitzades; encara no comprovat en un televisor |
 | Fotos .insp en brut d'Insta360 i vídeos .insv d'una pista | ❌ pla | ✅ des de la compilació 16 | Fotos comprovades amb exportacions de l'Insta360 Studio de fitxers X3, vídeos en un emulador d'Android amb un fitxer X3 de baixa resolució; encara no executat en cap iPhone |
 | Vídeos en brut amb un objectiu per pista o per fitxer (Insta360 X4, X4 Air, X5, X6, parelles d'X3, GoPro .360, DJI .osv) | ❌ pla o incorrecte | ✅ des de la compilació 18 | Analitzadors i unió comprovats amb fitxers reals d'X4, de parella d'X3, de GoPro MAX i d'Osmo 360; la reproducció és la prova en dispositius de les compilacions 18 i 19 |
 | .dng de doble ull de peix | ❌ pla | ❌ encara no | Previst |
@@ -529,27 +699,33 @@ La compilació actual, la compilació 19 (versió 3.3.0-rc.0, número de compila
 |---|---|---|
 | L'aplicació web de l'Immich | Mostra una foto 360° com una esfera, però pren un .insp en brut per un panorama acabat i embolica l'esfera amb els seus dos cercles; una vista de RV encara és una petició ([discussió #14768](https://github.com/immich-app/immich/discussions/14768)) | Uneix els fitxers en brut al dispositiu i obre una vista immersiva a les Quest 3 |
 | L'aplicació Insta360 o l'Studio | Cal per convertir els fitxers en brut de la targeta en una imatge 360° abans de veure-la | Obre directament els fitxers en brut .insp i .insv, i els fitxers GoPro .360 i DJI .osv |
-| Plex, Jellyfin, Synology Photos | Fotos i vídeos 360° mostrats plans o no reconeguts, tal com descriuen fils als seus fòrums (hi ha una petició a Plex oberta des del 2017) | Llegeix les mateixes carpetes per SMB, WebDAV o DLNA i les reprodueix com una esfera, sense canviar res al servidor |
+| Plex, Jellyfin, Synology Photos | Fotos i vídeos 360° mostrats plans o no reconeguts, tal com descriuen fils als seus fòrums (hi ha una petició a Plex oberta des del 2017) | Llegeix la mateixa biblioteca de Plex des de la compilació 20, o les mateixes carpetes per SMB, WebDAV o DLNA, i les reprodueix com una esfera, sense canviar res al servidor |
+| L'app Tapo | Una aplicació a part, amb la sessió iniciada al teu compte de TP-Link, amb els clips separats de les teves fotos | Mostra la càmera al costat de les teves fotos, hi parla només a la teva xarxa i guarda un clip com un vídeo que pots enviar a l'Immich (des de la compilació 20) |
+| L'aplicació mòbil de l'Immich en un televisor | No és una aplicació de televisor: un usuari explica que funciona amb un ratolí, no amb el comandament | La mateixa aplicació, feta per al comandament (des de la compilació 20) |
 | Copiar fitxers al casc | Cada fitxer es copia per cable abans de poder-lo veure | Reprodueix directament des de l'Immich, un NAS, un servidor multimèdia o un telèfon |
 | Els reproductors 360° i 3D de la botiga de les Quest | De pagament | Gratuït i de codi obert (AGPL) |
 
 ## Formats i orígens, per plataforma
 
-Immuch360 és una galeria, i també és un reproductor multimèdia gratuït: reprodueix el que l'aplicació oficial no pot, des de quatre orígens, al reproductor que s'adiu amb el fitxer.
+Immuch360 és una galeria, i també és un reproductor multimèdia gratuït: reprodueix el que l'aplicació oficial no pot, des dels orígens de la segona taula, al reproductor que s'adiu amb el fitxer.
 
-| Què | Telèfons Android | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Vídeos plans (MP4, MOV, MKV, el que descodifiqui el dispositiu) | Reproductor de l'Immich, i un reproductor natiu per als recursos compartits de xarxa | El mateix, excepte els fitxers MKV i AVI d'un recurs compartit, que iOS no obre (en un servidor es reprodueixen transcodificats) | A la finestra |
-| Fotos 360° | Visualitzador d'esfera, giroscopi | El mateix | Immersiu, tot al teu voltant |
-| Vídeos 360° | Reproductor Media3 natiu en una esfera, giroscopi, desplaçament, elecció de pista d'àudio, indicador de càrrega | Reproductor SceneKit natiu en una esfera, giroscopi, elecció de pista d'àudio, indicador de càrrega; reproduir i pausa, encara sense barra de temps | Immersiu, 3D real per als fitxers estereoscòpics, barra de temps amb salts de 10 segons, element anterior i següent |
-| 3D 360° (a dalt i a baix, un al costat de l'altre) | Ull esquerre, botó de disposició | El mateix | Cada ull rep la seva meitat del fotograma |
-| Fotos i vídeos VR180 (mitja esfera) | Mitja esfera, botó 360°/180° | El mateix | Mitja esfera immersiva |
-| Spatial 2.5D (profunditat en una pantalla plana a partir d'un vídeo estereoscòpic) | Reproductor natiu, seguiment del cap amb la càmera frontal | El mateix | No s'ofereix |
-| Fotos espacials d'Apple (parells estèreo HEIC, des de la compilació 19) | Ull esquerre, una fila de detalls diu que és espacial | El mateix | Veure en 3D: els dos ulls en una foto que sura a la vista immersiva, 3D o 2D, de mida ajustable |
-| Vídeos espacials d'Apple (MV-HEVC, des de la compilació 19) | Un sol ull (la capa base), amb un avís | El mateix | Un sol ull a la finestra, amb un avís |
-| Fotos .insp en brut d'Insta360 (des de la compilació 16) | Unides a la GPU abans del visualitzador d'esfera, fins a 8192x4096 | El mateix | Immersiu, a partir d'una imatge unida preparada per al casc |
-| .insv en brut d'Insta360, els dos objectius en una pista (des de la compilació 16) | Units per un efecte de GPU al reproductor Media3 | Units per un shader de SceneKit | Immersiu, units pel mateix efecte de GPU |
-| Vídeos en brut amb un objectiu per pista o per fitxer (des de la compilació 18): Insta360 X4, X4 Air, X5, X6 .insv, parelles d'X3, GoPro .360, DJI .osv | Dos descodificadors de maquinari alhora, un per objectiu (des de la compilació 19, de programari en un dispositiu sense descodificador de maquinari, fins a 2048x2048 per objectiu), i un compositor GL que els uneix en l'esfera; un objectiu, després el flux transcodificat, després el vídeo sense unir, quan el dispositiu no en pot fer funcionar dos | Un compositor d'AVFoundation propi amb Metal | Immersiu, els mateixos dos descodificadors i el mateix compositor (tauler de 3840x1920) |
+| Què | Telèfons Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (des de la compilació 20) |
+|---|---|---|---|---|
+| Vídeos plans (MP4, MOV, MKV, el que descodifiqui el dispositiu) | Reproductor de l'Immich, i un reproductor natiu per als recursos compartits de xarxa | El mateix, excepte els fitxers MKV i AVI d'un recurs compartit, que iOS no obre (en un servidor es reprodueixen transcodificats) | A la finestra | Com als telèfons; OK posa en pausa, esquerra i dreta salten 10 s |
+| Fotos 360° | Visualitzador d'esfera, giroscopi | El mateix | Immersiu, tot al teu voltant | Visualitzador d'esfera girat amb les fletxes, zoom amb les tecles de canal |
+| Vídeos 360° | Reproductor Media3 natiu en una esfera, giroscopi, desplaçament, elecció de pista d'àudio, indicador de càrrega | Reproductor SceneKit natiu en una esfera, giroscopi, elecció de pista d'àudio, indicador de càrrega; reproduir i pausa, encara sense barra de temps | Immersiu, 3D real per als fitxers estereoscòpics, barra de temps amb salts de 10 segons, element anterior i següent | El reproductor Media3 dels telèfons, girat amb les fletxes |
+| 3D 360° (a dalt i a baix, un al costat de l'altre) | Ull esquerre, botó de disposició | El mateix | Cada ull rep la seva meitat del fotograma | Ull esquerre, botó de disposició |
+| Fotos i vídeos VR180 (mitja esfera) | Mitja esfera, botó 360°/180° | El mateix | Mitja esfera immersiva | Mitja esfera, botó 360°/180° |
+| Spatial 2.5D (profunditat en una pantalla plana a partir d'un vídeo estereoscòpic) | Reproductor natiu, seguiment del cap amb la càmera frontal | El mateix | No s'ofereix | No s'ofereix |
+| Fotos espacials d'Apple (parells estèreo HEIC, des de la compilació 19) | Ull esquerre, una fila de detalls diu que és espacial | El mateix | Veure en 3D: els dos ulls en una foto que sura a la vista immersiva, 3D o 2D, de mida ajustable | Ull esquerre, una fila de detalls |
+| Vídeos espacials d'Apple (MV-HEVC, des de la compilació 19) | Un sol ull (la capa base), amb un avís | El mateix | Un sol ull a la finestra, amb un avís | Un ull, amb un avís |
+| Fotos .insp en brut d'Insta360 (des de la compilació 16) | Unides a la GPU abans del visualitzador d'esfera, fins a 8192x4096 | El mateix | Immersiu, a partir d'una imatge unida preparada per al casc | Com als telèfons |
+| .insv en brut d'Insta360, els dos objectius en una pista (des de la compilació 16) | Units per un efecte de GPU al reproductor Media3 | Units per un shader de SceneKit | Immersiu, units pel mateix efecte de GPU | Com als telèfons |
+| Vídeos en brut amb un objectiu per pista o per fitxer (des de la compilació 18): Insta360 X4, X4 Air, X5, X6 .insv, parelles d'X3, GoPro .360, DJI .osv | Dos descodificadors de maquinari alhora, un per objectiu (des de la compilació 19, de programari en un dispositiu sense descodificador de maquinari, fins a 2048x2048 per objectiu), i un compositor GL que els uneix en l'esfera; un objectiu, després el flux transcodificat, després el vídeo sense unir, quan el dispositiu no en pot fer funcionar dos | Un compositor d'AVFoundation propi amb Metal | Immersiu, els mateixos dos descodificadors i el mateix compositor (tauler de 3840x1920) | Com als telèfons, quan el televisor pot fer funcionar dos descodificadors alhora |
+| Visualització en directe de la càmera Tapo (des de la compilació 20) | Reproductor RTSP de Media3: SD a la pàgina, HD a pantalla completa, botó de so | Encara no: una targeta diu que arribarà més endavant | A la finestra, en HD | Com als telèfons |
+| Enregistraments de la càmera Tapo (des de la compilació 20) | Obtinguts de la targeta de memòria en un vídeo H.264 amb el seu so, després reproduïts amb desplaçament | El mateix | El mateix, a la finestra | El mateix |
+
+La columna del televisor encara no s'ha comprovat en un televisor, consulta [Mira-ho al televisor](#watch-on-your-tv-android-tv-and-google-tv); les files de la càmera encara no s'han comprovat amb una càmera real.
 
 | Origen | Com |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 és una galeria, i també és un reproductor multimèdia gratuït: rep
 | El mateix telèfon o casc | «Utilitza sense servidor» a la pàgina d'inici de sessió, o l'entrada En aquest dispositiu de la pestanya Biblioteca |
 | Un NAS o un ordinador | Recursos compartits SMB i WebDAV, i des de la compilació 19 servidors multimèdia DLNA, trobats a la xarxa, llegits en directe (un vídeo SMB per fins a sis connexions), sense copiar res; des de la compilació 15 els fitxers que triïs es poden enviar al teu compte d'Immich |
 | Un altre telèfon (des de la compilació 19) | «Comparteix aquest telèfon a la xarxa» en aquell telèfon: el casc, o qualsevol client WebDAV de la xarxa, llegeix els seus àlbums, mesos i contingut 360° |
+| Un Plex Media Server (des de la compilació 20) | Les seves biblioteques de fotos, pel·lícules i sèries per carpeta, els fitxers originals llegits en directe per HTTPS verificat amb el certificat propi del servidor, a casa o a través de l'adreça de fora de casa, a totes les plataformes; consulta [Plex Media Server, sense plex.tv](#plex-media-server-without-plextv) |
+| Una càmera Tapo (des de la compilació 20) | La visualització en directe amb el compte de la càmera (Android, Android TV, les Quest), i els enregistraments de la seva targeta de memòria amb la contrasenya del compte de TP-Link (totes les plataformes), només a la xarxa local; consulta [Càmeres Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 també funciona a les Meta Quest 3 i 3S (Horizon OS v69 o posterior; la compilació de l'Horizon Store només s'ofereix per a aquestes dues; el `-release.apk` universal també s'hauria de poder instal·lar en unes Quest 2 o Quest Pro, sense provar). Com fer-la servir és a [Al casc Meta Quest 3](#in-the-meta-quest-3-headset); aquesta secció tracta de la instal·lació i del que canvia al casc.
 
-La compilació per al casc només parla amb servidors per HTTPS, o per HTTP simple amb noms de la xarxa domèstica (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) i amb el mateix casc, com exigeix l'Horizon Store. Un servidor escrit com una adreça HTTP simple amb una IP, com ara `http://192.168.1.10:2283`, és rebutjat per aquesta compilació: fes servir HTTPS, un nom de la xarxa domèstica (`nas.local`) o el `-release.apk` universal, que manté la política oberta dels telèfons. Els recursos compartits WebDAV, DLNA i de telèfon en una adreça HTTP simple de la xarxa local no s'hi veuen afectats: l'aplicació els llegeix ella mateixa i només dona als seus reproductors l'adreça del seu pont local (pendent de confirmar al casc per a DLNA i el recurs compartit de telèfon, nous a la compilació 19).
+La compilació per al casc només parla amb servidors per HTTPS, o per HTTP simple amb noms de la xarxa domèstica (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) i amb el mateix casc, com exigeix l'Horizon Store. Un servidor escrit com una adreça HTTP simple amb una IP, com ara `http://192.168.1.10:2283`, és rebutjat per aquesta compilació: fes servir HTTPS, un nom de la xarxa domèstica (`nas.local`) o el `-release.apk` universal, que manté la política oberta dels telèfons. Els recursos compartits WebDAV, DLNA i de telèfon en una adreça HTTP simple de la xarxa local no s'hi veuen afectats: l'aplicació els llegeix ella mateixa i només dona als seus reproductors l'adreça del seu pont local (pendent de confirmar al casc per a DLNA i el recurs compartit de telèfon, nous a la compilació 19). Des de la compilació 20, a un servidor Plex s'hi arriba per HTTPS, i a una càmera Tapo hi arriba l'aplicació mateixa, amb la visualització en directe per RTSP, que no és HTTP: cap dels dos no s'hauria de veure afectat (pendent de confirmar al casc).
 
 <a id="install"></a>
 ### Instal·lació
@@ -576,7 +754,7 @@ La fitxa de l'Horizon Store espera la revisió de Meta, enviada amb la compilaci
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Al casc, obre la biblioteca, tria el filtre «Unknown sources» (fonts desconegudes) i inicia Immuch360.
@@ -584,7 +762,7 @@ La fitxa de l'Horizon Store espera la revisió de Meta, enviada amb la compilaci
 
 ### A la finestra
 
-Tota l'aplicació funciona com una finestra 2D redimensionable: inici de sessió, cronologia, àlbums, cerca, la pestanya Biblioteca (llista 360°, En aquest dispositiu, Recursos compartits de xarxa), la configuració i els visualitzadors de fotos i vídeos, on es reprodueixen les fotos i vídeos plans. Al casc, el botó 360° i Mostra com a 360° al menú ⋮ obren directament la vista immersiva en lloc del visualitzador d'esfera dels telèfons, i el botó Spatial 2.5D i el seu paràmetre no es mostren. Des de la compilació 19, una foto espacial d'Apple té un botó Veure en 3D, i el mosaic Comparteix aquest telèfon a la xarxa no es mostra: el casc és qui llegeix el recurs compartit d'un telèfon.
+Tota l'aplicació funciona com una finestra 2D redimensionable: inici de sessió, cronologia, àlbums, cerca, la pestanya Biblioteca (llista 360°, En aquest dispositiu, Recursos compartits de xarxa), la configuració i els visualitzadors de fotos i vídeos, on es reprodueixen les fotos i vídeos plans. Al casc, el botó 360° i Mostra com a 360° al menú ⋮ obren directament la vista immersiva en lloc del visualitzador d'esfera dels telèfons, i el botó Spatial 2.5D i el seu paràmetre no es mostren. Des de la compilació 19, una foto espacial d'Apple té un botó Veure en 3D, i el mosaic Comparteix aquest telèfon a la xarxa no es mostra: el casc és qui llegeix el recurs compartit d'un telèfon. Des de la compilació 20, els servidors Plex i les càmeres Tapo també s'obren a la finestra, la visualització en directe de la càmera en HD; el paràmetre «Disposició per a comandament a distància» es queda en Automàtica, cosa que el deixa desactivat al casc.
 
 ### En imatges
 
@@ -598,7 +776,7 @@ Captures fetes al casc amb el botó de captura (botó Meta i gallet), en unes Qu
 ### Limitacions al casc
 
 - **Còdecs de vídeo**: l'HEVC (H.265) és l'opció segura; l'H.264 s'atura al voltant de 4096x2304. Què comprova l'aplicació, i com donar al casc un vídeo que pugui descodificar, és a [Detalls del vídeo i descodificadors](#video-details-decoders-and-why-a-video-stutters).
-- **Botiga**: la versió de la botiga comença a la compilació 14. Les funcions marcades «des de la compilació 15» i «des de la compilació 16» arriben amb la seva propera actualització (la compilació 16, ja al canal de proves alfa), les posteriors després; l'APK de GitHub ja les té totes.
+- **Botiga**: la versió de la botiga comença a la compilació 14. Les funcions marcades «des de la compilació 15» i posteriors arriben amb les seves properes actualitzacions (el canal de proves alfa de la botiga, per a provadors, rep cada compilació nova); l'APK de GitHub ja les té totes.
 - **Permisos**: la compilació per al casc només demana fotos i vídeos (el mode sense servidor) i notificacions (progrés de la còpia de seguretat). No té permís d'emmagatzematge, d'àudio, d'ubicació ni de càmera, a diferència de la compilació per a telèfon; per tant, el canvi de servidor segons el nom de la Wi-Fi no està disponible al casc.
 - **Mida de l'APK**: el Spatial SDK afegeix uns 56 MB de codi natiu ARM de 64 bits, també als telèfons, on no es carrega mai.
 - **Llicència**: la vista immersiva fa servir el Meta Spatial SDK, distribuït sota el Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Captures fetes al casc amb el botó de captura (botó Meta i gallet), en unes Qu
 <a id="where-to-get-it"></a>
 ## On aconseguir-la
 
-L'aplicació és a Google Play; la versió de l'App Store espera la revisió d'Apple, i la de la Meta Horizon Store la de Meta. La publicació de GitHub sempre és la compilació més nova:
+L'aplicació és a Google Play per a telèfons i tauletes; la versió de l'App Store espera la revisió d'Apple, la de la Meta Horizon Store la de Meta, i la de Google Play per a televisors la revisió de Google de la versió per a televisor. La publicació de GitHub sempre és la compilació més nova:
 
 | Plataforma | Avui | Aviat |
 |---|---|---|
-| Telèfons i tauletes Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o l'APK de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` per a un telèfon (l'universal `Immuch360-v<version>-release.apk` funciona a tot arreu, `-armeabi-v7a` és per a telèfons antics de 32 bits, i el fitxer `.aab` és per a Google Play, no per instal·lar manualment). La compilació de GitHub sol anar per davant de la botiga. En tots dos casos s'instal·la al costat de l'aplicació oficial de l'Immich (paquet `com.aprogsys.immuch360`). | Google Play: compilacions 15 i 16 enviades a revisió de Google el 4 d'octubre de 2026 (l'última compilació confirmada com a publicada és la compilació 11) |
+| Telèfons i tauletes Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o l'APK de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` per a un telèfon (l'universal `Immuch360-v<version>-release.apk` funciona a tot arreu, `-armeabi-v7a` és per a telèfons antics de 32 bits, i el fitxer `.aab` és per a Google Play, no per instal·lar manualment). La compilació de GitHub sol anar per davant de la botiga. En tots dos casos s'instal·la al costat de l'aplicació oficial de l'Immich (paquet `com.aprogsys.immuch360`). | Google Play: la compilació 18 està publicada, la compilació 19 en revisió de Google des del 6 d'octubre de 2026, la compilació 20 a continuació |
 | iPhone i iPad | Espera la revisió d'Apple. La versió en revisió té les funcions de la compilació 11: la pujada a l'Immich i l'elecció Font del vídeo (compilació 15) i els fitxers en brut d'Insta360 (compilació 16) arribaran amb una actualització posterior de l'App Store. El codi font es compila amb Xcode o a Codemagic, consulta [Compila-la tu mateix](#build-it-yourself). | App Store, en revisió |
-| Meta Quest 3 i 3S | El fitxer `-quest-release.apk` de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases) (l'universal `-release.apk` també funciona), instal·lat manualment en mode de desenvolupador, consulta [Instal·lació](#install). La compilació de la botiga i l'APK de GitHub estan signats amb claus diferents: per passar de l'una a l'altra, primer desinstal·la l'aplicació (la seva configuració i els recursos compartits desats se'n van amb ella). | Meta Horizon Store: compilació 14 en revisió de Meta des del 3 d'octubre de 2026; la compilació 16 és al canal alfa de la botiga (només per a provadors) |
+| Meta Quest 3 i 3S | El fitxer `-quest-release.apk` de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases) (l'universal `-release.apk` també funciona), instal·lat manualment en mode de desenvolupador, consulta [Instal·lació](#install). La compilació de la botiga i l'APK de GitHub estan signats amb claus diferents: per passar de l'una a l'altra, primer desinstal·la l'aplicació (la seva configuració i els recursos compartits desats se'n van amb ella). | Meta Horizon Store: compilació 14 en revisió de Meta des del 3 d'octubre de 2026; el canal alfa de la botiga (només per a provadors) rep cada compilació nova |
+| Android TV i Google TV (des de la compilació 20) | L'`Immuch360-v<version>-release.apk` universal de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases), instal·lat manualment amb adb, consulta [Instal·la-la al televisor](#install-it-on-the-tv). És la mateixa aplicació que als telèfons. | Google Play als televisors, després de la revisió de Google de la versió per a televisor |
 
 Els enllaços de l'App Store i de la Meta Horizon Store s'afegiran aquí tan bon punt es publiquin les fitxes. Inicia la sessió amb l'URL habitual del teu servidor Immich i el teu compte, o toca «Utilitza sense servidor» a la pàgina d'inici de sessió per començar amb les fotos i vídeos del mateix dispositiu. L'APK de GitHub no s'actualitza sol: vigila la pàgina Releases, i un cop hagis instal·lat l'aplicació des d'una botiga, rep les actualitzacions d'aquella botiga.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Les captures de pantalla de les botigues es fan en compilacions de depuració per a simulador fetes amb `--dart-define=IMMUCH_SCREENSHOTS=true`, que només amaga la bandera de depuració. Les dues variants (flavours) d'Android són la mateixa aplicació. La variant `quest` té com a objectiu l'SDK 34 i només conserva els permisos que fa servir el casc (fotos, vídeos, notificacions): la gestió multimèdia, la ubicació en segon pla, l'emmagatzematge antic, l'àudio, la ubicació multimèdia, la ubicació del dispositiu i la càmera s'eliminen a `android/app/src/quest/AndroidManifest.xml`, perquè la Meta Horizon Store rebutja els dos primers i demana una justificació per a qualsevol altre de sensible; el mateix fitxer indica les Quest 3 i 3S com a dispositius compatibles i limita l'HTTP simple al mateix casc i als noms de la xarxa domèstica. L'APK només és de 64 bits per culpa dels dos arguments addicionals de la seva línia d'ordres (`--target-platform android-arm64 --android-project-arg arm64only=true`). La variant `phone` és la que exigeix Google Play. Per compilar per a iOS al teu propi Mac, fes servir Xcode i el teu propi equip de signatura; amb Xcode 26, executa primer una vegada `xcodebuild -downloadComponent MetalToolchain`, ja que els shaders Spatial ho necessiten. Sense Mac, les compilacions d'iOS s'executen a Codemagic (un Mac allotjat) a partir del fitxer `codemagic.yaml` d'aquest repositori. Les compilacions de publicació d'Android s'executen a GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Les captures de pantalla de les botigues es fan en compilacions de depuració per a simulador fetes amb `--dart-define=IMMUCH_SCREENSHOTS=true`, que només amaga la bandera de depuració. Les dues variants (flavours) d'Android són la mateixa aplicació. Des de la compilació 20, la variant `phone` també es declara com a aplicació de televisor (una entrada al llançador del televisor i una bandera, sense exigir pantalla tàctil), cosa que la variant `quest` deixa fora. La variant `quest` té com a objectiu l'SDK 34 i només conserva els permisos que fa servir el casc (fotos, vídeos, notificacions): la gestió multimèdia, la ubicació en segon pla, l'emmagatzematge antic, l'àudio, la ubicació multimèdia, la ubicació del dispositiu i la càmera s'eliminen a `android/app/src/quest/AndroidManifest.xml`, perquè la Meta Horizon Store rebutja els dos primers i demana una justificació per a qualsevol altre de sensible; el mateix fitxer indica les Quest 3 i 3S com a dispositius compatibles i limita l'HTTP simple al mateix casc i als noms de la xarxa domèstica. L'APK només és de 64 bits per culpa dels dos arguments addicionals de la seva línia d'ordres (`--target-platform android-arm64 --android-project-arg arm64only=true`). La variant `phone` és la que exigeix Google Play. Per compilar per a iOS al teu propi Mac, fes servir Xcode i el teu propi equip de signatura; amb Xcode 26, executa primer una vegada `xcodebuild -downloadComponent MetalToolchain`, ja que els shaders Spatial ho necessiten. Sense Mac, les compilacions d'iOS s'executen a Codemagic (un Mac allotjat) a partir del fitxer `codemagic.yaml` d'aquest repositori. Les compilacions de publicació d'Android s'executen a GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 En aquest repositori no hi ha cap secret: la clau de signatura d'Android es desa com a secrets xifrats de GitHub Actions, i el material de signatura d'Apple com a variables xifrades a Codemagic. Els fitxers de workflow només hi fan referència pel nom. Sense el teu propi `android/key.jks`, una compilació de publicació se signa amb la clau de depuració i no es pot instal·lar per sobre d'una còpia de GitHub o d'una botiga (desinstal·la-la primer); una compilació de depuració s'instal·la al costat com a Immuch360 debug. La còpia de la Meta Horizon Store és l'APK `quest` de la publicació signat amb una altra clau, aquella amb què es va registrar l'aplicació a la botiga per primera vegada, de manera que tampoc no es pot instal·lar per sobre d'un APK instal·lat manualment, ni a l'inrevés.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Des de la compilació 19, el client DLNA, el recurs compartit de telèfon i la detecció de contingut espacial d'Apple també escriuen al registre propi de l'aplicació (Registres, al menú de la foto de perfil, a dalt a la dreta), amb `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` i `NetworkMediaService`. Les línies del registre es queden al dispositiu tret que les copiïs tu mateix.
+Des de la compilació 19, el client DLNA, el recurs compartit de telèfon i la detecció de contingut espacial d'Apple també escriuen al registre propi de l'aplicació (Registres, al menú de la foto de perfil, a dalt a la dreta), amb `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` i `NetworkMediaService`. Des de la compilació 20, el mode televisor hi escriu amb `TvMode` i `TvTextEntry`, els servidors Plex amb `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` i `PlexServerEditPage`, i les càmeres Tapo amb `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` i `CameraLiveView`; les línies de Plex mai no contenen el testimoni, cap adreça ni cap títol, i les línies de la càmera deixen fora les contrasenyes. Les línies del registre es queden al dispositiu tret que les copiïs tu mateix.
 
 ## Privadesa
 
 - **No s'envia res al desenvolupador**: l'aplicació parla amb el servidor Immich que tu triïs (i, quan obres el mapa, amb el servei de mosaics de mapa que fa servir aquest servidor), no té publicitat, ni analítica, ni cap servei d'informes d'errors gestionat pel desenvolupador, i no envia res al desenvolupador d'Immuch360.
-- **Sense servidor**, res surt del dispositiu.
+- **Sense servidor**, no es contacta cap servidor: l'aplicació només fa servir la xarxa per als recursos compartits, els servidors Plex i les càmeres que obres, i per al recurs compartit de telèfon, si l'actives.
 - **Recursos compartits de xarxa**: la llista de recursos compartits es desa al dispositiu i mai no s'envia a cap servidor; les contrasenyes van al clauer o a l'emmagatzematge de claus del dispositiu.
+- **Plex** (des de la compilació 20): el testimoni es queda a l'emmagatzematge segur del dispositiu i només s'envia al teu propi servidor, en una capçalera de la petició per HTTPS; l'aplicació mai no contacta amb plex.tv.
+- **Càmeres Tapo** (des de la compilació 20): la contrasenya del compte de TP-Link i la contrasenya del compte de la càmera es queden a l'emmagatzematge segur del dispositiu; l'aplicació parla amb la càmera només a la xarxa local, mai amb els servidors de TP-Link; els clips obtinguts es queden a la memòria cau de l'aplicació i s'eliminen amb la càmera.
+- **Televisor**: si el dispositiu és un televisor es llegeix al mateix dispositiu; no s'envia res.
 - **Recurs compartit de telèfon**: només xarxa local, amb nom d'usuari i contrasenya, per HTTP simple (consulta [Comparteix aquest telèfon a la xarxa](#share-this-phone-on-the-network)).
 - **Càmera**: només la fa servir el reproductor Spatial 2.5D, al dispositiu; les imatges mai no es desen ni s'envien enlloc.
 
@@ -675,20 +857,25 @@ Aquest projecte és un fork de l'Immich i continua sota la [GNU AGPL v3](LICENSE
 
 El que encara no està fet, el més probable primer. Res d'això és una promesa, i els comentaris al [gestor d'incidències](https://github.com/freeKC/Immuch360/issues) ajuden a decidir què va primer.
 
-- **Google Play**: les compilacions 15 i 16 es van enviar a revisió de Google el 4 d'octubre de 2026 i es publicaran un cop aprovades; l'última compilació confirmada com a publicada és la compilació 11.
+- **Google Play**: la compilació 18 està publicada; la compilació 19 és en revisió de Google des del 6 d'octubre de 2026, i la compilació 20 ve després.
 - **App Store**: la versió 3.3.0 espera la revisió d'Apple; té les funcions de la compilació 11, de manera que la pujada a l'Immich i la comprovació dels descodificadors de vídeo (compilació 15) i els fitxers en brut d'Insta360 (compilació 16) arribaran amb la propera actualització de l'App Store. L'enllaç s'afegirà aquí quan estigui publicada.
-- **Meta Horizon Store**: la fitxa es va enviar a revisió de Meta el 3 d'octubre de 2026 amb la compilació 14, i la compilació 16 és al canal alfa de la botiga per a la propera actualització. Un cop s'aprovi la fitxa, les Quest 3 ja no necessitaran la instal·lació manual i l'enllaç de la botiga s'afegirà aquí; una còpia instal·lada manualment s'haurà de desinstal·lar primer (consulta [Instal·lació](#install)).
-- **Fitxes de les botigues**: els textos de Google Play i de l'App Store encara descriuen les primeres compilacions (fotos i vídeos 360°, fitxers en brut mostrats plans); presentaran els visualitzadors 3D, VR180 i Spatial, el mode sense servidor, els recursos compartits de xarxa, el reproductor multimèdia i els fitxers en brut d'Insta360. El text de la Meta Horizon Store ja presenta el reproductor multimèdia.
+- **Meta Horizon Store**: la fitxa es va enviar a revisió de Meta el 3 d'octubre de 2026 amb la compilació 14, i el canal alfa de la botiga rep cada compilació nova per a la propera actualització. Un cop s'aprovi la fitxa, les Quest 3 ja no necessitaran la instal·lació manual i l'enllaç de la botiga s'afegirà aquí; una còpia instal·lada manualment s'haurà de desinstal·lar primer (consulta [Instal·lació](#install)).
+- **Fitxes de les botigues**: la fitxa de Google Play es va reescriure l'octubre del 2026 amb captures noves, i guanyarà captures de televisor i una bandera de televisor amb la versió per a televisor. El text de l'App Store encara descriu les primeres compilacions (fotos i vídeos 360°, fitxers en brut mostrats plans); presentarà els visualitzadors 3D, VR180 i Spatial, el mode sense servidor, els recursos compartits de xarxa, el reproductor multimèdia i els fitxers en brut d'Insta360. El text de la Meta Horizon Store ja presenta el reproductor multimèdia.
 - **Fitxers en brut de càmeres 360°, a continuació**: un indicador de progrés mentre es prepara una foto en brut per al casc; anivellament dels vídeos GoPro i DJI a partir de les seves pròpies dades de moviment; .dng de doble ull de peix; informes de dispositius sobre la reproducció de dos objectius de la compilació 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) per confirmar les costures i la capacitat dels descodificadors.
 - **DLNA, recurs compartit de telèfon i contingut espacial d'Apple, a continuació**: els informes de dispositius de la compilació 19 (Plex, Jellyfin, un NAS i el Freebox Server per DLNA; un telèfon que serveix unes Quest, també al seu punt d'accés; fotos i vídeos espacials reals d'iPhone al casc); el dret de multicast demanat a Apple, perquè els iPhone trobin tots els servidors DLNA; anterior i següent entre fotos espacials al casc; un distintiu espacial a les fotos del servidor a la cronologia; vídeos espacials en 3D a les Quest, si els seus descodificadors ho permeten.
 - **Reproductors 360° als telèfons, a continuació**: una barra de temps al reproductor de vídeo 360° d'iOS (el d'Android ja en té), anterior/següent als reproductors 360° dels telèfons com a la vista immersiva de les Quest, i fotos al reproductor de vídeo 360° natiu.
 - **Recursos compartits de xarxa, propers passos**: lliscar d'un fitxer d'una carpeta al següent a les pàgines de foto i de vídeo (la vista immersiva de les Quest ja recorre els fitxers 360° d'una carpeta), autenticació Digest per a WebDAV, el nom d'usuari a partir del registre Bonjour.
 - **Vídeos plans**: l'elecció de pista d'àudio al reproductor pla, per a vídeos del servidor, del dispositiu i de recursos compartits per igual (els reproductors 360° i Spatial ja la tenen).
+- **Android TV, a continuació**: la prova en dispositius de la compilació 20 a l'emulador de Google TV i en un televisor real, després la versió per a televisor a Google Play (captures de televisor, la bandera de televisor, la revisió de Google); més endavant, canals a la pantalla d'inici del televisor.
+- **Càmeres Tapo, a continuació**: la prova en dispositius de la compilació 20 amb càmeres reals; la visualització en directe a l'iPhone i l'iPad; els enregistraments H.265; reproduir un clip mentre s'obté; tot un dia d'enregistraments en una sola línia de temps.
+- **Plex, a continuació**: la prova en dispositius de la compilació 20 (telèfons, les Quest, un iPhone, un televisor, fora de casa); portar el testimoni des de l'ordinador amb un codi QR; amagar la part DLNA d'un servidor Plex a la llista de servidors trobats; IPv6.
 - **Upstream**: petites pull requests a l'Immich per a les parts que vulguin els mantenidors, començant pel visualitzador de fotos 360°.
 
 ## Agraïments
 
 El visualitzador de fotos 360° es basa en la pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) de dmitry-brazhenko, construïda alhora sobre el prototip de bencefr a [#30192](https://github.com/immich-app/immich/pull/30192). Gràcies a tots dos.
+
+Les càmeres Tapo de la compilació 20 es van escriure a partir del que documenten sobre aquestes càmeres els projectes de codi obert [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) i [python-kasa](https://github.com/python-kasa/python-kasa).
 
 Per què un fork: la visualització 360° al mòbil es demana des del gener de 2024 i encara no és a l'aplicació oficial; el visualitzador de fotos està en revisió upstream a [#31169](https://github.com/immich-app/immich/pull/31169). Aquest fork l'ofereix ara, recull comentaris de dispositius reals i oferirà a l'Immich, en petites pull requests, tot el que vulguin els mantenidors. La vista de les Meta Quest es basa en el Meta Spatial SDK, que no és de codi obert, i per això es queda en aquest fork.
 

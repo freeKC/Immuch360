@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
@@ -20,12 +21,15 @@ import 'package:immich_mobile/presentation/widgets/network/network_status.widget
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_buffering.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
@@ -46,6 +50,10 @@ typedef _Video = ({NetworkEntry entry, Uri url});
 /// A raw video of a 360° camera (Insta360 .insv, GoPro .360, DJI .osv) is 360° by its name: the players map it on the
 /// sphere with the rawProjection JSON of its plan (see RawVideoResolver), the calibration read from the share, the
 /// other file of a split pair looked for next to it. One that does not open says why when its 360° button is pressed.
+///
+/// With a remote control, a keyboard or a game pad (see [NetworkVideoPageState._onKey]): OK pauses or plays, left and
+/// right seek while it plays and go to the previous or next file of [folder] while it is paused, up and down reach the
+/// app bar and the controls. On a TV, Back hides the controls before it leaves.
 @RoutePage()
 class NetworkVideoPage extends ConsumerStatefulWidget {
   const NetworkVideoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -86,6 +94,23 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// The frame size, once the native player read it: the 3D layout is guessed from it
   ({int width, int height})? _videoSize;
 
+  /// The page itself, which takes the keys of a remote while no button has the focus
+  final _rootFocus = FocusNode(debugLabel: 'Network video');
+
+  /// Around the app bar, and around its actions: where Up goes
+  final _appBarFocus = FocusNode(debugLabel: 'Network video app bar', canRequestFocus: false, skipTraversal: true);
+  final _actionsFocus = FocusNode(debugLabel: 'Network video actions', canRequestFocus: false, skipTraversal: true);
+
+  /// The play button of the controls: where Down goes
+  final _playFocus = FocusNode(debugLabel: 'Network video play');
+
+  /// Around the view of an error (the video could not be had, or not played): where Down and OK go then, to Retry,
+  /// since there are no controls and nothing plays
+  final _errorFocus = FocusNode(debugLabel: 'Network video error', canRequestFocus: false, skipTraversal: true);
+
+  /// "Paused: the arrows go to the previous or next item" shows once per run of the app
+  static bool _pausedHintShown = false;
+
   /// The key of the player of this page in [videoPlayerProvider]
   String get _playerKey => 'network:${widget.sourceId}:${widget.path}';
 
@@ -97,13 +122,186 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Back on a TV depends on where the focus is
+    _appBarFocus.addListener(_onAppBarFocus);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _removeListeners();
+    _appBarFocus.removeListener(_onAppBarFocus);
+    _rootFocus.dispose();
+    _appBarFocus.dispose();
+    _actionsFocus.dispose();
+    _playFocus.dispose();
+    _errorFocus.dispose();
     super.dispose();
+  }
+
+  void _onAppBarFocus() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  /// Down from a button of the app bar goes to Retry in place of a video that could not be had or played, else to the
+  /// controls, which it shows, as from the page itself
+  KeyEventResult _onAppBarKey(FocusNode node, KeyEvent event) {
+    if (event.logicalKey != LogicalKeyboardKey.arrowDown) {
+      return KeyEventResult.ignored;
+    }
+    if (isRemotePress(event)) {
+      final retry = _errorFocus.traversalDescendants.firstOrNull;
+      if (retry != null) {
+        retry.requestFocus();
+      } else {
+        // The page itself until the play button shows (not while the video loads)
+        _rootFocus.requestFocus();
+        _showControlsAndFocus(top: false);
+      }
+    }
+    return KeyEventResult.handled;
+  }
+
+  bool get _isPlaying {
+    final status = ref.read(videoPlayerProvider(_playerKey)).status;
+    return status == VideoPlaybackStatus.playing || status == VideoPlaybackStatus.buffering;
+  }
+
+  /// The keys of a remote control, a keyboard or a game pad. Media keys (play, pause, fast forward, rewind, next,
+  /// previous) work wherever the focus is on the page; the arrows and OK only while the page itself has it, else they
+  /// belong to the focused button. In place of a video that could not be had or played, Down and OK go to Retry.
+  KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    final key = event.logicalKey;
+    final press = isRemotePress(event);
+    if (remotePlayPauseKeys.contains(key)) {
+      if (press) {
+        _setPlaying(remotePlayPauseWantsPlay(key, isPlaying: _isPlaying));
+      }
+      return KeyEventResult.handled;
+    }
+    if (remoteSeekForwardKeys.contains(key) || remoteSeekBackwardKeys.contains(key)) {
+      if (event is! KeyUpEvent) {
+        _seekBy(remoteSeekForwardKeys.contains(key) ? remoteSeekStep : -remoteSeekStep);
+      }
+      return KeyEventResult.handled;
+    }
+    if (remoteNextItemKeys.contains(key) || remotePreviousItemKeys.contains(key)) {
+      if (press) {
+        _openNeighbour(remoteNextItemKeys.contains(key) ? 1 : -1);
+      }
+      return KeyEventResult.handled;
+    }
+    if (!node.hasPrimaryFocus) {
+      return KeyEventResult.ignored;
+    }
+    final retry = _errorFocus.traversalDescendants.firstOrNull;
+    if (retry != null && (remoteOkKeys.contains(key) || key == LogicalKeyboardKey.arrowDown)) {
+      if (press) {
+        retry.requestFocus();
+      }
+      return KeyEventResult.handled;
+    }
+    if (remoteOkKeys.contains(key)) {
+      if (press) {
+        _setPlaying(!_isPlaying);
+      }
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowLeft || key == LogicalKeyboardKey.arrowRight) {
+      final step = key == LogicalKeyboardKey.arrowRight ? 1 : -1;
+      if (_isPlaying) {
+        // Held, it keeps seeking
+        if (event is! KeyUpEvent) {
+          _seekBy(remoteSeekStep * step);
+        }
+      } else if (press) {
+        _openNeighbour(step);
+      }
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowUp) {
+      if (press) {
+        _showControlsAndFocus(top: true);
+      }
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowDown) {
+      if (press) {
+        _showControlsAndFocus(top: false);
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  /// Plays, or pauses and shows the controls (Play TV criterion TV-PC). A video at its end plays from the start.
+  void _setPlaying(bool play) {
+    final notifier = _notifier;
+    if (!play) {
+      unawaited(notifier.pause());
+      setState(() => _showControls = true);
+      _showPausedHint();
+      return;
+    }
+    if (ref.read(videoPlayerProvider(_playerKey)).status == VideoPlaybackStatus.completed) {
+      unawaited(notifier.restart());
+    } else {
+      unawaited(notifier.play());
+    }
+  }
+
+  /// Once: paused, the arrows no longer seek but go to the next file, when there is one
+  void _showPausedHint() {
+    if (_pausedHintShown || !ref.read(tvModeProvider) || widget.folder == null) {
+      return;
+    }
+    _pausedHintShown = true;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.t.tv_paused_arrows_hint)));
+  }
+
+  void _seekBy(Duration delta) {
+    final playback = ref.read(videoPlayerProvider(_playerKey));
+    var target = playback.position + delta;
+    if (target < Duration.zero) {
+      target = Duration.zero;
+    }
+    if (playback.duration > Duration.zero && target > playback.duration) {
+      target = playback.duration;
+    }
+    _notifier.seekTo(target);
+    setState(() => _showControls = true);
+  }
+
+  /// The previous or next photo or video of the folder, in place of this page: a TV user does not go back to the grid
+  /// between files. Nothing without a folder.
+  void _openNeighbour(int step) {
+    final route = networkFolderNeighbourRoute(widget.sourceId, widget.folder, widget.path, step);
+    if (route != null) {
+      unawaited(context.replaceRoute(route));
+    }
+  }
+
+  /// Shows the controls and focuses the app bar ([top]) or the play button
+  void _showControlsAndFocus({required bool top}) {
+    setState(() => _showControls = true);
+    // The play button is in the tree from the next frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final target = top
+          ? _actionsFocus.traversalDescendants.firstOrNull ?? _appBarFocus.traversalDescendants.firstOrNull
+          : _playFocus;
+      target?.requestFocus();
+    });
+  }
+
+  /// Back on a TV, while the controls show or the app bar has the focus: they hide, and the page takes the keys again
+  void _hideControls() {
+    setState(() => _showControls = false);
+    _rootFocus.requestFocus();
   }
 
   Future<_Video> _load() async {
@@ -138,6 +336,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   }
 
   void _retry() {
+    // Retry leaves with the error: the page takes the keys again
+    if (_errorFocus.hasFocus) {
+      _rootFocus.requestFocus();
+    }
     setState(() {
       _video = _load();
       videoSource = _sourceOf(_video);
@@ -430,11 +632,18 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
     final can360 = (isHorizonOs ?? false) || ref.watch(panorama360VideoSupportedProvider);
     // Like in the asset viewer: an experimental setting, on phones only, never while the platform check is pending
-    final canSpatial = isHorizonOs == false && ref.watch(appConfigProvider.select((c) => c.viewer.spatial25d));
-    final canUpload = ref.watch(hasServerProvider);
+    // A TV has no front camera for Spatial 2.5D, and is a viewer: nothing is sent from it
+    final tvMode = ref.watch(tvModeProvider);
+    final canSpatial =
+        !tvMode && isHorizonOs == false && ref.watch(appConfigProvider.select((c) => c.viewer.spatial25d));
+    final canUpload = !tvMode && ref.watch(hasServerProvider);
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
+    // The page covers the screen, under the app bar too: from the menu, Left would land on it rather than on the Back
+    // button. Out of the directional moves while the app bar has the focus (set here, not while the focus changes);
+    // Down and Back leave the app bar.
+    _rootFocus.skipTraversal = _appBarFocus.hasFocus;
 
-    return FutureBuilder<_Video>(
+    final page = FutureBuilder<_Video>(
       future: _video,
       builder: (context, snapshot) {
         final video = snapshot.data;
@@ -445,72 +654,106 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         final menu360 = can360 && !is360;
         final menuSpatial = canSpatial && !isStereo;
 
+        final appBar = AppBar(
+          backgroundColor: Colors.black38,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: false,
+          // On a TV, Back on the app bar only hides it: the Back button leaves the page itself
+          leading: tvMode ? remoteBackButton(context) : null,
+          title: Text(_name, maxLines: 1, overflow: TextOverflow.ellipsis),
+          actions: [
+            Focus(
+              focusNode: _actionsFocus,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (video != null && can360 && is360)
+                    IconButton(
+                      icon: const Icon(Icons.threesixty_rounded),
+                      tooltip: '360°',
+                      onPressed: () => unawaited(_open360(video)),
+                    ),
+                  if (video != null && canSpatial && isStereo)
+                    IconButton(
+                      icon: const Icon(Icons.threed_rotation_rounded),
+                      tooltip: context.t.spatial_2_5d,
+                      onPressed: () => unawaited(_openSpatial(video)),
+                    ),
+                  if (video != null && (menu360 || menuSpatial || canUpload))
+                    PopupMenuButton<void>(
+                      tooltip: context.t.more,
+                      itemBuilder: (context) => [
+                        if (menu360)
+                          PopupMenuItem<void>(
+                            onTap: () => unawaited(_open360(video)),
+                            child: ListTile(
+                              leading: const Icon(Icons.threesixty_rounded),
+                              title: Text(context.t.view_as_360),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        if (menuSpatial)
+                          PopupMenuItem<void>(
+                            onTap: () => unawaited(_openSpatial(video)),
+                            child: ListTile(
+                              leading: const Icon(Icons.threed_rotation_rounded),
+                              title: Text(context.t.spatial_2_5d),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        if (canUpload)
+                          PopupMenuItem<void>(
+                            // One upload from the shares at a time
+                            enabled: !isUploading,
+                            onTap: () =>
+                                unawaited(uploadNetworkEntries(this.context, ref, widget.sourceId, [video.entry])),
+                            child: ListTile(
+                              leading: const Icon(Icons.backup_outlined),
+                              title: Text(context.t.network_upload_action),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ],
+        );
+
         return Scaffold(
           backgroundColor: Colors.black,
           extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.black38,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            centerTitle: false,
-            title: Text(_name, maxLines: 1, overflow: TextOverflow.ellipsis),
-            actions: [
-              if (video != null && can360 && is360)
-                IconButton(
-                  icon: const Icon(Icons.threesixty_rounded),
-                  tooltip: '360°',
-                  onPressed: () => unawaited(_open360(video)),
-                ),
-              if (video != null && canSpatial && isStereo)
-                IconButton(
-                  icon: const Icon(Icons.threed_rotation_rounded),
-                  tooltip: context.t.spatial_2_5d,
-                  onPressed: () => unawaited(_openSpatial(video)),
-                ),
-              if (video != null && (menu360 || menuSpatial || canUpload))
-                PopupMenuButton<void>(
-                  tooltip: context.t.more,
-                  itemBuilder: (context) => [
-                    if (menu360)
-                      PopupMenuItem<void>(
-                        onTap: () => unawaited(_open360(video)),
-                        child: ListTile(
-                          leading: const Icon(Icons.threesixty_rounded),
-                          title: Text(context.t.view_as_360),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    if (menuSpatial)
-                      PopupMenuItem<void>(
-                        onTap: () => unawaited(_openSpatial(video)),
-                        child: ListTile(
-                          leading: const Icon(Icons.threed_rotation_rounded),
-                          title: Text(context.t.spatial_2_5d),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    if (canUpload)
-                      PopupMenuItem<void>(
-                        // One upload from the shares at a time
-                        enabled: !isUploading,
-                        onTap: () => unawaited(uploadNetworkEntries(this.context, ref, widget.sourceId, [video.entry])),
-                        child: ListTile(
-                          leading: const Icon(Icons.backup_outlined),
-                          title: Text(context.t.network_upload_action),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                  ],
-                ),
-            ],
+          appBar: PreferredSize(
+            preferredSize: appBar.preferredSize,
+            child: Focus(focusNode: _appBarFocus, onKeyEvent: _onAppBarKey, child: appBar),
           ),
           body: video != null
               ? _buildPlayer()
               : snapshot.connectionState != ConnectionState.done
               ? const NetworkLoadingView(color: Colors.white70)
-              : NetworkErrorView(error: snapshot.error ?? 'unknown error', onRetry: _retry, color: Colors.white70),
+              : Focus(
+                  focusNode: _errorFocus,
+                  child: NetworkErrorView(
+                    error: snapshot.error ?? 'unknown error',
+                    onRetry: _retry,
+                    color: Colors.white70,
+                  ),
+                ),
         );
       },
+    );
+
+    return PopScope(
+      // On a TV, Back first hides the controls and leaves the app bar, then leaves the page
+      canPop: !tvMode || (!_showControls && !_appBarFocus.hasFocus),
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _hideControls();
+        }
+      },
+      child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: page),
     );
   }
 
@@ -530,13 +773,17 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
               child: IgnorePointer(
                 child: Visibility.maintain(
                   visible: _isVideoReady,
-                  child: NativeVideoPlayerView(onViewReady: _initController),
+                  // A platform view must never take the focus: the keys of a remote would go to the native view
+                  child: ExcludeFocus(child: NativeVideoPlayerView(onViewReady: _initController)),
                 ),
               ),
             ),
           if (error != null)
             Positioned.fill(
-              child: NetworkErrorView(error: error, onRetry: _retry, color: Colors.white70),
+              child: Focus(
+                focusNode: _errorFocus,
+                child: NetworkErrorView(error: error, onRetry: _retry, color: Colors.white70),
+              ),
             )
           else
             // "Buffering…" while the video loads, and while it stalls (its position stands still as it plays)
@@ -550,7 +797,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
               left: 0,
               right: 0,
               bottom: 0,
-              child: SafeArea(top: false, child: NetworkVideoControls(playerKey: _playerKey)),
+              child: SafeArea(
+                top: false,
+                child: NetworkVideoControls(playerKey: _playerKey, playFocusNode: _playFocus),
+              ),
             ),
         ],
       ),

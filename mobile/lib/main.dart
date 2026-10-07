@@ -24,11 +24,13 @@ import 'package:immich_mobile/pages/common/splash_screen.page.dart';
 import 'package:immich_mobile/platform/background_worker_lock_api.g.dart';
 import 'package:immich_mobile/platform/native_sync_api.g.dart';
 import 'package:immich_mobile/platform/permission_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
@@ -66,10 +68,15 @@ void main() async {
     // Warm-up isolate pool for worker manager
     await workerManagerPatch.init(dynamicSpawning: true, isolatesCount: max(Platform.numberOfProcessors - 1, 5));
     await migrateDatabaseIfNeeded(dataController.db, NativeSyncApi(), PermissionApi());
+    // Before the first frame, so that the first screen is already laid out for the remote on a TV
+    final tvDevice = await readTvDeviceInfo();
 
     runApp(
       ProviderScope(
-        overrides: Store.overrideWith(dataController: dataController, apiService: apiService),
+        overrides: [
+          ...Store.overrideWith(dataController: dataController, apiService: apiService),
+          tvDeviceProvider.overrideWithValue(tvDevice),
+        ],
         child: const MainWidget(),
       ),
     );
@@ -137,6 +144,10 @@ class ImmichApp extends ConsumerStatefulWidget {
 }
 
 class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserver {
+  /// Keeps the navigator and its routes when the remote control layout is turned on or off: TvShell comes and goes
+  /// around it
+  final _appKey = GlobalKey(debugLabel: 'app');
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
@@ -275,6 +286,7 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
   Widget build(BuildContext context) {
     final router = ref.watch(appRouterProvider);
     final immichTheme = ref.watch(immichThemeProvider);
+    final tvMode = ref.watch(tvModeProvider);
 
     return ProviderScope(
       overrides: [localeProvider.overrideWithValue(context.locale)],
@@ -286,16 +298,23 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         supportedLocales: context.supportedLocales,
         locale: context.locale,
         themeMode: ref.watch(appConfigProvider.select((config) => config.theme.mode)),
-        darkTheme: getThemeData(colorScheme: immichTheme.dark, locale: context.locale),
-        theme: getThemeData(colorScheme: immichTheme.light, locale: context.locale),
-        builder: (context, child) => ImmichTranslationProvider(
-          translations: ImmichTranslations(
-            submit: context.t.submit,
-            password: context.t.password,
-            undo: context.t.undo,
-          ),
-          child: ImmichThemeProvider(colorScheme: context.colorScheme, child: child!),
-        ),
+        darkTheme: getThemeData(colorScheme: immichTheme.dark, locale: context.locale, tvMode: tvMode),
+        theme: getThemeData(colorScheme: immichTheme.light, locale: context.locale, tvMode: tvMode),
+        builder: (context, child) {
+          final app = KeyedSubtree(key: _appKey, child: child!);
+          return ImmichTranslationProvider(
+            translations: ImmichTranslations(
+              submit: context.t.submit,
+              password: context.t.password,
+              undo: context.t.undo,
+            ),
+            // The remote control layout (Android TV): margins, focus ring and remote keys, see TvShell
+            child: ImmichThemeProvider(
+              colorScheme: context.colorScheme,
+              child: tvMode ? TvShell(child: app) : app,
+            ),
+          );
+        },
         routerConfig: router.config(
           deepLinkBuilder: _deepLinkBuilder,
           navigatorObservers: () => [AppNavigationObserver(ref: ref), TransitioningRouteObserver()],

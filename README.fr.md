@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 est l'application mobile Immich avec des photos et vidéos 360° dans lesquelles on regarde autour de soi, et un lecteur gratuit pour les photos et vidéos à plat, 360°, 3D et VR180, sur les téléphones et tablettes Android, les iPhone et iPad, et les Meta Quest 3 et 3S. Elle s'adresse à ceux qui filment avec une caméra 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ou avec le mode photo sphère d'un téléphone, ou qui ont un casque, et qui veulent regarder leurs propres prises depuis un serveur Immich, le téléphone lui-même, un NAS ou un serveur multimédia : même serveur, même compte, aucun plugin côté serveur, ou pas de serveur du tout.
+Immuch360 est l'application mobile Immich avec des photos et vidéos 360° dans lesquelles on regarde autour de soi, et un lecteur gratuit pour les photos et vidéos à plat, 360°, 3D et VR180, sur les téléphones et tablettes Android, les iPhone et iPad, les Meta Quest 3 et 3S, et dès le build 20 Android TV et Google TV. Elle s'adresse à ceux qui filment avec une caméra 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ou avec le mode photo sphère d'un téléphone, ou qui ont un casque, et qui veulent regarder leurs propres prises depuis un serveur Immich, le téléphone lui-même, un NAS, un serveur multimédia ou un serveur Plex : même serveur, même compte, aucun plugin côté serveur, ou pas de serveur du tout. Dès le build 20, elle affiche aussi les caméras Tapo, en direct et les enregistrements de leur carte mémoire.
 
 <p align="center">
   <sub>Fork non officiel. Sans lien avec Immich ni FUTO. Le nom se lit « I am much 360 ».</sub>
@@ -15,7 +15,8 @@ Immuch360 est l'application mobile Immich avec des photos et vidéos 360° dans 
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a> &nbsp;·&nbsp;
   App Store : <a href="#where-to-get-it">en cours d'examen</a> &nbsp;·&nbsp;
-  Meta Quest 3 : <a href="#meta-quest-3">APK</a>, Horizon Store en cours d'examen
+  Meta Quest 3 : <a href="#meta-quest-3">APK</a>, Horizon Store en cours d'examen &nbsp;·&nbsp;
+  Android TV : <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 est l'application mobile Immich avec des photos et vidéos 360° dans 
     <td align="center" width="33%"><h3>🎥 2.5D natif</h3>De la profondeur sur un écran plat à partir d'une vidéo stéréoscopique, la vue suit votre tête (expérimental, téléphones et tablettes)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Une application, trois plateformes, vraie 3D dans le casque</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Une application sur les téléphones, les tablettes et le casque, vraie 3D dans le casque, et dès le build 20 sur Android TV avec la télécommande</td>
     <td align="center"><h3>🔌 Avec ou sans serveur</h3>Votre serveur Immich, ou la galerie du téléphone lui-même, sans compte</td>
     <td align="center"><h3>🗄️ Partages réseau</h3>Samba (SMB), WebDAV et, dès le build 19, serveurs multimédias DLNA trouvés sur le réseau et lus en direct, rien n'est téléchargé, et envoyés vers Immich quand vous le décidez. Dès le build 19, un téléphone partage aussi sa propre galerie avec le casque</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Sur le téléviseur</h3>Dès le build 20, le même APK sur Android TV et Google TV : photos et vidéos 360°, votre serveur et vos partages, avec la télécommande</td>
+    <td align="center"><h3>🎬 Plex, sans plex.tv</h3>Dès le build 20, vos bibliothèques Plex, lues depuis les fichiers originaux pour que le 360° reste en 360°, à la maison et en déplacement</td>
+    <td align="center"><h3>📹 Caméras Tapo</h3>Dès le build 20, la vue en direct et les enregistrements de la carte mémoire, sur votre réseau uniquement, et un clip envoyé vers Immich quand vous le décidez</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 est l'application mobile Immich avec des photos et vidéos 360° dans 
 - **« Mes photos 360° s'affichent comme une bande plate et étirée, et mes vidéos 360° sont lues à plat. »** Voir [Photos et vidéos 360° en sphère](#360-photos-and-videos-as-a-sphere).
 - **« Je n'ai pas de serveur, et je ne veux pas de compte. »** Voir [Sans serveur ni compte](#without-a-server-or-an-account).
 - **« Je veux regarder les vidéos de mon NAS, sur le téléphone ou dans le casque, sans les copier. »** Voir [Partages réseau](#network-shares-a-nas-a-computer-or-a-media-server).
+- **« Plex lit mes vidéos 360° à plat, et je veux ma bibliothèque Plex dans le casque, sur le téléviseur et hors de chez moi. »** Voir [Plex Media Server, sans plex.tv](#plex-media-server-without-plextv).
 - **« Mes photos sont sur mon téléphone, et je n'ai ni ordinateur ni NAS où les mettre pour le casque. »** Voir [Partager ce téléphone sur le réseau](#share-this-phone-on-the-network).
+- **« Je veux voir ma caméra Tapo et les clips de la nuit dernière sans l'application Tapo, et garder un clip dans Immich. »** Voir [Caméras Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **« Mes fichiers Insta360 doivent passer par l'application Insta360 avant que je puisse les regarder »** (et les fichiers GoPro .360 et DJI .osv aussi). Voir [Fichiers bruts de caméra 360°](#raw-360-camera-files-without-the-cameras-app).
 - **« Mes vidéos 3D apparaissent en double, et mes vidéos VR180 sont étirées tout autour. »** Voir [3D et VR180](#3d-and-vr180-photos-and-videos) et [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **« J'ai des photos spatiales prises avec mon iPhone. »** Voir [Photos et vidéos spatiales Apple](#apple-spatial-photos-and-videos).
 - **« Ça marche sur le téléphone, mais je le veux dans le Quest. »** Voir [Dans le casque Meta Quest 3](#in-the-meta-quest-3-headset).
+- **« Je veux regarder mes photos et vidéos 360°, et les vidéos de mon NAS ou de mon serveur Plex, sur le téléviseur, avec la télécommande. »** Voir [Regarder sur votre téléviseur](#watch-on-your-tv-android-tv-and-google-tv).
 - **« Je ne retrouve pas mes prises 360° parmi toutes les autres. »** Voir [La liste 360°](#find-your-360-shots-the-360-list).
 - **« Ma vidéo 360° saccade, ou lit une copie floue. »** Voir [Détails vidéo et décodeurs](#video-details-decoders-and-why-a-video-stutters).
 - **« Est-ce que je garde ce que fait l'application Immich ? »** Oui, avec deux petits changements, voir [Tout le reste, c'est Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Le choix est mémorisé sur le téléphone et ne change rien sur le serveur. Sur
 
 Vous n'avez pas de serveur Immich, ou vous ne voulez pas de compte : vous voulez seulement que les photos 360° de votre téléphone s'ouvrent en sphère que l'on tourne avec le gyroscope. L'application Immich demande d'abord une connexion.
 
-Sur la page de connexion, « Utiliser sans serveur » ouvre Immuch360 sur les photos et vidéos de l'appareil lui-même, avec les visualiseurs 360°, 3D, VR180 et Spatial, la liste 360° et les partages réseau, sans compte Immich. Les fonctions du serveur restent masquées ou grisées tant que vous ne connectez pas de serveur ; rien ne quitte l'appareil. Sur un Meta Quest 3, elle ouvre les photos et vidéos du casque lui-même.
+Sur la page de connexion, « Utiliser sans serveur » ouvre Immuch360 sur les photos et vidéos de l'appareil lui-même, avec les visualiseurs 360°, 3D, VR180 et Spatial, la liste 360° et les partages réseau (dès le build 20, aussi les serveurs Plex et les caméras Tapo), sans compte Immich. Les fonctions du serveur restent masquées ou grisées tant que vous ne connectez pas de serveur ; rien ne quitte l'appareil. Sur un Meta Quest 3, elle ouvre les photos et vidéos du casque lui-même ; sur un téléviseur, qui n'en a pas, elle renvoie vers les partages réseau (voir [Regarder sur votre téléviseur](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="L'onglet Bibliothèque sans serveur : l'entrée 360° en haut, puis Sur cet appareil avec deux photos 360°, et Partages réseau avec un partage nommé NAS">
 
@@ -126,7 +135,7 @@ Sur la page de connexion, « Utiliser sans serveur » ouvre Immuch360 sur les ph
 
 Vos vidéos 360° sont sur un NAS ou un ordinateur, et vous voulez les regarder sur le téléphone ou dans le casque sans les copier d'abord. Dans le casque, on finit par copier chaque fichier par câble ; les serveurs multimédias comme Plex et Jellyfin lisent les vidéos 360° à plat, comme le décrivent des demandes sur leurs forums ; l'application Immich ne lit que votre serveur Immich.
 
-Immuch360 parcourt et lit les photos et vidéos de tout serveur qui parle SMB (Samba, Windows), WebDAV ou, dès le build 19, DLNA/UPnP (un serveur multimédia : Plex, Jellyfin, minidlna, Gerbera, Emby, un NAS ou une box TV), directement depuis le partage. Elle trouve seule les serveurs de votre réseau, et lit les fichiers en direct dans les mêmes visualiseurs que le reste de l'application (360°, 3D, VR180, Spatial 2.5D, vue immersive du Quest), avec ou sans serveur Immich, sur les téléphones et sur le Meta Quest 3. Rien n'est téléchargé. Quand un serveur est connecté, les fichiers que vous choisissez peuvent être envoyés vers votre compte Immich (dès le build 15).
+Immuch360 parcourt et lit les photos et vidéos de tout serveur qui parle SMB (Samba, Windows), WebDAV ou, dès le build 19, DLNA/UPnP (un serveur multimédia : Jellyfin, minidlna, Gerbera, Emby, un NAS ou une box TV), directement depuis le partage. Dès le build 20, un Plex Media Server a son propre type, voir [Plex Media Server, sans plex.tv](#plex-media-server-without-plextv). Elle trouve seule les serveurs de votre réseau, et lit les fichiers en direct dans les mêmes visualiseurs que le reste de l'application (360°, 3D, VR180, Spatial 2.5D, vue immersive du Quest), avec ou sans serveur Immich, sur les téléphones et sur le Meta Quest 3. Rien n'est téléchargé. Quand un serveur est connecté, les fichiers que vous choisissez peuvent être envoyés vers votre compte Immich (dès le build 15).
 
 | Ajouter un partage | Un dossier d'un partage |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 parcourt et lit les photos et vidéos de tout serveur qui parle SMB (S
 
 ### Ajouter un partage
 
-1. Ouvrez l'onglet Bibliothèque, puis Partages réseau. La première fois, la page indique « Aucun partage pour l'instant » avec un bouton « Ajouter un partage » ; + en haut à droite fait la même chose à tout moment.
-2. La page « Ajouter un partage » cherche d'abord les serveurs de votre réseau et les liste sous « Trouvés sur le réseau », avec leur type (SMB, WebDAV, DLNA, Téléphone). La recherche prend jusqu'à six secondes environ ; « Relancer la recherche » la recommence. Elle utilise Bonjour/mDNS et un balayage du réseau local confirmé par un vrai échange SMB ou WebDAV, et dès le build 19 une recherche SSDP des serveurs multimédias DLNA.
-3. Touchez un serveur : le type, le serveur, le port et le chemin sont remplis.
-4. Absent de la liste ? Remplissez le formulaire à la main. Type : « SMB (Samba, partage Windows) », « WebDAV (Nextcloud, Synology et autres) » ou « Serveur multimédia DLNA (Plex, Jellyfin, NAS, box TV) ». Puis Nom, « Nom ou adresse du serveur » (un nom ou une adresse ; une adresse complète comme `smb://nas/photos`, `\\nas\photos` ou `https://nas:5006/photos` remplit les autres champs), « Port (facultatif) » quand ce n'est pas le port habituel, « Partage » pour SMB ou « Chemin de l'adresse WebDAV » pour WebDAV, « Dossier de départ (facultatif) », « Nom d'utilisateur » et « Mot de passe », et « Connexion sécurisée (HTTPS) » pour WebDAV.
+1. Ouvrez l'onglet Bibliothèque, puis Partages réseau. La première fois, la page indique « Aucun partage pour l'instant » avec un bouton « Ajouter un partage » ; + en haut à droite fait la même chose à tout moment. Dès le build 20, les deux demandent quoi ajouter : « Un partage réseau (NAS, ordinateur, serveur multimédia) », « Un serveur Plex Media Server » ou « Une caméra Tapo ». Choisissez le premier.
+2. La page « Ajouter un partage » cherche d'abord les serveurs de votre réseau et les liste sous « Trouvés sur le réseau », avec leur type (SMB, WebDAV, DLNA, Téléphone, et dès le build 20 Plex et Tapo). La recherche prend jusqu'à six secondes environ ; « Relancer la recherche » la recommence. Elle utilise Bonjour/mDNS et un balayage du réseau local confirmé par un vrai échange SMB ou WebDAV, dès le build 19 une recherche SSDP des serveurs multimédias DLNA, et dès le build 20 GDM, la découverte de Plex, et le protocole de découverte de TP-Link pour les caméras Tapo.
+3. Touchez un serveur : le type, le serveur, le port et le chemin sont remplis. Un serveur Plex ou une caméra Tapo ouvre plutôt sa propre page, déjà remplie.
+4. Absent de la liste ? Remplissez le formulaire à la main. Type : « SMB (Samba, partage Windows) », « WebDAV (Nextcloud, Synology et autres) », « Serveur multimédia DLNA (Jellyfin, NAS, box TV) » ou, dès le build 20, « Plex Media Server », qui ouvre la page de [Plex Media Server, sans plex.tv](#plex-media-server-without-plextv). Puis Nom, « Nom ou adresse du serveur » (un nom ou une adresse ; une adresse complète comme `smb://nas/photos`, `\\nas\photos` ou `https://nas:5006/photos` remplit les autres champs), « Port (facultatif) » quand ce n'est pas le port habituel, « Partage » pour SMB ou « Chemin de l'adresse WebDAV » pour WebDAV, « Dossier de départ (facultatif) », « Nom d'utilisateur » et « Mot de passe », et « Connexion sécurisée (HTTPS) » pour WebDAV.
 5. SMB : une fois le serveur et le nom d'utilisateur saisis, « Choisir un partage » liste les partages du serveur.
 6. DLNA : un serveur multimédia n'a ni nom d'utilisateur ni mot de passe. Indiquez le serveur, le port et le « Chemin de la description » de sa description d'appareil (`/rootDesc.xml` pour minidlna), ou collez l'adresse complète, comme `http://192.168.1.10:8200/rootDesc.xml`, dans le champ du serveur.
 7. Touchez « Tester la connexion ». Elle répond « Connecté, N éléments dans le dossier de départ », ou dit pourquoi elle a échoué. Touchez ensuite Sauvegarder, en bas du formulaire.
@@ -155,6 +164,7 @@ Un nom d'utilisateur avec un mot de passe vide est envoyé tel quel : un Freebox
 
 Le 360°, la 3D et le VR180 sont reconnus grâce aux métadonnées GPano ou sphériques du fichier, lues par requêtes de plage, et le VR180 aussi grâce au nom du fichier. Dès le build 16, les fichiers Insta360 bruts sont reconnus aussi (une photo .insp par son nom ou le bloc de calibration de la caméra, une vidéo .insv par son nom et son image) et assemblés.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Envoyer des fichiers d'un partage vers Immich
 
 Dès le build 15, quand vous êtes connecté à un serveur :
@@ -177,17 +187,67 @@ Dès le build 19, l'application envoie la recherche SSDP des serveurs multimédi
 <a id="a-share-that-moved"></a>
 ### Un partage qui a changé d'adresse
 
-Dès le build 19, un partage DLNA et un partage de téléphone (voir [Partager ce téléphone sur le réseau](#share-this-phone-on-the-network)) gardent l'identifiant qu'annonce leur serveur. Quand l'un d'eux ne répond plus à son adresse (une nouvelle adresse donnée par la box, un serveur redémarré sur un autre port), la page de son dossier affiche « Recherche de (nom) sur le réseau » et déplace le partage là où il répond désormais : tout de suite pour un serveur DLNA, qui n'a pas de mot de passe, et après une confirmation, « Utiliser la nouvelle adresse ? », qui montre les deux adresses, pour un partage avec nom d'utilisateur et mot de passe, puisqu'ils seraient envoyés à la nouvelle adresse.
+Dès le build 19, un partage DLNA et un partage de téléphone (voir [Partager ce téléphone sur le réseau](#share-this-phone-on-the-network)) gardent l'identifiant qu'annonce leur serveur. Quand l'un d'eux ne répond plus à son adresse (une nouvelle adresse donnée par la box, un serveur redémarré sur un autre port), la page de son dossier affiche « Recherche de (nom) sur le réseau » et déplace le partage là où il répond désormais : tout de suite pour un serveur DLNA, qui n'a pas de mot de passe, et après une confirmation, « Utiliser la nouvelle adresse ? », qui montre les deux adresses, pour un partage avec nom d'utilisateur et mot de passe, puisqu'ils seraient envoyés à la nouvelle adresse. Dès le build 20, un serveur Plex retrouvé à une autre adresse du réseau est lui aussi déplacé tout de suite : son certificat prouve que c'est le même serveur avant que le jeton soit envoyé. Une caméra Tapo est recherchée par son adresse MAC depuis sa propre page, voir [Caméras Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Limites
 
 - **SMB** : SMB 2 et 3 uniquement, pas SMB 1.
 - **WebDAV** : authentification Basic uniquement (Digest n'est pas encore pris en charge) ; un certificat HTTPS auto-signé doit être installé sur l'appareil.
-- **Trouver les serveurs** : le balayage du réseau et la recherche DLNA ne regardent que le réseau local /24, et demandent l'autorisation réseau local sur iOS. Sur iPhone et iPad, la recherche DLNA n'envoie que les requêtes unicast, tant qu'Apple n'accorde pas à l'application l'autorisation multicast, et certains serveurs n'y répondent pas (minidlna sous Linux) : ajoutez-les par leur adresse de description.
+- **Trouver les serveurs** : le balayage du réseau et les recherches DLNA, Plex et Tapo ne regardent que le réseau local /24, et demandent l'autorisation réseau local sur iOS. Sur iPhone et iPad, la recherche DLNA n'envoie que les requêtes unicast, tant qu'Apple n'accorde pas à l'application l'autorisation multicast, et certains serveurs n'y répondent pas (minidlna sous Linux) : ajoutez-les par leur adresse de description.
 - **DLNA** : un serveur qui ne propose qu'une copie convertie d'un fichier donne cette copie ; un dossier liste 20 000 éléments au maximum.
 - **Miniatures** : les miniatures de photos décodent le fichier entier, et les photos de plus de 30 Mo n'en ont pas.
 - **Lecteurs** : le choix de la piste audio n'est pas encore dans le lecteur à plat. Sur un téléphone, on ne peut pas encore glisser d'un fichier d'un dossier au suivant (la vue immersive du Quest a précédent et suivant pour les fichiers 360° du dossier). Le choix 3D ou 180° fait sur un fichier réseau n'est pas mémorisé.
 - **Envois** : ils ne se font que pendant que l'application est ouverte, et un fichier que le serveur a déjà est envoyé en entier avant que le serveur le signale comme doublon.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, sans plex.tv
+
+Vos vidéos sont dans Plex, et Plex affiche vos photos et vidéos 360° à plat, comme le décrivent des demandes sur son forum (l'une est ouverte depuis 2017). Vous voulez aussi cette bibliothèque dans le casque, sur le téléviseur et hors de chez vous. L'application Immich ne lit que votre serveur Immich, et le type DLNA du build 19 n'atteint le côté DLNA de Plex qu'à la maison.
+
+Dès le build 20, Immuch360 s'associe directement à votre Plex Media Server, sans plex.tv : elle trouve le serveur sur le réseau, vous collez un jeton une fois, et l'application lit en direct les fichiers originaux de vos bibliothèques, dans tous ses visualiseurs (360°, 3D, VR180, Spatial 2.5D, la vue immersive du Quest, la télécommande du téléviseur), à la maison et, grâce à votre redirection de port, hors de chez vous. Rien n'est copié, et les fichiers que vous choisissez peuvent être envoyés vers Immich.
+
+### Ajouter un serveur Plex
+
+1. Ouvrez l'onglet Bibliothèque, puis Partages réseau, puis + et « Un serveur Plex Media Server ». Le type « Plex Media Server » du formulaire de partage, et un serveur avec l'étiquette Plex sous « Trouvés sur le réseau », ouvrent la même page.
+2. La page « Ajouter un serveur Plex » cherche les serveurs Plex de votre réseau (« Recherche des serveurs Plex sur votre réseau ») et les liste sous « Trouvés sur le réseau ». Touchez le vôtre : une carte affiche son nom, sa version de Plex et un identifiant court.
+3. Absent de la liste ? Saisissez son « Adresse du serveur », comme `192.168.1.20`, `192.168.1.20:32400` ou `https://...plex.direct:32400`, puis touchez « Rechercher ». L'application lit le certificat du serveur et n'envoie rien d'autre.
+4. Obtenez le jeton, sur un ordinateur : ouvrez Plex dans un navigateur web et connectez-vous, ouvrez n'importe quelle photo ou vidéo de votre bibliothèque, puis « ... », « Get Info », « View XML ». Un nouvel onglet s'ouvre sur une adresse qui se termine par `X-Plex-Token=...`. Copiez toute cette adresse.
+5. Collez-la dans « Jeton d'accès », ou envoyez-la au téléphone et touchez « Coller depuis le presse-papiers » : l'application en tire le serveur et le jeton. Le texte qui suit `X-Plex-Token=` fonctionne aussi seul. « Comment l'obtenir », sur la page, dit la même chose ; les administrateurs du serveur peuvent aussi utiliser la valeur `PlexOnlineToken` du fichier `Preferences.xml` du serveur, qui n'expire pas. Sur un téléviseur, OK ouvre la boîte de dialogue du clavier : saisissez-y le jeton (il fait généralement 20 caractères).
+6. Touchez « Tester la connexion ». Elle répond « Connecté : N bibliothèques », ou dit ce qui ne va pas, comme « Le serveur Plex a refusé ce jeton. »
+7. « Accès hors du domicile » affiche ensuite ce que dit le serveur : « Le serveur indique qu'il est joignable à (adresse):(port). », ou « Le serveur n'a pas indiqué son adresse hors du domicile. » Pour utiliser le serveur hors de chez vous, saisissez votre adresse publique ou votre nom DynDNS dans « Adresse hors du domicile (IP ou nom) », et le port redirigé dans Plex (Paramètres, Accès à distance) dans « Port hors du domicile ». Ce que vous saisissez l'emporte toujours sur ce que dit le serveur.
+8. « Nom » est le nom du serveur sauf si vous le changez, et « Dossier de départ (facultatif) » peut ouvrir directement une bibliothèque. Touchez Sauvegarder. Le serveur est listé avec les partages, sous la forme `plex://` et son adresse.
+
+### Parcourir vos bibliothèques Plex
+
+1. Touchez le serveur dans Partages réseau. Le premier niveau liste les bibliothèques que l'application affiche : photos, films et autres vidéos, séries TV. La musique est laissée de côté.
+2. Sous une bibliothèque viennent ses dossiers tels qu'ils sont sur le disque du serveur (la vue « par dossier » de Plex), puis les photos et vidéos sous leurs noms de fichiers, avec les miniatures que fait Plex. Une bibliothèque de photos dont la vue par dossier ne répond pas affiche plutôt ses albums.
+3. Le 360° et la 3D sont détectés en lisant les fichiers eux-mêmes, comme sur tout partage : les photos 360° reçoivent le badge 360°, les photos spatiales Apple le badge 3D.
+4. Ouvrez une photo ou une vidéo comme sur tout partage : 360°, 3D, 360°/180°, Spatial 2.5D sur un téléphone, la vue immersive dans le Quest, la télécommande sur un téléviseur. Une vidéo est lue comme fichier original, par plages d'octets via le pont local de l'application, si bien que le déplacement dans la vidéo fonctionne et que ses métadonnées 360° et 3D arrivent intactes aux lecteurs.
+5. Sélectionnez des fichiers et touchez « Envoyer vers Immich » pour les envoyer vers votre serveur, comme depuis tout partage (voir [Envoyer des fichiers d'un partage vers Immich](#send-files-of-a-share-to-immich)).
+
+### Hors de chez vous
+
+À chaque ouverture du serveur, l'application essaie d'abord l'adresse à la maison puis, 400 ms plus tard, l'adresse hors du domicile. La première qui répond avec votre serveur est utilisée ; quand c'est l'adresse hors du domicile, la page du dossier affiche une icône de globe avec le libellé « Connecté par l'adresse hors du domicile ». Il faut pour cela l'accès à distance activé dans Plex (Paramètres, Accès à distance) avec un port redirigé par votre box : sans plex.tv, l'application ne peut pas utiliser le relais de Plex, donc un serveur sans redirection de port ne s'ouvre qu'à la maison, et hors de chez vous la page indique « Votre serveur Plex n'est pas joignable en dehors de votre réseau domestique. Activez l'accès à distance avec une redirection de port dans Plex (Paramètres, Accès à distance), ou saisissez son adresse publique. »
+
+L'adresse qu'indique le serveur est réapprise à chaque connexion à la maison. Quand elle ne répond pas depuis l'extérieur (une box qui change d'adresse, deux routeurs à la suite), saisissez la vôtre dans la page du serveur. Quand le jeton cesse de fonctionner (vous vous êtes déconnecté de la session du navigateur d'où vous l'aviez copié, par exemple), la page du dossier le dit et propose « Coller un nouveau jeton », qui ouvre la page du serveur sur le champ du jeton.
+
+### Comparaison avec Plex et avec le type DLNA
+
+- **Les fichiers originaux** : l'application lit les fichiers eux-mêmes, jamais une copie convertie par Plex, donc les métadonnées 360°, 3D et VR180 restent intactes et les visualiseurs de l'application s'en servent, là où les applications Plex affichent ces fichiers à plat.
+- **Pas de plex.tv** : l'application ne parle qu'à votre serveur, toujours en HTTPS. Le serveur est vérifié par son propre certificat plex.direct, lié à l'identifiant du serveur, avant l'envoi du jeton. Le jeton reste sur l'appareil, dans son stockage sécurisé, et ne va qu'à votre serveur, dans un en-tête de requête.
+- **Par rapport au même serveur ajouté en DLNA** : les dossiers tels que sur le disque, les miniatures de Plex, l'accès hors du domicile et une connexion sécurisée.
+
+### Limites
+
+- **Serveurs réclamés uniquement** : le serveur doit être réclamé dans Plex (connecté une fois à un compte Plex), ce qui lui donne son certificat plex.direct. Sinon la page indique « Cette adresse répond sans certificat Plex. Réclamez le serveur dans Plex, ou ajoutez-le comme partage SMB, WebDAV ou DLNA. »
+- **IPv4 uniquement** : « Les adresses IPv6 ne sont pas encore prises en charge. Saisissez l'adresse IPv4 du serveur. »
+- **Le jeton** donne un accès complet à votre serveur Plex. Retirer le serveur dans l'application oublie le jeton sur l'appareil mais ne le révoque pas : « Le jeton reste valide sur le serveur jusqu'à ce que vous vous déconnectiez de la session du navigateur d'où vous l'avez copié. » Un jeton avec une date de fin affiche cette date, et l'application ne peut pas le renouveler.
+- **Hors de chez vous** : uniquement par une redirection de port, il n'y a pas de relais.
+- **Bibliothèques** : la musique n'est pas affichée, un dossier liste au plus 20 000 entrées, et un utilisateur restreint peut obtenir « Ce jeton ne peut pas lire les bibliothèques du serveur. »
+- **Fichiers bruts de caméra 360°** (.insv, .insp, .360, .osv) : affichés seulement si Plex les liste ; sinon, ajoutez le même dossier du NAS comme partage SMB ou WebDAV, voir [Fichiers bruts de caméra 360°](#raw-360-camera-files-without-the-cameras-app).
+- **Trouver le serveur** : un serveur dont le réglage « Enable local network discovery (GDM) » est désactivé n'est pas trouvé, saisissez alors son adresse. Sur iPhone et iPad, la recherche n'envoie que des requêtes unicast. Le côté DLNA du même serveur peut aussi apparaître dans la liste, avec l'étiquette DLNA : choisissez la ligne avec l'étiquette Plex.
+- **Pas encore vérifié sur un appareil** : l'association, les dossiers, les plages d'octets d'une vidéo, les miniatures, un mauvais jeton et l'adresse hors du domicile ont été vérifiés depuis un ordinateur face à un vrai Plex Media Server 1.42.1, et les bibliothèques de photos et de séries TV face à un serveur simulé seulement. La lecture sur un téléphone, dans le Quest, sur un iPhone et sur un téléviseur, et le passage à l'adresse hors du domicile, forment le test sur appareil du build 20.
+- Immuch360 n'est pas affilié à Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Partager ce téléphone sur le réseau
@@ -219,6 +279,63 @@ Le nom d'utilisateur et le mot de passe sont créés une fois et conservés, don
 - **Sécurité** : réseau local uniquement. Le partage n'écoute que sur les adresses Wi-Fi, Ethernet et point d'accès du téléphone, jamais sur son adresse de données mobiles ou de VPN, et ne répond qu'aux appareils qui ont une adresse locale. Chaque requête demande le nom d'utilisateur et le mot de passe (HTTP Basic) ; dix mauvais mots de passe venant d'un appareil en une minute le bloquent pendant une minute. Le mot de passe circule en clair sur le Wi-Fi (HTTP simple) : utilisez le partage sur un réseau de confiance, et désactivez-le quand vous avez terminé.
 - **Le point d'accès du téléphone** : le casque peut s'y connecter ; quand il n'y trouve pas le téléphone, saisissez l'adresse affichée sur la page.
 - **Pas encore vérifié sur un appareil** : le serveur a été vérifié par des tests unitaires et par des tests de bout en bout avec le client WebDAV et le pont média du casque, sur un ordinateur. Un téléphone qui sert un Quest 3 (découverte, une vidéo de 4 Go lue et parcourue, l'écran éteint pendant 30 minutes, le point d'accès, Arrêter depuis la notification) et le côté iPhone, qui n'a encore jamais tourné sur un iPhone, forment le test sur appareil du build 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Caméras Tapo : vue en direct et enregistrements de la carte mémoire
+
+Vous avez des caméras Tapo à la maison, et vous voulez voir la caméra du jardin et les clips de la nuit dernière à côté de vos photos sans ouvrir l'application Tapo, et garder un clip dans Immich. L'application Immich n'a rien pour les caméras, et l'application Tapo est une application à part, connectée à votre compte TP-Link, avec les clips séparés de vos photos.
+
+Dès le build 20, Immuch360 ajoute une caméra Tapo à côté des partages réseau. Elle montre la caméra en direct sur les téléphones et tablettes Android, Android TV et le Meta Quest 3, et sur toutes les plateformes les enregistrements de sa carte mémoire, jour par jour : un clip est récupéré depuis la caméra, puis se lit comme n'importe quelle vidéo et peut être envoyé vers Immich. L'application parle à la caméra sur votre réseau uniquement, jamais aux serveurs de TP-Link, et ne change jamais rien sur la caméra.
+
+### Ajouter une caméra
+
+1. D'abord dans l'application Tapo : créez le compte de la caméra, dans les réglages de la caméra, Paramètres avancés, Compte de la caméra (un nom d'utilisateur et un mot de passe propres à cette caméra, utilisés pour la vue en direct), et activez la compatibilité tierce, sous Moi, puis Tapo Lab.
+2. Dans Immuch360, ouvrez l'onglet Bibliothèque, puis Partages réseau, puis + et « Une caméra Tapo ».
+3. La page « Ajouter une caméra » cherche les caméras (« Recherche des caméras Tapo sur votre réseau ») et les liste sous « Trouvés sur le réseau » avec l'étiquette Tapo. Touchez la vôtre pour remplir « Adresse de la caméra », ou saisissez son adresse. Une caméra avec l'étiquette Tapo dans le formulaire de partage ouvre la même page.
+4. « Nom » : le nom sous lequel la caméra est listée.
+5. Sous « Enregistrements sur la carte mémoire », « Mot de passe du compte TP-Link » : le mot de passe du compte que vous utilisez dans l'application Tapo. Il ouvre les enregistrements ; votre adresse e-mail n'est pas nécessaire.
+6. Sous « Direct », « Nom d'utilisateur du compte de la caméra » et « Mot de passe du compte de la caméra » : le compte de la caméra de l'étape 1.
+7. L'un des deux suffit (« Saisissez le mot de passe du compte TP-Link, le compte de la caméra, ou les deux. ») : le mot de passe TP-Link seul donne les enregistrements, le compte de la caméra seul la vue en direct.
+8. Touchez « Tester la caméra ». Elle affiche « Enregistrements : (modèle), firmware (version) » avec l'état de la carte mémoire, et « Vue en direct : (vidéo), son (audio) », ou ce qui a échoué pour chacun.
+9. Touchez Sauvegarder. La caméra est listée sous « Caméras », après les partages, avec son modèle une fois connu et `tapo://` avec son adresse.
+
+### La regarder en direct
+
+1. Touchez la caméra. Sa vue en direct est en haut de sa page : « Connexion à la caméra », puis l'image avec le badge Direct.
+2. Les boutons sur l'image : le son, coupé au départ (« Activer le son » ; « Pas de son sur cet appareil » quand l'appareil ne peut pas le lire), SD ou HD, et « Plein écran ».
+3. Un téléphone affiche la SD sur la page et la HD en plein écran ; le Quest affiche la HD. Retour quitte d'abord le plein écran.
+4. Sous l'image viennent le modèle et le firmware, et la carte mémoire, comme « Carte mémoire : (utilisé) utilisés sur (total) » ou « Pas de carte mémoire ».
+
+Sur iPhone et iPad, la vue en direct indique « La vue en direct arrivera sur iPhone et iPad dans une version ultérieure. Les enregistrements se lisent déjà ici. » Sans le compte de la caméra, la page indique « Ajoutez le compte de la caméra pour voir la vue en direct. »
+
+### Lire et garder les enregistrements
+
+1. Sous « Enregistrements sur la carte mémoire », la page de la caméra liste les jours avec des enregistrements, du plus récent au plus ancien, par mois. Sans le mot de passe du compte TP-Link, elle indique « Ajoutez le mot de passe du compte TP-Link pour voir les enregistrements. »
+2. Touchez un jour. Ses clips apparaissent sous les heures de l'horloge de la caméra, chacun avec son début, sa durée, la miniature de la caméra pour un événement, et son genre : Mouvement, Personne, Animal de compagnie, Véhicule, Pleurs de bébé, Animal, Continu ou Événement.
+3. Touchez un clip. L'application le récupère depuis la caméra (« Récupération de la vidéo depuis la caméra : N % », avec Annuler), puis le lit dans le lecteur vidéo, avec le son et le déplacement dans la vidéo. Un clip récupéré porte « Sur cet appareil » et s'ouvre tout de suite la fois suivante.
+4. Pour garder un clip dans Immich, avec un serveur connecté : le menu ⋮ de la vidéo, « Envoyer vers Immich ».
+5. Pour libérer de la place : un appui long sur un clip récupéré propose « Supprimer la copie sur cet appareil » (sur un téléphone), et la page de la caméra a « Supprimer les vidéos récupérées depuis cette caméra », avec leur taille.
+6. Le bouton d'actualisation en haut à droite, ou tirer la page vers le bas, interroge à nouveau la caméra.
+
+Quand la caméra ne répond plus à son adresse, sa page la cherche sur le réseau par son adresse MAC et la déplace là où elle répond désormais, dès qu'elle présente le même certificat. Une caméra qui présente un autre certificat que celui que l'application a vu la première fois donne lieu à une question : « La caméra à l'adresse (adresse) présente un autre certificat qu'avant. Ne continuez que si vous l'avez réinitialisée ou remplacée. »
+
+### Comparaison avec l'application Tapo
+
+- **Sur votre réseau uniquement** : l'application parle à la caméra elle-même, sur le réseau local, et jamais aux serveurs de TP-Link. Elle ne se connecte pas à un compte TP-Link, donc votre adresse e-mail n'est pas nécessaire.
+- **Les enregistrements deviennent des vidéos normales** : un clip récupéré est une vidéo H.264 avec son son, que vous pouvez envoyer vers Immich, où il reste après que la carte mémoire a enregistré par-dessus.
+- **À côté du reste** : avec ou sans serveur Immich, sur un téléphone, un téléviseur ou dans le Quest (dans la fenêtre), trouvée sur le réseau comme un partage.
+- **Lecture seule** : l'application ne demande à la caméra que ce qu'elle affiche ; elle ne change jamais un réglage et ne supprime jamais rien sur la caméra.
+
+### Limites
+
+- **Pas encore vérifié sur un appareil** : le build 20 n'a pas encore tourné avec une vraie caméra. Le protocole a été écrit à partir de captures d'une C510W avec le firmware 1.3.4 (la connexion V4 de mi-2026), et l'application a été vérifiée face à une caméra simulée dans ses tests. Les retours sont bienvenus, avec le modèle et le firmware qu'affiche « Tester la caméra » et les lignes des [Journaux](#logs).
+- **Vue en direct** : sur les téléphones et tablettes Android, Android TV et le Quest uniquement, pas encore sur iPhone et iPad. Les limites de TP-Link s'appliquent : deux flux HD et deux flux SD au plus en même temps par caméra, application Tapo comprise, et Tapo Care, la carte mémoire et un enregistreur qui utilise RTSP ou ONVIF ne peuvent pas tous fonctionner en même temps.
+- **Caméras** : les caméras sur batterie et les caméras derrière un hub Tapo ne sont pas prises en charge.
+- **Enregistrements** : un téléchargement à la fois par caméra. Pendant que l'application Tapo parcourt la carte mémoire, l'application réessaie après 4, 8 et 12 secondes, puis indique « La caméra est occupée par un autre lecteur, comme l'application Tapo. Réessayez dans une minute. » Les enregistrements en H.265 ne sont pas encore convertis (« Cet enregistrement est en H.265, que cette version ne sait pas encore convertir. »), les enregistrements continus n'ont pas de miniature, et un clip se lit une fois entièrement récupéré.
+- **Mots de passe** : chaque mauvais mot de passe compte, et après quelques-uns la caméra se verrouille un moment (« La caméra est verrouillée après trop de mots de passe erronés. Réessayez dans N minutes. »). L'application ne réessaie jamais d'elle-même un mot de passe refusé : seuls « Tester la caméra » ou Réessayer interrogent à nouveau la caméra. Quand la caméra accepte le mot de passe pour ses réglages mais pas pour ses vidéos, désactivez puis réactivez la compatibilité tierce dans l'application Tapo, puis redémarrez la caméra.
+- **Espace** : les clips récupérés restent dans le cache de l'application, 1 Go au plus pour toutes les caméras ensemble (ceux lus le moins récemment partent en premier) ; le système peut vider ce cache, et retirer une caméra supprime ses clips.
+- **Hors de chez vous** : l'application joint la caméra à son adresse sur votre réseau, donc pas depuis l'extérieur.
+- Immuch360 n'est pas affilié à TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Fichiers bruts de caméra 360°, sans l'application de la caméra
@@ -349,7 +466,7 @@ La détection a été vérifiée sur une photo spatiale d'exemple écrite par la
 
 On achète un Quest 3 pour regarder ses propres photos et vidéos 360°, puis on se demande où mettre les fichiers, comment les mettre sur le casque sans câble, et quel lecteur utiliser : les lecteurs du store pour la vidéo 360° et 3D sont payants.
 
-La même application Android tourne sur les Quest 3 et 3S en fenêtre, avec toute votre bibliothèque. Son bouton 360° ouvre une vue immersive où la photo ou la vidéo est tout autour de vous et où vous regardez autour en tournant la tête, en vraie 3D pour les fichiers stéréoscopiques (Meta Spatial SDK). Les médias viennent de votre serveur Immich, du casque lui-même, d'un NAS, d'un serveur multimédia ou d'un téléphone, lus sur place (un serveur multimédia et un téléphone dès le build 19, pas encore vérifiés sur le casque). Elle est libre et gratuite. Vérifié sur un Quest 3, et par un utilisateur avec des vidéos Insta360 X4 8K HEVC.
+La même application Android tourne sur les Quest 3 et 3S en fenêtre, avec toute votre bibliothèque. Son bouton 360° ouvre une vue immersive où la photo ou la vidéo est tout autour de vous et où vous regardez autour en tournant la tête, en vraie 3D pour les fichiers stéréoscopiques (Meta Spatial SDK). Les médias viennent de votre serveur Immich, du casque lui-même, d'un NAS, d'un serveur multimédia, d'un téléphone ou d'un serveur Plex, lus sur place (un serveur multimédia et un téléphone dès le build 19, un serveur Plex dès le build 20, pas encore vérifiés sur le casque), et dès le build 20 la fenêtre affiche aussi les caméras Tapo. Elle est libre et gratuite. Vérifié sur un Quest 3, et par un utilisateur avec des vidéos Insta360 X4 8K HEVC.
 
 ### Ouvrir la vue immersive
 
@@ -408,6 +525,56 @@ Tournez-la avec le joystick droit (ou le bouton Pivoter du panneau d'information
 - **Déplacement dans la vidéo** : une vidéo dont la source ne répond pas aux requêtes de plage d'octets ne peut pas être parcourue ; le panneau le dit.
 - **Vidéos à plat** : une vidéo stéréoscopique à plat (pas 360°) est lue dans la fenêtre avec les deux yeux visibles ; la vue 3D immersive est pour les médias 360° et VR180.
 - **Plus** : les codecs que décode le casque, le store, les autorisations et la taille de l'APK sont dans [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Regarder sur votre téléviseur (Android TV et Google TV)
+
+Vous voulez les photos et vidéos 360°, vos albums et les vidéos de votre NAS ou de votre serveur Plex sur grand écran, pour la famille sur le canapé, avec la télécommande du téléviseur. L'application mobile Immich n'est pas une application TV : un utilisateur qui l'a installée sur un téléviseur a constaté qu'elle fonctionne avec une souris, pas avec la télécommande ([discussion #1614](https://github.com/immich-app/immich/discussions/1614)), et l'équipe Immich ne prévoit pas d'application TV officielle ([discussion #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Dès le build 20, la même application Android tourne sur Android TV et Google TV, avec la télécommande comme seule entrée : un seul APK pour les téléphones et les téléviseurs, les visualiseurs 360° et 3D tournés avec les flèches, et les partages réseau, Plex et les caméras Tapo sur le téléviseur, avec ou sans serveur Immich.
+
+<a id="install-it-on-the-tv"></a>
+### L'installer sur le téléviseur
+
+1. Tant que Google Play ne propose pas l'application sur les téléviseurs, ce qui attend l'examen par Google de la version TV, prenez le `Immuch360-v<version>-release.apk` universel de la page [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Sur le téléviseur, activez les options pour les développeurs et le débogage USB (sur un Google TV : Paramètres, Système, À propos, sélectionnez « Build de l'OS Android TV » sept fois, puis Paramètres, Système, Options pour les développeurs ; les noms varient d'un téléviseur à l'autre).
+3. Depuis un ordinateur sur le même réseau, avec adb (Android SDK Platform Tools) : `adb connect <address of the TV>`, acceptez la demande sur le téléviseur, puis `adb install -r Immuch360-v<version>-release.apk`.
+4. L'application apparaît parmi les applications du téléviseur, avec sa bannière. Installez la version suivante de la même façon : `-r` garde la connexion et les réglages.
+
+### Premier démarrage
+
+1. Connectez-vous comme sur un téléphone : les flèches déplacent un cadre de champ en champ, et OK sur un champ (« Appuyez sur OK pour saisir ») ouvre le clavier du téléviseur dans une boîte de dialogue, pour l'adresse du serveur, l'e-mail et le mot de passe.
+2. Ou choisissez « Utiliser sans serveur ». Un téléviseur n'a pas de photos à lui, donc l'onglet Photos indique « Ce téléviseur n'a pas de photos ni de vidéos à lui : ouvrez un partage réseau depuis la Bibliothèque. » avec un bouton Partages réseau. Ajoutez-y un partage, un serveur Plex ou une caméra, comme sur un téléphone (voir [Partages réseau](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Se déplacer avec la télécommande
+
+- Les flèches déplacent le cadre, OK ouvre ce sur quoi il se trouve, Retour revient en arrière. Depuis un onglet, Retour va au menu latéral, puis à Photos, puis hors de l'application.
+- Les touches chaîne + et chaîne - font défiler une page à la fois.
+- Dans les visualiseurs, les touches lecture et pause, avance rapide, retour rapide, suivant et précédent de la télécommande fonctionnent, et la touche info affiche les détails d'une photo ou d'une vidéo.
+
+### Photos et vidéos avec la télécommande
+
+1. **Une photo** : gauche et droite passent à la précédente ou à la suivante, OK affiche ou masque les commandes, Haut va à la barre du haut (où se trouve le bouton 360°) et Bas à la barre du bas.
+2. **Une vidéo** : OK met en pause, en affichant les commandes, ou relance la lecture. Pendant la lecture, gauche et droite sautent de 10 secondes en arrière ou en avant ; en pause, elles passent à l'élément précédent ou suivant, comme l'indique l'aide : « En pause : les flèches passent à l'élément précédent ou suivant ».
+3. **Une photo 360°**, depuis le bouton 360° : les flèches regardent autour, plus vite quand on les maintient, et la vue ralentit jusqu'à l'arrêt. OK passe aux boutons de la barre du haut, sur « Zoom avant », à côté de « Zoom arrière », du champ de vision et de la 3D ; chaîne + et chaîne - zooment aussi. Retour revient des boutons à l'image, puis ferme. L'aide indique « Flèches pour regarder autour, OK pour les commandes, Retour pour fermer ».
+4. **Une vidéo 360°**, depuis le bouton 360° : les flèches regardent autour tant que les commandes sont masquées, OK met en pause et les affiche, Retour les masque, puis ferme. L'aide indique « Flèches pour regarder autour, OK pour mettre en pause et afficher les commandes, Retour pour fermer ».
+5. **Souvenirs** : gauche et droite parcourent les photos et passent au souvenir suivant, Haut va au bouton de fermeture et Bas à « Voir dans la vue chronologique ».
+6. **Partages et Plex** : les mêmes touches dans les pages photo et vidéo d'un partage, où gauche et droite ouvrent le fichier précédent ou suivant du dossier.
+
+### Le réglage Disposition pour télécommande
+
+Paramètres, Préférences, « Disposition pour télécommande » : « De grands cadres de focus et les touches de la télécommande, sans les commandes qui demandent un écran tactile. Automatique l'active sur Android TV et Google TV. » Automatique est la valeur par défaut ; Activée convient à une tablette pilotée par un clavier ou une manette ; Désactivée la coupe sur un téléviseur. Le réglage n'existe que sur Android. Les flèches et OK fonctionnent dans les visualiseurs avec un clavier ou une manette, quel que soit le réglage.
+
+### Limites
+
+- **Un visualiseur** : sur un téléviseur, l'application affiche et lit. La sauvegarde, les envois, la retouche, la suppression, le partage, la sélection de plusieurs éléments, Cast, Spatial 2.5D, le gyroscope, la carte et les Lieux, et « Partager ce téléphone sur le réseau » sont masqués.
+- **Connexion** : OAuth ouvre une page web, ce qu'un téléviseur ne peut pas faire : « La connexion avec (fournisseur) ouvre une page web, ce que ce téléviseur ne peut pas faire. Connectez-vous plutôt avec une adresse e-mail et un mot de passe. »
+- **Les liens** affichent leur adresse sous « Ouvrir sur un autre appareil » au lieu d'ouvrir un navigateur, et le texte se saisit dans la boîte de dialogue du clavier du système.
+- **Mémoire** : sur un téléviseur avec peu de mémoire, les photos 360° sont affichées en 4096x2048 au plus, sans l'image plus nette au zoom.
+- **Vidéos** : les décodeurs du téléviseur décident de ce qui se lit, avec le même réglage Source vidéo et la même vérification des décodeurs que sur un téléphone (voir [Détails vidéo et décodeurs](#video-details-decoders-and-why-a-video-stutters)) ; pas encore mesuré sur un téléviseur.
+- **Pas encore vérifié sur un appareil** : la prise en charge TV a été vérifiée par des tests automatisés uniquement, et n'a encore tourné ni sur un téléviseur ni sur un émulateur TV. À confirmer : le sens dans lequel les flèches tournent une vidéo 360°, le clavier du téléviseur (Gboard) dans la boîte de dialogue de texte, la touche OK des télécommandes infrarouges, les marges et la bannière sur l'écran d'accueil du téléviseur. Les retours sont bienvenus.
+- **Google Play sur les téléviseurs** attend l'examen par Google de la version TV ; d'ici là, l'APK.
+- **Autres téléviseurs** : Fire TV n'est pas testé, et il n'y a pas de version Apple TV.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Retrouver vos prises 360° : la liste 360°
@@ -488,11 +655,11 @@ Quand le serveur ignore les requêtes HTTP Range sur l'original et que l'index M
 <a id="everything-else-is-immich"></a>
 ## Tout le reste, c'est Immich
 
-Tout ce que fait l'application mobile Immich officielle est là : sauvegarde, timeline, albums, recherche, partage, partenaires, le tout synchronisé avec votre serveur, avec le même serveur et le même compte que l'application web. Immuch360 s'installe à côté de l'application officielle (paquet `com.aprogsys.immuch360`). Il y a deux différences, dès le build 15 : l'interrupteur « Forcer la vidéo originale » est devenu le choix Source vidéo décrit plus haut, et les photos et vidéos que vous envoyez à la main depuis un album de l'appareil comptent comme sauvegardées.
+Tout ce que fait l'application mobile Immich officielle est là : sauvegarde, timeline, albums, recherche, partage, partenaires, le tout synchronisé avec votre serveur, avec le même serveur et le même compte que l'application web. Immuch360 s'installe à côté de l'application officielle (paquet `com.aprogsys.immuch360`). Il y a deux différences, dès le build 15 : l'interrupteur « Forcer la vidéo originale » est devenu le choix Source vidéo décrit plus haut, et les photos et vidéos que vous envoyez à la main depuis un album de l'appareil comptent comme sauvegardées. Sur un téléviseur, dès le build 20, l'application est un visualiseur, voir [Regarder sur votre téléviseur](#watch-on-your-tv-android-tv-and-google-tv).
 
 Pour montrer une photo 360° à quelqu'un qui n'a pas l'application, partagez-la avec un lien partagé Immich : l'application web Immich affiche une photo 360° en sphère dans son navigateur.
 
-Le build actuel, le build 19 (version 3.3.0-rc.0, numéro de build 3030017), est basé sur Immich 3.3.0-rc.0 (Immich `main`, pas encore une version stable) et a été testé avec un serveur Immich 3.2. Merci de signaler les problèmes dans les [Issues](https://github.com/freeKC/Immuch360/issues), pas au projet Immich. Pour la documentation complète d'Immich lui-même, voir [immich.app](https://immich.app).
+Le build actuel, le build 20 (version 3.3.0-rc.0, numéro de build 3030018), est basé sur Immich 3.3.0-rc.0 (Immich `main`, pas encore une version stable). Le build 19 a été testé avec un serveur Immich 3.2, et le build 20 ne change rien à ce que l'application demande au serveur. Merci de signaler les problèmes dans les [Issues](https://github.com/freeKC/Immuch360/issues), pas au projet Immich. Pour la documentation complète d'Immich lui-même, voir [immich.app](https://immich.app).
 
 ## Comparaison avec l'application Immich et d'autres applications
 
@@ -515,6 +682,9 @@ Le build actuel, le build 19 (version 3.3.0-rc.0, numéro de build 3030017), est
 | Serveurs multimédias DLNA comme type de partage | ❌ | ✅ dès le build 19 | Vérifié avec minidlna et Gerbera dans Docker ; Plex, Jellyfin, un NAS, le Freebox Server, un iPhone et le Quest forment le test sur appareil du build 19 |
 | Envoyer les fichiers d'un partage vers Immich ; fichiers de l'appareil envoyés à la main comptés comme sauvegardés | ❌ fichiers de l'appareil uniquement | ✅ dès le build 15 | Testé sur un émulateur Android avec un serveur de test Samba et un serveur Immich 3.2 |
 | Partager ce téléphone sur le réseau, pour le casque | ❌ | ✅ dès le build 19, Android et iOS | Tests unitaires et tests de bout en bout avec le client WebDAV du casque, sur un ordinateur ; un téléphone qui sert un Quest, et le côté iPhone, forment le test sur appareil du build 19 |
+| Bibliothèques Plex Media Server lues depuis les fichiers originaux, à la maison et en déplacement, sans plex.tv | ❌ | ✅ dès le build 20, tous les visualiseurs, sur les téléphones, les tablettes, le Quest 3 et les téléviseurs | Vérifié depuis un ordinateur face à un vrai Plex Media Server 1.42.1 (association, dossiers, plages d'octets, miniatures, adresse hors du domicile) ; pas encore vérifié sur un appareil |
+| Caméras Tapo : la vue en direct, et les enregistrements de la carte mémoire envoyés vers Immich quand vous le décidez | ❌ | ✅ dès le build 20 : enregistrements partout, direct sur Android, Android TV et le Quest 3 | Vérifié face à une caméra simulée ; pas encore vérifié avec une vraie caméra |
+| Android TV et Google TV, pilotés par la télécommande, dans le même APK | ❌ pas une application TV | ✅ dès le build 20 | Vérifié par des tests automatisés ; pas encore vérifié sur un téléviseur |
 | Photos Insta360 .insp brutes et vidéos .insv brutes à une seule piste | ❌ à plat | ✅ dès le build 16 | Photos vérifiées face aux exports Insta360 Studio de fichiers X3, vidéos sur un émulateur Android avec un fichier X3 basse résolution ; pas encore lancé sur un iPhone |
 | Vidéos brutes avec un objectif par piste ou par fichier (Insta360 X4, X4 Air, X5, X6, paires X3, GoPro .360, DJI .osv) | ❌ à plat ou fausses | ✅ dès le build 18 | Analyseurs et assemblage vérifiés sur de vrais fichiers X4, paire X3, GoPro MAX et Osmo 360 ; la lecture est le test sur appareil des builds 18 et 19 |
 | .dng double fisheye | ❌ à plat | ❌ pas encore | Prévu |
@@ -529,27 +699,33 @@ Le build actuel, le build 19 (version 3.3.0-rc.0, numéro de build 3030017), est
 |---|---|---|
 | L'application web Immich | Elle affiche une photo 360° en sphère, mais prend un .insp brut pour un panorama fini et enroule ses deux cercles autour de la sphère ; une vue VR est encore une demande ([discussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Assemble les fichiers bruts sur l'appareil, et ouvre une vue immersive dans le Quest 3 |
 | L'application ou Studio Insta360 | Nécessaires pour transformer les fichiers bruts de la carte en image 360° avant de les regarder | Ouvre directement les fichiers bruts .insp et .insv, et les fichiers GoPro .360 et DJI .osv |
-| Plex, Jellyfin, Synology Photos | Photos et vidéos 360° affichées à plat ou non reconnues, comme le décrivent des fils de leurs forums (une demande Plex est ouverte depuis 2017) | Lit les mêmes dossiers en SMB, WebDAV ou DLNA et les lit en sphère, sans rien changer sur le serveur |
+| Plex, Jellyfin, Synology Photos | Photos et vidéos 360° affichées à plat ou non reconnues, comme le décrivent des fils de leurs forums (une demande Plex est ouverte depuis 2017) | Lit la bibliothèque Plex elle-même dès le build 20, ou les mêmes dossiers en SMB, WebDAV ou DLNA, et les lit en sphère, sans rien changer sur le serveur |
+| L'application Tapo | Une application à part, connectée à votre compte TP-Link, avec les clips séparés de vos photos | Affiche la caméra à côté de vos photos, lui parle sur votre réseau uniquement, et garde un clip comme une vidéo que vous pouvez envoyer vers Immich (dès le build 20) |
+| L'application mobile Immich sur un téléviseur | Pas une application TV : un utilisateur indique qu'elle fonctionne avec une souris, pas avec la télécommande | La même application, faite pour la télécommande (dès le build 20) |
 | Copier les fichiers sur le casque | Chaque fichier copié par câble avant de pouvoir le regarder | Lit sur place depuis Immich, un NAS, un serveur multimédia ou un téléphone |
 | Les lecteurs 360° et 3D du store Quest | Payants | Libre et gratuit (AGPL) |
 
 ## Formats et sources, par plateforme
 
-Immuch360 est une galerie, et c'est aussi un lecteur multimédia gratuit : il lit ce que l'application officielle ne sait pas lire, depuis quatre sources, dans le lecteur qui convient au fichier.
+Immuch360 est une galerie, et c'est aussi un lecteur multimédia gratuit : il lit ce que l'application officielle ne sait pas lire, depuis les sources du second tableau, dans le lecteur qui convient au fichier.
 
-| Quoi | Téléphones Android | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Vidéos à plat (MP4, MOV, MKV, ce que décode l'appareil) | Lecteur Immich, et un lecteur natif pour les partages réseau | Pareil, sauf les fichiers MKV et AVI d'un partage, qu'iOS n'ouvre pas (sur un serveur, ils sont lus transcodés) | Dans la fenêtre |
-| Photos 360° | Visualiseur sphérique, gyroscope | Pareil | Immersives, tout autour de vous |
-| Vidéos 360° | Lecteur natif Media3 sur une sphère, gyroscope, déplacement dans la vidéo, choix de la piste audio, indicateur de chargement | Lecteur natif SceneKit sur une sphère, gyroscope, choix de la piste audio, indicateur de chargement ; lecture et pause, pas encore de barre de temps | Immersives, vraie 3D pour les fichiers stéréoscopiques, barre de temps avec sauts de 10 secondes, média précédent et suivant |
-| 3D 360° (haut et bas, côte à côte) | Œil gauche, bouton de disposition | Pareil | Chaque œil reçoit sa propre moitié de l'image |
-| Photos et vidéos VR180 (demi-sphère) | Demi-sphère, bouton 360°/180° | Pareil | Demi-sphère immersive |
-| Spatial 2.5D (profondeur sur écran plat à partir d'une vidéo stéréoscopique) | Lecteur natif, suivi de la tête avec la caméra frontale | Pareil | Non proposé |
-| Photos spatiales Apple (paires stéréo HEIC, dès le build 19) | Œil gauche, une ligne de détails indique qu'elle est spatiale | Pareil | Voir en 3D : les deux yeux sur une photo qui flotte dans la vue immersive, 3D ou 2D, redimensionnable |
-| Vidéos spatiales Apple (MV-HEVC, dès le build 19) | Un seul œil (la couche de base), avec un avis | Pareil | Un seul œil dans la fenêtre, avec un avis |
-| Photos Insta360 .insp brutes (dès le build 16) | Assemblées sur le GPU avant le visualiseur sphérique, jusqu'à 8192x4096 | Pareil | Immersives, à partir d'une image assemblée préparée pour le casque |
-| Insta360 .insv brutes, les deux objectifs dans une piste (dès le build 16) | Assemblées par un effet GPU dans le lecteur Media3 | Assemblées par un shader SceneKit | Immersives, assemblées par le même effet GPU |
-| Vidéos brutes avec un objectif par piste ou par fichier (dès le build 18) : Insta360 X4, X4 Air, X5, X6 .insv, paires X3, GoPro .360, DJI .osv | Deux décodeurs matériels à la fois, un par objectif (dès le build 19, des décodeurs logiciels sur un appareil sans décodeur matériel, jusqu'à 2048x2048 par objectif), et un compositeur GL qui assemble dans la sphère ; un seul objectif, puis le flux transcodé, puis la vidéo non assemblée, quand l'appareil ne peut pas en faire tourner deux | Un compositeur AVFoundation sur mesure avec Metal | Immersives, mêmes deux décodeurs et même compositeur (dalle 3840x1920) |
+| Quoi | Téléphones Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (dès le build 20) |
+|---|---|---|---|---|
+| Vidéos à plat (MP4, MOV, MKV, ce que décode l'appareil) | Lecteur Immich, et un lecteur natif pour les partages réseau | Pareil, sauf les fichiers MKV et AVI d'un partage, qu'iOS n'ouvre pas (sur un serveur, ils sont lus transcodés) | Dans la fenêtre | Comme sur les téléphones ; OK met en pause, gauche et droite sautent de 10 s |
+| Photos 360° | Visualiseur sphérique, gyroscope | Pareil | Immersives, tout autour de vous | Visualiseur sphérique tourné avec les flèches, zoom avec les touches de chaîne |
+| Vidéos 360° | Lecteur natif Media3 sur une sphère, gyroscope, déplacement dans la vidéo, choix de la piste audio, indicateur de chargement | Lecteur natif SceneKit sur une sphère, gyroscope, choix de la piste audio, indicateur de chargement ; lecture et pause, pas encore de barre de temps | Immersives, vraie 3D pour les fichiers stéréoscopiques, barre de temps avec sauts de 10 secondes, média précédent et suivant | Le lecteur Media3 des téléphones, tourné avec les flèches |
+| 3D 360° (haut et bas, côte à côte) | Œil gauche, bouton de disposition | Pareil | Chaque œil reçoit sa propre moitié de l'image | Œil gauche, bouton de disposition |
+| Photos et vidéos VR180 (demi-sphère) | Demi-sphère, bouton 360°/180° | Pareil | Demi-sphère immersive | Demi-sphère, bouton 360°/180° |
+| Spatial 2.5D (profondeur sur écran plat à partir d'une vidéo stéréoscopique) | Lecteur natif, suivi de la tête avec la caméra frontale | Pareil | Non proposé | Non proposé |
+| Photos spatiales Apple (paires stéréo HEIC, dès le build 19) | Œil gauche, une ligne de détails indique qu'elle est spatiale | Pareil | Voir en 3D : les deux yeux sur une photo qui flotte dans la vue immersive, 3D ou 2D, redimensionnable | Œil gauche, une ligne de détails |
+| Vidéos spatiales Apple (MV-HEVC, dès le build 19) | Un seul œil (la couche de base), avec un avis | Pareil | Un seul œil dans la fenêtre, avec un avis | Un seul œil, avec un avis |
+| Photos Insta360 .insp brutes (dès le build 16) | Assemblées sur le GPU avant le visualiseur sphérique, jusqu'à 8192x4096 | Pareil | Immersives, à partir d'une image assemblée préparée pour le casque | Comme sur les téléphones |
+| Insta360 .insv brutes, les deux objectifs dans une piste (dès le build 16) | Assemblées par un effet GPU dans le lecteur Media3 | Assemblées par un shader SceneKit | Immersives, assemblées par le même effet GPU | Comme sur les téléphones |
+| Vidéos brutes avec un objectif par piste ou par fichier (dès le build 18) : Insta360 X4, X4 Air, X5, X6 .insv, paires X3, GoPro .360, DJI .osv | Deux décodeurs matériels à la fois, un par objectif (dès le build 19, des décodeurs logiciels sur un appareil sans décodeur matériel, jusqu'à 2048x2048 par objectif), et un compositeur GL qui assemble dans la sphère ; un seul objectif, puis le flux transcodé, puis la vidéo non assemblée, quand l'appareil ne peut pas en faire tourner deux | Un compositeur AVFoundation sur mesure avec Metal | Immersives, mêmes deux décodeurs et même compositeur (dalle 3840x1920) | Comme sur les téléphones, quand le téléviseur fait tourner deux décodeurs à la fois |
+| Vue en direct d'une caméra Tapo (dès le build 20) | Lecteur RTSP Media3 : SD sur la page, HD en plein écran, bouton du son | Pas encore : une carte indique qu'elle arrivera plus tard | Dans la fenêtre, en HD | Comme sur les téléphones |
+| Enregistrements d'une caméra Tapo (dès le build 20) | Récupérés depuis la carte mémoire dans une vidéo H.264 avec son son, puis lus avec déplacement dans la vidéo | Pareil | Pareil, dans la fenêtre | Pareil |
+
+La colonne TV n'a pas encore été vérifiée sur un téléviseur, voir [Regarder sur votre téléviseur](#watch-on-your-tv-android-tv-and-google-tv) ; les lignes des caméras n'ont pas encore été vérifiées avec une vraie caméra.
 
 | Depuis | Comment |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 est une galerie, et c'est aussi un lecteur multimédia gratuit : il li
 | Le téléphone ou le casque lui-même | « Utiliser sans serveur » sur la page de connexion, ou l'entrée Sur cet appareil de l'onglet Bibliothèque |
 | Un NAS ou un ordinateur | Partages SMB et WebDAV, et dès le build 19 serveurs multimédias DLNA, trouvés sur le réseau, lus en direct (une vidéo SMB par jusqu'à six connexions), rien n'est copié ; dès le build 15, les fichiers que vous choisissez peuvent être envoyés vers votre compte Immich |
 | Un autre téléphone (dès le build 19) | « Partager ce téléphone sur le réseau » sur ce téléphone : le casque, ou tout client WebDAV du réseau, lit ses albums, ses mois et ses médias 360° |
+| Un Plex Media Server (dès le build 20) | Ses bibliothèques de photos, de films et de séries TV par dossier, les fichiers originaux lus en direct en HTTPS vérifié avec le propre certificat du serveur, à la maison ou par l'adresse hors du domicile, sur toutes les plateformes ; voir [Plex Media Server, sans plex.tv](#plex-media-server-without-plextv) |
+| Une caméra Tapo (dès le build 20) | La vue en direct avec le compte de la caméra (Android, Android TV, le Quest), et les enregistrements de sa carte mémoire avec le mot de passe du compte TP-Link (toutes les plateformes), sur le réseau local uniquement ; voir [Caméras Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 tourne aussi sur les Meta Quest 3 et 3S (Horizon OS v69 ou plus récent ; le build Horizon Store n'est proposé que pour ces deux-là ; le `-release.apk` universel devrait aussi s'installer sur un Quest 2 ou un Quest Pro, non testé). L'utilisation est décrite dans [Dans le casque Meta Quest 3](#in-the-meta-quest-3-headset) ; cette section porte sur l'installation et sur ce qui diffère sur le casque.
 
-Le build casque ne parle aux serveurs qu'en HTTPS, ou en HTTP simple aux noms du réseau domestique (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) et au casque lui-même, comme l'exige l'Horizon Store. Un serveur saisi comme adresse HTTP simple avec une IP, comme `http://192.168.1.10:2283`, est refusé par ce build : utilisez HTTPS, un nom du réseau domestique (`nas.local`), ou le `-release.apk` universel, qui garde la politique ouverte des téléphones. Les partages WebDAV, DLNA et de téléphone à une adresse HTTP simple du réseau local ne sont pas concernés : l'application les lit elle-même et ne donne à ses lecteurs que l'adresse de son pont local (à confirmer sur le casque pour le DLNA et le partage de téléphone, nouveaux dans le build 19).
+Le build casque ne parle aux serveurs qu'en HTTPS, ou en HTTP simple aux noms du réseau domestique (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) et au casque lui-même, comme l'exige l'Horizon Store. Un serveur saisi comme adresse HTTP simple avec une IP, comme `http://192.168.1.10:2283`, est refusé par ce build : utilisez HTTPS, un nom du réseau domestique (`nas.local`), ou le `-release.apk` universel, qui garde la politique ouverte des téléphones. Les partages WebDAV, DLNA et de téléphone à une adresse HTTP simple du réseau local ne sont pas concernés : l'application les lit elle-même et ne donne à ses lecteurs que l'adresse de son pont local (à confirmer sur le casque pour le DLNA et le partage de téléphone, nouveaux dans le build 19). Dès le build 20, un serveur Plex est joint en HTTPS, et une caméra Tapo par l'application elle-même, sa vue en direct en RTSP, qui n'est pas du HTTP : ni l'un ni l'autre ne devrait être concerné (à confirmer sur le casque).
 
 <a id="install"></a>
 ### Installer
@@ -576,7 +754,7 @@ La fiche Horizon Store attend l'examen de Meta, soumise avec le build 14 ; tant 
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Dans le casque, ouvrez la Bibliothèque, choisissez le filtre « Unknown sources » (Sources inconnues), et lancez Immuch360.
@@ -584,7 +762,7 @@ La fiche Horizon Store attend l'examen de Meta, soumise avec le build 14 ; tant 
 
 ### Dans la fenêtre
 
-Toute l'application tourne dans une fenêtre 2D redimensionnable : connexion, timeline, albums, recherche, l'onglet Bibliothèque (liste 360°, Sur cet appareil, Partages réseau), les paramètres, et les visualiseurs de photos et de vidéos, où se lisent les photos et vidéos à plat. Sur le casque, le bouton 360°, et Voir en 360° dans le menu ⋮, ouvrent directement la vue immersive au lieu du visualiseur sphérique des téléphones, et le bouton Spatial 2.5D et son réglage ne sont pas affichés. Dès le build 19, une photo spatiale Apple a un bouton Voir en 3D, et la vignette Partager ce téléphone sur le réseau n'est pas affichée : c'est le casque qui lit le partage d'un téléphone.
+Toute l'application tourne dans une fenêtre 2D redimensionnable : connexion, timeline, albums, recherche, l'onglet Bibliothèque (liste 360°, Sur cet appareil, Partages réseau), les paramètres, et les visualiseurs de photos et de vidéos, où se lisent les photos et vidéos à plat. Sur le casque, le bouton 360°, et Voir en 360° dans le menu ⋮, ouvrent directement la vue immersive au lieu du visualiseur sphérique des téléphones, et le bouton Spatial 2.5D et son réglage ne sont pas affichés. Dès le build 19, une photo spatiale Apple a un bouton Voir en 3D, et la vignette Partager ce téléphone sur le réseau n'est pas affichée : c'est le casque qui lit le partage d'un téléphone. Dès le build 20, les serveurs Plex et les caméras Tapo s'ouvrent aussi dans la fenêtre, la vue en direct de la caméra en HD ; le réglage « Disposition pour télécommande » reste sur Automatique, ce qui le laisse désactivé sur le casque.
 
 ### En images
 
@@ -598,7 +776,7 @@ Captures faites dans le casque avec le bouton de capture (bouton Meta et gâchet
 ### Limites sur le casque
 
 - **Codecs vidéo** : le HEVC (H.265) est le choix sûr ; le H.264 s'arrête vers 4096x2304. Ce que vérifie l'application, et comment donner au casque une vidéo qu'il décode, est dans [Détails vidéo et décodeurs](#video-details-decoders-and-why-a-video-stutters).
-- **Store** : la version du store commence au build 14. Les fonctions marquées « dès le build 15 » et « dès le build 16 » arrivent avec sa prochaine mise à jour (le build 16, déjà sur le canal de test alpha), les suivantes après ; l'APK GitHub les a toutes dès maintenant.
+- **Store** : la version du store commence au build 14. Les fonctions marquées « dès le build 15 » et suivantes arrivent avec ses prochaines mises à jour (le canal de test alpha du store, pour les testeurs, reçoit chaque nouveau build) ; l'APK GitHub les a toutes dès maintenant.
 - **Autorisations** : le build casque ne demande que les photos et vidéos (le mode sans serveur) et les notifications (progression de la sauvegarde). Il n'a aucune autorisation de stockage, d'audio, de localisation ou de caméra, contrairement au build téléphone ; le changement de serveur selon le nom du Wi-Fi n'est donc pas disponible sur le casque.
 - **Taille de l'APK** : le Spatial SDK ajoute environ 56 Mo de code natif ARM 64 bits, sur les téléphones aussi, où il n'est jamais chargé.
 - **Licence** : la vue immersive utilise le Meta Spatial SDK, distribué sous le Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Captures faites dans le casque avec le bouton de capture (bouton Meta et gâchet
 <a id="where-to-get-it"></a>
 ## Où l'obtenir
 
-L'application est sur Google Play ; la version App Store attend l'examen d'Apple, et la version Meta Horizon Store celui de Meta. La release GitHub est toujours le build le plus récent :
+L'application est sur Google Play pour les téléphones et les tablettes ; la version App Store attend l'examen d'Apple, la version Meta Horizon Store celui de Meta, et la version Google Play pour les téléviseurs l'examen par Google de la version TV. La release GitHub est toujours le build le plus récent :
 
 | Plateforme | Aujourd'hui | Bientôt |
 |---|---|---|
-| Téléphones et tablettes Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ou l'APK sur la page [Releases](https://github.com/freeKC/Immuch360/releases) : `Immuch360-v<version>-arm64-v8a-release.apk` pour un téléphone (le `Immuch360-v<version>-release.apk` universel fonctionne partout, `-armeabi-v7a` est pour les anciens téléphones 32 bits, et le fichier `.aab` est pour Google Play, pas pour le sideload). Le build GitHub est généralement en avance sur le store. Dans tous les cas, il s'installe à côté de l'application Immich officielle (paquet `com.aprogsys.immuch360`). | Google Play : builds 15 et 16 envoyés à l'examen de Google le 4 octobre 2026 (le dernier build confirmé en ligne là-bas est le build 11) |
+| Téléphones et tablettes Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ou l'APK sur la page [Releases](https://github.com/freeKC/Immuch360/releases) : `Immuch360-v<version>-arm64-v8a-release.apk` pour un téléphone (le `Immuch360-v<version>-release.apk` universel fonctionne partout, `-armeabi-v7a` est pour les anciens téléphones 32 bits, et le fichier `.aab` est pour Google Play, pas pour le sideload). Le build GitHub est généralement en avance sur le store. Dans tous les cas, il s'installe à côté de l'application Immich officielle (paquet `com.aprogsys.immuch360`). | Google Play : le build 18 est en ligne, le build 19 en cours d'examen chez Google depuis le 6 octobre 2026, le build 20 ensuite |
 | iPhone et iPad | En attente de l'examen d'Apple. La version en cours d'examen a les fonctions du build 11 : l'envoi vers Immich et le choix Source vidéo (build 15) et les fichiers Insta360 bruts (build 16) viendront avec une mise à jour App Store ultérieure. Le code source se compile avec Xcode ou sur Codemagic, voir [Le compiler soi-même](#build-it-yourself). | App Store, en cours d'examen |
-| Meta Quest 3 et 3S | Le fichier `-quest-release.apk` de la page [Releases](https://github.com/freeKC/Immuch360/releases) (le `-release.apk` universel fonctionne aussi), installé en sideload en mode développeur, voir [Installer](#install). Le build du store et l'APK GitHub sont signés avec des clés différentes : pour passer de l'un à l'autre, désinstallez d'abord l'application (ses réglages et ses partages enregistrés partent avec). | Meta Horizon Store : build 14 en cours d'examen chez Meta depuis le 3 octobre 2026 ; le build 16 est sur le canal alpha du store (testeurs uniquement) |
+| Meta Quest 3 et 3S | Le fichier `-quest-release.apk` de la page [Releases](https://github.com/freeKC/Immuch360/releases) (le `-release.apk` universel fonctionne aussi), installé en sideload en mode développeur, voir [Installer](#install). Le build du store et l'APK GitHub sont signés avec des clés différentes : pour passer de l'un à l'autre, désinstallez d'abord l'application (ses réglages et ses partages enregistrés partent avec). | Meta Horizon Store : build 14 en cours d'examen chez Meta depuis le 3 octobre 2026 ; le canal alpha du store (testeurs uniquement) reçoit chaque nouveau build |
+| Android TV et Google TV (dès le build 20) | Le `Immuch360-v<version>-release.apk` universel de la page [Releases](https://github.com/freeKC/Immuch360/releases), installé en sideload avec adb, voir [L'installer sur le téléviseur](#install-it-on-the-tv). C'est la même application que sur les téléphones. | Google Play sur les téléviseurs, après l'examen par Google de la version TV |
 
 Les liens App Store et Meta Horizon Store seront ajoutés ici dès que les fiches seront publiées. Connectez-vous avec l'URL et le compte de votre serveur Immich habituel, ou touchez « Utiliser sans serveur » sur la page de connexion pour démarrer sur les photos et vidéos de l'appareil lui-même. L'APK de GitHub ne se met pas à jour seul : surveillez la page Releases, et une fois l'application installée depuis un store, prenez les mises à jour depuis ce store.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Les captures des stores sont faites sur des builds debug en simulateur compilés avec `--dart-define=IMMUCH_SCREENSHOTS=true`, qui masque seulement la bannière debug. Les deux flavors Android sont la même application. La flavor `quest` cible le SDK 34 et ne garde que les autorisations que le casque utilise (photos, vidéos, notifications) : la gestion des médias, la localisation en arrière-plan, l'ancien stockage, l'audio, la localisation des médias, la localisation de l'appareil et la caméra sont retirées dans `android/app/src/quest/AndroidManifest.xml`, parce que le Meta Horizon Store refuse les deux premières et demande une justification pour chacune des autres autorisations sensibles ; le même fichier désigne les Quest 3 et 3S comme appareils pris en charge et limite le HTTP simple au casque lui-même et aux noms du réseau domestique. L'APK est uniquement 64 bits grâce aux deux arguments supplémentaires de sa ligne de commande (`--target-platform android-arm64 --android-project-arg arm64only=true`). La flavor `phone` est ce qu'exige Google Play. Pour compiler pour iOS sur votre propre Mac, utilisez Xcode et votre propre équipe de signature ; avec Xcode 26, lancez d'abord une fois `xcodebuild -downloadComponent MetalToolchain`, car les shaders Spatial en ont besoin. Sans Mac, les builds iOS tournent sur Codemagic (un Mac hébergé) à partir du fichier `codemagic.yaml` de ce dépôt. Les builds Android de release tournent sur GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Les captures des stores sont faites sur des builds debug en simulateur compilés avec `--dart-define=IMMUCH_SCREENSHOTS=true`, qui masque seulement la bannière debug. Les deux flavors Android sont la même application. Dès le build 20, la flavor `phone` se déclare aussi comme application TV (une entrée de lanceur TV et une bannière, pas d'écran tactile requis), ce que la flavor `quest` laisse de côté. La flavor `quest` cible le SDK 34 et ne garde que les autorisations que le casque utilise (photos, vidéos, notifications) : la gestion des médias, la localisation en arrière-plan, l'ancien stockage, l'audio, la localisation des médias, la localisation de l'appareil et la caméra sont retirées dans `android/app/src/quest/AndroidManifest.xml`, parce que le Meta Horizon Store refuse les deux premières et demande une justification pour chacune des autres autorisations sensibles ; le même fichier désigne les Quest 3 et 3S comme appareils pris en charge et limite le HTTP simple au casque lui-même et aux noms du réseau domestique. L'APK est uniquement 64 bits grâce aux deux arguments supplémentaires de sa ligne de commande (`--target-platform android-arm64 --android-project-arg arm64only=true`). La flavor `phone` est ce qu'exige Google Play. Pour compiler pour iOS sur votre propre Mac, utilisez Xcode et votre propre équipe de signature ; avec Xcode 26, lancez d'abord une fois `xcodebuild -downloadComponent MetalToolchain`, car les shaders Spatial en ont besoin. Sans Mac, les builds iOS tournent sur Codemagic (un Mac hébergé) à partir du fichier `codemagic.yaml` de ce dépôt. Les builds Android de release tournent sur GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Aucun secret ne se trouve dans ce dépôt : la clé de signature Android est stockée sous forme de secrets GitHub Actions chiffrés, et le matériel de signature Apple sous forme de variables chiffrées sur Codemagic. Les fichiers de workflow n'y font référence que par leur nom. Sans votre propre `android/key.jks`, un build de release est signé avec la clé debug et ne peut pas s'installer par-dessus une copie venant de GitHub ou d'un store (désinstallez celle-ci d'abord) ; un build debug s'installe à côté sous le nom Immuch360 debug. La copie Meta Horizon Store est l'APK `quest` de la release signé avec une autre clé, celle avec laquelle l'application du store a été enregistrée au départ, donc elle ne peut pas non plus s'installer par-dessus un APK installé en sideload, ni l'inverse.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Dès le build 19, le client DLNA, le partage de téléphone et la détection des médias spatiaux Apple écrivent aussi dans le journal propre de l'application (Journaux, dans le menu de la photo de profil en haut à droite), sous `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` et `NetworkMediaService`. Les lignes de journal restent sur l'appareil, sauf si vous les copiez vous-même.
+Dès le build 19, le client DLNA, le partage de téléphone et la détection des médias spatiaux Apple écrivent aussi dans le journal propre de l'application (Journaux, dans le menu de la photo de profil en haut à droite), sous `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` et `NetworkMediaService`. Dès le build 20, le mode TV y écrit sous `TvMode` et `TvTextEntry`, les serveurs Plex sous `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` et `PlexServerEditPage`, et les caméras Tapo sous `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` et `CameraLiveView` ; les lignes Plex ne contiennent jamais le jeton, une adresse ni un titre, et les lignes des caméras laissent les mots de passe de côté. Les lignes de journal restent sur l'appareil, sauf si vous les copiez vous-même.
 
 ## Vie privée
 
 - **Rien ne part vers le développeur** : l'application parle au serveur Immich que vous choisissez (et, quand vous ouvrez la carte, au service de tuiles cartographiques qu'utilise ce serveur), n'a ni publicité, ni statistiques d'usage, ni service de rapport de plantage géré par le développeur, et n'envoie rien au développeur d'Immuch360.
-- **Sans serveur**, rien ne quitte l'appareil.
+- **Sans serveur**, aucun serveur n'est contacté : l'application n'utilise le réseau que pour les partages, les serveurs Plex et les caméras que vous ouvrez, et pour le partage de téléphone, si vous l'activez.
 - **Partages réseau** : la liste des partages est gardée sur l'appareil et jamais envoyée à un serveur ; les mots de passe vont dans le trousseau ou le keystore de l'appareil.
+- **Plex** (dès le build 20) : le jeton reste dans le stockage sécurisé de l'appareil et n'est envoyé qu'à votre propre serveur, dans un en-tête de requête en HTTPS ; l'application ne contacte jamais plex.tv.
+- **Caméras Tapo** (dès le build 20) : le mot de passe du compte TP-Link et le mot de passe du compte de la caméra restent dans le stockage sécurisé de l'appareil ; l'application parle à la caméra sur le réseau local uniquement, jamais aux serveurs de TP-Link ; les clips récupérés restent dans le cache de l'application et sont supprimés avec la caméra.
+- **Téléviseur** : le fait que l'appareil soit un téléviseur est lu sur l'appareil ; rien n'est envoyé.
 - **Partage de téléphone** : réseau local uniquement, avec un nom d'utilisateur et un mot de passe, en HTTP simple (voir [Partager ce téléphone sur le réseau](#share-this-phone-on-the-network)).
 - **Caméra** : utilisée uniquement par le lecteur Spatial 2.5D, sur l'appareil ; les images ne sont jamais stockées et jamais envoyées nulle part.
 
@@ -675,20 +857,25 @@ Ce projet est un fork d'Immich et reste sous [GNU AGPL v3](LICENSE). Chaque APK,
 
 Ce qui n'est pas encore fait, le plus probable d'abord. Rien ici n'est une promesse, et les retours sur le [suivi des issues](https://github.com/freeKC/Immuch360/issues) aident à décider de ce qui vient en premier.
 
-- **Google Play** : les builds 15 et 16 ont été envoyés à l'examen de Google le 4 octobre 2026 et seront en ligne une fois approuvés ; le dernier build confirmé en ligne là-bas est le build 11.
+- **Google Play** : le build 18 est en ligne ; le build 19 est en cours d'examen chez Google depuis le 6 octobre 2026, et le build 20 suit.
 - **App Store** : la version 3.3.0 attend l'examen d'Apple ; elle a les fonctions du build 11, donc l'envoi vers Immich et la vérification des décodeurs vidéo (build 15) et les fichiers Insta360 bruts (build 16) viennent avec la prochaine mise à jour App Store. Le lien sera ajouté ici quand elle sera en ligne.
-- **Meta Horizon Store** : la fiche a été soumise à l'examen de Meta le 3 octobre 2026 avec le build 14, et le build 16 est sur le canal alpha du store pour la prochaine mise à jour. Une fois la fiche approuvée, le Quest 3 n'aura plus besoin du sideload et le lien du store sera ajouté ici ; une copie installée en sideload devra d'abord être désinstallée (voir [Installer](#install)).
-- **Fiches des stores** : les textes Google Play et App Store décrivent encore les premiers builds (photos et vidéos 360°, fichiers bruts affichés à plat) ; ils présenteront les visualiseurs 3D, VR180 et Spatial, le mode sans serveur, les partages réseau, le lecteur multimédia et les fichiers Insta360 bruts. Le texte du Meta Horizon Store présente déjà le lecteur multimédia.
+- **Meta Horizon Store** : la fiche a été soumise à l'examen de Meta le 3 octobre 2026 avec le build 14, et le canal alpha du store reçoit chaque nouveau build pour la prochaine mise à jour. Une fois la fiche approuvée, le Quest 3 n'aura plus besoin du sideload et le lien du store sera ajouté ici ; une copie installée en sideload devra d'abord être désinstallée (voir [Installer](#install)).
+- **Fiches des stores** : la fiche Google Play a été réécrite en octobre 2026 avec de nouvelles captures, et recevra des captures TV et une bannière TV avec la version TV. Le texte App Store décrit encore les premiers builds (photos et vidéos 360°, fichiers bruts affichés à plat) ; il présentera les visualiseurs 3D, VR180 et Spatial, le mode sans serveur, les partages réseau, le lecteur multimédia et les fichiers Insta360 bruts. Le texte du Meta Horizon Store présente déjà le lecteur multimédia.
 - **Fichiers bruts de caméra 360°, la suite** : un indicateur de progression pendant la préparation d'une photo brute pour le casque ; la mise à niveau des vidéos GoPro et DJI à partir de leurs propres données de mouvement ; le .dng double fisheye ; des retours sur appareil pour la lecture à deux objectifs du build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) afin de confirmer les raccords et les budgets de décodeurs.
 - **DLNA, partage de téléphone et spatial Apple, la suite** : les retours sur appareil du build 19 (Plex, Jellyfin, un NAS et le Freebox Server en DLNA ; un téléphone qui sert un Quest, sur son point d'accès aussi ; de vraies photos et vidéos spatiales d'iPhone dans le casque) ; l'autorisation multicast demandée à Apple, pour que les iPhone trouvent tous les serveurs DLNA ; précédent et suivant entre photos spatiales dans le casque ; un badge spatial sur les photos du serveur dans la timeline ; les vidéos spatiales en 3D sur le Quest, si ses décodeurs le permettent.
 - **Lecteurs 360° sur téléphone, la suite** : une barre de temps dans le lecteur vidéo 360° iOS (celui d'Android l'a), précédent/suivant dans les lecteurs 360° des téléphones comme dans la vue immersive du Quest, et les photos dans le lecteur vidéo 360° natif.
 - **Partages réseau, prochaines étapes** : glisser d'un fichier d'un dossier au suivant dans les pages photo et vidéo (la vue immersive du Quest parcourt déjà les fichiers 360° d'un dossier), l'authentification Digest pour WebDAV, le nom d'utilisateur tiré de l'enregistrement Bonjour.
 - **Vidéos à plat** : le choix de la piste audio dans le lecteur à plat, pour les vidéos du serveur, de l'appareil et des partages (les lecteurs 360° et Spatial l'ont).
+- **Android TV, la suite** : le test sur appareil du build 20 sur l'émulateur Google TV et un vrai téléviseur, puis la version TV sur Google Play (captures TV, bannière TV, examen de Google) ; plus tard, des chaînes sur l'écran d'accueil du téléviseur.
+- **Caméras Tapo, la suite** : le test sur appareil du build 20 avec de vraies caméras ; la vue en direct sur iPhone et iPad ; les enregistrements H.265 ; lire un clip pendant sa récupération ; toute une journée d'enregistrements sur une seule ligne de temps.
+- **Plex, la suite** : le test sur appareil du build 20 (téléphones, le Quest, un iPhone, un téléviseur, hors de chez soi) ; apporter le jeton depuis l'ordinateur avec un QR code ; masquer le côté DLNA d'un serveur Plex dans la liste des serveurs trouvés ; IPv6.
 - **Upstream** : de petites pull requests vers Immich pour les parties que les mainteneurs veulent, en commençant par le visualiseur de photos 360°.
 
 ## Remerciements
 
 Le visualiseur de photos 360° est basé sur la pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) de dmitry-brazhenko, elle-même construite sur le prototype de bencefr dans [#30192](https://github.com/immich-app/immich/pull/30192). Merci à tous les deux.
+
+Les caméras Tapo du build 20 ont été écrites à partir de ce que les projets open source [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) et [python-kasa](https://github.com/python-kasa/python-kasa) documentent sur ces caméras.
 
 Pourquoi un fork : la vue 360° sur mobile est demandée depuis janvier 2024 et n'est pas encore dans l'application officielle ; le visualiseur de photos est en cours de revue upstream dans [#31169](https://github.com/immich-app/immich/pull/31169). Ce fork le livre dès maintenant, recueille de vrais retours sur appareil, et proposera à Immich, en petites pull requests, tout ce que les mainteneurs voudront. La vue Meta Quest repose sur le Meta Spatial SDK, qui n'est pas open source, donc elle reste dans ce fork.
 

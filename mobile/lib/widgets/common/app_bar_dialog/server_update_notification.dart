@@ -7,8 +7,9 @@ import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/server_info/server_info.model.dart';
+import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart' show LaunchMode;
 
 class ServerUpdateNotification extends HookConsumerWidget {
   const ServerUpdateNotification({super.key});
@@ -21,7 +22,7 @@ class ServerUpdateNotification extends HookConsumerWidget {
     final Color infoColor = context.isDarkTheme
         ? context.primaryColor.withAlpha(55)
         : context.primaryColor.withAlpha(25);
-    Future<void> openUpdateLink() {
+    Future<bool> openUpdateLink() {
       String url;
       if (serverInfoState.versionStatus == VersionStatus.serverOutOfDate) {
         url = kImmichLatestRelease;
@@ -36,7 +37,7 @@ class ServerUpdateNotification extends HookConsumerWidget {
         }
       }
 
-      return launchUrlString(url, mode: LaunchMode.externalApplication);
+      return openUrl(context, Uri.parse(url), mode: LaunchMode.externalApplication);
     }
 
     return SizedBox(

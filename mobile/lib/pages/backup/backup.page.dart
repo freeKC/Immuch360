@@ -11,6 +11,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/backup/backup_toggle_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
 import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
 import 'package:immich_mobile/providers/backup/backup_album.provider.dart';
@@ -23,7 +24,7 @@ import 'package:immich_mobile/widgets/backup/backup_info_card.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' show LaunchMode;
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 @RoutePage()
@@ -245,7 +246,7 @@ class _BackupFooterState extends ConsumerState<_BackupFooter> with WidgetsBindin
               variant: .ghost,
               expanded: false,
               onPressed: () =>
-                  unawaited(launchUrl(Uri.parse('https://dontkillmyapp.com'), mode: LaunchMode.externalApplication)),
+                  unawaited(openUrl(ctx, Uri.parse('https://dontkillmyapp.com'), mode: LaunchMode.externalApplication)),
             ),
             ImmichTextButton(
               labelText: context.t.backup_controller_page_background_battery_info_ok,

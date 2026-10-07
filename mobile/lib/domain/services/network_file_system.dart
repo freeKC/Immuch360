@@ -1,5 +1,7 @@
 // What a network share looks like to the app, whatever its protocol (SMB through dart_smb2, WebDAV and DLNA through
-// plain HTTP). Implementations read on demand and never copy a whole file to the device.
+// plain HTTP, Plex through its pinned HTTPS client, the recordings of a Tapo camera). Implementations read on demand
+// and never copy a whole file to the device, except the clips of a camera: it cannot serve a part of one, so a clip
+// is fetched whole into the cache before it plays.
 
 import 'dart:typed_data';
 
@@ -36,6 +38,19 @@ abstract class NetworkFileSystem {
 
   /// Closes the connection; the object is not used again
   Future<void> close();
+}
+
+/// A share whose server makes small pictures of its media (a Plex server). The pictures are read in Dart with the
+/// credentials of the share, so that no URL holding a credential reaches an image widget, whose errors print URLs.
+abstract interface class NetworkThumbnailSource {
+  /// A JPEG of [entry] about [size] pixels on its long side, null when the server has none
+  Future<Uint8List?> thumbnail(NetworkEntry entry, int size);
+}
+
+/// A share that can be reached through an address outside home (a Plex server through its public address)
+abstract interface class NetworkRemoteEndpoint {
+  /// Whether the open connection goes through the address outside home (mobile data, another network)
+  bool get isOutsideHome;
 }
 
 /// The order of [NetworkFileSystem.list]: folders first, then files, both by name without case (then with case, so

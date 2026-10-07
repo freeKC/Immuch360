@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sunan Immich mobil uygulamasıdır; aynı zamanda Android telefon ve tabletlerde, iPhone ve iPad'lerde, Meta Quest 3 ve 3S'te düz, 360°, 3D ve VR180 fotoğraf ve videolar için ücretsiz bir oynatıcıdır. 360° kamerayla (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ya da bir telefonun fotoğraf küresi moduyla çekim yapan veya bir VR başlığı olan ve kendi çekimlerini bir Immich sunucusundan, telefonun kendisinden, bir NAS'tan veya bir medya sunucusundan izlemek isteyenler içindir: aynı sunucu, aynı hesap, sunucu eklentisi yok, isterseniz hiç sunucu yok.
+Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sunan Immich mobil uygulamasıdır; aynı zamanda Android telefon ve tabletlerde, iPhone ve iPad'lerde, Meta Quest 3 ve 3S'te ve derleme 20'den itibaren Android TV ve Google TV'de düz, 360°, 3D ve VR180 fotoğraf ve videolar için ücretsiz bir oynatıcıdır. 360° kamerayla (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ya da bir telefonun fotoğraf küresi moduyla çekim yapan veya bir VR başlığı olan ve kendi çekimlerini bir Immich sunucusundan, telefonun kendisinden, bir NAS'tan, bir medya sunucusundan veya bir Plex sunucusundan izlemek isteyenler içindir: aynı sunucu, aynı hesap, sunucu eklentisi yok, isterseniz hiç sunucu yok. Derleme 20'den itibaren Tapo kameraları da gösterir: canlı görüntüyü ve hafıza kartlarındaki kayıtları.
 
 <p align="center">
   <sub>Resmi olmayan bir çatal. Immich veya FUTO ile bağlantılı değildir. Adı "I am much 360" diye okunur.</sub>
@@ -15,7 +15,8 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">inceleniyor</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store inceleniyor
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store inceleniyor &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
     <td align="center" width="33%"><h3>🎥 Yerleşik 2.5D</h3>Stereoskopik bir videodan düz ekranda derinlik, görüntü başınızı takip eder (deneysel, telefonlar ve tabletler)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Tek uygulama, üç platform, başlıkta gerçek 3D</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Telefonlarda, tabletlerde ve başlıkta tek uygulama, başlıkta gerçek 3D, derleme 20'den itibaren de Android TV'de uzaktan kumandayla</td>
     <td align="center"><h3>🔌 Sunucuyla veya sunucusuz</h3>Immich sunucunuz ya da telefonun kendi galerisi, hesap gerekmez</td>
     <td align="center"><h3>🗄️ Ağ paylaşımları</h3>Samba (SMB), WebDAV ve derleme 19'dan itibaren DLNA medya sunucuları; ağda bulunur ve canlı okunur, hiçbir şey indirilmez, siz istediğinizde Immich'e gönderilir. Derleme 19'dan itibaren bir telefon kendi galerisini de başlıkla paylaşır</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Televizyonda</h3>Derleme 20'den itibaren aynı APK Android TV ve Google TV'de: 360° fotoğraf ve videolar, sunucunuz ve paylaşımlarınız, uzaktan kumandayla</td>
+    <td align="center"><h3>🎬 Plex, plex.tv olmadan</h3>Derleme 20'den itibaren Plex kütüphaneleriniz, 360° 360° kalsın diye orijinal dosyalardan oynatılır, evde ve dışarıda</td>
+    <td align="center"><h3>📹 Tapo kameralar</h3>Derleme 20'den itibaren canlı görüntü ve hafıza kartındaki kayıtlar, yalnızca ağınızda, ve istediğinizde Immich'e gönderilen bir klip</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
 - **"360° fotoğraflarım düz, gerilmiş bir şerit olarak görünüyor, 360° videolarım da düz oynatılıyor."** Bkz. [Küre olarak 360° fotoğraf ve videolar](#360-photos-and-videos-as-a-sphere).
 - **"Sunucum yok ve bir hesap istemiyorum."** Bkz. [Sunucu veya hesap olmadan](#without-a-server-or-an-account).
 - **"NAS'ımdaki videoları kopyalamadan telefonda veya başlıkta izlemek istiyorum."** Bkz. [Ağ paylaşımları](#network-shares-a-nas-a-computer-or-a-media-server).
+- **"Plex 360° videolarımı düz oynatıyor ve Plex kütüphanemi başlıkta, televizyonda ve evden uzaktayken istiyorum."** Bkz. [Plex Media Server, plex.tv olmadan](#plex-media-server-without-plextv).
 - **"Fotoğraflarım telefonumda ve onları başlık için koyabileceğim bir bilgisayarım veya NAS'ım yok."** Bkz. [Bu telefonu ağda paylaş](#share-this-phone-on-the-network).
+- **"Tapo kameramı ve dün geceki klipleri Tapo uygulaması olmadan görmek ve bir klibi Immich'te saklamak istiyorum."** Bkz. [Tapo kameralar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"Insta360 dosyalarımı izleyebilmem için önce Insta360 uygulaması gerekiyor"** (GoPro .360 ve DJI .osv dosyaları da). Bkz. [Ham 360° kamera dosyaları](#raw-360-camera-files-without-the-cameras-app).
 - **"3D videolarım çift görünüyor, VR180 videolarım da her yana gerilmiş."** Bkz. [3D ve VR180](#3d-and-vr180-photos-and-videos) ve [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"iPhone'umdan uzamsal fotoğraflarım var."** Bkz. [Apple uzamsal fotoğraf ve videoları](#apple-spatial-photos-and-videos).
 - **"Telefonda çalışıyor ama Quest'te istiyorum."** Bkz. [Meta Quest 3 başlığında](#in-the-meta-quest-3-headset).
+- **"360° fotoğraf ve videolarımı, NAS'ımın veya Plex sunucumun videolarını televizyonda, uzaktan kumandayla izlemek istiyorum."** Bkz. [Televizyonunuzda izleyin](#watch-on-your-tv-android-tv-and-google-tv).
 - **"360° çekimlerimi diğerlerinin arasında bulamıyorum."** Bkz. [360° listesi](#find-your-360-shots-the-360-list).
 - **"360° videom takılıyor ya da bulanık bir kopyayı oynatıyor."** Bkz. [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters).
 - **"Immich uygulamasının yaptıklarını koruyor muyum?"** Evet, iki küçük değişiklikle, bkz. [Geri kalan her şey Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Seçim telefonda hatırlanır ve sunucuda hiçbir şeyi değiştirmez. Bir ağ p
 
 Immich sunucunuz yok ya da bir hesap istemiyorsunuz: yalnızca telefonunuzdaki 360° fotoğrafların jiroskopla çevirebileceğiniz bir küre olarak açılmasını istiyorsunuz. Immich uygulaması ise önce oturum açmanızı ister.
 
-Giriş sayfasındaki "Sunucu olmadan kullan", Immuch360'ı cihazın kendi fotoğraf ve videolarıyla açar; 360°, 3D, VR180 ve Spatial görüntüleyicileri, 360° listesi ve ağ paylaşımları dahil, Immich hesabı gerekmeden. Sunucu özellikleri siz bir sunucu bağlayana kadar gizli veya soluk kalır; hiçbir şey cihazdan çıkmaz. Bir Meta Quest 3'te başlığın kendi fotoğraf ve videolarını açar.
+Giriş sayfasındaki "Sunucu olmadan kullan", Immuch360'ı cihazın kendi fotoğraf ve videolarıyla açar; 360°, 3D, VR180 ve Spatial görüntüleyicileri, 360° listesi ve ağ paylaşımları (derleme 20'den itibaren Plex sunucuları ve Tapo kameralar da) dahil, Immich hesabı gerekmeden. Sunucu özellikleri siz bir sunucu bağlayana kadar gizli veya soluk kalır; hiçbir şey cihazdan çıkmaz. Bir Meta Quest 3'te başlığın kendi fotoğraf ve videolarını açar; kendi fotoğraf ve videosu olmayan bir televizyonda ise ağ paylaşımlarına yönlendirir (bkz. [Televizyonunuzda izleyin](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Sunucusuz Kütüphane sekmesi: üstte 360° öğesi, ardından iki 360° fotoğrafla Bu cihazda, ve NAS adlı bir paylaşımla Ağ paylaşımları">
 
@@ -126,7 +135,7 @@ Giriş sayfasındaki "Sunucu olmadan kullan", Immuch360'ı cihazın kendi fotoğ
 
 360° videolarınız bir NAS'ta veya bir bilgisayarda duruyor ve onları önce kopyalamadan telefonda ya da başlıkta izlemek istiyorsunuz. Başlıkta insanlar sonunda her dosyayı kabloyla kopyalıyor; Plex ve Jellyfin gibi medya sunucuları, forumlarındaki isteklerin anlattığı gibi 360° videoları düz oynatıyor; Immich uygulaması ise yalnızca Immich sunucunuzu okuyor.
 
-Immuch360, SMB (Samba, Windows), WebDAV ya da derleme 19'dan itibaren DLNA/UPnP (bir medya sunucusu: Plex, Jellyfin, minidlna, Gerbera, Emby, bir NAS veya bir TV kutusu) konuşan her sunucunun fotoğraf ve videolarını doğrudan paylaşımdan gezer ve oynatır. Ağınızdaki sunucuları kendisi bulur ve dosyaları uygulamanın geri kalanıyla aynı görüntüleyicilerde canlı oynatır (360°, 3D, VR180, Spatial 2.5D, Quest sürükleyici görünümü); Immich sunucusuyla veya sunucusuz, telefonlarda ve Meta Quest 3'te. Hiçbir şey indirilmez. Bir sunucu bağlıyken seçtiğiniz dosyalar Immich hesabınıza gönderilebilir (derleme 15'ten itibaren).
+Immuch360, SMB (Samba, Windows), WebDAV ya da derleme 19'dan itibaren DLNA/UPnP (bir medya sunucusu: Jellyfin, minidlna, Gerbera, Emby, bir NAS veya bir TV kutusu) konuşan her sunucunun fotoğraf ve videolarını doğrudan paylaşımdan gezer ve oynatır. Derleme 20'den itibaren bir Plex Media Server'ın kendi türü vardır, bkz. [Plex Media Server, plex.tv olmadan](#plex-media-server-without-plextv). Ağınızdaki sunucuları kendisi bulur ve dosyaları uygulamanın geri kalanıyla aynı görüntüleyicilerde canlı oynatır (360°, 3D, VR180, Spatial 2.5D, Quest sürükleyici görünümü); Immich sunucusuyla veya sunucusuz, telefonlarda ve Meta Quest 3'te. Hiçbir şey indirilmez. Bir sunucu bağlıyken seçtiğiniz dosyalar Immich hesabınıza gönderilebilir (derleme 15'ten itibaren).
 
 | Paylaşım ekle | Bir paylaşımın klasörü |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360, SMB (Samba, Windows), WebDAV ya da derleme 19'dan itibaren DLNA/UPnP 
 
 ### Paylaşım ekleyin
 
-1. Kütüphane sekmesini, ardından Ağ paylaşımları'nı açın. İlk seferde sayfa "Henüz paylaşım yok" der ve bir "Paylaşım ekle" düğmesi gösterir; sağ üstteki + her zaman aynı işi yapar.
-2. "Paylaşım ekle" sayfası önce ağınızdaki sunucuları arar ve onları türleriyle (SMB, WebDAV, DLNA, Telefon) birlikte "Ağda bulunanlar" altında listeler. Arama yaklaşık altı saniyeye kadar sürer; "Yeniden tara" aramayı baştan başlatır. Bonjour/mDNS'i ve gerçek bir SMB veya WebDAV alışverişiyle doğrulanan bir yerel ağ taramasını, derleme 19'dan itibaren de DLNA medya sunucuları için bir SSDP aramasını kullanır.
-3. Bir sunucuya dokunun: tür, sunucu, port ve yol doldurulur.
-4. Listede yok mu? Formu elle doldurun. Tür: "SMB (Samba, Windows paylaşımı)", "WebDAV (Nextcloud, Synology ve diğerleri)" veya "DLNA medya sunucusu (Plex, Jellyfin, NAS, TV kutusu)". Ardından Ad, "Sunucu adı veya adresi" (bir ad veya bir adres; `smb://nas/photos`, `\\nas\photos` veya `https://nas:5006/photos` gibi tam bir adres diğer alanları doldurur), olağan port değilse "Port (isteğe bağlı)", SMB için "Paylaşım" veya WebDAV için "WebDAV adresinin yolu", "Başlangıç klasörü (isteğe bağlı)", "Kullanıcı adı" ve "Şifre", WebDAV için de "Güvenli bağlantı (HTTPS)".
+1. Kütüphane sekmesini, ardından Ağ paylaşımları'nı açın. İlk seferde sayfa "Henüz paylaşım yok" der ve bir "Paylaşım ekle" düğmesi gösterir; sağ üstteki + her zaman aynı işi yapar. Derleme 20'den itibaren ikisi de neyin ekleneceğini sorar: "Bir ağ paylaşımı (NAS, bilgisayar, medya sunucusu)", "Bir Plex Media Server" veya "Bir Tapo kamera". İlkini seçin.
+2. "Paylaşım ekle" sayfası önce ağınızdaki sunucuları arar ve onları türleriyle (SMB, WebDAV, DLNA, Telefon, derleme 20'den itibaren Plex ve Tapo) birlikte "Ağda bulunanlar" altında listeler. Arama yaklaşık altı saniyeye kadar sürer; "Yeniden tara" aramayı baştan başlatır. Bonjour/mDNS'i ve gerçek bir SMB veya WebDAV alışverişiyle doğrulanan bir yerel ağ taramasını, derleme 19'dan itibaren DLNA medya sunucuları için bir SSDP aramasını, derleme 20'den itibaren de Plex'in keşif protokolü GDM'yi ve Tapo kameralar için TP-Link'in keşif protokolünü kullanır.
+3. Bir sunucuya dokunun: tür, sunucu, port ve yol doldurulur. Bir Plex sunucusu veya bir Tapo kamera ise bunun yerine kendi sayfasını, doldurulmuş olarak açar.
+4. Listede yok mu? Formu elle doldurun. Tür: "SMB (Samba, Windows paylaşımı)", "WebDAV (Nextcloud, Synology ve diğerleri)", "DLNA medya sunucusu (Jellyfin, NAS, TV kutusu)" veya derleme 20'den itibaren "Plex Media Server"; sonuncusu [Plex Media Server, plex.tv olmadan](#plex-media-server-without-plextv) bölümündeki sayfayı açar. Ardından Ad, "Sunucu adı veya adresi" (bir ad veya bir adres; `smb://nas/photos`, `\\nas\photos` veya `https://nas:5006/photos` gibi tam bir adres diğer alanları doldurur), olağan port değilse "Port (isteğe bağlı)", SMB için "Paylaşım" veya WebDAV için "WebDAV adresinin yolu", "Başlangıç klasörü (isteğe bağlı)", "Kullanıcı adı" ve "Şifre", WebDAV için de "Güvenli bağlantı (HTTPS)".
 5. SMB: sunucu ve kullanıcı adı yazıldıktan sonra "Bir paylaşım seçin" sunucunun paylaşımlarını listeler.
 6. DLNA: bir medya sunucusunun kullanıcı adı veya şifresi yoktur. Sunucuyu, portu ve aygıt açıklamasının "Açıklama yolu"nu (minidlna için `/rootDesc.xml`) girin ya da `http://192.168.1.10:8200/rootDesc.xml` gibi adresin tamamını sunucu alanına yapıştırın.
 7. "Bağlantıyı test et"e dokunun. "Bağlandı, başlangıç klasöründe N öğe var" yanıtını verir ya da neden başarısız olduğunu söyler. Ardından formun altındaki Kaydet'e dokunun.
@@ -155,6 +164,7 @@ Boş şifreli bir kullanıcı adı olduğu gibi gönderilir: bir Freebox Server,
 
 360°, 3D ve VR180, dosyanın aralık istekleriyle okunan GPano veya küresel meta verilerinden tanınır; VR180 ayrıca dosya adından da tanınır. Derleme 16'dan itibaren ham Insta360 dosyaları da tanınır (bir .insp fotoğrafı adından veya kameranın kalibrasyon bloğundan, bir .insv videosu adından ve karesinden) ve birleştirilir.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Bir paylaşımın dosyalarını Immich'e gönderin
 
 Derleme 15'ten itibaren, bir sunucuya bağlıyken:
@@ -177,17 +187,67 @@ Derleme 19'dan itibaren uygulama, medya sunucuları için SSDP aramasını ağı
 <a id="a-share-that-moved"></a>
 ### Yer değiştiren bir paylaşım
 
-Derleme 19'dan itibaren bir DLNA paylaşımı ve bir telefon paylaşımı (bkz. [Bu telefonu ağda paylaş](#share-this-phone-on-the-network)) sunucularının duyurduğu kimliği saklar. Biri artık kendi adresinde yanıt vermediğinde (modemin verdiği yeni bir adres, başka bir portta yeniden başlatılan bir sunucu), klasör sayfası "Ağda (ad) aranıyor" gösterir ve paylaşımı artık yanıt verdiği yere taşır: şifresi olmayan bir DLNA sunucusu için hemen; kullanıcı adı ve şifresi olan bir paylaşım için ise, bunlar yeni adrese gönderileceğinden, iki adresi de gösteren "Yeni adres kullanılsın mı?" onayından sonra.
+Derleme 19'dan itibaren bir DLNA paylaşımı ve bir telefon paylaşımı (bkz. [Bu telefonu ağda paylaş](#share-this-phone-on-the-network)) sunucularının duyurduğu kimliği saklar. Biri artık kendi adresinde yanıt vermediğinde (modemin verdiği yeni bir adres, başka bir portta yeniden başlatılan bir sunucu), klasör sayfası "Ağda (ad) aranıyor" gösterir ve paylaşımı artık yanıt verdiği yere taşır: şifresi olmayan bir DLNA sunucusu için hemen; kullanıcı adı ve şifresi olan bir paylaşım için ise, bunlar yeni adrese gönderileceğinden, iki adresi de gösteren "Yeni adres kullanılsın mı?" onayından sonra. Derleme 20'den itibaren ağın başka bir adresinde yeniden bulunan bir Plex sunucusu da hemen taşınır: belirteç gönderilmeden önce sertifikası onun aynı sunucu olduğunu kanıtlar. Bir Tapo kamera ise kendi sayfasından MAC adresiyle aranır, bkz. [Tapo kameralar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Sınırlar
 
 - **SMB**: yalnızca SMB 2 ve 3, SMB 1 yok.
 - **WebDAV**: yalnızca Basic kimlik doğrulama (Digest henüz desteklenmiyor); kendinden imzalı bir HTTPS sertifikasının cihaza yüklenmesi gerekir.
-- **Sunucuları bulma**: ağ taraması ve DLNA araması yalnızca yerel /24 ağına bakar ve iOS'ta yerel ağ izni gerektirir. iPhone ve iPad'de DLNA araması, Apple uygulamaya çok noktaya yayın yetkisini (multicast entitlement) verene kadar yalnızca tekli (unicast) istekleri gönderir ve bazı sunucular bunlara yanıt vermez (Linux'ta minidlna): bunları açıklama adresleriyle ekleyin.
+- **Sunucuları bulma**: ağ taraması ile DLNA, Plex ve Tapo aramaları yalnızca yerel /24 ağına bakar ve iOS'ta yerel ağ izni gerektirir. iPhone ve iPad'de DLNA araması, Apple uygulamaya çok noktaya yayın yetkisini (multicast entitlement) verene kadar yalnızca tekli (unicast) istekleri gönderir ve bazı sunucular bunlara yanıt vermez (Linux'ta minidlna): bunları açıklama adresleriyle ekleyin.
 - **DLNA**: bir dosyanın yalnızca dönüştürülmüş kopyasını sunan bir sunucu o kopyayı verir; bir klasör en fazla 20.000 öğe listeler.
 - **Küçük resimler**: fotoğraf küçük resimleri dosyanın tamamını çözer ve 30 MB'tan büyük fotoğrafların küçük resmi olmaz.
 - **Oynatıcılar**: ses parçası seçimi henüz düz oynatıcıda yok. Telefonda bir klasördeki bir dosyadan sonrakine kaydırarak geçiş henüz yok (Quest sürükleyici görünümünde klasördeki 360° dosyalar için önceki ve sonraki var). Bir ağ dosyasında yapılan 3D veya 180° seçimi hatırlanmaz.
 - **Yüklemeler**: yalnızca uygulama açıkken çalışır ve sunucuda zaten bulunan bir dosya, sunucu onu kopya olarak bildirmeden önce tamamen gönderilir.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, plex.tv olmadan
+
+Videolarınız Plex'te ve Plex, forumundaki isteklerin anlattığı gibi (biri 2017'den beri açık), 360° fotoğraf ve videolarınızı düz gösteriyor. Bu kütüphaneyi başlıkta, televizyonda ve evden uzaktayken de istiyorsunuz. Immich uygulaması yalnızca Immich sunucunuzu okur ve derleme 19'un DLNA türü Plex'in DLNA tarafına yalnızca evde ulaşır.
+
+Derleme 20'den itibaren Immuch360, plex.tv olmadan doğrudan Plex Media Server'ınızla eşleşir: sunucuyu ağda bulur, siz bir kez bir belirteç yapıştırırsınız ve uygulama kütüphanelerinizin orijinal dosyalarını uygulamanın her görüntüleyicisinde (360°, 3D, VR180, Spatial 2.5D, Quest sürükleyici görünümü, televizyon kumandası) canlı okur; evde ve port yönlendirmeniz sayesinde evden uzaktayken. Hiçbir şey kopyalanmaz ve seçtiğiniz dosyalar Immich'e gönderilebilir.
+
+### Bir Plex sunucusu ekleyin
+
+1. Kütüphane sekmesini, ardından Ağ paylaşımları'nı, ardından + ve "Bir Plex Media Server"ı açın. Paylaşım formundaki "Plex Media Server" türü ve "Ağda bulunanlar" altında Plex etiketli bir sunucu da aynı sayfayı açar.
+2. "Plex sunucusu ekle" sayfası ağınızdaki Plex sunucularını arar ("Ağınızda Plex sunucuları aranıyor") ve onları "Ağda bulunanlar" altında listeler. Sizinkine dokunun: bir kart adını, Plex sürümünü ve kısa bir kimliği gösterir.
+3. Listede yok mu? `192.168.1.20`, `192.168.1.20:32400` veya `https://...plex.direct:32400` gibi "Sunucu adresi"ni yazın, ardından "Sorgula"ya dokunun. Uygulama sunucunun sertifikasını okur ve başka hiçbir şey göndermez.
+4. Belirteci bir bilgisayarda alın: Plex'i bir web tarayıcısında açıp oturum açın, kütüphanenizdeki herhangi bir fotoğrafı veya videoyu açın, ardından "...", "Get Info" (Bilgi al), "View XML" (XML'i görüntüle). Yeni bir sekme, `X-Plex-Token=...` ile biten bir adreste açılır. Bu adresin tamamını kopyalayın.
+5. Onu "Erişim belirteci" alanına yapıştırın ya da telefona gönderip "Panodan yapıştır"a dokunun: uygulama sunucuyu ve belirteci buradan alır. Yalnızca `X-Plex-Token=` sonrasındaki metin de işe yarar. Sayfadaki "Nasıl alınır" da aynısını söyler; sunucu yöneticileri, süresi dolmayan, sunucunun `Preferences.xml` dosyasındaki `PlexOnlineToken` değerini de kullanabilir. Bir televizyonda OK klavye iletişim kutusunu açar: belirteci orada yazın (genellikle 20 karakterdir).
+6. "Bağlantıyı test et"e dokunun. "Bağlandı: N kütüphane" yanıtını verir ya da neyin yanlış olduğunu söyler, örneğin "Plex sunucusu bu belirteci reddetti."
+7. Ardından "Ev dışından erişim" sunucunun söylediğini gösterir: "Sunucu (adres):(port) adresinden erişilebilir olduğunu bildiriyor." ya da "Sunucu ev dışı adresini bildirmedi." Sunucuyu evden uzaktayken kullanmak için genel adresinizi veya DynDNS adınızı "Ev dışı adres (IP veya ad)" alanına, Plex'te (Ayarlar, Uzaktan Erişim) yönlendirilen portu da "Ev dışı port" alanına yazın. Yazdığınız her zaman sunucunun söylediğinden önce gelir.
+8. "Ad", siz değiştirmedikçe sunucunun adıdır ve "Başlangıç klasörü (isteğe bağlı)" doğrudan bir kütüphaneyi açabilir. Kaydet'e dokunun. Sunucu, paylaşımlarla birlikte `plex://` ve adresiyle listelenir.
+
+### Plex kütüphanelerinizi gezin
+
+1. Ağ paylaşımları'nda sunucuya dokunun. İlk düzey, uygulamanın gösterdiği kütüphaneleri listeler: fotoğraflar, filmler ve diğer videolar, diziler. Müzik dışarıda bırakılır.
+2. Bir kütüphanenin altında, sunucunun diskinde oldukları gibi klasörleri (Plex'in "klasöre göre" görünümü), ardından dosya adlarıyla fotoğraflar ve videolar, Plex'in oluşturduğu küçük resimlerle gelir. Klasör görünümü yanıt vermeyen bir fotoğraf kütüphanesi bunun yerine albümlerini gösterir.
+3. 360° ve 3D, her paylaşımda olduğu gibi dosyaların kendisi okunarak bulunur: 360° fotoğraflar 360° rozetini, Apple uzamsal olanlar 3D rozetini alır.
+4. Bir fotoğrafı veya videoyu her paylaşımdaki gibi açın: 360°, 3D, 360°/180°, telefonda Spatial 2.5D, Quest'te sürükleyici görünüm, televizyonda kumanda. Bir video, uygulamanın yerel köprüsü üzerinden bayt aralıklarıyla orijinal dosya olarak okunur; böylece ileri geri sarma çalışır ve 360° ve 3D meta verileri oynatıcılara bozulmadan ulaşır.
+5. Dosyaları seçip "Immich'e yükle"ye dokunarak, her paylaşımdan olduğu gibi sunucunuza gönderin (bkz. [Bir paylaşımın dosyalarını Immich'e gönderin](#send-files-of-a-share-to-immich)).
+
+### Evden uzaktayken
+
+Uygulama sunucuyu her açışında önce ev adresini, 400 ms sonra da ev dışı adresi dener. Sunucunuz olarak ilk yanıt veren kullanılır; bu ev dışı adresse, klasör sayfası "Ev dışı adres üzerinden bağlandı" etiketli bir dünya simgesi gösterir. Bunun için Plex'te Uzaktan Erişim'in (Ayarlar, Uzaktan Erişim) açık olması ve modeminizin bir portu yönlendirmesi gerekir: plex.tv olmadan uygulama Plex'in aktarma sunucusunu (relay) kullanamaz, bu yüzden port yönlendirmesi olmayan bir sunucu yalnızca evde açılır ve evden uzaktayken sayfa şunu söyler: "Plex sunucunuza ev ağınızın dışından erişilemiyor. Plex'te bir port yönlendirmesiyle uzaktan erişimi açın (Ayarlar, Uzaktan Erişim) veya genel adresini yazın."
+
+Sunucunun bildirdiği adres, evdeki her bağlantıda yeniden öğrenilir. Dışarıdan yanıt vermediğinde (adresini değiştiren bir modem, art arda iki yönlendirici), kendi adresinizi sunucunun sayfasına yazın. Belirteç çalışmayı bıraktığında (örneğin onu kopyaladığınız tarayıcı oturumundan çıkış yaptıysanız), klasör sayfası bunu söyler ve sunucunun sayfasını belirteç alanında açan "Yeni bir belirteç yapıştır" seçeneğini sunar.
+
+### Plex ve DLNA türüyle karşılaştırma
+
+- **Orijinal dosyalar**: uygulama hiçbir zaman Plex'in dönüştürdüğü bir kopyayı değil, dosyaların kendisini okur; böylece 360°, 3D ve VR180 meta verileri bozulmadan kalır ve uygulamanın görüntüleyicileri bunları kullanır, oysa Plex uygulamaları bu dosyaları düz gösterir.
+- **plex.tv yok**: uygulama yalnızca sunucunuzla, her zaman HTTPS üzerinden konuşur. Sunucu, belirteç gönderilmeden önce, sunucunun kimliğine bağlı kendi plex.direct sertifikasıyla doğrulanır. Belirteç cihazda, güvenli depolamasında kalır ve yalnızca sunucunuza, bir istek başlığında gider.
+- **Aynı sunucuyu DLNA olarak eklemeye kıyasla**: diskteki gibi klasörler, Plex'in küçük resimleri, ev dışından erişim ve güvenli bir bağlantı.
+
+### Sınırlar
+
+- **Yalnızca sahiplenilmiş sunucular**: sunucunun Plex'te sahiplenilmiş olması (bir kez bir Plex hesabıyla oturum açılmış olması) gerekir; bu ona plex.direct sertifikasını verir. Aksi halde sayfa şunu söyler: "Bu adres Plex sertifikası olmadan yanıt veriyor. Sunucuyu Plex'te sahiplenin veya SMB, WebDAV ya da DLNA paylaşımı olarak ekleyin."
+- **Yalnızca IPv4**: "IPv6 adresleri henüz desteklenmiyor. Sunucunun IPv4 adresini yazın."
+- **Belirteç**, Plex sunucunuza tam erişim verir. Sunucuyu uygulamadan kaldırmak belirteci cihazda unutur ama iptal etmez: "Belirteç, kopyaladığınız tarayıcı oturumundan çıkış yapana kadar sunucuda geçerli kalır." Bitiş tarihi olan bir belirteç bu tarihi gösterir ve uygulama onu yenileyemez.
+- **Evden uzaktayken**: yalnızca bir port yönlendirmesiyle, aktarma sunucusu yok.
+- **Kütüphaneler**: müzik gösterilmez, bir klasör en fazla 20.000 öğe listeler ve kısıtlı bir kullanıcı "Bu belirteç sunucunun kütüphanelerini okuyamıyor." yanıtını alabilir.
+- **Ham 360° kamera dosyaları** (.insv, .insp, .360, .osv) yalnızca Plex onları listeliyorsa görünür; aksi halde aynı NAS klasörünü bir SMB veya WebDAV paylaşımı olarak ekleyin, bkz. [Ham 360° kamera dosyaları](#raw-360-camera-files-without-the-cameras-app).
+- **Sunucuyu bulma**: "Enable local network discovery (GDM)" (Yerel ağ keşfini etkinleştir) ayarı kapalı olan bir sunucu bulunamaz, bu yüzden adresini yazın. iPhone ve iPad'de arama yalnızca tekli (unicast) istekler gönderir. Aynı sunucunun DLNA tarafı da listede DLNA etiketiyle görünebilir: Plex etiketli satırı seçin.
+- **Henüz bir cihazda doğrulanmadı**: eşleştirme, klasörler, bir videonun bayt aralıkları, küçük resimler, yanlış bir belirteç ve ev dışı adres bir bilgisayardan gerçek bir Plex Media Server 1.42.1'e karşı, fotoğraf ve dizi kütüphaneleri ise yalnızca simüle edilmiş bir sunucuya karşı doğrulandı. Telefonda, Quest'te, iPhone'da ve televizyonda oynatma ile ev dışı adrese geçiş, derleme 20'nin cihaz testidir.
+- Immuch360'ın Plex ile bir bağlantısı yoktur.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Bu telefonu ağda paylaş
@@ -219,6 +279,63 @@ Bundan sonra diğerleri gibi bir WebDAV paylaşımıdır: 360° algılama, ham d
 - **Güvenlik**: yalnızca yerel ağ. Paylaşım yalnızca telefonun Wi-Fi, Ethernet ve erişim noktası adreslerini dinler, hiçbir zaman mobil veri veya VPN adresini dinlemez ve yalnızca yerel adresi olan cihazlara yanıt verir. Her istek kullanıcı adı ve şifre gerektirir (HTTP Basic); bir cihazdan bir dakika içinde on yanlış şifre, o cihazı bir dakikalığına engeller. Şifre Wi-Fi üzerinde şifrelenmeden gider (düz HTTP): paylaşımı güvendiğiniz bir ağda kullanın ve işiniz bitince kapatın.
 - **Telefonun kendi erişim noktası**: başlık ona bağlanabilir; telefonu orada bulamazsa sayfada gösterilen adresi yazın.
 - **Henüz bir cihazda doğrulanmadı**: sunucu, birim testleriyle ve bir bilgisayarda başlığın kendi WebDAV istemcisi ve medya köprüsüyle uçtan uca testlerle doğrulandı. Bir Quest 3'e hizmet veren bir telefon (keşif, oynatılıp ileri geri sarılan 4 GB'lık bir video, 30 dakika kapalı ekran, erişim noktası, bildirimden Durdur) ve henüz bir iPhone'da çalışmamış olan iPhone tarafı, derleme 19'un cihaz testidir.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo kameralar: canlı görüntü ve hafıza kartındaki kayıtlar
+
+Evde Tapo kameralarınız var ve bahçe kamerasını ve dün geceki klipleri, Tapo uygulamasını açmadan fotoğraflarınızın yanında görmek ve bir klibi Immich'te saklamak istiyorsunuz. Immich uygulamasında kameralar için hiçbir şey yok; Tapo uygulaması ise TP-Link hesabınızla oturum açılmış, klipleri fotoğraflarınızdan ayrı tutan ayrı bir uygulama.
+
+Derleme 20'den itibaren Immuch360, ağ paylaşımlarının yanına bir Tapo kamera ekler. Kamerayı Android telefon ve tabletlerde, Android TV'de ve Meta Quest 3'te canlı gösterir; her platformda da hafıza kartındaki kayıtları gün gün gösterir: bir klip kameradan alınır, ardından her video gibi oynatılır ve Immich'e gönderilebilir. Uygulama kamerayla yalnızca ağınızda konuşur, asla TP-Link'in sunucularıyla değil, ve kamerada hiçbir şeyi değiştirmez.
+
+### Bir kamera ekleyin
+
+1. Önce Tapo uygulamasında: kameranın ayarlarında, Advanced Settings (Gelişmiş Ayarlar), Camera Account (Kamera Hesabı) altında kamera hesabını oluşturun (bu kamera için, canlı görüntüde kullanılan bir kullanıcı adı ve şifre) ve Me (Ben), ardından Tapo Lab altında Third-Party Compatibility'yi (Üçüncü Taraf Uyumluluğu) açın.
+2. Immuch360'ta Kütüphane sekmesini, ardından Ağ paylaşımları'nı, ardından + ve "Bir Tapo kamera"yı açın.
+3. "Kamera ekle" sayfası kameraları arar ("Ağınızda Tapo kameralar aranıyor") ve onları Tapo etiketiyle "Ağda bulunanlar" altında listeler. "Kamera adresi"ni doldurmak için sizinkine dokunun ya da adresini yazın. Paylaşım formunda Tapo etiketli bir kamera da aynı sayfayı açar.
+4. "Ad": kameranın nasıl listeleneceği.
+5. "Hafıza kartındaki kayıtlar" altında, "TP-Link hesabı şifresi": Tapo uygulamasında kullandığınız hesabın şifresi. Kayıtları açar; e-posta adresiniz gerekmez.
+6. "Canlı" altında, "Kamera hesabı kullanıcı adı" ve "Kamera hesabı şifresi": 1. adımdaki kamera hesabı.
+7. İkisinden biri yeterlidir ("TP-Link hesabı şifresini, kamera hesabını veya her ikisini girin."): yalnızca TP-Link şifresi kayıtları, yalnızca kamera hesabı canlı görüntüyü verir.
+8. "Kamerayı test et"e dokunun. Hafıza kartının durumuyla birlikte "Kayıtlar: (model), ürün yazılımı (sürüm)" ve "Canlı görüntü: (video), ses (audio)" ya da her biri için neyin başarısız olduğunu gösterir.
+9. Kaydet'e dokunun. Kamera, paylaşımlardan sonra "Kameralar" altında, bilindiğinde modeliyle ve adresiyle birlikte `tapo://` olarak listelenir.
+
+### Canlı izleyin
+
+1. Kameraya dokunun. Canlı görüntüsü sayfasının en üstündedir: "Kameraya bağlanılıyor", ardından Canlı rozetli görüntü.
+2. Görüntünün üzerindeki düğmeler: başta kapalı olan ses ("Sesi aç"; cihaz sesi çalamıyorsa "Bu cihazda ses yok"), SD veya HD ve "Tam ekran".
+3. Bir telefon sayfada SD, tam ekranda HD gösterir; Quest HD gösterir. Geri önce tam ekrandan çıkar.
+4. Görüntünün altında model ve ürün yazılımı ile hafıza kartı gelir, örneğin "Hafıza kartı: (toplam) içinden (kullanılan) kullanılıyor" veya "Hafıza kartı yok".
+
+iPhone ve iPad'de canlı görüntü alanı şunu söyler: "Canlı görüntü iPhone ve iPad'e daha sonraki bir sürümde gelecek. Kayıtlar burada şimdiden oynatılabiliyor." Kamera hesabı olmadan sayfa "Canlı görüntüyü görmek için kamera hesabını ekleyin." der.
+
+### Kayıtları oynatın ve saklayın
+
+1. "Hafıza kartındaki kayıtlar" altında kamera sayfası, kayıt olan günleri en yenisi başta olmak üzere aya göre listeler. TP-Link hesabı şifresi olmadan "Kayıtları görmek için TP-Link hesabı şifresini ekleyin." der.
+2. Bir güne dokunun. Klipleri, kameranın kendi saatine göre saatler altında gelir; her birinde başlangıcı, süresi, bir olay için kameranın küçük resmi ve türü bulunur: Hareket, Kişi, Evcil hayvan, Araç, Bebek ağlaması, Hayvan, Sürekli veya Olay.
+3. Bir klibe dokunun. Uygulama onu kameradan alır ("Video kameradan alınıyor: %N", İptal ile), ardından video oynatıcıda, sesli ve ileri geri sarılabilir şekilde oynatır. Alınmış bir klip "Bu cihazda" ibaresini taşır ve bir dahaki sefere hemen açılır.
+4. Bir klibi Immich'te saklamak için, bağlı bir sunucuyla: videonun ⋮ menüsü, "Immich'e yükle".
+5. Yer açmak için: alınmış bir klibe uzun basmak "Bu cihazdaki kopyayı sil" seçeneğini sunar (telefonda), kamera sayfasında da boyutlarıyla birlikte "Bu kameradan alınan videoları sil" bulunur.
+6. Sağ üstteki yenileme düğmesi ya da sayfayı aşağı çekmek, kameraya yeniden sorar.
+
+Kamera artık kendi adresinde yanıt vermediğinde, sayfası onu ağda MAC adresiyle arar ve aynı sertifikayı gösterdiğinde artık yanıt verdiği yere taşır. Uygulamanın ilk gördüğünden farklı bir sertifika gösteren bir kamera ise bunun yerine bir soru alır: "(adres) adresindeki kamera öncekinden farklı bir sertifika gösteriyor. Yalnızca sıfırladıysanız veya değiştirdiyseniz devam edin."
+
+### Tapo uygulamasıyla karşılaştırma
+
+- **Yalnızca ağınızda**: uygulama yerel ağda doğrudan kamerayla konuşur, asla TP-Link'in sunucularıyla değil. Bir TP-Link hesabıyla oturum açmaz, bu yüzden e-posta adresiniz gerekmez.
+- **Kayıtlar normal videolara dönüşür**: alınmış bir klip, sesiyle birlikte bir H.264 videodur; onu Immich'e gönderebilirsiniz ve hafıza kartı üzerine kayıt yaptıktan sonra da orada kalır.
+- **Geri kalanın yanında**: Immich sunucusuyla veya sunucusuz, telefonda, televizyonda veya Quest'te (pencerede), ağda bir paylaşım gibi bulunur.
+- **Salt okunur**: uygulama kameradan yalnızca gösterdiğini ister; hiçbir ayarı değiştirmez ve kamerada hiçbir şeyi silmez.
+
+### Sınırlar
+
+- **Henüz bir cihazda doğrulanmadı**: derleme 20 henüz gerçek bir kamerayla çalışmadı. Protokol, 1.3.4 ürün yazılımlı bir C510W'nin yakalamalarından (2026 ortasının V4 oturum açması) yazıldı ve uygulama testlerinde simüle edilmiş bir kameraya karşı doğrulandı. "Kamerayı test et"in gösterdiği model ve ürün yazılımıyla ve [Günlükler](#logs) satırlarıyla raporlarınızı bekliyoruz.
+- **Canlı görüntü**: yalnızca Android telefon ve tabletlerde, Android TV'de ve Quest'te; henüz iPhone ve iPad'de değil. TP-Link'in sınırları geçerlidir: Tapo uygulaması dahil, kamera başına aynı anda en fazla iki HD ve iki SD akış; Tapo Care, hafıza kartı ve RTSP veya ONVIF kullanan bir kaydedici aynı anda çalışamaz.
+- **Kameralar**: pilli kameralar ve bir Tapo hub'ının arkasındaki kameralar desteklenmez.
+- **Kayıtlar**: kamera başına aynı anda bir indirme. Tapo uygulaması hafıza kartını gezerken uygulama 4, 8 ve 12 saniye sonra yeniden dener, ardından "Kamera, Tapo uygulaması gibi başka bir izleyiciyle meşgul. Bir dakika sonra tekrar deneyin." der. H.265 kayıtlar henüz dönüştürülmez ("Bu kayıt H.265 biçiminde ve bu sürüm henüz dönüştüremiyor."), sürekli kayıtların küçük resmi yoktur ve bir klip tamamen alındıktan sonra oynatılır.
+- **Şifreler**: her yanlış şifre sayılır ve birkaç tanesinden sonra kamera bir süre kilitlenir ("Kamera çok fazla yanlış şifreden sonra kilitlendi. N dakika sonra tekrar deneyin."). Uygulama reddedilmiş bir şifreyi asla kendiliğinden yeniden denemez: kameraya yeniden yalnızca "Kamerayı test et" veya Yeniden dene sorar. Kamera şifreyi ayarları için kabul edip videoları için kabul etmediğinde, Tapo uygulamasında Third-Party Compatibility'yi (Üçüncü Taraf Uyumluluğu) kapatıp yeniden açın, ardından kamerayı yeniden başlatın.
+- **Alan**: alınan klipler uygulamanın önbelleğinde kalır, tüm kameralar için toplam en fazla 1 GB (en uzun süredir oynatılmayanlar önce gider); sistem bu önbelleği temizleyebilir ve bir kamerayı kaldırmak kliplerini siler.
+- **Evden uzaktayken**: uygulama kameraya ağınızdaki adresinden ulaşır, bu yüzden ağın dışından ulaşamaz.
+- Immuch360'ın TP-Link ile bir bağlantısı yoktur.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Kameranın uygulaması olmadan ham 360° kamera dosyaları
@@ -349,7 +466,7 @@ Algılama, Apple'ın kendi görüntü kitaplığının yazdığı örnek bir uza
 
 İnsanlar kendi 360° fotoğraf ve videolarını izlemek için bir Quest 3 alıyor, sonra dosyaları nereye koyacaklarını, onları kablosuz olarak başlığa nasıl aktaracaklarını ve hangi oynatıcıyı kullanacaklarını soruyor: mağazadaki 360° ve 3D video oynatıcıları ücretli.
 
-Aynı Android uygulaması Quest 3 ve 3S'te tüm kütüphanenizle birlikte bir pencere olarak çalışır. 360° düğmesi, fotoğrafın veya videonun sizi her yönden sardığı ve başınızı çevirerek etrafınıza baktığınız sürükleyici bir görünüm açar; stereoskopik dosyalar için gerçek 3D'dir (Meta Spatial SDK). Medya Immich sunucunuzdan, başlığın kendisinden, bir NAS'tan, bir medya sunucusundan veya bir telefondan gelir ve yerinde oynatılır (medya sunucusu ve telefon derleme 19'dan itibaren, henüz başlıkta doğrulanmadı). Ücretsiz ve açık kaynaklıdır. Bir Quest 3'te ve Insta360 X4 8K HEVC videolarıyla bir kullanıcı tarafından doğrulandı.
+Aynı Android uygulaması Quest 3 ve 3S'te tüm kütüphanenizle birlikte bir pencere olarak çalışır. 360° düğmesi, fotoğrafın veya videonun sizi her yönden sardığı ve başınızı çevirerek etrafınıza baktığınız sürükleyici bir görünüm açar; stereoskopik dosyalar için gerçek 3D'dir (Meta Spatial SDK). Medya Immich sunucunuzdan, başlığın kendisinden, bir NAS'tan, bir medya sunucusundan, bir telefondan veya bir Plex sunucusundan gelir ve yerinde oynatılır (medya sunucusu ve telefon derleme 19'dan, Plex sunucusu derleme 20'den itibaren, henüz başlıkta doğrulanmadı); derleme 20'den itibaren pencere Tapo kameraları da gösterir. Ücretsiz ve açık kaynaklıdır. Bir Quest 3'te ve Insta360 X4 8K HEVC videolarıyla bir kullanıcı tarafından doğrulandı.
 
 ### Sürükleyici görünümü açın
 
@@ -408,6 +525,56 @@ Merkezi önünüze gelene kadar sağ analog çubukla (ya da bilgi panelinin Dön
 - **İleri geri sarma**: kaynağı bayt aralığı isteklerine yanıt vermeyen bir videoda sarma yapılamaz; panel bunu belirtir.
 - **Düz videolar**: düz (360° olmayan) stereoskopik bir video, iki göz de görünür halde pencerede oynatılır; sürükleyici 3D görünüm 360° ve VR180 medya içindir.
 - **Daha fazlası**: başlığın çözdüğü codec'ler, mağaza, izinler ve APK boyutu [Meta Quest 3](#meta-quest-3) bölümündedir.
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Televizyonunuzda izleyin (Android TV ve Google TV)
+
+360° fotoğraf ve videoları, albümlerinizi ve NAS'ınızın veya Plex sunucunuzun videolarını, kanepedeki aile için büyük ekranda, televizyon kumandasıyla izlemek istiyorsunuz. Immich mobil uygulaması bir televizyon uygulaması değildir: onu bir televizyona kuran bir kullanıcı, kumandayla değil fareyle çalıştığını gördü ([tartışma #1614](https://github.com/immich-app/immich/discussions/1614)) ve Immich ekibinin resmi bir televizyon uygulaması için planı yok ([tartışma #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Derleme 20'den itibaren aynı Android uygulaması, tek giriş olarak kumandayla Android TV ve Google TV'de çalışır: telefonlar ve televizyonlar için tek APK, oklarla döndürülen 360° ve 3D görüntüleyiciler, ve televizyonda ağ paylaşımları, Plex ve Tapo kameralar; Immich sunucusuyla veya sunucusuz.
+
+<a id="install-it-on-the-tv"></a>
+### Televizyona kurun
+
+1. Google Play uygulamayı televizyonlarda sunana kadar (bu, televizyon sürümünün Google tarafından incelenmesini bekliyor), [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki evrensel `Immuch360-v<version>-release.apk` dosyasını alın.
+2. Televizyonda geliştirici seçeneklerini ve USB hata ayıklamayı açın (bir Google TV'de: Ayarlar, Sistem, Hakkında, "Android TV OS build" (Android TV OS derlemesi) öğesini yedi kez seçin, ardından Ayarlar, Sistem, Geliştirici seçenekleri; adlar televizyondan televizyona değişir).
+3. Aynı ağdaki bir bilgisayardan, adb ile (Android SDK Platform Tools): `adb connect <address of the TV>` (`<address of the TV>` televizyonun adresidir), televizyondaki istemi kabul edin, ardından `adb install -r Immuch360-v<version>-release.apk`.
+4. Uygulama, bandıyla (banner) birlikte televizyonun uygulamaları arasında görünür. Sonraki sürümü de aynı şekilde kurun: `-r` oturumu ve ayarları korur.
+
+### İlk başlatma
+
+1. Telefondaki gibi oturum açın: oklar bir çerçeveyi alandan alana taşır ve bir alanda OK ("Yazmak için OK'e basın") sunucu adresi, e-posta ve şifre için televizyonun klavyesini bir iletişim kutusunda açar.
+2. Ya da "Sunucu olmadan kullan"ı seçin. Bir televizyonun kendi fotoğrafı yoktur, bu yüzden Fotoğraflar sekmesi bir Ağ paylaşımları düğmesiyle birlikte "Bu televizyonun kendi fotoğrafı veya videosu yok: Kütüphane'den bir ağ paylaşımı açın." der. Oraya telefondaki gibi bir paylaşım, bir Plex sunucusu veya bir kamera ekleyin (bkz. [Ağ paylaşımları](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Kumandayla gezinin
+
+- Oklar çerçeveyi taşır, OK üzerinde olduğu öğeyi açar, Geri geri gider. Bir sekmeden Geri yan menüye, ardından Fotoğraflar'a, ardından uygulamanın dışına gider.
+- Kanal yukarı ve aşağı tuşları sayfa sayfa kaydırır.
+- Görüntüleyicilerde kumandanın oynat ve duraklat, ileri sar, geri sar, sonraki ve önceki tuşları çalışır ve bilgi tuşu bir fotoğrafın veya videonun ayrıntılarını gösterir.
+
+### Kumandayla fotoğraflar ve videolar
+
+1. **Bir fotoğraf**: sol ve sağ önceki veya sonrakine gider, OK kontrolleri gösterir veya gizler, Yukarı üst çubuğa (360° düğmesinin olduğu yer), Aşağı alt çubuğa gider.
+2. **Bir video**: OK duraklatır ve kontrolleri gösterir ya da oynatır. Oynarken sol ve sağ 10 saniye geri veya ileri atlar; duraklatılmışken, ipucunun dediği gibi önceki veya sonraki öğeye giderler: "Duraklatıldı: oklar önceki veya sonraki öğeye gider".
+3. **Bir 360° fotoğraf**, 360° düğmesinden: oklar etrafa bakar, basılı tutulduğunda daha hızlı, ve görünüm yavaşlayarak durur. OK, üst çubuğun düğmelerine, "Uzaklaştır", görüş alanı ve 3D'nin yanındaki "Yakınlaştır"a geçer; kanal yukarı ve aşağı da yakınlaştırır. Geri, düğmelerden görüntüye döner, ardından kapatır. İpucu şöyledir: "Etrafa bakmak için oklar, kontroller için OK, kapatmak için Geri".
+4. **Bir 360° video**, 360° düğmesinden: kontroller gizliyken oklar etrafa bakar, OK duraklatır ve onları gösterir, Geri onları gizler, ardından kapatır. İpucu şöyledir: "Etrafa bakmak için oklar, duraklatmak ve kontrolleri göstermek için OK, kapatmak için Geri".
+5. **Anılar**: sol ve sağ fotoğraflar arasında ve sonraki anıya geçer, Yukarı kapat düğmesine, Aşağı "Zaman çizelgesinde görüntüle"ye gider.
+6. **Paylaşımlar ve Plex**: bir paylaşımın fotoğraf ve video sayfalarında aynı tuşlar; orada sol ve sağ klasördeki önceki veya sonraki dosyayı açar.
+
+### Uzaktan kumanda düzeni ayarı
+
+Ayarlar, Tercihler, "Uzaktan kumanda düzeni": "Büyük odak çerçeveleri ve uzaktan kumanda tuşları, dokunmatik ekran gerektiren kontroller olmadan. Otomatik, Android TV ve Google TV'de açar." Varsayılan Otomatik'tir; Açık, klavye veya oyun kumandasıyla kullanılan bir tablete uyar; Kapalı onu bir televizyonda kapatır. Ayar yalnızca Android'de vardır. Oklar ve OK, ayar ne olursa olsun görüntüleyicilerde bir klavye veya oyun kumandasıyla çalışır.
+
+### Sınırlar
+
+- **Bir görüntüleyici**: televizyonda uygulama gösterir ve oynatır. Yedekleme, yüklemeler, düzenleme, silme, paylaşma, birden çok öğe seçme, Cast, Spatial 2.5D, jiroskop, harita ve Yerler, ve "Bu telefonu ağda paylaş" gizlidir.
+- **Oturum açma**: OAuth bir web sayfası açar ve bir televizyon bunu yapamaz: "(sağlayıcı) ile oturum açmak bir web sayfası açar ve bu televizyon bunu yapamaz. Bunun yerine e-posta ve şifreyle oturum açın."
+- **Bağlantılar** bir tarayıcı açmak yerine adreslerini "Başka bir cihazda aç" altında gösterir ve metin sistemin klavye iletişim kutusunda yazılır.
+- **Bellek**: belleği az olan bir televizyonda 360° fotoğraflar en fazla 4096x2048 gösterilir, yakınlaştırmada daha keskin görüntü olmadan.
+- **Videolar**: neyin oynatılacağına televizyonun kod çözücüleri karar verir; telefondaki aynı Video kaynağı ayarı ve kod çözücü denetimiyle (bkz. [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters)); henüz bir televizyonda ölçülmedi.
+- **Henüz bir cihazda doğrulanmadı**: televizyon desteği yalnızca otomatik testlerle doğrulandı ve henüz ne bir televizyonda ne de bir televizyon emülatöründe çalıştı. Doğrulanacaklar: okların bir 360° videoyu döndürdüğü yön, metin iletişim kutusunda televizyonun klavyesi (Gboard), kızılötesi kumandaların OK tuşu, kenar boşlukları ve televizyon ana ekranındaki bant. Raporlarınızı bekliyoruz.
+- **Televizyonlarda Google Play**, televizyon sürümünün Google tarafından incelenmesini bekliyor; o zamana kadar APK.
+- **Diğer televizyonlar**: Fire TV test edilmedi ve Apple TV sürümü yok.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## 360° çekimlerinizi bulun: 360° listesi
@@ -488,11 +655,11 @@ Sunucu orijinal üzerindeki HTTP Range isteklerini yok saydığında ve MP4 dizi
 <a id="everything-else-is-immich"></a>
 ## Geri kalan her şey Immich
 
-Resmi Immich mobil uygulamasının yaptığı her şey burada: yedekleme, zaman çizelgesi, albümler, arama, paylaşım, ortaklar; hepsi sunucunuzla eşitlenir, web uygulamasıyla aynı sunucu ve aynı hesapla. Immuch360 resmi uygulamanın yanına kurulur (paket `com.aprogsys.immuch360`). Derleme 15'ten itibaren iki fark var: "Orijinal videoyu zorla" anahtarı yukarıda anlatılan Video kaynağı seçimine dönüştü ve bir cihaz albümünden elle yüklediğiniz fotoğraf ve videolar yedeklenmiş sayılır.
+Resmi Immich mobil uygulamasının yaptığı her şey burada: yedekleme, zaman çizelgesi, albümler, arama, paylaşım, ortaklar; hepsi sunucunuzla eşitlenir, web uygulamasıyla aynı sunucu ve aynı hesapla. Immuch360 resmi uygulamanın yanına kurulur (paket `com.aprogsys.immuch360`). Derleme 15'ten itibaren iki fark var: "Orijinal videoyu zorla" anahtarı yukarıda anlatılan Video kaynağı seçimine dönüştü ve bir cihaz albümünden elle yüklediğiniz fotoğraf ve videolar yedeklenmiş sayılır. Bir televizyonda, derleme 20'den itibaren uygulama bir görüntüleyicidir, bkz. [Televizyonunuzda izleyin](#watch-on-your-tv-android-tv-and-google-tv).
 
 Bir 360° fotoğrafı uygulaması olmayan birine göstermek için onu bir Immich paylaşılan bağlantısıyla paylaşın: Immich web uygulaması bir 360° fotoğrafı onun tarayıcısında küre olarak gösterir.
 
-Güncel derleme, derleme 19 (sürüm 3.3.0-rc.0, derleme numarası 3030017), Immich 3.3.0-rc.0'ı (Immich `main`, henüz kararlı bir sürüm değil) temel alır ve bir Immich 3.2 sunucusuyla test edildi. Lütfen sorunları Immich projesine değil, [Issues](https://github.com/freeKC/Immuch360/issues) bölümüne bildirin. Immich'in kendisinin tam belgeleri için bkz. [immich.app](https://immich.app).
+Güncel derleme, derleme 20 (sürüm 3.3.0-rc.0, derleme numarası 3030018), Immich 3.3.0-rc.0'ı (Immich `main`, henüz kararlı bir sürüm değil) temel alır. Derleme 19 bir Immich 3.2 sunucusuyla test edildi ve derleme 20, uygulamanın sunucudan istediklerinde hiçbir şeyi değiştirmez. Lütfen sorunları Immich projesine değil, [Issues](https://github.com/freeKC/Immuch360/issues) bölümüne bildirin. Immich'in kendisinin tam belgeleri için bkz. [immich.app](https://immich.app).
 
 ## Immich uygulaması ve diğer uygulamalarla karşılaştırma
 
@@ -515,6 +682,9 @@ Güncel derleme, derleme 19 (sürüm 3.3.0-rc.0, derleme numarası 3030017), Imm
 | Paylaşım türü olarak DLNA medya sunucuları | ❌ | ✅ derleme 19'dan itibaren | Docker'da minidlna ve Gerbera ile doğrulandı; Plex, Jellyfin, bir NAS, Freebox Server, bir iPhone ve Quest derleme 19'un cihaz testidir |
 | Bir paylaşımın dosyalarını Immich'e gönderme; elle gönderilen cihaz dosyaları yedeklenmiş sayılır | ❌ yalnızca cihaz dosyaları | ✅ derleme 15'ten itibaren | Bir Android emülatöründe bir Samba test sunucusuna ve bir Immich 3.2 sunucusuna karşı test edildi |
 | Başlık için bu telefonu ağda paylaşma | ❌ | ✅ derleme 19'dan itibaren, Android ve iOS | Birim testleri ve bir bilgisayarda başlığın WebDAV istemcisiyle uçtan uca testler; bir Quest'e hizmet veren bir telefon ve iPhone tarafı derleme 19'un cihaz testidir |
+| Orijinal dosyalardan oynatılan Plex Media Server kütüphaneleri, evde ve dışarıda, plex.tv olmadan | ❌ | ✅ derleme 20'den itibaren, her görüntüleyicide, telefonlarda, tabletlerde, Quest 3'te ve televizyonlarda | Bir bilgisayardan gerçek bir Plex Media Server 1.42.1'e karşı doğrulandı (eşleştirme, klasörler, bayt aralıkları, küçük resimler, ev dışı adres); henüz bir cihazda doğrulanmadı |
+| Tapo kameralar: canlı görüntü ve istediğinizde Immich'e gönderilen hafıza kartı kayıtları | ❌ | ✅ derleme 20'den itibaren: kayıtlar her yerde, canlı görüntü Android, Android TV ve Quest 3'te | Simüle edilmiş bir kameraya karşı doğrulandı; henüz gerçek bir kamerayla doğrulanmadı |
+| Android TV ve Google TV, kumandayla, aynı APK'da | ❌ bir televizyon uygulaması değil | ✅ derleme 20'den itibaren | Otomatik testlerle doğrulandı; henüz bir televizyonda doğrulanmadı |
 | Ham Insta360 .insp fotoğrafları ve tek parçalı .insv videoları | ❌ düz | ✅ derleme 16'dan itibaren | Fotoğraflar X3 dosyalarının Insta360 Studio dışa aktarımlarıyla, videolar düşük çözünürlüklü bir X3 dosyasıyla bir Android emülatöründe doğrulandı; henüz bir iPhone'da çalıştırılmadı |
 | Parça veya dosya başına bir mercekli ham videolar (Insta360 X4, X4 Air, X5, X6, X3 çiftleri, GoPro .360, DJI .osv) | ❌ düz veya hatalı | ✅ derleme 18'den itibaren | Ayrıştırıcılar ve birleştirme gerçek X4, X3 çifti, GoPro MAX ve Osmo 360 dosyalarında doğrulandı; oynatma derleme 18 ve 19'un cihaz testidir |
 | Çift balıkgözü .dng | ❌ düz | ❌ henüz değil | Planlandı |
@@ -529,27 +699,33 @@ Güncel derleme, derleme 19 (sürüm 3.3.0-rc.0, derleme numarası 3030017), Imm
 |---|---|---|
 | Immich web uygulaması | Bir 360° fotoğrafı küre olarak gösterir, ancak ham bir .insp dosyasını bitmiş bir panorama sanar ve iki dairesini kürenin etrafına sarar; bir VR görünümü hâlâ bir istek ([tartışma #14768](https://github.com/immich-app/immich/discussions/14768)) | Ham dosyaları cihazda birleştirir ve Quest 3'te sürükleyici bir görünüm açar |
 | Insta360 uygulaması veya Studio | Kartın ham dosyalarını izlemeden önce 360° bir görüntüye dönüştürmek için gerekli | Ham .insp ve .insv dosyalarını, GoPro .360 ve DJI .osv dosyalarını da doğrudan açar |
-| Plex, Jellyfin, Synology Photos | 360° fotoğraf ve videolar, forumlarındaki konuların anlattığı gibi düz gösterilir veya tanınmaz (bir Plex isteği 2017'den beri açık) | Aynı klasörleri SMB, WebDAV veya DLNA üzerinden okur ve sunucuda hiçbir şeyi değiştirmeden küre olarak oynatır |
+| Plex, Jellyfin, Synology Photos | 360° fotoğraf ve videolar, forumlarındaki konuların anlattığı gibi düz gösterilir veya tanınmaz (bir Plex isteği 2017'den beri açık) | Derleme 20'den itibaren Plex kütüphanesinin kendisini ya da aynı klasörleri SMB, WebDAV veya DLNA üzerinden okur ve sunucuda hiçbir şeyi değiştirmeden küre olarak oynatır |
+| Tapo uygulaması | TP-Link hesabınızla oturum açılmış, klipleri fotoğraflarınızdan ayrı tutan ayrı bir uygulama | Kamerayı fotoğraflarınızın yanında gösterir, onunla yalnızca ağınızda konuşur ve bir klibi Immich'e gönderebileceğiniz bir video olarak saklar (derleme 20'den itibaren) |
+| Televizyonda Immich mobil uygulaması | Bir televizyon uygulaması değil: bir kullanıcı kumandayla değil fareyle çalıştığını bildiriyor | Aynı uygulama, kumanda için yapılmış (derleme 20'den itibaren) |
 | Dosyaları başlığa kopyalamak | İzleyebilmeden önce her dosyanın kabloyla kopyalanması | Immich'ten, bir NAS'tan, bir medya sunucusundan veya bir telefondan yerinde oynatır |
 | Quest mağazasının 360° ve 3D oynatıcıları | Ücretli | Ücretsiz ve açık kaynak (AGPL) |
 
 ## Platforma göre biçimler ve kaynaklar
 
-Immuch360 bir galeridir ve aynı zamanda ücretsiz bir medya oynatıcıdır: resmi uygulamanın oynatamadıklarını, dört kaynaktan, dosyaya uyan oynatıcıda oynatır.
+Immuch360 bir galeridir ve aynı zamanda ücretsiz bir medya oynatıcıdır: resmi uygulamanın oynatamadıklarını, ikinci tablodaki kaynaklardan, dosyaya uyan oynatıcıda oynatır.
 
-| Ne | Android telefonlar | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Düz videolar (MP4, MOV, MKV, cihazın çözebildikleri) | Immich oynatıcısı ve ağ paylaşımları için yerleşik bir oynatıcı | Aynısı, iOS'un açmadığı bir paylaşımdaki MKV ve AVI dosyaları hariç (sunucuda dönüştürülmüş olarak oynatılırlar) | Pencerede |
-| 360° fotoğraflar | Küre görüntüleyici, jiroskop | Aynısı | Sürükleyici, sizi her yönden sarar |
-| 360° videolar | Küre üzerinde yerleşik Media3 oynatıcı, jiroskop, ileri geri sarma, ses parçası seçimi, arabellek göstergesi | Küre üzerinde yerleşik SceneKit oynatıcı, jiroskop, ses parçası seçimi, arabellek göstergesi; oynat ve duraklat, henüz zaman çubuğu yok | Sürükleyici, stereoskopik dosyalar için gerçek 3D, 10 saniyelik atlamalı zaman çubuğu, önceki ve sonraki medya |
-| 3D 360° (üst ve alt, yan yana) | Sol göz, düzen düğmesi | Aynısı | Her göz karenin kendi yarısını alır |
-| VR180 (yarım küre) fotoğraf ve videolar | Yarım küre, 360°/180° düğmesi | Aynısı | Sürükleyici yarım küre |
-| Spatial 2.5D (stereoskopik bir videodan düz ekranda derinlik) | Yerleşik oynatıcı, ön kamerayla baş izleme | Aynısı | Sunulmaz |
-| Apple uzamsal fotoğrafları (HEIC stereo çiftleri, derleme 19'dan itibaren) | Sol göz, bir ayrıntı satırı uzamsal olduğunu belirtir | Aynısı | 3D olarak görüntüle: sürükleyici görünümde süzülen bir fotoğrafta iki göz, 3D veya 2D, yeniden boyutlandırılabilir |
-| Apple uzamsal videoları (MV-HEVC, derleme 19'dan itibaren) | Tek göz (temel katman), bir bildirimle | Aynısı | Pencerede tek göz, bir bildirimle |
-| Ham Insta360 .insp fotoğrafları (derleme 16'dan itibaren) | Küre görüntüleyiciden önce GPU'da birleştirilir, en fazla 8192x4096 | Aynısı | Sürükleyici, başlık için hazırlanmış birleştirilmiş bir resimden |
-| Ham Insta360 .insv, iki mercek tek parçada (derleme 16'dan itibaren) | Media3 oynatıcısında bir GPU efektiyle birleştirilir | Bir SceneKit shader ile birleştirilir | Sürükleyici, aynı GPU efektiyle birleştirilir |
-| Parça veya dosya başına bir mercekli ham videolar (derleme 18'den itibaren): Insta360 X4, X4 Air, X5, X6 .insv, X3 çiftleri, GoPro .360, DJI .osv | Aynı anda iki donanım kod çözücüsü, mercek başına bir tane (derleme 19'dan itibaren donanım kod çözücüsü olmayan bir cihazda yazılım kod çözücüleri, mercek başına en fazla 2048x2048), ve küreye birleştiren bir GL kompozitörü; cihaz ikisini çalıştıramadığında tek mercek, ardından dönüştürülmüş akış, ardından birleştirilmemiş video | Metal ile özel bir AVFoundation kompozitörü | Sürükleyici, aynı iki kod çözücü ve kompozitör (3840x1920 panel) |
+| Ne | Android telefonlar | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (derleme 20'den itibaren) |
+|---|---|---|---|---|
+| Düz videolar (MP4, MOV, MKV, cihazın çözebildikleri) | Immich oynatıcısı ve ağ paylaşımları için yerleşik bir oynatıcı | Aynısı, iOS'un açmadığı bir paylaşımdaki MKV ve AVI dosyaları hariç (sunucuda dönüştürülmüş olarak oynatılırlar) | Pencerede | Telefonlardaki gibi; OK duraklatır, sol ve sağ 10 sn atlar |
+| 360° fotoğraflar | Küre görüntüleyici, jiroskop | Aynısı | Sürükleyici, sizi her yönden sarar | Oklarla döndürülen, kanal tuşlarıyla yakınlaştırılan küre görüntüleyici |
+| 360° videolar | Küre üzerinde yerleşik Media3 oynatıcı, jiroskop, ileri geri sarma, ses parçası seçimi, arabellek göstergesi | Küre üzerinde yerleşik SceneKit oynatıcı, jiroskop, ses parçası seçimi, arabellek göstergesi; oynat ve duraklat, henüz zaman çubuğu yok | Sürükleyici, stereoskopik dosyalar için gerçek 3D, 10 saniyelik atlamalı zaman çubuğu, önceki ve sonraki medya | Telefonların Media3 oynatıcısı, oklarla döndürülür |
+| 3D 360° (üst ve alt, yan yana) | Sol göz, düzen düğmesi | Aynısı | Her göz karenin kendi yarısını alır | Sol göz, düzen düğmesi |
+| VR180 (yarım küre) fotoğraf ve videolar | Yarım küre, 360°/180° düğmesi | Aynısı | Sürükleyici yarım küre | Yarım küre, 360°/180° düğmesi |
+| Spatial 2.5D (stereoskopik bir videodan düz ekranda derinlik) | Yerleşik oynatıcı, ön kamerayla baş izleme | Aynısı | Sunulmaz | Sunulmaz |
+| Apple uzamsal fotoğrafları (HEIC stereo çiftleri, derleme 19'dan itibaren) | Sol göz, bir ayrıntı satırı uzamsal olduğunu belirtir | Aynısı | 3D olarak görüntüle: sürükleyici görünümde süzülen bir fotoğrafta iki göz, 3D veya 2D, yeniden boyutlandırılabilir | Sol göz, bir ayrıntı satırı |
+| Apple uzamsal videoları (MV-HEVC, derleme 19'dan itibaren) | Tek göz (temel katman), bir bildirimle | Aynısı | Pencerede tek göz, bir bildirimle | Tek göz, bir uyarıyla |
+| Ham Insta360 .insp fotoğrafları (derleme 16'dan itibaren) | Küre görüntüleyiciden önce GPU'da birleştirilir, en fazla 8192x4096 | Aynısı | Sürükleyici, başlık için hazırlanmış birleştirilmiş bir resimden | Telefonlardaki gibi |
+| Ham Insta360 .insv, iki mercek tek parçada (derleme 16'dan itibaren) | Media3 oynatıcısında bir GPU efektiyle birleştirilir | Bir SceneKit shader ile birleştirilir | Sürükleyici, aynı GPU efektiyle birleştirilir | Telefonlardaki gibi |
+| Parça veya dosya başına bir mercekli ham videolar (derleme 18'den itibaren): Insta360 X4, X4 Air, X5, X6 .insv, X3 çiftleri, GoPro .360, DJI .osv | Aynı anda iki donanım kod çözücüsü, mercek başına bir tane (derleme 19'dan itibaren donanım kod çözücüsü olmayan bir cihazda yazılım kod çözücüleri, mercek başına en fazla 2048x2048), ve küreye birleştiren bir GL kompozitörü; cihaz ikisini çalıştıramadığında tek mercek, ardından dönüştürülmüş akış, ardından birleştirilmemiş video | Metal ile özel bir AVFoundation kompozitörü | Sürükleyici, aynı iki kod çözücü ve kompozitör (3840x1920 panel) | Televizyon aynı anda iki kod çözücü çalıştırabildiğinde telefonlardaki gibi |
+| Tapo kamera canlı görüntüsü (derleme 20'den itibaren) | Media3 RTSP oynatıcı: sayfada SD, tam ekranda HD, ses düğmesi | Henüz yok: bir kart daha sonra geleceğini söyler | Pencerede, HD | Telefonlardaki gibi |
+| Tapo kamera kayıtları (derleme 20'den itibaren) | Hafıza kartından sesli bir H.264 videoya alınır, ardından ileri geri sarılarak oynatılır | Aynı | Aynı, pencerede | Aynı |
+
+Televizyon sütunu henüz bir televizyonda doğrulanmadı, bkz. [Televizyonunuzda izleyin](#watch-on-your-tv-android-tv-and-google-tv); kamera satırları henüz gerçek bir kamerayla doğrulanmadı.
 
 | Kaynak | Nasıl |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 bir galeridir ve aynı zamanda ücretsiz bir medya oynatıcıdır: res
 | Telefonun veya başlığın kendisi | Giriş sayfasında "Sunucu olmadan kullan" ya da Kütüphane sekmesindeki Bu cihazda öğesi |
 | Bir NAS veya bir bilgisayar | SMB ve WebDAV paylaşımları, derleme 19'dan itibaren de DLNA medya sunucuları; ağda bulunur, canlı okunur (bir SMB videosu en fazla altı bağlantı üzerinden), hiçbir şey kopyalanmaz; derleme 15'ten itibaren seçtiğiniz dosyalar Immich hesabınıza gönderilebilir |
 | Başka bir telefon (derleme 19'dan itibaren) | O telefonda "Bu telefonu ağda paylaş": başlık ya da ağdaki herhangi bir WebDAV istemcisi onun albümlerini, aylarını ve 360° medyasını okur |
+| Bir Plex Media Server (derleme 20'den itibaren) | Klasöre göre fotoğraf, film ve dizi kütüphaneleri; orijinal dosyalar, sunucunun kendi sertifikasıyla doğrulanan HTTPS üzerinden canlı okunur, evde veya ev dışı adres üzerinden, her platformda; bkz. [Plex Media Server, plex.tv olmadan](#plex-media-server-without-plextv) |
+| Bir Tapo kamera (derleme 20'den itibaren) | Kamera hesabıyla canlı görüntü (Android, Android TV, Quest) ve TP-Link hesabı şifresiyle hafıza kartındaki kayıtlar (her platform), yalnızca yerel ağda; bkz. [Tapo kameralar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 Meta Quest 3 ve 3S'te de çalışır (Horizon OS v69 veya sonrası; Horizon Store derlemesi yalnızca bu ikisi için listelenir; evrensel `-release.apk` bir Quest 2 veya Quest Pro'ya da kurulabilir, test edilmedi). Nasıl kullanılacağı [Meta Quest 3 başlığında](#in-the-meta-quest-3-headset) bölümündedir; bu bölüm kurulumu ve başlıkta nelerin farklı olduğunu anlatır.
 
-Başlık derlemesi, Horizon Store'un gerektirdiği gibi, sunucularla yalnızca HTTPS üzerinden ya da düz HTTP üzerinden ev ağı adlarıyla (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ve başlığın kendisiyle konuşur. `http://192.168.1.10:2283` gibi IP içeren düz bir HTTP adresi olarak yazılan bir sunucu bu derleme tarafından reddedilir: HTTPS, bir ev ağı adı (`nas.local`) ya da telefonların açık politikasını koruyan evrensel `-release.apk` kullanın. Yerel ağdaki düz HTTP adreslerinde bulunan WebDAV, DLNA ve telefon paylaşımları bundan etkilenmez: uygulama onları kendisi okur ve oynatıcılarına yalnızca kendi yerel köprüsünün adresini verir (DLNA ve derleme 19'da yeni olan telefon paylaşımı için başlıkta doğrulanacak).
+Başlık derlemesi, Horizon Store'un gerektirdiği gibi, sunucularla yalnızca HTTPS üzerinden ya da düz HTTP üzerinden ev ağı adlarıyla (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ve başlığın kendisiyle konuşur. `http://192.168.1.10:2283` gibi IP içeren düz bir HTTP adresi olarak yazılan bir sunucu bu derleme tarafından reddedilir: HTTPS, bir ev ağı adı (`nas.local`) ya da telefonların açık politikasını koruyan evrensel `-release.apk` kullanın. Yerel ağdaki düz HTTP adreslerinde bulunan WebDAV, DLNA ve telefon paylaşımları bundan etkilenmez: uygulama onları kendisi okur ve oynatıcılarına yalnızca kendi yerel köprüsünün adresini verir (DLNA ve derleme 19'da yeni olan telefon paylaşımı için başlıkta doğrulanacak). Derleme 20'den itibaren bir Plex sunucusuna HTTPS üzerinden, bir Tapo kameraya ise uygulamanın kendisi tarafından ulaşılır; canlı görüntüsü HTTP olmayan RTSP üzerindendir: ikisinin de etkilenmemesi gerekir (başlıkta doğrulanacak).
 
 <a id="install"></a>
 ### Kurulum
@@ -576,7 +754,7 @@ Horizon Store kaydı, derleme 14 ile gönderildi ve Meta'nın incelemesini bekli
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Başlıkta Library'yi (Kitaplık) açın, "Unknown sources" (Bilinmeyen kaynaklar) filtresini seçin ve Immuch360'ı başlatın.
@@ -584,7 +762,7 @@ Horizon Store kaydı, derleme 14 ile gönderildi ve Meta'nın incelemesini bekli
 
 ### Pencerede
 
-Uygulamanın tamamı yeniden boyutlandırılabilir bir 2D pencere olarak çalışır: oturum açma, zaman çizelgesi, albümler, arama, Kütüphane sekmesi (360° listesi, Bu cihazda, Ağ paylaşımları), ayarlar ve düz fotoğraf ve videoların oynatıldığı fotoğraf ve video görüntüleyicileri. Başlıkta 360° düğmesi ve ⋮ menüsündeki 360° olarak görüntüle, telefonların küre görüntüleyicisi yerine doğrudan sürükleyici görünümü açar; Spatial 2.5D düğmesi ve ayarı gösterilmez. Derleme 19'dan itibaren bir Apple uzamsal fotoğrafında 3D olarak görüntüle düğmesi vardır ve Bu telefonu ağda paylaş kutucuğu gösterilmez: bir telefonun paylaşımını okuyan, başlığın kendisidir.
+Uygulamanın tamamı yeniden boyutlandırılabilir bir 2D pencere olarak çalışır: oturum açma, zaman çizelgesi, albümler, arama, Kütüphane sekmesi (360° listesi, Bu cihazda, Ağ paylaşımları), ayarlar ve düz fotoğraf ve videoların oynatıldığı fotoğraf ve video görüntüleyicileri. Başlıkta 360° düğmesi ve ⋮ menüsündeki 360° olarak görüntüle, telefonların küre görüntüleyicisi yerine doğrudan sürükleyici görünümü açar; Spatial 2.5D düğmesi ve ayarı gösterilmez. Derleme 19'dan itibaren bir Apple uzamsal fotoğrafında 3D olarak görüntüle düğmesi vardır ve Bu telefonu ağda paylaş kutucuğu gösterilmez: bir telefonun paylaşımını okuyan, başlığın kendisidir. Derleme 20'den itibaren Plex sunucuları ve Tapo kameralar da pencerede açılır, kamera canlı görüntüsü HD'dir; "Uzaktan kumanda düzeni" ayarı Otomatik'te kalır, bu da onu başlıkta kapalı bırakır.
 
 ### Resimlerle
 
@@ -598,7 +776,7 @@ Başlıkta, yakalama düğmesiyle (Meta düğmesi ve tetik) bir Quest 3 üzerind
 ### Başlıktaki sınırlamalar
 
 - **Video codec'leri**: HEVC (H.265) güvenli seçimdir; H.264 yaklaşık 4096x2304'te durur. Uygulamanın neyi denetlediği ve başlığa çözebileceği bir videonun nasıl verileceği [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters) bölümündedir.
-- **Mağaza**: mağaza sürümü derleme 14 ile başlar. "Derleme 15'ten itibaren" ve "derleme 16'dan itibaren" diye işaretlenen özellikler bir sonraki güncellemesiyle (alfa test kanalında zaten bulunan derleme 16), sonrakiler de ondan sonra gelir; GitHub APK'sında şimdiden hepsi var.
+- **Mağaza**: mağaza sürümü derleme 14 ile başlar. "Derleme 15'ten itibaren" ve sonrası diye işaretlenen özellikler sonraki güncellemeleriyle gelir (mağazanın test edenlere yönelik alfa test kanalı her yeni derlemeyi alır); GitHub APK'sında şimdiden hepsi var.
 - **İzinler**: başlık derlemesi yalnızca fotoğraf ve videolar (sunucusuz mod) ve bildirimler (yedekleme ilerlemesi) için izin ister. Telefon derlemesinin aksine depolama, ses, konum veya kamera izni yoktur; bu nedenle Wi-Fi adına göre sunucu değiştirme başlıkta kullanılamaz.
 - **APK boyutu**: Spatial SDK, hiç yüklenmediği telefonlarda da, yaklaşık 56 MB 64-bit ARM yerel kodu ekler.
 - **Lisans**: sürükleyici görünüm, Meta Platform Technologies SDK License Agreement kapsamında dağıtılan Meta Spatial SDK'yı kullanır.
@@ -606,13 +784,14 @@ Başlıkta, yakalama düğmesiyle (Meta düğmesi ve tetik) bir Quest 3 üzerind
 <a id="where-to-get-it"></a>
 ## Nereden edinilir
 
-Uygulama Google Play'de; App Store sürümü Apple'ın, Meta Horizon Store sürümü de Meta'nın incelemesini bekliyor. En yeni derleme her zaman GitHub sürümündedir:
+Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple'ın, Meta Horizon Store sürümü Meta'nın, televizyonlar için Google Play sürümü de televizyon sürümünün Google tarafından incelenmesini bekliyor. En yeni derleme her zaman GitHub sürümündedir:
 
 | Platform | Bugün | Yakında |
 |---|---|---|
-| Android telefon ve tabletler | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ya da [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki APK: telefon için `Immuch360-v<version>-arm64-v8a-release.apk` (evrensel `Immuch360-v<version>-release.apk` her yerde çalışır, `-armeabi-v7a` eski 32 bit telefonlar içindir, `.aab` dosyası ise yandan yükleme için değil Google Play içindir). GitHub derlemesi genellikle mağazadakinden ileridedir. Her iki durumda da resmi Immich uygulamasının yanına kurulur (paket `com.aprogsys.immuch360`). | Google Play: derleme 15 ve 16, 4 Ekim 2026'da Google'ın incelemesine gönderildi (orada yayında olduğu doğrulanan son derleme, derleme 11) |
+| Android telefon ve tabletler | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ya da [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki APK: telefon için `Immuch360-v<version>-arm64-v8a-release.apk` (evrensel `Immuch360-v<version>-release.apk` her yerde çalışır, `-armeabi-v7a` eski 32 bit telefonlar içindir, `.aab` dosyası ise yandan yükleme için değil Google Play içindir). GitHub derlemesi genellikle mağazadakinden ileridedir. Her iki durumda da resmi Immich uygulamasının yanına kurulur (paket `com.aprogsys.immuch360`). | Google Play: derleme 18 yayında, derleme 19 ise 6 Ekim 2026'dan beri Google'ın incelemesinde, sırada derleme 20 var |
 | iPhone ve iPad | Apple'ın incelemesini bekliyor. İncelenen sürüm derleme 11'in özelliklerini taşır: Immich'e yükleme ve Video kaynağı seçimi (derleme 15) ile ham Insta360 dosyaları (derleme 16) daha sonraki bir App Store güncellemesiyle gelecek. Kaynak kod Xcode ile veya Codemagic üzerinde derlenir, bkz. [Kendiniz derleyin](#build-it-yourself). | App Store, inceleniyor |
-| Meta Quest 3 ve 3S | [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki `-quest-release.apk` dosyası (evrensel `-release.apk` de çalışır), geliştirici modunda yandan yüklenir, bkz. [Kurulum](#install). Mağaza derlemesi ve GitHub APK'sı farklı anahtarlarla imzalanır: birinden diğerine geçmek için önce uygulamayı kaldırın (ayarları ve kayıtlı paylaşımları da gider). | Meta Horizon Store: derleme 14, 3 Ekim 2026'dan beri Meta'nın incelemesinde; derleme 16 mağazanın alfa kanalında (yalnızca test edenler) |
+| Meta Quest 3 ve 3S | [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki `-quest-release.apk` dosyası (evrensel `-release.apk` de çalışır), geliştirici modunda yandan yüklenir, bkz. [Kurulum](#install). Mağaza derlemesi ve GitHub APK'sı farklı anahtarlarla imzalanır: birinden diğerine geçmek için önce uygulamayı kaldırın (ayarları ve kayıtlı paylaşımları da gider). | Meta Horizon Store: derleme 14, 3 Ekim 2026'dan beri Meta'nın incelemesinde; mağazanın alfa kanalı (yalnızca test edenler) her yeni derlemeyi alır |
+| Android TV ve Google TV (derleme 20'den itibaren) | [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki evrensel `Immuch360-v<version>-release.apk`, adb ile yandan yüklenir, bkz. [Televizyona kurun](#install-it-on-the-tv). Telefonlardaki uygulamanın aynısıdır. | Televizyonlarda Google Play, televizyon sürümünün Google tarafından incelenmesinden sonra |
 
 App Store ve Meta Horizon Store bağlantıları, kayıtlar yayımlanır yayımlanmaz buraya eklenecek. Her zamanki Immich sunucu URL'niz ve hesabınızla oturum açın ya da cihazın kendi fotoğraf ve videolarıyla başlamak için giriş sayfasında "Sunucu olmadan kullan"a dokunun. GitHub'dan alınan APK kendini güncellemez: Releases sayfasını takip edin ve uygulamayı bir mağazadan kurduysanız güncellemeleri o mağazadan alın.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Mağaza ekran görüntüleri, yalnızca hata ayıklama şeridini gizleyen `--dart-define=IMMUCH_SCREENSHOTS=true` ile yapılmış hata ayıklama simülatör derlemelerinde alınır. İki Android çeşidi (flavor) aynı uygulamadır. `quest` çeşidi SDK 34'ü hedefler ve yalnızca başlığın kullandığı izinleri (fotoğraflar, videolar, bildirimler) tutar: medya yönetimi, arka planda konum, eski depolama, ses, medya konumu, cihaz konumu ve kamera `android/app/src/quest/AndroidManifest.xml` içinde kaldırılır, çünkü Meta Horizon Store ilk ikisini reddeder ve diğer her hassas izin için bir gerekçe ister; aynı dosya desteklenen cihazlar olarak Quest 3 ve 3S'i belirtir ve düz HTTP'yi başlığın kendisiyle ve ev ağı adlarıyla sınırlar. APK, komut satırındaki iki ek argüman (`--target-platform android-arm64 --android-project-arg arm64only=true`) nedeniyle yalnızca 64 bittir. `phone` çeşidi Google Play'in gerektirdiğidir. Kendi Mac'inizde iOS için derlemek üzere Xcode'u ve kendi imzalama ekibinizi kullanın; Xcode 26 ile, Spatial shader'ları gerektirdiği için önce bir kez `xcodebuild -downloadComponent MetalToolchain` çalıştırın. Mac olmadan iOS derlemeleri, bu deponun `codemagic.yaml` dosyasıyla Codemagic'te (barındırılan bir Mac) çalışır. Android sürüm derlemeleri GitHub Actions'ta çalışır (`.github/workflows/immuch360-release.yml`).
+Mağaza ekran görüntüleri, yalnızca hata ayıklama şeridini gizleyen `--dart-define=IMMUCH_SCREENSHOTS=true` ile yapılmış hata ayıklama simülatör derlemelerinde alınır. İki Android çeşidi (flavor) aynı uygulamadır. Derleme 20'den itibaren `phone` çeşidi kendini bir televizyon uygulaması olarak da bildirir (bir televizyon başlatıcı girişi ve bir bant, dokunmatik ekran gerekmeden); `quest` çeşidi bunu dışarıda bırakır. `quest` çeşidi SDK 34'ü hedefler ve yalnızca başlığın kullandığı izinleri (fotoğraflar, videolar, bildirimler) tutar: medya yönetimi, arka planda konum, eski depolama, ses, medya konumu, cihaz konumu ve kamera `android/app/src/quest/AndroidManifest.xml` içinde kaldırılır, çünkü Meta Horizon Store ilk ikisini reddeder ve diğer her hassas izin için bir gerekçe ister; aynı dosya desteklenen cihazlar olarak Quest 3 ve 3S'i belirtir ve düz HTTP'yi başlığın kendisiyle ve ev ağı adlarıyla sınırlar. APK, komut satırındaki iki ek argüman (`--target-platform android-arm64 --android-project-arg arm64only=true`) nedeniyle yalnızca 64 bittir. `phone` çeşidi Google Play'in gerektirdiğidir. Kendi Mac'inizde iOS için derlemek üzere Xcode'u ve kendi imzalama ekibinizi kullanın; Xcode 26 ile, Spatial shader'ları gerektirdiği için önce bir kez `xcodebuild -downloadComponent MetalToolchain` çalıştırın. Mac olmadan iOS derlemeleri, bu deponun `codemagic.yaml` dosyasıyla Codemagic'te (barındırılan bir Mac) çalışır. Android sürüm derlemeleri GitHub Actions'ta çalışır (`.github/workflows/immuch360-release.yml`).
 
 Bu depoda hiçbir gizli bilgi bulunmaz: Android imzalama anahtarı şifrelenmiş GitHub Actions gizli bilgileri olarak, Apple imzalama materyali de Codemagic'te şifrelenmiş değişkenler olarak saklanır. İş akışı dosyaları onlara yalnızca adlarıyla başvurur. Kendi `android/key.jks` dosyanız olmadan bir sürüm derlemesi hata ayıklama anahtarıyla imzalanır ve GitHub'dan veya bir mağazadan alınmış bir kopyanın üzerine kurulamaz (önce onu kaldırın); bir hata ayıklama derlemesi onun yanına Immuch360 debug olarak kurulur. Meta Horizon Store kopyası, sürümün başka bir anahtarla, mağaza uygulamasının ilk kaydedildiği anahtarla imzalanmış `quest` APK'sıdır; bu yüzden o da yandan yüklenmiş bir APK'nın üzerine kurulamaz, tersi de olmaz.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Derleme 19'dan itibaren DLNA istemcisi, telefon paylaşımı ve Apple uzamsal medyasının algılanması, uygulamanın kendi günlüğüne de (sağ üstteki profil resminin menüsünde Günlükler) `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ve `NetworkMediaService` altında yazar. Günlük satırları, siz kendiniz kopyalamadıkça cihazda kalır.
+Derleme 19'dan itibaren DLNA istemcisi, telefon paylaşımı ve Apple uzamsal medyasının algılanması, uygulamanın kendi günlüğüne de (sağ üstteki profil resminin menüsünde Günlükler) `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ve `NetworkMediaService` altında yazar. Derleme 20'den itibaren oraya televizyon modu `TvMode` ve `TvTextEntry`, Plex sunucuları `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ve `PlexServerEditPage`, Tapo kameralar da `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ve `CameraLiveView` altında yazar; Plex satırları asla belirteci, bir adresi veya bir başlığı içermez, kamera satırları da şifreleri dışarıda bırakır. Günlük satırları, siz kendiniz kopyalamadıkça cihazda kalır.
 
 ## Gizlilik
 
 - **Geliştiriciye hiçbir şey gitmez**: uygulama seçtiğiniz Immich sunucusuyla (ve haritayı açtığınızda o sunucunun kullandığı harita döşemesi hizmetiyle) konuşur; reklam, analiz ya da geliştiricinin işlettiği bir çökme raporlama hizmeti yoktur ve Immuch360'ın geliştiricisine hiçbir şey gönderilmez.
-- **Sunucu olmadan** hiçbir şey cihazdan çıkmaz.
+- **Sunucu olmadan** hiçbir sunucuyla iletişim kurulmaz: uygulama ağı yalnızca açtığınız paylaşımlar, Plex sunucuları ve kameralar için ve açarsanız telefon paylaşımı için kullanır.
 - **Ağ paylaşımları**: paylaşım listesi cihazda tutulur ve hiçbir zaman bir sunucuya gönderilmez; şifreler cihazın anahtar zincirine veya anahtar deposuna gider.
+- **Plex** (derleme 20'den itibaren): belirteç cihazın güvenli depolamasında kalır ve yalnızca kendi sunucunuza, HTTPS üzerinden bir istek başlığında gönderilir; uygulama asla plex.tv ile iletişim kurmaz.
+- **Tapo kameralar** (derleme 20'den itibaren): TP-Link hesabı şifresi ve kamera hesabı şifresi cihazın güvenli depolamasında kalır; uygulama kamerayla yalnızca yerel ağda konuşur, asla TP-Link'in sunucularıyla değil; alınan klipler uygulamanın önbelleğinde kalır ve kamerayla birlikte silinir.
+- **Televizyon**: cihazın bir televizyon olup olmadığı cihazda okunur; hiçbir şey gönderilmez.
 - **Telefon paylaşımı**: yalnızca yerel ağ, kullanıcı adı ve şifreyle, düz HTTP üzerinden (bkz. [Bu telefonu ağda paylaş](#share-this-phone-on-the-network)).
 - **Kamera**: yalnızca Spatial 2.5D oynatıcısı tarafından, cihazda kullanılır; görüntüler asla saklanmaz ve hiçbir yere gönderilmez.
 
@@ -675,20 +857,25 @@ Bu proje Immich'in bir çatalıdır ve [GNU AGPL v3](LICENSE) lisansı altında 
 
 Henüz yapılmamış olanlar, en olası olanlar önce. Buradaki hiçbir şey bir söz değildir ve [sorun takipçisindeki](https://github.com/freeKC/Immuch360/issues) geri bildirimler neyin önce geleceğine karar vermeye yardımcı olur.
 
-- **Google Play**: derleme 15 ve 16, 4 Ekim 2026'da Google'ın incelemesine gönderildi ve onaylandığında yayına girer; orada yayında olduğu doğrulanan son derleme, derleme 11.
+- **Google Play**: derleme 18 yayında; derleme 19 ise 6 Ekim 2026'dan beri Google'ın incelemesinde ve ardından derleme 20 gelecek.
 - **App Store**: sürüm 3.3.0 Apple'ın incelemesini bekliyor; derleme 11'in özelliklerini taşıyor, bu yüzden Immich'e yükleme ve video kod çözücü denetimi (derleme 15) ile ham Insta360 dosyaları (derleme 16) bir sonraki App Store güncellemesiyle gelecek. Bağlantı yayına girdiğinde buraya eklenecek.
-- **Meta Horizon Store**: kayıt 3 Ekim 2026'da derleme 14 ile Meta'nın incelemesine gönderildi ve derleme 16 bir sonraki güncelleme için mağazanın alfa kanalında. Kayıt onaylandığında Quest 3 artık yandan yükleme gerektirmeyecek ve mağaza bağlantısı buraya eklenecek; yandan yüklenmiş bir kopyanın önce kaldırılması gerekir (bkz. [Kurulum](#install)).
-- **Mağaza kayıtları**: Google Play ve App Store metinleri hâlâ ilk derlemeleri anlatıyor (360° fotoğraf ve videolar, düz gösterilen ham dosyalar); 3D, VR180 ve Spatial görüntüleyicilerini, sunucusuz modu, ağ paylaşımlarını, medya oynatıcıyı ve ham Insta360 dosyalarını tanıtacaklar. Meta Horizon Store metni medya oynatıcıyı zaten tanıtıyor.
+- **Meta Horizon Store**: kayıt 3 Ekim 2026'da derleme 14 ile Meta'nın incelemesine gönderildi ve mağazanın alfa kanalı bir sonraki güncelleme için her yeni derlemeyi alır. Kayıt onaylandığında Quest 3 artık yandan yükleme gerektirmeyecek ve mağaza bağlantısı buraya eklenecek; yandan yüklenmiş bir kopyanın önce kaldırılması gerekir (bkz. [Kurulum](#install)).
+- **Mağaza kayıtları**: Google Play kaydı Ekim 2026'da yeni ekran görüntüleriyle yeniden yazıldı ve televizyon sürümüyle televizyon ekran görüntüleri ve bir televizyon bandı kazanacak. App Store metni hâlâ ilk derlemeleri anlatıyor (360° fotoğraf ve videolar, düz gösterilen ham dosyalar); 3D, VR180 ve Spatial görüntüleyicilerini, sunucusuz modu, ağ paylaşımlarını, medya oynatıcıyı ve ham Insta360 dosyalarını tanıtacak. Meta Horizon Store metni medya oynatıcıyı zaten tanıtıyor.
 - **Ham 360° kamera dosyaları, sırada**: ham bir fotoğraf başlık için hazırlanırken bir ilerleme göstergesi; GoPro ve DJI videolarının kendi hareket verileriyle düzeltilmesi; çift balıkgözü .dng; dikişleri ve kod çözücü bütçelerini doğrulamak için derleme 18'in iki mercekli oynatmasına dair cihaz raporları (X4, X5, X6, GoPro MAX 2, Osmo 360).
 - **DLNA, telefon paylaşımı ve Apple uzamsal, sırada**: derleme 19'un cihaz raporları (DLNA üzerinden Plex, Jellyfin, bir NAS ve Freebox Server; erişim noktası üzerinden de, bir Quest'e hizmet veren bir telefon; başlıkta gerçek iPhone uzamsal fotoğraf ve videoları); iPhone'ların her DLNA sunucusunu bulabilmesi için Apple'dan istenen çok noktaya yayın yetkisi; başlıkta uzamsal fotoğraflar arasında önceki ve sonraki; zaman çizelgesindeki sunucu fotoğraflarında bir uzamsal rozeti; kod çözücüleri izin verirse Quest'te uzamsal videoların 3D olarak gösterilmesi.
 - **Telefonlarda 360° oynatıcılar, sırada**: iOS 360° video oynatıcısında bir zaman çubuğu (Android'dekinde var), Quest sürükleyici görünümündeki gibi telefonların 360° oynatıcılarında önceki/sonraki ve yerleşik 360° video oynatıcısında fotoğraflar.
 - **Ağ paylaşımları, sonraki adımlar**: fotoğraf ve video sayfalarında bir klasördeki bir dosyadan sonrakine kaydırma (Quest sürükleyici görünümü bir klasörün 360° dosyaları arasında zaten geziniyor), WebDAV için Digest kimlik doğrulaması, Bonjour kaydından kullanıcı adı.
 - **Düz videolar**: sunucu, cihaz ve paylaşım videoları için aynı şekilde, düz oynatıcıda ses parçası seçimi (360° ve Spatial oynatıcılarında var).
+- **Android TV, sırada**: derleme 20'nin Google TV emülatöründe ve gerçek bir televizyonda cihaz testi, ardından Google Play'de televizyon sürümü (televizyon ekran görüntüleri, televizyon bandı, Google'ın incelemesi); daha sonra televizyon ana ekranında kanallar.
+- **Tapo kameralar, sırada**: derleme 20'nin gerçek kameralarla cihaz testi; iPhone ve iPad'de canlı görüntü; H.265 kayıtlar; bir klibi alınırken oynatmak; bütün bir günün kayıtları tek bir zaman çizelgesinde.
+- **Plex, sırada**: derleme 20'nin cihaz testi (telefonlar, Quest, bir iPhone, bir televizyon, evden uzakta); belirteci bilgisayardan bir QR koduyla getirmek; bulunan sunucular listesinde bir Plex sunucusunun DLNA tarafını gizlemek; IPv6.
 - **Upstream**: bakımcıların istediği parçalar için, 360° fotoğraf görüntüleyiciden başlayarak Immich'e küçük pull request'ler.
 
 ## Teşekkürler
 
 360° fotoğraf görüntüleyici, dmitry-brazhenko'nun upstream pull request'i [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) temel alır; o da bencefr'in [#30192](https://github.com/immich-app/immich/pull/30192) içindeki prototipi üzerine kurulmuştur. İkisine de teşekkürler.
+
+Derleme 20'nin Tapo kameraları, açık kaynak projeler [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ve [python-kasa](https://github.com/python-kasa/python-kasa) bu kameralar hakkında belgelediklerinden yola çıkılarak yazıldı.
 
 Neden bir çatal: mobilde 360° görüntüleme Ocak 2024'ten beri isteniyor ve henüz resmi uygulamada yok; fotoğraf görüntüleyici upstream'de [#31169](https://github.com/immich-app/immich/pull/31169) içinde inceleniyor. Bu çatal onu şimdi sunuyor, gerçek cihaz geri bildirimlerini topluyor ve bakımcıların istediği her şeyi küçük pull request'lerle Immich'e geri sunacak. Meta Quest görünümü açık kaynak olmayan Meta Spatial SDK'ya dayandığı için bu çatalda kalıyor.
 

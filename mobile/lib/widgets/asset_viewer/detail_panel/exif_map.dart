@@ -2,13 +2,16 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
+import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:immich_mobile/widgets/map/map_thumbnail.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' show canLaunchUrl;
 
-class ExifMap extends StatelessWidget {
+class ExifMap extends ConsumerWidget {
   final ExifInfo exifInfo;
   // TODO: Pass in a BaseAsset instead of the ID and thumbhash when removing old timeline
   // This is currently structured this way because of the old timeline implementation
@@ -26,7 +29,11 @@ class ExifMap extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // The map is gesture only and its tap opens another app: not on a TV
+    if (ref.watch(tvModeProvider)) {
+      return const SizedBox.shrink();
+    }
     final hasCoordinates = exifInfo.hasCoordinates;
     Future<Uri?> createCoordinatesUri() async {
       if (!hasCoordinates) {
@@ -80,7 +87,9 @@ class ExifMap extends StatelessWidget {
             }
 
             dPrint(() => 'Opening Map Uri: $uri');
-            unawaited(launchUrl(uri));
+            if (context.mounted) {
+              unawaited(openUrl(context, uri));
+            }
           },
           onCreated: onMapCreated,
         );

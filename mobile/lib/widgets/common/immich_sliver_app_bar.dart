@@ -13,6 +13,7 @@ import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
@@ -45,7 +46,8 @@ class ImmichSliverAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isCasting = ref.watch(castProvider.select((c) => c.isCasting));
-    final isReadonlyModeEnabled = ref.watch(readonlyModeProvider);
+    // The read only mode, or a TV: nothing to back up there, and the TV is the screen a cast would go to
+    final isViewOnly = ref.watch(viewOnlyProvider);
     final isMultiSelectEnabled = ref.watch(multiSelectProvider.select((s) => s.isEnabled));
     final hasServer = ref.watch(hasServerProvider);
 
@@ -69,13 +71,13 @@ class ImmichSliverAppBar extends ConsumerWidget {
           title: title ?? const _ImmichLogoWithText(),
           actions: [
             const _SyncStatusIndicator(),
-            if (isCasting && !isReadonlyModeEnabled)
+            if (isCasting && !isViewOnly)
               IconButton(
                 onPressed: () => showDialog(context: context, builder: (context) => const CastDialog()),
                 icon: Icon(isCasting ? Icons.cast_connected_rounded : Icons.cast_rounded),
               ),
             ...?actions,
-            if (showUploadButton && !isReadonlyModeEnabled && hasServer) const _BackupIndicator(),
+            if (showUploadButton && !isViewOnly && hasServer) const _BackupIndicator(),
             const _ProfileIndicator(),
             const SizedBox(width: 8),
           ],

@@ -12,6 +12,7 @@ import 'package:immich_mobile/presentation/widgets/network/network_media_tile.wi
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_selection.provider.dart';
@@ -62,6 +63,28 @@ class NetworkFolderMedia {
     }
     return (items: items, index: position);
   }
+}
+
+/// The page of the photo or video next to the one at [path] in [folder] ([step] 1 for the next one, -1 for the previous
+/// one), with the folder around it: what the arrows of a remote open from a photo or a paused video. Null at either end
+/// of the folder, and without a folder (a camera clip opens on its own).
+PageRouteInfo? networkFolderNeighbourRoute(String sourceId, NetworkFolderMedia? folder, String path, int step) {
+  if (folder == null) {
+    return null;
+  }
+  final entries = folder.entries;
+  final current = folder.index >= 0 && folder.index < entries.length && entries[folder.index].path == path
+      ? folder.index
+      : entries.indexWhere((entry) => entry.path == path);
+  final next = current + step;
+  if (current < 0 || next < 0 || next >= entries.length) {
+    return null;
+  }
+  final entry = entries[next];
+  final around = NetworkFolderMedia(entries: entries, urls: folder.urls, index: next);
+  return entry.isVideo
+      ? NetworkVideoRoute(sourceId: sourceId, path: entry.path, folder: around)
+      : NetworkPhotoRoute(sourceId: sourceId, path: entry.path, folder: around);
 }
 
 /// The folders and the photos and videos of a network share, from [path]: tap a folder to go into it, a photo or a
@@ -124,8 +147,11 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       if (relocated == null || !mounted) {
         return false;
       }
-      // DLNA has no authentication; any other share would send its user name and password to the new address
-      if (relocated.type != NetworkSourceType.dlna && !await _acceptsAddress(source, relocated)) {
+      // DLNA has no authentication. A Plex server only gets its token over the connection pinned to the certificate of
+      // the stored hash, and the relocator kept only a server announcing that hash: nothing goes to another one. Any
+      // other share would send its user name and password to the new address.
+      final asks = relocated.type != NetworkSourceType.dlna && relocated.type != NetworkSourceType.plex;
+      if (asks && !await _acceptsAddress(source, relocated)) {
         _log.info('${source.name} was not moved to ${relocated.host}:${relocated.port ?? ''}: the user declined');
         return false;
       }
@@ -253,6 +279,8 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     final selection = ref.watch(networkSelectionProvider(_folderKey));
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
     final selectionNotifier = ref.read(networkSelectionProvider(_folderKey).notifier);
+    // On a TV the app is a viewer: no picking files to send to the server
+    final tvMode = ref.watch(tvModeProvider);
 
     return PopScope(
       // Back while picking files stops picking first
@@ -265,24 +293,41 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       child: Scaffold(
         appBar: selection.isActive
             ? _selectionAppBar(selection, selectionNotifier)
-            : _appBar(source, selectionNotifier),
+            : _appBar(source, selectionNotifier, tvMode: tvMode),
         bottomNavigationBar: isUploading
             ? const NetworkUploadProgressBar()
             : selection.isActive
             ? _SelectionBar(count: selection.paths.length, onUpload: () => unawaited(_upload()))
             : null,
-        body: _buildBody(selection, source),
+        body: _buildBody(selection, source, tvMode: tvMode),
       ),
     );
   }
 
-  PreferredSizeWidget _appBar(NetworkSource? source, NetworkSelectionNotifier selection) {
+  PreferredSizeWidget _appBar(NetworkSource? source, NetworkSelectionNotifier selection, {required bool tvMode}) {
+    final connection = ref.watch(networkConnectionsProvider).opened(widget.sourceId);
     return AppBar(
       title: Text(_title(source)),
       elevation: 0,
       centerTitle: false,
       actions: [
-        if (_media.isNotEmpty)
+        // The share is read through its address outside home (a Plex server over mobile data): slower, and counted
+        // by the server as a remote stream
+        if (connection case final NetworkRemoteEndpoint remote when remote.isOutsideHome)
+          Tooltip(
+            key: const Key('network_browser_remote_endpoint'),
+            message: context.t.network_share_remote_endpoint,
+            child: const Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Icon(Icons.public)),
+          ),
+        // Pull to refresh is a gesture: a remote control gets a button
+        if (tvMode)
+          IconButton(
+            key: const Key('network_browser_refresh'),
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: context.t.refresh,
+            onPressed: () => unawaited(_refresh()),
+          ),
+        if (_media.isNotEmpty && !tvMode)
           IconButton(
             icon: const Icon(Icons.checklist_rounded),
             tooltip: context.t.network_upload_select,
@@ -308,7 +353,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     );
   }
 
-  Widget _buildBody(NetworkSelection selection, NetworkSource? source) {
+  Widget _buildBody(NetworkSelection selection, NetworkSource? source, {required bool tvMode}) {
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _refresh,
@@ -322,7 +367,8 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
                 folder: folder,
                 selection: selection,
                 onOpen: (entry) => _open(entry, folder),
-                onSelect: _select,
+                onSelect: tvMode ? null : _select,
+                focusFirst: tvMode,
               );
             }
             if (snapshot.connectionState != ConnectionState.done) {
@@ -335,7 +381,11 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
               );
             }
             return _Filled(
-              child: NetworkErrorView(error: snapshot.error ?? 'unknown error', onRetry: () => unawaited(_refresh())),
+              child: NetworkErrorView(
+                error: snapshot.error ?? 'unknown error',
+                onRetry: () => unawaited(_refresh()),
+                source: source,
+              ),
             );
           },
         ),
@@ -395,14 +445,23 @@ class _Filled extends StatelessWidget {
 }
 
 class _FolderView extends StatelessWidget {
-  const _FolderView({required this.folder, required this.selection, required this.onOpen, required this.onSelect});
+  const _FolderView({
+    required this.folder,
+    required this.selection,
+    required this.onOpen,
+    required this.onSelect,
+    this.focusFirst = false,
+  });
 
   final _Folder folder;
   final NetworkSelection selection;
   final void Function(NetworkEntry entry) onOpen;
 
-  /// A long press on a photo or a video
-  final void Function(NetworkEntry entry) onSelect;
+  /// A long press on a photo or a video; null on a TV, where nothing is picked
+  final void Function(NetworkEntry entry)? onSelect;
+
+  /// A remote control starts on the first folder, else on the first photo or video
+  final bool focusFirst;
 
   @override
   Widget build(BuildContext context) {
@@ -418,7 +477,12 @@ class _FolderView extends StatelessWidget {
           itemCount: folders.length,
           itemBuilder: (context, index) {
             final entry = folders[index];
-            return NetworkFolderTile(key: ValueKey(entry.path), entry: entry, onTap: () => onOpen(entry));
+            return NetworkFolderTile(
+              key: ValueKey(entry.path),
+              entry: entry,
+              onTap: () => onOpen(entry),
+              autofocus: focusFirst && index == 0,
+            );
           },
         ),
         if (media.isNotEmpty)
@@ -438,8 +502,9 @@ class _FolderView extends StatelessWidget {
                   entry: entry,
                   url: folder.urls[entry.path],
                   onTap: () => onOpen(entry),
-                  onLongPress: () => onSelect(entry),
+                  onLongPress: onSelect == null ? null : () => onSelect!(entry),
                   isSelected: selection.isActive ? selection.contains(entry.path) : null,
+                  autofocus: focusFirst && folders.isEmpty && index == 0,
                 );
               },
             ),

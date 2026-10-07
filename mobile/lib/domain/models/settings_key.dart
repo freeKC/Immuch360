@@ -55,6 +55,9 @@ enum SettingsKey<T> {
   // Log
   logLevel<LogLevel>(codec: EnumCodec(LogLevel.values)),
 
+  // TV
+  tvLayout<TvLayoutMode>(codec: EnumCodec(TvLayoutMode.values)),
+
   // Map
   mapShowFavoriteOnly<bool>(),
   mapRelativeDate<int>(),

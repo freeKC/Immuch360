@@ -192,6 +192,24 @@ Future<RootStackRouter> pumpNetworkRouter(
               },
         ),
       ),
+      // Where the error view sends a share whose credentials were refused
+      AutoRoute(
+        path: '/network-share-edit',
+        page: PageInfo(
+          NetworkShareEditRoute.name,
+          builder: (data) => Text('edit ${data.argsAs<NetworkShareEditRouteArgs>().source?.name}'),
+        ),
+      ),
+      AutoRoute(
+        path: '/plex-server-edit',
+        page: PageInfo(
+          PlexServerEditRoute.name,
+          builder: (data) {
+            final args = data.argsAs<PlexServerEditRouteArgs>();
+            return Text('plex edit ${args.source?.name}${args.focusToken ? ' token' : ''}');
+          },
+        ),
+      ),
     ],
   );
 

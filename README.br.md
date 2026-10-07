@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 eo arload hezoug Immich gant luc'hskeudennoù ha videoioù 360° a c'hallit sellet tro-dro enno, hag ul lenner digoust evit al luc'hskeudennoù hag ar videoioù plat, 360°, 3D ha VR180, war ar pellgomzerioù hag an tabletennoù Android, an iPhone hag an iPad, hag ar Meta Quest 3 ha 3S. Graet eo evit an dud a denn skeudennoù gant ur c'hamera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) pe gant mod photo sphere ur pellgomzer, pe o deus ur c'hasked, hag a fell dezho sellet ouzh o skeudennoù dezho eus ur servijer Immich, eus ar pellgomzer e-unan, eus un NAS pe eus ur servijer media: an hevelep servijer, an hevelep kont, lugent servijer ebet, pe servijer ebet zoken.
+Immuch360 eo arload hezoug Immich gant luc'hskeudennoù ha videoioù 360° a c'hallit sellet tro-dro enno, hag ul lenner digoust evit al luc'hskeudennoù hag ar videoioù plat, 360°, 3D ha VR180, war ar pellgomzerioù hag an tabletennoù Android, an iPhone hag an iPad, ar Meta Quest 3 ha 3S, hag adalek ar build 20 Android TV ha Google TV. Graet eo evit an dud a denn skeudennoù gant ur c'hamera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) pe gant mod photo sphere ur pellgomzer, pe o deus ur c'hasked, hag a fell dezho sellet ouzh o skeudennoù dezho eus ur servijer Immich, eus ar pellgomzer e-unan, eus un NAS, eus ur servijer media pe eus ur servijer Plex: an hevelep servijer, an hevelep kont, lugent servijer ebet, pe servijer ebet zoken. Adalek ar build 20 e tiskouez ivez ar c'hameraioù Tapo, war-eeun hag enrolladennoù o c'hartenn-vemor.
 
 <p align="center">
   <sub>Forc'h n'eo ket ofisiel. N'eo ket stag ouzh Immich nag ouzh FUTO. An anv a lenner evel "I am much 360".</sub>
@@ -15,7 +15,8 @@ Immuch360 eo arload hezoug Immich gant luc'hskeudennoù ha videoioù 360° a c'h
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">o vezañ gwiriet</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store o vezañ gwiriet
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store o vezañ gwiriet &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 eo arload hezoug Immich gant luc'hskeudennoù ha videoioù 360° a c'h
     <td align="center" width="33%"><h3>🎥 2.5D genidik</h3>Donder war ur skramm plat diwar ur video stereoskopek, ar gwel a heuilh ho penn (arnodel, pellgomzerioù ha tabletennoù)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Un arload, tri savenn, gwir 3D er c'hasked</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Un arload war ar pellgomzerioù, an tabletennoù hag ar c'hasked, gwir 3D er c'hasked, hag adalek ar build 20 war Android TV gant ar pellureer</td>
     <td align="center"><h3>🔌 Gant pe hep servijer</h3>Ho servijer Immich, pe galeri ar pellgomzer e-unan, kont ebet ret</td>
     <td align="center"><h3>🗄️ Rannadennoù rouedad</h3>Samba (SMB), WebDAV ha, adalek ar build 19, servijerioù media DLNA kavet war ar rouedad ha lennet war-eeun, netra pellgarget, ha kaset da Immich pa fell deoc'h. Adalek ar build 19 e c'hall ur pellgomzer rannañ e c'haleri e-unan gant ar c'hasked ivez</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 War ar skinwel</h3>Adalek ar build 20 an hevelep APK war Android TV ha Google TV: luc'hskeudennoù ha videoioù 360°, ho servijer hag ho rannadennoù, gant ar pellureer</td>
+    <td align="center"><h3>🎬 Plex, hep plex.tv</h3>Adalek ar build 20 ho levraouegoù Plex, lennet diwar ar restroù orin evit ma chomfe 360° e 360°, er gêr hag er-maez eus ar gêr</td>
+    <td align="center"><h3>📹 Kameraioù Tapo</h3>Adalek ar build 20 ar sell war-eeun hag enrolladennoù ar gartenn-vemor, war ho rouedad hepken, hag ur c'hlip kaset da Immich pa garit</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 eo arload hezoug Immich gant luc'hskeudennoù ha videoioù 360° a c'h
 - **"Va luc'hskeudennoù 360° a vez diskouezet evel ur vandenn blat hag astennet, ha va videoioù 360° a vez lennet plat."** Gwelit [Luc'hskeudennoù ha videoioù 360° evel ur sferenn](#360-photos-and-videos-as-a-sphere).
 - **"N'em eus servijer ebet, ha ne fell ket din kaout ur gont."** Gwelit [Hep servijer na kont](#without-a-server-or-an-account).
 - **"Sellet a fell din ouzh videoioù va NAS, war ar pellgomzer pe er c'hasked, hep o eilañ."** Gwelit [Rannadennoù rouedad](#network-shares-a-nas-a-computer-or-a-media-server).
+- **"Plex a lenn va videoioù 360° plat, ha fellout a ra din kaout va levraoueg Plex er c'hasked, war ar skinwel hag er-maez eus ar gêr."** Gwelit [Plex Media Server, hep plex.tv](#plex-media-server-without-plextv).
 - **"War va fellgomzer emañ va luc'hskeudennoù, ha n'em eus urzhiataer na NAS ebet evit o lakaat warnañ evit ar c'hasked."** Gwelit [Rannañ ar pellgomzer-mañ war ar rouedad](#share-this-phone-on-the-network).
+- **"Fellout a ra din gwelout va c'hamera Tapo ha klipoù an noz tremenet hep an arload Tapo, ha mirout ur c'hlip en Immich."** Gwelit [Kameraioù Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"Va restroù Insta360 o deus ezhomm eus an arload Insta360 a-raok ma c'hallfen sellet outo"** (hag ar restroù GoPro .360 ha DJI .osv ivez). Gwelit [Restroù kriz ar c'hameraoù 360°](#raw-360-camera-files-without-the-cameras-app).
 - **"Doubl e weler va videoioù 3D, ha va videoioù VR180 a vez astennet tro-dro."** Gwelit [3D ha VR180](#3d-and-vr180-photos-and-videos) ha [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"Luc'hskeudennoù spasel am eus eus va iPhone."** Gwelit [Luc'hskeudennoù ha videoioù spasel Apple](#apple-spatial-photos-and-videos).
 - **"Mont a ra en-dro war ar pellgomzer, met er Quest e fell din e gaout."** Gwelit [Er c'hasked Meta Quest 3](#in-the-meta-quest-3-headset).
+- **"Fellout a ra din sellet ouzh va luc'hskeudennoù ha videoioù 360°, hag ouzh videoioù va NAS pe va servijer Plex, war ar skinwel, gant ar pellureer."** Gwelit [Sellet war ho skinwel](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ne gavan ket va skeudennoù 360° e-touez an holl re all."** Gwelit [Ar roll 360°](#find-your-360-shots-the-360-list).
 - **"Va video 360° a chom a-sav a-dammoù, pe e lenn un eilskouerenn drubuilh."** Gwelit [Munudoù ar video hag an diskoderioù](#video-details-decoders-and-why-a-video-stutters).
 - **"Ha mirout a ran ar pezh a ra an arload Immich?"** Ya, gant daou cheñchamant bihan, gwelit [Immich eo an holl draoù all](#everything-else-is-immich).
@@ -100,7 +109,7 @@ An dibab a vez miret war ar pellgomzer ha ne cheñch netra war ar servijer. War 
 
 N'hoc'h eus servijer Immich ebet, pe ne fell ket deoc'h kaout ur gont: ne fell deoc'h nemet e vefe digoret luc'hskeudennoù 360° ho pellgomzer evel ur sferenn a c'hallit treiñ gant ar jiroskop. An arload Immich a c'houlenn kevreañ da gentañ.
 
-War ar bajenn gevreañ, "Implijout hep servijer" a zigor Immuch360 war luc'hskeudennoù ha videoioù ar benveg e-unan, gant ar gwelerioù 360°, 3D, VR180 ha Spatial, ar roll 360° hag ar rannadennoù rouedad, kont Immich ebet ret. Arc'hwelioù ar servijer a chom kuzhet pe louedet betek ma kevreit ur servijer; netra ne guita ar benveg. War ur Meta Quest 3 e tigor luc'hskeudennoù ha videoioù ar c'hasked e-unan.
+War ar bajenn gevreañ, "Implijout hep servijer" a zigor Immuch360 war luc'hskeudennoù ha videoioù ar benveg e-unan, gant ar gwelerioù 360°, 3D, VR180 ha Spatial, ar roll 360° hag ar rannadennoù rouedad (adalek ar build 20 ivez ar servijerioù Plex hag ar c'hameraioù Tapo), kont Immich ebet ret. Arc'hwelioù ar servijer a chom kuzhet pe louedet betek ma kevreit ur servijer; netra ne guita ar benveg. War ur Meta Quest 3 e tigor luc'hskeudennoù ha videoioù ar c'hasked e-unan; war ur skinwel, n'en deus hini ebet, e kas d'ar rannadennoù rouedad (gwelit [Sellet war ho skinwel](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="An ivinell Levraoueg hep servijer: an elfenn 360° e-krec'h, goude On this device gant div luc'hskeudenn 360°, ha Rannadennoù rouedad gant ur rannadenn anvet NAS">
 
@@ -126,7 +135,7 @@ War ar bajenn gevreañ, "Implijout hep servijer" a zigor Immuch360 war luc'hskeu
 
 Emañ ho videoioù 360° war un NAS pe war un urzhiataer, hag e fell deoc'h sellet outo war ar pellgomzer pe er c'hasked hep o eilañ da gentañ. Er c'hasked, an dud a echu oc'h eilañ pep restr dre ur fun; ar servijerioù media evel Plex ha Jellyfin a lenn ar videoioù 360° plat, evel m'en deskriv goulennoù war o foromoù; an arload Immich ne lenn nemet ho servijer Immich.
 
-Immuch360 a furch hag a lenn luc'hskeudennoù ha videoioù forzh peseurt servijer a gomz SMB (Samba, Windows), WebDAV pe, adalek ar build 19, DLNA/UPnP (ur servijer media: Plex, Jellyfin, minidlna, Gerbera, Emby, un NAS pe ur voest TV), war-eeun diwar ar rannadenn. Kavout a ra servijerioù ho rouedad e-unan, hag e lenn ar restroù war-eeun en hevelep gwelerioù ha peurrest an arload (360°, 3D, VR180, Spatial 2.5D, gwel soubus Quest), gant pe hep servijer Immich, war ar pellgomzerioù ha war ar Meta Quest 3. Netra ne vez pellgarget. Pa vez kevreet ur servijer, ar restroù a zibabit a c'hall bezañ kaset d'ho kont Immich (adalek ar build 15).
+Immuch360 a furch hag a lenn luc'hskeudennoù ha videoioù forzh peseurt servijer a gomz SMB (Samba, Windows), WebDAV pe, adalek ar build 19, DLNA/UPnP (ur servijer media: Jellyfin, minidlna, Gerbera, Emby, un NAS pe ur voest TV), war-eeun diwar ar rannadenn. Adalek ar build 20 en deus ur Plex Media Server ur seurt dezhañ e-unan, gwelit [Plex Media Server, hep plex.tv](#plex-media-server-without-plextv). Kavout a ra servijerioù ho rouedad e-unan, hag e lenn ar restroù war-eeun en hevelep gwelerioù ha peurrest an arload (360°, 3D, VR180, Spatial 2.5D, gwel soubus Quest), gant pe hep servijer Immich, war ar pellgomzerioù ha war ar Meta Quest 3. Netra ne vez pellgarget. Pa vez kevreet ur servijer, ar restroù a zibabit a c'hall bezañ kaset d'ho kont Immich (adalek ar build 15).
 
 | Ouzhpennañ ur rannadenn | Un teuliad eus ur rannadenn |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 a furch hag a lenn luc'hskeudennoù ha videoioù forzh peseurt servije
 
 ### Ouzhpennañ ur rannadenn
 
-1. Digorit an ivinell Levraoueg, goude Rannadennoù rouedad. Ar wech kentañ e lavar ar bajenn "Rannadenn ebet c'hoazh" gant ur bouton "Ouzhpennañ ur rannadenn"; + e-krec'h a-zehou a ra kement all forzh pegoulz.
-2. Ar bajenn "Ouzhpennañ ur rannadenn" a glask da gentañ servijerioù ho rouedad hag a ziskouez anezho dindan "Kavet war ar rouedad", gant o seurt (SMB, WebDAV, DLNA, Pellgomzer). Padout a ra ar c'hlask betek c'hwec'h eilenn bennak; "Furchal en-dro" a adlañs anezhañ. Implijout a ra Bonjour/mDNS hag ur furchadenn eus ar rouedad lec'hel kadarnaet gant ur gwir eskemm SMB pe WebDAV, hag adalek ar build 19 ur c'hlask SSDP evit ar servijerioù media DLNA.
-3. Stokit ur servijer: leuniet e vez ar seurt, ar servijer, ar porzh hag an hent.
-4. N'emañ ket er roll? Leuniit ar furmskrid gant an dorn. Seurt: "SMB (Samba, rannadenn Windows)", "WebDAV (Nextcloud, Synology hag all)" pe "Servijer media DLNA (Plex, Jellyfin, NAS, boest TV)". Goude Anv, "Anv pe chomlec'h ar servijer" (un anv pe ur chomlec'h; ur chomlec'h klok evel `smb://nas/photos`, `\\nas\photos` pe `https://nas:5006/photos` a leugn ar maeziennoù all), "Porzh (diret)" pa n'eo ket an hini boas, "Rannadenn" evit SMB pe "Hent ar chomlec'h WebDAV" evit WebDAV, "Teuliad loc'hañ (diret)", "Anv implijer" ha "Ger-tremen", ha "Kevreadur suraet (HTTPS)" evit WebDAV.
+1. Digorit an ivinell Levraoueg, goude Rannadennoù rouedad. Ar wech kentañ e lavar ar bajenn "Rannadenn ebet c'hoazh" gant ur bouton "Ouzhpennañ ur rannadenn"; + e-krec'h a-zehou a ra kement all forzh pegoulz. Adalek ar build 20 e c'houlenn an daou petra ouzhpennañ: "Ur rannadenn rouedad (NAS, urzhiataer, servijer media)", "Ur Plex Media Server" pe "Ur c'hamera Tapo". Dibabit an hini kentañ.
+2. Ar bajenn "Ouzhpennañ ur rannadenn" a glask da gentañ servijerioù ho rouedad hag a ziskouez anezho dindan "Kavet war ar rouedad", gant o seurt (SMB, WebDAV, DLNA, Pellgomzer, hag adalek ar build 20 Plex ha Tapo). Padout a ra ar c'hlask betek c'hwec'h eilenn bennak; "Furchal en-dro" a adlañs anezhañ. Implijout a ra Bonjour/mDNS hag ur furchadenn eus ar rouedad lec'hel kadarnaet gant ur gwir eskemm SMB pe WebDAV, adalek ar build 19 ur c'hlask SSDP evit ar servijerioù media DLNA, hag adalek ar build 20 GDM, an dizoloadur Plex, ha protokol dizoloadur TP-Link evit ar c'hameraioù Tapo.
+3. Stokit ur servijer: leuniet e vez ar seurt, ar servijer, ar porzh hag an hent. Ur servijer Plex pe ur c'hamera Tapo a zigor e bajenn dezhañ e-unan, leuniet.
+4. N'emañ ket er roll? Leuniit ar furmskrid gant an dorn. Seurt: "SMB (Samba, rannadenn Windows)", "WebDAV (Nextcloud, Synology hag all)", "Servijer media DLNA (Jellyfin, NAS, boest TV)" pe, adalek ar build 20, "Plex Media Server", a zigor pajenn [Plex Media Server, hep plex.tv](#plex-media-server-without-plextv). Goude Anv, "Anv pe chomlec'h ar servijer" (un anv pe ur chomlec'h; ur chomlec'h klok evel `smb://nas/photos`, `\\nas\photos` pe `https://nas:5006/photos` a leugn ar maeziennoù all), "Porzh (diret)" pa n'eo ket an hini boas, "Rannadenn" evit SMB pe "Hent ar chomlec'h WebDAV" evit WebDAV, "Teuliad loc'hañ (diret)", "Anv implijer" ha "Ger-tremen", ha "Kevreadur suraet (HTTPS)" evit WebDAV.
 5. SMB: kerkent ha ma vez skrivet ar servijer hag an anv implijer, "Dibabit ur rannadenn" a ziskouez roll rannadennoù ar servijer.
 6. DLNA: ur servijer media n'en deus anv implijer na ger-tremen ebet. Roit ar servijer, ar porzh hag "Hent an deskrivadur" eus deskrivadur e venveg (`/rootDesc.xml` evit minidlna), pe pegit ar chomlec'h a-bezh, evel `http://192.168.1.10:8200/rootDesc.xml`, e maezienn ar servijer.
 7. Stokit "Amprouiñ ar c'hevreadur". Respont a ra "Kevreet, N elfenn en teuliad loc'hañ", pe e lavar perak eo c'hwitet. Goude stokit Enrollañ, e traoñ ar furmskrid.
@@ -155,6 +164,7 @@ Un anv implijer gant ur ger-tremen goullo a vez kaset evel m'emañ: ur Freebox S
 
 360°, 3D ha VR180 a vez anavezet diouzh metaroadennoù GPano pe sferek ar restr, lennet gant goulennoù range, ha VR180 ivez diouzh anv ar restr. Adalek ar build 16 e vez anavezet ar restroù kriz Insta360 ivez (ul luc'hskeudenn .insp diouzh he anv pe diouzh bloc'had kalibradur ar c'hamera, ur video .insv diouzh e anv hag e skeudenn) ha gwriet.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Kas restroù ur rannadenn da Immich
 
 Adalek ar build 15, pa vezit kevreet ouzh ur servijer:
@@ -177,17 +187,67 @@ Adalek ar build 19 e kas an arload ar c'hlask SSDP evit ar servijerioù media d'
 <a id="a-share-that-moved"></a>
 ### Ur rannadenn he deus cheñchet lec'h
 
-Adalek ar build 19, ur rannadenn DLNA hag ur rannadenn pellgomzer (gwelit [Rannañ ar pellgomzer-mañ war ar rouedad](#share-this-phone-on-the-network)) a vir an naoudi embannet gant o servijer. Pa ne respont mui unan anezho war he chomlec'h (ur chomlec'h nevez roet gant ar voest, ur servijer adloc'het war ur porzh all), he fajenn teuliad a ziskouez "O klask (anv) war ar rouedad" hag a zilec'h ar rannadenn d'al lec'h ma respont bremañ: diouzhtu evit ur servijer DLNA, n'en deus ger-tremen ebet, ha goude ur gadarnadenn, "Implijout ar chomlec'h nevez?", o tiskouez an daou chomlec'h, evit ur rannadenn gant un anv implijer hag ur ger-tremen, rak kaset e vefent d'ar chomlec'h nevez.
+Adalek ar build 19, ur rannadenn DLNA hag ur rannadenn pellgomzer (gwelit [Rannañ ar pellgomzer-mañ war ar rouedad](#share-this-phone-on-the-network)) a vir an naoudi embannet gant o servijer. Pa ne respont mui unan anezho war he chomlec'h (ur chomlec'h nevez roet gant ar voest, ur servijer adloc'het war ur porzh all), he fajenn teuliad a ziskouez "O klask (anv) war ar rouedad" hag a zilec'h ar rannadenn d'al lec'h ma respont bremañ: diouzhtu evit ur servijer DLNA, n'en deus ger-tremen ebet, ha goude ur gadarnadenn, "Implijout ar chomlec'h nevez?", o tiskouez an daou chomlec'h, evit ur rannadenn gant un anv implijer hag ur ger-tremen, rak kaset e vefent d'ar chomlec'h nevez. Adalek ar build 20 ur servijer Plex kavet en-dro war ur chomlec'h all eus ar rouedad a vez dilec'hiet diouzhtu ivez: e desteni a brouenn ez eo an hevelep servijer a-raok ma vefe kaset ar jedouer. Ur c'hamera Tapo a vez klasket dre he chomlec'h MAC diwar he fajenn dezhi e-unan, gwelit [Kameraioù Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Bevennoù
 
 - **SMB**: SMB 2 ha 3 hepken, SMB 1 ebet.
 - **WebDAV**: dilesadur Basic hepken (n'eo ket skoret Digest c'hoazh); un testeni HTTPS sinet gantañ e-unan a rank bezañ staliet war ar benveg.
-- **Kavout servijerioù**: ar furchadenn rouedad hag ar c'hlask DLNA ne sellont nemet ouzh ar rouedad lec'hel /24, hag o deus ezhomm eus aotre ar rouedad lec'hel war iOS. War iPhone hag iPad ne gas ar c'hlask DLNA nemet ar goulennoù unicast, betek ma roio Apple an aotre multicast (multicast entitlement) d'an arload, ha servijerioù zo ne respontont ket outo (minidlna war Linux): ouzhpennit ar re-se dre o chomlec'h deskrivadur.
+- **Kavout servijerioù**: ar furchadenn rouedad hag ar c'hlaskoù DLNA, Plex ha Tapo ne sellont nemet ouzh ar rouedad lec'hel /24, hag o deus ezhomm eus aotre ar rouedad lec'hel war iOS. War iPhone hag iPad ne gas ar c'hlask DLNA nemet ar goulennoù unicast, betek ma roio Apple an aotre multicast (multicast entitlement) d'an arload, ha servijerioù zo ne respontont ket outo (minidlna war Linux): ouzhpennit ar re-se dre o chomlec'h deskrivadur.
 - **DLNA**: ur servijer na ginnig nemet un eilskouerenn amdroet eus ur restr a ro an eilskouerenn-se; un teuliad a ziskouez 20 000 elfenn d'ar muiañ.
 - **Skeudennigoù**: skeudennigoù al luc'hskeudennoù a ziskod ar restr a-bezh, hag al luc'hskeudennoù dreist 30 MB n'o deus hini ebet.
 - **Lennerioù**: n'emañ ket c'hoazh an dibab roudenn son el lenner plat. War ur pellgomzer n'haller ket c'hoazh riklañ eus ur restr eus un teuliad d'an hini war-lerc'h (ar gwel soubus Quest en deus a-raok ha da-heul evit restroù 360° an teuliad). An dibab 3D pe 180° graet war ur restr rouedad n'eo ket miret.
 - **Pellgasadennoù**: ne dreiont nemet e-pad ma vez digor an arload, hag ur restr en deus ar servijer dija a vez kaset penn-da-benn a-raok ma lavar ar servijer ez eo un doubl.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, hep plex.tv
+
+Emañ ho videoioù e Plex, ha Plex a ziskouez ho luc'hskeudennoù ha videoioù 360° plat, evel m'en deskriv goulennoù war e forom (unan a zo digor abaoe 2017). Fellout a ra deoc'h kaout al levraoueg-se ivez er c'hasked, war ar skinwel hag er-maez eus ar gêr. Arload Immich ne lenn nemet ho servijer Immich, ha seurt DLNA ar build 19 ne dizh lodenn DLNA Plex nemet er gêr.
+
+Adalek ar build 20 e kevre Immuch360 war-eeun ouzh ho Plex Media Server, hep plex.tv: kavout a ra ar servijer war ar rouedad, pegañ a rit ur jedouer ur wech, hag an arload a lenn restroù orin ho levraouegoù war-eeun, e pep gweler eus an arload (360°, 3D, VR180, Spatial 2.5D, gwel soubus Quest, pellureer ar skinwel), er gêr hag, dre hoc'h adkas porzh, er-maez eus ar gêr. Netra n'eo eilet, hag ar restroù a zibabit a c'hall bezañ kaset da Immich.
+
+### Ouzhpennañ ur servijer Plex
+
+1. Digorit an ivinell Levraoueg, goude Rannadennoù rouedad, goude + hag "Ur Plex Media Server". Ar seurt "Plex Media Server" er furmskrid rannadenn, hag ur servijer gant ar merk Plex dindan "Kavet war ar rouedad", a zigor an hevelep pajenn.
+2. Ar bajenn "Ouzhpennañ ur servijer Plex" a glask servijerioù Plex ho rouedad ("O klask servijerioù Plex war ho rouedad") hag o diskouez dindan "Kavet war ar rouedad". Stokit ho hini: ur gartenn a ziskouez e anv, e stumm Plex hag un naoudi berr.
+3. N'emañ ket er roll? Skrivit e "Chomlec'h ar servijer", evel `192.168.1.20`, `192.168.1.20:32400` pe `https://...plex.direct:32400`, ha goude stokit "Klask". An arload a lenn testeni ar servijer ha ne gas netra all.
+4. Tapit ar jedouer, war un urzhiataer: digorit Plex en ur merdeer web ha kevreit, digorit forzh peseurt luc'hskeudenn pe video eus ho levraoueg, goude "...", "Get Info", "View XML". Un ivinell nevez a zigor war ur chomlec'h a echu gant `X-Plex-Token=...`. Eilit ar chomlec'h-se a-bezh.
+5. Pegit anezhañ e "Jedouer haeziñ", pe kasit anezhañ d'ar pellgomzer ha stokit "Pegañ diwar ar golver": an arload a gemer ar servijer hag ar jedouer ennañ. An destenn goude `X-Plex-Token=` hec'h-unan a ya en-dro ivez. "Penaos e gaout", war ar bajenn, a lavar kement all; merourien ar servijer a c'hall ivez implijout talvoud `PlexOnlineToken` restr `Preferences.xml` ar servijer, na zeu ket da dermen. War ur skinwel e tigor OK boestad ar c'hlavier: skrivit ar jedouer eno (20 arouezenn eo peurliesañ).
+6. Stokit "Amprouiñ ar c'hevreadur". Respont a ra "Kevreet: N levraoueg", pe e lavar petra a ya a-dreuz, evel "Nac'het eo bet ar jedouer-mañ gant ar servijer Plex."
+7. Goude e tiskouez "Haeziñ diavaez an ti" ar pezh a lavar ar servijer: "Lavarout a ra ar servijer e c'haller tizhout anezhañ e (chomlec'h):(porzh).", pe "N'en deus ket lavaret ar servijer e chomlec'h er-maez eus an ti." Evit implijout ar servijer er-maez eus ar gêr, skrivit ho chomlec'h foran pe hoc'h anv DynDNS e "Chomlec'h er-maez eus an ti (IP pe anv)", hag ar porzh adkaset e Plex (Settings, Remote Access) e "Porzh er-maez eus an ti". Ar pezh a skrivit a dremen atav a-raok ar pezh a lavar ar servijer.
+8. "Anv" eo anv ar servijer nemet ma cheñchfec'h anezhañ, ha "Teuliad loc'hañ (diret)" a c'hall digeriñ ul levraoueg war-eeun. Stokit "Enrollañ". Diskouezet e vez ar servijer gant ar rannadennoù, evel `plex://` hag e chomlec'h.
+
+### Furchal en ho levraouegoù Plex
+
+1. Stokit ar servijer e Rannadennoù rouedad. Al live kentañ a ziskouez al levraouegoù a ziskouez an arload: luc'hskeudennoù, filmoù ha videoioù all, heuliadoù TV. Lezet eo ar sonerezh a-gostez.
+2. Dindan ul levraoueg e teu he zeuliadoù evel m'emaint war bladenn ar servijer (gwel "by folder" Plex), goude al luc'hskeudennoù hag ar videoioù dindan anv o restr, gant ar munudennoù a ra Plex. Ul levraoueg luc'hskeudennoù na respont ket he gwel dre deuliad a ziskouez he albomoù en he lec'h.
+3. 360° ha 3D a vez kavet en ur lenn ar restroù o-unan, evel war forzh peseurt rannadenn: al luc'hskeudennoù 360° a resev ar merk 360°, al luc'hskeudennoù spasel Apple ar merk 3D.
+4. Digorit ul luc'hskeudenn pe ur video evel war forzh peseurt rannadenn: 360°, 3D, 360°/180°, Spatial 2.5D war ur pellgomzer, ar gwel soubus er Quest, ar pellureer war ur skinwel. Ur video a vez lennet evel ar restr orin, dre lodennoù oktedoù a-dreuz pont lec'hel an arload, setu e ya en-dro al lammat en amzer hag e tizh e roadennoù-meta 360° ha 3D al lennerioù hep bezañ kemmet.
+5. Dibabit restroù ha stokit "Pellgas da Immich" evit o c'has d'ho servijer, evel diwar forzh peseurt rannadenn (gwelit [Kas restroù ur rannadenn da Immich](#send-files-of-a-share-to-immich)).
+
+### Er-maez eus ar gêr
+
+Bep tro ma tigor ar servijer, an arload a esa da gentañ ar chomlec'h er gêr ha, 400 ms diwezhatoc'h, ar chomlec'h er-maez eus an ti. Implijet e vez an hini kentañ a respont gant ho servijer; pa'z eo ar chomlec'h er-maez eus an ti, pajenn an teuliad a ziskouez un arlun bed gant an destenn "Kevreet dre ar chomlec'h er-maez eus an ti". Ezhomm zo evit se e vefe gweredekaet Remote Access e Plex (Settings, Remote Access) gant ur porzh adkaset gant ho poest: hep plex.tv n'hall ket an arload implijout an treizher Plex, setu ur servijer hep adkas porzh ne zigor nemet er gêr, hag er-maez eus ar gêr e lavar ar bajenn "N'haller ket tizhout ho servijer Plex er-maez eus rouedad an ti. Gweredekait an haeziñ a-bell gant un adkas porzh e Plex (Arventennoù, Haeziñ a-bell), pe skrivit e chomlec'h foran."
+
+Ar chomlec'h a lavar ar servijer a vez desket en-dro e pep kevreadur er gêr. Pa ne respont ket diavaez (ur voest a cheñch he chomlec'h, daou drowaller an eil war-lerc'h egile), skrivit ho hini war bajenn ar servijer. Pa baouez ar jedouer da vont en-dro (digevreet oc'h bet eus an estez merdeer m'ho peus e eilet diouti, da skouer), pajenn an teuliad a lavar se hag a ginnig "Pegañ ur jedouer nevez", a zigor pajenn ar servijer war vaezienn ar jedouer.
+
+### E-keñver Plex hag ar seurt DLNA
+
+- **Ar restroù orin**: an arload a lenn ar restroù o-unan, biskoazh un eilskouerenn amdroet gant Plex, setu e chom ar roadennoù-meta 360°, 3D ha VR180 hep bezañ kemmet hag e vezont implijet gant gwelerioù an arload, tra ma tiskouez arloadoù Plex ar restroù-se plat.
+- **plex.tv ebet**: an arload ne gomz nemet ouzh ho servijer, dre HTTPS atav. Gwiriet e vez ar servijer dre e desteni plex.direct dezhañ, liammet ouzh naoudi ar servijer, a-raok ma vefe kaset ar jedouer. Ar jedouer a chom war ar benveg, en e stokañ suraet, ha n'a nemet d'ho servijer, en un talbenn goulenn.
+- **E-keñver an hevelep servijer ouzhpennet evel DLNA**: an teuliadoù evel war ar bladenn, munudennoù Plex, an haeziñ er-maez eus an ti hag ur c'hevreadur suraet.
+
+### Bevennoù
+
+- **Servijerioù goulennet hepken**: ret eo d'ar servijer bezañ goulennet e Plex (kevreet ur wech ouzh ur gont Plex), ar pezh a ro dezhañ e desteni plex.direct. Anez e lavar ar bajenn "Ar chomlec'h-mañ a respont hep testeni Plex. Goulennit ar servijer e Plex, pe ouzhpennit anezhañ evel ur rannadenn SMB, WebDAV pe DLNA."
+- **IPv4 hepken**: "N'eo ket skoret ar chomlec'hioù IPv6 c'hoazh. Skrivit chomlec'h IPv4 ar servijer."
+- **Ar jedouer** a ro an holl haeziñ d'ho servijer Plex. Lemel ar servijer en arload a ankouna ar jedouer war ar benveg met n'en nullañ ket: "Chom a ra talvoudek ar jedouer war ar servijer betek ma tigevreot eus an estez merdeer m'ho peus e eilet diouti." Ur jedouer gant un deiziad termen a ziskouez an deiziad-se, ha n'hall ket an arload e adnevesaat.
+- **Er-maez eus ar gêr**: dre un adkas porzh hepken, treizher ebet n'eus.
+- **Levraouegoù**: ar sonerezh n'eo ket diskouezet, un teuliad a ziskouez 20 000 elfenn d'ar muiañ, hag un implijer bevennet a c'hall kaout "N'hall ket ar jedouer-mañ lenn levraouegoù ar servijer."
+- **Restroù kriz ar c'hameraoù 360°** (.insv, .insp, .360, .osv) ne vezont diskouezet nemet ma vezont roet gant Plex; anez ouzhpennit an hevelep teuliad NAS evel ur rannadenn SMB pe WebDAV, gwelit [Restroù kriz ar c'hameraoù 360°](#raw-360-camera-files-without-the-cameras-app).
+- **Kavout ar servijer**: ur servijer gant e arventenn "Enable local network discovery (GDM)" lazhet ne vez ket kavet, skrivit e chomlec'h neuze. War iPhone hag iPad ne gas ar c'hlask nemet goulennoù unicast. Lodenn DLNA an hevelep servijer a c'hall bezañ diskouezet er roll ivez, gant ar merk DLNA: dibabit al linenn gant ar merk Plex.
+- **N'eo ket bet gwiriet war ur benveg c'hoazh**: ar c'hevreañ, an teuliadoù, lodennoù oktedoù ur video, ar munudennoù, ur jedouer fall hag ar chomlec'h er-maez eus an ti a zo bet gwiriet diwar un urzhiataer gant ur gwir Plex Media Server 1.42.1, hag al levraouegoù luc'hskeudennoù hag heuliadoù TV gant ur servijer simulet hepken. Al lenn war ur pellgomzer, er Quest, war un iPhone ha war ur skinwel, hag an tremen d'ar chomlec'h er-maez eus an ti, a vo amprouet war ar benvegoù gant ar build 20.
+- Immuch360 n'eo ket stag ouzh Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Rannañ ar pellgomzer-mañ war ar rouedad
@@ -219,6 +279,63 @@ Diwar neuze ez eo ur rannadenn WebDAV evel forzh peseurt hini all: dinoadur 360�
 - **Surentez**: rouedad lec'hel hepken. Ar rannadenn ne selaou nemet war chomlec'hioù Wi-Fi, Ethernet ha poent tizhout ar pellgomzer, morse war e chomlec'h roadennoù hezoug pe VPN, ha ne respont nemet d'ar benvegoù o deus ur chomlec'h lec'hel. Pep goulenn en deus ezhomm eus an anv implijer hag ar ger-tremen (HTTP Basic); dek ger-tremen fall eus ur benveg e-pad ur vunutenn a stank anezhañ e-pad ur vunutenn. Ar ger-tremen a dremen hep bezañ enrineget war ar Wi-Fi (HTTP eeun): implijit ar rannadenn war ur rouedad a fiziit enni, ha lazhit anezhi pa vez echu ganeoc'h.
 - **Poent tizhout ar pellgomzer e-unan**: ar c'hasked a c'hall kevreañ outañ; pa ne gav ket ar pellgomzer eno, skrivit ar chomlec'h diskouezet war ar bajenn.
 - **N'eo ket bet gwiriet war ur benveg c'hoazh**: ar servijer a zo bet gwiriet gant amprouadennoù unanenn ha gant amprouadennoù penn-da-benn gant arval WebDAV ha pont media ar c'hasked e-unan, war un urzhiataer. Ur pellgomzer o pourchas d'ur Quest 3 (kavout, ur video 4 GB lennet gant lammoù, ar skramm lazhet e-pad 30 munutenn, ar poent tizhout, Paouez diwar ar c'hemenn) hag tu an iPhone, n'eo ket bet lañset war un iPhone c'hoazh, a vo amprouet war ar benvegoù gant ar build 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Kameraioù Tapo: sell war-eeun hag enrolladennoù ar gartenn-vemor
+
+Kameraioù Tapo hoc'h eus er gêr, ha fellout a ra deoc'h gwelout kamera al liorzh ha klipoù an noz tremenet e-kichen ho luc'hskeudennoù hep digeriñ an arload Tapo, ha mirout ur c'hlip en Immich. N'eus netra evit ar c'hameraioù en arload Immich, hag an arload Tapo a zo un arload a-ziforc'h, kevreet ouzh ho kont TP-Link, gant ar c'hlipoù a-ziforc'h diouzh ho luc'hskeudennoù.
+
+Adalek ar build 20 e ouzhpenn Immuch360 ur c'hamera Tapo e-kichen ar rannadennoù rouedad. Diskouez a ra ar c'hamera war-eeun war ar pellgomzerioù hag an tabletennoù Android, Android TV hag ar Meta Quest 3, ha war pep savenn enrolladennoù he c'hartenn-vemor, deiz goude deiz: ur c'hlip a vez tapet diwar ar c'hamera, goude e vez lennet evel forzh peseurt video hag e c'hall bezañ kaset da Immich. An arload ne gomz ouzh ar c'hamera nemet war ho rouedad, biskoazh ouzh servijerioù TP-Link, ha ne cheñch biskoazh netra war ar c'hamera.
+
+### Ouzhpennañ ur c'hamera
+
+1. En arload Tapo da gentañ: krouit kont ar c'hamera, en arventennoù ar c'hamera, Arventennoù araokaet, Kont ar c'hamera (un anv implijer hag ur ger-tremen evit ar c'hamera-mañ, implijet evit ar sell war-eeun), ha gweredekait ar c'henglotadur gant an trede strollad, dindan Me, ha goude Tapo Lab.
+2. En Immuch360, digorit an ivinell Levraoueg, goude Rannadennoù rouedad, goude + hag "Ur c'hamera Tapo".
+3. Ar bajenn "Ouzhpennañ ur c'hamera" a glask kameraioù ("O klask kameraioù Tapo war ho rouedad") hag o diskouez dindan "Kavet war ar rouedad" gant ar merk Tapo. Stokit hoc'h hini evit leuniañ "Chomlec'h ar c'hamera", pe skrivit he chomlec'h. Ur c'hamera gant ar merk Tapo er furmskrid rannadenn a zigor an hevelep pajenn.
+4. "Anv": an doare ma vez diskouezet ar c'hamera er roll.
+5. Dindan "Enrolladennoù war ar gartenn-vemor", "Ger-tremen ar gont TP-Link": ger-tremen ar gont a implijit en arload Tapo. Digeriñ a ra an enrolladennoù; n'eus ket ezhomm eus ho chomlec'h postel.
+6. Dindan "War-eeun", "Anv implijer kont ar c'hamera" ha "Ger-tremen kont ar c'hamera": kont ar c'hamera eus ar bazenn 1.
+7. Unan eus an daou a-walc'h ("Roit ger-tremen ar gont TP-Link, kont ar c'hamera, pe an daou."): ger-tremen TP-Link e-unan a ro an enrolladennoù, kont ar c'hamera e-unan ar sell war-eeun.
+8. Stokit "Amprouiñ ar c'hamera". Diskouez a ra "Enrolladennoù: (patrom), meziant diabarzh (stumm)" gant stad ar gartenn-vemor, ha "Sell war-eeun: (video), son (aodio)", pe ar pezh a zo c'hwitet evit pep hini.
+9. Stokit "Enrollañ". Diskouezet e vez ar c'hamera dindan "Kameraioù", goude ar rannadennoù, gant he fatrom kerkent ha ma vez anavezet ha `tapo://` gant he chomlec'h.
+
+### Sellet war-eeun
+
+1. Stokit ar c'hamera. He sell war-eeun a zo e penn uhel he fajenn: "O kevreañ ouzh ar c'hamera", goude ar skeudenn gant ar merk War-eeun.
+2. Ar boutonoù war ar skeudenn: ar son, lazhet da gentañ ("Gweredekaat ar son"; "Son ebet war an trobarzhell-mañ" pa n'hall ket an trobarzhell e lenn), SD pe HD, ha "Skramm a-bezh".
+3. Ur pellgomzer a ziskouez SD war ar bajenn ha HD war ar skramm a-bezh; ar Quest a ziskouez HD. Distreiñ a guita ar skramm a-bezh da gentañ.
+4. Dindan ar skeudenn e teu ar patrom hag ar meziant diabarzh hag ar gartenn-vemor, evel "Kartenn-vemor: (implijet) implijet war (hollad)" pe "Kartenn-vemor ebet".
+
+War iPhone hag iPad e lavar ar sell war-eeun "Ar sell war-eeun a zeuio war iPhone hag iPad en un handelv diwezhatoc'h. Lennet e vez an enrolladennoù amañ dija." Hep kont ar c'hamera e lavar ar bajenn "Ouzhpennit kont ar c'hamera evit gwelout ar sell war-eeun."
+
+### Lenn ha mirout an enrolladennoù
+
+1. Dindan "Enrolladennoù war ar gartenn-vemor", pajenn ar c'hamera a ziskouez an deizioù gant enrolladennoù, ar re nevesañ da gentañ, dre viz. Hep ger-tremen ar gont TP-Link e lavar "Ouzhpennit ger-tremen ar gont TP-Link evit gwelout an enrolladennoù."
+2. Stokit un deiz. E glipoù a zeu dindan eurioù amzer ar c'hamera hec'h-unan, pep hini gant e gregiñ, e badelezh, munudenn ar c'hamera evit un darvoud, hag e seurt: Fiñv, Den, Loen-ti, Karr, Babig o ouelañ, Loen, Dizehan pe Darvoud.
+3. Stokit ur c'hlip. An arload a dap anezhañ diwar ar c'hamera ("O tapout ar video diwar ar c'hamera: N%", gant Cancel (Nullañ)), goude e lenn anezhañ el lenner video, gant ar son hag al lammat en amzer. Ur c'hlip tapet en deus "War an trobarzhell-mañ" hag a zigor diouzhtu an dro war-lerc'h.
+4. Evit mirout ur c'hlip en Immich, gant ur servijer kevreet: lañser ⋮ ar video, "Pellgas da Immich".
+5. Evit dieubiñ plas: ur pouezadenn hir war ur c'hlip tapet a ginnig "Dilemel an eilskouerenn war an trobarzhell-mañ" (war ur pellgomzer), ha pajenn ar c'hamera he deus "Dilemel ar videoioù bet tapet diwar ar c'hamera-mañ", gant o ment.
+6. Ar bouton freskaat e-krec'h a-zehou, pe sachañ ar bajenn war-draoñ, a c'houlenn en-dro digant ar c'hamera.
+
+Pa ne respont mui ar c'hamera war he chomlec'h, he fajenn a glask anezhi war ar rouedad dre he chomlec'h MAC hag he dilec'h d'al lec'h ma respont bremañ, kerkent ha ma tiskouez an hevelep testeni. Ur c'hamera a ziskouez un testeni all eget an hini en deus gwelet an arload da gentañ a vez lakaet ur goulenn dezhi en he lec'h: "Ar c'hamera e (chomlec'h) a ziskouez un testeni all eget a-raok. Kendalc'hit nemet m'ho peus he adderaouekaet pe erlec'hiet."
+
+### E-keñver an arload Tapo
+
+- **War ho rouedad hepken**: an arload a gomz ouzh ar c'hamera hec'h-unan, war ar rouedad lec'hel, ha biskoazh ouzh servijerioù TP-Link. Ne gevre ket ouzh ur gont TP-Link, setu n'eus ket ezhomm eus ho chomlec'h postel.
+- **An enrolladennoù a zeu da vezañ videoioù boas**: ur c'hlip tapet a zo ur video H.264 gant e son, a c'hallit kas da Immich, ma chom goude m'he deus ar gartenn-vemor enrollet warnañ.
+- **E-kichen an traoù all**: gant pe hep servijer Immich, war ur pellgomzer, ur skinwel pe er Quest (er prenestr), kavet war ar rouedad evel ur rannadenn.
+- **Lenn hepken**: an arload ne c'houlenn digant ar c'hamera nemet ar pezh a ziskouez; ne cheñch biskoazh un arventenn ha ne zilam biskoazh netra war ar c'hamera.
+
+### Bevennoù
+
+- **N'eo ket bet gwiriet war ur benveg c'hoazh**: ar build 20 n'en deus ket bet labouret c'hoazh gant ur gwir gamera. Ar protokol a zo bet skrivet diwar tapadennoù rouedad ur C510W gant ar meziant diabarzh 1.3.4 (kevreañ V4 kreiz 2026), ha gwiriet eo bet an arload en e amprouennoù gant ur c'hamera simulet. Degemeret mat e vez an danevelloù, gant ar patrom hag ar meziant diabarzh a ziskouez "Amprouiñ ar c'hamera" ha linennoù ar [c'herzhlevrioù](#logs).
+- **Sell war-eeun**: war ar pellgomzerioù hag an tabletennoù Android, Android TV hag ar Quest hepken, n'eo ket war iPhone hag iPad c'hoazh. Bevennoù TP-Link a dalv: daou red HD ha daou red SD d'ar muiañ war un dro dre gamera, an arload Tapo e-barzh, ha Tapo Care, ar gartenn-vemor hag un enrolladur a implij RTSP pe ONVIF ne c'hallont ket mont en-dro holl war un dro.
+- **Kameraioù**: ar c'hameraioù gant pod-tredan hag ar c'hameraioù a-dreñv ur hub Tapo n'int ket skoret.
+- **Enrolladennoù**: ur pellgargadenn war un dro dre gamera. Tra ma furch an arload Tapo er gartenn-vemor, an arload a esa en-dro goude 4, 8 ha 12 eilenn, goude e lavar "Ac'hubet eo ar c'hamera gant ur sellour all, evel an arload Tapo. Klaskit en-dro a-benn ur vunutenn." An enrolladennoù en H.265 n'int ket amdroet c'hoazh ("En H.265 emañ an enrolladenn-mañ, ha n'hall ket an handelv-mañ hec'h amdreiñ c'hoazh."), n'eus munudenn ebet evit an enrolladennoù dizehan, hag ur c'hlip a vez lennet kerkent ha ma'z eo bet tapet en e bezh.
+- **Gerioù-tremen**: pep ger-tremen fall a gont, ha goude un nebeut e vez prennet ar c'hamera e-pad ur pennad ("Prennet eo ar c'hamera goude re a c'herioù-tremen fall. Klaskit en-dro a-benn N munutenn."). An arload ne adesa biskoazh e-unan ur ger-tremen nac'het: "Amprouiñ ar c'hamera" pe Retry (Esaeañ en-dro) hepken a c'houlenn en-dro digant ar c'hamera. Pa zegemer ar c'hamera ar ger-tremen evit hec'h arventennoù met n'eo ket evit he videoioù, lazhit ha gweredekait en-dro ar c'henglotadur gant an trede strollad en arload Tapo, ha goude adloc'hit ar c'hamera.
+- **Plas**: ar c'hlipoù tapet a chom e krubuilh an arload, 1 GB d'ar muiañ evit an holl gameraioù asambles (ar re n'int ket bet lennet abaoe ar muiañ a amzer a ya kuit da gentañ); ar reizhiad a c'hall goullonderiñ ar grubuilh-se, ha lemel ur c'hamera a zilam he c'hlipoù.
+- **Er-maez eus ar gêr**: an arload a dizh ar c'hamera war he chomlec'h war ho rouedad, n'eo ket eta diavaez dezhi.
+- Immuch360 n'eo ket stag ouzh TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Restroù kriz ar c'hameraoù 360°, hep arload ar c'hamera
@@ -349,7 +466,7 @@ An dinoadur a zo bet gwiriet war ur skouer luc'hskeudenn spasel skrivet gant lev
 
 An dud a bren ur Quest 3 evit sellet ouzh o luc'hskeudennoù hag o videoioù 360° dezho, ha goude e c'houlennont pelec'h lakaat ar restroù, penaos o lakaat war ar c'hasked hep fun, ha peseurt lenner implijout: al lennerioù video 360° ha 3D er stal a zo ret paeañ evito.
 
-An hevelep arload Android a dro war ar Quest 3 ha 3S evel ur prenestr, gant ho levraoueg a-bezh. E vouton 360° a zigor ur gwel soubus ma'z eo al luc'hskeudenn pe ar video tro-dro deoc'h ha ma sellit tro-dro en ur dreiñ ho penn, e gwir 3D evit ar restroù stereoskopek (Meta Spatial SDK). Ar media a zeu eus ho servijer Immich, eus ar c'hasked e-unan, eus un NAS, eus ur servijer media pe eus ur pellgomzer, lennet en o lec'h (ur servijer media hag ur pellgomzer adalek ar build 19, n'int ket bet gwiriet war ar c'hasked c'hoazh). Digoust ha mammenn digor eo. Gwiriet war ur Quest 3, ha gant un implijer gant videoioù Insta360 X4 8K HEVC.
+An hevelep arload Android a dro war ar Quest 3 ha 3S evel ur prenestr, gant ho levraoueg a-bezh. E vouton 360° a zigor ur gwel soubus ma'z eo al luc'hskeudenn pe ar video tro-dro deoc'h ha ma sellit tro-dro en ur dreiñ ho penn, e gwir 3D evit ar restroù stereoskopek (Meta Spatial SDK). Ar media a zeu eus ho servijer Immich, eus ar c'hasked e-unan, eus un NAS, eus ur servijer media, eus ur pellgomzer pe eus ur servijer Plex, lennet en o lec'h (ur servijer media hag ur pellgomzer adalek ar build 19, ur servijer Plex adalek ar build 20, n'int ket bet gwiriet war ar c'hasked c'hoazh), hag adalek ar build 20 e tiskouez ar prenestr ar c'hameraioù Tapo ivez. Digoust ha mammenn digor eo. Gwiriet war ur Quest 3, ha gant un implijer gant videoioù Insta360 X4 8K HEVC.
 
 ### Digeriñ ar gwel soubus
 
@@ -408,6 +525,56 @@ Trait anezhi gant ar joystick dehou (pe gant bouton Treiñ ar banell titouroù) 
 - **Lammat**: n'haller ket lammat en ur video na respont ket e vammenn d'ar goulennoù byte range; ar banell a lavar se.
 - **Videoioù plat**: ur video stereoskopek plat (n'eo ket 360°) a vez lennet er prenestr gant an daoulagad gwelus; ar gwel 3D soubus a zo evit ar media 360° ha VR180.
 - **Muioc'h**: ar c'hodekoù a ziskod ar c'hasked, ar stal, an aotreoù ha ment an APK a zo e [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Sellet war ho skinwel (Android TV ha Google TV)
+
+Fellout a ra deoc'h kaout al luc'hskeudennoù ha videoioù 360°, hoc'h albomoù ha videoioù ho NAS pe ho servijer Plex war ar skramm bras, evit ar familh war ar c'hanabe, gant pellureer ar skinwel. Arload hezoug Immich n'eo ket un arload skinwel: un implijer en doa e staliet war ur skinwel en deus kavet ez a en-dro gant ul logodenn, n'eo ket gant ar pellureer ([kaozeadenn #1614](https://github.com/immich-app/immich/discussions/1614)), ha skipailh Immich n'en deus raktres ebet evit un arload skinwel ofisiel ([kaozeadenn #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Adalek ar build 20 an hevelep arload Android a dro war Android TV ha Google TV, gant ar pellureer evel an hevelep doare enankañ: un APK evit ar pellgomzerioù hag ar skinwelioù, ar gwelerioù 360° ha 3D troet gant ar biroù, hag ar rannadennoù rouedad, Plex hag ar c'hameraioù Tapo war ar skinwel, gant pe hep servijer Immich.
+
+<a id="install-it-on-the-tv"></a>
+### Staliañ anezhañ war ar skinwel
+
+1. Betek ma kinnigo Google Play an arload war ar skinwelioù, ar pezh a c'hortoz gwiriadur Google eus an embannadur skinwel, kemerit an `Immuch360-v<version>-release.apk` hollek eus ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases).
+2. War ar skinwel, gweredekait an dibarzhioù diorroer hag an dizreinañ USB (war ur Google TV: Settings, System, About, dibabit "Android TV OS build" seizh gwech, goude Settings, System, Developer options; disheñvel eo an anvioù hervez ar skinwelioù).
+3. Diwar un urzhiataer war an hevelep rouedad, gant adb (Android SDK Platform Tools): `adb connect <address of the TV>`, asantit ar goulenn war ar skinwel, goude `adb install -r Immuch360-v<version>-release.apk`.
+4. An arload a vez diskouezet e-touez arloadoù ar skinwel, gant e vandenn. Staliit an embannadur war-lerc'h en hevelep doare: `-r` a vir ar c'hevreadur hag an arventennoù.
+
+### Loc'hañ ar wech kentañ
+
+1. Kevreit evel war ur pellgomzer: ar biroù a zilec'h ur stern eus ur vaezienn d'eben, hag OK war ur vaezienn ("Pouezit war OK evit skrivañ") a zigor klavier ar skinwel en ur voestad, evit chomlec'h ar servijer, ar postel hag ar ger-tremen.
+2. Pe dibabit "Implijout hep servijer". N'en deus ket ur skinwel luc'hskeudennoù dezhañ, setu e lavar an ivinell Photos (Luc'hskeudennoù) "N'en deus ar skinwel-mañ luc'hskeudenn pe video ebet dezhañ: digorit ur rannadenn rouedad diwar al Levraoueg." gant ur bouton Rannadennoù rouedad. Ouzhpennit eno ur rannadenn, ur servijer Plex pe ur c'hamera, evel war ur pellgomzer (gwelit [Rannadennoù rouedad](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Fiñval gant ar pellureer
+
+- Ar biroù a zilec'h ar stern, OK a zigor ar pezh m'emañ warnañ, Distreiñ a ya war-gil. Diwar un ivinell e kas Distreiñ d'al lañser a-gostez, goude da Photos (Luc'hskeudennoù), goude er-maez eus an arload.
+- Ar chadenn d'an nec'h ha d'an traoñ a ruilh ur bajenn bep tro.
+- Er gwelerioù ez a en-dro boutonoù lenn hag ehan, mont buan war-raok, mont buan war-gil, da-heul ha kent ar pellureer, hag ar bouton titouroù a ziskouez munudoù ul luc'hskeudenn pe ur video.
+
+### Luc'hskeudennoù ha videoioù gant ar pellureer
+
+1. **Ul luc'hskeudenn**: kleiz ha dehou a ya d'an hini kent pe d'an hini war-lerc'h, OK a ziskouez pe a guzh an elfennoù reoliñ, Krec'h a ya d'ar varrenn uhel (ma'z eus ar bouton 360°) ha Traoñ d'ar varrenn izel.
+2. **Ur video**: OK a ehan, en ur ziskouez an elfennoù reoliñ, pe a lenn. Tra ma vez lennet, kleiz ha dehou a lamm 10 eilenn war-gil pe war-raok; ehanet, ez eont d'an elfenn a-raok pe d'an hini war-lerc'h, evel ma lavar ar c'huzul: "Ehanet: ar biroù a ya d'an elfenn a-raok pe d'an hini war-lerc'h".
+3. **Ul luc'hskeudenn 360°**, diwar ar bouton 360°: ar biroù a sell tro-dro, buanoc'h pa vezont dalc'het, hag ar gwel a ehan goustadik. OK a ya da voutonoù ar varrenn uhel, war "Zoumañ", e-kichen "Dizoumañ", ar maez gwelout ha 3D; ar chadenn d'an nec'h ha d'an traoñ a zoum ivez. Distreiñ a zistro eus ar boutonoù d'ar skeudenn, goude a serr. Ar c'huzul a lavar "Biroù evit sellout tro-dro, OK evit an elfennoù reoliñ, Distreiñ evit serriñ".
+4. **Ur video 360°**, diwar ar bouton 360°: ar biroù a sell tro-dro tra ma vez kuzhet an elfennoù reoliñ, OK a ehan hag o diskouez, Distreiñ o c'huzh, goude a serr. Ar c'huzul a lavar "Biroù evit sellout tro-dro, OK evit ehanañ ha diskouez an elfennoù reoliñ, Distreiñ evit serriñ".
+5. **Eñvorennoù**: kleiz ha dehou a dremen dre al luc'hskeudennoù ha betek an eñvorenn war-lerc'h, Krec'h a ya d'ar bouton serriñ ha Traoñ da "View in timeline (Gwelet el linenn-amzer)".
+6. **Rannadennoù ha Plex**: an hevelep boutonoù e pajennoù luc'hskeudenn ha video ur rannadenn, ma tigor kleiz ha dehou restr a-raok pe restr war-lerc'h an teuliad.
+
+### An arventenn Aozadur evit ar pellureer
+
+Settings (Arventennoù), Preferences (Gwellvezioù), "Aozadur evit ar pellureer": "Frammoù fokus bras ha stokelloù ar pellureer, hep an elfennoù reoliñ ezhomm ur skramm stekiñ dezho. Emgefre a weredeka anezhañ war Android TV ha Google TV." Emgefre eo an dibab dre ziouer; Gweredekaet a zere ouzh un dabletenn renet gant ur c'hlavier pe ur pad c'hoari; Lazhet a lazh anezhañ war ur skinwel. An arventenn n'eus anezhi nemet war Android. Ar biroù hag OK a ya en-dro er gwelerioù gant ur c'hlavier pe ur pad c'hoari forzh petra eo an arventenn.
+
+### Bevennoù
+
+- **Ur gweler**: war ur skinwel ne ra an arload nemet diskouez ha lenn. Ar gwarez, ar pellgasadennoù, an aozañ, an dilemel, ar rannañ, dibab meur a elfenn, Cast, Spatial 2.5D, ar jiroskop, ar gartenn ha Lec'hioù, ha "Rannañ ar pellgomzer-mañ war ar rouedad" a zo kuzhet.
+- **Kevreañ**: OAuth a zigor ur bajenn web, ar pezh n'hall ket ur skinwel ober: "Kevreañ gant (pourchaser) a zigor ur bajenn web, ar pezh n'hall ket ar skinwel-mañ ober. Kevreit gant ur postel hag ur ger-tremen kentoc'h."
+- **Al liammoù** a ziskouez o chomlec'h dindan "Digeriñ war un trobarzhell all" e-lec'h digeriñ ur merdeer, hag an destenn a vez skrivet e boestad klavier ar reizhiad.
+- **Memor**: war ur skinwel gant nebeut a vemor, al luc'hskeudennoù 360° a vez diskouezet e 4096x2048 d'ar muiañ, hep ar skeudenn spisoc'h pa vez zoumet.
+- **Videoioù**: diskoderioù ar skinwel a ziviz petra a vez lennet, gant an hevelep arventenn Mammenn ar video hag an hevelep gwiriadur diskoderioù evel war ur pellgomzer (gwelit [Munudoù ar video hag an diskoderioù](#video-details-decoders-and-why-a-video-stutters)); n'eo ket bet muzuliet war ur skinwel c'hoazh.
+- **N'eo ket bet gwiriet war ur benveg c'hoazh**: ar skor skinwel a zo bet gwiriet gant amprouennoù emgefre hepken, ha n'en deus ket labouret c'hoazh war ur skinwel na war ur c'hendarvaner skinwel. Da gadarnaat: an tu ma tro ar biroù ur video 360°, klavier ar skinwel (Gboard) er voestad destenn, bouton OK ar pellureerioù dre skin-ruz, ar marzoù hag ar vandenn war skramm degemer ar skinwel. Degemeret mat e vez an danevelloù.
+- **Google Play war ar skinwelioù** a c'hortoz gwiriadur Google eus an embannadur skinwel; betek neuze, an APK.
+- **Skinwelioù all**: Fire TV n'eo ket bet amprouet, ha n'eus stumm Apple TV ebet.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Kavout ho skeudennoù 360°: ar roll 360°
@@ -488,11 +655,11 @@ Pa na ra ar servijer van ebet eus ar goulennoù HTTP Range war an orin ha pa'z e
 <a id="everything-else-is-immich"></a>
 ## Immich eo an holl draoù all
 
-Kement tra a ra an arload hezoug Immich ofisiel a zo amañ: gwarez, linenn-amzer, albomoù, klask, rannañ, kevelerien, an holl goubredet gant ho servijer, gant an hevelep servijer hag an hevelep kont hag an arload web. Immuch360 a vez staliet e-kichen an arload ofisiel (pakad `com.aprogsys.immuch360`). Daou ziforc'h a zo, adalek ar build 15: ar bouton "Force original video" a zo deuet da vezañ an dibab Mammenn ar video displeget a-us, hag al luc'hskeudennoù hag ar videoioù a bellgasit gant an dorn diwar un albom eus ar benveg a vez kontet evel gwarezet.
+Kement tra a ra an arload hezoug Immich ofisiel a zo amañ: gwarez, linenn-amzer, albomoù, klask, rannañ, kevelerien, an holl goubredet gant ho servijer, gant an hevelep servijer hag an hevelep kont hag an arload web. Immuch360 a vez staliet e-kichen an arload ofisiel (pakad `com.aprogsys.immuch360`). Daou ziforc'h a zo, adalek ar build 15: ar bouton "Force original video" a zo deuet da vezañ an dibab Mammenn ar video displeget a-us, hag al luc'hskeudennoù hag ar videoioù a bellgasit gant an dorn diwar un albom eus ar benveg a vez kontet evel gwarezet. War ur skinwel, adalek ar build 20, an arload a zo ur gweler hepken, gwelit [Sellet war ho skinwel](#watch-on-your-tv-android-tv-and-google-tv).
 
 Evit diskouez ul luc'hskeudenn 360° da unan bennak n'en deus ket an arload, rannit anezhi gant ul liamm rannet Immich: arload web Immich a ziskouez ul luc'hskeudenn 360° evel ur sferenn en e verdeer.
 
-Ar build bremanel, ar build 19 (stumm 3.3.0-rc.0, niverenn build 3030017), a zo diazezet war Immich 3.3.0-rc.0 (Immich `main`, n'eo ket c'hoazh un embannadur stabil) hag a zo bet amprouet gant ur servijer Immich 3.2. Danevellit ar c'hudennoù e [Kudennoù](https://github.com/freeKC/Immuch360/issues), mar plij, ha n'eo ket d'ar raktres Immich. Evit teuliadur klok Immich e-unan, gwelit [immich.app](https://immich.app).
+Ar build bremanel, ar build 20 (stumm 3.3.0-rc.0, niverenn build 3030018), a zo diazezet war Immich 3.3.0-rc.0 (Immich `main`, n'eo ket c'hoazh un embannadur stabil). Ar build 19 a zo bet amprouet gant ur servijer Immich 3.2, hag ar build 20 ne cheñch netra er pezh a c'houlenn an arload digant ar servijer. Danevellit ar c'hudennoù e [Kudennoù](https://github.com/freeKC/Immuch360/issues), mar plij, ha n'eo ket d'ar raktres Immich. Evit teuliadur klok Immich e-unan, gwelit [immich.app](https://immich.app).
 
 ## Keñveriet gant an arload Immich hag arloadoù all
 
@@ -515,6 +682,9 @@ Ar build bremanel, ar build 19 (stumm 3.3.0-rc.0, niverenn build 3030017), a zo 
 | Servijerioù media DLNA evel seurt rannadenn | ❌ | ✅ adalek ar build 19 | Gwiriet gant minidlna ha Gerbera e Docker; Plex, Jellyfin, un NAS, ar Freebox Server, un iPhone hag ar Quest a vo amprouet war ar benvegoù gant ar build 19 |
 | Kas restroù ur rannadenn da Immich; restroù ar benveg kaset gant an dorn kontet evel gwarezet | ❌ restroù ar benveg hepken | ✅ adalek ar build 15 | Amprouet war un emuler Android gant ur servijer amprouiñ Samba hag ur servijer Immich 3.2 |
 | Rannañ ar pellgomzer-mañ war ar rouedad, evit ar c'hasked | ❌ | ✅ adalek ar build 19, Android hag iOS | Amprouadennoù unanenn hag amprouadennoù penn-da-benn gant arval WebDAV ar c'hasked, war un urzhiataer; ur pellgomzer o pourchas d'ur Quest, ha tu an iPhone, a vo amprouet war ar benvegoù gant ar build 19 |
+| Levraouegoù Plex Media Server lennet diwar ar restroù orin, er gêr hag er-maez, hep plex.tv | ❌ | ✅ adalek ar build 20, pep gweler, war ar pellgomzerioù, an tabletennoù, ar Quest 3 hag ar skinwelioù | Gwiriet diwar un urzhiataer gant ur gwir Plex Media Server 1.42.1 (kevreañ, teuliadoù, lodennoù oktedoù, munudennoù, ar chomlec'h er-maez eus an ti); n'eo ket bet gwiriet war ur benveg c'hoazh |
+| Kameraioù Tapo: ar sell war-eeun, hag enrolladennoù ar gartenn-vemor kaset da Immich pa garit | ❌ | ✅ adalek ar build 20: an enrolladennoù e pep lec'h, war-eeun war Android, Android TV hag ar Quest 3 | Gwiriet gant ur c'hamera simulet; n'eo ket bet gwiriet gant ur gwir gamera c'hoazh |
+| Android TV ha Google TV, renet gant ar pellureer, en hevelep APK | ❌ n'eo ket un arload skinwel | ✅ adalek ar build 20 | Gwiriet gant amprouennoù emgefre; n'eo ket bet gwiriet war ur skinwel c'hoazh |
 | Luc'hskeudennoù Insta360 .insp kriz ha videoioù .insv ur roudenn | ❌ plat | ✅ adalek ar build 16 | Luc'hskeudennoù gwiriet keñver ouzh ezporzhiadurioù Insta360 Studio eus restroù X3, videoioù war un emuler Android gant ur restr X3 izel he spisder; n'eo ket bet lañset war un iPhone c'hoazh |
 | Videoioù kriz gant ul lunedenn dre roudenn pe dre restr (Insta360 X4, X4 Air, X5, X6, koubladoù X3, GoPro .360, DJI .osv) | ❌ plat pe fall | ✅ adalek ar build 18 | Dielfennerioù ha gwriañ gwiriet war restroù gwir X4, koublad X3, GoPro MAX hag Osmo 360; al lenn a vo amprouet war ar benvegoù gant ar builds 18 ha 19 |
 | .dng dual fisheye | ❌ plat | ❌ n'eo ket c'hoazh | Raktreset |
@@ -529,27 +699,33 @@ Ar build bremanel, ar build 19 (stumm 3.3.0-rc.0, niverenn build 3030017), a zo 
 |---|---|---|
 | Arload web Immich | Diskouez a ra ul luc'hskeudenn 360° evel ur sferenn, met kemer a ra un .insp kriz evit ur panorama echu hag e astenn e ziv gelc'hienn tro-dro d'ar sferenn; ur gwel VR a zo ur goulenn c'hoazh ([kaozeadenn #14768](https://github.com/immich-app/immich/discussions/14768)) | Gwriañ a ra ar restroù kriz war ar benveg, ha digeriñ a ra ur gwel soubus er Quest 3 |
 | An arload Insta360 pe Studio | Ret evit treiñ restroù kriz ar gartenn en ur skeudenn 360° a-raok sellet outi | Digeriñ a ra ar restroù kriz .insp ha .insv war-eeun, hag ar restroù GoPro .360 ha DJI .osv |
-| Plex, Jellyfin, Synology Photos | Luc'hskeudennoù ha videoioù 360° diskouezet plat pe n'int ket anavezet, evel m'en deskriv neudennadoù war o foromoù (ur goulenn Plex a zo digor abaoe 2017) | Lenn a ra an hevelep teuliadoù dre SMB, WebDAV pe DLNA hag o diskouez evel ur sferenn, hep cheñch netra war ar servijer |
+| Plex, Jellyfin, Synology Photos | Luc'hskeudennoù ha videoioù 360° diskouezet plat pe n'int ket anavezet, evel m'en deskriv neudennadoù war o foromoù (ur goulenn Plex a zo digor abaoe 2017) | Lenn a ra al levraoueg Plex hec'h-unan adalek ar build 20, pe an hevelep teuliadoù dre SMB, WebDAV pe DLNA, hag o diskouez evel ur sferenn, hep cheñch netra war ar servijer |
+| An arload Tapo | Un arload a-ziforc'h, kevreet ouzh ho kont TP-Link, gant ar c'hlipoù a-ziforc'h diouzh ho luc'hskeudennoù | Diskouez a ra ar c'hamera e-kichen ho luc'hskeudennoù, komz a ra outi war ho rouedad hepken, hag e vir ur c'hlip evel ur video a c'hallit kas da Immich (adalek ar build 20) |
+| Arload hezoug Immich war ur skinwel | N'eo ket un arload skinwel: un implijer a lavar ez a en-dro gant ul logodenn, n'eo ket gant ar pellureer | An hevelep arload, graet evit ar pellureer (adalek ar build 20) |
 | Eilañ ar restroù war ar c'hasked | Pep restr eilet dre ur fun a-raok ma c'hallfec'h sellet outi | Lenn a ra en o lec'h eus Immich, un NAS, ur servijer media pe ur pellgomzer |
 | Lennerioù 360° ha 3D stal ar Quest | Ret paeañ | Digoust ha mammenn digor (AGPL) |
 
 ## Furmadoù ha mammennoù, dre savenn
 
-Ur galeri eo Immuch360, hag ul lenner media digoust ivez: lenn a ra ar pezh n'hall ket an arload ofisiel, diwar peder mammenn, el lenner a glot gant ar restr.
+Ur galeri eo Immuch360, hag ul lenner media digoust ivez: lenn a ra ar pezh n'hall ket an arload ofisiel, diwar mammennoù an eil taolenn, el lenner a glot gant ar restr.
 
-| Petra | Pellgomzerioù Android | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Videoioù plat (MP4, MOV, MKV, ar pezh a ziskod ar benveg) | Lenner Immich, hag ul lenner genidik evit ar rannadennoù rouedad | An hevelep tra, nemet ar restroù MKV hag AVI eus ur rannadenn, ha ne zigor ket iOS (war ur servijer e vezont lennet treuzkodet) | Er prenestr |
-| Luc'hskeudennoù 360° | Gweler sferenn, jiroskop | An hevelep tra | Soubus, tro-dro deoc'h |
-| Videoioù 360° | Lenner Media3 genidik war ur sferenn, jiroskop, lammat en amzer, dibab ar roudenn son, arouez buffer | Lenner SceneKit genidik war ur sferenn, jiroskop, dibab ar roudenn son, arouez buffer; lenn hag ehan, barrenn amzer ebet c'hoazh | Soubus, gwir 3D evit ar restroù stereoskopek, barrenn amzer gant lammoù 10 eilenn, media kent ha da-heul |
-| 3D 360° (a-us hag a-is, kostez-ha-kostez) | Lagad kleiz, bouton aozadur | An hevelep tra | Pep lagad a resev e hanter dezhañ eus ar skeudenn |
-| Luc'hskeudennoù ha videoioù VR180 (hanter-sferenn) | Hanter-sferenn, bouton 360°/180° | An hevelep tra | Hanter-sferenn soubus |
-| Spatial 2.5D (donder war ur skramm plat diwar ur video stereoskopek) | Lenner genidik, heuliañ ar penn gant ar c'hamera a-raok | An hevelep tra | N'eo ket kinniget |
-| Luc'hskeudennoù spasel Apple (koubladoù stereo HEIC, adalek ar build 19) | Lagad kleiz, ul linenn vunudoù a lavar ez eo spasel | An hevelep tra | Gwelet e 3D: an daoulagad war ul luc'hskeudenn o neuñviñ er gwel soubus, 3D pe 2D, ment cheñchus |
-| Videoioù spasel Apple (MV-HEVC, adalek ar build 19) | Ul lagad (ar gwiskad diazez), gant ur c'hemenn | An hevelep tra | Ul lagad er prenestr, gant ur c'hemenn |
-| Luc'hskeudennoù Insta360 .insp kriz (adalek ar build 16) | Gwriet war ar GPU a-raok ar gweler sferenn, betek 8192x4096 | An hevelep tra | Soubus, diwar ur skeudenn wriet prientet evit ar c'hasked |
-| .insv Insta360 kriz, an div lunedenn en ur roudenn (adalek ar build 16) | Gwriet gant un efed GPU el lenner Media3 | Gwriet gant ur shader SceneKit | Soubus, gwriet gant an hevelep efed GPU |
-| Videoioù kriz gant ul lunedenn dre roudenn pe dre restr (adalek ar build 18): Insta360 X4, X4 Air, X5, X6 .insv, koubladoù X3, GoPro .360, DJI .osv | Daou ziskoder periant war un dro, unan dre lunedenn (adalek ar build 19 re meziant war ur benveg hep diskoder periant, betek 2048x2048 dre lunedenn), hag ur c'henaozer GL a wri er sferenn; ul lunedenn, goude ar red treuzkodet, goude ar video hep bezañ gwriet, pa n'hall ket ar benveg lakaat daou da vont | Ur c'henaozer AVFoundation personelaet gant Metal | Soubus, an hevelep daou ziskoder ha kenaozer (panell 3840x1920) |
+| Petra | Pellgomzerioù Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (adalek ar build 20) |
+|---|---|---|---|---|
+| Videoioù plat (MP4, MOV, MKV, ar pezh a ziskod ar benveg) | Lenner Immich, hag ul lenner genidik evit ar rannadennoù rouedad | An hevelep tra, nemet ar restroù MKV hag AVI eus ur rannadenn, ha ne zigor ket iOS (war ur servijer e vezont lennet treuzkodet) | Er prenestr | Evel war ar pellgomzerioù; OK a ehan, kleiz ha dehou a lamm 10 s |
+| Luc'hskeudennoù 360° | Gweler sferenn, jiroskop | An hevelep tra | Soubus, tro-dro deoc'h | Gweler sferenn troet gant ar biroù, zoumet gant boutonoù ar chadenn |
+| Videoioù 360° | Lenner Media3 genidik war ur sferenn, jiroskop, lammat en amzer, dibab ar roudenn son, arouez buffer | Lenner SceneKit genidik war ur sferenn, jiroskop, dibab ar roudenn son, arouez buffer; lenn hag ehan, barrenn amzer ebet c'hoazh | Soubus, gwir 3D evit ar restroù stereoskopek, barrenn amzer gant lammoù 10 eilenn, media kent ha da-heul | Lenner Media3 ar pellgomzerioù, troet gant ar biroù |
+| 3D 360° (a-us hag a-is, kostez-ha-kostez) | Lagad kleiz, bouton aozadur | An hevelep tra | Pep lagad a resev e hanter dezhañ eus ar skeudenn | Lagad kleiz, bouton aozadur |
+| Luc'hskeudennoù ha videoioù VR180 (hanter-sferenn) | Hanter-sferenn, bouton 360°/180° | An hevelep tra | Hanter-sferenn soubus | Hanter-sferenn, bouton 360°/180° |
+| Spatial 2.5D (donder war ur skramm plat diwar ur video stereoskopek) | Lenner genidik, heuliañ ar penn gant ar c'hamera a-raok | An hevelep tra | N'eo ket kinniget | N'eo ket kinniget |
+| Luc'hskeudennoù spasel Apple (koubladoù stereo HEIC, adalek ar build 19) | Lagad kleiz, ul linenn vunudoù a lavar ez eo spasel | An hevelep tra | Gwelet e 3D: an daoulagad war ul luc'hskeudenn o neuñviñ er gwel soubus, 3D pe 2D, ment cheñchus | Lagad kleiz, ul linenn vunudoù |
+| Videoioù spasel Apple (MV-HEVC, adalek ar build 19) | Ul lagad (ar gwiskad diazez), gant ur c'hemenn | An hevelep tra | Ul lagad er prenestr, gant ur c'hemenn | Ul lagad, gant ur c'hemenn |
+| Luc'hskeudennoù Insta360 .insp kriz (adalek ar build 16) | Gwriet war ar GPU a-raok ar gweler sferenn, betek 8192x4096 | An hevelep tra | Soubus, diwar ur skeudenn wriet prientet evit ar c'hasked | Evel war ar pellgomzerioù |
+| .insv Insta360 kriz, an div lunedenn en ur roudenn (adalek ar build 16) | Gwriet gant un efed GPU el lenner Media3 | Gwriet gant ur shader SceneKit | Soubus, gwriet gant an hevelep efed GPU | Evel war ar pellgomzerioù |
+| Videoioù kriz gant ul lunedenn dre roudenn pe dre restr (adalek ar build 18): Insta360 X4, X4 Air, X5, X6 .insv, koubladoù X3, GoPro .360, DJI .osv | Daou ziskoder periant war un dro, unan dre lunedenn (adalek ar build 19 re meziant war ur benveg hep diskoder periant, betek 2048x2048 dre lunedenn), hag ur c'henaozer GL a wri er sferenn; ul lunedenn, goude ar red treuzkodet, goude ar video hep bezañ gwriet, pa n'hall ket ar benveg lakaat daou da vont | Ur c'henaozer AVFoundation personelaet gant Metal | Soubus, an hevelep daou ziskoder ha kenaozer (panell 3840x1920) | Evel war ar pellgomzerioù, pa c'hall ar skinwel lakaat daou ziskoder da vont war un dro |
+| Sell war-eeun ur c'hamera Tapo (adalek ar build 20) | Lenner RTSP Media3: SD war ar bajenn, HD war ar skramm a-bezh, bouton son | N'eo ket c'hoazh: ur gartenn a lavar e teuio diwezhatoc'h | Er prenestr, e HD | Evel war ar pellgomzerioù |
+| Enrolladennoù ur c'hamera Tapo (adalek ar build 20) | Tapet diwar ar gartenn-vemor en ur video H.264 gant e son, goude lennet gant lammat en amzer | An hevelep tra | An hevelep tra, er prenestr | An hevelep tra |
+
+Bann ar skinwel n'eo ket bet gwiriet war ur skinwel c'hoazh, gwelit [Sellet war ho skinwel](#watch-on-your-tv-android-tv-and-google-tv); linennoù ar c'hamera n'int ket bet gwiriet gant ur gwir gamera c'hoazh.
 
 | Eus | Penaos |
 |---|---|
@@ -557,13 +733,15 @@ Ur galeri eo Immuch360, hag ul lenner media digoust ivez: lenn a ra ar pezh n'ha
 | Ar pellgomzer pe ar c'hasked e-unan | "Implijout hep servijer" war ar bajenn gevreañ, pe an elfenn On this device eus an ivinell Levraoueg |
 | Un NAS pe un urzhiataer | Rannadennoù SMB ha WebDAV, hag adalek ar build 19 servijerioù media DLNA, kavet war ar rouedad, lennet war-eeun (ur video SMB dre betek c'hwec'h kevreadur), netra eilet; adalek ar build 15 ar restroù a zibabit a c'hall bezañ kaset d'ho kont Immich |
 | Ur pellgomzer all (adalek ar build 19) | "Rannañ ar pellgomzer-mañ war ar rouedad" war ar pellgomzer-se: ar c'hasked, pe forzh peseurt arval WebDAV eus ar rouedad, a lenn e albomoù, e vizioù hag e vedia 360° |
+| Ur Plex Media Server (adalek ar build 20) | E levraouegoù luc'hskeudennoù, filmoù hag heuliadoù TV dre deuliad, ar restroù orin lennet war-eeun dre HTTPS gwiriet gant testeni ar servijer e-unan, er gêr pe dre ar chomlec'h er-maez eus an ti, war pep savenn; gwelit [Plex Media Server, hep plex.tv](#plex-media-server-without-plextv) |
+| Ur c'hamera Tapo (adalek ar build 20) | Ar sell war-eeun gant kont ar c'hamera (Android, Android TV, ar Quest), hag enrolladennoù he c'hartenn-vemor gant ger-tremen ar gont TP-Link (pep savenn), war ar rouedad lec'hel hepken; gwelit [Kameraioù Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 a dro ivez war ar Meta Quest 3 ha 3S (Horizon OS v69 pe nevesoc'h; build an Horizon Store a zo rollet evit an daou-se hepken; an `-release.apk` hollek a zlefe bezañ staliet ivez war ur Quest 2 pe ur Quest Pro, n'eo ket amprouet). Penaos e implijout a zo e [Er c'hasked Meta Quest 3](#in-the-meta-quest-3-headset); ar rann-mañ a denn d'ar staliañ ha d'ar pezh a zo disheñvel war ar c'hasked.
 
-Build ar c'hasked ne gomz ouzh ar servijerioù nemet dre HTTPS, pe dre HTTP eeun ouzh anvioù ar rouedad ti (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) hag ouzh ar c'hasked e-unan, evel ma c'houlenn an Horizon Store. Ur servijer skrivet evel ur chomlec'h HTTP eeun gant un IP, evel `http://192.168.1.10:2283`, a vez nac'het gant ar build-se: implijit HTTPS, un anv eus ar rouedad ti (`nas.local`), pe an `-release.apk` hollek, a vir reolenn zigor ar pellgomzerioù. N'eo ket an hevelep tra evit ar rannadennoù WebDAV, DLNA ha pellgomzer war ur chomlec'h HTTP eeun eus ar rouedad lec'hel: an arload a lenn anezho e-unan hag a ro d'e lennerioù chomlec'h e bont lec'hel hepken (da gadarnaat war ar c'hasked evit DLNA ha rannadenn ar pellgomzer, nevez er build 19).
+Build ar c'hasked ne gomz ouzh ar servijerioù nemet dre HTTPS, pe dre HTTP eeun ouzh anvioù ar rouedad ti (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) hag ouzh ar c'hasked e-unan, evel ma c'houlenn an Horizon Store. Ur servijer skrivet evel ur chomlec'h HTTP eeun gant un IP, evel `http://192.168.1.10:2283`, a vez nac'het gant ar build-se: implijit HTTPS, un anv eus ar rouedad ti (`nas.local`), pe an `-release.apk` hollek, a vir reolenn zigor ar pellgomzerioù. N'eo ket an hevelep tra evit ar rannadennoù WebDAV, DLNA ha pellgomzer war ur chomlec'h HTTP eeun eus ar rouedad lec'hel: an arload a lenn anezho e-unan hag a ro d'e lennerioù chomlec'h e bont lec'hel hepken (da gadarnaat war ar c'hasked evit DLNA ha rannadenn ar pellgomzer, nevez er build 19). Adalek ar build 20 e vez tizhet ur servijer Plex dre HTTPS, hag ur c'hamera Tapo gant an arload e-unan, he sell war-eeun dre RTSP, n'eo ket HTTP: ne zlefe hini anezho bezañ tizhet (da gadarnaat war ar c'hasked).
 
 <a id="install"></a>
 ### Staliañ
@@ -576,7 +754,7 @@ Fichenn an Horizon Store a c'hortoz gwiriadur Meta, kinniget gant ar build 14; b
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Er c'hasked, digorit al Levraoueg (Library), dibabit ar sil "Unknown sources" (Mammennoù dianav), ha loc'hit Immuch360.
@@ -584,7 +762,7 @@ Fichenn an Horizon Store a c'hortoz gwiriadur Meta, kinniget gant ar build 14; b
 
 ### Er prenestr
 
-An arload a-bezh a dro evel ur prenestr 2D a c'haller cheñch e vent: kevreañ, linenn-amzer, albomoù, klask, an ivinell Levraoueg (roll 360°, On this device, Rannadennoù rouedad), an arventennoù, ha gwelerioù al luc'hskeudennoù hag ar videoioù, ma vez lennet al luc'hskeudennoù hag ar videoioù plat. War ar c'hasked, ar bouton 360°, ha Gwelet evel 360° el lañser ⋮, a zigor ar gwel soubus war-eeun e-lec'h gweler sferenn ar pellgomzerioù, ha n'eo ket diskouezet ar bouton Spatial 2.5D hag e arventenn. Adalek ar build 19, ul luc'hskeudenn spasel Apple he deus ur bouton Gwelet e 3D, ha n'eo ket diskouezet ar garrezenn Rannañ ar pellgomzer-mañ war ar rouedad: ar c'hasked eo an hini a lenn rannadenn ur pellgomzer.
+An arload a-bezh a dro evel ur prenestr 2D a c'haller cheñch e vent: kevreañ, linenn-amzer, albomoù, klask, an ivinell Levraoueg (roll 360°, On this device, Rannadennoù rouedad), an arventennoù, ha gwelerioù al luc'hskeudennoù hag ar videoioù, ma vez lennet al luc'hskeudennoù hag ar videoioù plat. War ar c'hasked, ar bouton 360°, ha Gwelet evel 360° el lañser ⋮, a zigor ar gwel soubus war-eeun e-lec'h gweler sferenn ar pellgomzerioù, ha n'eo ket diskouezet ar bouton Spatial 2.5D hag e arventenn. Adalek ar build 19, ul luc'hskeudenn spasel Apple he deus ur bouton Gwelet e 3D, ha n'eo ket diskouezet ar garrezenn Rannañ ar pellgomzer-mañ war ar rouedad: ar c'hasked eo an hini a lenn rannadenn ur pellgomzer. Adalek ar build 20 e tigor ar servijerioù Plex hag ar c'hameraioù Tapo er prenestr ivez, sell war-eeun ar c'hamera e HD; an arventenn "Aozadur evit ar pellureer" a chom war Emgefre, ar pezh a lez anezhañ lazhet war ar c'hasked.
 
 ### E skeudennoù
 
@@ -598,7 +776,7 @@ Skrammdapadennoù tapet er c'hasked gant ar bouton tapout (bouton Meta ha dic'he
 ### Bevennoù war ar c'hasked
 
 - **Kodekoù video**: HEVC (H.265) eo an dibab sur; H.264 a baouez war-dro 4096x2304. Ar pezh a wir an arload, ha penaos reiñ d'ar c'hasked ur video a ziskod, a zo e [Munudoù ar video hag an diskoderioù](#video-details-decoders-and-why-a-video-stutters).
-- **Stal**: stumm ar stal a grog gant ar build 14. An arc'hwelioù merket "adalek ar build 15" hag "adalek ar build 16" a zeuio gant e hizivadenn war-lerc'h (build 16, war ar c'hanol amprouiñ alpha dija), ar re diwezhatoc'h goude; APK GitHub en deus anezho holl bremañ.
+- **Stal**: stumm ar stal a grog gant ar build 14. An arc'hwelioù merket "adalek ar build 15" hag ar re war-lerc'h a zeuio gant e hizivadennoù war-lerc'h (kanol amprouiñ alpha ar stal, evit an amprouerien, a resev pep build nevez); APK GitHub en deus anezho holl bremañ.
 - **Aotreoù**: build ar c'hasked ne c'houlenn nemet al luc'hskeudennoù hag ar videoioù (ar mod hep servijer) hag ar c'hemennoù (araokadur ar gwarez). N'en deus aotre ebet evit ar stokañ, ar son, al lec'hiadur pe ar c'hamera, disheñvel diouzh build ar pellgomzer; neuze n'eus ket eus ar cheñch servijer diouzh anv ar Wi-Fi war ar c'hasked.
 - **Ment an APK**: ar Spatial SDK a ouzhpenn war-dro 56 MB a god genidik ARM 64-bit, war ar pellgomzerioù ivez, ma ne vez morse karget.
 - **Lañvaz**: ar gwel soubus a implij ar Meta Spatial SDK, skignet dindan ar Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Skrammdapadennoù tapet er c'hasked gant ar bouton tapout (bouton Meta ha dic'he
 <a id="where-to-get-it"></a>
 ## Pelec'h e kaout
 
-Emañ an arload war Google Play; stumm an App Store a c'hortoz gwiriadur Apple, ha stumm ar Meta Horizon Store hini Meta. An embannadur GitHub eo atav ar build nevesañ:
+Emañ an arload war Google Play evit ar pellgomzerioù hag an tabletennoù; stumm an App Store a c'hortoz gwiriadur Apple, stumm ar Meta Horizon Store hini Meta, ha stumm Google Play evit ar skinwelioù gwiriadur Google eus an embannadur skinwel. An embannadur GitHub eo atav ar build nevesañ:
 
 | Savenn | Hiziv | A-benn nebeut |
 |---|---|---|
-| Pellgomzerioù ha tabletennoù Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), pe an APK war ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` evit ur pellgomzer (an `Immuch360-v<version>-release.apk` hollek a ya en-dro e pep lec'h, `-armeabi-v7a` a zo evit ar pellgomzerioù kozh 32 bit, hag ar restr `.aab` a zo evit Google Play, n'eo ket evit staliañ gant an dorn). Build GitHub a zo alies war-raok ar stal. N'eus forzh penaos, e vez staliet e-kichen an arload Immich ofisiel (pakad `com.aprogsys.immuch360`). | Google Play: builds 15 ha 16 kaset da wiriadur Google d'ar 4 a viz Here 2026 (ar build diwezhañ kadarnaet enlinenn eno eo ar build 11) |
+| Pellgomzerioù ha tabletennoù Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), pe an APK war ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` evit ur pellgomzer (an `Immuch360-v<version>-release.apk` hollek a ya en-dro e pep lec'h, `-armeabi-v7a` a zo evit ar pellgomzerioù kozh 32 bit, hag ar restr `.aab` a zo evit Google Play, n'eo ket evit staliañ gant an dorn). Build GitHub a zo alies war-raok ar stal. N'eus forzh penaos, e vez staliet e-kichen an arload Immich ofisiel (pakad `com.aprogsys.immuch360`). | Google Play: ar build 18 a zo enlinenn, ar build 19 o vezañ gwiriet gant Google abaoe ar 6 a viz Here 2026, ar build 20 war-lerc'h |
 | iPhone hag iPad | O c'hortoz gwiriadur Apple. Ar stumm o vezañ gwiriet en deus arc'hwelioù ar build 11: ar pellgas da Immich hag an dibab Mammenn ar video (build 15) hag ar restroù kriz Insta360 (build 16) a zeuio gant un hizivadenn diwezhatoc'h eus an App Store. Ar c'hod mammenn a vez savet gant Xcode pe war Codemagic, gwelit [E sevel hoc'h-unan](#build-it-yourself). | App Store, o vezañ gwiriet |
-| Meta Quest 3 ha 3S | Ar restr `-quest-release.apk` eus ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases) (an `-release.apk` hollek a ya en-dro ivez), staliet gant an dorn e mod diorroer, gwelit [Staliañ](#install). Build ar stal hag APK GitHub a zo sinet gant alc'hwezioù disheñvel: evit tremen eus unan d'egile, distaliit an arload da gentañ (e arventennoù hag e rannadennoù enrollet a ya gantañ). | Meta Horizon Store: build 14 o vezañ gwiriet gant Meta abaoe an 3 a viz Here 2026; build 16 a zo war ganol alpha ar stal (evit an amprouerien hepken) |
+| Meta Quest 3 ha 3S | Ar restr `-quest-release.apk` eus ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases) (an `-release.apk` hollek a ya en-dro ivez), staliet gant an dorn e mod diorroer, gwelit [Staliañ](#install). Build ar stal hag APK GitHub a zo sinet gant alc'hwezioù disheñvel: evit tremen eus unan d'egile, distaliit an arload da gentañ (e arventennoù hag e rannadennoù enrollet a ya gantañ). | Meta Horizon Store: build 14 o vezañ gwiriet gant Meta abaoe an 3 a viz Here 2026; kanol alpha ar stal (evit an amprouerien hepken) a resev pep build nevez |
+| Android TV ha Google TV (adalek ar build 20) | An `Immuch360-v<version>-release.apk` hollek eus ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases), staliet gant an dorn gant adb, gwelit [Staliañ anezhañ war ar skinwel](#install-it-on-the-tv). An hevelep arload eo hag war ar pellgomzerioù. | Google Play war ar skinwelioù, goude gwiriadur Google eus an embannadur skinwel |
 
 Liammoù an App Store hag ar Meta Horizon Store a vo ouzhpennet amañ kerkent ha ma vo embannet ar fichennoù. Kevreit gant URL ho servijer Immich boas hag ho kont, pe stokit "Implijout hep servijer" war ar bajenn gevreañ evit kregiñ gant luc'hskeudennoù ha videoioù ar benveg e-unan. An APK eus GitHub ne hizivaat ket e-unan: evezhiit ouzh ar bajenn Releases, ha kerkent ha ma ho peus staliet an arload diwar ur stal, kemerit an hizivadennoù diwar ar stal-se.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Ar skrammdapadennoù evit ar stalioù a vez tapet war builds simulator debug graet gant `--dart-define=IMMUCH_SCREENSHOTS=true`, ar pezh na guzh nemet ar vandenn debug. An daou flavour Android a zo an hevelep arload. An hini `quest` a vuk ar SDK 34 hag a vir nemet an aotreoù a implij ar c'hasked (luc'hskeudennoù, videoioù, kemennoù): merañ ar media, al lec'hiadur en drekleur, ar stokañ kozh, ar son, lec'hiadur ar media, lec'hiadur ar benveg hag ar c'hamera a zo lamet e `android/app/src/quest/AndroidManifest.xml`, rak ar Meta Horizon Store a nac'h an daou gentañ hag a c'houlenn abegoù evit pep aotre kizidik all; an hevelep restr a envel ar Quest 3 ha 3S evel he zrobarzhelloù skoret hag a vevenn an HTTP eeun d'ar c'hasked e-unan ha d'anvioù ar rouedad ti. An APK zo 64 bit hepken abalamour d'an div arguzenn ouzhpenn en e linenn-urzhiañ (`--target-platform android-arm64 --android-project-arg arm64only=true`). An hini `phone` eo an hini a c'houlenn Google Play. Evit sevel evit iOS war ho Mac deoc'h, implijit Xcode hag ho skipailh sinañ deoc'h; gant Xcode 26, lañsit `xcodebuild -downloadComponent MetalToolchain` ur wech da gentañ, rak ar shaderioù Spatial o deus ezhomm anezhañ. Hep Mac, ar builds iOS a dro war Codemagic (ur Mac herberc'hiet) diwar ar restr `codemagic.yaml` eus ar c'havlec'h-mañ. Ar builds embann Android a dro war GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Ar skrammdapadennoù evit ar stalioù a vez tapet war builds simulator debug graet gant `--dart-define=IMMUCH_SCREENSHOTS=true`, ar pezh na guzh nemet ar vandenn debug. An daou flavour Android a zo an hevelep arload. Adalek ar build 20 en em ziskler an hini `phone` ivez evel un arload skinwel (un elfenn e loc'her ar skinwel hag ur vandenn, skramm stekiñ ebet ret), ar pezh a lez an hini `quest` a-gostez. An hini `quest` a vuk ar SDK 34 hag a vir nemet an aotreoù a implij ar c'hasked (luc'hskeudennoù, videoioù, kemennoù): merañ ar media, al lec'hiadur en drekleur, ar stokañ kozh, ar son, lec'hiadur ar media, lec'hiadur ar benveg hag ar c'hamera a zo lamet e `android/app/src/quest/AndroidManifest.xml`, rak ar Meta Horizon Store a nac'h an daou gentañ hag a c'houlenn abegoù evit pep aotre kizidik all; an hevelep restr a envel ar Quest 3 ha 3S evel he zrobarzhelloù skoret hag a vevenn an HTTP eeun d'ar c'hasked e-unan ha d'anvioù ar rouedad ti. An APK zo 64 bit hepken abalamour d'an div arguzenn ouzhpenn en e linenn-urzhiañ (`--target-platform android-arm64 --android-project-arg arm64only=true`). An hini `phone` eo an hini a c'houlenn Google Play. Evit sevel evit iOS war ho Mac deoc'h, implijit Xcode hag ho skipailh sinañ deoc'h; gant Xcode 26, lañsit `xcodebuild -downloadComponent MetalToolchain` ur wech da gentañ, rak ar shaderioù Spatial o deus ezhomm anezhañ. Hep Mac, ar builds iOS a dro war Codemagic (ur Mac herberc'hiet) diwar ar restr `codemagic.yaml` eus ar c'havlec'h-mañ. Ar builds embann Android a dro war GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Sekred ebet n'emañ er c'havlec'h-mañ: alc'hwez sinañ Android a zo miret evel sekredoù GitHub Actions enrineget, ha danvez sinañ Apple evel argemmennoù enrineget war Codemagic. Ar restroù workflow ne reont dave dezho nemet dre o anv. Hep ho `android/key.jks` deoc'h, ur build embann a vez sinet gant an alc'hwez debug ha n'hall ket bezañ staliet war-c'horre un eilskouerenn eus GitHub pe eus ur stal (distaliit honnezh da gentañ); ur build debug a vez staliet en he c'hichen evel Immuch360 debug. Eilskouerenn ar Meta Horizon Store eo an APK `quest` eus an embannadur sinet gant un alc'hwez all, an hini m'eo bet enrollet arload ar stal gantañ da gentañ, neuze n'hall ket bezañ staliet war-c'horre un APK staliet gant an dorn kennebeut, nag ar c'hontrol.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Adalek ar build 19, an arval DLNA, rannadenn ar pellgomzer ha dinoadur ar media spasel Apple a skriv ivez e kerzhlevr an arload e-unan (Logs (Kerzhlevrioù), e lañser skeudenn ar profil e-krec'h a-zehou), dindan `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ha `NetworkMediaService`. Linennoù ar c'herzhlevr a chom war ar benveg nemet ma eilit anezho hoc'h-unan.
+Adalek ar build 19, an arval DLNA, rannadenn ar pellgomzer ha dinoadur ar media spasel Apple a skriv ivez e kerzhlevr an arload e-unan (Logs (Kerzhlevrioù), e lañser skeudenn ar profil e-krec'h a-zehou), dindan `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ha `NetworkMediaService`. Adalek ar build 20 e skriv ar mod skinwel eno dindan `TvMode` ha `TvTextEntry`, ar servijerioù Plex dindan `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ha `PlexServerEditPage`, hag ar c'hameraioù Tapo dindan `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ha `CameraLiveView`; linennoù Plex n'o deus biskoazh ar jedouer, ur chomlec'h pe un titl, ha linennoù ar c'hamera a lez ar gerioù-tremen a-gostez. Linennoù ar c'herzhlevr a chom war ar benveg nemet ma eilit anezho hoc'h-unan.
 
 ## Buhez prevez
 
 - **Netra ne ya d'an diorroer**: an arload a gomz gant ar servijer Immich a zibabit (ha, pa zigorit ar gartenn, gant servij teolennoù kartenn a implij ar servijer-se), n'en deus bruderezh ebet, dielfennañ ebet na servij danevelliñ sac'hadennoù ebet meret gant an diorroer, ha ne gas netra da ziorroer Immuch360.
-- **Hep servijer**, netra ne guita ar benveg.
+- **Hep servijer** ne vez darempredet servijer ebet: an arload n'implij ar rouedad nemet evit ar rannadennoù, ar servijerioù Plex hag ar c'hameraioù a zigorit, hag evit rannadenn ar pellgomzer, ma weredekait anezhi.
 - **Rannadennoù rouedad**: roll ar rannadennoù a vez miret war ar benveg ha morse kaset d'ur servijer; ar gerioù-tremen a ya da keychain pe da keystore ar benveg.
+- **Plex** (adalek ar build 20): ar jedouer a chom e stokañ suraet ar benveg ha ne vez kaset nemet d'ho servijer deoc'h, en un talbenn goulenn dre HTTPS; an arload ne zarempred biskoazh plex.tv.
+- **Kameraioù Tapo** (adalek ar build 20): ger-tremen ar gont TP-Link ha ger-tremen kont ar c'hamera a chom e stokañ suraet ar benveg; an arload ne gomz ouzh ar c'hamera nemet war ar rouedad lec'hel, biskoazh ouzh servijerioù TP-Link; ar c'hlipoù tapet a chom e krubuilh an arload hag a vez dilamet gant ar c'hamera.
+- **Skinwel**: gouzout hag-eñ eo ur skinwel ar benveg a vez lennet war ar benveg; netra ne vez kaset.
 - **Rannadenn ar pellgomzer**: rouedad lec'hel hepken, gant un anv implijer hag ur ger-tremen, dre HTTP eeun (gwelit [Rannañ ar pellgomzer-mañ war ar rouedad](#share-this-phone-on-the-network)).
 - **Kamera**: implijet gant al lenner Spatial 2.5D hepken, war ar benveg; ar skeudennoù n'int morse enrollet ha morse kaset e lec'h ebet.
 
@@ -675,20 +857,25 @@ Ar raktres-mañ zo ur forc'h eus Immich hag a chom dindan an [GNU AGPL v3](LICEN
 
 Ar pezh n'eo ket graet c'hoazh, an hini moarvat da gentañ. Netra amañ n'eo ur bromesa, hag an evezhiadennoù war ar [roll kudennoù](https://github.com/freeKC/Immuch360/issues) a sikour da zivizout petra a zeu da gentañ.
 
-- **Google Play**: kaset eo bet ar builds 15 ha 16 da wiriadur Google d'ar 4 a viz Here 2026 hag e vint enlinenn kerkent ha ma vint aprouet; ar build diwezhañ kadarnaet enlinenn eno eo ar build 11.
+- **Google Play**: ar build 18 a zo enlinenn; ar build 19 a zo o vezañ gwiriet gant Google abaoe ar 6 a viz Here 2026, hag ar build 20 a zeuio goude.
 - **App Store**: ar stumm 3.3.0 a c'hortoz gwiriadur Apple; arc'hwelioù ar build 11 en deus, neuze ar pellgas da Immich ha gwiriadur an diskoder video (build 15) hag ar restroù kriz Insta360 (build 16) a zeuio gant an hizivadenn App Store war-lerc'h. Al liamm a vo ouzhpennet amañ pa vo enlinenn.
-- **Meta Horizon Store**: ar fichenn a zo bet kinniget da wiriadur Meta d'an 3 a viz Here 2026 gant ar build 14, hag ar build 16 a zo war ganol alpha ar stal evit an hizivadenn war-lerc'h. Kerkent ha ma vo aprouet ar fichenn, ne vo ket ken ezhomm da staliañ gant an dorn war ar Quest 3 hag al liamm stal a vo ouzhpennet amañ; un eilskouerenn staliet gant an dorn a rank bezañ distaliet da gentañ (gwelit [Staliañ](#install)).
-- **Fichennoù ar stalioù**: testennoù Google Play hag an App Store a zeskriv c'hoazh ar builds kentañ (luc'hskeudennoù ha videoioù 360°, restroù kriz diskouezet plat); kinnig a raint ar gwelerioù 3D, VR180 ha Spatial, ar mod hep servijer, ar rannadennoù rouedad, al lenner media hag ar restroù kriz Insta360. Testenn ar Meta Horizon Store a ginnig al lenner media dija.
+- **Meta Horizon Store**: ar fichenn a zo bet kinniget da wiriadur Meta d'an 3 a viz Here 2026 gant ar build 14, ha kanol alpha ar stal a resev pep build nevez evit an hizivadenn war-lerc'h. Kerkent ha ma vo aprouet ar fichenn, ne vo ket ken ezhomm da staliañ gant an dorn war ar Quest 3 hag al liamm stal a vo ouzhpennet amañ; un eilskouerenn staliet gant an dorn a rank bezañ distaliet da gentañ (gwelit [Staliañ](#install)).
+- **Fichennoù ar stalioù**: fichenn Google Play a zo bet adskrivet e miz Here 2026 gant skrammdapadennoù nevez, hag e resevo skrammdapadennoù skinwel hag ur vandenn skinwel gant an embannadur skinwel. Testenn an App Store a zeskriv c'hoazh ar builds kentañ (luc'hskeudennoù ha videoioù 360°, restroù kriz diskouezet plat); kinnig a raio ar gwelerioù 3D, VR180 ha Spatial, ar mod hep servijer, ar rannadennoù rouedad, al lenner media hag ar restroù kriz Insta360. Testenn ar Meta Horizon Store a ginnig al lenner media dija.
 - **Restroù kriz ar c'hameraoù 360°, da heul**: un arouez araokadur e-pad ma vez prientet ul luc'hskeudenn kriz evit ar c'hasked; lakaat a-blaen videoioù GoPro ha DJI diouzh o roadennoù fiñv dezho; .dng dual fisheye; danevelloù benvegoù war lenn div lunedenn ar build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) evit kadarnaat ar gwriadoù ha budjed an diskoderioù.
 - **DLNA, rannadenn ar pellgomzer ha spasel Apple, da heul**: danevelloù benvegoù ar build 19 (Plex, Jellyfin, un NAS hag ar Freebox Server dre DLNA; ur pellgomzer o pourchas d'ur Quest, war e boent tizhout ivez; luc'hskeudennoù ha videoioù spasel gwir eus iPhone er c'hasked); an aotre multicast goulennet digant Apple, evit ma kavfe an iPhone pep servijer DLNA; kent ha da-heul etre al luc'hskeudennoù spasel er c'hasked; ur merk spasel war luc'hskeudennoù ar servijer el linenn-amzer; videoioù spasel e 3D war ar Quest, ma aotre e ziskoderioù.
 - **Lennerioù 360° war ar pellgomzerioù, da heul**: ur varrenn amzer e lenner video 360° iOS (hini Android en deus unan), kent/da-heul e lennerioù 360° ar pellgomzerioù evel er gwel soubus Quest, ha luc'hskeudennoù el lenner video 360° genidik.
 - **Rannadennoù rouedad, pazennoù war-lerc'h**: riklañ eus ur restr eus un teuliad d'an hini war-lerc'h er pajennoù luc'hskeudenn ha video (ar gwel soubus Quest a dremen dija dre restroù 360° un teuliad), dilesadur Digest evit WebDAV, an anv implijer diwar enrolladenn Bonjour.
 - **Videoioù plat**: an dibab roudenn son el lenner plat, evit videoioù ar servijer, ar benveg hag ar rannadennoù kement ha kement (al lennerioù 360° ha Spatial o deus anezhañ).
+- **Android TV, da heul**: amprouadenn ar build 20 war ar c'hendarvaner Google TV ha war ur gwir skinwel, goude an embannadur skinwel war Google Play (skrammdapadennoù skinwel, ar vandenn skinwel, gwiriadur Google); diwezhatoc'h, chadennoù war skramm degemer ar skinwel.
+- **Kameraioù Tapo, da heul**: amprouadenn ar build 20 gant gwir gameraioù; ar sell war-eeun war iPhone hag iPad; enrolladennoù H.265; lenn ur c'hlip tra ma vez tapet; un devezh a-bezh a enrolladennoù war ul linenn-amzer hepken.
+- **Plex, da heul**: amprouadenn ar build 20 war ar benvegoù (pellgomzerioù, ar Quest, un iPhone, ur skinwel, er-maez eus ar gêr); degas ar jedouer eus an urzhiataer gant ur c'hod QR; kuzhat lodenn DLNA ur servijer Plex e roll ar servijerioù kavet; IPv6.
 - **Upstream**: pull requests bihan da Immich evit al lodennoù a fell d'ar re a ra war-dro ar raktres, o kregiñ gant gweler al luc'hskeudennoù 360°.
 
 ## Trugarekadennoù
 
 Gweler al luc'hskeudennoù 360° a zo diazezet war ar pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) gant dmitry-brazhenko, savet e-unan war ar prototip gant bencefr e [#30192](https://github.com/immich-app/immich/pull/30192). Trugarez d'an daou anezho.
+
+Kameraioù Tapo ar build 20 a zo bet skrivet diwar ar pezh a zeskriv ar raktresoù mammenn digor [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ha [python-kasa](https://github.com/python-kasa/python-kasa) diwar-benn ar c'hameraioù-se.
 
 Perak ur forc'h: goulennet eo ar gwel 360° war hezoug abaoe miz Genver 2024 ha n'emañ ket c'hoazh en arload ofisiel; gweler al luc'hskeudennoù a zo o vezañ gwiriet upstream e [#31169](https://github.com/immich-app/immich/pull/31169). Ar forc'h-mañ a ginnig anezhañ bremañ, a zastum evezhiadennoù diwar benvegoù gwir, hag a ginnigo en-dro da Immich, e pull requests bihan, ar pezh a fello d'ar re a ra war-dro ar raktres. Gwel ar Meta Quest a ziazez war ar Meta Spatial SDK, n'eo ket mammenn digor, neuze e chom er forc'h-mañ.
 

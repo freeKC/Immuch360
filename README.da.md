@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 er Immich-mobilappen med 360°-fotos og -videoer, du kan se dig omkring i, og en gratis afspiller til flade, 360°-, 3D- og VR180-fotos og -videoer, på Android-telefoner og -tablets, iPhones og iPads samt Meta Quest 3 og 3S. Den er til dem, der fotograferer med et 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) eller med en telefons fotosfære-tilstand, eller som har et headset, og som vil se deres egne optagelser fra en Immich-server, selve telefonen, en NAS eller en medieserver: samme server, samme konto, intet server-plugin eller slet ingen server.
+Immuch360 er Immich-mobilappen med 360°-fotos og -videoer, du kan se dig omkring i, og en gratis afspiller til flade, 360°-, 3D- og VR180-fotos og -videoer, på Android-telefoner og -tablets, iPhones og iPads, Meta Quest 3 og 3S samt fra build 20 Android TV og Google TV. Den er til dem, der fotograferer med et 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) eller med en telefons fotosfære-tilstand, eller som har et headset, og som vil se deres egne optagelser fra en Immich-server, selve telefonen, en NAS, en medieserver eller en Plex-server: samme server, samme konto, intet server-plugin eller slet ingen server. Fra build 20 viser den også Tapo-kameraer, live og optagelserne på deres hukommelseskort.
 
 <p align="center">
   <sub>Uofficiel fork. Ikke tilknyttet Immich eller FUTO. Navnet læses som »I am much 360«.</sub>
@@ -15,7 +15,8 @@ Immuch360 er Immich-mobilappen med 360°-fotos og -videoer, du kan se dig omkrin
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">under gennemgang</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store under gennemgang
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store under gennemgang &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 er Immich-mobilappen med 360°-fotos og -videoer, du kan se dig omkrin
     <td align="center" width="33%"><h3>🎥 Indbygget 2.5D</h3>Dybde på en flad skærm fra en stereoskopisk video, visningen følger dit hoved (eksperimentel, telefoner og tablets)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Én app, tre platforme, ægte 3D i headsettet</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Én app på telefoner, tablets og headsettet, ægte 3D i headsettet og fra build 20 på Android TV med fjernbetjeningen</td>
     <td align="center"><h3>🔌 Med eller uden server</h3>Din Immich-server eller telefonens eget galleri, ingen konto nødvendig</td>
     <td align="center"><h3>🗄️ Netværksdelinger</h3>Samba (SMB), WebDAV og fra build 19 DLNA-medieservere, fundet på netværket og læst direkte, intet downloades, og sendt til Immich, når du vælger det. Fra build 19 deler en telefon også sit eget galleri med headsettet</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 På tv'et</h3>Fra build 20 den samme APK på Android TV og Google TV: 360°-fotos og -videoer, din server og dine delinger, med fjernbetjeningen</td>
+    <td align="center"><h3>🎬 Plex, uden plex.tv</h3>Fra build 20 dine Plex-biblioteker, afspillet fra de originale filer, så 360° forbliver 360°, hjemme og ude</td>
+    <td align="center"><h3>📹 Tapo-kameraer</h3>Fra build 20 livebilledet og optagelserne på hukommelseskortet, kun på dit netværk, og et klip sendt til Immich, når du vælger det</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 er Immich-mobilappen med 360°-fotos og -videoer, du kan se dig omkrin
 - **»Mine 360°-fotos vises som en flad, strakt stribe, og mine 360°-videoer afspilles fladt.«** Se [360°-fotos og -videoer som en kugle](#360-photos-and-videos-as-a-sphere).
 - **»Jeg har ingen server, og jeg vil ikke have en konto.«** Se [Uden server eller konto](#without-a-server-or-an-account).
 - **»Jeg vil se videoerne på min NAS, på telefonen eller i headsettet, uden at kopiere dem.«** Se [Netværksdelinger](#network-shares-a-nas-a-computer-or-a-media-server).
+- **»Plex afspiller mine 360°-videoer fladt, og jeg vil have mit Plex-bibliotek i headsettet, på tv'et og uden for hjemmet.«** Se [Plex Media Server, uden plex.tv](#plex-media-server-without-plextv).
 - **»Mine fotos er på min telefon, og jeg har hverken computer eller NAS at lægge dem på til headsettet.«** Se [Del denne telefon på netværket](#share-this-phone-on-the-network).
+- **»Jeg vil se mit Tapo-kamera og nattens klip uden Tapo-appen og gemme et klip i Immich.«** Se [Tapo-kameraer](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **»Mine Insta360-filer kræver Insta360-appen, før jeg kan se dem«** (og GoPro .360- og DJI .osv-filerne også). Se [Rå filer fra 360°-kameraer](#raw-360-camera-files-without-the-cameras-app).
 - **»Mine 3D-videoer ser dobbelte ud, og mine VR180-videoer er strakt hele vejen rundt.«** Se [3D og VR180](#3d-and-vr180-photos-and-videos) og [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **»Jeg har rumlige fotos fra min iPhone.«** Se [Apples rumlige fotos og videoer](#apple-spatial-photos-and-videos).
 - **»Det virker på telefonen, men jeg vil have det i Quest.«** Se [I Meta Quest 3-headsettet](#in-the-meta-quest-3-headset).
+- **»Jeg vil se mine 360°-fotos og -videoer og videoerne fra min NAS eller min Plex-server på tv'et, med fjernbetjeningen.«** Se [Se på dit tv](#watch-on-your-tv-android-tv-and-google-tv).
 - **»Jeg kan ikke finde mine 360°-optagelser blandt alle de andre.«** Se [360°-listen](#find-your-360-shots-the-360-list).
 - **»Min 360°-video hakker eller afspiller en sløret kopi.«** Se [Videodetaljer og dekodere](#video-details-decoders-and-why-a-video-stutters).
 - **»Beholder jeg det, Immich-appen kan?«** Ja, med to små ændringer, se [Alt andet er Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Valget huskes på telefonen og ændrer intet på serveren. For en fil på en net
 
 Du har ingen Immich-server, eller du vil ikke have en konto: du vil bare have, at 360°-fotos på din telefon åbner som en kugle, du kan dreje med gyroskopet. Immich-appen beder først om et login.
 
-På loginsiden åbner »Brug uden server« Immuch360 på enhedens egne fotos og videoer, med fremviserne til 360°, 3D, VR180 og Spatial, 360°-listen og netværksdelingerne, uden Immich-konto. Serverfunktionerne forbliver skjulte eller nedtonede, indtil du forbinder en server; intet forlader enheden. På en Meta Quest 3 åbner den headsettets egne fotos og videoer.
+På loginsiden åbner »Brug uden server« Immuch360 på enhedens egne fotos og videoer, med fremviserne til 360°, 3D, VR180 og Spatial, 360°-listen og netværksdelingerne (fra build 20 også Plex-serverne og Tapo-kameraerne), uden Immich-konto. Serverfunktionerne forbliver skjulte eller nedtonede, indtil du forbinder en server; intet forlader enheden. På en Meta Quest 3 åbner den headsettets egne fotos og videoer; på et tv, som ikke har nogen, henviser den til netværksdelingerne (se [Se på dit tv](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Fanen Bibliotek uden server: punktet 360° øverst, derefter På denne enhed med to 360°-fotos og Netværksdelinger med en deling ved navn NAS">
 
@@ -126,7 +135,7 @@ På loginsiden åbner »Brug uden server« Immuch360 på enhedens egne fotos og 
 
 Dine 360°-videoer ligger på en NAS eller en computer, og du vil se dem på telefonen eller i headsettet uden at kopiere dem først. Med headsettet ender folk med at kopiere hver fil over et kabel; medieservere som Plex og Jellyfin afspiller 360°-videoer fladt, som ønsker i deres fora beskriver; Immich-appen læser kun din Immich-server.
 
-Immuch360 gennemser og afspiller fotos og videoer fra enhver server, der taler SMB (Samba, Windows), WebDAV eller fra build 19 DLNA/UPnP (en medieserver: Plex, Jellyfin, minidlna, Gerbera, Emby, en NAS eller en TV-boks), direkte fra delingen. Appen finder selv serverne på dit netværk og afspiller filerne direkte i de samme fremvisere som resten af appen (360°, 3D, VR180, Spatial 2.5D, Quests immersive visning), med eller uden Immich-server, på telefoner og på Meta Quest 3. Intet downloades. Når en server er forbundet, kan de filer, du vælger, sendes til din Immich-konto (fra build 15).
+Immuch360 gennemser og afspiller fotos og videoer fra enhver server, der taler SMB (Samba, Windows), WebDAV eller fra build 19 DLNA/UPnP (en medieserver: Jellyfin, minidlna, Gerbera, Emby, en NAS eller en TV-boks), direkte fra delingen. Fra build 20 har en Plex Media Server sin egen type, se [Plex Media Server, uden plex.tv](#plex-media-server-without-plextv). Appen finder selv serverne på dit netværk og afspiller filerne direkte i de samme fremvisere som resten af appen (360°, 3D, VR180, Spatial 2.5D, Quests immersive visning), med eller uden Immich-server, på telefoner og på Meta Quest 3. Intet downloades. Når en server er forbundet, kan de filer, du vælger, sendes til din Immich-konto (fra build 15).
 
 | Tilføj en deling | En mappe i en deling |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 gennemser og afspiller fotos og videoer fra enhver server, der taler S
 
 ### Tilføj en deling
 
-1. Åbn fanen Bibliotek, derefter Netværksdelinger. Første gang viser siden »Ingen deling endnu« med en knap »Tilføj en deling«; + øverst til højre gør det samme når som helst.
-2. Siden »Tilføj en deling« leder først efter serverne på dit netværk og viser dem under »Fundet på netværket« med deres type (SMB, WebDAV, DLNA, Telefon). Søgningen tager op til omkring seks sekunder; »Scan igen« starter den forfra. Den bruger Bonjour/mDNS og en scanning af det lokale netværk, bekræftet af en ægte SMB- eller WebDAV-udveksling, og fra build 19 en SSDP-søgning efter DLNA-medieservere.
-3. Tryk på en server: type, server, port og sti udfyldes.
-4. Ikke på listen? Udfyld formularen manuelt. Type: »SMB (Samba, Windows-deling)«, »WebDAV (Nextcloud, Synology og andre)« eller »DLNA-medieserver (Plex, Jellyfin, NAS, TV-boks)«. Derefter Navn, »Servernavn eller adresse« (et navn eller en adresse; en fuld adresse som `smb://nas/photos`, `\\nas\photos` eller `https://nas:5006/photos` udfylder de andre felter), »Port (valgfri)«, når det ikke er den sædvanlige, »Deling« for SMB eller »Sti i WebDAV-adressen« for WebDAV, »Startmappe (valgfri)«, »Brugernavn« og »Kodeord« samt »Sikker forbindelse (HTTPS)« for WebDAV.
+1. Åbn fanen Bibliotek, derefter Netværksdelinger. Første gang viser siden »Ingen deling endnu« med en knap »Tilføj en deling«; + øverst til højre gør det samme når som helst. Fra build 20 spørger begge, hvad du vil tilføje: »En netværksdeling (NAS, computer, medieserver)«, »En Plex Media Server« eller »Et Tapo-kamera«. Vælg den første.
+2. Siden »Tilføj en deling« leder først efter serverne på dit netværk og viser dem under »Fundet på netværket« med deres type (SMB, WebDAV, DLNA, Telefon og fra build 20 Plex og Tapo). Søgningen tager op til omkring seks sekunder; »Scan igen« starter den forfra. Den bruger Bonjour/mDNS og en scanning af det lokale netværk, bekræftet af en ægte SMB- eller WebDAV-udveksling, fra build 19 en SSDP-søgning efter DLNA-medieservere og fra build 20 GDM, Plex' søgeprotokol, samt TP-Links søgeprotokol til Tapo-kameraerne.
+3. Tryk på en server: type, server, port og sti udfyldes. En Plex-server eller et Tapo-kamera åbner i stedet sin egen side, udfyldt.
+4. Ikke på listen? Udfyld formularen manuelt. Type: »SMB (Samba, Windows-deling)«, »WebDAV (Nextcloud, Synology og andre)«, »DLNA-medieserver (Jellyfin, NAS, TV-boks)« eller, fra build 20, »Plex Media Server«, som åbner siden fra [Plex Media Server, uden plex.tv](#plex-media-server-without-plextv). Derefter Navn, »Servernavn eller adresse« (et navn eller en adresse; en fuld adresse som `smb://nas/photos`, `\\nas\photos` eller `https://nas:5006/photos` udfylder de andre felter), »Port (valgfri)«, når det ikke er den sædvanlige, »Deling« for SMB eller »Sti i WebDAV-adressen« for WebDAV, »Startmappe (valgfri)«, »Brugernavn« og »Kodeord« samt »Sikker forbindelse (HTTPS)« for WebDAV.
 5. SMB: når server og brugernavn er indtastet, viser »Vælg en deling« serverens delinger.
 6. DLNA: en medieserver har intet brugernavn eller kodeord. Angiv serveren, porten og »Beskrivelsessti« til dens enhedsbeskrivelse (`/rootDesc.xml` for minidlna), eller indsæt hele adressen, for eksempel `http://192.168.1.10:8200/rootDesc.xml`, i serverfeltet.
 7. Tryk på »Test forbindelsen«. Svaret er »Forbundet, N elementer i startmappen«, eller appen siger, hvorfor det mislykkedes. Tryk derefter på Gem nederst i formularen.
@@ -155,6 +164,7 @@ Et brugernavn med tomt kodeord sendes, som det er: en Freebox Server vil have `f
 
 360°, 3D og VR180 genkendes ud fra filens GPano- eller sfæriske metadata, læst med range-forespørgsler, og VR180 også ud fra filnavnet. Fra build 16 genkendes rå Insta360-filer også (et .insp-foto på navnet eller på kameraets kalibreringsblok, en .insv-video på navnet og billedformatet) og sættes sammen.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Send filer fra en deling til Immich
 
 Fra build 15, når du er forbundet til en server:
@@ -177,17 +187,67 @@ Fra build 19 sender appen SSDP-søgningen efter medieservere til netværkets mul
 <a id="a-share-that-moved"></a>
 ### En deling, der er flyttet
 
-Fra build 19 beholder en DLNA-deling og en telefondeling (se [Del denne telefon på netværket](#share-this-phone-on-the-network)) det id, deres server annoncerer. Når en af dem ikke længere svarer på sin adresse (en ny adresse fra routeren, en server genstartet på en anden port), viser dens mappeside »Leder efter (navn) på netværket« og flytter delingen derhen, hvor den nu svarer: med det samme for en DLNA-server, som ikke har noget kodeord, og efter en bekræftelse, »Brug den nye adresse?«, der viser begge adresser, for en deling med brugernavn og kodeord, da de ville blive sendt til den nye adresse.
+Fra build 19 beholder en DLNA-deling og en telefondeling (se [Del denne telefon på netværket](#share-this-phone-on-the-network)) det id, deres server annoncerer. Når en af dem ikke længere svarer på sin adresse (en ny adresse fra routeren, en server genstartet på en anden port), viser dens mappeside »Leder efter (navn) på netværket« og flytter delingen derhen, hvor den nu svarer: med det samme for en DLNA-server, som ikke har noget kodeord, og efter en bekræftelse, »Brug den nye adresse?«, der viser begge adresser, for en deling med brugernavn og kodeord, da de ville blive sendt til den nye adresse. Fra build 20 flyttes en Plex-server, der findes igen på en anden adresse på netværket, også med det samme: dens certifikat beviser, at det er den samme server, før tokenet sendes. Et Tapo-kamera eftersøges via sin MAC-adresse fra sin egen side, se [Tapo-kameraer](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Begrænsninger
 
 - **SMB**: kun SMB 2 og 3, ikke SMB 1.
 - **WebDAV**: kun Basic-godkendelse (Digest understøttes endnu ikke); et selvsigneret HTTPS-certifikat skal være installeret på enheden.
-- **Finde servere**: netværksscanningen og DLNA-søgningen kigger kun på det lokale /24-netværk og kræver tilladelse til lokalt netværk på iOS. På iPhone og iPad sender DLNA-søgningen kun unicast-forespørgslerne, indtil Apple giver appen multicast-rettigheden, og nogle servere svarer ikke på dem (minidlna på Linux): tilføj dem via deres beskrivelsesadresse.
+- **Finde servere**: netværksscanningen og søgningerne efter DLNA, Plex og Tapo kigger kun på det lokale /24-netværk og kræver tilladelse til lokalt netværk på iOS. På iPhone og iPad sender DLNA-søgningen kun unicast-forespørgslerne, indtil Apple giver appen multicast-rettigheden, og nogle servere svarer ikke på dem (minidlna på Linux): tilføj dem via deres beskrivelsesadresse.
 - **DLNA**: en server, der kun tilbyder en konverteret kopi af en fil, giver den kopi; en mappe viser højst 20.000 elementer.
 - **Miniaturer**: fotominiaturer afkoder hele filen, og fotos over 30 MB får ingen.
 - **Afspillere**: valg af lydspor findes endnu ikke i den flade afspiller. På en telefon kan man endnu ikke stryge fra én fil i en mappe til den næste (Quests immersive visning har forrige og næste for mappens 360°-filer). Valget af 3D eller 180° for en netværksfil huskes ikke.
 - **Uploads**: de kører kun, mens appen er åben, og en fil, serveren allerede har, sendes helt, før serveren melder den som dublet.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, uden plex.tv
+
+Dine videoer ligger i Plex, og Plex viser dine 360°-fotos og -videoer fladt, som ønsker i dets forum beskriver (et af dem har været åbent siden 2017). Du vil også have det bibliotek i headsettet, på tv'et og uden for hjemmet. Immich-appen læser kun din Immich-server, og DLNA-typen fra build 19 når kun Plex' DLNA-side derhjemme.
+
+Fra build 20 parres Immuch360 direkte med din Plex Media Server, uden plex.tv: den finder serveren på netværket, du indsætter et token én gang, og appen læser de originale filer i dine biblioteker direkte, i alle appens fremvisere (360°, 3D, VR180, Spatial 2.5D, Quests immersive visning, tv'ets fjernbetjening), hjemme og, via din portvideresendelse, uden for hjemmet. Intet kopieres, og de filer, du vælger, kan sendes til Immich.
+
+### Tilføj en Plex-server
+
+1. Åbn fanen Bibliotek, derefter Netværksdelinger, derefter + og »En Plex Media Server«. Typen »Plex Media Server« i delingsformularen og en server med Plex-mærket under »Fundet på netværket« åbner den samme side.
+2. Siden »Tilføj en Plex-server« leder efter Plex-serverne på dit netværk (»Søger efter Plex-servere på dit netværk«) og viser dem under »Fundet på netværket«. Tryk på din: et kort viser dens navn, dens Plex-version og et kort id.
+3. Ikke på listen? Skriv dens »Serveradresse«, som `192.168.1.20`, `192.168.1.20:32400` eller `https://...plex.direct:32400`, og tryk derefter på »Slå op«. Appen læser serverens certifikat og sender intet andet.
+4. Hent tokenet på en computer: åbn Plex i en webbrowser og log ind, åbn et vilkårligt foto eller en vilkårlig video i dit bibliotek, derefter »...«, »Get Info«, »View XML«. En ny fane åbner på en adresse, der slutter med `X-Plex-Token=...`. Kopiér hele den adresse.
+5. Indsæt den i »Adgangstoken«, eller send den til telefonen og tryk på »Indsæt fra udklipsholderen«: appen tager serveren og tokenet fra den. Teksten efter `X-Plex-Token=` alene virker også. »Sådan får du det« på siden siger det samme; serveradministratorer kan også bruge værdien `PlexOnlineToken` fra serverens fil `Preferences.xml`, som ikke udløber. På et tv åbner OK tastaturdialogen: skriv tokenet der (det er som regel 20 tegn).
+6. Tryk på »Test forbindelsen«. Den svarer »Forbundet: N biblioteker« eller siger, hvad der er galt, som »Plex-serveren afviste dette token.«
+7. »Adgang uden for hjemmet« viser derefter, hvad serveren siger: »Serveren siger, at den kan nås på (adresse):(port).« eller »Serveren oplyste ikke sin adresse uden for hjemmet.« For at bruge serveren uden for hjemmet skal du skrive din offentlige adresse eller dit DynDNS-navn i »Adresse uden for hjemmet (IP eller navn)« og den port, der er videresendt i Plex (Indstillinger, Fjernadgang), i »Port uden for hjemmet«. Det, du skriver, går altid forud for det, serveren siger.
+8. »Navn« er serverens navn, medmindre du ændrer det, og »Startmappe (valgfri)« kan åbne ét bibliotek direkte. Tryk på Gem. Serveren vises sammen med delingerne som `plex://` og dens adresse.
+
+### Gennemse dine Plex-biblioteker
+
+1. Tryk på serveren i Netværksdelinger. Det første niveau viser de biblioteker, appen viser: fotos, film og andre videoer, tv-serier. Musik udelades.
+2. Under et bibliotek kommer dets mapper, som de ligger på serverens disk (Plex' visning »efter mappe«), derefter fotos og videoer under deres filnavne, med de miniaturer, Plex laver. Et fotobibliotek, hvis mappevisning ikke svarer, viser i stedet sine albummer.
+3. 360° og 3D findes ved at læse selve filerne, som på enhver deling: 360°-fotos får 360°-mærket, Apples rumlige fotos 3D-mærket.
+4. Åbn et foto eller en video som på enhver deling: 360°, 3D, 360°/180°, Spatial 2.5D på en telefon, den immersive visning i Quest, fjernbetjeningen på et tv. En video læses som den originale fil, med byteintervaller gennem appens lokale bro, så spoling virker, og dens 360°- og 3D-metadata når afspillerne intakte.
+5. Vælg filer og tryk på »Upload til Immich« for at sende dem til din server, som fra enhver deling (se [Send filer fra en deling til Immich](#send-files-of-a-share-to-immich)).
+
+### Uden for hjemmet
+
+Hver gang den åbner serveren, prøver appen først adressen derhjemme og 400 ms senere adressen uden for hjemmet. Den første, der svarer med din server, bruges; når det er adressen uden for hjemmet, viser mappesiden et globusikon med teksten »Forbundet via adressen uden for hjemmet«. Det kræver, at Fjernadgang er slået til i Plex (Indstillinger, Fjernadgang) med en port videresendt af din router: uden plex.tv kan appen ikke bruge Plex' relæ, så en server uden portvideresendelse åbner kun derhjemme, og uden for hjemmet siger siden »Din Plex-server kan ikke nås uden for dit hjemmenetværk. Slå fjernadgang til med en portvideresendelse i Plex (Indstillinger, Fjernadgang), eller skriv dens offentlige adresse.«
+
+Den adresse, serveren oplyser, læres igen ved hver forbindelse derhjemme. Når den ikke svarer udefra (en router, der skifter adresse, to routere efter hinanden), så skriv din egen på serverens side. Når tokenet holder op med at virke (du loggede for eksempel ud af den browsersession, du kopierede det fra), siger mappesiden det og tilbyder »Indsæt et nyt token«, som åbner serverens side på tokenfeltet.
+
+### Sammenlignet med Plex og med DLNA-typen
+
+- **De originale filer**: appen læser selve filerne, aldrig en kopi konverteret af Plex, så 360°-, 3D- og VR180-metadataene forbliver intakte, og appens fremvisere bruger dem, hvor Plex-apps viser disse filer fladt.
+- **Intet plex.tv**: appen taler kun med din server, altid over HTTPS. Serveren kontrolleres gennem sit eget plex.direct-certifikat, knyttet til serverens id, før tokenet sendes. Tokenet bliver på enheden, i dens sikre lager, og går kun til din server, i en anmodningsheader.
+- **Sammenlignet med at tilføje den samme server som DLNA**: mapperne som på disken, Plex' miniaturer, adgang uden for hjemmet og en sikker forbindelse.
+
+### Begrænsninger
+
+- **Kun servere, der er gjort krav på**: serveren skal være gjort krav på i Plex (logget ind på en Plex-konto én gang), hvilket giver den dens plex.direct-certifikat. Ellers siger siden »Denne adresse svarer uden et Plex-certifikat. Gør krav på serveren i Plex, eller tilføj den som en SMB-, WebDAV- eller DLNA-deling.«
+- **Kun IPv4**: »IPv6-adresser understøttes endnu ikke. Skriv serverens IPv4-adresse.«
+- **Tokenet** giver fuld adgang til din Plex-server. Når du fjerner serveren i appen, glemmes tokenet på enheden, men det tilbagekaldes ikke: »Tokenet forbliver gyldigt på serveren, indtil du logger ud af den browsersession, du kopierede det fra.« Et token med en udløbsdato viser den dato, og appen kan ikke forny det.
+- **Uden for hjemmet**: kun via en portvideresendelse, der er intet relæ.
+- **Biblioteker**: musik vises ikke, en mappe viser højst 20.000 elementer, og en begrænset bruger kan få »Dette token kan ikke læse serverens biblioteker.«
+- **Rå 360°-kamerafiler** (.insv, .insp, .360, .osv) vises kun, hvis Plex viser dem; ellers kan du tilføje den samme NAS-mappe som en SMB- eller WebDAV-deling, se [Rå 360°-kamerafiler](#raw-360-camera-files-without-the-cameras-app).
+- **Finde serveren**: en server, hvis indstilling »Enable local network discovery (GDM)« er slået fra, findes ikke, så skriv dens adresse. På iPhone og iPad sender søgningen kun unicast-forespørgsler. Den samme servers DLNA-side kan også vises på listen med DLNA-mærket: vælg linjen med Plex-mærket.
+- **Endnu ikke kontrolleret på en enhed**: parringen, mapperne, en videos byteintervaller, miniaturerne, et forkert token og adressen uden for hjemmet blev kontrolleret fra en computer mod en rigtig Plex Media Server 1.42.1, og foto- og tv-seriebiblioteker kun mod en simuleret server. Afspilning på en telefon, i Quest, på en iPhone og på et tv samt skiftet til adressen uden for hjemmet er enhedstesten for build 20.
+- Immuch360 er ikke tilknyttet Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Del denne telefon på netværket
@@ -219,6 +279,63 @@ Derfra er det en WebDAV-deling som alle andre: 360°-genkendelse, rå filer, den
 - **Sikkerhed**: kun lokalt netværk. Delingen lytter kun på telefonens Wi-Fi-, Ethernet- og hotspot-adresser, aldrig på dens mobildata- eller VPN-adresse, og svarer kun enheder med en lokal adresse. Hver forespørgsel kræver brugernavn og kodeord (HTTP Basic); ti forkerte kodeord fra én enhed inden for et minut blokerer den i et minut. Kodeordet sendes ukrypteret over Wi-Fi (almindelig HTTP): brug delingen på et netværk, du stoler på, og slå den fra, når du er færdig.
 - **Telefonens eget hotspot**: headsettet kan forbinde sig til det; når det ikke finder telefonen der, skal du indtaste adressen, der vises på siden.
 - **Endnu ikke kontrolleret på en enhed**: serveren er kontrolleret med unittests og med end-to-end-tests med headsettets egen WebDAV-klient og mediebro, på en computer. En telefon, der betjener en Quest 3 (søgning, en video på 4 GB afspillet og spolet, 30 minutter med slukket skærm, hotspottet, Stop fra notifikationen), og iPhone-delen, som endnu ikke har kørt på en iPhone, er testen på rigtige enheder for build 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo-kameraer: livebillede og optagelserne på hukommelseskortet
+
+Du har Tapo-kameraer derhjemme og vil se havekameraet og nattens klip ved siden af dine fotos uden at åbne Tapo-appen og gemme et klip i Immich. Immich-appen har intet til kameraer, og Tapo-appen er en separat app, logget ind på din TP-Link-konto, med klippene adskilt fra dine fotos.
+
+Fra build 20 tilføjer Immuch360 et Tapo-kamera ved siden af netværksdelingerne. Den viser kameraet live på Android-telefoner og -tablets, Android TV og Meta Quest 3 og på alle platforme optagelserne på dets hukommelseskort, dag for dag: et klip hentes fra kameraet, afspilles derefter som enhver anden video og kan sendes til Immich. Appen taler kun med kameraet på dit netværk, aldrig med TP-Links servere, og ændrer aldrig noget på kameraet.
+
+### Tilføj et kamera
+
+1. Først i Tapo-appen: opret kamerakontoen i kameraets indstillinger, Avancerede indstillinger, Kamerakonto (et brugernavn og et kodeord til dette kamera, brugt til livebilledet), og slå Tredjepartskompatibilitet til under Mig og derefter Tapo Lab.
+2. Åbn fanen Bibliotek i Immuch360, derefter Netværksdelinger, derefter + og »Et Tapo-kamera«.
+3. Siden »Tilføj et kamera« leder efter kameraer (»Søger efter Tapo-kameraer på dit netværk«) og viser dem under »Fundet på netværket« med Tapo-mærket. Tryk på dit for at udfylde »Kameraets adresse«, eller skriv dets adresse. Et kamera med Tapo-mærket i delingsformularen åbner den samme side.
+4. »Navn«: hvordan kameraet vises på listen.
+5. Under »Optagelser på hukommelseskortet«, »TP-Link-kontoens kodeord«: kodeordet til den konto, du bruger i Tapo-appen. Det åbner optagelserne; din e-mailadresse er ikke nødvendig.
+6. Under »Live«, »Kamerakontoens brugernavn« og »Kamerakontoens kodeord«: kamerakontoen fra trin 1.
+7. Én af de to er nok (»Indtast TP-Link-kontoens kodeord, kamerakontoen eller begge.«): TP-Link-kodeordet alene giver optagelserne, kamerakontoen alene livebilledet.
+8. Tryk på »Test kameraet«. Den viser »Optagelser: (model), firmware (version)« med hukommelseskortets tilstand og »Livebillede: (video), lyd (audio)«, eller hvad der mislykkedes for hver af dem.
+9. Tryk på Gem. Kameraet vises under »Kameraer«, efter delingerne, med sin model, når den kendes, og `tapo://` med sin adresse.
+
+### Se det live
+
+1. Tryk på kameraet. Dets livebillede er øverst på dets side: »Opretter forbindelse til kameraet«, derefter billedet med Live-mærket.
+2. Knapperne på billedet: lyden, slået fra i starten (»Slå lyden til«; »Ingen lyd på denne enhed«, når enheden ikke kan afspille den), SD eller HD og »Fuld skærm«.
+3. En telefon viser SD på siden og HD i fuld skærm; Quest viser HD. Tilbage forlader først fuld skærm.
+4. Under billedet kommer model og firmware og hukommelseskortet, som »Hukommelseskort: (brugt) brugt af (i alt)« eller »Intet hukommelseskort«.
+
+På iPhone og iPad siger livebilledet »Livebilledet kommer til iPhone og iPad i en senere version. Optagelserne afspilles allerede her.« Uden kamerakontoen siger siden »Tilføj kamerakontoen for at se livebilledet.«
+
+### Afspil og gem optagelserne
+
+1. Under »Optagelser på hukommelseskortet« viser kamerasiden dagene med optagelser, nyeste først, efter måned. Uden TP-Link-kontoens kodeord siger den »Tilføj TP-Link-kontoens kodeord for at se optagelserne.«
+2. Tryk på en dag. Dens klip vises under timerne i kameraets egen tid, hver med sin start, sin længde, kameraets miniature for en hændelse og sin type: Bevægelse, Person, Kæledyr, Køretøj, Babygråd, Dyr, Kontinuerlig eller Hændelse.
+3. Tryk på et klip. Appen henter det fra kameraet (»Henter videoen fra kameraet: N %«, med Annullér), og afspiller det derefter i videoafspilleren, med lyd og spoling. Et hentet klip er mærket »På denne enhed« og åbner med det samme næste gang.
+4. For at gemme et klip i Immich, med en server forbundet: videoens menu ⋮, »Upload til Immich«.
+5. For at frigøre plads: et langt tryk på et hentet klip tilbyder »Slet kopien på denne enhed« (på en telefon), og kamerasiden har »Slet de videoer, der er hentet fra dette kamera«, med deres størrelse.
+6. Opdateringsknappen øverst til højre, eller at trække siden ned, spørger kameraet igen.
+
+Når kameraet ikke længere svarer på sin adresse, leder dets side efter det på netværket via dets MAC-adresse og flytter det derhen, hvor det nu svarer, når det viser det samme certifikat. Et kamera, der viser et andet certifikat end det, appen så først, får i stedet et spørgsmål: »Kameraet på (adresse) viser et andet certifikat end før. Fortsæt kun, hvis du har nulstillet eller udskiftet det.«
+
+### Sammenlignet med Tapo-appen
+
+- **Kun på dit netværk**: appen taler med selve kameraet, på det lokale netværk, og aldrig med TP-Links servere. Den logger ikke ind på en TP-Link-konto, så din e-mailadresse er ikke nødvendig.
+- **Optagelser bliver til almindelige videoer**: et hentet klip er en H.264-video med lyd, som du kan sende til Immich, hvor den bliver, efter at hukommelseskortet har optaget hen over den.
+- **Ved siden af resten**: med eller uden Immich-server, på en telefon, et tv eller i Quest (i vinduet), fundet på netværket som en deling.
+- **Kun læsning**: appen spørger kun kameraet om det, den viser; den ændrer aldrig en indstilling og sletter aldrig noget på kameraet.
+
+### Begrænsninger
+
+- **Endnu ikke kontrolleret på en enhed**: build 20 har endnu ikke kørt med et rigtigt kamera. Protokollen blev skrevet ud fra optagelser af trafikken fra et C510W med firmware 1.3.4 (V4-loginnet fra midten af 2026), og appen blev kontrolleret mod et simuleret kamera i sine tests. Rapporter er velkomne, med den model og firmware, som »Test kameraet« viser, og linjerne fra [Log](#logs).
+- **Livebillede**: på Android-telefoner og -tablets, Android TV og Quest, endnu ikke på iPhone og iPad. TP-Links begrænsninger gælder: højst to HD- og to SD-streams ad gangen pr. kamera, Tapo-appen medregnet, og Tapo Care, hukommelseskortet og en optager, der bruger RTSP eller ONVIF, kan ikke alle køre på samme tid.
+- **Kameraer**: batterikameraer og kameraer bag en Tapo-hub understøttes ikke.
+- **Optagelser**: én download ad gangen pr. kamera. Mens Tapo-appen gennemser hukommelseskortet, prøver appen igen efter 4, 8 og 12 sekunder og siger derefter »Kameraet er optaget af en anden seer, som f.eks. Tapo-appen. Prøv igen om et minut.« Optagelser i H.265 konverteres endnu ikke (»Denne optagelse er i H.265, som denne version endnu ikke kan konvertere.«), kontinuerlige optagelser har ingen miniature, og et klip afspilles først, når det er hentet helt.
+- **Kodeord**: hvert forkert kodeord tæller, og efter nogle få låser kameraet i et stykke tid (»Kameraet er låst efter for mange forkerte kodeord. Prøv igen om N minutter.«). Appen prøver aldrig et afvist kodeord igen af sig selv: kun »Test kameraet« eller Prøv igen spørger kameraet igen. Når kameraet accepterer kodeordet til sine indstillinger, men ikke til sine videoer, så slå Tredjepartskompatibilitet fra og til igen i Tapo-appen, og genstart derefter kameraet.
+- **Plads**: hentede klip bliver i appens cache, højst 1 GB for alle kameraerne tilsammen (de klip, der er afspillet for længst siden, fjernes først); systemet kan rydde den cache, og når et kamera fjernes, slettes dets klip.
+- **Uden for hjemmet**: appen når kameraet på dets adresse på dit netværk, altså ikke udefra.
+- Immuch360 er ikke tilknyttet TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Rå filer fra 360°-kameraer, uden kameraets app
@@ -349,7 +466,7 @@ Genkendelsen er kontrolleret på et rumligt eksempelfoto skrevet af Apples eget 
 
 Folk køber en Quest 3 for at se deres egne 360°-fotos og -videoer og spørger så, hvor filerne skal ligge, hvordan de kommer over på headsettet uden kabel, og hvilken afspiller de skal bruge: butikkens afspillere til 360°- og 3D-video koster penge.
 
-Den samme Android-app kører på Quest 3 og 3S som et vindue, med hele dit bibliotek. Dens knap 360° åbner en immersiv visning, hvor fotoet eller videoen er hele vejen rundt om dig, og du ser dig omkring ved at dreje hovedet, i ægte 3D for stereoskopiske filer (Meta Spatial SDK). Medierne kommer fra din Immich-server, selve headsettet, en NAS, en medieserver eller en telefon og afspilles, hvor de ligger (en medieserver og en telefon fra build 19, endnu ikke kontrolleret på headsettet). Den er gratis og open source. Kontrolleret på en Quest 3 og af en bruger med Insta360 X4-videoer i 8K HEVC.
+Den samme Android-app kører på Quest 3 og 3S som et vindue, med hele dit bibliotek. Dens knap 360° åbner en immersiv visning, hvor fotoet eller videoen er hele vejen rundt om dig, og du ser dig omkring ved at dreje hovedet, i ægte 3D for stereoskopiske filer (Meta Spatial SDK). Medierne kommer fra din Immich-server, selve headsettet, en NAS, en medieserver, en telefon eller en Plex-server og afspilles, hvor de ligger (en medieserver og en telefon fra build 19, en Plex-server fra build 20, endnu ikke kontrolleret på headsettet), og fra build 20 viser vinduet også Tapo-kameraerne. Den er gratis og open source. Kontrolleret på en Quest 3 og af en bruger med Insta360 X4-videoer i 8K HEVC.
 
 ### Åbn den immersive visning
 
@@ -408,6 +525,56 @@ Drej det med højre thumbstick (eller knappen Drej på infopanelet), indtil dets
 - **Spoling**: en video, hvis kilde ikke besvarer byte-range-forespørgsler, kan ikke spoles; panelet siger det.
 - **Flade videoer**: en flad (ikke 360°) stereoskopisk video afspilles i vinduet med begge øjne synlige; den immersive 3D-visning er til 360°- og VR180-medier.
 - **Mere**: de codecs, headsettet afkoder, butikken, tilladelserne og APK-størrelsen står i [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Se på dit tv (Android TV og Google TV)
+
+Du vil have 360°-fotos og -videoer, dine albummer og videoerne fra din NAS eller Plex-server på den store skærm, til familien i sofaen, med tv'ets fjernbetjening. Immich-mobilappen er ikke en tv-app: en bruger, der installerede den på et tv, fandt ud af, at den virker med en mus, ikke med fjernbetjeningen ([diskussion #1614](https://github.com/immich-app/immich/discussions/1614)), og Immich-holdet har ingen planer om en officiel tv-app ([diskussion #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Fra build 20 kører den samme Android-app på Android TV og Google TV, med fjernbetjeningen som eneste input: én APK til telefoner og tv, 360°- og 3D-fremviserne drejet med pilene, og netværksdelingerne, Plex og Tapo-kameraerne på tv'et, med eller uden Immich-server.
+
+<a id="install-it-on-the-tv"></a>
+### Installér den på tv'et
+
+1. Indtil Google Play tilbyder appen på tv, hvilket venter på Googles gennemgang af tv-udgivelsen, skal du tage den universelle `Immuch360-v<version>-release.apk` fra siden [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Slå udviklerindstillinger og USB-fejlretning til på tv'et (på et Google TV: Indstillinger, System, Om, vælg »Android TV OS build« syv gange, derefter Indstillinger, System, Udviklerindstillinger; navnene varierer mellem tv).
+3. Fra en computer på det samme netværk, med adb (Android SDK Platform Tools): `adb connect <address of the TV>`, acceptér forespørgslen på tv'et, derefter `adb install -r Immuch360-v<version>-release.apk`.
+4. Appen vises blandt tv'ets apps med sit banner. Installér den næste udgivelse på samme måde: `-r` beholder login og indstillinger.
+
+### Første start
+
+1. Log ind som på en telefon: pilene flytter en ramme fra felt til felt, og OK på et felt (»Tryk på OK for at skrive«) åbner tv'ets tastatur i en dialog, til serveradressen, e-mailen og kodeordet.
+2. Eller vælg »Brug uden server«. Et tv har ingen egne fotos, så fanen Billeder siger »Dette tv har ingen egne fotos eller videoer: åbn en netværksdeling fra Biblioteket.« med en knap Netværksdelinger. Tilføj en deling, en Plex-server eller et kamera der, som på en telefon (se [Netværksdelinger](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Navigér med fjernbetjeningen
+
+- Pilene flytter rammen, OK åbner det, den står på, Tilbage går tilbage. Fra en fane går Tilbage til sidemenuen, derefter til Billeder, derefter ud af appen.
+- Kanal op og ned ruller en side ad gangen.
+- I fremviserne virker fjernbetjeningens taster til afspil og pause, spol frem, spol tilbage, næste og forrige, og infotasten viser detaljerne for et foto eller en video.
+
+### Fotos og videoer med fjernbetjeningen
+
+1. **Et foto**: venstre og højre går til det forrige eller næste, OK viser eller skjuler knapperne, Op går til den øverste bjælke (hvor knappen 360° er) og Ned til den nederste bjælke.
+2. **En video**: OK sætter på pause og viser knapperne, eller afspiller. Mens den afspilles, springer venstre og højre 10 sekunder tilbage eller frem; når den er sat på pause, går de til det forrige eller næste element, som tippet siger: »Sat på pause: pilene går til forrige eller næste element«.
+3. **Et 360°-foto**, fra knappen 360°: pilene ser sig omkring, hurtigere når de holdes nede, og visningen glider blødt til standsning. OK flytter til knapperne i den øverste bjælke, på »Zoom ind«, ved siden af »Zoom ud«, synsfeltet og 3D; kanal op og ned zoomer også. Tilbage vender fra knapperne tilbage til billedet og lukker derefter. Tippet lyder »Pile for at se dig omkring, OK for knapperne, Tilbage for at lukke«.
+4. **En 360°-video**, fra knappen 360°: pilene ser sig omkring, mens knapperne er skjult, OK sætter på pause og viser dem, Tilbage skjuler dem og lukker derefter. Tippet lyder »Pile for at se dig omkring, OK for at sætte på pause og vise knapperne, Tilbage for at lukke«.
+5. **Minder**: venstre og højre går gennem fotoene og videre til det næste minde, Op går til lukkeknappen og Ned til »Se på tidslinjen«.
+6. **Delinger og Plex**: de samme taster på foto- og videosiderne i en deling, hvor venstre og højre åbner den forrige eller næste fil i mappen.
+
+### Indstillingen Layout til fjernbetjening
+
+Indstillinger, Præferencer, »Layout til fjernbetjening«: »Store fokusrammer og fjernbetjeningens taster, uden de knapper, der kræver en berøringsskærm. Automatisk slår det til på Android TV og Google TV.« Automatisk er standard; Til passer til en tablet, der styres med et tastatur eller en gamepad; Fra slår det fra på et tv. Indstillingen findes kun på Android. Pilene og OK virker i fremviserne med et tastatur eller en gamepad uanset indstillingen.
+
+### Begrænsninger
+
+- **En fremviser**: på et tv viser og afspiller appen. Sikkerhedskopiering, uploads, redigering, sletning, deling, valg af flere elementer, Cast, Spatial 2.5D, gyroskopet, kortet og Steder samt »Del denne telefon på netværket« er skjult.
+- **Login**: OAuth åbner en webside, hvilket et tv ikke kan: »Login med (udbyder) åbner en webside, hvilket dette tv ikke kan. Log i stedet ind med e-mail og kodeord.«
+- **Links** viser deres adresse under »Åbn på en anden enhed« i stedet for at åbne en browser, og tekst skrives i systemets tastaturdialog.
+- **Hukommelse**: på et tv med lidt hukommelse vises 360°-fotos i højst 4096x2048, uden det skarpere billede ved zoom.
+- **Videoer**: tv'ets dekodere afgør, hvad der afspilles, med den samme indstilling Videokilde og den samme dekoderkontrol som på en telefon (se [Videodetaljer og dekodere](#video-details-decoders-and-why-a-video-stutters)); endnu ikke målt på et tv.
+- **Endnu ikke kontrolleret på en enhed**: tv-understøttelsen er kun kontrolleret af automatiske tests og har endnu ikke kørt på et tv eller på en tv-emulator. Skal bekræftes: den retning, pilene drejer en 360°-video i, tv'ets tastatur (Gboard) i tekstdialogen, OK-tasten på infrarøde fjernbetjeninger, margenerne og banneret på tv'ets startskærm. Rapporter er velkomne.
+- **Google Play på tv** venter på Googles gennemgang af tv-udgivelsen; indtil da APK'en.
+- **Andre tv**: Fire TV er ikke testet, og der er ingen Apple TV-version.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Find dine 360°-optagelser: 360°-listen
@@ -488,11 +655,11 @@ Når serveren ignorerer HTTP Range-forespørgsler på originalen, og MP4-indekse
 <a id="everything-else-is-immich"></a>
 ## Alt andet er Immich
 
-Alt, hvad den officielle Immich-mobilapp gør, er her: sikkerhedskopiering, tidslinje, albummer, søgning, deling, partnere, alt synkroniseret med din server, med samme server og samme konto som webappen. Immuch360 installeres ved siden af den officielle app (pakke `com.aprogsys.immuch360`). Der er to forskelle, fra build 15: kontakten »Tving original video« er blevet til valget Videokilde, som er beskrevet ovenfor, og fotos og videoer, du uploader manuelt fra et album på enheden, tæller som sikkerhedskopieret.
+Alt, hvad den officielle Immich-mobilapp gør, er her: sikkerhedskopiering, tidslinje, albummer, søgning, deling, partnere, alt synkroniseret med din server, med samme server og samme konto som webappen. Immuch360 installeres ved siden af den officielle app (pakke `com.aprogsys.immuch360`). Der er to forskelle, fra build 15: kontakten »Tving original video« er blevet til valget Videokilde, som er beskrevet ovenfor, og fotos og videoer, du uploader manuelt fra et album på enheden, tæller som sikkerhedskopieret. På et tv er appen fra build 20 en fremviser, se [Se på dit tv](#watch-on-your-tv-android-tv-and-google-tv).
 
 For at vise et 360°-foto til en, der ikke har appen, så del det med et delt Immich-link: Immich-webappen viser et 360°-foto som en kugle i vedkommendes browser.
 
-Det aktuelle build, build 19 (version 3.3.0-rc.0, buildnummer 3030017), er baseret på Immich 3.3.0-rc.0 (Immich `main`, endnu ikke en stabil udgivelse) og er testet med en Immich 3.2-server. Rapportér venligst problemer under [Issues](https://github.com/freeKC/Immuch360/issues), ikke til Immich-projektet. Den fulde dokumentation for selve Immich findes på [immich.app](https://immich.app).
+Det aktuelle build, build 20 (version 3.3.0-rc.0, buildnummer 3030018), er baseret på Immich 3.3.0-rc.0 (Immich `main`, endnu ikke en stabil udgivelse). Build 19 blev testet med en Immich 3.2-server, og build 20 ændrer intet i det, appen beder serveren om. Rapportér venligst problemer under [Issues](https://github.com/freeKC/Immuch360/issues), ikke til Immich-projektet. Den fulde dokumentation for selve Immich findes på [immich.app](https://immich.app).
 
 ## Sammenlignet med Immich-appen og andre apps
 
@@ -515,6 +682,9 @@ Det aktuelle build, build 19 (version 3.3.0-rc.0, buildnummer 3030017), er baser
 | DLNA-medieservere som delingstype | ❌ | ✅ fra build 19 | Kontrolleret mod minidlna og Gerbera i Docker; Plex, Jellyfin, en NAS, Freebox Server, en iPhone og Quest er testen på rigtige enheder for build 19 |
 | Send filerne på en deling til Immich; enhedsfiler sendt manuelt tæller som sikkerhedskopieret | ❌ kun enhedsfiler | ✅ fra build 15 | Testet på en Android-emulator mod en Samba-testserver og en Immich 3.2-server |
 | Del denne telefon på netværket, til headsettet | ❌ | ✅ fra build 19, Android og iOS | Unittests og end-to-end-tests med headsettets WebDAV-klient, på en computer; en telefon, der betjener en Quest, og iPhone-delen er testen på rigtige enheder for build 19 |
+| Plex Media Server-biblioteker afspillet fra de originale filer, hjemme og ude, uden plex.tv | ❌ | ✅ fra build 20, alle fremvisere, på telefoner, tablets, Quest 3 og tv | Kontrolleret fra en computer mod en rigtig Plex Media Server 1.42.1 (parring, mapper, byteintervaller, miniaturer, adressen uden for hjemmet); endnu ikke kontrolleret på en enhed |
+| Tapo-kameraer: livebilledet og optagelserne på hukommelseskortet, sendt til Immich, når du vælger det | ❌ | ✅ fra build 20: optagelser overalt, live på Android, Android TV og Quest 3 | Kontrolleret mod et simuleret kamera; endnu ikke kontrolleret med et rigtigt kamera |
+| Android TV og Google TV, styret med fjernbetjeningen, i den samme APK | ❌ ikke en tv-app | ✅ fra build 20 | Kontrolleret af automatiske tests; endnu ikke kontrolleret på et tv |
 | Rå Insta360 .insp-fotos og .insv-videoer med ét spor | ❌ flade | ✅ fra build 16 | Fotos kontrolleret mod Insta360 Studio-eksporter af X3-filer, videoer på en Android-emulator med en X3-fil i lav opløsning; endnu ikke kørt på en iPhone |
 | Rå videoer med ét objektiv pr. spor eller pr. fil (Insta360 X4, X4 Air, X5, X6, X3-par, GoPro .360, DJI .osv) | ❌ flade eller forkerte | ✅ fra build 18 | Parsere og sammensætning kontrolleret på rigtige X4-, X3-par-, GoPro MAX- og Osmo 360-filer; afspilning er testen på rigtige enheder for build 18 og 19 |
 | Dual fisheye .dng | ❌ flad | ❌ endnu ikke | Planlagt |
@@ -529,27 +699,33 @@ Det aktuelle build, build 19 (version 3.3.0-rc.0, buildnummer 3030017), er baser
 |---|---|---|
 | Immich-webappen | Den viser et 360°-foto som en kugle, men tager en rå .insp for et færdigt panorama og lægger dens to cirkler rundt om kuglen; en VR-visning er stadig et ønske ([diskussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Sætter rå filer sammen på enheden og åbner en immersiv visning i Quest 3 |
 | Insta360-appen eller Studio | Nødvendig for at gøre kortets rå filer til et 360°-billede, før man kan se dem | Åbner de rå .insp- og .insv-filer direkte, og GoPro .360- og DJI .osv-filerne |
-| Plex, Jellyfin, Synology Photos | 360°-fotos og -videoer vist fladt eller ikke genkendt, som tråde i deres fora beskriver (et ønske hos Plex har været åbent siden 2017) | Læser de samme mapper over SMB, WebDAV eller DLNA og afspiller dem som en kugle uden at ændre noget på serveren |
+| Plex, Jellyfin, Synology Photos | 360°-fotos og -videoer vist fladt eller ikke genkendt, som tråde i deres fora beskriver (et ønske hos Plex har været åbent siden 2017) | Læser selve Plex-biblioteket fra build 20, eller de samme mapper over SMB, WebDAV eller DLNA, og afspiller dem som en kugle uden at ændre noget på serveren |
+| Tapo-appen | En separat app, logget ind på din TP-Link-konto, med klippene adskilt fra dine fotos | Viser kameraet ved siden af dine fotos, taler kun med det på dit netværk og gemmer et klip som en video, du kan sende til Immich (fra build 20) |
+| Immich-mobilappen på et tv | Ikke en tv-app: en bruger fortæller, at den virker med en mus, ikke med fjernbetjeningen | Den samme app, lavet til fjernbetjeningen (fra build 20) |
 | Kopiering af filer til headsettet | Hver fil kopieres over et kabel, før man kan se den | Afspiller direkte fra Immich, en NAS, en medieserver eller en telefon |
 | 360°- og 3D-afspillerne i Quest-butikken | Koster penge | Gratis og open source (AGPL) |
 
 ## Formater og kilder efter platform
 
-Immuch360 er et galleri, og det er også en gratis medieafspiller: den afspiller det, den officielle app ikke kan, fra fire kilder, i den afspiller, der passer til filen.
+Immuch360 er et galleri, og det er også en gratis medieafspiller: den afspiller det, den officielle app ikke kan, fra kilderne i den anden tabel, i den afspiller, der passer til filen.
 
-| Hvad | Android-telefoner | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Flade videoer (MP4, MOV, MKV, det enheden afkoder) | Immich-afspilleren og en indbygget afspiller til netværksdelinger | Det samme, undtagen MKV- og AVI-filer på en deling, som iOS ikke åbner (på en server afspilles de transkodet) | I vinduet |
-| 360°-fotos | Kuglefremviser, gyroskop | Det samme | Immersiv, hele vejen rundt om dig |
-| 360°-videoer | Indbygget Media3-afspiller på en kugle, gyroskop, spoling, valg af lydspor, indlæsningsindikator | Indbygget SceneKit-afspiller på en kugle, gyroskop, valg af lydspor, indlæsningsindikator; afspil og pause, endnu ingen tidsbjælke | Immersiv, ægte 3D for stereoskopiske filer, tidsbjælke med spring på 10 sekunder, forrige og næste medie |
-| 3D 360° (top og bund, side om side) | Venstre øje, layoutknap | Det samme | Hvert øje får sin egen halvdel af billedet |
-| VR180-fotos og -videoer (halvkugle) | Halvkugle, knappen 360°/180° | Det samme | Immersiv halvkugle |
-| Spatial 2.5D (dybde på en flad skærm fra en stereoskopisk video) | Indbygget afspiller, hovedsporing med frontkameraet | Det samme | Tilbydes ikke |
-| Apples rumlige fotos (HEIC-stereopar, fra build 19) | Venstre øje, en detaljerække siger, at det er rumligt | Det samme | Vis i 3D: begge øjne på et foto, der svæver i den immersive visning, 3D eller 2D, med justerbar størrelse |
-| Apples rumlige videoer (MV-HEVC, fra build 19) | Ét øje (basislaget), med en meddelelse | Det samme | Ét øje i vinduet, med en meddelelse |
-| Rå Insta360 .insp-fotos (fra build 16) | Sat sammen på GPU'en før kuglefremviseren, op til 8192x4096 | Det samme | Immersiv, fra et sammensat billede forberedt til headsettet |
-| Rå Insta360 .insv, begge objektiver i ét spor (fra build 16) | Sat sammen af en GPU-effekt i Media3-afspilleren | Sat sammen af en SceneKit-shader | Immersiv, sat sammen af den samme GPU-effekt |
-| Rå videoer med ét objektiv pr. spor eller pr. fil (fra build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-par, GoPro .360, DJI .osv | To hardwaredekodere på én gang, én pr. objektiv (fra build 19 softwaredekodere på en enhed uden hardwaredekoder, op til 2048x2048 pr. objektiv), og en GL-compositor, der sætter sammen til kuglen; ét objektiv, derefter den transkodede stream, derefter videoen usammensat, når enheden ikke kan køre to | En egen AVFoundation-compositor med Metal | Immersiv, de samme to dekodere og compositor (panel 3840x1920) |
+| Hvad | Android-telefoner | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (fra build 20) |
+|---|---|---|---|---|
+| Flade videoer (MP4, MOV, MKV, det enheden afkoder) | Immich-afspilleren og en indbygget afspiller til netværksdelinger | Det samme, undtagen MKV- og AVI-filer på en deling, som iOS ikke åbner (på en server afspilles de transkodet) | I vinduet | Som på telefoner; OK sætter på pause, venstre og højre springer 10 s |
+| 360°-fotos | Kuglefremviser, gyroskop | Det samme | Immersiv, hele vejen rundt om dig | Kuglefremviser drejet med pilene, zoomet med kanaltasterne |
+| 360°-videoer | Indbygget Media3-afspiller på en kugle, gyroskop, spoling, valg af lydspor, indlæsningsindikator | Indbygget SceneKit-afspiller på en kugle, gyroskop, valg af lydspor, indlæsningsindikator; afspil og pause, endnu ingen tidsbjælke | Immersiv, ægte 3D for stereoskopiske filer, tidsbjælke med spring på 10 sekunder, forrige og næste medie | Telefonernes Media3-afspiller, drejet med pilene |
+| 3D 360° (top og bund, side om side) | Venstre øje, layoutknap | Det samme | Hvert øje får sin egen halvdel af billedet | Venstre øje, layoutknap |
+| VR180-fotos og -videoer (halvkugle) | Halvkugle, knappen 360°/180° | Det samme | Immersiv halvkugle | Halvkugle, knappen 360°/180° |
+| Spatial 2.5D (dybde på en flad skærm fra en stereoskopisk video) | Indbygget afspiller, hovedsporing med frontkameraet | Det samme | Tilbydes ikke | Tilbydes ikke |
+| Apples rumlige fotos (HEIC-stereopar, fra build 19) | Venstre øje, en detaljerække siger, at det er rumligt | Det samme | Vis i 3D: begge øjne på et foto, der svæver i den immersive visning, 3D eller 2D, med justerbar størrelse | Venstre øje, en detaljerække |
+| Apples rumlige videoer (MV-HEVC, fra build 19) | Ét øje (basislaget), med en meddelelse | Det samme | Ét øje i vinduet, med en meddelelse | Ét øje, med en meddelelse |
+| Rå Insta360 .insp-fotos (fra build 16) | Sat sammen på GPU'en før kuglefremviseren, op til 8192x4096 | Det samme | Immersiv, fra et sammensat billede forberedt til headsettet | Som på telefoner |
+| Rå Insta360 .insv, begge objektiver i ét spor (fra build 16) | Sat sammen af en GPU-effekt i Media3-afspilleren | Sat sammen af en SceneKit-shader | Immersiv, sat sammen af den samme GPU-effekt | Som på telefoner |
+| Rå videoer med ét objektiv pr. spor eller pr. fil (fra build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-par, GoPro .360, DJI .osv | To hardwaredekodere på én gang, én pr. objektiv (fra build 19 softwaredekodere på en enhed uden hardwaredekoder, op til 2048x2048 pr. objektiv), og en GL-compositor, der sætter sammen til kuglen; ét objektiv, derefter den transkodede stream, derefter videoen usammensat, når enheden ikke kan køre to | En egen AVFoundation-compositor med Metal | Immersiv, de samme to dekodere og compositor (panel 3840x1920) | Som på telefoner, når tv'et kan køre to dekodere på én gang |
+| Tapo-kameraets livebillede (fra build 20) | Media3 RTSP-afspiller: SD på siden, HD i fuld skærm, lydknap | Endnu ikke: et kort siger, at det kommer senere | I vinduet, i HD | Som på telefoner |
+| Tapo-kameraets optagelser (fra build 20) | Hentet fra hukommelseskortet til en H.264-video med lyd, derefter afspillet med spoling | Samme | Samme, i vinduet | Samme |
+
+Tv-kolonnen er endnu ikke kontrolleret på et tv, se [Se på dit tv](#watch-on-your-tv-android-tv-and-google-tv); kamerarækkerne er endnu ikke kontrolleret med et rigtigt kamera.
 
 | Hvorfra | Hvordan |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 er et galleri, og det er også en gratis medieafspiller: den afspiller
 | Selve telefonen eller headsettet | »Brug uden server« på loginsiden, eller punktet På denne enhed på fanen Bibliotek |
 | En NAS eller en computer | SMB- og WebDAV-delinger og fra build 19 DLNA-medieservere, fundet på netværket, læst direkte (en SMB-video over op til seks forbindelser), intet kopieret; fra build 15 kan de filer, du vælger, sendes til din Immich-konto |
 | En anden telefon (fra build 19) | »Del denne telefon på netværket« på den telefon: headsettet eller enhver WebDAV-klient på netværket læser dens albummer, måneder og 360°-medier |
+| En Plex Media Server (fra build 20) | Dens foto-, film- og tv-seriebiblioteker efter mappe, de originale filer læst direkte over HTTPS, kontrolleret mod serverens eget certifikat, hjemme eller via adressen uden for hjemmet, på alle platforme; se [Plex Media Server, uden plex.tv](#plex-media-server-without-plextv) |
+| Et Tapo-kamera (fra build 20) | Livebilledet med kamerakontoen (Android, Android TV, Quest) og optagelserne på dets hukommelseskort med TP-Link-kontoens kodeord (alle platforme), kun på det lokale netværk; se [Tapo-kameraer](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 kører også på Meta Quest 3 og 3S (Horizon OS v69 eller nyere; Horizon Store-buildet er kun opført for disse to; den universelle `-release.apk` burde også kunne installeres på en Quest 2 eller Quest Pro, ikke testet). Hvordan den bruges, står i [I Meta Quest 3-headsettet](#in-the-meta-quest-3-headset); dette afsnit handler om installation og om det, der er anderledes på headsettet.
 
-Headset-buildet taler kun med servere over HTTPS eller over almindelig HTTP med navne på hjemmenetværket (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) og med selve headsettet, som Horizon Store kræver. En server, der er indtastet som en almindelig HTTP-adresse med en IP, for eksempel `http://192.168.1.10:2283`, afvises af det build: brug HTTPS, et navn på hjemmenetværket (`nas.local`) eller den universelle `-release.apk`, som beholder telefonernes åbne politik. WebDAV-, DLNA- og telefondelinger på en almindelig HTTP-adresse på det lokale netværk er ikke berørt: appen læser dem selv og giver kun sine afspillere adressen på sin lokale bro (endnu ikke bekræftet på headsettet for DLNA og telefondelingen, nye i build 19).
+Headset-buildet taler kun med servere over HTTPS eller over almindelig HTTP med navne på hjemmenetværket (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) og med selve headsettet, som Horizon Store kræver. En server, der er indtastet som en almindelig HTTP-adresse med en IP, for eksempel `http://192.168.1.10:2283`, afvises af det build: brug HTTPS, et navn på hjemmenetværket (`nas.local`) eller den universelle `-release.apk`, som beholder telefonernes åbne politik. WebDAV-, DLNA- og telefondelinger på en almindelig HTTP-adresse på det lokale netværk er ikke berørt: appen læser dem selv og giver kun sine afspillere adressen på sin lokale bro (endnu ikke bekræftet på headsettet for DLNA og telefondelingen, nye i build 19). Fra build 20 nås en Plex-server over HTTPS og et Tapo-kamera af appen selv, dets livebillede over RTSP, som ikke er HTTP: ingen af dem burde være berørt (skal bekræftes på headsettet).
 
 <a id="install"></a>
 ### Installation
@@ -576,7 +754,7 @@ Horizon Store-opslaget venter på Metas gennemgang, indsendt med build 14; indti
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Åbn Bibliotek i headsettet, vælg filteret »Unknown sources« (ukendte kilder), og start Immuch360.
@@ -584,7 +762,7 @@ Horizon Store-opslaget venter på Metas gennemgang, indsendt med build 14; indti
 
 ### I vinduet
 
-Hele appen kører som et 2D-vindue, hvis størrelse kan ændres: login, tidslinje, albummer, søgning, fanen Bibliotek (360°-listen, På denne enhed, Netværksdelinger), indstillingerne og foto- og videofremviserne, hvor flade fotos og videoer afspilles. På headsettet åbner knappen 360° og Vis som 360° i menuen ⋮ direkte den immersive visning i stedet for telefonernes kuglefremviser, og knappen Spatial 2.5D og dens indstilling vises ikke. Fra build 19 har et rumligt Apple-foto en knap Vis i 3D, og flisen Del denne telefon på netværket vises ikke: det er headsettet, der læser en telefons deling.
+Hele appen kører som et 2D-vindue, hvis størrelse kan ændres: login, tidslinje, albummer, søgning, fanen Bibliotek (360°-listen, På denne enhed, Netværksdelinger), indstillingerne og foto- og videofremviserne, hvor flade fotos og videoer afspilles. På headsettet åbner knappen 360° og Vis som 360° i menuen ⋮ direkte den immersive visning i stedet for telefonernes kuglefremviser, og knappen Spatial 2.5D og dens indstilling vises ikke. Fra build 19 har et rumligt Apple-foto en knap Vis i 3D, og flisen Del denne telefon på netværket vises ikke: det er headsettet, der læser en telefons deling. Fra build 20 åbner Plex-serverne og Tapo-kameraerne også i vinduet, kameraets livebillede i HD; indstillingen »Layout til fjernbetjening« forbliver på Automatisk, hvilket lader den være slået fra på headsettet.
 
 ### I billeder
 
@@ -598,7 +776,7 @@ Billeder taget i headsettet med optageknappen (Meta-knappen og triggeren), på e
 ### Begrænsninger på headsettet
 
 - **Videocodecs**: HEVC (H.265) er det sikre valg; H.264 stopper omkring 4096x2304. Hvad appen kontrollerer, og hvordan du giver headsettet en video, det kan afkode, står i [Videodetaljer og dekodere](#video-details-decoders-and-why-a-video-stutters).
-- **Butik**: butiksversionen starter ved build 14. Funktionerne markeret »fra build 15« og »fra build 16« kommer med dens næste opdatering (build 16, allerede på alfa-testkanalen), de senere derefter; GitHub-APK'en har dem alle nu.
+- **Butik**: butiksversionen starter ved build 14. Funktionerne markeret »fra build 15« og senere kommer med dens næste opdateringer (butikkens alfa-testkanal, for testere, får hvert nyt build); GitHub-APK'en har dem alle nu.
 - **Tilladelser**: headset-buildet beder kun om fotos og videoer (tilstanden uden server) og notifikationer (status for sikkerhedskopiering). Det har ingen tilladelse til lager, lyd, placering eller kamera, i modsætning til telefon-buildet; skift af server ud fra Wi-Fi-navnet er derfor ikke tilgængeligt på headsettet.
 - **APK-størrelse**: Spatial SDK tilføjer omkring 56 MB indbygget 64-bit ARM-kode, også på telefoner, hvor den aldrig indlæses.
 - **Licens**: den immersive visning bruger Meta Spatial SDK, der distribueres under Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Billeder taget i headsettet med optageknappen (Meta-knappen og triggeren), på e
 <a id="where-to-get-it"></a>
 ## Hvor du får den
 
-Appen findes på Google Play; App Store-versionen venter på Apples gennemgang og Meta Horizon Store-versionen på Metas. GitHub-udgivelsen er altid det nyeste build:
+Appen findes på Google Play til telefoner og tablets; App Store-versionen venter på Apples gennemgang, Meta Horizon Store-versionen på Metas, og Google Play-versionen til tv på Googles gennemgang af tv-udgivelsen. GitHub-udgivelsen er altid det nyeste build:
 
 | Platform | I dag | Snart |
 |---|---|---|
-| Android-telefoner og -tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) eller APK'en på siden [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` til en telefon (den universelle `Immuch360-v<version>-release.apk` virker overalt, `-armeabi-v7a` er til ældre 32-bit-telefoner, og `.aab`-filen er til Google Play, ikke til sideloading). GitHub-buildet er som regel foran butikken. Uanset hvad installeres den ved siden af den officielle Immich-app (pakke `com.aprogsys.immuch360`). | Google Play: build 15 og 16 sendt til Googles gennemgang den 4. oktober 2026 (det seneste build, der er bekræftet tilgængeligt der, er build 11) |
+| Android-telefoner og -tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) eller APK'en på siden [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` til en telefon (den universelle `Immuch360-v<version>-release.apk` virker overalt, `-armeabi-v7a` er til ældre 32-bit-telefoner, og `.aab`-filen er til Google Play, ikke til sideloading). GitHub-buildet er som regel foran butikken. Uanset hvad installeres den ved siden af den officielle Immich-app (pakke `com.aprogsys.immuch360`). | Google Play: build 18 er tilgængeligt, build 19 under Googles gennemgang siden 6. oktober 2026, build 20 derefter |
 | iPhone og iPad | Venter på Apples gennemgang. Versionen under gennemgang har funktionerne fra build 11: upload til Immich og valget Videokilde (build 15) og de rå Insta360-filer (build 16) kommer med en senere App Store-opdatering. Kildekoden kan bygges med Xcode eller på Codemagic, se [Byg den selv](#build-it-yourself). | App Store, under gennemgang |
-| Meta Quest 3 og 3S | Filen `-quest-release.apk` fra siden [Releases](https://github.com/freeKC/Immuch360/releases) (den universelle `-release.apk` virker også), sideloadet i udviklertilstand, se [Installation](#install). Butiks-buildet og GitHub-APK'en er signeret med forskellige nøgler: for at skifte fra det ene til det andet skal du først afinstallere appen (dens indstillinger og gemte delinger forsvinder med den). | Meta Horizon Store: build 14 under Metas gennemgang siden 3. oktober 2026; build 16 er på butikkens alfakanal (kun testere) |
+| Meta Quest 3 og 3S | Filen `-quest-release.apk` fra siden [Releases](https://github.com/freeKC/Immuch360/releases) (den universelle `-release.apk` virker også), sideloadet i udviklertilstand, se [Installation](#install). Butiks-buildet og GitHub-APK'en er signeret med forskellige nøgler: for at skifte fra det ene til det andet skal du først afinstallere appen (dens indstillinger og gemte delinger forsvinder med den). | Meta Horizon Store: build 14 under Metas gennemgang siden 3. oktober 2026; butikkens alfakanal (kun testere) får hvert nyt build |
+| Android TV og Google TV (fra build 20) | Den universelle `Immuch360-v<version>-release.apk` fra siden [Releases](https://github.com/freeKC/Immuch360/releases), sideloadet med adb, se [Installér den på tv'et](#install-it-on-the-tv). Det er den samme app som på telefoner. | Google Play på tv, efter Googles gennemgang af tv-udgivelsen |
 
 Links til App Store og Meta Horizon Store tilføjes her, så snart opslagene er offentliggjort. Log ind med din sædvanlige Immich-server-URL og konto, eller tryk på »Brug uden server« på loginsiden for at starte på enhedens egne fotos og videoer. APK'en fra GitHub opdaterer ikke sig selv: hold øje med siden Releases, og når du har installeret appen fra en butik, så hent opdateringerne fra den butik.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Skærmbilleder til butikkerne tages på debug-builds til simulatoren, lavet med `--dart-define=IMMUCH_SCREENSHOTS=true`, som kun skjuler debug-banneret. De to Android-flavours er den samme app. Flavouren `quest` har target SDK 34 og beholder kun de tilladelser, headsettet bruger (fotos, videoer, notifikationer): medieadministration, placering i baggrunden, ældre lageradgang, lyd, mediers placering, enhedens placering og kamera fjernes i `android/app/src/quest/AndroidManifest.xml`, fordi Meta Horizon Store afviser de to første og kræver en begrundelse for hver anden følsom tilladelse; den samme fil angiver Quest 3 og 3S som understøttede enheder og begrænser almindelig HTTP til selve headsettet og til navne på hjemmenetværket. APK'en er kun 64 bit på grund af de to ekstra argumenter i dens kommandolinje (`--target-platform android-arm64 --android-project-arg arm64only=true`). Flavouren `phone` er den, Google Play kræver. For at bygge til iOS på din egen Mac skal du bruge Xcode og dit eget signeringsteam; med Xcode 26 skal du først køre `xcodebuild -downloadComponent MetalToolchain` én gang, da Spatial-shaderne har brug for det. Uden en Mac kører iOS-builds på Codemagic (en hostet Mac) ud fra filen `codemagic.yaml` i dette repository. Android-release-builds kører på GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Skærmbilleder til butikkerne tages på debug-builds til simulatoren, lavet med `--dart-define=IMMUCH_SCREENSHOTS=true`, som kun skjuler debug-banneret. De to Android-flavours er den samme app. Fra build 20 erklærer flavouren `phone` sig også som en tv-app (en startindgang til tv og et banner, ingen berøringsskærm påkrævet), hvilket flavouren `quest` udelader. Flavouren `quest` har target SDK 34 og beholder kun de tilladelser, headsettet bruger (fotos, videoer, notifikationer): medieadministration, placering i baggrunden, ældre lageradgang, lyd, mediers placering, enhedens placering og kamera fjernes i `android/app/src/quest/AndroidManifest.xml`, fordi Meta Horizon Store afviser de to første og kræver en begrundelse for hver anden følsom tilladelse; den samme fil angiver Quest 3 og 3S som understøttede enheder og begrænser almindelig HTTP til selve headsettet og til navne på hjemmenetværket. APK'en er kun 64 bit på grund af de to ekstra argumenter i dens kommandolinje (`--target-platform android-arm64 --android-project-arg arm64only=true`). Flavouren `phone` er den, Google Play kræver. For at bygge til iOS på din egen Mac skal du bruge Xcode og dit eget signeringsteam; med Xcode 26 skal du først køre `xcodebuild -downloadComponent MetalToolchain` én gang, da Spatial-shaderne har brug for det. Uden en Mac kører iOS-builds på Codemagic (en hostet Mac) ud fra filen `codemagic.yaml` i dette repository. Android-release-builds kører på GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Der ligger ingen hemmeligheder i dette repository: Android-signeringsnøglen er gemt som krypterede GitHub Actions-secrets, og Apples signeringsmateriale som krypterede variabler på Codemagic. Workflow-filerne henviser kun til dem ved navn. Uden din egen `android/key.jks` signeres et release-build med debug-nøglen og kan ikke installeres oven på en kopi fra GitHub eller en butik (afinstaller den først); et debug-build installeres ved siden af den som Immuch360 debug. Kopien i Meta Horizon Store er udgivelsens `quest`-APK signeret med en anden nøgle, den, som butiksappen først blev registreret med, så den kan heller ikke installeres oven på en sideloadet APK, eller omvendt.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Fra build 19 skriver DLNA-klienten, telefondelingen og genkendelsen af Apples rumlige medier også i appens egen log (Log, i menuen under profilbilledet øverst til højre), under `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` og `NetworkMediaService`. Loglinjer bliver på enheden, medmindre du selv kopierer dem.
+Fra build 19 skriver DLNA-klienten, telefondelingen og genkendelsen af Apples rumlige medier også i appens egen log (Log, i menuen under profilbilledet øverst til højre), under `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` og `NetworkMediaService`. Fra build 20 skriver tv-tilstanden der under `TvMode` og `TvTextEntry`, Plex-serverne under `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` og `PlexServerEditPage` og Tapo-kameraerne under `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` og `CameraLiveView`; Plex-linjerne indeholder aldrig tokenet, en adresse eller en titel, og kameralinjerne udelader kodeordene. Loglinjer bliver på enheden, medmindre du selv kopierer dem.
 
 ## Privatliv
 
 - **Intet går til udvikleren**: appen taler med den Immich-server, du vælger (og, når du åbner kortet, med den kortflisetjeneste, som serveren bruger), har ingen reklamer, ingen analyse og ingen tjeneste til nedbrudsrapporter drevet af udvikleren og sender intet til udvikleren af Immuch360.
-- **Uden server** forlader intet enheden.
+- **Uden server** kontaktes ingen server: appen bruger kun netværket til de delinger, Plex-servere og kameraer, du åbner, og til telefondelingen, hvis du slår den til.
 - **Netværksdelinger**: listen over delinger gemmes på enheden og sendes aldrig til en server; kodeord gemmes i enhedens nøglering eller keystore.
+- **Plex** (fra build 20): tokenet bliver i enhedens sikre lager og sendes kun til din egen server, i en anmodningsheader over HTTPS; appen kontakter aldrig plex.tv.
+- **Tapo-kameraer** (fra build 20): TP-Link-kontoens kodeord og kamerakontoens kodeord bliver i enhedens sikre lager; appen taler kun med kameraet på det lokale netværk, aldrig med TP-Links servere; hentede klip bliver i appens cache og slettes sammen med kameraet.
+- **Tv**: om enheden er et tv, aflæses på enheden; intet sendes.
 - **Telefondeling**: kun lokalt netværk, med brugernavn og kodeord, over almindelig HTTP (se [Del denne telefon på netværket](#share-this-phone-on-the-network)).
 - **Kamera**: bruges kun af Spatial 2.5D-afspilleren, på enheden; billederne gemmes aldrig og sendes aldrig nogen steder hen.
 
@@ -675,20 +857,25 @@ Dette projekt er en fork af Immich og forbliver under [GNU AGPL v3](LICENSE). Hv
 
 Det, der endnu ikke er færdigt, det mest sandsynlige først. Intet her er et løfte, og tilbagemeldinger i [issue-trackeren](https://github.com/freeKC/Immuch360/issues) hjælper med at afgøre, hvad der kommer først.
 
-- **Google Play**: build 15 og 16 blev sendt til Googles gennemgang den 4. oktober 2026 og bliver tilgængelige, når de er godkendt; det seneste build, der er bekræftet tilgængeligt der, er build 11.
+- **Google Play**: build 18 er tilgængeligt; build 19 er under Googles gennemgang siden 6. oktober 2026, og build 20 følger.
 - **App Store**: version 3.3.0 venter på Apples gennemgang; den har funktionerne fra build 11, så upload til Immich og kontrollen af videodekodere (build 15) og de rå Insta360-filer (build 16) kommer med den næste App Store-opdatering. Linket tilføjes her, når den er tilgængelig.
-- **Meta Horizon Store**: opslaget blev indsendt til Metas gennemgang den 3. oktober 2026 med build 14, og build 16 er på butikkens alfakanal til den næste opdatering. Når opslaget er godkendt, behøver Quest 3 ikke længere sideloading, og butikslinket tilføjes her; en sideloadet kopi skal først afinstalleres (se [Installation](#install)).
-- **Butiksopslag**: teksterne på Google Play og i App Store beskriver stadig de første builds (360°-fotos og -videoer, rå filer vist fladt); de vil præsentere fremviserne til 3D, VR180 og Spatial, tilstanden uden server, netværksdelingerne, medieafspilleren og de rå Insta360-filer. Teksten i Meta Horizon Store præsenterer allerede medieafspilleren.
+- **Meta Horizon Store**: opslaget blev indsendt til Metas gennemgang den 3. oktober 2026 med build 14, og butikkens alfakanal får hvert nyt build til den næste opdatering. Når opslaget er godkendt, behøver Quest 3 ikke længere sideloading, og butikslinket tilføjes her; en sideloadet kopi skal først afinstalleres (se [Installation](#install)).
+- **Butiksopslag**: opslaget på Google Play blev omskrevet i oktober 2026 med nye skærmbilleder og får tv-skærmbilleder og et tv-banner med tv-udgivelsen. Teksten i App Store beskriver stadig de første builds (360°-fotos og -videoer, rå filer vist fladt); den vil præsentere fremviserne til 3D, VR180 og Spatial, tilstanden uden server, netværksdelingerne, medieafspilleren og de rå Insta360-filer. Teksten i Meta Horizon Store præsenterer allerede medieafspilleren.
 - **Rå filer fra 360°-kameraer, næste skridt**: en fremskridtsindikator, mens et råt foto forberedes til headsettet; opretning af GoPro- og DJI-videoer ud fra deres egne bevægelsesdata; dual fisheye .dng; rapporter fra rigtige enheder om afspilningen med to objektiver fra build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) for at bekræfte samlinger og dekoderbudgetter.
 - **DLNA, telefondeling og Apples rumlige medier, næste skridt**: rapporterne fra rigtige enheder for build 19 (Plex, Jellyfin, en NAS og Freebox Server over DLNA; en telefon, der betjener en Quest, også på sit hotspot; rigtige rumlige iPhone-fotos og -videoer i headsettet); multicast-rettigheden, der er anmodet om hos Apple, så iPhones finder alle DLNA-servere; forrige og næste mellem rumlige fotos i headsettet; et mærke for rumlige fotos fra serveren på tidslinjen; rumlige videoer i 3D på Quest, hvis dens dekodere tillader det.
 - **360°-afspillere på telefoner, næste skridt**: en tidsbjælke i iOS' 360°-videoafspiller (den på Android har en), forrige/næste i telefonernes 360°-afspillere som i Quests immersive visning, og fotos i den indbyggede 360°-videoafspiller.
 - **Netværksdelinger, næste skridt**: at stryge fra én fil i en mappe til den næste på foto- og videosiderne (Quests immersive visning går allerede gennem en mappes 360°-filer), Digest-godkendelse til WebDAV, brugernavnet fra Bonjour-posten.
 - **Flade videoer**: valg af lydspor i den flade afspiller, for videoer fra server, enhed og deling (360°- og Spatial-afspillerne har det).
+- **Android TV, næste skridt**: enhedstesten af build 20 på Google TV-emulatoren og et rigtigt tv, derefter tv-udgivelsen på Google Play (tv-skærmbilleder, tv-banneret, Googles gennemgang); senere kanaler på tv'ets startskærm.
+- **Tapo-kameraer, næste skridt**: enhedstesten af build 20 med rigtige kameraer; livebilledet på iPhone og iPad; H.265-optagelser; afspilning af et klip, mens det hentes; en hel dags optagelser på én tidslinje.
+- **Plex, næste skridt**: enhedstesten af build 20 (telefoner, Quest, en iPhone, et tv, uden for hjemmet); overførsel af tokenet fra computeren med en QR-kode; skjul DLNA-siden af en Plex-server på listen over fundne servere; IPv6.
 - **Upstream**: små pull requests til Immich for de dele, vedligeholderne ønsker, begyndende med 360°-fotofremviseren.
 
 ## Tak
 
 360°-fotofremviseren er baseret på upstream-pull requesten [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) af dmitry-brazhenko, som selv bygger på prototypen af bencefr i [#30192](https://github.com/immich-app/immich/pull/30192). Tak til dem begge.
+
+Tapo-kameraerne i build 20 blev skrevet ud fra det, open source-projekterne [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) og [python-kasa](https://github.com/python-kasa/python-kasa) dokumenterer om disse kameraer.
 
 Hvorfor en fork: 360°-visning på mobil har været efterspurgt siden januar 2024 og findes endnu ikke i den officielle app; fotofremviseren er under gennemgang upstream i [#31169](https://github.com/immich-app/immich/pull/31169). Denne fork leverer den nu, samler tilbagemeldinger fra rigtige enheder og vil tilbyde Immich det, vedligeholderne ønsker, i små pull requests. Meta Quest-visningen bygger på Meta Spatial SDK, som ikke er open source, så den bliver i denne fork.
 

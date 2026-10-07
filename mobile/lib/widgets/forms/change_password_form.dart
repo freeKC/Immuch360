@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -5,6 +7,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
@@ -19,6 +23,45 @@ class ChangePasswordForm extends HookConsumerWidget {
     final confirmPasswordController = useTextEditingController.fromValue(TextEditingValue.empty);
     final authState = ref.watch(authProvider);
     final formKey = GlobalKey<FormState>();
+    // In the remote control layout each password, once typed in the dialog of the TV, moves on to the next one
+    final newPasswordEntry = useFocusNode();
+    final confirmPasswordEntry = useFocusNode();
+
+    Future<void> changePassword() async {
+      if (formKey.currentState!.validate()) {
+        final isSuccess = await ref
+            .read(authProvider.notifier)
+            .changePassword(currentPassword: currentPasswordController.text, newPassword: passwordController.text);
+
+        if (!isSuccess && context.mounted) {
+          ImmichToast.show(
+            context: context,
+            msg: context.t.login_password_changed_error,
+            toastType: ToastType.error,
+            gravity: ToastGravity.TOP,
+          );
+          return;
+        }
+
+        if (!context.mounted) {
+          return;
+        }
+
+        await ref.read(authProvider.notifier).logout();
+        if (!context.mounted) {
+          return;
+        }
+
+        ref.read(websocketProvider.notifier).disconnect();
+        AutoRouter.of(context).back();
+        ImmichToast.show(
+          context: context,
+          msg: context.t.login_password_changed_success,
+          toastType: ToastType.success,
+          gravity: ToastGravity.TOP,
+        );
+      }
+    }
 
     return Center(
       child: ConstrainedBox(
@@ -46,56 +89,29 @@ class ChangePasswordForm extends HookConsumerWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
-                      child: PasswordInput(controller: currentPasswordController, label: context.t.password),
+                      child: PasswordInput(
+                        controller: currentPasswordController,
+                        label: context.t.password,
+                        autofocus: true,
+                        onSubmitted: (_) => newPasswordEntry.requestFocus(),
+                      ),
                     ),
-                    PasswordInput(controller: passwordController, label: context.t.change_password_form_new_password),
+                    PasswordInput(
+                      controller: passwordController,
+                      label: context.t.change_password_form_new_password,
+                      entryFocusNode: newPasswordEntry,
+                      onSubmitted: (_) => confirmPasswordEntry.requestFocus(),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: ConfirmPasswordInput(
                         originalController: passwordController,
                         confirmController: confirmPasswordController,
+                        entryFocusNode: confirmPasswordEntry,
+                        onSubmitted: (_) => unawaited(changePassword()),
                       ),
                     ),
-                    ChangePasswordButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          final isSuccess = await ref
-                              .read(authProvider.notifier)
-                              .changePassword(
-                                currentPassword: currentPasswordController.text,
-                                newPassword: passwordController.text,
-                              );
-
-                          if (!isSuccess && context.mounted) {
-                            ImmichToast.show(
-                              context: context,
-                              msg: context.t.login_password_changed_error,
-                              toastType: ToastType.error,
-                              gravity: ToastGravity.TOP,
-                            );
-                            return;
-                          }
-
-                          if (!context.mounted) {
-                            return;
-                          }
-
-                          await ref.read(authProvider.notifier).logout();
-                          if (!context.mounted) {
-                            return;
-                          }
-
-                          ref.read(websocketProvider.notifier).disconnect();
-                          AutoRouter.of(context).back();
-                          ImmichToast.show(
-                            context: context,
-                            msg: context.t.login_password_changed_success,
-                            toastType: ToastType.success,
-                            gravity: ToastGravity.TOP,
-                          );
-                        }
-                      },
-                    ),
+                    ChangePasswordButton(onPressed: changePassword),
                     TextButton.icon(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () => AutoRouter.of(context).back(),
@@ -116,14 +132,35 @@ class PasswordInput extends StatelessWidget {
   final TextEditingController controller;
   final String label;
 
-  const PasswordInput({super.key, required this.controller, required this.label});
+  /// In the remote control layout only: the password is typed in the dialog of the TV (see TvTextEntry), whose text
+  /// goes to [onSubmitted]; [autofocus] and [entryFocusNode] are those of the entry
+  final ValueChanged<String>? onSubmitted;
+  final bool autofocus;
+  final FocusNode? entryFocusNode;
+
+  const PasswordInput({
+    super.key,
+    required this.controller,
+    required this.label,
+    this.onSubmitted,
+    this.autofocus = false,
+    this.entryFocusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      obscureText: true,
+    return TvTextEntry(
       controller: controller,
-      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder(), hintText: label),
+      label: label,
+      kind: TvTextKind.password,
+      onSubmitted: onSubmitted,
+      autofocus: autofocus,
+      focusNode: entryFocusNode,
+      child: TextFormField(
+        obscureText: true,
+        controller: controller,
+        decoration: InputDecoration(labelText: label, border: const OutlineInputBorder(), hintText: label),
+      ),
     );
   }
 }
@@ -132,7 +169,17 @@ class ConfirmPasswordInput extends StatelessWidget {
   final TextEditingController originalController;
   final TextEditingController confirmController;
 
-  const ConfirmPasswordInput({super.key, required this.originalController, required this.confirmController});
+  /// In the remote control layout only: see PasswordInput
+  final ValueChanged<String>? onSubmitted;
+  final FocusNode? entryFocusNode;
+
+  const ConfirmPasswordInput({
+    super.key,
+    required this.originalController,
+    required this.confirmController,
+    this.onSubmitted,
+    this.entryFocusNode,
+  });
 
   String? _validateInput(String? email) {
     if (confirmController.value != originalController.value) {
@@ -143,16 +190,23 @@ class ConfirmPasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      obscureText: true,
+    return TvTextEntry(
       controller: confirmController,
-      decoration: InputDecoration(
-        labelText: context.t.change_password_form_confirm_password,
-        hintText: context.t.change_password_form_reenter_new_password,
-        border: const OutlineInputBorder(),
+      label: context.t.change_password_form_confirm_password,
+      kind: TvTextKind.password,
+      onSubmitted: onSubmitted,
+      focusNode: entryFocusNode,
+      child: TextFormField(
+        obscureText: true,
+        controller: confirmController,
+        decoration: InputDecoration(
+          labelText: context.t.change_password_form_confirm_password,
+          hintText: context.t.change_password_form_reenter_new_password,
+          border: const OutlineInputBorder(),
+        ),
+        validator: _validateInput,
+        autovalidateMode: AutovalidateMode.always,
       ),
-      validator: _validateInput,
-      autovalidateMode: AutovalidateMode.always,
     );
   }
 }

@@ -14,6 +14,7 @@ import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
@@ -27,7 +28,7 @@ import 'package:immich_mobile/theme/theme_data.dart';
 import 'package:immich_mobile/widgets/common/immich_logo.dart';
 import 'package:immich_mobile/widgets/common/immich_title_text.dart';
 import 'package:logging/logging.dart';
-import 'package:url_launcher/url_launcher.dart' show LaunchMode, launchUrl;
+import 'package:url_launcher/url_launcher.dart' show LaunchMode;
 
 class BootstrapErrorWidget extends StatelessWidget {
   final String error;
@@ -161,13 +162,17 @@ class _BottomPanelState extends State<_BottomPanel> {
             _ActionLink(
               icon: Icons.chat_bubble_outline,
               label: context.t.discord,
-              onTap: () =>
-                  launchUrl(Uri.parse('https://github.com/freeKC/Immuch360'), mode: LaunchMode.externalApplication),
+              onTap: () => openUrl(
+                context,
+                Uri.parse('https://github.com/freeKC/Immuch360'),
+                mode: LaunchMode.externalApplication,
+              ),
             ),
             _ActionLink(
               icon: Icons.bug_report_outlined,
               label: context.t.profile_drawer_github,
-              onTap: () => launchUrl(
+              onTap: () => openUrl(
+                context,
                 Uri.parse('https://github.com/freeKC/Immuch360/issues'),
                 mode: LaunchMode.externalApplication,
               ),

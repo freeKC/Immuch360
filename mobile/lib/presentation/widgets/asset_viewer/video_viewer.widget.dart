@@ -388,7 +388,8 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
           if (showPlayer) ...[
             Visibility.maintain(
               visible: _isVideoReady,
-              child: NativeVideoPlayerView(onViewReady: _initController),
+              // A platform view must never take the focus: the keys of a remote would go to the native view
+              child: ExcludeFocus(child: NativeVideoPlayerView(onViewReady: _initController)),
             ),
             Center(
               child: AnimatedOpacity(

@@ -31,6 +31,8 @@ abstract class AppConfig with _$AppConfig {
 
   const factory AppConfig({
     @Default(LogLevel.info) LogLevel logLevel,
+    // Stored by name: older builds skip a setting whose name they do not know
+    @Default(TvLayoutMode.auto) TvLayoutMode tvLayout,
     @Default(ThemeConfig()) ThemeConfig theme,
     @Default(CleanupConfig()) CleanupConfig cleanup,
     @Default(MapConfig()) MapConfig map,
@@ -48,6 +50,7 @@ abstract class AppConfig with _$AppConfig {
   T read<T>(SettingsKey<T> key) =>
       (switch (key) {
             .logLevel => logLevel,
+            .tvLayout => tvLayout,
             .themePrimaryColor => theme.primaryColor,
             .themeMode => theme.mode,
             .themeDynamic => theme.dynamicTheme,
@@ -104,6 +107,7 @@ abstract class AppConfig with _$AppConfig {
   AppConfig write<T, U extends T>(SettingsKey<T> key, U value) {
     return switch (key) {
       .logLevel => copyWith(logLevel: value as LogLevel),
+      .tvLayout => copyWith(tvLayout: value as TvLayoutMode),
       .themePrimaryColor => copyWith(theme: theme.copyWith(primaryColor: value as ImmichColorPreset)),
       .themeMode => copyWith(theme: theme.copyWith(mode: value as ThemeMode)),
       .themeDynamic => copyWith(theme: theme.copyWith(dynamicTheme: value as bool)),

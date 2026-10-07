@@ -9,6 +9,8 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/string_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
 import 'package:immich_mobile/utils/people.utils.dart';
@@ -35,6 +37,8 @@ class _PeopleCollectionPageState extends ConsumerState<PeopleCollectionPage> {
   @override
   Widget build(BuildContext context) {
     final people = ref.watch(Store.people.all());
+    // A remote control starts on the first person
+    final tvMode = ref.watch(tvModeProvider);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -90,7 +94,8 @@ class _PeopleCollectionPageState extends ConsumerState<PeopleCollectionPage> {
                     return Column(
                       key: ValueKey(person.id),
                       children: [
-                        GestureDetector(
+                        RemoteFocusable(
+                          autofocus: tvMode && index == 0,
                           onTap: () {
                             unawaited(context.pushRoute(PersonRoute(person: person)));
                           },

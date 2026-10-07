@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
@@ -81,6 +82,27 @@ const _phone = DiscoveredServer(
   discoveryId: 'a1b2c3d4e5f60718',
   username: 'phone1234',
   isPhoneShare: true,
+);
+
+const _plex = DiscoveredServer(
+  host: '192.0.2.20',
+  displayName: 'Test Plex',
+  type: NetworkSourceType.plex,
+  port: 32400,
+  useTls: true,
+  origin: DiscoveryOrigin.gdm,
+  discoveryId: '0000000000000000000000000000000000000001',
+  plexHash: '0123456789abcdef0123456789abcdef',
+);
+
+const _tapo = DiscoveredServer(
+  host: '192.0.2.30',
+  displayName: 'Tapo C200',
+  type: NetworkSourceType.tapo,
+  port: 443,
+  useTls: true,
+  origin: DiscoveryOrigin.tdp,
+  discoveryId: '02-00-00-00-00-01',
 );
 
 const _cloud = DiscoveredServer(
@@ -369,7 +391,7 @@ void main() {
       expect(find.text('Found on the network'), findsOneWidget);
       expect(progress, findsOneWidget);
       expect(scanAgain, findsNothing);
-      expect(find.text('Looking for SMB and WebDAV servers on your network'), findsOneWidget);
+      expect(find.text('Looking for shares, media servers and cameras on your network'), findsOneWidget);
       expect(
         find.text('Not in the list? Enter the details by hand below, the form works for any server.'),
         findsOneWidget,
@@ -629,6 +651,22 @@ void main() {
       expect(secureStorage.values, {smbSource.secretKey: 'stored'});
     });
 
+    testWidgets('keeps on save what a later build stored with the share', (tester) async {
+      // A field this build does not know, as a later build may add one
+      final stored = {...smbSource.toJson(), 'laterSetting': 'kept'};
+      await store.put(StoreKey.networkSources, jsonEncode([stored, webDavSource.toJson()]));
+      secureStorage.values[smbSource.secretKey] = 'stored';
+      final source = NetworkSource.decodeList(store.tryGet(StoreKey.networkSources)).first;
+      await pumpEditPage(tester, source: source);
+
+      await enter(tester, 'name', 'Living room NAS');
+      await tapButton(tester, saveButton);
+
+      final saved = (jsonDecode(store.tryGet(StoreKey.networkSources)!) as List).first as Map;
+      expect(saved['name'], 'Living room NAS');
+      expect(saved['laterSetting'], 'kept');
+    });
+
     testWidgets('forgets the password when the field is emptied', (tester) async {
       await addExisting();
       await pumpEditPage(tester, source: smbSource);
@@ -685,7 +723,7 @@ void main() {
 
       await tapButton(tester, dlnaRadio);
 
-      expect(find.text('DLNA media server (Plex, Jellyfin, NAS, TV box)'), findsOneWidget);
+      expect(find.text('DLNA media server (Jellyfin, NAS, TV box)'), findsOneWidget);
       expect(find.text('Description path'), findsOneWidget);
       expect(find.byKey(const Key('network_share_dlna_hint')), findsOneWidget);
       expect(find.textContaining('minidlna on Linux are not found'), findsOneWidget);
@@ -867,6 +905,70 @@ void main() {
       expect(saved.name, 'Living room box');
       expect(saved.discoveryId, 'uuid:media');
       expect(secureStorage.values, isEmpty);
+    });
+  });
+
+  group('NetworkShareEditPage, Plex servers and cameras', () {
+    Finder found(DiscoveredServer server) =>
+        find.byKey(Key('network_share_found_${server.type.name}_${server.host}_${server.port}'));
+    final plexRadio = find.byKey(const Key('network_share_type_plex'));
+
+    Future<void> pumpWithServers(WidgetTester tester, List<DiscoveredServer> servers) async {
+      discovery.keepOpen = true;
+      await pumpEditPage(tester, settle: false);
+      discovery.scans.single.add(servers);
+      await discovery.scans.single.close();
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('lists the Plex servers and the cameras found, with their tags', (tester) async {
+      await pumpWithServers(tester, const [_nas, _plex, _tapo]);
+
+      expect(find.descendant(of: found(_plex), matching: find.text('Plex')), findsOneWidget);
+      expect(find.descendant(of: found(_plex), matching: find.text('Test Plex')), findsOneWidget);
+      expect(find.descendant(of: found(_plex), matching: find.byIcon(Icons.video_library_outlined)), findsOneWidget);
+      expect(find.descendant(of: found(_tapo), matching: find.text('Tapo')), findsOneWidget);
+      expect(find.descendant(of: found(_tapo), matching: find.text('192.0.2.30:443')), findsOneWidget);
+      expect(find.descendant(of: found(_tapo), matching: find.byIcon(Icons.videocam_outlined)), findsOneWidget);
+    });
+
+    testWidgets('a Plex server found on the network opens its own page in place of this one, filled in', (
+      tester,
+    ) async {
+      await pumpWithServers(tester, const [_plex]);
+
+      await tapButton(tester, found(_plex));
+
+      expect(find.text('plex edit Test Plex'), findsOneWidget);
+      expect(find.text('Add a share'), findsNothing, reason: 'replaced, not pushed over the form');
+      expect(storedSources(), isEmpty);
+    });
+
+    testWidgets('a camera found on the network opens its own page in place of this one, filled in', (tester) async {
+      await pumpWithServers(tester, const [_tapo]);
+
+      await tapButton(tester, found(_tapo));
+
+      expect(find.text('camera edit 192.0.2.30'), findsOneWidget);
+      expect(find.text('Add a share'), findsNothing);
+    });
+
+    testWidgets('the Plex radio of a new share opens the Plex page in place of the form', (tester) async {
+      await pumpEditPage(tester);
+
+      expect(find.text('Plex Media Server'), findsOneWidget);
+      await tapButton(tester, plexRadio);
+
+      expect(find.text('plex edit new'), findsOneWidget);
+      expect(find.text('Add a share'), findsNothing);
+    });
+
+    testWidgets('an existing share is not offered the Plex radio', (tester) async {
+      await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [smbSource]));
+      await pumpEditPage(tester, source: smbSource);
+
+      expect(plexRadio, findsNothing);
+      expect(find.byKey(const Key('network_share_type_dlna')), findsOneWidget);
     });
   });
 

@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 je mobilna aplikacija Immich sa 360° fotografijama i videozapisima u kojima se možete osvrtati, i besplatan plejer za ravne, 360°, 3D i VR180 fotografije i videozapise, na Android telefonima i tabletima, iPhone i iPad uređajima te na Meta Quest 3 i 3S. Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ili u režimu foto sfere na telefonu, ili imaju headset, i žele gledati vlastite snimke sa Immich servera, sa samog telefona, s NAS-a ili s medijskog servera: isti server, isti račun, bez dodatka na serveru, ili bez ikakvog servera.
+Immuch360 je mobilna aplikacija Immich sa 360° fotografijama i videozapisima u kojima se možete osvrtati, i besplatan plejer za ravne, 360°, 3D i VR180 fotografije i videozapise, na Android telefonima i tabletima, iPhone i iPad uređajima, na Meta Quest 3 i 3S te, od builda 20, na Android TV-u i Google TV-u. Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ili u režimu foto sfere na telefonu, ili imaju headset, i žele gledati vlastite snimke sa Immich servera, sa samog telefona, s NAS-a, s medijskog servera ili s Plex servera: isti server, isti račun, bez dodatka na serveru, ili bez ikakvog servera. Od builda 20 prikazuje i Tapo kamere, uživo i snimke s njihove memorijske kartice.
 
 <p align="center">
   <sub>Nezvanični fork. Nije povezan s Immichom ni s FUTO-om. Naziv se čita kao „I am much 360“.</sub>
@@ -15,7 +15,8 @@ Immuch360 je mobilna aplikacija Immich sa 360° fotografijama i videozapisima u 
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">na pregledu</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store na pregledu
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store na pregledu &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 je mobilna aplikacija Immich sa 360° fotografijama i videozapisima u 
     <td align="center" width="33%"><h3>🎥 Izvorni 2.5D</h3>Dubina na ravnom ekranu iz stereoskopskog videa, prikaz prati vašu glavu (eksperimentalno, telefoni i tableti)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Jedna aplikacija, tri platforme, pravi 3D u headsetu</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Jedna aplikacija na telefonima, tabletima i headsetu, pravi 3D u headsetu, a od builda 20 i na Android TV-u s daljinskim upravljačem</td>
     <td align="center"><h3>🔌 Sa serverom ili bez njega</h3>Vaš Immich server ili vlastita galerija telefona, bez računa</td>
     <td align="center"><h3>🗄️ Mrežni dijeljeni resursi</h3>Samba (SMB), WebDAV i, od builda 19, DLNA medijski serveri, pronađeni na mreži i čitani uživo, ništa se ne preuzima, i poslani u Immich kada vi odaberete. Od builda 19 telefon također dijeli vlastitu galeriju s headsetom</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Na televizoru</h3>Od builda 20 isti APK na Android TV-u i Google TV-u: 360° fotografije i videozapisi, vaš server i vaši dijeljeni resursi, s daljinskim upravljačem</td>
+    <td align="center"><h3>🎬 Plex, bez plex.tv</h3>Od builda 20 vaše Plex biblioteke, reproducirane iz originalnih datoteka da 360° ostane 360°, kod kuće i izvan nje</td>
+    <td align="center"><h3>📹 Tapo kamere</h3>Od builda 20 prikaz uživo i snimke s memorijske kartice, samo na vašoj mreži, i snimak poslan u Immich kada vi odlučite</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 je mobilna aplikacija Immich sa 360° fotografijama i videozapisima u 
 - **„Moje 360° fotografije prikazuju se kao ravna, razvučena traka, a moji 360° videozapisi reproduciraju se ravno.“** Pogledajte [360° fotografije i videozapisi kao sfera](#360-photos-and-videos-as-a-sphere).
 - **„Nemam server i ne želim račun.“** Pogledajte [Bez servera i bez računa](#without-a-server-or-an-account).
 - **„Želim gledati videozapise sa svog NAS-a, na telefonu ili u headsetu, bez kopiranja.“** Pogledajte [Mrežni dijeljeni resursi](#network-shares-a-nas-a-computer-or-a-media-server).
+- **„Plex reproducira moje 360° videozapise ravno, a ja želim svoju Plex biblioteku u headsetu, na televizoru i izvan kuće.“** Pogledajte [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv).
 - **„Moje fotografije su na telefonu, a nemam računar ni NAS na koji bih ih stavio za headset.“** Pogledajte [Dijeljenje ovog telefona na mreži](#share-this-phone-on-the-network).
+- **„Želim vidjeti svoju Tapo kameru i snimke od prošle noći bez aplikacije Tapo, i sačuvati snimak u Immichu.“** Pogledajte [Tapo kamere](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **„Za moje Insta360 datoteke treba mi aplikacija Insta360 prije nego što ih mogu gledati“** (a isto i za GoPro .360 i DJI .osv datoteke). Pogledajte [Sirove datoteke 360° kamera](#raw-360-camera-files-without-the-cameras-app).
 - **„Moji 3D videozapisi izgledaju dvostruko, a moji VR180 videozapisi su razvučeni svuda okolo.“** Pogledajte [3D i VR180](#3d-and-vr180-photos-and-videos) i [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **„Imam prostorne fotografije sa svog iPhonea.“** Pogledajte [Apple prostorne fotografije i videozapisi](#apple-spatial-photos-and-videos).
 - **„Radi na telefonu, ali želim to u Questu.“** Pogledajte [U headsetu Meta Quest 3](#in-the-meta-quest-3-headset).
+- **„Želim gledati svoje 360° fotografije i videozapise, i videozapise sa svog NAS-a ili Plex servera, na televizoru, s daljinskim upravljačem.“** Pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Ne mogu pronaći svoje 360° snimke među svim ostalim.“** Pogledajte [Lista 360°](#find-your-360-shots-the-360-list).
 - **„Moj 360° video zastajkuje ili reproducira mutnu kopiju.“** Pogledajte [Detalji videa i dekoderi](#video-details-decoders-and-why-a-video-stutters).
 - **„Zadržavam li sve što radi aplikacija Immich?“** Da, uz dvije male promjene, pogledajte [Sve ostalo je Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Izbor se pamti na telefonu i ne mijenja ništa na serveru. Kod datoteke s mrežn
 
 Nemate Immich server ili ne želite račun: samo želite da se 360° fotografije s vašeg telefona otvaraju kao sfera koju možete okretati žiroskopom. Aplikacija Immich najprije traži prijavu.
 
-Na stranici za prijavu, „Use without a server“ (Koristi bez servera) otvara Immuch360 s vlastitim fotografijama i videozapisima uređaja, s preglednicima 360°, 3D, VR180 i Spatial, listom 360° i mrežnim dijeljenim resursima, bez Immich računa. Funkcije servera ostaju skrivene ili zasivljene dok ne povežete server; ništa ne napušta uređaj. Na Meta Questu 3 otvara vlastite fotografije i videozapise headseta.
+Na stranici za prijavu, „Use without a server“ (Koristi bez servera) otvara Immuch360 s vlastitim fotografijama i videozapisima uređaja, s preglednicima 360°, 3D, VR180 i Spatial, listom 360° i mrežnim dijeljenim resursima (od builda 20 i Plex serverima i Tapo kamerama), bez Immich računa. Funkcije servera ostaju skrivene ili zasivljene dok ne povežete server; ništa ne napušta uređaj. Na Meta Questu 3 otvara vlastite fotografije i videozapise headseta; na televizoru, koji ih nema, upućuje na mrežne dijeljene resurse (pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Kartica Library bez servera: stavka 360° na vrhu, zatim On this device s dvije 360° fotografije i Network shares s dijeljenim resursom NAS">
 
@@ -126,7 +135,7 @@ Na stranici za prijavu, „Use without a server“ (Koristi bez servera) otvara 
 
 Vaši 360° videozapisi nalaze se na NAS-u ili računaru, a želite ih gledati na telefonu ili u headsetu bez prethodnog kopiranja. Za headset ljudi na kraju kopiraju svaku datoteku kablom; medijski serveri poput Plexa i Jellyfina reproduciraju 360° videozapise ravno, kako opisuju zahtjevi na njihovim forumima; aplikacija Immich čita samo vaš Immich server.
 
-Immuch360 pregledava i reproducira fotografije i videozapise s bilo kojeg servera koji podržava SMB (Samba, Windows), WebDAV ili, od builda 19, DLNA/UPnP (medijski server: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS ili TV boks), direktno s dijeljenog resursa. Sama pronalazi servere na vašoj mreži i reproducira datoteke uživo u istim preglednicima kao i ostatak aplikacije (360°, 3D, VR180, Spatial 2.5D, imerzivni prikaz na Questu), sa Immich serverom ili bez njega, na telefonima i na Meta Questu 3. Ništa se ne preuzima. Kada je server povezan, datoteke koje odaberete mogu se poslati na vaš Immich račun (od builda 15).
+Immuch360 pregledava i reproducira fotografije i videozapise s bilo kojeg servera koji podržava SMB (Samba, Windows), WebDAV ili, od builda 19, DLNA/UPnP (medijski server: Jellyfin, minidlna, Gerbera, Emby, NAS ili TV boks), direktno s dijeljenog resursa. Od builda 20 Plex Media Server ima vlastiti tip, pogledajte [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv). Sama pronalazi servere na vašoj mreži i reproducira datoteke uživo u istim preglednicima kao i ostatak aplikacije (360°, 3D, VR180, Spatial 2.5D, imerzivni prikaz na Questu), sa Immich serverom ili bez njega, na telefonima i na Meta Questu 3. Ništa se ne preuzima. Kada je server povezan, datoteke koje odaberete mogu se poslati na vaš Immich račun (od builda 15).
 
 | Dodavanje dijeljenog resursa | Folder dijeljenog resursa |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 pregledava i reproducira fotografije i videozapise s bilo kojeg server
 
 ### Dodavanje dijeljenog resursa
 
-1. Otvorite karticu Library, zatim Network shares. Prvi put stranica prikazuje „No share yet“ (Još nema dijeljenih resursa) s dugmetom „Add a share“ (Dodaj dijeljeni resurs); + gore desno radi isto u bilo kojem trenutku.
-2. Stranica „Add a share“ najprije traži servere na vašoj mreži i navodi ih pod „Found on the network“ (Pronađeno na mreži), s njihovim tipom (SMB, WebDAV, DLNA, Phone (Telefon)). Pretraga traje do otprilike šest sekundi; „Scan again“ (Skeniraj ponovo) je pokreće iznova. Koristi Bonjour/mDNS i skeniranje lokalne mreže potvrđeno stvarnom SMB ili WebDAV razmjenom, a od builda 19 i SSDP pretragu DLNA medijskih servera.
-3. Dodirnite server: tip, server, port i putanja se popunjavaju.
-4. Nije na listi? Popunite obrazac ručno. Tip: „SMB (Samba, Windows share)“ (Samba, Windows dijeljenje), „WebDAV (Nextcloud, Synology and others)“ (Nextcloud, Synology i drugi) ili „DLNA media server (Plex, Jellyfin, NAS, TV box)“ (DLNA medijski server). Zatim Name (Naziv), „Server name or address“ (Naziv ili adresa servera; naziv ili adresa, a puna adresa kao `smb://nas/photos`, `\\nas\photos` ili `https://nas:5006/photos` popunjava ostala polja), „Port (optional)“ (Port, opcionalno) kada nije uobičajeni, „Share“ (Dijeljeni resurs) za SMB ili „Path of the WebDAV address“ (Putanja WebDAV adrese) za WebDAV, „Start folder (optional)“ (Početni folder, opcionalno), „User name“ (Korisničko ime) i „Password“ (Lozinka), te „Secure connection (HTTPS)“ (Sigurna veza) za WebDAV.
+1. Otvorite karticu Library, zatim Network shares. Prvi put stranica prikazuje „No share yet“ (Još nema dijeljenih resursa) s dugmetom „Add a share“ (Dodaj dijeljeni resurs); + gore desno radi isto u bilo kojem trenutku. Od builda 20 oboje pitaju šta želite dodati: „A network share (NAS, computer, media server)“ (Mrežni dijeljeni resurs), „A Plex Media Server“ (Plex Media Server) ili „A Tapo camera“ (Kamera Tapo). Odaberite prvo.
+2. Stranica „Add a share“ najprije traži servere na vašoj mreži i navodi ih pod „Found on the network“ (Pronađeno na mreži), s njihovim tipom (SMB, WebDAV, DLNA, Phone (Telefon), a od builda 20 Plex i Tapo). Pretraga traje do otprilike šest sekundi; „Scan again“ (Skeniraj ponovo) je pokreće iznova. Koristi Bonjour/mDNS i skeniranje lokalne mreže potvrđeno stvarnom SMB ili WebDAV razmjenom, od builda 19 i SSDP pretragu DLNA medijskih servera, a od builda 20 GDM, otkrivanje Plexa, i TP-Linkov protokol otkrivanja za Tapo kamere.
+3. Dodirnite server: tip, server, port i putanja se popunjavaju. Plex server ili Tapo kamera umjesto toga otvara vlastitu stranicu, već popunjenu.
+4. Nije na listi? Popunite obrazac ručno. Tip: „SMB (Samba, Windows share)“ (Samba, Windows dijeljenje), „WebDAV (Nextcloud, Synology and others)“ (Nextcloud, Synology i drugi), „DLNA media server (Jellyfin, NAS, TV box)“ (DLNA medijski server) ili, od builda 20, „Plex Media Server“, koji otvara stranicu iz [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv). Zatim Name (Naziv), „Server name or address“ (Naziv ili adresa servera; naziv ili adresa, a puna adresa kao `smb://nas/photos`, `\\nas\photos` ili `https://nas:5006/photos` popunjava ostala polja), „Port (optional)“ (Port, opcionalno) kada nije uobičajeni, „Share“ (Dijeljeni resurs) za SMB ili „Path of the WebDAV address“ (Putanja WebDAV adrese) za WebDAV, „Start folder (optional)“ (Početni folder, opcionalno), „User name“ (Korisničko ime) i „Password“ (Lozinka), te „Secure connection (HTTPS)“ (Sigurna veza) za WebDAV.
 5. SMB: kada su server i korisničko ime upisani, „Choose a share“ (Odaberite dijeljeni resurs) navodi dijeljene resurse servera.
 6. DLNA: medijski server nema korisničko ime ni lozinku. Unesite server, port i „Description path“ (Putanja opisa) njegovog opisa uređaja (`/rootDesc.xml` za minidlna), ili zalijepite cijelu adresu, npr. `http://192.168.1.10:8200/rootDesc.xml`, u polje servera.
 7. Dodirnite „Test the connection“ (Testiraj vezu). Odgovor je „Connected, N entries in the start folder“ (Povezano, broj stavki u početnom folderu: N), ili aplikacija kaže zašto nije uspjelo. Zatim dodirnite Save (Sačuvaj), na dnu obrasca.
@@ -155,6 +164,7 @@ Korisničko ime s praznom lozinkom šalje se tako kakvo jeste: Freebox Server tr
 
 360°, 3D i VR180 prepoznaju se po GPano ili sfernim metapodacima datoteke, čitanim range zahtjevima, a VR180 i po nazivu datoteke. Od builda 16 prepoznaju se i sirove Insta360 datoteke (.insp fotografija po nazivu ili po kalibracijskom bloku kamere, .insv video po nazivu i dimenzijama kadra) i spajaju se.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Slanje datoteka s dijeljenog resursa u Immich
 
 Od builda 15, kada ste povezani sa serverom:
@@ -177,17 +187,67 @@ Od builda 19 aplikacija šalje SSDP pretragu medijskih servera na multicast grup
 <a id="a-share-that-moved"></a>
 ### Dijeljeni resurs koji se premjestio
 
-Od builda 19 DLNA dijeljeni resurs i dijeljeni resurs telefona (pogledajte [Dijeljenje ovog telefona na mreži](#share-this-phone-on-the-network)) zadržavaju ID koji njihov server objavljuje. Kada neki od njih više ne odgovara na svojoj adresi (nova adresa koju je dodijelio ruter, server ponovo pokrenut na drugom portu), stranica njegovog foldera prikazuje „Looking for (name) on the network“ (Traženje naziva na mreži) i premješta dijeljeni resurs tamo gdje sada odgovara: odmah za DLNA server, koji nema lozinku, a nakon potvrde „Use the new address?“ (Koristiti novu adresu?), koja prikazuje obje adrese, za dijeljeni resurs s korisničkim imenom i lozinkom, jer bi oni bili poslani na novu adresu.
+Od builda 19 DLNA dijeljeni resurs i dijeljeni resurs telefona (pogledajte [Dijeljenje ovog telefona na mreži](#share-this-phone-on-the-network)) zadržavaju ID koji njihov server objavljuje. Kada neki od njih više ne odgovara na svojoj adresi (nova adresa koju je dodijelio ruter, server ponovo pokrenut na drugom portu), stranica njegovog foldera prikazuje „Looking for (name) on the network“ (Traženje naziva na mreži) i premješta dijeljeni resurs tamo gdje sada odgovara: odmah za DLNA server, koji nema lozinku, a nakon potvrde „Use the new address?“ (Koristiti novu adresu?), koja prikazuje obje adrese, za dijeljeni resurs s korisničkim imenom i lozinkom, jer bi oni bili poslani na novu adresu. Od builda 20 i Plex server ponovo pronađen na drugoj adresi u mreži premješta se odmah: njegov certifikat dokazuje da je to isti server prije nego što se pošalje token. Tapo kamera se traži po svojoj MAC adresi sa svoje vlastite stranice, pogledajte [Tapo kamere](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Ograničenja
 
 - **SMB**: samo SMB 2 i 3, ne SMB 1.
 - **WebDAV**: samo Basic autentifikacija (Digest još nije podržan); samopotpisani HTTPS certifikat mora biti instaliran na uređaju.
-- **Pronalaženje servera**: skeniranje mreže i DLNA pretraga gledaju samo lokalnu /24 mrežu i na iOS-u trebaju dozvolu za lokalnu mrežu. Na iPhoneu i iPadu DLNA pretraga šalje samo unicast zahtjeve, dok Apple aplikaciji ne odobri multicast pravo, a neki serveri na njih ne odgovaraju (minidlna na Linuxu): dodajte ih preko njihove adrese opisa.
+- **Pronalaženje servera**: skeniranje mreže i DLNA, Plex i Tapo pretrage gledaju samo lokalnu /24 mrežu i na iOS-u trebaju dozvolu za lokalnu mrežu. Na iPhoneu i iPadu DLNA pretraga šalje samo unicast zahtjeve, dok Apple aplikaciji ne odobri multicast pravo, a neki serveri na njih ne odgovaraju (minidlna na Linuxu): dodajte ih preko njihove adrese opisa.
 - **DLNA**: server koji nudi samo konvertovanu kopiju datoteke daje tu kopiju; folder navodi najviše 20.000 stavki.
 - **Sličice**: sličice fotografija dekodiraju cijelu datoteku, a fotografije veće od 30 MB ih ne dobijaju.
 - **Plejeri**: izbor audio zapisa još nije u ravnom plejeru. Na telefonu se još ne može prevući s jedne datoteke foldera na sljedeću (imerzivni prikaz na Questu ima prethodno i sljedeće za 360° datoteke foldera). Izbor 3D ili 180° za mrežnu datoteku se ne pamti.
 - **Otpremanja**: rade samo dok je aplikacija otvorena, a datoteka koju server već ima šalje se cijela prije nego što je server prijavi kao duplikat.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, bez plex.tv
+
+Vaši videozapisi su u Plexu, a Plex prikazuje vaše 360° fotografije i videozapise ravno, kako opisuju zahtjevi na njegovom forumu (jedan je otvoren od 2017.). Tu biblioteku želite i u headsetu, na televizoru i izvan kuće. Aplikacija Immich čita samo vaš Immich server, a DLNA tip iz builda 19 dopire do DLNA strane Plexa samo kod kuće.
+
+Od builda 20 Immuch360 se uparuje direktno s vašim Plex Media Serverom, bez plex.tv: pronalazi server na mreži, vi jednom zalijepite token, a aplikacija uživo čita originalne datoteke vaših biblioteka, u svim preglednicima aplikacije (360°, 3D, VR180, Spatial 2.5D, imerzivni prikaz na Questu, daljinski upravljač televizora), kod kuće i, preko vašeg prosljeđivanja porta, izvan kuće. Ništa se ne kopira, a datoteke koje odaberete mogu se poslati u Immich.
+
+### Dodavanje Plex servera
+
+1. Otvorite karticu Library, zatim Network shares, zatim + i „A Plex Media Server“ (Plex Media Server). Tip „Plex Media Server“ u obrascu dijeljenog resursa, i server s oznakom Plex pod „Found on the network“ (Pronađeno na mreži), otvaraju istu stranicu.
+2. Stranica „Add a Plex server“ (Dodaj Plex server) traži Plex servere na vašoj mreži („Looking for Plex servers on your network“, Traženje Plex servera na vašoj mreži) i navodi ih pod „Found on the network“. Dodirnite svoj: kartica prikazuje njegov naziv, njegovu verziju Plexa i kratki ID.
+3. Nije na listi? Upišite njegovu „Server address“ (Adresa servera), kao `192.168.1.20`, `192.168.1.20:32400` ili `https://...plex.direct:32400`, zatim dodirnite „Look up“ (Potraži). Aplikacija čita certifikat servera i ne šalje ništa drugo.
+4. Nabavite token na računaru: otvorite Plex u web pregledniku i prijavite se, otvorite bilo koju fotografiju ili video iz svoje biblioteke, zatim „...“, „Get Info“, „View XML“. Otvara se nova kartica s adresom koja završava sa `X-Plex-Token=...`. Kopirajte cijelu tu adresu.
+5. Zalijepite je u „Access token“ (Token za pristup), ili je pošaljite na telefon i dodirnite „Paste from the clipboard“ (Zalijepi iz međuspremnika): aplikacija iz nje uzima server i token. Radi i samo tekst iza `X-Plex-Token=`. „How to get it“ (Kako ga dobiti), na stranici, kaže isto; administratori servera mogu koristiti i vrijednost `PlexOnlineToken` iz datoteke `Preferences.xml` servera, koja ne ističe. Na televizoru OK otvara dijalog tastature: tamo upišite token (obično ima 20 znakova).
+6. Dodirnite „Test the connection“ (Testiraj vezu). Odgovara „Connected: N libraries“ (Povezano: N biblioteka), ili kaže šta nije u redu, na primjer „The Plex server refused this token.“ (Plex server odbio je ovaj token.)
+7. „Access from outside home“ (Pristup izvan doma) tada prikazuje šta server kaže: „The server says it is reachable at (address):(port).“ (Server javlja da je dostupan na adresi:portu.) ili „The server did not tell its address outside home.“ (Server nije javio svoju adresu izvan doma.) Da biste koristili server izvan kuće, upišite svoju javnu adresu ili DynDNS naziv u „Address outside home (IP or name)“ (Adresa izvan doma, IP ili naziv), a port proslijeđen u Plexu (Settings, Remote Access) u „Port outside home“ (Port izvan doma). Ono što upišete uvijek ima prednost pred onim što server kaže.
+8. „Name“ (Naziv) je naziv servera ako ga ne promijenite, a „Start folder (optional)“ (Početni folder, opcionalno) može direktno otvoriti jednu biblioteku. Dodirnite Save (Sačuvaj). Server se prikazuje uz dijeljene resurse, kao `plex://` i njegova adresa.
+
+### Pregledanje vaših Plex biblioteka
+
+1. Dodirnite server u Network shares. Prvi nivo navodi biblioteke koje aplikacija prikazuje: fotografije, filmove i druge videozapise, TV serije. Muzika je izostavljena.
+2. Ispod biblioteke dolaze njeni folderi onakvi kakvi su na disku servera (Plexov prikaz „po folderu“), zatim fotografije i videozapisi pod svojim nazivima datoteka, sa sličicama koje pravi Plex. Biblioteka fotografija čiji prikaz po folderima ne odgovara umjesto toga prikazuje svoje albume.
+3. 360° i 3D se prepoznaju čitanjem samih datoteka, kao na svakom dijeljenom resursu: 360° fotografije dobijaju oznaku 360°, Apple prostorne oznaku 3D.
+4. Otvorite fotografiju ili video kao na svakom dijeljenom resursu: 360°, 3D, 360°/180°, Spatial 2.5D na telefonu, imerzivni prikaz na Questu, daljinski upravljač na televizoru. Video se čita kao originalna datoteka, s rasponima bajtova preko lokalnog mosta aplikacije, tako da premotavanje radi, a njegovi 360° i 3D metapodaci stižu do plejera netaknuti.
+5. Odaberite datoteke i dodirnite „Upload to Immich“ (Otpremi na Immich) da ih pošaljete na svoj server, kao s bilo kojeg dijeljenog resursa (pogledajte [Slanje datoteka s dijeljenog resursa u Immich](#send-files-of-a-share-to-immich)).
+
+### Izvan kuće
+
+Svaki put kada otvara server, aplikacija najprije pokušava kućnu adresu, a 400 ms kasnije adresu izvan doma. Koristi se prva koja odgovori s vašim serverom; kada je to adresa izvan doma, stranica foldera prikazuje ikonu globusa s natpisom „Connected through the address outside home“ (Povezano preko adrese izvan doma). Za to je potrebno da je Remote Access uključen u Plexu (Settings, Remote Access) s portom koji prosljeđuje vaš ruter: bez plex.tv aplikacija ne može koristiti Plexov relej, pa se server bez prosljeđivanja porta otvara samo kod kuće, a izvan kuće stranica kaže „Your Plex server cannot be reached from outside your home network. Turn on remote access with a port forwarding in Plex (Settings, Remote Access), or type its public address.“ (Vaš Plex server nije dostupan izvan kućne mreže. Uključite udaljeni pristup s prosljeđivanjem porta u Plexu ili upišite njegovu javnu adresu.)
+
+Adresu koju server javlja aplikacija ponovo uči pri svakoj vezi kod kuće. Kada ne odgovara izvana (ruter koji mijenja adresu, dva rutera jedan za drugim), upišite svoju na stranici servera. Kada token prestane raditi (na primjer, odjavili ste se iz sesije preglednika iz koje ste ga kopirali), stranica foldera to kaže i nudi „Paste a new token“ (Zalijepi novi token), što otvara stranicu servera na polju za token.
+
+### U poređenju s Plexom i s DLNA tipom
+
+- **Originalne datoteke**: aplikacija čita same datoteke, nikad kopiju koju je pretvorio Plex, pa 360°, 3D i VR180 metapodaci ostaju netaknuti i preglednici aplikacije ih koriste, dok Plex aplikacije te datoteke prikazuju ravno.
+- **Bez plex.tv**: aplikacija komunicira samo s vašim serverom, uvijek preko HTTPS-a. Server se provjerava preko vlastitog plex.direct certifikata, vezanog za ID servera, prije nego što se pošalje token. Token ostaje na uređaju, u njegovoj sigurnoj pohrani, i ide samo na vaš server, u zaglavlju zahtjeva.
+- **U poređenju s dodavanjem istog servera kao DLNA**: folderi kao na disku, Plexove sličice, pristup izvan kuće i sigurna veza.
+
+### Ograničenja
+
+- **Samo preuzeti serveri**: server mora biti preuzet (claimed) u Plexu (jednom prijavljen na Plex račun), čime dobija svoj plex.direct certifikat. U suprotnom stranica kaže „This address answers without a Plex certificate. Claim the server in Plex, or add it as an SMB, WebDAV or DLNA share.“ (Ova adresa odgovara bez Plex certifikata. Preuzmite server u Plexu ili ga dodajte kao SMB, WebDAV ili DLNA dijeljeni resurs.)
+- **Samo IPv4**: „IPv6 addresses are not supported yet. Type the IPv4 address of the server.“ (IPv6 adrese još nisu podržane. Upišite IPv4 adresu servera.)
+- **Token** daje puni pristup vašem Plex serveru. Uklanjanje servera u aplikaciji zaboravlja token na uređaju, ali ga ne opoziva: „The token stays valid on the server until you sign out of the browser session you copied it from.“ (Token ostaje valjan na serveru dok se ne odjavite iz sesije preglednika iz koje ste ga kopirali.) Token s datumom isteka prikazuje taj datum, a aplikacija ga ne može obnoviti.
+- **Izvan kuće**: samo preko prosljeđivanja porta, releja nema.
+- **Biblioteke**: muzika se ne prikazuje, folder navodi najviše 20.000 stavki, a korisnik s ograničenjima može dobiti „This token cannot read the libraries of the server.“ (Ovaj token ne može čitati biblioteke servera.)
+- **Sirove datoteke 360° kamera** (.insv, .insp, .360, .osv) prikazuju se samo ako ih Plex navodi; u suprotnom dodajte isti NAS folder kao SMB ili WebDAV dijeljeni resurs, pogledajte [Sirove datoteke 360° kamera](#raw-360-camera-files-without-the-cameras-app).
+- **Pronalaženje servera**: server čija je postavka „Enable local network discovery (GDM)“ isključena ne pronalazi se, pa upišite njegovu adresu. Na iPhoneu i iPadu pretraga šalje samo unicast zahtjeve. DLNA strana istog servera također se može pojaviti na listi, s oznakom DLNA: odaberite red s oznakom Plex.
+- **Još nije provjereno na uređaju**: uparivanje, folderi, rasponi bajtova videa, sličice, pogrešan token i adresa izvan doma provjereni su s računara na stvarnom Plex Media Serveru 1.42.1, a biblioteke fotografija i TV serija samo na simuliranom serveru. Reprodukcija na telefonu, na Questu, na iPhoneu i na televizoru, kao i prelazak na adresu izvan doma, test su na uređajima za build 20.
+- Immuch360 nije povezan s Plexom.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Dijeljenje ovog telefona na mreži
@@ -219,6 +279,63 @@ Od tada je to WebDAV dijeljeni resurs kao i svaki drugi: prepoznavanje 360°, si
 - **Sigurnost**: samo lokalna mreža. Dijeljenje sluša samo na Wi-Fi, Ethernet i hotspot adresama telefona, nikada na adresi mobilnih podataka ili VPN-a, i odgovara samo uređajima s lokalnom adresom. Svaki zahtjev traži korisničko ime i lozinku (HTTP Basic); deset pogrešnih lozinki s jednog uređaja u roku od minute blokira ga na minutu. Lozinka putuje nešifrovana preko Wi-Fi mreže (obični HTTP): koristite dijeljenje na mreži kojoj vjerujete i isključite ga kada završite.
 - **Vlastiti hotspot telefona**: headset se može povezati na njega; kada tamo ne pronađe telefon, upišite adresu prikazanu na stranici.
 - **Još nije provjereno na uređaju**: server je provjeren unit testovima i end-to-end testovima s vlastitim WebDAV klijentom i medijskim mostom headseta, na računaru. Telefon koji služi Quest 3 (otkrivanje, video od 4 GB reproduciran i premotavan, 30 minuta s ugašenim ekranom, hotspot, Stop iz obavještenja) i strana iPhonea, koja još nije pokrenuta na iPhoneu, su test na uređajima za build 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo kamere: prikaz uživo i snimke s memorijske kartice
+
+Kod kuće imate Tapo kamere i želite vidjeti kameru u dvorištu i snimke od prošle noći pored svojih fotografija, bez otvaranja aplikacije Tapo, i sačuvati snimak u Immichu. Aplikacija Immich nema ništa za kamere, a aplikacija Tapo je zasebna aplikacija, prijavljena na vaš TP-Link račun, sa snimcima odvojenim od vaših fotografija.
+
+Od builda 20 Immuch360 dodaje Tapo kameru pored mrežnih dijeljenih resursa. Prikazuje kameru uživo na Android telefonima i tabletima, Android TV-u i Meta Questu 3, a na svim platformama snimke s njene memorijske kartice, dan po dan: snimak se preuzima s kamere, zatim se reproducira kao bilo koji video i može se poslati u Immich. Aplikacija s kamerom komunicira samo na vašoj mreži, nikad sa serverima TP-Linka, i nikad ništa ne mijenja na kameri.
+
+### Dodavanje kamere
+
+1. Najprije u aplikaciji Tapo: kreirajte račun kamere, u postavkama kamere, Napredne postavke, Račun kamere (korisničko ime i lozinka za ovu kameru, za prikaz uživo), i uključite Kompatibilnost s aplikacijama trećih strana, pod Ja, zatim Tapo Lab.
+2. U Immuch360 otvorite karticu Library, zatim Network shares, zatim + i „A Tapo camera“ (Kamera Tapo).
+3. Stranica „Add a camera“ (Dodaj kameru) traži kamere („Looking for Tapo cameras on your network“, Traženje kamera Tapo na vašoj mreži) i navodi ih pod „Found on the network“ s oznakom Tapo. Dodirnite svoju da popunite „Camera address“ (Adresa kamere), ili upišite njenu adresu. Kamera s oznakom Tapo u obrascu dijeljenog resursa otvara istu stranicu.
+4. „Name“ (Naziv): kako se kamera prikazuje na listi.
+5. Pod „Recordings on the memory card“ (Snimke na memorijskoj kartici), „TP-Link account password“ (Lozinka TP-Link računa): lozinka računa koji koristite u aplikaciji Tapo. Otvara snimke; vaša adresa e-pošte nije potrebna.
+6. Pod „Live“ (Uživo), „Camera account user name“ (Korisničko ime računa kamere) i „Camera account password“ (Lozinka računa kamere): račun kamere iz koraka 1.
+7. Dovoljno je jedno od to dvoje („Enter the TP-Link account password, the camera account, or both.“, Unesite lozinku TP-Link računa, račun kamere ili oboje.): sama TP-Link lozinka daje snimke, sam račun kamere prikaz uživo.
+8. Dodirnite „Test the camera“ (Testiraj kameru). Prikazuje „Recordings: (model), firmware (version)“ (Snimke: model, firmver verzija) sa stanjem memorijske kartice, i „Live view: (video), sound (audio)“ (Prikaz uživo: video, zvuk), ili šta nije uspjelo za svako.
+9. Dodirnite Save (Sačuvaj). Kamera se prikazuje pod „Cameras“ (Kamere), nakon dijeljenih resursa, sa svojim modelom kada bude poznat i `tapo://` sa svojom adresom.
+
+### Gledanje uživo
+
+1. Dodirnite kameru. Njen prikaz uživo je na vrhu njene stranice: „Connecting to the camera“ (Povezivanje s kamerom), zatim slika s oznakom Live (Uživo).
+2. Dugmad na slici: zvuk, na početku isključen („Turn the sound on“, Uključi zvuk; „No sound on this device“, Nema zvuka na ovom uređaju, kada ga uređaj ne može reproducirati), SD ili HD, i „Full screen“ (Cijeli ekran).
+3. Telefon prikazuje SD na stranici i HD preko cijelog ekrana; Quest prikazuje HD. Back (Natrag) najprije izlazi iz prikaza preko cijelog ekrana.
+4. Ispod slike dolaze model i firmver te memorijska kartica, na primjer „Memory card: (used) used of (total)“ (Memorijska kartica: iskorišteno od ukupno) ili „No memory card“ (Nema memorijske kartice).
+
+Na iPhoneu i iPadu prikaz uživo kaže „The live view comes to iPhone and iPad in a later version. The recordings play here already.“ (Prikaz uživo stiže na iPhone i iPad u kasnijoj verziji. Snimke se ovdje već reproduciraju.) Bez računa kamere stranica kaže „Add the camera account to see the live view.“ (Dodajte račun kamere da biste vidjeli prikaz uživo.)
+
+### Reprodukcija i čuvanje snimaka
+
+1. Pod „Recordings on the memory card“ stranica kamere navodi dane sa snimkama, najnovije prvo, po mjesecima. Bez lozinke TP-Link računa kaže „Add the TP-Link account password to see the recordings.“ (Dodajte lozinku TP-Link računa da biste vidjeli snimke.)
+2. Dodirnite dan. Njegovi snimci dolaze pod satima vlastitog vremena kamere, svaki sa svojim početkom, trajanjem, sličicom kamere za događaj i svojom vrstom: Motion (Pokret), Person (Osoba), Pet (Kućni ljubimac), Vehicle (Vozilo), Baby crying (Plač bebe), Animal (Životinja), Continuous (Neprekidno) ili Event (Događaj).
+3. Dodirnite snimak. Aplikacija ga preuzima s kamere uz poruku „Getting the video from the camera: N%“ (Preuzimanje videozapisa s kamere) i dugme Cancel (Otkaži), zatim ga reproducira u video plejeru, sa zvukom i premotavanjem. Preuzeti snimak nosi „On this device“ (Na ovom uređaju) i sljedeći put se otvara odmah.
+4. Da sačuvate snimak u Immichu, s povezanim serverom: meni ⋮ videa, „Upload to Immich“ (Otpremi na Immich).
+5. Da oslobodite prostor: dugi pritisak na preuzeti snimak nudi „Delete the copy on this device“ (Izbriši kopiju na ovom uređaju) (na telefonu), a stranica kamere ima „Delete the videos fetched from this camera“ (Izbriši videozapise preuzete s ove kamere), s njihovom veličinom.
+6. Dugme za osvježavanje gore desno, ili povlačenje stranice nadolje, ponovo pita kameru.
+
+Kada kamera više ne odgovara na svojoj adresi, njena stranica je traži na mreži po njenoj MAC adresi i premješta je tamo gdje sada odgovara, čim pokaže isti certifikat. Kamera koja pokazuje drugi certifikat od onog koji je aplikacija prvi put vidjela umjesto toga dobija pitanje: „The camera at (address) shows another certificate than before. Continue only if you reset or replaced it.“ (Kamera na adresi pokazuje drugi certifikat nego prije. Nastavite samo ako ste je resetovali ili zamijenili.)
+
+### U poređenju s aplikacijom Tapo
+
+- **Samo na vašoj mreži**: aplikacija komunicira sa samom kamerom, na lokalnoj mreži, i nikad sa serverima TP-Linka. Ne prijavljuje se na TP-Link račun, pa vaša adresa e-pošte nije potrebna.
+- **Snimke postaju obični videozapisi**: preuzeti snimak je H.264 video sa zvukom, koji možete poslati u Immich, gdje ostaje i nakon što memorijska kartica snimi preko njega.
+- **Pored svega ostalog**: sa Immich serverom ili bez njega, na telefonu, televizoru ili u Questu (u prozoru), pronađena na mreži kao dijeljeni resurs.
+- **Samo čitanje**: aplikacija od kamere traži samo ono što prikazuje; nikad ne mijenja postavku i nikad ništa ne briše na kameri.
+
+### Ograničenja
+
+- **Još nije provjereno na uređaju**: build 20 još nije radio sa stvarnom kamerom. Protokol je napisan prema snimljenom saobraćaju kamere C510W s firmverom 1.3.4 (V4 prijava iz sredine 2026.), a aplikacija je u svojim testovima provjerena na simuliranoj kameri. Izvještaji su dobrodošli, s modelom i firmverom koje prikazuje „Test the camera“ i s redovima iz [Zapisnika](#logs).
+- **Prikaz uživo**: na Android telefonima i tabletima, Android TV-u i Questu, još ne na iPhoneu i iPadu. Važe TP-Linkova ograničenja: najviše dva HD i dva SD streama istovremeno po kameri, uključujući aplikaciju Tapo, a Tapo Care, memorijska kartica i snimač koji koristi RTSP ili ONVIF ne mogu svi raditi istovremeno.
+- **Kamere**: kamere na bateriju i kamere iza Tapo huba nisu podržane.
+- **Snimke**: jedno preuzimanje istovremeno po kameri. Dok aplikacija Tapo pregledava memorijsku karticu, aplikacija pokušava ponovo nakon 4, 8 i 12 sekundi, zatim kaže „The camera is busy with another viewer, such as the Tapo app. Try again in a minute.“ (Kamera je zauzeta drugim gledateljem, na primjer aplikacijom Tapo. Pokušajte ponovo za minutu.) Snimke u H.265 još se ne pretvaraju („This recording is in H.265, which this version cannot convert yet.“, Ova snimka je u formatu H.265, koji ova verzija još ne može pretvoriti.), neprekidne snimke nemaju sličicu, a snimak se reproducira tek kada je potpuno preuzet.
+- **Lozinke**: svaka pogrešna lozinka se računa, a nakon nekoliko kamera se zaključa na neko vrijeme („The camera is locked after too many wrong passwords. Try again in N minutes.“, Kamera je zaključana nakon previše pogrešnih lozinki. Pokušajte ponovo za N minuta.). Aplikacija nikad sama ponovo ne pokušava odbijenu lozinku: samo „Test the camera“ ili Retry (Pokušaj ponovo) ponovo pitaju kameru. Kada kamera prihvati lozinku za svoje postavke, ali ne i za svoje videozapise, isključite i ponovo uključite Kompatibilnost s aplikacijama trećih strana u aplikaciji Tapo, a zatim ponovo pokrenite kameru.
+- **Prostor**: preuzeti snimci ostaju u kešu aplikacije, najviše 1 GB za sve kamere zajedno (prvi odlaze oni koji su najdavnije reproducirani); sistem može očistiti taj keš, a uklanjanje kamere briše njene snimke.
+- **Izvan kuće**: aplikacija dopire do kamere na njenoj adresi na vašoj mreži, dakle ne izvana.
+- Immuch360 nije povezan s TP-Linkom.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Sirove datoteke 360° kamera, bez aplikacije kamere
@@ -349,7 +466,7 @@ Prepoznavanje je provjereno na primjeru prostorne fotografije koju je zapisala A
 
 Ljudi kupuju Quest 3 da bi gledali vlastite 360° fotografije i videozapise, a onda pitaju gdje da stave datoteke, kako da ih prebace na headset bez kabla i koji plejer da koriste: plejeri za 360° i 3D video u trgovini se plaćaju.
 
-Ista Android aplikacija radi na Questu 3 i 3S kao prozor, s cijelom vašom bibliotekom. Njeno dugme 360° otvara imerzivni prikaz u kojem su fotografija ili video svuda oko vas i osvrćete se okretanjem glave, u pravom 3D-u za stereoskopske datoteke (Meta Spatial SDK). Mediji dolaze s vašeg Immich servera, sa samog headseta, s NAS-a, s medijskog servera ili s telefona, i reproduciraju se tamo gdje jesu (medijski server i telefon od builda 19, još nije provjereno na headsetu). Besplatna je i otvorenog koda. Provjereno na Questu 3 i od strane korisnika s Insta360 X4 videozapisima u 8K HEVC.
+Ista Android aplikacija radi na Questu 3 i 3S kao prozor, s cijelom vašom bibliotekom. Njeno dugme 360° otvara imerzivni prikaz u kojem su fotografija ili video svuda oko vas i osvrćete se okretanjem glave, u pravom 3D-u za stereoskopske datoteke (Meta Spatial SDK). Mediji dolaze s vašeg Immich servera, sa samog headseta, s NAS-a, s medijskog servera, s telefona ili s Plex servera, i reproduciraju se tamo gdje jesu (medijski server i telefon od builda 19, Plex server od builda 20, još nije provjereno na headsetu), a od builda 20 prozor prikazuje i Tapo kamere. Besplatna je i otvorenog koda. Provjereno na Questu 3 i od strane korisnika s Insta360 X4 videozapisima u 8K HEVC.
 
 ### Otvaranje imerzivnog prikaza
 
@@ -408,6 +525,56 @@ Okrenite je desnom palicom (ili dugmetom Turn na info panelu) dok joj središte 
 - **Premotavanje**: video čiji izvor ne odgovara na zahtjeve za opsege bajtova ne može se premotavati; panel to kaže.
 - **Ravni videozapisi**: ravni (ne 360°) stereoskopski video reproducira se u prozoru s oba vidljiva oka; imerzivni 3D prikaz je za 360° i VR180 medije.
 - **Više**: kodeci koje headset dekodira, trgovina, dozvole i veličina APK-a nalaze se u [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Gledanje na televizoru (Android TV i Google TV)
+
+Želite 360° fotografije i videozapise, svoje albume i videozapise sa svog NAS-a ili Plex servera na velikom ekranu, za porodicu na kauču, s daljinskim upravljačem televizora. Mobilna aplikacija Immich nije aplikacija za televizor: korisnik koji ju je instalirao na televizor otkrio je da radi s mišem, a ne s daljinskim upravljačem ([diskusija #1614](https://github.com/immich-app/immich/discussions/1614)), a tim Immicha ne planira zvaničnu aplikaciju za televizor ([diskusija #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Od builda 20 ista Android aplikacija radi na Android TV-u i Google TV-u, s daljinskim upravljačem kao jedinim ulazom: jedan APK za telefone i televizore, 360° i 3D preglednici koji se okreću strelicama, i mrežni dijeljeni resursi, Plex i Tapo kamere na televizoru, sa Immich serverom ili bez njega.
+
+<a id="install-it-on-the-tv"></a>
+### Instalacija na televizor
+
+1. Dok Google Play ne ponudi aplikaciju na televizorima, što čeka Googleov pregled TV izdanja, uzmite univerzalni `Immuch360-v<version>-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Na televizoru uključite opcije za programere i USB otklanjanje grešaka (na Google TV-u: Postavke, Sistem, O uređaju, sedam puta odaberite „Android TV OS build“, zatim Postavke, Sistem, Opcije za programere; nazivi se razlikuju od televizora do televizora).
+3. S računara na istoj mreži, s adb (Android SDK Platform Tools): `adb connect <address of the TV>`, prihvatite upit na televizoru, zatim `adb install -r Immuch360-v<version>-release.apk`.
+4. Aplikacija se prikazuje među aplikacijama televizora, sa svojim banerom. Sljedeće izdanje instalirajte na isti način: `-r` zadržava prijavu i postavke.
+
+### Prvo pokretanje
+
+1. Prijavite se kao na telefonu: strelice pomjeraju okvir s polja na polje, a OK na polju („Press OK to type“, Pritisnite OK za kucanje) otvara tastaturu televizora u dijalogu, za adresu servera, e-poštu i lozinku.
+2. Ili odaberite „Use without a server“ (Koristi bez servera). Televizor nema vlastitih fotografija, pa kartica Photos (Fotografije) kaže „This TV has no photos or videos of its own: open a network share from the Library.“ (Ovaj televizor nema vlastitih fotografija ni videozapisa: otvorite mrežni dijeljeni resurs iz Biblioteke.) s dugmetom Network shares. Tamo dodajte dijeljeni resurs, Plex server ili kameru, kao na telefonu (pogledajte [Mrežni dijeljeni resursi](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Kretanje daljinskim upravljačem
+
+- Strelice pomjeraju okvir, OK otvara ono na čemu je, Back (Natrag) vraća nazad. Iz kartice Back ide u bočni meni, zatim na Photos, zatim izlazi iz aplikacije.
+- Kanal gore i dolje pomjeraju po jednu stranicu.
+- U preglednicima rade tipke daljinskog upravljača za reprodukciju i pauzu, premotavanje naprijed, premotavanje nazad, sljedeće i prethodno, a tipka za informacije prikazuje detalje fotografije ili videa.
+
+### Fotografije i videozapisi s daljinskim upravljačem
+
+1. **Fotografija**: lijevo i desno idu na prethodnu ili sljedeću, OK prikazuje ili skriva kontrole, Gore ide na gornju traku (gdje je dugme 360°), a Dolje na donju traku.
+2. **Video**: OK pauzira, prikazujući kontrole, ili reproducira. Dok se reproducira, lijevo i desno skaču 10 sekundi nazad ili naprijed; dok je pauziran, idu na prethodnu ili sljedeću stavku, kako kaže savjet: „Paused: the arrows go to the previous or next item“ (Pauzirano: strelice idu na prethodnu ili sljedeću stavku).
+3. **360° fotografija**, preko dugmeta 360°: strelice razgledaju, brže dok ih držite, a prikaz se postepeno zaustavlja. OK prelazi na dugmad gornje trake, na „Zoom in“ (Povećaj), pored „Zoom out“ (Smanji), vidnog polja i 3D; kanal gore i dolje također zumiraju. Back se s dugmadi vraća na sliku, zatim zatvara. Savjet glasi „Arrows to look around, OK for the controls, Back to close“ (Strelice za razgledavanje, OK za kontrole, Natrag za zatvaranje).
+4. **360° video**, preko dugmeta 360°: strelice razgledaju dok su kontrole skrivene, OK pauzira i prikazuje ih, Back ih skriva, zatim zatvara. Savjet glasi „Arrows to look around, OK to pause and show the controls, Back to close“ (Strelice za razgledavanje, OK za pauzu i prikaz kontrola, Natrag za zatvaranje).
+5. **Memories (Uspomene)**: lijevo i desno prolaze kroz fotografije i dalje na sljedeću uspomenu, Gore ide na dugme za zatvaranje, a Dolje na „View in timeline“ (Prikaži na vremenskoj liniji).
+6. **Dijeljeni resursi i Plex**: iste tipke na stranicama fotografija i videozapisa dijeljenog resursa, gdje lijevo i desno otvaraju prethodnu ili sljedeću datoteku foldera.
+
+### Postavka Remote control layout (Raspored za daljinski upravljač)
+
+Settings (Postavke), Preferences (Preferencije), „Remote control layout“ (Raspored za daljinski upravljač): „Large focus frames and remote control keys, without the controls that need a touch screen. Automatic turns it on on Android TV and Google TV.“ (Veliki okviri fokusa i tipke daljinskog upravljača, bez kontrola kojima treba ekran osjetljiv na dodir. Automatski ga uključuje na Android TV-u i Google TV-u.) Automatic (Automatski) je zadana vrijednost; On (Uključeno) odgovara tabletu kojim se upravlja tastaturom ili gamepadom; Off (Isključeno) ga isključuje na televizoru. Postavka postoji samo na Androidu. Strelice i OK rade u preglednicima s tastaturom ili gamepadom bez obzira na postavku.
+
+### Ograničenja
+
+- **Preglednik**: na televizoru aplikacija prikazuje i reproducira. Sigurnosne kopije, otpremanja, uređivanje, brisanje, dijeljenje, odabir više stavki, Cast, Spatial 2.5D, žiroskop, karta i Mjesta, te „Share this phone on the network“ (Dijeli ovaj telefon na mreži) su skriveni.
+- **Prijava**: OAuth otvara web-stranicu, a to televizor ne može: „Signing in with (provider) opens a web page, which this TV cannot do. Sign in with an email and a password instead.“ (Prijava putem provajdera otvara web-stranicu, a to ovaj televizor ne može. Umjesto toga prijavite se e-poštom i lozinkom.)
+- **Linkovi** prikazuju svoju adresu pod „Open on another device“ (Otvori na drugom uređaju) umjesto da otvore preglednik, a tekst se kuca u sistemskom dijalogu tastature.
+- **Memorija**: na televizoru s malo memorije 360° fotografije prikazuju se najviše u 4096x2048, bez oštrije slike pri zumiranju.
+- **Videozapisi**: dekoderi televizora odlučuju šta se reproducira, s istom postavkom Video source (Izvor videa) i istom provjerom dekodera kao na telefonu (pogledajte [Detalji videa i dekoderi](#video-details-decoders-and-why-a-video-stutters)); na televizoru još nije izmjereno.
+- **Još nije provjereno na uređaju**: podrška za televizor provjerena je samo automatskim testovima i još nije radila ni na televizoru ni na emulatoru televizora. Treba potvrditi: smjer u kojem strelice okreću 360° video, tastaturu televizora (Gboard) u dijalogu za tekst, tipku OK infracrvenih daljinskih upravljača, margine i baner na početnom ekranu televizora. Izvještaji su dobrodošli.
+- **Google Play na televizorima** čeka Googleov pregled TV izdanja; do tada APK.
+- **Drugi televizori**: Fire TV nije testiran, a verzije za Apple TV nema.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Pronađite svoje 360° snimke: lista 360°
@@ -488,11 +655,11 @@ Kada server ignoriše HTTP Range zahtjeve za original, a MP4 indeks (moov) je na
 <a id="everything-else-is-immich"></a>
 ## Sve ostalo je Immich
 
-Sve što radi zvanična mobilna aplikacija Immich nalazi se ovdje: sigurnosne kopije, vremenska linija, albumi, pretraga, dijeljenje, partneri, sve sinhronizovano s vašim serverom, s istim serverom i istim računom kao web aplikacija. Immuch360 se instalira pored zvanične aplikacije (paket `com.aprogsys.immuch360`). Postoje dvije razlike, od builda 15: prekidač „Force original video“ postao je izbor Video source opisan iznad, a fotografije i videozapisi koje ručno otpremite iz albuma uređaja računaju se kao sačuvani u sigurnosnoj kopiji.
+Sve što radi zvanična mobilna aplikacija Immich nalazi se ovdje: sigurnosne kopije, vremenska linija, albumi, pretraga, dijeljenje, partneri, sve sinhronizovano s vašim serverom, s istim serverom i istim računom kao web aplikacija. Immuch360 se instalira pored zvanične aplikacije (paket `com.aprogsys.immuch360`). Postoje dvije razlike, od builda 15: prekidač „Force original video“ postao je izbor Video source opisan iznad, a fotografije i videozapisi koje ručno otpremite iz albuma uređaja računaju se kao sačuvani u sigurnosnoj kopiji. Na televizoru je aplikacija od builda 20 preglednik, pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv).
 
 Da biste 360° fotografiju pokazali nekome ko nema aplikaciju, podijelite je putem dijeljenog Immich linka: web aplikacija Immich prikazuje 360° fotografiju kao sferu u njegovom pregledniku.
 
-Trenutni build, build 19 (verzija 3.3.0-rc.0, broj builda 3030017), zasnovan je na Immichu 3.3.0-rc.0 (Immich `main`, još nije stabilno izdanje) i testiran je sa Immich 3.2 serverom. Probleme prijavite u [Issues](https://github.com/freeKC/Immuch360/issues), a ne projektu Immich. Za punu dokumentaciju samog Immicha pogledajte [immich.app](https://immich.app).
+Trenutni build, build 20 (verzija 3.3.0-rc.0, broj builda 3030018), zasnovan je na Immichu 3.3.0-rc.0 (Immich `main`, još nije stabilno izdanje). Build 19 je testiran sa Immich 3.2 serverom, a build 20 ne mijenja ništa u onome što aplikacija traži od servera. Probleme prijavite u [Issues](https://github.com/freeKC/Immuch360/issues), a ne projektu Immich. Za punu dokumentaciju samog Immicha pogledajte [immich.app](https://immich.app).
 
 ## Poređenje s aplikacijom Immich i drugim aplikacijama
 
@@ -515,6 +682,9 @@ Trenutni build, build 19 (verzija 3.3.0-rc.0, broj builda 3030017), zasnovan je 
 | DLNA medijski serveri kao tip dijeljenog resursa | ❌ | ✅ od builda 19 | Provjereno na minidlna i Gerbera u Dockeru; Plex, Jellyfin, NAS, Freebox Server, iPhone i Quest su test na uređajima za build 19 |
 | Slanje datoteka s dijeljenog resursa u Immich; ručno poslane datoteke uređaja računaju se kao sačuvane u sigurnosnoj kopiji | ❌ samo datoteke uređaja | ✅ od builda 15 | Testirano na Android emulatoru sa Samba testnim serverom i Immich 3.2 serverom |
 | Dijeljenje ovog telefona na mreži, za headset | ❌ | ✅ od builda 19, Android i iOS | Unit testovi i end-to-end testovi s WebDAV klijentom headseta, na računaru; telefon koji služi Quest i strana iPhonea su test na uređajima za build 19 |
+| Biblioteke Plex Media Servera reproducirane iz originalnih datoteka, kod kuće i izvan nje, bez plex.tv | ❌ | ✅ od builda 20, svi preglednici, na telefonima, tabletima, Questu 3 i televizorima | Provjereno s računara na stvarnom Plex Media Serveru 1.42.1 (uparivanje, folderi, rasponi bajtova, sličice, adresa izvan doma); još nije provjereno na uređaju |
+| Tapo kamere: prikaz uživo i snimke s memorijske kartice poslane u Immich kada vi odlučite | ❌ | ✅ od builda 20: snimke svuda, uživo na Androidu, Android TV-u i Questu 3 | Provjereno na simuliranoj kameri; još nije provjereno sa stvarnom kamerom |
+| Android TV i Google TV, upravljano daljinskim upravljačem, u istom APK-u | ❌ nije aplikacija za televizor | ✅ od builda 20 | Provjereno automatskim testovima; još nije provjereno na televizoru |
 | Sirove Insta360 .insp fotografije i .insv videozapisi s jednim zapisom | ❌ ravno | ✅ od builda 16 | Fotografije provjerene u poređenju s izvozima X3 datoteka iz Insta360 Studija, videozapisi na Android emulatoru s X3 datotekom niske rezolucije; još nije pokrenuto na iPhoneu |
 | Sirovi videozapisi s jednim objektivom po zapisu ili po datoteci (Insta360 X4, X4 Air, X5, X6, X3 parovi, GoPro .360, DJI .osv) | ❌ ravno ili pogrešno | ✅ od builda 18 | Parseri i spajanje provjereni na stvarnim datotekama X4, X3 para, GoPro MAX i Osmo 360; reprodukcija je test na uređajima za buildove 18 i 19 |
 | Dual fisheye .dng | ❌ ravno | ❌ još ne | Planirano |
@@ -529,27 +699,33 @@ Trenutni build, build 19 (verzija 3.3.0-rc.0, broj builda 3030017), zasnovan je 
 |---|---|---|
 | Web aplikacija Immich | Prikazuje 360° fotografiju kao sferu, ali sirovu .insp smatra gotovom panoramom i omotava njena dva kruga oko sfere; VR prikaz je još uvijek zahtjev ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Spaja sirove datoteke na uređaju i otvara imerzivni prikaz na Questu 3 |
 | Aplikacija Insta360 ili Studio | Potrebna da se sirove datoteke s kartice pretvore u 360° sliku prije gledanja | Direktno otvara sirove .insp i .insv datoteke, kao i GoPro .360 i DJI .osv datoteke |
-| Plex, Jellyfin, Synology Photos | 360° fotografije i videozapisi prikazani ravno ili neprepoznati, kako opisuju teme na njihovim forumima (jedan zahtjev za Plex otvoren je od 2017.) | Čita iste foldere preko SMB-a, WebDAV-a ili DLNA-e i reproducira ih kao sferu, bez ikakve promjene na serveru |
+| Plex, Jellyfin, Synology Photos | 360° fotografije i videozapisi prikazani ravno ili neprepoznati, kako opisuju teme na njihovim forumima (jedan zahtjev za Plex otvoren je od 2017.) | Od builda 20 čita samu Plex biblioteku, ili iste foldere preko SMB-a, WebDAV-a ili DLNA-e, i reproducira ih kao sferu, bez ikakve promjene na serveru |
+| Aplikacija Tapo | Zasebna aplikacija, prijavljena na vaš TP-Link račun, sa snimcima odvojenim od vaših fotografija | Prikazuje kameru pored vaših fotografija, s njom komunicira samo na vašoj mreži i čuva snimak kao video koji možete poslati u Immich (od builda 20) |
+| Mobilna aplikacija Immich na televizoru | Nije aplikacija za televizor: korisnik javlja da radi s mišem, a ne s daljinskim upravljačem | Ista aplikacija, napravljena za daljinski upravljač (od builda 20) |
 | Kopiranje datoteka na headset | Svaka datoteka kopira se kablom prije gledanja | Reproducira na licu mjesta iz Immicha, s NAS-a, s medijskog servera ili s telefona |
 | 360° i 3D plejeri u trgovini za Quest | Plaćaju se | Besplatno i otvorenog koda (AGPL) |
 
 ## Formati i izvori, po platformi
 
-Immuch360 je galerija, a ujedno i besplatan medijski plejer: reproducira ono što zvanična aplikacija ne može, iz četiri izvora, u plejeru koji odgovara datoteci.
+Immuch360 je galerija, a ujedno i besplatan medijski plejer: reproducira ono što zvanična aplikacija ne može, iz izvora iz druge tabele, u plejeru koji odgovara datoteci.
 
-| Šta | Android telefoni | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Ravni videozapisi (MP4, MOV, MKV, ono što uređaj dekodira) | Immich plejer i izvorni plejer za mrežne dijeljene resurse | Isto, osim MKV i AVI datoteka s dijeljenog resursa, koje iOS ne otvara (sa servera se reproduciraju transkodirane) | U prozoru |
-| 360° fotografije | Preglednik sfere, žiroskop | Isto | Imerzivno, svuda oko vas |
-| 360° videozapisi | Izvorni Media3 plejer na sferi, žiroskop, premotavanje, izbor audio zapisa, indikator učitavanja | Izvorni SceneKit plejer na sferi, žiroskop, izbor audio zapisa, indikator učitavanja; reprodukcija i pauza, još bez vremenske trake | Imerzivno, pravi 3D za stereoskopske datoteke, vremenska traka sa skokovima od 10 sekundi, prethodni i sljedeći medij |
-| 3D 360° (gore i dolje, jedno pored drugog) | Lijevo oko, dugme za raspored | Isto | Svako oko dobija svoju polovinu kadra |
-| VR180 (polusfera) fotografije i videozapisi | Polusfera, dugme 360°/180° | Isto | Imerzivna polusfera |
-| Spatial 2.5D (dubina na ravnom ekranu iz stereoskopskog videa) | Izvorni plejer, praćenje glave prednjom kamerom | Isto | Ne nudi se |
-| Apple prostorne fotografije (HEIC stereo parovi, od builda 19) | Lijevo oko, red s detaljima kaže da je prostorna | Isto | View in 3D: oba oka na fotografiji koja lebdi u imerzivnom prikazu, 3D ili 2D, promjenjive veličine |
-| Apple prostorni videozapisi (MV-HEVC, od builda 19) | Jedno oko (osnovni sloj), s obavještenjem | Isto | Jedno oko u prozoru, s obavještenjem |
-| Sirove Insta360 .insp fotografije (od builda 16) | Spojene na GPU-u prije preglednika sfere, do 8192x4096 | Isto | Imerzivno, iz spojene slike pripremljene za headset |
-| Sirovi Insta360 .insv, oba objektiva u jednom zapisu (od builda 16) | Spojeni GPU efektom u Media3 plejeru | Spojeni SceneKit shaderom | Imerzivno, spojeni istim GPU efektom |
-| Sirovi videozapisi s jednim objektivom po zapisu ili po datoteci (od builda 18): Insta360 X4, X4 Air, X5, X6 .insv, X3 parovi, GoPro .360, DJI .osv | Dva hardverska dekodera istovremeno, po jedan za svaki objektiv (od builda 19 softverski na uređaju bez hardverskog dekodera, do 2048x2048 po objektivu), i GL kompozitor koji ih spaja u sferu; jedan objektiv, zatim transkodirani stream, zatim nespojen video, kada uređaj ne može pokrenuti dva | Vlastiti AVFoundation kompozitor s Metalom | Imerzivno, ista dva dekodera i kompozitor (panel 3840x1920) |
+| Šta | Android telefoni | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (od builda 20) |
+|---|---|---|---|---|
+| Ravni videozapisi (MP4, MOV, MKV, ono što uređaj dekodira) | Immich plejer i izvorni plejer za mrežne dijeljene resurse | Isto, osim MKV i AVI datoteka s dijeljenog resursa, koje iOS ne otvara (sa servera se reproduciraju transkodirane) | U prozoru | Kao na telefonima; OK pauzira, lijevo i desno skaču 10 s |
+| 360° fotografije | Preglednik sfere, žiroskop | Isto | Imerzivno, svuda oko vas | Preglednik sfere koji se okreće strelicama, zumira tipkama kanala |
+| 360° videozapisi | Izvorni Media3 plejer na sferi, žiroskop, premotavanje, izbor audio zapisa, indikator učitavanja | Izvorni SceneKit plejer na sferi, žiroskop, izbor audio zapisa, indikator učitavanja; reprodukcija i pauza, još bez vremenske trake | Imerzivno, pravi 3D za stereoskopske datoteke, vremenska traka sa skokovima od 10 sekundi, prethodni i sljedeći medij | Media3 plejer s telefona, okreće se strelicama |
+| 3D 360° (gore i dolje, jedno pored drugog) | Lijevo oko, dugme za raspored | Isto | Svako oko dobija svoju polovinu kadra | Lijevo oko, dugme rasporeda |
+| VR180 (polusfera) fotografije i videozapisi | Polusfera, dugme 360°/180° | Isto | Imerzivna polusfera | Polusfera, dugme 360°/180° |
+| Spatial 2.5D (dubina na ravnom ekranu iz stereoskopskog videa) | Izvorni plejer, praćenje glave prednjom kamerom | Isto | Ne nudi se | Nije ponuđeno |
+| Apple prostorne fotografije (HEIC stereo parovi, od builda 19) | Lijevo oko, red s detaljima kaže da je prostorna | Isto | View in 3D: oba oka na fotografiji koja lebdi u imerzivnom prikazu, 3D ili 2D, promjenjive veličine | Lijevo oko, red s detaljima |
+| Apple prostorni videozapisi (MV-HEVC, od builda 19) | Jedno oko (osnovni sloj), s obavještenjem | Isto | Jedno oko u prozoru, s obavještenjem | Jedno oko, s obavještenjem |
+| Sirove Insta360 .insp fotografije (od builda 16) | Spojene na GPU-u prije preglednika sfere, do 8192x4096 | Isto | Imerzivno, iz spojene slike pripremljene za headset | Kao na telefonima |
+| Sirovi Insta360 .insv, oba objektiva u jednom zapisu (od builda 16) | Spojeni GPU efektom u Media3 plejeru | Spojeni SceneKit shaderom | Imerzivno, spojeni istim GPU efektom | Kao na telefonima |
+| Sirovi videozapisi s jednim objektivom po zapisu ili po datoteci (od builda 18): Insta360 X4, X4 Air, X5, X6 .insv, X3 parovi, GoPro .360, DJI .osv | Dva hardverska dekodera istovremeno, po jedan za svaki objektiv (od builda 19 softverski na uređaju bez hardverskog dekodera, do 2048x2048 po objektivu), i GL kompozitor koji ih spaja u sferu; jedan objektiv, zatim transkodirani stream, zatim nespojen video, kada uređaj ne može pokrenuti dva | Vlastiti AVFoundation kompozitor s Metalom | Imerzivno, ista dva dekodera i kompozitor (panel 3840x1920) | Kao na telefonima, kada televizor može pokretati dva dekodera istovremeno |
+| Prikaz uživo Tapo kamere (od builda 20) | Media3 RTSP plejer: SD na stranici, HD preko cijelog ekrana, dugme za zvuk | Još ne: kartica kaže da stiže kasnije | U prozoru, u HD-u | Kao na telefonima |
+| Snimke Tapo kamere (od builda 20) | Preuzete s memorijske kartice u H.264 video sa zvukom, zatim reproducirane s premotavanjem | Isto | Isto, u prozoru | Isto |
+
+TV kolona još nije provjerena na televizoru, pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv); redovi za kameru još nisu provjereni sa stvarnom kamerom.
 
 | Odakle | Kako |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 je galerija, a ujedno i besplatan medijski plejer: reproducira ono št
 | Sam telefon ili headset | „Use without a server“ na stranici za prijavu, ili stavka On this device u kartici Library |
 | NAS ili računar | SMB i WebDAV dijeljeni resursi, a od builda 19 i DLNA medijski serveri, pronađeni na mreži, čitani uživo (SMB video preko do šest veza), ništa se ne kopira; od builda 15 datoteke koje odaberete mogu se poslati na vaš Immich račun |
 | Drugi telefon (od builda 19) | „Share this phone on the network“ na tom telefonu: headset, ili bilo koji WebDAV klijent na mreži, čita njegove albume, mjesece i 360° medije |
+| Plex Media Server (od builda 20) | Njegove biblioteke fotografija, filmova i TV serija po folderima, originalne datoteke čitane uživo preko HTTPS-a provjerenog vlastitim certifikatom servera, kod kuće ili preko adrese izvan doma, na svim platformama; pogledajte [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv) |
+| Tapo kamera (od builda 20) | Prikaz uživo s računom kamere (Android, Android TV, Quest), i snimke s njene memorijske kartice s lozinkom TP-Link računa (sve platforme), samo na lokalnoj mreži; pogledajte [Tapo kamere](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 radi i na Meta Questu 3 i 3S (Horizon OS v69 ili noviji; build u Horizon Storeu naveden je samo za ta dva; univerzalni `-release.apk` trebao bi se instalirati i na Quest 2 ili Quest Pro, netestirano). Kako se koristi opisano je u [U headsetu Meta Quest 3](#in-the-meta-quest-3-headset); ovaj odjeljak govori o instalaciji i o onome što je drugačije na headsetu.
 
-Build za headset s serverima komunicira samo preko HTTPS-a, ili preko običnog HTTP-a s nazivima kućne mreže (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) i sa samim headsetom, kako to traži Horizon Store. Server upisan kao obična HTTP adresa s IP-om, kao `http://192.168.1.10:2283`, taj build odbija: koristite HTTPS, naziv kućne mreže (`nas.local`) ili univerzalni `-release.apk`, koji zadržava otvorena pravila telefona. WebDAV, DLNA i dijeljeni resursi telefona na običnoj HTTP adresi lokalne mreže nisu pogođeni: aplikacija ih čita sama i svojim plejerima daje samo adresu svog lokalnog mosta (za DLNA i dijeljeni resurs telefona, nove u buildu 19, još treba potvrditi na headsetu).
+Build za headset s serverima komunicira samo preko HTTPS-a, ili preko običnog HTTP-a s nazivima kućne mreže (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) i sa samim headsetom, kako to traži Horizon Store. Server upisan kao obična HTTP adresa s IP-om, kao `http://192.168.1.10:2283`, taj build odbija: koristite HTTPS, naziv kućne mreže (`nas.local`) ili univerzalni `-release.apk`, koji zadržava otvorena pravila telefona. WebDAV, DLNA i dijeljeni resursi telefona na običnoj HTTP adresi lokalne mreže nisu pogođeni: aplikacija ih čita sama i svojim plejerima daje samo adresu svog lokalnog mosta (za DLNA i dijeljeni resurs telefona, nove u buildu 19, još treba potvrditi na headsetu). Od builda 20 do Plex servera se dolazi preko HTTPS-a, a do Tapo kamere dolazi sama aplikacija, s prikazom uživo preko RTSP-a, koji nije HTTP: ni jedno ni drugo ne bi trebalo biti pogođeno (treba potvrditi na headsetu).
 
 <a id="install"></a>
 ### Instalacija
@@ -576,7 +754,7 @@ Unos u Horizon Storeu čeka Metin pregled, poslan s buildom 14; dok ne bude odob
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. U headsetu otvorite biblioteku, odaberite filter „Unknown sources“ (Nepoznati izvori) i pokrenite Immuch360.
@@ -584,7 +762,7 @@ Unos u Horizon Storeu čeka Metin pregled, poslan s buildom 14; dok ne bude odob
 
 ### U prozoru
 
-Cijela aplikacija radi kao 2D prozor promjenjive veličine: prijava, vremenska linija, albumi, pretraga, kartica Library (lista 360°, On this device, Network shares), postavke i preglednici fotografija i videozapisa, gdje se reproduciraju ravne fotografije i videozapisi. Na headsetu dugme 360° i View as 360° u meniju ⋮ direktno otvaraju imerzivni prikaz umjesto preglednika sfere s telefona, a dugme Spatial 2.5D i njegova postavka se ne prikazuju. Od builda 19 Apple prostorna fotografija ima dugme View in 3D, a pločica Share this phone on the network se ne prikazuje: headset je taj koji čita dijeljeni resurs telefona.
+Cijela aplikacija radi kao 2D prozor promjenjive veličine: prijava, vremenska linija, albumi, pretraga, kartica Library (lista 360°, On this device, Network shares), postavke i preglednici fotografija i videozapisa, gdje se reproduciraju ravne fotografije i videozapisi. Na headsetu dugme 360° i View as 360° u meniju ⋮ direktno otvaraju imerzivni prikaz umjesto preglednika sfere s telefona, a dugme Spatial 2.5D i njegova postavka se ne prikazuju. Od builda 19 Apple prostorna fotografija ima dugme View in 3D, a pločica Share this phone on the network se ne prikazuje: headset je taj koji čita dijeljeni resurs telefona. Od builda 20 Plex serveri i Tapo kamere se također otvaraju u prozoru, prikaz uživo kamere u HD-u; postavka „Remote control layout“ (Raspored za daljinski upravljač) ostaje na Automatic, što je na headsetu ostavlja isključenom.
 
 ### U slikama
 
@@ -598,7 +776,7 @@ Snimci napravljeni u headsetu dugmetom za snimanje (dugme Meta i okidač), na Qu
 ### Ograničenja na headsetu
 
 - **Video kodeci**: HEVC (H.265) je siguran izbor; H.264 staje na otprilike 4096x2304. Šta aplikacija provjerava i kako headsetu dati video koji dekodira nalazi se u [Detalji videa i dekoderi](#video-details-decoders-and-why-a-video-stutters).
-- **Trgovina**: verzija u trgovini počinje od builda 14. Funkcije označene „od builda 15“ i „od builda 16“ dolaze s njenim sljedećim ažuriranjem (build 16, već na alfa testnom kanalu), kasnije nakon toga; APK s GitHuba ih već sada ima sve.
+- **Trgovina**: verzija u trgovini počinje od builda 14. Funkcije označene „od builda 15“ i kasnije dolaze s njenim sljedećim ažuriranjima (alfa testni kanal trgovine, za testere, dobija svaki novi build); APK s GitHuba ih već sada ima sve.
 - **Dozvole**: build za headset traži samo fotografije i videozapise (način rada bez servera) i obavještenja (napredak sigurnosne kopije). Nema dozvolu za pohranu, zvuk, lokaciju ni kameru, za razliku od builda za telefon; promjena servera prema nazivu Wi-Fi mreže zato nije dostupna na headsetu.
 - **Veličina APK-a**: Spatial SDK dodaje otprilike 56 MB izvornog 64-bitnog ARM koda, i na telefonima, gdje se nikada ne učitava.
 - **Licenca**: imerzivni prikaz koristi Meta Spatial SDK, distribuiran pod Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Snimci napravljeni u headsetu dugmetom za snimanje (dugme Meta i okidač), na Qu
 <a id="where-to-get-it"></a>
 ## Gdje je nabaviti
 
-Aplikacija je na Google Playu; verzija za App Store čeka Appleov pregled, a verzija za Meta Horizon Store Metin. Izdanje na GitHubu uvijek je najnoviji build:
+Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka Appleov pregled, verzija za Meta Horizon Store Metin, a Google Play verzija za televizore Googleov pregled TV izdanja. Izdanje na GitHubu uvijek je najnoviji build:
 
 | Platforma | Danas | Uskoro |
 |---|---|---|
-| Android telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi svuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za ručnu instalaciju). Build s GitHuba obično je ispred trgovine. U svakom slučaju instalira se pored zvanične aplikacije Immich (paket `com.aprogsys.immuch360`). | Google Play: buildovi 15 i 16 poslani na Googleov pregled 4. oktobra 2026. (posljednji build potvrđen kao objavljen tamo je build 11) |
+| Android telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi svuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za ručnu instalaciju). Build s GitHuba obično je ispred trgovine. U svakom slučaju instalira se pored zvanične aplikacije Immich (paket `com.aprogsys.immuch360`). | Google Play: build 18 je objavljen, build 19 na Googleovom pregledu od 6. oktobra 2026., build 20 slijedi |
 | iPhone i iPad | Čeka Appleov pregled. Verzija na pregledu ima funkcije builda 11: otpremanje u Immich i izbor Video source (build 15) te sirove Insta360 datoteke (build 16) doći će s kasnijim ažuriranjem u App Storeu. Izvorni kod se gradi u Xcodeu ili na Codemagicu, pogledajte [Napravite je sami](#build-it-yourself). | App Store, na pregledu |
-| Meta Quest 3 i 3S | Datoteka `-quest-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases) (radi i univerzalni `-release.apk`), ručno instalirana u načinu rada za programere, pogledajte [Instalacija](#install). Build iz trgovine i APK s GitHuba potpisani su različitim ključevima: da pređete s jednog na drugi, najprije deinstalirajte aplikaciju (njene postavke i sačuvani dijeljeni resursi odlaze s njom). | Meta Horizon Store: build 14 na Metinom pregledu od 3. oktobra 2026.; build 16 je na alfa kanalu trgovine (samo testeri) |
+| Meta Quest 3 i 3S | Datoteka `-quest-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases) (radi i univerzalni `-release.apk`), ručno instalirana u načinu rada za programere, pogledajte [Instalacija](#install). Build iz trgovine i APK s GitHuba potpisani su različitim ključevima: da pređete s jednog na drugi, najprije deinstalirajte aplikaciju (njene postavke i sačuvani dijeljeni resursi odlaze s njom). | Meta Horizon Store: build 14 na Metinom pregledu od 3. oktobra 2026.; alfa kanal trgovine (samo testeri) dobija svaki novi build |
+| Android TV i Google TV (od builda 20) | Univerzalni `Immuch360-v<version>-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases), ručno instaliran preko adb-a, pogledajte [Instalacija na televizor](#install-it-on-the-tv). To je ista aplikacija kao na telefonima. | Google Play na televizorima, nakon Googleovog pregleda TV izdanja |
 
 Linkovi za App Store i Meta Horizon Store bit će dodani ovdje čim unosi budu objavljeni. Prijavite se svojim uobičajenim URL-om Immich servera i računom, ili na stranici za prijavu dodirnite „Use without a server“ da počnete s vlastitim fotografijama i videozapisima uređaja. APK s GitHuba ne ažurira se sam: pratite stranicu Releases, a kada aplikaciju instalirate iz trgovine, ažuriranja preuzimajte iz te trgovine.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Snimci ekrana za trgovine prave se na debug buildovima za simulator napravljenim s `--dart-define=IMMUCH_SCREENSHOTS=true`, što samo skriva debug traku. Dvije Android varijante (flavours) su ista aplikacija. Varijanta `quest` cilja SDK 34 i zadržava samo dozvole koje headset koristi (fotografije, videozapisi, obavještenja): upravljanje medijima, lokacija u pozadini, stari pristup pohrani, zvuk, lokacija medija, lokacija uređaja i kamera uklonjeni su u `android/app/src/quest/AndroidManifest.xml`, jer Meta Horizon Store odbija prve dvije i traži obrazloženje za svaku drugu osjetljivu dozvolu; ista datoteka navodi Quest 3 i 3S kao podržane uređaje i ograničava obični HTTP na sam headset i na nazive kućne mreže. APK je samo 64-bitni zbog dva dodatna argumenta u njegovoj komandnoj liniji (`--target-platform android-arm64 --android-project-arg arm64only=true`). Varijanta `phone` je ono što traži Google Play. Da gradite za iOS na vlastitom Macu, koristite Xcode i vlastiti tim za potpisivanje; s Xcodeom 26 najprije jednom pokrenite `xcodebuild -downloadComponent MetalToolchain`, jer ga trebaju Spatial shaderi. Bez Maca iOS buildovi rade na Codemagicu (hostovani Mac) iz datoteke `codemagic.yaml` ovog repozitorija. Android release buildovi rade na GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Snimci ekrana za trgovine prave se na debug buildovima za simulator napravljenim s `--dart-define=IMMUCH_SCREENSHOTS=true`, što samo skriva debug traku. Dvije Android varijante (flavours) su ista aplikacija. Od builda 20 varijanta `phone` se također prijavljuje kao aplikacija za televizor (stavka pokretača za televizor i baner, ekran osjetljiv na dodir nije potreban), što varijanta `quest` izostavlja. Varijanta `quest` cilja SDK 34 i zadržava samo dozvole koje headset koristi (fotografije, videozapisi, obavještenja): upravljanje medijima, lokacija u pozadini, stari pristup pohrani, zvuk, lokacija medija, lokacija uređaja i kamera uklonjeni su u `android/app/src/quest/AndroidManifest.xml`, jer Meta Horizon Store odbija prve dvije i traži obrazloženje za svaku drugu osjetljivu dozvolu; ista datoteka navodi Quest 3 i 3S kao podržane uređaje i ograničava obični HTTP na sam headset i na nazive kućne mreže. APK je samo 64-bitni zbog dva dodatna argumenta u njegovoj komandnoj liniji (`--target-platform android-arm64 --android-project-arg arm64only=true`). Varijanta `phone` je ono što traži Google Play. Da gradite za iOS na vlastitom Macu, koristite Xcode i vlastiti tim za potpisivanje; s Xcodeom 26 najprije jednom pokrenite `xcodebuild -downloadComponent MetalToolchain`, jer ga trebaju Spatial shaderi. Bez Maca iOS buildovi rade na Codemagicu (hostovani Mac) iz datoteke `codemagic.yaml` ovog repozitorija. Android release buildovi rade na GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 U ovom repozitoriju nema nikakvih tajni: Android ključ za potpisivanje čuva se kao šifrovane GitHub Actions tajne, a Appleov materijal za potpisivanje kao šifrovane varijable na Codemagicu. Workflow datoteke ih navode samo po imenu. Bez vlastitog `android/key.jks`, release build se potpisuje debug ključem i ne može se instalirati preko kopije s GitHuba ili iz trgovine (najprije nju deinstalirajte); debug build se instalira pored nje kao Immuch360 debug. Kopija u Meta Horizon Storeu je `quest` APK izdanja potpisan drugim ključem, onim s kojim je aplikacija u trgovini prvi put registrovana, pa se ni ona ne može instalirati preko ručno instaliranog APK-a, niti obrnuto.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Od builda 19 DLNA klijent, dijeljeni resurs telefona i prepoznavanje Apple prostornih medija pišu i u vlastiti zapisnik aplikacije (Logs (Zapisnici), u meniju slike profila gore desno), pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` i `NetworkMediaService`. Redovi zapisnika ostaju na uređaju osim ako ih sami ne kopirate.
+Od builda 19 DLNA klijent, dijeljeni resurs telefona i prepoznavanje Apple prostornih medija pišu i u vlastiti zapisnik aplikacije (Logs (Zapisnici), u meniju slike profila gore desno), pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` i `NetworkMediaService`. Od builda 20 TV način rada piše tamo pod `TvMode` i `TvTextEntry`, Plex serveri pod `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` i `PlexServerEditPage`, a Tapo kamere pod `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` i `CameraLiveView`; Plex redovi nikad ne sadrže token, adresu ni naslov, a redovi kamere izostavljaju lozinke. Redovi zapisnika ostaju na uređaju osim ako ih sami ne kopirate.
 
 ## Privatnost
 
 - **Ništa ne ide programeru**: aplikacija komunicira s Immich serverom koji odaberete (i, kada otvorite mapu, sa servisom pločica mape koji taj server koristi), nema reklama, analitike ni servisa za prijavu padova koji vodi programer, i ništa ne šalje programeru Immuch360.
-- **Bez servera** ništa ne napušta uređaj.
+- **Bez servera** se ne kontaktira nijedan server: aplikacija koristi mrežu samo za dijeljene resurse, Plex servere i kamere koje otvorite, i za dijeljeni resurs telefona, ako ga uključite.
 - **Mrežni dijeljeni resursi**: lista dijeljenih resursa čuva se na uređaju i nikada se ne šalje na server; lozinke idu u privjesak ključeva ili spremište ključeva uređaja.
+- **Plex** (od builda 20): token ostaje u sigurnoj pohrani uređaja i šalje se samo na vaš vlastiti server, u zaglavlju zahtjeva preko HTTPS-a; aplikacija nikad ne kontaktira plex.tv.
+- **Tapo kamere** (od builda 20): lozinka TP-Link računa i lozinka računa kamere ostaju u sigurnoj pohrani uređaja; aplikacija s kamerom komunicira samo na lokalnoj mreži, nikad sa serverima TP-Linka; preuzeti snimci ostaju u kešu aplikacije i brišu se zajedno s kamerom.
+- **Televizor**: da li je uređaj televizor očitava se na uređaju; ništa se ne šalje.
 - **Dijeljeni resurs telefona**: samo lokalna mreža, s korisničkim imenom i lozinkom, preko običnog HTTP-a (pogledajte [Dijeljenje ovog telefona na mreži](#share-this-phone-on-the-network)).
 - **Kamera**: koristi je samo Spatial 2.5D plejer, na uređaju; slike se nikada ne čuvaju i nikamo se ne šalju.
 
@@ -675,20 +857,25 @@ Ovaj projekt je fork Immicha i ostaje pod [GNU AGPL v3](LICENSE). Svaki APK, ukl
 
 Ono što još nije gotovo, najvjerovatnije prvo. Ništa ovdje nije obećanje, a povratne informacije u [sistemu za prijavu problema](https://github.com/freeKC/Immuch360/issues) pomažu da se odluči šta dolazi prvo.
 
-- **Google Play**: buildovi 15 i 16 poslani su na Googleov pregled 4. oktobra 2026. i bit će objavljeni kada budu odobreni; posljednji build potvrđen kao objavljen tamo je build 11.
+- **Google Play**: build 18 je objavljen; build 19 je na Googleovom pregledu od 6. oktobra 2026., a build 20 slijedi.
 - **App Store**: verzija 3.3.0 čeka Appleov pregled; ima funkcije builda 11, pa će otpremanje u Immich i provjera video dekodera (build 15) te sirove Insta360 datoteke (build 16) doći sa sljedećim ažuriranjem u App Storeu. Link će biti dodan ovdje kada bude objavljena.
-- **Meta Horizon Store**: unos je poslan na Metin pregled 3. oktobra 2026. s buildom 14, a build 16 je na alfa kanalu trgovine za sljedeće ažuriranje. Kada unos bude odobren, Questu 3 više neće trebati ručna instalacija i link na trgovinu bit će dodan ovdje; ručno instaliranu kopiju najprije treba deinstalirati (pogledajte [Instalacija](#install)).
-- **Unosi u trgovinama**: tekstovi na Google Playu i u App Storeu još opisuju prve buildove (360° fotografije i videozapisi, sirove datoteke prikazane ravno); predstavit će 3D, VR180 i Spatial preglednike, način rada bez servera, mrežne dijeljene resurse, medijski plejer i sirove Insta360 datoteke. Tekst u Meta Horizon Storeu već predstavlja medijski plejer.
+- **Meta Horizon Store**: unos je poslan na Metin pregled 3. oktobra 2026. s buildom 14, a alfa kanal trgovine dobija svaki novi build za sljedeće ažuriranje. Kada unos bude odobren, Questu 3 više neće trebati ručna instalacija i link na trgovinu bit će dodan ovdje; ručno instaliranu kopiju najprije treba deinstalirati (pogledajte [Instalacija](#install)).
+- **Unosi u trgovinama**: unos na Google Playu prepisan je u oktobru 2026. s novim snimcima ekrana, a s TV izdanjem dobija TV snimke ekrana i TV baner. Tekst u App Storeu još opisuje prve buildove (360° fotografije i videozapisi, sirove datoteke prikazane ravno); predstavit će 3D, VR180 i Spatial preglednike, način rada bez servera, mrežne dijeljene resurse, medijski plejer i sirove Insta360 datoteke. Tekst u Meta Horizon Storeu već predstavlja medijski plejer.
 - **Sirove datoteke 360° kamera, sljedeće**: indikator napretka dok se sirova fotografija priprema za headset; izravnavanje GoPro i DJI videozapisa iz njihovih vlastitih podataka o kretanju; dual fisheye .dng; izvještaji s uređaja o reprodukciji s dva objektiva iz builda 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) radi potvrde spojeva i kapaciteta dekodera.
 - **DLNA, dijeljeni resurs telefona i Apple prostorni mediji, sljedeće**: izvještaji s uređaja za build 19 (Plex, Jellyfin, NAS i Freebox Server preko DLNA-e; telefon koji služi Quest, i preko svog hotspota; stvarne iPhone prostorne fotografije i videozapisi u headsetu); multicast pravo zatraženo od Applea, kako bi iPhonei pronalazili svaki DLNA server; prethodno i sljedeće između prostornih fotografija u headsetu; oznaka prostorne fotografije za fotografije sa servera na vremenskoj liniji; prostorni videozapisi u 3D-u na Questu, ako to njegovi dekoderi dozvole.
 - **360° plejeri na telefonima, sljedeće**: vremenska traka u iOS 360° video plejeru (Android plejer je ima), prethodno/sljedeće u 360° plejerima telefona kao u imerzivnom prikazu na Questu, i fotografije u izvornom 360° video plejeru.
 - **Mrežni dijeljeni resursi, sljedeći koraci**: prevlačenje s jedne datoteke foldera na sljedeću na stranicama fotografija i videozapisa (imerzivni prikaz na Questu već prolazi kroz 360° datoteke foldera), Digest autentifikacija za WebDAV, korisničko ime iz Bonjour zapisa.
 - **Ravni videozapisi**: izbor audio zapisa u ravnom plejeru, jednako za videozapise sa servera, s uređaja i s dijeljenih resursa (360° i Spatial plejeri ga imaju).
+- **Android TV, sljedeće**: test builda 20 na uređajima, na Google TV emulatoru i stvarnom televizoru, zatim TV izdanje na Google Playu (TV snimci ekrana, TV baner, Googleov pregled); kasnije kanali na početnom ekranu televizora.
+- **Tapo kamere, sljedeće**: test builda 20 sa stvarnim kamerama; prikaz uživo na iPhoneu i iPadu; H.265 snimke; reprodukcija snimka dok se preuzima; cijeli dan snimaka na jednoj vremenskoj liniji.
+- **Plex, sljedeće**: test builda 20 na uređajima (telefoni, Quest, iPhone, televizor, izvan kuće); prenos tokena s računara QR kodom; skrivanje DLNA strane Plex servera na listi pronađenih servera; IPv6.
 - **Upstream**: mali pull requestovi prema Immichu za dijelove koje održavaoci žele, počevši od preglednika 360° fotografija.
 
 ## Zahvale
 
 Preglednik 360° fotografija zasnovan je na upstream pull requestu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) autora dmitry-brazhenko, koji je i sam izgrađen na prototipu autora bencefr u [#30192](https://github.com/immich-app/immich/pull/30192). Hvala obojici.
+
+Tapo kamere iz builda 20 napisane su prema onome što o tim kamerama dokumentuju projekti otvorenog koda [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) i [python-kasa](https://github.com/python-kasa/python-kasa).
 
 Zašto fork: 360° prikaz na mobilnom traži se od januara 2024. i još nije u zvaničnoj aplikaciji; preglednik fotografija je na pregledu upstream u [#31169](https://github.com/immich-app/immich/pull/31169). Ovaj fork ga isporučuje već sada, prikuplja povratne informacije sa stvarnih uređaja i ponudit će Immichu, u malim pull requestovima, sve što održavaoci budu željeli. Prikaz za Meta Quest oslanja se na Meta Spatial SDK, koji nije otvorenog koda, pa ostaje u ovom forku.
 

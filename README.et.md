@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi vaadata, ning tasuta mängija tasapinnaliste, 360°, 3D ja VR180 fotode ja videote jaoks Android-telefonides ja -tahvelarvutites, iPhone'is ja iPadis ning Meta Quest 3 ja 3S peakomplektis. See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) või telefoni sfäärifoto režiimiga või kellel on VR-peakomplekt, ja kes tahavad vaadata oma kaadreid Immichi serverist, telefonist endast, NAS-ist või meediaserverist: sama server, sama konto, ilma serveri pistikprogrammita või üldse ilma serverita.
+Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi vaadata, ning tasuta mängija tasapinnaliste, 360°, 3D ja VR180 fotode ja videote jaoks Android-telefonides ja -tahvelarvutites, iPhone'is ja iPadis, Meta Quest 3 ja 3S peakomplektis ning alates järgust 20 Android TV-s ja Google TV-s. See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) või telefoni sfäärifoto režiimiga või kellel on VR-peakomplekt, ja kes tahavad vaadata oma kaadreid Immichi serverist, telefonist endast, NAS-ist, meediaserverist või Plex serverist: sama server, sama konto, ilma serveri pistikprogrammita või üldse ilma serverita. Alates järgust 20 näitab see ka Tapo kaameraid, otsepildina ja nende mälukaardi salvestistena.
 
 <p align="center">
   <sub>Mitteametlik haru (fork). Ei ole seotud Immichi ega FUTO-ga. Nime võib lugeda kui "I am much 360".</sub>
@@ -15,7 +15,8 @@ Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi v
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Androidi APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">ülevaatusel</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store ülevaatusel
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store ülevaatusel &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi v
     <td align="center" width="33%"><h3>🎥 Omane 2.5D</h3>Sügavus tasasel ekraanil stereoskoopilisest videost, vaade järgib sinu pead (katseline, telefonid ja tahvelarvutid)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Üks rakendus, kolm platvormi, tõeline 3D peakomplektis</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Üks rakendus telefonides, tahvelarvutites ja peakomplektis, tõeline 3D peakomplektis ning alates järgust 20 Android TV-s puldiga</td>
     <td align="center"><h3>🔌 Serveriga või ilma</h3>Sinu Immichi server või telefoni enda galerii, kontot pole vaja</td>
     <td align="center"><h3>🗄️ Võrgujaod</h3>Samba (SMB), WebDAV ja alates järgust 19 DLNA meediaserverid, mis leitakse võrgust ja loetakse otse, midagi alla laadimata, ning saadetakse Immichisse, kui sina nii otsustad. Alates järgust 19 jagab ka telefon oma galeriid peakomplektiga</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Teleris</h3>Alates järgust 20 sama APK Android TV-s ja Google TV-s: 360° fotod ja videod, sinu server ja sinu jaod, puldiga</td>
+    <td align="center"><h3>🎬 Plex, ilma plex.tv-ta</h3>Alates järgust 20 sinu Plexi kogud, esitatuna originaalfailidest, nii et 360° jääb 360°-ks, kodus ja väljaspool kodu</td>
+    <td align="center"><h3>📹 Tapo kaamerad</h3>Alates järgust 20 otsepilt ja mälukaardi salvestised, ainult sinu võrgus, ning klipp saadetakse Immichisse siis, kui sina otsustad</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi v
 - **"Minu 360° fotod paistavad lameda, venitatud ribana ja minu 360° videod mängivad tasapinnaliselt."** Vaata [360° fotod ja videod sfäärina](#360-photos-and-videos-as-a-sphere).
 - **"Mul pole serverit ja ma ei taha kontot."** Vaata [Ilma serveri ja kontota](#without-a-server-or-an-account).
 - **"Tahan vaadata oma NAS-i videoid telefonis või peakomplektis neid kopeerimata."** Vaata [Võrgujaod](#network-shares-a-nas-a-computer-or-a-media-server).
+- **"Plex esitab minu 360° videod tasapinnalisena ja ma tahan oma Plexi kogu peakomplektis, teleris ja väljaspool kodu."** Vaata [Plex Media Server, ilma plex.tv-ta](#plex-media-server-without-plextv).
 - **"Minu fotod on telefonis ja mul pole arvutit ega NAS-i, kuhu neid peakomplekti jaoks panna."** Vaata [Jaga seda telefoni võrgus](#share-this-phone-on-the-network).
+- **"Ma tahan näha oma Tapo kaamerat ja eilse öö klippe ilma Tapo rakenduseta ning hoida klippi Immichis."** Vaata [Tapo kaamerad](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"Minu Insta360 failid vajavad enne vaatamist Insta360 rakendust"** (samuti GoPro .360 ja DJI .osv failid). Vaata [360° kaamerate töötlemata failid](#raw-360-camera-files-without-the-cameras-app).
 - **"Minu 3D videod paistavad kahekordsena ja minu VR180 videod on igas suunas välja venitatud."** Vaata [3D ja VR180](#3d-and-vr180-photos-and-videos) ning [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"Mul on iPhone'iga tehtud ruumilised fotod."** Vaata [Apple'i ruumilised fotod ja videod](#apple-spatial-photos-and-videos).
 - **"Telefonis see töötab, aga ma tahan seda Questis."** Vaata [Meta Quest 3 peakomplektis](#in-the-meta-quest-3-headset).
+- **"Ma tahan vaadata oma 360° fotosid ja videoid ning oma NAS-i või Plex serveri videoid teleris, puldiga."** Vaata [Vaata oma teleris](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ma ei leia oma 360° kaadreid kõigi teiste seast üles."** Vaata [360° loend](#find-your-360-shots-the-360-list).
 - **"Minu 360° video hakib või mängib uduse koopiana."** Vaata [Video üksikasjad ja dekoodrid](#video-details-decoders-and-why-a-video-stutters).
 - **"Kas see, mida Immichi rakendus teeb, jääb alles?"** Jah, kahe väikese muudatusega, vaata [Kõik muu on Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Valik jäetakse telefonis meelde ega muuda serveris midagi. Võrgujao faili puhu
 
 Sul pole Immichi serverit või sa ei taha kontot: tahad lihtsalt, et sinu telefoni 360° fotod avaneksid sfäärina, mida saab güroskoobiga pöörata. Immichi rakendus küsib kõigepealt sisselogimist.
 
-Sisselogimislehel avab "Kasuta ilma serverita" Immuch360 seadme enda fotode ja videotega, koos 360°, 3D, VR180 ja Spatial vaaturite, 360° loendi ning võrgujagudega, ilma Immichi kontota. Serveri funktsioonid jäävad peidetuks või hallimaks, kuni ühendad serveri; seadmest ei lahku midagi. Meta Quest 3-s avab see peakomplekti enda fotod ja videod.
+Sisselogimislehel avab "Kasuta ilma serverita" Immuch360 seadme enda fotode ja videotega, koos 360°, 3D, VR180 ja Spatial vaaturite, 360° loendi ning võrgujagudega (alates järgust 20 ka Plex serverite ja Tapo kaameratega), ilma Immichi kontota. Serveri funktsioonid jäävad peidetuks või hallimaks, kuni ühendad serveri; seadmest ei lahku midagi. Meta Quest 3-s avab see peakomplekti enda fotod ja videod; teleris, millel neid pole, suunab see võrgujagude juurde (vaata [Vaata oma teleris](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Vahekaart Kogu ilma serverita: üleval kirje 360°, seejärel Sellel seadmel kahe 360° fotoga ja Võrgujaod jaoga nimega NAS">
 
@@ -126,7 +135,7 @@ Sisselogimislehel avab "Kasuta ilma serverita" Immuch360 seadme enda fotode ja v
 
 Sinu 360° videod on NAS-is või arvutis ja sa tahad neid vaadata telefonis või peakomplektis ilma neid enne kopeerimata. Peakomplekti puhul kopeeritakse lõpuks iga fail kaabli kaudu; meediaserverid nagu Plex ja Jellyfin esitavad 360° videoid tasapinnaliselt, nagu nende foorumite soovid kirjeldavad; Immichi rakendus loeb ainult sinu Immichi serverit.
 
-Immuch360 sirvib ja esitab fotosid ja videoid mis tahes serverist, mis räägib SMB-d (Samba, Windows), WebDAV-i või alates järgust 19 DLNA/UPnP-d (meediaserver: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS või telerikast), otse jaost. See leiab sinu võrgu serverid ise üles ja esitab failid otse samades vaaturites nagu ülejäänud rakendus (360°, 3D, VR180, Spatial 2.5D, Questi kaasahaarav vaade), Immichi serveriga või ilma, telefonides ja Meta Quest 3-s. Midagi ei laadita alla. Kui server on ühendatud, saab valitud failid saata sinu Immichi kontole (alates järgust 15).
+Immuch360 sirvib ja esitab fotosid ja videoid mis tahes serverist, mis räägib SMB-d (Samba, Windows), WebDAV-i või alates järgust 19 DLNA/UPnP-d (meediaserver: Jellyfin, minidlna, Gerbera, Emby, NAS või telerikast), otse jaost. Alates järgust 20 on Plex Media Serveril oma tüüp, vaata [Plex Media Server, ilma plex.tv-ta](#plex-media-server-without-plextv). See leiab sinu võrgu serverid ise üles ja esitab failid otse samades vaaturites nagu ülejäänud rakendus (360°, 3D, VR180, Spatial 2.5D, Questi kaasahaarav vaade), Immichi serveriga või ilma, telefonides ja Meta Quest 3-s. Midagi ei laadita alla. Kui server on ühendatud, saab valitud failid saata sinu Immichi kontole (alates järgust 15).
 
 | Jao lisamine | Jao kaust |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 sirvib ja esitab fotosid ja videoid mis tahes serverist, mis räägib 
 
 ### Jao lisamine
 
-1. Ava vahekaart Kogu, seejärel Võrgujaod. Esimesel korral on lehel kirjas "Jagusid veel pole" ja nupp "Lisa jagu"; üleval paremal olev + teeb sama igal ajal.
-2. Leht "Lisa jagu" otsib kõigepealt sinu võrgu servereid ja loetleb need jaotises "Võrgust leitud" koos nende tüübiga (SMB, WebDAV, DLNA, Telefon). Otsing võtab kuni umbes kuus sekundit; "Otsi uuesti" alustab seda uuesti. See kasutab Bonjouri/mDNS-i ja kohtvõrgu skannimist, mida kinnitab päris SMB või WebDAV vahetus, ning alates järgust 19 DLNA meediaserverite SSDP otsingut.
-3. Puuduta serverit: tüüp, server, port ja tee täidetakse.
-4. Pole loendis? Täida vorm käsitsi. Tüüp: "SMB (Samba, Windowsi jagu)", "WebDAV (Nextcloud, Synology ja teised)" või "DLNA meediaserver (Plex, Jellyfin, NAS, telerikast)". Seejärel Nimi, "Serveri nimi või aadress" (nimi või aadress; täisaadress nagu `smb://nas/photos`, `\\nas\photos` või `https://nas:5006/photos` täidab teised väljad), "Port (valikuline)", kui see pole tavapärane, SMB puhul "Jagu" või WebDAV-i puhul "WebDAV-aadressi rada", "Alguskaust (valikuline)", "Kasutajanimi" ja "Parool" ning WebDAV-i puhul "Turvaline ühendus (HTTPS)".
+1. Ava vahekaart Kogu, seejärel Võrgujaod. Esimesel korral on lehel kirjas "Jagusid veel pole" ja nupp "Lisa jagu"; üleval paremal olev + teeb sama igal ajal. Alates järgust 20 küsivad mõlemad, mida lisada: "Võrgujagu (NAS, arvuti, meediaserver)", "Plex Media Server" või "Tapo kaamera". Vali esimene.
+2. Leht "Lisa jagu" otsib kõigepealt sinu võrgu servereid ja loetleb need jaotises "Võrgust leitud" koos nende tüübiga (SMB, WebDAV, DLNA, Telefon ning alates järgust 20 Plex ja Tapo). Otsing võtab kuni umbes kuus sekundit; "Otsi uuesti" alustab seda uuesti. See kasutab Bonjouri/mDNS-i ja kohtvõrgu skannimist, mida kinnitab päris SMB või WebDAV vahetus, alates järgust 19 DLNA meediaserverite SSDP otsingut ning alates järgust 20 GDM-i, Plexi avastamist, ja TP-Linki avastusprotokolli Tapo kaamerate jaoks.
+3. Puuduta serverit: tüüp, server, port ja tee täidetakse. Plex server või Tapo kaamera avab selle asemel oma lehe, juba täidetuna.
+4. Pole loendis? Täida vorm käsitsi. Tüüp: "SMB (Samba, Windowsi jagu)", "WebDAV (Nextcloud, Synology ja teised)", "DLNA meediaserver (Jellyfin, NAS, telerikast)" või alates järgust 20 "Plex Media Server", mis avab lehe [Plex Media Server, ilma plex.tv-ta](#plex-media-server-without-plextv). Seejärel Nimi, "Serveri nimi või aadress" (nimi või aadress; täisaadress nagu `smb://nas/photos`, `\\nas\photos` või `https://nas:5006/photos` täidab teised väljad), "Port (valikuline)", kui see pole tavapärane, SMB puhul "Jagu" või WebDAV-i puhul "WebDAV-aadressi rada", "Alguskaust (valikuline)", "Kasutajanimi" ja "Parool" ning WebDAV-i puhul "Turvaline ühendus (HTTPS)".
 5. SMB: kui server ja kasutajanimi on sisestatud, loetleb "Vali jagu" serveri jaod.
 6. DLNA: meediaserveril pole kasutajanime ega parooli. Sisesta server, port ja seadme kirjelduse "Kirjelduse tee" (minidlna puhul `/rootDesc.xml`) või kleebi kogu aadress, näiteks `http://192.168.1.10:8200/rootDesc.xml`, serveri väljale.
 7. Puuduta "Testi ühendust". Vastus on "Ühendatud, alguskaustas on N kirjet" või selgitus, miks see ebaõnnestus. Seejärel puuduta vormi allosas "Salvesta".
@@ -155,6 +164,7 @@ Tühja parooliga kasutajanimi saadetakse nii, nagu see on: Freebox Server tahab 
 
 360°, 3D ja VR180 tuvastatakse faili GPano või sfäärilistest metaandmetest, mida loetakse vahemikupäringutega, ja VR180 ka failinimest. Alates järgust 16 tuvastatakse ka töötlemata Insta360 failid (.insp foto nime või kaamera kalibreerimisploki järgi, .insv video nime ja kaadri järgi) ja õmmeldakse kokku.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Jao failide saatmine Immichisse
 
 Alates järgust 15, kui oled serveriga ühendatud:
@@ -177,17 +187,67 @@ Alates järgust 19 saadab rakendus meediaserverite SSDP otsingu võrgu multiedas
 <a id="a-share-that-moved"></a>
 ### Jagu, mis kolis
 
-Alates järgust 19 hoiavad DLNA jagu ja telefoni jagu (vaata [Jaga seda telefoni võrgus](#share-this-phone-on-the-network)) alles oma serveri teatatud ID-d. Kui üks neist enam oma aadressil ei vasta (ruuteri antud uus aadress, teises pordis taaskäivitatud server), näitab selle kausta leht "Otsin võrgust (nimi)" ja viib jao sinna, kus see nüüd vastab: DLNA serveri puhul, millel pole parooli, kohe, ning kasutajanime ja parooliga jao puhul pärast kinnitust "Kas kasutada uut aadressi?", mis näitab mõlemat aadressi, sest need saadetaks uuele aadressile.
+Alates järgust 19 hoiavad DLNA jagu ja telefoni jagu (vaata [Jaga seda telefoni võrgus](#share-this-phone-on-the-network)) alles oma serveri teatatud ID-d. Kui üks neist enam oma aadressil ei vasta (ruuteri antud uus aadress, teises pordis taaskäivitatud server), näitab selle kausta leht "Otsin võrgust (nimi)" ja viib jao sinna, kus see nüüd vastab: DLNA serveri puhul, millel pole parooli, kohe, ning kasutajanime ja parooliga jao puhul pärast kinnitust "Kas kasutada uut aadressi?", mis näitab mõlemat aadressi, sest need saadetaks uuele aadressile. Alates järgust 20 kolib ka võrgu teiselt aadressilt uuesti leitud Plex server kohe: selle sertifikaat tõendab enne tõendi saatmist, et see on sama server. Tapo kaamerat otsitakse selle MAC-aadressi järgi kaamera enda lehelt, vaata [Tapo kaamerad](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Piirangud
 
 - **SMB**: ainult SMB 2 ja 3, SMB 1 mitte.
 - **WebDAV**: ainult Basic autentimine (Digest pole veel toetatud); isesigneeritud HTTPS-sertifikaat peab olema seadmesse installitud.
-- **Serverite leidmine**: võrgu skannimine ja DLNA otsing vaatavad ainult kohalikku /24 võrku ning vajavad iOS-is kohtvõrgu luba. iPhone'is ja iPadis saadab DLNA otsing ainult unicast-päringud, kuni Apple annab rakendusele multiedastuse õiguse, ja mõned serverid neile ei vasta (minidlna Linuxis): lisa need kirjeldusaadressi järgi.
+- **Serverite leidmine**: võrgu skannimine ning DLNA, Plexi ja Tapo otsingud vaatavad ainult kohalikku /24 võrku ning vajavad iOS-is kohtvõrgu luba. iPhone'is ja iPadis saadab DLNA otsing ainult unicast-päringud, kuni Apple annab rakendusele multiedastuse õiguse, ja mõned serverid neile ei vasta (minidlna Linuxis): lisa need kirjeldusaadressi järgi.
 - **DLNA**: server, mis pakub failist ainult teisendatud koopiat, annab selle koopia; kaust loetleb kuni 20 000 kirjet.
 - **Pisipildid**: fotode pisipildid dekodeerivad kogu faili ja üle 30 MB fotod pisipilti ei saa.
 - **Mängijad**: helirea valikut tasapinnalises mängijas veel pole. Telefonis ei saa veel kausta ühest failist järgmisse pühkida (Questi kaasahaaraval vaatel on kausta 360° failide jaoks eelmine ja järgmine). Võrgufailil tehtud 3D või 180° valikut meelde ei jäeta.
 - **Üleslaadimised**: need töötavad ainult siis, kui rakendus on avatud, ja fail, mis serveris juba on, saadetakse tervikuna enne, kui server selle duplikaadiks märgib.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, ilma plex.tv-ta
+
+Sinu videod on Plexis ja Plex näitab sinu 360° fotosid ja videoid tasapinnalisena, nagu selle foorumi soovid kirjeldavad (üks on avatud alates 2017. aastast). Sa tahad seda kogu ka peakomplektis, teleris ja väljaspool kodu. Immichi rakendus loeb ainult sinu Immichi serverit ja järgu 19 DLNA tüüp jõuab Plexi DLNA poolele ainult kodus.
+
+Alates järgust 20 seotakse Immuch360 sinu Plex Media Serveriga otse, ilma plex.tv-ta: see leiab serveri võrgust, sa kleebid tõendi ühe korra ja rakendus loeb sinu kogude originaalfaile otse, rakenduse igas vaaturis (360°, 3D, VR180, Spatial 2.5D, Questi kaasahaarav vaade, teleri pult), kodus ja sinu pordisuunamise kaudu väljaspool kodu. Midagi ei kopeerita ja valitud failid saab saata Immichisse.
+
+### Plex serveri lisamine
+
+1. Ava vahekaart Kogu, seejärel Võrgujaod, siis + ja "Plex Media Server". Jao vormi tüüp "Plex Media Server" ja Plexi sildiga server jaotises "Võrgust leitud" avavad sama lehe.
+2. Leht "Lisa Plex server" otsib sinu võrgu Plex servereid ("Otsitakse sinu võrgust Plex servereid") ja loetleb need jaotises "Võrgust leitud". Puuduta enda oma: kaart näitab selle nime, Plexi versiooni ja lühikest ID-d.
+3. Pole loendis? Sisesta selle "Serveri aadress", näiteks `192.168.1.20`, `192.168.1.20:32400` või `https://...plex.direct:32400`, seejärel puuduta "Otsi". Rakendus loeb serveri sertifikaati ega saada midagi muud.
+4. Hangi tõend arvutis: ava Plex veebibrauseris ja logi sisse, ava oma kogust mis tahes foto või video, seejärel "...", "Get Info", "View XML" (Plexi menüü ingliskeelsed nimed). Avaneb uus vahekaart aadressiga, mis lõpeb osaga `X-Plex-Token=...`. Kopeeri kogu see aadress.
+5. Kleebi see välja "Juurdepääsutõend" või saada see telefoni ja puuduta "Kleebi lõikelaualt": rakendus võtab sellest serveri ja tõendi. Töötab ka ainult `X-Plex-Token=` järel olev tekst. Lehel olev "Kuidas seda saada" ütleb sama; serveri administraatorid saavad kasutada ka serveri faili `Preferences.xml` väärtust `PlexOnlineToken`, mis ei aegu. Teleris avab OK klaviatuuri dialoogi: sisesta tõend sinna (see on tavaliselt 20 märki pikk).
+6. Puuduta "Testi ühendust". Vastus on "Ühendatud: N kogu" või selgitus, mis on valesti, näiteks "Plex server lükkas selle tõendi tagasi."
+7. "Juurdepääs väljaspool kodu" näitab siis, mida server ütleb: "Server teatab, et on kättesaadav aadressil (aadress):(port).", või "Server ei teatanud oma aadressi väljaspool kodu." Serveri kasutamiseks väljaspool kodu sisesta oma avalik aadress või DynDNS-nimi välja "Aadress väljaspool kodu (IP või nimi)" ja Plexis suunatud port (Seaded, Kaugjuurdepääs) välja "Port väljaspool kodu". See, mida sa sisestad, on alati ülimuslik selle ees, mida server ütleb.
+8. "Nimi" on serveri nimi, kui sa seda ei muuda, ja "Alguskaust (valikuline)" võib avada otse ühe kogu. Puuduta "Salvesta". Server on loetletud koos jagudega, kujul `plex://` ja selle aadress.
+
+### Plexi kogude sirvimine
+
+1. Puuduta serverit jaotises Võrgujaod. Esimene tase loetleb kogud, mida rakendus näitab: fotod, filmid ja muud videod, telesarjad. Muusika jäetakse välja.
+2. Kogu all on selle kaustad nii, nagu need on serveri kettal (Plexi vaade "kausta järgi"), seejärel fotod ja videod oma failinimede all, Plexi tehtud pisipiltidega. Fotokogu, mille kaustavaade ei vasta, näitab selle asemel oma albumeid.
+3. 360° ja 3D leitakse failide endi lugemise teel, nagu igas jaos: 360° fotod saavad 360° märgi, Apple'i ruumilised 3D märgi.
+4. Ava foto või video nagu igas jaos: 360°, 3D, 360°/180°, Spatial 2.5D telefonis, kaasahaarav vaade Questis, pult teleris. Videot loetakse originaalfailina, baidivahemike kaupa rakenduse kohaliku silla kaudu, nii et kerimine töötab ja selle 360° ja 3D metaandmed jõuavad mängijateni puutumatult.
+5. Vali failid ja puuduta "Laadi Immich'isse üles", et saata need oma serverisse, nagu igast jaost (vaata [Jao failide saatmine Immichisse](#send-files-of-a-share-to-immich)).
+
+### Väljaspool kodu
+
+Iga kord, kui rakendus serveri avab, proovib see kõigepealt koduaadressi ja 400 ms hiljem kodust väljaspool kasutatavat aadressi. Kasutatakse esimest, mis sinu serverina vastab; kui see on kodust väljaspool kasutatav aadress, näitab kausta leht gloobuse ikooni sildiga "Ühendatud kodust väljaspool kasutatava aadressi kaudu". Selleks peab Plexis olema sisse lülitatud kaugjuurdepääs (Seaded, Kaugjuurdepääs) ja sinu ruuter peab pordi suunama: ilma plex.tv-ta ei saa rakendus kasutada Plexi releed, nii et pordisuunamiseta server avaneb ainult kodus ja väljaspool kodu ütleb leht "Sinu Plex serverile ei pääse koduvõrgust väljaspool ligi. Lülita Plexis sisse kaugjuurdepääs pordisuunamisega (Seaded, Kaugjuurdepääs) või sisesta selle avalik aadress."
+
+Serveri teatatud aadress õpitakse uuesti iga kodus loodud ühenduse ajal. Kui see väljast ei vasta (ruuter, mis muudab oma aadressi, kaks ruuterit järjest), sisesta oma aadress serveri lehel. Kui tõend lakkab töötamast (näiteks logisid välja brauseri seansist, kust selle kopeerisid), ütleb kausta leht seda ja pakub valikut "Kleebi uus tõend", mis avab serveri lehe tõendi väljal.
+
+### Võrdlus Plexi ja DLNA tüübiga
+
+- **Originaalfailid**: rakendus loeb faile endid, mitte kunagi Plexi teisendatud koopiat, nii et 360°, 3D ja VR180 metaandmed jäävad puutumatuks ja rakenduse vaaturid kasutavad neid, samas kui Plexi rakendused näitavad neid faile tasapinnalisena.
+- **Ilma plex.tv-ta**: rakendus suhtleb ainult sinu serveriga, alati HTTPS-i kaudu. Serverit kontrollitakse enne tõendi saatmist selle enda plex.direct sertifikaadi kaudu, mis on seotud serveri ID-ga. Tõend jääb seadmesse, selle turvalisse salvestusruumi, ja läheb ainult sinu serverisse, päringu päises.
+- **Võrreldes sama serveri lisamisega DLNA-na**: kaustad nagu kettal, Plexi pisipildid, juurdepääs väljaspool kodu ja turvaline ühendus.
+
+### Piirangud
+
+- **Ainult seotud serverid**: server peab olema Plexis seotud (üks kord Plexi kontole sisse logitud), mis annab sellele plex.direct sertifikaadi. Muidu ütleb leht "See aadress vastab ilma Plexi sertifikaadita. Seo server Plexis endaga või lisa see SMB, WebDAV või DLNA jaona."
+- **Ainult IPv4**: "IPv6 aadresse veel ei toetata. Sisesta serveri IPv4 aadress."
+- **Tõend** annab täieliku juurdepääsu sinu Plex serverile. Serveri eemaldamine rakenduses unustab tõendi seadmes, kuid ei tühista seda: "Tõend jääb serveris kehtima, kuni logid välja brauseri seansist, kust selle kopeerisid." Lõppkuupäevaga tõend näitab seda kuupäeva ja rakendus ei saa seda uuendada.
+- **Väljaspool kodu**: ainult pordisuunamise kaudu, releed pole.
+- **Kogud**: muusikat ei näidata, kaust loetleb kõige rohkem 20 000 kirjet ja piiratud kasutaja võib saada teate "See tõend ei saa serveri kogusid lugeda."
+- **360° kaamerate töötlemata failid** (.insv, .insp, .360, .osv) ilmuvad ainult siis, kui Plex neid loetleb; muidu lisa sama NAS-i kaust SMB või WebDAV jaona, vaata [360° kaamerate töötlemata failid](#raw-360-camera-files-without-the-cameras-app).
+- **Serveri leidmine**: serverit, mille seade "Enable local network discovery (GDM)" on välja lülitatud, ei leita, nii et sisesta selle aadress. iPhone'is ja iPadis saadab otsing ainult unicast-päringuid. Sama serveri DLNA pool võib samuti loendis ilmuda, DLNA sildiga: vali Plexi sildiga rida.
+- **Seadmes veel kontrollimata**: sidumist, kaustu, video baidivahemikke, pisipilte, valet tõendit ja kodust väljaspool kasutatavat aadressi kontrolliti arvutist päris Plex Media Server 1.42.1 vastu ning foto- ja telesarjade kogusid ainult simuleeritud serveri vastu. Esitamine telefonis, Questis, iPhone'is ja teleris ning üleminek kodust väljaspool kasutatavale aadressile on järgu 20 seadmetesti osa.
+- Immuch360 ei ole Plexiga seotud.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Jaga seda telefoni võrgus
@@ -219,6 +279,63 @@ Sealt edasi on see WebDAV jagu nagu iga teine: 360° tuvastus, töötlemata fail
 - **Turvalisus**: ainult kohtvõrk. Jagu kuulab ainult telefoni Wi-Fi, Etherneti ja kuumkoha aadressidel, mitte kunagi mobiilse andmeside ega VPN-i aadressil, ja vastab ainult kohaliku aadressiga seadmetele. Iga päring vajab kasutajanime ja parooli (HTTP Basic); kümme valet parooli ühest seadmest minuti jooksul blokeerivad selle minutiks. Parool liigub Wi-Fi kaudu krüptimata (lihtne HTTP): kasuta jagu võrgus, mida usaldad, ja lülita see välja, kui oled lõpetanud.
 - **Telefoni enda kuumkoht**: peakomplekt saab sellega liituda; kui see telefoni sealt ei leia, sisesta lehel kuvatud aadress.
 - **Seadmes veel kontrollimata**: serverit kontrolliti ühiktestide ja otsast lõpuni testidega peakomplekti enda WebDAV-kliendi ja meediasillaga arvutis. Telefon, mis teenindab Quest 3-te (avastamine, 4 GB video esitamine ja kerimine, ekraan 30 minutit väljas, kuumkoht, "Peata" teavitusest), ja iPhone'i pool, mida pole iPhone'is veel käivitatud, on järgu 19 seadmetesti osa.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo kaamerad: otsepilt ja mälukaardi salvestised
+
+Sul on kodus Tapo kaamerad ja sa tahad näha aiakaamerat ja eilse öö klippe oma fotode kõrval ilma Tapo rakendust avamata ning hoida klippi Immichis. Immichi rakendusel pole kaamerate jaoks midagi ja Tapo rakendus on eraldi rakendus, sinu TP-Linki kontole sisse logitud, klippidega sinu fotodest eraldi.
+
+Alates järgust 20 lisab Immuch360 Tapo kaamera võrgujagude kõrvale. See näitab kaamera otsepilti Android-telefonides ja -tahvelarvutites, Android TV-s ja Meta Quest 3-s ning igal platvormil selle mälukaardi salvestisi päevade kaupa: klipp tuuakse kaamerast, seejärel esitatakse nagu iga videot ja selle saab saata Immichisse. Rakendus suhtleb kaameraga ainult sinu võrgus, mitte kunagi TP-Linki serveritega, ega muuda kaameras kunagi midagi.
+
+### Kaamera lisamine
+
+1. Kõigepealt Tapo rakenduses: loo kaamera konto kaamera seadetes, Advanced Settings, Camera Account (kasutajanimi ja parool selle kaamera jaoks, mida kasutatakse otsepildi jaoks), ja lülita sisse Third-Party Compatibility jaotises Me, seejärel Tapo Lab (Tapo rakenduse ingliskeelsed menüünimed).
+2. Ava Immuch360-s vahekaart Kogu, seejärel Võrgujaod, siis + ja "Tapo kaamera".
+3. Leht "Lisa kaamera" otsib kaameraid ("Otsitakse sinu võrgust Tapo kaameraid") ja loetleb need jaotises "Võrgust leitud" Tapo sildiga. Puuduta enda oma, et täita "Kaamera aadress", või sisesta selle aadress. Tapo sildiga kaamera jao vormis avab sama lehe.
+4. "Nimi": kuidas kaamera on loetletud.
+5. Jaotises "Mälukaardi salvestised" on "TP-Linki konto parool": selle konto parool, mida kasutad Tapo rakenduses. See avab salvestised; sinu e-posti aadressi pole vaja.
+6. Jaotises "Otse" on "Kaamera konto kasutajanimi" ja "Kaamera konto parool": 1. sammu kaamera konto.
+7. Piisab ühest neist kahest ("Sisesta TP-Linki konto parool, kaamera konto või mõlemad."): ainult TP-Linki parool annab salvestised, ainult kaamera konto otsepildi.
+8. Puuduta "Testi kaamerat". See näitab "Salvestised: (mudel), püsivara (versioon)" koos mälukaardi olekuga ja "Otsepilt: (video), heli (heli)" või seda, mis kummagi puhul ebaõnnestus.
+9. Puuduta "Salvesta". Kaamera on loetletud jaotises "Kaamerad" pärast jagusid, koos mudeliga, kui see on teada, ning `tapo://` ja selle aadressiga.
+
+### Otsepildi vaatamine
+
+1. Puuduta kaamerat. Selle otsepilt on lehe ülaosas: "Kaameraga ühendamine", seejärel pilt märgiga "Otse".
+2. Nupud pildil: heli, alguses välja lülitatud ("Lülita heli sisse"; "Selles seadmes heli pole", kui seade ei saa seda esitada), SD või HD ja "Täisekraan".
+3. Telefon näitab lehel SD-d ja täisekraanil HD-d; Quest näitab HD-d. Tagasi väljub kõigepealt täisekraanist.
+4. Pildi all on mudel ja püsivara ning mälukaart, näiteks "Mälukaart: kasutatud (kasutatud) / (kokku)" või "Mälukaarti pole".
+
+iPhone'is ja iPadis ütleb otsepilt "Otsepilt jõuab iPhone'i ja iPadi hilisemas versioonis. Salvestisi saab siin juba esitada." Ilma kaamera kontota ütleb leht "Otsepildi nägemiseks lisa kaamera konto."
+
+### Salvestiste esitamine ja hoidmine
+
+1. Jaotises "Mälukaardi salvestised" loetleb kaamera leht salvestistega päevad, uusimad eespool, kuude kaupa. Ilma TP-Linki konto paroolita ütleb see "Salvestiste nägemiseks lisa TP-Linki konto parool."
+2. Puuduta päeva. Selle klipid on kaamera enda kellaaja tundide all, igaühel algus, pikkus, sündmuse puhul kaamera pisipilt ja liik: Liikumine, Inimene, Lemmikloom, Sõiduk, Beebi nutt, Loom, Pidev või Sündmus.
+3. Puuduta klippi. Rakendus toob selle kaamerast ("Video toomine kaamerast: N%", koos nupuga "Katkesta"), seejärel esitab selle videomängijas heli ja kerimisega. Toodud klipil on märge "Selles seadmes" ja see avaneb järgmisel korral kohe.
+4. Klipi hoidmiseks Immichis, kui server on ühendatud: video menüü ⋮, "Laadi Immich'isse üles".
+5. Ruumi vabastamiseks: pikk vajutus toodud klipil pakub valikut "Kustuta koopia sellest seadmest" (telefonis) ja kaamera lehel on "Kustuta sellest kaamerast toodud videod" koos nende suurusega.
+6. Värskendusnupp üleval paremal või lehe allapoole tõmbamine küsib kaameralt uuesti.
+
+Kui kaamera oma aadressil enam ei vasta, otsib selle leht seda võrgust MAC-aadressi järgi ja viib selle sinna, kus see nüüd vastab, kui see näitab sama sertifikaati. Kaamera, mis näitab teistsugust sertifikaati kui see, mida rakendus esimesena nägi, saab selle asemel küsimuse: "Kaamera aadressil (aadress) näitab teistsugust sertifikaati kui varem. Jätka ainult siis, kui oled selle lähtestanud või välja vahetanud."
+
+### Võrdlus Tapo rakendusega
+
+- **Ainult sinu võrgus**: rakendus suhtleb kaamera endaga kohtvõrgus ega suhtle kunagi TP-Linki serveritega. See ei logi sisse TP-Linki kontole, nii et sinu e-posti aadressi pole vaja.
+- **Salvestistest saavad tavalised videod**: toodud klipp on H.264 video koos heliga, mille saad saata Immichisse, kus see jääb alles ka pärast seda, kui mälukaart on selle üle salvestanud.
+- **Muu kõrval**: Immichi serveriga või ilma, telefonis, teleris või Questis (aknas), võrgust leitud nagu jagu.
+- **Ainult lugemine**: rakendus küsib kaameralt ainult seda, mida see näitab; see ei muuda kunagi ühtegi seadet ega kustuta kaameras kunagi midagi.
+
+### Piirangud
+
+- **Seadmes veel kontrollimata**: järk 20 pole veel päris kaameraga töötanud. Protokoll kirjutati C510W püsivaraga 1.3.4 salvestatud liikluse põhjal (2026. aasta keskpaiga V4 sisselogimine) ja rakendust kontrolliti selle testides simuleeritud kaamera vastu. Teated on teretulnud, koos mudeli ja püsivaraga, mida "Testi kaamerat" näitab, ning [Logide](#logs) ridadega.
+- **Otsepilt**: ainult Android-telefonides ja -tahvelarvutites, Android TV-s ja Questis, iPhone'is ja iPadis veel mitte. Kehtivad TP-Linki piirangud: kaamera kohta korraga kõige rohkem kaks HD ja kaks SD voogu, Tapo rakendus kaasa arvatud, ning Tapo Care, mälukaart ja RTSP-d või ONVIF-i kasutav salvesti ei saa kõik korraga töötada.
+- **Kaamerad**: akutoitel kaameraid ja Tapo jaoturi taga olevaid kaameraid ei toetata.
+- **Salvestised**: üks allalaadimine korraga kaamera kohta. Kui Tapo rakendus mälukaarti sirvib, proovib rakendus uuesti 4, 8 ja 12 sekundi pärast ning ütleb siis "Kaamera on hõivatud teise vaatajaga, näiteks Tapo rakendusega. Proovi minuti pärast uuesti." H.265 salvestisi veel ei teisendata ("See salvestis on H.265 vormingus, mida see versioon veel teisendada ei oska."), pidevatel salvestistel pole pisipilti ja klipp mängib alles siis, kui see on täielikult toodud.
+- **Paroolid**: iga vale parool loeb ja mõne järel lukustub kaamera mõneks ajaks ("Kaamera on liiga paljude valede paroolide järel lukus. Proovi uuesti N minuti pärast."). Rakendus ei proovi tagasilükatud parooli kunagi ise uuesti: ainult "Testi kaamerat" või "Proovi uuesti" küsivad kaameralt uuesti. Kui kaamera võtab parooli vastu oma seadete jaoks, kuid mitte videote jaoks, lülita Tapo rakenduses Third-Party Compatibility välja ja uuesti sisse ning taaskäivita siis kaamera.
+- **Ruum**: toodud klipid jäävad rakenduse vahemällu, kõigi kaamerate peale kokku kõige rohkem 1 GB (kõige kauem esitamata klipid lähevad esimesena); süsteem võib selle vahemälu tühjendada ja kaamera eemaldamine kustutab selle klipid.
+- **Väljaspool kodu**: rakendus jõuab kaamerani selle aadressil sinu võrgus, seega mitte väljastpoolt seda.
+- Immuch360 ei ole TP-Linkiga seotud.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## 360° kaamerate töötlemata failid ilma kaamera rakenduseta
@@ -349,7 +466,7 @@ Tuvastust kontrolliti Apple'i enda pilditeegi kirjutatud ruumilise näidisfotoga
 
 Inimesed ostavad Quest 3, et vaadata oma 360° fotosid ja videoid, ja küsivad siis, kuhu failid panna, kuidas need ilma kaablita peakomplekti saada ja millist mängijat kasutada: poe mängijad 360° ja 3D video jaoks on tasulised.
 
-Sama Androidi rakendus töötab Quest 3-s ja 3S-is aknana koos kogu sinu koguga. Selle 360° nupp avab kaasahaarava vaate, kus foto või video on kõikjal sinu ümber ja sa vaatad ringi pead pöörates, stereoskoopiliste failide puhul tõelises 3D-s (Meta Spatial SDK). Meedia tuleb sinu Immichi serverist, peakomplektist endast, NAS-ist, meediaserverist või telefonist ja seda esitatakse kohapealt (meediaserver ja telefon alates järgust 19, peakomplektis veel kontrollimata). See on tasuta ja avatud lähtekoodiga. Kontrollitud Quest 3-s ja kasutaja poolt Insta360 X4 8K HEVC videotega.
+Sama Androidi rakendus töötab Quest 3-s ja 3S-is aknana koos kogu sinu koguga. Selle 360° nupp avab kaasahaarava vaate, kus foto või video on kõikjal sinu ümber ja sa vaatad ringi pead pöörates, stereoskoopiliste failide puhul tõelises 3D-s (Meta Spatial SDK). Meedia tuleb sinu Immichi serverist, peakomplektist endast, NAS-ist, meediaserverist, telefonist või Plex serverist ja seda esitatakse kohapealt (meediaserver ja telefon alates järgust 19, Plex server alates järgust 20, peakomplektis veel kontrollimata), ning alates järgust 20 näitab aken ka Tapo kaameraid. See on tasuta ja avatud lähtekoodiga. Kontrollitud Quest 3-s ja kasutaja poolt Insta360 X4 8K HEVC videotega.
 
 ### Kaasahaarava vaate avamine
 
@@ -408,6 +525,56 @@ Pööra seda parema juhtkangiga (või infopaneeli nupuga "Pööra"), kuni selle 
 - **Kerimine**: videos, mille allikas ei vasta baidivahemiku päringutele, ei saa kerida; paneel ütleb seda.
 - **Tasapinnalised videod**: tasapinnaline (mitte 360°) stereoskoopiline video mängib aknas, mõlemad silmad nähtaval; kaasahaarav 3D vaade on 360° ja VR180 meedia jaoks.
 - **Lisaks**: peakomplekti dekodeeritavad koodekid, pood, load ja APK suurus on jaotises [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Vaata oma teleris (Android TV ja Google TV)
+
+Sa tahad 360° fotosid ja videoid, oma albumeid ning oma NAS-i või Plex serveri videoid suurel ekraanil, perele diivanil, teleri puldiga. Immichi mobiilirakendus ei ole telerirakendus: kasutaja, kes selle telerisse installis, leidis, et see töötab hiirega, mitte puldiga ([arutelu #1614](https://github.com/immich-app/immich/discussions/1614)), ja Immichi meeskonnal pole ametliku telerirakenduse plaani ([arutelu #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Alates järgust 20 töötab sama Androidi rakendus Android TV-s ja Google TV-s, ainsaks sisendiks pult: üks APK telefonidele ja teleritele, 360° ja 3D vaaturid, mida pööratakse nooltega, ning võrgujaod, Plex ja Tapo kaamerad teleris, Immichi serveriga või ilma.
+
+<a id="install-it-on-the-tv"></a>
+### Telerisse installimine
+
+1. Kuni Google Play pakub rakendust teleritele, mis ootab Google'i ülevaatust teleri väljalaske jaoks, võta lehelt [Releases](https://github.com/freeKC/Immuch360/releases) universaalne `Immuch360-v<version>-release.apk`.
+2. Lülita teleris sisse arendaja valikud ja USB-silumine (Google TV-s: Seaded, Süsteem, Teave, vali seitse korda "Android TV OS build", seejärel Seaded, Süsteem, Arendaja valikud; nimed erinevad telerite vahel).
+3. Samas võrgus olevast arvutist, adb abil (Android SDK Platform Tools): `adb connect <address of the TV>`, nõustu teleris küsimusega, seejärel `adb install -r Immuch360-v<version>-release.apk`.
+4. Rakendus ilmub teleri rakenduste hulka koos oma bänneriga. Installi järgmine väljalase samamoodi: `-r` säilitab sisselogimise ja seaded.
+
+### Esimene käivitus
+
+1. Logi sisse nagu telefonis: nooled liigutavad raami väljalt väljale ja OK väljal ("Kirjutamiseks vajuta OK") avab teleri klaviatuuri dialoogis serveri aadressi, e-posti ja parooli jaoks.
+2. Või vali "Kasuta ilma serverita". Teleril pole oma fotosid, nii et vahekaardil Fotod on kirjas "Sellel teleril pole oma fotosid ega videoid: ava võrgujagu Kogust." koos nupuga Võrgujaod. Lisa sinna jagu, Plex server või kaamera, nagu telefonis (vaata [Võrgujaod](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Puldiga liikumine
+
+- Nooled liigutavad raami, OK avab selle, millel raam on, Tagasi läheb tagasi. Vahekaardilt läheb Tagasi külgmenüüsse, seejärel Fotode juurde, seejärel rakendusest välja.
+- Kanal üles ja alla kerivad lehekülje kaupa.
+- Vaaturites töötavad puldi esitamise ja pausi, edasikerimise, tagasikerimise, järgmise ja eelmise klahvid ning infoklahv näitab foto või video üksikasju.
+
+### Fotod ja videod puldiga
+
+1. **Foto**: vasak ja parem viivad eelmise või järgmise juurde, OK näitab või peidab juhtnupud, Üles viib ülemisele ribale (kus on 360° nupp) ja Alla alumisele ribale.
+2. **Video**: OK peatab, näidates juhtnuppe, või esitab. Esitamise ajal hüppavad vasak ja parem 10 sekundit tagasi või edasi; pausi ajal viivad need eelmise või järgmise üksuse juurde, nagu ütleb vihje: "Peatatud: nooled viivad eelmise või järgmise üksuse juurde".
+3. **360° foto**, 360° nupust: nooled vaatavad ringi, all hoides kiiremini, ja vaade peatub sujuvalt. OK viib ülemise riba nuppudele, nupule "Suurenda", mille kõrval on "Vähenda", vaateväli ja 3D; kanal üles ja alla suumivad samuti. Tagasi naaseb nuppudelt pildile, seejärel sulgeb. Vihje ütleb "Nooled ringi vaatamiseks, OK juhtnuppude jaoks, Tagasi sulgemiseks".
+4. **360° video**, 360° nupust: nooled vaatavad ringi, kui juhtnupud on peidetud, OK peatab ja näitab neid, Tagasi peidab need, seejärel sulgeb. Vihje ütleb "Nooled ringi vaatamiseks, OK peatamiseks ja juhtnuppude näitamiseks, Tagasi sulgemiseks".
+5. **Mälestused**: vasak ja parem käivad läbi fotod ja edasi järgmise mälestuseni, Üles viib sulgemisnupule ja Alla valikule "Vaata ajajoonel".
+6. **Jaod ja Plex**: samad klahvid jao foto- ja videolehtedel, kus vasak ja parem avavad kausta eelmise või järgmise faili.
+
+### Seade Kaugjuhtimispuldi paigutus
+
+Seaded, Eelistused, "Kaugjuhtimispuldi paigutus": "Suured fookusraamid ja puldi klahvid, ilma puuteekraani vajavate juhtnuppudeta. Automaatne lülitab selle sisse Android TV-s ja Google TV-s." Automaatne on vaikimisi; Sees sobib klaviatuuri või mängupuldiga juhitavale tahvelarvutile; Väljas lülitab selle teleris välja. Seade on olemas ainult Androidis. Nooled ja OK töötavad vaaturites klaviatuuri või mängupuldiga sõltumata seadest.
+
+### Piirangud
+
+- **Vaatur**: teleris rakendus näitab ja esitab. Varundus, üleslaadimised, muutmine, kustutamine, jagamine, mitme üksuse valimine, Cast, Spatial 2.5D, güroskoop, kaart ja Kohad ning "Jaga seda telefoni võrgus" on peidetud.
+- **Sisselogimine**: OAuth avab veebilehe, mida teler teha ei saa: "Teenusega (teenusepakkuja) sisselogimine avab veebilehe, mida see teler teha ei saa. Logi selle asemel sisse e-posti ja parooliga."
+- **Lingid** näitavad oma aadressi jaotises "Ava teises seadmes" brauseri avamise asemel ja tekst sisestatakse süsteemi klaviatuuridialoogis.
+- **Mälu**: vähese mäluga teleris näidatakse 360° fotosid kõige rohkem 4096x2048 suurusena, ilma teravama pildita suumimisel.
+- **Videod**: teleri dekoodrid otsustavad, mida esitatakse, sama seadega "Video allikas" ja sama dekoodrikontrolliga nagu telefonis (vaata [Video üksikasjad ja dekoodrid](#video-details-decoders-and-why-a-video-stutters)); teleris veel mõõtmata.
+- **Seadmes veel kontrollimata**: telerituge kontrolliti ainult automaattestidega ja see pole veel teleris ega teleri emulaatoris töötanud. Kinnitamist vajavad: suund, kuhu nooled 360° videot pööravad, teleri klaviatuur (Gboard) tekstidialoogis, infrapunapultide OK-klahv, veerised ja bänner teleri avakuval. Teated on teretulnud.
+- **Google Play teleritel** ootab Google'i ülevaatust teleri väljalaske jaoks; seni APK.
+- **Teised telerid**: Fire TV-d pole testitud ja Apple TV versiooni pole.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Leia oma 360° kaadrid: 360° loend
@@ -488,11 +655,11 @@ Kui server eirab originaali HTTP Range päringuid ja MP4 indeks (moov) on faili 
 <a id="everything-else-is-immich"></a>
 ## Kõik muu on Immich
 
-Kõik, mida ametlik Immichi mobiilirakendus teeb, on siin olemas: varundus, ajajoon, albumid, otsing, jagamine, partnerid, kõik sünkroonitud sinu serveriga, sama serveri ja sama kontoga nagu veebirakendus. Immuch360 installitakse ametliku rakenduse kõrvale (pakett `com.aprogsys.immuch360`). Alates järgust 15 on kaks erinevust: lülitist "Sunni algne video" sai ülalkirjeldatud valik "Video allikas" ning fotod ja videod, mille seadme albumist käsitsi üles laadid, loetakse varundatuks.
+Kõik, mida ametlik Immichi mobiilirakendus teeb, on siin olemas: varundus, ajajoon, albumid, otsing, jagamine, partnerid, kõik sünkroonitud sinu serveriga, sama serveri ja sama kontoga nagu veebirakendus. Immuch360 installitakse ametliku rakenduse kõrvale (pakett `com.aprogsys.immuch360`). Alates järgust 15 on kaks erinevust: lülitist "Sunni algne video" sai ülalkirjeldatud valik "Video allikas" ning fotod ja videod, mille seadme albumist käsitsi üles laadid, loetakse varundatuks. Teleris on rakendus alates järgust 20 vaatur, vaata [Vaata oma teleris](#watch-on-your-tv-android-tv-and-google-tv).
 
 Et näidata 360° fotot kellelegi, kellel rakendust pole, jaga seda Immichi jagatud lingiga: Immichi veebirakendus näitab 360° fotot tema brauseris sfäärina.
 
-Praegune järk, järk 19 (versioon 3.3.0-rc.0, järgu number 3030017), põhineb Immich 3.3.0-rc.0 versioonil (Immich `main`, veel mitte stabiilne väljalase) ja seda testiti Immich 3.2 serveriga. Palun teata probleemidest jaotises [Issues](https://github.com/freeKC/Immuch360/issues), mitte Immichi projektile. Immichi enda täieliku dokumentatsiooni leiad aadressilt [immich.app](https://immich.app).
+Praegune järk, järk 20 (versioon 3.3.0-rc.0, järgu number 3030018), põhineb Immich 3.3.0-rc.0 versioonil (Immich `main`, veel mitte stabiilne väljalase). Järku 19 testiti Immich 3.2 serveriga ja järk 20 ei muuda midagi selles, mida rakendus serverilt küsib. Palun teata probleemidest jaotises [Issues](https://github.com/freeKC/Immuch360/issues), mitte Immichi projektile. Immichi enda täieliku dokumentatsiooni leiad aadressilt [immich.app](https://immich.app).
 
 ## Võrdlus Immichi rakenduse ja teiste rakendustega
 
@@ -515,6 +682,9 @@ Praegune järk, järk 19 (versioon 3.3.0-rc.0, järgu number 3030017), põhineb 
 | DLNA meediaserverid jao tüübina | ❌ | ✅ alates järgust 19 | Kontrollitud minidlna ja Gerbera vastu Dockeris; Plex, Jellyfin, NAS, Freebox Server, iPhone ja Quest on järgu 19 seadmetesti osa |
 | Jao failide saatmine Immichisse; käsitsi saadetud seadme failid loetakse varundatuks | ❌ ainult seadme failid | ✅ alates järgust 15 | Testitud Androidi emulaatoris Samba testserveri ja Immich 3.2 serveri vastu |
 | Selle telefoni jagamine võrgus peakomplekti jaoks | ❌ | ✅ alates järgust 19, Android ja iOS | Ühiktestid ja otsast lõpuni testid peakomplekti WebDAV-kliendiga arvutis; Questi teenindav telefon ja iPhone'i pool on järgu 19 seadmetesti osa |
+| Plex Media Serveri kogud, esitatuna originaalfailidest, kodus ja väljaspool kodu, ilma plex.tv-ta | ❌ | ✅ alates järgust 20, kõik vaaturid, telefonides, tahvelarvutites, Quest 3-s ja teleritel | Kontrollitud arvutist päris Plex Media Server 1.42.1 vastu (sidumine, kaustad, baidivahemikud, pisipildid, kodust väljaspool kasutatav aadress); seadmes veel kontrollimata |
+| Tapo kaamerad: otsepilt ja mälukaardi salvestised, mis saadetakse Immichisse siis, kui sina otsustad | ❌ | ✅ alates järgust 20: salvestised kõikjal, otsepilt Androidis, Android TV-s ja Quest 3-s | Kontrollitud simuleeritud kaamera vastu; päris kaameraga veel kontrollimata |
+| Android TV ja Google TV, puldiga juhitav, samas APK-s | ❌ pole telerirakendus | ✅ alates järgust 20 | Kontrollitud automaattestidega; teleris veel kontrollimata |
 | Töötlemata Insta360 .insp fotod ja ühe rajaga .insv videod | ❌ tasapinnalised | ✅ alates järgust 16 | Fotosid kontrolliti X3 failide Insta360 Studio ekspordi vastu, videoid Androidi emulaatoris madala eraldusvõimega X3 failiga; iPhone'is veel käivitamata |
 | Töötlemata videod, üks objektiiv raja või faili kohta (Insta360 X4, X4 Air, X5, X6, X3 paarid, GoPro .360, DJI .osv) | ❌ tasapinnalised või valed | ✅ alates järgust 18 | Parserid ja kokkuõmblemine kontrollitud päris X4, X3 paari, GoPro MAX-i ja Osmo 360 failidega; esitamine on järkude 18 ja 19 seadmetesti osa |
 | Kahe kalasilmaga .dng | ❌ tasapinnaline | ❌ veel mitte | Plaanis |
@@ -529,27 +699,33 @@ Praegune järk, järk 19 (versioon 3.3.0-rc.0, järgu number 3030017), põhineb 
 |---|---|---|
 | Immichi veebirakendus | See näitab 360° fotot sfäärina, kuid peab töötlemata .insp-faili valmis panoraamiks ja mähib selle kaks ringi ümber sfääri; VR-vaade on endiselt soov ([arutelu #14768](https://github.com/immich-app/immich/discussions/14768)) | Õmbleb töötlemata failid seadmes kokku ja avab Quest 3-s kaasahaarava vaate |
 | Insta360 rakendus või Studio | Vajalik kaardi töötlemata failidest 360° pildi tegemiseks enne vaatamist | Avab töötlemata .insp ja .insv failid otse, samuti GoPro .360 ja DJI .osv failid |
-| Plex, Jellyfin, Synology Photos | 360° fotod ja videod kuvatakse tasapinnalisena või neid ei tuvastata, nagu nende foorumite lõimed kirjeldavad (Plexi soov on avatud alates 2017. aastast) | Loeb samu kaustu SMB, WebDAV-i või DLNA kaudu ja esitab neid sfäärina, serveris midagi muutmata |
+| Plex, Jellyfin, Synology Photos | 360° fotod ja videod kuvatakse tasapinnalisena või neid ei tuvastata, nagu nende foorumite lõimed kirjeldavad (Plexi soov on avatud alates 2017. aastast) | Loeb alates järgust 20 Plexi kogu ennast või samu kaustu SMB, WebDAV-i või DLNA kaudu ja esitab neid sfäärina, serveris midagi muutmata |
+| Tapo rakendus | Eraldi rakendus, sinu TP-Linki kontole sisse logitud, klippidega sinu fotodest eraldi | Näitab kaamerat sinu fotode kõrval, suhtleb sellega ainult sinu võrgus ja hoiab klippi videona, mille saad saata Immichisse (alates järgust 20) |
+| Immichi mobiilirakendus teleris | Pole telerirakendus: kasutaja teatab, et see töötab hiirega, mitte puldiga | Sama rakendus, puldi jaoks tehtud (alates järgust 20) |
 | Failide kopeerimine peakomplekti | Iga fail tuleb enne vaatamist kaabli kaudu kopeerida | Esitab kohapealt Immichist, NAS-ist, meediaserverist või telefonist |
 | Questi poe 360° ja 3D mängijad | Tasulised | Tasuta ja avatud lähtekoodiga (AGPL) |
 
 ## Vormingud ja allikad platvormi järgi
 
-Immuch360 on galerii ja ka tasuta meediamängija: see esitab seda, mida ametlik rakendus ei suuda, neljast allikast, failile sobivas mängijas.
+Immuch360 on galerii ja ka tasuta meediamängija: see esitab seda, mida ametlik rakendus ei suuda, teise tabeli allikatest, failile sobivas mängijas.
 
-| Mis | Android-telefonid | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Tasapinnalised videod (MP4, MOV, MKV, mida seade dekodeerib) | Immichi mängija ja võrgujagude jaoks omane mängija | Sama, välja arvatud jao MKV ja AVI failid, mida iOS ei ava (serveris mängivad need transkodeerituna) | Aknas |
-| 360° fotod | Sfäärivaatur, güroskoop | Sama | Kaasahaaravalt, kõikjal sinu ümber |
-| 360° videod | Omane Media3 mängija sfääril, güroskoop, kerimine, helirea valik, puhverdamise näidik | Omane SceneKiti mängija sfääril, güroskoop, helirea valik, puhverdamise näidik; esitamine ja paus, ajariba veel pole | Kaasahaaravalt, stereoskoopiliste failide puhul tõeline 3D, ajariba 10-sekundiliste hüpetega, eelmine ja järgmine meediafail |
-| 3D 360° (üleval ja all, kõrvuti) | Vasak silm, paigutuse nupp | Sama | Iga silm saab oma poole kaadrist |
-| VR180 (poolsfääri) fotod ja videod | Poolsfäär, 360°/180° nupp | Sama | Kaasahaarav poolsfäär |
-| Spatial 2.5D (sügavus tasasel ekraanil stereoskoopilisest videost) | Omane mängija, pea jälgimine esikaameraga | Sama | Ei pakuta |
-| Apple'i ruumilised fotod (HEIC stereopaarid, alates järgust 19) | Vasak silm, üksikasjade rida ütleb, et see on ruumiline | Sama | Vaata 3D-s: mõlemad silmad kaasahaaravas vaates hõljuval fotol, 3D või 2D, muudetava suurusega |
-| Apple'i ruumilised videod (MV-HEVC, alates järgust 19) | Üks silm (baaskiht), koos teatega | Sama | Üks silm aknas, koos teatega |
-| Töötlemata Insta360 .insp fotod (alates järgust 16) | Õmmeldakse GPU-l kokku enne sfäärivaaturit, kuni 8192x4096 | Sama | Kaasahaaravalt, peakomplekti jaoks ette valmistatud kokku õmmeldud pildist |
-| Töötlemata Insta360 .insv, mõlemad objektiivid ühel rajal (alates järgust 16) | Õmmeldakse Media3 mängijas GPU-efektiga kokku | Õmmeldakse SceneKiti varjutajaga kokku | Kaasahaaravalt, õmmeldud sama GPU-efektiga |
-| Töötlemata videod, üks objektiiv raja või faili kohta (alates järgust 18): Insta360 X4, X4 Air, X5, X6 .insv, X3 paarid, GoPro .360, DJI .osv | Kaks riistvaralist dekoodrit korraga, üks objektiivi kohta (alates järgust 19 tarkvaralised seadmes, kus riistvaralist dekoodrit pole, kuni 2048x2048 objektiivi kohta), ja GL-kompositor, mis õmbleb sfääriks; üks objektiiv, seejärel transkodeeritud voog, seejärel kokku õmblemata video, kui seade ei suuda kahte käitada | Kohandatud AVFoundationi kompositor Metaliga | Kaasahaaravalt, samad kaks dekoodrit ja kompositor (3840x1920 paneel) |
+| Mis | Android-telefonid | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (alates järgust 20) |
+|---|---|---|---|---|
+| Tasapinnalised videod (MP4, MOV, MKV, mida seade dekodeerib) | Immichi mängija ja võrgujagude jaoks omane mängija | Sama, välja arvatud jao MKV ja AVI failid, mida iOS ei ava (serveris mängivad need transkodeerituna) | Aknas | Nagu telefonides; OK peatab, vasak ja parem hüppavad 10 s |
+| 360° fotod | Sfäärivaatur, güroskoop | Sama | Kaasahaaravalt, kõikjal sinu ümber | Sfäärivaatur, mida pööratakse nooltega ja suumitakse kanaliklahvidega |
+| 360° videod | Omane Media3 mängija sfääril, güroskoop, kerimine, helirea valik, puhverdamise näidik | Omane SceneKiti mängija sfääril, güroskoop, helirea valik, puhverdamise näidik; esitamine ja paus, ajariba veel pole | Kaasahaaravalt, stereoskoopiliste failide puhul tõeline 3D, ajariba 10-sekundiliste hüpetega, eelmine ja järgmine meediafail | Telefonide Media3 mängija, mida pööratakse nooltega |
+| 3D 360° (üleval ja all, kõrvuti) | Vasak silm, paigutuse nupp | Sama | Iga silm saab oma poole kaadrist | Vasak silm, paigutuse nupp |
+| VR180 (poolsfääri) fotod ja videod | Poolsfäär, 360°/180° nupp | Sama | Kaasahaarav poolsfäär | Poolsfäär, 360°/180° nupp |
+| Spatial 2.5D (sügavus tasasel ekraanil stereoskoopilisest videost) | Omane mängija, pea jälgimine esikaameraga | Sama | Ei pakuta | Ei pakuta |
+| Apple'i ruumilised fotod (HEIC stereopaarid, alates järgust 19) | Vasak silm, üksikasjade rida ütleb, et see on ruumiline | Sama | Vaata 3D-s: mõlemad silmad kaasahaaravas vaates hõljuval fotol, 3D või 2D, muudetava suurusega | Vasak silm, üksikasjade rida |
+| Apple'i ruumilised videod (MV-HEVC, alates järgust 19) | Üks silm (baaskiht), koos teatega | Sama | Üks silm aknas, koos teatega | Üks silm, koos teatega |
+| Töötlemata Insta360 .insp fotod (alates järgust 16) | Õmmeldakse GPU-l kokku enne sfäärivaaturit, kuni 8192x4096 | Sama | Kaasahaaravalt, peakomplekti jaoks ette valmistatud kokku õmmeldud pildist | Nagu telefonides |
+| Töötlemata Insta360 .insv, mõlemad objektiivid ühel rajal (alates järgust 16) | Õmmeldakse Media3 mängijas GPU-efektiga kokku | Õmmeldakse SceneKiti varjutajaga kokku | Kaasahaaravalt, õmmeldud sama GPU-efektiga | Nagu telefonides |
+| Töötlemata videod, üks objektiiv raja või faili kohta (alates järgust 18): Insta360 X4, X4 Air, X5, X6 .insv, X3 paarid, GoPro .360, DJI .osv | Kaks riistvaralist dekoodrit korraga, üks objektiivi kohta (alates järgust 19 tarkvaralised seadmes, kus riistvaralist dekoodrit pole, kuni 2048x2048 objektiivi kohta), ja GL-kompositor, mis õmbleb sfääriks; üks objektiiv, seejärel transkodeeritud voog, seejärel kokku õmblemata video, kui seade ei suuda kahte käitada | Kohandatud AVFoundationi kompositor Metaliga | Kaasahaaravalt, samad kaks dekoodrit ja kompositor (3840x1920 paneel) | Nagu telefonides, kui teler suudab korraga kahte dekoodrit käitada |
+| Tapo kaamera otsepilt (alates järgust 20) | Media3 RTSP mängija: lehel SD, täisekraanil HD, helinupp | Veel mitte: kaart ütleb, et see tuleb hiljem | Aknas, HD-s | Nagu telefonides |
+| Tapo kaamera salvestised (alates järgust 20) | Tuuakse mälukaardilt H.264 videoks koos heliga, seejärel esitatakse kerimisega | Sama | Sama, aknas | Sama |
+
+Teleri veergu pole veel teleris kontrollitud, vaata [Vaata oma teleris](#watch-on-your-tv-android-tv-and-google-tv); kaamera ridu pole veel päris kaameraga kontrollitud.
 
 | Kust | Kuidas |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 on galerii ja ka tasuta meediamängija: see esitab seda, mida ametlik 
 | Telefon või peakomplekt ise | Sisselogimislehel "Kasuta ilma serverita" või vahekaardi Kogu kirje Sellel seadmel |
 | NAS või arvuti | SMB ja WebDAV jaod ning alates järgust 19 DLNA meediaserverid, mis leitakse võrgust ja loetakse otse (SMB video kuni kuue ühenduse kaudu), midagi kopeerimata; alates järgust 15 saab valitud failid saata sinu Immichi kontole |
 | Teine telefon (alates järgust 19) | Selles telefonis "Jaga seda telefoni võrgus": peakomplekt või iga võrgu WebDAV-klient loeb selle albumeid, kuid ja 360° meediat |
+| Plex Media Server (alates järgust 20) | Selle foto-, filmi- ja telesarjade kogud kaustade kaupa, originaalfailid loetakse otse HTTPS-i kaudu, mida kontrollitakse serveri enda sertifikaadi vastu, kodus või kodust väljaspool kasutatava aadressi kaudu, igal platvormil; vaata [Plex Media Server, ilma plex.tv-ta](#plex-media-server-without-plextv) |
+| Tapo kaamera (alates järgust 20) | Otsepilt kaamera kontoga (Android, Android TV, Quest) ja selle mälukaardi salvestised TP-Linki konto parooliga (igal platvormil), ainult kohtvõrgus; vaata [Tapo kaamerad](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 töötab ka Meta Quest 3 ja 3S peal (Horizon OS v69 või uuem; Horizon Store'i järk on loetletud ainult nende kahe jaoks; universaalne `-release.apk` peaks installituma ka Quest 2 või Quest Pro peale, testimata). Kuidas seda kasutada, on kirjas jaotises [Meta Quest 3 peakomplektis](#in-the-meta-quest-3-headset); see jaotis räägib installimisest ja sellest, mis peakomplektis erineb.
 
-Peakomplekti järk suhtleb serveritega ainult HTTPS-i kaudu või lihtsa HTTP kaudu koduvõrgu nimedega (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ja peakomplekti endaga, nagu Horizon Store nõuab. Lihtsa HTTP aadressina koos IP-ga sisestatud serveri, näiteks `http://192.168.1.10:2283`, lükkab see järk tagasi: kasuta HTTPS-i, koduvõrgu nime (`nas.local`) või universaalset `-release.apk`-d, mis säilitab telefonide avatud poliitika. Kohtvõrgu lihtsal HTTP aadressil olevaid WebDAV, DLNA ja telefoni jagusid see ei puuduta: rakendus loeb neid ise ja annab oma mängijatele ainult oma kohaliku silla aadressi (peakomplektis veel kinnitamisel DLNA ja telefoni jao jaoks, mis on järgus 19 uued).
+Peakomplekti järk suhtleb serveritega ainult HTTPS-i kaudu või lihtsa HTTP kaudu koduvõrgu nimedega (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ja peakomplekti endaga, nagu Horizon Store nõuab. Lihtsa HTTP aadressina koos IP-ga sisestatud serveri, näiteks `http://192.168.1.10:2283`, lükkab see järk tagasi: kasuta HTTPS-i, koduvõrgu nime (`nas.local`) või universaalset `-release.apk`-d, mis säilitab telefonide avatud poliitika. Kohtvõrgu lihtsal HTTP aadressil olevaid WebDAV, DLNA ja telefoni jagusid see ei puuduta: rakendus loeb neid ise ja annab oma mängijatele ainult oma kohaliku silla aadressi (peakomplektis veel kinnitamisel DLNA ja telefoni jao jaoks, mis on järgus 19 uued). Alates järgust 20 jõutakse Plex serverini HTTPS-i kaudu ja Tapo kaamerani rakenduse enda kaudu, selle otsepilt RTSP kaudu, mis pole HTTP: kumbagi ei tohiks see puudutada (peakomplektis veel kinnitamisel).
 
 <a id="install"></a>
 ### Installimine
@@ -576,7 +754,7 @@ Horizon Store'i kirje ootab Meta ülevaatust, see esitati koos järguga 14; kuni
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Ava peakomplektis Teek (Library), vali filter "Unknown sources" (Tundmatud allikad) ja käivita Immuch360.
@@ -584,7 +762,7 @@ Horizon Store'i kirje ootab Meta ülevaatust, see esitati koos järguga 14; kuni
 
 ### Aknas
 
-Kogu rakendus töötab muudetava suurusega 2D-aknana: sisselogimine, ajajoon, albumid, otsing, vahekaart Kogu (360° loend, Sellel seadmel, Võrgujaod), seaded ning foto- ja videovaaturid, kus esitatakse tasapinnalisi fotosid ja videoid. Peakomplektis avavad 360° nupp ja menüü ⋮ kirje "Vaata 360° vaatena" telefonide sfäärivaaturi asemel otse kaasahaarava vaate ning Spatial 2.5D nuppu ja selle seadet ei kuvata. Alates järgust 19 on Apple'i ruumilisel fotol nupp "Vaata 3D-s" ja paani "Jaga seda telefoni võrgus" ei kuvata: peakomplekt on see, kes telefoni jagu loeb.
+Kogu rakendus töötab muudetava suurusega 2D-aknana: sisselogimine, ajajoon, albumid, otsing, vahekaart Kogu (360° loend, Sellel seadmel, Võrgujaod), seaded ning foto- ja videovaaturid, kus esitatakse tasapinnalisi fotosid ja videoid. Peakomplektis avavad 360° nupp ja menüü ⋮ kirje "Vaata 360° vaatena" telefonide sfäärivaaturi asemel otse kaasahaarava vaate ning Spatial 2.5D nuppu ja selle seadet ei kuvata. Alates järgust 19 on Apple'i ruumilisel fotol nupp "Vaata 3D-s" ja paani "Jaga seda telefoni võrgus" ei kuvata: peakomplekt on see, kes telefoni jagu loeb. Alates järgust 20 avanevad aknas ka Plex serverid ja Tapo kaamerad, kaamera otsepilt HD-s; seade "Kaugjuhtimispuldi paigutus" jääb väärtusele Automaatne, mis jätab selle peakomplektis välja lülitatuks.
 
 ### Piltidena
 
@@ -598,7 +776,7 @@ Ekraanipildid on tehtud peakomplektis jäädvustusnupuga (Meta nupp ja päästik
 ### Piirangud peakomplektis
 
 - **Videokoodekid**: HEVC (H.265) on kindel valik; H.264 lõpeb umbes 4096x2304 juures. Mida rakendus kontrollib ja kuidas anda peakomplektile video, mida see dekodeerib, on kirjas jaotises [Video üksikasjad ja dekoodrid](#video-details-decoders-and-why-a-video-stutters).
-- **Pood**: poe versioon algab järgust 14. Funktsioonid, mis on märgitud "alates järgust 15" ja "alates järgust 16", tulevad selle järgmise uuendusega (järk 16, juba alfatestimise kanalis), hilisemad pärast seda; GitHubi APK-s on need kõik juba olemas.
+- **Pood**: poe versioon algab järgust 14. Funktsioonid, mis on märgitud "alates järgust 15" ja hilisemad, tulevad selle järgmiste uuendustega (poe alfatestimise kanal saab testijatele iga uue järgu); GitHubi APK-s on need kõik juba olemas.
 - **Load**: peakomplekti järk küsib ainult fotode ja videote (serverita režiim) ning teavituste (varunduse edenemine) luba. Erinevalt telefoni järgust pole sellel salvestusruumi, heli, asukoha ega kaamera luba; seetõttu pole Wi-Fi nimel põhinev serverivahetus peakomplektis saadaval.
 - **APK suurus**: Spatial SDK lisab umbes 56 MB 64-bitist ARM-i omakoodi, ka telefonides, kus seda kunagi ei laadita.
 - **Litsents**: kaasahaarav vaade kasutab Meta Spatial SDK-d, mida levitatakse Meta Platform Technologies SDK License Agreementi alusel.
@@ -606,13 +784,14 @@ Ekraanipildid on tehtud peakomplektis jäädvustusnupuga (Meta nupp ja päästik
 <a id="where-to-get-it"></a>
 ## Kust seda saada
 
-Rakendus on Google Plays; App Store'i versioon ootab Apple'i ülevaatust ja Meta Horizon Store'i versioon Meta oma. GitHubi väljalase on alati uusim järk:
+Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon ootab Apple'i ülevaatust, Meta Horizon Store'i versioon Meta oma ja teleritele mõeldud Google Play versioon Google'i ülevaatust teleri väljalaske jaoks. GitHubi väljalase on alati uusim järk:
 
 | Platvorm | Täna | Varsti |
 |---|---|---|
-| Android-telefonid ja -tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) või APK lehelt [Releases](https://github.com/freeKC/Immuch360/releases): telefoni jaoks `Immuch360-v<version>-arm64-v8a-release.apk` (universaalne `Immuch360-v<version>-release.apk` töötab kõikjal, `-armeabi-v7a` on vanematele 32-bitistele telefonidele ja fail `.aab` on Google Play jaoks, mitte käsitsi installimiseks). GitHubi järk on tavaliselt poest ees. Mõlemal juhul installitakse see ametliku Immichi rakenduse kõrvale (pakett `com.aprogsys.immuch360`). | Google Play: järgud 15 ja 16 saadeti Google'i ülevaatusele 4. oktoobril 2026 (viimane seal avaldatuks kinnitatud järk on 11) |
+| Android-telefonid ja -tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) või APK lehelt [Releases](https://github.com/freeKC/Immuch360/releases): telefoni jaoks `Immuch360-v<version>-arm64-v8a-release.apk` (universaalne `Immuch360-v<version>-release.apk` töötab kõikjal, `-armeabi-v7a` on vanematele 32-bitistele telefonidele ja fail `.aab` on Google Play jaoks, mitte käsitsi installimiseks). GitHubi järk on tavaliselt poest ees. Mõlemal juhul installitakse see ametliku Immichi rakenduse kõrvale (pakett `com.aprogsys.immuch360`). | Google Play: järk 18 on avaldatud, järk 19 on Google'i ülevaatusel alates 6. oktoobrist 2026, järk 20 järgmisena |
 | iPhone ja iPad | Ootab Apple'i ülevaatust. Ülevaatusel olev versioon sisaldab järgu 11 funktsioone: üleslaadimine Immichisse ja valik "Video allikas" (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad hilisema App Store'i uuendusega. Lähtekoodi saab ehitada Xcode'iga või Codemagicus, vaata [Ehita see ise](#build-it-yourself). | App Store, ülevaatusel |
-| Meta Quest 3 ja 3S | Lehe [Releases](https://github.com/freeKC/Immuch360/releases) fail `-quest-release.apk` (ka universaalne `-release.apk` töötab), käsitsi installitud arendajarežiimis, vaata [Installimine](#install). Poe järk ja GitHubi APK on allkirjastatud erinevate võtmetega: ühelt teisele üleminekuks desinstalli rakendus kõigepealt (selle seaded ja salvestatud jaod kaovad koos sellega). | Meta Horizon Store: järk 14 on Meta ülevaatusel alates 3. oktoobrist 2026; järk 16 on poe alfakanalis (ainult testijatele) |
+| Meta Quest 3 ja 3S | Lehe [Releases](https://github.com/freeKC/Immuch360/releases) fail `-quest-release.apk` (ka universaalne `-release.apk` töötab), käsitsi installitud arendajarežiimis, vaata [Installimine](#install). Poe järk ja GitHubi APK on allkirjastatud erinevate võtmetega: ühelt teisele üleminekuks desinstalli rakendus kõigepealt (selle seaded ja salvestatud jaod kaovad koos sellega). | Meta Horizon Store: järk 14 on Meta ülevaatusel alates 3. oktoobrist 2026; poe alfakanal (ainult testijatele) saab iga uue järgu |
+| Android TV ja Google TV (alates järgust 20) | Lehe [Releases](https://github.com/freeKC/Immuch360/releases) universaalne `Immuch360-v<version>-release.apk`, käsitsi installitud adb abil, vaata [Telerisse installimine](#install-it-on-the-tv). See on sama rakendus mis telefonides. | Google Play teleritel, pärast Google'i ülevaatust teleri väljalaske jaoks |
 
 App Store'i ja Meta Horizon Store'i lingid lisatakse siia kohe, kui kirjed on avaldatud. Logi sisse oma tavapärase Immichi serveri URL-i ja kontoga või puuduta sisselogimislehel "Kasuta ilma serverita", et alustada seadme enda fotode ja videotega. GitHubi APK ei uuenda end ise: jälgi lehte Releases ja kui oled rakenduse poest installinud, võta uuendused sellest poest.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Poe ekraanipildid tehakse silumisrežiimis simulaatorijärkudel, mis on ehitatud valikuga `--dart-define=IMMUCH_SCREENSHOTS=true`, mis peidab ainult silumisbänneri. Kaks Androidi varianti (flavour) on sama rakendus. Variant `quest` sihib SDK 34 ja säilitab ainult peakomplekti kasutatavad load (fotod, videod, teavitused): meediahaldus, taustaasukoht, pärandsalvestus, heli, meedia asukoht, seadme asukoht ja kaamera eemaldatakse failis `android/app/src/quest/AndroidManifest.xml`, sest Meta Horizon Store lükkab kaks esimest tagasi ja nõuab põhjendust iga muu tundliku loa jaoks; sama fail nimetab toetatud seadmetena Quest 3 ja 3S ning piirab lihtsa HTTP peakomplekti enda ja koduvõrgu nimedega. APK on ainult 64-bitine oma käsurea kahe lisaargumendi tõttu (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variant `phone` on see, mida Google Play nõuab. iOS-i jaoks oma Macis ehitamiseks kasuta Xcode'i ja oma allkirjastamismeeskonda; Xcode 26 puhul käivita kõigepealt üks kord `xcodebuild -downloadComponent MetalToolchain`, sest Spatiali varjutajad vajavad seda. Ilma Macita töötavad iOS-i järgud Codemagicus (hostitud Mac) selle hoidla failist `codemagic.yaml`. Androidi väljalaskejärgud töötavad GitHub Actionsis (`.github/workflows/immuch360-release.yml`).
+Poe ekraanipildid tehakse silumisrežiimis simulaatorijärkudel, mis on ehitatud valikuga `--dart-define=IMMUCH_SCREENSHOTS=true`, mis peidab ainult silumisbänneri. Kaks Androidi varianti (flavour) on sama rakendus. Alates järgust 20 kuulutab variant `phone` end ka telerirakenduseks (teleri käivitaja kirje ja bänner, puuteekraani pole vaja), mille variant `quest` välja jätab. Variant `quest` sihib SDK 34 ja säilitab ainult peakomplekti kasutatavad load (fotod, videod, teavitused): meediahaldus, taustaasukoht, pärandsalvestus, heli, meedia asukoht, seadme asukoht ja kaamera eemaldatakse failis `android/app/src/quest/AndroidManifest.xml`, sest Meta Horizon Store lükkab kaks esimest tagasi ja nõuab põhjendust iga muu tundliku loa jaoks; sama fail nimetab toetatud seadmetena Quest 3 ja 3S ning piirab lihtsa HTTP peakomplekti enda ja koduvõrgu nimedega. APK on ainult 64-bitine oma käsurea kahe lisaargumendi tõttu (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variant `phone` on see, mida Google Play nõuab. iOS-i jaoks oma Macis ehitamiseks kasuta Xcode'i ja oma allkirjastamismeeskonda; Xcode 26 puhul käivita kõigepealt üks kord `xcodebuild -downloadComponent MetalToolchain`, sest Spatiali varjutajad vajavad seda. Ilma Macita töötavad iOS-i järgud Codemagicus (hostitud Mac) selle hoidla failist `codemagic.yaml`. Androidi väljalaskejärgud töötavad GitHub Actionsis (`.github/workflows/immuch360-release.yml`).
 
 Selles hoidlas pole ühtegi saladust: Androidi allkirjastamisvõti on salvestatud GitHub Actionsi krüptitud saladustena ja Apple'i allkirjastamismaterjal Codemagicu krüptitud muutujatena. Töövoo failid viitavad neile ainult nime järgi. Ilma sinu enda `android/key.jks` failita allkirjastatakse väljalaskejärk silumisvõtmega ja seda ei saa installida GitHubist või poest pärit koopia peale (desinstalli see kõigepealt); silumisjärk installitakse selle kõrvale nimega Immuch360 debug. Meta Horizon Store'i koopia on väljalaske `quest` APK, mis on allkirjastatud teise võtmega, sellega, millega poe rakendus esmalt registreeriti, seega ei saa seda installida ka käsitsi installitud APK peale ega vastupidi.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Alates järgust 19 kirjutavad DLNA klient, telefoni jagu ja Apple'i ruumilise meedia tuvastus ka rakenduse enda logisse ("Logid", profiilipildi menüüs üleval paremal) siltide `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ja `NetworkMediaService` all. Logiread jäävad seadmesse, kui sa neid ise ei kopeeri.
+Alates järgust 19 kirjutavad DLNA klient, telefoni jagu ja Apple'i ruumilise meedia tuvastus ka rakenduse enda logisse ("Logid", profiilipildi menüüs üleval paremal) siltide `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ja `NetworkMediaService` all. Alates järgust 20 kirjutab telerirežiim sinna siltide `TvMode` ja `TvTextEntry` all, Plex serverid siltide `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ja `PlexServerEditPage` all ning Tapo kaamerad siltide `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ja `CameraLiveView` all; Plexi read ei sisalda kunagi tõendit, aadressi ega pealkirja ning kaamera read jätavad paroolid välja. Logiread jäävad seadmesse, kui sa neid ise ei kopeeri.
 
 ## Privaatsus
 
 - **Arendajale ei lähe midagi**: rakendus suhtleb sinu valitud Immichi serveriga (ja kaardi avamisel selle serveri kasutatava kaardipaanide teenusega), sellel pole reklaame, analüütikat ega arendaja hallatavat krahhiaruannete teenust ning see ei saada Immuch360 arendajale midagi.
-- **Ilma serverita** ei lahku seadmest midagi.
+- **Ilma serverita** ei võeta ühegi serveriga ühendust: rakendus kasutab võrku ainult avatud jagude, Plex serverite ja kaamerate jaoks ning telefoni jao jaoks, kui selle sisse lülitad.
 - **Võrgujaod**: jagude loendit hoitakse seadmes ja seda ei saadeta kunagi serverisse; paroolid lähevad seadme võtmehoidjasse või võtmehoidlasse.
+- **Plex** (alates järgust 20): tõend jääb seadme turvalisse salvestusruumi ja see saadetakse ainult sinu enda serverisse, päringu päises HTTPS-i kaudu; rakendus ei võta kunagi ühendust plex.tv-ga.
+- **Tapo kaamerad** (alates järgust 20): TP-Linki konto parool ja kaamera konto parool jäävad seadme turvalisse salvestusruumi; rakendus suhtleb kaameraga ainult kohtvõrgus, mitte kunagi TP-Linki serveritega; toodud klipid jäävad rakenduse vahemällu ja kustutatakse koos kaameraga.
+- **Teler**: seda, kas seade on teler, loetakse seadmes; midagi ei saadeta.
 - **Telefoni jagu**: ainult kohtvõrk, kasutajanime ja parooliga, lihtsa HTTP kaudu (vaata [Jaga seda telefoni võrgus](#share-this-phone-on-the-network)).
 - **Kaamera**: seda kasutab ainult Spatial 2.5D mängija, seadmes; pilte ei salvestata kunagi ega saadeta kuhugi.
 
@@ -675,20 +857,25 @@ See projekt on Immichi haru ja jääb [GNU AGPL v3](LICENSE) litsentsi alla. Iga
 
 Mis on veel tegemata, kõige tõenäolisemad eespool. Miski siin pole lubadus ning tagasiside [veahalduris](https://github.com/freeKC/Immuch360/issues) aitab otsustada, mis tuleb esimesena.
 
-- **Google Play**: järgud 15 ja 16 saadeti Google'i ülevaatusele 4. oktoobril 2026 ja avaldatakse pärast heakskiitu; viimane seal avaldatuks kinnitatud järk on 11.
+- **Google Play**: järk 18 on avaldatud; järk 19 on Google'i ülevaatusel alates 6. oktoobrist 2026 ja järk 20 tuleb järgmisena.
 - **App Store**: versioon 3.3.0 ootab Apple'i ülevaatust; see sisaldab järgu 11 funktsioone, seega üleslaadimine Immichisse ja videodekoodrite kontroll (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad järgmise App Store'i uuendusega. Link lisatakse siia, kui see on avaldatud.
-- **Meta Horizon Store**: kirje esitati Meta ülevaatusele 3. oktoobril 2026 koos järguga 14 ja järk 16 on järgmise uuenduse jaoks poe alfakanalis. Kui kirje heaks kiidetakse, ei vaja Quest 3 enam käsitsi installimist ja poe link lisatakse siia; käsitsi installitud koopia tuleb kõigepealt desinstallida (vaata [Installimine](#install)).
-- **Poekirjed**: Google Play ja App Store'i tekstid kirjeldavad endiselt esimesi järke (360° fotod ja videod, töötlemata failid tasapinnalisena); need tutvustavad tulevikus 3D, VR180 ja Spatial vaatureid, serverita režiimi, võrgujagusid, meediamängijat ja töötlemata Insta360 faile. Meta Horizon Store'i tekst tutvustab juba meediamängijat.
+- **Meta Horizon Store**: kirje esitati Meta ülevaatusele 3. oktoobril 2026 koos järguga 14 ja poe alfakanal saab järgmise uuenduse jaoks iga uue järgu. Kui kirje heaks kiidetakse, ei vaja Quest 3 enam käsitsi installimist ja poe link lisatakse siia; käsitsi installitud koopia tuleb kõigepealt desinstallida (vaata [Installimine](#install)).
+- **Poekirjed**: Google Play kirje kirjutati 2026. aasta oktoobris uute ekraanipiltidega ümber ja saab teleri väljalaskega teleri ekraanipildid ja teleri bänneri. App Store'i tekst kirjeldab endiselt esimesi järke (360° fotod ja videod, töötlemata failid tasapinnalisena); see tutvustab tulevikus 3D, VR180 ja Spatial vaatureid, serverita režiimi, võrgujagusid, meediamängijat ja töötlemata Insta360 faile. Meta Horizon Store'i tekst tutvustab juba meediamängijat.
 - **360° kaamerate töötlemata failid, edasi**: edenemisnäidik, kui töötlemata fotot peakomplekti jaoks ette valmistatakse; GoPro ja DJI videote loodimine nende enda liikumisandmete põhjal; kahe kalasilmaga .dng; seadmete teated järgu 18 kahe objektiiviga esituse kohta (X4, X5, X6, GoPro MAX 2, Osmo 360), et kinnitada õmblusi ja dekoodrite eelarvet.
 - **DLNA, telefoni jagu ja Apple'i ruumiline meedia, edasi**: järgu 19 seadmete teated (Plex, Jellyfin, NAS ja Freebox Server DLNA kaudu; Questi teenindav telefon, ka oma kuumkohas; päris iPhone'i ruumilised fotod ja videod peakomplektis); Apple'ilt küsitud multiedastuse õigus, et iPhone'id leiaksid iga DLNA serveri; eelmine ja järgmine ruumiliste fotode vahel peakomplektis; ruumilise märgi lisamine serveri fotodele ajajoonel; ruumilised videod 3D-s Questis, kui selle dekoodrid seda võimaldavad.
 - **Telefonide 360° mängijad, edasi**: ajariba iOS-i 360° videomängijas (Androidi omal see on), eelmine/järgmine telefonide 360° mängijates nagu Questi kaasahaaravas vaates ja fotod omases 360° videomängijas.
 - **Võrgujaod, järgmised sammud**: kausta ühest failist järgmisse pühkimine foto- ja videolehtedel (Questi kaasahaarav vaade käib juba kausta 360° failid läbi), Digest autentimine WebDAV-i jaoks, kasutajanimi Bonjouri kirjest.
 - **Tasapinnalised videod**: helirea valik tasapinnalises mängijas, ühtviisi serveri, seadme ja jagude videote jaoks (360° ja Spatial mängijatel see on).
+- **Android TV, edasi**: järgu 20 seadmetest Google TV emulaatoris ja päris teleris, seejärel teleri väljalase Google Plays (teleri ekraanipildid, teleri bänner, Google'i ülevaatus); hiljem kanalid teleri avakuval.
+- **Tapo kaamerad, edasi**: järgu 20 seadmetest päris kaameratega; otsepilt iPhone'is ja iPadis; H.265 salvestised; klipi esitamine selle toomise ajal; terve päeva salvestised ühel ajajoonel.
+- **Plex, edasi**: järgu 20 seadmetest (telefonid, Quest, iPhone, teler, väljaspool kodu); tõendi toomine arvutist QR-koodiga; Plex serveri DLNA poole peitmine leitud serverite loendis; IPv6.
 - **Upstream**: väikesed pull request'id Immichile nende osade jaoks, mida hooldajad soovivad, alustades 360° fotovaaturist.
 
 ## Tänusõnad
 
 360° fotovaatur põhineb dmitry-brazhenko upstream pull request'il [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), mis omakorda tugineb bencefri prototüübile [#30192](https://github.com/immich-app/immich/pull/30192). Tänud mõlemale.
+
+Järgu 20 Tapo kaamerad kirjutati selle põhjal, mida avatud lähtekoodiga projektid [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ja [python-kasa](https://github.com/python-kasa/python-kasa) nende kaamerate kohta dokumenteerivad.
 
 Miks haru: 360° vaatamist mobiilis on palutud alates 2024. aasta jaanuarist ja seda pole ametlikus rakenduses veel olemas; fotovaatur on upstreamis ülevaatusel, [#31169](https://github.com/immich-app/immich/pull/31169). See haru pakub seda juba praegu, kogub päris seadmete tagasisidet ja pakub Immichile väikeste pull request'idena tagasi kõike, mida hooldajad soovivad. Meta Questi vaade tugineb Meta Spatial SDK-le, mis pole avatud lähtekoodiga, seega jääb see sellesse harusse.
 

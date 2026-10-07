@@ -7,6 +7,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
+import 'package:immich_mobile/infrastructure/network/plex/gdm.dart';
+import 'package:immich_mobile/infrastructure/network/upnp/ssdp.dart';
+import 'package:immich_mobile/infrastructure/tapo/tapo_discovery.dart';
 
 /// A TCP server on 127.0.0.1 that answers each connection with [reply] once it received a whole NetBIOS message
 /// (nothing when [reply] is null), and keeps what it received
@@ -132,6 +135,20 @@ void Function(HttpRequest request) _endingAtFirstRequest(Completer<void> done) =
     _webHandler(request);
   }
 };
+
+/// A confirmer whose Tapo certificate check says [isTapo], and remembers the hosts and ports it was asked about
+class _TapoConfirmer extends ServerConfirmer {
+  _TapoConfirmer({required this.isTapo}) : super(httpTimeout: const Duration(seconds: 1));
+
+  final bool isTapo;
+  final List<String> checked = [];
+
+  @override
+  Future<bool> isTapoCamera(String host, {int port = 443, DiscoveryRequest? request}) async {
+    checked.add('$host:$port');
+    return isTapo;
+  }
+}
 
 /// Waits until [condition] holds, 5 seconds at most
 Future<void> _until(bool Function() condition) async {
@@ -434,7 +451,7 @@ void main() {
       }
       final others = tried.where((t) => !t.endsWith(':445') && !t.endsWith(':80')).toList();
       expect(others.map((t) => t.split(':').first).toSet(), {'192.168.1.7'});
-      expect(others, hasLength(5));
+      expect(others, hasLength(6), reason: 'the five WebDAV ports and RTSP');
     });
 
     test('stops once the discovery ended', () async {
@@ -530,14 +547,58 @@ void main() {
             }
           }
           for (final host in alive) {
-            for (final port in [5005, 5006, 443, 8080, 8443]) {
+            for (final port in [5005, 5006, 443, 8080, 8443, 554]) {
               expect(tried, contains('$host:$port'));
             }
           }
-          expect(tried.length, 506 * firstPorts.length + alive.length * 5, reason: 'nothing else, nothing twice');
+          expect(tried.length, 506 * firstPorts.length + alive.length * 6, reason: 'nothing else, nothing twice');
           expect(timeouts.every((timeout) => timeout >= const Duration(milliseconds: 250)), isTrue);
         });
       }
+    });
+
+    test('a host answering on the RTSP port with the certificate of a Tapo camera is a camera on 443', () async {
+      final rtsp = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(rtsp.close);
+      rtsp.listen((socket) => socket.destroy());
+      final tapo = _TapoConfirmer(isTapo: true);
+      final probe = SubnetScanProbe(
+        confirmer: tapo,
+        ports: [ScanPort(rtsp.port, NetworkSourceType.tapo)],
+        localAddresses: () async => fail('the hosts are given'),
+        reverseLookup: (address) async => null,
+      );
+
+      final found = await probe(_request(hosts: ['127.0.0.1'])).toList();
+
+      final camera = found.single;
+      expect(camera.type, NetworkSourceType.tapo);
+      expect(camera.host, '127.0.0.1');
+      expect(camera.port, 443, reason: 'where a camera is reached, as TDP finds it');
+      expect(camera.useTls, isTrue);
+      expect(camera.displayName, '127.0.0.1', reason: 'no English text made outside the pages');
+      expect(camera.origin, DiscoveryOrigin.scan);
+      expect(tapo.checked, ['127.0.0.1:443']);
+    });
+
+    test('a host answering on the RTSP port without the certificate of a Tapo camera is nothing', () async {
+      final rtsp = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(rtsp.close);
+      rtsp.listen((socket) => socket.destroy());
+      final probe = SubnetScanProbe(
+        confirmer: _TapoConfirmer(isTapo: false),
+        ports: [ScanPort(rtsp.port, NetworkSourceType.tapo)],
+        localAddresses: () async => fail('the hosts are given'),
+        reverseLookup: (address) async => null,
+      );
+
+      expect(await probe(_request(hosts: ['127.0.0.1'])).toList(), isEmpty);
+    });
+
+    test('tries RTSP last, for the Tapo cameras, and never takes it from IMMUCH_SCAN_PORTS', () {
+      expect(ScanPort.defaults.last, const ScanPort(554, NetworkSourceType.tapo));
+      expect(ScanPort.defaults.where((port) => port.type == NetworkSourceType.tapo), hasLength(1));
+      expect(ScanPort.parse('554:tapo'), isEmpty);
     });
 
     test('sizes the connections at once and their timeout to the scan budget', () {
@@ -724,5 +785,14 @@ void main() {
       final services = await bonsoirBrowse('_smb._tcp', Future<void>.delayed(const Duration(seconds: 5))).toList();
       expect(services, isEmpty);
     });
+  });
+
+  test('the discovery of the app runs mDNS, the scan, SSDP, GDM and TDP', () {
+    final probes = networkDiscoveryProbes(extraPorts: const []);
+
+    expect(probes, hasLength(5));
+    expect(probes[2], const SsdpProbe().call);
+    expect(probes[3], const GdmProbe().call);
+    expect(probes[4], const TapoDiscoveryProbe().call);
   });
 }

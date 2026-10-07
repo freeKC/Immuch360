@@ -8,6 +8,9 @@
 //   WebDAV, so that a router or a printer is not offered as a share.
 // - SSDP for the DLNA media servers, see upnp/ssdp.dart. They are not scanned for by port: the path of their device
 //   description cannot be guessed (Jellyfin, Windows and Synology put an id in it).
+// - GDM for the Plex Media Servers (UDP 32414, see plex/gdm.dart), and the TP-Link discovery protocol for the Tapo
+//   cameras (TDP, UDP 20002, see ../tapo/tapo_discovery.dart). The scan also finds a camera by its RTSP port (554),
+//   confirmed by the certificate it shows on 443.
 //
 // Nothing is sent with credentials, and the probes stop when the discovery ends.
 
@@ -25,22 +28,29 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/infrastructure/network/plex/gdm.dart';
 import 'package:immich_mobile/infrastructure/network/upnp/ssdp.dart';
+import 'package:immich_mobile/infrastructure/tapo/tapo_discovery.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('NetworkDiscoveryProbes');
 
-/// The discovery of the app: mDNS, the scan of the subnet, with [extraPorts] scanned as well (by default those of
-/// IMMUCH_SCAN_PORTS, see [ScanPort.fromEnvironment]), and SSDP
-NetworkDiscoveryService createNetworkDiscoveryService({List<ScanPort>? extraPorts}) {
+/// The discovery of the app, see [networkDiscoveryProbes]
+NetworkDiscoveryService createNetworkDiscoveryService({List<ScanPort>? extraPorts}) =>
+    NetworkDiscoveryService(probes: networkDiscoveryProbes(extraPorts: extraPorts));
+
+/// The probes of the discovery of the app: mDNS, the scan of the subnet, with [extraPorts] scanned as well (by default
+/// those of IMMUCH_SCAN_PORTS, see [ScanPort.fromEnvironment]), SSDP, GDM and TDP
+@visibleForTesting
+List<DiscoveryProbe> networkDiscoveryProbes({List<ScanPort>? extraPorts}) {
   const confirmer = ServerConfirmer();
-  return NetworkDiscoveryService(
-    probes: [
-      const MdnsProbe(confirmer: confirmer).call,
-      SubnetScanProbe(confirmer: confirmer, extraPorts: extraPorts ?? ScanPort.fromEnvironment()).call,
-      const SsdpProbe().call,
-    ],
-  );
+  return [
+    const MdnsProbe(confirmer: confirmer).call,
+    SubnetScanProbe(confirmer: confirmer, extraPorts: extraPorts ?? ScanPort.fromEnvironment()).call,
+    const SsdpProbe().call,
+    const GdmProbe().call,
+    const TapoDiscoveryProbe().call,
+  ];
 }
 
 /// The install id this device announces when it shares its gallery (see StoreKey.phoneShareId), null when it never
@@ -63,7 +73,9 @@ class ScanPort {
   /// WebDAV over HTTPS
   final bool useTls;
 
-  /// SMB, the WebDAV server of Synology (5006 over TLS), then the web servers that may serve WebDAV
+  /// SMB, the WebDAV server of Synology (5006 over TLS), the web servers that may serve WebDAV, then RTSP for the
+  /// Tapo cameras, which TDP finds better (with their model and MAC address): the scan only tries it on the hosts that
+  /// answered on another port, and confirms it on 443 (see [ServerConfirmer.isTapoCamera])
   static const defaults = [
     ScanPort(445, NetworkSourceType.smb),
     ScanPort(5005, NetworkSourceType.webdav),
@@ -72,6 +84,7 @@ class ScanPort {
     ScanPort(443, NetworkSourceType.webdav, useTls: true),
     ScanPort(8080, NetworkSourceType.webdav),
     ScanPort(8443, NetworkSourceType.webdav, useTls: true),
+    ScanPort(554, NetworkSourceType.tapo),
   ];
 
   /// The ports given at build time with --dart-define=IMMUCH_SCAN_PORTS=..., see [parse]
@@ -112,7 +125,7 @@ class ScanPort {
   String toString() => '$port:${type.name}${useTls ? ':tls' : ''}';
 }
 
-/// Tells whether what answers on a port is an SMB or a WebDAV server
+/// Tells whether what answers on a port is an SMB or a WebDAV server, or a Tapo camera
 class ServerConfirmer {
   const ServerConfirmer({
     this.smbTimeout = const Duration(milliseconds: 1500),
@@ -238,6 +251,50 @@ class ServerConfirmer {
     packet[3] = messageLength & 0xFF;
     packet.setRange(4, packet.length, message.buffer.asUint8List());
     return packet;
+  }
+
+  /// Whether [host]:[port] shows the certificate of a Tapo camera: "TPRI" in its subject or its issuer (the cameras
+  /// sign their own). The TLS handshake is refused as soon as the certificate is seen, so nothing is sent but the
+  /// start of the handshake. False once [request] ended.
+  Future<bool> isTapoCamera(String host, {int port = 443, DiscoveryRequest? request}) async {
+    if (request?.isCancelled ?? false) {
+      return false;
+    }
+    final RawSocket socket;
+    try {
+      socket = await RawSocket.connect(host, port, timeout: httpTimeout);
+    } catch (_) {
+      return false;
+    }
+    X509Certificate? seen;
+    try {
+      // The handshake has no time limit of its own, and closing its socket does not end it: a host that keeps the
+      // connection open without answering is left to the time limit, its socket closed below
+      final secure = await RawSecureSocket.secure(
+        socket,
+        host: host,
+        onBadCertificate: (certificate) {
+          seen = certificate;
+          return false;
+        },
+      ).timeout(httpTimeout);
+      // A certificate the device trusts: not the self-signed one of a camera
+      await secure.close();
+      return false;
+    } on HandshakeException {
+      // The expected end once the certificate was refused
+    } on TimeoutException {
+      return false;
+    } catch (error) {
+      _log.finest('TLS $host:$port: $error');
+    } finally {
+      unawaited(socket.close().catchError((Object _) => socket));
+    }
+    final certificate = seen;
+    if (certificate == null || (request?.isCancelled ?? false)) {
+      return false;
+    }
+    return certificate.subject.contains('TPRI') || certificate.issuer.contains('TPRI');
   }
 
   /// Whether [bytes] start with a NetBIOS session message holding an SMB2 message
@@ -855,6 +912,8 @@ class SubnetScanProbe {
       return null;
     }
     var path = '';
+    var serverPort = port.port;
+    var useTls = port.useTls;
     if (port.type == NetworkSourceType.smb) {
       final isSmb = socket != null
           ? await ServerConfirmer.negotiatesSmb2(socket, timeout: confirmer.smbTimeout, until: request.done)
@@ -862,6 +921,15 @@ class SubnetScanProbe {
       if (!isSmb) {
         return null;
       }
+    } else if (port.type == NetworkSourceType.tapo) {
+      socket?.destroy();
+      // Many devices answer on the RTSP port; a Tapo camera shows its own certificate on 443, where it is reached
+      if (!await confirmer.isTapoCamera(host, request: request)) {
+        return null;
+      }
+      // The port and TLS of the TDP find, so that the camera found both ways shows once (see mergeKey)
+      serverPort = 443;
+      useTls = true;
     } else {
       socket?.destroy();
       // A Nextcloud or ownCloud server keeps its WebDAV under remote.php
@@ -885,8 +953,8 @@ class SubnetScanProbe {
       host: host,
       displayName: name ?? host,
       type: port.type,
-      port: port.port,
-      useTls: port.useTls,
+      port: serverPort,
+      useTls: useTls,
       path: path,
       origin: DiscoveryOrigin.scan,
     );

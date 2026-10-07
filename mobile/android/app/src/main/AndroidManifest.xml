@@ -38,6 +38,15 @@
   <uses-permission android:name="android.permission.CAMERA" />
   <uses-feature android:name="android.hardware.camera.front" android:required="false" />
   <uses-feature android:name="android.hardware.camera" android:required="false" />
+  <!-- Android TV and Google TV: the remote is the only input there, and Google Play lists the app on a TV only when
+       none of these is required. The location features are implied by the location permissions of the Wi-Fi name
+       based server switching, which a TV without GPS does not need. -->
+  <uses-feature android:name="android.software.leanback" android:required="false" />
+  <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+  <uses-feature android:name="android.hardware.faketouch" android:required="false" />
+  <uses-feature android:name="android.hardware.location" android:required="false" />
+  <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+  <uses-feature android:name="android.hardware.location.network" android:required="false" />
 
   <!-- Foreground service permission -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -50,7 +59,7 @@
   <uses-permission android:name="android.permission.WAKE_LOCK" />
 
   <application android:label="@string/app_name" android:name=".ImmichApp" android:usesCleartextTraffic="true"
-    android:icon="@mipmap/ic_launcher" android:requestLegacyExternalStorage="true"
+    android:icon="@mipmap/ic_launcher" android:banner="@mipmap/ic_banner" android:requestLegacyExternalStorage="true"
     android:largeHeap="true" android:enableOnBackInvokedCallback="false" android:allowBackup="false"
     android:networkSecurityConfig="@xml/network_security_config">
 
@@ -101,6 +110,9 @@
         <category android:name="android.intent.category.LAUNCHER" />
         <!-- Horizon OS: start as a 2D panel (hybrid app) -->
         <category android:name="com.oculus.intent.category.2D" />
+        <!-- Android TV and Google TV launcher (phone flavour); DEFAULT, a no-op here, in the Horizon Store build. On
+             this activity itself: the badging shows no TV entry for an activity alias. -->
+        <category android:name="${tvLauncherCategory}" />
       </intent-filter>
 
 

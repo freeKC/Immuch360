@@ -16,11 +16,13 @@ import 'package:immich_mobile/presentation/widgets/timeline/segment.model.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/segment_builder.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.state.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline_drag_region.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
 import 'package:immich_mobile/providers/haptic_feedback.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
@@ -199,12 +201,53 @@ class _FixedSegmentRow extends ConsumerWidget {
   }
 }
 
-class _AssetTileWidget extends ConsumerWidget {
+class _AssetTileWidget extends ConsumerStatefulWidget {
   final BaseAsset asset;
   final int assetIndex;
   final Size size;
 
   const _AssetTileWidget({super.key, required this.asset, required this.assetIndex, required this.size});
+
+  @override
+  ConsumerState<_AssetTileWidget> createState() => _AssetTileWidgetState();
+}
+
+class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
+  final _focusNode = FocusNode(debugLabel: 'Timeline tile');
+
+  /// A route covered the timeline while this tile showed the asset of the viewer
+  bool _coveredWhileCurrent = false;
+
+  BaseAsset get asset => widget.asset;
+  int get assetIndex => widget.assetIndex;
+  Size get size => widget.size;
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  /// Remote control layout: back from the viewer, the tile of the asset shown last takes the focus, not the tile the
+  /// viewer was opened from (the user may have moved to other assets meanwhile). Only a tile that is built can.
+  void _focusWhenBackFromViewer(BuildContext context) {
+    final routeIsCurrent = ModalRoute.of(context)?.isCurrent ?? true;
+    if (!routeIsCurrent) {
+      _coveredWhileCurrent = true;
+      return;
+    }
+    if (!_coveredWhileCurrent) {
+      return;
+    }
+    _coveredWhileCurrent = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _focusNode.requestFocus();
+      unawaited(Scrollable.ensureVisible(this.context, alignment: 0.5, duration: const Duration(milliseconds: 200)));
+    });
+  }
 
   Future _handleOnTap(
     BuildContext ctx,
@@ -264,20 +307,26 @@ class _AssetTileWidget extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final remoteSize = size * MediaQuery.devicePixelRatioOf(context);
 
     final heroOffset = TabsRouterScope.of(context)?.controller.activeIndex ?? 0;
 
     final lockSelection = _getLockSelectionStatus(ref);
     final showStorageIndicator = ref.watch(timelineArgsProvider.select((args) => args.showStorageIndicator));
-    final isReadonlyModeEnabled = ref.watch(readonlyModeProvider);
+    // The read only mode, or a TV: no selection (a long press has no equivalent on a remote anyway)
+    final isViewOnly = ref.watch(viewOnlyProvider);
     final showStackIndicator = ref.watch(timelineServiceProvider).origin != TimelineOrigin.trash;
+    if (ref.watch(tvModeProvider) && ref.watch(assetViewerProvider.select((state) => state.currentAsset == asset))) {
+      _focusWhenBackFromViewer(context);
+    }
 
     return RepaintBoundary(
-      child: GestureDetector(
+      // The remote of a TV reaches the tile: the arrows focus it, OK opens it
+      child: RemoteFocusable(
+        focusNode: _focusNode,
         onTap: () => lockSelection ? null : _handleOnTap(context, ref, assetIndex, asset, heroOffset, remoteSize),
-        onLongPress: () => lockSelection || isReadonlyModeEnabled ? null : _handleOnLongPress(ref, asset),
+        onLongPress: () => lockSelection || isViewOnly ? null : _handleOnLongPress(ref, asset),
         child: ThumbnailTile(
           asset,
           remoteSize: remoteSize,

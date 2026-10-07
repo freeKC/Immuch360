@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 
 class SearchFilterChip extends StatelessWidget {
   final String label;
@@ -12,7 +13,7 @@ class SearchFilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (currentFilter != null) {
-      return GestureDetector(
+      return RemoteFocusable(
         onTap: onTap,
         child: Card(
           elevation: 0,
@@ -25,7 +26,7 @@ class SearchFilterChip extends StatelessWidget {
         ),
       );
     }
-    return GestureDetector(
+    return RemoteFocusable(
       onTap: onTap,
       child: Card(
         elevation: 0,

@@ -8,7 +8,9 @@ import 'package:immich_mobile/extensions/asyncvalue_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/memory.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 @RoutePage()
@@ -25,6 +27,8 @@ class _MemoryListPageState extends ConsumerState<MemoryListPage> {
   @override
   Widget build(BuildContext context) {
     final memories = ref.watch(allMemoriesProvider(_onlyFavorites));
+    // A remote control starts on the first memory
+    final tvMode = ref.watch(tvModeProvider);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -52,7 +56,8 @@ class _MemoryListPageState extends ConsumerState<MemoryListPage> {
                   ),
                   padding: const EdgeInsets.all(16),
                   itemCount: memories.length,
-                  itemBuilder: (context, index) => GestureDetector(
+                  itemBuilder: (context, index) => RemoteFocusable(
+                    autofocus: tvMode && index == 0,
                     onTap: () {
                       MemoryPage.setMemory(ref, memories[index]);
                       unawaited(context.pushRoute(MemoryRoute(memories: memories, memoryIndex: index)));

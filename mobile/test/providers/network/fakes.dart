@@ -8,14 +8,28 @@ import 'package:immich_mobile/services/secure_storage.service.dart';
 class FakeSecureStorage implements SecureStorageService {
   final Map<String, String> values = {};
 
+  /// The keys written with deviceOnly, and those deleted with it
+  final Set<String> writtenDeviceOnly = {};
+  final Set<String> deletedDeviceOnly = {};
+
   @override
   Future<String?> read(String key) async => values[key];
 
   @override
-  Future<void> write(String key, String value) async => values[key] = value;
+  Future<void> write(String key, String value, {bool deviceOnly = false}) async {
+    values[key] = value;
+    if (deviceOnly) {
+      writtenDeviceOnly.add(key);
+    }
+  }
 
   @override
-  Future<void> delete(String key) async => values.remove(key);
+  Future<void> delete(String key, {bool deviceOnly = false}) async {
+    values.remove(key);
+    if (deviceOnly) {
+      deletedDeviceOnly.add(key);
+    }
+  }
 }
 
 /// A share in memory: [entries] by folder path

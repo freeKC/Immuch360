@@ -1,0 +1,8 @@
+HTTP/1.0 200 OK
+Content-Type: plex/media-player
+Resource-Identifier: 0000000000000000000000000000000000000002
+Name: Test Player
+Port: 32500
+Product: Plex for Android
+Version: 10.0.0
+

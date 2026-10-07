@@ -33,6 +33,8 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
@@ -42,6 +44,7 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
@@ -480,6 +483,21 @@ const _highResolutionFov = _doubleTapZoomedFov;
 // 8192 x 4096 pixels already take 128 MB
 const _maxTextureSize = Size(8192, 4096);
 
+/// Largest texture on a TV that Android calls a low RAM device (1 or 2 GB boxes): 32 MB
+const lowRamTextureSize = Size(4096, 2048);
+
+/// How much a zoom key or button of a remote control zooms in or out
+const _remoteZoomFactor = 1.25;
+
+/// How long the hint for the arrows of a remote stays on screen
+const _lookHintDuration = Duration(seconds: 4);
+
+/// Where a panorama viewer looks, for the tests of its keys
+@visibleForTesting
+abstract interface class PanoramaViewProbe {
+  ({double longitude, double latitude, double fov}) get view;
+}
+
 /// The decode size to ask for, for an image of [aspectRatio] (width / height) to fit in 8192 x 4096 pixels.
 ///
 /// The decoders (native on Android and iOS, and the Dart fallback) scale an image down to the smallest size that
@@ -570,7 +588,8 @@ class PanoramaViewerPage extends ConsumerStatefulWidget {
 }
 
 class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
+    with WidgetsBindingObserver, TickerProviderStateMixin
+    implements PanoramaViewProbe {
   ImageStream? _imageStream;
   late final ImageStreamListener _imageListener = ImageStreamListener(_onImage, onError: _onImageError);
   ImageInfo? _imageInfo;
@@ -625,6 +644,29 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       _loadHighResolutionIfZoomedIn();
     });
   Animation<double> _zoomAnimation = const AlwaysStoppedAnimation(_defaultFov);
+  // Where the zoom going on ends
+  double? _zoomTarget;
+
+  // The arrows of a remote control (or a keyboard, a game pad) turn the view while they are held, with when each went
+  // down, in the time of _keyTurn: see _onKeyTurnTick
+  late final Ticker _keyTurn = createTicker(_onKeyTurnTick);
+  final Map<LogicalKeyboardKey, Duration> _heldArrows = {};
+  Duration _keyTurnNow = Duration.zero;
+
+  // The sphere takes the keys; the app bar is not inside it, so the arrows move between its buttons once one has the
+  // focus. Zoom in is where OK goes in the remote control layout.
+  final _sphereFocus = FocusNode(debugLabel: 'Panorama sphere');
+  final _appBarFocus = FocusNode(debugLabel: 'Panorama app bar', canRequestFocus: false, skipTraversal: true);
+  final _actionsFocus = FocusNode(debugLabel: 'Panorama actions', canRequestFocus: false, skipTraversal: true);
+  final _zoomInFocus = FocusNode(debugLabel: 'Panorama zoom in');
+
+  // "Arrows to look around..." in the remote control layout, for a few seconds once the sphere shows
+  bool _lookHintStarted = false;
+  bool _lookHintVisible = false;
+  Timer? _lookHintTimer;
+
+  @override
+  ({double longitude, double latitude, double fov}) get view => (longitude: _longitude, latitude: _latitude, fov: _fov);
 
   // Gyroscope mode: the view follows the phone, drags still add on top
   bool _gyroEnabled = false;
@@ -639,6 +681,31 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Back on a TV depends on where the focus is
+    _appBarFocus.addListener(_onAppBarFocus);
+  }
+
+  void _onAppBarFocus() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  /// Down from a button of the app bar goes back to the sphere, like Back
+  KeyEventResult _onAppBarKey(FocusNode node, KeyEvent event) {
+    if (event.logicalKey != LogicalKeyboardKey.arrowDown) {
+      return KeyEventResult.ignored;
+    }
+    if (isRemotePress(event)) {
+      _sphereFocus.requestFocus();
+    }
+    return KeyEventResult.handled;
+  }
+
+  /// A TV that Android calls a low RAM device: no texture above 4096 x 2048 pixels, no sharper image on zoom
+  bool get _lowRam {
+    final device = ref.read(tvDeviceProvider);
+    return device.isTelevision && device.isLowRamDevice;
   }
 
   @override
@@ -846,6 +913,13 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _inertia.dispose();
+    _keyTurn.dispose();
+    _lookHintTimer?.cancel();
+    _appBarFocus.removeListener(_onAppBarFocus);
+    _sphereFocus.dispose();
+    _appBarFocus.dispose();
+    _actionsFocus.dispose();
+    _zoomInFocus.dispose();
     _zoom.dispose();
     _stopSensors();
     if (_gyroEnabled) {
@@ -941,7 +1015,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   void _loadHighResolutionIfZoomedIn() {
     final remoteId = widget.asset?.remoteId;
     final frame = _frameSize;
-    if (_highResolutionRequested || _fov > _highResolutionFov || remoteId == null || frame == null) {
+    if (_highResolutionRequested || _fov > _highResolutionFov || remoteId == null || frame == null || _lowRam) {
       return;
     }
     _highResolutionRequested = true;
@@ -1124,12 +1198,136 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     });
   }
 
-  void _onDoubleTap() {
-    _zoomAnimation = Tween(
-      begin: _fov,
-      end: doubleTapFov(_fov),
-    ).chain(CurveTween(curve: Curves.easeOutCubic)).animate(_zoom);
+  void _onDoubleTap() => _zoomTo(doubleTapFov(_fov));
+
+  void _zoomTo(double fov) {
+    _zoomTarget = fov;
+    _zoomAnimation = Tween(begin: _fov, end: fov).chain(CurveTween(curve: Curves.easeOutCubic)).animate(_zoom);
     unawaited(_zoom.forward(from: 0));
+  }
+
+  /// A zoom key or button: [factor] below 1 zooms in. From where the view is going, so that keys pressed quickly add up.
+  void _zoomBy(double factor) {
+    final from = _zoom.isAnimating ? _zoomTarget ?? _fov : _fov;
+    _zoom.stop();
+    _zoomTo((from * factor).clamp(15.0, 115.0));
+  }
+
+  /// The keys of a remote control, a keyboard or a game pad while the sphere has the focus: the arrows turn the view
+  /// as long as they are held (their repeats are not needed), zoom keys zoom, OK goes to the app bar
+  KeyEventResult _onSphereKey(FocusNode node, KeyEvent event) {
+    final key = event.logicalKey;
+    if (_arrowDirections.containsKey(key)) {
+      if (event is KeyDownEvent) {
+        _startKeyTurn(key);
+      } else if (event is KeyUpEvent) {
+        _stopKeyTurn(key);
+      }
+      return KeyEventResult.handled;
+    }
+    final zoomIn = remoteZoomInKeys.contains(key);
+    if (zoomIn || remoteZoomOutKeys.contains(key)) {
+      if (isRemotePress(event)) {
+        _zoomBy(zoomIn ? 1 / _remoteZoomFactor : _remoteZoomFactor);
+      }
+      return KeyEventResult.handled;
+    }
+    if (remoteOkKeys.contains(key)) {
+      if (isRemotePress(event)) {
+        _focusAppBar();
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  /// Zoom in in the remote control layout, never Close: a second OK must not leave the viewer by surprise. Else the
+  /// first action, if any.
+  void _focusAppBar() {
+    final target = _zoomInFocus.context != null ? _zoomInFocus : _actionsFocus.traversalDescendants.firstOrNull;
+    target?.requestFocus();
+  }
+
+  static final _arrowDirections = {
+    LogicalKeyboardKey.arrowLeft: const Offset(-1, 0),
+    LogicalKeyboardKey.arrowRight: const Offset(1, 0),
+    LogicalKeyboardKey.arrowUp: const Offset(0, 1),
+    LogicalKeyboardKey.arrowDown: const Offset(0, -1),
+  };
+
+  void _startKeyTurn(LogicalKeyboardKey key) {
+    // A key, like a touch, stops the view where it is
+    _inertia.stop();
+    if (_heldArrows.containsKey(key)) {
+      return;
+    }
+    if (!_keyTurn.isActive) {
+      _keyTurnNow = Duration.zero;
+      unawaited(_keyTurn.start());
+    }
+    _heldArrows[key] = _keyTurnNow;
+  }
+
+  void _stopKeyTurn(LogicalKeyboardKey key) {
+    if (!_heldArrows.containsKey(key)) {
+      return;
+    }
+    // The speed the arrows had: once the last one is up, the view eases to a stop like after a flick (a short press
+    // nudges it by a few degrees that way)
+    final velocity = _keyTurnVelocity(_keyTurnNow);
+    _heldArrows.remove(key);
+    if (_heldArrows.isNotEmpty) {
+      return;
+    }
+    _keyTurn.stop();
+    _inertiaVelocity = velocity;
+    _lastInertiaTick = Duration.zero;
+    _inertia.stop();
+    unawaited(_inertia.start());
+  }
+
+  /// Degrees per second of longitude (x, right is positive) and latitude (y, up is positive) the held arrows turn at
+  /// [now]: faster the longer each is held, slower when zoomed in (see remoteTurnSpeed)
+  Offset _keyTurnVelocity(Duration now) {
+    var velocity = Offset.zero;
+    for (final MapEntry(key: key, value: since) in _heldArrows.entries) {
+      final speed = remoteTurnSpeed((now - since).inMicroseconds / 1e6, _fov);
+      final direction = _arrowDirections[key]!;
+      velocity += Offset(direction.dx * speed, direction.dy * speed * remotePitchFactor);
+    }
+    return velocity;
+  }
+
+  void _onKeyTurnTick(Duration elapsed) {
+    final dt = (elapsed - _keyTurnNow).inMicroseconds / 1e6;
+    _keyTurnNow = elapsed;
+    if (dt <= 0) {
+      return;
+    }
+    final velocity = _keyTurnVelocity(elapsed);
+    setState(() {
+      _longitude += velocity.dx * dt;
+      _latitude = (_latitude + velocity.dy * dt).clamp(-90.0, 90.0);
+    });
+  }
+
+  /// Shows the hint for the arrows once, in the remote control layout, when the sphere first shows
+  void _startLookHint() {
+    if (_lookHintStarted) {
+      return;
+    }
+    _lookHintStarted = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _lookHintVisible = true);
+      _lookHintTimer = Timer(_lookHintDuration, () {
+        if (mounted) {
+          setState(() => _lookHintVisible = false);
+        }
+      });
+    });
   }
 
   @override
@@ -1146,87 +1344,181 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     final gpanoCrop = isRaw ? null : _gpanoCrop;
     // A partial panorama covers what its GPano crop says, whatever the coverage
     final hasGPanoCrop = gpanoCrop != null && isPartialSphere(gpanoCrop);
+    // The remote control layout: zoom buttons, no gyroscope (a TV has none), a hint for the arrows
+    final tvMode = ref.watch(tvModeProvider);
+    if (tvMode && showsSphere) {
+      _startLookHint();
+    }
+    // The sphere covers the screen, under the app bar too: from a button, Left would land on it rather than on Close.
+    // Out of the directional moves while the app bar has the focus (set here, not while the focus changes); Down and
+    // Back go back to it.
+    _sphereFocus.skipTraversal = _appBarFocus.hasFocus;
 
-    return Scaffold(
+    final appBar = AppBar(
+      backgroundColor: Colors.transparent,
+      foregroundColor: Colors.white,
+      // Closes the viewer itself: through Navigator.maybePop, the PopScope below would take it for the Back key of
+      // a remote on the app bar, and only give the focus back to the sphere
+      leading: CloseButton(onPressed: tvMode ? () => Navigator.of(context).pop() : null),
+      actions: [
+        Focus(
+          focusNode: _actionsFocus,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (showsSphere && tvMode) ...[
+                IconButton(
+                  key: const Key('panorama_zoom_out'),
+                  icon: const Icon(Icons.zoom_out_rounded),
+                  tooltip: context.t.tv_zoom_out,
+                  onPressed: () => _zoomBy(_remoteZoomFactor),
+                ),
+                IconButton(
+                  key: const Key('panorama_zoom_in'),
+                  focusNode: _zoomInFocus,
+                  icon: const Icon(Icons.zoom_in_rounded),
+                  tooltip: context.t.tv_zoom_in,
+                  onPressed: () => _zoomBy(1 / _remoteZoomFactor),
+                ),
+              ],
+              if (showsSphere && !hasGPanoCrop && !isRaw)
+                IconButton(
+                  isSelected: view.coverage == SphereCoverage.half,
+                  icon: Text(
+                    view.coverage.shortLabel,
+                    style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                  tooltip: context.t.panorama_coverage,
+                  onPressed: () => _showNextCoverage(view),
+                ),
+              if (showsSphere && !isRaw)
+                IconButton(
+                  isSelected: stereoLayout != StereoLayout.mono,
+                  icon: const Icon(Icons.view_in_ar_outlined),
+                  selectedIcon: const Icon(Icons.view_in_ar),
+                  tooltip: stereoLayout.label(context.t),
+                  onPressed: () => _showNextStereoLayout(stereoLayout),
+                ),
+              if (showsSphere && !isHorizonOs && !tvMode)
+                IconButton(
+                  isSelected: _gyroEnabled,
+                  icon: const Icon(Icons.explore_outlined),
+                  selectedIcon: const Icon(Icons.explore),
+                  tooltip: context.t.panorama_gyroscope,
+                  onPressed: () => _setGyroEnabled(!_gyroEnabled),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+
+    final page = Scaffold(
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        leading: const CloseButton(),
-        actions: [
-          if (showsSphere && !hasGPanoCrop && !isRaw)
-            IconButton(
-              isSelected: view.coverage == SphereCoverage.half,
-              icon: Text(
-                view.coverage.shortLabel,
-                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
-              ),
-              tooltip: context.t.panorama_coverage,
-              onPressed: () => _showNextCoverage(view),
-            ),
-          if (showsSphere && !isRaw)
-            IconButton(
-              isSelected: stereoLayout != StereoLayout.mono,
-              icon: const Icon(Icons.view_in_ar_outlined),
-              selectedIcon: const Icon(Icons.view_in_ar),
-              tooltip: stereoLayout.label(context.t),
-              onPressed: () => _showNextStereoLayout(stereoLayout),
-            ),
-          if (showsSphere && !isHorizonOs)
-            IconButton(
-              isSelected: _gyroEnabled,
-              icon: const Icon(Icons.explore_outlined),
-              selectedIcon: const Icon(Icons.explore),
-              tooltip: context.t.panorama_gyroscope,
-              onPressed: () => _setGyroEnabled(!_gyroEnabled),
-            ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: appBar.preferredSize,
+        child: Focus(focusNode: _appBarFocus, onKeyEvent: _onAppBarKey, child: appBar),
       ),
-      body: !showsSphere
-          ? Center(
-              child: _imageError != null
-                  ? Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Text(context.t.error_loading_image, style: const TextStyle(color: Colors.white70)),
-                    )
-                  : const CircularProgressIndicator(color: Colors.white70),
-            )
-          : Listener(
-              onPointerDown: _onPointerDown,
-              onPointerUp: _onPointerUp,
-              onPointerCancel: _onPointerUp,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onScaleStart: (_) => _fovAtScaleStart = _fov,
-                onScaleUpdate: _onScaleUpdate,
-                onScaleEnd: _onScaleEnd,
-                onDoubleTap: _onDoubleTap,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CustomPaint(
-                      painter: _SpherePainter(
-                        image: image,
-                        crop: sphereCrop(view.coverage, gpanoCrop: gpanoCrop),
-                        textureRect: stereoLayout.leftEyeRect,
-                        longitude: _longitude,
-                        latitude: _latitude,
-                        fov: _fov,
-                      ),
-                      size: Size.infinite,
+      // The sphere takes the keys (it covers the screen: no focus ring around it)
+      body: NoFocusRing(
+        child: Focus(
+          focusNode: _sphereFocus,
+          autofocus: true,
+          onKeyEvent: _onSphereKey,
+          child: !showsSphere
+              ? Center(
+                  child: _imageError != null
+                      ? Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(context.t.error_loading_image, style: const TextStyle(color: Colors.white70)),
+                        )
+                      : const CircularProgressIndicator(color: Colors.white70),
+                )
+              : Listener(
+                  onPointerDown: _onPointerDown,
+                  onPointerUp: _onPointerUp,
+                  onPointerCancel: _onPointerUp,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onScaleStart: (_) => _fovAtScaleStart = _fov,
+                    onScaleUpdate: _onScaleUpdate,
+                    onScaleEnd: _onScaleEnd,
+                    onDoubleTap: _onDoubleTap,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CustomPaint(
+                          painter: _SpherePainter(
+                            image: image,
+                            crop: sphereCrop(view.coverage, gpanoCrop: gpanoCrop),
+                            textureRect: stereoLayout.leftEyeRect,
+                            longitude: _longitude,
+                            latitude: _latitude,
+                            fov: _fov,
+                          ),
+                          size: Size.infinite,
+                        ),
+                        if ((isRaw && calibrationSource != null) || _lookHintVisible)
+                          Positioned(
+                            left: 16,
+                            right: 16,
+                            bottom: 16,
+                            child: SafeArea(
+                              top: false,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                spacing: 8,
+                                children: [
+                                  if (_lookHintVisible) _HintPill(text: context.t.tv_look_hint),
+                                  if (isRaw && calibrationSource != null) _RawStitchLabel(source: calibrationSource),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                    if (isRaw && calibrationSource != null)
-                      Positioned(
-                        left: 16,
-                        right: 16,
-                        bottom: 16,
-                        child: SafeArea(top: false, child: _RawStitchLabel(source: calibrationSource)),
-                      ),
-                  ],
+                  ),
                 ),
-              ),
+        ),
+      ),
+    );
+
+    return PopScope(
+      // In the remote control layout, Back from the app bar goes back to the sphere first
+      canPop: !tvMode || !_appBarFocus.hasFocus,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _sphereFocus.requestFocus();
+        }
+      },
+      child: page,
+    );
+  }
+}
+
+/// A short line over the sphere, in the style of the label of a raw photo
+class _HintPill extends StatelessWidget {
+  const _HintPill({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Center(
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
+          ),
+        ),
+      ),
     );
   }
 }

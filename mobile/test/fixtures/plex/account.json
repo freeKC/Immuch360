@@ -1,0 +1,16 @@
+{
+  "MyPlex": {
+    "authToken": "TEST-ACCOUNT-TOKEN-0000",
+    "username": "test-user@example.com",
+    "mappingState": "mapped",
+    "mappingError": "",
+    "signInState": "ok",
+    "publicAddress": "203.0.113.7",
+    "publicPort": 32401,
+    "privateAddress": "192.0.2.20",
+    "privatePort": 32400,
+    "subscriptionFeatures": "",
+    "subscriptionActive": false,
+    "subscriptionState": "Inactive"
+  }
+}

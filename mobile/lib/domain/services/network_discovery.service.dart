@@ -1,17 +1,33 @@
-// Finds the SMB, WebDAV and DLNA servers of the local network for the form that adds a share. Several probes run side
-// by side (mDNS / DNS-SD, a scan of the subnet, SSDP, see network_discovery_probes.dart); what they find is merged into
-// one list that grows while they run. A probe that fails, or a platform without what it needs, only means fewer
-// servers.
+// Finds the SMB, WebDAV and DLNA servers, the Plex Media Servers and the Tapo cameras of the local network for the
+// forms that add a share or a camera. Several probes run side by side (mDNS / DNS-SD, a scan of the subnet, SSDP, GDM
+// for Plex, the TP-Link discovery for Tapo, see network_discovery_probes.dart); what they find is merged into one list
+// that grows while they run. A probe that fails, or a platform without what it needs, only means fewer servers.
 
 import 'dart:async';
 
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('NetworkDiscovery');
 
-/// How a server was found
-enum DiscoveryOrigin { mdns, scan, ssdp }
+/// How a server was found: mDNS / DNS-SD, the scan of the subnet, SSDP (DLNA), GDM (Plex), the TP-Link discovery
+/// protocol (Tapo)
+enum DiscoveryOrigin {
+  mdns,
+  scan,
+  ssdp,
+  gdm,
+  tdp;
+
+  /// Which find of a server is kept when two probes find it (see [DiscoveredServer.mergedWith]), the lowest first:
+  /// mDNS has the name the server gives itself, TDP the model and the MAC address of a camera
+  int get rank => switch (this) {
+    mdns => 0,
+    tdp => 1,
+    scan || ssdp || gdm => 2,
+  };
+}
 
 /// A server found on the network, with what the form needs to reach it
 class DiscoveredServer {
@@ -27,6 +43,9 @@ class DiscoveredServer {
     this.discoveryId,
     this.username,
     this.isPhoneShare = false,
+    this.plexHash,
+    this.version,
+    this.camera,
   });
 
   /// The IP address or the host name to put in the server field
@@ -59,20 +78,36 @@ class DiscoveredServer {
   /// The gallery of a phone running this app, shared on the network ("Share this phone on the network")
   final bool isPhoneShare;
 
+  /// The 32 hex digits of the plex.direct certificate a Plex server announces (the Host header of its GDM answer).
+  /// Not part of the equality.
+  final String? plexHash;
+
+  /// The Plex Media Server version, the firmware of a Tapo camera. Not part of the equality.
+  final String? version;
+
+  /// What a Tapo camera announces of its login (the generation, the form of the user name), for its first test. Not
+  /// part of the equality.
+  final TapoCameraInfo? camera;
+
   /// What tells two finds of the same server apart from two servers: [address] when known, else [host]. One address
   /// and port may serve several DLNA media servers (a NAS, a server with embedded devices): each is told apart by its
-  /// UDN, else by its description path.
+  /// UDN, else by its description path; several Plex servers by their machine id. A camera found by TDP and by the
+  /// scan has the same address, type and port (443), so it shows once.
   (String, NetworkSourceType, int, String) get mergeKey => (
     (address ?? host).toLowerCase(),
     type,
     port,
-    type == NetworkSourceType.dlna ? (discoveryId ?? path).toLowerCase() : '',
+    switch (type) {
+      NetworkSourceType.dlna => (discoveryId ?? path).toLowerCase(),
+      NetworkSourceType.plex => (discoveryId ?? '').toLowerCase(),
+      NetworkSourceType.smb || NetworkSourceType.webdav || NetworkSourceType.tapo => '',
+    },
   );
 
-  /// The same server as found by two probes: the mDNS find wins (it has the name the server gives itself), a known
-  /// WebDAV path, discovery id and user name are kept
+  /// The same server as found by two probes: the find of the better origin wins (see [DiscoveryOrigin.rank]; the
+  /// first find on a tie), a known WebDAV path, discovery id, user name, Plex hash, version and camera login are kept
   DiscoveredServer mergedWith(DiscoveredServer other) {
-    final preferred = other.origin == DiscoveryOrigin.mdns && origin != DiscoveryOrigin.mdns ? other : this;
+    final preferred = other.origin.rank < origin.rank ? other : this;
     final second = identical(preferred, this) ? other : this;
     return DiscoveredServer(
       host: preferred.host,
@@ -86,6 +121,9 @@ class DiscoveredServer {
       discoveryId: preferred.discoveryId ?? second.discoveryId,
       username: preferred.username ?? second.username,
       isPhoneShare: preferred.isPhoneShare || second.isPhoneShare,
+      plexHash: preferred.plexHash ?? second.plexHash,
+      version: preferred.version ?? second.version,
+      camera: preferred.camera ?? second.camera,
     );
   }
 
@@ -182,7 +220,10 @@ class NetworkDiscoveryService {
           merged.useTls == known.useTls &&
           merged.discoveryId == known.discoveryId &&
           merged.username == known.username &&
-          merged.isPhoneShare == known.isPhoneShare) {
+          merged.isPhoneShare == known.isPhoneShare &&
+          merged.plexHash == known.plexHash &&
+          merged.version == known.version &&
+          merged.camera == known.camera) {
         return;
       }
       found[key] = merged;

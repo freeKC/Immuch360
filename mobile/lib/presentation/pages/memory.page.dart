@@ -12,7 +12,9 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/memory/memory_bottom_info.widget.dart';
 import 'package:immich_mobile/presentation/widgets/memory/memory_card.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/haptic_feedback.provider.dart';
 import 'package:immich_mobile/utils/system_ui.utils.dart';
 import 'package:immich_mobile/widgets/memories/memory_epilogue.dart';
@@ -186,6 +188,84 @@ class MemoryPage extends HookConsumerWidget {
       ref.read(assetViewerProvider.notifier).setAsset(asset);
     }
 
+    /// Focuses the button of the page on screen nearest to its top (Close) or to its bottom (View in timeline, or Start
+    /// over on the last page), which the taps of a phone need no focus for
+    void focusButton(FocusNode root, {required bool top}) {
+      final screen = root.rect;
+      final buttons = root.traversalDescendants.where((button) => screen.contains(button.rect.center)).toList()
+        ..sort((a, b) => a.rect.center.dy.compareTo(b.rect.center.dy));
+      if (buttons.isNotEmpty) {
+        (top ? buttons.first : buttons.last).requestFocus();
+      }
+    }
+
+    /// The keys of a remote control, a keyboard or a game pad while no button has the focus, as the taps on the halves
+    /// of the screen: left and right go to the previous or next photo, on to the next memory at the end of one, OK and
+    /// the play keys pause or play a video. Up goes to Close, Down to View in timeline (Start over on the last page,
+    /// where OK goes too), and the opposite arrow comes back to the photo. The next and previous keys go to the next or
+    /// previous memory.
+    KeyEventResult onKey(FocusNode node, KeyEvent event) {
+      final key = event.logicalKey;
+      final press = isRemotePress(event);
+      final assets = currentMemory.value.assets;
+      final index = currentAssetPage.value;
+      final ok = remoteOkKeys.contains(key);
+      if (remoteNextItemKeys.contains(key) || remotePreviousItemKeys.contains(key)) {
+        if (press) {
+          remoteNextItemKeys.contains(key) ? toNextMemory() : toPreviousMemory();
+        }
+        return KeyEventResult.handled;
+      }
+      // The last page has no photo: Start over
+      final onEpilogue = memoryPageController.hasClients && memoryPageController.page?.round() == memories.length;
+      if (ok && node.hasPrimaryFocus && onEpilogue) {
+        if (press) {
+          focusButton(node, top: false);
+        }
+        return KeyEventResult.handled;
+      }
+      // OK belongs to the focused button, if any (Close); the play keys work from anywhere
+      if ((ok && node.hasPrimaryFocus) || remotePlayPauseKeys.contains(key)) {
+        if (press && index < assets.length && assets[index].isVideo) {
+          final player = ref.read(videoPlayerProvider(assets[index].id).notifier);
+          final status = ref.read(videoPlayerProvider(assets[index].id)).status;
+          final isPlaying = status == VideoPlaybackStatus.playing || status == VideoPlaybackStatus.buffering;
+          final play = ok ? !isPlaying : remotePlayPauseWantsPlay(key, isPlaying: isPlaying);
+          unawaited(play ? player.play() : player.pause());
+        }
+        return KeyEventResult.handled;
+      }
+      if (!node.hasPrimaryFocus) {
+        // A button has the focus: Down from Close and Up from the bottom ones come back to the photo, where the
+        // traversal would go from one button to the other
+        final button = FocusManager.instance.primaryFocus;
+        final vertical = key == LogicalKeyboardKey.arrowUp || key == LogicalKeyboardKey.arrowDown;
+        if (button != null && vertical) {
+          final above = button.rect.center.dy < node.rect.center.dy;
+          if (above == (key == LogicalKeyboardKey.arrowDown)) {
+            if (press) {
+              node.requestFocus();
+            }
+            return KeyEventResult.handled;
+          }
+        }
+        return KeyEventResult.ignored;
+      }
+      if (key == LogicalKeyboardKey.arrowLeft || key == LogicalKeyboardKey.arrowRight) {
+        if (press) {
+          key == LogicalKeyboardKey.arrowRight ? toNextAsset(index) : toPreviousAsset(index);
+        }
+        return KeyEventResult.handled;
+      }
+      if (key == LogicalKeyboardKey.arrowUp || key == LogicalKeyboardKey.arrowDown) {
+        if (press) {
+          focusButton(node, top: key == LogicalKeyboardKey.arrowUp);
+        }
+        return KeyEventResult.handled;
+      }
+      return KeyEventResult.ignored;
+    }
+
     /* Notification listener is used instead of OnPageChanged callback since OnPageChanged is called
      * when the page in the **center** of the viewer changes. We want to reset currentAssetPage only when the final
      * page during the end of scroll is different than the current page
@@ -207,151 +287,155 @@ class MemoryPage extends HookConsumerWidget {
 
         return false;
       },
-      child: Scaffold(
-        backgroundColor: bgColor,
-        body: SafeArea(
-          child: PageView.builder(
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-            scrollDirection: Axis.vertical,
-            controller: memoryPageController,
-            onPageChanged: (pageNumber) {
-              ref.read(hapticFeedbackProvider.notifier).mediumImpact();
-              if (pageNumber < memories.length) {
-                currentMemoryIndex.value = pageNumber;
-                currentMemory.value = memories[pageNumber];
+      child: Focus(
+        autofocus: true,
+        onKeyEvent: onKey,
+        child: Scaffold(
+          backgroundColor: bgColor,
+          body: SafeArea(
+            child: PageView.builder(
+              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              scrollDirection: Axis.vertical,
+              controller: memoryPageController,
+              onPageChanged: (pageNumber) {
+                ref.read(hapticFeedbackProvider.notifier).mediumImpact();
+                if (pageNumber < memories.length) {
+                  currentMemoryIndex.value = pageNumber;
+                  currentMemory.value = memories[pageNumber];
 
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  MemoryPage.setMemory(ref, memories[pageNumber]);
-                });
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    MemoryPage.setMemory(ref, memories[pageNumber]);
+                  });
 
-                // Update currentAsset to the first asset of the new memory
-                if (memories[pageNumber].assets.isNotEmpty) {
-                  currentAsset.value = memories[pageNumber].assets.first;
+                  // Update currentAsset to the first asset of the new memory
+                  if (memories[pageNumber].assets.isNotEmpty) {
+                    currentAsset.value = memories[pageNumber].assets.first;
+                  }
                 }
-              }
 
-              currentAssetPage.value = 0;
+                currentAssetPage.value = 0;
 
-              updateProgressText();
-            },
-            itemCount: memories.length + 1,
-            itemBuilder: (context, mIndex) {
-              // Build last page
-              if (mIndex == memories.length) {
-                return MemoryEpilogue(
-                  onStartOver: () => memoryPageController.animateToPage(
-                    0,
-                    duration: const Duration(seconds: 1),
-                    curve: Curves.easeInOut,
-                  ),
-                );
-              }
-
-              final yearsAgo = DateTime.now().year - memories[mIndex].data.year;
-              final title = context.t.years_ago(years: yearsAgo);
-              // Build horizontal page
-              final assetController = memoryAssetPageControllers[mIndex];
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0, bottom: 2.0),
-                    child: AnimatedBuilder(
-                      animation: assetController,
-                      builder: (context, child) {
-                        double value = 0.0;
-                        if (assetController.hasClients) {
-                          // We can only access [page] if this has clients
-                          value = assetController.page ?? 0;
-                        }
-                        return MemoryProgressIndicator(
-                          ticks: memories[mIndex].assets.length,
-                          value: (value + 1) / memories[mIndex].assets.length,
-                        );
-                      },
+                updateProgressText();
+              },
+              itemCount: memories.length + 1,
+              itemBuilder: (context, mIndex) {
+                // Build last page
+                if (mIndex == memories.length) {
+                  return MemoryEpilogue(
+                    onStartOver: () => memoryPageController.animateToPage(
+                      0,
+                      duration: const Duration(seconds: 1),
+                      curve: Curves.easeInOut,
                     ),
-                  ),
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        PageView.builder(
-                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                          controller: assetController,
-                          onPageChanged: onAssetChanged,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: memories[mIndex].assets.length,
-                          itemBuilder: (context, index) {
-                            final asset = memories[mIndex].assets[index];
-                            return Stack(
-                              children: [
-                                ColoredBox(
-                                  color: Colors.black,
-                                  child: MemoryCard(
-                                    asset: asset,
-                                    title: title,
-                                    showTitle: index == 0,
-                                    isCurrent: mIndex == currentMemoryIndex.value && index == currentAssetPage.value,
-                                  ),
-                                ),
-                                Positioned.fill(
-                                  child: Row(
-                                    children: [
-                                      // Left side of the screen
-                                      Expanded(
-                                        child: GestureDetector(
-                                          behavior: HitTestBehavior.translucent,
-                                          onTap: () {
-                                            toPreviousAsset(index);
-                                          },
-                                        ),
-                                      ),
+                  );
+                }
 
-                                      // Right side of the screen
-                                      Expanded(
-                                        child: GestureDetector(
-                                          behavior: HitTestBehavior.translucent,
-                                          onTap: () {
-                                            toNextAsset(index);
-                                          },
-                                        ),
-                                      ),
-                                    ],
+                final yearsAgo = DateTime.now().year - memories[mIndex].data.year;
+                final title = context.t.years_ago(years: yearsAgo);
+                // Build horizontal page
+                final assetController = memoryAssetPageControllers[mIndex];
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0, bottom: 2.0),
+                      child: AnimatedBuilder(
+                        animation: assetController,
+                        builder: (context, child) {
+                          double value = 0.0;
+                          if (assetController.hasClients) {
+                            // We can only access [page] if this has clients
+                            value = assetController.page ?? 0;
+                          }
+                          return MemoryProgressIndicator(
+                            ticks: memories[mIndex].assets.length,
+                            value: (value + 1) / memories[mIndex].assets.length,
+                          );
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          PageView.builder(
+                            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                            controller: assetController,
+                            onPageChanged: onAssetChanged,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: memories[mIndex].assets.length,
+                            itemBuilder: (context, index) {
+                              final asset = memories[mIndex].assets[index];
+                              return Stack(
+                                children: [
+                                  ColoredBox(
+                                    color: Colors.black,
+                                    child: MemoryCard(
+                                      asset: asset,
+                                      title: title,
+                                      showTitle: index == 0,
+                                      isCurrent: mIndex == currentMemoryIndex.value && index == currentAssetPage.value,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                        Positioned(
-                          top: 8,
-                          left: 8,
-                          child: MaterialButton(
-                            minWidth: 0,
-                            onPressed: () {
-                              // auto_route doesn't invoke pop scope, so
-                              // turn off full screen mode here
-                              // https://github.com/Milad-Akarie/auto_route_library/issues/1799
-                              unawaited(context.maybePop());
-                              unawaited(restoreEdgeToEdge());
+                                  Positioned.fill(
+                                    child: Row(
+                                      children: [
+                                        // Left side of the screen
+                                        Expanded(
+                                          child: GestureDetector(
+                                            behavior: HitTestBehavior.translucent,
+                                            onTap: () {
+                                              toPreviousAsset(index);
+                                            },
+                                          ),
+                                        ),
+
+                                        // Right side of the screen
+                                        Expanded(
+                                          child: GestureDetector(
+                                            behavior: HitTestBehavior.translucent,
+                                            onTap: () {
+                                              toNextAsset(index);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
                             },
-                            shape: const CircleBorder(),
-                            color: Colors.white.withValues(alpha: 0.2),
-                            elevation: 0,
-                            child: const Icon(Icons.close_rounded, color: Colors.white),
                           ),
-                        ),
-                        if (currentAsset.value != null && currentAsset.value!.isVideo)
                           Positioned(
-                            bottom: 24,
-                            right: 32,
-                            child: Icon(Icons.videocam_outlined, color: Colors.grey[200]),
+                            top: 8,
+                            left: 8,
+                            child: MaterialButton(
+                              minWidth: 0,
+                              onPressed: () {
+                                // auto_route doesn't invoke pop scope, so
+                                // turn off full screen mode here
+                                // https://github.com/Milad-Akarie/auto_route_library/issues/1799
+                                unawaited(context.maybePop());
+                                unawaited(restoreEdgeToEdge());
+                              },
+                              shape: const CircleBorder(),
+                              color: Colors.white.withValues(alpha: 0.2),
+                              elevation: 0,
+                              child: const Icon(Icons.close_rounded, color: Colors.white),
+                            ),
                           ),
-                      ],
+                          if (currentAsset.value != null && currentAsset.value!.isVideo)
+                            Positioned(
+                              bottom: 24,
+                              right: 32,
+                              child: Icon(Icons.videocam_outlined, color: Colors.grey[200]),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                  MemoryBottomInfo(memory: memories[mIndex], title: title),
-                ],
-              );
-            },
+                    MemoryBottomInfo(memory: memories[mIndex], title: title),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

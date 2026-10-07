@@ -6,9 +6,11 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/smb_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/upnp/dlna_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
+import 'package:immich_mobile/infrastructure/tapo/tapo_file_system.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:logging/logging.dart';
@@ -21,6 +23,8 @@ final networkFileSystemOpenersProvider = Provider<Map<NetworkSourceType, Network
     NetworkSourceType.smb: SmbFileSystem.open,
     NetworkSourceType.webdav: WebDavFileSystem.open,
     NetworkSourceType.dlna: DlnaFileSystem.open,
+    NetworkSourceType.plex: PlexFileSystem.open,
+    NetworkSourceType.tapo: TapoFileSystem.open,
   };
 });
 

@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà bạn có thể nhìn quanh bên trong, đồng thời là trình phát miễn phí cho ảnh và video phẳng, 360°, 3D và VR180, trên điện thoại và máy tính bảng Android, iPhone và iPad, cùng Meta Quest 3 và 3S. Ứng dụng dành cho những ai chụp bằng máy ảnh 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) hoặc chế độ ảnh cầu của điện thoại, hoặc có kính thực tế ảo, và muốn xem ảnh của chính mình từ máy chủ Immich, từ chính điện thoại, từ NAS hay máy chủ đa phương tiện: cùng máy chủ, cùng tài khoản, không cần plugin trên máy chủ, hoặc không cần máy chủ nào cả.
+Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà bạn có thể nhìn quanh bên trong, đồng thời là trình phát miễn phí cho ảnh và video phẳng, 360°, 3D và VR180, trên điện thoại và máy tính bảng Android, iPhone và iPad, Meta Quest 3 và 3S, và từ bản dựng 20 là Android TV và Google TV. Ứng dụng dành cho những ai chụp bằng máy ảnh 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) hoặc chế độ ảnh cầu của điện thoại, hoặc có kính thực tế ảo, và muốn xem ảnh của chính mình từ máy chủ Immich, từ chính điện thoại, từ NAS, máy chủ đa phương tiện hay máy chủ Plex: cùng máy chủ, cùng tài khoản, không cần plugin trên máy chủ, hoặc không cần máy chủ nào cả. Từ bản dựng 20, ứng dụng còn hiển thị camera Tapo, cả hình ảnh trực tiếp lẫn các bản ghi trên thẻ nhớ của chúng.
 
 <p align="center">
   <sub>Bản fork không chính thức. Không liên kết với Immich hay FUTO. Tên đọc là "I am much 360".</sub>
@@ -15,7 +15,8 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">đang xét duyệt</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store đang xét duyệt
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store đang xét duyệt &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
     <td align="center" width="33%"><h3>🎥 2.5D tích hợp</h3>Chiều sâu trên màn hình phẳng từ video lập thể, góc nhìn đi theo đầu bạn (thử nghiệm, điện thoại và máy tính bảng)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Một ứng dụng, ba nền tảng, 3D thật trong kính</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Một ứng dụng cho điện thoại, máy tính bảng và kính, 3D thật trong kính, và từ bản dựng 20 trên Android TV với điều khiển từ xa</td>
     <td align="center"><h3>🔌 Có hoặc không có máy chủ</h3>Máy chủ Immich của bạn, hoặc thư viện ảnh của chính điện thoại, không cần tài khoản</td>
     <td align="center"><h3>🗄️ Chia sẻ mạng</h3>Samba (SMB), WebDAV và, từ bản dựng 19, máy chủ đa phương tiện DLNA, được tìm thấy trên mạng và đọc trực tiếp, không tải gì về, và gửi lên Immich khi bạn chọn. Từ bản dựng 19, điện thoại còn chia sẻ thư viện ảnh của chính nó cho kính</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Trên TV</h3>Từ bản dựng 20, cùng một APK trên Android TV và Google TV: ảnh và video 360°, máy chủ và các chia sẻ của bạn, với điều khiển từ xa</td>
+    <td align="center"><h3>🎬 Plex, không cần plex.tv</h3>Từ bản dựng 20, các thư viện Plex của bạn, phát từ tệp gốc để 360° vẫn là 360°, ở nhà và khi đi xa</td>
+    <td align="center"><h3>📹 Camera Tapo</h3>Từ bản dựng 20, hình ảnh trực tiếp và các bản ghi trên thẻ nhớ, chỉ trong mạng của bạn, và gửi một đoạn lên Immich khi bạn chọn</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 - **"Ảnh 360° của tôi hiện thành một dải phẳng bị kéo giãn, còn video 360° thì phát phẳng."** Xem [Ảnh và video 360° dạng hình cầu](#360-photos-and-videos-as-a-sphere).
 - **"Tôi không có máy chủ và không muốn tạo tài khoản."** Xem [Không cần máy chủ hay tài khoản](#without-a-server-or-an-account).
 - **"Tôi muốn xem video trên NAS bằng điện thoại hoặc trong kính mà không phải sao chép."** Xem [Chia sẻ mạng](#network-shares-a-nas-a-computer-or-a-media-server).
+- **"Plex phát video 360° của tôi ở dạng phẳng, và tôi muốn xem thư viện Plex trong kính, trên TV và khi ở xa nhà."** Xem [Plex Media Server, không cần plex.tv](#plex-media-server-without-plextv).
 - **"Ảnh của tôi nằm trên điện thoại, và tôi không có máy tính hay NAS để đặt chúng vào cho kính."** Xem [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network).
+- **"Tôi muốn xem camera Tapo và các đoạn ghi đêm qua mà không cần ứng dụng Tapo, và giữ một đoạn trong Immich."** Xem [Camera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"Tệp Insta360 của tôi cần ứng dụng Insta360 thì mới xem được"** (cả tệp GoPro .360 và DJI .osv). Xem [Tệp thô của máy ảnh 360°](#raw-360-camera-files-without-the-cameras-app).
 - **"Video 3D của tôi bị nhân đôi, còn video VR180 bị kéo giãn khắp xung quanh."** Xem [3D và VR180](#3d-and-vr180-photos-and-videos) và [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"Tôi có ảnh không gian từ iPhone."** Xem [Ảnh và video không gian của Apple](#apple-spatial-photos-and-videos).
 - **"Trên điện thoại thì chạy rồi, nhưng tôi muốn dùng trong Quest."** Xem [Trong kính Meta Quest 3](#in-the-meta-quest-3-headset).
+- **"Tôi muốn xem ảnh và video 360° của mình, cùng video trên NAS hoặc máy chủ Plex, trên TV, bằng điều khiển từ xa."** Xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Tôi không tìm được ảnh 360° giữa mọi ảnh khác."** Xem [Danh sách 360°](#find-your-360-shots-the-360-list).
 - **"Video 360° của tôi bị giật, hoặc phát ra một bản mờ."** Xem [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters).
 - **"Tôi có giữ được những gì ứng dụng Immich làm không?"** Có, với hai thay đổi nhỏ, xem [Mọi thứ khác là Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Lựa chọn được ghi nhớ trên điện thoại và không thay đổi gì
 
 Bạn không có máy chủ Immich, hoặc không muốn tạo tài khoản: bạn chỉ muốn ảnh 360° trên điện thoại mở ra thành hình cầu mà bạn có thể xoay bằng con quay hồi chuyển. Ứng dụng Immich yêu cầu đăng nhập trước.
 
-Trên trang đăng nhập, "Sử dụng không cần máy chủ" mở Immuch360 với ảnh và video của chính thiết bị, cùng các trình xem 360°, 3D, VR180 và Spatial, danh sách 360° và chia sẻ mạng, không cần tài khoản Immich. Các tính năng máy chủ bị ẩn hoặc làm mờ cho đến khi bạn kết nối máy chủ; không có gì rời khỏi thiết bị. Trên Meta Quest 3, nó mở ảnh và video của chính kính.
+Trên trang đăng nhập, "Sử dụng không cần máy chủ" mở Immuch360 với ảnh và video của chính thiết bị, cùng các trình xem 360°, 3D, VR180 và Spatial, danh sách 360° và chia sẻ mạng (từ bản dựng 20 có thêm máy chủ Plex và camera Tapo), không cần tài khoản Immich. Các tính năng máy chủ bị ẩn hoặc làm mờ cho đến khi bạn kết nối máy chủ; không có gì rời khỏi thiết bị. Trên Meta Quest 3, nó mở ảnh và video của chính kính; trên TV, vốn không có ảnh và video riêng, nó dẫn bạn tới chia sẻ mạng (xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Thẻ Thư viện khi không có máy chủ: mục 360° ở trên cùng, sau đó Trên thiết bị này với hai ảnh 360°, và Chia sẻ mạng với một chia sẻ tên NAS">
 
@@ -126,7 +135,7 @@ Trên trang đăng nhập, "Sử dụng không cần máy chủ" mở Immuch360 
 
 Video 360° của bạn nằm trên NAS hoặc máy tính, và bạn muốn xem chúng trên điện thoại hoặc trong kính mà không phải sao chép trước. Với kính, mọi người thường phải sao chép từng tệp qua cáp; các máy chủ đa phương tiện như Plex và Jellyfin phát video 360° ở dạng phẳng, như các yêu cầu trên diễn đàn của họ mô tả; ứng dụng Immich chỉ đọc máy chủ Immich của bạn.
 
-Immuch360 duyệt và phát ảnh, video của bất kỳ máy chủ nào hỗ trợ SMB (Samba, Windows), WebDAV hoặc, từ bản dựng 19, DLNA/UPnP (máy chủ đa phương tiện: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS hoặc TV box), trực tiếp từ chia sẻ. Ứng dụng tự tìm các máy chủ trong mạng của bạn và phát tệp trực tiếp trong cùng các trình xem như phần còn lại của ứng dụng (360°, 3D, VR180, Spatial 2.5D, chế độ xem nhập vai trên Quest), có hoặc không có máy chủ Immich, trên điện thoại và trên Meta Quest 3. Không có gì được tải về. Khi đã kết nối máy chủ, các tệp bạn chọn có thể được gửi lên tài khoản Immich của bạn (từ bản dựng 15).
+Immuch360 duyệt và phát ảnh, video của bất kỳ máy chủ nào hỗ trợ SMB (Samba, Windows), WebDAV hoặc, từ bản dựng 19, DLNA/UPnP (máy chủ đa phương tiện: Jellyfin, minidlna, Gerbera, Emby, NAS hoặc TV box), trực tiếp từ chia sẻ. Từ bản dựng 20, Plex Media Server có loại riêng, xem [Plex Media Server, không cần plex.tv](#plex-media-server-without-plextv). Ứng dụng tự tìm các máy chủ trong mạng của bạn và phát tệp trực tiếp trong cùng các trình xem như phần còn lại của ứng dụng (360°, 3D, VR180, Spatial 2.5D, chế độ xem nhập vai trên Quest), có hoặc không có máy chủ Immich, trên điện thoại và trên Meta Quest 3. Không có gì được tải về. Khi đã kết nối máy chủ, các tệp bạn chọn có thể được gửi lên tài khoản Immich của bạn (từ bản dựng 15).
 
 | Thêm chia sẻ | Một thư mục của chia sẻ |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 duyệt và phát ảnh, video của bất kỳ máy chủ nào hỗ t
 
 ### Thêm chia sẻ
 
-1. Mở thẻ Thư viện, rồi Chia sẻ mạng. Lần đầu, trang ghi "Chưa có chia sẻ nào" với nút "Thêm chia sẻ"; dấu + ở góc trên bên phải làm việc tương tự bất cứ lúc nào.
-2. Trang "Thêm chia sẻ" trước tiên tìm các máy chủ trong mạng của bạn và liệt kê chúng dưới "Tìm thấy trên mạng", kèm loại (SMB, WebDAV, DLNA, Điện thoại). Việc tìm kiếm mất tối đa khoảng sáu giây; "Quét lại" bắt đầu lại từ đầu. Nó dùng Bonjour/mDNS và một lượt quét mạng cục bộ được xác nhận bằng trao đổi SMB hoặc WebDAV thật, và từ bản dựng 19 thêm tìm kiếm SSDP cho máy chủ đa phương tiện DLNA.
-3. Chạm vào một máy chủ: loại, máy chủ, cổng và đường dẫn được điền sẵn.
-4. Không có trong danh sách? Điền biểu mẫu thủ công. Loại: "SMB (Samba, chia sẻ Windows)", "WebDAV (Nextcloud, Synology và các loại khác)" hoặc "Máy chủ đa phương tiện DLNA (Plex, Jellyfin, NAS, TV box)". Sau đó Tên, "Tên hoặc địa chỉ máy chủ" (tên hoặc địa chỉ; một địa chỉ đầy đủ như `smb://nas/photos`, `\\nas\photos` hay `https://nas:5006/photos` sẽ điền các trường khác), "Cổng (không bắt buộc)" khi không phải cổng thông thường, "Chia sẻ" cho SMB hoặc "Đường dẫn của địa chỉ WebDAV" cho WebDAV, "Thư mục bắt đầu (không bắt buộc)", "Tên người dùng" và "Mật khẩu", và "Kết nối an toàn (HTTPS)" cho WebDAV.
+1. Mở thẻ Thư viện, rồi Chia sẻ mạng. Lần đầu, trang ghi "Chưa có chia sẻ nào" với nút "Thêm chia sẻ"; dấu + ở góc trên bên phải làm việc tương tự bất cứ lúc nào. Từ bản dựng 20, cả hai đều hỏi bạn muốn thêm gì: "Một chia sẻ mạng (NAS, máy tính, máy chủ đa phương tiện)", "Một Plex Media Server" hoặc "Một camera Tapo". Chọn mục đầu tiên.
+2. Trang "Thêm chia sẻ" trước tiên tìm các máy chủ trong mạng của bạn và liệt kê chúng dưới "Tìm thấy trên mạng", kèm loại (SMB, WebDAV, DLNA, Điện thoại, và từ bản dựng 20 là Plex và Tapo). Việc tìm kiếm mất tối đa khoảng sáu giây; "Quét lại" bắt đầu lại từ đầu. Nó dùng Bonjour/mDNS và một lượt quét mạng cục bộ được xác nhận bằng trao đổi SMB hoặc WebDAV thật, từ bản dựng 19 thêm tìm kiếm SSDP cho máy chủ đa phương tiện DLNA, và từ bản dựng 20 thêm GDM, giao thức khám phá của Plex, cùng giao thức khám phá của TP-Link cho camera Tapo.
+3. Chạm vào một máy chủ: loại, máy chủ, cổng và đường dẫn được điền sẵn. Máy chủ Plex hoặc camera Tapo thì mở trang riêng của nó, đã điền sẵn.
+4. Không có trong danh sách? Điền biểu mẫu thủ công. Loại: "SMB (Samba, chia sẻ Windows)", "WebDAV (Nextcloud, Synology và các loại khác)", "Máy chủ đa phương tiện DLNA (Jellyfin, NAS, TV box)" hoặc, từ bản dựng 20, "Plex Media Server", mục này mở trang của [Plex Media Server, không cần plex.tv](#plex-media-server-without-plextv). Sau đó Tên, "Tên hoặc địa chỉ máy chủ" (tên hoặc địa chỉ; một địa chỉ đầy đủ như `smb://nas/photos`, `\\nas\photos` hay `https://nas:5006/photos` sẽ điền các trường khác), "Cổng (không bắt buộc)" khi không phải cổng thông thường, "Chia sẻ" cho SMB hoặc "Đường dẫn của địa chỉ WebDAV" cho WebDAV, "Thư mục bắt đầu (không bắt buộc)", "Tên người dùng" và "Mật khẩu", và "Kết nối an toàn (HTTPS)" cho WebDAV.
 5. SMB: khi đã nhập máy chủ và tên người dùng, "Chọn một chia sẻ" liệt kê các chia sẻ của máy chủ.
 6. DLNA: máy chủ đa phương tiện không có tên người dùng hay mật khẩu. Nhập máy chủ, cổng và "Đường dẫn mô tả" của bản mô tả thiết bị (`/rootDesc.xml` với minidlna), hoặc dán toàn bộ địa chỉ, ví dụ `http://192.168.1.10:8200/rootDesc.xml`, vào trường máy chủ.
 7. Chạm "Kiểm tra kết nối". Kết quả là "Đã kết nối, N mục trong thư mục bắt đầu", hoặc lý do thất bại. Sau đó chạm Lưu ở cuối biểu mẫu.
@@ -155,6 +164,7 @@ Tên người dùng với mật khẩu trống được gửi đúng như vậy:
 
 360°, 3D và VR180 được nhận diện từ siêu dữ liệu GPano hoặc siêu dữ liệu hình cầu của tệp, đọc bằng yêu cầu theo dải byte, và VR180 còn từ tên tệp. Từ bản dựng 16, tệp thô Insta360 cũng được nhận diện (ảnh .insp theo tên hoặc khối hiệu chuẩn của máy ảnh, video .insv theo tên và khung hình) và được ghép nối.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Gửi tệp của chia sẻ lên Immich
 
 Từ bản dựng 15, khi bạn đã kết nối máy chủ:
@@ -177,17 +187,67 @@ Từ bản dựng 19, ứng dụng gửi yêu cầu tìm kiếm SSDP cho máy ch
 <a id="a-share-that-moved"></a>
 ### Chia sẻ đã đổi địa chỉ
 
-Từ bản dựng 19, chia sẻ DLNA và chia sẻ điện thoại (xem [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network)) giữ mã định danh mà máy chủ của chúng công bố. Khi một chia sẻ không còn trả lời ở địa chỉ cũ (địa chỉ mới do bộ định tuyến cấp, máy chủ khởi động lại ở cổng khác), trang thư mục của nó hiện "Đang tìm (tên) trên mạng" và chuyển chia sẻ tới nơi nó đang trả lời: ngay lập tức với máy chủ DLNA, vốn không có mật khẩu, và sau một xác nhận "Dùng địa chỉ mới?", hiển thị cả hai địa chỉ, với chia sẻ có tên người dùng và mật khẩu, vì chúng sẽ được gửi tới địa chỉ mới.
+Từ bản dựng 19, chia sẻ DLNA và chia sẻ điện thoại (xem [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network)) giữ mã định danh mà máy chủ của chúng công bố. Khi một chia sẻ không còn trả lời ở địa chỉ cũ (địa chỉ mới do bộ định tuyến cấp, máy chủ khởi động lại ở cổng khác), trang thư mục của nó hiện "Đang tìm (tên) trên mạng" và chuyển chia sẻ tới nơi nó đang trả lời: ngay lập tức với máy chủ DLNA, vốn không có mật khẩu, và sau một xác nhận "Dùng địa chỉ mới?", hiển thị cả hai địa chỉ, với chia sẻ có tên người dùng và mật khẩu, vì chúng sẽ được gửi tới địa chỉ mới. Từ bản dựng 20, một máy chủ Plex được tìm thấy lại ở địa chỉ khác trong mạng cũng được chuyển ngay: chứng chỉ của nó chứng minh đó là cùng một máy chủ trước khi mã token được gửi. Camera Tapo được tìm theo địa chỉ MAC từ trang riêng của nó, xem [Camera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Giới hạn
 
 - **SMB**: chỉ SMB 2 và 3, không có SMB 1.
 - **WebDAV**: chỉ xác thực Basic (chưa hỗ trợ Digest); chứng chỉ HTTPS tự ký phải được cài trên thiết bị.
-- **Tìm máy chủ**: việc quét mạng và tìm kiếm DLNA chỉ xét mạng /24 cục bộ, và cần quyền mạng cục bộ trên iOS. Trên iPhone và iPad, tìm kiếm DLNA chỉ gửi yêu cầu unicast cho đến khi Apple cấp cho ứng dụng quyền multicast (multicast entitlement), và một số máy chủ không trả lời chúng (minidlna trên Linux): hãy thêm những máy chủ đó bằng địa chỉ mô tả.
+- **Tìm máy chủ**: việc quét mạng và các tìm kiếm DLNA, Plex và Tapo chỉ xét mạng /24 cục bộ, và cần quyền mạng cục bộ trên iOS. Trên iPhone và iPad, tìm kiếm DLNA chỉ gửi yêu cầu unicast cho đến khi Apple cấp cho ứng dụng quyền multicast (multicast entitlement), và một số máy chủ không trả lời chúng (minidlna trên Linux): hãy thêm những máy chủ đó bằng địa chỉ mô tả.
 - **DLNA**: máy chủ chỉ cung cấp bản sao đã chuyển đổi của một tệp sẽ trả về bản sao đó; một thư mục liệt kê tối đa 20.000 mục.
 - **Hình thu nhỏ**: hình thu nhỏ của ảnh giải mã toàn bộ tệp, và ảnh lớn hơn 30 MB không có hình thu nhỏ.
 - **Trình phát**: chưa có lựa chọn bản âm thanh trong trình phát phẳng. Trên điện thoại chưa vuốt được từ tệp này sang tệp tiếp theo của thư mục (chế độ xem nhập vai trên Quest có trước và tiếp theo cho các tệp 360° của thư mục). Lựa chọn 3D hoặc 180° với tệp mạng không được ghi nhớ.
 - **Tải lên**: chỉ chạy khi ứng dụng đang mở, và tệp mà máy chủ đã có vẫn được gửi toàn bộ trước khi máy chủ báo là trùng.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, không cần plex.tv
+
+Video của bạn nằm trong Plex, và Plex hiển thị ảnh và video 360° của bạn ở dạng phẳng, như các yêu cầu trên diễn đàn của Plex mô tả (một yêu cầu đã mở từ năm 2017). Bạn cũng muốn có thư viện đó trong kính, trên TV và khi ở xa nhà. Ứng dụng Immich chỉ đọc máy chủ Immich của bạn, còn loại DLNA của bản dựng 19 chỉ tới được phần DLNA của Plex khi ở nhà.
+
+Từ bản dựng 20, Immuch360 ghép nối trực tiếp với Plex Media Server của bạn, không cần plex.tv: ứng dụng tìm máy chủ trên mạng, bạn dán một mã token một lần, và ứng dụng đọc trực tiếp các tệp gốc trong thư viện của bạn, trong mọi trình xem của ứng dụng (360°, 3D, VR180, Spatial 2.5D, chế độ xem nhập vai trên Quest, điều khiển từ xa của TV), ở nhà và, qua chuyển tiếp cổng của bạn, khi ở xa nhà. Không có gì bị sao chép, và các tệp bạn chọn có thể được gửi lên Immich.
+
+### Thêm máy chủ Plex
+
+1. Mở thẻ Thư viện, rồi Chia sẻ mạng, rồi + và "Một Plex Media Server". Loại "Plex Media Server" trong biểu mẫu chia sẻ, và một máy chủ có nhãn Plex dưới "Tìm thấy trên mạng", cũng mở cùng trang này.
+2. Trang "Thêm máy chủ Plex" tìm các máy chủ Plex trong mạng của bạn ("Đang tìm máy chủ Plex trên mạng của bạn") và liệt kê chúng dưới "Tìm thấy trên mạng". Chạm vào máy chủ của bạn: một thẻ hiển thị tên, phiên bản Plex và một mã định danh ngắn.
+3. Không có trong danh sách? Nhập "Địa chỉ máy chủ" của nó, ví dụ `192.168.1.20`, `192.168.1.20:32400` hoặc `https://...plex.direct:32400`, rồi chạm "Tra cứu". Ứng dụng đọc chứng chỉ của máy chủ và không gửi gì khác.
+4. Lấy mã token, trên máy tính: mở Plex trong trình duyệt web và đăng nhập, mở một ảnh hoặc video bất kỳ trong thư viện, rồi "...", "Get Info" (Xem thông tin), "View XML" (Xem XML). Một thẻ mới mở ra với địa chỉ kết thúc bằng `X-Plex-Token=...`. Sao chép toàn bộ địa chỉ đó.
+5. Dán nó vào "Mã token truy cập", hoặc gửi nó sang điện thoại và chạm "Dán từ bảng nhớ tạm": ứng dụng lấy cả máy chủ và mã token từ đó. Chỉ phần văn bản sau `X-Plex-Token=` cũng được. "Cách lấy mã", trên trang, nói điều tương tự; quản trị viên máy chủ cũng có thể dùng giá trị `PlexOnlineToken` trong tệp `Preferences.xml` của máy chủ, giá trị này không hết hạn. Trên TV, OK mở hộp thoại bàn phím: nhập mã token ở đó (thường dài 20 ký tự).
+6. Chạm "Kiểm tra kết nối". Ứng dụng trả lời "Đã kết nối: N thư viện", hoặc cho biết lỗi gì, ví dụ "Máy chủ Plex đã từ chối mã token này."
+7. Sau đó "Truy cập từ bên ngoài nhà" hiển thị điều máy chủ cho biết: "Máy chủ cho biết có thể truy cập tại (địa chỉ):(cổng).", hoặc "Máy chủ không cho biết địa chỉ bên ngoài nhà của nó." Để dùng máy chủ khi ở xa nhà, nhập địa chỉ công khai hoặc tên DynDNS của bạn vào "Địa chỉ bên ngoài nhà (IP hoặc tên)", và cổng đã chuyển tiếp trong Plex (Cài đặt, Truy cập từ xa) vào "Cổng bên ngoài nhà". Những gì bạn nhập luôn được ưu tiên hơn điều máy chủ cho biết.
+8. "Tên" là tên của máy chủ trừ khi bạn đổi, và "Thư mục bắt đầu (không bắt buộc)" có thể mở thẳng một thư viện. Chạm Lưu. Máy chủ được liệt kê cùng các chia sẻ, dưới dạng `plex://` và địa chỉ của nó.
+
+### Duyệt các thư viện Plex
+
+1. Chạm vào máy chủ trong Chia sẻ mạng. Cấp đầu tiên liệt kê các thư viện mà ứng dụng hiển thị: ảnh, phim và các video khác, chương trình TV. Nhạc bị bỏ qua.
+2. Bên dưới một thư viện là các thư mục của nó như trên ổ đĩa của máy chủ (chế độ xem "theo thư mục" của Plex), rồi đến ảnh và video theo tên tệp, với ảnh thu nhỏ do Plex tạo. Một thư viện ảnh mà chế độ xem thư mục không phản hồi sẽ hiển thị các album của nó thay thế.
+3. 360° và 3D được nhận diện bằng cách đọc chính các tệp, như với mọi chia sẻ: ảnh 360° có huy hiệu 360°, ảnh không gian của Apple có huy hiệu 3D.
+4. Mở ảnh hoặc video như với mọi chia sẻ: 360°, 3D, 360°/180°, Spatial 2.5D trên điện thoại, chế độ xem nhập vai trong Quest, điều khiển từ xa trên TV. Video được đọc dưới dạng tệp gốc, theo từng khoảng byte qua cầu nối cục bộ của ứng dụng, nên tua được và siêu dữ liệu 360° và 3D đến trình phát nguyên vẹn.
+5. Chọn tệp và chạm "Tải lên Immich" để gửi chúng lên máy chủ của bạn, như từ mọi chia sẻ (xem [Gửi tệp của chia sẻ lên Immich](#send-files-of-a-share-to-immich)).
+
+### Khi ở xa nhà
+
+Mỗi lần mở máy chủ, ứng dụng thử địa chỉ ở nhà trước và, 400 ms sau, địa chỉ bên ngoài nhà. Địa chỉ đầu tiên trả lời đúng là máy chủ của bạn sẽ được dùng; khi đó là địa chỉ bên ngoài nhà, trang thư mục hiển thị biểu tượng quả địa cầu có nhãn "Đã kết nối qua địa chỉ bên ngoài nhà". Điều này cần bật Truy cập từ xa trong Plex (Cài đặt, Truy cập từ xa) với một cổng được bộ định tuyến chuyển tiếp: không có plex.tv, ứng dụng không thể dùng máy chủ chuyển tiếp (relay) của Plex, nên máy chủ không có chuyển tiếp cổng chỉ mở được ở nhà, và khi ở xa nhà trang sẽ ghi "Không thể truy cập máy chủ Plex của bạn từ bên ngoài mạng gia đình. Hãy bật truy cập từ xa với chuyển tiếp cổng trong Plex (Cài đặt, Truy cập từ xa), hoặc nhập địa chỉ công khai của nó."
+
+Địa chỉ mà máy chủ cho biết được cập nhật lại mỗi lần kết nối ở nhà. Khi địa chỉ đó không trả lời từ bên ngoài (bộ định tuyến đổi địa chỉ, hai bộ định tuyến nối tiếp nhau), hãy tự nhập địa chỉ của bạn trong trang của máy chủ. Khi mã token ngừng hoạt động (ví dụ bạn đã đăng xuất khỏi phiên trình duyệt mà bạn sao chép nó), trang thư mục sẽ báo và đề xuất "Dán mã token mới", mở trang của máy chủ tại trường mã token.
+
+### So với Plex và với loại DLNA
+
+- **Tệp gốc**: ứng dụng đọc chính các tệp, không bao giờ đọc bản sao do Plex chuyển đổi, nên siêu dữ liệu 360°, 3D và VR180 được giữ nguyên và các trình xem của ứng dụng sử dụng chúng, trong khi các ứng dụng Plex hiển thị những tệp này ở dạng phẳng.
+- **Không cần plex.tv**: ứng dụng chỉ giao tiếp với máy chủ của bạn, luôn qua HTTPS. Máy chủ được kiểm tra qua chứng chỉ plex.direct của chính nó, gắn với mã định danh của máy chủ, trước khi mã token được gửi. Mã token ở lại trên thiết bị, trong bộ nhớ an toàn, và chỉ được gửi tới máy chủ của bạn, trong một header của yêu cầu.
+- **So với việc thêm cùng máy chủ đó dưới dạng DLNA**: các thư mục như trên ổ đĩa, ảnh thu nhỏ của Plex, truy cập từ bên ngoài nhà và kết nối an toàn.
+
+### Giới hạn
+
+- **Chỉ máy chủ đã được nhận quyền sở hữu**: máy chủ phải được nhận quyền sở hữu (claim) trong Plex (đăng nhập vào tài khoản Plex một lần), điều này cấp cho nó chứng chỉ plex.direct. Nếu không, trang sẽ ghi "Địa chỉ này phản hồi mà không có chứng chỉ Plex. Hãy nhận quyền sở hữu máy chủ trong Plex, hoặc thêm nó dưới dạng chia sẻ SMB, WebDAV hoặc DLNA."
+- **Chỉ IPv4**: "Chưa hỗ trợ địa chỉ IPv6. Hãy nhập địa chỉ IPv4 của máy chủ."
+- **Mã token** cho toàn quyền truy cập máy chủ Plex của bạn. Xóa máy chủ trong ứng dụng sẽ quên mã token trên thiết bị nhưng không thu hồi nó: "Mã token vẫn hợp lệ trên máy chủ cho đến khi bạn đăng xuất khỏi phiên trình duyệt mà bạn đã sao chép nó." Mã token có ngày hết hạn sẽ hiển thị ngày đó, và ứng dụng không thể gia hạn nó.
+- **Khi ở xa nhà**: chỉ qua chuyển tiếp cổng, không có máy chủ chuyển tiếp.
+- **Thư viện**: nhạc không được hiển thị, một thư mục liệt kê tối đa 20.000 mục, và người dùng bị hạn chế có thể gặp "Mã token này không thể đọc thư viện của máy chủ."
+- **Tệp thô của máy ảnh 360°** (.insv, .insp, .360, .osv) chỉ hiển thị nếu Plex liệt kê chúng; nếu không, hãy thêm cùng thư mục NAS đó dưới dạng chia sẻ SMB hoặc WebDAV, xem [Tệp thô của máy ảnh 360°](#raw-360-camera-files-without-the-cameras-app).
+- **Tìm máy chủ**: máy chủ tắt cài đặt "Enable local network discovery (GDM)" (Bật khám phá mạng cục bộ) sẽ không được tìm thấy, nên hãy nhập địa chỉ của nó. Trên iPhone và iPad, việc tìm kiếm chỉ gửi yêu cầu unicast. Phần DLNA của cùng máy chủ đó cũng có thể hiện trong danh sách, với nhãn DLNA: hãy chọn dòng có nhãn Plex.
+- **Chưa kiểm tra trên thiết bị**: việc ghép nối, các thư mục, các khoảng byte của video, ảnh thu nhỏ, mã token sai và địa chỉ bên ngoài nhà đã được kiểm tra từ máy tính với một Plex Media Server 1.42.1 thật, còn thư viện ảnh và chương trình TV chỉ với một máy chủ mô phỏng. Phát trên điện thoại, trong Quest, trên iPhone và trên TV, và việc chuyển sang địa chỉ bên ngoài nhà, là phần kiểm thử trên thiết bị của bản dựng 20.
+- Immuch360 không liên kết với Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Chia sẻ điện thoại này trên mạng
@@ -219,6 +279,63 @@ Từ đó, nó là một chia sẻ WebDAV như mọi chia sẻ khác: nhận di�
 - **Bảo mật**: chỉ mạng cục bộ. Chia sẻ chỉ lắng nghe trên địa chỉ Wi-Fi, Ethernet và điểm phát sóng của điện thoại, không bao giờ trên địa chỉ dữ liệu di động hay VPN, và chỉ trả lời thiết bị có địa chỉ cục bộ. Mọi yêu cầu đều cần tên người dùng và mật khẩu (HTTP Basic); mười lần sai mật khẩu từ một thiết bị trong vòng một phút sẽ chặn thiết bị đó trong một phút. Mật khẩu đi qua Wi-Fi không mã hóa (HTTP thường): hãy dùng chia sẻ trên mạng bạn tin cậy, và tắt khi xong.
 - **Điểm phát sóng của chính điện thoại**: kính có thể kết nối vào đó; khi kính không tìm thấy điện thoại ở đó, hãy nhập địa chỉ hiển thị trên trang.
 - **Chưa kiểm tra trên thiết bị**: máy chủ đã được kiểm tra bằng kiểm thử đơn vị và kiểm thử đầu cuối với chính ứng dụng WebDAV và cầu nối đa phương tiện của kính, trên máy tính. Điện thoại phục vụ cho Quest 3 (phát hiện, video 4 GB được phát và tua, tắt màn hình trong 30 phút, điểm phát sóng, Dừng từ thông báo) và phía iPhone, chưa từng chạy trên iPhone, là phần kiểm tra trên thiết bị của bản dựng 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Camera Tapo: hình ảnh trực tiếp và các bản ghi trên thẻ nhớ
+
+Bạn có camera Tapo ở nhà, và bạn muốn xem camera ngoài vườn và các đoạn ghi đêm qua ngay cạnh ảnh của mình mà không cần mở ứng dụng Tapo, và giữ một đoạn trong Immich. Ứng dụng Immich không có gì cho camera, còn ứng dụng Tapo là một ứng dụng riêng, đăng nhập vào tài khoản TP-Link của bạn, với các đoạn ghi tách biệt khỏi ảnh của bạn.
+
+Từ bản dựng 20, Immuch360 thêm camera Tapo bên cạnh các chia sẻ mạng. Ứng dụng hiển thị hình ảnh trực tiếp của camera trên điện thoại và máy tính bảng Android, Android TV và Meta Quest 3, và trên mọi nền tảng là các bản ghi trên thẻ nhớ của nó, theo từng ngày: một đoạn được tải từ camera, rồi phát như mọi video và có thể được gửi lên Immich. Ứng dụng chỉ giao tiếp với camera trong mạng của bạn, không bao giờ với máy chủ của TP-Link, và không bao giờ thay đổi gì trên camera.
+
+### Thêm camera
+
+1. Trước tiên trong ứng dụng Tapo: tạo tài khoản camera, trong cài đặt của camera, Advanced Settings (Cài đặt nâng cao), Camera Account (Tài khoản camera) (tên người dùng và mật khẩu riêng cho camera này, dùng cho hình ảnh trực tiếp), và bật Third-Party Compatibility (Tương thích bên thứ ba), trong Me (Tôi), rồi Tapo Lab.
+2. Trong Immuch360, mở thẻ Thư viện, rồi Chia sẻ mạng, rồi + và "Một camera Tapo".
+3. Trang "Thêm camera" tìm các camera ("Đang tìm camera Tapo trên mạng của bạn") và liệt kê chúng dưới "Tìm thấy trên mạng" với nhãn Tapo. Chạm vào camera của bạn để điền "Địa chỉ camera", hoặc nhập địa chỉ của nó. Một camera có nhãn Tapo trong biểu mẫu chia sẻ cũng mở cùng trang này.
+4. "Tên": cách camera được liệt kê.
+5. Dưới "Bản ghi trên thẻ nhớ", "Mật khẩu tài khoản TP-Link": mật khẩu của tài khoản bạn dùng trong ứng dụng Tapo. Nó mở các bản ghi; không cần địa chỉ email của bạn.
+6. Dưới "Trực tiếp", "Tên người dùng tài khoản camera" và "Mật khẩu tài khoản camera": tài khoản camera ở bước 1.
+7. Chỉ cần một trong hai ("Nhập mật khẩu tài khoản TP-Link, tài khoản camera, hoặc cả hai."): chỉ mật khẩu TP-Link cho các bản ghi, chỉ tài khoản camera cho hình ảnh trực tiếp.
+8. Chạm "Kiểm tra camera". Ứng dụng hiển thị "Bản ghi: (mẫu), firmware (phiên bản)" cùng trạng thái thẻ nhớ, và "Hình ảnh trực tiếp: (video), âm thanh (audio)", hoặc phần nào bị lỗi cho từng mục.
+9. Chạm Lưu. Camera được liệt kê dưới "Camera", sau các chia sẻ, với mẫu camera khi đã biết và `tapo://` kèm địa chỉ của nó.
+
+### Xem trực tiếp
+
+1. Chạm vào camera. Hình ảnh trực tiếp của nó ở đầu trang: "Đang kết nối với camera", rồi hình ảnh với huy hiệu Trực tiếp.
+2. Các nút trên hình ảnh: âm thanh, ban đầu tắt ("Bật âm thanh"; "Không có âm thanh trên thiết bị này" khi thiết bị không phát được), SD hoặc HD, và "Toàn màn hình".
+3. Điện thoại hiển thị SD trên trang và HD ở chế độ toàn màn hình; Quest hiển thị HD. Quay lại sẽ thoát toàn màn hình trước.
+4. Bên dưới hình ảnh là mẫu camera, firmware và thẻ nhớ, ví dụ "Thẻ nhớ: đã dùng (đã dùng) trên (tổng)" hoặc "Không có thẻ nhớ".
+
+Trên iPhone và iPad, phần hình ảnh trực tiếp ghi "Hình ảnh trực tiếp sẽ có trên iPhone và iPad trong một phiên bản sau. Các bản ghi đã phát được ở đây." Khi không có tài khoản camera, trang ghi "Thêm tài khoản camera để xem hình ảnh trực tiếp."
+
+### Phát và giữ các bản ghi
+
+1. Dưới "Bản ghi trên thẻ nhớ", trang camera liệt kê các ngày có bản ghi, mới nhất trước, theo tháng. Khi không có mật khẩu tài khoản TP-Link, trang ghi "Thêm mật khẩu tài khoản TP-Link để xem các bản ghi."
+2. Chạm vào một ngày. Các đoạn ghi của ngày đó được xếp theo giờ, theo giờ của chính camera, mỗi đoạn có thời điểm bắt đầu, độ dài, ảnh thu nhỏ của camera cho một sự kiện, và loại: Chuyển động, Người, Thú cưng, Phương tiện, Em bé khóc, Động vật, Liên tục hoặc Sự kiện.
+3. Chạm vào một đoạn. Ứng dụng tải nó từ camera ("Đang tải video từ camera: N%", với Hủy), rồi phát trong trình phát video, có âm thanh và tua được. Một đoạn đã tải mang nhãn "Trên thiết bị này" và mở ngay ở lần sau.
+4. Để giữ một đoạn trong Immich, khi đã kết nối máy chủ: menu ⋮ của video, "Tải lên Immich".
+5. Để giải phóng dung lượng: nhấn giữ một đoạn đã tải sẽ có "Xóa bản sao trên thiết bị này" (trên điện thoại), và trang camera có "Xóa các video đã tải từ camera này", kèm dung lượng của chúng.
+6. Nút làm mới ở góc trên bên phải, hoặc kéo trang xuống, sẽ hỏi lại camera.
+
+Khi camera không còn trả lời ở địa chỉ cũ, trang của nó tìm camera trên mạng theo địa chỉ MAC và chuyển nó tới nơi nó đang trả lời, khi camera xuất trình cùng một chứng chỉ. Một camera xuất trình chứng chỉ khác với chứng chỉ ứng dụng thấy lần đầu sẽ nhận một câu hỏi thay vào đó: "Camera tại (địa chỉ) hiển thị chứng chỉ khác với trước đây. Chỉ tiếp tục nếu bạn đã đặt lại hoặc thay thế nó."
+
+### So với ứng dụng Tapo
+
+- **Chỉ trong mạng của bạn**: ứng dụng giao tiếp trực tiếp với camera, trong mạng cục bộ, và không bao giờ với máy chủ của TP-Link. Ứng dụng không đăng nhập vào tài khoản TP-Link, nên không cần địa chỉ email của bạn.
+- **Bản ghi trở thành video bình thường**: một đoạn đã tải là video H.264 có âm thanh, bạn có thể gửi lên Immich, nơi nó vẫn còn sau khi thẻ nhớ đã ghi đè lên.
+- **Cạnh mọi thứ khác**: có hoặc không có máy chủ Immich, trên điện thoại, TV hoặc trong Quest (trong cửa sổ), được tìm thấy trên mạng như một chia sẻ.
+- **Chỉ đọc**: ứng dụng chỉ yêu cầu camera những gì nó hiển thị; không bao giờ thay đổi cài đặt và không bao giờ xóa gì trên camera.
+
+### Giới hạn
+
+- **Chưa kiểm tra trên thiết bị**: bản dựng 20 chưa chạy với camera thật. Giao thức được viết dựa trên các bản ghi gói tin của một C510W với firmware 1.3.4 (kiểu đăng nhập V4 của giữa năm 2026), và ứng dụng đã được kiểm tra với một camera mô phỏng trong các bài kiểm thử. Rất hoan nghênh các báo cáo, kèm mẫu camera và firmware mà "Kiểm tra camera" hiển thị và các dòng trong [Nhật ký](#logs).
+- **Hình ảnh trực tiếp**: chỉ trên điện thoại và máy tính bảng Android, Android TV và Quest, chưa có trên iPhone và iPad. Các giới hạn của TP-Link vẫn áp dụng: tối đa hai luồng HD và hai luồng SD cùng lúc cho mỗi camera, tính cả ứng dụng Tapo, và Tapo Care, thẻ nhớ và một đầu ghi dùng RTSP hoặc ONVIF không thể chạy cùng lúc.
+- **Camera**: không hỗ trợ camera dùng pin và camera đứng sau hub Tapo.
+- **Bản ghi**: mỗi camera chỉ tải một đoạn một lúc. Khi ứng dụng Tapo đang duyệt thẻ nhớ, ứng dụng thử lại sau 4, 8 và 12 giây, rồi báo "Camera đang bận với một người xem khác, ví dụ ứng dụng Tapo. Hãy thử lại sau một phút." Bản ghi H.265 chưa được chuyển đổi ("Bản ghi này ở định dạng H.265, phiên bản này chưa thể chuyển đổi."), bản ghi liên tục không có ảnh thu nhỏ, và một đoạn chỉ phát khi đã tải xong hoàn toàn.
+- **Mật khẩu**: mỗi lần nhập sai mật khẩu đều được tính, và sau vài lần camera sẽ khóa một lúc ("Camera bị khóa sau quá nhiều lần nhập sai mật khẩu. Hãy thử lại sau N phút."). Ứng dụng không bao giờ tự thử lại một mật khẩu đã bị từ chối: chỉ "Kiểm tra camera" hoặc Thử lại mới hỏi lại camera. Khi camera chấp nhận mật khẩu cho phần cài đặt nhưng không cho video, hãy tắt rồi bật lại Third-Party Compatibility (Tương thích bên thứ ba) trong ứng dụng Tapo, rồi khởi động lại camera.
+- **Dung lượng**: các đoạn đã tải nằm trong bộ nhớ đệm của ứng dụng, tối đa 1 GB cho tất cả camera cộng lại (những đoạn lâu nhất chưa phát sẽ bị xóa trước); hệ thống có thể xóa bộ nhớ đệm đó, và gỡ một camera sẽ xóa các đoạn của nó.
+- **Khi ở xa nhà**: ứng dụng kết nối tới camera theo địa chỉ của nó trong mạng của bạn, nên không thể từ bên ngoài mạng đó.
+- Immuch360 không liên kết với TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Tệp thô của máy ảnh 360°, không cần ứng dụng của máy ảnh
@@ -349,7 +466,7 @@ Việc nhận diện đã được kiểm tra trên một ảnh không gian mẫ
 
 Nhiều người mua Quest 3 để xem ảnh và video 360° của chính mình, rồi hỏi nên đặt tệp ở đâu, làm sao đưa chúng vào kính mà không cần cáp, và dùng trình phát nào: các trình phát video 360° và 3D trên cửa hàng đều phải trả phí.
 
-Cùng một ứng dụng Android chạy trên Quest 3 và 3S dưới dạng cửa sổ, với toàn bộ thư viện của bạn. Nút 360° của nó mở chế độ xem nhập vai, nơi ảnh hoặc video bao quanh bạn và bạn nhìn quanh bằng cách xoay đầu, ở dạng 3D thật với tệp lập thể (Meta Spatial SDK). Nội dung đến từ máy chủ Immich, từ chính kính, từ NAS, máy chủ đa phương tiện hoặc điện thoại, và được phát tại chỗ (máy chủ đa phương tiện và điện thoại từ bản dựng 19, chưa kiểm tra trên kính). Ứng dụng miễn phí và mã nguồn mở. Đã kiểm tra trên Quest 3, và bởi một người dùng với video Insta360 X4 8K HEVC.
+Cùng một ứng dụng Android chạy trên Quest 3 và 3S dưới dạng cửa sổ, với toàn bộ thư viện của bạn. Nút 360° của nó mở chế độ xem nhập vai, nơi ảnh hoặc video bao quanh bạn và bạn nhìn quanh bằng cách xoay đầu, ở dạng 3D thật với tệp lập thể (Meta Spatial SDK). Nội dung đến từ máy chủ Immich, từ chính kính, từ NAS, máy chủ đa phương tiện, điện thoại hoặc máy chủ Plex, và được phát tại chỗ (máy chủ đa phương tiện và điện thoại từ bản dựng 19, máy chủ Plex từ bản dựng 20, chưa kiểm tra trên kính), và từ bản dựng 20 cửa sổ cũng hiển thị camera Tapo. Ứng dụng miễn phí và mã nguồn mở. Đã kiểm tra trên Quest 3, và bởi một người dùng với video Insta360 X4 8K HEVC.
 
 ### Mở chế độ xem nhập vai
 
@@ -408,6 +525,56 @@ Xoay ảnh bằng cần điều khiển bên phải (hoặc nút Xoay trên bả
 - **Tua**: video có nguồn không hỗ trợ yêu cầu theo dải byte thì không tua được; bảng sẽ báo như vậy.
 - **Video phẳng**: video lập thể phẳng (không phải 360°) phát trong cửa sổ với cả hai mắt cùng hiện; chế độ xem 3D nhập vai dành cho nội dung 360° và VR180.
 - **Thêm nữa**: các codec mà kính giải mã được, cửa hàng, quyền và dung lượng APK có trong [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Xem trên TV (Android TV và Google TV)
+
+Bạn muốn xem ảnh và video 360°, các album của bạn và video trên NAS hoặc máy chủ Plex trên màn hình lớn, cho cả nhà ngồi trên ghế sofa, bằng điều khiển từ xa của TV. Ứng dụng di động Immich không phải là ứng dụng TV: một người dùng đã cài nó lên TV và thấy rằng nó dùng được với chuột, không dùng được với điều khiển từ xa ([thảo luận #1614](https://github.com/immich-app/immich/discussions/1614)), và nhóm Immich không có kế hoạch làm ứng dụng TV chính thức ([thảo luận #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Từ bản dựng 20, cùng một ứng dụng Android chạy trên Android TV và Google TV, với điều khiển từ xa là cách nhập duy nhất: một APK cho điện thoại và TV, các trình xem 360° và 3D xoay bằng các phím mũi tên, và chia sẻ mạng, Plex và camera Tapo trên TV, có hoặc không có máy chủ Immich.
+
+<a id="install-it-on-the-tv"></a>
+### Cài đặt trên TV
+
+1. Cho đến khi Google Play cung cấp ứng dụng trên TV, việc này chờ Google xét duyệt bản phát hành cho TV, hãy lấy bản phổ thông `Immuch360-v<version>-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Trên TV, bật tùy chọn nhà phát triển và gỡ lỗi USB (trên Google TV: Cài đặt, Hệ thống, Giới thiệu, chọn "Android TV OS build" (Bản dựng hệ điều hành Android TV) bảy lần, rồi Cài đặt, Hệ thống, Tùy chọn cho nhà phát triển; tên gọi khác nhau tùy TV).
+3. Từ một máy tính trong cùng mạng, với adb (Android SDK Platform Tools): `adb connect <address of the TV>` (`<address of the TV>` là địa chỉ của TV), chấp nhận lời nhắc trên TV, rồi `adb install -r Immuch360-v<version>-release.apk`.
+4. Ứng dụng hiện trong danh sách ứng dụng của TV, với biểu ngữ của nó. Cài bản phát hành tiếp theo theo cách tương tự: `-r` giữ thông tin đăng nhập và cài đặt.
+
+### Lần khởi động đầu tiên
+
+1. Đăng nhập như trên điện thoại: các phím mũi tên di chuyển khung tiêu điểm từ trường này sang trường khác, và OK trên một trường ("Nhấn OK để nhập") mở bàn phím của TV trong một hộp thoại, để nhập địa chỉ máy chủ, email và mật khẩu.
+2. Hoặc chọn "Sử dụng không cần máy chủ". TV không có ảnh riêng, nên thẻ Ảnh ghi "TV này không có ảnh hoặc video riêng: hãy mở một chia sẻ mạng từ Thư viện." với nút Chia sẻ mạng. Hãy thêm chia sẻ, máy chủ Plex hoặc camera ở đó, như trên điện thoại (xem [Chia sẻ mạng](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Di chuyển bằng điều khiển từ xa
+
+- Các phím mũi tên di chuyển khung tiêu điểm, OK mở mục đang được chọn, Quay lại để trở về. Từ một thẻ, Quay lại chuyển tới menu bên, rồi tới Ảnh, rồi thoát ứng dụng.
+- Phím kênh lên và xuống cuộn từng trang một.
+- Trong các trình xem, các phím phát và tạm dừng, tua nhanh, tua lại, tiếp theo và trước đó của điều khiển từ xa đều hoạt động, và phím thông tin hiển thị chi tiết của ảnh hoặc video.
+
+### Ảnh và video với điều khiển từ xa
+
+1. **Một ảnh**: trái và phải chuyển tới ảnh trước hoặc tiếp theo, OK hiện hoặc ẩn các điều khiển, Lên chuyển tới thanh trên cùng (nơi có nút 360°) và Xuống tới thanh dưới cùng.
+2. **Một video**: OK tạm dừng, hiện các điều khiển, hoặc phát tiếp. Khi đang phát, trái và phải nhảy lùi hoặc tới 10 giây; khi đang tạm dừng, chúng chuyển tới mục trước hoặc tiếp theo, như lời gợi ý: "Đã tạm dừng: các mũi tên chuyển đến mục trước hoặc tiếp theo".
+3. **Một ảnh 360°**, từ nút 360°: các phím mũi tên để nhìn quanh, nhanh hơn khi giữ, và góc nhìn dừng lại từ từ. OK chuyển tới các nút của thanh trên cùng, ở "Phóng to", cạnh "Thu nhỏ", trường nhìn và 3D; phím kênh lên và xuống cũng phóng to thu nhỏ. Quay lại trở về từ các nút về hình ảnh, rồi đóng. Lời gợi ý là "Mũi tên để nhìn xung quanh, OK để hiện điều khiển, Quay lại để đóng".
+4. **Một video 360°**, từ nút 360°: các phím mũi tên để nhìn quanh khi các điều khiển bị ẩn, OK tạm dừng và hiện chúng, Quay lại ẩn chúng, rồi đóng. Lời gợi ý là "Mũi tên để nhìn xung quanh, OK để tạm dừng và hiện điều khiển, Quay lại để đóng".
+5. **Kỷ niệm**: trái và phải đi qua các ảnh và sang kỷ niệm tiếp theo, Lên chuyển tới nút đóng và Xuống tới "Xem trên dòng thời gian".
+6. **Chia sẻ và Plex**: các phím giống vậy trong trang ảnh và video của một chia sẻ, nơi trái và phải mở tệp trước hoặc tiếp theo trong thư mục.
+
+### Cài đặt Bố cục cho điều khiển từ xa
+
+Cài đặt, Cá nhân hóa, "Bố cục cho điều khiển từ xa": "Khung tiêu điểm lớn và các phím điều khiển từ xa, không có các điều khiển cần màn hình cảm ứng. Tự động sẽ bật trên Android TV và Google TV." Tự động là mặc định; Bật phù hợp với máy tính bảng điều khiển bằng bàn phím hoặc tay cầm chơi game; Tắt sẽ tắt nó trên TV. Cài đặt này chỉ có trên Android. Các phím mũi tên và OK hoạt động trong các trình xem với bàn phím hoặc tay cầm chơi game bất kể cài đặt này.
+
+### Giới hạn
+
+- **Một trình xem**: trên TV, ứng dụng chỉ hiển thị và phát. Sao lưu, tải lên, chỉnh sửa, xóa, chia sẻ, chọn nhiều mục, Cast, Spatial 2.5D, con quay hồi chuyển, bản đồ và Địa điểm, và "Chia sẻ điện thoại này trên mạng" đều bị ẩn.
+- **Đăng nhập**: OAuth mở một trang web, điều mà TV không làm được: "Đăng nhập bằng (nhà cung cấp) sẽ mở một trang web, điều mà TV này không làm được. Hãy đăng nhập bằng email và mật khẩu."
+- **Liên kết** hiển thị địa chỉ của chúng dưới "Mở trên thiết bị khác" thay vì mở trình duyệt, và văn bản được nhập trong hộp thoại bàn phím của hệ thống.
+- **Bộ nhớ**: trên TV ít bộ nhớ, ảnh 360° được hiển thị tối đa 4096x2048, không có hình ảnh sắc nét hơn khi phóng to.
+- **Video**: bộ giải mã của TV quyết định cái gì phát được, với cùng cài đặt Nguồn video và việc kiểm tra bộ giải mã như trên điện thoại (xem [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters)); chưa đo trên TV.
+- **Chưa kiểm tra trên thiết bị**: hỗ trợ TV mới chỉ được kiểm tra bằng các bài kiểm thử tự động, và chưa chạy trên TV cũng như trên trình giả lập TV. Cần xác nhận: hướng mà các phím mũi tên xoay video 360°, bàn phím của TV (Gboard) trong hộp thoại văn bản, phím OK của điều khiển hồng ngoại, lề màn hình và biểu ngữ trên màn hình chính của TV. Rất hoan nghênh các báo cáo.
+- **Google Play trên TV** đang chờ Google xét duyệt bản phát hành cho TV; cho đến lúc đó, hãy dùng APK.
+- **TV khác**: Fire TV chưa được kiểm thử, và không có phiên bản Apple TV.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Tìm ảnh 360° của bạn: danh sách 360°
@@ -488,11 +655,11 @@ Khi máy chủ bỏ qua yêu cầu HTTP Range với bản gốc và chỉ mục 
 <a id="everything-else-is-immich"></a>
 ## Mọi thứ khác là Immich
 
-Mọi thứ ứng dụng di động Immich chính thức làm được đều có ở đây: sao lưu, dòng thời gian, album, tìm kiếm, chia sẻ, người thân, tất cả đồng bộ với máy chủ của bạn, cùng máy chủ và cùng tài khoản với ứng dụng web. Immuch360 được cài song song với ứng dụng chính thức (gói `com.aprogsys.immuch360`). Có hai điểm khác, từ bản dựng 15: công tắc "Ưu tiên chất lượng gốc" trở thành lựa chọn Nguồn video mô tả ở trên, và ảnh, video bạn tải lên thủ công từ một album của thiết bị được tính là đã sao lưu.
+Mọi thứ ứng dụng di động Immich chính thức làm được đều có ở đây: sao lưu, dòng thời gian, album, tìm kiếm, chia sẻ, người thân, tất cả đồng bộ với máy chủ của bạn, cùng máy chủ và cùng tài khoản với ứng dụng web. Immuch360 được cài song song với ứng dụng chính thức (gói `com.aprogsys.immuch360`). Có hai điểm khác, từ bản dựng 15: công tắc "Ưu tiên chất lượng gốc" trở thành lựa chọn Nguồn video mô tả ở trên, và ảnh, video bạn tải lên thủ công từ một album của thiết bị được tính là đã sao lưu. Trên TV, từ bản dựng 20, ứng dụng là một trình xem, xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv).
 
 Để cho người không có ứng dụng xem một ảnh 360°, hãy chia sẻ nó bằng liên kết chia sẻ của Immich: ứng dụng web Immich hiển thị ảnh 360° dạng hình cầu trong trình duyệt của họ.
 
-Bản dựng hiện tại, bản dựng 19 (phiên bản 3.3.0-rc.0, số bản dựng 3030017), dựa trên Immich 3.3.0-rc.0 (Immich `main`, chưa phải bản phát hành ổn định) và đã được kiểm thử với máy chủ Immich 3.2. Vui lòng báo lỗi tại [Issues](https://github.com/freeKC/Immuch360/issues), không báo cho dự án Immich. Tài liệu đầy đủ của chính Immich có tại [immich.app](https://immich.app).
+Bản dựng hiện tại, bản dựng 20 (phiên bản 3.3.0-rc.0, số bản dựng 3030018), dựa trên Immich 3.3.0-rc.0 (Immich `main`, chưa phải bản phát hành ổn định). Bản dựng 19 đã được kiểm thử với máy chủ Immich 3.2, và bản dựng 20 không thay đổi gì trong những gì ứng dụng yêu cầu từ máy chủ. Vui lòng báo lỗi tại [Issues](https://github.com/freeKC/Immuch360/issues), không báo cho dự án Immich. Tài liệu đầy đủ của chính Immich có tại [immich.app](https://immich.app).
 
 ## So sánh với ứng dụng Immich và các ứng dụng khác
 
@@ -515,6 +682,9 @@ Bản dựng hiện tại, bản dựng 19 (phiên bản 3.3.0-rc.0, số bản 
 | Máy chủ đa phương tiện DLNA như một loại chia sẻ | ❌ | ✅ từ bản dựng 19 | Đã kiểm tra với minidlna và Gerbera trong Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone và Quest là phần kiểm tra trên thiết bị của bản dựng 19 |
 | Gửi tệp của chia sẻ lên Immich; tệp thiết bị gửi thủ công được tính là đã sao lưu | ❌ chỉ tệp thiết bị | ✅ từ bản dựng 15 | Đã kiểm thử trên trình giả lập Android với máy chủ kiểm thử Samba và máy chủ Immich 3.2 |
 | Chia sẻ điện thoại này trên mạng, cho kính | ❌ | ✅ từ bản dựng 19, Android và iOS | Kiểm thử đơn vị và kiểm thử đầu cuối với ứng dụng WebDAV của kính, trên máy tính; điện thoại phục vụ cho Quest, và phía iPhone, là phần kiểm tra trên thiết bị của bản dựng 19 |
+| Thư viện Plex Media Server phát từ tệp gốc, ở nhà và khi đi xa, không cần plex.tv | ❌ | ✅ từ bản dựng 20, mọi trình xem, trên điện thoại, máy tính bảng, Quest 3 và TV | Đã kiểm tra từ máy tính với một Plex Media Server 1.42.1 thật (ghép nối, thư mục, khoảng byte, ảnh thu nhỏ, địa chỉ bên ngoài nhà); chưa kiểm tra trên thiết bị |
+| Camera Tapo: hình ảnh trực tiếp, và các bản ghi trên thẻ nhớ gửi lên Immich khi bạn chọn | ❌ | ✅ từ bản dựng 20: bản ghi ở mọi nơi, trực tiếp trên Android, Android TV và Quest 3 | Đã kiểm tra với một camera mô phỏng; chưa kiểm tra với camera thật |
+| Android TV và Google TV, điều khiển bằng điều khiển từ xa, trong cùng một APK | ❌ không phải ứng dụng TV | ✅ từ bản dựng 20 | Đã kiểm tra bằng các bài kiểm thử tự động; chưa kiểm tra trên TV |
 | Ảnh thô Insta360 .insp và video .insv một luồng | ❌ phẳng | ✅ từ bản dựng 16 | Ảnh được so với bản xuất Insta360 Studio của tệp X3, video kiểm tra trên trình giả lập Android với tệp X3 độ phân giải thấp; chưa chạy trên iPhone |
 | Video thô mỗi ống kính một luồng hoặc một tệp (Insta360 X4, X4 Air, X5, X6, cặp X3, GoPro .360, DJI .osv) | ❌ phẳng hoặc sai | ✅ từ bản dựng 18 | Bộ phân tích và phần ghép nối đã kiểm tra trên tệp X4, cặp X3, GoPro MAX và Osmo 360 thật; việc phát là phần kiểm tra trên thiết bị của bản dựng 18 và 19 |
 | .dng mắt cá kép | ❌ phẳng | ❌ chưa có | Đã lên kế hoạch |
@@ -529,27 +699,33 @@ Bản dựng hiện tại, bản dựng 19 (phiên bản 3.3.0-rc.0, số bản 
 |---|---|---|
 | Ứng dụng web Immich | Hiển thị ảnh 360° dạng hình cầu, nhưng coi tệp .insp thô là ảnh toàn cảnh hoàn chỉnh và bọc hai vòng tròn của nó quanh hình cầu; chế độ xem VR vẫn chỉ là một yêu cầu ([thảo luận #14768](https://github.com/immich-app/immich/discussions/14768)) | Ghép nối tệp thô trên thiết bị, và mở chế độ xem nhập vai trong Quest 3 |
 | Ứng dụng Insta360 hoặc Studio | Cần dùng để biến tệp thô trên thẻ thành ảnh 360° trước khi xem | Mở trực tiếp tệp thô .insp và .insv, cùng tệp GoPro .360 và DJI .osv |
-| Plex, Jellyfin, Synology Photos | Ảnh và video 360° hiện phẳng hoặc không được nhận diện, như các chủ đề trên diễn đàn của họ mô tả (một yêu cầu với Plex đã mở từ năm 2017) | Đọc cùng các thư mục qua SMB, WebDAV hoặc DLNA và phát dạng hình cầu, không thay đổi gì trên máy chủ |
+| Plex, Jellyfin, Synology Photos | Ảnh và video 360° hiện phẳng hoặc không được nhận diện, như các chủ đề trên diễn đàn của họ mô tả (một yêu cầu với Plex đã mở từ năm 2017) | Đọc chính thư viện Plex từ bản dựng 20, hoặc cùng các thư mục qua SMB, WebDAV hoặc DLNA và phát dạng hình cầu, không thay đổi gì trên máy chủ |
+| Ứng dụng Tapo | Một ứng dụng riêng, đăng nhập vào tài khoản TP-Link của bạn, với các đoạn ghi tách biệt khỏi ảnh | Hiển thị camera cạnh ảnh của bạn, chỉ giao tiếp với nó trong mạng của bạn, và giữ một đoạn dưới dạng video bạn có thể gửi lên Immich (từ bản dựng 20) |
+| Ứng dụng di động Immich trên TV | Không phải ứng dụng TV: một người dùng cho biết nó dùng được với chuột, không dùng được với điều khiển từ xa | Cùng một ứng dụng, được làm cho điều khiển từ xa (từ bản dựng 20) |
 | Sao chép tệp vào kính | Mỗi tệp phải sao chép qua cáp trước khi xem được | Phát tại chỗ từ Immich, NAS, máy chủ đa phương tiện hoặc điện thoại |
 | Trình phát 360° và 3D trên cửa hàng Quest | Phải trả phí | Miễn phí và mã nguồn mở (AGPL) |
 
 ## Định dạng và nguồn, theo nền tảng
 
-Immuch360 là một thư viện ảnh, và cũng là một trình phát đa phương tiện miễn phí: nó phát những gì ứng dụng chính thức không phát được, từ bốn nguồn, trong trình phát phù hợp với tệp.
+Immuch360 là một thư viện ảnh, và cũng là một trình phát đa phương tiện miễn phí: nó phát những gì ứng dụng chính thức không phát được, từ các nguồn trong bảng thứ hai, trong trình phát phù hợp với tệp.
 
-| Nội dung | Điện thoại Android | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Video phẳng (MP4, MOV, MKV, những gì thiết bị giải mã được) | Trình phát Immich, và trình phát tích hợp cho chia sẻ mạng | Tương tự, trừ tệp MKV và AVI của chia sẻ, mà iOS không mở được (trên máy chủ chúng phát bản đã chuyển mã) | Trong cửa sổ |
-| Ảnh 360° | Trình xem hình cầu, con quay hồi chuyển | Tương tự | Nhập vai, bao quanh bạn |
-| Video 360° | Trình phát Media3 tích hợp trên hình cầu, con quay hồi chuyển, tua, chọn bản âm thanh, chỉ báo bộ đệm | Trình phát SceneKit tích hợp trên hình cầu, con quay hồi chuyển, chọn bản âm thanh, chỉ báo bộ đệm; phát và tạm dừng, chưa có thanh thời gian | Nhập vai, 3D thật cho tệp lập thể, thanh thời gian với bước tua 10 giây, nội dung trước và tiếp theo |
-| 3D 360° (trên và dưới, cạnh nhau) | Mắt trái, nút bố cục | Tương tự | Mỗi mắt nhận một nửa khung hình của riêng nó |
-| Ảnh và video VR180 (nửa cầu) | Nửa cầu, nút 360°/180° | Tương tự | Nửa cầu nhập vai |
-| Spatial 2.5D (chiều sâu trên màn hình phẳng từ video lập thể) | Trình phát tích hợp, theo dõi đầu bằng camera trước | Tương tự | Không có |
-| Ảnh không gian Apple (cặp lập thể HEIC, từ bản dựng 19) | Mắt trái, một dòng chi tiết cho biết đó là ảnh không gian | Tương tự | Xem ở dạng 3D: cả hai mắt trên một ảnh lơ lửng trong chế độ xem nhập vai, 3D hoặc 2D, đổi được kích thước |
-| Video không gian Apple (MV-HEVC, từ bản dựng 19) | Một mắt (lớp cơ sở), kèm thông báo | Tương tự | Một mắt trong cửa sổ, kèm thông báo |
-| Ảnh thô Insta360 .insp (từ bản dựng 16) | Ghép nối trên GPU trước trình xem hình cầu, tối đa 8192x4096 | Tương tự | Nhập vai, từ một ảnh đã ghép chuẩn bị cho kính |
-| Insta360 .insv thô, hai ống kính trong một luồng (từ bản dựng 16) | Ghép nối bằng hiệu ứng GPU trong trình phát Media3 | Ghép nối bằng shader SceneKit | Nhập vai, ghép nối bằng cùng hiệu ứng GPU |
-| Video thô mỗi ống kính một luồng hoặc một tệp (từ bản dựng 18): Insta360 X4, X4 Air, X5, X6 .insv, cặp X3, GoPro .360, DJI .osv | Hai bộ giải mã phần cứng cùng lúc, mỗi ống kính một bộ (từ bản dựng 19 là bộ giải mã phần mềm trên thiết bị không có bộ giải mã phần cứng, tối đa 2048x2048 mỗi ống kính), và một bộ tổng hợp GL ghép vào hình cầu; một ống kính, rồi luồng đã chuyển mã, rồi video chưa ghép, khi thiết bị không chạy được hai bộ | Bộ tổng hợp AVFoundation tùy biến bằng Metal | Nhập vai, cùng hai bộ giải mã và bộ tổng hợp (bảng 3840x1920) |
+| Nội dung | Điện thoại Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (từ bản dựng 20) |
+|---|---|---|---|---|
+| Video phẳng (MP4, MOV, MKV, những gì thiết bị giải mã được) | Trình phát Immich, và trình phát tích hợp cho chia sẻ mạng | Tương tự, trừ tệp MKV và AVI của chia sẻ, mà iOS không mở được (trên máy chủ chúng phát bản đã chuyển mã) | Trong cửa sổ | Như trên điện thoại; OK tạm dừng, trái và phải nhảy 10 giây |
+| Ảnh 360° | Trình xem hình cầu, con quay hồi chuyển | Tương tự | Nhập vai, bao quanh bạn | Trình xem hình cầu xoay bằng phím mũi tên, phóng to bằng phím kênh |
+| Video 360° | Trình phát Media3 tích hợp trên hình cầu, con quay hồi chuyển, tua, chọn bản âm thanh, chỉ báo bộ đệm | Trình phát SceneKit tích hợp trên hình cầu, con quay hồi chuyển, chọn bản âm thanh, chỉ báo bộ đệm; phát và tạm dừng, chưa có thanh thời gian | Nhập vai, 3D thật cho tệp lập thể, thanh thời gian với bước tua 10 giây, nội dung trước và tiếp theo | Trình phát Media3 của điện thoại, xoay bằng phím mũi tên |
+| 3D 360° (trên và dưới, cạnh nhau) | Mắt trái, nút bố cục | Tương tự | Mỗi mắt nhận một nửa khung hình của riêng nó | Mắt trái, nút bố cục |
+| Ảnh và video VR180 (nửa cầu) | Nửa cầu, nút 360°/180° | Tương tự | Nửa cầu nhập vai | Nửa cầu, nút 360°/180° |
+| Spatial 2.5D (chiều sâu trên màn hình phẳng từ video lập thể) | Trình phát tích hợp, theo dõi đầu bằng camera trước | Tương tự | Không có | Không có |
+| Ảnh không gian Apple (cặp lập thể HEIC, từ bản dựng 19) | Mắt trái, một dòng chi tiết cho biết đó là ảnh không gian | Tương tự | Xem ở dạng 3D: cả hai mắt trên một ảnh lơ lửng trong chế độ xem nhập vai, 3D hoặc 2D, đổi được kích thước | Mắt trái, một dòng chi tiết |
+| Video không gian Apple (MV-HEVC, từ bản dựng 19) | Một mắt (lớp cơ sở), kèm thông báo | Tương tự | Một mắt trong cửa sổ, kèm thông báo | Một mắt, kèm thông báo |
+| Ảnh thô Insta360 .insp (từ bản dựng 16) | Ghép nối trên GPU trước trình xem hình cầu, tối đa 8192x4096 | Tương tự | Nhập vai, từ một ảnh đã ghép chuẩn bị cho kính | Như trên điện thoại |
+| Insta360 .insv thô, hai ống kính trong một luồng (từ bản dựng 16) | Ghép nối bằng hiệu ứng GPU trong trình phát Media3 | Ghép nối bằng shader SceneKit | Nhập vai, ghép nối bằng cùng hiệu ứng GPU | Như trên điện thoại |
+| Video thô mỗi ống kính một luồng hoặc một tệp (từ bản dựng 18): Insta360 X4, X4 Air, X5, X6 .insv, cặp X3, GoPro .360, DJI .osv | Hai bộ giải mã phần cứng cùng lúc, mỗi ống kính một bộ (từ bản dựng 19 là bộ giải mã phần mềm trên thiết bị không có bộ giải mã phần cứng, tối đa 2048x2048 mỗi ống kính), và một bộ tổng hợp GL ghép vào hình cầu; một ống kính, rồi luồng đã chuyển mã, rồi video chưa ghép, khi thiết bị không chạy được hai bộ | Bộ tổng hợp AVFoundation tùy biến bằng Metal | Nhập vai, cùng hai bộ giải mã và bộ tổng hợp (bảng 3840x1920) | Như trên điện thoại, khi TV chạy được hai bộ giải mã cùng lúc |
+| Hình ảnh trực tiếp của camera Tapo (từ bản dựng 20) | Trình phát RTSP Media3: SD trên trang, HD khi toàn màn hình, nút âm thanh | Chưa có: một thẻ cho biết tính năng sẽ có sau | Trong cửa sổ, HD | Như trên điện thoại |
+| Bản ghi của camera Tapo (từ bản dựng 20) | Tải từ thẻ nhớ thành video H.264 có âm thanh, rồi phát và tua được | Tương tự | Tương tự, trong cửa sổ | Tương tự |
+
+Cột TV chưa được kiểm tra trên TV, xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv); các dòng về camera chưa được kiểm tra với camera thật.
 
 | Từ đâu | Cách thức |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 là một thư viện ảnh, và cũng là một trình phát đa phư
 | Chính điện thoại hoặc kính | "Sử dụng không cần máy chủ" trên trang đăng nhập, hoặc mục Trên thiết bị này của thẻ Thư viện |
 | NAS hoặc máy tính | Chia sẻ SMB và WebDAV, và từ bản dựng 19 là máy chủ đa phương tiện DLNA, được tìm thấy trên mạng, đọc trực tiếp (video SMB qua tối đa sáu kết nối), không sao chép gì; từ bản dựng 15, các tệp bạn chọn có thể gửi lên tài khoản Immich của bạn |
 | Một điện thoại khác (từ bản dựng 19) | "Chia sẻ điện thoại này trên mạng" trên điện thoại đó: kính, hoặc bất kỳ ứng dụng WebDAV nào trong mạng, đọc album, tháng và nội dung 360° của nó |
+| Plex Media Server (từ bản dựng 20) | Các thư viện ảnh, phim và chương trình TV theo thư mục, các tệp gốc được đọc trực tiếp qua HTTPS và kiểm tra bằng chứng chỉ riêng của máy chủ, ở nhà hoặc qua địa chỉ bên ngoài nhà, trên mọi nền tảng; xem [Plex Media Server, không cần plex.tv](#plex-media-server-without-plextv) |
+| Camera Tapo (từ bản dựng 20) | Hình ảnh trực tiếp với tài khoản camera (Android, Android TV, Quest), và các bản ghi trên thẻ nhớ với mật khẩu tài khoản TP-Link (mọi nền tảng), chỉ trong mạng cục bộ; xem [Camera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 cũng chạy trên Meta Quest 3 và 3S (Horizon OS v69 trở lên; bản dựng trên Horizon Store chỉ đăng ký cho hai thiết bị này; bản `-release.apk` phổ thông có lẽ cũng cài được trên Quest 2 hoặc Quest Pro, chưa kiểm thử). Cách sử dụng nằm trong [Trong kính Meta Quest 3](#in-the-meta-quest-3-headset); phần này nói về cài đặt và những điểm khác biệt trên kính.
 
-Bản dựng cho kính chỉ giao tiếp với máy chủ qua HTTPS, hoặc qua HTTP thường với tên trong mạng gia đình (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) và với chính kính, theo yêu cầu của Horizon Store. Máy chủ được nhập dưới dạng địa chỉ HTTP thường có IP, ví dụ `http://192.168.1.10:2283`, sẽ bị bản dựng này từ chối: hãy dùng HTTPS, một tên trong mạng gia đình (`nas.local`), hoặc bản `-release.apk` phổ thông, vốn giữ chính sách mở như trên điện thoại. Chia sẻ WebDAV, DLNA và chia sẻ điện thoại ở địa chỉ HTTP thường trong mạng cục bộ không bị ảnh hưởng: ứng dụng tự đọc chúng và chỉ đưa cho trình phát địa chỉ cầu nối cục bộ của nó (cần xác nhận trên kính với DLNA và chia sẻ điện thoại, mới có ở bản dựng 19).
+Bản dựng cho kính chỉ giao tiếp với máy chủ qua HTTPS, hoặc qua HTTP thường với tên trong mạng gia đình (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) và với chính kính, theo yêu cầu của Horizon Store. Máy chủ được nhập dưới dạng địa chỉ HTTP thường có IP, ví dụ `http://192.168.1.10:2283`, sẽ bị bản dựng này từ chối: hãy dùng HTTPS, một tên trong mạng gia đình (`nas.local`), hoặc bản `-release.apk` phổ thông, vốn giữ chính sách mở như trên điện thoại. Chia sẻ WebDAV, DLNA và chia sẻ điện thoại ở địa chỉ HTTP thường trong mạng cục bộ không bị ảnh hưởng: ứng dụng tự đọc chúng và chỉ đưa cho trình phát địa chỉ cầu nối cục bộ của nó (cần xác nhận trên kính với DLNA và chia sẻ điện thoại, mới có ở bản dựng 19). Từ bản dựng 20, máy chủ Plex được kết nối qua HTTPS, còn camera Tapo do chính ứng dụng kết nối, hình ảnh trực tiếp của nó qua RTSP, vốn không phải HTTP: lẽ ra cả hai đều không bị ảnh hưởng (cần xác nhận trên kính).
 
 <a id="install"></a>
 ### Cài đặt ứng dụng
@@ -576,7 +754,7 @@ Trang trên Horizon Store đang chờ Meta xét duyệt, đã gửi kèm bản d
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Trong kính, mở Library (Thư viện), chọn bộ lọc "Unknown sources" (Nguồn không xác định), và khởi động Immuch360.
@@ -584,7 +762,7 @@ Trang trên Horizon Store đang chờ Meta xét duyệt, đã gửi kèm bản d
 
 ### Trong cửa sổ
 
-Toàn bộ ứng dụng chạy như một cửa sổ 2D đổi được kích thước: đăng nhập, dòng thời gian, album, tìm kiếm, thẻ Thư viện (danh sách 360°, Trên thiết bị này, Chia sẻ mạng), cài đặt, và các trình xem ảnh và video, nơi ảnh và video phẳng được phát. Trên kính, nút 360°, và Xem dạng 360° trong menu ⋮, mở thẳng chế độ xem nhập vai thay vì trình xem hình cầu của điện thoại, còn nút Spatial 2.5D và cài đặt của nó không hiển thị. Từ bản dựng 19, ảnh không gian của Apple có nút Xem ở dạng 3D, và ô Chia sẻ điện thoại này trên mạng không hiển thị: chính kính là bên đọc chia sẻ của điện thoại.
+Toàn bộ ứng dụng chạy như một cửa sổ 2D đổi được kích thước: đăng nhập, dòng thời gian, album, tìm kiếm, thẻ Thư viện (danh sách 360°, Trên thiết bị này, Chia sẻ mạng), cài đặt, và các trình xem ảnh và video, nơi ảnh và video phẳng được phát. Trên kính, nút 360°, và Xem dạng 360° trong menu ⋮, mở thẳng chế độ xem nhập vai thay vì trình xem hình cầu của điện thoại, còn nút Spatial 2.5D và cài đặt của nó không hiển thị. Từ bản dựng 19, ảnh không gian của Apple có nút Xem ở dạng 3D, và ô Chia sẻ điện thoại này trên mạng không hiển thị: chính kính là bên đọc chia sẻ của điện thoại. Từ bản dựng 20, máy chủ Plex và camera Tapo cũng mở trong cửa sổ, hình ảnh trực tiếp của camera ở chất lượng HD; cài đặt "Bố cục cho điều khiển từ xa" giữ ở Tự động, nghĩa là tắt trên kính.
 
 ### Qua hình ảnh
 
@@ -598,7 +776,7 @@ Toàn bộ ứng dụng chạy như một cửa sổ 2D đổi được kích th
 ### Giới hạn trên kính
 
 - **Codec video**: HEVC (H.265) là lựa chọn an toàn; H.264 dừng ở khoảng 4096x2304. Ứng dụng kiểm tra gì, và cách cho kính một video mà nó giải mã được, có trong [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters).
-- **Cửa hàng**: phiên bản trên cửa hàng bắt đầu từ bản dựng 14. Các tính năng ghi "từ bản dựng 15" và "từ bản dựng 16" sẽ có trong lần cập nhật tiếp theo (bản dựng 16, đã có trên kênh thử nghiệm alpha), các tính năng sau đó đến sau; APK trên GitHub đã có tất cả.
+- **Cửa hàng**: phiên bản trên cửa hàng bắt đầu từ bản dựng 14. Các tính năng ghi "từ bản dựng 15" và sau đó sẽ có trong các lần cập nhật tiếp theo (kênh thử nghiệm alpha của cửa hàng, dành cho người thử nghiệm, nhận mọi bản dựng mới); APK trên GitHub đã có tất cả.
 - **Quyền**: bản dựng cho kính chỉ xin quyền ảnh và video (chế độ không có máy chủ) và thông báo (tiến trình sao lưu). Nó không có quyền bộ nhớ, âm thanh, vị trí hay camera, khác với bản dựng cho điện thoại; vì vậy tính năng đổi máy chủ theo tên Wi-Fi không có trên kính.
 - **Dung lượng APK**: Spatial SDK thêm khoảng 56 MB mã native ARM 64-bit, kể cả trên điện thoại, nơi nó không bao giờ được nạp.
 - **Giấy phép**: chế độ xem nhập vai dùng Meta Spatial SDK, được phân phối theo Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Toàn bộ ứng dụng chạy như một cửa sổ 2D đổi được kích th
 <a id="where-to-get-it"></a>
 ## Tải ở đâu
 
-Ứng dụng có trên Google Play; phiên bản App Store đang chờ Apple xét duyệt, và phiên bản Meta Horizon Store đang chờ Meta. Bản phát hành trên GitHub luôn là bản dựng mới nhất:
+Ứng dụng có trên Google Play cho điện thoại và máy tính bảng; phiên bản App Store đang chờ Apple xét duyệt, phiên bản Meta Horizon Store đang chờ Meta, và phiên bản Google Play cho TV đang chờ Google xét duyệt bản phát hành cho TV. Bản phát hành trên GitHub luôn là bản dựng mới nhất:
 
 | Nền tảng | Hiện nay | Sắp tới |
 |---|---|---|
-| Điện thoại và máy tính bảng Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), hoặc APK trên trang [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` cho điện thoại (bản phổ thông `Immuch360-v<version>-release.apk` chạy ở mọi nơi, `-armeabi-v7a` dành cho điện thoại 32 bit đời cũ, và tệp `.aab` dành cho Google Play, không dùng để cài thủ công). Bản dựng trên GitHub thường đi trước cửa hàng. Dù cách nào, ứng dụng cũng cài song song với ứng dụng Immich chính thức (gói `com.aprogsys.immuch360`). | Google Play: bản dựng 15 và 16 đã gửi Google xét duyệt ngày 4 tháng 10 năm 2026 (bản dựng cuối cùng được xác nhận đang phát hành ở đó là bản dựng 11) |
+| Điện thoại và máy tính bảng Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), hoặc APK trên trang [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` cho điện thoại (bản phổ thông `Immuch360-v<version>-release.apk` chạy ở mọi nơi, `-armeabi-v7a` dành cho điện thoại 32 bit đời cũ, và tệp `.aab` dành cho Google Play, không dùng để cài thủ công). Bản dựng trên GitHub thường đi trước cửa hàng. Dù cách nào, ứng dụng cũng cài song song với ứng dụng Immich chính thức (gói `com.aprogsys.immuch360`). | Google Play: bản dựng 18 đang phát hành, bản dựng 19 đang được Google xét duyệt từ ngày 6 tháng 10 năm 2026, bản dựng 20 tiếp theo |
 | iPhone và iPad | Đang chờ Apple xét duyệt. Phiên bản đang xét duyệt có các tính năng của bản dựng 11: tải lên Immich và lựa chọn Nguồn video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong một bản cập nhật App Store sau này. Mã nguồn được dựng bằng Xcode hoặc trên Codemagic, xem [Tự dựng ứng dụng](#build-it-yourself). | App Store, đang xét duyệt |
-| Meta Quest 3 và 3S | Tệp `-quest-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases) (bản `-release.apk` phổ thông cũng chạy), cài thủ công ở chế độ nhà phát triển, xem [Cài đặt ứng dụng](#install). Bản dựng trên cửa hàng và APK trên GitHub được ký bằng các khóa khác nhau: để chuyển từ bản này sang bản kia, hãy gỡ ứng dụng trước (cài đặt và các chia sẻ đã lưu cũng mất theo). | Meta Horizon Store: bản dựng 14 đang được Meta xét duyệt từ ngày 3 tháng 10 năm 2026; bản dựng 16 có trên kênh alpha của cửa hàng (chỉ người thử nghiệm) |
+| Meta Quest 3 và 3S | Tệp `-quest-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases) (bản `-release.apk` phổ thông cũng chạy), cài thủ công ở chế độ nhà phát triển, xem [Cài đặt ứng dụng](#install). Bản dựng trên cửa hàng và APK trên GitHub được ký bằng các khóa khác nhau: để chuyển từ bản này sang bản kia, hãy gỡ ứng dụng trước (cài đặt và các chia sẻ đã lưu cũng mất theo). | Meta Horizon Store: bản dựng 14 đang được Meta xét duyệt từ ngày 3 tháng 10 năm 2026; kênh alpha của cửa hàng (chỉ người thử nghiệm) nhận mọi bản dựng mới |
+| Android TV và Google TV (từ bản dựng 20) | Bản phổ thông `Immuch360-v<version>-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases), cài thủ công bằng adb, xem [Cài đặt trên TV](#install-it-on-the-tv). Đây là cùng một ứng dụng như trên điện thoại. | Google Play trên TV, sau khi Google xét duyệt bản phát hành cho TV |
 
 Liên kết App Store và Meta Horizon Store sẽ được thêm vào đây ngay khi các trang được phát hành. Đăng nhập bằng URL máy chủ Immich và tài khoản quen thuộc của bạn, hoặc chạm "Sử dụng không cần máy chủ" trên trang đăng nhập để bắt đầu với ảnh và video của chính thiết bị. APK tải từ GitHub không tự cập nhật: hãy theo dõi trang Releases, và khi bạn đã cài ứng dụng từ một cửa hàng, hãy nhận cập nhật từ cửa hàng đó.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Ảnh chụp màn hình cho cửa hàng được chụp trên bản dựng debug cho trình mô phỏng, tạo với `--dart-define=IMMUCH_SCREENSHOTS=true`, tùy chọn này chỉ ẩn biểu ngữ debug. Hai flavor Android là cùng một ứng dụng. Flavor `quest` nhắm SDK 34 và chỉ giữ các quyền mà kính dùng (ảnh, video, thông báo): quản lý nội dung đa phương tiện, vị trí chạy nền, bộ nhớ kiểu cũ, âm thanh, vị trí của nội dung, vị trí thiết bị và camera bị gỡ bỏ trong `android/app/src/quest/AndroidManifest.xml`, vì Meta Horizon Store từ chối hai quyền đầu và yêu cầu giải trình cho mọi quyền nhạy cảm khác; cùng tệp đó khai báo Quest 3 và 3S là thiết bị được hỗ trợ và giới hạn HTTP thường ở chính kính và tên trong mạng gia đình. APK chỉ có 64 bit nhờ hai đối số bổ sung trong dòng lệnh (`--target-platform android-arm64 --android-project-arg arm64only=true`). Flavor `phone` là thứ Google Play yêu cầu. Để dựng cho iOS trên máy Mac của bạn, hãy dùng Xcode và nhóm ký của riêng bạn; với Xcode 26, chạy `xcodebuild -downloadComponent MetalToolchain` một lần trước, vì các shader của Spatial cần nó. Không có Mac, bản dựng iOS chạy trên Codemagic (một máy Mac được lưu trữ) từ tệp `codemagic.yaml` của kho mã này. Bản dựng phát hành Android chạy trên GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Ảnh chụp màn hình cho cửa hàng được chụp trên bản dựng debug cho trình mô phỏng, tạo với `--dart-define=IMMUCH_SCREENSHOTS=true`, tùy chọn này chỉ ẩn biểu ngữ debug. Hai flavor Android là cùng một ứng dụng. Từ bản dựng 20, flavor `phone` còn tự khai báo là ứng dụng TV (một mục trong trình khởi chạy TV và một biểu ngữ, không yêu cầu màn hình cảm ứng), điều mà flavor `quest` bỏ qua. Flavor `quest` nhắm SDK 34 và chỉ giữ các quyền mà kính dùng (ảnh, video, thông báo): quản lý nội dung đa phương tiện, vị trí chạy nền, bộ nhớ kiểu cũ, âm thanh, vị trí của nội dung, vị trí thiết bị và camera bị gỡ bỏ trong `android/app/src/quest/AndroidManifest.xml`, vì Meta Horizon Store từ chối hai quyền đầu và yêu cầu giải trình cho mọi quyền nhạy cảm khác; cùng tệp đó khai báo Quest 3 và 3S là thiết bị được hỗ trợ và giới hạn HTTP thường ở chính kính và tên trong mạng gia đình. APK chỉ có 64 bit nhờ hai đối số bổ sung trong dòng lệnh (`--target-platform android-arm64 --android-project-arg arm64only=true`). Flavor `phone` là thứ Google Play yêu cầu. Để dựng cho iOS trên máy Mac của bạn, hãy dùng Xcode và nhóm ký của riêng bạn; với Xcode 26, chạy `xcodebuild -downloadComponent MetalToolchain` một lần trước, vì các shader của Spatial cần nó. Không có Mac, bản dựng iOS chạy trên Codemagic (một máy Mac được lưu trữ) từ tệp `codemagic.yaml` của kho mã này. Bản dựng phát hành Android chạy trên GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Không có bí mật nào nằm trong kho mã này: khóa ký Android được lưu dưới dạng secret đã mã hóa của GitHub Actions, và tài liệu ký của Apple được lưu dưới dạng biến đã mã hóa trên Codemagic. Các tệp workflow chỉ tham chiếu chúng theo tên. Không có `android/key.jks` của riêng bạn, bản dựng phát hành được ký bằng khóa debug và không cài đè được lên bản lấy từ GitHub hay cửa hàng (hãy gỡ bản đó trước); bản dựng debug được cài song song dưới tên Immuch360 debug. Bản trên Meta Horizon Store là APK `quest` của bản phát hành được ký bằng một khóa khác, chính là khóa mà ứng dụng trên cửa hàng được đăng ký lần đầu, nên nó cũng không cài đè lên APK cài thủ công được, và ngược lại.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Từ bản dựng 19, ứng dụng DLNA, chia sẻ điện thoại và việc nhận diện nội dung không gian của Apple cũng ghi vào nhật ký riêng của ứng dụng (Nhật ký, trong menu ảnh đại diện ở góc trên bên phải), dưới `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` và `NetworkMediaService`. Các dòng nhật ký ở lại trên thiết bị trừ khi bạn tự sao chép chúng.
+Từ bản dựng 19, ứng dụng DLNA, chia sẻ điện thoại và việc nhận diện nội dung không gian của Apple cũng ghi vào nhật ký riêng của ứng dụng (Nhật ký, trong menu ảnh đại diện ở góc trên bên phải), dưới `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` và `NetworkMediaService`. Từ bản dựng 20, chế độ TV ghi vào đó dưới `TvMode` và `TvTextEntry`, các máy chủ Plex dưới `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` và `PlexServerEditPage`, và các camera Tapo dưới `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` và `CameraLiveView`; các dòng của Plex không bao giờ chứa mã token, địa chỉ hay tiêu đề, và các dòng của camera bỏ qua mật khẩu. Các dòng nhật ký ở lại trên thiết bị trừ khi bạn tự sao chép chúng.
 
 ## Quyền riêng tư
 
 - **Không có gì gửi tới nhà phát triển**: ứng dụng giao tiếp với máy chủ Immich bạn chọn (và, khi bạn mở bản đồ, với dịch vụ ô bản đồ mà máy chủ đó dùng), không có quảng cáo, không có phân tích và không có dịch vụ báo lỗi do nhà phát triển vận hành, và không gửi gì tới nhà phát triển Immuch360.
-- **Không có máy chủ**, không có gì rời khỏi thiết bị.
+- **Không có máy chủ**, không máy chủ nào được liên hệ: ứng dụng chỉ dùng mạng cho các chia sẻ, máy chủ Plex và camera bạn mở, và cho chia sẻ điện thoại, nếu bạn bật nó.
 - **Chia sẻ mạng**: danh sách chia sẻ được giữ trên thiết bị và không bao giờ gửi tới máy chủ; mật khẩu được lưu trong keychain hoặc keystore của thiết bị.
+- **Plex** (từ bản dựng 20): mã token ở trong bộ nhớ an toàn của thiết bị và chỉ được gửi tới máy chủ của chính bạn, trong một header của yêu cầu qua HTTPS; ứng dụng không bao giờ liên hệ plex.tv.
+- **Camera Tapo** (từ bản dựng 20): mật khẩu tài khoản TP-Link và mật khẩu tài khoản camera ở trong bộ nhớ an toàn của thiết bị; ứng dụng chỉ giao tiếp với camera trong mạng cục bộ, không bao giờ với máy chủ của TP-Link; các đoạn đã tải nằm trong bộ nhớ đệm của ứng dụng và bị xóa cùng với camera.
+- **TV**: việc thiết bị có phải là TV hay không được xác định ngay trên thiết bị; không có gì được gửi đi.
 - **Chia sẻ điện thoại**: chỉ mạng cục bộ, có tên người dùng và mật khẩu, qua HTTP thường (xem [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network)).
 - **Camera**: chỉ trình phát Spatial 2.5D dùng, trên thiết bị; hình ảnh không bao giờ được lưu và không gửi đi đâu.
 
@@ -675,20 +857,25 @@ Dự án này là một bản fork của Immich và vẫn theo giấy phép [GNU
 
 Những gì chưa làm, việc nhiều khả năng nhất đứng trước. Không có gì ở đây là lời hứa, và phản hồi trên [trình theo dõi vấn đề](https://github.com/freeKC/Immuch360/issues) giúp quyết định việc gì làm trước.
 
-- **Google Play**: bản dựng 15 và 16 đã gửi Google xét duyệt ngày 4 tháng 10 năm 2026 và sẽ phát hành khi được duyệt; bản dựng cuối cùng được xác nhận đang phát hành ở đó là bản dựng 11.
+- **Google Play**: bản dựng 18 đang phát hành; bản dựng 19 đang được Google xét duyệt từ ngày 6 tháng 10 năm 2026, và bản dựng 20 theo sau.
 - **App Store**: phiên bản 3.3.0 đang chờ Apple xét duyệt; nó có các tính năng của bản dựng 11, nên tải lên Immich và kiểm tra bộ giải mã video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong bản cập nhật App Store tiếp theo. Liên kết sẽ được thêm vào đây khi phát hành.
-- **Meta Horizon Store**: trang đã được gửi Meta xét duyệt ngày 3 tháng 10 năm 2026 với bản dựng 14, và bản dựng 16 đang ở kênh alpha của cửa hàng cho lần cập nhật tới. Khi trang được duyệt, Quest 3 không còn cần cài thủ công và liên kết cửa hàng sẽ được thêm vào đây; bản cài thủ công phải được gỡ trước (xem [Cài đặt ứng dụng](#install)).
-- **Trang trên cửa hàng**: nội dung trên Google Play và App Store vẫn mô tả các bản dựng đầu (ảnh và video 360°, tệp thô hiện phẳng); chúng sẽ giới thiệu các trình xem 3D, VR180 và Spatial, chế độ không có máy chủ, chia sẻ mạng, trình phát đa phương tiện và tệp thô Insta360. Nội dung trên Meta Horizon Store đã giới thiệu trình phát đa phương tiện.
+- **Meta Horizon Store**: trang đã được gửi Meta xét duyệt ngày 3 tháng 10 năm 2026 với bản dựng 14, và kênh alpha của cửa hàng nhận mọi bản dựng mới cho lần cập nhật tới. Khi trang được duyệt, Quest 3 không còn cần cài thủ công và liên kết cửa hàng sẽ được thêm vào đây; bản cài thủ công phải được gỡ trước (xem [Cài đặt ứng dụng](#install)).
+- **Trang trên cửa hàng**: trang Google Play đã được viết lại vào tháng 10 năm 2026 với ảnh chụp màn hình mới, và sẽ có thêm ảnh chụp màn hình TV và biểu ngữ TV cùng bản phát hành cho TV. Nội dung trên App Store vẫn mô tả các bản dựng đầu (ảnh và video 360°, tệp thô hiện phẳng); nó sẽ giới thiệu các trình xem 3D, VR180 và Spatial, chế độ không có máy chủ, chia sẻ mạng, trình phát đa phương tiện và tệp thô Insta360. Nội dung trên Meta Horizon Store đã giới thiệu trình phát đa phương tiện.
 - **Tệp thô của máy ảnh 360°, tiếp theo**: chỉ báo tiến trình khi đang chuẩn bị ảnh thô cho kính; cân bằng video GoPro và DJI từ dữ liệu chuyển động của chính chúng; .dng mắt cá kép; báo cáo từ thiết bị về việc phát hai ống kính của bản dựng 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) để xác nhận đường nối và ngân sách bộ giải mã.
 - **DLNA, chia sẻ điện thoại và nội dung không gian Apple, tiếp theo**: báo cáo từ thiết bị cho bản dựng 19 (Plex, Jellyfin, NAS và Freebox Server qua DLNA; điện thoại phục vụ cho Quest, cả qua điểm phát sóng của nó; ảnh và video không gian thật từ iPhone trong kính); quyền multicast đã xin Apple, để iPhone tìm được mọi máy chủ DLNA; trước và tiếp theo giữa các ảnh không gian trong kính; huy hiệu không gian cho ảnh trên máy chủ trong dòng thời gian; video không gian ở dạng 3D trên Quest, nếu bộ giải mã của nó cho phép.
 - **Trình phát 360° trên điện thoại, tiếp theo**: thanh thời gian trong trình phát video 360° trên iOS (trình phát Android đã có), trước/tiếp theo trong trình phát 360° của điện thoại như trong chế độ xem nhập vai trên Quest, và ảnh trong trình phát video 360° tích hợp.
 - **Chia sẻ mạng, các bước tiếp theo**: vuốt từ tệp này sang tệp tiếp theo của thư mục trong trang ảnh và video (chế độ xem nhập vai trên Quest đã đi qua các tệp 360° của thư mục), xác thực Digest cho WebDAV, tên người dùng từ bản ghi Bonjour.
 - **Video phẳng**: lựa chọn bản âm thanh trong trình phát phẳng, như nhau cho video trên máy chủ, thiết bị và chia sẻ (trình phát 360° và Spatial đã có).
+- **Android TV, tiếp theo**: kiểm thử bản dựng 20 trên trình giả lập Google TV và một TV thật, rồi bản phát hành cho TV trên Google Play (ảnh chụp màn hình TV, biểu ngữ TV, Google xét duyệt); sau đó, các kênh trên màn hình chính của TV.
+- **Camera Tapo, tiếp theo**: kiểm thử bản dựng 20 với camera thật; hình ảnh trực tiếp trên iPhone và iPad; bản ghi H.265; phát một đoạn trong khi đang tải; cả một ngày bản ghi trên một dòng thời gian.
+- **Plex, tiếp theo**: kiểm thử bản dựng 20 trên thiết bị (điện thoại, Quest, iPhone, TV, khi ở xa nhà); đưa mã token từ máy tính sang bằng mã QR; ẩn phần DLNA của máy chủ Plex trong danh sách máy chủ tìm thấy; IPv6.
 - **Upstream**: các pull request nhỏ gửi Immich cho những phần mà người bảo trì muốn, bắt đầu với trình xem ảnh 360°.
 
 ## Ghi nhận
 
 Trình xem ảnh 360° dựa trên pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) của dmitry-brazhenko, vốn được xây dựng trên bản mẫu của bencefr trong [#30192](https://github.com/immich-app/immich/pull/30192). Cảm ơn cả hai.
+
+Camera Tapo của bản dựng 20 được viết dựa trên những gì các dự án mã nguồn mở [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) và [python-kasa](https://github.com/python-kasa/python-kasa) ghi lại về các camera này.
 
 Vì sao có bản fork: tính năng xem 360° trên di động đã được yêu cầu từ tháng 1 năm 2024 và chưa có trong ứng dụng chính thức; trình xem ảnh đang được xét duyệt upstream trong [#31169](https://github.com/immich-app/immich/pull/31169). Bản fork này cung cấp nó ngay bây giờ, thu thập phản hồi từ thiết bị thật, và sẽ đóng góp lại cho Immich, bằng các pull request nhỏ, bất cứ phần nào người bảo trì muốn. Chế độ xem trên Meta Quest dựa vào Meta Spatial SDK, vốn không phải mã nguồn mở, nên phần đó ở lại trong bản fork này.
 

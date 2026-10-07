@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Focus frame of the buttons of the native 360° video player, drawn over them: a remote control (Android TV) moves
+     the focus between them, and the touch ripple alone does not show where it is. Nothing without the focus. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:state_focused="true">
+    <shape android:shape="rectangle">
+      <stroke android:width="3dp" android:color="@android:color/white" />
+      <corners android:radius="8dp" />
+    </shape>
+  </item>
+  <item android:drawable="@android:color/transparent" />
+</selector>

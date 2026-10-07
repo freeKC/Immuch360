@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
@@ -90,6 +91,14 @@ class _FakeRelocator implements NetworkSourceRelocator {
     await answer?.future;
     return result;
   }
+}
+
+/// A share read through its address outside home, or at home, as a Plex server may be
+class _RemoteShare extends MemoryShare implements NetworkRemoteEndpoint {
+  _RemoteShare(super.source, {super.folders, super.files, required this.isOutsideHome});
+
+  @override
+  final bool isOutsideHome;
 }
 
 /// The record of the files sent, in memory: widget tests do not wait for real file reads
@@ -732,6 +741,60 @@ void main() {
     expect(videoHost.urls, isEmpty, reason: 'no frame taken while the server picture comes');
   });
 
+  group('the address outside home and refused credentials', () {
+    testWidgets('marks a share read through its address outside home', (tester) async {
+      share = _RemoteShare(source, folders: share.folders, files: share.files, isOutsideHome: true);
+      await pumpBrowser(tester);
+
+      expect(find.byKey(const Key('network_browser_remote_endpoint')), findsOneWidget);
+      expect(find.byIcon(Icons.public), findsOneWidget);
+      expect(find.byTooltip('Connected through the address outside home'), findsOneWidget);
+    });
+
+    testWidgets('no mark at home, nor for a share that has no address outside home', (tester) async {
+      share = _RemoteShare(source, folders: share.folders, files: share.files, isOutsideHome: false);
+      await pumpBrowser(tester);
+      expect(find.byKey(const Key('network_browser_remote_endpoint')), findsNothing);
+    });
+
+    testWidgets('offers to edit a share whose credentials were refused', (tester) async {
+      share.error = const NetworkFileSystemException('Wrong user name or password', isAuthentication: true);
+      await pumpBrowser(tester);
+
+      expect(find.byKey(const Key('network_error_edit_source')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('network_error_edit_source')));
+      await tester.pumpAndSettle();
+      expect(find.text('edit Home NAS'), findsOneWidget);
+    });
+
+    testWidgets('offers a new token to a Plex server that refused its token', (tester) async {
+      const plex = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.plex,
+        name: 'Test Plex',
+        host: '192.0.2.20',
+        useTls: true,
+        plex: PlexServerInfo(hash: '0123456789abcdef0123456789abcdef'),
+      );
+      await store.delete(StoreKey.networkSources);
+      await store.put(StoreKey.networkSourcesExtra, NetworkSource.encodeList(const [plex]));
+      share.error = const NetworkFileSystemException('The Plex server refused this token', isAuthentication: true);
+      await pumpBrowser(tester);
+
+      expect(find.text('Paste a new token'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('network_error_edit_source')));
+      await tester.pumpAndSettle();
+      expect(find.text('plex edit Test Plex token'), findsOneWidget);
+    });
+
+    testWidgets('no edit button when the share could not be reached', (tester) async {
+      share.error = const NetworkFileSystemException('Cannot reach nas.local');
+      await pumpBrowser(tester);
+
+      expect(find.byKey(const Key('network_error_edit_source')), findsNothing);
+    });
+  });
+
   group('a share found on the network, at a new address', () {
     const found = NetworkSource(
       id: 'nas',
@@ -798,6 +861,39 @@ void main() {
       share.error = const NetworkFileSystemException('Refused', isAuthentication: true);
       await pump(tester);
       expect(relocator.asked, isEmpty);
+    });
+
+    testWidgets('a Plex server is moved without a question: only its own certificate ever gets the token', (
+      tester,
+    ) async {
+      const plex = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.plex,
+        name: 'Test Plex',
+        host: '192.0.2.20',
+        useTls: true,
+        discoveryId: '0000000000000000000000000000000000000001',
+        plex: PlexServerInfo(hash: '0123456789abcdef0123456789abcdef'),
+      );
+      await store.delete(StoreKey.networkSources);
+      await store.put(StoreKey.networkSourcesExtra, NetworkSource.encodeList(const [plex]));
+      share.error = const NetworkFileSystemException('Cannot reach 192.0.2.20: No route to host');
+      relocator
+        ..answer = Completer<void>()
+        ..result = plex.copyWith(host: '192.0.2.21');
+      await pump(tester, settle: false);
+      await tester.pump();
+      await tester.pump();
+
+      share.error = null;
+      relocator.answer!.complete();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.text('Holidays'), findsOneWidget);
+      final saved = NetworkSource.decodeList(store.tryGet(StoreKey.networkSourcesExtra)).single;
+      expect(saved.host, '192.0.2.21');
+      expect(saved.plex?.hash, '0123456789abcdef0123456789abcdef');
     });
 
     testWidgets('a share typed by hand is not looked for', (tester) async {

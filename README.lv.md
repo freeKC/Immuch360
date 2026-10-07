@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīties apkārt, un bezmaksas atskaņotājs plakaniem, 360°, 3D un VR180 foto un video Android tālruņos un planšetdatoros, iPhone un iPad, kā arī Meta Quest 3 un 3S. Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) vai tālruņa fotosfēras režīmu, vai kam ir VR brilles, un kas vēlas skatīties savus uzņēmumus no Immich servera, paša tālruņa, NAS vai multivides servera: tas pats serveris, tas pats konts, bez servera spraudņa vai vispār bez servera.
+Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīties apkārt, un bezmaksas atskaņotājs plakaniem, 360°, 3D un VR180 foto un video Android tālruņos un planšetdatoros, iPhone un iPad, Meta Quest 3 un 3S, kā arī no 20. būvējuma Android TV un Google TV. Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) vai tālruņa fotosfēras režīmu, vai kam ir VR brilles, un kas vēlas skatīties savus uzņēmumus no Immich servera, paša tālruņa, NAS, multivides servera vai Plex servera: tas pats serveris, tas pats konts, bez servera spraudņa vai vispār bez servera. No 20. būvējuma tā rāda arī Tapo kameras: tiešraidi un to atmiņas kartes ierakstus.
 
 <p align="center">
   <sub>Neoficiāls atzarojums. Nav saistīts ar Immich vai FUTO. Nosaukums lasāms kā „I am much 360”.</sub>
@@ -15,7 +15,8 @@ Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīt
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">tiek pārskatīts</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store tiek pārskatīts
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store tiek pārskatīts &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīt
     <td align="center" width="33%"><h3>🎥 Īsts 2.5D</h3>Dziļums plakanā ekrānā no stereoskopiska video, skats seko jūsu galvai (eksperimentāls, tālruņi un planšetdatori)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Viena lietotne, trīs platformas, īsts 3D brillēs</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Viena lietotne tālruņos, planšetdatoros un brillēs, īsts 3D brillēs, un no 20. būvējuma Android TV ar tālvadības pulti</td>
     <td align="center"><h3>🔌 Ar serveri vai bez tā</h3>Jūsu Immich serveris vai paša tālruņa galerija, konts nav vajadzīgs</td>
     <td align="center"><h3>🗄️ Tīkla koplietojumi</h3>Samba (SMB), WebDAV un, no 19. būvējuma, DLNA multivides serveri, atrasti tīklā un lasīti tieši, nekas netiek lejupielādēts, un nosūtīti uz Immich, kad to izvēlaties. No 19. būvējuma tālrunis arī koplieto savu galeriju ar brillēm</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Televizorā</h3>No 20. būvējuma tas pats APK Android TV un Google TV: 360° foto un video, jūsu serveris un jūsu koplietojumi, ar tālvadības pulti</td>
+    <td align="center"><h3>🎬 Plex, bez plex.tv</h3>No 20. būvējuma jūsu Plex bibliotēkas, atskaņotas no oriģinālajiem failiem, lai 360° paliktu 360°, mājās un ārpus tām</td>
+    <td align="center"><h3>📹 Tapo kameras</h3>No 20. būvējuma tiešraide un atmiņas kartes ieraksti, tikai jūsu tīklā, un klips tiek nosūtīts uz Immich, kad jūs to izvēlaties</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīt
 - **„Mani 360° foto tiek rādīti kā plakana, izstiepta josla, un mani 360° video tiek atskaņoti plakani.”** Skatiet [360° foto un video kā sfēra](#360-photos-and-videos-as-a-sphere).
 - **„Man nav servera, un es negribu kontu.”** Skatiet [Bez servera un konta](#without-a-server-or-an-account).
 - **„Es gribu skatīties sava NAS video tālrunī vai brillēs, tos nekopējot.”** Skatiet [Tīkla koplietojumi](#network-shares-a-nas-a-computer-or-a-media-server).
+- **„Plex manus 360° video rāda plakanus, un es gribu savu Plex bibliotēku brillēs, televizorā un ārpus mājām.”** Skatiet [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv).
 - **„Mani foto ir tālrunī, un man nav datora vai NAS, kur tos ielikt brillēm.”** Skatiet [Koplietot šo tālruni tīklā](#share-this-phone-on-the-network).
+- **„Es gribu redzēt savu Tapo kameru un pagājušās nakts klipus bez lietotnes Tapo un paturēt klipu Immich.”** Skatiet [Tapo kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **„Maniem Insta360 failiem vajag Insta360 lietotni, pirms tos var skatīties”** (un arī GoPro .360 un DJI .osv failiem). Skatiet [Neapstrādāti 360° kameras faili](#raw-360-camera-files-without-the-cameras-app).
 - **„Mani 3D video izskatās dubulti, un mani VR180 video ir izstiepti pa visu sfēru.”** Skatiet [3D un VR180](#3d-and-vr180-photos-and-videos) un [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **„Man ir telpiskie foto no mana iPhone.”** Skatiet [Apple telpiskie foto un video](#apple-spatial-photos-and-videos).
 - **„Tālrunī tas darbojas, bet es to gribu Quest brillēs.”** Skatiet [Meta Quest 3 brillēs](#in-the-meta-quest-3-headset).
+- **„Es gribu skatīties savus 360° foto un video, kā arī sava NAS vai Plex servera video televizorā, ar tālvadības pulti.”** Skatiet [Skatīties televizorā](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Es nevaru atrast savus 360° uzņēmumus starp visiem pārējiem.”** Skatiet [360° saraksts](#find-your-360-shots-the-360-list).
 - **„Mans 360° video raustās vai atskaņo izplūdušu kopiju.”** Skatiet [Video informācija un dekoderi](#video-details-decoders-and-why-a-video-stutters).
 - **„Vai saglabājas tas, ko dara Immich lietotne?”** Jā, ar divām nelielām izmaiņām, skatiet [Viss pārējais ir Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Izvēle tiek atcerēta tālrunī un serverī neko nemaina. Tīkla koplietojuma f
 
 Jums nav Immich servera, vai jūs negribat kontu: jūs tikai gribat, lai tālruņa 360° foto atvērtos kā sfēra, ko var griezt ar žiroskopu. Immich lietotne vispirms prasa pieslēgties.
 
-Pieslēgšanās lapā „Lietot bez servera” atver Immuch360 ar pašas ierīces foto un video, ar 360°, 3D, VR180 un Spatial skatītājiem, 360° sarakstu un tīkla koplietojumiem, Immich konts nav vajadzīgs. Servera funkcijas paliek paslēptas vai pelēkas, līdz pievienojat serveri; nekas neatstāj ierīci. Meta Quest 3 brillēs tā atver pašu briļļu foto un video.
+Pieslēgšanās lapā „Lietot bez servera” atver Immuch360 ar pašas ierīces foto un video, ar 360°, 3D, VR180 un Spatial skatītājiem, 360° sarakstu un tīkla koplietojumiem (no 20. būvējuma arī Plex serveriem un Tapo kamerām), Immich konts nav vajadzīgs. Servera funkcijas paliek paslēptas vai pelēkas, līdz pievienojat serveri; nekas neatstāj ierīci. Meta Quest 3 brillēs tā atver pašu briļļu foto un video; televizorā, kuram to nav, tā norāda uz tīkla koplietojumiem (skatiet [Skatīties televizorā](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Cilne Bibliotēka bez servera: augšā ieraksts 360°, tad Šajā ierīcē ar diviem 360° foto un Tīkla koplietojumi ar koplietojumu, kura nosaukums ir NAS">
 
@@ -126,7 +135,7 @@ Pieslēgšanās lapā „Lietot bez servera” atver Immuch360 ar pašas ierīce
 
 Jūsu 360° video atrodas NAS vai datorā, un jūs gribat tos skatīties tālrunī vai brillēs, iepriekš tos nekopējot. Brillēs cilvēki galu galā kopē katru failu ar kabeli; multivides serveri, piemēram, Plex un Jellyfin, atskaņo 360° video plakani, kā raksta pieprasījumi to forumos; Immich lietotne lasa tikai jūsu Immich serveri.
 
-Immuch360 pārlūko un atskaņo foto un video no jebkura servera, kas runā SMB (Samba, Windows), WebDAV vai, no 19. būvējuma, DLNA/UPnP (multivides serveris: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS vai TV kaste), tieši no koplietojuma. Tā pati atrod jūsu tīkla serverus un atskaņo failus tieši tajos pašos skatītājos kā pārējā lietotne (360°, 3D, VR180, Spatial 2.5D, Quest imersīvais skats), ar Immich serveri vai bez tā, tālruņos un Meta Quest 3. Nekas netiek lejupielādēts. Kad serveris ir pievienots, izvēlētos failus var nosūtīt uz jūsu Immich kontu (no 15. būvējuma).
+Immuch360 pārlūko un atskaņo foto un video no jebkura servera, kas runā SMB (Samba, Windows), WebDAV vai, no 19. būvējuma, DLNA/UPnP (multivides serveris: Jellyfin, minidlna, Gerbera, Emby, NAS vai TV kaste), tieši no koplietojuma. No 20. būvējuma Plex Media Server ir savs veids, skatiet [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv). Tā pati atrod jūsu tīkla serverus un atskaņo failus tieši tajos pašos skatītājos kā pārējā lietotne (360°, 3D, VR180, Spatial 2.5D, Quest imersīvais skats), ar Immich serveri vai bez tā, tālruņos un Meta Quest 3. Nekas netiek lejupielādēts. Kad serveris ir pievienots, izvēlētos failus var nosūtīt uz jūsu Immich kontu (no 15. būvējuma).
 
 | Pievienot koplietojumu | Koplietojuma mape |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 pārlūko un atskaņo foto un video no jebkura servera, kas runā SMB 
 
 ### Pievienot koplietojumu
 
-1. Atveriet cilni „Bibliotēka”, tad „Tīkla koplietojumi”. Pirmajā reizē lapā rakstīts „Vēl nav neviena koplietojuma” ar pogu „Pievienot koplietojumu”; + augšā pa labi jebkurā brīdī dara to pašu.
-2. Lapa „Pievienot koplietojumu” vispirms meklē jūsu tīkla serverus un uzskaita tos sadaļā „Atrasts tīklā” ar to veidu (SMB, WebDAV, DLNA, Tālrunis). Meklēšana ilgst līdz aptuveni sešām sekundēm; „Meklēt vēlreiz” to sāk no jauna. Tā izmanto Bonjour/mDNS un lokālā tīkla skenēšanu, ko apstiprina īsta SMB vai WebDAV apmaiņa, un no 19. būvējuma SSDP meklēšanu DLNA multivides serveriem.
-3. Pieskarieties serverim: veids, serveris, ports un ceļš tiek aizpildīti.
-4. Nav sarakstā? Aizpildiet veidlapu manuāli. Veids: „SMB (Samba, Windows koplietojums)”, „WebDAV (Nextcloud, Synology un citi)” vai „DLNA multivides serveris (Plex, Jellyfin, NAS, TV kaste)”. Tad „Nosaukums”, „Servera nosaukums vai adrese” (nosaukums vai adrese; pilna adrese, piemēram, `smb://nas/photos`, `\\nas\photos` vai `https://nas:5006/photos`, aizpilda pārējos laukus), „Ports (neobligāts)”, ja tas nav parastais, „Koplietojums” SMB gadījumā vai „WebDAV adreses ceļš” WebDAV gadījumā, „Sākuma mape (neobligāta)”, „Lietotājvārds” un „Parole”, un WebDAV gadījumā „Drošs savienojums (HTTPS)”.
+1. Atveriet cilni „Bibliotēka”, tad „Tīkla koplietojumi”. Pirmajā reizē lapā rakstīts „Vēl nav neviena koplietojuma” ar pogu „Pievienot koplietojumu”; + augšā pa labi jebkurā brīdī dara to pašu. No 20. būvējuma abi jautā, ko pievienot: „Tīkla koplietojums (NAS, dators, multivides serveris)”, „Plex Media Server” vai „Tapo kamera”. Izvēlieties pirmo.
+2. Lapa „Pievienot koplietojumu” vispirms meklē jūsu tīkla serverus un uzskaita tos sadaļā „Atrasts tīklā” ar to veidu (SMB, WebDAV, DLNA, Tālrunis, un no 20. būvējuma Plex un Tapo). Meklēšana ilgst līdz aptuveni sešām sekundēm; „Meklēt vēlreiz” to sāk no jauna. Tā izmanto Bonjour/mDNS un lokālā tīkla skenēšanu, ko apstiprina īsta SMB vai WebDAV apmaiņa, no 19. būvējuma SSDP meklēšanu DLNA multivides serveriem, un no 20. būvējuma GDM, Plex atklāšanas protokolu, un TP-Link atklāšanas protokolu Tapo kamerām.
+3. Pieskarieties serverim: veids, serveris, ports un ceļš tiek aizpildīti. Plex serveris vai Tapo kamera tā vietā atver savu lapu, jau aizpildītu.
+4. Nav sarakstā? Aizpildiet veidlapu manuāli. Veids: „SMB (Samba, Windows koplietojums)”, „WebDAV (Nextcloud, Synology un citi)”, „DLNA multivides serveris (Jellyfin, NAS, TV kaste)” vai, no 20. būvējuma, „Plex Media Server”, kas atver sadaļas [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv) lapu. Tad „Nosaukums”, „Servera nosaukums vai adrese” (nosaukums vai adrese; pilna adrese, piemēram, `smb://nas/photos`, `\\nas\photos` vai `https://nas:5006/photos`, aizpilda pārējos laukus), „Ports (neobligāts)”, ja tas nav parastais, „Koplietojums” SMB gadījumā vai „WebDAV adreses ceļš” WebDAV gadījumā, „Sākuma mape (neobligāta)”, „Lietotājvārds” un „Parole”, un WebDAV gadījumā „Drošs savienojums (HTTPS)”.
 5. SMB: kad serveris un lietotājvārds ir ievadīti, „Izvēlieties koplietojumu” uzskaita servera koplietojumus.
 6. DLNA: multivides serverim nav lietotājvārda un paroles. Norādiet serveri, portu un tā ierīces apraksta „Apraksta ceļš” (`/rootDesc.xml` minidlna gadījumā) vai ielīmējiet visu adresi, piemēram, `http://192.168.1.10:8200/rootDesc.xml`, servera laukā.
 7. Pieskarieties „Pārbaudīt savienojumu”. Atbilde ir „Savienots, sākuma mapē ir N ieraksti”, vai arī tiek pateikts, kāpēc neizdevās. Tad pieskarieties „Saglabāt” veidlapas apakšā.
@@ -155,6 +164,7 @@ Lietotājvārds ar tukšu paroli tiek nosūtīts tieši tā: Freebox Server savi
 
 360°, 3D un VR180 tiek atpazīti pēc faila GPano vai sfēriskajiem metadatiem, kas tiek nolasīti ar diapazona pieprasījumiem, un VR180 arī pēc faila nosaukuma. No 16. būvējuma tiek atpazīti arī neapstrādāti Insta360 faili (.insp foto pēc nosaukuma vai kameras kalibrācijas bloka, .insv video pēc nosaukuma un kadra) un tiek sašūti.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Nosūtīt koplietojuma failus uz Immich
 
 No 15. būvējuma, kad esat pievienojies serverim:
@@ -177,17 +187,67 @@ No 19. būvējuma lietotne sūta SSDP multivides serveru meklēšanu uz tīkla m
 <a id="a-share-that-moved"></a>
 ### Koplietojums, kas pārvācies
 
-No 19. būvējuma DLNA koplietojums un tālruņa koplietojums (skatiet [Koplietot šo tālruni tīklā](#share-this-phone-on-the-network)) patur identifikatoru, ko izsludina to serveris. Kad kāds vairs neatbild savā adresē (jauna adrese no rūtera, serveris pārstartēts citā portā), tā mapes lapā tiek rādīts „Meklē (nosaukums) tīklā”, un koplietojums tiek pārvietots uz vietu, kur tas tagad atbild: uzreiz DLNA serverim, kam nav paroles, un pēc apstiprinājuma „Izmantot jauno adresi?”, kurā redzamas abas adreses, koplietojumam ar lietotājvārdu un paroli, jo tie tiktu nosūtīti uz jauno adresi.
+No 19. būvējuma DLNA koplietojums un tālruņa koplietojums (skatiet [Koplietot šo tālruni tīklā](#share-this-phone-on-the-network)) patur identifikatoru, ko izsludina to serveris. Kad kāds vairs neatbild savā adresē (jauna adrese no rūtera, serveris pārstartēts citā portā), tā mapes lapā tiek rādīts „Meklē (nosaukums) tīklā”, un koplietojums tiek pārvietots uz vietu, kur tas tagad atbild: uzreiz DLNA serverim, kam nav paroles, un pēc apstiprinājuma „Izmantot jauno adresi?”, kurā redzamas abas adreses, koplietojumam ar lietotājvārdu un paroli, jo tie tiktu nosūtīti uz jauno adresi. No 20. būvējuma Plex serveris, kas atkal atrasts citā tīkla adresē, arī tiek pārvietots uzreiz: tā sertifikāts pierāda, ka tas ir tas pats serveris, pirms tiek nosūtīts marķieris. Tapo kamera tiek meklēta pēc tās MAC adreses no tās pašas lapas, skatiet [Tapo kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Ierobežojumi
 
 - **SMB**: tikai SMB 2 un 3, bez SMB 1.
 - **WebDAV**: tikai Basic autentifikācija (Digest vēl netiek atbalstīta); pašparakstīts HTTPS sertifikāts ir jāinstalē ierīcē.
-- **Serveru atrašana**: tīkla skenēšana un DLNA meklēšana aptver tikai lokālo /24 tīklu, un iOS ierīcēs vajag lokālā tīkla atļauju. iPhone un iPad ierīcēs DLNA meklēšana sūta tikai vienraides pieprasījumus, līdz Apple piešķirs lietotnei multiraides tiesības, un daži serveri uz tiem neatbild (minidlna Linux sistēmā): pievienojiet tos pēc to apraksta adreses.
+- **Serveru atrašana**: tīkla skenēšana un DLNA, Plex un Tapo meklēšana aptver tikai lokālo /24 tīklu, un iOS ierīcēs vajag lokālā tīkla atļauju. iPhone un iPad ierīcēs DLNA meklēšana sūta tikai vienraides pieprasījumus, līdz Apple piešķirs lietotnei multiraides tiesības, un daži serveri uz tiem neatbild (minidlna Linux sistēmā): pievienojiet tos pēc to apraksta adreses.
 - **DLNA**: serveris, kas piedāvā tikai faila konvertētu kopiju, dod šo kopiju; mapē tiek uzskaitīti ne vairāk kā 20 000 ierakstu.
 - **Sīktēli**: foto sīktēliem tiek dekodēts viss fails, un foto, kas lielāki par 30 MB, tos nesaņem.
 - **Atskaņotāji**: audio celiņa izvēles plakanajā atskaņotājā vēl nav. Tālrunī vēl nevar pārvilkt no viena mapes faila uz nākamo (Quest imersīvajam skatam ir iepriekšējais un nākamais mapes 360° failiem). Tīkla failam izdarītā 3D vai 180° izvēle netiek atcerēta.
 - **Augšupielādes**: tās notiek tikai, kamēr lietotne ir atvērta, un fails, kas serverim jau ir, tiek nosūtīts pilnībā, pirms serveris paziņo, ka tas ir dublikāts.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, bez plex.tv
+
+Jūsu video ir Plex, un Plex jūsu 360° foto un video rāda plakanus, kā apraksta pieprasījumi tā forumā (viens ir atvērts kopš 2017. gada). Jūs arī gribat šo bibliotēku brillēs, televizorā un ārpus mājām. Immich lietotne lasa tikai jūsu Immich serveri, un 19. būvējuma DLNA veids sasniedz Plex DLNA pusi tikai mājās.
+
+No 20. būvējuma Immuch360 savienojas pārī ar jūsu Plex Media Server tieši, bez plex.tv: tā atrod serveri tīklā, jūs vienreiz ielīmējat marķieri, un lietotne tieši lasa jūsu bibliotēku oriģinālos failus katrā lietotnes skatītājā (360°, 3D, VR180, Spatial 2.5D, Quest imersīvais skats, televizora tālvadības pults), mājās un, izmantojot jūsu portu pāradresāciju, ārpus mājām. Nekas netiek kopēts, un izvēlētos failus var nosūtīt uz Immich.
+
+### Pievienot Plex serveri
+
+1. Atveriet cilni „Bibliotēka”, tad „Tīkla koplietojumi”, tad + un „Plex Media Server”. Koplietojuma veidlapas veids „Plex Media Server” un serveris ar Plex birku sadaļā „Atrasts tīklā” atver to pašu lapu.
+2. Lapa „Pievienot Plex serveri” meklē jūsu tīkla Plex serverus („Meklē Plex serverus jūsu tīklā”) un uzskaita tos sadaļā „Atrasts tīklā”. Pieskarieties savējam: kartītē redzams tā nosaukums, Plex versija un īss identifikators.
+3. Nav sarakstā? Ierakstiet tā adresi laukā „Servera adrese”, piemēram, `192.168.1.20`, `192.168.1.20:32400` vai `https://...plex.direct:32400`, tad pieskarieties „Uzmeklēt”. Lietotne nolasa servera sertifikātu un neko citu nesūta.
+4. Iegūstiet marķieri datorā: atveriet Plex tīmekļa pārlūkā un pierakstieties, atveriet jebkuru savas bibliotēkas foto vai video, tad „...”, „Get Info”, „View XML”. Atveras jauna cilne ar adresi, kas beidzas ar `X-Plex-Token=...`. Nokopējiet visu šo adresi.
+5. Ielīmējiet to laukā „Piekļuves marķieris” vai nosūtiet to uz tālruni un pieskarieties „Ielīmēt no starpliktuves”: lietotne no tās paņem serveri un marķieri. Der arī tikai teksts pēc `X-Plex-Token=`. Lapā esošais „Kā to iegūt” saka to pašu; serveru administratori var izmantot arī servera faila `Preferences.xml` vērtību `PlexOnlineToken`, kas nebeidzas. Televizorā OK atver tastatūras dialogu: ierakstiet marķieri tur (parasti tas ir 20 rakstzīmju garš).
+6. Pieskarieties „Pārbaudīt savienojumu”. Atbilde ir „Savienots: N bibliotēkas” vai paziņojums par to, kas nav kārtībā, piemēram, „Plex serveris noraidīja šo marķieri.”
+7. Pēc tam „Piekļuve ārpus mājām” rāda, ko saka serveris: „Serveris ziņo, ka ir sasniedzams adresē (adrese):(ports).” vai „Serveris nepaziņoja savu adresi ārpus mājām.” Lai izmantotu serveri ārpus mājām, ierakstiet savu publisko adresi vai DynDNS nosaukumu laukā „Adrese ārpus mājām (IP vai nosaukums)” un Plex pāradresēto portu (Iestatījumi, Attālā piekļuve) laukā „Ports ārpus mājām”. Tas, ko ierakstāt, vienmēr ir svarīgāks par to, ko saka serveris.
+8. „Nosaukums” ir servera nosaukums, ja vien to nemaināt, un „Sākuma mape (neobligāta)” var tieši atvērt vienu bibliotēku. Pieskarieties „Saglabāt”. Serveris tiek uzskaitīts kopā ar koplietojumiem, kā `plex://` un tā adrese.
+
+### Pārlūkot savas Plex bibliotēkas
+
+1. Pieskarieties serverim sadaļā „Tīkla koplietojumi”. Pirmajā līmenī ir uzskaitītas bibliotēkas, ko lietotne rāda: foto, filmas un citi video, TV šovi. Mūzika ir izlaista.
+2. Zem bibliotēkas ir tās mapes, kādas tās ir servera diskā (Plex skats „pa mapēm”), tad foto un video ar to failu nosaukumiem un sīktēliem, ko veido Plex. Foto bibliotēka, kuras mapju skats neatbild, tā vietā rāda savus albumus.
+3. 360° un 3D tiek atpazīti, lasot pašus failus, kā jebkurā koplietojumā: 360° foto saņem 360° nozīmīti, Apple telpiskie foto 3D nozīmīti.
+4. Atveriet foto vai video kā jebkurā koplietojumā: 360°, 3D, 360°/180°, Spatial 2.5D tālrunī, imersīvais skats Quest brillēs, tālvadības pults televizorā. Video tiek lasīts kā oriģinālais fails, ar baitu diapazoniem caur lietotnes lokālo tiltu, tāpēc pārtīšana darbojas un tā 360° un 3D metadati sasniedz atskaņotājus neskarti.
+5. Atlasiet failus un pieskarieties „Augšupielādēt uz Immich”, lai nosūtītu tos uz savu serveri, kā no jebkura koplietojuma (skatiet [Nosūtīt koplietojuma failus uz Immich](#send-files-of-a-share-to-immich)).
+
+### Ārpus mājām
+
+Katru reizi, atverot serveri, lietotne vispirms mēģina mājas adresi un pēc 400 ms adresi ārpus mājām. Tiek izmantota pirmā, kas atbild ar jūsu serveri; ja tā ir adrese ārpus mājām, mapes lapā tiek rādīta globusa ikona ar uzrakstu „Savienots, izmantojot adresi ārpus mājām”. Tam vajag Plex ieslēgtu attālo piekļuvi (Iestatījumi, Attālā piekļuve) ar portu, ko pāradresē jūsu rūteris: bez plex.tv lietotne nevar izmantot Plex retranslāciju, tāpēc serveris bez portu pāradresācijas atveras tikai mājās, un ārpus mājām lapā rakstīts „Jūsu Plex serveris nav sasniedzams ārpus mājas tīkla. Ieslēdziet attālo piekļuvi ar portu pāradresāciju Plex (Iestatījumi, Attālā piekļuve) vai ierakstiet tā publisko adresi.”
+
+Adrese, ko paziņo serveris, tiek apgūta no jauna katrā savienojumā mājās. Ja tā neatbild no ārpuses (rūteris, kas maina savu adresi, divi rūteri pēc kārtas), ierakstiet savējo servera lapā. Kad marķieris pārstāj darboties (piemēram, jūs izrakstījāties no pārlūka sesijas, no kuras to nokopējāt), mapes lapa to paziņo un piedāvā „Ielīmēt jaunu marķieri”, kas atver servera lapu pie marķiera lauka.
+
+### Salīdzinājumā ar Plex un ar DLNA veidu
+
+- **Oriģinālie faili**: lietotne lasa pašus failus, nekad ne Plex pārveidotu kopiju, tāpēc 360°, 3D un VR180 metadati paliek neskarti un lietotnes skatītāji tos izmanto, kamēr Plex lietotnes šos failus rāda plakanus.
+- **Bez plex.tv**: lietotne sazinās tikai ar jūsu serveri, vienmēr caur HTTPS. Pirms marķiera nosūtīšanas serveris tiek pārbaudīts pēc tā paša plex.direct sertifikāta, kas piesaistīts servera identifikatoram. Marķieris paliek ierīcē, tās drošajā krātuvē, un tiek sūtīts tikai uz jūsu serveri, pieprasījuma galvenē.
+- **Salīdzinājumā ar tā paša servera pievienošanu kā DLNA**: mapes kā diskā, Plex sīktēli, piekļuve ārpus mājām un drošs savienojums.
+
+### Ierobežojumi
+
+- **Tikai pieprasīti serveri**: serverim jābūt pieprasītam Plex (vienreiz pierakstoties Plex kontā), kas tam dod tā plex.direct sertifikātu. Pretējā gadījumā lapā rakstīts „Šī adrese atbild bez Plex sertifikāta. Pieprasiet serveri Plex vai pievienojiet to kā SMB, WebDAV vai DLNA koplietojumu.”
+- **Tikai IPv4**: „IPv6 adreses vēl netiek atbalstītas. Ierakstiet servera IPv4 adresi.”
+- **Marķieris** dod pilnu piekļuvi jūsu Plex serverim. Servera noņemšana lietotnē aizmirst marķieri ierīcē, bet to neatsauc: „Marķieris serverī paliek derīgs, līdz izrakstāties no pārlūka sesijas, no kuras to nokopējāt.” Marķieris ar beigu datumu rāda šo datumu, un lietotne to nevar atjaunot.
+- **Ārpus mājām**: tikai ar portu pāradresāciju, retranslācijas nav.
+- **Bibliotēkas**: mūzika netiek rādīta, mape uzskaita ne vairāk kā 20 000 ierakstu, un lietotājs ar ierobežojumiem var saņemt „Šis marķieris nevar lasīt servera bibliotēkas.”
+- **Neapstrādāti 360° kameras faili** (.insv, .insp, .360, .osv) tiek rādīti tikai tad, ja Plex tos uzskaita; pretējā gadījumā pievienojiet to pašu NAS mapi kā SMB vai WebDAV koplietojumu, skatiet [Neapstrādāti 360° kameras faili](#raw-360-camera-files-without-the-cameras-app).
+- **Servera atrašana**: serveris, kuram iestatījums „Enable local network discovery (GDM)” ir izslēgts, netiek atrasts, tāpēc ierakstiet tā adresi. iPhone un iPad ierīcēs meklēšana sūta tikai vienraides pieprasījumus. Tā paša servera DLNA puse arī var parādīties sarakstā ar DLNA birku: izvēlieties rindu ar Plex birku.
+- **Vēl nav pārbaudīts ierīcē**: savienošana pārī, mapes, video baitu diapazoni, sīktēli, nepareizs marķieris un adrese ārpus mājām tika pārbaudīti no datora pret īstu Plex Media Server 1.42.1, un foto un TV šovu bibliotēkas tikai pret simulētu serveri. Atskaņošana tālrunī, Quest brillēs, iPhone un televizorā, kā arī pārslēgšanās uz adresi ārpus mājām ir 20. būvējuma ierīču tests.
+- Immuch360 nav saistīta ar Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Koplietot šo tālruni tīklā
@@ -219,6 +279,63 @@ No šī brīža tas ir WebDAV koplietojums kā jebkurš cits: 360° atpazīšana
 - **Drošība**: tikai lokālais tīkls. Koplietojums klausās tikai tālruņa Wi-Fi, Ethernet un tīklāja adresēs, nekad mobilo datu vai VPN adresē, un atbild tikai ierīcēm ar lokālu adresi. Katram pieprasījumam vajag lietotājvārdu un paroli (HTTP Basic); desmit nepareizas paroles no vienas ierīces minūtes laikā to bloķē uz minūti. Parole Wi-Fi tīklā ceļo nešifrēta (vienkāršs HTTP): izmantojiet koplietojumu tīklā, kam uzticaties, un izslēdziet to, kad esat beidzis.
 - **Paša tālruņa tīklājs**: brilles var tam pievienoties; ja tās tur neatrod tālruni, ierakstiet lapā redzamo adresi.
 - **Vēl nav pārbaudīts ierīcē**: serveris tika pārbaudīts ar vienībtestiem un pilna cikla testiem ar pašu briļļu WebDAV klientu un multivides tiltu, datorā. Tālrunis, kas apkalpo Quest 3 (atklāšana, 4 GB video atskaņots un pārtīts, ekrāns izslēgts 30 minūtes, tīklājs, „Apturēt” no paziņojuma), un iPhone puse, kas vēl nav darbināta iPhone tālrunī, ir 19. būvējuma ierīču tests.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo kameras: tiešraide un atmiņas kartes ieraksti
+
+Jums mājās ir Tapo kameras, un jūs gribat redzēt dārza kameru un pagājušās nakts klipus blakus saviem foto, neatverot lietotni Tapo, un paturēt klipu Immich. Immich lietotnē nav nekā kamerām, un lietotne Tapo ir atsevišķa lietotne, pierakstīta jūsu TP-Link kontā, kur klipi ir atsevišķi no jūsu foto.
+
+No 20. būvējuma Immuch360 pievieno Tapo kameru blakus tīkla koplietojumiem. Tā rāda kameras tiešraidi Android tālruņos un planšetdatoros, Android TV un Meta Quest 3, un visās platformās tās atmiņas kartes ierakstus, dienu pa dienai: klips tiek iegūts no kameras, tad atskaņots kā jebkurš video, un to var nosūtīt uz Immich. Lietotne sazinās ar kameru tikai jūsu tīklā, nekad ar TP-Link serveriem, un nekad neko nemaina kamerā.
+
+### Pievienot kameru
+
+1. Vispirms lietotnē Tapo: izveidojiet kameras kontu kameras iestatījumos, Advanced Settings, Camera Account (lietotājvārds un parole šai kamerai, ko izmanto tiešraidei), un ieslēdziet Third-Party Compatibility sadaļā Me, tad Tapo Lab.
+2. Immuch360 atveriet cilni „Bibliotēka”, tad „Tīkla koplietojumi”, tad + un „Tapo kamera”.
+3. Lapa „Pievienot kameru” meklē kameras („Meklē Tapo kameras jūsu tīklā”) un uzskaita tās sadaļā „Atrasts tīklā” ar Tapo birku. Pieskarieties savējai, lai aizpildītu „Kameras adrese”, vai ierakstiet tās adresi. Kamera ar Tapo birku koplietojuma veidlapā atver to pašu lapu.
+4. „Nosaukums”: kā kamera tiek uzskaitīta.
+5. Sadaļā „Ieraksti atmiņas kartē”, „TP-Link konta parole”: tā konta parole, ko izmantojat lietotnē Tapo. Tā atver ierakstus; jūsu e-pasta adrese nav vajadzīga.
+6. Sadaļā „Tiešraide”, „Kameras konta lietotājvārds” un „Kameras konta parole”: 1. soļa kameras konts.
+7. Pietiek ar vienu no diviem („Ievadiet TP-Link konta paroli, kameras kontu vai abus.”): tikai TP-Link parole dod ierakstus, tikai kameras konts dod tiešraidi.
+8. Pieskarieties „Pārbaudīt kameru”. Tiek rādīts „Ieraksti: (modelis), programmaparatūra (versija)” ar atmiņas kartes stāvokli un „Tiešraides attēls: (video), skaņa (audio)” vai tas, kas katram neizdevās.
+9. Pieskarieties „Saglabāt”. Kamera tiek uzskaitīta sadaļā „Kameras”, aiz koplietojumiem, ar savu modeli, kad tas ir zināms, un `tapo://` ar tās adresi.
+
+### Skatīties tiešraidē
+
+1. Pieskarieties kamerai. Tās tiešraide ir lapas augšā: „Savienojas ar kameru”, tad attēls ar nozīmīti „Tiešraide”.
+2. Pogas uz attēla: skaņa, sākumā izslēgta („Ieslēgt skaņu”; „Šajā ierīcē nav skaņas”, ja ierīce to nevar atskaņot), SD vai HD un „Pilnekrāns”.
+3. Tālrunis lapā rāda SD un pilnekrānā HD; Quest brilles rāda HD. Atpakaļ vispirms iziet no pilnekrāna.
+4. Zem attēla ir modelis un programmaparatūra un atmiņas karte, piemēram, „Atmiņas karte: izmantoti (izmantots) no (kopā)” vai „Nav atmiņas kartes”.
+
+iPhone un iPad ierīcēs tiešraides vietā rakstīts „Tiešraides attēls iPhone un iPad ierīcēs būs pieejams vēlākā versijā. Ierakstus šeit jau var atskaņot.” Bez kameras konta lapā rakstīts „Pievienojiet kameras kontu, lai redzētu tiešraides attēlu.”
+
+### Atskaņot un paturēt ierakstus
+
+1. Sadaļā „Ieraksti atmiņas kartē” kameras lapa uzskaita dienas ar ierakstiem, jaunākās vispirms, pa mēnešiem. Bez TP-Link konta paroles tajā rakstīts „Pievienojiet TP-Link konta paroli, lai redzētu ierakstus.”
+2. Pieskarieties dienai. Tās klipi ir sakārtoti pa kameras pašas laika stundām, katrs ar sākumu, ilgumu, kameras sīktēlu notikumam un veidu: Kustība, Cilvēks, Mājdzīvnieks, Transportlīdzeklis, Bērna raudas, Dzīvnieks, Nepārtraukts vai Notikums.
+3. Pieskarieties klipam. Lietotne to iegūst no kameras („Iegūst video no kameras: N%”, ar „Atcelt”), tad atskaņo to video atskaņotājā, ar skaņu un pārtīšanu. Iegūtam klipam ir atzīme „Šajā ierīcē”, un nākamajā reizē tas atveras uzreiz.
+4. Lai paturētu klipu Immich, kad serveris ir pievienots: video izvēlne ⋮, „Augšupielādēt uz Immich”.
+5. Lai atbrīvotu vietu: ilgs spiediens uz iegūta klipa piedāvā „Dzēst kopiju šajā ierīcē” (tālrunī), un kameras lapā ir „Dzēst no šīs kameras iegūtos video” ar to izmēru.
+6. Atsvaidzināšanas poga augšā pa labi vai lapas pavilkšana uz leju vēlreiz vaicā kamerai.
+
+Kad kamera vairs neatbild savā adresē, tās lapa meklē to tīklā pēc tās MAC adreses un pārvieto to uz vietu, kur tā tagad atbild, tiklīdz tā uzrāda to pašu sertifikātu. Kamerai, kas uzrāda citu sertifikātu nekā to, ko lietotne redzēja pirmo reizi, tā vietā tiek uzdots jautājums: „Kamera adresē (adrese) rāda citu sertifikātu nekā iepriekš. Turpiniet tikai tad, ja to atiestatījāt vai nomainījāt.”
+
+### Salīdzinājumā ar lietotni Tapo
+
+- **Tikai jūsu tīklā**: lietotne sazinās ar pašu kameru lokālajā tīklā un nekad ar TP-Link serveriem. Tā nepierakstās TP-Link kontā, tāpēc jūsu e-pasta adrese nav vajadzīga.
+- **Ieraksti kļūst par parastiem video**: iegūts klips ir H.264 video ar skaņu, ko varat nosūtīt uz Immich, kur tas paliek arī pēc tam, kad atmiņas karte to ir pārrakstījusi.
+- **Blakus visam pārējam**: ar Immich serveri vai bez tā, tālrunī, televizorā vai Quest brillēs (logā), atrasta tīklā kā koplietojums.
+- **Tikai lasīšana**: lietotne prasa kamerai tikai to, ko tā rāda; tā nekad nemaina iestatījumu un nekad neko kamerā nedzēš.
+
+### Ierobežojumi
+
+- **Vēl nav pārbaudīts ierīcē**: 20. būvējums vēl nav darbojies ar īstu kameru. Protokols tika uzrakstīts pēc C510W ar programmaparatūru 1.3.4 tīkla datplūsmas ierakstiem (2026. gada vidus V4 pieteikšanās), un lietotne tika pārbaudīta pret simulētu kameru tās testos. Ziņojumi ir gaidīti, ar modeli un programmaparatūru, ko rāda „Pārbaudīt kameru”, un sadaļas [Žurnāli](#logs) rindām.
+- **Tiešraide**: tikai Android tālruņos un planšetdatoros, Android TV un Quest brillēs, vēl ne iPhone un iPad. Ir spēkā TP-Link ierobežojumi: ne vairāk kā divas HD un divas SD straumes vienlaikus vienai kamerai, ieskaitot lietotni Tapo, un Tapo Care, atmiņas karte un ierakstītājs, kas izmanto RTSP vai ONVIF, nevar darboties visi vienlaikus.
+- **Kameras**: kameras ar akumulatoru un kameras aiz Tapo centrmezgla netiek atbalstītas.
+- **Ieraksti**: viena lejupielāde vienlaikus katrai kamerai. Kamēr lietotne Tapo pārlūko atmiņas karti, lietotne mēģina vēlreiz pēc 4, 8 un 12 sekundēm, tad paziņo „Kameru aizņem cits skatītājs, piemēram, lietotne Tapo. Mēģiniet vēlreiz pēc minūtes.” Ieraksti H.265 formātā vēl netiek pārveidoti („Šis ieraksts ir H.265 formātā, ko šī versija vēl nespēj pārveidot.”), nepārtrauktajiem ierakstiem nav sīktēla, un klips tiek atskaņots, kad tas ir pilnībā iegūts.
+- **Paroles**: katra nepareiza parole tiek skaitīta, un pēc dažām kamera uz laiku bloķējas („Kamera ir bloķēta pēc pārāk daudzām nepareizām parolēm. Mēģiniet vēlreiz pēc N minūtēm.”). Lietotne pati nekad vēlreiz nemēģina noraidītu paroli: tikai „Pārbaudīt kameru” vai „Retry” (Mēģināt vēlreiz) atkal vaicā kamerai. Kad kamera pieņem paroli saviem iestatījumiem, bet ne saviem video, lietotnē Tapo izslēdziet un vēlreiz ieslēdziet Third-Party Compatibility, tad pārstartējiet kameru.
+- **Vieta**: iegūtie klipi paliek lietotnes kešatmiņā, ne vairāk kā 1 GB visām kamerām kopā (vispirms tiek dzēsti tie, kas atskaņoti visilgāk atpakaļ); sistēma var notīrīt šo kešatmiņu, un kameras noņemšana dzēš tās klipus.
+- **Ārpus mājām**: lietotne sasniedz kameru tās adresē jūsu tīklā, tātad ne no ārpuses.
+- Immuch360 nav saistīta ar TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Neapstrādāti 360° kameras faili, bez kameras lietotnes
@@ -349,7 +466,7 @@ Atpazīšana pārbaudīta ar parauga telpisko foto, ko ierakstījusi pašas Appl
 
 Cilvēki pērk Quest 3, lai skatītos savus 360° foto un video, un tad jautā, kur likt failus, kā tos dabūt brillēs bez kabeļa un kuru atskaņotāju izmantot: veikala 360° un 3D video atskaņotāji ir maksas.
 
-Tā pati Android lietotne darbojas Quest 3 un 3S brillēs kā logs, ar visu jūsu bibliotēku. Tās 360° poga atver imersīvo skatu, kur foto vai video ir visapkārt jums, un jūs skatāties apkārt, griežot galvu, stereoskopiskiem failiem īstā 3D (Meta Spatial SDK). Multivide nāk no jūsu Immich servera, pašām brillēm, NAS, multivides servera vai tālruņa, atskaņota uz vietas (multivides serveris un tālrunis no 19. būvējuma, brillēs vēl nav pārbaudīts). Tā ir bezmaksas un atvērtā koda. Pārbaudīts Quest 3 brillēs, arī lietotājs ar Insta360 X4 8K HEVC video.
+Tā pati Android lietotne darbojas Quest 3 un 3S brillēs kā logs, ar visu jūsu bibliotēku. Tās 360° poga atver imersīvo skatu, kur foto vai video ir visapkārt jums, un jūs skatāties apkārt, griežot galvu, stereoskopiskiem failiem īstā 3D (Meta Spatial SDK). Multivide nāk no jūsu Immich servera, pašām brillēm, NAS, multivides servera, tālruņa vai Plex servera, atskaņota uz vietas (multivides serveris un tālrunis no 19. būvējuma, Plex serveris no 20. būvējuma, brillēs vēl nav pārbaudīts), un no 20. būvējuma logā tiek rādītas arī Tapo kameras. Tā ir bezmaksas un atvērtā koda. Pārbaudīts Quest 3 brillēs, arī lietotājs ar Insta360 X4 8K HEVC video.
 
 ### Atvērt imersīvo skatu
 
@@ -408,6 +525,56 @@ Pagrieziet to ar labo kursorsviru (vai informācijas paneļa pogu „Pagriezt”
 - **Pārtīšana**: video, kura avots neatbild uz baitu diapazona pieprasījumiem, nevar pārtīt; panelis to pasaka.
 - **Plakani video**: plakans (ne 360°) stereoskopisks video tiek atskaņots logā ar abām acīm redzamām; imersīvais 3D skats ir paredzēts 360° un VR180 multividei.
 - **Vairāk**: kodeki, ko brilles dekodē, veikals, atļaujas un APK izmērs ir aprakstīti sadaļā [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Skatīties televizorā (Android TV un Google TV)
+
+Jūs gribat 360° foto un video, savus albumus un sava NAS vai Plex servera video uz lielā ekrāna, ģimenei uz dīvāna, ar televizora tālvadības pulti. Immich mobilā lietotne nav televizora lietotne: lietotājs, kas to instalēja televizorā, konstatēja, ka tā darbojas ar peli, nevis ar tālvadības pulti ([diskusija #1614](https://github.com/immich-app/immich/discussions/1614)), un Immich komandai nav plānu veidot oficiālu televizora lietotni ([diskusija #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+No 20. būvējuma tā pati Android lietotne darbojas Android TV un Google TV, ar tālvadības pulti kā vienīgo ievadi: viens APK tālruņiem un televizoriem, 360° un 3D skatītāji tiek griezti ar bultiņām, un tīkla koplietojumi, Plex un Tapo kameras televizorā, ar Immich serveri vai bez tā.
+
+<a id="install-it-on-the-tv"></a>
+### Instalēt to televizorā
+
+1. Kamēr Google Play nepiedāvā lietotni televizoriem, kas gaida Google pārskatīšanu televizora laidienam, ņemiet universālo `Immuch360-v<version>-release.apk` no lapas [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Televizorā ieslēdziet izstrādātāja opcijas un USB atkļūdošanu (Google TV: Iestatījumi, Sistēma, Par, septiņas reizes atlasiet „Android TV OS build”, tad Iestatījumi, Sistēma, Izstrādātāja opcijas; nosaukumi dažādiem televizoriem atšķiras).
+3. No datora tajā pašā tīklā, ar adb (Android SDK Platform Tools): `adb connect <address of the TV>`, apstipriniet uzaicinājumu televizorā, tad `adb install -r Immuch360-v<version>-release.apk`.
+4. Lietotne parādās starp televizora lietotnēm, ar savu reklāmkarogu. Nākamo laidienu instalējiet tāpat: `-r` patur pieslēgšanos un iestatījumus.
+
+### Pirmā palaišana
+
+1. Pierakstieties kā tālrunī: bultiņas pārvieto rāmi no lauka uz lauku, un OK uz lauka („Nospiediet OK, lai rakstītu”) atver televizora tastatūru dialogā, servera adresei, e-pastam un parolei.
+2. Vai izvēlieties „Lietot bez servera”. Televizoram nav savu foto, tāpēc cilnē „Fotoattēli” rakstīts „Šim televizoram nav savu fotoattēlu vai video: atveriet tīkla koplietojumu no Bibliotēkas.” ar pogu „Tīkla koplietojumi”. Pievienojiet tur koplietojumu, Plex serveri vai kameru, kā tālrunī (skatiet [Tīkla koplietojumi](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Pārvietošanās ar tālvadības pulti
+
+- Bultiņas pārvieto rāmi, OK atver to, uz kā tas ir, Atpakaļ iet atpakaļ. No cilnes Atpakaļ pāriet uz sānu izvēlni, tad uz „Fotoattēli”, tad iziet no lietotnes.
+- Kanāls augšup un lejup ritina pa vienai lapai.
+- Skatītājos darbojas tālvadības pults atskaņošanas un pauzes, ātrās pārtīšanas uz priekšu, attīšanas, nākamā un iepriekšējā taustiņi, un informācijas taustiņš rāda foto vai video informāciju.
+
+### Foto un video ar tālvadības pulti
+
+1. **Foto**: pa kreisi un pa labi pāriet uz iepriekšējo vai nākamo, OK rāda vai paslēpj vadīklas, Augšup pāriet uz augšējo joslu (kur ir 360° poga) un Lejup uz apakšējo joslu.
+2. **Video**: OK pauzē, parādot vadīklas, vai atskaņo. Kamēr tas tiek atskaņots, pa kreisi un pa labi pārlec 10 sekundes atpakaļ vai uz priekšu; kamēr tas ir pauzēts, tās pāriet uz iepriekšējo vai nākamo vienumu, kā saka norāde: „Pauzēts: bultiņas pāriet uz iepriekšējo vai nākamo vienumu”.
+3. **360° foto**, no 360° pogas: bultiņas ļauj paskatīties apkārt, ātrāk, ja tās tur nospiestas, un skats vienmērīgi apstājas. OK pāriet uz augšējās joslas pogām, uz „Tuvināt”, blakus „Tālināt”, redzes laukam un 3D; kanāls augšup un lejup arī tālummaina. Atpakaļ atgriežas no pogām pie attēla, tad aizver. Norāde skan „Bultiņas, lai paskatītos apkārt, OK vadīklām, Atpakaļ, lai aizvērtu”.
+4. **360° video**, no 360° pogas: bultiņas ļauj paskatīties apkārt, kamēr vadīklas ir paslēptas, OK pauzē un parāda tās, Atpakaļ tās paslēpj, tad aizver. Norāde skan „Bultiņas, lai paskatītos apkārt, OK pauzei un vadīklu rādīšanai, Atpakaļ, lai aizvērtu”.
+5. **Atmiņas**: pa kreisi un pa labi iet cauri foto un tālāk uz nākamo atmiņu, Augšup pāriet uz aizvēršanas pogu un Lejup uz „Skatīt laika skalā”.
+6. **Koplietojumi un Plex**: tie paši taustiņi koplietojuma foto un video lapās, kur pa kreisi un pa labi atver iepriekšējo vai nākamo mapes failu.
+
+### Iestatījums „Izkārtojums tālvadības pultij”
+
+„Iestatījumi”, „Iestatījumi” (Preferences), „Izkārtojums tālvadības pultij”: „Lieli fokusa rāmji un tālvadības pults taustiņi, bez vadīklām, kurām vajadzīgs skārienekrāns. Automātiski to ieslēdz Android TV un Google TV.” „Automātiski” ir noklusējums; „Ieslēgts” der planšetdatoram, ko vada ar tastatūru vai spēļu kontrolieri; „Izslēgts” to izslēdz televizorā. Iestatījums pastāv tikai Android. Bultiņas un OK skatītājos darbojas ar tastatūru vai spēļu kontrolieri neatkarīgi no iestatījuma.
+
+### Ierobežojumi
+
+- **Skatītājs**: televizorā lietotne rāda un atskaņo. Dublēšana, augšupielādes, rediģēšana, dzēšana, kopīgošana, vairāku vienumu atlase, Cast, Spatial 2.5D, žiroskops, karte un Vietas, un „Koplietot šo tālruni tīklā” ir paslēpti.
+- **Pierakstīšanās**: OAuth atver tīmekļa lapu, ko televizors nevar: „Pierakstīšanās ar (pakalpojumu sniedzējs) atver tīmekļa lapu, ko šis televizors nevar. Tā vietā pierakstieties ar e-pastu un paroli.”
+- **Saites** rāda savu adresi sadaļā „Atvērt citā ierīcē”, nevis atver pārlūku, un teksts tiek ievadīts sistēmas tastatūras dialogā.
+- **Atmiņa**: televizorā ar maz atmiņas 360° foto tiek rādīti ne vairāk kā 4096x2048 izšķirtspējā, bez asāka attēla tuvinot.
+- **Video**: to, kas tiek atskaņots, nosaka televizora dekoderi, ar to pašu iestatījumu „Video avots” un dekoderu pārbaudi kā tālrunī (skatiet [Video informācija un dekoderi](#video-details-decoders-and-why-a-video-stutters)); televizorā vēl nav izmērīts.
+- **Vēl nav pārbaudīts ierīcē**: televizora atbalsts tika pārbaudīts tikai ar automatizētiem testiem un vēl nav darbojies ne televizorā, ne televizora emulatorā. Jāapstiprina: virziens, kurā bultiņas griež 360° video, televizora tastatūra (Gboard) teksta dialogā, infrasarkano tālvadības pultu OK taustiņš, malas un reklāmkarogs televizora sākuma ekrānā. Ziņojumi ir gaidīti.
+- **Google Play televizoriem** gaida Google pārskatīšanu televizora laidienam; līdz tam APK.
+- **Citi televizori**: Fire TV nav testēts, un Apple TV versijas nav.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Atrodiet savus 360° uzņēmumus: 360° saraksts
@@ -488,11 +655,11 @@ Ja serveris ignorē HTTP Range pieprasījumus oriģinālam un MP4 indekss (moov)
 <a id="everything-else-is-immich"></a>
 ## Viss pārējais ir Immich
 
-Viss, ko dara oficiālā Immich mobilā lietotne, ir šeit: dublēšana, laika skala, albumi, meklēšana, kopīgošana, partneri, viss sinhronizēts ar jūsu serveri, ar to pašu serveri un to pašu kontu kā tīmekļa lietotnei. Immuch360 instalējas blakus oficiālajai lietotnei (pakotne `com.aprogsys.immuch360`). Ir divas atšķirības, no 15. būvējuma: slēdzis „Vienmēr izmantot oriģinālo video” kļuva par augstāk aprakstīto izvēli „Video avots”, un foto un video, ko augšupielādējat manuāli no ierīces albuma, tiek uzskatīti par dublētiem.
+Viss, ko dara oficiālā Immich mobilā lietotne, ir šeit: dublēšana, laika skala, albumi, meklēšana, kopīgošana, partneri, viss sinhronizēts ar jūsu serveri, ar to pašu serveri un to pašu kontu kā tīmekļa lietotnei. Immuch360 instalējas blakus oficiālajai lietotnei (pakotne `com.aprogsys.immuch360`). Ir divas atšķirības, no 15. būvējuma: slēdzis „Vienmēr izmantot oriģinālo video” kļuva par augstāk aprakstīto izvēli „Video avots”, un foto un video, ko augšupielādējat manuāli no ierīces albuma, tiek uzskatīti par dublētiem. Televizorā, no 20. būvējuma, lietotne ir skatītājs, skatiet [Skatīties televizorā](#watch-on-your-tv-android-tv-and-google-tv).
 
 Lai parādītu 360° foto kādam, kam nav lietotnes, kopīgojiet to ar Immich kopīgotu saiti: Immich tīmekļa lietotne viņa pārlūkā rāda 360° foto kā sfēru.
 
-Pašreizējais būvējums, 19. būvējums (versija 3.3.0-rc.0, būvējuma numurs 3030017), balstās uz Immich 3.3.0-rc.0 (Immich `main`, vēl ne stabils laidiens) un tika testēts ar Immich 3.2 serveri. Lūdzu, ziņojiet par problēmām [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam. Pilnu paša Immich dokumentāciju skatiet [immich.app](https://immich.app).
+Pašreizējais būvējums, 20. būvējums (versija 3.3.0-rc.0, būvējuma numurs 3030018), balstās uz Immich 3.3.0-rc.0 (Immich `main`, vēl ne stabils laidiens). 19. būvējums tika testēts ar Immich 3.2 serveri, un 20. būvējums neko nemaina tajā, ko lietotne prasa serverim. Lūdzu, ziņojiet par problēmām [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam. Pilnu paša Immich dokumentāciju skatiet [immich.app](https://immich.app).
 
 ## Salīdzinājums ar Immich lietotni un citām lietotnēm
 
@@ -515,6 +682,9 @@ Pašreizējais būvējums, 19. būvējums (versija 3.3.0-rc.0, būvējuma numurs
 | DLNA multivides serveri kā koplietojuma veids | ❌ | ✅ no 19. būvējuma | Pārbaudīts ar minidlna un Gerbera Docker vidē; Plex, Jellyfin, NAS, Freebox Server, iPhone un Quest ir 19. būvējuma ierīču tests |
 | Koplietojuma failu sūtīšana uz Immich; manuāli nosūtīti ierīces faili tiek uzskatīti par dublētiem | ❌ tikai ierīces faili | ✅ no 15. būvējuma | Testēts Android emulatorā ar Samba testa serveri un Immich 3.2 serveri |
 | Koplietot šo tālruni tīklā, brillēm | ❌ | ✅ no 19. būvējuma, Android un iOS | Vienībtesti un pilna cikla testi ar briļļu WebDAV klientu, datorā; tālrunis, kas apkalpo Quest, un iPhone puse ir 19. būvējuma ierīču tests |
+| Plex Media Server bibliotēkas, atskaņotas no oriģinālajiem failiem, mājās un ārpus tām, bez plex.tv | ❌ | ✅ no 20. būvējuma, katrs skatītājs, tālruņos, planšetdatoros, Quest 3 un televizoros | Pārbaudīts no datora pret īstu Plex Media Server 1.42.1 (savienošana pārī, mapes, baitu diapazoni, sīktēli, adrese ārpus mājām); ierīcē vēl nav pārbaudīts |
+| Tapo kameras: tiešraide un atmiņas kartes ieraksti, nosūtīti uz Immich, kad jūs to izvēlaties | ❌ | ✅ no 20. būvējuma: ieraksti visur, tiešraide Android, Android TV un Quest 3 | Pārbaudīts pret simulētu kameru; ar īstu kameru vēl nav pārbaudīts |
+| Android TV un Google TV, vadīts ar tālvadības pulti, tajā pašā APK | ❌ nav televizora lietotne | ✅ no 20. būvējuma | Pārbaudīts ar automatizētiem testiem; televizorā vēl nav pārbaudīts |
 | Neapstrādāti Insta360 .insp foto un viena celiņa .insv video | ❌ plakani | ✅ no 16. būvējuma | Foto salīdzināti ar Insta360 Studio X3 failu eksportiem, video Android emulatorā ar zemas izšķirtspējas X3 failu; iPhone tālrunī vēl nav darbināts |
 | Neapstrādāti video ar vienu objektīvu katrā celiņā vai failā (Insta360 X4, X4 Air, X5, X6, X3 pāri, GoPro .360, DJI .osv) | ❌ plakani vai nepareizi | ✅ no 18. būvējuma | Parsētāji un sašūšana pārbaudīti ar īstiem X4, X3 pāra, GoPro MAX un Osmo 360 failiem; atskaņošana ir 18. un 19. būvējuma ierīču tests |
 | Dubultā „zivs acs” .dng | ❌ plakans | ❌ vēl ne | Plānots |
@@ -529,27 +699,33 @@ Pašreizējais būvējums, 19. būvējums (versija 3.3.0-rc.0, būvējuma numurs
 |---|---|---|
 | Immich tīmekļa lietotne | Tā rāda 360° foto kā sfēru, bet neapstrādātu .insp uzskata par gatavu panorāmu un aptin tā divus apļus ap sfēru; VR skats joprojām ir tikai pieprasījums ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Sašuj neapstrādātus failus ierīcē un atver imersīvo skatu Quest 3 brillēs |
 | Insta360 lietotne vai Studio | Vajadzīga, lai kartes neapstrādātos failus pirms skatīšanās pārvērstu 360° attēlā | Tieši atver neapstrādātos .insp un .insv failus, kā arī GoPro .360 un DJI .osv failus |
-| Plex, Jellyfin, Synology Photos | 360° foto un video tiek rādīti plakani vai netiek atpazīti, kā raksta tēmas to forumos (Plex pieprasījums ir atvērts kopš 2017. gada) | Lasa tās pašas mapes caur SMB, WebDAV vai DLNA un atskaņo tās kā sfēru, serverī neko nemainot |
+| Plex, Jellyfin, Synology Photos | 360° foto un video tiek rādīti plakani vai netiek atpazīti, kā raksta tēmas to forumos (Plex pieprasījums ir atvērts kopš 2017. gada) | Lasa pašu Plex bibliotēku no 20. būvējuma vai tās pašas mapes caur SMB, WebDAV vai DLNA un atskaņo tās kā sfēru, serverī neko nemainot |
+| Lietotne Tapo | Atsevišķa lietotne, pierakstīta jūsu TP-Link kontā, kur klipi ir atsevišķi no jūsu foto | Rāda kameru blakus jūsu foto, sazinās ar to tikai jūsu tīklā un patur klipu kā video, ko varat nosūtīt uz Immich (no 20. būvējuma) |
+| Immich mobilā lietotne televizorā | Nav televizora lietotne: lietotājs ziņo, ka tā darbojas ar peli, nevis ar tālvadības pulti | Tā pati lietotne, pielāgota tālvadības pultij (no 20. būvējuma) |
 | Failu kopēšana uz brillēm | Katrs fails jākopē ar kabeli, pirms to var skatīties | Atskaņo uz vietas no Immich, NAS, multivides servera vai tālruņa |
 | Quest veikala 360° un 3D atskaņotāji | Maksas | Bezmaksas un atvērtā koda (AGPL) |
 
 ## Formāti un avoti pa platformām
 
-Immuch360 ir galerija, un tā ir arī bezmaksas multivides atskaņotājs: tā atskaņo to, ko oficiālā lietotne nevar, no četriem avotiem, failam piemērotā atskaņotājā.
+Immuch360 ir galerija, un tā ir arī bezmaksas multivides atskaņotājs: tā atskaņo to, ko oficiālā lietotne nevar, no otrās tabulas avotiem, failam piemērotā atskaņotājā.
 
-| Kas | Android tālruņi | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Plakani video (MP4, MOV, MKV, ko ierīce dekodē) | Immich atskaņotājs, un tīkla koplietojumiem iebūvēts atskaņotājs | Tāpat, izņemot koplietojuma MKV un AVI failus, ko iOS neatver (serverī tie tiek atskaņoti transkodēti) | Logā |
-| 360° foto | Sfēras skatītājs, žiroskops | Tāpat | Imersīvi, visapkārt jums |
-| 360° video | Iebūvēts Media3 atskaņotājs uz sfēras, žiroskops, pārtīšana, audio celiņa izvēle, bufera indikators | Iebūvēts SceneKit atskaņotājs uz sfēras, žiroskops, audio celiņa izvēle, bufera indikators; atskaņošana un pauze, laika joslas vēl nav | Imersīvi, īsts 3D stereoskopiskiem failiem, laika josla ar 10 sekunžu pārlēcieniem, iepriekšējais un nākamais fails |
-| 3D 360° (augšā un apakšā, blakus) | Kreisā acs, izkārtojuma poga | Tāpat | Katra acs saņem savu kadra pusi |
-| VR180 (puslodes) foto un video | Puslode, 360°/180° poga | Tāpat | Imersīva puslode |
-| Spatial 2.5D (dziļums plakanā ekrānā no stereoskopiska video) | Iebūvēts atskaņotājs, galvas izsekošana ar priekšējo kameru | Tāpat | Netiek piedāvāts |
-| Apple telpiskie foto (HEIC stereo pāri, no 19. būvējuma) | Kreisā acs, informācijas rinda norāda, ka tas ir telpisks | Tāpat | „Skatīt 3D”: abas acis foto, kas peld imersīvajā skatā, 3D vai 2D, maināma izmēra |
-| Apple telpiskie video (MV-HEVC, no 19. būvējuma) | Viena acs (bāzes slānis), ar paziņojumu | Tāpat | Viena acs logā, ar paziņojumu |
-| Neapstrādāti Insta360 .insp foto (no 16. būvējuma) | Sašūti ar GPU pirms sfēras skatītāja, līdz 8192x4096 | Tāpat | Imersīvi, no sašūta attēla, kas sagatavots brillēm |
-| Neapstrādāti Insta360 .insv, abi objektīvi vienā celiņā (no 16. būvējuma) | Sašūti ar GPU efektu Media3 atskaņotājā | Sašūti ar SceneKit ēnotāju | Imersīvi, sašūti ar to pašu GPU efektu |
-| Neapstrādāti video ar vienu objektīvu katrā celiņā vai failā (no 18. būvējuma): Insta360 X4, X4 Air, X5, X6 .insv, X3 pāri, GoPro .360, DJI .osv | Divi aparatūras dekoderi vienlaikus, pa vienam katram objektīvam (no 19. būvējuma programmatūras dekoderi ierīcē bez aparatūras dekodera, līdz 2048x2048 katram objektīvam), un GL kompozitors, kas sašuj sfērā; viens objektīvs, tad transkodētā straume, tad nesašūts video, ja ierīce nevar darbināt divus | Pielāgots AVFoundation kompozitors ar Metal | Imersīvi, tie paši divi dekoderi un kompozitors (3840x1920 panelis) |
+| Kas | Android tālruņi | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (no 20. būvējuma) |
+|---|---|---|---|---|
+| Plakani video (MP4, MOV, MKV, ko ierīce dekodē) | Immich atskaņotājs, un tīkla koplietojumiem iebūvēts atskaņotājs | Tāpat, izņemot koplietojuma MKV un AVI failus, ko iOS neatver (serverī tie tiek atskaņoti transkodēti) | Logā | Kā tālruņos; OK pauzē, pa kreisi un pa labi pārlec 10 s |
+| 360° foto | Sfēras skatītājs, žiroskops | Tāpat | Imersīvi, visapkārt jums | Sfēras skatītājs, griezts ar bultiņām, tālummainīts ar kanālu taustiņiem |
+| 360° video | Iebūvēts Media3 atskaņotājs uz sfēras, žiroskops, pārtīšana, audio celiņa izvēle, bufera indikators | Iebūvēts SceneKit atskaņotājs uz sfēras, žiroskops, audio celiņa izvēle, bufera indikators; atskaņošana un pauze, laika joslas vēl nav | Imersīvi, īsts 3D stereoskopiskiem failiem, laika josla ar 10 sekunžu pārlēcieniem, iepriekšējais un nākamais fails | Tālruņu Media3 atskaņotājs, griezts ar bultiņām |
+| 3D 360° (augšā un apakšā, blakus) | Kreisā acs, izkārtojuma poga | Tāpat | Katra acs saņem savu kadra pusi | Kreisā acs, izkārtojuma poga |
+| VR180 (puslodes) foto un video | Puslode, 360°/180° poga | Tāpat | Imersīva puslode | Puslode, 360°/180° poga |
+| Spatial 2.5D (dziļums plakanā ekrānā no stereoskopiska video) | Iebūvēts atskaņotājs, galvas izsekošana ar priekšējo kameru | Tāpat | Netiek piedāvāts | Netiek piedāvāts |
+| Apple telpiskie foto (HEIC stereo pāri, no 19. būvējuma) | Kreisā acs, informācijas rinda norāda, ka tas ir telpisks | Tāpat | „Skatīt 3D”: abas acis foto, kas peld imersīvajā skatā, 3D vai 2D, maināma izmēra | Kreisā acs, informācijas rinda |
+| Apple telpiskie video (MV-HEVC, no 19. būvējuma) | Viena acs (bāzes slānis), ar paziņojumu | Tāpat | Viena acs logā, ar paziņojumu | Viena acs, ar paziņojumu |
+| Neapstrādāti Insta360 .insp foto (no 16. būvējuma) | Sašūti ar GPU pirms sfēras skatītāja, līdz 8192x4096 | Tāpat | Imersīvi, no sašūta attēla, kas sagatavots brillēm | Kā tālruņos |
+| Neapstrādāti Insta360 .insv, abi objektīvi vienā celiņā (no 16. būvējuma) | Sašūti ar GPU efektu Media3 atskaņotājā | Sašūti ar SceneKit ēnotāju | Imersīvi, sašūti ar to pašu GPU efektu | Kā tālruņos |
+| Neapstrādāti video ar vienu objektīvu katrā celiņā vai failā (no 18. būvējuma): Insta360 X4, X4 Air, X5, X6 .insv, X3 pāri, GoPro .360, DJI .osv | Divi aparatūras dekoderi vienlaikus, pa vienam katram objektīvam (no 19. būvējuma programmatūras dekoderi ierīcē bez aparatūras dekodera, līdz 2048x2048 katram objektīvam), un GL kompozitors, kas sašuj sfērā; viens objektīvs, tad transkodētā straume, tad nesašūts video, ja ierīce nevar darbināt divus | Pielāgots AVFoundation kompozitors ar Metal | Imersīvi, tie paši divi dekoderi un kompozitors (3840x1920 panelis) | Kā tālruņos, ja televizors var darbināt divus dekoderus vienlaikus |
+| Tapo kameras tiešraide (no 20. būvējuma) | Media3 RTSP atskaņotājs: SD lapā, HD pilnekrānā, skaņas poga | Vēl ne: kartīte saka, ka tā nāks vēlāk | Logā, HD | Kā tālruņos |
+| Tapo kameras ieraksti (no 20. būvējuma) | Iegūti no atmiņas kartes H.264 video ar skaņu, tad atskaņoti ar pārtīšanu | Tāpat | Tāpat, logā | Tāpat |
+
+Televizora kolonna vēl nav pārbaudīta televizorā, skatiet [Skatīties televizorā](#watch-on-your-tv-android-tv-and-google-tv); kameru rindas vēl nav pārbaudītas ar īstu kameru.
 
 | No kurienes | Kā |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 ir galerija, un tā ir arī bezmaksas multivides atskaņotājs: tā at
 | Pats tālrunis vai brilles | „Lietot bez servera” pieslēgšanās lapā vai cilnes „Bibliotēka” ieraksts „Šajā ierīcē” |
 | NAS vai dators | SMB un WebDAV koplietojumi, un no 19. būvējuma DLNA multivides serveri, atrasti tīklā, lasīti tieši (SMB video pa līdz sešiem savienojumiem), nekas netiek kopēts; no 15. būvējuma izvēlētos failus var nosūtīt uz jūsu Immich kontu |
 | Cits tālrunis (no 19. būvējuma) | „Koplietot šo tālruni tīklā” tajā tālrunī: brilles vai jebkurš tīkla WebDAV klients lasa tā albumus, mēnešus un 360° multividi |
+| Plex Media Server (no 20. būvējuma) | Tā foto, filmu un TV šovu bibliotēkas pa mapēm, oriģinālie faili lasīti tieši caur HTTPS, pārbaudīti pret servera paša sertifikātu, mājās vai caur adresi ārpus mājām, visās platformās; skatiet [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv) |
+| Tapo kamera (no 20. būvējuma) | Tiešraide ar kameras kontu (Android, Android TV, Quest brilles) un tās atmiņas kartes ieraksti ar TP-Link konta paroli (visas platformas), tikai lokālajā tīklā; skatiet [Tapo kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 darbojas arī Meta Quest 3 un 3S brillēs (Horizon OS v69 vai jaunāka; Horizon Store būvējums ir paredzēts tikai šīm divām; universālajam `-release.apk` vajadzētu instalēties arī Quest 2 vai Quest Pro, nav testēts). Kā to lietot, aprakstīts sadaļā [Meta Quest 3 brillēs](#in-the-meta-quest-3-headset); šī sadaļa ir par instalēšanu un to, kas brillēs atšķiras.
 
-Briļļu būvējums sazinās ar serveriem tikai caur HTTPS vai caur vienkāršu HTTP ar mājas tīkla nosaukumiem (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) un ar pašām brillēm, kā to prasa Horizon Store. Serveris, kas ievadīts kā vienkārša HTTP adrese ar IP, piemēram, `http://192.168.1.10:2283`, šajā būvējumā tiek atteikts: izmantojiet HTTPS, mājas tīkla nosaukumu (`nas.local`) vai universālo `-release.apk`, kas saglabā tālruņu atvērto politiku. Uz WebDAV, DLNA un tālruņa koplietojumiem vienkāršā lokālā tīkla HTTP adresē tas neattiecas: lietotne tos lasa pati un saviem atskaņotājiem nodod tikai sava lokālā tilta adresi (DLNA un tālruņa koplietojumam, kas ir jauni 19. būvējumā, brillēs vēl jāapstiprina).
+Briļļu būvējums sazinās ar serveriem tikai caur HTTPS vai caur vienkāršu HTTP ar mājas tīkla nosaukumiem (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) un ar pašām brillēm, kā to prasa Horizon Store. Serveris, kas ievadīts kā vienkārša HTTP adrese ar IP, piemēram, `http://192.168.1.10:2283`, šajā būvējumā tiek atteikts: izmantojiet HTTPS, mājas tīkla nosaukumu (`nas.local`) vai universālo `-release.apk`, kas saglabā tālruņu atvērto politiku. Uz WebDAV, DLNA un tālruņa koplietojumiem vienkāršā lokālā tīkla HTTP adresē tas neattiecas: lietotne tos lasa pati un saviem atskaņotājiem nodod tikai sava lokālā tilta adresi (DLNA un tālruņa koplietojumam, kas ir jauni 19. būvējumā, brillēs vēl jāapstiprina). No 20. būvējuma Plex serveris tiek sasniegts caur HTTPS, un Tapo kameru sasniedz pati lietotne, tās tiešraidi caur RTSP, kas nav HTTP: uz tiem tam nevajadzētu attiekties (brillēs vēl jāapstiprina).
 
 <a id="install"></a>
 ### Instalēšana
@@ -576,7 +754,7 @@ Horizon Store ieraksts gaida Meta pārskatīšanu, iesniegts ar 14. būvējumu; 
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Brillēs atveriet bibliotēku, izvēlieties filtru „Unknown sources” (nezināmi avoti) un palaidiet Immuch360.
@@ -584,7 +762,7 @@ Horizon Store ieraksts gaida Meta pārskatīšanu, iesniegts ar 14. būvējumu; 
 
 ### Logā
 
-Visa lietotne darbojas kā maināma izmēra 2D logs: pieslēgšanās, laika skala, albumi, meklēšana, cilne „Bibliotēka” (360° saraksts, „Šajā ierīcē”, „Tīkla koplietojumi”), iestatījumi un foto un video skatītāji, kuros tiek atskaņoti plakani foto un video. Brillēs 360° poga un „Skatīt kā 360°” izvēlnē ⋮ tieši atver imersīvo skatu, nevis tālruņu sfēras skatītāju, un poga Spatial 2.5D un tās iestatījums netiek rādīti. No 19. būvējuma Apple telpiskam foto ir poga „Skatīt 3D”, un flīze „Koplietot šo tālruni tīklā” netiek rādīta: brilles ir tās, kas lasa tālruņa koplietojumu.
+Visa lietotne darbojas kā maināma izmēra 2D logs: pieslēgšanās, laika skala, albumi, meklēšana, cilne „Bibliotēka” (360° saraksts, „Šajā ierīcē”, „Tīkla koplietojumi”), iestatījumi un foto un video skatītāji, kuros tiek atskaņoti plakani foto un video. Brillēs 360° poga un „Skatīt kā 360°” izvēlnē ⋮ tieši atver imersīvo skatu, nevis tālruņu sfēras skatītāju, un poga Spatial 2.5D un tās iestatījums netiek rādīti. No 19. būvējuma Apple telpiskam foto ir poga „Skatīt 3D”, un flīze „Koplietot šo tālruni tīklā” netiek rādīta: brilles ir tās, kas lasa tālruņa koplietojumu. No 20. būvējuma Plex serveri un Tapo kameras arī atveras logā, kameras tiešraide HD kvalitātē; iestatījums „Izkārtojums tālvadības pultij” paliek „Automātiski”, kas to brillēs atstāj izslēgtu.
 
 ### Attēlos
 
@@ -598,7 +776,7 @@ Ekrānuzņēmumi uzņemti brillēs ar uzņemšanas pogu (Meta poga un mēlīte),
 ### Ierobežojumi brillēs
 
 - **Video kodeki**: HEVC (H.265) ir drošā izvēle; H.264 apstājas ap 4096x2304. Ko lietotne pārbauda un kā dot brillēm video, ko tās dekodē, aprakstīts sadaļā [Video informācija un dekoderi](#video-details-decoders-and-why-a-video-stutters).
-- **Veikals**: veikala versija sākas ar 14. būvējumu. Funkcijas, kas atzīmētas „no 15. būvējuma” un „no 16. būvējuma”, nāks ar tās nākamo atjauninājumu (16. būvējums, jau alfa testa kanālā), vēlākās pēc tam; GitHub APK tās visas ir jau tagad.
+- **Veikals**: veikala versija sākas ar 14. būvējumu. Funkcijas, kas atzīmētas „no 15. būvējuma” un vēlāk, nāks ar tās nākamajiem atjauninājumiem (veikala alfa testa kanāls testētājiem saņem katru jauno būvējumu); GitHub APK tās visas ir jau tagad.
 - **Atļaujas**: briļļu būvējums prasa tikai foto un video (režīms bez servera) un paziņojumu (dublēšanas progress) atļaujas. Atšķirībā no tālruņa būvējuma tam nav krātuves, audio, atrašanās vietas vai kameras atļaujas; tāpēc servera pārslēgšana pēc Wi-Fi nosaukuma brillēs nav pieejama.
 - **APK izmērs**: Spatial SDK pievieno ap 56 MB 64 bitu ARM vietējā koda, arī tālruņos, kur tas nekad netiek ielādēts.
 - **Licence**: imersīvais skats izmanto Meta Spatial SDK, ko izplata saskaņā ar Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Ekrānuzņēmumi uzņemti brillēs ar uzņemšanas pogu (Meta poga un mēlīte),
 <a id="where-to-get-it"></a>
 ## Kur to iegūt
 
-Lietotne ir Google Play; App Store versija gaida Apple pārskatīšanu, un Meta Horizon Store versija gaida Meta pārskatīšanu. GitHub laidienā vienmēr ir jaunākais būvējums:
+Lietotne ir Google Play tālruņiem un planšetdatoriem; App Store versija gaida Apple pārskatīšanu, Meta Horizon Store versija gaida Meta pārskatīšanu, un Google Play versija televizoriem gaida Google pārskatīšanu televizora laidienam. GitHub laidienā vienmēr ir jaunākais būvējums:
 
 | Platforma | Šodien | Drīzumā |
 |---|---|---|
-| Android tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) vai APK lapā [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` tālrunim (universālais `Immuch360-v<version>-release.apk` darbojas visur, `-armeabi-v7a` ir vecākiem 32 bitu tālruņiem, un `.aab` fails ir paredzēts Google Play, ne instalēšanai no sāniem). GitHub būvējums parasti ir priekšā veikalam. Jebkurā gadījumā tā instalējas blakus oficiālajai Immich lietotnei (pakotne `com.aprogsys.immuch360`). | Google Play: 15. un 16. būvējums nosūtīti Google pārskatīšanai 2026. gada 4. oktobrī (pēdējais apstiprinātais tur pieejamais būvējums ir 11. būvējums) |
+| Android tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) vai APK lapā [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` tālrunim (universālais `Immuch360-v<version>-release.apk` darbojas visur, `-armeabi-v7a` ir vecākiem 32 bitu tālruņiem, un `.aab` fails ir paredzēts Google Play, ne instalēšanai no sāniem). GitHub būvējums parasti ir priekšā veikalam. Jebkurā gadījumā tā instalējas blakus oficiālajai Immich lietotnei (pakotne `com.aprogsys.immuch360`). | Google Play: 18. būvējums ir pieejams, 19. būvējums Google pārskatīšanā kopš 2026. gada 6. oktobra, nākamais 20. būvējums |
 | iPhone un iPad | Gaida Apple pārskatīšanu. Pārskatāmajai versijai ir 11. būvējuma funkcijas: augšupielāde uz Immich un izvēle „Video avots” (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar vēlāku App Store atjauninājumu. Pirmkods kompilējas ar Xcode vai Codemagic, skatiet [Izveidojiet to paši](#build-it-yourself). | App Store, tiek pārskatīts |
-| Meta Quest 3 un 3S | Fails `-quest-release.apk` lapā [Releases](https://github.com/freeKC/Immuch360/releases) (universālais `-release.apk` arī darbojas), instalēts no sāniem izstrādātāja režīmā, skatiet [Instalēšana](#install). Veikala būvējums un GitHub APK ir parakstīti ar dažādām atslēgām: lai pārietu no viena uz otru, vispirms atinstalējiet lietotni (tās iestatījumi un saglabātie koplietojumi pazūd līdz ar to). | Meta Horizon Store: 14. būvējums Meta pārskatīšanā kopš 2026. gada 3. oktobra; 16. būvējums ir veikala alfa kanālā (tikai testētājiem) |
+| Meta Quest 3 un 3S | Fails `-quest-release.apk` lapā [Releases](https://github.com/freeKC/Immuch360/releases) (universālais `-release.apk` arī darbojas), instalēts no sāniem izstrādātāja režīmā, skatiet [Instalēšana](#install). Veikala būvējums un GitHub APK ir parakstīti ar dažādām atslēgām: lai pārietu no viena uz otru, vispirms atinstalējiet lietotni (tās iestatījumi un saglabātie koplietojumi pazūd līdz ar to). | Meta Horizon Store: 14. būvējums Meta pārskatīšanā kopš 2026. gada 3. oktobra; veikala alfa kanāls (tikai testētājiem) saņem katru jauno būvējumu |
+| Android TV un Google TV (no 20. būvējuma) | Universālais `Immuch360-v<version>-release.apk` lapā [Releases](https://github.com/freeKC/Immuch360/releases), instalēts no sāniem ar adb, skatiet [Instalēt to televizorā](#install-it-on-the-tv). Tā ir tā pati lietotne kā tālruņos. | Google Play televizoriem, pēc Google pārskatīšanas televizora laidienam |
 
 App Store un Meta Horizon Store saites tiks pievienotas šeit, tiklīdz ieraksti būs publicēti. Pieslēdzieties ar savu parasto Immich servera URL un kontu vai pieslēgšanās lapā pieskarieties „Lietot bez servera”, lai sāktu ar pašas ierīces foto un video. APK no GitHub pats neatjauninās: sekojiet lapai Releases, un, kad lietotne ir instalēta no veikala, ņemiet atjauninājumus no šī veikala.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Veikalu ekrānuzņēmumi tiek uzņemti atkļūdošanas simulatora būvējumos, kas veidoti ar `--dart-define=IMMUCH_SCREENSHOTS=true`, kas tikai paslēpj atkļūdošanas lenti. Abi Android varianti ir viena un tā pati lietotne. Variants `quest` mērķē uz SDK 34 un patur tikai brillēs izmantotās atļaujas (foto, video, paziņojumi): multivides pārvaldība, fona atrašanās vieta, mantotā krātuve, audio, multivides atrašanās vieta, ierīces atrašanās vieta un kamera ir noņemtas failā `android/app/src/quest/AndroidManifest.xml`, jo Meta Horizon Store atsaka pirmās divas un prasa pamatojumu katrai citai sensitīvai atļaujai; tas pats fails nosauc Quest 3 un 3S kā atbalstītās ierīces un ierobežo vienkāršu HTTP līdz pašām brillēm un mājas tīkla nosaukumiem. APK ir tikai 64 bitu, pateicoties diviem papildu argumentiem tā komandrindā (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variants `phone` ir tas, ko prasa Google Play. Lai būvētu iOS savā Mac datorā, izmantojiet Xcode un savu parakstīšanas komandu; ar Xcode 26 vispirms vienreiz palaidiet `xcodebuild -downloadComponent MetalToolchain`, jo to vajag Spatial ēnotājiem. Bez Mac iOS būvējumi darbojas Codemagic (mitināts Mac) no šīs repozitorija faila `codemagic.yaml`. Android laidienu būvējumi darbojas GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Veikalu ekrānuzņēmumi tiek uzņemti atkļūdošanas simulatora būvējumos, kas veidoti ar `--dart-define=IMMUCH_SCREENSHOTS=true`, kas tikai paslēpj atkļūdošanas lenti. Abi Android varianti ir viena un tā pati lietotne. No 20. būvējuma variants `phone` sevi deklarē arī kā televizora lietotni (ieraksts televizora palaidējā un reklāmkarogs, skārienekrāns nav obligāts), ko variants `quest` neietver. Variants `quest` mērķē uz SDK 34 un patur tikai brillēs izmantotās atļaujas (foto, video, paziņojumi): multivides pārvaldība, fona atrašanās vieta, mantotā krātuve, audio, multivides atrašanās vieta, ierīces atrašanās vieta un kamera ir noņemtas failā `android/app/src/quest/AndroidManifest.xml`, jo Meta Horizon Store atsaka pirmās divas un prasa pamatojumu katrai citai sensitīvai atļaujai; tas pats fails nosauc Quest 3 un 3S kā atbalstītās ierīces un ierobežo vienkāršu HTTP līdz pašām brillēm un mājas tīkla nosaukumiem. APK ir tikai 64 bitu, pateicoties diviem papildu argumentiem tā komandrindā (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variants `phone` ir tas, ko prasa Google Play. Lai būvētu iOS savā Mac datorā, izmantojiet Xcode un savu parakstīšanas komandu; ar Xcode 26 vispirms vienreiz palaidiet `xcodebuild -downloadComponent MetalToolchain`, jo to vajag Spatial ēnotājiem. Bez Mac iOS būvējumi darbojas Codemagic (mitināts Mac) no šīs repozitorija faila `codemagic.yaml`. Android laidienu būvējumi darbojas GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Šajā repozitorijā nav neviena noslēpuma: Android parakstīšanas atslēga glabājas kā šifrēti GitHub Actions noslēpumi, un Apple parakstīšanas materiāli glabājas kā šifrēti mainīgie Codemagic. Darbplūsmas faili uz tiem atsaucas tikai pēc nosaukuma. Bez sava `android/key.jks` laidiena būvējums tiek parakstīts ar atkļūdošanas atslēgu un nevar instalēties pār kopiju no GitHub vai veikala (vispirms atinstalējiet to); atkļūdošanas būvējums instalējas blakus tai kā Immuch360 debug. Meta Horizon Store kopija ir laidiena `quest` APK, parakstīts ar citu atslēgu, to, ar kuru veikala lietotne pirmo reizi tika reģistrēta, tāpēc tā arī nevar instalēties pār no sāniem instalētu APK, ne otrādi.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-No 19. būvējuma DLNA klients, tālruņa koplietojums un Apple telpiskās multivides atpazīšana raksta arī lietotnes pašas žurnālā („Žurnāli”, profila attēla izvēlnē augšā pa labi), ar tagiem `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` un `NetworkMediaService`. Žurnāla rindas paliek ierīcē, ja vien jūs tās paši nenokopējat.
+No 19. būvējuma DLNA klients, tālruņa koplietojums un Apple telpiskās multivides atpazīšana raksta arī lietotnes pašas žurnālā („Žurnāli”, profila attēla izvēlnē augšā pa labi), ar tagiem `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` un `NetworkMediaService`. No 20. būvējuma televizora režīms tur raksta ar tagiem `TvMode` un `TvTextEntry`, Plex serveri ar `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` un `PlexServerEditPage`, un Tapo kameras ar `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` un `CameraLiveView`; Plex rindās nekad nav marķiera, adreses vai nosaukuma, un kameru rindās nav paroļu. Žurnāla rindas paliek ierīcē, ja vien jūs tās paši nenokopējat.
 
 ## Privātums
 
 - **Nekas netiek sūtīts izstrādātājam**: lietotne sazinās ar jūsu izvēlēto Immich serveri (un, atverot karti, ar karšu flīžu pakalpojumu, ko izmanto šis serveris), tai nav reklāmu, analītikas vai izstrādātāja darbināta avāriju ziņošanas pakalpojuma, un tā neko nesūta Immuch360 izstrādātājam.
-- **Bez servera** nekas neatstāj ierīci.
+- **Bez servera** neviens serveris netiek uzrunāts: lietotne izmanto tīklu tikai jūsu atvērtajiem koplietojumiem, Plex serveriem un kamerām, un tālruņa koplietojumam, ja to ieslēdzat.
 - **Tīkla koplietojumi**: koplietojumu saraksts glabājas ierīcē un nekad netiek sūtīts uz serveri; paroles glabājas ierīces atslēgu glabātuvē (keychain vai keystore).
+- **Plex** (no 20. būvējuma): marķieris paliek ierīces drošajā krātuvē un tiek sūtīts tikai uz jūsu pašu serveri, pieprasījuma galvenē caur HTTPS; lietotne nekad nesazinās ar plex.tv.
+- **Tapo kameras** (no 20. būvējuma): TP-Link konta parole un kameras konta parole paliek ierīces drošajā krātuvē; lietotne sazinās ar kameru tikai lokālajā tīklā, nekad ar TP-Link serveriem; iegūtie klipi paliek lietotnes kešatmiņā un tiek dzēsti kopā ar kameru.
+- **Televizors**: tas, vai ierīce ir televizors, tiek noteikts ierīcē; nekas netiek nosūtīts.
 - **Tālruņa koplietojums**: tikai lokālais tīkls, ar lietotājvārdu un paroli, caur vienkāršu HTTP (skatiet [Koplietot šo tālruni tīklā](#share-this-phone-on-the-network)).
 - **Kamera**: izmanto tikai Spatial 2.5D atskaņotājs, ierīcē; attēli nekad netiek glabāti un nekur netiek sūtīti.
 
@@ -675,20 +857,25 @@ Pilna politika ir failā [PRIVACY.md](PRIVACY.md).
 
 Kas vēl nav izdarīts, visticamākais vispirms. Nekas šeit nav solījums, un atsauksmes [problēmu sekotājā](https://github.com/freeKC/Immuch360/issues) palīdz izlemt, kas nāks vispirms.
 
-- **Google Play**: 15. un 16. būvējums nosūtīti Google pārskatīšanai 2026. gada 4. oktobrī un būs pieejami pēc apstiprināšanas; pēdējais apstiprinātais tur pieejamais būvējums ir 11. būvējums.
+- **Google Play**: 18. būvējums ir pieejams; 19. būvējums ir Google pārskatīšanā kopš 2026. gada 6. oktobra, un 20. būvējums sekos.
 - **App Store**: versija 3.3.0 gaida Apple pārskatīšanu; tai ir 11. būvējuma funkcijas, tāpēc augšupielāde uz Immich un video dekoderu pārbaude (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar nākamo App Store atjauninājumu. Saite tiks pievienota šeit, kad tā būs aktīva.
-- **Meta Horizon Store**: ieraksts tika iesniegts Meta pārskatīšanai 2026. gada 3. oktobrī ar 14. būvējumu, un 16. būvējums ir veikala alfa kanālā nākamajam atjauninājumam. Kad ieraksts būs apstiprināts, Quest 3 vairs nevajadzēs instalēšanu no sāniem, un veikala saite tiks pievienota šeit; no sāniem instalēta kopija vispirms būs jāatinstalē (skatiet [Instalēšana](#install)).
-- **Veikalu ieraksti**: Google Play un App Store teksti joprojām apraksta pirmos būvējumus (360° foto un video, neapstrādāti faili rādīti plakani); tie iepazīstinās ar 3D, VR180 un Spatial skatītājiem, režīmu bez servera, tīkla koplietojumiem, multivides atskaņotāju un neapstrādātajiem Insta360 failiem. Meta Horizon Store teksts jau iepazīstina ar multivides atskaņotāju.
+- **Meta Horizon Store**: ieraksts tika iesniegts Meta pārskatīšanai 2026. gada 3. oktobrī ar 14. būvējumu, un veikala alfa kanāls saņem katru jauno būvējumu nākamajam atjauninājumam. Kad ieraksts būs apstiprināts, Quest 3 vairs nevajadzēs instalēšanu no sāniem, un veikala saite tiks pievienota šeit; no sāniem instalēta kopija vispirms būs jāatinstalē (skatiet [Instalēšana](#install)).
+- **Veikalu ieraksti**: Google Play ieraksts tika pārrakstīts 2026. gada oktobrī ar jauniem ekrānuzņēmumiem, un līdz ar televizora laidienu tas iegūs televizora ekrānuzņēmumus un televizora reklāmkarogu. App Store teksts joprojām apraksta pirmos būvējumus (360° foto un video, neapstrādāti faili rādīti plakani); tas iepazīstinās ar 3D, VR180 un Spatial skatītājiem, režīmu bez servera, tīkla koplietojumiem, multivides atskaņotāju un neapstrādātajiem Insta360 failiem. Meta Horizon Store teksts jau iepazīstina ar multivides atskaņotāju.
 - **Neapstrādāti 360° kameras faili, tālāk**: progresa indikators, kamēr neapstrādāts foto tiek sagatavots brillēm; GoPro un DJI video izlīdzināšana pēc to pašu kustības datiem; dubultā „zivs acs” .dng; ziņojumi no ierīcēm par 18. būvējuma divu objektīvu atskaņošanu (X4, X5, X6, GoPro MAX 2, Osmo 360), lai apstiprinātu šuves un dekoderu resursus.
 - **DLNA, tālruņa koplietojums un Apple telpiskie faili, tālāk**: 19. būvējuma ziņojumi no ierīcēm (Plex, Jellyfin, NAS un Freebox Server caur DLNA; tālrunis, kas apkalpo Quest, arī savā tīklājā; īsti iPhone telpiskie foto un video brillēs); multiraides tiesības, kas lūgtas no Apple, lai iPhone atrastu katru DLNA serveri; iepriekšējais un nākamais starp telpiskajiem foto brillēs; telpiskā nozīmīte uz servera foto laika skalā; telpiskie video 3D formātā Quest brillēs, ja to dekoderi to ļaus.
 - **360° atskaņotāji tālruņos, tālāk**: laika josla iOS 360° video atskaņotājā (Android atskaņotājam tā ir), iepriekšējais/nākamais tālruņu 360° atskaņotājos kā Quest imersīvajā skatā, un foto iebūvētajā 360° video atskaņotājā.
 - **Tīkla koplietojumi, nākamie soļi**: pārvilkšana no viena mapes faila uz nākamo foto un video lapās (Quest imersīvais skats jau iet cauri mapes 360° failiem), Digest autentifikācija WebDAV, lietotājvārds no Bonjour ieraksta.
 - **Plakani video**: audio celiņa izvēle plakanajā atskaņotājā, vienādi servera, ierīces un koplietojuma video (360° un Spatial atskaņotājiem tā ir).
+- **Android TV, tālāk**: 20. būvējuma ierīču tests Google TV emulatorā un īstā televizorā, tad televizora laidiens Google Play (televizora ekrānuzņēmumi, televizora reklāmkarogs, Google pārskatīšana); vēlāk kanāli televizora sākuma ekrānā.
+- **Tapo kameras, tālāk**: 20. būvējuma ierīču tests ar īstām kamerām; tiešraide iPhone un iPad; H.265 ieraksti; klipa atskaņošana, kamēr tas tiek iegūts; visas dienas ieraksti vienā laika joslā.
+- **Plex, tālāk**: 20. būvējuma ierīču tests (tālruņi, Quest brilles, iPhone, televizors, ārpus mājām); marķiera pārnešana no datora ar QR kodu; Plex servera DLNA puses paslēpšana atrasto serveru sarakstā; IPv6.
 - **Augšupstraume**: nelieli izmaiņu pieprasījumi (pull request) Immich tām daļām, ko vēlas uzturētāji, sākot ar 360° foto skatītāju.
 
 ## Pateicības
 
 360° foto skatītājs balstās uz augšupstraumes izmaiņu pieprasījumu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), ko veidoja dmitry-brazhenko, un kas pats balstās uz bencefr prototipu [#30192](https://github.com/immich-app/immich/pull/30192). Paldies abiem.
+
+20\. būvējuma Tapo kameras tika uzrakstītas pēc tā, ko par šīm kamerām dokumentē atvērtā koda projekti [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) un [python-kasa](https://github.com/python-kasa/python-kasa).
 
 Kāpēc atzarojums: 360° skatīšanās mobilajā ierīcē tiek lūgta kopš 2024. gada janvāra, un oficiālajā lietotnē tās vēl nav; foto skatītājs augšupstraumē tiek pārskatīts [#31169](https://github.com/immich-app/immich/pull/31169). Šis atzarojums to piedāvā jau tagad, vāc atsauksmes no īstām ierīcēm un nelielos izmaiņu pieprasījumos piedāvās Immich visu, ko vēlēsies uzturētāji. Meta Quest skats balstās uz Meta Spatial SDK, kas nav atvērtā koda, tāpēc tas paliek šajā atzarojumā.
 

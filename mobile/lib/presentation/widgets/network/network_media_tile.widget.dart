@@ -1,6 +1,6 @@
-// The tiles of the network share browser: a photo with its thumbnail, a video with a frame of it, a 360° badge on the
-// files that declare a 360° projection, a badge on the files sent to the server before, the selection mark and the
-// progress of an upload, and the folder rows.
+// The tiles of the network share browser: a photo with its thumbnail (or the one its server made), a video with a
+// frame of it, a 360° badge on the files that declare a 360° projection, a badge on the files sent to the server
+// before, the selection mark and the progress of an upload, and the folder rows.
 
 import 'dart:async';
 import 'dart:collection';
@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
@@ -18,7 +19,9 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
 import 'package:immich_mobile/platform/video_thumbnail_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
@@ -294,12 +297,16 @@ class NetworkMediaTile extends ConsumerWidget {
     required this.onTap,
     this.onLongPress,
     this.isSelected,
+    this.autofocus = false,
   });
 
   final NetworkEntry entry;
   final Uri? url;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
+
+  /// The first item of the page for a remote control
+  final bool autofocus;
 
   /// Whether the file is picked, null when the browser is not picking files
   final bool? isSelected;
@@ -321,6 +328,12 @@ class NetworkMediaTile extends ConsumerWidget {
     final hasThumbnail = entry.isImage && url != null && (entry.size ?? 0) <= networkThumbnailMaxFileSize;
     final hasFrame = entry.isVideo && url != null;
     final isSelected = this.isSelected;
+    // A share whose server makes the pictures of its media (a Plex server) shows those, read through its connection
+    final serverPictures = switch (ref.watch(networkConnectionsProvider).opened(entry.sourceId)) {
+      final NetworkThumbnailSource source => source,
+      _ => null,
+    };
+    Widget withServerThumbnail(Widget picture) => _withServerThumbnail(entry, picture, serverPictures);
 
     return Semantics(
       label: wasSent ? '${entry.name}, ${context.t.network_upload_sent_before}' : entry.name,
@@ -329,9 +342,11 @@ class NetworkMediaTile extends ConsumerWidget {
       onTap: onTap,
       onLongPress: onLongPress,
       excludeSemantics: true,
-      child: GestureDetector(
+      // The remote of a TV reaches the tile too: the arrows focus it, OK opens it
+      child: RemoteFocusable(
         onTap: onTap,
         onLongPress: onLongPress,
+        autofocus: autofocus,
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(4)),
           child: Stack(
@@ -339,13 +354,12 @@ class NetworkMediaTile extends ConsumerWidget {
             children: [
               ColoredBox(color: context.colorScheme.surfaceContainerHighest),
               if (hasThumbnail)
-                _withServerThumbnail(entry, _PhotoThumbnail(url: url, name: entry.name))
+                withServerThumbnail(_PhotoThumbnail(url: url, name: entry.name))
               else if (hasFrame)
-                _withServerThumbnail(entry, _VideoThumbnail(entry: entry, url: url))
+                withServerThumbnail(_VideoThumbnail(entry: entry, url: url))
               else
                 // A photo too large to read for a thumbnail still shows the picture its server made of it
-                _withServerThumbnail(
-                  entry,
+                withServerThumbnail(
                   _Placeholder(icon: entry.isVideo ? Icons.movie_outlined : Icons.image_outlined, name: entry.name),
                 ),
               if (entry.isVideo)
@@ -393,27 +407,40 @@ class NetworkMediaTile extends ConsumerWidget {
   }
 }
 
-/// The picture the server made of [entry] when it tells one (a DLNA media server), else [picture]
-Widget _withServerThumbnail(NetworkEntry entry, Widget picture) {
+/// The picture the server made of [entry] when it tells one (a DLNA media server gives its URL), or when the open
+/// connection of its share makes them ([serverPictures], a Plex server), else [picture]
+Widget _withServerThumbnail(NetworkEntry entry, Widget picture, NetworkThumbnailSource? serverPictures) {
   final thumbnailUrl = entry.thumbnailUrl;
-  return thumbnailUrl == null ? picture : _ServerThumbnail(url: thumbnailUrl, fallback: picture);
+  if (thumbnailUrl != null) {
+    return _ServerThumbnail(
+      image: ResizeImage(NetworkImage(thumbnailUrl), width: _ServerThumbnail.size),
+      fallback: picture,
+    );
+  }
+  if (serverPictures != null) {
+    return _ServerThumbnail(
+      image: NetworkServerThumbnailImage(serverPictures, entry, size: _ServerThumbnail.size),
+      fallback: picture,
+    );
+  }
+  return picture;
 }
 
-/// The picture a media server made of a file (DLNA album art or thumbnail resource), read in Dart straight from the
-/// server: no read of the file through the bridge, no video frame to take. [fallback] (the bridge picture, the video
-/// frame) when the server does not give it.
+/// The picture a media server made of a file (DLNA album art or thumbnail resource, a Plex thumbnail), read in Dart
+/// from the server: no read of the file through the bridge, no video frame to take. [fallback] (the bridge picture,
+/// the video frame) when the server does not give it.
 class _ServerThumbnail extends ConsumerWidget {
-  const _ServerThumbnail({required this.url, required this.fallback});
+  const _ServerThumbnail({required this.image, required this.fallback});
 
-  final String url;
+  final ImageProvider image;
   final Widget fallback;
 
   /// The server pictures are small already (160 pixels for JPEG_TN): this only bounds a large album art
-  static const width = 256;
+  static const size = 256;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final image = ResizeImage(NetworkImage(url), width: width);
+    final image = this.image;
     return Image(
       key: const Key('network_media_server_thumbnail'),
       image: image,
@@ -563,10 +590,13 @@ class _Placeholder extends StatelessWidget {
 
 /// A folder of a share in the browser
 class NetworkFolderTile extends StatelessWidget {
-  const NetworkFolderTile({super.key, required this.entry, required this.onTap});
+  const NetworkFolderTile({super.key, required this.entry, required this.onTap, this.autofocus = false});
 
   final NetworkEntry entry;
   final VoidCallback onTap;
+
+  /// The first item of the page for a remote control
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
@@ -575,6 +605,7 @@ class NetworkFolderTile extends StatelessWidget {
       leading: Icon(Icons.folder_outlined, color: context.primaryColor),
       title: Text(entry.name, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: const Icon(Icons.chevron_right_rounded),
+      autofocus: autofocus,
       onTap: onTap,
     );
   }

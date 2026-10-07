@@ -137,11 +137,13 @@ Map<String, String> sphereCoverageLabels(Translations t) => {
 };
 
 /// Translated labels of the native 360° viewers: their 3D control (see [stereoLayoutLabels]), their coverage control
-/// (see [sphereCoverageLabels]) and the stereo photo mode of the immersive viewer (see [appleSpatialViewerLabels])
+/// (see [sphereCoverageLabels]), the stereo photo mode of the immersive viewer (see [appleSpatialViewerLabels]) and
+/// the hint of the 360° video player for the arrows of a remote control (Android TV)
 Map<String, String> sphereViewerLabels(Translations t) => {
   ...stereoLayoutLabels(t),
   ...sphereCoverageLabels(t),
   ...appleSpatialViewerLabels(t),
+  'remoteLookHint': t.tv_video_360_hint,
 };
 
 extension SphereCoverageExtension on SphereCoverage {

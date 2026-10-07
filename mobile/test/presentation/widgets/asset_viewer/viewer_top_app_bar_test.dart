@@ -249,6 +249,8 @@ void main() {
     'leftRight': '3D, side by side',
     ...englishCoverageLabels,
     ...englishSpatialLabels,
+    // The hint of the native 360° video player for the arrows of a remote control
+    'remoteLookHint': 'Arrows to look around, OK to pause and show the controls, Back to close',
   };
   // The audio track control of the native video players, with the language of the app to name the track languages in
   const englishAudioTrackLabels = {

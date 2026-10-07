@@ -1,0 +1,72 @@
+{
+  "MediaContainer": {
+    "size": 1,
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "Metadata": [
+      {
+        "ratingKey": "401",
+        "key": "/library/metadata/401",
+        "guid": "plex://movie/000000000000000000000191",
+        "slug": "alone",
+        "studio": "Test Studio",
+        "type": "movie",
+        "title": "Alone",
+        "contentRating": "G",
+        "summary": "Made up for the tests.",
+        "audienceRating": 7.5,
+        "year": 2020,
+        "tagline": "",
+        "thumb": "/library/metadata/401/thumb/1700000000",
+        "art": "/library/metadata/401/art/1700000000",
+        "duration": 5000,
+        "originallyAvailableAt": "2020-01-01",
+        "addedAt": 1600000401,
+        "updatedAt": 1700000401,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "Image": [
+          {
+            "alt": "Alone",
+            "type": "coverPoster",
+            "url": "/library/metadata/401/thumb/1700000000"
+          }
+        ],
+        "UltraBlurColors": {
+          "topLeft": "000000",
+          "topRight": "000000",
+          "bottomRight": "000000",
+          "bottomLeft": "000000"
+        },
+        "Media": [
+          {
+            "id": 4010,
+            "duration": 5000,
+            "bitrate": 8000,
+            "width": 640,
+            "height": 480,
+            "aspectRatio": 1.78,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mov",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "hasVoiceActivity": false,
+            "Part": [
+              {
+                "id": 4010,
+                "key": "/library/parts/4010/1700000000/file.mov",
+                "duration": 5000,
+                "file": "/data/movies/Shorts/alone.mov",
+                "size": 1000,
+                "container": "mov",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

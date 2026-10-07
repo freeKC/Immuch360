@@ -239,7 +239,7 @@ void main() {
     });
   });
 
-  test('the native viewers get the labels of their 3D and coverage controls', () {
+  test('the native viewers get the labels of their 3D and coverage controls, and the hint for a remote', () {
     expect(sphereCoverageLabels(StaticTranslations.instance).keys, {'coverage', 'coverage_full', 'coverage_half'});
     expect(sphereViewerLabels(StaticTranslations.instance).keys, {
       'stereo',
@@ -253,6 +253,7 @@ void main() {
       'spatial2d',
       'spatialNoNavigation',
       'spatialSecondEyeFailed',
+      'remoteLookHint',
     });
   });
 

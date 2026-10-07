@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 on Immichin mobiilisovellus, jossa 360°-kuvissa ja -videoissa voi katsella ympärilleen, sekä ilmainen soitin tavallisille, 360°-, 3D- ja VR180-kuville ja -videoille Android-puhelimissa ja -tableteissa, iPhonessa ja iPadissa sekä Meta Quest 3- ja 3S-laseissa. Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) tai puhelimen pallopanoraamatilassa tai joilla on VR-lasit, ja jotka haluavat katsella omia kuviaan Immich-palvelimelta, puhelimesta itsestään, NAS-laitteelta tai mediapalvelimelta: sama palvelin, sama tili, ei palvelinlaajennusta, tai ei palvelinta lainkaan.
+Immuch360 on Immichin mobiilisovellus, jossa 360°-kuvissa ja -videoissa voi katsella ympärilleen, sekä ilmainen soitin tavallisille, 360°-, 3D- ja VR180-kuville ja -videoille Android-puhelimissa ja -tableteissa, iPhonessa ja iPadissa, Meta Quest 3- ja 3S-laseissa sekä koontiversiosta 20 alkaen Android TV:ssä ja Google TV:ssä. Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) tai puhelimen pallopanoraamatilassa tai joilla on VR-lasit, ja jotka haluavat katsella omia kuviaan Immich-palvelimelta, puhelimesta itsestään, NAS-laitteelta, mediapalvelimelta tai Plex-palvelimelta: sama palvelin, sama tili, ei palvelinlaajennusta, tai ei palvelinta lainkaan. Koontiversiosta 20 alkaen se näyttää myös Tapo-kamerat, suorana ja niiden muistikortin tallenteet.
 
 <p align="center">
   <sub>Epävirallinen haara (fork). Ei yhteydessä Immichiin eikä FUTOon. Nimi luetaan "I am much 360".</sub>
@@ -15,7 +15,8 @@ Immuch360 on Immichin mobiilisovellus, jossa 360°-kuvissa ja -videoissa voi kat
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">tarkastettavana</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store tarkastettavana
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store tarkastettavana &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 on Immichin mobiilisovellus, jossa 360°-kuvissa ja -videoissa voi kat
     <td align="center" width="33%"><h3>🎥 Natiivi 2.5D</h3>Syvyyttä tasaiselle näytölle stereoskooppisesta videosta, näkymä seuraa päätäsi (kokeellinen, puhelimet ja tabletit)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Yksi sovellus, kolme alustaa, aito 3D laseissa</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Yksi sovellus puhelimissa, tableteissa ja laseissa, aito 3D laseissa ja koontiversiosta 20 alkaen Android TV:ssä kaukosäätimellä</td>
     <td align="center"><h3>🔌 Palvelimen kanssa tai ilman</h3>Immich-palvelimesi tai puhelimen oma galleria, tiliä ei tarvita</td>
     <td align="center"><h3>🗄️ Verkkojaot</h3>Samba (SMB), WebDAV ja koontiversiosta 19 alkaen DLNA-mediapalvelimet, jotka löydetään verkosta ja luetaan suoraan, mitään lataamatta, ja lähetetään Immichiin, kun itse päätät. Koontiversiosta 19 alkaen puhelin jakaa myös oman galleriansa lasien kanssa</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Televisiossa</h3>Koontiversiosta 20 alkaen sama APK Android TV:ssä ja Google TV:ssä: 360°-kuvat ja -videot, palvelimesi ja jakosi, kaukosäätimellä</td>
+    <td align="center"><h3>🎬 Plex ilman plex.tv:tä</h3>Koontiversiosta 20 alkaen Plex-kirjastosi toistettuna alkuperäisistä tiedostoista, jotta 360° pysyy 360°:na, kotona ja kodin ulkopuolella</td>
+    <td align="center"><h3>📹 Tapo-kamerat</h3>Koontiversiosta 20 alkaen suora kuva ja muistikortin tallenteet, vain omassa verkossasi, ja leike lähetettynä Immichiin, kun itse päätät</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 on Immichin mobiilisovellus, jossa 360°-kuvissa ja -videoissa voi kat
 - **"360°-kuvani näkyvät litteänä, venytettynä nauhana, ja 360°-videoni toistuvat litteinä."** Katso [360°-kuvat ja -videot pallona](#360-photos-and-videos-as-a-sphere).
 - **"Minulla ei ole palvelinta, enkä halua tiliä."** Katso [Ilman palvelinta tai tiliä](#without-a-server-or-an-account).
 - **"Haluan katsoa NAS-laitteeni videoita puhelimessa tai laseissa kopioimatta niitä."** Katso [Verkkojaot](#network-shares-a-nas-a-computer-or-a-media-server).
+- **"Plex toistaa 360°-videoni litteinä, ja haluan Plex-kirjastoni laseihin, televisioon ja kodin ulkopuolelle."** Katso [Plex Media Server ilman plex.tv:tä](#plex-media-server-without-plextv).
 - **"Kuvani ovat puhelimessani, eikä minulla ole tietokonetta tai NAS-laitetta, jolle laittaa ne laseja varten."** Katso [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network).
+- **"Haluan nähdä Tapo-kamerani ja viime yön leikkeet ilman Tapo-sovellusta ja säilyttää leikkeen Immichissä."** Katso [Tapo-kamerat](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"Insta360-tiedostoni tarvitsevat Insta360-sovelluksen ennen kuin voin katsoa niitä"** (ja myös GoPron .360- ja DJI:n .osv-tiedostot). Katso [360°-kameroiden käsittelemättömät tiedostot](#raw-360-camera-files-without-the-cameras-app).
 - **"3D-videoni näyttävät kahdentuneilta, ja VR180-videoni ovat venyneet joka suuntaan."** Katso [3D ja VR180](#3d-and-vr180-photos-and-videos) ja [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"Minulla on iPhonella otettuja tilakuvia."** Katso [Applen tilakuvat ja -videot](#apple-spatial-photos-and-videos).
 - **"Se toimii puhelimessa, mutta haluan sen Questiin."** Katso [Meta Quest 3 -laseissa](#in-the-meta-quest-3-headset).
+- **"Haluan katsella 360°-kuviani ja -videoitani sekä NAS-laitteeni tai Plex-palvelimeni videoita televisiosta kaukosäätimellä."** Katso [Katsele televisiosta](#watch-on-your-tv-android-tv-and-google-tv).
 - **"En löydä 360°-kuviani kaikkien muiden joukosta."** Katso [360°-luettelo](#find-your-360-shots-the-360-list).
 - **"360°-videoni nykii tai toistaa sumean kopion."** Katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters).
 - **"Säilyykö se, mitä Immich-sovellus tekee?"** Kyllä, kahdella pienellä muutoksella, katso [Kaikki muu on Immichiä](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Valinta muistetaan puhelimessa, eikä se muuta mitään palvelimella. Verkkojaon
 
 Sinulla ei ole Immich-palvelinta tai et halua tiliä: haluat vain, että puhelimesi 360°-kuvat avautuvat pallona, jota voi kääntää gyroskoopilla. Immich-sovellus pyytää ensin kirjautumaan.
 
-Kirjautumissivulla "Käytä ilman palvelinta" avaa Immuch360:n laitteen omilla kuvilla ja videoilla, 360°-, 3D-, VR180- ja Spatial-katselimien, 360°-luettelon ja verkkojakojen kanssa, ilman Immich-tiliä. Palvelimen toiminnot pysyvät piilossa tai harmaina, kunnes yhdistät palvelimen; mitään ei lähde laitteesta. Meta Quest 3:ssa se avaa lasien omat kuvat ja videot.
+Kirjautumissivulla "Käytä ilman palvelinta" avaa Immuch360:n laitteen omilla kuvilla ja videoilla, 360°-, 3D-, VR180- ja Spatial-katselimien, 360°-luettelon ja verkkojakojen kanssa (koontiversiosta 20 alkaen myös Plex-palvelimien ja Tapo-kameroiden kanssa), ilman Immich-tiliä. Palvelimen toiminnot pysyvät piilossa tai harmaina, kunnes yhdistät palvelimen; mitään ei lähde laitteesta. Meta Quest 3:ssa se avaa lasien omat kuvat ja videot; televisiossa, jossa niitä ei ole, se ohjaa verkkojakoihin (katso [Katsele televisiosta](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Kirjasto-välilehti ilman palvelinta: 360°-kohta ylimpänä, sitten Laitteella kahdella 360°-kuvalla ja Verkkojaot jaolla nimeltä NAS">
 
@@ -126,7 +135,7 @@ Kirjautumissivulla "Käytä ilman palvelinta" avaa Immuch360:n laitteen omilla k
 
 360°-videosi ovat NAS-laitteella tai tietokoneella, ja haluat katsoa niitä puhelimessa tai laseissa kopioimatta niitä ensin. Laseja varten ihmiset päätyvät kopioimaan jokaisen tiedoston kaapelilla; Plexin ja Jellyfinin kaltaiset mediapalvelimet toistavat 360°-videot litteinä, kuten niiden foorumien pyynnöt kertovat; Immich-sovellus lukee vain Immich-palvelintasi.
 
-Immuch360 selaa ja toistaa kuvia ja videoita mistä tahansa palvelimesta, joka puhuu SMB:tä (Samba, Windows), WebDAVia tai koontiversiosta 19 alkaen DLNA/UPnP:tä (mediapalvelin: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS-laite tai TV-boksi), suoraan jaosta. Se löytää verkkosi palvelimet itse ja toistaa tiedostot suoraan samoissa katselimissa kuin muu sovellus (360°, 3D, VR180, Spatial 2.5D, Questin immersiivinen näkymä), Immich-palvelimen kanssa tai ilman, puhelimissa ja Meta Quest 3:ssa. Mitään ei ladata. Kun palvelin on yhdistetty, valitsemasi tiedostot voi lähettää Immich-tilillesi (koontiversiosta 15 alkaen).
+Immuch360 selaa ja toistaa kuvia ja videoita mistä tahansa palvelimesta, joka puhuu SMB:tä (Samba, Windows), WebDAVia tai koontiversiosta 19 alkaen DLNA/UPnP:tä (mediapalvelin: Jellyfin, minidlna, Gerbera, Emby, NAS-laite tai TV-boksi), suoraan jaosta. Koontiversiosta 20 alkaen Plex Media Serverillä on oma tyyppinsä, katso [Plex Media Server ilman plex.tv:tä](#plex-media-server-without-plextv). Se löytää verkkosi palvelimet itse ja toistaa tiedostot suoraan samoissa katselimissa kuin muu sovellus (360°, 3D, VR180, Spatial 2.5D, Questin immersiivinen näkymä), Immich-palvelimen kanssa tai ilman, puhelimissa ja Meta Quest 3:ssa. Mitään ei ladata. Kun palvelin on yhdistetty, valitsemasi tiedostot voi lähettää Immich-tilillesi (koontiversiosta 15 alkaen).
 
 | Jaon lisääminen | Jaon kansio |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 selaa ja toistaa kuvia ja videoita mistä tahansa palvelimesta, joka p
 
 ### Jaon lisääminen
 
-1. Avaa Kirjasto-välilehti ja sitten Verkkojaot. Ensimmäisellä kerralla sivulla lukee "Ei vielä jakoja" ja siinä on "Lisää jako" -painike; ylhäällä oikealla oleva + tekee saman milloin tahansa.
-2. "Lisää jako" -sivu etsii ensin verkkosi palvelimia ja luettelee ne kohdassa "Löydetty verkosta" tyyppeineen (SMB, WebDAV, DLNA, Puhelin). Haku kestää enintään noin kuusi sekuntia; "Etsi uudelleen" aloittaa sen alusta. Se käyttää Bonjouria/mDNS:ää ja lähiverkon skannausta, joka varmistetaan todellisella SMB- tai WebDAV-vaihdolla, sekä koontiversiosta 19 alkaen DLNA-mediapalvelimien SSDP-hakua.
-3. Napauta palvelinta: tyyppi, palvelin, portti ja polku täytetään.
-4. Eikö se ole luettelossa? Täytä lomake käsin. Tyyppi: "SMB (Samba, Windows-jako)", "WebDAV (Nextcloud, Synology ja muut)" tai "DLNA-mediapalvelin (Plex, Jellyfin, NAS, TV-boksi)". Sitten Nimi, "Palvelimen nimi tai osoite" (nimi tai osoite; täydellinen osoite, kuten `smb://nas/photos`, `\\nas\photos` tai `https://nas:5006/photos`, täyttää muut kentät), "Portti (valinnainen)", jos se ei ole tavallinen, SMB:lle "Jako" tai WebDAVille "WebDAV-osoitteen polku", "Aloituskansio (valinnainen)", "Käyttäjänimi" ja "Salasana" sekä WebDAVille "Suojattu yhteys (HTTPS)".
+1. Avaa Kirjasto-välilehti ja sitten Verkkojaot. Ensimmäisellä kerralla sivulla lukee "Ei vielä jakoja" ja siinä on "Lisää jako" -painike; ylhäällä oikealla oleva + tekee saman milloin tahansa. Koontiversiosta 20 alkaen molemmat kysyvät, mitä lisätään: "Verkkojako (NAS, tietokone, mediapalvelin)", "Plex Media Server" tai "Tapo-kamera". Valitse ensimmäinen.
+2. "Lisää jako" -sivu etsii ensin verkkosi palvelimia ja luettelee ne kohdassa "Löydetty verkosta" tyyppeineen (SMB, WebDAV, DLNA, Puhelin sekä koontiversiosta 20 alkaen Plex ja Tapo). Haku kestää enintään noin kuusi sekuntia; "Etsi uudelleen" aloittaa sen alusta. Se käyttää Bonjouria/mDNS:ää ja lähiverkon skannausta, joka varmistetaan todellisella SMB- tai WebDAV-vaihdolla, koontiversiosta 19 alkaen DLNA-mediapalvelimien SSDP-hakua sekä koontiversiosta 20 alkaen GDM:ää, Plexin etsintää, ja TP-Linkin etsintäprotokollaa Tapo-kameroille.
+3. Napauta palvelinta: tyyppi, palvelin, portti ja polku täytetään. Plex-palvelin tai Tapo-kamera avaa sen sijaan oman sivunsa valmiiksi täytettynä.
+4. Eikö se ole luettelossa? Täytä lomake käsin. Tyyppi: "SMB (Samba, Windows-jako)", "WebDAV (Nextcloud, Synology ja muut)", "DLNA-mediapalvelin (Jellyfin, NAS, TV-boksi)" tai koontiversiosta 20 alkaen "Plex Media Server", joka avaa sivun [Plex Media Server ilman plex.tv:tä](#plex-media-server-without-plextv). Sitten Nimi, "Palvelimen nimi tai osoite" (nimi tai osoite; täydellinen osoite, kuten `smb://nas/photos`, `\\nas\photos` tai `https://nas:5006/photos`, täyttää muut kentät), "Portti (valinnainen)", jos se ei ole tavallinen, SMB:lle "Jako" tai WebDAVille "WebDAV-osoitteen polku", "Aloituskansio (valinnainen)", "Käyttäjänimi" ja "Salasana" sekä WebDAVille "Suojattu yhteys (HTTPS)".
 5. SMB: kun palvelin ja käyttäjänimi on kirjoitettu, "Valitse jako" luettelee palvelimen jaot.
 6. DLNA: mediapalvelimella ei ole käyttäjänimeä eikä salasanaa. Anna palvelin, portti ja sen laitekuvauksen "Kuvauksen polku" (minidlnalle `/rootDesc.xml`), tai liitä koko osoite, kuten `http://192.168.1.10:8200/rootDesc.xml`, palvelinkenttään.
 7. Napauta "Testaa yhteys". Vastaus on "Yhdistetty, N kohdetta aloituskansiossa", tai se kertoo, miksi yhteys epäonnistui. Napauta sitten lomakkeen alareunassa "Tallenna".
@@ -155,6 +164,7 @@ Käyttäjänimi tyhjällä salasanalla lähetetään sellaisenaan: Freebox Serve
 
 360°, 3D ja VR180 tunnistetaan tiedoston GPano- tai pallometatiedoista, jotka luetaan aluepyynnöillä, ja VR180 myös tiedostonimestä. Koontiversiosta 16 alkaen tunnistetaan myös käsittelemättömät Insta360-tiedostot (.insp-kuva nimestä tai kameran kalibrointilohkosta, .insv-video nimestä ja kuvaruudusta), ja ne yhdistetään.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Jaon tiedostojen lähettäminen Immichiin
 
 Koontiversiosta 15 alkaen, kun olet yhteydessä palvelimeen:
@@ -177,17 +187,67 @@ Koontiversiosta 19 alkaen sovellus lähettää mediapalvelimien SSDP-haun verkon
 <a id="a-share-that-moved"></a>
 ### Siirtynyt jako
 
-Koontiversiosta 19 alkaen DLNA-jako ja puhelinjako (katso [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network)) säilyttävät palvelimensa ilmoittaman tunnisteen. Kun jako ei enää vastaa osoitteessaan (reitittimen antama uusi osoite, toisessa portissa uudelleen käynnistetty palvelin), sen kansiosivulla näkyy "Etsitään (nimi) verkosta", ja jako siirretään sinne, missä se nyt vastaa: DLNA-palvelimen tapauksessa heti, koska sillä ei ole salasanaa, ja käyttäjänimellä ja salasanalla suojatun jaon tapauksessa vahvistuksen "Käytetäänkö uutta osoitetta?" jälkeen, joka näyttää molemmat osoitteet, koska ne lähetettäisiin uuteen osoitteeseen.
+Koontiversiosta 19 alkaen DLNA-jako ja puhelinjako (katso [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network)) säilyttävät palvelimensa ilmoittaman tunnisteen. Kun jako ei enää vastaa osoitteessaan (reitittimen antama uusi osoite, toisessa portissa uudelleen käynnistetty palvelin), sen kansiosivulla näkyy "Etsitään (nimi) verkosta", ja jako siirretään sinne, missä se nyt vastaa: DLNA-palvelimen tapauksessa heti, koska sillä ei ole salasanaa, ja käyttäjänimellä ja salasanalla suojatun jaon tapauksessa vahvistuksen "Käytetäänkö uutta osoitetta?" jälkeen, joka näyttää molemmat osoitteet, koska ne lähetettäisiin uuteen osoitteeseen. Koontiversiosta 20 alkaen myös Plex-palvelin, joka löytyy uudelleen toisesta verkon osoitteesta, siirretään heti: sen varmenne todistaa, että se on sama palvelin, ennen kuin tunnus lähetetään. Tapo-kameraa etsitään sen MAC-osoitteella sen omalta sivulta, katso [Tapo-kamerat](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Rajoitukset
 
 - **SMB**: vain SMB 2 ja 3, ei SMB 1.
 - **WebDAV**: vain Basic-todennus (Digestiä ei vielä tueta); itse allekirjoitetun HTTPS-varmenteen on oltava asennettuna laitteelle.
-- **Palvelimien löytäminen**: verkon skannaus ja DLNA-haku tutkivat vain paikallista /24-verkkoa ja tarvitsevat iOS:ssä lähiverkkoluvan. iPhonessa ja iPadissa DLNA-haku lähettää vain unicast-pyynnöt, kunnes Apple myöntää sovellukselle multicast-oikeuden, ja jotkin palvelimet eivät vastaa niihin (minidlna Linuxissa): lisää ne kuvausosoitteensa avulla.
+- **Palvelimien löytäminen**: verkon skannaus sekä DLNA-, Plex- ja Tapo-haut tutkivat vain paikallista /24-verkkoa ja tarvitsevat iOS:ssä lähiverkkoluvan. iPhonessa ja iPadissa DLNA-haku lähettää vain unicast-pyynnöt, kunnes Apple myöntää sovellukselle multicast-oikeuden, ja jotkin palvelimet eivät vastaa niihin (minidlna Linuxissa): lisää ne kuvausosoitteensa avulla.
 - **DLNA**: palvelin, joka tarjoaa tiedostosta vain muunnetun kopion, antaa sen kopion; kansio luettelee enintään 20 000 kohdetta.
 - **Pikkukuvat**: kuvien pikkukuvat dekoodaavat koko tiedoston, ja yli 30 Mt:n kuvat eivät saa pikkukuvaa.
 - **Soittimet**: ääniraidan valinta ei ole vielä tavallisessa soittimessa. Puhelimessa ei voi vielä pyyhkäistä kansion tiedostosta seuraavaan (Questin immersiivisessä näkymässä on edellinen ja seuraava kansion 360°-tiedostoille). Verkkotiedostolle tehtyä 3D- tai 180°-valintaa ei muisteta.
 - **Lähetykset**: ne toimivat vain, kun sovellus on auki, ja palvelimella jo oleva tiedosto lähetetään kokonaan ennen kuin palvelin ilmoittaa sen kaksoiskappaleeksi.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server ilman plex.tv:tä
+
+Videosi ovat Plexissä, ja Plex näyttää 360°-kuvasi ja -videosi litteinä, kuten sen foorumin pyynnöt kertovat (yksi on ollut avoinna vuodesta 2017). Haluat tämän kirjaston myös laseihin, televisioon ja kodin ulkopuolelle. Immich-sovellus lukee vain Immich-palvelintasi, ja koontiversion 19 DLNA-tyyppi ulottuu Plexin DLNA-puoleen vain kotona.
+
+Koontiversiosta 20 alkaen Immuch360 muodostaa parin Plex Media Serverisi kanssa suoraan, ilman plex.tv:tä: se löytää palvelimen verkosta, liität tunnuksen kerran, ja sovellus lukee kirjastojesi alkuperäiset tiedostot suoraan sovelluksen jokaisessa katselimessa (360°, 3D, VR180, Spatial 2.5D, Questin immersiivinen näkymä, television kaukosäädin), kotona ja porttiohjauksesi kautta kodin ulkopuolella. Mitään ei kopioida, ja valitsemasi tiedostot voi lähettää Immichiin.
+
+### Plex-palvelimen lisääminen
+
+1. Avaa Kirjasto-välilehti, sitten Verkkojaot, sitten + ja "Plex Media Server". Jakolomakkeen "Plex Media Server" -tyyppi ja Plex-tunnisteella merkitty palvelin kohdassa "Löydetty verkosta" avaavat saman sivun.
+2. "Lisää Plex-palvelin" -sivu etsii verkkosi Plex-palvelimia ("Etsitään Plex-palvelimia verkostasi") ja luettelee ne kohdassa "Löydetty verkosta". Napauta omaasi: kortti näyttää sen nimen, Plex-version ja lyhyen tunnisteen.
+3. Eikö se ole luettelossa? Kirjoita sen "Palvelimen osoite", kuten `192.168.1.20`, `192.168.1.20:32400` tai `https://...plex.direct:32400`, ja napauta sitten "Hae". Sovellus lukee palvelimen varmenteen eikä lähetä mitään muuta.
+4. Hae tunnus tietokoneella: avaa Plex verkkoselaimessa ja kirjaudu sisään, avaa mikä tahansa kirjastosi kuva tai video, sitten "...", "Get Info", "View XML" (Plexin valikon englanninkieliset nimet). Uusi välilehti avautuu osoitteeseen, joka päättyy `X-Plex-Token=...`. Kopioi koko osoite.
+5. Liitä se kenttään "Käyttötunnus" tai lähetä se puhelimeen ja napauta "Liitä leikepöydältä": sovellus ottaa siitä palvelimen ja tunnuksen. Myös pelkkä `X-Plex-Token=`-osan jälkeinen teksti toimii. Sivun "Näin saat sen" kertoo saman; palvelimen ylläpitäjät voivat käyttää myös palvelimen `Preferences.xml`-tiedoston `PlexOnlineToken`-arvoa, joka ei vanhene. Televisiossa OK avaa näppäimistöikkunan: kirjoita tunnus siihen (se on yleensä 20 merkkiä).
+6. Napauta "Testaa yhteys". Vastaus on "Yhdistetty: N kirjastoa", tai se kertoo, mikä on vialla, kuten "Plex-palvelin hylkäsi tämän tunnuksen."
+7. "Käyttö kodin ulkopuolelta" näyttää sitten, mitä palvelin kertoo: "Palvelin kertoo olevansa tavoitettavissa osoitteessa (osoite):(portti).", tai "Palvelin ei kertonut kodin ulkopuolista osoitettaan." Käyttääksesi palvelinta kodin ulkopuolella kirjoita julkinen osoitteesi tai DynDNS-nimesi kenttään "Kodin ulkopuolinen osoite (IP tai nimi)" ja Plexissä ohjattu portti (Asetukset, Etäkäyttö) kenttään "Kodin ulkopuolinen portti". Kirjoittamasi arvo menee aina palvelimen ilmoittaman edelle.
+8. "Nimi" on palvelimen nimi, ellet muuta sitä, ja "Aloituskansio (valinnainen)" voi avata yhden kirjaston suoraan. Napauta "Tallenna". Palvelin näkyy jakojen joukossa muodossa `plex://` ja osoite.
+
+### Plex-kirjastojen selaaminen
+
+1. Napauta palvelinta kohdassa Verkkojaot. Ensimmäinen taso luettelee kirjastot, jotka sovellus näyttää: kuvat, elokuvat ja muut videot, TV-sarjat. Musiikki jätetään pois.
+2. Kirjaston alla ovat sen kansiot sellaisina kuin ne ovat palvelimen levyllä (Plexin "kansioittain"-näkymä), sitten kuvat ja videot tiedostonimillään, Plexin tekemine pikkukuvineen. Kuvakirjasto, jonka kansionäkymä ei vastaa, näyttää sen sijaan albuminsa.
+3. 360° ja 3D tunnistetaan lukemalla itse tiedostot, kuten missä tahansa jaossa: 360°-kuvat saavat 360°-merkin, Applen tilakuvat 3D-merkin.
+4. Avaa kuva tai video kuten missä tahansa jaossa: 360°, 3D, 360°/180°, Spatial 2.5D puhelimessa, immersiivinen näkymä Questissa, kaukosäädin televisiossa. Video luetaan alkuperäisenä tiedostona tavualueina sovelluksen paikallisen sillan kautta, joten kelaus toimii ja sen 360°- ja 3D-metatiedot päätyvät soittimiin koskemattomina.
+5. Valitse tiedostot ja napauta "Lähetä Immichiin" lähettääksesi ne palvelimellesi, kuten mistä tahansa jaosta (katso [Jaon tiedostojen lähettäminen Immichiin](#send-files-of-a-share-to-immich)).
+
+### Kodin ulkopuolella
+
+Aina kun sovellus avaa palvelimen, se kokeilee ensin kotiosoitetta ja 400 ms myöhemmin kodin ulkopuolista osoitetta. Käyttöön otetaan ensimmäinen, joka vastaa palvelimenasi; kun se on kodin ulkopuolinen osoite, kansiosivulla näkyy maapallokuvake tekstillä "Yhdistetty kodin ulkopuolisen osoitteen kautta". Tämä edellyttää, että etäkäyttö on otettu käyttöön Plexissä (Asetukset, Etäkäyttö) ja reitittimesi ohjaa portin: ilman plex.tv:tä sovellus ei voi käyttää Plexin välityspalvelua, joten palvelin ilman porttiohjausta avautuu vain kotona, ja kodin ulkopuolella sivulla lukee "Plex-palvelintasi ei tavoiteta kotiverkon ulkopuolelta. Ota etäkäyttö käyttöön porttiohjauksella Plexissä (Asetukset, Etäkäyttö) tai kirjoita sen julkinen osoite."
+
+Palvelimen ilmoittama osoite opitaan uudelleen jokaisella kotona tehdyllä yhteydellä. Kun se ei vastaa ulkoa (reititin, joka vaihtaa osoitettaan, kaksi reititintä peräkkäin), kirjoita omasi palvelimen sivulle. Kun tunnus lakkaa toimimasta (esimerkiksi kirjauduit ulos selainistunnosta, josta kopioit sen), kansiosivu kertoo sen ja tarjoaa vaihtoehdon "Liitä uusi tunnus", joka avaa palvelimen sivun tunnuskentän kohdalta.
+
+### Vertailu Plexiin ja DLNA-tyyppiin
+
+- **Alkuperäiset tiedostot**: sovellus lukee itse tiedostot, ei koskaan Plexin muuntamaa kopiota, joten 360°-, 3D- ja VR180-metatiedot säilyvät koskemattomina ja sovelluksen katselimet käyttävät niitä, kun taas Plex-sovellukset näyttävät nämä tiedostot litteinä.
+- **Ei plex.tv:tä**: sovellus keskustelee vain palvelimesi kanssa, aina HTTPS:n kautta. Palvelin tarkistetaan sen oman, palvelimen tunnisteeseen sidotun plex.direct-varmenteen avulla ennen kuin tunnus lähetetään. Tunnus pysyy laitteella sen suojatussa tallennustilassa ja kulkee vain palvelimellesi pyynnön otsakkeessa.
+- **Verrattuna saman palvelimen lisäämiseen DLNA:na**: kansiot kuten levyllä, Plexin pikkukuvat, käyttö kodin ulkopuolelta ja suojattu yhteys.
+
+### Rajoitukset
+
+- **Vain omistukseen otetut palvelimet**: palvelimen on oltava otettu omistukseen Plexissä (kirjauduttu kerran Plex-tilille), mikä antaa sille plex.direct-varmenteen. Muuten sivulla lukee "Tämä osoite vastaa ilman Plex-varmennetta. Ota palvelin omistukseesi Plexissä tai lisää se SMB-, WebDAV- tai DLNA-jakona."
+- **Vain IPv4**: "IPv6-osoitteita ei vielä tueta. Kirjoita palvelimen IPv4-osoite."
+- **Tunnus** antaa täyden pääsyn Plex-palvelimeesi. Palvelimen poistaminen sovelluksesta unohtaa tunnuksen laitteella mutta ei mitätöi sitä: "Tunnus pysyy voimassa palvelimella, kunnes kirjaudut ulos selainistunnosta, josta kopioit sen." Tunnus, jolla on päättymispäivä, näyttää sen päivän, eikä sovellus voi uusia sitä.
+- **Kodin ulkopuolella**: vain porttiohjauksen kautta, välityspalvelua ei ole.
+- **Kirjastot**: musiikkia ei näytetä, kansio luettelee enintään 20 000 kohdetta, ja rajoitettu käyttäjä voi saada ilmoituksen "Tällä tunnuksella ei voi lukea palvelimen kirjastoja."
+- **360°-kameroiden käsittelemättömät tiedostot** (.insv, .insp, .360, .osv) näkyvät vain, jos Plex luettelee ne; muuten lisää sama NAS-kansio SMB- tai WebDAV-jakona, katso [360°-kameroiden käsittelemättömät tiedostot](#raw-360-camera-files-without-the-cameras-app).
+- **Palvelimen löytäminen**: palvelinta, jonka asetus "Enable local network discovery (GDM)" on pois päältä, ei löydetä, joten kirjoita sen osoite. iPhonessa ja iPadissa haku lähettää vain unicast-pyyntöjä. Saman palvelimen DLNA-puoli voi myös näkyä luettelossa DLNA-tunnisteella: valitse rivi, jolla on Plex-tunniste.
+- **Ei vielä tarkistettu laitteella**: parin muodostus, kansiot, videon tavualueet, pikkukuvat, väärä tunnus ja kodin ulkopuolinen osoite tarkistettiin tietokoneelta oikeaa Plex Media Server 1.42.1:tä vasten, ja kuva- ja TV-sarjakirjastot vain simuloitua palvelinta vasten. Toisto puhelimessa, Questissa, iPhonessa ja televisiossa sekä siirtyminen kodin ulkopuoliseen osoitteeseen kuuluvat koontiversion 20 laitetestiin.
+- Immuch360 ei ole sidoksissa Plexiin.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Jaa tämä puhelin verkossa
@@ -219,6 +279,63 @@ Siitä eteenpäin se on WebDAV-jako kuten mikä tahansa muu: 360°-tunnistus, k�
 - **Turvallisuus**: vain lähiverkko. Jako kuuntelee vain puhelimen Wi-Fi-, Ethernet- ja yhteyspisteosoitteissa, ei koskaan mobiilidata- tai VPN-osoitteessa, ja vastaa vain laitteille, joilla on paikallinen osoite. Jokainen pyyntö tarvitsee käyttäjänimen ja salasanan (HTTP Basic); kymmenen väärää salasanaa samasta laitteesta minuutin sisällä estää sen minuutiksi. Salasana kulkee Wi-Fissä salaamattomana (tavallinen HTTP): käytä jakoa verkossa, johon luotat, ja poista se käytöstä, kun olet valmis.
 - **Puhelimen oma yhteyspiste**: lasit voivat liittyä siihen; jos ne eivät löydä puhelinta sieltä, kirjoita sivulla näkyvä osoite.
 - **Ei vielä tarkistettu laitteella**: palvelin tarkistettiin yksikkötesteillä ja päästä päähän -testeillä lasien omalla WebDAV-asiakkaalla ja mediasillalla tietokoneessa. Quest 3:a palveleva puhelin (löytäminen, 4 Gt:n videon toisto ja kelaus, näyttö pois päältä 30 minuuttia, yhteyspiste, "Lopeta" ilmoituksesta) ja iPhonen puoli, jota ei ole vielä ajettu iPhonessa, kuuluvat koontiversion 19 laitetestiin.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo-kamerat: suora kuva ja muistikortin tallenteet
+
+Sinulla on Tapo-kameroita kotona, ja haluat nähdä puutarhakameran ja viime yön leikkeet kuviesi vieressä avaamatta Tapo-sovellusta sekä säilyttää leikkeen Immichissä. Immich-sovelluksessa ei ole mitään kameroille, ja Tapo-sovellus on erillinen sovellus, joka on kirjautunut TP-Link-tilillesi ja pitää leikkeet erillään kuvistasi.
+
+Koontiversiosta 20 alkaen Immuch360 lisää Tapo-kameran verkkojakojen viereen. Se näyttää kameran suorana Android-puhelimissa ja -tableteissa, Android TV:ssä ja Meta Quest 3:ssa, ja kaikilla alustoilla sen muistikortin tallenteet päivä kerrallaan: leike haetaan kamerasta, minkä jälkeen se toistuu kuten mikä tahansa video ja sen voi lähettää Immichiin. Sovellus keskustelee kameran kanssa vain verkossasi, ei koskaan TP-Linkin palvelimien kanssa, eikä koskaan muuta mitään kamerassa.
+
+### Kameran lisääminen
+
+1. Ensin Tapo-sovelluksessa: luo kameratili kameran asetuksissa, Advanced Settings, Camera Account (käyttäjänimi ja salasana tälle kameralle, suoraa kuvaa varten), ja ota käyttöön Third-Party Compatibility kohdassa Me, sitten Tapo Lab (Tapo-sovelluksen valikkojen englanninkieliset nimet).
+2. Avaa Immuch360:ssa Kirjasto-välilehti, sitten Verkkojaot, sitten + ja "Tapo-kamera".
+3. "Lisää kamera" -sivu etsii kameroita ("Etsitään Tapo-kameroita verkostasi") ja luettelee ne kohdassa "Löydetty verkosta" Tapo-tunnisteella. Napauta omaasi täyttääksesi kentän "Kameran osoite" tai kirjoita sen osoite. Tapo-tunnisteella merkitty kamera jakolomakkeessa avaa saman sivun.
+4. "Nimi": millä nimellä kamera näkyy luettelossa.
+5. Kohdassa "Muistikortin tallenteet" on "TP-Link-tilin salasana": sen tilin salasana, jota käytät Tapo-sovelluksessa. Se avaa tallenteet; sähköpostiosoitettasi ei tarvita.
+6. Kohdassa "Suora" ovat "Kameratilin käyttäjänimi" ja "Kameratilin salasana": vaiheen 1 kameratili.
+7. Kumpi tahansa riittää ("Anna TP-Link-tilin salasana, kameratili tai molemmat."): pelkkä TP-Link-salasana antaa tallenteet, pelkkä kameratili suoran kuvan.
+8. Napauta "Testaa kamera". Se näyttää "Tallenteet: (malli), laiteohjelmisto (versio)" muistikortin tilan kanssa ja "Suora kuva: (video), ääni (ääni)", tai sen, mikä kummassakin epäonnistui.
+9. Napauta "Tallenna". Kamera näkyy kohdassa "Kamerat" jakojen jälkeen, mallinsa kanssa, kun se tiedetään, ja `tapo://` osoitteineen.
+
+### Suoran kuvan katsominen
+
+1. Napauta kameraa. Sen suora kuva on sivun yläosassa: "Yhdistetään kameraan", sitten kuva "Suora"-merkillä.
+2. Kuvan päällä olevat painikkeet: ääni, aluksi pois päältä ("Ota ääni käyttöön"; "Ei ääntä tällä laitteella", kun laite ei voi toistaa sitä), SD tai HD ja "Koko näyttö".
+3. Puhelin näyttää sivulla SD:n ja koko näytössä HD:n; Quest näyttää HD:n. Takaisin poistuu ensin koko näytöstä.
+4. Kuvan alla ovat malli ja laiteohjelmisto sekä muistikortti, kuten "Muistikortti: (käytetty) / (yhteensä) käytetty" tai "Ei muistikorttia".
+
+iPhonessa ja iPadissa suorassa kuvassa lukee "Suora kuva tulee iPhonelle ja iPadille myöhemmässä versiossa. Tallenteet toistuvat täällä jo nyt." Ilman kameratiliä sivulla lukee "Lisää kameratili nähdäksesi suoran kuvan."
+
+### Tallenteiden toistaminen ja säilyttäminen
+
+1. Kohdassa "Muistikortin tallenteet" kameran sivu luettelee päivät, joilta on tallenteita, uusimmat ensin, kuukausittain. Ilman TP-Link-tilin salasanaa siinä lukee "Lisää TP-Link-tilin salasana nähdäksesi tallenteet."
+2. Napauta päivää. Sen leikkeet näkyvät kameran oman ajan tuntien alla, kukin alkuaikansa, kestonsa, tapahtuman kohdalla kameran pikkukuvan ja lajinsa kanssa: Liike, Henkilö, Lemmikki, Ajoneuvo, Vauvan itku, Eläin, Jatkuva tai Tapahtuma.
+3. Napauta leikettä. Sovellus hakee sen kamerasta ("Haetaan videota kamerasta: N %", ja "Peruuta"), ja toistaa sen sitten videosoittimessa äänen ja kelauksen kera. Haetussa leikkeessä on merkintä "Tällä laitteella", ja se avautuu seuraavalla kerralla heti.
+4. Leikkeen säilyttäminen Immichissä, kun palvelin on yhdistetty: videon ⋮-valikko, "Lähetä Immichiin".
+5. Tilan vapauttaminen: pitkä painallus haetussa leikkeessä tarjoaa vaihtoehdon "Poista kopio tältä laitteelta" (puhelimessa), ja kameran sivulla on "Poista tältä kameralta haetut videot" kokoineen.
+6. Päivityspainike ylhäällä oikealla tai sivun vetäminen alas kysyy kameralta uudelleen.
+
+Kun kamera ei enää vastaa osoitteessaan, sen sivu etsii sitä verkosta MAC-osoitteen perusteella ja siirtää sen sinne, missä se nyt vastaa, kun se näyttää saman varmenteen. Kamera, joka näyttää eri varmenteen kuin sovellus ensin näki, saa sen sijaan kysymyksen: "Kamera osoitteessa (osoite) näyttää eri varmenteen kuin ennen. Jatka vain, jos olet palauttanut sen tehdasasetuksiin tai vaihtanut sen."
+
+### Vertailu Tapo-sovellukseen
+
+- **Vain omassa verkossasi**: sovellus keskustelee itse kameran kanssa lähiverkossa eikä koskaan TP-Linkin palvelimien kanssa. Se ei kirjaudu TP-Link-tilille, joten sähköpostiosoitettasi ei tarvita.
+- **Tallenteista tulee tavallisia videoita**: haettu leike on H.264-video äänineen, jonka voit lähettää Immichiin, jossa se säilyy senkin jälkeen, kun muistikortti on tallentanut sen päälle.
+- **Muun rinnalla**: Immich-palvelimen kanssa tai ilman, puhelimessa, televisiossa tai Questissa (ikkunassa), verkosta löydettynä kuten jako.
+- **Vain luku**: sovellus pyytää kameralta vain sitä, mitä se näyttää; se ei koskaan muuta asetusta eikä koskaan poista mitään kamerasta.
+
+### Rajoitukset
+
+- **Ei vielä tarkistettu laitteella**: koontiversiota 20 ei ole vielä ajettu oikean kameran kanssa. Protokolla kirjoitettiin C510W:n kaappauksista laiteohjelmistolla 1.3.4 (vuoden 2026 puolivälin V4-kirjautuminen), ja sovellus tarkistettiin testeissään simuloitua kameraa vasten. Raportit ovat tervetulleita, mukana malli ja laiteohjelmisto, jotka "Testaa kamera" näyttää, sekä [Lokien](#logs) rivit.
+- **Suora kuva**: vain Android-puhelimissa ja -tableteissa, Android TV:ssä ja Questissa, ei vielä iPhonessa ja iPadissa. TP-Linkin rajoitukset ovat voimassa: enintään kaksi HD- ja kaksi SD-striimiä yhtä aikaa kameraa kohden, Tapo-sovellus mukaan lukien, eivätkä Tapo Care, muistikortti ja RTSP:tä tai ONVIFia käyttävä tallennin voi kaikki toimia yhtä aikaa.
+- **Kamerat**: akkukameroita ja Tapo-keskittimen takana olevia kameroita ei tueta.
+- **Tallenteet**: yksi lataus kerrallaan kameraa kohden. Kun Tapo-sovellus selaa muistikorttia, sovellus yrittää uudelleen 4, 8 ja 12 sekunnin kuluttua ja sanoo sitten "Kamera on varattu toiselle katselijalle, kuten Tapo-sovellukselle. Yritä uudelleen minuutin kuluttua." H.265-tallenteita ei vielä muunneta ("Tämä tallenne on H.265-muodossa, jota tämä versio ei vielä osaa muuntaa."), jatkuvilla tallenteilla ei ole pikkukuvaa, ja leike toistuu vasta, kun se on haettu kokonaan.
+- **Salasanat**: jokainen väärä salasana lasketaan, ja muutaman jälkeen kamera lukittuu hetkeksi ("Kamera on lukittu liian monen väärän salasanan jälkeen. Yritä uudelleen N minuutin kuluttua."). Sovellus ei koskaan itse kokeile hylättyä salasanaa uudelleen: vain "Testaa kamera" tai "Retry" ("Yritä uudelleen") kysyvät kameralta uudelleen. Kun kamera hyväksyy salasanan asetuksiinsa mutta ei videoihinsa, ota Third-Party Compatibility pois käytöstä ja uudelleen käyttöön Tapo-sovelluksessa ja käynnistä sitten kamera uudelleen.
+- **Tila**: haetut leikkeet jäävät sovelluksen välimuistiin, enintään 1 Gt kaikille kameroille yhteensä (pisimpään toistamatta olleet poistetaan ensin); järjestelmä voi tyhjentää tämän välimuistin, ja kameran poistaminen poistaa sen leikkeet.
+- **Kodin ulkopuolella**: sovellus tavoittaa kameran sen osoitteesta verkossasi, joten ei sen ulkopuolelta.
+- Immuch360 ei ole sidoksissa TP-Linkiin.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## 360°-kameroiden käsittelemättömät tiedostot ilman kameran sovellusta
@@ -349,7 +466,7 @@ Tunnistus tarkistettiin Applen oman kuvakirjaston kirjoittamalla näytetilakuval
 
 Ihmiset ostavat Quest 3:n katsoakseen omia 360°-kuviaan ja -videoitaan ja kysyvät sitten, minne tiedostot laitetaan, miten ne saa laseihin ilman kaapelia ja mitä soitinta käytetään: kaupan 360°- ja 3D-videosoittimet ovat maksullisia.
 
-Sama Android-sovellus toimii Quest 3:ssa ja 3S:ssä ikkunana koko kirjastosi kanssa. Sen 360°-painike avaa immersiivisen näkymän, jossa kuva tai video on kaikkialla ympärilläsi ja katselet ympärillesi päätä kääntämällä, stereoskooppisissa tiedostoissa aidossa 3D:ssä (Meta Spatial SDK). Media tulee Immich-palvelimeltasi, laseista itsestään, NAS-laitteelta, mediapalvelimelta tai puhelimesta, ja se toistetaan paikaltaan (mediapalvelin ja puhelin koontiversiosta 19 alkaen, ei vielä tarkistettu laseissa). Se on ilmainen ja avointa lähdekoodia. Tarkistettu Quest 3:lla, ja käyttäjä on kokeillut sitä Insta360 X4:n 8K HEVC -videoilla.
+Sama Android-sovellus toimii Quest 3:ssa ja 3S:ssä ikkunana koko kirjastosi kanssa. Sen 360°-painike avaa immersiivisen näkymän, jossa kuva tai video on kaikkialla ympärilläsi ja katselet ympärillesi päätä kääntämällä, stereoskooppisissa tiedostoissa aidossa 3D:ssä (Meta Spatial SDK). Media tulee Immich-palvelimeltasi, laseista itsestään, NAS-laitteelta, mediapalvelimelta, puhelimesta tai Plex-palvelimelta, ja se toistetaan paikaltaan (mediapalvelin ja puhelin koontiversiosta 19 alkaen, Plex-palvelin koontiversiosta 20 alkaen, ei vielä tarkistettu laseissa), ja koontiversiosta 20 alkaen ikkuna näyttää myös Tapo-kamerat. Se on ilmainen ja avointa lähdekoodia. Tarkistettu Quest 3:lla, ja käyttäjä on kokeillut sitä Insta360 X4:n 8K HEVC -videoilla.
 
 ### Immersiivisen näkymän avaaminen
 
@@ -408,6 +525,56 @@ Käännä sitä oikealla ohjainsauvalla (tai tietopaneelin "Käännä"-painikkee
 - **Kelaus**: videota, jonka lähde ei vastaa tavualuepyyntöihin, ei voi kelata; paneeli kertoo tästä.
 - **Tavalliset videot**: tavallinen (ei 360°) stereoskooppinen video toistuu ikkunassa molemmat silmät näkyvissä; immersiivinen 3D-näkymä on tarkoitettu 360°- ja VR180-medialle.
 - **Lisää**: lasien dekoodaamat koodekit, kauppa, luvat ja APK:n koko ovat kohdassa [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Katsele televisiosta (Android TV ja Google TV)
+
+Haluat 360°-kuvat ja -videot, albumisi sekä NAS-laitteesi tai Plex-palvelimesi videot isolle ruudulle, perheelle sohvalle, television kaukosäätimellä. Immich-mobiilisovellus ei ole TV-sovellus: käyttäjä, joka asensi sen televisioon, huomasi sen toimivan hiirellä mutta ei kaukosäätimellä ([keskustelu #1614](https://github.com/immich-app/immich/discussions/1614)), eikä Immich-tiimi suunnittele virallista TV-sovellusta ([keskustelu #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Koontiversiosta 20 alkaen sama Android-sovellus toimii Android TV:ssä ja Google TV:ssä kaukosäädin ainoana syötteenä: yksi APK puhelimille ja televisioille, 360°- ja 3D-katselimet nuolilla käännettyinä, sekä verkkojaot, Plex ja Tapo-kamerat televisiossa, Immich-palvelimen kanssa tai ilman.
+
+<a id="install-it-on-the-tv"></a>
+### Asentaminen televisioon
+
+1. Kunnes Google Play tarjoaa sovellusta televisioille, mikä odottaa Googlen tarkastusta TV-julkaisulle, ota yleinen `Immuch360-v<version>-release.apk` [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta.
+2. Ota televisiossa käyttöön kehittäjäasetukset ja USB-virheenkorjaus (Google TV:ssä: Asetukset, Järjestelmä, Tietoja, valitse "Android TV OS build" seitsemän kertaa, sitten Asetukset, Järjestelmä, Kehittäjäasetukset; nimet vaihtelevat televisioittain).
+3. Samassa verkossa olevalta tietokoneelta adb:llä (Android SDK Platform Tools): `adb connect <address of the TV>`, hyväksy kehote televisiossa, sitten `adb install -r Immuch360-v<version>-release.apk`.
+4. Sovellus näkyy television sovellusten joukossa bannerinsa kanssa. Asenna seuraava julkaisu samalla tavalla: `-r` säilyttää kirjautumisen ja asetukset.
+
+### Ensimmäinen käynnistys
+
+1. Kirjaudu kuten puhelimessa: nuolet siirtävät kehystä kentästä toiseen, ja OK kentässä ("Paina OK kirjoittaaksesi") avaa television näppäimistön ikkunaan palvelimen osoitetta, sähköpostia ja salasanaa varten.
+2. Tai valitse "Käytä ilman palvelinta". Televisiolla ei ole omia kuvia, joten Kuvat-välilehdellä lukee "Tällä televisiolla ei ole omia kuvia tai videoita: avaa verkkojako Kirjastosta." ja siinä on Verkkojaot-painike. Lisää siellä jako, Plex-palvelin tai kamera kuten puhelimessa (katso [Verkkojaot](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Liikkuminen kaukosäätimellä
+
+- Nuolet siirtävät kehystä, OK avaa sen, minkä kohdalla kehys on, Takaisin palaa. Välilehdeltä Takaisin siirtyy sivuvalikkoon, sitten Kuviin ja sitten ulos sovelluksesta.
+- Kanava ylös ja alas vierittävät sivun kerrallaan.
+- Katselimissa kaukosäätimen toisto ja tauko, pikakelaus eteen, taaksepäin kelaus, seuraava ja edellinen -näppäimet toimivat, ja tietonäppäin näyttää kuvan tai videon tiedot.
+
+### Kuvat ja videot kaukosäätimellä
+
+1. **Kuva**: vasen ja oikea siirtävät edelliseen tai seuraavaan, OK näyttää tai piilottaa säätimet, Ylös siirtää yläpalkkiin (jossa 360°-painike on) ja Alas alapalkkiin.
+2. **Video**: OK keskeyttää ja näyttää säätimet, tai toistaa. Toiston aikana vasen ja oikea hyppäävät 10 sekuntia taakse tai eteen; tauolla ne siirtävät edelliseen tai seuraavaan kohteeseen, kuten vihje kertoo: "Keskeytetty: nuolet siirtävät edelliseen tai seuraavaan kohteeseen".
+3. **360°-kuva**, 360°-painikkeesta: nuolet katselevat ympärille, nopeammin pohjassa pidettäessä, ja näkymä pysähtyy pehmeästi. OK siirtää yläpalkin painikkeisiin, kohtaan "Lähennä", jonka vieressä ovat "Loitonna", näkökenttä ja 3D; kanava ylös ja alas myös zoomaavat. Takaisin palaa painikkeista kuvaan ja sitten sulkee. Vihjeessä lukee "Nuolet katseluun, OK säätimiin, Takaisin sulkee".
+4. **360°-video**, 360°-painikkeesta: nuolet katselevat ympärille, kun säätimet ovat piilossa, OK keskeyttää ja näyttää ne, Takaisin piilottaa ne ja sitten sulkee. Vihjeessä lukee "Nuolet katseluun, OK keskeyttää ja näyttää säätimet, Takaisin sulkee".
+5. **Muistot**: vasen ja oikea käyvät läpi kuvat ja jatkavat seuraavaan muistoon, Ylös siirtää sulkemispainikkeeseen ja Alas kohtaan "Näytä aikajanalla".
+6. **Jaot ja Plex**: samat näppäimet jaon kuva- ja videosivuilla, joilla vasen ja oikea avaavat kansion edellisen tai seuraavan tiedoston.
+
+### Kaukosäädinasettelu-asetus
+
+Asetukset, Asetukset (Preferences), "Kaukosäädinasettelu": "Suuret kohdistuskehykset ja kaukosäätimen näppäimet ilman kosketusnäyttöä vaativia säätimiä. Automaattinen ottaa sen käyttöön Android TV:ssä ja Google TV:ssä." Automaattinen on oletus; Päällä sopii näppäimistöllä tai peliohjaimella ohjattavaan tablettiin; Pois poistaa sen käytöstä televisiossa. Asetus on vain Androidissa. Nuolet ja OK toimivat katselimissa näppäimistöllä tai peliohjaimella asetuksesta riippumatta.
+
+### Rajoitukset
+
+- **Katselin**: televisiossa sovellus näyttää ja toistaa. Varmuuskopiointi, lähetykset, muokkaus, poistaminen, jakaminen, useiden kohteiden valinta, Cast, Spatial 2.5D, gyroskooppi, kartta ja Paikat sekä "Jaa tämä puhelin verkossa" on piilotettu.
+- **Kirjautuminen**: OAuth avaa verkkosivun, mihin televisio ei pysty: "Kirjautuminen palvelulla (palveluntarjoaja) avaa verkkosivun, mihin tämä televisio ei pysty. Kirjaudu sen sijaan sähköpostilla ja salasanalla."
+- **Linkit** näyttävät osoitteensa kohdassa "Avaa toisella laitteella" selaimen avaamisen sijaan, ja teksti kirjoitetaan järjestelmän näppäimistöikkunassa.
+- **Muisti**: vähämuistisessa televisiossa 360°-kuvat näytetään enintään kokoa 4096x2048, ilman terävämpää kuvaa zoomattaessa.
+- **Videot**: television dekooderit päättävät, mitä toistetaan, samalla "Videon lähde" -asetuksella ja dekooderitarkistuksella kuin puhelimessa (katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters)); ei vielä mitattu televisiossa.
+- **Ei vielä tarkistettu laitteella**: TV-tuki tarkistettiin vain automaattisilla testeillä, eikä sitä ole vielä ajettu televisiossa eikä TV-emulaattorissa. Vahvistettavana: suunta, johon nuolet kääntävät 360°-videota, television näppäimistö (Gboard) tekstiikkunassa, infrapunakaukosäätimien OK-näppäin, marginaalit ja banneri television aloitusnäytöllä. Raportit ovat tervetulleita.
+- **Google Play televisioissa** odottaa Googlen tarkastusta TV-julkaisulle; siihen asti APK.
+- **Muut televisiot**: Fire TV:tä ei ole testattu, eikä Apple TV -versiota ole.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Löydä 360°-kuvasi: 360°-luettelo
@@ -488,11 +655,11 @@ Kun palvelin ohittaa alkuperäisen tiedoston HTTP Range -pyynnöt ja MP4-indeksi
 <a id="everything-else-is-immich"></a>
 ## Kaikki muu on Immichiä
 
-Kaikki, mitä virallinen Immich-mobiilisovellus tekee, on täällä: varmuuskopiointi, aikajana, albumit, haku, jakaminen, kumppanit, kaikki synkronoituna palvelimesi kanssa, samalla palvelimella ja samalla tilillä kuin verkkosovellus. Immuch360 asentuu virallisen sovelluksen rinnalle (paketti `com.aprogsys.immuch360`). Eroja on kaksi, koontiversiosta 15 alkaen: "Pakota alkuperäinen video" -kytkimestä tuli yllä kuvattu "Videon lähde" -valinta, ja laitteen albumista käsin lähettämäsi kuvat ja videot lasketaan varmuuskopioiduiksi.
+Kaikki, mitä virallinen Immich-mobiilisovellus tekee, on täällä: varmuuskopiointi, aikajana, albumit, haku, jakaminen, kumppanit, kaikki synkronoituna palvelimesi kanssa, samalla palvelimella ja samalla tilillä kuin verkkosovellus. Immuch360 asentuu virallisen sovelluksen rinnalle (paketti `com.aprogsys.immuch360`). Eroja on kaksi, koontiversiosta 15 alkaen: "Pakota alkuperäinen video" -kytkimestä tuli yllä kuvattu "Videon lähde" -valinta, ja laitteen albumista käsin lähettämäsi kuvat ja videot lasketaan varmuuskopioiduiksi. Televisiossa sovellus on koontiversiosta 20 alkaen katselin, katso [Katsele televisiosta](#watch-on-your-tv-android-tv-and-google-tv).
 
 Jos haluat näyttää 360°-kuvan jollekulle, jolla ei ole sovellusta, jaa se Immichin jakolinkillä: Immichin verkkosovellus näyttää 360°-kuvan pallona hänen selaimessaan.
 
-Nykyinen koontiversio, koontiversio 19 (versio 3.3.0-rc.0, koontinumero 3030017), perustuu Immich 3.3.0-rc.0:aan (Immich `main`, ei vielä vakaa julkaisu), ja sitä on testattu Immich 3.2 -palvelimella. Ilmoita ongelmista kohdassa [Issues](https://github.com/freeKC/Immuch360/issues), älä Immich-projektille. Immichin oma täydellinen dokumentaatio on osoitteessa [immich.app](https://immich.app).
+Nykyinen koontiversio, koontiversio 20 (versio 3.3.0-rc.0, koontinumero 3030018), perustuu Immich 3.3.0-rc.0:aan (Immich `main`, ei vielä vakaa julkaisu). Koontiversiota 19 testattiin Immich 3.2 -palvelimella, eikä koontiversio 20 muuta mitään siinä, mitä sovellus pyytää palvelimelta. Ilmoita ongelmista kohdassa [Issues](https://github.com/freeKC/Immuch360/issues), älä Immich-projektille. Immichin oma täydellinen dokumentaatio on osoitteessa [immich.app](https://immich.app).
 
 ## Vertailu Immich-sovellukseen ja muihin sovelluksiin
 
@@ -515,6 +682,9 @@ Nykyinen koontiversio, koontiversio 19 (versio 3.3.0-rc.0, koontinumero 3030017)
 | DLNA-mediapalvelimet jakotyyppinä | ❌ | ✅ koontiversiosta 19 alkaen | Tarkistettu minidlnaa ja Gerberaa vasten Dockerissa; Plex, Jellyfin, NAS-laite, Freebox Server, iPhone ja Quest kuuluvat koontiversion 19 laitetestiin |
 | Jaon tiedostojen lähettäminen Immichiin; käsin lähetetyt laitteen tiedostot lasketaan varmuuskopioiduiksi | ❌ vain laitteen tiedostot | ✅ koontiversiosta 15 alkaen | Testattu Android-emulaattorissa Samba-testipalvelinta ja Immich 3.2 -palvelinta vasten |
 | Tämän puhelimen jakaminen verkossa laseja varten | ❌ | ✅ koontiversiosta 19 alkaen, Android ja iOS | Yksikkötestit ja päästä päähän -testit lasien WebDAV-asiakkaalla tietokoneessa; Questia palveleva puhelin ja iPhonen puoli kuuluvat koontiversion 19 laitetestiin |
+| Plex Media Server -kirjastot toistettuina alkuperäisistä tiedostoista, kotona ja kodin ulkopuolella, ilman plex.tv:tä | ❌ | ✅ koontiversiosta 20 alkaen, kaikki katselimet, puhelimissa, tableteissa, Quest 3:ssa ja televisioissa | Tarkistettu tietokoneelta oikeaa Plex Media Server 1.42.1:tä vasten (parin muodostus, kansiot, tavualueet, pikkukuvat, kodin ulkopuolinen osoite); ei vielä tarkistettu laitteella |
+| Tapo-kamerat: suora kuva ja muistikortin tallenteet lähetettyinä Immichiin, kun itse päätät | ❌ | ✅ koontiversiosta 20 alkaen: tallenteet kaikkialla, suora kuva Androidissa, Android TV:ssä ja Quest 3:ssa | Tarkistettu simuloitua kameraa vasten; ei vielä tarkistettu oikealla kameralla |
+| Android TV ja Google TV kaukosäätimellä ohjattuna, samassa APK:ssa | ❌ ei TV-sovellus | ✅ koontiversiosta 20 alkaen | Tarkistettu automaattisilla testeillä; ei vielä tarkistettu televisiossa |
 | Käsittelemättömät Insta360 .insp -kuvat ja yhden raidan .insv -videot | ❌ litteitä | ✅ koontiversiosta 16 alkaen | Kuvat tarkistettu X3-tiedostojen Insta360 Studio -vientejä vasten, videot Android-emulaattorissa matalaresoluutioisella X3-tiedostolla; ei vielä ajettu iPhonessa |
 | Käsittelemättömät videot, joissa yksi objektiivi raitaa tai tiedostoa kohden (Insta360 X4, X4 Air, X5, X6, X3-parit, GoPro .360, DJI .osv) | ❌ litteitä tai vääriä | ✅ koontiversiosta 18 alkaen | Jäsentimet ja yhdistäminen tarkistettu todellisilla X4-, X3-pari-, GoPro MAX- ja Osmo 360 -tiedostoilla; toisto kuuluu koontiversioiden 18 ja 19 laitetestiin |
 | Kaksoiskalansilmä-.dng | ❌ litteä | ❌ ei vielä | Suunnitteilla |
@@ -529,27 +699,33 @@ Nykyinen koontiversio, koontiversio 19 (versio 3.3.0-rc.0, koontinumero 3030017)
 |---|---|---|
 | Immichin verkkosovellus | Se näyttää 360°-kuvan pallona, mutta pitää käsittelemätöntä .insp-tiedostoa valmiina panoraamana ja kietoo sen kaksi ympyrää pallon ympärille; VR-näkymä on yhä pyyntö ([keskustelu #14768](https://github.com/immich-app/immich/discussions/14768)) | Yhdistää käsittelemättömät tiedostot laitteella ja avaa immersiivisen näkymän Quest 3:ssa |
 | Insta360-sovellus tai Studio | Tarvitaan muistikortin käsittelemättömien tiedostojen muuttamiseen 360°-kuvaksi ennen katselua | Avaa käsittelemättömät .insp- ja .insv-tiedostot suoraan sekä GoPron .360- ja DJI:n .osv-tiedostot |
-| Plex, Jellyfin, Synology Photos | 360°-kuvat ja -videot näytetään litteinä tai niitä ei tunnisteta, kuten niiden foorumien ketjut kertovat (Plexin pyyntö on ollut avoinna vuodesta 2017) | Lukee samat kansiot SMB:n, WebDAVin tai DLNA:n kautta ja toistaa ne pallona muuttamatta mitään palvelimella |
+| Plex, Jellyfin, Synology Photos | 360°-kuvat ja -videot näytetään litteinä tai niitä ei tunnisteta, kuten niiden foorumien ketjut kertovat (Plexin pyyntö on ollut avoinna vuodesta 2017) | Lukee koontiversiosta 20 alkaen itse Plex-kirjaston tai samat kansiot SMB:n, WebDAVin tai DLNA:n kautta ja toistaa ne pallona muuttamatta mitään palvelimella |
+| Tapo-sovellus | Erillinen sovellus, joka on kirjautunut TP-Link-tilillesi ja pitää leikkeet erillään kuvistasi | Näyttää kameran kuviesi vieressä, keskustelee sen kanssa vain verkossasi ja säilyttää leikkeen videona, jonka voit lähettää Immichiin (koontiversiosta 20 alkaen) |
+| Immich-mobiilisovellus televisiossa | Ei TV-sovellus: käyttäjä kertoo sen toimivan hiirellä mutta ei kaukosäätimellä | Sama sovellus kaukosäätimelle tehtynä (koontiversiosta 20 alkaen) |
 | Tiedostojen kopioiminen laseihin | Jokainen tiedosto kopioidaan kaapelilla ennen kuin sitä voi katsoa | Toistaa paikaltaan Immichistä, NAS-laitteelta, mediapalvelimelta tai puhelimesta |
 | Quest-kaupan 360°- ja 3D-soittimet | Maksullisia | Ilmainen ja avointa lähdekoodia (AGPL) |
 
 ## Muodot ja lähteet alustoittain
 
-Immuch360 on galleria ja myös ilmainen mediasoitin: se toistaa sen, mihin virallinen sovellus ei pysty, neljästä lähteestä, tiedostolle sopivassa soittimessa.
+Immuch360 on galleria ja myös ilmainen mediasoitin: se toistaa sen, mihin virallinen sovellus ei pysty, toisen taulukon lähteistä, tiedostolle sopivassa soittimessa.
 
-| Mitä | Android-puhelimet | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Tavalliset videot (MP4, MOV, MKV, mitä laite dekoodaa) | Immich-soitin ja natiivi soitin verkkojaoille | Sama, paitsi jaon MKV- ja AVI-tiedostot, joita iOS ei avaa (palvelimella ne toistuvat transkoodattuina) | Ikkunassa |
-| 360°-kuvat | Pallokatselin, gyroskooppi | Sama | Immersiivisesti, kaikkialla ympärilläsi |
-| 360°-videot | Natiivi Media3-soitin pallolla, gyroskooppi, kelaus, ääniraidan valinta, puskurointi-ilmaisin | Natiivi SceneKit-soitin pallolla, gyroskooppi, ääniraidan valinta, puskurointi-ilmaisin; toisto ja tauko, ei vielä aikajanaa | Immersiivisesti, aito 3D stereoskooppisille tiedostoille, aikajana 10 sekunnin hypyillä, edellinen ja seuraava media |
-| 3D 360° (ylä- ja alaosa, rinnakkain) | Vasen silmä, asettelupainike | Sama | Kumpikin silmä saa oman puoliskonsa kuvaruudusta |
-| VR180- (puolipallo) kuvat ja videot | Puolipallo, 360°/180°-painike | Sama | Immersiivinen puolipallo |
-| Spatial 2.5D (syvyyttä tasaiselle näytölle stereoskooppisesta videosta) | Natiivi soitin, pään seuranta etukameralla | Sama | Ei tarjolla |
-| Applen tilakuvat (HEIC-stereoparit, koontiversiosta 19 alkaen) | Vasen silmä, tietorivi kertoo, että kyseessä on tilakuva | Sama | Näytä 3D:nä: molemmat silmät immersiivisessä näkymässä leijuvassa kuvassa, 3D tai 2D, koko muutettavissa |
-| Applen tilavideot (MV-HEVC, koontiversiosta 19 alkaen) | Yksi silmä (peruskerros), ilmoituksen kanssa | Sama | Yksi silmä ikkunassa, ilmoituksen kanssa |
-| Käsittelemättömät Insta360 .insp -kuvat (koontiversiosta 16 alkaen) | Yhdistetään GPU:lla ennen pallokatselinta, enintään 8192x4096 | Sama | Immersiivisesti, laseja varten valmistellusta yhdistetystä kuvasta |
-| Käsittelemätön Insta360 .insv, molemmat objektiivit yhdellä raidalla (koontiversiosta 16 alkaen) | Yhdistetään Media3-soittimen GPU-tehosteella | Yhdistetään SceneKit-shaderilla | Immersiivisesti, yhdistetään samalla GPU-tehosteella |
-| Käsittelemättömät videot, joissa yksi objektiivi raitaa tai tiedostoa kohden (koontiversiosta 18 alkaen): Insta360 X4, X4 Air, X5, X6 .insv, X3-parit, GoPro .360, DJI .osv | Kaksi laitteistodekooderia yhtä aikaa, yksi objektiivia kohden (koontiversiosta 19 alkaen ohjelmistodekooderit laitteessa, jossa ei ole laitteistodekooderia, enintään 2048x2048 objektiivia kohden), ja GL-kompositori, joka yhdistää palloksi; yksi objektiivi, sitten transkoodattu striimi, sitten yhdistämätön video, kun laite ei pysty ajamaan kahta | Mukautettu AVFoundation-kompositori Metalilla | Immersiivisesti, samat kaksi dekooderia ja kompositori (3840x1920-paneeli) |
+| Mitä | Android-puhelimet | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (koontiversiosta 20 alkaen) |
+|---|---|---|---|---|
+| Tavalliset videot (MP4, MOV, MKV, mitä laite dekoodaa) | Immich-soitin ja natiivi soitin verkkojaoille | Sama, paitsi jaon MKV- ja AVI-tiedostot, joita iOS ei avaa (palvelimella ne toistuvat transkoodattuina) | Ikkunassa | Kuten puhelimissa; OK keskeyttää, vasen ja oikea hyppäävät 10 s |
+| 360°-kuvat | Pallokatselin, gyroskooppi | Sama | Immersiivisesti, kaikkialla ympärilläsi | Pallokatselin nuolilla käännettynä, zoomaus kanavanäppäimillä |
+| 360°-videot | Natiivi Media3-soitin pallolla, gyroskooppi, kelaus, ääniraidan valinta, puskurointi-ilmaisin | Natiivi SceneKit-soitin pallolla, gyroskooppi, ääniraidan valinta, puskurointi-ilmaisin; toisto ja tauko, ei vielä aikajanaa | Immersiivisesti, aito 3D stereoskooppisille tiedostoille, aikajana 10 sekunnin hypyillä, edellinen ja seuraava media | Puhelinten Media3-soitin nuolilla käännettynä |
+| 3D 360° (ylä- ja alaosa, rinnakkain) | Vasen silmä, asettelupainike | Sama | Kumpikin silmä saa oman puoliskonsa kuvaruudusta | Vasen silmä, asettelupainike |
+| VR180- (puolipallo) kuvat ja videot | Puolipallo, 360°/180°-painike | Sama | Immersiivinen puolipallo | Puolipallo, 360°/180°-painike |
+| Spatial 2.5D (syvyyttä tasaiselle näytölle stereoskooppisesta videosta) | Natiivi soitin, pään seuranta etukameralla | Sama | Ei tarjolla | Ei tarjolla |
+| Applen tilakuvat (HEIC-stereoparit, koontiversiosta 19 alkaen) | Vasen silmä, tietorivi kertoo, että kyseessä on tilakuva | Sama | Näytä 3D:nä: molemmat silmät immersiivisessä näkymässä leijuvassa kuvassa, 3D tai 2D, koko muutettavissa | Vasen silmä, tietorivi |
+| Applen tilavideot (MV-HEVC, koontiversiosta 19 alkaen) | Yksi silmä (peruskerros), ilmoituksen kanssa | Sama | Yksi silmä ikkunassa, ilmoituksen kanssa | Yksi silmä, ilmoituksen kanssa |
+| Käsittelemättömät Insta360 .insp -kuvat (koontiversiosta 16 alkaen) | Yhdistetään GPU:lla ennen pallokatselinta, enintään 8192x4096 | Sama | Immersiivisesti, laseja varten valmistellusta yhdistetystä kuvasta | Kuten puhelimissa |
+| Käsittelemätön Insta360 .insv, molemmat objektiivit yhdellä raidalla (koontiversiosta 16 alkaen) | Yhdistetään Media3-soittimen GPU-tehosteella | Yhdistetään SceneKit-shaderilla | Immersiivisesti, yhdistetään samalla GPU-tehosteella | Kuten puhelimissa |
+| Käsittelemättömät videot, joissa yksi objektiivi raitaa tai tiedostoa kohden (koontiversiosta 18 alkaen): Insta360 X4, X4 Air, X5, X6 .insv, X3-parit, GoPro .360, DJI .osv | Kaksi laitteistodekooderia yhtä aikaa, yksi objektiivia kohden (koontiversiosta 19 alkaen ohjelmistodekooderit laitteessa, jossa ei ole laitteistodekooderia, enintään 2048x2048 objektiivia kohden), ja GL-kompositori, joka yhdistää palloksi; yksi objektiivi, sitten transkoodattu striimi, sitten yhdistämätön video, kun laite ei pysty ajamaan kahta | Mukautettu AVFoundation-kompositori Metalilla | Immersiivisesti, samat kaksi dekooderia ja kompositori (3840x1920-paneeli) | Kuten puhelimissa, kun televisio pystyy ajamaan kahta dekooderia yhtä aikaa |
+| Tapo-kameran suora kuva (koontiversiosta 20 alkaen) | Media3-RTSP-soitin: SD sivulla, HD koko näytössä, äänipainike | Ei vielä: kortti kertoo sen tulevan myöhemmin | Ikkunassa, HD-laatuisena | Kuten puhelimissa |
+| Tapo-kameran tallenteet (koontiversiosta 20 alkaen) | Haetaan muistikortilta H.264-videoksi äänineen ja toistetaan sitten kelauksen kera | Sama | Sama, ikkunassa | Sama |
+
+TV-saraketta ei ole vielä tarkistettu televisiossa, katso [Katsele televisiosta](#watch-on-your-tv-android-tv-and-google-tv); kamerarivejä ei ole vielä tarkistettu oikealla kameralla.
 
 | Mistä | Miten |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 on galleria ja myös ilmainen mediasoitin: se toistaa sen, mihin viral
 | Puhelin tai lasit itse | "Käytä ilman palvelinta" kirjautumissivulla tai Kirjasto-välilehden Laitteella-kohta |
 | NAS-laite tai tietokone | SMB- ja WebDAV-jaot sekä koontiversiosta 19 alkaen DLNA-mediapalvelimet, jotka löydetään verkosta ja luetaan suoraan (SMB-video enintään kuuden yhteyden kautta), mitään kopioimatta; koontiversiosta 15 alkaen valitsemasi tiedostot voi lähettää Immich-tilillesi |
 | Toinen puhelin (koontiversiosta 19 alkaen) | "Jaa tämä puhelin verkossa" kyseisessä puhelimessa: lasit tai mikä tahansa verkon WebDAV-asiakas lukee sen albumit, kuukaudet ja 360°-median |
+| Plex Media Server (koontiversiosta 20 alkaen) | Sen kuva-, elokuva- ja TV-sarjakirjastot kansioittain, alkuperäiset tiedostot luettuina suoraan HTTPS:n kautta, joka tarkistetaan palvelimen omaa varmennetta vasten, kotona tai kodin ulkopuolisen osoitteen kautta, kaikilla alustoilla; katso [Plex Media Server ilman plex.tv:tä](#plex-media-server-without-plextv) |
+| Tapo-kamera (koontiversiosta 20 alkaen) | Suora kuva kameratilillä (Android, Android TV, Quest) ja sen muistikortin tallenteet TP-Link-tilin salasanalla (kaikki alustat), vain lähiverkossa; katso [Tapo-kamerat](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 toimii myös Meta Quest 3- ja 3S-laseissa (Horizon OS v69 tai uudempi; Horizon Store -koontiversio on listattu vain näille kahdelle; yleisen `-release.apk`-tiedoston pitäisi asentua myös Quest 2:een tai Quest Prohon, testaamatta). Käyttöohjeet ovat kohdassa [Meta Quest 3 -laseissa](#in-the-meta-quest-3-headset); tämä osio käsittelee asentamista ja sitä, mikä laseissa on toisin.
 
-Lasien koontiversio kommunikoi palvelimien kanssa vain HTTPS:n kautta tai tavallisella HTTP:llä kotiverkon nimiin (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ja laseihin itseensä, kuten Horizon Store vaatii. Kyseinen koontiversio hylkää palvelimen, joka on kirjoitettu tavallisena HTTP-osoitteena IP-osoitteella, kuten `http://192.168.1.10:2283`: käytä HTTPS:ää, kotiverkon nimeä (`nas.local`) tai yleistä `-release.apk`-tiedostoa, joka säilyttää puhelinten avoimen käytännön. Tämä ei koske lähiverkon tavallisessa HTTP-osoitteessa olevia WebDAV-, DLNA- ja puhelinjakoja: sovellus lukee ne itse ja antaa soittimilleen vain paikallisen siltansa osoitteen (vahvistettava vielä laseissa DLNA:n ja puhelinjaon osalta, jotka ovat uusia koontiversiossa 19).
+Lasien koontiversio kommunikoi palvelimien kanssa vain HTTPS:n kautta tai tavallisella HTTP:llä kotiverkon nimiin (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ja laseihin itseensä, kuten Horizon Store vaatii. Kyseinen koontiversio hylkää palvelimen, joka on kirjoitettu tavallisena HTTP-osoitteena IP-osoitteella, kuten `http://192.168.1.10:2283`: käytä HTTPS:ää, kotiverkon nimeä (`nas.local`) tai yleistä `-release.apk`-tiedostoa, joka säilyttää puhelinten avoimen käytännön. Tämä ei koske lähiverkon tavallisessa HTTP-osoitteessa olevia WebDAV-, DLNA- ja puhelinjakoja: sovellus lukee ne itse ja antaa soittimilleen vain paikallisen siltansa osoitteen (vahvistettava vielä laseissa DLNA:n ja puhelinjaon osalta, jotka ovat uusia koontiversiossa 19). Koontiversiosta 20 alkaen Plex-palvelimeen yhdistetään HTTPS:n kautta ja Tapo-kameraan sovelluksen itsensä kautta, sen suora kuva RTSP:n kautta, joka ei ole HTTP:tä: kumpaakaan tämän ei pitäisi koskea (vahvistettava vielä laseissa).
 
 <a id="install"></a>
 ### Asentaminen
@@ -576,7 +754,7 @@ Horizon Store -sivu odottaa Metan tarkastusta, ja se lähetettiin koontiversion 
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Avaa laseissa Kirjasto (Library), valitse suodatin "Unknown sources" (Tuntemattomat lähteet) ja käynnistä Immuch360.
@@ -584,7 +762,7 @@ Horizon Store -sivu odottaa Metan tarkastusta, ja se lähetettiin koontiversion 
 
 ### Ikkunassa
 
-Koko sovellus toimii koon muutettavana 2D-ikkunana: kirjautuminen, aikajana, albumit, haku, Kirjasto-välilehti (360°-luettelo, Laitteella, Verkkojaot), asetukset sekä kuva- ja videokatselimet, joissa tavalliset kuvat ja videot toistuvat. Laseissa 360°-painike ja ⋮-valikon "Näytä 360°-näkymänä" avaavat immersiivisen näkymän suoraan puhelinten pallokatselimen sijaan, eikä Spatial 2.5D -painiketta ja sen asetusta näytetä. Koontiversiosta 19 alkaen Applen tilakuvassa on "Näytä 3D:nä" -painike, eikä "Jaa tämä puhelin verkossa" -ruutua näytetä: lasit ovat se laite, joka lukee puhelimen jakoa.
+Koko sovellus toimii koon muutettavana 2D-ikkunana: kirjautuminen, aikajana, albumit, haku, Kirjasto-välilehti (360°-luettelo, Laitteella, Verkkojaot), asetukset sekä kuva- ja videokatselimet, joissa tavalliset kuvat ja videot toistuvat. Laseissa 360°-painike ja ⋮-valikon "Näytä 360°-näkymänä" avaavat immersiivisen näkymän suoraan puhelinten pallokatselimen sijaan, eikä Spatial 2.5D -painiketta ja sen asetusta näytetä. Koontiversiosta 19 alkaen Applen tilakuvassa on "Näytä 3D:nä" -painike, eikä "Jaa tämä puhelin verkossa" -ruutua näytetä: lasit ovat se laite, joka lukee puhelimen jakoa. Koontiversiosta 20 alkaen myös Plex-palvelimet ja Tapo-kamerat avautuvat ikkunassa, kameran suora kuva HD-laatuisena; "Kaukosäädinasettelu"-asetus pysyy arvossa Automaattinen, joka jättää sen laseissa pois päältä.
 
 ### Kuvina
 
@@ -598,7 +776,7 @@ Kuvakaappaukset on otettu laseissa kaappauspainikkeella (Meta-painike ja liipais
 ### Rajoitukset laseissa
 
 - **Videokoodekit**: HEVC (H.265) on varma valinta; H.264 loppuu noin kokoon 4096x2304. Se, mitä sovellus tarkistaa ja miten laseille annetaan video, jonka ne dekoodaavat, kerrotaan kohdassa [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters).
-- **Kauppa**: kauppaversio alkaa koontiversiosta 14. Ominaisuudet, jotka on merkitty "koontiversiosta 15 alkaen" ja "koontiversiosta 16 alkaen", tulevat sen seuraavassa päivityksessä (koontiversio 16, jo alfatestikanavalla), myöhemmät sen jälkeen; GitHubin APK:ssa ne ovat kaikki jo nyt.
+- **Kauppa**: kauppaversio alkaa koontiversiosta 14. Ominaisuudet, jotka on merkitty "koontiversiosta 15 alkaen" ja myöhemmin, tulevat sen seuraavissa päivityksissä (kaupan alfatestikanava saa testaajille jokaisen uuden koontiversion); GitHubin APK:ssa ne ovat kaikki jo nyt.
 - **Luvat**: lasien koontiversio pyytää vain kuvien ja videoiden (ilman palvelinta -tila) sekä ilmoitusten (varmuuskopioinnin edistyminen) lupaa. Siinä ei ole tallennustila-, ääni-, sijainti- eikä kameralupaa, toisin kuin puhelimen koontiversiossa; siksi Wi-Fi-nimeen perustuva palvelimen vaihto ei ole käytettävissä laseissa.
 - **APK:n koko**: Spatial SDK lisää noin 56 Mt 64-bittistä ARM-natiivikoodia, myös puhelimissa, joissa sitä ei koskaan ladata.
 - **Lisenssi**: immersiivinen näkymä käyttää Meta Spatial SDK:ta, jota jaetaan Meta Platform Technologies SDK License Agreementin ehdoilla.
@@ -606,13 +784,14 @@ Kuvakaappaukset on otettu laseissa kaappauspainikkeella (Meta-painike ja liipais
 <a id="where-to-get-it"></a>
 ## Mistä sen saa
 
-Sovellus on Google Playssa; App Store -versio odottaa Applen tarkastusta ja Meta Horizon Store -versio Metan tarkastusta. GitHub-julkaisu on aina uusin koontiversio:
+Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa Applen tarkastusta, Meta Horizon Store -versio Metan tarkastusta ja televisioiden Google Play -versio Googlen tarkastusta TV-julkaisulle. GitHub-julkaisu on aina uusin koontiversio:
 
 | Alusta | Nyt | Pian |
 |---|---|---|
-| Android-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) tai APK [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta: puhelimelle `Immuch360-v<version>-arm64-v8a-release.apk` (yleinen `Immuch360-v<version>-release.apk` toimii kaikkialla, `-armeabi-v7a` on vanhemmille 32-bittisille puhelimille, ja `.aab`-tiedosto on Google Playta varten, ei sivulataamiseen). GitHubin koontiversio on yleensä kauppaa edellä. Kummassakin tapauksessa se asentuu virallisen Immich-sovelluksen rinnalle (paketti `com.aprogsys.immuch360`). | Google Play: koontiversiot 15 ja 16 lähetetty Googlen tarkastettaviksi 4. lokakuuta 2026 (viimeisin siellä julkaistuksi vahvistettu koontiversio on 11) |
+| Android-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) tai APK [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta: puhelimelle `Immuch360-v<version>-arm64-v8a-release.apk` (yleinen `Immuch360-v<version>-release.apk` toimii kaikkialla, `-armeabi-v7a` on vanhemmille 32-bittisille puhelimille, ja `.aab`-tiedosto on Google Playta varten, ei sivulataamiseen). GitHubin koontiversio on yleensä kauppaa edellä. Kummassakin tapauksessa se asentuu virallisen Immich-sovelluksen rinnalle (paketti `com.aprogsys.immuch360`). | Google Play: koontiversio 18 on julkaistu, koontiversio 19 Googlen tarkastettavana 6. lokakuuta 2026 lähtien, koontiversio 20 seuraavaksi |
 | iPhone ja iPad | Odottaa Applen tarkastusta. Tarkastettavana olevassa versiossa on koontiversion 11 ominaisuudet: lähetys Immichiin ja "Videon lähde" -valinta (koontiversio 15) sekä käsittelemättömät Insta360-tiedostot (koontiversio 16) tulevat myöhemmässä App Store -päivityksessä. Lähdekoodin voi koota Xcodella tai Codemagicissa, katso [Kokoa se itse](#build-it-yourself). | App Store, tarkastettavana |
-| Meta Quest 3 ja 3S | [Releases](https://github.com/freeKC/Immuch360/releases)-sivun `-quest-release.apk`-tiedosto (myös yleinen `-release.apk` toimii), sivuladattuna kehittäjätilassa, katso [Asentaminen](#install). Kaupan koontiversio ja GitHubin APK on allekirjoitettu eri avaimilla: vaihtaaksesi toisesta toiseen poista sovellus ensin (sen asetukset ja tallennetut jaot häviävät sen mukana). | Meta Horizon Store: koontiversio 14 Metan tarkastettavana 3. lokakuuta 2026 lähtien; koontiversio 16 on kaupan alfakanavalla (vain testaajille) |
+| Meta Quest 3 ja 3S | [Releases](https://github.com/freeKC/Immuch360/releases)-sivun `-quest-release.apk`-tiedosto (myös yleinen `-release.apk` toimii), sivuladattuna kehittäjätilassa, katso [Asentaminen](#install). Kaupan koontiversio ja GitHubin APK on allekirjoitettu eri avaimilla: vaihtaaksesi toisesta toiseen poista sovellus ensin (sen asetukset ja tallennetut jaot häviävät sen mukana). | Meta Horizon Store: koontiversio 14 Metan tarkastettavana 3. lokakuuta 2026 lähtien; kaupan alfakanava (vain testaajille) saa jokaisen uuden koontiversion |
+| Android TV ja Google TV (koontiversiosta 20 alkaen) | Yleinen `Immuch360-v<version>-release.apk` [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta, sivuladattuna adb:llä, katso [Asentaminen televisioon](#install-it-on-the-tv). Se on sama sovellus kuin puhelimissa. | Google Play televisioissa, Googlen TV-julkaisun tarkastuksen jälkeen |
 
 App Storen ja Meta Horizon Storen linkit lisätään tänne heti, kun sivut on julkaistu. Kirjaudu tavallisella Immich-palvelimesi URL-osoitteella ja tililläsi, tai napauta kirjautumissivulla "Käytä ilman palvelinta" aloittaaksesi laitteen omilla kuvilla ja videoilla. GitHubin APK ei päivity itsestään: seuraa Releases-sivua, ja kun olet asentanut sovelluksen kaupasta, hae päivitykset siitä kaupasta.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Kauppojen kuvakaappaukset otetaan simulaattorin debug-koontiversioilla, jotka on tehty valinnalla `--dart-define=IMMUCH_SCREENSHOTS=true`, joka vain piilottaa debug-nauhan. Androidin kaksi varianttia (flavour) ovat sama sovellus. `quest`-variantin kohde on SDK 34, ja se säilyttää vain lasien käyttämät luvat (kuvat, videot, ilmoitukset): median hallinta, taustasijainti, vanha tallennustila, ääni, median sijainti, laitteen sijainti ja kamera poistetaan tiedostossa `android/app/src/quest/AndroidManifest.xml`, koska Meta Horizon Store hylkää kaksi ensimmäistä ja vaatii perustelun jokaiselle muulle arkaluonteiselle luvalle; sama tiedosto nimeää tuetuiksi laitteiksi Quest 3:n ja 3S:n ja rajoittaa tavallisen HTTP:n laseihin itseensä ja kotiverkon nimiin. APK on vain 64-bittinen komentorivinsä kahden lisäargumentin vuoksi (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone`-variantti on se, jota Google Play vaatii. Kun kokoat iOS:lle omalla Macillasi, käytä Xcodea ja omaa allekirjoitustiimiäsi; Xcode 26:lla aja ensin kerran `xcodebuild -downloadComponent MetalToolchain`, koska Spatial-shaderit tarvitsevat sitä. Ilman Macia iOS-koontiversiot ajetaan Codemagicissa (palveluna tarjottu Mac) tämän tietovaraston `codemagic.yaml`-tiedostosta. Androidin julkaisukoontiversiot ajetaan GitHub Actionsissa (`.github/workflows/immuch360-release.yml`).
+Kauppojen kuvakaappaukset otetaan simulaattorin debug-koontiversioilla, jotka on tehty valinnalla `--dart-define=IMMUCH_SCREENSHOTS=true`, joka vain piilottaa debug-nauhan. Androidin kaksi varianttia (flavour) ovat sama sovellus. Koontiversiosta 20 alkaen `phone`-variantti ilmoittaa itsensä myös TV-sovellukseksi (television käynnistimen kohta ja banneri, kosketusnäyttöä ei vaadita), minkä `quest`-variantti jättää pois. `quest`-variantin kohde on SDK 34, ja se säilyttää vain lasien käyttämät luvat (kuvat, videot, ilmoitukset): median hallinta, taustasijainti, vanha tallennustila, ääni, median sijainti, laitteen sijainti ja kamera poistetaan tiedostossa `android/app/src/quest/AndroidManifest.xml`, koska Meta Horizon Store hylkää kaksi ensimmäistä ja vaatii perustelun jokaiselle muulle arkaluonteiselle luvalle; sama tiedosto nimeää tuetuiksi laitteiksi Quest 3:n ja 3S:n ja rajoittaa tavallisen HTTP:n laseihin itseensä ja kotiverkon nimiin. APK on vain 64-bittinen komentorivinsä kahden lisäargumentin vuoksi (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone`-variantti on se, jota Google Play vaatii. Kun kokoat iOS:lle omalla Macillasi, käytä Xcodea ja omaa allekirjoitustiimiäsi; Xcode 26:lla aja ensin kerran `xcodebuild -downloadComponent MetalToolchain`, koska Spatial-shaderit tarvitsevat sitä. Ilman Macia iOS-koontiversiot ajetaan Codemagicissa (palveluna tarjottu Mac) tämän tietovaraston `codemagic.yaml`-tiedostosta. Androidin julkaisukoontiversiot ajetaan GitHub Actionsissa (`.github/workflows/immuch360-release.yml`).
 
 Tässä tietovarastossa ei ole salaisuuksia: Androidin allekirjoitusavain on tallennettu salattuina GitHub Actions -salaisuuksina ja Applen allekirjoitusmateriaali salattuina muuttujina Codemagiciin. Työnkulkutiedostot viittaavat niihin vain nimellä. Ilman omaa `android/key.jks`-tiedostoa julkaisukoontiversio allekirjoitetaan debug-avaimella, eikä sitä voi asentaa GitHubista tai kaupasta tulleen kopion päälle (poista se ensin); debug-koontiversio asentuu sen rinnalle nimellä Immuch360 debug. Meta Horizon Storen kopio on julkaisun `quest`-APK, joka on allekirjoitettu toisella avaimella, sillä, jolla kaupan sovellus alun perin rekisteröitiin, joten sitäkään ei voi asentaa sivuladatun APK:n päälle, eikä päinvastoin.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Koontiversiosta 19 alkaen DLNA-asiakas, puhelinjako ja Applen tilamedian tunnistus kirjoittavat myös sovelluksen omaan lokiin ("Lokit", ylhäällä oikealla olevan profiilikuvan valikossa) tunnisteilla `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ja `NetworkMediaService`. Lokirivit pysyvät laitteella, ellet kopioi niitä itse.
+Koontiversiosta 19 alkaen DLNA-asiakas, puhelinjako ja Applen tilamedian tunnistus kirjoittavat myös sovelluksen omaan lokiin ("Lokit", ylhäällä oikealla olevan profiilikuvan valikossa) tunnisteilla `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ja `NetworkMediaService`. Koontiversiosta 20 alkaen TV-tila kirjoittaa sinne tunnisteilla `TvMode` ja `TvTextEntry`, Plex-palvelimet tunnisteilla `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ja `PlexServerEditPage` sekä Tapo-kamerat tunnisteilla `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ja `CameraLiveView`; Plexin rivit eivät koskaan sisällä tunnusta, osoitetta tai nimikettä, ja kameran rivit jättävät salasanat pois. Lokirivit pysyvät laitteella, ellet kopioi niitä itse.
 
 ## Yksityisyys
 
 - **Mitään ei lähetetä kehittäjälle**: sovellus kommunikoi valitsemasi Immich-palvelimen kanssa (ja kun avaat kartan, sen palvelimen käyttämän karttaruutupalvelun kanssa), siinä ei ole mainoksia, analytiikkaa eikä kehittäjän ylläpitämää kaatumisraporttipalvelua, eikä se lähetä mitään Immuch360:n kehittäjälle.
-- **Ilman palvelinta** mitään ei lähde laitteesta.
+- **Ilman palvelinta** mihinkään palvelimeen ei oteta yhteyttä: sovellus käyttää verkkoa vain avaamiisi jakoihin, Plex-palvelimiin ja kameroihin sekä puhelinjakoon, jos otat sen käyttöön.
 - **Verkkojaot**: jakoluettelo säilytetään laitteella eikä sitä koskaan lähetetä palvelimelle; salasanat tallennetaan laitteen avainnippuun tai avainsäilöön.
+- **Plex** (koontiversiosta 20 alkaen): tunnus pysyy laitteen suojatussa tallennustilassa, ja se lähetetään vain omalle palvelimellesi pyynnön otsakkeessa HTTPS:n kautta; sovellus ei koskaan ota yhteyttä plex.tv:hen.
+- **Tapo-kamerat** (koontiversiosta 20 alkaen): TP-Link-tilin salasana ja kameratilin salasana pysyvät laitteen suojatussa tallennustilassa; sovellus keskustelee kameran kanssa vain lähiverkossa, ei koskaan TP-Linkin palvelimien kanssa; haetut leikkeet jäävät sovelluksen välimuistiin ja poistetaan kameran mukana.
+- **Televisio**: se, onko laite televisio, luetaan laitteella; mitään ei lähetetä.
 - **Puhelinjako**: vain lähiverkko, käyttäjänimellä ja salasanalla, tavallisen HTTP:n kautta (katso [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network)).
 - **Kamera**: vain Spatial 2.5D -soitin käyttää sitä, laitteella; kuvia ei koskaan tallenneta eikä lähetetä minnekään.
 
@@ -675,20 +857,25 @@ Tämä projekti on Immichin haara ja pysyy [GNU AGPL v3](LICENSE) -lisenssin ala
 
 Mitä ei ole vielä tehty, todennäköisimmät ensin. Mikään tässä ei ole lupaus, ja palaute [vikaseurannassa](https://github.com/freeKC/Immuch360/issues) auttaa päättämään, mikä tulee ensin.
 
-- **Google Play**: koontiversiot 15 ja 16 lähetettiin Googlen tarkastettaviksi 4. lokakuuta 2026, ja ne julkaistaan hyväksynnän jälkeen; viimeisin siellä julkaistuksi vahvistettu koontiversio on 11.
+- **Google Play**: koontiversio 18 on julkaistu; koontiversio 19 on Googlen tarkastettavana 6. lokakuuta 2026 lähtien, ja koontiversio 20 seuraa.
 - **App Store**: versio 3.3.0 odottaa Applen tarkastusta; siinä on koontiversion 11 ominaisuudet, joten lähetys Immichiin ja videodekooderien tarkistus (koontiversio 15) sekä käsittelemättömät Insta360-tiedostot (koontiversio 16) tulevat seuraavassa App Store -päivityksessä. Linkki lisätään tänne, kun se on julkaistu.
-- **Meta Horizon Store**: sivu lähetettiin Metan tarkastettavaksi 3. lokakuuta 2026 koontiversion 14 kanssa, ja koontiversio 16 on kaupan alfakanavalla seuraavaa päivitystä varten. Kun sivu on hyväksytty, Quest 3 ei enää tarvitse sivulataamista ja kaupan linkki lisätään tänne; sivuladattu kopio on ensin poistettava (katso [Asentaminen](#install)).
-- **Kauppasivut**: Google Playn ja App Storen tekstit kuvaavat yhä ensimmäisiä koontiversioita (360°-kuvat ja -videot, käsittelemättömät tiedostot litteinä); niissä esitellään jatkossa 3D-, VR180- ja Spatial-katselimet, ilman palvelinta -tila, verkkojaot, mediasoitin ja käsittelemättömät Insta360-tiedostot. Meta Horizon Storen teksti esittelee jo mediasoittimen.
+- **Meta Horizon Store**: sivu lähetettiin Metan tarkastettavaksi 3. lokakuuta 2026 koontiversion 14 kanssa, ja kaupan alfakanava saa jokaisen uuden koontiversion seuraavaa päivitystä varten. Kun sivu on hyväksytty, Quest 3 ei enää tarvitse sivulataamista ja kaupan linkki lisätään tänne; sivuladattu kopio on ensin poistettava (katso [Asentaminen](#install)).
+- **Kauppasivut**: Google Playn sivu kirjoitettiin uudelleen lokakuussa 2026 uusin kuvakaappauksin, ja se saa TV-julkaisun myötä TV-kuvakaappaukset ja TV-bannerin. App Storen teksti kuvaa yhä ensimmäisiä koontiversioita (360°-kuvat ja -videot, käsittelemättömät tiedostot litteinä); siinä esitellään jatkossa 3D-, VR180- ja Spatial-katselimet, ilman palvelinta -tila, verkkojaot, mediasoitin ja käsittelemättömät Insta360-tiedostot. Meta Horizon Storen teksti esittelee jo mediasoittimen.
 - **360°-kameroiden käsittelemättömät tiedostot, seuraavaksi**: edistymisilmaisin, kun käsittelemätöntä kuvaa valmistellaan laseja varten; GoPro- ja DJI-videoiden oikaisu niiden omista liiketiedoista; kaksoiskalansilmä-.dng; laiteraportit koontiversion 18 kahden objektiivin toistosta (X4, X5, X6, GoPro MAX 2, Osmo 360) saumojen ja dekooderien kapasiteetin vahvistamiseksi.
 - **DLNA, puhelinjako ja Applen tilamedia, seuraavaksi**: koontiversion 19 laiteraportit (Plex, Jellyfin, NAS-laite ja Freebox Server DLNA:n kautta; Questia palveleva puhelin, myös omassa yhteyspisteessään; todelliset iPhonen tilakuvat ja -videot laseissa); Applelta pyydetty multicast-oikeus, jotta iPhonet löytävät jokaisen DLNA-palvelimen; edellinen ja seuraava tilakuvien välillä laseissa; tilamerkki palvelimen kuviin aikajanalla; tilavideot 3D:nä Questissa, jos sen dekooderit sen sallivat.
 - **Puhelinten 360°-soittimet, seuraavaksi**: aikajana iOS:n 360°-videosoittimeen (Androidin soittimessa se on), edellinen/seuraava puhelinten 360°-soittimiin kuten Questin immersiivisessä näkymässä sekä kuvat natiiviin 360°-videosoittimeen.
 - **Verkkojaot, seuraavat vaiheet**: pyyhkäisy kansion tiedostosta seuraavaan kuva- ja videosivuilla (Questin immersiivinen näkymä käy jo läpi kansion 360°-tiedostot), Digest-todennus WebDAVille, käyttäjänimi Bonjour-tietueesta.
 - **Tavalliset videot**: ääniraidan valinta tavalliseen soittimeen, samalla tavalla palvelimen, laitteen ja jakojen videoille (360°- ja Spatial-soittimissa se on).
+- **Android TV, seuraavaksi**: koontiversion 20 laitetesti Google TV -emulaattorissa ja oikeassa televisiossa, sitten TV-julkaisu Google Playssa (TV-kuvakaappaukset, TV-banneri, Googlen tarkastus); myöhemmin kanavat television aloitusnäytölle.
+- **Tapo-kamerat, seuraavaksi**: koontiversion 20 laitetesti oikeilla kameroilla; suora kuva iPhonessa ja iPadissa; H.265-tallenteet; leikkeen toisto haun aikana; koko päivän tallenteet yhdellä aikajanalla.
+- **Plex, seuraavaksi**: koontiversion 20 laitetesti (puhelimet, Quest, iPhone, televisio, kodin ulkopuolella); tunnuksen tuominen tietokoneelta QR-koodilla; Plex-palvelimen DLNA-puolen piilottaminen löydettyjen palvelimien luettelosta; IPv6.
 - **Upstream**: pieniä pull requesteja Immichiin niistä osista, joita ylläpitäjät haluavat, alkaen 360°-kuvakatselimesta.
 
 ## Kiitokset
 
 360°-kuvakatselin perustuu dmitry-brazhenkon upstream-pull requestiin [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), joka puolestaan perustuu bencefrin prototyyppiin [#30192](https://github.com/immich-app/immich/pull/30192). Kiitos molemmille.
+
+Koontiversion 20 Tapo-kamerat kirjoitettiin sen perusteella, mitä avoimen lähdekoodin projektit [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ja [python-kasa](https://github.com/python-kasa/python-kasa) dokumentoivat näistä kameroista.
 
 Miksi haara: 360°-katselua mobiilissa on pyydetty tammikuusta 2024 lähtien, eikä sitä ole vielä virallisessa sovelluksessa; kuvakatselin on upstreamissa tarkastettavana kohdassa [#31169](https://github.com/immich-app/immich/pull/31169). Tämä haara tarjoaa sen jo nyt, kerää todellista palautetta laitteilta ja tarjoaa Immichille pieninä pull requesteina kaiken, mitä ylläpitäjät haluavat. Meta Quest -näkymä perustuu Meta Spatial SDK:hon, joka ei ole avointa lähdekoodia, joten se jää tähän haaraan.
 

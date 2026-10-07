@@ -108,6 +108,14 @@ const _kParamTypeOverrides = <String, String>{
   'apple_spatial_fov.deg': 'String',
   'backup_controller_page_storage_format.total': 'String',
   'backup_controller_page_storage_format.used': 'String',
+  // A size written out with its unit by the caller ("1.2 GB"), not a count
+  'camera_cache_size.size': 'String',
+  // An address written out by the caller, as the names and addresses below
+  'camera_error_certificate_changed.host': 'String',
+  'camera_error_unreachable.host': 'String',
+  // Sizes written out with their unit by the caller, as the storage of the backup page
+  'camera_sd_used.total': 'String',
+  'camera_sd_used.used': 'String',
   'cleanup_found_assets_with_size.size': 'String',
   // Names and addresses written out by the caller (a Bonjour name, "http://192.168.1.20:8360"), so that an
   // InternetAddress or a Uri, whose text is not the one shown, cannot be passed instead
@@ -116,6 +124,14 @@ const _kParamTypeOverrides = <String, String>{
   'phone_share_notification_text.address': 'String',
   'phone_share_notification_text.user': 'String',
   'phone_share_subtitle_on.address': 'String',
+  // The address outside home a Plex server told, and its port, which an int would write with a grouping separator
+  // ("32,400")
+  'plex_remote_learned.address': 'String',
+  'plex_remote_learned.port': 'String',
+  // The first digits of the machine id of a Plex server (hexadecimal), not a number
+  'plex_server_found.id': 'String',
+  // A date written out by the caller for the locale
+  'plex_token_expires.date': 'String',
   // The codec and the frame size of a lens, filled in by the native players: the digits alone, as for the frame sizes
   // below
   'raw_video_one_lens_decoder.codec': 'String',

@@ -6,6 +6,7 @@ import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
 
 const _shadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0, 1))];
@@ -13,9 +14,12 @@ const _shadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0,
 /// Play, pause and seek for the player of a video of a network share, the one of [videoPlayerProvider] under
 /// [playerKey]
 class NetworkVideoControls extends ConsumerWidget {
-  const NetworkVideoControls({super.key, required this.playerKey});
+  const NetworkVideoControls({super.key, required this.playerKey, this.playFocusNode});
 
   final String playerKey;
+
+  /// The focus of the play button, for the page to put the remote there
+  final FocusNode? playFocusNode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,6 +40,7 @@ class NetworkVideoControls extends ConsumerWidget {
             children: [
               IconButton(
                 key: const Key('network_video_play_pause'),
+                focusNode: playFocusNode,
                 iconSize: 32,
                 padding: const EdgeInsets.all(12),
                 constraints: const BoxConstraints(),
@@ -60,17 +65,21 @@ class NetworkVideoControls extends ConsumerWidget {
               const SizedBox(width: 12),
             ],
           ),
-          Slider(
-            value: min(position.inMicroseconds.toDouble(), duration.inMicroseconds.toDouble()),
-            min: 0,
-            max: max(duration.inMicroseconds.toDouble(), 1),
-            thumbColor: Colors.white,
-            activeColor: Colors.white,
-            inactiveColor: whiteOpacity75,
-            padding: EdgeInsets.zero,
-            onChangeStart: (_) => notifier.hold(),
-            onChangeEnd: (_) => notifier.release(),
-            onChanged: isLoaded ? (value) => notifier.seekTo(Duration(microseconds: value.toInt())) : null,
+          // On a TV the page seeks with left and right: a focused slider would keep the arrows (Flutter issue 54984)
+          ExcludeFocus(
+            excluding: ref.watch(tvModeProvider),
+            child: Slider(
+              value: min(position.inMicroseconds.toDouble(), duration.inMicroseconds.toDouble()),
+              min: 0,
+              max: max(duration.inMicroseconds.toDouble(), 1),
+              thumbColor: Colors.white,
+              activeColor: Colors.white,
+              inactiveColor: whiteOpacity75,
+              padding: EdgeInsets.zero,
+              onChangeStart: (_) => notifier.hold(),
+              onChangeEnd: (_) => notifier.release(),
+              onChanged: isLoaded ? (value) => notifier.seekTo(Duration(microseconds: value.toInt())) : null,
+            ),
           ),
         ],
       ),

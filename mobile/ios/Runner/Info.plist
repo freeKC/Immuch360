@@ -138,7 +138,7 @@
 		<key>NSFaceIDUsageDescription</key>
 		<string>We need to use FaceID to allow access to your locked folder</string>
 		<key>NSLocalNetworkUsageDescription</key>
-		<string>Immuch360 uses the local network to reach your server by its address, to cast, to find network shares and media servers (SMB, WebDAV, DLNA), and to share this phone's photos with your headset.</string>
+		<string>Immuch360 uses the local network to reach your server by its address, to cast, to find network shares, media servers and cameras (SMB, WebDAV, DLNA, Plex, Tapo), to show your cameras, and to share this phone's photos with your headset.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>We require this permission to access the local WiFi name for background upload mechanism</string>
 		<key>NSLocationUsageDescription</key>

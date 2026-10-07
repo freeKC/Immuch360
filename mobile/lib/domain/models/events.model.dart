@@ -20,6 +20,11 @@ class ViewerShowDetailsEvent extends Event {
   const ViewerShowDetailsEvent();
 }
 
+/// Closes the details of the asset viewer: Back and the info key of a remote control, which has no swipe
+class ViewerHideDetailsEvent extends Event {
+  const ViewerHideDetailsEvent();
+}
+
 // Multi-Select Events
 class MultiSelectToggleEvent extends Event {
   final bool isEnabled;

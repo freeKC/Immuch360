@@ -6,6 +6,7 @@
 import 'dart:math';
 
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/infrastructure/network/entry_names.dart';
 import 'package:immich_mobile/infrastructure/network/lite_xml.dart';
 
 /// One `res` element of an item: a way of getting it, with what the server tells of it
@@ -357,18 +358,13 @@ const _mimeExtensions = {
   'video/mpeg': 'mpg',
 };
 
-final _unsafeNameCharacters = RegExp(r'[/\\\x00-\x1F\x7F]');
-
 /// The name of [object] in the browser, null for an item that is no photo or video the app knows.
 ///
 /// The title, with the characters a path cannot hold replaced by "_". An item also needs an extension: the one of its
 /// original URL when it is a photo or video extension the app knows (Gerbera and minidlna keep the one of the file,
 /// raw camera files included), else the one of its MIME type; added unless the title already ends with it.
 String? dlnaEntryName(DidlObject object) {
-  var base = object.title.trim().replaceAll(_unsafeNameCharacters, '_');
-  if (base.isEmpty || base == '.' || base == '..') {
-    base = '_';
-  }
+  final base = safeEntryName(object.title);
   if (object.isContainer) {
     return base;
   }
@@ -397,28 +393,8 @@ String? _extensionOf(DidlResource resource) {
 }
 
 /// The objects of one listing that have a name (see [dlnaEntryName]), in server order, the names made unique without
-/// case: the second "a.jpg" becomes "a (2).jpg", then "a (3).jpg"
-List<({DidlObject object, String name})> dlnaEntryNames(Iterable<DidlObject> objects) {
-  final taken = <String>{};
-  final named = <({DidlObject object, String name})>[];
-  for (final object in objects) {
-    final name = dlnaEntryName(object);
-    if (name == null) {
-      continue;
-    }
-    var unique = name;
-    if (!taken.add(name.toLowerCase())) {
-      final dot = object.isContainer ? -1 : name.lastIndexOf('.');
-      final stem = dot > 0 ? name.substring(0, dot) : name;
-      final extension = dot > 0 ? name.substring(dot) : '';
-      for (var n = 2; ; n++) {
-        unique = '$stem ($n)$extension';
-        if (taken.add(unique.toLowerCase())) {
-          break;
-        }
-      }
-    }
-    named.add((object: object, name: unique));
-  }
-  return named;
-}
+/// case: the second "a.jpg" becomes "a (2).jpg", then "a (3).jpg" (see [uniqueEntryNames])
+List<({DidlObject object, String name})> dlnaEntryNames(Iterable<DidlObject> objects) => [
+  for (final (:item, :name) in uniqueEntryNames(objects, dlnaEntryName, (object) => object.isContainer))
+    (object: item, name: name),
+];

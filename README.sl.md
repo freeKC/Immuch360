@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 je mobilna aplikacija Immich s fotografijami in videoposnetki 360°, v katerih se lahko razgledujete, in z brezplačnim predvajalnikom ploskih, 360°, 3D in VR180 fotografij in videoposnetkov na telefonih in tablicah Android, iPhonih in iPadih ter na Meta Quest 3 in 3S. Namenjena je tistim, ki snemajo s kamero 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ali v načinu fotosfere telefona ali imajo očala VR, in želijo gledati svoje posnetke s strežnika Immich, s samega telefona, z NAS-a ali s predstavnostnega strežnika: isti strežnik, isti račun, brez vtičnika na strežniku ali sploh brez strežnika.
+Immuch360 je mobilna aplikacija Immich s fotografijami in videoposnetki 360°, v katerih se lahko razgledujete, in z brezplačnim predvajalnikom ploskih, 360°, 3D in VR180 fotografij in videoposnetkov na telefonih in tablicah Android, iPhonih in iPadih, na Meta Quest 3 in 3S ter od gradnje 20 na Android TV in Google TV. Namenjena je tistim, ki snemajo s kamero 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ali v načinu fotosfere telefona ali imajo očala VR, in želijo gledati svoje posnetke s strežnika Immich, s samega telefona, z NAS-a, s predstavnostnega strežnika ali s strežnika Plex: isti strežnik, isti račun, brez vtičnika na strežniku ali sploh brez strežnika. Od gradnje 20 prikazuje tudi kamere Tapo, v živo in posnetke z njihove pomnilniške kartice.
 
 <p align="center">
   <sub>Neuradni fork. Ni povezan z Immichem ali s FUTO. V angleščini se ime bere kot „I am much 360“.</sub>
@@ -15,7 +15,8 @@ Immuch360 je mobilna aplikacija Immich s fotografijami in videoposnetki 360°, v
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">APK za Android</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">v pregledu</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store v pregledu
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store v pregledu &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 je mobilna aplikacija Immich s fotografijami in videoposnetki 360°, v
     <td align="center" width="33%"><h3>🎥 Izvorni 2.5D</h3>Globina na ploskem zaslonu iz stereoskopskega videoposnetka, pogled sledi vaši glavi (preizkusno, telefoni in tablice)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Ena aplikacija, tri platforme, pravi 3D v očalih</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Ena aplikacija na telefonih, tablicah in v očalih, pravi 3D v očalih, od gradnje 20 pa tudi na Android TV z daljinskim upravljalnikom</td>
     <td align="center"><h3>🔌 S strežnikom ali brez njega</h3>Vaš strežnik Immich ali galerija samega telefona, račun ni potreben</td>
     <td align="center"><h3>🗄️ Omrežne skupne rabe</h3>Samba (SMB), WebDAV in od gradnje 19 predstavnostni strežniki DLNA, najdeni v omrežju in brani v živo, nič se ne prenese, ter poslani v Immich, ko se tako odločite. Od gradnje 19 telefon z očali deli tudi svojo galerijo</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Na televizorju</h3>Od gradnje 20 isti APK na Android TV in Google TV: fotografije in videoposnetki 360°, vaš strežnik in vaše skupne rabe, z daljinskim upravljalnikom</td>
+    <td align="center"><h3>🎬 Plex brez plex.tv</h3>Od gradnje 20 vaše knjižnice Plex, predvajane iz izvirnih datotek, da 360° ostane 360°, doma in zunaj doma</td>
+    <td align="center"><h3>📹 Kamere Tapo</h3>Od gradnje 20 slika v živo in posnetki s pomnilniške kartice, samo v vašem omrežju, in posnetek, poslan v Immich, ko se tako odločite</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 je mobilna aplikacija Immich s fotografijami in videoposnetki 360°, v
 - **„Moje fotografije 360° so prikazane kot plosk, raztegnjen trak, videoposnetki 360° pa se predvajajo ploski.“** Glejte [Fotografije in videoposnetki 360° kot krogla](#360-photos-and-videos-as-a-sphere).
 - **„Nimam strežnika in nočem računa.“** Glejte [Brez strežnika in brez računa](#without-a-server-or-an-account).
 - **„Videoposnetke z NAS-a želim gledati na telefonu ali v očalih, ne da bi jih kopiral.“** Glejte [Omrežne skupne rabe](#network-shares-a-nas-a-computer-or-a-media-server).
+- **„Plex moje videoposnetke 360° predvaja ploske, jaz pa želim svojo knjižnico Plex v očalih, na televizorju in zunaj doma.“** Glejte [Plex Media Server brez plex.tv](#plex-media-server-without-plextv).
 - **„Moje fotografije so na telefonu, za očala pa nimam računalnika ali NAS-a, kamor bi jih dal.“** Glejte [Deli ta telefon v omrežju](#share-this-phone-on-the-network).
+- **„Želim videti svojo kamero Tapo in posnetke prejšnje noči brez aplikacije Tapo in posnetek shraniti v Immich.“** Glejte [Kamere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **„Za moje datoteke Insta360 potrebujem aplikacijo Insta360, preden jih lahko gledam“** (enako za datoteke GoPro .360 in DJI .osv). Glejte [Neobdelane datoteke kamer 360°](#raw-360-camera-files-without-the-cameras-app).
 - **„Moji 3D videoposnetki so podvojeni, videoposnetki VR180 pa raztegnjeni naokoli.“** Glejte [3D in VR180](#3d-and-vr180-photos-and-videos) in [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **„Imam prostorske fotografije z iPhona.“** Glejte [Prostorske fotografije in videoposnetki Apple](#apple-spatial-photos-and-videos).
 - **„Na telefonu deluje, želim pa ga v Questu.“** Glejte [V očalih Meta Quest 3](#in-the-meta-quest-3-headset).
+- **„Želim gledati svoje fotografije in videoposnetke 360° ter videoposnetke z mojega NAS-a ali strežnika Plex na televizorju, z daljinskim upravljalnikom.“** Glejte [Gledanje na televizorju](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Svojih posnetkov 360° ne najdem med vsemi drugimi.“** Glejte [Seznam 360°](#find-your-360-shots-the-360-list).
 - **„Moj videoposnetek 360° se zatika ali predvaja zamegljeno kopijo.“** Glejte [Podrobnosti videa in dekoderji](#video-details-decoders-and-why-a-video-stutters).
 - **„Ali obdržim vse, kar zna aplikacija Immich?“** Da, z dvema manjšima spremembama, glejte [Vse drugo je Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Izbira se zapomni v telefonu in na strežniku ničesar ne spremeni. Pri datoteki
 
 Nimate strežnika Immich ali ne želite računa: želite le, da se fotografije 360° v telefonu odprejo kot krogla, ki jo vrtite z žiroskopom. Aplikacija Immich najprej zahteva prijavo.
 
-Na strani za prijavo „Uporabi brez strežnika“ odpre Immuch360 s fotografijami in videoposnetki same naprave, s pregledovalniki 360°, 3D, VR180 in Spatial, s seznamom 360° in z omrežnimi skupnimi rabami, brez računa Immich. Funkcije strežnika ostanejo skrite ali sive, dokler ne povežete strežnika; nič ne zapusti naprave. Na Meta Quest 3 odpre fotografije in videoposnetke samih očal.
+Na strani za prijavo „Uporabi brez strežnika“ odpre Immuch360 s fotografijami in videoposnetki same naprave, s pregledovalniki 360°, 3D, VR180 in Spatial, s seznamom 360° in z omrežnimi skupnimi rabami (od gradnje 20 tudi s strežniki Plex in kamerami Tapo), brez računa Immich. Funkcije strežnika ostanejo skrite ali sive, dokler ne povežete strežnika; nič ne zapusti naprave. Na Meta Quest 3 odpre fotografije in videoposnetke samih očal; na televizorju, ki jih nima, pokaže na omrežne skupne rabe (glejte [Gledanje na televizorju](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Zavihek Knjižnica brez strežnika: vnos 360° na vrhu, nato Na tej napravi z dvema fotografijama 360° in Omrežne skupne rabe s skupno rabo z imenom NAS">
 
@@ -126,7 +135,7 @@ Na strani za prijavo „Uporabi brez strežnika“ odpre Immuch360 s fotografija
 
 Vaši videoposnetki 360° so na NAS-u ali računalniku in jih želite gledati na telefonu ali v očalih, ne da bi jih prej kopirali. Za očala ljudje na koncu vsako datoteko kopirajo prek kabla; predstavnostni strežniki, kot sta Plex in Jellyfin, videoposnetke 360° predvajajo ploske, kot opisujejo zahteve na njihovih forumih; aplikacija Immich bere samo vaš strežnik Immich.
 
-Immuch360 brska in predvaja fotografije in videoposnetke s katerega koli strežnika, ki podpira SMB (Samba, Windows), WebDAV ali od gradnje 19 DLNA/UPnP (predstavnostni strežnik: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS ali TV sprejemnik), neposredno iz skupne rabe. Strežnike v vašem omrežju najde sam in datoteke predvaja v živo v istih pregledovalnikih kot preostanek aplikacije (360°, 3D, VR180, Spatial 2.5D, potopitveni pogled v Questu), s strežnikom Immich ali brez njega, na telefonih in na Meta Quest 3. Nič se ne prenese. Ko je strežnik povezan, lahko izbrane datoteke pošljete v svoj račun Immich (od gradnje 15).
+Immuch360 brska in predvaja fotografije in videoposnetke s katerega koli strežnika, ki podpira SMB (Samba, Windows), WebDAV ali od gradnje 19 DLNA/UPnP (predstavnostni strežnik: Jellyfin, minidlna, Gerbera, Emby, NAS ali TV sprejemnik), neposredno iz skupne rabe. Od gradnje 20 ima Plex Media Server svojo vrsto, glejte [Plex Media Server brez plex.tv](#plex-media-server-without-plextv). Strežnike v vašem omrežju najde sam in datoteke predvaja v živo v istih pregledovalnikih kot preostanek aplikacije (360°, 3D, VR180, Spatial 2.5D, potopitveni pogled v Questu), s strežnikom Immich ali brez njega, na telefonih in na Meta Quest 3. Nič se ne prenese. Ko je strežnik povezan, lahko izbrane datoteke pošljete v svoj račun Immich (od gradnje 15).
 
 | Dodajanje skupne rabe | Mapa skupne rabe |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 brska in predvaja fotografije in videoposnetke s katerega koli strežn
 
 ### Dodajanje skupne rabe
 
-1. Odprite zavihek Knjižnica, nato Omrežne skupne rabe. Prvič stran prikaže „Še ni skupne rabe“ z gumbom „Dodaj skupno rabo“; + desno zgoraj kadar koli naredi isto.
-2. Stran „Dodaj skupno rabo“ najprej poišče strežnike v vašem omrežju in jih navede pod „Najdeno v omrežju“ z njihovo vrsto (SMB, WebDAV, DLNA, Telefon). Iskanje traja približno do šest sekund; „Ponovno išči“ ga začne znova. Uporablja Bonjour/mDNS in pregled lokalnega omrežja, potrjen z resnično izmenjavo SMB ali WebDAV, od gradnje 19 pa še iskanje SSDP predstavnostnih strežnikov DLNA.
-3. Dotaknite se strežnika: vrsta, strežnik, vrata in pot se izpolnijo.
-4. Ga ni na seznamu? Obrazec izpolnite ročno. Vrsta: „SMB (Samba, skupna raba Windows)“, „WebDAV (Nextcloud, Synology in drugi)“ ali „Predstavnostni strežnik DLNA (Plex, Jellyfin, NAS, TV sprejemnik)“. Nato Ime, „Ime ali naslov strežnika“ (ime ali naslov; celoten naslov, kot je `smb://nas/photos`, `\\nas\photos` ali `https://nas:5006/photos`, izpolni druga polja), „Vrata (neobvezno)“, če niso običajna, „Skupna raba“ za SMB ali „Pot naslova WebDAV“ za WebDAV, „Začetna mapa (neobvezno)“, „Uporabniško ime“ in „Geslo“ ter „Varna povezava (HTTPS)“ za WebDAV.
+1. Odprite zavihek Knjižnica, nato Omrežne skupne rabe. Prvič stran prikaže „Še ni skupne rabe“ z gumbom „Dodaj skupno rabo“; + desno zgoraj kadar koli naredi isto. Od gradnje 20 oba vprašata, kaj dodati: „Omrežna skupna raba (NAS, računalnik, predstavnostni strežnik)“, „Plex Media Server“ ali „Kamera Tapo“. Izberite prvo možnost.
+2. Stran „Dodaj skupno rabo“ najprej poišče strežnike v vašem omrežju in jih navede pod „Najdeno v omrežju“ z njihovo vrsto (SMB, WebDAV, DLNA, Telefon, od gradnje 20 pa še Plex in Tapo). Iskanje traja približno do šest sekund; „Ponovno išči“ ga začne znova. Uporablja Bonjour/mDNS in pregled lokalnega omrežja, potrjen z resnično izmenjavo SMB ali WebDAV, od gradnje 19 iskanje SSDP predstavnostnih strežnikov DLNA, od gradnje 20 pa GDM, odkrivanje Plexa, in protokol odkrivanja TP-Link za kamere Tapo.
+3. Dotaknite se strežnika: vrsta, strežnik, vrata in pot se izpolnijo. Strežnik Plex ali kamera Tapo namesto tega odpre svojo stran, že izpolnjeno.
+4. Ga ni na seznamu? Obrazec izpolnite ročno. Vrsta: „SMB (Samba, skupna raba Windows)“, „WebDAV (Nextcloud, Synology in drugi)“, „Predstavnostni strežnik DLNA (Jellyfin, NAS, TV sprejemnik)“ ali od gradnje 20 „Plex Media Server“, ki odpre stran iz razdelka [Plex Media Server brez plex.tv](#plex-media-server-without-plextv). Nato Ime, „Ime ali naslov strežnika“ (ime ali naslov; celoten naslov, kot je `smb://nas/photos`, `\\nas\photos` ali `https://nas:5006/photos`, izpolni druga polja), „Vrata (neobvezno)“, če niso običajna, „Skupna raba“ za SMB ali „Pot naslova WebDAV“ za WebDAV, „Začetna mapa (neobvezno)“, „Uporabniško ime“ in „Geslo“ ter „Varna povezava (HTTPS)“ za WebDAV.
 5. SMB: ko vnesete strežnik in uporabniško ime, „Izberite skupno rabo“ prikaže skupne rabe strežnika.
 6. DLNA: predstavnostni strežnik nima uporabniškega imena ali gesla. Vnesite strežnik, vrata in „Pot opisa“ njegovega opisa naprave (`/rootDesc.xml` za minidlna) ali v polje strežnika prilepite celoten naslov, na primer `http://192.168.1.10:8200/rootDesc.xml`.
 7. Dotaknite se „Preizkusi povezavo“. Odgovor je „Povezano, število elementov v začetni mapi: N“ ali razlog za neuspeh. Nato se dotaknite Shrani na dnu obrazca.
@@ -155,6 +164,7 @@ Uporabniško ime s praznim geslom se pošlje tako, kot je: Freebox Server za svo
 
 360°, 3D in VR180 se prepoznajo iz metapodatkov GPano ali sferičnih metapodatkov datoteke, ki se berejo z zahtevami za obseg (range requests), VR180 pa tudi iz imena datoteke. Od gradnje 16 se prepoznajo in sestavijo tudi neobdelane datoteke Insta360 (fotografija .insp po imenu ali po kalibracijskem bloku kamere, videoposnetek .insv po imenu in sličici).
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Pošiljanje datotek skupne rabe v Immich
 
 Od gradnje 15, ko ste povezani s strežnikom:
@@ -177,17 +187,67 @@ Od gradnje 19 aplikacija pošlje iskanje predstavnostnih strežnikov SSDP v skup
 <a id="a-share-that-moved"></a>
 ### Skupna raba, ki se je preselila
 
-Od gradnje 19 si skupna raba DLNA in skupna raba telefona (glejte [Deli ta telefon v omrežju](#share-this-phone-on-the-network)) zapomnita identifikator, ki ga oznanja njun strežnik. Ko ena od njiju ne odgovarja več na svojem naslovu (nov naslov od usmerjevalnika, strežnik, znova zagnan na drugih vratih), stran njene mape prikaže „Iskanje (ime) v omrežju“ in skupno rabo prestavi tja, kjer zdaj odgovarja: takoj pri strežniku DLNA, ki nima gesla, in po potrditvi „Uporabim nov naslov?“, ki prikaže oba naslova, pri skupni rabi z uporabniškim imenom in geslom, ker bi se ta poslala na nov naslov.
+Od gradnje 19 si skupna raba DLNA in skupna raba telefona (glejte [Deli ta telefon v omrežju](#share-this-phone-on-the-network)) zapomnita identifikator, ki ga oznanja njun strežnik. Ko ena od njiju ne odgovarja več na svojem naslovu (nov naslov od usmerjevalnika, strežnik, znova zagnan na drugih vratih), stran njene mape prikaže „Iskanje (ime) v omrežju“ in skupno rabo prestavi tja, kjer zdaj odgovarja: takoj pri strežniku DLNA, ki nima gesla, in po potrditvi „Uporabim nov naslov?“, ki prikaže oba naslova, pri skupni rabi z uporabniškim imenom in geslom, ker bi se ta poslala na nov naslov. Od gradnje 20 se takoj prestavi tudi strežnik Plex, ki ga aplikacija znova najde na drugem naslovu omrežja: njegovo potrdilo dokaže, da gre za isti strežnik, preden se pošlje žeton. Kamero Tapo aplikacija išče po njenem naslovu MAC z njene lastne strani, glejte [Kamere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Omejitve
 
 - **SMB**: samo SMB 2 in 3, brez SMB 1.
 - **WebDAV**: samo preverjanje pristnosti Basic (Digest še ni podprt); samopodpisano potrdilo HTTPS mora biti nameščeno v napravi.
-- **Iskanje strežnikov**: pregled omrežja in iskanje DLNA zajemata samo lokalno omrežje /24 in v iOS potrebujeta dovoljenje za lokalno omrežje. Na iPhonu in iPadu iskanje DLNA pošilja samo zahteve unicast, dokler Apple aplikaciji ne odobri pravice (entitlement) za multicast, nekateri strežniki pa nanje ne odgovarjajo (minidlna v Linuxu): dodajte jih po naslovu opisa.
+- **Iskanje strežnikov**: pregled omrežja in iskanja DLNA, Plex in Tapo zajemajo samo lokalno omrežje /24 in v iOS potrebujejo dovoljenje za lokalno omrežje. Na iPhonu in iPadu iskanje DLNA pošilja samo zahteve unicast, dokler Apple aplikaciji ne odobri pravice (entitlement) za multicast, nekateri strežniki pa nanje ne odgovarjajo (minidlna v Linuxu): dodajte jih po naslovu opisa.
 - **DLNA**: strežnik, ki ponuja samo pretvorjeno kopijo datoteke, da to kopijo; mapa navede največ 20.000 elementov.
 - **Sličice**: sličice fotografij dekodirajo celotno datoteko, fotografije, večje od 30 MB, pa sličice ne dobijo.
 - **Predvajalniki**: izbire zvočne sledi v ploskem predvajalniku še ni. Na telefonu še ni mogoče podrsati z ene datoteke mape na naslednjo (potopitveni pogled v Questu ima prejšnji in naslednji za datoteke 360° v mapi). Izbira 3D ali 180° za omrežno datoteko se ne zapomni.
 - **Nalaganja**: tečejo samo, ko je aplikacija odprta, datoteka, ki jo strežnik že ima, pa se pošlje v celoti, preden jo strežnik prijavi kot dvojnik.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server brez plex.tv
+
+Vaši videoposnetki so v Plexu, Plex pa vaše fotografije in videoposnetke 360° prikazuje ploske, kot opisujejo zahteve na njegovem forumu (ena je odprta od leta 2017). To knjižnico želite imeti tudi v očalih, na televizorju in zunaj doma. Aplikacija Immich bere samo vaš strežnik Immich, vrsta DLNA iz gradnje 19 pa stran DLNA Plexa doseže samo doma.
+
+Od gradnje 20 se Immuch360 z vašim Plex Media Server poveže neposredno, brez plex.tv: strežnik najde v omrežju, vi enkrat prilepite žeton, aplikacija pa izvirne datoteke vaših knjižnic bere v živo, v vsakem pregledovalniku aplikacije (360°, 3D, VR180, Spatial 2.5D, potopitveni pogled v Questu, daljinski upravljalnik televizorja), doma in prek vašega posredovanja vrat tudi zunaj doma. Nič se ne kopira, izbrane datoteke pa lahko pošljete v Immich.
+
+### Dodajanje strežnika Plex
+
+1. Odprite zavihek Knjižnica, nato Omrežne skupne rabe, nato + in „Plex Media Server“. Vrsta „Plex Media Server“ v obrazcu skupne rabe in strežnik z oznako Plex pod „Najdeno v omrežju“ odpreta isto stran.
+2. Stran „Dodaj strežnik Plex“ išče strežnike Plex v vašem omrežju („Iskanje strežnikov Plex v vašem omrežju“) in jih navede pod „Najdeno v omrežju“. Dotaknite se svojega: kartica prikaže njegovo ime, različico Plexa in kratek identifikator.
+3. Ga ni na seznamu? V polje „Naslov strežnika“ vnesite njegov naslov, na primer `192.168.1.20`, `192.168.1.20:32400` ali `https://...plex.direct:32400`, nato se dotaknite „Poišči“. Aplikacija prebere potrdilo strežnika in ne pošlje ničesar drugega.
+4. Žeton pridobite na računalniku: odprite Plex v spletnem brskalniku in se prijavite, odprite katero koli fotografijo ali videoposnetek iz svoje knjižnice, nato „...“, „Get Info“ (Pridobi informacije), „View XML“ (Prikaži XML). Odpre se nov zavihek z naslovom, ki se konča z `X-Plex-Token=...`. Kopirajte ta celoten naslov.
+5. Prilepite ga v „Žeton za dostop“ ali ga pošljite na telefon in se dotaknite „Prilepi iz odložišča“: aplikacija iz njega vzame strežnik in žeton. Deluje tudi samo besedilo za `X-Plex-Token=`. „Kako ga dobiti“ na strani pove isto; skrbniki strežnika lahko uporabijo tudi vrednost `PlexOnlineToken` iz datoteke `Preferences.xml` strežnika, ki ne poteče. Na televizorju OK odpre pogovorno okno tipkovnice: tam vnesite žeton (običajno ima 20 znakov).
+6. Dotaknite se „Preizkusi povezavo“. Odgovor je „Povezano: N knjižnic“ ali opis napake, na primer „Strežnik Plex je zavrnil ta žeton.“
+7. „Dostop od zunaj“ nato prikaže, kaj sporoča strežnik: „Strežnik sporoča, da je dosegljiv na (naslov):(vrata).“ ali „Strežnik ni sporočil svojega naslova zunaj doma.“ Če želite strežnik uporabljati zunaj doma, vnesite svoj javni naslov ali ime DynDNS v „Naslov zunaj doma (IP ali ime)“, vrata, posredovana v Plexu (Nastavitve, Oddaljeni dostop), pa v „Vrata zunaj doma“. Kar vnesete, ima vedno prednost pred tem, kar sporoča strežnik.
+8. „Ime“ je ime strežnika, razen če ga spremenite, „Začetna mapa (neobvezno)“ pa lahko neposredno odpre eno knjižnico. Dotaknite se Shrani. Strežnik je naveden skupaj s skupnimi rabami, kot `plex://` in njegov naslov.
+
+### Brskanje po knjižnicah Plex
+
+1. Dotaknite se strežnika v Omrežnih skupnih rabah. Prva raven navaja knjižnice, ki jih aplikacija prikazuje: fotografije, filme in druge videoposnetke, TV-serije. Glasba je izpuščena.
+2. Pod knjižnico so njene mape, kot so na disku strežnika (pogled Plexa „po mapah“), nato fotografije in videoposnetki pod imeni svojih datotek, s sličicami, ki jih naredi Plex. Knjižnica fotografij, katere pogled po mapah ne odgovarja, namesto tega prikaže svoje albume.
+3. 360° in 3D se prepoznata z branjem samih datotek, kot v kateri koli skupni rabi: fotografije 360° dobijo značko 360°, prostorske fotografije Apple značko 3D.
+4. Odprite fotografijo ali videoposnetek kot v kateri koli skupni rabi: 360°, 3D, 360°/180°, Spatial 2.5D na telefonu, potopitveni pogled v Questu, daljinski upravljalnik na televizorju. Videoposnetek se bere kot izvirna datoteka, po obsegih bajtov prek lokalnega mostu aplikacije, zato previjanje deluje, njegovi metapodatki 360° in 3D pa nedotaknjeni pridejo do predvajalnikov.
+5. Izberite datoteke in se dotaknite „Naloži v Immich“, da jih pošljete na svoj strežnik, kot iz katere koli skupne rabe (glejte [Pošiljanje datotek skupne rabe v Immich](#send-files-of-a-share-to-immich)).
+
+### Zunaj doma
+
+Ob vsakem odpiranju strežnika aplikacija najprej poskusi domači naslov in 400 ms pozneje naslov zunaj doma. Uporabi se prvi, ki odgovori z vašim strežnikom; ko je to naslov zunaj doma, stran mape prikaže ikono globusa z oznako „Povezano prek naslova zunaj doma“. Za to mora biti v Plexu vklopljen oddaljeni dostop (Nastavitve, Oddaljeni dostop) z vrati, ki jih posreduje vaš usmerjevalnik: brez plex.tv aplikacija ne more uporabiti posrednika Plexa, zato se strežnik brez posredovanja vrat odpre samo doma, zunaj doma pa stran prikaže „Vaš strežnik Plex ni dosegljiv zunaj domačega omrežja. V Plexu vklopite oddaljeni dostop s posredovanjem vrat (Nastavitve, Oddaljeni dostop) ali vnesite njegov javni naslov.“
+
+Naslov, ki ga sporoča strežnik, se znova pridobi ob vsaki povezavi doma. Ko od zunaj ne odgovarja (usmerjevalnik, ki menja naslov, dva usmerjevalnika zaporedoma), vnesite svojega na strani strežnika. Ko žeton preneha delovati (na primer, ker ste se odjavili iz seje brskalnika, iz katere ste ga kopirali), stran mape to sporoči in ponudi „Prilepi nov žeton“, kar odpre stran strežnika pri polju za žeton.
+
+### V primerjavi s Plexom in z vrsto DLNA
+
+- **Izvirne datoteke**: aplikacija bere same datoteke, nikoli kopije, ki jo pretvori Plex, zato metapodatki 360°, 3D in VR180 ostanejo nedotaknjeni in jih pregledovalniki aplikacije uporabijo, medtem ko aplikacije Plex te datoteke prikazujejo ploske.
+- **Brez plex.tv**: aplikacija komunicira samo z vašim strežnikom, vedno prek HTTPS. Strežnik se preveri prek njegovega lastnega potrdila plex.direct, vezanega na identifikator strežnika, preden se pošlje žeton. Žeton ostane v napravi, v njeni varni shrambi, in gre samo na vaš strežnik, v glavi zahteve.
+- **V primerjavi z dodajanjem istega strežnika kot DLNA**: mape, kot so na disku, sličice Plexa, dostop zunaj doma in varna povezava.
+
+### Omejitve
+
+- **Samo prevzeti strežniki**: strežnik mora biti v Plexu prevzet (enkrat prijavljen v račun Plex), kar mu da potrdilo plex.direct. Sicer stran prikaže „Ta naslov odgovarja brez potrdila Plex. Prevzemite strežnik v Plexu ali ga dodajte kot skupno rabo SMB, WebDAV ali DLNA.“
+- **Samo IPv4**: „Naslovi IPv6 še niso podprti. Vnesite naslov IPv4 strežnika.“
+- **Žeton** daje popoln dostop do vašega strežnika Plex. Odstranitev strežnika v aplikaciji pozabi žeton v napravi, vendar ga ne prekliče: „Žeton ostane na strežniku veljaven, dokler se ne odjavite iz seje brskalnika, iz katere ste ga kopirali.“ Žeton z datumom poteka prikaže ta datum, aplikacija pa ga ne more obnoviti.
+- **Zunaj doma**: samo prek posredovanja vrat, posrednika ni.
+- **Knjižnice**: glasba ni prikazana, mapa navede največ 20.000 vnosov, uporabnik z omejitvami pa lahko dobi „Ta žeton ne more brati knjižnic strežnika.“
+- **Neobdelane datoteke kamer 360°** (.insv, .insp, .360, .osv) so prikazane samo, če jih Plex navaja; sicer dodajte isto mapo NAS-a kot skupno rabo SMB ali WebDAV, glejte [Neobdelane datoteke kamer 360°](#raw-360-camera-files-without-the-cameras-app).
+- **Iskanje strežnika**: strežnik z izklopljeno nastavitvijo „Enable local network discovery (GDM)“ (Omogoči odkrivanje v lokalnem omrežju) ni najden, zato vnesite njegov naslov. Na iPhonu in iPadu iskanje pošilja samo zahteve unicast. Na seznamu se lahko pojavi tudi stran DLNA istega strežnika, z oznako DLNA: izberite vrstico z oznako Plex.
+- **Še ni preverjeno na napravi**: povezovanje, mape, obsegi bajtov videoposnetka, sličice, napačen žeton in naslov zunaj doma so bili preverjeni z računalnika na resničnem Plex Media Server 1.42.1, knjižnice fotografij in TV-serij pa samo na simuliranem strežniku. Predvajanje na telefonu, v Questu, na iPhonu in na televizorju ter preklop na naslov zunaj doma so preizkus gradnje 20 na napravah.
+- Immuch360 ni povezan s Plexom.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Deli ta telefon v omrežju
@@ -219,6 +279,63 @@ Od tam naprej je to skupna raba WebDAV kot vsaka druga: zaznavanje 360°, neobde
 - **Varnost**: samo lokalno omrežje. Skupna raba posluša samo na naslovih Wi-Fi, Ethernet in dostopne točke telefona, nikoli na naslovu mobilnih podatkov ali VPN, in odgovarja samo napravam z lokalnim naslovom. Vsaka zahteva potrebuje uporabniško ime in geslo (HTTP Basic); deset napačnih gesel z ene naprave v eni minuti jo za minuto blokira. Geslo po Wi-Fi potuje nešifrirano (navaden HTTP): skupno rabo uporabljajte v omrežju, ki mu zaupate, in jo izklopite, ko končate.
 - **Dostopna točka samega telefona**: očala se lahko povežejo nanjo; če tam telefona ne najdejo, vnesite naslov, prikazan na strani.
 - **Še ni preverjeno na napravi**: strežnik je bil preverjen s testi enot in s celovitimi testi z odjemalcem WebDAV in predstavnostnim mostom samih očal na računalniku. Telefon, ki streže Questu 3 (odkrivanje, videoposnetek velikosti 4 GB, predvajan in previjan, 30 minut izklopljen zaslon, dostopna točka, Ustavi iz obvestila), in stran iPhona, ki na iPhonu še ni tekla, so preizkus gradnje 19 na napravah.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Kamere Tapo: slika v živo in posnetki s pomnilniške kartice
+
+Doma imate kamere Tapo in bi radi videli kamero na vrtu in posnetke prejšnje noči poleg svojih fotografij, ne da bi odprli aplikacijo Tapo, in posnetek shranili v Immich. Aplikacija Immich nima ničesar za kamere, aplikacija Tapo pa je ločena aplikacija, prijavljena v vaš račun TP-Link, s posnetki ločeno od vaših fotografij.
+
+Od gradnje 20 Immuch360 doda kamero Tapo poleg omrežnih skupnih rab. Kamero prikaže v živo na telefonih in tablicah Android, na Android TV in na Meta Quest 3, na vseh platformah pa posnetke z njene pomnilniške kartice, dan za dnem: posnetek se prenese s kamere, nato se predvaja kot vsak videoposnetek in ga je mogoče poslati v Immich. Aplikacija s kamero komunicira samo v vašem omrežju, nikoli s strežniki TP-Link, in na kameri nikoli ničesar ne spremeni.
+
+### Dodajanje kamere
+
+1. Najprej v aplikaciji Tapo: ustvarite račun kamere v nastavitvah kamere, Advanced Settings (Napredne nastavitve), Camera Account (Račun kamere) (uporabniško ime in geslo za to kamero, ki se uporabljata za sliko v živo), in vklopite Third-Party Compatibility (Združljivost s tretjimi osebami) pod Me (Jaz), nato Tapo Lab.
+2. V Immuch360 odprite zavihek Knjižnica, nato Omrežne skupne rabe, nato + in „Kamera Tapo“.
+3. Stran „Dodaj kamero“ išče kamere („Iskanje kamer Tapo v vašem omrežju“) in jih navede pod „Najdeno v omrežju“ z oznako Tapo. Dotaknite se svoje, da se izpolni „Naslov kamere“, ali vnesite njen naslov. Kamera z oznako Tapo v obrazcu skupne rabe odpre isto stran.
+4. „Ime“: kako je kamera navedena.
+5. Pod „Posnetki na pomnilniški kartici“ „Geslo računa TP-Link“: geslo računa, ki ga uporabljate v aplikaciji Tapo. Odpre posnetke; vaš e-poštni naslov ni potreben.
+6. Pod „V živo“ „Uporabniško ime računa kamere“ in „Geslo računa kamere“: račun kamere iz 1. koraka.
+7. Dovolj je eno od dvojega („Vnesite geslo računa TP-Link, račun kamere ali oboje.“): samo geslo TP-Link da posnetke, samo račun kamere sliko v živo.
+8. Dotaknite se „Preizkusi kamero“. Prikaže „Posnetki: (model), vdelana programska oprema (različica)“ s stanjem pomnilniške kartice in „Slika v živo: (video), zvok (zvok)“ ali kaj je pri vsakem spodletelo.
+9. Dotaknite se Shrani. Kamera je navedena pod „Kamere“, za skupnimi rabami, z modelom, ko je znan, in `tapo://` z njenim naslovom.
+
+### Gledanje v živo
+
+1. Dotaknite se kamere. Njena slika v živo je na vrhu njene strani: „Povezovanje s kamero“, nato slika z značko V živo.
+2. Gumbi na sliki: zvok, na začetku izklopljen („Vklopi zvok“; „V tej napravi ni zvoka“, ko ga naprava ne more predvajati), SD ali HD in „Celozaslonski način“.
+3. Telefon prikaže SD na strani in HD v celozaslonskem načinu; Quest prikaže HD. Nazaj najprej zapre celozaslonski način.
+4. Pod sliko so model in vdelana programska oprema ter pomnilniška kartica, na primer „Pomnilniška kartica: uporabljeno (uporabljeno) od (skupaj)“ ali „Ni pomnilniške kartice“.
+
+Na iPhonu in iPadu slika v živo prikaže „Slika v živo pride na iPhone in iPad v poznejši različici. Posnetki se tukaj že predvajajo.“ Brez računa kamere stran prikaže „Dodajte račun kamere, da vidite sliko v živo.“
+
+### Predvajanje in shranjevanje posnetkov
+
+1. Pod „Posnetki na pomnilniški kartici“ stran kamere navede dneve s posnetki, najnovejše najprej, po mesecih. Brez gesla računa TP-Link prikaže „Dodajte geslo računa TP-Link, da vidite posnetke.“
+2. Dotaknite se dneva. Njegovi posnetki so razvrščeni pod urami po lastnem času kamere, vsak s svojim začetkom, dolžino, sličico kamere za dogodek in vrsto: Gibanje, Oseba, Hišni ljubljenček, Vozilo, Jok dojenčka, Žival, Neprekinjeno ali Dogodek.
+3. Dotaknite se posnetka. Aplikacija ga prenese s kamere („Prenašanje videoposnetka s kamere: N %“, s Prekliči), nato ga predvaja v predvajalniku videa, z zvokom in previjanjem. Prenesen posnetek nosi „V tej napravi“ in se naslednjič odpre takoj.
+4. Če želite posnetek shraniti v Immich, s povezanim strežnikom: meni ⋮ videoposnetka, „Naloži v Immich“.
+5. Za sprostitev prostora: dolg pritisk na prenesen posnetek ponudi „Izbriši kopijo v tej napravi“ (na telefonu), stran kamere pa ima „Izbriši videoposnetke, prenesene s te kamere“, z njihovo velikostjo.
+6. Gumb za osvežitev desno zgoraj ali poteg strani navzdol kamero znova vpraša.
+
+Ko kamera na svojem naslovu ne odgovarja več, jo njena stran poišče v omrežju po naslovu MAC in jo prestavi tja, kjer zdaj odgovarja, ko pokaže isto potrdilo. Kamera, ki pokaže drugo potrdilo, kot ga je aplikacija videla najprej, namesto tega dobi vprašanje: „Kamera na (naslov) kaže drugo potrdilo kot prej. Nadaljujte le, če ste jo ponastavili ali zamenjali.“
+
+### V primerjavi z aplikacijo Tapo
+
+- **Samo v vašem omrežju**: aplikacija komunicira s samo kamero, v lokalnem omrežju, in nikoli s strežniki TP-Link. Ne prijavi se v račun TP-Link, zato vaš e-poštni naslov ni potreben.
+- **Posnetki postanejo običajni videoposnetki**: prenesen posnetek je videoposnetek H.264 z zvokom, ki ga lahko pošljete v Immich, kjer ostane tudi potem, ko ga je pomnilniška kartica prepisala.
+- **Poleg vsega drugega**: s strežnikom Immich ali brez njega, na telefonu, na televizorju ali v Questu (v oknu), najdena v omrežju kot skupna raba.
+- **Samo za branje**: aplikacija od kamere zahteva samo tisto, kar prikazuje; nikoli ne spremeni nastavitve in na kameri nikoli ničesar ne izbriše.
+
+### Omejitve
+
+- **Še ni preverjeno na napravi**: gradnja 20 še ni tekla z resnično kamero. Protokol je bil napisan po zajemih s C510W z vdelano programsko opremo 1.3.4 (prijava V4 iz sredine leta 2026), aplikacija pa je bila v svojih preizkusih preverjena na simulirani kameri. Poročila so dobrodošla, z modelom in vdelano programsko opremo, ki ju prikaže „Preizkusi kamero“, in vrsticami iz razdelka [Dnevniki](#logs).
+- **Slika v živo**: samo na telefonih in tablicah Android, na Android TV in v Questu, še ne na iPhonu in iPadu. Veljajo omejitve TP-Link: največ dva toka HD in dva SD hkrati na kamero, vključno z aplikacijo Tapo, Tapo Care, pomnilniška kartica in snemalnik, ki uporablja RTSP ali ONVIF, pa ne morejo vsi delovati hkrati.
+- **Kamere**: kamere na baterije in kamere za zvezdiščem Tapo niso podprte.
+- **Posnetki**: en prenos naenkrat na kamero. Medtem ko aplikacija Tapo brska po pomnilniški kartici, aplikacija poskusi znova po 4, 8 in 12 sekundah, nato prikaže „Kamera je zasedena z drugim gledalcem, na primer z aplikacijo Tapo. Poskusite znova čez minuto.“ Posnetki v H.265 se še ne pretvorijo („Ta posnetek je v H.265, ki ga ta različica še ne zna pretvoriti.“), neprekinjeni posnetki nimajo sličice, posnetek pa se predvaja, ko je v celoti prenesen.
+- **Gesla**: vsako napačno geslo šteje, po nekaj napačnih pa se kamera za nekaj časa zaklene („Kamera je zaklenjena po preveč napačnih geslih. Poskusite znova čez N minut.“). Aplikacija zavrnjenega gesla nikoli ne poskusi znova sama: kamero znova vprašata samo „Preizkusi kamero“ ali Poskusi znova. Ko kamera sprejme geslo za nastavitve, ne pa za videoposnetke, v aplikaciji Tapo izklopite in znova vklopite Third-Party Compatibility (Združljivost s tretjimi osebami), nato znova zaženite kamero.
+- **Prostor**: preneseni posnetki ostanejo v predpomnilniku aplikacije, največ 1 GB za vse kamere skupaj (najprej odidejo tisti, ki so bili predvajani najdlje nazaj); sistem lahko ta predpomnilnik izprazni, odstranitev kamere pa izbriše njene posnetke.
+- **Zunaj doma**: aplikacija kamero doseže na njenem naslovu v vašem omrežju, torej ne od zunaj.
+- Immuch360 ni povezan s TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Neobdelane datoteke kamer 360°, brez aplikacije kamere
@@ -349,7 +466,7 @@ Zaznavanje je bilo preverjeno na vzorčni prostorski fotografiji, ki jo je zapis
 
 Ljudje kupijo Quest 3, da bi gledali svoje fotografije in videoposnetke 360°, nato pa sprašujejo, kam dati datoteke, kako jih brez kabla spraviti v očala in kateri predvajalnik uporabiti: predvajalniki za video 360° in 3D v trgovini so plačljivi.
 
-Ista aplikacija za Android teče na Questu 3 in 3S kot okno z vso vašo knjižnico. Njen gumb 360° odpre potopitveni pogled, v katerem vas fotografija ali videoposnetek obdaja in se razgledujete z obračanjem glave, v pravem 3D za stereoskopske datoteke (Meta Spatial SDK). Predstavnost prihaja z vašega strežnika Immich, iz samih očal, z NAS-a, s predstavnostnega strežnika ali s telefona in se predvaja na mestu (predstavnostni strežnik in telefon od gradnje 19, v očalih še ni preverjeno). Je brezplačna in odprtokodna. Preverjeno na Questu 3 in s strani uporabnika z videoposnetki Insta360 X4 8K HEVC.
+Ista aplikacija za Android teče na Questu 3 in 3S kot okno z vso vašo knjižnico. Njen gumb 360° odpre potopitveni pogled, v katerem vas fotografija ali videoposnetek obdaja in se razgledujete z obračanjem glave, v pravem 3D za stereoskopske datoteke (Meta Spatial SDK). Predstavnost prihaja z vašega strežnika Immich, iz samih očal, z NAS-a, s predstavnostnega strežnika, s telefona ali s strežnika Plex in se predvaja na mestu (predstavnostni strežnik in telefon od gradnje 19, strežnik Plex od gradnje 20, v očalih še ni preverjeno), od gradnje 20 pa okno prikazuje tudi kamere Tapo. Je brezplačna in odprtokodna. Preverjeno na Questu 3 in s strani uporabnika z videoposnetki Insta360 X4 8K HEVC.
 
 ### Odpiranje potopitvenega pogleda
 
@@ -408,6 +525,56 @@ Zasukajte jo z desno palčko (ali z gumbom Zasukaj na informacijski plošči), d
 - **Previjanje**: videoposnetka, katerega vir ne odgovarja na zahteve za obseg bajtov, ni mogoče previjati; plošča to sporoči.
 - **Ploski videoposnetki**: ploski (ne 360°) stereoskopski videoposnetek se predvaja v oknu z obema vidnima očesoma; potopitveni pogled 3D je za predstavnost 360° in VR180.
 - **Več**: kodeki, ki jih očala dekodirajo, trgovina, dovoljenja in velikost APK so v razdelku [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Gledanje na televizorju (Android TV in Google TV)
+
+Fotografije in videoposnetke 360°, svoje albume in videoposnetke z NAS-a ali strežnika Plex želite na velikem zaslonu, za družino na kavču, z daljinskim upravljalnikom televizorja. Mobilna aplikacija Immich ni aplikacija za televizor: uporabnik, ki jo je namestil na televizor, je ugotovil, da deluje z miško, ne z daljinskim upravljalnikom ([razprava #1614](https://github.com/immich-app/immich/discussions/1614)), ekipa Immich pa ne načrtuje uradne aplikacije za televizor ([razprava #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Od gradnje 20 ista aplikacija za Android teče na Android TV in Google TV, z daljinskim upravljalnikom kot edinim vnosom: en APK za telefone in televizorje, pregledovalnika 360° in 3D, ki ju obračate s puščicami, ter omrežne skupne rabe, Plex in kamere Tapo na televizorju, s strežnikom Immich ali brez njega.
+
+<a id="install-it-on-the-tv"></a>
+### Namestitev na televizor
+
+1. Dokler Google Play ne ponuja aplikacije na televizorjih, kar čaka na Googlov pregled izdaje za televizorje, vzemite univerzalni `Immuch360-v<version>-release.apk` s strani [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Na televizorju vklopite možnosti za razvijalce in odpravljanje napak prek USB (na Google TV: Nastavitve, Sistem, O napravi, sedemkrat izberite „Različica OS Android TV“ (Android TV OS build), nato Nastavitve, Sistem, Možnosti za razvijalce; imena se med televizorji razlikujejo).
+3. Z računalnika v istem omrežju, z adb (Android SDK Platform Tools): `adb connect <address of the TV>`, na televizorju sprejmite poziv, nato `adb install -r Immuch360-v<version>-release.apk`.
+4. Aplikacija se prikaže med aplikacijami televizorja, s svojo pasico. Naslednjo izdajo namestite enako: `-r` ohrani prijavo in nastavitve.
+
+### Prvi zagon
+
+1. Prijavite se kot na telefonu: puščice premikajo okvir od polja do polja, OK na polju („Pritisnite OK za tipkanje“) pa odpre tipkovnico televizorja v pogovornem oknu, za naslov strežnika, e-pošto in geslo.
+2. Ali pa izberite „Uporabi brez strežnika“. Televizor nima lastnih fotografij, zato zavihek Fotografije prikaže „Ta televizor nima lastnih fotografij ali videoposnetkov: odprite omrežno skupno rabo iz Knjižnice.“ z gumbom Omrežne skupne rabe. Tam dodajte skupno rabo, strežnik Plex ali kamero, kot na telefonu (glejte [Omrežne skupne rabe](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Premikanje z daljinskim upravljalnikom
+
+- Puščice premikajo okvir, OK odpre to, na čemer je, Nazaj gre nazaj. Z zavihka gre Nazaj v stranski meni, nato na Fotografije, nato iz aplikacije.
+- Kanal gor in dol se pomikata po eno stran naenkrat.
+- V pregledovalnikih delujejo tipke daljinskega upravljalnika za predvajanje in premor, previjanje naprej, previjanje nazaj, naslednje in prejšnje, tipka za informacije pa prikaže podrobnosti fotografije ali videoposnetka.
+
+### Fotografije in videoposnetki z daljinskim upravljalnikom
+
+1. **Fotografija**: levo in desno gresta na prejšnjo ali naslednjo, OK prikaže ali skrije kontrolnike, gor gre na zgornjo vrstico (kjer je gumb 360°), dol pa na spodnjo vrstico.
+2. **Videoposnetek**: OK ustavi in prikaže kontrolnike ali predvaja. Med predvajanjem levo in desno skočita 10 sekund nazaj ali naprej; ko je ustavljen, gresta na prejšnji ali naslednji element, kot pove namig: „Začasno ustavljeno: puščice gredo na prejšnji ali naslednji element“.
+3. **Fotografija 360°**, z gumbom 360°: s puščicami se razgledujete, hitreje ob držanju, pogled pa se mehko ustavi. OK preide na gumbe zgornje vrstice, na „Povečaj“, poleg „Pomanjšaj“, vidnega polja in 3D; kanal gor in dol tudi povečujeta. Nazaj se z gumbov vrne na sliko, nato zapre. Namig se glasi „Puščice za razgledovanje, OK za kontrolnike, Nazaj za zapiranje“.
+4. **Videoposnetek 360°**, z gumbom 360°: s puščicami se razgledujete, dokler so kontrolniki skriti, OK ustavi in jih prikaže, Nazaj jih skrije, nato zapre. Namig se glasi „Puščice za razgledovanje, OK za premor in prikaz kontrolnikov, Nazaj za zapiranje“.
+5. **Spomini**: levo in desno gresta skozi fotografije in naprej na naslednji spomin, gor gre na gumb za zapiranje, dol pa na „Ogled na časovnici“.
+6. **Skupne rabe in Plex**: iste tipke na straneh fotografij in videoposnetkov skupne rabe, kjer levo in desno odpreta prejšnjo ali naslednjo datoteko mape.
+
+### Nastavitev Postavitev za daljinski upravljalnik
+
+Nastavitve, Nastavitve po meri, „Postavitev za daljinski upravljalnik“: „Veliki okvirji fokusa in tipke daljinskega upravljalnika, brez kontrolnikov, ki potrebujejo zaslon na dotik. Samodejno jo vklopi na Android TV in Google TV.“ Samodejno je privzeto; Vklopljeno ustreza tablici, ki jo upravljate s tipkovnico ali igralnim ploščkom; Izklopljeno jo na televizorju izklopi. Nastavitev obstaja samo v Androidu. Puščice in OK v pregledovalnikih delujejo s tipkovnico ali igralnim ploščkom ne glede na nastavitev.
+
+### Omejitve
+
+- **Pregledovalnik**: na televizorju aplikacija prikazuje in predvaja. Varnostno kopiranje, nalaganje, urejanje, brisanje, deljenje, izbira več elementov, Cast, Spatial 2.5D, žiroskop, zemljevid in Kraji ter „Deli ta telefon v omrežju“ so skriti.
+- **Prijava**: OAuth odpre spletno stran, česar televizor ne zmore: „Prijava z (ponudnik) odpre spletno stran, česar ta televizor ne zmore. Namesto tega se prijavite z e-pošto in geslom.“
+- **Povezave** prikažejo svoj naslov pod „Odpri v drugi napravi“, namesto da bi odprle brskalnik, besedilo pa se vnaša v sistemskem pogovornem oknu tipkovnice.
+- **Pomnilnik**: na televizorju z malo pomnilnika so fotografije 360° prikazane največ v 4096x2048, brez ostrejše slike ob povečavi.
+- **Videoposnetki**: kaj se predvaja, odločajo dekoderji televizorja, z isto nastavitvijo Vir videa in istim preverjanjem dekoderja kot na telefonu (glejte [Podrobnosti videa in dekoderji](#video-details-decoders-and-why-a-video-stutters)); na televizorju še ni izmerjeno.
+- **Še ni preverjeno na napravi**: podpora za televizorje je bila preverjena samo z avtomatiziranimi preizkusi in še ni tekla na televizorju niti na emulatorju televizorja. Treba je potrditi: smer, v katero puščice obračajo videoposnetek 360°, tipkovnico televizorja (Gboard) v besedilnem pogovornem oknu, tipko OK infrardečih upravljalnikov, robove in pasico na začetnem zaslonu televizorja. Poročila so dobrodošla.
+- **Google Play na televizorjih** čaka na Googlov pregled izdaje za televizorje; do takrat APK.
+- **Drugi televizorji**: Fire TV ni preizkušen, različice za Apple TV pa ni.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Najdite svoje posnetke 360°: seznam 360°
@@ -488,11 +655,11 @@ Ko strežnik pri izvirniku prezre zahteve HTTP Range in je indeks MP4 (moov) na 
 <a id="everything-else-is-immich"></a>
 ## Vse drugo je Immich
 
-Vse, kar zna uradna mobilna aplikacija Immich, je tukaj: varnostno kopiranje, časovnica, albumi, iskanje, deljenje, partnerji, vse sinhronizirano z vašim strežnikom, z istim strežnikom in istim računom kot spletna aplikacija. Immuch360 se namesti poleg uradne aplikacije (paket `com.aprogsys.immuch360`). Od gradnje 15 sta dve razliki: stikalo „Vsili izvirni video“ je postalo zgoraj opisana izbira Vir videa, fotografije in videoposnetki, ki jih ročno naložite iz albuma naprave, pa štejejo kot varnostno kopirani.
+Vse, kar zna uradna mobilna aplikacija Immich, je tukaj: varnostno kopiranje, časovnica, albumi, iskanje, deljenje, partnerji, vse sinhronizirano z vašim strežnikom, z istim strežnikom in istim računom kot spletna aplikacija. Immuch360 se namesti poleg uradne aplikacije (paket `com.aprogsys.immuch360`). Od gradnje 15 sta dve razliki: stikalo „Vsili izvirni video“ je postalo zgoraj opisana izbira Vir videa, fotografije in videoposnetki, ki jih ročno naložite iz albuma naprave, pa štejejo kot varnostno kopirani. Na televizorju je aplikacija od gradnje 20 pregledovalnik, glejte [Gledanje na televizorju](#watch-on-your-tv-android-tv-and-google-tv).
 
 Če želite fotografijo 360° pokazati nekomu, ki nima aplikacije, jo delite s povezavo za deljenje Immich: spletna aplikacija Immich v njegovem brskalniku prikaže fotografijo 360° kot kroglo.
 
-Trenutna gradnja, gradnja 19 (različica 3.3.0-rc.0, številka gradnje 3030017), temelji na Immich 3.3.0-rc.0 (Immich `main`, še ne stabilna izdaja) in je bila preizkušena s strežnikom Immich 3.2. Težave prosim prijavite v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Celotna dokumentacija samega Immicha je na [immich.app](https://immich.app).
+Trenutna gradnja, gradnja 20 (različica 3.3.0-rc.0, številka gradnje 3030018), temelji na Immich 3.3.0-rc.0 (Immich `main`, še ne stabilna izdaja). Gradnja 19 je bila preizkušena s strežnikom Immich 3.2, gradnja 20 pa ne spremeni ničesar pri tem, kar aplikacija zahteva od strežnika. Težave prosim prijavite v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Celotna dokumentacija samega Immicha je na [immich.app](https://immich.app).
 
 ## Primerjava z aplikacijo Immich in drugimi aplikacijami
 
@@ -515,6 +682,9 @@ Trenutna gradnja, gradnja 19 (različica 3.3.0-rc.0, številka gradnje 3030017),
 | Predstavnostni strežniki DLNA kot vrsta skupne rabe | ❌ | ✅ od gradnje 19 | Preverjeno z minidlna in Gerbera v Dockerju; Plex, Jellyfin, NAS, Freebox Server, iPhone in Quest so preizkus gradnje 19 na napravah |
 | Pošiljanje datotek skupne rabe v Immich; ročno poslane datoteke naprave štejejo kot varnostno kopirane | ❌ samo datoteke naprave | ✅ od gradnje 15 | Preizkušeno na emulatorju Android s preizkusnim strežnikom Samba in strežnikom Immich 3.2 |
 | Deli ta telefon v omrežju, za očala | ❌ | ✅ od gradnje 19, Android in iOS | Testi enot in celoviti testi z odjemalcem WebDAV očal na računalniku; telefon, ki streže Questu, in stran iPhona so preizkus gradnje 19 na napravah |
+| Knjižnice Plex Media Server, predvajane iz izvirnih datotek, doma in zunaj doma, brez plex.tv | ❌ | ✅ od gradnje 20, vsi pregledovalniki, na telefonih, tablicah, Questu 3 in televizorjih | Preverjeno z računalnika na resničnem Plex Media Server 1.42.1 (povezovanje, mape, obsegi bajtov, sličice, naslov zunaj doma); še ni preverjeno na napravi |
+| Kamere Tapo: slika v živo in posnetki s pomnilniške kartice, poslani v Immich, ko se tako odločite | ❌ | ✅ od gradnje 20: posnetki povsod, v živo na Androidu, Android TV in Questu 3 | Preverjeno na simulirani kameri; še ni preverjeno z resnično kamero |
+| Android TV in Google TV, upravljano z daljinskim upravljalnikom, v istem APK | ❌ ni aplikacija za televizor | ✅ od gradnje 20 | Preverjeno z avtomatiziranimi preizkusi; še ni preverjeno na televizorju |
 | Neobdelane fotografije Insta360 .insp in videoposnetki .insv z eno sledjo | ❌ ploske | ✅ od gradnje 16 | Fotografije preverjene v primerjavi z izvozi Insta360 Studio iz datotek X3, videoposnetki na emulatorju Android z datoteko X3 nizke ločljivosti; na iPhonu še niso tekli |
 | Neobdelani videoposnetki z enim objektivom na sled ali na datoteko (Insta360 X4, X4 Air, X5, X6, pari X3, GoPro .360, DJI .osv) | ❌ ploski ali napačni | ✅ od gradnje 18 | Razčlenjevalniki in sestavljanje preverjeni na resničnih datotekah X4, para X3, GoPro MAX in Osmo 360; predvajanje je preizkus gradenj 18 in 19 na napravah |
 | .dng z dvojnim ribjim očesom | ❌ plosk | ❌ še ne | Načrtovano |
@@ -529,27 +699,33 @@ Trenutna gradnja, gradnja 19 (različica 3.3.0-rc.0, številka gradnje 3030017),
 |---|---|---|
 | Spletna aplikacija Immich | Fotografijo 360° prikaže kot kroglo, neobdelan .insp pa obravnava kot dokončano panoramo in njegova kroga ovije okoli krogle; pogled VR je še vedno zahteva ([razprava #14768](https://github.com/immich-app/immich/discussions/14768)) | Neobdelane datoteke sestavi v napravi in odpre potopitveni pogled v Questu 3 |
 | Aplikacija ali Studio Insta360 | Potrebna, da neobdelane datoteke s kartice pred ogledom spremenite v sliko 360° | Neobdelane datoteke .insp in .insv ter datoteke GoPro .360 in DJI .osv odpre neposredno |
-| Plex, Jellyfin, Synology Photos | Fotografije in videoposnetki 360° prikazani ploski ali neprepoznani, kot opisujejo niti na njihovih forumih (zahteva za Plex je odprta od leta 2017) | Iste mape bere prek SMB, WebDAV ali DLNA in jih predvaja kot kroglo, ne da bi na strežniku kar koli spremenil |
+| Plex, Jellyfin, Synology Photos | Fotografije in videoposnetki 360° prikazani ploski ali neprepoznani, kot opisujejo niti na njihovih forumih (zahteva za Plex je odprta od leta 2017) | Od gradnje 20 bere samo knjižnico Plex ali iste mape prek SMB, WebDAV ali DLNA in jih predvaja kot kroglo, ne da bi na strežniku kar koli spremenil |
+| Aplikacija Tapo | Ločena aplikacija, prijavljena v vaš račun TP-Link, s posnetki ločeno od vaših fotografij | Kamero prikaže poleg vaših fotografij, z njo komunicira samo v vašem omrežju in posnetek shrani kot videoposnetek, ki ga lahko pošljete v Immich (od gradnje 20) |
+| Mobilna aplikacija Immich na televizorju | Ni aplikacija za televizor: uporabnik poroča, da deluje z miško, ne z daljinskim upravljalnikom | Ista aplikacija, narejena za daljinski upravljalnik (od gradnje 20) |
 | Kopiranje datotek v očala | Vsako datoteko je treba pred ogledom kopirati prek kabla | Predvaja na mestu iz Immicha, z NAS-a, s predstavnostnega strežnika ali s telefona |
 | Predvajalniki 360° in 3D v trgovini Quest | Plačljivi | Brezplačno in odprtokodno (AGPL) |
 
 ## Formati in viri po platformah
 
-Immuch360 je galerija in hkrati brezplačen predstavnostni predvajalnik: predvaja tisto, česar uradna aplikacija ne zmore, iz štirih virov, v predvajalniku, ki ustreza datoteki.
+Immuch360 je galerija in hkrati brezplačen predstavnostni predvajalnik: predvaja tisto, česar uradna aplikacija ne zmore, iz virov druge tabele, v predvajalniku, ki ustreza datoteki.
 
-| Kaj | Telefoni Android | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Ploski videoposnetki (MP4, MOV, MKV, kar naprava dekodira) | Predvajalnik Immich in izvorni predvajalnik za omrežne skupne rabe | Enako, razen datotek MKV in AVI iz skupne rabe, ki jih iOS ne odpre (s strežnika se predvajajo prekodirane) | V oknu |
-| Fotografije 360° | Sferični pregledovalnik, žiroskop | Enako | Potopitveno, vsenaokrog |
-| Videoposnetki 360° | Izvorni predvajalnik Media3 na krogli, žiroskop, previjanje, izbira zvočne sledi, indikator medpomnjenja | Izvorni predvajalnik SceneKit na krogli, žiroskop, izbira zvočne sledi, indikator medpomnjenja; predvajanje in premor, še brez časovnega traku | Potopitveno, pravi 3D za stereoskopske datoteke, časovni trak s preskoki po 10 sekund, prejšnji in naslednji medij |
-| 3D 360° (zgoraj in spodaj, drug ob drugem) | Levo oko, gumb postavitve | Enako | Vsako oko dobi svojo polovico sličice |
-| Fotografije in videoposnetki VR180 (polkrogla) | Polkrogla, gumb 360°/180° | Enako | Potopitvena polkrogla |
-| Spatial 2.5D (globina na ploskem zaslonu iz stereoskopskega videoposnetka) | Izvorni predvajalnik, sledenje glave s sprednjo kamero | Enako | Ni na voljo |
-| Prostorske fotografije Apple (stereo pari HEIC, od gradnje 19) | Levo oko, vrstica v podrobnostih pove, da je prostorska | Enako | Ogled v 3D: obe očesi na fotografiji, ki lebdi v potopitvenem pogledu, 3D ali 2D, nastavljiva velikost |
-| Prostorski videoposnetki Apple (MV-HEVC, od gradnje 19) | Eno oko (osnovna plast), z obvestilom | Enako | Eno oko v oknu, z obvestilom |
-| Neobdelane fotografije Insta360 .insp (od gradnje 16) | Sestavljene na grafičnem procesorju pred sferičnim pregledovalnikom, do 8192x4096 | Enako | Potopitveno, iz sestavljene slike, pripravljene za očala |
-| Neobdelan Insta360 .insv, oba objektiva v eni sledi (od gradnje 16) | Sestavljen z učinkom GPU v predvajalniku Media3 | Sestavljen s senčilnikom SceneKit | Potopitveno, sestavljen z istim učinkom GPU |
-| Neobdelani videoposnetki z enim objektivom na sled ali na datoteko (od gradnje 18): Insta360 X4, X4 Air, X5, X6 .insv, pari X3, GoPro .360, DJI .osv | Dva strojna dekoderja hkrati, eden na objektiv (od gradnje 19 programska na napravi brez strojnega dekoderja, do 2048x2048 na objektiv), in sestavljalnik GL, ki sestavi v kroglo; en objektiv, nato prekodiran tok, nato nesestavljen videoposnetek, ko naprava ne zmore dveh | Lasten sestavljalnik AVFoundation z Metalom | Potopitveno, ista dva dekoderja in sestavljalnik (plošča 3840x1920) |
+| Kaj | Telefoni Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (od gradnje 20) |
+|---|---|---|---|---|
+| Ploski videoposnetki (MP4, MOV, MKV, kar naprava dekodira) | Predvajalnik Immich in izvorni predvajalnik za omrežne skupne rabe | Enako, razen datotek MKV in AVI iz skupne rabe, ki jih iOS ne odpre (s strežnika se predvajajo prekodirane) | V oknu | Kot na telefonih; OK ustavi, levo in desno skočita 10 s |
+| Fotografije 360° | Sferični pregledovalnik, žiroskop | Enako | Potopitveno, vsenaokrog | Sferični pregledovalnik, obračan s puščicami, povečava s tipkami kanalov |
+| Videoposnetki 360° | Izvorni predvajalnik Media3 na krogli, žiroskop, previjanje, izbira zvočne sledi, indikator medpomnjenja | Izvorni predvajalnik SceneKit na krogli, žiroskop, izbira zvočne sledi, indikator medpomnjenja; predvajanje in premor, še brez časovnega traku | Potopitveno, pravi 3D za stereoskopske datoteke, časovni trak s preskoki po 10 sekund, prejšnji in naslednji medij | Predvajalnik Media3 s telefonov, obračan s puščicami |
+| 3D 360° (zgoraj in spodaj, drug ob drugem) | Levo oko, gumb postavitve | Enako | Vsako oko dobi svojo polovico sličice | Levo oko, gumb postavitve |
+| Fotografije in videoposnetki VR180 (polkrogla) | Polkrogla, gumb 360°/180° | Enako | Potopitvena polkrogla | Polkrogla, gumb 360°/180° |
+| Spatial 2.5D (globina na ploskem zaslonu iz stereoskopskega videoposnetka) | Izvorni predvajalnik, sledenje glave s sprednjo kamero | Enako | Ni na voljo | Ni na voljo |
+| Prostorske fotografije Apple (stereo pari HEIC, od gradnje 19) | Levo oko, vrstica v podrobnostih pove, da je prostorska | Enako | Ogled v 3D: obe očesi na fotografiji, ki lebdi v potopitvenem pogledu, 3D ali 2D, nastavljiva velikost | Levo oko, vrstica v podrobnostih |
+| Prostorski videoposnetki Apple (MV-HEVC, od gradnje 19) | Eno oko (osnovna plast), z obvestilom | Enako | Eno oko v oknu, z obvestilom | Eno oko, z obvestilom |
+| Neobdelane fotografije Insta360 .insp (od gradnje 16) | Sestavljene na grafičnem procesorju pred sferičnim pregledovalnikom, do 8192x4096 | Enako | Potopitveno, iz sestavljene slike, pripravljene za očala | Kot na telefonih |
+| Neobdelan Insta360 .insv, oba objektiva v eni sledi (od gradnje 16) | Sestavljen z učinkom GPU v predvajalniku Media3 | Sestavljen s senčilnikom SceneKit | Potopitveno, sestavljen z istim učinkom GPU | Kot na telefonih |
+| Neobdelani videoposnetki z enim objektivom na sled ali na datoteko (od gradnje 18): Insta360 X4, X4 Air, X5, X6 .insv, pari X3, GoPro .360, DJI .osv | Dva strojna dekoderja hkrati, eden na objektiv (od gradnje 19 programska na napravi brez strojnega dekoderja, do 2048x2048 na objektiv), in sestavljalnik GL, ki sestavi v kroglo; en objektiv, nato prekodiran tok, nato nesestavljen videoposnetek, ko naprava ne zmore dveh | Lasten sestavljalnik AVFoundation z Metalom | Potopitveno, ista dva dekoderja in sestavljalnik (plošča 3840x1920) | Kot na telefonih, ko televizor zmore dva dekoderja hkrati |
+| Slika v živo kamere Tapo (od gradnje 20) | Predvajalnik RTSP Media3: SD na strani, HD v celozaslonskem načinu, gumb za zvok | Še ne: kartica pove, da pride pozneje | V oknu, v HD | Kot na telefonih |
+| Posnetki kamere Tapo (od gradnje 20) | Preneseni s pomnilniške kartice v videoposnetek H.264 z zvokom, nato predvajani s previjanjem | Enako | Enako, v oknu | Enako |
+
+Stolpec TV še ni bil preverjen na televizorju, glejte [Gledanje na televizorju](#watch-on-your-tv-android-tv-and-google-tv); vrstice kamere še niso bile preverjene z resnično kamero.
 
 | Od kod | Kako |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 je galerija in hkrati brezplačen predstavnostni predvajalnik: predvaj
 | Sam telefon ali očala | „Uporabi brez strežnika“ na strani za prijavo ali vnos Na tej napravi v zavihku Knjižnica |
 | NAS ali računalnik | Skupne rabe SMB in WebDAV ter od gradnje 19 predstavnostni strežniki DLNA, najdeni v omrežju, brani v živo (videoposnetek SMB prek do šestih povezav), nič se ne kopira; od gradnje 15 lahko izbrane datoteke pošljete v svoj račun Immich |
 | Drug telefon (od gradnje 19) | „Deli ta telefon v omrežju“ na tem telefonu: očala ali kateri koli odjemalec WebDAV v omrežju berejo njegove albume, mesece in predstavnost 360° |
+| Plex Media Server (od gradnje 20) | Njegove knjižnice fotografij, filmov in TV-serij po mapah, izvirne datoteke, brane v živo prek HTTPS, preverjenega z lastnim potrdilom strežnika, doma ali prek naslova zunaj doma, na vseh platformah; glejte [Plex Media Server brez plex.tv](#plex-media-server-without-plextv) |
+| Kamera Tapo (od gradnje 20) | Slika v živo z računom kamere (Android, Android TV, Quest) in posnetki z njene pomnilniške kartice z geslom računa TP-Link (vse platforme), samo v lokalnem omrežju; glejte [Kamere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 teče tudi na Meta Quest 3 in 3S (Horizon OS v69 ali novejši; gradnja v Horizon Store je navedena samo za ta dva; univerzalni `-release.apk` bi se moral namestiti tudi na Quest 2 ali Quest Pro, ni preizkušeno). Kako ga uporabljati, je opisano v [V očalih Meta Quest 3](#in-the-meta-quest-3-headset); ta razdelek govori o namestitvi in o tem, kaj je v očalih drugače.
 
-Gradnja za očala s strežniki komunicira samo prek HTTPS ali prek navadnega HTTP z imeni domačega omrežja (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) in s samimi očali, kot zahteva Horizon Store. Strežnik, vnesen kot navaden naslov HTTP z IP, na primer `http://192.168.1.10:2283`, ta gradnja zavrne: uporabite HTTPS, ime domačega omrežja (`nas.local`) ali univerzalni `-release.apk`, ki ohranja odprto pravilo telefonov. To ne velja za skupne rabe WebDAV, DLNA in telefona na navadnem naslovu HTTP lokalnega omrežja: aplikacija jih bere sama in svojim predvajalnikom preda samo naslov svojega lokalnega mostu (za DLNA in skupno rabo telefona, novi v gradnji 19, je to v očalih še treba potrditi).
+Gradnja za očala s strežniki komunicira samo prek HTTPS ali prek navadnega HTTP z imeni domačega omrežja (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) in s samimi očali, kot zahteva Horizon Store. Strežnik, vnesen kot navaden naslov HTTP z IP, na primer `http://192.168.1.10:2283`, ta gradnja zavrne: uporabite HTTPS, ime domačega omrežja (`nas.local`) ali univerzalni `-release.apk`, ki ohranja odprto pravilo telefonov. To ne velja za skupne rabe WebDAV, DLNA in telefona na navadnem naslovu HTTP lokalnega omrežja: aplikacija jih bere sama in svojim predvajalnikom preda samo naslov svojega lokalnega mostu (za DLNA in skupno rabo telefona, novi v gradnji 19, je to v očalih še treba potrditi). Od gradnje 20 se strežnik Plex doseže prek HTTPS, kamero Tapo pa doseže aplikacija sama, njeno sliko v živo prek RTSP, ki ni HTTP: nobenega od njiju to ne bi smelo zadevati (treba je potrditi v očalih).
 
 <a id="install"></a>
 ### Namestitev
@@ -576,7 +754,7 @@ Vnos v Horizon Store, oddan z gradnjo 14, čaka na Metin pregled; dokler ni odob
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. V očalih odprite Library (Knjižnica), izberite filter „Unknown sources“ (Neznani viri) in zaženite Immuch360.
@@ -584,7 +762,7 @@ Vnos v Horizon Store, oddan z gradnjo 14, čaka na Metin pregled; dokler ni odob
 
 ### V oknu
 
-Celotna aplikacija teče kot 2D okno s spremenljivo velikostjo: prijava, časovnica, albumi, iskanje, zavihek Knjižnica (seznam 360°, Na tej napravi, Omrežne skupne rabe), nastavitve ter pregledovalnika fotografij in videoposnetkov, kjer se predvajajo ploske fotografije in videoposnetki. V očalih gumb 360° in Prikaži kot 360° v meniju ⋮ neposredno odpreta potopitveni pogled namesto sferičnega pregledovalnika telefonov, gumb Spatial 2.5D in njegova nastavitev pa nista prikazana. Od gradnje 19 ima prostorska fotografija Apple gumb Ogled v 3D, ploščica Deli ta telefon v omrežju pa ni prikazana: očala so tista, ki berejo skupno rabo telefona.
+Celotna aplikacija teče kot 2D okno s spremenljivo velikostjo: prijava, časovnica, albumi, iskanje, zavihek Knjižnica (seznam 360°, Na tej napravi, Omrežne skupne rabe), nastavitve ter pregledovalnika fotografij in videoposnetkov, kjer se predvajajo ploske fotografije in videoposnetki. V očalih gumb 360° in Prikaži kot 360° v meniju ⋮ neposredno odpreta potopitveni pogled namesto sferičnega pregledovalnika telefonov, gumb Spatial 2.5D in njegova nastavitev pa nista prikazana. Od gradnje 19 ima prostorska fotografija Apple gumb Ogled v 3D, ploščica Deli ta telefon v omrežju pa ni prikazana: očala so tista, ki berejo skupno rabo telefona. Od gradnje 20 se v oknu odpirajo tudi strežniki Plex in kamere Tapo, slika v živo kamere v HD; nastavitev „Postavitev za daljinski upravljalnik“ ostane na Samodejno, kar jo v očalih pusti izklopljeno.
 
 ### V slikah
 
@@ -598,7 +776,7 @@ Posnetki zaslona, narejeni v očalih z gumbom za zajem (gumb Meta in sprožilec)
 ### Omejitve v očalih
 
 - **Video kodeki**: HEVC (H.265) je varna izbira; H.264 se ustavi pri približno 4096x2304. Kaj aplikacija preverja in kako očalom dati videoposnetek, ki ga dekodirajo, je v [Podrobnosti videa in dekoderji](#video-details-decoders-and-why-a-video-stutters).
-- **Trgovina**: različica v trgovini se začne z gradnjo 14. Funkcije z oznako „od gradnje 15“ in „od gradnje 16“ pridejo z njeno naslednjo posodobitvijo (gradnja 16, že na preizkusnem kanalu alfa), poznejše za njo; APK z GitHuba jih ima že vse.
+- **Trgovina**: različica v trgovini se začne z gradnjo 14. Funkcije z oznako „od gradnje 15“ in poznejše pridejo z njenimi naslednjimi posodobitvami (preizkusni kanal alfa trgovine, za preizkuševalce, dobi vsako novo gradnjo); APK z GitHuba jih ima že vse.
 - **Dovoljenja**: gradnja za očala zahteva samo fotografije in videoposnetke (način brez strežnika) in obvestila (napredek varnostnega kopiranja). Za razliko od gradnje za telefon nima dovoljenj za shrambo, zvok, lokacijo ali kamero; zato preklapljanje strežnika glede na ime omrežja Wi-Fi v očalih ni na voljo.
 - **Velikost APK**: Spatial SDK doda približno 56 MB izvorne kode ARM 64-bit, tudi na telefonih, kjer se nikoli ne naloži.
 - **Licenca**: potopitveni pogled uporablja Meta Spatial SDK, ki se distribuira pod Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Posnetki zaslona, narejeni v očalih z gumbom za zajem (gumb Meta in sprožilec)
 <a id="where-to-get-it"></a>
 ## Kje jo dobite
 
-Aplikacija je na Google Play; različica za App Store čaka na Applov pregled, različica za Meta Horizon Store pa na Metinega. Izdaja na GitHubu je vedno najnovejša gradnja:
+Aplikacija je na Google Play za telefone in tablice; različica za App Store čaka na Applov pregled, različica za Meta Horizon Store na Metinega, različica Google Play za televizorje pa na Googlov pregled izdaje za televizorje. Izdaja na GitHubu je vedno najnovejša gradnja:
 
 | Platforma | Danes | Kmalu |
 |---|---|---|
-| Telefoni in tablice Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ali APK na strani [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` deluje povsod, `-armeabi-v7a` je za starejše 32-bitne telefone, datoteka `.aab` pa je za Google Play, ne za sideload). Gradnja na GitHubu je običajno pred trgovino. V vsakem primeru se namesti poleg uradne aplikacije Immich (paket `com.aprogsys.immuch360`). | Google Play: gradnji 15 in 16 poslani v Googlov pregled 4. oktobra 2026 (zadnja gradnja, potrjeno objavljena tam, je gradnja 11) |
+| Telefoni in tablice Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ali APK na strani [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` deluje povsod, `-armeabi-v7a` je za starejše 32-bitne telefone, datoteka `.aab` pa je za Google Play, ne za sideload). Gradnja na GitHubu je običajno pred trgovino. V vsakem primeru se namesti poleg uradne aplikacije Immich (paket `com.aprogsys.immuch360`). | Google Play: gradnja 18 je objavljena, gradnja 19 v Googlovem pregledu od 6. oktobra 2026, nato gradnja 20 |
 | iPhone in iPad | Čaka na Applov pregled. Različica v pregledu vsebuje funkcije gradnje 11: nalaganje v Immich in izbira Vir videa (gradnja 15) ter neobdelane datoteke Insta360 (gradnja 16) pridejo s poznejšo posodobitvijo v App Store. Izvorna koda se gradi z Xcode ali na Codemagic, glejte [Zgradite jo sami](#build-it-yourself). | App Store, v pregledu |
-| Meta Quest 3 in 3S | Datoteka `-quest-release.apk` s strani [Releases](https://github.com/freeKC/Immuch360/releases) (deluje tudi univerzalni `-release.apk`), nameščena s sideloadom v načinu za razvijalce, glejte [Namestitev](#install). Gradnja iz trgovine in APK z GitHuba sta podpisana z različnima ključema: za prehod z enega na drugega najprej odstranite aplikacijo (z njo izginejo tudi nastavitve in shranjene skupne rabe). | Meta Horizon Store: gradnja 14 v Metinem pregledu od 3. oktobra 2026; gradnja 16 je na kanalu alfa trgovine (samo za preizkuševalce) |
+| Meta Quest 3 in 3S | Datoteka `-quest-release.apk` s strani [Releases](https://github.com/freeKC/Immuch360/releases) (deluje tudi univerzalni `-release.apk`), nameščena s sideloadom v načinu za razvijalce, glejte [Namestitev](#install). Gradnja iz trgovine in APK z GitHuba sta podpisana z različnima ključema: za prehod z enega na drugega najprej odstranite aplikacijo (z njo izginejo tudi nastavitve in shranjene skupne rabe). | Meta Horizon Store: gradnja 14 v Metinem pregledu od 3. oktobra 2026; kanal alfa trgovine (samo za preizkuševalce) dobi vsako novo gradnjo |
+| Android TV in Google TV (od gradnje 20) | Univerzalni `Immuch360-v<version>-release.apk` s strani [Releases](https://github.com/freeKC/Immuch360/releases), nameščen s sideloadom prek adb, glejte [Namestitev na televizor](#install-it-on-the-tv). To je ista aplikacija kot na telefonih. | Google Play na televizorjih, po Googlovem pregledu izdaje za televizorje |
 
 Povezavi na App Store in Meta Horizon Store bosta dodani tukaj takoj, ko bosta vnosa objavljena. Prijavite se z običajnim naslovom URL strežnika Immich in računom ali se na strani za prijavo dotaknite „Uporabi brez strežnika“, da začnete s fotografijami in videoposnetki same naprave. APK z GitHuba se ne posodablja sam: spremljajte stran Releases, ko pa aplikacijo namestite iz trgovine, posodobitve prejemajte iz te trgovine.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Posnetki zaslona za trgovine so narejeni na razhroščevalnih gradnjah v simulatorju, izdelanih z `--dart-define=IMMUCH_SCREENSHOTS=true`, kar samo skrije razhroščevalni trak. Dve različici (flavor) za Android sta ista aplikacija. `quest` cilja SDK 34 in ohrani samo dovoljenja, ki jih očala uporabljajo (fotografije, videoposnetki, obvestila): upravljanje predstavnosti, lokacija v ozadju, starejša shramba, zvok, lokacija predstavnosti, lokacija naprave in kamera so odstranjeni v `android/app/src/quest/AndroidManifest.xml`, ker Meta Horizon Store prvi dve zavrne in za vsako drugo občutljivo dovoljenje zahteva utemeljitev; ista datoteka navaja Quest 3 in 3S kot podprti napravi in navaden HTTP omeji na sama očala in imena domačega omrežja. APK je samo 64-biten zaradi dveh dodatnih argumentov njegove ukazne vrstice (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` je tisti, ki ga zahteva Google Play. Za gradnjo za iOS na lastnem Macu uporabite Xcode in lastno ekipo za podpisovanje; z Xcode 26 najprej enkrat zaženite `xcodebuild -downloadComponent MetalToolchain`, ker ga potrebujejo senčilniki Spatial. Brez Maca gradnje za iOS tečejo na Codemagic (gostovani Mac) iz datoteke `codemagic.yaml` tega repozitorija. Gradnje izdaj za Android tečejo na GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Posnetki zaslona za trgovine so narejeni na razhroščevalnih gradnjah v simulatorju, izdelanih z `--dart-define=IMMUCH_SCREENSHOTS=true`, kar samo skrije razhroščevalni trak. Dve različici (flavor) za Android sta ista aplikacija. Od gradnje 20 se `phone` deklarira tudi kot aplikacija za televizor (vnos v zaganjalniku televizorja in pasica, zaslon na dotik ni obvezen), česar `quest` nima. `quest` cilja SDK 34 in ohrani samo dovoljenja, ki jih očala uporabljajo (fotografije, videoposnetki, obvestila): upravljanje predstavnosti, lokacija v ozadju, starejša shramba, zvok, lokacija predstavnosti, lokacija naprave in kamera so odstranjeni v `android/app/src/quest/AndroidManifest.xml`, ker Meta Horizon Store prvi dve zavrne in za vsako drugo občutljivo dovoljenje zahteva utemeljitev; ista datoteka navaja Quest 3 in 3S kot podprti napravi in navaden HTTP omeji na sama očala in imena domačega omrežja. APK je samo 64-biten zaradi dveh dodatnih argumentov njegove ukazne vrstice (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` je tisti, ki ga zahteva Google Play. Za gradnjo za iOS na lastnem Macu uporabite Xcode in lastno ekipo za podpisovanje; z Xcode 26 najprej enkrat zaženite `xcodebuild -downloadComponent MetalToolchain`, ker ga potrebujejo senčilniki Spatial. Brez Maca gradnje za iOS tečejo na Codemagic (gostovani Mac) iz datoteke `codemagic.yaml` tega repozitorija. Gradnje izdaj za Android tečejo na GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 V tem repozitoriju ni nobene skrivnosti: podpisni ključ za Android je shranjen kot šifrirane skrivnosti GitHub Actions, Applovo gradivo za podpisovanje pa kot šifrirane spremenljivke na Codemagic. Datoteke workflow se nanje sklicujejo samo po imenu. Brez lastnega `android/key.jks` je gradnja izdaje podpisana z razhroščevalnim ključem in se ne more namestiti čez kopijo z GitHuba ali iz trgovine (najprej odstranite tisto); razhroščevalna gradnja se namesti poleg nje kot Immuch360 debug. Kopija v Meta Horizon Store je APK `quest` iz izdaje, podpisan z drugim ključem, tistim, s katerim je bila aplikacija v trgovini prvotno registrirana, zato se tudi ta ne more namestiti čez APK, nameščen s sideloadom, in obratno.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Od gradnje 19 odjemalec DLNA, skupna raba telefona in zaznavanje prostorske predstavnosti Apple pišejo tudi v dnevnik same aplikacije (Dnevniki, v meniju profilne slike desno zgoraj) pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` in `NetworkMediaService`. Vrstice dnevnika ostanejo v napravi, razen če jih sami kopirate.
+Od gradnje 19 odjemalec DLNA, skupna raba telefona in zaznavanje prostorske predstavnosti Apple pišejo tudi v dnevnik same aplikacije (Dnevniki, v meniju profilne slike desno zgoraj) pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` in `NetworkMediaService`. Od gradnje 20 tja piše način za televizor pod `TvMode` in `TvTextEntry`, strežniki Plex pod `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` in `PlexServerEditPage`, kamere Tapo pa pod `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` in `CameraLiveView`; vrstice Plexa nikoli ne vsebujejo žetona, omrežnega naslova ali naslova vsebine, vrstice kamer pa izpustijo gesla. Vrstice dnevnika ostanejo v napravi, razen če jih sami kopirate.
 
 ## Zasebnost
 
 - **Razvijalcu se nič ne pošilja**: aplikacija komunicira s strežnikom Immich, ki ga izberete (in ko odprete zemljevid, s storitvijo ploščic zemljevida, ki jo ta strežnik uporablja), nima oglasov, analitike ali storitve za poročanje o zrušitvah, ki bi jo upravljal razvijalec, in razvijalcu Immuch360 ne pošilja ničesar.
-- **Brez strežnika** nič ne zapusti naprave.
+- **Brez strežnika** se ne vzpostavi stik z nobenim strežnikom: aplikacija uporablja omrežje samo za skupne rabe, strežnike Plex in kamere, ki jih odprete, ter za skupno rabo telefona, če jo vklopite.
 - **Omrežne skupne rabe**: seznam skupnih rab je shranjen v napravi in se nikoli ne pošlje na strežnik; gesla gredo v obesek za ključe (keychain) ali shrambo ključev (keystore) naprave.
+- **Plex** (od gradnje 20): žeton ostane v varni shrambi naprave in se pošlje samo na vaš lastni strežnik, v glavi zahteve prek HTTPS; aplikacija nikoli ne vzpostavi stika s plex.tv.
+- **Kamere Tapo** (od gradnje 20): geslo računa TP-Link in geslo računa kamere ostaneta v varni shrambi naprave; aplikacija s kamero komunicira samo v lokalnem omrežju, nikoli s strežniki TP-Link; preneseni posnetki ostanejo v predpomnilniku aplikacije in se izbrišejo skupaj s kamero.
+- **Televizor**: ali je naprava televizor, se ugotovi v napravi; nič se ne pošlje.
 - **Skupna raba telefona**: samo lokalno omrežje, z uporabniškim imenom in geslom, prek navadnega HTTP (glejte [Deli ta telefon v omrežju](#share-this-phone-on-the-network)).
 - **Kamera**: uporablja jo samo predvajalnik Spatial 2.5D, v napravi; slike se nikoli ne shranijo in nikamor ne pošljejo.
 
@@ -675,20 +857,25 @@ Ta projekt je fork Immicha in ostaja pod licenco [GNU AGPL v3](LICENSE). Vsak AP
 
 Kar še ni narejeno, najprej najverjetnejše. Nič od tega ni obljuba, povratne informacije v [sledilniku težav](https://github.com/freeKC/Immuch360/issues) pa pomagajo odločiti, kaj pride najprej.
 
-- **Google Play**: gradnji 15 in 16 sta bili 4. oktobra 2026 poslani v Googlov pregled in bosta objavljeni po odobritvi; zadnja gradnja, potrjeno objavljena tam, je gradnja 11.
+- **Google Play**: gradnja 18 je objavljena; gradnja 19 je v Googlovem pregledu od 6. oktobra 2026, gradnja 20 pa sledi.
 - **App Store**: različica 3.3.0 čaka na Applov pregled; vsebuje funkcije gradnje 11, zato nalaganje v Immich in preverjanje video dekoderja (gradnja 15) ter neobdelane datoteke Insta360 (gradnja 16) pridejo z naslednjo posodobitvijo v App Store. Povezava bo dodana tukaj, ko bo objavljena.
-- **Meta Horizon Store**: vnos je bil 3. oktobra 2026 z gradnjo 14 oddan v Metin pregled, gradnja 16 pa je na kanalu alfa trgovine za naslednjo posodobitev. Ko bo vnos odobren, Quest 3 ne bo več potreboval sideloada, povezava na trgovino pa bo dodana tukaj; kopijo, nameščeno s sideloadom, je treba najprej odstraniti (glejte [Namestitev](#install)).
-- **Vnosi v trgovinah**: besedili v Google Play in App Store še opisujeta prve gradnje (fotografije in videoposnetki 360°, neobdelane datoteke, prikazane ploske); predstavili bosta pregledovalnike 3D, VR180 in Spatial, način brez strežnika, omrežne skupne rabe, predstavnostni predvajalnik in neobdelane datoteke Insta360. Besedilo v Meta Horizon Store predstavnostni predvajalnik že predstavlja.
+- **Meta Horizon Store**: vnos je bil 3. oktobra 2026 z gradnjo 14 oddan v Metin pregled, kanal alfa trgovine pa dobi vsako novo gradnjo za naslednjo posodobitev. Ko bo vnos odobren, Quest 3 ne bo več potreboval sideloada, povezava na trgovino pa bo dodana tukaj; kopijo, nameščeno s sideloadom, je treba najprej odstraniti (glejte [Namestitev](#install)).
+- **Vnosi v trgovinah**: vnos v Google Play je bil oktobra 2026 na novo napisan z novimi posnetki zaslona, z izdajo za televizorje pa dobi posnetke zaslona televizorja in pasico za televizor. Besedilo v App Store še opisuje prve gradnje (fotografije in videoposnetki 360°, neobdelane datoteke, prikazane ploske); predstavilo bo pregledovalnike 3D, VR180 in Spatial, način brez strežnika, omrežne skupne rabe, predstavnostni predvajalnik in neobdelane datoteke Insta360. Besedilo v Meta Horizon Store predstavnostni predvajalnik že predstavlja.
 - **Neobdelane datoteke kamer 360°, naprej**: indikator napredka med pripravo neobdelane fotografije za očala; poravnava videoposnetkov GoPro in DJI iz njihovih lastnih podatkov o gibanju; .dng z dvojnim ribjim očesom; poročila z naprav o predvajanju z dvema objektivoma iz gradnje 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) za potrditev šivov in zmogljivosti dekoderjev.
 - **DLNA, skupna raba telefona in prostorska predstavnost Apple, naprej**: poročila z naprav za gradnjo 19 (Plex, Jellyfin, NAS in Freebox Server prek DLNA; telefon, ki streže Questu, tudi prek svoje dostopne točke; resnične prostorske fotografije in videoposnetki z iPhona v očalih); pravica (entitlement) za multicast, zaprošena pri Applu, da bi iPhoni našli vse strežnike DLNA; prejšnji in naslednji med prostorskimi fotografijami v očalih; prostorska značka na fotografijah s strežnika v časovnici; prostorski videoposnetki v 3D na Questu, če to dopuščajo njegovi dekoderji.
 - **Predvajalniki 360° na telefonih, naprej**: časovni trak v predvajalniku videa 360° v iOS (v Androidu ga ima), prejšnji/naslednji v predvajalnikih 360° na telefonih kot v potopitvenem pogledu Questa in fotografije v izvornem predvajalniku videa 360°.
 - **Omrežne skupne rabe, naslednji koraki**: drsenje z ene datoteke mape na naslednjo na straneh fotografije in videoposnetka (potopitveni pogled Questa že prehaja med datotekami 360° v mapi), preverjanje pristnosti Digest za WebDAV, uporabniško ime iz zapisa Bonjour.
 - **Ploski videoposnetki**: izbira zvočne sledi v ploskem predvajalniku, enako za videoposnetke s strežnika, iz naprave in iz skupnih rab (predvajalnika 360° in Spatial jo imata).
+- **Android TV, naslednji koraki**: preizkus gradnje 20 na emulatorju Google TV in na resničnem televizorju, nato izdaja za televizorje na Google Play (posnetki zaslona televizorja, pasica za televizor, Googlov pregled); pozneje kanali na začetnem zaslonu televizorja.
+- **Kamere Tapo, naslednji koraki**: preizkus gradnje 20 z resničnimi kamerami; slika v živo na iPhonu in iPadu; posnetki H.265; predvajanje posnetka med prenašanjem; cel dan posnetkov na eni časovnici.
+- **Plex, naslednji koraki**: preizkus gradnje 20 na napravah (telefoni, Quest, iPhone, televizor, zunaj doma); prenos žetona z računalnika s kodo QR; skritje strani DLNA strežnika Plex na seznamu najdenih strežnikov; IPv6.
 - **Upstream**: majhni pull requesti v Immich za dele, ki jih želijo vzdrževalci, najprej pregledovalnik fotografij 360°.
 
 ## Zahvale
 
 Pregledovalnik fotografij 360° temelji na upstream pull requestu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) avtorja dmitry-brazhenko, ki je sam zgrajen na prototipu avtorja bencefr v [#30192](https://github.com/immich-app/immich/pull/30192). Hvala obema.
+
+Kamere Tapo v gradnji 20 so bile napisane na podlagi tega, kar o teh kamerah dokumentirajo odprtokodni projekti [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) in [python-kasa](https://github.com/python-kasa/python-kasa).
 
 Zakaj fork: ogled 360° na mobilnih napravah se zahteva od januarja 2024 in ga v uradni aplikaciji še ni; pregledovalnik fotografij je v upstreamu v pregledu v [#31169](https://github.com/immich-app/immich/pull/31169). Ta fork ga prinaša že zdaj, zbira povratne informacije z resničnih naprav in bo Immichu v majhnih pull requestih ponudil nazaj, kar koli bodo vzdrževalci želeli. Pogled za Meta Quest temelji na Meta Spatial SDK, ki ni odprtokoden, zato ostaja v tem forku.
 

@@ -1,0 +1,169 @@
+{
+  "MediaContainer": {
+    "size": 5,
+    "totalSize": 5,
+    "offset": 0,
+    "allowSync": true,
+    "art": "/:/resources/movie-fanart.jpg",
+    "content": "secondary",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "00000000-0000-0000-0000-000000000001",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1700000000,
+    "thumb": "/:/resources/movie.png",
+    "title1": "Movies",
+    "title2": "By Folder",
+    "viewGroup": "secondary",
+    "Metadata": [
+      {
+        "key": "/library/sections/1/folder?parent=101",
+        "title": "Holidays"
+      },
+      {
+        "key": "/library/sections/1/folder?parent=102",
+        "title": "Shorts"
+      },
+      {
+        "key": "/library/sections/1/folder?parent=103",
+        "title": "holidays"
+      },
+      {
+        "ratingKey": "201",
+        "key": "/library/metadata/201",
+        "guid": "plex://movie/0000000000000000000000c9",
+        "slug": "test-pattern",
+        "studio": "Test Studio",
+        "type": "movie",
+        "title": "Test Pattern",
+        "contentRating": "G",
+        "summary": "Made up for the tests.",
+        "audienceRating": 7.5,
+        "year": 2020,
+        "tagline": "",
+        "thumb": "/library/metadata/201/thumb/1700000000",
+        "art": "/library/metadata/201/art/1700000000",
+        "duration": 600000,
+        "originallyAvailableAt": "2020-01-01",
+        "addedAt": 1600000201,
+        "updatedAt": 1700000201,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "Image": [
+          {
+            "alt": "Test Pattern",
+            "type": "coverPoster",
+            "url": "/library/metadata/201/thumb/1700000000"
+          }
+        ],
+        "UltraBlurColors": {
+          "topLeft": "000000",
+          "topRight": "000000",
+          "bottomRight": "000000",
+          "bottomLeft": "000000"
+        },
+        "Media": [
+          {
+            "id": 2010,
+            "duration": 600000,
+            "bitrate": 8000,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "hasVoiceActivity": false,
+            "Part": [
+              {
+                "id": 2010,
+                "key": "/library/parts/2010/1700000000/file.mkv",
+                "duration": 600000,
+                "file": "/data/movies/Test Pattern (2020).mkv",
+                "size": 104857600,
+                "container": "mkv",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "ratingKey": "202",
+        "key": "/library/metadata/202",
+        "guid": "plex://movie/0000000000000000000000ca",
+        "slug": "two-parts",
+        "studio": "Test Studio",
+        "type": "movie",
+        "title": "Two Parts",
+        "contentRating": "G",
+        "summary": "Made up for the tests.",
+        "audienceRating": 7.5,
+        "year": 2020,
+        "tagline": "",
+        "thumb": "/library/metadata/202/thumb/1700000000",
+        "art": "/library/metadata/202/art/1700000000",
+        "duration": 120000,
+        "originallyAvailableAt": "2020-01-01",
+        "addedAt": 1600000202,
+        "updatedAt": 1700000202,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "Image": [
+          {
+            "alt": "Two Parts",
+            "type": "coverPoster",
+            "url": "/library/metadata/202/thumb/1700000000"
+          }
+        ],
+        "UltraBlurColors": {
+          "topLeft": "000000",
+          "topRight": "000000",
+          "bottomRight": "000000",
+          "bottomLeft": "000000"
+        },
+        "Media": [
+          {
+            "id": 2020,
+            "duration": 120000,
+            "bitrate": 8000,
+            "width": 1280,
+            "height": 720,
+            "aspectRatio": 1.78,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mp4",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "hasVoiceActivity": false,
+            "Part": [
+              {
+                "id": 2021,
+                "key": "/library/parts/2021/1700000000/file.mp4",
+                "duration": 60000,
+                "file": "/data/movies/Two Parts/Two Parts - pt1.mp4",
+                "size": 2000,
+                "container": "mp4",
+                "videoProfile": "high"
+              },
+              {
+                "id": 2022,
+                "key": "/library/parts/2022/1700000000/file.mp4",
+                "duration": 60000,
+                "file": "/data/movies/Two Parts/Two Parts - pt2.mp4",
+                "size": 3000,
+                "container": "mp4",
+                "videoProfile": "high"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

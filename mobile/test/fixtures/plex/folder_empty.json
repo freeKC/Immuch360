@@ -1,0 +1,15 @@
+{
+  "MediaContainer": {
+    "size": 0,
+    "allowSync": true,
+    "art": "/:/resources/movie-fanart.jpg",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "title1": "Movies",
+    "title2": "By Folder",
+    "viewGroup": "secondary",
+    "offset": 0,
+    "totalSize": 0
+  }
+}

@@ -15,11 +15,15 @@ import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/oauth.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
@@ -76,6 +80,12 @@ class LoginForm extends HookConsumerWidget {
     final warningMessage = useState<String?>(null);
     final loginFormKey = GlobalKey<FormState>();
     final ValueNotifier<String?> serverEndpoint = useState<String?>(null);
+    // The remote control layout (Android TV): the fields are typed in through the native text dialog
+    final tvMode = ref.watch(tvModeProvider);
+    final passwordEntryFocus = useFocusNode(debugLabel: 'Password entry');
+    // A TV that never reached a server is most likely there for the network shares: it starts on "Use without a
+    // server" rather than on the address
+    final neverConnected = useMemoized(() => getServerUrl() == null);
 
     Future<void> checkVersionMismatch() async {
       try {
@@ -482,13 +492,20 @@ class LoginForm extends HookConsumerWidget {
                   onSubmit: getServerAuthSettings,
                   submitText: context.t.next,
                   submitIcon: Icons.arrow_forward_rounded,
-                  builder: (_, form) => ImmichURLInput(
+                  builder: (_, form) => TvTextEntry(
                     controller: serverEndpointController,
                     label: context.t.login_form_endpoint_url,
-                    hintText: context.t.login_form_endpoint_hint,
-                    validator: _validateUrl,
-                    keyboardAction: .next,
-                    onSubmit: (_) => form.submit(),
+                    kind: TvTextKind.url,
+                    autofocus: isLocalSession || !neverConnected,
+                    onSubmitted: (_) => form.submit(),
+                    child: ImmichURLInput(
+                      controller: serverEndpointController,
+                      label: context.t.login_form_endpoint_url,
+                      hintText: context.t.login_form_endpoint_hint,
+                      validator: _validateUrl,
+                      keyboardAction: .next,
+                      onSubmit: (_) => form.submit(),
+                    ),
                   ),
                 ),
                 ImmichTextButton(
@@ -498,11 +515,14 @@ class LoginForm extends HookConsumerWidget {
                   onPressed: () => context.pushRoute(const SettingsRoute()),
                 ),
                 if (!isLocalSession)
-                  ImmichTextButton(
-                    labelText: context.t.login_form_use_without_server,
-                    icon: Icons.cloud_off_rounded,
-                    variant: ImmichVariant.ghost,
-                    onPressed: useWithoutServer,
+                  RemoteInitialFocus(
+                    enabled: tvMode && neverConnected,
+                    child: ImmichTextButton(
+                      labelText: context.t.login_form_use_without_server,
+                      icon: Icons.cloud_off_rounded,
+                      variant: ImmichVariant.ghost,
+                      onPressed: useWithoutServer,
+                    ),
                   ),
               ],
             ),
@@ -529,26 +549,50 @@ class LoginForm extends HookConsumerWidget {
                     builder: (context, form) => Column(
                       spacing: ImmichSpacing.md,
                       children: [
-                        ImmichEmailInput(
+                        TvTextEntry(
                           controller: emailController,
                           label: context.t.email,
-                          hintText: context.t.login_form_email_hint,
-                          validator: _validateEmail,
-                          keyboardAction: TextInputAction.next,
-                          onSubmit: (_) => passwordFocusNode.requestFocus(),
+                          kind: TvTextKind.email,
+                          autofocus: true,
+                          onSubmitted: (_) => passwordEntryFocus.requestFocus(),
+                          child: ImmichEmailInput(
+                            controller: emailController,
+                            label: context.t.email,
+                            hintText: context.t.login_form_email_hint,
+                            validator: _validateEmail,
+                            keyboardAction: TextInputAction.next,
+                            onSubmit: (_) => passwordFocusNode.requestFocus(),
+                          ),
                         ),
-                        ImmichPasswordInput(
+                        TvTextEntry(
                           controller: passwordController,
-                          focusNode: passwordFocusNode,
                           label: context.t.password,
-                          hintText: context.t.login_form_password_hint,
-                          keyboardAction: TextInputAction.go,
-                          onSubmit: (_) => form.submit(),
+                          kind: TvTextKind.password,
+                          focusNode: passwordEntryFocus,
+                          onSubmitted: (_) => form.submit(),
+                          child: ImmichPasswordInput(
+                            controller: passwordController,
+                            focusNode: passwordFocusNode,
+                            label: context.t.password,
+                            hintText: context.t.login_form_password_hint,
+                            keyboardAction: TextInputAction.go,
+                            onSubmit: (_) => form.submit(),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                if (isOauthEnable.value)
+                // OAuth signs in through a web page, which a TV cannot open (Play criterion TV-WB): a line says so
+                if (isOauthEnable.value && tvMode)
+                  Padding(
+                    padding: const EdgeInsets.only(top: ImmichSpacing.md),
+                    child: Text(
+                      context.t.tv_oauth_unavailable(provider: oAuthButtonLabel.value),
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.bodyMedium,
+                    ),
+                  )
+                else if (isOauthEnable.value)
                   ImmichForm(
                     onSubmit: oAuthLogin,
                     submitText: oAuthButtonLabel.value,

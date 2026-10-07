@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.Pair
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.Surface
 import android.view.View
 import android.view.WindowManager
@@ -16,6 +18,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.OptIn
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -34,6 +37,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.Size
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -57,6 +61,7 @@ import app.alextran.immich.core.raw.RawProjection
 import app.alextran.immich.core.raw.RawStitchException
 import app.alextran.immich.core.raw.RawTrack
 import app.alextran.immich.core.raw.TwoLensPlayback
+import app.alextran.immich.tv.isTelevision
 import java.lang.reflect.Field
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -68,6 +73,9 @@ private const val RAW_PROJECTION_TAG = "RawProjection"
 
 /** Opacity of the 3D control while the video shows as a regular 360° video */
 private const val MONO_ALPHA = 0.6f
+
+/** How long the hint for the arrows of a remote stays on screen */
+private const val REMOTE_HINT_MS = 4000L
 
 /**
  * Plays an equirectangular video full screen. The spherical surface of [PlayerView] turns the view with touch
@@ -91,6 +99,10 @@ private const val MONO_ALPHA = 0.6f
  *
  * On close (button, system back, or the system destroying the activity), Flutter gets [SphericalVideoEvents.closed]
  * with the layout and the coverage shown last, so that the corrections of the user can be remembered for the asset.
+ *
+ * With a remote control (Android TV), see [dispatchKeyEvent]: while the controls are hidden, the arrows turn the view
+ * ([RemoteLook]) and OK pauses or resumes and shows the controls; once they show, the keys move between them as
+ * usual, and Back hides them before it closes the player.
  *
  * A raw 360° video comes with its rawProjection JSON (see [RawProjection]) and is drawn as a mono full sphere
  * whatever the file or the controls say, so the 3D and field of view controls hide. Both lenses side by side in one
@@ -158,6 +170,9 @@ class SphericalVideoActivity : ComponentActivity() {
     /** Key of the label of the 3D control itself, in the labels from Flutter */
     private const val LABEL_STEREO = "stereo"
 
+    /** Key of the hint for the arrows of a remote, in the labels from Flutter */
+    private const val LABEL_REMOTE_LOOK_HINT = "remoteLookHint"
+
     /** Keys of the label of the field of view control itself and of its two values, in the labels from Flutter */
     private const val LABEL_COVERAGE = "coverage"
     private const val LABEL_COVERAGE_FULL = "coverage_full"
@@ -179,6 +194,7 @@ class SphericalVideoActivity : ComponentActivity() {
         "The file of the other lens cannot be read. One lens shows: half of the sphere stays black.",
       LABEL_RAW_UNSTITCHED to
         "The 360° stitching failed on this device. The video shows as the camera recorded it.",
+      LABEL_REMOTE_LOOK_HINT to "Arrows to look around, OK to pause and show the controls, Back to close",
     )
 
     /** Key of the name of the layout, in the labels from Flutter */
@@ -296,6 +312,39 @@ class SphericalVideoActivity : ComponentActivity() {
   private lateinit var audioTracks: AudioTrackChooser
   private lateinit var bufferingLabel: TextView
   private lateinit var bufferingIndicator: BufferingIndicator
+  private lateinit var remoteHint: TextView
+
+  /** Turns the view with the arrows of a remote, null without a spherical view */
+  private var remoteLook: RemoteLook? = null
+
+  /** Android TV or Google TV: the hint for the arrows shows with the first frame, before any key */
+  private var television = false
+
+  /** The hint for the arrows showed once in this activity */
+  private var remoteHintShown = false
+
+  /** The playback controls are on screen (or coming), as PlayerView last told */
+  private var controlsShown = false
+
+  /**
+   * The last input was an arrow or OK of a remote, a keyboard or a game pad rather than a touch: Back then hides the
+   * controls before it closes the player. Back itself does not count, so that the back gesture of a phone closes as
+   * before.
+   */
+  private var lastInputWasKey = false
+
+  /** OK went down while the controls were hidden: its release pauses or resumes, whatever shows by then */
+  private var okDownConsumed = false
+
+  private val hideRemoteHint = Runnable { remoteHint.visibility = View.GONE }
+
+  /** Back with a remote: the controls hide first, then the next Back closes the player (see [updateBackCallback]) */
+  private val hideControlsOnBack =
+    object : OnBackPressedCallback(false) {
+      override fun handleOnBackPressed() {
+        playerView.hideController()
+      }
+    }
 
   /** The spherical surface of [playerView] */
   private var sphericalView: SphericalGLSurfaceView? = null
@@ -387,6 +436,10 @@ class SphericalVideoActivity : ComponentActivity() {
       playerView.keepScreenOn = isPlaying
     }
 
+    override fun onRenderedFirstFrame() {
+      if (television) showRemoteHint()
+    }
+
     override fun onTracksChanged(tracks: Tracks) {
       val format = selectedVideoFormat(tracks)
       // The spherical renderer only falls back to the default stereo mode set by the 3D control when the video
@@ -448,9 +501,12 @@ class SphericalVideoActivity : ComponentActivity() {
     val errorMessage = intent.getStringExtra(EXTRA_ERROR_MESSAGE) ?: getString(R.string.spherical_video_error)
 
     // The close button, the title and the audio track, field of view and 3D controls come and go with the playback
-    // controls
+    // controls. Once they show, the arrows move between them: a turn still going on stops.
     playerView.setControllerVisibilityListener(PlayerView.ControllerVisibilityListener { visibility ->
       topBar.visibility = visibility
+      controlsShown = visibility == View.VISIBLE
+      if (controlsShown) remoteLook?.cancel()
+      updateBackCallback()
     })
     playerView.setErrorMessageProvider(ErrorMessageProvider<PlaybackException> { error ->
       Pair.create(error.errorCode, errorMessage)
@@ -468,6 +524,12 @@ class SphericalVideoActivity : ComponentActivity() {
     sphericalView = (playerView.videoSurfaceView as? SphericalGLSurfaceView)?.also {
       it.addVideoSurfaceListener(videoSurfaceListener)
     }
+    remoteLook = sphericalView?.let(::RemoteLook)
+    television = isTelevision(this)
+    remoteHint = findViewById<TextView>(R.id.spherical_video_remote_hint).apply {
+      text = label(LABEL_REMOTE_LOOK_HINT)
+    }
+    onBackPressedDispatcher.addCallback(this, hideControlsOnBack)
     val rawJson = intent.getStringExtra(EXTRA_RAW_PROJECTION)?.takeIf { it.isNotBlank() }
     rawJsonPresent = rawJson != null
     rawProjection = rawProjectionOf(rawJson)
@@ -542,13 +604,86 @@ class SphericalVideoActivity : ComponentActivity() {
     // A dialog, the notification shade or another app may have brought the system bars back
     if (hasFocus) {
       hideSystemBars()
+    } else {
+      // The release of a held arrow goes to the dialog now: the turn would never end
+      remoteLook?.cancel()
     }
   }
 
   override fun onStop() {
     super.onStop()
+    remoteLook?.cancel()
     playerView.onPause()
     releasePlayer()
+  }
+
+  /**
+   * The keys of a remote control, a keyboard or a game pad, before PlayerView, which would only show the controls for
+   * the arrows and OK. While the controls are hidden: the arrows turn the view as long as they are held (repeats
+   * ignored), and OK pauses or resumes, then shows the controls with play and pause focused. Media keys (play, pause,
+   * fast forward, rewind) always reach Media3. Once the controls show, every key goes to them as before.
+   */
+  override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+    val direction = RemoteLookMath.directionOf(event.keyCode)
+    val ok = RemoteLookMath.isOkKey(event.keyCode)
+    if (direction != null || ok) {
+      lastInputWasKey = true
+      updateBackCallback()
+    }
+    val look = remoteLook
+    if (direction != null && look != null) {
+      // The release of an arrow that turns the view, even if the controls showed meanwhile
+      if (event.action == KeyEvent.ACTION_UP && look.isHeld(direction)) {
+        look.stop(direction)
+        return true
+      }
+      if (!playerView.isControllerFullyVisible && !controlsShown) {
+        if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+          look.start(direction)
+          showRemoteHint()
+        }
+        return true
+      }
+    }
+    if (ok) {
+      if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+        okDownConsumed = !playerView.isControllerFullyVisible && !controlsShown
+      }
+      if (okDownConsumed) {
+        if (event.action == KeyEvent.ACTION_UP) {
+          okDownConsumed = false
+          player?.let { Util.handlePlayPauseButtonAction(it) }
+          playerView.showController()
+          showRemoteHint()
+        }
+        return true
+      }
+    }
+    return super.dispatchKeyEvent(event)
+  }
+
+  override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+    if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+      lastInputWasKey = false
+      updateBackCallback()
+      // A finger takes over from the arrows: the view must see one gesture at a time
+      remoteLook?.cancel()
+    }
+    return super.dispatchTouchEvent(event)
+  }
+
+  /** Back hides the controls first only when they show and the remote was used last; else it closes as before */
+  private fun updateBackCallback() {
+    hideControlsOnBack.isEnabled = lastInputWasKey && controlsShown
+  }
+
+  /** "Arrows to look around..." for a few seconds, once */
+  private fun showRemoteHint() {
+    if (remoteHintShown) return
+    remoteHintShown = true
+    remoteHint.visibility = View.VISIBLE
+    remoteHint.removeCallbacks(hideRemoteHint)
+    remoteHint.postDelayed(hideRemoteHint, REMOTE_HINT_MS)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -578,6 +713,7 @@ class SphericalVideoActivity : ComponentActivity() {
       SphericalVideoApiImpl.notifyClosed(currentStereoLayout() ?: stereoLayout, coverage)
     }
     sphericalView?.removeVideoSurfaceListener(videoSurfaceListener)
+    remoteHint.removeCallbacks(hideRemoteHint)
     super.onDestroy()
   }
 
@@ -688,6 +824,7 @@ class SphericalVideoActivity : ComponentActivity() {
         plan = plan.copy(firstFrameMessage = null)
         showRawMessage(message)
       }
+      if (television) showRemoteHint()
     }
 
     override fun onStitchError(error: Exception) {
@@ -1167,6 +1304,7 @@ class SphericalVideoActivity : ComponentActivity() {
     // The video fills the whole screen, the controls stay clear of the camera cutout and of the system bars
     val controller = playerView.findViewById<View>(androidx.media3.ui.R.id.exo_controller)
     val bufferingMargin = (bufferingLabel.layoutParams as FrameLayout.LayoutParams).bottomMargin
+    val remoteHintMargin = (remoteHint.layoutParams as FrameLayout.LayoutParams).topMargin
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.spherical_video_root)) { _, insets ->
       val safe = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
       topBar.updateLayoutParams<FrameLayout.LayoutParams> {
@@ -1176,6 +1314,7 @@ class SphericalVideoActivity : ComponentActivity() {
       }
       controller?.updatePadding(left = safe.left, right = safe.right, bottom = safe.bottom)
       bufferingLabel.updateLayoutParams<FrameLayout.LayoutParams> { bottomMargin = bufferingMargin + safe.bottom }
+      remoteHint.updateLayoutParams<FrameLayout.LayoutParams> { topMargin = remoteHintMargin + safe.top }
       insets
     }
   }

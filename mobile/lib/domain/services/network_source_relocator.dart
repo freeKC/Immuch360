@@ -1,7 +1,7 @@
 // A share found on the network keeps the id its server announces (the UPnP UDN of a DLNA media server, the TXT id of
-// a phone share), not only its address. When the address stops answering (a phone or a box given another address by
-// the router, a media server restarted on another port), one discovery finds the server again by that id, so that the
-// user does not have to edit the share.
+// a phone share, the machine id of a Plex server, the MAC address of a Tapo camera), not only its address. When the
+// address stops answering (a phone or a box given another address by the router, a media server restarted on another
+// port), one discovery finds the server again by that id, so that the user does not have to edit the share.
 
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
@@ -30,6 +30,12 @@ class NetworkSourceRelocator {
     if (server == null) {
       return null;
     }
+    // Only the server holding the certificate of the stored hash may get the token: another one announcing the same
+    // machine id is ignored. The stored hash is lower case, as in the plex.direct names
+    if (source.type == NetworkSourceType.plex &&
+        (server.plexHash == null || server.plexHash!.toLowerCase() != source.plex?.hash)) {
+      return null;
+    }
 
     // The description of a DLNA server may move as well (Jellyfin puts its server id in the path)
     final share = source.type == NetworkSourceType.dlna && server.path.isNotEmpty ? server.path : source.share;
@@ -44,5 +50,7 @@ class NetworkSourceRelocator {
   static int _defaultPort(NetworkSource source) => switch (source.type) {
     NetworkSourceType.smb => 445,
     NetworkSourceType.webdav || NetworkSourceType.dlna => source.useTls ? 443 : 80,
+    NetworkSourceType.plex => 32400,
+    NetworkSourceType.tapo => 443,
   };
 }

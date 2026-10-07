@@ -6,6 +6,7 @@ import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/theme/color_scheme.dart';
@@ -125,7 +126,7 @@ class PrimaryColorSetting extends HookConsumerWidget {
               children: ImmichColorPreset.values.map((preset) {
                 final theme = preset.themeOfPreset;
 
-                return GestureDetector(
+                return RemoteFocusable(
                   onTap: () => onPrimaryColorChange(preset),
                   child: buildPrimaryColorTile(
                     topColor: theme.light.primary,

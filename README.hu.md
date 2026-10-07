@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Az Immuch360 az Immich mobilalkalmazása körbenézhető 360°-os fotókkal és videókkal, valamint ingyenes lejátszó sík, 360°-os, 3D és VR180 fotókhoz és videókhoz, Android telefonokon és táblagépeken, iPhone-on és iPaden, valamint Meta Quest 3 és 3S headseten. Azoknak szól, akik 360°-os kamerával (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) vagy a telefon gömbpanoráma-módjával fényképeznek, vagy akiknek headsetjük van, és a saját felvételeiket szeretnék nézni egy Immich szerverről, magáról a telefonról, egy NAS-ról vagy egy médiaszerverről: ugyanaz a szerver, ugyanaz a fiók, szerverbővítmény nélkül, vagy akár szerver nélkül.
+Az Immuch360 az Immich mobilalkalmazása körbenézhető 360°-os fotókkal és videókkal, valamint ingyenes lejátszó sík, 360°-os, 3D és VR180 fotókhoz és videókhoz, Android telefonokon és táblagépeken, iPhone-on és iPaden, a Meta Quest 3 és 3S headseten, valamint a 20-as buildtől Android TV-n és Google TV-n. Azoknak szól, akik 360°-os kamerával (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) vagy a telefon gömbpanoráma-módjával fényképeznek, vagy akiknek headsetjük van, és a saját felvételeiket szeretnék nézni egy Immich szerverről, magáról a telefonról, egy NAS-ról, egy médiaszerverről vagy egy Plex szerverről: ugyanaz a szerver, ugyanaz a fiók, szerverbővítmény nélkül, vagy akár szerver nélkül. A 20-as buildtől a Tapo kamerákat is megjeleníti, élőben és a memóriakártyájuk felvételeivel.
 
 <p align="center">
   <sub>Nem hivatalos fork. Nem áll kapcsolatban az Immichhel és a FUTO-val. A név kiejtése: „I am much 360”.</sub>
@@ -15,7 +15,8 @@ Az Immuch360 az Immich mobilalkalmazása körbenézhető 360°-os fotókkal és 
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">ellenőrzés alatt</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store ellenőrzés alatt
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store ellenőrzés alatt &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Az Immuch360 az Immich mobilalkalmazása körbenézhető 360°-os fotókkal és 
     <td align="center" width="33%"><h3>🎥 Natív 2.5D</h3>Mélység sík képernyőn egy sztereoszkópikus videóból, a nézet követi a fejét (kísérleti, telefonok és táblagépek)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Egy alkalmazás, három platform, valódi 3D a headsetben</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Egy alkalmazás telefonokon, táblagépeken és a headseten, valódi 3D a headsetben, a 20-as buildtől pedig Android TV-n, távirányítóval</td>
     <td align="center"><h3>🔌 Szerverrel vagy anélkül</h3>Az Ön Immich szervere, vagy a telefon saját galériája, fiók nélkül</td>
     <td align="center"><h3>🗄️ Hálózati megosztások</h3>Samba (SMB), WebDAV és a 19-es buildtől DLNA médiaszerverek, a hálózaton megtalálva és élőben olvasva, semmi sem töltődik le, és ha úgy dönt, elküldhetők az Immichbe. A 19-es buildtől egy telefon a saját galériáját is megoszthatja a headsettel</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 A tévén</h3>A 20-as buildtől ugyanaz az APK Android TV-n és Google TV-n: 360°-os fotók és videók, a szervere és a megosztásai, távirányítóval</td>
+    <td align="center"><h3>🎬 Plex, plex.tv nélkül</h3>A 20-as buildtől a Plex-könyvtárai, az eredeti fájlokból lejátszva, hogy a 360° 360° maradjon, otthon és otthonon kívül is</td>
+    <td align="center"><h3>📹 Tapo kamerák</h3>A 20-as buildtől az élő kép és a memóriakártya felvételei, csak az Ön hálózatán, és egy klip az Immichbe küldve, amikor Ön úgy dönt</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Az Immuch360 az Immich mobilalkalmazása körbenézhető 360°-os fotókkal és 
 - **„A 360°-os fotóim lapos, megnyújtott csíkként jelennek meg, a 360°-os videóim pedig síkban játszódnak le.”** Lásd: [360°-os fotók és videók gömbként](#360-photos-and-videos-as-a-sphere).
 - **„Nincs szerverem, és nem szeretnék fiókot.”** Lásd: [Szerver és fiók nélkül](#without-a-server-or-an-account).
 - **„A NAS-omon lévő videókat szeretném nézni a telefonon vagy a headsetben, másolás nélkül.”** Lásd: [Hálózati megosztások](#network-shares-a-nas-a-computer-or-a-media-server).
+- **„A Plex síkban játssza le a 360°-os videóimat, és a Plex-könyvtáramat a headsetben, a tévén és otthonon kívül is látni szeretném.”** Lásd: [Plex Media Server, plex.tv nélkül](#plex-media-server-without-plextv).
 - **„A fotóim a telefonomon vannak, és nincs számítógépem vagy NAS-om, ahová a headset számára feltehetném őket.”** Lásd: [A telefon megosztása a hálózaton](#share-this-phone-on-the-network).
+- **„Látni szeretném a Tapo kamerámat és az előző éjszaka klipjeit a Tapo alkalmazás nélkül, és egy klipet megtartanék az Immichben.”** Lásd: [Tapo kamerák](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **„Az Insta360 fájljaimhoz kell az Insta360 alkalmazás, mielőtt megnézhetném őket”** (és a GoPro .360 és DJI .osv fájlokhoz is). Lásd: [Nyers 360°-os kamerafájlok](#raw-360-camera-files-without-the-cameras-app).
 - **„A 3D videóim duplán látszanak, a VR180 videóim pedig körbe vannak nyújtva.”** Lásd: [3D és VR180](#3d-and-vr180-photos-and-videos) és [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **„Vannak térbeli fotóim az iPhone-omról.”** Lásd: [Apple térbeli fotók és videók](#apple-spatial-photos-and-videos).
 - **„A telefonon működik, de a Questben szeretném.”** Lásd: [A Meta Quest 3 headsetben](#in-the-meta-quest-3-headset).
+- **„A 360°-os fotóimat és videóimat, valamint a NAS-om vagy a Plex szerverem videóit a tévén szeretném nézni, távirányítóval.”** Lásd: [Nézés a tévén](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Nem találom a 360°-os felvételeimet a többi között.”** Lásd: [A 360°-os lista](#find-your-360-shots-the-360-list).
 - **„A 360°-os videóm akadozik, vagy egy elmosódott másolat játszódik le.”** Lásd: [Videóadatok és dekóderek](#video-details-decoders-and-why-a-video-stutters).
 - **„Megmarad minden, amit az Immich alkalmazás tud?”** Igen, két apró eltéréssel, lásd: [Minden más Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ A választást a telefon megjegyzi, és a szerveren semmi sem változik. Hálóz
 
 Nincs Immich szervere, vagy nem szeretne fiókot: csak azt szeretné, hogy a telefonja 360°-os fotói giroszkóppal forgatható gömbként nyíljanak meg. Az Immich alkalmazás először bejelentkezést kér.
 
-A bejelentkezési oldalon a „Használat szerver nélkül” az eszköz saját fotóin és videóin nyitja meg az Immuch360-at, a 360°-os, 3D, VR180 és Spatial nézegetőkkel, a 360°-os listával és a hálózati megosztásokkal, Immich fiók nélkül. A szerverfunkciók rejtve vagy kiszürkítve maradnak, amíg nem csatlakoztat egy szervert; semmi sem hagyja el az eszközt. Meta Quest 3-on a headset saját fotóit és videóit nyitja meg.
+A bejelentkezési oldalon a „Használat szerver nélkül” az eszköz saját fotóin és videóin nyitja meg az Immuch360-at, a 360°-os, 3D, VR180 és Spatial nézegetőkkel, a 360°-os listával és a hálózati megosztásokkal (a 20-as buildtől a Plex szerverekkel és a Tapo kamerákkal is), Immich fiók nélkül. A szerverfunkciók rejtve vagy kiszürkítve maradnak, amíg nem csatlakoztat egy szervert; semmi sem hagyja el az eszközt. Meta Quest 3-on a headset saját fotóit és videóit nyitja meg; egy tévén, amelynek nincsenek ilyenek, a hálózati megosztásokhoz irányít (lásd [Nézés a tévén](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="A Képtár lap szerver nélkül: felül a 360° elem, alatta Ezen az eszközön két 360°-os fotóval, és Hálózati megosztások egy NAS nevű megosztással">
 
@@ -126,7 +135,7 @@ A bejelentkezési oldalon a „Használat szerver nélkül” az eszköz saját 
 
 A 360°-os videói egy NAS-on vagy számítógépen vannak, és a telefonon vagy a headsetben szeretné nézni őket, előzetes másolás nélkül. A headsetnél az emberek végül minden fájlt kábelen másolnak át; a Plexhez és a Jellyfinhez hasonló médiaszerverek síkban játsszák le a 360°-os videókat, ahogy a fórumaikon olvasható kérések is leírják; az Immich alkalmazás csak az Ön Immich szerverét olvassa.
 
-Az Immuch360 bármely SMB (Samba, Windows), WebDAV vagy a 19-es buildtől DLNA/UPnP protokollt beszélő szerver (médiaszerver: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS vagy TV-okosdoboz) fotóit és videóit böngészi és játssza le, közvetlenül a megosztásról. Magától megtalálja a hálózat szervereit, és a fájlokat élőben játssza le ugyanazokban a nézegetőkben, mint az alkalmazás többi része (360°, 3D, VR180, Spatial 2.5D, a Quest immerzív nézete), Immich szerverrel vagy anélkül, telefonokon és a Meta Quest 3-on. Semmi sem töltődik le. Ha van csatlakoztatott szerver, a kiválasztott fájlok elküldhetők az Immich fiókjába (a 15-ös buildtől).
+Az Immuch360 bármely SMB (Samba, Windows), WebDAV vagy a 19-es buildtől DLNA/UPnP protokollt beszélő szerver (médiaszerver: Jellyfin, minidlna, Gerbera, Emby, NAS vagy TV-okosdoboz) fotóit és videóit böngészi és játssza le, közvetlenül a megosztásról. A 20-as buildtől a Plex Media Servernek saját típusa van, lásd [Plex Media Server, plex.tv nélkül](#plex-media-server-without-plextv). Magától megtalálja a hálózat szervereit, és a fájlokat élőben játssza le ugyanazokban a nézegetőkben, mint az alkalmazás többi része (360°, 3D, VR180, Spatial 2.5D, a Quest immerzív nézete), Immich szerverrel vagy anélkül, telefonokon és a Meta Quest 3-on. Semmi sem töltődik le. Ha van csatlakoztatott szerver, a kiválasztott fájlok elküldhetők az Immich fiókjába (a 15-ös buildtől).
 
 | Megosztás hozzáadása | Egy megosztás mappája |
 |---|---|
@@ -135,10 +144,10 @@ Az Immuch360 bármely SMB (Samba, Windows), WebDAV vagy a 19-es buildtől DLNA/U
 
 ### Megosztás hozzáadása
 
-1. Nyissa meg a Képtár lapot, majd a Hálózati megosztásokat. Első alkalommal az oldalon a „Még nincs megosztás” szöveg és egy „Megosztás hozzáadása” gomb látható; a jobb felső + bármikor ugyanezt teszi.
-2. A „Megosztás hozzáadása” oldal először megkeresi a hálózat szervereit, és „A hálózaton található” alatt sorolja fel őket a típusukkal (SMB, WebDAV, DLNA, Telefon). A keresés legfeljebb körülbelül hat másodpercig tart; az „Újrakeresés” újraindítja. Bonjour/mDNS-t és a helyi hálózat valódi SMB- vagy WebDAV-kommunikációval megerősített átvizsgálását használja, a 19-es buildtől pedig SSDP-keresést a DLNA médiaszerverekhez.
-3. Koppintson egy szerverre: a típus, a szerver, a port és az útvonal kitöltődik.
-4. Nincs a listában? Töltse ki kézzel az űrlapot. Típus: „SMB (Samba, Windows-megosztás)”, „WebDAV (Nextcloud, Synology és mások)” vagy „DLNA médiaszerver (Plex, Jellyfin, NAS, TV-okosdoboz)”. Majd Név, „Szerver neve vagy címe” (név vagy cím; egy teljes cím, például `smb://nas/photos`, `\\nas\photos` vagy `https://nas:5006/photos` a többi mezőt is kitölti), „Port (opcionális)”, ha nem a szokásos, SMB esetén „Megosztás”, WebDAV esetén „A WebDAV-cím útvonala”, „Kezdőmappa (opcionális)”, „Felhasználónév” és „Jelszó”, valamint WebDAV esetén „Biztonságos kapcsolat (HTTPS)”.
+1. Nyissa meg a Képtár lapot, majd a Hálózati megosztásokat. Első alkalommal az oldalon a „Még nincs megosztás” szöveg és egy „Megosztás hozzáadása” gomb látható; a jobb felső + bármikor ugyanezt teszi. A 20-as buildtől mindkettő megkérdezi, mit szeretne hozzáadni: „Hálózati megosztás (NAS, számítógép, médiaszerver)”, „Plex Media Server” vagy „Tapo kamera”. Válassza az elsőt.
+2. A „Megosztás hozzáadása” oldal először megkeresi a hálózat szervereit, és „A hálózaton található” alatt sorolja fel őket a típusukkal (SMB, WebDAV, DLNA, Telefon, a 20-as buildtől Plex és Tapo). A keresés legfeljebb körülbelül hat másodpercig tart; az „Újrakeresés” újraindítja. Bonjour/mDNS-t és a helyi hálózat valódi SMB- vagy WebDAV-kommunikációval megerősített átvizsgálását használja, a 19-es buildtől SSDP-keresést a DLNA médiaszerverekhez, a 20-as buildtől pedig a GDM-et, a Plex felderítését, és a TP-Link felderítési protokollját a Tapo kamerákhoz.
+3. Koppintson egy szerverre: a típus, a szerver, a port és az útvonal kitöltődik. Egy Plex szerver vagy egy Tapo kamera ehelyett a saját, kitöltött oldalát nyitja meg.
+4. Nincs a listában? Töltse ki kézzel az űrlapot. Típus: „SMB (Samba, Windows-megosztás)”, „WebDAV (Nextcloud, Synology és mások)”, „DLNA médiaszerver (Jellyfin, NAS, TV-okosdoboz)” vagy a 20-as buildtől „Plex Media Server”, amely a [Plex Media Server, plex.tv nélkül](#plex-media-server-without-plextv) oldalát nyitja meg. Majd Név, „Szerver neve vagy címe” (név vagy cím; egy teljes cím, például `smb://nas/photos`, `\\nas\photos` vagy `https://nas:5006/photos` a többi mezőt is kitölti), „Port (opcionális)”, ha nem a szokásos, SMB esetén „Megosztás”, WebDAV esetén „A WebDAV-cím útvonala”, „Kezdőmappa (opcionális)”, „Felhasználónév” és „Jelszó”, valamint WebDAV esetén „Biztonságos kapcsolat (HTTPS)”.
 5. SMB: miután beírta a szervert és a felhasználónevet, a „Válasszon megosztást” felsorolja a szerver megosztásait.
 6. DLNA: a médiaszervernek nincs felhasználóneve és jelszava. Adja meg a szervert, a portot és az eszközleírás „Leírás elérési útja” mezőjét (minidlna esetén `/rootDesc.xml`), vagy illessze be a teljes címet, például `http://192.168.1.10:8200/rootDesc.xml`, a szerver mezőbe.
 7. Koppintson a „Kapcsolat tesztelése” gombra. A válasz „Kapcsolódva, N elem a kezdőmappában”, vagy a hiba oka. Ezután koppintson az űrlap alján lévő Mentés gombra.
@@ -155,6 +164,7 @@ Az üres jelszavú felhasználónevet az alkalmazás így küldi el: egy Freebox
 
 A 360°-ot, a 3D-t és a VR180-at az alkalmazás a fájl GPano vagy gömbi metaadataiból ismeri fel, tartománykérésekkel olvasva, a VR180-at a fájlnévből is. A 16-os buildtől a nyers Insta360 fájlokat is felismeri (egy .insp fotót a nevéről vagy a kamera kalibrációs blokkjáról, egy .insv videót a nevéről és a képkockájáról), és összeilleszti őket.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Megosztás fájljainak küldése az Immichbe
 
 A 15-ös buildtől, ha csatlakozott egy szerverhez:
@@ -177,17 +187,67 @@ A 19-es buildtől az alkalmazás elküldi a médiaszerverek SSDP-keresését a h
 <a id="a-share-that-moved"></a>
 ### Elköltözött megosztás
 
-A 19-es buildtől egy DLNA-megosztás és egy telefonos megosztás (lásd [A telefon megosztása a hálózaton](#share-this-phone-on-the-network)) megőrzi a szervere által közölt azonosítót. Ha az egyik már nem válaszol a címén (a router új címet adott, a szerver más porton indult újra), a mappaoldalán ez jelenik meg: „(név) keresése a hálózaton”, és a megosztást oda helyezi át, ahol most válaszol: egy DLNA-szervernél azonnal, mivel annak nincs jelszava, felhasználónévvel és jelszóval védett megosztásnál pedig egy megerősítés után („Az új címet használja?”), amely mindkét címet mutatja, mivel ezek az új címre kerülnének elküldésre.
+A 19-es buildtől egy DLNA-megosztás és egy telefonos megosztás (lásd [A telefon megosztása a hálózaton](#share-this-phone-on-the-network)) megőrzi a szervere által közölt azonosítót. Ha az egyik már nem válaszol a címén (a router új címet adott, a szerver más porton indult újra), a mappaoldalán ez jelenik meg: „(név) keresése a hálózaton”, és a megosztást oda helyezi át, ahol most válaszol: egy DLNA-szervernél azonnal, mivel annak nincs jelszava, felhasználónévvel és jelszóval védett megosztásnál pedig egy megerősítés után („Az új címet használja?”), amely mindkét címet mutatja, mivel ezek az új címre kerülnének elküldésre. A 20-as buildtől a hálózat egy másik címén újra megtalált Plex szerver is azonnal áthelyeződik: a tanúsítványa bizonyítja, hogy ugyanaz a szerver, mielőtt a token elküldésre kerülne. Egy Tapo kamerát a saját oldaláról keres meg a MAC-címe alapján, lásd [Tapo kamerák](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Korlátok
 
 - **SMB**: csak SMB 2 és 3, SMB 1 nem.
 - **WebDAV**: csak Basic hitelesítés (a Digest még nem támogatott); egy önaláírt HTTPS-tanúsítványt telepíteni kell az eszközre.
-- **Szerverek keresése**: a hálózat átvizsgálása és a DLNA-keresés csak a helyi /24 hálózatot nézi, és iOS-en a helyi hálózati engedélyt igényli. iPhone-on és iPaden a DLNA-keresés csak unicast kéréseket küld, amíg az Apple meg nem adja az alkalmazásnak a multicast jogosultságot (entitlement), és egyes szerverek nem válaszolnak ezekre (minidlna Linuxon): ezeket a leíráscímükkel adja hozzá.
+- **Szerverek keresése**: a hálózat átvizsgálása, valamint a DLNA-, Plex- és Tapo-keresés csak a helyi /24 hálózatot nézi, és iOS-en a helyi hálózati engedélyt igényli. iPhone-on és iPaden a DLNA-keresés csak unicast kéréseket küld, amíg az Apple meg nem adja az alkalmazásnak a multicast jogosultságot (entitlement), és egyes szerverek nem válaszolnak ezekre (minidlna Linuxon): ezeket a leíráscímükkel adja hozzá.
 - **DLNA**: az a szerver, amely egy fájlnak csak átalakított másolatát kínálja, azt a másolatot adja; egy mappa legfeljebb 20 000 elemet listáz.
 - **Bélyegképek**: a fotók bélyegképe a teljes fájlt dekódolja, a 30 MB feletti fotók nem kapnak bélyegképet.
 - **Lejátszók**: a hangsáv kiválasztása a sík lejátszóban még nem érhető el. Telefonon még nem lehet egy mappa egyik fájljáról a következőre lapozni (a Quest immerzív nézetében van előző és következő a mappa 360°-os fájljaihoz). A hálózati fájlon választott 3D vagy 180° beállítást az alkalmazás nem jegyzi meg.
 - **Feltöltések**: csak akkor futnak, amíg az alkalmazás nyitva van, és a szerveren már meglévő fájl is teljes egészében elküldésre kerül, mielőtt a szerver duplikátumként jelzi.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, plex.tv nélkül
+
+A videói a Plexben vannak, és a Plex síkban mutatja a 360°-os fotóit és videóit, ahogy a fórumán lévő kérések leírják (az egyik 2017 óta nyitott). Ezt a könyvtárat a headsetben, a tévén és otthonon kívül is szeretné látni. Az Immich alkalmazás csak az Immich szerverét olvassa, a 19-es build DLNA-típusa pedig csak otthon éri el a Plex DLNA-oldalát.
+
+A 20-as buildtől az Immuch360 közvetlenül párosodik a Plex Media Serverrel, plex.tv nélkül: megtalálja a szervert a hálózaton, Ön egyszer beilleszt egy tokent, és az alkalmazás élőben olvassa a könyvtárai eredeti fájljait, az alkalmazás minden nézegetőjében (360°, 3D, VR180, Spatial 2.5D, a Quest immerzív nézete, a tévé távirányítója), otthon és a porttovábbításon keresztül otthonon kívül is. Semmi sem másolódik, és a kiválasztott fájlok elküldhetők az Immichbe.
+
+### Plex szerver hozzáadása
+
+1. Nyissa meg a Képtár lapot, majd a Hálózati megosztásokat, majd a + gombot és a „Plex Media Server” elemet. A megosztási űrlap „Plex Media Server” típusa és egy Plex címkéjű szerver „A hálózaton található” alatt ugyanezt az oldalt nyitja meg.
+2. A „Plex szerver hozzáadása” oldal megkeresi a hálózat Plex szervereit („Plex szerverek keresése a hálózatán”), és „A hálózaton található” alatt sorolja fel őket. Koppintson a sajátjára: egy kártya mutatja a nevét, a Plex-verzióját és egy rövid azonosítót.
+3. Nincs a listában? Írja be a „Szerver címe” mezőbe, például `192.168.1.20`, `192.168.1.20:32400` vagy `https://...plex.direct:32400`, majd koppintson a „Keresés” gombra. Az alkalmazás beolvassa a szerver tanúsítványát, és semmi mást nem küld.
+4. Szerezze be a tokent egy számítógépen: nyissa meg a Plexet egy webböngészőben, és jelentkezzen be, nyissa meg a könyvtára bármely fotóját vagy videóját, majd „...”, „Get Info”, „View XML”. Egy új lap nyílik meg egy `X-Plex-Token=...` végű címen. Másolja ki ezt a teljes címet.
+5. Illessze be a „Hozzáférési token” mezőbe, vagy küldje át a telefonra, és koppintson a „Beillesztés a vágólapról” gombra: az alkalmazás kiveszi belőle a szervert és a tokent. Az `X-Plex-Token=` utáni szöveg önmagában is működik. Az oldalon a „Hogyan szerezheti meg” ugyanezt mondja; a szerver rendszergazdái a `PlexOnlineToken` értéket is használhatják a szerver `Preferences.xml` fájljából, amely nem jár le. Tévén az OK megnyitja a billentyűzet párbeszédablakát: ott írja be a tokent (általában 20 karakter).
+6. Koppintson a „Kapcsolat tesztelése” gombra. A válasz „Csatlakozva: N könyvtár”, vagy az, hogy mi a hiba, például „A Plex szerver elutasította ezt a tokent.”
+7. Az „Elérés otthonon kívülről” ezután megmutatja, mit mond a szerver: „A szerver szerint elérhető itt: (cím):(port).”, vagy „A szerver nem adta meg az otthonon kívüli címét.” A szerver otthonon kívüli használatához írja be a nyilvános címét vagy DynDNS-nevét az „Otthonon kívüli cím (IP vagy név)” mezőbe, a Plexben (Beállítások, Távoli elérés) továbbított portot pedig az „Otthonon kívüli port” mezőbe. Amit Ön beír, mindig felülírja azt, amit a szerver mond.
+8. A „Név” a szerver neve, hacsak meg nem változtatja, a „Kezdőmappa (opcionális)” pedig közvetlenül megnyithat egy könyvtárat. Koppintson a Mentés gombra. A szerver a megosztások között jelenik meg, `plex://` előtaggal és a címével.
+
+### A Plex-könyvtárak böngészése
+
+1. Koppintson a szerverre a Hálózati megosztások között. Az első szint az alkalmazás által megjelenített könyvtárakat sorolja fel: fotók, filmek és egyéb videók, tévésorozatok. A zene kimarad.
+2. Egy könyvtár alatt a mappái következnek úgy, ahogy a szerver lemezén vannak (a Plex „mappa szerinti” nézete), majd a fotók és videók a fájlnevükkel, a Plex által készített bélyegképekkel. Az a fotókönyvtár, amelynek mappanézete nem válaszol, helyette az albumait mutatja.
+3. A 360°-ot és a 3D-t maguknak a fájloknak a beolvasásával ismeri fel, mint bármely megosztáson: a 360°-os fotók 360°-os jelvényt kapnak, az Apple térbeli fotók 3D jelvényt.
+4. Nyisson meg egy fotót vagy videót, mint bármely megosztáson: 360°, 3D, 360°/180°, Spatial 2.5D telefonon, az immerzív nézet a Questben, a távirányító a tévén. A videó eredeti fájlként, bájttartományokkal olvasódik be az alkalmazás helyi hídján keresztül, így a tekerés működik, és a 360°-os és 3D metaadatai épen jutnak el a lejátszókhoz.
+5. Jelöljön ki fájlokat, és koppintson a „Feltöltés az Immichbe” gombra, hogy elküldje őket a szerverére, mint bármely megosztásról (lásd [Megosztás fájljainak küldése az Immichbe](#send-files-of-a-share-to-immich)).
+
+### Otthonon kívül
+
+Minden alkalommal, amikor megnyitja a szervert, az alkalmazás előbb az otthoni címet próbálja, majd 400 ms-mal később az otthonon kívüli címet. Az első, amelyik az Ön szerverével válaszol, lesz használva; ha ez az otthonon kívüli cím, a mappaoldal egy földgömb ikont mutat „Csatlakozva az otthonon kívüli címen keresztül” felirattal. Ehhez a Plexben be kell kapcsolni a Távoli elérést (Beállítások, Távoli elérés), a routeren továbbított porttal: plex.tv nélkül az alkalmazás nem használhatja a Plex relay-ét, így a porttovábbítás nélküli szerver csak otthon nyílik meg, otthonon kívül pedig az oldal ezt mondja: „A Plex szerver nem érhető el az otthoni hálózaton kívülről. Kapcsolja be a távoli elérést porttovábbítással a Plexben (Beállítások, Távoli elérés), vagy írja be a nyilvános címét.”
+
+A szerver által közölt címet az alkalmazás minden otthoni csatlakozáskor újra megtanulja. Ha kívülről nem válaszol (címet váltó router, két egymás utáni router), írja be a sajátját a szerver oldalán. Ha a token már nem működik (például kijelentkezett abból a böngésző-munkamenetből, ahonnan kimásolta), a mappaoldal jelzi ezt, és felajánlja az „Új token beillesztése” lehetőséget, amely a szerver oldalát a token mezőnél nyitja meg.
+
+### Összehasonlítás a Plexszel és a DLNA-típussal
+
+- **Az eredeti fájlok**: az alkalmazás magukat a fájlokat olvassa, soha nem a Plex által átalakított másolatot, így a 360°-os, 3D és VR180 metaadatok épek maradnak, és az alkalmazás nézegetői használják őket, míg a Plex alkalmazásai síkban mutatják ezeket a fájlokat.
+- **Nincs plex.tv**: az alkalmazás csak az Ön szerverével beszél, mindig HTTPS-en. A szervert a saját, a szerver azonosítójához kötött plex.direct tanúsítványa alapján ellenőrzi, mielőtt a token elküldésre kerülne. A token az eszközön marad, annak biztonságos tárolójában, és csak az Ön szerveréhez jut el, egy kérésfejlécben.
+- **Ahhoz képest, mintha ugyanazt a szervert DLNA-ként adná hozzá**: a mappák úgy, ahogy a lemezen vannak, a Plex bélyegképei, elérés otthonon kívülről és biztonságos kapcsolat.
+
+### Korlátok
+
+- **Csak igényelt szerverek**: a szervert igényelni kell a Plexben (egyszer be kell jelentkezni vele egy Plex-fiókba), ez adja meg neki a plex.direct tanúsítványát. Ellenkező esetben az oldal ezt mondja: „Ez a cím Plex-tanúsítvány nélkül válaszol. Igényelje a szervert a Plexben, vagy adja hozzá SMB-, WebDAV- vagy DLNA-megosztásként.”
+- **Csak IPv4**: „Az IPv6-címek még nem támogatottak. Írja be a szerver IPv4-címét.”
+- **A token** teljes hozzáférést ad a Plex szerveréhez. Ha eltávolítja a szervert az alkalmazásban, a token törlődik az eszközről, de nem kerül visszavonásra: „A token érvényes marad a szerveren, amíg ki nem jelentkezik abból a böngésző-munkamenetből, ahonnan kimásolta.” Egy lejárati dátummal rendelkező token megmutatja ezt a dátumot, és az alkalmazás nem tudja megújítani.
+- **Otthonon kívül**: csak porttovábbításon keresztül, relay nincs.
+- **Könyvtárak**: a zene nem jelenik meg, egy mappa legfeljebb 20 000 elemet listáz, és egy korlátozott felhasználó ezt kaphatja: „Ez a token nem tudja olvasni a szerver könyvtárait.”
+- **Nyers 360°-os kamerafájlok** (.insv, .insp, .360, .osv) csak akkor jelennek meg, ha a Plex listázza őket; különben adja hozzá ugyanazt a NAS-mappát SMB- vagy WebDAV-megosztásként, lásd [Nyers 360°-os kamerafájlok](#raw-360-camera-files-without-the-cameras-app).
+- **A szerver megtalálása**: az a szerver, amelynek „Enable local network discovery (GDM)” beállítása ki van kapcsolva, nem található meg, ezért írja be a címét. iPhone-on és iPaden a keresés csak unicast kéréseket küld. Ugyanannak a szervernek a DLNA-oldala is megjelenhet a listában, DLNA címkével: a Plex címkéjű sort válassza.
+- **Eszközön még nincs ellenőrizve**: a párosítást, a mappákat, egy videó bájttartományait, a bélyegképeket, a hibás tokent és az otthonon kívüli címet egy számítógépről ellenőrizték egy valódi Plex Media Server 1.42.1 ellen, a fotó- és tévésorozat-könyvtárakat pedig csak egy szimulált szerver ellen. A lejátszás telefonon, a Questben, iPhone-on és tévén, valamint az átváltás az otthonon kívüli címre a 20-as build eszköztesztje.
+- Az Immuch360 nem áll kapcsolatban a Plexszel.
 
 <a id="share-this-phone-on-the-network"></a>
 ## A telefon megosztása a hálózaton
@@ -219,6 +279,63 @@ Innentől ez egy WebDAV-megosztás, mint bármelyik másik: 360°-felismerés, n
 - **Biztonság**: csak helyi hálózat. A megosztás csak a telefon Wi-Fi-, Ethernet- és hotspot-címein figyel, soha nem a mobiladat- vagy VPN-címén, és csak helyi címmel rendelkező eszközöknek válaszol. Minden kéréshez felhasználónév és jelszó kell (HTTP Basic); egy eszközről egy percen belül tíz hibás jelszó egy percre letiltja azt az eszközt. A jelszó titkosítatlanul halad a Wi-Fin (egyszerű HTTP): olyan hálózaton használja a megosztást, amelyben megbízik, és kapcsolja ki, ha végzett.
 - **A telefon saját hotspotja**: a headset csatlakozhat hozzá; ha ott nem találja a telefont, írja be az oldalon látható címet.
 - **Eszközön még nincs ellenőrizve**: a szervert egységtesztek és végponttól végpontig tartó tesztek ellenőrizték a headset saját WebDAV-kliensével és médiahídjával, számítógépen. Egy Quest 3-at kiszolgáló telefon (felderítés, egy 4 GB-os videó lejátszása és tekerése, 30 perc kikapcsolt képernyővel, a hotspot, Leállítás az értesítésből) és az iPhone-oldal, amely még nem futott iPhone-on, a 19-es build eszközös tesztje.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo kamerák: élő kép és a memóriakártya felvételei
+
+Otthon Tapo kamerái vannak, és a kerti kamerát és az előző éjszaka klipjeit a fotói mellett szeretné látni a Tapo alkalmazás megnyitása nélkül, és egy klipet megtartana az Immichben. Az Immich alkalmazásban nincs semmi a kamerákhoz, a Tapo alkalmazás pedig egy külön alkalmazás, a TP-Link-fiókjával bejelentkezve, a klipekkel a fotóitól elkülönítve.
+
+A 20-as buildtől az Immuch360 a hálózati megosztások mellé egy Tapo kamerát is felvesz. A kamerát élőben mutatja Android telefonokon és táblagépeken, Android TV-n és a Meta Quest 3-on, és minden platformon a memóriakártyája felvételeit, napról napra: egy klip letöltődik a kameráról, aztán bármely videóhoz hasonlóan lejátszható, és elküldhető az Immichbe. Az alkalmazás csak az Ön hálózatán beszél a kamerával, soha nem a TP-Link szervereivel, és soha nem változtat semmit a kamerán.
+
+### Kamera hozzáadása
+
+1. Előbb a Tapo alkalmazásban: hozza létre a kamerafiókot a kamera beállításaiban, Speciális beállítások, Kamerafiók (felhasználónév és jelszó ehhez a kamerához, az élő képhez), és kapcsolja be a Harmadik féltől származó kompatibilitást (Én, majd Tapo Lab).
+2. Az Immuch360-ban nyissa meg a Képtár lapot, majd a Hálózati megosztásokat, majd a + gombot és a „Tapo kamera” elemet.
+3. A „Kamera hozzáadása” oldal megkeresi a kamerákat („Tapo kamerák keresése a hálózatán”), és „A hálózaton található” alatt sorolja fel őket Tapo címkével. Koppintson a sajátjára a „Kamera címe” kitöltéséhez, vagy írja be a címét. A megosztási űrlapon egy Tapo címkéjű kamera ugyanezt az oldalt nyitja meg.
+4. „Név”: ahogyan a kamera a listában megjelenik.
+5. A „Felvételek a memóriakártyán” alatt a „TP-Link-fiók jelszava”: annak a fióknak a jelszava, amelyet a Tapo alkalmazásban használ. Ez nyitja meg a felvételeket; az e-mail-címére nincs szükség.
+6. Az „Élő” alatt a „Kamerafiók felhasználóneve” és a „Kamerafiók jelszava”: az 1. lépés kamerafiókja.
+7. A kettő közül egy is elég („Adja meg a TP-Link-fiók jelszavát, a kamerafiókot vagy mindkettőt.”): önmagában a TP-Link-jelszó a felvételeket adja, önmagában a kamerafiók az élő képet.
+8. Koppintson a „Kamera tesztelése” gombra. Megjelenik a „Felvételek: (modell), firmware (verzió)” a memóriakártya állapotával, és az „Élő kép: (videó), hang (hang)”, vagy hogy mi nem sikerült az egyes részeknél.
+9. Koppintson a Mentés gombra. A kamera a „Kamerák” alatt jelenik meg, a megosztások után, a modelljével, amint ismert, és `tapo://` előtaggal a címével.
+
+### Élő nézés
+
+1. Koppintson a kamerára. Az élő képe az oldala tetején van: „Csatlakozás a kamerához”, majd a kép az Élő jelvénnyel.
+2. A képen lévő gombok: a hang, kezdetben kikapcsolva („Hang bekapcsolása”; „Nincs hang ezen az eszközön”, ha az eszköz nem tudja lejátszani), SD vagy HD, és „Teljes képernyő”.
+3. A telefon az oldalon SD-t, teljes képernyőn HD-t mutat; a Quest HD-t mutat. A Vissza először a teljes képernyőből lép ki.
+4. A kép alatt a modell és a firmware, valamint a memóriakártya következik, például „Memóriakártya: (összes) közül (foglalt) foglalt” vagy „Nincs memóriakártya”.
+
+iPhone-on és iPaden az élő kép helyén ez áll: „Az élő kép egy későbbi verzióban érkezik iPhone-ra és iPadre. A felvételek itt már lejátszhatók.” Kamerafiók nélkül az oldal ezt mondja: „Adja hozzá a kamerafiókot az élő kép megtekintéséhez.”
+
+### A felvételek lejátszása és megtartása
+
+1. A „Felvételek a memóriakártyán” alatt a kamera oldala felsorolja a felvételeket tartalmazó napokat, a legújabbal kezdve, hónaponként. TP-Link-fiók jelszava nélkül ezt mondja: „Adja hozzá a TP-Link-fiók jelszavát a felvételek megtekintéséhez.”
+2. Koppintson egy napra. A klipjei a kamera saját idejének órái alatt jelennek meg, mindegyik a kezdetével, a hosszával, eseménynél a kamera bélyegképével és a fajtájával: Mozgás, Személy, Háziállat, Jármű, Babasírás, Állat, Folyamatos vagy Esemény.
+3. Koppintson egy klipre. Az alkalmazás letölti a kameráról („Videó letöltése a kameráról: N%”, Mégsem gombbal), majd lejátssza a videólejátszóban, hanggal és tekeréssel. Egy letöltött klipen „Ezen az eszközön” felirat látható, és legközelebb azonnal megnyílik.
+4. Klip megtartása az Immichben, csatlakoztatott szerverrel: a videó ⋮ menüje, „Feltöltés az Immichbe”.
+5. Hely felszabadítása: egy letöltött klipen hosszan nyomva megjelenik „Az ezen az eszközön lévő másolat törlése” (telefonon), a kamera oldalán pedig ott van „Az erről a kameráról letöltött videók törlése”, a méretükkel.
+6. A jobb felső frissítés gomb vagy az oldal lehúzása újra lekérdezi a kamerát.
+
+Ha a kamera már nem válaszol a címén, az oldala a MAC-címe alapján megkeresi a hálózaton, és oda helyezi át, ahol most válaszol, amint ugyanazt a tanúsítványt mutatja. Ha egy kamera más tanúsítványt mutat, mint amit az alkalmazás először látott, helyette kérdés jelenik meg: „A(z) (cím) címen lévő kamera más tanúsítványt mutat, mint korábban. Csak akkor folytassa, ha visszaállította vagy kicserélte.”
+
+### Összehasonlítás a Tapo alkalmazással
+
+- **Csak az Ön hálózatán**: az alkalmazás magával a kamerával beszél, a helyi hálózaton, és soha nem a TP-Link szervereivel. Nem jelentkezik be TP-Link-fiókba, így az e-mail-címére nincs szükség.
+- **A felvételek normál videókká válnak**: egy letöltött klip H.264 videó a hangjával, amelyet elküldhet az Immichbe, ahol akkor is megmarad, ha a memóriakártya már felülírta.
+- **A többi mellett**: Immich szerverrel vagy anélkül, telefonon, tévén vagy a Questben (az ablakban), egy megosztáshoz hasonlóan megtalálva a hálózaton.
+- **Csak olvasás**: az alkalmazás csak azt kéri a kamerától, amit megjelenít; soha nem módosít beállítást, és soha nem töröl semmit a kamerán.
+
+### Korlátok
+
+- **Eszközön még nincs ellenőrizve**: a 20-as build még nem futott valódi kamerával. A protokoll egy 1.3.4-es firmware-ű C510W rögzített forgalma alapján készült (a 2026 közepi V4-es bejelentkezés), az alkalmazást pedig a tesztjeiben egy szimulált kamera ellen ellenőrizték. A visszajelzéseket szívesen fogadjuk, a „Kamera tesztelése” által mutatott modellel és firmware-rel, valamint a [Naplók](#logs) soraival.
+- **Élő kép**: csak Android telefonokon és táblagépeken, Android TV-n és a Questen, iPhone-on és iPaden még nem. A TP-Link korlátai érvényesek: kameránként egyszerre legfeljebb két HD és két SD adatfolyam, a Tapo alkalmazást is beleértve, és a Tapo Care, a memóriakártya és egy RTSP-t vagy ONVIF-et használó rögzítő nem futhat egyszerre.
+- **Kamerák**: az akkumulátoros kamerák és a Tapo hub mögötti kamerák nem támogatottak.
+- **Felvételek**: kameránként egyszerre egy letöltés. Amíg a Tapo alkalmazás a memóriakártyát böngészi, az alkalmazás 4, 8 és 12 másodperc után újrapróbálkozik, majd ezt mondja: „A kamerát egy másik néző használja, például a Tapo alkalmazás. Próbálja újra egy perc múlva.” A H.265 formátumú felvételeket még nem alakítja át („Ez a felvétel H.265 formátumú, amelyet ez a verzió még nem tud átalakítani.”), a folyamatos felvételeknek nincs bélyegképük, és egy klip csak a teljes letöltése után játszódik le.
+- **Jelszavak**: minden hibás jelszó számít, és néhány után a kamera egy időre zárol („A kamera túl sok hibás jelszó után zárolva van. Próbálja újra N perc múlva.”). Az alkalmazás soha nem próbál újra magától egy elutasított jelszót: csak a „Kamera tesztelése” vagy az Újra kérdezi le újra a kamerát. Ha a kamera elfogadja a jelszót a beállításaihoz, de a videóihoz nem, kapcsolja ki, majd újra be a Harmadik féltől származó kompatibilitást a Tapo alkalmazásban, aztán indítsa újra a kamerát.
+- **Tárhely**: a letöltött klipek az alkalmazás gyorsítótárában maradnak, az összes kamerára együtt legfeljebb 1 GB (a legrégebben lejátszottak mennek először); a rendszer törölheti ezt a gyorsítótárat, és egy kamera eltávolítása törli a klipjeit.
+- **Otthonon kívül**: az alkalmazás a kamerát az Ön hálózatán lévő címén éri el, így azon kívülről nem.
+- Az Immuch360 nem áll kapcsolatban a TP-Linkkel.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Nyers 360°-os kamerafájlok, a kamera alkalmazása nélkül
@@ -349,7 +466,7 @@ A felismerés egy, az Apple saját képkönyvtára által írt minta térbeli fo
 
 Sokan azért vesznek Quest 3-at, hogy a saját 360°-os fotóikat és videóikat nézzék, aztán azt kérdezik, hová tegyék a fájlokat, hogyan juttassák őket kábel nélkül a headsetre, és melyik lejátszót használják: az áruház 360°-os és 3D videolejátszói fizetősek.
 
-Ugyanaz az androidos alkalmazás fut a Quest 3-on és 3S-en ablakként, a teljes könyvtárával. A 360° gombja egy immerzív nézetet nyit meg, amelyben a fotó vagy videó körülveszi Önt, és a fejét fordítva nézhet körül, a sztereoszkópikus fájloknál valódi 3D-ben (Meta Spatial SDK). A médiák az Immich szerveréről, magáról a headsetről, egy NAS-ról, egy médiaszerverről vagy egy telefonról jönnek, és a helyükön játszódnak le (médiaszerver és telefon a 19-es buildtől, a headseten még nincs ellenőrizve). Ingyenes és nyílt forráskódú. Quest 3-on ellenőrizve, valamint egy felhasználó által Insta360 X4 8K HEVC videókkal.
+Ugyanaz az androidos alkalmazás fut a Quest 3-on és 3S-en ablakként, a teljes könyvtárával. A 360° gombja egy immerzív nézetet nyit meg, amelyben a fotó vagy videó körülveszi Önt, és a fejét fordítva nézhet körül, a sztereoszkópikus fájloknál valódi 3D-ben (Meta Spatial SDK). A médiák az Immich szerveréről, magáról a headsetről, egy NAS-ról, egy médiaszerverről, egy telefonról vagy egy Plex szerverről jönnek, és a helyükön játszódnak le (médiaszerver és telefon a 19-es buildtől, Plex szerver a 20-as buildtől, a headseten még nincs ellenőrizve), a 20-as buildtől pedig az ablak a Tapo kamerákat is mutatja. Ingyenes és nyílt forráskódú. Quest 3-on ellenőrizve, valamint egy felhasználó által Insta360 X4 8K HEVC videókkal.
 
 ### Az immerzív nézet megnyitása
 
@@ -408,6 +525,56 @@ Forgassa el a jobb oldali joystickkal (vagy az információs panel Forgatás gom
 - **Tekerés**: az a videó, amelynek forrása nem válaszol a bájttartomány-kérésekre, nem tekerhető; a panel ezt jelzi.
 - **Sík videók**: egy sík (nem 360°-os) sztereoszkópikus videó az ablakban játszódik le, mindkét szem látható; az immerzív 3D nézet a 360°-os és VR180 médiákhoz való.
 - **Továbbiak**: a headset által dekódolt kodekek, az áruház, az engedélyek és az APK mérete a [Meta Quest 3](#meta-quest-3) részben található.
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Nézés a tévén (Android TV és Google TV)
+
+A 360°-os fotókat és videókat, az albumait és a NAS-a vagy a Plex szervere videóit a nagy képernyőn szeretné látni, a kanapén ülő családnak, a tévé távirányítójával. Az Immich mobilalkalmazás nem tévéalkalmazás: egy felhasználó, aki tévére telepítette, azt tapasztalta, hogy egérrel működik, távirányítóval nem ([#1614-es beszélgetés](https://github.com/immich-app/immich/discussions/1614)), és az Immich csapatának nincs terve hivatalos tévéalkalmazásra ([#13748-as beszélgetés](https://github.com/immich-app/immich/discussions/13748)).
+
+A 20-as buildtől ugyanaz az androidos alkalmazás fut Android TV-n és Google TV-n, egyetlen bemenetként a távirányítóval: egy APK telefonokhoz és tévékhez, a nyilakkal forgatható 360°-os és 3D nézegetők, és a hálózati megosztások, a Plex és a Tapo kamerák a tévén, Immich szerverrel vagy anélkül.
+
+<a id="install-it-on-the-tv"></a>
+### Telepítés a tévére
+
+1. Amíg a Google Play nem kínálja az alkalmazást tévékre, ami a tévés kiadás Google általi ellenőrzésére vár, töltse le az univerzális `Immuch360-v<version>-release.apk` fájlt a [Releases](https://github.com/freeKC/Immuch360/releases) oldalról.
+2. A tévén kapcsolja be a fejlesztői beállításokat és az USB-hibakeresést (Google TV-n: Beállítások, Rendszer, Névjegy, válassza ki hétszer az „Android TV OS build” elemet, majd Beállítások, Rendszer, Fejlesztői beállítások; a nevek tévénként eltérnek).
+3. Egy ugyanazon a hálózaton lévő számítógépről, adb-vel (Android SDK Platform Tools): `adb connect <address of the TV>`, fogadja el a kérést a tévén, majd `adb install -r Immuch360-v<version>-release.apk`.
+4. Az alkalmazás megjelenik a tévé alkalmazásai között, a szalaghirdetésével (banner). A következő kiadást ugyanígy telepítse: a `-r` megtartja a bejelentkezést és a beállításokat.
+
+### Első indítás
+
+1. Jelentkezzen be, mint egy telefonon: a nyilak egy keretet mozgatnak mezőről mezőre, és az OK egy mezőn („Nyomja meg az OK gombot a gépeléshez”) egy párbeszédablakban megnyitja a tévé billentyűzetét a szerver címéhez, az e-mail-címhez és a jelszóhoz.
+2. Vagy válassza a „Használat szerver nélkül” lehetőséget. A tévének nincsenek saját fotói, ezért a Fotók lapon ez áll: „Ezen a tévén nincsenek saját fotók vagy videók: nyisson meg egy hálózati megosztást a Képtárból.”, egy Hálózati megosztások gombbal. Ott adjon hozzá egy megosztást, egy Plex szervert vagy egy kamerát, mint egy telefonon (lásd [Hálózati megosztások](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Mozgás a távirányítóval
+
+- A nyilak a keretet mozgatják, az OK megnyitja, amin a keret áll, a Vissza visszalép. Egy lapról a Vissza az oldalsó menübe visz, majd a Fotókhoz, majd ki az alkalmazásból.
+- A csatorna fel és le gombok egyszerre egy oldalt görgetnek.
+- A nézegetőkben a távirányító lejátszás és szünet, előretekerés, visszatekerés, következő és előző gombjai működnek, az info gomb pedig egy fotó vagy videó részleteit mutatja.
+
+### Fotók és videók a távirányítóval
+
+1. **Fotó**: a bal és a jobb az előzőre vagy a következőre lép, az OK megjeleníti vagy elrejti a vezérlőket, a Fel a felső sávra visz (ahol a 360° gomb van), a Le az alsó sávra.
+2. **Videó**: az OK szünetelteti, megjelenítve a vezérlőket, vagy lejátssza. Lejátszás közben a bal és a jobb 10 másodpercet ugrik vissza vagy előre; szüneteltetve az előző vagy a következő elemre lépnek, ahogy a tipp mondja: „Szüneteltetve: a nyilak az előző vagy a következő elemre lépnek”.
+3. **360°-os fotó**, a 360° gombról: a nyilakkal lehet körülnézni, nyomva tartva gyorsabban, és a nézet fokozatosan áll meg. Az OK a felső sáv gombjaira lép, a „Nagyítás” gombra, a „Kicsinyítés”, a látómező és a 3D mellett; a csatorna fel és le is nagyít és kicsinyít. A Vissza a gombokról a képre tér vissza, majd bezár. A tipp így szól: „Nyilak a körülnézéshez, OK a vezérlőkhöz, Vissza a bezáráshoz”.
+4. **360°-os videó**, a 360° gombról: a nyilakkal lehet körülnézni, amíg a vezérlők rejtve vannak, az OK szünetelteti és megjeleníti őket, a Vissza elrejti őket, majd bezár. A tipp így szól: „Nyilak a körülnézéshez, OK a szüneteltetéshez és a vezérlők megjelenítéséhez, Vissza a bezáráshoz”.
+5. **Emlékek**: a bal és a jobb végiglépked a fotókon és tovább a következő emlékre, a Fel a bezárás gombra visz, a Le a „Megtekintés az idővonalon” gombra.
+6. **Megosztások és Plex**: ugyanezek a gombok egy megosztás fotó- és videóoldalain, ahol a bal és a jobb a mappa előző vagy következő fájlját nyitja meg.
+
+### A Távirányítós elrendezés beállítás
+
+Beállítások, Beállítások (Preferences), „Távirányítós elrendezés”: „Nagy fókuszkeretek és távirányító-gombok, az érintőképernyőt igénylő vezérlők nélkül. Az Automatikus Android TV-n és Google TV-n kapcsolja be.” Az Automatikus az alapértelmezett; a Be egy billentyűzettel vagy játékvezérlővel használt táblagéphez illik; a Ki kikapcsolja tévén. A beállítás csak Androidon létezik. A nyilak és az OK a nézegetőkben billentyűzettel vagy játékvezérlővel a beállítástól függetlenül működnek.
+
+### Korlátok
+
+- **Nézegető**: tévén az alkalmazás megjelenít és lejátszik. A biztonsági mentés, a feltöltések, a szerkesztés, a törlés, a megosztás, több elem kijelölése, a Cast, a Spatial 2.5D, a giroszkóp, a térkép és a Helyek, valamint „A telefon megosztása a hálózaton” rejtve van.
+- **Bejelentkezés**: az OAuth egy weboldalt nyit meg, amire a tévé nem képes: „A(z) (szolgáltató) bejelentkezés egy weboldalt nyit meg, amire ez a tévé nem képes. Jelentkezzen be inkább e-mail-címmel és jelszóval.”
+- **A linkek** a címüket a „Megnyitás másik eszközön” alatt mutatják böngésző megnyitása helyett, a szöveget pedig a rendszer billentyűzetes párbeszédablakában kell beírni.
+- **Memória**: kevés memóriájú tévén a 360°-os fotók legfeljebb 4096x2048 méretben jelennek meg, nagyításkor élesebb kép nélkül.
+- **Videók**: a tévé dekóderei döntik el, mi játszható le, ugyanazzal a Videóforrás beállítással és dekóderellenőrzéssel, mint telefonon (lásd [Videóadatok és dekóderek](#video-details-decoders-and-why-a-video-stutters)); tévén még nincs megmérve.
+- **Eszközön még nincs ellenőrizve**: a tévétámogatást csak automatizált tesztek ellenőrizték, és még nem futott sem tévén, sem tévéemulátoron. Megerősítendő: milyen irányba forgatják a nyilak a 360°-os videót, a tévé billentyűzete (Gboard) a szöveges párbeszédablakban, az infravörös távirányítók OK gombja, a margók és a szalaghirdetés a tévé kezdőképernyőjén. A visszajelzéseket szívesen fogadjuk.
+- **A Google Play tévéken** a tévés kiadás Google általi ellenőrzésére vár; addig az APK.
+- **Más tévék**: a Fire TV nincs tesztelve, és nincs Apple TV-verzió.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Találja meg a 360°-os felvételeit: a 360°-os lista
@@ -488,11 +655,11 @@ Ha a szerver figyelmen kívül hagyja az eredetire vonatkozó HTTP Range kérés
 <a id="everything-else-is-immich"></a>
 ## Minden más Immich
 
-Minden, amit a hivatalos Immich mobilalkalmazás tud, itt is megvan: biztonsági mentés, idővonal, albumok, keresés, megosztás, partnerek, mind szinkronizálva a szerverével, ugyanazzal a szerverrel és ugyanazzal a fiókkal, mint a webalkalmazás. Az Immuch360 a hivatalos alkalmazás mellé települ (csomag: `com.aprogsys.immuch360`). Két eltérés van, a 15-ös buildtől: a „Mindig az eredeti videó lejátszása” kapcsolóból a fent leírt Videóforrás választás lett, és az eszköz egy albumából kézzel feltöltött fotók és videók biztonsági mentettnek számítanak.
+Minden, amit a hivatalos Immich mobilalkalmazás tud, itt is megvan: biztonsági mentés, idővonal, albumok, keresés, megosztás, partnerek, mind szinkronizálva a szerverével, ugyanazzal a szerverrel és ugyanazzal a fiókkal, mint a webalkalmazás. Az Immuch360 a hivatalos alkalmazás mellé települ (csomag: `com.aprogsys.immuch360`). Két eltérés van, a 15-ös buildtől: a „Mindig az eredeti videó lejátszása” kapcsolóból a fent leírt Videóforrás választás lett, és az eszköz egy albumából kézzel feltöltött fotók és videók biztonsági mentettnek számítanak. Tévén, a 20-as buildtől, az alkalmazás nézegető, lásd [Nézés a tévén](#watch-on-your-tv-android-tv-and-google-tv).
 
 Ha valakinek, akinek nincs meg az alkalmazás, 360°-os fotót szeretne mutatni, ossza meg egy Immich megosztási linkkel: az Immich webalkalmazása a böngészőjében gömbként mutatja a 360°-os fotót.
 
-A jelenlegi build, a 19-es (3.3.0-rc.0 verzió, 3030017-es buildszám), az Immich 3.3.0-rc.0-n alapul (az Immich `main` ága, még nem stabil kiadás), és egy Immich 3.2 szerverrel lett tesztelve. A problémákat az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon jelezze, ne az Immich projektnek. Magának az Immichnek a teljes dokumentációja az [immich.app](https://immich.app) oldalon található.
+A jelenlegi build, a 20-as (3.3.0-rc.0 verzió, 3030018-as buildszám), az Immich 3.3.0-rc.0-n alapul (az Immich `main` ága, még nem stabil kiadás). A 19-es build egy Immich 3.2 szerverrel lett tesztelve, és a 20-as build semmit sem változtat azon, amit az alkalmazás a szervertől kér. A problémákat az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon jelezze, ne az Immich projektnek. Magának az Immichnek a teljes dokumentációja az [immich.app](https://immich.app) oldalon található.
 
 ## Összehasonlítás az Immich alkalmazással és más alkalmazásokkal
 
@@ -515,6 +682,9 @@ A jelenlegi build, a 19-es (3.3.0-rc.0 verzió, 3030017-es buildszám), az Immic
 | DLNA médiaszerverek mint megosztástípus | ❌ | ✅ a 19-es buildtől | Ellenőrizve minidlna és Gerbera ellen Dockerben; a Plex, a Jellyfin, egy NAS, a Freebox Server, egy iPhone és a Quest a 19-es build eszközös tesztje |
 | Egy megosztás fájljainak küldése az Immichbe; a kézzel küldött eszközfájlok biztonsági mentettnek számítanak | ❌ csak eszközfájlok | ✅ a 15-ös buildtől | Tesztelve Android-emulátoron egy Samba tesztszerverrel és egy Immich 3.2 szerverrel |
 | A telefon megosztása a hálózaton, a headset számára | ❌ | ✅ a 19-es buildtől, Android és iOS | Egységtesztek és végponttól végpontig tartó tesztek a headset WebDAV-kliensével, számítógépen; egy Questet kiszolgáló telefon és az iPhone-oldal a 19-es build eszközös tesztje |
+| Plex Media Server könyvtárai az eredeti fájlokból lejátszva, otthon és otthonon kívül, plex.tv nélkül | ❌ | ✅ a 20-as buildtől, minden nézegetőben, telefonokon, táblagépeken, a Quest 3-on és tévéken | Számítógépről ellenőrizve egy valódi Plex Media Server 1.42.1 ellen (párosítás, mappák, bájttartományok, bélyegképek, az otthonon kívüli cím); eszközön még nincs ellenőrizve |
+| Tapo kamerák: az élő kép és a memóriakártya felvételei, az Immichbe küldve, amikor Ön úgy dönt | ❌ | ✅ a 20-as buildtől: felvételek mindenhol, élő kép Androidon, Android TV-n és a Quest 3-on | Szimulált kamera ellen ellenőrizve; valódi kamerával még nincs ellenőrizve |
+| Android TV és Google TV, távirányítóval vezérelve, ugyanabban az APK-ban | ❌ nem tévéalkalmazás | ✅ a 20-as buildtől | Automatizált tesztekkel ellenőrizve; tévén még nincs ellenőrizve |
 | Nyers Insta360 .insp fotók és egysávos .insv videók | ❌ sík | ✅ a 16-os buildtől | Fotók X3 fájlok Insta360 Studio-exportjaival összevetve, videók Android-emulátoron egy alacsony felbontású X3 fájllal; iPhone-on még nem futott |
 | Nyers videók sávonként vagy fájlonként egy objektívvel (Insta360 X4, X4 Air, X5, X6, X3-párok, GoPro .360, DJI .osv) | ❌ sík vagy hibás | ✅ a 18-as buildtől | Elemzők és összeillesztés valódi X4, X3-pár, GoPro MAX és Osmo 360 fájlokon ellenőrizve; a lejátszás a 18-as és 19-es build eszközös tesztje |
 | Kettős halszemes .dng | ❌ sík | ❌ még nem | Tervezett |
@@ -529,27 +699,33 @@ A jelenlegi build, a 19-es (3.3.0-rc.0 verzió, 3030017-es buildszám), az Immic
 |---|---|---|
 | Az Immich webalkalmazása | Gömbként mutatja a 360°-os fotót, de egy nyers .insp fájlt kész panorámának vesz, és a két körét a gömb köré tekeri; a VR-nézet még csak kérés ([#14768-as beszélgetés](https://github.com/immich-app/immich/discussions/14768)) | Az eszközön illeszti össze a nyers fájlokat, és immerzív nézetet nyit a Quest 3-ban |
 | Az Insta360 alkalmazás vagy a Studio | Megtekintés előtt szükség van rá, hogy a kártya nyers fájljaiból 360°-os kép legyen | Közvetlenül megnyitja a nyers .insp és .insv fájlokat, valamint a GoPro .360 és DJI .osv fájlokat |
-| Plex, Jellyfin, Synology Photos | A 360°-os fotók és videók síkban jelennek meg, vagy nem ismeri fel őket, ahogy a fórumaik szálai leírják (egy Plex-kérés 2017 óta nyitott) | Ugyanazokat a mappákat olvassa SMB-n, WebDAV-on vagy DLNA-n keresztül, és gömbként játssza le őket, a szerveren semmit sem változtatva |
+| Plex, Jellyfin, Synology Photos | A 360°-os fotók és videók síkban jelennek meg, vagy nem ismeri fel őket, ahogy a fórumaik szálai leírják (egy Plex-kérés 2017 óta nyitott) | A 20-as buildtől magát a Plex-könyvtárat olvassa, vagy ugyanazokat a mappákat SMB-n, WebDAV-on vagy DLNA-n keresztül, és gömbként játssza le őket, a szerveren semmit sem változtatva |
+| A Tapo alkalmazás | Külön alkalmazás, a TP-Link-fiókjával bejelentkezve, a klipekkel a fotóitól elkülönítve | A kamerát a fotói mellett mutatja, csak az Ön hálózatán beszél vele, és egy klipet videóként tart meg, amelyet elküldhet az Immichbe (a 20-as buildtől) |
+| Az Immich mobilalkalmazás tévén | Nem tévéalkalmazás: egy felhasználó szerint egérrel működik, távirányítóval nem | Ugyanaz az alkalmazás, távirányítóra tervezve (a 20-as buildtől) |
 | Fájlok másolása a headsetre | Minden fájlt kábelen kell átmásolni, mielőtt megnézhető | A helyén játssza le az Immichből, egy NAS-ról, egy médiaszerverről vagy egy telefonról |
 | A Quest áruház 360°-os és 3D lejátszói | Fizetősek | Ingyenes és nyílt forráskódú (AGPL) |
 
 ## Formátumok és források, platformonként
 
-Az Immuch360 galéria, és egyben ingyenes médialejátszó is: lejátssza, amit a hivatalos alkalmazás nem tud, négy forrásból, a fájlnak megfelelő lejátszóban.
+Az Immuch360 galéria, és egyben ingyenes médialejátszó is: lejátssza, amit a hivatalos alkalmazás nem tud, a második táblázat forrásaiból, a fájlnak megfelelő lejátszóban.
 
-| Mi | Android telefonok | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Sík videók (MP4, MOV, MKV, amit az eszköz dekódol) | Immich lejátszó, és natív lejátszó a hálózati megosztásokhoz | Ugyanez, kivéve egy megosztás MKV és AVI fájljait, amelyeket az iOS nem nyit meg (szerverről átkódolva játszódnak le) | Az ablakban |
-| 360°-os fotók | Gömbnézegető, giroszkóp | Ugyanez | Immerzív, körös-körül |
-| 360°-os videók | Natív Media3 lejátszó gömbön, giroszkóp, tekerés, hangsávválasztás, pufferelésjelző | Natív SceneKit lejátszó gömbön, giroszkóp, hangsávválasztás, pufferelésjelző; lejátszás és szünet, idősáv még nincs | Immerzív, sztereoszkópikus fájloknál valódi 3D, idősáv 10 másodperces ugrásokkal, előző és következő média |
-| 3D 360° (felül és alul, egymás mellett) | Bal szem, elrendezés gomb | Ugyanez | Mindkét szem a képkocka saját felét kapja |
-| VR180 (félgömb) fotók és videók | Félgömb, 360°/180° gomb | Ugyanez | Immerzív félgömb |
-| Spatial 2.5D (mélység sík képernyőn egy sztereoszkópikus videóból) | Natív lejátszó, fejkövetés az előlapi kamerával | Ugyanez | Nem érhető el |
-| Apple térbeli fotók (HEIC sztereó párok, a 19-es buildtől) | Bal szem, egy adatsor jelzi, hogy térbeli | Ugyanez | Megtekintés 3D-ben: mindkét szem egy, az immerzív nézetben lebegő fotón, 3D vagy 2D, átméretezhető |
-| Apple térbeli videók (MV-HEVC, a 19-es buildtől) | Egy szem (az alapréteg), értesítéssel | Ugyanez | Egy szem az ablakban, értesítéssel |
-| Nyers Insta360 .insp fotók (a 16-os buildtől) | GPU-n összeillesztve a gömbnézegető előtt, legfeljebb 8192x4096 méretig | Ugyanez | Immerzív, a headset számára előkészített összeillesztett képből |
-| Nyers Insta360 .insv, mindkét objektív egy sávban (a 16-os buildtől) | A Media3 lejátszóban egy GPU-effekt illeszti össze | Egy SceneKit shader illeszti össze | Immerzív, ugyanaz a GPU-effekt illeszti össze |
-| Nyers videók sávonként vagy fájlonként egy objektívvel (a 18-as buildtől): Insta360 X4, X4 Air, X5, X6 .insv, X3-párok, GoPro .360, DJI .osv | Két hardveres dekóder egyszerre, objektívenként egy (a 19-es buildtől hardveres dekóder nélküli eszközön szoftveresek, objektívenként legfeljebb 2048x2048), és egy GL-kompozitor, amely a gömbbe illeszti őket; egy objektív, majd az átkódolt adatfolyam, majd az összeillesztetlen videó, ha az eszköz nem tud kettőt futtatni | Egyedi AVFoundation-kompozitor Metallal | Immerzív, ugyanaz a két dekóder és kompozitor (3840x1920-as panel) |
+| Mi | Android telefonok | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (a 20-as buildtől) |
+|---|---|---|---|---|
+| Sík videók (MP4, MOV, MKV, amit az eszköz dekódol) | Immich lejátszó, és natív lejátszó a hálózati megosztásokhoz | Ugyanez, kivéve egy megosztás MKV és AVI fájljait, amelyeket az iOS nem nyit meg (szerverről átkódolva játszódnak le) | Az ablakban | Mint telefonokon; az OK szüneteltet, a bal és a jobb 10 mp-et ugrik |
+| 360°-os fotók | Gömbnézegető, giroszkóp | Ugyanez | Immerzív, körös-körül | Nyilakkal forgatható gömbnézegető, nagyítás a csatornagombokkal |
+| 360°-os videók | Natív Media3 lejátszó gömbön, giroszkóp, tekerés, hangsávválasztás, pufferelésjelző | Natív SceneKit lejátszó gömbön, giroszkóp, hangsávválasztás, pufferelésjelző; lejátszás és szünet, idősáv még nincs | Immerzív, sztereoszkópikus fájloknál valódi 3D, idősáv 10 másodperces ugrásokkal, előző és következő média | A telefonok Media3 lejátszója, nyilakkal forgatva |
+| 3D 360° (felül és alul, egymás mellett) | Bal szem, elrendezés gomb | Ugyanez | Mindkét szem a képkocka saját felét kapja | Bal szem, elrendezés gomb |
+| VR180 (félgömb) fotók és videók | Félgömb, 360°/180° gomb | Ugyanez | Immerzív félgömb | Félgömb, 360°/180° gomb |
+| Spatial 2.5D (mélység sík képernyőn egy sztereoszkópikus videóból) | Natív lejátszó, fejkövetés az előlapi kamerával | Ugyanez | Nem érhető el | Nem érhető el |
+| Apple térbeli fotók (HEIC sztereó párok, a 19-es buildtől) | Bal szem, egy adatsor jelzi, hogy térbeli | Ugyanez | Megtekintés 3D-ben: mindkét szem egy, az immerzív nézetben lebegő fotón, 3D vagy 2D, átméretezhető | Bal szem, egy adatsor |
+| Apple térbeli videók (MV-HEVC, a 19-es buildtől) | Egy szem (az alapréteg), értesítéssel | Ugyanez | Egy szem az ablakban, értesítéssel | Egy szem, értesítéssel |
+| Nyers Insta360 .insp fotók (a 16-os buildtől) | GPU-n összeillesztve a gömbnézegető előtt, legfeljebb 8192x4096 méretig | Ugyanez | Immerzív, a headset számára előkészített összeillesztett képből | Mint telefonokon |
+| Nyers Insta360 .insv, mindkét objektív egy sávban (a 16-os buildtől) | A Media3 lejátszóban egy GPU-effekt illeszti össze | Egy SceneKit shader illeszti össze | Immerzív, ugyanaz a GPU-effekt illeszti össze | Mint telefonokon |
+| Nyers videók sávonként vagy fájlonként egy objektívvel (a 18-as buildtől): Insta360 X4, X4 Air, X5, X6 .insv, X3-párok, GoPro .360, DJI .osv | Két hardveres dekóder egyszerre, objektívenként egy (a 19-es buildtől hardveres dekóder nélküli eszközön szoftveresek, objektívenként legfeljebb 2048x2048), és egy GL-kompozitor, amely a gömbbe illeszti őket; egy objektív, majd az átkódolt adatfolyam, majd az összeillesztetlen videó, ha az eszköz nem tud kettőt futtatni | Egyedi AVFoundation-kompozitor Metallal | Immerzív, ugyanaz a két dekóder és kompozitor (3840x1920-as panel) | Mint telefonokon, ha a tévé egyszerre két dekódert tud futtatni |
+| Tapo kamera élő képe (a 20-as buildtől) | Media3 RTSP lejátszó: SD az oldalon, HD teljes képernyőn, hang gomb | Még nem: egy kártya jelzi, hogy később érkezik | Az ablakban, HD-ben | Mint telefonokon |
+| Tapo kamera felvételei (a 20-as buildtől) | A memóriakártyáról letöltve egy hangos H.264 videóba, majd tekeréssel lejátszva | Ugyanez | Ugyanez, az ablakban | Ugyanez |
+
+A tévé oszlopot még nem ellenőrizték tévén, lásd [Nézés a tévén](#watch-on-your-tv-android-tv-and-google-tv); a kamerás sorokat még nem ellenőrizték valódi kamerával.
 
 | Honnan | Hogyan |
 |---|---|
@@ -557,13 +733,15 @@ Az Immuch360 galéria, és egyben ingyenes médialejátszó is: lejátssza, amit
 | Maga a telefon vagy a headset | „Használat szerver nélkül” a bejelentkezési oldalon, vagy a Képtár lap Ezen az eszközön eleme |
 | NAS vagy számítógép | SMB- és WebDAV-megosztások, a 19-es buildtől DLNA médiaszerverek is, a hálózaton megtalálva, élőben olvasva (egy SMB-videó legfeljebb hat kapcsolaton), semmi sem másolódik; a 15-ös buildtől a kiválasztott fájlok elküldhetők az Immich fiókjába |
 | Egy másik telefon (a 19-es buildtől) | „A telefon megosztása a hálózaton” azon a telefonon: a headset, vagy a hálózat bármely WebDAV-kliense olvassa az albumait, hónapjait és 360°-os médiáit |
+| Plex Media Server (a 20-as buildtől) | A fotó-, film- és tévésorozat-könyvtárai mappák szerint, az eredeti fájlok élőben olvasva HTTPS-en, a szerver saját tanúsítványával ellenőrizve, otthon vagy az otthonon kívüli címen keresztül, minden platformon; lásd [Plex Media Server, plex.tv nélkül](#plex-media-server-without-plextv) |
+| Tapo kamera (a 20-as buildtől) | Az élő kép a kamerafiókkal (Android, Android TV, a Quest), és a memóriakártyája felvételei a TP-Link-fiók jelszavával (minden platformon), csak a helyi hálózaton; lásd [Tapo kamerák](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Az Immuch360 a Meta Quest 3-on és 3S-en is fut (Horizon OS v69 vagy újabb; a Horizon Store build csak erre a kettőre van bejegyezve; az univerzális `-release.apk` elvileg Quest 2-re vagy Quest Prora is telepíthető, teszteletlen). A használatát [A Meta Quest 3 headsetben](#in-the-meta-quest-3-headset) rész írja le; ez a rész a telepítésről szól, és arról, miben más a headseten.
 
-A headset-build csak HTTPS-en keresztül kommunikál a szerverekkel, vagy egyszerű HTTP-n az otthoni hálózat neveivel (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) és magával a headsettel, ahogy a Horizon Store megköveteli. Egy IP-címet tartalmazó egyszerű HTTP-címként megadott szervert, például `http://192.168.1.10:2283`, ez a build elutasít: használjon HTTPS-t, egy otthoni hálózati nevet (`nas.local`), vagy az univerzális `-release.apk` fájlt, amely megtartja a telefonok nyitott szabályait. A helyi hálózat egyszerű HTTP-címén lévő WebDAV-, DLNA- és telefonos megosztásokat ez nem érinti: az alkalmazás maga olvassa őket, és a lejátszóinak csak a helyi hídja címét adja át (a DLNA és a telefonos megosztás esetében, amelyek a 19-es build újdonságai, ez a headseten még megerősítésre vár).
+A headset-build csak HTTPS-en keresztül kommunikál a szerverekkel, vagy egyszerű HTTP-n az otthoni hálózat neveivel (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) és magával a headsettel, ahogy a Horizon Store megköveteli. Egy IP-címet tartalmazó egyszerű HTTP-címként megadott szervert, például `http://192.168.1.10:2283`, ez a build elutasít: használjon HTTPS-t, egy otthoni hálózati nevet (`nas.local`), vagy az univerzális `-release.apk` fájlt, amely megtartja a telefonok nyitott szabályait. A helyi hálózat egyszerű HTTP-címén lévő WebDAV-, DLNA- és telefonos megosztásokat ez nem érinti: az alkalmazás maga olvassa őket, és a lejátszóinak csak a helyi hídja címét adja át (a DLNA és a telefonos megosztás esetében, amelyek a 19-es build újdonságai, ez a headseten még megerősítésre vár). A 20-as buildtől a Plex szervert HTTPS-en éri el, a Tapo kamerát pedig maga az alkalmazás, az élő képét RTSP-n, ami nem HTTP: egyiket sem kellene érintenie (a headseten megerősítendő).
 
 <a id="install"></a>
 ### Telepítés
@@ -576,7 +754,7 @@ A Horizon Store-bejegyzés a Meta jóváhagyására vár, a 14-es builddel lett 
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. A headsetben nyissa meg a Library (Könyvtár) részt, válassza az „Unknown sources” (Ismeretlen források) szűrőt, és indítsa el az Immuch360-at.
@@ -584,7 +762,7 @@ A Horizon Store-bejegyzés a Meta jóváhagyására vár, a 14-es builddel lett 
 
 ### Az ablakban
 
-Az egész alkalmazás átméretezhető 2D ablakként fut: bejelentkezés, idővonal, albumok, keresés, a Képtár lap (360°-os lista, Ezen az eszközön, Hálózati megosztások), a beállítások, valamint a fotó- és videónézegetők, ahol a sík fotók és videók megjelennek. A headseten a 360° gomb és a ⋮ menü Megtekintés 360°-ként eleme közvetlenül az immerzív nézetet nyitja meg a telefonok gömbnézegetője helyett, a Spatial 2.5D gomb és a beállítása pedig nem jelenik meg. A 19-es buildtől egy Apple térbeli fotónak Megtekintés 3D-ben gombja van, és A telefon megosztása a hálózaton csempe nem jelenik meg: a headset az, amelyik egy telefon megosztását olvassa.
+Az egész alkalmazás átméretezhető 2D ablakként fut: bejelentkezés, idővonal, albumok, keresés, a Képtár lap (360°-os lista, Ezen az eszközön, Hálózati megosztások), a beállítások, valamint a fotó- és videónézegetők, ahol a sík fotók és videók megjelennek. A headseten a 360° gomb és a ⋮ menü Megtekintés 360°-ként eleme közvetlenül az immerzív nézetet nyitja meg a telefonok gömbnézegetője helyett, a Spatial 2.5D gomb és a beállítása pedig nem jelenik meg. A 19-es buildtől egy Apple térbeli fotónak Megtekintés 3D-ben gombja van, és A telefon megosztása a hálózaton csempe nem jelenik meg: a headset az, amelyik egy telefon megosztását olvassa. A 20-as buildtől a Plex szerverek és a Tapo kamerák is az ablakban nyílnak meg, a kamera élő képe HD-ben; a „Távirányítós elrendezés” beállítás Automatikus marad, ami a headseten kikapcsolva hagyja.
 
 ### Képekben
 
@@ -598,7 +776,7 @@ A headsetben a rögzítés gombbal (Meta gomb és ravasz) készült képernyők�
 ### Korlátok a headseten
 
 - **Videokodekek**: a HEVC (H.265) a biztos választás; a H.264 körülbelül 4096x2304-nél megáll. Hogy mit ellenőriz az alkalmazás, és hogyan adhat a headsetnek dekódolható videót, a [Videóadatok és dekóderek](#video-details-decoders-and-why-a-video-stutters) részben olvasható.
-- **Áruház**: az áruházi verzió a 14-es buildtől indul. A „15-ös buildtől” és „16-os buildtől” jelölésű funkciók a következő frissítéssel érkeznek (16-os build, már az alfa tesztcsatornán), a későbbiek azután; a GitHub APK-ban már mind benne van.
+- **Áruház**: az áruházi verzió a 14-es buildtől indul. A „15-ös buildtől” és későbbi jelölésű funkciók a következő frissítésekkel érkeznek (az áruház alfa tesztcsatornája a tesztelőknek minden új buildet megkap); a GitHub APK-ban már mind benne van.
 - **Engedélyek**: a headset-build csak a fotók és videók (szerver nélküli mód) és az értesítések (biztonsági mentés előrehaladása) engedélyét kéri. A telefonos builddel ellentétben nincs tárhely-, hang-, hely- vagy kameraengedélye; a Wi-Fi-hálózat neve alapján történő szerverváltás ezért a headseten nem érhető el.
 - **APK-méret**: a Spatial SDK körülbelül 56 MB 64 bites ARM natív kódot ad hozzá, a telefonokon is, ahol soha nem töltődik be.
 - **Licenc**: az immerzív nézet a Meta Spatial SDK-t használja, amelyet a Meta Platform Technologies SDK License Agreement alapján terjesztenek.
@@ -606,13 +784,14 @@ A headsetben a rögzítés gombbal (Meta gomb és ravasz) készült képernyők�
 <a id="where-to-get-it"></a>
 ## Honnan szerezhető be
 
-Az alkalmazás elérhető a Google Playen; az App Store-verzió az Apple, a Meta Horizon Store-verzió a Meta jóváhagyására vár. A GitHub-kiadás mindig a legújabb build:
+Az alkalmazás elérhető a Google Playen telefonokra és táblagépekre; az App Store-verzió az Apple, a Meta Horizon Store-verzió a Meta jóváhagyására vár, a tévékre szánt Google Play-verzió pedig a tévés kiadás Google általi ellenőrzésére. A GitHub-kiadás mindig a legújabb build:
 
 | Platform | Ma | Hamarosan |
 |---|---|---|
-| Android telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), vagy az APK a [Releases](https://github.com/freeKC/Immuch360/releases) oldalon: telefonhoz `Immuch360-v<version>-arm64-v8a-release.apk` (az univerzális `Immuch360-v<version>-release.apk` mindenhol működik, a `-armeabi-v7a` a régebbi 32 bites telefonokhoz való, a `.aab` fájl pedig a Google Playnek szól, nem oldalról telepítéshez). A GitHub-build általában előrébb jár, mint az áruház. Mindkét esetben a hivatalos Immich alkalmazás mellé települ (csomag: `com.aprogsys.immuch360`). | Google Play: a 15-ös és 16-os build 2026. október 4-én került beküldésre a Google-hoz ellenőrzésre (az utolsó, ott élőként megerősített build a 11-es) |
+| Android telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), vagy az APK a [Releases](https://github.com/freeKC/Immuch360/releases) oldalon: telefonhoz `Immuch360-v<version>-arm64-v8a-release.apk` (az univerzális `Immuch360-v<version>-release.apk` mindenhol működik, a `-armeabi-v7a` a régebbi 32 bites telefonokhoz való, a `.aab` fájl pedig a Google Playnek szól, nem oldalról telepítéshez). A GitHub-build általában előrébb jár, mint az áruház. Mindkét esetben a hivatalos Immich alkalmazás mellé települ (csomag: `com.aprogsys.immuch360`). | Google Play: a 18-as build élő, a 19-es 2026. október 6. óta a Google ellenőrzése alatt, utána a 20-as következik |
 | iPhone és iPad | Az Apple jóváhagyására vár. Az ellenőrzés alatt álló verzió a 11-es build funkcióit tartalmazza: az Immichbe való feltöltés és a Videóforrás választás (15-ös build), valamint a nyers Insta360 fájlok (16-os build) egy későbbi App Store-frissítéssel érkeznek. A forráskód Xcode-dal vagy Codemagicen fordítható, lásd [Saját fordítás](#build-it-yourself). | App Store, ellenőrzés alatt |
-| Meta Quest 3 és 3S | A [Releases](https://github.com/freeKC/Immuch360/releases) oldal `-quest-release.apk` fájlja (az univerzális `-release.apk` is működik), fejlesztői módban oldalról telepítve, lásd [Telepítés](#install). Az áruházi build és a GitHub APK különböző kulcsokkal van aláírva: az egyikről a másikra váltáshoz először távolítsa el az alkalmazást (a beállításai és a mentett megosztások vele együtt törlődnek). | Meta Horizon Store: a 14-es build 2026. október 3. óta a Meta ellenőrzése alatt; a 16-os build az áruház alfa csatornáján van (csak tesztelőknek) |
+| Meta Quest 3 és 3S | A [Releases](https://github.com/freeKC/Immuch360/releases) oldal `-quest-release.apk` fájlja (az univerzális `-release.apk` is működik), fejlesztői módban oldalról telepítve, lásd [Telepítés](#install). Az áruházi build és a GitHub APK különböző kulcsokkal van aláírva: az egyikről a másikra váltáshoz először távolítsa el az alkalmazást (a beállításai és a mentett megosztások vele együtt törlődnek). | Meta Horizon Store: a 14-es build 2026. október 3. óta a Meta ellenőrzése alatt; az áruház alfa csatornája (csak tesztelőknek) minden új buildet megkap |
+| Android TV és Google TV (a 20-as buildtől) | A [Releases](https://github.com/freeKC/Immuch360/releases) oldal univerzális `Immuch360-v<version>-release.apk` fájlja, adb-vel oldalról telepítve, lásd [Telepítés a tévére](#install-it-on-the-tv). Ugyanaz az alkalmazás, mint a telefonokon. | Google Play tévéken, a tévés kiadás Google általi ellenőrzése után |
 
 Az App Store és a Meta Horizon Store linkjei a bejegyzések közzététele után azonnal ide kerülnek. Jelentkezzen be a szokásos Immich szerver URL-jével és fiókjával, vagy koppintson a bejelentkezési oldalon a „Használat szerver nélkül” gombra, hogy az eszköz saját fotóival és videóival kezdjen. A GitHubról származó APK nem frissül magától: figyelje a Releases oldalt, és ha egyszer áruházból telepítette az alkalmazást, a frissítéseket is abból az áruházból kapja.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Az áruházi képernyőképek `--dart-define=IMMUCH_SCREENSHOTS=true` kapcsolóval készült szimulátoros debug buildeken készülnek, ez csak a debug szalagot rejti el. A két androidos flavor ugyanaz az alkalmazás. A `quest` az SDK 34-et célozza, és csak a headset által használt engedélyeket tartja meg (fotók, videók, értesítések): a médiakezelés, a háttérbeli helymeghatározás, a régi tárhely, a hang, a média helyadatai, az eszköz helyadatai és a kamera az `android/app/src/quest/AndroidManifest.xml` fájlban el vannak távolítva, mert a Meta Horizon Store az első kettőt elutasítja, és minden más érzékeny engedélyhez indoklást kér; ugyanez a fájl a Quest 3-at és 3S-t nevezi meg támogatott eszközként, és az egyszerű HTTP-t magára a headsetre és az otthoni hálózat neveire korlátozza. Az APK a parancssora két extra argumentuma miatt csak 64 bites (`--target-platform android-arm64 --android-project-arg arm64only=true`). A `phone` az, amit a Google Play megkövetel. Ha saját Macen szeretne iOS-re fordítani, használja az Xcode-ot és a saját aláíró csapatát; Xcode 26 esetén előbb egyszer futtassa le az `xcodebuild -downloadComponent MetalToolchain` parancsot, mert a Spatial shaderekhez szükséges. Mac nélkül az iOS-buildek a Codemagicen (bérelt Mac) futnak, ennek a tárolónak a `codemagic.yaml` fájlja alapján. Az androidos kiadási buildek a GitHub Actionsön futnak (`.github/workflows/immuch360-release.yml`).
+Az áruházi képernyőképek `--dart-define=IMMUCH_SCREENSHOTS=true` kapcsolóval készült szimulátoros debug buildeken készülnek, ez csak a debug szalagot rejti el. A két androidos flavor ugyanaz az alkalmazás. A 20-as buildtől a `phone` tévéalkalmazásként is bejelenti magát (tévés indítóbejegyzés és szalaghirdetés, érintőképernyő nem szükséges), amit a `quest` kihagy. A `quest` az SDK 34-et célozza, és csak a headset által használt engedélyeket tartja meg (fotók, videók, értesítések): a médiakezelés, a háttérbeli helymeghatározás, a régi tárhely, a hang, a média helyadatai, az eszköz helyadatai és a kamera az `android/app/src/quest/AndroidManifest.xml` fájlban el vannak távolítva, mert a Meta Horizon Store az első kettőt elutasítja, és minden más érzékeny engedélyhez indoklást kér; ugyanez a fájl a Quest 3-at és 3S-t nevezi meg támogatott eszközként, és az egyszerű HTTP-t magára a headsetre és az otthoni hálózat neveire korlátozza. Az APK a parancssora két extra argumentuma miatt csak 64 bites (`--target-platform android-arm64 --android-project-arg arm64only=true`). A `phone` az, amit a Google Play megkövetel. Ha saját Macen szeretne iOS-re fordítani, használja az Xcode-ot és a saját aláíró csapatát; Xcode 26 esetén előbb egyszer futtassa le az `xcodebuild -downloadComponent MetalToolchain` parancsot, mert a Spatial shaderekhez szükséges. Mac nélkül az iOS-buildek a Codemagicen (bérelt Mac) futnak, ennek a tárolónak a `codemagic.yaml` fájlja alapján. Az androidos kiadási buildek a GitHub Actionsön futnak (`.github/workflows/immuch360-release.yml`).
 
 Ebben a tárolóban nincs titok: az androidos aláírókulcs titkosított GitHub Actions-titokként, az Apple aláírási anyagai titkosított változókként vannak tárolva a Codemagicen. A workflow-fájlok csak név szerint hivatkoznak rájuk. Saját `android/key.jks` nélkül a kiadási build a debug kulccsal lesz aláírva, és nem telepíthető egy GitHubról vagy áruházból származó példányra (azt előbb távolítsa el); a debug build Immuch360 debug néven mellé települ. A Meta Horizon Store-példány a kiadás `quest` APK-ja egy másik kulccsal aláírva, azzal, amellyel az áruházi alkalmazást először regisztrálták, így egy oldalról telepített APK-ra sem telepíthető, és fordítva sem.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-A 19-es buildtől a DLNA-kliens, a telefonos megosztás és az Apple térbeli médiák felismerése az alkalmazás saját naplójába is ír (Naplók, a jobb felső profilkép menüjében), a `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` és `NetworkMediaService` néven. A naplósorok az eszközön maradnak, hacsak nem másolja ki őket saját maga.
+A 19-es buildtől a DLNA-kliens, a telefonos megosztás és az Apple térbeli médiák felismerése az alkalmazás saját naplójába is ír (Naplók, a jobb felső profilkép menüjében), a `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` és `NetworkMediaService` néven. A 20-as buildtől a tévémód `TvMode` és `TvTextEntry`, a Plex szerverek `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` és `PlexServerEditPage`, a Tapo kamerák pedig `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` és `CameraLiveView` néven írnak ide; a Plex-sorok soha nem tartalmazzák a tokent, a hálózati címet vagy a médiák címét, a kamerasorokból pedig kimaradnak a jelszavak. A naplósorok az eszközön maradnak, hacsak nem másolja ki őket saját maga.
 
 ## Adatvédelem
 
 - **Semmi sem jut el a fejlesztőhöz**: az alkalmazás az Ön által választott Immich szerverrel kommunikál (és, ha megnyitja a térképet, az azon szerver által használt térképcsempe-szolgáltatással), nincs benne reklám, analitika vagy a fejlesztő által üzemeltetett összeomlás-jelentő szolgáltatás, és semmit sem küld az Immuch360 fejlesztőjének.
-- **Szerver nélkül** semmi sem hagyja el az eszközt.
+- **Szerver nélkül** egyetlen szerverrel sem veszi fel a kapcsolatot: az alkalmazás csak a megnyitott megosztásokhoz, Plex szerverekhez és kamerákhoz, valamint a telefonos megosztáshoz használja a hálózatot, ha bekapcsolja.
 - **Hálózati megosztások**: a megosztások listája az eszközön tárolódik, és soha nem kerül szerverre; a jelszavak az eszköz kulcstartójába vagy kulcstárolójába kerülnek.
+- **Plex** (a 20-as buildtől): a token az eszköz biztonságos tárolójában marad, és csak az Ön saját szerverére kerül elküldésre, egy kérésfejlécben, HTTPS-en; az alkalmazás soha nem lép kapcsolatba a plex.tv-vel.
+- **Tapo kamerák** (a 20-as buildtől): a TP-Link-fiók jelszava és a kamerafiók jelszava az eszköz biztonságos tárolójában marad; az alkalmazás csak a helyi hálózaton beszél a kamerával, soha nem a TP-Link szervereivel; a letöltött klipek az alkalmazás gyorsítótárában maradnak, és a kamerával együtt törlődnek.
+- **Tévé**: azt, hogy az eszköz tévé-e, az eszközön olvassa ki; semmi sem kerül elküldésre.
 - **Telefonos megosztás**: csak helyi hálózat, felhasználónévvel és jelszóval, egyszerű HTTP-n (lásd [A telefon megosztása a hálózaton](#share-this-phone-on-the-network)).
 - **Kamera**: csak a Spatial 2.5D lejátszó használja, az eszközön; a képek soha nem tárolódnak, és soha nem kerülnek elküldésre.
 
@@ -675,20 +857,25 @@ Ez a projekt az Immich forkja, és a [GNU AGPL v3](LICENSE) alatt marad. Minden 
 
 Ami még nincs kész, a legvalószínűbbel kezdve. Semmi sem ígéret itt, és a visszajelzések a [hibakövetőben](https://github.com/freeKC/Immuch360/issues) segítenek eldönteni, mi kerüljön sorra először.
 
-- **Google Play**: a 15-ös és 16-os build 2026. október 4-én került beküldésre a Google-hoz ellenőrzésre, és jóváhagyás után élesbe kerül; az utolsó, ott élőként megerősített build a 11-es.
+- **Google Play**: a 18-as build élő; a 19-es 2026. október 6. óta a Google ellenőrzése alatt van, a 20-as build pedig ezután következik.
 - **App Store**: a 3.3.0 verzió az Apple jóváhagyására vár; a 11-es build funkcióit tartalmazza, így az Immichbe való feltöltés és a videodekóder-ellenőrzés (15-ös build), valamint a nyers Insta360 fájlok (16-os build) a következő App Store-frissítéssel érkeznek. A link akkor kerül ide, amikor élesbe kerül.
-- **Meta Horizon Store**: a bejegyzés 2026. október 3-án került beküldésre a Meta ellenőrzésére a 14-es builddel, a 16-os build pedig az áruház alfa csatornáján van a következő frissítéshez. A bejegyzés jóváhagyása után a Quest 3-nak már nem lesz szüksége oldalról telepítésre, és az áruházi link ide kerül; egy oldalról telepített példányt előbb el kell távolítani (lásd [Telepítés](#install)).
-- **Áruházi leírások**: a Google Play és az App Store szövegei még az első buildeket írják le (360°-os fotók és videók, síkban megjelenő nyers fájlok); be fogják mutatni a 3D, VR180 és Spatial nézegetőket, a szerver nélküli módot, a hálózati megosztásokat, a médialejátszót és a nyers Insta360 fájlokat. A Meta Horizon Store szövege már bemutatja a médialejátszót.
+- **Meta Horizon Store**: a bejegyzés 2026. október 3-án került beküldésre a Meta ellenőrzésére a 14-es builddel, az áruház alfa csatornája pedig minden új buildet megkap a következő frissítéshez. A bejegyzés jóváhagyása után a Quest 3-nak már nem lesz szüksége oldalról telepítésre, és az áruházi link ide kerül; egy oldalról telepített példányt előbb el kell távolítani (lásd [Telepítés](#install)).
+- **Áruházi leírások**: a Google Play-bejegyzést 2026 októberében új képernyőképekkel átírták, és a tévés kiadással tévés képernyőképeket és tévés szalaghirdetést kap. Az App Store szövege még az első buildeket írja le (360°-os fotók és videók, síkban megjelenő nyers fájlok); be fogja mutatni a 3D, VR180 és Spatial nézegetőket, a szerver nélküli módot, a hálózati megosztásokat, a médialejátszót és a nyers Insta360 fájlokat. A Meta Horizon Store szövege már bemutatja a médialejátszót.
 - **Nyers 360°-os kamerafájlok, következő lépések**: folyamatjelző, amíg egy nyers fotó a headset számára készül; a GoPro és DJI videók vízszintezése a saját mozgásadataik alapján; kettős halszemes .dng; eszközös beszámolók a 18-as build kétobjektíves lejátszásáról (X4, X5, X6, GoPro MAX 2, Osmo 360) az illesztési vonalak és a dekóderkeretek megerősítéséhez.
 - **DLNA, telefonos megosztás és Apple térbeli médiák, következő lépések**: a 19-es build eszközös beszámolói (Plex, Jellyfin, egy NAS és a Freebox Server DLNA-n; egy Questet kiszolgáló telefon, a hotspotján is; valódi iPhone-os térbeli fotók és videók a headsetben); az Apple-től kért multicast jogosultság, hogy az iPhone-ok minden DLNA-szervert megtaláljanak; előző és következő a térbeli fotók között a headsetben; térbeli jelvény a szerveres fotókon az idővonalon; térbeli videók 3D-ben a Queston, ha a dekóderei engedik.
 - **360°-os lejátszók telefonon, következő lépések**: idősáv az iOS-es 360°-os videolejátszóban (az androidosban már van), előző/következő a telefonok 360°-os lejátszóiban, ahogy a Quest immerzív nézetében, és fotók a natív 360°-os videolejátszóban.
 - **Hálózati megosztások, következő lépések**: lapozás egy mappa egyik fájljáról a következőre a fotó- és videóoldalakon (a Quest immerzív nézete már végigmegy egy mappa 360°-os fájljain), Digest hitelesítés WebDAV-hoz, a felhasználónév a Bonjour-rekordból.
 - **Sík videók**: a hangsáv kiválasztása a sík lejátszóban, a szerveres, eszközös és megosztásos videókhoz egyaránt (a 360°-os és a Spatial lejátszóban már megvan).
+- **Android TV, következő lépések**: a 20-as build eszköztesztje a Google TV emulátoron és egy valódi tévén, majd a tévés kiadás a Google Playen (tévés képernyőképek, a tévés szalaghirdetés, a Google ellenőrzése); később csatornák a tévé kezdőképernyőjén.
+- **Tapo kamerák, következő lépések**: a 20-as build eszköztesztje valódi kamerákkal; az élő kép iPhone-on és iPaden; a H.265 felvételek; egy klip lejátszása letöltés közben; egy teljes nap felvételei egyetlen idővonalon.
+- **Plex, következő lépések**: a 20-as build eszköztesztje (telefonok, a Quest, egy iPhone, egy tévé, otthonon kívül); a token átvitele a számítógépről QR-kóddal; egy Plex szerver DLNA-oldalának elrejtése a megtalált szerverek listájában; IPv6.
 - **Upstream**: kis pull requestek az Immichnek azokhoz a részekhez, amelyeket a karbantartók szeretnének, a 360°-os fotónézegetővel kezdve.
 
 ## Köszönetnyilvánítás
 
 A 360°-os fotónézegető dmitry-brazhenko [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) upstream pull requestjén alapul, amely maga is bencefr prototípusára épül a [#30192](https://github.com/immich-app/immich/pull/30192) számú pull requestben. Köszönet mindkettőjüknek.
+
+A 20-as build Tapo kamera-támogatása abból készült, amit a nyílt forráskódú [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) és [python-kasa](https://github.com/python-kasa/python-kasa) projektek dokumentálnak ezekről a kamerákról.
 
 Miért fork: a 360°-os megjelenítést mobilon 2024 januárja óta kérik, és a hivatalos alkalmazásban még nincs benne; a fotónézegető upstream ellenőrzés alatt áll a [#31169](https://github.com/immich-app/immich/pull/31169) számú pull requestben. Ez a fork már most elérhetővé teszi, valódi eszközös visszajelzéseket gyűjt, és kis pull requestekben felajánl az Immichnek mindent, amit a karbantartók szeretnének. A Meta Quest nézet a Meta Spatial SDK-ra épül, amely nem nyílt forráskódú, ezért ebben a forkban marad.
 

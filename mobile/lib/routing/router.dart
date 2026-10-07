@@ -11,6 +11,7 @@ import 'package:immich_mobile/domain/models/memory.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/person.model.dart';
 import 'package:immich_mobile/domain/models/user.model.dart';
+import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/models/folder/recursive_folder.model.dart';
 import 'package:immich_mobile/models/shared_link/shared_link.model.dart';
@@ -42,6 +43,9 @@ import 'package:immich_mobile/presentation/pages/album_options.page.dart';
 import 'package:immich_mobile/presentation/pages/archive.page.dart';
 import 'package:immich_mobile/presentation/pages/asset_selection_timeline.page.dart';
 import 'package:immich_mobile/presentation/pages/asset_troubleshoot.page.dart';
+import 'package:immich_mobile/presentation/pages/camera/camera.page.dart';
+import 'package:immich_mobile/presentation/pages/camera/camera_day.page.dart';
+import 'package:immich_mobile/presentation/pages/camera/camera_edit.page.dart';
 import 'package:immich_mobile/presentation/pages/cleanup_preview.page.dart';
 import 'package:immich_mobile/presentation/pages/create_album.page.dart';
 import 'package:immich_mobile/presentation/pages/dev/main_timeline.page.dart';
@@ -63,6 +67,7 @@ import 'package:immich_mobile/presentation/pages/network/network_share_edit.page
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
+import 'package:immich_mobile/presentation/pages/network/plex_server_edit.page.dart';
 import 'package:immich_mobile/presentation/pages/panorama_360.page.dart';
 import 'package:immich_mobile/presentation/pages/partner_detail.page.dart';
 import 'package:immich_mobile/presentation/pages/people_collection.page.dart';
@@ -215,6 +220,12 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: NetworkBrowserRoute.page, guards: [_authGuard]),
     AutoRoute(page: NetworkPhotoRoute.page, guards: [_authGuard]),
     AutoRoute(page: NetworkVideoRoute.page, guards: [_authGuard]),
+    // A Plex Media Server is a share with a page of its own to pair it; a Tapo camera has its own pages, since it is
+    // not browsed as folders
+    AutoRoute(page: PlexServerEditRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: CameraRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: CameraEditRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: CameraDayRoute.page, guards: [_authGuard, _duplicateGuard]),
     // Share this phone on the network (phones only)
     AutoRoute(page: PhoneShareRoute.page, guards: [_authGuard, _duplicateGuard]),
     // required to handle all deeplinks in deep_link.service.dart

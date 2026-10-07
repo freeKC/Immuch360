@@ -10,12 +10,14 @@ class SecureStorageService {
 
   const SecureStorageService(this._secureStorageRepository);
 
-  Future<void> write(String key, String value) async {
-    await _secureStorageRepository.write(key, value);
+  /// [deviceOnly]: a secret kept on this device only, see SecureStorageRepository.write
+  Future<void> write(String key, String value, {bool deviceOnly = false}) async {
+    await _secureStorageRepository.write(key, value, deviceOnly: deviceOnly);
   }
 
-  Future<void> delete(String key) async {
-    await _secureStorageRepository.delete(key);
+  /// [deviceOnly] must be what the key was written with, see SecureStorageRepository.delete
+  Future<void> delete(String key, {bool deviceOnly = false}) async {
+    await _secureStorageRepository.delete(key, deviceOnly: deviceOnly);
   }
 
   Future<String?> read(String key) async {

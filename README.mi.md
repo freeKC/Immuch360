@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Ko Immuch360 te taupānga waea a Immich me ngā whakaahua me ngā ataata 360° ka taea e koe te titiro huri noa, me tētahi pūrei utu kore mō ngā whakaahua me ngā ataata papatahi, 360°, 3D me VR180, i ngā waea me ngā papahiko Android, i ngā iPhone me ngā iPad, me te Meta Quest 3 me te 3S. Mō te hunga e hopu ana ki tētahi kāmera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360), ki te aratau pōro whakaahua rānei o tētahi waea, mō te hunga rānei he pōtae ō rātou, ā, e hiahia ana ki te mātakitaki i ā rātou ake hopu mai i tētahi tūmau Immich, i te waea tonu, i tētahi NAS, i tētahi tūmau pāpāho rānei: te tūmau ōrite, te pūkete ōrite, kāore he mono tūmau, kāore rānei he tūmau.
+Ko Immuch360 te taupānga waea a Immich me ngā whakaahua me ngā ataata 360° ka taea e koe te titiro huri noa, me tētahi pūrei utu kore mō ngā whakaahua me ngā ataata papatahi, 360°, 3D me VR180, i ngā waea me ngā papahiko Android, i ngā iPhone me ngā iPad, i te Meta Quest 3 me te 3S, ā, mai i te hanga 20 i Android TV me Google TV. Mō te hunga e hopu ana ki tētahi kāmera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360), ki te aratau pōro whakaahua rānei o tētahi waea, mō te hunga rānei he pōtae ō rātou, ā, e hiahia ana ki te mātakitaki i ā rātou ake hopu mai i tētahi tūmau Immich, i te waea tonu, i tētahi NAS, i tētahi tūmau pāpāho, i tētahi tūmau Plex rānei: te tūmau ōrite, te pūkete ōrite, kāore he mono tūmau, kāore rānei he tūmau. Mai i te hanga 20 ka whakaatu anō i ngā kāmera Tapo, ora tonu, me ngā hopukanga o tō rātou kāri pūmahara.
 
 <p align="center">
   <sub>He peka kore ōkawa. Kāore e hono ana ki Immich, ki FUTO rānei. Ka pānuitia te ingoa pēnei i “I am much 360”.</sub>
@@ -15,7 +15,8 @@ Ko Immuch360 te taupānga waea a Immich me ngā whakaahua me ngā ataata 360° k
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">kei te arotakehia</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store kei te arotakehia
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store kei te arotakehia &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Ko Immuch360 te taupānga waea a Immich me ngā whakaahua me ngā ataata 360° k
     <td align="center" width="33%"><h3>🎥 2.5D taketake</h3>He hōhonutanga i runga i te mata papatahi mai i tētahi ataata stereo, ka whai te tirohanga i tō māhunga (whakamātautau, ngā waea me ngā papahiko)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Kotahi te taupānga, e toru ngā pūhara, he 3D tūturu i te pōtae</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Kotahi te taupānga i ngā waea, i ngā papahiko me te pōtae, he 3D tūturu i te pōtae, ā, mai i te hanga 20 i Android TV me te mamao</td>
     <td align="center"><h3>🔌 Me te tūmau, me te kore rānei</h3>Tō tūmau Immich, te taiwhanga rānei o te waea tonu, kāore he pūkete e hiahiatia ana</td>
     <td align="center"><h3>🗄️ Ngā tiritiri whatunga</h3>Samba (SMB), WebDAV, ā, mai i te hanga 19, ngā tūmau pāpāho DLNA ka kitea i te whatunga, ka pānuitia tōtika, kāore he mea e tikiake ana, ka tukuna ki Immich ina kōwhiri koe. Mai i te hanga 19 ka tiri hoki te waea i tōna ake taiwhanga ki te pōtae</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 I te pouaka whakaata</h3>Mai i te hanga 20 ko te APK ōrite i Android TV me Google TV: ngā whakaahua me ngā ataata 360°, tō tūmau me ō tiritiri, me te mamao</td>
+    <td align="center"><h3>🎬 Plex, me te kore plex.tv</h3>Mai i te hanga 20 ō pātaka Plex, ka purei mai i ngā kōnae taketake kia noho tonu te 360° hei 360°, i te kāinga, i waho hoki</td>
+    <td align="center"><h3>📹 Ngā kāmera Tapo</h3>Mai i te hanga 20 te tirohanga ora me ngā hopukanga o te kāri pūmahara, i tō whatunga anake, ā, ka tukuna tētahi topenga ki Immich ina kōwhiri koe</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Ko Immuch360 te taupānga waea a Immich me ngā whakaahua me ngā ataata 360° k
 - **“Ka puta aku whakaahua 360° hei tīpae papatahi, kua toro, ā, ka purei papatahi aku ataata 360°.”** Tirohia [Ngā whakaahua me ngā ataata 360° hei pōro](#360-photos-and-videos-as-a-sphere).
 - **“Kāore aku tūmau, kāore au e hiahia ki tētahi pūkete.”** Tirohia [Me te kore tūmau, pūkete rānei](#without-a-server-or-an-account).
 - **“E hiahia ana ahau ki te mātakitaki i ngā ataata o taku NAS, i te waea, i te pōtae rānei, me te kore e tārua.”** Tirohia [Ngā tiritiri whatunga](#network-shares-a-nas-a-computer-or-a-media-server).
+- **“Ka purei papatahi a Plex i aku ataata 360°, ā, e hiahia ana ahau ki taku pātaka Plex i te pōtae, i te pouaka whakaata, i waho atu hoki i te kāinga.”** Tirohia [Plex Media Server, me te kore plex.tv](#plex-media-server-without-plextv).
 - **“Kei taku waea aku whakaahua, ā, kāore aku rorohiko, NAS rānei hei whakatakoto mā te pōtae.”** Tirohia [Tiritiri i tēnei waea i te whatunga](#share-this-phone-on-the-network).
+- **“E hiahia ana ahau ki te kite i taku kāmera Tapo me ngā topenga o inapō me te kore taupānga Tapo, ā, ki te pupuri i tētahi topenga ki Immich.”** Tirohia [Ngā kāmera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **“Me whai taupānga Insta360 aku kōnae Insta360 i mua i taku mātakitaki”** (me ngā kōnae GoPro .360 me DJI .osv hoki). Tirohia [Ngā kōnae kāmera 360° mata](#raw-360-camera-files-without-the-cameras-app).
 - **“He rua ngā āhua o aku ataata 3D, ā, kua toro aku ataata VR180 huri noa i te pōro.”** Tirohia [3D me VR180](#3d-and-vr180-photos-and-videos) me [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **“He whakaahua mokowā āku nō taku iPhone.”** Tirohia [Ngā whakaahua me ngā ataata mokowā Apple](#apple-spatial-photos-and-videos).
 - **“Ka mahi i te waea, engari e hiahia ana ahau kia kitea i te Quest.”** Tirohia [I te pōtae Meta Quest 3](#in-the-meta-quest-3-headset).
+- **“E hiahia ana ahau ki te mātakitaki i aku whakaahua me aku ataata 360°, me ngā ataata o taku NAS, o taku tūmau Plex rānei, i te pouaka whakaata, me te mamao.”** Tirohia [Mātakitaki i tō pouaka whakaata](#watch-on-your-tv-android-tv-and-google-tv).
 - **“Kāore e kitea e au aku hopu 360° i waenga i ērā atu katoa.”** Tirohia [Te rārangi 360°](#find-your-360-shots-the-360-list).
 - **“Ka haukotikoti taku ataata 360°, ka purei rānei i tētahi tārua mōrehu.”** Tirohia [Ngā taipitopito ataata me ngā pūwetewete](#video-details-decoders-and-why-a-video-stutters).
 - **“Ka mau tonu ngā mahi a te taupānga Immich?”** Āe, me ētahi panoni iti e rua, tirohia [He Immich katoa ērā atu](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Ka maumaharatia te kōwhiringa i te waea, ā, kāore he mea e panonitia i te tū
 
 Kāore ōu tūmau Immich, kāore rānei koe e hiahia ki tētahi pūkete: e hiahia noa ana koe kia tuwhera ngā whakaahua 360° o tō waea hei pōro ka taea te huri ki te pūhurihuri. Ka tono te taupānga Immich kia takiuru i te tuatahi.
 
-I te whārangi takiuru, mā te “Whakamahia me te kore tūmau” ka tuwhera a Immuch360 ki ngā whakaahua me ngā ataata o te pūrere tonu, me ngā mātaki 360°, 3D, VR180 me Spatial, te rārangi 360° me ngā tiritiri whatunga, kāore he pūkete Immich e hiahiatia ana. Ka noho hunga, kōtukutuku rānei ngā āhuatanga tūmau kia hono rā anō koe ki tētahi tūmau; kāore he mea e wehe atu i te pūrere. I tētahi Meta Quest 3 ka tuwhera ki ngā whakaahua me ngā ataata o te pōtae tonu.
+I te whārangi takiuru, mā te “Whakamahia me te kore tūmau” ka tuwhera a Immuch360 ki ngā whakaahua me ngā ataata o te pūrere tonu, me ngā mātaki 360°, 3D, VR180 me Spatial, te rārangi 360° me ngā tiritiri whatunga (mai i te hanga 20 ngā tūmau Plex me ngā kāmera Tapo hoki), kāore he pūkete Immich e hiahiatia ana. Ka noho hunga, kōtukutuku rānei ngā āhuatanga tūmau kia hono rā anō koe ki tētahi tūmau; kāore he mea e wehe atu i te pūrere. I tētahi Meta Quest 3 ka tuwhera ki ngā whakaahua me ngā ataata o te pōtae tonu; i tētahi pouaka whakaata, kāore nei ōna ake, ka tohu ki ngā tiritiri whatunga (tirohia [Mātakitaki i tō pouaka whakaata](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Te ripa Pātaka me te kore tūmau: te tāurunga 360° kei runga, kātahi ko On this device me ngā whakaahua 360° e rua, me Ngā tiritiri whatunga me tētahi tiritiri ko NAS te ingoa">
 
@@ -126,7 +135,7 @@ I te whārangi takiuru, mā te “Whakamahia me te kore tūmau” ka tuwhera a I
 
 Kei tētahi NAS, rorohiko rānei ō ataata 360°, ā, e hiahia ana koe ki te mātakitaki i a rātou i te waea, i te pōtae rānei me te kore e tārua i te tuatahi. I te pōtae, ka tārua te tangata i ia kōnae mā te taura; ka purei papatahi ngā tūmau pāpāho pēnei i a Plex me Jellyfin i ngā ataata 360°, e ai ki ngā tono i ō rātou paepae kōrero; ko tō tūmau Immich anake ka pānuitia e te taupānga Immich.
 
-Ka tirotiro, ka purei a Immuch360 i ngā whakaahua me ngā ataata o tētahi tūmau e kōrero ana i te SMB (Samba, Windows), i te WebDAV, ā, mai i te hanga 19, i te DLNA/UPnP (he tūmau pāpāho: Plex, Jellyfin, minidlna, Gerbera, Emby, he NAS, he pouaka pouaka whakaata rānei), tōtika mai i te tiritiri. Ka kitea e ia ngā tūmau o tō whatunga, ā, ka purei tōtika i ngā kōnae i ngā mātaki ōrite ki ērā atu wāhi o te taupānga (360°, 3D, VR180, Spatial 2.5D, te mātaki rumaki o te Quest), me te tūmau Immich, me te kore rānei, i ngā waea me te Meta Quest 3. Kāore he mea e tikiakehia. Ina hono tētahi tūmau, ka taea ngā kōnae ka kōwhiria e koe te tuku ki tō pūkete Immich (mai i te hanga 15).
+Ka tirotiro, ka purei a Immuch360 i ngā whakaahua me ngā ataata o tētahi tūmau e kōrero ana i te SMB (Samba, Windows), i te WebDAV, ā, mai i te hanga 19, i te DLNA/UPnP (he tūmau pāpāho: Jellyfin, minidlna, Gerbera, Emby, he NAS, he pouaka pouaka whakaata rānei), tōtika mai i te tiritiri. Mai i te hanga 20 he momo motuhake tō tētahi Plex Media Server, tirohia [Plex Media Server, me te kore plex.tv](#plex-media-server-without-plextv). Ka kitea e ia ngā tūmau o tō whatunga, ā, ka purei tōtika i ngā kōnae i ngā mātaki ōrite ki ērā atu wāhi o te taupānga (360°, 3D, VR180, Spatial 2.5D, te mātaki rumaki o te Quest), me te tūmau Immich, me te kore rānei, i ngā waea me te Meta Quest 3. Kāore he mea e tikiakehia. Ina hono tētahi tūmau, ka taea ngā kōnae ka kōwhiria e koe te tuku ki tō pūkete Immich (mai i te hanga 15).
 
 | Tāpiri tiritiri | He kōpaki o tētahi tiritiri |
 |---|---|
@@ -135,10 +144,10 @@ Ka tirotiro, ka purei a Immuch360 i ngā whakaahua me ngā ataata o tētahi tūm
 
 ### Tāpiri tiritiri
 
-1. Whakatuwheratia te ripa “Pātaka”, kātahi ko “Ngā tiritiri whatunga”. I te wā tuatahi, ka kī te whārangi “Kāore anō he tiritiri” me tētahi pātene “Tāpiri tiritiri”; ka pērā anō te + kei runga matau i ngā wā katoa.
-2. Ka rapu te whārangi “Tāpiri tiritiri” i ngā tūmau o tō whatunga i te tuatahi, ka whakarārangi i a rātou i raro i “I kitea i te whatunga”, me tō rātou momo (SMB, WebDAV, DLNA, Waea). Tae atu ki te ono hēkona pea te roa o te rapu; mā te “Matawai anō” ka tīmata anō. Ka whakamahi i te Bonjour/mDNS me tētahi matawai o te whatunga ā-rohe kua whakaūngia e tētahi whakawhitinga SMB, WebDAV tūturu rānei, ā, mai i te hanga 19 he rapu SSDP mō ngā tūmau pāpāho DLNA.
-3. Pātōtia tētahi tūmau: ka whakakīa te momo, te tūmau, te tauranga me te ara.
-4. Kāore i te rārangi? Whakakīia ā-ringa te puka. Momo: “SMB (Samba, tiritiri Windows)”, “WebDAV (Nextcloud, Synology me ētahi atu)”, “Tūmau pāpāho DLNA (Plex, Jellyfin, NAS, pouaka pouaka whakaata)” rānei. Kātahi ko “Ingoa”, “Ingoa, wāhitau rānei o te tūmau” (he ingoa, he wāhitau rānei; mā tētahi wāhitau katoa pēnei i `smb://nas/photos`, `\\nas\photos`, `https://nas:5006/photos` rānei ka whakakīa ērā atu āpure), “Tauranga (kōwhiringa)” ina ehara i te tauranga noa, “Tiritiri” mō te SMB, “Ara o te wāhitau WebDAV” rānei mō te WebDAV, “Kōpaki tīmatanga (kōwhiringa)”, “Ingoa kaiwhakamahi” me “Kupuhipa”, me “Tūhononga haumaru (HTTPS)” mō te WebDAV.
+1. Whakatuwheratia te ripa “Pātaka”, kātahi ko “Ngā tiritiri whatunga”. I te wā tuatahi, ka kī te whārangi “Kāore anō he tiritiri” me tētahi pātene “Tāpiri tiritiri”; ka pērā anō te + kei runga matau i ngā wā katoa. Mai i te hanga 20 ka pātai rāua tahi he aha hei tāpiri: “He tiritiri whatunga (NAS, rorohiko, tūmau pāpāho)”, “He Plex Media Server”, “He kāmera Tapo” rānei. Kōwhiria te tuatahi.
+2. Ka rapu te whārangi “Tāpiri tiritiri” i ngā tūmau o tō whatunga i te tuatahi, ka whakarārangi i a rātou i raro i “I kitea i te whatunga”, me tō rātou momo (SMB, WebDAV, DLNA, Waea, ā, mai i te hanga 20 ko Plex me Tapo). Tae atu ki te ono hēkona pea te roa o te rapu; mā te “Matawai anō” ka tīmata anō. Ka whakamahi i te Bonjour/mDNS me tētahi matawai o te whatunga ā-rohe kua whakaūngia e tētahi whakawhitinga SMB, WebDAV tūturu rānei, mai i te hanga 19 he rapu SSDP mō ngā tūmau pāpāho DLNA, ā, mai i te hanga 20 ko GDM, te kitenga a Plex, me te kawa kitenga a TP-Link mō ngā kāmera Tapo.
+3. Pātōtia tētahi tūmau: ka whakakīa te momo, te tūmau, te tauranga me te ara. Ka tuwhera kē tētahi tūmau Plex, tētahi kāmera Tapo rānei i tōna ake whārangi, kua whakakīa.
+4. Kāore i te rārangi? Whakakīia ā-ringa te puka. Momo: “SMB (Samba, tiritiri Windows)”, “WebDAV (Nextcloud, Synology me ētahi atu)”, “Tūmau pāpāho DLNA (Jellyfin, NAS, pouaka pouaka whakaata)”, ā, mai i te hanga 20, “Plex Media Server” rānei, ka tuwhera i te whārangi o [Plex Media Server, me te kore plex.tv](#plex-media-server-without-plextv). Kātahi ko “Ingoa”, “Ingoa, wāhitau rānei o te tūmau” (he ingoa, he wāhitau rānei; mā tētahi wāhitau katoa pēnei i `smb://nas/photos`, `\\nas\photos`, `https://nas:5006/photos` rānei ka whakakīa ērā atu āpure), “Tauranga (kōwhiringa)” ina ehara i te tauranga noa, “Tiritiri” mō te SMB, “Ara o te wāhitau WebDAV” rānei mō te WebDAV, “Kōpaki tīmatanga (kōwhiringa)”, “Ingoa kaiwhakamahi” me “Kupuhipa”, me “Tūhononga haumaru (HTTPS)” mō te WebDAV.
 5. SMB: ina patohia te tūmau me te ingoa kaiwhakamahi, ka whakarārangi a “Kōwhiria he tiritiri” i ngā tiritiri o te tūmau.
 6. DLNA: kāore he ingoa kaiwhakamahi, he kupuhipa rānei o tētahi tūmau pāpāho. Hōmai te tūmau, te tauranga me te “Ara whakaahuatanga” o tōna whakaahuatanga pūrere (`/rootDesc.xml` mō minidlna), whakapiria rānei te wāhitau katoa, pēnei i `http://192.168.1.10:8200/rootDesc.xml`, ki te āpure tūmau.
 7. Pātōtia te “Whakamātauria te tūhononga”. Ka whakautu “Kua tūhono, N tāurunga kei te kōpaki tīmatanga”, ka kī rānei he aha i rahua ai. Kātahi ka pātō i te “Tiaki”, kei raro i te puka.
@@ -155,6 +164,7 @@ Ka tukuna pērā tonu tētahi ingoa kaiwhakamahi me tētahi kupuhipa kau: e hiah
 
 Ka mōhiotia te 360°, te 3D me te VR180 mai i ngā raraunga GPano, pōro rānei o te kōnae, ka pānuitia ki ngā tono awhe, ā, ko te VR180 mai i te ingoa kōnae hoki. Mai i te hanga 16 ka mōhiotia anō ngā kōnae Insta360 mata (he whakaahua .insp mā tōna ingoa, mā te poraka whakataurite o te kāmera rānei, he ataata .insv mā tōna ingoa me tōna anga) ka tuia.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Tuku i ngā kōnae o tētahi tiritiri ki Immich
 
 Mai i te hanga 15, ina hono koe ki tētahi tūmau:
@@ -177,17 +187,67 @@ Mai i te hanga 19, ka tuku te taupānga i te rapu SSDP mō ngā tūmau pāpāho 
 <a id="a-share-that-moved"></a>
 ### He tiritiri kua neke
 
-Mai i te hanga 19, ka pupuri tētahi tiritiri DLNA me tētahi tiritiri waea (tirohia [Tiritiri i tēnei waea i te whatunga](#share-this-phone-on-the-network)) i te id e pānuitia ana e tō rātou tūmau. Ina kore tētahi e whakautu anō i tōna wāhitau (he wāhitau hou i hoatu e te pouaka, he tūmau kua tīmata anō i tētahi atu tauranga), ka whakaatu tōna whārangi kōpaki i te “E rapu ana i a (ingoa) i te whatunga”, ā, ka nekehia te tiritiri ki te wāhi e whakautu ana ināianei: i taua wā tonu mō tētahi tūmau DLNA, kāore nei he kupuhipa, ā, i muri i tētahi whakaūnga, “Me whakamahi te wāhitau hou?”, e whakaatu ana i ngā wāhitau e rua, mō tētahi tiritiri he ingoa kaiwhakamahi, he kupuhipa hoki, nō te mea ka tukuna ērā ki te wāhitau hou.
+Mai i te hanga 19, ka pupuri tētahi tiritiri DLNA me tētahi tiritiri waea (tirohia [Tiritiri i tēnei waea i te whatunga](#share-this-phone-on-the-network)) i te id e pānuitia ana e tō rātou tūmau. Ina kore tētahi e whakautu anō i tōna wāhitau (he wāhitau hou i hoatu e te pouaka, he tūmau kua tīmata anō i tētahi atu tauranga), ka whakaatu tōna whārangi kōpaki i te “E rapu ana i a (ingoa) i te whatunga”, ā, ka nekehia te tiritiri ki te wāhi e whakautu ana ināianei: i taua wā tonu mō tētahi tūmau DLNA, kāore nei he kupuhipa, ā, i muri i tētahi whakaūnga, “Me whakamahi te wāhitau hou?”, e whakaatu ana i ngā wāhitau e rua, mō tētahi tiritiri he ingoa kaiwhakamahi, he kupuhipa hoki, nō te mea ka tukuna ērā ki te wāhitau hou. Mai i te hanga 20 ka neke tonu anō tētahi tūmau Plex ka kitea anō i tētahi atu wāhitau o te whatunga: mā tōna tiwhikete e whakaatu ko te tūmau ōrite ia i mua i te tukunga o te tohu. Ka rapua tētahi kāmera Tapo mā tōna wāhitau MAC mai i tōna ake whārangi, tirohia [Ngā kāmera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Ngā tepe
 
 - **SMB**: SMB 2 me 3 anake, kāore he SMB 1.
 - **WebDAV**: ko te motuhēhēnga Basic anake (kāore anō a Digest kia tautokona); me tāuta tētahi tiwhikete HTTPS waitohu-ā-whaiaro ki te pūrere.
-- **Te kimi tūmau**: ka titiro te matawai whatunga me te rapu DLNA ki te whatunga ā-rohe /24 anake, ā, me whai whakaaetanga whatunga ā-rohe i iOS. I te iPhone me te iPad ka tuku te rapu DLNA i ngā tono unicast anake, kia tuku rā anō a Apple i te mana multicast ki te taupānga, ā, kāore ētahi tūmau e whakautu (minidlna i Linux): tāpirihia ērā mā tō rātou wāhitau whakaahuatanga.
+- **Te kimi tūmau**: ka titiro te matawai whatunga me ngā rapu DLNA, Plex me Tapo ki te whatunga ā-rohe /24 anake, ā, me whai whakaaetanga whatunga ā-rohe i iOS. I te iPhone me te iPad ka tuku te rapu DLNA i ngā tono unicast anake, kia tuku rā anō a Apple i te mana multicast ki te taupānga, ā, kāore ētahi tūmau e whakautu (minidlna i Linux): tāpirihia ērā mā tō rātou wāhitau whakaahuatanga.
 - **DLNA**: ko tētahi tūmau e tuku ana i tētahi tārua kua hurihia anake o tētahi kōnae ka hoatu i taua tārua; ka whakarārangi tētahi kōpaki i te 20,000 tāurunga te nui rawa.
 - **Ngā karakōnui**: ka wetewete ngā karakōnui whakaahua i te kōnae katoa, ā, kāore he karakōnui mō ngā whakaahua nui ake i te 30 MB.
 - **Ngā pūrei**: kāore anō te kōwhiringa ara ororongo kia tae ki te pūrei papatahi. I tētahi waea kāore anō kia taea te kōrere mai i tētahi kōnae o tētahi kōpaki ki tērā e whai ake ana (he o mua me o muri tō te mātaki rumaki o te Quest mō ngā kōnae 360° o te kōpaki). Kāore e maumaharatia te kōwhiringa 3D, 180° rānei i tētahi kōnae whatunga.
 - **Ngā tukuake**: ka rere anake i te wā e tuwhera ana te taupānga, ā, ko tētahi kōnae kei te tūmau kē ka tukuna katoatia i mua i te pūrongo a te tūmau he tārua rua.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, me te kore plex.tv
+
+Kei Plex ō ataata, ā, ka whakaatu papatahi a Plex i ō whakaahua me ō ataata 360°, e ai ki ngā tono i tōna paepae (kua tuwhera tētahi mai i te 2017). E hiahia ana hoki koe ki taua pātaka i te pōtae, i te pouaka whakaata, i waho atu hoki i te kāinga. Ka pānui noa te taupānga Immich i tō tūmau Immich, ā, ka tae noa te momo DLNA o te hanga 19 ki te taha DLNA o Plex i te kāinga anake.
+
+Mai i te hanga 20 ka takirua tōtika a Immuch360 ki tō Plex Media Server, me te kore plex.tv: ka kitea e ia te tūmau i te whatunga, ka whakapiri koe i tētahi tohu kotahi te wā, ā, ka pānui ora te taupānga i ngā kōnae taketake o ō pātaka, i ia mātaki o te taupānga (360°, 3D, VR180, Spatial 2.5D, te mātaki rumaki o te Quest, te mamao o te pouaka whakaata), i te kāinga, ā, mā tō whakawhiti tauranga, i waho atu i te kāinga. Kāore he mea e tāruatia, ā, ka taea ngā kōnae ka kōwhiria e koe te tuku ki Immich.
+
+### Tāpirihia he tūmau Plex
+
+1. Whakatuwheratia te ripa “Pātaka”, kātahi ko “Ngā tiritiri whatunga”, kātahi ko + me “He Plex Media Server”. Ka tuwhera i te whārangi ōrite te momo “Plex Media Server” o te puka tiritiri, me tētahi tūmau he tūtohu Plex tōna i raro i “I kitea i te whatunga”.
+2. Ka rapu te whārangi “Tāpirihia he tūmau Plex” i ngā tūmau Plex o tō whatunga (“E rapu ana i ngā tūmau Plex i tō whatunga”), ā, ka whakarārangi i a rātou i raro i “I kitea i te whatunga”. Pātōtia tōu: ka whakaatu tētahi kāri i tōna ingoa, i tōna putanga Plex me tētahi id poto.
+3. Kāore i te rārangi? Patohia tōna “Wāhitau tūmau”, pēnei i `192.168.1.20`, `192.168.1.20:32400`, `https://...plex.direct:32400` rānei, kātahi ka pātō i “Rapua”. Ka pānui te taupānga i te tiwhikete o te tūmau, ā, kāore e tuku i tētahi atu mea.
+4. Tikina te tohu, i tētahi rorohiko: whakatuwheratia a Plex i tētahi pūtirotiro tukutuku ka takiuru, whakatuwheratia tētahi whakaahua, ataata rānei o tō pātaka, kātahi ko “...”, “Get Info”, “View XML”. Ka tuwhera tētahi ripa hou ki tētahi wāhitau e mutu ana ki `X-Plex-Token=...`. Tāruatia taua wāhitau katoa.
+5. Whakapiria ki “Tohu urunga”, tukuna rānei ki te waea ka pātō i “Whakapiri mai i te papatopenga”: ka tangohia e te taupānga te tūmau me te tohu mai i reira. Ka mahi anō ko te kupu anake i muri i `X-Plex-Token=`. He ōrite te kōrero a “Me pēhea te whiwhi”, i te whārangi; ka taea hoki e ngā kaiwhakahaere tūmau te uara `PlexOnlineToken` o te kōnae `Preferences.xml` o te tūmau te whakamahi, kāore nei e pau. I tētahi pouaka whakaata, ka tuwhera te OK i te kōrero papapātuhi: patohia te tohu ki reira (20 pūāhua te roa i te nuinga o te wā).
+6. Pātōtia “Whakamātauria te tūhononga”. Ka whakautu “Kua hono: N pātaka”, ka kī rānei he aha te hē, pēnei i “Kua whakakāhoretia e te tūmau Plex tēnei tohu.”
+7. Kātahi ka whakaatu a “Urunga mai i waho o te kāinga” i te kōrero a te tūmau: “E ai ki te tūmau ka taea ia te toro i (wāhitau):(tauranga).”, “Kāore te tūmau i kī mai i tōna wāhitau i waho o te kāinga.” rānei. Hei whakamahi i te tūmau i waho atu i te kāinga, patohia tō wāhitau tūmatanui, tō ingoa DynDNS rānei ki “Wāhitau i waho o te kāinga (IP, ingoa rānei)”, me te tauranga kua whakawhitia i Plex (Ngā tautuhinga, Urunga mamao) ki “Tauranga i waho o te kāinga”. Ka toa tonu tāu e patohia ana i tā te tūmau e kī ana.
+8. Ko “Ingoa” te ingoa o te tūmau ki te kore koe e panoni, ā, ka taea e “Kōpaki tīmatanga (kōwhiringa)” te whakatuwhera tōtika i tētahi pātaka kotahi. Pātōtia “Save” (Tiaki). Ka whakarārangitia te tūmau me ngā tiritiri, hei `plex://` me tōna wāhitau.
+
+### Tirotiro i ō pātaka Plex
+
+1. Pātōtia te tūmau i “Ngā tiritiri whatunga”. Ka whakarārangi te taumata tuatahi i ngā pātaka ka whakaaturia e te taupānga: ngā whakaahua, ngā kiriata me ētahi atu ataata, ngā hōtaka pouaka whakaata. Ka waiho te puoro.
+2. I raro i tētahi pātaka ko ōna kōpaki pērā i tō rātou noho i te kōpae o te tūmau (te tirohanga “mā te kōpaki” a Plex), kātahi ko ngā whakaahua me ngā ataata i raro i ō rātou ingoa kōnae, me ngā koromātiti ka hangaia e Plex. Ka whakaatu kē tētahi pātaka whakaahua, kāore nei tōna tirohanga kōpaki e whakautu, i ōna pukaemi.
+3. Ka kitea te 360° me te 3D mā te pānui i ngā kōnae tonu, pērā i tētahi tiritiri: ka whiwhi ngā whakaahua 360° i te tohu 360°, ko ngā mea mokowā Apple i te tohu 3D.
+4. Whakatuwheratia tētahi whakaahua, ataata rānei pērā i tētahi tiritiri: 360°, 3D, 360°/180°, Spatial 2.5D i tētahi waea, te mātaki rumaki i te Quest, te mamao i tētahi pouaka whakaata. Ka pānuitia tētahi ataata hei kōnae taketake, me ngā awhe paita mā te arawhiti ā-rohe o te taupānga, nā reira ka mahi te rapu wā, ā, ka tae pai ōna raraunga 360° me te 3D ki ngā pūrei.
+5. Tīpakohia ngā kōnae ka pātō i “Tukuake ki Immich” hei tuku ki tō tūmau, pērā i tētahi tiritiri (tirohia [Tuku i ngā kōnae o tētahi tiritiri ki Immich](#send-files-of-a-share-to-immich)).
+
+### I waho atu i te kāinga
+
+I ia wā ka whakatuwhera i te tūmau, ka whakamātau te taupānga i te wāhitau i te kāinga i te tuatahi, ā, 400 ms i muri mai, i te wāhitau i waho o te kāinga. Ka whakamahia te mea tuatahi ka whakautu me tō tūmau; ina ko te wāhitau i waho o te kāinga, ka whakaatu te whārangi kōpaki i tētahi ata ao me te tapanga “Kua hono mā te wāhitau i waho o te kāinga”. Me whakakā te Urunga mamao i Plex (Ngā tautuhinga, Urunga mamao) me tētahi tauranga kua whakawhitia e tō pouaka: me te kore plex.tv kāore e taea e te taupānga te whakamahi i te tuku a Plex, nō reira ka tuwhera noa tētahi tūmau kāore he whakawhiti tauranga i te kāinga, ā, i waho atu i te kāinga ka kī te whārangi “Kāore e taea tō tūmau Plex te toro mai i waho o tō whatunga kāinga. Whakakāngia te urunga mamao me te whakawhiti tauranga i Plex (Ngā tautuhinga, Urunga mamao), patohia rānei tōna wāhitau tūmatanui.”
+
+Ka akona anō te wāhitau ka kīia e te tūmau i ia tūhononga i te kāinga. Ina kore e whakautu mai i waho (he pouaka e huri ana i tōna wāhitau, e rua ngā pouara i te rārangi), patohia tōu ki te whārangi o te tūmau. Ina mutu te mahi a te tohu (i puta koe i te wāhanga pūtirotiro i tāruatia mai ai, hei tauira), ka kī te whārangi kōpaki pērā, ā, ka tuku i “Whakapiri he tohu hou”, ka tuwhera i te whārangi o te tūmau ki te āpure tohu.
+
+### Te whakatairite ki a Plex me te momo DLNA
+
+- **Ngā kōnae taketake**: ka pānui te taupānga i ngā kōnae tonu, kaua rawa he tārua kua hurihia e Plex, nā reira ka noho pai ngā raraunga 360°, 3D me VR180, ā, ka whakamahia e ngā mātaki o te taupānga, engari ka whakaatu papatahi ngā taupānga Plex i ēnei kōnae.
+- **Kāore he plex.tv**: ka kōrero noa te taupānga ki tō tūmau, mā te HTTPS i ngā wā katoa. Ka tirohia te tūmau mā tōna ake tiwhikete plex.direct, e here ana ki te id o te tūmau, i mua i te tukunga o te tohu. Ka noho te tohu ki te pūrere, ki tōna pātaka haumaru, ā, ka tae noa ki tō tūmau, i tētahi pane tono.
+- **Ki te whakatairite ki te tāpiri i te tūmau ōrite hei DLNA**: ngā kōpaki pērā i te kōpae, ngā koromātiti a Plex, te urunga mai i waho o te kāinga me tētahi tūhononga haumaru.
+
+### Ngā tepe
+
+- **Ngā tūmau kua kerēmehia anake**: me kerēmehia te tūmau i Plex (kua takiuru ki tētahi pūkete Plex kotahi te wā), mā tēnā ka whiwhi ia i tōna tiwhikete plex.direct. Ki te kore, ka kī te whārangi “Ka whakautu tēnei wāhitau me te kore tiwhikete Plex. Kerēmehia te tūmau i Plex, tāpirihia rānei hei tiritiri SMB, WebDAV, DLNA rānei.”
+- **IPv4 anake**: “Kāore anō ngā wāhitau IPv6 kia tautokona. Patohia te wāhitau IPv4 o te tūmau.”
+- **Ko te tohu** ka hoatu i te urunga katoa ki tō tūmau Plex. Mā te tango i te tūmau i te taupānga ka warewaretia te tohu i te pūrere, engari kāore e whakakorea: “Ka mana tonu te tohu ki te tūmau kia puta rā anō koe i te wāhanga pūtirotiro i tāruatia mai ai.” Ka whakaatu tētahi tohu he rā mutunga tōna i taua rā, ā, kāore e taea e te taupānga te whakahou.
+- **I waho atu i te kāinga**: mā tētahi whakawhiti tauranga anake, kāore he tuku.
+- **Ngā pātaka**: kāore e whakaaturia te puoro, ka whakarārangi tētahi kōpaki i ngā tāurunga 20,000 te nui rawa, ā, ka whiwhi pea tētahi kaiwhakamahi kua herea i te “Kāore e taea e tēnei tohu te pānui i ngā pātaka o te tūmau.”
+- **Ngā kōnae kāmera 360° mata** (.insv, .insp, .360, .osv) ka whakaaturia mēnā ka whakarārangitia e Plex anake; ki te kore, tāpirihia te kōpaki NAS ōrite hei tiritiri SMB, WebDAV rānei, tirohia [Ngā kōnae kāmera 360° mata](#raw-360-camera-files-without-the-cameras-app).
+- **Te kimi i te tūmau**: kāore e kitea tētahi tūmau kua wetohia tōna tautuhinga “Enable local network discovery (GDM)”, nā reira patohia tōna wāhitau. I te iPhone me te iPad ka tuku te rapu i ngā tono unicast anake. Ka puta pea anō te taha DLNA o te tūmau ōrite i te rārangi, me te tūtohu DLNA: kōwhiria te rārangi me te tūtohu Plex.
+- **Kāore anō kia tirohia i tētahi pūrere**: ko te takirua, ngā kōpaki, ngā awhe paita o tētahi ataata, ngā koromātiti, tētahi tohu hē me te wāhitau i waho o te kāinga i tirohia mai i tētahi rorohiko ki tētahi Plex Media Server 1.42.1 tūturu, ā, ko ngā pātaka whakaahua me ngā hōtaka pouaka whakaata ki tētahi tūmau whaihanga anake. Ko te purei i tētahi waea, i te Quest, i tētahi iPhone me tētahi pouaka whakaata, me te huri ki te wāhitau i waho o te kāinga, te whakamātautau pūrere o te hanga 20.
+- Kāore a Immuch360 e hono ana ki a Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Tiritiri i tēnei waea i te whatunga
@@ -219,6 +279,63 @@ Mai i reira he tiritiri WebDAV pēnei i ērā atu: te mōhio 360°, ngā kōnae 
 - **Haumarutanga**: whatunga ā-rohe anake. Ka whakarongo te tiritiri ki ngā wāhitau Wi-Fi, Ethernet me te wāhi whakapā o te waea anake, kāore rawa ki tōna wāhitau raraunga pūkoro, VPN rānei, ā, ka whakautu anake ki ngā pūrere he wāhitau ā-rohe. Me whai ingoa kaiwhakamahi me te kupuhipa ia tono (HTTP Basic); ko ngā kupuhipa hē tekau mai i tētahi pūrere i roto i te meneti kotahi ka aukati i a ia mō te meneti kotahi. Ka haere te kupuhipa me te kore whakamuna i te Wi-Fi (HTTP noa): whakamahia te tiritiri i tētahi whatunga e whakawhirinaki ana koe, ā, wetohia ina mutu koe.
 - **Te wāhi whakapā o te waea tonu**: ka taea e te pōtae te hono atu; ina kore ia e kite i te waea ki reira, patohia te wāhitau e whakaaturia ana i te whārangi.
 - **Kāore anō kia tirohia i tētahi pūrere**: i tirohia te tūmau ki ngā whakamātautau wae me ngā whakamātautau mai i te tīmatanga ki te mutunga me te kiritaki WebDAV me te arawhiti pāpāho o te pōtae tonu, i tētahi rorohiko. Ko tētahi waea e tuku ana ki tētahi Quest 3 (te kitenga, tētahi ataata 4 GB ka pūreihia, ka rapua te wā, te mata kua weto mō ngā meneti 30, te wāhi whakapā, “Whakamutu” mai i te pānui) me te taha iPhone, kāore anō kia rere i tētahi iPhone, te whakamātautau pūrere o te hanga 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Ngā kāmera Tapo: te tirohanga ora me ngā hopukanga o te kāri pūmahara
+
+He kāmera Tapo ōu i te kāinga, ā, e hiahia ana koe ki te kite i te kāmera māra me ngā topenga o inapō i te taha o ō whakaahua me te kore e whakatuwhera i te taupānga Tapo, ā, ki te pupuri i tētahi topenga ki Immich. Kāore he mea mō ngā kāmera i te taupānga Immich, ā, he taupānga motuhake te taupānga Tapo, kua takiuru ki tō pūkete TP-Link, me ngā topenga i wehe i ō whakaahua.
+
+Mai i te hanga 20 ka tāpiri a Immuch360 i tētahi kāmera Tapo i te taha o ngā tiritiri whatunga. Ka whakaatu ora i te kāmera i ngā waea me ngā papahiko Android, i Android TV me te Meta Quest 3, ā, i ngā pūhara katoa ko ngā hopukanga o tōna kāri pūmahara, i ia rā: ka tikina tētahi topenga mai i te kāmera, kātahi ka purei pērā i tētahi ataata, ā, ka taea te tuku ki Immich. Ka kōrero noa te taupānga ki te kāmera i tō whatunga, kaua rawa ki ngā tūmau o TP-Link, ā, kāore rawa e panoni i tētahi mea i te kāmera.
+
+### Tāpirihia he kāmera
+
+1. I te taupānga Tapo i te tuatahi: hangaia te pūkete kāmera, i ngā tautuhinga o te kāmera, Advanced Settings, Camera Account (he ingoa kaiwhakamahi me tētahi kupuhipa mō tēnei kāmera, ka whakamahia mō te tirohanga ora), ā, whakakāngia te Third-Party Compatibility, i raro i Me, kātahi ko Tapo Lab.
+2. I Immuch360, whakatuwheratia te ripa “Pātaka”, kātahi ko “Ngā tiritiri whatunga”, kātahi ko + me “He kāmera Tapo”.
+3. Ka rapu te whārangi “Tāpirihia he kāmera” i ngā kāmera (“E rapu ana i ngā kāmera Tapo i tō whatunga”), ā, ka whakarārangi i a rātou i raro i “I kitea i te whatunga” me te tūtohu Tapo. Pātōtia tōu hei whakakī i “Wāhitau o te kāmera”, patohia rānei tōna wāhitau. Ka tuwhera i te whārangi ōrite tētahi kāmera me te tūtohu Tapo i te puka tiritiri.
+4. “Ingoa”: me pēhea te whakarārangi i te kāmera.
+5. I raro i “Ngā hopukanga kei te kāri pūmahara”, “Kupuhipa o te pūkete TP-Link”: te kupuhipa o te pūkete e whakamahia ana e koe i te taupānga Tapo. Ka whakatuwhera i ngā hopukanga; kāore tō wāhitau īmēra e hiahiatia ana.
+6. I raro i “Ora”, “Ingoa kaiwhakamahi o te pūkete kāmera” me “Kupuhipa o te pūkete kāmera”: te pūkete kāmera o te hipanga 1.
+7. Ka ranea tētahi o ngā mea e rua (“Tāurutia te kupuhipa o te pūkete TP-Link, te pūkete kāmera, ko rāua tahi rānei.”): mā te kupuhipa TP-Link anake ka whiwhi i ngā hopukanga, mā te pūkete kāmera anake te tirohanga ora.
+8. Pātōtia “Whakamātauria te kāmera”. Ka whakaatu i te “Ngā hopukanga: (tauira), pūmanawa mau (putanga)” me te āhua o te kāri pūmahara, me te “Tirohanga ora: (ataata), oro (ororongo)”, he aha rānei i rahua mō ia mea.
+9. Pātōtia “Save” (Tiaki). Ka whakarārangitia te kāmera i raro i “Ngā kāmera”, i muri i ngā tiritiri, me tōna tauira ina mōhiotia, me `tapo://` me tōna wāhitau.
+
+### Mātakitaki ora
+
+1. Pātōtia te kāmera. Kei runga o tōna whārangi tōna tirohanga ora: “E hono ana ki te kāmera”, kātahi ko te pikitia me te tohu “Ora”.
+2. Ngā pātene i runga i te pikitia: te oro, kua weto i te tīmatanga (“Whakakāngia te oro”; “Kāore he oro ki tēnei pūrere” ina kore e taea e te pūrere te purei), SD, HD rānei, me “Mata katoa”.
+3. Ka whakaatu tētahi waea i te SD i te whārangi me te HD i te mata katoa; ka whakaatu te Quest i te HD. Ka wehe tuatahi te Hoki i te mata katoa.
+4. I raro i te pikitia ko te tauira me te pūmanawa mau me te kāri pūmahara, pēnei i “Kāri pūmahara: (kua whakamahia) kua whakamahia o (tapeke)”, “Kāore he kāri pūmahara” rānei.
+
+I te iPhone me te iPad ka kī te tirohanga ora “Ka tae mai te tirohanga ora ki iPhone me iPad i tētahi putanga ā muri. Kei te whakatere kē ngā hopukanga ki konei.” Me te kore pūkete kāmera ka kī te whārangi “Tāpirihia te pūkete kāmera kia kite i te tirohanga ora.”
+
+### Purei me te pupuri i ngā hopukanga
+
+1. I raro i “Ngā hopukanga kei te kāri pūmahara”, ka whakarārangi te whārangi kāmera i ngā rā he hopukanga, ko te hou rawa i te tuatahi, mā te marama. Me te kore kupuhipa o te pūkete TP-Link ka kī “Tāpirihia te kupuhipa o te pūkete TP-Link kia kite i ngā hopukanga.”
+2. Pātōtia tētahi rā. Ka puta ōna topenga i raro i ngā hāora o te wā ake o te kāmera, me tōna tīmatanga, tōna roa, te koromātiti o te kāmera mō tētahi takahanga, me tōna momo: Nekehanga, Tangata, Mōkai, Waka, Tangi pēpi, Kararehe, Haere tonu, Takahanga rānei.
+3. Pātōtia tētahi topenga. Ka tikina e te taupānga mai i te kāmera (“E tiki ana i te ataata mai i te kāmera: N%”, me “Cancel” (Whakakore)), kātahi ka purei i te pūrei ataata, me te oro me te rapu wā. Ka mau tētahi topenga kua tikina i te “Kei tēnei pūrere”, ā, ka tuwhera tonu i te wā e whai ake ana.
+4. Hei pupuri i tētahi topenga ki Immich, me tētahi tūmau kua hono: te tahua ⋮ o te ataata, “Tukuake ki Immich”.
+5. Hei whakawātea wāhi: mā te pēhi roa i tētahi topenga kua tikina ka tukuna “Mukua te tārua ki tēnei pūrere” (i tētahi waea), ā, kei te whārangi kāmera te “Mukua ngā ataata i tikina mai i tēnei kāmera”, me tō rātou rahi.
+6. Mā te pātene whakahou kei runga matau, mā te tō iho rānei i te whārangi, ka pātai anō ki te kāmera.
+
+Ina kore te kāmera e whakautu anō i tōna wāhitau, ka rapu tōna whārangi i a ia i te whatunga mā tōna wāhitau MAC, ā, ka neke ki te wāhi e whakautu ana ināianei, ina whakaatu ia i te tiwhikete ōrite. Ka whiwhi kē tētahi kāmera e whakaatu ana i tētahi tiwhikete rerekē i tērā i kitea tuatahitia e te taupānga i tētahi pātai: “Kei te whakaatu te kāmera i (wāhitau) i tētahi tiwhikete rerekē i tō mua. Me haere tonu mēnā kua tautuhi anō, kua whakakapi rānei koe i a ia.”
+
+### Te whakatairite ki te taupānga Tapo
+
+- **I tō whatunga anake**: ka kōrero te taupānga ki te kāmera tonu, i te whatunga ā-rohe, kaua rawa ki ngā tūmau o TP-Link. Kāore e takiuru ki tētahi pūkete TP-Link, nā reira kāore tō wāhitau īmēra e hiahiatia ana.
+- **Ka noho ngā hopukanga hei ataata noa**: he ataata H.264 tētahi topenga kua tikina, me tōna oro, ka taea e koe te tuku ki Immich, ka noho ai i muri i te tuhituhi a te kāri pūmahara ki runga.
+- **I te taha o ērā atu**: me te tūmau Immich, me te kore rānei, i tētahi waea, i tētahi pouaka whakaata, i te Quest rānei (i te matapihi), ka kitea i te whatunga pērā i tētahi tiritiri.
+- **Pānui anake**: ka tono noa te taupānga ki te kāmera i ngā mea ka whakaaturia e ia; kāore rawa e panoni i tētahi tautuhinga, kāore rawa e muku i tētahi mea i te kāmera.
+
+### Ngā tepe
+
+- **Kāore anō kia tirohia i tētahi pūrere**: kāore anō te hanga 20 kia rere me tētahi kāmera tūturu. I tuhia te kawa mai i ngā hopu whatunga o tētahi C510W me te pūmanawa mau 1.3.4 (te takiuru V4 o waenga 2026), ā, i tirohia te taupānga ki tētahi kāmera whaihanga i ōna whakamātautau. Ka manakohia ngā pūrongo, me te tauira me te pūmanawa mau ka whakaaturia e “Whakamātauria te kāmera” me ngā rārangi o [Ngā rangitaki](#logs).
+- **Te tirohanga ora**: i ngā waea me ngā papahiko Android, i Android TV me te Quest anake, kāore anō i te iPhone me te iPad. Ka pā ngā tepe a TP-Link: e rua ngā rerenga HD me ngā rerenga SD e rua te nui rawa i te wā kotahi mō ia kāmera, tae atu ki te taupānga Tapo, ā, kāore e taea e Tapo Care, te kāri pūmahara me tētahi kaihopu e whakamahi ana i te RTSP, ONVIF rānei te rere katoa i te wā kotahi.
+- **Ngā kāmera**: kāore e tautokona ngā kāmera pūhiko me ngā kāmera kei muri i tētahi tari Tapo.
+- **Ngā hopukanga**: kotahi te tikiake i te wā kotahi mō ia kāmera. I te wā e tirotiro ana te taupānga Tapo i te kāri pūmahara, ka whakamātau anō te taupānga i muri i te 4, 8 me te 12 hēkona, kātahi ka kī “Kei te pukumahi te kāmera ki tētahi atu kaimātakitaki, pērā i te taupānga Tapo. Whakamātau anō ā tētahi meneti.” Kāore anō ngā hopukanga H.265 kia hurihia (“Kei te H.265 tēnei hopukanga, kāore anō tēnei putanga kia taea te whakawhiti.”), kāore he koromātiti o ngā hopukanga haere tonu, ā, ka purei tētahi topenga ina oti katoa te tiki.
+- **Ngā kupuhipa**: ka tatau ia kupuhipa hē, ā, i muri i ētahi ka raka te kāmera mō tētahi wā (“Kua rakaina te kāmera i muri i te maha o ngā kupuhipa hē. Whakamātau anō ā N meneti.”). Kāore rawa te taupānga e whakamātau anō i tētahi kupuhipa kua whakakāhoretia ko ia anake: mā “Whakamātauria te kāmera”, mā “Retry” (Whakamātau anō) anake e pātai anō ki te kāmera. Ina whakaae te kāmera ki te kupuhipa mō ōna tautuhinga engari kaua mō ōna ataata, wetohia, whakakāngia anō te Third-Party Compatibility i te taupānga Tapo, kātahi ka tīmata anō i te kāmera.
+- **Te wāhi**: ka noho ngā topenga kua tikina ki te keteroki o te taupānga, 1 GB te nui rawa mō ngā kāmera katoa tahi (ka haere tuatahi ngā mea kua roa rawa e kore e purei); ka taea e te pūnaha te ūkui i taua keteroki, ā, mā te tango i tētahi kāmera ka mukua ōna topenga.
+- **I waho atu i te kāinga**: ka tae te taupānga ki te kāmera i tōna wāhitau i tō whatunga, nā reira kaua mai i waho.
+- Kāore a Immuch360 e hono ana ki a TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Ngā kōnae kāmera 360° mata, me te kore taupānga o te kāmera
@@ -349,7 +466,7 @@ I tirohia te kitenga ki tētahi whakaahua mokowā tauira i tuhia e te pātaka at
 
 Ka hoko te tangata i tētahi Quest 3 hei mātakitaki i ā rātou ake whakaahua me ngā ataata 360°, kātahi ka pātai me whakatakoto ngā kōnae ki hea, me pēhea te kawe ki te pōtae me te kore taura, ā, ko tēhea pūrei hei whakamahi: he utu ngā pūrei ataata 360° me te 3D o te toa.
 
-Ka rere te taupānga Android ōrite i te Quest 3 me te 3S hei matapihi, me tō pātaka katoa. Mā tōna pātene 360° ka tuwhera tētahi mātaki rumaki e karapoti ai te whakaahua, te ataata rānei i a koe, ā, ka titiro huri noa koe mā te huri i tō māhunga, i te 3D tūturu mō ngā kōnae stereo (Meta Spatial SDK). Ka puta mai te pāpāho i tō tūmau Immich, i te pōtae tonu, i tētahi NAS, i tētahi tūmau pāpāho, i tētahi waea rānei, ka purei i tōna wāhi (he tūmau pāpāho me tētahi waea mai i te hanga 19, kāore anō kia tirohia i te pōtae). He utu kore, he puna tuwhera. I tirohia i tētahi Quest 3, ā, e tētahi kaiwhakamahi me ngā ataata Insta360 X4 8K HEVC.
+Ka rere te taupānga Android ōrite i te Quest 3 me te 3S hei matapihi, me tō pātaka katoa. Mā tōna pātene 360° ka tuwhera tētahi mātaki rumaki e karapoti ai te whakaahua, te ataata rānei i a koe, ā, ka titiro huri noa koe mā te huri i tō māhunga, i te 3D tūturu mō ngā kōnae stereo (Meta Spatial SDK). Ka puta mai te pāpāho i tō tūmau Immich, i te pōtae tonu, i tētahi NAS, i tētahi tūmau pāpāho, i tētahi waea, i tētahi tūmau Plex rānei, ka purei i tōna wāhi (he tūmau pāpāho me tētahi waea mai i te hanga 19, he tūmau Plex mai i te hanga 20, kāore anō kia tirohia i te pōtae), ā, mai i te hanga 20 ka whakaatu anō te matapihi i ngā kāmera Tapo. He utu kore, he puna tuwhera. I tirohia i tētahi Quest 3, ā, e tētahi kaiwhakamahi me ngā ataata Insta360 X4 8K HEVC.
 
 ### Whakatuwhera i te mātaki rumaki
 
@@ -408,6 +525,56 @@ Hurihia ki te rākau kōnui matau (ki te pātene “Hurihia” rānei o te paewh
 - **Te rapu wā**: kāore e taea te rapu wā i tētahi ataata kāore tōna mātāpuna e whakautu ana i ngā tono awhe paita; ka kī te paewhiri pērā.
 - **Ngā ataata papatahi**: ka purei tētahi ataata stereo papatahi (ehara i te 360°) i te matapihi me te kitea o ngā karu e rua; ko te mātaki 3D rumaki mō te pāpāho 360° me VR180.
 - **Ētahi atu**: kei [Meta Quest 3](#meta-quest-3) ngā codec ka wetewetehia e te pōtae, te toa, ngā whakaaetanga me te rahi APK.
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Mātakitaki i tō pouaka whakaata (Android TV me Google TV)
+
+E hiahia ana koe ki ngā whakaahua me ngā ataata 360°, ō pukaemi me ngā ataata o tō NAS, o tō tūmau Plex rānei i te mata nui, mō te whānau i runga i te hōpa, me te mamao o te pouaka whakaata. Ehara te taupānga waea Immich i te taupānga pouaka whakaata: i kite tētahi kaiwhakamahi i tāuta i a ia ki tētahi pouaka whakaata ka mahi ia me tētahi kiore, kaua me te mamao ([kōrerorero #1614](https://github.com/immich-app/immich/discussions/1614)), ā, kāore he mahere a te tīma Immich mō tētahi taupānga pouaka whakaata ōkawa ([kōrerorero #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Mai i te hanga 20 ka rere te taupānga Android ōrite i Android TV me Google TV, ko te mamao anake te tāuru: kotahi te APK mō ngā waea me ngā pouaka whakaata, ka hurihia ngā mātaki 360° me te 3D ki ngā pere, ā, kei te pouaka whakaata ngā tiritiri whatunga, a Plex me ngā kāmera Tapo, me te tūmau Immich, me te kore rānei.
+
+<a id="install-it-on-the-tv"></a>
+### Tāuta ki te pouaka whakaata
+
+1. Kia tuku rā anō a Google Play i te taupānga ki ngā pouaka whakaata, e tatari ana ki te arotake a Google i te tuku pouaka whakaata, tangohia te `Immuch360-v<version>-release.apk` whānui o te whārangi [Releases](https://github.com/freeKC/Immuch360/releases).
+2. I te pouaka whakaata, whakakāngia ngā kōwhiringa kaiwhakawhanake me te patuiro USB (i tētahi Google TV: Ngā tautuhinga, Pūnaha, Mō, tīpakohia te “Android TV OS build” e whitu ngā wā, kātahi ko Ngā tautuhinga, Pūnaha, Ngā kōwhiringa kaiwhakawhanake; he rerekē ngā ingoa i ia pouaka whakaata).
+3. Mai i tētahi rorohiko i te whatunga ōrite, me te adb (Android SDK Platform Tools): `adb connect <address of the TV>`, whakaaetia te tono i te pouaka whakaata, kātahi ko `adb install -r Immuch360-v<version>-release.apk`.
+4. Ka puta te taupānga i waenga i ngā taupānga o te pouaka whakaata, me tōna haki. Tāutahia te tuku e whai ake ana mā te huarahi ōrite: ka pupuri a `-r` i te takiuru me ngā tautuhinga.
+
+### Te tīmatanga tuatahi
+
+1. Takiuru pērā i tētahi waea: ka neke ngā pere i tētahi tāpare mai i tētahi āpure ki tētahi, ā, mā te OK i tētahi āpure (“Pēhia te OK hei patopato”) ka tuwhera te papapātuhi o te pouaka whakaata i tētahi kōrero, mō te wāhitau tūmau, te īmēra me te kupuhipa.
+2. Kōwhiria rānei te “Whakamahia me te kore tūmau”. Kāore he whakaahua ake o tētahi pouaka whakaata, nā reira ka kī te ripa “Photos” (Whakaahua) “Kāore he whakaahua, he ataata rānei nō tēnei pouaka whakaata: whakatuwherahia he tiritiri whatunga mai i te Pātaka.” me tētahi pātene “Ngā tiritiri whatunga”. Tāpirihia tētahi tiritiri, tētahi tūmau Plex, tētahi kāmera rānei ki reira, pērā i tētahi waea (tirohia [Ngā tiritiri whatunga](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Te nekeneke me te mamao
+
+- Ka neke ngā pere i te tāpare, ka whakatuwhera te OK i te mea kei raro, ka hoki te Hoki. Mai i tētahi ripa, ka haere te Hoki ki te tahua taha, kātahi ki “Photos” (Whakaahua), kātahi ka puta i te taupānga.
+- Ka panuku te hongere ake me te hongere iho i tētahi whārangi i te wā kotahi.
+- I ngā mātaki, ka mahi ngā pātuhi purei me te tatari, whakamua tere, whakamuri, o muri me o mua o te mamao, ā, ka whakaatu te pātuhi mōhiohio i ngā taipitopito o tētahi whakaahua, ataata rānei.
+
+### Ngā whakaahua me ngā ataata me te mamao
+
+1. **He whakaahua**: ka haere te mauī me te matau ki te mea o mua, o muri rānei, ka whakaatu, ka huna rānei te OK i ngā mana, ka haere te Ake ki te pae o runga (kei reira te pātene 360°) me te Iho ki te pae o raro.
+2. **He ataata**: ka tatari te OK, me te whakaatu i ngā mana, ka purei rānei. I te wā e purei ana, ka peke te mauī me te matau 10 hēkona whakamuri, whakamua rānei; i te wā kua tatari, ka haere ki te tūemi o mua, o muri rānei, pērā i te kī a te tohu: “Kua tatari: ka haere ngā pere ki te tūemi o mua, o muri rānei”.
+3. **He whakaahua 360°**, mai i te pātene 360°: ka titiro huri noa ngā pere, ka tere ake ina puritia, ā, ka āta mutu te tirohanga. Ka neke te OK ki ngā pātene o te pae o runga, ki “Topa atu”, i te taha o “Topa mai”, te āpure tirohanga me te 3D; ka topa anō te hongere ake me te iho. Ka hoki te Hoki mai i ngā pātene ki te pikitia, kātahi ka kati. Ko te tohu: “Ngā pere hei titiro huri noa, OK mō ngā mana, Hoki hei kati”.
+4. **He ataata 360°**, mai i te pātene 360°: ka titiro huri noa ngā pere i te wā e huna ana ngā mana, ka tatari te OK me te whakaatu i a rātou, ka huna te Hoki i a rātou, kātahi ka kati. Ko te tohu: “Ngā pere hei titiro huri noa, OK hei tatari me te whakaatu i ngā mana, Hoki hei kati”.
+5. **Ngā maumahara**: ka haere te mauī me te matau i ngā whakaahua, ā, ki te maumahara e whai ake ana, ka haere te Ake ki te pātene kati me te Iho ki “View in timeline” (Tirohia i te rārangi wā).
+6. **Ngā tiritiri me Plex**: ko ngā pātuhi ōrite i ngā whārangi whakaahua me ngā whārangi ataata o tētahi tiritiri, ka whakatuwhera ai te mauī me te matau i te kōnae o mua, o muri rānei o te kōpaki.
+
+### Te tautuhinga “Tahora mō te mamao”
+
+“Settings” (Tautuhinga), “Preferences” (Manakohanga), “Tahora mō te mamao”: “Ngā tāpare arotahi nui me ngā pātuhi o te mamao, me te kore o ngā mana e hiahia ana ki te mata pā. Ka whakakāngia e Aunoa ki Android TV me Google TV.” Ko “Aunoa” te taunoa; e hāngai ana a “Kā” ki tētahi papahiko e whakahaeretia ana e tētahi papapātuhi, e tētahi papatākaro rānei; ka weto a “Weto” i tētahi pouaka whakaata. Kei Android anake te tautuhinga. Ka mahi ngā pere me te OK i ngā mātaki me tētahi papapātuhi, papatākaro rānei, ahakoa te tautuhinga.
+
+### Ngā tepe
+
+- **He mātaki**: i tētahi pouaka whakaata ka whakaatu, ka purei te taupānga. Ka hunaia te taurua, ngā tukuake, te whakatika, te muku, te tiritiri, te tīpako i ngā tūemi maha, Cast, Spatial 2.5D, te pūhurihuri, te mahere me ngā Wāhi, me “Tiritiri i tēnei waea i te whatunga”.
+- **Te takiuru**: ka whakatuwhera te OAuth i tētahi whārangi tukutuku, kāore e taea e tētahi pouaka whakaata: “Ka whakatuwhera te takiuru mā (kaiwhakarato) i tētahi whārangi tukutuku, kāore e taea e tēnei pouaka whakaata. Takiuru kē mā te īmēra me te kupuhipa.”
+- **Ngā hononga** ka whakaatu i tō rātou wāhitau i raro i “Whakatuwhera ki tētahi atu pūrere” kaua e whakatuwhera i tētahi pūtirotiro, ā, ka patohia te kupu ki te kōrero papapātuhi o te pūnaha.
+- **Te pūmahara**: i tētahi pouaka whakaata he iti te pūmahara, ka whakaaturia ngā whakaahua 360° ki te 4096x2048 te nui rawa, me te kore pikitia koi ake ina topa.
+- **Ngā ataata**: mā ngā pūwetewete o te pouaka whakaata e whakatau he aha ka purei, me te tautuhinga “Te mātāpuna ataata” me te arotake pūwetewete ōrite ki tētahi waea (tirohia [Ngā taipitopito ataata me ngā pūwetewete](#video-details-decoders-and-why-a-video-stutters)); kāore anō kia inea i tētahi pouaka whakaata.
+- **Kāore anō kia tirohia i tētahi pūrere**: i tirohia te tautoko pouaka whakaata e ngā whakamātautau aunoa anake, ā, kāore anō kia rere i tētahi pouaka whakaata, i tētahi kaiwhaihanga pouaka whakaata rānei. Me whakaū: te ahunga e huri ai ngā pere i tētahi ataata 360°, te papapātuhi o te pouaka whakaata (Gboard) i te kōrero kupu, te pātuhi OK o ngā mamao pōkākā, ngā tawhē me te haki i te mata kāinga o te pouaka whakaata. Ka manakohia ngā pūrongo.
+- **Google Play i ngā pouaka whakaata** e tatari ana ki te arotake a Google i te tuku pouaka whakaata; tae noa ki taua wā, ko te APK.
+- **Ētahi atu pouaka whakaata**: kāore anō a Fire TV kia whakamātauria, ā, kāore he putanga Apple TV.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Kimihia ō hopu 360°: te rārangi 360°
@@ -488,11 +655,11 @@ Ina whakahapa te tūmau i ngā tono HTTP Range i te taketake, ā, kei te mutunga
 <a id="everything-else-is-immich"></a>
 ## He Immich katoa ērā atu
 
-Kei konei ngā mahi katoa a te taupānga waea Immich ōkawa: te taurua, te rārangi wā, ngā pukaemi, te rapu, te tiritiri, ngā hoa, kua tukutahia katoa ki tō tūmau, me te tūmau ōrite me te pūkete ōrite ki te taupānga tukutuku. Ka tāuta a Immuch360 i te taha o te taupānga ōkawa (mōkihi `com.aprogsys.immuch360`). E rua ngā rerekētanga, mai i te hanga 15: kua huri te pana “Force original video” hei kōwhiringa “Te mātāpuna ataata” kua whakamāramatia i runga ake, ā, ko ngā whakaahua me ngā ataata ka tukuake ā-ringa e koe mai i tētahi pukaemi pūrere ka kīia kua taurua.
+Kei konei ngā mahi katoa a te taupānga waea Immich ōkawa: te taurua, te rārangi wā, ngā pukaemi, te rapu, te tiritiri, ngā hoa, kua tukutahia katoa ki tō tūmau, me te tūmau ōrite me te pūkete ōrite ki te taupānga tukutuku. Ka tāuta a Immuch360 i te taha o te taupānga ōkawa (mōkihi `com.aprogsys.immuch360`). E rua ngā rerekētanga, mai i te hanga 15: kua huri te pana “Force original video” hei kōwhiringa “Te mātāpuna ataata” kua whakamāramatia i runga ake, ā, ko ngā whakaahua me ngā ataata ka tukuake ā-ringa e koe mai i tētahi pukaemi pūrere ka kīia kua taurua. I tētahi pouaka whakaata, mai i te hanga 20, he mātaki te taupānga, tirohia [Mātakitaki i tō pouaka whakaata](#watch-on-your-tv-android-tv-and-google-tv).
 
 Hei whakaatu i tētahi whakaahua 360° ki tētahi kāore he taupānga, tiria ki tētahi hononga tiritiri Immich: ka whakaatu te taupānga tukutuku Immich i tētahi whakaahua 360° hei pōro i tōna pūtirotiro.
 
-Ko te hanga o nāianei, te hanga 19 (putanga 3.3.0-rc.0, nama hanga 3030017), e ahu mai ana i Immich 3.3.0-rc.0 (Immich `main`, kāore anō i te tuku pūmau), ā, i whakamātauria ki tētahi tūmau Immich 3.2. Tēnā pūrongotia ngā raru i [Issues](https://github.com/freeKC/Immuch360/issues), kaua ki te kaupapa Immich. Mō ngā tuhinga katoa o Immich tonu, tirohia [immich.app](https://immich.app).
+Ko te hanga o nāianei, te hanga 20 (putanga 3.3.0-rc.0, nama hanga 3030018), e ahu mai ana i Immich 3.3.0-rc.0 (Immich `main`, kāore anō i te tuku pūmau). I whakamātauria te hanga 19 ki tētahi tūmau Immich 3.2, ā, kāore te hanga 20 e panoni i tētahi mea i ngā tono a te taupānga ki te tūmau. Tēnā pūrongotia ngā raru i [Issues](https://github.com/freeKC/Immuch360/issues), kaua ki te kaupapa Immich. Mō ngā tuhinga katoa o Immich tonu, tirohia [immich.app](https://immich.app).
 
 ## Te whakatairite ki te taupānga Immich me ētahi atu taupānga
 
@@ -515,6 +682,9 @@ Ko te hanga o nāianei, te hanga 19 (putanga 3.3.0-rc.0, nama hanga 3030017), e 
 | Ngā tūmau pāpāho DLNA hei momo tiritiri | ❌ | ✅ mai i te hanga 19 | I tirohia ki a minidlna me Gerbera i Docker; ko Plex, Jellyfin, tētahi NAS, te Freebox Server, tētahi iPhone me te Quest te whakamātautau pūrere o te hanga 19 |
 | Tuku i ngā kōnae o tētahi tiritiri ki Immich; ka kīia kua taurua ngā kōnae pūrere i tukuna ā-ringa | ❌ ngā kōnae pūrere anake | ✅ mai i te hanga 15 | I whakamātauria i tētahi kaiwhaihanga Android ki tētahi tūmau whakamātautau Samba me tētahi tūmau Immich 3.2 |
 | Tiritiri i tēnei waea i te whatunga, mō te pōtae | ❌ | ✅ mai i te hanga 19, Android me iOS | Ngā whakamātautau wae me ngā whakamātautau mai i te tīmatanga ki te mutunga me te kiritaki WebDAV o te pōtae, i tētahi rorohiko; ko tētahi waea e tuku ana ki tētahi Quest, me te taha iPhone, te whakamātautau pūrere o te hanga 19 |
+| Ngā pātaka Plex Media Server ka purei mai i ngā kōnae taketake, i te kāinga, i waho hoki, me te kore plex.tv | ❌ | ✅ mai i te hanga 20, ia mātaki, i ngā waea, ngā papahiko, te Quest 3 me ngā pouaka whakaata | I tirohia mai i tētahi rorohiko ki tētahi Plex Media Server 1.42.1 tūturu (te takirua, ngā kōpaki, ngā awhe paita, ngā koromātiti, te wāhitau i waho o te kāinga); kāore anō kia tirohia i tētahi pūrere |
+| Ngā kāmera Tapo: te tirohanga ora, me ngā hopukanga o te kāri pūmahara ka tukuna ki Immich ina kōwhiri koe | ❌ | ✅ mai i te hanga 20: ngā hopukanga i ngā wāhi katoa, ora i Android, Android TV me te Quest 3 | I tirohia ki tētahi kāmera whaihanga; kāore anō kia tirohia ki tētahi kāmera tūturu |
+| Android TV me Google TV, ka whakahaeretia e te mamao, i te APK ōrite | ❌ ehara i te taupānga pouaka whakaata | ✅ mai i te hanga 20 | I tirohia e ngā whakamātautau aunoa; kāore anō kia tirohia i tētahi pouaka whakaata |
 | Ngā whakaahua Insta360 .insp mata me ngā ataata .insv ara kotahi | ❌ papatahi | ✅ mai i te hanga 16 | I tirohia ngā whakaahua ki ngā kaweake Insta360 Studio o ngā kōnae X3, ngā ataata i tētahi kaiwhaihanga Android me tētahi kōnae X3 taumira iti; kāore anō kia rere i tētahi iPhone |
 | Ngā ataata mata kotahi te arotahi mō ia ara, mō ia kōnae rānei (Insta360 X4, X4 Air, X5, X6, ngā takirua X3, GoPro .360, DJI .osv) | ❌ papatahi, hē rānei | ✅ mai i te hanga 18 | I tirohia ngā kaitātari me te tuitui ki ngā kōnae X4, takirua X3, GoPro MAX me Osmo 360 tūturu; ko te purei te whakamātautau pūrere o ngā hanga 18 me 19 |
 | .dng fisheye rua | ❌ papatahi | ❌ kāore anō | Kua whakamaheretia |
@@ -529,27 +699,33 @@ Ko te hanga o nāianei, te hanga 19 (putanga 3.3.0-rc.0, nama hanga 3030017), e 
 |---|---|---|
 | Te taupānga tukutuku Immich | Ka whakaatu i tētahi whakaahua 360° hei pōro, engari ka kīia he tirohanga whānui kua oti tētahi .insp mata, ka tākai i ōna porowhita e rua huri noa i te pōro; he tono tonu te tirohanga VR ([kōrerorero #14768](https://github.com/immich-app/immich/discussions/14768)) | Ka tui i ngā kōnae mata i te pūrere, ā, ka whakatuwhera i tētahi mātaki rumaki i te Quest 3 |
 | Te taupānga Insta360, Studio rānei | E hiahiatia ana hei huri i ngā kōnae mata o te kāri hei pikitia 360° i mua i te mātakitaki | Ka whakatuwhera tōtika i ngā kōnae .insp me .insv mata, me ngā kōnae GoPro .360 me DJI .osv |
-| Plex, Jellyfin, Synology Photos | Ka whakaaturia papatahi ngā whakaahua me ngā ataata 360°, kāore rānei e mōhiotia, e ai ki ngā kōrero i ō rātou paepae (kua tuwhera tētahi tono Plex mai i te 2017) | Ka pānui i ngā kōpaki ōrite mā te SMB, WebDAV, DLNA rānei, ka purei hei pōro, me te kore e panoni i tētahi mea i te tūmau |
+| Plex, Jellyfin, Synology Photos | Ka whakaaturia papatahi ngā whakaahua me ngā ataata 360°, kāore rānei e mōhiotia, e ai ki ngā kōrero i ō rātou paepae (kua tuwhera tētahi tono Plex mai i te 2017) | Ka pānui i te pātaka Plex tonu mai i te hanga 20, i ngā kōpaki ōrite rānei mā te SMB, WebDAV, DLNA rānei, ka purei hei pōro, me te kore e panoni i tētahi mea i te tūmau |
+| Te taupānga Tapo | He taupānga motuhake, kua takiuru ki tō pūkete TP-Link, me ngā topenga i wehe i ō whakaahua | Ka whakaatu i te kāmera i te taha o ō whakaahua, ka kōrero ki a ia i tō whatunga anake, ā, ka pupuri i tētahi topenga hei ataata ka taea e koe te tuku ki Immich (mai i te hanga 20) |
+| Te taupānga waea Immich i tētahi pouaka whakaata | Ehara i te taupānga pouaka whakaata: e ai ki tētahi kaiwhakamahi ka mahi me tētahi kiore, kaua me te mamao | Ko te taupānga ōrite, i hangaia mō te mamao (mai i te hanga 20) |
 | Te tārua kōnae ki te pōtae | Me tārua ia kōnae mā te taura i mua i te mātakitaki | Ka purei i tōna wāhi mai i Immich, i tētahi NAS, i tētahi tūmau pāpāho, i tētahi waea rānei |
 | Ngā pūrei 360° me 3D o te toa Quest | He utu | He utu kore, he puna tuwhera (AGPL) |
 
 ## Ngā hōputu me ngā mātāpuna, mā te pūhara
 
-He taiwhanga a Immuch360, ā, he pūrei pāpāho utu kore anō: ka purei i ngā mea kāore e taea e te taupānga ōkawa, mai i ngā mātāpuna e whā, i te pūrei e hāngai ana ki te kōnae.
+He taiwhanga a Immuch360, ā, he pūrei pāpāho utu kore anō: ka purei i ngā mea kāore e taea e te taupānga ōkawa, mai i ngā mātāpuna o te ripanga tuarua, i te pūrei e hāngai ana ki te kōnae.
 
-| He aha | Ngā waea Android | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Ngā ataata papatahi (MP4, MOV, MKV, ngā mea ka wetewetehia e te pūrere) | Te pūrei Immich, me tētahi pūrei taketake mō ngā tiritiri whatunga | He ōrite, hāunga ngā kōnae MKV me AVI o tētahi tiritiri, kāore nei a iOS e whakatuwhera (i tētahi tūmau ka purei kua whakawaehere anō) | I te matapihi |
-| Ngā whakaahua 360° | Te mātaki pōro, te pūhurihuri | He ōrite | Rumaki, e karapoti ana i a koe |
-| Ngā ataata 360° | Te pūrei Media3 taketake i runga i tētahi pōro, te pūhurihuri, te rapu wā, te kōwhiringa ara ororongo, te tohu pūrua | Te pūrei SceneKit taketake i runga i tētahi pōro, te pūhurihuri, te kōwhiringa ara ororongo, te tohu pūrua; pūrei me te tatari, kāore anō he pae wā | Rumaki, 3D tūturu mō ngā kōnae stereo, te pae wā me ngā peke 10 hēkona, te pāpāho o mua me o muri |
-| 3D 360° (runga me raro, taha ki te taha) | Te karu mauī, te pātene tahora | He ōrite | Ka whiwhi ia karu i tōna ake haurua o te anga |
-| Ngā whakaahua me ngā ataata VR180 (haurua pōro) | Haurua pōro, pātene 360°/180° | He ōrite | Haurua pōro rumaki |
-| Spatial 2.5D (hōhonutanga mata papatahi mai i tētahi ataata stereo) | Te pūrei taketake, te aroturuki māhunga ki te kāmera o mua | He ōrite | Kāore e tukuna |
-| Ngā whakaahua mokowā Apple (ngā takirua stereo HEIC, mai i te hanga 19) | Te karu mauī, ka kī tētahi rārangi taipitopito he mokowā | He ōrite | “Tirohia i te 3D”: ngā karu e rua i tētahi whakaahua e rewa ana i te mātaki rumaki, 3D, 2D rānei, ka taea te whakarahi |
-| Ngā ataata mokowā Apple (MV-HEVC, mai i te hanga 19) | Kotahi te karu (te paparanga pūtake), me tētahi pānui | He ōrite | Kotahi te karu i te matapihi, me tētahi pānui |
-| Ngā whakaahua Insta360 .insp mata (mai i te hanga 16) | Ka tuia i te GPU i mua i te mātaki pōro, tae atu ki te 8192x4096 | He ōrite | Rumaki, mai i tētahi pikitia kua tuia kua whakaritea mō te pōtae |
-| Insta360 .insv mata, ngā arotahi e rua i tētahi ara kotahi (mai i te hanga 16) | Ka tuia e tētahi pānga GPU i te pūrei Media3 | Ka tuia e tētahi kaiwhakamarumaru SceneKit | Rumaki, ka tuia e te pānga GPU ōrite |
-| Ngā ataata mata kotahi te arotahi mō ia ara, mō ia kōnae rānei (mai i te hanga 18): Insta360 X4, X4 Air, X5, X6 .insv, ngā takirua X3, GoPro .360, DJI .osv | E rua ngā pūwetewete pūmārō i te wā kotahi, kotahi mō ia arotahi (mai i te hanga 19 he pūmanawa i tētahi pūrere kāore he pūwetewete pūmārō, tae atu ki te 2048x2048 mō ia arotahi), me tētahi kaitito GL e tui ana ki te pōro; kotahi te arotahi, kātahi ko te rerenga kua whakawaehere anō, kātahi ko te ataata kāore i tuia, ina kore e taea e te pūrere te whakahaere i te rua | He kaitito AVFoundation ritenga me Metal | Rumaki, ngā pūwetewete e rua ōrite me te kaitito (paewhiri 3840x1920) |
+| He aha | Ngā waea Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (mai i te hanga 20) |
+|---|---|---|---|---|
+| Ngā ataata papatahi (MP4, MOV, MKV, ngā mea ka wetewetehia e te pūrere) | Te pūrei Immich, me tētahi pūrei taketake mō ngā tiritiri whatunga | He ōrite, hāunga ngā kōnae MKV me AVI o tētahi tiritiri, kāore nei a iOS e whakatuwhera (i tētahi tūmau ka purei kua whakawaehere anō) | I te matapihi | Pērā i ngā waea; ka tatari te OK, ka peke te mauī me te matau 10 h |
+| Ngā whakaahua 360° | Te mātaki pōro, te pūhurihuri | He ōrite | Rumaki, e karapoti ana i a koe | Te mātaki pōro ka hurihia ki ngā pere, ka topa ki ngā pātuhi hongere |
+| Ngā ataata 360° | Te pūrei Media3 taketake i runga i tētahi pōro, te pūhurihuri, te rapu wā, te kōwhiringa ara ororongo, te tohu pūrua | Te pūrei SceneKit taketake i runga i tētahi pōro, te pūhurihuri, te kōwhiringa ara ororongo, te tohu pūrua; pūrei me te tatari, kāore anō he pae wā | Rumaki, 3D tūturu mō ngā kōnae stereo, te pae wā me ngā peke 10 hēkona, te pāpāho o mua me o muri | Te pūrei Media3 o ngā waea, ka hurihia ki ngā pere |
+| 3D 360° (runga me raro, taha ki te taha) | Te karu mauī, te pātene tahora | He ōrite | Ka whiwhi ia karu i tōna ake haurua o te anga | Te karu mauī, te pātene tahora |
+| Ngā whakaahua me ngā ataata VR180 (haurua pōro) | Haurua pōro, pātene 360°/180° | He ōrite | Haurua pōro rumaki | Haurua pōro, pātene 360°/180° |
+| Spatial 2.5D (hōhonutanga mata papatahi mai i tētahi ataata stereo) | Te pūrei taketake, te aroturuki māhunga ki te kāmera o mua | He ōrite | Kāore e tukuna | Kāore e tukuna |
+| Ngā whakaahua mokowā Apple (ngā takirua stereo HEIC, mai i te hanga 19) | Te karu mauī, ka kī tētahi rārangi taipitopito he mokowā | He ōrite | “Tirohia i te 3D”: ngā karu e rua i tētahi whakaahua e rewa ana i te mātaki rumaki, 3D, 2D rānei, ka taea te whakarahi | Te karu mauī, tētahi rārangi taipitopito |
+| Ngā ataata mokowā Apple (MV-HEVC, mai i te hanga 19) | Kotahi te karu (te paparanga pūtake), me tētahi pānui | He ōrite | Kotahi te karu i te matapihi, me tētahi pānui | Kotahi te karu, me tētahi pānui |
+| Ngā whakaahua Insta360 .insp mata (mai i te hanga 16) | Ka tuia i te GPU i mua i te mātaki pōro, tae atu ki te 8192x4096 | He ōrite | Rumaki, mai i tētahi pikitia kua tuia kua whakaritea mō te pōtae | Pērā i ngā waea |
+| Insta360 .insv mata, ngā arotahi e rua i tētahi ara kotahi (mai i te hanga 16) | Ka tuia e tētahi pānga GPU i te pūrei Media3 | Ka tuia e tētahi kaiwhakamarumaru SceneKit | Rumaki, ka tuia e te pānga GPU ōrite | Pērā i ngā waea |
+| Ngā ataata mata kotahi te arotahi mō ia ara, mō ia kōnae rānei (mai i te hanga 18): Insta360 X4, X4 Air, X5, X6 .insv, ngā takirua X3, GoPro .360, DJI .osv | E rua ngā pūwetewete pūmārō i te wā kotahi, kotahi mō ia arotahi (mai i te hanga 19 he pūmanawa i tētahi pūrere kāore he pūwetewete pūmārō, tae atu ki te 2048x2048 mō ia arotahi), me tētahi kaitito GL e tui ana ki te pōro; kotahi te arotahi, kātahi ko te rerenga kua whakawaehere anō, kātahi ko te ataata kāore i tuia, ina kore e taea e te pūrere te whakahaere i te rua | He kaitito AVFoundation ritenga me Metal | Rumaki, ngā pūwetewete e rua ōrite me te kaitito (paewhiri 3840x1920) | Pērā i ngā waea, ina taea e te pouaka whakaata te whakahaere i ngā pūwetewete e rua i te wā kotahi |
+| Te tirohanga ora o te kāmera Tapo (mai i te hanga 20) | Te pūrei RTSP Media3: SD i te whārangi, HD i te mata katoa, te pātene oro | Kāore anō: ka kī tētahi kāri ka tae mai ā muri | I te matapihi, i te HD | Pērā i ngā waea |
+| Ngā hopukanga kāmera Tapo (mai i te hanga 20) | Ka tikina mai i te kāri pūmahara hei ataata H.264 me tōna oro, kātahi ka purei me te rapu wā | He ōrite | He ōrite, i te matapihi | He ōrite |
+
+Kāore anō te tīwae pouaka whakaata kia tirohia i tētahi pouaka whakaata, tirohia [Mātakitaki i tō pouaka whakaata](#watch-on-your-tv-android-tv-and-google-tv); kāore anō ngā rārangi kāmera kia tirohia ki tētahi kāmera tūturu.
 
 | Mai i | Me pēhea |
 |---|---|
@@ -557,13 +733,15 @@ He taiwhanga a Immuch360, ā, he pūrei pāpāho utu kore anō: ka purei i ngā 
 | Te waea, te pōtae rānei tonu | “Whakamahia me te kore tūmau” i te whārangi takiuru, te tāurunga “On this device” rānei o te ripa “Pātaka” |
 | He NAS, he rorohiko rānei | Ngā tiritiri SMB me WebDAV, ā, mai i te hanga 19 ngā tūmau pāpāho DLNA, ka kitea i te whatunga, ka pānuitia tōtika (he ataata SMB mā te ono hononga te nui rawa), kāore he mea e tāruatia; mai i te hanga 15 ka taea ngā kōnae ka kōwhiria e koe te tuku ki tō pūkete Immich |
 | Tētahi atu waea (mai i te hanga 19) | “Tiritiri i tēnei waea i te whatunga” i taua waea: ka pānui te pōtae, tētahi kiritaki WebDAV rānei o te whatunga, i ōna pukaemi, ōna marama me ōna pāpāho 360° |
+| He Plex Media Server (mai i te hanga 20) | Ōna pātaka whakaahua, kiriata me ngā hōtaka pouaka whakaata mā te kōpaki, ko ngā kōnae taketake ka pānui ora mā te HTTPS kua tirohia ki te tiwhikete ake o te tūmau, i te kāinga, mā te wāhitau i waho o te kāinga rānei, i ngā pūhara katoa; tirohia [Plex Media Server, me te kore plex.tv](#plex-media-server-without-plextv) |
+| He kāmera Tapo (mai i te hanga 20) | Te tirohanga ora me te pūkete kāmera (Android, Android TV, te Quest), me ngā hopukanga o tōna kāri pūmahara me te kupuhipa o te pūkete TP-Link (ngā pūhara katoa), i te whatunga ā-rohe anake; tirohia [Ngā kāmera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Ka rere anō a Immuch360 i te Meta Quest 3 me te 3S (Horizon OS v69, hou ake rānei; kua whakarārangitia te hanga Horizon Store mō ēnei e rua anake; me tāuta pea te `-release.apk` whānui ki tētahi Quest 2, Quest Pro rānei, kāore anō kia whakamātauria). Kei [I te pōtae Meta Quest 3](#in-the-meta-quest-3-headset) te whakamahinga; ko tēnei wāhanga mō te tāuta me ngā rerekētanga i te pōtae.
 
-Ka kōrero noa te hanga pōtae ki ngā tūmau mā te HTTPS, mā te HTTP noa rānei ki ngā ingoa o te whatunga kāinga (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) me te pōtae tonu, e ai ki te hiahia a te Horizon Store. Ko tētahi tūmau i patohia hei wāhitau HTTP noa me tētahi IP, pēnei i `http://192.168.1.10:2283`, ka whakakāhoretia e taua hanga: whakamahia te HTTPS, tētahi ingoa whatunga kāinga (`nas.local`), te `-release.apk` whānui rānei, e pupuri ana i te kaupapahere tuwhera o ngā waea. Kāore e pā ana ki ngā tiritiri WebDAV, DLNA me te waea i tētahi wāhitau HTTP noa o te whatunga ā-rohe: ka pānuitia e te taupānga tonu, ka hoatu ki ōna pūrei te wāhitau anake o tōna arawhiti ā-rohe (me whakaū i te pōtae mō te DLNA me te tiritiri waea, he hou i te hanga 19).
+Ka kōrero noa te hanga pōtae ki ngā tūmau mā te HTTPS, mā te HTTP noa rānei ki ngā ingoa o te whatunga kāinga (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) me te pōtae tonu, e ai ki te hiahia a te Horizon Store. Ko tētahi tūmau i patohia hei wāhitau HTTP noa me tētahi IP, pēnei i `http://192.168.1.10:2283`, ka whakakāhoretia e taua hanga: whakamahia te HTTPS, tētahi ingoa whatunga kāinga (`nas.local`), te `-release.apk` whānui rānei, e pupuri ana i te kaupapahere tuwhera o ngā waea. Kāore e pā ana ki ngā tiritiri WebDAV, DLNA me te waea i tētahi wāhitau HTTP noa o te whatunga ā-rohe: ka pānuitia e te taupānga tonu, ka hoatu ki ōna pūrei te wāhitau anake o tōna arawhiti ā-rohe (me whakaū i te pōtae mō te DLNA me te tiritiri waea, he hou i te hanga 19). Mai i te hanga 20 ka torohia tētahi tūmau Plex mā te HTTPS, ā, ko tētahi kāmera Tapo e te taupānga tonu, ko tōna tirohanga ora mā te RTSP, ehara nei i te HTTP: kāore pea e pā ki tētahi o rāua (me whakaū i te pōtae).
 
 <a id="install"></a>
 ### Tāuta
@@ -576,7 +754,7 @@ Kei te tatari te whakarārangitanga Horizon Store ki te arotake a Meta, i tukuna
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. I te pōtae, whakatuwheratia te Library, kōwhiria te tātari “Unknown sources” (Ngā mātāpuna kāore e mōhiotia), ka tīmata i a Immuch360.
@@ -584,7 +762,7 @@ Kei te tatari te whakarārangitanga Horizon Store ki te arotake a Meta, i tukuna
 
 ### I te matapihi
 
-Ka rere te taupānga katoa hei matapihi 2D ka taea te whakarahi: te takiuru, te rārangi wā, ngā pukaemi, te rapu, te ripa “Pātaka” (te rārangi 360°, “On this device”, “Ngā tiritiri whatunga”), ngā tautuhinga, me ngā mātaki whakaahua me te ataata, e purei ai ngā whakaahua me ngā ataata papatahi. I te pōtae ka tuwhera tōtika te mātaki rumaki i te pātene 360°, me “Tirohia hei 360°” i te tahua ⋮, kaua te mātaki pōro o ngā waea, ā, kāore e whakaaturia te pātene Spatial 2.5D me tōna tautuhinga. Mai i te hanga 19 he pātene “Tirohia i te 3D” tō tētahi whakaahua mokowā Apple, ā, kāore e whakaaturia te taera “Tiritiri i tēnei waea i te whatunga”: ko te pōtae te mea e pānui ana i te tiritiri o tētahi waea.
+Ka rere te taupānga katoa hei matapihi 2D ka taea te whakarahi: te takiuru, te rārangi wā, ngā pukaemi, te rapu, te ripa “Pātaka” (te rārangi 360°, “On this device”, “Ngā tiritiri whatunga”), ngā tautuhinga, me ngā mātaki whakaahua me te ataata, e purei ai ngā whakaahua me ngā ataata papatahi. I te pōtae ka tuwhera tōtika te mātaki rumaki i te pātene 360°, me “Tirohia hei 360°” i te tahua ⋮, kaua te mātaki pōro o ngā waea, ā, kāore e whakaaturia te pātene Spatial 2.5D me tōna tautuhinga. Mai i te hanga 19 he pātene “Tirohia i te 3D” tō tētahi whakaahua mokowā Apple, ā, kāore e whakaaturia te taera “Tiritiri i tēnei waea i te whatunga”: ko te pōtae te mea e pānui ana i te tiritiri o tētahi waea. Mai i te hanga 20 ka tuwhera anō ngā tūmau Plex me ngā kāmera Tapo i te matapihi, ko te tirohanga ora o te kāmera i te HD; ka noho te tautuhinga “Tahora mō te mamao” ki “Aunoa”, ka waiho weto ai i te pōtae.
 
 ### I ngā pikitia
 
@@ -598,7 +776,7 @@ He hopuāhua i tangohia i te pōtae ki te pātene hopu (te pātene Meta me te ke
 ### Ngā tepe i te pōtae
 
 - **Ngā codec ataata**: ko te HEVC (H.265) te kōwhiringa haumaru; ka mutu te H.264 ki te 4096x2304 pea. Ko ngā mea ka tirohia e te taupānga, me te huarahi hei hoatu ki te pōtae tētahi ataata ka wetewetehia e ia, kei [Ngā taipitopito ataata me ngā pūwetewete](#video-details-decoders-and-why-a-video-stutters).
-- **Toa**: ka tīmata te putanga toa i te hanga 14. Ko ngā āhuatanga kua tohua “mai i te hanga 15” me “mai i te hanga 16” ka tae mai me tōna whakahōu e whai ake ana (te hanga 16, kei te hongere whakamātautau alpha kē), ko ērā i muri mai ā muri iho; kei te APK GitHub katoa ināianei.
+- **Toa**: ka tīmata te putanga toa i te hanga 14. Ko ngā āhuatanga kua tohua “mai i te hanga 15” me ērā i muri mai ka tae mai me ōna whakahōu e whai ake ana (ka whiwhi te hongere whakamātautau alpha o te toa, mō ngā kaiwhakamātau, i ia hanga hou); kei te APK GitHub katoa ināianei.
 - **Ngā whakaaetanga**: ka tono noa te hanga pōtae mō ngā whakaahua me ngā ataata (te aratau kāore he tūmau) me ngā pānui (te kauneke taurua). Kāore ōna whakaaetanga penapena, ororongo, tauwāhi, kāmera rānei, kāore i rite ki te hanga waea; nō reira kāore e wātea te whakawhiti tūmau i runga i te ingoa Wi-Fi i te pōtae.
 - **Te rahi APK**: ka tāpiri te Spatial SDK i te 56 MB pea o te waehere taketake ARM 64 moka, i ngā waea hoki, kāore rawa nei e utaina.
 - **Raihana**: ka whakamahi te mātaki rumaki i te Meta Spatial SDK, ka tohaina i raro i te Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ He hopuāhua i tangohia i te pōtae ki te pātene hopu (te pātene Meta me te ke
 <a id="where-to-get-it"></a>
 ## Me pēhea te whiwhi
 
-Kei Google Play te taupānga; kei te tatari te putanga App Store ki te arotake a Apple, ā, te putanga Meta Horizon Store ki tā Meta. Ko te tuku GitHub te hanga hou rawa i ngā wā katoa:
+Kei Google Play te taupānga mō ngā waea me ngā papahiko; kei te tatari te putanga App Store ki te arotake a Apple, te putanga Meta Horizon Store ki tā Meta, ā, te putanga Google Play mō ngā pouaka whakaata ki te arotake a Google i te tuku pouaka whakaata. Ko te tuku GitHub te hanga hou rawa i ngā wā katoa:
 
 | Pūhara | I tēnei rā | Ākuanei |
 |---|---|---|
-| Ngā waea me ngā papahiko Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), te APK rānei i te whārangi [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` mō tētahi waea (ka mahi te `Immuch360-v<version>-release.apk` whānui ki hea, mō ngā waea 32 moka tawhito te `-armeabi-v7a`, ā, mō Google Play te kōnae `.aab`, kaua mō te sideload). Kei mua te hanga GitHub i te toa i te nuinga o te wā. Ahakoa he aha, ka tāuta i te taha o te taupānga Immich ōkawa (mōkihi `com.aprogsys.immuch360`). | Google Play: i tukuna ngā hanga 15 me 16 mō te arotake a Google i te 4 o Whiringa-ā-nuku 2026 (ko te hanga whakamutunga kua whakaūngia e ora ana ki reira ko te hanga 11) |
+| Ngā waea me ngā papahiko Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), te APK rānei i te whārangi [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` mō tētahi waea (ka mahi te `Immuch360-v<version>-release.apk` whānui ki hea, mō ngā waea 32 moka tawhito te `-armeabi-v7a`, ā, mō Google Play te kōnae `.aab`, kaua mō te sideload). Kei mua te hanga GitHub i te toa i te nuinga o te wā. Ahakoa he aha, ka tāuta i te taha o te taupānga Immich ōkawa (mōkihi `com.aprogsys.immuch360`). | Google Play: kei te ora te hanga 18, kei te arotake a Google te hanga 19 mai i te 6 o Whiringa-ā-nuku 2026, ko te hanga 20 e whai ake ana |
 | iPhone me iPad | Kei te tatari ki te arotake a Apple. Kei te putanga e arotakehia ana ngā āhuatanga o te hanga 11: ko te tukuake ki Immich me te kōwhiringa “Te mātāpuna ataata” (hanga 15) me ngā kōnae Insta360 mata (hanga 16) ka tae mai me tētahi whakahōu App Store ā muri. Ka hanga te waehere puna ki a Xcode, ki Codemagic rānei, tirohia [Hangaia e koe anō](#build-it-yourself). | App Store, kei te arotakehia |
-| Meta Quest 3 me 3S | Te kōnae `-quest-release.apk` o te whārangi [Releases](https://github.com/freeKC/Immuch360/releases) (ka mahi anō te `-release.apk` whānui), kua sideload i te aratau kaiwhakawhanake, tirohia [Tāuta](#install). He rerekē ngā kī i hainatia ai te hanga toa me te APK GitHub: hei whakawhiti mai i tētahi ki tērā atu, wetetāutahia te taupānga i te tuatahi (ka haere tahi ōna tautuhinga me ngā tiritiri kua tiakina). | Meta Horizon Store: kei te arotake a Meta te hanga 14 mai i te 3 o Whiringa-ā-nuku 2026; kei te hongere alpha o te toa te hanga 16 (ngā kaiwhakamātau anake) |
+| Meta Quest 3 me 3S | Te kōnae `-quest-release.apk` o te whārangi [Releases](https://github.com/freeKC/Immuch360/releases) (ka mahi anō te `-release.apk` whānui), kua sideload i te aratau kaiwhakawhanake, tirohia [Tāuta](#install). He rerekē ngā kī i hainatia ai te hanga toa me te APK GitHub: hei whakawhiti mai i tētahi ki tērā atu, wetetāutahia te taupānga i te tuatahi (ka haere tahi ōna tautuhinga me ngā tiritiri kua tiakina). | Meta Horizon Store: kei te arotake a Meta te hanga 14 mai i te 3 o Whiringa-ā-nuku 2026; ka whiwhi te hongere alpha o te toa (ngā kaiwhakamātau anake) i ia hanga hou |
+| Android TV me Google TV (mai i te hanga 20) | Te `Immuch360-v<version>-release.apk` whānui o te whārangi [Releases](https://github.com/freeKC/Immuch360/releases), kua sideload ki te adb, tirohia [Tāuta ki te pouaka whakaata](#install-it-on-the-tv). Ko te taupānga ōrite ki ngā waea. | Google Play i ngā pouaka whakaata, i muri i te arotake a Google i te tuku pouaka whakaata |
 
 Ka tāpiritia ki konei ngā hononga App Store me Meta Horizon Store ina whakaputaina ngā whakarārangitanga. Takiuru me tō URL tūmau Immich me tō pūkete noa, pātō rānei i te “Whakamahia me te kore tūmau” i te whārangi takiuru kia tīmata ki ngā whakaahua me ngā ataata o te pūrere tonu. Kāore te APK mai i GitHub e whakahou i a ia anō: mātakitakihia te whārangi Releases, ā, ina tāuta koe i te taupānga mai i tētahi toa, tikina ngā whakahōu mai i taua toa.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Ka tangohia ngā hopuāhua toa i ngā hanga kaiwhaihanga patuiro i hangaia ki a `--dart-define=IMMUCH_SCREENSHOTS=true`, ka huna noa i te haki patuiro. He taupānga ōrite ngā kakara Android e rua. Ko te `quest` ka whāia te SDK 34, ā, ka pupuri noa i ngā whakaaetanga e whakamahia ana e te pōtae (ngā whakaahua, ngā ataata, ngā pānui): ko te whakahaere pāpāho, te tauwāhi papamuri, te penapena tawhito, te ororongo, te tauwāhi pāpāho, te tauwāhi pūrere me te kāmera kua tangohia i `android/app/src/quest/AndroidManifest.xml`, nō te mea ka whakakāhore te Meta Horizon Store i ngā mea tuatahi e rua, ā, ka tono i tētahi parahau mō ia whakaaetanga tairongo atu; ka whakaingoa taua kōnae anō i te Quest 3 me te 3S hei pūrere e tautokona ana, ā, ka here i te HTTP noa ki te pōtae tonu me ngā ingoa o te whatunga kāinga. He 64 moka anake te APK nā ngā tohenga tāpiri e rua o tōna rārangi tono (`--target-platform android-arm64 --android-project-arg arm64only=true`). Ko te `phone` te mea e hiahiatia ana e Google Play. Hei hanga mō iOS i tō ake Mac, whakamahia a Xcode me tō ake tīma haina; me Xcode 26, whakahaerehia a `xcodebuild -downloadComponent MetalToolchain` kotahi te wā i te tuatahi, nō te mea e hiahiatia ana e ngā kaiwhakamarumaru Spatial. Me te kore Mac, ka rere ngā hanga iOS i Codemagic (he Mac kua manaakitia) mai i te kōnae `codemagic.yaml` o tēnei pūkete. Ka rere ngā hanga tuku Android i GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Ka tangohia ngā hopuāhua toa i ngā hanga kaiwhaihanga patuiro i hangaia ki a `--dart-define=IMMUCH_SCREENSHOTS=true`, ka huna noa i te haki patuiro. He taupānga ōrite ngā kakara Android e rua. Mai i te hanga 20 ka kī anō te `phone` he taupānga pouaka whakaata ia (he tāurunga kaiwhakarewa pouaka whakaata me tētahi haki, kāore he mata pā e hiahiatia ana), ka waiho e te `quest`. Ko te `quest` ka whāia te SDK 34, ā, ka pupuri noa i ngā whakaaetanga e whakamahia ana e te pōtae (ngā whakaahua, ngā ataata, ngā pānui): ko te whakahaere pāpāho, te tauwāhi papamuri, te penapena tawhito, te ororongo, te tauwāhi pāpāho, te tauwāhi pūrere me te kāmera kua tangohia i `android/app/src/quest/AndroidManifest.xml`, nō te mea ka whakakāhore te Meta Horizon Store i ngā mea tuatahi e rua, ā, ka tono i tētahi parahau mō ia whakaaetanga tairongo atu; ka whakaingoa taua kōnae anō i te Quest 3 me te 3S hei pūrere e tautokona ana, ā, ka here i te HTTP noa ki te pōtae tonu me ngā ingoa o te whatunga kāinga. He 64 moka anake te APK nā ngā tohenga tāpiri e rua o tōna rārangi tono (`--target-platform android-arm64 --android-project-arg arm64only=true`). Ko te `phone` te mea e hiahiatia ana e Google Play. Hei hanga mō iOS i tō ake Mac, whakamahia a Xcode me tō ake tīma haina; me Xcode 26, whakahaerehia a `xcodebuild -downloadComponent MetalToolchain` kotahi te wā i te tuatahi, nō te mea e hiahiatia ana e ngā kaiwhakamarumaru Spatial. Me te kore Mac, ka rere ngā hanga iOS i Codemagic (he Mac kua manaakitia) mai i te kōnae `codemagic.yaml` o tēnei pūkete. Ka rere ngā hanga tuku Android i GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Kāore he muna e noho ana i tēnei pūkete: ka penapenatia te kī haina Android hei muna GitHub Actions kua whakamunatia, ā, ka penapenatia ngā rauemi haina Apple hei taurangi kua whakamunatia i Codemagic. Ka tohu noa ngā kōnae rerenga mahi ki a rātou mā te ingoa. Me te kore tō ake `android/key.jks`, ka hainatia tētahi hanga tuku ki te kī patuiro, ā, kāore e taea te tāuta ki runga i tētahi tārua nō GitHub, nō tētahi toa rānei (wetetāutahia tērā i te tuatahi); ka tāuta tētahi hanga patuiro i tōna taha hei Immuch360 debug. Ko te tārua Meta Horizon Store ko te APK `quest` o te tuku kua hainatia ki tētahi atu kī, te kī i rēhitatia tuatahitia ai te taupānga toa, nō reira kāore hoki e taea te tāuta ki runga i tētahi APK kua sideload, i te huringa kōaro rānei.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Mai i te hanga 19 ka tuhi anō te kiritaki DLNA, te tiritiri waea me te kitenga o te pāpāho mokowā Apple ki te rangitaki ake o te taupānga (“Logs” (Rangitaki), i te tahua o te pikitia kōtaha kei runga matau), i raro i `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` me `NetworkMediaService`. Ka noho ngā rārangi rangitaki ki te pūrere ki te kore koe e tārua i a koe anō.
+Mai i te hanga 19 ka tuhi anō te kiritaki DLNA, te tiritiri waea me te kitenga o te pāpāho mokowā Apple ki te rangitaki ake o te taupānga (“Logs” (Rangitaki), i te tahua o te pikitia kōtaha kei runga matau), i raro i `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` me `NetworkMediaService`. Mai i te hanga 20 ka tuhi te aratau pouaka whakaata ki reira i raro i `TvMode` me `TvTextEntry`, ngā tūmau Plex i raro i `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` me `PlexServerEditPage`, ā, ngā kāmera Tapo i raro i `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` me `CameraLiveView`; kāore rawa ngā rārangi Plex e mau i te tohu, i tētahi wāhitau, i tētahi taitara rānei, ā, ka waiho e ngā rārangi kāmera ngā kupuhipa. Ka noho ngā rārangi rangitaki ki te pūrere ki te kore koe e tārua i a koe anō.
 
 ## Tūmataiti
 
 - **Kāore he mea e haere ki te kaiwhakawhanake**: ka kōrero te taupānga ki te tūmau Immich ka kōwhiria e koe (ā, ina whakatuwhera koe i te mahere, ki te ratonga taera mahere e whakamahia ana e taua tūmau), kāore he pānui hokohoko, kāore he tātaritanga, kāore he ratonga pūrongo hinganga e whakahaerehia ana e te kaiwhakawhanake, ā, kāore he mea e tukuna ki te kaiwhakawhanake o Immuch360.
-- **Me te kore tūmau**, kāore he mea e wehe atu i te pūrere.
+- **Me te kore tūmau**, kāore he tūmau e whakapāngia ana: ka whakamahi noa te taupānga i te whatunga mō ngā tiritiri, ngā tūmau Plex me ngā kāmera ka whakatuwheratia e koe, me te tiritiri waea, mēnā ka whakakāngia e koe.
 - **Ngā tiritiri whatunga**: ka puritia te rārangi tiritiri i te pūrere, kāore rawa e tukuna ki tētahi tūmau; ka haere ngā kupuhipa ki te keychain, keystore rānei o te pūrere.
+- **Plex** (mai i te hanga 20): ka noho te tohu ki te pātaka haumaru o te pūrere, ā, ka tukuna noa ki tō ake tūmau, i tētahi pane tono mā te HTTPS; kāore rawa te taupānga e whakapā ki plex.tv.
+- **Ngā kāmera Tapo** (mai i te hanga 20): ka noho te kupuhipa o te pūkete TP-Link me te kupuhipa o te pūkete kāmera ki te pātaka haumaru o te pūrere; ka kōrero noa te taupānga ki te kāmera i te whatunga ā-rohe, kaua rawa ki ngā tūmau o TP-Link; ka noho ngā topenga kua tikina ki te keteroki o te taupānga, ā, ka mukua tahi me te kāmera.
+- **Pouaka whakaata**: ka pānuitia i te pūrere mēnā he pouaka whakaata te pūrere; kāore he mea e tukuna.
 - **Te tiritiri waea**: whatunga ā-rohe anake, me tētahi ingoa kaiwhakamahi me te kupuhipa, mā te HTTP noa (tirohia [Tiritiri i tēnei waea i te whatunga](#share-this-phone-on-the-network)).
 - **Kāmera**: ka whakamahia e te pūrei Spatial 2.5D anake, i te pūrere; kāore rawa ngā whakaahua e penapenatia, kāore rawa e tukuna ki hea.
 
@@ -675,20 +857,25 @@ He peka tēnei kaupapa nō Immich, ā, ka noho tonu i raro i te [GNU AGPL v3](LI
 
 Ngā mea kāore anō kia oti, ko te mea tūpono rawa i te tuatahi. Ehara tētahi mea i konei i te kupu taurangi, ā, ka āwhina ngā urupare i te [pūaroturuki take](https://github.com/freeKC/Immuch360/issues) ki te whakatau he aha ka tae tuatahi.
 
-- **Google Play**: i tukuna ngā hanga 15 me 16 mō te arotake a Google i te 4 o Whiringa-ā-nuku 2026, ā, ka ora ina whakaaetia; ko te hanga whakamutunga kua whakaūngia e ora ana ki reira ko te hanga 11.
+- **Google Play**: kei te ora te hanga 18; kei te arotake a Google te hanga 19 mai i te 6 o Whiringa-ā-nuku 2026, ā, ka whai ake te hanga 20.
 - **App Store**: kei te tatari te putanga 3.3.0 ki te arotake a Apple; kei a ia ngā āhuatanga o te hanga 11, nō reira ko te tukuake ki Immich me te arowhai pūwetewete ataata (hanga 15) me ngā kōnae Insta360 mata (hanga 16) ka tae mai me te whakahōu App Store e whai ake ana. Ka tāpiritia te hononga ki konei ina ora.
-- **Meta Horizon Store**: i tukuna te whakarārangitanga mō te arotake a Meta i te 3 o Whiringa-ā-nuku 2026 me te hanga 14, ā, kei te hongere alpha o te toa te hanga 16 mō te whakahōu e whai ake ana. Ina whakaaetia te whakarārangitanga, kāore te Quest 3 e hiahia ki te sideload, ā, ka tāpiritia te hononga toa ki konei; me wetetāuta i te tuatahi tētahi tārua kua sideload (tirohia [Tāuta](#install)).
-- **Ngā whakarārangitanga toa**: kei te whakaahua tonu ngā kupu Google Play me App Store i ngā hanga tuatahi (ngā whakaahua me ngā ataata 360°, ngā kōnae mata ka whakaaturia papatahi); ka whakaatu rātou i ngā mātaki 3D, VR180 me Spatial, te aratau kāore he tūmau, ngā tiritiri whatunga, te pūrei pāpāho me ngā kōnae Insta360 mata. Kei te whakaatu kē te kupu Meta Horizon Store i te pūrei pāpāho.
+- **Meta Horizon Store**: i tukuna te whakarārangitanga mō te arotake a Meta i te 3 o Whiringa-ā-nuku 2026 me te hanga 14, ā, ka whiwhi te hongere alpha o te toa i ia hanga hou mō te whakahōu e whai ake ana. Ina whakaaetia te whakarārangitanga, kāore te Quest 3 e hiahia ki te sideload, ā, ka tāpiritia te hononga toa ki konei; me wetetāuta i te tuatahi tētahi tārua kua sideload (tirohia [Tāuta](#install)).
+- **Ngā whakarārangitanga toa**: i tuhia anō te whakarārangitanga Google Play i Whiringa-ā-nuku 2026 me ngā hopuāhua hou, ā, ka whiwhi i ngā hopuāhua pouaka whakaata me tētahi haki pouaka whakaata me te tuku pouaka whakaata. Kei te whakaahua tonu te kupu App Store i ngā hanga tuatahi (ngā whakaahua me ngā ataata 360°, ngā kōnae mata ka whakaaturia papatahi); ka whakaatu ia i ngā mātaki 3D, VR180 me Spatial, te aratau kāore he tūmau, ngā tiritiri whatunga, te pūrei pāpāho me ngā kōnae Insta360 mata. Kei te whakaatu kē te kupu Meta Horizon Store i te pūrei pāpāho.
 - **Ngā kōnae kāmera 360° mata, ā muri**: he tohu kauneke i te wā e whakaritea ana tētahi whakaahua mata mō te pōtae; te whakarite i ngā ataata GoPro me DJI mai i ō rātou ake raraunga nekehanga; .dng fisheye rua; ngā pūrongo pūrere mō te purei arotahi rua o te hanga 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) hei whakaū i ngā hononga me ngā tahua pūwetewete.
 - **DLNA, te tiritiri waea me te mokowā Apple, ā muri**: ngā pūrongo pūrere o te hanga 19 (Plex, Jellyfin, tētahi NAS me te Freebox Server mā te DLNA; tētahi waea e tuku ana ki tētahi Quest, i tōna wāhi whakapā hoki; ngā whakaahua me ngā ataata mokowā iPhone tūturu i te pōtae); te mana multicast i tonoa ki a Apple, kia kitea ai e ngā iPhone ia tūmau DLNA; te o mua me te o muri i waenga i ngā whakaahua mokowā i te pōtae; he tohu mokowā i ngā whakaahua tūmau i te rārangi wā; ngā ataata mokowā i te 3D i te Quest, mēnā ka whakaaetia e ōna pūwetewete.
 - **Ngā pūrei 360° i ngā waea, ā muri**: he pae wā i te pūrei ataata 360° iOS (kei te pūrei Android kē), te o mua/o muri i ngā pūrei 360° o ngā waea pērā i te mātaki rumaki o te Quest, me ngā whakaahua i te pūrei ataata 360° taketake.
 - **Ngā tiritiri whatunga, ngā hipanga e whai ake ana**: te kōrere mai i tētahi kōnae o tētahi kōpaki ki tērā e whai ake ana i ngā whārangi whakaahua me te ataata (kei te haere kē te mātaki rumaki o te Quest i ngā kōnae 360° o tētahi kōpaki), te motuhēhēnga Digest mō te WebDAV, te ingoa kaiwhakamahi mai i te rekoata Bonjour.
 - **Ngā ataata papatahi**: te kōwhiringa ara ororongo i te pūrei papatahi, mō ngā ataata tūmau, pūrere me te tiritiri anō (kei ngā pūrei 360° me Spatial kē).
+- **Android TV, e whai ake ana**: te whakamātautau pūrere o te hanga 20 i te kaiwhaihanga Google TV me tētahi pouaka whakaata tūturu, kātahi ko te tuku pouaka whakaata i Google Play (ngā hopuāhua pouaka whakaata, te haki pouaka whakaata, te arotake a Google); ā muri ake, ngā hongere i te mata kāinga o te pouaka whakaata.
+- **Ngā kāmera Tapo, e whai ake ana**: te whakamātautau pūrere o te hanga 20 me ngā kāmera tūturu; te tirohanga ora i te iPhone me te iPad; ngā hopukanga H.265; te purei i tētahi topenga i te wā e tikina ana; ngā hopukanga o tētahi rā katoa i tētahi rārangi wā kotahi.
+- **Plex, e whai ake ana**: te whakamātautau pūrere o te hanga 20 (ngā waea, te Quest, tētahi iPhone, tētahi pouaka whakaata, i waho atu i te kāinga); te kawe mai i te tohu i te rorohiko mā tētahi waehere QR; te huna i te taha DLNA o tētahi tūmau Plex i te rārangi o ngā tūmau kua kitea; IPv6.
 - **Ki runga**: ngā pull request iti ki a Immich mō ngā wāhanga e hiahiatia ana e ngā kaitiaki, ka tīmata ki te mātaki whakaahua 360°.
 
 ## Ngā mihi
 
 Ko te mātaki whakaahua 360° e ahu mai ana i te pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) nā dmitry-brazhenko, i hangaia i runga i te tauira tuatahi nā bencefr i [#30192](https://github.com/immich-app/immich/pull/30192). Kei te mihi ki a rāua tahi.
+
+I tuhia ngā kāmera Tapo o te hanga 20 mai i ngā mea e tuhia ana mō ēnei kāmera e ngā kaupapa puna tuwhera [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) me [python-kasa](https://github.com/python-kasa/python-kasa).
 
 He aha i peka ai: kua tonoa te mātakitaki 360° i te waea mai i te Kohitātea 2024, ā, kāore anō i te taupānga ōkawa; kei te arotakehia te mātaki whakaahua i [#31169](https://github.com/immich-app/immich/pull/31169). Ka tuku tēnei peka i taua mea ināianei, ka kohi i ngā urupare pūrere tūturu, ā, ka tuku anō ki a Immich, i ngā pull request iti, i ngā mea e hiahiatia ana e ngā kaitiaki. Ka whakawhirinaki te mātaki Meta Quest ki te Meta Spatial SDK, ehara nei i te puna tuwhera, nō reira ka noho tonu ki tēnei peka.
 

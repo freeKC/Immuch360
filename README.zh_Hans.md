@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 是加入了可环顾四周的 360° 照片和视频的 Immich 移动应用，同时也是一款免费播放器，可在 Android 手机和平板、iPhone 和 iPad 以及 Meta Quest 3 和 3S 上播放普通、360°、3D 和 VR180 照片与视频。它面向使用 360° 相机（Insta360、GoPro MAX、DJI Osmo 360、Ricoh Theta、Samsung Gear 360）或手机全景球模式拍摄的人，或拥有头显的人，让他们能观看来自 Immich 服务器、手机本身、NAS 或媒体服务器的自己拍摄的内容：同一台服务器，同一个账户，无需服务器插件，甚至完全不需要服务器。
+Immuch360 是加入了可环顾四周的 360° 照片和视频的 Immich 移动应用，同时也是一款免费播放器，可在 Android 手机和平板、iPhone 和 iPad、Meta Quest 3 和 3S 上，以及从构建 20 起在 Android TV 和 Google TV 上播放普通、360°、3D 和 VR180 照片与视频。它面向使用 360° 相机（Insta360、GoPro MAX、DJI Osmo 360、Ricoh Theta、Samsung Gear 360）或手机全景球模式拍摄的人，或拥有头显的人，让他们能观看来自 Immich 服务器、手机本身、NAS、媒体服务器或 Plex 服务器的自己拍摄的内容：同一台服务器，同一个账户，无需服务器插件，甚至完全不需要服务器。从构建 20 起，它还能显示 Tapo 摄像头的实时画面和其存储卡上的录像。
 
 <p align="center">
   <sub>非官方分支。与 Immich 或 FUTO 无关。名称读作“I am much 360”。</sub>
@@ -15,7 +15,8 @@ Immuch360 是加入了可环顾四周的 360° 照片和视频的 Immich 移动�
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store：<a href="#where-to-get-it">审核中</a> &nbsp;·&nbsp;
-  Meta Quest 3：<a href="#meta-quest-3">APK</a>，Horizon Store 审核中
+  Meta Quest 3：<a href="#meta-quest-3">APK</a>，Horizon Store 审核中 &nbsp;·&nbsp;
+  Android TV：<a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 是加入了可环顾四周的 360° 照片和视频的 Immich 移动�
     <td align="center" width="33%"><h3>🎥 原生 2.5D</h3>从立体视频在平面屏幕上获得纵深，视角跟随你的头部（实验性，手机和平板）</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android、iOS、Meta Quest 3</h3>一个应用，三个平台，头显中为真 3D</td>
+    <td align="center"><h3>📱 Android、iOS、Quest 3、电视</h3>一个应用覆盖手机、平板和头显，头显中为真 3D，从构建 20 起还可在 Android TV 上用遥控器操作</td>
     <td align="center"><h3>🔌 有无服务器均可</h3>你的 Immich 服务器，或手机自带的图库，无需账户</td>
     <td align="center"><h3>🗄️ 网络共享</h3>Samba（SMB）、WebDAV，以及从构建 19 起的 DLNA 媒体服务器，在网络上自动发现并实时读取，不下载任何内容，在你选择时发送到 Immich。从构建 19 起，手机还可以把自己的图库共享给头显</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 在电视上</h3>从构建 20 起，同一个 APK 可用于 Android TV 和 Google TV：360° 照片和视频、你的服务器和你的共享，全部用遥控器操作</td>
+    <td align="center"><h3>🎬 Plex，无需 plex.tv</h3>从构建 20 起读取你的 Plex 资源库，直接播放原始文件，让 360° 依然是 360°，在家和在外都能用</td>
+    <td align="center"><h3>📹 Tapo 摄像头</h3>从构建 20 起提供实时画面和存储卡上的录像，仅在你的网络内使用，并可按你的选择把片段发送到 Immich</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 是加入了可环顾四周的 360° 照片和视频的 Immich 移动�
 - **“我的 360° 照片显示为一条被拉伸的扁平长条，360° 视频也按普通视频播放。”** 参见[以球面显示 360° 照片和视频](#360-photos-and-videos-as-a-sphere)。
 - **“我没有服务器，也不想注册账户。”** 参见[无需服务器或账户](#without-a-server-or-an-account)。
 - **“我想在手机或头显上观看 NAS 里的视频，但不想复制。”** 参见[网络共享](#network-shares-a-nas-a-computer-or-a-media-server)。
+- **“Plex 把我的 360° 视频按平面播放，而我想在头显里、电视上和离家在外时使用我的 Plex 资源库。”** 参见 [Plex Media Server，无需 plex.tv](#plex-media-server-without-plextv)。
 - **“我的照片在手机上，我没有电脑或 NAS 可以放给头显用。”** 参见[在网络上共享此手机](#share-this-phone-on-the-network)。
+- **“我想不用 Tapo 应用就能查看我的 Tapo 摄像头和昨晚的片段，并把片段保存到 Immich。”** 参见 [Tapo 摄像头](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)。
 - **“我的 Insta360 文件要先用 Insta360 应用处理才能观看”**（GoPro .360 和 DJI .osv 文件也是）。参见[360° 相机 RAW 文件](#raw-360-camera-files-without-the-cameras-app)。
 - **“我的 3D 视频显示成重影，VR180 视频被拉伸到四周。”** 参见 [3D 和 VR180](#3d-and-vr180-photos-and-videos) 以及 [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental)。
 - **“我有 iPhone 拍的空间照片。”** 参见 [Apple 空间照片和视频](#apple-spatial-photos-and-videos)。
 - **“在手机上能用，但我想在 Quest 里用。”** 参见[在 Meta Quest 3 头显中](#in-the-meta-quest-3-headset)。
+- **“我想在电视上用遥控器观看我的 360° 照片和视频，以及 NAS 或 Plex 服务器中的视频。”** 参见[在电视上观看](#watch-on-your-tv-android-tv-and-google-tv)。
 - **“我在一堆照片里找不到我的 360° 照片。”** 参见 [360° 列表](#find-your-360-shots-the-360-list)。
 - **“我的 360° 视频卡顿，或者播放的是一个模糊的副本。”** 参见[视频详情和解码器](#video-details-decoders-and-why-a-video-stutters)。
 - **“Immich 应用的功能我都还能用吗？”** 可以，只有两处小变化，参见[其余一切都是 Immich](#everything-else-is-immich)。
@@ -100,7 +109,7 @@ Immuch360 在 Android 和 iOS 手机及平板上把它们作为可环顾四周�
 
 你没有 Immich 服务器，或者不想注册账户：你只是想让手机里的 360° 照片以球面打开，并能用陀螺仪转动。Immich 应用要求先登录。
 
-在登录页上，「不连接服务器使用」会以设备自身的照片和视频打开 Immuch360，提供 360°、3D、VR180 和 Spatial 查看器、360° 列表和网络共享，无需 Immich 账户。服务器功能会隐藏或显示为灰色，直到你连接服务器；任何内容都不会离开设备。在 Meta Quest 3 上，它会打开头显自身的照片和视频。
+在登录页上，「不连接服务器使用」会以设备自身的照片和视频打开 Immuch360，提供 360°、3D、VR180 和 Spatial 查看器、360° 列表和网络共享（从构建 20 起还有 Plex 服务器和 Tapo 摄像头），无需 Immich 账户。服务器功能会隐藏或显示为灰色，直到你连接服务器；任何内容都不会离开设备。在 Meta Quest 3 上，它会打开头显自身的照片和视频；在电视上，由于电视没有自己的照片和视频，它会引导你前往网络共享（参见[在电视上观看](#watch-on-your-tv-android-tv-and-google-tv)）。
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="无服务器时的资源库标签页：顶部为 360° 入口，然后是包含两张 360° 照片的在本设备上，以及包含名为 NAS 的共享的网络共享">
 
@@ -126,7 +135,7 @@ Immuch360 在 Android 和 iOS 手机及平板上把它们作为可环顾四周�
 
 你的 360° 视频存放在 NAS 或电脑上，你想在手机或头显上观看，而不必先复制。在头显上，人们最终只能用数据线逐个复制文件；Plex 和 Jellyfin 等媒体服务器按平面播放 360° 视频，正如它们论坛上的需求帖所描述的；Immich 应用只读取你的 Immich 服务器。
 
-Immuch360 可以直接从共享浏览并播放任何支持 SMB（Samba、Windows）、WebDAV 或从构建 19 起支持 DLNA/UPnP（媒体服务器：Plex、Jellyfin、minidlna、Gerbera、Emby、NAS 或电视盒子）的服务器上的照片和视频。它会自行找到你网络中的服务器，并在与应用其他部分相同的查看器中实时播放文件（360°、3D、VR180、Spatial 2.5D、Quest 沉浸式视图），有无 Immich 服务器均可，手机和 Meta Quest 3 上都能用。不会下载任何内容。连接服务器后，你选中的文件可以发送到你的 Immich 账户（从构建 15 起）。
+Immuch360 可以直接从共享浏览并播放任何支持 SMB（Samba、Windows）、WebDAV 或从构建 19 起支持 DLNA/UPnP（媒体服务器：Jellyfin、minidlna、Gerbera、Emby、NAS 或电视盒子）的服务器上的照片和视频。从构建 20 起，Plex Media Server 有了自己的类型，参见 [Plex Media Server，无需 plex.tv](#plex-media-server-without-plextv)。它会自行找到你网络中的服务器，并在与应用其他部分相同的查看器中实时播放文件（360°、3D、VR180、Spatial 2.5D、Quest 沉浸式视图），有无 Immich 服务器均可，手机和 Meta Quest 3 上都能用。不会下载任何内容。连接服务器后，你选中的文件可以发送到你的 Immich 账户（从构建 15 起）。
 
 | 添加共享 | 共享中的文件夹 |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 可以直接从共享浏览并播放任何支持 SMB（Samba、Windows
 
 ### 添加共享
 
-1. 打开「资源库」标签页，然后打开「网络共享」。第一次打开时，页面显示「还没有共享」以及「添加共享」按钮；右上角的 + 随时都能做同样的事。
-2. 「添加共享」页面会先查找你网络中的服务器，并在「在网络上找到」下按类型（SMB、WebDAV、DLNA、手机）列出。查找最多约需六秒；「重新扫描」会重新开始。它使用 Bonjour/mDNS，以及经真实 SMB 或 WebDAV 交互确认的本地网络扫描，从构建 19 起还会对 DLNA 媒体服务器进行 SSDP 搜索。
-3. 点按某台服务器：类型、服务器、端口和路径会自动填好。
-4. 列表中没有？手动填写表单。类型：「SMB（Samba，Windows 共享）」、「WebDAV（Nextcloud、Synology 等）」或「DLNA 媒体服务器（Plex、Jellyfin、NAS、电视盒子）」。然后是「名称」、「服务器名称或地址」（名称或地址；`smb://nas/photos`、`\\nas\photos` 或 `https://nas:5006/photos` 这样的完整地址会填好其他字段）、非常规端口时填写「端口（可选）」、SMB 填「共享名」或 WebDAV 填「WebDAV 地址的路径」、「起始文件夹（可选）」、「用户名」和「密码」，以及 WebDAV 的「安全连接（HTTPS）」。
+1. 打开「资源库」标签页，然后打开「网络共享」。第一次打开时，页面显示「还没有共享」以及「添加共享」按钮；右上角的 + 随时都能做同样的事。从构建 20 起，两者都会先询问要添加什么：「网络共享（NAS、电脑、媒体服务器）」、「Plex Media Server」或「Tapo 摄像头」。选择第一项。
+2. 「添加共享」页面会先查找你网络中的服务器，并在「在网络上找到」下按类型（SMB、WebDAV、DLNA、手机，从构建 20 起还有 Plex 和 Tapo）列出。查找最多约需六秒；「重新扫描」会重新开始。它使用 Bonjour/mDNS，以及经真实 SMB 或 WebDAV 交互确认的本地网络扫描，从构建 19 起还会对 DLNA 媒体服务器进行 SSDP 搜索，从构建 20 起还使用 Plex 的发现协议 GDM，以及 TP-Link 用于 Tapo 摄像头的发现协议。
+3. 点按某台服务器：类型、服务器、端口和路径会自动填好。Plex 服务器或 Tapo 摄像头则会打开它自己的页面，同样已经填好。
+4. 列表中没有？手动填写表单。类型：「SMB（Samba，Windows 共享）」、「WebDAV（Nextcloud、Synology 等）」、「DLNA 媒体服务器（Jellyfin、NAS、电视盒子）」，或从构建 20 起的「Plex Media Server」，它会打开 [Plex Media Server，无需 plex.tv](#plex-media-server-without-plextv) 中介绍的页面。然后是「名称」、「服务器名称或地址」（名称或地址；`smb://nas/photos`、`\\nas\photos` 或 `https://nas:5006/photos` 这样的完整地址会填好其他字段）、非常规端口时填写「端口（可选）」、SMB 填「共享名」或 WebDAV 填「WebDAV 地址的路径」、「起始文件夹（可选）」、「用户名」和「密码」，以及 WebDAV 的「安全连接（HTTPS）」。
 5. SMB：输入服务器和用户名后，「选择共享」会列出服务器上的共享。
 6. DLNA：媒体服务器没有用户名和密码。填写服务器、端口及其设备描述的「描述路径」（minidlna 为 `/rootDesc.xml`），或者把完整地址（例如 `http://192.168.1.10:8200/rootDesc.xml`）粘贴到服务器字段中。
 7. 点按「测试连接」。结果为「已连接，起始文件夹中有 N 个项目」，或说明失败原因。然后点按表单底部的「保存」。
@@ -155,6 +164,7 @@ Immuch360 可以直接从共享浏览并播放任何支持 SMB（Samba、Windows
 
 360°、3D 和 VR180 根据文件的 GPano 或球面元数据识别（通过范围请求读取），VR180 还可根据文件名识别。从构建 16 起，也能识别 Insta360 RAW 文件（.insp 照片根据文件名或相机的校准数据块，.insv 视频根据文件名和画面）并进行拼接。
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### 把共享中的文件发送到 Immich
 
 从构建 15 起，在已连接服务器时：
@@ -177,17 +187,67 @@ Immuch360 可以直接从共享浏览并播放任何支持 SMB（Samba、Windows
 <a id="a-share-that-moved"></a>
 ### 地址已变化的共享
 
-从构建 19 起，DLNA 共享和手机共享（参见[在网络上共享此手机](#share-this-phone-on-the-network)）会保存其服务器所宣告的 ID。当其中一个在原地址不再响应时（路由器分配了新地址，服务器在另一个端口重启），其文件夹页面会显示「正在网络上查找 (名称)」，并把共享移到它现在响应的位置：对于没有密码的 DLNA 服务器会立即迁移；对于有用户名和密码的共享，会先弹出显示两个地址的确认「使用新地址？」，因为用户名和密码将被发送到新地址。
+从构建 19 起，DLNA 共享和手机共享（参见[在网络上共享此手机](#share-this-phone-on-the-network)）会保存其服务器所宣告的 ID。当其中一个在原地址不再响应时（路由器分配了新地址，服务器在另一个端口重启），其文件夹页面会显示「正在网络上查找 (名称)」，并把共享移到它现在响应的位置：对于没有密码的 DLNA 服务器会立即迁移；对于有用户名和密码的共享，会先弹出显示两个地址的确认「使用新地址？」，因为用户名和密码将被发送到新地址。从构建 20 起，在网络中另一个地址上重新找到的 Plex 服务器也会立即迁移：在发送令牌之前，它的证书会证明它是同一台服务器。Tapo 摄像头则在它自己的页面上按 MAC 地址查找，参见 [Tapo 摄像头](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)。
 
 ### 限制
 
 - **SMB**：仅支持 SMB 2 和 3，不支持 SMB 1。
 - **WebDAV**：仅支持 Basic 认证（暂不支持 Digest）；自签名 HTTPS 证书必须安装在设备上。
-- **查找服务器**：网络扫描和 DLNA 搜索只查看本地 /24 网络，并且在 iOS 上需要本地网络权限。在 iPhone 和 iPad 上，在 Apple 授予应用多播权限（multicast entitlement）之前，DLNA 搜索只发送单播请求，而有些服务器不响应单播请求（Linux 上的 minidlna）：请通过描述地址添加它们。
+- **查找服务器**：网络扫描以及 DLNA、Plex 和 Tapo 搜索只查看本地 /24 网络，并且在 iOS 上需要本地网络权限。在 iPhone 和 iPad 上，在 Apple 授予应用多播权限（multicast entitlement）之前，DLNA 搜索只发送单播请求，而有些服务器不响应单播请求（Linux 上的 minidlna）：请通过描述地址添加它们。
 - **DLNA**：只提供文件转换副本的服务器会给出该副本；一个文件夹最多列出 20,000 个项目。
 - **缩略图**：照片缩略图需要解码整个文件，超过 30 MB 的照片没有缩略图。
 - **播放器**：平面播放器暂不支持选择音轨。手机上暂不能在文件夹中从一个文件滑动到下一个（Quest 沉浸式视图可对文件夹中的 360° 文件使用上一个和下一个）。对网络文件所做的 3D 或 180° 选择不会被记住。
 - **上传**：只在应用打开时进行，服务器已有的文件也会完整发送，之后服务器才会报告它是重复的。
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server，无需 plex.tv
+
+你的视频在 Plex 里，而 Plex 把你的 360° 照片和视频按平面显示，正如其论坛上的需求帖所描述的（其中一个自 2017 年起一直未关闭）。你还想在头显里、电视上以及离家在外时使用这个资源库。Immich 应用只读取你的 Immich 服务器，而构建 19 的 DLNA 类型只能在家中访问 Plex 的 DLNA 部分。
+
+从构建 20 起，Immuch360 可以直接与你的 Plex Media Server 配对，无需 plex.tv：它会在网络上找到服务器，你只需粘贴一次令牌，应用就会实时读取你资源库中的原始文件，可用于应用的每一个查看器（360°、3D、VR180、Spatial 2.5D、Quest 沉浸式视图、电视遥控器），在家可用，通过你的端口转发在外也可用。不会复制任何内容，你选中的文件可以发送到 Immich。
+
+### 添加 Plex 服务器
+
+1. 打开「资源库」标签页，然后打开「网络共享」，再点 + 和「Plex Media Server」。共享表单中的「Plex Media Server」类型，以及「在网络上找到」下带 Plex 标签的服务器，都会打开同一个页面。
+2. 「添加 Plex 服务器」页面会查找你网络中的 Plex 服务器（「正在你的网络中查找 Plex 服务器」），并在「在网络上找到」下列出。点按你的服务器：一张卡片会显示它的名称、Plex 版本和一个简短 ID。
+3. 列表中没有？输入它的「服务器地址」，例如 `192.168.1.20`、`192.168.1.20:32400` 或 `https://...plex.direct:32400`，然后点按「查找」。应用会读取服务器的证书，不发送任何其他内容。
+4. 在电脑上获取令牌：在网页浏览器中打开 Plex 并登录，打开资源库中的任意照片或视频，然后依次点「...」、「Get Info」（获取信息）、「View XML」（查看 XML）。一个新标签页会打开一个以 `X-Plex-Token=...` 结尾的地址。复制整个地址。
+5. 将它粘贴到「访问令牌」，或者把它发送到手机后点按「从剪贴板粘贴」：应用会从中取出服务器和令牌。只粘贴 `X-Plex-Token=` 之后的文字也可以。页面上的「如何获取」也说明了同样的内容；服务器管理员还可以使用服务器 `Preferences.xml` 文件中的 `PlexOnlineToken` 值，它不会过期。在电视上，按 OK 会打开键盘对话框：在那里输入令牌（通常为 20 个字符）。
+6. 点按「测试连接」。它会回答「已连接：N 个资源库」，或说明问题所在，例如「Plex 服务器拒绝了此令牌。」
+7. 随后「从家外访问」会显示服务器提供的信息：「服务器表示可通过 (地址):(端口) 访问。」，或「服务器没有告知其家外地址。」要在离家时使用服务器，请在「家外地址（IP 或名称）」中输入你的公网地址或 DynDNS 名称，并在「家外端口」中输入在 Plex 中转发的端口（设置，远程访问）。你输入的内容始终优先于服务器提供的信息。
+8. 除非你更改，「名称」就是服务器的名称，「起始文件夹（可选）」可以直接打开某个资源库。点按「保存」。服务器会与共享一起列出，显示为 `plex://` 加上它的地址。
+
+### 浏览你的 Plex 资源库
+
+1. 在「网络共享」中点按该服务器。第一层列出应用显示的资源库：照片、电影和其他视频、电视节目。音乐不显示。
+2. 资源库下面是它在服务器磁盘上的文件夹（Plex 的「按文件夹」视图），然后是以文件名显示的照片和视频，带有 Plex 生成的缩略图。文件夹视图无响应的照片资源库会改为显示其相册。
+3. 与任何共享一样，360° 和 3D 通过读取文件本身来识别：360° 照片会带 360° 标记，Apple 空间照片会带 3D 标记。
+4. 像在任何共享中一样打开照片或视频：360°、3D、360°/180°、手机上的 Spatial 2.5D、Quest 中的沉浸式视图、电视上的遥控器。视频以原始文件读取，通过应用的本地桥接按字节范围读取，因此可以拖动进度，其 360° 和 3D 元数据也会完整地传到播放器。
+5. 选择文件并点按「上传到 Immich」，即可像从任何共享一样把它们发送到你的服务器（参见[把共享中的文件发送到 Immich](#send-files-of-a-share-to-immich)）。
+
+### 离家在外
+
+每次打开服务器时，应用会先尝试家中地址，400 毫秒后再尝试家外地址。使用第一个以你的服务器身份响应的地址；如果是家外地址，文件夹页面会显示一个地球图标，标注为「通过家外地址连接」。这需要在 Plex 中开启远程访问（设置，远程访问），并由你的路由器转发一个端口：没有 plex.tv，应用无法使用 Plex 的中继，因此没有端口转发的服务器只能在家中打开，离家时页面会显示「无法从家庭网络外访问你的 Plex 服务器。请在 Plex 中通过端口转发开启远程访问（设置，远程访问），或输入它的公网地址。」
+
+服务器提供的地址会在每次在家连接时重新获取。如果从外面无法通过它访问（路由器会更换地址、两台路由器串联），请在服务器页面中输入你自己的地址。当令牌失效时（例如你退出了复制令牌所用的浏览器会话），文件夹页面会提示这一点，并提供「粘贴新令牌」，它会打开服务器页面并定位到令牌字段。
+
+### 与 Plex 和 DLNA 类型的比较
+
+- **原始文件**：应用读取文件本身，从不读取 Plex 转换过的副本，因此 360°、3D 和 VR180 元数据保持完整，应用的查看器会使用它们，而 Plex 应用会把这些文件按平面显示。
+- **无需 plex.tv**：应用只与你的服务器通信，始终通过 HTTPS。在发送令牌之前，会通过服务器自己的、与服务器 ID 绑定的 plex.direct 证书来验证服务器。令牌保存在设备的安全存储中，只放在请求头中发送到你的服务器。
+- **与把同一台服务器添加为 DLNA 相比**：文件夹与磁盘上一致、Plex 的缩略图、家外访问以及安全连接。
+
+### 限制
+
+- **仅限已认领的服务器**：服务器必须在 Plex 中被认领（登录过一次 Plex 账户），这样它才会获得 plex.direct 证书。否则页面会显示「此地址的响应没有 Plex 证书。请在 Plex 中认领该服务器，或将其添加为 SMB、WebDAV 或 DLNA 共享。」
+- **仅限 IPv4**：「暂不支持 IPv6 地址。请输入服务器的 IPv4 地址。」
+- **令牌**可完全访问你的 Plex 服务器。在应用中移除服务器会在设备上忘记令牌，但不会吊销它：「在你退出复制令牌所用的浏览器会话之前，该令牌在服务器上仍然有效。」带有截止日期的令牌会显示该日期，应用无法续期。
+- **离家在外**：只能通过端口转发，没有中继。
+- **资源库**：不显示音乐，一个文件夹最多列出 20,000 项，受限用户可能会看到「此令牌无法读取服务器的资源库。」
+- **360° 相机 RAW 文件**（.insv、.insp、.360、.osv）只有在 Plex 列出它们时才会显示；否则请把同一个 NAS 文件夹添加为 SMB 或 WebDAV 共享，参见 [360° 相机 RAW 文件](#raw-360-camera-files-without-the-cameras-app)。
+- **查找服务器**：关闭了「Enable local network discovery (GDM)」（启用本地网络发现）设置的服务器无法被找到，请输入它的地址。在 iPhone 和 iPad 上，搜索只发送单播请求。同一台服务器的 DLNA 部分也可能以 DLNA 标签出现在列表中：请选择带 Plex 标签的那一行。
+- **尚未在设备上验证**：配对、文件夹、视频的字节范围、缩略图、错误的令牌和家外地址已在电脑上针对真实的 Plex Media Server 1.42.1 验证，照片和电视节目资源库仅针对模拟服务器验证。在手机、Quest、iPhone 和电视上的播放，以及切换到家外地址，属于构建 20 的设备测试。
+- Immuch360 与 Plex 没有关联。
 
 <a id="share-this-phone-on-the-network"></a>
 ## 在网络上共享此手机
@@ -219,6 +279,63 @@ Immuch360 可以直接从共享浏览并播放任何支持 SMB（Samba、Windows
 - **安全**：仅限本地网络。共享只在手机的 Wi-Fi、以太网和热点地址上监听，从不在移动数据或 VPN 地址上监听，并且只响应本地地址的设备。每个请求都需要用户名和密码（HTTP Basic）；同一设备一分钟内输错十次密码会被封锁一分钟。密码在 Wi-Fi 上以明文传输（普通 HTTP）：请在你信任的网络中使用共享，用完后关闭。
 - **手机自身的热点**：头显可以连接到它；如果头显在热点上找不到手机，请输入页面上显示的地址。
 - **尚未在设备上验证**：服务器已通过单元测试，以及在电脑上使用头显自身的 WebDAV 客户端和媒体桥接进行的端到端测试验证。手机为 Quest 3 提供服务（发现、播放并拖动一段 4 GB 视频、熄屏 30 分钟、热点、从通知中停止），以及尚未在 iPhone 上运行过的 iPhone 端，属于构建 19 的设备测试。
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tapo 摄像头：实时画面和存储卡上的录像
+
+你家里有 Tapo 摄像头，你想不打开 Tapo 应用，就在照片旁边查看花园摄像头和昨晚的片段，并把某个片段保存到 Immich。Immich 应用没有任何摄像头功能，而 Tapo 应用是一个单独的应用，登录了你的 TP-Link 账户，片段与你的照片分开存放。
+
+从构建 20 起，Immuch360 在网络共享旁边加入了 Tapo 摄像头。它在 Android 手机和平板、Android TV 和 Meta Quest 3 上显示摄像头的实时画面，并在所有平台上按天显示其存储卡上的录像：片段从摄像头获取后，像任何视频一样播放，并可发送到 Immich。应用只在你的网络内与摄像头通信，从不连接 TP-Link 的服务器，也从不更改摄像头上的任何内容。
+
+### 添加摄像头
+
+1. 先在 Tapo 应用中：在摄像头的设置中，依次进入 Advanced Settings（高级设置）、Camera Account（摄像头账号），创建摄像头账号（此摄像头专用的用户名和密码，用于实时画面），并在 Me（我）下的 Tapo Lab 中开启 Third-Party Compatibility（第三方兼容）。
+2. 在 Immuch360 中，打开「资源库」标签页，然后打开「网络共享」，再点 + 和「Tapo 摄像头」。
+3. 「添加摄像头」页面会查找摄像头（「正在你的网络中查找 Tapo 摄像头」），并在「在网络上找到」下以 Tapo 标签列出。点按你的摄像头即可填写「摄像头地址」，也可以手动输入它的地址。共享表单中带 Tapo 标签的摄像头也会打开同一个页面。
+4. 「名称」：摄像头在列表中显示的名称。
+5. 在「存储卡上的录像」下，「TP-Link 账号密码」：你在 Tapo 应用中使用的账号的密码。它用于打开录像；不需要你的电子邮件地址。
+6. 在「实时」下，「摄像头账号用户名」和「摄像头账号密码」：第 1 步中的摄像头账号。
+7. 两者有一个就够了（「请输入 TP-Link 账号密码、摄像头账号，或两者都输入。」）：只有 TP-Link 密码可以查看录像，只有摄像头账号可以查看实时画面。
+8. 点按「测试摄像头」。它会显示「录像：(型号)，固件 (版本)」以及存储卡状态，和「实时画面：(视频)，声音 (音频)」，或者分别显示失败的原因。
+9. 点按「保存」。摄像头会列在共享之后的「摄像头」下，知道型号后会显示型号，并显示 `tapo://` 加上它的地址。
+
+### 观看实时画面
+
+1. 点按摄像头。它的实时画面位于页面顶部：先显示「正在连接摄像头」，然后是带「实时」标记的画面。
+2. 画面上的按钮：声音，一开始是关闭的（「打开声音」；设备无法播放声音时显示「此设备上没有声音」）、「标清」或「高清」，以及「全屏」。
+3. 手机在页面上显示标清，全屏时显示高清；Quest 显示高清。返回键会先退出全屏。
+4. 画面下方是型号、固件和存储卡信息，例如「存储卡：已用 (已用空间)，共 (总空间)」或「没有存储卡」。
+
+在 iPhone 和 iPad 上，实时画面处会显示「实时画面将在以后的版本中登陆 iPhone 和 iPad。录像现在已可在此播放。」没有摄像头账号时，页面会显示「添加摄像头账号以查看实时画面。」
+
+### 播放和保存录像
+
+1. 在「存储卡上的录像」下，摄像头页面按月列出有录像的日期，最新的在前。没有 TP-Link 账号密码时，它会显示「添加 TP-Link 账号密码以查看录像。」
+2. 点按某一天。它的片段按摄像头自身时间的小时排列，每个片段都有开始时间、时长、事件的摄像头缩略图以及类型：移动、人、宠物、车辆、婴儿哭声、动物、连续录像或事件。
+3. 点按一个片段。应用会从摄像头获取它（「正在从摄像头获取视频：N%」，可点「取消」），然后在视频播放器中播放，有声音，可以拖动进度。已获取的片段会带有「在此设备上」，下次会立即打开。
+4. 要把片段保存到 Immich（需已连接服务器）：在视频的 ⋮ 菜单中选择「上传到 Immich」。
+5. 要释放空间：长按已获取的片段会提供「删除此设备上的副本」（在手机上），摄像头页面上有「删除从此摄像头获取的视频」，并显示它们的大小。
+6. 右上角的刷新按钮或下拉页面会再次询问摄像头。
+
+当摄像头在原地址不再响应时，它的页面会按 MAC 地址在网络上查找它，并在它出示相同的证书后，把它移到现在响应的位置。如果摄像头出示的证书与应用最初看到的不同，则会先弹出询问：「(地址) 上的摄像头显示的证书与之前不同。只有在你重置或更换过它时才继续。」
+
+### 与 Tapo 应用的比较
+
+- **仅在你的网络内**：应用在本地网络上直接与摄像头通信，从不连接 TP-Link 的服务器。它不登录 TP-Link 账户，因此不需要你的电子邮件地址。
+- **录像变成普通视频**：已获取的片段是带声音的 H.264 视频，你可以把它发送到 Immich，即使存储卡已经覆盖了它，它也会保留在 Immich 中。
+- **与其他内容放在一起**：有无 Immich 服务器均可，在手机、电视或 Quest 上（在窗口中）都能用，像共享一样在网络上被找到。
+- **只读**：应用只向摄像头请求它要显示的内容；从不更改设置，也从不删除摄像头上的任何内容。
+
+### 限制
+
+- **尚未在设备上验证**：构建 20 还没有在真实摄像头上运行过。协议是根据固件 1.3.4 的 C510W 的抓包编写的（2026 年年中的 V4 登录方式），应用在测试中针对模拟摄像头进行了验证。欢迎反馈，请附上「测试摄像头」显示的型号和固件，以及[日志](#logs)中的相关行。
+- **实时画面**：仅限 Android 手机和平板、Android TV 和 Quest，iPhone 和 iPad 暂不支持。TP-Link 的限制同样适用：每台摄像头同时最多两路高清流和两路标清流（包括 Tapo 应用在内），并且 Tapo Care、存储卡和使用 RTSP 或 ONVIF 的录像机不能同时运行。
+- **摄像头**：不支持电池摄像头和接在 Tapo 网关（hub）后面的摄像头。
+- **录像**：每台摄像头一次只能下载一个。当 Tapo 应用正在浏览存储卡时，应用会在 4、8 和 12 秒后重试，然后显示「摄像头正被其他观看者占用，例如 Tapo 应用。请一分钟后重试。」H.265 录像暂时无法转换（「此录像为 H.265 格式，当前版本暂时无法转换。」），连续录像没有缩略图，片段要完全获取后才能播放。
+- **密码**：每次密码错误都会计数，错误几次后摄像头会锁定一段时间（「密码错误次数过多，摄像头已锁定。请在 N 分钟后重试。」）。应用从不自行重试被拒绝的密码：只有「测试摄像头」或「重试」才会再次询问摄像头。如果摄像头接受了设置用的密码，却不接受视频用的密码，请在 Tapo 应用中关闭再重新开启 Third-Party Compatibility（第三方兼容），然后重启摄像头。
+- **空间**：已获取的片段保存在应用的缓存中，所有摄像头合计最多 1 GB（最久未播放的先删除）；系统可能会清理该缓存，移除摄像头会删除它的片段。
+- **离家在外**：应用通过摄像头在你网络中的地址访问它，因此无法从网络外部访问。
+- Immuch360 与 TP-Link 没有关联。
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## 360° 相机 RAW 文件，无需相机应用
@@ -349,7 +466,7 @@ iPhone 可以拍摄空间照片和视频，而 Immich 服务器对此一无所�
 
 很多人买 Quest 3 是为了看自己的 360° 照片和视频，然后会问文件该放在哪里、怎样不用数据线传到头显上，以及用哪个播放器：商店里的 360° 和 3D 视频播放器都是付费的。
 
-同一个 Android 应用以窗口形式运行在 Quest 3 和 3S 上，包含你的整个资源库。它的 360° 按钮会打开沉浸式视图，照片或视频环绕在你四周，转动头部即可环顾，立体文件呈现真 3D（Meta Spatial SDK）。媒体来自你的 Immich 服务器、头显本身、NAS、媒体服务器或手机，就地播放（媒体服务器和手机从构建 19 起，尚未在头显上验证）。它免费且开源。已在 Quest 3 上验证，也有用户用 Insta360 X4 8K HEVC 视频验证过。
+同一个 Android 应用以窗口形式运行在 Quest 3 和 3S 上，包含你的整个资源库。它的 360° 按钮会打开沉浸式视图，照片或视频环绕在你四周，转动头部即可环顾，立体文件呈现真 3D（Meta Spatial SDK）。媒体来自你的 Immich 服务器、头显本身、NAS、媒体服务器、手机或 Plex 服务器，就地播放（媒体服务器和手机从构建 19 起，Plex 服务器从构建 20 起，尚未在头显上验证），从构建 20 起，窗口中还会显示 Tapo 摄像头。它免费且开源。已在 Quest 3 上验证，也有用户用 Insta360 X4 8K HEVC 视频验证过。
 
 ### 打开沉浸式视图
 
@@ -408,6 +525,56 @@ iPhone 可以拍摄空间照片和视频，而 Immich 服务器对此一无所�
 - **拖动进度**：如果视频的来源不响应字节范围请求，就无法拖动进度；面板会提示这一点。
 - **平面视频**：平面（非 360°）立体视频在窗口中播放，两只眼的画面都可见；沉浸式 3D 视图用于 360° 和 VR180 媒体。
 - **更多**：头显能解码的编解码器、商店、权限和 APK 大小，请见 [Meta Quest 3](#meta-quest-3)。
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## 在电视上观看（Android TV 和 Google TV）
+
+你想在大屏幕上用电视遥控器观看 360° 照片和视频、你的相册以及 NAS 或 Plex 服务器中的视频，让全家人坐在沙发上一起看。Immich 移动应用不是电视应用：一位把它装在电视上的用户发现，它能用鼠标操作，却不能用遥控器操作（[讨论 #1614](https://github.com/immich-app/immich/discussions/1614)），而 Immich 团队没有推出官方电视应用的计划（[讨论 #13748](https://github.com/immich-app/immich/discussions/13748)）。
+
+从构建 20 起，同一个 Android 应用可在 Android TV 和 Google TV 上运行，只用遥控器操作：手机和电视使用同一个 APK，360° 和 3D 查看器用方向键转动，网络共享、Plex 和 Tapo 摄像头也能在电视上使用，有无 Immich 服务器均可。
+
+<a id="install-it-on-the-tv"></a>
+### 在电视上安装
+
+1. 在 Google Play 为电视提供该应用之前（这要等待 Google 审核电视版本），请从 [Releases](https://github.com/freeKC/Immuch360/releases) 页面获取通用的 `Immuch360-v<version>-release.apk`。
+2. 在电视上开启开发者选项和 USB 调试（在 Google TV 上：设置、系统、关于，选择「Android TV OS build」（Android TV 操作系统版本）七次，然后进入设置、系统、开发者选项；不同电视上的名称有所不同）。
+3. 在同一网络中的电脑上使用 adb（Android SDK Platform Tools）：执行 `adb connect <address of the TV>`（`<address of the TV>` 为电视的地址），在电视上接受提示，然后执行 `adb install -r Immuch360-v<version>-release.apk`。
+4. 应用会带着它的横幅出现在电视的应用列表中。以同样的方式安装下一个版本：`-r` 会保留登录和设置。
+
+### 首次启动
+
+1. 像在手机上一样登录：方向键会在字段之间移动焦点框，在字段上按 OK（「按 OK 输入」）会在对话框中打开电视键盘，用于输入服务器地址、电子邮件和密码。
+2. 或者选择「不连接服务器使用」。电视没有自己的照片，因此「照片」标签页会显示「这台电视没有自己的照片或视频：请从资源库打开网络共享。」并带有「网络共享」按钮。在那里添加共享、Plex 服务器或摄像头，与在手机上一样（参见[网络共享](#network-shares-a-nas-a-computer-or-a-media-server)）。
+
+### 用遥控器移动
+
+- 方向键移动焦点框，OK 打开焦点所在的内容，返回键返回。在标签页上，返回键会先转到侧边菜单，再转到「照片」，然后退出应用。
+- 频道加和频道减一次滚动一页。
+- 在查看器中，遥控器的播放和暂停、快进、快退、下一个和上一个按键都可以使用，信息键会显示照片或视频的详情。
+
+### 用遥控器看照片和视频
+
+1. **照片**：左右键切换到上一张或下一张，OK 显示或隐藏控件，上键转到顶栏（360° 按钮所在处），下键转到底栏。
+2. **视频**：OK 暂停并显示控件，或继续播放。播放时，左右键后退或前进 10 秒；暂停时，左右键切换到上一项或下一项，正如提示所说：「已暂停：方向键切换到上一项或下一项」。
+3. **360° 照片**，通过 360° 按钮打开：方向键环顾四周，按住时更快，松开后视图会缓缓停下。OK 会移到顶栏的按钮上，停在「放大」，旁边是「缩小」、视野和 3D；频道加和频道减也可以缩放。返回键从按钮回到画面，然后关闭。提示为「方向键环顾四周，OK 显示控件，返回键关闭」。
+4. **360° 视频**，通过 360° 按钮打开：控件隐藏时方向键环顾四周，OK 暂停并显示控件，返回键隐藏控件，然后关闭。提示为「方向键环顾四周，OK 暂停并显示控件，返回键关闭」。
+5. **回忆**：左右键浏览照片并进入下一段回忆，上键转到关闭按钮，下键转到「在时间轴中查看」。
+6. **共享和 Plex**：在共享的照片和视频页面中使用同样的按键，左右键会打开文件夹中的上一个或下一个文件。
+
+### 「遥控器布局」设置
+
+「设置」、「偏好设置」、「遥控器布局」：「大号焦点框和遥控器按键，不显示需要触摸屏的控件。自动会在 Android TV 和 Google TV 上开启。」默认为「自动」；「开」适合用键盘或游戏手柄操作的平板；「关」会在电视上关闭它。该设置仅在 Android 上提供。无论该设置如何，在查看器中用键盘或游戏手柄都可以使用方向键和 OK。
+
+### 限制
+
+- **查看器**：在电视上，应用只用于显示和播放。备份、上传、编辑、删除、共享、多选、投屏（Cast）、Spatial 2.5D、陀螺仪、地图和地点，以及「在网络上共享此手机」都会隐藏。
+- **登录**：OAuth 需要打开网页，而电视做不到：「使用 (提供方) 登录需要打开网页，这台电视无法做到。请改用电子邮件和密码登录。」
+- **链接**会在「在其他设备上打开」下显示其地址，而不是打开浏览器，文字在系统的键盘对话框中输入。
+- **内存**：在内存较小的电视上，360° 照片最大以 4096x2048 显示，放大时不会显示更清晰的画面。
+- **视频**：由电视的解码器决定能播放什么，「视频来源」设置和解码器检查与手机上相同（参见[视频详情和解码器](#video-details-decoders-and-why-a-video-stutters)）；尚未在电视上测量。
+- **尚未在设备上验证**：电视支持仅通过自动化测试验证，还没有在电视或电视模拟器上运行过。有待确认：方向键转动 360° 视频的方向、文字对话框中的电视键盘（Gboard）、红外遥控器的 OK 键、边距以及电视主屏幕上的横幅。欢迎反馈。
+- **电视上的 Google Play** 要等待 Google 审核电视版本；在此之前，请使用 APK。
+- **其他电视**：未测试 Fire TV，也没有 Apple TV 版本。
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## 找到你的 360° 照片：360° 列表
@@ -488,11 +655,11 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 <a id="everything-else-is-immich"></a>
 ## 其余一切都是 Immich
 
-官方 Immich 移动应用的所有功能这里都有：备份、时间线、相册、搜索、共享、好友，全部与你的服务器同步，与网页版使用同一台服务器和同一个账户。Immuch360 可与官方应用并存安装（包名 `com.aprogsys.immuch360`）。从构建 15 起有两处不同：「强制播放原始视频」开关变成了上文介绍的「视频来源」选项，而你从设备相册手动上传的照片和视频会计为已备份。
+官方 Immich 移动应用的所有功能这里都有：备份、时间线、相册、搜索、共享、好友，全部与你的服务器同步，与网页版使用同一台服务器和同一个账户。Immuch360 可与官方应用并存安装（包名 `com.aprogsys.immuch360`）。从构建 15 起有两处不同：「强制播放原始视频」开关变成了上文介绍的「视频来源」选项，而你从设备相册手动上传的照片和视频会计为已备份。从构建 20 起，应用在电视上是一个查看器，参见[在电视上观看](#watch-on-your-tv-android-tv-and-google-tv)。
 
 要把 360° 照片展示给没有安装应用的人，请通过 Immich 共享链接分享：Immich 网页版会在对方的浏览器中把 360° 照片显示为球面。
 
-当前构建为构建 19（版本 3.3.0-rc.0，构建号 3030017），基于 Immich 3.3.0-rc.0（Immich `main`，尚非稳定版），并已用 Immich 3.2 服务器测试。请在 [Issues](https://github.com/freeKC/Immuch360/issues) 中报告问题，而不是向 Immich 项目报告。Immich 本身的完整文档请见 [immich.app](https://immich.app)。
+当前构建为构建 20（版本 3.3.0-rc.0，构建号 3030018），基于 Immich 3.3.0-rc.0（Immich `main`，尚非稳定版）。构建 19 已用 Immich 3.2 服务器测试，而构建 20 对应用向服务器请求的内容没有任何改变。请在 [Issues](https://github.com/freeKC/Immuch360/issues) 中报告问题，而不是向 Immich 项目报告。Immich 本身的完整文档请见 [immich.app](https://immich.app)。
 
 ## 与 Immich 应用及其他应用的比较
 
@@ -515,6 +682,9 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | 把 DLNA 媒体服务器作为一种共享类型 | ❌ | ✅ 从构建 19 起 | 已在 Docker 中用 minidlna 和 Gerbera 验证；Plex、Jellyfin、NAS、Freebox Server、iPhone 和 Quest 属于构建 19 的设备测试 |
 | 把共享中的文件发送到 Immich；手动发送的设备文件计为已备份 | ❌ 仅限设备文件 | ✅ 从构建 15 起 | 已在 Android 模拟器上用 Samba 测试服务器和 Immich 3.2 服务器测试 |
 | 为头显在网络上共享此手机 | ❌ | ✅ 从构建 19 起，Android 和 iOS | 单元测试以及在电脑上用头显的 WebDAV 客户端进行的端到端测试；手机为 Quest 提供服务以及 iPhone 端属于构建 19 的设备测试 |
+| 直接播放 Plex Media Server 资源库中的原始文件，在家和在外都可以，无需 plex.tv | ❌ | ✅ 从构建 20 起，所有查看器，手机、平板、Quest 3 和电视上均可 | 已在电脑上针对真实的 Plex Media Server 1.42.1 验证（配对、文件夹、字节范围、缩略图、家外地址）；尚未在设备上验证 |
+| Tapo 摄像头：实时画面，以及按你的选择发送到 Immich 的存储卡录像 | ❌ | ✅ 从构建 20 起：录像所有平台可用，实时画面在 Android、Android TV 和 Quest 3 上可用 | 已针对模拟摄像头验证；尚未用真实摄像头验证 |
+| Android TV 和 Google TV，用遥控器操作，同一个 APK | ❌ 不是电视应用 | ✅ 从构建 20 起 | 已通过自动化测试验证；尚未在电视上验证 |
 | Insta360 RAW .insp 照片和单轨道 .insv 视频 | ❌ 平面 | ✅ 从构建 16 起 | 照片已与 X3 文件的 Insta360 Studio 导出结果对比验证，视频已在 Android 模拟器上用低分辨率 X3 文件验证；尚未在 iPhone 上运行 |
 | 每个镜头一条轨道或一个文件的 RAW 视频（Insta360 X4、X4 Air、X5、X6、X3 文件对、GoPro .360、DJI .osv） | ❌ 平面或错误 | ✅ 从构建 18 起 | 解析器和拼接已在真实的 X4、X3 文件对、GoPro MAX 和 Osmo 360 文件上验证；播放属于构建 18 和 19 的设备测试 |
 | 双鱼眼 .dng | ❌ 平面 | ❌ 暂不支持 | 已计划 |
@@ -529,27 +699,33 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 |---|---|---|
 | Immich 网页版 | 能把 360° 照片显示为球面，但会把 RAW .insp 当作成品全景，并把它的两个圆包裹在球面上；VR 视图仍只是一个需求（[讨论 #14768](https://github.com/immich-app/immich/discussions/14768)） | 在设备上拼接 RAW 文件，并在 Quest 3 中打开沉浸式视图 |
 | Insta360 应用或 Studio | 观看前需要用它把存储卡里的 RAW 文件转换成 360° 画面 | 直接打开 RAW .insp 和 .insv 文件，以及 GoPro .360 和 DJI .osv 文件 |
-| Plex、Jellyfin、Synology Photos | 360° 照片和视频按平面显示或无法识别，正如其论坛帖子所描述的（Plex 的一个需求自 2017 年起一直未关闭） | 通过 SMB、WebDAV 或 DLNA 读取同样的文件夹，并以球面播放，不改动服务器上的任何内容 |
+| Plex、Jellyfin、Synology Photos | 360° 照片和视频按平面显示或无法识别，正如其论坛帖子所描述的（Plex 的一个需求自 2017 年起一直未关闭） | 从构建 20 起直接读取 Plex 资源库，或通过 SMB、WebDAV 或 DLNA 读取同样的文件夹，并以球面播放，不改动服务器上的任何内容 |
+| Tapo 应用 | 一个单独的应用，登录你的 TP-Link 账户，片段与你的照片分开 | 在你的照片旁边显示摄像头，只在你的网络内与它通信，并把片段保存为可发送到 Immich 的视频（从构建 20 起） |
+| 电视上的 Immich 移动应用 | 不是电视应用：有用户反映它能用鼠标操作，却不能用遥控器操作 | 同一个应用，为遥控器而设计（从构建 20 起） |
 | 把文件复制到头显 | 每个文件都要先用数据线复制才能观看 | 从 Immich、NAS、媒体服务器或手机就地播放 |
 | Quest 商店中的 360° 和 3D 播放器 | 付费 | 免费且开源（AGPL） |
 
 ## 按平台列出的格式和来源
 
-Immuch360 是一个图库，也是一个免费的媒体播放器：它能播放官方应用无法播放的内容，来源有四种，并使用适合该文件的播放器。
+Immuch360 是一个图库，也是一个免费的媒体播放器：它能播放官方应用无法播放的内容，来源见第二个表格，并使用适合该文件的播放器。
 
-| 内容 | Android 手机 | iPhone、iPad | Meta Quest 3 |
-|---|---|---|---|
-| 普通视频（MP4、MOV、MKV，设备能解码的格式） | Immich 播放器，网络共享使用原生播放器 | 相同，但共享中的 MKV 和 AVI 文件除外，iOS 无法打开（在服务器上则播放转码版本） | 在窗口中 |
-| 360° 照片 | 球面查看器，陀螺仪 | 相同 | 沉浸式，环绕四周 |
-| 360° 视频 | 球面上的原生 Media3 播放器，陀螺仪，拖动进度，选择音轨，缓冲指示 | 球面上的原生 SceneKit 播放器，陀螺仪，选择音轨，缓冲指示；只有播放和暂停，暂无时间条 | 沉浸式，立体文件为真 3D，带 10 秒跳转的时间条，上一个和下一个媒体 |
-| 3D 360°（上下、左右） | 左眼，布局按钮 | 相同 | 每只眼看到画面中属于自己的一半 |
-| VR180（半球面）照片和视频 | 半球面，360°/180° 按钮 | 相同 | 沉浸式半球面 |
-| Spatial 2.5D（从立体视频在平面屏幕上获得纵深） | 原生播放器，用前置摄像头追踪头部 | 相同 | 不提供 |
-| Apple 空间照片（HEIC 立体对，从构建 19 起） | 左眼，详情中有一行说明是空间照片 | 相同 | 以 3D 查看：照片浮在沉浸式视图中，两只眼都可见，可选 3D 或 2D，可调整大小 |
-| Apple 空间视频（MV-HEVC，从构建 19 起） | 一只眼（基础图层），并显示提示 | 相同 | 在窗口中显示一只眼，并显示提示 |
-| Insta360 RAW .insp 照片（从构建 16 起） | 在球面查看器之前于 GPU 上拼接，最高 8192x4096 | 相同 | 沉浸式，使用为头显准备的拼接图片 |
-| Insta360 RAW .insv，两个镜头在同一轨道（从构建 16 起） | 在 Media3 播放器中由 GPU 效果拼接 | 由 SceneKit 着色器拼接 | 沉浸式，由同样的 GPU 效果拼接 |
-| 每个镜头一条轨道或一个文件的 RAW 视频（从构建 18 起）：Insta360 X4、X4 Air、X5、X6 .insv，X3 文件对，GoPro .360，DJI .osv | 同时使用两个硬件解码器，每个镜头一个（从构建 19 起，在没有硬件解码器的设备上使用软件解码器，每个镜头最高 2048x2048），由 GL 合成器拼接成球面；设备无法运行两个解码器时，依次改用单镜头、转码视频流、未拼接视频 | 基于 Metal 的自定义 AVFoundation 合成器 | 沉浸式，同样的两个解码器和合成器（3840x1920 面板） |
+| 内容 | Android 手机 | iPhone、iPad | Meta Quest 3 | Android TV、Google TV（从构建 20 起） |
+|---|---|---|---|---|
+| 普通视频（MP4、MOV、MKV，设备能解码的格式） | Immich 播放器，网络共享使用原生播放器 | 相同，但共享中的 MKV 和 AVI 文件除外，iOS 无法打开（在服务器上则播放转码版本） | 在窗口中 | 与手机相同；OK 暂停，左右键跳转 10 秒 |
+| 360° 照片 | 球面查看器，陀螺仪 | 相同 | 沉浸式，环绕四周 | 用方向键转动的球面查看器，用频道键缩放 |
+| 360° 视频 | 球面上的原生 Media3 播放器，陀螺仪，拖动进度，选择音轨，缓冲指示 | 球面上的原生 SceneKit 播放器，陀螺仪，选择音轨，缓冲指示；只有播放和暂停，暂无时间条 | 沉浸式，立体文件为真 3D，带 10 秒跳转的时间条，上一个和下一个媒体 | 手机上的 Media3 播放器，用方向键转动 |
+| 3D 360°（上下、左右） | 左眼，布局按钮 | 相同 | 每只眼看到画面中属于自己的一半 | 左眼，布局按钮 |
+| VR180（半球面）照片和视频 | 半球面，360°/180° 按钮 | 相同 | 沉浸式半球面 | 半球面，360°/180° 按钮 |
+| Spatial 2.5D（从立体视频在平面屏幕上获得纵深） | 原生播放器，用前置摄像头追踪头部 | 相同 | 不提供 | 不提供 |
+| Apple 空间照片（HEIC 立体对，从构建 19 起） | 左眼，详情中有一行说明是空间照片 | 相同 | 以 3D 查看：照片浮在沉浸式视图中，两只眼都可见，可选 3D 或 2D，可调整大小 | 左眼，详情中有一行说明 |
+| Apple 空间视频（MV-HEVC，从构建 19 起） | 一只眼（基础图层），并显示提示 | 相同 | 在窗口中显示一只眼，并显示提示 | 一只眼，并显示提示 |
+| Insta360 RAW .insp 照片（从构建 16 起） | 在球面查看器之前于 GPU 上拼接，最高 8192x4096 | 相同 | 沉浸式，使用为头显准备的拼接图片 | 与手机相同 |
+| Insta360 RAW .insv，两个镜头在同一轨道（从构建 16 起） | 在 Media3 播放器中由 GPU 效果拼接 | 由 SceneKit 着色器拼接 | 沉浸式，由同样的 GPU 效果拼接 | 与手机相同 |
+| 每个镜头一条轨道或一个文件的 RAW 视频（从构建 18 起）：Insta360 X4、X4 Air、X5、X6 .insv，X3 文件对，GoPro .360，DJI .osv | 同时使用两个硬件解码器，每个镜头一个（从构建 19 起，在没有硬件解码器的设备上使用软件解码器，每个镜头最高 2048x2048），由 GL 合成器拼接成球面；设备无法运行两个解码器时，依次改用单镜头、转码视频流、未拼接视频 | 基于 Metal 的自定义 AVFoundation 合成器 | 沉浸式，同样的两个解码器和合成器（3840x1920 面板） | 与手机相同，前提是电视能同时运行两个解码器 |
+| Tapo 摄像头实时画面（从构建 20 起） | Media3 RTSP 播放器：页面上为标清，全屏时为高清，有声音按钮 | 暂不支持：一张卡片说明以后会提供 | 在窗口中，高清 | 与手机相同 |
+| Tapo 摄像头录像（从构建 20 起） | 从存储卡获取为带声音的 H.264 视频，然后播放，可拖动进度 | 相同 | 相同，在窗口中 | 相同 |
+
+电视一列尚未在电视上验证，参见[在电视上观看](#watch-on-your-tv-android-tv-and-google-tv)；摄像头相关的行尚未用真实摄像头验证。
 
 | 来源 | 方式 |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 是一个图库，也是一个免费的媒体播放器：它能播放�
 | 手机或头显本身 | 登录页上的「不连接服务器使用」，或「资源库」标签页中的「在本设备上」 |
 | NAS 或电脑 | SMB 和 WebDAV 共享，以及从构建 19 起的 DLNA 媒体服务器，在网络上发现、实时读取（SMB 视频最多通过六个连接），不复制任何内容；从构建 15 起，你选中的文件可以发送到你的 Immich 账户 |
 | 另一部手机（从构建 19 起） | 在那部手机上使用「在网络上共享此手机」：头显或网络中的任何 WebDAV 客户端都能读取它的相册、月份和 360° 媒体 |
+| Plex Media Server（从构建 20 起） | 按文件夹浏览其照片、电影和电视节目资源库，通过 HTTPS 实时读取原始文件，并以服务器自己的证书进行验证，在家或通过家外地址均可，所有平台可用；参见 [Plex Media Server，无需 plex.tv](#plex-media-server-without-plextv) |
+| Tapo 摄像头（从构建 20 起） | 用摄像头账号查看实时画面（Android、Android TV、Quest），用 TP-Link 账号密码查看其存储卡上的录像（所有平台），仅限本地网络；参见 [Tapo 摄像头](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 也可在 Meta Quest 3 和 3S 上运行（Horizon OS v69 或更高版本；Horizon Store 构建只针对这两款设备上架；通用的 `-release.apk` 应该也能安装在 Quest 2 或 Quest Pro 上，未经测试）。使用方法见[在 Meta Quest 3 头显中](#in-the-meta-quest-3-headset)；本节介绍安装方法以及头显上的不同之处。
 
-按照 Horizon Store 的要求，头显构建只通过 HTTPS 与服务器通信，或通过普通 HTTP 与家庭网络名称（`.local`、`.lan`、`.home`、`.internal`、`.home.arpa`）以及头显本身通信。以带 IP 的普通 HTTP 地址输入的服务器，例如 `http://192.168.1.10:2283`，会被该构建拒绝：请使用 HTTPS、家庭网络名称（`nas.local`），或保留手机版开放策略的通用 `-release.apk`。位于本地网络普通 HTTP 地址上的 WebDAV、DLNA 和手机共享不受影响：应用自己读取它们，只把本地桥接的地址交给播放器（DLNA 和手机共享为构建 19 新增，尚需在头显上确认）。
+按照 Horizon Store 的要求，头显构建只通过 HTTPS 与服务器通信，或通过普通 HTTP 与家庭网络名称（`.local`、`.lan`、`.home`、`.internal`、`.home.arpa`）以及头显本身通信。以带 IP 的普通 HTTP 地址输入的服务器，例如 `http://192.168.1.10:2283`，会被该构建拒绝：请使用 HTTPS、家庭网络名称（`nas.local`），或保留手机版开放策略的通用 `-release.apk`。位于本地网络普通 HTTP 地址上的 WebDAV、DLNA 和手机共享不受影响：应用自己读取它们，只把本地桥接的地址交给播放器（DLNA 和手机共享为构建 19 新增，尚需在头显上确认）。从构建 20 起，Plex 服务器通过 HTTPS 访问，Tapo 摄像头则由应用自己访问，其实时画面通过 RTSP 传输，而 RTSP 不是 HTTP：两者都不应受影响（尚需在头显上确认）。
 
 <a id="install"></a>
 ### 安装
@@ -576,7 +754,7 @@ Horizon Store 上架申请已随构建 14 提交，正在等待 Meta 审核；�
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. 在头显中打开 Library（资源库），选择“Unknown sources”（未知来源）筛选器，然后启动 Immuch360。
@@ -584,7 +762,7 @@ Horizon Store 上架申请已随构建 14 提交，正在等待 Meta 审核；�
 
 ### 在窗口中
 
-整个应用以可调整大小的 2D 窗口运行：登录、时间线、相册、搜索、「资源库」标签页（360° 列表、「在本设备上」、「网络共享」）、设置，以及播放普通照片和视频的照片和视频查看器。在头显上，360° 按钮和 ⋮ 菜单中的「以 360° 查看」会直接打开沉浸式视图，而不是手机上的球面查看器，Spatial 2.5D 按钮及其设置不会显示。从构建 19 起，Apple 空间照片有「以 3D 查看」按钮，而「在网络上共享此手机」图块不会显示：头显是读取手机共享的一方。
+整个应用以可调整大小的 2D 窗口运行：登录、时间线、相册、搜索、「资源库」标签页（360° 列表、「在本设备上」、「网络共享」）、设置，以及播放普通照片和视频的照片和视频查看器。在头显上，360° 按钮和 ⋮ 菜单中的「以 360° 查看」会直接打开沉浸式视图，而不是手机上的球面查看器，Spatial 2.5D 按钮及其设置不会显示。从构建 19 起，Apple 空间照片有「以 3D 查看」按钮，而「在网络上共享此手机」图块不会显示：头显是读取手机共享的一方。从构建 20 起，Plex 服务器和 Tapo 摄像头也在窗口中打开，摄像头实时画面为高清；「遥控器布局」设置保持为「自动」，在头显上即为关闭。
 
 ### 截图
 
@@ -598,7 +776,7 @@ Horizon Store 上架申请已随构建 14 提交，正在等待 Meta 审核；�
 ### 头显上的限制
 
 - **视频编解码器**：HEVC（H.265）是稳妥的选择；H.264 在约 4096x2304 处达到上限。应用检查哪些内容，以及如何给头显一个它能解码的视频，请见[视频详情和解码器](#video-details-decoders-and-why-a-video-stutters)。
-- **商店**：商店版本从构建 14 开始。标注“从构建 15 起”和“从构建 16 起”的功能会随其下一次更新提供（构建 16，已在 alpha 测试频道上），之后的功能随后提供；GitHub APK 现在已包含全部功能。
+- **商店**：商店版本从构建 14 开始。标注“从构建 15 起”及之后的功能会随其后续更新提供（商店面向测试人员的 alpha 测试频道会获得每个新构建）；GitHub APK 现在已包含全部功能。
 - **权限**：头显构建只请求照片和视频（无服务器模式）以及通知（备份进度）权限。与手机构建不同，它没有存储、音频、位置或摄像头权限；因此头显上无法根据 Wi-Fi 名称切换服务器。
 - **APK 大小**：Spatial SDK 会增加约 56 MB 的 64-bit ARM 原生代码，手机版也包含，但在手机上从不加载。
 - **许可**：沉浸式视图使用 Meta Spatial SDK，该 SDK 依据 Meta Platform Technologies SDK License Agreement 分发。
@@ -606,13 +784,14 @@ Horizon Store 上架申请已随构建 14 提交，正在等待 Meta 审核；�
 <a id="where-to-get-it"></a>
 ## 获取方式
 
-应用已在 Google Play 上架；App Store 版本正在等待 Apple 审核，Meta Horizon Store 版本正在等待 Meta 审核。GitHub 发布页始终是最新构建：
+应用的手机和平板版本已在 Google Play 上架；App Store 版本正在等待 Apple 审核，Meta Horizon Store 版本正在等待 Meta 审核，面向电视的 Google Play 版本正在等待 Google 审核电视版本。GitHub 发布页始终是最新构建：
 
 | 平台 | 现在 | 即将 |
 |---|---|---|
-| Android 手机和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或 [Releases](https://github.com/freeKC/Immuch360/releases) 页面上的 APK：手机请用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用的 `Immuch360-v<version>-release.apk` 到处都能用，`-armeabi-v7a` 适用于较旧的 32 位手机，`.aab` 文件用于 Google Play，不用于侧载）。GitHub 构建通常领先于商店。无论哪种方式，它都可与官方 Immich 应用并存安装（包名 `com.aprogsys.immuch360`）。 | Google Play：构建 15 和 16 已于 2026 年 10 月 4 日提交 Google 审核（那里最后确认上线的构建是构建 11） |
+| Android 手机和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或 [Releases](https://github.com/freeKC/Immuch360/releases) 页面上的 APK：手机请用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用的 `Immuch360-v<version>-release.apk` 到处都能用，`-armeabi-v7a` 适用于较旧的 32 位手机，`.aab` 文件用于 Google Play，不用于侧载）。GitHub 构建通常领先于商店。无论哪种方式，它都可与官方 Immich 应用并存安装（包名 `com.aprogsys.immuch360`）。 | Google Play：构建 18 已上线，构建 19 自 2026 年 10 月 6 日起由 Google 审核中，接下来是构建 20 |
 | iPhone 和 iPad | 正在等待 Apple 审核。审核中的版本包含构建 11 的功能：上传到 Immich 和「视频来源」选项（构建 15）以及 Insta360 RAW 文件（构建 16）将随后续的 App Store 更新提供。源代码可用 Xcode 或在 Codemagic 上构建，参见[自行构建](#build-it-yourself)。 | App Store，审核中 |
-| Meta Quest 3 和 3S | [Releases](https://github.com/freeKC/Immuch360/releases) 页面上的 `-quest-release.apk` 文件（通用的 `-release.apk` 也可以），在开发者模式下侧载，参见[安装](#install)。商店构建和 GitHub APK 使用不同的密钥签名：要从一个切换到另一个，请先卸载应用（其设置和已保存的共享也会一并删除）。 | Meta Horizon Store：构建 14 自 2026 年 10 月 3 日起由 Meta 审核中；构建 16 在商店的 alpha 频道上（仅限测试人员） |
+| Meta Quest 3 和 3S | [Releases](https://github.com/freeKC/Immuch360/releases) 页面上的 `-quest-release.apk` 文件（通用的 `-release.apk` 也可以），在开发者模式下侧载，参见[安装](#install)。商店构建和 GitHub APK 使用不同的密钥签名：要从一个切换到另一个，请先卸载应用（其设置和已保存的共享也会一并删除）。 | Meta Horizon Store：构建 14 自 2026 年 10 月 3 日起由 Meta 审核中；商店的 alpha 频道（仅限测试人员）会获得每个新构建 |
+| Android TV 和 Google TV（从构建 20 起） | [Releases](https://github.com/freeKC/Immuch360/releases) 页面上的通用 `Immuch360-v<version>-release.apk`，用 adb 侧载，参见[在电视上安装](#install-it-on-the-tv)。它与手机上的应用是同一个应用。 | 面向电视的 Google Play，需等待 Google 审核电视版本 |
 
 App Store 和 Meta Horizon Store 的链接会在上架后第一时间添加到这里。用你平常的 Immich 服务器 URL 和账户登录，或在登录页上点按「不连接服务器使用」，从设备自身的照片和视频开始。从 GitHub 下载的 APK 不会自动更新：请关注 Releases 页面；如果你是从商店安装的应用，请从该商店获取更新。
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-商店截图是在使用 `--dart-define=IMMUCH_SCREENSHOTS=true` 构建的调试版模拟器上拍摄的，该选项只会隐藏调试横幅。两个 Android flavor 是同一个应用。`quest` flavor 以 SDK 34 为目标，只保留头显使用的权限（照片、视频、通知）：媒体管理、后台位置、旧版存储、音频、媒体位置、设备位置和摄像头权限都在 `android/app/src/quest/AndroidManifest.xml` 中移除，因为 Meta Horizon Store 拒绝前两项，并要求对其他每项敏感权限说明理由；同一文件把 Quest 3 和 3S 列为支持的设备，并把普通 HTTP 限制在头显本身和家庭网络名称上。由于命令行中的两个额外参数（`--target-platform android-arm64 --android-project-arg arm64only=true`），该 APK 只有 64 位。`phone` flavor 是 Google Play 所要求的。要在自己的 Mac 上构建 iOS 版，请使用 Xcode 和你自己的签名团队；使用 Xcode 26 时，请先运行一次 `xcodebuild -downloadComponent MetalToolchain`，因为 Spatial 着色器需要它。没有 Mac 时，iOS 构建可通过本仓库的 `codemagic.yaml` 文件在 Codemagic（托管的 Mac）上运行。Android 发布构建在 GitHub Actions 上运行（`.github/workflows/immuch360-release.yml`）。
+商店截图是在使用 `--dart-define=IMMUCH_SCREENSHOTS=true` 构建的调试版模拟器上拍摄的，该选项只会隐藏调试横幅。两个 Android flavor 是同一个应用。从构建 20 起，`phone` flavor 还会把自己声明为电视应用（电视启动器入口和横幅，不要求触摸屏），而 `quest` flavor 不包含这些。`quest` flavor 以 SDK 34 为目标，只保留头显使用的权限（照片、视频、通知）：媒体管理、后台位置、旧版存储、音频、媒体位置、设备位置和摄像头权限都在 `android/app/src/quest/AndroidManifest.xml` 中移除，因为 Meta Horizon Store 拒绝前两项，并要求对其他每项敏感权限说明理由；同一文件把 Quest 3 和 3S 列为支持的设备，并把普通 HTTP 限制在头显本身和家庭网络名称上。由于命令行中的两个额外参数（`--target-platform android-arm64 --android-project-arg arm64only=true`），该 APK 只有 64 位。`phone` flavor 是 Google Play 所要求的。要在自己的 Mac 上构建 iOS 版，请使用 Xcode 和你自己的签名团队；使用 Xcode 26 时，请先运行一次 `xcodebuild -downloadComponent MetalToolchain`，因为 Spatial 着色器需要它。没有 Mac 时，iOS 构建可通过本仓库的 `codemagic.yaml` 文件在 Codemagic（托管的 Mac）上运行。Android 发布构建在 GitHub Actions 上运行（`.github/workflows/immuch360-release.yml`）。
 
 本仓库中不存放任何密钥：Android 签名密钥以加密的 GitHub Actions secrets 形式保存，Apple 签名材料以加密变量形式保存在 Codemagic 上。工作流文件只按名称引用它们。没有你自己的 `android/key.jks` 时，发布构建会用调试密钥签名，无法覆盖安装来自 GitHub 或商店的副本（请先卸载那一份）；调试构建会以 Immuch360 debug 的名称并存安装。Meta Horizon Store 上的副本是发布版本的 `quest` APK，用另一把密钥签名，也就是商店应用首次注册时使用的密钥，因此它同样无法覆盖安装侧载的 APK，反之亦然。
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-从构建 19 起，DLNA 客户端、手机共享和 Apple 空间媒体识别也会写入应用自己的日志（右上角头像菜单中的「日志」），标签为 `Ssdp`、`DlnaFileSystem`、`NetworkBrowserPage`、`PhoneShare`、`PhoneShareServer`、`AppleSpatialService`、`HeicStereoProbe` 和 `NetworkMediaService`。除非你自己复制，否则日志内容只保留在设备上。
+从构建 19 起，DLNA 客户端、手机共享和 Apple 空间媒体识别也会写入应用自己的日志（右上角头像菜单中的「日志」），标签为 `Ssdp`、`DlnaFileSystem`、`NetworkBrowserPage`、`PhoneShare`、`PhoneShareServer`、`AppleSpatialService`、`HeicStereoProbe` 和 `NetworkMediaService`。从构建 20 起，电视模式写入 `TvMode` 和 `TvTextEntry` 标签，Plex 服务器写入 `Gdm`、`UdpTransport`、`PlexClient`、`PlexFileSystem` 和 `PlexServerEditPage`，Tapo 摄像头写入 `TapoDiscovery`、`TapoHttps`、`TapoLogin`、`TapoControl`、`TapoMedia`、`TapoFileSystem`、`TapoTest`、`TapoCamera`、`CameraPage`、`CameraEditPage` 和 `CameraLiveView`；Plex 日志行从不包含令牌、地址或标题，摄像头日志行不包含密码。除非你自己复制，否则日志内容只保留在设备上。
 
 ## 隐私
 
 - **不向开发者发送任何内容**：应用只与你选择的 Immich 服务器通信（打开地图时，还会与该服务器使用的地图瓦片服务通信），没有广告、没有分析，也没有由开发者运营的崩溃报告服务，不会向 Immuch360 的开发者发送任何内容。
-- **无服务器时**，任何内容都不会离开设备。
+- **无服务器时**，不会联系任何服务器：应用只在你打开的共享、Plex 服务器和摄像头，以及你开启的手机共享上使用网络。
 - **网络共享**：共享列表保存在设备上，从不发送到服务器；密码保存在设备的钥匙串或密钥库中。
+- **Plex**（从构建 20 起）：令牌保存在设备的安全存储中，只通过 HTTPS 在请求头中发送到你自己的服务器；应用从不联系 plex.tv。
+- **Tapo 摄像头**（从构建 20 起）：TP-Link 账号密码和摄像头账号密码保存在设备的安全存储中；应用只在本地网络上与摄像头通信，从不连接 TP-Link 的服务器；已获取的片段保存在应用的缓存中，并会随摄像头一起删除。
+- **电视**：设备是否为电视在设备上判断；不会发送任何内容。
 - **手机共享**：仅限本地网络，需要用户名和密码，通过普通 HTTP（参见[在网络上共享此手机](#share-this-phone-on-the-network)）。
 - **摄像头**：只由 Spatial 2.5D 播放器在设备上使用；图像从不保存，也不会发送到任何地方。
 
@@ -675,20 +857,25 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 尚未完成的工作，最可能先做的排在前面。这里的内容都不是承诺，[问题跟踪器](https://github.com/freeKC/Immuch360/issues)中的反馈有助于决定先做什么。
 
-- **Google Play**：构建 15 和 16 已于 2026 年 10 月 4 日提交 Google 审核，获批后上线；那里最后确认上线的构建是构建 11。
+- **Google Play**：构建 18 已上线；构建 19 自 2026 年 10 月 6 日起由 Google 审核中，之后是构建 20。
 - **App Store**：版本 3.3.0 正在等待 Apple 审核；它包含构建 11 的功能，因此上传到 Immich 和视频解码器检查（构建 15）以及 Insta360 RAW 文件（构建 16）将随下一次 App Store 更新提供。上线后会在这里添加链接。
-- **Meta Horizon Store**：上架申请已于 2026 年 10 月 3 日随构建 14 提交 Meta 审核，构建 16 已在商店的 alpha 频道上准备作为下一次更新。上架获批后，Quest 3 将不再需要侧载，商店链接也会添加到这里；侧载的副本需要先卸载（参见[安装](#install)）。
-- **商店介绍**：Google Play 和 App Store 的介绍文字仍在描述最初的构建（360° 照片和视频，RAW 文件按平面显示）；之后会介绍 3D、VR180 和 Spatial 查看器、无服务器模式、网络共享、媒体播放器以及 Insta360 RAW 文件。Meta Horizon Store 的介绍已经包含媒体播放器。
+- **Meta Horizon Store**：上架申请已于 2026 年 10 月 3 日随构建 14 提交 Meta 审核，商店的 alpha 频道会获得每个新构建，为下一次更新做准备。上架获批后，Quest 3 将不再需要侧载，商店链接也会添加到这里；侧载的副本需要先卸载（参见[安装](#install)）。
+- **商店介绍**：Google Play 的介绍已于 2026 年 10 月重写并配上新截图，电视版本发布时还会增加电视截图和电视横幅。App Store 的介绍文字仍在描述最初的构建（360° 照片和视频，RAW 文件按平面显示）；之后会介绍 3D、VR180 和 Spatial 查看器、无服务器模式、网络共享、媒体播放器以及 Insta360 RAW 文件。Meta Horizon Store 的介绍已经包含媒体播放器。
 - **360° 相机 RAW 文件，下一步**：为头显准备 RAW 照片时显示进度；利用 GoPro 和 DJI 视频自身的运动数据进行校平；双鱼眼 .dng；收集构建 18 双镜头播放的设备报告（X4、X5、X6、GoPro MAX 2、Osmo 360），以确认接缝和解码器负载。
 - **DLNA、手机共享和 Apple 空间媒体，下一步**：构建 19 的设备报告（通过 DLNA 使用 Plex、Jellyfin、NAS 和 Freebox Server；手机为 Quest 提供服务，包括通过其热点；在头显中观看真实的 iPhone 空间照片和视频）；向 Apple 申请多播权限，以便 iPhone 能找到所有 DLNA 服务器；在头显中的空间照片之间切换上一个和下一个；在时间线中为服务器照片加上空间标记；如果解码器允许，在 Quest 上以 3D 播放空间视频。
 - **手机上的 360° 播放器，下一步**：iOS 360° 视频播放器的时间条（Android 版已有），手机 360° 播放器中像 Quest 沉浸式视图那样的上一个/下一个，以及在原生 360° 视频播放器中显示照片。
 - **网络共享，后续步骤**：在照片和视频页面中从文件夹的一个文件滑动到下一个（Quest 沉浸式视图已经可以在文件夹的 360° 文件之间切换），WebDAV 的 Digest 认证，从 Bonjour 记录读取用户名。
 - **平面视频**：在平面播放器中选择音轨，服务器、设备和共享视频都一样（360° 和 Spatial 播放器已经支持）。
+- **Android TV，下一步**：在 Google TV 模拟器和真实电视上进行构建 20 的设备测试，然后在 Google Play 上发布电视版本（电视截图、电视横幅、Google 审核）；之后在电视主屏幕上提供频道。
+- **Tapo 摄像头，下一步**：用真实摄像头进行构建 20 的设备测试；iPhone 和 iPad 上的实时画面；H.265 录像；边获取边播放片段；把一整天的录像放在一条时间线上。
+- **Plex，下一步**：构建 20 的设备测试（手机、Quest、iPhone、电视、离家在外）；用二维码从电脑传入令牌；在找到的服务器列表中隐藏 Plex 服务器的 DLNA 部分；IPv6。
 - **上游**：针对维护者需要的部分，向 Immich 提交小的 pull request，从 360° 照片查看器开始。
 
 ## 致谢
 
 360° 照片查看器基于 dmitry-brazhenko 的上游 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)，而它又建立在 bencefr 在 [#30192](https://github.com/immich-app/immich/pull/30192) 中的原型之上。感谢两位。
+
+构建 20 的 Tapo 摄像头功能是根据开源项目 [pytapo](https://github.com/JurajNyiri/pytapo)、[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) 和 [python-kasa](https://github.com/python-kasa/python-kasa) 对这些摄像头的说明编写的。
 
 为什么要做分支：移动端 360° 浏览自 2024 年 1 月起就有人提出，官方应用至今仍未提供；照片查看器正在上游的 [#31169](https://github.com/immich-app/immich/pull/31169) 中审核。本分支现在就提供这一功能，收集真实设备的反馈，并会以小的 pull request 把维护者需要的任何部分回馈给 Immich。Meta Quest 视图依赖不开源的 Meta Spatial SDK，因此它会留在本分支中。
 

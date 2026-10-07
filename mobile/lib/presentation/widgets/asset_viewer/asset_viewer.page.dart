@@ -19,10 +19,13 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_preloader.
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.provider.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/utils/system_ui.utils.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 
@@ -133,6 +136,17 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   // Read once: the provider is scoped to this route, and dispose may no longer read it
   late final _jump = ref.read(assetViewerJumpProvider);
 
+  /// The viewer itself, which takes the keys of a remote control while no button has the focus
+  final _rootFocus = FocusNode(debugLabel: 'Asset viewer');
+
+  /// Around the top bar, its buttons on the right, and the bottom bar: where Up and Down go
+  final _topBarFocus = FocusNode(debugLabel: 'Asset viewer top bar', canRequestFocus: false, skipTraversal: true);
+  final _topActionsFocus = FocusNode(debugLabel: 'Asset viewer actions', canRequestFocus: false, skipTraversal: true);
+  final _bottomBarFocus = FocusNode(debugLabel: 'Asset viewer bottom bar', canRequestFocus: false, skipTraversal: true);
+
+  /// "Paused: the arrows go to the previous or next item" shows once per opening of the viewer
+  bool _pausedHintShown = false;
+
   void _onTapNavigate(int direction) {
     final page = _pageController.page?.toInt();
     if (page == null) {
@@ -206,6 +220,9 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
     _reloadSubscription = EventStream.shared.listen(_onEvent);
     _jump._attach(this);
+    // Back on a TV depends on where the focus is
+    _topBarFocus.addListener(_onBarsFocus);
+    _bottomBarFocus.addListener(_onBarsFocus);
 
     WidgetsBinding.instance.addPostFrameCallback(_onAssetInit);
 
@@ -216,6 +233,12 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   @override
   void dispose() {
     _jump._detach(this);
+    _topBarFocus.removeListener(_onBarsFocus);
+    _bottomBarFocus.removeListener(_onBarsFocus);
+    _rootFocus.dispose();
+    _topBarFocus.dispose();
+    _topActionsFocus.dispose();
+    _bottomBarFocus.dispose();
     _pageController.dispose();
     _preloader.dispose();
     unawaited(_reloadSubscription?.cancel());
@@ -345,6 +368,168 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     }
   }
 
+  void _onBarsFocus() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _barsHaveFocus => _topBarFocus.hasFocus || _bottomBarFocus.hasFocus;
+
+  /// The player of the video on screen, null for a photo
+  AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState>? get _videoPlayer {
+    final asset = ref.read(assetViewerProvider).currentAsset;
+    return asset != null && asset.isVideo ? videoPlayerProvider(asset.id) : null;
+  }
+
+  /// The keys of a remote control, a keyboard or a game pad. Next, previous, info and the media keys work wherever
+  /// the focus is in the viewer; the arrows and OK only while the viewer itself has it, else they belong to the
+  /// focused button. A photo: left and right go to the previous or next asset, OK shows or hides the controls. A video
+  /// that plays: OK pauses, left and right seek by 10 s (Play TV criterion TV-PC). A paused video: OK plays, left and
+  /// right go to the previous or next asset. Up and Down show the controls and focus the top or the bottom bar.
+  KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    final key = event.logicalKey;
+    final press = isRemotePress(event);
+    final video = _videoPlayer;
+    if (remoteDetailsKeys.contains(key)) {
+      if (press) {
+        _toggleDetails();
+      }
+      return KeyEventResult.handled;
+    }
+    if (remoteNextItemKeys.contains(key) || remotePreviousItemKeys.contains(key)) {
+      if (press) {
+        _onTapNavigate(remoteNextItemKeys.contains(key) ? 1 : -1);
+      }
+      return KeyEventResult.handled;
+    }
+    if (video != null && remotePlayPauseKeys.contains(key)) {
+      if (press) {
+        _setPlaying(video, remotePlayPauseWantsPlay(key, isPlaying: _isPlaying(video)));
+      }
+      return KeyEventResult.handled;
+    }
+    if (video != null && (remoteSeekForwardKeys.contains(key) || remoteSeekBackwardKeys.contains(key))) {
+      if (event is! KeyUpEvent) {
+        _seekBy(video, remoteSeekForwardKeys.contains(key) ? remoteSeekStep : -remoteSeekStep);
+      }
+      return KeyEventResult.handled;
+    }
+    if (!node.hasPrimaryFocus) {
+      return KeyEventResult.ignored;
+    }
+    final playing = video != null && _isPlaying(video);
+    if (remoteOkKeys.contains(key)) {
+      if (press) {
+        if (video != null) {
+          _setPlaying(video, !playing);
+        } else if (ref.read(assetViewerProvider).showingControls) {
+          ref.read(assetViewerProvider.notifier).setControls(false);
+        } else {
+          // Never the Back button of the top bar: a second OK would close the viewer by surprise
+          _showControlsAndFocus(_bottomBarFocus, withBack: false);
+        }
+      }
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowLeft || key == LogicalKeyboardKey.arrowRight) {
+      final step = key == LogicalKeyboardKey.arrowRight ? 1 : -1;
+      if (playing) {
+        // Held, it keeps seeking
+        if (event is! KeyUpEvent) {
+          _seekBy(video, remoteSeekStep * step);
+        }
+      } else if (press) {
+        _onTapNavigate(step);
+      }
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowUp || key == LogicalKeyboardKey.arrowDown) {
+      if (press) {
+        _showControlsAndFocus(key == LogicalKeyboardKey.arrowUp ? _topBarFocus : _bottomBarFocus);
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  bool _isPlaying(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video) {
+    final status = ref.read(video).status;
+    return status == VideoPlaybackStatus.playing || status == VideoPlaybackStatus.buffering;
+  }
+
+  /// Plays, or pauses and shows the controls. A video at its end plays from the start.
+  void _setPlaying(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video, bool play) {
+    final notifier = ref.read(video.notifier);
+    if (!play) {
+      unawaited(notifier.pause());
+      ref.read(assetViewerProvider.notifier).setControls(true);
+      _showPausedHint();
+      return;
+    }
+    if (ref.read(video).status == VideoPlaybackStatus.completed) {
+      unawaited(notifier.restart());
+    } else {
+      unawaited(notifier.play());
+    }
+  }
+
+  /// Once per opening: paused, the arrows no longer seek but go to the next asset
+  void _showPausedHint() {
+    if (_pausedHintShown || !ref.read(tvModeProvider)) {
+      return;
+    }
+    _pausedHintShown = true;
+    context.scaffoldMessenger.showSnackBar(SnackBar(content: Text(context.t.tv_paused_arrows_hint)));
+  }
+
+  void _seekBy(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video, Duration delta) {
+    final playback = ref.read(video);
+    var target = playback.position + delta;
+    if (target < Duration.zero) {
+      target = Duration.zero;
+    }
+    if (playback.duration > Duration.zero && target > playback.duration) {
+      target = playback.duration;
+    }
+    ref.read(video.notifier).seekTo(target);
+    ref.read(assetViewerProvider.notifier).setControls(true);
+  }
+
+  void _toggleDetails() {
+    final showing = ref.read(assetViewerProvider).showingDetails;
+    EventStream.shared.emit(showing ? const ViewerHideDetailsEvent() : const ViewerShowDetailsEvent());
+  }
+
+  /// Shows the controls and focuses a button of [bar]: the buttons on the right of the top bar (360° first) or the top
+  /// one of the bottom bar (play for a video), else whatever the other bar offers, the Back button of the top bar
+  /// only [withBack]
+  void _showControlsAndFocus(FocusNode bar, {bool withBack = true}) {
+    ref.read(assetViewerProvider.notifier).setControls(true);
+    // The bars take the focus once shown, from the next frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final top =
+          _topActionsFocus.traversalDescendants.firstOrNull ??
+          (withBack ? _topBarFocus.traversalDescendants.firstOrNull : null);
+      final bottom = _bottomBarFocus.traversalDescendants.firstOrNull;
+      final target = identical(bar, _topBarFocus) ? top ?? bottom : bottom ?? top;
+      target?.requestFocus();
+    });
+  }
+
+  /// Back on a TV: the details close first, then the controls that have the focus hide, then the viewer closes
+  void _onTvBack() {
+    if (ref.read(assetViewerProvider).showingDetails) {
+      EventStream.shared.emit(const ViewerHideDetailsEvent());
+      return;
+    }
+    ref.read(assetViewerProvider.notifier).setControls(false);
+    _rootFocus.requestFocus();
+  }
+
   Future<void> _setSystemUIMode(bool controls, bool details) {
     final immersive = !controls || (CurrentPlatform.isIOS && details);
     return immersive ? SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky) : restoreEdgeToEdge();
@@ -374,23 +559,44 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       unawaited(_setSystemUIMode(controls, details));
     });
 
-    return AnnotatedRegion(
+    // The controls hide while one of their buttons has the focus (the 5 s timer of a video): the viewer takes it back,
+    // so that the next key of a remote is not lost
+    ref.listen(assetViewerProvider.select((value) => value.showingControls), (_, showing) {
+      if (!showing && _barsHaveFocus) {
+        _rootFocus.requestFocus();
+      }
+    });
+
+    final tvMode = ref.watch(tvModeProvider);
+    const topBar = ViewerTopAppBar();
+
+    final viewer = AnnotatedRegion(
       value: _viewerOverlayStyle,
       child: Scaffold(
         backgroundColor: backgroundColor,
         resizeToAvoidBottomInset: false,
-        appBar: const ViewerTopAppBar(),
+        appBar: PreferredSize(
+          preferredSize: topBar.preferredSize,
+          child: Focus(
+            focusNode: _topBarFocus,
+            child: ViewerTopAppBar(trailingFocusNode: _topActionsFocus),
+          ),
+        ),
         extendBody: true,
         extendBodyBehindAppBar: true,
         floatingActionButton: IgnorePointer(
           ignoring: !showingControls,
-          child: AnimatedOpacity(
-            opacity: showingControls ? 1.0 : 0.0,
-            duration: Durations.short2,
-            child: const DownloadStatusFloatingButton(),
+          // Hidden, it must not take the focus either
+          child: ExcludeFocus(
+            excluding: !showingControls,
+            child: AnimatedOpacity(
+              opacity: showingControls ? 1.0 : 0.0,
+              duration: Durations.short2,
+              child: const DownloadStatusFloatingButton(),
+            ),
           ),
         ),
-        bottomNavigationBar: const ViewerBottomAppBar(),
+        bottomNavigationBar: Focus(focusNode: _bottomBarFocus, child: const ViewerBottomAppBar()),
         body: Stack(
           children: [
             NotificationListener<ScrollEndNotification>(
@@ -421,6 +627,17 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
           ],
         ),
       ),
+    );
+
+    return PopScope(
+      // On a TV, Back closes the details, then leaves the bars, before it closes the viewer
+      canPop: !tvMode || (!showingDetails && !_barsHaveFocus),
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _onTvBack();
+        }
+      },
+      child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: viewer),
     );
   }
 }

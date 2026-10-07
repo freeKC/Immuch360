@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 d asnas aziraz n Immich s tewlafin d tvidyutin 360° anda tzemreḍ ad tmuqleḍ yal tama, daɣen d ameɣri baṭel i tewlafin d tvidyutin timsawin, 360°, 3D d VR180, ɣef tiliɣriyin d ttablit Android, iPhone d iPad, akked Meta Quest 3 d 3S. Yettwaxdem i wid yettṣewwiren s tkamirat 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) neɣ s uskar n tewlaft tasfirt n tiliɣri, neɣ i wid yesɛan tacacit, u bɣan ad walin tiwlafin-nsen seg uqeddac Immich, seg tiliɣri s yiman-is, seg NAS neɣ seg uqeddac n yimidyaten: d yiwen uqeddac, d yiwen umiḍan, war azegrir n uqeddac, neɣ war aqeddac akk.
+Immuch360 d asnas aziraz n Immich s tewlafin d tvidyutin 360° anda tzemreḍ ad tmuqleḍ yal tama, daɣen d ameɣri baṭel i tewlafin d tvidyutin timsawin, 360°, 3D d VR180, ɣef tiliɣriyin d ttablit Android, iPhone d iPad, Meta Quest 3 d 3S, u seg lebni 20 Android TV d Google TV. Yettwaxdem i wid yettṣewwiren s tkamirat 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) neɣ s uskar n tewlaft tasfirt n tiliɣri, neɣ i wid yesɛan tacacit, u bɣan ad walin tiwlafin-nsen seg uqeddac Immich, seg tiliɣri s yiman-is, seg NAS, seg uqeddac n yimidyaten neɣ seg uqeddac Plex: d yiwen uqeddac, d yiwen umiḍan, war azegrir n uqeddac, neɣ war aqeddac akk. Seg lebni 20 yesskanay-d daɣen tikamiṛatin Tapo, srid d yiseklasen n tkarḍa-nsent n tkatut.
 
 <p align="center">
   <sub>Afurk (fork) ur nelli d unṣib. Ur yeqqin ara ɣer Immich neɣ ɣer FUTO. Isem-is yettwaɣra «I am much 360».</sub>
@@ -15,7 +15,8 @@ Immuch360 d asnas aziraz n Immich s tewlafin d tvidyutin 360° anda tzemreḍ ad
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">APK n Android</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">deg usenqed</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store deg usenqed
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store deg usenqed &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 d asnas aziraz n Immich s tewlafin d tvidyutin 360° anda tzemreḍ ad
     <td align="center" width="33%"><h3>🎥 2.5D unṣib</h3>Tiɣmert ɣef ugdil amsawi seg tvidyut stiriyu, tamuɣli tettḍafar aqerru-ik (s tirmit, tiliɣriyin d ttablit)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Yiwen usnas, kraḍ n tɣerɣar, 3D n tidet deg tcacit</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Yiwen usnas ɣef tiliɣriyin, ttablit d tcacit, 3D n tidet deg tcacit, u seg lebni 20 ɣef Android TV s tilikumand</td>
     <td align="center"><h3>🔌 S uqeddac neɣ war aqeddac</h3>Aqeddac-ik Immich, neɣ tamidelt n tiliɣri s yiman-is, war amiḍan</td>
     <td align="center"><h3>🗄️ Ifuyla n uẓeṭṭa</h3>Samba (SMB), WebDAV d, seg lebni 19, iqeddacen n yimidyaten DLNA i d-yettwafen deg uẓeṭṭa u ttwaɣran srid, ulac ayen yettwasidren, u ttwaznen ɣer Immich mi ara tefreneḍ. Seg lebni 19 tiliɣri tezmer daɣen ad tebḍu tamidelt-is d tcacit</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Ɣef tiliẓri</h3>Seg lebni 20 yiwen APK-nni ɣef Android TV d Google TV: tiwlafin d tvidyutin 360°, aqeddac-ik d yifuyla-k yettwabḍan, s tilikumand</td>
+    <td align="center"><h3>🎬 Plex, war plex.tv</h3>Seg lebni 20 timkarḍiyin-ik Plex, ttwaɣrant seg yifuyla iṣliyen akken 360° ad yeqqim d 360°, deg uxxam d beṛṛa n uxxam</td>
+    <td align="center"><h3>📹 Tikamiṛatin Tapo</h3>Seg lebni 20 tamuɣli tusridt d yiseklasen n tkarḍa n tkatut, deg uẓeṭṭa-k kan, d tavidyut tettwazen ɣer Immich mi ara tebɣuḍ</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 d asnas aziraz n Immich s tewlafin d tvidyutin 360° anda tzemreḍ ad
 - **«Tiwlafin-iw 360° ttbanent am teslent tamsawit, tettwazzel, u tividyutin-iw 360° ttwaɣrant d timsawin.»** Wali [Tiwlafin d tvidyutin 360° am tsfirt](#360-photos-and-videos-as-a-sphere).
 - **«Ur sɛiɣ ara aqeddac, ur bɣiɣ ara amiḍan.»** Wali [War aqeddac, war amiḍan](#without-a-server-or-an-account).
 - **«Bɣiɣ ad waliɣ tividyutin n NAS-iw, ɣef tiliɣri neɣ deg tcacit, war ma nɣeleɣ-tent.»** Wali [Ifuyla n uẓeṭṭa](#network-shares-a-nas-a-computer-or-a-media-server).
+- **«Plex yeqqar tividyutin-iw 360° d timsawin, u bɣiɣ tamkarḍit-iw Plex deg tcacit, ɣef tiliẓri d beṛṛa n uxxam.»** Wali [Plex Media Server, war plex.tv](#plex-media-server-without-plextv).
 - **«Tiwlafin-iw ɣef tiliɣri, ur sɛiɣ ara aselkim neɣ NAS anda ara tent-sruseɣ i tcacit.»** Wali [Bḍu tiliɣri-a deg uẓeṭṭa](#share-this-phone-on-the-network).
+- **«Bɣiɣ ad waliɣ takamiṛat-iw Tapo d tvidyutin n yiḍ yezrin war asnas Tapo, u ad ḥerzeɣ tavidyut deg Immich.»** Wali [Tikamiṛatin Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **«Ifuyla-iw Insta360 sran asnas Insta360 send ad zmireɣ ad ten-waliɣ»** (akked ifuyla .360 n GoPro d .osv n DJI). Wali [Ifuyla RAW n tkamiratin 360°](#raw-360-camera-files-without-the-cameras-app).
 - **«Tividyutin-iw 3D ttbanent snat n tikkal, u tividyutin-iw VR180 ttwazzlent yal tama.»** Wali [3D d VR180](#3d-and-vr180-photos-and-videos) akked [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **«Sɛiɣ tiwlafin timennawin seg iPhone-iw.»** Wali [Tiwlafin d tvidyutin timennawin n Apple](#apple-spatial-photos-and-videos).
 - **«Yetteddu ɣef tiliɣri, maca bɣiɣ-t deg Quest.»** Wali [Deg tcacit Meta Quest 3](#in-the-meta-quest-3-headset).
+- **«Bɣiɣ ad waliɣ tiwlafin-iw d tvidyutin-iw 360°, d tvidyutin n NAS-iw neɣ n uqeddac-iw Plex, ɣef tiliẓri, s tilikumand.»** Wali [Wali ɣef tiliẓri](#watch-on-your-tv-android-tv-and-google-tv).
 - **«Ur ufiɣ ara tiwlafin-iw 360° gar tiyaḍ akk.»** Wali [Tabdart 360°](#find-your-360-shots-the-360-list).
 - **«Tavidyut-iw 360° tettḥebbis, neɣ yettwaɣra unɣal yessewhamen.»** Wali [Talɣut n tvidyut d yidekuduren](#video-details-decoders-and-why-a-video-stutters).
 - **«Ad ḥerzeɣ ayen akk yettxeddim usnas Immich?»** Ih, s sin n yibeddilen imecṭaḥ, wali [Ayen nniḍen akk d Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Afran yettwaḥraz ɣef tiliɣri, ur ibeddel acemma ɣef uqeddac. Ɣef ufaylu n 
 
 Ur tesɛiḍ ara aqeddac Immich, neɣ ur tebɣiḍ ara amiḍan: tebɣiḍ kan tiwlafin 360° n tiliɣri-k ad ldint am tsfirt i tzemreḍ ad tezziḍ s ujiroskop. Asnas Immich yessuter qbel tuqqna.
 
-Deg usebter n tuqqna, «Seqdec war aqeddac» yeldi Immuch360 ɣef tewlafin d tvidyutin n yibenk s yiman-is, s yimeskanen 360°, 3D, VR180 d Spatial, tabdart 360° akked yifuyla n uẓeṭṭa, war amiḍan Immich. Timahilin n uqeddac qqiment ffrent neɣ d tidelsanin alamma tqqneḍ aqeddac; ulac ayen ara d-yeffɣen seg yibenk. Ɣef Meta Quest 3, yeldi tiwlafin d tvidyutin n tcacit s yiman-is.
+Deg usebter n tuqqna, «Seqdec war aqeddac» yeldi Immuch360 ɣef tewlafin d tvidyutin n yibenk s yiman-is, s yimeskanen 360°, 3D, VR180 d Spatial, tabdart 360° akked yifuyla n uẓeṭṭa (seg lebni 20 daɣen iqeddacen Plex d tikamiṛatin Tapo), war amiḍan Immich. Timahilin n uqeddac qqiment ffrent neɣ d tidelsanin alamma tqqneḍ aqeddac; ulac ayen ara d-yeffɣen seg yibenk. Ɣef Meta Quest 3, yeldi tiwlafin d tvidyutin n tcacit s yiman-is; ɣef tiliẓri, ur nesɛi ara tiwlafin, yettwelleh ɣer yifuyla n uẓeṭṭa (wali [Wali ɣef tiliẓri](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Iccer Tamkarḍit war aqeddac: aferdis 360° d asawen, syin On this device s snat n tewlafin 360°, akked Ifuyla n uẓeṭṭa s ufaylu yettwabḍan yettusemman NAS">
 
@@ -126,7 +135,7 @@ Deg usebter n tuqqna, «Seqdec war aqeddac» yeldi Immuch360 ɣef tewlafin d tvi
 
 Tividyutin-ik 360° ha-tent ɣef NAS neɣ ɣef uselkim, u tebɣiḍ ad tent-twaliḍ ɣef tiliɣri neɣ deg tcacit war ma tneɣleḍ-tent qbel. Deg tcacit, imdanen nnulfan-d ad nɣlen yal afaylu s tenzeqt; iqeddacen n yimidyaten am Plex d Jellyfin qqaren tividyutin 360° d timsawin, akken i t-id-glemen yisuturen deg tdiwenniyin-nsen; asnas Immich yeqqar kan aqeddac-ik Immich.
 
-Immuch360 yessnirim, yeqqar tiwlafin d tvidyutin n yal aqeddac i yemmeslayen s SMB (Samba, Windows), WebDAV neɣ, seg lebni 19, DLNA/UPnP (aqeddac n yimidyaten: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS neɣ tanaka n TV), srid seg ufaylu yettwabḍan. Yettaf-d s yiman-is iqeddacen n uẓeṭṭa-k, yeqqar ifuyla srid deg yimeskanen-nni n usnas (360°, 3D, VR180, Spatial 2.5D, ameskan immersif n Quest), s uqeddac Immich neɣ war-s, ɣef tiliɣriyin d Meta Quest 3. Ulac ayen yettwasidren. Mi ara yili uqeddac yeqqnen, ifuyla i tefreneḍ zemren ad ttwaznen ɣer umiḍan-ik Immich (seg lebni 15).
+Immuch360 yessnirim, yeqqar tiwlafin d tvidyutin n yal aqeddac i yemmeslayen s SMB (Samba, Windows), WebDAV neɣ, seg lebni 19, DLNA/UPnP (aqeddac n yimidyaten: Jellyfin, minidlna, Gerbera, Emby, NAS neɣ tanaka n TV), srid seg ufaylu yettwabḍan. Seg lebni 20 Plex Media Server yesɛa anaw-is, wali [Plex Media Server, war plex.tv](#plex-media-server-without-plextv). Yettaf-d s yiman-is iqeddacen n uẓeṭṭa-k, yeqqar ifuyla srid deg yimeskanen-nni n usnas (360°, 3D, VR180, Spatial 2.5D, ameskan immersif n Quest), s uqeddac Immich neɣ war-s, ɣef tiliɣriyin d Meta Quest 3. Ulac ayen yettwasidren. Mi ara yili uqeddac yeqqnen, ifuyla i tefreneḍ zemren ad ttwaznen ɣer umiḍan-ik Immich (seg lebni 15).
 
 | Rnu afaylu yettwabḍan | Akaram n ufaylu yettwabḍan |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 yessnirim, yeqqar tiwlafin d tvidyutin n yal aqeddac i yemmeslayen s S
 
 ### Rnu afaylu yettwabḍan
 
-1. Ldi iccer Tamkarḍit, syin Ifuyla n uẓeṭṭa. Tikkelt tamezwarut, asebter yenna-d «Ulac ula d yiwen ufaylu yettwabḍan» s teqffalt «Rnu afaylu yettwabḍan»; + d asawen s ayeffus yexdem ayen-nni yal tikkelt.
-2. Asebter «Rnu afaylu yettwabḍan» yettnadi qbel ɣef yiqeddacen n uẓeṭṭa-k, yessebded-iten ddaw «Yettwaf deg uẓeṭṭa», s wanaw-nsen (SMB, WebDAV, DLNA, Tiliɣri). Anadi yettawi alamma d sḍis n tsinin; «Nadi tikkelt nniḍen» ad t-yales. Yesseqdac Bonjour/mDNS akked usenqed n uẓeṭṭa adigan i d-yettwasentmen s umbadal n tidet SMB neɣ WebDAV, u seg lebni 19 anadi SSDP ɣef yiqeddacen n yimidyaten DLNA.
-3. Sit ɣef uqeddac: anaw, aqeddac, tawwurt d ubrid ad ttwačaren.
-4. Ulac-it deg tebdart? Ččar tiferkit s ufus. Anaw: «SMB (Samba, beṭṭu n Windows)», «WebDAV (Nextcloud, Synology d wiyaḍ)» neɣ «Aqeddac n yimidyaten DLNA (Plex, Jellyfin, NAS, tanaka n TV)». Syin Isem, «Isem neɣ tansa n uqeddac» (isem neɣ tansa; tansa tummidt am `smb://nas/photos`, `\\nas\photos` neɣ `https://nas:5006/photos` tettččar urtiyen nniḍen), «Tawwurt (d afrayan)» ma mačči d tin yezgan, «Afaylu yettwabḍan» i SMB neɣ «Abrid n tansa WebDAV» i WebDAV, «Akaram n tazwara (d afrayan)», «Isem n useqdac» d «Awal uffir», akked «Tuqqna taɣellsant (HTTPS)» i WebDAV.
+1. Ldi iccer Tamkarḍit, syin Ifuyla n uẓeṭṭa. Tikkelt tamezwarut, asebter yenna-d «Ulac ula d yiwen ufaylu yettwabḍan» s teqffalt «Rnu afaylu yettwabḍan»; + d asawen s ayeffus yexdem ayen-nni yal tikkelt. Seg lebni 20 i sin ttessteqsayen acu ara ternuḍ: «Afaylu n uẓeṭṭa (NAS, aselkim, aqeddac n yimidyaten)», «Plex Media Server» neɣ «Takamiṛat Tapo». Fren amezwaru.
+2. Asebter «Rnu afaylu yettwabḍan» yettnadi qbel ɣef yiqeddacen n uẓeṭṭa-k, yessebded-iten ddaw «Yettwaf deg uẓeṭṭa», s wanaw-nsen (SMB, WebDAV, DLNA, Tiliɣri, u seg lebni 20 Plex d Tapo). Anadi yettawi alamma d sḍis n tsinin; «Nadi tikkelt nniḍen» ad t-yales. Yesseqdac Bonjour/mDNS akked usenqed n uẓeṭṭa adigan i d-yettwasentmen s umbadal n tidet SMB neɣ WebDAV, seg lebni 19 anadi SSDP ɣef yiqeddacen n yimidyaten DLNA, u seg lebni 20 GDM, anadi n Plex, d uneggaf n unadi n TP-Link i tkamiṛatin Tapo.
+3. Sit ɣef uqeddac: anaw, aqeddac, tawwurt d ubrid ad ttwačaren. Aqeddac Plex neɣ takamiṛat Tapo yeldi deg wadeg-is asebter-is, yettwačaren yakan.
+4. Ulac-it deg tebdart? Ččar tiferkit s ufus. Anaw: «SMB (Samba, beṭṭu n Windows)», «WebDAV (Nextcloud, Synology d wiyaḍ)», «Aqeddac n yimidyaten DLNA (Jellyfin, NAS, tanaka n TV)» neɣ, seg lebni 20, «Plex Media Server», i yeldin asebter n [Plex Media Server, war plex.tv](#plex-media-server-without-plextv). Syin Isem, «Isem neɣ tansa n uqeddac» (isem neɣ tansa; tansa tummidt am `smb://nas/photos`, `\\nas\photos` neɣ `https://nas:5006/photos` tettččar urtiyen nniḍen), «Tawwurt (d afrayan)» ma mačči d tin yezgan, «Afaylu yettwabḍan» i SMB neɣ «Abrid n tansa WebDAV» i WebDAV, «Akaram n tazwara (d afrayan)», «Isem n useqdac» d «Awal uffir», akked «Tuqqna taɣellsant (HTTPS)» i WebDAV.
 5. SMB: mi ara turiḍ aqeddac d yisem n useqdac, «Fren afaylu yettwabḍan» yesskan-d ifuyla yettwabḍan n uqeddac.
 6. DLNA: aqeddac n yimidyaten ur yesɛi ara isem n useqdac neɣ awal uffir. Efk-d aqeddac, tawwurt d «Abrid n uglam» n uglam n yibenk-is (`/rootDesc.xml` i minidlna), neɣ senṭeḍ tansa tummidt, am `http://192.168.1.10:8200/rootDesc.xml`, deg wurti n uqeddac.
 7. Sit ɣef «Sekyed tuqqna». Yettarra-d «Yeqqen, N n yiferdisen deg ukaram n tazwara», neɣ yenna-d ayɣer ur yeddi ara. Syin sit ɣef Sekles, d akessar n tferkit.
@@ -155,6 +164,7 @@ Isem n useqdac s wawal uffir ilem yettwazen akken yella: Freebox Server yebɣa `
 
 360°, 3D d VR180 ttwassnen-d seg yisefka GPano neɣ yisefka n tsfirt n ufaylu, yettwaɣran s yisuturen n tegrumma (range requests), u VR180 daɣen seg yisem n ufaylu. Seg lebni 16 ifuyla RAW n Insta360 ttwassnen-d daɣen (tawlaft .insp s yisem-is neɣ s yiḥder n useggem n tkamirat, tavidyut .insv s yisem-is d tugna-s) u ttwasdukklen.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Azen ifuyla n ufaylu yettwabḍan ɣer Immich
 
 Seg lebni 15, mi ara tiliḍ teqqneḍ ɣer uqeddac:
@@ -177,17 +187,67 @@ Seg lebni 19, asnas yettazen anadi SSDP ɣef yiqeddacen n yimidyaten ɣer ugraw 
 <a id="a-share-that-moved"></a>
 ### Afaylu yettwabḍan i yettwasnkezen
 
-Seg lebni 19, afaylu yettwabḍan DLNA d ufaylu yettwabḍan n tiliɣri (wali [Bḍu tiliɣri-a deg uẓeṭṭa](#share-this-phone-on-the-network)) ḥerzen asulay i d-yebcer uqeddac-nsen. Mi ara yili yiwen ur d-yettarra ara deg tansa-s (tansa tamaynut i d-yefka umsefrak, aqeddac yulsen ad yekker ɣef tewwurt nniḍen), asebter n ukaram-is yesskan-d «Anadi ɣef (isem) deg uẓeṭṭa» u yessenkaz afaylu yettwabḍan ɣer wanda i d-yettarra tura: imir-n i uqeddac DLNA, ur nesɛi awal uffir, u deffir usentem, «Seqdec tansa tamaynut?», i d-yesskanayen snat n tansiwin, i ufaylu yettwabḍan s yisem n useqdac d wawal uffir, acku ad ttwaznen ɣer tansa tamaynut.
+Seg lebni 19, afaylu yettwabḍan DLNA d ufaylu yettwabḍan n tiliɣri (wali [Bḍu tiliɣri-a deg uẓeṭṭa](#share-this-phone-on-the-network)) ḥerzen asulay i d-yebcer uqeddac-nsen. Mi ara yili yiwen ur d-yettarra ara deg tansa-s (tansa tamaynut i d-yefka umsefrak, aqeddac yulsen ad yekker ɣef tewwurt nniḍen), asebter n ukaram-is yesskan-d «Anadi ɣef (isem) deg uẓeṭṭa» u yessenkaz afaylu yettwabḍan ɣer wanda i d-yettarra tura: imir-n i uqeddac DLNA, ur nesɛi awal uffir, u deffir usentem, «Seqdec tansa tamaynut?», i d-yesskanayen snat n tansiwin, i ufaylu yettwabḍan s yisem n useqdac d wawal uffir, acku ad ttwaznen ɣer tansa tamaynut. Seg lebni 20 aqeddac Plex i d-yettwafen tikkelt nniḍen deg tansa nniḍen n uẓeṭṭa yettwasenkaz daɣen imir-n: aselkin-is yesbegginay d netta s yiman-is uqbel ad yettwazen ujuṭu. Takamiṛat Tapo yettwanadi s tansa-s MAC seg usebter-is, wali [Tikamiṛatin Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Tilisa
 
 - **SMB**: SMB 2 d 3 kan, mačči SMB 1.
 - **WebDAV**: asesteb Basic kan (Digest ur yettwasefrak ara yakan); aselkin HTTPS yezmlen s yiman-is ilaq ad yettwasbedd ɣef yibenk.
-- **Anadi ɣef yiqeddacen**: asenqed n uẓeṭṭa d unadi DLNA ttmuqulen kan aẓeṭṭa adigan /24, u sran tasiregt n uẓeṭṭa adigan ɣef iOS. Ɣef iPhone d iPad, anadi DLNA yettazen kan isuturen unicast, alamma Apple yefka-d i usnas azref multicast (entitlement), u kra n yiqeddacen ur d-ttarran ara fell-asen (minidlna ɣef Linux): rnu-ten s tansa n uglam-nsen.
+- **Anadi ɣef yiqeddacen**: asenqed n uẓeṭṭa d yinadiyen DLNA, Plex d Tapo ttmuqulen kan aẓeṭṭa adigan /24, u sran tasiregt n uẓeṭṭa adigan ɣef iOS. Ɣef iPhone d iPad, anadi DLNA yettazen kan isuturen unicast, alamma Apple yefka-d i usnas azref multicast (entitlement), u kra n yiqeddacen ur d-ttarran ara fell-asen (minidlna ɣef Linux): rnu-ten s tansa n uglam-nsen.
 - **DLNA**: aqeddac i d-yettaken kan anɣal yettwabeddlen n ufaylu ad d-yefk anɣal-nni; akaram yesskan-d 20 000 n yiferdisen akk ugar.
 - **Tugniwin timecṭuḥin**: tugniwin timecṭuḥin n tewlafin ttɣaren afaylu akk, u tiwlafin yugaren 30 MB ur sɛint ara tugna tamecṭuḥt.
 - **Imeɣriyen**: afran n ubrid n umeslaw ulac-it yakan deg umeɣri amsawi. Ɣef tiliɣri ulac yakan azuɣer seg ufaylu n ukaram ɣer win i d-iteddun (ameskan immersif n Quest yesɛa uzwir d uḍfir i yifuyla 360° n ukaram). Afran 3D neɣ 180° i yettwaxedmen ɣef ufaylu n uẓeṭṭa ur yettwaḥraz ara.
 - **Asali**: yetteddu kan mi ara yili usnas yeldi, u afaylu i yesɛa yakan uqeddac yettwazen akk send ad t-id-yini uqeddac d isleɣ.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server, war plex.tv
+
+Tividyutin-ik llant deg Plex, u Plex yesskanay-d tiwlafin d tvidyutin-ik 360° d timsawin, akken i d-glemen yisuturen deg tdiwenniyt-is (yiwen yeldi seg 2017). Tebɣiḍ daɣen tamkarḍit-nni deg tcacit, ɣef tiliẓri d beṛṛa n uxxam. Asnas Immich yeqqar kan aqeddac-ik Immich, u anaw DLNA n lebni 19 yettaweḍ kan ɣer tama DLNA n Plex deg uxxam.
+
+Seg lebni 20 Immuch360 yettuqqen srid ɣer Plex Media Server-ik, war plex.tv: yettaf-d aqeddac deg uẓeṭṭa, tsenṭḍeḍ ajuṭu yiwet n tikkelt, u asnas yeqqar srid ifuyla iṣliyen n temkarḍiyin-ik, deg yal ameskan n usnas (360°, 3D, VR180, Spatial 2.5D, ameskan immersif n Quest, tilikumand n tiliẓri), deg uxxam u, s usmelleɣ n tewwurt, beṛṛa n uxxam. Ulac ayen yettwaneɣlen, u ifuyla i tefreneḍ zemren ad ttwaznen ɣer Immich.
+
+### Rnu aqeddac Plex
+
+1. Ldi iccer Tamkarḍit, syin Ifuyla n uẓeṭṭa, syin + d «Plex Media Server». Anaw «Plex Media Server» n tferkit n beṭṭu, d uqeddac s tecraḍt Plex ddaw «Yettwaf deg uẓeṭṭa», ldin asebter-nni.
+2. Asebter «Rnu aqeddac Plex» yettnadi iqeddacen Plex n uẓeṭṭa-k («Anadi n yiqeddacen Plex deg uẓeṭṭa-k») u yessebded-iten ddaw «Yettwaf deg uẓeṭṭa». Sit ɣef win-ik: takarḍa tesskanay-d isem-is, lqem-is Plex d usulay awezlan.
+3. Ulac-it deg tebdart? Aru «Tansa n uqeddac», am `192.168.1.20`, `192.168.1.20:32400` neɣ `https://...plex.direct:32400`, syin sit ɣef «Nadi». Asnas yeqqar aselkin n uqeddac u ur yettazen kra nniḍen.
+4. Awi-d ajuṭu, ɣef uselkim: ldi Plex deg yiminig web u qqen, ldi yal tawlaft neɣ tavidyut n temkarḍit-ik, syin «...», «Get Info», «View XML». Iccer amaynut yeldi ɣef tansa i yekfan s `X-Plex-Token=...`. Nɣel tansa-nni akk.
+5. Senṭeḍ-tt deg «Ajuṭu n unekcum», neɣ azen-tt ɣer tiliɣri u sit ɣef «Senṭeḍ seg tecfawt»: asnas yettawi seg-s aqeddac d ujuṭu. Aḍris deffir `X-Plex-Token=` iman-is yetteddu daɣen. «Amek ara t-tawiḍ», deg usebter, yenna-d ayen-nni; inedbalen n uqeddac zemren daɣen ad sseqdacen azal `PlexOnlineToken` n ufaylu `Preferences.xml` n uqeddac, ur nettfakka ara. Ɣef tiliẓri, OK yeldi adiwenni n unasiw: aru dinna ajuṭu (s umata d 20 n yisekkilen).
+6. Sit ɣef «Sekyed tuqqna». Ad d-yerr «Yeqqen: N n temkarḍiyin», neɣ ad d-yini acu ur neddi ara, am «Aqeddac Plex yugi ajuṭu-a.»
+7. «Anekcum seg beṛṛa n uxxam» yesskanay-d syin ayen i d-yenna uqeddac: «Aqeddac yenna-d yezmer ad yettwaweḍ deg (tansa):(tawwurt).», neɣ «Aqeddac ur d-yenni ara tansa-s beṛṛa n uxxam.» Akken ad tesseqdceḍ aqeddac beṛṛa n uxxam, aru tansa-k tazayezt neɣ isem-ik DynDNS deg «Tansa beṛṛa n uxxam (IP neɣ isem)», d tewwurt yettwasmellɣen deg Plex (Iɣewwaren, Anekcum s yimen) deg «Tawwurt beṛṛa n uxxam». Ayen i tettaruḍ yezwar yal tikkelt ɣef wayen i d-yenna uqeddac.
+8. «Isem» d isem n uqeddac ma yella ur t-tbeddleḍ ara, u «Akaram n tazwara (d afrayan)» yezmer ad yeldi srid yiwet n temkarḍit. Sit ɣef Save (Sekles). Aqeddac yettban-d d yifuyla yettwabḍan, am `plex://` d tansa-s.
+
+### Snirem timkarḍiyin-ik Plex
+
+1. Sit ɣef uqeddac deg Ifuyla n uẓeṭṭa. Aswir amezwaru yessebded timkarḍiyin i d-yesskanay usnas: tiwlafin, isaragen d tvidyutin nniḍen, tisɣunin n TV. Aẓawan ur d-yettban ara.
+2. Ddaw temkarḍit d ikaramen-is akken llan ɣef uḍebsi n uqeddac (askan «s ukaram» n Plex), syin tiwlafin d tvidyutin s yismawen n yifuyla-nsent, s tugniwin timecṭuḥin i d-yexdem Plex. Tamkarḍit n tewlafin ur d-nettarra ara deg uskan s ukaram tesskanay-d deg wadeg-is ilbumen-is.
+3. 360° d 3D ttwassnen s tɣuri n yifuyla s yiman-nsen, am deg yal afaylu yettwabḍan: tiwlafin 360° ttawint tabzimt 360°, tiwlafin timennawin n Apple tabzimt 3D.
+4. Ldi tawlaft neɣ tavidyut am deg yal afaylu yettwabḍan: 360°, 3D, 360°/180°, Spatial 2.5D ɣef tiliɣri, ameskan immersif deg Quest, tilikumand ɣef tiliẓri. Tavidyut tettwaɣer am ufaylu aṣli, s tegrumma n yibiten s tqentert tadigant n usnas, ihi anegzum yetteddu u isfka-s 360° d 3D ttawḍen ɣer yimeɣriyen akken llan.
+5. Fren ifuyla u sit ɣef «Sali ɣer Immich» akken ad ten-tazneḍ ɣer uqeddac-ik, am seg yal afaylu yettwabḍan (wali [Azen ifuyla n ufaylu yettwabḍan ɣer Immich](#send-files-of-a-share-to-immich)).
+
+### Beṛṛa n uxxam
+
+Yal tikkelt ara yeldi aqeddac, asnas yettɛaraḍ qbel tansa n uxxam u, 400 ms deffir, tansa beṛṛa n uxxam. Tin d-yerran tazwara s uqeddac-ik d tin ara yettwasqedcen; mi ara tili d tansa beṛṛa n uxxam, asebter n ukaram yesskanay-d tignit n umaḍal s tecraḍt «Yeqqen s tansa beṛṛa n uxxam». Ayagi yesra Anekcum s yimen yermed deg Plex (Iɣewwaren, Anekcum s yimen) s tewwurt yettwasmellɣen sɣur tanaka-k: war plex.tv asnas ur yezmir ara ad yesseqdec relay n Plex, ihi aqeddac war asmelleɣ n tewwurt yettaldi kan deg uxxam, u beṛṛa n uxxam asebter ad d-yini «Aqeddac-ik Plex ur yettwaweḍ ara seg beṛṛa n uẓeṭṭa n uxxam. Rmed anekcum s yimen s usmelleɣ n tewwurt deg Plex (Iɣewwaren, Anekcum s yimen), neɣ aru tansa-s tazayezt.»
+
+Tansa i d-yenna uqeddac tettwalmed tikkelt nniḍen yal tuqqna deg uxxam. Mi ara tili ur d-tettarra ara seg beṛṛa (tanaka i yettbeddilen tansa, sin n yimsefrak wa deffir wa), aru tin-ik deg usebter n uqeddac. Mi ara yeḥbes ujuṭu (amedya teffɣeḍ seg tɣimit n yiminig ansi i t-tneɣleḍ), asebter n ukaram ad t-id-yini u ad d-yessumer «Senṭeḍ ajuṭu amaynut», i yeldin asebter n uqeddac ɣef wurti n ujuṭu.
+
+### Asemyaser d Plex d unaw DLNA
+
+- **Ifuyla iṣliyen**: asnas yeqqar ifuyla s yiman-nsen, werǧin anɣal yettwabeddlen sɣur Plex, ihi isfka 360°, 3D d VR180 qqimen akken llan u imeskanen n usnas sseqdacen-ten, ma d isnasen n Plex sskanayen-d ifuyla-a d imsawin.
+- **War plex.tv**: asnas yemmeslay kan d uqeddac-ik, yal tikkelt s HTTPS. Aqeddac yettwasenqed s uselkin-is plex.direct, yeqqnen ɣer usulay n uqeddac, uqbel ad yettwazen ujuṭu. Ajuṭu yeqqim deg yibenk, deg uḥraz-is aɣellsan, u yettwazen kan ɣer uqeddac-ik, deg uqerru n usuter.
+- **Ma nserwes d tmerna n uqeddac-nni am DLNA**: ikaramen akken llan ɣef uḍebsi, tugniwin timecṭuḥin n Plex, anekcum seg beṛṛa n uxxam d tuqqna taɣellsant.
+
+### Tilisa
+
+- **Iqeddacen yettwasutren kan**: aqeddac ilaq ad yettwasuter deg Plex (yeqqen yiwet n tikkelt ɣer umiḍan Plex), ayen i s-yettaken aselkin-is plex.direct. Ma ulac, asebter ad d-yini «Tansa-a d-terra war aselkin Plex. Ssuter aqeddac deg Plex, neɣ rnu-t am ufaylu SMB, WebDAV neɣ DLNA.»
+- **IPv4 kan**: «Tansiwin IPv6 ur ttwasefraknt ara yakan. Aru tansa IPv4 n uqeddac.»
+- **Ajuṭu** yettak anekcum ummid ɣer uqeddac-ik Plex. Tukksa n uqeddac deg usnas tettu ajuṭu deg yibenk maca ur t-teffeɣ ara: «Ajuṭu ad yeqqim d ameɣtu deg uqeddac alamma teffɣeḍ seg tɣimit n yiminig ansi i t-tneɣleḍ.» Ajuṭu s wass n taggara yesskanay-d azemz-nni, u asnas ur yezmir ara ad t-yesmaynut.
+- **Beṛṛa n uxxam**: s usmelleɣ n tewwurt kan, ulac relay.
+- **Timkarḍiyin**: aẓawan ur d-yettban ara, akaram yessebded 20 000 n yiferdisen ma yella aṭas, u aseqdac yettwaḥeddren yezmer ad yaweḍ ɣer «Ajuṭu-a ur yezmir ara ad iɣer timkarḍiyin n uqeddac.»
+- **Ifuyla RAW n tkamiratin 360°** (.insv, .insp, .360, .osv) ttbanen-d kan ma yessebded-iten Plex; neɣ rnu akaram-nni n NAS am ufaylu yettwabḍan SMB neɣ WebDAV, wali [Ifuyla RAW n tkamiratin 360°](#raw-360-camera-files-without-the-cameras-app).
+- **Tifin n uqeddac**: aqeddac anda yensa uɣewwar «Enable local network discovery (GDM)» ur yettwaf ara, ihi aru tansa-s. Ɣef iPhone d iPad anadi yettazen kan isuturen unicast. Tama DLNA n uqeddac-nni tezmer daɣen ad d-tban deg tebdart, s tecraḍt DLNA: fren izirig s tecraḍt Plex.
+- **Ur yettwasenqed ara yakan ɣef yibenk**: tuqqna, ikaramen, tigrumma n yibiten n tvidyut, tugniwin timecṭuḥin, ajuṭu ur nṣeḥḥa ara d tansa beṛṛa n uxxam ttwasenqden seg uselkim ɣef Plex Media Server 1.42.1 n tidet, u timkarḍiyin n tewlafin d tisɣunin n TV ɣef uqeddac yettwasemrasen kan. Taɣuri ɣef tiliɣri, deg Quest, ɣef iPhone d tiliẓri, d usenfel ɣer tansa beṛṛa n uxxam, d asekyed ɣef yibenk n lebni 20.
+- Immuch360 ur yeqqin ara ɣer Plex.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Bḍu tiliɣri-a deg uẓeṭṭa
@@ -219,6 +279,63 @@ Seg tama-nni, d afaylu yettwabḍan WebDAV am wiyaḍ: tagrut n 360°, ifuyla RA
 - **Taɣellist**: aẓeṭṭa adigan kan. Beṭṭu yesseflid kan ɣef tansiwin Wi-Fi, Ethernet d ataxxam n tuqqna n tiliɣri, werǧin ɣef tansa n yisefka n uziraz neɣ VPN, u yettarra-d kan i yibenkan s tansa tadigant. Yal tuttra tesra isem n useqdac d wawal uffir (HTTP Basic); mraw n wawalen uffiren n tuccḍa seg yiwen n yibenk deg tesdat ad t-sḥebsen i tesdat. Awal uffir yettɛeddi war awgelhen deg Wi-Fi (HTTP amagnu): seqdec beṭṭu deg uẓeṭṭa i tumneḍ, u sens-it mi ara tfakkeḍ.
 - **Ataxxam n tuqqna n tiliɣri s yiman-is**: tacacit tezmer ad teqqen ɣur-s; ma ur tufi ara tiliɣri dinna, aru tansa i d-yettbanen ɣef usebter.
 - **Ur yettwasenqed ara yakan ɣef yibenk**: aqeddac yettwasenqed s yisekyaden n tyunin d yisekyaden seg yixef ɣer yixef s umsaɣ WebDAV d tqentert n yimidyaten n tcacit s yiman-is, ɣef uselkim. Tiliɣri i yettqeddicen Quest 3 (tagrut, tavidyut n 4 GB yettwaɣran u yettwanegzen, agdil yensa 30 n tesdatin, ataxxam n tuqqna, Seḥbes seg walɣu) akked tama n iPhone, ur nteddu ara yakan ɣef iPhone, d asekyed ɣef yibenk n lebni 19.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Tikamiṛatin Tapo: tamuɣli tusridt d yiseklasen n tkarḍa n tkatut
+
+Tesɛiḍ tikamiṛatin Tapo deg uxxam, u tebɣiḍ ad twaliḍ takamiṛat n tebḥirt d tvidyutin n yiḍ yezrin ɣer tama n tewlafin-ik war ma teldiḍ asnas Tapo, u ad tḥerzeḍ tavidyut deg Immich. Asnas Immich ur yesɛi acemma i tkamiṛatin, u asnas Tapo d asnas nniḍen, yeqqnen ɣer umiḍan-ik TP-Link, s tvidyutin weḥd-sent, beɛdent ɣef tewlafin-ik.
+
+Seg lebni 20 Immuch360 yettarnu takamiṛat Tapo ɣer tama n yifuyla n uẓeṭṭa. Yesskanay-d takamiṛat srid ɣef tiliɣriyin d ttablit Android, Android TV d Meta Quest 3, u ɣef yal tiɣerɣert iseklasen n tkarḍa-s n tkatut, ass s wass: tavidyut tettwawi-d seg tkamiṛat, syin tettwaɣer am yal tavidyut u tezmer ad tettwazen ɣer Immich. Asnas yemmeslay d tkamiṛat deg uẓeṭṭa-k kan, werǧin d yiqeddacen n TP-Link, u werǧin ibeddel kra ɣef tkamiṛat.
+
+### Rnu takamiṛat
+
+1. Deg usnas Tapo qbel: snulfu-d amiḍan n tkamiṛat, deg yiɣewwaren n tkamiṛat, Iɣewwaren leqqayen, Amiḍan n tkamiṛat (isem n useqdac d wawal uffir i tkamiṛat-a, i tmuɣli tusridt), u rmed Amṣada d wis kraḍ, ddaw Nekk, syen Tapo Lab.
+2. Deg Immuch360, ldi iccer Tamkarḍit, syin Ifuyla n uẓeṭṭa, syin + d «Takamiṛat Tapo».
+3. Asebter «Rnu takamiṛat» yettnadi tikamiṛatin («Anadi n tkamiṛatin Tapo deg uẓeṭṭa-k») u yessebded-itent ddaw «Yettwaf deg uẓeṭṭa» s tecraḍt Tapo. Sit ɣef tin-ik akken ad yettwačar «Tansa n tkamiṛat», neɣ aru tansa-s. Takamiṛat s tecraḍt Tapo deg tferkit n beṭṭu teldi asebter-nni.
+4. «Isem»: amek ara d-tban tkamiṛat deg tebdart.
+5. Ddaw «Iseklasen ɣef tkarḍa n tkatut», «Awal uffir n umiḍan TP-Link»: awal uffir n umiḍan i tesseqdaceḍ deg usnas Tapo. Yettaldi iseklasen; tansa-k imayl ur tettwasra ara.
+6. Ddaw «Srid», «Isem n useqdac n umiḍan n tkamiṛat» d «Awal uffir n umiḍan n tkamiṛat»: amiḍan n tkamiṛat n tikli 1.
+7. Yiwen seg sin yekfa («Sekcem awal uffir n umiḍan TP-Link, amiḍan n tkamiṛat, neɣ i sin.»): awal uffir TP-Link iman-is yettak iseklasen, amiḍan n tkamiṛat iman-is yettak tamuɣli tusridt.
+8. Sit ɣef «Sekyed takamiṛat». Ad d-tesskan «Iseklasen: (tamudemt), firmware (lqem)» s waddad n tkarḍa n tkatut, d «Tamuɣli tusridt: (tavidyut), ameslaw (ameslaw)», neɣ ayen ur neddi ara i yal yiwen.
+9. Sit ɣef Save (Sekles). Takamiṛat tettban-d ddaw «Tikamiṛatin», deffir yifuyla yettwabḍan, s tmudemt-is mi ara tettwassen d `tapo://` s tansa-s.
+
+### Wali-tt srid
+
+1. Sit ɣef tkamiṛat. Tamuɣli-s tusridt tella deg ufella n usebter-is: «Tuqqna ɣer tkamiṛat», syin tugna s tebzimt «Srid».
+2. Tiqeffalin ɣef tugna: ameslaw, yensa deg tazwara («Rmed ameslaw»; «Ulac ameslaw deg yibenk-a» mi ara yili yibenk ur yezmir ara ad t-yeɣr), SD neɣ HD, d «Agdil ačuran».
+3. Tiliɣri tesskanay-d SD deg usebter d HD deg ugdil ačuran; Quest yesskanay-d HD. Tuɣalin teffeɣ qbel seg ugdil ačuran.
+4. Ddaw tugna d tamudemt d firmware d tkarḍa n tkatut, am «Takarḍa n tkatut: (yettwasqedcen) yettwasqedcen seg (akk)» neɣ «Ulac takarḍa n tkatut».
+
+Ɣef iPhone d iPad tamuɣli tusridt tenna-d «Tamuɣli tusridt ad d-tas ɣer iPhone d iPad deg lqem ara d-yasen. Iseklasen ttwaɣran dagi yakan.» War amiḍan n tkamiṛat asebter yenna-d «Rnu amiḍan n tkamiṛat akken ad twaliḍ tamuɣli tusridt.»
+
+### Ɣer u ḥrez iseklasen
+
+1. Ddaw «Iseklasen ɣef tkarḍa n tkatut», asebter n tkamiṛat yessebded ussan yesɛan iseklasen, amaynut d amezwaru, s wayyur. War awal uffir n umiḍan TP-Link ad d-yini «Rnu awal uffir n umiḍan TP-Link akken ad twaliḍ iseklasen.»
+2. Sit ɣef wass. Tividyutin-is ttbanent-d ddaw isragen n wakud n tkamiṛat s yiman-is, yal yiwet s tazwara-s, teɣzi-s, tugna tamecṭuḥt n tkamiṛat i tedyant, d wanaw-is: Amussu, Amdan, Aɣersiw n uxxam, Takeṛṛust, Imeṭṭawen n llufan, Aɣersiw, Ur yettḥebbis ara neɣ Tadyant.
+3. Sit ɣef tvidyut. Asnas yettawi-tt-id seg tkamiṛat («Tavidyut tettwawi-d seg tkamiṛat: N%», s Cancel (Sefsex)), syin yeqqar-itt deg umeɣri n tvidyut, s umeslaw d unegzum. Tavidyut i d-yettwawin tesɛa «Deg yibenk-a» u tettaldi imir-n tikkelt i d-iteddun.
+4. Akken ad tḥerzeḍ tavidyut deg Immich, s uqeddac yeqqnen: umuɣ ⋮ n tvidyut, «Sali ɣer Immich».
+5. Akken ad tserrḥeḍ i tallunt: asiti aɣezfan ɣef tvidyut i d-yettwawin yessumer «Kkes anɣel deg yibenk-a» (ɣef tiliɣri), u asebter n tkamiṛat yesɛa «Kkes tividyutin i d-yettwawwin seg tkamiṛat-a», s teɣzi-nsent.
+6. Taqeffalt n usmiren d asawen s ayeffus, neɣ ajbad n usebter ɣer wadda, ad yessteqsi takamiṛat tikkelt nniḍen.
+
+Mi ara tili tkamiṛat ur d-tettarra ara deg tansa-s, asebter-is yettnadi-tt deg uẓeṭṭa s tansa-s MAC u yessenkaz-itt ɣer wanda i d-tettarra tura, mi ara d-tesskan aselkin-nni. Takamiṛat i d-yesskanayen aselkin nniḍen ur nelli d win i yeẓra usnas tikkelt tamezwarut ad d-tawi asteqsi deg wadeg-is: «Takamiṛat deg (tansa) tesskanay aselkin nniḍen ur nelli d win n yiḍelli. Kemmel kan ma telseḍ-tt-id neɣ tbeddleḍ-tt.»
+
+### Asemyaser d usnas Tapo
+
+- **Deg uẓeṭṭa-k kan**: asnas yemmeslay d tkamiṛat s yiman-is, deg uẓeṭṭa adigan, werǧin d yiqeddacen n TP-Link. Ur yettqeqqin ara ɣer umiḍan TP-Link, ihi tansa-k imayl ur tettwasra ara.
+- **Iseklasen ttuɣalen d tividyutin tilawin**: tavidyut i d-yettwawin d tavidyut H.264 s umeslaw-is, tzemreḍ ad tt-tazneḍ ɣer Immich, anda ara teqqim ula seld mi ara d-tsekles tkarḍa n tkatut fell-as.
+- **Ɣer tama n wayen nniḍen**: s uqeddac Immich neɣ war-s, ɣef tiliɣri, tiliẓri neɣ deg Quest (deg usfaylu), tettwaf deg uẓeṭṭa am ufaylu yettwabḍan.
+- **Taɣuri kan**: asnas yessuter kan i tkamiṛat ayen i d-yesskanay; werǧin ibeddel aɣewwar, werǧin yekkes kra ɣef tkamiṛat.
+
+### Tilisa
+
+- **Ur yettwasenqed ara yakan ɣef yibenk**: lebni 20 ur yeddi ara yakan d tkamiṛat n tidet. Aneggaf yettwaru seg tuṭṭfiwin n C510W s firmware 1.3.4 (tuqqna V4 n wammas n 2026), u asnas yettwasenqed ɣef tkamiṛat yettwasemrasen deg yisekyaden-is. Ineqqisen ttwaqeblen s lferḥ, s tmudemt d firmware i d-yesskanay «Sekyed takamiṛat» d yizirigen n [Iɣmisen](#logs).
+- **Tamuɣli tusridt**: ɣef tiliɣriyin d ttablit Android, Android TV d Quest kan, mačči ɣef iPhone d iPad yakan. Tilisa n TP-Link ttwaḥsabent: ugar n sin n yisuddam HD d sin SD deg yiwet n tikkelt i yal takamiṛat ur yezmir ara, ula d asnas Tapo, u Tapo Care, takarḍa n tkatut d umsekles i yesseqdacen RTSP neɣ ONVIF ur zmiren ara ad ddun akk deg yiwet n tikkelt.
+- **Tikamiṛatin**: tikamiṛatin s tbatri d tikamiṛatin deffir hub Tapo ur ttwasefraknt ara.
+- **Iseklasen**: yiwen usider deg yiwet n tikkelt i yal takamiṛat. Mi ara yili usnas Tapo yessnirim takarḍa n tkatut, asnas yettɛawad deffir 4, 8 d 12 n tsinin, syin yenna-d «Takamiṛat tettwaṭṭef sɣur amẓaṛ nniḍen, am usnas Tapo. Ɛreḍ tikkelt nniḍen deg tesdidt.» Iseklasen s H.265 ur ttwabeddlen ara yakan («Asekles-a s H.265, lqem-a ur yezmir ara ad t-yesseḥreb yakan.»), iseklasen ur nettḥebbis ara ulac ɣur-sen tugna tamecṭuḥt, u tavidyut tettwaɣer kan mi ara tettwawi-d akk.
+- **Awalen uffiren**: yal awal uffir ur nṣeḥḥa ara yettwaḥsab, u seld kra takamiṛat tettwasekkeṛ kra n wakud («Takamiṛat tettwasekkeṛ seld aṭas n wawalen uffiren ur nṣeḥḥa ara. Ɛreḍ tikkelt nniḍen deg N n tesdidin.»). Asnas werǧin yettɛawad s yiman-is awal uffir yettwagin: ala «Sekyed takamiṛat» neɣ Retry (Ɛreḍ tikkelt nniḍen) i yessteqsayen takamiṛat tikkelt nniḍen. Mi ara tqebbel tkamiṛat awal uffir i yiɣewwaren-is maca mačči i tvidyutin-is, sens syen rmed tikkelt nniḍen Amṣada d wis kraḍ deg usnas Tapo, syen ales asekker i tkamiṛat.
+- **Tallunt**: tividyutin i d-yettwawin qqiment deg tkatut tuffirt n usnas, 1 GB ma yella aṭas i tkamiṛatin akk akken ma llant (tid yettwaɣran zik-nni d timezwura ara yettwakksen); anagraw yezmer ad yesfeḍ tkatut-nni, u tukksa n tkamiṛat tekkes tividyutin-is.
+- **Beṛṛa n uxxam**: asnas yettaweḍ ɣer tkamiṛat deg tansa-s deg uẓeṭṭa-k, ihi mačči seg beṛṛa-s.
+- Immuch360 ur yeqqin ara ɣer TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Ifuyla RAW n tkamiratin 360°, war asnas n tkamirat
@@ -349,7 +466,7 @@ Tagrut tettwasenqed ɣef tewlaft tamennawt n umedya yettwarun s temkarḍit n tu
 
 Imdanen ttaɣen Quest 3 akken ad walin tiwlafin d tvidyutin-nsen 360°, syin ttsaqsayen anda ara srusen ifuyla, amek ara ten-sɛeddin ɣer tcacit war tanzeqt, d wanwa ameɣri ara sqedcen: imeɣriyen n tvidyutin 360° d 3D n tḥanutt s idrimen.
 
-Asnas-nni n Android yetteddu ɣef Quest 3 d 3S am usfaylu, s temkarḍit-ik akk. Taqeffalt-is 360° teldi ameskan immersif anda tawlaft neɣ tavidyut tezzi i tama-k akk, u tmuqleḍ yal tama s tuzzya n uqerru-ik, s 3D n tidet i yifuyla stiriyu (Meta Spatial SDK). Imidyaten d-ttasen seg uqeddac-ik Immich, seg tcacit s yiman-is, seg NAS, seg uqeddac n yimidyaten neɣ seg tiliɣri, ttwaɣran deg wadeg-nsen (aqeddac n yimidyaten d tiliɣri seg lebni 19, ur ttwasenqden ara yakan deg tcacit). D baṭel u d aɣbalu yeldin. Yettwasenqed ɣef Quest 3, u s useqdac s tvidyutin Insta360 X4 8K HEVC.
+Asnas-nni n Android yetteddu ɣef Quest 3 d 3S am usfaylu, s temkarḍit-ik akk. Taqeffalt-is 360° teldi ameskan immersif anda tawlaft neɣ tavidyut tezzi i tama-k akk, u tmuqleḍ yal tama s tuzzya n uqerru-ik, s 3D n tidet i yifuyla stiriyu (Meta Spatial SDK). Imidyaten d-ttasen seg uqeddac-ik Immich, seg tcacit s yiman-is, seg NAS, seg uqeddac n yimidyaten, seg tiliɣri neɣ seg uqeddac Plex, ttwaɣran deg wadeg-nsen (aqeddac n yimidyaten d tiliɣri seg lebni 19, aqeddac Plex seg lebni 20, ur ttwasenqden ara yakan deg tcacit), u seg lebni 20 asfaylu yesskanay-d daɣen tikamiṛatin Tapo. D baṭel u d aɣbalu yeldin. Yettwasenqed ɣef Quest 3, u s useqdac s tvidyutin Insta360 X4 8K HEVC.
 
 ### Ldi ameskan immersif
 
@@ -408,6 +525,56 @@ Zzi-tt s ujenṭaḍ ayeffus (neɣ s tqeffalt Zzi n ugalis n talɣut) alamma tle
 - **Anegzum**: tavidyut ur d-yettarra uɣbalu-ines i yisuturen n tegrumma n yibiten ur tettwanegzam ara; agalis yenna-t-id.
 - **Tividyutin timsawin**: tavidyut stiriyu tamsawit (mačči 360°) tettwaɣra deg usfaylu s snat n tiṭṭawin yettbanen; tamuɣli immersif 3D d tin n yimidyaten 360° d VR180.
 - **Ugar**: ikudiken i teɣɣar tcacit, taḥanutt, tisirag d tiddi n APK llan deg [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Wali ɣef tiliẓri (Android TV d Google TV)
+
+Tebɣiḍ tiwlafin d tvidyutin 360°, ilbumen-ik d tvidyutin n NAS-ik neɣ n uqeddac-ik Plex ɣef ugdil ameqqran, i twacult ɣef ukursi, s tilikumand n tiliẓri. Asnas aziraz n Immich mačči d asnas n tiliẓri: aseqdac i t-isebdden ɣef tiliẓri yufa-d yetteddu s tɣerdayt, mačči s tilikumand ([adiwenni #1614](https://github.com/immich-app/immich/discussions/1614)), u tarbaɛt n Immich ur tesɛi ara asnas unṣib n tiliẓri deg yiɣawasen-is ([adiwenni #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Seg lebni 20 asnas-nni n Android yetteddu ɣef Android TV d Google TV, s tilikumand kan am unekcam: yiwen APK i tiliɣriyin d tiliẓriyin, imeskanen 360° d 3D ttezzin s yineccaben, d yifuyla n uẓeṭṭa, Plex d tikamiṛatin Tapo ɣef tiliẓri, s uqeddac Immich neɣ war-s.
+
+<a id="install-it-on-the-tv"></a>
+### Sebded-it ɣef tiliẓri
+
+1. Alamma Google Play yessumer asnas ɣef tiliẓriyin, ayen yettraǧun asenqed n Google i usiẓreg n tiliẓri, awi `Immuch360-v<version>-release.apk` amatu seg usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases).
+2. Ɣef tiliẓri, rmed iɣewwaren n uneflay d tseɣtit USB (ɣef Google TV: Settings, System, About, fren «Android TV OS build» sebɛa n tikkal, syin Settings, System, Developer options; ismawen mgaraden seg tiliẓri ɣer tayeḍ).
+3. Seg uselkim deg uẓeṭṭa-nni, s adb (Android SDK Platform Tools): `adb connect <address of the TV>`, qbel asuter ɣef tiliẓri, syin `adb install -r Immuch360-v<version>-release.apk`.
+4. Asnas yettban-d gar yisnasen n tiliẓri, s ubanner-is. Sebded asiẓreg i d-iteddun s wudem-nni: `-r` yeḥrez tuqqna d yiɣewwaren.
+
+### Asekker amezwaru
+
+1. Qqen am ɣef tiliɣri: ineccaben ssenkazen akatar seg wurti ɣer wayeḍ, u OK ɣef wurti («Sit ɣef OK akken ad taruḍ») yeldi anasiw n tiliẓri deg udiwenni, i tansa n uqeddac, imayl d wawal uffir.
+2. Neɣ fren «Seqdec war aqeddac». Tiliẓri ur tesɛi ara tiwlafin-is, ihi iccer Photos (Tiwlafin) yenna-d «Tiliẓri-a ur tesɛi ara tugniwin neɣ tividyutin-is: ldi afaylu n uẓeṭṭa seg Temkarḍit.» s teqffalt Ifuyla n uẓeṭṭa. Rnu dinna afaylu yettwabḍan, aqeddac Plex neɣ takamiṛat, am ɣef tiliɣri (wali [Ifuyla n uẓeṭṭa](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Inig s tilikumand
+
+- Ineccaben ssenkazen akatar, OK yeldi ayen ɣef yella, Tuɣalin tettuɣal. Seg yiccer, Tuɣalin tettawi ɣer wumuɣ n tama, syin ɣer Photos (Tiwlafin), syin ad teffeɣ seg usnas.
+- Tiqeffalin n ubadu ɣer d asawen d wadda ssenkazent yiwen usebter yal tikkelt.
+- Deg yimeskanen, tiqeffalin n tilikumand n tɣuri d usteɛfu, n uzwir arurad, n tuɣalin ɣer deffir, n win d-iteddun d win yezrin teddunt, u taqeffalt n talɣut tesskanay-d talqayin n tewlaft neɣ n tvidyut.
+
+### Tiwlafin d tvidyutin s tilikumand
+
+1. **Tawlaft**: azelmaḍ d uyeffus ddun ɣer tin yezrin neɣ tin d-iteddun, OK yesskanay neɣ yeffer isenqaden, D asawen yettawi ɣer ufeggag n ufella (anda tella teqffalt 360°) u D akessar ɣer ufeggag n wadda.
+2. **Tavidyut**: OK yesteɛfay, s uskan n yisenqaden, neɣ yeqqar. Mi ara tettwaɣer, azelmaḍ d uyeffus neggzen 10 n tsinin ɣer deffir neɣ ɣer zdat; mi ara testeɛfu, ddun ɣer uferdis yezrin neɣ win d-iteddun, akken i d-yenna uwelleh: «Yesteɛfa: ineccaben ad ddun ɣer uferdis yezrin neɣ ɣer win d-iteddun».
+3. **Tawlaft 360°**, seg teqffalt 360°: ineccaben ttmuqulen yal tama, s tazzla ma ṭṭfen, u tamuɣli tettḥebbis s leɛqel. OK yettawi ɣer tqeffalin n ufeggag n ufella, ɣef «Simɣer», ɣer tama n «Simẓi», n wurti n tmuɣli d 3D; tiqeffalin n ubadu ssemɣarent u ssemẓayent daɣen. Tuɣalin tettuɣal seg tqeffalin ɣer tugna, syin ad tmdel. Awelleh yenna-d «Ineccaben i usekyed n uzaglu, OK i yisenqaden, Tuɣalin i umdal».
+4. **Tavidyut 360°**, seg teqffalt 360°: ineccaben ttmuqulen yal tama mi ara ffren yisenqaden, OK yesteɛfay u yesskanay-ten, Tuɣalin teffer-iten, syin ad tmdel. Awelleh yenna-d «Ineccaben i usekyed n uzaglu, OK i usteɛfu d uskan n yisenqaden, Tuɣalin i umdal».
+5. **Memories (Asmekti)**: azelmaḍ d uyeffus ddun gar tewlafin u ɛeddin ɣer usmekti d-iteddun, D asawen yettawi ɣer teqffalt n umdal u D akessar ɣer «View in timeline (Wali deg tesnakudt)».
+6. **Ifuyla yettwabḍan d Plex**: tiqeffalin-nni deg yisebtar n tewlafin d tvidyutin n ufaylu yettwabḍan, anda azelmaḍ d uyeffus ldin afaylu yezrin neɣ win d-iteddun n ukaram.
+
+### Aɣewwar Taneɣruft i tilikumand
+
+Settings (Iɣewwaṛen), Preferences (Ismenyifen), «Taneɣruft i tilikumand»: «Ikatren n usaḍes imeqqranen d tqeffalin n tilikumand, war isenqaden i yesran agdil anennal. S wudem awurman ad t-yermed ɣef Android TV d Google TV.» S wudem awurman d amezwer; Yermed yelha i ttablit yettwanehren s unasiw neɣ s ugamepad; Yensa ad t-yessens ɣef tiliẓri. Aɣewwar yella ɣef Android kan. Ineccaben d OK teddun deg yimeskanen s unasiw neɣ s ugamepad akken yebɣu yili uɣewwar.
+
+### Tilisa
+
+- **Ameskan**: ɣef tiliẓri asnas yesskanay u yeqqar. Aḥraz, isalayen, asiẓreg, tukksa, beṭṭu, afran n waṭas n yiferdisen, Cast, Spatial 2.5D, ajiroskop, takarḍa d Places (Imukan), d «Bḍu tiliɣri-a deg uẓeṭṭa» ffren.
+- **Tuqqna**: OAuth yeldi asebter web, ayen ur tezmir ara tiliẓri: «Tuqqna s (asaǧǧaw) ad teldi asebter web, ayen ur tezmir ara tiliẓri-a. Qqen s yimayl d wawal uffir deg wadeg-is.»
+- **Iseɣwan** sskanayen-d tansa-nsen ddaw «Ldi ɣef yibenk nniḍen» deg wadeg ad ldin iminig, u aḍris yettwaru deg udiwenni n unasiw n unagraw.
+- **Takatut**: ɣef tiliẓri s tkatut tamecṭuḥt, tiwlafin 360° ttbanent-d 4096x2048 ma yella aṭas, war tugna yifen di tseddi mi ara tsemɣreḍ.
+- **Tividyutin**: idekuduren n tiliẓri i yettfernen ayen ara yettwaɣren, s uɣewwar-nni «Aɣbalu n tvidyut» d usenqed-nni n yidekuduren am ɣef tiliɣri (wali [Talɣut n tvidyut d yidekuduren](#video-details-decoders-and-why-a-video-stutters)); ur yettwaktal ara yakan ɣef tiliẓri.
+- **Ur yettwasenqed ara yakan ɣef yibenk**: tallelt n tiliẓri tettwasenqed s yisekyaden iwurmanen kan, u ur teddi ara yakan ɣef tiliẓri neɣ ɣef usimulatur n tiliẓri. Ayen ilaqen ad yettwasentem: tanila anda ttezzin yineccaben tavidyut 360°, anasiw n tiliẓri (Gboard) deg udiwenni n uḍris, taqeffalt OK n tilikumand IR (infrared), iṛuda d ubanner ɣef ugdil agejdan n tiliẓri. Ineqqisen ttwaqeblen s lferḥ.
+- **Google Play ɣef tiliẓriyin** yettraǧu asenqed n Google i usiẓreg n tiliẓri; alamma d imir-n, APK.
+- **Tiliẓriyin nniḍen**: Fire TV ur yettwarem ara, u ulac lqem i Apple TV.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Af-d tiwlafin-ik 360°: tabdart 360°
@@ -488,11 +655,11 @@ Mi ara yili uqeddac ur yettḥulfu ara i yisuturen HTTP Range ɣef uṣli u amat
 <a id="everything-else-is-immich"></a>
 ## Ayen nniḍen akk d Immich
 
-Ayen akk i yexeddem usnas aziraz unṣib n Immich yella dagi: aḥraz, tasnakudt, ilbumen, anadi, beṭṭu, imendaden, akk mtawan d uqeddac-ik, s yiwen uqeddac d yiwen umiḍan am usnas web. Immuch360 yettwasbedd ɣer tama n usnas unṣib (akemmus `com.aprogsys.immuch360`). Llan sin n yimgiraden, seg lebni 15: taqeffalt «Force original video» tuɣal d afran «Aɣbalu n tvidyut» i d-yettwaglemen d asawen, u tiwlafin d tvidyutin i tessaliḍ s ufus seg ulbom n yibenk ttwaḥesbent d tid yettwaḥerzen.
+Ayen akk i yexeddem usnas aziraz unṣib n Immich yella dagi: aḥraz, tasnakudt, ilbumen, anadi, beṭṭu, imendaden, akk mtawan d uqeddac-ik, s yiwen uqeddac d yiwen umiḍan am usnas web. Immuch360 yettwasbedd ɣer tama n usnas unṣib (akemmus `com.aprogsys.immuch360`). Llan sin n yimgiraden, seg lebni 15: taqeffalt «Force original video» tuɣal d afran «Aɣbalu n tvidyut» i d-yettwaglemen d asawen, u tiwlafin d tvidyutin i tessaliḍ s ufus seg ulbom n yibenk ttwaḥesbent d tid yettwaḥerzen. Ɣef tiliẓri, seg lebni 20, asnas d ameskan, wali [Wali ɣef tiliẓri](#watch-on-your-tv-android-tv-and-google-tv).
 
 Akken ad tesskneḍ tawlaft 360° i walbaɛḍ ur nesɛi ara asnas, bḍu-tt s useɣwen yettwabḍan n Immich: asnas web n Immich yesskanay tawlaft 360° am tsfirt deg yiminig-is.
 
-Lebni n tura, lebni 19 (lqem 3.3.0-rc.0, uṭṭun n lebni 3030017), yebna ɣef Immich 3.3.0-rc.0 (Immich `main`, mačči d lqem urkid yakan) u yettwarem s uqeddac Immich 3.2. Ma ulac aɣilif, mmel-d uguren deg [Uguren](https://github.com/freeKC/Immuch360/issues), mačči i usenfar Immich. I tsemlit tummidt n Immich s yiman-is, wali [immich.app](https://immich.app).
+Lebni n tura, lebni 20 (lqem 3.3.0-rc.0, uṭṭun n lebni 3030018), yebna ɣef Immich 3.3.0-rc.0 (Immich `main`, mačči d lqem urkid yakan). Lebni 19 yettwarem s uqeddac Immich 3.2, u lebni 20 ur ibeddel acemma deg wayen i yessuter usnas seg uqeddac. Ma ulac aɣilif, mmel-d uguren deg [Uguren](https://github.com/freeKC/Immuch360/issues), mačči i usenfar Immich. I tsemlit tummidt n Immich s yiman-is, wali [immich.app](https://immich.app).
 
 ## Asemres ɣer usnas Immich d yisnasen nniḍen
 
@@ -515,6 +682,9 @@ Lebni n tura, lebni 19 (lqem 3.3.0-rc.0, uṭṭun n lebni 3030017), yebna ɣef 
 | Iqeddacen n yimidyaten DLNA d anaw n ufaylu yettwabḍan | ❌ | ✅ seg lebni 19 | Yettwasenqed mgal minidlna d Gerbera deg Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone d Quest d asekyed ɣef yibenk n lebni 19 |
 | Azen ifuyla n ufaylu yettwabḍan ɣer Immich; ifuyla n yibenk yettwaznen s ufus ttwaḥesben d yettwaḥerzen | ❌ ifuyla n yibenk kan | ✅ seg lebni 15 | Yettwarem ɣef umserwes Android mgal aqeddac n usekyed Samba d uqeddac Immich 3.2 |
 | Bḍu tiliɣri-a deg uẓeṭṭa, i tcacit | ❌ | ✅ seg lebni 19, Android d iOS | Isekyaden n tyunin d yisekyaden seg yixef ɣer yixef s umsaɣ WebDAV n tcacit, ɣef uselkim; tiliɣri i yettqeddicen Quest, d tama n iPhone, d asekyed ɣef yibenk n lebni 19 |
+| Timkarḍiyin n Plex Media Server ttwaɣrant seg yifuyla iṣliyen, deg uxxam d beṛṛa n uxxam, war plex.tv | ❌ | ✅ seg lebni 20, yal ameskan, ɣef tiliɣriyin, ttablit, Quest 3 d tiliẓriyin | Yettwasenqed seg uselkim ɣef Plex Media Server 1.42.1 n tidet (tuqqna, ikaramen, tigrumma n yibiten, tugniwin timecṭuḥin, tansa beṛṛa n uxxam); ur yettwasenqed ara yakan ɣef yibenk |
+| Tikamiṛatin Tapo: tamuɣli tusridt, d yiseklasen n tkarḍa n tkatut ttwaznen ɣer Immich mi ara tebɣuḍ | ❌ | ✅ seg lebni 20: iseklasen anda yebɣu yili, srid ɣef Android, Android TV d Quest 3 | Yettwasenqed ɣef tkamiṛat yettwasemrasen; ur yettwasenqed ara yakan s tkamiṛat n tidet |
+| Android TV d Google TV, s tilikumand, deg yiwen APK-nni | ❌ mačči d asnas n tiliẓri | ✅ seg lebni 20 | Yettwasenqed s yisekyaden iwurmanen; ur yettwasenqed ara yakan ɣef tiliẓri |
 | Tiwlafin RAW n Insta360 .insp d tvidyutin .insv s yiwen ubrid | ❌ timsawin | ✅ seg lebni 16 | Tiwlafin ttwasenqdent mgal isifeḍ n Insta360 Studio n yifuyla X3, tividyutin ɣef umserwes Android s ufaylu X3 n tbadut tamecṭuḥt; ur teddun ara yakan ɣef iPhone |
 | Tividyutin RAW s yiwet n talentilt i yal abrid neɣ i yal afaylu (Insta360 X4, X4 Air, X5, X6, tiyugiwin X3, GoPro .360, DJI .osv) | ❌ timsawin neɣ ur ṣeḥḥent ara | ✅ seg lebni 18 | Imsefsayen d usdukkel ttwasenqden ɣef yifuyla n tidet X4, tayugit X3, GoPro MAX d Osmo 360; taɣuri d asekyed ɣef yibenk n lebni 18 d 19 |
 | .dng s snat n tiṭṭawin fisheye | ❌ tamsawit | ❌ mazal | Yettwaheyya |
@@ -529,27 +699,33 @@ Lebni n tura, lebni 19 (lqem 3.3.0-rc.0, uṭṭun n lebni 3030017), yebna ɣef 
 |---|---|---|
 | Asnas web n Immich | Yesskanay tawlaft 360° am tsfirt, maca yettwali .insp RAW d tawlaft tiẓegzawt yemmden, yessezzay snat n tewwurin-is ɣef tsfirt; tamuɣli VR mazal-itt d asuter ([adiwenni #14768](https://github.com/immich-app/immich/discussions/14768)) | Yessdukkul ifuyla RAW ɣef yibenk, u yeldi ameskan immersif deg Quest 3 |
 | Asnas Insta360 neɣ Studio | Yettwasra akken ad uɣalen yifuyla RAW n tkarḍa d tugna 360° send tamuɣli | Yeldi srid ifuyla RAW .insp d .insv, d yifuyla GoPro .360 d DJI .osv |
-| Plex, Jellyfin, Synology Photos | Tiwlafin d tvidyutin 360° ttbanent d timsawin neɣ ur ttwassnent ara, akken i d-glemen yisental deg tdiwenniyin-nsen (asuter n Plex yeldi seg 2017) | Yeqqar ikaramen-nni s SMB, WebDAV neɣ DLNA u yesselkam-iten am tsfirt, war ma ibeddel kra ɣef uqeddac |
+| Plex, Jellyfin, Synology Photos | Tiwlafin d tvidyutin 360° ttbanent d timsawin neɣ ur ttwassnent ara, akken i d-glemen yisental deg tdiwenniyin-nsen (asuter n Plex yeldi seg 2017) | Yeqqar tamkarḍit n Plex s yiman-is seg lebni 20, neɣ ikaramen-nni s SMB, WebDAV neɣ DLNA, u yesselkam-iten am tsfirt, war ma ibeddel kra ɣef uqeddac |
+| Asnas Tapo | D asnas nniḍen, yeqqnen ɣer umiḍan-ik TP-Link, s tvidyutin beɛdent ɣef tewlafin-ik | Yesskanay-d takamiṛat ɣer tama n tewlafin-ik, yemmeslay yid-s deg uẓeṭṭa-k kan, u yeḥrez tavidyut am tvidyut i tzemreḍ ad tazneḍ ɣer Immich (seg lebni 20) |
+| Asnas aziraz n Immich ɣef tiliẓri | Mačči d asnas n tiliẓri: aseqdac yenna-d yetteddu s tɣerdayt, mačči s tilikumand | Asnas-nni, yettwaxdem i tilikumand (seg lebni 20) |
 | Anɣal n yifuyla ɣer tcacit | Yal afaylu yettwanɣal s tenzeqt send ad tizmireḍ ad t-twaliḍ | Yettwaɣra deg wadeg-is seg Immich, seg NAS, seg uqeddac n yimidyaten neɣ seg tiliɣri |
 | Imeɣriyen 360° d 3D n tḥanutt n Quest | S idrimen | Baṭel u d aɣbalu yeldin (AGPL) |
 
 ## Imasalen d yiɣbula, s tɣerɣert
 
-Immuch360 d tamidelt, u daɣen d ameɣri n yimidyaten baṭel: yeqqar ayen ur yezmir ara usnas unṣib, seg ukkuẓ n yiɣbula, deg umeɣri yemmezgen d ufaylu.
+Immuch360 d tamidelt, u daɣen d ameɣri n yimidyaten baṭel: yeqqar ayen ur yezmir ara usnas unṣib, seg yiɣbula n tfelwit tis snat, deg umeɣri yemmezgen d ufaylu.
 
-| Acu | Tiliɣriyin Android | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Tividyutin timsawin (MP4, MOV, MKV, ayen yeɣɣar yibenk) | Ameɣri n Immich, d umeɣri unṣib i yifuyla yettwabḍan n uẓeṭṭa | Akken kan, ala ifuyla MKV d AVI n ufaylu yettwabḍan, ur yettaldi ara iOS (ɣef uqeddac ttwaɣran yettwabeddlen) | Deg usfaylu |
-| Tiwlafin 360° | Ameskan n tsfirt, ajiroskop | Akken kan | Immersif, i tama-k akk |
-| Tividyutin 360° | Ameɣri unṣib Media3 ɣef tsfirt, ajiroskop, anegzum, afran n ubrid n umeslaw, amatar n usali | Ameɣri unṣib SceneKit ɣef tsfirt, ajiroskop, afran n ubrid n umeslaw, amatar n usali; urar d usteɛfu, ulac yakan afeggag n wakud | Immersif, 3D n tidet i yifuyla stiriyu, afeggag n wakud s yineggzumen n 10 n tsinin, amidya uzwir d uḍfir |
-| 3D 360° (s ufella d wadda, rrif ɣer rrif) | Tiṭ tazelmaḍt, taqeffalt n usefrek | Akken kan | Yal tiṭ tettawi azgen-is n tugna |
-| Tiwlafin d tvidyutin VR180 (azgen n tsfirt) | Azgen n tsfirt, taqeffalt 360°/180° | Akken kan | Azgen n tsfirt immersif |
-| Spatial 2.5D (tiɣmert ɣef ugdil amsawi seg tvidyut stiriyu) | Ameɣri unṣib, aḍfar n uqerru s tkamirat n zdat | Akken kan | Ur yettwasumer ara |
-| Tiwlafin timennawin n Apple (tiyugiwin stiriyu HEIC, seg lebni 19) | Tiṭ tazelmaḍt, izirig n talqayin yenna-d d tamennawt | Akken kan | Wali s 3D: snat n tiṭṭawin ɣef tewlaft yettɛumen deg umeskan immersif, 3D neɣ 2D, tettbeddil tiddi |
-| Tividyutin timennawin n Apple (MV-HEVC, seg lebni 19) | Yiwet n tiṭ (tissi n tazwara), s walɣu | Akken kan | Yiwet n tiṭ deg usfaylu, s walɣu |
-| Tiwlafin RAW n Insta360 .insp (seg lebni 16) | Ttwasdukklent ɣef GPU send ameskan n tsfirt, alamma d 8192x4096 | Akken kan | Immersif, seg tugna yettwasdukklen yettwahyan i tcacit |
-| Insta360 .insv RAW, snat n tlentilin deg yiwen ubrid (seg lebni 16) | Ttwasdukklent s usemdu GPU deg umeɣri Media3 | Ttwasdukklent s shader n SceneKit | Immersif, ttwasdukklent s usemdu GPU-nni |
-| Tividyutin RAW s yiwet n talentilt i yal abrid neɣ i yal afaylu (seg lebni 18): Insta360 X4, X4 Air, X5, X6 .insv, tiyugiwin X3, GoPro .360, DJI .osv | Sin n yidekuduren n warrum deg yiwet n tikkelt, yiwen i yal talentilt (seg lebni 19 iseɣzanen ɣef yibenk war adekudur n warrum, alamma d 2048x2048 i yal talentilt), d umsuddes GL i yessdukkulen deg tsfirt; yiwet n talentilt, syin tavidyut yettwabeddlen, syin tavidyut war asdukkel, mi ara yili yibenk ur yezmir ara ad yesseddu sin | Amsuddes AVFoundation udmawan s Metal | Immersif, sin-nni n yidekuduren d umsuddes-nni (agalis 3840x1920) |
+| Acu | Tiliɣriyin Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (seg lebni 20) |
+|---|---|---|---|---|
+| Tividyutin timsawin (MP4, MOV, MKV, ayen yeɣɣar yibenk) | Ameɣri n Immich, d umeɣri unṣib i yifuyla yettwabḍan n uẓeṭṭa | Akken kan, ala ifuyla MKV d AVI n ufaylu yettwabḍan, ur yettaldi ara iOS (ɣef uqeddac ttwaɣran yettwabeddlen) | Deg usfaylu | Am ɣef tiliɣriyin; OK yesteɛfay, azelmaḍ d uyeffus neggzen 10 n tsinin |
+| Tiwlafin 360° | Ameskan n tsfirt, ajiroskop | Akken kan | Immersif, i tama-k akk | Ameskan n tsfirt yettezzin s yineccaben, asemɣer s tqeffalin n ubadu |
+| Tividyutin 360° | Ameɣri unṣib Media3 ɣef tsfirt, ajiroskop, anegzum, afran n ubrid n umeslaw, amatar n usali | Ameɣri unṣib SceneKit ɣef tsfirt, ajiroskop, afran n ubrid n umeslaw, amatar n usali; urar d usteɛfu, ulac yakan afeggag n wakud | Immersif, 3D n tidet i yifuyla stiriyu, afeggag n wakud s yineggzumen n 10 n tsinin, amidya uzwir d uḍfir | Ameɣri Media3 n tiliɣriyin, yettezzin s yineccaben |
+| 3D 360° (s ufella d wadda, rrif ɣer rrif) | Tiṭ tazelmaḍt, taqeffalt n usefrek | Akken kan | Yal tiṭ tettawi azgen-is n tugna | Tiṭ tazelmaḍt, taqeffalt n usefrek |
+| Tiwlafin d tvidyutin VR180 (azgen n tsfirt) | Azgen n tsfirt, taqeffalt 360°/180° | Akken kan | Azgen n tsfirt immersif | Azgen n tsfirt, taqeffalt 360°/180° |
+| Spatial 2.5D (tiɣmert ɣef ugdil amsawi seg tvidyut stiriyu) | Ameɣri unṣib, aḍfar n uqerru s tkamirat n zdat | Akken kan | Ur yettwasumer ara | Ur yettwasumer ara |
+| Tiwlafin timennawin n Apple (tiyugiwin stiriyu HEIC, seg lebni 19) | Tiṭ tazelmaḍt, izirig n talqayin yenna-d d tamennawt | Akken kan | Wali s 3D: snat n tiṭṭawin ɣef tewlaft yettɛumen deg umeskan immersif, 3D neɣ 2D, tettbeddil tiddi | Tiṭ tazelmaḍt, izirig n talqayin |
+| Tividyutin timennawin n Apple (MV-HEVC, seg lebni 19) | Yiwet n tiṭ (tissi n tazwara), s walɣu | Akken kan | Yiwet n tiṭ deg usfaylu, s walɣu | Yiwet n tiṭ, s walɣu |
+| Tiwlafin RAW n Insta360 .insp (seg lebni 16) | Ttwasdukklent ɣef GPU send ameskan n tsfirt, alamma d 8192x4096 | Akken kan | Immersif, seg tugna yettwasdukklen yettwahyan i tcacit | Am ɣef tiliɣriyin |
+| Insta360 .insv RAW, snat n tlentilin deg yiwen ubrid (seg lebni 16) | Ttwasdukklent s usemdu GPU deg umeɣri Media3 | Ttwasdukklent s shader n SceneKit | Immersif, ttwasdukklent s usemdu GPU-nni | Am ɣef tiliɣriyin |
+| Tividyutin RAW s yiwet n talentilt i yal abrid neɣ i yal afaylu (seg lebni 18): Insta360 X4, X4 Air, X5, X6 .insv, tiyugiwin X3, GoPro .360, DJI .osv | Sin n yidekuduren n warrum deg yiwet n tikkelt, yiwen i yal talentilt (seg lebni 19 iseɣzanen ɣef yibenk war adekudur n warrum, alamma d 2048x2048 i yal talentilt), d umsuddes GL i yessdukkulen deg tsfirt; yiwet n talentilt, syin tavidyut yettwabeddlen, syin tavidyut war asdukkel, mi ara yili yibenk ur yezmir ara ad yesseddu sin | Amsuddes AVFoundation udmawan s Metal | Immersif, sin-nni n yidekuduren d umsuddes-nni (agalis 3840x1920) | Am ɣef tiliɣriyin, mi ara tezmer tiliẓri ad tesseddu sin n yidekuduren deg yiwet n tikkelt |
+| Tamuɣli tusridt n tkamiṛat Tapo (seg lebni 20) | Ameɣri RTSP n Media3: SD deg usebter, HD deg ugdil ačuran, taqeffalt n umeslaw | Mazal: takarḍa tenna-d ad d-tas ar zdat | Deg usfaylu, s HD | Am ɣef tiliɣriyin |
+| Iseklasen n tkamiṛat Tapo (seg lebni 20) | Ttwawin-d seg tkarḍa n tkatut ɣer tvidyut H.264 s umeslaw-is, syin ttwaɣran s unegzum | Akken kan | Akken kan, deg usfaylu | Akken kan |
+
+Tagejdit n tiliẓri ur tettwasenqed ara yakan ɣef tiliẓri, wali [Wali ɣef tiliẓri](#watch-on-your-tv-android-tv-and-google-tv); izirigen n tkamiṛat ur ttwasenqden ara yakan s tkamiṛat n tidet.
 
 | Seg | Amek |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 d tamidelt, u daɣen d ameɣri n yimidyaten baṭel: yeqqar ayen ur ye
 | Tiliɣri neɣ tacacit s yiman-is | «Seqdec war aqeddac» deg usebter n tuqqna, neɣ aferdis On this device n yiccer Tamkarḍit |
 | NAS neɣ aselkim | Ifuyla yettwabḍan SMB d WebDAV, u seg lebni 19 iqeddacen n yimidyaten DLNA, i d-yettwafen deg uẓeṭṭa, ttwaɣran srid (tavidyut SMB s sḍis n tuqqniwin akk ugar), ulac ayen yettwanɣalen; seg lebni 15 ifuyla i tefreneḍ zemren ad ttwaznen ɣer umiḍan-ik Immich |
 | Tiliɣri nniḍen (seg lebni 19) | «Bḍu tiliɣri-a deg uẓeṭṭa» ɣef tiliɣri-nni: tacacit, neɣ yal amsaɣ WebDAV n uẓeṭṭa, teqqar ilbumen-is, ayyuren-is d yimidyaten-is 360° |
+| Plex Media Server (seg lebni 20) | Timkarḍiyin-is n tewlafin, n yisaragen d tsɣunin n TV s ukaram, ifuyla iṣliyen ttwaɣran srid s HTTPS yettwasenqden s uselkin n uqeddac s yiman-is, deg uxxam neɣ s tansa beṛṛa n uxxam, ɣef yal tiɣerɣert; wali [Plex Media Server, war plex.tv](#plex-media-server-without-plextv) |
+| Takamiṛat Tapo (seg lebni 20) | Tamuɣli tusridt s umiḍan n tkamiṛat (Android, Android TV, Quest), d yiseklasen n tkarḍa-s n tkatut s wawal uffir n umiḍan TP-Link (yal tiɣerɣert), deg uẓeṭṭa adigan kan; wali [Tikamiṛatin Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 yetteddu daɣen ɣef Meta Quest 3 d 3S (Horizon OS v69 neɣ ugar; lebni n Horizon Store yettwabder i sin-a kan; `-release.apk` amatu ilaq ad yettwasbedd daɣen ɣef Quest 2 neɣ Quest Pro, ur yettwarem ara). Amek ara t-tesqedceḍ yella deg [Deg tcacit Meta Quest 3](#in-the-meta-quest-3-headset); tigezmi-a tettmeslay ɣef usebded-is d wayen yemgaraden deg tcacit.
 
-Lebni n tcacit yettmeslay kan d yiqeddacen s HTTPS, neɣ s HTTP amagnu ɣer yismawen n uẓeṭṭa n wexxam (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) d tcacit s yiman-is, akken i t-yessuter Horizon Store. Aqeddac yettwarun d tansa HTTP tamagnut s IP, am `http://192.168.1.10:2283`, yettwagi s lebni-nni: seqdec HTTPS, isem n uẓeṭṭa n wexxam (`nas.local`), neɣ `-release.apk` amatu, i yeḥerzen tasertit yeldin n tiliɣriyin. Ifuyla yettwabḍan WebDAV, DLNA d tiliɣri ɣef tansa HTTP tamagnut n uẓeṭṭa adigan ur ttwaḥsaben ara: asnas yeqqar-iten s yiman-is u yettak i yimeɣriyen-is kan tansa n tqentert-is tadigant (ilaq ad yettwasentem deg tcacit i DLNA d ufaylu yettwabḍan n tiliɣri, imaynuten deg lebni 19).
+Lebni n tcacit yettmeslay kan d yiqeddacen s HTTPS, neɣ s HTTP amagnu ɣer yismawen n uẓeṭṭa n wexxam (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) d tcacit s yiman-is, akken i t-yessuter Horizon Store. Aqeddac yettwarun d tansa HTTP tamagnut s IP, am `http://192.168.1.10:2283`, yettwagi s lebni-nni: seqdec HTTPS, isem n uẓeṭṭa n wexxam (`nas.local`), neɣ `-release.apk` amatu, i yeḥerzen tasertit yeldin n tiliɣriyin. Ifuyla yettwabḍan WebDAV, DLNA d tiliɣri ɣef tansa HTTP tamagnut n uẓeṭṭa adigan ur ttwaḥsaben ara: asnas yeqqar-iten s yiman-is u yettak i yimeɣriyen-is kan tansa n tqentert-is tadigant (ilaq ad yettwasentem deg tcacit i DLNA d ufaylu yettwabḍan n tiliɣri, imaynuten deg lebni 19). Seg lebni 20 aqeddac Plex yettwaweḍ s HTTPS, u takamiṛat Tapo s usnas s yiman-is, s tmuɣli-s tusridt s RTSP, ur nelli d HTTP: ur ilaq ara ad ttwaḥesben (ilaq ad yettwasentem deg tcacit).
 
 <a id="install"></a>
 ### Asebded
@@ -576,7 +754,7 @@ Tabdart n Horizon Store tettraǧu asenqed n Meta, tettwazen s lebni 14; alamma t
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. Deg tcacit, ldi Tamkarḍit (Library), fren asizdeg «Unknown sources» (Iɣbula irussinen), u sekker Immuch360.
@@ -584,7 +762,7 @@ Tabdart n Horizon Store tettraǧu asenqed n Meta, tettwazen s lebni 14; alamma t
 
 ### Deg usfaylu
 
-Asnas akk yetteddu am usfaylu 2D i yettbeddilen tiddi: tuqqna, tasnakudt, ilbumen, anadi, iccer Tamkarḍit (tabdart 360°, On this device, Ifuyla n uẓeṭṭa), iɣewwaṛen, d yimeskanen n tewlafin d tvidyutin, anda ttwaɣrant tiwlafin d tvidyutin timsawin. Deg tcacit taqeffalt 360°, d «Wali am 360°» deg wumuɣ ⋮, ldint srid ameskan immersif deg wadeg n umeskan n tsfirt n tiliɣriyin, u taqeffalt Spatial 2.5D d uɣewwar-is ur d-ttbanen ara. Seg lebni 19 tawlaft tamennawt n Apple tesɛa taqeffalt «Wali s 3D», u tamkarḍit tamecṭuḥt «Bḍu tiliɣri-a deg uẓeṭṭa» ur d-tettban ara: d tacacit i yeqqaren afaylu yettwabḍan n tiliɣri.
+Asnas akk yetteddu am usfaylu 2D i yettbeddilen tiddi: tuqqna, tasnakudt, ilbumen, anadi, iccer Tamkarḍit (tabdart 360°, On this device, Ifuyla n uẓeṭṭa), iɣewwaṛen, d yimeskanen n tewlafin d tvidyutin, anda ttwaɣrant tiwlafin d tvidyutin timsawin. Deg tcacit taqeffalt 360°, d «Wali am 360°» deg wumuɣ ⋮, ldint srid ameskan immersif deg wadeg n umeskan n tsfirt n tiliɣriyin, u taqeffalt Spatial 2.5D d uɣewwar-is ur d-ttbanen ara. Seg lebni 19 tawlaft tamennawt n Apple tesɛa taqeffalt «Wali s 3D», u tamkarḍit tamecṭuḥt «Bḍu tiliɣri-a deg uẓeṭṭa» ur d-tettban ara: d tacacit i yeqqaren afaylu yettwabḍan n tiliɣri. Seg lebni 20 iqeddacen Plex d tikamiṛatin Tapo ldin daɣen deg usfaylu, tamuɣli tusridt n tkamiṛat s HD; aɣewwar «Taneɣruft i tilikumand» yeqqim ɣef S wudem awurman, ayen i t-yeǧǧan yensa deg tcacit.
 
 ### S tugniwin
 
@@ -598,7 +776,7 @@ Tugniwin yettwaṭṭfen deg tcacit s tqeffalt n tuṭṭfa (taqeffalt Meta d td
 ### Tilisa deg tcacit
 
 - **Ikudiken n tvidyut**: HEVC (H.265) d afran aɣelsan; H.264 yeḥbes ɣer 4096x2304 akka. Ayen yessenqad usnas, d wamek ara tefkeḍ i tcacit tavidyut i teɣɣar, llan deg [Talɣut n tvidyut d yidekuduren](#video-details-decoders-and-why-a-video-stutters).
-- **Taḥanutt**: lqem n tḥanutt yebda seg lebni 14. Timahilin yettwacerḍen «seg lebni 15» d «seg lebni 16» ad d-asent s uleqqem-is i d-iteddun (lebni 16, yella yakan deg ubrid n usekyed alpha), tid i d-yuḍfren deffir-s; APK n GitHub yesɛa-tent akk tura.
+- **Taḥanutt**: lqem n tḥanutt yebda seg lebni 14. Timahilin yettwacerḍen «seg lebni 15» d wid i d-yuḍfren ad d-asent s yileqman-is i d-iteddun (abrid n usekyed alpha n tḥanutt, i yimsekyaden, yettawi yal lebni amaynut); APK n GitHub yesɛa-tent akk tura.
 - **Tisirag**: lebni n tcacit yessuter kan tiwlafin d tvidyutin (askar war aqeddac) d yilɣa (anerni n uḥraz). Ur yesɛi ara tasiregt n uḥraz n yifuyla, n umeslaw, n wadeg neɣ n tkamirat, mgal lebni n tiliɣri; ihi abeddel n uqeddac s yisem n Wi-Fi ulac-it deg tcacit.
 - **Tiddi n APK**: Spatial SDK yerna azal n 56 MB n tengalt tagensayt ARM 64-bit, ula ɣef tiliɣriyin, anda werǧin tettwasali.
 - **Turagt**: ameskan immersif yesseqdac Meta Spatial SDK, yettwazuzren s Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Tugniwin yettwaṭṭfen deg tcacit s tqeffalt n tuṭṭfa (taqeffalt Meta d td
 <a id="where-to-get-it"></a>
 ## Anda ara t-id-tafeḍ
 
-Asnas yella deg Google Play; lqem n App Store yettraǧu asenqed n Apple, u lqem n Meta Horizon Store win n Meta. Asiẓreg n GitHub yesɛa yal tikkelt lebni aneggaru:
+Asnas yella deg Google Play i tiliɣriyin d ttablit; lqem n App Store yettraǧu asenqed n Apple, lqem n Meta Horizon Store win n Meta, u lqem n Google Play i tiliẓriyin yettraǧu asenqed n Google i usiẓreg n tiliẓri. Asiẓreg n GitHub yesɛa yal tikkelt lebni aneggaru:
 
 | Taɣerɣert | Ass-a | Ticki |
 |---|---|---|
-| Tiliɣriyin d ttablit Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), neɣ APK deg usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` i tiliɣri (`Immuch360-v<version>-release.apk` amatu yetteddu anda yebɣu yili, `-armeabi-v7a` i tiliɣriyin tiqburin s 32 bit, u afaylu `.aab` d win n Google Play, mačči i usebded s ufus). Lebni n GitHub s umata yezwar taḥanutt. Akken yebɣu yili, yettwasbedd ɣer tama n usnas unṣib Immich (akemmus `com.aprogsys.immuch360`). | Google Play: lebni 15 d 16 ttwaznen i usenqed n Google ass n 4 tubeṛ 2026 (lebni aneggaru yettwasentmen dinna d lebni 11) |
+| Tiliɣriyin d ttablit Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), neɣ APK deg usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` i tiliɣri (`Immuch360-v<version>-release.apk` amatu yetteddu anda yebɣu yili, `-armeabi-v7a` i tiliɣriyin tiqburin s 32 bit, u afaylu `.aab` d win n Google Play, mačči i usebded s ufus). Lebni n GitHub s umata yezwar taḥanutt. Akken yebɣu yili, yettwasbedd ɣer tama n usnas unṣib Immich (akemmus `com.aprogsys.immuch360`). | Google Play: lebni 18 yella, lebni 19 deg usenqed n Google seg 6 tubeṛ 2026, syin lebni 20 |
 | iPhone d iPad | Yettraǧu asenqed n Apple. Lqem yettwasenqaden yesɛa timahilin n lebni 11: asali ɣer Immich d ufran «Aɣbalu n tvidyut» (lebni 15) d yifuyla RAW n Insta360 (lebni 16) ad d-asen s uleqqem n App Store i d-iteddun. Aɣbalu yettwabna s Xcode neɣ ɣef Codemagic, wali [Bnu-t s yiman-ik](#build-it-yourself). | App Store, deg usenqed |
-| Meta Quest 3 d 3S | Afaylu `-quest-release.apk` n usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases) (`-release.apk` amatu yetteddu daɣen), yettwasbedden s ufus deg uskar n uneflay, wali [Asebded](#install). Lebni n tḥanutt d APK n GitHub ttwazeplen s tsura yemgaraden: akken ad tɛeddiḍ seg yiwen ɣer wayeḍ, kkes asnas qbel (iɣewwaṛen-is d yifuyla yettwabḍan yettwaskelsen ad ṛuḥen yid-s). | Meta Horizon Store: lebni 14 deg usenqed n Meta seg 3 tubeṛ 2026; lebni 16 yella deg ubrid alpha n tḥanutt (i yimsekyaden kan) |
+| Meta Quest 3 d 3S | Afaylu `-quest-release.apk` n usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases) (`-release.apk` amatu yetteddu daɣen), yettwasbedden s ufus deg uskar n uneflay, wali [Asebded](#install). Lebni n tḥanutt d APK n GitHub ttwazeplen s tsura yemgaraden: akken ad tɛeddiḍ seg yiwen ɣer wayeḍ, kkes asnas qbel (iɣewwaṛen-is d yifuyla yettwabḍan yettwaskelsen ad ṛuḥen yid-s). | Meta Horizon Store: lebni 14 deg usenqed n Meta seg 3 tubeṛ 2026; abrid alpha n tḥanutt (i yimsekyaden kan) yettawi yal lebni amaynut |
+| Android TV d Google TV (seg lebni 20) | `Immuch360-v<version>-release.apk` amatu n usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases), yettwasbedden s adb, wali [Sebded-it ɣef tiliẓri](#install-it-on-the-tv). D asnas-nni n tiliɣriyin. | Google Play ɣef tiliẓriyin, deffir usenqed n Google i usiẓreg n tiliẓri |
 
 Iseɣwan n App Store d Meta Horizon Store ad ttwarnun da mi ara d-teffeɣ tebdart. Kcem s tansa URL d umiḍan-ik Immich yezgan, neɣ sit ɣef «Seqdec war aqeddac» deg usebter n tuqqna akken ad tebduḍ s tewlafin d tvidyutin n yibenk s yiman-is. APK n GitHub ur yettales ara aleqqem s yiman-is: ḍfer asebter Isiẓrigen, u mi ara tesbeddeḍ asnas seg tḥanutt, awi ileqman seg tḥanutt-nni.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Tugniwin n ugdil n tḥuna ttwaṭṭfent ɣef yilmisen debug n usimulatur yettwabnan s `--dart-define=IMMUCH_SCREENSHOTS=true`, i yeffren kan abanner debug. Snat n tsenfaliyin Android d yiwen usnas. Tin n `quest` tettnadi SDK 34 u teḥrez kan tisirag i tesseqdac tcacit (tiwlafin, tividyutin, ilɣa): asefrek n yimidyaten, adeg deg ugilal, aḥraz aqbur, ameslaw, adeg n yimidyaten, adeg n yibenk d tkamirat ttwakksent deg `android/app/src/quest/AndroidManifest.xml`, acku Meta Horizon Store yugi snat timezwura u yessuter assaɣ i yal tasiregt nniḍen tamḥulfut; afaylu-nni s yiman-is yebder Quest 3 d 3S d yibenkan yettwasefraken, u yeḥder HTTP amagnu ɣer tcacit s yiman-is d yismawen n uẓeṭṭa n wexxam. APK d 64 bit kan s sebba n sin n yimuren-nni nniḍen n yizirig-is n tladna (`--target-platform android-arm64 --android-project-arg arm64only=true`). Tin n `phone` d ayen yessuter Google Play. Akken ad tebnuḍ i iOS ɣef Mac-ik, seqdec Xcode d tarbaɛt-ik n uzmul; s Xcode 26, sekker `xcodebuild -downloadComponent MetalToolchain` yiwet n tikkelt qbel, acku ishaderen Spatial sran-t. War Mac, ilmisen iOS ttedun ɣef Codemagic (Mac yettusneblen) seg ufaylu `codemagic.yaml` n ukufi-a. Ilmisen n usiẓreg Android ttedun ɣef GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Tugniwin n ugdil n tḥuna ttwaṭṭfent ɣef yilmisen debug n usimulatur yettwabnan s `--dart-define=IMMUCH_SCREENSHOTS=true`, i yeffren kan abanner debug. Snat n tsenfaliyin Android d yiwen usnas. Seg lebni 20 tin n `phone` tettbeddir iman-is daɣen d asnas n tiliẓri (anekcam deg ulanseɣ n tiliẓri d ubanner, ur tesra ara agdil anennal), ayen ur tettarnu ara tin n `quest`. Tin n `quest` tettnadi SDK 34 u teḥrez kan tisirag i tesseqdac tcacit (tiwlafin, tividyutin, ilɣa): asefrek n yimidyaten, adeg deg ugilal, aḥraz aqbur, ameslaw, adeg n yimidyaten, adeg n yibenk d tkamirat ttwakksent deg `android/app/src/quest/AndroidManifest.xml`, acku Meta Horizon Store yugi snat timezwura u yessuter assaɣ i yal tasiregt nniḍen tamḥulfut; afaylu-nni s yiman-is yebder Quest 3 d 3S d yibenkan yettwasefraken, u yeḥder HTTP amagnu ɣer tcacit s yiman-is d yismawen n uẓeṭṭa n wexxam. APK d 64 bit kan s sebba n sin n yimuren-nni nniḍen n yizirig-is n tladna (`--target-platform android-arm64 --android-project-arg arm64only=true`). Tin n `phone` d ayen yessuter Google Play. Akken ad tebnuḍ i iOS ɣef Mac-ik, seqdec Xcode d tarbaɛt-ik n uzmul; s Xcode 26, sekker `xcodebuild -downloadComponent MetalToolchain` yiwet n tikkelt qbel, acku ishaderen Spatial sran-t. War Mac, ilmisen iOS ttedun ɣef Codemagic (Mac yettusneblen) seg ufaylu `codemagic.yaml` n ukufi-a. Ilmisen n usiẓreg Android ttedun ɣef GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Ulac ula d yiwet n tbaḍnit deg ukufi-a: tasarut n uzmul Android tettwaḥraz d tibaḍniyin GitHub Actions yettwawgelhen, u ayen n uzmul n Apple yettwaḥraz d imuttiyen yettwawgelhen ɣef Codemagic. Ifuyla n workflow ttbedren-ten kan s yisem. War `android/key.jks` inek, lebni n usiẓreg yettwazmal s tsarut debug u ur yezmir ara ad yettwasbedd ɣef unɣal seg GitHub neɣ seg tḥanutt (kkes-it qbel); lebni debug yettwasbedd ɣer tama-s am Immuch360 debug. Anɣal n Meta Horizon Store d APK `quest` n usiẓreg yettwazemlen s tsarut nniḍen, tin s wacu i yettwajerred usnas n tḥanutt i tikkelt tamezwarut, ihi ur yezmir ara ad yettwasbedd ɣef APK yettwasbedden s ufus, u ula d akessaḍ.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Seg lebni 19 amsaɣ DLNA, afaylu yettwabḍan n tiliɣri d tagrut n yimidyaten imennawen n Apple ttarun daɣen deg uɣmis n usnas s yiman-is (Logs (Iɣmisen), deg wumuɣ n tugna n umaɣnu d asawen s ayeffus), ddaw `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` d `NetworkMediaService`. Izirigen n uɣmis qqimen ɣef yibenk alamma tneɣleḍ-ten s yiman-ik.
+Seg lebni 19 amsaɣ DLNA, afaylu yettwabḍan n tiliɣri d tagrut n yimidyaten imennawen n Apple ttarun daɣen deg uɣmis n usnas s yiman-is (Logs (Iɣmisen), deg wumuɣ n tugna n umaɣnu d asawen s ayeffus), ddaw `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` d `NetworkMediaService`. Seg lebni 20 askar n tiliẓri yettaru dinna ddaw `TvMode` d `TvTextEntry`, iqeddacen Plex ddaw `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` d `PlexServerEditPage`, u tikamiṛatin Tapo ddaw `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` d `CameraLiveView`; izirigen n Plex werǧin gebren ajuṭu, tansa neɣ azwel, u izirigen n tkamiṛat ur gebren ara awalen uffiren. Izirigen n uɣmis qqimen ɣef yibenk alamma tneɣleḍ-ten s yiman-ik.
 
 ## Tabaḍnit
 
 - **Ulac ayen yettruḥun ɣer uneflay**: asnas yettmeslay d uqeddac Immich i tferneḍ (u, mi ara teldiḍ takarḍa, d umeẓlu n yiḥricen n tkarḍa i yesseqdac uqeddac-nni), ur yesɛi ara adellel, ur yesɛi ara tasleḍt, ur yesɛi ara ameẓlu n uneqqis n uɣelluy i yesseddu uneflay, u ur yettazen acemma i uneflay n Immuch360.
-- **War aqeddac**, ulac ayen ara d-yeffɣen seg yibenk.
+- **War aqeddac**, ulac aqeddac ara yettwanermes: asnas yesseqdac aẓeṭṭa kan i yifuyla yettwabḍan, iqeddacen Plex d tikamiṛatin i teldiḍ, d ufaylu yettwabḍan n tiliɣri, ma tremdeḍ-t.
 - **Ifuyla n uẓeṭṭa**: tabdart n yifuyla yettwabḍan tettwaḥraz ɣef yibenk u werǧin tettwazen ɣer uqeddac; awalen uffiren ttedun ɣer tsarut n yibenk (keychain neɣ keystore).
+- **Plex** (seg lebni 20): ajuṭu yeqqim deg uḥraz aɣellsan n yibenk u yettwazen kan ɣer uqeddac-ik, deg uqerru n usuter s HTTPS; asnas werǧin yettnermis plex.tv.
+- **Tikamiṛatin Tapo** (seg lebni 20): awal uffir n umiḍan TP-Link d wawal uffir n umiḍan n tkamiṛat qqimen deg uḥraz aɣellsan n yibenk; asnas yemmeslay d tkamiṛat deg uẓeṭṭa adigan kan, werǧin d yiqeddacen n TP-Link; tividyutin i d-yettwawin qqiment deg tkatut tuffirt n usnas u ttwakksent akked tkamiṛat.
+- **Tiliẓri**: ma yella yibenk d tiliẓri yettwaɣer ɣef yibenk; ulac ayen yettwazenen.
 - **Afaylu yettwabḍan n tiliɣri**: aẓeṭṭa adigan kan, s yisem n useqdac d wawal uffir, s HTTP amagnu (wali [Bḍu tiliɣri-a deg uẓeṭṭa](#share-this-phone-on-the-network)).
 - **Takamirat**: tettwaseqdac kan s umeɣri Spatial 2.5D, ɣef yibenk; tugniwin werǧin ttwaḥerzent, werǧin ttwaznent ɣer wanda nniḍen.
 
@@ -675,20 +857,25 @@ Asenfar-a d afurk n Immich u yeqqim ddaw [GNU AGPL v3](LICENSE). Yal APK, ula d 
 
 Ayen ur yemmid ara yakan, win yettbanen d amezwaru qbel. Ulac dagi ula d yiwet n lewɛed, u tamuɣli-nwen deg [umfaraz n wuguren](https://github.com/freeKC/Immuch360/issues) tettɛawan i wakken ad nefren ayen ara d-yasen d amezwaru.
 
-- **Google Play**: lebni 15 d 16 ttwaznen i usenqed n Google ass n 4 tubeṛ 2026 u ad d-ffɣen mi ara ttwaqeblen; lebni aneggaru yettwasentmen dinna d lebni 11.
+- **Google Play**: lebni 18 yella; lebni 19 deg usenqed n Google seg 6 tubeṛ 2026, u lebni 20 ad d-yeḍfer.
 - **App Store**: lqem 3.3.0 yettraǧu asenqed n Apple; yesɛa timahilin n lebni 11, ihi asali ɣer Immich d usenqed n yidekuduren n tvidyut (lebni 15) d yifuyla RAW n Insta360 (lebni 16) ad d-asen s uleqqem n App Store i d-iteddun. Aseɣwen ad yettwarnu da mi ara yili yeffeɣ.
-- **Meta Horizon Store**: tabdart tettwazen i usenqed n Meta ass n 3 tubeṛ 2026 s lebni 14, u lebni 16 yella deg ubrid alpha n tḥanutt i uleqqem i d-iteddun. Mi ara tettwaqbel tebdart, Quest 3 ur yesra ara asebded s ufus u aseɣwen n tḥanutt ad yettwarnu da; anɣal yettwasbedden s ufus ilaq ad yettwakkes qbel (wali [Asebded](#install)).
-- **Tibdarin n tḥuna**: iḍrisen n Google Play d App Store mazal glemen-d ilmisen imezwura (tiwlafin d tvidyutin 360°, ifuyla RAW ttbanen d imsawin); ad d-sskanen imeskanen 3D, VR180 d Spatial, askar war aqeddac, ifuyla n uẓeṭṭa, ameɣri n yimidyaten d yifuyla RAW n Insta360. Aḍris n Meta Horizon Store yesskanay-d yakan ameɣri n yimidyaten.
+- **Meta Horizon Store**: tabdart tettwazen i usenqed n Meta ass n 3 tubeṛ 2026 s lebni 14, u abrid alpha n tḥanutt yettawi yal lebni amaynut i uleqqem i d-iteddun. Mi ara tettwaqbel tebdart, Quest 3 ur yesra ara asebded s ufus u aseɣwen n tḥanutt ad yettwarnu da; anɣal yettwasbedden s ufus ilaq ad yettwakkes qbel (wali [Asebded](#install)).
+- **Tibdarin n tḥuna**: tabdart n Google Play tettwaɛawed deg tubeṛ 2026 s tugniwin n ugdil timaynutin, u ad d-tawi tugniwin n ugdil n tiliẓri d ubanner n tiliẓri s usiẓreg n tiliẓri. Aḍris n App Store mazal yeglem-d ilmisen imezwura (tiwlafin d tvidyutin 360°, ifuyla RAW ttbanen d imsawin); ad d-yesskan imeskanen 3D, VR180 d Spatial, askar war aqeddac, ifuyla n uẓeṭṭa, ameɣri n yimidyaten d yifuyla RAW n Insta360. Aḍris n Meta Horizon Store yesskanay-d yakan ameɣri n yimidyaten.
 - **Ifuyla RAW n tkamiratin 360°, d wayen d-iteddun**: amatar n unnerni mi ara tettwahyya tewlaft RAW i tcacit; asgunfu n tvidyutin GoPro d DJI seg yisefka-nsent n umussu; .dng s snat n tiṭṭawin fisheye; ineqqisen ɣef yibenkan n tɣuri s snat n tlentilin n lebni 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) akken ad ttwasentment tuqqniwin d tlisa n yidekuduren.
 - **DLNA, afaylu yettwabḍan n tiliɣri d Apple spatial, d wayen d-iteddun**: ineqqisen ɣef yibenkan n lebni 19 (Plex, Jellyfin, NAS d Freebox Server s DLNA; tiliɣri i yettqeddicen Quest, ula s ataxxam-is n tuqqna; tiwlafin d tvidyutin timennawin n tidet n iPhone deg tcacit); azref multicast yettwasutren seg Apple, akken ad afen yiPhone yal aqeddac DLNA; uzwir d uḍfir gar tewlafin timennawin deg tcacit; tacreḍt tamennawt ɣef tewlafin n uqeddac deg tesnakudt; tividyutin timennawin s 3D ɣef Quest, ma yella idekuduren-is sirgen-t.
 - **Imeɣriyen 360° ɣef tiliɣriyin, d wayen d-iteddun**: afeggag n wakud deg umeɣri n tvidyutin 360° n iOS (win n Android yesɛa-t), uzwir/uḍfir deg yimeɣriyen 360° n tiliɣriyin am deg umeskan immersif n Quest, d tewlafin deg umeɣri unṣib n tvidyutin 360°.
 - **Ifuyla n uẓeṭṭa, isurifen i d-iteddun**: azuɣer seg ufaylu n ukaram ɣer win i d-iteddun deg yisebtar n tewlafin d tvidyutin (ameskan immersif n Quest yettɛeddi yakan gar yifuyla 360° n ukaram), asesteb Digest i WebDAV, isem n useqdac seg ugmuḍ Bonjour.
 - **Tividyutin timsawin**: afran n ubrid n umeslaw deg umeɣri amsawi, i tvidyutin n uqeddac, n yibenk d yifuyla yettwabḍan (imeɣriyen 360° d Spatial sɛan-t).
+- **Android TV, ayen d-iteddun**: asekyed ɣef yibenk n lebni 20 ɣef usimulatur Google TV d tiliẓri n tidet, syin asiẓreg n tiliẓri ɣef Google Play (tugniwin n ugdil n tiliẓri, abanner n tiliẓri, asenqed n Google); ar zdat, ibuda ɣef ugdil agejdan n tiliẓri.
+- **Tikamiṛatin Tapo, ayen d-iteddun**: asekyed ɣef yibenk n lebni 20 s tkamiṛatin n tidet; tamuɣli tusridt ɣef iPhone d iPad; iseklasen H.265; taɣuri n tvidyut mi ara tettwawi-d; ass akk n yiseklasen ɣef yiwet n tesnakudt.
+- **Plex, ayen d-iteddun**: asekyed ɣef yibenk n lebni 20 (tiliɣriyin, Quest, iPhone, tiliẓri, beṛṛa n uxxam); tawwit n ujuṭu seg uselkim s tengalt QR; aseffer n tama DLNA n uqeddac Plex deg tebdart n yiqeddacen yettwafen; IPv6.
 - **Upstream**: isuturen n usdukkel (pull requests) imecṭaḥ i Immich i yiḥricen i bɣan yimeẓla, bdu s umeskan n tewlafin 360°.
 
 ## Tanemmirt
 
 Ameskan n tewlafin 360° yebna ɣef usuter n usdukkel upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) n dmitry-brazhenko, i yebnan s yiman-is ɣef usenfar amezwaru n bencefr deg [#30192](https://github.com/immich-app/immich/pull/30192). Tanemmirt i sin-nsen.
+
+Tikamiṛatin Tapo n lebni 20 ttwarunt seg wayen i d-glemen yisenfaren n uɣbalu yeldin [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) d [python-kasa](https://github.com/python-kasa/python-kasa) ɣef tkamiṛatin-a.
 
 Ayɣer afurk: tamuɣli 360° ɣef uziraz tettwasuter seg yennayer 2024 u mazal ulac-itt deg usnas unṣib; ameskan n tewlafin yettwasenqad upstream deg [#31169](https://github.com/immich-app/immich/pull/31169). Afurk-a yessuffeɣ-it tura, yesselkam tamuɣli n tidet ɣef yibenkan, u ad yefk i Immich, s yisuturen n usdukkel imecṭaḥ, ayen akk i bɣan yimeẓla. Ameskan n Meta Quest yettekka ɣef Meta Spatial SDK, ur nelli d aɣbalu yeldin, ihi yeqqim deg ufurk-a.
 

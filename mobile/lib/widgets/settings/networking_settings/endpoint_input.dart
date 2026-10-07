@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/auth/auxilary_endpoint.model.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/widgets/settings/networking_settings/networking_settings.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -113,14 +115,25 @@ class EndpointInputState extends ConsumerState<EndpointInput> {
           status: auxCheckStatus,
           enabled: widget.enabled,
         ),
-        subtitle: ImmichURLInput(
-          enabled: widget.enabled,
-          autovalidateMode: .onUserInteraction,
-          validator: validateUrl,
-          keyboardAction: .next,
-          hintText: 'http(s)://immich.domain.com',
+        subtitle: TvTextEntry(
           controller: controller,
-          focusNode: focusNode,
+          label: context.t.login_form_endpoint_url,
+          kind: TvTextKind.url,
+          // The field never has the focus on a TV, so the check that runs when it loses it runs here
+          onSubmitted: (url) {
+            if (validateUrl(url) == null) {
+              unawaited(validateAuxilaryServerUrl());
+            }
+          },
+          child: ImmichURLInput(
+            enabled: widget.enabled,
+            autovalidateMode: .onUserInteraction,
+            validator: validateUrl,
+            keyboardAction: .next,
+            hintText: 'http(s)://immich.domain.com',
+            controller: controller,
+            focusNode: focusNode,
+          ),
         ),
       ),
     );

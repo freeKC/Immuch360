@@ -27,6 +27,10 @@ enum SlideshowDirection { forward, backward, shuffle }
 /// transcoded stream; always the original, whatever the device; or always the transcoded stream
 enum VideoSourcePolicy { preferOriginalWithinDecoder, alwaysOriginal, alwaysTranscoded }
 
+/// The remote control layout (see tvModeProvider): on by itself on Android TV and Google TV, or forced on (a tablet
+/// driven by a keyboard or a game pad) or off
+enum TvLayoutMode { auto, on, off }
+
 enum PartnerDirection { sharedBy, sharedWith }
 
 enum DevicePermission { photos, videos, storage, mediaLocation }

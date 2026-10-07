@@ -1,0 +1,84 @@
+{
+  "MediaContainer": {
+    "size": 5,
+    "Setting": [
+      {
+        "id": "FriendlyName",
+        "label": "FriendlyName",
+        "summary": "",
+        "type": "text",
+        "default": "",
+        "value": "Test Plex",
+        "hidden": false,
+        "advanced": false,
+        "group": "network"
+      },
+      {
+        "id": "secureConnections",
+        "label": "secureConnections",
+        "summary": "",
+        "type": "int",
+        "default": 1,
+        "value": 1,
+        "hidden": false,
+        "advanced": false,
+        "group": "network"
+      },
+      {
+        "id": "GdmEnabled",
+        "label": "GdmEnabled",
+        "summary": "",
+        "type": "bool",
+        "default": true,
+        "value": true,
+        "hidden": false,
+        "advanced": false,
+        "group": "network"
+      },
+      {
+        "id": "ManualPortMappingMode",
+        "label": "ManualPortMappingMode",
+        "summary": "",
+        "type": "bool",
+        "default": false,
+        "value": true,
+        "hidden": false,
+        "advanced": false,
+        "group": "network"
+      },
+      {
+        "id": "ManualPortMappingPort",
+        "label": "ManualPortMappingPort",
+        "summary": "",
+        "type": "int",
+        "default": 32400,
+        "value": 32401,
+        "hidden": false,
+        "advanced": false,
+        "group": "network"
+      },
+      {
+        "id": "LastAutomaticMappedPort",
+        "label": "LastAutomaticMappedPort",
+        "summary": "",
+        "type": "int",
+        "default": 0,
+        "value": 0,
+        "hidden": false,
+        "advanced": false,
+        "group": "network"
+      },
+      {
+        "id": "customConnections",
+        "label": "customConnections",
+        "summary": "",
+        "type": "text",
+        "default": "",
+        "value": "",
+        "hidden": false,
+        "advanced": false,
+        "group": "network"
+      }
+    ]
+  }
+}

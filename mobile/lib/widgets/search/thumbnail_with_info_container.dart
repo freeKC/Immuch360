@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 
 class ThumbnailWithInfoContainer extends StatelessWidget {
   const ThumbnailWithInfoContainer({
@@ -18,8 +19,8 @@ class ThumbnailWithInfoContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+    return RemoteFocusable(
+      onTap: () => onTap?.call(),
       child: Stack(
         alignment: Alignment.bottomLeft,
         children: [

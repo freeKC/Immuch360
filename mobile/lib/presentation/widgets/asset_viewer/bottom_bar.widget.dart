@@ -11,8 +11,8 @@ import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/add_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/widgets/asset_viewer/video_controls.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -37,7 +37,8 @@ class ViewerBottomBar extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final isReadonlyModeEnabled = ref.watch(readonlyModeProvider);
+    // The read only mode, or a TV, where the app is a viewer: no share, upload, edit, add or delete
+    final isViewOnly = ref.watch(viewOnlyProvider);
     final showingDetails = ref.watch(assetViewerProvider.select((s) => s.showingDetails));
     final isInLockedView = ref.watch(inLockedViewProvider);
     final isInTrash = ref.watch(timelineServiceProvider).origin == TimelineOrigin.trash;
@@ -95,7 +96,7 @@ class ViewerBottomBar extends ConsumerWidget {
                         children: [
                           if (asset.isImage) OcrToggleButton(asset: asset),
                           if (asset.isVideo) VideoControls(videoPlayerName: asset.id),
-                          if (!isReadonlyModeEnabled)
+                          if (!isViewOnly)
                             ImmichColorOverride(
                               color: Colors.white,
                               child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: actions),

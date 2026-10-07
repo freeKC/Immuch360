@@ -10,7 +10,9 @@ class ImmichTheme {
   const ImmichTheme({required this.light, required this.dark});
 }
 
-ThemeData getThemeData({required ColorScheme colorScheme, required Locale locale}) {
+/// [tvMode]: the remote control layout (Android TV), where the focus is the only cursor: the focus overlay of buttons
+/// and list tiles becomes a light tint that leaves their content readable, under the focus ring of TvShell.
+ThemeData getThemeData({required ColorScheme colorScheme, required Locale locale, bool tvMode = false}) {
   final isDark = colorScheme.brightness == Brightness.dark;
 
   return ThemeData(
@@ -19,7 +21,7 @@ ThemeData getThemeData({required ColorScheme colorScheme, required Locale locale
     colorScheme: colorScheme,
     primaryColor: colorScheme.primary,
     hintColor: colorScheme.onSurfaceSecondary,
-    focusColor: colorScheme.primary,
+    focusColor: tvMode ? colorScheme.primary.withAlpha(60) : colorScheme.primary,
     scaffoldBackgroundColor: colorScheme.surface,
     splashColor: colorScheme.primary.withValues(alpha: 0.1),
     highlightColor: colorScheme.primary.withValues(alpha: 0.1),

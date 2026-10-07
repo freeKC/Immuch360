@@ -9,10 +9,15 @@ import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
-import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/network/found_servers.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
+import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/confirm_dialog.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
 import 'package:logging/logging.dart';
@@ -198,7 +203,8 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
     }
   }
 
-  /// Looks for the SMB, WebDAV and DLNA servers and the phone shares of the network, again when called again
+  /// Looks for the SMB, WebDAV and DLNA servers, the phone shares, the Plex servers and the cameras of the network
+  /// (the last two open their own pages), again when called again
   void _scan() {
     unawaited(_discovery?.cancel());
     void ended() {
@@ -237,8 +243,17 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   }
 
   /// Fills the form with a server found on the network, then asks for what is missing: the user name, the password
-  /// of a phone share (its user name is announced), nothing for a DLNA media server
+  /// of a phone share (its user name is announced), nothing for a DLNA media server. A Plex server and a camera have
+  /// pages of their own, which take the place of this one, filled in.
   void _fillFrom(DiscoveredServer server) {
+    if (server.type == NetworkSourceType.plex) {
+      unawaited(context.replaceRoute(PlexServerEditRoute(server: server)));
+      return;
+    }
+    if (server.type == NetworkSourceType.tapo) {
+      unawaited(context.replaceRoute(CameraEditRoute(server: server)));
+      return;
+    }
     final isDlna = server.type == NetworkSourceType.dlna;
     setState(() {
       // A share name and a WebDAV path do not mean the same, and what was filled in for another server is not right
@@ -412,7 +427,12 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       NetworkSourceType.smb => shareText.trim().replaceAll(RegExp(r'^[/\\]+|[/\\]+$'), ''),
       NetworkSourceType.webdav => normalizeNetworkPath(shareText, empty: ''),
       NetworkSourceType.dlna => normalizeDescriptionPath(shareText),
+      // Never held by this form: they have pages of their own
+      NetworkSourceType.plex || NetworkSourceType.tapo => null,
     };
+    if (share == null) {
+      return null;
+    }
     if (host.isEmpty || !_portIsValid || (type != NetworkSourceType.webdav && share.isEmpty)) {
       return null;
     }
@@ -430,6 +450,8 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       username: type == NetworkSourceType.dlna ? '' : _username.text.trim(),
       useTls: type != NetworkSourceType.smb && (address?.useTls ?? _useTls),
       discoveryId: discovery != null && discovery.type == type ? discovery.id : null,
+      // What a later build stored with the share, which this form does not show, is written back as it was
+      extraJson: widget.source?.extraJson ?? const {},
     );
   }
 
@@ -546,6 +568,47 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
     Widget? suffixIcon,
     Iterable<String>? autofillHints,
     ValueChanged<String>? onChanged,
+    TvTextKind tvKind = TvTextKind.text,
+  }) {
+    // On a TV the field is typed in through the native text dialog, whose text does not go through onChanged
+    return TvTextEntry(
+      controller: controller,
+      label: label,
+      kind: tvKind,
+      onSubmitted: (value) {
+        onChanged?.call(value);
+        _changed();
+      },
+      child: _textField(
+        controller,
+        label,
+        key: key,
+        hint: hint,
+        errorText: errorText,
+        focusNode: focusNode,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        obscureText: obscureText,
+        suffixIcon: suffixIcon,
+        autofillHints: autofillHints,
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _textField(
+    TextEditingController controller,
+    String label, {
+    Key? key,
+    String? hint,
+    String? errorText,
+    FocusNode? focusNode,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    bool obscureText = false,
+    Widget? suffixIcon,
+    Iterable<String>? autofillHints,
+    ValueChanged<String>? onChanged,
   }) {
     return TextField(
       key: key,
@@ -581,232 +644,253 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
         leading: const CloseButton(),
         centerTitle: false,
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          children: [
-            const SizedBox(height: 20),
-            if (_isNew) ...[
-              _DiscoverySection(
-                servers: _servers,
-                scanning: _scanning,
-                scanned: _scanned,
-                onScan: _scan,
-                onSelected: _fillFrom,
-              ),
+      // A remote control starts on the first item: a server found, or the first choice of the form
+      body: RemoteInitialFocus(
+        enabled: ref.watch(tvModeProvider),
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            children: [
               const SizedBox(height: 20),
-            ],
-            Text(context.t.network_share_type, style: labelStyle),
-            RadioGroup<NetworkSourceType>(
-              groupValue: _type,
-              onChanged: (type) {
-                if (type != null && type != _type) {
-                  setState(() {
-                    _type = type;
-                    if (type == NetworkSourceType.dlna) {
-                      // The switch is not shown for DLNA: an https description address sets it again
-                      _useTls = false;
-                    }
+              if (_isNew) ...[
+                FoundServersList(
+                  servers: _servers,
+                  scanning: _scanning,
+                  scanned: _scanned,
+                  onScan: _scan,
+                  onSelected: _fillFrom,
+                ),
+                const SizedBox(height: 20),
+              ],
+              Text(context.t.network_share_type, style: labelStyle),
+              RadioGroup<NetworkSourceType>(
+                groupValue: _type,
+                onChanged: (type) {
+                  if (type == NetworkSourceType.plex) {
+                    // A Plex server is paired on a page of its own: none of these fields makes sense for it
+                    unawaited(context.replaceRoute(PlexServerEditRoute()));
+                    return;
+                  }
+                  if (type != null && type != _type) {
+                    setState(() {
+                      _type = type;
+                      if (type == NetworkSourceType.dlna) {
+                        // The switch is not shown for DLNA: an https description address sets it again
+                        _useTls = false;
+                      }
+                      _testMessage = null;
+                    });
+                  }
+                },
+                child: Column(
+                  children: [
+                    RadioListTile<NetworkSourceType>(
+                      key: const Key('network_share_type_smb'),
+                      value: NetworkSourceType.smb,
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      title: Text(context.t.network_share_type_smb),
+                    ),
+                    RadioListTile<NetworkSourceType>(
+                      key: const Key('network_share_type_webdav'),
+                      value: NetworkSourceType.webdav,
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      title: Text(context.t.network_share_type_webdav),
+                    ),
+                    RadioListTile<NetworkSourceType>(
+                      key: const Key('network_share_type_dlna'),
+                      value: NetworkSourceType.dlna,
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      title: Text(context.t.network_share_type_dlna),
+                    ),
+                    // A share saved as another type stays one of those: a Plex server is added, not converted
+                    if (_isNew)
+                      RadioListTile<NetworkSourceType>(
+                        key: const Key('network_share_type_plex'),
+                        value: NetworkSourceType.plex,
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                        title: Text(context.t.network_share_type_plex),
+                      ),
+                  ],
+                ),
+              ),
+              if (isDlna) ...[
+                const SizedBox(height: 4),
+                Text(
+                  context.t.network_share_dlna_hint,
+                  key: const Key('network_share_dlna_hint'),
+                  style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),
+                ),
+              ],
+              const SizedBox(height: 16),
+              _field(_name, context.t.network_share_name, key: const Key('network_share_name')),
+              const SizedBox(height: 16),
+              _field(
+                _host,
+                context.t.network_share_host,
+                key: const Key('network_share_host'),
+                // The whole description address fits here and fills port and path: what a DLNA server that is not found
+                // needs (minidlna on Linux, never found on iOS, see ssdp.dart)
+                hint: isSmb
+                    ? 'nas.local, 192.168.1.20'
+                    : isDlna
+                    ? 'http://192.168.1.10:8200/rootDesc.xml'
+                    : 'cloud.example.com',
+                focusNode: _hostFocus,
+                keyboardType: TextInputType.url,
+                autofillHints: const [AutofillHints.url],
+                tvKind: TvTextKind.url,
+                // Another server: the id of the one tapped no longer goes with it
+                onChanged: (_) => _filledDiscovery = null,
+              ),
+              const SizedBox(height: 16),
+              _field(
+                _port,
+                context.t.network_share_port,
+                key: const Key('network_share_port'),
+                hint: isSmb ? '445' : (_useTls ? '443' : '80'),
+                errorText: _portIsValid ? null : '1-65535',
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                tvKind: TvTextKind.number,
+              ),
+              const SizedBox(height: 16),
+              _field(
+                _share,
+                isSmb
+                    ? context.t.network_share_share_name
+                    : isDlna
+                    ? context.t.network_share_description_path
+                    : context.t.network_share_url_path,
+                key: const Key('network_share_share'),
+                hint: isSmb
+                    ? 'media'
+                    : isDlna
+                    ? '/rootDesc.xml'
+                    : '/remote.php/dav/files/alice',
+                keyboardType: TextInputType.url,
+              ),
+              if (isSmb) ...[
+                const SizedBox(height: 4),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    key: const Key('network_share_choose_share'),
+                    onPressed: canListShares ? _chooseShare : null,
+                    icon: _listingShares
+                        ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.folder_shared_outlined),
+                    label: Text(
+                      context.t.network_share_scan_choose_share,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                if (_shareListError != null) _TestResult(message: _shareListError!, succeeded: false),
+              ],
+              const SizedBox(height: 16),
+              _field(
+                _rootPath,
+                context.t.network_share_root_path,
+                key: const Key('network_share_root_path'),
+                hint: '/',
+                keyboardType: TextInputType.url,
+              ),
+              // DLNA has no authentication
+              if (!isDlna) ...[
+                const SizedBox(height: 16),
+                _field(
+                  _username,
+                  context.t.network_share_username,
+                  key: const Key('network_share_username'),
+                  focusNode: _usernameFocus,
+                  autofillHints: const [AutofillHints.username],
+                ),
+                const SizedBox(height: 16),
+                _field(
+                  _password,
+                  context.t.network_share_password,
+                  key: const Key('network_share_password'),
+                  focusNode: _passwordFocus,
+                  obscureText: !_showPassword,
+                  autofillHints: const [AutofillHints.password],
+                  tvKind: TvTextKind.password,
+                  suffixIcon: IconButton(
+                    icon: Icon(_showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                    onPressed: () => setState(() => _showPassword = !_showPassword),
+                  ),
+                ),
+              ],
+              if (!isSmb && !isDlna) ...[
+                const SizedBox(height: 8),
+                SwitchListTile.adaptive(
+                  key: const Key('network_share_use_tls'),
+                  value: _useTls,
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  onChanged: (value) => setState(() {
+                    _useTls = value;
                     _testMessage = null;
-                  });
-                }
-              },
-              child: Column(
-                children: [
-                  RadioListTile<NetworkSourceType>(
-                    key: const Key('network_share_type_smb'),
-                    value: NetworkSourceType.smb,
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                    title: Text(context.t.network_share_type_smb),
-                  ),
-                  RadioListTile<NetworkSourceType>(
-                    key: const Key('network_share_type_webdav'),
-                    value: NetworkSourceType.webdav,
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                    title: Text(context.t.network_share_type_webdav),
-                  ),
-                  RadioListTile<NetworkSourceType>(
-                    key: const Key('network_share_type_dlna'),
-                    value: NetworkSourceType.dlna,
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                    title: Text(context.t.network_share_type_dlna),
-                  ),
-                ],
-              ),
-            ),
-            if (isDlna) ...[
-              const SizedBox(height: 4),
-              Text(
-                context.t.network_share_dlna_hint,
-                key: const Key('network_share_dlna_hint'),
-                style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),
-              ),
-            ],
-            const SizedBox(height: 16),
-            _field(_name, context.t.network_share_name, key: const Key('network_share_name')),
-            const SizedBox(height: 16),
-            _field(
-              _host,
-              context.t.network_share_host,
-              key: const Key('network_share_host'),
-              // The whole description address fits here and fills port and path: what a DLNA server that is not found
-              // needs (minidlna on Linux, never found on iOS, see ssdp.dart)
-              hint: isSmb
-                  ? 'nas.local, 192.168.1.20'
-                  : isDlna
-                  ? 'http://192.168.1.10:8200/rootDesc.xml'
-                  : 'cloud.example.com',
-              focusNode: _hostFocus,
-              keyboardType: TextInputType.url,
-              autofillHints: const [AutofillHints.url],
-              // Another server: the id of the one tapped no longer goes with it
-              onChanged: (_) => _filledDiscovery = null,
-            ),
-            const SizedBox(height: 16),
-            _field(
-              _port,
-              context.t.network_share_port,
-              key: const Key('network_share_port'),
-              hint: isSmb ? '445' : (_useTls ? '443' : '80'),
-              errorText: _portIsValid ? null : '1-65535',
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-            const SizedBox(height: 16),
-            _field(
-              _share,
-              isSmb
-                  ? context.t.network_share_share_name
-                  : isDlna
-                  ? context.t.network_share_description_path
-                  : context.t.network_share_url_path,
-              key: const Key('network_share_share'),
-              hint: isSmb
-                  ? 'media'
-                  : isDlna
-                  ? '/rootDesc.xml'
-                  : '/remote.php/dav/files/alice',
-              keyboardType: TextInputType.url,
-            ),
-            if (isSmb) ...[
-              const SizedBox(height: 4),
+                  }),
+                  title: Text(context.t.network_share_use_tls, style: labelStyle),
+                ),
+              ],
+              const SizedBox(height: 16),
               Align(
                 alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  key: const Key('network_share_choose_share'),
-                  onPressed: canListShares ? _chooseShare : null,
-                  icon: _listingShares
+                child: OutlinedButton.icon(
+                  onPressed: canSubmit ? _test : null,
+                  icon: _testing
                       ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.folder_shared_outlined),
+                      : const Icon(Icons.network_check_rounded),
                   label: Text(
-                    context.t.network_share_scan_choose_share,
+                    context.t.network_share_test,
                     style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              if (_shareListError != null) _TestResult(message: _shareListError!, succeeded: false),
-            ],
-            const SizedBox(height: 16),
-            _field(
-              _rootPath,
-              context.t.network_share_root_path,
-              key: const Key('network_share_root_path'),
-              hint: '/',
-              keyboardType: TextInputType.url,
-            ),
-            // DLNA has no authentication
-            if (!isDlna) ...[
-              const SizedBox(height: 16),
-              _field(
-                _username,
-                context.t.network_share_username,
-                key: const Key('network_share_username'),
-                focusNode: _usernameFocus,
-                autofillHints: const [AutofillHints.username],
-              ),
-              const SizedBox(height: 16),
-              _field(
-                _password,
-                context.t.network_share_password,
-                key: const Key('network_share_password'),
-                focusNode: _passwordFocus,
-                obscureText: !_showPassword,
-                autofillHints: const [AutofillHints.password],
-                suffixIcon: IconButton(
-                  icon: Icon(_showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
-                  onPressed: () => setState(() => _showPassword = !_showPassword),
-                ),
-              ),
-            ],
-            if (!isSmb && !isDlna) ...[
-              const SizedBox(height: 8),
-              SwitchListTile.adaptive(
-                key: const Key('network_share_use_tls'),
-                value: _useTls,
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                onChanged: (value) => setState(() {
-                  _useTls = value;
-                  _testMessage = null;
-                }),
-                title: Text(context.t.network_share_use_tls, style: labelStyle),
-              ),
-            ],
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton.icon(
-                onPressed: canSubmit ? _test : null,
-                icon: _testing
-                    ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.network_check_rounded),
-                label: Text(
-                  context.t.network_share_test,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            if (_testMessage != null) ...[
-              const SizedBox(height: 12),
-              _TestResult(message: _testMessage!, succeeded: _testSucceeded),
-            ],
-            const SizedBox(height: 24),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Wrap(
-                alignment: WrapAlignment.end,
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  if (!_isNew)
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: context.colorScheme.error,
-                        side: BorderSide(color: context.colorScheme.error),
+              if (_testMessage != null) ...[
+                const SizedBox(height: 12),
+                _TestResult(message: _testMessage!, succeeded: _testSucceeded),
+              ],
+              const SizedBox(height: 24),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    if (!_isNew)
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: context.colorScheme.error,
+                          side: BorderSide(color: context.colorScheme.error),
+                        ),
+                        onPressed: _saving ? null : _remove,
+                        icon: const Icon(Icons.delete_outline),
+                        label: Text(
+                          context.t.network_share_remove,
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      onPressed: _saving ? null : _remove,
-                      icon: const Icon(Icons.delete_outline),
+                    ElevatedButton.icon(
+                      onPressed: canSubmit ? _save : null,
+                      icon: const Icon(Icons.check),
                       label: Text(
-                        context.t.network_share_remove,
+                        context.t.network_share_save,
                         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ElevatedButton.icon(
-                    onPressed: canSubmit ? _save : null,
-                    icon: const Icon(Icons.check),
-                    label: Text(
-                      context.t.network_share_save,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
@@ -830,96 +914,6 @@ class _TestResult extends StatelessWidget {
         Expanded(
           child: Text(message, style: context.textTheme.bodyMedium?.copyWith(color: color)),
         ),
-      ],
-    );
-  }
-}
-
-/// The servers found on the network, above the fields of a new share
-class _DiscoverySection extends StatelessWidget {
-  const _DiscoverySection({
-    required this.servers,
-    required this.scanning,
-    required this.scanned,
-    required this.onScan,
-    required this.onSelected,
-  });
-
-  final List<DiscoveredServer> servers;
-  final bool scanning;
-  final bool scanned;
-  final VoidCallback onScan;
-  final ValueChanged<DiscoveredServer> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final labelStyle = context.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold);
-    final hintStyle = context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant);
-    return Column(
-      key: const Key('network_share_discovery'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(child: Text(context.t.network_share_scan_title, style: labelStyle)),
-            if (scanning)
-              const SizedBox.square(
-                key: Key('network_share_scan_progress'),
-                dimension: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            else
-              TextButton.icon(
-                key: const Key('network_share_scan_again'),
-                onPressed: onScan,
-                icon: const Icon(Icons.refresh_rounded),
-                label: Text(
-                  context.t.network_share_scan_again,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        if (servers.isNotEmpty)
-          Text(context.t.network_share_scan_tap_to_fill, style: hintStyle)
-        else if (scanning)
-          Text(context.t.network_share_scan_scanning, style: hintStyle)
-        else if (scanned)
-          Text(context.t.network_share_scan_none_found, style: hintStyle),
-        for (final server in servers)
-          // One address and port may serve several DLNA media servers, whose tiles have the same key
-          KeyedSubtree(
-            key: ValueKey(server.mergeKey),
-            child: ListTile(
-              key: Key('network_share_found_${server.type.name}_${server.host}_${server.port}'),
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(server.isPhoneShare ? Icons.smartphone : networkSourceIcon(server.type)),
-              title: Text(server.displayName, maxLines: 1, overflow: TextOverflow.ellipsis),
-              subtitle: Text(
-                server.host.contains(':') ? '[${server.host}]:${server.port}' : '${server.host}:${server.port}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Text(
-                server.isPhoneShare
-                    ? context.t.network_share_scan_type_phone
-                    : switch (server.type) {
-                        NetworkSourceType.smb => context.t.network_share_scan_type_smb,
-                        NetworkSourceType.webdav => context.t.network_share_scan_type_webdav,
-                        NetworkSourceType.dlna => context.t.network_share_scan_type_dlna,
-                      },
-                style: context.textTheme.labelMedium?.copyWith(
-                  color: context.primaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () => onSelected(server),
-            ),
-          ),
-        const SizedBox(height: 8),
-        Text(context.t.network_share_scan_enter_by_hand, style: hintStyle),
-        const Divider(height: 24),
       ],
     );
   }

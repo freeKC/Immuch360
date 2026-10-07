@@ -1,0 +1,29 @@
+{
+  "MediaContainer": {
+    "size": 2,
+    "allowSync": true,
+    "apiVersion": "1.1.0",
+    "claimed": true,
+    "friendlyName": "Test Plex",
+    "machineIdentifier": "0000000000000000000000000000000000000001",
+    "version": "1.42.1.10060-4e8b05daf",
+    "myPlex": true,
+    "myPlexMappingState": "mapped",
+    "myPlexSigninState": "ok",
+    "myPlexUsername": "test-user@example.com",
+    "platform": "Linux",
+    "platformVersion": "6.1",
+    "Directory": [
+      {
+        "count": 1,
+        "key": "library",
+        "title": "library"
+      },
+      {
+        "count": 1,
+        "key": "system",
+        "title": "system"
+      }
+    ]
+  }
+}

@@ -5,6 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/network.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -27,9 +29,17 @@ class LocalNetworkPreference extends HookConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(title),
-        content: isUrlField
-            ? ImmichURLInput(controller: controller, autofocus: true, keyboardAction: .done, hintText: hintText)
-            : ImmichTextInput(controller: controller, autofocus: true, keyboardAction: .done, hintText: hintText),
+        // On a TV the text is typed in the dialog of the TV, whose OK saves it at once
+        content: TvTextEntry(
+          controller: controller,
+          label: title,
+          kind: isUrlField ? TvTextKind.url : TvTextKind.text,
+          autofocus: true,
+          onSubmitted: (text) => Navigator.pop(context, text),
+          child: isUrlField
+              ? ImmichURLInput(controller: controller, autofocus: true, keyboardAction: .done, hintText: hintText)
+              : ImmichTextInput(controller: controller, autofocus: true, keyboardAction: .done, hintText: hintText),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

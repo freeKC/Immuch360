@@ -14,7 +14,11 @@ class ViewerBottomAppBar extends ConsumerWidget {
 
     return IgnorePointer(
       ignoring: opacity < 1.0,
-      child: AnimatedOpacity(opacity: opacity, duration: Durations.short2, child: const ViewerBottomBar()),
+      // Hidden, its buttons must not take the focus either: an arrow of a remote would land on an invisible button
+      child: ExcludeFocus(
+        excluding: opacity < 1.0,
+        child: AnimatedOpacity(opacity: opacity, duration: Durations.short2, child: const ViewerBottomBar()),
+      ),
     );
   }
 }

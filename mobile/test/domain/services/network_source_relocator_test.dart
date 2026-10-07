@@ -1,8 +1,11 @@
 // A share found on the network is found again by the id its server announces once its address changed: a phone share
-// given another address by the router, a DLNA media server restarted on another port or under another path.
+// given another address by the router, a DLNA media server restarted on another port or under another path, a Plex
+// server or a Tapo camera given another address. A Plex server is only followed to a server announcing the hash of its
+// certificate.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/network_source_relocator.dart';
 
@@ -39,6 +42,7 @@ DiscoveredServer _server(
   String path = '/',
   String? discoveryId,
   DiscoveryOrigin origin = DiscoveryOrigin.mdns,
+  String? plexHash,
 }) => DiscoveredServer(
   host: host,
   displayName: host,
@@ -47,6 +51,29 @@ DiscoveredServer _server(
   path: path,
   origin: origin,
   discoveryId: discoveryId,
+  plexHash: plexHash,
+);
+
+const _machineId = '0000000000000000000000000000000000000001';
+const _plexHash = '0123456789abcdef0123456789abcdef';
+
+const _plexServer = NetworkSource(
+  id: 'plex',
+  type: NetworkSourceType.plex,
+  name: 'Test Plex',
+  host: '192.0.2.20',
+  useTls: true,
+  discoveryId: _machineId,
+  plex: PlexServerInfo(hash: _plexHash),
+);
+
+const _camera = NetworkSource(
+  id: 'camera',
+  type: NetworkSourceType.tapo,
+  name: 'Garden',
+  host: '192.0.2.30',
+  useTls: true,
+  discoveryId: '02-00-00-00-00-01',
 );
 
 /// A discovery that finds [servers], and counts its runs
@@ -155,5 +182,77 @@ void main() {
     );
     expect(await discovery.relocator().relocate(typedIn), isNull);
     expect(discovery.runs, 0);
+  });
+
+  test('a Plex server without a port is at 32400, and follows a server with the hash of its certificate', () async {
+    final discovery = _Discovery([
+      _server(
+        '192.0.2.20',
+        32400,
+        type: NetworkSourceType.plex,
+        discoveryId: _machineId,
+        plexHash: _plexHash,
+        origin: DiscoveryOrigin.gdm,
+      ),
+    ]);
+    expect(await discovery.relocator().relocate(_plexServer), isNull, reason: 'the same address and port');
+
+    final moved = _Discovery([
+      _server(
+        '192.0.2.21',
+        32400,
+        type: NetworkSourceType.plex,
+        discoveryId: _machineId.toUpperCase(),
+        plexHash: _plexHash,
+        origin: DiscoveryOrigin.gdm,
+      ),
+    ]);
+    final relocated = await moved.relocator().relocate(_plexServer);
+    expect(relocated?.host, '192.0.2.21');
+    expect(relocated?.plex?.hash, _plexHash);
+  });
+
+  test('ignores a Plex server announcing the machine id with another hash, or none', () async {
+    for (final hash in ['ffffffffffffffffffffffffffffffff', null]) {
+      final discovery = _Discovery([
+        _server(
+          '192.0.2.66',
+          32400,
+          type: NetworkSourceType.plex,
+          discoveryId: _machineId,
+          plexHash: hash,
+          origin: DiscoveryOrigin.gdm,
+        ),
+      ]);
+
+      expect(await discovery.relocator().relocate(_plexServer), isNull, reason: 'hash $hash');
+    }
+  });
+
+  test('a camera without a port is at 443, and follows its MAC address', () async {
+    final same = _Discovery([
+      _server(
+        '192.0.2.30',
+        443,
+        type: NetworkSourceType.tapo,
+        discoveryId: '02-00-00-00-00-01',
+        origin: DiscoveryOrigin.tdp,
+      ),
+    ]);
+    expect(await same.relocator().relocate(_camera), isNull);
+
+    final moved = _Discovery([
+      _server(
+        '192.0.2.31',
+        443,
+        type: NetworkSourceType.tapo,
+        discoveryId: '02-00-00-00-00-01',
+        origin: DiscoveryOrigin.tdp,
+      ),
+    ]);
+    final relocated = await moved.relocator().relocate(_camera);
+    expect(relocated?.host, '192.0.2.31');
+    expect(relocated?.port, 443);
+    expect(relocated?.type, NetworkSourceType.tapo);
   });
 }

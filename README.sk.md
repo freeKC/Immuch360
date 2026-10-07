@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 je mobilná aplikácia Immich s fotkami a videami 360°, v ktorých sa môžete rozhliadať, a s bezplatným prehrávačom plochých, 360°, 3D a VR180 fotiek a videí na telefónoch a tabletoch s Androidom, na iPhonoch a iPadoch a na Meta Quest 3 a 3S. Je určená ľuďom, ktorí fotia kamerou 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) alebo v režime fotosféry telefónu, prípadne majú headset, a chcú si pozerať vlastné zábery zo servera Immich, priamo z telefónu, z NAS alebo z mediálneho servera: rovnaký server, rovnaký účet, žiadny doplnok na serveri, alebo úplne bez servera.
+Immuch360 je mobilná aplikácia Immich s fotkami a videami 360°, v ktorých sa môžete rozhliadať, a s bezplatným prehrávačom plochých, 360°, 3D a VR180 fotiek a videí na telefónoch a tabletoch s Androidom, na iPhonoch a iPadoch, na Meta Quest 3 a 3S a od zostavy 20 aj na Android TV a Google TV. Je určená ľuďom, ktorí fotia kamerou 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) alebo v režime fotosféry telefónu, prípadne majú headset, a chcú si pozerať vlastné zábery zo servera Immich, priamo z telefónu, z NAS, z mediálneho servera alebo zo servera Plex: rovnaký server, rovnaký účet, žiadny doplnok na serveri, alebo úplne bez servera. Od zostavy 20 zobrazuje aj kamery Tapo, naživo aj záznamy z ich pamäťovej karty.
 
 <p align="center">
   <sub>Neoficiálny fork. Nie je spojený s Immich ani s FUTO. Po anglicky sa názov číta ako „I am much 360“.</sub>
@@ -15,7 +15,8 @@ Immuch360 je mobilná aplikácia Immich s fotkami a videami 360°, v ktorých sa
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">APK pre Android</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">v posudzovaní</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store v posudzovaní
+  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store v posudzovaní &nbsp;·&nbsp;
+  Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
 <table align="center">
@@ -25,9 +26,14 @@ Immuch360 je mobilná aplikácia Immich s fotkami a videami 360°, v ktorých sa
     <td align="center" width="33%"><h3>🎥 Natívne 2.5D</h3>Hĺbka na plochej obrazovke zo stereoskopického videa, pohľad sleduje vašu hlavu (experimentálne, telefóny a tablety)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Meta Quest 3</h3>Jedna aplikácia, tri platformy, skutočné 3D v headsete</td>
+    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Jedna aplikácia na telefónoch, tabletoch a v headsete, skutočné 3D v headsete a od zostavy 20 na Android TV s diaľkovým ovládačom</td>
     <td align="center"><h3>🔌 So serverom alebo bez neho</h3>Váš server Immich alebo vlastná galéria telefónu, bez potreby účtu</td>
     <td align="center"><h3>🗄️ Sieťové úložiská</h3>Samba (SMB), WebDAV a od zostavy 19 aj mediálne servery DLNA nájdené v sieti a čítané naživo, nič sa nesťahuje, a keď sa rozhodnete, odoslané do Immich. Od zostavy 19 telefón tiež zdieľa svoju galériu s headsetom</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>📺 Na televízore</h3>Od zostavy 20 ten istý APK na Android TV a Google TV: fotky a videá 360°, váš server a vaše zdieľania, s diaľkovým ovládačom</td>
+    <td align="center"><h3>🎬 Plex bez plex.tv</h3>Od zostavy 20 vaše knižnice Plex prehrávané z pôvodných súborov, aby 360° zostalo 360°, doma aj mimo domova</td>
+    <td align="center"><h3>📹 Kamery Tapo</h3>Od zostavy 20 živý obraz a záznamy z pamäťovej karty, iba vo vašej sieti, a klip odoslaný do Immich, keď sa rozhodnete</td>
   </tr>
 </table>
 
@@ -36,11 +42,14 @@ Immuch360 je mobilná aplikácia Immich s fotkami a videami 360°, v ktorých sa
 - **„Moje fotky 360° sa zobrazujú ako plochý, natiahnutý pás a moje videá 360° sa prehrávajú ploché.“** Pozrite si [Fotky a videá 360° ako guľa](#360-photos-and-videos-as-a-sphere).
 - **„Nemám server a nechcem účet.“** Pozrite si [Bez servera a bez účtu](#without-a-server-or-an-account).
 - **„Chcem pozerať videá zo svojho NAS na telefóne alebo v headsete bez kopírovania.“** Pozrite si [Sieťové úložiská](#network-shares-a-nas-a-computer-or-a-media-server).
+- **„Plex mi prehráva videá 360° ploché a ja chcem svoju knižnicu Plex v headsete, na televízore a mimo domova.“** Pozrite si [Plex Media Server bez plex.tv](#plex-media-server-without-plextv).
 - **„Moje fotky sú v telefóne a nemám počítač ani NAS, kam by som ich dal pre headset.“** Pozrite si [Zdieľať tento telefón v sieti](#share-this-phone-on-the-network).
+- **„Chcem vidieť svoju kameru Tapo a klipy z minulej noci bez aplikácie Tapo a uložiť si klip v Immich.“** Pozrite si [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **„Moje súbory Insta360 potrebujú aplikáciu Insta360, kým si ich môžem pozrieť“** (a rovnako súbory GoPro .360 a DJI .osv). Pozrite si [Nespracované súbory kamier 360°](#raw-360-camera-files-without-the-cameras-app).
 - **„Moje 3D videá vyzerajú zdvojene a videá VR180 sú natiahnuté dookola.“** Pozrite si [3D a VR180](#3d-and-vr180-photos-and-videos) a [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **„Mám priestorové fotky z iPhonu.“** Pozrite si [Priestorové fotky a videá Apple](#apple-spatial-photos-and-videos).
 - **„Na telefóne to funguje, ale chcem to v Queste.“** Pozrite si [V headsete Meta Quest 3](#in-the-meta-quest-3-headset).
+- **„Chcem si pozerať svoje fotky a videá 360° a videá z môjho NAS alebo servera Plex na televízore, s diaľkovým ovládačom.“** Pozrite si [Pozerajte na televízore](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Nemôžem nájsť svoje zábery 360° medzi všetkými ostatnými.“** Pozrite si [Zoznam 360°](#find-your-360-shots-the-360-list).
 - **„Moje video 360° trhá alebo prehráva rozmazanú kópiu.“** Pozrite si [Podrobnosti videa a dekodéry](#video-details-decoders-and-why-a-video-stutters).
 - **„Zostane mi všetko, čo robí aplikácia Immich?“** Áno, s dvoma malými zmenami, pozrite si [Všetko ostatné je Immich](#everything-else-is-immich).
@@ -100,7 +109,7 @@ Voľba sa zapamätá v telefóne a na serveri nič nemení. Pri súbore zo sieť
 
 Nemáte server Immich alebo nechcete účet: chcete len, aby sa fotky 360° z telefónu otvárali ako guľa, ktorú otáčate gyroskopom. Aplikácia Immich najprv žiada prihlásenie.
 
-Na prihlasovacej stránke „Používať bez servera“ otvorí Immuch360 s fotkami a videami samotného zariadenia, so zobrazeniami 360°, 3D, VR180 a Spatial, zoznamom 360° a sieťovými úložiskami, bez potreby účtu Immich. Funkcie servera zostanú skryté alebo sivé, kým nepripojíte server; nič neopustí zariadenie. Na Meta Quest 3 sa otvoria fotky a videá samotného headsetu.
+Na prihlasovacej stránke „Používať bez servera“ otvorí Immuch360 s fotkami a videami samotného zariadenia, so zobrazeniami 360°, 3D, VR180 a Spatial, zoznamom 360° a sieťovými úložiskami (od zostavy 20 aj so servermi Plex a kamerami Tapo), bez potreby účtu Immich. Funkcie servera zostanú skryté alebo sivé, kým nepripojíte server; nič neopustí zariadenie. Na Meta Quest 3 sa otvoria fotky a videá samotného headsetu; na televízore, ktorý žiadne nemá, aplikácia odkáže na sieťové úložiská (pozrite si [Pozerajte na televízore](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Karta Knižnica bez servera: položka 360° hore, potom Na tomto zariadení s dvoma fotkami 360° a Sieťové úložiská so zdieľaním s názvom NAS">
 
@@ -126,7 +135,7 @@ Na prihlasovacej stránke „Používať bez servera“ otvorí Immuch360 s fotk
 
 Vaše videá 360° sú na NAS alebo na počítači a chcete ich pozerať na telefóne alebo v headsete bez toho, aby ste ich najprv kopírovali. Pri headsete ľudia nakoniec kopírujú každý súbor káblom; mediálne servery ako Plex a Jellyfin prehrávajú videá 360° ploché, ako opisujú požiadavky na ich fórach; aplikácia Immich číta iba váš server Immich.
 
-Immuch360 prehliada a prehráva fotky a videá z akéhokoľvek servera, ktorý podporuje SMB (Samba, Windows), WebDAV alebo od zostavy 19 DLNA/UPnP (mediálny server: Plex, Jellyfin, minidlna, Gerbera, Emby, NAS alebo TV box), priamo zo zdieľania. Servery vo vašej sieti nájde sám a súbory prehráva naživo v tých istých zobrazeniach ako zvyšok aplikácie (360°, 3D, VR180, Spatial 2.5D, pohlcujúce zobrazenie v Queste), so serverom Immich alebo bez neho, na telefónoch aj na Meta Quest 3. Nič sa nesťahuje. Keď je pripojený server, vybrané súbory môžete odoslať do svojho účtu Immich (od zostavy 15).
+Immuch360 prehliada a prehráva fotky a videá z akéhokoľvek servera, ktorý podporuje SMB (Samba, Windows), WebDAV alebo od zostavy 19 DLNA/UPnP (mediálny server: Jellyfin, minidlna, Gerbera, Emby, NAS alebo TV box), priamo zo zdieľania. Od zostavy 20 má Plex Media Server vlastný typ, pozrite si [Plex Media Server bez plex.tv](#plex-media-server-without-plextv). Servery vo vašej sieti nájde sám a súbory prehráva naživo v tých istých zobrazeniach ako zvyšok aplikácie (360°, 3D, VR180, Spatial 2.5D, pohlcujúce zobrazenie v Queste), so serverom Immich alebo bez neho, na telefónoch aj na Meta Quest 3. Nič sa nesťahuje. Keď je pripojený server, vybrané súbory môžete odoslať do svojho účtu Immich (od zostavy 15).
 
 | Pridať zdieľanie | Priečinok zdieľania |
 |---|---|
@@ -135,10 +144,10 @@ Immuch360 prehliada a prehráva fotky a videá z akéhokoľvek servera, ktorý p
 
 ### Pridať zdieľanie
 
-1. Otvorte kartu Knižnica, potom Sieťové úložiská. Prvýkrát stránka zobrazí „Zatiaľ žiadne zdieľanie“ s tlačidlom „Pridať zdieľanie“; + vpravo hore urobí to isté kedykoľvek.
-2. Stránka „Pridať zdieľanie“ najprv hľadá servery vo vašej sieti a uvádza ich v časti „Nájdené v sieti“ s ich typom (SMB, WebDAV, DLNA, Telefón). Hľadanie trvá približne do šiestich sekúnd; „Hľadať znova“ ho spustí odznova. Používa Bonjour/mDNS a prehľadanie miestnej siete potvrdené skutočnou výmenou SMB alebo WebDAV a od zostavy 19 aj vyhľadávanie SSDP mediálnych serverov DLNA.
-3. Ťuknite na server: typ, server, port a cesta sa vyplnia.
-4. Nie je v zozname? Vyplňte formulár ručne. Typ: „SMB (Samba, zdieľanie Windows)“, „WebDAV (Nextcloud, Synology a ďalšie)“ alebo „Mediálny server DLNA (Plex, Jellyfin, NAS, TV box)“. Potom Názov, „Názov alebo adresa servera“ (názov alebo adresa; úplná adresa ako `smb://nas/photos`, `\\nas\photos` alebo `https://nas:5006/photos` vyplní ostatné polia), „Port (voliteľné)“, ak nie je štandardný, „Zdieľaný priečinok“ pre SMB alebo „Cesta adresy WebDAV“ pre WebDAV, „Počiatočný priečinok (voliteľné)“, „Používateľské meno“ a „Heslo“ a „Zabezpečené pripojenie (HTTPS)“ pre WebDAV.
+1. Otvorte kartu Knižnica, potom Sieťové úložiská. Prvýkrát stránka zobrazí „Zatiaľ žiadne zdieľanie“ s tlačidlom „Pridať zdieľanie“; + vpravo hore urobí to isté kedykoľvek. Od zostavy 20 sa obe pýtajú, čo pridať: „Sieťové úložisko (NAS, počítač, mediálny server)“, „Plex Media Server“ alebo „Kamera Tapo“. Vyberte prvú možnosť.
+2. Stránka „Pridať zdieľanie“ najprv hľadá servery vo vašej sieti a uvádza ich v časti „Nájdené v sieti“ s ich typom (SMB, WebDAV, DLNA, Telefón a od zostavy 20 Plex a Tapo). Hľadanie trvá približne do šiestich sekúnd; „Hľadať znova“ ho spustí odznova. Používa Bonjour/mDNS a prehľadanie miestnej siete potvrdené skutočnou výmenou SMB alebo WebDAV, od zostavy 19 vyhľadávanie SSDP mediálnych serverov DLNA a od zostavy 20 GDM, vyhľadávanie Plexu, a protokol vyhľadávania TP-Link pre kamery Tapo.
+3. Ťuknite na server: typ, server, port a cesta sa vyplnia. Server Plex alebo kamera Tapo namiesto toho otvorí vlastnú stránku, už vyplnenú.
+4. Nie je v zozname? Vyplňte formulár ručne. Typ: „SMB (Samba, zdieľanie Windows)“, „WebDAV (Nextcloud, Synology a ďalšie)“, „Mediálny server DLNA (Jellyfin, NAS, TV box)“ alebo od zostavy 20 „Plex Media Server“, ktorý otvorí stránku z časti [Plex Media Server bez plex.tv](#plex-media-server-without-plextv). Potom Názov, „Názov alebo adresa servera“ (názov alebo adresa; úplná adresa ako `smb://nas/photos`, `\\nas\photos` alebo `https://nas:5006/photos` vyplní ostatné polia), „Port (voliteľné)“, ak nie je štandardný, „Zdieľaný priečinok“ pre SMB alebo „Cesta adresy WebDAV“ pre WebDAV, „Počiatočný priečinok (voliteľné)“, „Používateľské meno“ a „Heslo“ a „Zabezpečené pripojenie (HTTPS)“ pre WebDAV.
 5. SMB: keď zadáte server a používateľské meno, „Vyberte zdieľaný priečinok“ zobrazí zdieľané priečinky servera.
 6. DLNA: mediálny server nemá používateľské meno ani heslo. Zadajte server, port a „Cesta k popisu“ jeho popisu zariadenia (`/rootDesc.xml` pre minidlna), alebo do poľa servera vložte celú adresu, napríklad `http://192.168.1.10:8200/rootDesc.xml`.
 7. Ťuknite na „Otestovať pripojenie“. Odpoveď je „Pripojené, počet položiek v počiatočnom priečinku: N“ alebo dôvod zlyhania. Potom ťuknite na Uložiť v dolnej časti formulára.
@@ -155,6 +164,7 @@ Používateľské meno s prázdnym heslom sa odošle tak, ako je: Freebox Server
 
 360°, 3D a VR180 sa rozpoznávajú z metadát GPano alebo sférických metadát súboru, ktoré sa čítajú požiadavkami na rozsah (range requests), a VR180 aj z názvu súboru. Od zostavy 16 sa rozpoznávajú aj nespracované súbory Insta360 (fotka .insp podľa názvu alebo kalibračného bloku kamery, video .insv podľa názvu a snímky) a spájajú sa.
 
+<a id="send-files-of-a-share-to-immich"></a>
 ### Odoslať súbory zo zdieľania do Immich
 
 Od zostavy 15, keď ste pripojení k serveru:
@@ -177,17 +187,67 @@ Od zostavy 19 aplikácia posiela vyhľadávanie mediálnych serverov SSDP do sku
 <a id="a-share-that-moved"></a>
 ### Zdieľanie, ktoré sa presunulo
 
-Od zostavy 19 si zdieľanie DLNA a zdieľanie telefónu (pozrite si [Zdieľať tento telefón v sieti](#share-this-phone-on-the-network)) pamätajú identifikátor, ktorý ich server oznamuje. Keď jedno z nich prestane odpovedať na svojej adrese (nová adresa od routera, server reštartovaný na inom porte), stránka jeho priečinka zobrazí „Hľadanie (názov) v sieti“ a presunie zdieľanie tam, kde teraz odpovedá: hneď pri serveri DLNA, ktorý nemá heslo, a po potvrdení „Použiť novú adresu?“ so zobrazením oboch adries pri zdieľaní s používateľským menom a heslom, pretože tie by sa odoslali na novú adresu.
+Od zostavy 19 si zdieľanie DLNA a zdieľanie telefónu (pozrite si [Zdieľať tento telefón v sieti](#share-this-phone-on-the-network)) pamätajú identifikátor, ktorý ich server oznamuje. Keď jedno z nich prestane odpovedať na svojej adrese (nová adresa od routera, server reštartovaný na inom porte), stránka jeho priečinka zobrazí „Hľadanie (názov) v sieti“ a presunie zdieľanie tam, kde teraz odpovedá: hneď pri serveri DLNA, ktorý nemá heslo, a po potvrdení „Použiť novú adresu?“ so zobrazením oboch adries pri zdieľaní s používateľským menom a heslom, pretože tie by sa odoslali na novú adresu. Od zostavy 20 sa hneď presunie aj server Plex nájdený znova na inej adrese siete: jeho certifikát pred odoslaním tokenu dokáže, že ide o ten istý server. Kamera Tapo sa hľadá podľa svojej adresy MAC zo svojej vlastnej stránky, pozrite si [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Obmedzenia
 
 - **SMB**: iba SMB 2 a 3, žiadne SMB 1.
 - **WebDAV**: iba overenie Basic (Digest zatiaľ nie je podporované); samopodpísaný certifikát HTTPS musí byť nainštalovaný v zariadení.
-- **Hľadanie serverov**: prehľadanie siete a vyhľadávanie DLNA pokrývajú iba miestnu sieť /24 a na iOS potrebujú povolenie pre miestnu sieť. Na iPhone a iPade posiela vyhľadávanie DLNA iba požiadavky unicast, kým Apple neudelí aplikácii oprávnenie (entitlement) na multicast, a niektoré servery na ne neodpovedajú (minidlna na Linuxe): pridajte ich podľa adresy popisu.
+- **Hľadanie serverov**: prehľadanie siete a vyhľadávania DLNA, Plex a Tapo pokrývajú iba miestnu sieť /24 a na iOS potrebujú povolenie pre miestnu sieť. Na iPhone a iPade posiela vyhľadávanie DLNA iba požiadavky unicast, kým Apple neudelí aplikácii oprávnenie (entitlement) na multicast, a niektoré servery na ne neodpovedajú (minidlna na Linuxe): pridajte ich podľa adresy popisu.
 - **DLNA**: server, ktorý ponúka iba konvertovanú kópiu súboru, poskytne túto kópiu; priečinok vypíše najviac 20 000 položiek.
 - **Miniatúry**: miniatúry fotiek dekódujú celý súbor a fotky nad 30 MB miniatúru nedostanú.
 - **Prehrávače**: výber zvukovej stopy zatiaľ nie je v plochom prehrávači. Na telefóne sa zatiaľ nedá posúvať z jedného súboru priečinka na ďalší (pohlcujúce zobrazenie v Queste má predchádzajúce a ďalšie pre súbory 360° v priečinku). Voľba 3D alebo 180° pri sieťovom súbore sa nezapamätá.
 - **Nahrávanie**: beží iba vtedy, keď je aplikácia otvorená, a súbor, ktorý už server má, sa odošle celý, kým ho server neoznačí ako duplikát.
+
+<a id="plex-media-server-without-plextv"></a>
+## Plex Media Server bez plex.tv
+
+Vaše videá sú v Plexe a Plex zobrazuje vaše fotky a videá 360° ploché, ako opisujú požiadavky na jeho fóre (jedna je otvorená od roku 2017). Túto knižnicu chcete mať aj v headsete, na televízore a mimo domova. Aplikácia Immich číta iba váš server Immich a typ DLNA zo zostavy 19 sa k strane DLNA Plexu dostane iba doma.
+
+Od zostavy 20 sa Immuch360 spáruje s vaším Plex Media Server priamo, bez plex.tv: nájde server v sieti, raz vložíte token a aplikácia číta pôvodné súbory vašich knižníc naživo, v každom zobrazení aplikácie (360°, 3D, VR180, Spatial 2.5D, pohlcujúce zobrazenie v Queste, diaľkový ovládač televízora), doma a cez vaše presmerovanie portu aj mimo domova. Nič sa nekopíruje a vybrané súbory môžete odoslať do Immich.
+
+### Pridať server Plex
+
+1. Otvorte kartu Knižnica, potom Sieťové úložiská, potom + a „Plex Media Server“. Typ „Plex Media Server“ vo formulári zdieľania a server so štítkom Plex v časti „Nájdené v sieti“ otvoria tú istú stránku.
+2. Stránka „Pridať server Plex“ hľadá servery Plex vo vašej sieti („Hľadajú sa servery Plex vo vašej sieti“) a uvádza ich v časti „Nájdené v sieti“. Ťuknite na ten svoj: karta zobrazí jeho názov, verziu Plexu a krátky identifikátor.
+3. Nie je v zozname? Do poľa „Adresa servera“ zadajte jeho adresu, napríklad `192.168.1.20`, `192.168.1.20:32400` alebo `https://...plex.direct:32400`, a ťuknite na „Vyhľadať“. Aplikácia prečíta certifikát servera a nič iné neodošle.
+4. Získajte token na počítači: otvorte Plex vo webovom prehliadači a prihláste sa, otvorte ľubovoľnú fotku alebo video zo svojej knižnice, potom „...“, „Get Info“ (Získať informácie), „View XML“ (Zobraziť XML). Otvorí sa nová karta s adresou končiacou na `X-Plex-Token=...`. Skopírujte celú túto adresu.
+5. Vložte ju do poľa „Prístupový token“ alebo ju pošlite do telefónu a ťuknite na „Vložiť zo schránky“: aplikácia si z nej vezme server aj token. Funguje aj samotný text za `X-Plex-Token=`. „Ako ho získať“ na stránke hovorí to isté; správcovia servera môžu použiť aj hodnotu `PlexOnlineToken` zo súboru `Preferences.xml` servera, ktorá nevyprší. Na televízore OK otvorí dialóg klávesnice: zadajte token tam (zvyčajne má 20 znakov).
+6. Ťuknite na „Otestovať pripojenie“. Odpoveď je „Pripojené: N knižníc“ alebo popis chyby, napríklad „Server Plex tento token odmietol.“
+7. „Prístup mimo domova“ potom zobrazí, čo hovorí server: „Server uvádza, že je dostupný na adrese (adresa):(port).“ alebo „Server neoznámil svoju adresu mimo domova.“ Ak chcete server používať mimo domova, zadajte svoju verejnú adresu alebo názov DynDNS do poľa „Adresa mimo domova (IP alebo názov)“ a port presmerovaný v Plexe (Nastavenia, Vzdialený prístup) do poľa „Port mimo domova“. To, čo zadáte, má vždy prednosť pred tým, čo hovorí server.
+8. „Názov“ je názov servera, ak ho nezmeníte, a „Počiatočný priečinok (voliteľné)“ môže priamo otvoriť jednu knižnicu. Ťuknite na Uložiť. Server sa zobrazí v zozname so zdieľaniami ako `plex://` a jeho adresa.
+
+### Prehliadať knižnice Plex
+
+1. Ťuknite na server v Sieťových úložiskách. Prvá úroveň uvádza knižnice, ktoré aplikácia zobrazuje: fotky, filmy a iné videá, seriály. Hudba je vynechaná.
+2. Pod knižnicou sú jej priečinky tak, ako sú na disku servera (zobrazenie „podľa priečinka“ v Plexe), potom fotky a videá pod názvami ich súborov, s miniatúrami, ktoré vytvára Plex. Knižnica fotiek, ktorej zobrazenie podľa priečinka neodpovedá, namiesto toho zobrazí svoje albumy.
+3. 360° a 3D sa rozpoznávajú čítaním samotných súborov, ako na akomkoľvek zdieľaní: fotky 360° dostanú odznak 360°, priestorové fotky Apple odznak 3D.
+4. Otvorte fotku alebo video ako na akomkoľvek zdieľaní: 360°, 3D, 360°/180°, Spatial 2.5D na telefóne, pohlcujúce zobrazenie v Queste, diaľkový ovládač na televízore. Video sa číta ako pôvodný súbor, po rozsahoch bajtov cez miestny most aplikácie, takže pretáčanie funguje a jeho metadáta 360° a 3D sa k prehrávačom dostanú neporušené.
+5. Vyberte súbory a ťuknite na „Nahrať do Immich“, aby ste ich odoslali na svoj server, ako z akéhokoľvek zdieľania (pozrite si [Odoslať súbory zo zdieľania do Immich](#send-files-of-a-share-to-immich)).
+
+### Mimo domova
+
+Pri každom otvorení servera aplikácia najprv skúsi domácu adresu a o 400 ms neskôr adresu mimo domova. Použije sa prvá, ktorá odpovie s vaším serverom; ak je to adresa mimo domova, stránka priečinka zobrazí ikonu zemegule s textom „Pripojené cez adresu mimo domova“. Na to musí byť v Plexe zapnutý vzdialený prístup (Nastavenia, Vzdialený prístup) s portom presmerovaným vaším routerom: bez plex.tv nemôže aplikácia použiť relé Plexu, takže server bez presmerovania portu sa otvorí iba doma a mimo domova stránka zobrazí „Váš server Plex nie je dostupný mimo domácej siete. Zapnite v Plexe vzdialený prístup s presmerovaním portu (Nastavenia, Vzdialený prístup) alebo zadajte jeho verejnú adresu.“
+
+Adresu, ktorú server oznamuje, sa aplikácia znova naučí pri každom pripojení doma. Keď zvonku neodpovedá (router, ktorý mení adresu, dva routery za sebou), zadajte svoju na stránke servera. Keď token prestane fungovať (napríklad ste sa odhlásili z relácie prehliadača, z ktorej ste ho skopírovali), stránka priečinka to oznámi a ponúkne „Vložiť nový token“, čo otvorí stránku servera na poli tokenu.
+
+### V porovnaní s Plexom a s typom DLNA
+
+- **Pôvodné súbory**: aplikácia číta samotné súbory, nikdy nie kópiu prevedenú Plexom, takže metadáta 360°, 3D a VR180 zostanú neporušené a zobrazenia aplikácie ich použijú, zatiaľ čo aplikácie Plex tieto súbory zobrazujú ploché.
+- **Bez plex.tv**: aplikácia komunikuje iba s vaším serverom, vždy cez HTTPS. Server sa pred odoslaním tokenu overí cez jeho vlastný certifikát plex.direct, viazaný na identifikátor servera. Token zostáva v zariadení, v jeho zabezpečenom úložisku, a ide iba na váš server, v hlavičke požiadavky.
+- **V porovnaní s pridaním toho istého servera ako DLNA**: priečinky tak, ako sú na disku, miniatúry Plexu, prístup mimo domova a zabezpečené pripojenie.
+
+### Obmedzenia
+
+- **Iba privlastnené servery**: server musí byť v Plexe privlastnený (raz prihlásený k účtu Plex), čím dostane certifikát plex.direct. Inak stránka zobrazí „Táto adresa odpovedá bez certifikátu Plex. Privlastnite si server v Plexe alebo ho pridajte ako úložisko SMB, WebDAV alebo DLNA.“
+- **Iba IPv4**: „Adresy IPv6 zatiaľ nie sú podporované. Zadajte adresu IPv4 servera.“
+- **Token** dáva úplný prístup k vášmu serveru Plex. Odstránenie servera v aplikácii zabudne token v zariadení, ale nezruší ho: „Token zostáva na serveri platný, kým sa neodhlásite z relácie prehliadača, z ktorej ste ho skopírovali.“ Token s dátumom skončenia platnosti zobrazí tento dátum a aplikácia ho nedokáže obnoviť.
+- **Mimo domova**: iba cez presmerovanie portu, relé neexistuje.
+- **Knižnice**: hudba sa nezobrazuje, priečinok uvádza najviac 20 000 položiek a používateľ s obmedzeniami môže dostať „Tento token nemôže čítať knižnice servera.“
+- **Nespracované súbory kamier 360°** (.insv, .insp, .360, .osv) sa zobrazia, iba ak ich Plex uvádza; inak pridajte ten istý priečinok NAS ako zdieľanie SMB alebo WebDAV, pozrite si [Nespracované súbory kamier 360°](#raw-360-camera-files-without-the-cameras-app).
+- **Hľadanie servera**: server s vypnutým nastavením „Enable local network discovery (GDM)“ (Zapnúť vyhľadávanie v miestnej sieti) sa nenájde, preto zadajte jeho adresu. Na iPhone a iPade posiela vyhľadávanie iba požiadavky unicast. V zozname sa môže objaviť aj strana DLNA toho istého servera, so štítkom DLNA: vyberte riadok so štítkom Plex.
+- **Zatiaľ neoverené na zariadení**: párovanie, priečinky, rozsahy bajtov videa, miniatúry, nesprávny token a adresa mimo domova boli overené z počítača voči skutočnému Plex Media Server 1.42.1 a knižnice fotiek a seriálov iba voči simulovanému serveru. Prehrávanie na telefóne, v Queste, na iPhone a na televízore a prepnutie na adresu mimo domova sú testom zostavy 20 na zariadeniach.
+- Immuch360 nie je pridružený k Plexu.
 
 <a id="share-this-phone-on-the-network"></a>
 ## Zdieľať tento telefón v sieti
@@ -219,6 +279,63 @@ Odvtedy je to zdieľanie WebDAV ako každé iné: rozpoznávanie 360°, nespraco
 - **Zabezpečenie**: iba miestna sieť. Zdieľanie počúva iba na adresách Wi-Fi, Ethernet a hotspotu telefónu, nikdy na adrese mobilných dát alebo VPN, a odpovedá iba zariadeniam s miestnou adresou. Každá požiadavka potrebuje používateľské meno a heslo (HTTP Basic); desať nesprávnych hesiel z jedného zariadenia za minútu ho zablokuje na minútu. Heslo sa cez Wi-Fi prenáša nešifrované (obyčajné HTTP): zdieľanie používajte v sieti, ktorej dôverujete, a keď skončíte, vypnite ho.
 - **Vlastný hotspot telefónu**: headset sa k nemu môže pripojiť; ak tam telefón nenájde, zadajte adresu zobrazenú na stránke.
 - **Zatiaľ neoverené na zariadení**: server bol overený jednotkovými testami a end-to-end testami s vlastným klientom WebDAV a mediálnym mostom headsetu na počítači. Telefón, ktorý poskytuje súbory pre Quest 3 (vyhľadanie, video s veľkosťou 4 GB prehrávané a pretáčané, obrazovka vypnutá 30 minút, hotspot, Zastaviť z upozornenia), a strana iPhonu, ktorá na iPhone zatiaľ nebežala, sú testom zostavy 19 na zariadeniach.
+
+<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
+## Kamery Tapo: živý obraz a záznamy z pamäťovej karty
+
+Doma máte kamery Tapo a chcete vidieť kameru v záhrade a klipy z minulej noci vedľa svojich fotiek bez otvárania aplikácie Tapo a uložiť si klip v Immich. Aplikácia Immich pre kamery nemá nič a aplikácia Tapo je samostatná aplikácia prihlásená k vášmu účtu TP-Link, s klipmi oddelene od vašich fotiek.
+
+Od zostavy 20 Immuch360 pridáva kameru Tapo vedľa sieťových úložísk. Kameru zobrazuje naživo na telefónoch a tabletoch s Androidom, na Android TV a na Meta Quest 3 a na každej platforme záznamy z jej pamäťovej karty, deň po dni: klip sa stiahne z kamery, potom sa prehrá ako každé video a dá sa odoslať do Immich. Aplikácia komunikuje s kamerou iba vo vašej sieti, nikdy so servermi TP-Link, a na kamere nikdy nič nemení.
+
+### Pridať kameru
+
+1. Najprv v aplikácii Tapo: vytvorte účet kamery v nastaveniach kamery, Advanced Settings (Rozšírené nastavenia), Camera Account (Účet kamery) (používateľské meno a heslo pre túto kameru, používané pre živý obraz), a zapnite Third-Party Compatibility (Kompatibilita s tretími stranami) v časti Me (Ja), potom Tapo Lab.
+2. V Immuch360 otvorte kartu Knižnica, potom Sieťové úložiská, potom + a „Kamera Tapo“.
+3. Stránka „Pridať kameru“ hľadá kamery („Hľadajú sa kamery Tapo vo vašej sieti“) a uvádza ich v časti „Nájdené v sieti“ so štítkom Tapo. Ťuknite na tú svoju, aby sa vyplnila „Adresa kamery“, alebo zadajte jej adresu. Kamera so štítkom Tapo vo formulári zdieľania otvorí tú istú stránku.
+4. „Názov“: ako sa kamera zobrazí v zozname.
+5. V časti „Záznamy na pamäťovej karte“ „Heslo účtu TP-Link“: heslo účtu, ktorý používate v aplikácii Tapo. Otvára záznamy; vaša e-mailová adresa nie je potrebná.
+6. V časti „Naživo“ „Používateľské meno účtu kamery“ a „Heslo účtu kamery“: účet kamery z kroku 1.
+7. Stačí jedno z dvoch („Zadajte heslo účtu TP-Link, účet kamery alebo oboje.“): samotné heslo TP-Link dá záznamy, samotný účet kamery živý obraz.
+8. Ťuknite na „Otestovať kameru“. Zobrazí „Záznamy: (model), firmvér (verzia)“ so stavom pamäťovej karty a „Živý obraz: (video), zvuk (audio)“ alebo čo pri každom zlyhalo.
+9. Ťuknite na Uložiť. Kamera sa zobrazí v časti „Kamery“, za zdieľaniami, so svojím modelom, keď je známy, a `tapo://` so svojou adresou.
+
+### Pozerať naživo
+
+1. Ťuknite na kameru. Jej živý obraz je v hornej časti jej stránky: „Pripájanie ku kamere“, potom obraz s odznakom Naživo.
+2. Tlačidlá na obraze: zvuk, na začiatku vypnutý („Zapnúť zvuk“; „V tomto zariadení nie je zvuk“, keď ho zariadenie nedokáže prehrať), SD alebo HD a „Celá obrazovka“.
+3. Telefón zobrazuje SD na stránke a HD na celej obrazovke; Quest zobrazuje HD. Späť najprv ukončí celú obrazovku.
+4. Pod obrazom sú model a firmvér a pamäťová karta, napríklad „Pamäťová karta: využité (využité) z (celkom)“ alebo „Žiadna pamäťová karta“.
+
+Na iPhone a iPade živý obraz zobrazí „Živý obraz príde na iPhone a iPad v neskoršej verzii. Záznamy sa tu už prehrávajú.“ Bez účtu kamery stránka zobrazí „Na zobrazenie živého obrazu pridajte účet kamery.“
+
+### Prehrávať a uchovať záznamy
+
+1. V časti „Záznamy na pamäťovej karte“ stránka kamery uvádza dni so záznamami, od najnovších, podľa mesiacov. Bez hesla účtu TP-Link zobrazí „Na zobrazenie záznamov pridajte heslo účtu TP-Link.“
+2. Ťuknite na deň. Jeho klipy sú pod hodinami podľa vlastného času kamery, každý so začiatkom, dĺžkou, miniatúrou kamery pri udalosti a druhom: Pohyb, Osoba, Domáce zviera, Vozidlo, Plač dieťaťa, Zviera, Nepretržitý alebo Udalosť.
+3. Ťuknite na klip. Aplikácia ho stiahne z kamery („Sťahovanie videa z kamery: N %“, so Zrušiť), potom ho prehrá v prehrávači videa, so zvukom a pretáčaním. Stiahnutý klip nesie „V tomto zariadení“ a nabudúce sa otvorí hneď.
+4. Ak chcete klip uchovať v Immich, s pripojeným serverom: ponuka ⋮ videa, „Nahrať do Immich“.
+5. Na uvoľnenie miesta: dlhé stlačenie stiahnutého klipu ponúkne „Vymazať kópiu v tomto zariadení“ (na telefóne) a stránka kamery má „Vymazať videá stiahnuté z tejto kamery“, s ich veľkosťou.
+6. Tlačidlo obnovenia vpravo hore alebo potiahnutie stránky nadol sa kamery opýta znova.
+
+Keď kamera prestane odpovedať na svojej adrese, jej stránka ju hľadá v sieti podľa adresy MAC a presunie ju tam, kde teraz odpovedá, keď ukáže ten istý certifikát. Kamera, ktorá ukáže iný certifikát, než aký aplikácia videla prvýkrát, namiesto toho dostane otázku: „Kamera na adrese (adresa) ukazuje iný certifikát ako predtým. Pokračujte, iba ak ste ju resetovali alebo vymenili.“
+
+### V porovnaní s aplikáciou Tapo
+
+- **Iba vo vašej sieti**: aplikácia komunikuje so samotnou kamerou v miestnej sieti a nikdy so servermi TP-Link. Neprihlasuje sa k účtu TP-Link, takže vaša e-mailová adresa nie je potrebná.
+- **Zo záznamov sa stanú bežné videá**: stiahnutý klip je video H.264 so zvukom, ktoré môžete odoslať do Immich, kde zostane aj potom, čo ho pamäťová karta prepíše.
+- **Vedľa všetkého ostatného**: so serverom Immich alebo bez neho, na telefóne, na televízore alebo v Queste (v okne), nájdená v sieti ako zdieľanie.
+- **Iba na čítanie**: aplikácia od kamery žiada iba to, čo zobrazuje; nikdy nemení nastavenie a nikdy na kamere nič nevymaže.
+
+### Obmedzenia
+
+- **Zatiaľ neoverené na zariadení**: zostava 20 zatiaľ nebežala so skutočnou kamerou. Protokol bol napísaný podľa záznamov komunikácie z C510W s firmvérom 1.3.4 (prihlásenie V4 z polovice roka 2026) a aplikácia bola v testoch overená voči simulovanej kamere. Hlásenia sú vítané, s modelom a firmvérom, ktoré zobrazí „Otestovať kameru“, a riadkami zo [Záznamy](#logs).
+- **Živý obraz**: iba na telefónoch a tabletoch s Androidom, na Android TV a v Queste, zatiaľ nie na iPhone a iPade. Platia obmedzenia TP-Link: najviac dva HD a dva SD streamy naraz na kameru, vrátane aplikácie Tapo, a Tapo Care, pamäťová karta a rekordér používajúci RTSP alebo ONVIF nemôžu bežať všetky naraz.
+- **Kamery**: kamery na batériu a kamery za rozbočovačom Tapo nie sú podporované.
+- **Záznamy**: jedno sťahovanie naraz na kameru. Kým aplikácia Tapo prehliada pamäťovú kartu, aplikácia to skúsi znova po 4, 8 a 12 sekundách a potom zobrazí „Kamera je zaneprázdnená iným divákom, napríklad aplikáciou Tapo. Skúste to znova o minútu.“ Záznamy v H.265 sa zatiaľ neprevádzajú („Tento záznam je vo formáte H.265, ktorý táto verzia zatiaľ nevie previesť.“), nepretržité záznamy nemajú miniatúru a klip sa prehrá, až keď je celý stiahnutý.
+- **Heslá**: každé nesprávne heslo sa počíta a po niekoľkých sa kamera na chvíľu uzamkne („Kamera je po príliš mnohých nesprávnych heslách uzamknutá. Skúste to znova o N minút.“). Aplikácia nikdy sama neskúša odmietnuté heslo znova: kamery sa znova opýta iba „Otestovať kameru“ alebo Skúsiť znova. Keď kamera prijme heslo pre nastavenia, ale nie pre videá, vypnite a znova zapnite Third-Party Compatibility (Kompatibilita s tretími stranami) v aplikácii Tapo a reštartujte kameru.
+- **Miesto**: stiahnuté klipy zostávajú vo vyrovnávacej pamäti aplikácie, najviac 1 GB pre všetky kamery spolu (najskôr odchádzajú tie, ktoré sa prehrali najdávnejšie); systém môže túto vyrovnávaciu pamäť vymazať a odstránenie kamery vymaže jej klipy.
+- **Mimo domova**: aplikácia sa ku kamere dostane na jej adrese vo vašej sieti, teda nie zvonku.
+- Immuch360 nie je pridružený k TP-Link.
 
 <a id="raw-360-camera-files-without-the-cameras-app"></a>
 ## Nespracované súbory kamier 360°, bez aplikácie kamery
@@ -349,7 +466,7 @@ Rozpoznávanie bolo overené na ukážkovej priestorovej fotke zapísanej vlastn
 
 Ľudia si kupujú Quest 3, aby si pozerali vlastné fotky a videá 360°, a potom sa pýtajú, kam dať súbory, ako ich dostať do headsetu bez kábla a aký prehrávač použiť: prehrávače 360° a 3D videí v obchode sú platené.
 
-Tá istá aplikácia pre Android beží na Queste 3 a 3S ako okno s celou vašou knižnicou. Jej tlačidlo 360° otvorí pohlcujúce zobrazenie, v ktorom vás fotka alebo video obklopuje a rozhliadate sa otáčaním hlavy, v skutočnom 3D pre stereoskopické súbory (Meta Spatial SDK). Médiá pochádzajú z vášho servera Immich, zo samotného headsetu, z NAS, z mediálneho servera alebo z telefónu a prehrávajú sa priamo na mieste (mediálny server a telefón od zostavy 19, v headsete zatiaľ neoverené). Je bezplatná a s otvoreným zdrojovým kódom. Overené na Queste 3 a používateľom s videami Insta360 X4 8K HEVC.
+Tá istá aplikácia pre Android beží na Queste 3 a 3S ako okno s celou vašou knižnicou. Jej tlačidlo 360° otvorí pohlcujúce zobrazenie, v ktorom vás fotka alebo video obklopuje a rozhliadate sa otáčaním hlavy, v skutočnom 3D pre stereoskopické súbory (Meta Spatial SDK). Médiá pochádzajú z vášho servera Immich, zo samotného headsetu, z NAS, z mediálneho servera, z telefónu alebo zo servera Plex a prehrávajú sa priamo na mieste (mediálny server a telefón od zostavy 19, server Plex od zostavy 20, v headsete zatiaľ neoverené) a od zostavy 20 okno zobrazuje aj kamery Tapo. Je bezplatná a s otvoreným zdrojovým kódom. Overené na Queste 3 a používateľom s videami Insta360 X4 8K HEVC.
 
 ### Otvoriť pohlcujúce zobrazenie
 
@@ -408,6 +525,56 @@ Otočte ho pravou páčkou (alebo tlačidlom Otočiť na informačnom paneli), k
 - **Pretáčanie**: video, ktorého zdroj neodpovedá na požiadavky na rozsah bajtov, nemožno pretáčať; panel to oznámi.
 - **Ploché videá**: ploché (nie 360°) stereoskopické video sa prehráva v okne s viditeľnými oboma očami; pohlcujúce 3D zobrazenie je pre médiá 360° a VR180.
 - **Viac**: kodeky, ktoré headset dekóduje, obchod, povolenia a veľkosť APK sú v časti [Meta Quest 3](#meta-quest-3).
+
+<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
+## Pozerajte na televízore (Android TV a Google TV)
+
+Chcete fotky a videá 360°, svoje albumy a videá z NAS alebo servera Plex na veľkej obrazovke, pre rodinu na gauči, s diaľkovým ovládačom televízora. Mobilná aplikácia Immich nie je aplikácia pre televízor: používateľ, ktorý si ju nainštaloval do televízora, zistil, že funguje s myšou, nie s diaľkovým ovládačom ([diskusia #1614](https://github.com/immich-app/immich/discussions/1614)), a tím Immich neplánuje oficiálnu aplikáciu pre televízor ([diskusia #13748](https://github.com/immich-app/immich/discussions/13748)).
+
+Od zostavy 20 beží tá istá aplikácia pre Android na Android TV a Google TV, s diaľkovým ovládačom ako jediným vstupom: jeden APK pre telefóny aj televízory, zobrazenia 360° a 3D otáčané šípkami a sieťové úložiská, Plex a kamery Tapo na televízore, so serverom Immich alebo bez neho.
+
+<a id="install-it-on-the-tv"></a>
+### Inštalácia do televízora
+
+1. Kým Google Play nebude ponúkať aplikáciu na televízoroch, čo čaká na posúdenie verzie pre televízory spoločnosťou Google, stiahnite si univerzálny `Immuch360-v<version>-release.apk` zo stránky [Releases](https://github.com/freeKC/Immuch360/releases).
+2. Na televízore zapnite možnosti pre vývojárov a ladenie cez USB (na Google TV: Nastavenia, Systém, Informácie, sedemkrát vyberte „Zostava OS Android TV“ (Android TV OS build), potom Nastavenia, Systém, Možnosti pre vývojárov; názvy sa medzi televízormi líšia).
+3. Z počítača v tej istej sieti, s adb (Android SDK Platform Tools): `adb connect <address of the TV>`, potvrďte výzvu na televízore, potom `adb install -r Immuch360-v<version>-release.apk`.
+4. Aplikácia sa zobrazí medzi aplikáciami televízora, so svojím bannerom. Ďalšie vydanie nainštalujte rovnako: `-r` zachová prihlásenie a nastavenia.
+
+### Prvé spustenie
+
+1. Prihláste sa ako na telefóne: šípky presúvajú rámček z poľa na pole a OK na poli („Stlačte OK na písanie“) otvorí klávesnicu televízora v dialógu, pre adresu servera, e-mail a heslo.
+2. Alebo vyberte „Používať bez servera“. Televízor nemá vlastné fotky, takže karta Fotky zobrazí „Tento televízor nemá vlastné fotky ani videá: otvorte sieťové úložisko z Knižnice.“ s tlačidlom Sieťové úložiská. Pridajte tam zdieľanie, server Plex alebo kameru, ako na telefóne (pozrite si [Sieťové úložiská](#network-shares-a-nas-a-computer-or-a-media-server)).
+
+### Ovládanie diaľkovým ovládačom
+
+- Šípky presúvajú rámček, OK otvorí to, na čom je, Späť sa vráti. Z karty Späť prejde do bočnej ponuky, potom na Fotky, potom ukončí aplikáciu.
+- Kanál hore a dole posúvajú po stránkach.
+- V zobrazeniach fungujú tlačidlá diaľkového ovládača prehrať a pozastaviť, pretočiť dopredu, pretočiť dozadu, ďalej a späť a tlačidlo informácií zobrazí podrobnosti fotky alebo videa.
+
+### Fotky a videá s diaľkovým ovládačom
+
+1. **Fotka**: vľavo a vpravo prejdú na predchádzajúcu alebo ďalšiu, OK zobrazí alebo skryje ovládacie prvky, hore prejde na hornú lištu (kde je tlačidlo 360°) a dole na dolnú lištu.
+2. **Video**: OK pozastaví a zobrazí ovládacie prvky, alebo prehrá. Počas prehrávania vľavo a vpravo preskočia o 10 sekúnd dozadu alebo dopredu; keď je pozastavené, prejdú na predchádzajúcu alebo ďalšiu položku, ako hovorí tip: „Pozastavené: šípky prejdú na predchádzajúcu alebo ďalšiu položku“.
+3. **Fotka 360°**, z tlačidla 360°: šípkami sa rozhliadate, rýchlejšie pri podržaní, a pohľad sa plynulo zastaví. OK prejde na tlačidlá hornej lišty, na „Priblížiť“, vedľa „Oddialiť“, zorného poľa a 3D; kanál hore a dole tiež približujú. Späť sa vráti z tlačidiel na obraz, potom zatvorí. Tip znie „Šípkami sa rozhliadate, OK zobrazí ovládanie, Späť zatvorí“.
+4. **Video 360°**, z tlačidla 360°: šípkami sa rozhliadate, kým sú ovládacie prvky skryté, OK pozastaví a zobrazí ich, Späť ich skryje, potom zatvorí. Tip znie „Šípkami sa rozhliadate, OK pozastaví a zobrazí ovládanie, Späť zatvorí“.
+5. **Spomienky**: vľavo a vpravo prechádzajú fotkami a pokračujú na ďalšiu spomienku, hore prejde na tlačidlo zatvorenia a dole na „Zobraziť v časovej osi“.
+6. **Zdieľania a Plex**: tie isté tlačidlá na stránkach fotiek a videí zdieľania, kde vľavo a vpravo otvoria predchádzajúci alebo ďalší súbor priečinka.
+
+### Nastavenie Rozloženie pre diaľkový ovládač
+
+Nastavenia, Predvoľby, „Rozloženie pre diaľkový ovládač“: „Veľké rámčeky výberu a tlačidlá diaľkového ovládača, bez ovládacích prvkov, ktoré vyžadujú dotykovú obrazovku. Automaticky ho zapne na Android TV a Google TV.“ Automaticky je predvolené; Zapnuté sa hodí pre tablet ovládaný klávesnicou alebo herným ovládačom; Vypnuté ho na televízore vypne. Nastavenie existuje iba v Androide. Šípky a OK fungujú v zobrazeniach s klávesnicou alebo herným ovládačom bez ohľadu na nastavenie.
+
+### Obmedzenia
+
+- **Prehliadač**: na televízore aplikácia zobrazuje a prehráva. Zálohovanie, nahrávanie, úpravy, mazanie, zdieľanie, výber viacerých položiek, Cast, Spatial 2.5D, gyroskop, mapa a Miesta a „Zdieľať tento telefón v sieti“ sú skryté.
+- **Prihlásenie**: OAuth otvára webovú stránku, čo televízor nedokáže: „Prihlásenie cez (poskytovateľ) otvára webovú stránku, čo tento televízor nedokáže. Prihláste sa namiesto toho e-mailom a heslom.“
+- **Odkazy** zobrazia svoju adresu pod „Otvoriť v inom zariadení“ namiesto otvorenia prehliadača a text sa zadáva v dialógu klávesnice systému.
+- **Pamäť**: na televízore s malou pamäťou sa fotky 360° zobrazujú najviac v rozlíšení 4096x2048, bez ostrejšieho obrazu pri priblížení.
+- **Videá**: o tom, čo sa prehrá, rozhodujú dekodéry televízora, s rovnakým nastavením Zdroj videa a rovnakou kontrolou dekodéra ako na telefóne (pozrite si [Podrobnosti videa a dekodéry](#video-details-decoders-and-why-a-video-stutters)); na televízore zatiaľ nemerané.
+- **Zatiaľ neoverené na zariadení**: podpora televízorov bola overená iba automatickými testami a zatiaľ nebežala na televízore ani na emulátore televízora. Treba potvrdiť: smer, ktorým šípky otáčajú video 360°, klávesnicu televízora (Gboard) v textovom dialógu, tlačidlo OK infračervených ovládačov, okraje a banner na domovskej obrazovke televízora. Hlásenia sú vítané.
+- **Google Play na televízoroch** čaká na posúdenie verzie pre televízory spoločnosťou Google; dovtedy APK.
+- **Iné televízory**: Fire TV nie je testovaný a verzia pre Apple TV neexistuje.
 
 <a id="find-your-360-shots-the-360-list"></a>
 ## Nájdite svoje zábery 360°: zoznam 360°
@@ -488,11 +655,11 @@ Keď server ignoruje požiadavky HTTP Range na originál a index MP4 (moov) je n
 <a id="everything-else-is-immich"></a>
 ## Všetko ostatné je Immich
 
-Všetko, čo robí oficiálna mobilná aplikácia Immich, je tu: zálohovanie, časová os, albumy, vyhľadávanie, zdieľanie, partneri, všetko synchronizované s vaším serverom, s rovnakým serverom a rovnakým účtom ako webová aplikácia. Immuch360 sa inštaluje vedľa oficiálnej aplikácie (balík `com.aprogsys.immuch360`). Od zostavy 15 existujú dva rozdiely: prepínač „Vynútiť pôvodné video“ sa zmenil na voľbu Zdroj videa opísanú vyššie a fotky a videá, ktoré ručne nahráte z albumu zariadenia, sa počítajú ako zálohované.
+Všetko, čo robí oficiálna mobilná aplikácia Immich, je tu: zálohovanie, časová os, albumy, vyhľadávanie, zdieľanie, partneri, všetko synchronizované s vaším serverom, s rovnakým serverom a rovnakým účtom ako webová aplikácia. Immuch360 sa inštaluje vedľa oficiálnej aplikácie (balík `com.aprogsys.immuch360`). Od zostavy 15 existujú dva rozdiely: prepínač „Vynútiť pôvodné video“ sa zmenil na voľbu Zdroj videa opísanú vyššie a fotky a videá, ktoré ručne nahráte z albumu zariadenia, sa počítajú ako zálohované. Na televízore je aplikácia od zostavy 20 prehliadačom, pozrite si [Pozerajte na televízore](#watch-on-your-tv-android-tv-and-google-tv).
 
 Ak chcete ukázať fotku 360° niekomu, kto aplikáciu nemá, zdieľajte ju zdieľaným odkazom Immich: webová aplikácia Immich zobrazí fotku 360° ako guľu v jeho prehliadači.
 
-Aktuálna zostava, zostava 19 (verzia 3.3.0-rc.0, číslo zostavy 3030017), vychádza z Immich 3.3.0-rc.0 (Immich `main`, zatiaľ nie stabilné vydanie) a bola testovaná so serverom Immich 3.2. Problémy prosím hláste v [Issues](https://github.com/freeKC/Immuch360/issues), nie projektu Immich. Úplnú dokumentáciu samotného Immich nájdete na [immich.app](https://immich.app).
+Aktuálna zostava, zostava 20 (verzia 3.3.0-rc.0, číslo zostavy 3030018), vychádza z Immich 3.3.0-rc.0 (Immich `main`, zatiaľ nie stabilné vydanie). Zostava 19 bola testovaná so serverom Immich 3.2 a zostava 20 nemení nič na tom, čo aplikácia od servera žiada. Problémy prosím hláste v [Issues](https://github.com/freeKC/Immuch360/issues), nie projektu Immich. Úplnú dokumentáciu samotného Immich nájdete na [immich.app](https://immich.app).
 
 ## Porovnanie s aplikáciou Immich a inými aplikáciami
 
@@ -515,6 +682,9 @@ Aktuálna zostava, zostava 19 (verzia 3.3.0-rc.0, číslo zostavy 3030017), vych
 | Mediálne servery DLNA ako typ zdieľania | ❌ | ✅ od zostavy 19 | Overené s minidlna a Gerbera v Dockeri; Plex, Jellyfin, NAS, Freebox Server, iPhone a Quest sú testom zostavy 19 na zariadeniach |
 | Odoslanie súborov zo zdieľania do Immich; súbory zariadenia odoslané ručne sa počítajú ako zálohované | ❌ iba súbory zariadenia | ✅ od zostavy 15 | Testované na emulátore Androidu s testovacím serverom Samba a serverom Immich 3.2 |
 | Zdieľať tento telefón v sieti, pre headset | ❌ | ✅ od zostavy 19, Android a iOS | Jednotkové a end-to-end testy s klientom WebDAV headsetu na počítači; telefón poskytujúci súbory pre Quest a strana iPhonu sú testom zostavy 19 na zariadeniach |
+| Knižnice Plex Media Server prehrávané z pôvodných súborov, doma aj mimo domova, bez plex.tv | ❌ | ✅ od zostavy 20, všetky zobrazenia, na telefónoch, tabletoch, Queste 3 a televízoroch | Overené z počítača voči skutočnému Plex Media Server 1.42.1 (párovanie, priečinky, rozsahy bajtov, miniatúry, adresa mimo domova); zatiaľ neoverené na zariadení |
+| Kamery Tapo: živý obraz a záznamy z pamäťovej karty odoslané do Immich, keď sa rozhodnete | ❌ | ✅ od zostavy 20: záznamy všade, naživo na Androide, Android TV a Queste 3 | Overené voči simulovanej kamere; zatiaľ neoverené so skutočnou kamerou |
+| Android TV a Google TV, ovládané diaľkovým ovládačom, v tom istom APK | ❌ nie je aplikácia pre televízor | ✅ od zostavy 20 | Overené automatickými testami; zatiaľ neoverené na televízore |
 | Nespracované fotky Insta360 .insp a videá .insv s jednou stopou | ❌ ploché | ✅ od zostavy 16 | Fotky overené porovnaním s exportmi Insta360 Studio zo súborov X3, videá na emulátore Androidu so súborom X3 s nízkym rozlíšením; na iPhone zatiaľ nespustené |
 | Nespracované videá s jedným objektívom na stopu alebo na súbor (Insta360 X4, X4 Air, X5, X6, páry X3, GoPro .360, DJI .osv) | ❌ ploché alebo nesprávne | ✅ od zostavy 18 | Parsery a spájanie overené na skutočných súboroch X4, páru X3, GoPro MAX a Osmo 360; prehrávanie je testom zostáv 18 a 19 na zariadeniach |
 | Dvojitý fisheye .dng | ❌ plochý | ❌ zatiaľ nie | Plánované |
@@ -529,27 +699,33 @@ Aktuálna zostava, zostava 19 (verzia 3.3.0-rc.0, číslo zostavy 3030017), vych
 |---|---|---|
 | Webová aplikácia Immich | Zobrazí fotku 360° ako guľu, ale nespracovaný .insp považuje za hotovú panorámu a jeho dva kruhy obalí okolo gule; zobrazenie VR je zatiaľ len požiadavka ([diskusia #14768](https://github.com/immich-app/immich/discussions/14768)) | Spája nespracované súbory v zariadení a otvára pohlcujúce zobrazenie v Queste 3 |
 | Aplikácia alebo Studio Insta360 | Potrebné na prevedenie nespracovaných súborov z karty na obraz 360° pred pozeraním | Priamo otvára nespracované súbory .insp a .insv aj súbory GoPro .360 a DJI .osv |
-| Plex, Jellyfin, Synology Photos | Fotky a videá 360° zobrazené ploché alebo nerozpoznané, ako opisujú vlákna na ich fórach (požiadavka v Plexe je otvorená od roku 2017) | Číta tie isté priečinky cez SMB, WebDAV alebo DLNA a prehráva ich ako guľu bez akejkoľvek zmeny na serveri |
+| Plex, Jellyfin, Synology Photos | Fotky a videá 360° zobrazené ploché alebo nerozpoznané, ako opisujú vlákna na ich fórach (požiadavka v Plexe je otvorená od roku 2017) | Od zostavy 20 číta samotnú knižnicu Plex alebo tie isté priečinky cez SMB, WebDAV alebo DLNA a prehráva ich ako guľu bez akejkoľvek zmeny na serveri |
+| Aplikácia Tapo | Samostatná aplikácia prihlásená k vášmu účtu TP-Link, s klipmi oddelene od vašich fotiek | Zobrazí kameru vedľa vašich fotiek, komunikuje s ňou iba vo vašej sieti a uchová klip ako video, ktoré môžete odoslať do Immich (od zostavy 20) |
+| Mobilná aplikácia Immich na televízore | Nie je aplikácia pre televízor: používateľ hlási, že funguje s myšou, nie s diaľkovým ovládačom | Tá istá aplikácia, urobená pre diaľkový ovládač (od zostavy 20) |
 | Kopírovanie súborov do headsetu | Každý súbor treba pred pozeraním skopírovať káblom | Prehráva priamo na mieste z Immich, z NAS, z mediálneho servera alebo z telefónu |
 | Prehrávače 360° a 3D z obchodu Questu | Platené | Bezplatné a s otvoreným zdrojovým kódom (AGPL) |
 
 ## Formáty a zdroje podľa platformy
 
-Immuch360 je galéria a zároveň bezplatný prehrávač médií: prehrá to, čo oficiálna aplikácia nedokáže, zo štyroch zdrojov, v prehrávači vhodnom pre daný súbor.
+Immuch360 je galéria a zároveň bezplatný prehrávač médií: prehrá to, čo oficiálna aplikácia nedokáže, zo zdrojov druhej tabuľky, v prehrávači vhodnom pre daný súbor.
 
-| Čo | Telefóny s Androidom | iPhone, iPad | Meta Quest 3 |
-|---|---|---|---|
-| Ploché videá (MP4, MOV, MKV, čo zariadenie dekóduje) | Prehrávač Immich a natívny prehrávač pre sieťové úložiská | To isté, okrem súborov MKV a AVI zo zdieľania, ktoré iOS neotvorí (zo servera sa prehrávajú prekódované) | V okne |
-| Fotky 360° | Sférický prehliadač, gyroskop | To isté | Pohlcujúce, všade okolo vás |
-| Videá 360° | Natívny prehrávač Media3 na guli, gyroskop, pretáčanie, výber zvukovej stopy, indikátor načítavania | Natívny prehrávač SceneKit na guli, gyroskop, výber zvukovej stopy, indikátor načítavania; prehrať a pozastaviť, zatiaľ bez časovej lišty | Pohlcujúce, skutočné 3D pre stereoskopické súbory, časová lišta s preskočením o 10 sekúnd, predchádzajúce a ďalšie médium |
-| 3D 360° (hore a dole, vedľa seba) | Ľavé oko, tlačidlo rozloženia | To isté | Každé oko dostane svoju polovicu snímky |
-| Fotky a videá VR180 (pologuľa) | Pologuľa, tlačidlo 360°/180° | To isté | Pohlcujúca pologuľa |
-| Spatial 2.5D (hĺbka na plochej obrazovke zo stereoskopického videa) | Natívny prehrávač, sledovanie hlavy prednou kamerou | To isté | Neponúka sa |
-| Priestorové fotky Apple (stereo páry HEIC, od zostavy 19) | Ľavé oko, riadok v podrobnostiach uvádza, že ide o priestorovú fotku | To isté | Zobraziť v 3D: obe oči na fotke vznášajúcej sa v pohlcujúcom zobrazení, 3D alebo 2D, s nastaviteľnou veľkosťou |
-| Priestorové videá Apple (MV-HEVC, od zostavy 19) | Jedno oko (základná vrstva), s upozornením | To isté | Jedno oko v okne, s upozornením |
-| Nespracované fotky Insta360 .insp (od zostavy 16) | Spojené na GPU pred sférickým prehliadačom, do 8192x4096 | To isté | Pohlcujúce, zo spojeného obrázka pripraveného pre headset |
-| Nespracované Insta360 .insv, oba objektívy v jednej stope (od zostavy 16) | Spojené efektom GPU v prehrávači Media3 | Spojené shaderom SceneKit | Pohlcujúce, spojené tým istým efektom GPU |
-| Nespracované videá s jedným objektívom na stopu alebo na súbor (od zostavy 18): Insta360 X4, X4 Air, X5, X6 .insv, páry X3, GoPro .360, DJI .osv | Dva hardvérové dekodéry naraz, jeden na objektív (od zostavy 19 softvérové na zariadení bez hardvérového dekodéra, do 2048x2048 na objektív), a kompozitor GL, ktorý ich spojí do gule; jeden objektív, potom prekódovaný stream, potom nespojené video, keď zariadenie nezvládne dva | Vlastný kompozitor AVFoundation s Metal | Pohlcujúce, tie isté dva dekodéry a kompozitor (panel 3840x1920) |
+| Čo | Telefóny s Androidom | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (od zostavy 20) |
+|---|---|---|---|---|
+| Ploché videá (MP4, MOV, MKV, čo zariadenie dekóduje) | Prehrávač Immich a natívny prehrávač pre sieťové úložiská | To isté, okrem súborov MKV a AVI zo zdieľania, ktoré iOS neotvorí (zo servera sa prehrávajú prekódované) | V okne | Ako na telefónoch; OK pozastaví, vľavo a vpravo preskočia o 10 s |
+| Fotky 360° | Sférický prehliadač, gyroskop | To isté | Pohlcujúce, všade okolo vás | Sférický prehliadač otáčaný šípkami, približovaný tlačidlami kanálov |
+| Videá 360° | Natívny prehrávač Media3 na guli, gyroskop, pretáčanie, výber zvukovej stopy, indikátor načítavania | Natívny prehrávač SceneKit na guli, gyroskop, výber zvukovej stopy, indikátor načítavania; prehrať a pozastaviť, zatiaľ bez časovej lišty | Pohlcujúce, skutočné 3D pre stereoskopické súbory, časová lišta s preskočením o 10 sekúnd, predchádzajúce a ďalšie médium | Prehrávač Media3 z telefónov, otáčaný šípkami |
+| 3D 360° (hore a dole, vedľa seba) | Ľavé oko, tlačidlo rozloženia | To isté | Každé oko dostane svoju polovicu snímky | Ľavé oko, tlačidlo rozloženia |
+| Fotky a videá VR180 (pologuľa) | Pologuľa, tlačidlo 360°/180° | To isté | Pohlcujúca pologuľa | Pologuľa, tlačidlo 360°/180° |
+| Spatial 2.5D (hĺbka na plochej obrazovke zo stereoskopického videa) | Natívny prehrávač, sledovanie hlavy prednou kamerou | To isté | Neponúka sa | Neponúka sa |
+| Priestorové fotky Apple (stereo páry HEIC, od zostavy 19) | Ľavé oko, riadok v podrobnostiach uvádza, že ide o priestorovú fotku | To isté | Zobraziť v 3D: obe oči na fotke vznášajúcej sa v pohlcujúcom zobrazení, 3D alebo 2D, s nastaviteľnou veľkosťou | Ľavé oko, riadok v podrobnostiach |
+| Priestorové videá Apple (MV-HEVC, od zostavy 19) | Jedno oko (základná vrstva), s upozornením | To isté | Jedno oko v okne, s upozornením | Jedno oko, s upozornením |
+| Nespracované fotky Insta360 .insp (od zostavy 16) | Spojené na GPU pred sférickým prehliadačom, do 8192x4096 | To isté | Pohlcujúce, zo spojeného obrázka pripraveného pre headset | Ako na telefónoch |
+| Nespracované Insta360 .insv, oba objektívy v jednej stope (od zostavy 16) | Spojené efektom GPU v prehrávači Media3 | Spojené shaderom SceneKit | Pohlcujúce, spojené tým istým efektom GPU | Ako na telefónoch |
+| Nespracované videá s jedným objektívom na stopu alebo na súbor (od zostavy 18): Insta360 X4, X4 Air, X5, X6 .insv, páry X3, GoPro .360, DJI .osv | Dva hardvérové dekodéry naraz, jeden na objektív (od zostavy 19 softvérové na zariadení bez hardvérového dekodéra, do 2048x2048 na objektív), a kompozitor GL, ktorý ich spojí do gule; jeden objektív, potom prekódovaný stream, potom nespojené video, keď zariadenie nezvládne dva | Vlastný kompozitor AVFoundation s Metal | Pohlcujúce, tie isté dva dekodéry a kompozitor (panel 3840x1920) | Ako na telefónoch, keď televízor zvládne dva dekodéry naraz |
+| Živý obraz kamery Tapo (od zostavy 20) | Prehrávač RTSP Media3: SD na stránke, HD na celej obrazovke, tlačidlo zvuku | Zatiaľ nie: karta oznamuje, že príde neskôr | V okne, v HD | Ako na telefónoch |
+| Záznamy kamery Tapo (od zostavy 20) | Stiahnuté z pamäťovej karty do videa H.264 so zvukom, potom prehrávané s pretáčaním | To isté | To isté, v okne | To isté |
+
+Stĺpec TV ešte nebol overený na televízore, pozrite si [Pozerajte na televízore](#watch-on-your-tv-android-tv-and-google-tv); riadky kamery ešte neboli overené so skutočnou kamerou.
 
 | Odkiaľ | Ako |
 |---|---|
@@ -557,13 +733,15 @@ Immuch360 je galéria a zároveň bezplatný prehrávač médií: prehrá to, č
 | Samotný telefón alebo headset | „Používať bez servera“ na prihlasovacej stránke alebo položka Na tomto zariadení na karte Knižnica |
 | NAS alebo počítač | Zdieľania SMB a WebDAV a od zostavy 19 mediálne servery DLNA, nájdené v sieti, čítané naživo (video SMB cez až šesť pripojení), nič sa nekopíruje; od zostavy 15 môžete vybrané súbory odoslať do svojho účtu Immich |
 | Iný telefón (od zostavy 19) | „Zdieľať tento telefón v sieti“ na tom telefóne: headset alebo akýkoľvek klient WebDAV v sieti číta jeho albumy, mesiace a médiá 360° |
+| Plex Media Server (od zostavy 20) | Jeho knižnice fotiek, filmov a seriálov podľa priečinkov, pôvodné súbory čítané naživo cez HTTPS overené voči vlastnému certifikátu servera, doma alebo cez adresu mimo domova, na každej platforme; pozrite si [Plex Media Server bez plex.tv](#plex-media-server-without-plextv) |
+| Kamera Tapo (od zostavy 20) | Živý obraz s účtom kamery (Android, Android TV, Quest) a záznamy z jej pamäťovej karty s heslom účtu TP-Link (každá platforma), iba v miestnej sieti; pozrite si [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
 Immuch360 beží aj na Meta Quest 3 a 3S (Horizon OS v69 alebo novší; zostava v Horizon Store je uvedená iba pre tieto dva; univerzálny `-release.apk` by sa mal nainštalovať aj na Quest 2 alebo Quest Pro, netestované). Ako ho používať, je opísané v časti [V headsete Meta Quest 3](#in-the-meta-quest-3-headset); táto časť sa venuje inštalácii a tomu, čo je v headsete inak.
 
-Zostava pre headset komunikuje so servermi iba cez HTTPS, alebo cez obyčajné HTTP s názvami domácej siete (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) a so samotným headsetom, ako vyžaduje Horizon Store. Server zadaný ako obyčajná adresa HTTP s IP, napríklad `http://192.168.1.10:2283`, táto zostava odmietne: použite HTTPS, názov domácej siete (`nas.local`) alebo univerzálny `-release.apk`, ktorý zachováva otvorené pravidlá telefónov. Netýka sa to zdieľaní WebDAV, DLNA a zdieľaní telefónu na obyčajnej adrese HTTP miestnej siete: aplikácia ich číta sama a svojim prehrávačom odovzdá iba adresu svojho miestneho mosta (pre DLNA a zdieľanie telefónu, nové v zostave 19, to treba ešte potvrdiť v headsete).
+Zostava pre headset komunikuje so servermi iba cez HTTPS, alebo cez obyčajné HTTP s názvami domácej siete (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) a so samotným headsetom, ako vyžaduje Horizon Store. Server zadaný ako obyčajná adresa HTTP s IP, napríklad `http://192.168.1.10:2283`, táto zostava odmietne: použite HTTPS, názov domácej siete (`nas.local`) alebo univerzálny `-release.apk`, ktorý zachováva otvorené pravidlá telefónov. Netýka sa to zdieľaní WebDAV, DLNA a zdieľaní telefónu na obyčajnej adrese HTTP miestnej siete: aplikácia ich číta sama a svojim prehrávačom odovzdá iba adresu svojho miestneho mosta (pre DLNA a zdieľanie telefónu, nové v zostave 19, to treba ešte potvrdiť v headsete). Od zostavy 20 sa k serveru Plex pristupuje cez HTTPS a ku kamere Tapo samotná aplikácia, jej živý obraz cez RTSP, ktoré nie je HTTP: ani jedného by sa to nemalo týkať (treba potvrdiť v headsete).
 
 <a id="install"></a>
 ### Inštalácia
@@ -576,7 +754,7 @@ Záznam v Horizon Store čaká na posúdenie spoločnosťou Meta, odoslaný so z
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-19-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
    ```
 
 4. V headsete otvorte Library (Knižnica), vyberte filter „Unknown sources“ (Neznáme zdroje) a spustite Immuch360.
@@ -584,7 +762,7 @@ Záznam v Horizon Store čaká na posúdenie spoločnosťou Meta, odoslaný so z
 
 ### V okne
 
-Celá aplikácia beží ako 2D okno s nastaviteľnou veľkosťou: prihlásenie, časová os, albumy, vyhľadávanie, karta Knižnica (zoznam 360°, Na tomto zariadení, Sieťové úložiská), nastavenia a prehliadače fotiek a videí, kde sa prehrávajú ploché fotky a videá. V headsete tlačidlo 360° a Zobraziť ako 360° v ponuke ⋮ otvoria priamo pohlcujúce zobrazenie namiesto sférického prehliadača telefónov a tlačidlo Spatial 2.5D ani jeho nastavenie sa nezobrazujú. Od zostavy 19 má priestorová fotka Apple tlačidlo Zobraziť v 3D a dlaždica Zdieľať tento telefón v sieti sa nezobrazuje: headset je ten, kto zdieľanie telefónu číta.
+Celá aplikácia beží ako 2D okno s nastaviteľnou veľkosťou: prihlásenie, časová os, albumy, vyhľadávanie, karta Knižnica (zoznam 360°, Na tomto zariadení, Sieťové úložiská), nastavenia a prehliadače fotiek a videí, kde sa prehrávajú ploché fotky a videá. V headsete tlačidlo 360° a Zobraziť ako 360° v ponuke ⋮ otvoria priamo pohlcujúce zobrazenie namiesto sférického prehliadača telefónov a tlačidlo Spatial 2.5D ani jeho nastavenie sa nezobrazujú. Od zostavy 19 má priestorová fotka Apple tlačidlo Zobraziť v 3D a dlaždica Zdieľať tento telefón v sieti sa nezobrazuje: headset je ten, kto zdieľanie telefónu číta. Od zostavy 20 sa v okne otvárajú aj servery Plex a kamery Tapo, živý obraz kamery v HD; nastavenie „Rozloženie pre diaľkový ovládač“ zostáva na Automaticky, čo ho v headsete necháva vypnuté.
 
 ### V obrázkoch
 
@@ -598,7 +776,7 @@ Snímky urobené v headsete tlačidlom snímky obrazovky (tlačidlo Meta a spú�
 ### Obmedzenia v headsete
 
 - **Videokodeky**: HEVC (H.265) je bezpečná voľba; H.264 končí približne pri 4096x2304. Čo aplikácia kontroluje a ako dať headsetu video, ktoré dekóduje, je v časti [Podrobnosti videa a dekodéry](#video-details-decoders-and-why-a-video-stutters).
-- **Obchod**: verzia v obchode začína zostavou 14. Funkcie označené „od zostavy 15“ a „od zostavy 16“ prídu s jej ďalšou aktualizáciou (zostava 16, už na testovacom kanáli alfa), neskoršie potom; APK z GitHubu ich má všetky už teraz.
+- **Obchod**: verzia v obchode začína zostavou 14. Funkcie označené „od zostavy 15“ a neskoršie prídu s jej ďalšími aktualizáciami (testovací kanál alfa obchodu, pre testerov, dostáva každú novú zostavu); APK z GitHubu ich má všetky už teraz.
 - **Povolenia**: zostava pre headset žiada iba fotky a videá (režim bez servera) a upozornenia (priebeh zálohovania). Na rozdiel od zostavy pre telefón nemá povolenie pre úložisko, zvuk, polohu ani kameru; prepínanie servera podľa názvu siete Wi-Fi preto v headsete nie je k dispozícii.
 - **Veľkosť APK**: Spatial SDK pridáva približne 56 MB natívneho kódu ARM 64-bit, aj na telefónoch, kde sa nikdy nenačíta.
 - **Licencia**: pohlcujúce zobrazenie používa Meta Spatial SDK, distribuované podľa Meta Platform Technologies SDK License Agreement.
@@ -606,13 +784,14 @@ Snímky urobené v headsete tlačidlom snímky obrazovky (tlačidlo Meta a spú�
 <a id="where-to-get-it"></a>
 ## Kde ju získať
 
-Aplikácia je na Google Play; verzia pre App Store čaká na posúdenie spoločnosťou Apple a verzia pre Meta Horizon Store na posúdenie spoločnosťou Meta. Vydanie na GitHube je vždy najnovšia zostava:
+Aplikácia je na Google Play pre telefóny a tablety; verzia pre App Store čaká na posúdenie spoločnosťou Apple, verzia pre Meta Horizon Store na posúdenie spoločnosťou Meta a verzia Google Play pre televízory na posúdenie verzie pre televízory spoločnosťou Google. Vydanie na GitHube je vždy najnovšia zostava:
 
 | Platforma | Dnes | Čoskoro |
 |---|---|---|
-| Telefóny a tablety s Androidom | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) alebo APK na stránke [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pre telefón (univerzálny `Immuch360-v<version>-release.apk` funguje všade, `-armeabi-v7a` je pre staršie 32-bitové telefóny a súbor `.aab` je pre Google Play, nie na sideload). Zostava na GitHube je zvyčajne pred obchodom. V každom prípade sa inštaluje vedľa oficiálnej aplikácie Immich (balík `com.aprogsys.immuch360`). | Google Play: zostavy 15 a 16 odoslané na posúdenie spoločnosťou Google 4. októbra 2026 (posledná zostava potvrdená ako zverejnená je zostava 11) |
+| Telefóny a tablety s Androidom | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) alebo APK na stránke [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pre telefón (univerzálny `Immuch360-v<version>-release.apk` funguje všade, `-armeabi-v7a` je pre staršie 32-bitové telefóny a súbor `.aab` je pre Google Play, nie na sideload). Zostava na GitHube je zvyčajne pred obchodom. V každom prípade sa inštaluje vedľa oficiálnej aplikácie Immich (balík `com.aprogsys.immuch360`). | Google Play: zostava 18 je zverejnená, zostava 19 v posudzovaní spoločnosťou Google od 6. októbra 2026, potom zostava 20 |
 | iPhone a iPad | Čaká na posúdenie spoločnosťou Apple. Posudzovaná verzia obsahuje funkcie zostavy 11: nahrávanie do Immich a voľba Zdroj videa (zostava 15) a nespracované súbory Insta360 (zostava 16) prídu s neskoršou aktualizáciou v App Store. Zdrojový kód sa zostavuje v Xcode alebo na Codemagic, pozrite si [Zostavte si ju sami](#build-it-yourself). | App Store, v posudzovaní |
-| Meta Quest 3 a 3S | Súbor `-quest-release.apk` zo stránky [Releases](https://github.com/freeKC/Immuch360/releases) (funguje aj univerzálny `-release.apk`), nainštalovaný cez sideload v režime vývojára, pozrite si [Inštalácia](#install). Zostava z obchodu a APK z GitHubu sú podpísané rôznymi kľúčmi: ak chcete prejsť z jednej na druhú, najprv aplikáciu odinštalujte (jej nastavenia a uložené zdieľania sa stratia spolu s ňou). | Meta Horizon Store: zostava 14 v posudzovaní spoločnosťou Meta od 3. októbra 2026; zostava 16 je na kanáli alfa obchodu (iba pre testerov) |
+| Meta Quest 3 a 3S | Súbor `-quest-release.apk` zo stránky [Releases](https://github.com/freeKC/Immuch360/releases) (funguje aj univerzálny `-release.apk`), nainštalovaný cez sideload v režime vývojára, pozrite si [Inštalácia](#install). Zostava z obchodu a APK z GitHubu sú podpísané rôznymi kľúčmi: ak chcete prejsť z jednej na druhú, najprv aplikáciu odinštalujte (jej nastavenia a uložené zdieľania sa stratia spolu s ňou). | Meta Horizon Store: zostava 14 v posudzovaní spoločnosťou Meta od 3. októbra 2026; kanál alfa obchodu (iba pre testerov) dostáva každú novú zostavu |
+| Android TV a Google TV (od zostavy 20) | Univerzálny `Immuch360-v<version>-release.apk` zo stránky [Releases](https://github.com/freeKC/Immuch360/releases), nainštalovaný cez sideload pomocou adb, pozrite si [Inštalácia do televízora](#install-it-on-the-tv). Je to tá istá aplikácia ako na telefónoch. | Google Play na televízoroch, po posúdení verzie pre televízory spoločnosťou Google |
 
 Odkazy na App Store a Meta Horizon Store tu pribudnú hneď, ako budú záznamy zverejnené. Prihláste sa svojou obvyklou adresou URL servera Immich a účtom, alebo na prihlasovacej stránke ťuknite na „Používať bez servera“ a začnite s fotkami a videami samotného zariadenia. APK z GitHubu sa sám neaktualizuje: sledujte stránku Releases a keď si aplikáciu nainštalujete z obchodu, aktualizácie preberajte z toho obchodu.
 
@@ -633,7 +812,7 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Snímky obrazovky pre obchody sa robia na ladiacich zostavách v simulátore, vytvorených s `--dart-define=IMMUCH_SCREENSHOTS=true`, čo iba skryje ladiaci pásik. Dva varianty (flavor) pre Android sú tá istá aplikácia. `quest` cieli na SDK 34 a ponecháva iba povolenia, ktoré headset používa (fotky, videá, upozornenia): správa médií, poloha na pozadí, staršie úložisko, zvuk, poloha médií, poloha zariadenia a kamera sú odstránené v `android/app/src/quest/AndroidManifest.xml`, pretože Meta Horizon Store odmieta prvé dve a pri každom ďalšom citlivom povolení žiada odôvodnenie; ten istý súbor uvádza Quest 3 a 3S ako podporované zariadenia a obmedzuje obyčajné HTTP na samotný headset a na názvy domácej siete. APK je iba 64-bitový vďaka dvom ďalším argumentom jeho príkazového riadka (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` je to, čo vyžaduje Google Play. Ak chcete zostavovať pre iOS na vlastnom Macu, použite Xcode a vlastný tím na podpisovanie; s Xcode 26 najprv raz spustite `xcodebuild -downloadComponent MetalToolchain`, pretože ho potrebujú shadery Spatial. Bez Macu sa zostavy pre iOS spúšťajú na Codemagic (hosťovaný Mac) zo súboru `codemagic.yaml` tohto repozitára. Zostavy vydaní pre Android bežia na GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Snímky obrazovky pre obchody sa robia na ladiacich zostavách v simulátore, vytvorených s `--dart-define=IMMUCH_SCREENSHOTS=true`, čo iba skryje ladiaci pásik. Dva varianty (flavor) pre Android sú tá istá aplikácia. Od zostavy 20 sa `phone` deklaruje aj ako aplikácia pre televízor (položka v spúšťači televízora a banner, bez povinnej dotykovej obrazovky), čo `quest` vynecháva. `quest` cieli na SDK 34 a ponecháva iba povolenia, ktoré headset používa (fotky, videá, upozornenia): správa médií, poloha na pozadí, staršie úložisko, zvuk, poloha médií, poloha zariadenia a kamera sú odstránené v `android/app/src/quest/AndroidManifest.xml`, pretože Meta Horizon Store odmieta prvé dve a pri každom ďalšom citlivom povolení žiada odôvodnenie; ten istý súbor uvádza Quest 3 a 3S ako podporované zariadenia a obmedzuje obyčajné HTTP na samotný headset a na názvy domácej siete. APK je iba 64-bitový vďaka dvom ďalším argumentom jeho príkazového riadka (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` je to, čo vyžaduje Google Play. Ak chcete zostavovať pre iOS na vlastnom Macu, použite Xcode a vlastný tím na podpisovanie; s Xcode 26 najprv raz spustite `xcodebuild -downloadComponent MetalToolchain`, pretože ho potrebujú shadery Spatial. Bez Macu sa zostavy pre iOS spúšťajú na Codemagic (hosťovaný Mac) zo súboru `codemagic.yaml` tohto repozitára. Zostavy vydaní pre Android bežia na GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 V tomto repozitári nie je žiadne tajomstvo: podpisový kľúč pre Android je uložený ako šifrované tajomstvá GitHub Actions a podpisové materiály Apple ako šifrované premenné na Codemagic. Súbory workflow na ne odkazujú iba menom. Bez vlastného `android/key.jks` sa zostava vydania podpíše ladiacim kľúčom a nedá sa nainštalovať cez kópiu z GitHubu alebo z obchodu (najprv ju odinštalujte); ladiaca zostava sa nainštaluje vedľa nej ako Immuch360 debug. Kópia v Meta Horizon Store je APK `quest` z vydania podpísaný iným kľúčom, tým, s ktorým bola aplikácia v obchode pôvodne zaregistrovaná, takže ani ju nemožno nainštalovať cez APK nainštalovaný cez sideload, ani naopak.
 
@@ -655,13 +834,16 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
-Od zostavy 19 zapisujú klient DLNA, zdieľanie telefónu a rozpoznávanie priestorových médií Apple aj do vlastného záznamu aplikácie (Záznamy v ponuke profilovej fotky vpravo hore) pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` a `NetworkMediaService`. Riadky záznamu zostávajú v zariadení, pokiaľ ich sami neskopírujete.
+Od zostavy 19 zapisujú klient DLNA, zdieľanie telefónu a rozpoznávanie priestorových médií Apple aj do vlastného záznamu aplikácie (Záznamy v ponuke profilovej fotky vpravo hore) pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` a `NetworkMediaService`. Od zostavy 20 tam režim televízora zapisuje pod `TvMode` a `TvTextEntry`, servery Plex pod `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` a `PlexServerEditPage` a kamery Tapo pod `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` a `CameraLiveView`; riadky Plexu nikdy neobsahujú token, adresu ani názov a riadky kamier vynechávajú heslá. Riadky záznamu zostávajú v zariadení, pokiaľ ich sami neskopírujete.
 
 ## Súkromie
 
 - **Vývojárovi sa nič neodosiela**: aplikácia komunikuje so serverom Immich, ktorý si zvolíte (a keď otvoríte mapu, so službou mapových dlaždíc, ktorú tento server používa), nemá reklamy, analytiku ani službu hlásenia pádov prevádzkovanú vývojárom a vývojárovi Immuch360 nič neodosiela.
-- **Bez servera** nič neopustí zariadenie.
+- **Bez servera** sa nekontaktuje žiadny server: aplikácia používa sieť iba pre zdieľania, servery Plex a kamery, ktoré otvoríte, a pre zdieľanie telefónu, ak ho zapnete.
 - **Sieťové úložiská**: zoznam zdieľaní je uložený v zariadení a nikdy sa neodosiela na server; heslá sa ukladajú do kľúčenky (keychain) alebo úložiska kľúčov (keystore) zariadenia.
+- **Plex** (od zostavy 20): token zostáva v zabezpečenom úložisku zariadenia a odosiela sa iba na váš vlastný server, v hlavičke požiadavky cez HTTPS; aplikácia nikdy nekontaktuje plex.tv.
+- **Kamery Tapo** (od zostavy 20): heslo účtu TP-Link a heslo účtu kamery zostávajú v zabezpečenom úložisku zariadenia; aplikácia komunikuje s kamerou iba v miestnej sieti, nikdy so servermi TP-Link; stiahnuté klipy zostávajú vo vyrovnávacej pamäti aplikácie a vymažú sa spolu s kamerou.
+- **Televízor**: to, či je zariadenie televízor, sa zisťuje v zariadení; nič sa neodosiela.
 - **Zdieľanie telefónu**: iba miestna sieť, s používateľským menom a heslom, cez obyčajné HTTP (pozrite si [Zdieľať tento telefón v sieti](#share-this-phone-on-the-network)).
 - **Kamera**: používa ju iba prehrávač Spatial 2.5D, v zariadení; obrázky sa nikdy neukladajú a nikam sa neodosielajú.
 
@@ -675,20 +857,25 @@ Tento projekt je forkom Immich a zostáva pod licenciou [GNU AGPL v3](LICENSE). 
 
 Čo zatiaľ nie je hotové, od najpravdepodobnejšieho. Nič z toho nie je sľub a spätná väzba v [systéme hlásení](https://github.com/freeKC/Immuch360/issues) pomáha rozhodnúť, čo príde ako prvé.
 
-- **Google Play**: zostavy 15 a 16 boli odoslané na posúdenie spoločnosťou Google 4. októbra 2026 a po schválení budú zverejnené; posledná zostava potvrdená ako zverejnená je zostava 11.
+- **Google Play**: zostava 18 je zverejnená; zostava 19 je v posudzovaní spoločnosťou Google od 6. októbra 2026 a zostava 20 nasleduje.
 - **App Store**: verzia 3.3.0 čaká na posúdenie spoločnosťou Apple; obsahuje funkcie zostavy 11, takže nahrávanie do Immich a kontrola videodekodéra (zostava 15) a nespracované súbory Insta360 (zostava 16) prídu s ďalšou aktualizáciou v App Store. Odkaz tu pribudne, keď bude verzia zverejnená.
-- **Meta Horizon Store**: záznam bol odoslaný na posúdenie spoločnosťou Meta 3. októbra 2026 so zostavou 14 a zostava 16 je na kanáli alfa obchodu pre ďalšiu aktualizáciu. Po schválení záznamu už Quest 3 nebude potrebovať sideload a odkaz na obchod tu pribudne; kópiu nainštalovanú cez sideload treba najprv odinštalovať (pozrite si [Inštalácia](#install)).
-- **Záznamy v obchodoch**: texty v Google Play a App Store stále opisujú prvé zostavy (fotky a videá 360°, nespracované súbory zobrazené ploché); budú predstavovať prehliadače 3D, VR180 a Spatial, režim bez servera, sieťové úložiská, prehrávač médií a nespracované súbory Insta360. Text v Meta Horizon Store už prehrávač médií predstavuje.
+- **Meta Horizon Store**: záznam bol odoslaný na posúdenie spoločnosťou Meta 3. októbra 2026 so zostavou 14 a kanál alfa obchodu dostáva každú novú zostavu pre ďalšiu aktualizáciu. Po schválení záznamu už Quest 3 nebude potrebovať sideload a odkaz na obchod tu pribudne; kópiu nainštalovanú cez sideload treba najprv odinštalovať (pozrite si [Inštalácia](#install)).
+- **Záznamy v obchodoch**: záznam v Google Play bol v októbri 2026 prepísaný s novými snímkami obrazovky a s vydaním pre televízory dostane snímky obrazovky z televízora a banner pre televízor. Text v App Store stále opisuje prvé zostavy (fotky a videá 360°, nespracované súbory zobrazené ploché); bude predstavovať prehliadače 3D, VR180 a Spatial, režim bez servera, sieťové úložiská, prehrávač médií a nespracované súbory Insta360. Text v Meta Horizon Store už prehrávač médií predstavuje.
 - **Nespracované súbory kamier 360°, ďalej**: indikátor priebehu počas prípravy nespracovanej fotky pre headset; vyrovnanie videí GoPro a DJI z ich vlastných pohybových údajov; dvojitý fisheye .dng; hlásenia zo zariadení o prehrávaní s dvoma objektívmi zo zostavy 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) na potvrdenie švov a limitov dekodérov.
 - **DLNA, zdieľanie telefónu a priestorové médiá Apple, ďalej**: hlásenia zo zariadení pre zostavu 19 (Plex, Jellyfin, NAS a Freebox Server cez DLNA; telefón poskytujúci súbory pre Quest, aj cez svoj hotspot; skutočné priestorové fotky a videá z iPhonu v headsete); oprávnenie (entitlement) na multicast vyžiadané od spoločnosti Apple, aby iPhony našli každý server DLNA; predchádzajúce a ďalšie medzi priestorovými fotkami v headsete; odznak priestorovej fotky na fotkách zo servera na časovej osi; priestorové videá v 3D na Queste, ak to jeho dekodéry umožnia.
 - **Prehrávače 360° na telefónoch, ďalej**: časová lišta vo videoprehrávači 360° na iOS (na Androide ju má), predchádzajúce/ďalšie v prehrávačoch 360° na telefónoch ako v pohlcujúcom zobrazení Questu a fotky v natívnom videoprehrávači 360°.
 - **Sieťové úložiská, ďalšie kroky**: posúvanie z jedného súboru priečinka na ďalší na stránkach fotky a videa (pohlcujúce zobrazenie Questu už prechádza súbormi 360° priečinka), overenie Digest pre WebDAV, používateľské meno zo záznamu Bonjour.
 - **Ploché videá**: výber zvukovej stopy v plochom prehrávači, rovnako pre videá zo servera, zo zariadenia aj zo zdieľaní (prehrávače 360° a Spatial ho majú).
+- **Android TV, ďalšie kroky**: test zostavy 20 na emulátore Google TV a na skutočnom televízore, potom vydanie pre televízory na Google Play (snímky obrazovky z televízora, banner pre televízor, posúdenie spoločnosťou Google); neskôr kanály na domovskej obrazovke televízora.
+- **Kamery Tapo, ďalšie kroky**: test zostavy 20 so skutočnými kamerami; živý obraz na iPhone a iPade; záznamy v H.265; prehrávanie klipu počas sťahovania; celý deň záznamov na jednej časovej osi.
+- **Plex, ďalšie kroky**: test zostavy 20 na zariadeniach (telefóny, Quest, iPhone, televízor, mimo domova); prenos tokenu z počítača pomocou QR kódu; skrytie strany DLNA servera Plex v zozname nájdených serverov; IPv6.
 - **Upstream**: malé pull requesty do Immich pre časti, o ktoré budú mať správcovia záujem, začínajúc prehliadačom fotiek 360°.
 
 ## Poďakovanie
 
 Prehliadač fotiek 360° vychádza z upstream pull requestu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) od dmitry-brazhenko, ktorý je sám postavený na prototype od bencefr v [#30192](https://github.com/immich-app/immich/pull/30192). Vďaka obom.
+
+Kamery Tapo v zostave 20 boli napísané podľa toho, čo o týchto kamerách dokumentujú projekty s otvoreným zdrojovým kódom [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) a [python-kasa](https://github.com/python-kasa/python-kasa).
 
 Prečo fork: zobrazenie 360° na mobile sa žiada od januára 2024 a v oficiálnej aplikácii zatiaľ nie je; prehliadač fotiek je v upstreame v posudzovaní v [#31169](https://github.com/immich-app/immich/pull/31169). Tento fork ho prináša už teraz, zbiera spätnú väzbu zo skutočných zariadení a ponúkne späť do Immich, v malých pull requestoch, čokoľvek, o čo budú mať správcovia záujem. Zobrazenie pre Meta Quest závisí od Meta Spatial SDK, ktoré nie je open source, takže zostáva v tomto forku.
 

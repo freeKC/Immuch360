@@ -43,6 +43,9 @@ android {
     versionCode flutter.versionCode
     versionName flutter.versionName
     resValue "string", "app_name", "Immuch360"
+    // Android TV and Google TV launcher entry; added to the map, which already holds Flutter's applicationName (a
+    // plain = would drop it)
+    manifestPlaceholders += [tvLauncherCategory: "android.intent.category.LEANBACK_LAUNCHER"]
   }
 
   // Two store flavours of the same app: "phone" for Google Play and the GitHub releases, "quest" for the Meta
@@ -56,6 +59,8 @@ android {
     quest {
       dimension "store"
       targetSdk = 34
+      // No TV entry in the Horizon Store build: the headset has no TV launcher and its upload checks are unknown there
+      manifestPlaceholders += [tvLauncherCategory: "android.intent.category.DEFAULT"]
     }
   }
 
@@ -126,6 +131,8 @@ dependencies {
   implementation libs.media3.ui
   // GL effect that maps the two fisheye circles of a raw 360 camera video on the sphere (DualFisheyeEffect)
   implementation libs.media3.effect
+  // RTSP live view of the Tapo cameras (CameraLiveView)
+  implementation libs.media3.exoplayer.rtsp
   implementation libs.kotlinx.coroutines.android
   implementation libs.work.runtime.ktx
   implementation libs.concurrent.futures

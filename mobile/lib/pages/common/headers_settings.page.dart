@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 
@@ -125,20 +127,28 @@ class HeaderKeyValueSettings extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: TextFormField(
+                // On a TV the name is typed in the dialog of the TV (a proxy that needs a header is reached from the
+                // login page there too); its text does not go through onChanged
+                child: TvTextEntry(
                   controller: keyController,
-                  decoration: InputDecoration(
-                    labelText: context.t.header_settings_header_name_input,
-                    border: const OutlineInputBorder(),
+                  label: context.t.header_settings_header_name_input,
+                  kind: TvTextKind.text,
+                  onSubmitted: (headerKey) => header.key = headerKey,
+                  child: TextFormField(
+                    controller: keyController,
+                    decoration: InputDecoration(
+                      labelText: context.t.header_settings_header_name_input,
+                      border: const OutlineInputBorder(),
+                    ),
+                    autocorrect: false,
+                    smartDashesType: .disabled,
+                    smartQuotesType: .disabled,
+                    onChanged: (headerKey) {
+                      header.key = headerKey;
+                    },
+                    validator: emptyFieldValidator,
+                    textInputAction: TextInputAction.next,
                   ),
-                  autocorrect: false,
-                  smartDashesType: .disabled,
-                  smartQuotesType: .disabled,
-                  onChanged: (headerKey) {
-                    header.key = headerKey;
-                  },
-                  validator: emptyFieldValidator,
-                  textInputAction: TextInputAction.next,
                 ),
               ),
               Padding(
@@ -155,20 +165,26 @@ class HeaderKeyValueSettings extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12.0),
-          child: TextFormField(
+          child: TvTextEntry(
             controller: valueController,
-            decoration: InputDecoration(
-              labelText: context.t.header_settings_header_value_input,
-              border: const OutlineInputBorder(),
+            label: context.t.header_settings_header_value_input,
+            kind: TvTextKind.text,
+            onSubmitted: (headerValue) => header.value = headerValue,
+            child: TextFormField(
+              controller: valueController,
+              decoration: InputDecoration(
+                labelText: context.t.header_settings_header_value_input,
+                border: const OutlineInputBorder(),
+              ),
+              autocorrect: false,
+              smartDashesType: .disabled,
+              smartQuotesType: .disabled,
+              onChanged: (headerValue) {
+                header.value = headerValue;
+              },
+              validator: emptyFieldValidator,
+              textInputAction: TextInputAction.done,
             ),
-            autocorrect: false,
-            smartDashesType: .disabled,
-            smartQuotesType: .disabled,
-            onChanged: (headerValue) {
-              header.value = headerValue;
-            },
-            validator: emptyFieldValidator,
-            textInputAction: TextInputAction.done,
           ),
         ),
       ],

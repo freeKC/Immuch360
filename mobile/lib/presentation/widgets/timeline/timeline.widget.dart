@@ -9,6 +9,7 @@ import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/extensions/asyncvalue_extensions.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/download_status_floating_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/bottom_sheet/general_bottom_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
@@ -19,11 +20,14 @@ import 'package:immich_mobile/presentation/widgets/timeline/sliver_segmented_lis
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.state.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline_drag_selection.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline_pinch_zoom.dart';
+import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
+import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/debounce.dart';
 import 'package:immich_mobile/widgets/common/immich_sliver_app_bar.dart';
 import 'package:immich_mobile/widgets/common/mesmerizing_sliver_app_bar.dart';
@@ -328,6 +332,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     final isMultiSelectStatusVisible = !isSelectionMode && isMultiSelectEnabled;
     final isBottomWidgetVisible =
         widget.bottomSheet != null && (isMultiSelectStatusVisible || widget.persistentBottomBar);
+    // A TV without a server has no photos of its own: the page says where they are instead of staying empty
+    final tvWithoutServer = ref.watch(tvModeProvider) && !ref.watch(hasServerProvider);
 
     return PopScope(
       canPop: !isMultiSelectEnabled,
@@ -402,6 +408,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                             ),
                           ),
                           if (widget.bottomSliverWidget != null) widget.bottomSliverWidget!,
+                          if (tvWithoutServer && childCount == 0)
+                            const SliverFillRemaining(hasScrollBody: false, child: _TvEmptyLocalSession()),
                           SliverPadding(padding: EdgeInsets.only(bottom: contentBottomPadding)),
                         ],
                       );
@@ -447,6 +455,35 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The empty timeline of a TV without a server: where its photos and videos are, and a way there with the remote
+class _TvEmptyLocalSession extends StatelessWidget {
+  const _TvEmptyLocalSession();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.lan_outlined, size: 48, color: context.colorScheme.onSurfaceVariant),
+            const SizedBox(height: 16),
+            Text(context.t.tv_local_session_empty, textAlign: TextAlign.center, style: context.textTheme.titleMedium),
+            const SizedBox(height: 16),
+            FilledButton.tonalIcon(
+              autofocus: true,
+              onPressed: () => context.pushRoute(const NetworkSharesRoute()),
+              icon: const Icon(Icons.lan_outlined),
+              label: Text(context.t.network_shares),
+            ),
+          ],
         ),
       ),
     );

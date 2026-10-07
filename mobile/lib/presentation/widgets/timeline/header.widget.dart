@@ -9,8 +9,8 @@ import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/providers/haptic_feedback.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 
 class TimelineHeader extends HookWidget {
@@ -101,10 +101,11 @@ class _BulkSelectIconButton extends ConsumerWidget {
       bucketAssets = <BaseAsset>[];
     }
 
-    final isReadonlyModeEnabled = ref.watch(readonlyModeProvider);
+    // The read only mode, or a TV, where the app is a viewer: no selection
+    final isViewOnly = ref.watch(viewOnlyProvider);
     final isAllSelected = ref.watch(bucketSelectionProvider(bucketAssets));
 
-    return isReadonlyModeEnabled
+    return isViewOnly
         ? const SizedBox.shrink()
         : IconButton(
             onPressed: () {

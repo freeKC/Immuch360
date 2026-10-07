@@ -8,6 +8,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
@@ -92,7 +93,8 @@ class PhoneShareTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPhone = CurrentPlatform.isAndroid || CurrentPlatform.isIOS;
-    if (!isPhone || ref.watch(isHorizonOsProvider).valueOrNull != false) {
+    // A TV reads the shares of others, it is not one: no phone share there either
+    if (!isPhone || ref.watch(isHorizonOsProvider).valueOrNull != false || ref.watch(tvModeProvider)) {
       return const SizedBox.shrink();
     }
     final state = ref.watch(phoneShareProvider);

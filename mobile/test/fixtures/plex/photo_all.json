@@ -1,0 +1,56 @@
+{
+  "MediaContainer": {
+    "size": 2,
+    "totalSize": 2,
+    "offset": 0,
+    "allowSync": false,
+    "librarySectionID": 2,
+    "librarySectionTitle": "Photos",
+    "title1": "Photos",
+    "viewGroup": "photo",
+    "Metadata": [
+      {
+        "ratingKey": "500",
+        "key": "/library/metadata/500/children",
+        "type": "photo",
+        "title": "Summer",
+        "summary": "",
+        "index": 1,
+        "thumb": "/library/metadata/500/thumb/1700000000",
+        "addedAt": 1650000000,
+        "updatedAt": 1700000000
+      },
+      {
+        "ratingKey": "510",
+        "key": "/library/metadata/510",
+        "parentRatingKey": "500",
+        "type": "photo",
+        "title": "Loose",
+        "summary": "",
+        "index": 1,
+        "thumb": "/library/metadata/510/thumb/1700000000",
+        "addedAt": 1650000510,
+        "updatedAt": 1700000000,
+        "originallyAvailableAt": "2024-05-01",
+        "Media": [
+          {
+            "id": 5100,
+            "width": 4000,
+            "height": 3000,
+            "aspectRatio": 1.33,
+            "container": "jpeg",
+            "Part": [
+              {
+                "id": 5100,
+                "key": "/library/parts/5100/1700000000/file.jpg",
+                "file": "/data/photos/loose.jpg",
+                "size": 2048,
+                "container": "jpeg"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

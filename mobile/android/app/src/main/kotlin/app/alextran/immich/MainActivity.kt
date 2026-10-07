@@ -8,6 +8,9 @@ import app.alextran.immich.background.BackgroundEngineLock
 import app.alextran.immich.background.BackgroundWorkerApiImpl
 import app.alextran.immich.background.BackgroundWorkerFgHostApi
 import app.alextran.immich.background.BackgroundWorkerLockApi
+import app.alextran.immich.camera.CameraLiveApi
+import app.alextran.immich.camera.CameraLiveApiImpl
+import app.alextran.immich.camera.CameraLiveViewFactory
 import app.alextran.immich.connectivity.ConnectivityApi
 import app.alextran.immich.connectivity.ConnectivityApiImpl
 import app.alextran.immich.core.HttpClientManager
@@ -32,6 +35,8 @@ import app.alextran.immich.spherical.SphericalVideoApiImpl
 import app.alextran.immich.sync.NativeSyncApi
 import app.alextran.immich.sync.NativeSyncApiImpl26
 import app.alextran.immich.sync.NativeSyncApiImpl30
+import app.alextran.immich.tv.TvApi
+import app.alextran.immich.tv.TvApiImpl
 import app.alextran.immich.videodecoder.VideoDecoderApi
 import app.alextran.immich.videodecoder.VideoDecoderApiImpl
 import app.alextran.immich.videothumbnail.VideoThumbnailApi
@@ -50,6 +55,13 @@ class MainActivity : FlutterFragmentActivity() {
     ImmersiveApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     // The Stop action of the phone share notification, for the engine that runs the share
     PhoneShareApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    val messenger = flutterEngine.dartExecutor.binaryMessenger
+    // TV detection and the native text dialog of the remote control layout: they need this activity
+    TvApi.setUp(messenger, TvApiImpl(this))
+    // Live view of the Tapo cameras: a platform view and the API that feeds it
+    val cameraLiveViews = CameraLiveViewFactory(messenger)
+    flutterEngine.platformViewsController.registry.registerViewFactory(CameraLiveViewFactory.VIEW_TYPE, cameraLiveViews)
+    CameraLiveApi.setUp(messenger, CameraLiveApiImpl(cameraLiveViews))
   }
 
   override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
@@ -58,6 +70,9 @@ class MainActivity : FlutterFragmentActivity() {
     SpatialVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     ImmersiveApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     PhoneShareApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    // The TV dialog must not keep this activity once it is gone
+    TvApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
+    CameraLiveApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     super.cleanUpFlutterEngine(flutterEngine)
   }
 

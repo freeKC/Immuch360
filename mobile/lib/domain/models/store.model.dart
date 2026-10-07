@@ -42,8 +42,8 @@ enum StoreKey<T> {
   /// a JSON map from the local asset id to what was found, the latest entries last
   localPanoramaAssets<String>._(5004),
 
-  /// The network shares (SMB and WebDAV) the user added: a JSON list of NetworkSource, in the order they were added.
-  /// Never holds a password, those live in the secure storage
+  /// The network shares of the types builds 19 and older know (SMB, WebDAV, DLNA) the user added: a JSON list of
+  /// NetworkSource, in the order they were added. Never holds a password, those live in the secure storage
   networkSources<String>._(5005),
 
   /// Apple spatial media found by reading their files (the server tells nothing about them), so that a photo is read
@@ -54,6 +54,19 @@ enum StoreKey<T> {
   /// Install id of this phone in "Share this phone on the network", 16 hex digits generated once: the headset knows
   /// the share by it when the address changes, and the phone skips its own share when it looks for others
   phoneShareId<String>._(5021),
+
+  /// The network sources of the types that build 19 and older do not know (Plex servers, Tapo cameras, any later
+  /// type): a JSON list like networkSources. Kept apart because those builds drop the sources of a type they do not
+  /// know and write their list back without them; this key they never load
+  networkSourcesExtra<String>._(5022),
+
+  /// X-Plex-Client-Identifier of this install, 32 hex digits made on first use: the Plex server lists the app once per
+  /// install
+  plexClientIdentifier<String>._(5023),
+
+  /// What each Plex server said about its address outside home at the last connection at home: a JSON map from the
+  /// source id to {host, port, mapping, at}. Apart from the sources, whose change closes the open connection
+  plexLearnedAddresses<String>._(5024),
 
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),

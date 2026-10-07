@@ -23,8 +23,8 @@ import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/timezone.dart';
@@ -34,7 +34,10 @@ import 'package:logging/logging.dart';
 final _log = Logger('ViewerTopAppBar');
 
 class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
-  const ViewerTopAppBar({super.key});
+  const ViewerTopAppBar({super.key, this.trailingFocusNode});
+
+  /// Around the buttons on the right (360°, 3D, the actions): where Up of a remote goes
+  final FocusNode? trailingFocusNode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,7 +49,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final album = ref.watch(currentRemoteAlbumProvider);
 
     final isInLockedView = ref.watch(inLockedViewProvider);
-    final isReadonlyModeEnabled = ref.watch(readonlyModeProvider);
+    // The read only mode, or a TV, where the app is a viewer: the favourite and the menu (cast among others) hide
+    final isViewOnly = ref.watch(viewOnlyProvider);
 
     final showingDetails = ref.watch(assetViewerProvider.select((state) => state.showingDetails));
 
@@ -80,7 +84,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // Spatial 2.5D, an experimental setting, plays stereoscopic videos with depth on phones only: never on a Meta
     // Quest, nor while the platform check is pending. Like 360, it changes nothing on the server.
     final isSpatialEnabled = ref.watch(appConfigProvider.select((config) => config.viewer.spatial25d));
-    final isPhone = ref.watch(isHorizonOsProvider).valueOrNull == false;
+    // Not a TV either: Spatial 2.5D follows the head with the front camera
+    final isPhone = ref.watch(isHorizonOsProvider).valueOrNull == false && !ref.watch(tvModeProvider);
     final VoidCallback? onSpatialPressed = switch (asset.type) {
       AssetType.video when isSpatialEnabled && isPhone => () => unawaited(openSpatialVideo(context, ref, asset)),
       _ => null,
@@ -131,61 +136,67 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     return IgnorePointer(
       ignoring: opacity < 1.0,
-      child: AnimatedOpacity(
-        opacity: opacity,
-        duration: Durations.short2,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: showingDetails
-                        ? null
-                        : const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.black45, Colors.black12, Colors.transparent],
-                            stops: [0.0, 0.7, 1.0],
-                          ),
-                  ),
-                ),
-              ),
-            ),
-            SafeArea(
-              bottom: false,
-              child: SizedBox(
-                height: preferredSize.height,
-                child: Theme(
-                  data: context.themeData.copyWith(iconTheme: const IconThemeData(size: 22, color: Colors.white)),
-                  child: NavigationToolbar(
-                    centerMiddle: true,
-                    leading: const _AppBarBackButton(),
-                    middle: showingDetails ? null : _AssetInfoTitle(asset: asset),
-                    trailing:
-                        !showingDetails &&
-                            (!isReadonlyModeEnabled ||
-                                panoramaButton != null ||
-                                spatialButton != null ||
-                                view3dButton != null)
-                        ? ImmichColorOverride(
-                            color: Colors.white,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ?view3dButton,
-                                ?panoramaButton,
-                                ?spatialButton,
-                                if (!isReadonlyModeEnabled) ...(isInLockedView ? lockedViewActions : actions),
-                              ],
+      // Hidden, its buttons must not take the focus either: an arrow of a remote would land on an invisible button
+      child: ExcludeFocus(
+        excluding: opacity < 1.0,
+        child: AnimatedOpacity(
+          opacity: opacity,
+          duration: Durations.short2,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: showingDetails
+                          ? null
+                          : const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black45, Colors.black12, Colors.transparent],
+                              stops: [0.0, 0.7, 1.0],
                             ),
-                          )
-                        : null,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              SafeArea(
+                bottom: false,
+                child: SizedBox(
+                  height: preferredSize.height,
+                  child: Theme(
+                    data: context.themeData.copyWith(iconTheme: const IconThemeData(size: 22, color: Colors.white)),
+                    child: NavigationToolbar(
+                      centerMiddle: true,
+                      leading: const _AppBarBackButton(),
+                      middle: showingDetails ? null : _AssetInfoTitle(asset: asset),
+                      trailing:
+                          !showingDetails &&
+                              (!isViewOnly || panoramaButton != null || spatialButton != null || view3dButton != null)
+                          ? ImmichColorOverride(
+                              color: Colors.white,
+                              child: Focus(
+                                focusNode: trailingFocusNode,
+                                canRequestFocus: false,
+                                skipTraversal: true,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ?view3dButton,
+                                    ?panoramaButton,
+                                    ?spatialButton,
+                                    if (!isViewOnly) ...(isInLockedView ? lockedViewActions : actions),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -216,6 +227,9 @@ class _AppBarBackButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showingDetails = ref.watch(assetViewerProvider.select((state) => state.showingDetails));
+    // In the remote control layout the viewer's PopScope keeps the Back key of a remote for the bars while they have
+    // the focus, which this button has when pressed with OK: it closes the viewer itself, not through maybePop
+    final tvMode = ref.watch(tvModeProvider);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: showingDetails ? context.colorScheme.surface : Colors.transparent,
@@ -225,7 +239,7 @@ class _AppBarBackButton extends ConsumerWidget {
         padding: const EdgeInsets.all(10.0),
         elevation: showingDetails ? 4 : 0,
       ),
-      onPressed: context.maybePop,
+      onPressed: tvMode ? () => Navigator.of(context).pop() : context.maybePop,
       child: const Icon(Icons.arrow_back_rounded),
     );
   }

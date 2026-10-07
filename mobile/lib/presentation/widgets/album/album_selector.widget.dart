@@ -13,6 +13,7 @@ import 'package:immich_mobile/models/albums/album_search.model.dart';
 import 'package:immich_mobile/presentation/widgets/album/album_tile.dart';
 import 'package:immich_mobile/presentation/widgets/album/new_album_name_modal.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/album/album_sort_by_options.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
@@ -332,7 +333,7 @@ class _SortButtonState extends ConsumerState<_SortButton> {
           )
           .toList(),
       builder: (context, controller, child) {
-        return GestureDetector(
+        return RemoteFocusable(
           onTap: () {
             if (controller.isOpen) {
               controller.close();
@@ -666,7 +667,7 @@ class _GridAlbumCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final albumThumbnailAsset = ref.watch(assetServiceProvider).getRemoteAsset(album.thumbnailAssetId ?? "");
 
-    return GestureDetector(
+    return RemoteFocusable(
       onTap: () => onAlbumSelected(album),
       child: Card(
         elevation: 0,

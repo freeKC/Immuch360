@@ -15,6 +15,9 @@ DiscoveredServer _server(
   String? discoveryId,
   String? username,
   bool isPhoneShare = false,
+  bool useTls = false,
+  String? plexHash,
+  String? version,
 }) => DiscoveredServer(
   host: host,
   displayName: name,
@@ -26,6 +29,40 @@ DiscoveredServer _server(
   discoveryId: discoveryId,
   username: username,
   isPhoneShare: isPhoneShare,
+  useTls: useTls,
+  plexHash: plexHash,
+  version: version,
+);
+
+/// A Tapo camera as TDP finds it (model, MAC, firmware) or as the scan finds it (the address only)
+DiscoveredServer _camera({required DiscoveryOrigin origin}) => _server(
+  origin == DiscoveryOrigin.tdp ? 'Tapo C200' : '192.0.2.30',
+  '192.0.2.30',
+  type: NetworkSourceType.tapo,
+  port: 443,
+  useTls: true,
+  origin: origin,
+  discoveryId: origin == DiscoveryOrigin.tdp ? '02-00-00-00-00-01' : null,
+  version: origin == DiscoveryOrigin.tdp ? '1.3.9' : null,
+);
+
+/// A Plex Media Server as GDM finds it
+DiscoveredServer _plex(
+  String name,
+  String machineId, {
+  String? plexHash,
+  String? version,
+  String host = '192.0.2.20',
+}) => _server(
+  name,
+  host,
+  type: NetworkSourceType.plex,
+  port: 32400,
+  useTls: true,
+  origin: DiscoveryOrigin.gdm,
+  discoveryId: machineId,
+  plexHash: plexHash,
+  version: version,
 );
 
 /// A probe that gives [servers], one per [interval], then ends unless [endless]
@@ -326,6 +363,96 @@ void main() {
       expect(requests.single.hosts, ['10.0.2.2']);
       await Future<void>.delayed(Duration.zero);
       expect(requests.single.isCancelled, isTrue);
+    });
+  });
+
+  group('Plex servers and Tapo cameras', () {
+    test('a camera found by TDP and by the scan shows once, with what TDP tells, whichever came first', () {
+      final scanned = _camera(origin: DiscoveryOrigin.scan);
+      final announced = _camera(origin: DiscoveryOrigin.tdp);
+
+      expect(scanned.mergeKey, announced.mergeKey);
+      for (final merged in [scanned.mergedWith(announced), announced.mergedWith(scanned)]) {
+        expect(merged.origin, DiscoveryOrigin.tdp);
+        expect(merged.displayName, 'Tapo C200');
+        expect(merged.discoveryId, '02-00-00-00-00-01');
+        expect(merged.version, '1.3.9');
+      }
+    });
+
+    test('the mDNS find still wins over every other origin, TDP over the rest, the first find on a tie', () {
+      expect(DiscoveryOrigin.values.map((origin) => origin.rank), [0, 2, 2, 2, 1]);
+      final mdns = _server('NAS', '192.168.1.20', origin: DiscoveryOrigin.mdns);
+      final scan = _server('192.168.1.20', '192.168.1.20');
+      final ssdp = _server('Other', '192.168.1.20', origin: DiscoveryOrigin.ssdp);
+      expect(scan.mergedWith(mdns).origin, DiscoveryOrigin.mdns);
+      expect(mdns.mergedWith(scan).origin, DiscoveryOrigin.mdns);
+      expect(scan.mergedWith(ssdp).displayName, '192.168.1.20');
+      expect(ssdp.mergedWith(scan).displayName, 'Other');
+    });
+
+    test('two Plex servers at one address are told apart by their machine id, the finds of each merged', () {
+      final first = _plex('Living room', '0000000000000000000000000000000000000001');
+      final second = _plex('Office', '0000000000000000000000000000000000000002');
+      final firstAgain = _plex('Living room', '0000000000000000000000000000000000000001'.toUpperCase());
+
+      expect(first.mergeKey, isNot(second.mergeKey));
+      expect(first.mergeKey, firstAgain.mergeKey, reason: 'machine ids are hexadecimal, in either case');
+      expect(
+        _plex('A', '').mergeKey,
+        _server('A', '192.0.2.20', type: NetworkSourceType.plex, port: 32400, origin: DiscoveryOrigin.gdm).mergeKey,
+      );
+    });
+
+    test('merging keeps the Plex hash and the version of either find', () {
+      final withHash = _plex(
+        'Test Plex',
+        '0000000000000000000000000000000000000001',
+        plexHash: '0123456789abcdef0123456789abcdef',
+        version: '1.42.1',
+      );
+      final bare = _plex('Test Plex', '0000000000000000000000000000000000000001');
+
+      for (final merged in [withHash.mergedWith(bare), bare.mergedWith(withHash)]) {
+        expect(merged.plexHash, '0123456789abcdef0123456789abcdef');
+        expect(merged.version, '1.42.1');
+      }
+      expect(withHash, bare, reason: 'the hash and the version are not part of the equality');
+    });
+
+    test('gives a new list when a second find brings the Plex hash or the version', () async {
+      const id = '0000000000000000000000000000000000000001';
+      final service = NetworkDiscoveryService(
+        probes: [
+          _probe([_plex('Test Plex', id)]),
+          _probe([
+            _plex('Test Plex', id, plexHash: '0123456789abcdef0123456789abcdef'),
+            _plex('Test Plex', id, plexHash: '0123456789abcdef0123456789abcdef'),
+            _plex('Test Plex', id, plexHash: '0123456789abcdef0123456789abcdef', version: '1.42.1'),
+          ], interval: const Duration(milliseconds: 10)),
+        ],
+      );
+
+      final lists = await service.discover(timeout: const Duration(seconds: 5)).toList();
+
+      expect(lists, hasLength(3), reason: 'nothing new in the second find of the hash');
+      expect(lists[0].single.plexHash, isNull);
+      expect(lists[1].single.plexHash, '0123456789abcdef0123456789abcdef');
+      expect(lists[2].single.version, '1.42.1');
+    });
+
+    test('the scan and TDP finds of one camera make one line in the list', () async {
+      final service = NetworkDiscoveryService(
+        probes: [
+          _probe([_camera(origin: DiscoveryOrigin.scan)]),
+          _probe([_camera(origin: DiscoveryOrigin.tdp)], interval: const Duration(milliseconds: 10)),
+        ],
+      );
+
+      final last = (await service.discover(timeout: const Duration(seconds: 5)).toList()).last;
+
+      expect(last.single.displayName, 'Tapo C200');
+      expect(last.single.origin, DiscoveryOrigin.tdp);
     });
   });
 }

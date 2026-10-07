@@ -1,0 +1,76 @@
+{
+  "MediaContainer": {
+    "size": 2,
+    "allowSync": false,
+    "key": "500",
+    "librarySectionID": 2,
+    "librarySectionTitle": "Photos",
+    "title1": "Photos",
+    "title2": "Summer",
+    "viewGroup": "photo",
+    "Metadata": [
+      {
+        "ratingKey": "501",
+        "key": "/library/metadata/501",
+        "parentRatingKey": "500",
+        "type": "photo",
+        "title": "pano",
+        "summary": "",
+        "index": 1,
+        "thumb": "/library/metadata/501/thumb/1700000000",
+        "addedAt": 1650000501,
+        "updatedAt": 1700000000,
+        "originallyAvailableAt": "2024-05-01",
+        "Media": [
+          {
+            "id": 5010,
+            "width": 8000,
+            "height": 4000,
+            "aspectRatio": 2.0,
+            "container": "jpeg",
+            "Part": [
+              {
+                "id": 5010,
+                "key": "/library/parts/5010/1700000000/file.jpg",
+                "file": "/data/photos/Summer/pano_equirect.jpg",
+                "size": 8192,
+                "container": "jpeg"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "ratingKey": "502",
+        "key": "/library/metadata/502",
+        "parentRatingKey": "500",
+        "type": "photo",
+        "title": "garden",
+        "summary": "",
+        "index": 1,
+        "thumb": "/library/metadata/502/thumb/1700000000",
+        "addedAt": 1650000502,
+        "updatedAt": 1700000000,
+        "originallyAvailableAt": "2024-05-01",
+        "Media": [
+          {
+            "id": 5020,
+            "width": 4032,
+            "height": 3024,
+            "aspectRatio": 1.33,
+            "container": "heic",
+            "Part": [
+              {
+                "id": 5020,
+                "key": "/library/parts/5020/1700000000/file.jpg",
+                "file": "/data/photos/Summer/garden.heic",
+                "size": 4096,
+                "container": "heic"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "MediaContainer": {
+    "size": 4,
+    "allowSync": false,
+    "title1": "Plex Library",
+    "Directory": [
+      {
+        "allowSync": true,
+        "art": "/:/resources/movie-fanart.jpg",
+        "composite": "/library/sections/1/composite/1700000000",
+        "filters": true,
+        "refreshing": false,
+        "thumb": "/:/resources/movie.png",
+        "key": "1",
+        "type": "movie",
+        "title": "Movies",
+        "agent": "tv.plex.agents.movie",
+        "scanner": "Plex Movie",
+        "language": "en-US",
+        "uuid": "00000000-0000-0000-0000-000000000001",
+        "updatedAt": 1700000000,
+        "createdAt": 1690000000,
+        "scannedAt": 1700000000,
+        "content": true,
+        "directory": true,
+        "contentChangedAt": 1000,
+        "hidden": 0,
+        "Location": [
+          {
+            "id": 1,
+            "path": "/data/movies"
+          }
+        ]
+      },
+      {
+        "allowSync": true,
+        "art": "/:/resources/photo-fanart.jpg",
+        "composite": "/library/sections/2/composite/1700000000",
+        "filters": true,
+        "refreshing": false,
+        "thumb": "/:/resources/photo.png",
+        "key": "2",
+        "type": "photo",
+        "title": "Photos",
+        "agent": "com.plexapp.agents.none",
+        "scanner": "Plex Photo Scanner",
+        "language": "en-US",
+        "uuid": "00000000-0000-0000-0000-000000000002",
+        "updatedAt": 1700000000,
+        "createdAt": 1690000000,
+        "scannedAt": 1700000000,
+        "content": true,
+        "directory": true,
+        "contentChangedAt": 1000,
+        "hidden": 0,
+        "Location": [
+          {
+            "id": 2,
+            "path": "/data/photos"
+          }
+        ]
+      },
+      {
+        "allowSync": true,
+        "art": "/:/resources/show-fanart.jpg",
+        "composite": "/library/sections/3/composite/1700000000",
+        "filters": true,
+        "refreshing": false,
+        "thumb": "/:/resources/show.png",
+        "key": "3",
+        "type": "show",
+        "title": "Series",
+        "agent": "tv.plex.agents.series",
+        "scanner": "Plex TV Series",
+        "language": "en-US",
+        "uuid": "00000000-0000-0000-0000-000000000003",
+        "updatedAt": 1700000000,
+        "createdAt": 1690000000,
+        "scannedAt": 1700000000,
+        "content": true,
+        "directory": true,
+        "contentChangedAt": 1000,
+        "hidden": 0,
+        "Location": [
+          {
+            "id": 3,
+            "path": "/data/series"
+          }
+        ]
+      },
+      {
+        "allowSync": true,
+        "art": "/:/resources/artist-fanart.jpg",
+        "composite": "/library/sections/4/composite/1700000000",
+        "filters": true,
+        "refreshing": false,
+        "thumb": "/:/resources/artist.png",
+        "key": "4",
+        "type": "artist",
+        "title": "Music",
+        "agent": "tv.plex.agents.music",
+        "scanner": "Plex Music",
+        "language": "en-US",
+        "uuid": "00000000-0000-0000-0000-000000000004",
+        "updatedAt": 1700000000,
+        "createdAt": 1690000000,
+        "scannedAt": 1700000000,
+        "content": true,
+        "directory": true,
+        "contentChangedAt": 1000,
+        "hidden": 0,
+        "Location": [
+          {
+            "id": 4,
+            "path": "/data/music"
+          }
+        ]
+      }
+    ]
+  }
+}

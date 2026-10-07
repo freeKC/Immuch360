@@ -2,7 +2,7 @@ name: immich_mobile
 description: Immich - selfhosted backup media file on mobile phone
 
 publish_to: 'none'
-version: 3.3.0-rc.0+3030017
+version: 3.3.0-rc.0+3030018
 
 environment:
   sdk: '>=3.12.0 <4.0.0'
@@ -63,6 +63,8 @@ dependencies:
   permission_handler: ^11.4.0
   photo_manager: 3.9.0
   pinput: ^5.0.2
+  # Tapo cameras: the P-256 arithmetic, AES-CCM and PBKDF2 of their login, in pure Dart
+  pointycastle: ^4.0.0
   punycode: ^1.0.0
   scroll_date_picker: ^3.8.0
   scrollable_positioned_list: ^0.3.8

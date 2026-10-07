@@ -11,9 +11,11 @@ import 'package:immich_mobile/presentation/widgets/images/local_album_thumbnail.
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/people/partner_user_avatar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/user.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
@@ -58,6 +60,8 @@ class LibraryActionButtonGrid extends ConsumerWidget {
       icon: Icons.threesixty_rounded,
       onTap: () => context.pushRoute(const Panorama360Route()),
       label: context.t.library_360,
+      // The first item of the page for a remote control: the 360° media are what the app is about
+      autofocus: ref.watch(tvModeProvider),
     );
 
     if (!hasServer) {
@@ -119,16 +123,18 @@ class LibraryActionButtonGrid extends ConsumerWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.icon, required this.onTap, required this.label});
+  const _ActionButton({required this.icon, required this.onTap, required this.label, this.autofocus = false});
 
   final IconData icon;
   final VoidCallback onTap;
   final String label;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: FilledButton.icon(
+        autofocus: autofocus,
         onPressed: onTap,
         label: Padding(
           padding: const EdgeInsets.only(left: 4.0),
@@ -150,6 +156,7 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
+/// The collection cards. Each is a RemoteFocusable: the remote of a TV reaches it, and OK opens it.
 class _CollectionCards extends ConsumerWidget {
   const _CollectionCards();
 
@@ -157,6 +164,8 @@ class _CollectionCards extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // People, places and memories come from the server; the device albums and the network shares do not
     final hasServer = ref.watch(hasServerProvider);
+    // The map of the places is gesture only, and its links open a web browser: not on a TV
+    final tvMode = ref.watch(tvModeProvider);
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -165,7 +174,8 @@ class _CollectionCards extends ConsumerWidget {
           spacing: 8,
           runSpacing: 8,
           children: [
-            if (hasServer) ...const [_PeopleCollectionCard(), _PlacesCollectionCard()],
+            if (hasServer) const _PeopleCollectionCard(),
+            if (hasServer && !tvMode) const _PlacesCollectionCard(),
             const _LocalAlbumsCollectionCard(),
             const _NetworkSharesCollectionCard(),
             if (hasServer) const _MemoriesCollectionCard(),
@@ -189,7 +199,7 @@ class _PeopleCollectionCard extends ConsumerWidget {
         final widthFactor = isTablet ? 0.25 : 0.5;
         final size = context.width * widthFactor - 20.0;
 
-        return GestureDetector(
+        return RemoteFocusable(
           onTap: () => context.pushRoute(const PeopleCollectionRoute()),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,7 +264,7 @@ class _PlacesCollectionCard extends StatelessWidget {
         final widthFactor = isTablet ? 0.25 : 0.5;
         final size = context.width * widthFactor - 20.0;
 
-        return GestureDetector(
+        return RemoteFocusable(
           onTap: () => context.pushRoute(PlaceRoute(currentLocation: null)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,7 +318,7 @@ class _LocalAlbumsCollectionCard extends ConsumerWidget {
         final widthFactor = isTablet ? 0.25 : 0.5;
         final size = context.width * widthFactor - 20.0;
 
-        return GestureDetector(
+        return RemoteFocusable(
           onTap: () => context.pushRoute(const LocalAlbumsRoute()),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,7 +389,7 @@ class _NetworkSharesCollectionCard extends ConsumerWidget {
         final widthFactor = isTablet ? 0.25 : 0.5;
         final size = context.width * widthFactor - 20.0;
 
-        return GestureDetector(
+        return RemoteFocusable(
           onTap: () => context.pushRoute(const NetworkSharesRoute()),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,7 +474,7 @@ class _MemoriesCollectionCard extends ConsumerWidget {
         final widthFactor = isTablet ? 0.25 : 0.5;
         final size = context.width * widthFactor - 20.0;
 
-        return GestureDetector(
+        return RemoteFocusable(
           onTap: () => context.pushRoute(const MemoryListRoute()),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

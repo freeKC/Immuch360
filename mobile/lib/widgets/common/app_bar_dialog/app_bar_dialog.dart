@@ -8,6 +8,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/server_info/server_disk_info.model.dart';
 import 'package:immich_mobile/pages/common/settings.page.dart';
+import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/backup/backup_server.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
@@ -23,7 +24,7 @@ import 'package:immich_mobile/widgets/common/app_bar_dialog/app_bar_server_info.
 import 'package:immich_mobile/widgets/common/confirm_dialog.dart';
 import 'package:immich_mobile/widgets/common/immich_logo.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' show LaunchMode;
 
 class ImmichAppBarDialog extends HookConsumerWidget {
   const ImmichAppBarDialog({super.key});
@@ -203,17 +204,26 @@ class ImmichAppBarDialog extends HookConsumerWidget {
           children: [
             InkWell(
               onTap: () {
+                // This dialog closes first: the address dialog of a TV shows from the navigator below it
+                final navigatorContext = Navigator.of(context).context;
                 ContextHelper(context).pop();
-                unawaited(launchUrl(Uri.parse('https://docs.immich.app'), mode: LaunchMode.externalApplication));
+                unawaited(
+                  openUrl(navigatorContext, Uri.parse('https://docs.immich.app'), mode: LaunchMode.externalApplication),
+                );
               },
               child: Text(context.t.documentation, style: context.textTheme.bodySmall),
             ),
             const SizedBox(width: 20, child: Text("•", textAlign: TextAlign.center)),
             InkWell(
               onTap: () {
+                final navigatorContext = Navigator.of(context).context;
                 ContextHelper(context).pop();
                 unawaited(
-                  launchUrl(Uri.parse('https://github.com/freeKC/Immuch360'), mode: LaunchMode.externalApplication),
+                  openUrl(
+                    navigatorContext,
+                    Uri.parse('https://github.com/freeKC/Immuch360'),
+                    mode: LaunchMode.externalApplication,
+                  ),
                 );
               },
               child: Text(context.t.profile_drawer_github, style: context.textTheme.bodySmall),

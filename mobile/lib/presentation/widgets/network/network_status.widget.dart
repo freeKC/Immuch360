@@ -1,7 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 
 /// What to tell the user of a failure to reach or read a share: the message of the file system when it gave one, the
 /// status of the media bridge for an image it could not serve (rather than its URL)
@@ -46,12 +49,15 @@ class NetworkLoadingView extends StatelessWidget {
 }
 
 /// A file or folder of a share that could not be opened, with [error] told, and a button to try again when [onRetry]
-/// is given
+/// is given. When the server refused the credentials of [source], a button opens its page on them.
 class NetworkErrorView extends StatelessWidget {
-  const NetworkErrorView({super.key, required this.error, this.onRetry, this.color});
+  const NetworkErrorView({super.key, required this.error, this.onRetry, this.color, this.source});
 
   final Object error;
   final VoidCallback? onRetry;
+
+  /// The share the error comes from, null when unknown
+  final NetworkSource? source;
 
   /// For the text and the icon, the theme's otherwise (white over the black of the viewers, for example)
   final Color? color;
@@ -59,6 +65,8 @@ class NetworkErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final onRetry = this.onRetry;
+    final source = this.source;
+    final error = this.error;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -78,6 +86,17 @@ class NetworkErrorView extends StatelessWidget {
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh_rounded),
                 label: Text(context.t.retry),
+              ),
+            ],
+            if (source != null && error is NetworkFileSystemException && error.isAuthentication) ...[
+              const SizedBox(height: 8),
+              TextButton.icon(
+                key: const Key('network_error_edit_source'),
+                onPressed: () => context.pushRoute(networkSourceEditRoute(source, focusCredentials: true)),
+                icon: const Icon(Icons.edit_outlined),
+                label: Text(
+                  source.type == NetworkSourceType.plex ? context.t.plex_token_paste_new : context.t.network_share_edit,
+                ),
               ),
             ],
           ],
