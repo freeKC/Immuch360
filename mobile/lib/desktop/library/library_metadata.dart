@@ -35,9 +35,15 @@ class MediaMetadata {
     this.durationMs = 0,
     this.projection,
     this.animated = false,
+    this.readFailed = false,
   });
 
+  /// Read, and nothing found: a damaged file, or a format without metadata
   static const none = MediaMetadata();
+
+  /// The file could not be opened or read (a cloud file while its client is offline, a file another program holds):
+  /// the scanner keeps it with the dates of the listing and reads it again at its next pass
+  static const failedRead = MediaMetadata(readFailed: true);
 
   /// The size of the stored picture, before [orientation] turns it
   final int? width;
@@ -60,6 +66,9 @@ class MediaMetadata {
   /// An animated GIF, WebP or PNG
   final bool animated;
 
+  /// See [failedRead]
+  final bool readFailed;
+
   /// Whether the picture is shown turned by a quarter, its width and height swapped
   bool get turnsQuarter => orientation >= 5 && orientation <= 8;
 
@@ -70,7 +79,8 @@ class MediaMetadata {
   @override
   String toString() =>
       'MediaMetadata(${width}x$height, orientation: $orientation, takenAt: $takenAt, '
-      'gps: $latitude,$longitude, durationMs: $durationMs, projection: $projection, animated: $animated)';
+      'gps: $latitude,$longitude, durationMs: $durationMs, projection: $projection, animated: $animated, '
+      'readFailed: $readFailed)';
 }
 
 /// Reads up to [length] bytes from [offset]: fewer at the end, none past it
@@ -117,14 +127,14 @@ class _FileSource implements ByteSource {
 }
 
 /// The metadata of the file at [path], a photo or a video as [kind] says. Never throws for a damaged or unreadable
-/// file: it gives what could be read.
+/// file: it gives what could be read, or [MediaMetadata.failedRead] when the file could not be opened or read.
 MediaMetadata readMediaMetadataSync(String path, LibraryMediaKind kind) {
   RandomAccessFile? file;
   try {
     file = File(path).openSync();
     return readMediaMetadata(_FileSource(file), kind);
   } on FileSystemException {
-    return MediaMetadata.none;
+    return MediaMetadata.failedRead;
   } finally {
     file?.closeSync();
   }

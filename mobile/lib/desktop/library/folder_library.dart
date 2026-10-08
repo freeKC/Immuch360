@@ -119,7 +119,7 @@ class FolderLibrary {
   bool get hasRoots => index.hasRoots;
 
   /// Adds the folder at [path]. A folder inside a root already there is already in the library: that root comes back.
-  /// A folder around roots already there replaces them, and their files keep their ids (see libraryFileId).
+  /// A folder around roots already there replaces them, and their files keep their ids (see LibraryIds.file).
   LibraryRoot addRoot(String path) {
     final absolute = rules.context.normalize(rules.context.absolute(path));
     if (!FileSystemEntity.isDirectorySync(absolute)) {

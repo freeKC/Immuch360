@@ -2,69 +2,50 @@
 #include <flutter/flutter_view_controller.h>
 #include <windows.h>
 
-#include <dbghelp.h>
-#include <shlobj.h>
-
-#include <cwchar>
 #include <string>
 #include <vector>
 
 #include "app_identity.h"
+#include "crash_dumps.h"
 #include "flutter_window.h"
 #include "utils.h"
 
 namespace {
 
-// Where the crash reports of the native code go: the cache folder of the app
-// (getApplicationCacheDirectory() on the Dart side), whose "Save logs to a
-// file" collects them. Worked out at start, since the crash handler must do as
-// little as possible.
-wchar_t g_crash_dump_folder[MAX_PATH * 2] = L"";
-
-void PrepareCrashDumpFolder() {
-  PWSTR local_app_data = nullptr;
-  if (FAILED(::SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, nullptr,
-                                    &local_app_data))) {
-    return;
+// The first copy reads what it is handed against its own current folder: an
+// argument naming a file or a folder from the folder this start was made in
+// (immuch360.exe IMG_0001.insp in a terminal) is given with its full path,
+// which only this start can work out. Anything else (an option, a link, a
+// path that does not exist) goes as typed.
+std::string WithFullPath(const std::string& argument) {
+  if (argument.empty() || argument[0] == '-') {
+    return argument;
   }
-  std::wstring folder = std::wstring(local_app_data) + L"\\" +
-                        IMMUCH360_COMPANY_NAME_W + L"\\" +
-                        IMMUCH360_PRODUCT_NAME_W + L"\\crash_dumps";
-  ::CoTaskMemFree(local_app_data);
-  const int created = ::SHCreateDirectoryExW(nullptr, folder.c_str(), nullptr);
-  if (created != ERROR_SUCCESS && created != ERROR_ALREADY_EXISTS &&
-      created != ERROR_FILE_EXISTS) {
-    return;
+  const int wide_length =
+      ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, argument.c_str(),
+                            static_cast<int>(argument.size()), nullptr, 0);
+  if (wide_length <= 0) {
+    return argument;
   }
-  wcsncpy_s(g_crash_dump_folder, folder.c_str(), _TRUNCATE);
-}
-
-// A crash in native code (a plugin, the engine) leaves no Dart log line: a
-// small minidump (the threads and their stacks, not the memory of the app)
-// tells where it happened. It stays on the computer until the user saves it.
-LONG WINAPI WriteCrashDump(EXCEPTION_POINTERS* exception) {
-  if (g_crash_dump_folder[0] == L'\0') {
-    return EXCEPTION_CONTINUE_SEARCH;
+  std::wstring wide(wide_length, L'\0');
+  ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, argument.c_str(),
+                        static_cast<int>(argument.size()), wide.data(),
+                        wide_length);
+  const DWORD needed = ::GetFullPathNameW(wide.c_str(), 0, nullptr, nullptr);
+  if (needed == 0) {
+    return argument;
   }
-  SYSTEMTIME now;
-  ::GetLocalTime(&now);
-  wchar_t path[MAX_PATH * 2 + 64];
-  swprintf_s(path, L"%s\\immuch360-%04u%02u%02u-%02u%02u%02u.dmp",
-             g_crash_dump_folder, now.wYear, now.wMonth, now.wDay, now.wHour,
-             now.wMinute, now.wSecond);
-  HANDLE file = ::CreateFileW(path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
-                              FILE_ATTRIBUTE_NORMAL, nullptr);
-  if (file != INVALID_HANDLE_VALUE) {
-    MINIDUMP_EXCEPTION_INFORMATION info;
-    info.ThreadId = ::GetCurrentThreadId();
-    info.ExceptionPointers = exception;
-    info.ClientPointers = FALSE;
-    ::MiniDumpWriteDump(::GetCurrentProcess(), ::GetCurrentProcessId(), file,
-                        MiniDumpNormal, exception ? &info : nullptr, nullptr,
-                        nullptr);
-    ::CloseHandle(file);
+  std::wstring full(needed, L'\0');
+  const DWORD written =
+      ::GetFullPathNameW(wide.c_str(), needed, full.data(), nullptr);
+  if (written == 0 || written >= needed) {
+    return argument;
   }
-  return EXCEPTION_CONTINUE_SEARCH;
+  full.resize(written);
+  if (::GetFileAttributesW(full.c_str()) == INVALID_FILE_ATTRIBUTES) {
+    return argument;
+  }
+  return Utf8FromUtf16(full.c_str());
 }
 
 // A second start of the app (a file opened with it while it runs) gives its
@@ -89,7 +70,7 @@ void HandOverToRunningInstance(const std::vector<std::string>& arguments) {
   // The arguments, UTF-8, each ended by a zero byte
   std::string payload;
   for (const std::string& argument : arguments) {
-    payload.append(argument);
+    payload.append(WithFullPath(argument));
     payload.push_back('\0');
   }
   COPYDATASTRUCT data;
@@ -106,8 +87,8 @@ void HandOverToRunningInstance(const std::vector<std::string>& arguments) {
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
-  PrepareCrashDumpFolder();
-  ::SetUnhandledExceptionFilter(WriteCrashDump);
+  // Before anything else can crash
+  InstallCrashDumps(CrashDumpFolder());
 
   std::vector<std::string> command_line_arguments =
       GetCommandLineArguments();
@@ -135,20 +116,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
-  FlutterWindow window(project);
-  Win32Window::Point origin(10, 10);
-  Win32Window::Size size(1280, 720);
-  if (!window.Create(IMMUCH360_PRODUCT_NAME_W, origin, size)) {
-    return EXIT_FAILURE;
-  }
-  window.SetQuitOnClose(true);
+  int exit_code = EXIT_SUCCESS;
+  {
+    FlutterWindow window(project);
+    Win32Window::Point origin(10, 10);
+    Win32Window::Size size(1280, 720);
+    if (window.Create(IMMUCH360_PRODUCT_NAME_W, origin, size)) {
+      window.SetQuitOnClose(true);
 
-  ::MSG msg;
-  while (::GetMessage(&msg, nullptr, 0, 0)) {
-    ::TranslateMessage(&msg);
-    ::DispatchMessage(&msg);
+      ::MSG msg;
+      while (::GetMessage(&msg, nullptr, 0, 0)) {
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+      }
+    } else {
+      exit_code = EXIT_FAILURE;
+    }
+    // The close guard ends the loop with PostQuitMessage while the window, the
+    // engine and the plugins still exist (flutter_window.cpp): they go here,
+    // at the end of this block, while COM is still there for the objects they
+    // release (the share sheet's DataTransferManager, the engine's
+    // DirectManipulation), never after it.
   }
 
   ::CoUninitialize();
-  return EXIT_SUCCESS;
+  return exit_code;
 }

@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_watcher.dart';
+import 'package:immich_mobile/desktop/library/volume_id.dart';
 import 'package:path/path.dart' as p;
 
 void main() {
@@ -119,5 +121,31 @@ void main() {
       async.elapse(const Duration(minutes: 1));
       expect(changes, 0);
     });
+  });
+
+  test('roots watched: the local ones whose drive is there, not the shares nor those on a drive the user ejects', () {
+    LibraryRoot root(String name, {bool available = true, bool network = false}) => LibraryRoot(
+      id: 'win-1:/$name',
+      path: name,
+      volumeKey: 'win-1',
+      pathInVolume: '/$name',
+      isNetwork: network,
+      includeCloudOnly: false,
+      available: available,
+      addedAt: DateTime(2024),
+    );
+    final roots = [root('Pictures'), root('Card'), root('Unplugged', available: false), root('Share', network: true)];
+    expect(watchedRootPaths(roots, isRemovable: (root) => root.path == 'Card'), ['Pictures']);
+  });
+
+  test('the disks of Windows a user ejects: memory cards, USB and FireWire drives, not the internal ones', () {
+    // STORAGE_BUS_TYPE: 4 FireWire, 7 USB, 11 SATA, 12 SD, 13 MMC, 17 NVMe
+    for (final bus in [4, 7, 12, 13]) {
+      expect(isRemovableStorage(busType: bus, removableMedia: false), isTrue, reason: 'bus $bus');
+    }
+    for (final bus in [11, 17]) {
+      expect(isRemovableStorage(busType: bus, removableMedia: false), isFalse, reason: 'bus $bus');
+    }
+    expect(isRemovableStorage(busType: 11, removableMedia: true), isTrue);
   });
 }

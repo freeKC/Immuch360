@@ -16,23 +16,13 @@ void main() {
   test('a phone keeps everything, and its TV layout hides the gyroscope and the maps', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final phone = read(tvMode: false);
-    expect([
-      phone.gyroscope,
-      phone.maps,
-      phone.systemBackgroundBackup,
-      phone.oauth,
-      phone.freeUpSpace,
-      phone.notifications,
-      phone.deleteFromDevice,
-      phone.videoPlayback,
-      phone.biometrics,
-    ], everyElement(isTrue));
-    expect(phone.shareThisDevice, ShareThisDevice.phone);
+    expect([phone.gyroscope, phone.maps, phone.oauth, phone.haptics], everyElement(isTrue));
 
     final tv = read(tvMode: true);
     expect(tv.gyroscope, isFalse);
     expect(tv.maps, isFalse);
     expect(tv.oauth, isTrue);
+    expect(tv.haptics, isTrue);
   });
 
   test('a computer leaves out what needs a phone', () {
@@ -40,25 +30,12 @@ void main() {
       debugDefaultTargetPlatformOverride = platform;
       final computer = read(tvMode: false);
       expect(
-        [
-          computer.gyroscope,
-          computer.maps,
-          computer.systemBackgroundBackup,
-          computer.homeWidgets,
-          computer.shareTarget,
-          computer.oauth,
-          computer.freeUpSpace,
-          computer.notifications,
-          computer.deleteFromDevice,
-          computer.videoPlayback,
-          computer.galleryPermission,
-        ],
+        [computer.gyroscope, computer.maps, computer.oauth, computer.haptics],
         everyElement(isFalse),
         reason: platform.name,
       );
-      expect(computer.shareThisDevice, ShareThisDevice.computer);
-      // Windows Hello and Touch ID, nothing on Linux
-      expect(computer.biometrics, platform != TargetPlatform.linux);
+      // The remote control layout changes nothing there
+      expect(read(tvMode: true).maps, isFalse, reason: platform.name);
     }
   });
 }

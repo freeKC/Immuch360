@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
-import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/platform/permission_api.g.dart';
@@ -39,7 +38,7 @@ void main() {
   tearDown(() => fixture.dispose());
 
   test('the file of a local asset is the file of the library, read in place', () async {
-    final id = libraryFileId(rootId, 'IMG_1.jpg');
+    final id = fixture.ids.file(rootId, 'IMG_1.jpg');
     final file = await storage.getFileForAsset(id);
     expect(file!.path, p.join(fixture.files.path, 'Photos', 'IMG_1.jpg'));
     expect(await storage.isAssetAvailableLocally(id), isTrue);
@@ -47,7 +46,7 @@ void main() {
   });
 
   test('uploads get an AssetEntity built in Dart: type, size, duration in seconds, name, dates', () async {
-    final id = libraryFileId(rootId, 'VID_2.mp4');
+    final id = fixture.ids.file(rootId, 'VID_2.mp4');
     final entity = await storage.getAssetEntityForAsset(_asset(id, 'VID_2.mp4', AssetType.video));
     expect(entity, isNotNull);
     expect(entity!.id, id);
@@ -63,7 +62,7 @@ void main() {
   test(
     'a file the cloud client emptied since the scan, or gone, has no file: the upload says it is not found',
     () async {
-      final id = libraryFileId(rootId, 'IMG_1.jpg');
+      final id = fixture.ids.file(rootId, 'IMG_1.jpg');
       fixture.attributes[p.join(fixture.files.path, 'Photos', 'IMG_1.jpg')] = 0x400000;
       expect(await storage.getFileForAsset(id), isNull);
       expect(await storage.getAssetEntityForAsset(_asset(id, 'IMG_1.jpg', AssetType.image)), isNull);
@@ -75,7 +74,7 @@ void main() {
   );
 
   test('nothing comes from a cloud: no iCloud on a computer', () async {
-    expect(await storage.loadFileFromCloud(libraryFileId(rootId, 'IMG_1.jpg')), isNull);
+    expect(await storage.loadFileFromCloud(fixture.ids.file(rootId, 'IMG_1.jpg')), isNull);
   });
 
   group('the photo permission of a computer', () {

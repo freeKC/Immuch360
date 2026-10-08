@@ -39,14 +39,13 @@ class DesktopWindow {
 
 final desktopWindowProvider = Provider<DesktopWindow>((ref) => const DesktopWindow());
 
-/// The routes of the viewers, by name: the photo and video viewers of the timeline, the 360° views, the memories and
-/// the slideshow, the photos and videos of the network shares. A viewer opened without a name (the 360° view of a
-/// share photo) is known by its full screen button.
+/// The routes of the viewers, by name: the photo and video viewers of the timeline, the 360° photo view, the memories
+/// and the slideshow, the photos and videos of the network shares. A viewer opened without a name (the 360° view of a
+/// share photo) is known by its full screen button. Panorama360Route and VideoRoute are not here: despite their names
+/// they are grids (the 360° list of the Library, the Videos of Search), where F and Escape do nothing.
 const desktopViewerRouteNames = {
   AssetViewerRoute.name,
   PanoramaViewerRoute.name,
-  Panorama360Route.name,
-  VideoRoute.name,
   MemoryRoute.name,
   SlideshowRoute.name,
   NetworkPhotoRoute.name,

@@ -12,7 +12,10 @@
 // not, as reparse points.
 //
 // A scan runs in its own isolate when the folders page or the watcher asks for it, and in the isolate of the sync
-// services when they ask for changes; a lease in the index keeps two scans from running at once.
+// services when they ask for changes; a lease in the index keeps two scans from running at once. The lease is short and
+// renewed as the scan goes, since a scan can end without releasing it: the window closed (window_manager ends the
+// process without waiting for the isolates) or the app crashed. On Windows a lease of another process is taken over
+// at once (see _leftByAnotherProcess).
 
 import 'dart:async';
 import 'dart:ffi';
@@ -244,6 +247,18 @@ class ScanSummary {
   /// Whether the local tables of the app have something to learn
   bool get hasChanges => written > 0 || removed > 0;
 
+  /// This scan, which found the index busy, then [next], the scan that went again after it: busy as [next] is, with
+  /// the changes of both, since a scan that lost its lease on the way may have written some
+  ScanSummary then(ScanSummary next) => ScanSummary(
+    busy: next.busy,
+    written: written + next.written,
+    removed: removed + next.removed,
+    cloudOnly: next.cloudOnly,
+    moved: moved + next.moved,
+    unavailable: next.unavailable,
+    cancelled: next.cancelled,
+  );
+
   ScanSummary operator +(ScanSummary other) => ScanSummary(
     busy: busy || other.busy,
     written: written + other.written,
@@ -265,12 +280,20 @@ class ScanCancelled implements Exception {
   const ScanCancelled();
 }
 
+// Thrown out of a scan whose lease another scan took over (it ran past its lease, stuck on a share that stopped
+// answering): that one brings the index up to date
+class _LeaseLost implements Exception {
+  const _LeaseLost();
+}
+
 // Files written per generation, and entries between two turns of the event loop
 const _batchLength = 200;
 const _yieldEvery = 256;
 
-// A scan holds its lease this long without renewing it; renewed at every folder
-const _leaseLength = Duration(minutes: 10);
+// A scan holds its lease this long without renewing it, and renews it at every folder and between files once this
+// long has passed: a lease a scan left behind on its way out blocks the next ones for a minute at most
+const _leaseLength = Duration(minutes: 1);
+const _leaseRenewal = Duration(seconds: 10);
 
 /// How long a network folder goes without a rescan, unless the user asks for one (Refresh). It is not watched, and
 /// walking a share costs a round trip per folder, so the rescans that the watcher of a local folder or a sync start
@@ -279,12 +302,23 @@ const networkRescanInterval = Duration(minutes: 15);
 
 var _scanCounter = 0;
 
+/// The process a lease owner names, the owner being `<pid>-<isolate>-<scan>` (see runLibraryScan)
+int? leaseOwnerPid(String owner) => int.tryParse(owner.split('-').first);
+
+// The Windows runner lets one process of the app run per user session (a second one hands its arguments over and
+// quits), and the index lives in the profile of that user: a lease of another process was left by one that ended in
+// the middle of a scan. Elsewhere the lease runs out on its own.
+bool _leftByAnotherProcess(String holder) {
+  final owner = leaseOwnerPid(holder);
+  return owner != null && owner != pid;
+}
+
 /// Reads the metadata of a file; the scanner's is [readMediaMetadataSync], tests count the files it opens
 typedef MetadataReader = MediaMetadata Function(String path, LibraryMediaKind kind);
 
 /// Scans the roots of the index at [indexPath]: every local root, and the network roots not scanned for
 /// [networkRescanInterval], or all of them when [everyRoot]. Returns a busy summary at once when another scan holds
-/// the lease.
+/// the lease, unless [isAbandonedLease] (by default: on Windows, a lease of another process) says it was left behind.
 Future<ScanSummary> runLibraryScan(
   String indexPath, {
   bool everyRoot = false,
@@ -294,12 +328,14 @@ Future<ScanSummary> runLibraryScan(
   MetadataReader? readMetadata,
   bool Function()? isCancelled,
   DateTime Function()? clock,
+  bool Function(String holder)? isAbandonedLease,
 }) async {
   final index = LibraryIndex.open(indexPath);
-  final owner = '${Isolate.current.hashCode}-$pid-${_scanCounter++}';
+  final owner = '$pid-${Isolate.current.hashCode}-${_scanCounter++}';
   final now = clock ?? DateTime.now;
+  final abandoned = isAbandonedLease ?? (Platform.isWindows ? _leftByAnotherProcess : null);
   try {
-    if (!index.tryAcquireScanLease(owner, _leaseLength, now: now())) {
+    if (!index.tryAcquireScanLease(owner, _leaseLength, now: now(), isAbandoned: abandoned)) {
       return const ScanSummary(busy: true);
     }
     final scan = _Scan(
@@ -322,7 +358,9 @@ Future<ScanSummary> runLibraryScan(
         summary += await scan.scanRoot(root);
       }
     } on ScanCancelled {
-      return summary + const ScanSummary(cancelled: true);
+      return summary + ScanSummary(written: scan.writtenInRoot, cancelled: true);
+    } on _LeaseLost {
+      return summary + ScanSummary(written: scan.writtenInRoot, busy: true);
     }
     index.recordScanEnd(endedMs: now().millisecondsSinceEpoch, rootsVersion: rootsVersion);
     return summary;
@@ -417,17 +455,36 @@ class _Scan {
   final bool Function() isCancelled;
   final bool Function() renewLease;
   final DateTime Function() now;
+  late final LibraryIds ids = index.ids;
   var _sinceYield = 0;
+  DateTime? _renewedAt;
+
+  /// Files written so far by the root being scanned, for a scan that stops in the middle of it
+  var writtenInRoot = 0;
 
   Future<void> _tick() async {
     if (isCancelled()) {
       throw const ScanCancelled();
     }
+    _keepLease();
     if (++_sinceYield >= _yieldEvery) {
       _sinceYield = 0;
       // Lets the isolate hear a cancel, and a busy machine breathe
       await Future<void>.delayed(Duration.zero);
     }
+  }
+
+  /// Renews the lease when [_leaseRenewal] has passed since the last time; stops the scan when another one took it
+  void _keepLease() {
+    final at = now();
+    final renewed = _renewedAt;
+    if (renewed != null && at.difference(renewed) < _leaseRenewal) {
+      return;
+    }
+    if (!renewLease()) {
+      throw const _LeaseLost();
+    }
+    _renewedAt = at;
   }
 
   /// Where [root] is now: its path when the same volume is still there, else wherever the volume came back
@@ -442,6 +499,7 @@ class _Scan {
   }
 
   Future<ScanSummary> scanRoot(LibraryRoot root) async {
+    writtenInRoot = 0;
     final path = _locate(root);
     if (path == null) {
       index.updateRootLocation(root.id, path: root.path, available: false);
@@ -454,20 +512,19 @@ class _Scan {
     final seen = <String>{};
     final unreadable = <String>[];
     final batch = <IndexedFile>[];
-    var written = 0;
     var cloudOnly = 0;
     final addedSeconds = now().millisecondsSinceEpoch ~/ 1000;
 
     void flush() {
       index.writeFiles(batch);
-      written += batch.length;
+      writtenInRoot += batch.length;
       batch.clear();
     }
 
     final folders = <String>[''];
     while (folders.isNotEmpty) {
       final relativeDir = folders.removeLast();
-      renewLease();
+      _keepLease();
       final absoluteDir = relativeDir.isEmpty ? path : rules.context.joinAll([path, ...relativeDir.split('/')]);
       final entries = lister.list(absoluteDir);
       if (entries == null) {
@@ -490,24 +547,33 @@ class _Scan {
         if (kind == null || isSkippedFileName(entry.name)) {
           continue;
         }
-        final id = libraryFileId(root.id, rules.key(relativePath));
+        final id = ids.file(root.id, rules.key(relativePath));
         seen.add(id);
         final isCloudOnly = isCloudPlaceholder(entry.attributes) && !root.includeCloudOnly;
         if (isCloudOnly) {
           cloudOnly++;
         }
         final before = known[id];
-        if (before != null &&
+        final unchanged =
+            before != null &&
             before.size == entry.size &&
             before.modifiedMs == entry.modifiedMs &&
             before.cloudOnly == isCloudOnly &&
-            before.relativePath == relativePath) {
+            before.relativePath == relativePath;
+        // A file whose content could not be read last time is read again: once readable, it gets its date taken, its
+        // dimensions and its projection, which its listing does not give
+        final readAgain = unchanged && before.readFailed;
+        if (unchanged && !readAgain) {
           continue;
         }
         // A placeholder is never opened: reading its head would download it
         final metadata = isCloudOnly
             ? MediaMetadata.none
             : readMetadata(rules.context.join(absoluteDir, entry.name), kind);
+        if (readAgain && metadata.readFailed) {
+          // Still not readable: nothing new for the app
+          continue;
+        }
         batch.add(
           _record(
             root: root,
@@ -527,6 +593,7 @@ class _Scan {
       }
     }
     flush();
+    final written = writtenInRoot;
 
     final gone = [
       for (final MapEntry(key: id, value: file) in known.entries)
@@ -560,7 +627,7 @@ class _Scan {
     return IndexedFile(
       id: id,
       rootId: root.id,
-      albumId: libraryAlbumId(root.id, rules.key(relativeDir)),
+      albumId: ids.album(root.id, rules.key(relativeDir)),
       relativePath: relativePath,
       type: kind.assetType,
       size: entry.size,
@@ -575,6 +642,7 @@ class _Scan {
       longitude: metadata.longitude,
       projection: metadata.projection,
       cloudOnly: cloudOnly,
+      readFailed: metadata.readFailed,
     );
   }
 }

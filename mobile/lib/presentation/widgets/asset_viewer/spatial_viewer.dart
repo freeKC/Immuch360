@@ -17,6 +17,7 @@ import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/models/video_buffering.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -35,6 +36,11 @@ import 'package:immich_mobile/services/api.service.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('SpatialViewer');
+
+/// What to say where the Spatial 2.5D player does not run: on a computer it comes in a later version of Immuch360
+/// Desktop, so the phone text ("not available on this device") would read as final there
+String _unavailableMessage(Translations t) =>
+    CurrentPlatform.isDesktop ? t.desktop_spatial_unavailable : t.spatial_unavailable;
 
 /// Plays [asset], a video, full screen in the Spatial 2.5D player, from where and as the viewer plays it.
 ///
@@ -80,7 +86,7 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
     ...videoBufferingLabels(context.t),
     ...videoSourceLabels(context.t),
   };
-  final unavailableMessage = context.t.spatial_unavailable;
+  final unavailableMessage = _unavailableMessage(context.t);
   final errorMessage = context.t.spatial_open_failed;
 
   final layoutKey = spatialLayoutKey(asset);
@@ -223,7 +229,7 @@ Future<bool> openSpatialVideoUrl(
     ...audioTrackLabels(context.t, Localizations.localeOf(context)),
     ...videoBufferingLabels(context.t),
   };
-  final unavailableMessage = context.t.spatial_unavailable;
+  final unavailableMessage = _unavailableMessage(context.t);
   final errorMessage = context.t.spatial_open_failed;
 
   final SpatialCapabilities capabilities;

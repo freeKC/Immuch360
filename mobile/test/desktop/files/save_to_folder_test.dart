@@ -181,7 +181,8 @@ void main() {
       pickers.saveAnswer = p.join(root.path, 'for the issue');
 
       expect(await saveLogFile(log, crashDumps: dumps, announce: false), isTrue);
-      expect(pickers.asked.single, 'save Immich_log_2026-10-08T10-20-30.zip zip');
+      // The name tells the user that crash reports go with the log
+      expect(pickers.asked.single, 'save Immich_log_2026-10-08T10-20-30-with-crash-reports.zip zip');
       final entries = readZip(File('${pickers.saveAnswer}.zip').readAsBytesSync());
       expect(entries.keys.first, 'Immich_log_2026-10-08T10-20-30.log');
       expect(utf8.decode(entries.values.first), 'line one\nline two\n');

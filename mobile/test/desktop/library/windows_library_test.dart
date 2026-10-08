@@ -152,7 +152,7 @@ void main() {
       final summary = await library.scan();
       expect((summary.written, summary.removed), (2, 0));
 
-      final file = index.file(libraryFileId(root.id, '2024/img_1.jpg'))!;
+      final file = index.file(index.ids.file(root.id, '2024/img_1.jpg'))!;
       expect(file.relativePath, '2024/IMG_1.JPG');
       expect((file.width, file.height), (40, 30));
       expect(library.file(file.id)!.path, p.join(dir.path, 'Photos', '2024', 'IMG_1.JPG'));
@@ -161,5 +161,17 @@ void main() {
       index.close();
       library.close();
     }
+  });
+
+  test('the drive of the temporary folder is no drive the user ejects, nor is a share', () {
+    final probe = WindowsVolumeProbe();
+    // The disk answers the storage query (an NVMe or SATA disk on a PC, a virtual SCSI one on a CI runner), so the
+    // bus of a USB drive would be read the same way
+    final storage = probe.storageOf(dir.path);
+    expect(storage, isNotNull);
+    expect(isRemovableStorage(busType: storage!.busType, removableMedia: storage.removableMedia), isFalse);
+    expect(probe.isRemovable(dir.path), isFalse);
+    expect(probe.storageOf(r'\\nowhere.invalid\share'), isNull);
+    expect(probe.isRemovable(r'\\nowhere.invalid\share'), isFalse);
   });
 }

@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:path/path.dart' as p;
 
@@ -23,6 +24,9 @@ final folderPickerProvider = Provider<Future<String?> Function()>(
 
 /// "Folders on this computer": the folders whose photos and videos the app shows on a computer, in place of the
 /// gallery of a phone. Nothing is scanned before the user chose a folder here.
+///
+/// Under the focus ring of the remote control layout, as the "This computer" settings, and so is its dialog: Material
+/// only tints a focused button, too faintly to follow with Tab (design 4.7).
 @RoutePage()
 class FoldersPage extends ConsumerWidget {
   const FoldersPage({super.key});
@@ -31,24 +35,26 @@ class FoldersPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final view = ref.watch(folderLibraryControllerProvider);
     final scanning = view.valueOrNull?.scanning ?? false;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.t.desktop_folders_title),
-        actions: [
-          IconButton(
-            key: const Key('desktop_folders_refresh'),
-            tooltip: context.t.refresh,
-            icon: const Icon(Icons.refresh),
-            // The user asks: the network folders too, which the automatic rescans read only now and then
-            onPressed: () => unawaited(ref.read(folderLibraryControllerProvider.notifier).refresh(everyRoot: true)),
-          ),
-        ],
+    return TvFocusRing(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(context.t.desktop_folders_title),
+          actions: [
+            IconButton(
+              key: const Key('desktop_folders_refresh'),
+              tooltip: context.t.refresh,
+              icon: const Icon(Icons.refresh),
+              // The user asks: the network folders too, which the automatic rescans read only now and then
+              onPressed: () => unawaited(ref.read(folderLibraryControllerProvider.notifier).refresh(everyRoot: true)),
+            ),
+          ],
+        ),
+        body: switch (view) {
+          AsyncData(:final value) => _FoldersList(view: value, scanning: scanning),
+          AsyncError() => Center(child: Text(context.t.failed_to_load_folder)),
+          _ => const Center(child: CircularProgressIndicator()),
+        },
       ),
-      body: switch (view) {
-        AsyncData(:final value) => _FoldersList(view: value, scanning: scanning),
-        AsyncError() => Center(child: Text(context.t.failed_to_load_folder)),
-        _ => const Center(child: CircularProgressIndicator()),
-      },
     );
   }
 }
@@ -81,17 +87,24 @@ class _FoldersList extends ConsumerWidget {
   Future<void> _confirmRemove(BuildContext context, WidgetRef ref, LibraryRoot root) async {
     final remove = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(dialogContext.t.desktop_folders_remove),
-        content: Text('${root.path}\n\n${dialogContext.t.desktop_folders_remove_info}'),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(dialogContext.t.cancel)),
-          TextButton(
-            key: const Key('desktop_folders_remove_confirm'),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(dialogContext.t.remove),
-          ),
-        ],
+      // The ring of the page stays under the dialog's barrier: the dialog brings its own
+      builder: (dialogContext) => TvFocusRing(
+        child: AlertDialog(
+          title: Text(dialogContext.t.desktop_folders_remove),
+          content: Text('${root.path}\n\n${dialogContext.t.desktop_folders_remove_info}'),
+          actions: [
+            TextButton(
+              key: const Key('desktop_folders_remove_cancel'),
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(dialogContext.t.cancel),
+            ),
+            TextButton(
+              key: const Key('desktop_folders_remove_confirm'),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(dialogContext.t.remove),
+            ),
+          ],
+        ),
       ),
     );
     if ((remove ?? false) && context.mounted) {

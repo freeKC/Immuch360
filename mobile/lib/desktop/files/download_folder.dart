@@ -14,6 +14,7 @@ import 'dart:io';
 
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/foundation.dart';
+import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -23,10 +24,13 @@ import 'package:path_provider/path_provider.dart';
 const desktopDownloadStagingFolder = 'immuch360-downloads';
 
 /// [task] as the computers run it: in its own folder under the temporary folder rather than in the documents of the
-/// user (see the header of this file)
+/// user (see the header of this file), under a name Windows accepts. The name comes from the server, where a photo
+/// uploaded from Linux or macOS can be "What?.jpg" or "12:30.jpg": Windows refuses the first, and writes the second
+/// as a file "12" with a hidden stream "30.jpg", which the move into the download folder then fails on.
 DownloadTask desktopDownloadTask(DownloadTask task) => task.copyWith(
   baseDirectory: BaseDirectory.temporary,
   directory: p.join(desktopDownloadStagingFolder, task.taskId.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_')),
+  filename: safeFileName(task.filename),
 );
 
 /// The download folder setting and the default it falls back on

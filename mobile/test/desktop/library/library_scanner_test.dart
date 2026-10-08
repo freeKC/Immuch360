@@ -6,6 +6,7 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/library_scanner.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:path/path.dart' as p;
+import 'package:sqlite3/sqlite3.dart';
 
 import 'library_fixtures.dart';
 import 'library_test_support.dart';
@@ -58,21 +59,21 @@ void main() {
       final albums = index.albums();
       expect(albums, hasLength(2));
       final trips = albums.firstWhere((album) => album.relativeDir == 'Trips');
-      expect(trips.id, libraryAlbumId(root.id, 'Trips'));
+      expect(trips.id, fixture.ids.album(root.id, 'Trips'));
       expect(trips.assetCount, 2);
 
-      final photo = index.file(libraryFileId(root.id, 'Trips/IMG_0001.JPG'))!;
+      final photo = index.file(fixture.ids.file(root.id, 'Trips/IMG_0001.JPG'))!;
       expect(photo.type, LibraryMediaKind.image.assetType);
       expect((photo.width, photo.height), (4000, 3000));
       expect(photo.createdSeconds, taken.millisecondsSinceEpoch ~/ 1000);
       expect(photo.playbackStyle, 1);
 
-      final video = index.file(libraryFileId(root.id, 'Trips/VID_0002.mp4'))!;
+      final video = index.file(fixture.ids.file(root.id, 'Trips/VID_0002.mp4'))!;
       expect(video.type, LibraryMediaKind.video.assetType);
       expect(video.durationMs, 12000);
       expect(video.playbackStyle, 2);
 
-      expect(index.file(libraryFileId(root.id, 'pano.jpg'))!.projection, 'equirectangular');
+      expect(index.file(fixture.ids.file(root.id, 'pano.jpg'))!.projection, 'equirectangular');
       expect(fixture.opened.map(p.basename), unorderedEquals(['IMG_0001.JPG', 'VID_0002.mp4', 'pano.jpg']));
       expect(library.roots().single.fileCount, 3);
     });
@@ -83,7 +84,7 @@ void main() {
       final library = fixture.library()..addRoot(p.join(fixture.files.path, 'Photos'));
       await library.scan();
 
-      final file = openIndex().file(libraryFileId('win-0000beef:/Photos', 'plain.png'))!;
+      final file = openIndex().file(fixture.ids.file('win-0000beef:/Photos', 'plain.png'))!;
       expect(file.createdSeconds, lessThanOrEqualTo(modified.millisecondsSinceEpoch ~/ 1000));
       expect(file.modifiedMs ~/ 1000, modified.millisecondsSinceEpoch ~/ 1000);
     });
@@ -125,7 +126,7 @@ void main() {
       final delta = index.changesSince(index.checkpoint);
       expect(delta.updates.map((file) => file.name), unorderedEquals(['a.jpg', 'new.png']));
       expect(delta.updates.firstWhere((file) => file.name == 'a.jpg').width, 30);
-      expect(delta.deletes, [libraryFileId(rootId, 'b.jpg')]);
+      expect(delta.deletes, [fixture.ids.file(rootId, 'b.jpg')]);
     });
 
     test('a file that comes back before the next sync is a change, not a deletion', () async {
@@ -155,7 +156,7 @@ void main() {
       }
       final summary = await fixture.scan();
       expect(summary.removed, 0);
-      expect(openIndex().file(libraryFileId(rootId, '2023/c.mp4')), isNotNull);
+      expect(openIndex().file(fixture.ids.file(rootId, '2023/c.mp4')), isNotNull);
     }, skip: Platform.isWindows ? 'chmod is a POSIX tool' : null);
 
     test('a cancelled scan stops and is not taken as fresh', () async {
@@ -170,16 +171,129 @@ void main() {
       );
       expect(summary.cancelled, isTrue);
       expect(openIndex().lastScan.endedMs, before);
-      expect(openIndex().file(libraryFileId(rootId, 'd.jpg')), isNull);
+      expect(openIndex().file(fixture.ids.file(rootId, 'd.jpg')), isNull);
     });
 
     test('a second scan while one holds the index says so and does nothing', () async {
       final index = openIndex();
-      expect(index.tryAcquireScanLease('another scan', const Duration(minutes: 1)), isTrue);
+      // Another isolate of this process
+      final owner = '$pid-1-0';
+      expect(index.tryAcquireScanLease(owner, const Duration(minutes: 1)), isTrue);
       final summary = await fixture.scan();
       expect(summary.busy, isTrue);
-      index.releaseScanLease('another scan');
+      index.releaseScanLease(owner);
       expect((await fixture.scan()).busy, isFalse);
+    });
+
+    test(
+      'a lease left by a process that ended mid scan: taken over at once on Windows, after a minute elsewhere',
+      () async {
+        final start = DateTime(2030);
+        final left = '${pid + 1}-1-0';
+        expect(leaseOwnerPid(left), pid + 1);
+        expect(openIndex().tryAcquireScanLease(left, const Duration(minutes: 1), now: start), isTrue);
+
+        final soon = await fixture.scan(clock: () => start.add(const Duration(seconds: 30)));
+        expect(soon.busy, !Platform.isWindows);
+        final later = await fixture.scan(clock: () => start.add(const Duration(seconds: 61)));
+        expect(later.busy, isFalse);
+      },
+    );
+
+    test('a scan that lost its lease to another one stops, and the other one holds the index', () async {
+      for (var i = 0; i < 3; i++) {
+        fixture.write('Photos/new_$i.jpg', jpegBytes(width: 1, height: 1));
+      }
+      var now = DateTime(2030);
+      final other = openIndex();
+      final owner = '$pid-2-0';
+      fixture.onRead = (_) {
+        // The scan stalls past its lease (a share that stopped answering), and another one takes the index
+        now = now.add(const Duration(minutes: 2));
+        other.tryAcquireScanLease(owner, const Duration(minutes: 1), now: now);
+      };
+      final lost = await fixture.scan(clock: () => now);
+      expect(lost.busy, isTrue);
+      expect(fixture.opened, hasLength(1), reason: 'stopped at the next file');
+      fixture.onRead = null;
+      expect((await fixture.scan(clock: () => now)).busy, isTrue, reason: 'the lease is still the other scan\'s');
+
+      other.releaseScanLease(owner);
+      final again = await fixture.scan(clock: () => now);
+      expect((again.busy, again.written), (false, 3));
+    });
+
+    test('what a scan that lost its lease wrote still counts once the next one went through', () {
+      final summary = const ScanSummary(written: 2, busy: true).then(const ScanSummary(written: 1, removed: 1));
+      expect((summary.busy, summary.written, summary.removed, summary.hasChanges), (false, 3, 1, true));
+    });
+
+    test('a file that could not be read is read again at the next scans, until it can be', () async {
+      final index = openIndex();
+      index.setCheckpoint(index.changesSince(0).seq);
+      final path = p.join(fixture.files.path, 'Photos', 'held.jpg');
+      fixture
+        ..write('Photos/held.jpg', jpegBytes(width: 30, height: 20))
+        ..failing.add(path);
+      await fixture.scan();
+      final id = fixture.ids.file(rootId, 'held.jpg');
+      expect((index.file(id)!.width, index.file(id)!.readFailed), (null, true));
+      // The app shows it already, dated by the file
+      expect(index.changesSince(index.checkpoint).updates.map((file) => file.name), ['held.jpg']);
+      index.setCheckpoint(index.seq);
+
+      fixture.opened.clear();
+      await fixture.scan();
+      expect(fixture.opened, [path]);
+      expect(index.seq, index.checkpoint, reason: 'still not readable: nothing new for the app');
+
+      fixture.failing.clear();
+      await fixture.scan();
+      final read = index.file(id)!;
+      expect((read.width, read.height, read.readFailed), (30, 20, false));
+      expect(index.changesSince(index.checkpoint).updates.map((file) => file.name), ['held.jpg']);
+
+      fixture.opened.clear();
+      await fixture.scan();
+      expect(fixture.opened, isEmpty);
+    });
+  });
+
+  group('ids', () {
+    test('are keyed per library: the same in every connection, another library gets another key', () {
+      final id = openIndex().ids.file('win-0000beef:/Photos', 'a.jpg');
+      expect(openIndex().ids.file('win-0000beef:/Photos', 'a.jpg'), id);
+      expect(fixture.ids.file('win-0000beef:/Photos', 'a.jpg'), id);
+
+      final other = TestLibrary();
+      addTearDown(other.dispose);
+      expect(other.ids.file('win-0000beef:/Photos', 'a.jpg'), isNot(id));
+    });
+
+    test('an index of the first version gets a key, and its files their keyed ids at the next scan', () async {
+      fixture.write('Photos/a.jpg', jpegBytes(width: 10, height: 10));
+      final rootId = fixture.library().addRoot(p.join(fixture.files.path, 'Photos')).id;
+      // The first schema: no key, no read_failed column, a file under the unkeyed id of that version
+      const oldId = 'f0123456789abcdef0123456789abcdef01234567';
+      sqlite3.open(fixture.indexPath)
+        ..execute('ALTER TABLE files DROP COLUMN read_failed')
+        ..execute("DELETE FROM meta WHERE key = 'id_key'")
+        ..execute(
+          'INSERT INTO files (id, root_id, album_id, rel_path, type, size, modified_ms, added_s, created_s, '
+          "change_seq) VALUES (?, ?, 'd0', 'a.jpg', 1, 1, 1, 1, 1, 1)",
+          [oldId, rootId],
+        )
+        ..execute("UPDATE meta SET value = 1 WHERE key = 'seq'")
+        ..execute('PRAGMA user_version = 1')
+        ..close();
+
+      final index = openIndex();
+      await fixture.scan();
+      expect(index.file(oldId), isNull);
+      expect(index.file(fixture.ids.file(rootId, 'a.jpg'))!.width, 10);
+      final delta = index.changesSince(0);
+      expect(delta.deletes, [oldId]);
+      expect(delta.updates.map((file) => file.id), [fixture.ids.file(rootId, 'a.jpg')]);
     });
   });
 
@@ -217,7 +331,7 @@ void main() {
 
       expect(fixture.opened, contains(cloud.path));
       expect(index.changesSince(index.checkpoint).updates.map((file) => file.name), ['cloud.jpg']);
-      expect(index.file(libraryFileId(rootId, 'cloud.jpg'))!.width, 20);
+      expect(index.file(fixture.ids.file(rootId, 'cloud.jpg'))!.width, 20);
     });
 
     test('a shown file whose space the cloud client freed leaves the local tables', () async {
@@ -231,7 +345,7 @@ void main() {
       local.setLastModifiedSync(DateTime(2030));
       await fixture.scan();
 
-      expect(index.changesSince(index.checkpoint).deletes, [libraryFileId(rootId, 'local.jpg')]);
+      expect(index.changesSince(index.checkpoint).deletes, [fixture.ids.file(rootId, 'local.jpg')]);
     });
   });
 
@@ -394,7 +508,7 @@ void main() {
       library.removeRoot(root.id);
       expect(library.roots(), isEmpty);
       expect(index.fullSyncNeeded, isTrue);
-      expect(index.changesSince(index.checkpoint).deletes, [libraryFileId(root.id, 'a.jpg')]);
+      expect(index.changesSince(index.checkpoint).deletes, [fixture.ids.file(root.id, 'a.jpg')]);
       expect(file.existsSync(), isTrue);
     });
 

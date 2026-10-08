@@ -120,9 +120,15 @@ jobs:
         run: python3 .github/desktop/check_workflow.py
 
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
-      - name: Nothing changed under mobile/android and mobile/ios
+      - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
         if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
         run: python3 .github/desktop/check_phone_projects.py --phone-ref origin/immuch360
+
+      # The plugin baseline of the test job compares names only: a package of the phones moved to another version by a
+      # desktop package shows here, in mobile/pubspec.lock against the phone branch
+      - name: Packages of the phone builds as on the phone branch
+        if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
+        run: python3 .github/desktop/check_phone_packages.py --phone-ref origin/immuch360
 
   test:
     name: Analyze, mobile suite, plugin baseline

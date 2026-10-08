@@ -4,7 +4,10 @@
 //    a few seconds after the last one, and a watch that ends or fails is started again a little later, with a rescan,
 //    since events were lost;
 //  - network folders are not watched (change notifications over SMB are not reliable), nor anything on Linux: the
-//    Refresh action, and the rescan when the window comes back after five minutes or more, cover them.
+//    Refresh action, and the rescan when the window comes back after five minutes or more, cover them;
+//  - nor are folders on a drive the user ejects (a memory card, a USB drive): on Windows a watch keeps a handle open on
+//    the volume, and Windows then refuses to eject it ("This device is currently in use") for as long as the app runs,
+//    which leads people to pull the drive anyway. The same Refresh and rescan cover them.
 
 import 'dart:async';
 import 'dart:io';
@@ -14,6 +17,13 @@ import 'package:path/path.dart' as p;
 
 /// Watches one folder and what is below it
 typedef FolderWatch = Stream<FileSystemEvent> Function(String path);
+
+/// The folders of [roots] to watch: the local ones whose drive is connected, less those [isRemovable] puts on a drive
+/// the user ejects
+List<String> watchedRootPaths(Iterable<LibraryRoot> roots, {required bool Function(LibraryRoot root) isRemovable}) => [
+  for (final root in roots)
+    if (root.available && !root.isNetwork && !isRemovable(root)) root.path,
+];
 
 Stream<FileSystemEvent> _systemWatch(String path) => Directory(path).watch(recursive: true);
 

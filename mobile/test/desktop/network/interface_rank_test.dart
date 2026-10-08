@@ -340,5 +340,37 @@ void main() {
       final ranked = rankDesktopAddresses(cafe, facts: {'Wi-Fi': cafeWifi}, chosen: 'Wi-Fi');
       expect(servedShareAddresses(ranked), isEmpty);
     });
+
+    test('on Windows, a network whose category could not be read is left out until the user shares on it', () {
+      // The Network List Manager could not be read, or did not list the network of this adapter
+      final unknown = rankDesktopAddresses(
+        cafe,
+        facts: {
+          'Wi-Fi': const AdapterFacts(
+            name: 'Wi-Fi',
+            kind: AdapterKind.wifi,
+            hasGateway: true,
+            defaultRoute: true,
+            category: NetworkCategory.unknown,
+          ),
+        },
+      );
+      expect(unknown.single.isPublic, isTrue);
+      expect(servedShareAddresses(unknown), isEmpty);
+      allowPublicNetworksForSession(unknown);
+      expect(servedShareAddresses(unknown), ['10.42.0.15']);
+    });
+
+    test('on Windows, an interface the system told nothing of counts as on a network of unknown category', () {
+      // The whole reading failed: no facts at all, which elsewhere means a system without categories
+      final unread = rankDesktopAddresses(cafe, categoriesExpected: true);
+      expect(unread.single.facts?.category, NetworkCategory.unknown);
+      expect(servedShareAddresses(unread), isEmpty);
+      expect(servedShareAddresses(rankDesktopAddresses(cafe, chosen: 'Wi-Fi', categoriesExpected: true)), isEmpty);
+      // A known category still decides
+      expect(servedShareAddresses(rankDesktopAddresses(cafe, facts: {'Wi-Fi': _wifi}, categoriesExpected: true)), [
+        '10.42.0.15',
+      ]);
+    });
   });
 }

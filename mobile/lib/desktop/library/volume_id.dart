@@ -14,6 +14,7 @@
 
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:path/path.dart' as p;
@@ -72,6 +73,11 @@ abstract class VolumeProbe {
   /// Where the folder [pathInVolume] of the volume [volumeKey] is now; null when the volume is not connected or the
   /// folder is not on it any more
   String? locate(String volumeKey, String pathInVolume);
+
+  /// Whether the folder [absolutePath] is on a drive the user ejects: a memory card, a USB or FireWire drive, a
+  /// disc. The watcher leaves those alone (see library_watcher.dart). False where the system is not asked yet (Linux,
+  /// macOS), whose watches do not hold the volume the way the Windows one does.
+  bool isRemovable(String absolutePath) => false;
 }
 
 String _joinInside(String mountPoint, String pathInVolume, p.Context context) {
@@ -115,6 +121,26 @@ typedef _SetThreadErrorModeNative = Int32 Function(Uint32, Pointer<Uint32>);
 typedef _SetThreadErrorMode = int Function(int, Pointer<Uint32>);
 typedef _GetConnectionNative = Uint32 Function(Pointer<Utf16>, Pointer<Utf16>, Pointer<Uint32>);
 typedef _GetConnection = int Function(Pointer<Utf16>, Pointer<Utf16>, Pointer<Uint32>);
+typedef _GetVolumeNameForMountPointNative = Int32 Function(Pointer<Utf16>, Pointer<Utf16>, Uint32);
+typedef _GetVolumeNameForMountPoint = int Function(Pointer<Utf16>, Pointer<Utf16>, int);
+typedef _CreateFileNative =
+    Pointer<Void> Function(Pointer<Utf16>, Uint32, Uint32, Pointer<Void>, Uint32, Uint32, Pointer<Void>);
+typedef _CreateFile = Pointer<Void> Function(Pointer<Utf16>, int, int, Pointer<Void>, int, int, Pointer<Void>);
+typedef _DeviceIoControlNative =
+    Int32 Function(
+      Pointer<Void>,
+      Uint32,
+      Pointer<Uint8>,
+      Uint32,
+      Pointer<Uint8>,
+      Uint32,
+      Pointer<Uint32>,
+      Pointer<Void>,
+    );
+typedef _DeviceIoControl =
+    int Function(Pointer<Void>, int, Pointer<Uint8>, int, Pointer<Uint8>, int, Pointer<Uint32>, Pointer<Void>);
+typedef _CloseHandleNative = Int32 Function(Pointer<Void>);
+typedef _CloseHandle = int Function(Pointer<Void>);
 
 // WNetGetConnectionW: a remembered mapping whose share does not answer now still names the share
 const _errorConnectionUnavailable = 1201;
@@ -122,7 +148,32 @@ const _errorConnectionUnavailable = 1201;
 // GetDriveTypeW
 const _driveUnknown = 0;
 const _driveNoRootDir = 1;
+const _driveRemovable = 2;
+const _driveFixed = 3;
 const _driveRemote = 4;
+const _driveCdRom = 5;
+
+// The device of a volume, opened with no access right at all, which is enough to ask it about itself and needs no
+// administrator
+const _fileShareRead = 0x1;
+const _fileShareWrite = 0x2;
+const _openExisting = 3;
+
+// IOCTL_STORAGE_QUERY_PROPERTY with StorageDeviceProperty and PropertyStandardQuery; the answer is a
+// STORAGE_DEVICE_DESCRIPTOR, with RemovableMedia at byte 10 and BusType at byte 28
+const _ioctlStorageQueryProperty = 0x2d1400;
+const _storagePropertyQueryLength = 12;
+const _deviceDescriptorLength = 1024;
+const _descriptorRemovableMedia = 10;
+const _descriptorBusType = 28;
+
+// STORAGE_BUS_TYPE of the drives a user unplugs: FireWire, USB, SD and MMC cards. A Thunderbolt enclosure reports the
+// bus of the disk inside it (NVMe, SATA) and is watched like an internal disk.
+const _removableBusTypes = {4, 7, 12, 13};
+
+/// Whether a disk Windows describes by [busType] (STORAGE_BUS_TYPE) and [removableMedia] is one the user ejects
+bool isRemovableStorage({required int busType, required bool removableMedia}) =>
+    removableMedia || _removableBusTypes.contains(busType);
 
 // SetThreadErrorMode: no "insert a disk" dialog for an empty card reader while the drives are probed
 const _semFailCriticalErrors = 0x0001;
@@ -153,6 +204,13 @@ class WindowsVolumeProbe extends VolumeProbe {
   late final _setThreadErrorMode = _kernel32.lookupFunction<_SetThreadErrorModeNative, _SetThreadErrorMode>(
     'SetThreadErrorMode',
   );
+  late final _getVolumeNameForMountPoint = _kernel32
+      .lookupFunction<_GetVolumeNameForMountPointNative, _GetVolumeNameForMountPoint>(
+        'GetVolumeNameForVolumeMountPointW',
+      );
+  late final _createFile = _kernel32.lookupFunction<_CreateFileNative, _CreateFile>('CreateFileW');
+  late final _deviceIoControl = _kernel32.lookupFunction<_DeviceIoControlNative, _DeviceIoControl>('DeviceIoControl');
+  late final _closeHandle = _kernel32.lookupFunction<_CloseHandleNative, _CloseHandle>('CloseHandle');
 
   T _quietly<T>(T Function() probe) => using((arena) {
     final previous = arena<Uint32>();
@@ -242,6 +300,92 @@ class WindowsVolumeProbe extends VolumeProbe {
       isNetwork: false,
     );
   }
+
+  /// A memory card reader's drive (DRIVE_REMOVABLE), an optical disc or a mounted ISO image (DRIVE_CDROM, whose content
+  /// never changes anyway), or a fixed drive whose disk sits on a bus a user unplugs: USB hard disks and SSDs are
+  /// DRIVE_FIXED, so their bus is asked of the disk itself
+  @override
+  bool isRemovable(String absolutePath) => _quietly(() {
+    final mountPoint = _volumePathOf(absolutePath);
+    if (mountPoint == null || mountPoint.startsWith(r'\\')) {
+      return false;
+    }
+    final type = _driveTypeOf(mountPoint);
+    if (type == _driveRemovable || type == _driveCdRom) {
+      return true;
+    }
+    if (type != _driveFixed) {
+      return false;
+    }
+    final storage = _storageOfVolume(mountPoint);
+    return storage != null && isRemovableStorage(busType: storage.busType, removableMedia: storage.removableMedia);
+  });
+
+  /// How Windows describes the disk under the local folder [absolutePath]: its STORAGE_BUS_TYPE, and whether its
+  /// medium comes out. Null when it does not say: a share, a volume spread over several disks.
+  ({int busType, bool removableMedia})? storageOf(String absolutePath) => _quietly(() {
+    final mountPoint = _volumePathOf(absolutePath);
+    return mountPoint == null || mountPoint.startsWith(r'\\') ? null : _storageOfVolume(mountPoint);
+  });
+
+  ({int busType, bool removableMedia})? _storageOfVolume(String mountPoint) {
+    final device = _volumeDeviceOf(mountPoint);
+    return device == null ? null : _storageOfDevice(device);
+  }
+
+  /// "\\?\Volume{...}", the volume mounted at [mountPoint], without the trailing separator: CreateFileW opens the
+  /// volume under that name, and its root folder with the separator
+  String? _volumeDeviceOf(String mountPoint) => using((arena) {
+    const length = 64;
+    final buffer = arena<Uint16>(length).cast<Utf16>();
+    final withSeparator = mountPoint.endsWith(r'\') ? mountPoint : '$mountPoint\\';
+    if (_getVolumeNameForMountPoint(withSeparator.toNativeUtf16(allocator: arena), buffer, length) == 0) {
+      return null;
+    }
+    final name = buffer.toDartString();
+    return name.endsWith(r'\') ? name.substring(0, name.length - 1) : name;
+  });
+
+  ({int busType, bool removableMedia})? _storageOfDevice(String device) => using((arena) {
+    final handle = _createFile(
+      device.toNativeUtf16(allocator: arena),
+      0,
+      _fileShareRead | _fileShareWrite,
+      nullptr,
+      _openExisting,
+      0,
+      nullptr,
+    );
+    if (handle.address == -1) {
+      return null;
+    }
+    try {
+      // StorageDeviceProperty (0) and PropertyStandardQuery (0): the query is all zeros
+      final query = arena<Uint8>(_storagePropertyQueryLength);
+      final descriptor = arena<Uint8>(_deviceDescriptorLength);
+      final returned = arena<Uint32>();
+      final ok = _deviceIoControl(
+        handle,
+        _ioctlStorageQueryProperty,
+        query,
+        _storagePropertyQueryLength,
+        descriptor,
+        _deviceDescriptorLength,
+        returned,
+        nullptr,
+      );
+      if (ok == 0 || returned.value < _descriptorBusType + 4) {
+        return null;
+      }
+      final view = ByteData.sublistView(descriptor.asTypedList(_deviceDescriptorLength));
+      return (
+        busType: view.getUint32(_descriptorBusType, Endian.little),
+        removableMedia: view.getUint8(_descriptorRemovableMedia) != 0,
+      );
+    } finally {
+      _closeHandle(handle);
+    }
+  });
 
   @override
   String? locate(String volumeKey, String pathInVolume) => _quietly(() {

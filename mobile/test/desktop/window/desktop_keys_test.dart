@@ -218,6 +218,42 @@ void main() {
     expect(wheelZoomFactor(const PointerScrollEvent(scrollDelta: Offset(40, 0))), isNull);
   });
 
+  test('the wheel zooms in proportion to the move: small moves add up to one notch', () {
+    const notch = 100.0;
+    double factor(double dy) => wheelZoomFactor(PointerScrollEvent(scrollDelta: Offset(0, dy)), notch: notch)!;
+
+    // One notch: 10 %
+    expect(factor(-notch), closeTo(0.9, 1e-9));
+    expect(factor(notch), closeTo(1 / 0.9, 1e-9));
+    // A high resolution wheel sending a notch as four moves zooms as much as one notch, not four times as much
+    final quarter = factor(-notch / 4);
+    expect(quarter, greaterThan(0.9));
+    expect(quarter * quarter * quarter * quarter, closeTo(0.9, 1e-9));
+    // One large jump counts for three notches at most
+    expect(factor(-notch * 20), closeTo(0.9 * 0.9 * 0.9, 1e-9));
+    expect(factor(notch * 20), closeTo(1 / (0.9 * 0.9 * 0.9), 1e-9));
+  });
+
+  test('a notch is what the embedder of each computer sends, the scale of the screen included on Windows', () {
+    expect(desktopWheelNotch(TargetPlatform.windows, 1), 100);
+    // The internal panel of a laptop at 200 %: the same 100 physical pixels, so 50 logical ones
+    expect(desktopWheelNotch(TargetPlatform.windows, 2), 50);
+    expect(desktopWheelNotch(TargetPlatform.linux, 2), 53);
+    expect(desktopWheelNotch(TargetPlatform.macOS, 2), 40);
+  });
+
+  testWidgets('one notch of Windows zooms 10 % on a screen at 100 % and at 200 %', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    addTearDown(tester.view.resetDevicePixelRatio);
+    for (final ratio in [1.0, 2.0]) {
+      tester.view.devicePixelRatio = ratio;
+      // 100 physical pixels, as the event reaches the app: in logical pixels of the screen it comes from
+      final event = PointerScrollEvent(viewId: tester.view.viewId, scrollDelta: Offset(0, -100 / ratio));
+      expect(wheelZoomFactor(event), closeTo(0.9, 1e-9), reason: 'scale $ratio');
+    }
+    debugDefaultTargetPlatformOverride = null;
+  });
+
   testWidgets('fewer animations asked by the system stop the inertia on a computer only', (tester) async {
     late BuildContext context;
     await tester.pumpWidget(

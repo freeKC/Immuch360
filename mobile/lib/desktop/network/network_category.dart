@@ -9,7 +9,9 @@
 // /proc/net/route. macOS gives nothing here yet: names only.
 //
 // The category is a security signal only: Microsoft warns that it "must never be used to assume which Windows
-// Firewall ports are open" (NLM_NETWORK_CATEGORY), and it is not used that way.
+// Firewall ports are open" (NLM_NETWORK_CATEGORY), and it is not used that way. Since the share relies on it to stay
+// off a café's Wi-Fi, a category Windows could not tell is never taken as private: it is unknown, which the share
+// treats as public (a disabled Network List Service, a failed COM call, an adapter read between two networks).
 
 import 'dart:async';
 import 'dart:ffi';
@@ -30,6 +32,10 @@ enum NetworkCategory {
 
   /// The network of the user's company, authenticated by its domain controller
   domain,
+
+  /// Windows was asked and could not tell: the Network List Manager could not be read, or it did not list the network
+  /// of an adapter that has a gateway. The share treats it as public.
+  unknown,
 }
 
 /// What an adapter is, from its interface type (Windows) or nothing (elsewhere)
@@ -100,12 +106,22 @@ void forgetDesktopAdapterFacts() {
 }
 
 Future<Map<String, AdapterFacts>> _readFacts() async {
-  try {
-    // The system this runs on, not the target platform a test may pretend to be: these read Windows and Linux APIs
-    if (Platform.isWindows) {
-      final adapters = await Isolate.run(readWindowsAdapterFacts);
+  // The system this runs on, not the target platform a test may pretend to be: these read Windows and Linux APIs
+  if (Platform.isWindows) {
+    try {
+      final (adapters, problems) = await Isolate.run(() {
+        final problems = <String>[];
+        return (readWindowsAdapterFacts(problems: problems), problems);
+      });
+      reportWindowsProblems(problems);
       return {for (final adapter in adapters) adapter.name: adapter};
+    } catch (error) {
+      // The share then counts every address as on a network of unknown category (interface_rank.dart)
+      reportWindowsProblems(['the adapters could not be read: $error']);
+      return const {};
     }
+  }
+  try {
     if (Platform.isLinux) {
       return linuxRouteFacts(await File('/proc/net/route').readAsString());
     }
@@ -113,6 +129,27 @@ Future<Map<String, AdapterFacts>> _readFacts() async {
     _log.fine('The system tells nothing of the network adapters: $error');
   }
   return const {};
+}
+
+/// What the last reading of Windows could not read, so that a lasting failure is logged as a warning once rather than
+/// at each reading, every few seconds while the share runs
+var _lastProblems = '';
+
+/// Logs what a reading of Windows could not read: a warning when it changed since the previous reading, since the
+/// share then leaves the networks of unknown category out
+@visibleForTesting
+void reportWindowsProblems(List<String> problems) {
+  final text = problems.join('; ');
+  if (text != _lastProblems) {
+    _lastProblems = text;
+    if (text.isEmpty) {
+      _log.info('The network categories of Windows can be read again');
+    } else {
+      _log.warning('Windows does not tell the network categories, the share treats them as public: $text');
+    }
+  } else if (text.isNotEmpty) {
+    _log.fine('Network categories still unknown: $text');
+  }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -203,24 +240,41 @@ Uint8List guidBytes(String text) {
 }
 
 /// The adapters of this Windows computer with their kind, gateway, default route and network category. Synchronous
-/// calls into iphlpapi and the Network List Manager: run it in an isolate of its own.
+/// calls into iphlpapi and the Network List Manager: run it in an isolate of its own. What could not be read goes to
+/// [problems], for the caller to log: the logger of an isolate run this way goes nowhere.
 @visibleForTesting
-List<AdapterFacts> readWindowsAdapterFacts() {
-  final categories = _readNetworkCategories();
-  return [
-    for (final adapter in _readAdapters())
-      AdapterFacts(
-        name: adapter.name,
-        description: adapter.description,
-        kind: windowsAdapterKind(adapter.ifType),
-        isUp: adapter.isUp,
-        hasGateway: adapter.hasGateway,
-        defaultRoute: adapter.defaultRoute,
-        category: categories[adapter.guid]?.$1,
-        networkId: categories[adapter.guid]?.$2,
-      ),
-  ];
+List<AdapterFacts> readWindowsAdapterFacts({List<String>? problems}) {
+  final categories = _readNetworkCategories(problems ?? []);
+  final adapters = _readAdapters();
+  if (adapters == null) {
+    problems?.add('GetAdaptersAddresses failed');
+    return const [];
+  }
+  return windowsAdapterFacts(adapters, categories);
 }
+
+/// The facts of the Windows [adapters], with the [categories] of the networks by adapter GUID that the Network List
+/// Manager gave, null when it could not be read. A category it could not tell is unknown rather than missing for an
+/// adapter with a gateway, the kind that reaches other people's devices: the share then treats it as public. Without a
+/// gateway (a direct cable to a headset, a virtual switch), no category stays none, as Windows shows such networks.
+@visibleForTesting
+List<AdapterFacts> windowsAdapterFacts(
+  List<WindowsAdapter> adapters,
+  Map<String, (NetworkCategory, String)>? categories,
+) => [
+  for (final adapter in adapters)
+    AdapterFacts(
+      name: adapter.name,
+      description: adapter.description,
+      kind: windowsAdapterKind(adapter.ifType),
+      isUp: adapter.isUp,
+      hasGateway: adapter.hasGateway,
+      defaultRoute: adapter.defaultRoute,
+      category:
+          categories?[adapter.guid]?.$1 ?? (categories == null || adapter.hasGateway ? NetworkCategory.unknown : null),
+      networkId: categories?[adapter.guid]?.$2,
+    ),
+];
 
 /// IP_ADAPTER_ADDRESSES_LH up to the gateways, the fields read here. The first two fields stand for the union of
 /// Length and IfIndex with a 64 bit alignment, which the pointer after it keeps.
@@ -270,7 +324,9 @@ typedef _GetAdaptersAddresses =
 typedef _GetBestInterfaceNative = Uint32 Function(Uint32 destination, Pointer<Uint32> index);
 typedef _GetBestInterface = int Function(int destination, Pointer<Uint32> index);
 
-typedef _WindowsAdapter = ({
+/// One adapter as the IP helper describes it; [guid] is its name there, "{...}" in upper case
+@visibleForTesting
+typedef WindowsAdapter = ({
   String name,
   String description,
   String guid,
@@ -280,7 +336,8 @@ typedef _WindowsAdapter = ({
   bool defaultRoute,
 });
 
-List<_WindowsAdapter> _readAdapters() {
+/// Null when the IP helper could not list them
+List<WindowsAdapter>? _readAdapters() {
   const afInet = 2;
   // GAA_FLAG_SKIP_ANYCAST, _SKIP_MULTICAST, _SKIP_DNS_SERVER, _INCLUDE_GATEWAYS
   const flags = 0x0002 | 0x0004 | 0x0008 | 0x0080;
@@ -311,9 +368,9 @@ List<_WindowsAdapter> _readAdapters() {
           continue;
         }
         if (result != 0) {
-          return const <_WindowsAdapter>[];
+          return null;
         }
-        final adapters = <_WindowsAdapter>[];
+        final adapters = <WindowsAdapter>[];
         for (var entry = buffer.cast<_AdapterAddresses>(); entry != nullptr; entry = entry.ref.next) {
           final adapter = entry.ref;
           adapters.add((
@@ -331,7 +388,7 @@ List<_WindowsAdapter> _readAdapters() {
         malloc.free(buffer);
       }
     }
-    return const <_WindowsAdapter>[];
+    return null;
   });
 }
 
@@ -393,8 +450,9 @@ void _releaseObject(Pointer<Void> self) {
 }
 
 /// The category and the network id of the network of each connected adapter, by adapter GUID ("{...}", upper case);
-/// empty when COM or the Network List Manager cannot be reached
-Map<String, (NetworkCategory, String)> _readNetworkCategories() {
+/// null when COM or the Network List Manager cannot be reached (the Network List Service disabled by a tool that
+/// "debloats" Windows, for one), with the reason in [problems]
+Map<String, (NetworkCategory, String)>? _readNetworkCategories(List<String> problems) {
   const coinitMultithreaded = 0;
   // RPC_E_CHANGED_MODE: the thread already has another apartment, which serves as well
   const changedMode = -2147417850;
@@ -407,13 +465,16 @@ Map<String, (NetworkCategory, String)> _readNetworkCategories() {
   final coUninitialize = ole32.lookupFunction<_CoUninitializeNative, _CoUninitialize>('CoUninitialize');
   final coCreateInstance = ole32.lookupFunction<_CoCreateInstanceNative, _CoCreateInstance>('CoCreateInstance');
 
+  String hex(int hresult) => '0x${hresult.toUnsigned(32).toRadixString(16).toUpperCase()}';
+
   final initialized = coInitializeEx(nullptr, coinitMultithreaded);
   if (initialized < 0 && initialized != changedMode) {
-    return const {};
+    problems.add('CoInitializeEx ${hex(initialized)}');
+    return null;
   }
   final categories = <String, (NetworkCategory, String)>{};
   try {
-    using((arena) {
+    return using((arena) {
       Pointer<Uint8> guid(String text) {
         final bytes = guidBytes(text);
         final pointer = arena<Uint8>(16);
@@ -422,15 +483,26 @@ Map<String, (NetworkCategory, String)> _readNetworkCategories() {
       }
 
       final out = arena<Pointer<Void>>();
-      if (coCreateInstance(guid(_clsidNetworkListManager), nullptr, anyContext, guid(_iidNetworkListManager), out) <
-          0) {
-        return;
+      final created = coCreateInstance(
+        guid(_clsidNetworkListManager),
+        nullptr,
+        anyContext,
+        guid(_iidNetworkListManager),
+        out,
+      );
+      if (created < 0) {
+        problems.add('the Network List Manager is not there (${hex(created)})');
+        return null;
       }
       final manager = out.value;
       try {
-        if (_slot<_OutPointerNative>(manager, _managerGetNetworkConnections).asFunction<_OutPointer>()(manager, out) <
-            0) {
-          return;
+        final listed = _slot<_OutPointerNative>(manager, _managerGetNetworkConnections).asFunction<_OutPointer>()(
+          manager,
+          out,
+        );
+        if (listed < 0) {
+          problems.add('GetNetworkConnections ${hex(listed)}');
+          return null;
         }
         final connections = out.value;
         try {
@@ -477,6 +549,7 @@ Map<String, (NetworkCategory, String)> _readNetworkCategories() {
       } finally {
         _releaseObject(manager);
       }
+      return categories;
     });
   } finally {
     // Balanced only when this call initialised COM on the thread (S_OK, or S_FALSE when it already was)
@@ -484,5 +557,4 @@ Map<String, (NetworkCategory, String)> _readNetworkCategories() {
       coUninitialize();
     }
   }
-  return categories;
 }

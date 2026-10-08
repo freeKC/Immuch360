@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/files/save_to_folder.dart';
+import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -163,7 +164,8 @@ class AssetMediaRepository {
       taskId: taskId,
       url: url,
       headers: ApiService.getRequestHeaders(),
-      filename: displayName,
+      // A computer writes the server's name as a file name of its own: Windows refuses "?" or "|" (saved_files.dart)
+      filename: CurrentPlatform.isDesktop ? safeFileName(displayName) : displayName,
       directory: taskId,
       baseDirectory: BaseDirectory.temporary,
       group: kShareDownloadGroup,

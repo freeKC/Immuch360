@@ -25,6 +25,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:immich_mobile/desktop/network/interface_rank.dart';
+import 'package:immich_mobile/desktop/network/windows_dns_sd.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
@@ -584,6 +585,10 @@ Future<String?> lookupIPv4(String host) async {
 /// The resolved services of one type through bonsoir (NSD on Android, the DNS-SD of Apple on iOS). Any failure (no
 /// mDNS on the platform, local network access denied on iOS) ends the stream without an error.
 Stream<MdnsService> bonsoirBrowse(String type, Future<void> until) {
+  // bonsoir_windows crashes the app (lib/desktop/network/windows_dns_sd.dart): Windows asks dnsapi itself
+  if (CurrentPlatform.isWindows) {
+    return windowsDnsSdBrowse(type, until);
+  }
   final controller = StreamController<MdnsService>();
   BonsoirDiscovery? discovery;
   StreamSubscription<BonsoirDiscoveryEvent>? events;

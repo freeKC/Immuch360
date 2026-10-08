@@ -11,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/desktop/library/folder_library_sync_api.dart';
-import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
 import 'package:immich_mobile/domain/services/hash.service.dart';
 import 'package:immich_mobile/domain/services/local_sync.service.dart';
@@ -79,7 +78,7 @@ void main() {
 
     final local = await albums.getAll(sortBy: {SortLocalAlbumsBy.name});
     expect(local.map((album) => (album.name, album.assetCount)), [('2024', 2), ('Screens', 1)]);
-    final photo = await assets.getById(libraryFileId(rootId, '2024/IMG_1.jpg'));
+    final photo = await assets.getById(fixture.ids.file(rootId, '2024/IMG_1.jpg'));
     expect(photo, isNotNull);
     expect((photo!.name, photo.width, photo.height, photo.checksum), ('IMG_1.jpg', 40, 30, null));
     expect(await api.shouldFullSync(), isFalse);
@@ -91,10 +90,10 @@ void main() {
     await albums.upsert(album.copyWith(backupSelection: BackupSelection.selected));
 
     await hashService().hashAssets();
-    final id = libraryFileId(rootId, '2024/IMG_1.jpg');
+    final id = fixture.ids.file(rootId, '2024/IMG_1.jpg');
     expect((await assets.getById(id))!.checksum, sha1Of('2024/IMG_1.jpg'));
     // The other folder is not chosen: not hashed
-    expect((await assets.getById(libraryFileId(rootId, 'Screens/S_3.png')))!.checksum, isNull);
+    expect((await assets.getById(fixture.ids.file(rootId, 'Screens/S_3.png')))!.checksum, isNull);
 
     fixture.write('Pictures/2024/IMG_1.jpg', jpegBytes(width: 41, height: 30), modified: DateTime(2030));
     await fixture.scan();
@@ -114,8 +113,8 @@ void main() {
 
     await syncService().sync();
 
-    expect(await assets.getById(libraryFileId(rootId, '2024/IMG_4.jpg')), isNotNull);
-    expect(await assets.getById(libraryFileId(rootId, 'Screens/S_3.png')), isNull);
+    expect(await assets.getById(fixture.ids.file(rootId, '2024/IMG_4.jpg')), isNotNull);
+    expect(await assets.getById(fixture.ids.file(rootId, 'Screens/S_3.png')), isNull);
     final local = await albums.getAll(sortBy: {SortLocalAlbumsBy.name});
     expect(local.map((album) => (album.name, album.assetCount)), [('2024', 3)]);
   });
@@ -127,12 +126,12 @@ void main() {
     await syncService().sync();
 
     expect(await albums.getAll(), isEmpty);
-    expect(await assets.getById(libraryFileId(rootId, '2024/IMG_1.jpg')), isNull);
+    expect(await assets.getById(fixture.ids.file(rootId, '2024/IMG_1.jpg')), isNull);
   });
 
   test('a drive back under another letter changes nothing in the local tables', () async {
     await syncService().sync();
-    final before = await assets.getById(libraryFileId(rootId, '2024/VID_2.mp4'));
+    final before = await assets.getById(fixture.ids.file(rootId, '2024/VID_2.mp4'));
 
     final moved = fixture.files.renameSync(p.join(fixture.dir.path, 'F'));
     fixture.probe.mounts
@@ -141,7 +140,7 @@ void main() {
     await fixture.scan();
     await syncService().sync();
 
-    final after = await assets.getById(libraryFileId(rootId, '2024/VID_2.mp4'));
+    final after = await assets.getById(fixture.ids.file(rootId, '2024/VID_2.mp4'));
     expect(after, isNotNull);
     expect(after!.updatedAt, before!.updatedAt);
     expect((await albums.getAll()).length, 2);

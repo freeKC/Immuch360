@@ -12,6 +12,9 @@
 //   QWERTY and AZERTY, a key of its own on QWERTZ, and "-" is the "6" key of AZERTY, whose logical key the embedders
 //   do not agree on. The number pad keys and the "=" key are matched as keys.
 
+import 'dart:math' as math;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -130,14 +133,32 @@ DesktopWindowKey? desktopWindowKeyOf(KeyEvent event, {bool? typing}) {
 bool isMouseBackButton(PointerDownEvent event) =>
     event.kind == PointerDeviceKind.mouse && event.buttons & kBackMouseButton != 0;
 
-/// How much one notch of a mouse wheel zooms the 360° photo viewer: below 1 zooms in. Null for an event that is not
-/// a vertical wheel move (a horizontal scroll; a trackpad pinch arrives as scale events instead).
-double? wheelZoomFactor(PointerSignalEvent event) {
+/// One notch of a mouse wheel, in logical pixels, as the Flutter embedders report it at the system's default setting
+/// (their values come from Chromium): Windows sends 100 physical pixels, three lines of a third of a hundred, whatever
+/// the scale of the screen, so 50 logical pixels on a screen at 200 %; Linux and macOS send 53 and 40 logical pixels.
+double desktopWheelNotch(TargetPlatform platform, double devicePixelRatio) => switch (platform) {
+  TargetPlatform.linux => 53,
+  TargetPlatform.macOS => 40,
+  _ => 100 / devicePixelRatio,
+};
+
+/// How much a mouse wheel move zooms the 360° photo viewer: below 1 zooms in, 10 % for one notch. In proportion to the
+/// move rather than per event, since high resolution and free spinning wheels, and touchpads without a precision
+/// driver, send several small moves for one notch; one move counts for three notches at most, so that a single large
+/// jump does not cross the whole zoom range. Null for an event that is not a vertical wheel move (a horizontal scroll;
+/// a trackpad pinch arrives as scale events instead). [notch] is for the tests; by default the notch of this computer
+/// on the screen the event comes from.
+double? wheelZoomFactor(PointerSignalEvent event, {double? notch}) {
   if (event is! PointerScrollEvent || event.scrollDelta.dy == 0) {
     return null;
   }
-  return event.scrollDelta.dy < 0 ? 0.9 : 1 / 0.9;
+  final size = notch ?? desktopWheelNotch(defaultTargetPlatform, _devicePixelRatioOf(event));
+  final notches = (event.scrollDelta.dy / size).clamp(-3.0, 3.0);
+  return math.pow(1 / 0.9, notches).toDouble();
 }
+
+double _devicePixelRatioOf(PointerEvent event) =>
+    WidgetsBinding.instance.platformDispatcher.view(id: event.viewId)?.devicePixelRatio ?? 1;
 
 /// Whether the views must not move by themselves on this computer: the system asks for fewer animations (design 4.7),
 /// so a sphere stops where it is released instead of turning on like after a flick. The phones keep their inertia.

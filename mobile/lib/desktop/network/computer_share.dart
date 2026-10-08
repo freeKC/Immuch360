@@ -22,6 +22,7 @@ import 'package:immich_mobile/desktop/network/interface_rank.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:logging/logging.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -115,35 +116,40 @@ Future<bool> confirmComputerShare(BuildContext context) async {
 
 enum _PublicNetworkAnswer { cancel, settings, shareAnyway }
 
+/// Under the focus ring of the remote control layout, as the close dialog: its three answers are reached with Tab, and
+/// Material only tints a focused button, too faintly to tell which one Enter would choose (design 4.7)
 class _PublicNetworkDialog extends StatelessWidget {
   const _PublicNetworkDialog();
 
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return AlertDialog(
-      key: const Key('computer_share_public_network'),
-      icon: const Icon(Icons.public),
-      title: Text(t.desktop_public_network_title),
-      content: Text(t.desktop_public_network_body),
-      actions: [
-        // Not sharing is the answer of a key pressed without reading
-        TextButton(
-          autofocus: true,
-          onPressed: () => Navigator.of(context).pop(_PublicNetworkAnswer.cancel),
-          child: Text(t.cancel),
-        ),
-        TextButton(
-          key: const Key('computer_share_public_network_settings'),
-          onPressed: () => Navigator.of(context).pop(_PublicNetworkAnswer.settings),
-          child: Text(t.local_session_permission_settings),
-        ),
-        TextButton(
-          key: const Key('computer_share_public_network_anyway'),
-          onPressed: () => Navigator.of(context).pop(_PublicNetworkAnswer.shareAnyway),
-          child: Text(t.desktop_public_network_share_anyway),
-        ),
-      ],
+    return TvFocusRing(
+      child: AlertDialog(
+        key: const Key('computer_share_public_network'),
+        icon: const Icon(Icons.public),
+        title: Text(t.desktop_public_network_title),
+        content: Text(t.desktop_public_network_body),
+        actions: [
+          // Not sharing is the answer of a key pressed without reading
+          TextButton(
+            key: const Key('computer_share_public_network_cancel'),
+            autofocus: true,
+            onPressed: () => Navigator.of(context).pop(_PublicNetworkAnswer.cancel),
+            child: Text(t.cancel),
+          ),
+          TextButton(
+            key: const Key('computer_share_public_network_settings'),
+            onPressed: () => Navigator.of(context).pop(_PublicNetworkAnswer.settings),
+            child: Text(t.local_session_permission_settings),
+          ),
+          TextButton(
+            key: const Key('computer_share_public_network_anyway'),
+            onPressed: () => Navigator.of(context).pop(_PublicNetworkAnswer.shareAnyway),
+            child: Text(t.desktop_public_network_share_anyway),
+          ),
+        ],
+      ),
     );
   }
 }

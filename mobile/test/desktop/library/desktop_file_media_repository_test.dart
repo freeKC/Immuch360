@@ -193,6 +193,17 @@ void main() {
       );
     });
 
+    test('a name from the server that Windows refuses is made safe before the transfer writes it', () async {
+      // Uploaded from Linux or macOS: "?" is refused by Windows, and "12:30" would become a file "12" with a stream
+      for (final (name, safe) in [('What?.jpg', 'What_.jpg'), ('12:30.jpg', '12_30.jpg'), ('a|b.png', 'a_b.png')]) {
+        final staged = desktopDownloadTask(
+          DownloadTask(taskId: 'remote-id-3', url: 'https://example.invalid/3', filename: name),
+        );
+        expect(staged.filename, safe);
+        expect(p.basename(await staged.filePath()), safe);
+      }
+    });
+
     test(
       'DownloadService keeps the file in the download folder before its finally block deletes the download',
       () async {

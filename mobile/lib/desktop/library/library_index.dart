@@ -11,14 +11,20 @@
 // The scanner (its own isolate), the sync API (the isolate of the sync services) and the folders page (the main
 // isolate) each open their own connection; WAL lets them read while one writes, and a lease in the meta table keeps
 // two scans from running at once.
+//
+// The meta table also keeps the key of the ids of the files and albums (LibraryIds), so that every isolate builds the
+// same ids, and only this computer can.
 
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 
-const _schemaVersion = 1;
+// 1: the first schema; 2: the key of the ids, and the files whose content could not be read
+const _schemaVersion = 2;
 
 /// The name of the index file, in the support folder of the app
 const libraryIndexFileName = 'desktop_library.sqlite';
@@ -43,6 +49,7 @@ class IndexedFile {
     this.longitude,
     this.projection,
     this.cloudOnly = false,
+    this.readFailed = false,
     this.checksum,
     this.checksumSize,
     this.checksumModifiedMs,
@@ -83,6 +90,10 @@ class IndexedFile {
 
   /// Kept online only by a cloud client: counted, never read, never published
   final bool cloudOnly;
+
+  /// The scan could not read the file's content (a cloud file while its client is offline, a file another program
+  /// held): what it holds comes from the listing alone, and the next scan reads it again
+  final bool readFailed;
 
   /// SHA-1 in base64, valid while the file keeps [checksumSize] and [checksumModifiedMs]
   final String? checksum;
@@ -125,7 +136,7 @@ class IndexedAlbum {
 }
 
 /// The size, date and state a scan compares a file with
-typedef KnownFile = ({String relativePath, int size, int modifiedMs, bool cloudOnly});
+typedef KnownFile = ({String relativePath, int size, int modifiedMs, bool cloudOnly, bool readFailed});
 
 /// What a delta carries: the published files changed since the checkpoint, the ids gone, and the generation it reaches
 typedef IndexDelta = ({List<IndexedFile> updates, List<String> deletes, int seq});
@@ -153,15 +164,39 @@ class LibraryIndex {
 
   void close() => _db.close();
 
+  int get _userVersion => _db.select('PRAGMA user_version').first.values.first! as int;
+
   void _migrate() {
-    final version = _db.select('PRAGMA user_version').first.values.first! as int;
-    if (version >= _schemaVersion) {
+    if (_userVersion >= _schemaVersion) {
       return;
     }
     _write(() {
-      _db
-        ..execute('CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value)')
-        ..execute('''
+      // Read again under the write lock: another isolate may have migrated the file meanwhile
+      final version = _userVersion;
+      if (version < 1) {
+        _createFirstSchema();
+      }
+      if (version < 2) {
+        // The files of a first schema index keep their unkeyed ids until the next scan of their root, which finds
+        // each of them under its new id and lets the old one go: the app sees them leave and come back once
+        _db
+          ..execute('ALTER TABLE files ADD COLUMN read_failed INTEGER NOT NULL DEFAULT 0')
+          ..execute('INSERT OR IGNORE INTO meta (key, value) VALUES (?, ?)', ['id_key', _newIdKey()]);
+      }
+      _db.execute('PRAGMA user_version = $_schemaVersion');
+    });
+  }
+
+  // A secret, so from the random source of the system
+  static Uint8List _newIdKey() {
+    final random = Random.secure();
+    return Uint8List.fromList(List.generate(libraryIdKeyLength, (_) => random.nextInt(256)));
+  }
+
+  void _createFirstSchema() {
+    _db
+      ..execute('CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value)')
+      ..execute('''
           CREATE TABLE IF NOT EXISTS roots (
             id TEXT PRIMARY KEY,
             path TEXT NOT NULL,
@@ -173,7 +208,7 @@ class LibraryIndex {
             added_ms INTEGER NOT NULL,
             scanned_ms INTEGER
           )''')
-        ..execute('''
+      ..execute('''
           CREATE TABLE IF NOT EXISTS files (
             id TEXT PRIMARY KEY,
             root_id TEXT NOT NULL,
@@ -197,12 +232,10 @@ class LibraryIndex {
             checksum_modified_ms INTEGER,
             change_seq INTEGER NOT NULL
           )''')
-        ..execute('CREATE INDEX IF NOT EXISTS files_by_album ON files (album_id)')
-        ..execute('CREATE INDEX IF NOT EXISTS files_by_root ON files (root_id)')
-        ..execute('CREATE INDEX IF NOT EXISTS files_by_change ON files (change_seq)')
-        ..execute('CREATE TABLE IF NOT EXISTS tombstones (id TEXT PRIMARY KEY, change_seq INTEGER NOT NULL)')
-        ..execute('PRAGMA user_version = $_schemaVersion');
-    });
+      ..execute('CREATE INDEX IF NOT EXISTS files_by_album ON files (album_id)')
+      ..execute('CREATE INDEX IF NOT EXISTS files_by_root ON files (root_id)')
+      ..execute('CREATE INDEX IF NOT EXISTS files_by_change ON files (change_seq)')
+      ..execute('CREATE TABLE IF NOT EXISTS tombstones (id TEXT PRIMARY KEY, change_seq INTEGER NOT NULL)');
   }
 
   /// Runs [action] in a write transaction, taken at once so that two writers queue instead of failing on upgrade
@@ -270,6 +303,9 @@ class LibraryIndex {
   /// Bumped whenever the roots change, so that a scan made before is no longer fresh
   int get rootsVersion => _metaInt('roots_version');
 
+  /// The ids of the files and albums of this library, keyed by the secret of the index
+  late final LibraryIds ids = LibraryIds(_meta('id_key')! as Uint8List);
+
   void _rootsChanged() {
     _setMeta('roots_version', _metaInt('roots_version') + 1);
     _setMeta('full_sync', 1);
@@ -286,18 +322,20 @@ class LibraryIndex {
 
   // --- scan lease ---
 
-  /// Takes the right to scan for [ttl] unless another scan holds it; renewed by calling again with the same [owner]
-  bool tryAcquireScanLease(String owner, Duration ttl, {DateTime? now}) => _write(() {
-    final at = (now ?? DateTime.now()).millisecondsSinceEpoch;
-    final holder = _meta('lease_owner') as String?;
-    final until = _metaInt('lease_until_ms');
-    if (holder != null && holder != owner && until > at) {
-      return false;
-    }
-    _setMeta('lease_owner', owner);
-    _setMeta('lease_until_ms', at + ttl.inMilliseconds);
-    return true;
-  });
+  /// Takes the right to scan for [ttl] unless another scan holds it; renewed by calling again with the same [owner].
+  /// A lease that [isAbandoned] says was left by a scan that cannot run any more is taken over at once.
+  bool tryAcquireScanLease(String owner, Duration ttl, {DateTime? now, bool Function(String holder)? isAbandoned}) =>
+      _write(() {
+        final at = (now ?? DateTime.now()).millisecondsSinceEpoch;
+        final holder = _meta('lease_owner') as String?;
+        final until = _metaInt('lease_until_ms');
+        if (holder != null && holder != owner && until > at && !(isAbandoned?.call(holder) ?? false)) {
+          return false;
+        }
+        _setMeta('lease_owner', owner);
+        _setMeta('lease_until_ms', at + ttl.inMilliseconds);
+        return true;
+      });
 
   void releaseScanLease(String owner) => _write(() {
     if (_meta('lease_owner') == owner) {
@@ -383,14 +421,16 @@ class LibraryIndex {
 
   /// What the index has of the files of [rootId], by id, for a scan to compare against
   Map<String, KnownFile> knownFiles(String rootId) => {
-    for (final row in _db.select('SELECT id, rel_path, size, modified_ms, cloud_only FROM files WHERE root_id = ?', [
-      rootId,
-    ]))
+    for (final row in _db.select(
+      'SELECT id, rel_path, size, modified_ms, cloud_only, read_failed FROM files WHERE root_id = ?',
+      [rootId],
+    ))
       row['id'] as String: (
         relativePath: row['rel_path'] as String,
         size: row['size'] as int,
         modifiedMs: row['modified_ms'] as int,
         cloudOnly: row['cloud_only'] == 1,
+        readFailed: row['read_failed'] == 1,
       ),
   };
 
@@ -404,13 +444,14 @@ class LibraryIndex {
       final seq = _nextSeq();
       final statement = _db.prepare('''
         INSERT INTO files (id, root_id, album_id, rel_path, type, size, modified_ms, added_s, created_s, width, height,
-          duration_ms, playback_style, latitude, longitude, projection, cloud_only, change_seq)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          duration_ms, playback_style, latitude, longitude, projection, cloud_only, read_failed, change_seq)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (id) DO UPDATE SET album_id = excluded.album_id, rel_path = excluded.rel_path, type = excluded.type,
           size = excluded.size, modified_ms = excluded.modified_ms, created_s = excluded.created_s,
           width = excluded.width, height = excluded.height, duration_ms = excluded.duration_ms,
           playback_style = excluded.playback_style, latitude = excluded.latitude, longitude = excluded.longitude,
-          projection = excluded.projection, cloud_only = excluded.cloud_only, change_seq = excluded.change_seq''');
+          projection = excluded.projection, cloud_only = excluded.cloud_only, read_failed = excluded.read_failed,
+          change_seq = excluded.change_seq''');
       // A file that comes back before the app learnt it was gone is a change, not a deletion followed by an addition
       final revive = _db.prepare('DELETE FROM tombstones WHERE id = ?');
       try {
@@ -434,6 +475,7 @@ class LibraryIndex {
             file.longitude,
             file.projection,
             file.cloudOnly ? 1 : 0,
+            file.readFailed ? 1 : 0,
             seq,
           ]);
         }
@@ -489,6 +531,7 @@ class LibraryIndex {
     longitude: (row['longitude'] as num?)?.toDouble(),
     projection: row['projection'] as String?,
     cloudOnly: row['cloud_only'] == 1,
+    readFailed: row['read_failed'] == 1,
     checksum: row['checksum'] as String?,
     checksumSize: row['checksum_size'] as int?,
     checksumModifiedMs: row['checksum_modified_ms'] as int?,

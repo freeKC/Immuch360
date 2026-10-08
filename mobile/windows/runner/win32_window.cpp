@@ -3,6 +3,8 @@
 #include <dwmapi.h>
 #include <flutter_windows.h>
 
+#include <algorithm>
+
 #include "app_identity.h"
 #include "resource.h"
 
@@ -135,11 +137,31 @@ bool Win32Window::Create(const std::wstring& title,
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   double scale_factor = dpi / 96.0;
 
-  HWND window = CreateWindow(
-      window_class, title.c_str(), WS_OVERLAPPEDWINDOW,
-      Scale(origin.x, scale_factor), Scale(origin.y, scale_factor),
-      Scale(size.width, scale_factor), Scale(size.height, scale_factor),
-      nullptr, nullptr, GetModuleHandle(nullptr), this);
+  int x = Scale(origin.x, scale_factor);
+  int y = Scale(origin.y, scale_factor);
+  int width = Scale(size.width, scale_factor);
+  int height = Scale(size.height, scale_factor);
+  // The size asked for is in logical pixels: on a small screen with a large
+  // scale (1920 x 1080 at 150 %, a common laptop default) it is the whole
+  // screen, and the bottom of the pages and the lower border would sit under
+  // the taskbar. The window is kept inside the work area of its screen.
+  MONITORINFO monitor_info{};
+  monitor_info.cbSize = sizeof(monitor_info);
+  if (GetMonitorInfo(monitor, &monitor_info)) {
+    const RECT& work = monitor_info.rcWork;
+    x = std::clamp(x, static_cast<int>(work.left),
+                   std::max(static_cast<int>(work.left),
+                            static_cast<int>(work.right) - width));
+    y = std::clamp(y, static_cast<int>(work.top),
+                   std::max(static_cast<int>(work.top),
+                            static_cast<int>(work.bottom) - height));
+    width = std::min(width, static_cast<int>(work.right) - x);
+    height = std::min(height, static_cast<int>(work.bottom) - y);
+  }
+
+  HWND window = CreateWindow(window_class, title.c_str(), WS_OVERLAPPEDWINDOW,
+                             x, y, width, height, nullptr, nullptr,
+                             GetModuleHandle(nullptr), this);
 
   if (!window) {
     return false;

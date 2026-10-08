@@ -67,8 +67,8 @@ Future<int> saveFilesToFolder(List<String> paths, {bool announce = true}) async 
   return saved;
 }
 
-/// The folder where the Windows runner writes a minidump when the native code crashes (windows/runner/main.cpp): the
-/// cache folder of the app. Linux and macOS leave crash reports to the system.
+/// The folder where the Windows runner writes a minidump when the native code crashes (windows/runner/crash_dumps.cpp):
+/// the cache folder of the app. Linux and macOS leave crash reports to the system.
 Future<Directory> crashDumpDirectory() async =>
     Directory(p.join((await getApplicationCacheDirectory()).path, 'crash_dumps'));
 
@@ -98,10 +98,13 @@ Future<bool> saveLogFile(File logFile, {Directory? crashDumps, bool announce = t
   final dumps = await latestCrashDumps(crashDumps ?? await crashDumpDirectory());
   final baseName = p.basenameWithoutExtension(logFile.path);
   final extension = dumps.isEmpty ? 'log' : 'zip';
+  // The name says so in the save dialog: a crash report holds a part of the memory of the app, the stacks of its
+  // threads, which the user should know before attaching the file to a public issue
+  final suggestedName = dumps.isEmpty ? '$baseName.log' : '$baseName-with-crash-reports.zip';
   final String? chosen;
   try {
     chosen = await filePickers.saveLocation(
-      suggestedName: '$baseName.$extension',
+      suggestedName: suggestedName,
       initialDirectory: _lastFolder,
       typeLabel: dumps.isEmpty ? 'Log' : 'ZIP',
       extensions: [extension],

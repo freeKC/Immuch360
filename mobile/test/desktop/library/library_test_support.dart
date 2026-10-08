@@ -67,6 +67,12 @@ class TestLibrary {
   /// Every file whose metadata a scan read
   final opened = <String>[];
 
+  /// Files whose content a scan cannot read, as when another program holds them
+  final failing = <String>{};
+
+  /// Called as a scan reads a file
+  void Function(String path)? onRead;
+
   var rules = LibraryPathRules(context: p.context, caseFold: false);
   var scans = 0;
 
@@ -83,7 +89,8 @@ class TestLibrary {
       rules: rules,
       readMetadata: (path, kind) {
         opened.add(path);
-        return readMediaMetadataSync(path, kind);
+        onRead?.call(path);
+        return failing.contains(path) ? MediaMetadata.failedRead : readMediaMetadataSync(path, kind);
       },
     );
   }
@@ -101,6 +108,9 @@ class TestLibrary {
     _toClose.add(library.close);
     return library;
   }
+
+  /// The ids of this library, built with the key of its index
+  late final LibraryIds ids = index().ids;
 
   /// A connection of its own to the index
   LibraryIndex index() {

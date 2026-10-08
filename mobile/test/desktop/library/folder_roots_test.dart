@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/volume_id.dart';
@@ -6,37 +9,51 @@ import 'package:path/path.dart' as p;
 void main() {
   final windows = LibraryPathRules(context: p.windows, caseFold: true);
   final linux = LibraryPathRules(context: p.posix, caseFold: false);
+  final ids = LibraryIds(List.filled(libraryIdKeyLength, 7));
 
   group('ids', () {
     test('Windows paths are normalised and case folded, so a case only rename keeps the id', () {
       expect(windows.key(r'2024\Holidays\IMG_0001.JPG'), '2024/holidays/img_0001.jpg');
       expect(windows.key(r'2024/Holidays\.\IMG_0001.JPG'), '2024/holidays/img_0001.jpg');
       expect(
-        libraryFileId('win-1a2b3c4d:/photos', windows.key(r'2024\IMG_0001.JPG')),
-        libraryFileId('win-1a2b3c4d:/photos', windows.key('2024/img_0001.jpg')),
+        ids.file('win-1a2b3c4d:/photos', windows.key(r'2024\IMG_0001.JPG')),
+        ids.file('win-1a2b3c4d:/photos', windows.key('2024/img_0001.jpg')),
       );
     });
 
     test('Linux keeps the case, which tells two files apart there', () {
       expect(linux.key('2024/IMG.jpg'), '2024/IMG.jpg');
-      expect(libraryFileId('uuid-x:/p', linux.key('a.JPG')), isNot(libraryFileId('uuid-x:/p', linux.key('a.jpg'))));
+      expect(ids.file('uuid-x:/p', linux.key('a.JPG')), isNot(ids.file('uuid-x:/p', linux.key('a.jpg'))));
     });
 
     test('an id is f and 40 hex digits, free of the path and of the account name in it', () {
-      final id = libraryFileId(r'win-1a2b3c4d:/users/jean.dupont/pictures', windows.key('IMG_0001.JPG'));
+      final id = ids.file(r'win-1a2b3c4d:/users/jean.dupont/pictures', windows.key('IMG_0001.JPG'));
       expect(id, matches(RegExp(r'^f[0-9a-f]{40}$')));
       expect(id, isNot(contains('jean')));
-      expect(libraryAlbumId('win-1a2b3c4d:/photos', ''), matches(RegExp(r'^d[0-9a-f]{40}$')));
+      expect(ids.album('win-1a2b3c4d:/photos', ''), matches(RegExp(r'^d[0-9a-f]{40}$')));
     });
 
     test('the id depends on the volume and the path inside it, not on the root it is found under', () {
       // A file of E:\Photos\2024 found from a root at E:\Photos, at E:\Photos\2024 or at E:\
-      final fromPhotos = libraryFileId('win-1a2b3c4d:/photos', '2024/a.jpg');
-      expect(libraryFileId('win-1a2b3c4d:/photos/2024', 'a.jpg'), fromPhotos);
-      expect(libraryFileId('win-1a2b3c4d:/', 'photos/2024/a.jpg'), fromPhotos);
-      expect(libraryAlbumId('win-1a2b3c4d:/photos', '2024'), libraryAlbumId('win-1a2b3c4d:/photos/2024', ''));
+      final fromPhotos = ids.file('win-1a2b3c4d:/photos', '2024/a.jpg');
+      expect(ids.file('win-1a2b3c4d:/photos/2024', 'a.jpg'), fromPhotos);
+      expect(ids.file('win-1a2b3c4d:/', 'photos/2024/a.jpg'), fromPhotos);
+      expect(ids.album('win-1a2b3c4d:/photos', '2024'), ids.album('win-1a2b3c4d:/photos/2024', ''));
       // Another volume with the same path: another file
-      expect(libraryFileId('win-99999999:/photos', '2024/a.jpg'), isNot(fromPhotos));
+      expect(ids.file('win-99999999:/photos', '2024/a.jpg'), isNot(fromPhotos));
+    });
+
+    test('the id needs the key of the library: a guessed path cannot be checked against it without that key', () {
+      const rootId = r'win-1a2b3c4d:/users/jean.dupont/pictures';
+      final key = windows.key('IMG_0001.JPG');
+      final id = ids.file(rootId, key);
+      // What a plain hash of the path gives: anyone could compute it from a guessed account name and serial number
+      final plain = sha256.convert(utf8.encode('$rootId/$key')).toString().substring(0, 40);
+      expect(id, isNot('f$plain'));
+      // Another installation, another key: the same file gets another id; the same key, the same id
+      expect(LibraryIds(List.filled(libraryIdKeyLength, 8)).file(rootId, key), isNot(id));
+      expect(LibraryIds(List.filled(libraryIdKeyLength, 7)).file(rootId, key), id);
+      expect(() => LibraryIds(const [1, 2, 3]), throwsArgumentError);
     });
 
     test('nested roots', () {

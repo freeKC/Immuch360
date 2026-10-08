@@ -4,7 +4,9 @@
 The desktop work adds packages for Windows, macOS and Linux only. A package that also declares android or ios would
 join the phone builds unnoticed; this check reads mobile/.flutter-plugins-dependencies, which `flutter pub get`
 writes with one plugin list per platform, and compares the android and ios lists with plugin-baseline.json. The
-desktop lists are printed for the record, never compared: they are expected to grow.
+desktop lists are printed for the record, never compared: they are expected to grow. The versions of the packages
+the phones are built with are checked by check_phone_packages.py, against the phone branch rather than a baseline,
+so that a phone release merged into the desktop branch needs no update here.
 
   check_plugin_baseline.py           compare (exit 1 on any difference, 2 when the plugin file is missing)
   check_plugin_baseline.py --update  rewrite the baseline on purpose, after a change reviewed for the phones

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
@@ -9,6 +10,7 @@ import 'package:immich_mobile/desktop/network/interface_rank.dart';
 import 'package:immich_mobile/desktop/network/network_category.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 
@@ -223,6 +225,33 @@ void main() {
 
         expect(settingsOpened, 1);
         expect(calls.starts, 0);
+      });
+    });
+
+    testWidgets('the question has a focus ring of its own: Cancel first, then each answer with Tab', (tester) async {
+      await on(TargetPlatform.windows, () async {
+        candidates = const [_cafeWifi];
+        await pump(tester, const PhoneSharePage());
+        await flipSwitch(tester);
+
+        final ring = tester.state<TvFocusRingState>(
+          find.ancestor(of: find.byKey(const Key('computer_share_public_network')), matching: find.byType(TvFocusRing)),
+        );
+        Key? focused() => FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextButton>()?.key;
+        final keys = [focused()];
+        expect(ring.ringRect, isNotNull, reason: 'Cancel has the focus and the ring from the start');
+        for (var i = 0; i < 2; i++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pumpAndSettle();
+          expect(ring.ringRect, isNotNull, reason: 'stop ${i + 2} shows the ring');
+          keys.add(focused());
+        }
+        expect(keys, const [
+          Key('computer_share_public_network_cancel'),
+          Key('computer_share_public_network_settings'),
+          Key('computer_share_public_network_anyway'),
+        ]);
+        expect(calls.starts, 0, reason: 'moving the focus answers nothing');
       });
     });
 

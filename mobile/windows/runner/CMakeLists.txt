@@ -7,6 +7,7 @@ project(runner LANGUAGES CXX)
 #
 # Any new source files that you add to the application should be added here.
 add_executable(${BINARY_NAME} WIN32
+  "crash_dumps.cpp"
   "flutter_window.cpp"
   "main.cpp"
   "utils.cpp"
@@ -34,7 +35,7 @@ target_compile_definitions(${BINARY_NAME} PRIVATE "NOMINMAX")
 # dependencies here.
 target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app)
 target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib")
-# MiniDumpWriteDump, for the crash reports of the native code (main.cpp)
+# MiniDumpWriteDump, for the crash reports of the native code (crash_dumps.cpp)
 target_link_libraries(${BINARY_NAME} PRIVATE "dbghelp.lib")
 target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 

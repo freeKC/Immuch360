@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
+import 'package:path/path.dart' as p;
 
 import 'library_fixtures.dart';
 
@@ -142,5 +144,15 @@ void main() {
     test('a video that is not an ISO media file gives nothing', () {
       expect(_video(Uint8List.fromList([0x1a, 0x45, 0xdf, 0xa3, ...List.filled(60, 0)])).durationMs, 0);
     });
+  });
+
+  test('a file that cannot be read says so, so that the scanner reads it again; a damaged one was read', () {
+    final dir = Directory.systemTemp.createTempSync('library_metadata_test_');
+    addTearDown(() => dir.deleteSync(recursive: true));
+
+    expect(readMediaMetadataSync(p.join(dir.path, 'gone.jpg'), LibraryMediaKind.image).readFailed, isTrue);
+    final damaged = File(p.join(dir.path, 'damaged.jpg'))..writeAsBytesSync(List.filled(64, 7));
+    final read = readMediaMetadataSync(damaged.path, LibraryMediaKind.image);
+    expect((read.readFailed, read.width), (false, null));
   });
 }

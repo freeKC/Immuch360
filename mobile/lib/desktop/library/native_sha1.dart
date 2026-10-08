@@ -8,6 +8,9 @@
 // package:crypto stays as the fallback when none of them loads. The file is read in 1 MiB chunks straight into a
 // native buffer, which the digest reads without a copy.
 //
+// The file is read through a SharedFileReader (shared_file.dart): while a 4 GB video was hashed, Explorer could not
+// rename, move or delete it or its folder through dart:io's way of opening files on Windows.
+//
 // The result is base64, as the phones give it (MessageDigest SHA-1 then Base64.NO_WRAP on Android).
 
 import 'dart:convert';
@@ -17,6 +20,7 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:ffi/ffi.dart';
+import 'package:immich_mobile/desktop/library/shared_file.dart';
 
 /// Bytes read at once while hashing
 const sha1ChunkLength = 1024 * 1024;
@@ -70,18 +74,17 @@ abstract class Sha1Engine {
 
 /// SHA-1 of the file at [path] in base64. [isCancelled] is asked between chunks; a cancel throws [Sha1Cancelled].
 String sha1OfFile(String path, {Sha1Engine? engine, bool Function()? isCancelled}) {
-  final file = File(path).openSync();
+  final file = SharedFileReader.open(path);
   final buffer = malloc<Uint8>(sha1ChunkLength);
   try {
     final digest = (engine ?? Sha1Engine.system()).start();
     var finished = false;
     try {
-      final view = buffer.asTypedList(sha1ChunkLength);
       while (true) {
         if (isCancelled?.call() ?? false) {
           throw const Sha1Cancelled();
         }
-        final read = file.readIntoSync(view);
+        final read = file.readInto(buffer, sha1ChunkLength);
         if (read <= 0) {
           break;
         }
@@ -96,7 +99,7 @@ String sha1OfFile(String path, {Sha1Engine? engine, bool Function()? isCancelled
     }
   } finally {
     malloc.free(buffer);
-    file.closeSync();
+    file.close();
   }
 }
 

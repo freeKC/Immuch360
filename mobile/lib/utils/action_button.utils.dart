@@ -163,7 +163,7 @@ enum ActionButtonType {
             context.timelineOrigin != TimelineOrigin.archive &&
             context.timelineOrigin != TimelineOrigin.localAlbum &&
             context.isOwner,
-      // Not on a computer until Google Cast is checked there (deviceFeaturesProvider.cast)
+      // Not on a computer until Google Cast is checked there
       ActionButtonType.cast => !CurrentPlatform.isDesktop && (context.isCasting || context.asset.hasRemote),
       ActionButtonType.slideshow => true,
       // The action decides from the exif and the choices kept on the device: "View as 360°", or "Stop treating as

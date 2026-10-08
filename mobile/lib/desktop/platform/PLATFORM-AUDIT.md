@@ -133,6 +133,7 @@ or `deviceFeaturesProvider` so that the phones run exactly as before:
 
 | File | Hand over |
 |---|---|
+| `lib/extensions/platform_extensions.dart` | `isWindows`, `isMacOS`, `isLinux`, `isDesktop` from `defaultTargetPlatform`, constants of the compiler in profile and release (`vm:platform-const-if`), so that the phone builds drop every desktop branch with the classes only it creates |
 | `lib/main.dart` | `runImmich(beforeStart:)` shared with `lib/main_desktop.dart`; `PlatformApis` for the lock, sync and permission APIs; `desktopOverrides()` in the root scope (storage, file media, asset media, permission and share handler repositories); no `SystemChrome` or notifications set up; `desktopAppShell` around the app |
 | `lib/utils/bootstrap.dart` | no `PhotoManager.setIgnorePermissionCheck` |
 | `lib/data/db/main/database.dart` | `databaseDirectory()`: the support folder of the app on the computers |
@@ -140,18 +141,24 @@ or `deviceFeaturesProvider` so that the phones run exactly as before:
 | `lib/providers/infrastructure/platform.provider.dart` | every API through `PlatformApis` |
 | `lib/domain/services/background_worker.service.dart`, `lib/presentation/widgets/network/network_media_tile.widget.dart`, `lib/providers/network/phone_share.provider.dart`, `lib/services/view_intent.service.dart` | the direct constructions through `PlatformApis` |
 | `lib/infrastructure/loaders/local_image_request.dart` | accepts the encoded answer `{pointer, length}` |
-| `lib/infrastructure/network/network_discovery_probes.dart` | `desktopLanAddressesOf` for the subnets to scan |
+| `lib/infrastructure/network/network_discovery_probes.dart` | `desktopLanAddressesOf` for the subnets to scan; on Windows, mDNS through the DNS-SD functions of dnsapi (`windowsDnsSdBrowse`, `lib/desktop/network/windows_dns_sd.dart`) instead of bonsoir_windows, which crashed the app |
+| `lib/providers/network/phone_share.provider.dart` | on Windows, the share announced through dnsapi (`windowsShareAdvertise`) on the network it listens on only, instead of bonsoir on every interface |
 | `lib/presentation/widgets/asset_viewer/panorama_viewer.widget.dart` | gyroscope button gated by `deviceFeaturesProvider`; mouse wheel zoom |
 | `lib/presentation/widgets/tv/remote_keys.dart` | zoom key sets with the keyboard keys on the computers |
 | `lib/presentation/widgets/asset_viewer/video_viewer.widget.dart`, `lib/presentation/pages/network/network_video.page.dart` | `DesktopVideoPlaceholder` instead of the native player |
-| `lib/pages/common/settings.page.dart`, `lib/widgets/common/app_bar_dialog/app_bar_dialog.dart` | "This computer" section; free up space and notifications not offered |
+| `lib/pages/common/settings.page.dart`, `lib/widgets/common/app_bar_dialog/app_bar_dialog.dart` | "This computer" section, its `ComputerSettings` built behind the gate too so that the phone builds leave it out; free up space and notifications not offered |
 | `lib/widgets/settings/backup_settings/backup_settings.dart` | backup while the app is open, no cellular options |
-| `lib/presentation/pages/library.page.dart`, `lib/widgets/asset_viewer/detail_panel/exif_map.dart` | maps through `deviceFeaturesProvider.maps` |
+| `lib/presentation/pages/library.page.dart`, `lib/widgets/asset_viewer/detail_panel/exif_map.dart` | maps through `deviceFeaturesProvider.maps`; "On this computer" on the card of the device albums |
+| `lib/presentation/pages/local_album.page.dart`, `lib/pages/backup/backup_album_selection.page.dart` | `FoldersEntry`: the way to the folders page, the banner while no folder is chosen |
+| `lib/widgets/common/local_album_sliver_app_bar.dart`, `lib/presentation/widgets/panorama_360/panorama_360_filter_bar.widget.dart` | "On this computer" instead of "On this device" |
+| `lib/presentation/widgets/camera/camera_live_view.widget.dart` | the Tapo live view announced for later instead of the Android view |
+| `lib/presentation/widgets/asset_viewer/spatial_viewer.dart` | Spatial 2.5D announced for later instead of "not available on this device" |
 | `lib/widgets/forms/login/login_form.dart` | OAuth through `deviceFeaturesProvider.oauth`, with a line saying so |
 | `lib/presentation/widgets/local_session/local_session_permission_banner.dart` | `FoldersBanner` instead of the gallery permission |
 | `lib/widgets/settings/ssl_client_cert_settings.dart` | `importClientCertificate` from a file instead of the system picker |
 | `lib/presentation/pages/network/phone_share.page.dart` | computer wording, `confirmComputerShare` before starting |
-| `lib/repositories/asset_media.repository.dart` | "Save to a folder" on Linux instead of the share sheet |
+| `lib/repositories/asset_media.repository.dart` | "Save to a folder" on Linux instead of the share sheet; the name of a shared download made safe for the computer |
+| `lib/repositories/upload.repository.dart` | `openSharedRead` on Windows, so that a file being uploaded can still be renamed, moved or deleted |
 | `lib/services/immich_logger.service.dart`, `lib/pages/common/app_log.page.dart` | "Save logs to a file"; file names without colons |
 | `lib/utils/action_button.utils.dart` | "Delete from device" not offered |
-| `lib/routing/router.dart` | `FoldersRoute` |
+| `lib/routing/router.dart` | `FoldersRoute`, registered on the computers only so that the phone builds leave out the folders page and the library behind it |

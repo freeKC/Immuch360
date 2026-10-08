@@ -6,7 +6,6 @@ import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/library/folder_library_sync_api.dart';
-import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_hasher.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
@@ -60,11 +59,11 @@ void main() {
     test('assets the way Android gives them: the size as shown, orientation 0, seconds', () async {
       final api = fixture.syncApi();
       await fixture.scan();
-      final album = libraryAlbumId(rootId, '2024');
+      final album = fixture.ids.album(rootId, '2024');
       final assets = {for (final asset in await api.getAssetsForAlbum(album)) asset.name: asset};
 
       final photo = assets['IMG_1.jpg']!;
-      expect(photo.id, libraryFileId(rootId, '2024/IMG_1.jpg'));
+      expect(photo.id, fixture.ids.file(rootId, '2024/IMG_1.jpg'));
       expect(photo.type, 1);
       expect((photo.width, photo.height, photo.orientation), (3000, 4000, 0));
       expect(photo.playbackStyle, PlatformAssetPlaybackStyle.image);
@@ -79,13 +78,13 @@ void main() {
       expect((video.latitude, video.longitude), (null, null));
 
       expect(await api.getAssetIdsForAlbum(album), unorderedEquals(assets.values.map((asset) => asset.id)));
-      final gif = (await api.getAssetsForAlbum(libraryAlbumId(rootId, ''))).single;
+      final gif = (await api.getAssetsForAlbum(fixture.ids.album(rootId, ''))).single;
       expect(gif.playbackStyle, PlatformAssetPlaybackStyle.imageAnimated);
     });
 
     test('what was added since a date, and what changed since it', () async {
       final api = fixture.syncApi();
-      final album = libraryAlbumId(rootId, '2024');
+      final album = fixture.ids.album(rootId, '2024');
       await api.getAlbums();
       final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
@@ -111,12 +110,12 @@ void main() {
 
       final delta = await api.getMediaChanges();
       expect(delta.hasChanges, isTrue);
-      final added = libraryFileId(rootId, '2024/IMG_4.jpg');
+      final added = fixture.ids.file(rootId, '2024/IMG_4.jpg');
       expect(delta.updates.map((asset) => asset.id), [added]);
       expect(delta.assetAlbums, {
-        added: [libraryAlbumId(rootId, '2024')],
+        added: [fixture.ids.album(rootId, '2024')],
       });
-      expect(delta.deletes, [libraryFileId(rootId, 'top.gif')]);
+      expect(delta.deletes, [fixture.ids.file(rootId, 'top.gif')]);
 
       await api.checkpointSync();
       expect((await api.getMediaChanges()).hasChanges, isFalse);
@@ -204,7 +203,7 @@ void main() {
     );
 
     test('base64 SHA-1 per asset in the order asked, kept for the files as they are', () async {
-      final ids = [libraryFileId(rootId, '2024/VID_2.mp4'), 'unknown', libraryFileId(rootId, '2024/IMG_1.jpg')];
+      final ids = [fixture.ids.file(rootId, '2024/VID_2.mp4'), 'unknown', fixture.ids.file(rootId, '2024/IMG_1.jpg')];
       var hashed = 0;
       final api = FolderLibrarySyncApi(
         indexPath: () async => fixture.indexPath,
@@ -247,14 +246,14 @@ void main() {
       await fixture.scan();
       final api = fixture.syncApi();
 
-      final refused = await api.hashAssets([libraryFileId(rootId, 'cloud.jpg')]);
+      final refused = await api.hashAssets([fixture.ids.file(rootId, 'cloud.jpg')]);
       expect(refused.single.hash, isNull);
       expect(refused.single.error, contains('online only'));
 
       fixture.files.renameSync(p.join(fixture.dir.path, 'unplugged'));
       fixture.probe.mounts.clear();
       await fixture.scan();
-      final offline = await api.hashAssets([libraryFileId(rootId, 'top.gif')]);
+      final offline = await api.hashAssets([fixture.ids.file(rootId, 'top.gif')]);
       expect(offline.single.error, contains('not connected'));
     });
 
@@ -272,7 +271,7 @@ void main() {
         },
       );
       addTearDown(api.close);
-      final run = api.hashAssets([libraryFileId(rootId, 'top.gif')]);
+      final run = api.hashAssets([fixture.ids.file(rootId, 'top.gif')]);
       await started.future;
       await api.cancelHashing();
       release.complete();

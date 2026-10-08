@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/folders.page.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:path/path.dart' as p;
 
 import 'library_fixtures.dart';
@@ -185,6 +186,8 @@ void main() {
     await fixture.scan();
     await pumpPage(tester);
 
+    final ring = tester.state<TvFocusRingState>(find.byType(TvFocusRing));
+    expect(ring.ringRect, isNull, reason: 'no ring before the keyboard is used');
     final tops = <double>[];
     final seen = <FocusNode>{};
     for (var i = 0; i < 8; i++) {
@@ -194,11 +197,32 @@ void main() {
       if (focus == null || focus.context == null || !seen.add(focus)) {
         break;
       }
+      expect(ring.ringRect, isNotNull, reason: 'stop ${i + 1} shows the ring');
       tops.add(tester.getTopLeft(find.byElementPredicate((element) => element == focus.context)).dy);
     }
     // Refresh, the folder's remove button, "Add a folder", the suggestion: at least those, top to bottom
     expect(tops.length, greaterThanOrEqualTo(4));
     expect(tops, orderedEquals([...tops]..sort()));
+  }, variant: TargetPlatformVariant.desktop());
+
+  testWidgets('the remove dialog has a ring of its own, above its barrier', (tester) async {
+    library.addRoot(footage);
+    await fixture.scan();
+    await pumpPage(tester);
+
+    await tester.tap(find.byTooltip('Remove this folder'));
+    await tester.pumpAndSettle();
+    final ring = tester.state<TvFocusRingState>(
+      find.ancestor(of: find.byType(AlertDialog), matching: find.byType(TvFocusRing)),
+    );
+    final keys = <Key?>[];
+    for (var i = 0; i < 2; i++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+      expect(ring.ringRect, isNotNull, reason: 'stop ${i + 1} shows the ring');
+      keys.add(FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextButton>()?.key);
+    }
+    expect(keys, [const Key('desktop_folders_remove_cancel'), const Key('desktop_folders_remove_confirm')]);
   }, variant: TargetPlatformVariant.desktop());
 
   testWidgets('every control has a label', (tester) async {

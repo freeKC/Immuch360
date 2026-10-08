@@ -74,7 +74,9 @@ enum SettingSection {
     SettingSection.preferences => const PreferenceSetting(),
     SettingSection.timeline => const AssetListSettings(),
     SettingSection.beta => const SyncStatusAndActions(),
-    SettingSection.thisComputer => const ComputerSettings(),
+    // Built on a computer only (isOnThisDevice), and tested here as well so that the phone builds, where the condition
+    // is a constant, leave out the section and the desktop settings it holds
+    SettingSection.thisComputer => CurrentPlatform.isDesktop ? const ComputerSettings() : const SizedBox.shrink(),
   };
 
   /// Whether the section is about the server (backup, connection, sync), so pointless in a session without one

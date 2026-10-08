@@ -23,6 +23,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/network/interface_rank.dart';
+import 'package:immich_mobile/desktop/network/windows_dns_sd.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/phone_share/phone_gallery_tree.dart';
@@ -383,7 +384,9 @@ final phoneShareEnvironmentProvider = Provider<PhoneShareEnvironment>((ref) {
         preferredPort: preferredPort,
       );
     },
-    advertise: bonsoirAdvertise,
+    // bonsoir_windows crashes the app; Windows announces through dnsapi, on the network the share listens on only
+    // (lib/desktop/network/windows_dns_sd.dart)
+    advertise: CurrentPlatform.isWindows ? windowsShareAdvertise : bonsoirAdvertise,
     // The computers rank their own network interfaces (lib/desktop/network/interface_rank.dart)
     localAddresses: CurrentPlatform.isDesktop ? desktopShareLocalAddresses : phoneShareLocalAddresses,
     networkChanges: () => Connectivity().onConnectivityChanged.map<void>((_) {}),

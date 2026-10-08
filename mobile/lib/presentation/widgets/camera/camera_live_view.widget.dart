@@ -2,7 +2,7 @@
 // RTSP stream of the camera with Media3; it gets the address and the camera account through CameraLiveApi.setSource,
 // never through the creation parameters of the view, and reports its state through CameraLiveEvents. The sub stream
 // (SD) on a phone, the main one (HD) in full screen and on the Quest. On iPhone and iPad the live view comes later:
-// AVPlayer has no RTSP.
+// AVPlayer has no RTSP. On a computer too: there is no Android view there, and Immuch360 Desktop has no video player yet.
 //
 // A platform view never takes the focus (a remote would get stuck in it): it sits in an ExcludeFocus, and its buttons
 // are Flutter buttons above it.
@@ -16,6 +16,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/tapo/rtsp_probe.dart';
 import 'package:immich_mobile/platform/camera_live_api.g.dart';
@@ -240,6 +241,9 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
 
   @override
   Widget build(BuildContext context) {
+    if (CurrentPlatform.isDesktop) {
+      return _Message(key: const Key('camera_live_later'), text: context.t.desktop_tapo_live_later);
+    }
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return _Message(key: const Key('camera_live_later'), text: context.t.camera_live_later_on_ios);
     }

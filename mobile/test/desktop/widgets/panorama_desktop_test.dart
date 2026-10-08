@@ -16,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
@@ -133,6 +134,23 @@ void main() {
     }
     await tester.pumpAndSettle();
     expect(view(tester).fov, 115);
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  testWidgets('a notch sent as several small wheel moves zooms as much as one notch', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    await pumpViewer(tester);
+    final start = view(tester).fov;
+    final mouse = TestPointer(1, PointerDeviceKind.mouse);
+    await tester.sendEventToBinding(mouse.hover(sphereCenter(tester)));
+
+    // A high resolution or free spinning wheel: four moves of a quarter notch, on the scale of the test screen
+    final notch = desktopWheelNotch(TargetPlatform.windows, tester.view.devicePixelRatio);
+    for (var i = 0; i < 4; i++) {
+      await tester.sendEventToBinding(mouse.scroll(Offset(0, -notch / 4)));
+    }
+    await tester.pumpAndSettle();
+    expect(view(tester).fov, closeTo(start * 0.9, 0.01));
     debugDefaultTargetPlatformOverride = null;
   });
 

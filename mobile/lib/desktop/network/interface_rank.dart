@@ -14,7 +14,8 @@
 //   used while it has an address, whatever these rules say.
 //
 // The share also leaves out the addresses of networks Windows marks as public, unless the user said "Share for this
-// session" for that network (computer_share.dart).
+// session" for that network (computer_share.dart). It fails closed: on Windows, an address whose network category
+// could not be read counts as public too (network_category.dart).
 
 import 'dart:io';
 
@@ -45,8 +46,11 @@ class RankedAddress {
   /// The /24 subnet, "192.168.1"
   String get subnet => address.substring(0, address.lastIndexOf('.'));
 
-  /// Whether Windows marks the network of this address as public
-  bool get isPublic => facts?.category == NetworkCategory.public;
+  /// Whether Windows marks the network of this address as public, or could not tell its category
+  bool get isPublic => switch (facts?.category) {
+    NetworkCategory.public || NetworkCategory.unknown => true,
+    NetworkCategory.private || NetworkCategory.domain || null => false,
+  };
 
   /// What "Share for this session" remembers: the network when Windows gives its id, else the interface
   String get networkKey => facts?.networkId ?? 'interface:$name';
@@ -121,19 +125,25 @@ int _tierOf(String name, AdapterFacts? facts) {
 
 /// The order in which a computer uses the private IPv4 [addresses] of its interfaces (interface name, address), with
 /// what the system tells of them in [facts] (by interface name, see desktopAdapterFacts) and the adapter the user
-/// [chosen] in the settings; see the top of this file. Left out addresses are not in the answer.
+/// [chosen] in the settings; see the top of this file. Left out addresses are not in the answer. With
+/// [categoriesExpected] (Windows, which tells the category of every network), an interface the system told nothing of
+/// is on a network of unknown category: the reading failed, or the adapter came after it.
 List<RankedAddress> rankDesktopAddresses(
   List<(String, InternetAddress)> addresses, {
   Map<String, AdapterFacts> facts = const {},
   String? chosen,
+  bool categoriesExpected = false,
 }) {
+  AdapterFacts? factsOf(String name) =>
+      facts[name] ?? (categoriesExpected ? AdapterFacts(name: name, category: NetworkCategory.unknown) : null);
+
   final usable = _usable(addresses).toList();
   final choice = chosen?.toLowerCase();
   if (choice != null) {
     final picked = [
       for (final (_, name, address) in usable)
         if (name.toLowerCase() == choice)
-          RankedAddress(name: name, address: address.address, tier: 0, facts: facts[name]),
+          RankedAddress(name: name, address: address.address, tier: 0, facts: factsOf(name)),
     ];
     if (picked.isNotEmpty) {
       return picked;
@@ -142,7 +152,7 @@ List<RankedAddress> rankDesktopAddresses(
 
   final ranked = <(int, int, int, RankedAddress)>[];
   for (final (index, name, address) in usable) {
-    final adapter = facts[name];
+    final adapter = factsOf(name);
     if (adapter != null && !adapter.isUp) {
       continue;
     }
@@ -258,7 +268,8 @@ Future<List<RankedAddress>> desktopShareCandidates() async {
   final addresses = await _interfaceAddresses();
   final facts = await desktopAdapterFacts();
   final chosen = await DesktopNetworkChoice.load();
-  return rankDesktopAddresses(addresses, facts: facts, chosen: chosen);
+  // The system this runs on, as desktopAdapterFacts reads it
+  return rankDesktopAddresses(addresses, facts: facts, chosen: chosen, categoriesExpected: Platform.isWindows);
 }
 
 /// Every interface of this computer with a private IPv4 address, for the choice of the settings

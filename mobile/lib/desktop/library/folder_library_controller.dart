@@ -16,6 +16,7 @@ import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_scanner.dart';
 import 'package:immich_mobile/desktop/library/library_watcher.dart';
+import 'package:immich_mobile/desktop/library/volume_id.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
@@ -202,10 +203,11 @@ class FolderLibraryController extends AsyncNotifier<FolderLibraryView> {
     try {
       summary = await library.scan(everyRoot: everyRoot);
       // Another scan held the index (the sync services scan before they read): this one waits and goes again, as
-      // that one may have started before the change it is asked for
+      // that one may have started before the change it is asked for. What a scan wrote before it lost its lease to
+      // another one still counts.
       while (summary.busy) {
         await Future<void>.delayed(const Duration(milliseconds: 500));
-        summary = await library.scan(everyRoot: everyRoot);
+        summary = summary.then(await library.scan(everyRoot: everyRoot));
       }
     } catch (error, stackTrace) {
       _log.warning('Scan of the folders failed', error, stackTrace);
@@ -246,6 +248,14 @@ final folderLibraryControllerProvider = AsyncNotifierProvider<FolderLibraryContr
   FolderLibraryController.new,
 );
 
+/// Whether a root is on a drive the user ejects (see watchedRootPaths); replaced in tests
+final removableRootProvider = Provider<bool Function(LibraryRoot root)>((ref) {
+  final volumes = VolumeProbe.thisComputer();
+  // Asked once per volume and place: the watcher hears of every change of the folders page, scans included
+  final known = <String, bool>{};
+  return (root) => known.putIfAbsent('${root.volumeKey}|${root.path}', () => volumes.isRemovable(root.path));
+});
+
 /// The watcher of the roots on a computer that can watch folders (Windows, macOS); null elsewhere. Kept alive by
 /// [FolderLibraryHost].
 final folderLibraryWatcherProvider = Provider<LibraryWatcher?>((ref) {
@@ -256,12 +266,10 @@ final folderLibraryWatcherProvider = Provider<LibraryWatcher?>((ref) {
     onChange: () => unawaited(ref.read(folderLibraryControllerProvider.notifier).refresh()),
   );
   ref.onDispose(watcher.dispose);
+  final isRemovable = ref.watch(removableRootProvider);
   ref.listen(folderLibraryControllerProvider, (_, next) {
     final roots = next.valueOrNull?.roots ?? const <LibraryRoot>[];
-    watcher.watchFolders([
-      for (final root in roots)
-        if (root.available && !root.isNetwork) root.path,
-    ]);
+    watcher.watchFolders(watchedRootPaths(roots, isRemovable: isRemovable));
   }, fireImmediately: true);
   return watcher;
 });

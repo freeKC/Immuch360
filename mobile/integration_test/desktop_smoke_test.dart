@@ -41,5 +41,12 @@ void main() {
     }
     expect(firstPage, findsWidgets);
     debugPrint('First page: ${find.byType(LoginForm).evaluate().isNotEmpty ? 'login' : 'timeline'}');
+
+    // A profile without a saved login (the debug build's own profile at first) is signed out by the splash page,
+    // which shows the login page without waiting for that sign out: it must end before the test tears the providers
+    // down, or it writes to a disposed AuthNotifier
+    for (var i = 0; i < 30; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
   });
 }

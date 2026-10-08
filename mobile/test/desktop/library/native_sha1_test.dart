@@ -55,6 +55,25 @@ void main() {
     expect(sha1OfFile(file.path), 'qZk+NkcGgWq6PiVxeFDCbJzQ2J0=');
   });
 
+  test('a file being hashed can be renamed and deleted meanwhile, and is hashed to its end as it was', () {
+    // dart:io opens files on Windows without FILE_SHARE_DELETE: Explorer could not rename a video while it was hashed
+    final bytes = Uint8List.fromList(List.generate(2 * sha1ChunkLength + 5, (i) => i * 7));
+    final file = write('busy.insv', bytes);
+    var asked = 0;
+    final hash = sha1OfFile(
+      file.path,
+      isCancelled: () {
+        // Asked before each chunk: the second time, one chunk is read
+        if (++asked == 2) {
+          File(file.renameSync(p.join(dir.path, 'renamed.insv')).path).deleteSync();
+        }
+        return false;
+      },
+    );
+    expect(hash, reference(bytes));
+    expect(file.existsSync(), isFalse);
+  });
+
   test('a cancel between chunks stops the read', () {
     final file = write('big.bin', Uint8List(3 * sha1ChunkLength));
     var chunks = 0;

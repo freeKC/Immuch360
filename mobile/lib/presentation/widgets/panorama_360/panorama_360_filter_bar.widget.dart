@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/panorama_360.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
@@ -56,7 +57,10 @@ class Panorama360FilterBar extends ConsumerWidget {
                 ),
                 if (hasServer) ...[
                   sourceChip(Panorama360Source.server, t.library_360_on_server),
-                  sourceChip(Panorama360Source.device, t.on_this_device),
+                  sourceChip(
+                    Panorama360Source.device,
+                    CurrentPlatform.isDesktop ? t.on_this_computer : t.on_this_device,
+                  ),
                   if (facets.availableSources.contains(Panorama360Source.shared) ||
                       filter.sources.contains(Panorama360Source.shared))
                     sourceChip(Panorama360Source.shared, t.shared_with_me),

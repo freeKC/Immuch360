@@ -1,12 +1,15 @@
 // The folders of the library of Immuch360 Desktop: what a root is, which files and folders a scan takes, and the ids
 // the local tables know them by.
 //
-// A file's id is "f" and the first 20 bytes of SHA-256 of "<root id>/<path relative to the root>", in hex. The root id
-// comes from the volume (see volume_id.dart), not from the drive letter or the mount point, so a drive that comes back
-// as F: instead of E: keeps the ids of its files. The id is never the path itself: it reaches the server as the
-// deviceAssetId of an upload, and a path would carry the user's account name there. The relative path is case folded
-// where the file system ignores case (Windows, macOS), so a rename that only changes the case keeps the id, as the
-// file system sees one file.
+// A file's id is "f" and the first 20 bytes of HMAC-SHA-256 of "<root id>/<path relative to the root>", in hex. The
+// root id comes from the volume (see volume_id.dart), not from the drive letter or the mount point, so a drive that
+// comes back as F: instead of E: keeps the ids of its files. The id is never the path itself: it reaches the server as
+// the deviceAssetId of an upload, and a path would carry the user's account name there. Nor is it a plain hash of the
+// path: the only unknown in "win-1a2b3c4d:/users/<account>/pictures/img_0001.jpg" is a 32-bit volume serial number
+// (none at all for a share), so whoever sees the id on the server could try a guessed account name against every
+// serial in seconds. The key is a random secret made once per installation and kept in the index
+// (LibraryIndex.ids); it never leaves the computer. The relative path is case folded where the file system ignores
+// case (Windows, macOS), so a rename that only changes the case keeps the id, as the file system sees one file.
 //
 // Each folder that holds media is an album, like a bucket of the Android gallery; its id is built the same way from
 // the folder's path, with "d" in front.
@@ -196,15 +199,6 @@ class LibraryPathRules {
   }
 }
 
-String _hexId(String prefix, String key) {
-  final digest = sha256.convert(utf8.encode(key)).bytes;
-  final buffer = StringBuffer(prefix);
-  for (var i = 0; i < 20; i++) {
-    buffer.write(digest[i].toRadixString(16).padLeft(2, '0'));
-  }
-  return buffer.toString();
-}
-
 // "<root id>/<relative key>": the root id ends with the root's path inside its volume, so the key is the file's path
 // inside the volume whatever root it is found under; a root at the top of a volume ("win-1a2b3c4d:/") already ends
 // with the separator
@@ -215,12 +209,35 @@ String _keyUnder(String rootId, String relativeKey) {
   return rootId.endsWith('/') ? '$rootId$relativeKey' : '$rootId/$relativeKey';
 }
 
-/// The id of the file at [relativeKey] (see [LibraryPathRules.key]) under the root [rootId]. It depends only on the
-/// volume and the file's path inside it, so a folder added inside or around an existing root finds the same ids.
-String libraryFileId(String rootId, String relativeKey) => _hexId('f', _keyUnder(rootId, relativeKey));
+/// The length of the key of the ids, in bytes: the block of SHA-256 holds it whole
+const libraryIdKeyLength = 32;
 
-/// The id of the album of the folder at [relativeDirKey] (empty for the root itself) under the root [rootId]
-String libraryAlbumId(String rootId, String relativeDirKey) => _hexId('d', _keyUnder(rootId, relativeDirKey));
+/// Builds the ids of the files and albums of one library, with the key of its index (see the header of this file)
+class LibraryIds {
+  LibraryIds(List<int> key) : _hmac = Hmac(sha256, key) {
+    if (key.length != libraryIdKeyLength) {
+      throw ArgumentError.value(key.length, 'key', 'A key of the library ids is $libraryIdKeyLength bytes');
+    }
+  }
+
+  final Hmac _hmac;
+
+  /// The id of the file at [relativeKey] (see [LibraryPathRules.key]) under the root [rootId]. It depends only on the
+  /// volume and the file's path inside it, so a folder added inside or around an existing root finds the same ids.
+  String file(String rootId, String relativeKey) => _hexId('f', _keyUnder(rootId, relativeKey));
+
+  /// The id of the album of the folder at [relativeDirKey] (empty for the root itself) under the root [rootId]
+  String album(String rootId, String relativeDirKey) => _hexId('d', _keyUnder(rootId, relativeDirKey));
+
+  String _hexId(String prefix, String key) {
+    final digest = _hmac.convert(utf8.encode(key)).bytes;
+    final buffer = StringBuffer(prefix);
+    for (var i = 0; i < 20; i++) {
+      buffer.write(digest[i].toRadixString(16).padLeft(2, '0'));
+    }
+    return buffer.toString();
+  }
+}
 
 /// Whether the root [childId] lies inside the root [parentId] (both built by VolumeIdentity.rootId)
 bool rootContains(String parentId, String childId) {

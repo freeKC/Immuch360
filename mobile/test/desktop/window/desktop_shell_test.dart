@@ -196,6 +196,35 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
+  testWidgets('the Videos and 360° grids are no viewers: F and Escape do nothing there', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    await pumpShell(tester);
+
+    // Their route names sound like viewers, but both pages are timelines (Search > Videos, Library > 360°)
+    for (final name in [VideoRoute.name, Panorama360Route.name]) {
+      unawaited(
+        navigator().push(
+          MaterialPageRoute<void>(
+            settings: RouteSettings(name: name),
+            builder: (_) => Scaffold(body: Focus(autofocus: true, child: Text('$name grid'))),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(await tester.sendKeyEvent(LogicalKeyboardKey.keyF), isFalse, reason: name);
+      expect(isFullScreen(tester), isFalse, reason: name);
+      expect(await tester.sendKeyEvent(LogicalKeyboardKey.escape), isFalse, reason: name);
+      await tester.pumpAndSettle();
+      expect(find.text('$name grid'), findsOneWidget, reason: 'Escape does not close a grid');
+
+      navigator().pop();
+      await tester.pumpAndSettle();
+    }
+    expect(window.calls, ['preventClose true']);
+    debugDefaultTargetPlatformOverride = null;
+  });
+
   testWidgets('a letter typed in a text field of a viewer stays in the field', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;
     await pumpShell(tester);
