@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | Bahasa Melayu Kelantan | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: gambo nga video 360°, 3D nga VR180, dari Immich, fon demo ke NAS. Android, iOS nga Meta Quest 3, ado server ke takdok">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: gambo nga video 360°, 3D nga VR180, dari Immich, fon demo ke NAS. Android, iOS nga Meta Quest, ado server ke takdok">
 </p>
 
 # Immuch360
 
-Immuch360 tu aplikasi mudoh alih Immich hok ado gambo nga video 360° hok demo buleh tengok kelilin, nga pemain percumo untuk gambo nga video rata, 360°, 3D nga VR180, kat fon nga tablet Android, iPhone nga iPad, Meta Quest 3 nga 3S, nga dari binaan 20 kat Android TV nga Google TV. Dio untuk ore hok ambik gambo nga kamera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ke mod sfera foto fon, ke ore hok ado headset, pah nok tengok gambo sendiri dari server Immich, dari fon tu sendiri, dari NAS, server media ke server Plex: server samo, akaun samo, takdok plugin server, ke takdok server langsung. Dari binaan 20 dio pong tunjuk kamera Tapo, secaro langsung nga rakaman kad memori dio.
+Immuch360 tu aplikasi mudoh alih Immich hok ado gambo nga video 360° hok demo buleh tengok kelilin, nga pemain percumo untuk gambo nga video rata, 360°, 3D nga VR180, kat fon nga tablet Android, iPhone nga iPad, headset Meta Quest (Quest 3 nga 3S, nga dari binaan 21 Quest 2 nga Quest Pro, belum diuji), nga dari binaan 20 kat Android TV nga Google TV. Dio untuk ore hok ambik gambo nga kamera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ke mod sfera foto fon, ke ore hok ado headset, pah nok tengok gambo sendiri dari server Immich, dari fon tu sendiri, dari NAS, server media ke server Plex: server samo, akaun samo, takdok plugin server, ke takdok server langsung. Dari binaan 20 dio pong tunjuk kamera Tapo, secaro langsung nga rakaman kad memori dio.
 
 <p align="center">
   <sub>Cabang tok rasmi. Takdok kaito nga Immich ke FUTO. Namo dio dibaco macey "I am much 360".</sub>
@@ -15,7 +15,7 @@ Immuch360 tu aplikasi mudoh alih Immich hok ado gambo nga video 360° hok demo b
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">tengoh disemak</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store tengoh disemak &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store doh diluluske, binaan 21 doh dihanta sebagai kemas kini pertamo dio &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 tu aplikasi mudoh alih Immich hok ado gambo nga video 360° hok demo b
     <td align="center" width="33%"><h3>🎥 2.5D asli</h3>Dalang kat skrin rata dari video stereo, pandange ikut kepalo demo (cubo-cubo, fon nga tablet)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Satu aplikasi kat fon, tablet nga headset, 3D betul dale headset, nga dari binaan 20 kat Android TV nga alat kawalan jauh</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Satu aplikasi kat fon, tablet nga headset Quest 2, Pro, 3 nga 3S, 3D betul dale headset, nga dari binaan 20 kat Android TV nga alat kawalan jauh</td>
     <td align="center"><h3>🔌 Ado server ke takdok</h3>Server Immich demo, ke galeri fon tu sendiri, tok payoh akaun</td>
     <td align="center"><h3>🗄️ Kongsi rangkaie</h3>Samba (SMB), WebDAV nga, dari binaan 19, server media DLNA hok jumpo dale rangkaie pah dibaco teruh, takdok gapo hok dimuat turun, pah dihanta ko Immich bilo demo pilih. Dari binaan 19 fon pong buleh kongsi galeri dio nga headset</td>
   </tr>
@@ -109,7 +109,7 @@ Pilihe tu diingat dale fon pah tok ubah gapo-gapo kat server. Kat fail kongsi ra
 
 Demo takdok server Immich, ke demo tok nok akaun: demo nok gambo 360° dale fon bukak jadi sfera hok buleh dipusing nga giroskop jah. Aplikasi Immich mintak log masuk dulu.
 
-Kat muko log masuk, "Guno tanpo server" bukak Immuch360 nga gambo nga video dale peranti tu sendiri, nga pemapar 360°, 3D, VR180 nga Spatial, senarai 360° nga kongsi rangkaie (dari binaan 20 pong server Plex nga kamera Tapo), tok payoh akaun Immich. Ciri server kekal sorok ke kelabu sampa demo sambung server; takdok gapo hok kelua dari peranti. Kat Meta Quest 3 dio bukak gambo nga video headset tu sendiri; kat TV, hok takdok gambo sendiri, dio tunjuk jale ko kongsi rangkaie (tengok [Tengok kat TV demo](#watch-on-your-tv-android-tv-and-google-tv)).
+Kat muko log masuk, "Guno tanpo server" bukak Immuch360 nga gambo nga video dale peranti tu sendiri, nga pemapar 360°, 3D, VR180 nga Spatial, senarai 360° nga kongsi rangkaie (dari binaan 20 pong server Plex nga kamera Tapo), tok payoh akaun Immich. Ciri server kekal sorok ke kelabu sampa demo sambung server; takdok gapo hok kelua dari peranti. Kat Meta Quest dio bukak gambo nga video headset tu sendiri; kat TV, hok takdok gambo sendiri, dio tunjuk jale ko kongsi rangkaie (tengok [Tengok kat TV demo](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Tab Pustako tanpo server: menu 360° kat atah, lepah tu On this device nga duo gambo 360°, nga Kongsi rangkaie nga satu kongsi namo NAS">
 
@@ -159,7 +159,7 @@ Namo pengguno nga kato lalue kosong dihanta macey tu jugok: Freebox Server nok `
 1. Ketuk satu kongsi. Folder kelua dulu, lepah tu gambo nga video jadi grid nga lakare kecik (satu bingkai tiap video pong, disimpang dale peranti). Hok dikenal sebagai 360° ado lencana 360°, nga dari binaan 19 gambo nga video ruang Apple ado lencana 3D. Tarik ko bawoh nok segarke.
 2. Ketuk gambo: dio bukak skrin penoh (picit, ketuk duo kali), pah butang 360° dio bukak pemapar sfera.
 3. Ketuk video: dio maing dale pemain asli (maing, henti sekejap, cari), nga butang 360° hok bukak pemain 360° nga butang 3D nga 360°/180° dio, nga kat fon butang Spatial untuk fail stereo.
-4. Kat Quest 3, butang 360° bukak paparan imersif, nga dari binaan 19 "Tengok dale 3D" bukak gambo ruang Apple dale 3D.
+4. Kat Quest, butang 360° bukak paparan imersif, nga dari binaan 19 "Tengok dale 3D" bukak gambo ruang Apple dale 3D.
 5. Menu ⋮ ado "Lihat sebagai 360°" untuk fail hok takdok tag 360°, nga kat fon "Spatial 2.5D" untuk video hok buke stereo.
 
 360°, 3D nga VR180 dikenal dari metadata GPano ke sfera dale fail, dibaco nga permintaa julat, nga VR180 pong dari namo fail. Dari binaan 16 fail Insta360 mentoh pong dikenal (gambo .insp ikut namo dio ke blok kalibrasi kamera, video .insv ikut namo nga bingkai dio) pah dicantum.
@@ -252,7 +252,7 @@ Alamat hok server bagitau dipelajari balik tiap kali sambung kat rumoh. Bilo dio
 <a id="share-this-phone-on-the-network"></a>
 ## Kongsi fon ni dale rangkaie
 
-Gambo nga video demo dok dale fon, pah demo nok tengok dale headset, tanpo komputer, NAS ke server Immich. Dari binaan 19, fon, Android ke iPhone, bui gambo nga video dio kat Wi-Fi, pah Meta Quest 3 maing dio. Aplikasi Immich takdok bendo macey ni.
+Gambo nga video demo dok dale fon, pah demo nok tengok dale headset, tanpo komputer, NAS ke server Immich. Dari binaan 19, fon, Android ke iPhone, bui gambo nga video dio kat Wi-Fi, pah Meta Quest maing dio. Aplikasi Immich takdok bendo macey ni.
 
 ### Buka dio, kat fon
 
@@ -285,7 +285,7 @@ Lepah tu dio kongsi WebDAV macey hok lain: kenal 360°, fail mentoh, paparan ime
 
 Demo ado kamera Tapo kat rumoh, pah demo nok tengok kamera taman nga klip malam tadi sebeloh gambo demo tanpo bukak aplikasi Tapo, nga simpang satu klip dale Immich. Aplikasi Immich takdok gapo-gapo untuk kamera, nga aplikasi Tapo tu aplikasi lain, log masuk ko akaun TP-Link demo, nga klip asing dari gambo demo.
 
-Dari binaan 20 Immuch360 tamboh kamera Tapo sebeloh kongsi rangkaie. Dio tunjuk kamera secaro langsung kat fon nga tablet Android, Android TV nga Meta Quest 3, nga kat semuo platform rakaman kad memori dio, hari demi hari: satu klip diambik dari kamera, lepah tu maing macey mano-mano video nga buleh dihanta ko Immich. Aplikasi cakap nga kamera dale rangkaie demo jah, tok pernah nga server TP-Link, nga tok pernah ubah gapo-gapo kat kamera.
+Dari binaan 20 Immuch360 tamboh kamera Tapo sebeloh kongsi rangkaie. Dio tunjuk kamera secaro langsung kat fon nga tablet Android, Android TV nga Meta Quest, nga kat semuo platform rakaman kad memori dio, hari demi hari: satu klip diambik dari kamera, lepah tu maing macey mano-mano video nga buleh dihanta ko Immich. Aplikasi cakap nga kamera dale rangkaie demo jah, tok pernah nga server TP-Link, nga tok pernah ubah gapo-gapo kat kamera.
 
 ### Tambah kamera
 
@@ -396,7 +396,7 @@ Dari binaan 19, kat Android nga Quest:
 
 Dale aplikasi Immich, gambo ke video 360° stereo tunjuk keduo-duo mato serentak, gambo bergando, nga fail VR180, hok liputi setengoh depe jah, ditarik keliling sfera.
 
-Immuch360 kenal susune 3D, atah nga bawoh ke sebeloh-sebeloh, dari fail (kotak st3d video) ke teko dari bentuk bingkai, nga tiap pemapar ado butang 3D nok tukar dio. Fon tunjuk mato kiri; Meta Quest 3 tunjuk tiap mato separuh dio sendiri, dale 3D betul. Fail VR180 dilukis kat setengoh sfera, nga belake hitey buke gambo hok ditarik. Dio dikenal dari fail (sempada sfera ke jaring, potonge GPano) ke dari "vr180" ke "180" dale namo, nga tiap pemapar ado butang 360°/180°.
+Immuch360 kenal susune 3D, atah nga bawoh ke sebeloh-sebeloh, dari fail (kotak st3d video) ke teko dari bentuk bingkai, nga tiap pemapar ado butang 3D nok tukar dio. Fon tunjuk mato kiri; Meta Quest tunjuk tiap mato separuh dio sendiri, dale 3D betul. Fail VR180 dilukis kat setengoh sfera, nga belake hitey buke gambo hok ditarik. Dio dikenal dari fail (sempada sfera ke jaring, potonge GPano) ke dari "vr180" ke "180" dale namo, nga tiap pemapar ado butang 360°/180°.
 
 ### Tukar susune ke liputa
 
@@ -428,14 +428,14 @@ Nga "Settings", "Advanced" (Lanjuta), "Troubleshooting" (Selesai masalah) buka, 
 ### Format, privasi nga had
 
 - **Format**: sebeloh-sebeloh nga atah nga bawoh, pong nga mato betuka, lebar penoh ke separuh, rata, 360° nga VR180. Susune dibaco dari fail, kalu takdok diteko dari bentuk bingkai ke namo fail (sbs, ou, tb nga macey tu; fail lebar separuh dikenal ikut namo jah), nga buleh dipilih guno tange dale pemain. Pilihe tu diingat untuk video pustako, buke untuk fail kongsi rangkaie.
-- **Kamera**: gambo diproses dale peranti jah, tok penah disimpang nga tok penah dihanta ko mano-mano. Binaan Quest 3 takdok kebenara kamera langsung (headset takdok kamera hok aplikasi buleh guno), nga pemain Spatial tok ditawar situ: butang nga tetapa dio disorok kat headset.
+- **Kamera**: gambo diproses dale peranti jah, tok penah disimpang nga tok penah dihanta ko mano-mano. Binaan Quest takdok kebenara kamera langsung (headset takdok kamera hok aplikasi buleh guno), nga pemain Spatial tok ditawar situ: butang nga tetapa dio disorok kat headset.
 - **Had**: cubo-cubo, fon nga tablet jah (buke kat Meta Quest), perlu OpenGL ES 3.0 ke Metal. Dalang tu anggara. Dio paling baik dale landskap nga muko demo terang. Doh disemak kat Galaxy S24+; maklum balas iPhone dialu-aluke.
 - **Ganti**: kalu ado gapo-gapo tak keno (takdok kamera, peranti tok disokong, susune tok leh baco), demo balik ko pemain biaso.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Gambo nga video ruang Apple
 
-iPhone ambik gambo nga video ruang, nga server Immich tok kato gapo-gapo pasal dio: dale aplikasi Immich dio gambo ke video rata. Dari binaan 19 Immuch360 kenal dio nga baco fail, pah tunjuk gambo ruang dale 3D dale Meta Quest 3. Ni buke pemain Spatial 2.5D kat atah, hok untuk video sebeloh-sebeloh nga atah nga bawoh.
+iPhone ambik gambo nga video ruang, nga server Immich tok kato gapo-gapo pasal dio: dale aplikasi Immich dio gambo ke video rata. Dari binaan 19 Immuch360 kenal dio nga baco fail, pah tunjuk gambo ruang dale 3D dale headset Meta Quest. Ni buke pemain Spatial 2.5D kat atah, hok untuk video sebeloh-sebeloh nga atah nga bawoh.
 
 - **Gambo ruang** tu fail HEIC (`.heic`, `.heif`, `.hif`) hok simpang duo gambo, satu tiap mato, dikumpul jadi pasange stereo. Aplikasi baco kepalo fail (dale peranti, hok asal kat server nga permintaa julat, ke fail kongsi rangkaie) pah ingat jawape dio dale fon, jadi satu gambo dibaco sekali jah.
 - **Video ruang** (MV-HEVC) dikenal dari trek video: lapisa keduo, nga keduo-duo mato disebut.
@@ -466,7 +466,7 @@ Pengenala doh disemak nga gambo ruang contoh hok ditulis dek pustako imej Apple 
 
 Ore beli Quest 3 nok tengok gambo nga video 360° dio sendiri, lepah tu tanyo mano nok letak fail, macey mano nok masuk dio ko headset tanpo kabel, nga pemain mano nok guno: pemain video 360° nga 3D dale kedai keno bayar.
 
-Aplikasi Android samo jale kat Quest 3 nga 3S sebagai tingkap, nga seluruh pustako demo. Butang 360° dio bukak paparan imersif tempat gambo ke video ado keliling demo pah demo tengok kelilin nga pusing kepalo, dale 3D betul untuk fail stereo (Meta Spatial SDK). Media datang dari server Immich demo, headset tu sendiri, NAS, server media, fon ke server Plex, dimaing kat tempat dio (server media nga fon dari binaan 19, server Plex dari binaan 20, belum disemak kat headset lagi), nga dari binaan 20 tingkap tu pong tunjuk kamera Tapo. Dio percumo nga sumber terbuko. Doh disemak kat Quest 3, nga dek sorang pengguno nga video Insta360 X4 8K HEVC.
+Aplikasi Android samo jale kat Quest 3 nga 3S, nga dari binaan 21 kat Quest 2 nga Quest Pro (belum diuji), sebagai tingkap, nga seluruh pustako demo. Butang 360° dio bukak paparan imersif tempat gambo ke video ado keliling demo pah demo tengok kelilin nga pusing kepalo, dale 3D betul untuk fail stereo (Meta Spatial SDK). Media datang dari server Immich demo, headset tu sendiri, NAS, server media, fon ke server Plex, dimaing kat tempat dio (server media nga fon dari binaan 19, server Plex dari binaan 20, belum disemak kat headset lagi), nga dari binaan 20 tingkap tu pong tunjuk kamera Tapo. Dio percumo nga sumber terbuko. Doh disemak kat Quest 3, nga dek sorang pengguno nga video Insta360 X4 8K HEVC.
 
 ### Bukak paparan imersif
 
@@ -659,7 +659,7 @@ Semuo gapo hok aplikasi mudoh alih Immich rasmi buat ado sini: sandare, garis ma
 
 Nok tunjuk gambo 360° ko ore hok takdok aplikasi, kongsi dio nga pauta kongsi Immich: aplikasi web Immich tunjuk gambo 360° jadi sfera dale pelayar dio.
 
-Binaan skang, binaan 20 (versi 3.3.0-rc.0, nombor binaan 3030018), berasas Immich 3.3.0-rc.0 (Immich `main`, belum keluare stabil lagi). Binaan 19 doh diuji nga server Immich 3.2, nga binaan 20 tok ubah gapo-gapo dale gapo hok aplikasi mintak dari server. Tolong lapor masalah dale [Issues](https://github.com/freeKC/Immuch360/issues), buke ko projek Immich. Untuk dokumentasi penoh Immich sendiri, tengok [immich.app](https://immich.app).
+Binaan skang, binaan 21 (versi 3.3.0-rc.0, nombor binaan 3030019), berasas Immich 3.3.0-rc.0 (Immich `main`, belum keluare stabil lagi). Binaan 19 doh diuji nga server Immich 3.2, nga binaan 20 nga 21 tok ubah gapo-gapo dale gapo hok aplikasi mintak dari server. Tolong lapor masalah dale [Issues](https://github.com/freeKC/Immuch360/issues), buke ko projek Immich. Untuk dokumentasi penoh Immich sendiri, tengok [immich.app](https://immich.app).
 
 ## Banding nga aplikasi Immich nga aplikasi lain
 
@@ -670,20 +670,20 @@ Binaan skang, binaan 20 (versi 3.3.0-rc.0, nombor binaan 3030018), berasas Immic
 | Gambo 360° jadi sfera hok demo buleh tengok kelilin (tarik, picit, ketuk duo kali, inersia, pandange awal kamera, panorama separuh) | ❌ jalur rata | ✅ | Diuji kat Galaxy S24+ nga iPhone 14 |
 | Giroskop: tengok kelilin nga gerak fon | ❌ | ✅ | Diuji kat Galaxy S24+ nga iPhone 14 |
 | Video 360° dale pemain sfera, nga bunyi, cari, pilihe trek bunyi nga penunjuk timbal | ❌ video rata | ✅ Android nga iOS (belum ado bar maso kat iOS) | Diuji kat Galaxy S24+ nga iPhone 14 |
-| Gambo nga video 360° 3D (stereo) | ❌ gambo bergando | ✅ mato kiri kat fon, 3D betul kat Quest 3 | Diuji kat Galaxy S24+ nga Quest 3, nga contoh 3D 360° betul (VRTogether, Vuze, Kandao) nga satu gambo 3D; lapora dari kamera lain dialu-aluke |
+| Gambo nga video 360° 3D (stereo) | ❌ gambo bergando | ✅ mato kiri kat fon, 3D betul kat Quest | Diuji kat Galaxy S24+ nga Quest 3, nga contoh 3D 360° betul (VRTogether, Vuze, Kandao) nga satu gambo 3D; lapora dari kamera lain dialu-aluke |
 | Gambo nga video VR180 (setengoh sfera) | ❌ ditarik keliling sfera | ✅ setengoh sfera, butang 360°/180° | Diuji kat emulator Android nga Galaxy S24+ nga media sintetik; maklum balas peranti dialu-aluke |
-| Gambo ruang Apple (pasange stereo HEIC) nga video ruang (MV-HEVC) | ❌ gambo ke video rata, takdok gapo kato dio ruang | ✅ dari binaan 19: gambo dale 3D kat Quest 3, satu mato nga satu baris butir kat tempat lain | Pengenala disemak nga gambo contoh hok ditulis dek pustako imej Apple nga nga fail sintetik; paparan headset nga fail iPhone betul tu ujian peranti binaan 19 |
-| Paparan imersif Meta Quest 3 nga pengesane kepalo, bar maso, sebelum nga lepah, nga Pusing | ❌ | ✅ aplikasi samo, sebagai binaan headset ke APK fon | Diuji kat Quest 3 (kawale binaan 14, dilaras dale binaan 16 lepah maklum balas pengguno), nga dek sorang pengguno nga video Insta360 X4 8K HEVC |
+| Gambo ruang Apple (pasange stereo HEIC) nga video ruang (MV-HEVC) | ❌ gambo ke video rata, takdok gapo kato dio ruang | ✅ dari binaan 19: gambo dale 3D kat Quest, satu mato nga satu baris butir kat tempat lain | Pengenala disemak nga gambo contoh hok ditulis dek pustako imej Apple nga nga fail sintetik; paparan headset nga fail iPhone betul tu ujian peranti binaan 19 |
+| Paparan imersif Meta Quest nga pengesane kepalo, bar maso, sebelum nga lepah, nga Pusing | ❌ | ✅ aplikasi samo, sebagai binaan headset ke APK fon | Diuji kat Quest 3 (kawale binaan 14, dilaras dale binaan 16 lepah maklum balas pengguno), nga dek sorang pengguno nga video Insta360 X4 8K HEVC |
 | Lencana 360° kat lakare kecik, nga senarai 360° nga fail mentoh nga penapis (tempoh, sumber, jenih, kamera) | ❌ | ✅ penapis dari binaan 18 | Siap |
 | "Lihat sebagai 360°" untuk fail hok server tok tando | ❌ | ✅ diingat dale fon | Siap |
 | Spatial 2.5D: dalang kat skrin rata dari video stereo | ❌ | ✅ cubo-cubo, fon nga tablet | Diuji kat Galaxy S24+; maklum balas iPhone dialu-aluke |
 | Guno tanpo server langsung, nga galeri peranti tu sendiri | ❌ keno log masuk | ✅ | Diuji kat Galaxy S24+, Quest 3 nga emulator Android |
-| Kongsi SMB nga WebDAV hok jumpo dale rangkaie pah dimaing teruh, takdok gapo dimuat turun | ❌ | ✅ tiap pemapar, fon nga Quest 3 | Diuji nga Freebox Server (SMB) kat Galaxy S24+ nga Quest 3, nga nga server uji Samba nga WebDAV kat emulator Android; maklum balas NAS nga WebDAV lain dialu-aluke |
+| Kongsi SMB nga WebDAV hok jumpo dale rangkaie pah dimaing teruh, takdok gapo dimuat turun | ❌ | ✅ tiap pemapar, fon nga Quest | Diuji nga Freebox Server (SMB) kat Galaxy S24+ nga Quest 3, nga nga server uji Samba nga WebDAV kat emulator Android; maklum balas NAS nga WebDAV lain dialu-aluke |
 | Server media DLNA sebagai jenih kongsi | ❌ | ✅ dari binaan 19 | Disemak nga minidlna nga Gerbera dale Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone nga Quest tu ujian peranti binaan 19 |
 | Hanta fail kongsi ko Immich; fail peranti hok dihanta guno tange dikiro doh disandarke | ❌ fail peranti jah | ✅ dari binaan 15 | Diuji kat emulator Android nga server uji Samba nga server Immich 3.2 |
 | Kongsi fon ni dale rangkaie, untuk headset | ❌ | ✅ dari binaan 19, Android nga iOS | Ujian unit nga ujian hujung ko hujung nga klien WebDAV headset, kat komputer; fon hok layan Quest, nga bahagian iPhone, tu ujian peranti binaan 19 |
-| Pustako Plex Media Server dimaing dari fail asal, kat rumoh nga kat luar, tanpo plex.tv | ❌ | ✅ dari binaan 20, tiap-tiap pemapar, kat fon, tablet, Quest 3 nga TV | Disemak dari komputer nga Plex Media Server 1.42.1 betul (berpasang, folder, julat bait, lakara kecik, alamat di luar rumoh); belum disemak kat peranti lagi |
-| Kamera Tapo: paparan langsung, nga rakaman kad memori dihanta ko Immich bilo demo pilih | ❌ | ✅ dari binaan 20: rakaman kat mano-mano, langsung kat Android, Android TV nga Quest 3 | Disemak nga kamera simulasi; belum disemak nga kamera betul lagi |
+| Pustako Plex Media Server dimaing dari fail asal, kat rumoh nga kat luar, tanpo plex.tv | ❌ | ✅ dari binaan 20, tiap-tiap pemapar, kat fon, tablet, Quest nga TV | Disemak dari komputer nga Plex Media Server 1.42.1 betul (berpasang, folder, julat bait, lakara kecik, alamat di luar rumoh); belum disemak kat peranti lagi |
+| Kamera Tapo: paparan langsung, nga rakaman kad memori dihanta ko Immich bilo demo pilih | ❌ | ✅ dari binaan 20: rakaman kat mano-mano, langsung kat Android, Android TV nga Quest | Disemak nga kamera simulasi; belum disemak nga kamera betul lagi |
 | Android TV nga Google TV, dikawal nga alat kawalan jauh, dale APK samo | ❌ buke aplikasi TV | ✅ dari binaan 20 | Disemak nga uji automatik; belum disemak kat TV lagi |
 | Gambo Insta360 .insp mentoh nga video .insv satu trek | ❌ rata | ✅ dari binaan 16 | Gambo disemak nga eksport Insta360 Studio fail X3, video kat emulator Android nga fail X3 resolusi rendoh; belum jale kat iPhone lagi |
 | Video mentoh nga satu lensa tiap trek ke tiap fail (Insta360 X4, X4 Air, X5, X6, pasange X3, GoPro .360, DJI .osv) | ❌ rata ke saloh | ✅ dari binaan 18 | Penghurai nga cantum disemak nga fail X4, pasange X3, GoPro MAX nga Osmo 360 betul; main balik tu ujian peranti binaan 18 nga 19 |
@@ -697,7 +697,7 @@ Binaan skang, binaan 20 (versi 3.3.0-rc.0, nombor binaan 3030018), berasas Immic
 
 | Gapo hok ore guno | Gapo hok dio jumpo | Gapo Immuch360 buat |
 |---|---|---|
-| Aplikasi web Immich | Dio tunjuk gambo 360° jadi sfera, tapi anggap .insp mentoh tu panorama siap pah balut duo bulata dio keliling sfera; paparan VR masih permintaa ([perbincange #14768](https://github.com/immich-app/immich/discussions/14768)) | Cantum fail mentoh dale peranti, pah bukak paparan imersif dale Quest 3 |
+| Aplikasi web Immich | Dio tunjuk gambo 360° jadi sfera, tapi anggap .insp mentoh tu panorama siap pah balut duo bulata dio keliling sfera; paparan VR masih permintaa ([perbincange #14768](https://github.com/immich-app/immich/discussions/14768)) | Cantum fail mentoh dale peranti, pah bukak paparan imersif dale Quest |
 | Aplikasi Insta360 ke Studio | Perlu nok tukar fail mentoh dale kad jadi gambo 360° sebelum tengok | Bukak fail .insp nga .insv mentoh teruh, nga fail GoPro .360 nga DJI .osv |
 | Plex, Jellyfin, Synology Photos | Gambo nga video 360° tunjuk rata ke tok dikenal, macey hok tajuk dale forum dio cerito (satu permintaa Plex doh bukak sejak 2017) | Baco pustako Plex tu sendiri dari binaan 20, ke folder samo melalui SMB, WebDAV ke DLNA, pah maing dio jadi sfera, tanpo ubah gapo-gapo kat server |
 | Aplikasi Tapo | Aplikasi lain, log masuk ko akaun TP-Link demo, nga klip asing dari gambo demo | Tunjuk kamera sebeloh gambo demo, cakap nga dio dale rangkaie demo jah, nga simpang klip sebagai video hok demo buleh hanta ko Immich (dari binaan 20) |
@@ -709,7 +709,7 @@ Binaan skang, binaan 20 (versi 3.3.0-rc.0, nombor binaan 3030018), berasas Immic
 
 Immuch360 tu galeri, nga dio pong pemain media percumo: dio maing gapo hok aplikasi rasmi tok leh, dari sumber dale jadual keduo, dale pemain hok sesuai nga fail.
 
-| Gapo | Fon Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (dari binaan 20) |
+| Gapo | Fon Android | iPhone, iPad | Meta Quest | Android TV, Google TV (dari binaan 20) |
 |---|---|---|---|---|
 | Video rata (MP4, MOV, MKV, gapo hok peranti nyahkod) | Pemain Immich, nga pemain asli untuk kongsi rangkaie | Samo, kecuali fail MKV nga AVI dale kongsi, hok iOS tok bukak (kat server dio maing doh ditranskod) | Dale tingkap | Macey kat fon; OK jeda, kiri nga kane lompat 10 s |
 | Gambo 360° | Pemapar sfera, giroskop | Samo | Imersif, keliling demo | Pemapar sfera dipusing nga anak panah, dizum nga kekunci saluran |
@@ -739,14 +739,14 @@ Lajur TV belum disemak kat TV lagi, tengok [Tengok kat TV demo](#watch-on-your-t
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 pong jale kat Meta Quest 3 nga 3S (Horizon OS v69 ke lepah; binaan Horizon Store disenarai untuk duo ni jah; `-release.apk` universal patut buleh pasang kat Quest 2 ke Quest Pro gak, belum diuji). Caro guno dio ado dale [Dale headset Meta Quest 3](#in-the-meta-quest-3-headset); bahagian ni pasal pasang dio nga gapo hok beza kat headset.
+Immuch360 pong jale kat headset Meta Quest nga Horizon OS v69 ke lepah. Dari binaan 21 binaan Horizon Store disenarai untuk Quest 2, Quest Pro, Quest 3 nga 3S, empak hok `-release.apk` universal doh sebut; Quest pertamo tak, kedai doh tok terimo dio lagi. Quest 3 nga 3S doh diuji. Quest 2 nga Quest Pro belum diuji lagi: penyahkod video dio lagi lambat, nga had hok aplikasi semak diukur kat Quest 3, jadi video H.264 hok beso mungking ditolak nga satu mesej ke tersekat-sekat kat dio. Lapora dari duo headset ni dialu-aluke dale [Issues](https://github.com/freeKC/Immuch360/issues). Caro guno dio ado dale [Dale headset Meta Quest 3](#in-the-meta-quest-3-headset); bahagian ni pasal pasang dio nga gapo hok beza kat headset.
 
 Binaan headset cakap nga server melalui HTTPS jah, ke melalui HTTP biaso ko namo rangkaie rumoh (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) nga ko headset tu sendiri, macey hok Horizon Store keno. Server hok ditaip sebagai alamat HTTP biaso nga IP, macey `http://192.168.1.10:2283`, ditolak dek binaan tu: guno HTTPS, namo rangkaie rumoh (`nas.local`), ke `-release.apk` universal, hok simpang dasar terbuko fon. Kongsi WebDAV, DLNA nga fon kat alamat HTTP biaso dale rangkaie tempate tok terkeno: aplikasi baco dio sendiri pah bui pemain dio alamat jambate tempate dio jah (belum disahke kat headset untuk DLNA nga kongsi fon, baru dale binaan 19). Dari binaan 20 server Plex dicapai melalui HTTPS, nga kamera Tapo dek aplikasi tu sendiri, paparan langsung dio melalui RTSP, hok buke HTTP: duo-duo patut tok terkeno (belum disahke kat headset).
 
 <a id="install"></a>
 ### Pasang
 
-Senarai Horizon Store tengoh tunggu semaka Meta, dihanta nga binaan 14; sampa dio diluluske, sideload fail `-quest-release.apk` dari satu keluare (dibina untuk headset: 64 bit, target SDK 34, kebenara hok headset guno jah), ke `-release.apk` universal:
+Meta doh luluske senarai Horizon Store pado 7 Oktober 2026 nga binaan 14, nga binaan 21 doh dihanta sebagai kemas kini pertamo dio. Sampa muko kedai jadi awam, ke nok dapat binaan sebelum kedai ado, sideload fail `-quest-release.apk` dari satu keluare (dibina untuk headset: 64 bit, target SDK 34, kebenara hok headset guno jah), ke `-release.apk` universal:
 
 1. Buka mod pembangun sekali. Dale aplikasi fon Meta Horizon, bukak "Devices" (Peranti), pilih headset, lepah tu "Headset settings" (Tetapa headset), lepah tu "Developer mode" (Mod pembangun). Ni perlu akaun pembangun, hok percumo kat developers.meta.com. Demo pong perlu adb (Android SDK Platform Tools) kat komputer, ke SideQuest.
 2. Sambung headset ko komputer nga kabel USB-C. Dale headset, terimo "Allow USB debugging" (Bui nyahpepijat USB).
@@ -754,7 +754,7 @@ Senarai Horizon Store tengoh tunggu semaka Meta, dihanta nga binaan 14; sampa di
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. Dale headset, bukak Library, pilih penapis "Unknown sources" (Sumber tok dikenal), pah mulo Immuch360.
@@ -776,7 +776,7 @@ Tangkapa diambik dale headset nga butang tangkap (butang Meta nga picu), kat Que
 ### Had kat headset
 
 - **Kodek video**: HEVC (H.265) pilihe selamat; H.264 berhenti kira-kira 4096x2304. Gapo hok aplikasi semak, nga macey mano nok bui headset video hok dio nyahkod, ado dale [Butir video nga penyahkod](#video-details-decoders-and-why-a-video-stutters).
-- **Kedai**: versi kedai mulo kat binaan 14. Ciri hok ditando "dari binaan 15" nga lepah tu mari nga kemas kini dio hok lepah (saluran uji alpha kedai, untuk penguji, dapat tiap binaan baru); APK GitHub ado semuo skang.
+- **Kedai**: versi kedai mulo kat binaan 14. Ciri hok ditando "dari binaan 15" nga lepah tu mari nga binaan 21, kemas kini pertamo dio, bilo Meta doh semak dio (saluran uji alpha kedai, untuk penguji, dapat tiap binaan baru); APK GitHub ado semuo skang.
 - **Kebenara**: binaan headset mintak gambo nga video jah (mod tanpo server) nga pemberitahua (kemajua sandare). Dio takdok kebenara storan, bunyi, lokasi ke kamera, tok samo nga binaan fon; jadi tukar server ikut namo Wi-Fi takdok kat headset.
 - **Saiz APK**: Spatial SDK tambah lebih kurang 56 MB kod asli ARM 64 bit, kat fon pong, tempat dio tok penah dimuat.
 - **Lesen**: paparan imersif guno Meta Spatial SDK, diedar bawoh Meta Platform Technologies SDK License Agreement.
@@ -784,13 +784,13 @@ Tangkapa diambik dale headset nga butang tangkap (butang Meta nga picu), kat Que
 <a id="where-to-get-it"></a>
 ## Mano nok dapat
 
-Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tunggu semaka Apple, versi Meta Horizon Store tunggu semaka Meta, nga versi Google Play untuk TV tunggu semaka Google untuk keluare TV. Keluare GitHub sokmo binaan paling baru:
+Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tunggu semaka Apple, senarai Meta Horizon Store doh diluluske nga kemas kini pertamo dio dale semaka Meta, nga versi Google Play untuk TV tunggu semaka Google untuk keluare TV. Keluare GitHub sokmo binaan paling baru:
 
 | Platform | Hari ni | Tak lamo lagi |
 |---|---|---|
-| Fon nga tablet Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ke APK kat muko [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk fon (`Immuch360-v<version>-release.apk` universal jale kat mano-mano, `-armeabi-v7a` untuk fon 32 bit lamo, nga fail `.aab` untuk Google Play, buke untuk sideload). Binaan GitHub biasonyo lagi dulu dari kedai. Mano-mano pong, dio pasang sebeloh aplikasi Immich rasmi (pakej `com.aprogsys.immuch360`). | Google Play: binaan 18 doh ado, binaan 19 dale semaka Google sejak 6 Oktober 2026, binaan 20 lepah tu |
+| Fon nga tablet Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ke APK kat muko [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk fon (`Immuch360-v<version>-release.apk` universal jale kat mano-mano, `-armeabi-v7a` untuk fon 32 bit lamo, nga fail `.aab` untuk Google Play, buke untuk sideload). Binaan GitHub biasonyo lagi dulu dari kedai. Mano-mano pong, dio pasang sebeloh aplikasi Immich rasmi (pakej `com.aprogsys.immuch360`). | Google Play: binaan 18 doh ado, binaan 20 dale semaka Google sejak 7 Oktober 2026, ganti binaan 19 |
 | iPhone nga iPad | Tengoh tunggu semaka Apple. Versi hok tengoh disemak ado ciri binaan 11: muat naik ko Immich nga pilihe "Sumber video" (binaan 15) nga fail Insta360 mentoh (binaan 16) akan mari nga kemas kini App Store kemudie. Kod sumber dibina nga Xcode ke kat Codemagic, tengok [Bina sendiri](#build-it-yourself). | App Store, tengoh disemak |
-| Meta Quest 3 nga 3S | Fail `-quest-release.apk` dari muko [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` universal pong jadi), di-sideload dale mod pembangun, tengok [Pasang](#install). Binaan kedai nga APK GitHub ditandatange nga kunci lain: nok tukar dari satu ko lagi satu, nyahpasang aplikasi dulu (tetapa nga kongsi hok disimpang dio hilang samo). | Meta Horizon Store: binaan 14 dale semaka Meta sejak 3 Oktober 2026; saluran alpha kedai (penguji jah) dapat tiap binaan baru |
+| Meta Quest 2, Quest Pro, Quest 3 nga 3S (Quest 2 nga Quest Pro belum diuji) | Fail `-quest-release.apk` dari muko [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` universal pong jadi), di-sideload dale mod pembangun, tengok [Pasang](#install). Binaan kedai nga APK GitHub ditandatange nga kunci lain: nok tukar dari satu ko lagi satu, nyahpasang aplikasi dulu (tetapa nga kongsi hok disimpang dio hilang samo). | Meta Horizon Store: senarai doh diluluske pado 7 Oktober 2026 nga binaan 14, nga binaan 21, kemas kini pertamo dio, dale semaka Meta; saluran alpha kedai (penguji jah) dapat tiap binaan baru |
 | Android TV nga Google TV (dari binaan 20) | `Immuch360-v<version>-release.apk` universal dari muko [Releases](https://github.com/freeKC/Immuch360/releases), di-sideload nga adb, tengok [Pasang dio kat TV](#install-it-on-the-tv). Dio aplikasi samo macey kat fon. | Google Play kat TV, lepah semaka Google untuk keluare TV |
 
 Pauta App Store nga Meta Horizon Store akan ditamboh sini bilo senarai doh diterbit. Log masuk nga URL server Immich nga akaun biaso demo, ke ketuk "Guno tanpo server" kat muko log masuk nok mulo nga gambo nga video peranti tu sendiri. APK dari GitHub tok kemas kini sendiri: perhati muko Releases, nga bilo demo doh pasang aplikasi dari kedai, ambik kemas kini dari kedai tu.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Tangkapa skrin kedai diambik kat binaan simulator nyahpepijat hok dibuat nga `--dart-define=IMMUCH_SCREENSHOTS=true`, hok sorok sepanduk nyahpepijat jah. Duo perisa Android tu aplikasi samo. Dari binaan 20 hok `phone` pong isytihar diri dio sebagai aplikasi TV (entri pelancar TV nga sepanduk, tok perlu skrin sentuh), hok `quest` tinggal. Hok `quest` sasar SDK 34 nga simpang kebenara hok headset guno jah (gambo, video, pemberitahua): pengurusa media, lokasi latar belake, storan lamo, bunyi, lokasi media, lokasi peranti nga kamera dibuang dale `android/app/src/quest/AndroidManifest.xml`, sebab Meta Horizon Store tolak duo pertamo pah mintak alase untuk tiap kebenara sensitif lain; fail samo sebut Quest 3 nga 3S sebagai peranti hok disokong nga hadke HTTP biaso ko headset tu sendiri nga ko namo rangkaie rumoh. APK tu 64 bit jah sebab duo argume tambahe dale baris arahe dio (`--target-platform android-arm64 --android-project-arg arm64only=true`). Hok `phone` tu hok Google Play keno. Nok bina untuk iOS kat Mac demo sendiri, guno Xcode nga pasuke tandatange demo sendiri; nga Xcode 26, jale `xcodebuild -downloadComponent MetalToolchain` sekali dulu, sebab shader Spatial perlu dio. Tanpo Mac, binaan iOS jale kat Codemagic (Mac dihos) dari fail `codemagic.yaml` repositori ni. Binaan keluare Android jale kat GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Tangkapa skrin kedai diambik kat binaan simulator nyahpepijat hok dibuat nga `--dart-define=IMMUCH_SCREENSHOTS=true`, hok sorok sepanduk nyahpepijat jah. Duo perisa Android tu aplikasi samo. Dari binaan 20 hok `phone` pong isytihar diri dio sebagai aplikasi TV (entri pelancar TV nga sepanduk, tok perlu skrin sentuh), hok `quest` tinggal. Hok `quest` sasar SDK 34 nga simpang kebenara hok headset guno jah (gambo, video, pemberitahua): pengurusa media, lokasi latar belake, storan lamo, bunyi, lokasi media, lokasi peranti nga kamera dibuang dale `android/app/src/quest/AndroidManifest.xml`, sebab Meta Horizon Store tolak duo pertamo pah mintak alase untuk tiap kebenara sensitif lain; fail samo sebut Quest 2, Quest Pro, Quest 3 nga 3S sebagai peranti hok disokong nga hadke HTTP biaso ko headset tu sendiri nga ko namo rangkaie rumoh. APK tu 64 bit jah sebab duo argume tambahe dale baris arahe dio (`--target-platform android-arm64 --android-project-arg arm64only=true`). Hok `phone` tu hok Google Play keno. Nok bina untuk iOS kat Mac demo sendiri, guno Xcode nga pasuke tandatange demo sendiri; nga Xcode 26, jale `xcodebuild -downloadComponent MetalToolchain` sekali dulu, sebab shader Spatial perlu dio. Tanpo Mac, binaan iOS jale kat Codemagic (Mac dihos) dari fail `codemagic.yaml` repositori ni. Binaan keluare Android jale kat GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Takdok rahsio dale repositori ni: kunci tandatange Android disimpang sebagai rahsio GitHub Actions hok disulitke, nga bahan tandatange Apple disimpang sebagai pembolehubah hok disulitke kat Codemagic. Fail aliran kijo sebut dio ikut namo jah. Tanpo `android/key.jks` demo sendiri, binaan keluare ditandatange nga kunci nyahpepijat nga tok leh pasang atah salina dari GitHub ke kedai (nyahpasang hok tu dulu); binaan nyahpepijat pasang sebeloh dio sebagai Immuch360 debug. Salina Meta Horizon Store tu APK `quest` dari keluare hok ditandatange nga kunci lain, kunci hok aplikasi kedai mulo-mulo didaftar nga dio, jadi dio pong tok leh pasang atah APK hok di-sideload, ke sebaliknyo.
 
@@ -857,9 +857,9 @@ Projek ni cabang Immich nga kekal bawoh [GNU AGPL v3](LICENSE). Tiap APK, termas
 
 Gapo hok belum siap, hok paling mungki dulu. Takdok gapo sini janji, nga maklum balas dale [penjejak isu](https://github.com/freeKC/Immuch360/issues) tolong putuh gapo mari dulu.
 
-- **Google Play**: binaan 18 doh ado; binaan 19 dale semaka Google sejak 6 Oktober 2026, nga binaan 20 ikut lepah tu.
+- **Google Play**: binaan 18 doh ado; binaan 20 dale semaka Google sejak 7 Oktober 2026, ganti binaan 19. Binaan 21 tok ubah gapo-gapo kat fon nga tablet.
 - **App Store**: versi 3.3.0 tengoh tunggu semaka Apple; dio ado ciri binaan 11, jadi muat naik ko Immich nga semaka penyahkod video (binaan 15) nga fail Insta360 mentoh (binaan 16) mari nga kemas kini App Store lepah. Pauta akan ditamboh sini bilo dio doh ado.
-- **Meta Horizon Store**: senarai doh dihanta untuk semaka Meta pado 3 Oktober 2026 nga binaan 14, nga saluran alpha kedai dapat tiap binaan baru untuk kemas kini lepah. Bilo senarai diluluske, Quest 3 doh tok payoh sideload nga pauta kedai akan ditamboh sini; salina hok di-sideload keno nyahpasang dulu (tengok [Pasang](#install)).
+- **Meta Horizon Store**: Meta doh luluske senarai pado 7 Oktober 2026 nga binaan 14. Binaan 21 doh dihanta sebagai kemas kini pertamo dio: dio bawok semuo sejak binaan 14 (muat naik dari kongsi ko Immich, sumber video hok dipilih ikut gapo hok headset buleh nyahkod, fail mentoh Insta360, GoPro nga DJI, DLNA, kongsi fon, gambo ruang Apple, pustako Plex Media Server, kamera Tapo), nga kedai senarai dio untuk Quest 2, Quest Pro, Quest 3 nga 3S. Pauta kedai akan ditamboh sini bilo muko tu jadi awam; salina hok di-sideload keno nyahpasang dulu (tengok [Pasang](#install)).
 - **Senarai kedai**: senarai Google Play ditulis balik dale Oktober 2026 nga tangkapa skrin baru, nga akan dapat tangkapa skrin TV nga sepanduk TV samo nga keluare TV. Teks App Store masih terang binaan awal (gambo nga video 360°, fail mentoh tunjuk rata); dio akan perkenal pemapar 3D, VR180 nga Spatial, mod tanpo server, kongsi rangkaie, pemain media nga fail Insta360 mentoh. Teks Meta Horizon Store doh perkenal pemain media.
 - **Fail kamera 360° mentoh, lepah ni**: penunjuk kemajua maso gambo mentoh disedio untuk headset; ratake video GoPro nga DJI dari data gerak dio sendiri; .dng fisheye bergando; lapora peranti pasal main balik duo lensa binaan 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) nok sahke sambunge nga bajet penyahkod.
 - **DLNA, kongsi fon nga ruang Apple, lepah ni**: lapora peranti binaan 19 (Plex, Jellyfin, NAS nga Freebox Server melalui DLNA; fon hok layan Quest, kat hotspot dio pong; gambo nga video ruang iPhone betul dale headset); hak multicast hok dimintak dari Apple, supayo iPhone jumpo tiap server DLNA; sebelum nga lepah antaro gambo ruang dale headset; lencana ruang kat gambo server dale garis maso; video ruang dale 3D kat Quest, kalu penyahkod dio bui.

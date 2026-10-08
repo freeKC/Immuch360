@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | Čeština | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D a VR180 fotky a videa z Immich, z vašeho telefonu nebo z NAS. Android, iOS a Meta Quest 3, se serverem i bez něj">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D a VR180 fotky a videa z Immich, z vašeho telefonu nebo z NAS. Android, iOS a Meta Quest, se serverem i bez něj">
 </p>
 
 # Immuch360
 
-Immuch360 je mobilní aplikace Immich s 360° fotkami a videi, ve kterých se můžete rozhlížet, a s bezplatným přehrávačem plochých, 360°, 3D a VR180 fotek a videí, na telefonech a tabletech s Androidem, na iPhonech a iPadech, na Meta Quest 3 a 3S a od buildu 20 na Android TV a Google TV. Je určena těm, kdo fotí 360° kamerou (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) nebo v režimu fotosféry telefonu, nebo kdo mají headset, a chtějí sledovat své vlastní záběry ze serveru Immich, ze samotného telefonu, z NAS, z mediálního serveru nebo ze serveru Plex: stejný server, stejný účet, žádný plugin na serveru, nebo vůbec žádný server. Od buildu 20 zobrazuje také kamery Tapo, živě i záznamy z jejich paměťové karty.
+Immuch360 je mobilní aplikace Immich s 360° fotkami a videi, ve kterých se můžete rozhlížet, a s bezplatným přehrávačem plochých, 360°, 3D a VR180 fotek a videí, na telefonech a tabletech s Androidem, na iPhonech a iPadech, na headsetech Meta Quest (Quest 3 a 3S a od buildu 21 Quest 2 a Quest Pro, netestováno) a od buildu 20 na Android TV a Google TV. Je určena těm, kdo fotí 360° kamerou (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) nebo v režimu fotosféry telefonu, nebo kdo mají headset, a chtějí sledovat své vlastní záběry ze serveru Immich, ze samotného telefonu, z NAS, z mediálního serveru nebo ze serveru Plex: stejný server, stejný účet, žádný plugin na serveru, nebo vůbec žádný server. Od buildu 20 zobrazuje také kamery Tapo, živě i záznamy z jejich paměťové karty.
 
 <p align="center">
   <sub>Neoficiální fork. Není spojen s Immich ani s FUTO. Název se čte jako „I am much 360“.</sub>
@@ -15,7 +15,7 @@ Immuch360 je mobilní aplikace Immich s 360° fotkami a videi, ve kterých se m�
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">ve schvalování</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store ve schvalování &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store schválen, build 21 odeslán jako první aktualizace &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 je mobilní aplikace Immich s 360° fotkami a videi, ve kterých se m�
     <td align="center" width="33%"><h3>🎥 Nativní 2.5D</h3>Hloubka na plochém displeji ze stereoskopického videa, pohled sleduje vaši hlavu (experimentální, telefony a tablety)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Jedna aplikace na telefonech, tabletech a v headsetu, skutečné 3D v headsetu a od buildu 20 na Android TV s dálkovým ovladačem</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Jedna aplikace na telefonech, tabletech a v headsetech Quest 2, Pro, 3 a 3S, skutečné 3D v headsetu a od buildu 20 na Android TV s dálkovým ovladačem</td>
     <td align="center"><h3>🔌 Se serverem i bez něj</h3>Váš server Immich, nebo vlastní galerie telefonu, bez účtu</td>
     <td align="center"><h3>🗄️ Síťová úložiště</h3>Samba (SMB), WebDAV a od buildu 19 mediální servery DLNA, nalezené v síti a čtené živě, nic se nestahuje, a odeslané do Immich, kdy se rozhodnete. Od buildu 19 telefon také sdílí svou vlastní galerii s headsetem</td>
   </tr>
@@ -109,7 +109,7 @@ Volba se pamatuje v telefonu a na serveru nic nemění. U souboru ze síťového
 
 Nemáte server Immich nebo nechcete účet: chcete jen, aby se 360° fotky z vašeho telefonu otevíraly jako koule, kterou můžete otáčet gyroskopem. Aplikace Immich nejdříve žádá přihlášení.
 
-Na přihlašovací stránce otevře „Použít bez serveru“ Immuch360 s vlastními fotkami a videi zařízení, s prohlížeči 360°, 3D, VR180 a Spatial, se seznamem 360° a se síťovými úložišti (od buildu 20 také se servery Plex a kamerami Tapo), bez účtu Immich. Funkce serveru zůstávají skryté nebo zašedlé, dokud nepřipojíte server; nic neopouští zařízení. Na Meta Quest 3 otevře vlastní fotky a videa headsetu; na televizi, která žádné nemá, odkáže na síťová úložiště (viz [Sledování na televizi](#watch-on-your-tv-android-tv-and-google-tv)).
+Na přihlašovací stránce otevře „Použít bez serveru“ Immuch360 s vlastními fotkami a videi zařízení, s prohlížeči 360°, 3D, VR180 a Spatial, se seznamem 360° a se síťovými úložišti (od buildu 20 také se servery Plex a kamerami Tapo), bez účtu Immich. Funkce serveru zůstávají skryté nebo zašedlé, dokud nepřipojíte server; nic neopouští zařízení. Na Meta Questu otevře vlastní fotky a videa headsetu; na televizi, která žádné nemá, odkáže na síťová úložiště (viz [Sledování na televizi](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Karta Knihovna bez serveru: nahoře položka 360°, pak V tomto zařízení se dvěma 360° fotkami a Síťová úložiště se sdílením jménem NAS">
 
@@ -159,7 +159,7 @@ Uživatelské jméno s prázdným heslem se odešle tak, jak je: Freebox Server 
 1. Klepněte na sdílení. Nejprve jsou složky, pak fotky a videa jako mřížka s náhledy (u každého videa také snímek, uložený v mezipaměti zařízení). Ty, které jsou rozpoznány jako 360°, mají štítek 360° a od buildu 19 prostorové fotky a videa Apple štítek 3D. Stažením dolů obsah obnovíte.
 2. Klepněte na fotku: otevře se na celou obrazovku (roztažení prstů, dvojité klepnutí) a její tlačítko 360° otevře prohlížeč koule.
 3. Klepněte na video: přehraje se v nativním přehrávači (přehrát, pozastavit, posun), s tlačítkem 360°, které otevře 360° přehrávač s jeho tlačítky 3D a 360°/180°, a na telefonu s tlačítkem Spatial pro stereoskopické soubory.
-4. Na Questu 3 tlačítko 360° otevře imerzivní zobrazení a od buildu 19 „Zobrazit ve 3D“ otevře prostorovou fotku Apple ve 3D.
+4. Na Questu tlačítko 360° otevře imerzivní zobrazení a od buildu 19 „Zobrazit ve 3D“ otevře prostorovou fotku Apple ve 3D.
 5. Nabídka ⋮ má „Zobrazit jako 360°“ pro soubory bez značky 360° a na telefonu „Spatial 2.5D“ pro videa, která nejsou stereoskopická.
 
 360°, 3D a VR180 se rozpoznávají podle metadat GPano nebo sférických metadat souboru, čtených pomocí požadavků na rozsah, a VR180 také podle názvu souboru. Od buildu 16 se rozpoznávají i nezpracované soubory Insta360 (fotka .insp podle názvu nebo podle kalibračního bloku kamery, video .insv podle názvu a rozměrů snímku) a spojují se.
@@ -252,7 +252,7 @@ Adresu, kterou server sděluje, se aplikace znovu naučí při každém připoje
 <a id="share-this-phone-on-the-network"></a>
 ## Sdílet tento telefon v síti
 
-Vaše fotky a videa jsou v telefonu a chcete je vidět v headsetu, bez počítače, NAS nebo serveru Immich. Od buildu 19 telefon, Android nebo iPhone, poskytuje své vlastní fotky a videa přes Wi-Fi a Meta Quest 3 je přehrává. Aplikace Immich nic takového nemá.
+Vaše fotky a videa jsou v telefonu a chcete je vidět v headsetu, bez počítače, NAS nebo serveru Immich. Od buildu 19 telefon, Android nebo iPhone, poskytuje své vlastní fotky a videa přes Wi-Fi a Meta Quest je přehrává. Aplikace Immich nic takového nemá.
 
 ### Zapnutí, na telefonu
 
@@ -285,7 +285,7 @@ Od té chvíle je to sdílení WebDAV jako každé jiné: rozpoznání 360°, ne
 
 Doma máte kamery Tapo a chcete vidět zahradní kameru a včerejší noční klipy vedle svých fotek, aniž byste otevírali aplikaci Tapo, a uložit si klip v Immich. Aplikace Immich pro kamery nic nemá a aplikace Tapo je samostatná aplikace přihlášená k vašemu účtu TP-Link, s klipy odděleně od vašich fotek.
 
-Od buildu 20 přidává Immuch360 kameru Tapo vedle síťových úložišť. Zobrazuje kameru živě na telefonech a tabletech s Androidem, na Android TV a na Meta Quest 3 a na všech platformách záznamy z její paměťové karty, den po dni: klip se stáhne z kamery, pak se přehraje jako každé jiné video a lze ho odeslat do Immich. Aplikace s kamerou komunikuje jen ve vaší síti, nikdy se servery TP-Link, a na kameře nikdy nic nemění.
+Od buildu 20 přidává Immuch360 kameru Tapo vedle síťových úložišť. Zobrazuje kameru živě na telefonech a tabletech s Androidem, na Android TV a na Meta Questu a na všech platformách záznamy z její paměťové karty, den po dni: klip se stáhne z kamery, pak se přehraje jako každé jiné video a lze ho odeslat do Immich. Aplikace s kamerou komunikuje jen ve vaší síti, nikdy se servery TP-Link, a na kameře nikdy nic nemění.
 
 ### Přidání kamery
 
@@ -396,7 +396,7 @@ Od buildu 19, na Androidu a na Questu:
 
 V aplikaci Immich stereoskopická 360° fotka nebo video zobrazuje obě oči současně, zdvojený obraz, a soubor VR180, který pokrývá jen přední polovinu, je roztažený kolem celé koule.
 
-Immuch360 rozpoznává 3D rozložení, nahoře a dole nebo vedle sebe, ze souboru (box st3d u videa), nebo je odhadne z tvaru snímku, a každý prohlížeč má tlačítko 3D pro jejich změnu. Telefon zobrazuje levé oko; Meta Quest 3 ukazuje každému oku jeho vlastní polovinu, ve skutečném 3D. Soubory VR180 se vykreslují na polokouli, se zadní částí černou místo roztaženého obrazu. Rozpoznávají se ze souboru (sférické meze nebo síť, ořez GPano) nebo podle „vr180“ či „180“ v názvu a každý prohlížeč má tlačítko 360°/180°.
+Immuch360 rozpoznává 3D rozložení, nahoře a dole nebo vedle sebe, ze souboru (box st3d u videa), nebo je odhadne z tvaru snímku, a každý prohlížeč má tlačítko 3D pro jejich změnu. Telefon zobrazuje levé oko; Meta Quest ukazuje každému oku jeho vlastní polovinu, ve skutečném 3D. Soubory VR180 se vykreslují na polokouli, se zadní částí černou místo roztaženého obrazu. Rozpoznávají se ze souboru (sférické meze nebo síť, ořez GPano) nebo podle „vr180“ či „180“ v názvu a každý prohlížeč má tlačítko 360°/180°.
 
 ### Změna rozložení nebo pokrytí
 
@@ -428,14 +428,14 @@ Se zapnutým Nastavení, Pokročilé, Řešení problémů přehrávač přidá 
 ### Formáty, soukromí a omezení
 
 - **Formáty**: vedle sebe a nahoře a dole, i s prohozenýma očima, plná nebo poloviční šířka, ploché, 360° a VR180. Rozložení se čte ze souboru, jinak se odhadne z tvaru snímku nebo z názvu souboru (sbs, ou, tb a podobně; soubor s poloviční šířkou se rozpozná jen podle názvu) a lze ho v přehrávači zvolit ručně. Volba se pamatuje u videa z knihovny, ne u souboru ze síťového úložiště.
-- **Kamera**: snímky se zpracovávají jen v zařízení, nikdy se neukládají a nikam se neodesílají. Build pro Quest 3 nemá vůbec žádné oprávnění ke kameře (headset nemá kameru, kterou by aplikace směla použít) a přehrávač Spatial se tam nenabízí: jeho tlačítko i nastavení jsou v headsetu skryté.
+- **Kamera**: snímky se zpracovávají jen v zařízení, nikdy se neukládají a nikam se neodesílají. Build pro Quest nemá vůbec žádné oprávnění ke kameře (headset nemá kameru, kterou by aplikace směla použít) a přehrávač Spatial se tam nenabízí: jeho tlačítko i nastavení jsou v headsetu skryté.
 - **Omezení**: experimentální, jen telefony a tablety (ne na Meta Questu), vyžaduje OpenGL ES 3.0 nebo Metal. Hloubka je odhad. Nejlépe funguje na šířku s dobře osvětleným obličejem. Ověřeno na Galaxy S24+; zpětná vazba z iPhonu je vítána.
 - **Záloha**: když se něco pokazí (žádná kamera, nepodporované zařízení, nečitelné rozložení), vrátíte se do běžného přehrávače.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Prostorové fotky a videa Apple
 
-iPhone pořizuje prostorové fotky a videa a server Immich o nich nic neříká: v aplikaci Immich jsou to plochá fotka nebo video. Od buildu 19 je Immuch360 rozpoznává čtením souborů a prostorovou fotku zobrazí ve 3D v Meta Questu 3. Nejde o přehrávač Spatial 2.5D výše, který je pro videa vedle sebe a nahoře a dole.
+iPhone pořizuje prostorové fotky a videa a server Immich o nich nic neříká: v aplikaci Immich jsou to plochá fotka nebo video. Od buildu 19 je Immuch360 rozpoznává čtením souborů a prostorovou fotku zobrazí ve 3D v headsetu Meta Quest. Nejde o přehrávač Spatial 2.5D výše, který je pro videa vedle sebe a nahoře a dole.
 
 - **Prostorové fotky** jsou soubory HEIC (`.heic`, `.heif`, `.hif`), které obsahují dva snímky, jeden pro každé oko, seskupené jako stereo pár. Aplikace přečte začátek souboru (v zařízení, originál na serveru požadavkem na rozsah, nebo soubor ze síťového úložiště) a odpověď si zapamatuje v telefonu, takže se fotka čte jen jednou.
 - **Prostorová videa** (MV-HEVC) se rozpoznávají podle video stopy: druhá vrstva a deklarované obě oči.
@@ -466,7 +466,7 @@ Rozpoznání bylo ověřeno na ukázkové prostorové fotce zapsané vlastní ob
 
 Lidé si kupují Quest 3, aby sledovali své vlastní 360° fotky a videa, a pak se ptají, kam soubory dát, jak je dostat do headsetu bez kabelu a jaký přehrávač použít: přehrávače 360° a 3D videa v obchodě jsou placené.
 
-Stejná aplikace pro Android běží na Questu 3 a 3S jako okno, s celou vaší knihovnou. Její tlačítko 360° otevře imerzivní zobrazení, kde je fotka nebo video všude kolem vás a rozhlížíte se otáčením hlavy, ve skutečném 3D u stereoskopických souborů (Meta Spatial SDK). Média pocházejí z vašeho serveru Immich, ze samotného headsetu, z NAS, z mediálního serveru, z telefonu nebo ze serveru Plex a přehrávají se tam, kde jsou (mediální server a telefon od buildu 19, server Plex od buildu 20, v headsetu zatím neověřeno), a od buildu 20 okno zobrazuje také kamery Tapo. Je zdarma a s otevřeným zdrojovým kódem. Ověřeno na Questu 3 a uživatelem s videi Insta360 X4 v 8K HEVC.
+Stejná aplikace pro Android běží na Questu 3 a 3S a od buildu 21 na Questu 2 a Questu Pro (netestováno) jako okno, s celou vaší knihovnou. Její tlačítko 360° otevře imerzivní zobrazení, kde je fotka nebo video všude kolem vás a rozhlížíte se otáčením hlavy, ve skutečném 3D u stereoskopických souborů (Meta Spatial SDK). Média pocházejí z vašeho serveru Immich, ze samotného headsetu, z NAS, z mediálního serveru, z telefonu nebo ze serveru Plex a přehrávají se tam, kde jsou (mediální server a telefon od buildu 19, server Plex od buildu 20, v headsetu zatím neověřeno), a od buildu 20 okno zobrazuje také kamery Tapo. Je zdarma a s otevřeným zdrojovým kódem. Ověřeno na Questu 3 a uživatelem s videi Insta360 X4 v 8K HEVC.
 
 ### Otevření imerzivního zobrazení
 
@@ -659,7 +659,7 @@ Vše, co umí oficiální mobilní aplikace Immich, je zde: zálohování, časo
 
 Chcete-li ukázat 360° fotku někomu, kdo aplikaci nemá, sdílejte ji sdíleným odkazem Immich: webová aplikace Immich zobrazí 360° fotku v jeho prohlížeči jako kouli.
 
-Aktuální build, build 20 (verze 3.3.0-rc.0, číslo buildu 3030018), vychází z Immich 3.3.0-rc.0 (Immich `main`, zatím ne stabilní vydání). Build 19 byl testován se serverem Immich 3.2 a build 20 nemění nic na tom, co aplikace od serveru žádá. Problémy prosím hlaste v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Úplnou dokumentaci samotného Immich najdete na [immich.app](https://immich.app).
+Aktuální build, build 21 (verze 3.3.0-rc.0, číslo buildu 3030019), vychází z Immich 3.3.0-rc.0 (Immich `main`, zatím ne stabilní vydání). Build 19 byl testován se serverem Immich 3.2 a buildy 20 a 21 nemění nic na tom, co aplikace od serveru žádá. Problémy prosím hlaste v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Úplnou dokumentaci samotného Immich najdete na [immich.app](https://immich.app).
 
 ## Srovnání s aplikací Immich a dalšími aplikacemi
 
@@ -670,20 +670,20 @@ Aktuální build, build 20 (verze 3.3.0-rc.0, číslo buildu 3030018), vychází
 | 360° fotky jako koule, ve které se rozhlížíte (tažení, roztažení prstů, dvojité klepnutí, setrvačnost, počáteční pohled kamery, částečná panoramata) | ❌ plochý pruh | ✅ | Testováno na Galaxy S24+ a iPhonu 14 |
 | Gyroskop: rozhlížení pohybem telefonu | ❌ | ✅ | Testováno na Galaxy S24+ a iPhonu 14 |
 | 360° videa ve sférickém přehrávači, se zvukem, posunem, výběrem zvukové stopy a ukazatelem načítání | ❌ ploché video | ✅ Android a iOS (na iOS zatím bez ukazatele průběhu) | Testováno na Galaxy S24+ a iPhonu 14 |
-| 3D (stereoskopické) 360° fotky a videa | ❌ zdvojený obraz | ✅ levé oko na telefonech, skutečné 3D na Questu 3 | Testováno na Galaxy S24+ a Questu 3 se skutečnými 3D 360° ukázkami (VRTogether, Vuze, Kandao) a 3D fotkou; hlášení z jiných kamer vítána |
+| 3D (stereoskopické) 360° fotky a videa | ❌ zdvojený obraz | ✅ levé oko na telefonech, skutečné 3D na Questu | Testováno na Galaxy S24+ a Questu 3 se skutečnými 3D 360° ukázkami (VRTogether, Vuze, Kandao) a 3D fotkou; hlášení z jiných kamer vítána |
 | VR180 (polokoule) fotky a videa | ❌ roztažené kolem koule | ✅ polokoule, tlačítko 360°/180° | Testováno na emulátoru Androidu a Galaxy S24+ se syntetickými médii; zpětná vazba ze zařízení vítána |
-| Prostorové fotky Apple (stereo páry HEIC) a prostorová videa (MV-HEVC) | ❌ plochá fotka nebo video, nic neříká, že je prostorové | ✅ od buildu 19: fotky ve 3D v Questu 3, jinde jedno oko a řádek v podrobnostech | Rozpoznání ověřeno na ukázkové fotce zapsané obrazovou knihovnou Apple a na syntetických souborech; zobrazení v headsetu a skutečné soubory z iPhonu jsou testem na zařízeních pro build 19 |
-| Imerzivní zobrazení na Meta Quest 3 se sledováním hlavy, ukazatelem průběhu, předchozím a dalším a otáčením | ❌ | ✅ stejná aplikace, jako build pro headset nebo APK pro telefon | Testováno na Questu 3 (ovládání buildu 14, upravené v buildu 16 po zpětné vazbě uživatele) a uživatelem s videi Insta360 X4 v 8K HEVC |
+| Prostorové fotky Apple (stereo páry HEIC) a prostorová videa (MV-HEVC) | ❌ plochá fotka nebo video, nic neříká, že je prostorové | ✅ od buildu 19: fotky ve 3D v Questu, jinde jedno oko a řádek v podrobnostech | Rozpoznání ověřeno na ukázkové fotce zapsané obrazovou knihovnou Apple a na syntetických souborech; zobrazení v headsetu a skutečné soubory z iPhonu jsou testem na zařízeních pro build 19 |
+| Imerzivní zobrazení na Meta Questu se sledováním hlavy, ukazatelem průběhu, předchozím a dalším a otáčením | ❌ | ✅ stejná aplikace, jako build pro headset nebo APK pro telefon | Testováno na Questu 3 (ovládání buildu 14, upravené v buildu 16 po zpětné vazbě uživatele) a uživatelem s videi Insta360 X4 v 8K HEVC |
 | Štítek 360° na náhledech a seznam 360° s nezpracovanými soubory a filtry (období, zdroj, druh, kamera) | ❌ | ✅ filtry od buildu 18 | Hotovo |
 | „Zobrazit jako 360°“ pro soubory, které server neoznačí | ❌ | ✅ pamatuje se v telefonu | Hotovo |
 | Spatial 2.5D: hloubka na plochém displeji ze stereoskopického videa | ❌ | ✅ experimentální, telefony a tablety | Testováno na Galaxy S24+; zpětná vazba z iPhonu vítána |
 | Použití úplně bez serveru, s vlastní galerií zařízení | ❌ nutné přihlášení | ✅ | Testováno na Galaxy S24+, Questu 3 a emulátoru Androidu |
-| Sdílení SMB a WebDAV nalezená v síti a přehrávaná živě, nic se nestahuje | ❌ | ✅ každý prohlížeč, telefony i Quest 3 | Testováno s Freebox Serverem (SMB) na Galaxy S24+ a Questu 3 a proti testovacím serverům Samba a WebDAV na emulátoru Androidu; zpětná vazba k jiným NAS a WebDAV vítána |
+| Sdílení SMB a WebDAV nalezená v síti a přehrávaná živě, nic se nestahuje | ❌ | ✅ každý prohlížeč, telefony i Quest | Testováno s Freebox Serverem (SMB) na Galaxy S24+ a Questu 3 a proti testovacím serverům Samba a WebDAV na emulátoru Androidu; zpětná vazba k jiným NAS a WebDAV vítána |
 | Mediální servery DLNA jako typ sdílení | ❌ | ✅ od buildu 19 | Ověřeno proti minidlna a Gerbera v Dockeru; Plex, Jellyfin, NAS, Freebox Server, iPhone a Quest jsou testem na zařízeních pro build 19 |
 | Odeslání souborů ze sdílení do Immich; ručně odeslané soubory zařízení se počítají jako zálohované | ❌ jen soubory zařízení | ✅ od buildu 15 | Testováno na emulátoru Androidu proti testovacímu serveru Samba a serveru Immich 3.2 |
 | Sdílení tohoto telefonu v síti, pro headset | ❌ | ✅ od buildu 19, Android a iOS | Jednotkové testy a end-to-end testy s klientem WebDAV headsetu, na počítači; telefon obsluhující Quest a strana iPhonu jsou testem na zařízeních pro build 19 |
-| Knihovny Plex Media Serveru přehrávané z původních souborů, doma i mimo domov, bez plex.tv | ❌ | ✅ od buildu 20, všechny prohlížeče, na telefonech, tabletech, Questu 3 a televizích | Ověřeno z počítače proti skutečnému Plex Media Serveru 1.42.1 (párování, složky, rozsahy bajtů, náhledy, adresa mimo domov); zatím neověřeno v zařízení |
-| Kamery Tapo: živý obraz a záznamy z paměťové karty odeslané do Immich, když se rozhodnete | ❌ | ✅ od buildu 20: záznamy všude, živě na Androidu, Android TV a Questu 3 | Ověřeno proti simulované kameře; zatím neověřeno se skutečnou kamerou |
+| Knihovny Plex Media Serveru přehrávané z původních souborů, doma i mimo domov, bez plex.tv | ❌ | ✅ od buildu 20, všechny prohlížeče, na telefonech, tabletech, Questu a televizích | Ověřeno z počítače proti skutečnému Plex Media Serveru 1.42.1 (párování, složky, rozsahy bajtů, náhledy, adresa mimo domov); zatím neověřeno v zařízení |
+| Kamery Tapo: živý obraz a záznamy z paměťové karty odeslané do Immich, když se rozhodnete | ❌ | ✅ od buildu 20: záznamy všude, živě na Androidu, Android TV a Questu | Ověřeno proti simulované kameře; zatím neověřeno se skutečnou kamerou |
 | Android TV a Google TV, ovládané dálkovým ovladačem, ve stejném APK | ❌ není aplikace pro televizi | ✅ od buildu 20 | Ověřeno automatickými testy; zatím neověřeno na televizi |
 | Nezpracované fotky Insta360 .insp a videa .insv s jednou stopou | ❌ ploché | ✅ od buildu 16 | Fotky ověřeny proti exportům souborů X3 z Insta360 Studia, videa na emulátoru Androidu se souborem X3 v nízkém rozlišení; na iPhonu zatím neběželo |
 | Nezpracovaná videa s jedním objektivem na stopu nebo na soubor (Insta360 X4, X4 Air, X5, X6, dvojice X3, GoPro .360, DJI .osv) | ❌ ploché nebo chybné | ✅ od buildu 18 | Parsery a spojování ověřeny na skutečných souborech X4, dvojice X3, GoPro MAX a Osmo 360; přehrávání je testem na zařízeních pro buildy 18 a 19 |
@@ -697,7 +697,7 @@ Aktuální build, build 20 (verze 3.3.0-rc.0, číslo buildu 3030018), vychází
 
 | Co lidé používají | Na co narazí | Co dělá Immuch360 |
 |---|---|---|
-| Webová aplikace Immich | Zobrazí 360° fotku jako kouli, ale nezpracovaný .insp považuje za hotové panorama a obalí jeho dva kruhy kolem koule; zobrazení VR je stále jen žádost ([diskuse #14768](https://github.com/immich-app/immich/discussions/14768)) | Spojuje nezpracované soubory v zařízení a otevírá imerzivní zobrazení v Questu 3 |
+| Webová aplikace Immich | Zobrazí 360° fotku jako kouli, ale nezpracovaný .insp považuje za hotové panorama a obalí jeho dva kruhy kolem koule; zobrazení VR je stále jen žádost ([diskuse #14768](https://github.com/immich-app/immich/discussions/14768)) | Spojuje nezpracované soubory v zařízení a otevírá imerzivní zobrazení v Questu |
 | Aplikace Insta360 nebo Studio | Nutná k převedení nezpracovaných souborů z karty na 360° snímek před sledováním | Otevírá nezpracované soubory .insp a .insv přímo, i soubory GoPro .360 a DJI .osv |
 | Plex, Jellyfin, Synology Photos | 360° fotky a videa zobrazené plochě nebo nerozpoznané, jak popisují vlákna na jejich fórech (žádost u Plexu je otevřená od roku 2017) | Od buildu 20 čte samotnou knihovnu Plex, nebo stejné složky přes SMB, WebDAV nebo DLNA, a přehrává je jako kouli, bez jakékoli změny na serveru |
 | Aplikace Tapo | Samostatná aplikace přihlášená k vašemu účtu TP-Link, s klipy odděleně od vašich fotek | Zobrazuje kameru vedle vašich fotek, komunikuje s ní jen ve vaší síti a uchová klip jako video, které můžete odeslat do Immich (od buildu 20) |
@@ -709,7 +709,7 @@ Aktuální build, build 20 (verze 3.3.0-rc.0, číslo buildu 3030018), vychází
 
 Immuch360 je galerie a zároveň bezplatný přehrávač médií: přehraje to, co oficiální aplikace neumí, ze zdrojů ve druhé tabulce, v přehrávači, který se k souboru hodí.
 
-| Co | Telefony s Androidem | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (od buildu 20) |
+| Co | Telefony s Androidem | iPhone, iPad | Meta Quest | Android TV, Google TV (od buildu 20) |
 |---|---|---|---|---|
 | Plochá videa (MP4, MOV, MKV, co zařízení dekóduje) | Přehrávač Immich a nativní přehrávač pro síťová úložiště | Stejně, kromě souborů MKV a AVI ze sdílení, které iOS neotevře (ze serveru se přehrají překódované) | V okně | Jako na telefonech; OK pozastaví, vlevo a vpravo skočí o 10 s |
 | 360° fotky | Prohlížeč koule, gyroskop | Stejně | Imerzivní, všude kolem vás | Prohlížeč koule otáčený šipkami, přibližovaný tlačítky kanálů |
@@ -739,14 +739,14 @@ Sloupec televize zatím nebyl ověřen na televizi, viz [Sledování na televizi
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 běží také na Meta Quest 3 a 3S (Horizon OS v69 nebo novější; build v Horizon Store je uveden jen pro tyto dva; univerzální `-release.apk` by se měl nainstalovat i na Quest 2 nebo Quest Pro, netestováno). Jak ji používat, je v části [V headsetu Meta Quest 3](#in-the-meta-quest-3-headset); tato část se týká instalace a toho, co je v headsetu jinak.
+Immuch360 běží také na headsetech Meta Quest s Horizon OS v69 nebo novějším. Od buildu 21 je build v Horizon Store uveden pro Quest 2, Quest Pro, Quest 3 a 3S, tedy pro čtyři headsety, které už uvádí univerzální `-release.apk`; první Quest ne, obchod ho už nepřijímá. Quest 3 a 3S jsou otestované. Quest 2 a Quest Pro zatím otestované nejsou: jejich videodekodéry jsou pomalejší a limity, které aplikace kontroluje, byly změřeny na Questu 3, takže velké video H.264 může být na nich odmítnuto se zprávou nebo se může trhat. Hlášení z těchto dvou headsetů jsou vítána v [Issues](https://github.com/freeKC/Immuch360/issues). Jak ji používat, je v části [V headsetu Meta Quest 3](#in-the-meta-quest-3-headset); tato část se týká instalace a toho, co je v headsetu jinak.
 
 Build pro headset komunikuje se servery jen přes HTTPS, nebo přes prostý HTTP s názvy domácí sítě (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) a se samotným headsetem, jak vyžaduje Horizon Store. Server zadaný jako prostá adresa HTTP s IP, například `http://192.168.1.10:2283`, tento build odmítne: použijte HTTPS, název domácí sítě (`nas.local`) nebo univerzální `-release.apk`, který zachovává otevřená pravidla telefonů. Sdílení WebDAV, DLNA a sdílení telefonu na prosté adrese HTTP místní sítě se to netýká: aplikace je čte sama a svým přehrávačům předává jen adresu svého místního mostu (u DLNA a sdílení telefonu, nových v buildu 19, ještě k potvrzení v headsetu). Od buildu 20 se k serveru Plex přistupuje přes HTTPS a ke kameře Tapo sama aplikace, její živý obraz přes RTSP, což není HTTP: ani jednoho by se to nemělo týkat (k potvrzení v headsetu).
 
 <a id="install"></a>
 ### Instalace
 
-Záznam v Horizon Store čeká na schválení společností Meta, odeslaný s buildem 14; dokud nebude schválen, nahrajte ručně (sideload) soubor `-quest-release.apk` z vydání (sestavený pro headset: 64 bitů, cílové SDK 34, jen oprávnění, která headset používá), nebo univerzální `-release.apk`:
+Meta schválila záznam v Horizon Store 7. října 2026 s buildem 14 a build 21 je odeslán jako jeho první aktualizace. Dokud stránka v obchodě nebude veřejná, nebo chcete-li build dřív, než ho bude mít obchod, nahrajte ručně (sideload) soubor `-quest-release.apk` z vydání (sestavený pro headset: 64 bitů, cílové SDK 34, jen oprávnění, která headset používá), nebo univerzální `-release.apk`:
 
 1. Jednou zapněte režim vývojáře. V aplikaci Meta Horizon v telefonu otevřete Zařízení, vyberte headset, pak Nastavení headsetu, pak Režim vývojáře. K tomu je potřeba vývojářský účet, který je na developers.meta.com zdarma. Na počítači také potřebujete adb (Android SDK Platform Tools), nebo SideQuest.
 2. Připojte headset k počítači kabelem USB-C. V headsetu potvrďte „Allow USB debugging“ (povolit ladění USB).
@@ -754,7 +754,7 @@ Záznam v Horizon Store čeká na schválení společností Meta, odeslaný s bu
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. V headsetu otevřete Knihovnu, zvolte filtr „Unknown sources“ (neznámé zdroje) a spusťte Immuch360.
@@ -776,7 +776,7 @@ Snímky pořízené v headsetu tlačítkem pro snímek obrazovky (tlačítko Met
 ### Omezení v headsetu
 
 - **Video kodeky**: HEVC (H.265) je bezpečná volba; H.264 končí zhruba na 4096x2304. Co aplikace kontroluje a jak dát headsetu video, které dekóduje, je v části [Podrobnosti o videu a dekodéry](#video-details-decoders-and-why-a-video-stutters).
-- **Obchod**: verze v obchodě začíná buildem 14. Funkce označené „od buildu 15“ a pozdější přijdou s jejími dalšími aktualizacemi (alfa testovací kanál obchodu, pro testery, dostává každý nový build); APK z GitHubu je má všechny už teď.
+- **Obchod**: verze v obchodě začíná buildem 14. Funkce označené „od buildu 15“ a pozdější přijdou s buildem 21, její první aktualizací, jakmile ho Meta schválí (alfa testovací kanál obchodu, pro testery, dostává každý nový build); APK z GitHubu je má všechny už teď.
 - **Oprávnění**: build pro headset žádá jen o fotky a videa (režim bez serveru) a oznámení (průběh zálohování). Na rozdíl od buildu pro telefon nemá oprávnění k úložišti, zvuku, poloze ani kameře; přepínání serveru podle názvu Wi-Fi proto v headsetu není k dispozici.
 - **Velikost APK**: Spatial SDK přidává zhruba 56 MB nativního 64bitového kódu ARM, i na telefonech, kde se nikdy nenačte.
 - **Licence**: imerzivní zobrazení používá Meta Spatial SDK, distribuované pod licencí Meta Platform Technologies SDK License Agreement.
@@ -784,13 +784,13 @@ Snímky pořízené v headsetu tlačítkem pro snímek obrazovky (tlačítko Met
 <a id="where-to-get-it"></a>
 ## Kde aplikaci získat
 
-Aplikace je na Google Play pro telefony a tablety; verze pro App Store čeká na schválení společností Apple, verze pro Meta Horizon Store na schválení společností Meta a verze Google Play pro televize na schválení televizní verze Googlem. Vydání na GitHubu je vždy nejnovější build:
+Aplikace je na Google Play pro telefony a tablety; verze pro App Store čeká na schválení společností Apple, záznam v Meta Horizon Store je schválen a jeho první aktualizace je ve schvalování u společnosti Meta a verze Google Play pro televize čeká na schválení televizní verze Googlem. Vydání na GitHubu je vždy nejnovější build:
 
 | Platforma | Dnes | Brzy |
 |---|---|---|
-| Telefony a tablety s Androidem | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), nebo APK na stránce [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pro telefon (univerzální `Immuch360-v<version>-release.apk` funguje všude, `-armeabi-v7a` je pro starší 32bitové telefony a soubor `.aab` je pro Google Play, ne pro ruční instalaci). Build na GitHubu bývá před obchodem napřed. Tak či tak se instaluje vedle oficiální aplikace Immich (balíček `com.aprogsys.immuch360`). | Google Play: build 18 je dostupný, build 19 ve schvalování u Googlu od 6. října 2026, build 20 bude následovat |
+| Telefony a tablety s Androidem | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), nebo APK na stránce [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pro telefon (univerzální `Immuch360-v<version>-release.apk` funguje všude, `-armeabi-v7a` je pro starší 32bitové telefony a soubor `.aab` je pro Google Play, ne pro ruční instalaci). Build na GitHubu bývá před obchodem napřed. Tak či tak se instaluje vedle oficiální aplikace Immich (balíček `com.aprogsys.immuch360`). | Google Play: build 18 je dostupný, build 20 ve schvalování u Googlu od 7. října 2026, místo buildu 19 |
 | iPhone a iPad | Čeká na schválení společností Apple. Verze ve schvalování obsahuje funkce buildu 11: nahrávání do Immich a volba Zdroj videa (build 15) a nezpracované soubory Insta360 (build 16) přijdou s pozdější aktualizací v App Store. Ze zdrojového kódu se dá sestavit v Xcode nebo na Codemagic, viz [Sestavení vlastními silami](#build-it-yourself). | App Store, ve schvalování |
-| Meta Quest 3 a 3S | Soubor `-quest-release.apk` ze stránky [Releases](https://github.com/freeKC/Immuch360/releases) (funguje i univerzální `-release.apk`), nahraný ručně v režimu vývojáře, viz [Instalace](#install). Build z obchodu a APK z GitHubu jsou podepsané různými klíči: chcete-li přejít z jednoho na druhý, nejdřív aplikaci odinstalujte (její nastavení a uložená sdílení zmizí s ní). | Meta Horizon Store: build 14 ve schvalování u společnosti Meta od 3. října 2026; alfa kanál obchodu (jen pro testery) dostává každý nový build |
+| Meta Quest 2, Quest Pro, Quest 3 a 3S (Quest 2 a Quest Pro netestované) | Soubor `-quest-release.apk` ze stránky [Releases](https://github.com/freeKC/Immuch360/releases) (funguje i univerzální `-release.apk`), nahraný ručně v režimu vývojáře, viz [Instalace](#install). Build z obchodu a APK z GitHubu jsou podepsané různými klíči: chcete-li přejít z jednoho na druhý, nejdřív aplikaci odinstalujte (její nastavení a uložená sdílení zmizí s ní). | Meta Horizon Store: záznam byl schválen 7. října 2026 s buildem 14 a build 21, jeho první aktualizace, je ve schvalování u společnosti Meta; alfa kanál obchodu (jen pro testery) dostává každý nový build |
 | Android TV a Google TV (od buildu 20) | Univerzální `Immuch360-v<version>-release.apk` ze stránky [Releases](https://github.com/freeKC/Immuch360/releases), nahraný ručně přes adb, viz [Instalace na televizi](#install-it-on-the-tv). Je to stejná aplikace jako na telefonech. | Google Play na televizích, po schválení televizní verze Googlem |
 
 Odkazy na App Store a Meta Horizon Store sem budou doplněny, jakmile budou záznamy zveřejněny. Přihlaste se obvyklou adresou URL svého serveru Immich a svým účtem, nebo na přihlašovací stránce klepněte na „Použít bez serveru“ a začněte s vlastními fotkami a videi zařízení. APK z GitHubu se sám neaktualizuje: sledujte stránku Releases, a pokud jste aplikaci nainstalovali z obchodu, berte aktualizace z tohoto obchodu.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Snímky obrazovky pro obchody se pořizují na ladicích buildech pro simulátor sestavených s `--dart-define=IMMUCH_SCREENSHOTS=true`, což jen skryje ladicí banner. Dvě varianty (flavours) pro Android jsou stejná aplikace. Od buildu 20 se varianta `phone` také hlásí jako aplikace pro televizi (položka spouštěče pro televizi a banner, dotyková obrazovka není vyžadována), což varianta `quest` vynechává. Varianta `quest` cílí na SDK 34 a ponechává jen oprávnění, která headset používá (fotky, videa, oznámení): správa médií, poloha na pozadí, starší přístup k úložišti, zvuk, poloha médií, poloha zařízení a kamera jsou odstraněny v `android/app/src/quest/AndroidManifest.xml`, protože Meta Horizon Store první dvě odmítá a u každého dalšího citlivého oprávnění žádá zdůvodnění; tentýž soubor uvádí Quest 3 a 3S jako podporovaná zařízení a omezuje prostý HTTP na samotný headset a na názvy domácí sítě. APK je jen 64bitový díky dvěma dodatečným argumentům jeho příkazového řádku (`--target-platform android-arm64 --android-project-arg arm64only=true`). Varianta `phone` je ta, kterou vyžaduje Google Play. Chcete-li sestavit pro iOS na vlastním Macu, použijte Xcode a svůj vlastní podpisový tým; s Xcode 26 nejdřív jednou spusťte `xcodebuild -downloadComponent MetalToolchain`, protože ho potřebují shadery Spatial. Bez Macu běží buildy pro iOS na Codemagic (hostovaný Mac) podle souboru `codemagic.yaml` tohoto repozitáře. Vydání pro Android se sestavují na GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Snímky obrazovky pro obchody se pořizují na ladicích buildech pro simulátor sestavených s `--dart-define=IMMUCH_SCREENSHOTS=true`, což jen skryje ladicí banner. Dvě varianty (flavours) pro Android jsou stejná aplikace. Od buildu 20 se varianta `phone` také hlásí jako aplikace pro televizi (položka spouštěče pro televizi a banner, dotyková obrazovka není vyžadována), což varianta `quest` vynechává. Varianta `quest` cílí na SDK 34 a ponechává jen oprávnění, která headset používá (fotky, videa, oznámení): správa médií, poloha na pozadí, starší přístup k úložišti, zvuk, poloha médií, poloha zařízení a kamera jsou odstraněny v `android/app/src/quest/AndroidManifest.xml`, protože Meta Horizon Store první dvě odmítá a u každého dalšího citlivého oprávnění žádá zdůvodnění; tentýž soubor uvádí Quest 2, Quest Pro, Quest 3 a 3S jako podporovaná zařízení a omezuje prostý HTTP na samotný headset a na názvy domácí sítě. APK je jen 64bitový díky dvěma dodatečným argumentům jeho příkazového řádku (`--target-platform android-arm64 --android-project-arg arm64only=true`). Varianta `phone` je ta, kterou vyžaduje Google Play. Chcete-li sestavit pro iOS na vlastním Macu, použijte Xcode a svůj vlastní podpisový tým; s Xcode 26 nejdřív jednou spusťte `xcodebuild -downloadComponent MetalToolchain`, protože ho potřebují shadery Spatial. Bez Macu běží buildy pro iOS na Codemagic (hostovaný Mac) podle souboru `codemagic.yaml` tohoto repozitáře. Vydání pro Android se sestavují na GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 V tomto repozitáři není žádné tajemství: podpisový klíč pro Android je uložen jako šifrované secrets GitHub Actions a podpisové materiály Apple jako šifrované proměnné na Codemagic. Soubory workflow na ně odkazují jen jménem. Bez vlastního `android/key.jks` se build vydání podepíše ladicím klíčem a nelze ho nainstalovat přes kopii z GitHubu nebo z obchodu (tu nejdřív odinstalujte); ladicí build se nainstaluje vedle ní jako Immuch360 debug. Kopie v Meta Horizon Store je APK `quest` z vydání podepsaný jiným klíčem, tím, se kterým byla aplikace v obchodě poprvé zaregistrována, takže ani ji nelze nainstalovat přes ručně nahraný APK, ani naopak.
 
@@ -857,9 +857,9 @@ Tento projekt je fork Immich a zůstává pod licencí [GNU AGPL v3](LICENSE). K
 
 Co ještě není hotové, nejpravděpodobnější první. Nic zde není slib a zpětná vazba v [systému hlášení](https://github.com/freeKC/Immuch360/issues) pomáhá rozhodnout, co přijde dřív.
 
-- **Google Play**: build 18 je dostupný; build 19 je ve schvalování u Googlu od 6. října 2026 a build 20 bude následovat.
+- **Google Play**: build 18 je dostupný; build 20 je ve schvalování u Googlu od 7. října 2026, místo buildu 19. Build 21 na telefonech a tabletech nic nemění.
 - **App Store**: verze 3.3.0 čeká na schválení společností Apple; obsahuje funkce buildu 11, takže nahrávání do Immich a kontrola video dekodérů (build 15) a nezpracované soubory Insta360 (build 16) přijdou s příští aktualizací v App Store. Odkaz sem bude doplněn, jakmile bude dostupná.
-- **Meta Horizon Store**: záznam byl odeslán ke schválení společnosti Meta 3. října 2026 s buildem 14 a alfa kanál obchodu dostává každý nový build pro příští aktualizaci. Jakmile bude záznam schválen, Quest 3 už nebude potřebovat ruční instalaci a odkaz na obchod sem bude doplněn; ručně nahranou kopii je nutné nejdřív odinstalovat (viz [Instalace](#install)).
+- **Meta Horizon Store**: Meta schválila záznam 7. října 2026 s buildem 14. Build 21 je odeslán jako jeho první aktualizace: přináší vše od buildu 14 (nahrávání ze sdílení do Immich, zdroj videa vybraný podle toho, co headset dekóduje, nezpracované soubory Insta360, GoPro a DJI, DLNA, sdílení telefonu, prostorové fotky Apple, knihovny Plex Media Serveru, kamery Tapo) a obchod ho uvádí pro Quest 2, Quest Pro, Quest 3 a 3S. Odkaz na obchod sem bude doplněn, jakmile bude stránka veřejná; ručně nahranou kopii je nutné nejdřív odinstalovat (viz [Instalace](#install)).
 - **Záznamy v obchodech**: záznam na Google Play byl v říjnu 2026 přepsán s novými snímky obrazovky a s televizní verzí získá snímky z televize a televizní banner. Text v App Store stále popisuje první buildy (360° fotky a videa, nezpracované soubory zobrazené plochě); bude představovat prohlížeče 3D, VR180 a Spatial, režim bez serveru, síťová úložiště, přehrávač médií a nezpracované soubory Insta360. Text v Meta Horizon Store už přehrávač médií představuje.
 - **Nezpracované soubory 360° kamer, dále**: ukazatel průběhu při přípravě nezpracované fotky pro headset; vyrovnání videí GoPro a DJI z jejich vlastních pohybových dat; duální fisheye .dng; hlášení ze zařízení k přehrávání se dvěma objektivy z buildu 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) k potvrzení švů a kapacity dekodérů.
 - **DLNA, sdílení telefonu a prostorová média Apple, dále**: hlášení ze zařízení k buildu 19 (Plex, Jellyfin, NAS a Freebox Server přes DLNA; telefon obsluhující Quest, i přes svůj hotspot; skutečné prostorové fotky a videa z iPhonu v headsetu); oprávnění pro multicast vyžádané od Apple, aby iPhony našly každý server DLNA; předchozí a další mezi prostorovými fotkami v headsetu; štítek prostorové fotky u fotek ze serveru na časové ose; prostorová videa ve 3D na Questu, pokud to jeho dekodéry dovolí.

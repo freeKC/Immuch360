@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | 日本語 | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360：360°、3D、VR180 の写真と動画を、Immich、スマートフォン、NAS から。Android、iOS、Meta Quest 3 に対応、サーバーあり・なしのどちらでも">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360：360°、3D、VR180 の写真と動画を、Immich、スマートフォン、NAS から。Android、iOS、Meta Quest に対応、サーバーあり・なしのどちらでも">
 </p>
 
 # Immuch360
 
-Immuch360 は、見回せる 360° の写真と動画に対応した Immich モバイルアプリで、平面、360°、3D、VR180 の写真と動画を再生できる無料のプレーヤーでもあります。Android のスマートフォンとタブレット、iPhone と iPad、Meta Quest 3 と 3S、そしてビルド 20 からは Android TV と Google TV で動作します。360° カメラ（Insta360、GoPro MAX、DJI Osmo 360、Ricoh Theta、Samsung Gear 360）やスマートフォンのフォトスフィアモードで撮影する人、またはヘッドセットを持っていて、自分の撮影データを Immich サーバー、スマートフォン本体、NAS、メディアサーバー、Plex サーバーから見たい人のためのアプリです。同じサーバー、同じアカウントのまま使え、サーバー用のプラグインは不要で、サーバーなしでも使えます。ビルド 20 からは Tapo カメラも、ライブ映像とメモリーカードの録画を表示できます。
+Immuch360 は、見回せる 360° の写真と動画に対応した Immich モバイルアプリで、平面、360°、3D、VR180 の写真と動画を再生できる無料のプレーヤーでもあります。Android のスマートフォンとタブレット、iPhone と iPad、Meta Quest ヘッドセット（Quest 3 と 3S、ビルド 21 からは Quest 2 と Quest Pro も、未テスト）、そしてビルド 20 からは Android TV と Google TV で動作します。360° カメラ（Insta360、GoPro MAX、DJI Osmo 360、Ricoh Theta、Samsung Gear 360）やスマートフォンのフォトスフィアモードで撮影する人、またはヘッドセットを持っていて、自分の撮影データを Immich サーバー、スマートフォン本体、NAS、メディアサーバー、Plex サーバーから見たい人のためのアプリです。同じサーバー、同じアカウントのまま使え、サーバー用のプラグインは不要で、サーバーなしでも使えます。ビルド 20 からは Tapo カメラも、ライブ映像とメモリーカードの録画を表示できます。
 
 <p align="center">
   <sub>非公式のフォークです。Immich および FUTO とは提携していません。名前は「I am much 360」と読みます。</sub>
@@ -15,7 +15,7 @@ Immuch360 は、見回せる 360° の写真と動画に対応した Immich モ�
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store：<a href="#where-to-get-it">審査中</a> &nbsp;·&nbsp;
-  Meta Quest 3：<a href="#meta-quest-3">APK</a>、Horizon Store は審査中 &nbsp;·&nbsp;
+  Meta Quest：<a href="#meta-quest-3">APK</a>、Horizon Store は承認済み、最初のアップデートとしてビルド 21 を提出済み &nbsp;·&nbsp;
   Android TV：<a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 は、見回せる 360° の写真と動画に対応した Immich モ�
     <td align="center" width="33%"><h3>🎥 ネイティブ 2.5D</h3>ステレオ動画から平面の画面に奥行きを再現し、視点が頭の動きに追従します（試験運用、スマートフォンとタブレット）</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android、iOS、Quest 3、TV</h3>スマートフォン、タブレット、ヘッドセットで 1 つのアプリ、ヘッドセットでは本物の 3D、ビルド 20 からは Android TV でリモコン操作</td>
+    <td align="center"><h3>📱 Android、iOS、Quest、TV</h3>スマートフォン、タブレット、Quest 2、Pro、3、3S ヘッドセットで 1 つのアプリ、ヘッドセットでは本物の 3D、ビルド 20 からは Android TV でリモコン操作</td>
     <td align="center"><h3>🔌 サーバーあり・なしのどちらでも</h3>自分の Immich サーバー、またはスマートフォン本体のギャラリー、アカウント不要</td>
     <td align="center"><h3>🗄️ ネットワーク共有</h3>Samba（SMB）、WebDAV、そしてビルド 19 からは DLNA メディアサーバーを、ネットワーク上で見つけてそのまま読み込みます。何もダウンロードせず、選んだときに Immich へ送信できます。ビルド 19 からは、スマートフォンが自分のギャラリーをヘッドセットと共有することもできます</td>
   </tr>
@@ -109,7 +109,7 @@ Immuch360 は、Android と iOS のスマートフォンとタブレットで、
 
 Immich サーバーがない、またはアカウントを作りたくない。ただスマートフォンの 360° 写真を、ジャイロスコープで回せる球体として開きたい。Immich アプリは、まずログインを求めます。
 
-ログイン画面の「サーバーなしで使用」を選ぶと、Immuch360 はデバイス本体の写真と動画で開き、360°、3D、VR180、Spatial の各ビューアー、360° リスト、ネットワーク共有（ビルド 20 からは Plex サーバーと Tapo カメラも）を使えます。Immich のアカウントは不要です。サーバーの機能は、サーバーに接続するまで非表示またはグレー表示になり、データがデバイスの外に出ることはありません。Meta Quest 3 では、ヘッドセット本体の写真と動画で開きます。自身の写真や動画を持たないテレビでは、ネットワーク共有へ案内します（[テレビで見る](#watch-on-your-tv-android-tv-and-google-tv) を参照）。
+ログイン画面の「サーバーなしで使用」を選ぶと、Immuch360 はデバイス本体の写真と動画で開き、360°、3D、VR180、Spatial の各ビューアー、360° リスト、ネットワーク共有（ビルド 20 からは Plex サーバーと Tapo カメラも）を使えます。Immich のアカウントは不要です。サーバーの機能は、サーバーに接続するまで非表示またはグレー表示になり、データがデバイスの外に出ることはありません。Meta Quest では、ヘッドセット本体の写真と動画で開きます。自身の写真や動画を持たないテレビでは、ネットワーク共有へ案内します（[テレビで見る](#watch-on-your-tv-android-tv-and-google-tv) を参照）。
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="サーバーなしのライブラリタブ：上部に 360° の項目、次に 360° 写真が 2 枚あるデバイス上の項目、NAS という名前の共有があるネットワーク共有">
 
@@ -159,7 +159,7 @@ Immuch360 は、SMB（Samba、Windows）、WebDAV、そしてビルド 19 から
 1. 共有をタップします。最初にフォルダー、次に写真と動画がサムネイル付きのグリッドで表示されます（各動画の 1 フレームもデバイスにキャッシュされます）。360° と認識されたものには 360° バッジが付き、ビルド 19 からは Apple の空間写真と空間ビデオに 3D バッジが付きます。下に引っ張ると更新します。
 2. 写真をタップすると全画面で開き（ピンチ、ダブルタップ）、その 360° ボタンで球体ビューアーが開きます。
 3. 動画をタップすると、ネイティブプレーヤーで再生されます（再生、一時停止、シーク）。360° ボタンで 360° プレーヤーと、その 3D と 360°/180° のボタンが使え、スマートフォンではステレオのファイルに Spatial ボタンがあります。
-4. Quest 3 では、360° ボタンでイマーシブビューが開き、ビルド 19 からは「3D で表示」で Apple の空間写真を 3D で開けます。
+4. Quest では、360° ボタンでイマーシブビューが開き、ビルド 19 からは「3D で表示」で Apple の空間写真を 3D で開けます。
 5. ⋮ メニューには、360° タグのないファイル用に「360°で表示」があり、スマートフォンではステレオでない動画用に「Spatial 2.5D」があります。
 
 360°、3D、VR180 は、範囲リクエストで読み込んだファイルの GPano または球面メタデータから認識され、VR180 はファイル名からも認識されます。ビルド 16 からは Insta360 の RAW ファイルも認識され（.insp 写真は名前またはカメラのキャリブレーションブロックから、.insv 動画は名前とフレームから）、スティッチされます。
@@ -252,7 +252,7 @@ Immuch360 は、SMB（Samba、Windows）、WebDAV、そしてビルド 19 から
 <a id="share-this-phone-on-the-network"></a>
 ## この電話をネットワークで共有
 
-写真と動画はスマートフォンにあり、パソコンも NAS も Immich サーバーも使わずにヘッドセットで見たい。ビルド 19 から、Android または iPhone のスマートフォンが自分の写真と動画を Wi-Fi で配信し、Meta Quest 3 がそれを再生します。Immich アプリにはこのような機能はありません。
+写真と動画はスマートフォンにあり、パソコンも NAS も Immich サーバーも使わずにヘッドセットで見たい。ビルド 19 から、Android または iPhone のスマートフォンが自分の写真と動画を Wi-Fi で配信し、Meta Quest がそれを再生します。Immich アプリにはこのような機能はありません。
 
 ### スマートフォンでオンにする
 
@@ -285,7 +285,7 @@ Immuch360 は、SMB（Samba、Windows）、WebDAV、そしてビルド 19 から
 
 自宅に Tapo カメラがあり、Tapo アプリを開かずに庭のカメラや昨夜のクリップを写真と並べて見て、クリップを Immich に残したい。Immich アプリにはカメラ向けの機能がなく、Tapo アプリは TP-Link アカウントにサインインする別のアプリで、クリップは写真とは別の場所にあります。
 
-ビルド 20 から、Immuch360 はネットワーク共有と並べて Tapo カメラを追加できます。Android のスマートフォンとタブレット、Android TV、Meta Quest 3 ではカメラのライブ映像を表示し、すべてのプラットフォームでメモリーカードの録画を日ごとに表示します：クリップはカメラから取得され、他の動画と同じように再生でき、Immich に送信できます。アプリはあなたのネットワーク内でだけカメラと通信し、TP-Link のサーバーとは通信せず、カメラの設定を変えることもありません。
+ビルド 20 から、Immuch360 はネットワーク共有と並べて Tapo カメラを追加できます。Android のスマートフォンとタブレット、Android TV、Meta Quest ではカメラのライブ映像を表示し、すべてのプラットフォームでメモリーカードの録画を日ごとに表示します：クリップはカメラから取得され、他の動画と同じように再生でき、Immich に送信できます。アプリはあなたのネットワーク内でだけカメラと通信し、TP-Link のサーバーとは通信せず、カメラの設定を変えることもありません。
 
 ### カメラを追加する
 
@@ -396,7 +396,7 @@ Insta360 のカメラは、レンズの 2 つの魚眼の円を、1 枚の画像
 
 Immich アプリでは、ステレオの 360° 写真や動画は両目の画像が同時に表示されて二重に見え、前方の半分しかカバーしない VR180 のファイルは球体の全周に引き伸ばされます。
 
-Immuch360 は、上下または左右の 3D レイアウトをファイル（動画の st3d ボックス）から認識するか、フレームの形から推測します。どのビューアーにも、それを変更する 3D ボタンがあります。スマートフォンは左目を表示し、Meta Quest 3 はそれぞれの目にそれぞれの半分を表示して本物の 3D になります。VR180 のファイルは半球に描画され、背面は引き伸ばされた画像ではなく黒になります。VR180 はファイル（球面の範囲やメッシュ、GPano の切り抜き）から、または名前に含まれる「vr180」や「180」から認識され、どのビューアーにも 360°/180° ボタンがあります。
+Immuch360 は、上下または左右の 3D レイアウトをファイル（動画の st3d ボックス）から認識するか、フレームの形から推測します。どのビューアーにも、それを変更する 3D ボタンがあります。スマートフォンは左目を表示し、Meta Quest はそれぞれの目にそれぞれの半分を表示して本物の 3D になります。VR180 のファイルは半球に描画され、背面は引き伸ばされた画像ではなく黒になります。VR180 はファイル（球面の範囲やメッシュ、GPano の切り抜き）から、または名前に含まれる「vr180」や「180」から認識され、どのビューアーにも 360°/180° ボタンがあります。
 
 ### レイアウトや範囲を変更する
 
@@ -428,14 +428,14 @@ Galaxy S24+ と Quest 3 で、実際の 3D 360° のサンプル動画（VRToget
 ### 形式、プライバシー、制限
 
 - **形式**：左右と上下、左右の目を入れ替えたもの、フル幅とハーフ幅、平面、360°、VR180 に対応します。レイアウトはファイルから読み込み、なければフレームの形やファイル名（sbs、ou、tb など。ハーフ幅のファイルは名前でしか認識されません）から推測し、プレーヤーで手動で選ぶこともできます。この選択はライブラリの動画については記憶されますが、ネットワーク共有のファイルについては記憶されません。
-- **カメラ**：画像はデバイス上でのみ処理され、保存されることも、どこかに送信されることもありません。Quest 3 用のビルドにはカメラの許可がまったくなく（ヘッドセットにはアプリが使えるカメラがありません）、Spatial プレーヤーも提供されません：そのボタンと設定はヘッドセットでは非表示です。
+- **カメラ**：画像はデバイス上でのみ処理され、保存されることも、どこかに送信されることもありません。Quest 用のビルドにはカメラの許可がまったくなく（ヘッドセットにはアプリが使えるカメラがありません）、Spatial プレーヤーも提供されません：そのボタンと設定はヘッドセットでは非表示です。
 - **制限**：試験運用で、スマートフォンとタブレットのみ（Meta Quest では使えません）、OpenGL ES 3.0 または Metal が必要です。奥行きは推定値です。横向きで、顔が明るく照らされているときに最もよく動作します。Galaxy S24+ で確認しました。iPhone でのフィードバックをお待ちしています。
 - **フォールバック**：何か問題が起きた場合（カメラがない、対応していないデバイス、読み取れないレイアウト）、通常のプレーヤーに戻ります。
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Apple の空間写真と空間ビデオ
 
-iPhone は空間写真と空間ビデオを撮影できますが、Immich サーバーはそれについて何も伝えないため、Immich アプリでは平面の写真や動画になります。ビルド 19 から、Immuch360 はファイルを読んでそれらを認識し、Meta Quest 3 で空間写真を 3D で表示します。これは、左右や上下の動画向けである上の Spatial 2.5D プレーヤーとは別のものです。
+iPhone は空間写真と空間ビデオを撮影できますが、Immich サーバーはそれについて何も伝えないため、Immich アプリでは平面の写真や動画になります。ビルド 19 から、Immuch360 はファイルを読んでそれらを認識し、Meta Quest ヘッドセットで空間写真を 3D で表示します。これは、左右や上下の動画向けである上の Spatial 2.5D プレーヤーとは別のものです。
 
 - **空間写真**は HEIC ファイル（`.heic`、`.heif`、`.hif`）で、片目ずつ 2 枚の画像をステレオペアとしてまとめて持っています。アプリはファイルの先頭部分を読み（デバイス上、範囲リクエストによるサーバーのオリジナル、またはネットワーク共有のファイル）、結果をスマートフォンに記憶するので、写真を読むのは 1 回だけです。
 - **空間ビデオ**（MV-HEVC）は動画トラックから認識されます：2 つ目のレイヤーがあり、両目が宣言されていることです。
@@ -466,7 +466,7 @@ iPhone は空間写真と空間ビデオを撮影できますが、Immich サー
 
 Quest 3 を買うのは自分の 360° 写真や動画を見るためなのに、ファイルをどこに置くか、ケーブルなしでヘッドセットにどう入れるか、どのプレーヤーを使うかで迷う人がいます。ストアの 360° や 3D 動画のプレーヤーは有料です。
 
-同じ Android アプリが、Quest 3 と 3S ではライブラリ全体を持ったウィンドウとして動作します。360° ボタンでイマーシブビューが開き、写真や動画に囲まれて、頭を動かして見回せます。ステレオのファイルは本物の 3D になります（Meta Spatial SDK）。メディアは Immich サーバー、ヘッドセット本体、NAS、メディアサーバー、スマートフォン、Plex サーバーから、その場で再生されます（メディアサーバーとスマートフォンはビルド 19 から、Plex サーバーはビルド 20 から、まだヘッドセットでは確認していません）。ビルド 20 からは、ウィンドウに Tapo カメラも表示されます。無料のオープンソースです。Quest 3 で確認済みで、Insta360 X4 の 8K HEVC 動画を使うユーザーにも確認していただきました。
+同じ Android アプリが、Quest 3 と 3S、ビルド 21 からは Quest 2 と Quest Pro（未テスト）でも、ライブラリ全体を持ったウィンドウとして動作します。360° ボタンでイマーシブビューが開き、写真や動画に囲まれて、頭を動かして見回せます。ステレオのファイルは本物の 3D になります（Meta Spatial SDK）。メディアは Immich サーバー、ヘッドセット本体、NAS、メディアサーバー、スマートフォン、Plex サーバーから、その場で再生されます（メディアサーバーとスマートフォンはビルド 19 から、Plex サーバーはビルド 20 から、まだヘッドセットでは確認していません）。ビルド 20 からは、ウィンドウに Tapo カメラも表示されます。無料のオープンソースです。Quest 3 で確認済みで、Insta360 X4 の 8K HEVC 動画を使うユーザーにも確認していただきました。
 
 ### イマーシブビューを開く
 
@@ -659,7 +659,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 アプリを持っていない人に 360° 写真を見せるには、Immich の共有リンクで共有してください：Immich のウェブアプリは、その人のブラウザーで 360° 写真を球体として表示します。
 
-現在のビルド、ビルド 20（バージョン 3.3.0-rc.0、ビルド番号 3030018）は Immich 3.3.0-rc.0（Immich の `main`、まだ安定版ではありません）をベースにしています。ビルド 19 は Immich 3.2 サーバーでテストしており、ビルド 20 ではアプリがサーバーに求める内容は何も変わっていません。問題は Immich プロジェクトではなく、[Issues](https://github.com/freeKC/Immuch360/issues) に報告してください。Immich 自体の詳しいドキュメントは [immich.app](https://immich.app) を参照してください。
+現在のビルド、ビルド 21（バージョン 3.3.0-rc.0、ビルド番号 3030019）は Immich 3.3.0-rc.0（Immich の `main`、まだ安定版ではありません）をベースにしています。ビルド 19 は Immich 3.2 サーバーでテストしており、ビルド 20 と 21 ではアプリがサーバーに求める内容は何も変わっていません。問題は Immich プロジェクトではなく、[Issues](https://github.com/freeKC/Immuch360/issues) に報告してください。Immich 自体の詳しいドキュメントは [immich.app](https://immich.app) を参照してください。
 
 ## Immich アプリや他のアプリとの比較
 
@@ -670,20 +670,20 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | 見回せる球体としての 360° 写真（ドラッグ、ピンチ、ダブルタップ、慣性、カメラの初期視点、部分的なパノラマ） | ❌ 平らな帯 | ✅ | Galaxy S24+ と iPhone 14 でテスト済み |
 | ジャイロスコープ：スマートフォンを動かして見回す | ❌ | ✅ | Galaxy S24+ と iPhone 14 でテスト済み |
 | 球体プレーヤーでの 360° 動画、音声、シーク、音声トラックの選択、バッファリング表示 | ❌ 平面の動画 | ✅ Android と iOS（iOS にはまだタイムバーなし） | Galaxy S24+ と iPhone 14 でテスト済み |
-| 3D（ステレオ）の 360° 写真と動画 | ❌ 二重の画像 | ✅ スマートフォンでは左目、Quest 3 では本物の 3D | Galaxy S24+ と Quest 3 で、実際の 3D 360° サンプル（VRTogether、Vuze、Kandao）と 3D 写真でテスト済み。他のカメラでの報告を歓迎します |
+| 3D（ステレオ）の 360° 写真と動画 | ❌ 二重の画像 | ✅ スマートフォンでは左目、Quest では本物の 3D | Galaxy S24+ と Quest 3 で、実際の 3D 360° サンプル（VRTogether、Vuze、Kandao）と 3D 写真でテスト済み。他のカメラでの報告を歓迎します |
 | VR180（半天球）の写真と動画 | ❌ 球体の全周に引き伸ばし | ✅ 半天球、360°/180° ボタン | Android エミュレーターと Galaxy S24+ で合成メディアを使いテスト済み。実機でのフィードバックを歓迎します |
-| Apple の空間写真（HEIC のステレオペア）と空間ビデオ（MV-HEVC） | ❌ 平面の写真や動画、空間であることの表示なし | ✅ ビルド 19 から：Quest 3 では写真を 3D で、それ以外では片目と詳細の 1 行 | Apple の画像ライブラリで書き出したサンプル写真と合成ファイルで検出を確認。ヘッドセットでの表示と実際の iPhone のファイルはビルド 19 の実機テストの対象 |
-| 頭の動きの追跡、タイムバー、前へと次へ、回転に対応した Meta Quest 3 のイマーシブビュー | ❌ | ✅ 同じアプリ、ヘッドセット用ビルドまたはスマートフォン用 APK | Quest 3 でテスト済み（ビルド 14 の操作、ユーザーのフィードバックを受けてビルド 16 で調整）、Insta360 X4 の 8K HEVC 動画を使うユーザーにも確認していただきました |
+| Apple の空間写真（HEIC のステレオペア）と空間ビデオ（MV-HEVC） | ❌ 平面の写真や動画、空間であることの表示なし | ✅ ビルド 19 から：Quest では写真を 3D で、それ以外では片目と詳細の 1 行 | Apple の画像ライブラリで書き出したサンプル写真と合成ファイルで検出を確認。ヘッドセットでの表示と実際の iPhone のファイルはビルド 19 の実機テストの対象 |
+| 頭の動きの追跡、タイムバー、前へと次へ、回転に対応した Meta Quest のイマーシブビュー | ❌ | ✅ 同じアプリ、ヘッドセット用ビルドまたはスマートフォン用 APK | Quest 3 でテスト済み（ビルド 14 の操作、ユーザーのフィードバックを受けてビルド 16 で調整）、Insta360 X4 の 8K HEVC 動画を使うユーザーにも確認していただきました |
 | サムネイルの 360° バッジと、RAW ファイルとフィルター（期間、ソース、種類、カメラ）付きの 360° リスト | ❌ | ✅ フィルターはビルド 18 から | 完了 |
 | サーバーが判定しないファイル向けの「360°で表示」 | ❌ | ✅ スマートフォンに記憶 | 完了 |
 | Spatial 2.5D：ステレオ動画から平面の画面に奥行きを再現 | ❌ | ✅ 試験運用、スマートフォンとタブレット | Galaxy S24+ でテスト済み。iPhone でのフィードバックを歓迎します |
 | サーバーなしで、デバイス本体のギャラリーを使う | ❌ ログイン必須 | ✅ | Galaxy S24+、Quest 3、Android エミュレーターでテスト済み |
-| ネットワーク上で見つけた SMB と WebDAV の共有をそのまま再生、何もダウンロードしない | ❌ | ✅ すべてのビューアー、スマートフォンと Quest 3 | Freebox Server（SMB）を使い Galaxy S24+ と Quest 3 で、また Samba と WebDAV のテストサーバーを使い Android エミュレーターでテスト済み。他の NAS や WebDAV でのフィードバックを歓迎します |
+| ネットワーク上で見つけた SMB と WebDAV の共有をそのまま再生、何もダウンロードしない | ❌ | ✅ すべてのビューアー、スマートフォンと Quest | Freebox Server（SMB）を使い Galaxy S24+ と Quest 3 で、また Samba と WebDAV のテストサーバーを使い Android エミュレーターでテスト済み。他の NAS や WebDAV でのフィードバックを歓迎します |
 | 共有の種類としての DLNA メディアサーバー | ❌ | ✅ ビルド 19 から | Docker 上の minidlna と Gerbera で確認済み。Plex、Jellyfin、NAS、Freebox Server、iPhone、Quest はビルド 19 の実機テストの対象 |
 | 共有のファイルを Immich に送信、手動で送信したデバイスのファイルをバックアップ済みとして数える | ❌ デバイスのファイルのみ | ✅ ビルド 15 から | Android エミュレーターで、Samba のテストサーバーと Immich 3.2 サーバーを使いテスト済み |
 | ヘッドセットのために、この電話をネットワークで共有 | ❌ | ✅ ビルド 19 から、Android と iOS | ユニットテストと、ヘッドセットの WebDAV クライアントを使ったエンドツーエンドテストをパソコン上で実施。Quest に配信するスマートフォンと iPhone 側はビルド 19 の実機テストの対象 |
-| Plex Media Server のライブラリを元のファイルから、自宅でも外出先でも、plex.tv なしで再生 | ❌ | ✅ ビルド 20 から、すべてのビューアーで、スマートフォン、タブレット、Quest 3、テレビ | コンピューターから実際の Plex Media Server 1.42.1 を相手に確認（ペアリング、フォルダー、バイト範囲指定、サムネイル、自宅外のアドレス）。デバイスではまだ確認していません |
-| Tapo カメラ：ライブ映像と、選んだときに Immich へ送れるメモリーカードの録画 | ❌ | ✅ ビルド 20 から：録画はすべての環境、ライブ映像は Android、Android TV、Quest 3 | シミュレーションしたカメラで確認。実際のカメラではまだ確認していません |
+| Plex Media Server のライブラリを元のファイルから、自宅でも外出先でも、plex.tv なしで再生 | ❌ | ✅ ビルド 20 から、すべてのビューアーで、スマートフォン、タブレット、Quest、テレビ | コンピューターから実際の Plex Media Server 1.42.1 を相手に確認（ペアリング、フォルダー、バイト範囲指定、サムネイル、自宅外のアドレス）。デバイスではまだ確認していません |
+| Tapo カメラ：ライブ映像と、選んだときに Immich へ送れるメモリーカードの録画 | ❌ | ✅ ビルド 20 から：録画はすべての環境、ライブ映像は Android、Android TV、Quest | シミュレーションしたカメラで確認。実際のカメラではまだ確認していません |
 | Android TV と Google TV、リモコン操作、同じ APK で | ❌ テレビ用アプリではない | ✅ ビルド 20 から | 自動テストで確認。テレビではまだ確認していません |
 | Insta360 の RAW の .insp 写真とシングルトラックの .insv 動画 | ❌ 平面 | ✅ ビルド 16 から | 写真は X3 のファイルを Insta360 Studio で書き出したものと比較、動画は低解像度の X3 ファイルを使い Android エミュレーターで確認。まだ iPhone では動かしていません |
 | トラックごとまたはファイルごとにレンズが 1 つの RAW 動画（Insta360 X4、X4 Air、X5、X6、X3 ペア、GoPro .360、DJI .osv） | ❌ 平面または誤った表示 | ✅ ビルド 18 から | 実際の X4、X3 ペア、GoPro MAX、Osmo 360 のファイルで解析とスティッチを確認。再生はビルド 18 と 19 の実機テストの対象 |
@@ -697,7 +697,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 | 使われているもの | 困ること | Immuch360 の対応 |
 |---|---|---|
-| Immich のウェブアプリ | 360° 写真を球体で表示しますが、RAW の .insp を完成したパノラマとして扱い、2 つの円を球体に巻き付けます。VR 表示はまだ要望の段階です（[ディスカッション #14768](https://github.com/immich-app/immich/discussions/14768)） | RAW ファイルをデバイス上でスティッチし、Quest 3 ではイマーシブビューを開きます |
+| Immich のウェブアプリ | 360° 写真を球体で表示しますが、RAW の .insp を完成したパノラマとして扱い、2 つの円を球体に巻き付けます。VR 表示はまだ要望の段階です（[ディスカッション #14768](https://github.com/immich-app/immich/discussions/14768)） | RAW ファイルをデバイス上でスティッチし、Quest ではイマーシブビューを開きます |
 | Insta360 アプリまたは Studio | 見る前に、カードの RAW ファイルを 360° 画像に変換する必要があります | RAW の .insp と .insv ファイル、GoPro の .360 と DJI の .osv ファイルを直接開きます |
 | Plex、Jellyfin、Synology Photos | 各フォーラムのスレッドにあるように、360° の写真と動画が平面で表示されるか、認識されません（Plex への要望は 2017 年から未対応） | ビルド 20 からは Plex のライブラリそのものを、または同じフォルダーを SMB、WebDAV、DLNA で読み込み、サーバー側を何も変えずに球体で再生します |
 | Tapo アプリ | TP-Link アカウントにサインインする別のアプリで、クリップは写真とは別の場所にある | カメラを写真と並べて表示し、あなたのネットワーク内だけで通信し、クリップを Immich に送れる動画として残します（ビルド 20 から） |
@@ -709,7 +709,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 Immuch360 はギャラリーであり、無料のメディアプレーヤーでもあります：公式アプリでは再生できないものを、2 つ目の表のソースから、ファイルに合ったプレーヤーで再生します。
 
-| 対象 | Android スマートフォン | iPhone、iPad | Meta Quest 3 | Android TV、Google TV（ビルド 20 から） |
+| 対象 | Android スマートフォン | iPhone、iPad | Meta Quest | Android TV、Google TV（ビルド 20 から） |
 |---|---|---|---|---|
 | 平面の動画（MP4、MOV、MKV など、デバイスがデコードできるもの） | Immich のプレーヤー、ネットワーク共有にはネイティブプレーヤー | 同じ。ただし共有の MKV と AVI ファイルは iOS では開けません（サーバー上のものは変換して再生） | ウィンドウ内 | スマートフォンと同じ。OK で一時停止、左右で 10 秒移動 |
 | 360° 写真 | 球体ビューアー、ジャイロスコープ | 同じ | イマーシブ、周囲全体 | 矢印キーで向きを変える球体ビューアー、チャンネルキーで拡大縮小 |
@@ -739,14 +739,14 @@ Immuch360 はギャラリーであり、無料のメディアプレーヤーで�
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 は Meta Quest 3 と 3S でも動作します（Horizon OS v69 以降。Horizon Store のビルドはこの 2 機種のみを対象としています。ユニバーサル版の `-release.apk` は Quest 2 や Quest Pro にもインストールできるはずですが、未テストです）。使い方は [Meta Quest 3 ヘッドセットで](#in-the-meta-quest-3-headset) にあります。このセクションでは、インストール方法とヘッドセットで異なる点を説明します。
+Immuch360 は Horizon OS v69 以降の Meta Quest ヘッドセットでも動作します。ビルド 21 から、Horizon Store のビルドは Quest 2、Quest Pro、Quest 3、3S を対象としています。これはユニバーサル版の `-release.apk` がすでに挙げている 4 機種です。初代 Quest は対象外で、ストアはもう受け付けていません。Quest 3 と 3S はテスト済みです。Quest 2 と Quest Pro はまだテストしていません：これらは動画デコーダーが遅く、アプリが確認する上限は Quest 3 で測定したものなので、大きな H.264 動画はメッセージを出して拒否されたり、カクついたりすることがあります。この 2 機種での報告は [Issues](https://github.com/freeKC/Immuch360/issues) で歓迎します。使い方は [Meta Quest 3 ヘッドセットで](#in-the-meta-quest-3-headset) にあります。このセクションでは、インストール方法とヘッドセットで異なる点を説明します。
 
 ヘッドセット用のビルドは、Horizon Store の要件に従い、HTTPS か、ホームネットワークの名前（`.local`、`.lan`、`.home`、`.internal`、`.home.arpa`）とヘッドセット自身に対する平文の HTTP でのみサーバーと通信します。`http://192.168.1.10:2283` のように IP を使った平文の HTTP アドレスで入力したサーバーは、このビルドでは拒否されます：HTTPS、ホームネットワークの名前（`nas.local`）、またはスマートフォンと同じ制限のないポリシーを持つユニバーサル版の `-release.apk` を使ってください。ローカルネットワークの平文の HTTP アドレスにある WebDAV、DLNA、電話の共有は対象外です：アプリが自分で読み込み、プレーヤーにはローカルブリッジのアドレスだけを渡します（DLNA と電話の共有はビルド 19 の新機能で、ヘッドセットではまだ確認が必要です）。ビルド 20 からは、Plex サーバーには HTTPS で接続し、Tapo カメラにはアプリ自身が接続して、ライブ映像は HTTP ではない RTSP を使います：どちらも対象にはならないはずです（ヘッドセットで確認が必要です）。
 
 <a id="install"></a>
 ### インストール
 
-Horizon Store の掲載はビルド 14 で提出し、Meta の審査待ちです。承認されるまでは、リリースの `-quest-release.apk` ファイル（ヘッドセット向けのビルド：64 ビット、ターゲット SDK 34、ヘッドセットが使う許可のみ）、またはユニバーサル版の `-release.apk` をサイドロードしてください：
+Meta は 2026 年 10 月 7 日にビルド 14 で Horizon Store の掲載を承認し、ビルド 21 を最初のアップデートとして提出しています。ストアのページが公開されるまで、またはストアより先にビルドを入手したい場合は、リリースの `-quest-release.apk` ファイル（ヘッドセット向けのビルド：64 ビット、ターゲット SDK 34、ヘッドセットが使う許可のみ）、またはユニバーサル版の `-release.apk` をサイドロードしてください：
 
 1. 開発者モードを一度だけ有効にします。Meta Horizon のスマートフォンアプリで、Devices（デバイス）を開き、ヘッドセットを選んで、Headset settings（ヘッドセットの設定）、Developer mode（開発者モード）の順に進みます。これには developers.meta.com で無料で作れる開発者アカウントが必要です。パソコンには adb（Android SDK Platform Tools）または SideQuest も必要です。
 2. USB-C ケーブルでヘッドセットをパソコンに接続します。ヘッドセットで「Allow USB debugging」（USB デバッグを許可）を承認します。
@@ -754,7 +754,7 @@ Horizon Store の掲載はビルド 14 で提出し、Meta の審査待ちです
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. ヘッドセットでライブラリを開き、「Unknown sources」（提供元不明）のフィルターを選んで、Immuch360 を起動します。
@@ -776,7 +776,7 @@ Horizon Store の掲載はビルド 14 で提出し、Meta の審査待ちです
 ### ヘッドセットでの制限
 
 - **動画コーデック**：HEVC（H.265）が確実な選択です。H.264 は約 4096x2304 が上限です。アプリが何を確認するか、ヘッドセットがデコードできる動画をどう用意するかは、[動画の詳細とデコーダー](#video-details-decoders-and-why-a-video-stutters) を参照してください。
-- **ストア**：ストア版はビルド 14 から始まります。「ビルド 15 から」以降と記した機能は、今後のアップデートで届きます（テスター向けのストアのアルファテストチャンネルには、新しいビルドが毎回届きます）。GitHub の APK にはすでにすべて含まれています。
+- **ストア**：ストア版はビルド 14 から始まります。「ビルド 15 から」以降と記した機能は、最初のアップデートであるビルド 21 で、Meta の審査が終わりしだい届きます（テスター向けのストアのアルファテストチャンネルには、新しいビルドが毎回届きます）。GitHub の APK にはすでにすべて含まれています。
 - **許可**：ヘッドセット用のビルドが求めるのは、写真と動画（サーバーなしのモード）と通知（バックアップの進行状況）の許可だけです。スマートフォン用のビルドと異なり、ストレージ、音声、位置情報、カメラの許可はありません。そのため、Wi-Fi の名前に応じたサーバーの切り替えはヘッドセットでは使えません。
 - **APK のサイズ**：Spatial SDK により、約 56 MB の 64 ビット ARM ネイティブコードが加わります。これはスマートフォンでも同じで、スマートフォンでは読み込まれることはありません。
 - **ライセンス**：イマーシブビューは Meta Spatial SDK を使用しており、Meta Platform Technologies SDK License Agreement のもとで配布されています。
@@ -784,13 +784,13 @@ Horizon Store の掲載はビルド 14 で提出し、Meta の審査待ちです
 <a id="where-to-get-it"></a>
 ## 入手方法
 
-アプリはスマートフォンとタブレット向けに Google Play にあります。App Store 版は Apple の審査待ち、Meta Horizon Store 版は Meta の審査待ち、テレビ向けの Google Play 版はテレビ向けリリースの Google の審査待ちです。GitHub のリリースには常に最新のビルドがあります：
+アプリはスマートフォンとタブレット向けに Google Play にあります。App Store 版は Apple の審査待ち、Meta Horizon Store の掲載は承認済みで最初のアップデートが Meta の審査中、テレビ向けの Google Play 版はテレビ向けリリースの Google の審査待ちです。GitHub のリリースには常に最新のビルドがあります：
 
 | プラットフォーム | 現在 | 今後 |
 |---|---|---|
-| Android のスマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)、または [Releases](https://github.com/freeKC/Immuch360/releases) ページの APK：スマートフォンには `Immuch360-v<version>-arm64-v8a-release.apk`（ユニバーサル版の `Immuch360-v<version>-release.apk` はどこでも動作し、`-armeabi-v7a` は古い 32 ビットのスマートフォン用、`.aab` ファイルは Google Play 用でサイドロード用ではありません）。GitHub のビルドは通常ストアより先行しています。どちらの場合も、公式の Immich アプリと並べてインストールできます（パッケージ `com.aprogsys.immuch360`）。 | Google Play：ビルド 18 が公開中、ビルド 19 は 2026 年 10 月 6 日から Google の審査中、次はビルド 20 |
+| Android のスマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)、または [Releases](https://github.com/freeKC/Immuch360/releases) ページの APK：スマートフォンには `Immuch360-v<version>-arm64-v8a-release.apk`（ユニバーサル版の `Immuch360-v<version>-release.apk` はどこでも動作し、`-armeabi-v7a` は古い 32 ビットのスマートフォン用、`.aab` ファイルは Google Play 用でサイドロード用ではありません）。GitHub のビルドは通常ストアより先行しています。どちらの場合も、公式の Immich アプリと並べてインストールできます（パッケージ `com.aprogsys.immuch360`）。 | Google Play：ビルド 18 が公開中、ビルド 19 に代えてビルド 20 が 2026 年 10 月 7 日から Google の審査中 |
 | iPhone と iPad | Apple の審査待ちです。審査中のバージョンにはビルド 11 の機能が含まれています：Immich へのアップロードと「動画のソース」の選択（ビルド 15）、Insta360 の RAW ファイル（ビルド 16）は、後の App Store のアップデートで届きます。ソースは Xcode または Codemagic でビルドできます。[自分でビルドする](#build-it-yourself) を参照してください。 | App Store、審査中 |
-| Meta Quest 3 と 3S | [Releases](https://github.com/freeKC/Immuch360/releases) ページの `-quest-release.apk` ファイル（ユニバーサル版の `-release.apk` も動作します）を、開発者モードでサイドロードします。[インストール](#install) を参照してください。ストアのビルドと GitHub の APK は異なる鍵で署名されています：一方からもう一方に切り替えるには、先にアプリをアンインストールしてください（設定と保存した共有も消えます）。 | Meta Horizon Store：ビルド 14 が 2026 年 10 月 3 日から Meta の審査中。ストアのアルファチャンネル（テスターのみ）には新しいビルドが毎回届きます |
+| Meta Quest 2、Quest Pro、Quest 3、3S（Quest 2 と Quest Pro は未テスト） | [Releases](https://github.com/freeKC/Immuch360/releases) ページの `-quest-release.apk` ファイル（ユニバーサル版の `-release.apk` も動作します）を、開発者モードでサイドロードします。[インストール](#install) を参照してください。ストアのビルドと GitHub の APK は異なる鍵で署名されています：一方からもう一方に切り替えるには、先にアプリをアンインストールしてください（設定と保存した共有も消えます）。 | Meta Horizon Store：2026 年 10 月 7 日にビルド 14 で掲載が承認され、最初のアップデートであるビルド 21 が Meta の審査中。ストアのアルファチャンネル（テスターのみ）には新しいビルドが毎回届きます |
 | Android TV と Google TV（ビルド 20 から） | [Releases](https://github.com/freeKC/Immuch360/releases) ページのユニバーサル版 `Immuch360-v<version>-release.apk` を adb でサイドロードします。[テレビにインストールする](#install-it-on-the-tv) を参照してください。スマートフォンと同じアプリです。 | テレビ向けの Google Play、テレビ向けリリースの Google の審査後 |
 
 App Store と Meta Horizon Store のリンクは、掲載が公開され次第ここに追加します。いつもの Immich サーバーの URL とアカウントでログインするか、ログイン画面で「サーバーなしで使用」をタップして、デバイス本体の写真と動画で始めてください。GitHub の APK は自動では更新されません：Releases ページを確認してください。ストアからアプリをインストールした後は、そのストアから更新を受け取ってください。
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-ストア用のスクリーンショットは、`--dart-define=IMMUCH_SCREENSHOTS=true` を付けて作ったシミュレーター用のデバッグビルドで撮影しています。このオプションはデバッグバナーを隠すだけです。2 つの Android フレーバーは同じアプリです。ビルド 20 から、`phone` はテレビ用アプリとしても宣言しています（テレビのランチャー項目とバナーを持ち、タッチスクリーンを必須としません）。`quest` にはこの宣言はありません。`quest` はターゲット SDK 34 で、ヘッドセットが使う許可（写真、動画、通知）だけを残しています：メディア管理、バックグラウンドでの位置情報、従来のストレージ、音声、メディアの位置情報、デバイスの位置情報、カメラは `android/app/src/quest/AndroidManifest.xml` で削除しています。Meta Horizon Store は最初の 2 つを拒否し、その他の機密性の高い許可にはすべて理由の説明を求めるためです。同じファイルで、対応デバイスを Quest 3 と 3S とし、平文の HTTP をヘッドセット自身とホームネットワークの名前に限定しています。APK が 64 ビット専用なのは、コマンドラインの 2 つの追加引数（`--target-platform android-arm64 --android-project-arg arm64only=true`）によるものです。`phone` は Google Play が求めるものです。自分の Mac で iOS 向けにビルドするには、Xcode と自分の署名チームを使います。Xcode 26 では、Spatial のシェーダーに必要なため、最初に一度 `xcodebuild -downloadComponent MetalToolchain` を実行してください。Mac がない場合、iOS のビルドはこのリポジトリの `codemagic.yaml` ファイルから Codemagic（ホスティングされた Mac）で実行します。Android のリリースビルドは GitHub Actions（`.github/workflows/immuch360-release.yml`）で実行します。
+ストア用のスクリーンショットは、`--dart-define=IMMUCH_SCREENSHOTS=true` を付けて作ったシミュレーター用のデバッグビルドで撮影しています。このオプションはデバッグバナーを隠すだけです。2 つの Android フレーバーは同じアプリです。ビルド 20 から、`phone` はテレビ用アプリとしても宣言しています（テレビのランチャー項目とバナーを持ち、タッチスクリーンを必須としません）。`quest` にはこの宣言はありません。`quest` はターゲット SDK 34 で、ヘッドセットが使う許可（写真、動画、通知）だけを残しています：メディア管理、バックグラウンドでの位置情報、従来のストレージ、音声、メディアの位置情報、デバイスの位置情報、カメラは `android/app/src/quest/AndroidManifest.xml` で削除しています。Meta Horizon Store は最初の 2 つを拒否し、その他の機密性の高い許可にはすべて理由の説明を求めるためです。同じファイルで、対応デバイスを Quest 2、Quest Pro、Quest 3、3S とし、平文の HTTP をヘッドセット自身とホームネットワークの名前に限定しています。APK が 64 ビット専用なのは、コマンドラインの 2 つの追加引数（`--target-platform android-arm64 --android-project-arg arm64only=true`）によるものです。`phone` は Google Play が求めるものです。自分の Mac で iOS 向けにビルドするには、Xcode と自分の署名チームを使います。Xcode 26 では、Spatial のシェーダーに必要なため、最初に一度 `xcodebuild -downloadComponent MetalToolchain` を実行してください。Mac がない場合、iOS のビルドはこのリポジトリの `codemagic.yaml` ファイルから Codemagic（ホスティングされた Mac）で実行します。Android のリリースビルドは GitHub Actions（`.github/workflows/immuch360-release.yml`）で実行します。
 
 このリポジトリに秘密情報は置いていません：Android の署名鍵は暗号化された GitHub Actions のシークレットとして、Apple の署名関連のデータは Codemagic の暗号化された変数として保管しています。ワークフローのファイルは名前で参照しているだけです。自分の `android/key.jks` がない場合、リリースビルドはデバッグ鍵で署名され、GitHub やストアから入れたものの上にはインストールできません（先にそちらをアンインストールしてください）。デバッグビルドは Immuch360 debug として並べてインストールされます。Meta Horizon Store 版は、リリースの `quest` APK を別の鍵、つまりストアのアプリを最初に登録したときの鍵で署名したものなので、サイドロードした APK の上にもインストールできず、その逆もできません。
 
@@ -857,9 +857,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 まだ実現していないことを、可能性の高い順に並べています。ここにあるものは約束ではありません。[Issue トラッカー](https://github.com/freeKC/Immuch360/issues) でのフィードバックが、何を優先するかを決める助けになります。
 
-- **Google Play**：ビルド 18 が公開中です。ビルド 19 は 2026 年 10 月 6 日から Google の審査中で、ビルド 20 がそれに続きます。
+- **Google Play**：ビルド 18 が公開中です。ビルド 19 に代えて、ビルド 20 が 2026 年 10 月 7 日から Google の審査中です。ビルド 21 では、スマートフォンとタブレットについては何も変わりません。
 - **App Store**：バージョン 3.3.0 が Apple の審査待ちです。ビルド 11 の機能が含まれているため、Immich へのアップロードと動画デコーダーのチェック（ビルド 15）、Insta360 の RAW ファイル（ビルド 16）は次の App Store のアップデートで届きます。公開されたらリンクをここに追加します。
-- **Meta Horizon Store**：2026 年 10 月 3 日にビルド 14 で掲載を Meta の審査に提出し、次のアップデートに向けて、ストアのアルファチャンネルには新しいビルドが毎回届きます。掲載が承認されれば、Quest 3 でサイドロードは不要になり、ストアのリンクをここに追加します。サイドロードしたものは先にアンインストールする必要があります（[インストール](#install) を参照）。
+- **Meta Horizon Store**：Meta は 2026 年 10 月 7 日にビルド 14 で掲載を承認しました。ビルド 21 を最初のアップデートとして提出しています：ビルド 14 以降のすべて（共有から Immich へのアップロード、ヘッドセットがデコードできるものに応じた動画ソースの選択、Insta360、GoPro、DJI の RAW ファイル、DLNA、スマートフォンの共有、Apple の空間写真、Plex Media Server のライブラリ、Tapo カメラ）が含まれ、ストアでは Quest 2、Quest Pro、Quest 3、3S を対象としています。ページが公開されたら、ストアのリンクをここに追加します。サイドロードしたものは先にアンインストールする必要があります（[インストール](#install) を参照）。
 - **ストアの掲載文**：Google Play の掲載文は 2026 年 10 月に新しいスクリーンショットとともに書き直しており、テレビ向けリリースに合わせてテレビのスクリーンショットとテレビ用バナーを追加します。App Store の説明文はまだ初期のビルド（360° の写真と動画、RAW ファイルは平面表示）を説明しています。今後は 3D、VR180、Spatial のビューアー、サーバーなしのモード、ネットワーク共有、メディアプレーヤー、Insta360 の RAW ファイルを紹介します。Meta Horizon Store の説明文では、すでにメディアプレーヤーを紹介しています。
 - **カメラの RAW 360° ファイル、次の作業**：ヘッドセット用に RAW 写真を準備している間の進行状況インジケーター。GoPro と DJI の動画の、それぞれのモーションデータによる水平補正。デュアル魚眼の .dng。継ぎ目とデコーダーの余裕を確認するための、ビルド 18 の 2 つのレンズの再生に関する実機での報告（X4、X5、X6、GoPro MAX 2、Osmo 360）。
 - **DLNA、電話の共有、Apple の空間メディア、次の作業**：ビルド 19 の実機での報告（DLNA での Plex、Jellyfin、NAS、Freebox Server。テザリングを含め Quest に配信するスマートフォン。ヘッドセットでの実際の iPhone の空間写真と空間ビデオ）。iPhone がすべての DLNA サーバーを見つけられるよう Apple に申請しているマルチキャストのエンタイトルメント。ヘッドセットでの空間写真間の前へと次へ。タイムラインでのサーバーの写真への空間バッジ。デコーダーが対応していれば、Quest での空間ビデオの 3D 表示。

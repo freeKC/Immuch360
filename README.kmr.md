@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | Kurmancî | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: wêne û vîdyoyên 360°, 3D û VR180, ji Immich, telefona te an NAS. Android, iOS û Meta Quest 3, bi server an bêyî server">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: wêne û vîdyoyên 360°, 3D û VR180, ji Immich, telefona te an NAS. Android, iOS û Meta Quest, bi server an bêyî server">
 </p>
 
 # Immuch360
 
-Immuch360 sepana mobîl a Immich e ku wêne û vîdyoyên 360° tê de hene û tu dikarî li dora xwe lê binêrî, û lîstikvanekî belaş e ji bo wêne û vîdyoyên dûz, 360°, 3D û VR180, li ser telefon û tabletên Android, iPhone û iPad, Meta Quest 3 û 3S, û ji build 20 li ser Android TV û Google TV. Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) an bi moda photo sphere ya telefonê dikişînin, an kaskek wan heye, û dixwazin wêneyên xwe ji servera Immich, ji telefonê bi xwe, ji NAS, ji serverê medyayê an ji serverê Plex temaşe bikin: heman server, heman hesab, bê pêveka serverê, an jî bê server. Ji build 20 ew kamerayên Tapo jî nîşan dide, zindî û tomarên karta wan a bîrê.
+Immuch360 sepana mobîl a Immich e ku wêne û vîdyoyên 360° tê de hene û tu dikarî li dora xwe lê binêrî, û lîstikvanekî belaş e ji bo wêne û vîdyoyên dûz, 360°, 3D û VR180, li ser telefon û tabletên Android, iPhone û iPad, kaskên Meta Quest (Quest 3 û 3S, û ji build 21 Quest 2 û Quest Pro, nehatine ceribandin), û ji build 20 li ser Android TV û Google TV. Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) an bi moda photo sphere ya telefonê dikişînin, an kaskek wan heye, û dixwazin wêneyên xwe ji servera Immich, ji telefonê bi xwe, ji NAS, ji serverê medyayê an ji serverê Plex temaşe bikin: heman server, heman hesab, bê pêveka serverê, an jî bê server. Ji build 20 ew kamerayên Tapo jî nîşan dide, zindî û tomarên karta wan a bîrê.
 
 <p align="center">
   <sub>Forkeke ne fermî. Ne girêdayî Immich an FUTO ye. Nav wekî "I am much 360" tê xwendin.</sub>
@@ -15,7 +15,7 @@ Immuch360 sepana mobîl a Immich e ku wêne û vîdyoyên 360° tê de hene û t
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">di nirxandinê de</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store di nirxandinê de &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store pejirand, build 21 wekî nûkirina wê ya yekem hat şandin &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 sepana mobîl a Immich e ku wêne û vîdyoyên 360° tê de hene û t
     <td align="center" width="33%"><h3>🎥 2.5D ya xwecihî</h3>Kûrahî li ser ekraneke dûz ji vîdyoyeke stereoskopîk, dîmen li pey serê te diçe (ceribandinî, telefon û tablet)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Yek sepan li ser telefon, tablet û kaskê, di kaskê de 3D ya rastîn, û ji build 20 li ser Android TV bi kontrola ji dûr ve</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Yek sepan li ser telefon, tablet û kaskên Quest 2, Pro, 3 û 3S, di kaskê de 3D ya rastîn, û ji build 20 li ser Android TV bi kontrola ji dûr ve</td>
     <td align="center"><h3>🔌 Bi server an bêyî server</h3>Servera te ya Immich, an galeriya telefonê bi xwe, hesab ne hewce ye</td>
     <td align="center"><h3>🗄️ Parvekirinên torê</h3>Samba (SMB), WebDAV û, ji build 19, serverên medyayê yên DLNA li ser torê tên dîtin û rasterast tên xwendin, tiştek nayê daxistin, û dema tu bixwazî ji Immich re tên şandin. Ji build 19 telefonek dikare galeriya xwe bi kaskê re jî parve bike</td>
   </tr>
@@ -109,7 +109,7 @@ Bijartin li ser telefonê tê bîranîn û li ser serverê tiştekî naguherîne
 
 Servera te ya Immich tune, an tu hesabek naxwazî: tu tenê dixwazî wêneyên 360° yên telefona te wekî gogekê vebin ku tu bi jîroskopê bizivirînî. Sepana Immich pêşî têketinê dixwaze.
 
-Li ser rûpela têketinê, "Bêyî server bi kar bîne" Immuch360 li ser wêne û vîdyoyên cîhazê bi xwe vedike, bi dîtinvanên 360°, 3D, VR180 û Spatial, lîsteya 360° û parvekirinên torê (ji build 20 serverên Plex û kamerayên Tapo jî), bêyî ku hesabê Immich hewce be. Taybetmendiyên serverê heta ku tu serverekê girê bidî veşartî an gewr dimînin; tiştek ji cîhazê dernakeve. Li ser Meta Quest 3 ew wêne û vîdyoyên kaskê bi xwe vedike; li ser televizyonekê, ku yên wê tune ne, ew te ber bi parvekirinên torê ve dibe (binêre [Li ser televizyona xwe temaşe bike](#watch-on-your-tv-android-tv-and-google-tv)).
+Li ser rûpela têketinê, "Bêyî server bi kar bîne" Immuch360 li ser wêne û vîdyoyên cîhazê bi xwe vedike, bi dîtinvanên 360°, 3D, VR180 û Spatial, lîsteya 360° û parvekirinên torê (ji build 20 serverên Plex û kamerayên Tapo jî), bêyî ku hesabê Immich hewce be. Taybetmendiyên serverê heta ku tu serverekê girê bidî veşartî an gewr dimînin; tiştek ji cîhazê dernakeve. Li ser Meta Quest ew wêne û vîdyoyên kaskê bi xwe vedike; li ser televizyonekê, ku yên wê tune ne, ew te ber bi parvekirinên torê ve dibe (binêre [Li ser televizyona xwe temaşe bike](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Tabloya Kitêbxane bêyî server: hêmana 360° li jor, paşê On this device bi du wêneyên 360°, û Parvekirinên torê bi parvekirineke bi navê NAS">
 
@@ -159,7 +159,7 @@ Navê bikarhênerekî bi şîfreyeke vala wisa tê şandin: Freebox Server ji bo
 1. Li parvekirinekê bixe. Peldank pêşî tên, paşê wêne û vîdyo wekî torekê bi wêneyên biçûk (çarçoveyek ji her vîdyoyê jî, li ser cîhazê hatiye veşartin). Yên ku wekî 360° hatine naskirin nîşaneya 360° hene, û ji build 19 wêne û vîdyoyên fezayî yên Apple nîşaneyeke 3D. Ji bo nûkirinê ber bi jêr ve bikişîne.
 2. Li wêneyekî bixe: ew bi ekrana tevahî vedibe (pinch, du caran lêxistin), û bişkoka wê ya 360° dîtinvanê gogê vedike.
 3. Li vîdyoyekê bixe: ew di lîstikvanê xwecihî de dilîze (lê bide, bisekinîne, bazdan), bi bişkokeke 360° ku lîstikvanê 360° û bişkokên wê yên 3D û 360°/180° vedike, û li ser telefonê bişkokeke Spatial ji bo pelên stereoskopîk.
-4. Li ser Quest 3, bişkoka 360° dîmena binavbûyî vedike, û ji build 19 "Di 3D de bibîne" wêneyekî fezayî yê Apple bi 3D vedike.
+4. Li ser Quest, bişkoka 360° dîmena binavbûyî vedike, û ji build 19 "Di 3D de bibîne" wêneyekî fezayî yê Apple bi 3D vedike.
 5. Menûya ⋮ "Wek 360° bibîne" ji bo pelên bê etîketa 360° heye, û li ser telefonê "Spatial 2.5D" ji bo vîdyoyên ku ne stereoskopîk in.
 
 360°, 3D û VR180 ji metadata GPano an spherical a pelê, ku bi daxwazên range tê xwendin, tên naskirin, û VR180 ji navê pelê jî. Ji build 16 pelên xav ên Insta360 jî tên naskirin (wêneyekî .insp bi navê xwe an bi bloka kalibrasyonê ya kamerayê, vîdyoyeke .insv bi navê xwe û çarçoveya xwe) û tên dirûtin.
@@ -252,7 +252,7 @@ Navnîşana ku server dibêje di her girêdanê de li malê ji nû ve tê fêrb�
 <a id="share-this-phone-on-the-network"></a>
 ## Vê telefonê li ser torê parve bike
 
-Wêne û vîdyoyên te li ser telefona te ne, û tu dixwazî wan di kaskê de bibînî, bêyî komputer, NAS an servera Immich. Ji build 19 telefonek, Android an iPhone, wêne û vîdyoyên xwe li ser Wi-Fi pêşkêş dike, û Meta Quest 3 wan dilîze. Di sepana Immich de tiştekî wisa tune.
+Wêne û vîdyoyên te li ser telefona te ne, û tu dixwazî wan di kaskê de bibînî, bêyî komputer, NAS an servera Immich. Ji build 19 telefonek, Android an iPhone, wêne û vîdyoyên xwe li ser Wi-Fi pêşkêş dike, û Meta Quest wan dilîze. Di sepana Immich de tiştekî wisa tune.
 
 ### Li ser telefonê veke
 
@@ -285,7 +285,7 @@ Ji wir ve ew parvekirineke WebDAV e wek her yeke din: naskirina 360°, pelên xa
 
 Kamerayên te yên Tapo li malê hene, û tu dixwazî kameraya baxçe û klîpên şeva borî li kêleka wêneyên xwe bibînî bêyî ku sepana Tapo vekî, û klîpekê di Immich de bihêlî. Sepana Immich ji bo kamerayan tiştek nîne, û sepana Tapo sepaneke cuda ye, bi hesabê te yê TP-Link têketî, bi klîpên ji wêneyên te cuda.
 
-Ji build 20 Immuch360 kameraya Tapo li kêleka parvekirinên torê zêde dike. Ew kamerayê zindî li ser telefon û tabletên Android, Android TV û Meta Quest 3 nîşan dide, û li ser her platformê tomarên karta wê ya bîrê, roj bi roj: klîpek ji kamerayê tê anîn, paşê wek her vîdyoyê dilîze û dikare ji Immich re bê şandin. Sepan tenê li ser tora te bi kamerayê re diaxive, qet bi serverên TP-Link re na, û qet tiştekî li ser kamerayê naguherîne.
+Ji build 20 Immuch360 kameraya Tapo li kêleka parvekirinên torê zêde dike. Ew kamerayê zindî li ser telefon û tabletên Android, Android TV û Meta Quest nîşan dide, û li ser her platformê tomarên karta wê ya bîrê, roj bi roj: klîpek ji kamerayê tê anîn, paşê wek her vîdyoyê dilîze û dikare ji Immich re bê şandin. Sepan tenê li ser tora te bi kamerayê re diaxive, qet bi serverên TP-Link re na, û qet tiştekî li ser kamerayê naguherîne.
 
 ### Kamerayekê lê zêde bike
 
@@ -396,7 +396,7 @@ Ji build 19, li ser Android û Quest:
 
 Di sepana Immich de wêneyek an vîdyoyeke 360° ya stereoskopîk herdu çavan bi hev re nîşan dide, wêneyekî ducar, û pelekî VR180, ku tenê nîvê pêşiyê digire, li dora tevahiya gogê tê kişandin.
 
-Immuch360 rêzkirinên 3D, jor û jêr an li kêleka hev, ji pelê (qutiya st3d a vîdyoyekê) nas dike, an ji şiklê çarçoveyê texmîn dike, û her dîtinvanek bişkokeke 3D heye ji bo guhertina wan. Telefonek çavê çepê nîşan dide; Meta Quest 3 ji her çavî nîvê wî nîşan dide, bi 3D ya rastîn. Pelên VR180 li ser nîvgogekê tên xêzkirin, bi paşiyeke reş li şûna wêneyekî kişandî. Ew ji pelê (spherical bounds an mesh, GPano crop) an ji "vr180" an "180" di navê de tên naskirin, û her dîtinvanek bişkokeke 360°/180° heye.
+Immuch360 rêzkirinên 3D, jor û jêr an li kêleka hev, ji pelê (qutiya st3d a vîdyoyekê) nas dike, an ji şiklê çarçoveyê texmîn dike, û her dîtinvanek bişkokeke 3D heye ji bo guhertina wan. Telefonek çavê çepê nîşan dide; Meta Quest ji her çavî nîvê wî nîşan dide, bi 3D ya rastîn. Pelên VR180 li ser nîvgogekê tên xêzkirin, bi paşiyeke reş li şûna wêneyekî kişandî. Ew ji pelê (spherical bounds an mesh, GPano crop) an ji "vr180" an "180" di navê de tên naskirin, û her dîtinvanek bişkokeke 360°/180° heye.
 
 ### Rêzkirin an rûpoşê biguherîne
 
@@ -428,14 +428,14 @@ Bi Settings, Pêşketî, Troubleshooting (Çareserkirina pirsgirêkan) vekirî, 
 ### Format, nepenî û sînor
 
 - **Format**: li kêleka hev û jor û jêr, bi çavên guherandî jî, firehiya tevahî an nîvco, dûz, 360° û VR180. Rêzkirin ji pelê tê xwendin, wekî din ji şiklê çarçoveyê an navê pelê tê texmînkirin (sbs, ou, tb û yên wisa; pelekî nîvfireh tenê bi navê xwe tê naskirin), û dikare di lîstikvan de bi destan were hilbijartin. Bijartin ji bo vîdyoyeke kitêbxaneyê tê bîranîn, ne ji bo pelekî parvekirineke torê.
-- **Kamera**: wêne tenê li ser cîhazê tên pêvajokirin, qet nayên tomarkirin û qet ji tu derê re nayên şandin. Build a Quest 3 qet destûra kamerayê tune (kaskê kamerayek tune ku sepanek bikaribe bi kar bîne), û lîstikvanê Spatial li wir nayê pêşkêşkirin: bişkoka wê û eyara wê li ser kaskê veşartî ne.
+- **Kamera**: wêne tenê li ser cîhazê tên pêvajokirin, qet nayên tomarkirin û qet ji tu derê re nayên şandin. Build a Quest qet destûra kamerayê tune (kaskê kamerayek tune ku sepanek bikaribe bi kar bîne), û lîstikvanê Spatial li wir nayê pêşkêşkirin: bişkoka wê û eyara wê li ser kaskê veşartî ne.
 - **Sînor**: ceribandinî, tenê telefon û tablet (ne li ser Meta Quest), OpenGL ES 3.0 an Metal hewce dike. Kûrahî texmînek e. Ew herî baş di rewşa berfireh de bi rûyekî baş ronîkirî dixebite. Li ser Galaxy S24+ hatiye kontrolkirin; nerînên iPhone bi xêr hatin.
 - **Alternatîf**: heke tiştek xelet biçe (kamera tune, cîhaza nayê piştgirîkirin, rêzkirina nexwendî), tu vedigerî lîstikvanê asayî.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Wêne û vîdyoyên fezayî yên Apple
 
-iPhone wêne û vîdyoyên fezayî dikişîne, û servera Immich tiştekî li ser wan nabêje: di sepana Immich de ew wêneyek an vîdyoyeke dûz in. Ji build 19 Immuch360 bi xwendina pelan wan nas dike, û wêneyekî fezayî di Meta Quest 3 de bi 3D nîşan dide. Ev ne lîstikvanê Spatial 2.5D yê li jor e, ku ji bo vîdyoyên li kêleka hev û jor û jêr e.
+iPhone wêne û vîdyoyên fezayî dikişîne, û servera Immich tiştekî li ser wan nabêje: di sepana Immich de ew wêneyek an vîdyoyeke dûz in. Ji build 19 Immuch360 bi xwendina pelan wan nas dike, û wêneyekî fezayî di kaskeke Meta Quest de bi 3D nîşan dide. Ev ne lîstikvanê Spatial 2.5D yê li jor e, ku ji bo vîdyoyên li kêleka hev û jor û jêr e.
 
 - **Wêneyên fezayî** pelên HEIC (`.heic`, `.heif`, `.hif`) in ku du wêneyan, yek ji bo her çavî, wekî cotek stereo komkirî digirin. Sepan serê pelê dixwîne (li ser cîhazê, orîjînala serverê bi daxwazeke range, an pelekî parvekirineke torê) û bersivê li ser telefonê tîne bîra xwe, ji ber vê yekê wêneyek tenê carekê tê xwendin.
 - **Vîdyoyên fezayî** (MV-HEVC) ji şopa vîdyoyê tên naskirin: qatek duyem, û herdu çav hatine ragihandin.
@@ -466,7 +466,7 @@ Naskirin li ser wêneyekî fezayî yê nimûne ku ji aliyê pirtûkxaneya wêney
 
 Mirov Quest 3 dikirin da ku wêne û vîdyoyên xwe yên 360° temaşe bikin, paşê dipirsin ka pelan li ku bikin, çawa wan bêyî kablo bigihînin kaskê, û kîjan lîstikvanî bi kar bînin: lîstikvanên firoşgehê ji bo vîdyoyên 360° û 3D bi pere ne.
 
-Heman sepana Android li ser Quest 3 û 3S wekî pencereyekê dimeşe, bi tevahiya kitêbxaneya te. Bişkoka wê ya 360° dîmeneke binavbûyî vedike ku wêne an vîdyo li dora te ye û tu bi zivirandina serê xwe li dora xwe dinêrî, bi 3D ya rastîn ji bo pelên stereoskopîk (Meta Spatial SDK). Medya ji servera te ya Immich, ji kaskê bi xwe, ji NAS, ji serverekî medyayê, ji telefonekê an ji serverekî Plex tên, li cihê xwe tên lîstin (serverê medyayê û telefon ji build 19, serverê Plex ji build 20, hîn li ser kaskê nehatine kontrolkirin), û ji build 20 pencere kamerayên Tapo jî nîşan dide. Ew belaş û çavkaniya vekirî ye. Li ser Quest 3 hatiye kontrolkirin, û ji aliyê bikarhênerekî bi vîdyoyên Insta360 X4 8K HEVC.
+Heman sepana Android li ser Quest 3 û 3S, û ji build 21 li ser Quest 2 û Quest Pro (nehatine ceribandin), wekî pencereyekê dimeşe, bi tevahiya kitêbxaneya te. Bişkoka wê ya 360° dîmeneke binavbûyî vedike ku wêne an vîdyo li dora te ye û tu bi zivirandina serê xwe li dora xwe dinêrî, bi 3D ya rastîn ji bo pelên stereoskopîk (Meta Spatial SDK). Medya ji servera te ya Immich, ji kaskê bi xwe, ji NAS, ji serverekî medyayê, ji telefonekê an ji serverekî Plex tên, li cihê xwe tên lîstin (serverê medyayê û telefon ji build 19, serverê Plex ji build 20, hîn li ser kaskê nehatine kontrolkirin), û ji build 20 pencere kamerayên Tapo jî nîşan dide. Ew belaş û çavkaniya vekirî ye. Li ser Quest 3 hatiye kontrolkirin, û ji aliyê bikarhênerekî bi vîdyoyên Insta360 X4 8K HEVC.
 
 ### Dîmena binavbûyî veke
 
@@ -659,7 +659,7 @@ Her tiştê ku sepana mobîl a fermî ya Immich dike li vir e: paşeke, demjimê
 
 Ji bo nîşandana wêneyekî 360° ji kesekî ku sepan tune, wê bi girêdaneke parvekirî ya Immich parve bike: sepana webê ya Immich wêneyekî 360° di geroka wan de wekî gogekê nîşan dide.
 
-Build a niha, build 20 (guhertoya 3.3.0-rc.0, hejmara build 3030018), li ser Immich 3.3.0-rc.0 (Immich `main`, hîn ne weşaneke stabîl) ava bûye. Build 19 bi servereke Immich 3.2 hatiye ceribandin, û build 20 tiştekî di tiştên ku sepan ji serverê dipirse de naguherîne. Ji kerema xwe pirsgirêkan di [Issues](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re. Ji bo belgekirina tevahî ya Immich bi xwe, binêre [immich.app](https://immich.app).
+Build a niha, build 21 (guhertoya 3.3.0-rc.0, hejmara build 3030019), li ser Immich 3.3.0-rc.0 (Immich `main`, hîn ne weşaneke stabîl) ava bûye. Build 19 bi servereke Immich 3.2 hatiye ceribandin, û build 20 û 21 tiştekî di tiştên ku sepan ji serverê dipirse de naguherînin. Ji kerema xwe pirsgirêkan di [Issues](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re. Ji bo belgekirina tevahî ya Immich bi xwe, binêre [immich.app](https://immich.app).
 
 ## Berhevdan bi sepana Immich û sepanên din re
 
@@ -670,20 +670,20 @@ Build a niha, build 20 (guhertoya 3.3.0-rc.0, hejmara build 3030018), li ser Imm
 | Wêneyên 360° wekî gogekê ku tu li dora xwe lê dinêrî (kişandin, pinch, du caran lêxistin, berdewamî, dîmena destpêkê ya kamerayê, panoramayên nîvco) | ❌ xêzeke dûz | ✅ | Li ser Galaxy S24+ û iPhone 14 hatiye ceribandin |
 | Jîroskop: bi livandina telefonê li dora xwe binêre | ❌ | ✅ | Li ser Galaxy S24+ û iPhone 14 hatiye ceribandin |
 | Vîdyoyên 360° di lîstikvanekî gogî de, bi deng, bazdan, bijartina şopa dengî û nîşaneya tamponê | ❌ vîdyoya dûz | ✅ Android û iOS (hîn xeta demê li ser iOS tune) | Li ser Galaxy S24+ û iPhone 14 hatiye ceribandin |
-| Wêne û vîdyoyên 360° yên 3D (stereoskopîk) | ❌ wêneyê ducar | ✅ çavê çepê li ser telefonan, 3D ya rastîn li ser Quest 3 | Li ser Galaxy S24+ û Quest 3 hatiye ceribandin, bi nimûneyên rastîn ên 3D 360° (VRTogether, Vuze, Kandao) û wêneyekî 3D; raporên ji kamerayên din bi xêr hatin |
+| Wêne û vîdyoyên 360° yên 3D (stereoskopîk) | ❌ wêneyê ducar | ✅ çavê çepê li ser telefonan, 3D ya rastîn li ser Quest | Li ser Galaxy S24+ û Quest 3 hatiye ceribandin, bi nimûneyên rastîn ên 3D 360° (VRTogether, Vuze, Kandao) û wêneyekî 3D; raporên ji kamerayên din bi xêr hatin |
 | Wêne û vîdyoyên VR180 (nîvgog) | ❌ li dora gogê hatiye kişandin | ✅ nîvgog, bişkoka 360°/180° | Li ser emulatorekî Android û Galaxy S24+ bi medyaya sentetîk hatiye ceribandin; nerînên cîhazan bi xêr hatin |
-| Wêneyên fezayî yên Apple (cotên stereo HEIC) û vîdyoyên fezayî (MV-HEVC) | ❌ wêneyek an vîdyoyeke dûz, tiştek nabêje ku fezayî ye | ✅ ji build 19: wêne bi 3D di Quest 3 de, li derên din yek çav û rêzeke hûrguliyan | Naskirin li ser wêneyekî nimûne yê ku pirtûkxaneya wêneyan a Apple nivîsandiye û li ser pelên sentetîk hatiye kontrolkirin; dîmena kaskê û pelên rastîn ên iPhone ceribandina cîhazê ya build 19 ne |
-| Dîmena binavbûyî ya Meta Quest 3 bi şopandina serî, xeta demê, ya berê û ya din, û Bizivirîne | ❌ | ✅ heman sepan, wekî build a kaskê an APK ya telefonê | Li ser Quest 3 hatiye ceribandin (kontrolên build 14, di build 16 de piştî nerîna bikarhênerekî hatine sererastkirin), û ji aliyê bikarhênerekî bi vîdyoyên Insta360 X4 8K HEVC |
+| Wêneyên fezayî yên Apple (cotên stereo HEIC) û vîdyoyên fezayî (MV-HEVC) | ❌ wêneyek an vîdyoyeke dûz, tiştek nabêje ku fezayî ye | ✅ ji build 19: wêne bi 3D di Quest de, li derên din yek çav û rêzeke hûrguliyan | Naskirin li ser wêneyekî nimûne yê ku pirtûkxaneya wêneyan a Apple nivîsandiye û li ser pelên sentetîk hatiye kontrolkirin; dîmena kaskê û pelên rastîn ên iPhone ceribandina cîhazê ya build 19 ne |
+| Dîmena binavbûyî ya Meta Quest bi şopandina serî, xeta demê, ya berê û ya din, û Bizivirîne | ❌ | ✅ heman sepan, wekî build a kaskê an APK ya telefonê | Li ser Quest 3 hatiye ceribandin (kontrolên build 14, di build 16 de piştî nerîna bikarhênerekî hatine sererastkirin), û ji aliyê bikarhênerekî bi vîdyoyên Insta360 X4 8K HEVC |
 | Nîşaneya 360° li ser wêneyên biçûk, û lîsteyeke 360° bi pelên xav û parzûnan (dem, çavkanî, cure, kamera) | ❌ | ✅ parzûn ji build 18 | Qediya |
 | "Wek 360° bibîne" ji bo pelên ku server nîşan nake | ❌ | ✅ li ser telefonê tê bîranîn | Qediya |
 | Spatial 2.5D: kûrahî li ser ekraneke dûz ji vîdyoyeke stereoskopîk | ❌ | ✅ ceribandinî, telefon û tablet | Li ser Galaxy S24+ hatiye ceribandin; nerînên iPhone bi xêr hatin |
 | Bêyî tu serverê bi kar bîne, li ser galeriya cîhazê bi xwe | ❌ têketin pêwîst e | ✅ | Li ser Galaxy S24+, Quest 3 û emulatorekî Android hatiye ceribandin |
-| Parvekirinên SMB û WebDAV li ser torê tên dîtin û rasterast tên lîstin, tiştek nayê daxistin | ❌ | ✅ her dîtinvan, telefon û Quest 3 | Bi Freebox Server (SMB) li ser Galaxy S24+ û Quest 3, û li hember serverên ceribandinê yên Samba û WebDAV li ser emulatorekî Android hatiye ceribandin; nerînên NAS û WebDAV yên din bi xêr hatin |
+| Parvekirinên SMB û WebDAV li ser torê tên dîtin û rasterast tên lîstin, tiştek nayê daxistin | ❌ | ✅ her dîtinvan, telefon û Quest | Bi Freebox Server (SMB) li ser Galaxy S24+ û Quest 3, û li hember serverên ceribandinê yên Samba û WebDAV li ser emulatorekî Android hatiye ceribandin; nerînên NAS û WebDAV yên din bi xêr hatin |
 | Serverên medyayê yên DLNA wekî cureyekî parvekirinê | ❌ | ✅ ji build 19 | Li hember minidlna û Gerbera di Docker de hatiye kontrolkirin; Plex, Jellyfin, NAS, Freebox Server, iPhone û Quest ceribandina cîhazê ya build 19 ne |
 | Pelên parvekirinekê ji Immich re bişîne; pelên cîhazê yên bi destan şandî wekî paşekekirî tên hesibandin | ❌ tenê pelên cîhazê | ✅ ji build 15 | Li ser emulatorekî Android li hember serverekî ceribandinê yê Samba û servereke Immich 3.2 hatiye ceribandin |
 | Vê telefonê li ser torê parve bike, ji bo kaskê | ❌ | ✅ ji build 19, Android û iOS | Ceribandinên yekîneyê û ceribandinên ji serî heta dawiyê bi muwekîlê WebDAV ê kaskê, li ser komputerekê; telefonek ku Quest xizmet dike, û aliyê iPhone, ceribandina cîhazê ya build 19 ne |
-| Kitêbxaneyên Plex Media Server ku ji pelên orîjînal tên lîstin, li malê û li derve, bêyî plex.tv | ❌ | ✅ ji build 20, her dîtinvan, li ser telefon, tablet, Quest 3 û televizyonan | Ji komputerekê li hember Plex Media Server 1.42.1 a rastîn hat kontrolkirin (cotkirin, peldank, rêzeyên baytan, wêneyên piçûk, navnîşana derveyî malê); hîn li ser cîhazê nehatiye kontrolkirin |
-| Kamerayên Tapo: dîtina zindî, û tomarên karta bîrê ku dema tu bixwazî ji Immich re tên şandin | ❌ | ✅ ji build 20: tomar li her derê, zindî li ser Android, Android TV û Quest 3 | Li hember kameraya simulekirî hat kontrolkirin; hîn bi kameraya rastîn nehatiye kontrolkirin |
+| Kitêbxaneyên Plex Media Server ku ji pelên orîjînal tên lîstin, li malê û li derve, bêyî plex.tv | ❌ | ✅ ji build 20, her dîtinvan, li ser telefon, tablet, Quest û televizyonan | Ji komputerekê li hember Plex Media Server 1.42.1 a rastîn hat kontrolkirin (cotkirin, peldank, rêzeyên baytan, wêneyên piçûk, navnîşana derveyî malê); hîn li ser cîhazê nehatiye kontrolkirin |
+| Kamerayên Tapo: dîtina zindî, û tomarên karta bîrê ku dema tu bixwazî ji Immich re tên şandin | ❌ | ✅ ji build 20: tomar li her derê, zindî li ser Android, Android TV û Quest | Li hember kameraya simulekirî hat kontrolkirin; hîn bi kameraya rastîn nehatiye kontrolkirin |
 | Android TV û Google TV, bi kontrola ji dûr ve tên ajotin, di heman APK de | ❌ ne sepana televizyonê ye | ✅ ji build 20 | Bi ceribandinên otomatîk hat kontrolkirin; hîn li ser televizyonê nehatiye kontrolkirin |
 | Wêneyên xav ên Insta360 .insp û vîdyoyên .insv ên yek-şopî | ❌ dûz | ✅ ji build 16 | Wêne li hember derxistinên Insta360 Studio yên pelên X3 hatine kontrolkirin, vîdyo li ser emulatorekî Android bi pelekî X3 yê çareseriya nizm; hîn li ser iPhone nemeşiyaye |
 | Vîdyoyên xav bi lensek ji bo her şopê an her pelê (Insta360 X4, X4 Air, X5, X6, cotên X3, GoPro .360, DJI .osv) | ❌ dûz an şaş | ✅ ji build 18 | Parser û dirûtin li ser pelên rastîn ên X4, cotek X3, GoPro MAX û Osmo 360 hatine kontrolkirin; lîstin ceribandina cîhazê ya build 18 û 19 e |
@@ -697,7 +697,7 @@ Build a niha, build 20 (guhertoya 3.3.0-rc.0, hejmara build 3030018), li ser Imm
 
 | Mirov çi bi kar tînin | Rastî çi tên | Immuch360 çi dike |
 |---|---|---|
-| Sepana webê ya Immich | Ew wêneyekî 360° wekî gogekê nîşan dide, lê .insp a xav wekî panoramayeke qediyayî digire û du xelekên wê li dora gogê dipêçe; dîmeneke VR hîn daxwazek e ([discussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Pelên xav li ser cîhazê didirû, û di Quest 3 de dîmeneke binavbûyî vedike |
+| Sepana webê ya Immich | Ew wêneyekî 360° wekî gogekê nîşan dide, lê .insp a xav wekî panoramayeke qediyayî digire û du xelekên wê li dora gogê dipêçe; dîmeneke VR hîn daxwazek e ([discussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Pelên xav li ser cîhazê didirû, û di Quest de dîmeneke binavbûyî vedike |
 | Sepana Insta360 an Studio | Hewce ye ji bo veguherandina pelên xav ên kartê bo wêneyekî 360° berî temaşekirinê | Pelên xav .insp û .insv rasterast vedike, û pelên GoPro .360 û DJI .osv |
 | Plex, Jellyfin, Synology Photos | Wêne û vîdyoyên 360° dûz tên nîşandan an nayên naskirin, wekî ku mijarên li ser forûmên wan diyar dikin (daxwazeke Plex ji 2017 ve vekirî ye) | Ji build 20 kitêbxaneya Plex bi xwe dixwîne, an heman peldankan bi SMB, WebDAV an DLNA, û wan wekî gogekê dilîze, bêyî ku tiştekî li ser serverê biguherîne |
 | Sepana Tapo | Sepaneke cuda, bi hesabê te yê TP-Link têketî, bi klîpên ji wêneyên te cuda | Kamerayê li kêleka wêneyên te nîşan dide, tenê li ser tora te bi wê re diaxive, û klîpekê wekî vîdyoyek ku tu dikarî ji Immich re bişînî dihêle (ji build 20) |
@@ -709,7 +709,7 @@ Build a niha, build 20 (guhertoya 3.3.0-rc.0, hejmara build 3030018), li ser Imm
 
 Immuch360 galeriyek e, û ew lîstikvanekî medyayê yê belaş e jî: ew tiştên ku sepana fermî nikare dilîze, ji çavkaniyên tabloya duyem, di lîstikvanê ku li pelê tê de.
 
-| Çi | Telefonên Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (ji build 20) |
+| Çi | Telefonên Android | iPhone, iPad | Meta Quest | Android TV, Google TV (ji build 20) |
 |---|---|---|---|---|
 | Vîdyoyên dûz (MP4, MOV, MKV, tiştên ku cîhaz dekod dike) | Lîstikvanê Immich, û lîstikvanekî xwecihî ji bo parvekirinên torê | Heman, ji bilî pelên MKV û AVI yên parvekirinê, ku iOS venake (li ser serverekê ew veguherandî dilîzin) | Di pencereyê de | Wek li ser telefonan; OK radiwestîne, çep û rast 10 çirke bazdidin |
 | Wêneyên 360° | Dîtinvanê gogê, jîroskop | Heman | Binavbûyî, li dora te | Dîtinvanê gogê bi tîran tê zivirandin, bi bişkokên kanalê tê zoomkirin |
@@ -739,14 +739,14 @@ Stûna televizyonê hîn li ser televizyonê nehatiye kontrolkirin, binêre [Li 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 li ser Meta Quest 3 û 3S jî dimeşe (Horizon OS v69 an nûtir; build a Horizon Store tenê ji bo van herduyan hatiye tomarkirin; `-release.apk` a gerdûnî divê li ser Quest 2 an Quest Pro jî saz bibe, nehatiye ceribandin). Çawa tê bikaranîn di [Di kaska Meta Quest 3 de](#in-the-meta-quest-3-headset) de ye; ev beş li ser sazkirina wê û tiştên ku li ser kaskê cuda ne ye.
+Immuch360 li ser kaskên Meta Quest bi Horizon OS v69 an nûtir jî dimeşe. Ji build 21 build a Horizon Store ji bo Quest 2, Quest Pro, Quest 3 û 3S hatiye tomarkirin, ew çar kaskên ku `-release.apk` a gerdûnî jixwe binav dike; Quest a yekem ne tê de ye, firoşgeh êdî wê qebûl nake. Quest 3 û 3S hatine ceribandin. Quest 2 û Quest Pro hîn nehatine ceribandin: dekoderên wan ên vîdyoyê hêdîtir in, û sînorên ku sepan kontrol dike li ser Quest 3 hatine pîvandin, ji ber vê yekê vîdyoyeke mezin a H.264 dikare li ser wan bi peyamekê were redkirin an biqete. Raporên ji van herdu kaskan di [Issues](https://github.com/freeKC/Immuch360/issues) de bi xêr hatin. Çawa tê bikaranîn di [Di kaska Meta Quest 3 de](#in-the-meta-quest-3-headset) de ye; ev beş li ser sazkirina wê û tiştên ku li ser kaskê cuda ne ye.
 
 Build a kaskê tenê bi HTTPS bi serveran re diaxive, an bi HTTP ya sade bi navên tora malê (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) û bi kaskê bi xwe re, wekî ku Horizon Store dixwaze. Serverek ku wekî navnîşaneke HTTP ya sade bi IP hatiye nivîsandin, wek `http://192.168.1.10:2283`, ji aliyê wê build ve tê redkirin: HTTPS, navekî tora malê (`nas.local`), an `-release.apk` a gerdûnî bi kar bîne, ku siyaseta vekirî ya telefonan diparêze. Parvekirinên WebDAV, DLNA û telefonê li navnîşaneke HTTP ya sade ya tora herêmî ne têkildar in: sepan wan bi xwe dixwîne û tenê navnîşana pira xwe ya herêmî dide lîstikvanên xwe (ji bo DLNA û parvekirina telefonê, ku di build 19 de nû ne, hîn divê li ser kaskê were piştrastkirin). Ji build 20 serverê Plex bi HTTPS tê gihîştin, û kameraya Tapo ji aliyê sepanê bi xwe ve, dîtina wê ya zindî bi RTSP, ku ne HTTP ye: divê ne yek ji wan têkildar be (hîn divê li ser kaskê were piştrastkirin).
 
 <a id="install"></a>
 ### Sazkirin
 
-Tomara Horizon Store li benda nirxandina Meta ye, bi build 14 hatiye şandin; heta ku were pejirandin, pela `-quest-release.apk` ya weşanekê (ji bo kaskê hatiye avakirin: 64 bit, SDK ya armanc 34, tenê destûrên ku kask bi kar tîne), an `-release.apk` a gerdûnî sideload bike:
+Meta tomara Horizon Store di 7ê Cotmeha 2026an de bi build 14 pejirand, û build 21 wekî nûkirina wê ya yekem hatiye şandin. Heta ku rûpela firoşgehê giştî bibe, an ji bo ku tu buildekê berî firoşgehê bistînî, pela `-quest-release.apk` ya weşanekê (ji bo kaskê hatiye avakirin: 64 bit, SDK ya armanc 34, tenê destûrên ku kask bi kar tîne), an `-release.apk` a gerdûnî sideload bike:
 
 1. Carekê moda pêşdebiran çalak bike. Di sepana telefonê ya Meta Horizon de, Devices (Cîhaz) veke, kaskê hilbijêre, paşê Headset settings (Eyarên kaskê), paşê Developer mode (Moda pêşdebiran). Ji bo vê hesabekî pêşdebiran hewce ye, ku li developers.meta.com belaş e. Li ser komputerê adb (Android SDK Platform Tools), an SideQuest jî hewce ye.
 2. Kaskê bi kabloyeke USB-C bi komputerekê ve girê bide. Di kaskê de, "Allow USB debugging" (Destûra debugkirina USB bide) qebûl bike.
@@ -754,7 +754,7 @@ Tomara Horizon Store li benda nirxandina Meta ye, bi build 14 hatiye şandin; he
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. Di kaskê de, Library veke, parzûna "Unknown sources" (Çavkaniyên nenas) hilbijêre, û Immuch360 dest pê bike.
@@ -776,7 +776,7 @@ Wêneyên ku di kaskê de bi bişkoka kişandinê (bişkoka Meta û tetik) li se
 ### Sînorên li ser kaskê
 
 - **Kodekên vîdyoyê**: HEVC (H.265) bijartina ewle ye; H.264 li dora 4096x2304 disekine. Sepan çi kontrol dike, û çawa vîdyoyeke ku kask dekod dike bidî wê, di [Hûrguliyên vîdyoyê û dekoder](#video-details-decoders-and-why-a-video-stutters) de ye.
-- **Firoşgeh**: guhertoya firoşgehê ji build 14 dest pê dike. Taybetmendiyên ku bi "ji build 15" û paşê hatine nîşankirin bi nûkirinên wê yên din tên (kanala ceribandinê ya alpha ya firoşgehê, ji bo ceribandvanan, her build a nû digire); APK ya GitHub niha hemû hene.
+- **Firoşgeh**: guhertoya firoşgehê ji build 14 dest pê dike. Taybetmendiyên ku bi "ji build 15" û paşê hatine nîşankirin bi build 21, nûkirina wê ya yekem, tên, gava Meta ew nirxand (kanala ceribandinê ya alpha ya firoşgehê, ji bo ceribandvanan, her build a nû digire); APK ya GitHub niha hemû hene.
 - **Destûr**: build a kaskê tenê wêne û vîdyoyan (moda bêyî server) û agahdariyan (pêşveçûna paşekeyê) dixwaze. Wê destûra embar, deng, cih an kamerayê tune, berevajî build a telefonê; ji ber vê yekê guhertina serverê li gorî navê Wi-Fi li ser kaskê ne berdest e.
 - **Mezinahiya APK**: Spatial SDK nêzîkî 56 MB koda xwecihî ya ARM a 64-bit zêde dike, li ser telefonan jî, ku ew qet nayê barkirin.
 - **Lîsans**: dîmena binavbûyî Meta Spatial SDK bi kar tîne, ku di bin Meta Platform Technologies SDK License Agreement de tê belavkirin.
@@ -784,13 +784,13 @@ Wêneyên ku di kaskê de bi bişkoka kişandinê (bişkoka Meta û tetik) li se
 <a id="where-to-get-it"></a>
 ## Ji ku derê bistînî
 
-Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li benda nirxandina Apple ye, guhertoya Meta Horizon Store li benda ya Meta, û guhertoya Google Play ji bo televizyonan li benda nirxandina Google ya weşana televizyonê. Weşana GitHub her tim build a herî nû ye:
+Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li benda nirxandina Apple ye, tomara Meta Horizon Store hatiye pejirandin û nûkirina wê ya yekem di nirxandina Meta de ye, û guhertoya Google Play ji bo televizyonan li benda nirxandina Google ya weşana televizyonê ye. Weşana GitHub her tim build a herî nû ye:
 
 | Platform | Îro | Di demeke nêzîk de |
 |---|---|---|
-| Telefon û tabletên Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), an APK li ser rûpela [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` ji bo telefonekê (`Immuch360-v<version>-release.apk` a gerdûnî li her derê dixebite, `-armeabi-v7a` ji bo telefonên kevin ên 32 bit e, û pela `.aab` ji bo Google Play ye, ne ji bo sideloadkirinê). Build a GitHub bi gelemperî li pêş firoşgehê ye. Bi her awayî ew li kêleka sepana fermî ya Immich tê sazkirin (pakêta `com.aprogsys.immuch360`). | Google Play: build 18 zindî ye, build 19 ji 6ê Cotmeha 2026an ve di nirxandina Google de ye, paşê build 20 |
+| Telefon û tabletên Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), an APK li ser rûpela [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` ji bo telefonekê (`Immuch360-v<version>-release.apk` a gerdûnî li her derê dixebite, `-armeabi-v7a` ji bo telefonên kevin ên 32 bit e, û pela `.aab` ji bo Google Play ye, ne ji bo sideloadkirinê). Build a GitHub bi gelemperî li pêş firoşgehê ye. Bi her awayî ew li kêleka sepana fermî ya Immich tê sazkirin (pakêta `com.aprogsys.immuch360`). | Google Play: build 18 zindî ye, build 20 ji 7ê Cotmeha 2026an ve di nirxandina Google de ye, li şûna build 19 |
 | iPhone û iPad | Li benda nirxandina Apple ye. Guhertoya di nirxandinê de taybetmendiyên build 11 hene: barkirina li Immich û bijartina Çavkaniya vîdyoyê (build 15) û pelên xav ên Insta360 (build 16) dê bi nûkirineke paşê ya App Store bên. Çavkanî bi Xcode an li ser Codemagic tê avakirin, binêre [Bi xwe ava bike](#build-it-yourself). | App Store, di nirxandinê de |
-| Meta Quest 3 û 3S | Pela `-quest-release.apk` ya rûpela [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` a gerdûnî jî dixebite), di moda pêşdebiran de sideloadkirî, binêre [Sazkirin](#install). Build a firoşgehê û APK ya GitHub bi mifteyên cuda hatine îmzekirin: ji bo derbasbûna ji yekê bo ya din, pêşî sepanê rake (eyar û parvekirinên wê yên qeydkirî bi wê re diçin). | Meta Horizon Store: build 14 ji 3ê Cotmeha 2026an ve di nirxandina Meta de ye; kanala alpha ya firoşgehê (tenê ceribandvan) her build a nû digire |
+| Meta Quest 2, Quest Pro, Quest 3 û 3S (Quest 2 û Quest Pro nehatine ceribandin) | Pela `-quest-release.apk` ya rûpela [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` a gerdûnî jî dixebite), di moda pêşdebiran de sideloadkirî, binêre [Sazkirin](#install). Build a firoşgehê û APK ya GitHub bi mifteyên cuda hatine îmzekirin: ji bo derbasbûna ji yekê bo ya din, pêşî sepanê rake (eyar û parvekirinên wê yên qeydkirî bi wê re diçin). | Meta Horizon Store: tomar di 7ê Cotmeha 2026an de bi build 14 hat pejirandin, û build 21, nûkirina wê ya yekem, di nirxandina Meta de ye; kanala alpha ya firoşgehê (tenê ceribandvan) her build a nû digire |
 | Android TV û Google TV (ji build 20) | `Immuch360-v<version>-release.apk` a gerdûnî ya rûpela [Releases](https://github.com/freeKC/Immuch360/releases), bi adb sideloadkirî, binêre [Wê li ser televizyonê saz bike](#install-it-on-the-tv). Ew heman sepan e wek li ser telefonan. | Google Play li ser televizyonan, piştî nirxandina Google ya weşana televizyonê |
 
 Girêdanên App Store û Meta Horizon Store dê gava tomar hatin weşandin li vir bên zêdekirin. Bi URL û hesabê xwe yê asayî yê servera Immich têkeve, an li ser rûpela têketinê li "Bêyî server bi kar bîne" bixe da ku li ser wêne û vîdyoyên cîhazê bi xwe dest pê bikî. APK ya ji GitHub xwe bi xwe nû nake: li rûpela Releases binêre, û gava te sepan ji firoşgehekê saz kir, nûkirinan ji wê firoşgehê bistîne.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Wêneyên ekranê yên firoşgehê li ser build ên debug ên simulatorê tên kişandin ku bi `--dart-define=IMMUCH_SCREENSHOTS=true` hatine çêkirin, ku tenê banera debug vedişêre. Herdu flavorên Android heman sepan in. Ji build 20 `phone` xwe wekî sepana televizyonê jî radigihîne (têketineke di launchera televizyonê de û banerek, dîmendera destlêdanê ne mecbûrî ye), ku `quest` ew dernaxe. `quest` SDK 34 dike armanc û tenê destûrên ku kask bi kar tîne diparêze (wêne, vîdyo, agahdarî): rêveberiya medyayê, cihê paşxanê, embarê kevin, deng, cihê medyayê, cihê cîhazê û kamera di `android/app/src/quest/AndroidManifest.xml` de tên rakirin, ji ber ku Meta Horizon Store du yên pêşîn red dike û ji bo her destûreke din a hestiyar sedemekê dixwaze; heman pel Quest 3 û 3S wekî cîhazên piştgirîkirî binav dike û HTTP ya sade bi kaskê bi xwe û navên tora malê ve sînordar dike. APK tenê 64 bit e ji ber du argumanên zêde yên rêza fermana wê (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` ew e ku Google Play dixwaze. Ji bo avakirina iOS li ser Mac a xwe, Xcode û tîma xwe ya îmzekirinê bi kar bîne; bi Xcode 26, pêşî carekê `xcodebuild -downloadComponent MetalToolchain` bixebitîne, ji ber ku shaderên Spatial wê hewce dikin. Bêyî Mac, build ên iOS li ser Codemagic (Mac a mêvandar) ji pela `codemagic.yaml` a vê depoyê dimeşin. Build ên weşanê yên Android li ser GitHub Actions (`.github/workflows/immuch360-release.yml`) dimeşin.
+Wêneyên ekranê yên firoşgehê li ser build ên debug ên simulatorê tên kişandin ku bi `--dart-define=IMMUCH_SCREENSHOTS=true` hatine çêkirin, ku tenê banera debug vedişêre. Herdu flavorên Android heman sepan in. Ji build 20 `phone` xwe wekî sepana televizyonê jî radigihîne (têketineke di launchera televizyonê de û banerek, dîmendera destlêdanê ne mecbûrî ye), ku `quest` ew dernaxe. `quest` SDK 34 dike armanc û tenê destûrên ku kask bi kar tîne diparêze (wêne, vîdyo, agahdarî): rêveberiya medyayê, cihê paşxanê, embarê kevin, deng, cihê medyayê, cihê cîhazê û kamera di `android/app/src/quest/AndroidManifest.xml` de tên rakirin, ji ber ku Meta Horizon Store du yên pêşîn red dike û ji bo her destûreke din a hestiyar sedemekê dixwaze; heman pel Quest 2, Quest Pro, Quest 3 û 3S wekî cîhazên piştgirîkirî binav dike û HTTP ya sade bi kaskê bi xwe û navên tora malê ve sînordar dike. APK tenê 64 bit e ji ber du argumanên zêde yên rêza fermana wê (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` ew e ku Google Play dixwaze. Ji bo avakirina iOS li ser Mac a xwe, Xcode û tîma xwe ya îmzekirinê bi kar bîne; bi Xcode 26, pêşî carekê `xcodebuild -downloadComponent MetalToolchain` bixebitîne, ji ber ku shaderên Spatial wê hewce dikin. Bêyî Mac, build ên iOS li ser Codemagic (Mac a mêvandar) ji pela `codemagic.yaml` a vê depoyê dimeşin. Build ên weşanê yên Android li ser GitHub Actions (`.github/workflows/immuch360-release.yml`) dimeşin.
 
 Tu veşartî di vê depoyê de tune: mifteya îmzekirina Android wekî veşartiyên GitHub Actions ên şîfrekirî hatiye tomarkirin, û materyalê îmzekirina Apple wekî guherbarên şîfrekirî li ser Codemagic. Pelên workflow tenê bi navê wan behs dikin. Bêyî `android/key.jks` a xwe, build a weşanê bi mifteya debug tê îmzekirin û nikare li ser kopiyeke ji GitHub an firoşgehekê were sazkirin (pêşî wê rake); build a debug li kêleka wê wekî Immuch360 debug tê sazkirin. Kopiya Meta Horizon Store APK ya `quest` a weşanê ye ku bi mifteyeke din hatiye îmzekirin, ya ku sepana firoşgehê pêşî pê hatiye tomarkirin, ji ber vê yekê ew jî nikare li ser APK yeke sideloadkirî were sazkirin, û berevajî jî.
 
@@ -857,9 +857,9 @@ Ev proje forkeke Immich e û di bin [GNU AGPL v3](LICENSE) de dimîne. Her APK, 
 
 Tiştên ku hîn nehatine kirin, yên herî muhtemel pêşî. Tiştek li vir ne soz e, û nerînên li ser [issue tracker](https://github.com/freeKC/Immuch360/issues) alîkariyê dikin ku were biryardan ka çi pêşî tê.
 
-- **Google Play**: build 18 zindî ye; build 19 ji 6ê Cotmeha 2026an ve di nirxandina Google de ye, û build 20 li pey wê tê.
+- **Google Play**: build 18 zindî ye; build 20 ji 7ê Cotmeha 2026an ve di nirxandina Google de ye, li şûna build 19. Build 21 li ser telefon û tabletan tiştekî naguherîne.
 - **App Store**: guhertoya 3.3.0 li benda nirxandina Apple ye; ew taybetmendiyên build 11 digire, ji ber vê yekê barkirina li Immich û kontrola dekodera vîdyoyê (build 15) û pelên xav ên Insta360 (build 16) bi nûkirina din a App Store tên. Girêdan dê gava zindî bibe li vir were zêdekirin.
-- **Meta Horizon Store**: tomar di 3ê Cotmeha 2026an de bi build 14 ji bo nirxandina Meta hat şandin, û kanala alpha ya firoşgehê ji bo nûkirina din her build a nû digire. Gava tomar were pejirandin, Quest 3 êdî sideloadkirinê hewce nake û girêdana firoşgehê dê li vir were zêdekirin; kopiyeke sideloadkirî divê pêşî were rakirin (binêre [Sazkirin](#install)).
+- **Meta Horizon Store**: Meta tomar di 7ê Cotmeha 2026an de bi build 14 pejirand. Build 21 wekî nûkirina wê ya yekem hatiye şandin: ew her tiştê ji build 14 û vir ve tîne (barkirin ji parvekirinekê bo Immich, çavkaniya vîdyoyê ku li gorî tiştê kask dikare dekod bike tê hilbijartin, pelên xav ên Insta360, GoPro û DJI, DLNA, parvekirina telefonê, wêneyên fezayî yên Apple, kitêbxaneyên Plex Media Server, kamerayên Tapo), û firoşgeh wê ji bo Quest 2, Quest Pro, Quest 3 û 3S tomar dike. Girêdana firoşgehê dê gava rûpel giştî bibe li vir were zêdekirin; kopiyeke sideloadkirî divê pêşî were rakirin (binêre [Sazkirin](#install)).
 - **Tomarên firoşgehan**: tomara Google Play di Cotmeha 2026an de bi wêneyên ekranê yên nû ji nû ve hat nivîsandin, û bi weşana televizyonê re wêneyên ekranê yên televizyonê û banera televizyonê digire. Nivîsa App Store hîn build ên yekem şirove dike (wêne û vîdyoyên 360°, pelên xav dûz tên nîşandan); ew ê dîtinvanên 3D, VR180 û Spatial, moda bêyî server, parvekirinên torê, lîstikvanê medyayê û pelên xav ên Insta360 bide nasîn. Nivîsa Meta Horizon Store berê lîstikvanê medyayê dide nasîn.
 - **Pelên xav ên kameraya 360°, ya din**: nîşaneyeke pêşveçûnê dema wêneyekî xav ji bo kaskê tê amadekirin; rastkirina vîdyoyên GoPro û DJI ji daneyên wan ên tevgerê; dual fisheye .dng; raporên cîhazan li ser lîstina du-lensî ya build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) ji bo piştrastkirina dirûn û budceyên dekoderan.
 - **DLNA, parvekirina telefonê û fezaya Apple, ya din**: raporên cîhazan ên build 19 (Plex, Jellyfin, NAS û Freebox Server bi DLNA; telefonek ku Quest xizmet dike, li ser hotspota xwe jî; wêne û vîdyoyên fezayî yên rastîn ên iPhone di kaskê de); mafê multicast ê ku ji Apple hatiye xwestin, da ku iPhone her serverekî DLNA bibînin; ya berê û ya din di navbera wêneyên fezayî de di kaskê de; nîşaneyeke fezayî li ser wêneyên serverê di demjimêrê de; vîdyoyên fezayî bi 3D li ser Quest, heke dekoderên wê destûrê bidin.

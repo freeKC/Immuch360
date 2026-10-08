@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | Srpski | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D i VR180 fotografije i video zapisi, sa Immich-a, vašeg telefona ili NAS-a. Android, iOS i Meta Quest 3, sa serverom ili bez njega">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D i VR180 fotografije i video zapisi, sa Immich-a, vašeg telefona ili NAS-a. Android, iOS i Meta Quest, sa serverom ili bez njega">
 </p>
 
 # Immuch360
 
-Immuch360 je Immich mobilna aplikacija sa 360° fotografijama i video zapisima u kojima možete da gledate oko sebe, i besplatan plejer za ravne, 360°, 3D i VR180 fotografije i video zapise, na Android telefonima i tabletima, iPhone i iPad uređajima, na Meta Quest 3 i 3S, a od bilda 20 i na Android TV-u i Google TV-u. Namenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ili režimom foto sfere na telefonu, ili koji imaju VR naočare, i žele da gledaju sopstvene snimke sa Immich servera, sa samog telefona, sa NAS-a, medijskog servera ili Plex servera: isti server, isti nalog, bez dodatka za server, ili potpuno bez servera. Od bilda 20 prikazuje i Tapo kamere, uživo i snimke sa njihove memorijske kartice.
+Immuch360 je Immich mobilna aplikacija sa 360° fotografijama i video zapisima u kojima možete da gledate oko sebe, i besplatan plejer za ravne, 360°, 3D i VR180 fotografije i video zapise, na Android telefonima i tabletima, iPhone i iPad uređajima, na Meta Quest naočarima (Quest 3 i 3S, a od bilda 21 Quest 2 i Quest Pro, netestirano), a od bilda 20 i na Android TV-u i Google TV-u. Namenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ili režimom foto sfere na telefonu, ili koji imaju VR naočare, i žele da gledaju sopstvene snimke sa Immich servera, sa samog telefona, sa NAS-a, medijskog servera ili Plex servera: isti server, isti nalog, bez dodatka za server, ili potpuno bez servera. Od bilda 20 prikazuje i Tapo kamere, uživo i snimke sa njihove memorijske kartice.
 
 <p align="center">
   <sub>Nezvanični fork. Nije povezan sa Immich-om ni sa FUTO. Ime se čita kao "I am much 360".</sub>
@@ -15,7 +15,7 @@ Immuch360 je Immich mobilna aplikacija sa 360° fotografijama i video zapisima u
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">na pregledu</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store na pregledu &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store odobren, bild 21 predat kao njegovo prvo ažuriranje &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 je Immich mobilna aplikacija sa 360° fotografijama i video zapisima u
     <td align="center" width="33%"><h3>🎥 Izvorni 2.5D</h3>Dubina na ravnom ekranu iz stereoskopskog videa, prikaz prati vašu glavu (eksperimentalno, telefoni i tableti)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Jedna aplikacija na telefonima, tabletima i naočarima, pravi 3D u naočarima, a od bilda 20 i na Android TV-u uz daljinski upravljač</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Jedna aplikacija na telefonima, tabletima i naočarima Quest 2, Pro, 3 i 3S, pravi 3D u naočarima, a od bilda 20 i na Android TV-u uz daljinski upravljač</td>
     <td align="center"><h3>🔌 Sa serverom ili bez njega</h3>Vaš Immich server, ili galerija samog telefona, bez naloga</td>
     <td align="center"><h3>🗄️ Mrežni deljeni resursi</h3>Samba (SMB), WebDAV i, od bilda 19, DLNA medijski serveri pronađeni na mreži i čitani uživo, ništa se ne preuzima, a šalju se na Immich kada vi odlučite. Od bilda 19 telefon takođe deli svoju galeriju sa naočarima</td>
   </tr>
@@ -109,7 +109,7 @@ Izbor se pamti na telefonu i ne menja ništa na serveru. Za datoteku sa mrežnog
 
 Nemate Immich server, ili ne želite nalog: želite samo da se 360° fotografije sa telefona otvore kao sfera koju možete da okrećete žiroskopom. Immich aplikacija prvo traži prijavu.
 
-Na stranici za prijavu, "Koristi bez servera" otvara Immuch360 sa fotografijama i video zapisima samog uređaja, sa pregledačima za 360°, 3D, VR180 i Spatial, listom 360° i mrežnim deljenim resursima (od bilda 20 i Plex serverima i Tapo kamerama), bez Immich naloga. Funkcije servera ostaju skrivene ili zasivljene dok ne povežete server; ništa ne napušta uređaj. Na Meta Quest 3 otvaraju se fotografije i video zapisi samih naočara; na televizoru, koji ih nema, upućuje na mrežne deljene resurse (pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv)).
+Na stranici za prijavu, "Koristi bez servera" otvara Immuch360 sa fotografijama i video zapisima samog uređaja, sa pregledačima za 360°, 3D, VR180 i Spatial, listom 360° i mrežnim deljenim resursima (od bilda 20 i Plex serverima i Tapo kamerama), bez Immich naloga. Funkcije servera ostaju skrivene ili zasivljene dok ne povežete server; ništa ne napušta uređaj. Na Meta Quest naočarima otvaraju se fotografije i video zapisi samih naočara; na televizoru, koji ih nema, upućuje na mrežne deljene resurse (pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Kartica Biblioteka bez servera: stavka 360° na vrhu, zatim Na ovom uređaju sa dve 360° fotografije, i Mrežni deljeni resursi sa resursom pod imenom NAS">
 
@@ -159,7 +159,7 @@ Korisničko ime sa praznom šifrom šalje se takvo kakvo je: Freebox Server tra�
 1. Dodirnite deljeni resurs. Prvo dolaze fascikle, zatim fotografije i video zapisi kao mreža sličica (i po jedan kadar svakog videa, keširan na uređaju). Oni prepoznati kao 360° imaju oznaku 360°, a od bilda 19 Apple prostorne fotografije i video zapisi imaju oznaku 3D. Povucite nadole za osvežavanje.
 2. Dodirnite fotografiju: otvara se preko celog ekrana (razvlačenje prstiju, dvostruki dodir), a njeno dugme 360° otvara sferni pregledač.
 3. Dodirnite video: reprodukuje se u izvornom plejeru (reprodukcija, pauza, premotavanje), sa dugmetom 360° koje otvara 360° plejer i njegovu dugmad 3D i 360°/180°, a na telefonu i dugmetom Spatial za stereoskopske datoteke.
-4. Na Quest 3 dugme 360° otvara imerzivni prikaz, a od bilda 19 "Prikaži u 3D" otvara Apple prostornu fotografiju u 3D.
+4. Na Quest naočarima dugme 360° otvara imerzivni prikaz, a od bilda 19 "Prikaži u 3D" otvara Apple prostornu fotografiju u 3D.
 5. Meni ⋮ ima "Prikaži kao 360°" za datoteke bez oznake 360°, a na telefonu "Spatial 2.5D" za video zapise koji nisu stereoskopski.
 
 360°, 3D i VR180 se prepoznaju iz GPano ili sfernih metapodataka datoteke, čitanih zahtevima za opseg bajtova (range requests), a VR180 i iz imena datoteke. Od bilda 16 prepoznaju se i neobrađene Insta360 datoteke (.insp fotografija po imenu ili po kalibracionom bloku kamere, .insv video po imenu i po kadru) i spajaju se.
@@ -252,7 +252,7 @@ Adresu koju server javlja aplikacija ponovo saznaje pri svakom povezivanju kod k
 <a id="share-this-phone-on-the-network"></a>
 ## Deli ovaj telefon na mreži
 
-Vaše fotografije i video zapisi su na telefonu i želite da ih vidite u naočarima, bez računara, NAS-a ili Immich servera. Od bilda 19 telefon, Android ili iPhone, deli sopstvene fotografije i video zapise preko Wi-Fi mreže, a Meta Quest 3 ih reprodukuje. Immich aplikacija nema ništa slično.
+Vaše fotografije i video zapisi su na telefonu i želite da ih vidite u naočarima, bez računara, NAS-a ili Immich servera. Od bilda 19 telefon, Android ili iPhone, deli sopstvene fotografije i video zapise preko Wi-Fi mreže, a Meta Quest naočare ih reprodukuju. Immich aplikacija nema ništa slično.
 
 ### Uključivanje, na telefonu
 
@@ -285,7 +285,7 @@ Od tada je to WebDAV deljeni resurs kao i svaki drugi: prepoznavanje 360°, neob
 
 Kod kuće imate Tapo kamere, i želite da vidite kameru u bašti i snimke od sinoć pored svojih fotografija bez otvaranja aplikacije Tapo, i da zadržite snimak u Immich-u. Immich aplikacija nema ništa za kamere, a aplikacija Tapo je zasebna aplikacija, prijavljena na vaš TP-Link nalog, sa snimcima odvojenim od vaših fotografija.
 
-Od bilda 20 Immuch360 dodaje Tapo kameru pored mrežnih deljenih resursa. Prikazuje kameru uživo na Android telefonima i tabletima, Android TV-u i Meta Quest 3, a na svim platformama snimke sa njene memorijske kartice, dan po dan: snimak se preuzima sa kamere, zatim se reprodukuje kao svaki drugi video i može da se pošalje na Immich. Aplikacija razgovara sa kamerom samo na vašoj mreži, nikada sa TP-Link serverima, i nikada ništa ne menja na kameri.
+Od bilda 20 Immuch360 dodaje Tapo kameru pored mrežnih deljenih resursa. Prikazuje kameru uživo na Android telefonima i tabletima, Android TV-u i Meta Quest naočarima, a na svim platformama snimke sa njene memorijske kartice, dan po dan: snimak se preuzima sa kamere, zatim se reprodukuje kao svaki drugi video i može da se pošalje na Immich. Aplikacija razgovara sa kamerom samo na vašoj mreži, nikada sa TP-Link serverima, i nikada ništa ne menja na kameri.
 
 ### Dodavanje kamere
 
@@ -396,7 +396,7 @@ Od bilda 19, na Android-u i Quest-u:
 
 U Immich aplikaciji stereoskopska 360° fotografija ili video prikazuje oba oka odjednom, udvojenu sliku, a VR180 datoteka, koja pokriva samo prednju polovinu, razvučena je svuda oko sfere.
 
-Immuch360 prepoznaje 3D rasporede, gore i dole ili jedno pored drugog, iz datoteke (st3d kutija videa), ili ih pogađa po obliku kadra, a svaki pregledač ima dugme 3D za njihovu promenu. Telefon prikazuje levo oko; Meta Quest 3 svakom oku prikazuje njegovu polovinu, u pravom 3D. VR180 datoteke se iscrtavaju na polusferi, sa crnom zadnjom stranom umesto razvučene slike. Prepoznaju se iz datoteke (sferne granice ili mreža, GPano isecanje) ili po "vr180" ili "180" u imenu, a svaki pregledač ima dugme 360°/180°.
+Immuch360 prepoznaje 3D rasporede, gore i dole ili jedno pored drugog, iz datoteke (st3d kutija videa), ili ih pogađa po obliku kadra, a svaki pregledač ima dugme 3D za njihovu promenu. Telefon prikazuje levo oko; Meta Quest naočare svakom oku prikazuje njegovu polovinu, u pravom 3D. VR180 datoteke se iscrtavaju na polusferi, sa crnom zadnjom stranom umesto razvučene slike. Prepoznaju se iz datoteke (sferne granice ili mreža, GPano isecanje) ili po "vr180" ili "180" u imenu, a svaki pregledač ima dugme 360°/180°.
 
 ### Promena rasporeda ili pokrivenosti
 
@@ -428,14 +428,14 @@ Kada je uključeno Podešavanja, Napredno, Rešavanje problema, plejer dodaje sl
 ### Formati, privatnost i ograničenja
 
 - **Formati**: jedno pored drugog i gore i dole, i sa zamenjenim očima, pune ili polovične širine, ravno, 360° i VR180. Raspored se čita iz datoteke, u suprotnom se pogađa po obliku kadra ili imenu datoteke (sbs, ou, tb i slično; datoteka polovične širine prepoznaje se samo po imenu), a može se izabrati i ručno u plejeru. Izbor se pamti za video iz biblioteke, ne i za datoteku sa mrežnog deljenog resursa.
-- **Kamera**: slike se obrađuju samo na uređaju, nikada se ne čuvaju i nikada se nikuda ne šalju. Bild za Quest 3 uopšte nema dozvolu za kameru (naočare nemaju kameru koju aplikacija sme da koristi), a Spatial plejer se tamo ne nudi: njegovo dugme i podešavanje su skriveni u naočarima.
+- **Kamera**: slike se obrađuju samo na uređaju, nikada se ne čuvaju i nikada se nikuda ne šalju. Bild za Quest uopšte nema dozvolu za kameru (naočare nemaju kameru koju aplikacija sme da koristi), a Spatial plejer se tamo ne nudi: njegovo dugme i podešavanje su skriveni u naočarima.
 - **Ograničenja**: eksperimentalno, samo telefoni i tableti (ne na Meta Quest-u), zahteva OpenGL ES 3.0 ili Metal. Dubina je procena. Najbolje radi u horizontalnom položaju sa dobro osvetljenim licem. Provereno na Galaxy S24+; povratne informacije sa iPhone-a su dobrodošle.
 - **Rezerva**: ako nešto pođe naopako (nema kamere, uređaj nije podržan, raspored nije čitljiv), vraćate se u običan plejer.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Apple prostorne fotografije i video zapisi
 
-iPhone snima prostorne fotografije i video zapise, a Immich server o njima ništa ne kaže: u Immich aplikaciji to su ravna fotografija ili video. Od bilda 19 Immuch360 ih prepoznaje čitanjem datoteka i prikazuje prostornu fotografiju u 3D na Meta Quest 3. Ovo nije gore opisani Spatial 2.5D plejer, koji je za video zapise jedno pored drugog i gore i dole.
+iPhone snima prostorne fotografije i video zapise, a Immich server o njima ništa ne kaže: u Immich aplikaciji to su ravna fotografija ili video. Od bilda 19 Immuch360 ih prepoznaje čitanjem datoteka i prikazuje prostornu fotografiju u 3D na Meta Quest naočarima. Ovo nije gore opisani Spatial 2.5D plejer, koji je za video zapise jedno pored drugog i gore i dole.
 
 - **Prostorne fotografije** su HEIC datoteke (`.heic`, `.heif`, `.hif`) koje sadrže dve slike, po jednu za svako oko, grupisane kao stereo par. Aplikacija čita početak datoteke (na uređaju, original sa servera zahtevom za opseg, ili datoteku sa mrežnog deljenog resursa) i pamti odgovor na telefonu, pa se fotografija čita samo jednom.
 - **Prostorni video zapisi** (MV-HEVC) se prepoznaju po video zapisu: drugi sloj i oba navedena oka.
@@ -466,7 +466,7 @@ Prepoznavanje je provereno na primeru prostorne fotografije koju je napisala App
 
 Ljudi kupuju Quest 3 da bi gledali sopstvene 360° fotografije i video zapise, a zatim pitaju gde da stave datoteke, kako da ih prebace na naočare bez kabla i koji plejer da koriste: plejeri iz prodavnice za 360° i 3D video se plaćaju.
 
-Ista Android aplikacija radi na Quest 3 i 3S kao prozor, sa celom vašom bibliotekom. Njeno dugme 360° otvara imerzivni prikaz u kome je fotografija ili video svuda oko vas i gledate okolo okretanjem glave, u pravom 3D za stereoskopske datoteke (Meta Spatial SDK). Mediji dolaze sa vašeg Immich servera, iz samih naočara, sa NAS-a, medijskog servera, telefona ili Plex servera, i reprodukuju se tamo gde jesu (medijski server i telefon od bilda 19, Plex server od bilda 20, još nije provereno u naočarima), a od bilda 20 prozor prikazuje i Tapo kamere. Besplatna je i otvorenog koda. Proverena na Quest 3, a i jedan korisnik ju je proverio sa 8K HEVC video zapisima sa Insta360 X4.
+Ista Android aplikacija radi na Quest 3 i 3S, a od bilda 21 i na Quest 2 i Quest Pro (netestirano), kao prozor, sa celom vašom bibliotekom. Njeno dugme 360° otvara imerzivni prikaz u kome je fotografija ili video svuda oko vas i gledate okolo okretanjem glave, u pravom 3D za stereoskopske datoteke (Meta Spatial SDK). Mediji dolaze sa vašeg Immich servera, iz samih naočara, sa NAS-a, medijskog servera, telefona ili Plex servera, i reprodukuju se tamo gde jesu (medijski server i telefon od bilda 19, Plex server od bilda 20, još nije provereno u naočarima), a od bilda 20 prozor prikazuje i Tapo kamere. Besplatna je i otvorenog koda. Proverena na Quest 3, a i jedan korisnik ju je proverio sa 8K HEVC video zapisima sa Insta360 X4.
 
 ### Otvaranje imerzivnog prikaza
 
@@ -659,7 +659,7 @@ Sve što radi zvanična Immich mobilna aplikacija postoji i ovde: rezervne kopij
 
 Da biste 360° fotografiju pokazali nekome ko nema aplikaciju, podelite je Immich deljenim linkom: Immich veb aplikacija prikazuje 360° fotografiju kao sferu u njegovom pregledaču.
 
-Trenutni bild, bild 20 (verzija 3.3.0-rc.0, broj bilda 3030018), zasnovan je na Immich 3.3.0-rc.0 (Immich `main`, još nije stabilno izdanje). Bild 19 je testiran sa Immich 3.2 serverom, a bild 20 ne menja ništa u onome što aplikacija traži od servera. Probleme prijavite u [Issues](https://github.com/freeKC/Immuch360/issues), a ne Immich projektu. Za potpunu dokumentaciju samog Immich-a pogledajte [immich.app](https://immich.app).
+Trenutni bild, bild 21 (verzija 3.3.0-rc.0, broj bilda 3030019), zasnovan je na Immich 3.3.0-rc.0 (Immich `main`, još nije stabilno izdanje). Bild 19 je testiran sa Immich 3.2 serverom, a bildovi 20 i 21 ne menjaju ništa u onome što aplikacija traži od servera. Probleme prijavite u [Issues](https://github.com/freeKC/Immuch360/issues), a ne Immich projektu. Za potpunu dokumentaciju samog Immich-a pogledajte [immich.app](https://immich.app).
 
 ## U poređenju sa Immich aplikacijom i drugim aplikacijama
 
@@ -670,20 +670,20 @@ Trenutni bild, bild 20 (verzija 3.3.0-rc.0, broj bilda 3030018), zasnovan je na 
 | 360° fotografije kao sfera u kojoj gledate oko sebe (prevlačenje, razvlačenje prstiju, dvostruki dodir, inercija, početni prikaz kamere, delimične panorame) | ❌ ravna traka | ✅ | Testirano na Galaxy S24+ i iPhone 14 |
 | Žiroskop: gledanje okolo pomeranjem telefona | ❌ | ✅ | Testirano na Galaxy S24+ i iPhone 14 |
 | 360° video zapisi u sfernom plejeru, sa zvukom, premotavanjem, izborom audio zapisa i indikatorom učitavanja | ❌ ravan video | ✅ Android i iOS (na iOS-u još bez trake vremena) | Testirano na Galaxy S24+ i iPhone 14 |
-| 3D (stereoskopske) 360° fotografije i video zapisi | ❌ udvojena slika | ✅ levo oko na telefonima, pravi 3D na Quest 3 | Testirano na Galaxy S24+ i Quest 3, sa stvarnim 3D 360° primerima (VRTogether, Vuze, Kandao) i jednom 3D fotografijom; izveštaji sa drugih kamera su dobrodošli |
+| 3D (stereoskopske) 360° fotografije i video zapisi | ❌ udvojena slika | ✅ levo oko na telefonima, pravi 3D na Quest | Testirano na Galaxy S24+ i Quest 3, sa stvarnim 3D 360° primerima (VRTogether, Vuze, Kandao) i jednom 3D fotografijom; izveštaji sa drugih kamera su dobrodošli |
 | VR180 (polusfera) fotografije i video zapisi | ❌ razvučeno oko sfere | ✅ polusfera, dugme 360°/180° | Testirano na Android emulatoru i Galaxy S24+ sa sintetičkim medijima; povratne informacije sa uređaja su dobrodošle |
-| Apple prostorne fotografije (HEIC stereo parovi) i prostorni video zapisi (MV-HEVC) | ❌ ravna fotografija ili video, ništa ne kaže da je prostorno | ✅ od bilda 19: fotografije u 3D na Quest 3, jedno oko i red detalja na drugim mestima | Prepoznavanje provereno na primeru fotografije koju je napisala Apple-ova biblioteka za slike i na sintetičkim datotekama; prikaz u naočarima i stvarne iPhone datoteke su test na uređajima za bild 19 |
-| Imerzivni prikaz na Meta Quest 3 sa praćenjem glave, trakom vremena, prethodnim i sledećim, i Okreni | ❌ | ✅ ista aplikacija, kao bild za naočare ili APK za telefon | Testirano na Quest 3 (kontrole iz bilda 14, podešene u bildu 16 posle povratnih informacija korisnika), i od strane korisnika sa 8K HEVC video zapisima sa Insta360 X4 |
+| Apple prostorne fotografije (HEIC stereo parovi) i prostorni video zapisi (MV-HEVC) | ❌ ravna fotografija ili video, ništa ne kaže da je prostorno | ✅ od bilda 19: fotografije u 3D na Quest, jedno oko i red detalja na drugim mestima | Prepoznavanje provereno na primeru fotografije koju je napisala Apple-ova biblioteka za slike i na sintetičkim datotekama; prikaz u naočarima i stvarne iPhone datoteke su test na uređajima za bild 19 |
+| Imerzivni prikaz na Meta Quest sa praćenjem glave, trakom vremena, prethodnim i sledećim, i Okreni | ❌ | ✅ ista aplikacija, kao bild za naočare ili APK za telefon | Testirano na Quest 3 (kontrole iz bilda 14, podešene u bildu 16 posle povratnih informacija korisnika), i od strane korisnika sa 8K HEVC video zapisima sa Insta360 X4 |
 | Oznaka 360° na sličicama i lista 360° sa neobrađenim datotekama i filterima (period, izvor, vrsta, kamera) | ❌ | ✅ filteri od bilda 18 | Gotovo |
 | "Prikaži kao 360°" za datoteke koje server ne označava | ❌ | ✅ pamti se na telefonu | Gotovo |
 | Spatial 2.5D: dubina na ravnom ekranu iz stereoskopskog videa | ❌ | ✅ eksperimentalno, telefoni i tableti | Testirano na Galaxy S24+; povratne informacije sa iPhone-a su dobrodošle |
 | Korišćenje bez ikakvog servera, sa galerijom samog uređaja | ❌ potrebna prijava | ✅ | Testirano na Galaxy S24+, Quest 3 i Android emulatoru |
-| SMB i WebDAV deljeni resursi pronađeni na mreži i reprodukovani uživo, ništa se ne preuzima | ❌ | ✅ svi pregledači, telefoni i Quest 3 | Testirano sa Freebox Server-om (SMB) na Galaxy S24+ i Quest 3, i sa Samba i WebDAV test serverima na Android emulatoru; povratne informacije za druge NAS i WebDAV su dobrodošle |
+| SMB i WebDAV deljeni resursi pronađeni na mreži i reprodukovani uživo, ništa se ne preuzima | ❌ | ✅ svi pregledači, telefoni i Quest | Testirano sa Freebox Server-om (SMB) na Galaxy S24+ i Quest 3, i sa Samba i WebDAV test serverima na Android emulatoru; povratne informacije za druge NAS i WebDAV su dobrodošle |
 | DLNA medijski serveri kao tip deljenog resursa | ❌ | ✅ od bilda 19 | Provereno sa minidlna i Gerbera u Docker-u; Plex, Jellyfin, NAS, Freebox Server, iPhone i Quest su test na uređajima za bild 19 |
 | Slanje datoteka sa deljenog resursa na Immich; ručno poslate datoteke uređaja računaju se kao rezervno kopirane | ❌ samo datoteke uređaja | ✅ od bilda 15 | Testirano na Android emulatoru sa Samba test serverom i Immich 3.2 serverom |
 | Deljenje ovog telefona na mreži, za naočare | ❌ | ✅ od bilda 19, Android i iOS | Jedinični testovi i end to end testovi sa WebDAV klijentom naočara, na računaru; telefon koji deli sadržaj za Quest, i strana iPhone-a, su test na uređajima za bild 19 |
-| Plex Media Server biblioteke reprodukovane iz originalnih datoteka, kod kuće i van nje, bez plex.tv | ❌ | ✅ od bilda 20, svi pregledači, na telefonima, tabletima, Quest 3 i televizorima | Provereno sa računara na pravom Plex Media Serveru 1.42.1 (uparivanje, fascikle, opsezi bajtova, sličice, adresa van kuće); još nije provereno na uređaju |
-| Tapo kamere: prikaz uživo i snimci sa memorijske kartice poslati na Immich kada vi to izaberete | ❌ | ✅ od bilda 20: snimci svuda, uživo na Android-u, Android TV-u i Quest 3 | Provereno na simuliranoj kameri; još nije provereno sa pravom kamerom |
+| Plex Media Server biblioteke reprodukovane iz originalnih datoteka, kod kuće i van nje, bez plex.tv | ❌ | ✅ od bilda 20, svi pregledači, na telefonima, tabletima, Quest i televizorima | Provereno sa računara na pravom Plex Media Serveru 1.42.1 (uparivanje, fascikle, opsezi bajtova, sličice, adresa van kuće); još nije provereno na uređaju |
+| Tapo kamere: prikaz uživo i snimci sa memorijske kartice poslati na Immich kada vi to izaberete | ❌ | ✅ od bilda 20: snimci svuda, uživo na Android-u, Android TV-u i Quest | Provereno na simuliranoj kameri; još nije provereno sa pravom kamerom |
 | Android TV i Google TV, upravljanje daljinskim upravljačem, u istom APK-u | ❌ nije aplikacija za televizor | ✅ od bilda 20 | Provereno automatskim testovima; još nije provereno na televizoru |
 | Neobrađene Insta360 .insp fotografije i .insv video zapisi sa jednim zapisom | ❌ ravno | ✅ od bilda 16 | Fotografije proverene u poređenju sa izvozima X3 datoteka iz Insta360 Studio-a, video zapisi na Android emulatoru sa X3 datotekom niske rezolucije; još nije pokrenuto na iPhone-u |
 | Neobrađeni video zapisi sa jednim sočivom po zapisu ili po datoteci (Insta360 X4, X4 Air, X5, X6, X3 parovi, GoPro .360, DJI .osv) | ❌ ravno ili pogrešno | ✅ od bilda 18 | Parseri i spajanje provereni na stvarnim datotekama sa X4, X3 para, GoPro MAX i Osmo 360; reprodukcija je test na uređajima za bildove 18 i 19 |
@@ -697,7 +697,7 @@ Trenutni bild, bild 20 (verzija 3.3.0-rc.0, broj bilda 3030018), zasnovan je na 
 
 | Šta ljudi koriste | Na šta nailaze | Šta Immuch360 radi |
 |---|---|---|
-| Immich veb aplikacija | Prikazuje 360° fotografiju kao sferu, ali neobrađenu .insp datoteku smatra gotovom panoramom i obmotava njena dva kruga oko sfere; VR prikaz je i dalje samo zahtev ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Spaja neobrađene datoteke na uređaju i otvara imerzivni prikaz na Quest 3 |
+| Immich veb aplikacija | Prikazuje 360° fotografiju kao sferu, ali neobrađenu .insp datoteku smatra gotovom panoramom i obmotava njena dva kruga oko sfere; VR prikaz je i dalje samo zahtev ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Spaja neobrađene datoteke na uređaju i otvara imerzivni prikaz na Quest |
 | Aplikacija Insta360 ili Studio | Potrebna da bi se neobrađene datoteke sa kartice pretvorile u 360° sliku pre gledanja | Direktno otvara neobrađene .insp i .insv datoteke, kao i GoPro .360 i DJI .osv datoteke |
 | Plex, Jellyfin, Synology Photos | 360° fotografije i video zapisi prikazani ravno ili neprepoznati, kako opisuju teme na njihovim forumima (zahtev za Plex je otvoren od 2017.) | Čita samu Plex biblioteku od bilda 20, ili iste fascikle preko SMB, WebDAV ili DLNA, i reprodukuje ih kao sferu, bez ikakvih izmena na serveru |
 | Aplikacija Tapo | Zasebna aplikacija, prijavljena na vaš TP-Link nalog, sa snimcima odvojenim od vaših fotografija | Prikazuje kameru pored vaših fotografija, razgovara sa njom samo na vašoj mreži i čuva snimak kao video koji možete da pošaljete na Immich (od bilda 20) |
@@ -709,7 +709,7 @@ Trenutni bild, bild 20 (verzija 3.3.0-rc.0, broj bilda 3030018), zasnovan je na 
 
 Immuch360 je galerija, a i besplatan medijski plejer: reprodukuje ono što zvanična aplikacija ne može, iz izvora iz druge tabele, u plejeru koji odgovara datoteci.
 
-| Šta | Android telefoni | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (od bilda 20) |
+| Šta | Android telefoni | iPhone, iPad | Meta Quest | Android TV, Google TV (od bilda 20) |
 |---|---|---|---|---|
 | Ravni video zapisi (MP4, MOV, MKV, ono što uređaj dekodira) | Immich plejer, i izvorni plejer za mrežne deljene resurse | Isto, osim MKV i AVI datoteka sa deljenog resursa, koje iOS ne otvara (sa servera se reprodukuju transkodirane) | U prozoru | Kao na telefonima; OK pauzira, levo i desno skaču 10 s |
 | 360° fotografije | Sferni pregledač, žiroskop | Isto | Imerzivno, svuda oko vas | Sferni pregledač koji se okreće strelicama, zumira tasterima za kanale |
@@ -739,14 +739,14 @@ Kolona za televizor još nije proverena na televizoru, pogledajte [Gledanje na t
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 radi i na Meta Quest 3 i 3S (Horizon OS v69 ili noviji; bild u Horizon Store-u je naveden samo za ova dva; univerzalni `-release.apk` bi trebalo da se instalira i na Quest 2 ili Quest Pro, netestirano). Kako se koristi opisano je u [U Meta Quest 3 naočarima](#in-the-meta-quest-3-headset); ovaj odeljak govori o instalaciji i o tome šta se razlikuje u naočarima.
+Immuch360 radi i na Meta Quest naočarima sa Horizon OS v69 ili novijim. Od bilda 21 bild u Horizon Store-u je naveden za Quest 2, Quest Pro, Quest 3 i 3S, četiri modela koja univerzalni `-release.apk` već navodi; prvi Quest nije, prodavnica ga više ne prihvata. Quest 3 i 3S su testirani. Quest 2 i Quest Pro još nisu testirani: njihovi video dekoderi su sporiji, a ograničenja koja aplikacija proverava izmerena su na Quest 3, pa veliki H.264 video na njima može biti odbijen uz poruku ili da secka. Izveštaji sa ova dva modela naočara su dobrodošli u [Issues](https://github.com/freeKC/Immuch360/issues). Kako se koristi opisano je u [U Meta Quest 3 naočarima](#in-the-meta-quest-3-headset); ovaj odeljak govori o instalaciji i o tome šta se razlikuje u naočarima.
 
 Bild za naočare komunicira sa serverima samo preko HTTPS-a, ili preko običnog HTTP-a sa imenima iz kućne mreže (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) i sa samim naočarima, kako zahteva Horizon Store. Server unet kao obična HTTP adresa sa IP adresom, na primer `http://192.168.1.10:2283`, taj bild odbija: koristite HTTPS, ime iz kućne mreže (`nas.local`) ili univerzalni `-release.apk`, koji zadržava otvorenu politiku telefona. WebDAV, DLNA i deljeni resursi telefona na običnoj HTTP adresi lokalne mreže nisu pogođeni: aplikacija ih čita sama i svojim plejerima daje samo adresu svog lokalnog mosta (treba potvrditi u naočarima za DLNA i deljeni resurs telefona, novine u bildu 19). Od bilda 20 Plex serveru se pristupa preko HTTPS-a, a Tapo kameri sama aplikacija, njenom prikazu uživo preko RTSP-a, koji nije HTTP: ni jedno ni drugo ne bi trebalo da bude pogođeno (treba potvrditi u naočarima).
 
 <a id="install"></a>
 ### Instalacija
 
-Oglas u Horizon Store-u čeka Meta-in pregled, predat sa bildom 14; dok se ne odobri, instalirajte sa strane datoteku `-quest-release.apk` iz izdanja (napravljenu za naočare: 64-bitna, ciljni SDK 34, samo dozvole koje naočare koriste), ili univerzalni `-release.apk`:
+Meta je odobrila oglas u Horizon Store-u 7. oktobra 2026. sa bildom 14, a bild 21 je predat kao njegovo prvo ažuriranje. Dok stranica u prodavnici ne postane javna, ili da biste dobili bild pre nego što ga prodavnica ima, instalirajte sa strane datoteku `-quest-release.apk` iz izdanja (napravljenu za naočare: 64-bitna, ciljni SDK 34, samo dozvole koje naočare koriste), ili univerzalni `-release.apk`:
 
 1. Jednom uključite režim za programere. U aplikaciji Meta Horizon na telefonu otvorite Devices (Uređaji), izaberite naočare, zatim Headset settings (Podešavanja naočara), zatim Developer mode (Režim za programere). Za to je potreban nalog programera, koji je besplatan na developers.meta.com. Na računaru vam treba i adb (Android SDK Platform Tools), ili SideQuest.
 2. Povežite naočare sa računarom USB-C kablom. U naočarima prihvatite "Allow USB debugging" (Dozvoli USB otklanjanje grešaka).
@@ -754,7 +754,7 @@ Oglas u Horizon Store-u čeka Meta-in pregled, predat sa bildom 14; dok se ne od
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. U naočarima otvorite biblioteku, izaberite filter "Unknown sources" (Nepoznati izvori) i pokrenite Immuch360.
@@ -776,7 +776,7 @@ Snimci napravljeni u naočarima dugmetom za snimanje ekrana (Meta dugme i okida�
 ### Ograničenja u naočarima
 
 - **Video kodeci**: HEVC (H.265) je siguran izbor; H.264 staje oko 4096x2304. Šta aplikacija proverava i kako da naočarima date video koji mogu da dekodiraju opisano je u [Detalji videa i dekoderi](#video-details-decoders-and-why-a-video-stutters).
-- **Prodavnica**: verzija iz prodavnice počinje od bilda 14. Funkcije označene sa "od bilda 15" i kasnije stižu sa njenim sledećim ažuriranjima (alfa test kanal prodavnice, za testere, dobija svaki novi bild); GitHub APK ih već sada sve ima.
+- **Prodavnica**: verzija iz prodavnice počinje od bilda 14. Funkcije označene sa "od bilda 15" i kasnije stižu sa bildom 21, njenim prvim ažuriranjem, kada ga Meta pregleda (alfa test kanal prodavnice, za testere, dobija svaki novi bild); GitHub APK ih već sada sve ima.
 - **Dozvole**: bild za naočare traži samo fotografije i video zapise (režim bez servera) i obaveštenja (napredak rezervne kopije). Nema dozvolu za skladište, zvuk, lokaciju ni kameru, za razliku od bilda za telefon; promena servera na osnovu imena Wi-Fi mreže zato nije dostupna u naočarima.
 - **Veličina APK-a**: Spatial SDK dodaje oko 56 MB izvornog 64-bitnog ARM koda, i na telefonima, gde se nikada ne učitava.
 - **Licenca**: imerzivni prikaz koristi Meta Spatial SDK, koji se distribuira pod Meta Platform Technologies SDK License Agreement.
@@ -784,13 +784,13 @@ Snimci napravljeni u naočarima dugmetom za snimanje ekrana (Meta dugme i okida�
 <a id="where-to-get-it"></a>
 ## Gde je preuzeti
 
-Aplikacija je na Google Play-u za telefone i tablete; verzija za App Store čeka Apple-ov pregled, verzija za Meta Horizon Store Meta-in, a Google Play verzija za televizore Google-ov pregled izdanja za televizore. GitHub izdanje je uvek najnoviji bild:
+Aplikacija je na Google Play-u za telefone i tablete; verzija za App Store čeka Apple-ov pregled, oglas u Meta Horizon Store-u je odobren a njegovo prvo ažuriranje je na Meta-inom pregledu, a Google Play verzija za televizore čeka Google-ov pregled izdanja za televizore. GitHub izdanje je uvek najnoviji bild:
 
 | Platforma | Danas | Uskoro |
 |---|---|---|
-| Android telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi svuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za instalaciju sa strane). GitHub bild je obično ispred prodavnice. U svakom slučaju instalira se pored zvanične Immich aplikacije (paket `com.aprogsys.immuch360`). | Google Play: bild 18 je objavljen, bild 19 je na Google-ovom pregledu od 6. oktobra 2026., bild 20 sledi |
+| Android telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi svuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za instalaciju sa strane). GitHub bild je obično ispred prodavnice. U svakom slučaju instalira se pored zvanične Immich aplikacije (paket `com.aprogsys.immuch360`). | Google Play: bild 18 je objavljen, bild 20 je na Google-ovom pregledu od 7. oktobra 2026., umesto bilda 19 |
 | iPhone i iPad | Čeka Apple-ov pregled. Verzija na pregledu ima funkcije bilda 11: otpremanje na Immich i izbor Izvor videa (bild 15) i neobrađene Insta360 datoteke (bild 16) stižu sa kasnijim ažuriranjem u App Store-u. Izvorni kod se gradi pomoću Xcode-a ili na Codemagic-u, pogledajte [Napravite je sami](#build-it-yourself). | App Store, na pregledu |
-| Meta Quest 3 i 3S | Datoteka `-quest-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases) (radi i univerzalni `-release.apk`), instalirana sa strane u režimu za programere, pogledajte [Instalacija](#install). Bild iz prodavnice i GitHub APK potpisani su različitim ključevima: da biste prešli sa jednog na drugi, prvo deinstalirajte aplikaciju (sa njom odlaze i njena podešavanja i sačuvani deljeni resursi). | Meta Horizon Store: bild 14 na Meta-inom pregledu od 3. oktobra 2026; alfa kanal prodavnice (samo za testere) dobija svaki novi bild |
+| Meta Quest 2, Quest Pro, Quest 3 i 3S (Quest 2 i Quest Pro netestirani) | Datoteka `-quest-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases) (radi i univerzalni `-release.apk`), instalirana sa strane u režimu za programere, pogledajte [Instalacija](#install). Bild iz prodavnice i GitHub APK potpisani su različitim ključevima: da biste prešli sa jednog na drugi, prvo deinstalirajte aplikaciju (sa njom odlaze i njena podešavanja i sačuvani deljeni resursi). | Meta Horizon Store: oglas je odobren 7. oktobra 2026. sa bildom 14, a bild 21, njegovo prvo ažuriranje, je na Meta-inom pregledu; alfa kanal prodavnice (samo za testere) dobija svaki novi bild |
 | Android TV i Google TV (od bilda 20) | Univerzalni `Immuch360-v<version>-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases), instaliran sa strane preko adb-a, pogledajte [Instaliranje na televizor](#install-it-on-the-tv). To je ista aplikacija kao na telefonima. | Google Play na televizorima, posle Google-ovog pregleda izdanja za televizore |
 
 Linkovi za App Store i Meta Horizon Store biće dodati ovde čim oglasi budu objavljeni. Prijavite se sa uobičajenom adresom svog Immich servera i nalogom, ili dodirnite "Koristi bez servera" na stranici za prijavu da biste počeli sa fotografijama i video zapisima samog uređaja. APK sa GitHub-a se ne ažurira sam: pratite stranicu Releases, a kada aplikaciju instalirate iz prodavnice, ažuriranja preuzimajte iz te prodavnice.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Snimci ekrana za prodavnice prave se na debug bildovima za simulator napravljenim sa `--dart-define=IMMUCH_SCREENSHOTS=true`, što samo skriva debug traku. Dve Android varijante (flavours) su ista aplikacija. Od bilda 20 varijanta `phone` se izjašnjava i kao aplikacija za televizor (unos u pokretaču televizora i baner, ekran osetljiv na dodir nije potreban), što varijanta `quest` izostavlja. Varijanta `quest` cilja SDK 34 i zadržava samo dozvole koje naočare koriste (fotografije, video zapisi, obaveštenja): upravljanje medijima, lokacija u pozadini, zastarelo skladište, zvuk, lokacija medija, lokacija uređaja i kamera uklanjaju se u `android/app/src/quest/AndroidManifest.xml`, jer Meta Horizon Store odbija prve dve i traži obrazloženje za svaku drugu osetljivu dozvolu; ista datoteka navodi Quest 3 i 3S kao podržane uređaje i ograničava običan HTTP na same naočare i na imena iz kućne mreže. APK je samo 64-bitni zbog dva dodatna argumenta u njegovoj komandnoj liniji (`--target-platform android-arm64 --android-project-arg arm64only=true`). Varijanta `phone` je ona koju zahteva Google Play. Da biste napravili iOS verziju na sopstvenom Mac-u, koristite Xcode i sopstveni tim za potpisivanje; sa Xcode 26 prvo jednom pokrenite `xcodebuild -downloadComponent MetalToolchain`, jer je potreban Spatial shaderima. Bez Mac-a, iOS bildovi se prave na Codemagic-u (Mac u oblaku) iz datoteke `codemagic.yaml` ovog repozitorijuma. Android bildovi za izdanja prave se na GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Snimci ekrana za prodavnice prave se na debug bildovima za simulator napravljenim sa `--dart-define=IMMUCH_SCREENSHOTS=true`, što samo skriva debug traku. Dve Android varijante (flavours) su ista aplikacija. Od bilda 20 varijanta `phone` se izjašnjava i kao aplikacija za televizor (unos u pokretaču televizora i baner, ekran osetljiv na dodir nije potreban), što varijanta `quest` izostavlja. Varijanta `quest` cilja SDK 34 i zadržava samo dozvole koje naočare koriste (fotografije, video zapisi, obaveštenja): upravljanje medijima, lokacija u pozadini, zastarelo skladište, zvuk, lokacija medija, lokacija uređaja i kamera uklanjaju se u `android/app/src/quest/AndroidManifest.xml`, jer Meta Horizon Store odbija prve dve i traži obrazloženje za svaku drugu osetljivu dozvolu; ista datoteka navodi Quest 2, Quest Pro, Quest 3 i 3S kao podržane uređaje i ograničava običan HTTP na same naočare i na imena iz kućne mreže. APK je samo 64-bitni zbog dva dodatna argumenta u njegovoj komandnoj liniji (`--target-platform android-arm64 --android-project-arg arm64only=true`). Varijanta `phone` je ona koju zahteva Google Play. Da biste napravili iOS verziju na sopstvenom Mac-u, koristite Xcode i sopstveni tim za potpisivanje; sa Xcode 26 prvo jednom pokrenite `xcodebuild -downloadComponent MetalToolchain`, jer je potreban Spatial shaderima. Bez Mac-a, iOS bildovi se prave na Codemagic-u (Mac u oblaku) iz datoteke `codemagic.yaml` ovog repozitorijuma. Android bildovi za izdanja prave se na GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 U ovom repozitorijumu nema nijedne tajne: Android ključ za potpisivanje čuva se kao šifrovane tajne u GitHub Actions, a Apple materijal za potpisivanje kao šifrovane promenljive na Codemagic-u. Datoteke tokova rada ih navode samo po imenu. Bez sopstvenog `android/key.jks`, bild za izdanje se potpisuje debug ključem i ne može da se instalira preko kopije sa GitHub-a ili iz prodavnice (prvo deinstalirajte tu kopiju); debug bild se instalira pored nje kao Immuch360 debug. Kopija iz Meta Horizon Store-a je `quest` APK izdanja potpisan drugim ključem, onim sa kojim je aplikacija prvi put registrovana u prodavnici, pa ni ona ne može da se instalira preko APK-a instaliranog sa strane, niti obrnuto.
 
@@ -857,9 +857,9 @@ Ovaj projekat je fork Immich-a i ostaje pod [GNU AGPL v3](LICENSE). Svaki APK, u
 
 Ono što još nije urađeno, najverovatnije prvo. Ništa ovde nije obećanje, a povratne informacije u [sistemu za prijavu problema](https://github.com/freeKC/Immuch360/issues) pomažu da se odluči šta dolazi prvo.
 
-- **Google Play**: bild 18 je objavljen; bild 19 je na Google-ovom pregledu od 6. oktobra 2026., a bild 20 sledi.
+- **Google Play**: bild 18 je objavljen; bild 20 je na Google-ovom pregledu od 7. oktobra 2026., umesto bilda 19. Bild 21 ne menja ništa na telefonima i tabletima.
 - **App Store**: verzija 3.3.0 čeka Apple-ov pregled; ima funkcije bilda 11, pa otpremanje na Immich i provera video dekodera (bild 15) i neobrađene Insta360 datoteke (bild 16) stižu sa sledećim ažuriranjem u App Store-u. Link će biti dodat ovde kada bude objavljena.
-- **Meta Horizon Store**: oglas je poslat na Meta-in pregled 3. oktobra 2026. sa bildom 14, a alfa kanal prodavnice dobija svaki novi bild za sledeće ažuriranje. Kada se oglas odobri, za Quest 3 više neće biti potrebna instalacija sa strane i link za prodavnicu biće dodat ovde; kopija instalirana sa strane mora prvo da se deinstalira (pogledajte [Instalacija](#install)).
+- **Meta Horizon Store**: Meta je odobrila oglas 7. oktobra 2026. sa bildom 14. Bild 21 je predat kao njegovo prvo ažuriranje: donosi sve od bilda 14 (otpremanja sa deljenog resursa na Immich, izvor videa izabran prema onome što naočare dekodiraju, neobrađene Insta360, GoPro i DJI datoteke, DLNA, deljenje telefona, Apple prostorne fotografije, Plex Media Server biblioteke, Tapo kamere), a prodavnica ga navodi za Quest 2, Quest Pro, Quest 3 i 3S. Link za prodavnicu biće dodat ovde kada stranica postane javna; kopija instalirana sa strane mora prvo da se deinstalira (pogledajte [Instalacija](#install)).
 - **Oglasi u prodavnicama**: oglas na Google Play-u prepisan je u oktobru 2026. sa novim snimcima ekrana, a sa izdanjem za televizore dobiće snimke ekrana sa televizora i baner za televizor. Tekst u App Store-u i dalje opisuje prve bildove (360° fotografije i video zapisi, neobrađene datoteke prikazane ravno); predstaviće pregledače za 3D, VR180 i Spatial, režim bez servera, mrežne deljene resurse, medijski plejer i neobrađene Insta360 datoteke. Tekst u Meta Horizon Store-u već predstavlja medijski plejer.
 - **Neobrađene datoteke 360° kamera, sledeće**: indikator napretka dok se neobrađena fotografija priprema za naočare; ispravljanje horizonta GoPro i DJI video zapisa iz njihovih sopstvenih podataka o kretanju; dvostruko riblje oko u .dng; izveštaji sa uređaja o reprodukciji sa dva sočiva iz bilda 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) radi potvrde spojeva i budžeta dekodera.
 - **DLNA, deljeni resurs telefona i Apple prostorni mediji, sledeće**: izveštaji sa uređaja za bild 19 (Plex, Jellyfin, NAS i Freebox Server preko DLNA; telefon koji deli sadržaj za Quest, i preko svog hotspota; stvarne prostorne fotografije i video zapisi sa iPhone-a u naočarima); multicast ovlašćenje zatraženo od Apple-a, da bi iPhone pronalazio svaki DLNA server; prethodno i sledeće između prostornih fotografija u naočarima; prostorna oznaka na fotografijama sa servera na vremenskoj liniji; prostorni video zapisi u 3D na Quest-u, ako njegovi dekoderi to dozvole.

@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | Lietuvių | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D ir VR180 nuotraukos ir vaizdo įrašai iš Immich, telefono ar NAS. Android, iOS ir Meta Quest 3, su serveriu arba be jo">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D ir VR180 nuotraukos ir vaizdo įrašai iš Immich, telefono ar NAS. Android, iOS ir Meta Quest, su serveriu arba be jo">
 </p>
 
 # Immuch360
 
-Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašais, kuriuose galima apsidairyti, ir nemokamas grotuvas plokščioms, 360°, 3D ir VR180 nuotraukoms ir vaizdo įrašams, skirtas Android telefonams ir planšetėms, iPhone ir iPad, Meta Quest 3 ir 3S, o nuo 20 surinkimo ir Android TV bei Google TV. Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) arba telefono fotosferos režimu, arba turi VR akinius, ir nori žiūrėti savo kadrus iš Immich serverio, paties telefono, NAS, medijos serverio ar Plex serverio: tas pats serveris, ta pati paskyra, jokio serverio papildinio arba visai be serverio. Nuo 20 surinkimo ji taip pat rodo Tapo kameras: tiesioginį vaizdą ir jų atminties kortelės įrašus.
+Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašais, kuriuose galima apsidairyti, ir nemokamas grotuvas plokščioms, 360°, 3D ir VR180 nuotraukoms ir vaizdo įrašams, skirtas Android telefonams ir planšetėms, iPhone ir iPad, Meta Quest akiniams (Quest 3 ir 3S, o nuo 21 surinkimo Quest 2 ir Quest Pro, neišbandyta), o nuo 20 surinkimo ir Android TV bei Google TV. Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) arba telefono fotosferos režimu, arba turi VR akinius, ir nori žiūrėti savo kadrus iš Immich serverio, paties telefono, NAS, medijos serverio ar Plex serverio: tas pats serveris, ta pati paskyra, jokio serverio papildinio arba visai be serverio. Nuo 20 surinkimo ji taip pat rodo Tapo kameras: tiesioginį vaizdą ir jų atminties kortelės įrašus.
 
 <p align="center">
   <sub>Neoficiali atšaka. Nesusijusi su Immich ar FUTO. Pavadinimas skaitomas kaip „I am much 360“.</sub>
@@ -15,7 +15,7 @@ Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašai
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">peržiūrima</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store peržiūrima &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store patvirtinta, 21 surinkimas pateiktas kaip pirmasis atnaujinimas &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašai
     <td align="center" width="33%"><h3>🎥 Tikras 2.5D</h3>Gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo, vaizdas seka jūsų galvą (eksperimentinis, telefonai ir planšetės)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Viena programa telefonuose, planšetėse ir akiniuose, tikras 3D akiniuose, o nuo 20 surinkimo ir Android TV su nuotolinio valdymo pulteliu</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Viena programa telefonuose, planšetėse ir Quest 2, Pro, 3 ir 3S akiniuose, tikras 3D akiniuose, o nuo 20 surinkimo ir Android TV su nuotolinio valdymo pulteliu</td>
     <td align="center"><h3>🔌 Su serveriu arba be jo</h3>Jūsų Immich serveris arba paties telefono galerija, paskyros nereikia</td>
     <td align="center"><h3>🗄️ Tinklo bendrinimai</h3>Samba (SMB), WebDAV ir, nuo 19 surinkimo, DLNA medijos serveriai, randami tinkle ir skaitomi tiesiogiai, nieko neatsisiunčiant, o į Immich siunčiami, kai pasirenkate. Nuo 19 surinkimo telefonas taip pat bendrina savo galeriją su akiniais</td>
   </tr>
@@ -109,7 +109,7 @@ Pasirinkimas įsimenamas telefone ir serveryje nieko nekeičia. Tinklo bendrinim
 
 Neturite Immich serverio arba nenorite paskyros: norite tik, kad telefono 360° nuotraukos atsivertų kaip sfera, kurią galima sukti giroskopu. Immich programa pirmiausia prašo prisijungti.
 
-Prisijungimo puslapyje „Naudoti be serverio“ atveria Immuch360 su paties įrenginio nuotraukomis ir vaizdo įrašais, su 360°, 3D, VR180 ir Spatial peržiūromis, 360° sąrašu ir tinklo bendrinimais (nuo 20 surinkimo taip pat Plex serveriais ir Tapo kameromis), Immich paskyros nereikia. Serverio funkcijos lieka paslėptos arba pilkos, kol prijungsite serverį; niekas nepalieka įrenginio. Meta Quest 3 akiniuose ji atveria pačių akinių nuotraukas ir vaizdo įrašus; televizoriuje, kuris jų neturi, ji nukreipia į tinklo bendrinimus (žr. [Žiūrėti televizoriuje](#watch-on-your-tv-android-tv-and-google-tv)).
+Prisijungimo puslapyje „Naudoti be serverio“ atveria Immuch360 su paties įrenginio nuotraukomis ir vaizdo įrašais, su 360°, 3D, VR180 ir Spatial peržiūromis, 360° sąrašu ir tinklo bendrinimais (nuo 20 surinkimo taip pat Plex serveriais ir Tapo kameromis), Immich paskyros nereikia. Serverio funkcijos lieka paslėptos arba pilkos, kol prijungsite serverį; niekas nepalieka įrenginio. Meta Quest akiniuose ji atveria pačių akinių nuotraukas ir vaizdo įrašus; televizoriuje, kuris jų neturi, ji nukreipia į tinklo bendrinimus (žr. [Žiūrėti televizoriuje](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Skirtukas Biblioteka be serverio: viršuje punktas 360°, tada Šiame įrenginyje su dviem 360° nuotraukomis ir Tinklo bendrinimai su bendrinimu, pavadintu NAS">
 
@@ -159,7 +159,7 @@ Naudotojo vardas su tuščiu slaptažodžiu siunčiamas būtent taip: Freebox Se
 1. Bakstelėkite bendrinimą. Pirmiausia aplankai, tada nuotraukos ir vaizdo įrašai kaip tinklelis su miniatiūromis (taip pat po kadrą iš kiekvieno vaizdo įrašo, laikomą įrenginio talpykloje). Atpažinti kaip 360° turi 360° ženklelį, o nuo 19 surinkimo Apple erdvinės nuotraukos ir vaizdo įrašai turi 3D ženklelį. Patraukite žemyn, kad atnaujintumėte.
 2. Bakstelėkite nuotrauką: ji atsiveria per visą ekraną (suėmimas pirštais, dvigubas bakstelėjimas), o jos 360° mygtukas atveria sferos peržiūrą.
 3. Bakstelėkite vaizdo įrašą: jis leidžiamas savajame grotuve (paleidimas, pristabdymas, persukimas), su 360° mygtuku, kuris atveria 360° grotuvą ir jo 3D bei 360°/180° mygtukus, o telefone stereoskopiniams failams yra mygtukas Spatial.
-4. Quest 3 akiniuose 360° mygtukas atveria įtraukiančią peržiūrą, o nuo 19 surinkimo „Žiūrėti 3D“ atveria Apple erdvinę nuotrauką 3D vaizdu.
+4. Quest akiniuose 360° mygtukas atveria įtraukiančią peržiūrą, o nuo 19 surinkimo „Žiūrėti 3D“ atveria Apple erdvinę nuotrauką 3D vaizdu.
 5. Meniu ⋮ yra „Žiūrėti kaip 360°“ failams be 360° žymos, o telefone „Spatial 2.5D“ vaizdo įrašams, kurie nėra stereoskopiniai.
 
 360°, 3D ir VR180 atpažįstami iš failo GPano ar sferinių metaduomenų, nuskaitomų intervalų užklausomis, o VR180 ir iš failo pavadinimo. Nuo 16 surinkimo atpažįstami ir neapdoroti Insta360 failai (.insp nuotrauka pagal pavadinimą ar kameros kalibravimo bloką, .insv vaizdo įrašas pagal pavadinimą ir kadrą) ir yra sujungiami.
@@ -252,7 +252,7 @@ Adresas, kurį praneša serveris, išmokstamas iš naujo per kiekvieną prisijun
 <a id="share-this-phone-on-the-network"></a>
 ## Bendrinti šį telefoną tinkle
 
-Jūsų nuotraukos ir vaizdo įrašai yra telefone, ir norite juos matyti akiniuose be kompiuterio, NAS ar Immich serverio. Nuo 19 surinkimo telefonas, Android ar iPhone, savo nuotraukas ir vaizdo įrašus pateikia per Wi-Fi, o Meta Quest 3 juos leidžia. Immich programa nieko panašaus neturi.
+Jūsų nuotraukos ir vaizdo įrašai yra telefone, ir norite juos matyti akiniuose be kompiuterio, NAS ar Immich serverio. Nuo 19 surinkimo telefonas, Android ar iPhone, savo nuotraukas ir vaizdo įrašus pateikia per Wi-Fi, o Meta Quest akiniai juos leidžia. Immich programa nieko panašaus neturi.
 
 ### Įjungti telefone
 
@@ -285,7 +285,7 @@ Nuo tada tai WebDAV bendrinimas kaip bet kuris kitas: 360° atpažinimas, neapdo
 
 Namuose turite Tapo kamerų ir norite matyti sodo kamerą ir praėjusios nakties įrašus šalia savo nuotraukų, neatverdami Tapo programėlės, ir išsaugoti įrašą Immich. Immich programa neturi nieko kameroms, o Tapo programėlė yra atskira programa, prisijungusi prie jūsų TP-Link paskyros, kurioje įrašai laikomi atskirai nuo jūsų nuotraukų.
 
-Nuo 20 surinkimo Immuch360 prideda Tapo kamerą šalia tinklo bendrinimų. Ji rodo kamerą tiesiogiai Android telefonuose ir planšetėse, Android TV ir Meta Quest 3, o visose platformose ir jos atminties kortelės įrašus, diena po dienos: įrašas gaunamas iš kameros, tada leidžiamas kaip bet kuris vaizdo įrašas ir gali būti nusiųstas į Immich. Programa kalbasi su kamera tik jūsų tinkle, niekada su TP-Link serveriais, ir niekada nieko kameroje nekeičia.
+Nuo 20 surinkimo Immuch360 prideda Tapo kamerą šalia tinklo bendrinimų. Ji rodo kamerą tiesiogiai Android telefonuose ir planšetėse, Android TV ir Meta Quest, o visose platformose ir jos atminties kortelės įrašus, diena po dienos: įrašas gaunamas iš kameros, tada leidžiamas kaip bet kuris vaizdo įrašas ir gali būti nusiųstas į Immich. Programa kalbasi su kamera tik jūsų tinkle, niekada su TP-Link serveriais, ir niekada nieko kameroje nekeičia.
 
 ### Pridėti kamerą
 
@@ -396,7 +396,7 @@ Nuo 19 surinkimo, Android ir Quest:
 
 Immich programoje stereoskopinė 360° nuotrauka ar vaizdo įrašas rodo abi akis vienu metu, dvigubą vaizdą, o VR180 failas, apimantis tik priekinę pusę, ištempiamas aplink visą sferą.
 
-Immuch360 atpažįsta 3D išdėstymus, viršuje ir apačioje arba vienas šalia kito, iš failo (vaizdo įrašo st3d dėžutė) arba spėja juos iš kadro formos, o kiekviena peržiūra turi 3D mygtuką jiems pakeisti. Telefonas rodo kairiąją akį; Meta Quest 3 kiekvienai akiai rodo jos pusę, tikru 3D. VR180 failai piešiami ant pusės sferos, galas lieka juodas, o ne ištemptas vaizdas. Jie atpažįstami iš failo (sferinės ribos ar tinklelis, GPano apkarpymas) arba iš „vr180“ ar „180“ pavadinime, o kiekviena peržiūra turi 360°/180° mygtuką.
+Immuch360 atpažįsta 3D išdėstymus, viršuje ir apačioje arba vienas šalia kito, iš failo (vaizdo įrašo st3d dėžutė) arba spėja juos iš kadro formos, o kiekviena peržiūra turi 3D mygtuką jiems pakeisti. Telefonas rodo kairiąją akį; Meta Quest akiniai kiekvienai akiai rodo jos pusę, tikru 3D. VR180 failai piešiami ant pusės sferos, galas lieka juodas, o ne ištemptas vaizdas. Jie atpažįstami iš failo (sferinės ribos ar tinklelis, GPano apkarpymas) arba iš „vr180“ ar „180“ pavadinime, o kiekviena peržiūra turi 360°/180° mygtuką.
 
 ### Pakeisti išdėstymą ar aprėptį
 
@@ -428,14 +428,14 @@ Kai įjungta „Nustatymai“, „Sudėtingesnis“, „Trikčių šalinimas“,
 ### Formatai, privatumas ir apribojimai
 
 - **Formatai**: vienas šalia kito ir viršuje ir apačioje, taip pat su sukeistomis akimis, viso ar pusės pločio, plokšti, 360° ir VR180. Išdėstymas nuskaitomas iš failo, kitu atveju spėjamas iš kadro formos ar failo pavadinimo (sbs, ou, tb ir panašiai; pusės pločio failas atpažįstamas tik pagal pavadinimą), ir gali būti pasirinktas rankiniu būdu grotuve. Pasirinkimas įsimenamas bibliotekos vaizdo įrašui, ne tinklo bendrinimo failui.
-- **Kamera**: vaizdai apdorojami tik įrenginyje, niekada nesaugomi ir niekur nesiunčiami. Quest 3 surinkimas visai neturi kameros leidimo (akiniai neturi kameros, kurią galėtų naudoti programa), o Spatial grotuvas ten nesiūlomas: jo mygtukas ir nustatymas akiniuose paslėpti.
+- **Kamera**: vaizdai apdorojami tik įrenginyje, niekada nesaugomi ir niekur nesiunčiami. Quest surinkimas visai neturi kameros leidimo (akiniai neturi kameros, kurią galėtų naudoti programa), o Spatial grotuvas ten nesiūlomas: jo mygtukas ir nustatymas akiniuose paslėpti.
 - **Apribojimai**: eksperimentinis, tik telefonai ir planšetės (ne Meta Quest), reikia OpenGL ES 3.0 arba Metal. Gylis yra įvertis. Geriausiai veikia gulsčiai, kai veidas gerai apšviestas. Patikrinta Galaxy S24+; atsiliepimai iš iPhone laukiami.
 - **Atsarginis variantas**: jei kas nors nepavyksta (nėra kameros, nepalaikomas įrenginys, neperskaitomas išdėstymas), grįžtate į įprastą grotuvą.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Apple erdvinės nuotraukos ir vaizdo įrašai
 
-iPhone daro erdvines nuotraukas ir vaizdo įrašus, o Immich serveris apie juos nieko nesako: Immich programoje tai plokščia nuotrauka ar vaizdo įrašas. Nuo 19 surinkimo Immuch360 juos atpažįsta nuskaitydama failus ir Meta Quest 3 akiniuose rodo erdvinę nuotrauką 3D vaizdu. Tai ne aukščiau aprašytas Spatial 2.5D grotuvas, kuris skirtas vienas šalia kito ir viršuje ir apačioje vaizdo įrašams.
+iPhone daro erdvines nuotraukas ir vaizdo įrašus, o Immich serveris apie juos nieko nesako: Immich programoje tai plokščia nuotrauka ar vaizdo įrašas. Nuo 19 surinkimo Immuch360 juos atpažįsta nuskaitydama failus ir Meta Quest akiniuose rodo erdvinę nuotrauką 3D vaizdu. Tai ne aukščiau aprašytas Spatial 2.5D grotuvas, kuris skirtas vienas šalia kito ir viršuje ir apačioje vaizdo įrašams.
 
 - **Erdvinės nuotraukos** yra HEIC failai (`.heic`, `.heif`, `.hif`), kuriuose yra du vaizdai, po vieną kiekvienai akiai, sugrupuoti kaip stereo pora. Programa nuskaito failo pradžią (įrenginyje, serverio originalą intervalo užklausa arba tinklo bendrinimo failą) ir įsimena atsakymą telefone, todėl nuotrauka nuskaitoma vieną kartą.
 - **Erdviniai vaizdo įrašai** (MV-HEVC) atpažįstami iš vaizdo takelio: antras sluoksnis ir abi nurodytos akys.
@@ -466,7 +466,7 @@ Atpažinimas patikrintas su pavyzdine erdvine nuotrauka, įrašyta pačios Apple
 
 Žmonės perka Quest 3, kad žiūrėtų savo 360° nuotraukas ir vaizdo įrašus, o tada klausia, kur dėti failus, kaip juos perkelti į akinius be laido ir kokį grotuvą naudoti: parduotuvės 360° ir 3D vaizdo grotuvai yra mokami.
 
-Ta pati Android programa veikia Quest 3 ir 3S akiniuose kaip langas, su visa jūsų biblioteka. Jos 360° mygtukas atveria įtraukiančią peržiūrą, kurioje nuotrauka ar vaizdo įrašas yra aplink jus, o apsidairote sukdami galvą, stereoskopiniams failams tikru 3D (Meta Spatial SDK). Medija ateina iš jūsų Immich serverio, pačių akinių, NAS, medijos serverio, telefono ar Plex serverio ir leidžiama vietoje (medijos serveris ir telefonas nuo 19 surinkimo, Plex serveris nuo 20 surinkimo, akiniuose dar nepatikrinta), o nuo 20 surinkimo lange rodomos ir Tapo kameros. Ji nemokama ir atvirojo kodo. Patikrinta Quest 3 akiniuose, taip pat naudotojo su Insta360 X4 8K HEVC vaizdo įrašais.
+Ta pati Android programa veikia Quest 3 ir 3S akiniuose, o nuo 21 surinkimo ir Quest 2 bei Quest Pro (neišbandyta), kaip langas, su visa jūsų biblioteka. Jos 360° mygtukas atveria įtraukiančią peržiūrą, kurioje nuotrauka ar vaizdo įrašas yra aplink jus, o apsidairote sukdami galvą, stereoskopiniams failams tikru 3D (Meta Spatial SDK). Medija ateina iš jūsų Immich serverio, pačių akinių, NAS, medijos serverio, telefono ar Plex serverio ir leidžiama vietoje (medijos serveris ir telefonas nuo 19 surinkimo, Plex serveris nuo 20 surinkimo, akiniuose dar nepatikrinta), o nuo 20 surinkimo lange rodomos ir Tapo kameros. Ji nemokama ir atvirojo kodo. Patikrinta Quest 3 akiniuose, taip pat naudotojo su Insta360 X4 8K HEVC vaizdo įrašais.
 
 ### Atverti įtraukiančią peržiūrą
 
@@ -659,7 +659,7 @@ Viskas, ką daro oficiali Immich mobilioji programa, yra čia: atsarginės kopij
 
 Kad parodytumėte 360° nuotrauką žmogui, kuris neturi programos, bendrinkite ją Immich bendrinama nuoroda: Immich žiniatinklio programa jo naršyklėje rodo 360° nuotrauką kaip sferą.
 
-Dabartinis surinkimas, 20 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030018), paremtas Immich 3.3.0-rc.0 (Immich `main`, dar ne stabili laida). 19 surinkimas buvo išbandytas su Immich 3.2 serveriu, o 20 surinkimas nieko nekeičia tame, ko programa prašo iš serverio. Problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui. Visa paties Immich dokumentacija yra [immich.app](https://immich.app).
+Dabartinis surinkimas, 21 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030019), paremtas Immich 3.3.0-rc.0 (Immich `main`, dar ne stabili laida). 19 surinkimas buvo išbandytas su Immich 3.2 serveriu, o 20 ir 21 surinkimai nieko nekeičia tame, ko programa prašo iš serverio. Problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui. Visa paties Immich dokumentacija yra [immich.app](https://immich.app).
 
 ## Palyginimas su Immich programa ir kitomis programomis
 
@@ -670,20 +670,20 @@ Dabartinis surinkimas, 20 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030
 | 360° nuotraukos kaip sfera, kurioje apsidairote (tempimas, suėmimas pirštais, dvigubas bakstelėjimas, inercija, pradinis kameros vaizdas, dalinės panoramos) | ❌ plokščia juosta | ✅ | Išbandyta Galaxy S24+ ir iPhone 14 |
 | Giroskopas: apsidairykite judindami telefoną | ❌ | ✅ | Išbandyta Galaxy S24+ ir iPhone 14 |
 | 360° vaizdo įrašai sferiniame grotuve, su garsu, persukimu, garso takelio pasirinkimu ir buferio indikatoriumi | ❌ plokščias vaizdo įrašas | ✅ Android ir iOS (iOS kol kas be laiko juostos) | Išbandyta Galaxy S24+ ir iPhone 14 |
-| 3D (stereoskopinės) 360° nuotraukos ir vaizdo įrašai | ❌ dvigubas vaizdas | ✅ kairioji akis telefonuose, tikras 3D Quest 3 akiniuose | Išbandyta Galaxy S24+ ir Quest 3, su tikrais 3D 360° pavyzdžiais (VRTogether, Vuze, Kandao) ir 3D nuotrauka; pranešimai apie kitas kameras laukiami |
+| 3D (stereoskopinės) 360° nuotraukos ir vaizdo įrašai | ❌ dvigubas vaizdas | ✅ kairioji akis telefonuose, tikras 3D Quest akiniuose | Išbandyta Galaxy S24+ ir Quest 3, su tikrais 3D 360° pavyzdžiais (VRTogether, Vuze, Kandao) ir 3D nuotrauka; pranešimai apie kitas kameras laukiami |
 | VR180 (pusės sferos) nuotraukos ir vaizdo įrašai | ❌ ištempta aplink sferą | ✅ pusė sferos, 360°/180° mygtukas | Išbandyta Android emuliatoriuje ir Galaxy S24+ su sintetine medija; atsiliepimai iš įrenginių laukiami |
-| Apple erdvinės nuotraukos (HEIC stereo poros) ir erdviniai vaizdo įrašai (MV-HEVC) | ❌ plokščia nuotrauka ar vaizdo įrašas, niekas nenurodo, kad tai erdvinis | ✅ nuo 19 surinkimo: nuotraukos 3D vaizdu Quest 3 akiniuose, kitur viena akis ir informacijos eilutė | Atpažinimas patikrintas su pavyzdine nuotrauka, įrašyta Apple vaizdų bibliotekos, ir su sintetiniais failais; akinių vaizdas ir tikri iPhone failai yra 19 surinkimo įrenginių bandymas |
-| Meta Quest 3 įtraukianti peržiūra su galvos sekimu, laiko juosta, ankstesniu ir kitu bei pasukimu | ❌ | ✅ ta pati programa, kaip akinių surinkimas arba telefono APK | Išbandyta Quest 3 akiniuose (14 surinkimo valdikliai, pakoreguoti 16 surinkime po naudotojo atsiliepimo) ir naudotojo su Insta360 X4 8K HEVC vaizdo įrašais |
+| Apple erdvinės nuotraukos (HEIC stereo poros) ir erdviniai vaizdo įrašai (MV-HEVC) | ❌ plokščia nuotrauka ar vaizdo įrašas, niekas nenurodo, kad tai erdvinis | ✅ nuo 19 surinkimo: nuotraukos 3D vaizdu Quest akiniuose, kitur viena akis ir informacijos eilutė | Atpažinimas patikrintas su pavyzdine nuotrauka, įrašyta Apple vaizdų bibliotekos, ir su sintetiniais failais; akinių vaizdas ir tikri iPhone failai yra 19 surinkimo įrenginių bandymas |
+| Meta Quest įtraukianti peržiūra su galvos sekimu, laiko juosta, ankstesniu ir kitu bei pasukimu | ❌ | ✅ ta pati programa, kaip akinių surinkimas arba telefono APK | Išbandyta Quest 3 akiniuose (14 surinkimo valdikliai, pakoreguoti 16 surinkime po naudotojo atsiliepimo) ir naudotojo su Insta360 X4 8K HEVC vaizdo įrašais |
 | 360° ženklelis ant miniatiūrų ir 360° sąrašas su neapdorotais failais ir filtrais (laikotarpis, šaltinis, tipas, kamera) | ❌ | ✅ filtrai nuo 18 surinkimo | Atlikta |
 | „Žiūrėti kaip 360°“ failams, kurių serveris nepažymi | ❌ | ✅ įsimenama telefone | Atlikta |
 | Spatial 2.5D: gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo | ❌ | ✅ eksperimentinis, telefonai ir planšetės | Išbandyta Galaxy S24+; atsiliepimai iš iPhone laukiami |
 | Naudojimas be jokio serverio, su paties įrenginio galerija | ❌ reikia prisijungti | ✅ | Išbandyta Galaxy S24+, Quest 3 ir Android emuliatoriuje |
-| SMB ir WebDAV bendrinimai, randami tinkle ir leidžiami tiesiogiai, nieko neatsisiunčiant | ❌ | ✅ kiekviena peržiūra, telefonai ir Quest 3 | Išbandyta su Freebox Server (SMB) Galaxy S24+ ir Quest 3, taip pat su Samba ir WebDAV bandomaisiais serveriais Android emuliatoriuje; atsiliepimai apie kitus NAS ir WebDAV laukiami |
+| SMB ir WebDAV bendrinimai, randami tinkle ir leidžiami tiesiogiai, nieko neatsisiunčiant | ❌ | ✅ kiekviena peržiūra, telefonai ir Quest | Išbandyta su Freebox Server (SMB) Galaxy S24+ ir Quest 3, taip pat su Samba ir WebDAV bandomaisiais serveriais Android emuliatoriuje; atsiliepimai apie kitus NAS ir WebDAV laukiami |
 | DLNA medijos serveriai kaip bendrinimo tipas | ❌ | ✅ nuo 19 surinkimo | Patikrinta su minidlna ir Gerbera Docker aplinkoje; Plex, Jellyfin, NAS, Freebox Server, iPhone ir Quest yra 19 surinkimo įrenginių bandymas |
 | Bendrinimo failų siuntimas į Immich; rankiniu būdu išsiųsti įrenginio failai laikomi turinčiais atsarginę kopiją | ❌ tik įrenginio failai | ✅ nuo 15 surinkimo | Išbandyta Android emuliatoriuje su Samba bandomuoju serveriu ir Immich 3.2 serveriu |
 | Bendrinti šį telefoną tinkle, akiniams | ❌ | ✅ nuo 19 surinkimo, Android ir iOS | Vienetų testai ir ištisiniai testai su akinių WebDAV klientu, kompiuteryje; telefonas, aptarnaujantis Quest, ir iPhone pusė yra 19 surinkimo įrenginių bandymas |
-| Plex Media Server bibliotekos, leidžiamos iš originalių failų, namuose ir ne namuose, be plex.tv | ❌ | ✅ nuo 20 surinkimo, kiekviena peržiūra, telefonuose, planšetėse, Quest 3 ir televizoriuose | Patikrinta iš kompiuterio su tikru Plex Media Server 1.42.1 (susiejimas, aplankai, baitų intervalai, miniatiūros, adresas už namų ribų); įrenginyje dar nepatikrinta |
-| Tapo kameros: tiesioginis vaizdas ir atminties kortelės įrašai, siunčiami į Immich, kai pasirenkate | ❌ | ✅ nuo 20 surinkimo: įrašai visur, tiesiogiai Android, Android TV ir Quest 3 | Patikrinta su imituota kamera; su tikra kamera dar nepatikrinta |
+| Plex Media Server bibliotekos, leidžiamos iš originalių failų, namuose ir ne namuose, be plex.tv | ❌ | ✅ nuo 20 surinkimo, kiekviena peržiūra, telefonuose, planšetėse, Quest ir televizoriuose | Patikrinta iš kompiuterio su tikru Plex Media Server 1.42.1 (susiejimas, aplankai, baitų intervalai, miniatiūros, adresas už namų ribų); įrenginyje dar nepatikrinta |
+| Tapo kameros: tiesioginis vaizdas ir atminties kortelės įrašai, siunčiami į Immich, kai pasirenkate | ❌ | ✅ nuo 20 surinkimo: įrašai visur, tiesiogiai Android, Android TV ir Quest | Patikrinta su imituota kamera; su tikra kamera dar nepatikrinta |
 | Android TV ir Google TV, valdomi pulteliu, tame pačiame APK | ❌ ne televizoriaus programa | ✅ nuo 20 surinkimo | Patikrinta automatiniais testais; televizoriuje dar nepatikrinta |
 | Neapdorotos Insta360 .insp nuotraukos ir vieno takelio .insv vaizdo įrašai | ❌ plokšti | ✅ nuo 16 surinkimo | Nuotraukos palygintos su Insta360 Studio X3 failų eksportais, vaizdo įrašai Android emuliatoriuje su mažos raiškos X3 failu; iPhone telefone dar nepaleista |
 | Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile (Insta360 X4, X4 Air, X5, X6, X3 poros, GoPro .360, DJI .osv) | ❌ plokšti arba neteisingi | ✅ nuo 18 surinkimo | Analizatoriai ir sujungimas patikrinti su tikrais X4, X3 poros, GoPro MAX ir Osmo 360 failais; atkūrimas yra 18 ir 19 surinkimų įrenginių bandymas |
@@ -697,7 +697,7 @@ Dabartinis surinkimas, 20 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030
 
 | Ką naudoja žmonės | Su kuo susiduria | Ką daro Immuch360 |
 |---|---|---|
-| Immich žiniatinklio programa | Ji rodo 360° nuotrauką kaip sferą, bet neapdorotą .insp laiko baigta panorama ir apvynioja jos du apskritimus aplink sferą; VR peržiūra vis dar tik prašymas ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Sujungia neapdorotus failus įrenginyje ir atveria įtraukiančią peržiūrą Quest 3 akiniuose |
+| Immich žiniatinklio programa | Ji rodo 360° nuotrauką kaip sferą, bet neapdorotą .insp laiko baigta panorama ir apvynioja jos du apskritimus aplink sferą; VR peržiūra vis dar tik prašymas ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Sujungia neapdorotus failus įrenginyje ir atveria įtraukiančią peržiūrą Quest akiniuose |
 | Insta360 programa arba Studio | Reikalinga, kad kortelės neapdoroti failai prieš žiūrint taptų 360° vaizdu | Tiesiai atveria neapdorotus .insp ir .insv failus, taip pat GoPro .360 ir DJI .osv failus |
 | Plex, Jellyfin, Synology Photos | 360° nuotraukos ir vaizdo įrašai rodomi plokšti arba neatpažįstami, kaip aprašo temos jų forumuose (Plex prašymas atviras nuo 2017 m.) | Nuo 20 surinkimo skaito pačią Plex biblioteką arba tuos pačius aplankus per SMB, WebDAV ar DLNA ir leidžia juos kaip sferą, serveryje nieko nekeisdama |
 | Tapo programėlė | Atskira programa, prisijungusi prie jūsų TP-Link paskyros, kurioje įrašai laikomi atskirai nuo jūsų nuotraukų | Rodo kamerą šalia jūsų nuotraukų, kalbasi su ja tik jūsų tinkle ir išsaugo įrašą kaip vaizdo įrašą, kurį galite nusiųsti į Immich (nuo 20 surinkimo) |
@@ -709,7 +709,7 @@ Dabartinis surinkimas, 20 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030
 
 Immuch360 yra galerija, ir ji taip pat yra nemokamas medijos grotuvas: ji leidžia tai, ko negali oficiali programa, iš antrosios lentelės šaltinių, failui tinkamame grotuve.
 
-| Kas | Android telefonai | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (nuo 20 surinkimo) |
+| Kas | Android telefonai | iPhone, iPad | Meta Quest | Android TV, Google TV (nuo 20 surinkimo) |
 |---|---|---|---|---|
 | Plokšti vaizdo įrašai (MP4, MOV, MKV, ką dekoduoja įrenginys) | Immich grotuvas, o tinklo bendrinimams savasis grotuvas | Taip pat, išskyrus bendrinimo MKV ir AVI failus, kurių iOS neatveria (serveryje jie leidžiami perkoduoti) | Lange | Kaip telefonuose; OK pristabdo, kairėn ir dešinėn peršoka 10 s |
 | 360° nuotraukos | Sferos peržiūra, giroskopas | Taip pat | Įtraukianti, aplink jus | Sferos peržiūra, sukama rodyklėmis, mastelis keičiamas kanalo mygtukais |
@@ -739,14 +739,14 @@ Televizoriaus stulpelis dar nepatikrintas televizoriuje, žr. [Žiūrėti televi
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 taip pat veikia Meta Quest 3 ir 3S akiniuose (Horizon OS v69 ar naujesnė; Horizon Store surinkimas skirtas tik šiems dviem; universalus `-release.apk` turėtų įsidiegti ir Quest 2 ar Quest Pro, neišbandyta). Kaip ją naudoti, aprašyta skyriuje [Meta Quest 3 akiniuose](#in-the-meta-quest-3-headset); šis skyrius apie diegimą ir tai, kuo skiriasi akiniuose.
+Immuch360 taip pat veikia Meta Quest akiniuose su Horizon OS v69 ar naujesne. Nuo 21 surinkimo Horizon Store surinkimas skirtas Quest 2, Quest Pro, Quest 3 ir 3S, tiems keturiems, kuriuos jau nurodo universalus `-release.apk`; pirmasis Quest ne, parduotuvė jo nebepriima. Quest 3 ir 3S išbandyti. Quest 2 ir Quest Pro dar neišbandyti: jų vaizdo dekoderiai lėtesni, o ribos, kurias tikrina programa, buvo išmatuotos su Quest 3, todėl didelis H.264 vaizdo įrašas juose gali būti atmestas su pranešimu arba strigti. Pranešimai iš šių dviejų akinių laukiami [Issues](https://github.com/freeKC/Immuch360/issues). Kaip ją naudoti, aprašyta skyriuje [Meta Quest 3 akiniuose](#in-the-meta-quest-3-headset); šis skyrius apie diegimą ir tai, kuo skiriasi akiniuose.
 
 Akinių surinkimas su serveriais kalba tik per HTTPS arba per paprastą HTTP su namų tinklo pavadinimais (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ir su pačiais akiniais, kaip reikalauja Horizon Store. Serveris, įvestas kaip paprastas HTTP adresas su IP, pvz., `http://192.168.1.10:2283`, tame surinkime atmetamas: naudokite HTTPS, namų tinklo pavadinimą (`nas.local`) arba universalų `-release.apk`, kuris išlaiko atvirą telefonų politiką. WebDAV, DLNA ir telefono bendrinimams paprastu vietinio tinklo HTTP adresu tai negalioja: programa juos skaito pati ir savo grotuvams perduoda tik savo vietinio tilto adresą (DLNA ir telefono bendrinimui, naujiems 19 surinkime, akiniuose dar reikia patvirtinti). Nuo 20 surinkimo Plex serveris pasiekiamas per HTTPS, o Tapo kamerą pasiekia pati programa, jos tiesioginis vaizdas perduodamas per RTSP, kuris nėra HTTP: nė vieno iš jų tai neturėtų paliesti (akiniuose dar reikia patvirtinti).
 
 <a id="install"></a>
 ### Diegimas
 
-Horizon Store įrašas laukia Meta peržiūros, pateiktas su 14 surinkimu; kol jis nepatvirtintas, šoniniu būdu įdiekite leidimo failą `-quest-release.apk` (sukurtas akiniams: 64 bitų, target SDK 34, tik akinių naudojami leidimai) arba universalų `-release.apk`:
+Meta patvirtino Horizon Store įrašą 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas pateiktas kaip pirmasis jo atnaujinimas. Kol parduotuvės puslapis nėra viešas arba norėdami gauti surinkimą anksčiau nei parduotuvė, šoniniu būdu įdiekite leidimo failą `-quest-release.apk` (sukurtas akiniams: 64 bitų, target SDK 34, tik akinių naudojami leidimai) arba universalų `-release.apk`:
 
 1. Vieną kartą įjunkite kūrėjo režimą. Meta Horizon telefono programoje atverkite „Devices“ (įrenginiai), pasirinkite akinius, tada „Headset settings“ (akinių nustatymai), tada „Developer mode“ (kūrėjo režimas). Tam reikia kūrėjo paskyros, kuri nemokama svetainėje developers.meta.com. Kompiuteryje taip pat reikia adb (Android SDK Platform Tools) arba SideQuest.
 2. Prijunkite akinius prie kompiuterio USB-C laidu. Akiniuose patvirtinkite „Allow USB debugging“ (leisti USB derinimą).
@@ -754,7 +754,7 @@ Horizon Store įrašas laukia Meta peržiūros, pateiktas su 14 surinkimu; kol j
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. Akiniuose atverkite biblioteką, pasirinkite filtrą „Unknown sources“ (nežinomi šaltiniai) ir paleiskite Immuch360.
@@ -776,7 +776,7 @@ Ekrano nuotraukos darytos akiniuose fiksavimo mygtuku (Meta mygtukas ir gaidukas
 ### Apribojimai akiniuose
 
 - **Vaizdo kodekai**: HEVC (H.265) yra saugus pasirinkimas; H.264 sustoja ties maždaug 4096x2304. Ką tikrina programa ir kaip duoti akiniams vaizdo įrašą, kurį jie dekoduoja, aprašyta skyriuje [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters).
-- **Parduotuvė**: parduotuvės versija prasideda nuo 14 surinkimo. Funkcijos, pažymėtos „nuo 15 surinkimo“ ir vėlesnės, ateis su kitais jos atnaujinimais (parduotuvės alfa bandymų kanalas bandytojams gauna kiekvieną naują surinkimą); GitHub APK jas visas turi jau dabar.
+- **Parduotuvė**: parduotuvės versija prasideda nuo 14 surinkimo. Funkcijos, pažymėtos „nuo 15 surinkimo“ ir vėlesnės, ateis su 21 surinkimu, pirmuoju jos atnaujinimu, kai Meta jį peržiūrės (parduotuvės alfa bandymų kanalas bandytojams gauna kiekvieną naują surinkimą); GitHub APK jas visas turi jau dabar.
 - **Leidimai**: akinių surinkimas prašo tik nuotraukų ir vaizdo įrašų (režimas be serverio) ir pranešimų (atsarginių kopijų eiga) leidimų. Skirtingai nei telefono surinkimas, jis neturi saugyklos, garso, vietos ar kameros leidimo; todėl serverio perjungimas pagal Wi-Fi pavadinimą akiniuose nepasiekiamas.
 - **APK dydis**: Spatial SDK prideda apie 56 MB 64 bitų ARM savojo kodo, taip pat ir telefonuose, kur jis niekada neįkeliamas.
 - **Licencija**: įtraukianti peržiūra naudoja Meta Spatial SDK, platinamą pagal Meta Platform Technologies SDK License Agreement.
@@ -784,13 +784,13 @@ Ekrano nuotraukos darytos akiniuose fiksavimo mygtuku (Meta mygtukas ir gaidukas
 <a id="where-to-get-it"></a>
 ## Kur ją gauti
 
-Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Apple peržiūros, Meta Horizon Store versija Meta peržiūros, o Google Play versija televizoriams Google peržiūros televizoriaus leidimui. GitHub leidime visada naujausias surinkimas:
+Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Apple peržiūros, Meta Horizon Store įrašas patvirtintas ir jo pirmasis atnaujinimas yra Meta peržiūroje, o Google Play versija televizoriams laukia Google peržiūros televizoriaus leidimui. GitHub leidime visada naujausias surinkimas:
 
 | Platforma | Šiandien | Netrukus |
 |---|---|---|
-| Android telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`). | Google Play: 18 surinkimas jau veikia, 19 surinkimas Google peržiūroje nuo 2026 m. spalio 6 d., toliau 20 surinkimas |
+| Android telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`). | Google Play: 18 surinkimas jau veikia, 20 surinkimas Google peržiūroje nuo 2026 m. spalio 7 d., vietoj 19 surinkimo |
 | iPhone ir iPad | Laukia Apple peržiūros. Peržiūrima versija turi 11 surinkimo funkcijas: įkėlimas į Immich ir „Vaizdo įrašo šaltinis“ pasirinkimas (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su vėlesniu App Store atnaujinimu. Šaltinio kodas kompiliuojamas su Xcode arba Codemagic, žr. [Susikurkite patys](#build-it-yourself). | App Store, peržiūrima |
-| Meta Quest 3 ir 3S | Puslapio [Releases](https://github.com/freeKC/Immuch360/releases) failas `-quest-release.apk` (universalus `-release.apk` taip pat veikia), įdiegtas šoniniu būdu kūrėjo režimu, žr. [Diegimas](#install). Parduotuvės surinkimas ir GitHub APK pasirašyti skirtingais raktais: norėdami pereiti nuo vieno prie kito, pirmiausia pašalinkite programą (jos nustatymai ir išsaugoti bendrinimai dingsta kartu). | Meta Horizon Store: 14 surinkimas Meta peržiūroje nuo 2026 m. spalio 3 d.; parduotuvės alfa kanalas (tik bandytojams) gauna kiekvieną naują surinkimą |
+| Meta Quest 2, Quest Pro, Quest 3 ir 3S (Quest 2 ir Quest Pro neišbandyti) | Puslapio [Releases](https://github.com/freeKC/Immuch360/releases) failas `-quest-release.apk` (universalus `-release.apk` taip pat veikia), įdiegtas šoniniu būdu kūrėjo režimu, žr. [Diegimas](#install). Parduotuvės surinkimas ir GitHub APK pasirašyti skirtingais raktais: norėdami pereiti nuo vieno prie kito, pirmiausia pašalinkite programą (jos nustatymai ir išsaugoti bendrinimai dingsta kartu). | Meta Horizon Store: įrašas patvirtintas 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas, pirmasis jo atnaujinimas, yra Meta peržiūroje; parduotuvės alfa kanalas (tik bandytojams) gauna kiekvieną naują surinkimą |
 | Android TV ir Google TV (nuo 20 surinkimo) | Universalus `Immuch360-v<version>-release.apk` iš puslapio [Releases](https://github.com/freeKC/Immuch360/releases), įdiegtas šoniniu būdu su adb, žr. [Įdiegti televizoriuje](#install-it-on-the-tv). Tai ta pati programa kaip telefonuose. | Google Play televizoriams, po Google peržiūros televizoriaus leidimui |
 
 App Store ir Meta Horizon Store nuorodos bus pridėtos čia, kai tik įrašai bus paskelbti. Prisijunkite su savo įprastu Immich serverio URL ir paskyra arba prisijungimo puslapyje bakstelėkite „Naudoti be serverio“, kad pradėtumėte nuo paties įrenginio nuotraukų ir vaizdo įrašų. APK iš GitHub pats neatsinaujina: stebėkite puslapį Releases, o įdiegę programą iš parduotuvės, atnaujinimus imkite iš tos parduotuvės.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Parduotuvių ekrano nuotraukos daromos derinimo simuliatoriaus surinkimuose, sukurtuose su `--dart-define=IMMUCH_SCREENSHOTS=true`, kuris tik paslepia derinimo juostelę. Du Android variantai yra ta pati programa. Nuo 20 surinkimo variantas `phone` taip pat deklaruoja save kaip televizoriaus programą (televizoriaus paleidiklio įrašas ir reklamjuostė, jutiklinis ekranas nebūtinas), o variantas `quest` to nedaro. Variantas `quest` taikosi į SDK 34 ir išlaiko tik akinių naudojamus leidimus (nuotraukos, vaizdo įrašai, pranešimai): medijos valdymas, foninė vieta, senoji saugykla, garsas, medijos vieta, įrenginio vieta ir kamera pašalinti faile `android/app/src/quest/AndroidManifest.xml`, nes Meta Horizon Store atmeta pirmuosius du ir prašo pagrįsti kiekvieną kitą jautrų leidimą; tas pats failas nurodo Quest 3 ir 3S kaip palaikomus įrenginius ir riboja paprastą HTTP iki pačių akinių ir namų tinklo pavadinimų. APK yra tik 64 bitų dėl dviejų papildomų jo komandinės eilutės argumentų (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variantas `phone` yra tai, ko reikalauja Google Play. Norėdami kurti iOS savo Mac kompiuteryje, naudokite Xcode ir savo pasirašymo komandą; su Xcode 26 pirmiausia vieną kartą paleiskite `xcodebuild -downloadComponent MetalToolchain`, nes jo reikia Spatial šešėliuoklėms. Be Mac iOS surinkimai vykdomi Codemagic (talpinamas Mac) pagal šios saugyklos failą `codemagic.yaml`. Android leidimų surinkimai vykdomi GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Parduotuvių ekrano nuotraukos daromos derinimo simuliatoriaus surinkimuose, sukurtuose su `--dart-define=IMMUCH_SCREENSHOTS=true`, kuris tik paslepia derinimo juostelę. Du Android variantai yra ta pati programa. Nuo 20 surinkimo variantas `phone` taip pat deklaruoja save kaip televizoriaus programą (televizoriaus paleidiklio įrašas ir reklamjuostė, jutiklinis ekranas nebūtinas), o variantas `quest` to nedaro. Variantas `quest` taikosi į SDK 34 ir išlaiko tik akinių naudojamus leidimus (nuotraukos, vaizdo įrašai, pranešimai): medijos valdymas, foninė vieta, senoji saugykla, garsas, medijos vieta, įrenginio vieta ir kamera pašalinti faile `android/app/src/quest/AndroidManifest.xml`, nes Meta Horizon Store atmeta pirmuosius du ir prašo pagrįsti kiekvieną kitą jautrų leidimą; tas pats failas nurodo Quest 2, Quest Pro, Quest 3 ir 3S kaip palaikomus įrenginius ir riboja paprastą HTTP iki pačių akinių ir namų tinklo pavadinimų. APK yra tik 64 bitų dėl dviejų papildomų jo komandinės eilutės argumentų (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variantas `phone` yra tai, ko reikalauja Google Play. Norėdami kurti iOS savo Mac kompiuteryje, naudokite Xcode ir savo pasirašymo komandą; su Xcode 26 pirmiausia vieną kartą paleiskite `xcodebuild -downloadComponent MetalToolchain`, nes jo reikia Spatial šešėliuoklėms. Be Mac iOS surinkimai vykdomi Codemagic (talpinamas Mac) pagal šios saugyklos failą `codemagic.yaml`. Android leidimų surinkimai vykdomi GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Šioje saugykloje nėra jokių paslapčių: Android pasirašymo raktas saugomas kaip užšifruotos GitHub Actions paslaptys, o Apple pasirašymo medžiaga saugoma kaip užšifruoti kintamieji Codemagic. Darbo eigos failai juos nurodo tik pavadinimu. Be savo `android/key.jks` leidimo surinkimas pasirašomas derinimo raktu ir negali būti įdiegtas ant kopijos iš GitHub ar parduotuvės (pirmiausia pašalinkite ją); derinimo surinkimas įdiegiamas šalia jos kaip Immuch360 debug. Meta Horizon Store kopija yra leidimo `quest` APK, pasirašytas kitu raktu, tuo, su kuriuo parduotuvės programa buvo pirmą kartą užregistruota, todėl ji taip pat negali būti įdiegta ant šoniniu būdu įdiegto APK, nei atvirkščiai.
 
@@ -857,9 +857,9 @@ Visa politika pateikta faile [PRIVACY.md](PRIVACY.md).
 
 Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o atsiliepimai [pranešimų sekiklyje](https://github.com/freeKC/Immuch360/issues) padeda nuspręsti, kas bus pirma.
 
-- **Google Play**: 18 surinkimas jau veikia; 19 surinkimas Google peržiūroje nuo 2026 m. spalio 6 d., o po jo seka 20 surinkimas.
+- **Google Play**: 18 surinkimas jau veikia; 20 surinkimas Google peržiūroje nuo 2026 m. spalio 7 d., vietoj 19 surinkimo. 21 surinkimas telefonuose ir planšetėse nieko nekeičia.
 - **App Store**: versija 3.3.0 laukia Apple peržiūros; ji turi 11 surinkimo funkcijas, todėl įkėlimas į Immich ir vaizdo dekoderių patikra (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su kitu App Store atnaujinimu. Nuoroda bus pridėta čia, kai ji veiks.
-- **Meta Horizon Store**: įrašas pateiktas Meta peržiūrai 2026 m. spalio 3 d. su 14 surinkimu, o parduotuvės alfa kanalas kitam atnaujinimui gauna kiekvieną naują surinkimą. Kai įrašas bus patvirtintas, Quest 3 nebereikės šoninio diegimo, o parduotuvės nuoroda bus pridėta čia; šoniniu būdu įdiegtą kopiją pirmiausia reikės pašalinti (žr. [Diegimas](#install)).
+- **Meta Horizon Store**: Meta patvirtino įrašą 2026 m. spalio 7 d. su 14 surinkimu. 21 surinkimas pateiktas kaip pirmasis jo atnaujinimas: jis atneša viską nuo 14 surinkimo (įkėlimus iš bendrinimo į Immich, vaizdo įrašo šaltinį, parenkamą pagal tai, ką akiniai dekoduoja, neapdorotus Insta360, GoPro ir DJI failus, DLNA, telefono bendrinimą, Apple erdvines nuotraukas, Plex Media Server bibliotekas, Tapo kameras), o parduotuvė jį skelbia Quest 2, Quest Pro, Quest 3 ir 3S. Parduotuvės nuoroda bus pridėta čia, kai puslapis taps viešas; šoniniu būdu įdiegtą kopiją pirmiausia reikės pašalinti (žr. [Diegimas](#install)).
 - **Parduotuvių įrašai**: Google Play įrašas perrašytas 2026 m. spalį su naujomis ekrano nuotraukomis, o su televizoriaus leidimu jame atsiras televizoriaus ekrano nuotraukos ir televizoriaus reklamjuostė. App Store tekstas vis dar aprašo pirmuosius surinkimus (360° nuotraukos ir vaizdo įrašai, neapdoroti failai rodomi plokšti); jis pristatys 3D, VR180 ir Spatial peržiūras, režimą be serverio, tinklo bendrinimus, medijos grotuvą ir neapdorotus Insta360 failus. Meta Horizon Store tekstas jau pristato medijos grotuvą.
 - **Neapdoroti 360° kameros failai, toliau**: eigos indikatorius, kol neapdorota nuotrauka ruošiama akiniams; GoPro ir DJI vaizdo įrašų išlyginimas pagal jų pačių judesio duomenis; dvigubos „žuvies akies“ .dng; pranešimai iš įrenginių apie 18 surinkimo dviejų objektyvų atkūrimą (X4, X5, X6, GoPro MAX 2, Osmo 360), kad būtų patvirtintos siūlės ir dekoderių ištekliai.
 - **DLNA, telefono bendrinimas ir Apple erdvinė medija, toliau**: 19 surinkimo pranešimai iš įrenginių (Plex, Jellyfin, NAS ir Freebox Server per DLNA; telefonas, aptarnaujantis Quest, taip pat per savo prieigos tašką; tikros iPhone erdvinės nuotraukos ir vaizdo įrašai akiniuose); daugiaadresio ryšio teisė, kurios prašoma iš Apple, kad iPhone rastų kiekvieną DLNA serverį; ankstesnis ir kitas tarp erdvinių nuotraukų akiniuose; erdvinis ženklelis ant serverio nuotraukų laiko skalėje; erdviniai vaizdo įrašai 3D vaizdu Quest akiniuose, jei leis jų dekoderiai.

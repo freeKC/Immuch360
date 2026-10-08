@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | Tiếng Việt | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: ảnh và video 360°, 3D và VR180 từ Immich, điện thoại của bạn hoặc NAS. Android, iOS và Meta Quest 3, có hoặc không có máy chủ">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: ảnh và video 360°, 3D và VR180 từ Immich, điện thoại của bạn hoặc NAS. Android, iOS và Meta Quest, có hoặc không có máy chủ">
 </p>
 
 # Immuch360
 
-Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà bạn có thể nhìn quanh bên trong, đồng thời là trình phát miễn phí cho ảnh và video phẳng, 360°, 3D và VR180, trên điện thoại và máy tính bảng Android, iPhone và iPad, Meta Quest 3 và 3S, và từ bản dựng 20 là Android TV và Google TV. Ứng dụng dành cho những ai chụp bằng máy ảnh 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) hoặc chế độ ảnh cầu của điện thoại, hoặc có kính thực tế ảo, và muốn xem ảnh của chính mình từ máy chủ Immich, từ chính điện thoại, từ NAS, máy chủ đa phương tiện hay máy chủ Plex: cùng máy chủ, cùng tài khoản, không cần plugin trên máy chủ, hoặc không cần máy chủ nào cả. Từ bản dựng 20, ứng dụng còn hiển thị camera Tapo, cả hình ảnh trực tiếp lẫn các bản ghi trên thẻ nhớ của chúng.
+Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà bạn có thể nhìn quanh bên trong, đồng thời là trình phát miễn phí cho ảnh và video phẳng, 360°, 3D và VR180, trên điện thoại và máy tính bảng Android, iPhone và iPad, kính Meta Quest (Quest 3 và 3S, và từ bản dựng 21 là Quest 2 và Quest Pro, chưa kiểm thử), và từ bản dựng 20 là Android TV và Google TV. Ứng dụng dành cho những ai chụp bằng máy ảnh 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) hoặc chế độ ảnh cầu của điện thoại, hoặc có kính thực tế ảo, và muốn xem ảnh của chính mình từ máy chủ Immich, từ chính điện thoại, từ NAS, máy chủ đa phương tiện hay máy chủ Plex: cùng máy chủ, cùng tài khoản, không cần plugin trên máy chủ, hoặc không cần máy chủ nào cả. Từ bản dựng 20, ứng dụng còn hiển thị camera Tapo, cả hình ảnh trực tiếp lẫn các bản ghi trên thẻ nhớ của chúng.
 
 <p align="center">
   <sub>Bản fork không chính thức. Không liên kết với Immich hay FUTO. Tên đọc là "I am much 360".</sub>
@@ -15,7 +15,7 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">đang xét duyệt</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store đang xét duyệt &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store đã duyệt, bản dựng 21 đã gửi làm bản cập nhật đầu tiên &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
     <td align="center" width="33%"><h3>🎥 2.5D tích hợp</h3>Chiều sâu trên màn hình phẳng từ video lập thể, góc nhìn đi theo đầu bạn (thử nghiệm, điện thoại và máy tính bảng)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Một ứng dụng cho điện thoại, máy tính bảng và kính, 3D thật trong kính, và từ bản dựng 20 trên Android TV với điều khiển từ xa</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Một ứng dụng cho điện thoại, máy tính bảng và các kính Quest 2, Pro, 3 và 3S, 3D thật trong kính, và từ bản dựng 20 trên Android TV với điều khiển từ xa</td>
     <td align="center"><h3>🔌 Có hoặc không có máy chủ</h3>Máy chủ Immich của bạn, hoặc thư viện ảnh của chính điện thoại, không cần tài khoản</td>
     <td align="center"><h3>🗄️ Chia sẻ mạng</h3>Samba (SMB), WebDAV và, từ bản dựng 19, máy chủ đa phương tiện DLNA, được tìm thấy trên mạng và đọc trực tiếp, không tải gì về, và gửi lên Immich khi bạn chọn. Từ bản dựng 19, điện thoại còn chia sẻ thư viện ảnh của chính nó cho kính</td>
   </tr>
@@ -109,7 +109,7 @@ Lựa chọn được ghi nhớ trên điện thoại và không thay đổi gì
 
 Bạn không có máy chủ Immich, hoặc không muốn tạo tài khoản: bạn chỉ muốn ảnh 360° trên điện thoại mở ra thành hình cầu mà bạn có thể xoay bằng con quay hồi chuyển. Ứng dụng Immich yêu cầu đăng nhập trước.
 
-Trên trang đăng nhập, "Sử dụng không cần máy chủ" mở Immuch360 với ảnh và video của chính thiết bị, cùng các trình xem 360°, 3D, VR180 và Spatial, danh sách 360° và chia sẻ mạng (từ bản dựng 20 có thêm máy chủ Plex và camera Tapo), không cần tài khoản Immich. Các tính năng máy chủ bị ẩn hoặc làm mờ cho đến khi bạn kết nối máy chủ; không có gì rời khỏi thiết bị. Trên Meta Quest 3, nó mở ảnh và video của chính kính; trên TV, vốn không có ảnh và video riêng, nó dẫn bạn tới chia sẻ mạng (xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv)).
+Trên trang đăng nhập, "Sử dụng không cần máy chủ" mở Immuch360 với ảnh và video của chính thiết bị, cùng các trình xem 360°, 3D, VR180 và Spatial, danh sách 360° và chia sẻ mạng (từ bản dựng 20 có thêm máy chủ Plex và camera Tapo), không cần tài khoản Immich. Các tính năng máy chủ bị ẩn hoặc làm mờ cho đến khi bạn kết nối máy chủ; không có gì rời khỏi thiết bị. Trên Meta Quest, nó mở ảnh và video của chính kính; trên TV, vốn không có ảnh và video riêng, nó dẫn bạn tới chia sẻ mạng (xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Thẻ Thư viện khi không có máy chủ: mục 360° ở trên cùng, sau đó Trên thiết bị này với hai ảnh 360°, và Chia sẻ mạng với một chia sẻ tên NAS">
 
@@ -159,7 +159,7 @@ Tên người dùng với mật khẩu trống được gửi đúng như vậy:
 1. Chạm vào một chia sẻ. Thư mục hiện trước, rồi đến ảnh và video dạng lưới có hình thu nhỏ (cả một khung hình của mỗi video, được lưu đệm trên thiết bị). Những tệp được nhận diện là 360° có huy hiệu 360°, và từ bản dựng 19, ảnh và video không gian của Apple có huy hiệu 3D. Kéo xuống để làm mới.
 2. Chạm vào một ảnh: ảnh mở toàn màn hình (chụm, chạm hai lần), và nút 360° của nó mở trình xem hình cầu.
 3. Chạm vào một video: video phát trong trình phát tích hợp (phát, tạm dừng, tua), với nút 360° mở trình phát 360° cùng các nút 3D và 360°/180° của nó, và trên điện thoại có nút Spatial cho tệp lập thể.
-4. Trên Quest 3, nút 360° mở chế độ xem nhập vai, và từ bản dựng 19, "Xem ở dạng 3D" mở ảnh không gian của Apple ở dạng 3D.
+4. Trên Quest, nút 360° mở chế độ xem nhập vai, và từ bản dựng 19, "Xem ở dạng 3D" mở ảnh không gian của Apple ở dạng 3D.
 5. Menu ⋮ có "Xem dạng 360°" cho các tệp không có thẻ 360°, và trên điện thoại có "Spatial 2.5D" cho các video không phải lập thể.
 
 360°, 3D và VR180 được nhận diện từ siêu dữ liệu GPano hoặc siêu dữ liệu hình cầu của tệp, đọc bằng yêu cầu theo dải byte, và VR180 còn từ tên tệp. Từ bản dựng 16, tệp thô Insta360 cũng được nhận diện (ảnh .insp theo tên hoặc khối hiệu chuẩn của máy ảnh, video .insv theo tên và khung hình) và được ghép nối.
@@ -252,7 +252,7 @@ Mỗi lần mở máy chủ, ứng dụng thử địa chỉ ở nhà trước v
 <a id="share-this-phone-on-the-network"></a>
 ## Chia sẻ điện thoại này trên mạng
 
-Ảnh và video của bạn nằm trên điện thoại, và bạn muốn xem chúng trong kính mà không cần máy tính, NAS hay máy chủ Immich. Từ bản dựng 19, điện thoại, Android hoặc iPhone, phục vụ ảnh và video của chính nó qua Wi-Fi, và Meta Quest 3 phát chúng. Ứng dụng Immich không có tính năng nào như vậy.
+Ảnh và video của bạn nằm trên điện thoại, và bạn muốn xem chúng trong kính mà không cần máy tính, NAS hay máy chủ Immich. Từ bản dựng 19, điện thoại, Android hoặc iPhone, phục vụ ảnh và video của chính nó qua Wi-Fi, và một chiếc Meta Quest phát chúng. Ứng dụng Immich không có tính năng nào như vậy.
 
 ### Bật trên điện thoại
 
@@ -285,7 +285,7 @@ Từ đó, nó là một chia sẻ WebDAV như mọi chia sẻ khác: nhận di�
 
 Bạn có camera Tapo ở nhà, và bạn muốn xem camera ngoài vườn và các đoạn ghi đêm qua ngay cạnh ảnh của mình mà không cần mở ứng dụng Tapo, và giữ một đoạn trong Immich. Ứng dụng Immich không có gì cho camera, còn ứng dụng Tapo là một ứng dụng riêng, đăng nhập vào tài khoản TP-Link của bạn, với các đoạn ghi tách biệt khỏi ảnh của bạn.
 
-Từ bản dựng 20, Immuch360 thêm camera Tapo bên cạnh các chia sẻ mạng. Ứng dụng hiển thị hình ảnh trực tiếp của camera trên điện thoại và máy tính bảng Android, Android TV và Meta Quest 3, và trên mọi nền tảng là các bản ghi trên thẻ nhớ của nó, theo từng ngày: một đoạn được tải từ camera, rồi phát như mọi video và có thể được gửi lên Immich. Ứng dụng chỉ giao tiếp với camera trong mạng của bạn, không bao giờ với máy chủ của TP-Link, và không bao giờ thay đổi gì trên camera.
+Từ bản dựng 20, Immuch360 thêm camera Tapo bên cạnh các chia sẻ mạng. Ứng dụng hiển thị hình ảnh trực tiếp của camera trên điện thoại và máy tính bảng Android, Android TV và Meta Quest, và trên mọi nền tảng là các bản ghi trên thẻ nhớ của nó, theo từng ngày: một đoạn được tải từ camera, rồi phát như mọi video và có thể được gửi lên Immich. Ứng dụng chỉ giao tiếp với camera trong mạng của bạn, không bao giờ với máy chủ của TP-Link, và không bao giờ thay đổi gì trên camera.
 
 ### Thêm camera
 
@@ -396,7 +396,7 @@ Từ bản dựng 19, trên Android và Quest:
 
 Trong ứng dụng Immich, ảnh hoặc video 360° lập thể hiển thị cả hai mắt cùng lúc, một hình bị nhân đôi, còn tệp VR180, vốn chỉ phủ nửa phía trước, bị kéo giãn khắp hình cầu.
 
-Immuch360 nhận diện bố cục 3D, trên và dưới hoặc cạnh nhau, từ tệp (hộp st3d của video), hoặc đoán từ hình dạng khung hình, và mọi trình xem đều có nút 3D để thay đổi. Điện thoại hiển thị mắt trái; Meta Quest 3 cho mỗi mắt thấy nửa của riêng nó, ở dạng 3D thật. Tệp VR180 được vẽ trên nửa hình cầu, phía sau là màu đen thay vì hình bị kéo giãn. Chúng được nhận diện từ tệp (giới hạn hình cầu hoặc lưới, vùng cắt GPano) hoặc từ "vr180" hay "180" trong tên, và mọi trình xem đều có nút 360°/180°.
+Immuch360 nhận diện bố cục 3D, trên và dưới hoặc cạnh nhau, từ tệp (hộp st3d của video), hoặc đoán từ hình dạng khung hình, và mọi trình xem đều có nút 3D để thay đổi. Điện thoại hiển thị mắt trái; Meta Quest cho mỗi mắt thấy nửa của riêng nó, ở dạng 3D thật. Tệp VR180 được vẽ trên nửa hình cầu, phía sau là màu đen thay vì hình bị kéo giãn. Chúng được nhận diện từ tệp (giới hạn hình cầu hoặc lưới, vùng cắt GPano) hoặc từ "vr180" hay "180" trong tên, và mọi trình xem đều có nút 360°/180°.
 
 ### Đổi bố cục hoặc phạm vi
 
@@ -428,14 +428,14 @@ Khi bật Cài đặt, Nâng cao, Xử lý sự cố, trình phát thêm một l
 ### Định dạng, quyền riêng tư và giới hạn
 
 - **Định dạng**: cạnh nhau và trên và dưới, kể cả đảo mắt, toàn bộ hoặc nửa chiều rộng, phẳng, 360° và VR180. Bố cục được đọc từ tệp, nếu không thì đoán từ hình dạng khung hình hoặc tên tệp (sbs, ou, tb và tương tự; tệp nửa chiều rộng chỉ nhận diện được qua tên), và có thể chọn bằng tay trong trình phát. Lựa chọn được ghi nhớ với video trong thư viện, không với tệp của chia sẻ mạng.
-- **Camera**: hình ảnh chỉ được xử lý trên thiết bị, không bao giờ được lưu và không gửi đi đâu. Bản dựng cho Quest 3 hoàn toàn không có quyền camera (kính không có camera nào cho ứng dụng dùng), và trình phát Spatial không có ở đó: nút và cài đặt của nó bị ẩn trên kính.
+- **Camera**: hình ảnh chỉ được xử lý trên thiết bị, không bao giờ được lưu và không gửi đi đâu. Bản dựng cho Quest hoàn toàn không có quyền camera (kính không có camera nào cho ứng dụng dùng), và trình phát Spatial không có ở đó: nút và cài đặt của nó bị ẩn trên kính.
 - **Giới hạn**: thử nghiệm, chỉ điện thoại và máy tính bảng (không có trên Meta Quest), cần OpenGL ES 3.0 hoặc Metal. Chiều sâu chỉ là ước tính. Hoạt động tốt nhất ở chế độ ngang với khuôn mặt đủ sáng. Đã kiểm tra trên Galaxy S24+; rất mong nhận phản hồi từ iPhone.
 - **Dự phòng**: nếu có gì trục trặc (không có camera, thiết bị không hỗ trợ, bố cục không đọc được), bạn quay về trình phát thường.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Ảnh và video không gian của Apple
 
-iPhone chụp ảnh và quay video không gian, còn máy chủ Immich không cho biết gì về chúng: trong ứng dụng Immich, chúng chỉ là ảnh hoặc video phẳng. Từ bản dựng 19, Immuch360 nhận diện chúng bằng cách đọc tệp, và hiển thị ảnh không gian ở dạng 3D trong Meta Quest 3. Đây không phải trình phát Spatial 2.5D ở trên, vốn dành cho video cạnh nhau và trên và dưới.
+iPhone chụp ảnh và quay video không gian, còn máy chủ Immich không cho biết gì về chúng: trong ứng dụng Immich, chúng chỉ là ảnh hoặc video phẳng. Từ bản dựng 19, Immuch360 nhận diện chúng bằng cách đọc tệp, và hiển thị ảnh không gian ở dạng 3D trong kính Meta Quest. Đây không phải trình phát Spatial 2.5D ở trên, vốn dành cho video cạnh nhau và trên và dưới.
 
 - **Ảnh không gian** là tệp HEIC (`.heic`, `.heif`, `.hif`) chứa hai ảnh, mỗi mắt một ảnh, được nhóm thành một cặp lập thể. Ứng dụng đọc phần đầu tệp (trên thiết bị, bản gốc của máy chủ bằng một yêu cầu dải byte, hoặc tệp của chia sẻ mạng) và ghi nhớ kết quả trên điện thoại, nên mỗi ảnh chỉ được đọc một lần.
 - **Video không gian** (MV-HEVC) được nhận diện từ luồng video: một lớp thứ hai, và cả hai mắt được khai báo.
@@ -466,7 +466,7 @@ Việc nhận diện đã được kiểm tra trên một ảnh không gian mẫ
 
 Nhiều người mua Quest 3 để xem ảnh và video 360° của chính mình, rồi hỏi nên đặt tệp ở đâu, làm sao đưa chúng vào kính mà không cần cáp, và dùng trình phát nào: các trình phát video 360° và 3D trên cửa hàng đều phải trả phí.
 
-Cùng một ứng dụng Android chạy trên Quest 3 và 3S dưới dạng cửa sổ, với toàn bộ thư viện của bạn. Nút 360° của nó mở chế độ xem nhập vai, nơi ảnh hoặc video bao quanh bạn và bạn nhìn quanh bằng cách xoay đầu, ở dạng 3D thật với tệp lập thể (Meta Spatial SDK). Nội dung đến từ máy chủ Immich, từ chính kính, từ NAS, máy chủ đa phương tiện, điện thoại hoặc máy chủ Plex, và được phát tại chỗ (máy chủ đa phương tiện và điện thoại từ bản dựng 19, máy chủ Plex từ bản dựng 20, chưa kiểm tra trên kính), và từ bản dựng 20 cửa sổ cũng hiển thị camera Tapo. Ứng dụng miễn phí và mã nguồn mở. Đã kiểm tra trên Quest 3, và bởi một người dùng với video Insta360 X4 8K HEVC.
+Cùng một ứng dụng Android chạy trên Quest 3 và 3S, và từ bản dựng 21 trên Quest 2 và Quest Pro (chưa kiểm thử), dưới dạng cửa sổ, với toàn bộ thư viện của bạn. Nút 360° của nó mở chế độ xem nhập vai, nơi ảnh hoặc video bao quanh bạn và bạn nhìn quanh bằng cách xoay đầu, ở dạng 3D thật với tệp lập thể (Meta Spatial SDK). Nội dung đến từ máy chủ Immich, từ chính kính, từ NAS, máy chủ đa phương tiện, điện thoại hoặc máy chủ Plex, và được phát tại chỗ (máy chủ đa phương tiện và điện thoại từ bản dựng 19, máy chủ Plex từ bản dựng 20, chưa kiểm tra trên kính), và từ bản dựng 20 cửa sổ cũng hiển thị camera Tapo. Ứng dụng miễn phí và mã nguồn mở. Đã kiểm tra trên Quest 3, và bởi một người dùng với video Insta360 X4 8K HEVC.
 
 ### Mở chế độ xem nhập vai
 
@@ -659,7 +659,7 @@ Mọi thứ ứng dụng di động Immich chính thức làm được đều c�
 
 Để cho người không có ứng dụng xem một ảnh 360°, hãy chia sẻ nó bằng liên kết chia sẻ của Immich: ứng dụng web Immich hiển thị ảnh 360° dạng hình cầu trong trình duyệt của họ.
 
-Bản dựng hiện tại, bản dựng 20 (phiên bản 3.3.0-rc.0, số bản dựng 3030018), dựa trên Immich 3.3.0-rc.0 (Immich `main`, chưa phải bản phát hành ổn định). Bản dựng 19 đã được kiểm thử với máy chủ Immich 3.2, và bản dựng 20 không thay đổi gì trong những gì ứng dụng yêu cầu từ máy chủ. Vui lòng báo lỗi tại [Issues](https://github.com/freeKC/Immuch360/issues), không báo cho dự án Immich. Tài liệu đầy đủ của chính Immich có tại [immich.app](https://immich.app).
+Bản dựng hiện tại, bản dựng 21 (phiên bản 3.3.0-rc.0, số bản dựng 3030019), dựa trên Immich 3.3.0-rc.0 (Immich `main`, chưa phải bản phát hành ổn định). Bản dựng 19 đã được kiểm thử với máy chủ Immich 3.2, và các bản dựng 20 và 21 không thay đổi gì trong những gì ứng dụng yêu cầu từ máy chủ. Vui lòng báo lỗi tại [Issues](https://github.com/freeKC/Immuch360/issues), không báo cho dự án Immich. Tài liệu đầy đủ của chính Immich có tại [immich.app](https://immich.app).
 
 ## So sánh với ứng dụng Immich và các ứng dụng khác
 
@@ -670,20 +670,20 @@ Bản dựng hiện tại, bản dựng 20 (phiên bản 3.3.0-rc.0, số bản 
 | Ảnh 360° dạng hình cầu để nhìn quanh (kéo, chụm, chạm hai lần, quán tính, góc nhìn ban đầu của máy ảnh, ảnh toàn cảnh một phần) | ❌ dải phẳng | ✅ | Đã kiểm thử trên Galaxy S24+ và iPhone 14 |
 | Con quay hồi chuyển: nhìn quanh bằng cách di chuyển điện thoại | ❌ | ✅ | Đã kiểm thử trên Galaxy S24+ và iPhone 14 |
 | Video 360° trong trình phát hình cầu, có âm thanh, tua, chọn bản âm thanh và chỉ báo bộ đệm | ❌ video phẳng | ✅ Android và iOS (iOS chưa có thanh thời gian) | Đã kiểm thử trên Galaxy S24+ và iPhone 14 |
-| Ảnh và video 360° 3D (lập thể) | ❌ hình bị nhân đôi | ✅ mắt trái trên điện thoại, 3D thật trên Quest 3 | Đã kiểm thử trên Galaxy S24+ và Quest 3, với mẫu 3D 360° thật (VRTogether, Vuze, Kandao) và một ảnh 3D; rất mong nhận báo cáo từ các máy ảnh khác |
+| Ảnh và video 360° 3D (lập thể) | ❌ hình bị nhân đôi | ✅ mắt trái trên điện thoại, 3D thật trên Quest | Đã kiểm thử trên Galaxy S24+ và Quest 3, với mẫu 3D 360° thật (VRTogether, Vuze, Kandao) và một ảnh 3D; rất mong nhận báo cáo từ các máy ảnh khác |
 | Ảnh và video VR180 (nửa cầu) | ❌ kéo giãn quanh hình cầu | ✅ nửa cầu, nút 360°/180° | Đã kiểm thử trên trình giả lập Android và Galaxy S24+ với nội dung tổng hợp; rất mong nhận phản hồi từ thiết bị thật |
-| Ảnh không gian Apple (cặp lập thể HEIC) và video không gian (MV-HEVC) | ❌ ảnh hoặc video phẳng, không có gì cho biết đó là nội dung không gian | ✅ từ bản dựng 19: ảnh 3D trong Quest 3, ở nơi khác là một mắt và một dòng chi tiết | Việc nhận diện đã kiểm tra trên ảnh mẫu do thư viện ảnh của Apple ghi và trên tệp tổng hợp; chế độ xem trong kính và tệp iPhone thật là phần kiểm tra trên thiết bị của bản dựng 19 |
-| Chế độ xem nhập vai trên Meta Quest 3 với theo dõi đầu, thanh thời gian, trước và tiếp theo, và Xoay | ❌ | ✅ cùng ứng dụng, dưới dạng bản dựng cho kính hoặc APK điện thoại | Đã kiểm thử trên Quest 3 (điều khiển của bản dựng 14, điều chỉnh ở bản dựng 16 theo phản hồi người dùng), và bởi một người dùng với video Insta360 X4 8K HEVC |
+| Ảnh không gian Apple (cặp lập thể HEIC) và video không gian (MV-HEVC) | ❌ ảnh hoặc video phẳng, không có gì cho biết đó là nội dung không gian | ✅ từ bản dựng 19: ảnh 3D trong Quest, ở nơi khác là một mắt và một dòng chi tiết | Việc nhận diện đã kiểm tra trên ảnh mẫu do thư viện ảnh của Apple ghi và trên tệp tổng hợp; chế độ xem trong kính và tệp iPhone thật là phần kiểm tra trên thiết bị của bản dựng 19 |
+| Chế độ xem nhập vai trên Meta Quest với theo dõi đầu, thanh thời gian, trước và tiếp theo, và Xoay | ❌ | ✅ cùng ứng dụng, dưới dạng bản dựng cho kính hoặc APK điện thoại | Đã kiểm thử trên Quest 3 (điều khiển của bản dựng 14, điều chỉnh ở bản dựng 16 theo phản hồi người dùng), và bởi một người dùng với video Insta360 X4 8K HEVC |
 | Huy hiệu 360° trên hình thu nhỏ, và danh sách 360° có tệp thô và bộ lọc (khoảng thời gian, nguồn, loại, máy ảnh) | ❌ | ✅ bộ lọc từ bản dựng 18 | Đã xong |
 | "Xem dạng 360°" cho tệp mà máy chủ không đánh dấu | ❌ | ✅ ghi nhớ trên điện thoại | Đã xong |
 | Spatial 2.5D: chiều sâu trên màn hình phẳng từ video lập thể | ❌ | ✅ thử nghiệm, điện thoại và máy tính bảng | Đã kiểm thử trên Galaxy S24+; rất mong nhận phản hồi từ iPhone |
 | Dùng không cần máy chủ, với thư viện ảnh của chính thiết bị | ❌ bắt buộc đăng nhập | ✅ | Đã kiểm thử trên Galaxy S24+, Quest 3 và trình giả lập Android |
-| Chia sẻ SMB và WebDAV được tìm thấy trên mạng và phát trực tiếp, không tải gì về | ❌ | ✅ mọi trình xem, điện thoại và Quest 3 | Đã kiểm thử với Freebox Server (SMB) trên Galaxy S24+ và Quest 3, và với máy chủ kiểm thử Samba và WebDAV trên trình giả lập Android; rất mong nhận phản hồi về NAS và WebDAV khác |
+| Chia sẻ SMB và WebDAV được tìm thấy trên mạng và phát trực tiếp, không tải gì về | ❌ | ✅ mọi trình xem, điện thoại và Quest | Đã kiểm thử với Freebox Server (SMB) trên Galaxy S24+ và Quest 3, và với máy chủ kiểm thử Samba và WebDAV trên trình giả lập Android; rất mong nhận phản hồi về NAS và WebDAV khác |
 | Máy chủ đa phương tiện DLNA như một loại chia sẻ | ❌ | ✅ từ bản dựng 19 | Đã kiểm tra với minidlna và Gerbera trong Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone và Quest là phần kiểm tra trên thiết bị của bản dựng 19 |
 | Gửi tệp của chia sẻ lên Immich; tệp thiết bị gửi thủ công được tính là đã sao lưu | ❌ chỉ tệp thiết bị | ✅ từ bản dựng 15 | Đã kiểm thử trên trình giả lập Android với máy chủ kiểm thử Samba và máy chủ Immich 3.2 |
 | Chia sẻ điện thoại này trên mạng, cho kính | ❌ | ✅ từ bản dựng 19, Android và iOS | Kiểm thử đơn vị và kiểm thử đầu cuối với ứng dụng WebDAV của kính, trên máy tính; điện thoại phục vụ cho Quest, và phía iPhone, là phần kiểm tra trên thiết bị của bản dựng 19 |
-| Thư viện Plex Media Server phát từ tệp gốc, ở nhà và khi đi xa, không cần plex.tv | ❌ | ✅ từ bản dựng 20, mọi trình xem, trên điện thoại, máy tính bảng, Quest 3 và TV | Đã kiểm tra từ máy tính với một Plex Media Server 1.42.1 thật (ghép nối, thư mục, khoảng byte, ảnh thu nhỏ, địa chỉ bên ngoài nhà); chưa kiểm tra trên thiết bị |
-| Camera Tapo: hình ảnh trực tiếp, và các bản ghi trên thẻ nhớ gửi lên Immich khi bạn chọn | ❌ | ✅ từ bản dựng 20: bản ghi ở mọi nơi, trực tiếp trên Android, Android TV và Quest 3 | Đã kiểm tra với một camera mô phỏng; chưa kiểm tra với camera thật |
+| Thư viện Plex Media Server phát từ tệp gốc, ở nhà và khi đi xa, không cần plex.tv | ❌ | ✅ từ bản dựng 20, mọi trình xem, trên điện thoại, máy tính bảng, Quest và TV | Đã kiểm tra từ máy tính với một Plex Media Server 1.42.1 thật (ghép nối, thư mục, khoảng byte, ảnh thu nhỏ, địa chỉ bên ngoài nhà); chưa kiểm tra trên thiết bị |
+| Camera Tapo: hình ảnh trực tiếp, và các bản ghi trên thẻ nhớ gửi lên Immich khi bạn chọn | ❌ | ✅ từ bản dựng 20: bản ghi ở mọi nơi, trực tiếp trên Android, Android TV và Quest | Đã kiểm tra với một camera mô phỏng; chưa kiểm tra với camera thật |
 | Android TV và Google TV, điều khiển bằng điều khiển từ xa, trong cùng một APK | ❌ không phải ứng dụng TV | ✅ từ bản dựng 20 | Đã kiểm tra bằng các bài kiểm thử tự động; chưa kiểm tra trên TV |
 | Ảnh thô Insta360 .insp và video .insv một luồng | ❌ phẳng | ✅ từ bản dựng 16 | Ảnh được so với bản xuất Insta360 Studio của tệp X3, video kiểm tra trên trình giả lập Android với tệp X3 độ phân giải thấp; chưa chạy trên iPhone |
 | Video thô mỗi ống kính một luồng hoặc một tệp (Insta360 X4, X4 Air, X5, X6, cặp X3, GoPro .360, DJI .osv) | ❌ phẳng hoặc sai | ✅ từ bản dựng 18 | Bộ phân tích và phần ghép nối đã kiểm tra trên tệp X4, cặp X3, GoPro MAX và Osmo 360 thật; việc phát là phần kiểm tra trên thiết bị của bản dựng 18 và 19 |
@@ -697,7 +697,7 @@ Bản dựng hiện tại, bản dựng 20 (phiên bản 3.3.0-rc.0, số bản 
 
 | Mọi người dùng gì | Họ gặp vấn đề gì | Immuch360 làm gì |
 |---|---|---|
-| Ứng dụng web Immich | Hiển thị ảnh 360° dạng hình cầu, nhưng coi tệp .insp thô là ảnh toàn cảnh hoàn chỉnh và bọc hai vòng tròn của nó quanh hình cầu; chế độ xem VR vẫn chỉ là một yêu cầu ([thảo luận #14768](https://github.com/immich-app/immich/discussions/14768)) | Ghép nối tệp thô trên thiết bị, và mở chế độ xem nhập vai trong Quest 3 |
+| Ứng dụng web Immich | Hiển thị ảnh 360° dạng hình cầu, nhưng coi tệp .insp thô là ảnh toàn cảnh hoàn chỉnh và bọc hai vòng tròn của nó quanh hình cầu; chế độ xem VR vẫn chỉ là một yêu cầu ([thảo luận #14768](https://github.com/immich-app/immich/discussions/14768)) | Ghép nối tệp thô trên thiết bị, và mở chế độ xem nhập vai trong Quest |
 | Ứng dụng Insta360 hoặc Studio | Cần dùng để biến tệp thô trên thẻ thành ảnh 360° trước khi xem | Mở trực tiếp tệp thô .insp và .insv, cùng tệp GoPro .360 và DJI .osv |
 | Plex, Jellyfin, Synology Photos | Ảnh và video 360° hiện phẳng hoặc không được nhận diện, như các chủ đề trên diễn đàn của họ mô tả (một yêu cầu với Plex đã mở từ năm 2017) | Đọc chính thư viện Plex từ bản dựng 20, hoặc cùng các thư mục qua SMB, WebDAV hoặc DLNA và phát dạng hình cầu, không thay đổi gì trên máy chủ |
 | Ứng dụng Tapo | Một ứng dụng riêng, đăng nhập vào tài khoản TP-Link của bạn, với các đoạn ghi tách biệt khỏi ảnh | Hiển thị camera cạnh ảnh của bạn, chỉ giao tiếp với nó trong mạng của bạn, và giữ một đoạn dưới dạng video bạn có thể gửi lên Immich (từ bản dựng 20) |
@@ -709,7 +709,7 @@ Bản dựng hiện tại, bản dựng 20 (phiên bản 3.3.0-rc.0, số bản 
 
 Immuch360 là một thư viện ảnh, và cũng là một trình phát đa phương tiện miễn phí: nó phát những gì ứng dụng chính thức không phát được, từ các nguồn trong bảng thứ hai, trong trình phát phù hợp với tệp.
 
-| Nội dung | Điện thoại Android | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (từ bản dựng 20) |
+| Nội dung | Điện thoại Android | iPhone, iPad | Meta Quest | Android TV, Google TV (từ bản dựng 20) |
 |---|---|---|---|---|
 | Video phẳng (MP4, MOV, MKV, những gì thiết bị giải mã được) | Trình phát Immich, và trình phát tích hợp cho chia sẻ mạng | Tương tự, trừ tệp MKV và AVI của chia sẻ, mà iOS không mở được (trên máy chủ chúng phát bản đã chuyển mã) | Trong cửa sổ | Như trên điện thoại; OK tạm dừng, trái và phải nhảy 10 giây |
 | Ảnh 360° | Trình xem hình cầu, con quay hồi chuyển | Tương tự | Nhập vai, bao quanh bạn | Trình xem hình cầu xoay bằng phím mũi tên, phóng to bằng phím kênh |
@@ -739,14 +739,14 @@ Cột TV chưa được kiểm tra trên TV, xem [Xem trên TV](#watch-on-your-t
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 cũng chạy trên Meta Quest 3 và 3S (Horizon OS v69 trở lên; bản dựng trên Horizon Store chỉ đăng ký cho hai thiết bị này; bản `-release.apk` phổ thông có lẽ cũng cài được trên Quest 2 hoặc Quest Pro, chưa kiểm thử). Cách sử dụng nằm trong [Trong kính Meta Quest 3](#in-the-meta-quest-3-headset); phần này nói về cài đặt và những điểm khác biệt trên kính.
+Immuch360 cũng chạy trên các kính Meta Quest dùng Horizon OS v69 trở lên. Từ bản dựng 21, bản dựng trên Horizon Store được đăng ký cho Quest 2, Quest Pro, Quest 3 và 3S, đúng bốn thiết bị mà bản `-release.apk` phổ thông đã khai báo; chiếc Quest đầu tiên thì không, cửa hàng không còn chấp nhận nó. Quest 3 và 3S đã được kiểm thử. Quest 2 và Quest Pro chưa được kiểm thử: bộ giải mã video của chúng chậm hơn, và các giới hạn mà ứng dụng kiểm tra được đo trên Quest 3, nên một video H.264 lớn có thể bị từ chối kèm thông báo hoặc bị giật trên hai kính này. Rất mong nhận báo cáo từ hai kính này tại [Issues](https://github.com/freeKC/Immuch360/issues). Cách sử dụng nằm trong [Trong kính Meta Quest 3](#in-the-meta-quest-3-headset); phần này nói về cài đặt và những điểm khác biệt trên kính.
 
 Bản dựng cho kính chỉ giao tiếp với máy chủ qua HTTPS, hoặc qua HTTP thường với tên trong mạng gia đình (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) và với chính kính, theo yêu cầu của Horizon Store. Máy chủ được nhập dưới dạng địa chỉ HTTP thường có IP, ví dụ `http://192.168.1.10:2283`, sẽ bị bản dựng này từ chối: hãy dùng HTTPS, một tên trong mạng gia đình (`nas.local`), hoặc bản `-release.apk` phổ thông, vốn giữ chính sách mở như trên điện thoại. Chia sẻ WebDAV, DLNA và chia sẻ điện thoại ở địa chỉ HTTP thường trong mạng cục bộ không bị ảnh hưởng: ứng dụng tự đọc chúng và chỉ đưa cho trình phát địa chỉ cầu nối cục bộ của nó (cần xác nhận trên kính với DLNA và chia sẻ điện thoại, mới có ở bản dựng 19). Từ bản dựng 20, máy chủ Plex được kết nối qua HTTPS, còn camera Tapo do chính ứng dụng kết nối, hình ảnh trực tiếp của nó qua RTSP, vốn không phải HTTP: lẽ ra cả hai đều không bị ảnh hưởng (cần xác nhận trên kính).
 
 <a id="install"></a>
 ### Cài đặt ứng dụng
 
-Trang trên Horizon Store đang chờ Meta xét duyệt, đã gửi kèm bản dựng 14; cho đến khi được duyệt, hãy cài thủ công tệp `-quest-release.apk` của một bản phát hành (dựng cho kính: 64 bit, target SDK 34, chỉ các quyền mà kính dùng), hoặc bản `-release.apk` phổ thông:
+Meta đã duyệt trang trên Horizon Store ngày 7 tháng 10 năm 2026 với bản dựng 14, và bản dựng 21 đã được gửi làm bản cập nhật đầu tiên. Cho đến khi trang cửa hàng được công khai, hoặc để có một bản dựng trước khi cửa hàng có nó, hãy cài thủ công tệp `-quest-release.apk` của một bản phát hành (dựng cho kính: 64 bit, target SDK 34, chỉ các quyền mà kính dùng), hoặc bản `-release.apk` phổ thông:
 
 1. Bật chế độ nhà phát triển một lần. Trong ứng dụng Meta Horizon trên điện thoại, mở Devices (Thiết bị), chọn kính, rồi Headset settings (Cài đặt kính), rồi Developer mode (Chế độ nhà phát triển). Việc này cần một tài khoản nhà phát triển, miễn phí tại developers.meta.com. Bạn cũng cần adb (Android SDK Platform Tools) trên máy tính, hoặc SideQuest.
 2. Nối kính với máy tính bằng cáp USB-C. Trong kính, chấp nhận "Allow USB debugging" (Cho phép gỡ lỗi USB).
@@ -754,7 +754,7 @@ Trang trên Horizon Store đang chờ Meta xét duyệt, đã gửi kèm bản d
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. Trong kính, mở Library (Thư viện), chọn bộ lọc "Unknown sources" (Nguồn không xác định), và khởi động Immuch360.
@@ -776,7 +776,7 @@ Toàn bộ ứng dụng chạy như một cửa sổ 2D đổi được kích th
 ### Giới hạn trên kính
 
 - **Codec video**: HEVC (H.265) là lựa chọn an toàn; H.264 dừng ở khoảng 4096x2304. Ứng dụng kiểm tra gì, và cách cho kính một video mà nó giải mã được, có trong [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters).
-- **Cửa hàng**: phiên bản trên cửa hàng bắt đầu từ bản dựng 14. Các tính năng ghi "từ bản dựng 15" và sau đó sẽ có trong các lần cập nhật tiếp theo (kênh thử nghiệm alpha của cửa hàng, dành cho người thử nghiệm, nhận mọi bản dựng mới); APK trên GitHub đã có tất cả.
+- **Cửa hàng**: phiên bản trên cửa hàng bắt đầu từ bản dựng 14. Các tính năng ghi "từ bản dựng 15" và sau đó sẽ có trong bản dựng 21, bản cập nhật đầu tiên, sau khi Meta xét duyệt nó (kênh thử nghiệm alpha của cửa hàng, dành cho người thử nghiệm, nhận mọi bản dựng mới); APK trên GitHub đã có tất cả.
 - **Quyền**: bản dựng cho kính chỉ xin quyền ảnh và video (chế độ không có máy chủ) và thông báo (tiến trình sao lưu). Nó không có quyền bộ nhớ, âm thanh, vị trí hay camera, khác với bản dựng cho điện thoại; vì vậy tính năng đổi máy chủ theo tên Wi-Fi không có trên kính.
 - **Dung lượng APK**: Spatial SDK thêm khoảng 56 MB mã native ARM 64-bit, kể cả trên điện thoại, nơi nó không bao giờ được nạp.
 - **Giấy phép**: chế độ xem nhập vai dùng Meta Spatial SDK, được phân phối theo Meta Platform Technologies SDK License Agreement.
@@ -784,13 +784,13 @@ Toàn bộ ứng dụng chạy như một cửa sổ 2D đổi được kích th
 <a id="where-to-get-it"></a>
 ## Tải ở đâu
 
-Ứng dụng có trên Google Play cho điện thoại và máy tính bảng; phiên bản App Store đang chờ Apple xét duyệt, phiên bản Meta Horizon Store đang chờ Meta, và phiên bản Google Play cho TV đang chờ Google xét duyệt bản phát hành cho TV. Bản phát hành trên GitHub luôn là bản dựng mới nhất:
+Ứng dụng có trên Google Play cho điện thoại và máy tính bảng; phiên bản App Store đang chờ Apple xét duyệt, trang trên Meta Horizon Store đã được duyệt và bản cập nhật đầu tiên đang được Meta xét duyệt, và phiên bản Google Play cho TV đang chờ Google xét duyệt bản phát hành cho TV. Bản phát hành trên GitHub luôn là bản dựng mới nhất:
 
 | Nền tảng | Hiện nay | Sắp tới |
 |---|---|---|
-| Điện thoại và máy tính bảng Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), hoặc APK trên trang [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` cho điện thoại (bản phổ thông `Immuch360-v<version>-release.apk` chạy ở mọi nơi, `-armeabi-v7a` dành cho điện thoại 32 bit đời cũ, và tệp `.aab` dành cho Google Play, không dùng để cài thủ công). Bản dựng trên GitHub thường đi trước cửa hàng. Dù cách nào, ứng dụng cũng cài song song với ứng dụng Immich chính thức (gói `com.aprogsys.immuch360`). | Google Play: bản dựng 18 đang phát hành, bản dựng 19 đang được Google xét duyệt từ ngày 6 tháng 10 năm 2026, bản dựng 20 tiếp theo |
+| Điện thoại và máy tính bảng Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), hoặc APK trên trang [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` cho điện thoại (bản phổ thông `Immuch360-v<version>-release.apk` chạy ở mọi nơi, `-armeabi-v7a` dành cho điện thoại 32 bit đời cũ, và tệp `.aab` dành cho Google Play, không dùng để cài thủ công). Bản dựng trên GitHub thường đi trước cửa hàng. Dù cách nào, ứng dụng cũng cài song song với ứng dụng Immich chính thức (gói `com.aprogsys.immuch360`). | Google Play: bản dựng 18 đang phát hành, bản dựng 20 đang được Google xét duyệt từ ngày 7 tháng 10 năm 2026, thay cho bản dựng 19 |
 | iPhone và iPad | Đang chờ Apple xét duyệt. Phiên bản đang xét duyệt có các tính năng của bản dựng 11: tải lên Immich và lựa chọn Nguồn video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong một bản cập nhật App Store sau này. Mã nguồn được dựng bằng Xcode hoặc trên Codemagic, xem [Tự dựng ứng dụng](#build-it-yourself). | App Store, đang xét duyệt |
-| Meta Quest 3 và 3S | Tệp `-quest-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases) (bản `-release.apk` phổ thông cũng chạy), cài thủ công ở chế độ nhà phát triển, xem [Cài đặt ứng dụng](#install). Bản dựng trên cửa hàng và APK trên GitHub được ký bằng các khóa khác nhau: để chuyển từ bản này sang bản kia, hãy gỡ ứng dụng trước (cài đặt và các chia sẻ đã lưu cũng mất theo). | Meta Horizon Store: bản dựng 14 đang được Meta xét duyệt từ ngày 3 tháng 10 năm 2026; kênh alpha của cửa hàng (chỉ người thử nghiệm) nhận mọi bản dựng mới |
+| Meta Quest 2, Quest Pro, Quest 3 và 3S (Quest 2 và Quest Pro chưa kiểm thử) | Tệp `-quest-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases) (bản `-release.apk` phổ thông cũng chạy), cài thủ công ở chế độ nhà phát triển, xem [Cài đặt ứng dụng](#install). Bản dựng trên cửa hàng và APK trên GitHub được ký bằng các khóa khác nhau: để chuyển từ bản này sang bản kia, hãy gỡ ứng dụng trước (cài đặt và các chia sẻ đã lưu cũng mất theo). | Meta Horizon Store: trang đã được duyệt ngày 7 tháng 10 năm 2026 với bản dựng 14, và bản dựng 21, bản cập nhật đầu tiên, đang được Meta xét duyệt; kênh alpha của cửa hàng (chỉ người thử nghiệm) nhận mọi bản dựng mới |
 | Android TV và Google TV (từ bản dựng 20) | Bản phổ thông `Immuch360-v<version>-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases), cài thủ công bằng adb, xem [Cài đặt trên TV](#install-it-on-the-tv). Đây là cùng một ứng dụng như trên điện thoại. | Google Play trên TV, sau khi Google xét duyệt bản phát hành cho TV |
 
 Liên kết App Store và Meta Horizon Store sẽ được thêm vào đây ngay khi các trang được phát hành. Đăng nhập bằng URL máy chủ Immich và tài khoản quen thuộc của bạn, hoặc chạm "Sử dụng không cần máy chủ" trên trang đăng nhập để bắt đầu với ảnh và video của chính thiết bị. APK tải từ GitHub không tự cập nhật: hãy theo dõi trang Releases, và khi bạn đã cài ứng dụng từ một cửa hàng, hãy nhận cập nhật từ cửa hàng đó.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Ảnh chụp màn hình cho cửa hàng được chụp trên bản dựng debug cho trình mô phỏng, tạo với `--dart-define=IMMUCH_SCREENSHOTS=true`, tùy chọn này chỉ ẩn biểu ngữ debug. Hai flavor Android là cùng một ứng dụng. Từ bản dựng 20, flavor `phone` còn tự khai báo là ứng dụng TV (một mục trong trình khởi chạy TV và một biểu ngữ, không yêu cầu màn hình cảm ứng), điều mà flavor `quest` bỏ qua. Flavor `quest` nhắm SDK 34 và chỉ giữ các quyền mà kính dùng (ảnh, video, thông báo): quản lý nội dung đa phương tiện, vị trí chạy nền, bộ nhớ kiểu cũ, âm thanh, vị trí của nội dung, vị trí thiết bị và camera bị gỡ bỏ trong `android/app/src/quest/AndroidManifest.xml`, vì Meta Horizon Store từ chối hai quyền đầu và yêu cầu giải trình cho mọi quyền nhạy cảm khác; cùng tệp đó khai báo Quest 3 và 3S là thiết bị được hỗ trợ và giới hạn HTTP thường ở chính kính và tên trong mạng gia đình. APK chỉ có 64 bit nhờ hai đối số bổ sung trong dòng lệnh (`--target-platform android-arm64 --android-project-arg arm64only=true`). Flavor `phone` là thứ Google Play yêu cầu. Để dựng cho iOS trên máy Mac của bạn, hãy dùng Xcode và nhóm ký của riêng bạn; với Xcode 26, chạy `xcodebuild -downloadComponent MetalToolchain` một lần trước, vì các shader của Spatial cần nó. Không có Mac, bản dựng iOS chạy trên Codemagic (một máy Mac được lưu trữ) từ tệp `codemagic.yaml` của kho mã này. Bản dựng phát hành Android chạy trên GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Ảnh chụp màn hình cho cửa hàng được chụp trên bản dựng debug cho trình mô phỏng, tạo với `--dart-define=IMMUCH_SCREENSHOTS=true`, tùy chọn này chỉ ẩn biểu ngữ debug. Hai flavor Android là cùng một ứng dụng. Từ bản dựng 20, flavor `phone` còn tự khai báo là ứng dụng TV (một mục trong trình khởi chạy TV và một biểu ngữ, không yêu cầu màn hình cảm ứng), điều mà flavor `quest` bỏ qua. Flavor `quest` nhắm SDK 34 và chỉ giữ các quyền mà kính dùng (ảnh, video, thông báo): quản lý nội dung đa phương tiện, vị trí chạy nền, bộ nhớ kiểu cũ, âm thanh, vị trí của nội dung, vị trí thiết bị và camera bị gỡ bỏ trong `android/app/src/quest/AndroidManifest.xml`, vì Meta Horizon Store từ chối hai quyền đầu và yêu cầu giải trình cho mọi quyền nhạy cảm khác; cùng tệp đó khai báo Quest 2, Quest Pro, Quest 3 và 3S là thiết bị được hỗ trợ và giới hạn HTTP thường ở chính kính và tên trong mạng gia đình. APK chỉ có 64 bit nhờ hai đối số bổ sung trong dòng lệnh (`--target-platform android-arm64 --android-project-arg arm64only=true`). Flavor `phone` là thứ Google Play yêu cầu. Để dựng cho iOS trên máy Mac của bạn, hãy dùng Xcode và nhóm ký của riêng bạn; với Xcode 26, chạy `xcodebuild -downloadComponent MetalToolchain` một lần trước, vì các shader của Spatial cần nó. Không có Mac, bản dựng iOS chạy trên Codemagic (một máy Mac được lưu trữ) từ tệp `codemagic.yaml` của kho mã này. Bản dựng phát hành Android chạy trên GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Không có bí mật nào nằm trong kho mã này: khóa ký Android được lưu dưới dạng secret đã mã hóa của GitHub Actions, và tài liệu ký của Apple được lưu dưới dạng biến đã mã hóa trên Codemagic. Các tệp workflow chỉ tham chiếu chúng theo tên. Không có `android/key.jks` của riêng bạn, bản dựng phát hành được ký bằng khóa debug và không cài đè được lên bản lấy từ GitHub hay cửa hàng (hãy gỡ bản đó trước); bản dựng debug được cài song song dưới tên Immuch360 debug. Bản trên Meta Horizon Store là APK `quest` của bản phát hành được ký bằng một khóa khác, chính là khóa mà ứng dụng trên cửa hàng được đăng ký lần đầu, nên nó cũng không cài đè lên APK cài thủ công được, và ngược lại.
 
@@ -857,9 +857,9 @@ Dự án này là một bản fork của Immich và vẫn theo giấy phép [GNU
 
 Những gì chưa làm, việc nhiều khả năng nhất đứng trước. Không có gì ở đây là lời hứa, và phản hồi trên [trình theo dõi vấn đề](https://github.com/freeKC/Immuch360/issues) giúp quyết định việc gì làm trước.
 
-- **Google Play**: bản dựng 18 đang phát hành; bản dựng 19 đang được Google xét duyệt từ ngày 6 tháng 10 năm 2026, và bản dựng 20 theo sau.
+- **Google Play**: bản dựng 18 đang phát hành; bản dựng 20 đang được Google xét duyệt từ ngày 7 tháng 10 năm 2026, thay cho bản dựng 19. Bản dựng 21 không thay đổi gì trên điện thoại và máy tính bảng.
 - **App Store**: phiên bản 3.3.0 đang chờ Apple xét duyệt; nó có các tính năng của bản dựng 11, nên tải lên Immich và kiểm tra bộ giải mã video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong bản cập nhật App Store tiếp theo. Liên kết sẽ được thêm vào đây khi phát hành.
-- **Meta Horizon Store**: trang đã được gửi Meta xét duyệt ngày 3 tháng 10 năm 2026 với bản dựng 14, và kênh alpha của cửa hàng nhận mọi bản dựng mới cho lần cập nhật tới. Khi trang được duyệt, Quest 3 không còn cần cài thủ công và liên kết cửa hàng sẽ được thêm vào đây; bản cài thủ công phải được gỡ trước (xem [Cài đặt ứng dụng](#install)).
+- **Meta Horizon Store**: Meta đã duyệt trang ngày 7 tháng 10 năm 2026 với bản dựng 14. Bản dựng 21 đã được gửi làm bản cập nhật đầu tiên: nó mang đến mọi thứ kể từ bản dựng 14 (tải lên Immich từ một chia sẻ, nguồn video chọn theo những gì kính giải mã được, tệp thô Insta360, GoPro và DJI, DLNA, chia sẻ từ điện thoại, ảnh không gian Apple, thư viện Plex Media Server, camera Tapo), và cửa hàng đăng ký nó cho Quest 2, Quest Pro, Quest 3 và 3S. Liên kết cửa hàng sẽ được thêm vào đây khi trang được công khai; bản cài thủ công phải được gỡ trước (xem [Cài đặt ứng dụng](#install)).
 - **Trang trên cửa hàng**: trang Google Play đã được viết lại vào tháng 10 năm 2026 với ảnh chụp màn hình mới, và sẽ có thêm ảnh chụp màn hình TV và biểu ngữ TV cùng bản phát hành cho TV. Nội dung trên App Store vẫn mô tả các bản dựng đầu (ảnh và video 360°, tệp thô hiện phẳng); nó sẽ giới thiệu các trình xem 3D, VR180 và Spatial, chế độ không có máy chủ, chia sẻ mạng, trình phát đa phương tiện và tệp thô Insta360. Nội dung trên Meta Horizon Store đã giới thiệu trình phát đa phương tiện.
 - **Tệp thô của máy ảnh 360°, tiếp theo**: chỉ báo tiến trình khi đang chuẩn bị ảnh thô cho kính; cân bằng video GoPro và DJI từ dữ liệu chuyển động của chính chúng; .dng mắt cá kép; báo cáo từ thiết bị về việc phát hai ống kính của bản dựng 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) để xác nhận đường nối và ngân sách bộ giải mã.
 - **DLNA, chia sẻ điện thoại và nội dung không gian Apple, tiếp theo**: báo cáo từ thiết bị cho bản dựng 19 (Plex, Jellyfin, NAS và Freebox Server qua DLNA; điện thoại phục vụ cho Quest, cả qua điểm phát sóng của nó; ảnh và video không gian thật từ iPhone trong kính); quyền multicast đã xin Apple, để iPhone tìm được mọi máy chủ DLNA; trước và tiếp theo giữa các ảnh không gian trong kính; huy hiệu không gian cho ảnh trên máy chủ trong dòng thời gian; video không gian ở dạng 3D trên Quest, nếu bộ giải mã của nó cho phép.

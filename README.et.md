@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | Eesti | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D ja VR180 fotod ning videod Immichist, sinu telefonist või NAS-ist. Android, iOS ja Meta Quest 3, serveriga või ilma">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D ja VR180 fotod ning videod Immichist, sinu telefonist või NAS-ist. Android, iOS ja Meta Quest, serveriga või ilma">
 </p>
 
 # Immuch360
 
-Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi vaadata, ning tasuta mängija tasapinnaliste, 360°, 3D ja VR180 fotode ja videote jaoks Android-telefonides ja -tahvelarvutites, iPhone'is ja iPadis, Meta Quest 3 ja 3S peakomplektis ning alates järgust 20 Android TV-s ja Google TV-s. See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) või telefoni sfäärifoto režiimiga või kellel on VR-peakomplekt, ja kes tahavad vaadata oma kaadreid Immichi serverist, telefonist endast, NAS-ist, meediaserverist või Plex serverist: sama server, sama konto, ilma serveri pistikprogrammita või üldse ilma serverita. Alates järgust 20 näitab see ka Tapo kaameraid, otsepildina ja nende mälukaardi salvestistena.
+Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi vaadata, ning tasuta mängija tasapinnaliste, 360°, 3D ja VR180 fotode ja videote jaoks Android-telefonides ja -tahvelarvutites, iPhone'is ja iPadis, Meta Questi peakomplektides (Quest 3 ja 3S ning alates järgust 21 Quest 2 ja Quest Pro, testimata) ning alates järgust 20 Android TV-s ja Google TV-s. See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) või telefoni sfäärifoto režiimiga või kellel on VR-peakomplekt, ja kes tahavad vaadata oma kaadreid Immichi serverist, telefonist endast, NAS-ist, meediaserverist või Plex serverist: sama server, sama konto, ilma serveri pistikprogrammita või üldse ilma serverita. Alates järgust 20 näitab see ka Tapo kaameraid, otsepildina ja nende mälukaardi salvestistena.
 
 <p align="center">
   <sub>Mitteametlik haru (fork). Ei ole seotud Immichi ega FUTO-ga. Nime võib lugeda kui "I am much 360".</sub>
@@ -15,7 +15,7 @@ Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi v
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Androidi APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">ülevaatusel</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store ülevaatusel &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store heaks kiidetud, järk 21 esitatud selle esimese uuendusena &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 on Immichi mobiilirakendus, kus 360° fotodes ja videotes saab ringi v
     <td align="center" width="33%"><h3>🎥 Omane 2.5D</h3>Sügavus tasasel ekraanil stereoskoopilisest videost, vaade järgib sinu pead (katseline, telefonid ja tahvelarvutid)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Üks rakendus telefonides, tahvelarvutites ja peakomplektis, tõeline 3D peakomplektis ning alates järgust 20 Android TV-s puldiga</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Üks rakendus telefonides, tahvelarvutites ning Quest 2, Pro, 3 ja 3S peakomplektides, tõeline 3D peakomplektis ning alates järgust 20 Android TV-s puldiga</td>
     <td align="center"><h3>🔌 Serveriga või ilma</h3>Sinu Immichi server või telefoni enda galerii, kontot pole vaja</td>
     <td align="center"><h3>🗄️ Võrgujaod</h3>Samba (SMB), WebDAV ja alates järgust 19 DLNA meediaserverid, mis leitakse võrgust ja loetakse otse, midagi alla laadimata, ning saadetakse Immichisse, kui sina nii otsustad. Alates järgust 19 jagab ka telefon oma galeriid peakomplektiga</td>
   </tr>
@@ -109,7 +109,7 @@ Valik jäetakse telefonis meelde ega muuda serveris midagi. Võrgujao faili puhu
 
 Sul pole Immichi serverit või sa ei taha kontot: tahad lihtsalt, et sinu telefoni 360° fotod avaneksid sfäärina, mida saab güroskoobiga pöörata. Immichi rakendus küsib kõigepealt sisselogimist.
 
-Sisselogimislehel avab "Kasuta ilma serverita" Immuch360 seadme enda fotode ja videotega, koos 360°, 3D, VR180 ja Spatial vaaturite, 360° loendi ning võrgujagudega (alates järgust 20 ka Plex serverite ja Tapo kaameratega), ilma Immichi kontota. Serveri funktsioonid jäävad peidetuks või hallimaks, kuni ühendad serveri; seadmest ei lahku midagi. Meta Quest 3-s avab see peakomplekti enda fotod ja videod; teleris, millel neid pole, suunab see võrgujagude juurde (vaata [Vaata oma teleris](#watch-on-your-tv-android-tv-and-google-tv)).
+Sisselogimislehel avab "Kasuta ilma serverita" Immuch360 seadme enda fotode ja videotega, koos 360°, 3D, VR180 ja Spatial vaaturite, 360° loendi ning võrgujagudega (alates järgust 20 ka Plex serverite ja Tapo kaameratega), ilma Immichi kontota. Serveri funktsioonid jäävad peidetuks või hallimaks, kuni ühendad serveri; seadmest ei lahku midagi. Meta Questis avab see peakomplekti enda fotod ja videod; teleris, millel neid pole, suunab see võrgujagude juurde (vaata [Vaata oma teleris](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Vahekaart Kogu ilma serverita: üleval kirje 360°, seejärel Sellel seadmel kahe 360° fotoga ja Võrgujaod jaoga nimega NAS">
 
@@ -159,7 +159,7 @@ Tühja parooliga kasutajanimi saadetakse nii, nagu see on: Freebox Server tahab 
 1. Puuduta jagu. Kõigepealt tulevad kaustad, seejärel fotod ja videod pisipiltidega ruudustikuna (ka iga video kaader, seadmes vahemällu salvestatud). 360° failiks tuvastatutel on 360° märk ja alates järgust 19 on Apple'i ruumilistel fotodel ja videotel 3D märk. Värskendamiseks tõmba alla.
 2. Puuduta fotot: see avaneb täisekraanil (näpistamine, topeltpuudutus) ja selle 360° nupp avab sfäärivaaturi.
 3. Puuduta videot: see mängib omases mängijas (esitamine, paus, kerimine), 360° nupuga, mis avab 360° mängija koos selle 3D ja 360°/180° nuppudega, ning telefonis stereoskoopiliste failide jaoks Spatial nupuga.
-4. Quest 3-s avab 360° nupp kaasahaarava vaate ja alates järgust 19 avab "Vaata 3D-s" Apple'i ruumilise foto 3D-s.
+4. Questis avab 360° nupp kaasahaarava vaate ja alates järgust 19 avab "Vaata 3D-s" Apple'i ruumilise foto 3D-s.
 5. Menüüs ⋮ on 360° sildita failide jaoks "Vaata 360° vaatena" ja telefonis mittestereoskoopiliste videote jaoks "Spatial 2.5D".
 
 360°, 3D ja VR180 tuvastatakse faili GPano või sfäärilistest metaandmetest, mida loetakse vahemikupäringutega, ja VR180 ka failinimest. Alates järgust 16 tuvastatakse ka töötlemata Insta360 failid (.insp foto nime või kaamera kalibreerimisploki järgi, .insv video nime ja kaadri järgi) ja õmmeldakse kokku.
@@ -252,7 +252,7 @@ Serveri teatatud aadress õpitakse uuesti iga kodus loodud ühenduse ajal. Kui s
 <a id="share-this-phone-on-the-network"></a>
 ## Jaga seda telefoni võrgus
 
-Sinu fotod ja videod on telefonis ja sa tahad neid peakomplektis näha ilma arvuti, NAS-i või Immichi serverita. Alates järgust 19 jagab telefon, Android või iPhone, oma fotosid ja videoid Wi-Fi kaudu ning Meta Quest 3 esitab neid. Immichi rakenduses pole midagi sellist.
+Sinu fotod ja videod on telefonis ja sa tahad neid peakomplektis näha ilma arvuti, NAS-i või Immichi serverita. Alates järgust 19 jagab telefon, Android või iPhone, oma fotosid ja videoid Wi-Fi kaudu ning Meta Quest esitab neid. Immichi rakenduses pole midagi sellist.
 
 ### Sisselülitamine telefonis
 
@@ -285,7 +285,7 @@ Sealt edasi on see WebDAV jagu nagu iga teine: 360° tuvastus, töötlemata fail
 
 Sul on kodus Tapo kaamerad ja sa tahad näha aiakaamerat ja eilse öö klippe oma fotode kõrval ilma Tapo rakendust avamata ning hoida klippi Immichis. Immichi rakendusel pole kaamerate jaoks midagi ja Tapo rakendus on eraldi rakendus, sinu TP-Linki kontole sisse logitud, klippidega sinu fotodest eraldi.
 
-Alates järgust 20 lisab Immuch360 Tapo kaamera võrgujagude kõrvale. See näitab kaamera otsepilti Android-telefonides ja -tahvelarvutites, Android TV-s ja Meta Quest 3-s ning igal platvormil selle mälukaardi salvestisi päevade kaupa: klipp tuuakse kaamerast, seejärel esitatakse nagu iga videot ja selle saab saata Immichisse. Rakendus suhtleb kaameraga ainult sinu võrgus, mitte kunagi TP-Linki serveritega, ega muuda kaameras kunagi midagi.
+Alates järgust 20 lisab Immuch360 Tapo kaamera võrgujagude kõrvale. See näitab kaamera otsepilti Android-telefonides ja -tahvelarvutites, Android TV-s ja Meta Questis ning igal platvormil selle mälukaardi salvestisi päevade kaupa: klipp tuuakse kaamerast, seejärel esitatakse nagu iga videot ja selle saab saata Immichisse. Rakendus suhtleb kaameraga ainult sinu võrgus, mitte kunagi TP-Linki serveritega, ega muuda kaameras kunagi midagi.
 
 ### Kaamera lisamine
 
@@ -396,7 +396,7 @@ Alates järgust 19 Androidis ja Questis:
 
 Immichi rakenduses näitab stereoskoopiline 360° foto või video mõlemat silma korraga, kahekordset pilti, ja VR180 fail, mis katab ainult esimese poole, venitatakse ümber kogu sfääri.
 
-Immuch360 tuvastab 3D paigutused, üleval ja all või kõrvuti, failist (video st3d-kast) või oletab need kaadri kuju järgi ning igal vaaturil on nende muutmiseks 3D nupp. Telefon näitab vasakut silma; Meta Quest 3 näitab igale silmale tema enda poolt, tõelises 3D-s. VR180 failid joonistatakse poolsfäärile, tagumine osa on venitatud pildi asemel must. Need tuvastatakse failist (sfäärilised piirid või võrgustik, GPano kärpimine) või nimes olevast "vr180" või "180" järgi ning igal vaaturil on 360°/180° nupp.
+Immuch360 tuvastab 3D paigutused, üleval ja all või kõrvuti, failist (video st3d-kast) või oletab need kaadri kuju järgi ning igal vaaturil on nende muutmiseks 3D nupp. Telefon näitab vasakut silma; Meta Quest näitab igale silmale tema enda poolt, tõelises 3D-s. VR180 failid joonistatakse poolsfäärile, tagumine osa on venitatud pildi asemel must. Need tuvastatakse failist (sfäärilised piirid või võrgustik, GPano kärpimine) või nimes olevast "vr180" või "180" järgi ning igal vaaturil on 360°/180° nupp.
 
 ### Paigutuse või katvuse muutmine
 
@@ -428,14 +428,14 @@ Kui Seaded, Täpsemad valikud, "Tõrkeotsing" on sees, lisab mängija üleval va
 ### Vormingud, privaatsus ja piirangud
 
 - **Vormingud**: kõrvuti ning üleval ja all, ka vahetatud silmadega, täis- või poollaiuses, tasapinnaline, 360° ja VR180. Paigutus loetakse failist, muul juhul oletatakse kaadri kuju või failinime järgi (sbs, ou, tb ja muu sarnane; poollaiuses fail tuvastatakse ainult nime järgi) ning selle saab mängijas käsitsi valida. Valik jäetakse meelde kogus oleva video jaoks, võrgujao faili jaoks mitte.
-- **Kaamera**: pilte töödeldakse ainult seadmes, neid ei salvestata ega saadeta kunagi kuhugi. Quest 3 järgul pole üldse kaamera luba (peakomplektil pole kaamerat, mida rakendus tohiks kasutada), ja Spatial mängijat seal ei pakuta: selle nupp ja seade on peakomplektis peidetud.
+- **Kaamera**: pilte töödeldakse ainult seadmes, neid ei salvestata ega saadeta kunagi kuhugi. Questi järgul pole üldse kaamera luba (peakomplektil pole kaamerat, mida rakendus tohiks kasutada), ja Spatial mängijat seal ei pakuta: selle nupp ja seade on peakomplektis peidetud.
 - **Piirangud**: katseline, ainult telefonid ja tahvelarvutid (mitte Meta Questis), vajab OpenGL ES 3.0 või Metali. Sügavus on hinnang. Kõige paremini töötab see rõhtpaigutuses hästi valgustatud näoga. Kontrollitud Galaxy S24+ peal; iPhone'i tagasiside on teretulnud.
 - **Varuvariant**: kui midagi läheb valesti (kaamerat pole, seade pole toetatud, paigutus pole loetav), oled tagasi tavalises mängijas.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Apple'i ruumilised fotod ja videod
 
-iPhone teeb ruumilisi fotosid ja videoid ning Immichi server ei ütle nende kohta midagi: Immichi rakenduses on need tasapinnaline foto või video. Alates järgust 19 tuvastab Immuch360 need faile lugedes ja näitab ruumilist fotot Meta Quest 3-s 3D-s. See pole ülalkirjeldatud Spatial 2.5D mängija, mis on mõeldud kõrvuti ning üleval ja all videote jaoks.
+iPhone teeb ruumilisi fotosid ja videoid ning Immichi server ei ütle nende kohta midagi: Immichi rakenduses on need tasapinnaline foto või video. Alates järgust 19 tuvastab Immuch360 need faile lugedes ja näitab ruumilist fotot Meta Questi peakomplektis 3D-s. See pole ülalkirjeldatud Spatial 2.5D mängija, mis on mõeldud kõrvuti ning üleval ja all videote jaoks.
 
 - **Ruumilised fotod** on HEIC-failid (`.heic`, `.heif`, `.hif`), mis sisaldavad kahte pilti, ühte kummagi silma jaoks, rühmitatuna stereopaariks. Rakendus loeb faili algust (seadmes, serveri originaali vahemikupäringuga või võrgujao faili) ja jätab vastuse telefonis meelde, seega fotot loetakse üks kord.
 - **Ruumilised videod** (MV-HEVC) tuvastatakse videoraja järgi: teine kiht ja mõlemad silmad deklareeritud.
@@ -466,7 +466,7 @@ Tuvastust kontrolliti Apple'i enda pilditeegi kirjutatud ruumilise näidisfotoga
 
 Inimesed ostavad Quest 3, et vaadata oma 360° fotosid ja videoid, ja küsivad siis, kuhu failid panna, kuidas need ilma kaablita peakomplekti saada ja millist mängijat kasutada: poe mängijad 360° ja 3D video jaoks on tasulised.
 
-Sama Androidi rakendus töötab Quest 3-s ja 3S-is aknana koos kogu sinu koguga. Selle 360° nupp avab kaasahaarava vaate, kus foto või video on kõikjal sinu ümber ja sa vaatad ringi pead pöörates, stereoskoopiliste failide puhul tõelises 3D-s (Meta Spatial SDK). Meedia tuleb sinu Immichi serverist, peakomplektist endast, NAS-ist, meediaserverist, telefonist või Plex serverist ja seda esitatakse kohapealt (meediaserver ja telefon alates järgust 19, Plex server alates järgust 20, peakomplektis veel kontrollimata), ning alates järgust 20 näitab aken ka Tapo kaameraid. See on tasuta ja avatud lähtekoodiga. Kontrollitud Quest 3-s ja kasutaja poolt Insta360 X4 8K HEVC videotega.
+Sama Androidi rakendus töötab Quest 3-s ja 3S-is ning alates järgust 21 Quest 2-s ja Quest Pro's (testimata) aknana koos kogu sinu koguga. Selle 360° nupp avab kaasahaarava vaate, kus foto või video on kõikjal sinu ümber ja sa vaatad ringi pead pöörates, stereoskoopiliste failide puhul tõelises 3D-s (Meta Spatial SDK). Meedia tuleb sinu Immichi serverist, peakomplektist endast, NAS-ist, meediaserverist, telefonist või Plex serverist ja seda esitatakse kohapealt (meediaserver ja telefon alates järgust 19, Plex server alates järgust 20, peakomplektis veel kontrollimata), ning alates järgust 20 näitab aken ka Tapo kaameraid. See on tasuta ja avatud lähtekoodiga. Kontrollitud Quest 3-s ja kasutaja poolt Insta360 X4 8K HEVC videotega.
 
 ### Kaasahaarava vaate avamine
 
@@ -659,7 +659,7 @@ Kõik, mida ametlik Immichi mobiilirakendus teeb, on siin olemas: varundus, ajaj
 
 Et näidata 360° fotot kellelegi, kellel rakendust pole, jaga seda Immichi jagatud lingiga: Immichi veebirakendus näitab 360° fotot tema brauseris sfäärina.
 
-Praegune järk, järk 20 (versioon 3.3.0-rc.0, järgu number 3030018), põhineb Immich 3.3.0-rc.0 versioonil (Immich `main`, veel mitte stabiilne väljalase). Järku 19 testiti Immich 3.2 serveriga ja järk 20 ei muuda midagi selles, mida rakendus serverilt küsib. Palun teata probleemidest jaotises [Issues](https://github.com/freeKC/Immuch360/issues), mitte Immichi projektile. Immichi enda täieliku dokumentatsiooni leiad aadressilt [immich.app](https://immich.app).
+Praegune järk, järk 21 (versioon 3.3.0-rc.0, järgu number 3030019), põhineb Immich 3.3.0-rc.0 versioonil (Immich `main`, veel mitte stabiilne väljalase). Järku 19 testiti Immich 3.2 serveriga ja järgud 20 ja 21 ei muuda midagi selles, mida rakendus serverilt küsib. Palun teata probleemidest jaotises [Issues](https://github.com/freeKC/Immuch360/issues), mitte Immichi projektile. Immichi enda täieliku dokumentatsiooni leiad aadressilt [immich.app](https://immich.app).
 
 ## Võrdlus Immichi rakenduse ja teiste rakendustega
 
@@ -670,20 +670,20 @@ Praegune järk, järk 20 (versioon 3.3.0-rc.0, järgu number 3030018), põhineb 
 | 360° fotod sfäärina, milles saab ringi vaadata (lohistamine, näpistamine, topeltpuudutus, inerts, kaamera algvaade, osalised panoraamid) | ❌ lame riba | ✅ | Testitud Galaxy S24+ ja iPhone 14 peal |
 | Güroskoop: ringi vaatamine telefoni liigutades | ❌ | ✅ | Testitud Galaxy S24+ ja iPhone 14 peal |
 | 360° videod sfäärilises mängijas, heli, kerimise, helirea valiku ja puhverdamise näidikuga | ❌ tasapinnaline video | ✅ Android ja iOS (iOS-is veel ajariba pole) | Testitud Galaxy S24+ ja iPhone 14 peal |
-| 3D (stereoskoopilised) 360° fotod ja videod | ❌ kahekordne pilt | ✅ telefonides vasak silm, Quest 3-s tõeline 3D | Testitud Galaxy S24+ ja Quest 3 peal päris 3D 360° näidistega (VRTogether, Vuze, Kandao) ja 3D fotoga; teiste kaamerate kohta on teated teretulnud |
+| 3D (stereoskoopilised) 360° fotod ja videod | ❌ kahekordne pilt | ✅ telefonides vasak silm, Questis tõeline 3D | Testitud Galaxy S24+ ja Quest 3 peal päris 3D 360° näidistega (VRTogether, Vuze, Kandao) ja 3D fotoga; teiste kaamerate kohta on teated teretulnud |
 | VR180 (poolsfääri) fotod ja videod | ❌ venitatud ümber sfääri | ✅ poolsfäär, 360°/180° nupp | Testitud Androidi emulaatoris ja Galaxy S24+ peal sünteetilise meediaga; tagasiside seadmetest on teretulnud |
-| Apple'i ruumilised fotod (HEIC stereopaarid) ja ruumilised videod (MV-HEVC) | ❌ tasapinnaline foto või video, miski ei ütle, et see on ruumiline | ✅ alates järgust 19: fotod 3D-s Quest 3-s, mujal üks silm ja üksikasjade rida | Tuvastust kontrolliti Apple'i pilditeegi kirjutatud näidisfoto ja sünteetiliste failidega; peakomplekti vaade ja päris iPhone'i failid on järgu 19 seadmetesti osa |
-| Meta Quest 3 kaasahaarav vaade pea jälgimise, ajariba, eelmise ja järgmise ning nupuga "Pööra" | ❌ | ✅ sama rakendus, peakomplekti järguna või telefoni APK-na | Testitud Quest 3-s (järgu 14 juhtnupud, kohandatud järgus 16 kasutaja tagasiside põhjal) ja kasutaja poolt Insta360 X4 8K HEVC videotega |
+| Apple'i ruumilised fotod (HEIC stereopaarid) ja ruumilised videod (MV-HEVC) | ❌ tasapinnaline foto või video, miski ei ütle, et see on ruumiline | ✅ alates järgust 19: fotod 3D-s Questis, mujal üks silm ja üksikasjade rida | Tuvastust kontrolliti Apple'i pilditeegi kirjutatud näidisfoto ja sünteetiliste failidega; peakomplekti vaade ja päris iPhone'i failid on järgu 19 seadmetesti osa |
+| Meta Questi kaasahaarav vaade pea jälgimise, ajariba, eelmise ja järgmise ning nupuga "Pööra" | ❌ | ✅ sama rakendus, peakomplekti järguna või telefoni APK-na | Testitud Quest 3-s (järgu 14 juhtnupud, kohandatud järgus 16 kasutaja tagasiside põhjal) ja kasutaja poolt Insta360 X4 8K HEVC videotega |
 | 360° märk pisipiltidel ja 360° loend töötlemata failide ja filtritega (periood, allikas, tüüp, kaamera) | ❌ | ✅ filtrid alates järgust 18 | Tehtud |
 | "Vaata 360° vaatena" failidele, mida server ei märgi | ❌ | ✅ jäetakse telefonis meelde | Tehtud |
 | Spatial 2.5D: sügavus tasasel ekraanil stereoskoopilisest videost | ❌ | ✅ katseline, telefonid ja tahvelarvutid | Testitud Galaxy S24+ peal; iPhone'i tagasiside on teretulnud |
 | Kasutamine ilma igasuguse serverita, seadme enda galeriiga | ❌ sisselogimine nõutud | ✅ | Testitud Galaxy S24+, Quest 3 ja Androidi emulaatori peal |
-| SMB ja WebDAV jaod, mis leitakse võrgust ja esitatakse otse, midagi alla laadimata | ❌ | ✅ kõik vaaturid, telefonid ja Quest 3 | Testitud Freebox Serveriga (SMB) Galaxy S24+ ja Quest 3 peal ning Samba ja WebDAV testserverite vastu Androidi emulaatoris; teiste NAS-ide ja WebDAV-i tagasiside on teretulnud |
+| SMB ja WebDAV jaod, mis leitakse võrgust ja esitatakse otse, midagi alla laadimata | ❌ | ✅ kõik vaaturid, telefonid ja Quest | Testitud Freebox Serveriga (SMB) Galaxy S24+ ja Quest 3 peal ning Samba ja WebDAV testserverite vastu Androidi emulaatoris; teiste NAS-ide ja WebDAV-i tagasiside on teretulnud |
 | DLNA meediaserverid jao tüübina | ❌ | ✅ alates järgust 19 | Kontrollitud minidlna ja Gerbera vastu Dockeris; Plex, Jellyfin, NAS, Freebox Server, iPhone ja Quest on järgu 19 seadmetesti osa |
 | Jao failide saatmine Immichisse; käsitsi saadetud seadme failid loetakse varundatuks | ❌ ainult seadme failid | ✅ alates järgust 15 | Testitud Androidi emulaatoris Samba testserveri ja Immich 3.2 serveri vastu |
 | Selle telefoni jagamine võrgus peakomplekti jaoks | ❌ | ✅ alates järgust 19, Android ja iOS | Ühiktestid ja otsast lõpuni testid peakomplekti WebDAV-kliendiga arvutis; Questi teenindav telefon ja iPhone'i pool on järgu 19 seadmetesti osa |
-| Plex Media Serveri kogud, esitatuna originaalfailidest, kodus ja väljaspool kodu, ilma plex.tv-ta | ❌ | ✅ alates järgust 20, kõik vaaturid, telefonides, tahvelarvutites, Quest 3-s ja teleritel | Kontrollitud arvutist päris Plex Media Server 1.42.1 vastu (sidumine, kaustad, baidivahemikud, pisipildid, kodust väljaspool kasutatav aadress); seadmes veel kontrollimata |
-| Tapo kaamerad: otsepilt ja mälukaardi salvestised, mis saadetakse Immichisse siis, kui sina otsustad | ❌ | ✅ alates järgust 20: salvestised kõikjal, otsepilt Androidis, Android TV-s ja Quest 3-s | Kontrollitud simuleeritud kaamera vastu; päris kaameraga veel kontrollimata |
+| Plex Media Serveri kogud, esitatuna originaalfailidest, kodus ja väljaspool kodu, ilma plex.tv-ta | ❌ | ✅ alates järgust 20, kõik vaaturid, telefonides, tahvelarvutites, Questis ja teleritel | Kontrollitud arvutist päris Plex Media Server 1.42.1 vastu (sidumine, kaustad, baidivahemikud, pisipildid, kodust väljaspool kasutatav aadress); seadmes veel kontrollimata |
+| Tapo kaamerad: otsepilt ja mälukaardi salvestised, mis saadetakse Immichisse siis, kui sina otsustad | ❌ | ✅ alates järgust 20: salvestised kõikjal, otsepilt Androidis, Android TV-s ja Questis | Kontrollitud simuleeritud kaamera vastu; päris kaameraga veel kontrollimata |
 | Android TV ja Google TV, puldiga juhitav, samas APK-s | ❌ pole telerirakendus | ✅ alates järgust 20 | Kontrollitud automaattestidega; teleris veel kontrollimata |
 | Töötlemata Insta360 .insp fotod ja ühe rajaga .insv videod | ❌ tasapinnalised | ✅ alates järgust 16 | Fotosid kontrolliti X3 failide Insta360 Studio ekspordi vastu, videoid Androidi emulaatoris madala eraldusvõimega X3 failiga; iPhone'is veel käivitamata |
 | Töötlemata videod, üks objektiiv raja või faili kohta (Insta360 X4, X4 Air, X5, X6, X3 paarid, GoPro .360, DJI .osv) | ❌ tasapinnalised või valed | ✅ alates järgust 18 | Parserid ja kokkuõmblemine kontrollitud päris X4, X3 paari, GoPro MAX-i ja Osmo 360 failidega; esitamine on järkude 18 ja 19 seadmetesti osa |
@@ -697,7 +697,7 @@ Praegune järk, järk 20 (versioon 3.3.0-rc.0, järgu number 3030018), põhineb 
 
 | Mida inimesed kasutavad | Millega nad kokku puutuvad | Mida Immuch360 teeb |
 |---|---|---|
-| Immichi veebirakendus | See näitab 360° fotot sfäärina, kuid peab töötlemata .insp-faili valmis panoraamiks ja mähib selle kaks ringi ümber sfääri; VR-vaade on endiselt soov ([arutelu #14768](https://github.com/immich-app/immich/discussions/14768)) | Õmbleb töötlemata failid seadmes kokku ja avab Quest 3-s kaasahaarava vaate |
+| Immichi veebirakendus | See näitab 360° fotot sfäärina, kuid peab töötlemata .insp-faili valmis panoraamiks ja mähib selle kaks ringi ümber sfääri; VR-vaade on endiselt soov ([arutelu #14768](https://github.com/immich-app/immich/discussions/14768)) | Õmbleb töötlemata failid seadmes kokku ja avab Questis kaasahaarava vaate |
 | Insta360 rakendus või Studio | Vajalik kaardi töötlemata failidest 360° pildi tegemiseks enne vaatamist | Avab töötlemata .insp ja .insv failid otse, samuti GoPro .360 ja DJI .osv failid |
 | Plex, Jellyfin, Synology Photos | 360° fotod ja videod kuvatakse tasapinnalisena või neid ei tuvastata, nagu nende foorumite lõimed kirjeldavad (Plexi soov on avatud alates 2017. aastast) | Loeb alates järgust 20 Plexi kogu ennast või samu kaustu SMB, WebDAV-i või DLNA kaudu ja esitab neid sfäärina, serveris midagi muutmata |
 | Tapo rakendus | Eraldi rakendus, sinu TP-Linki kontole sisse logitud, klippidega sinu fotodest eraldi | Näitab kaamerat sinu fotode kõrval, suhtleb sellega ainult sinu võrgus ja hoiab klippi videona, mille saad saata Immichisse (alates järgust 20) |
@@ -709,7 +709,7 @@ Praegune järk, järk 20 (versioon 3.3.0-rc.0, järgu number 3030018), põhineb 
 
 Immuch360 on galerii ja ka tasuta meediamängija: see esitab seda, mida ametlik rakendus ei suuda, teise tabeli allikatest, failile sobivas mängijas.
 
-| Mis | Android-telefonid | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (alates järgust 20) |
+| Mis | Android-telefonid | iPhone, iPad | Meta Quest | Android TV, Google TV (alates järgust 20) |
 |---|---|---|---|---|
 | Tasapinnalised videod (MP4, MOV, MKV, mida seade dekodeerib) | Immichi mängija ja võrgujagude jaoks omane mängija | Sama, välja arvatud jao MKV ja AVI failid, mida iOS ei ava (serveris mängivad need transkodeerituna) | Aknas | Nagu telefonides; OK peatab, vasak ja parem hüppavad 10 s |
 | 360° fotod | Sfäärivaatur, güroskoop | Sama | Kaasahaaravalt, kõikjal sinu ümber | Sfäärivaatur, mida pööratakse nooltega ja suumitakse kanaliklahvidega |
@@ -739,14 +739,14 @@ Teleri veergu pole veel teleris kontrollitud, vaata [Vaata oma teleris](#watch-o
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 töötab ka Meta Quest 3 ja 3S peal (Horizon OS v69 või uuem; Horizon Store'i järk on loetletud ainult nende kahe jaoks; universaalne `-release.apk` peaks installituma ka Quest 2 või Quest Pro peale, testimata). Kuidas seda kasutada, on kirjas jaotises [Meta Quest 3 peakomplektis](#in-the-meta-quest-3-headset); see jaotis räägib installimisest ja sellest, mis peakomplektis erineb.
+Immuch360 töötab ka Meta Questi peakomplektides, millel on Horizon OS v69 või uuem. Alates järgust 21 on Horizon Store'i järk loetletud Quest 2, Quest Pro, Quest 3 ja 3S jaoks, need neli, mida universaalne `-release.apk` juba nimetab; esimest Questi mitte, pood seda enam vastu ei võta. Quest 3 ja 3S on testitud. Quest 2 ja Quest Pro ei ole veel testitud: nende videodekoodrid on aeglasemad ja rakenduse kontrollitavad piirid mõõdeti Quest 3 peal, nii et suure H.264 video võidakse neil teatega tagasi lükata või see võib hakkida. Nende kahe peakomplekti kohta on teated teretulnud jaotises [Issues](https://github.com/freeKC/Immuch360/issues). Kuidas seda kasutada, on kirjas jaotises [Meta Quest 3 peakomplektis](#in-the-meta-quest-3-headset); see jaotis räägib installimisest ja sellest, mis peakomplektis erineb.
 
 Peakomplekti järk suhtleb serveritega ainult HTTPS-i kaudu või lihtsa HTTP kaudu koduvõrgu nimedega (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ja peakomplekti endaga, nagu Horizon Store nõuab. Lihtsa HTTP aadressina koos IP-ga sisestatud serveri, näiteks `http://192.168.1.10:2283`, lükkab see järk tagasi: kasuta HTTPS-i, koduvõrgu nime (`nas.local`) või universaalset `-release.apk`-d, mis säilitab telefonide avatud poliitika. Kohtvõrgu lihtsal HTTP aadressil olevaid WebDAV, DLNA ja telefoni jagusid see ei puuduta: rakendus loeb neid ise ja annab oma mängijatele ainult oma kohaliku silla aadressi (peakomplektis veel kinnitamisel DLNA ja telefoni jao jaoks, mis on järgus 19 uued). Alates järgust 20 jõutakse Plex serverini HTTPS-i kaudu ja Tapo kaamerani rakenduse enda kaudu, selle otsepilt RTSP kaudu, mis pole HTTP: kumbagi ei tohiks see puudutada (peakomplektis veel kinnitamisel).
 
 <a id="install"></a>
 ### Installimine
 
-Horizon Store'i kirje ootab Meta ülevaatust, see esitati koos järguga 14; kuni see heaks kiidetakse, installi väljalaske fail `-quest-release.apk` käsitsi (sideload) (ehitatud peakomplekti jaoks: 64-bitine, siht-SDK 34, ainult peakomplekti kasutatavad load) või universaalne `-release.apk`:
+Meta kiitis Horizon Store'i kirje heaks 7. oktoobril 2026 koos järguga 14 ja järk 21 on esitatud selle esimese uuendusena. Kuni poe leht pole avalik, või et saada järk enne, kui see poes on, installi väljalaske fail `-quest-release.apk` käsitsi (sideload) (ehitatud peakomplekti jaoks: 64-bitine, siht-SDK 34, ainult peakomplekti kasutatavad load) või universaalne `-release.apk`:
 
 1. Lülita arendajarežiim üks kord sisse. Ava telefonis rakendus Meta Horizon, ava "Devices" (Seadmed), vali peakomplekt, seejärel "Headset settings" (Peakomplekti seaded), seejärel "Developer mode" (Arendajarežiim). Selleks on vaja arendajakontot, mis on tasuta aadressil developers.meta.com. Arvutis on vaja ka adb-d (Android SDK Platform Tools) või SideQuesti.
 2. Ühenda peakomplekt USB-C kaabliga arvutiga. Nõustu peakomplektis küsimusega "Allow USB debugging" (Luba USB-silumine).
@@ -754,7 +754,7 @@ Horizon Store'i kirje ootab Meta ülevaatust, see esitati koos järguga 14; kuni
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. Ava peakomplektis Teek (Library), vali filter "Unknown sources" (Tundmatud allikad) ja käivita Immuch360.
@@ -776,7 +776,7 @@ Ekraanipildid on tehtud peakomplektis jäädvustusnupuga (Meta nupp ja päästik
 ### Piirangud peakomplektis
 
 - **Videokoodekid**: HEVC (H.265) on kindel valik; H.264 lõpeb umbes 4096x2304 juures. Mida rakendus kontrollib ja kuidas anda peakomplektile video, mida see dekodeerib, on kirjas jaotises [Video üksikasjad ja dekoodrid](#video-details-decoders-and-why-a-video-stutters).
-- **Pood**: poe versioon algab järgust 14. Funktsioonid, mis on märgitud "alates järgust 15" ja hilisemad, tulevad selle järgmiste uuendustega (poe alfatestimise kanal saab testijatele iga uue järgu); GitHubi APK-s on need kõik juba olemas.
+- **Pood**: poe versioon algab järgust 14. Funktsioonid, mis on märgitud "alates järgust 15" ja hilisemad, tulevad järguga 21, selle esimese uuendusega, kui Meta on selle üle vaadanud (poe alfatestimise kanal saab testijatele iga uue järgu); GitHubi APK-s on need kõik juba olemas.
 - **Load**: peakomplekti järk küsib ainult fotode ja videote (serverita režiim) ning teavituste (varunduse edenemine) luba. Erinevalt telefoni järgust pole sellel salvestusruumi, heli, asukoha ega kaamera luba; seetõttu pole Wi-Fi nimel põhinev serverivahetus peakomplektis saadaval.
 - **APK suurus**: Spatial SDK lisab umbes 56 MB 64-bitist ARM-i omakoodi, ka telefonides, kus seda kunagi ei laadita.
 - **Litsents**: kaasahaarav vaade kasutab Meta Spatial SDK-d, mida levitatakse Meta Platform Technologies SDK License Agreementi alusel.
@@ -784,13 +784,13 @@ Ekraanipildid on tehtud peakomplektis jäädvustusnupuga (Meta nupp ja päästik
 <a id="where-to-get-it"></a>
 ## Kust seda saada
 
-Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon ootab Apple'i ülevaatust, Meta Horizon Store'i versioon Meta oma ja teleritele mõeldud Google Play versioon Google'i ülevaatust teleri väljalaske jaoks. GitHubi väljalase on alati uusim järk:
+Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon ootab Apple'i ülevaatust, Meta Horizon Store'i kirje on heaks kiidetud ja selle esimene uuendus on Meta ülevaatusel ning teleritele mõeldud Google Play versioon ootab Google'i ülevaatust teleri väljalaske jaoks. GitHubi väljalase on alati uusim järk:
 
 | Platvorm | Täna | Varsti |
 |---|---|---|
-| Android-telefonid ja -tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) või APK lehelt [Releases](https://github.com/freeKC/Immuch360/releases): telefoni jaoks `Immuch360-v<version>-arm64-v8a-release.apk` (universaalne `Immuch360-v<version>-release.apk` töötab kõikjal, `-armeabi-v7a` on vanematele 32-bitistele telefonidele ja fail `.aab` on Google Play jaoks, mitte käsitsi installimiseks). GitHubi järk on tavaliselt poest ees. Mõlemal juhul installitakse see ametliku Immichi rakenduse kõrvale (pakett `com.aprogsys.immuch360`). | Google Play: järk 18 on avaldatud, järk 19 on Google'i ülevaatusel alates 6. oktoobrist 2026, järk 20 järgmisena |
+| Android-telefonid ja -tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) või APK lehelt [Releases](https://github.com/freeKC/Immuch360/releases): telefoni jaoks `Immuch360-v<version>-arm64-v8a-release.apk` (universaalne `Immuch360-v<version>-release.apk` töötab kõikjal, `-armeabi-v7a` on vanematele 32-bitistele telefonidele ja fail `.aab` on Google Play jaoks, mitte käsitsi installimiseks). GitHubi järk on tavaliselt poest ees. Mõlemal juhul installitakse see ametliku Immichi rakenduse kõrvale (pakett `com.aprogsys.immuch360`). | Google Play: järk 18 on avaldatud, järk 20 on Google'i ülevaatusel alates 7. oktoobrist 2026, järgu 19 asemel |
 | iPhone ja iPad | Ootab Apple'i ülevaatust. Ülevaatusel olev versioon sisaldab järgu 11 funktsioone: üleslaadimine Immichisse ja valik "Video allikas" (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad hilisema App Store'i uuendusega. Lähtekoodi saab ehitada Xcode'iga või Codemagicus, vaata [Ehita see ise](#build-it-yourself). | App Store, ülevaatusel |
-| Meta Quest 3 ja 3S | Lehe [Releases](https://github.com/freeKC/Immuch360/releases) fail `-quest-release.apk` (ka universaalne `-release.apk` töötab), käsitsi installitud arendajarežiimis, vaata [Installimine](#install). Poe järk ja GitHubi APK on allkirjastatud erinevate võtmetega: ühelt teisele üleminekuks desinstalli rakendus kõigepealt (selle seaded ja salvestatud jaod kaovad koos sellega). | Meta Horizon Store: järk 14 on Meta ülevaatusel alates 3. oktoobrist 2026; poe alfakanal (ainult testijatele) saab iga uue järgu |
+| Meta Quest 2, Quest Pro, Quest 3 ja 3S (Quest 2 ja Quest Pro testimata) | Lehe [Releases](https://github.com/freeKC/Immuch360/releases) fail `-quest-release.apk` (ka universaalne `-release.apk` töötab), käsitsi installitud arendajarežiimis, vaata [Installimine](#install). Poe järk ja GitHubi APK on allkirjastatud erinevate võtmetega: ühelt teisele üleminekuks desinstalli rakendus kõigepealt (selle seaded ja salvestatud jaod kaovad koos sellega). | Meta Horizon Store: kirje kiideti heaks 7. oktoobril 2026 koos järguga 14 ja järk 21, selle esimene uuendus, on Meta ülevaatusel; poe alfakanal (ainult testijatele) saab iga uue järgu |
 | Android TV ja Google TV (alates järgust 20) | Lehe [Releases](https://github.com/freeKC/Immuch360/releases) universaalne `Immuch360-v<version>-release.apk`, käsitsi installitud adb abil, vaata [Telerisse installimine](#install-it-on-the-tv). See on sama rakendus mis telefonides. | Google Play teleritel, pärast Google'i ülevaatust teleri väljalaske jaoks |
 
 App Store'i ja Meta Horizon Store'i lingid lisatakse siia kohe, kui kirjed on avaldatud. Logi sisse oma tavapärase Immichi serveri URL-i ja kontoga või puuduta sisselogimislehel "Kasuta ilma serverita", et alustada seadme enda fotode ja videotega. GitHubi APK ei uuenda end ise: jälgi lehte Releases ja kui oled rakenduse poest installinud, võta uuendused sellest poest.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Poe ekraanipildid tehakse silumisrežiimis simulaatorijärkudel, mis on ehitatud valikuga `--dart-define=IMMUCH_SCREENSHOTS=true`, mis peidab ainult silumisbänneri. Kaks Androidi varianti (flavour) on sama rakendus. Alates järgust 20 kuulutab variant `phone` end ka telerirakenduseks (teleri käivitaja kirje ja bänner, puuteekraani pole vaja), mille variant `quest` välja jätab. Variant `quest` sihib SDK 34 ja säilitab ainult peakomplekti kasutatavad load (fotod, videod, teavitused): meediahaldus, taustaasukoht, pärandsalvestus, heli, meedia asukoht, seadme asukoht ja kaamera eemaldatakse failis `android/app/src/quest/AndroidManifest.xml`, sest Meta Horizon Store lükkab kaks esimest tagasi ja nõuab põhjendust iga muu tundliku loa jaoks; sama fail nimetab toetatud seadmetena Quest 3 ja 3S ning piirab lihtsa HTTP peakomplekti enda ja koduvõrgu nimedega. APK on ainult 64-bitine oma käsurea kahe lisaargumendi tõttu (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variant `phone` on see, mida Google Play nõuab. iOS-i jaoks oma Macis ehitamiseks kasuta Xcode'i ja oma allkirjastamismeeskonda; Xcode 26 puhul käivita kõigepealt üks kord `xcodebuild -downloadComponent MetalToolchain`, sest Spatiali varjutajad vajavad seda. Ilma Macita töötavad iOS-i järgud Codemagicus (hostitud Mac) selle hoidla failist `codemagic.yaml`. Androidi väljalaskejärgud töötavad GitHub Actionsis (`.github/workflows/immuch360-release.yml`).
+Poe ekraanipildid tehakse silumisrežiimis simulaatorijärkudel, mis on ehitatud valikuga `--dart-define=IMMUCH_SCREENSHOTS=true`, mis peidab ainult silumisbänneri. Kaks Androidi varianti (flavour) on sama rakendus. Alates järgust 20 kuulutab variant `phone` end ka telerirakenduseks (teleri käivitaja kirje ja bänner, puuteekraani pole vaja), mille variant `quest` välja jätab. Variant `quest` sihib SDK 34 ja säilitab ainult peakomplekti kasutatavad load (fotod, videod, teavitused): meediahaldus, taustaasukoht, pärandsalvestus, heli, meedia asukoht, seadme asukoht ja kaamera eemaldatakse failis `android/app/src/quest/AndroidManifest.xml`, sest Meta Horizon Store lükkab kaks esimest tagasi ja nõuab põhjendust iga muu tundliku loa jaoks; sama fail nimetab toetatud seadmetena Quest 2, Quest Pro, Quest 3 ja 3S ning piirab lihtsa HTTP peakomplekti enda ja koduvõrgu nimedega. APK on ainult 64-bitine oma käsurea kahe lisaargumendi tõttu (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variant `phone` on see, mida Google Play nõuab. iOS-i jaoks oma Macis ehitamiseks kasuta Xcode'i ja oma allkirjastamismeeskonda; Xcode 26 puhul käivita kõigepealt üks kord `xcodebuild -downloadComponent MetalToolchain`, sest Spatiali varjutajad vajavad seda. Ilma Macita töötavad iOS-i järgud Codemagicus (hostitud Mac) selle hoidla failist `codemagic.yaml`. Androidi väljalaskejärgud töötavad GitHub Actionsis (`.github/workflows/immuch360-release.yml`).
 
 Selles hoidlas pole ühtegi saladust: Androidi allkirjastamisvõti on salvestatud GitHub Actionsi krüptitud saladustena ja Apple'i allkirjastamismaterjal Codemagicu krüptitud muutujatena. Töövoo failid viitavad neile ainult nime järgi. Ilma sinu enda `android/key.jks` failita allkirjastatakse väljalaskejärk silumisvõtmega ja seda ei saa installida GitHubist või poest pärit koopia peale (desinstalli see kõigepealt); silumisjärk installitakse selle kõrvale nimega Immuch360 debug. Meta Horizon Store'i koopia on väljalaske `quest` APK, mis on allkirjastatud teise võtmega, sellega, millega poe rakendus esmalt registreeriti, seega ei saa seda installida ka käsitsi installitud APK peale ega vastupidi.
 
@@ -857,9 +857,9 @@ See projekt on Immichi haru ja jääb [GNU AGPL v3](LICENSE) litsentsi alla. Iga
 
 Mis on veel tegemata, kõige tõenäolisemad eespool. Miski siin pole lubadus ning tagasiside [veahalduris](https://github.com/freeKC/Immuch360/issues) aitab otsustada, mis tuleb esimesena.
 
-- **Google Play**: järk 18 on avaldatud; järk 19 on Google'i ülevaatusel alates 6. oktoobrist 2026 ja järk 20 tuleb järgmisena.
+- **Google Play**: järk 18 on avaldatud; järk 20 on Google'i ülevaatusel alates 7. oktoobrist 2026, järgu 19 asemel. Järk 21 ei muuda telefonides ja tahvelarvutites midagi.
 - **App Store**: versioon 3.3.0 ootab Apple'i ülevaatust; see sisaldab järgu 11 funktsioone, seega üleslaadimine Immichisse ja videodekoodrite kontroll (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad järgmise App Store'i uuendusega. Link lisatakse siia, kui see on avaldatud.
-- **Meta Horizon Store**: kirje esitati Meta ülevaatusele 3. oktoobril 2026 koos järguga 14 ja poe alfakanal saab järgmise uuenduse jaoks iga uue järgu. Kui kirje heaks kiidetakse, ei vaja Quest 3 enam käsitsi installimist ja poe link lisatakse siia; käsitsi installitud koopia tuleb kõigepealt desinstallida (vaata [Installimine](#install)).
+- **Meta Horizon Store**: Meta kiitis kirje heaks 7. oktoobril 2026 koos järguga 14. Järk 21 on esitatud selle esimese uuendusena: see toob kõik alates järgust 14 (üleslaadimised jaost Immichisse, videoallikas valitud selle järgi, mida peakomplekt dekodeerib, Insta360, GoPro ja DJI töötlemata failid, DLNA, telefoni jagamine, Apple'i ruumilised fotod, Plex Media Serveri kogud, Tapo kaamerad) ja pood pakub seda Quest 2, Quest Pro, Quest 3 ja 3S jaoks. Poe link lisatakse siia, kui leht on avalik; käsitsi installitud koopia tuleb kõigepealt desinstallida (vaata [Installimine](#install)).
 - **Poekirjed**: Google Play kirje kirjutati 2026. aasta oktoobris uute ekraanipiltidega ümber ja saab teleri väljalaskega teleri ekraanipildid ja teleri bänneri. App Store'i tekst kirjeldab endiselt esimesi järke (360° fotod ja videod, töötlemata failid tasapinnalisena); see tutvustab tulevikus 3D, VR180 ja Spatial vaatureid, serverita režiimi, võrgujagusid, meediamängijat ja töötlemata Insta360 faile. Meta Horizon Store'i tekst tutvustab juba meediamängijat.
 - **360° kaamerate töötlemata failid, edasi**: edenemisnäidik, kui töötlemata fotot peakomplekti jaoks ette valmistatakse; GoPro ja DJI videote loodimine nende enda liikumisandmete põhjal; kahe kalasilmaga .dng; seadmete teated järgu 18 kahe objektiiviga esituse kohta (X4, X5, X6, GoPro MAX 2, Osmo 360), et kinnitada õmblusi ja dekoodrite eelarvet.
 - **DLNA, telefoni jagu ja Apple'i ruumiline meedia, edasi**: järgu 19 seadmete teated (Plex, Jellyfin, NAS ja Freebox Server DLNA kaudu; Questi teenindav telefon, ka oma kuumkohas; päris iPhone'i ruumilised fotod ja videod peakomplektis); Apple'ilt küsitud multiedastuse õigus, et iPhone'id leiaksid iga DLNA serveri; eelmine ja järgmine ruumiliste fotode vahel peakomplektis; ruumilise märgi lisamine serveri fotodele ajajoonel; ruumilised videod 3D-s Questis, kui selle dekoodrid seda võimaldavad.

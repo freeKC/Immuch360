@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | Latviešu | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D un VR180 foto un video no Immich, tālruņa vai NAS. Android, iOS un Meta Quest 3, ar serveri vai bez tā">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D un VR180 foto un video no Immich, tālruņa vai NAS. Android, iOS un Meta Quest, ar serveri vai bez tā">
 </p>
 
 # Immuch360
 
-Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīties apkārt, un bezmaksas atskaņotājs plakaniem, 360°, 3D un VR180 foto un video Android tālruņos un planšetdatoros, iPhone un iPad, Meta Quest 3 un 3S, kā arī no 20. būvējuma Android TV un Google TV. Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) vai tālruņa fotosfēras režīmu, vai kam ir VR brilles, un kas vēlas skatīties savus uzņēmumus no Immich servera, paša tālruņa, NAS, multivides servera vai Plex servera: tas pats serveris, tas pats konts, bez servera spraudņa vai vispār bez servera. No 20. būvējuma tā rāda arī Tapo kameras: tiešraidi un to atmiņas kartes ierakstus.
+Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīties apkārt, un bezmaksas atskaņotājs plakaniem, 360°, 3D un VR180 foto un video Android tālruņos un planšetdatoros, iPhone un iPad, Meta Quest brillēs (Quest 3 un 3S, un no 21. būvējuma Quest 2 un Quest Pro, nav testēts), kā arī no 20. būvējuma Android TV un Google TV. Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) vai tālruņa fotosfēras režīmu, vai kam ir VR brilles, un kas vēlas skatīties savus uzņēmumus no Immich servera, paša tālruņa, NAS, multivides servera vai Plex servera: tas pats serveris, tas pats konts, bez servera spraudņa vai vispār bez servera. No 20. būvējuma tā rāda arī Tapo kameras: tiešraidi un to atmiņas kartes ierakstus.
 
 <p align="center">
   <sub>Neoficiāls atzarojums. Nav saistīts ar Immich vai FUTO. Nosaukums lasāms kā „I am much 360”.</sub>
@@ -15,7 +15,7 @@ Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīt
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">tiek pārskatīts</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store tiek pārskatīts &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store apstiprināts, 21. būvējums iesniegts kā tā pirmais atjauninājums &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 ir Immich mobilā lietotne ar 360° foto un video, kuros var paskatīt
     <td align="center" width="33%"><h3>🎥 Īsts 2.5D</h3>Dziļums plakanā ekrānā no stereoskopiska video, skats seko jūsu galvai (eksperimentāls, tālruņi un planšetdatori)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Viena lietotne tālruņos, planšetdatoros un brillēs, īsts 3D brillēs, un no 20. būvējuma Android TV ar tālvadības pulti</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Viena lietotne tālruņos, planšetdatoros un Quest 2, Pro, 3 un 3S brillēs, īsts 3D brillēs, un no 20. būvējuma Android TV ar tālvadības pulti</td>
     <td align="center"><h3>🔌 Ar serveri vai bez tā</h3>Jūsu Immich serveris vai paša tālruņa galerija, konts nav vajadzīgs</td>
     <td align="center"><h3>🗄️ Tīkla koplietojumi</h3>Samba (SMB), WebDAV un, no 19. būvējuma, DLNA multivides serveri, atrasti tīklā un lasīti tieši, nekas netiek lejupielādēts, un nosūtīti uz Immich, kad to izvēlaties. No 19. būvējuma tālrunis arī koplieto savu galeriju ar brillēm</td>
   </tr>
@@ -109,7 +109,7 @@ Izvēle tiek atcerēta tālrunī un serverī neko nemaina. Tīkla koplietojuma f
 
 Jums nav Immich servera, vai jūs negribat kontu: jūs tikai gribat, lai tālruņa 360° foto atvērtos kā sfēra, ko var griezt ar žiroskopu. Immich lietotne vispirms prasa pieslēgties.
 
-Pieslēgšanās lapā „Lietot bez servera” atver Immuch360 ar pašas ierīces foto un video, ar 360°, 3D, VR180 un Spatial skatītājiem, 360° sarakstu un tīkla koplietojumiem (no 20. būvējuma arī Plex serveriem un Tapo kamerām), Immich konts nav vajadzīgs. Servera funkcijas paliek paslēptas vai pelēkas, līdz pievienojat serveri; nekas neatstāj ierīci. Meta Quest 3 brillēs tā atver pašu briļļu foto un video; televizorā, kuram to nav, tā norāda uz tīkla koplietojumiem (skatiet [Skatīties televizorā](#watch-on-your-tv-android-tv-and-google-tv)).
+Pieslēgšanās lapā „Lietot bez servera” atver Immuch360 ar pašas ierīces foto un video, ar 360°, 3D, VR180 un Spatial skatītājiem, 360° sarakstu un tīkla koplietojumiem (no 20. būvējuma arī Plex serveriem un Tapo kamerām), Immich konts nav vajadzīgs. Servera funkcijas paliek paslēptas vai pelēkas, līdz pievienojat serveri; nekas neatstāj ierīci. Meta Quest brillēs tā atver pašu briļļu foto un video; televizorā, kuram to nav, tā norāda uz tīkla koplietojumiem (skatiet [Skatīties televizorā](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="Cilne Bibliotēka bez servera: augšā ieraksts 360°, tad Šajā ierīcē ar diviem 360° foto un Tīkla koplietojumi ar koplietojumu, kura nosaukums ir NAS">
 
@@ -159,7 +159,7 @@ Lietotājvārds ar tukšu paroli tiek nosūtīts tieši tā: Freebox Server savi
 1. Pieskarieties koplietojumam. Vispirms nāk mapes, tad foto un video kā režģis ar sīktēliem (arī pa kadram no katra video, saglabāts ierīces kešatmiņā). Tiem, kas atpazīti kā 360°, ir 360° nozīmīte, un no 19. būvējuma Apple telpiskajiem foto un video ir 3D nozīmīte. Pavelciet uz leju, lai atsvaidzinātu.
 2. Pieskarieties foto: tas atveras pilnekrāna režīmā (savilkšana, dubultskāriens), un tā 360° poga atver sfēras skatītāju.
 3. Pieskarieties video: tas tiek atskaņots iebūvētajā atskaņotājā (atskaņošana, pauze, pārtīšana), ar 360° pogu, kas atver 360° atskaņotāju un tā 3D un 360°/180° pogas, un tālrunī stereoskopiskiem failiem ir poga Spatial.
-4. Quest 3 brillēs 360° poga atver imersīvo skatu, un no 19. būvējuma „Skatīt 3D” atver Apple telpisko foto 3D formātā.
+4. Quest brillēs 360° poga atver imersīvo skatu, un no 19. būvējuma „Skatīt 3D” atver Apple telpisko foto 3D formātā.
 5. Izvēlnē ⋮ ir „Skatīt kā 360°” failiem bez 360° taga, un tālrunī „Spatial 2.5D” video, kas nav stereoskopiski.
 
 360°, 3D un VR180 tiek atpazīti pēc faila GPano vai sfēriskajiem metadatiem, kas tiek nolasīti ar diapazona pieprasījumiem, un VR180 arī pēc faila nosaukuma. No 16. būvējuma tiek atpazīti arī neapstrādāti Insta360 faili (.insp foto pēc nosaukuma vai kameras kalibrācijas bloka, .insv video pēc nosaukuma un kadra) un tiek sašūti.
@@ -252,7 +252,7 @@ Adrese, ko paziņo serveris, tiek apgūta no jauna katrā savienojumā mājās. 
 <a id="share-this-phone-on-the-network"></a>
 ## Koplietot šo tālruni tīklā
 
-Jūsu foto un video ir tālrunī, un jūs gribat tos redzēt brillēs bez datora, NAS vai Immich servera. No 19. būvējuma tālrunis, Android vai iPhone, pasniedz savus foto un video Wi-Fi tīklā, un Meta Quest 3 tos atskaņo. Immich lietotnei nekā tamlīdzīga nav.
+Jūsu foto un video ir tālrunī, un jūs gribat tos redzēt brillēs bez datora, NAS vai Immich servera. No 19. būvējuma tālrunis, Android vai iPhone, pasniedz savus foto un video Wi-Fi tīklā, un Meta Quest brilles tos atskaņo. Immich lietotnei nekā tamlīdzīga nav.
 
 ### Ieslēgt tālrunī
 
@@ -285,7 +285,7 @@ No šī brīža tas ir WebDAV koplietojums kā jebkurš cits: 360° atpazīšana
 
 Jums mājās ir Tapo kameras, un jūs gribat redzēt dārza kameru un pagājušās nakts klipus blakus saviem foto, neatverot lietotni Tapo, un paturēt klipu Immich. Immich lietotnē nav nekā kamerām, un lietotne Tapo ir atsevišķa lietotne, pierakstīta jūsu TP-Link kontā, kur klipi ir atsevišķi no jūsu foto.
 
-No 20. būvējuma Immuch360 pievieno Tapo kameru blakus tīkla koplietojumiem. Tā rāda kameras tiešraidi Android tālruņos un planšetdatoros, Android TV un Meta Quest 3, un visās platformās tās atmiņas kartes ierakstus, dienu pa dienai: klips tiek iegūts no kameras, tad atskaņots kā jebkurš video, un to var nosūtīt uz Immich. Lietotne sazinās ar kameru tikai jūsu tīklā, nekad ar TP-Link serveriem, un nekad neko nemaina kamerā.
+No 20. būvējuma Immuch360 pievieno Tapo kameru blakus tīkla koplietojumiem. Tā rāda kameras tiešraidi Android tālruņos un planšetdatoros, Android TV un Meta Quest, un visās platformās tās atmiņas kartes ierakstus, dienu pa dienai: klips tiek iegūts no kameras, tad atskaņots kā jebkurš video, un to var nosūtīt uz Immich. Lietotne sazinās ar kameru tikai jūsu tīklā, nekad ar TP-Link serveriem, un nekad neko nemaina kamerā.
 
 ### Pievienot kameru
 
@@ -396,7 +396,7 @@ No 19. būvējuma, Android un Quest ierīcēs:
 
 Immich lietotnē stereoskopisks 360° foto vai video rāda abas acis vienlaikus, dubultu attēlu, un VR180 fails, kas aptver tikai priekšējo pusi, tiek izstiepts pa visu sfēru.
 
-Immuch360 atpazīst 3D izkārtojumus, augšā un apakšā vai blakus, no faila (video st3d bloks) vai uzmin tos pēc kadra formas, un katram skatītājam ir 3D poga to maiņai. Tālrunis rāda kreiso aci; Meta Quest 3 katrai acij rāda tās pusi, īstā 3D. VR180 faili tiek zīmēti uz puslodes, aizmugure paliek melna, nevis izstiepts attēls. Tie tiek atpazīti no faila (sfēriskās robežas vai tīkls, GPano apgriešana) vai pēc „vr180” vai „180” nosaukumā, un katram skatītājam ir 360°/180° poga.
+Immuch360 atpazīst 3D izkārtojumus, augšā un apakšā vai blakus, no faila (video st3d bloks) vai uzmin tos pēc kadra formas, un katram skatītājam ir 3D poga to maiņai. Tālrunis rāda kreiso aci; Meta Quest katrai acij rāda tās pusi, īstā 3D. VR180 faili tiek zīmēti uz puslodes, aizmugure paliek melna, nevis izstiepts attēls. Tie tiek atpazīti no faila (sfēriskās robežas vai tīkls, GPano apgriešana) vai pēc „vr180” vai „180” nosaukumā, un katram skatītājam ir 360°/180° poga.
 
 ### Mainīt izkārtojumu vai pārklājumu
 
@@ -428,14 +428,14 @@ Ja ieslēgts „Iestatījumi”, „Papildu”, „Problēmas novēršana”, at
 ### Formāti, privātums un ierobežojumi
 
 - **Formāti**: blakus un augšā un apakšā, arī ar samainītām acīm, pilna vai puses platuma, plakani, 360° un VR180. Izkārtojums tiek nolasīts no faila, citādi uzminēts pēc kadra formas vai faila nosaukuma (sbs, ou, tb un līdzīgi; puses platuma fails tiek atpazīts tikai pēc nosaukuma), un to var izvēlēties manuāli atskaņotājā. Izvēle tiek atcerēta bibliotēkas video, ne tīkla koplietojuma failam.
-- **Kamera**: attēli tiek apstrādāti tikai ierīcē, nekad netiek glabāti un nekur netiek sūtīti. Quest 3 būvējumam vispār nav kameras atļaujas (brillēm nav kameras, ko lietotne drīkstētu izmantot), un Spatial atskaņotājs tur netiek piedāvāts: tā poga un iestatījums brillēs ir paslēpti.
+- **Kamera**: attēli tiek apstrādāti tikai ierīcē, nekad netiek glabāti un nekur netiek sūtīti. Quest būvējumam vispār nav kameras atļaujas (brillēm nav kameras, ko lietotne drīkstētu izmantot), un Spatial atskaņotājs tur netiek piedāvāts: tā poga un iestatījums brillēs ir paslēpti.
 - **Ierobežojumi**: eksperimentāls, tikai tālruņi un planšetdatori (ne Meta Quest), vajag OpenGL ES 3.0 vai Metal. Dziļums ir aplēse. Vislabāk darbojas horizontālā orientācijā ar labi apgaismotu seju. Pārbaudīts Galaxy S24+; atsauksmes no iPhone gaidītas.
 - **Rezerves variants**: ja kaut kas noiet greizi (nav kameras, neatbalstīta ierīce, nenolasāms izkārtojums), jūs atgriežaties parastajā atskaņotājā.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Apple telpiskie foto un video
 
-iPhone uzņem telpiskus foto un video, bet Immich serveris par tiem neko nesaka: Immich lietotnē tie ir plakans foto vai video. No 19. būvējuma Immuch360 tos atpazīst, nolasot failus, un Meta Quest 3 brillēs rāda telpisko foto 3D formātā. Tas nav augstāk aprakstītais Spatial 2.5D atskaņotājs, kas paredzēts blakus un augšā un apakšā video.
+iPhone uzņem telpiskus foto un video, bet Immich serveris par tiem neko nesaka: Immich lietotnē tie ir plakans foto vai video. No 19. būvējuma Immuch360 tos atpazīst, nolasot failus, un Meta Quest brillēs rāda telpisko foto 3D formātā. Tas nav augstāk aprakstītais Spatial 2.5D atskaņotājs, kas paredzēts blakus un augšā un apakšā video.
 
 - **Telpiskie foto** ir HEIC faili (`.heic`, `.heif`, `.hif`), kuros ir divi attēli, pa vienam katrai acij, sagrupēti kā stereo pāris. Lietotne nolasa faila sākumu (ierīcē, servera oriģinālu ar diapazona pieprasījumu vai tīkla koplietojuma failu) un atceras atbildi tālrunī, tāpēc foto tiek nolasīts vienreiz.
 - **Telpiskie video** (MV-HEVC) tiek atpazīti pēc video celiņa: otrs slānis un abas deklarētās acis.
@@ -466,7 +466,7 @@ Atpazīšana pārbaudīta ar parauga telpisko foto, ko ierakstījusi pašas Appl
 
 Cilvēki pērk Quest 3, lai skatītos savus 360° foto un video, un tad jautā, kur likt failus, kā tos dabūt brillēs bez kabeļa un kuru atskaņotāju izmantot: veikala 360° un 3D video atskaņotāji ir maksas.
 
-Tā pati Android lietotne darbojas Quest 3 un 3S brillēs kā logs, ar visu jūsu bibliotēku. Tās 360° poga atver imersīvo skatu, kur foto vai video ir visapkārt jums, un jūs skatāties apkārt, griežot galvu, stereoskopiskiem failiem īstā 3D (Meta Spatial SDK). Multivide nāk no jūsu Immich servera, pašām brillēm, NAS, multivides servera, tālruņa vai Plex servera, atskaņota uz vietas (multivides serveris un tālrunis no 19. būvējuma, Plex serveris no 20. būvējuma, brillēs vēl nav pārbaudīts), un no 20. būvējuma logā tiek rādītas arī Tapo kameras. Tā ir bezmaksas un atvērtā koda. Pārbaudīts Quest 3 brillēs, arī lietotājs ar Insta360 X4 8K HEVC video.
+Tā pati Android lietotne darbojas Quest 3 un 3S brillēs, un no 21. būvējuma Quest 2 un Quest Pro (nav testēts), kā logs, ar visu jūsu bibliotēku. Tās 360° poga atver imersīvo skatu, kur foto vai video ir visapkārt jums, un jūs skatāties apkārt, griežot galvu, stereoskopiskiem failiem īstā 3D (Meta Spatial SDK). Multivide nāk no jūsu Immich servera, pašām brillēm, NAS, multivides servera, tālruņa vai Plex servera, atskaņota uz vietas (multivides serveris un tālrunis no 19. būvējuma, Plex serveris no 20. būvējuma, brillēs vēl nav pārbaudīts), un no 20. būvējuma logā tiek rādītas arī Tapo kameras. Tā ir bezmaksas un atvērtā koda. Pārbaudīts Quest 3 brillēs, arī lietotājs ar Insta360 X4 8K HEVC video.
 
 ### Atvērt imersīvo skatu
 
@@ -659,7 +659,7 @@ Viss, ko dara oficiālā Immich mobilā lietotne, ir šeit: dublēšana, laika s
 
 Lai parādītu 360° foto kādam, kam nav lietotnes, kopīgojiet to ar Immich kopīgotu saiti: Immich tīmekļa lietotne viņa pārlūkā rāda 360° foto kā sfēru.
 
-Pašreizējais būvējums, 20. būvējums (versija 3.3.0-rc.0, būvējuma numurs 3030018), balstās uz Immich 3.3.0-rc.0 (Immich `main`, vēl ne stabils laidiens). 19. būvējums tika testēts ar Immich 3.2 serveri, un 20. būvējums neko nemaina tajā, ko lietotne prasa serverim. Lūdzu, ziņojiet par problēmām [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam. Pilnu paša Immich dokumentāciju skatiet [immich.app](https://immich.app).
+Pašreizējais būvējums, 21. būvējums (versija 3.3.0-rc.0, būvējuma numurs 3030019), balstās uz Immich 3.3.0-rc.0 (Immich `main`, vēl ne stabils laidiens). 19. būvējums tika testēts ar Immich 3.2 serveri, un 20. un 21. būvējums neko nemaina tajā, ko lietotne prasa serverim. Lūdzu, ziņojiet par problēmām [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam. Pilnu paša Immich dokumentāciju skatiet [immich.app](https://immich.app).
 
 ## Salīdzinājums ar Immich lietotni un citām lietotnēm
 
@@ -670,20 +670,20 @@ Pašreizējais būvējums, 20. būvējums (versija 3.3.0-rc.0, būvējuma numurs
 | 360° foto kā sfēra, kurā paskatīties apkārt (vilkšana, savilkšana, dubultskāriens, inerce, kameras sākuma skats, daļējas panorāmas) | ❌ plakana josla | ✅ | Testēts Galaxy S24+ un iPhone 14 |
 | Žiroskops: skatieties apkārt, kustinot tālruni | ❌ | ✅ | Testēts Galaxy S24+ un iPhone 14 |
 | 360° video sfēriskā atskaņotājā, ar skaņu, pārtīšanu, audio celiņa izvēli un bufera indikatoru | ❌ plakans video | ✅ Android un iOS (iOS vēl bez laika joslas) | Testēts Galaxy S24+ un iPhone 14 |
-| 3D (stereoskopiski) 360° foto un video | ❌ dubults attēls | ✅ kreisā acs tālruņos, īsts 3D Quest 3 brillēs | Testēts Galaxy S24+ un Quest 3, ar īstiem 3D 360° paraugiem (VRTogether, Vuze, Kandao) un 3D foto; ziņojumi par citām kamerām gaidīti |
+| 3D (stereoskopiski) 360° foto un video | ❌ dubults attēls | ✅ kreisā acs tālruņos, īsts 3D Quest brillēs | Testēts Galaxy S24+ un Quest 3, ar īstiem 3D 360° paraugiem (VRTogether, Vuze, Kandao) un 3D foto; ziņojumi par citām kamerām gaidīti |
 | VR180 (puslodes) foto un video | ❌ izstiepts ap sfēru | ✅ puslode, 360°/180° poga | Testēts Android emulatorā un Galaxy S24+ ar sintētisku multividi; atsauksmes no ierīcēm gaidītas |
-| Apple telpiskie foto (HEIC stereo pāri) un telpiskie video (MV-HEVC) | ❌ plakans foto vai video, nekas neliecina, ka tas ir telpisks | ✅ no 19. būvējuma: foto 3D formātā Quest 3 brillēs, citur viena acs un informācijas rinda | Atpazīšana pārbaudīta ar parauga foto, ko ierakstījusi Apple attēlu bibliotēka, un ar sintētiskiem failiem; briļļu skats un īsti iPhone faili ir 19. būvējuma ierīču tests |
-| Meta Quest 3 imersīvais skats ar galvas izsekošanu, laika joslu, iepriekšējo un nākamo un pagriešanu | ❌ | ✅ tā pati lietotne, kā briļļu būvējums vai tālruņa APK | Testēts Quest 3 brillēs (14. būvējuma vadība, pielāgota 16. būvējumā pēc lietotāja atsauksmes), arī lietotājs ar Insta360 X4 8K HEVC video |
+| Apple telpiskie foto (HEIC stereo pāri) un telpiskie video (MV-HEVC) | ❌ plakans foto vai video, nekas neliecina, ka tas ir telpisks | ✅ no 19. būvējuma: foto 3D formātā Quest brillēs, citur viena acs un informācijas rinda | Atpazīšana pārbaudīta ar parauga foto, ko ierakstījusi Apple attēlu bibliotēka, un ar sintētiskiem failiem; briļļu skats un īsti iPhone faili ir 19. būvējuma ierīču tests |
+| Meta Quest imersīvais skats ar galvas izsekošanu, laika joslu, iepriekšējo un nākamo un pagriešanu | ❌ | ✅ tā pati lietotne, kā briļļu būvējums vai tālruņa APK | Testēts Quest 3 brillēs (14. būvējuma vadība, pielāgota 16. būvējumā pēc lietotāja atsauksmes), arī lietotājs ar Insta360 X4 8K HEVC video |
 | 360° nozīmīte uz sīktēliem un 360° saraksts ar neapstrādātiem failiem un filtriem (periods, avots, veids, kamera) | ❌ | ✅ filtri no 18. būvējuma | Paveikts |
 | „Skatīt kā 360°” failiem, ko serveris neatzīmē | ❌ | ✅ tiek atcerēts tālrunī | Paveikts |
 | Spatial 2.5D: dziļums plakanā ekrānā no stereoskopiska video | ❌ | ✅ eksperimentāls, tālruņi un planšetdatori | Testēts Galaxy S24+; atsauksmes no iPhone gaidītas |
 | Lietošana bez jebkāda servera, ar pašas ierīces galeriju | ❌ jāpieslēdzas | ✅ | Testēts Galaxy S24+, Quest 3 un Android emulatorā |
-| SMB un WebDAV koplietojumi, atrasti tīklā un atskaņoti tieši, nekas netiek lejupielādēts | ❌ | ✅ katrs skatītājs, tālruņi un Quest 3 | Testēts ar Freebox Server (SMB) Galaxy S24+ un Quest 3, un ar Samba un WebDAV testa serveriem Android emulatorā; atsauksmes par citiem NAS un WebDAV gaidītas |
+| SMB un WebDAV koplietojumi, atrasti tīklā un atskaņoti tieši, nekas netiek lejupielādēts | ❌ | ✅ katrs skatītājs, tālruņi un Quest | Testēts ar Freebox Server (SMB) Galaxy S24+ un Quest 3, un ar Samba un WebDAV testa serveriem Android emulatorā; atsauksmes par citiem NAS un WebDAV gaidītas |
 | DLNA multivides serveri kā koplietojuma veids | ❌ | ✅ no 19. būvējuma | Pārbaudīts ar minidlna un Gerbera Docker vidē; Plex, Jellyfin, NAS, Freebox Server, iPhone un Quest ir 19. būvējuma ierīču tests |
 | Koplietojuma failu sūtīšana uz Immich; manuāli nosūtīti ierīces faili tiek uzskatīti par dublētiem | ❌ tikai ierīces faili | ✅ no 15. būvējuma | Testēts Android emulatorā ar Samba testa serveri un Immich 3.2 serveri |
 | Koplietot šo tālruni tīklā, brillēm | ❌ | ✅ no 19. būvējuma, Android un iOS | Vienībtesti un pilna cikla testi ar briļļu WebDAV klientu, datorā; tālrunis, kas apkalpo Quest, un iPhone puse ir 19. būvējuma ierīču tests |
-| Plex Media Server bibliotēkas, atskaņotas no oriģinālajiem failiem, mājās un ārpus tām, bez plex.tv | ❌ | ✅ no 20. būvējuma, katrs skatītājs, tālruņos, planšetdatoros, Quest 3 un televizoros | Pārbaudīts no datora pret īstu Plex Media Server 1.42.1 (savienošana pārī, mapes, baitu diapazoni, sīktēli, adrese ārpus mājām); ierīcē vēl nav pārbaudīts |
-| Tapo kameras: tiešraide un atmiņas kartes ieraksti, nosūtīti uz Immich, kad jūs to izvēlaties | ❌ | ✅ no 20. būvējuma: ieraksti visur, tiešraide Android, Android TV un Quest 3 | Pārbaudīts pret simulētu kameru; ar īstu kameru vēl nav pārbaudīts |
+| Plex Media Server bibliotēkas, atskaņotas no oriģinālajiem failiem, mājās un ārpus tām, bez plex.tv | ❌ | ✅ no 20. būvējuma, katrs skatītājs, tālruņos, planšetdatoros, Quest un televizoros | Pārbaudīts no datora pret īstu Plex Media Server 1.42.1 (savienošana pārī, mapes, baitu diapazoni, sīktēli, adrese ārpus mājām); ierīcē vēl nav pārbaudīts |
+| Tapo kameras: tiešraide un atmiņas kartes ieraksti, nosūtīti uz Immich, kad jūs to izvēlaties | ❌ | ✅ no 20. būvējuma: ieraksti visur, tiešraide Android, Android TV un Quest | Pārbaudīts pret simulētu kameru; ar īstu kameru vēl nav pārbaudīts |
 | Android TV un Google TV, vadīts ar tālvadības pulti, tajā pašā APK | ❌ nav televizora lietotne | ✅ no 20. būvējuma | Pārbaudīts ar automatizētiem testiem; televizorā vēl nav pārbaudīts |
 | Neapstrādāti Insta360 .insp foto un viena celiņa .insv video | ❌ plakani | ✅ no 16. būvējuma | Foto salīdzināti ar Insta360 Studio X3 failu eksportiem, video Android emulatorā ar zemas izšķirtspējas X3 failu; iPhone tālrunī vēl nav darbināts |
 | Neapstrādāti video ar vienu objektīvu katrā celiņā vai failā (Insta360 X4, X4 Air, X5, X6, X3 pāri, GoPro .360, DJI .osv) | ❌ plakani vai nepareizi | ✅ no 18. būvējuma | Parsētāji un sašūšana pārbaudīti ar īstiem X4, X3 pāra, GoPro MAX un Osmo 360 failiem; atskaņošana ir 18. un 19. būvējuma ierīču tests |
@@ -697,7 +697,7 @@ Pašreizējais būvējums, 20. būvējums (versija 3.3.0-rc.0, būvējuma numurs
 
 | Ko cilvēki izmanto | Ar ko viņi saskaras | Ko dara Immuch360 |
 |---|---|---|
-| Immich tīmekļa lietotne | Tā rāda 360° foto kā sfēru, bet neapstrādātu .insp uzskata par gatavu panorāmu un aptin tā divus apļus ap sfēru; VR skats joprojām ir tikai pieprasījums ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Sašuj neapstrādātus failus ierīcē un atver imersīvo skatu Quest 3 brillēs |
+| Immich tīmekļa lietotne | Tā rāda 360° foto kā sfēru, bet neapstrādātu .insp uzskata par gatavu panorāmu un aptin tā divus apļus ap sfēru; VR skats joprojām ir tikai pieprasījums ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Sašuj neapstrādātus failus ierīcē un atver imersīvo skatu Quest brillēs |
 | Insta360 lietotne vai Studio | Vajadzīga, lai kartes neapstrādātos failus pirms skatīšanās pārvērstu 360° attēlā | Tieši atver neapstrādātos .insp un .insv failus, kā arī GoPro .360 un DJI .osv failus |
 | Plex, Jellyfin, Synology Photos | 360° foto un video tiek rādīti plakani vai netiek atpazīti, kā raksta tēmas to forumos (Plex pieprasījums ir atvērts kopš 2017. gada) | Lasa pašu Plex bibliotēku no 20. būvējuma vai tās pašas mapes caur SMB, WebDAV vai DLNA un atskaņo tās kā sfēru, serverī neko nemainot |
 | Lietotne Tapo | Atsevišķa lietotne, pierakstīta jūsu TP-Link kontā, kur klipi ir atsevišķi no jūsu foto | Rāda kameru blakus jūsu foto, sazinās ar to tikai jūsu tīklā un patur klipu kā video, ko varat nosūtīt uz Immich (no 20. būvējuma) |
@@ -709,7 +709,7 @@ Pašreizējais būvējums, 20. būvējums (versija 3.3.0-rc.0, būvējuma numurs
 
 Immuch360 ir galerija, un tā ir arī bezmaksas multivides atskaņotājs: tā atskaņo to, ko oficiālā lietotne nevar, no otrās tabulas avotiem, failam piemērotā atskaņotājā.
 
-| Kas | Android tālruņi | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (no 20. būvējuma) |
+| Kas | Android tālruņi | iPhone, iPad | Meta Quest | Android TV, Google TV (no 20. būvējuma) |
 |---|---|---|---|---|
 | Plakani video (MP4, MOV, MKV, ko ierīce dekodē) | Immich atskaņotājs, un tīkla koplietojumiem iebūvēts atskaņotājs | Tāpat, izņemot koplietojuma MKV un AVI failus, ko iOS neatver (serverī tie tiek atskaņoti transkodēti) | Logā | Kā tālruņos; OK pauzē, pa kreisi un pa labi pārlec 10 s |
 | 360° foto | Sfēras skatītājs, žiroskops | Tāpat | Imersīvi, visapkārt jums | Sfēras skatītājs, griezts ar bultiņām, tālummainīts ar kanālu taustiņiem |
@@ -739,14 +739,14 @@ Televizora kolonna vēl nav pārbaudīta televizorā, skatiet [Skatīties televi
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 darbojas arī Meta Quest 3 un 3S brillēs (Horizon OS v69 vai jaunāka; Horizon Store būvējums ir paredzēts tikai šīm divām; universālajam `-release.apk` vajadzētu instalēties arī Quest 2 vai Quest Pro, nav testēts). Kā to lietot, aprakstīts sadaļā [Meta Quest 3 brillēs](#in-the-meta-quest-3-headset); šī sadaļa ir par instalēšanu un to, kas brillēs atšķiras.
+Immuch360 darbojas arī Meta Quest brillēs ar Horizon OS v69 vai jaunāku. No 21. būvējuma Horizon Store būvējums ir paredzēts Quest 2, Quest Pro, Quest 3 un 3S, tām četrām, kuras jau nosauc universālais `-release.apk`; pirmās Quest nav, veikals tās vairs nepieņem. Quest 3 un 3S ir testētas. Quest 2 un Quest Pro vēl nav testētas: to video dekoderi ir lēnāki, un robežas, ko lietotne pārbauda, tika izmērītas Quest 3 brillēs, tāpēc liels H.264 video tajās var tikt atteikts ar ziņojumu vai raustīties. Ziņojumi no šīm divām brillēm ir gaidīti [Issues](https://github.com/freeKC/Immuch360/issues). Kā to lietot, aprakstīts sadaļā [Meta Quest 3 brillēs](#in-the-meta-quest-3-headset); šī sadaļa ir par instalēšanu un to, kas brillēs atšķiras.
 
 Briļļu būvējums sazinās ar serveriem tikai caur HTTPS vai caur vienkāršu HTTP ar mājas tīkla nosaukumiem (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) un ar pašām brillēm, kā to prasa Horizon Store. Serveris, kas ievadīts kā vienkārša HTTP adrese ar IP, piemēram, `http://192.168.1.10:2283`, šajā būvējumā tiek atteikts: izmantojiet HTTPS, mājas tīkla nosaukumu (`nas.local`) vai universālo `-release.apk`, kas saglabā tālruņu atvērto politiku. Uz WebDAV, DLNA un tālruņa koplietojumiem vienkāršā lokālā tīkla HTTP adresē tas neattiecas: lietotne tos lasa pati un saviem atskaņotājiem nodod tikai sava lokālā tilta adresi (DLNA un tālruņa koplietojumam, kas ir jauni 19. būvējumā, brillēs vēl jāapstiprina). No 20. būvējuma Plex serveris tiek sasniegts caur HTTPS, un Tapo kameru sasniedz pati lietotne, tās tiešraidi caur RTSP, kas nav HTTP: uz tiem tam nevajadzētu attiekties (brillēs vēl jāapstiprina).
 
 <a id="install"></a>
 ### Instalēšana
 
-Horizon Store ieraksts gaida Meta pārskatīšanu, iesniegts ar 14. būvējumu; kamēr tas nav apstiprināts, instalējiet no sāniem laidiena failu `-quest-release.apk` (veidots brillēm: 64 bitu, target SDK 34, tikai brillēs izmantotās atļaujas) vai universālo `-release.apk`:
+Meta apstiprināja Horizon Store ierakstu 2026. gada 7. oktobrī ar 14. būvējumu, un 21. būvējums ir iesniegts kā tā pirmais atjauninājums. Kamēr veikala lapa nav publiska, vai lai saņemtu būvējumu ātrāk nekā veikalā, instalējiet no sāniem laidiena failu `-quest-release.apk` (veidots brillēm: 64 bitu, target SDK 34, tikai brillēs izmantotās atļaujas) vai universālo `-release.apk`:
 
 1. Vienreiz ieslēdziet izstrādātāja režīmu. Meta Horizon tālruņa lietotnē atveriet „Devices” (ierīces), izvēlieties brilles, tad „Headset settings” (briļļu iestatījumi), tad „Developer mode” (izstrādātāja režīms). Tam vajag izstrādātāja kontu, kas ir bezmaksas vietnē developers.meta.com. Datorā vajag arī adb (Android SDK Platform Tools) vai SideQuest.
 2. Savienojiet brilles ar datoru ar USB-C kabeli. Brillēs apstipriniet „Allow USB debugging” (atļaut USB atkļūdošanu).
@@ -754,7 +754,7 @@ Horizon Store ieraksts gaida Meta pārskatīšanu, iesniegts ar 14. būvējumu; 
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. Brillēs atveriet bibliotēku, izvēlieties filtru „Unknown sources” (nezināmi avoti) un palaidiet Immuch360.
@@ -776,7 +776,7 @@ Ekrānuzņēmumi uzņemti brillēs ar uzņemšanas pogu (Meta poga un mēlīte),
 ### Ierobežojumi brillēs
 
 - **Video kodeki**: HEVC (H.265) ir drošā izvēle; H.264 apstājas ap 4096x2304. Ko lietotne pārbauda un kā dot brillēm video, ko tās dekodē, aprakstīts sadaļā [Video informācija un dekoderi](#video-details-decoders-and-why-a-video-stutters).
-- **Veikals**: veikala versija sākas ar 14. būvējumu. Funkcijas, kas atzīmētas „no 15. būvējuma” un vēlāk, nāks ar tās nākamajiem atjauninājumiem (veikala alfa testa kanāls testētājiem saņem katru jauno būvējumu); GitHub APK tās visas ir jau tagad.
+- **Veikals**: veikala versija sākas ar 14. būvējumu. Funkcijas, kas atzīmētas „no 15. būvējuma” un vēlāk, nāks ar 21. būvējumu, tās pirmo atjauninājumu, kad Meta to būs pārskatījusi (veikala alfa testa kanāls testētājiem saņem katru jauno būvējumu); GitHub APK tās visas ir jau tagad.
 - **Atļaujas**: briļļu būvējums prasa tikai foto un video (režīms bez servera) un paziņojumu (dublēšanas progress) atļaujas. Atšķirībā no tālruņa būvējuma tam nav krātuves, audio, atrašanās vietas vai kameras atļaujas; tāpēc servera pārslēgšana pēc Wi-Fi nosaukuma brillēs nav pieejama.
 - **APK izmērs**: Spatial SDK pievieno ap 56 MB 64 bitu ARM vietējā koda, arī tālruņos, kur tas nekad netiek ielādēts.
 - **Licence**: imersīvais skats izmanto Meta Spatial SDK, ko izplata saskaņā ar Meta Platform Technologies SDK License Agreement.
@@ -784,13 +784,13 @@ Ekrānuzņēmumi uzņemti brillēs ar uzņemšanas pogu (Meta poga un mēlīte),
 <a id="where-to-get-it"></a>
 ## Kur to iegūt
 
-Lietotne ir Google Play tālruņiem un planšetdatoriem; App Store versija gaida Apple pārskatīšanu, Meta Horizon Store versija gaida Meta pārskatīšanu, un Google Play versija televizoriem gaida Google pārskatīšanu televizora laidienam. GitHub laidienā vienmēr ir jaunākais būvējums:
+Lietotne ir Google Play tālruņiem un planšetdatoriem; App Store versija gaida Apple pārskatīšanu, Meta Horizon Store ieraksts ir apstiprināts un tā pirmais atjauninājums ir Meta pārskatīšanā, un Google Play versija televizoriem gaida Google pārskatīšanu televizora laidienam. GitHub laidienā vienmēr ir jaunākais būvējums:
 
 | Platforma | Šodien | Drīzumā |
 |---|---|---|
-| Android tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) vai APK lapā [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` tālrunim (universālais `Immuch360-v<version>-release.apk` darbojas visur, `-armeabi-v7a` ir vecākiem 32 bitu tālruņiem, un `.aab` fails ir paredzēts Google Play, ne instalēšanai no sāniem). GitHub būvējums parasti ir priekšā veikalam. Jebkurā gadījumā tā instalējas blakus oficiālajai Immich lietotnei (pakotne `com.aprogsys.immuch360`). | Google Play: 18. būvējums ir pieejams, 19. būvējums Google pārskatīšanā kopš 2026. gada 6. oktobra, nākamais 20. būvējums |
+| Android tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) vai APK lapā [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` tālrunim (universālais `Immuch360-v<version>-release.apk` darbojas visur, `-armeabi-v7a` ir vecākiem 32 bitu tālruņiem, un `.aab` fails ir paredzēts Google Play, ne instalēšanai no sāniem). GitHub būvējums parasti ir priekšā veikalam. Jebkurā gadījumā tā instalējas blakus oficiālajai Immich lietotnei (pakotne `com.aprogsys.immuch360`). | Google Play: 18. būvējums ir pieejams, 20. būvējums Google pārskatīšanā kopš 2026. gada 7. oktobra, 19. būvējuma vietā |
 | iPhone un iPad | Gaida Apple pārskatīšanu. Pārskatāmajai versijai ir 11. būvējuma funkcijas: augšupielāde uz Immich un izvēle „Video avots” (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar vēlāku App Store atjauninājumu. Pirmkods kompilējas ar Xcode vai Codemagic, skatiet [Izveidojiet to paši](#build-it-yourself). | App Store, tiek pārskatīts |
-| Meta Quest 3 un 3S | Fails `-quest-release.apk` lapā [Releases](https://github.com/freeKC/Immuch360/releases) (universālais `-release.apk` arī darbojas), instalēts no sāniem izstrādātāja režīmā, skatiet [Instalēšana](#install). Veikala būvējums un GitHub APK ir parakstīti ar dažādām atslēgām: lai pārietu no viena uz otru, vispirms atinstalējiet lietotni (tās iestatījumi un saglabātie koplietojumi pazūd līdz ar to). | Meta Horizon Store: 14. būvējums Meta pārskatīšanā kopš 2026. gada 3. oktobra; veikala alfa kanāls (tikai testētājiem) saņem katru jauno būvējumu |
+| Meta Quest 2, Quest Pro, Quest 3 un 3S (Quest 2 un Quest Pro nav testētas) | Fails `-quest-release.apk` lapā [Releases](https://github.com/freeKC/Immuch360/releases) (universālais `-release.apk` arī darbojas), instalēts no sāniem izstrādātāja režīmā, skatiet [Instalēšana](#install). Veikala būvējums un GitHub APK ir parakstīti ar dažādām atslēgām: lai pārietu no viena uz otru, vispirms atinstalējiet lietotni (tās iestatījumi un saglabātie koplietojumi pazūd līdz ar to). | Meta Horizon Store: ieraksts tika apstiprināts 2026. gada 7. oktobrī ar 14. būvējumu, un 21. būvējums, tā pirmais atjauninājums, ir Meta pārskatīšanā; veikala alfa kanāls (tikai testētājiem) saņem katru jauno būvējumu |
 | Android TV un Google TV (no 20. būvējuma) | Universālais `Immuch360-v<version>-release.apk` lapā [Releases](https://github.com/freeKC/Immuch360/releases), instalēts no sāniem ar adb, skatiet [Instalēt to televizorā](#install-it-on-the-tv). Tā ir tā pati lietotne kā tālruņos. | Google Play televizoriem, pēc Google pārskatīšanas televizora laidienam |
 
 App Store un Meta Horizon Store saites tiks pievienotas šeit, tiklīdz ieraksti būs publicēti. Pieslēdzieties ar savu parasto Immich servera URL un kontu vai pieslēgšanās lapā pieskarieties „Lietot bez servera”, lai sāktu ar pašas ierīces foto un video. APK no GitHub pats neatjauninās: sekojiet lapai Releases, un, kad lietotne ir instalēta no veikala, ņemiet atjauninājumus no šī veikala.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Veikalu ekrānuzņēmumi tiek uzņemti atkļūdošanas simulatora būvējumos, kas veidoti ar `--dart-define=IMMUCH_SCREENSHOTS=true`, kas tikai paslēpj atkļūdošanas lenti. Abi Android varianti ir viena un tā pati lietotne. No 20. būvējuma variants `phone` sevi deklarē arī kā televizora lietotni (ieraksts televizora palaidējā un reklāmkarogs, skārienekrāns nav obligāts), ko variants `quest` neietver. Variants `quest` mērķē uz SDK 34 un patur tikai brillēs izmantotās atļaujas (foto, video, paziņojumi): multivides pārvaldība, fona atrašanās vieta, mantotā krātuve, audio, multivides atrašanās vieta, ierīces atrašanās vieta un kamera ir noņemtas failā `android/app/src/quest/AndroidManifest.xml`, jo Meta Horizon Store atsaka pirmās divas un prasa pamatojumu katrai citai sensitīvai atļaujai; tas pats fails nosauc Quest 3 un 3S kā atbalstītās ierīces un ierobežo vienkāršu HTTP līdz pašām brillēm un mājas tīkla nosaukumiem. APK ir tikai 64 bitu, pateicoties diviem papildu argumentiem tā komandrindā (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variants `phone` ir tas, ko prasa Google Play. Lai būvētu iOS savā Mac datorā, izmantojiet Xcode un savu parakstīšanas komandu; ar Xcode 26 vispirms vienreiz palaidiet `xcodebuild -downloadComponent MetalToolchain`, jo to vajag Spatial ēnotājiem. Bez Mac iOS būvējumi darbojas Codemagic (mitināts Mac) no šīs repozitorija faila `codemagic.yaml`. Android laidienu būvējumi darbojas GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Veikalu ekrānuzņēmumi tiek uzņemti atkļūdošanas simulatora būvējumos, kas veidoti ar `--dart-define=IMMUCH_SCREENSHOTS=true`, kas tikai paslēpj atkļūdošanas lenti. Abi Android varianti ir viena un tā pati lietotne. No 20. būvējuma variants `phone` sevi deklarē arī kā televizora lietotni (ieraksts televizora palaidējā un reklāmkarogs, skārienekrāns nav obligāts), ko variants `quest` neietver. Variants `quest` mērķē uz SDK 34 un patur tikai brillēs izmantotās atļaujas (foto, video, paziņojumi): multivides pārvaldība, fona atrašanās vieta, mantotā krātuve, audio, multivides atrašanās vieta, ierīces atrašanās vieta un kamera ir noņemtas failā `android/app/src/quest/AndroidManifest.xml`, jo Meta Horizon Store atsaka pirmās divas un prasa pamatojumu katrai citai sensitīvai atļaujai; tas pats fails nosauc Quest 2, Quest Pro, Quest 3 un 3S kā atbalstītās ierīces un ierobežo vienkāršu HTTP līdz pašām brillēm un mājas tīkla nosaukumiem. APK ir tikai 64 bitu, pateicoties diviem papildu argumentiem tā komandrindā (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variants `phone` ir tas, ko prasa Google Play. Lai būvētu iOS savā Mac datorā, izmantojiet Xcode un savu parakstīšanas komandu; ar Xcode 26 vispirms vienreiz palaidiet `xcodebuild -downloadComponent MetalToolchain`, jo to vajag Spatial ēnotājiem. Bez Mac iOS būvējumi darbojas Codemagic (mitināts Mac) no šīs repozitorija faila `codemagic.yaml`. Android laidienu būvējumi darbojas GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Šajā repozitorijā nav neviena noslēpuma: Android parakstīšanas atslēga glabājas kā šifrēti GitHub Actions noslēpumi, un Apple parakstīšanas materiāli glabājas kā šifrēti mainīgie Codemagic. Darbplūsmas faili uz tiem atsaucas tikai pēc nosaukuma. Bez sava `android/key.jks` laidiena būvējums tiek parakstīts ar atkļūdošanas atslēgu un nevar instalēties pār kopiju no GitHub vai veikala (vispirms atinstalējiet to); atkļūdošanas būvējums instalējas blakus tai kā Immuch360 debug. Meta Horizon Store kopija ir laidiena `quest` APK, parakstīts ar citu atslēgu, to, ar kuru veikala lietotne pirmo reizi tika reģistrēta, tāpēc tā arī nevar instalēties pār no sāniem instalētu APK, ne otrādi.
 
@@ -857,9 +857,9 @@ Pilna politika ir failā [PRIVACY.md](PRIVACY.md).
 
 Kas vēl nav izdarīts, visticamākais vispirms. Nekas šeit nav solījums, un atsauksmes [problēmu sekotājā](https://github.com/freeKC/Immuch360/issues) palīdz izlemt, kas nāks vispirms.
 
-- **Google Play**: 18. būvējums ir pieejams; 19. būvējums ir Google pārskatīšanā kopš 2026. gada 6. oktobra, un 20. būvējums sekos.
+- **Google Play**: 18. būvējums ir pieejams; 20. būvējums ir Google pārskatīšanā kopš 2026. gada 7. oktobra, 19. būvējuma vietā. 21. būvējums tālruņos un planšetdatoros neko nemaina.
 - **App Store**: versija 3.3.0 gaida Apple pārskatīšanu; tai ir 11. būvējuma funkcijas, tāpēc augšupielāde uz Immich un video dekoderu pārbaude (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar nākamo App Store atjauninājumu. Saite tiks pievienota šeit, kad tā būs aktīva.
-- **Meta Horizon Store**: ieraksts tika iesniegts Meta pārskatīšanai 2026. gada 3. oktobrī ar 14. būvējumu, un veikala alfa kanāls saņem katru jauno būvējumu nākamajam atjauninājumam. Kad ieraksts būs apstiprināts, Quest 3 vairs nevajadzēs instalēšanu no sāniem, un veikala saite tiks pievienota šeit; no sāniem instalēta kopija vispirms būs jāatinstalē (skatiet [Instalēšana](#install)).
+- **Meta Horizon Store**: Meta apstiprināja ierakstu 2026. gada 7. oktobrī ar 14. būvējumu. 21. būvējums ir iesniegts kā tā pirmais atjauninājums: tas atnes visu kopš 14. būvējuma (augšupielādes no koplietojuma uz Immich, video avotu, kas izvēlēts pēc tā, ko brilles spēj dekodēt, neapstrādātus Insta360, GoPro un DJI failus, DLNA, tālruņa koplietojumu, Apple telpiskos foto, Plex Media Server bibliotēkas, Tapo kameras), un veikals to piedāvā Quest 2, Quest Pro, Quest 3 un 3S. Veikala saite tiks pievienota šeit, kad lapa būs publiska; no sāniem instalēta kopija vispirms būs jāatinstalē (skatiet [Instalēšana](#install)).
 - **Veikalu ieraksti**: Google Play ieraksts tika pārrakstīts 2026. gada oktobrī ar jauniem ekrānuzņēmumiem, un līdz ar televizora laidienu tas iegūs televizora ekrānuzņēmumus un televizora reklāmkarogu. App Store teksts joprojām apraksta pirmos būvējumus (360° foto un video, neapstrādāti faili rādīti plakani); tas iepazīstinās ar 3D, VR180 un Spatial skatītājiem, režīmu bez servera, tīkla koplietojumiem, multivides atskaņotāju un neapstrādātajiem Insta360 failiem. Meta Horizon Store teksts jau iepazīstina ar multivides atskaņotāju.
 - **Neapstrādāti 360° kameras faili, tālāk**: progresa indikators, kamēr neapstrādāts foto tiek sagatavots brillēm; GoPro un DJI video izlīdzināšana pēc to pašu kustības datiem; dubultā „zivs acs” .dng; ziņojumi no ierīcēm par 18. būvējuma divu objektīvu atskaņošanu (X4, X5, X6, GoPro MAX 2, Osmo 360), lai apstiprinātu šuves un dekoderu resursus.
 - **DLNA, tālruņa koplietojums un Apple telpiskie faili, tālāk**: 19. būvējuma ziņojumi no ierīcēm (Plex, Jellyfin, NAS un Freebox Server caur DLNA; tālrunis, kas apkalpo Quest, arī savā tīklājā; īsti iPhone telpiskie foto un video brillēs); multiraides tiesības, kas lūgtas no Apple, lai iPhone atrastu katru DLNA serveri; iepriekšējais un nākamais starp telpiskajiem foto brillēs; telpiskā nozīmīte uz servera foto laika skalā; telpiskie video 3D formātā Quest brillēs, ja to dekoderi to ļaus.

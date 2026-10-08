@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | English (UK) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D and VR180 photos and videos, from Immich, your phone or a NAS. Android, iOS and Meta Quest 3, with or without a server">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°, 3D and VR180 photos and videos, from Immich, your phone or a NAS. Android, iOS and Meta Quest, with or without a server">
 </p>
 
 # Immuch360
 
-Immuch360 is the Immich mobile app with 360° photos and videos you can look around in, and a free player for flat, 360°, 3D and VR180 photos and videos, on Android phones and tablets, iPhones and iPads, the Meta Quest 3 and 3S, and from build 20 Android TV and Google TV. It is for people who shoot with a 360° camera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) or the photo sphere mode of a phone, or who own a headset, and want to watch their own shots from an Immich server, the phone itself, a NAS, a media server or a Plex server: same server, same account, no server plugin, or no server at all. From build 20 it also shows Tapo cameras, live and the recordings of their memory card.
+Immuch360 is the Immich mobile app with 360° photos and videos you can look around in, and a free player for flat, 360°, 3D and VR180 photos and videos, on Android phones and tablets, iPhones and iPads, Meta Quest headsets (Quest 3 and 3S, and from build 21 the Quest 2 and Quest Pro, untested), and from build 20 Android TV and Google TV. It is for people who shoot with a 360° camera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) or the photo sphere mode of a phone, or who own a headset, and want to watch their own shots from an Immich server, the phone itself, a NAS, a media server or a Plex server: same server, same account, no server plugin, or no server at all. From build 20 it also shows Tapo cameras, live and the recordings of their memory card.
 
 <p align="center">
   <sub>Unofficial fork. Not affiliated with Immich or FUTO. The name reads as "I am much 360".</sub>
@@ -15,7 +15,7 @@ Immuch360 is the Immich mobile app with 360° photos and videos you can look aro
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">under review</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store under review &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store approved, build 21 submitted as its first update &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 is the Immich mobile app with 360° photos and videos you can look aro
     <td align="center" width="33%"><h3>🎥 Native 2.5D</h3>Depth on a flat screen from a stereoscopic video, the view follows your head (experimental, phones and tablets)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>One app on phones, tablets and the headset, true 3D in the headset, and from build 20 on Android TV with the remote</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>One app on phones, tablets and the Quest 2, Pro, 3 and 3S headsets, true 3D in the headset, and from build 20 on Android TV with the remote</td>
     <td align="center"><h3>🔌 With or without a server</h3>Your Immich server, or the phone's own gallery, no account needed</td>
     <td align="center"><h3>🗄️ Network shares</h3>Samba (SMB), WebDAV and, from build 19, DLNA media servers found on the network and read live, nothing downloaded, and sent to Immich when you choose. From build 19 a phone also shares its own gallery with the headset</td>
   </tr>
@@ -109,7 +109,7 @@ The choice is remembered on the phone and changes nothing on the server. On a fi
 
 You have no Immich server, or you do not want an account: you only want the 360° photos of your phone to open as a sphere you can turn with the gyroscope. The Immich app asks for a login first.
 
-On the login page, "Use without a server" opens Immuch360 on the device's own photos and videos, with the 360°, 3D, VR180 and Spatial viewers, the 360° list and the network shares (from build 20 also the Plex servers and the Tapo cameras), no Immich account needed. The server features stay hidden or greyed out until you connect a server; nothing leaves the device. On a Meta Quest 3 it opens the headset's own photos and videos; on a TV, which has none, it points to the network shares (see [Watch on your TV](#watch-on-your-tv-android-tv-and-google-tv)).
+On the login page, "Use without a server" opens Immuch360 on the device's own photos and videos, with the 360°, 3D, VR180 and Spatial viewers, the 360° list and the network shares (from build 20 also the Plex servers and the Tapo cameras), no Immich account needed. The server features stay hidden or greyed out until you connect a server; nothing leaves the device. On a Meta Quest it opens the headset's own photos and videos; on a TV, which has none, it points to the network shares (see [Watch on your TV](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="The Library tab without a server: the 360° entry at the top, then On this device with two 360° photos, and Network shares with a share named NAS">
 
@@ -159,7 +159,7 @@ A username with an empty password is sent as such: a Freebox Server wants `freeb
 1. Tap a share. Folders come first, then the photos and videos as a grid with thumbnails (a frame of each video too, cached on the device). The ones recognised as 360° carry the 360° badge, and from build 19 Apple spatial photos and videos a 3D badge. Pull down to refresh.
 2. Tap a photo: it opens full screen (pinch, double tap), and its 360° button opens the sphere viewer.
 3. Tap a video: it plays in the native player (play, pause, seeking), with a 360° button that opens the 360° player and its 3D and 360°/180° buttons, and on a phone a Spatial button for stereoscopic files.
-4. On the Quest 3, the 360° button opens the immersive view, and from build 19 "View in 3D" opens an Apple spatial photo in 3D.
+4. On a Quest, the 360° button opens the immersive view, and from build 19 "View in 3D" opens an Apple spatial photo in 3D.
 5. The ⋮ menu has "View as 360°" for the files without a 360° tag, and on a phone "Spatial 2.5D" for the videos that are not stereoscopic.
 
 360°, 3D and VR180 are recognised from the GPano or spherical metadata of the file, read with range requests, and VR180 also from the file name. From build 16 raw Insta360 files are recognised too (an .insp photo by its name or the camera's calibration block, an .insv video by its name and its frame) and stitched.
@@ -252,7 +252,7 @@ The address the server tells is learned again at each connection at home. When i
 <a id="share-this-phone-on-the-network"></a>
 ## Share this phone on the network
 
-Your photos and videos are on your phone, and you want to see them in the headset, without a computer, a NAS or an Immich server. From build 19 a phone, Android or iPhone, serves its own photos and videos on the Wi-Fi, and the Meta Quest 3 plays them. The Immich app has nothing like it.
+Your photos and videos are on your phone, and you want to see them in the headset, without a computer, a NAS or an Immich server. From build 19 a phone, Android or iPhone, serves its own photos and videos on the Wi-Fi, and a Meta Quest plays them. The Immich app has nothing like it.
 
 ### Turn it on, on the phone
 
@@ -285,7 +285,7 @@ From there it is a WebDAV share like any other: 360° detection, raw files, the 
 
 You have Tapo cameras at home, and you want to see the garden camera and last night's clips next to your photos without opening the Tapo app, and keep a clip in Immich. The Immich app has nothing for cameras, and the Tapo app is a separate app, signed in to your TP-Link account, with the clips apart from your photos.
 
-From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows the camera live on Android phones and tablets, Android TV and the Meta Quest 3, and on every platform the recordings of its memory card, day by day: a clip is fetched from the camera, then plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows the camera live on Android phones and tablets, Android TV and the Meta Quest, and on every platform the recordings of its memory card, day by day: a clip is fetched from the camera, then plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
 
 ### Add a camera
 
@@ -396,7 +396,7 @@ From build 19, on Android and the Quest:
 
 In the Immich app a stereoscopic 360° photo or video shows both eyes at once, a doubled picture, and a VR180 file, which covers only the front half, is stretched all around the sphere.
 
-Immuch360 recognises the 3D layouts, top and bottom or side by side, from the file (the st3d box of a video), or guesses them from the shape of the frame, and every viewer has a 3D button to change them. A phone shows the left eye; the Meta Quest 3 shows each eye its own half, in real 3D. VR180 files are drawn on a half sphere, with the back black instead of a stretched picture. They are recognised from the file (spherical bounds or mesh, GPano crop) or from a "vr180" or "180" in the name, and every viewer has a 360°/180° button.
+Immuch360 recognises the 3D layouts, top and bottom or side by side, from the file (the st3d box of a video), or guesses them from the shape of the frame, and every viewer has a 3D button to change them. A phone shows the left eye; a Meta Quest shows each eye its own half, in real 3D. VR180 files are drawn on a half sphere, with the back black instead of a stretched picture. They are recognised from the file (spherical bounds or mesh, GPano crop) or from a "vr180" or "180" in the name, and every viewer has a 360°/180° button.
 
 ### Change the layout or the coverage
 
@@ -428,14 +428,14 @@ With Settings, Advanced, Troubleshooting on, the player adds an overlay at the t
 ### Formats, privacy and limits
 
 - **Formats**: side by side and top and bottom, also with the eyes swapped, full or half width, flat, 360° and VR180. The layout is read from the file, else guessed from the frame shape or the file name (sbs, ou, tb and the like; a half width file is only recognised by its name), and can be chosen by hand in the player. The choice is remembered for a video of the library, not for a file of a network share.
-- **Camera**: images are processed on the device only, never stored and never sent anywhere. The Quest 3 build has no camera permission at all (the headset has no camera an app may use), and the Spatial player is not offered there: its button and its setting are hidden on the headset.
+- **Camera**: images are processed on the device only, never stored and never sent anywhere. The Quest build has no camera permission at all (the headset has no camera an app may use), and the Spatial player is not offered there: its button and its setting are hidden on the headset.
 - **Limits**: experimental, phones and tablets only (not on the Meta Quest), needs OpenGL ES 3.0 or Metal. The depth is an estimate. It works best in landscape with your face well lit. Checked on a Galaxy S24+; iPhone feedback welcome.
 - **Fallback**: if anything goes wrong (no camera, unsupported device, unreadable layout), you are back in the normal player.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Apple spatial photos and videos
 
-An iPhone takes spatial photos and videos, and the Immich server says nothing about them: in the Immich app they are a flat photo or video. From build 19 Immuch360 recognises them by reading the files, and shows a spatial photo in 3D in the Meta Quest 3. This is not the Spatial 2.5D player above, which is for side by side and top and bottom videos.
+An iPhone takes spatial photos and videos, and the Immich server says nothing about them: in the Immich app they are a flat photo or video. From build 19 Immuch360 recognises them by reading the files, and shows a spatial photo in 3D in a Meta Quest headset. This is not the Spatial 2.5D player above, which is for side by side and top and bottom videos.
 
 - **Spatial photos** are HEIC files (`.heic`, `.heif`, `.hif`) that hold two pictures, one per eye, grouped as a stereo pair. The app reads the head of the file (on the device, the server's original with a range request, or a file of a network share) and remembers the answer on the phone, so a photo is read once.
 - **Spatial videos** (MV-HEVC) are recognised from the video track: a second layer, and both eyes declared.
@@ -466,7 +466,7 @@ The detection was checked on a sample spatial photo written by Apple's own image
 
 People buy a Quest 3 to watch their own 360° photos and videos, then ask where to put the files, how to get them onto the headset without a cable, and which player to use: the store players for 360° and 3D video are paid.
 
-The same Android app runs on the Quest 3 and 3S as a window, with your whole library. Its 360° button opens an immersive view where the photo or video is all around you and you look around by turning your head, in true 3D for stereoscopic files (Meta Spatial SDK). The media come from your Immich server, the headset itself, a NAS, a media server, a phone or a Plex server, played in place (a media server and a phone from build 19, a Plex server from build 20, not checked on the headset yet), and from build 20 the window also shows the Tapo cameras. It is free and open source. Checked on a Quest 3, and by a user with Insta360 X4 8K HEVC videos.
+The same Android app runs on the Quest 3 and 3S, and from build 21 on the Quest 2 and Quest Pro (untested), as a window, with your whole library. Its 360° button opens an immersive view where the photo or video is all around you and you look around by turning your head, in true 3D for stereoscopic files (Meta Spatial SDK). The media come from your Immich server, the headset itself, a NAS, a media server, a phone or a Plex server, played in place (a media server and a phone from build 19, a Plex server from build 20, not checked on the headset yet), and from build 20 the window also shows the Tapo cameras. It is free and open source. Checked on a Quest 3, and by a user with Insta360 X4 8K HEVC videos.
 
 ### Open the immersive view
 
@@ -659,7 +659,7 @@ Everything the official Immich mobile app does is here: backup, timeline, albums
 
 To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows a 360° photo as a sphere in their browser.
 
-The current build, build 20 (version 3.3.0-rc.0, build number 3030018), is based on Immich 3.3.0-rc.0 (Immich `main`, not a stable release yet). Build 19 was tested with an Immich 3.2 server, and build 20 changes nothing in what the app asks of the server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
+The current build, build 21 (version 3.3.0-rc.0, build number 3030019), is based on Immich 3.3.0-rc.0 (Immich `main`, not a stable release yet). Build 19 was tested with an Immich 3.2 server, and builds 20 and 21 change nothing in what the app asks of the server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
 
 ## Compared with the Immich app and other apps
 
@@ -670,20 +670,20 @@ The current build, build 20 (version 3.3.0-rc.0, build number 3030018), is based
 | 360° photos as a sphere you look around in (drag, pinch, double tap, inertia, the camera's initial view, partial panoramas) | ❌ flat strip | ✅ | Tested on a Galaxy S24+ and an iPhone 14 |
 | Gyroscope: look around by moving the phone | ❌ | ✅ | Tested on a Galaxy S24+ and an iPhone 14 |
 | 360° videos in a spherical player, with sound, seeking, audio track choice and a buffering indicator | ❌ flat video | ✅ Android and iOS (no time bar on iOS yet) | Tested on a Galaxy S24+ and an iPhone 14 |
-| 3D (stereoscopic) 360° photos and videos | ❌ doubled picture | ✅ left eye on phones, true 3D on the Quest 3 | Tested on a Galaxy S24+ and a Quest 3, with real 3D 360° samples (VRTogether, Vuze, Kandao) and a 3D photo; reports from other cameras welcome |
+| 3D (stereoscopic) 360° photos and videos | ❌ doubled picture | ✅ left eye on phones, true 3D on the Quest | Tested on a Galaxy S24+ and a Quest 3, with real 3D 360° samples (VRTogether, Vuze, Kandao) and a 3D photo; reports from other cameras welcome |
 | VR180 (half sphere) photos and videos | ❌ stretched around the sphere | ✅ half sphere, 360°/180° button | Tested on an Android emulator and a Galaxy S24+ with synthetic media; device feedback welcome |
-| Apple spatial photos (HEIC stereo pairs) and spatial videos (MV-HEVC) | ❌ a flat photo or video, nothing says it is spatial | ✅ from build 19: photos in 3D in the Quest 3, one eye and a details row elsewhere | Detection checked on a sample photo written by Apple's image library and on synthetic files; the headset view and real iPhone files are the device test of build 19 |
-| Meta Quest 3 immersive view with head tracking, a time bar, previous and next, and Turn | ❌ | ✅ same app, as a headset build or the phone APK | Tested on a Quest 3 (controls of build 14, adjusted in build 16 after a user's feedback), and by a user with Insta360 X4 8K HEVC videos |
+| Apple spatial photos (HEIC stereo pairs) and spatial videos (MV-HEVC) | ❌ a flat photo or video, nothing says it is spatial | ✅ from build 19: photos in 3D in the Quest, one eye and a details row elsewhere | Detection checked on a sample photo written by Apple's image library and on synthetic files; the headset view and real iPhone files are the device test of build 19 |
+| Meta Quest immersive view with head tracking, a time bar, previous and next, and Turn | ❌ | ✅ same app, as a headset build or the phone APK | Tested on a Quest 3 (controls of build 14, adjusted in build 16 after a user's feedback), and by a user with Insta360 X4 8K HEVC videos |
 | 360° badge on thumbnails, and a 360° list with raw files and filters (period, source, type, camera) | ❌ | ✅ filters from build 18 | Done |
 | "View as 360°" for files the server does not flag | ❌ | ✅ remembered on the phone | Done |
 | Spatial 2.5D: depth on a flat screen from a stereoscopic video | ❌ | ✅ experimental, phones and tablets | Tested on a Galaxy S24+; iPhone feedback welcome |
 | Use without any server, on the device's own gallery | ❌ login required | ✅ | Tested on a Galaxy S24+, a Quest 3 and an Android emulator |
-| SMB and WebDAV shares found on the network and played live, nothing downloaded | ❌ | ✅ every viewer, phones and Quest 3 | Tested with a Freebox Server (SMB) on a Galaxy S24+ and a Quest 3, and against Samba and WebDAV test servers on an Android emulator; other NAS and WebDAV feedback welcome |
+| SMB and WebDAV shares found on the network and played live, nothing downloaded | ❌ | ✅ every viewer, phones and Quest | Tested with a Freebox Server (SMB) on a Galaxy S24+ and a Quest 3, and against Samba and WebDAV test servers on an Android emulator; other NAS and WebDAV feedback welcome |
 | DLNA media servers as a share type | ❌ | ✅ from build 19 | Checked against minidlna and Gerbera in Docker; Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest are the device test of build 19 |
 | Send the files of a share to Immich; device files sent by hand counted as backed up | ❌ device files only | ✅ from build 15 | Tested on an Android emulator against a Samba test server and an Immich 3.2 server |
 | Share this phone on the network, for the headset | ❌ | ✅ from build 19, Android and iOS | Unit tests and end to end tests with the headset's WebDAV client, on a computer; a phone serving a Quest, and the iPhone side, are the device test of build 19 |
-| Plex Media Server libraries played from the original files, at home and away, without plex.tv | ❌ | ✅ from build 20, every viewer, on phones, tablets, the Quest 3 and TVs | Checked from a computer against a real Plex Media Server 1.42.1 (pairing, folders, byte ranges, thumbnails, the address outside home); not yet checked on a device |
-| Tapo cameras: the live view, and the recordings of the memory card sent to Immich when you choose | ❌ | ✅ from build 20: recordings everywhere, live on Android, Android TV and the Quest 3 | Checked against a simulated camera; not yet checked with a real camera |
+| Plex Media Server libraries played from the original files, at home and away, without plex.tv | ❌ | ✅ from build 20, every viewer, on phones, tablets, the Quest and TVs | Checked from a computer against a real Plex Media Server 1.42.1 (pairing, folders, byte ranges, thumbnails, the address outside home); not yet checked on a device |
+| Tapo cameras: the live view, and the recordings of the memory card sent to Immich when you choose | ❌ | ✅ from build 20: recordings everywhere, live on Android, Android TV and the Quest | Checked against a simulated camera; not yet checked with a real camera |
 | Android TV and Google TV, driven by the remote, in the same APK | ❌ not a TV app | ✅ from build 20 | Checked by automated tests; not yet checked on a TV |
 | Raw Insta360 .insp photos and single track .insv videos | ❌ flat | ✅ from build 16 | Photos checked against Insta360 Studio exports of X3 files, videos on an Android emulator with a low resolution X3 file; not run on an iPhone yet |
 | Raw videos with one lens per track or per file (Insta360 X4, X4 Air, X5, X6, X3 pairs, GoPro .360, DJI .osv) | ❌ flat or wrong | ✅ from build 18 | Parsers and stitching checked on real X4, X3 pair, GoPro MAX and Osmo 360 files; playback is the device test of builds 18 and 19 |
@@ -697,7 +697,7 @@ The current build, build 20 (version 3.3.0-rc.0, build number 3030018), is based
 
 | What people use | What they run into | What Immuch360 does |
 |---|---|---|
-| The Immich web app | It shows a 360° photo as a sphere, but takes a raw .insp for a finished panorama and wraps its two circles around the sphere; a VR view is still a request ([discussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Stitches raw files on the device, and opens an immersive view in the Quest 3 |
+| The Immich web app | It shows a 360° photo as a sphere, but takes a raw .insp for a finished panorama and wraps its two circles around the sphere; a VR view is still a request ([discussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Stitches raw files on the device, and opens an immersive view in the Quest |
 | The Insta360 app or Studio | Needed to turn the raw files of the card into a 360° picture before watching | Opens the raw .insp and .insv files directly, and the GoPro .360 and DJI .osv files |
 | Plex, Jellyfin, Synology Photos | 360° photos and videos shown flat or not recognised, as threads on their forums describe (a Plex request has been open since 2017) | Reads the Plex library itself from build 20, or the same folders over SMB, WebDAV or DLNA, and plays them as a sphere, without changing anything on the server |
 | The Tapo app | A separate app, signed in to your TP-Link account, with the clips apart from your photos | Shows the camera next to your photos, talks to it on your network only, and keeps a clip as a video you can send to Immich (from build 20) |
@@ -709,7 +709,7 @@ The current build, build 20 (version 3.3.0-rc.0, build number 3030018), is based
 
 Immuch360 is a gallery, and it is also a free media player: it plays what the official app cannot, from the sources of the second table, in the player that fits the file.
 
-| What | Android phones | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (from build 20) |
+| What | Android phones | iPhone, iPad | Meta Quest | Android TV, Google TV (from build 20) |
 |---|---|---|---|---|
 | Flat videos (MP4, MOV, MKV, what the device decodes) | Immich player, and a native player for network shares | Same, except the MKV and AVI files of a share, which iOS does not open (on a server they play transcoded) | In the window | As on phones; OK pauses, left and right jump 10 s |
 | 360° photos | Sphere viewer, gyroscope | Same | Immersive, all around you | Sphere viewer turned with the arrows, zoomed with the channel keys |
@@ -739,14 +739,14 @@ The TV column has not been checked on a TV yet, see [Watch on your TV](#watch-on
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 also runs on the Meta Quest 3 and 3S (Horizon OS v69 or later; the Horizon Store build is listed for these two only; the universal `-release.apk` should also install on a Quest 2 or Quest Pro, untested). How to use it is in [In the Meta Quest 3 headset](#in-the-meta-quest-3-headset); this section is about installing it and what differs on the headset.
+Immuch360 also runs on the Meta Quest headsets with Horizon OS v69 or later. From build 21 the Horizon Store build is listed for the Quest 2, Quest Pro, Quest 3 and 3S, the four the universal `-release.apk` already names; the first Quest is not, the store no longer accepts it. The Quest 3 and 3S are tested. The Quest 2 and Quest Pro are not tested yet: their video decoders are slower, and the limits the app checks were measured on a Quest 3, so a large H.264 video may be refused with a message or stutter on them. Reports from these two headsets are welcome in [Issues](https://github.com/freeKC/Immuch360/issues). How to use it is in [In the Meta Quest 3 headset](#in-the-meta-quest-3-headset); this section is about installing it and what differs on the headset.
 
 The headset build only talks to servers over HTTPS, or over plain HTTP to names of the home network (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) and to the headset itself, as the Horizon Store requires. A server typed as a plain HTTP address with an IP, such as `http://192.168.1.10:2283`, is refused by that build: use HTTPS, a home network name (`nas.local`), or the universal `-release.apk`, which keeps the open policy of the phones. WebDAV, DLNA and phone shares at a plain HTTP address of the local network are not concerned: the app reads them itself and hands its players only the address of its local bridge (to be confirmed on the headset for DLNA and the phone share, new in build 19). From build 20 a Plex server is reached over HTTPS, and a Tapo camera by the app itself, its live view over RTSP, which is not HTTP: neither should be concerned (to be confirmed on the headset).
 
 <a id="install"></a>
 ### Install
 
-The Horizon Store listing is waiting for Meta's review, submitted with build 14; until it is approved, sideload the `-quest-release.apk` file of a release (built for the headset: 64 bit, target SDK 34, only the permissions the headset uses), or the universal `-release.apk`:
+Meta approved the Horizon Store listing on 7 October 2026 with build 14, and build 21 is submitted as its first update. Until the store page is public, or to get a build before the store has it, sideload the `-quest-release.apk` file of a release (built for the headset: 64 bit, target SDK 34, only the permissions the headset uses), or the universal `-release.apk`:
 
 1. Enable developer mode once. In the Meta Horizon phone app, open Devices, select the headset, then Headset settings, then Developer mode. This needs a developer account, which is free at developers.meta.com. You also need adb (Android SDK Platform Tools) on the computer, or SideQuest.
 2. Connect the headset to a computer with a USB-C cable. In the headset, accept "Allow USB debugging".
@@ -754,7 +754,7 @@ The Horizon Store listing is waiting for Meta's review, submitted with build 14;
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. In the headset, open the Library, choose the "Unknown sources" filter, and start Immuch360.
@@ -776,7 +776,7 @@ Captures taken in the headset with the capture button (Meta button and trigger),
 ### Limitations on the headset
 
 - **Video codecs**: HEVC (H.265) is the safe choice; H.264 stops around 4096x2304. What the app checks, and how to give the headset a video it decodes, is in [Video details and decoders](#video-details-decoders-and-why-a-video-stutters).
-- **Store**: the store version starts at build 14. The features marked "from build 15" and later come with its next updates (the store's alpha test channel, for testers, gets each new build); the GitHub APK has them all now.
+- **Store**: the store version starts at build 14. The features marked "from build 15" and later come with build 21, its first update, once Meta has reviewed it (the store's alpha test channel, for testers, gets each new build); the GitHub APK has them all now.
 - **Permissions**: the headset build asks only for photos and videos (the mode without a server) and notifications (backup progress). It has no storage, audio, location or camera permission, unlike the phone build; the Wi-Fi name based server switching is therefore not available on the headset.
 - **APK size**: the Spatial SDK adds about 56 MB of 64-bit ARM native code, on phones too, where it is never loaded.
 - **License**: the immersive view uses the Meta Spatial SDK, distributed under the Meta Platform Technologies SDK License Agreement.
@@ -784,13 +784,13 @@ Captures taken in the headset with the capture button (Meta button and trigger),
 <a id="where-to-get-it"></a>
 ## Where to get it
 
-The app is on Google Play for phones and tablets; the App Store version is waiting for Apple's review, the Meta Horizon Store version for Meta's, and the Google Play version for TVs for Google's review of the TV release. The GitHub release is always the newest build:
+The app is on Google Play for phones and tablets; the App Store version is waiting for Apple's review, the Meta Horizon Store listing is approved and its first update is in Meta's review, and the Google Play version for TVs is waiting for Google's review of the TV release. The GitHub release is always the newest build:
 
 | Platform | Today | Soon |
 |---|---|---|
-| Android phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone (the universal `Immuch360-v<version>-release.apk` works everywhere, `-armeabi-v7a` is for older 32 bit phones, and the `.aab` file is for Google Play, not for sideloading). The GitHub build is usually ahead of the store. Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`). | Google Play: build 18 is live, build 19 in Google's review since 6 October 2026, build 20 next |
+| Android phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone (the universal `Immuch360-v<version>-release.apk` works everywhere, `-armeabi-v7a` is for older 32 bit phones, and the `.aab` file is for Google Play, not for sideloading). The GitHub build is usually ahead of the store. Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`). | Google Play: build 18 is live, build 20 in Google's review since 7 October 2026, in place of build 19 |
 | iPhone and iPad | Waiting for Apple's review. The version under review carries the features of build 11: the upload to Immich and the Video source choice (build 15) and the raw Insta360 files (build 16) will come with a later App Store update. The source builds with Xcode or on Codemagic, see [Build it yourself](#build-it-yourself). | App Store, under review |
-| Meta Quest 3 and 3S | The `-quest-release.apk` file of the [Releases](https://github.com/freeKC/Immuch360/releases) page (the universal `-release.apk` works too), sideloaded in developer mode, see [Install](#install). The store build and the GitHub APK are signed with different keys: to switch from one to the other, uninstall the app first (its settings and saved shares go with it). | Meta Horizon Store: build 14 under Meta's review since 3 October 2026; the store's alpha channel (testers only) gets each new build |
+| Meta Quest 2, Quest Pro, Quest 3 and 3S (the Quest 2 and Quest Pro untested) | The `-quest-release.apk` file of the [Releases](https://github.com/freeKC/Immuch360/releases) page (the universal `-release.apk` works too), sideloaded in developer mode, see [Install](#install). The store build and the GitHub APK are signed with different keys: to switch from one to the other, uninstall the app first (its settings and saved shares go with it). | Meta Horizon Store: the listing was approved on 7 October 2026 with build 14, and build 21, its first update, is in Meta's review; the store's alpha channel (testers only) gets each new build |
 | Android TV and Google TV (from build 20) | The universal `Immuch360-v<version>-release.apk` of the [Releases](https://github.com/freeKC/Immuch360/releases) page, sideloaded with adb, see [Install it on the TV](#install-it-on-the-tv). It is the same app as on phones. | Google Play on TVs, after Google's review of the TV release |
 
 The App Store and Meta Horizon Store links will be added here as soon as the listings are published. Log in with your usual Immich server URL and account, or tap "Use without a server" on the login page to start on the device's own photos and videos. The APK from GitHub does not update itself: watch the Releases page, and once you have installed the app from a store, take the updates from that store.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Store screenshots are taken on debug simulator builds made with `--dart-define=IMMUCH_SCREENSHOTS=true`, which only hides the debug banner. The two Android flavours are the same app. From build 20 the `phone` one also declares itself as a TV app (a TV launcher entry and a banner, no touch screen required), which the `quest` one leaves out. The `quest` one targets SDK 34 and keeps only the permissions the headset uses (photos, videos, notifications): media management, background location, legacy storage, audio, media location, device location and camera are removed in `android/app/src/quest/AndroidManifest.xml`, because the Meta Horizon Store refuses the first two and asks for a justification of every other sensitive one; the same file names the Quest 3 and 3S as its supported devices and limits plain HTTP to the headset itself and to names of the home network. The APK is 64 bit only because of the two extra arguments of its command line (`--target-platform android-arm64 --android-project-arg arm64only=true`). The `phone` one is what Google Play requires. To build for iOS on your own Mac, use Xcode and your own signing team; with Xcode 26, run `xcodebuild -downloadComponent MetalToolchain` once first, as the Spatial shaders need it. Without a Mac, iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Store screenshots are taken on debug simulator builds made with `--dart-define=IMMUCH_SCREENSHOTS=true`, which only hides the debug banner. The two Android flavours are the same app. From build 20 the `phone` one also declares itself as a TV app (a TV launcher entry and a banner, no touch screen required), which the `quest` one leaves out. The `quest` one targets SDK 34 and keeps only the permissions the headset uses (photos, videos, notifications): media management, background location, legacy storage, audio, media location, device location and camera are removed in `android/app/src/quest/AndroidManifest.xml`, because the Meta Horizon Store refuses the first two and asks for a justification of every other sensitive one; the same file names the Quest 2, Quest Pro, Quest 3 and 3S as its supported devices and limits plain HTTP to the headset itself and to names of the home network. The APK is 64 bit only because of the two extra arguments of its command line (`--target-platform android-arm64 --android-project-arg arm64only=true`). The `phone` one is what Google Play requires. To build for iOS on your own Mac, use Xcode and your own signing team; with Xcode 26, run `xcodebuild -downloadComponent MetalToolchain` once first, as the Spatial shaders need it. Without a Mac, iOS builds run on Codemagic (a hosted Mac) from the `codemagic.yaml` file of this repository. Android release builds run on GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 No secret lives in this repository: the Android signing key is stored as encrypted GitHub Actions secrets, and the Apple signing material is stored as encrypted variables on Codemagic. The workflow files only reference them by name. Without your own `android/key.jks`, a release build is signed with the debug key and cannot install over a copy from GitHub or a store (uninstall that one first); a debug build installs next to it as Immuch360 debug. The Meta Horizon Store copy is the `quest` APK of the release signed with another key, the one the store app was first registered with, so it cannot install over a sideloaded APK either, nor the other way round.
 
@@ -857,9 +857,9 @@ This project is a fork of Immich and stays under the [GNU AGPL v3](LICENSE). Eve
 
 What is not done yet, the most likely first. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
-- **Google Play**: build 18 is live; build 19 is in Google's review since 6 October 2026, and build 20 follows.
+- **Google Play**: build 18 is live; build 20 is in Google's review since 7 October 2026, in place of build 19. Build 21 changes nothing on phones and tablets.
 - **App Store**: version 3.3.0 is waiting for Apple's review; it carries the features of build 11, so the upload to Immich and the video decoder check (build 15) and the raw Insta360 files (build 16) come with the next App Store update. The link will be added here when it is live.
-- **Meta Horizon Store**: the listing was submitted for Meta's review on 3 October 2026 with build 14, and the store's alpha channel gets each new build for the next update. Once the listing is approved, the Quest 3 no longer needs sideloading and the store link will be added here; a sideloaded copy has to be uninstalled first (see [Install](#install)).
+- **Meta Horizon Store**: Meta approved the listing on 7 October 2026 with build 14. Build 21 is submitted as its first update: it brings everything since build 14 (uploads from a share to Immich, the video source chosen from what the headset decodes, raw Insta360, GoPro and DJI files, DLNA, the phone share, Apple spatial photos, Plex Media Server libraries, Tapo cameras), and the store lists it for the Quest 2, Quest Pro, Quest 3 and 3S. The store link will be added here once the page is public; a sideloaded copy has to be uninstalled first (see [Install](#install)).
 - **Store listings**: the Google Play listing was rewritten in October 2026 with new screenshots, and gains TV screenshots and a TV banner with the TV release. The App Store text still describes the first builds (360° photos and videos, raw files shown flat); it will present the 3D, VR180 and Spatial viewers, the mode without a server, network shares, the media player and the raw Insta360 files. The Meta Horizon Store text already presents the media player.
 - **Raw 360° camera files, next**: a progress indicator while a raw photo is prepared for the headset; levelling of GoPro and DJI videos from their own motion data; dual fisheye .dng; device reports on the two lens playback of build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) to confirm seams and decoder budgets.
 - **DLNA, phone share and Apple spatial, next**: the device reports of build 19 (Plex, Jellyfin, a NAS and the Freebox Server over DLNA; a phone serving a Quest, on its hotspot too; real iPhone spatial photos and videos in the headset); the multicast entitlement asked from Apple, so that iPhones find every DLNA server; previous and next between spatial photos in the headset; a spatial badge on server photos in the timeline; spatial videos in 3D on the Quest, if its decoders allow it.

@@ -1,11 +1,11 @@
 [English](README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | Alemannisch | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
 <p align="center">
-  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°-, 3D- und VR180-Fotos und -Videos, vo Immich, dim Telefon oder emne NAS. Android, iOS und Meta Quest 3, mit oder ohni Server">
+  <img src=".github/readme/banner.png" width="760" alt="Immuch360: 360°-, 3D- und VR180-Fotos und -Videos, vo Immich, dim Telefon oder emne NAS. Android, iOS und Meta Quest, mit oder ohni Server">
 </p>
 
 # Immuch360
 
-Immuch360 isch d Immich-App fürs Handy mit 360°-Fotos und -Videos, i dene du dich chasch umeluege, und en gratis Player für flachi, 360°-, 3D- und VR180-Fotos und -Videos, uf Android-Telefon und -Tablets, iPhones und iPads, uf de Meta Quest 3 und 3S, und ab Build 20 uf Android TV und Google TV. Si isch für Lüüt, wo mit ere 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) oder im Fotosphäre-Modus vom Telefon fotografiered, oder wo es Headset händ, und ihri eigete Ufnahme vo emne Immich-Server, vom Telefon sälber, vo emne NAS, emne Medieserver oder emne Plex-Server aaluege wänd: glyche Server, glyches Konto, kei Server-Plugin, oder grad gar kei Server. Ab Build 20 zeigt si au Tapo-Kameras, live und d Ufnahme vo ihrere Speichercharte.
+Immuch360 isch d Immich-App fürs Handy mit 360°-Fotos und -Videos, i dene du dich chasch umeluege, und en gratis Player für flachi, 360°-, 3D- und VR180-Fotos und -Videos, uf Android-Telefon und -Tablets, iPhones und iPads, uf de Meta-Quest-Headsets (Quest 3 und 3S, und ab Build 21 Quest 2 und Quest Pro, nöd prüeft), und ab Build 20 uf Android TV und Google TV. Si isch für Lüüt, wo mit ere 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) oder im Fotosphäre-Modus vom Telefon fotografiered, oder wo es Headset händ, und ihri eigete Ufnahme vo emne Immich-Server, vom Telefon sälber, vo emne NAS, emne Medieserver oder emne Plex-Server aaluege wänd: glyche Server, glyches Konto, kei Server-Plugin, oder grad gar kei Server. Ab Build 20 zeigt si au Tapo-Kameras, live und d Ufnahme vo ihrere Speichercharte.
 
 <p align="center">
   <sub>Inoffizielle Fork. Nöd mit Immich oder FUTO verbunde. De Name wird «I am much 360» gläse.</sub>
@@ -15,7 +15,7 @@ Immuch360 isch d Immich-App fürs Handy mit 360°-Fotos und -Videos, i dene du d
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a> &nbsp;·&nbsp;
   App Store: <a href="#where-to-get-it">i de Prüefig</a> &nbsp;·&nbsp;
-  Meta Quest 3: <a href="#meta-quest-3">APK</a>, Horizon Store i de Prüefig &nbsp;·&nbsp;
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store freigä, Build 21 als erschts Update iigreicht &nbsp;·&nbsp;
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
@@ -26,7 +26,7 @@ Immuch360 isch d Immich-App fürs Handy mit 360°-Fotos und -Videos, i dene du d
     <td align="center" width="33%"><h3>🎥 Nativs 2.5D</h3>Tüüfi uf emne flache Bildschirm us emne stereoskopische Video, d Aasicht folgt dim Chopf (experimentell, Telefon und Tablets)</td>
   </tr>
   <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest 3, TV</h3>Ei App uf Telefon, Tablets und em Headset, echts 3D im Headset, und ab Build 20 uf Android TV mit de Fernbedienig</td>
+    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Ei App uf Telefon, Tablets und de Headsets Quest 2, Pro, 3 und 3S, echts 3D im Headset, und ab Build 20 uf Android TV mit de Fernbedienig</td>
     <td align="center"><h3>🔌 Mit oder ohni Server</h3>Din Immich-Server oder d eigeti Galerie vom Telefon, kei Konto nötig</td>
     <td align="center"><h3>🗄️ Netzwerkfreigabe</h3>Samba (SMB), WebDAV und, ab Build 19, DLNA-Medieserver, im Netzwerk gfunde und live gläse, nüt wird abeglade, und uf Immich gschickt, wänn du das wotsch. Ab Build 19 teilt es Telefon au sini eigeti Galerie mit em Headset</td>
   </tr>
@@ -109,7 +109,7 @@ D Wahl wird uf em Telefon gspeicheret und ändert nüt uf em Server. Bi ere Date
 
 Du häsch kei Immich-Server, oder du wotsch kei Konto: du wotsch nume, dass d 360°-Fotos vo dim Telefon als Kugle ufgönd, wo du mit em Gyroskop chasch drülle. D Immich-App wott zerscht es Login.
 
-Uf de Login-Siite macht «Ohni Server bruuche» Immuch360 mit de eigete Fotos und Videos vom Grät uf, mit de 360°-, 3D-, VR180- und Spatial-Viewer, de 360°-Lischte und de Netzwerkfreigabe (ab Build 20 au mit de Plex-Server und de Tapo-Kameras), ohni Immich-Konto. D Server-Funktione bliibed versteckt oder grau, bis du en Server verbindsch; nüt verlaht s Grät. Uf de Meta Quest 3 macht's d eigete Fotos und Videos vom Headset uf; uf emne Fernseh, wo kei hät, füehrt's zu de Netzwerkfreigabe (lueg [Uf dim Fernseh aaluege](#watch-on-your-tv-android-tv-and-google-tv)).
+Uf de Login-Siite macht «Ohni Server bruuche» Immuch360 mit de eigete Fotos und Videos vom Grät uf, mit de 360°-, 3D-, VR180- und Spatial-Viewer, de 360°-Lischte und de Netzwerkfreigabe (ab Build 20 au mit de Plex-Server und de Tapo-Kameras), ohni Immich-Konto. D Server-Funktione bliibed versteckt oder grau, bis du en Server verbindsch; nüt verlaht s Grät. Uf ere Meta Quest macht's d eigete Fotos und Videos vom Headset uf; uf emne Fernseh, wo kei hät, füehrt's zu de Netzwerkfreigabe (lueg [Uf dim Fernseh aaluege](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src=".github/readme/b19-library-no-server.png" width="260" alt="De Tab Bibliothek ohni Server: de Iitrag 360° zoberscht, dänn Uf däm Grät mit zwei 360°-Fotos, und Netzwerkfreigabe mit ere Freigab namens NAS">
 
@@ -159,7 +159,7 @@ En Benutzername mit emne leere Passwort wird so gschickt: en Freebox Server wott
 1. Tipp uf e Freigab. Zerscht chömed d Ordner, dänn d Fotos und Videos als Raster mit Vorschaubilder (au es Bild vo jedem Video, uf em Grät zwüschegspeicheret). Die, wo als 360° erkännt wärded, händ s 360°-Abzeiche, und ab Build 19 händ räumlichi Apple-Fotos und -Videos es 3D-Abzeiche. Zum Aktualisiere abezieh.
 2. Tipp uf es Foto: es gaht im Vollbild uf (zwei Finger, Doppeltippe), und sin 360°-Chnopf macht de Kugle-Viewer uf.
 3. Tipp uf es Video: es lauft im native Player (Abspiele, Pause, Springe), mit emne 360°-Chnopf, wo de 360°-Player mit sine 3D- und 360°/180°-Chnöpf uftuet, und uf emne Telefon mit emne Spatial-Chnopf für stereoskopischi Dateie.
-4. Uf de Quest 3 macht de 360°-Chnopf d immersivi Aasicht uf, und ab Build 19 macht «In 3D aaluege» es räumlichs Apple-Foto in 3D uf.
+4. Uf ere Quest macht de 360°-Chnopf d immersivi Aasicht uf, und ab Build 19 macht «In 3D aaluege» es räumlichs Apple-Foto in 3D uf.
 5. S ⋮-Menü hät «Als 360° aazeige» für Dateie ohni 360°-Tag, und uf emne Telefon «Spatial 2.5D» für Videos, wo nöd stereoskopisch sind.
 
 360°, 3D und VR180 wärded a de GPano- oder sphärische Metadate vo de Datei erkännt, wo mit Range-Aafrage gläse wärded, und VR180 au am Dateiname. Ab Build 16 wärded au rohi Insta360-Dateie erkännt (es .insp-Foto a sim Name oder am Kalibrierigsblock vo de Kamera, es .insv-Video a sim Name und sim Bild) und zämegsetzt.
@@ -252,7 +252,7 @@ D Adrässe, wo de Server aagit, wird bi jeder Verbindig dihei nöi glernt. Wänn
 <a id="share-this-phone-on-the-network"></a>
 ## Das Telefon im Netzwerk freigä
 
-Dini Fotos und Videos sind uf dim Telefon, und du wotsch si im Headset luege, ohni Computer, ohni NAS und ohni Immich-Server. Ab Build 19 stellt es Telefon, Android oder iPhone, sini eigete Fotos und Videos im WLAN zur Verfüegig, und d Meta Quest 3 spilt si ab. D Immich-App hät nüt dergliiche.
+Dini Fotos und Videos sind uf dim Telefon, und du wotsch si im Headset luege, ohni Computer, ohni NAS und ohni Immich-Server. Ab Build 19 stellt es Telefon, Android oder iPhone, sini eigete Fotos und Videos im WLAN zur Verfüegig, und e Meta Quest spilt si ab. D Immich-App hät nüt dergliiche.
 
 ### Iischalte, uf em Telefon
 
@@ -285,7 +285,7 @@ Vo det aa isch es e WebDAV-Freigab wie jedi anderi: 360°-Erkännig, Rohdateie, 
 
 Du häsch dihei Tapo-Kameras und wotsch d Gartechamera und d Clips vo letschter Nacht näbed dine Fotos gseh, ohni d Tapo-App ufztue, und en Clip in Immich bhalte. D Immich-App hät nüt für Kameras, und d Tapo-App isch e separati App, i dis TP-Link-Konto iigloggt, mit de Clips getrennt vo dine Fotos.
 
-Ab Build 20 füegt Immuch360 e Tapo-Kamera näbed de Netzwerkfreigabe hinzue. Si zeigt d Kamera live uf Android-Telefon und -Tablets, Android TV und de Meta Quest 3, und uf jeder Plattform d Ufnahme vo ihrere Speichercharte, Tag für Tag: en Clip wird vo de Kamera gholt, lauft dänn wie jedes Video und cha uf Immich gschickt wärde. D App redt nume i dim Netzwerk mit de Kamera, nie mit de Server vo TP-Link, und änderet nie öppis a de Kamera.
+Ab Build 20 füegt Immuch360 e Tapo-Kamera näbed de Netzwerkfreigabe hinzue. Si zeigt d Kamera live uf Android-Telefon und -Tablets, Android TV und de Meta Quest, und uf jeder Plattform d Ufnahme vo ihrere Speichercharte, Tag für Tag: en Clip wird vo de Kamera gholt, lauft dänn wie jedes Video und cha uf Immich gschickt wärde. D App redt nume i dim Netzwerk mit de Kamera, nie mit de Server vo TP-Link, und änderet nie öppis a de Kamera.
 
 ### E Kamera hinzuefüege
 
@@ -396,7 +396,7 @@ Ab Build 19, uf Android und de Quest:
 
 I de Immich-App zeigt es stereoskopischs 360°-Foto oder -Video beidi Auge gliichziitig, es doppelts Bild, und e VR180-Datei, wo nume di vorder Hälfti abdeckt, wird um di ganz Kugle verzoge.
 
-Immuch360 erkännt d 3D-Layouts, obe und unde oder nebedenand, us de Datei (d st3d-Box vo emne Video) oder errat si us de Form vom Bild, und jede Viewer hät en 3D-Chnopf zum si ändere. Es Telefon zeigt s linggs Aug; d Meta Quest 3 zeigt jedem Aug sini eigeti Hälfti, in echtem 3D. VR180-Dateie wärded uf e Halbkugle zeichnet, hine schwarz statt emne verzogne Bild. Si wärded us de Datei erkännt (sphärischi Gränze oder Mesh, GPano-Zueschnitt) oder a emne «vr180» oder «180» im Name, und jede Viewer hät en 360°/180°-Chnopf.
+Immuch360 erkännt d 3D-Layouts, obe und unde oder nebedenand, us de Datei (d st3d-Box vo emne Video) oder errat si us de Form vom Bild, und jede Viewer hät en 3D-Chnopf zum si ändere. Es Telefon zeigt s linggs Aug; e Meta Quest zeigt jedem Aug sini eigeti Hälfti, in echtem 3D. VR180-Dateie wärded uf e Halbkugle zeichnet, hine schwarz statt emne verzogne Bild. Si wärded us de Datei erkännt (sphärischi Gränze oder Mesh, GPano-Zueschnitt) oder a emne «vr180» oder «180» im Name, und jede Viewer hät en 360°/180°-Chnopf.
 
 ### S Layout oder d Abdeckig ändere
 
@@ -428,14 +428,14 @@ Mit Settings, Erwiitert, Fählersuechi aa, füegt de Player obe links en Overlay
 ### Format, Dateschutz und Grenze
 
 - **Format**: nebedenand und obe und unde, au mit vertuuschte Auge, volli oder halbi Breiti, flach, 360° und VR180. S Layout wird us de Datei gläse, susch us de Bildform oder em Dateiname errate (sbs, ou, tb und so; e Datei mit halber Breiti wird nume am Name erkännt), und cha im Player vo Hand gwählt wärde. D Wahl wird für es Video vo de Bibliothek gspeicheret, nöd für e Datei vo ere Netzwerkfreigab.
-- **Kamera**: d Bilder wärded nume uf em Grät verarbeitet, nie gspeicheret und nie niene anegschickt. De Quest-3-Build hät gar kei Kamera-Berächtigung (s Headset hät kei Kamera, wo e App dörf bruuche), und de Spatial-Player wird det nöd aabote: sin Chnopf und sini Iistellig sind uf em Headset versteckt.
+- **Kamera**: d Bilder wärded nume uf em Grät verarbeitet, nie gspeicheret und nie niene anegschickt. De Quest-Build hät gar kei Kamera-Berächtigung (s Headset hät kei Kamera, wo e App dörf bruuche), und de Spatial-Player wird det nöd aabote: sin Chnopf und sini Iistellig sind uf em Headset versteckt.
 - **Grenze**: experimentell, nume Telefon und Tablets (nöd uf de Meta Quest), bruucht OpenGL ES 3.0 oder Metal. D Tüüfi isch e Schätzig. Am beschte gaht's quer und mit guet beleuchtetem Gsicht. Prüeft uf emne Galaxy S24+; Rückmäldige vom iPhone sind willkomme.
 - **Ersatzlösig**: wänn öppis schiefgaht (kei Kamera, nöd unterstützts Grät, unläsbars Layout), bisch wieder im normale Player.
 
 <a id="apple-spatial-photos-and-videos"></a>
 ## Räumlichi Apple-Fotos und -Videos
 
-Es iPhone macht räumlichi Fotos und Videos, und de Immich-Server seit nüt drüber: i de Immich-App sind's es flachs Foto oder Video. Ab Build 19 erkännt Immuch360 si, indem si d Dateie list, und zeigt es räumlichs Foto in 3D i de Meta Quest 3. Das isch nöd de Spatial-2.5D-Player vo obe, wo für Videos nebedenand und obe und unde isch.
+Es iPhone macht räumlichi Fotos und Videos, und de Immich-Server seit nüt drüber: i de Immich-App sind's es flachs Foto oder Video. Ab Build 19 erkännt Immuch360 si, indem si d Dateie list, und zeigt es räumlichs Foto in 3D i emne Meta-Quest-Headset. Das isch nöd de Spatial-2.5D-Player vo obe, wo für Videos nebedenand und obe und unde isch.
 
 - **Räumlichi Fotos** sind HEIC-Dateie (`.heic`, `.heif`, `.hif`) mit zwei Bilder, eis pro Aug, als Stereopaar gruppiert. D App list de Aafang vo de Datei (uf em Grät, s Original vom Server mit ere Range-Aafrag, oder e Datei vo ere Netzwerkfreigab) und speicheret d Antwort uf em Telefon, drum wird es Foto nume eimal gläse.
 - **Räumlichi Videos** (MV-HEVC) wärded a de Videospur erkännt: e zweiti Schicht, und beidi Auge aagä.
@@ -466,7 +466,7 @@ D Erkännig isch mit emne Bispil-Foto prüeft worde, wo Apple sini eigeti Bildbi
 
 Lüüt chaufed e Quest 3, zum ihri eigete 360°-Fotos und -Videos z luege, und fröged dänn, wo si d Dateie sölled ane tue, wie si si ohni Kabel ufs Headset bringed und weli Player si sölled bruuche: d Player im Store für 360°- und 3D-Video choschted.
 
-Di glych Android-App lauft uf de Quest 3 und 3S als Fänschter, mit dinere ganze Bibliothek. Ihre 360°-Chnopf macht e immersivi Aasicht uf, i dere s Foto oder Video rund um dich isch und du dich umeluegsch, indem du de Chopf drüllsch, in echtem 3D für stereoskopischi Dateie (Meta Spatial SDK). D Medie chömed vo dim Immich-Server, vom Headset sälber, vo emne NAS, emne Medieserver, emne Telefon oder emne Plex-Server und laufed diräkt vo det (en Medieserver und es Telefon ab Build 19, en Plex-Server ab Build 20, no nöd uf em Headset prüeft), und ab Build 20 zeigt s Fänschter au d Tapo-Kameras. Si isch gratis und Open Source. Prüeft uf ere Quest 3, und vo emne Benutzer mit Insta360-X4-8K-HEVC-Videos.
+Di glych Android-App lauft uf de Quest 3 und 3S, und ab Build 21 uf de Quest 2 und Quest Pro (nöd prüeft), als Fänschter, mit dinere ganze Bibliothek. Ihre 360°-Chnopf macht e immersivi Aasicht uf, i dere s Foto oder Video rund um dich isch und du dich umeluegsch, indem du de Chopf drüllsch, in echtem 3D für stereoskopischi Dateie (Meta Spatial SDK). D Medie chömed vo dim Immich-Server, vom Headset sälber, vo emne NAS, emne Medieserver, emne Telefon oder emne Plex-Server und laufed diräkt vo det (en Medieserver und es Telefon ab Build 19, en Plex-Server ab Build 20, no nöd uf em Headset prüeft), und ab Build 20 zeigt s Fänschter au d Tapo-Kameras. Si isch gratis und Open Source. Prüeft uf ere Quest 3, und vo emne Benutzer mit Insta360-X4-8K-HEVC-Videos.
 
 ### D immersivi Aasicht uftue
 
@@ -659,7 +659,7 @@ Alles, wo di offiziell Immich-Handy-App macht, isch da: Sicherig, Zitachse, Albe
 
 Zum emne Mänsch, wo d App nöd hät, es 360°-Foto zeige, teil's mit emne Immich-Link: d Immich-Web-App zeigt es 360°-Foto i sim Browser als Kugle.
 
-De aktuell Build, Build 20 (Version 3.3.0-rc.0, Buildnummere 3030018), basiert uf Immich 3.3.0-rc.0 (Immich `main`, no kei stabils Release). Build 19 isch mit emne Immich-3.2-Server prüeft worde, und Build 20 änderet nüt a dem, was d App vom Server wott. Bitte mäld Problem i de [Issues](https://github.com/freeKC/Immuch360/issues), nöd bim Immich-Projekt. Für di ganz Dokumentation vo Immich sälber, lueg [immich.app](https://immich.app).
+De aktuell Build, Build 21 (Version 3.3.0-rc.0, Buildnummere 3030019), basiert uf Immich 3.3.0-rc.0 (Immich `main`, no kei stabils Release). Build 19 isch mit emne Immich-3.2-Server prüeft worde, und d Builds 20 und 21 änderet nüt a dem, was d App vom Server wott. Bitte mäld Problem i de [Issues](https://github.com/freeKC/Immuch360/issues), nöd bim Immich-Projekt. Für di ganz Dokumentation vo Immich sälber, lueg [immich.app](https://immich.app).
 
 ## Im Vergliich mit de Immich-App und andere Apps
 
@@ -670,20 +670,20 @@ De aktuell Build, Build 20 (Version 3.3.0-rc.0, Buildnummere 3030018), basiert u
 | 360°-Fotos als Kugle zum Umeluege (zieh, zwei Finger, Doppeltippe, Nachlauf, d Startaasicht vo de Kamera, Teilpanoramas) | ❌ flache Streife | ✅ | Prüeft uf emne Galaxy S24+ und emne iPhone 14 |
 | Gyroskop: umeluege, indem du s Telefon bewegsch | ❌ | ✅ | Prüeft uf emne Galaxy S24+ und emne iPhone 14 |
 | 360°-Videos imne Kugle-Player, mit Ton, Springe, Tonspur-Wahl und Puffer-Aazeig | ❌ flachs Video | ✅ Android und iOS (uf iOS no kei Ziitleischte) | Prüeft uf emne Galaxy S24+ und emne iPhone 14 |
-| 3D-(stereoskopischi) 360°-Fotos und -Videos | ❌ doppelts Bild | ✅ linggs Aug uf Telefon, echts 3D uf de Quest 3 | Prüeft uf emne Galaxy S24+ und ere Quest 3, mit echte 3D-360°-Bispil (VRTogether, Vuze, Kandao) und emne 3D-Foto; Bricht vo andere Kameras willkomme |
+| 3D-(stereoskopischi) 360°-Fotos und -Videos | ❌ doppelts Bild | ✅ linggs Aug uf Telefon, echts 3D uf de Quest | Prüeft uf emne Galaxy S24+ und ere Quest 3, mit echte 3D-360°-Bispil (VRTogether, Vuze, Kandao) und emne 3D-Foto; Bricht vo andere Kameras willkomme |
 | VR180-(Halbkugle-)Fotos und -Videos | ❌ um d Kugle verzoge | ✅ Halbkugle, 360°/180°-Chnopf | Prüeft uf emne Android-Emulator und emne Galaxy S24+ mit synthetische Medie; Rückmäldige vo Grät willkomme |
-| Räumlichi Apple-Fotos (HEIC-Stereopaar) und räumlichi Videos (MV-HEVC) | ❌ es flachs Foto oder Video, nüt seit, dass es räumlich isch | ✅ ab Build 19: Fotos in 3D i de Quest 3, susch eis Aug und e Detail-Ziile | Erkännig prüeft mit emne Bispil-Foto, wo d Bildbibliothek vo Apple gschribe hät, und mit synthetische Dateie; d Aasicht im Headset und echti iPhone-Dateie sind de Gerätetest vo Build 19 |
-| Immersivi Aasicht uf de Meta Quest 3 mit Chopfverfolgig, Ziitleischte, vorhärigs und nächschts, und Dräie | ❌ | ✅ glychi App, als Headset-Build oder s Telefon-APK | Prüeft uf ere Quest 3 (Steuerig vo Build 14, in Build 16 nach ere Rückmäldig vo emne Benutzer aapasst), und vo emne Benutzer mit Insta360-X4-8K-HEVC-Videos |
+| Räumlichi Apple-Fotos (HEIC-Stereopaar) und räumlichi Videos (MV-HEVC) | ❌ es flachs Foto oder Video, nüt seit, dass es räumlich isch | ✅ ab Build 19: Fotos in 3D i de Quest, susch eis Aug und e Detail-Ziile | Erkännig prüeft mit emne Bispil-Foto, wo d Bildbibliothek vo Apple gschribe hät, und mit synthetische Dateie; d Aasicht im Headset und echti iPhone-Dateie sind de Gerätetest vo Build 19 |
+| Immersivi Aasicht uf de Meta Quest mit Chopfverfolgig, Ziitleischte, vorhärigs und nächschts, und Dräie | ❌ | ✅ glychi App, als Headset-Build oder s Telefon-APK | Prüeft uf ere Quest 3 (Steuerig vo Build 14, in Build 16 nach ere Rückmäldig vo emne Benutzer aapasst), und vo emne Benutzer mit Insta360-X4-8K-HEVC-Videos |
 | 360°-Abzeiche uf de Vorschaubilder, und e 360°-Lischte mit Rohdateie und Filter (Ziitruum, Quälle, Art, Kamera) | ❌ | ✅ Filter ab Build 18 | Erledigt |
 | «Als 360° aazeige» für Dateie, wo de Server nöd markiert | ❌ | ✅ uf em Telefon gspeicheret | Erledigt |
 | Spatial 2.5D: Tüüfi uf emne flache Bildschirm us emne stereoskopische Video | ❌ | ✅ experimentell, Telefon und Tablets | Prüeft uf emne Galaxy S24+; Rückmäldige vom iPhone willkomme |
 | Bruuche ganz ohni Server, mit de eigete Galerie vom Grät | ❌ Login nötig | ✅ | Prüeft uf emne Galaxy S24+, ere Quest 3 und emne Android-Emulator |
-| SMB- und WebDAV-Freigabe, im Netzwerk gfunde und live abgspilt, nüt abeglade | ❌ | ✅ jede Viewer, Telefon und Quest 3 | Prüeft mit emne Freebox Server (SMB) uf emne Galaxy S24+ und ere Quest 3, und gäge Samba- und WebDAV-Testserver uf emne Android-Emulator; Rückmäldige zu andere NAS und WebDAV willkomme |
+| SMB- und WebDAV-Freigabe, im Netzwerk gfunde und live abgspilt, nüt abeglade | ❌ | ✅ jede Viewer, Telefon und Quest | Prüeft mit emne Freebox Server (SMB) uf emne Galaxy S24+ und ere Quest 3, und gäge Samba- und WebDAV-Testserver uf emne Android-Emulator; Rückmäldige zu andere NAS und WebDAV willkomme |
 | DLNA-Medieserver als Freigab-Typ | ❌ | ✅ ab Build 19 | Prüeft gäge minidlna und Gerbera in Docker; Plex, Jellyfin, es NAS, de Freebox Server, es iPhone und d Quest sind de Gerätetest vo Build 19 |
 | D Dateie vo ere Freigab uf Immich schicke; vo Hand gschickti Dateie vom Grät gälted als gsicheret | ❌ nume Dateie vom Grät | ✅ ab Build 15 | Prüeft uf emne Android-Emulator gäge en Samba-Testserver und en Immich-3.2-Server |
 | Das Telefon im Netzwerk freigä, für s Headset | ❌ | ✅ ab Build 19, Android und iOS | Unit-Tests und End-to-End-Tests mit em WebDAV-Client vom Headset, uf emne Computer; es Telefon, wo e Quest belieferet, und d iPhone-Siite sind de Gerätetest vo Build 19 |
-| Plex-Media-Server-Bibliotheke, abgspilt us de Originaldateie, dihei und unterwägs, ohni plex.tv | ❌ | ✅ ab Build 20, jede Viewer, uf Telefon, Tablets, de Quest 3 und Fernseh | Vo emne Computer us gäge en echte Plex Media Server 1.42.1 prüeft (Verbinde, Ordner, Byte-Bereich, Vorschaubilder, d Adrässe usserhalb vo dihei); no nöd uf emne Grät prüeft |
-| Tapo-Kameras: d Live-Aasicht, und d Ufnahme vo de Speichercharte uf Immich gschickt, wänn du's wotsch | ❌ | ✅ ab Build 20: Ufnahme überall, live uf Android, Android TV und de Quest 3 | Gäge e simulierti Kamera prüeft; no nöd mit ere echte Kamera prüeft |
+| Plex-Media-Server-Bibliotheke, abgspilt us de Originaldateie, dihei und unterwägs, ohni plex.tv | ❌ | ✅ ab Build 20, jede Viewer, uf Telefon, Tablets, de Quest und Fernseh | Vo emne Computer us gäge en echte Plex Media Server 1.42.1 prüeft (Verbinde, Ordner, Byte-Bereich, Vorschaubilder, d Adrässe usserhalb vo dihei); no nöd uf emne Grät prüeft |
+| Tapo-Kameras: d Live-Aasicht, und d Ufnahme vo de Speichercharte uf Immich gschickt, wänn du's wotsch | ❌ | ✅ ab Build 20: Ufnahme überall, live uf Android, Android TV und de Quest | Gäge e simulierti Kamera prüeft; no nöd mit ere echte Kamera prüeft |
 | Android TV und Google TV, mit de Fernbedienig gstüüret, im glyche APK | ❌ kei TV-App | ✅ ab Build 20 | Mit automatische Tests prüeft; no nöd uf emne Fernseh prüeft |
 | Rohi Insta360-.insp-Fotos und .insv-Videos mit einere Spur | ❌ flach | ✅ ab Build 16 | Fotos prüeft gäge Insta360-Studio-Exporte vo X3-Dateie, Videos uf emne Android-Emulator mit ere X3-Datei mit tüüfer Uflösig; no nie uf emne iPhone gloffe |
 | Rohi Videos mit eim Objektiv pro Spur oder pro Datei (Insta360 X4, X4 Air, X5, X6, X3-Paar, GoPro .360, DJI .osv) | ❌ flach oder falsch | ✅ ab Build 18 | Parser und Zämesetze prüeft mit echte X4-, X3-Paar-, GoPro-MAX- und Osmo-360-Dateie; s Abspiele isch de Gerätetest vo de Builds 18 und 19 |
@@ -697,7 +697,7 @@ De aktuell Build, Build 20 (Version 3.3.0-rc.0, Buildnummere 3030018), basiert u
 
 | Was d Lüüt bruuched | Wo si aastossed | Was Immuch360 macht |
 |---|---|---|
-| D Immich-Web-App | Si zeigt es 360°-Foto als Kugle, haltet aber es rohs .insp für es fertigs Panorama und wicklet sini zwei Chreis um d Kugle; e VR-Aasicht isch immer no en Wunsch ([Diskussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Setzt Rohdateie uf em Grät zäme und macht i de Quest 3 e immersivi Aasicht uf |
+| D Immich-Web-App | Si zeigt es 360°-Foto als Kugle, haltet aber es rohs .insp für es fertigs Panorama und wicklet sini zwei Chreis um d Kugle; e VR-Aasicht isch immer no en Wunsch ([Diskussion #14768](https://github.com/immich-app/immich/discussions/14768)) | Setzt Rohdateie uf em Grät zäme und macht i de Quest e immersivi Aasicht uf |
 | D Insta360-App oder Studio | Nötig, zum d Rohdateie vo de Charte in es 360°-Bild umzwandle, bevor mer's cha luege | Macht di rohe .insp- und .insv-Dateie diräkt uf, und d GoPro-.360- und DJI-.osv-Dateie au |
 | Plex, Jellyfin, Synology Photos | 360°-Fotos und -Videos flach aazeigt oder nöd erkännt, wie's Beiträg i ihre Forum beschriibed (en Plex-Wunsch isch sit 2017 offe) | List ab Build 20 d Plex-Bibliothek sälber, oder di glyche Ordner über SMB, WebDAV oder DLNA, und spilt si als Kugle ab, ohni öppis am Server z ändere |
 | D Tapo-App | E separati App, i dis TP-Link-Konto iigloggt, mit de Clips getrennt vo dine Fotos | Zeigt d Kamera näbed dine Fotos, redt nume i dim Netzwerk mit ere, und bhaltet en Clip als Video, wo du uf Immich chasch schicke (ab Build 20) |
@@ -709,7 +709,7 @@ De aktuell Build, Build 20 (Version 3.3.0-rc.0, Buildnummere 3030018), basiert u
 
 Immuch360 isch e Galerie, und au en gratis Medieplayer: er spilt, was di offiziell App nöd cha, us de Quälle vo de zweite Tabälle, i dem Player, wo zur Datei passt.
 
-| Was | Android-Telefon | iPhone, iPad | Meta Quest 3 | Android TV, Google TV (ab Build 20) |
+| Was | Android-Telefon | iPhone, iPad | Meta Quest | Android TV, Google TV (ab Build 20) |
 |---|---|---|---|---|
 | Flachi Videos (MP4, MOV, MKV, was s Grät dekodiert) | Immich-Player, und en native Player für Netzwerkfreigabe | Glych, usser d MKV- und AVI-Dateie vo ere Freigab, wo iOS nöd uftuet (uf emne Server laufed si transkodiert) | Im Fänschter | Wie uf Telefon; OK pausiert, links und rächts springed 10 s |
 | 360°-Fotos | Kugle-Viewer, Gyroskop | Glych | Immersiv, rund um dich | Kugle-Viewer, mit de Pfiil drüllt, zoomt mit de Kanaltaste |
@@ -739,14 +739,14 @@ D TV-Spalte isch no nöd uf emne Fernseh prüeft, lueg [Uf dim Fernseh aaluege](
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 lauft au uf de Meta Quest 3 und 3S (Horizon OS v69 oder neuer; de Build im Horizon Store isch nume für die zwei glischtet; s universelle `-release.apk` sött sich au uf ere Quest 2 oder Quest Pro installiere lah, nöd prüeft). Wie mer's bruucht, staht in [Im Meta Quest 3 Headset](#in-the-meta-quest-3-headset); dä Abschnitt gaht ums Installiere und um das, wo uf em Headset anders isch.
+Immuch360 lauft au uf de Meta-Quest-Headsets mit Horizon OS v69 oder neuer. Ab Build 21 isch de Build im Horizon Store für d Quest 2, Quest Pro, Quest 3 und 3S glischtet, die vier, wo s universelle `-release.apk` scho nennt; di erscht Quest nöd, de Store nimmt si nümme aa. D Quest 3 und 3S sind prüeft. D Quest 2 und Quest Pro sind no nöd prüeft: ihri Videodecoder sind langsamer, und d Gränze, wo d App prüeft, sind uf ere Quest 3 gmässe worde, drum cha es grosses H.264-Video uf ihne mit ere Mäldig abgläh wärde oder ruckle. Bricht vo dene zwei Headsets sind i de [Issues](https://github.com/freeKC/Immuch360/issues) willkomme. Wie mer's bruucht, staht in [Im Meta Quest 3 Headset](#in-the-meta-quest-3-headset); dä Abschnitt gaht ums Installiere und um das, wo uf em Headset anders isch.
 
 De Headset-Build redt mit Server nume über HTTPS, oder über eifachs HTTP mit Näme vom Heimnetz (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) und mit em Headset sälber, so wie's de Horizon Store verlangt. En Server, wo als eifachi HTTP-Adrässe mit ere IP iitippt isch, wie `http://192.168.1.10:2283`, lehnt dä Build ab: bruuch HTTPS, en Name vom Heimnetz (`nas.local`), oder s universelle `-release.apk`, wo di offe Regle vo de Telefon bhaltet. WebDAV-, DLNA- und Telefon-Freigabe a ere eifache HTTP-Adrässe vom lokale Netzwerk sind nöd betroffe: d App list si sälber und git ihrne Player nume d Adrässe vo ihrere lokale Brugg (für DLNA und d Telefon-Freigab, neu in Build 19, no uf em Headset z bestätige). Ab Build 20 wird en Plex-Server über HTTPS erreicht, und e Tapo-Kamera vo de App sälber, ihri Live-Aasicht über RTSP, wo kei HTTP isch: beidi sötted nöd betroffe sii (uf em Headset no z bestätige).
 
 <a id="install"></a>
 ### Installiere
 
-De Iitrag im Horizon Store wartet uf d Prüefig vo Meta, iigreicht mit Build 14; bis er freigä isch, sideload d Datei `-quest-release.apk` vo emne Release (für s Headset baut: 64 Bit, Target SDK 34, nume d Berächtigunge, wo s Headset bruucht), oder s universelle `-release.apk`:
+Meta hät de Iitrag im Horizon Store am 7. Oktober 2026 mit Build 14 freigä, und Build 21 isch als sis erschts Update iigreicht. Bis d Store-Siite öffentlich isch, oder zum en Build überchoo, bevor de Store en hät, sideload d Datei `-quest-release.apk` vo emne Release (für s Headset baut: 64 Bit, Target SDK 34, nume d Berächtigunge, wo s Headset bruucht), oder s universelle `-release.apk`:
 
 1. Schalt eimal de Entwicklermodus ii. I de Meta-Horizon-App uf em Telefon tue «Devices» (Grät) uf, wähl s Headset, dänn «Headset settings» (Headset-Iistellige), dänn «Developer mode» (Entwicklermodus). Defür bruuchsch es Entwicklerkonto, wo uf developers.meta.com gratis isch. Uf em Computer bruuchsch au adb (Android SDK Platform Tools), oder SideQuest.
 2. Verbind s Headset mit emne USB-C-Kabel mit emne Computer. Im Headset «Allow USB debugging» (USB-Debugging erlaube) aanäh.
@@ -754,7 +754,7 @@ De Iitrag im Horizon Store wartet uf d Prüefig vo Meta, iigreicht mit Build 14;
 
    ```bash
    adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-20-quest-release.apk
+   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
    ```
 
 4. Im Headset d Bibliothek uftue, de Filter «Unknown sources» (Unbekannti Quälle) wähle und Immuch360 starte.
@@ -776,7 +776,7 @@ Ufnahme im Headset mit em Ufnahme-Chnopf (Meta-Chnopf und Trigger), uf ere Quest
 ### Grenze uf em Headset
 
 - **Video-Codecs**: HEVC (H.265) isch di sicher Wahl; H.264 hört bi öppe 4096x2304 uf. Was d App prüeft, und wie mer em Headset es Video git, wo's dekodiert, staht in [Videodetails und Decoder](#video-details-decoders-and-why-a-video-stutters).
-- **Store**: d Store-Version fangt bi Build 14 aa. D Funktione mit «ab Build 15» und spöter chömed mit de nächschte Updates (de Alpha-Testkanal vom Store, für Tester, überchunnt jede neue Build); s GitHub-APK hät si jetzt scho alli.
+- **Store**: d Store-Version fangt bi Build 14 aa. D Funktione mit «ab Build 15» und spöter chömed mit Build 21, sim erschte Update, sobald Meta en prüeft hät (de Alpha-Testkanal vom Store, für Tester, überchunnt jede neue Build); s GitHub-APK hät si jetzt scho alli.
 - **Berächtigunge**: de Headset-Build fröget nume nach Fotos und Videos (de Modus ohni Server) und Benachrichtigunge (Fortschritt vo de Sicherig). Er hät kei Speicher-, Audio-, Standort- oder Kamera-Berächtigung, anders als de Telefon-Build; s Wächsle vom Server nach em WLAN-Name gaht drum uf em Headset nöd.
 - **APK-Grössi**: s Spatial SDK bringt öppe 56 MB 64-Bit-ARM-Native-Code derzue, au uf de Telefon, wo's nie glade wird.
 - **Lizänz**: d immersivi Aasicht bruucht s Meta Spatial SDK, wo under em Meta Platform Technologies SDK License Agreement verteilt wird.
@@ -784,13 +784,13 @@ Ufnahme im Headset mit em Ufnahme-Chnopf (Meta-Chnopf und Trigger), uf ere Quest
 <a id="where-to-get-it"></a>
 ## Wo du si überchunsch
 
-D App isch uf Google Play für Telefon und Tablets; d Version für de App Store wartet uf d Prüefig vo Apple, d Version für de Meta Horizon Store uf die vo Meta, und d Google-Play-Version für Fernseh uf d Prüefig vo Google vom TV-Release. S GitHub-Release isch immer de neuscht Build:
+D App isch uf Google Play für Telefon und Tablets; d Version für de App Store wartet uf d Prüefig vo Apple, de Iitrag im Meta Horizon Store isch freigä und sis erschts Update isch i de Prüefig vo Meta, und d Google-Play-Version für Fernseh wartet uf d Prüefig vo Google vom TV-Release. S GitHub-Release isch immer de neuscht Build:
 
 | Plattform | Hüt | Bald |
 |---|---|---|
-| Android-Telefon und -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder s APK uf de Siite [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` für es Telefon (s universelle `Immuch360-v<version>-release.apk` gaht überall, `-armeabi-v7a` isch für älteri 32-Bit-Telefon, und d `.aab`-Datei isch für Google Play, nöd zum Sideloade). De GitHub-Build isch meischtens em Store vorus. So oder so wird er näbed de offizielle Immich-App installiert (Paket `com.aprogsys.immuch360`). | Google Play: Build 18 isch online, Build 19 sit em 6. Oktober 2026 i de Prüefig vo Google, Build 20 dernaa |
+| Android-Telefon und -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder s APK uf de Siite [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` für es Telefon (s universelle `Immuch360-v<version>-release.apk` gaht überall, `-armeabi-v7a` isch für älteri 32-Bit-Telefon, und d `.aab`-Datei isch für Google Play, nöd zum Sideloade). De GitHub-Build isch meischtens em Store vorus. So oder so wird er näbed de offizielle Immich-App installiert (Paket `com.aprogsys.immuch360`). | Google Play: Build 18 isch online, Build 20 sit em 7. Oktober 2026 i de Prüefig vo Google, anstatt Build 19 |
 | iPhone und iPad | Wartet uf d Prüefig vo Apple. D Version i de Prüefig hät d Funktione vo Build 11: s Ufelade uf Immich und d Wahl Videoquälle (Build 15) und d rohe Insta360-Dateie (Build 16) chömed mit emne spötere Update im App Store. De Quellcode lat sich mit Xcode oder uf Codemagic baue, lueg [Sälber baue](#build-it-yourself). | App Store, i de Prüefig |
-| Meta Quest 3 und 3S | D Datei `-quest-release.apk` vo de Siite [Releases](https://github.com/freeKC/Immuch360/releases) (s universelle `-release.apk` gaht au), im Entwicklermodus gsideloadet, lueg [Installiere](#install). De Store-Build und s GitHub-APK sind mit verschiedene Schlüssel signiert: zum vom eint zum andere wächsle, zerscht d App deinstalliere (ihri Iistellige und gspeicherete Freigabe gönd mit). | Meta Horizon Store: Build 14 sit em 3. Oktober 2026 i de Prüefig vo Meta; de Alpha-Kanal vom Store (nume für Tester) überchunnt jede neue Build |
+| Meta Quest 2, Quest Pro, Quest 3 und 3S (Quest 2 und Quest Pro nöd prüeft) | D Datei `-quest-release.apk` vo de Siite [Releases](https://github.com/freeKC/Immuch360/releases) (s universelle `-release.apk` gaht au), im Entwicklermodus gsideloadet, lueg [Installiere](#install). De Store-Build und s GitHub-APK sind mit verschiedene Schlüssel signiert: zum vom eint zum andere wächsle, zerscht d App deinstalliere (ihri Iistellige und gspeicherete Freigabe gönd mit). | Meta Horizon Store: de Iitrag isch am 7. Oktober 2026 mit Build 14 freigä worde, und Build 21, sis erschts Update, isch i de Prüefig vo Meta; de Alpha-Kanal vom Store (nume für Tester) überchunnt jede neue Build |
 | Android TV und Google TV (ab Build 20) | S universelle `Immuch360-v<version>-release.apk` vo de Siite [Releases](https://github.com/freeKC/Immuch360/releases), mit adb gsideloadet, lueg [Uf em Fernseh installiere](#install-it-on-the-tv). Es isch di glych App wie uf Telefon. | Google Play uf Fernseh, nach de Prüefig vo Google vom TV-Release |
 
 D Links zum App Store und zum Meta Horizon Store chömed da ane, sobald d Iiträg veröffentlicht sind. Mäld dich mit de gwohnte URL vo dim Immich-Server und dim Konto aa, oder tipp uf de Login-Siite uf «Ohni Server bruuche», zum mit de eigete Fotos und Videos vom Grät aazfange. S APK vo GitHub aktualisiert sich nöd sälber: lueg uf de Siite Releases nache, und sobald du d App us emne Store installiert häsch, nimm d Updates us dem Store.
@@ -808,11 +808,11 @@ mise run install
 mise run codegen
 flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
 flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 3: the -quest-release.apk of the releases (also mise run build:quest)
+flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-D Store-Screenshots wärded uf Debug-Builds im Simulator gmacht, wo mit `--dart-define=IMMUCH_SCREENSHOTS=true` baut sind, was nume s Debug-Banner versteckt. Di zwei Android-Flavours sind di glych App. Ab Build 20 meldet sich de `phone`-Flavour au als TV-App aa (en Iitrag im TV-Launcher und es Banner, kei Touchscreen nötig), was de `quest`-Flavour weglaht. De `quest`-Flavour zielt uf SDK 34 und bhaltet nume d Berächtigunge, wo s Headset bruucht (Fotos, Videos, Benachrichtigunge): Medieverwaltig, Standort im Hintergrund, alte Speicherzuegriff, Audio, Standort vo de Medie, Standort vom Grät und Kamera wärded in `android/app/src/quest/AndroidManifest.xml` entfernt, will de Meta Horizon Store di erschte zwei ablehnt und für jedi anderi sensibli Berächtigung e Begründig verlangt; di glych Datei nennt d Quest 3 und 3S als unterstützti Grät und begränzt eifachs HTTP uf s Headset sälber und uf Näme vom Heimnetz. S APK isch nume 64 Bit wäge de zwei zuesätzliche Argument vo sinere Befehlsziile (`--target-platform android-arm64 --android-project-arg arm64only=true`). De `phone`-Flavour isch das, wo Google Play verlangt. Zum für iOS uf dim eigete Mac baue, bruuch Xcode und dis eigete Signier-Team; mit Xcode 26 lauf zerscht eimal `xcodebuild -downloadComponent MetalToolchain`, will d Spatial-Shader das bruuched. Ohni Mac laufed iOS-Builds uf Codemagic (en ghostete Mac) mit de Datei `codemagic.yaml` vo dem Repository. Android-Release-Builds laufed uf GitHub Actions (`.github/workflows/immuch360-release.yml`).
+D Store-Screenshots wärded uf Debug-Builds im Simulator gmacht, wo mit `--dart-define=IMMUCH_SCREENSHOTS=true` baut sind, was nume s Debug-Banner versteckt. Di zwei Android-Flavours sind di glych App. Ab Build 20 meldet sich de `phone`-Flavour au als TV-App aa (en Iitrag im TV-Launcher und es Banner, kei Touchscreen nötig), was de `quest`-Flavour weglaht. De `quest`-Flavour zielt uf SDK 34 und bhaltet nume d Berächtigunge, wo s Headset bruucht (Fotos, Videos, Benachrichtigunge): Medieverwaltig, Standort im Hintergrund, alte Speicherzuegriff, Audio, Standort vo de Medie, Standort vom Grät und Kamera wärded in `android/app/src/quest/AndroidManifest.xml` entfernt, will de Meta Horizon Store di erschte zwei ablehnt und für jedi anderi sensibli Berächtigung e Begründig verlangt; di glych Datei nennt d Quest 2, Quest Pro, Quest 3 und 3S als unterstützti Grät und begränzt eifachs HTTP uf s Headset sälber und uf Näme vom Heimnetz. S APK isch nume 64 Bit wäge de zwei zuesätzliche Argument vo sinere Befehlsziile (`--target-platform android-arm64 --android-project-arg arm64only=true`). De `phone`-Flavour isch das, wo Google Play verlangt. Zum für iOS uf dim eigete Mac baue, bruuch Xcode und dis eigete Signier-Team; mit Xcode 26 lauf zerscht eimal `xcodebuild -downloadComponent MetalToolchain`, will d Spatial-Shader das bruuched. Ohni Mac laufed iOS-Builds uf Codemagic (en ghostete Mac) mit de Datei `codemagic.yaml` vo dem Repository. Android-Release-Builds laufed uf GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Kei Geheimnis liit i dem Repository: de Android-Signierschlüssel isch als verschlüssleti GitHub-Actions-Secrets gspeicheret, und s Apple-Signiermaterial als verschlüssleti Variable uf Codemagic. D Workflow-Dateie verwiised nume mit em Name druf. Ohni dis eigete `android/key.jks` wird en Release-Build mit em Debug-Schlüssel signiert und cha nöd über e Kopie vo GitHub oder emne Store installiert wärde (deinstallier die zerscht); en Debug-Build wird näbedra als Immuch360 debug installiert. D Kopie im Meta Horizon Store isch s `quest`-APK vom Release, mit emne andere Schlüssel signiert, dem, mit dem d Store-App zerscht registriert worde isch, drum cha si au nöd über es sideloadets APK installiert wärde, und umgekehrt au nöd.
 
@@ -857,9 +857,9 @@ Das Projekt isch e Fork vo Immich und bliibt under de [GNU AGPL v3](LICENSE). Je
 
 Was no nöd gmacht isch, s Wahrschiinlichscht zerscht. Nüt devo isch es Verspreche, und Rückmäldige im [Issue-Tracker](https://github.com/freeKC/Immuch360/issues) hälfed z entscheide, was zerscht chunt.
 
-- **Google Play**: Build 18 isch online; Build 19 isch sit em 6. Oktober 2026 i de Prüefig vo Google, und Build 20 chunnt dernaa.
+- **Google Play**: Build 18 isch online; Build 20 isch sit em 7. Oktober 2026 i de Prüefig vo Google, anstatt Build 19. Build 21 änderet nüt uf Telefon und Tablets.
 - **App Store**: d Version 3.3.0 wartet uf d Prüefig vo Apple; si hät d Funktione vo Build 11, drum chömed s Ufelade uf Immich und d Prüefig vo de Videodecoder (Build 15) und d rohe Insta360-Dateie (Build 16) mit em nächschte Update im App Store. De Link chunt da ane, sobald si online isch.
-- **Meta Horizon Store**: de Iitrag isch am 3. Oktober 2026 mit Build 14 zur Prüefig a Meta iigreicht worde, und de Alpha-Kanal vom Store überchunnt jede neue Build für s nächscht Update. Sobald de Iitrag freigä isch, bruucht d Quest 3 kei Sideloading me, und de Store-Link chunt da ane; e sideloadeti Kopie muess zerscht deinstalliert wärde (lueg [Installiere](#install)).
+- **Meta Horizon Store**: Meta hät de Iitrag am 7. Oktober 2026 mit Build 14 freigä. Build 21 isch als sis erschts Update iigreicht: er bringt alles sit Build 14 (Uploads vo ere Freigabe uf Immich, d Videoquelle nach dem gwählt, was s Headset decodiert, rohi Insta360-, GoPro- und DJI-Dateie, DLNA, d Telefon-Freigabe, räumlichi Apple-Fotos, Plex-Media-Server-Bibliotheke, Tapo-Kameras), und de Store listet en für d Quest 2, Quest Pro, Quest 3 und 3S. De Store-Link chunt da ane, sobald d Siite öffentlich isch; e sideloadeti Kopie muess zerscht deinstalliert wärde (lueg [Installiere](#install)).
 - **Store-Iiträg**: de Google-Play-Iitrag isch im Oktober 2026 mit neue Screenshots nöi gschribe worde, und überchunnt mit em TV-Release TV-Screenshots und es TV-Banner. De Text im App Store beschriibt immer no di erschte Builds (360°-Fotos und -Videos, Rohdateie flach aazeigt); er wird d 3D-, VR180- und Spatial-Viewer, de Modus ohni Server, d Netzwerkfreigabe, de Medieplayer und d rohe Insta360-Dateie vorstelle. De Text im Meta Horizon Store stellt de Medieplayer scho vor.
 - **Rohdateie vo 360°-Kameras, als Nächschts**: e Fortschrittsaazeig, solang es rohs Foto für s Headset vorbereitet wird; s Usrichte vo GoPro- und DJI-Videos mit ihrne eigete Bewegigsdate; Dual-Fisheye-.dng; Bricht vo Grät zum Abspiele mit zwei Objektiv vo Build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360), zum Nähte und Decoder-Budgets z bestätige.
 - **DLNA, Telefon-Freigab und räumlichi Apple-Medie, als Nächschts**: d Gerätebricht vo Build 19 (Plex, Jellyfin, es NAS und de Freebox Server über DLNA; es Telefon, wo e Quest belieferet, au über sin Hotspot; echti räumlichi iPhone-Fotos und -Videos im Headset); d Multicast-Berächtigung, wo bi Apple aagfrögt isch, damit iPhones jede DLNA-Server finded; vorhärigs und nächschts zwüsche räumliche Fotos im Headset; es Abzeiche für räumlichi Fotos vom Server i de Zitachse; räumlichi Videos in 3D uf de Quest, wänn ihri Decoder das zuelönd.

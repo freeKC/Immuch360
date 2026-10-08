@@ -31,10 +31,13 @@
   <!-- No cleartext HTTP on the headset (the Horizon Store security scan flags it); the exceptions are in
        res/xml/network_security_config.xml of this flavour, which replaces the phone one by resource merging -->
   <application android:usesCleartextTraffic="false" tools:replace="android:usesCleartextTraffic">
-    <!-- The Horizon Store lists the app for the devices named here (the dashboard has no setting for it). Only the
-         Quest 3 and 3S are tested: the headset decoder limits and the 8192x4096 textures of the immersive view were
-         measured on them. The phone build keeps the wider list for sideloading. -->
-    <meta-data android:name="com.oculus.supportedDevices" android:value="quest3|quest3s" tools:replace="android:value" />
+    <!-- The Horizon Store lists the app for the devices named here (the dashboard has no setting for it). The Quest 3
+         and 3S are the measured ones: the headset decoder limits and the 8192x4096 textures of the immersive view were
+         checked on them. The Quest 2 and Quest Pro (XR2 Gen 1, slower video decoders) are accepted from build 21
+         without a test on a real one: the decoder limits of VideoDecoders.kt were measured on the Quest 3 and are
+         optimistic for them, and a video their decoders refuse gets the usual message. The Quest 1 is not accepted
+         by the store any more. The phone build declares the same list. -->
+    <meta-data android:name="com.oculus.supportedDevices" android:value="quest2|questpro|quest3|quest3s" tools:replace="android:value" />
     <service android:name=".phoneshare.PhoneShareService" tools:node="remove" />
   </application>
 
