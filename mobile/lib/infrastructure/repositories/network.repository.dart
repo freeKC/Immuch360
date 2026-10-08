@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:cupertino_http/cupertino_http.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/network/desktop_http_stack.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:ok_http/ok_http.dart';
 import 'package:web_socket/web_socket.dart';
@@ -12,6 +14,12 @@ class NetworkRepository {
   static Pointer<Void>? _clientPointer;
 
   static Future<void> init() async {
+    // No native client on the computers: a dart:io one (lib/desktop/network)
+    if (CurrentPlatform.isDesktop) {
+      await DesktopHttpStack.instance.init();
+      _client = DesktopHttpStack.instance.client;
+      return;
+    }
     final clientPointer = Pointer<Void>.fromAddress(await networkApi.getClientPointer());
     if (clientPointer == _clientPointer) {
       return;
@@ -42,6 +50,9 @@ class NetworkRepository {
 
   // ignore: avoid-unused-parameters
   static Future<WebSocket> createWebSocket(Uri uri, {Map<String, String>? headers, Iterable<String>? protocols}) {
+    if (CurrentPlatform.isDesktop) {
+      return DesktopHttpStack.instance.createWebSocket(uri, headers: headers, protocols: protocols);
+    }
     if (Platform.isIOS) {
       final session = URLSession.fromRawPointer(_clientPointer!.cast());
       return CupertinoWebSocket.connectWithSession(session, uri, protocols: protocols);

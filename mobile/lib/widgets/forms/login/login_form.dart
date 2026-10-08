@@ -22,6 +22,7 @@ import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/background_sync.provider.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/oauth.provider.dart';
@@ -82,6 +83,8 @@ class LoginForm extends HookConsumerWidget {
     final ValueNotifier<String?> serverEndpoint = useState<String?>(null);
     // The remote control layout (Android TV): the fields are typed in through the native text dialog
     final tvMode = ref.watch(tvModeProvider);
+    // Not checked on a computer yet: the localhost redirect the desktop needs must be accepted by the server
+    final hasOauth = ref.watch(deviceFeaturesProvider.select((features) => features.oauth));
     final passwordEntryFocus = useFocusNode(debugLabel: 'Password entry');
     // A TV that never reached a server is most likely there for the network shares: it starts on "Use without a
     // server" rather than on the address
@@ -583,11 +586,13 @@ class LoginForm extends HookConsumerWidget {
                     ),
                   ),
                 // OAuth signs in through a web page, which a TV cannot open (Play criterion TV-WB): a line says so
-                if (isOauthEnable.value && tvMode)
+                if (isOauthEnable.value && (tvMode || !hasOauth))
                   Padding(
                     padding: const EdgeInsets.only(top: ImmichSpacing.md),
                     child: Text(
-                      context.t.tv_oauth_unavailable(provider: oAuthButtonLabel.value),
+                      tvMode
+                          ? context.t.tv_oauth_unavailable(provider: oAuthButtonLabel.value)
+                          : context.t.desktop_oauth_unavailable(provider: oAuthButtonLabel.value),
                       textAlign: TextAlign.center,
                       style: context.textTheme.bodyMedium,
                     ),

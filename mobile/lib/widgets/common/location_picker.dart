@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/string_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -74,14 +75,17 @@ class _LocationPicker extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(context.t.edit_location_dialog_title, style: context.textTheme.titleMedium),
-            Align(
-              alignment: Alignment.center,
-              child: TextButton.icon(
-                icon: Text(context.t.location_picker_choose_on_map),
-                label: const Icon(Icons.map_outlined, size: 16),
-                onPressed: onMapTap,
+            // Immuch360 Desktop: no map to choose on, maplibre_gl has no desktop implementation; the coordinates below
+            // stay (deviceFeaturesProvider.maps, which a TV answers no to as well, would take the map from the TV)
+            if (!CurrentPlatform.isDesktop)
+              Align(
+                alignment: Alignment.center,
+                child: TextButton.icon(
+                  icon: Text(context.t.location_picker_choose_on_map),
+                  label: const Icon(Icons.map_outlined, size: 16),
+                  onPressed: onMapTap,
+                ),
               ),
-            ),
             const SizedBox(height: 12),
             _ManualPickerInput(
               controller: latitudeController,

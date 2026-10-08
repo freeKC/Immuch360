@@ -1,0 +1,5 @@
+{
+  "CameraLiveApi": "Tapo live view, phase 2 of the desktop plan: until then the camera page offers the live view on Android only (hasLive in camera.page.dart)",
+  "ImmersiveApi": "Meta Quest immersive viewer: isHorizonOsProvider answers false off Android before calling it",
+  "TvApi": "Android TV: readTvDeviceInfo answers \"not a TV\" off Android before calling it"
+}

@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:immich_mobile/desktop/platform/desktop_device.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
@@ -163,6 +165,9 @@ class ApiService {
       final androidInfo = await deviceInfoPlugin.androidInfo;
       authenticationApi.apiClient.addDefaultHeader('deviceModel', androidInfo.model);
       authenticationApi.apiClient.addDefaultHeader('deviceType', 'Android');
+    } else if (CurrentPlatform.isDesktop) {
+      authenticationApi.apiClient.addDefaultHeader('deviceModel', desktopDeviceModel);
+      authenticationApi.apiClient.addDefaultHeader('deviceType', desktopDeviceType());
     } else {
       authenticationApi.apiClient.addDefaultHeader('deviceModel', 'Unknown');
       authenticationApi.apiClient.addDefaultHeader('deviceType', 'Unknown');

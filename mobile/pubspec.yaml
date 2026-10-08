@@ -83,6 +83,9 @@ dependencies:
   wakelock_plus: ^1.3.3
   worker_manager: ^7.2.9
   web_socket: ^1.0.1
+  # Immuch360 Desktop: the window (title, smallest size, close guard, full screen); Windows, macOS and Linux only, used
+  # under lib/desktop/ only
+  window_manager: ^0.5.2
   socket_io_client:
     git:
       url: https://github.com/mertalev/socket.io-client-dart
@@ -128,6 +131,10 @@ dependency_overrides:
   background_downloader:
     path: packages/background_downloader
   bonsoir: ^5.1.11
+  # Immuch360 Desktop: the Windows side of flutter_secure_storage in Dart (DPAPI), without the C++ plugin that needs
+  # the ATL component of Visual Studio (see packages/flutter_secure_storage_windows)
+  flutter_secure_storage_windows:
+    path: packages/flutter_secure_storage_windows
   objective_c:
     git:
       url: https://github.com/mertalev/native
@@ -171,6 +178,14 @@ flutter_launcher_icons:
   android: 'ic_launcher'
   ios: false
   remove_alpha_ios: true
+  # Immuch360 Desktop
+  windows:
+    generate: true
+    image_path: 'assets/immich-logo.png'
+    icon_size: 256
+  macos:
+    generate: true
+    image_path: 'assets/immich-logo-w-bg.png'
 
 analyzer:
   exclude:

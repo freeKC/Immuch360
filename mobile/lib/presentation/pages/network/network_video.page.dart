@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -11,6 +12,7 @@ import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
@@ -768,7 +770,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       onTap: () => setState(() => _showControls = !_showControls),
       child: Stack(
         children: [
-          if (isRouteActive)
+          if (isRouteActive && CurrentPlatform.isDesktop)
+            // No video player on the computers yet: a line says so
+            const Positioned.fill(child: DesktopVideoPlaceholder())
+          else if (isRouteActive)
             Positioned.fill(
               child: IgnorePointer(
                 child: Visibility.maintain(

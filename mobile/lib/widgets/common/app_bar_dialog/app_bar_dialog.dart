@@ -314,7 +314,7 @@ class ImmichAppBarDialog extends HookConsumerWidget {
                 ),
                 if (isReadonlyModeEnabled) buildReadonlyMessage(),
                 buildAppLogButton(),
-                if (hasServer) buildFreeUpSpaceButton(),
+                if (hasServer && SettingSection.freeUpSpace.isOnThisDevice) buildFreeUpSpaceButton(),
                 buildSettingButton(),
                 if (hasServer) buildSignOutButton() else buildConnectServerButton(),
                 buildFooter(),

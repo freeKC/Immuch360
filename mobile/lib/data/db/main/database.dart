@@ -37,6 +37,7 @@ import 'package:immich_mobile/data/db/main/table/user/auth_user.dart';
 import 'package:immich_mobile/data/db/main/table/user/metadata.dart';
 import 'package:immich_mobile/data/db/main/table/user/partner.dart';
 import 'package:immich_mobile/data/db/main/table/user/user.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/infrastructure/repositories/backup.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/local_album.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/local_asset.repository.dart';
@@ -489,9 +490,14 @@ Future<(SqliteConnection, SqliteConnectionPool)> openSqliteConnectionWithUpdateP
 }
 
 Future<File> _databaseFile(String name) async {
-  final dbFolder = await getApplicationDocumentsDirectory();
+  final dbFolder = await databaseDirectory();
   return File(p.join(dbFolder.path, '$name.sqlite'));
 }
+
+/// The folder of the databases: the documents folder of the app on the phones; on the computers the support folder
+/// of the app, since the documents folder there is the user's own Documents
+Future<Directory> databaseDirectory() =>
+    CurrentPlatform.isDesktop ? getApplicationSupportDirectory() : getApplicationDocumentsDirectory();
 
 SqliteDatabase _openImmichDatabase(File file) {
   return SqliteDatabase.withFactory(

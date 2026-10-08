@@ -4,6 +4,7 @@ import 'package:immich_mobile/data/data_controller.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/log.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
@@ -80,7 +81,10 @@ abstract final class Bootstrap {
     }
 
     // TODO: Remove once all asset operations are migrated to Native APIs
-    await PhotoManager.setIgnorePermissionCheck(true);
+    // photo_manager has no Windows or Linux implementation, and the computers do not use it
+    if (!CurrentPlatform.isDesktop) {
+      await PhotoManager.setIgnorePermissionCheck(true);
+    }
     return (dataController, apiService);
   }
 }

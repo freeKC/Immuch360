@@ -6,6 +6,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/archive.action.dart';
@@ -120,7 +121,9 @@ enum ActionButtonType {
             context.isInLockedView && //
             context.asset.hasRemote,
       ActionButtonType.deleteLocal =>
-        !context.isInLockedView && //
+        // Not on a computer until the files can go to the system's trash
+        !CurrentPlatform.isDesktop && //
+            !context.isInLockedView && //
             context.asset.isMerged,
       ActionButtonType.upload =>
         !context.isInLockedView && //
@@ -160,7 +163,8 @@ enum ActionButtonType {
             context.timelineOrigin != TimelineOrigin.archive &&
             context.timelineOrigin != TimelineOrigin.localAlbum &&
             context.isOwner,
-      ActionButtonType.cast => context.isCasting || context.asset.hasRemote,
+      // Not on a computer until Google Cast is checked there (deviceFeaturesProvider.cast)
+      ActionButtonType.cast => !CurrentPlatform.isDesktop && (context.isCasting || context.asset.hasRemote),
       ActionButtonType.slideshow => true,
       // The action decides from the exif and the choices kept on the device: "View as 360°", or "Stop treating as
       // 360°" once chosen. Nothing changes on the server, so it stays in the locked view too.

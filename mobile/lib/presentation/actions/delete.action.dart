@@ -26,7 +26,8 @@ final _stateProvider = Provider.family.autoDispose<_State?, ActionSource>((ref, 
   final localIds = <String>[];
   final ownedRemote = <RemoteAsset>[];
   for (final asset in assets) {
-    if (asset.localId case final localId?) {
+    // The files of a computer stay where they are until they can go to the system's trash: only the server copy goes
+    if (asset.localId case final localId? when !CurrentPlatform.isDesktop) {
       localIds.add(localId);
     }
     if (asset case final RemoteAsset remote when remote.ownerId == authUserId) {
@@ -166,6 +167,10 @@ class DeleteAction extends AssetActionBuilder {
 
 final _cleanupStateProvider = Provider.family.autoDispose<List<String>?, ActionSource>((ref, source) {
   final assets = ref.watch(assetsActionProvider(source));
+  // No "Delete from device" on a computer until its files can go to the system's trash
+  if (CurrentPlatform.isDesktop) {
+    return null;
+  }
   final assetIds = assets.backedUp().map((asset) => asset.localId).nonNulls.toList(growable: false);
   return assetIds.isEmpty ? null : assetIds;
 }, dependencies: [assetsActionProvider]);

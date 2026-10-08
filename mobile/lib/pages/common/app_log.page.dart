@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -67,16 +68,27 @@ class AppLogPage extends HookWidget {
               shouldReload.value = !shouldReload.value;
             },
           ),
-          Builder(
-            builder: (BuildContext iconContext) {
-              return IconButton(
-                icon: Icon(Icons.share_rounded, color: context.primaryColor, semanticLabel: "Share logs", size: 20.0),
-                onPressed: () {
-                  unawaited(ImmichLogger.shareLogs(iconContext));
-                },
-              );
-            },
-          ),
+          // A computer can also keep the logs as a file, with its crash reports
+          if (CurrentPlatform.isDesktop)
+            Builder(
+              builder: (BuildContext iconContext) => IconButton(
+                icon: Icon(Icons.save_alt_rounded, color: context.primaryColor, size: 20.0),
+                tooltip: context.t.desktop_save_logs,
+                onPressed: () => unawaited(ImmichLogger.shareLogs(iconContext, toFile: true)),
+              ),
+            ),
+          // Linux has no share sheet for files: the button above is its export
+          if (!CurrentPlatform.isLinux)
+            Builder(
+              builder: (BuildContext iconContext) {
+                return IconButton(
+                  icon: Icon(Icons.share_rounded, color: context.primaryColor, semanticLabel: "Share logs", size: 20.0),
+                  onPressed: () {
+                    unawaited(ImmichLogger.shareLogs(iconContext));
+                  },
+                );
+              },
+            ),
         ],
         leading: IconButton(
           onPressed: () {

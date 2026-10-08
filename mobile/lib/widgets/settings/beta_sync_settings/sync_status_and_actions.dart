@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/desktop/files/save_to_folder.dart';
 import 'package:immich_mobile/domain/models/server_capability.model.dart';
 import 'package:immich_mobile/domain/services/local_album.service.dart';
 import 'package:immich_mobile/domain/services/memory.service.dart';
@@ -22,7 +24,6 @@ import 'package:immich_mobile/services/app_settings.service.dart';
 import 'package:immich_mobile/widgets/settings/beta_sync_settings/entity_count_tile.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SyncStatusAndActions extends HookConsumerWidget {
@@ -36,7 +37,8 @@ class SyncStatusAndActions extends HookConsumerWidget {
       try {
         // WAL Checkpoint to ensure all changes are written to the database
         await ref.read(driftProvider).customStatement("pragma wal_checkpoint(truncate)");
-        final documentsDir = await getApplicationDocumentsDirectory();
+        // Where the databases are: the documents of the app on the phones, its support folder on the computers
+        final documentsDir = await databaseDirectory();
         final dbFile = File(path.join(documentsDir.path, 'immich.sqlite'));
 
         // ignore: avoid_slow_async_io
@@ -59,11 +61,16 @@ class SyncStatusAndActions extends HookConsumerWidget {
         }
 
         final size = MediaQuery.of(context).size;
-        await Share.shareXFiles(
-          [XFile(exportFile.path)],
-          text: 'Immich Database Export',
-          sharePositionOrigin: Rect.fromPoints(Offset.zero, Offset(size.width / 3, size.height)),
-        );
+        // Linux has no share sheet for files: the export is saved into a folder the user picks (lib/desktop/files)
+        if (CurrentPlatform.isLinux) {
+          await saveFilesToFolder([exportFile.path], announce: false);
+        } else {
+          await Share.shareXFiles(
+            [XFile(exportFile.path)],
+            text: 'Immich Database Export',
+            sharePositionOrigin: Rect.fromPoints(Offset.zero, Offset(size.width / 3, size.height)),
+          );
+        }
 
         Future.delayed(const Duration(seconds: 30), () async {
           // ignore: avoid_slow_async_io

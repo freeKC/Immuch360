@@ -477,7 +477,10 @@ class ForegroundUploadService {
     required UploadCallbacks callbacks,
   }) async {
     final t = StaticTranslations.instance;
-    final assetNotFoundOnDevice = CurrentPlatform.isAndroid
+    // A computer has its own wording: its files are those of the folders of the library
+    final assetNotFoundOnDevice = CurrentPlatform.isDesktop
+        ? t.asset_not_found_on_computer
+        : CurrentPlatform.isAndroid
         ? t.asset_not_found_on_device_android
         : t.asset_not_found_on_device_ios;
     File? file;

@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/network/computer_share.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -24,10 +25,17 @@ class PhoneSharePage extends ConsumerWidget {
       return controller.stop();
     }
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final refused = context.t.local_session_permission_title;
+    // A computer shares the folders the user chose: none chosen yet is what stops it there
+    final refused = CurrentPlatform.isDesktop
+        ? context.t.desktop_folders_choose_title
+        : context.t.local_session_permission_title;
     // Nothing to share without the photos and videos
     if (!await ref.read(phoneSharePermissionsProvider)()) {
       messenger?.showSnackBar(SnackBar(content: Text(refused)));
+      return;
+    }
+    // A computer may be on a network Windows marks as public (lib/desktop/network/computer_share.dart)
+    if (CurrentPlatform.isDesktop && (!context.mounted || !await confirmComputerShare(context))) {
       return;
     }
     await controller.start();
@@ -37,9 +45,15 @@ class PhoneSharePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(phoneShareProvider);
     final t = context.t;
+    // The same share on a computer, with its own wording
+    final computer = CurrentPlatform.isDesktop;
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.phone_share_title), elevation: 0, centerTitle: false),
+      appBar: AppBar(
+        title: Text(computer ? t.computer_share_title : t.phone_share_title),
+        elevation: 0,
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.only(top: 8, bottom: 32),
@@ -47,8 +61,8 @@ class PhoneSharePage extends ConsumerWidget {
             SwitchListTile(
               key: const Key('phone_share_switch'),
               contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-              secondary: Icon(Icons.smartphone, color: context.primaryColor),
-              title: Text(t.phone_share_switch),
+              secondary: Icon(computer ? Icons.computer : Icons.smartphone, color: context.primaryColor),
+              title: Text(computer ? t.computer_share_switch : t.phone_share_switch),
               value: state.isEnabled,
               onChanged: state.status == PhoneShareStatus.starting
                   ? null
@@ -78,7 +92,9 @@ class PhoneSharePage extends ConsumerWidget {
                 ),
             ],
             if (CurrentPlatform.isIOS) _Notice(icon: Icons.info_outline, text: t.phone_share_ios_foreground),
-            _Notice(icon: Icons.lock_outline, text: t.phone_share_read_only),
+            // The firewall and the public networks of a computer (lib/desktop/network/computer_share.dart)
+            if (computer) const ComputerShareNotices(),
+            _Notice(icon: Icons.lock_outline, text: computer ? t.computer_share_read_only : t.phone_share_read_only),
           ],
         ),
       ),
@@ -93,8 +109,10 @@ class PhoneShareTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPhone = CurrentPlatform.isAndroid || CurrentPlatform.isIOS;
+    // The computers share their folders once that is available (lib/desktop/network/computer_share.dart)
+    final computer = CurrentPlatform.isDesktop && computerShareAvailable;
     // A TV reads the shares of others, it is not one: no phone share there either
-    if (!isPhone || ref.watch(isHorizonOsProvider).valueOrNull != false || ref.watch(tvModeProvider)) {
+    if (!(isPhone || computer) || ref.watch(isHorizonOsProvider).valueOrNull != false || ref.watch(tvModeProvider)) {
       return const SizedBox.shrink();
     }
     final state = ref.watch(phoneShareProvider);
@@ -103,7 +121,7 @@ class PhoneShareTile extends ConsumerWidget {
     final subtitle = !state.isEnabled
         ? t.phone_share_subtitle_off
         : address == null
-        ? t.phone_share_no_network
+        ? (computer ? t.computer_share_no_network : t.phone_share_no_network)
         : t.phone_share_subtitle_on(address: address);
 
     return Column(
@@ -112,8 +130,11 @@ class PhoneShareTile extends ConsumerWidget {
         ListTile(
           key: const Key('phone_share_tile'),
           contentPadding: const EdgeInsets.only(left: 20, right: 8),
-          leading: Icon(Icons.smartphone, color: context.primaryColor, size: 28),
-          title: Text(t.phone_share_title, style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500)),
+          leading: Icon(computer ? Icons.computer : Icons.smartphone, color: context.primaryColor, size: 28),
+          title: Text(
+            computer ? t.computer_share_title : t.phone_share_title,
+            style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
+          ),
           subtitle: Text(subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
           trailing: const Icon(Icons.chevron_right_rounded),
           onTap: () => context.pushRoute(const PhoneShareRoute()),
@@ -151,7 +172,10 @@ class _SharedCard extends ConsumerWidget {
             if (state.urls.isEmpty && state.status == PhoneShareStatus.on)
               Padding(
                 padding: const EdgeInsets.only(top: 4, right: 12, bottom: 8),
-                child: Text(t.phone_share_no_network, style: TextStyle(color: context.colorScheme.error)),
+                child: Text(
+                  CurrentPlatform.isDesktop ? t.computer_share_no_network : t.phone_share_no_network,
+                  style: TextStyle(color: context.colorScheme.error),
+                ),
               ),
             for (final url in state.urls) _CopyRow(value: url, style: monospace.copyWith(fontSize: 16)),
             if (serviceName != null) _CopyRow(value: serviceName, icon: Icons.wifi_tethering_rounded),

@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
@@ -418,6 +419,15 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     if (!node.hasPrimaryFocus) {
       return KeyEventResult.ignored;
     }
+    // Home and End of a computer: the first and the last asset of the timeline; a video keeps them for its start and
+    // end. The phones have no such keys (remote_keys.dart).
+    if (video == null && (remoteFirstItemKeys.contains(key) || remoteLastItemKeys.contains(key))) {
+      final target = remoteFirstItemKeys.contains(key) ? 0 : _totalAssets - 1;
+      if (press && target != _currentPage) {
+        unawaited(_jumpToLoaded(target));
+      }
+      return KeyEventResult.handled;
+    }
     final playing = video != null && _isPlaying(video);
     if (remoteOkKeys.contains(key)) {
       if (press) {
@@ -616,6 +626,12 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
                 ),
               ),
             ),
+            // Immuch360 Desktop: previous and next for the mouse, which cannot swipe (desktop/window/hover_chevrons.dart)
+            if (CurrentPlatform.isDesktop && !showingDetails)
+              DesktopPageChevrons(
+                canNavigate: (direction) => _currentPage + direction >= 0 && _currentPage + direction < _totalAssets,
+                onNavigate: _onTapNavigate,
+              ),
             if (!CurrentPlatform.isIOS)
               IgnorePointer(
                 child: AnimatedContainer(

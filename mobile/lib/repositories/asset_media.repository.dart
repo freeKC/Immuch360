@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/files/save_to_folder.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -402,6 +403,16 @@ class AssetMediaRepository {
       return 0;
     }
     final downloadedXFiles = shareFiles.map((shareFile) => XFile(shareFile.file.path)).toList();
+
+    // Linux has no share sheet for files: they are saved into a folder instead (lib/desktop/files)
+    if (CurrentPlatform.isLinux) {
+      unawaited(
+        saveFilesToFolder([
+          for (final file in downloadedXFiles) file.path,
+        ]).whenComplete(() async => cleanupTempFiles(tempFiles)),
+      );
+      return downloadedXFiles.length;
+    }
 
     // we dont want to await the share result since the
     // "preparing" dialog will not disappear until

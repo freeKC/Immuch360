@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
+import 'package:immich_mobile/desktop/files/save_to_folder.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -15,9 +17,11 @@ import 'package:share_plus/share_plus.dart';
 /// Logs can be shared by calling the `shareLogs` method, which will open a share dialog
 /// and generate a csv file.
 abstract final class ImmichLogger {
-  static Future<void> shareLogs(BuildContext context) async {
+  /// [toFile]: on a computer, keep the logs as a file the user saves (lib/desktop/files) rather than share them
+  static Future<void> shareLogs(BuildContext context, {bool toFile = false}) async {
     final tempDir = await getTemporaryDirectory();
-    final dateTime = DateTime.now().toIso8601String();
+    // Windows refuses the colons of an ISO 8601 time in a file name
+    final dateTime = CurrentPlatform.isDesktop ? fileNameDate(DateTime.now()) : DateTime.now().toIso8601String();
     final filePath = '${tempDir.path}/Immich_log_$dateTime.log';
     final logFile = await File(filePath).create();
     final io = logFile.openWrite();
@@ -38,6 +42,13 @@ abstract final class ImmichLogger {
     }
 
     if (!context.mounted) {
+      return;
+    }
+
+    // Linux has no share sheet for files: its share button saves the file too
+    if (toFile || CurrentPlatform.isLinux) {
+      await saveLogFile(logFile);
+      await logFile.delete();
       return;
     }
 

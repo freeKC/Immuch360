@@ -21,6 +21,7 @@ import '../models.dart';
 import '../task.dart';
 import '../utils.dart';
 import 'isolate.dart';
+import 'transfer_security.dart';
 
 const okResponses = [200, 201, 202, 203, 204, 205, 206];
 
@@ -41,11 +42,27 @@ final class DesktopDownloader extends BaseDownloader {
   final _resume = <Task>{};
   final _isolateSendPorts =
       <Task, SendPort?>{}; // isolate SendPort for running task
-  static var httpClient = http.Client();
+  // Immuch360: a getter, so that a client built before the app handed over its TLS material
+  // (transfer_security.dart) is rebuilt at its next use
+  static http.Client _httpClient = http.Client();
+  static int _httpClientVersion = 0;
+
+  static http.Client get httpClient {
+    if (_httpClientVersion != DesktopTransfers.version) {
+      _recreateClient();
+    }
+    return _httpClient;
+  }
+
+  static set httpClient(http.Client value) => _httpClient = value;
   static Duration? _requestTimeout;
   static var _proxy = <String, dynamic>{}; // 'address' and 'port'
   static var _bypassTLSCertificateValidation = false;
   static int _skipExistingFiles = -1;
+  // Immuch360: in a task's isolate, the origin and the headers the main isolate made for that task from what the app
+  // handed over (DesktopTransfers in transfer_security.dart)
+  static Uri? _taskUrl;
+  static Map<String, String> _taskHeaders = const {};
 
   factory DesktopDownloader() => _singleton;
 
@@ -190,6 +207,8 @@ final class DesktopDownloader extends BaseDownloader {
       requestTimeout,
       proxy,
       bypassTLSCertificateValidation,
+      transferSecurity,
+      transferHeadersOf(task.url),
     ));
     if (_isolateSendPorts.keys.contains(task)) {
       // if already registered with null value, cancel immediately
@@ -686,9 +705,60 @@ final class DesktopDownloader extends BaseDownloader {
     _recreateClient();
   }
 
+  /// Immuch360: the TLS material handed over by the app, sent to each task's isolate
+  static DesktopTransferSecurity? get transferSecurity =>
+      DesktopTransfers.security;
+
+  /// Immuch360: the headers the app adds to a task for [url], sent to the task's isolate with its arguments
+  static Map<String, String> transferHeadersOf(String url) {
+    final headersFor = DesktopTransfers.headersFor;
+    final uri = Uri.tryParse(url);
+    if (headersFor == null || uri == null) {
+      return const {};
+    }
+    return headersFor(uri);
+  }
+
+  /// Immuch360: in a task's isolate, before [setHttpClient], what the main isolate sent with the task: the TLS
+  /// material, and the headers made for the task's [url], added to the requests to that origin only
+  static void useTaskTransfer(
+    DesktopTransferSecurity? security,
+    String url,
+    Map<String, String> headers,
+  ) {
+    DesktopTransfers.security = security;
+    DesktopTransfers.version++;
+    _taskUrl = Uri.tryParse(url);
+    _taskHeaders = headers;
+  }
+
+  static Map<String, String> _transferHeadersOfRequest(Uri url) {
+    final taskUrl = _taskUrl;
+    if (taskUrl == null) {
+      return DesktopTransfers.headersFor?.call(url) ?? const {};
+    }
+    final sameOrigin =
+        taskUrl.scheme == url.scheme &&
+        taskUrl.host.toLowerCase() == url.host.toLowerCase() &&
+        taskUrl.port == url.port;
+    return sameOrigin ? _taskHeaders : const {};
+  }
+
+  /// Immuch360: the context of the app's TLS material, or none (dart:io's default) when there is none or it cannot
+  /// be used
+  static SecurityContext? _transferContext() {
+    try {
+      return DesktopTransfers.security?.createContext();
+    } catch (e) {
+      _log.warning('TLS material of the app not usable for the transfers: $e');
+      return null;
+    }
+  }
+
   /// Recreates the [httpClient] used for Requests and isolate downloads/uploads
   static void _recreateClient() {
-    final client = HttpClient();
+    _httpClientVersion = DesktopTransfers.version;
+    final client = HttpClient(context: _transferContext());
     client.connectionTimeout = requestTimeout;
     client.findProxy =
         proxy.isNotEmpty
@@ -698,7 +768,7 @@ final class DesktopDownloader extends BaseDownloader {
         bypassTLSCertificateValidation && !kReleaseMode
             ? (X509Certificate cert, String host, int port) => true
             : null;
-    httpClient = IOClient(client);
+    _httpClient = _TransferHeadersClient(IOClient(client));
     if (bypassTLSCertificateValidation) {
       if (kReleaseMode) {
         throw ArgumentError(
@@ -730,4 +800,24 @@ final class DesktopDownloader extends BaseDownloader {
     _running.remove(task);
     _isolateSendPorts.remove(task);
   }
+}
+
+/// Immuch360: adds the headers the app handed over (the session cookie of the user's server) to the requests of the
+/// transfers, without replacing a header the task sets itself
+class _TransferHeadersClient extends http.BaseClient {
+  _TransferHeadersClient(this._inner);
+
+  final http.Client _inner;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    for (final MapEntry(:key, :value)
+        in DesktopDownloader._transferHeadersOfRequest(request.url).entries) {
+      request.headers.putIfAbsent(key, () => value);
+    }
+    return _inner.send(request);
+  }
+
+  @override
+  void close() => _inner.close();
 }

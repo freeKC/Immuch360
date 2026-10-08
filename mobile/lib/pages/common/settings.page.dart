@@ -2,7 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/settings/computer_settings.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -28,7 +30,8 @@ enum SettingSection {
   notifications(Icons.notifications_none_rounded),
   preferences(Icons.interests_outlined),
   timeline(Icons.auto_awesome_mosaic_outlined),
-  beta(Icons.sync_outlined);
+  beta(Icons.sync_outlined),
+  thisComputer(Icons.computer_outlined);
 
   final IconData icon;
 
@@ -43,6 +46,7 @@ enum SettingSection {
     SettingSection.preferences => t.preferences_settings_title,
     SettingSection.timeline => t.asset_list_settings_title,
     SettingSection.beta => t.sync_status,
+    SettingSection.thisComputer => t.desktop_this_computer,
   };
 
   String subtitle(Translations t) => switch (this) {
@@ -56,6 +60,7 @@ enum SettingSection {
     SettingSection.preferences => t.preferences_settings_subtitle,
     SettingSection.timeline => t.asset_list_settings_subtitle,
     SettingSection.beta => t.sync_status_subtitle,
+    SettingSection.thisComputer => t.desktop_this_computer_subtitle,
   };
 
   Widget get widget => switch (this) {
@@ -69,6 +74,7 @@ enum SettingSection {
     SettingSection.preferences => const PreferenceSetting(),
     SettingSection.timeline => const AssetListSettings(),
     SettingSection.beta => const SyncStatusAndActions(),
+    SettingSection.thisComputer => const ComputerSettings(),
   };
 
   /// Whether the section is about the server (backup, connection, sync), so pointless in a session without one
@@ -82,11 +88,19 @@ enum SettingSection {
   };
 
   const SettingSection(this.icon);
+
+  /// Whether the section exists on this device: "This computer" on the computers only, where free up space and the
+  /// notifications do not exist
+  bool get isOnThisDevice => switch (this) {
+    SettingSection.thisComputer => CurrentPlatform.isDesktop,
+    SettingSection.freeUpSpace || SettingSection.notifications => !CurrentPlatform.isDesktop,
+    _ => true,
+  };
 }
 
 /// The sections to list, without the server ones when there is no server
 List<SettingSection> _visibleSections(bool hasServer) =>
-    hasServer ? SettingSection.values : SettingSection.values.where((section) => !section.needsServer).toList();
+    SettingSection.values.where((section) => section.isOnThisDevice && (hasServer || !section.needsServer)).toList();
 
 @RoutePage()
 class SettingsPage extends StatelessWidget {

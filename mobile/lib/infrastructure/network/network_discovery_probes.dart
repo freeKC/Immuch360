@@ -24,10 +24,12 @@ import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import 'package:immich_mobile/desktop/network/interface_rank.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/infrastructure/network/plex/gdm.dart';
 import 'package:immich_mobile/infrastructure/network/upnp/ssdp.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_discovery.dart';
@@ -1028,10 +1030,15 @@ class SubnetScanProbe {
 Future<List<String>> localIPv4Addresses() async {
   try {
     final interfaces = await NetworkInterface.list(type: InternetAddressType.IPv4);
-    return SubnetScanProbe.lanAddressesOf([
+    final addresses = [
       for (final interface in interfaces)
         for (final address in interface.addresses) (interface.name, address),
-    ]);
+    ];
+    // Windows names its interfaces otherwise, and lists virtual adapters (lib/desktop/network/interface_rank.dart)
+    if (CurrentPlatform.isDesktop) {
+      return await desktopLanAddressesFrom(addresses);
+    }
+    return SubnetScanProbe.lanAddressesOf(addresses);
   } catch (error) {
     _log.fine('No network interface: $error');
     return const [];

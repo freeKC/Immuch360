@@ -14,7 +14,8 @@ class DevicePermissionService {
   Future<DevicePermissionStatus> requestGallery() => _gallery(_permissionRepository.request);
 
   Future<DevicePermissionStatus> _gallery(_Handler handler) async {
-    if (CurrentPlatform.isIOS) {
+    // A computer asks the folders of its library, through the desktop permission repository
+    if (CurrentPlatform.isIOS || CurrentPlatform.isDesktop) {
       return handler(.photos);
     }
 

@@ -1,0 +1,21 @@
+{
+  "mobile/lib/constants/constants.dart": 1,
+  "mobile/lib/infrastructure/network/plex/plex_client.dart": 2,
+  "mobile/lib/infrastructure/network/upnp/ssdp.dart": 1,
+  "mobile/lib/infrastructure/repositories/local_album.repository.dart": 2,
+  "mobile/lib/presentation/actions/lock.action.dart": 1,
+  "mobile/lib/presentation/actions/share.action.dart": 1,
+  "mobile/lib/presentation/widgets/asset_viewer/asset_viewer.page.dart": 1,
+  "mobile/lib/presentation/widgets/asset_viewer/video_viewer.widget.dart": 2,
+  "mobile/lib/providers/asset_viewer/local_panorama.provider.dart": 1,
+  "mobile/lib/providers/permission.provider.dart": 1,
+  "mobile/lib/providers/raw/raw_video.provider.dart": 1,
+  "mobile/lib/repositories/asset_media.repository.dart": 1,
+  "mobile/lib/repositories/download.repository.dart": 1,
+  "mobile/lib/services/cleanup.service.dart": 1,
+  "mobile/lib/services/download.service.dart": 2,
+  "mobile/lib/services/foreground_upload.service.dart": 1,
+  "mobile/lib/widgets/common/mesmerizing_sliver_app_bar.dart": 1,
+  "mobile/lib/widgets/common/person_sliver_app_bar.dart": 1,
+  "mobile/lib/widgets/common/remote_album_sliver_app_bar.dart": 1
+}
