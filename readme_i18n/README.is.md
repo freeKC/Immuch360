@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | Íslenska | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Íslenska</b> · Önnur tungumál (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: 360°, 3D og VR180 myndir og myndskeið, úr Immich, símanum eða NAS. Android, iOS og Meta Quest, með eða án vélþjóns">
 </p>
 
 # Immuch360
 
-Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hægt er að líta í kringum sig í, og ókeypis spilari fyrir flatar myndir og myndskeið, 360°, 3D og VR180, á Android-símum og spjaldtölvum, iPhone og iPad, Meta Quest gleraugum (Quest 3 og 3S, og frá smíð 21 Quest 2 og Quest Pro, óprófað), og frá smíð 20 Android TV og Google TV. Það er fyrir þá sem taka myndir með 360° myndavél (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) eða í kúlumyndastillingu símans, eða eiga VR-gleraugu, og vilja horfa á eigið efni af Immich-vélþjóni, úr símanum sjálfum, af NAS, af miðlaþjóni eða af Plex-þjóni: sami vélþjónn, sami aðgangur, engin viðbót á vélþjóninum, eða enginn vélþjónn yfirleitt. Frá smíð 20 sýnir það líka Tapo-myndavélar, beint og upptökurnar á minniskorti þeirra.
+Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hægt er að líta í kringum sig í, og ókeypis spilari fyrir flatar myndir og myndskeið, 360°, 3D og VR180, á Android-símum og spjaldtölvum, iPhone og iPad, Meta Quest gleraugum (Quest 3 og 3S, og frá smíð 21 Quest 2 og Quest Pro, óprófað), og frá smíð 20 Android TV og Google TV.
+
+Það er fyrir þá sem taka myndir með 360° myndavél (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) eða í kúlumyndastillingu símans, eða eiga VR-gleraugu, og vilja horfa á eigið efni af Immich-vélþjóni, úr símanum sjálfum, af NAS, af miðlaþjóni eða af Plex-þjóni: sami vélþjónn, sami aðgangur, engin viðbót á vélþjóninum, eða enginn vélþjónn yfirleitt. Frá smíð 20 sýnir það líka Tapo-myndavélar, beint og upptökurnar á minniskorti þeirra.
 
 <p align="center">
   <sub>Óopinber afleiða (fork). Engin tengsl við Immich eða FUTO. Nafnið er lesið „I am much 360“.</sub>
@@ -13,29 +15,52 @@ Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hæg
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">í yfirferð</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store samþykkt, smíð 21 send inn sem fyrsta uppfærsla &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
+  App Store: <a href="#where-to-get-it">í yfirferð</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store samþykkt, smíð 21 send inn sem fyrsta uppfærsla<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 Innbyggt 360°</h3>Myndir og myndskeið sem kúla sem hægt er að líta í kringum sig í, með gíróskópi, óunnar skrár úr myndavélum meðtaldar (Insta360 frá smíð 16, GoPro og DJI frá smíð 18). Einnig ókeypis myndskeiðaspilari: flatt, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 Innbyggt 3D</h3>Steríó 360° og VR180, efst/neðst eða hlið við hlið, og rýmismyndir frá Apple (frá smíð 19): raunverulegt 3D í gleraugunum, eitt auga í síma</td>
-    <td align="center" width="33%"><h3>🎥 Innbyggt 2.5D</h3>Dýpt á flötum skjá úr steríómyndskeiði, sjónarhornið fylgir höfðinu (tilraun, símar og spjaldtölvur)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Eitt forrit í símum, spjaldtölvum og Quest 2, Pro, 3 og 3S gleraugunum, raunverulegt 3D í gleraugunum, og frá smíð 20 á Android TV með fjarstýringunni</td>
-    <td align="center"><h3>🔌 Með eða án vélþjóns</h3>Þinn Immich-vélþjónn, eða myndasafn símans sjálfs, enginn aðgangur nauðsynlegur</td>
-    <td align="center"><h3>🗄️ Netdeilingar</h3>Samba (SMB), WebDAV og, frá smíð 19, DLNA-miðlaþjónar sem finnast á netinu og eru lesnir beint, ekkert sótt, og sendir í Immich þegar þú velur. Frá smíð 19 getur sími líka deilt eigin myndasafni með gleraugunum</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Í sjónvarpinu</h3>Frá smíð 20 sama APK á Android TV og Google TV: 360° myndir og myndskeið, vélþjónninn þinn og deilingarnar þínar, með fjarstýringunni</td>
-    <td align="center"><h3>🎬 Plex, án plex.tv</h3>Frá smíð 20 Plex-söfnin þín, spiluð úr upprunalegu skránum svo 360° haldist 360°, heima og að heiman</td>
-    <td align="center"><h3>📹 Tapo-myndavélar</h3>Frá smíð 20 bein mynd og upptökur minniskortsins, aðeins á netinu þínu, og myndskeið sent í Immich þegar þú velur</td>
-  </tr>
-</table>
+- 🌐 **Innbyggt 360°**<br>Myndir og myndskeið sem kúla sem hægt er að líta í kringum sig í, með gíróskópi, óunnar skrár úr myndavélum meðtaldar (Insta360 frá smíð 16, GoPro og DJI frá smíð 18). Einnig ókeypis myndskeiðaspilari: flatt, 360°, 3D, VR180
+- 👓 **Innbyggt 3D**<br>Steríó 360° og VR180, efst/neðst eða hlið við hlið, og rýmismyndir frá Apple (frá smíð 19): raunverulegt 3D í gleraugunum, eitt auga í síma
+- 🎥 **Innbyggt 2.5D**<br>Dýpt á flötum skjá úr steríómyndskeiði, sjónarhornið fylgir höfðinu (tilraun, símar og spjaldtölvur)
+- 📱 **Android, iOS, Quest, TV**<br>Eitt forrit í símum, spjaldtölvum og Quest 2, Pro, 3 og 3S gleraugunum, raunverulegt 3D í gleraugunum, og frá smíð 20 á Android TV með fjarstýringunni
+- 🔌 **Með eða án vélþjóns**<br>Þinn Immich-vélþjónn, eða myndasafn símans sjálfs, enginn aðgangur nauðsynlegur
+- 🗄️ **Netdeilingar**<br>Samba (SMB), WebDAV og, frá smíð 19, DLNA-miðlaþjónar sem finnast á netinu og eru lesnir beint, ekkert sótt, og sendir í Immich þegar þú velur. Frá smíð 19 getur sími líka deilt eigin myndasafni með gleraugunum
+- 📺 **Í sjónvarpinu**<br>Frá smíð 20 sama APK á Android TV og Google TV: 360° myndir og myndskeið, vélþjónninn þinn og deilingarnar þínar, með fjarstýringunni
+- 🎬 **Plex, án plex.tv**<br>Frá smíð 20 Plex-söfnin þín, spiluð úr upprunalegu skránum svo 360° haldist 360°, heima og að heiman
+- 📹 **Tapo-myndavélar**<br>Frá smíð 20 bein mynd og upptökur minniskortsins, aðeins á netinu þínu, og myndskeið sent í Immich þegar þú velur
+
+<details>
+<summary><b>Efnisyfirlit</b></summary>
+
+- [360° myndir og myndskeið sem kúla](#360-photos-and-videos-as-a-sphere)
+- [Án vélþjóns eða aðgangs](#without-a-server-or-an-account)
+- [Netdeilingar: NAS, tölva eða miðlaþjónn](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, án plex.tv](#plex-media-server-without-plextv)
+- [Deila þessum síma á netinu](#share-this-phone-on-the-network)
+- [Tapo-myndavélar: bein mynd og upptökur minniskortsins](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Óunnar 360° myndavélaskrár, án forrits myndavélarinnar](#raw-360-camera-files-without-the-cameras-app)
+- [3D og VR180 myndir og myndskeið](#3d-and-vr180-photos-and-videos)
+- [Dýpt á flötum skjá: Spatial 2.5D (tilraun)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Rýmismyndir og rýmismyndskeið frá Apple](#apple-spatial-photos-and-videos)
+- [Í Meta Quest 3 gleraugunum](#in-the-meta-quest-3-headset)
+- [Horfðu í sjónvarpinu (Android TV og Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Finndu 360° myndirnar þínar: 360° listinn](#find-your-360-shots-the-360-list)
+- [Upplýsingar um myndskeið, afkóðarar og hvers vegna myndskeið hikstar](#video-details-decoders-and-why-a-video-stutters)
+- [Allt annað er Immich](#everything-else-is-immich)
+- [Samanburður við Immich-forritið og önnur forrit](#compared-with-the-immich-app-and-other-apps)
+- [Snið og uppsprettur, eftir stýrikerfi](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Hvar á að sækja það](#where-to-get-it)
+- [Smíðaðu það sjálf(ur)](#build-it-yourself)
+- [Atvikaskrár](#logs)
+- [Persónuvernd](#privacy)
+- [Leyfi og vörumerki](#license-and-trademark)
+- [Áætlun](#roadmap)
+- [Þakkir](#credits)
+
+</details>
 
 ## Hvaða vanda glímir þú við?
 
@@ -61,12 +86,19 @@ Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hæg
 
 Þú tekur afrit af myndunum þínum á [Immich](https://github.com/immich-app/immich) vélþjón, og sumar þeirra koma úr 360° myndavél eða úr kúlumyndastillingu síma. Í opinbera farsímaforritinu birtast þær myndir sem flöt, teygð ræma, og 360° myndskeið spilast líka flöt. Vefforrit Immich getur sýnt 360° mynd sem kúlu, farsímaforritið ekki: beðið hefur verið um það síðan í janúar 2024 í [umræðu #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 opnar þær sem kúlu sem hægt er að líta í kringum sig í, á Android- og iOS-símum og spjaldtölvum. Mynd snýst þegar þú dregur hana, stækkar með klípu eða tvísmelli, heldur aðeins áfram að snúast eftir hratt drag, opnast á upphafssjónarhorninu sem myndavélin skráði (GPano-lýsigögn) og fær skarpari áferð þegar þú stækkar; hlutavíðmyndir eru meðhöndlaðar (GPano-skurður). Myndskeið spilast í innbyggðum kúluspilara með hljóði, dragi og gíróskópi. Samsettar 360° skrár virka alls staðar: útflutningur úr Insta360-forritinu eða Studio, GoPro Player, Ricoh Theta og kúlumyndir úr símum. Óunnar skrár beint úr myndavélinni eru skeyttar saman af forritinu, sjá [Óunnar 360° myndavélaskrár](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 opnar þær sem kúlu sem hægt er að líta í kringum sig í, á Android- og iOS-símum og spjaldtölvum.
 
-| 360° mynd sem kúla | 360° myndskeið í 360° spilaranum |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="360° mynd af vatnsbakka í kúluskoðaranum: lokahnappurinn efst til vinstri, hnapparnir 360°, 3D-uppsetning og gíróskóp efst til hægri"> | <img src="../.github/readme/b19-video.png" width="420" alt="360° myndskeið af strandvegi spilað í 360° spilara síma sem haldið er á hlið: loka og skráarheiti efst til vinstri, 360° og 3D efst til hægri, fyrra, spóla aftur, spila, spóla áfram og næsta í miðjunni, tímastikan neðst"> |
-| Loka efst til vinstri; efst til hægri 360°/180° hnappurinn, hnappur 3D-uppsetningar og gíróskópið | Ýttu á myndina til að fá stjórnhnappana; 360° og 3D efst til hægri |
+Mynd snýst þegar þú dregur hana, stækkar með klípu eða tvísmelli, heldur aðeins áfram að snúast eftir hratt drag, opnast á upphafssjónarhorninu sem myndavélin skráði (GPano-lýsigögn) og fær skarpari áferð þegar þú stækkar; hlutavíðmyndir eru meðhöndlaðar (GPano-skurður). Myndskeið spilast í innbyggðum kúluspilara með hljóði, dragi og gíróskópi.
+
+Samsettar 360° skrár virka alls staðar: útflutningur úr Insta360-forritinu eða Studio, GoPro Player, Ricoh Theta og kúlumyndir úr símum. Óunnar skrár beint úr myndavélinni eru skeyttar saman af forritinu, sjá [Óunnar 360° myndavélaskrár](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="360° mynd af vatnsbakka í kúluskoðaranum: lokahnappurinn efst til vinstri, hnapparnir 360°, 3D-uppsetning og gíróskóp efst til hægri">
+  <img src="../.github/readme/b19-video.png" width="420" alt="360° myndskeið af strandvegi spilað í 360° spilara síma sem haldið er á hlið: loka og skráarheiti efst til vinstri, 360° og 3D efst til hægri, fyrra, spóla aftur, spila, spóla áfram og næsta í miðjunni, tímastikan neðst">
+</p>
+
+- **360° mynd sem kúla**: loka efst til vinstri; efst til hægri 360°/180° hnappurinn, hnappur 3D-uppsetningar og gíróskópið.
+- **360° myndskeið í 360° spilaranum**: ýttu á myndina til að fá stjórnhnappana; 360° og 3D efst til hægri.
 
 ### Opna 360° mynd sem kúlu
 
@@ -135,12 +167,17 @@ Valið er munað í símanum og breytir engu á vélþjóninum. Á skrá á netd
 
 360° myndskeiðin þín eru á NAS eða tölvu og þú vilt horfa á þau í símanum eða í gleraugunum án þess að afrita þau fyrst. Í gleraugunum endar fólk á því að afrita hverja skrá með snúru; miðlaþjónar eins og Plex og Jellyfin spila 360° myndskeið flöt, eins og beiðnir á spjallborðum þeirra lýsa; Immich-forritið les aðeins Immich-vélþjóninn þinn.
 
-Immuch360 vafrar um og spilar myndir og myndskeið hvaða vélþjóns sem er sem talar SMB (Samba, Windows), WebDAV eða, frá smíð 19, DLNA/UPnP (miðlaþjónn: Jellyfin, minidlna, Gerbera, Emby, NAS eða sjónvarpsbox), beint af deilingunni. Frá smíð 20 hefur Plex Media Server sína eigin tegund, sjá [Plex Media Server, án plex.tv](#plex-media-server-without-plextv). Það finnur sjálft vélþjónana á netinu þínu og spilar skrárnar beint í sömu skoðurum og annars staðar í forritinu (360°, 3D, VR180, Spatial 2.5D, umlykjandi sýn Quest), með eða án Immich-vélþjóns, í símum og á Meta Quest 3. Ekkert er sótt. Þegar vélþjónn er tengdur er hægt að senda skrárnar sem þú velur á Immich-aðganginn þinn (frá smíð 15).
+Immuch360 vafrar um og spilar myndir og myndskeið hvaða vélþjóns sem er sem talar SMB (Samba, Windows), WebDAV eða, frá smíð 19, DLNA/UPnP (miðlaþjónn: Jellyfin, minidlna, Gerbera, Emby, NAS eða sjónvarpsbox), beint af deilingunni. Frá smíð 20 hefur Plex Media Server sína eigin tegund, sjá [Plex Media Server, án plex.tv](#plex-media-server-without-plextv).
 
-| Bæta við deilingu | Mappa á deilingu |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Síðan Bæta við deilingu: Nafn, Heiti eða vistfang þjóns, Gátt (valfrjálst), Deiling, Veldu deilingu, Upphafsmappa (valfrjálst), Notandanafn, Lykilorð, Prófa tenginguna, og niðurstaðan Tengt, 2 færslur í upphafsmöppunni"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Mappa á netdeilingu sem net smámynda: 360° myndir með 360° merkinu og 360° myndskeið með spilunarmerki, Velja-hnappurinn efst til hægri"> |
-| Reitir nýrrar SMB-deilingar, eftir Prófa tenginguna | 360° myndir og myndskeið, lesin beint af deilingunni |
+Það finnur sjálft vélþjónana á netinu þínu og spilar skrárnar beint í sömu skoðurum og annars staðar í forritinu (360°, 3D, VR180, Spatial 2.5D, umlykjandi sýn Quest), með eða án Immich-vélþjóns, í símum og á Meta Quest 3. Ekkert er sótt. Þegar vélþjónn er tengdur er hægt að senda skrárnar sem þú velur á Immich-aðganginn þinn (frá smíð 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Síðan Bæta við deilingu: Nafn, Heiti eða vistfang þjóns, Gátt (valfrjálst), Deiling, Veldu deilingu, Upphafsmappa (valfrjálst), Notandanafn, Lykilorð, Prófa tenginguna, og niðurstaðan Tengt, 2 færslur í upphafsmöppunni">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Mappa á netdeilingu sem net smámynda: 360° myndir með 360° merkinu og 360° myndskeið með spilunarmerki, Velja-hnappurinn efst til hægri">
+</p>
+
+- **Bæta við deilingu**: reitir nýrrar SMB-deilingar, eftir Prófa tenginguna.
+- **Mappa á deilingu**: 360° myndir og myndskeið, lesin beint af deilingunni.
 
 ### Bæta við deilingu
 
@@ -178,16 +215,26 @@ Opin mynd eða myndskeið af deilingu er með sama atriði í valmyndinni sinni.
 
 ### Hvernig spilað er án þess að sækja
 
-Spilararnir lesa þau bæti sem þeir þurfa í gegnum brú inni í forritinu (aðeins loopback-vistfang, slembilykill fyrir hverja lotu, bætabil), svo spólun í myndskeiði virkar og ekkert er afritað í tækið. Spilararnir og skoðari gleraugnanna fá aldrei vistfang deilingarinnar, aðeins 127.0.0.1 brúarinnar; beiðnirnar til vélþjónsins sendir forritið sjálft. Til að spilun verði hnökralaus er deilingin lesin í stórum blokkum, skráin helst opin á milli lestra, allt að 16 MB eru lesin á undan spilaranum, og myndskeiðið sem er í spilun er lesið yfir allt að sex SMB-tengingar samhliða, aðskildar frá tengingunni sem þjónar smámyndum og listum. Freebox Server svarar hverjum lestri hægt: ein tenging gefur 4,5 MB/s, sex gefa 19 MB/s, nóg fyrir 5.7K útflutning á 132 Mbit/s. Á meðan spilarinn bíður eftir gögnum sýna 360° og Spatial spilararnir „Hleð“ ásamt fyllingu spilunarbiðminnisins; flati spilarinn sýnir „Hleð“ án prósentu á meðan myndskeiðið hleðst eða stöðvast.
+Spilararnir lesa þau bæti sem þeir þurfa í gegnum brú inni í forritinu (aðeins loopback-vistfang, slembilykill fyrir hverja lotu, bætabil), svo spólun í myndskeiði virkar og ekkert er afritað í tækið. Spilararnir og skoðari gleraugnanna fá aldrei vistfang deilingarinnar, aðeins 127.0.0.1 brúarinnar; beiðnirnar til vélþjónsins sendir forritið sjálft.
+
+Til að spilun verði hnökralaus er deilingin lesin í stórum blokkum, skráin helst opin á milli lestra, allt að 16 MB eru lesin á undan spilaranum, og myndskeiðið sem er í spilun er lesið yfir allt að sex SMB-tengingar samhliða, aðskildar frá tengingunni sem þjónar smámyndum og listum. Freebox Server svarar hverjum lestri hægt: ein tenging gefur 4,5 MB/s, sex gefa 19 MB/s, nóg fyrir 5.7K útflutning á 132 Mbit/s.
+
+Á meðan spilarinn bíður eftir gögnum sýna 360° og Spatial spilararnir „Hleð“ ásamt fyllingu spilunarbiðminnisins; flati spilarinn sýnir „Hleð“ án prósentu á meðan myndskeiðið hleðst eða stöðvast.
 
 ### DLNA-miðlaþjónar
 
-Frá smíð 19 sendir forritið SSDP-leitina að miðlaþjónum á fjölvarpshóp netsins, og sömu beiðni á gátt 1900 á hverju vistfangi staðarnetsins /24, les síðan tækjalýsingu hvers vélþjóns sem svarar og heldur þeim sem birta efni sitt (ContentDirectory). Möppur og skrár eru listaðar með Browse-aðgerð vélþjónsins, síðu fyrir síðu, og nefndar eftir titlum sínum: skrá fær endingu tegundar sinnar þegar titillinn hefur enga, og önnur skrá með sama titil í möppu verður `name (2)`. Hljóði er sleppt. Smámyndir eru plötuumslög eða litlu myndirnar sem vélþjónninn býr til, hlaðnar af forritinu sjálfu, með eigin smámynd forritsins þegar vélþjónninn hefur enga. Skrá er spiluð úr frumriti sem vélþjónninn býður, frekar en umbreyttu afriti þegar hann býður hvort tveggja, lesin með bilbeiðnum, svo spólun virkar. Prófað gegn minidlna og Gerbera; uppgötvun á raunverulegu neti, Plex, Jellyfin, NAS, Freebox Server, iPhone og Quest eru tækjaprófun smíðar 19.
+Frá smíð 19 sendir forritið SSDP-leitina að miðlaþjónum á fjölvarpshóp netsins, og sömu beiðni á gátt 1900 á hverju vistfangi staðarnetsins /24, les síðan tækjalýsingu hvers vélþjóns sem svarar og heldur þeim sem birta efni sitt (ContentDirectory).
+
+Möppur og skrár eru listaðar með Browse-aðgerð vélþjónsins, síðu fyrir síðu, og nefndar eftir titlum sínum: skrá fær endingu tegundar sinnar þegar titillinn hefur enga, og önnur skrá með sama titil í möppu verður `name (2)`. Hljóði er sleppt. Smámyndir eru plötuumslög eða litlu myndirnar sem vélþjónninn býr til, hlaðnar af forritinu sjálfu, með eigin smámynd forritsins þegar vélþjónninn hefur enga. Skrá er spiluð úr frumriti sem vélþjónninn býður, frekar en umbreyttu afriti þegar hann býður hvort tveggja, lesin með bilbeiðnum, svo spólun virkar.
+
+Prófað gegn minidlna og Gerbera; uppgötvun á raunverulegu neti, Plex, Jellyfin, NAS, Freebox Server, iPhone og Quest eru tækjaprófun smíðar 19.
 
 <a id="a-share-that-moved"></a>
 ### Deiling sem hefur færst
 
-Frá smíð 19 halda DLNA-deiling og símadeiling (sjá [Deila þessum síma á netinu](#share-this-phone-on-the-network)) auðkenninu sem vélþjónn þeirra tilkynnir. Þegar önnur hvor svarar ekki lengur á vistfangi sínu (nýtt vistfang frá beininum, vélþjónn endurræstur á annarri gátt) sýnir möppusíða hennar „Leita að (nafn) á netinu“ og færir deilinguna þangað sem hún svarar núna: strax fyrir DLNA-vélþjón, sem hefur ekkert lykilorð, og eftir staðfestingu, „Nota nýja vistfangið?“, sem sýnir bæði vistföngin, fyrir deilingu með notandanafni og lykilorði, þar sem þau yrðu send á nýja vistfangið. Frá smíð 20 færist Plex-þjónn sem finnst aftur á öðru vistfangi á netinu líka strax: skilríki hans sannar að þetta sé sami þjónn áður en tókinn er sendur. Leitað er að Tapo-myndavél eftir MAC-vistfangi hennar af hennar eigin síðu, sjá [Tapo-myndavélar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Frá smíð 19 halda DLNA-deiling og símadeiling (sjá [Deila þessum síma á netinu](#share-this-phone-on-the-network)) auðkenninu sem vélþjónn þeirra tilkynnir. Þegar önnur hvor svarar ekki lengur á vistfangi sínu (nýtt vistfang frá beininum, vélþjónn endurræstur á annarri gátt) sýnir möppusíða hennar „Leita að (nafn) á netinu“ og færir deilinguna þangað sem hún svarar núna: strax fyrir DLNA-vélþjón, sem hefur ekkert lykilorð, og eftir staðfestingu, „Nota nýja vistfangið?“, sem sýnir bæði vistföngin, fyrir deilingu með notandanafni og lykilorði, þar sem þau yrðu send á nýja vistfangið.
+
+Frá smíð 20 færist Plex-þjónn sem finnst aftur á öðru vistfangi á netinu líka strax: skilríki hans sannar að þetta sé sami þjónn áður en tókinn er sendur. Leitað er að Tapo-myndavél eftir MAC-vistfangi hennar af hennar eigin síðu, sjá [Tapo-myndavélar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Takmarkanir
 
@@ -227,7 +274,9 @@ Frá smíð 20 parast Immuch360 beint við Plex Media Server þinn, án plex.tv:
 
 ### Að heiman
 
-Í hvert skipti sem það opnar þjóninn reynir forritið fyrst heimavistfangið og, 400 ms síðar, vistfangið utan heimilis. Það fyrsta sem svarar með þjóninum þínum er notað; þegar það er vistfangið utan heimilis sýnir möppusíðan hnattartákn merkt „Tengt um vistfangið utan heimilis“. Til þess þarf að kveikja á Fjaraðgangi í Plex (Stillingar, Fjaraðgangur) með gátt sem beinirinn framsendir: án plex.tv getur forritið ekki notað endurvarpa Plex, svo þjónn án gáttaframsendingar opnast aðeins heima, og að heiman segir síðan „Ekki er hægt að ná í Plex-þjóninn þinn utan heimanetsins. Kveiktu á fjaraðgangi með gáttaframsendingu í Plex (Stillingar, Fjaraðgangur), eða sláðu inn opinbert vistfang hans.“
+Í hvert skipti sem það opnar þjóninn reynir forritið fyrst heimavistfangið og, 400 ms síðar, vistfangið utan heimilis. Það fyrsta sem svarar með þjóninum þínum er notað; þegar það er vistfangið utan heimilis sýnir möppusíðan hnattartákn merkt „Tengt um vistfangið utan heimilis“.
+
+Til þess þarf að kveikja á Fjaraðgangi í Plex (Stillingar, Fjaraðgangur) með gátt sem beinirinn framsendir: án plex.tv getur forritið ekki notað endurvarpa Plex, svo þjónn án gáttaframsendingar opnast aðeins heima, og að heiman segir síðan „Ekki er hægt að ná í Plex-þjóninn þinn utan heimanetsins. Kveiktu á fjaraðgangi með gáttaframsendingu í Plex (Stillingar, Fjaraðgangur), eða sláðu inn opinbert vistfang hans.“
 
 Vistfangið sem þjónninn gefur upp er lært aftur við hverja tengingu heima. Þegar það svarar ekki utan frá (beinir sem skiptir um vistfang, tveir beinar í röð) skaltu slá þitt inn á síðu þjónsins. Þegar tókinn hættir að virka (þú skráðir þig til dæmis út úr vafralotunni sem þú afritaðir hann úr) segir möppusíðan það og býður „Líma inn nýjan tóka“, sem opnar síðu þjónsins við tókareitinn.
 
@@ -344,15 +393,13 @@ Insta360-myndavélar taka upp tvo fiskaugnahringi linsanna sinna, hlið við hli
 
 Frá smíð 16 skeytir Immuch360 þessar skrár saman sjálft, í símanum, spjaldtölvunni eða gleraugunum, án þess að neitt þurfi að setja upp á vélþjóninum:
 
-| Myndavél og skrá | Hvað forritið gerir | Frá |
-|---|---|---|
-| Insta360 .insp myndir | Skeyttar saman á GPU á undan kúluskoðaranum, allt að 8192x4096, með varaleið á CPU í minni stærð | Smíð 16 |
-| Insta360 .insv myndskeið sem geyma báðar linsur í einni rás | Skeytt saman með GPU-áhrifum í spilaranum | Smíð 16 |
-| Insta360 X4, X4 Air, X5 og X6 .insv myndskeið, ein ferningslaga rás á linsu | Tveir afkóðarar samtímis, einn á linsu, og GPU-samsetjari sem skeytir þær saman í kúluna | Smíð 18 |
-| Insta360 X3 og eldri í 5.7K og yfir: tvær skrár, `_00_` og `_10_` | Það sama, hin skráin fundin við hlið þeirrar fyrri | Smíð 18 |
-| GoPro MAX og MAX 2 .360: tvær rásir með þremur teningshliðum hvor | Það sama, með skörunardálkana blandaða saman | Smíð 18 |
-| DJI Osmo 360 .osv: tvær ferningslaga 10 bita rásir | Það sama, með Kannala-Brandt kvörðun skrárinnar | Smíð 18 |
-| Tvöfalt fiskauga .dng | Birtist flatt | Ekki enn |
+- **Insta360 .insp myndir** (smíð 16): skeyttar saman á GPU á undan kúluskoðaranum, allt að 8192x4096, með varaleið á CPU í minni stærð.
+- **Insta360 .insv myndskeið sem geyma báðar linsur í einni rás** (smíð 16): skeytt saman með GPU-áhrifum í spilaranum.
+- **Insta360 X4, X4 Air, X5 og X6 .insv myndskeið, ein ferningslaga rás á linsu** (smíð 18): tveir afkóðarar samtímis, einn á linsu, og GPU-samsetjari sem skeytir þær saman í kúluna.
+- **Insta360 X3 og eldri í 5.7K og yfir: tvær skrár, `_00_` og `_10_`** (smíð 18): það sama, hin skráin fundin við hlið þeirrar fyrri.
+- **GoPro MAX og MAX 2 .360: tvær rásir með þremur teningshliðum hvor** (smíð 18): það sama, með skörunardálkana blandaða saman.
+- **DJI Osmo 360 .osv: tvær ferningslaga 10 bita rásir** (smíð 18): það sama, með Kannala-Brandt kvörðun skrárinnar.
+- **Tvöfalt fiskauga .dng** (ekki enn): birtist flatt.
 
 ### Horfa á óunna skrá
 
@@ -466,7 +513,9 @@ Greiningin var prófuð á sýnishorni rýmismyndar sem myndvinnslusafn Apple sj
 
 Fólk kaupir Quest 3 til að horfa á eigin 360° myndir og myndskeið, og spyr svo hvar eigi að setja skrárnar, hvernig eigi að koma þeim í gleraugun án snúru, og hvaða spilara eigi að nota: spilararnir fyrir 360° og 3D myndskeið í versluninni kosta peninga.
 
-Sama Android-forritið keyrir á Quest 3 og 3S, og frá smíð 21 á Quest 2 og Quest Pro (óprófað), sem gluggi, með öllu safninu þínu. 360° hnappur þess opnar umlykjandi sýn þar sem myndin eða myndskeiðið er allt í kringum þig og þú lítur í kringum þig með því að snúa höfðinu, í raunverulegu 3D fyrir steríóskrár (Meta Spatial SDK). Efnið kemur af Immich-vélþjóninum, úr gleraugunum sjálfum, af NAS, miðlaþjóni, síma eða Plex-þjóni, spilað þar sem það er (miðlaþjónn og sími frá smíð 19, Plex-þjónn frá smíð 20, ekki enn prófað í gleraugunum), og frá smíð 20 sýnir glugginn líka Tapo-myndavélarnar. Það er ókeypis og með opnum hugbúnaði. Prófað á Quest 3, og af notanda með Insta360 X4 8K HEVC myndskeið.
+Sama Android-forritið keyrir á Quest 3 og 3S, og frá smíð 21 á Quest 2 og Quest Pro (óprófað), sem gluggi, með öllu safninu þínu. 360° hnappur þess opnar umlykjandi sýn þar sem myndin eða myndskeiðið er allt í kringum þig og þú lítur í kringum þig með því að snúa höfðinu, í raunverulegu 3D fyrir steríóskrár (Meta Spatial SDK).
+
+Efnið kemur af Immich-vélþjóninum, úr gleraugunum sjálfum, af NAS, miðlaþjóni, síma eða Plex-þjóni, spilað þar sem það er (miðlaþjónn og sími frá smíð 19, Plex-þjónn frá smíð 20, ekki enn prófað í gleraugunum), og frá smíð 20 sýnir glugginn líka Tapo-myndavélarnar. Það er ókeypis og með opnum hugbúnaði. Prófað á Quest 3, og af notanda með Insta360 X4 8K HEVC myndskeið.
 
 ### Opna umlykjandi sýnina
 
@@ -479,17 +528,20 @@ Sama Android-forritið keyrir á Quest 3 og 3S, og frá smíð 21 á Quest 2 og 
 
 | Aðgerð | Fjarstýringar | Hendur |
 |---|---|---|
-| Aftur í forritið | B eða Y | Til baka-hnappur upplýsingaspjaldsins |
-| Spila eða gera hlé á myndskeiði | Gikkur, þegar upplýsingaspjaldið er falið | Spila- eða Hlé-hnappur upplýsingaspjaldsins |
+| Aftur í forritið | B eða Y | Til baka-hnappur |
+| Spila eða gera hlé á myndskeiði | Gikkur, þegar upplýsingaspjaldið er falið | Spila- eða Hlé-hnappur |
 | Sýna eða fela upplýsingaspjaldið | A, X, grip eða valmynd | Valmyndarbending, eða klípa þegar spjaldið er falið |
-| Snúa sýninni, til að líta aftur fyrir sig án þess að snúa höfðinu (frá smíð 17) | Hægri stýripinni til vinstri eða hægri: 30° í hverri ýtingu, og heldur áfram að snúast á meðan honum er haldið (eins línu yfirlag sýnir hornið) | Snúa-hnappur upplýsingaspjaldsins (90°) |
-| Fyrra eða næsta efni | Vinstri stýripinni til vinstri eða hægri (hvor pinninn sem er fyrir smíð 17; frá smíð 16 nefnir eins línu yfirlag efnið, upplýsingaspjaldið helst falið) | Fyrra- og Næsta-hnappar upplýsingaspjaldsins |
-| 10 sekúndur aftur á bak eða áfram í myndskeiði | Stýripinni niður eða upp (frá smíð 16 sýnir eins línu yfirlag tímann, upplýsingaspjaldið helst falið) | Stökkhnapparnir tveir, eða dragðu tímastiku upplýsingaspjaldsins |
-| Snúa myndinni um 90° | Stýripinni niður eða upp á mynd (frá smíð 16 sýnir eins línu yfirlagið hornið); á myndskeiði, Snúa-hnappur upplýsingaspjaldsins | Snúa-hnappur upplýsingaspjaldsins |
-| Breyta 3D-uppsetningu (mónó, efst og neðst, hlið við hlið) | 3D-hnappur upplýsingaspjaldsins | 3D-hnappur upplýsingaspjaldsins |
-| Heil kúla eða hálf kúla (VR180) | 360°/180° hnappur upplýsingaspjaldsins | 360°/180° hnappur upplýsingaspjaldsins |
+| Snúa sýninni (frá smíð 17) | Hægri stýripinni til vinstri eða hægri, 30° í hverri ýtingu | Snúa-hnappur (90°) |
+| Fyrra eða næsta efni | Vinstri stýripinni til vinstri eða hægri | Fyrra- og Næsta-hnappar |
+| 10 sekúndur aftur á bak eða áfram í myndskeiði | Stýripinni niður eða upp | Stökkhnapparnir tveir, eða dragðu tímastikuna |
+| Snúa myndinni um 90° | Stýripinni niður eða upp á mynd, Snúa-hnappur á myndskeiði | Snúa-hnappur |
+| Breyta 3D-uppsetningu (mónó, efst og neðst, hlið við hlið) | 3D-hnappur | 3D-hnappur |
+| Heil kúla eða hálf kúla (VR180) | 360°/180° hnappur | 360°/180° hnappur |
 
-Með fjarstýringum virka hnapparnir og tímastika upplýsingaspjaldsins líka: beindu geislanum að þeim og ýttu á gikkinn.
+Í þessari töflu eru hnapparnir og tímastikan þau á upplýsingaspjaldinu. Með fjarstýringum virka þau líka: beindu geislanum að þeim og ýttu á gikkinn.
+
+- **Snúa sýninni**: til að líta aftur fyrir sig án þess að snúa höfðinu. Hægri stýripinninn heldur áfram að snúa á meðan honum er haldið, og eins línu yfirlag sýnir hornið.
+- **Eins línu yfirlag**: frá smíð 16 sýnir spólun, snúningur myndar, eða fyrra og næsta með stýripinna eins línu yfirlag (tímann, hornið eða heiti efnisins) og upplýsingaspjaldið helst falið. Fyrir smíð 17 fór hvor pinninn sem er í fyrra eða næsta efni.
 
 ### Upplýsingaspjaldið, fyrra og næsta
 
@@ -497,7 +549,9 @@ Upplýsingaspjald myndskeiðs er með tímastiku (staða, lengd, hversu mikið e
 
 Fyrra og næsta fara í gegnum 360° efni staðarins sem þú komst frá, án þess að fara út úr umlykjandi sýninni: tímalínuna, 360° listann (eins og hann er síaður), myndasafn, möppu á netdeilingu, eða efni gleraugnanna sjálfra (On this device). Flötum myndum og myndskeiðum er sleppt. Þegar þú ferð aftur í forritið úr tímalínunni, myndasafni eða 360° listanum lendir það á efninu sem þú varst að skoða (síða deilimöppu helst á skránni sem þú opnaðir), og myndskeiðið sem þú opnaðir umlykjandi sýnina á heldur áfram þar sem frá var horfið.
 
-Frá smíð 17 snýr hægri stýripinninn sýninni, eins og hægri stýripinninn gerir í flestum forritum fyrir gleraugu: ein ýting snýr um 30°, ef honum er haldið heldur snúningurinn áfram, svo það sem er fyrir aftan þig kemur fram fyrir án þess að þú snúir höfðinu eða stólnum; fyrra og næsta eru á vinstri stýripinnanum. Frá smíð 16, eftir ábendingu notanda í gleraugunum, sýnir spólun, snúningur eða fyrra/næsta með stýripinna eins línu yfirlag (tímann, hornið eða titil efnisins) sem dofnar eftir 1,5 sekúndur í stað þess að kalla fram upplýsingaspjaldið; spjaldið kemur áfram með A, X, gripinu eða valmyndarhnappinum. Sama smíð heldur því að hægt sé að sýna og fela spjaldið þegar fjarstýringarnar sofna, vakna eða víkja fyrir handrakningu, og skráir þær breytingar, sjá [Atvikaskrár](#logs).
+Frá smíð 17 snýr hægri stýripinninn sýninni, eins og hægri stýripinninn gerir í flestum forritum fyrir gleraugu: ein ýting snýr um 30°, ef honum er haldið heldur snúningurinn áfram, svo það sem er fyrir aftan þig kemur fram fyrir án þess að þú snúir höfðinu eða stólnum; fyrra og næsta eru á vinstri stýripinnanum.
+
+Frá smíð 16, eftir ábendingu notanda í gleraugunum, sýnir spólun, snúningur eða fyrra/næsta með stýripinna eins línu yfirlag (tímann, hornið eða titil efnisins) sem dofnar eftir 1,5 sekúndur í stað þess að kalla fram upplýsingaspjaldið; spjaldið kemur áfram með A, X, gripinu eða valmyndarhnappinum. Sama smíð heldur því að hægt sé að sýna og fela spjaldið þegar fjarstýringarnar sofna, vakna eða víkja fyrir handrakningu, og skráir þær breytingar, sjá [Atvikaskrár](#logs).
 
 Rýmismynd frá Apple sem opnuð er með „Skoða í 3D“ er ekki sett á kúlu: hún svífur fyrir framan þig, sjá [Rýmismyndir og rýmismyndskeið frá Apple](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Myndir sýna fyrst forskoðun, síðan frumritið, minnkað í mesta lagi í 819
 
 3D-uppsetningar, efst og neðst og hlið við hlið, 360° og VR180, eru sýndar í 3D, þar sem hvort auga fær sinn helming rammans. Uppsetningin kemur úr skránni þegar hún gefur upp eina (myndskeið), annars er giskað á hana út frá lögun hennar (ferningur: efst og neðst, 4:1: hlið við hlið); þegar hún er röng skaltu nota 3D-hnapp upplýsingaspjaldsins.
 
-| 360° mynd í gleraugunum | 360° myndskeið í gleraugunum | 3D 360° myndskeið í gleraugunum |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="360° mynd allt í kringum þig í Quest 3, með upplýsingaspjaldinu: hnappar fyrir uppsetningu, 360° og Til baka"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="360° myndskeið af vatni í spilun í Quest 3, með upplýsingaspjaldinu: hnappar fyrir uppsetningu, 360°, Hlé og Til baka"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Steríó 360° myndskeið í Quest 3, á upplýsingaspjaldinu stendur 3D, efst og neðst"> |
-| Umlykjandi sýn myndar, með upplýsingaspjaldinu (uppsetning, 360°/180°, Til baka) | Myndskeið í spilun, með Hlé | Steríómyndskeið efst og neðst, hvort auga fær sitt (Kandao Obsidian sýnishornið) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="360° mynd allt í kringum þig í Quest 3, með upplýsingaspjaldinu: hnappar fyrir uppsetningu, 360° og Til baka">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="360° myndskeið af vatni í spilun í Quest 3, með upplýsingaspjaldinu: hnappar fyrir uppsetningu, 360°, Hlé og Til baka">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Steríó 360° myndskeið í Quest 3, á upplýsingaspjaldinu stendur 3D, efst og neðst">
+</p>
+
+- **360° mynd í gleraugunum**: umlykjandi sýn myndar, með upplýsingaspjaldinu (uppsetning, 360°/180°, Til baka).
+- **360° myndskeið í gleraugunum**: myndskeið í spilun, með Hlé.
+- **3D 360° myndskeið í gleraugunum**: steríómyndskeið efst og neðst, hvort auga fær sitt (Kandao Obsidian sýnishornið).
 
 Þessar skjámyndir voru teknar með forritið á frönsku, fyrir smíð 14. Spjaldið er nú einnig með tímastikuna á milli 10 sekúndna stökkhnappanna tveggja, Fyrra og Næsta, og Snúa.
 
@@ -598,7 +657,9 @@ Immuch360 setur 360° merki á smámyndir 360° mynda (í möppu á netdeilingu,
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Upplýsingar um myndskeið, afkóðarar og hvers vegna myndskeið hikstar
 
-Fólk spyr hvaða merkjamál, stærð og bitahraða Quest 3 spilar, og hvers vegna 5.7K útflutningur hikstar í gleraugunum þótt hann spilist í símanum. Svarið er vélbúnaðarafkóðarinn: H.264 afkóðari Quest 3 (XR2 Gen 2) nær hámarki í kringum 4096x2304, svo 5760x2880 H.264 myndskeið (stig 6.0, um 200 Mbit/s, venjulegur Insta360 útflutningur) afkóðast á um 17 fps í gleraugunum, með kubbagöllum, á meðan sama skrá spilast vel í síma. Sama myndskeið í HEVC (H.265) spilast vel í gleraugunum: Insta360 X4 8K HEVC myndskeið (7680x3840, 29,97 fps, 210 Mbit/s, Main snið stig 6.1, 8 bita) spilast hnökralaust í umlykjandi sýninni, í upprunalegri upplausn og án umkóðunar (samkvæmt notanda á Quest 3).
+Fólk spyr hvaða merkjamál, stærð og bitahraða Quest 3 spilar, og hvers vegna 5.7K útflutningur hikstar í gleraugunum þótt hann spilist í símanum. Svarið er vélbúnaðarafkóðarinn: H.264 afkóðari Quest 3 (XR2 Gen 2) nær hámarki í kringum 4096x2304, svo 5760x2880 H.264 myndskeið (stig 6.0, um 200 Mbit/s, venjulegur Insta360 útflutningur) afkóðast á um 17 fps í gleraugunum, með kubbagöllum, á meðan sama skrá spilast vel í síma.
+
+Sama myndskeið í HEVC (H.265) spilast vel í gleraugunum: Insta360 X4 8K HEVC myndskeið (7680x3840, 29,97 fps, 210 Mbit/s, Main snið stig 6.1, 8 bita) spilast hnökralaust í umlykjandi sýninni, í upprunalegri upplausn og án umkóðunar (samkvæmt notanda á Quest 3).
 
 Immich-forritið er með einn rofa, „Force original video“, og sýnir aðeins merkjamálið. Immuch360 sýnir hvað myndskeið er og hvað tækið afkóðar, og velur skrána sem spilast.
 
@@ -623,7 +684,9 @@ Settings, Fyrir lengra komna, „Myndskeiðsafkóðarar þessa tækis“ (frá s
 1. Opnaðu Settings, Skoðun Eigna, síðan Videos.
 2. Undir „Uppruni myndskeiðs“ („Hvaða skrá spilast þegar þjónninn er með umkóðað afrit“), veldu „Upprunalega skráin þegar þetta tæki afkóðar hana“, „Alltaf upprunalega skráin“ eða „Alltaf umkóðaða streymið“.
 
-Frá smíð 15 gildir valið um hvert myndskeið á vélþjóninum: flata spilarann, 360° og Spatial spilarana, og umlykjandi sýn Quest. Þar til þú velur heldur sími því sem gamli rofinn „Force original video“ sagði (slökkt sjálfgefið: umkóðaða streymið, sem er frumritið sjálft þegar vélþjónninn umkóðaði það ekki), og Quest spilar frumritið þegar gleraugun afkóða það. Prófunin les merkjamál, stærð og rammatíðni úr skránni og ber þau saman við vélbúnaðarafkóðarana (H.264 á Quest 3 er takmarkað við mældu 4096x2304). Spilari sem getur ekki afkóðað frumritið skiptir yfir í umkóðaða streymið með skilaboðum: „Spila umkóðaða streymið: upprunalega skráin (merkjamál og stærð) fer fram úr því sem þetta tæki afkóðar“.
+Frá smíð 15 gildir valið um hvert myndskeið á vélþjóninum: flata spilarann, 360° og Spatial spilarana, og umlykjandi sýn Quest. Þar til þú velur heldur sími því sem gamli rofinn „Force original video“ sagði (slökkt sjálfgefið: umkóðaða streymið, sem er frumritið sjálft þegar vélþjónninn umkóðaði það ekki), og Quest spilar frumritið þegar gleraugun afkóða það.
+
+Prófunin les merkjamál, stærð og rammatíðni úr skránni og ber þau saman við vélbúnaðarafkóðarana (H.264 á Quest 3 er takmarkað við mældu 4096x2304). Spilari sem getur ekki afkóðað frumritið skiptir yfir í umkóðaða streymið með skilaboðum: „Spila umkóðaða streymið: upprunalega skráin (merkjamál og stærð) fer fram úr því sem þetta tæki afkóðar“.
 
 Í gleraugunum ræsir umlykjandi sýnin frumritið og, við fyrstu rammana, skiptir yfir í umkóðað streymi vélþjónsins þegar frumritið er yfir getu afkóðaranna, og segir frá því á upplýsingaspjaldinu; þegar ekkert umkóðað streymi er til, þegar það er enn of stórt, eða þegar skráin kemur úr gleraugunum eða af netdeilingu, segir upplýsingaspjaldið frá því í 10 sekúndur, ásamt því hverju þarf að breyta. Smíð 14, sú sem send var í Horizon Store, prófar aðeins H.264 yfir 4096x2304, og reynir þá spilunarstreymi vélþjónsins á sama hátt.
 
@@ -661,87 +724,184 @@ Til að sýna einhverjum sem er ekki með forritið 360° mynd skaltu deila henn
 
 Núverandi smíð, smíð 21 (útgáfa 3.3.0-rc.0, smíðanúmer 3030019), byggir á Immich 3.3.0-rc.0 (`main` hjá Immich, ekki enn stöðug útgáfa). Smíð 19 var prófuð með Immich 3.2 vélþjóni, og smíðar 20 og 21 breyta engu í því sem forritið biður vélþjóninn um. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich-verkefnisins. Fyrir fullkomin skjöl um Immich sjálft, sjá [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Samanburður við Immich-forritið og önnur forrit
 
 ### Hvers vegna þessi afleiða er til, í einni töflu
 
-| | Immich-farsímaforrit | Immuch360 | Staða |
-|---|:---:|:---:|---|
-| 360° myndir sem kúla sem hægt er að líta í kringum sig í (draga, klípa, tvísmella, tregða, upphafssjónarhorn myndavélarinnar, hlutavíðmyndir) | ❌ flöt ræma | ✅ | Prófað á Galaxy S24+ og iPhone 14 |
-| Gíróskóp: líta í kringum sig með því að hreyfa símann | ❌ | ✅ | Prófað á Galaxy S24+ og iPhone 14 |
-| 360° myndskeið í kúluspilara, með hljóði, spólun, vali á hljóðrás og biðminnisvísi | ❌ flatt myndskeið | ✅ Android og iOS (engin tímastika á iOS enn) | Prófað á Galaxy S24+ og iPhone 14 |
-| 3D (steríó) 360° myndir og myndskeið | ❌ tvöföld mynd | ✅ vinstra auga í símum, raunverulegt 3D á Quest | Prófað á Galaxy S24+ og Quest 3, með raunverulegum 3D 360° sýnishornum (VRTogether, Vuze, Kandao) og 3D mynd; ábendingar frá öðrum myndavélum vel þegnar |
-| VR180 (hálf kúla) myndir og myndskeið | ❌ teygð um kúluna | ✅ hálf kúla, 360°/180° hnappur | Prófað á Android-hermi og Galaxy S24+ með tilbúnu efni; ábendingar frá tækjum vel þegnar |
-| Rýmismyndir frá Apple (HEIC steríópör) og rýmismyndskeið (MV-HEVC) | ❌ flöt mynd eða myndskeið, ekkert segir að það sé rýmisefni | ✅ frá smíð 19: myndir í 3D í Quest, eitt auga og upplýsingalína annars staðar | Greining prófuð á sýnishornsmynd sem myndvinnslusafn Apple skrifaði og á tilbúnum skrám; sýnin í gleraugunum og raunverulegar iPhone-skrár eru tækjaprófun smíðar 19 |
-| Umlykjandi sýn Meta Quest með höfuðrakningu, tímastiku, fyrra og næsta, og Snúa | ❌ | ✅ sama forrit, sem smíð fyrir gleraugu eða APK fyrir síma | Prófað á Quest 3 (stjórntæki smíðar 14, aðlöguð í smíð 16 eftir ábendingu notanda), og af notanda með Insta360 X4 8K HEVC myndskeið |
-| 360° merki á smámyndum, og 360° listi með óunnum skrám og síum (tímabil, uppruni, tegund, myndavél) | ❌ | ✅ síur frá smíð 18 | Lokið |
-| „Skoða sem 360°“ fyrir skrár sem vélþjónninn merkir ekki | ❌ | ✅ munað í símanum | Lokið |
-| Spatial 2.5D: dýpt á flötum skjá úr steríómyndskeiði | ❌ | ✅ tilraun, símar og spjaldtölvur | Prófað á Galaxy S24+; ábendingar frá iPhone vel þegnar |
-| Nota án nokkurs vélþjóns, á myndasafni tækisins sjálfs | ❌ innskráning nauðsynleg | ✅ | Prófað á Galaxy S24+, Quest 3 og Android-hermi |
-| SMB- og WebDAV-deilingar sem finnast á netinu og spilast beint, ekkert sótt | ❌ | ✅ hver skoðari, símar og Quest | Prófað með Freebox Server (SMB) á Galaxy S24+ og Quest 3, og gegn Samba- og WebDAV-prófunarþjónum á Android-hermi; ábendingar um önnur NAS og WebDAV vel þegnar |
-| DLNA-miðlaþjónar sem tegund deilingar | ❌ | ✅ frá smíð 19 | Prófað gegn minidlna og Gerbera í Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone og Quest eru tækjaprófun smíðar 19 |
-| Senda skrár af deilingu í Immich; skrár tækis sendar handvirkt teljast afritaðar | ❌ aðeins skrár tækisins | ✅ frá smíð 15 | Prófað á Android-hermi gegn Samba-prófunarþjóni og Immich 3.2 vélþjóni |
-| Deila þessum síma á netinu, fyrir gleraugun | ❌ | ✅ frá smíð 19, Android og iOS | Einingapróf og enda-til-enda próf með WebDAV-biðlara gleraugnanna, á tölvu; sími sem þjónar Quest, og iPhone-hliðin, eru tækjaprófun smíðar 19 |
-| Plex Media Server söfn spiluð úr upprunalegu skránum, heima og að heiman, án plex.tv | ❌ | ✅ frá smíð 20, allir skoðarar, í símum, spjaldtölvum, Quest og sjónvörpum | Prófað úr tölvu gegn raunverulegum Plex Media Server 1.42.1 (pörun, möppur, bætabil, smámyndir, vistfangið utan heimilis); ekki enn prófað á tæki |
-| Tapo-myndavélar: bein mynd, og upptökur minniskortsins sendar í Immich þegar þú velur | ❌ | ✅ frá smíð 20: upptökur alls staðar, bein mynd á Android, Android TV og Quest | Prófað gegn hermdri myndavél; ekki enn prófað með raunverulegri myndavél |
-| Android TV og Google TV, stýrt með fjarstýringunni, í sama APK | ❌ ekki sjónvarpsforrit | ✅ frá smíð 20 | Prófað með sjálfvirkum prófunum; ekki enn prófað í sjónvarpi |
-| Óunnar Insta360 .insp myndir og .insv myndskeið með einni rás | ❌ flatt | ✅ frá smíð 16 | Myndir bornar saman við útflutning Insta360 Studio á X3-skrám, myndskeið á Android-hermi með X3-skrá í lágri upplausn; ekki enn keyrt á iPhone |
-| Óunnin myndskeið með eina linsu á rás eða á skrá (Insta360 X4, X4 Air, X5, X6, X3-pör, GoPro .360, DJI .osv) | ❌ flatt eða rangt | ✅ frá smíð 18 | Þáttarar og samskeyting prófuð á raunverulegum X4-, X3-pars-, GoPro MAX- og Osmo 360-skrám; spilun er tækjaprófun smíða 18 og 19 |
-| Tvöfalt fiskauga .dng | ❌ flatt | ❌ ekki enn | Á áætlun |
-| Myndskeið á vélþjóni: frumritið þegar tækið afkóðar það, annars umkóðaða streymið; listi yfir myndskeiðsafkóðara tækisins | ❌ einn rofi, „Force original video“ | ✅ frá smíð 15 | Prófað á Android-hermi; H.264 hámark Quest 3 var mælt í gleraugunum |
-| Tæknilegar upplýsingar um myndskeið: bitahraði, mynd, snið, hvort þetta tæki afkóðar það | ❌ aðeins merkjamálið | ✅ frá smíð 18 | Lokið |
-| Ókeypis spilari fyrir flöt, 360°, 3D og VR180 myndskeið, af vélþjóninum, úr símanum eða af NAS | ❌ aðeins flatt | ✅ (spilararnir í verslun Quest 3 kosta peninga) | |
-| Sami vélþjónn, sami aðgangur, sett upp við hlið opinbera forritsins | | ✅ | |
+| | Immich-farsímaforrit | Immuch360 |
+|---|:---:|:---:|
+| 360° myndir sem kúla sem hægt er að líta í kringum sig í (draga, klípa, tvísmella, tregða, upphafssjónarhorn myndavélarinnar, hlutavíðmyndir) | ❌ flöt ræma | ✅ |
+| Gíróskóp: líta í kringum sig með því að hreyfa símann | ❌ | ✅ |
+| 360° myndskeið í kúluspilara, með hljóði, spólun, vali á hljóðrás og biðminnisvísi | ❌ flatt myndskeið | ✅ Android og iOS (engin tímastika á iOS enn) |
+| 3D (steríó) 360° myndir og myndskeið | ❌ tvöföld mynd | ✅ vinstra auga í símum, raunverulegt 3D á Quest |
+| VR180 (hálf kúla) myndir og myndskeið | ❌ teygð um kúluna | ✅ hálf kúla, 360°/180° hnappur |
+| Rýmismyndir frá Apple (HEIC steríópör) og rýmismyndskeið (MV-HEVC) | ❌ flöt mynd eða myndskeið, ekkert segir að það sé rýmisefni | ✅ frá smíð 19: myndir í 3D í Quest, eitt auga og upplýsingalína annars staðar |
+| Umlykjandi sýn Meta Quest með höfuðrakningu, tímastiku, fyrra og næsta, og Snúa | ❌ | ✅ sama forrit, sem smíð fyrir gleraugu eða APK fyrir síma |
+| 360° merki á smámyndum, og 360° listi með óunnum skrám og síum (tímabil, uppruni, tegund, myndavél) | ❌ | ✅ síur frá smíð 18 |
+| „Skoða sem 360°“ fyrir skrár sem vélþjónninn merkir ekki | ❌ | ✅ munað í símanum |
+| Spatial 2.5D: dýpt á flötum skjá úr steríómyndskeiði | ❌ | ✅ tilraun, símar og spjaldtölvur |
+| Nota án nokkurs vélþjóns, á myndasafni tækisins sjálfs | ❌ innskráning nauðsynleg | ✅ |
+| SMB- og WebDAV-deilingar sem finnast á netinu og spilast beint, ekkert sótt | ❌ | ✅ hver skoðari, símar og Quest |
+| DLNA-miðlaþjónar sem tegund deilingar | ❌ | ✅ frá smíð 19 |
+| Senda skrár af deilingu í Immich; skrár tækis sendar handvirkt teljast afritaðar | ❌ aðeins skrár tækisins | ✅ frá smíð 15 |
+| Deila þessum síma á netinu, fyrir gleraugun | ❌ | ✅ frá smíð 19, Android og iOS |
+| Plex Media Server söfn spiluð úr upprunalegu skránum, heima og að heiman, án plex.tv | ❌ | ✅ frá smíð 20, allir skoðarar, í símum, spjaldtölvum, Quest og sjónvörpum |
+| Tapo-myndavélar: bein mynd, og upptökur minniskortsins sendar í Immich þegar þú velur | ❌ | ✅ frá smíð 20: upptökur alls staðar, bein mynd á Android, Android TV og Quest |
+| Android TV og Google TV, stýrt með fjarstýringunni, í sama APK | ❌ ekki sjónvarpsforrit | ✅ frá smíð 20 |
+| Óunnar Insta360 .insp myndir og .insv myndskeið með einni rás | ❌ flatt | ✅ frá smíð 16 |
+| Óunnin myndskeið með eina linsu á rás eða á skrá (Insta360 X4, X4 Air, X5, X6, X3-pör, GoPro .360, DJI .osv) | ❌ flatt eða rangt | ✅ frá smíð 18 |
+| Tvöfalt fiskauga .dng | ❌ flatt | ❌ ekki enn |
+| Myndskeið á vélþjóni: frumritið þegar tækið afkóðar það, annars umkóðaða streymið; listi yfir myndskeiðsafkóðara tækisins | ❌ einn rofi, „Force original video“ | ✅ frá smíð 15 |
+| Tæknilegar upplýsingar um myndskeið: bitahraði, mynd, snið, hvort þetta tæki afkóðar það | ❌ aðeins merkjamálið | ✅ frá smíð 18 |
+| Ókeypis spilari fyrir flöt, 360°, 3D og VR180 myndskeið, af vélþjóninum, úr símanum eða af NAS | ❌ aðeins flatt | ✅ (spilararnir í verslun Quest 3 kosta peninga) |
+| Sami vélþjónn, sami aðgangur, sett upp við hlið opinbera forritsins | | ✅ |
+
+<details>
+<summary><b>Staða hverrar línu</b>: hvernig hún var prófuð</summary>
+
+- **360° myndir sem kúla**: prófað á Galaxy S24+ og iPhone 14.
+- **Gíróskóp**: prófað á Galaxy S24+ og iPhone 14.
+- **360° myndskeið**: prófað á Galaxy S24+ og iPhone 14.
+- **3D 360° myndir og myndskeið**: prófað á Galaxy S24+ og Quest 3, með raunverulegum 3D 360° sýnishornum (VRTogether, Vuze, Kandao) og 3D mynd; ábendingar frá öðrum myndavélum vel þegnar.
+- **VR180**: prófað á Android-hermi og Galaxy S24+ með tilbúnu efni; ábendingar frá tækjum vel þegnar.
+- **Rýmismyndir og rýmismyndskeið frá Apple**: greining prófuð á sýnishornsmynd sem myndvinnslusafn Apple skrifaði og á tilbúnum skrám; sýnin í gleraugunum og raunverulegar iPhone-skrár eru tækjaprófun smíðar 19.
+- **Umlykjandi sýn Meta Quest**: prófað á Quest 3 (stjórntæki smíðar 14, aðlöguð í smíð 16 eftir ábendingu notanda), og af notanda með Insta360 X4 8K HEVC myndskeið.
+- **360° merki og 360° listi**: lokið.
+- **Skoða sem 360°**: lokið.
+- **Spatial 2.5D**: prófað á Galaxy S24+; ábendingar frá iPhone vel þegnar.
+- **Án nokkurs vélþjóns**: prófað á Galaxy S24+, Quest 3 og Android-hermi.
+- **SMB- og WebDAV-deilingar**: prófað með Freebox Server (SMB) á Galaxy S24+ og Quest 3, og gegn Samba- og WebDAV-prófunarþjónum á Android-hermi; ábendingar um önnur NAS og WebDAV vel þegnar.
+- **DLNA-miðlaþjónar**: prófað gegn minidlna og Gerbera í Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone og Quest eru tækjaprófun smíðar 19.
+- **Senda skrár af deilingu í Immich**: prófað á Android-hermi gegn Samba-prófunarþjóni og Immich 3.2 vélþjóni.
+- **Deila þessum síma á netinu**: einingapróf og enda-til-enda próf með WebDAV-biðlara gleraugnanna, á tölvu; sími sem þjónar Quest, og iPhone-hliðin, eru tækjaprófun smíðar 19.
+- **Plex Media Server**: prófað úr tölvu gegn raunverulegum Plex Media Server 1.42.1 (pörun, möppur, bætabil, smámyndir, vistfangið utan heimilis); ekki enn prófað á tæki.
+- **Tapo-myndavélar**: prófað gegn hermdri myndavél; ekki enn prófað með raunverulegri myndavél.
+- **Android TV og Google TV**: prófað með sjálfvirkum prófunum; ekki enn prófað í sjónvarpi.
+- **Óunnar Insta360 .insp myndir og .insv myndskeið með einni rás**: myndir bornar saman við útflutning Insta360 Studio á X3-skrám, myndskeið á Android-hermi með X3-skrá í lágri upplausn; ekki enn keyrt á iPhone.
+- **Óunnin myndskeið með eina linsu á rás eða á skrá**: þáttarar og samskeyting prófuð á raunverulegum X4-, X3-pars-, GoPro MAX- og Osmo 360-skrám; spilun er tækjaprófun smíða 18 og 19.
+- **Tvöfalt fiskauga .dng**: á áætlun.
+- **Myndskeið á vélþjóni og myndskeiðsafkóðararnir**: prófað á Android-hermi; H.264 hámark Quest 3 var mælt í gleraugunum.
+- **Tæknilegar upplýsingar um myndskeið**: lokið.
+
+</details>
 
 ### Önnur forrit sem fólk notar til þessa
 
-| Það sem fólk notar | Það sem það rekst á | Það sem Immuch360 gerir |
-|---|---|---|
-| Vefforrit Immich | Það sýnir 360° mynd sem kúlu, en tekur óunna .insp fyrir tilbúna víðmynd og vefur tveimur hringjum hennar utan um kúluna; VR-sýn er enn beiðni ([umræða #14768](https://github.com/immich-app/immich/discussions/14768)) | Skeytir óunnar skrár saman í tækinu, og opnar umlykjandi sýn í Quest |
-| Insta360-forritið eða Studio | Nauðsynlegt til að breyta óunnum skrám kortsins í 360° mynd áður en horft er | Opnar óunnu .insp og .insv skrárnar beint, og GoPro .360 og DJI .osv skrárnar |
-| Plex, Jellyfin, Synology Photos | 360° myndir og myndskeið sýnd flöt eða ekki þekkt, eins og þræðir á spjallborðum þeirra lýsa (beiðni til Plex hefur verið opin síðan 2017) | Les Plex-safnið sjálft frá smíð 20, eða sömu möppur yfir SMB, WebDAV eða DLNA, og spilar þær sem kúlu, án þess að breyta neinu á vélþjóninum |
-| Tapo-forritið | Sérstakt forrit, skráð inn á TP-Link-aðganginn þinn, með myndskeiðin aðskilin frá myndunum þínum | Sýnir myndavélina við hlið myndanna þinna, talar við hana aðeins á netinu þínu, og geymir myndskeið sem þú getur sent í Immich (frá smíð 20) |
-| Immich-farsímaforritið í sjónvarpi | Ekki sjónvarpsforrit: notandi greinir frá því að það virki með mús, ekki með fjarstýringunni | Sama forritið, gert fyrir fjarstýringuna (frá smíð 20) |
-| Afrita skrár í gleraugun | Hver skrá afrituð með snúru áður en hægt er að horfa á hana | Spilar á staðnum úr Immich, af NAS, miðlaþjóni eða síma |
-| 360° og 3D spilarar Quest-verslunarinnar | Kosta peninga | Ókeypis og með opnum hugbúnaði (AGPL) |
+- **Vefforrit Immich**
+  - Það sem það rekst á: það sýnir 360° mynd sem kúlu, en tekur óunna .insp fyrir tilbúna víðmynd og vefur tveimur hringjum hennar utan um kúluna; VR-sýn er enn beiðni ([umræða #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Það sem Immuch360 gerir: skeytir óunnar skrár saman í tækinu, og opnar umlykjandi sýn í Quest.
+- **Insta360-forritið eða Studio**
+  - Það sem það rekst á: nauðsynlegt til að breyta óunnum skrám kortsins í 360° mynd áður en horft er.
+  - Það sem Immuch360 gerir: opnar óunnu .insp og .insv skrárnar beint, og GoPro .360 og DJI .osv skrárnar.
+- **Plex, Jellyfin, Synology Photos**
+  - Það sem það rekst á: 360° myndir og myndskeið sýnd flöt eða ekki þekkt, eins og þræðir á spjallborðum þeirra lýsa (beiðni til Plex hefur verið opin síðan 2017).
+  - Það sem Immuch360 gerir: les Plex-safnið sjálft frá smíð 20, eða sömu möppur yfir SMB, WebDAV eða DLNA, og spilar þær sem kúlu, án þess að breyta neinu á vélþjóninum.
+- **Tapo-forritið**
+  - Það sem það rekst á: sérstakt forrit, skráð inn á TP-Link-aðganginn þinn, með myndskeiðin aðskilin frá myndunum þínum.
+  - Það sem Immuch360 gerir: sýnir myndavélina við hlið myndanna þinna, talar við hana aðeins á netinu þínu, og geymir myndskeið sem þú getur sent í Immich (frá smíð 20).
+- **Immich-farsímaforritið í sjónvarpi**
+  - Það sem það rekst á: ekki sjónvarpsforrit: notandi greinir frá því að það virki með mús, ekki með fjarstýringunni.
+  - Það sem Immuch360 gerir: sama forritið, gert fyrir fjarstýringuna (frá smíð 20).
+- **Afrita skrár í gleraugun**
+  - Það sem það rekst á: hver skrá afrituð með snúru áður en hægt er að horfa á hana.
+  - Það sem Immuch360 gerir: spilar á staðnum úr Immich, af NAS, miðlaþjóni eða síma.
+- **360° og 3D spilarar Quest-verslunarinnar**
+  - Það sem það rekst á: kosta peninga.
+  - Það sem Immuch360 gerir: ókeypis og með opnum hugbúnaði (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Snið og uppsprettur, eftir stýrikerfi
 
-Immuch360 er myndasafn, og það er líka ókeypis margmiðlunarspilari: það spilar það sem opinbera forritið getur ekki, úr uppsprettunum í seinni töflunni, í spilaranum sem hentar skránni.
+Immuch360 er myndasafn, og það er líka ókeypis margmiðlunarspilari: það spilar það sem opinbera forritið getur ekki, úr uppsprettunum í seinni listanum, í spilaranum sem hentar skránni.
 
-| Hvað | Android-símar | iPhone, iPad | Meta Quest | Android TV, Google TV (frá smíð 20) |
-|---|---|---|---|---|
-| Flöt myndskeið (MP4, MOV, MKV, það sem tækið afkóðar) | Immich-spilarinn, og innbyggður spilari fyrir netdeilingar | Sama, nema MKV- og AVI-skrár á deilingu, sem iOS opnar ekki (á vélþjóni spilast þær umkóðaðar) | Í glugganum | Eins og í símum; OK gerir hlé, vinstri og hægri stökkva 10 s |
-| 360° myndir | Kúluskoðari, gíróskóp | Sama | Umlykjandi, allt í kringum þig | Kúluskoðari sem snúið er með örvunum, aðdráttur með rásahnöppunum |
-| 360° myndskeið | Innbyggður Media3 spilari á kúlu, gíróskóp, spólun, val á hljóðrás, biðminnisvísir | Innbyggður SceneKit spilari á kúlu, gíróskóp, val á hljóðrás, biðminnisvísir; spila og hlé, engin tímastika enn | Umlykjandi, raunverulegt 3D fyrir steríóskrár, tímastika með 10 sekúndna stökkum, fyrra og næsta efni | Media3 spilari símanna, snúið með örvunum |
-| 3D 360° (efst og neðst, hlið við hlið) | Vinstra auga, uppsetningarhnappur | Sama | Hvort auga fær sinn helming rammans | Vinstra auga, uppsetningarhnappur |
-| VR180 (hálf kúla) myndir og myndskeið | Hálf kúla, 360°/180° hnappur | Sama | Umlykjandi hálf kúla | Hálf kúla, 360°/180° hnappur |
-| Spatial 2.5D (dýpt á flötum skjá úr steríómyndskeiði) | Innbyggður spilari, höfuðrakning með frammyndavélinni | Sama | Ekki í boði | Ekki í boði |
-| Rýmismyndir frá Apple (HEIC steríópör, frá smíð 19) | Vinstra auga, upplýsingalína segir að hún sé rýmismynd | Sama | Skoða í 3D: bæði augu á mynd sem svífur í umlykjandi sýninni, 3D eða 2D, stærðanleg | Vinstra auga, upplýsingalína |
-| Rýmismyndskeið frá Apple (MV-HEVC, frá smíð 19) | Eitt auga (grunnlagið), með tilkynningu | Sama | Eitt auga í glugganum, með tilkynningu | Eitt auga, með tilkynningu |
-| Óunnar Insta360 .insp myndir (frá smíð 16) | Skeyttar saman á GPU á undan kúluskoðaranum, allt að 8192x4096 | Sama | Umlykjandi, úr samsettri mynd sem er undirbúin fyrir gleraugun | Eins og í símum |
-| Óunnar Insta360 .insv, báðar linsur í einni rás (frá smíð 16) | Skeytt saman með GPU-áhrifum í Media3 spilaranum | Skeytt saman með SceneKit-skyggingu | Umlykjandi, skeytt saman með sömu GPU-áhrifum | Eins og í símum |
-| Óunnin myndskeið með eina linsu á rás eða á skrá (frá smíð 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-pör, GoPro .360, DJI .osv | Tveir vélbúnaðarafkóðarar samtímis, einn á linsu (frá smíð 19 hugbúnaðarafkóðarar á tæki án vélbúnaðarafkóðara, allt að 2048x2048 á linsu), og GL-samsetjari sem skeytir saman í kúluna; ein linsa, síðan umkóðaða streymið, síðan ósamsett myndskeiðið, þegar tækið getur ekki keyrt tvo | Sérsmíðaður AVFoundation-samsetjari með Metal | Umlykjandi, sömu tveir afkóðarar og samsetjari (3840x1920 spjald) | Eins og í símum, þegar sjónvarpið keyrir tvo afkóðara samtímis |
-| Bein mynd Tapo-myndavélar (frá smíð 20) | Media3 RTSP spilari: SD á síðunni, HD á heilskjá, hljóðhnappur | Ekki enn: spjald segir að hún komi síðar | Í glugganum, í HD | Eins og í símum |
-| Upptökur Tapo-myndavélar (frá smíð 20) | Sóttar af minniskortinu í H.264 myndskeið með hljóði, síðan spilaðar með spólun | Sama | Sama, í glugganum | Sama |
+- **Flöt myndskeið (MP4, MOV, MKV, það sem tækið afkóðar)**
+  - Android-símar: Immich-spilarinn, og innbyggður spilari fyrir netdeilingar.
+  - iPhone, iPad: sama, nema MKV- og AVI-skrár á deilingu, sem iOS opnar ekki (á vélþjóni spilast þær umkóðaðar).
+  - Meta Quest: í glugganum.
+  - Android TV, Google TV: eins og í símum; OK gerir hlé, vinstri og hægri stökkva 10 s.
+- **360° myndir**
+  - Android-símar: kúluskoðari, gíróskóp.
+  - iPhone, iPad: sama.
+  - Meta Quest: umlykjandi, allt í kringum þig.
+  - Android TV, Google TV: kúluskoðari sem snúið er með örvunum, aðdráttur með rásahnöppunum.
+- **360° myndskeið**
+  - Android-símar: innbyggður Media3 spilari á kúlu, gíróskóp, spólun, val á hljóðrás, biðminnisvísir.
+  - iPhone, iPad: innbyggður SceneKit spilari á kúlu, gíróskóp, val á hljóðrás, biðminnisvísir; spila og hlé, engin tímastika enn.
+  - Meta Quest: umlykjandi, raunverulegt 3D fyrir steríóskrár, tímastika með 10 sekúndna stökkum, fyrra og næsta efni.
+  - Android TV, Google TV: Media3 spilari símanna, snúið með örvunum.
+- **3D 360° (efst og neðst, hlið við hlið)**
+  - Android-símar: vinstra auga, uppsetningarhnappur.
+  - iPhone, iPad: sama.
+  - Meta Quest: hvort auga fær sinn helming rammans.
+  - Android TV, Google TV: vinstra auga, uppsetningarhnappur.
+- **VR180 (hálf kúla) myndir og myndskeið**
+  - Android-símar: hálf kúla, 360°/180° hnappur.
+  - iPhone, iPad: sama.
+  - Meta Quest: umlykjandi hálf kúla.
+  - Android TV, Google TV: hálf kúla, 360°/180° hnappur.
+- **Spatial 2.5D (dýpt á flötum skjá úr steríómyndskeiði)**
+  - Android-símar: innbyggður spilari, höfuðrakning með frammyndavélinni.
+  - iPhone, iPad: sama.
+  - Meta Quest: ekki í boði.
+  - Android TV, Google TV: ekki í boði.
+- **Rýmismyndir frá Apple (HEIC steríópör, frá smíð 19)**
+  - Android-símar: vinstra auga, upplýsingalína segir að hún sé rýmismynd.
+  - iPhone, iPad: sama.
+  - Meta Quest: Skoða í 3D: bæði augu á mynd sem svífur í umlykjandi sýninni, 3D eða 2D, stærðanleg.
+  - Android TV, Google TV: vinstra auga, upplýsingalína.
+- **Rýmismyndskeið frá Apple (MV-HEVC, frá smíð 19)**
+  - Android-símar: eitt auga (grunnlagið), með tilkynningu.
+  - iPhone, iPad: sama.
+  - Meta Quest: eitt auga í glugganum, með tilkynningu.
+  - Android TV, Google TV: eitt auga, með tilkynningu.
+- **Óunnar Insta360 .insp myndir (frá smíð 16)**
+  - Android-símar: skeyttar saman á GPU á undan kúluskoðaranum, allt að 8192x4096.
+  - iPhone, iPad: sama.
+  - Meta Quest: umlykjandi, úr samsettri mynd sem er undirbúin fyrir gleraugun.
+  - Android TV, Google TV: eins og í símum.
+- **Óunnar Insta360 .insv, báðar linsur í einni rás (frá smíð 16)**
+  - Android-símar: skeytt saman með GPU-áhrifum í Media3 spilaranum.
+  - iPhone, iPad: skeytt saman með SceneKit-skyggingu.
+  - Meta Quest: umlykjandi, skeytt saman með sömu GPU-áhrifum.
+  - Android TV, Google TV: eins og í símum.
+- **Óunnin myndskeið með eina linsu á rás eða á skrá (frá smíð 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-pör, GoPro .360, DJI .osv**
+  - Android-símar: tveir vélbúnaðarafkóðarar samtímis, einn á linsu (frá smíð 19 hugbúnaðarafkóðarar á tæki án vélbúnaðarafkóðara, allt að 2048x2048 á linsu), og GL-samsetjari sem skeytir saman í kúluna; ein linsa, síðan umkóðaða streymið, síðan ósamsett myndskeiðið, þegar tækið getur ekki keyrt tvo.
+  - iPhone, iPad: sérsmíðaður AVFoundation-samsetjari með Metal.
+  - Meta Quest: umlykjandi, sömu tveir afkóðarar og samsetjari (3840x1920 spjald).
+  - Android TV, Google TV: eins og í símum, þegar sjónvarpið keyrir tvo afkóðara samtímis.
+- **Bein mynd Tapo-myndavélar (frá smíð 20)**
+  - Android-símar: Media3 RTSP spilari: SD á síðunni, HD á heilskjá, hljóðhnappur.
+  - iPhone, iPad: ekki enn: spjald segir að hún komi síðar.
+  - Meta Quest: í glugganum, í HD.
+  - Android TV, Google TV: eins og í símum.
+- **Upptökur Tapo-myndavélar (frá smíð 20)**
+  - Android-símar: sóttar af minniskortinu í H.264 myndskeið með hljóði, síðan spilaðar með spólun.
+  - iPhone, iPad: sama.
+  - Meta Quest: sama, í glugganum.
+  - Android TV, Google TV: sama.
 
-Sjónvarpsdálkurinn hefur ekki enn verið prófaður í sjónvarpi, sjá [Horfðu í sjónvarpinu](#watch-on-your-tv-android-tv-and-google-tv); myndavélalínurnar hafa ekki enn verið prófaðar með raunverulegri myndavél.
+Færslurnar fyrir Android TV og Google TV, frá smíð 20, hafa ekki enn verið prófaðar í sjónvarpi, sjá [Horfðu í sjónvarpinu](#watch-on-your-tv-android-tv-and-google-tv); myndavélafærslurnar hafa ekki enn verið prófaðar með raunverulegri myndavél.
 
-| Hvaðan | Hvernig |
-|---|---|
-| Immich-vélþjónninn þinn | Frumritið eða umkóðaða streymi vélþjónsins, eins og Settings, Skoðun Eigna, Uppruni myndskeiðs segir til um (sjá [Upplýsingar um myndskeið og afkóðarar](#video-details-decoders-and-why-a-video-stutters)). Sami aðgangur og í vefforritinu |
-| Síminn eða gleraugun sjálf | „Nota án vélþjóns“ á innskráningarsíðunni, eða On this device atriðið í Safn-flipanum |
-| NAS eða tölva | SMB- og WebDAV-deilingar, og frá smíð 19 DLNA-miðlaþjónar, sem finnast á netinu, lesnar beint (SMB-myndskeið yfir allt að sex tengingar), ekkert afritað; frá smíð 15 er hægt að senda skrárnar sem þú velur á Immich-aðganginn þinn |
-| Annar sími (frá smíð 19) | „Deila þessum síma á netinu“ í þeim síma: gleraugun, eða hvaða WebDAV-biðlari sem er á netinu, lesa myndasöfn hans, mánuði og 360° efni |
-| Plex Media Server (frá smíð 20) | Mynda-, kvikmynda- og sjónvarpsþáttasöfn hans eftir möppum, upprunalegu skrárnar lesnar beint yfir HTTPS sem staðfest er gegn eigin skilríki þjónsins, heima eða í gegnum vistfangið utan heimilis, á öllum kerfum; sjá [Plex Media Server, án plex.tv](#plex-media-server-without-plextv) |
-| Tapo-myndavél (frá smíð 20) | Bein mynd með myndavélaraðganginum (Android, Android TV, Quest), og upptökur minniskortsins með lykilorði TP-Link-aðgangsins (öll kerfi), aðeins á staðarnetinu; sjá [Tapo-myndavélar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Immich-vélþjónninn þinn**: frumritið eða umkóðaða streymi vélþjónsins, eins og Settings, Skoðun Eigna, Uppruni myndskeiðs segir til um (sjá [Upplýsingar um myndskeið og afkóðarar](#video-details-decoders-and-why-a-video-stutters)). Sami aðgangur og í vefforritinu.
+- **Síminn eða gleraugun sjálf**: „Nota án vélþjóns“ á innskráningarsíðunni, eða On this device atriðið í Safn-flipanum.
+- **NAS eða tölva**: SMB- og WebDAV-deilingar, og frá smíð 19 DLNA-miðlaþjónar, sem finnast á netinu, lesnar beint (SMB-myndskeið yfir allt að sex tengingar), ekkert afritað; frá smíð 15 er hægt að senda skrárnar sem þú velur á Immich-aðganginn þinn.
+- **Annar sími (frá smíð 19)**: „Deila þessum síma á netinu“ í þeim síma: gleraugun, eða hvaða WebDAV-biðlari sem er á netinu, lesa myndasöfn hans, mánuði og 360° efni.
+- **Plex Media Server (frá smíð 20)**: mynda-, kvikmynda- og sjónvarpsþáttasöfn hans eftir möppum, upprunalegu skrárnar lesnar beint yfir HTTPS sem staðfest er gegn eigin skilríki þjónsins, heima eða í gegnum vistfangið utan heimilis, á öllum kerfum; sjá [Plex Media Server, án plex.tv](#plex-media-server-without-plextv).
+- **Tapo-myndavél (frá smíð 20)**: bein mynd með myndavélaraðganginum (Android, Android TV, Quest), og upptökur minniskortsins með lykilorði TP-Link-aðgangsins (öll kerfi), aðeins á staðarnetinu; sjá [Tapo-myndavélar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 keyrir líka á Meta Quest gleraugum með Horizon OS v69 eða nýrra. Frá smíð 21 er smíðin í Horizon Store skráð fyrir Quest 2, Quest Pro, Quest 3 og 3S, þau fjögur sem alhliða `-release.apk` nefnir nú þegar; fyrsta Quest er það ekki, verslunin tekur ekki lengur við því. Quest 3 og 3S eru prófuð. Quest 2 og Quest Pro eru ekki enn prófuð: myndafkóðarar þeirra eru hægari, og mörkin sem forritið athugar voru mæld á Quest 3, svo stóru H.264 myndskeiði gæti verið hafnað með skilaboðum eða það hikstað á þeim. Ábendingar frá þessum tvennum gleraugum eru vel þegnar í [Issues](https://github.com/freeKC/Immuch360/issues). Hvernig á að nota það er í [Í Meta Quest 3 gleraugunum](#in-the-meta-quest-3-headset); þessi hluti fjallar um uppsetninguna og það sem er öðruvísi í gleraugunum.
+Immuch360 keyrir líka á Meta Quest gleraugum með Horizon OS v69 eða nýrra. Frá smíð 21 er smíðin í Horizon Store skráð fyrir Quest 2, Quest Pro, Quest 3 og 3S, þau fjögur sem alhliða `-release.apk` nefnir nú þegar; fyrsta Quest er það ekki, verslunin tekur ekki lengur við því.
 
-Smíðin fyrir gleraugun talar aðeins við vélþjóna yfir HTTPS, eða yfir venjulegt HTTP við heiti á heimanetinu (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) og við gleraugun sjálf, eins og Horizon Store krefst. Vélþjóni sem er sleginn inn sem venjulegt HTTP-vistfang með IP-tölu, eins og `http://192.168.1.10:2283`, er hafnað af þeirri smíð: notaðu HTTPS, heiti á heimanetinu (`nas.local`), eða alhliða `-release.apk`, sem heldur opinni stefnu símanna. WebDAV-, DLNA- og símadeilingar á venjulegu HTTP-vistfangi á staðarnetinu eiga ekki í hlut: forritið les þær sjálft og lætur spilarana aðeins fá vistfang staðbundnu brúarinnar sinnar (á eftir að staðfesta í gleraugunum fyrir DLNA og símadeilinguna, sem eru nýjar í smíð 19). Frá smíð 20 er náð í Plex-þjón yfir HTTPS, og í Tapo-myndavél af forritinu sjálfu, með beinni mynd hennar yfir RTSP, sem er ekki HTTP: hvorugt ætti að eiga í hlut (á eftir að staðfesta í gleraugunum).
+Quest 3 og 3S eru prófuð. Quest 2 og Quest Pro eru ekki enn prófuð: myndafkóðarar þeirra eru hægari, og mörkin sem forritið athugar voru mæld á Quest 3, svo stóru H.264 myndskeiði gæti verið hafnað með skilaboðum eða það hikstað á þeim. Ábendingar frá þessum tvennum gleraugum eru vel þegnar í [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Hvernig á að nota það er í [Í Meta Quest 3 gleraugunum](#in-the-meta-quest-3-headset); þessi hluti fjallar um uppsetninguna og það sem er öðruvísi í gleraugunum.
+
+Smíðin fyrir gleraugun talar aðeins við vélþjóna yfir HTTPS, eða yfir venjulegt HTTP við heiti á heimanetinu (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) og við gleraugun sjálf, eins og Horizon Store krefst. Vélþjóni sem er sleginn inn sem venjulegt HTTP-vistfang með IP-tölu, eins og `http://192.168.1.10:2283`, er hafnað af þeirri smíð: notaðu HTTPS, heiti á heimanetinu (`nas.local`), eða alhliða `-release.apk`, sem heldur opinni stefnu símanna.
+
+WebDAV-, DLNA- og símadeilingar á venjulegu HTTP-vistfangi á staðarnetinu eiga ekki í hlut: forritið les þær sjálft og lætur spilarana aðeins fá vistfang staðbundnu brúarinnar sinnar (á eftir að staðfesta í gleraugunum fyrir DLNA og símadeilinguna, sem eru nýjar í smíð 19). Frá smíð 20 er náð í Plex-þjón yfir HTTPS, og í Tapo-myndavél af forritinu sjálfu, með beinni mynd hennar yfir RTSP, sem er ekki HTTP: hvorugt ætti að eiga í hlut (á eftir að staðfesta í gleraugunum).
 
 <a id="install"></a>
 ### Uppsetning
@@ -762,16 +922,23 @@ Meta samþykkti færsluna í Horizon Store 7. október 2026 með smíð 14, og s
 
 ### Í glugganum
 
-Allt forritið keyrir sem 2D-gluggi sem hægt er að breyta stærð á: innskráning, tímalína, myndasöfn, leit, Safn-flipinn (360° listi, On this device, Netdeilingar), stillingarnar, og skoðarar mynda og myndskeiða, þar sem flatar myndir og myndskeið spilast. Í gleraugunum opna 360° hnappurinn, og Skoða sem 360° í ⋮ valmyndinni, umlykjandi sýnina beint í stað kúluskoðara símanna, og Spatial 2.5D hnappurinn og stilling hans eru ekki sýnd. Frá smíð 19 er rýmismynd frá Apple með Skoða í 3D hnapp, og reiturinn Deila þessum síma á netinu er ekki sýndur: gleraugun eru það sem les deilingu síma. Frá smíð 20 opnast Plex-þjónarnir og Tapo-myndavélarnar líka í glugganum, bein mynd myndavélarinnar í HD; stillingin „Útlit fyrir fjarstýringu“ helst á Sjálfvirkt, sem lætur hana vera slökkta í gleraugunum.
+Allt forritið keyrir sem 2D-gluggi sem hægt er að breyta stærð á: innskráning, tímalína, myndasöfn, leit, Safn-flipinn (360° listi, On this device, Netdeilingar), stillingarnar, og skoðarar mynda og myndskeiða, þar sem flatar myndir og myndskeið spilast.
+
+Í gleraugunum opna 360° hnappurinn, og Skoða sem 360° í ⋮ valmyndinni, umlykjandi sýnina beint í stað kúluskoðara símanna, og Spatial 2.5D hnappurinn og stilling hans eru ekki sýnd.
+
+Frá smíð 19 er rýmismynd frá Apple með Skoða í 3D hnapp, og reiturinn Deila þessum síma á netinu er ekki sýndur: gleraugun eru það sem les deilingu síma. Frá smíð 20 opnast Plex-þjónarnir og Tapo-myndavélarnar líka í glugganum, bein mynd myndavélarinnar í HD; stillingin „Útlit fyrir fjarstýringu“ helst á Sjálfvirkt, sem lætur hana vera slökkta í gleraugunum.
 
 ### Í myndum
 
 Skjámyndir teknar í gleraugunum með myndatökuhnappinum (Meta-hnappur og gikkur), á Quest 3, með forritið á frönsku; Safn-flipinn er sýndur í ham án vélþjóns.
 
-| Án vélþjóns | Netdeilingar |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Safn-flipinn án vélþjóns: On this device og Netdeilingar"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Síðan Netdeilingar með SMB-deilingu á Freebox Server"> |
-| Safn-flipinn í ham án vélþjóns: eigið efni gleraugnanna og netdeilingarnar | Samba-deiling á Freebox Server, lesin beint úr gleraugunum |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Safn-flipinn án vélþjóns: On this device og Netdeilingar">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Síðan Netdeilingar með SMB-deilingu á Freebox Server">
+</p>
+
+- **Án vélþjóns**: Safn-flipinn í ham án vélþjóns, með eigið efni gleraugnanna og netdeilingarnar.
+- **Netdeilingar**: Samba-deiling á Freebox Server, lesin beint úr gleraugunum.
 
 ### Takmarkanir í gleraugunum
 
@@ -786,12 +953,18 @@ Skjámyndir teknar í gleraugunum með myndatökuhnappinum (Meta-hnappur og gikk
 
 Forritið er á Google Play fyrir síma og spjaldtölvur; App Store útgáfan bíður yfirferðar Apple, færslan í Meta Horizon Store er samþykkt og fyrsta uppfærsla hennar er í yfirferð hjá Meta, og Google Play útgáfan fyrir sjónvörp bíður yfirferðar Google á sjónvarpsútgáfunni. Útgáfan á GitHub er alltaf nýjasta smíðin:
 
-| Stýrikerfi | Í dag | Bráðum |
-|---|---|---|
-| Android-símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eða APK-skráin á síðunni [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fyrir síma (alhliða `Immuch360-v<version>-release.apk` virkar alls staðar, `-armeabi-v7a` er fyrir eldri 32 bita síma, og `.aab` skráin er fyrir Google Play, ekki til hliðhleðslu). Smíðin á GitHub er yfirleitt á undan versluninni. Hvort heldur sem er sest hún upp við hlið opinbera Immich-forritsins (pakki `com.aprogsys.immuch360`). | Google Play: smíð 18 er í boði, smíð 20 í yfirferð hjá Google síðan 7. október 2026, í stað smíðar 19 |
-| iPhone og iPad | Bíður yfirferðar Apple. Útgáfan í yfirferð er með eiginleika smíðar 11: upphleðsla í Immich og valið Uppruni myndskeiðs (smíð 15) og óunnar Insta360-skrár (smíð 16) koma með síðari uppfærslu í App Store. Frumkóðinn er smíðaður með Xcode eða á Codemagic, sjá [Smíðaðu það sjálf(ur)](#build-it-yourself). | App Store, í yfirferð |
-| Meta Quest 2, Quest Pro, Quest 3 og 3S (Quest 2 og Quest Pro óprófuð) | Skráin `-quest-release.apk` á síðunni [Releases](https://github.com/freeKC/Immuch360/releases) (alhliða `-release.apk` virkar líka), hliðhlaðin í forritaramáta, sjá [Uppsetning](#install). Smíðin í versluninni og APK-skráin á GitHub eru undirritaðar með mismunandi lyklum: til að skipta frá annarri yfir í hina skaltu fyrst fjarlægja forritið (stillingar þess og vistaðar deilingar fara með). | Meta Horizon Store: færslan var samþykkt 7. október 2026 með smíð 14, og smíð 21, fyrsta uppfærsla hennar, er í yfirferð hjá Meta; alfa-rás verslunarinnar (aðeins prófarar) fær hverja nýja smíð |
-| Android TV og Google TV (frá smíð 20) | Alhliða `Immuch360-v<version>-release.apk` á síðunni [Releases](https://github.com/freeKC/Immuch360/releases), hliðhlaðið með adb, sjá [Settu það upp í sjónvarpinu](#install-it-on-the-tv). Það er sama forritið og í símunum. | Google Play á sjónvörpum, eftir yfirferð Google á sjónvarpsútgáfunni |
+- **Android-símar og spjaldtölvur**
+  - Í dag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eða APK-skráin á síðunni [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fyrir síma (alhliða `Immuch360-v<version>-release.apk` virkar alls staðar, `-armeabi-v7a` er fyrir eldri 32 bita síma, og `.aab` skráin er fyrir Google Play, ekki til hliðhleðslu). Smíðin á GitHub er yfirleitt á undan versluninni. Hvort heldur sem er sest hún upp við hlið opinbera Immich-forritsins (pakki `com.aprogsys.immuch360`).
+  - Bráðum: á Google Play er smíð 18 í boði, smíð 20 í yfirferð hjá Google síðan 7. október 2026, í stað smíðar 19.
+- **iPhone og iPad**
+  - Í dag: bíður yfirferðar Apple. Útgáfan í yfirferð er með eiginleika smíðar 11: upphleðsla í Immich og valið Uppruni myndskeiðs (smíð 15) og óunnar Insta360-skrár (smíð 16) koma með síðari uppfærslu í App Store. Frumkóðinn er smíðaður með Xcode eða á Codemagic, sjá [Smíðaðu það sjálf(ur)](#build-it-yourself).
+  - Bráðum: App Store, í yfirferð.
+- **Meta Quest 2, Quest Pro, Quest 3 og 3S (Quest 2 og Quest Pro óprófuð)**
+  - Í dag: skráin `-quest-release.apk` á síðunni [Releases](https://github.com/freeKC/Immuch360/releases) (alhliða `-release.apk` virkar líka), hliðhlaðin í forritaramáta, sjá [Uppsetning](#install). Smíðin í versluninni og APK-skráin á GitHub eru undirritaðar með mismunandi lyklum: til að skipta frá annarri yfir í hina skaltu fyrst fjarlægja forritið (stillingar þess og vistaðar deilingar fara með).
+  - Bráðum: á Meta Horizon Store var færslan samþykkt 7. október 2026 með smíð 14, og smíð 21, fyrsta uppfærsla hennar, er í yfirferð hjá Meta; alfa-rás verslunarinnar (aðeins prófarar) fær hverja nýja smíð.
+- **Android TV og Google TV (frá smíð 20)**
+  - Í dag: alhliða `Immuch360-v<version>-release.apk` á síðunni [Releases](https://github.com/freeKC/Immuch360/releases), hliðhlaðið með adb, sjá [Settu það upp í sjónvarpinu](#install-it-on-the-tv). Það er sama forritið og í símunum.
+  - Bráðum: Google Play á sjónvörpum, eftir yfirferð Google á sjónvarpsútgáfunni.
 
 Tenglum á App Store og Meta Horizon Store verður bætt hér við um leið og færslurnar eru birtar. Skráðu þig inn með venjulegri slóð Immich-vélþjónsins og aðganginum þínum, eða ýttu á „Nota án vélþjóns“ á innskráningarsíðunni til að byrja á myndum og myndskeiðum tækisins sjálfs. APK-skráin frá GitHub uppfærir sig ekki sjálf: fylgstu með síðunni Releases, og þegar þú hefur sett forritið upp úr verslun skaltu fá uppfærslurnar úr þeirri verslun.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Skjámyndir fyrir verslanir eru teknar á villuleitarsmíðum fyrir hermi gerðum með `--dart-define=IMMUCH_SCREENSHOTS=true`, sem felur aðeins villuleitarborðann. Android-útgáfurnar tvær (flavours) eru sama forritið. Frá smíð 20 lýsir `phone` útgáfan sér líka sem sjónvarpsforriti (færsla í ræsiforriti sjónvarpsins og borði, enginn snertiskjár nauðsynlegur), sem `quest` útgáfan sleppir. `quest` útgáfan miðar á SDK 34 og heldur aðeins heimildunum sem gleraugun nota (myndir, myndskeið, tilkynningar): stjórnun miðla, staðsetning í bakgrunni, eldri geymsla, hljóð, staðsetning miðla, staðsetning tækis og myndavél eru fjarlægð í `android/app/src/quest/AndroidManifest.xml`, því Meta Horizon Store hafnar fyrstu tveimur og biður um rökstuðning fyrir hverri annarri viðkvæmri heimild; sama skrá nefnir Quest 2, Quest Pro, Quest 3 og 3S sem studd tæki og takmarkar venjulegt HTTP við gleraugun sjálf og heiti á heimanetinu. APK-skráin er aðeins 64 bita vegna tveggja aukarófa á skipanalínu hennar (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` útgáfan er það sem Google Play krefst. Til að smíða fyrir iOS á eigin Mac skaltu nota Xcode og eigið undirritunarteymi; með Xcode 26 skaltu keyra `xcodebuild -downloadComponent MetalToolchain` einu sinni fyrst, þar sem Spatial-skyggingarnar þurfa það. Án Mac keyra iOS-smíðar á Codemagic (hýstum Mac) út frá skránni `codemagic.yaml` í þessari geymslu. Útgáfusmíðar fyrir Android keyra á GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Skjámyndir fyrir verslanir eru teknar á villuleitarsmíðum fyrir hermi gerðum með `--dart-define=IMMUCH_SCREENSHOTS=true`, sem felur aðeins villuleitarborðann.
+
+Android-útgáfurnar tvær (flavours) eru sama forritið. Frá smíð 20 lýsir `phone` útgáfan sér líka sem sjónvarpsforriti (færsla í ræsiforriti sjónvarpsins og borði, enginn snertiskjár nauðsynlegur), sem `quest` útgáfan sleppir.
+
+`quest` útgáfan miðar á SDK 34 og heldur aðeins heimildunum sem gleraugun nota (myndir, myndskeið, tilkynningar): stjórnun miðla, staðsetning í bakgrunni, eldri geymsla, hljóð, staðsetning miðla, staðsetning tækis og myndavél eru fjarlægð í `android/app/src/quest/AndroidManifest.xml`, því Meta Horizon Store hafnar fyrstu tveimur og biður um rökstuðning fyrir hverri annarri viðkvæmri heimild; sama skrá nefnir Quest 2, Quest Pro, Quest 3 og 3S sem studd tæki og takmarkar venjulegt HTTP við gleraugun sjálf og heiti á heimanetinu. APK-skráin er aðeins 64 bita vegna tveggja aukarófa á skipanalínu hennar (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` útgáfan er það sem Google Play krefst.
+
+Til að smíða fyrir iOS á eigin Mac skaltu nota Xcode og eigið undirritunarteymi; með Xcode 26 skaltu keyra `xcodebuild -downloadComponent MetalToolchain` einu sinni fyrst, þar sem Spatial-skyggingarnar þurfa það. Án Mac keyra iOS-smíðar á Codemagic (hýstum Mac) út frá skránni `codemagic.yaml` í þessari geymslu. Útgáfusmíðar fyrir Android keyra á GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Ekkert leyndarmál er í þessari geymslu: undirritunarlykill Android er geymdur sem dulkóðuð leyndarmál í GitHub Actions, og undirritunargögn Apple sem dulkóðaðar breytur á Codemagic. Verkflæðisskrárnar vísa aðeins í þau með nafni. Án þíns eigin `android/key.jks` er útgáfusmíð undirrituð með villuleitarlyklinum og getur ekki sest upp ofan á eintak frá GitHub eða verslun (fjarlægðu það fyrst); villuleitarsmíð sest upp við hliðina sem Immuch360 debug. Eintakið í Meta Horizon Store er `quest` APK-skrá útgáfunnar undirrituð með öðrum lykli, þeim sem forrit verslunarinnar var fyrst skráð með, svo það getur heldur ekki sest upp ofan á hliðhlaðna APK-skrá, né öfugt.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Frá smíð 19 skrifa DLNA-biðlarinn, símadeilingin og greining rýmisefnis frá Apple einnig í eigin atvikaskrá forritsins (Logs (Atvikaskrár), í valmynd prófílmyndarinnar efst til hægri), undir `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` og `NetworkMediaService`. Frá smíð 20 skrifar sjónvarpshamurinn þangað undir `TvMode` og `TvTextEntry`, Plex-þjónarnir undir `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` og `PlexServerEditPage`, og Tapo-myndavélarnar undir `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` og `CameraLiveView`; Plex-línurnar innihalda aldrei tókann, vistfang eða titil, og myndavélalínurnar sleppa lykilorðunum. Línur atvikaskrárinnar haldast í tækinu nema þú afritir þær sjálf(ur).
 
+<a id="privacy"></a>
 ## Persónuvernd
 
 - **Ekkert fer til forritarans**: forritið talar við Immich-vélþjóninn sem þú velur (og, þegar þú opnar kortið, við kortatíglaþjónustuna sem sá vélþjónn notar), hefur engar auglýsingar, enga greiningu og enga hrunskýrsluþjónustu á vegum forritarans, og sendir ekkert til forritara Immuch360.
@@ -849,10 +1029,12 @@ Frá smíð 19 skrifa DLNA-biðlarinn, símadeilingin og greining rýmisefnis fr
 
 Öll stefnan er í [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Leyfi og vörumerki
 
 Þetta verkefni er afleiða af Immich og er áfram undir [GNU AGPL v3](../LICENSE). Hver APK-skrá, símaskrárnar meðtaldar, inniheldur einnig Meta Spatial SDK, sem er ekki opinn hugbúnaður (Meta Platform Technologies SDK License Agreement) og er aðeins notað á Meta Quest gleraugum. Immuch360 er hvorki tengt né stutt af Immich-teyminu eða FUTO.
 
+<a id="roadmap"></a>
 ## Áætlun
 
 Það sem er ekki enn búið, það líklegasta fyrst. Ekkert hér er loforð, og ábendingar á [verkbeiðnalistanum](https://github.com/freeKC/Immuch360/issues) hjálpa til við að ákveða hvað kemur fyrst.
@@ -871,6 +1053,7 @@ Frá smíð 19 skrifa DLNA-biðlarinn, símadeilingin og greining rýmisefnis fr
 - **Plex, næst**: tækjaprófun smíðar 20 (símar, Quest, iPhone, sjónvarp, að heiman); að flytja tókann úr tölvunni með QR-kóða; að fela DLNA-hlið Plex-þjóns á listanum yfir fundna þjóna; IPv6.
 - **Upstream**: litlar pull requests til Immich fyrir þá hluta sem viðhaldsaðilarnir vilja, byrjað á 360° myndskoðaranum.
 
+<a id="credits"></a>
 ## Þakkir
 
 360° myndskoðarinn byggir á upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) eftir dmitry-brazhenko, sem sjálf byggir á frumgerð bencefr í [#30192](https://github.com/immich-app/immich/pull/30192). Þakkir til þeirra beggja.

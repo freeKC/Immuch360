@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | Polski | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Polski</b> · Inne języki (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: zdjęcia i filmy 360°, 3D i VR180, z Immich, z telefonu lub z NAS. Android, iOS i Meta Quest, z serwerem lub bez">
 </p>
 
 # Immuch360
 
-Immuch360 to aplikacja mobilna Immich ze zdjęciami i filmami 360°, w których można się rozglądać, oraz darmowy odtwarzacz płaskich zdjęć i filmów, a także 360°, 3D i VR180, na telefony i tablety z Androidem, iPhone'y i iPady, gogle Meta Quest (Quest 3 i 3S, a od kompilacji 21 Quest 2 i Quest Pro, nie testowano), a od kompilacji 20 także na Android TV i Google TV. Jest dla osób, które fotografują kamerą 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) lub w trybie sfery zdjęciowej telefonu, albo mają gogle VR, i chcą oglądać własne ujęcia z serwera Immich, z samego telefonu, z NAS, z serwera multimediów lub z serwera Plex: ten sam serwer, to samo konto, bez wtyczki na serwerze, albo zupełnie bez serwera. Od kompilacji 20 pokazuje też kamery Tapo, na żywo i z nagraniami z ich karty pamięci.
+Immuch360 to aplikacja mobilna Immich ze zdjęciami i filmami 360°, w których można się rozglądać, oraz darmowy odtwarzacz płaskich zdjęć i filmów, a także 360°, 3D i VR180, na telefony i tablety z Androidem, iPhone'y i iPady, gogle Meta Quest (Quest 3 i 3S, a od kompilacji 21 Quest 2 i Quest Pro, nie testowano), a od kompilacji 20 także na Android TV i Google TV.
+
+Jest dla osób, które fotografują kamerą 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) lub w trybie sfery zdjęciowej telefonu, albo mają gogle VR, i chcą oglądać własne ujęcia z serwera Immich, z samego telefonu, z NAS, z serwera multimediów lub z serwera Plex: ten sam serwer, to samo konto, bez wtyczki na serwerze, albo zupełnie bez serwera. Od kompilacji 20 pokazuje też kamery Tapo, na żywo i z nagraniami z ich karty pamięci.
 
 <p align="center">
   <sub>Nieoficjalny fork. Niezwiązany z Immich ani FUTO. Nazwę czyta się jak "I am much 360".</sub>
@@ -13,29 +15,52 @@ Immuch360 to aplikacja mobilna Immich ze zdjęciami i filmami 360°, w których 
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK na Androida</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">w trakcie weryfikacji</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store zatwierdzony, kompilacja 21 przesłana jako pierwsza aktualizacja &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">APK na Androida</a><br>
+  App Store: <a href="#where-to-get-it">w trakcie weryfikacji</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store zatwierdzony, kompilacja 21 przesłana jako pierwsza aktualizacja<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 Natywne 360°</h3>Zdjęcia i filmy jako sfera, w której się rozglądasz, z żyroskopem, łącznie z surowymi plikami z kamery (Insta360 od kompilacji 16, GoPro i DJI od kompilacji 18). Do tego darmowy odtwarzacz wideo: płaskie, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 Natywne 3D</h3>Stereoskopowe 360° i VR180, góra i dół lub obok siebie, oraz zdjęcia przestrzenne Apple (od kompilacji 19): prawdziwe 3D w goglach, jedno oko na telefonie</td>
-    <td align="center" width="33%"><h3>🎥 Natywne 2.5D</h3>Głębia na płaskim ekranie ze stereoskopowego filmu, obraz podąża za ruchem głowy (eksperymentalne, telefony i tablety)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Jedna aplikacja na telefonach, tabletach i w goglach Quest 2, Pro, 3 i 3S, prawdziwe 3D w goglach, a od kompilacji 20 na Android TV z pilotem</td>
-    <td align="center"><h3>🔌 Z serwerem lub bez</h3>Twój serwer Immich albo własna galeria telefonu, bez konta</td>
-    <td align="center"><h3>🗄️ Udziały sieciowe</h3>Samba (SMB), WebDAV oraz, od kompilacji 19, serwery multimediów DLNA, znajdowane w sieci i odczytywane na żywo, nic nie jest pobierane, a do Immich trafia to, co wybierzesz. Od kompilacji 19 telefon udostępnia też goglom własną galerię</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Na telewizorze</h3>Od kompilacji 20 ten sam APK na Android TV i Google TV: zdjęcia i filmy 360°, Twój serwer i Twoje udziały, obsługiwane pilotem</td>
-    <td align="center"><h3>🎬 Plex, bez plex.tv</h3>Od kompilacji 20 Twoje biblioteki Plex, odtwarzane z oryginalnych plików, więc 360° pozostaje 360°, w domu i poza nim</td>
-    <td align="center"><h3>📹 Kamery Tapo</h3>Od kompilacji 20 podgląd na żywo i nagrania z karty pamięci, tylko w Twojej sieci, a do Immich trafia klip, który wybierzesz</td>
-  </tr>
-</table>
+- 🌐 **Natywne 360°**<br>Zdjęcia i filmy jako sfera, w której się rozglądasz, z żyroskopem, łącznie z surowymi plikami z kamery (Insta360 od kompilacji 16, GoPro i DJI od kompilacji 18). Do tego darmowy odtwarzacz wideo: płaskie, 360°, 3D, VR180
+- 👓 **Natywne 3D**<br>Stereoskopowe 360° i VR180, góra i dół lub obok siebie, oraz zdjęcia przestrzenne Apple (od kompilacji 19): prawdziwe 3D w goglach, jedno oko na telefonie
+- 🎥 **Natywne 2.5D**<br>Głębia na płaskim ekranie ze stereoskopowego filmu, obraz podąża za ruchem głowy (eksperymentalne, telefony i tablety)
+- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikacja na telefonach, tabletach i w goglach Quest 2, Pro, 3 i 3S, prawdziwe 3D w goglach, a od kompilacji 20 na Android TV z pilotem
+- 🔌 **Z serwerem lub bez**<br>Twój serwer Immich albo własna galeria telefonu, bez konta
+- 🗄️ **Udziały sieciowe**<br>Samba (SMB), WebDAV oraz, od kompilacji 19, serwery multimediów DLNA, znajdowane w sieci i odczytywane na żywo, nic nie jest pobierane, a do Immich trafia to, co wybierzesz. Od kompilacji 19 telefon udostępnia też goglom własną galerię
+- 📺 **Na telewizorze**<br>Od kompilacji 20 ten sam APK na Android TV i Google TV: zdjęcia i filmy 360°, Twój serwer i Twoje udziały, obsługiwane pilotem
+- 🎬 **Plex, bez plex.tv**<br>Od kompilacji 20 Twoje biblioteki Plex, odtwarzane z oryginalnych plików, więc 360° pozostaje 360°, w domu i poza nim
+- 📹 **Kamery Tapo**<br>Od kompilacji 20 podgląd na żywo i nagrania z karty pamięci, tylko w Twojej sieci, a do Immich trafia klip, który wybierzesz
+
+<details>
+<summary><b>Spis treści</b></summary>
+
+- [Zdjęcia i filmy 360° jako sfera](#360-photos-and-videos-as-a-sphere)
+- [Bez serwera i bez konta](#without-a-server-or-an-account)
+- [Udziały sieciowe: NAS, komputer lub serwer multimediów](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv)
+- [Udostępnij ten telefon w sieci](#share-this-phone-on-the-network)
+- [Kamery Tapo: podgląd na żywo i nagrania z karty pamięci](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Surowe pliki z kamer 360°, bez aplikacji kamery](#raw-360-camera-files-without-the-cameras-app)
+- [Zdjęcia i filmy 3D i VR180](#3d-and-vr180-photos-and-videos)
+- [Głębia na płaskim ekranie: Spatial 2.5D (eksperymentalne)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Zdjęcia i filmy przestrzenne Apple](#apple-spatial-photos-and-videos)
+- [W goglach Meta Quest 3](#in-the-meta-quest-3-headset)
+- [Oglądanie na telewizorze (Android TV i Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Znajdź swoje ujęcia 360°: lista 360°](#find-your-360-shots-the-360-list)
+- [Szczegóły wideo, dekodery i dlaczego film się zacina](#video-details-decoders-and-why-a-video-stutters)
+- [Cała reszta to Immich](#everything-else-is-immich)
+- [Porównanie z aplikacją Immich i innymi aplikacjami](#compared-with-the-immich-app-and-other-apps)
+- [Formaty i źródła, według platformy](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Gdzie ją pobrać](#where-to-get-it)
+- [Zbuduj ją samodzielnie](#build-it-yourself)
+- [Logi](#logs)
+- [Prywatność](#privacy)
+- [Licencja i znak towarowy](#license-and-trademark)
+- [Plan rozwoju](#roadmap)
+- [Podziękowania](#credits)
+
+</details>
 
 ## Jaki masz problem?
 
@@ -61,12 +86,19 @@ Przy nowszych funkcjach tekst podaje, od której kompilacji są dostępne. Wydan
 
 Tworzysz kopię zapasową zdjęć na serwerze [Immich](https://github.com/immich-app/immich), a część z nich pochodzi z kamery 360° lub z trybu sfery zdjęciowej telefonu. W oficjalnej aplikacji mobilnej te zdjęcia wyświetlają się jako płaski, rozciągnięty pas, a filmy 360° również odtwarzają się płasko. Aplikacja webowa Immich potrafi pokazać zdjęcie 360° jako sferę, aplikacja mobilna nie: prośba o to istnieje od stycznia 2024 w [dyskusji #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 otwiera je jako sferę, w której się rozglądasz, na telefonach i tabletach z Androidem i iOS. Zdjęcie obraca się, gdy je przeciągasz, przybliża się gestem uszczypnięcia lub podwójnym dotknięciem, po szybkim przeciągnięciu jeszcze chwilę się obraca, startuje od widoku początkowego zapisanego przez kamerę (metadane GPano) i dostaje ostrzejszą teksturę po przybliżeniu; obsługiwane są częściowe panoramy (kadrowanie GPano). Film odtwarza się w natywnym odtwarzaczu sferycznym z dźwiękiem, przeciąganiem i żyroskopem. Połączone pliki 360° działają wszędzie: eksporty z aplikacji Insta360 lub Studio, GoPro Player, Ricoh Theta i sfery zdjęciowe z telefonów. Surowe pliki prosto z kamery łączy sama aplikacja, zobacz [Surowe pliki z kamer 360°](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 otwiera je jako sferę, w której się rozglądasz, na telefonach i tabletach z Androidem i iOS.
 
-| Zdjęcie 360° jako sfera | Film 360° w odtwarzaczu 360° |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="Zdjęcie 360° brzegu jeziora w przeglądarce sferycznej: przycisk zamykania w lewym górnym rogu, przyciski 360°, układu 3D i żyroskopu w prawym górnym rogu"> | <img src="../.github/readme/b19-video.png" width="420" alt="Film 360° z nadmorską drogą odtwarzany w odtwarzaczu 360° telefonu trzymanego poziomo: zamykanie i nazwa pliku w lewym górnym rogu, 360° i 3D w prawym górnym rogu, poprzedni, cofnięcie, odtwarzanie, przewinięcie do przodu i następny pośrodku, pasek czasu na dole"> |
-| Zamykanie w lewym górnym rogu; w prawym górnym rogu przycisk 360°/180°, przycisk układu 3D i żyroskop | Dotknij obrazu, aby zobaczyć sterowanie; 360° i 3D w prawym górnym rogu |
+Zdjęcie obraca się, gdy je przeciągasz, przybliża się gestem uszczypnięcia lub podwójnym dotknięciem, po szybkim przeciągnięciu jeszcze chwilę się obraca, startuje od widoku początkowego zapisanego przez kamerę (metadane GPano) i dostaje ostrzejszą teksturę po przybliżeniu; obsługiwane są częściowe panoramy (kadrowanie GPano). Film odtwarza się w natywnym odtwarzaczu sferycznym z dźwiękiem, przeciąganiem i żyroskopem.
+
+Połączone pliki 360° działają wszędzie: eksporty z aplikacji Insta360 lub Studio, GoPro Player, Ricoh Theta i sfery zdjęciowe z telefonów. Surowe pliki prosto z kamery łączy sama aplikacja, zobacz [Surowe pliki z kamer 360°](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="Zdjęcie 360° brzegu jeziora w przeglądarce sferycznej: przycisk zamykania w lewym górnym rogu, przyciski 360°, układu 3D i żyroskopu w prawym górnym rogu">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Film 360° z nadmorską drogą odtwarzany w odtwarzaczu 360° telefonu trzymanego poziomo: zamykanie i nazwa pliku w lewym górnym rogu, 360° i 3D w prawym górnym rogu, poprzedni, cofnięcie, odtwarzanie, przewinięcie do przodu i następny pośrodku, pasek czasu na dole">
+</p>
+
+- **Zdjęcie 360° jako sfera**: zamykanie w lewym górnym rogu; w prawym górnym rogu przycisk 360°/180°, przycisk układu 3D i żyroskop.
+- **Film 360° w odtwarzaczu 360°**: dotknij obrazu, aby zobaczyć sterowanie; 360° i 3D w prawym górnym rogu.
 
 ### Otwieranie zdjęcia 360° jako sfery
 
@@ -135,12 +167,17 @@ Na stronie logowania przycisk "Używaj bez serwera" otwiera Immuch360 na własny
 
 Twoje filmy 360° leżą na NAS lub komputerze i chcesz je oglądać na telefonie lub w goglach bez wcześniejszego kopiowania. W przypadku gogli ludzie w końcu kopiują każdy plik kablem; serwery multimediów, takie jak Plex i Jellyfin, odtwarzają filmy 360° płasko, jak opisują prośby na ich forach; aplikacja Immich czyta tylko Twój serwer Immich.
 
-Immuch360 przegląda i odtwarza zdjęcia i filmy z każdego serwera obsługującego SMB (Samba, Windows), WebDAV lub, od kompilacji 19, DLNA/UPnP (serwer multimediów: Jellyfin, minidlna, Gerbera, Emby, NAS lub przystawka TV), prosto z udziału. Od kompilacji 20 Plex Media Server ma własny typ, zobacz [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv). Sama znajduje serwery w Twojej sieci i odtwarza pliki na żywo w tych samych przeglądarkach co reszta aplikacji (360°, 3D, VR180, Spatial 2.5D, widok immersyjny na Queście), z serwerem Immich lub bez, na telefonach i na Meta Quest 3. Nic nie jest pobierane. Gdy serwer jest połączony, wybrane pliki można wysłać na konto Immich (od kompilacji 15).
+Immuch360 przegląda i odtwarza zdjęcia i filmy z każdego serwera obsługującego SMB (Samba, Windows), WebDAV lub, od kompilacji 19, DLNA/UPnP (serwer multimediów: Jellyfin, minidlna, Gerbera, Emby, NAS lub przystawka TV), prosto z udziału. Od kompilacji 20 Plex Media Server ma własny typ, zobacz [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv).
 
-| Dodawanie udziału | Folder udziału |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Strona Dodaj udział: Nazwa, Nazwa lub adres serwera, Port (opcjonalnie), Udział, Wybierz udział, Folder początkowy (opcjonalnie), Nazwa użytkownika, Hasło, Testuj połączenie i wynik Połączono, elementy w folderze początkowym: 2"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Folder udziału sieciowego jako siatka miniatur: zdjęcia 360° z plakietką 360° i film 360° ze znakiem odtwarzania, przycisk Wybierz w prawym górnym rogu"> |
-| Pola nowego udziału SMB po użyciu Testuj połączenie | Zdjęcia 360° i film odczytywane na żywo z udziału |
+Sama znajduje serwery w Twojej sieci i odtwarza pliki na żywo w tych samych przeglądarkach co reszta aplikacji (360°, 3D, VR180, Spatial 2.5D, widok immersyjny na Queście), z serwerem Immich lub bez, na telefonach i na Meta Quest 3. Nic nie jest pobierane. Gdy serwer jest połączony, wybrane pliki można wysłać na konto Immich (od kompilacji 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Strona Dodaj udział: Nazwa, Nazwa lub adres serwera, Port (opcjonalnie), Udział, Wybierz udział, Folder początkowy (opcjonalnie), Nazwa użytkownika, Hasło, Testuj połączenie i wynik Połączono, elementy w folderze początkowym: 2">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Folder udziału sieciowego jako siatka miniatur: zdjęcia 360° z plakietką 360° i film 360° ze znakiem odtwarzania, przycisk Wybierz w prawym górnym rogu">
+</p>
+
+- **Dodawanie udziału**: pola nowego udziału SMB po użyciu Testuj połączenie.
+- **Folder udziału**: zdjęcia 360° i film odczytywane na żywo z udziału.
 
 ### Dodawanie udziału
 
@@ -178,16 +215,26 @@ Otwarte zdjęcie lub film z udziału ma tę samą pozycję w swoim menu. Bez ser
 
 ### Jak odtwarza bez pobierania
 
-Odtwarzacze odczytują potrzebne bajty przez most wewnątrz aplikacji (tylko adres pętli zwrotnej, losowy token na sesję, zakresy bajtów), więc przewijanie filmu działa, a nic nie jest kopiowane na urządzenie. Odtwarzacze i przeglądarka w goglach nigdy nie dostają adresu udziału, tylko 127.0.0.1 mostu; żądania do serwera wykonuje sama aplikacja. Dla płynnego odtwarzania udział jest czytany dużymi blokami, plik pozostaje otwarty między odczytami, do 16 MB jest czytane z wyprzedzeniem względem odtwarzacza, a odtwarzany film jest czytany przez maksymalnie sześć równoległych połączeń SMB, oddzielnych od połączenia obsługującego miniatury i listy. Freebox Server odpowiada wolno na każdy odczyt: jedno połączenie daje 4,5 MB/s, sześć daje 19 MB/s, czyli dość dla eksportu 5.7K o przepływności 132 Mbit/s. Gdy odtwarzacz czeka na dane, odtwarzacze 360° i Spatial pokazują "Buforowanie" z poziomem wypełnienia bufora; płaski odtwarzacz pokazuje "Buforowanie" bez wartości procentowej podczas ładowania lub zacinania się filmu.
+Odtwarzacze odczytują potrzebne bajty przez most wewnątrz aplikacji (tylko adres pętli zwrotnej, losowy token na sesję, zakresy bajtów), więc przewijanie filmu działa, a nic nie jest kopiowane na urządzenie. Odtwarzacze i przeglądarka w goglach nigdy nie dostają adresu udziału, tylko 127.0.0.1 mostu; żądania do serwera wykonuje sama aplikacja.
+
+Dla płynnego odtwarzania udział jest czytany dużymi blokami, plik pozostaje otwarty między odczytami, do 16 MB jest czytane z wyprzedzeniem względem odtwarzacza, a odtwarzany film jest czytany przez maksymalnie sześć równoległych połączeń SMB, oddzielnych od połączenia obsługującego miniatury i listy. Freebox Server odpowiada wolno na każdy odczyt: jedno połączenie daje 4,5 MB/s, sześć daje 19 MB/s, czyli dość dla eksportu 5.7K o przepływności 132 Mbit/s.
+
+Gdy odtwarzacz czeka na dane, odtwarzacze 360° i Spatial pokazują "Buforowanie" z poziomem wypełnienia bufora; płaski odtwarzacz pokazuje "Buforowanie" bez wartości procentowej podczas ładowania lub zacinania się filmu.
 
 ### Serwery multimediów DLNA
 
-Od kompilacji 19 aplikacja wysyła wyszukiwanie SSDP serwerów multimediów do grupy multicast sieci oraz to samo żądanie na port 1900 każdego adresu lokalnej sieci /24, następnie czyta opis urządzenia każdego serwera, który odpowie, i zachowuje te, które publikują swoją zawartość (ContentDirectory). Foldery i pliki są wyświetlane za pomocą akcji Browse serwera, strona po stronie, i nazywane według tytułów: plik dostaje rozszerzenie swojego typu, gdy tytuł go nie ma, a drugi plik o tym samym tytule w folderze staje się `name (2)`. Dźwięk jest pomijany. Miniatury to okładki albumów lub małe obrazki tworzone przez serwer, ładowane przez samą aplikację, a gdy serwer ich nie ma, używana jest własna miniatura aplikacji. Plik odtwarza się z oryginału oferowanego przez serwer, a nie z przekonwertowanej kopii, gdy serwer oferuje oba, odczytywanego żądaniami zakresu, więc przewijanie działa. Sprawdzone z minidlna i Gerbera; wykrywanie w prawdziwej sieci, Plex, Jellyfin, NAS, Freebox Server, iPhone i Quest to test na urządzeniach kompilacji 19.
+Od kompilacji 19 aplikacja wysyła wyszukiwanie SSDP serwerów multimediów do grupy multicast sieci oraz to samo żądanie na port 1900 każdego adresu lokalnej sieci /24, następnie czyta opis urządzenia każdego serwera, który odpowie, i zachowuje te, które publikują swoją zawartość (ContentDirectory).
+
+Foldery i pliki są wyświetlane za pomocą akcji Browse serwera, strona po stronie, i nazywane według tytułów: plik dostaje rozszerzenie swojego typu, gdy tytuł go nie ma, a drugi plik o tym samym tytule w folderze staje się `name (2)`. Dźwięk jest pomijany. Miniatury to okładki albumów lub małe obrazki tworzone przez serwer, ładowane przez samą aplikację, a gdy serwer ich nie ma, używana jest własna miniatura aplikacji. Plik odtwarza się z oryginału oferowanego przez serwer, a nie z przekonwertowanej kopii, gdy serwer oferuje oba, odczytywanego żądaniami zakresu, więc przewijanie działa.
+
+Sprawdzone z minidlna i Gerbera; wykrywanie w prawdziwej sieci, Plex, Jellyfin, NAS, Freebox Server, iPhone i Quest to test na urządzeniach kompilacji 19.
 
 <a id="a-share-that-moved"></a>
 ### Udział, który zmienił adres
 
-Od kompilacji 19 udział DLNA i udział telefonu (zobacz [Udostępnij ten telefon w sieci](#share-this-phone-on-the-network)) zachowują identyfikator ogłaszany przez swój serwer. Gdy któryś przestaje odpowiadać pod swoim adresem (nowy adres nadany przez router, serwer uruchomiony ponownie na innym porcie), strona jego folderu pokazuje "Szukanie (nazwa) w sieci" i przenosi udział tam, gdzie teraz odpowiada: od razu w przypadku serwera DLNA, który nie ma hasła, a po potwierdzeniu, "Użyć nowego adresu?", z oboma adresami, w przypadku udziału z nazwą użytkownika i hasłem, ponieważ zostałyby one wysłane na nowy adres. Od kompilacji 20 serwer Plex odnaleziony pod innym adresem w sieci również jest przenoszony od razu: jego certyfikat dowodzi, że to ten sam serwer, zanim zostanie wysłany token. Kamera Tapo jest szukana po adresie MAC ze swojej własnej strony, zobacz [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Od kompilacji 19 udział DLNA i udział telefonu (zobacz [Udostępnij ten telefon w sieci](#share-this-phone-on-the-network)) zachowują identyfikator ogłaszany przez swój serwer. Gdy któryś przestaje odpowiadać pod swoim adresem (nowy adres nadany przez router, serwer uruchomiony ponownie na innym porcie), strona jego folderu pokazuje "Szukanie (nazwa) w sieci" i przenosi udział tam, gdzie teraz odpowiada: od razu w przypadku serwera DLNA, który nie ma hasła, a po potwierdzeniu, "Użyć nowego adresu?", z oboma adresami, w przypadku udziału z nazwą użytkownika i hasłem, ponieważ zostałyby one wysłane na nowy adres.
+
+Od kompilacji 20 serwer Plex odnaleziony pod innym adresem w sieci również jest przenoszony od razu: jego certyfikat dowodzi, że to ten sam serwer, zanim zostanie wysłany token. Kamera Tapo jest szukana po adresie MAC ze swojej własnej strony, zobacz [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Ograniczenia
 
@@ -227,7 +274,9 @@ Od kompilacji 20 Immuch360 łączy się z Twoim Plex Media Server bezpośrednio,
 
 ### Poza domem
 
-Za każdym razem, gdy otwiera serwer, aplikacja najpierw próbuje adresu domowego, a 400 ms później adresu spoza domu. Używany jest pierwszy, który odpowie Twoim serwerem; gdy jest to adres spoza domu, strona folderu pokazuje ikonę globusa z etykietą "Połączono przez adres spoza domu". Wymaga to włączonego Dostępu zdalnego w Plex (Ustawienia, Dostęp zdalny) z portem przekierowanym przez router: bez plex.tv aplikacja nie może korzystać z przekaźnika (relay) Plex, więc serwer bez przekierowania portu otwiera się tylko w domu, a poza domem strona mówi "Twój serwer Plex jest niedostępny spoza sieci domowej. Włącz dostęp zdalny z przekierowaniem portu w Plex (Ustawienia, Dostęp zdalny) lub wpisz jego adres publiczny."
+Za każdym razem, gdy otwiera serwer, aplikacja najpierw próbuje adresu domowego, a 400 ms później adresu spoza domu. Używany jest pierwszy, który odpowie Twoim serwerem; gdy jest to adres spoza domu, strona folderu pokazuje ikonę globusa z etykietą "Połączono przez adres spoza domu".
+
+Wymaga to włączonego Dostępu zdalnego w Plex (Ustawienia, Dostęp zdalny) z portem przekierowanym przez router: bez plex.tv aplikacja nie może korzystać z przekaźnika (relay) Plex, więc serwer bez przekierowania portu otwiera się tylko w domu, a poza domem strona mówi "Twój serwer Plex jest niedostępny spoza sieci domowej. Włącz dostęp zdalny z przekierowaniem portu w Plex (Ustawienia, Dostęp zdalny) lub wpisz jego adres publiczny."
 
 Adres podawany przez serwer jest poznawany na nowo przy każdym połączeniu w domu. Gdy nie odpowiada z zewnątrz (router, który zmienia adres, dwa routery jeden za drugim), wpisz swój na stronie serwera. Gdy token przestaje działać (na przykład wylogowałeś się z sesji przeglądarki, z której go skopiowałeś), strona folderu to zgłasza i proponuje "Wklej nowy token", co otwiera stronę serwera na polu tokenu.
 
@@ -344,15 +393,13 @@ Kamery Insta360 zapisują dwa koła rybiego oka swoich obiektywów obok siebie w
 
 Od kompilacji 16 Immuch360 sama łączy te pliki, na telefonie, tablecie lub w goglach, bez instalowania czegokolwiek na serwerze:
 
-| Kamera i plik | Co robi aplikacja | Od |
-|---|---|---|
-| Zdjęcia Insta360 .insp | Łączone na GPU przed przeglądarką sferyczną, do 8192x4096, z awaryjnym trybem CPU w mniejszym rozmiarze | Kompilacja 16 |
-| Filmy Insta360 .insv z oboma obiektywami w jednej ścieżce | Łączone efektem GPU w odtwarzaczu | Kompilacja 16 |
-| Filmy Insta360 X4, X4 Air, X5 i X6 .insv, jedna kwadratowa ścieżka na obiektyw | Dwa dekodery jednocześnie, po jednym na obiektyw, i kompozytor GPU, który łączy je w sferę | Kompilacja 18 |
-| Insta360 X3 i starsze od 5.7K wzwyż: dwa pliki, `_00_` i `_10_` | To samo, drugi plik jest odnajdywany obok pierwszego | Kompilacja 18 |
-| GoPro MAX i MAX 2 .360: dwie ścieżki po trzy ściany sześcianu | To samo, z płynnym przejściem kolumn nakładania | Kompilacja 18 |
-| DJI Osmo 360 .osv: dwie kwadratowe ścieżki 10-bitowe | To samo, z kalibracją Kannala-Brandt z pliku | Kompilacja 18 |
-| Podwójne rybie oko .dng | Wyświetla się płasko | Jeszcze nie |
+- **Zdjęcia Insta360 .insp** (kompilacja 16): łączone na GPU przed przeglądarką sferyczną, do 8192x4096, z awaryjnym trybem CPU w mniejszym rozmiarze.
+- **Filmy Insta360 .insv z oboma obiektywami w jednej ścieżce** (kompilacja 16): łączone efektem GPU w odtwarzaczu.
+- **Filmy Insta360 X4, X4 Air, X5 i X6 .insv, jedna kwadratowa ścieżka na obiektyw** (kompilacja 18): dwa dekodery jednocześnie, po jednym na obiektyw, i kompozytor GPU, który łączy je w sferę.
+- **Insta360 X3 i starsze od 5.7K wzwyż: dwa pliki, `_00_` i `_10_`** (kompilacja 18): to samo, drugi plik jest odnajdywany obok pierwszego.
+- **GoPro MAX i MAX 2 .360: dwie ścieżki po trzy ściany sześcianu** (kompilacja 18): to samo, z płynnym przejściem kolumn nakładania.
+- **DJI Osmo 360 .osv: dwie kwadratowe ścieżki 10-bitowe** (kompilacja 18): to samo, z kalibracją Kannala-Brandt z pliku.
+- **Podwójne rybie oko .dng** (jeszcze nie): wyświetla się płasko.
 
 ### Oglądanie surowego pliku
 
@@ -466,7 +513,9 @@ Wykrywanie sprawdzono na przykładowym zdjęciu przestrzennym zapisanym przez w�
 
 Ludzie kupują Questa 3, żeby oglądać własne zdjęcia i filmy 360°, a potem pytają, gdzie umieścić pliki, jak przenieść je do gogli bez kabla i jakiego odtwarzacza użyć: odtwarzacze 360° i 3D ze sklepu są płatne.
 
-Ta sama aplikacja na Androida działa na Queście 3 i 3S, a od kompilacji 21 na Queście 2 i Queście Pro (nie testowano), jako okno, z całą Twoją biblioteką. Jej przycisk 360° otwiera widok immersyjny, w którym zdjęcie lub film jest wszędzie wokół Ciebie, a Ty rozglądasz się, obracając głowę, w prawdziwym 3D dla plików stereoskopowych (Meta Spatial SDK). Multimedia pochodzą z Twojego serwera Immich, z samych gogli, z NAS, z serwera multimediów, z telefonu lub z serwera Plex i są odtwarzane na miejscu (serwer multimediów i telefon od kompilacji 19, serwer Plex od kompilacji 20, jeszcze nie sprawdzone w goglach), a od kompilacji 20 okno pokazuje też kamery Tapo. Aplikacja jest darmowa i otwartoźródłowa. Sprawdzona na Queście 3 oraz przez użytkownika z filmami Insta360 X4 8K HEVC.
+Ta sama aplikacja na Androida działa na Queście 3 i 3S, a od kompilacji 21 na Queście 2 i Queście Pro (nie testowano), jako okno, z całą Twoją biblioteką. Jej przycisk 360° otwiera widok immersyjny, w którym zdjęcie lub film jest wszędzie wokół Ciebie, a Ty rozglądasz się, obracając głowę, w prawdziwym 3D dla plików stereoskopowych (Meta Spatial SDK).
+
+Multimedia pochodzą z Twojego serwera Immich, z samych gogli, z NAS, z serwera multimediów, z telefonu lub z serwera Plex i są odtwarzane na miejscu (serwer multimediów i telefon od kompilacji 19, serwer Plex od kompilacji 20, jeszcze nie sprawdzone w goglach), a od kompilacji 20 okno pokazuje też kamery Tapo. Aplikacja jest darmowa i otwartoźródłowa. Sprawdzona na Queście 3 oraz przez użytkownika z filmami Insta360 X4 8K HEVC.
 
 ### Otwieranie widoku immersyjnego
 
@@ -479,17 +528,20 @@ Ta sama aplikacja na Androida działa na Queście 3 i 3S, a od kompilacji 21 na 
 
 | Działanie | Kontrolery | Dłonie |
 |---|---|---|
-| Powrót do aplikacji | B lub Y | Przycisk Wstecz na panelu informacyjnym |
-| Odtwarzanie lub pauza filmu | Spust, gdy panel informacyjny jest ukryty | Przycisk Odtwórz lub Wstrzymaj na panelu informacyjnym |
+| Powrót do aplikacji | B lub Y | Przycisk Wstecz |
+| Odtwarzanie lub pauza filmu | Spust, gdy panel informacyjny jest ukryty | Przycisk Odtwórz lub Wstrzymaj |
 | Pokazanie lub ukrycie panelu informacyjnego | A, X, chwyt lub menu | Gest menu albo uszczypnięcie, gdy panel jest ukryty |
-| Obrót widoku, aby spojrzeć za siebie bez obracania głowy (od kompilacji 17) | Prawa gałka w lewo lub w prawo: 30° na pchnięcie, a przytrzymana obraca dalej (jednowierszowa nakładka pokazuje kąt) | Przycisk Obróć na panelu informacyjnym (90°) |
-| Poprzedni lub następny element | Lewa gałka w lewo lub w prawo (przed kompilacją 17 dowolna gałka; od kompilacji 16 jednowierszowa nakładka podaje nazwę elementu, panel informacyjny pozostaje ukryty) | Przyciski Poprzednie i Następne na panelu informacyjnym |
-| 10 sekund do tyłu lub do przodu w filmie | Gałka w dół lub w górę (od kompilacji 16 jednowierszowa nakładka pokazuje czas, panel informacyjny pozostaje ukryty) | Dwa przyciski przewijania albo przeciągnięcie paska czasu na panelu informacyjnym |
-| Obrót obrazu o 90° | Gałka w dół lub w górę przy zdjęciu (od kompilacji 16 jednowierszowa nakładka pokazuje kąt); przy filmie przycisk Obróć na panelu informacyjnym | Przycisk Obróć na panelu informacyjnym |
-| Zmiana układu 3D (mono, góra i dół, obok siebie) | Przycisk 3D na panelu informacyjnym | Przycisk 3D na panelu informacyjnym |
-| Pełna sfera lub półsfera (VR180) | Przycisk 360°/180° na panelu informacyjnym | Przycisk 360°/180° na panelu informacyjnym |
+| Obrót widoku (od kompilacji 17) | Prawa gałka w lewo lub w prawo, 30° na pchnięcie | Przycisk Obróć (90°) |
+| Poprzedni lub następny element | Lewa gałka w lewo lub w prawo | Przyciski Poprzednie i Następne |
+| 10 sekund do tyłu lub do przodu w filmie | Gałka w dół lub w górę | Dwa przyciski przewijania albo przeciągnięcie paska czasu |
+| Obrót obrazu o 90° | Gałka w dół lub w górę przy zdjęciu, przycisk Obróć przy filmie | Przycisk Obróć |
+| Zmiana układu 3D (mono, góra i dół, obok siebie) | Przycisk 3D | Przycisk 3D |
+| Pełna sfera lub półsfera (VR180) | Przycisk 360°/180° | Przycisk 360°/180° |
 
-Z kontrolerami przyciski i pasek czasu panelu informacyjnego też działają: wskaż je promieniem i naciśnij spust.
+W tej tabeli przyciski i pasek czasu to te z panelu informacyjnego. Z kontrolerami też działają: wskaż je promieniem i naciśnij spust.
+
+- **Obrót widoku**: aby spojrzeć za siebie bez obracania głowy. Przytrzymana prawa gałka obraca dalej, a jednowierszowa nakładka pokazuje kąt.
+- **Jednowierszowa nakładka**: od kompilacji 16 przewijanie gałką, obrót zdjęcia albo poprzedni i następny element pokazują jednowierszową nakładkę (czas, kąt lub nazwę elementu), a panel informacyjny pozostaje ukryty. Przed kompilacją 17 do poprzedniego lub następnego elementu przechodziła dowolna gałka.
 
 ### Panel informacyjny, poprzedni i następny
 
@@ -497,7 +549,9 @@ Panel informacyjny filmu ma pasek czasu (pozycja, czas trwania, ile jest zbuforo
 
 Poprzedni i następny przechodzą przez multimedia 360° z miejsca, z którego przyszedłeś, bez wychodzenia z widoku immersyjnego: oś czasu, lista 360° (z filtrami), album, folder udziału sieciowego albo własne multimedia gogli (Na tym urządzeniu). Płaskie zdjęcia i filmy są pomijane. Gdy wracasz do aplikacji z osi czasu, albumu lub listy 360°, trafiasz na element, który oglądałeś (strona folderu udziału zostaje na pliku, który otworzyłeś), a film, na którym otworzyłeś widok immersyjny, wznawia się tam, gdzie go zostawiłeś.
 
-Od kompilacji 17 prawa gałka obraca widok, tak jak prawa gałka obraca w większości aplikacji na gogle: pchnięcie obraca o 30°, przytrzymanie obraca dalej, więc to, co jest za Tobą, pojawia się przed Tobą bez obracania głowy czy krzesła; poprzedni i następny są na lewej gałce. Od kompilacji 16, po opinii użytkownika gogli, przewijanie, obrót lub poprzedni/następny gałką pokazują jednowierszową nakładkę (czas, kąt lub tytuł elementu), która znika po 1,5 sekundy, zamiast wywoływać panel informacyjny; panel nadal pojawia się po naciśnięciu A, X, chwytu lub przycisku menu. Ta sama kompilacja utrzymuje działanie przełączania panelu, gdy kontrolery usypiają, budzą się lub ustępują miejsca śledzeniu dłoni, i zapisuje te przejścia w logach, zobacz [Logi](#logs).
+Od kompilacji 17 prawa gałka obraca widok, tak jak prawa gałka obraca w większości aplikacji na gogle: pchnięcie obraca o 30°, przytrzymanie obraca dalej, więc to, co jest za Tobą, pojawia się przed Tobą bez obracania głowy czy krzesła; poprzedni i następny są na lewej gałce.
+
+Od kompilacji 16, po opinii użytkownika gogli, przewijanie, obrót lub poprzedni/następny gałką pokazują jednowierszową nakładkę (czas, kąt lub tytuł elementu), która znika po 1,5 sekundy, zamiast wywoływać panel informacyjny; panel nadal pojawia się po naciśnięciu A, X, chwytu lub przycisku menu. Ta sama kompilacja utrzymuje działanie przełączania panelu, gdy kontrolery usypiają, budzą się lub ustępują miejsca śledzeniu dłoni, i zapisuje te przejścia w logach, zobacz [Logi](#logs).
 
 Zdjęcie przestrzenne Apple otwarte przez "Wyświetl w 3D" nie jest umieszczane na sferze: unosi się przed Tobą, zobacz [Zdjęcia i filmy przestrzenne Apple](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Zdjęcia najpierw pokazują podgląd, potem oryginał, zmniejszony do co najwyż
 
 Układy 3D, góra i dół oraz obok siebie, 360° i VR180, są pokazywane w 3D, a każde oko dostaje własną połowę klatki. Układ pochodzi z pliku, jeśli plik go deklaruje (filmy), w przeciwnym razie jest odgadywany z kształtu (kwadrat: góra i dół, 4:1: obok siebie); gdy jest błędny, użyj przycisku 3D na panelu informacyjnym.
 
-| Zdjęcie 360° w goglach | Film 360° w goglach | Film 3D 360° w goglach |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="Zdjęcie 360° dookoła Ciebie w Queście 3, z panelem informacyjnym: przyciski układu, 360° i Wstecz"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Film 360° z jeziorem odtwarzany w Queście 3, z panelem informacyjnym: przyciski układu, 360°, Wstrzymaj i Wstecz"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Stereoskopowy film 360° w Queście 3, panel informacyjny pokazuje 3D, góra i dół"> |
-| Widok immersyjny zdjęcia z panelem informacyjnym (układ, 360°/180°, Wstecz) | Odtwarzany film, z przyciskiem Wstrzymaj | Stereoskopowy film góra i dół, każde oko dostaje swój obraz (próbka Kandao Obsidian) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Zdjęcie 360° dookoła Ciebie w Queście 3, z panelem informacyjnym: przyciski układu, 360° i Wstecz">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Film 360° z jeziorem odtwarzany w Queście 3, z panelem informacyjnym: przyciski układu, 360°, Wstrzymaj i Wstecz">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Stereoskopowy film 360° w Queście 3, panel informacyjny pokazuje 3D, góra i dół">
+</p>
+
+- **Zdjęcie 360° w goglach**: widok immersyjny zdjęcia z panelem informacyjnym (układ, 360°/180°, Wstecz).
+- **Film 360° w goglach**: odtwarzany film, z przyciskiem Wstrzymaj.
+- **Film 3D 360° w goglach**: stereoskopowy film góra i dół, każde oko dostaje swój obraz (próbka Kandao Obsidian).
 
 Te zrzuty wykonano z aplikacją w języku francuskim, przed kompilacją 14. Panel ma teraz też pasek czasu między dwoma przyciskami przewijania o 10 sekund, Poprzednie i Następne oraz Obróć.
 
@@ -598,7 +657,9 @@ Immuch360 dodaje plakietkę 360° do miniatur zdjęć 360° (w folderze udziału
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Szczegóły wideo, dekodery i dlaczego film się zacina
 
-Ludzie pytają, jaki kodek, rozdzielczość i przepływność odtwarza Quest 3 i dlaczego eksport 5.7K zacina się w goglach, choć na telefonie działa. Odpowiedzią jest dekoder sprzętowy: dekoder H.264 w Queście 3 (XR2 Gen 2) kończy się w okolicach 4096x2304, więc film H.264 5760x2880 (poziom 6.0, około 200 Mbit/s, typowy eksport Insta360) dekoduje się w goglach z prędkością około 17 kl./s, z artefaktami blokowymi, podczas gdy ten sam plik dobrze odtwarza się na telefonie. Ten sam film w HEVC (H.265) działa w goglach dobrze: film Insta360 X4 8K HEVC (7680x3840, 29,97 kl./s, 210 Mbit/s, profil Main poziom 6.1, 8 bitów) odtwarza się płynnie w widoku immersyjnym, w natywnej rozdzielczości i bez transkodowania (zgłoszone przez użytkownika Questa 3).
+Ludzie pytają, jaki kodek, rozdzielczość i przepływność odtwarza Quest 3 i dlaczego eksport 5.7K zacina się w goglach, choć na telefonie działa. Odpowiedzią jest dekoder sprzętowy: dekoder H.264 w Queście 3 (XR2 Gen 2) kończy się w okolicach 4096x2304, więc film H.264 5760x2880 (poziom 6.0, około 200 Mbit/s, typowy eksport Insta360) dekoduje się w goglach z prędkością około 17 kl./s, z artefaktami blokowymi, podczas gdy ten sam plik dobrze odtwarza się na telefonie.
+
+Ten sam film w HEVC (H.265) działa w goglach dobrze: film Insta360 X4 8K HEVC (7680x3840, 29,97 kl./s, 210 Mbit/s, profil Main poziom 6.1, 8 bitów) odtwarza się płynnie w widoku immersyjnym, w natywnej rozdzielczości i bez transkodowania (zgłoszone przez użytkownika Questa 3).
 
 Aplikacja Immich ma jeden przełącznik "Wymuś oryginalne wideo" i pokazuje tylko kodek. Immuch360 pokazuje, czym jest film i co urządzenie dekoduje, oraz wybiera plik, który da się odtworzyć.
 
@@ -623,7 +684,9 @@ Ustawienia, Zaawansowane, "Dekodery wideo tego urządzenia" (od kompilacji 15) w
 1. Otwórz Ustawienia, Przeglądarka zasobów, potem Filmy.
 2. W sekcji "Źródło wideo" ("Który plik jest odtwarzany, gdy serwer ma transkodowaną kopię") wybierz "Oryginał, gdy to urządzenie może go zdekodować", "Zawsze oryginał" lub "Zawsze transkodowany strumień".
 
-Od kompilacji 15 wybór dotyczy każdego filmu z serwera: płaskiego odtwarzacza, odtwarzaczy 360° i Spatial oraz widoku immersyjnego na Queście. Dopóki go nie dokonasz, telefon zachowuje to, co wskazywał dawny przełącznik "Wymuś oryginalne wideo" (domyślnie wyłączony: strumień transkodowany, który jest samym oryginałem, gdy serwer go nie transkodował), a Quest odtwarza oryginał, gdy gogle potrafią go zdekodować. Kontrola odczytuje z pliku kodek, rozmiar i liczbę klatek i porównuje je z dekoderami sprzętowymi (H.264 na Queście 3 jest ograniczony do zmierzonych 4096x2304). Odtwarzacz, który nie może zdekodować oryginału, przełącza się na strumień transkodowany z komunikatem: "Odtwarzanie transkodowanego strumienia: oryginał (kodek i rozmiar) przekracza możliwości dekodowania tego urządzenia".
+Od kompilacji 15 wybór dotyczy każdego filmu z serwera: płaskiego odtwarzacza, odtwarzaczy 360° i Spatial oraz widoku immersyjnego na Queście. Dopóki go nie dokonasz, telefon zachowuje to, co wskazywał dawny przełącznik "Wymuś oryginalne wideo" (domyślnie wyłączony: strumień transkodowany, który jest samym oryginałem, gdy serwer go nie transkodował), a Quest odtwarza oryginał, gdy gogle potrafią go zdekodować.
+
+Kontrola odczytuje z pliku kodek, rozmiar i liczbę klatek i porównuje je z dekoderami sprzętowymi (H.264 na Queście 3 jest ograniczony do zmierzonych 4096x2304). Odtwarzacz, który nie może zdekodować oryginału, przełącza się na strumień transkodowany z komunikatem: "Odtwarzanie transkodowanego strumienia: oryginał (kodek i rozmiar) przekracza możliwości dekodowania tego urządzenia".
 
 W goglach widok immersyjny uruchamia oryginał i przy pierwszych klatkach przełącza się na strumień transkodowany serwera, gdy oryginał przekracza możliwości dekoderów, informując o tym na panelu informacyjnym; gdy nie ma strumienia transkodowanego, gdy jest on nadal za duży albo gdy plik pochodzi z gogli lub z udziału sieciowego, panel informacyjny mówi o tym przez 10 sekund, wraz z tym, co należy zmienić. Kompilacja 14, ta przesłana do Horizon Store, sprawdza tylko H.264 powyżej 4096x2304 i wtedy w ten sam sposób próbuje strumienia odtwarzania serwera.
 
@@ -661,87 +724,184 @@ Aby pokazać zdjęcie 360° komuś, kto nie ma aplikacji, udostępnij je linkiem
 
 Bieżąca kompilacja, kompilacja 21 (wersja 3.3.0-rc.0, numer kompilacji 3030019), jest oparta na Immich 3.3.0-rc.0 (Immich `main`, jeszcze nie wydanie stabilne). Kompilacja 19 była testowana z serwerem Immich 3.2, a kompilacje 20 i 21 nie zmieniają niczego w tym, czego aplikacja wymaga od serwera. Problemy zgłaszaj w [Issues](https://github.com/freeKC/Immuch360/issues), nie w projekcie Immich. Pełna dokumentacja samego Immich jest na [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Porównanie z aplikacją Immich i innymi aplikacjami
 
 ### Dlaczego ten fork istnieje, w jednej tabeli
 
-| | Aplikacja mobilna Immich | Immuch360 | Stan |
-|---|:---:|:---:|---|
-| Zdjęcia 360° jako sfera, w której się rozglądasz (przeciąganie, uszczypnięcie, podwójne dotknięcie, bezwładność, widok początkowy kamery, częściowe panoramy) | ❌ płaski pas | ✅ | Przetestowane na Galaxy S24+ i iPhonie 14 |
-| Żyroskop: rozglądanie się przez poruszanie telefonem | ❌ | ✅ | Przetestowane na Galaxy S24+ i iPhonie 14 |
-| Filmy 360° w odtwarzaczu sferycznym, z dźwiękiem, przewijaniem, wyborem ścieżki dźwiękowej i wskaźnikiem buforowania | ❌ płaski film | ✅ Android i iOS (na iOS jeszcze bez paska czasu) | Przetestowane na Galaxy S24+ i iPhonie 14 |
-| Zdjęcia i filmy 3D (stereoskopowe) 360° | ❌ podwojony obraz | ✅ lewe oko na telefonach, prawdziwe 3D na Queście | Przetestowane na Galaxy S24+ i Queście 3, z prawdziwymi próbkami 3D 360° (VRTogether, Vuze, Kandao) i zdjęciem 3D; zgłoszenia z innych kamer mile widziane |
-| Zdjęcia i filmy VR180 (półsfera) | ❌ rozciągnięte dookoła sfery | ✅ półsfera, przycisk 360°/180° | Przetestowane na emulatorze Androida i Galaxy S24+ z syntetycznymi multimediami; opinie z urządzeń mile widziane |
-| Zdjęcia przestrzenne Apple (pary stereo HEIC) i filmy przestrzenne (MV-HEVC) | ❌ płaskie zdjęcie lub film, nic nie wskazuje, że jest przestrzenny | ✅ od kompilacji 19: zdjęcia w 3D na Queście, gdzie indziej jedno oko i wiersz szczegółów | Wykrywanie sprawdzone na przykładowym zdjęciu zapisanym przez bibliotekę obrazów Apple i na plikach syntetycznych; widok w goglach i prawdziwe pliki z iPhone'a to test na urządzeniach kompilacji 19 |
-| Widok immersyjny Meta Quest ze śledzeniem głowy, paskiem czasu, poprzednim i następnym oraz obrotem | ❌ | ✅ ta sama aplikacja, jako kompilacja dla gogli lub APK na telefon | Przetestowane na Queście 3 (sterowanie z kompilacji 14, poprawione w kompilacji 16 po opinii użytkownika) i przez użytkownika z filmami Insta360 X4 8K HEVC |
-| Plakietka 360° na miniaturach i lista 360° z surowymi plikami i filtrami (okres, źródło, rodzaj, kamera) | ❌ | ✅ filtry od kompilacji 18 | Gotowe |
-| "Wyświetl jako 360°" dla plików, których serwer nie oznacza | ❌ | ✅ zapamiętywane w telefonie | Gotowe |
-| Spatial 2.5D: głębia na płaskim ekranie ze stereoskopowego filmu | ❌ | ✅ eksperymentalne, telefony i tablety | Przetestowane na Galaxy S24+; opinie z iPhone'ów mile widziane |
-| Używanie bez żadnego serwera, na własnej galerii urządzenia | ❌ wymagane logowanie | ✅ | Przetestowane na Galaxy S24+, Queście 3 i emulatorze Androida |
-| Udziały SMB i WebDAV znajdowane w sieci i odtwarzane na żywo, nic nie jest pobierane | ❌ | ✅ każda przeglądarka, telefony i Quest | Przetestowane z Freebox Server (SMB) na Galaxy S24+ i Queście 3 oraz z testowymi serwerami Samba i WebDAV na emulatorze Androida; opinie o innych NAS i WebDAV mile widziane |
-| Serwery multimediów DLNA jako typ udziału | ❌ | ✅ od kompilacji 19 | Sprawdzone z minidlna i Gerbera w Dockerze; Plex, Jellyfin, NAS, Freebox Server, iPhone i Quest to test na urządzeniach kompilacji 19 |
-| Wysyłanie plików z udziału do Immich; pliki z urządzenia wysłane ręcznie liczą się jako zarchiwizowane | ❌ tylko pliki z urządzenia | ✅ od kompilacji 15 | Przetestowane na emulatorze Androida z testowym serwerem Samba i serwerem Immich 3.2 |
-| Udostępnianie tego telefonu w sieci, dla gogli | ❌ | ✅ od kompilacji 19, Android i iOS | Testy jednostkowe i testy end-to-end z klientem WebDAV gogli, na komputerze; telefon obsługujący Questa i strona iPhone'a to test na urządzeniach kompilacji 19 |
-| Biblioteki Plex Media Server odtwarzane z oryginalnych plików, w domu i poza nim, bez plex.tv | ❌ | ✅ od kompilacji 20, każda przeglądarka, na telefonach, tabletach, Queście i telewizorach | Sprawdzone z komputera na prawdziwym Plex Media Server 1.42.1 (łączenie, foldery, zakresy bajtów, miniatury, adres spoza domu); jeszcze nie sprawdzone na urządzeniu |
-| Kamery Tapo: podgląd na żywo i nagrania z karty pamięci wysyłane do Immich, gdy zechcesz | ❌ | ✅ od kompilacji 20: nagrania wszędzie, na żywo na Androidzie, Android TV i Queście | Sprawdzone na symulowanej kamerze; jeszcze nie sprawdzone z prawdziwą kamerą |
-| Android TV i Google TV, sterowane pilotem, w tym samym APK | ❌ nie jest aplikacją na telewizory | ✅ od kompilacji 20 | Sprawdzone testami automatycznymi; jeszcze nie sprawdzone na telewizorze |
-| Surowe zdjęcia Insta360 .insp i filmy .insv z jedną ścieżką | ❌ płasko | ✅ od kompilacji 16 | Zdjęcia sprawdzone w porównaniu z eksportami Insta360 Studio plików X3, filmy na emulatorze Androida z plikiem X3 w niskiej rozdzielczości; jeszcze nie uruchamiane na iPhonie |
-| Surowe filmy z jednym obiektywem na ścieżkę lub na plik (Insta360 X4, X4 Air, X5, X6, pary X3, GoPro .360, DJI .osv) | ❌ płasko lub błędnie | ✅ od kompilacji 18 | Parsery i łączenie sprawdzone na prawdziwych plikach X4, pary X3, GoPro MAX i Osmo 360; odtwarzanie to test na urządzeniach kompilacji 18 i 19 |
-| Podwójne rybie oko .dng | ❌ płasko | ❌ jeszcze nie | Planowane |
-| Filmy z serwera: oryginał, gdy urządzenie go dekoduje, w przeciwnym razie strumień transkodowany; lista dekoderów wideo urządzenia | ❌ jeden przełącznik "Wymuś oryginalne wideo" | ✅ od kompilacji 15 | Przetestowane na emulatorze Androida; limit H.264 Questa 3 zmierzono w goglach |
-| Szczegóły techniczne filmu: przepływność, obraz, profil, czy to urządzenie go dekoduje | ❌ tylko kodek | ✅ od kompilacji 18 | Gotowe |
-| Darmowy odtwarzacz płaskich filmów oraz 360°, 3D i VR180, z serwera, telefonu lub NAS | ❌ tylko płaskie | ✅ (odtwarzacze ze sklepu Questa 3 są płatne) | |
-| Ten sam serwer, to samo konto, instaluje się obok oficjalnej aplikacji | | ✅ | |
+| | Aplikacja mobilna Immich | Immuch360 |
+|---|:---:|:---:|
+| Zdjęcia 360° jako sfera, w której się rozglądasz (przeciąganie, uszczypnięcie, podwójne dotknięcie, bezwładność, widok początkowy kamery, częściowe panoramy) | ❌ płaski pas | ✅ |
+| Żyroskop: rozglądanie się przez poruszanie telefonem | ❌ | ✅ |
+| Filmy 360° w odtwarzaczu sferycznym, z dźwiękiem, przewijaniem, wyborem ścieżki dźwiękowej i wskaźnikiem buforowania | ❌ płaski film | ✅ Android i iOS (na iOS jeszcze bez paska czasu) |
+| Zdjęcia i filmy 3D (stereoskopowe) 360° | ❌ podwojony obraz | ✅ lewe oko na telefonach, prawdziwe 3D na Queście |
+| Zdjęcia i filmy VR180 (półsfera) | ❌ rozciągnięte dookoła sfery | ✅ półsfera, przycisk 360°/180° |
+| Zdjęcia przestrzenne Apple (pary stereo HEIC) i filmy przestrzenne (MV-HEVC) | ❌ płaskie zdjęcie lub film, nic nie wskazuje, że jest przestrzenny | ✅ od kompilacji 19: zdjęcia w 3D na Queście, gdzie indziej jedno oko i wiersz szczegółów |
+| Widok immersyjny Meta Quest ze śledzeniem głowy, paskiem czasu, poprzednim i następnym oraz obrotem | ❌ | ✅ ta sama aplikacja, jako kompilacja dla gogli lub APK na telefon |
+| Plakietka 360° na miniaturach i lista 360° z surowymi plikami i filtrami (okres, źródło, rodzaj, kamera) | ❌ | ✅ filtry od kompilacji 18 |
+| "Wyświetl jako 360°" dla plików, których serwer nie oznacza | ❌ | ✅ zapamiętywane w telefonie |
+| Spatial 2.5D: głębia na płaskim ekranie ze stereoskopowego filmu | ❌ | ✅ eksperymentalne, telefony i tablety |
+| Używanie bez żadnego serwera, na własnej galerii urządzenia | ❌ wymagane logowanie | ✅ |
+| Udziały SMB i WebDAV znajdowane w sieci i odtwarzane na żywo, nic nie jest pobierane | ❌ | ✅ każda przeglądarka, telefony i Quest |
+| Serwery multimediów DLNA jako typ udziału | ❌ | ✅ od kompilacji 19 |
+| Wysyłanie plików z udziału do Immich; pliki z urządzenia wysłane ręcznie liczą się jako zarchiwizowane | ❌ tylko pliki z urządzenia | ✅ od kompilacji 15 |
+| Udostępnianie tego telefonu w sieci, dla gogli | ❌ | ✅ od kompilacji 19, Android i iOS |
+| Biblioteki Plex Media Server odtwarzane z oryginalnych plików, w domu i poza nim, bez plex.tv | ❌ | ✅ od kompilacji 20, każda przeglądarka, na telefonach, tabletach, Queście i telewizorach |
+| Kamery Tapo: podgląd na żywo i nagrania z karty pamięci wysyłane do Immich, gdy zechcesz | ❌ | ✅ od kompilacji 20: nagrania wszędzie, na żywo na Androidzie, Android TV i Queście |
+| Android TV i Google TV, sterowane pilotem, w tym samym APK | ❌ nie jest aplikacją na telewizory | ✅ od kompilacji 20 |
+| Surowe zdjęcia Insta360 .insp i filmy .insv z jedną ścieżką | ❌ płasko | ✅ od kompilacji 16 |
+| Surowe filmy z jednym obiektywem na ścieżkę lub na plik (Insta360 X4, X4 Air, X5, X6, pary X3, GoPro .360, DJI .osv) | ❌ płasko lub błędnie | ✅ od kompilacji 18 |
+| Podwójne rybie oko .dng | ❌ płasko | ❌ jeszcze nie |
+| Filmy z serwera: oryginał, gdy urządzenie go dekoduje, w przeciwnym razie strumień transkodowany; lista dekoderów wideo urządzenia | ❌ jeden przełącznik "Wymuś oryginalne wideo" | ✅ od kompilacji 15 |
+| Szczegóły techniczne filmu: przepływność, obraz, profil, czy to urządzenie go dekoduje | ❌ tylko kodek | ✅ od kompilacji 18 |
+| Darmowy odtwarzacz płaskich filmów oraz 360°, 3D i VR180, z serwera, telefonu lub NAS | ❌ tylko płaskie | ✅ (odtwarzacze ze sklepu Questa 3 są płatne) |
+| Ten sam serwer, to samo konto, instaluje się obok oficjalnej aplikacji | | ✅ |
+
+<details>
+<summary><b>Stan każdego wiersza</b>: jak był testowany</summary>
+
+- **Zdjęcia 360° jako sfera**: przetestowane na Galaxy S24+ i iPhonie 14.
+- **Żyroskop**: przetestowane na Galaxy S24+ i iPhonie 14.
+- **Filmy 360°**: przetestowane na Galaxy S24+ i iPhonie 14.
+- **Zdjęcia i filmy 3D 360°**: przetestowane na Galaxy S24+ i Queście 3, z prawdziwymi próbkami 3D 360° (VRTogether, Vuze, Kandao) i zdjęciem 3D; zgłoszenia z innych kamer mile widziane.
+- **VR180**: przetestowane na emulatorze Androida i Galaxy S24+ z syntetycznymi multimediami; opinie z urządzeń mile widziane.
+- **Zdjęcia i filmy przestrzenne Apple**: wykrywanie sprawdzone na przykładowym zdjęciu zapisanym przez bibliotekę obrazów Apple i na plikach syntetycznych; widok w goglach i prawdziwe pliki z iPhone'a to test na urządzeniach kompilacji 19.
+- **Widok immersyjny Meta Quest**: przetestowane na Queście 3 (sterowanie z kompilacji 14, poprawione w kompilacji 16 po opinii użytkownika) i przez użytkownika z filmami Insta360 X4 8K HEVC.
+- **Plakietka 360° i lista 360°**: gotowe.
+- **Wyświetl jako 360°**: gotowe.
+- **Spatial 2.5D**: przetestowane na Galaxy S24+; opinie z iPhone'ów mile widziane.
+- **Bez żadnego serwera**: przetestowane na Galaxy S24+, Queście 3 i emulatorze Androida.
+- **Udziały SMB i WebDAV**: przetestowane z Freebox Server (SMB) na Galaxy S24+ i Queście 3 oraz z testowymi serwerami Samba i WebDAV na emulatorze Androida; opinie o innych NAS i WebDAV mile widziane.
+- **Serwery multimediów DLNA**: sprawdzone z minidlna i Gerbera w Dockerze; Plex, Jellyfin, NAS, Freebox Server, iPhone i Quest to test na urządzeniach kompilacji 19.
+- **Wysyłanie plików z udziału do Immich**: przetestowane na emulatorze Androida z testowym serwerem Samba i serwerem Immich 3.2.
+- **Udostępnianie tego telefonu w sieci**: testy jednostkowe i testy end-to-end z klientem WebDAV gogli, na komputerze; telefon obsługujący Questa i strona iPhone'a to test na urządzeniach kompilacji 19.
+- **Plex Media Server**: sprawdzone z komputera na prawdziwym Plex Media Server 1.42.1 (łączenie, foldery, zakresy bajtów, miniatury, adres spoza domu); jeszcze nie sprawdzone na urządzeniu.
+- **Kamery Tapo**: sprawdzone na symulowanej kamerze; jeszcze nie sprawdzone z prawdziwą kamerą.
+- **Android TV i Google TV**: sprawdzone testami automatycznymi; jeszcze nie sprawdzone na telewizorze.
+- **Surowe zdjęcia Insta360 .insp i filmy .insv z jedną ścieżką**: zdjęcia sprawdzone w porównaniu z eksportami Insta360 Studio plików X3, filmy na emulatorze Androida z plikiem X3 w niskiej rozdzielczości; jeszcze nie uruchamiane na iPhonie.
+- **Surowe filmy z jednym obiektywem na ścieżkę lub na plik**: parsery i łączenie sprawdzone na prawdziwych plikach X4, pary X3, GoPro MAX i Osmo 360; odtwarzanie to test na urządzeniach kompilacji 18 i 19.
+- **Podwójne rybie oko .dng**: planowane.
+- **Filmy z serwera i dekodery wideo**: przetestowane na emulatorze Androida; limit H.264 Questa 3 zmierzono w goglach.
+- **Szczegóły techniczne filmu**: gotowe.
+
+</details>
 
 ### Inne aplikacje, których ludzie do tego używają
 
-| Czego ludzie używają | Na co trafiają | Co robi Immuch360 |
-|---|---|---|
-| Aplikacja webowa Immich | Pokazuje zdjęcie 360° jako sferę, ale traktuje surowy .insp jak gotową panoramę i owija jego dwa koła wokół sfery; widok VR to wciąż prośba ([dyskusja #14768](https://github.com/immich-app/immich/discussions/14768)) | Łączy surowe pliki na urządzeniu i otwiera widok immersyjny na Queście |
-| Aplikacja Insta360 lub Studio | Potrzebna, aby zamienić surowe pliki z karty na obraz 360° przed obejrzeniem | Otwiera surowe pliki .insp i .insv bezpośrednio, a także pliki GoPro .360 i DJI .osv |
-| Plex, Jellyfin, Synology Photos | Zdjęcia i filmy 360° wyświetlane płasko lub nierozpoznawane, jak opisują wątki na ich forach (prośba w Plex jest otwarta od 2017) | Od kompilacji 20 czyta samą bibliotekę Plex, albo te same foldery przez SMB, WebDAV lub DLNA, i odtwarza je jako sferę, bez zmieniania czegokolwiek na serwerze |
-| Aplikacja Tapo | Osobna aplikacja, zalogowana do Twojego konta TP-Link, z klipami oddzielnie od zdjęć | Pokazuje kamerę obok Twoich zdjęć, łączy się z nią tylko w Twojej sieci i zachowuje klip jako film, który możesz wysłać do Immich (od kompilacji 20) |
-| Aplikacja mobilna Immich na telewizorze | Nie jest aplikacją na telewizory: użytkownik zgłasza, że działa z myszą, a nie z pilotem | Ta sama aplikacja, przystosowana do pilota (od kompilacji 20) |
-| Kopiowanie plików do gogli | Każdy plik kopiowany kablem, zanim można go obejrzeć | Odtwarza na miejscu z Immich, NAS, serwera multimediów lub telefonu |
-| Odtwarzacze 360° i 3D ze sklepu Questa | Płatne | Darmowe i otwartoźródłowe (AGPL) |
+- **Aplikacja webowa Immich**
+  - Na co trafiają: pokazuje zdjęcie 360° jako sferę, ale traktuje surowy .insp jak gotową panoramę i owija jego dwa koła wokół sfery; widok VR to wciąż prośba ([dyskusja #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Co robi Immuch360: łączy surowe pliki na urządzeniu i otwiera widok immersyjny na Queście.
+- **Aplikacja Insta360 lub Studio**
+  - Na co trafiają: potrzebna, aby zamienić surowe pliki z karty na obraz 360° przed obejrzeniem.
+  - Co robi Immuch360: otwiera surowe pliki .insp i .insv bezpośrednio, a także pliki GoPro .360 i DJI .osv.
+- **Plex, Jellyfin, Synology Photos**
+  - Na co trafiają: zdjęcia i filmy 360° wyświetlane płasko lub nierozpoznawane, jak opisują wątki na ich forach (prośba w Plex jest otwarta od 2017).
+  - Co robi Immuch360: od kompilacji 20 czyta samą bibliotekę Plex, albo te same foldery przez SMB, WebDAV lub DLNA, i odtwarza je jako sferę, bez zmieniania czegokolwiek na serwerze.
+- **Aplikacja Tapo**
+  - Na co trafiają: osobna aplikacja, zalogowana do Twojego konta TP-Link, z klipami oddzielnie od zdjęć.
+  - Co robi Immuch360: pokazuje kamerę obok Twoich zdjęć, łączy się z nią tylko w Twojej sieci i zachowuje klip jako film, który możesz wysłać do Immich (od kompilacji 20).
+- **Aplikacja mobilna Immich na telewizorze**
+  - Na co trafiają: nie jest aplikacją na telewizory: użytkownik zgłasza, że działa z myszą, a nie z pilotem.
+  - Co robi Immuch360: ta sama aplikacja, przystosowana do pilota (od kompilacji 20).
+- **Kopiowanie plików do gogli**
+  - Na co trafiają: każdy plik kopiowany kablem, zanim można go obejrzeć.
+  - Co robi Immuch360: odtwarza na miejscu z Immich, NAS, serwera multimediów lub telefonu.
+- **Odtwarzacze 360° i 3D ze sklepu Questa**
+  - Na co trafiają: płatne.
+  - Co robi Immuch360: darmowe i otwartoźródłowe (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Formaty i źródła, według platformy
 
-Immuch360 to galeria, a także darmowy odtwarzacz multimediów: odtwarza to, czego nie potrafi oficjalna aplikacja, ze źródeł z drugiej tabeli, w odtwarzaczu dopasowanym do pliku.
+Immuch360 to galeria, a także darmowy odtwarzacz multimediów: odtwarza to, czego nie potrafi oficjalna aplikacja, ze źródeł z drugiej listy, w odtwarzaczu dopasowanym do pliku.
 
-| Co | Telefony z Androidem | iPhone, iPad | Meta Quest | Android TV, Google TV (od kompilacji 20) |
-|---|---|---|---|---|
-| Płaskie filmy (MP4, MOV, MKV, to, co dekoduje urządzenie) | Odtwarzacz Immich i natywny odtwarzacz dla udziałów sieciowych | To samo, z wyjątkiem plików MKV i AVI z udziału, których iOS nie otwiera (z serwera odtwarzają się transkodowane) | W oknie | Jak na telefonach; OK wstrzymuje, lewo i prawo przeskakują o 10 s |
-| Zdjęcia 360° | Przeglądarka sferyczna, żyroskop | To samo | Immersyjnie, dookoła Ciebie | Przeglądarka sferyczna obracana strzałkami, powiększana klawiszami kanałów |
-| Filmy 360° | Natywny odtwarzacz Media3 na sferze, żyroskop, przewijanie, wybór ścieżki dźwiękowej, wskaźnik buforowania | Natywny odtwarzacz SceneKit na sferze, żyroskop, wybór ścieżki dźwiękowej, wskaźnik buforowania; odtwarzanie i pauza, jeszcze bez paska czasu | Immersyjnie, prawdziwe 3D dla plików stereoskopowych, pasek czasu z przeskokami o 10 sekund, poprzedni i następny element | Odtwarzacz Media3 z telefonów, obracany strzałkami |
-| 3D 360° (góra i dół, obok siebie) | Lewe oko, przycisk układu | To samo | Każde oko dostaje własną połowę klatki | Lewe oko, przycisk układu |
-| Zdjęcia i filmy VR180 (półsfera) | Półsfera, przycisk 360°/180° | To samo | Immersyjna półsfera | Półsfera, przycisk 360°/180° |
-| Spatial 2.5D (głębia na płaskim ekranie ze stereoskopowego filmu) | Natywny odtwarzacz, śledzenie głowy przednim aparatem | To samo | Niedostępne | Niedostępne |
-| Zdjęcia przestrzenne Apple (pary stereo HEIC, od kompilacji 19) | Lewe oko, wiersz szczegółów informuje, że jest przestrzenne | To samo | Wyświetl w 3D: oboje oczu na zdjęciu unoszącym się w widoku immersyjnym, 3D lub 2D, z możliwością zmiany rozmiaru | Lewe oko, wiersz szczegółów |
-| Filmy przestrzenne Apple (MV-HEVC, od kompilacji 19) | Jedno oko (warstwa bazowa), z powiadomieniem | To samo | Jedno oko w oknie, z powiadomieniem | Jedno oko, z powiadomieniem |
-| Surowe zdjęcia Insta360 .insp (od kompilacji 16) | Łączone na GPU przed przeglądarką sferyczną, do 8192x4096 | To samo | Immersyjnie, z połączonego obrazu przygotowanego dla gogli | Jak na telefonach |
-| Surowe Insta360 .insv, oba obiektywy w jednej ścieżce (od kompilacji 16) | Łączone efektem GPU w odtwarzaczu Media3 | Łączone shaderem SceneKit | Immersyjnie, łączone tym samym efektem GPU | Jak na telefonach |
-| Surowe filmy z jednym obiektywem na ścieżkę lub na plik (od kompilacji 18): Insta360 X4, X4 Air, X5, X6 .insv, pary X3, GoPro .360, DJI .osv | Dwa dekodery sprzętowe jednocześnie, po jednym na obiektyw (od kompilacji 19 programowe na urządzeniu bez dekodera sprzętowego, do 2048x2048 na obiektyw), i kompozytor GL, który łączy je w sferę; jeden obiektyw, potem strumień transkodowany, potem film bez łączenia, gdy urządzenie nie może uruchomić dwóch | Własny kompozytor AVFoundation z Metal | Immersyjnie, te same dwa dekodery i kompozytor (panel 3840x1920) | Jak na telefonach, gdy telewizor uruchamia dwa dekodery jednocześnie |
-| Podgląd na żywo z kamery Tapo (od kompilacji 20) | Odtwarzacz RTSP Media3: SD na stronie, HD na pełnym ekranie, przycisk dźwięku | Jeszcze nie: karta informuje, że pojawi się później | W oknie, w HD | Jak na telefonach |
-| Nagrania z kamery Tapo (od kompilacji 20) | Pobierane z karty pamięci do filmu H.264 z dźwiękiem, potem odtwarzane z przewijaniem | To samo | To samo, w oknie | To samo |
+- **Płaskie filmy (MP4, MOV, MKV, to, co dekoduje urządzenie)**
+  - Telefony z Androidem: odtwarzacz Immich i natywny odtwarzacz dla udziałów sieciowych.
+  - iPhone, iPad: to samo, z wyjątkiem plików MKV i AVI z udziału, których iOS nie otwiera (z serwera odtwarzają się transkodowane).
+  - Meta Quest: w oknie.
+  - Android TV, Google TV: jak na telefonach; OK wstrzymuje, lewo i prawo przeskakują o 10 s.
+- **Zdjęcia 360°**
+  - Telefony z Androidem: przeglądarka sferyczna, żyroskop.
+  - iPhone, iPad: to samo.
+  - Meta Quest: immersyjnie, dookoła Ciebie.
+  - Android TV, Google TV: przeglądarka sferyczna obracana strzałkami, powiększana klawiszami kanałów.
+- **Filmy 360°**
+  - Telefony z Androidem: natywny odtwarzacz Media3 na sferze, żyroskop, przewijanie, wybór ścieżki dźwiękowej, wskaźnik buforowania.
+  - iPhone, iPad: natywny odtwarzacz SceneKit na sferze, żyroskop, wybór ścieżki dźwiękowej, wskaźnik buforowania; odtwarzanie i pauza, jeszcze bez paska czasu.
+  - Meta Quest: immersyjnie, prawdziwe 3D dla plików stereoskopowych, pasek czasu z przeskokami o 10 sekund, poprzedni i następny element.
+  - Android TV, Google TV: odtwarzacz Media3 z telefonów, obracany strzałkami.
+- **3D 360° (góra i dół, obok siebie)**
+  - Telefony z Androidem: lewe oko, przycisk układu.
+  - iPhone, iPad: to samo.
+  - Meta Quest: każde oko dostaje własną połowę klatki.
+  - Android TV, Google TV: lewe oko, przycisk układu.
+- **Zdjęcia i filmy VR180 (półsfera)**
+  - Telefony z Androidem: półsfera, przycisk 360°/180°.
+  - iPhone, iPad: to samo.
+  - Meta Quest: immersyjna półsfera.
+  - Android TV, Google TV: półsfera, przycisk 360°/180°.
+- **Spatial 2.5D (głębia na płaskim ekranie ze stereoskopowego filmu)**
+  - Telefony z Androidem: natywny odtwarzacz, śledzenie głowy przednim aparatem.
+  - iPhone, iPad: to samo.
+  - Meta Quest: niedostępne.
+  - Android TV, Google TV: niedostępne.
+- **Zdjęcia przestrzenne Apple (pary stereo HEIC, od kompilacji 19)**
+  - Telefony z Androidem: lewe oko, wiersz szczegółów informuje, że jest przestrzenne.
+  - iPhone, iPad: to samo.
+  - Meta Quest: Wyświetl w 3D: oboje oczu na zdjęciu unoszącym się w widoku immersyjnym, 3D lub 2D, z możliwością zmiany rozmiaru.
+  - Android TV, Google TV: lewe oko, wiersz szczegółów.
+- **Filmy przestrzenne Apple (MV-HEVC, od kompilacji 19)**
+  - Telefony z Androidem: jedno oko (warstwa bazowa), z powiadomieniem.
+  - iPhone, iPad: to samo.
+  - Meta Quest: jedno oko w oknie, z powiadomieniem.
+  - Android TV, Google TV: jedno oko, z powiadomieniem.
+- **Surowe zdjęcia Insta360 .insp (od kompilacji 16)**
+  - Telefony z Androidem: łączone na GPU przed przeglądarką sferyczną, do 8192x4096.
+  - iPhone, iPad: to samo.
+  - Meta Quest: immersyjnie, z połączonego obrazu przygotowanego dla gogli.
+  - Android TV, Google TV: jak na telefonach.
+- **Surowe Insta360 .insv, oba obiektywy w jednej ścieżce (od kompilacji 16)**
+  - Telefony z Androidem: łączone efektem GPU w odtwarzaczu Media3.
+  - iPhone, iPad: łączone shaderem SceneKit.
+  - Meta Quest: immersyjnie, łączone tym samym efektem GPU.
+  - Android TV, Google TV: jak na telefonach.
+- **Surowe filmy z jednym obiektywem na ścieżkę lub na plik (od kompilacji 18): Insta360 X4, X4 Air, X5, X6 .insv, pary X3, GoPro .360, DJI .osv**
+  - Telefony z Androidem: dwa dekodery sprzętowe jednocześnie, po jednym na obiektyw (od kompilacji 19 programowe na urządzeniu bez dekodera sprzętowego, do 2048x2048 na obiektyw), i kompozytor GL, który łączy je w sferę; jeden obiektyw, potem strumień transkodowany, potem film bez łączenia, gdy urządzenie nie może uruchomić dwóch.
+  - iPhone, iPad: własny kompozytor AVFoundation z Metal.
+  - Meta Quest: immersyjnie, te same dwa dekodery i kompozytor (panel 3840x1920).
+  - Android TV, Google TV: jak na telefonach, gdy telewizor uruchamia dwa dekodery jednocześnie.
+- **Podgląd na żywo z kamery Tapo (od kompilacji 20)**
+  - Telefony z Androidem: odtwarzacz RTSP Media3: SD na stronie, HD na pełnym ekranie, przycisk dźwięku.
+  - iPhone, iPad: jeszcze nie: karta informuje, że pojawi się później.
+  - Meta Quest: w oknie, w HD.
+  - Android TV, Google TV: jak na telefonach.
+- **Nagrania z kamery Tapo (od kompilacji 20)**
+  - Telefony z Androidem: pobierane z karty pamięci do filmu H.264 z dźwiękiem, potem odtwarzane z przewijaniem.
+  - iPhone, iPad: to samo.
+  - Meta Quest: to samo, w oknie.
+  - Android TV, Google TV: to samo.
 
-Kolumna telewizora nie została jeszcze sprawdzona na telewizorze, zobacz [Oglądanie na telewizorze](#watch-on-your-tv-android-tv-and-google-tv); wiersze kamer nie zostały jeszcze sprawdzone z prawdziwą kamerą.
+Pozycje dla Android TV i Google TV, od kompilacji 20, nie zostały jeszcze sprawdzone na telewizorze, zobacz [Oglądanie na telewizorze](#watch-on-your-tv-android-tv-and-google-tv); pozycje kamer nie zostały jeszcze sprawdzone z prawdziwą kamerą.
 
-| Skąd | Jak |
-|---|---|
-| Twój serwer Immich | Oryginał lub strumień transkodowany serwera, zgodnie z Ustawienia, Przeglądarka zasobów, Źródło wideo (zobacz [Szczegóły wideo i dekodery](#video-details-decoders-and-why-a-video-stutters)). To samo konto co w aplikacji webowej |
-| Sam telefon lub gogle | "Używaj bez serwera" na stronie logowania albo pozycja Na tym urządzeniu na karcie Biblioteka |
-| NAS lub komputer | Udziały SMB i WebDAV, a od kompilacji 19 serwery multimediów DLNA, znajdowane w sieci, odczytywane na żywo (film przez SMB nawet przez sześć połączeń), nic nie jest kopiowane; od kompilacji 15 wybrane pliki można wysłać na konto Immich |
-| Inny telefon (od kompilacji 19) | "Udostępnij ten telefon w sieci" na tamtym telefonie: gogle lub dowolny klient WebDAV w sieci czytają jego albumy, miesiące i multimedia 360° |
-| Plex Media Server (od kompilacji 20) | Jego biblioteki zdjęć, filmów i seriali według folderów, oryginalne pliki czytane na żywo przez HTTPS sprawdzane na podstawie własnego certyfikatu serwera, w domu lub przez adres spoza domu, na każdej platformie; zobacz [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv) |
-| Kamera Tapo (od kompilacji 20) | Podgląd na żywo z kontem kamery (Android, Android TV, Quest) i nagrania z jej karty pamięci z hasłem konta TP-Link (każda platforma), tylko w sieci lokalnej; zobacz [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Twój serwer Immich**: oryginał lub strumień transkodowany serwera, zgodnie z Ustawienia, Przeglądarka zasobów, Źródło wideo (zobacz [Szczegóły wideo i dekodery](#video-details-decoders-and-why-a-video-stutters)). To samo konto co w aplikacji webowej.
+- **Sam telefon lub gogle**: "Używaj bez serwera" na stronie logowania albo pozycja Na tym urządzeniu na karcie Biblioteka.
+- **NAS lub komputer**: udziały SMB i WebDAV, a od kompilacji 19 serwery multimediów DLNA, znajdowane w sieci, odczytywane na żywo (film przez SMB nawet przez sześć połączeń), nic nie jest kopiowane; od kompilacji 15 wybrane pliki można wysłać na konto Immich.
+- **Inny telefon (od kompilacji 19)**: "Udostępnij ten telefon w sieci" na tamtym telefonie: gogle lub dowolny klient WebDAV w sieci czytają jego albumy, miesiące i multimedia 360°.
+- **Plex Media Server (od kompilacji 20)**: jego biblioteki zdjęć, filmów i seriali według folderów, oryginalne pliki czytane na żywo przez HTTPS sprawdzane na podstawie własnego certyfikatu serwera, w domu lub przez adres spoza domu, na każdej platformie; zobacz [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv).
+- **Kamera Tapo (od kompilacji 20)**: podgląd na żywo z kontem kamery (Android, Android TV, Quest) i nagrania z jej karty pamięci z hasłem konta TP-Link (każda platforma), tylko w sieci lokalnej; zobacz [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 działa też na goglach Meta Quest z Horizon OS v69 lub nowszym. Od kompilacji 21 kompilacja w Horizon Store jest przeznaczona dla Quest 2, Quest Pro, Quest 3 i 3S, czterech modeli, które uniwersalny `-release.apk` już wymienia; pierwszego Questa nie ma, sklep go już nie przyjmuje. Quest 3 i 3S są przetestowane. Quest 2 i Quest Pro nie są jeszcze przetestowane: ich dekodery wideo są wolniejsze, a limity sprawdzane przez aplikację zmierzono na Queście 3, więc duży film H.264 może zostać na nich odrzucony z komunikatem albo się zacinać. Zgłoszenia z tych dwóch gogli są mile widziane w [Issues](https://github.com/freeKC/Immuch360/issues). Jak z niej korzystać, opisuje [W goglach Meta Quest 3](#in-the-meta-quest-3-headset); ta sekcja dotyczy instalacji i tego, czym gogle się różnią.
+Immuch360 działa też na goglach Meta Quest z Horizon OS v69 lub nowszym. Od kompilacji 21 kompilacja w Horizon Store jest przeznaczona dla Quest 2, Quest Pro, Quest 3 i 3S, czterech modeli, które uniwersalny `-release.apk` już wymienia; pierwszego Questa nie ma, sklep go już nie przyjmuje.
 
-Kompilacja dla gogli łączy się z serwerami tylko przez HTTPS albo zwykłym HTTP z nazwami sieci domowej (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) i z samymi goglami, zgodnie z wymaganiami Horizon Store. Serwer wpisany jako zwykły adres HTTP z IP, np. `http://192.168.1.10:2283`, jest przez tę kompilację odrzucany: użyj HTTPS, nazwy sieci domowej (`nas.local`) lub uniwersalnego `-release.apk`, który zachowuje otwartą politykę telefonów. Nie dotyczy to udziałów WebDAV, DLNA i udziałów telefonu pod zwykłym adresem HTTP w sieci lokalnej: aplikacja czyta je sama i przekazuje swoim odtwarzaczom tylko adres swojego lokalnego mostu (do potwierdzenia w goglach dla DLNA i udziału telefonu, nowych w kompilacji 19). Od kompilacji 20 z serwerem Plex aplikacja łączy się przez HTTPS, a z kamerą Tapo sama, z jej podglądem na żywo przez RTSP, który nie jest HTTP: żadnego z nich nie powinno to dotyczyć (do potwierdzenia w goglach).
+Quest 3 i 3S są przetestowane. Quest 2 i Quest Pro nie są jeszcze przetestowane: ich dekodery wideo są wolniejsze, a limity sprawdzane przez aplikację zmierzono na Queście 3, więc duży film H.264 może zostać na nich odrzucony z komunikatem albo się zacinać. Zgłoszenia z tych dwóch gogli są mile widziane w [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Jak z niej korzystać, opisuje [W goglach Meta Quest 3](#in-the-meta-quest-3-headset); ta sekcja dotyczy instalacji i tego, czym gogle się różnią.
+
+Kompilacja dla gogli łączy się z serwerami tylko przez HTTPS albo zwykłym HTTP z nazwami sieci domowej (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) i z samymi goglami, zgodnie z wymaganiami Horizon Store. Serwer wpisany jako zwykły adres HTTP z IP, np. `http://192.168.1.10:2283`, jest przez tę kompilację odrzucany: użyj HTTPS, nazwy sieci domowej (`nas.local`) lub uniwersalnego `-release.apk`, który zachowuje otwartą politykę telefonów.
+
+Nie dotyczy to udziałów WebDAV, DLNA i udziałów telefonu pod zwykłym adresem HTTP w sieci lokalnej: aplikacja czyta je sama i przekazuje swoim odtwarzaczom tylko adres swojego lokalnego mostu (do potwierdzenia w goglach dla DLNA i udziału telefonu, nowych w kompilacji 19). Od kompilacji 20 z serwerem Plex aplikacja łączy się przez HTTPS, a z kamerą Tapo sama, z jej podglądem na żywo przez RTSP, który nie jest HTTP: żadnego z nich nie powinno to dotyczyć (do potwierdzenia w goglach).
 
 <a id="install"></a>
 ### Instalacja
@@ -762,16 +922,23 @@ Meta zatwierdziła stronę w Horizon Store 7 października 2026 z kompilacją 14
 
 ### W oknie
 
-Cała aplikacja działa jako okno 2D o zmiennym rozmiarze: logowanie, oś czasu, albumy, wyszukiwanie, karta Biblioteka (lista 360°, Na tym urządzeniu, Udziały sieciowe), ustawienia oraz przeglądarki zdjęć i filmów, w których odtwarzają się płaskie zdjęcia i filmy. W goglach przycisk 360° i Wyświetl jako 360° w menu ⋮ otwierają bezpośrednio widok immersyjny zamiast przeglądarki sferycznej z telefonów, a przycisk Spatial 2.5D i jego ustawienie nie są wyświetlane. Od kompilacji 19 zdjęcie przestrzenne Apple ma przycisk Wyświetl w 3D, a kafelek Udostępnij ten telefon w sieci nie jest wyświetlany: to gogle czytają udział telefonu. Od kompilacji 20 serwery Plex i kamery Tapo też otwierają się w oknie, podgląd na żywo z kamery w HD; ustawienie "Układ dla pilota" pozostaje na Automatyczny, co w goglach oznacza, że jest wyłączone.
+Cała aplikacja działa jako okno 2D o zmiennym rozmiarze: logowanie, oś czasu, albumy, wyszukiwanie, karta Biblioteka (lista 360°, Na tym urządzeniu, Udziały sieciowe), ustawienia oraz przeglądarki zdjęć i filmów, w których odtwarzają się płaskie zdjęcia i filmy.
+
+W goglach przycisk 360° i Wyświetl jako 360° w menu ⋮ otwierają bezpośrednio widok immersyjny zamiast przeglądarki sferycznej z telefonów, a przycisk Spatial 2.5D i jego ustawienie nie są wyświetlane.
+
+Od kompilacji 19 zdjęcie przestrzenne Apple ma przycisk Wyświetl w 3D, a kafelek Udostępnij ten telefon w sieci nie jest wyświetlany: to gogle czytają udział telefonu. Od kompilacji 20 serwery Plex i kamery Tapo też otwierają się w oknie, podgląd na żywo z kamery w HD; ustawienie "Układ dla pilota" pozostaje na Automatyczny, co w goglach oznacza, że jest wyłączone.
 
 ### Na zdjęciach
 
 Zrzuty wykonane w goglach przyciskiem przechwytywania (przycisk Meta i spust), na Queście 3, z aplikacją w języku francuskim; karta Biblioteka jest pokazana w trybie bez serwera.
 
-| Bez serwera | Udziały sieciowe |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Karta Biblioteka bez serwera: Na tym urządzeniu i Udziały sieciowe"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Strona Udziały sieciowe z udziałem SMB z Freebox Server"> |
-| Karta Biblioteka w trybie bez serwera: własne multimedia gogli i udziały sieciowe | Udział Samba z Freebox Server, odczytywany na żywo w goglach |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Karta Biblioteka bez serwera: Na tym urządzeniu i Udziały sieciowe">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Strona Udziały sieciowe z udziałem SMB z Freebox Server">
+</p>
+
+- **Bez serwera**: karta Biblioteka w trybie bez serwera, z własnymi multimediami gogli i udziałami sieciowymi.
+- **Udziały sieciowe**: udział Samba z Freebox Server, odczytywany na żywo w goglach.
 
 ### Ograniczenia w goglach
 
@@ -786,12 +953,18 @@ Zrzuty wykonane w goglach przyciskiem przechwytywania (przycisk Meta i spust), n
 
 Aplikacja jest w Google Play na telefony i tablety; wersja dla App Store czeka na weryfikację przez Apple, strona w Meta Horizon Store jest zatwierdzona, a jej pierwsza aktualizacja jest w weryfikacji przez Meta, a wersja w Google Play na telewizory czeka na weryfikację wydania na telewizory przez Google. Wydanie na GitHubie to zawsze najnowsza kompilacja:
 
-| Platforma | Dziś | Wkrótce |
-|---|---|---|
-| Telefony i tablety z Androidem | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) albo APK na stronie [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` dla telefonu (uniwersalny `Immuch360-v<version>-release.apk` działa wszędzie, `-armeabi-v7a` jest dla starszych telefonów 32-bitowych, a plik `.aab` jest dla Google Play, nie do ręcznej instalacji). Kompilacja z GitHuba zwykle wyprzedza sklep. W obu przypadkach instaluje się obok oficjalnej aplikacji Immich (pakiet `com.aprogsys.immuch360`). | Google Play: kompilacja 18 jest dostępna, kompilacja 20 w weryfikacji przez Google od 7 października 2026, zamiast kompilacji 19 |
-| iPhone i iPad | Czeka na weryfikację przez Apple. Wersja w trakcie weryfikacji ma funkcje kompilacji 11: przesyłanie do Immich i wybór Źródło wideo (kompilacja 15) oraz surowe pliki Insta360 (kompilacja 16) przyjdą z późniejszą aktualizacją w App Store. Kod źródłowy kompiluje się w Xcode lub na Codemagic, zobacz [Zbuduj ją samodzielnie](#build-it-yourself). | App Store, w trakcie weryfikacji |
-| Meta Quest 2, Quest Pro, Quest 3 i 3S (Quest 2 i Quest Pro nie testowano) | Plik `-quest-release.apk` ze strony [Releases](https://github.com/freeKC/Immuch360/releases) (uniwersalny `-release.apk` też działa), zainstalowany ręcznie w trybie dewelopera, zobacz [Instalacja](#install). Kompilacja ze sklepu i APK z GitHuba są podpisane różnymi kluczami: aby przejść z jednej na drugą, najpierw odinstaluj aplikację (jej ustawienia i zapisane udziały znikną razem z nią). | Meta Horizon Store: strona została zatwierdzona 7 października 2026 z kompilacją 14, a kompilacja 21, jej pierwsza aktualizacja, jest w weryfikacji przez Meta; kanał alfa sklepu (tylko testerzy) dostaje każdą nową kompilację |
-| Android TV i Google TV (od kompilacji 20) | Uniwersalny `Immuch360-v<version>-release.apk` ze strony [Releases](https://github.com/freeKC/Immuch360/releases), zainstalowany ręcznie przez adb, zobacz [Instalacja na telewizorze](#install-it-on-the-tv). To ta sama aplikacja co na telefonach. | Google Play na telewizorach, po weryfikacji wydania na telewizory przez Google |
+- **Telefony i tablety z Androidem**
+  - Dziś: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) albo APK na stronie [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` dla telefonu (uniwersalny `Immuch360-v<version>-release.apk` działa wszędzie, `-armeabi-v7a` jest dla starszych telefonów 32-bitowych, a plik `.aab` jest dla Google Play, nie do ręcznej instalacji). Kompilacja z GitHuba zwykle wyprzedza sklep. W obu przypadkach instaluje się obok oficjalnej aplikacji Immich (pakiet `com.aprogsys.immuch360`).
+  - Wkrótce: w Google Play kompilacja 18 jest dostępna, kompilacja 20 w weryfikacji przez Google od 7 października 2026, zamiast kompilacji 19.
+- **iPhone i iPad**
+  - Dziś: czeka na weryfikację przez Apple. Wersja w trakcie weryfikacji ma funkcje kompilacji 11: przesyłanie do Immich i wybór Źródło wideo (kompilacja 15) oraz surowe pliki Insta360 (kompilacja 16) przyjdą z późniejszą aktualizacją w App Store. Kod źródłowy kompiluje się w Xcode lub na Codemagic, zobacz [Zbuduj ją samodzielnie](#build-it-yourself).
+  - Wkrótce: App Store, w trakcie weryfikacji.
+- **Meta Quest 2, Quest Pro, Quest 3 i 3S (Quest 2 i Quest Pro nie testowano)**
+  - Dziś: plik `-quest-release.apk` ze strony [Releases](https://github.com/freeKC/Immuch360/releases) (uniwersalny `-release.apk` też działa), zainstalowany ręcznie w trybie dewelopera, zobacz [Instalacja](#install). Kompilacja ze sklepu i APK z GitHuba są podpisane różnymi kluczami: aby przejść z jednej na drugą, najpierw odinstaluj aplikację (jej ustawienia i zapisane udziały znikną razem z nią).
+  - Wkrótce: w Meta Horizon Store strona została zatwierdzona 7 października 2026 z kompilacją 14, a kompilacja 21, jej pierwsza aktualizacja, jest w weryfikacji przez Meta; kanał alfa sklepu (tylko testerzy) dostaje każdą nową kompilację.
+- **Android TV i Google TV (od kompilacji 20)**
+  - Dziś: uniwersalny `Immuch360-v<version>-release.apk` ze strony [Releases](https://github.com/freeKC/Immuch360/releases), zainstalowany ręcznie przez adb, zobacz [Instalacja na telewizorze](#install-it-on-the-tv). To ta sama aplikacja co na telefonach.
+  - Wkrótce: Google Play na telewizorach, po weryfikacji wydania na telewizory przez Google.
 
 Linki do App Store i Meta Horizon Store zostaną tu dodane, gdy tylko strony zostaną opublikowane. Zaloguj się zwykłym adresem URL swojego serwera Immich i kontem albo dotknij "Używaj bez serwera" na stronie logowania, aby zacząć od własnych zdjęć i filmów urządzenia. APK z GitHuba sam się nie aktualizuje: obserwuj stronę Releases, a gdy zainstalujesz aplikację ze sklepu, pobieraj aktualizacje z tego sklepu.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Zrzuty ekranu do sklepów są robione na kompilacjach debug na symulatorze, zbudowanych z `--dart-define=IMMUCH_SCREENSHOTS=true`, co tylko ukrywa baner debug. Dwa warianty (flavours) Androida to ta sama aplikacja. Od kompilacji 20 wariant `phone` deklaruje się też jako aplikacja na telewizory (pozycja w launcherze telewizora i baner, bez wymaganego ekranu dotykowego), czego wariant `quest` nie robi. Wariant `quest` celuje w SDK 34 i zachowuje tylko uprawnienia używane przez gogle (zdjęcia, filmy, powiadomienia): zarządzanie multimediami, lokalizacja w tle, starsza pamięć, dźwięk, lokalizacja multimediów, lokalizacja urządzenia i aparat są usuwane w `android/app/src/quest/AndroidManifest.xml`, ponieważ Meta Horizon Store odrzuca pierwsze dwa i wymaga uzasadnienia każdego innego wrażliwego uprawnienia; ten sam plik wskazuje Quest 2, Quest Pro, Quest 3 i 3S jako obsługiwane urządzenia i ogranicza zwykłe HTTP do samych gogli i nazw sieci domowej. APK jest tylko 64-bitowy dzięki dwóm dodatkowym argumentom jego wiersza poleceń (`--target-platform android-arm64 --android-project-arg arm64only=true`). Wariant `phone` jest tym, czego wymaga Google Play. Aby zbudować wersję na iOS na własnym Macu, użyj Xcode i własnego zespołu podpisującego; z Xcode 26 uruchom najpierw raz `xcodebuild -downloadComponent MetalToolchain`, bo potrzebują go shadery Spatial. Bez Maca kompilacje iOS działają na Codemagic (hostowany Mac) na podstawie pliku `codemagic.yaml` z tego repozytorium. Kompilacje wydań na Androida działają w GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Zrzuty ekranu do sklepów są robione na kompilacjach debug na symulatorze, zbudowanych z `--dart-define=IMMUCH_SCREENSHOTS=true`, co tylko ukrywa baner debug.
+
+Dwa warianty (flavours) Androida to ta sama aplikacja. Od kompilacji 20 wariant `phone` deklaruje się też jako aplikacja na telewizory (pozycja w launcherze telewizora i baner, bez wymaganego ekranu dotykowego), czego wariant `quest` nie robi.
+
+Wariant `quest` celuje w SDK 34 i zachowuje tylko uprawnienia używane przez gogle (zdjęcia, filmy, powiadomienia): zarządzanie multimediami, lokalizacja w tle, starsza pamięć, dźwięk, lokalizacja multimediów, lokalizacja urządzenia i aparat są usuwane w `android/app/src/quest/AndroidManifest.xml`, ponieważ Meta Horizon Store odrzuca pierwsze dwa i wymaga uzasadnienia każdego innego wrażliwego uprawnienia; ten sam plik wskazuje Quest 2, Quest Pro, Quest 3 i 3S jako obsługiwane urządzenia i ogranicza zwykłe HTTP do samych gogli i nazw sieci domowej. APK jest tylko 64-bitowy dzięki dwóm dodatkowym argumentom jego wiersza poleceń (`--target-platform android-arm64 --android-project-arg arm64only=true`). Wariant `phone` jest tym, czego wymaga Google Play.
+
+Aby zbudować wersję na iOS na własnym Macu, użyj Xcode i własnego zespołu podpisującego; z Xcode 26 uruchom najpierw raz `xcodebuild -downloadComponent MetalToolchain`, bo potrzebują go shadery Spatial. Bez Maca kompilacje iOS działają na Codemagic (hostowany Mac) na podstawie pliku `codemagic.yaml` z tego repozytorium. Kompilacje wydań na Androida działają w GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 W tym repozytorium nie ma żadnych sekretów: klucz podpisywania Androida jest przechowywany jako zaszyfrowane sekrety GitHub Actions, a materiały podpisywania Apple jako zaszyfrowane zmienne na Codemagic. Pliki przepływów pracy odwołują się do nich tylko po nazwie. Bez własnego `android/key.jks` kompilacja wydania jest podpisywana kluczem debug i nie zainstaluje się na kopii z GitHuba lub ze sklepu (najpierw ją odinstaluj); kompilacja debug instaluje się obok niej jako Immuch360 debug. Kopia w Meta Horizon Store to APK `quest` z wydania podpisany innym kluczem, tym, z którym aplikacja została pierwotnie zarejestrowana w sklepie, więc ona także nie zainstaluje się na ręcznie zainstalowanym APK, ani odwrotnie.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Od kompilacji 19 klient DLNA, udział telefonu i wykrywanie multimediów przestrzennych Apple zapisują też do własnego logu aplikacji (Logi, w menu zdjęcia profilowego w prawym górnym rogu), pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` i `NetworkMediaService`. Od kompilacji 20 tryb telewizora zapisuje tam pod `TvMode` i `TvTextEntry`, serwery Plex pod `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` i `PlexServerEditPage`, a kamery Tapo pod `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` i `CameraLiveView`; wiersze Plex nigdy nie zawierają tokenu, adresu ani tytułu, a wiersze kamer pomijają hasła. Wiersze logów pozostają na urządzeniu, chyba że sam je skopiujesz.
 
+<a id="privacy"></a>
 ## Prywatność
 
 - **Nic nie trafia do dewelopera**: aplikacja komunikuje się z wybranym przez Ciebie serwerem Immich (a po otwarciu mapy z usługą kafelków mapy, której używa ten serwer), nie ma reklam, analityki ani usługi raportowania awarii prowadzonej przez dewelopera i nie wysyła niczego deweloperowi Immuch360.
@@ -849,10 +1029,12 @@ Od kompilacji 19 klient DLNA, udział telefonu i wykrywanie multimediów przestr
 
 Pełna polityka znajduje się w [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Licencja i znak towarowy
 
 Ten projekt jest forkiem Immich i pozostaje na licencji [GNU AGPL v3](../LICENSE). Każdy APK, w tym te na telefony, zawiera też Meta Spatial SDK, który nie jest otwartoźródłowy (Meta Platform Technologies SDK License Agreement) i jest używany tylko na goglach Meta Quest. Immuch360 nie jest powiązany z zespołem Immich ani FUTO, ani przez nich popierany.
 
+<a id="roadmap"></a>
 ## Plan rozwoju
 
 Co nie jest jeszcze gotowe, od najbardziej prawdopodobnego. Nic tutaj nie jest obietnicą, a opinie w [systemie zgłoszeń](https://github.com/freeKC/Immuch360/issues) pomagają zdecydować, co będzie pierwsze.
@@ -871,6 +1053,7 @@ Co nie jest jeszcze gotowe, od najbardziej prawdopodobnego. Nic tutaj nie jest o
 - **Plex, dalej**: test kompilacji 20 na urządzeniach (telefony, Quest, iPhone, telewizor, poza domem); przenoszenie tokenu z komputera kodem QR; ukrywanie strony DLNA serwera Plex na liście znalezionych serwerów; IPv6.
 - **Upstream**: małe pull requesty do Immich dla części, których chcą opiekunowie, zaczynając od przeglądarki zdjęć 360°.
 
+<a id="credits"></a>
 ## Podziękowania
 
 Przeglądarka zdjęć 360° opiera się na pull requeście [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) autorstwa dmitry-brazhenko w projekcie głównym, który z kolei bazuje na prototypie bencefr z [#30192](https://github.com/immich-app/immich/pull/30192). Dziękuję obu.

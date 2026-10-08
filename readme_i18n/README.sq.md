@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | Shqip | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Shqip</b> · Gjuhë të tjera (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: foto dhe video 360°, 3D dhe VR180, nga Immich, nga telefoni juaj ose nga një NAS. Android, iOS dhe Meta Quest, me ose pa server">
 </p>
 
 # Immuch360
 
-Immuch360 është aplikacioni celular i Immich me foto dhe video 360° në të cilat mund të shikoni përreth, si dhe një luajtës falas për foto dhe video të sheshta, 360°, 3D dhe VR180, në telefona dhe tableta Android, iPhone dhe iPad, në kufjet Meta Quest (Quest 3 dhe 3S, dhe nga ndërtimi 21 Quest 2 dhe Quest Pro, të patestuara), dhe nga ndërtimi 20 në Android TV dhe Google TV. Është për ata që xhirojnë me një kamerë 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ose me modalitetin e fotosferës së telefonit, ose që kanë kufje VR, dhe duan të shohin pamjet e tyre nga një server Immich, nga vetë telefoni, nga një NAS, nga një server medias ose nga një server Plex: i njëjti server, e njëjta llogari, pa shtojcë në server, ose pa server fare. Nga ndërtimi 20 shfaq edhe kamerat Tapo, drejtpërdrejt dhe regjistrimet e kartës së tyre të kujtesës.
+Immuch360 është aplikacioni celular i Immich me foto dhe video 360° në të cilat mund të shikoni përreth, si dhe një luajtës falas për foto dhe video të sheshta, 360°, 3D dhe VR180, në telefona dhe tableta Android, iPhone dhe iPad, në kufjet Meta Quest (Quest 3 dhe 3S, dhe nga ndërtimi 21 Quest 2 dhe Quest Pro, të patestuara), dhe nga ndërtimi 20 në Android TV dhe Google TV.
+
+Është për ata që xhirojnë me një kamerë 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ose me modalitetin e fotosferës së telefonit, ose që kanë kufje VR, dhe duan të shohin pamjet e tyre nga një server Immich, nga vetë telefoni, nga një NAS, nga një server medias ose nga një server Plex: i njëjti server, e njëjta llogari, pa shtojcë në server, ose pa server fare. Nga ndërtimi 20 shfaq edhe kamerat Tapo, drejtpërdrejt dhe regjistrimet e kartës së tyre të kujtesës.
 
 <p align="center">
   <sub>Fork jozyrtar. Nuk ka lidhje me Immich apo me FUTO. Në anglisht, emri lexohet si “I am much 360”.</sub>
@@ -13,29 +15,52 @@ Immuch360 është aplikacioni celular i Immich me foto dhe video 360° në të c
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK për Android</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">në shqyrtim</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store i miratuar, ndërtimi 21 i dërguar si përditësimi i tij i parë &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">APK për Android</a><br>
+  App Store: <a href="#where-to-get-it">në shqyrtim</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store i miratuar, ndërtimi 21 i dërguar si përditësimi i tij i parë<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 360° vendas</h3>Foto dhe video si një sferë në të cilën shikoni përreth, me xhiroskopin, përfshirë skedarët e papërpunuar të kamerës (Insta360 nga ndërtimi 16, GoPro dhe DJI nga ndërtimi 18). Edhe një luajtës videoje falas: i sheshtë, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 3D vendas</h3>360° stereoskopike dhe VR180, lart dhe poshtë ose krah për krah, si dhe fotot hapësinore Apple (nga ndërtimi 19): 3D i vërtetë në kufjet VR, një sy në telefon</td>
-    <td align="center" width="33%"><h3>🎥 2.5D vendas</h3>Thellësi në një ekran të sheshtë nga një video stereoskopike, pamja ndjek kokën tuaj (eksperimentale, telefona dhe tableta)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Një aplikacion në telefona, tableta dhe kufjet Quest 2, Pro, 3 dhe 3S, 3D i vërtetë në kufjet VR, dhe nga ndërtimi 20 në Android TV me telekomandë</td>
-    <td align="center"><h3>🔌 Me ose pa server</h3>Serveri juaj Immich, ose vetë galeria e telefonit, pa nevojë për llogari</td>
-    <td align="center"><h3>🗄️ Ndarjet e rrjetit</h3>Samba (SMB), WebDAV dhe, nga ndërtimi 19, serverë medias DLNA të gjetur në rrjet dhe të lexuar drejtpërdrejt, pa shkarkuar asgjë, dhe të dërguar në Immich kur të zgjidhni. Nga ndërtimi 19, një telefon ndan edhe galerinë e tij me kufjet VR</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Në televizor</h3>Nga ndërtimi 20 e njëjta APK në Android TV dhe Google TV: foto dhe video 360°, serveri juaj dhe ndarjet tuaja, me telekomandë</td>
-    <td align="center"><h3>🎬 Plex, pa plex.tv</h3>Nga ndërtimi 20 bibliotekat tuaja Plex, të luajtura nga skedarët origjinalë që 360° të mbetet 360°, në shtëpi dhe jashtë saj</td>
-    <td align="center"><h3>📹 Kamerat Tapo</h3>Nga ndërtimi 20 pamja e drejtpërdrejtë dhe regjistrimet e kartës së kujtesës, vetëm në rrjetin tuaj, dhe një klip i dërguar në Immich kur ta zgjidhni</td>
-  </tr>
-</table>
+- 🌐 **360° vendas**<br>Foto dhe video si një sferë në të cilën shikoni përreth, me xhiroskopin, përfshirë skedarët e papërpunuar të kamerës (Insta360 nga ndërtimi 16, GoPro dhe DJI nga ndërtimi 18). Edhe një luajtës videoje falas: i sheshtë, 360°, 3D, VR180
+- 👓 **3D vendas**<br>360° stereoskopike dhe VR180, lart dhe poshtë ose krah për krah, si dhe fotot hapësinore Apple (nga ndërtimi 19): 3D i vërtetë në kufjet VR, një sy në telefon
+- 🎥 **2.5D vendas**<br>Thellësi në një ekran të sheshtë nga një video stereoskopike, pamja ndjek kokën tuaj (eksperimentale, telefona dhe tableta)
+- 📱 **Android, iOS, Quest, TV**<br>Një aplikacion në telefona, tableta dhe kufjet Quest 2, Pro, 3 dhe 3S, 3D i vërtetë në kufjet VR, dhe nga ndërtimi 20 në Android TV me telekomandë
+- 🔌 **Me ose pa server**<br>Serveri juaj Immich, ose vetë galeria e telefonit, pa nevojë për llogari
+- 🗄️ **Ndarjet e rrjetit**<br>Samba (SMB), WebDAV dhe, nga ndërtimi 19, serverë medias DLNA të gjetur në rrjet dhe të lexuar drejtpërdrejt, pa shkarkuar asgjë, dhe të dërguar në Immich kur të zgjidhni. Nga ndërtimi 19, një telefon ndan edhe galerinë e tij me kufjet VR
+- 📺 **Në televizor**<br>Nga ndërtimi 20 e njëjta APK në Android TV dhe Google TV: foto dhe video 360°, serveri juaj dhe ndarjet tuaja, me telekomandë
+- 🎬 **Plex, pa plex.tv**<br>Nga ndërtimi 20 bibliotekat tuaja Plex, të luajtura nga skedarët origjinalë që 360° të mbetet 360°, në shtëpi dhe jashtë saj
+- 📹 **Kamerat Tapo**<br>Nga ndërtimi 20 pamja e drejtpërdrejtë dhe regjistrimet e kartës së kujtesës, vetëm në rrjetin tuaj, dhe një klip i dërguar në Immich kur ta zgjidhni
+
+<details>
+<summary><b>Përmbajtja</b></summary>
+
+- [Foto dhe video 360° si sferë](#360-photos-and-videos-as-a-sphere)
+- [Pa server dhe pa llogari](#without-a-server-or-an-account)
+- [Ndarjet e rrjetit: një NAS, një kompjuter ose një server medias](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, pa plex.tv](#plex-media-server-without-plextv)
+- [Ndaje këtë telefon në rrjet](#share-this-phone-on-the-network)
+- [Kamerat Tapo: pamja e drejtpërdrejtë dhe regjistrimet e kartës së kujtesës](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Skedarët e papërpunuar të kamerave 360°, pa aplikacionin e kamerës](#raw-360-camera-files-without-the-cameras-app)
+- [Foto dhe video 3D dhe VR180](#3d-and-vr180-photos-and-videos)
+- [Thellësi në një ekran të sheshtë: Spatial 2.5D (eksperimentale)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Foto dhe video hapësinore Apple](#apple-spatial-photos-and-videos)
+- [Në kufjet Meta Quest 3](#in-the-meta-quest-3-headset)
+- [Shikojini në televizor (Android TV dhe Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Gjeni pamjet tuaja 360°: lista 360°](#find-your-360-shots-the-360-list)
+- [Detajet e videos, dekoderët dhe pse një video ngec](#video-details-decoders-and-why-a-video-stutters)
+- [Gjithçka tjetër është Immich](#everything-else-is-immich)
+- [Krahasimi me aplikacionin Immich dhe aplikacione të tjera](#compared-with-the-immich-app-and-other-apps)
+- [Formatet dhe burimet, sipas platformës](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Ku ta merrni](#where-to-get-it)
+- [Ndërtojeni vetë](#build-it-yourself)
+- [Regjistrat](#logs)
+- [Privatësia](#privacy)
+- [Licenca dhe marka tregtare](#license-and-trademark)
+- [Plani](#roadmap)
+- [Falënderime](#credits)
+
+</details>
 
 ## Cili është problemi juaj?
 
@@ -61,12 +86,19 @@ Kur një veçori është e re, teksti tregon nga cili ndërtim ekziston. Publiki
 
 Ju i ruani fotot në një server [Immich](https://github.com/immich-app/immich), dhe disa prej tyre vijnë nga një kamerë 360° ose nga modaliteti i fotosferës së një telefoni. Në aplikacionin zyrtar celular këto pamje shfaqen si një shirit i sheshtë e i shtrirë, dhe edhe videot 360° luhen të sheshta. Aplikacioni web i Immich mund ta shfaqë një foto 360° si sferë, aplikacioni celular jo: kjo kërkohet që nga janari 2024 në [diskutimin #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 i hap ato si një sferë në të cilën shikoni përreth, në telefona dhe tableta Android dhe iOS. Një foto rrotullohet kur e tërhiqni, zmadhohet me shtrëngim gishtash ose me prekje të dyfishtë, vazhdon të rrotullohet pak pas një tërheqjeje të shpejtë, nis nga pamja fillestare që regjistroi kamera (metadatat GPano) dhe merr një teksturë më të qartë kur zmadhoni; panoramat e pjesshme trajtohen (prerja GPano). Një video luhet në një luajtës sferik vendas, me zë, tërheqje dhe xhiroskop. Skedarët 360° tashmë të bashkuar funksionojnë kudo: eksportet nga aplikacioni ose Studio i Insta360, GoPro Player, Ricoh Theta dhe fotosferat e telefonave. Skedarët e papërpunuar drejt nga kamera i bashkon aplikacioni, shihni [Skedarët e papërpunuar të kamerave 360°](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 i hap ato si një sferë në të cilën shikoni përreth, në telefona dhe tableta Android dhe iOS.
 
-| Një foto 360° si sferë | Një video 360° në luajtësin 360° |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="Një foto 360° e bregut të një liqeni në shikuesin sferik: butoni i mbylljes lart majtas, butonat 360°, Paraqitja 3D dhe Xhiroskop lart djathtas"> | <img src="../.github/readme/b19-video.png" width="420" alt="Një video 360° e një rruge bregdetare që luhet në luajtësin 360° të një telefoni të mbajtur horizontalisht: mbyllja dhe emri i skedarit lart majtas, 360° dhe 3D lart djathtas, i mëparshmi, prapa, luaj, përpara dhe i radhës në mes, shiriti i kohës poshtë"> |
-| Mbyllja lart majtas; lart djathtas butoni 360°/180°, butoni i paraqitjes 3D dhe xhiroskopi | Prekni pamjen për kontrollet; 360° dhe 3D lart djathtas |
+Një foto rrotullohet kur e tërhiqni, zmadhohet me shtrëngim gishtash ose me prekje të dyfishtë, vazhdon të rrotullohet pak pas një tërheqjeje të shpejtë, nis nga pamja fillestare që regjistroi kamera (metadatat GPano) dhe merr një teksturë më të qartë kur zmadhoni; panoramat e pjesshme trajtohen (prerja GPano). Një video luhet në një luajtës sferik vendas, me zë, tërheqje dhe xhiroskop.
+
+Skedarët 360° tashmë të bashkuar funksionojnë kudo: eksportet nga aplikacioni ose Studio i Insta360, GoPro Player, Ricoh Theta dhe fotosferat e telefonave. Skedarët e papërpunuar drejt nga kamera i bashkon aplikacioni, shihni [Skedarët e papërpunuar të kamerave 360°](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="Një foto 360° e bregut të një liqeni në shikuesin sferik: butoni i mbylljes lart majtas, butonat 360°, Paraqitja 3D dhe Xhiroskop lart djathtas">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Një video 360° e një rruge bregdetare që luhet në luajtësin 360° të një telefoni të mbajtur horizontalisht: mbyllja dhe emri i skedarit lart majtas, 360° dhe 3D lart djathtas, i mëparshmi, prapa, luaj, përpara dhe i radhës në mes, shiriti i kohës poshtë">
+</p>
+
+- **Një foto 360° si sferë**: mbyllja lart majtas; lart djathtas butoni 360°/180°, butoni i paraqitjes 3D dhe xhiroskopi.
+- **Një video 360° në luajtësin 360°**: prekni pamjen për kontrollet; 360° dhe 3D lart djathtas.
 
 ### Hapni një foto 360° si sferë
 
@@ -135,12 +167,17 @@ Në faqen e hyrjes, “Përdor pa server” e hap Immuch360 me fotot dhe videot 
 
 Videot tuaja 360° ndodhen në një NAS ose në një kompjuter, dhe doni t'i shihni në telefon ose në kufjet VR pa i kopjuar më parë. Për kufjet VR, njerëzit përfundojnë duke kopjuar çdo skedar me kabllo; serverët e medias si Plex dhe Jellyfin i luajnë videot 360° të sheshta, siç e përshkruajnë kërkesat në forumet e tyre; aplikacioni Immich lexon vetëm serverin tuaj Immich.
 
-Immuch360 shfleton dhe luan fotot dhe videot e çdo serveri që flet SMB (Samba, Windows), WebDAV ose, nga ndërtimi 19, DLNA/UPnP (një server medias: Jellyfin, minidlna, Gerbera, Emby, një NAS ose një kuti TV), drejtpërdrejt nga ndarja. Nga ndërtimi 20 një Plex Media Server ka llojin e vet, shihni [Plex Media Server, pa plex.tv](#plex-media-server-without-plextv). I gjen vetë serverët e rrjetit tuaj dhe i luan skedarët drejtpërdrejt në të njëjtët shikues si pjesa tjetër e aplikacionit (360°, 3D, VR180, Spatial 2.5D, pamja zhytëse në Quest), me ose pa server Immich, në telefona dhe në Meta Quest 3. Asgjë nuk shkarkohet. Kur një server është i lidhur, skedarët që zgjidhni mund të dërgohen në llogarinë tuaj Immich (nga ndërtimi 15).
+Immuch360 shfleton dhe luan fotot dhe videot e çdo serveri që flet SMB (Samba, Windows), WebDAV ose, nga ndërtimi 19, DLNA/UPnP (një server medias: Jellyfin, minidlna, Gerbera, Emby, një NAS ose një kuti TV), drejtpërdrejt nga ndarja. Nga ndërtimi 20 një Plex Media Server ka llojin e vet, shihni [Plex Media Server, pa plex.tv](#plex-media-server-without-plextv).
 
-| Shto një ndarje | Një dosje e një ndarjeje |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Faqja Shto një ndarje: Emri, Emri ose adresa e serverit, Porta (opsionale), Ndarja, Zgjidhni një ndarje, Dosja fillestare (opsionale), Emri i përdoruesit, Fjalëkalimi, Testo lidhjen dhe rezultati U lidh, 2 elemente në dosjen fillestare"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Një dosje e një ndarjeje rrjeti si rrjetë miniaturash: foto 360° me distinktivin 360° dhe një video 360° me shenjë luajtjeje, butoni Zgjidh lart djathtas"> |
-| Fushat e një ndarjeje të re SMB, pas Testo lidhjen | Foto 360° dhe një video, të lexuara drejtpërdrejt nga ndarja |
+I gjen vetë serverët e rrjetit tuaj dhe i luan skedarët drejtpërdrejt në të njëjtët shikues si pjesa tjetër e aplikacionit (360°, 3D, VR180, Spatial 2.5D, pamja zhytëse në Quest), me ose pa server Immich, në telefona dhe në Meta Quest 3. Asgjë nuk shkarkohet. Kur një server është i lidhur, skedarët që zgjidhni mund të dërgohen në llogarinë tuaj Immich (nga ndërtimi 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Faqja Shto një ndarje: Emri, Emri ose adresa e serverit, Porta (opsionale), Ndarja, Zgjidhni një ndarje, Dosja fillestare (opsionale), Emri i përdoruesit, Fjalëkalimi, Testo lidhjen dhe rezultati U lidh, 2 elemente në dosjen fillestare">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Një dosje e një ndarjeje rrjeti si rrjetë miniaturash: foto 360° me distinktivin 360° dhe një video 360° me shenjë luajtjeje, butoni Zgjidh lart djathtas">
+</p>
+
+- **Shto një ndarje**: fushat e një ndarjeje të re SMB, pas Testo lidhjen.
+- **Një dosje e një ndarjeje**: foto 360° dhe një video, të lexuara drejtpërdrejt nga ndarja.
 
 ### Shtoni një ndarje
 
@@ -178,16 +215,26 @@ Fotoja ose videoja e hapur nga një ndarje ka të njëjtin zë në menynë e saj
 
 ### Si luhet pa shkarkuar
 
-Luajtësit lexojnë bajtet që u duhen përmes një ure brenda aplikacionit (vetëm adresë loopback, token i rastësishëm për çdo seancë, intervale bajtesh), prandaj kalimi përpara e prapa në një video funksionon dhe asgjë nuk kopjohet në pajisje. Luajtësit dhe shikuesi i kufjeve VR nuk marrin kurrë adresën e ndarjes, vetëm 127.0.0.1 të urës; kërkesat drejt serverit i bën vetë aplikacioni. Për luajtje të rrjedhshme, ndarja lexohet në blloqe të mëdha, skedari mbetet i hapur mes leximeve, deri në 16 MB lexohen përpara luajtësit, dhe videoja që luhet lexohet përmes deri në gjashtë lidhjeve SMB paralele, të ndara nga lidhja që shërben miniaturat dhe listimet. Një Freebox Server i përgjigjet ngadalë çdo leximi: një lidhje jep 4,5 MB/s, gjashtë japin 19 MB/s, mjaftueshëm për një eksport 5.7K me 132 Mbit/s. Ndërsa luajtësi pret të dhëna, luajtësit 360° dhe Spatial shfaqin “Po ngarkohet” me mbushjen e buferit të luajtjes; luajtësi i sheshtë shfaq “Po ngarkohet” pa përqindje ndërsa videoja ngarkohet ose ngec.
+Luajtësit lexojnë bajtet që u duhen përmes një ure brenda aplikacionit (vetëm adresë loopback, token i rastësishëm për çdo seancë, intervale bajtesh), prandaj kalimi përpara e prapa në një video funksionon dhe asgjë nuk kopjohet në pajisje. Luajtësit dhe shikuesi i kufjeve VR nuk marrin kurrë adresën e ndarjes, vetëm 127.0.0.1 të urës; kërkesat drejt serverit i bën vetë aplikacioni.
+
+Për luajtje të rrjedhshme, ndarja lexohet në blloqe të mëdha, skedari mbetet i hapur mes leximeve, deri në 16 MB lexohen përpara luajtësit, dhe videoja që luhet lexohet përmes deri në gjashtë lidhjeve SMB paralele, të ndara nga lidhja që shërben miniaturat dhe listimet. Një Freebox Server i përgjigjet ngadalë çdo leximi: një lidhje jep 4,5 MB/s, gjashtë japin 19 MB/s, mjaftueshëm për një eksport 5.7K me 132 Mbit/s.
+
+Ndërsa luajtësi pret të dhëna, luajtësit 360° dhe Spatial shfaqin “Po ngarkohet” me mbushjen e buferit të luajtjes; luajtësi i sheshtë shfaq “Po ngarkohet” pa përqindje ndërsa videoja ngarkohet ose ngec.
 
 ### Serverët e medias DLNA
 
-Nga ndërtimi 19, aplikacioni dërgon kërkimin SSDP për serverët e medias te grupi multicast i rrjetit dhe të njëjtën kërkesë te porta 1900 e çdo adrese të rrjetit lokal /24, pastaj lexon përshkrimin e pajisjes së çdo serveri që përgjigjet dhe mban ata që publikojnë përmbajtjen e tyre (një ContentDirectory). Dosjet dhe skedarët listohen me veprimin Browse të serverit, faqe pas faqeje, dhe emërtohen sipas titujve të tyre: një skedar merr shtesën e llojit të vet kur titulli nuk ka, dhe një skedar i dytë me të njëjtin titull në një dosje bëhet `name (2)`. Audioja lihet jashtë. Miniaturat janë kopertina e albumit ose figurat e vogla që krijon serveri, të ngarkuara nga vetë aplikacioni, me miniaturën e vetë aplikacionit kur serveri nuk ka. Një skedar luhet nga origjinali që ofron serveri, në vend të një kopjeje të konvertuar kur ofron të dyja, i lexuar me kërkesa intervali, prandaj kalimi përpara e prapa funksionon. Verifikuar me minidlna dhe Gerbera; zbulimi në një rrjet real, Plex, Jellyfin, një NAS, Freebox Server, një iPhone dhe Quest janë testi në pajisje i ndërtimit 19.
+Nga ndërtimi 19, aplikacioni dërgon kërkimin SSDP për serverët e medias te grupi multicast i rrjetit dhe të njëjtën kërkesë te porta 1900 e çdo adrese të rrjetit lokal /24, pastaj lexon përshkrimin e pajisjes së çdo serveri që përgjigjet dhe mban ata që publikojnë përmbajtjen e tyre (një ContentDirectory).
+
+Dosjet dhe skedarët listohen me veprimin Browse të serverit, faqe pas faqeje, dhe emërtohen sipas titujve të tyre: një skedar merr shtesën e llojit të vet kur titulli nuk ka, dhe një skedar i dytë me të njëjtin titull në një dosje bëhet `name (2)`. Audioja lihet jashtë. Miniaturat janë kopertina e albumit ose figurat e vogla që krijon serveri, të ngarkuara nga vetë aplikacioni, me miniaturën e vetë aplikacionit kur serveri nuk ka. Një skedar luhet nga origjinali që ofron serveri, në vend të një kopjeje të konvertuar kur ofron të dyja, i lexuar me kërkesa intervali, prandaj kalimi përpara e prapa funksionon.
+
+Verifikuar me minidlna dhe Gerbera; zbulimi në një rrjet real, Plex, Jellyfin, një NAS, Freebox Server, një iPhone dhe Quest janë testi në pajisje i ndërtimit 19.
 
 <a id="a-share-that-moved"></a>
 ### Një ndarje që ndryshoi vend
 
-Nga ndërtimi 19, një ndarje DLNA dhe një ndarje telefoni (shihni [Ndaje këtë telefon në rrjet](#share-this-phone-on-the-network)) mbajnë identifikuesin që shpall serveri i tyre. Kur njëra prej tyre nuk përgjigjet më në adresën e saj (një adresë e re e dhënë nga ruteri, një server i rinisur në një portë tjetër), faqja e dosjes së saj shfaq “Duke kërkuar (emri) në rrjet” dhe e zhvendos ndarjen aty ku përgjigjet tani: menjëherë për një server DLNA, që nuk ka fjalëkalim, dhe pas një konfirmimi, “Të përdoret adresa e re?”, që tregon të dyja adresat, për një ndarje me emër përdoruesi dhe fjalëkalim, sepse ato do të dërgoheshin te adresa e re. Nga ndërtimi 20 edhe një server Plex i gjetur sërish në një adresë tjetër të rrjetit zhvendoset menjëherë: certifikata e tij provon se është i njëjti server para se të dërgohet tokeni. Një kamerë Tapo kërkohet sipas adresës së saj MAC nga faqja e saj, shihni [Kamerat Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Nga ndërtimi 19, një ndarje DLNA dhe një ndarje telefoni (shihni [Ndaje këtë telefon në rrjet](#share-this-phone-on-the-network)) mbajnë identifikuesin që shpall serveri i tyre. Kur njëra prej tyre nuk përgjigjet më në adresën e saj (një adresë e re e dhënë nga ruteri, një server i rinisur në një portë tjetër), faqja e dosjes së saj shfaq “Duke kërkuar (emri) në rrjet” dhe e zhvendos ndarjen aty ku përgjigjet tani: menjëherë për një server DLNA, që nuk ka fjalëkalim, dhe pas një konfirmimi, “Të përdoret adresa e re?”, që tregon të dyja adresat, për një ndarje me emër përdoruesi dhe fjalëkalim, sepse ato do të dërgoheshin te adresa e re.
+
+Nga ndërtimi 20 edhe një server Plex i gjetur sërish në një adresë tjetër të rrjetit zhvendoset menjëherë: certifikata e tij provon se është i njëjti server para se të dërgohet tokeni. Një kamerë Tapo kërkohet sipas adresës së saj MAC nga faqja e saj, shihni [Kamerat Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Kufizimet
 
@@ -227,7 +274,9 @@ Nga ndërtimi 20 Immuch360 çiftohet drejtpërdrejt me Plex Media Server-in tuaj
 
 ### Jashtë shtëpisë
 
-Sa herë që hap serverin, aplikacioni provon fillimisht adresën e shtëpisë dhe, 400 ms më vonë, adresën jashtë shtëpisë. Përdoret e para që përgjigjet me serverin tuaj; kur është adresa jashtë shtëpisë, faqja e dosjes shfaq një ikonë globi me etiketën “I lidhur përmes adresës jashtë shtëpisë”. Kjo kërkon që Qasja në distancë të jetë aktive në Plex (Cilësimet, Qasja në distancë) me një portë të përcjellë nga ruteri juaj: pa plex.tv aplikacioni nuk mund të përdorë relenë e Plex, prandaj një server pa përcjellje porte hapet vetëm në shtëpi, dhe jashtë shtëpisë faqja thotë “Serveri juaj Plex nuk arrihet dot jashtë rrjetit të shtëpisë. Aktivizoni qasjen në distancë me një përcjellje porte në Plex (Cilësimet, Qasja në distancë), ose shkruani adresën e tij publike.”
+Sa herë që hap serverin, aplikacioni provon fillimisht adresën e shtëpisë dhe, 400 ms më vonë, adresën jashtë shtëpisë. Përdoret e para që përgjigjet me serverin tuaj; kur është adresa jashtë shtëpisë, faqja e dosjes shfaq një ikonë globi me etiketën “I lidhur përmes adresës jashtë shtëpisë”.
+
+Kjo kërkon që Qasja në distancë të jetë aktive në Plex (Cilësimet, Qasja në distancë) me një portë të përcjellë nga ruteri juaj: pa plex.tv aplikacioni nuk mund të përdorë relenë e Plex, prandaj një server pa përcjellje porte hapet vetëm në shtëpi, dhe jashtë shtëpisë faqja thotë “Serveri juaj Plex nuk arrihet dot jashtë rrjetit të shtëpisë. Aktivizoni qasjen në distancë me një përcjellje porte në Plex (Cilësimet, Qasja në distancë), ose shkruani adresën e tij publike.”
 
 Adresa që tregon serveri mësohet sërish në çdo lidhje në shtëpi. Kur nuk përgjigjet nga jashtë (një ruter që ndryshon adresën, dy ruterë njëri pas tjetrit), shkruani tuajën në faqen e serverit. Kur tokeni ndalon së funksionuari (për shembull keni dalë nga sesioni i shfletuesit prej nga e kopjuat), faqja e dosjes e thotë këtë dhe ofron “Ngjit një token të ri”, që hap faqen e serverit te fusha e tokenit.
 
@@ -344,15 +393,13 @@ Kamerat Insta360 regjistrojnë dy rrathët fisheye të objektivave të tyre, kra
 
 Nga ndërtimi 16, Immuch360 i bashkon vetë këta skedarë, në telefon, në tabletë ose në kufjet VR, pa instaluar asgjë në server:
 
-| Kamera dhe skedari | Çfarë bën aplikacioni | Nga |
-|---|---|---|
-| Fotot Insta360 .insp | Të bashkuara në GPU para shikuesit sferik, deri në 8192x4096, me një zgjidhje rezervë në CPU në madhësi më të vogël | Ndërtimi 16 |
-| Videot Insta360 .insv që i mbajnë të dy objektivat në një pistë | Të bashkuara nga një efekt GPU në luajtës | Ndërtimi 16 |
-| Videot .insv Insta360 X4, X4 Air, X5 dhe X6, një pistë katrore për çdo objektiv | Dy dekoderë njëkohësisht, një për çdo objektiv, dhe një kompozitor GPU që i bashkon në sferë | Ndërtimi 18 |
-| Insta360 X3 e më të vjetra në 5.7K e lart: dy skedarë, `_00_` dhe `_10_` | E njëjta gjë, skedari tjetër gjendet pranë të parit | Ndërtimi 18 |
-| GoPro MAX dhe MAX 2 .360: dy pista me nga tri faqe kubi | E njëjta gjë, me kolonat e mbivendosjes të përziera | Ndërtimi 18 |
-| DJI Osmo 360 .osv: dy pista katrore 10 bit | E njëjta gjë, me kalibrimin Kannala-Brandt të skedarit | Ndërtimi 18 |
-| .dng me dy fisheye | Shfaqet i sheshtë | Ende jo |
+- **Fotot Insta360 .insp** (ndërtimi 16): të bashkuara në GPU para shikuesit sferik, deri në 8192x4096, me një zgjidhje rezervë në CPU në madhësi më të vogël.
+- **Videot Insta360 .insv që i mbajnë të dy objektivat në një pistë** (ndërtimi 16): të bashkuara nga një efekt GPU në luajtës.
+- **Videot .insv Insta360 X4, X4 Air, X5 dhe X6, një pistë katrore për çdo objektiv** (ndërtimi 18): dy dekoderë njëkohësisht, një për çdo objektiv, dhe një kompozitor GPU që i bashkon në sferë.
+- **Insta360 X3 e më të vjetra në 5.7K e lart: dy skedarë, `_00_` dhe `_10_`** (ndërtimi 18): e njëjta gjë, skedari tjetër gjendet pranë të parit.
+- **GoPro MAX dhe MAX 2 .360: dy pista me nga tri faqe kubi** (ndërtimi 18): e njëjta gjë, me kolonat e mbivendosjes të përziera.
+- **DJI Osmo 360 .osv: dy pista katrore 10 bit** (ndërtimi 18): e njëjta gjë, me kalibrimin Kannala-Brandt të skedarit.
+- **.dng me dy fisheye** (ende jo): shfaqet i sheshtë.
 
 ### Shikoni një skedar të papërpunuar
 
@@ -466,7 +513,9 @@ Zbulimi u verifikua në një foto hapësinore shembull të shkruar nga vetë bib
 
 Njerëzit blejnë një Quest 3 për të parë fotot dhe videot e tyre 360°, pastaj pyesin ku t'i vendosin skedarët, si t'i kalojnë në kufjet VR pa kabllo, dhe cilin luajtës të përdorin: luajtësit e dyqanit për video 360° dhe 3D janë me pagesë.
 
-I njëjti aplikacion Android punon në Quest 3 dhe 3S, dhe nga ndërtimi 21 në Quest 2 dhe Quest Pro (i patestuar), si dritare, me gjithë bibliotekën tuaj. Butoni i tij 360° hap një pamje zhytëse ku fotoja ose videoja është rreth jush dhe ju shikoni përreth duke kthyer kokën, në 3D të vërtetë për skedarët stereoskopikë (Meta Spatial SDK). Mediat vijnë nga serveri juaj Immich, nga vetë kufjet VR, nga një NAS, nga një server medias, nga një telefon ose nga një server Plex, dhe luhen aty ku janë (një server medias dhe një telefon nga ndërtimi 19, një server Plex nga ndërtimi 20, ende të paverifikuar në kufjet VR), dhe nga ndërtimi 20 dritarja shfaq edhe kamerat Tapo. Është falas dhe me burim të hapur. Verifikuar në një Quest 3, dhe nga një përdorues me video Insta360 X4 8K HEVC.
+I njëjti aplikacion Android punon në Quest 3 dhe 3S, dhe nga ndërtimi 21 në Quest 2 dhe Quest Pro (i patestuar), si dritare, me gjithë bibliotekën tuaj. Butoni i tij 360° hap një pamje zhytëse ku fotoja ose videoja është rreth jush dhe ju shikoni përreth duke kthyer kokën, në 3D të vërtetë për skedarët stereoskopikë (Meta Spatial SDK).
+
+Mediat vijnë nga serveri juaj Immich, nga vetë kufjet VR, nga një NAS, nga një server medias, nga një telefon ose nga një server Plex, dhe luhen aty ku janë (një server medias dhe një telefon nga ndërtimi 19, një server Plex nga ndërtimi 20, ende të paverifikuar në kufjet VR), dhe nga ndërtimi 20 dritarja shfaq edhe kamerat Tapo. Është falas dhe me burim të hapur. Verifikuar në një Quest 3, dhe nga një përdorues me video Insta360 X4 8K HEVC.
 
 ### Hapni pamjen zhytëse
 
@@ -479,17 +528,20 @@ I njëjti aplikacion Android punon në Quest 3 dhe 3S, dhe nga ndërtimi 21 në 
 
 | Veprimi | Kontrolluesit | Duart |
 |---|---|---|
-| Kthim te aplikacioni | B ose Y | Butoni Mbrapa i panelit të informacionit |
-| Luani ose pauzoni një video | Këmbëza, kur paneli i informacionit është i fshehur | Butoni Luaj ose Pauzë i panelit të informacionit |
+| Kthim te aplikacioni | B ose Y | Butoni Mbrapa |
+| Luani ose pauzoni një video | Këmbëza, kur paneli i informacionit është i fshehur | Butoni Luaj ose Pauzë |
 | Shfaqni ose fshihni panelin e informacionit | A, X, butoni i kapjes ose menyja | Gjesti i menysë, ose shtrëngim gishtash kur paneli është i fshehur |
-| Rrotulloni pamjen, për të parë pas pa kthyer kokën (nga ndërtimi 17) | Leva e djathtë majtas ose djathtas: 30° për çdo shtytje, dhe vazhdon të rrotullohet ndërsa e mbani (një shtresë me një rresht tregon këndin) | Butoni Rrotullo i panelit të informacionit (90°) |
-| Media e mëparshme ose e radhës | Leva e majtë majtas ose djathtas (cilado nga levat para ndërtimit 17; nga ndërtimi 16 një shtresë me një rresht tregon emrin e medias, paneli i informacionit mbetet i fshehur) | Butonat E mëparshmja dhe Tjetra të panelit të informacionit |
-| 10 sekonda prapa ose përpara në një video | Leva poshtë ose lart (nga ndërtimi 16 një shtresë me një rresht tregon kohën, paneli i informacionit mbetet i fshehur) | Dy butonat e kapërcimit, ose tërhiqni shiritin e kohës të panelit të informacionit |
-| Rrotulloni pamjen me 90° | Leva poshtë ose lart në një foto (nga ndërtimi 16 shtresa me një rresht tregon këndin); në një video, butoni Rrotullo i panelit të informacionit | Butoni Rrotullo i panelit të informacionit |
-| Ndryshoni paraqitjen 3D (mono, lart dhe poshtë, krah për krah) | Butoni 3D i panelit të informacionit | Butoni 3D i panelit të informacionit |
-| Sferë e plotë ose gjysmësferë (VR180) | Butoni 360°/180° i panelit të informacionit | Butoni 360°/180° i panelit të informacionit |
+| Rrotulloni pamjen (nga ndërtimi 17) | Leva e djathtë majtas ose djathtas, 30° për çdo shtytje | Butoni Rrotullo (90°) |
+| Media e mëparshme ose e radhës | Leva e majtë majtas ose djathtas | Butonat E mëparshmja dhe Tjetra |
+| 10 sekonda prapa ose përpara në një video | Leva poshtë ose lart | Dy butonat e kapërcimit, ose tërhiqni shiritin e kohës |
+| Rrotulloni pamjen me 90° | Leva poshtë ose lart në një foto, butoni Rrotullo në një video | Butoni Rrotullo |
+| Ndryshoni paraqitjen 3D (mono, lart dhe poshtë, krah për krah) | Butoni 3D | Butoni 3D |
+| Sferë e plotë ose gjysmësferë (VR180) | Butoni 360°/180° | Butoni 360°/180° |
 
-Me kontrolluesit, edhe butonat dhe shiriti i kohës i panelit të informacionit funksionojnë: drejtojini rrezen dhe shtypni këmbëzën.
+Në këtë tabelë, butonat dhe shiriti i kohës janë ato të panelit të informacionit. Me kontrolluesit funksionojnë gjithashtu: drejtojini rrezen dhe shtypni këmbëzën.
+
+- **Rrotulloni pamjen**: për të parë pas pa kthyer kokën. Leva e djathtë vazhdon të rrotullojë pamjen ndërsa e mbani, dhe një shtresë me një rresht tregon këndin.
+- **Shtresa me një rresht**: nga ndërtimi 16, kalimi përpara ose prapa me levë, rrotullimi i një fotoje, ose kalimi te media e mëparshme ose e radhës shfaq një shtresë me një rresht (kohën, këndin ose emrin e medias) dhe paneli i informacionit mbetet i fshehur. Para ndërtimit 17, cilado nga levat kalonte te media e mëparshme ose e radhës.
 
 ### Paneli i informacionit, i mëparshmi dhe i radhës
 
@@ -497,7 +549,9 @@ Paneli i informacionit i një videoje ka një shirit kohe (pozicioni, kohëzgjat
 
 I mëparshmi dhe i radhës kalojnë nëpër mediat 360° të vendit nga keni ardhur, pa dalë nga pamja zhytëse: kronologjia, lista 360° (siç është filtruar), një album, një dosje e një ndarjeje rrjeti, ose mediat e vetë kufjeve VR (On this device). Fotot dhe videot e sheshta kapërcehen. Kur ktheheni te aplikacioni nga kronologjia, një album ose lista 360°, ai ndalet te media që po shikonit (faqja e një dosjeje ndarjeje qëndron te skedari që hapët), dhe videoja nga e cila hapët pamjen zhytëse vazhdon aty ku e la.
 
-Nga ndërtimi 17, leva e djathtë rrotullon pamjen, ashtu siç rrotullon leva e djathtë në shumicën e aplikacioneve për kufje VR: një shtytje rrotullon 30°, mbajtja vazhdon rrotullimin, prandaj ajo që është pas jush vjen përpara pa e kthyer kokën ose karrigen; i mëparshmi dhe i radhës janë te leva e majtë. Nga ndërtimi 16, pas komentit të një përdoruesi në kufjet VR, një kalim përpara e prapa, një rrotullim ose i mëparshmi/i radhës me levë shfaq një shtresë me një rresht (koha, këndi ose titulli i medias) që zhduket pas 1,5 sekondash në vend që të hapë panelin e informacionit; paneli vjen ende me A, X, butonin e kapjes ose butonin e menysë. I njëjti ndërtim e mban të funksionueshëm ndërrimin e panelit kur kontrolluesit flenë, zgjohen ose i lënë vendin ndjekjes së duarve, dhe i regjistron këto kalime, shihni [Regjistrat](#logs).
+Nga ndërtimi 17, leva e djathtë rrotullon pamjen, ashtu siç rrotullon leva e djathtë në shumicën e aplikacioneve për kufje VR: një shtytje rrotullon 30°, mbajtja vazhdon rrotullimin, prandaj ajo që është pas jush vjen përpara pa e kthyer kokën ose karrigen; i mëparshmi dhe i radhës janë te leva e majtë.
+
+Nga ndërtimi 16, pas komentit të një përdoruesi në kufjet VR, një kalim përpara e prapa, një rrotullim ose i mëparshmi/i radhës me levë shfaq një shtresë me një rresht (koha, këndi ose titulli i medias) që zhduket pas 1,5 sekondash në vend që të hapë panelin e informacionit; paneli vjen ende me A, X, butonin e kapjes ose butonin e menysë. I njëjti ndërtim e mban të funksionueshëm ndërrimin e panelit kur kontrolluesit flenë, zgjohen ose i lënë vendin ndjekjes së duarve, dhe i regjistron këto kalime, shihni [Regjistrat](#logs).
 
 Një foto hapësinore Apple e hapur me “Shiko në 3D” nuk vendoset në një sferë: ajo pluskon përpara jush, shihni [Foto dhe video hapësinore Apple](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Fotot shfaqin fillimisht një parapamje, pastaj origjinalin, të zvogëluar më 
 
 Paraqitjet 3D, lart dhe poshtë dhe krah për krah, 360° dhe VR180, shfaqen në 3D, secili sy merr gjysmën e vet të kuadrit. Paraqitja vjen nga skedari kur ai deklaron një të tillë (videot), përndryshe hamendësohet nga forma (katror: lart dhe poshtë, 4:1: krah për krah); kur është e gabuar, përdorni butonin 3D të panelit të informacionit.
 
-| Foto 360° në kufjet VR | Video 360° në kufjet VR | Video 3D 360° në kufjet VR |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="Një foto 360° rreth jush në Quest 3, me panelin e informacionit: butonat e paraqitjes, 360° dhe Mbrapa"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Një video 360° e një liqeni që luhet në Quest 3, me panelin e informacionit: butonat e paraqitjes, 360°, Pauzë dhe Mbrapa"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Një video 360° stereoskopike në Quest 3, paneli i informacionit tregon 3D, lart dhe poshtë"> |
-| Pamja zhytëse e një fotoje, me panelin e informacionit (paraqitja, 360°/180°, Mbrapa) | Një video që luhet, me Pauzë | Një video stereoskopike lart dhe poshtë, secili sy merr pamjen e vet (shembulli Kandao Obsidian) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Një foto 360° rreth jush në Quest 3, me panelin e informacionit: butonat e paraqitjes, 360° dhe Mbrapa">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Një video 360° e një liqeni që luhet në Quest 3, me panelin e informacionit: butonat e paraqitjes, 360°, Pauzë dhe Mbrapa">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Një video 360° stereoskopike në Quest 3, paneli i informacionit tregon 3D, lart dhe poshtë">
+</p>
+
+- **Foto 360° në kufjet VR**: pamja zhytëse e një fotoje, me panelin e informacionit (paraqitja, 360°/180°, Mbrapa).
+- **Video 360° në kufjet VR**: një video që luhet, me Pauzë.
+- **Video 3D 360° në kufjet VR**: një video stereoskopike lart dhe poshtë, secili sy merr pamjen e vet (shembulli Kandao Obsidian).
 
 Këto pamje u bënë me aplikacionin në frëngjisht, para ndërtimit 14. Paneli tani ka edhe shiritin e kohës midis dy butonave të kapërcimit me 10 sekonda, E mëparshmja dhe Tjetra, si dhe Rrotullo.
 
@@ -598,7 +657,9 @@ Immuch360 vendos një distinktiv 360° në miniaturat e fotove 360° (në një d
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Detajet e videos, dekoderët dhe pse një video ngec
 
-Njerëzit pyesin cilin kodek, madhësi dhe shpejtësi bitesh luan Quest 3, dhe pse një eksport 5.7K ngec në kufjet VR ndërsa në telefon luhet. Përgjigjja është dekoderi harduerik: dekoderi H.264 i Quest 3 (XR2 Gen 2) arrin deri rreth 4096x2304, prandaj një video H.264 5760x2880 (niveli 6.0, rreth 200 Mbit/s, eksporti i zakonshëm i Insta360) dekodohet me rreth 17 fps në kufjet VR, me artefakte blloqesh, ndërsa i njëjti skedar luhet mirë në një telefon. E njëjta video në HEVC (H.265) luhet mirë në kufjet VR: një video Insta360 X4 8K HEVC (7680x3840, 29,97 fps, 210 Mbit/s, profili Main niveli 6.1, 8 bit) luhet rrjedhshëm në pamjen zhytëse, në rezolucionin e saj vendas dhe pa transkodim (raportuar nga një përdorues në një Quest 3).
+Njerëzit pyesin cilin kodek, madhësi dhe shpejtësi bitesh luan Quest 3, dhe pse një eksport 5.7K ngec në kufjet VR ndërsa në telefon luhet. Përgjigjja është dekoderi harduerik: dekoderi H.264 i Quest 3 (XR2 Gen 2) arrin deri rreth 4096x2304, prandaj një video H.264 5760x2880 (niveli 6.0, rreth 200 Mbit/s, eksporti i zakonshëm i Insta360) dekodohet me rreth 17 fps në kufjet VR, me artefakte blloqesh, ndërsa i njëjti skedar luhet mirë në një telefon.
+
+E njëjta video në HEVC (H.265) luhet mirë në kufjet VR: një video Insta360 X4 8K HEVC (7680x3840, 29,97 fps, 210 Mbit/s, profili Main niveli 6.1, 8 bit) luhet rrjedhshëm në pamjen zhytëse, në rezolucionin e saj vendas dhe pa transkodim (raportuar nga një përdorues në një Quest 3).
 
 Aplikacioni Immich ka një çelës të vetëm “Force original video” dhe shfaq vetëm kodekun. Immuch360 tregon çfarë është një video dhe çfarë dekodon pajisja, dhe zgjedh skedarin që luhet.
 
@@ -623,7 +684,9 @@ Cilësimet, Të avancuara, “Dekoderët e videos së kësaj pajisjeje” (nga n
 1. Hapni Cilësimet, Shikuesi i asetit, pastaj Videos.
 2. Nën “Burimi i videos” (“Cili skedar luhet kur serveri ka një kopje të transkoduar”), zgjidhni “Origjinali kur kjo pajisje e dekodon”, “Gjithmonë origjinali” ose “Gjithmonë transmetimi i transkoduar”.
 
-Nga ndërtimi 15, zgjedhja vlen për çdo video të serverit: luajtësi i sheshtë, luajtësit 360° dhe Spatial, dhe pamja zhytëse e Quest-it. Derisa të zgjidhni një, telefoni mban atë që thoshte çelësi i dikurshëm “Force original video” (i çaktivizuar si parazgjedhje: transmetimi i transkoduar, që është vetë origjinali kur serveri nuk e ka transkoduar), dhe Quest luan origjinalin kur kufjet VR e dekodojnë. Kontrolli lexon kodekun, madhësinë dhe shpejtësinë e kuadrove nga skedari dhe i krahason me dekoderët harduerikë (H.264 në Quest 3 kufizohet në 4096x2304 të matura). Një luajtës që nuk mund ta dekodojë origjinalin kalon te transmetimi i transkoduar me një mesazh: “Po luhet transmetimi i transkoduar: origjinali (kodeku dhe madhësia) tejkalon atë që dekodon kjo pajisje”.
+Nga ndërtimi 15, zgjedhja vlen për çdo video të serverit: luajtësi i sheshtë, luajtësit 360° dhe Spatial, dhe pamja zhytëse e Quest-it. Derisa të zgjidhni një, telefoni mban atë që thoshte çelësi i dikurshëm “Force original video” (i çaktivizuar si parazgjedhje: transmetimi i transkoduar, që është vetë origjinali kur serveri nuk e ka transkoduar), dhe Quest luan origjinalin kur kufjet VR e dekodojnë.
+
+Kontrolli lexon kodekun, madhësinë dhe shpejtësinë e kuadrove nga skedari dhe i krahason me dekoderët harduerikë (H.264 në Quest 3 kufizohet në 4096x2304 të matura). Një luajtës që nuk mund ta dekodojë origjinalin kalon te transmetimi i transkoduar me një mesazh: “Po luhet transmetimi i transkoduar: origjinali (kodeku dhe madhësia) tejkalon atë që dekodon kjo pajisje”.
 
 Në kufjet VR, pamja zhytëse nis origjinalin dhe, në kuadrot e para, kalon te transmetimi i transkoduar i serverit kur origjinali është mbi dekoderët, duke e thënë këtë në panelin e informacionit; kur nuk ka transmetim të transkoduar, kur ai është ende shumë i madh, ose kur skedari vjen nga kufjet VR ose nga një ndarje rrjeti, paneli i informacionit e thotë këtë për 10 sekonda, bashkë me atë që duhet ndryshuar. Ndërtimi 14, ai i dërguar në Horizon Store, kontrollon vetëm H.264 mbi 4096x2304, dhe pastaj provon në të njëjtën mënyrë transmetimin e luajtjes të serverit.
 
@@ -661,87 +724,184 @@ Për t'i treguar një foto 360° dikujt që nuk e ka aplikacionin, ndajeni me nj
 
 Ndërtimi aktual, ndërtimi 21 (versioni 3.3.0-rc.0, numri i ndërtimit 3030019), bazohet në Immich 3.3.0-rc.0 (`main` i Immich, ende jo një publikim i qëndrueshëm). Ndërtimi 19 u testua me një server Immich 3.2, dhe ndërtimet 20 dhe 21 nuk ndryshojnë asgjë në atë që aplikacioni i kërkon serverit. Ju lutemi raportoni problemet te [Issues](https://github.com/freeKC/Immuch360/issues), jo te projekti Immich. Për dokumentacionin e plotë të vetë Immich, shihni [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Krahasimi me aplikacionin Immich dhe aplikacione të tjera
 
 ### Pse ekziston ky fork, në një tabelë
 
-| | Aplikacioni celular Immich | Immuch360 | Gjendja |
-|---|:---:|:---:|---|
-| Foto 360° si një sferë në të cilën shikoni përreth (tërheqje, shtrëngim gishtash, prekje e dyfishtë, inerci, pamja fillestare e kamerës, panorama të pjesshme) | ❌ shirit i sheshtë | ✅ | Testuar në një Galaxy S24+ dhe një iPhone 14 |
-| Xhiroskop: shikoni përreth duke lëvizur telefonin | ❌ | ✅ | Testuar në një Galaxy S24+ dhe një iPhone 14 |
-| Video 360° në një luajtës sferik, me zë, kalim përpara e prapa, zgjedhje të pistës audio dhe tregues ngarkimi | ❌ video e sheshtë | ✅ Android dhe iOS (ende pa shirit kohe në iOS) | Testuar në një Galaxy S24+ dhe një iPhone 14 |
-| Foto dhe video 360° 3D (stereoskopike) | ❌ pamje e dyfishuar | ✅ syri i majtë në telefona, 3D i vërtetë në Quest | Testuar në një Galaxy S24+ dhe një Quest 3, me shembuj realë 3D 360° (VRTogether, Vuze, Kandao) dhe një foto 3D; raportet nga kamera të tjera janë të mirëpritura |
-| Foto dhe video VR180 (gjysmësferë) | ❌ e shtrirë rreth sferës | ✅ gjysmësferë, butoni 360°/180° | Testuar në një emulator Android dhe një Galaxy S24+ me media sintetike; komentet nga pajisjet janë të mirëpritura |
-| Fotot hapësinore Apple (çifte stereo HEIC) dhe videot hapësinore (MV-HEVC) | ❌ një foto ose video e sheshtë, asgjë nuk tregon se është hapësinore | ✅ nga ndërtimi 19: fotot në 3D në Quest, gjetkë një sy dhe një rresht në detaje | Zbulimi u verifikua në një foto shembull të shkruar nga biblioteka e figurave e Apple dhe në skedarë sintetikë; pamja në kufjet VR dhe skedarët realë nga iPhone janë testi në pajisje i ndërtimit 19 |
-| Pamja zhytëse e Meta Quest me ndjekje të kokës, shirit kohe, të mëparshmin dhe të radhës, dhe Rrotullo | ❌ | ✅ i njëjti aplikacion, si ndërtim për kufjet VR ose si APK e telefonit | Testuar në një Quest 3 (kontrollet e ndërtimit 14, të përshtatura në ndërtimin 16 pas komentit të një përdoruesi), dhe nga një përdorues me video Insta360 X4 8K HEVC |
-| Distinktiv 360° në miniatura, dhe një listë 360° me skedarë të papërpunuar dhe filtra (periudha, burimi, lloji, kamera) | ❌ | ✅ filtrat nga ndërtimi 18 | E përfunduar |
-| “Shiko si 360°” për skedarët që serveri nuk i shënon | ❌ | ✅ mbahet mend në telefon | E përfunduar |
-| Spatial 2.5D: thellësi në një ekran të sheshtë nga një video stereoskopike | ❌ | ✅ eksperimentale, telefona dhe tableta | Testuar në një Galaxy S24+; komentet nga iPhone janë të mirëpritura |
-| Përdorimi pa asnjë server, me vetë galerinë e pajisjes | ❌ hyrja e detyrueshme | ✅ | Testuar në një Galaxy S24+, një Quest 3 dhe një emulator Android |
-| Ndarje SMB dhe WebDAV të gjetura në rrjet dhe të luajtura drejtpërdrejt, pa shkarkuar asgjë | ❌ | ✅ çdo shikues, telefona dhe Quest | Testuar me një Freebox Server (SMB) në një Galaxy S24+ dhe një Quest 3, dhe me serverë testimi Samba dhe WebDAV në një emulator Android; komentet për NAS të tjerë dhe WebDAV janë të mirëpritura |
-| Serverët e medias DLNA si lloj ndarjeje | ❌ | ✅ nga ndërtimi 19 | Verifikuar me minidlna dhe Gerbera në Docker; Plex, Jellyfin, një NAS, Freebox Server, një iPhone dhe Quest janë testi në pajisje i ndërtimit 19 |
-| Dërgimi i skedarëve të një ndarjeje në Immich; skedarët e pajisjes të dërguar me dorë llogariten si të ruajtur në kopje rezervë | ❌ vetëm skedarët e pajisjes | ✅ nga ndërtimi 15 | Testuar në një emulator Android me një server testimi Samba dhe një server Immich 3.2 |
-| Ndaje këtë telefon në rrjet, për kufjet VR | ❌ | ✅ nga ndërtimi 19, Android dhe iOS | Teste njësie dhe teste nga fillimi në fund me klientin WebDAV të kufjeve VR, në një kompjuter; një telefon që i shërben një Quest-i, dhe ana e iPhone-it, janë testi në pajisje i ndërtimit 19 |
-| Bibliotekat e një Plex Media Server të luajtura nga skedarët origjinalë, në shtëpi dhe jashtë, pa plex.tv | ❌ | ✅ nga ndërtimi 20, të gjithë shikuesit, në telefona, tableta, Quest dhe televizorë | Verifikuar nga një kompjuter kundrejt një Plex Media Server 1.42.1 të vërtetë (çiftimi, dosjet, intervalet e bajtëve, miniaturat, adresa jashtë shtëpisë); ende i paverifikuar në pajisje |
-| Kamerat Tapo: pamja e drejtpërdrejtë, dhe regjistrimet e kartës së kujtesës të dërguara në Immich kur ta zgjidhni | ❌ | ✅ nga ndërtimi 20: regjistrimet kudo, drejtpërdrejt në Android, Android TV dhe Quest | Verifikuar kundrejt një kamere të simuluar; ende i paverifikuar me një kamerë të vërtetë |
-| Android TV dhe Google TV, të drejtuara me telekomandë, në të njëjtën APK | ❌ nuk është aplikacion televizori | ✅ nga ndërtimi 20 | Verifikuar me teste të automatizuara; ende i paverifikuar në një televizor |
-| Foto Insta360 .insp të papërpunuara dhe video .insv me një pistë | ❌ të sheshta | ✅ nga ndërtimi 16 | Fotot u verifikuan kundrejt eksporteve të Insta360 Studio të skedarëve X3, videot në një emulator Android me një skedar X3 me rezolucion të ulët; ende nuk ka punuar në një iPhone |
-| Video të papërpunuara me një objektiv për pistë ose për skedar (Insta360 X4, X4 Air, X5, X6, çifte X3, GoPro .360, DJI .osv) | ❌ të sheshta ose të gabuara | ✅ nga ndërtimi 18 | Lexuesit dhe bashkimi u verifikuan në skedarë realë X4, çift X3, GoPro MAX dhe Osmo 360; luajtja është testi në pajisje i ndërtimeve 18 dhe 19 |
-| .dng me dy fisheye | ❌ i sheshtë | ❌ ende jo | I planifikuar |
-| Videot e serverit: origjinali kur pajisja e dekodon, përndryshe transmetimi i transkoduar; lista e dekoderëve të videos së pajisjes | ❌ një çelës i vetëm “Force original video” | ✅ nga ndërtimi 15 | Testuar në një emulator Android; kufiri H.264 i Quest 3 u mat në kufjet VR |
-| Detajet teknike të një videoje: shpejtësia e biteve, figura, profili, nëse kjo pajisje e dekodon | ❌ vetëm kodeku | ✅ nga ndërtimi 18 | E përfunduar |
-| Një luajtës falas për video të sheshta, 360°, 3D dhe VR180, nga serveri, telefoni ose një NAS | ❌ vetëm të sheshta | ✅ (luajtësit e dyqanit të Quest 3 janë me pagesë) | |
-| I njëjti server, e njëjta llogari, instalohet pranë aplikacionit zyrtar | | ✅ | |
+| | Aplikacioni celular Immich | Immuch360 |
+|---|:---:|:---:|
+| Foto 360° si një sferë në të cilën shikoni përreth (tërheqje, shtrëngim gishtash, prekje e dyfishtë, inerci, pamja fillestare e kamerës, panorama të pjesshme) | ❌ shirit i sheshtë | ✅ |
+| Xhiroskop: shikoni përreth duke lëvizur telefonin | ❌ | ✅ |
+| Video 360° në një luajtës sferik, me zë, kalim përpara e prapa, zgjedhje të pistës audio dhe tregues ngarkimi | ❌ video e sheshtë | ✅ Android dhe iOS (ende pa shirit kohe në iOS) |
+| Foto dhe video 360° 3D (stereoskopike) | ❌ pamje e dyfishuar | ✅ syri i majtë në telefona, 3D i vërtetë në Quest |
+| Foto dhe video VR180 (gjysmësferë) | ❌ e shtrirë rreth sferës | ✅ gjysmësferë, butoni 360°/180° |
+| Fotot hapësinore Apple (çifte stereo HEIC) dhe videot hapësinore (MV-HEVC) | ❌ një foto ose video e sheshtë, asgjë nuk tregon se është hapësinore | ✅ nga ndërtimi 19: fotot në 3D në Quest, gjetkë një sy dhe një rresht në detaje |
+| Pamja zhytëse e Meta Quest me ndjekje të kokës, shirit kohe, të mëparshmin dhe të radhës, dhe Rrotullo | ❌ | ✅ i njëjti aplikacion, si ndërtim për kufjet VR ose si APK e telefonit |
+| Distinktiv 360° në miniatura, dhe një listë 360° me skedarë të papërpunuar dhe filtra (periudha, burimi, lloji, kamera) | ❌ | ✅ filtrat nga ndërtimi 18 |
+| “Shiko si 360°” për skedarët që serveri nuk i shënon | ❌ | ✅ mbahet mend në telefon |
+| Spatial 2.5D: thellësi në një ekran të sheshtë nga një video stereoskopike | ❌ | ✅ eksperimentale, telefona dhe tableta |
+| Përdorimi pa asnjë server, me vetë galerinë e pajisjes | ❌ hyrja e detyrueshme | ✅ |
+| Ndarje SMB dhe WebDAV të gjetura në rrjet dhe të luajtura drejtpërdrejt, pa shkarkuar asgjë | ❌ | ✅ çdo shikues, telefona dhe Quest |
+| Serverët e medias DLNA si lloj ndarjeje | ❌ | ✅ nga ndërtimi 19 |
+| Dërgimi i skedarëve të një ndarjeje në Immich; skedarët e pajisjes të dërguar me dorë llogariten si të ruajtur në kopje rezervë | ❌ vetëm skedarët e pajisjes | ✅ nga ndërtimi 15 |
+| Ndaje këtë telefon në rrjet, për kufjet VR | ❌ | ✅ nga ndërtimi 19, Android dhe iOS |
+| Bibliotekat e një Plex Media Server të luajtura nga skedarët origjinalë, në shtëpi dhe jashtë, pa plex.tv | ❌ | ✅ nga ndërtimi 20, të gjithë shikuesit, në telefona, tableta, Quest dhe televizorë |
+| Kamerat Tapo: pamja e drejtpërdrejtë, dhe regjistrimet e kartës së kujtesës të dërguara në Immich kur ta zgjidhni | ❌ | ✅ nga ndërtimi 20: regjistrimet kudo, drejtpërdrejt në Android, Android TV dhe Quest |
+| Android TV dhe Google TV, të drejtuara me telekomandë, në të njëjtën APK | ❌ nuk është aplikacion televizori | ✅ nga ndërtimi 20 |
+| Foto Insta360 .insp të papërpunuara dhe video .insv me një pistë | ❌ të sheshta | ✅ nga ndërtimi 16 |
+| Video të papërpunuara me një objektiv për pistë ose për skedar (Insta360 X4, X4 Air, X5, X6, çifte X3, GoPro .360, DJI .osv) | ❌ të sheshta ose të gabuara | ✅ nga ndërtimi 18 |
+| .dng me dy fisheye | ❌ i sheshtë | ❌ ende jo |
+| Videot e serverit: origjinali kur pajisja e dekodon, përndryshe transmetimi i transkoduar; lista e dekoderëve të videos së pajisjes | ❌ një çelës i vetëm “Force original video” | ✅ nga ndërtimi 15 |
+| Detajet teknike të një videoje: shpejtësia e biteve, figura, profili, nëse kjo pajisje e dekodon | ❌ vetëm kodeku | ✅ nga ndërtimi 18 |
+| Një luajtës falas për video të sheshta, 360°, 3D dhe VR180, nga serveri, telefoni ose një NAS | ❌ vetëm të sheshta | ✅ (luajtësit e dyqanit të Quest 3 janë me pagesë) |
+| I njëjti server, e njëjta llogari, instalohet pranë aplikacionit zyrtar | | ✅ |
+
+<details>
+<summary><b>Gjendja e çdo rreshti</b>: si u testua</summary>
+
+- **Foto 360° si një sferë**: testuar në një Galaxy S24+ dhe një iPhone 14.
+- **Xhiroskop**: testuar në një Galaxy S24+ dhe një iPhone 14.
+- **Video 360°**: testuar në një Galaxy S24+ dhe një iPhone 14.
+- **Foto dhe video 360° 3D**: testuar në një Galaxy S24+ dhe një Quest 3, me shembuj realë 3D 360° (VRTogether, Vuze, Kandao) dhe një foto 3D; raportet nga kamera të tjera janë të mirëpritura.
+- **VR180**: testuar në një emulator Android dhe një Galaxy S24+ me media sintetike; komentet nga pajisjet janë të mirëpritura.
+- **Fotot dhe videot hapësinore Apple**: zbulimi u verifikua në një foto shembull të shkruar nga biblioteka e figurave e Apple dhe në skedarë sintetikë; pamja në kufjet VR dhe skedarët realë nga iPhone janë testi në pajisje i ndërtimit 19.
+- **Pamja zhytëse e Meta Quest**: testuar në një Quest 3 (kontrollet e ndërtimit 14, të përshtatura në ndërtimin 16 pas komentit të një përdoruesi), dhe nga një përdorues me video Insta360 X4 8K HEVC.
+- **Distinktivi 360° dhe lista 360°**: e përfunduar.
+- **Shiko si 360°**: e përfunduar.
+- **Spatial 2.5D**: testuar në një Galaxy S24+; komentet nga iPhone janë të mirëpritura.
+- **Pa asnjë server**: testuar në një Galaxy S24+, një Quest 3 dhe një emulator Android.
+- **Ndarjet SMB dhe WebDAV**: testuar me një Freebox Server (SMB) në një Galaxy S24+ dhe një Quest 3, dhe me serverë testimi Samba dhe WebDAV në një emulator Android; komentet për NAS të tjerë dhe WebDAV janë të mirëpritura.
+- **Serverët e medias DLNA**: verifikuar me minidlna dhe Gerbera në Docker; Plex, Jellyfin, një NAS, Freebox Server, një iPhone dhe Quest janë testi në pajisje i ndërtimit 19.
+- **Dërgimi i skedarëve të një ndarjeje në Immich**: testuar në një emulator Android me një server testimi Samba dhe një server Immich 3.2.
+- **Ndaje këtë telefon në rrjet**: teste njësie dhe teste nga fillimi në fund me klientin WebDAV të kufjeve VR, në një kompjuter; një telefon që i shërben një Quest-i, dhe ana e iPhone-it, janë testi në pajisje i ndërtimit 19.
+- **Plex Media Server**: verifikuar nga një kompjuter kundrejt një Plex Media Server 1.42.1 të vërtetë (çiftimi, dosjet, intervalet e bajtëve, miniaturat, adresa jashtë shtëpisë); ende i paverifikuar në pajisje.
+- **Kamerat Tapo**: verifikuar kundrejt një kamere të simuluar; ende i paverifikuar me një kamerë të vërtetë.
+- **Android TV dhe Google TV**: verifikuar me teste të automatizuara; ende i paverifikuar në një televizor.
+- **Foto Insta360 .insp të papërpunuara dhe video .insv me një pistë**: fotot u verifikuan kundrejt eksporteve të Insta360 Studio të skedarëve X3, videot në një emulator Android me një skedar X3 me rezolucion të ulët; ende nuk ka punuar në një iPhone.
+- **Video të papërpunuara me një objektiv për pistë ose për skedar**: lexuesit dhe bashkimi u verifikuan në skedarë realë X4, çift X3, GoPro MAX dhe Osmo 360; luajtja është testi në pajisje i ndërtimeve 18 dhe 19.
+- **.dng me dy fisheye**: i planifikuar.
+- **Videot e serverit dhe dekoderët e videos**: testuar në një emulator Android; kufiri H.264 i Quest 3 u mat në kufjet VR.
+- **Detajet teknike të një videoje**: e përfunduar.
+
+</details>
 
 ### Aplikacione të tjera që njerëzit përdorin për këtë
 
-| Çfarë përdorin njerëzit | Me çfarë hasen | Çfarë bën Immuch360 |
-|---|---|---|
-| Aplikacioni web i Immich | E shfaq një foto 360° si sferë, por e merr një .insp të papërpunuar për një panoramë të përfunduar dhe i mbështjell dy rrathët e tij rreth sferës; një pamje VR është ende një kërkesë ([diskutimi #14768](https://github.com/immich-app/immich/discussions/14768)) | I bashkon skedarët e papërpunuar në pajisje dhe hap një pamje zhytëse në Quest |
-| Aplikacioni ose Studio i Insta360 | I nevojshëm për t'i kthyer skedarët e papërpunuar të kartës në një pamje 360° para shikimit | I hap drejtpërdrejt skedarët e papërpunuar .insp dhe .insv, si dhe skedarët GoPro .360 dhe DJI .osv |
-| Plex, Jellyfin, Synology Photos | Foto dhe video 360° të shfaqura të sheshta ose të panjohura, siç e përshkruajnë temat në forumet e tyre (një kërkesë për Plex është e hapur që nga 2017) | Lexon vetë bibliotekën Plex nga ndërtimi 20, ose të njëjtat dosje përmes SMB, WebDAV ose DLNA, dhe i luan si sferë, pa ndryshuar asgjë në server |
-| Aplikacioni Tapo | Një aplikacion më vete, i identifikuar në llogarinë tuaj TP-Link, me klipet larg fotove tuaja | Shfaq kamerën pranë fotove tuaja, flet me të vetëm në rrjetin tuaj, dhe e mban një klip si video që mund ta dërgoni në Immich (nga ndërtimi 20) |
-| Aplikacioni celular Immich në një televizor | Nuk është aplikacion televizori: një përdorues raporton se funksionon me maus, jo me telekomandë | I njëjti aplikacion, i bërë për telekomandën (nga ndërtimi 20) |
-| Kopjimi i skedarëve në kufjet VR | Çdo skedar kopjohet me kabllo para se ta shihni | Luan aty ku janë, nga Immich, një NAS, një server medias ose një telefon |
-| Luajtësit 360° dhe 3D të dyqanit të Quest | Me pagesë | Falas dhe me burim të hapur (AGPL) |
+- **Aplikacioni web i Immich**
+  - Me çfarë hasen: e shfaq një foto 360° si sferë, por e merr një .insp të papërpunuar për një panoramë të përfunduar dhe i mbështjell dy rrathët e tij rreth sferës; një pamje VR është ende një kërkesë ([diskutimi #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Çfarë bën Immuch360: i bashkon skedarët e papërpunuar në pajisje dhe hap një pamje zhytëse në Quest.
+- **Aplikacioni ose Studio i Insta360**
+  - Me çfarë hasen: i nevojshëm për t'i kthyer skedarët e papërpunuar të kartës në një pamje 360° para shikimit.
+  - Çfarë bën Immuch360: i hap drejtpërdrejt skedarët e papërpunuar .insp dhe .insv, si dhe skedarët GoPro .360 dhe DJI .osv.
+- **Plex, Jellyfin, Synology Photos**
+  - Me çfarë hasen: foto dhe video 360° të shfaqura të sheshta ose të panjohura, siç e përshkruajnë temat në forumet e tyre (një kërkesë për Plex është e hapur që nga 2017).
+  - Çfarë bën Immuch360: lexon vetë bibliotekën Plex nga ndërtimi 20, ose të njëjtat dosje përmes SMB, WebDAV ose DLNA, dhe i luan si sferë, pa ndryshuar asgjë në server.
+- **Aplikacioni Tapo**
+  - Me çfarë hasen: një aplikacion më vete, i identifikuar në llogarinë tuaj TP-Link, me klipet larg fotove tuaja.
+  - Çfarë bën Immuch360: shfaq kamerën pranë fotove tuaja, flet me të vetëm në rrjetin tuaj, dhe e mban një klip si video që mund ta dërgoni në Immich (nga ndërtimi 20).
+- **Aplikacioni celular Immich në një televizor**
+  - Me çfarë hasen: nuk është aplikacion televizori: një përdorues raporton se funksionon me maus, jo me telekomandë.
+  - Çfarë bën Immuch360: i njëjti aplikacion, i bërë për telekomandën (nga ndërtimi 20).
+- **Kopjimi i skedarëve në kufjet VR**
+  - Me çfarë hasen: çdo skedar kopjohet me kabllo para se ta shihni.
+  - Çfarë bën Immuch360: luan aty ku janë, nga Immich, një NAS, një server medias ose një telefon.
+- **Luajtësit 360° dhe 3D të dyqanit të Quest**
+  - Me çfarë hasen: me pagesë.
+  - Çfarë bën Immuch360: falas dhe me burim të hapur (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Formatet dhe burimet, sipas platformës
 
-Immuch360 është një galeri, dhe është edhe një luajtës medias falas: luan atë që aplikacioni zyrtar nuk mundet, nga burimet e tabelës së dytë, në luajtësin që i përshtatet skedarit.
+Immuch360 është një galeri, dhe është edhe një luajtës medias falas: luan atë që aplikacioni zyrtar nuk mundet, nga burimet e listës së dytë, në luajtësin që i përshtatet skedarit.
 
-| Çfarë | Telefonat Android | iPhone, iPad | Meta Quest | Android TV, Google TV (nga ndërtimi 20) |
-|---|---|---|---|---|
-| Video të sheshta (MP4, MOV, MKV, ato që dekodon pajisja) | Luajtësi i Immich, dhe një luajtës vendas për ndarjet e rrjetit | Njësoj, përveç skedarëve MKV dhe AVI të një ndarjeje, që iOS nuk i hap (në një server luhen të transkoduar) | Në dritare | Si në telefona; OK ndal, majtas dhe djathtas kapërcejnë 10 s |
-| Foto 360° | Shikuesi sferik, xhiroskopi | Njësoj | Zhytëse, rreth jush | Shikuesi sferik i rrotulluar me shigjetat, i zmadhuar me tastet e kanaleve |
-| Video 360° | Luajtësi vendas Media3 në një sferë, xhiroskopi, kalim përpara e prapa, zgjedhja e pistës audio, treguesi i ngarkimit | Luajtësi vendas SceneKit në një sferë, xhiroskopi, zgjedhja e pistës audio, treguesi i ngarkimit; luaj dhe pauzë, ende pa shirit kohe | Zhytëse, 3D i vërtetë për skedarët stereoskopikë, shirit kohe me kapërcime 10 sekondash, media e mëparshme dhe e radhës | Luajtësi Media3 i telefonave, i rrotulluar me shigjetat |
-| 3D 360° (lart dhe poshtë, krah për krah) | Syri i majtë, butoni i paraqitjes | Njësoj | Secili sy merr gjysmën e vet të kuadrit | Syri i majtë, butoni i paraqitjes |
-| Foto dhe video VR180 (gjysmësferë) | Gjysmësferë, butoni 360°/180° | Njësoj | Gjysmësferë zhytëse | Gjysmësferë, butoni 360°/180° |
-| Spatial 2.5D (thellësi në ekran të sheshtë nga një video stereoskopike) | Luajtës vendas, ndjekja e kokës me kamerën e përparme | Njësoj | Nuk ofrohet | Nuk ofrohet |
-| Fotot hapësinore Apple (çifte stereo HEIC, nga ndërtimi 19) | Syri i majtë, një rresht në detaje tregon se është hapësinore | Njësoj | Shiko në 3D: të dy sytë në një foto që pluskon në pamjen zhytëse, 3D ose 2D, me madhësi të ndryshueshme | Syri i majtë, një rresht në detaje |
-| Videot hapësinore Apple (MV-HEVC, nga ndërtimi 19) | Një sy (shtresa bazë), me një njoftim | Njësoj | Një sy në dritare, me një njoftim | Një sy, me një njoftim |
-| Foto Insta360 .insp të papërpunuara (nga ndërtimi 16) | Të bashkuara në GPU para shikuesit sferik, deri në 8192x4096 | Njësoj | Zhytëse, nga një pamje e bashkuar e përgatitur për kufjet VR | Si në telefona |
-| Insta360 .insv i papërpunuar, të dy objektivat në një pistë (nga ndërtimi 16) | I bashkuar nga një efekt GPU në luajtësin Media3 | I bashkuar nga një shader SceneKit | Zhytëse, i bashkuar nga i njëjti efekt GPU | Si në telefona |
-| Video të papërpunuara me një objektiv për pistë ose për skedar (nga ndërtimi 18): Insta360 X4, X4 Air, X5, X6 .insv, çifte X3, GoPro .360, DJI .osv | Dy dekoderë harduerikë njëkohësisht, një për çdo objektiv (nga ndërtimi 19 softuerikë në një pajisje pa dekoder harduerik, deri në 2048x2048 për objektiv), dhe një kompozitor GL që i bashkon në sferë; një objektiv, pastaj transmetimi i transkoduar, pastaj videoja e pabashkuar, kur pajisja nuk mund të ekzekutojë dy | Një kompozitor AVFoundation i posaçëm me Metal | Zhytëse, të njëjtët dy dekoderë dhe kompozitor (panel 3840x1920) | Si në telefona, kur televizori ekzekuton dy dekoderë njëkohësisht |
-| Pamja e drejtpërdrejtë e kamerës Tapo (nga ndërtimi 20) | Luajtësi RTSP Media3: SD në faqe, HD në ekran të plotë, butoni i zërit | Ende jo: një kartë thotë se vjen më vonë | Në dritare, në HD | Si në telefona |
-| Regjistrimet e kamerës Tapo (nga ndërtimi 20) | Të marra nga karta e kujtesës në një video H.264 me zërin e saj, pastaj të luajtura me kalim përpara e prapa | Njësoj | Njësoj, në dritare | Njësoj |
+- **Video të sheshta (MP4, MOV, MKV, ato që dekodon pajisja)**
+  - Telefonat Android: luajtësi i Immich, dhe një luajtës vendas për ndarjet e rrjetit.
+  - iPhone, iPad: njësoj, përveç skedarëve MKV dhe AVI të një ndarjeje, që iOS nuk i hap (në një server luhen të transkoduar).
+  - Meta Quest: në dritare.
+  - Android TV, Google TV: si në telefona; OK ndal, majtas dhe djathtas kapërcejnë 10 s.
+- **Foto 360°**
+  - Telefonat Android: shikuesi sferik, xhiroskopi.
+  - iPhone, iPad: njësoj.
+  - Meta Quest: zhytëse, rreth jush.
+  - Android TV, Google TV: shikuesi sferik i rrotulluar me shigjetat, i zmadhuar me tastet e kanaleve.
+- **Video 360°**
+  - Telefonat Android: luajtësi vendas Media3 në një sferë, xhiroskopi, kalim përpara e prapa, zgjedhja e pistës audio, treguesi i ngarkimit.
+  - iPhone, iPad: luajtësi vendas SceneKit në një sferë, xhiroskopi, zgjedhja e pistës audio, treguesi i ngarkimit; luaj dhe pauzë, ende pa shirit kohe.
+  - Meta Quest: zhytëse, 3D i vërtetë për skedarët stereoskopikë, shirit kohe me kapërcime 10 sekondash, media e mëparshme dhe e radhës.
+  - Android TV, Google TV: luajtësi Media3 i telefonave, i rrotulluar me shigjetat.
+- **3D 360° (lart dhe poshtë, krah për krah)**
+  - Telefonat Android: syri i majtë, butoni i paraqitjes.
+  - iPhone, iPad: njësoj.
+  - Meta Quest: secili sy merr gjysmën e vet të kuadrit.
+  - Android TV, Google TV: syri i majtë, butoni i paraqitjes.
+- **Foto dhe video VR180 (gjysmësferë)**
+  - Telefonat Android: gjysmësferë, butoni 360°/180°.
+  - iPhone, iPad: njësoj.
+  - Meta Quest: gjysmësferë zhytëse.
+  - Android TV, Google TV: gjysmësferë, butoni 360°/180°.
+- **Spatial 2.5D (thellësi në ekran të sheshtë nga një video stereoskopike)**
+  - Telefonat Android: luajtës vendas, ndjekja e kokës me kamerën e përparme.
+  - iPhone, iPad: njësoj.
+  - Meta Quest: nuk ofrohet.
+  - Android TV, Google TV: nuk ofrohet.
+- **Fotot hapësinore Apple (çifte stereo HEIC, nga ndërtimi 19)**
+  - Telefonat Android: syri i majtë, një rresht në detaje tregon se është hapësinore.
+  - iPhone, iPad: njësoj.
+  - Meta Quest: Shiko në 3D: të dy sytë në një foto që pluskon në pamjen zhytëse, 3D ose 2D, me madhësi të ndryshueshme.
+  - Android TV, Google TV: syri i majtë, një rresht në detaje.
+- **Videot hapësinore Apple (MV-HEVC, nga ndërtimi 19)**
+  - Telefonat Android: një sy (shtresa bazë), me një njoftim.
+  - iPhone, iPad: njësoj.
+  - Meta Quest: një sy në dritare, me një njoftim.
+  - Android TV, Google TV: një sy, me një njoftim.
+- **Foto Insta360 .insp të papërpunuara (nga ndërtimi 16)**
+  - Telefonat Android: të bashkuara në GPU para shikuesit sferik, deri në 8192x4096.
+  - iPhone, iPad: njësoj.
+  - Meta Quest: zhytëse, nga një pamje e bashkuar e përgatitur për kufjet VR.
+  - Android TV, Google TV: si në telefona.
+- **Insta360 .insv i papërpunuar, të dy objektivat në një pistë (nga ndërtimi 16)**
+  - Telefonat Android: i bashkuar nga një efekt GPU në luajtësin Media3.
+  - iPhone, iPad: i bashkuar nga një shader SceneKit.
+  - Meta Quest: zhytëse, i bashkuar nga i njëjti efekt GPU.
+  - Android TV, Google TV: si në telefona.
+- **Video të papërpunuara me një objektiv për pistë ose për skedar (nga ndërtimi 18): Insta360 X4, X4 Air, X5, X6 .insv, çifte X3, GoPro .360, DJI .osv**
+  - Telefonat Android: dy dekoderë harduerikë njëkohësisht, një për çdo objektiv (nga ndërtimi 19 softuerikë në një pajisje pa dekoder harduerik, deri në 2048x2048 për objektiv), dhe një kompozitor GL që i bashkon në sferë; një objektiv, pastaj transmetimi i transkoduar, pastaj videoja e pabashkuar, kur pajisja nuk mund të ekzekutojë dy.
+  - iPhone, iPad: një kompozitor AVFoundation i posaçëm me Metal.
+  - Meta Quest: zhytëse, të njëjtët dy dekoderë dhe kompozitor (panel 3840x1920).
+  - Android TV, Google TV: si në telefona, kur televizori ekzekuton dy dekoderë njëkohësisht.
+- **Pamja e drejtpërdrejtë e kamerës Tapo (nga ndërtimi 20)**
+  - Telefonat Android: luajtësi RTSP Media3: SD në faqe, HD në ekran të plotë, butoni i zërit.
+  - iPhone, iPad: ende jo: një kartë thotë se vjen më vonë.
+  - Meta Quest: në dritare, në HD.
+  - Android TV, Google TV: si në telefona.
+- **Regjistrimet e kamerës Tapo (nga ndërtimi 20)**
+  - Telefonat Android: të marra nga karta e kujtesës në një video H.264 me zërin e saj, pastaj të luajtura me kalim përpara e prapa.
+  - iPhone, iPad: njësoj.
+  - Meta Quest: njësoj, në dritare.
+  - Android TV, Google TV: njësoj.
 
-Kolona TV nuk është verifikuar ende në një televizor, shihni [Shikojini në televizor](#watch-on-your-tv-android-tv-and-google-tv); rreshtat e kamerës nuk janë verifikuar ende me një kamerë të vërtetë.
+Hyrjet Android TV dhe Google TV, nga ndërtimi 20, nuk janë verifikuar ende në një televizor, shihni [Shikojini në televizor](#watch-on-your-tv-android-tv-and-google-tv); hyrjet e kamerës nuk janë verifikuar ende me një kamerë të vërtetë.
 
-| Nga | Si |
-|---|---|
-| Serveri juaj Immich | Origjinali ose transmetimi i transkoduar i serverit, siç thotë Cilësimet, Shikuesi i asetit, Burimi i videos (shihni [Detajet e videos dhe dekoderët](#video-details-decoders-and-why-a-video-stutters)). E njëjta llogari si aplikacioni web |
-| Vetë telefoni ose kufjet VR | “Përdor pa server” në faqen e hyrjes, ose zëri On this device i skedës Biblioteka |
-| Një NAS ose një kompjuter | Ndarje SMB dhe WebDAV, dhe nga ndërtimi 19 serverë medias DLNA, të gjetur në rrjet, të lexuar drejtpërdrejt (një video SMB përmes deri në gjashtë lidhjeve), pa kopjuar asgjë; nga ndërtimi 15 skedarët që zgjidhni mund të dërgohen në llogarinë tuaj Immich |
-| Një telefon tjetër (nga ndërtimi 19) | “Ndaje këtë telefon në rrjet” në atë telefon: kufjet VR, ose çdo klient WebDAV i rrjetit, lexojnë albumet, muajt dhe mediat e tij 360° |
-| Një Plex Media Server (nga ndërtimi 20) | Bibliotekat e tij të fotove, filmave dhe serialeve sipas dosjes, skedarët origjinalë të lexuar drejtpërdrejt përmes HTTPS të kontrolluar kundrejt certifikatës së vetë serverit, në shtëpi ose përmes adresës jashtë shtëpisë, në çdo platformë; shihni [Plex Media Server, pa plex.tv](#plex-media-server-without-plextv) |
-| Një kamerë Tapo (nga ndërtimi 20) | Pamja e drejtpërdrejtë me llogarinë e kamerës (Android, Android TV, Quest), dhe regjistrimet e kartës së saj të kujtesës me fjalëkalimin e llogarisë TP-Link (çdo platformë), vetëm në rrjetin lokal; shihni [Kamerat Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Serveri juaj Immich**: origjinali ose transmetimi i transkoduar i serverit, siç thotë Cilësimet, Shikuesi i asetit, Burimi i videos (shihni [Detajet e videos dhe dekoderët](#video-details-decoders-and-why-a-video-stutters)). E njëjta llogari si aplikacioni web.
+- **Vetë telefoni ose kufjet VR**: “Përdor pa server” në faqen e hyrjes, ose zëri On this device i skedës Biblioteka.
+- **Një NAS ose një kompjuter**: ndarje SMB dhe WebDAV, dhe nga ndërtimi 19 serverë medias DLNA, të gjetur në rrjet, të lexuar drejtpërdrejt (një video SMB përmes deri në gjashtë lidhjeve), pa kopjuar asgjë; nga ndërtimi 15 skedarët që zgjidhni mund të dërgohen në llogarinë tuaj Immich.
+- **Një telefon tjetër (nga ndërtimi 19)**: “Ndaje këtë telefon në rrjet” në atë telefon: kufjet VR, ose çdo klient WebDAV i rrjetit, lexojnë albumet, muajt dhe mediat e tij 360°.
+- **Një Plex Media Server (nga ndërtimi 20)**: bibliotekat e tij të fotove, filmave dhe serialeve sipas dosjes, skedarët origjinalë të lexuar drejtpërdrejt përmes HTTPS të kontrolluar kundrejt certifikatës së vetë serverit, në shtëpi ose përmes adresës jashtë shtëpisë, në çdo platformë; shihni [Plex Media Server, pa plex.tv](#plex-media-server-without-plextv).
+- **Një kamerë Tapo (nga ndërtimi 20)**: pamja e drejtpërdrejtë me llogarinë e kamerës (Android, Android TV, Quest), dhe regjistrimet e kartës së saj të kujtesës me fjalëkalimin e llogarisë TP-Link (çdo platformë), vetëm në rrjetin lokal; shihni [Kamerat Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 punon gjithashtu në kufjet Meta Quest me Horizon OS v69 ose më të ri. Nga ndërtimi 21, ndërtimi i Horizon Store është i listuar për Quest 2, Quest Pro, Quest 3 dhe 3S, të katërtat që i emërton tashmë `-release.apk` universal; Quest-i i parë jo, dyqani nuk e pranon më. Quest 3 dhe 3S janë testuar. Quest 2 dhe Quest Pro nuk janë testuar ende: dekoduesit e tyre të videos janë më të ngadaltë, dhe kufijtë që kontrollon aplikacioni u matën në një Quest 3, prandaj një video e madhe H.264 mund të refuzohet me një mesazh ose të ngecë në to. Raportet nga këto dy kufje janë të mirëpritura te [Issues](https://github.com/freeKC/Immuch360/issues). Si përdoret është te [Në kufjet Meta Quest 3](#in-the-meta-quest-3-headset); ky seksion ka të bëjë me instalimin dhe me atë që ndryshon në kufjet VR.
+Immuch360 punon gjithashtu në kufjet Meta Quest me Horizon OS v69 ose më të ri. Nga ndërtimi 21, ndërtimi i Horizon Store është i listuar për Quest 2, Quest Pro, Quest 3 dhe 3S, të katërtat që i emërton tashmë `-release.apk` universal; Quest-i i parë jo, dyqani nuk e pranon më.
 
-Ndërtimi për kufjet VR komunikon me serverët vetëm përmes HTTPS, ose përmes HTTP të thjeshtë me emra të rrjetit të shtëpisë (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) dhe me vetë kufjet VR, siç kërkon Horizon Store. Një server i shkruar si adresë HTTP e thjeshtë me IP, si `http://192.168.1.10:2283`, refuzohet nga ai ndërtim: përdorni HTTPS, një emër të rrjetit të shtëpisë (`nas.local`), ose `-release.apk` universal, që mban politikën e hapur të telefonave. Ndarjet WebDAV, DLNA dhe të telefonit në një adresë HTTP të thjeshtë të rrjetit lokal nuk preken: aplikacioni i lexon vetë dhe u jep luajtësve të tij vetëm adresën e urës së tij lokale (për t'u konfirmuar në kufjet VR për DLNA dhe ndarjen e telefonit, të reja në ndërtimin 19). Nga ndërtimi 20 një server Plex arrihet përmes HTTPS, dhe një kamerë Tapo nga vetë aplikacioni, pamja e saj e drejtpërdrejtë përmes RTSP, që nuk është HTTP: asnjëra nuk duhet të preket (për t'u konfirmuar në kufjet VR).
+Quest 3 dhe 3S janë testuar. Quest 2 dhe Quest Pro nuk janë testuar ende: dekoduesit e tyre të videos janë më të ngadaltë, dhe kufijtë që kontrollon aplikacioni u matën në një Quest 3, prandaj një video e madhe H.264 mund të refuzohet me një mesazh ose të ngecë në to. Raportet nga këto dy kufje janë të mirëpritura te [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Si përdoret është te [Në kufjet Meta Quest 3](#in-the-meta-quest-3-headset); ky seksion ka të bëjë me instalimin dhe me atë që ndryshon në kufjet VR.
+
+Ndërtimi për kufjet VR komunikon me serverët vetëm përmes HTTPS, ose përmes HTTP të thjeshtë me emra të rrjetit të shtëpisë (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) dhe me vetë kufjet VR, siç kërkon Horizon Store. Një server i shkruar si adresë HTTP e thjeshtë me IP, si `http://192.168.1.10:2283`, refuzohet nga ai ndërtim: përdorni HTTPS, një emër të rrjetit të shtëpisë (`nas.local`), ose `-release.apk` universal, që mban politikën e hapur të telefonave.
+
+Ndarjet WebDAV, DLNA dhe të telefonit në një adresë HTTP të thjeshtë të rrjetit lokal nuk preken: aplikacioni i lexon vetë dhe u jep luajtësve të tij vetëm adresën e urës së tij lokale (për t'u konfirmuar në kufjet VR për DLNA dhe ndarjen e telefonit, të reja në ndërtimin 19). Nga ndërtimi 20 një server Plex arrihet përmes HTTPS, dhe një kamerë Tapo nga vetë aplikacioni, pamja e saj e drejtpërdrejtë përmes RTSP, që nuk është HTTP: asnjëra nuk duhet të preket (për t'u konfirmuar në kufjet VR).
 
 <a id="install"></a>
 ### Instalimi
@@ -762,16 +922,23 @@ Meta e miratoi faqen në Horizon Store më 7 tetor 2026 me ndërtimin 14, dhe nd
 
 ### Në dritare
 
-I gjithë aplikacioni punon si një dritare 2D me madhësi të ndryshueshme: hyrja, kronologjia, albumet, kërkimi, skeda Biblioteka (lista 360°, On this device, Ndarjet e rrjetit), cilësimet, dhe shikuesit e fotove dhe videove, ku luhen fotot dhe videot e sheshta. Në kufjet VR, butoni 360°, dhe Shiko si 360° në menynë ⋮, hapin drejtpërdrejt pamjen zhytëse në vend të shikuesit sferik të telefonave, dhe butoni Spatial 2.5D dhe cilësimi i tij nuk shfaqen. Nga ndërtimi 19, një foto hapësinore Apple ka një buton Shiko në 3D, dhe pllakëza Ndaje këtë telefon në rrjet nuk shfaqet: kufjet VR janë ato që lexojnë ndarjen e një telefoni. Nga ndërtimi 20 serverët Plex dhe kamerat Tapo hapen edhe ata në dritare, pamja e drejtpërdrejtë e kamerës në HD; cilësimi “Paraqitje për telekomandë” mbetet në Automatike, gjë që e lë joaktiv në kufjet VR.
+I gjithë aplikacioni punon si një dritare 2D me madhësi të ndryshueshme: hyrja, kronologjia, albumet, kërkimi, skeda Biblioteka (lista 360°, On this device, Ndarjet e rrjetit), cilësimet, dhe shikuesit e fotove dhe videove, ku luhen fotot dhe videot e sheshta.
+
+Në kufjet VR, butoni 360°, dhe Shiko si 360° në menynë ⋮, hapin drejtpërdrejt pamjen zhytëse në vend të shikuesit sferik të telefonave, dhe butoni Spatial 2.5D dhe cilësimi i tij nuk shfaqen.
+
+Nga ndërtimi 19, një foto hapësinore Apple ka një buton Shiko në 3D, dhe pllakëza Ndaje këtë telefon në rrjet nuk shfaqet: kufjet VR janë ato që lexojnë ndarjen e një telefoni. Nga ndërtimi 20 serverët Plex dhe kamerat Tapo hapen edhe ata në dritare, pamja e drejtpërdrejtë e kamerës në HD; cilësimi “Paraqitje për telekomandë” mbetet në Automatike, gjë që e lë joaktiv në kufjet VR.
 
 ### Në pamje
 
 Pamje të bëra në kufjet VR me butonin e kapjes së ekranit (butoni Meta dhe këmbëza), në një Quest 3, me aplikacionin në frëngjisht; skeda Biblioteka shfaqet në modalitetin pa server.
 
-| Pa server | Ndarjet e rrjetit |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Skeda Biblioteka pa server: On this device dhe Ndarjet e rrjetit"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Faqja Ndarjet e rrjetit me një ndarje SMB të një Freebox Server"> |
-| Skeda Biblioteka në modalitetin pa server: mediat e vetë kufjeve VR dhe ndarjet e rrjetit | Një ndarje Samba e një Freebox Server, e lexuar drejtpërdrejt nga kufjet VR |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Skeda Biblioteka pa server: On this device dhe Ndarjet e rrjetit">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Faqja Ndarjet e rrjetit me një ndarje SMB të një Freebox Server">
+</p>
+
+- **Pa server**: skeda Biblioteka në modalitetin pa server, me mediat e vetë kufjeve VR dhe ndarjet e rrjetit.
+- **Ndarjet e rrjetit**: një ndarje Samba e një Freebox Server, e lexuar drejtpërdrejt nga kufjet VR.
 
 ### Kufizimet në kufjet VR
 
@@ -786,12 +953,18 @@ Pamje të bëra në kufjet VR me butonin e kapjes së ekranit (butoni Meta dhe k
 
 Aplikacioni është në Google Play për telefona dhe tableta; versioni i App Store pret shqyrtimin e Apple, faqja në Meta Horizon Store është miratuar dhe përditësimi i saj i parë është në shqyrtim te Meta, dhe versioni i Google Play për televizorë pret shqyrtimin e Google për publikimin për televizor. Publikimi në GitHub është gjithmonë ndërtimi më i ri:
 
-| Platforma | Sot | Së shpejti |
-|---|---|---|
-| Telefona dhe tableta Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ose APK-ja në faqen [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` për një telefon (`Immuch360-v<version>-release.apk` universal funksionon kudo, `-armeabi-v7a` është për telefona më të vjetër 32 bit, dhe skedari `.aab` është për Google Play, jo për sideload). Ndërtimi i GitHub zakonisht është përpara dyqanit. Në çdo rast instalohet pranë aplikacionit zyrtar Immich (paketa `com.aprogsys.immuch360`). | Google Play: ndërtimi 18 është i publikuar, ndërtimi 20 në shqyrtim te Google që nga 7 tetor 2026, në vend të ndërtimit 19 |
-| iPhone dhe iPad | Në pritje të shqyrtimit të Apple. Versioni në shqyrtim ka veçoritë e ndërtimit 11: ngarkimi në Immich dhe zgjedhja Burimi i videos (ndërtimi 15) dhe skedarët Insta360 të papërpunuar (ndërtimi 16) do të vijnë me një përditësim të mëvonshëm të App Store. Kodi burimor ndërtohet me Xcode ose në Codemagic, shihni [Ndërtojeni vetë](#build-it-yourself). | App Store, në shqyrtim |
-| Meta Quest 2, Quest Pro, Quest 3 dhe 3S (Quest 2 dhe Quest Pro të patestuara) | Skedari `-quest-release.apk` i faqes [Releases](https://github.com/freeKC/Immuch360/releases) (funksionon edhe `-release.apk` universal), i instaluar me sideload në modalitetin e zhvilluesit, shihni [Instalimi](#install). Ndërtimi i dyqanit dhe APK-ja e GitHub janë nënshkruar me çelësa të ndryshëm: për të kaluar nga njëri te tjetri, çinstaloni fillimisht aplikacionin (cilësimet dhe ndarjet e ruajtura shkojnë bashkë me të). | Meta Horizon Store: faqja u miratua më 7 tetor 2026 me ndërtimin 14, dhe ndërtimi 21, përditësimi i saj i parë, është në shqyrtim nga Meta; kanali alfa i dyqanit (vetëm për testuesit) merr çdo ndërtim të ri |
-| Android TV dhe Google TV (nga ndërtimi 20) | `Immuch360-v<version>-release.apk` universal i faqes [Releases](https://github.com/freeKC/Immuch360/releases), i instaluar me sideload me adb, shihni [Instalojeni në televizor](#install-it-on-the-tv). Është i njëjti aplikacion si në telefona. | Google Play në televizorë, pas shqyrtimit të Google për publikimin për televizor |
+- **Telefona dhe tableta Android**
+  - Sot: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ose APK-ja në faqen [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` për një telefon (`Immuch360-v<version>-release.apk` universal funksionon kudo, `-armeabi-v7a` është për telefona më të vjetër 32 bit, dhe skedari `.aab` është për Google Play, jo për sideload). Ndërtimi i GitHub zakonisht është përpara dyqanit. Në çdo rast instalohet pranë aplikacionit zyrtar Immich (paketa `com.aprogsys.immuch360`).
+  - Së shpejti: në Google Play, ndërtimi 18 është i publikuar, ndërtimi 20 në shqyrtim te Google që nga 7 tetor 2026, në vend të ndërtimit 19.
+- **iPhone dhe iPad**
+  - Sot: në pritje të shqyrtimit të Apple. Versioni në shqyrtim ka veçoritë e ndërtimit 11: ngarkimi në Immich dhe zgjedhja Burimi i videos (ndërtimi 15) dhe skedarët Insta360 të papërpunuar (ndërtimi 16) do të vijnë me një përditësim të mëvonshëm të App Store. Kodi burimor ndërtohet me Xcode ose në Codemagic, shihni [Ndërtojeni vetë](#build-it-yourself).
+  - Së shpejti: App Store, në shqyrtim.
+- **Meta Quest 2, Quest Pro, Quest 3 dhe 3S (Quest 2 dhe Quest Pro të patestuara)**
+  - Sot: skedari `-quest-release.apk` i faqes [Releases](https://github.com/freeKC/Immuch360/releases) (funksionon edhe `-release.apk` universal), i instaluar me sideload në modalitetin e zhvilluesit, shihni [Instalimi](#install). Ndërtimi i dyqanit dhe APK-ja e GitHub janë nënshkruar me çelësa të ndryshëm: për të kaluar nga njëri te tjetri, çinstaloni fillimisht aplikacionin (cilësimet dhe ndarjet e ruajtura shkojnë bashkë me të).
+  - Së shpejti: në Meta Horizon Store, faqja u miratua më 7 tetor 2026 me ndërtimin 14, dhe ndërtimi 21, përditësimi i saj i parë, është në shqyrtim nga Meta; kanali alfa i dyqanit (vetëm për testuesit) merr çdo ndërtim të ri.
+- **Android TV dhe Google TV (nga ndërtimi 20)**
+  - Sot: `Immuch360-v<version>-release.apk` universal i faqes [Releases](https://github.com/freeKC/Immuch360/releases), i instaluar me sideload me adb, shihni [Instalojeni në televizor](#install-it-on-the-tv). Është i njëjti aplikacion si në telefona.
+  - Së shpejti: Google Play në televizorë, pas shqyrtimit të Google për publikimin për televizor.
 
 Lidhjet e App Store dhe Meta Horizon Store do të shtohen këtu sapo të publikohen faqet. Hyni me URL-në dhe llogarinë tuaj të zakonshme të serverit Immich, ose prekni “Përdor pa server” në faqen e hyrjes për të filluar me fotot dhe videot e vetë pajisjes. APK-ja nga GitHub nuk përditësohet vetë: ndiqni faqen Releases, dhe pasi ta keni instaluar aplikacionin nga një dyqan, merrini përditësimet nga ai dyqan.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Pamjet e ekranit për dyqanet bëhen në ndërtime korrigjimi në simulator, të krijuara me `--dart-define=IMMUCH_SCREENSHOTS=true`, që vetëm fsheh shiritin e korrigjimit. Dy variantet (flavor) Android janë i njëjti aplikacion. Nga ndërtimi 20 `phone` deklarohet edhe si aplikacion televizori (një hyrje në lëshuesin e televizorit dhe një baner, pa kërkuar ekran me prekje), gjë që `quest` e lë jashtë. `quest` synon SDK 34 dhe mban vetëm lejet që përdorin kufjet VR (foto, video, njoftime): menaxhimi i medias, vendndodhja në sfond, hapësira e vjetër e ruajtjes, audio, vendndodhja e medias, vendndodhja e pajisjes dhe kamera hiqen në `android/app/src/quest/AndroidManifest.xml`, sepse Meta Horizon Store refuzon dy të parat dhe kërkon arsyetim për çdo leje tjetër të ndjeshme; i njëjti skedar emërton Quest 2, Quest Pro, Quest 3 dhe 3S si pajisjet e mbështetura dhe e kufizon HTTP-në e thjeshtë te vetë kufjet VR dhe te emrat e rrjetit të shtëpisë. APK-ja është vetëm 64 bit për shkak të dy argumenteve shtesë të rreshtit të saj të komandës (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` është ai që kërkon Google Play. Për të ndërtuar për iOS në Mac-un tuaj, përdorni Xcode dhe ekipin tuaj të nënshkrimit; me Xcode 26, ekzekutoni një herë fillimisht `xcodebuild -downloadComponent MetalToolchain`, sepse shader-at Spatial kanë nevojë për të. Pa Mac, ndërtimet iOS ekzekutohen në Codemagic (një Mac i strehuar) nga skedari `codemagic.yaml` i këtij depoje. Ndërtimet e publikimit Android ekzekutohen në GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Pamjet e ekranit për dyqanet bëhen në ndërtime korrigjimi në simulator, të krijuara me `--dart-define=IMMUCH_SCREENSHOTS=true`, që vetëm fsheh shiritin e korrigjimit.
+
+Dy variantet (flavor) Android janë i njëjti aplikacion. Nga ndërtimi 20 `phone` deklarohet edhe si aplikacion televizori (një hyrje në lëshuesin e televizorit dhe një baner, pa kërkuar ekran me prekje), gjë që `quest` e lë jashtë.
+
+`quest` synon SDK 34 dhe mban vetëm lejet që përdorin kufjet VR (foto, video, njoftime): menaxhimi i medias, vendndodhja në sfond, hapësira e vjetër e ruajtjes, audio, vendndodhja e medias, vendndodhja e pajisjes dhe kamera hiqen në `android/app/src/quest/AndroidManifest.xml`, sepse Meta Horizon Store refuzon dy të parat dhe kërkon arsyetim për çdo leje tjetër të ndjeshme; i njëjti skedar emërton Quest 2, Quest Pro, Quest 3 dhe 3S si pajisjet e mbështetura dhe e kufizon HTTP-në e thjeshtë te vetë kufjet VR dhe te emrat e rrjetit të shtëpisë. APK-ja është vetëm 64 bit për shkak të dy argumenteve shtesë të rreshtit të saj të komandës (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` është ai që kërkon Google Play.
+
+Për të ndërtuar për iOS në Mac-un tuaj, përdorni Xcode dhe ekipin tuaj të nënshkrimit; me Xcode 26, ekzekutoni një herë fillimisht `xcodebuild -downloadComponent MetalToolchain`, sepse shader-at Spatial kanë nevojë për të. Pa Mac, ndërtimet iOS ekzekutohen në Codemagic (një Mac i strehuar) nga skedari `codemagic.yaml` i këtij depoje. Ndërtimet e publikimit Android ekzekutohen në GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Asnjë sekret nuk ndodhet në këtë depo: çelësi i nënshkrimit Android ruhet si sekrete të koduara të GitHub Actions, dhe materiali i nënshkrimit Apple si variabla të koduara në Codemagic. Skedarët e workflow-it u referohen vetëm me emër. Pa `android/key.jks` tuajin, një ndërtim publikimi nënshkruhet me çelësin e korrigjimit dhe nuk mund të instalohet mbi një kopje nga GitHub ose nga një dyqan (çinstalojeni fillimisht atë); një ndërtim korrigjimi instalohet pranë saj si Immuch360 debug. Kopja e Meta Horizon Store është APK-ja `quest` e publikimit e nënshkruar me një çelës tjetër, atë me të cilin u regjistrua fillimisht aplikacioni i dyqanit, prandaj as ajo nuk mund të instalohet mbi një APK të instaluar me sideload, as anasjelltas.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Nga ndërtimi 19, klienti DLNA, ndarja e telefonit dhe zbulimi i mediave hapësinore Apple shkruajnë edhe në regjistrin e vetë aplikacionit (Regjistrat, në menynë e fotos së profilit lart djathtas), nën `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` dhe `NetworkMediaService`. Nga ndërtimi 20 modaliteti i televizorit shkruan aty nën `TvMode` dhe `TvTextEntry`, serverët Plex nën `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` dhe `PlexServerEditPage`, dhe kamerat Tapo nën `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` dhe `CameraLiveView`; rreshtat e Plex nuk përmbajnë kurrë tokenin, një adresë ose një titull, dhe rreshtat e kamerave i lënë jashtë fjalëkalimet. Rreshtat e regjistrit mbeten në pajisje, përveç nëse i kopjoni vetë.
 
+<a id="privacy"></a>
 ## Privatësia
 
 - **Asgjë nuk shkon te zhvilluesi**: aplikacioni komunikon me serverin Immich që zgjidhni (dhe, kur hapni hartën, me shërbimin e pllakave të hartës që përdor ai server), nuk ka reklama, analitikë apo shërbim raportimi të rrëzimeve të drejtuar nga zhvilluesi, dhe nuk i dërgon asgjë zhvilluesit të Immuch360.
@@ -849,10 +1029,12 @@ Nga ndërtimi 19, klienti DLNA, ndarja e telefonit dhe zbulimi i mediave hapësi
 
 Politika e plotë është te [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Licenca dhe marka tregtare
 
 Ky projekt është një fork i Immich dhe mbetet nën [GNU AGPL v3](../LICENSE). Çdo APK, përfshirë ato për telefona, përmban gjithashtu Meta Spatial SDK, që nuk është me burim të hapur (Meta Platform Technologies SDK License Agreement) dhe përdoret vetëm në kufjet Meta Quest. Immuch360 nuk është i lidhur me ekipin e Immich apo me FUTO, dhe nuk miratohet prej tyre.
 
+<a id="roadmap"></a>
 ## Plani
 
 Çfarë nuk është bërë ende, më e mundshmja e para. Asgjë këtu nuk është premtim, dhe komentet në [gjurmuesin e problemeve](https://github.com/freeKC/Immuch360/issues) ndihmojnë të vendoset çfarë vjen e para.
@@ -871,6 +1053,7 @@ Ky projekt është një fork i Immich dhe mbetet nën [GNU AGPL v3](../LICENSE).
 - **Plex, hapat e radhës**: testi në pajisje i ndërtimit 20 (telefona, Quest, një iPhone, një televizor, jashtë shtëpisë); sjellja e tokenit nga kompjuteri me një kod QR; fshehja e anës DLNA të një serveri Plex në listën e serverëve të gjetur; IPv6.
 - **Upstream**: pull request të vegjël për Immich për pjesët që duan mirëmbajtësit, duke filluar nga shikuesi i fotove 360°.
 
+<a id="credits"></a>
 ## Falënderime
 
 Shikuesi i fotove 360° bazohet në pull request-in upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) nga dmitry-brazhenko, i ndërtuar vetë mbi prototipin e bencefr në [#30192](https://github.com/immich-app/immich/pull/30192). Faleminderit të dyve.

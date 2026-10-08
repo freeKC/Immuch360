@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | Oʻzbekcha | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Oʻzbekcha</b> · Boshqa tillar (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: Immich, telefoningiz yoki NAS dan 360°, 3D va VR180 suratlar va videolar. Android, iOS va Meta Quest, server bilan yoki serversiz">
 </p>
 
 # Immuch360
 
-Immuch360 ichida atrofga qarash mumkin boʻlgan 360° suratlar va videolarga ega Immich mobil ilovasi, shuningdek Android telefon va planshetlarida, iPhone va iPad da, Meta Quest shlemlarida (Quest 3 va 3S, 21-yigʻmadan esa Quest 2 va Quest Pro, sinovdan oʻtmagan), 20-yigʻmadan esa Android TV va Google TV da tekis, 360°, 3D va VR180 suratlar va videolar uchun bepul pleyer. U 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) yoki telefonning fotosfera rejimida suratga oladigan yoxud shlemi bor va oʻz suratlarini Immich serveridan, telefonning oʻzidan, NAS, media server yoki Plex serveridan koʻrmoqchi boʻlganlar uchun: oʻsha server, oʻsha hisob, serverda hech qanday plagin yoʻq, yoki umuman serversiz. 20-yigʻmadan u Tapo kameralarini ham koʻrsatadi: jonli tasvirni va xotira kartasidagi yozuvlarni.
+Immuch360 ichida atrofga qarash mumkin boʻlgan 360° suratlar va videolarga ega Immich mobil ilovasi, shuningdek Android telefon va planshetlarida, iPhone va iPad da, Meta Quest shlemlarida (Quest 3 va 3S, 21-yigʻmadan esa Quest 2 va Quest Pro, sinovdan oʻtmagan), 20-yigʻmadan esa Android TV va Google TV da tekis, 360°, 3D va VR180 suratlar va videolar uchun bepul pleyer.
+
+U 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) yoki telefonning fotosfera rejimida suratga oladigan yoxud shlemi bor va oʻz suratlarini Immich serveridan, telefonning oʻzidan, NAS, media server yoki Plex serveridan koʻrmoqchi boʻlganlar uchun: oʻsha server, oʻsha hisob, serverda hech qanday plagin yoʻq, yoki umuman serversiz. 20-yigʻmadan u Tapo kameralarini ham koʻrsatadi: jonli tasvirni va xotira kartasidagi yozuvlarni.
 
 <p align="center">
   <sub>Norasmiy fork. Immich yoki FUTO bilan bogʻliq emas. Nomi "I am much 360" deb oʻqiladi.</sub>
@@ -13,29 +15,52 @@ Immuch360 ichida atrofga qarash mumkin boʻlgan 360° suratlar va videolarga ega
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">koʻrib chiqilmoqda</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store tasdiqlandi, 21-yigʻma birinchi yangilanish sifatida yuborildi &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
+  App Store: <a href="#where-to-get-it">koʻrib chiqilmoqda</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store tasdiqlandi, 21-yigʻma birinchi yangilanish sifatida yuborildi<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 Oʻrnatilgan 360°</h3>Ichida atrofga qaraydigan sfera koʻrinishidagi suratlar va videolar, giroskop bilan, kameraning xom fayllari ham (Insta360 16-yigʻmadan, GoPro va DJI 18-yigʻmadan). Yana bepul video pleyer: tekis, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 Oʻrnatilgan 3D</h3>Stereoskopik 360° va VR180, yuqori va pastki yoki yonma-yon, hamda Apple fazoviy suratlari (19-yigʻmadan): shlemda haqiqiy 3D, telefonda bitta koʻz</td>
-    <td align="center" width="33%"><h3>🎥 Oʻrnatilgan 2.5D</h3>Stereoskopik videodan tekis ekranda chuqurlik, koʻrinish boshingizni kuzatadi (tajribaviy, telefonlar va planshetlar)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Telefonlar, planshetlar va Quest 2, Pro, 3 va 3S shlemlarida bitta ilova, shlemda haqiqiy 3D, 20-yigʻmadan esa Android TV da pult bilan</td>
-    <td align="center"><h3>🔌 Server bilan yoki serversiz</h3>Sizning Immich serveringiz yoki telefonning oʻz galereyasi, hisob kerak emas</td>
-    <td align="center"><h3>🗄️ Tarmoq ulashmalari</h3>Samba (SMB), WebDAV va 19-yigʻmadan DLNA media serverlari, tarmoqda topiladi va jonli oʻqiladi, hech narsa yuklab olinmaydi, siz tanlaganingizda Immich ga yuboriladi. 19-yigʻmadan telefon oʻz galereyasini shlem bilan ham ulashadi</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Televizorda</h3>20-yigʻmadan Android TV va Google TV da oʻsha APK: 360° suratlar va videolar, serveringiz va ulashmalaringiz, pult bilan</td>
-    <td align="center"><h3>🎬 Plex, plex.tv siz</h3>20-yigʻmadan Plex kutubxonalaringiz, 360° 360° boʻlib qolishi uchun asl fayllardan ijro etiladi, uyda ham, tashqarida ham</td>
-    <td align="center"><h3>📹 Tapo kameralari</h3>20-yigʻmadan jonli tasvir va xotira kartasidagi yozuvlar, faqat tarmogʻingizda, va siz xohlaganda Immich ga yuboriladigan klip</td>
-  </tr>
-</table>
+- 🌐 **Oʻrnatilgan 360°**<br>Ichida atrofga qaraydigan sfera koʻrinishidagi suratlar va videolar, giroskop bilan, kameraning xom fayllari ham (Insta360 16-yigʻmadan, GoPro va DJI 18-yigʻmadan). Yana bepul video pleyer: tekis, 360°, 3D, VR180
+- 👓 **Oʻrnatilgan 3D**<br>Stereoskopik 360° va VR180, yuqori va pastki yoki yonma-yon, hamda Apple fazoviy suratlari (19-yigʻmadan): shlemda haqiqiy 3D, telefonda bitta koʻz
+- 🎥 **Oʻrnatilgan 2.5D**<br>Stereoskopik videodan tekis ekranda chuqurlik, koʻrinish boshingizni kuzatadi (tajribaviy, telefonlar va planshetlar)
+- 📱 **Android, iOS, Quest, TV**<br>Telefonlar, planshetlar va Quest 2, Pro, 3 va 3S shlemlarida bitta ilova, shlemda haqiqiy 3D, 20-yigʻmadan esa Android TV da pult bilan
+- 🔌 **Server bilan yoki serversiz**<br>Sizning Immich serveringiz yoki telefonning oʻz galereyasi, hisob kerak emas
+- 🗄️ **Tarmoq ulashmalari**<br>Samba (SMB), WebDAV va 19-yigʻmadan DLNA media serverlari, tarmoqda topiladi va jonli oʻqiladi, hech narsa yuklab olinmaydi, siz tanlaganingizda Immich ga yuboriladi. 19-yigʻmadan telefon oʻz galereyasini shlem bilan ham ulashadi
+- 📺 **Televizorda**<br>20-yigʻmadan Android TV va Google TV da oʻsha APK: 360° suratlar va videolar, serveringiz va ulashmalaringiz, pult bilan
+- 🎬 **Plex, plex.tv siz**<br>20-yigʻmadan Plex kutubxonalaringiz, 360° 360° boʻlib qolishi uchun asl fayllardan ijro etiladi, uyda ham, tashqarida ham
+- 📹 **Tapo kameralari**<br>20-yigʻmadan jonli tasvir va xotira kartasidagi yozuvlar, faqat tarmogʻingizda, va siz xohlaganda Immich ga yuboriladigan klip
+
+<details>
+<summary><b>Mundarija</b></summary>
+
+- [Sfera koʻrinishidagi 360° suratlar va videolar](#360-photos-and-videos-as-a-sphere)
+- [Server va hisobsiz](#without-a-server-or-an-account)
+- [Tarmoq ulashmalari: NAS, kompyuter yoki media server](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, plex.tv siz](#plex-media-server-without-plextv)
+- [Bu telefonni tarmoqda ulashish](#share-this-phone-on-the-network)
+- [Tapo kameralari: jonli tasvir va xotira kartasidagi yozuvlar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Kameraning xom 360° fayllari, kamera ilovasisiz](#raw-360-camera-files-without-the-cameras-app)
+- [3D va VR180 suratlar va videolar](#3d-and-vr180-photos-and-videos)
+- [Tekis ekranda chuqurlik: Spatial 2.5D (tajribaviy)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Apple fazoviy suratlari va videolari](#apple-spatial-photos-and-videos)
+- [Meta Quest 3 shlemida](#in-the-meta-quest-3-headset)
+- [Televizoringizda koʻring (Android TV va Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [360° suratlaringizni toping: 360° roʻyxati](#find-your-360-shots-the-360-list)
+- [Video tafsilotlari, dekoderlar va video nima uchun qotib qoladi](#video-details-decoders-and-why-a-video-stutters)
+- [Qolgan hammasi Immich](#everything-else-is-immich)
+- [Immich ilovasi va boshqa ilovalar bilan taqqoslash](#compared-with-the-immich-app-and-other-apps)
+- [Platformalar boʻyicha formatlar va manbalar](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Qayerdan olish mumkin](#where-to-get-it)
+- [Oʻzingiz yigʻing](#build-it-yourself)
+- [Jurnallar](#logs)
+- [Maxfiylik](#privacy)
+- [Litsenziya va savdo belgisi](#license-and-trademark)
+- [Yoʻl xaritasi](#roadmap)
+- [Minnatdorchilik](#credits)
+
+</details>
 
 ## Sizda qanday muammo bor?
 
@@ -61,12 +86,19 @@ Funksiya yangi boʻlsa, matnda u qaysi yigʻmadan beri borligi aytiladi. GitHub 
 
 Siz suratlaringizning zaxira nusxasini [Immich](https://github.com/immich-app/immich) serveriga olasiz va ularning baʼzilari 360° kameradan yoki telefonning fotosfera rejimidan keladi. Rasmiy mobil ilovada bu suratlar tekis, choʻzilgan tasma boʻlib koʻrinadi, 360° videolar ham tekis ijro etiladi. Immich veb ilovasi 360° suratni sfera koʻrinishida koʻrsata oladi, mobil ilova esa yoʻq: bu 2024-yil yanvaridan beri [#6572 muhokamasida](https://github.com/immich-app/immich/discussions/6572) soʻralmoqda.
 
-Immuch360 ularni Android va iOS telefon va planshetlarida ichida atrofga qaraydigan sfera sifatida ochadi. Surat sudraganingizda aylanadi, chimdish yoki ikki marta bosish bilan kattalashadi, tez sudrashdan keyin yana biroz aylanib turadi, kamera yozib olgan boshlangʻich koʻrinishda ochiladi (GPano metamaʼlumotlari) va kattalashtirganingizda aniqroq tekstura oladi; qisman panoramalar ham qoʻllab-quvvatlanadi (GPano kesimi). Video oʻrnatilgan sferik pleyerda ovoz, sudrash va giroskop bilan ijro etiladi. Tikilgan 360° fayllar hamma joyda ishlaydi: Insta360 ilovasi yoki Studio, GoPro Player, Ricoh Theta eksportlari va telefon fotosferalari. Toʻgʻridan-toʻgʻri kameradan kelgan xom fayllarni ilova oʻzi tikadi, qarang: [Kameraning xom 360° fayllari](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 ularni Android va iOS telefon va planshetlarida ichida atrofga qaraydigan sfera sifatida ochadi.
 
-| Sfera koʻrinishidagi 360° surat | 360° pleyerdagi 360° video |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="Sfera koʻruvchisida koʻl qirgʻogʻining 360° surati: yuqori chapda yopish tugmasi, yuqori oʻngda 360°, 3D joylashuvi va giroskop tugmalari"> | <img src="../.github/readme/b19-video.png" width="420" alt="Yotiq ushlangan telefonning 360° pleyerida qirgʻoq yoʻlining 360° videosi: yuqori chapda yopish va fayl nomi, yuqori oʻngda 360° va 3D, oʻrtada oldingi, orqaga, ijro, oldinga va keyingi, pastda vaqt chizigʻi"> |
-| Yuqori chapda yopish; yuqori oʻngda 360°/180° tugmasi, 3D joylashuvi tugmasi va giroskop | Boshqaruvlar uchun tasvirga bosing; yuqori oʻngda 360° va 3D |
+Surat sudraganingizda aylanadi, chimdish yoki ikki marta bosish bilan kattalashadi, tez sudrashdan keyin yana biroz aylanib turadi, kamera yozib olgan boshlangʻich koʻrinishda ochiladi (GPano metamaʼlumotlari) va kattalashtirganingizda aniqroq tekstura oladi; qisman panoramalar ham qoʻllab-quvvatlanadi (GPano kesimi). Video oʻrnatilgan sferik pleyerda ovoz, sudrash va giroskop bilan ijro etiladi.
+
+Tikilgan 360° fayllar hamma joyda ishlaydi: Insta360 ilovasi yoki Studio, GoPro Player, Ricoh Theta eksportlari va telefon fotosferalari. Toʻgʻridan-toʻgʻri kameradan kelgan xom fayllarni ilova oʻzi tikadi, qarang: [Kameraning xom 360° fayllari](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="Sfera koʻruvchisida koʻl qirgʻogʻining 360° surati: yuqori chapda yopish tugmasi, yuqori oʻngda 360°, 3D joylashuvi va giroskop tugmalari">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Yotiq ushlangan telefonning 360° pleyerida qirgʻoq yoʻlining 360° videosi: yuqori chapda yopish va fayl nomi, yuqori oʻngda 360° va 3D, oʻrtada oldingi, orqaga, ijro, oldinga va keyingi, pastda vaqt chizigʻi">
+</p>
+
+- **Sfera koʻrinishidagi 360° surat**: yuqori chapda yopish; yuqori oʻngda 360°/180° tugmasi, 3D joylashuvi tugmasi va giroskop.
+- **360° pleyerdagi 360° video**: boshqaruvlar uchun tasvirga bosing; yuqori oʻngda 360° va 3D.
 
 ### 360° suratni sfera sifatida ochish
 
@@ -135,12 +167,17 @@ Kirish sahifasidagi "Serversiz foydalanish" Immuch360 ni qurilmaning oʻz suratl
 
 360° videolaringiz NAS yoki kompyuterda turibdi va siz ularni avval nusxalamasdan telefonda yoki shlemda koʻrmoqchisiz. Shlemda odamlar oxir-oqibat har bir faylni kabel orqali nusxalaydi; Plex va Jellyfin kabi media serverlar 360° videolarni tekis ijro etadi, forumlaridagi soʻrovlarda aytilganidek; Immich ilovasi esa faqat sizning Immich serveringizni oʻqiydi.
 
-Immuch360 SMB (Samba, Windows), WebDAV yoki 19-yigʻmadan DLNA/UPnP (media server: Jellyfin, minidlna, Gerbera, Emby, NAS yoki TV pristavka) protokolini qoʻllaydigan har qanday serverdagi suratlar va videolarni toʻgʻridan-toʻgʻri ulashmadan koʻrib chiqadi va ijro etadi. 20-yigʻmadan Plex Media Server ning alohida turi bor, qarang: [Plex Media Server, plex.tv siz](#plex-media-server-without-plextv). U tarmogʻingizdagi serverlarni oʻzi topadi va fayllarni ilovaning qolgan qismidagi oʻsha koʻruvchilarda jonli ijro etadi (360°, 3D, VR180, Spatial 2.5D, Quest ning immersiv koʻrinishi), Immich serveri bilan yoki serversiz, telefonlarda va Meta Quest 3 da. Hech narsa yuklab olinmaydi. Server ulangan boʻlsa, siz tanlagan fayllarni Immich hisobingizga yuborish mumkin (15-yigʻmadan).
+Immuch360 SMB (Samba, Windows), WebDAV yoki 19-yigʻmadan DLNA/UPnP (media server: Jellyfin, minidlna, Gerbera, Emby, NAS yoki TV pristavka) protokolini qoʻllaydigan har qanday serverdagi suratlar va videolarni toʻgʻridan-toʻgʻri ulashmadan koʻrib chiqadi va ijro etadi. 20-yigʻmadan Plex Media Server ning alohida turi bor, qarang: [Plex Media Server, plex.tv siz](#plex-media-server-without-plextv).
 
-| Ulashma qoʻshish | Ulashmaning jildi |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Ulashma qo'shish sahifasi: Nomi, Server nomi yoki manzili, Port (ixtiyoriy), Ulashma, Ulashmani tanlang, Boshlang'ich jild (ixtiyoriy), Foydalanuvchi nomi, Parol, Ulanishni tekshirish va natija: Ulandi, boshlang'ich jildda 2 ta element"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Tarmoq ulashmasining jildi miniatyuralar toʻri koʻrinishida: 360° belgili 360° suratlar va ijro belgili 360° video, yuqori oʻngda Tanlash tugmasi"> |
-| Ulanishni tekshirish dan keyin yangi SMB ulashmasining maydonlari | Ulashmadan jonli oʻqilgan 360° suratlar va video |
+U tarmogʻingizdagi serverlarni oʻzi topadi va fayllarni ilovaning qolgan qismidagi oʻsha koʻruvchilarda jonli ijro etadi (360°, 3D, VR180, Spatial 2.5D, Quest ning immersiv koʻrinishi), Immich serveri bilan yoki serversiz, telefonlarda va Meta Quest 3 da. Hech narsa yuklab olinmaydi. Server ulangan boʻlsa, siz tanlagan fayllarni Immich hisobingizga yuborish mumkin (15-yigʻmadan).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Ulashma qo'shish sahifasi: Nomi, Server nomi yoki manzili, Port (ixtiyoriy), Ulashma, Ulashmani tanlang, Boshlang'ich jild (ixtiyoriy), Foydalanuvchi nomi, Parol, Ulanishni tekshirish va natija: Ulandi, boshlang'ich jildda 2 ta element">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Tarmoq ulashmasining jildi miniatyuralar toʻri koʻrinishida: 360° belgili 360° suratlar va ijro belgili 360° video, yuqori oʻngda Tanlash tugmasi">
+</p>
+
+- **Ulashma qoʻshish**: Ulanishni tekshirish dan keyin yangi SMB ulashmasining maydonlari.
+- **Ulashmaning jildi**: ulashmadan jonli oʻqilgan 360° suratlar va video.
 
 ### Ulashma qoʻshish
 
@@ -178,16 +215,26 @@ Ulashmadagi ochiq surat yoki videoning menyusida ham xuddi shu band bor. Servers
 
 ### Yuklab olmasdan qanday ijro etiladi
 
-Pleyerlar kerakli baytlarni ilova ichidagi koʻprik orqali oʻqiydi (faqat loopback manzil, har bir sessiya uchun tasodifiy token, bayt diapazonlari), shuning uchun videoni oʻtkazish ishlaydi va qurilmaga hech narsa nusxalanmaydi. Pleyerlar va shlem koʻruvchisi ulashma manzilini hech qachon olmaydi, faqat koʻprikning 127.0.0.1 manzilini oladi; serverga soʻrovlarni ilovaning oʻzi yuboradi. Ravon ijro uchun ulashma katta bloklarda oʻqiladi, fayl oʻqishlar orasida ochiq qoladi, pleyerdan 16 MB gacha oldinga oʻqiladi, ijro etilayotgan video esa miniatyuralar va roʻyxatlarga xizmat qiladigan ulanishdan alohida, oltitagacha parallel SMB ulanishi orqali oʻqiladi. Freebox Server har bir oʻqishga sekin javob beradi: bitta ulanish 4,5 MB/s, oltitasi 19 MB/s beradi, bu 132 Mbit/s dagi 5.7K eksport uchun yetarli. Pleyer maʼlumot kutayotganda 360° va Spatial pleyerlari ijro buferining toʻlishi bilan "Yuklanmoqda" ni koʻrsatadi; tekis pleyer video yuklanayotganda yoki toʻxtab qolganda foizsiz "Yuklanmoqda" ni koʻrsatadi.
+Pleyerlar kerakli baytlarni ilova ichidagi koʻprik orqali oʻqiydi (faqat loopback manzil, har bir sessiya uchun tasodifiy token, bayt diapazonlari), shuning uchun videoni oʻtkazish ishlaydi va qurilmaga hech narsa nusxalanmaydi. Pleyerlar va shlem koʻruvchisi ulashma manzilini hech qachon olmaydi, faqat koʻprikning 127.0.0.1 manzilini oladi; serverga soʻrovlarni ilovaning oʻzi yuboradi.
+
+Ravon ijro uchun ulashma katta bloklarda oʻqiladi, fayl oʻqishlar orasida ochiq qoladi, pleyerdan 16 MB gacha oldinga oʻqiladi, ijro etilayotgan video esa miniatyuralar va roʻyxatlarga xizmat qiladigan ulanishdan alohida, oltitagacha parallel SMB ulanishi orqali oʻqiladi. Freebox Server har bir oʻqishga sekin javob beradi: bitta ulanish 4,5 MB/s, oltitasi 19 MB/s beradi, bu 132 Mbit/s dagi 5.7K eksport uchun yetarli.
+
+Pleyer maʼlumot kutayotganda 360° va Spatial pleyerlari ijro buferining toʻlishi bilan "Yuklanmoqda" ni koʻrsatadi; tekis pleyer video yuklanayotganda yoki toʻxtab qolganda foizsiz "Yuklanmoqda" ni koʻrsatadi.
 
 ### DLNA media serverlari
 
-19-yigʻmadan ilova media serverlar uchun SSDP qidiruvini tarmoqning multicast guruhiga, xuddi shu soʻrovni esa mahalliy /24 tarmoqning har bir manzilidagi 1900-portga yuboradi, keyin javob bergan har bir serverning qurilma tavsifini oʻqiydi va oʻz kontentini eʼlon qiladiganlarini (ContentDirectory) saqlab qoladi. Jildlar va fayllar serverning Browse amali bilan sahifama-sahifa roʻyxatlanadi va sarlavhalari bilan nomlanadi: sarlavhada kengaytma boʻlmasa, fayl oʻz turining kengaytmasini oladi, jilddagi xuddi shu sarlavhali ikkinchi fayl esa `name (2)` boʻladi. Audio chiqarib tashlanadi. Miniatyuralar albom muqovasi yoki server yaratadigan kichik rasmlar boʻlib, ularni ilovaning oʻzi yuklaydi, serverda boʻlmasa ilovaning oʻz miniatyurasi ishlatiladi. Fayl server taklif qiladigan asl nusxadan ijro etiladi, ikkalasi taklif qilinganda oʻzgartirilgan nusxadan emas, va diapazon soʻrovlari bilan oʻqiladi, shuning uchun oʻtkazish ishlaydi. minidlna va Gerbera bilan tekshirildi; haqiqiy tarmoqda topish, Plex, Jellyfin, NAS, Freebox Server, iPhone va Quest 19-yigʻmaning qurilmadagi sinovidir.
+19-yigʻmadan ilova media serverlar uchun SSDP qidiruvini tarmoqning multicast guruhiga, xuddi shu soʻrovni esa mahalliy /24 tarmoqning har bir manzilidagi 1900-portga yuboradi, keyin javob bergan har bir serverning qurilma tavsifini oʻqiydi va oʻz kontentini eʼlon qiladiganlarini (ContentDirectory) saqlab qoladi.
+
+Jildlar va fayllar serverning Browse amali bilan sahifama-sahifa roʻyxatlanadi va sarlavhalari bilan nomlanadi: sarlavhada kengaytma boʻlmasa, fayl oʻz turining kengaytmasini oladi, jilddagi xuddi shu sarlavhali ikkinchi fayl esa `name (2)` boʻladi. Audio chiqarib tashlanadi. Miniatyuralar albom muqovasi yoki server yaratadigan kichik rasmlar boʻlib, ularni ilovaning oʻzi yuklaydi, serverda boʻlmasa ilovaning oʻz miniatyurasi ishlatiladi. Fayl server taklif qiladigan asl nusxadan ijro etiladi, ikkalasi taklif qilinganda oʻzgartirilgan nusxadan emas, va diapazon soʻrovlari bilan oʻqiladi, shuning uchun oʻtkazish ishlaydi.
+
+minidlna va Gerbera bilan tekshirildi; haqiqiy tarmoqda topish, Plex, Jellyfin, NAS, Freebox Server, iPhone va Quest 19-yigʻmaning qurilmadagi sinovidir.
 
 <a id="a-share-that-moved"></a>
 ### Manzili oʻzgargan ulashma
 
-19-yigʻmadan DLNA ulashmasi va telefon ulashmasi (qarang: [Bu telefonni tarmoqda ulashish](#share-this-phone-on-the-network)) serveri eʼlon qiladigan identifikatorni saqlaydi. Ulardan biri oʻz manzilida javob bermay qolsa (routerdan olingan yangi manzil, boshqa portda qayta ishga tushgan server), uning jild sahifasi "Tarmoqda (nom) qidirilmoqda" ni koʻrsatadi va ulashmani endi javob berayotgan joyga koʻchiradi: paroli boʻlmagan DLNA server uchun darhol, foydalanuvchi nomi va paroli bor ulashma uchun esa ikkala manzilni koʻrsatadigan "Yangi manzildan foydalanilsinmi?" tasdigʻidan keyin, chunki ular yangi manzilga yuboriladi. 20-yigʻmadan tarmoqning boshqa manzilida qayta topilgan Plex serveri ham darhol koʻchiriladi: token yuborilishidan oldin uning sertifikati bu oʻsha server ekanini isbotlaydi. Tapo kamerasi esa oʻz sahifasidan MAC manzili boʻyicha qidiriladi, qarang: [Tapo kameralari](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+19-yigʻmadan DLNA ulashmasi va telefon ulashmasi (qarang: [Bu telefonni tarmoqda ulashish](#share-this-phone-on-the-network)) serveri eʼlon qiladigan identifikatorni saqlaydi. Ulardan biri oʻz manzilida javob bermay qolsa (routerdan olingan yangi manzil, boshqa portda qayta ishga tushgan server), uning jild sahifasi "Tarmoqda (nom) qidirilmoqda" ni koʻrsatadi va ulashmani endi javob berayotgan joyga koʻchiradi: paroli boʻlmagan DLNA server uchun darhol, foydalanuvchi nomi va paroli bor ulashma uchun esa ikkala manzilni koʻrsatadigan "Yangi manzildan foydalanilsinmi?" tasdigʻidan keyin, chunki ular yangi manzilga yuboriladi.
+
+20-yigʻmadan tarmoqning boshqa manzilida qayta topilgan Plex serveri ham darhol koʻchiriladi: token yuborilishidan oldin uning sertifikati bu oʻsha server ekanini isbotlaydi. Tapo kamerasi esa oʻz sahifasidan MAC manzili boʻyicha qidiriladi, qarang: [Tapo kameralari](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Cheklovlar
 
@@ -227,7 +274,9 @@ Videolaringiz Plex da, Plex esa 360° suratlar va videolaringizni tekis koʻrsat
 
 ### Uydan tashqarida
 
-Serverni har safar ochganda ilova avval uy manzilini, 400 ms dan keyin esa uydan tashqaridagi manzilni sinaydi. Sizning serveringiz sifatida birinchi javob bergani ishlatiladi; agar bu uydan tashqaridagi manzil boʻlsa, jild sahifasi "Uydan tashqaridagi manzil orqali ulangan" yozuvli globus belgisini koʻrsatadi. Buning uchun Plex da Remote Access (Masofaviy kirish) yoqilgan (Settings, Remote Access) va routeringiz bir portni yoʻnaltirgan boʻlishi kerak: plex.tv siz ilova Plex ning reley serveridan foydalana olmaydi, shuning uchun port yoʻnaltirilmagan server faqat uyda ochiladi, uydan tashqarida esa sahifa "Plex serveringizga uy tarmog'ingizdan tashqarida kirib bo'lmaydi. Plex'da port yo'naltirish bilan masofaviy kirishni yoqing (Sozlamalar, Masofaviy kirish) yoki uning ommaviy manzilini kiriting." deydi.
+Serverni har safar ochganda ilova avval uy manzilini, 400 ms dan keyin esa uydan tashqaridagi manzilni sinaydi. Sizning serveringiz sifatida birinchi javob bergani ishlatiladi; agar bu uydan tashqaridagi manzil boʻlsa, jild sahifasi "Uydan tashqaridagi manzil orqali ulangan" yozuvli globus belgisini koʻrsatadi.
+
+Buning uchun Plex da Remote Access (Masofaviy kirish) yoqilgan (Settings, Remote Access) va routeringiz bir portni yoʻnaltirgan boʻlishi kerak: plex.tv siz ilova Plex ning reley serveridan foydalana olmaydi, shuning uchun port yoʻnaltirilmagan server faqat uyda ochiladi, uydan tashqarida esa sahifa "Plex serveringizga uy tarmog'ingizdan tashqarida kirib bo'lmaydi. Plex'da port yo'naltirish bilan masofaviy kirishni yoqing (Sozlamalar, Masofaviy kirish) yoki uning ommaviy manzilini kiriting." deydi.
 
 Server bildirgan manzil uydagi har bir ulanishda qayta aniqlanadi. Agar u tashqaridan javob bermasa (manzilini oʻzgartiradigan router, ketma-ket ikki router), oʻz manzilingizni server sahifasida kiriting. Token ishlamay qolsa (masalan, siz uni nusxalagan brauzer seansidan chiqqan boʻlsangiz), jild sahifasi buni aytadi va server sahifasini token maydonida ochadigan "Yangi token joylash" ni taklif qiladi.
 
@@ -344,15 +393,13 @@ Insta360 kameralari obyektivlarining ikki baliqkoʻz doirasini bitta tasvirda yo
 
 16-yigʻmadan Immuch360 bu fayllarni telefonda, planshetda yoki shlemda oʻzi tikadi, serverga hech narsa oʻrnatmasdan:
 
-| Kamera va fayl | Ilova nima qiladi | Qachondan |
-|---|---|---|
-| Insta360 .insp suratlari | Sfera koʻruvchisidan oldin GPU da, 8192x4096 gacha tikiladi, kichikroq oʻlchamda CPU zaxira varianti bilan | 16-yigʻma |
-| Ikkala obyektivni bitta trekda saqlaydigan Insta360 .insv videolari | Pleyerda GPU effekti bilan tikiladi | 16-yigʻma |
-| Insta360 X4, X4 Air, X5 va X6 .insv videolari, har bir obyektiv uchun bitta kvadrat trek | Bir vaqtda ikkita dekoder, har bir obyektivga bittadan, va ularni sferaga tikadigan GPU kompozitori | 18-yigʻma |
-| 5.7K va undan yuqori Insta360 X3 va eskiroqlari: ikki fayl, `_00_` va `_10_` | Xuddi shunday, ikkinchi fayl birinchisining yonidan topiladi | 18-yigʻma |
-| GoPro MAX va MAX 2 .360: har biri kubning uch yuzidan iborat ikki trek | Xuddi shunday, ustma-ust tushadigan ustunlar aralashtiriladi | 18-yigʻma |
-| DJI Osmo 360 .osv: ikkita kvadrat 10 bit trek | Xuddi shunday, faylning Kannala-Brandt kalibrovkasi bilan | 18-yigʻma |
-| Ikki baliqkoʻz .dng | Tekis koʻrinadi | Hali emas |
+- **Insta360 .insp suratlari** (16-yigʻma): sfera koʻruvchisidan oldin GPU da, 8192x4096 gacha tikiladi, kichikroq oʻlchamda CPU zaxira varianti bilan.
+- **Ikkala obyektivni bitta trekda saqlaydigan Insta360 .insv videolari** (16-yigʻma): pleyerda GPU effekti bilan tikiladi.
+- **Insta360 X4, X4 Air, X5 va X6 .insv videolari, har bir obyektiv uchun bitta kvadrat trek** (18-yigʻma): bir vaqtda ikkita dekoder, har bir obyektivga bittadan, va ularni sferaga tikadigan GPU kompozitori.
+- **5.7K va undan yuqori Insta360 X3 va eskiroqlari: ikki fayl, `_00_` va `_10_`** (18-yigʻma): xuddi shunday, ikkinchi fayl birinchisining yonidan topiladi.
+- **GoPro MAX va MAX 2 .360: har biri kubning uch yuzidan iborat ikki trek** (18-yigʻma): xuddi shunday, ustma-ust tushadigan ustunlar aralashtiriladi.
+- **DJI Osmo 360 .osv: ikkita kvadrat 10 bit trek** (18-yigʻma): xuddi shunday, faylning Kannala-Brandt kalibrovkasi bilan.
+- **Ikki baliqkoʻz .dng** (hali emas): tekis koʻrinadi.
 
 ### Xom faylni koʻrish
 
@@ -466,7 +513,9 @@ Aniqlash Apple ning oʻz tasvir kutubxonasi yozgan namunaviy fazoviy surat va si
 
 Odamlar oʻz 360° suratlari va videolarini koʻrish uchun Quest 3 sotib oladi, keyin fayllarni qayerga qoʻyish, ularni shlemga kabelsiz qanday oʻtkazish va qaysi pleyerdan foydalanishni soʻraydi: doʻkondagi 360° va 3D video pleyerlari pullik.
 
-Oʻsha Android ilovasi Quest 3 va 3S da, 21-yigʻmadan esa Quest 2 va Quest Pro da (sinovdan oʻtmagan), butun kutubxonangiz bilan oyna sifatida ishlaydi. Uning 360° tugmasi immersiv koʻrinishni ochadi, unda surat yoki video sizni har tomondan oʻrab oladi va siz boshingizni burib atrofga qaraysiz, stereoskopik fayllar uchun haqiqiy 3D da (Meta Spatial SDK). Media Immich serveringizdan, shlemning oʻzidan, NAS dan, media serverdan, telefondan yoki Plex serveridan keladi va joyida ijro etiladi (media server va telefon 19-yigʻmadan, Plex serveri 20-yigʻmadan, shlemda hali tekshirilmagan), 20-yigʻmadan esa oyna Tapo kameralarini ham koʻrsatadi. U bepul va ochiq kodli. Quest 3 da va Insta360 X4 8K HEVC videolari bilan bir foydalanuvchi tomonidan tekshirildi.
+Oʻsha Android ilovasi Quest 3 va 3S da, 21-yigʻmadan esa Quest 2 va Quest Pro da (sinovdan oʻtmagan), butun kutubxonangiz bilan oyna sifatida ishlaydi. Uning 360° tugmasi immersiv koʻrinishni ochadi, unda surat yoki video sizni har tomondan oʻrab oladi va siz boshingizni burib atrofga qaraysiz, stereoskopik fayllar uchun haqiqiy 3D da (Meta Spatial SDK).
+
+Media Immich serveringizdan, shlemning oʻzidan, NAS dan, media serverdan, telefondan yoki Plex serveridan keladi va joyida ijro etiladi (media server va telefon 19-yigʻmadan, Plex serveri 20-yigʻmadan, shlemda hali tekshirilmagan), 20-yigʻmadan esa oyna Tapo kameralarini ham koʻrsatadi. U bepul va ochiq kodli. Quest 3 da va Insta360 X4 8K HEVC videolari bilan bir foydalanuvchi tomonidan tekshirildi.
 
 ### Immersiv koʻrinishni ochish
 
@@ -479,17 +528,20 @@ Oʻsha Android ilovasi Quest 3 va 3S da, 21-yigʻmadan esa Quest 2 va Quest Pro 
 
 | Amal | Kontrollerlar | Qoʻllar |
 |---|---|---|
-| Ilovaga qaytish | B yoki Y | Maʼlumot panelidagi Orqaga tugmasi |
-| Videoni ijro etish yoki pauza | Maʼlumot paneli yashirin boʻlganda tepki | Maʼlumot panelidagi Ijro etish yoki Pauza tugmasi |
+| Ilovaga qaytish | B yoki Y | Orqaga tugmasi |
+| Videoni ijro etish yoki pauza | Maʼlumot paneli yashirin boʻlganda tepki | Ijro etish yoki Pauza tugmasi |
 | Maʼlumot panelini koʻrsatish yoki yashirish | A, X, ushlash tugmasi yoki menyu | Menyu imosi yoki panel yashirin boʻlganda chimdish |
-| Boshingizni burmasdan orqaga qarash uchun koʻrinishni burish (17-yigʻmadan) | Oʻng joystik chapga yoki oʻngga: har surishda 30°, ushlab turilsa burilishda davom etadi (bir qatorli qatlam burchakni koʻrsatadi) | Maʼlumot panelidagi Burish tugmasi (90°) |
-| Oldingi yoki keyingi media | Chap joystik chapga yoki oʻngga (17-yigʻmagacha istalgan joystik; 16-yigʻmadan bir qatorli qatlam media nomini koʻrsatadi, maʼlumot paneli yashirin qoladi) | Maʼlumot panelidagi Oldingi va Keyingi tugmalari |
-| Videoda 10 soniya orqaga yoki oldinga | Joystik pastga yoki yuqoriga (16-yigʻmadan bir qatorli qatlam vaqtni koʻrsatadi, maʼlumot paneli yashirin qoladi) | Ikki oʻtkazish tugmasi yoki maʼlumot panelidagi vaqt chizigʻini sudrash |
-| Tasvirni 90° burish | Suratda joystik pastga yoki yuqoriga (16-yigʻmadan bir qatorli qatlam burchakni koʻrsatadi); videoda maʼlumot panelidagi Burish tugmasi | Maʼlumot panelidagi Burish tugmasi |
-| 3D joylashuvini oʻzgartirish (mono, yuqori va pastki, yonma-yon) | Maʼlumot panelidagi 3D tugmasi | Maʼlumot panelidagi 3D tugmasi |
-| Toʻliq sfera yoki yarim sfera (VR180) | Maʼlumot panelidagi 360°/180° tugmasi | Maʼlumot panelidagi 360°/180° tugmasi |
+| Koʻrinishni burish (17-yigʻmadan) | Oʻng joystik chapga yoki oʻngga, har surishda 30° | Burish tugmasi (90°) |
+| Oldingi yoki keyingi media | Chap joystik chapga yoki oʻngga | Oldingi va Keyingi tugmalari |
+| Videoda 10 soniya orqaga yoki oldinga | Joystik pastga yoki yuqoriga | Ikki oʻtkazish tugmasi yoki vaqt chizigʻini sudrash |
+| Tasvirni 90° burish | Suratda joystik pastga yoki yuqoriga, videoda Burish tugmasi | Burish tugmasi |
+| 3D joylashuvini oʻzgartirish (mono, yuqori va pastki, yonma-yon) | 3D tugmasi | 3D tugmasi |
+| Toʻliq sfera yoki yarim sfera (VR180) | 360°/180° tugmasi | 360°/180° tugmasi |
 
-Kontrollerlar bilan maʼlumot panelidagi tugmalar va vaqt chizigʻi ham ishlaydi: nur bilan ularga yoʻnaltiring va tepkini bosing.
+Bu jadvaldagi tugmalar va vaqt chizigʻi maʼlumot paneliniki. Kontrollerlar bilan ular ham ishlaydi: nur bilan ularga yoʻnaltiring va tepkini bosing.
+
+- **Koʻrinishni burish**: boshingizni burmasdan orqaga qarash uchun. Oʻng joystik ushlab turilsa burilishda davom etadi, bir qatorli qatlam esa burchakni koʻrsatadi.
+- **Bir qatorli qatlam**: 16-yigʻmadan joystik bilan oʻtkazish, suratni burish yoki oldingi va keyingi bir qatorli qatlamni koʻrsatadi (vaqt, burchak yoki media nomi) va maʼlumot paneli yashirin qoladi. 17-yigʻmagacha istalgan joystik oldingi yoki keyingi mediaga oʻtardi.
 
 ### Maʼlumot paneli, oldingi va keyingi
 
@@ -497,7 +549,9 @@ Videoning maʼlumot panelida ikkita 10 soniyalik oʻtkazish tugmasi orasida vaqt
 
 Oldingi va keyingi immersiv koʻrinishdan chiqmasdan siz kelgan joyning 360° mediasi boʻylab harakatlanadi: vaqt chizigʻi, 360° roʻyxati (filtrlangan holda), albom, tarmoq ulashmasi jildi yoki shlemning oʻz mediasi (On this device). Tekis suratlar va videolar oʻtkazib yuboriladi. Vaqt chizigʻi, albom yoki 360° roʻyxatidan ilovaga qaytganingizda u siz koʻrayotgan mediaga tushadi (ulashma jildi sahifasi siz ochgan faylda qoladi), immersiv koʻrinishni ochgan videongiz esa toʻxtagan joyidan davom etadi.
 
-17-yigʻmadan oʻng joystik, koʻpchilik shlem ilovalaridagi kabi, koʻrinishni buradi: bir surish 30° buradi, ushlab turish burishni davom ettiradi, shunda orqangizdagi narsa boshingizni yoki stulingizni burmasdan oldingizga keladi; oldingi va keyingi chap joystikda. 16-yigʻmadan, shlemdagi bir foydalanuvchining fikri boʻyicha, joystik bilan oʻtkazish, burish yoki oldingi/keyingi maʼlumot panelini chiqarish oʻrniga 1,5 soniyadan keyin yoʻqoladigan bir qatorli qatlamni (vaqt, burchak yoki media sarlavhasi) koʻrsatadi; panel hamon A, X, ushlash yoki menyu tugmasi bilan chiqadi. Oʻsha yigʻma kontrollerlar uxlaganda, uygʻonganda yoki qoʻl kuzatuviga joy berganda ham panel almashtirgichini ishlaydigan holda saqlaydi va bu oʻtishlarni jurnalga yozadi, qarang: [Jurnallar](#logs).
+17-yigʻmadan oʻng joystik, koʻpchilik shlem ilovalaridagi kabi, koʻrinishni buradi: bir surish 30° buradi, ushlab turish burishni davom ettiradi, shunda orqangizdagi narsa boshingizni yoki stulingizni burmasdan oldingizga keladi; oldingi va keyingi chap joystikda.
+
+16-yigʻmadan, shlemdagi bir foydalanuvchining fikri boʻyicha, joystik bilan oʻtkazish, burish yoki oldingi/keyingi maʼlumot panelini chiqarish oʻrniga 1,5 soniyadan keyin yoʻqoladigan bir qatorli qatlamni (vaqt, burchak yoki media sarlavhasi) koʻrsatadi; panel hamon A, X, ushlash yoki menyu tugmasi bilan chiqadi. Oʻsha yigʻma kontrollerlar uxlaganda, uygʻonganda yoki qoʻl kuzatuviga joy berganda ham panel almashtirgichini ishlaydigan holda saqlaydi va bu oʻtishlarni jurnalga yozadi, qarang: [Jurnallar](#logs).
 
 "3D ko'rinishida ko'rish" bilan ochilgan Apple fazoviy surati sferaga joylashtirilmaydi: u oldingizda suzib turadi, qarang: [Apple fazoviy suratlari va videolari](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Suratlar avval oldindan koʻrishni, keyin koʻpi bilan 8192x4096 gacha kichrayti
 
 3D joylashuvlari, yuqori va pastki va yonma-yon, 360° va VR180, 3D da koʻrsatiladi, har bir koʻz kadrning oʻz yarmini oladi. Joylashuv fayl uni eʼlon qilsa (videolar) fayldan olinadi, aks holda shaklidan taxmin qilinadi (kvadrat: yuqori va pastki, 4:1: yonma-yon); notoʻgʻri boʻlsa, maʼlumot panelidagi 3D tugmasidan foydalaning.
 
-| Shlemdagi 360° surat | Shlemdagi 360° video | Shlemdagi 3D 360° video |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="Quest 3 da sizni oʻrab turgan 360° surat, maʼlumot paneli bilan: joylashuv, 360° va Orqaga tugmalari"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Quest 3 da ijro etilayotgan koʻlning 360° videosi, maʼlumot paneli bilan: joylashuv, 360°, Pauza va Orqaga tugmalari"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Quest 3 dagi stereoskopik 360° video, maʼlumot panelida 3D, yuqori va pastki deb yozilgan"> |
-| Suratning immersiv koʻrinishi, maʼlumot paneli bilan (joylashuv, 360°/180°, Orqaga) | Ijro etilayotgan video, Pauza bilan | Yuqori va pastki stereoskopik video, har bir koʻzga oʻz tasviri (Kandao Obsidian namunasi) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Quest 3 da sizni oʻrab turgan 360° surat, maʼlumot paneli bilan: joylashuv, 360° va Orqaga tugmalari">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Quest 3 da ijro etilayotgan koʻlning 360° videosi, maʼlumot paneli bilan: joylashuv, 360°, Pauza va Orqaga tugmalari">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Quest 3 dagi stereoskopik 360° video, maʼlumot panelida 3D, yuqori va pastki deb yozilgan">
+</p>
+
+- **Shlemdagi 360° surat**: suratning immersiv koʻrinishi, maʼlumot paneli bilan (joylashuv, 360°/180°, Orqaga).
+- **Shlemdagi 360° video**: ijro etilayotgan video, Pauza bilan.
+- **Shlemdagi 3D 360° video**: yuqori va pastki stereoskopik video, har bir koʻzga oʻz tasviri (Kandao Obsidian namunasi).
 
 Bu skrinshotlar 14-yigʻmadan oldin, ilova fransuz tilida boʻlganda olingan. Panelda endi ikkita 10 soniyalik oʻtkazish tugmasi orasidagi vaqt chizigʻi, Oldingi va Keyingi, hamda Burish ham bor.
 
@@ -598,7 +657,9 @@ Immuch360 360° suratlarning miniatyuralariga (tarmoq ulashmasi jildida 360° vi
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Video tafsilotlari, dekoderlar va video nima uchun qotib qoladi
 
-Odamlar Quest 3 qaysi kodek, oʻlcham va bit tezligini ijro etishini, 5.7K eksport nega telefonda ijro etilsa ham shlemda qotib qolishini soʻraydi. Javob apparat dekoderida: Quest 3 (XR2 Gen 2) ning H.264 dekoderi taxminan 4096x2304 da chegarasiga yetadi, shuning uchun 5760x2880 H.264 video (6.0 daraja, taxminan 200 Mbit/s, odatiy Insta360 eksporti) shlemda taxminan 17 fps da, blok artefaktlari bilan dekodlanadi, oʻsha fayl esa telefonda bemalol ijro etiladi. Oʻsha video HEVC (H.265) da shlemda yaxshi ijro etiladi: Insta360 X4 8K HEVC video (7680x3840, 29,97 fps, 210 Mbit/s, Main profil 6.1 daraja, 8 bit) immersiv koʻrinishda oʻz oʻlchamida va transkodlashsiz ravon ijro etiladi (Quest 3 dagi foydalanuvchi xabar bergan).
+Odamlar Quest 3 qaysi kodek, oʻlcham va bit tezligini ijro etishini, 5.7K eksport nega telefonda ijro etilsa ham shlemda qotib qolishini soʻraydi. Javob apparat dekoderida: Quest 3 (XR2 Gen 2) ning H.264 dekoderi taxminan 4096x2304 da chegarasiga yetadi, shuning uchun 5760x2880 H.264 video (6.0 daraja, taxminan 200 Mbit/s, odatiy Insta360 eksporti) shlemda taxminan 17 fps da, blok artefaktlari bilan dekodlanadi, oʻsha fayl esa telefonda bemalol ijro etiladi.
+
+Oʻsha video HEVC (H.265) da shlemda yaxshi ijro etiladi: Insta360 X4 8K HEVC video (7680x3840, 29,97 fps, 210 Mbit/s, Main profil 6.1 daraja, 8 bit) immersiv koʻrinishda oʻz oʻlchamida va transkodlashsiz ravon ijro etiladi (Quest 3 dagi foydalanuvchi xabar bergan).
 
 Immich ilovasida bitta "Force original video" almashtirgichi bor va u faqat kodekni koʻrsatadi. Immuch360 video nima ekanini va qurilma nimani dekodlashini koʻrsatadi hamda ijro etiladigan faylni tanlaydi.
 
@@ -623,7 +684,9 @@ Settings, Advanced, "Shu qurilmaning video dekoderlari" (15-yigʻmadan) telefon 
 1. Settings, Asset Viewer, keyin Videos ni oching.
 2. "Video manbasi" ("Serverda transkodlangan nusxa boʻlganda qaysi fayl ijro etiladi") ostida "Shu qurilma dekodlay olsa, asl fayl", "Har doim asl fayl" yoki "Har doim transkodlangan oqim" ni tanlang.
 
-15-yigʻmadan tanlov har bir server videosiga qoʻllanadi: tekis pleyer, 360° va Spatial pleyerlari va Quest ning immersiv koʻrinishi. Siz tanlamaguningizcha telefon avvalgi "Force original video" almashtirgichi aytganini saqlaydi (standart holatda oʻchiq: transkodlangan oqim, server transkodlamagan boʻlsa bu asl faylning oʻzi), Quest esa shlem dekodlay olsa asl faylni ijro etadi. Tekshiruv kodek, oʻlcham va kadr tezligini fayldan oʻqiydi va ularni apparat dekoderlari bilan solishtiradi (Quest 3 da H.264 oʻlchangan 4096x2304 bilan cheklanadi). Asl faylni dekodlay olmaydigan pleyer xabar bilan transkodlangan oqimga oʻtadi: "Transkodlangan oqim ijro etilmoqda: asl fayl (kodek va oʻlcham) shu qurilma dekodlay oladigan chegaradan oshadi".
+15-yigʻmadan tanlov har bir server videosiga qoʻllanadi: tekis pleyer, 360° va Spatial pleyerlari va Quest ning immersiv koʻrinishi. Siz tanlamaguningizcha telefon avvalgi "Force original video" almashtirgichi aytganini saqlaydi (standart holatda oʻchiq: transkodlangan oqim, server transkodlamagan boʻlsa bu asl faylning oʻzi), Quest esa shlem dekodlay olsa asl faylni ijro etadi.
+
+Tekshiruv kodek, oʻlcham va kadr tezligini fayldan oʻqiydi va ularni apparat dekoderlari bilan solishtiradi (Quest 3 da H.264 oʻlchangan 4096x2304 bilan cheklanadi). Asl faylni dekodlay olmaydigan pleyer xabar bilan transkodlangan oqimga oʻtadi: "Transkodlangan oqim ijro etilmoqda: asl fayl (kodek va oʻlcham) shu qurilma dekodlay oladigan chegaradan oshadi".
 
 Shlemda immersiv koʻrinish asl faylni boshlaydi va birinchi kadrlarda, asl fayl dekoderlardan oshsa, serverning transkodlangan oqimiga oʻtadi va buni maʼlumot panelida aytadi; transkodlangan oqim boʻlmasa, u ham juda katta boʻlsa yoki fayl shlemdan yoxud tarmoq ulashmasidan kelgan boʻlsa, maʼlumot paneli buni 10 soniya davomida nimani oʻzgartirish kerakligi bilan birga aytadi. Horizon Store ga yuborilgan 14-yigʻma faqat 4096x2304 dan katta H.264 ni tekshiradi va shunda serverning ijro oqimini xuddi shunday sinab koʻradi.
 
@@ -661,87 +724,184 @@ Rasmiy Immich mobil ilovasi qiladigan hamma narsa shu yerda: zaxira nusxa, vaqt 
 
 Joriy yigʻma, 21-yigʻma (versiya 3.3.0-rc.0, yigʻma raqami 3030019), Immich 3.3.0-rc.0 ga asoslangan (Immich `main`, hali barqaror reliz emas). 19-yigʻma Immich 3.2 serveri bilan sinovdan oʻtkazilgan, 20 va 21-yigʻmalar esa ilova serverdan soʻraydigan narsalarda hech narsani oʻzgartirmaydi. Iltimos, muammolar haqida Immich loyihasiga emas, [Issues](https://github.com/freeKC/Immuch360/issues) boʻlimiga xabar bering. Immich ning oʻzi haqidagi toʻliq hujjatlar uchun qarang: [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich ilovasi va boshqa ilovalar bilan taqqoslash
 
 ### Bu fork nima uchun bor, bitta jadvalda
 
-| | Immich mobil ilovasi | Immuch360 | Holat |
-|---|:---:|:---:|---|
-| Ichida atrofga qaraydigan sfera koʻrinishidagi 360° suratlar (sudrash, chimdish, ikki marta bosish, inersiya, kameraning boshlangʻich koʻrinishi, qisman panoramalar) | ❌ tekis tasma | ✅ | Galaxy S24+ va iPhone 14 da sinovdan oʻtgan |
-| Giroskop: telefonni harakatlantirib atrofga qarash | ❌ | ✅ | Galaxy S24+ va iPhone 14 da sinovdan oʻtgan |
-| Sferik pleyerdagi 360° videolar, ovoz, oʻtkazish, audio trek tanlovi va buferlash koʻrsatkichi bilan | ❌ tekis video | ✅ Android va iOS (iOS da hozircha vaqt chizigʻi yoʻq) | Galaxy S24+ va iPhone 14 da sinovdan oʻtgan |
-| 3D (stereoskopik) 360° suratlar va videolar | ❌ ikkilangan tasvir | ✅ telefonlarda chap koʻz, Quest da haqiqiy 3D | Galaxy S24+ va Quest 3 da haqiqiy 3D 360° namunalar (VRTogether, Vuze, Kandao) va 3D surat bilan sinovdan oʻtgan; boshqa kameralardan hisobotlarni kutib qolamiz |
-| VR180 (yarim sfera) suratlar va videolar | ❌ sfera boʻylab choʻzilgan | ✅ yarim sfera, 360°/180° tugmasi | Android emulyatori va Galaxy S24+ da sintetik media bilan sinovdan oʻtgan; qurilmalardan fikrlarni kutib qolamiz |
-| Apple fazoviy suratlari (HEIC stereo juftliklari) va fazoviy videolari (MV-HEVC) | ❌ tekis surat yoki video, fazoviy ekanini hech narsa aytmaydi | ✅ 19-yigʻmadan: Quest da suratlar 3D da, boshqa joylarda bitta koʻz va tafsilotlar qatori | Aniqlash Apple tasvir kutubxonasi yozgan namunaviy surat va sintetik fayllarda tekshirildi; shlemdagi koʻrinish va haqiqiy iPhone fayllari 19-yigʻmaning qurilmadagi sinovidir |
-| Bosh kuzatuvi, vaqt chizigʻi, oldingi va keyingi hamda Burish bilan Meta Quest immersiv koʻrinishi | ❌ | ✅ oʻsha ilova, shlem yigʻmasi yoki telefon APK si sifatida | Quest 3 da sinovdan oʻtgan (14-yigʻma boshqaruvlari, foydalanuvchi fikri boʻyicha 16-yigʻmada moslangan) va Insta360 X4 8K HEVC videolari bilan bir foydalanuvchi tomonidan |
-| Miniatyuralarda 360° belgisi va xom fayllar hamda filtrlar (davr, manba, tur, kamera) bilan 360° roʻyxati | ❌ | ✅ filtrlar 18-yigʻmadan | Tayyor |
-| Server belgilamagan fayllar uchun "360° sifatida ko‘rish" | ❌ | ✅ telefonda eslab qolinadi | Tayyor |
-| Spatial 2.5D: stereoskopik videodan tekis ekranda chuqurlik | ❌ | ✅ tajribaviy, telefonlar va planshetlar | Galaxy S24+ da sinovdan oʻtgan; iPhone dan fikrlarni kutib qolamiz |
-| Umuman serversiz, qurilmaning oʻz galereyasi bilan foydalanish | ❌ kirish talab qilinadi | ✅ | Galaxy S24+, Quest 3 va Android emulyatorida sinovdan oʻtgan |
-| Tarmoqda topilib, jonli ijro etiladigan SMB va WebDAV ulashmalari, hech narsa yuklab olinmaydi | ❌ | ✅ har bir koʻruvchi, telefonlar va Quest | Galaxy S24+ va Quest 3 da Freebox Server (SMB) bilan, Android emulyatorida Samba va WebDAV test serverlari bilan sinovdan oʻtgan; boshqa NAS va WebDAV boʻyicha fikrlarni kutib qolamiz |
-| Ulashma turi sifatida DLNA media serverlari | ❌ | ✅ 19-yigʻmadan | Docker da minidlna va Gerbera bilan tekshirildi; Plex, Jellyfin, NAS, Freebox Server, iPhone va Quest 19-yigʻmaning qurilmadagi sinovidir |
-| Ulashma fayllarini Immich ga yuborish; qoʻlda yuborilgan qurilma fayllari zaxiralangan hisoblanadi | ❌ faqat qurilma fayllari | ✅ 15-yigʻmadan | Android emulyatorida Samba test serveri va Immich 3.2 serveri bilan sinovdan oʻtgan |
-| Shlem uchun bu telefonni tarmoqda ulashish | ❌ | ✅ 19-yigʻmadan, Android va iOS | Unit testlar va kompyuterda shlemning WebDAV mijozi bilan uchidan-uchigacha testlar; Quest ga tarqatadigan telefon va iPhone tomoni 19-yigʻmaning qurilmadagi sinovidir |
-| Plex Media Server kutubxonalari asl fayllardan ijro etiladi, uyda va tashqarida, plex.tv siz | ❌ | ✅ 20-yigʻmadan, har bir koʻruvchida, telefonlar, planshetlar, Quest va televizorlarda | Kompyuterdan haqiqiy Plex Media Server 1.42.1 ga nisbatan tekshirildi (bogʻlanish, jildlar, bayt diapazonlari, eskizlar, uydan tashqaridagi manzil); hali qurilmada tekshirilmagan |
-| Tapo kameralari: jonli tasvir va siz xohlaganda Immich ga yuboriladigan xotira kartasi yozuvlari | ❌ | ✅ 20-yigʻmadan: yozuvlar hamma joyda, jonli tasvir Android, Android TV va Quest da | Simulyatsiya qilingan kameraga nisbatan tekshirildi; hali haqiqiy kamera bilan tekshirilmagan |
-| Android TV va Google TV, pult bilan boshqariladi, oʻsha APK da | ❌ televizor ilovasi emas | ✅ 20-yigʻmadan | Avtomatik testlar bilan tekshirildi; hali televizorda tekshirilmagan |
-| Xom Insta360 .insp suratlari va bitta trekli .insv videolari | ❌ tekis | ✅ 16-yigʻmadan | Suratlar X3 fayllarining Insta360 Studio eksportlari bilan, videolar Android emulyatorida past oʻlchamli X3 fayli bilan tekshirildi; hali iPhone da ishga tushmagan |
-| Har bir trek yoki faylda bitta obyektivli xom videolar (Insta360 X4, X4 Air, X5, X6, X3 juftliklari, GoPro .360, DJI .osv) | ❌ tekis yoki notoʻgʻri | ✅ 18-yigʻmadan | Tahlilchilar va tikish haqiqiy X4, X3 juftligi, GoPro MAX va Osmo 360 fayllarida tekshirildi; ijro 18 va 19-yigʻmalarning qurilmadagi sinovidir |
-| Ikki baliqkoʻz .dng | ❌ tekis | ❌ hali emas | Rejalashtirilgan |
-| Server videolari: qurilma dekodlay olsa asl fayl, aks holda transkodlangan oqim; qurilmaning video dekoderlari roʻyxati | ❌ bitta "Force original video" almashtirgichi | ✅ 15-yigʻmadan | Android emulyatorida sinovdan oʻtgan; Quest 3 ning H.264 chegarasi shlemda oʻlchangan |
-| Video texnik tafsilotlari: bit tezligi, tasvir, profil, shu qurilma uni dekodlay oladimi | ❌ faqat kodek | ✅ 18-yigʻmadan | Tayyor |
-| Serverdan, telefondan yoki NAS dan tekis, 360°, 3D va VR180 videolar uchun bepul pleyer | ❌ faqat tekis | ✅ (Quest 3 doʻkonidagi pleyerlar pullik) | |
-| Oʻsha server, oʻsha hisob, rasmiy ilova yoniga oʻrnatiladi | | ✅ | |
+| | Immich mobil ilovasi | Immuch360 |
+|---|:---:|:---:|
+| Ichida atrofga qaraydigan sfera koʻrinishidagi 360° suratlar (sudrash, chimdish, ikki marta bosish, inersiya, kameraning boshlangʻich koʻrinishi, qisman panoramalar) | ❌ tekis tasma | ✅ |
+| Giroskop: telefonni harakatlantirib atrofga qarash | ❌ | ✅ |
+| Sferik pleyerdagi 360° videolar, ovoz, oʻtkazish, audio trek tanlovi va buferlash koʻrsatkichi bilan | ❌ tekis video | ✅ Android va iOS (iOS da hozircha vaqt chizigʻi yoʻq) |
+| 3D (stereoskopik) 360° suratlar va videolar | ❌ ikkilangan tasvir | ✅ telefonlarda chap koʻz, Quest da haqiqiy 3D |
+| VR180 (yarim sfera) suratlar va videolar | ❌ sfera boʻylab choʻzilgan | ✅ yarim sfera, 360°/180° tugmasi |
+| Apple fazoviy suratlari (HEIC stereo juftliklari) va fazoviy videolari (MV-HEVC) | ❌ tekis surat yoki video, fazoviy ekanini hech narsa aytmaydi | ✅ 19-yigʻmadan: Quest da suratlar 3D da, boshqa joylarda bitta koʻz va tafsilotlar qatori |
+| Bosh kuzatuvi, vaqt chizigʻi, oldingi va keyingi hamda Burish bilan Meta Quest immersiv koʻrinishi | ❌ | ✅ oʻsha ilova, shlem yigʻmasi yoki telefon APK si sifatida |
+| Miniatyuralarda 360° belgisi va xom fayllar hamda filtrlar (davr, manba, tur, kamera) bilan 360° roʻyxati | ❌ | ✅ filtrlar 18-yigʻmadan |
+| Server belgilamagan fayllar uchun "360° sifatida ko‘rish" | ❌ | ✅ telefonda eslab qolinadi |
+| Spatial 2.5D: stereoskopik videodan tekis ekranda chuqurlik | ❌ | ✅ tajribaviy, telefonlar va planshetlar |
+| Umuman serversiz, qurilmaning oʻz galereyasi bilan foydalanish | ❌ kirish talab qilinadi | ✅ |
+| Tarmoqda topilib, jonli ijro etiladigan SMB va WebDAV ulashmalari, hech narsa yuklab olinmaydi | ❌ | ✅ har bir koʻruvchi, telefonlar va Quest |
+| Ulashma turi sifatida DLNA media serverlari | ❌ | ✅ 19-yigʻmadan |
+| Ulashma fayllarini Immich ga yuborish; qoʻlda yuborilgan qurilma fayllari zaxiralangan hisoblanadi | ❌ faqat qurilma fayllari | ✅ 15-yigʻmadan |
+| Shlem uchun bu telefonni tarmoqda ulashish | ❌ | ✅ 19-yigʻmadan, Android va iOS |
+| Plex Media Server kutubxonalari asl fayllardan ijro etiladi, uyda va tashqarida, plex.tv siz | ❌ | ✅ 20-yigʻmadan, har bir koʻruvchida, telefonlar, planshetlar, Quest va televizorlarda |
+| Tapo kameralari: jonli tasvir va siz xohlaganda Immich ga yuboriladigan xotira kartasi yozuvlari | ❌ | ✅ 20-yigʻmadan: yozuvlar hamma joyda, jonli tasvir Android, Android TV va Quest da |
+| Android TV va Google TV, pult bilan boshqariladi, oʻsha APK da | ❌ televizor ilovasi emas | ✅ 20-yigʻmadan |
+| Xom Insta360 .insp suratlari va bitta trekli .insv videolari | ❌ tekis | ✅ 16-yigʻmadan |
+| Har bir trek yoki faylda bitta obyektivli xom videolar (Insta360 X4, X4 Air, X5, X6, X3 juftliklari, GoPro .360, DJI .osv) | ❌ tekis yoki notoʻgʻri | ✅ 18-yigʻmadan |
+| Ikki baliqkoʻz .dng | ❌ tekis | ❌ hali emas |
+| Server videolari: qurilma dekodlay olsa asl fayl, aks holda transkodlangan oqim; qurilmaning video dekoderlari roʻyxati | ❌ bitta "Force original video" almashtirgichi | ✅ 15-yigʻmadan |
+| Video texnik tafsilotlari: bit tezligi, tasvir, profil, shu qurilma uni dekodlay oladimi | ❌ faqat kodek | ✅ 18-yigʻmadan |
+| Serverdan, telefondan yoki NAS dan tekis, 360°, 3D va VR180 videolar uchun bepul pleyer | ❌ faqat tekis | ✅ (Quest 3 doʻkonidagi pleyerlar pullik) |
+| Oʻsha server, oʻsha hisob, rasmiy ilova yoniga oʻrnatiladi | | ✅ |
+
+<details>
+<summary><b>Har bir qatorning holati</b>: qanday sinovdan oʻtkazilgan</summary>
+
+- **Sfera koʻrinishidagi 360° suratlar**: Galaxy S24+ va iPhone 14 da sinovdan oʻtgan.
+- **Giroskop**: Galaxy S24+ va iPhone 14 da sinovdan oʻtgan.
+- **360° videolar**: Galaxy S24+ va iPhone 14 da sinovdan oʻtgan.
+- **3D 360° suratlar va videolar**: Galaxy S24+ va Quest 3 da haqiqiy 3D 360° namunalar (VRTogether, Vuze, Kandao) va 3D surat bilan sinovdan oʻtgan; boshqa kameralardan hisobotlarni kutib qolamiz.
+- **VR180**: Android emulyatori va Galaxy S24+ da sintetik media bilan sinovdan oʻtgan; qurilmalardan fikrlarni kutib qolamiz.
+- **Apple fazoviy suratlari va videolari**: aniqlash Apple tasvir kutubxonasi yozgan namunaviy surat va sintetik fayllarda tekshirildi; shlemdagi koʻrinish va haqiqiy iPhone fayllari 19-yigʻmaning qurilmadagi sinovidir.
+- **Meta Quest immersiv koʻrinishi**: Quest 3 da sinovdan oʻtgan (14-yigʻma boshqaruvlari, foydalanuvchi fikri boʻyicha 16-yigʻmada moslangan) va Insta360 X4 8K HEVC videolari bilan bir foydalanuvchi tomonidan.
+- **360° belgisi va 360° roʻyxati**: tayyor.
+- **360° sifatida koʻrish**: tayyor.
+- **Spatial 2.5D**: Galaxy S24+ da sinovdan oʻtgan; iPhone dan fikrlarni kutib qolamiz.
+- **Umuman serversiz**: Galaxy S24+, Quest 3 va Android emulyatorida sinovdan oʻtgan.
+- **SMB va WebDAV ulashmalari**: Galaxy S24+ va Quest 3 da Freebox Server (SMB) bilan, Android emulyatorida Samba va WebDAV test serverlari bilan sinovdan oʻtgan; boshqa NAS va WebDAV boʻyicha fikrlarni kutib qolamiz.
+- **DLNA media serverlari**: Docker da minidlna va Gerbera bilan tekshirildi; Plex, Jellyfin, NAS, Freebox Server, iPhone va Quest 19-yigʻmaning qurilmadagi sinovidir.
+- **Ulashma fayllarini Immich ga yuborish**: Android emulyatorida Samba test serveri va Immich 3.2 serveri bilan sinovdan oʻtgan.
+- **Bu telefonni tarmoqda ulashish**: unit testlar va kompyuterda shlemning WebDAV mijozi bilan uchidan-uchigacha testlar; Quest ga tarqatadigan telefon va iPhone tomoni 19-yigʻmaning qurilmadagi sinovidir.
+- **Plex Media Server**: kompyuterdan haqiqiy Plex Media Server 1.42.1 ga nisbatan tekshirildi (bogʻlanish, jildlar, bayt diapazonlari, eskizlar, uydan tashqaridagi manzil); hali qurilmada tekshirilmagan.
+- **Tapo kameralari**: simulyatsiya qilingan kameraga nisbatan tekshirildi; hali haqiqiy kamera bilan tekshirilmagan.
+- **Android TV va Google TV**: avtomatik testlar bilan tekshirildi; hali televizorda tekshirilmagan.
+- **Xom Insta360 .insp suratlari va bitta trekli .insv videolari**: suratlar X3 fayllarining Insta360 Studio eksportlari bilan, videolar Android emulyatorida past oʻlchamli X3 fayli bilan tekshirildi; hali iPhone da ishga tushmagan.
+- **Har bir trek yoki faylda bitta obyektivli xom videolar**: tahlilchilar va tikish haqiqiy X4, X3 juftligi, GoPro MAX va Osmo 360 fayllarida tekshirildi; ijro 18 va 19-yigʻmalarning qurilmadagi sinovidir.
+- **Ikki baliqkoʻz .dng**: rejalashtirilgan.
+- **Server videolari va video dekoderlari**: Android emulyatorida sinovdan oʻtgan; Quest 3 ning H.264 chegarasi shlemda oʻlchangan.
+- **Video texnik tafsilotlari**: tayyor.
+
+</details>
 
 ### Odamlar buning uchun ishlatadigan boshqa ilovalar
 
-| Odamlar nimadan foydalanadi | Nimaga duch keladi | Immuch360 nima qiladi |
-|---|---|---|
-| Immich veb ilovasi | U 360° suratni sfera sifatida koʻrsatadi, lekin xom .insp ni tayyor panorama deb hisoblaydi va uning ikki doirasini sfera atrofiga oʻraydi; VR koʻrinish hali ham faqat soʻrov ([#14768 muhokamasi](https://github.com/immich-app/immich/discussions/14768)) | Xom fayllarni qurilmada tikadi va Quest da immersiv koʻrinishni ochadi |
-| Insta360 ilovasi yoki Studio | Koʻrishdan oldin kartadagi xom fayllarni 360° tasvirga aylantirish uchun kerak | Xom .insp va .insv fayllarini, shuningdek GoPro .360 va DJI .osv fayllarini toʻgʻridan-toʻgʻri ochadi |
-| Plex, Jellyfin, Synology Photos | 360° suratlar va videolar tekis koʻrsatiladi yoki tanilmaydi, forumlaridagi mavzularda aytilganidek (Plex dagi bir soʻrov 2017-yildan beri ochiq) | 20-yigʻmadan Plex kutubxonasining oʻzini yoki oʻsha jildlarni SMB, WebDAV yoki DLNA orqali oʻqiydi va serverda hech narsani oʻzgartirmasdan sfera sifatida ijro etadi |
-| Tapo ilovasi | TP-Link hisobingizga kirilgan alohida ilova, kliplar suratlaringizdan alohida | Kamerani suratlaringiz yonida koʻrsatadi, u bilan faqat tarmogʻingizda bogʻlanadi va klipni Immich ga yuborish mumkin boʻlgan video sifatida saqlaydi (20-yigʻmadan) |
-| Televizordagi Immich mobil ilovasi | Televizor ilovasi emas: bir foydalanuvchi u pult bilan emas, sichqoncha bilan ishlashini aytadi | Oʻsha ilova, pult uchun moslashtirilgan (20-yigʻmadan) |
-| Fayllarni shlemga nusxalash | Koʻrishdan oldin har bir fayl kabel orqali nusxalanadi | Immich, NAS, media server yoki telefondan joyida ijro etadi |
-| Quest doʻkonidagi 360° va 3D pleyerlar | Pullik | Bepul va ochiq kodli (AGPL) |
+- **Immich veb ilovasi**
+  - Nimaga duch keladi: u 360° suratni sfera sifatida koʻrsatadi, lekin xom .insp ni tayyor panorama deb hisoblaydi va uning ikki doirasini sfera atrofiga oʻraydi; VR koʻrinish hali ham faqat soʻrov ([#14768 muhokamasi](https://github.com/immich-app/immich/discussions/14768)).
+  - Immuch360 nima qiladi: xom fayllarni qurilmada tikadi va Quest da immersiv koʻrinishni ochadi.
+- **Insta360 ilovasi yoki Studio**
+  - Nimaga duch keladi: koʻrishdan oldin kartadagi xom fayllarni 360° tasvirga aylantirish uchun kerak.
+  - Immuch360 nima qiladi: xom .insp va .insv fayllarini, shuningdek GoPro .360 va DJI .osv fayllarini toʻgʻridan-toʻgʻri ochadi.
+- **Plex, Jellyfin, Synology Photos**
+  - Nimaga duch keladi: 360° suratlar va videolar tekis koʻrsatiladi yoki tanilmaydi, forumlaridagi mavzularda aytilganidek (Plex dagi bir soʻrov 2017-yildan beri ochiq).
+  - Immuch360 nima qiladi: 20-yigʻmadan Plex kutubxonasining oʻzini yoki oʻsha jildlarni SMB, WebDAV yoki DLNA orqali oʻqiydi va serverda hech narsani oʻzgartirmasdan sfera sifatida ijro etadi.
+- **Tapo ilovasi**
+  - Nimaga duch keladi: TP-Link hisobingizga kirilgan alohida ilova, kliplar suratlaringizdan alohida.
+  - Immuch360 nima qiladi: kamerani suratlaringiz yonida koʻrsatadi, u bilan faqat tarmogʻingizda bogʻlanadi va klipni Immich ga yuborish mumkin boʻlgan video sifatida saqlaydi (20-yigʻmadan).
+- **Televizordagi Immich mobil ilovasi**
+  - Nimaga duch keladi: televizor ilovasi emas: bir foydalanuvchi u pult bilan emas, sichqoncha bilan ishlashini aytadi.
+  - Immuch360 nima qiladi: oʻsha ilova, pult uchun moslashtirilgan (20-yigʻmadan).
+- **Fayllarni shlemga nusxalash**
+  - Nimaga duch keladi: koʻrishdan oldin har bir fayl kabel orqali nusxalanadi.
+  - Immuch360 nima qiladi: Immich, NAS, media server yoki telefondan joyida ijro etadi.
+- **Quest doʻkonidagi 360° va 3D pleyerlar**
+  - Nimaga duch keladi: pullik.
+  - Immuch360 nima qiladi: bepul va ochiq kodli (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Platformalar boʻyicha formatlar va manbalar
 
-Immuch360 galereya, shuningdek bepul media pleyer: u rasmiy ilova ijro eta olmaydigan narsalarni ikkinchi jadvaldagi manbalardan, faylga mos pleyerda ijro etadi.
+Immuch360 galereya, shuningdek bepul media pleyer: u rasmiy ilova ijro eta olmaydigan narsalarni ikkinchi roʻyxatdagi manbalardan, faylga mos pleyerda ijro etadi.
 
-| Nima | Android telefonlar | iPhone, iPad | Meta Quest | Android TV, Google TV (20-yigʻmadan) |
-|---|---|---|---|---|
-| Tekis videolar (MP4, MOV, MKV, qurilma dekodlaydigan narsa) | Immich pleyeri va tarmoq ulashmalari uchun oʻrnatilgan pleyer | Xuddi shunday, iOS ochmaydigan ulashmadagi MKV va AVI fayllaridan tashqari (serverda ular transkodlangan holda ijro etiladi) | Oynada | Telefonlardagi kabi; OK pauza qiladi, chap va oʻng 10 s sakraydi |
-| 360° suratlar | Sfera koʻruvchisi, giroskop | Xuddi shunday | Immersiv, sizni oʻrab oladi | Strelkalar bilan buriladigan, kanal tugmalari bilan masshtablanadigan sfera koʻruvchisi |
-| 360° videolar | Sferada oʻrnatilgan Media3 pleyeri, giroskop, oʻtkazish, audio trek tanlovi, buferlash koʻrsatkichi | Sferada oʻrnatilgan SceneKit pleyeri, giroskop, audio trek tanlovi, buferlash koʻrsatkichi; ijro va pauza, hozircha vaqt chizigʻi yoʻq | Immersiv, stereoskopik fayllar uchun haqiqiy 3D, 10 soniyalik oʻtkazishli vaqt chizigʻi, oldingi va keyingi media | Telefonlarning Media3 pleyeri, strelkalar bilan buriladi |
-| 3D 360° (yuqori va pastki, yonma-yon) | Chap koʻz, joylashuv tugmasi | Xuddi shunday | Har bir koʻz kadrning oʻz yarmini oladi | Chap koʻz, joylashuv tugmasi |
-| VR180 (yarim sfera) suratlar va videolar | Yarim sfera, 360°/180° tugmasi | Xuddi shunday | Immersiv yarim sfera | Yarim sfera, 360°/180° tugmasi |
-| Spatial 2.5D (stereoskopik videodan tekis ekranda chuqurlik) | Oʻrnatilgan pleyer, old kamera bilan bosh kuzatuvi | Xuddi shunday | Taklif qilinmaydi | Taklif qilinmaydi |
-| Apple fazoviy suratlari (HEIC stereo juftliklari, 19-yigʻmadan) | Chap koʻz, tafsilotlar qatori uning fazoviy ekanini aytadi | Xuddi shunday | 3D ko'rinishida ko'rish: immersiv koʻrinishda suzib turgan suratda ikkala koʻz, 3D yoki 2D, oʻlchami oʻzgaradi | Chap koʻz, tafsilotlar qatori |
-| Apple fazoviy videolari (MV-HEVC, 19-yigʻmadan) | Bitta koʻz (asosiy qatlam), bildirishnoma bilan | Xuddi shunday | Oynada bitta koʻz, bildirishnoma bilan | Bitta koʻz, ogohlantirish bilan |
-| Xom Insta360 .insp suratlari (16-yigʻmadan) | Sfera koʻruvchisidan oldin GPU da tikiladi, 8192x4096 gacha | Xuddi shunday | Immersiv, shlem uchun tayyorlangan tikilgan tasvirdan | Telefonlardagi kabi |
-| Xom Insta360 .insv, ikkala obyektiv bitta trekda (16-yigʻmadan) | Media3 pleyerida GPU effekti bilan tikiladi | SceneKit shaderi bilan tikiladi | Immersiv, oʻsha GPU effekti bilan tikiladi | Telefonlardagi kabi |
-| Har bir trek yoki faylda bitta obyektivli xom videolar (18-yigʻmadan): Insta360 X4, X4 Air, X5, X6 .insv, X3 juftliklari, GoPro .360, DJI .osv | Bir vaqtda ikkita apparat dekoder, har bir obyektivga bittadan (19-yigʻmadan apparat dekoderi yoʻq qurilmada dasturiy dekoderlar, har bir obyektiv uchun 2048x2048 gacha), va sferaga tikadigan GL kompozitori; qurilma ikkitasini ishga tushira olmasa, bitta obyektiv, keyin transkodlangan oqim, keyin tikilmagan video | Metal bilan maxsus AVFoundation kompozitori | Immersiv, oʻsha ikki dekoder va kompozitor (3840x1920 panel) | Televizor bir vaqtda ikkita dekoderni ishlata olsa, telefonlardagi kabi |
-| Tapo kamerasining jonli tasviri (20-yigʻmadan) | Media3 RTSP pleyeri: sahifada SD, toʻliq ekranda HD, ovoz tugmasi | Hali yoʻq: karta bu keyinroq kelishini aytadi | Oynada, HD da | Telefonlardagi kabi |
-| Tapo kamerasi yozuvlari (20-yigʻmadan) | Xotira kartasidan ovozli H.264 videoga olinadi, keyin oldinga-orqaga oʻtkazish bilan ijro etiladi | Xuddi shunday | Xuddi shunday, oynada | Xuddi shunday |
+- **Tekis videolar (MP4, MOV, MKV, qurilma dekodlaydigan narsa)**
+  - Android telefonlar: Immich pleyeri va tarmoq ulashmalari uchun oʻrnatilgan pleyer.
+  - iPhone, iPad: xuddi shunday, iOS ochmaydigan ulashmadagi MKV va AVI fayllaridan tashqari (serverda ular transkodlangan holda ijro etiladi).
+  - Meta Quest: oynada.
+  - Android TV, Google TV: telefonlardagi kabi; OK pauza qiladi, chap va oʻng 10 s sakraydi.
+- **360° suratlar**
+  - Android telefonlar: sfera koʻruvchisi, giroskop.
+  - iPhone, iPad: xuddi shunday.
+  - Meta Quest: immersiv, sizni oʻrab oladi.
+  - Android TV, Google TV: strelkalar bilan buriladigan, kanal tugmalari bilan masshtablanadigan sfera koʻruvchisi.
+- **360° videolar**
+  - Android telefonlar: sferada oʻrnatilgan Media3 pleyeri, giroskop, oʻtkazish, audio trek tanlovi, buferlash koʻrsatkichi.
+  - iPhone, iPad: sferada oʻrnatilgan SceneKit pleyeri, giroskop, audio trek tanlovi, buferlash koʻrsatkichi; ijro va pauza, hozircha vaqt chizigʻi yoʻq.
+  - Meta Quest: immersiv, stereoskopik fayllar uchun haqiqiy 3D, 10 soniyalik oʻtkazishli vaqt chizigʻi, oldingi va keyingi media.
+  - Android TV, Google TV: telefonlarning Media3 pleyeri, strelkalar bilan buriladi.
+- **3D 360° (yuqori va pastki, yonma-yon)**
+  - Android telefonlar: chap koʻz, joylashuv tugmasi.
+  - iPhone, iPad: xuddi shunday.
+  - Meta Quest: har bir koʻz kadrning oʻz yarmini oladi.
+  - Android TV, Google TV: chap koʻz, joylashuv tugmasi.
+- **VR180 (yarim sfera) suratlar va videolar**
+  - Android telefonlar: yarim sfera, 360°/180° tugmasi.
+  - iPhone, iPad: xuddi shunday.
+  - Meta Quest: immersiv yarim sfera.
+  - Android TV, Google TV: yarim sfera, 360°/180° tugmasi.
+- **Spatial 2.5D (stereoskopik videodan tekis ekranda chuqurlik)**
+  - Android telefonlar: oʻrnatilgan pleyer, old kamera bilan bosh kuzatuvi.
+  - iPhone, iPad: xuddi shunday.
+  - Meta Quest: taklif qilinmaydi.
+  - Android TV, Google TV: taklif qilinmaydi.
+- **Apple fazoviy suratlari (HEIC stereo juftliklari, 19-yigʻmadan)**
+  - Android telefonlar: chap koʻz, tafsilotlar qatori uning fazoviy ekanini aytadi.
+  - iPhone, iPad: xuddi shunday.
+  - Meta Quest: 3D ko'rinishida ko'rish: immersiv koʻrinishda suzib turgan suratda ikkala koʻz, 3D yoki 2D, oʻlchami oʻzgaradi.
+  - Android TV, Google TV: chap koʻz, tafsilotlar qatori.
+- **Apple fazoviy videolari (MV-HEVC, 19-yigʻmadan)**
+  - Android telefonlar: bitta koʻz (asosiy qatlam), bildirishnoma bilan.
+  - iPhone, iPad: xuddi shunday.
+  - Meta Quest: oynada bitta koʻz, bildirishnoma bilan.
+  - Android TV, Google TV: bitta koʻz, ogohlantirish bilan.
+- **Xom Insta360 .insp suratlari (16-yigʻmadan)**
+  - Android telefonlar: sfera koʻruvchisidan oldin GPU da tikiladi, 8192x4096 gacha.
+  - iPhone, iPad: xuddi shunday.
+  - Meta Quest: immersiv, shlem uchun tayyorlangan tikilgan tasvirdan.
+  - Android TV, Google TV: telefonlardagi kabi.
+- **Xom Insta360 .insv, ikkala obyektiv bitta trekda (16-yigʻmadan)**
+  - Android telefonlar: Media3 pleyerida GPU effekti bilan tikiladi.
+  - iPhone, iPad: SceneKit shaderi bilan tikiladi.
+  - Meta Quest: immersiv, oʻsha GPU effekti bilan tikiladi.
+  - Android TV, Google TV: telefonlardagi kabi.
+- **Har bir trek yoki faylda bitta obyektivli xom videolar (18-yigʻmadan): Insta360 X4, X4 Air, X5, X6 .insv, X3 juftliklari, GoPro .360, DJI .osv**
+  - Android telefonlar: bir vaqtda ikkita apparat dekoder, har bir obyektivga bittadan (19-yigʻmadan apparat dekoderi yoʻq qurilmada dasturiy dekoderlar, har bir obyektiv uchun 2048x2048 gacha), va sferaga tikadigan GL kompozitori; qurilma ikkitasini ishga tushira olmasa, bitta obyektiv, keyin transkodlangan oqim, keyin tikilmagan video.
+  - iPhone, iPad: Metal bilan maxsus AVFoundation kompozitori.
+  - Meta Quest: immersiv, oʻsha ikki dekoder va kompozitor (3840x1920 panel).
+  - Android TV, Google TV: televizor bir vaqtda ikkita dekoderni ishlata olsa, telefonlardagi kabi.
+- **Tapo kamerasining jonli tasviri (20-yigʻmadan)**
+  - Android telefonlar: Media3 RTSP pleyeri: sahifada SD, toʻliq ekranda HD, ovoz tugmasi.
+  - iPhone, iPad: hali yoʻq: karta bu keyinroq kelishini aytadi.
+  - Meta Quest: oynada, HD da.
+  - Android TV, Google TV: telefonlardagi kabi.
+- **Tapo kamerasi yozuvlari (20-yigʻmadan)**
+  - Android telefonlar: xotira kartasidan ovozli H.264 videoga olinadi, keyin oldinga-orqaga oʻtkazish bilan ijro etiladi.
+  - iPhone, iPad: xuddi shunday.
+  - Meta Quest: xuddi shunday, oynada.
+  - Android TV, Google TV: xuddi shunday.
 
-Televizor ustuni hali televizorda tekshirilmagan, qarang: [Televizoringizda koʻring](#watch-on-your-tv-android-tv-and-google-tv); kamera qatorlari hali haqiqiy kamera bilan tekshirilmagan.
+Android TV va Google TV bandlari, 20-yigʻmadan, hali televizorda tekshirilmagan, qarang: [Televizoringizda koʻring](#watch-on-your-tv-android-tv-and-google-tv); kamera bandlari hali haqiqiy kamera bilan tekshirilmagan.
 
-| Qayerdan | Qanday |
-|---|---|
-| Immich serveringiz | Settings, Asset Viewer, Video manbasi aytganidek asl fayl yoki serverning transkodlangan oqimi (qarang: [Video tafsilotlari va dekoderlar](#video-details-decoders-and-why-a-video-stutters)). Veb ilovadagi oʻsha hisob |
-| Telefon yoki shlemning oʻzi | Kirish sahifasidagi "Serversiz foydalanish" yoki Kutubxona yorligʻidagi On this device bandi |
-| NAS yoki kompyuter | SMB va WebDAV ulashmalari, 19-yigʻmadan esa DLNA media serverlari, tarmoqda topiladi, jonli oʻqiladi (SMB video oltitagacha ulanish orqali), hech narsa nusxalanmaydi; 15-yigʻmadan siz tanlagan fayllarni Immich hisobingizga yuborish mumkin |
-| Boshqa telefon (19-yigʻmadan) | Oʻsha telefonda "Bu telefonni tarmoqda ulashish": shlem yoki tarmoqdagi har qanday WebDAV mijozi uning albomlari, oylari va 360° mediasini oʻqiydi |
-| Plex Media Server (20-yigʻmadan) | Uning suratlar, filmlar va teleseriallar kutubxonalari jild boʻyicha, asl fayllar serverning oʻz sertifikati bilan tekshiriladigan HTTPS orqali jonli oʻqiladi, uyda yoki uydan tashqaridagi manzil orqali, har bir platformada; qarang: [Plex Media Server, plex.tv siz](#plex-media-server-without-plextv) |
-| Tapo kamerasi (20-yigʻmadan) | Kamera hisobi bilan jonli tasvir (Android, Android TV, Quest) va TP-Link hisobi paroli bilan xotira kartasidagi yozuvlar (har bir platforma), faqat mahalliy tarmoqda; qarang: [Tapo kameralari](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Immich serveringiz**: Settings, Asset Viewer, Video manbasi aytganidek asl fayl yoki serverning transkodlangan oqimi (qarang: [Video tafsilotlari va dekoderlar](#video-details-decoders-and-why-a-video-stutters)). Veb ilovadagi oʻsha hisob.
+- **Telefon yoki shlemning oʻzi**: kirish sahifasidagi "Serversiz foydalanish" yoki Kutubxona yorligʻidagi On this device bandi.
+- **NAS yoki kompyuter**: SMB va WebDAV ulashmalari, 19-yigʻmadan esa DLNA media serverlari, tarmoqda topiladi, jonli oʻqiladi (SMB video oltitagacha ulanish orqali), hech narsa nusxalanmaydi; 15-yigʻmadan siz tanlagan fayllarni Immich hisobingizga yuborish mumkin.
+- **Boshqa telefon (19-yigʻmadan)**: oʻsha telefonda "Bu telefonni tarmoqda ulashish": shlem yoki tarmoqdagi har qanday WebDAV mijozi uning albomlari, oylari va 360° mediasini oʻqiydi.
+- **Plex Media Server (20-yigʻmadan)**: uning suratlar, filmlar va teleseriallar kutubxonalari jild boʻyicha, asl fayllar serverning oʻz sertifikati bilan tekshiriladigan HTTPS orqali jonli oʻqiladi, uyda yoki uydan tashqaridagi manzil orqali, har bir platformada; qarang: [Plex Media Server, plex.tv siz](#plex-media-server-without-plextv).
+- **Tapo kamerasi (20-yigʻmadan)**: kamera hisobi bilan jonli tasvir (Android, Android TV, Quest) va TP-Link hisobi paroli bilan xotira kartasidagi yozuvlar (har bir platforma), faqat mahalliy tarmoqda; qarang: [Tapo kameralari](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 Horizon OS v69 yoki undan keyingi versiyali Meta Quest shlemlarida ham ishlaydi. 21-yigʻmadan Horizon Store yigʻmasi Quest 2, Quest Pro, Quest 3 va 3S uchun roʻyxatga olingan, yaʼni universal `-release.apk` allaqachon nomlagan toʻrttasi uchun; birinchi Quest roʻyxatda yoʻq, doʻkon uni endi qabul qilmaydi. Quest 3 va 3S sinovdan oʻtgan. Quest 2 va Quest Pro hali sinovdan oʻtmagan: ularning video dekoderlari sekinroq, ilova tekshiradigan chegaralar esa Quest 3 da oʻlchangan, shuning uchun katta H.264 video ularda xabar bilan rad etilishi yoki tutilib ijro etilishi mumkin. Bu ikki shlemdan hisobotlarni [Issues](https://github.com/freeKC/Immuch360/issues) boʻlimida kutib qolamiz. Undan qanday foydalanish [Meta Quest 3 shlemida](#in-the-meta-quest-3-headset) boʻlimida; bu boʻlim oʻrnatish va shlemda nima farq qilishi haqida.
+Immuch360 Horizon OS v69 yoki undan keyingi versiyali Meta Quest shlemlarida ham ishlaydi. 21-yigʻmadan Horizon Store yigʻmasi Quest 2, Quest Pro, Quest 3 va 3S uchun roʻyxatga olingan, yaʼni universal `-release.apk` allaqachon nomlagan toʻrttasi uchun; birinchi Quest roʻyxatda yoʻq, doʻkon uni endi qabul qilmaydi.
 
-Shlem yigʻmasi serverlar bilan faqat HTTPS orqali, yoki oddiy HTTP orqali uy tarmogʻi nomlari (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) va shlemning oʻzi bilan bogʻlanadi, Horizon Store talab qilganidek. `http://192.168.1.10:2283` kabi IP li oddiy HTTP manzil sifatida kiritilgan serverni bu yigʻma rad etadi: HTTPS, uy tarmogʻi nomi (`nas.local`) yoki telefonlarning ochiq siyosatini saqlaydigan universal `-release.apk` dan foydalaning. Mahalliy tarmoqning oddiy HTTP manzilidagi WebDAV, DLNA va telefon ulashmalariga bu taalluqli emas: ilova ularni oʻzi oʻqiydi va pleyerlariga faqat oʻz mahalliy koʻprigining manzilini beradi (19-yigʻmada yangi boʻlgan DLNA va telefon ulashmasi uchun shlemda tasdiqlanishi kerak). 20-yigʻmadan Plex serveriga HTTPS orqali, Tapo kamerasiga esa ilovaning oʻzi murojaat qiladi, uning jonli tasviri HTTP boʻlmagan RTSP orqali: ikkalasiga ham bu taalluqli boʻlmasligi kerak (shlemda tasdiqlanishi kerak).
+Quest 3 va 3S sinovdan oʻtgan. Quest 2 va Quest Pro hali sinovdan oʻtmagan: ularning video dekoderlari sekinroq, ilova tekshiradigan chegaralar esa Quest 3 da oʻlchangan, shuning uchun katta H.264 video ularda xabar bilan rad etilishi yoki tutilib ijro etilishi mumkin. Bu ikki shlemdan hisobotlarni [Issues](https://github.com/freeKC/Immuch360/issues) boʻlimida kutib qolamiz.
+
+Undan qanday foydalanish [Meta Quest 3 shlemida](#in-the-meta-quest-3-headset) boʻlimida; bu boʻlim oʻrnatish va shlemda nima farq qilishi haqida.
+
+Shlem yigʻmasi serverlar bilan faqat HTTPS orqali, yoki oddiy HTTP orqali uy tarmogʻi nomlari (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) va shlemning oʻzi bilan bogʻlanadi, Horizon Store talab qilganidek. `http://192.168.1.10:2283` kabi IP li oddiy HTTP manzil sifatida kiritilgan serverni bu yigʻma rad etadi: HTTPS, uy tarmogʻi nomi (`nas.local`) yoki telefonlarning ochiq siyosatini saqlaydigan universal `-release.apk` dan foydalaning.
+
+Mahalliy tarmoqning oddiy HTTP manzilidagi WebDAV, DLNA va telefon ulashmalariga bu taalluqli emas: ilova ularni oʻzi oʻqiydi va pleyerlariga faqat oʻz mahalliy koʻprigining manzilini beradi (19-yigʻmada yangi boʻlgan DLNA va telefon ulashmasi uchun shlemda tasdiqlanishi kerak). 20-yigʻmadan Plex serveriga HTTPS orqali, Tapo kamerasiga esa ilovaning oʻzi murojaat qiladi, uning jonli tasviri HTTP boʻlmagan RTSP orqali: ikkalasiga ham bu taalluqli boʻlmasligi kerak (shlemda tasdiqlanishi kerak).
 
 <a id="install"></a>
 ### Oʻrnatish
@@ -762,16 +922,23 @@ Meta Horizon Store sahifasini 2026-yil 7-oktabrda 14-yigʻma bilan tasdiqladi, 2
 
 ### Oynada
 
-Butun ilova oʻlchami oʻzgaradigan 2D oyna sifatida ishlaydi: kirish, vaqt chizigʻi, albomlar, qidiruv, Kutubxona yorligʻi (360° roʻyxati, On this device, Tarmoq ulashmalari), sozlamalar, hamda tekis suratlar va videolar ijro etiladigan surat va video koʻruvchilari. Shlemda 360° tugmasi va ⋮ menyusidagi 360° sifatida ko‘rish telefonlardagi sfera koʻruvchisi oʻrniga toʻgʻridan-toʻgʻri immersiv koʻrinishni ochadi, Spatial 2.5D tugmasi va uning sozlamasi esa koʻrsatilmaydi. 19-yigʻmadan Apple fazoviy suratida 3D ko'rinishida ko'rish tugmasi bor, Bu telefonni tarmoqda ulashish katakchasi esa koʻrsatilmaydi: telefon ulashmasini oʻqiydigan aynan shlemning oʻzi. 20-yigʻmadan Plex serverlari va Tapo kameralari ham oynada ochiladi, kameraning jonli tasviri HD da; "Pult uchun joylashuv" sozlamasi Avtomatik da qoladi, bu esa uni shlemda oʻchiq qoldiradi.
+Butun ilova oʻlchami oʻzgaradigan 2D oyna sifatida ishlaydi: kirish, vaqt chizigʻi, albomlar, qidiruv, Kutubxona yorligʻi (360° roʻyxati, On this device, Tarmoq ulashmalari), sozlamalar, hamda tekis suratlar va videolar ijro etiladigan surat va video koʻruvchilari.
+
+Shlemda 360° tugmasi va ⋮ menyusidagi 360° sifatida ko‘rish telefonlardagi sfera koʻruvchisi oʻrniga toʻgʻridan-toʻgʻri immersiv koʻrinishni ochadi, Spatial 2.5D tugmasi va uning sozlamasi esa koʻrsatilmaydi.
+
+19-yigʻmadan Apple fazoviy suratida 3D ko'rinishida ko'rish tugmasi bor, Bu telefonni tarmoqda ulashish katakchasi esa koʻrsatilmaydi: telefon ulashmasini oʻqiydigan aynan shlemning oʻzi. 20-yigʻmadan Plex serverlari va Tapo kameralari ham oynada ochiladi, kameraning jonli tasviri HD da; "Pult uchun joylashuv" sozlamasi Avtomatik da qoladi, bu esa uni shlemda oʻchiq qoldiradi.
 
 ### Rasmlarda
 
 Skrinshotlar shlemda suratga olish tugmasi (Meta tugmasi va tepki) bilan, Quest 3 da, ilova fransuz tilida boʻlganda olingan; Kutubxona yorligʻi serversiz rejimda koʻrsatilgan.
 
-| Serversiz | Tarmoq ulashmalari |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Serversiz Kutubxona yorligʻi: On this device va Tarmoq ulashmalari"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Freebox Server SMB ulashmasi bilan Tarmoq ulashmalari sahifasi"> |
-| Serversiz rejimdagi Kutubxona yorligʻi: shlemning oʻz mediasi va tarmoq ulashmalari | Shlemdan jonli oʻqilgan Freebox Server Samba ulashmasi |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Serversiz Kutubxona yorligʻi: On this device va Tarmoq ulashmalari">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Freebox Server SMB ulashmasi bilan Tarmoq ulashmalari sahifasi">
+</p>
+
+- **Serversiz**: serversiz rejimdagi Kutubxona yorligʻi, shlemning oʻz mediasi va tarmoq ulashmalari bilan.
+- **Tarmoq ulashmalari**: shlemdan jonli oʻqilgan Freebox Server Samba ulashmasi.
 
 ### Shlemdagi cheklovlar
 
@@ -786,12 +953,18 @@ Skrinshotlar shlemda suratga olish tugmasi (Meta tugmasi va tepki) bilan, Quest 
 
 Ilova telefonlar va planshetlar uchun Google Play da bor; App Store versiyasi Apple ning koʻrib chiqishini kutmoqda, Meta Horizon Store sahifasi tasdiqlangan va uning birinchi yangilanishi Meta ning koʻrib chiqishida, televizorlar uchun Google Play versiyasi esa televizor relizining Google tomonidan koʻrib chiqilishini kutmoqda. GitHub relizi har doim eng yangi yigʻma:
 
-| Platforma | Bugun | Tez orada |
-|---|---|---|
-| Android telefon va planshetlari | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) yoki [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi APK: telefon uchun `Immuch360-v<version>-arm64-v8a-release.apk` (universal `Immuch360-v<version>-release.apk` hamma joyda ishlaydi, `-armeabi-v7a` eski 32 bitli telefonlar uchun, `.aab` fayli esa qoʻlda oʻrnatish uchun emas, Google Play uchun). GitHub yigʻmasi odatda doʻkondan oldinda boʻladi. Har qanday holatda u rasmiy Immich ilovasi yoniga oʻrnatiladi (paket `com.aprogsys.immuch360`). | Google Play: 18-yigʻma faol, 19-yigʻma oʻrniga 20-yigʻma 2026-yil 7-oktabrdan beri Google ning koʻrib chiqishida |
-| iPhone va iPad | Apple ning koʻrib chiqishini kutmoqda. Koʻrib chiqilayotgan versiyada 11-yigʻmaning funksiyalari bor: Immich ga yuklash va Video manbasi tanlovi (15-yigʻma) hamda xom Insta360 fayllari (16-yigʻma) keyingi App Store yangilanishi bilan keladi. Manba kodi Xcode yoki Codemagic da yigʻiladi, qarang: [Oʻzingiz yigʻing](#build-it-yourself). | App Store, koʻrib chiqilmoqda |
-| Meta Quest 2, Quest Pro, Quest 3 va 3S (Quest 2 va Quest Pro sinovdan oʻtmagan) | [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi `-quest-release.apk` fayli (universal `-release.apk` ham ishlaydi), dasturchi rejimida qoʻlda oʻrnatiladi, qarang: [Oʻrnatish](#install). Doʻkon yigʻmasi va GitHub APK si turli kalitlar bilan imzolangan: biridan ikkinchisiga oʻtish uchun avval ilovani oʻchiring (uning sozlamalari va saqlangan ulashmalari ham birga ketadi). | Meta Horizon Store: sahifa 2026-yil 7-oktabrda 14-yigʻma bilan tasdiqlandi, uning birinchi yangilanishi boʻlgan 21-yigʻma esa Meta ning koʻrib chiqishida; doʻkonning alfa kanali (faqat sinovchilar uchun) har bir yangi yigʻmani oladi |
-| Android TV va Google TV (20-yigʻmadan) | [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi universal `Immuch360-v<version>-release.apk`, adb bilan qoʻlda oʻrnatiladi, qarang: [Televizorga oʻrnatish](#install-it-on-the-tv). Bu telefonlardagi oʻsha ilova. | Televizorlarda Google Play, televizor relizi Google tomonidan koʻrib chiqilgandan keyin |
+- **Android telefon va planshetlari**
+  - Bugun: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) yoki [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi APK: telefon uchun `Immuch360-v<version>-arm64-v8a-release.apk` (universal `Immuch360-v<version>-release.apk` hamma joyda ishlaydi, `-armeabi-v7a` eski 32 bitli telefonlar uchun, `.aab` fayli esa qoʻlda oʻrnatish uchun emas, Google Play uchun). GitHub yigʻmasi odatda doʻkondan oldinda boʻladi. Har qanday holatda u rasmiy Immich ilovasi yoniga oʻrnatiladi (paket `com.aprogsys.immuch360`).
+  - Tez orada: Google Play da 18-yigʻma faol, 19-yigʻma oʻrniga 20-yigʻma 2026-yil 7-oktabrdan beri Google ning koʻrib chiqishida.
+- **iPhone va iPad**
+  - Bugun: Apple ning koʻrib chiqishini kutmoqda. Koʻrib chiqilayotgan versiyada 11-yigʻmaning funksiyalari bor: Immich ga yuklash va Video manbasi tanlovi (15-yigʻma) hamda xom Insta360 fayllari (16-yigʻma) keyingi App Store yangilanishi bilan keladi. Manba kodi Xcode yoki Codemagic da yigʻiladi, qarang: [Oʻzingiz yigʻing](#build-it-yourself).
+  - Tez orada: App Store, koʻrib chiqilmoqda.
+- **Meta Quest 2, Quest Pro, Quest 3 va 3S (Quest 2 va Quest Pro sinovdan oʻtmagan)**
+  - Bugun: [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi `-quest-release.apk` fayli (universal `-release.apk` ham ishlaydi), dasturchi rejimida qoʻlda oʻrnatiladi, qarang: [Oʻrnatish](#install). Doʻkon yigʻmasi va GitHub APK si turli kalitlar bilan imzolangan: biridan ikkinchisiga oʻtish uchun avval ilovani oʻchiring (uning sozlamalari va saqlangan ulashmalari ham birga ketadi).
+  - Tez orada: Meta Horizon Store da sahifa 2026-yil 7-oktabrda 14-yigʻma bilan tasdiqlandi, uning birinchi yangilanishi boʻlgan 21-yigʻma esa Meta ning koʻrib chiqishida; doʻkonning alfa kanali (faqat sinovchilar uchun) har bir yangi yigʻmani oladi.
+- **Android TV va Google TV (20-yigʻmadan)**
+  - Bugun: [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi universal `Immuch360-v<version>-release.apk`, adb bilan qoʻlda oʻrnatiladi, qarang: [Televizorga oʻrnatish](#install-it-on-the-tv). Bu telefonlardagi oʻsha ilova.
+  - Tez orada: televizorlarda Google Play, televizor relizi Google tomonidan koʻrib chiqilgandan keyin.
 
 App Store va Meta Horizon Store havolalari sahifalar eʼlon qilinishi bilan shu yerga qoʻshiladi. Odatdagi Immich server URL manzilingiz va hisobingiz bilan kiring yoki qurilmaning oʻz suratlari va videolari bilan boshlash uchun kirish sahifasida "Serversiz foydalanish" ga bosing. GitHub dan olingan APK oʻzini yangilamaydi: Releases sahifasini kuzatib boring, ilovani doʻkondan oʻrnatgan boʻlsangiz esa yangilanishlarni oʻsha doʻkondan oling.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Doʻkon skrinshotlari faqat debug bannerini yashiradigan `--dart-define=IMMUCH_SCREENSHOTS=true` bilan yigʻilgan debug simulyator yigʻmalarida olinadi. Ikki Android varianti (flavor) bir xil ilova. 20-yigʻmadan `phone` varianti oʻzini televizor ilovasi deb ham eʼlon qiladi (televizor ishga tushirgichidagi band va banner, sensorli ekran talab qilinmaydi), `quest` varianti esa buni chiqarib tashlaydi. `quest` varianti SDK 34 ga moʻljallangan va faqat shlem ishlatadigan ruxsatlarni (suratlar, videolar, bildirishnomalar) saqlaydi: media boshqaruvi, orqa fondagi joylashuv, eski xotira, audio, media joylashuvi, qurilma joylashuvi va kamera `android/app/src/quest/AndroidManifest.xml` da olib tashlangan, chunki Meta Horizon Store dastlabki ikkitasini rad etadi va qolgan har bir nozik ruxsat uchun asos soʻraydi; oʻsha fayl Quest 2, Quest Pro, Quest 3 va 3S ni qoʻllab-quvvatlanadigan qurilmalar deb koʻrsatadi va oddiy HTTP ni shlemning oʻzi va uy tarmogʻi nomlari bilan cheklaydi. APK buyruq satridagi ikki qoʻshimcha argument (`--target-platform android-arm64 --android-project-arg arm64only=true`) tufayli faqat 64 bitli. `phone` varianti Google Play talab qiladigan narsa. Oʻz Mac ingizda iOS uchun yigʻish uchun Xcode va oʻz imzolash jamoangizdan foydalaning; Xcode 26 bilan avval bir marta `xcodebuild -downloadComponent MetalToolchain` ni ishga tushiring, chunki u Spatial shaderlari uchun kerak. Mac siz iOS yigʻmalari ushbu repozitoriyning `codemagic.yaml` fayli orqali Codemagic da (xostingdagi Mac) ishlaydi. Android reliz yigʻmalari GitHub Actions da ishlaydi (`.github/workflows/immuch360-release.yml`).
+Doʻkon skrinshotlari faqat debug bannerini yashiradigan `--dart-define=IMMUCH_SCREENSHOTS=true` bilan yigʻilgan debug simulyator yigʻmalarida olinadi.
+
+Ikki Android varianti (flavor) bir xil ilova. 20-yigʻmadan `phone` varianti oʻzini televizor ilovasi deb ham eʼlon qiladi (televizor ishga tushirgichidagi band va banner, sensorli ekran talab qilinmaydi), `quest` varianti esa buni chiqarib tashlaydi.
+
+`quest` varianti SDK 34 ga moʻljallangan va faqat shlem ishlatadigan ruxsatlarni (suratlar, videolar, bildirishnomalar) saqlaydi: media boshqaruvi, orqa fondagi joylashuv, eski xotira, audio, media joylashuvi, qurilma joylashuvi va kamera `android/app/src/quest/AndroidManifest.xml` da olib tashlangan, chunki Meta Horizon Store dastlabki ikkitasini rad etadi va qolgan har bir nozik ruxsat uchun asos soʻraydi; oʻsha fayl Quest 2, Quest Pro, Quest 3 va 3S ni qoʻllab-quvvatlanadigan qurilmalar deb koʻrsatadi va oddiy HTTP ni shlemning oʻzi va uy tarmogʻi nomlari bilan cheklaydi. APK buyruq satridagi ikki qoʻshimcha argument (`--target-platform android-arm64 --android-project-arg arm64only=true`) tufayli faqat 64 bitli. `phone` varianti Google Play talab qiladigan narsa.
+
+Oʻz Mac ingizda iOS uchun yigʻish uchun Xcode va oʻz imzolash jamoangizdan foydalaning; Xcode 26 bilan avval bir marta `xcodebuild -downloadComponent MetalToolchain` ni ishga tushiring, chunki u Spatial shaderlari uchun kerak. Mac siz iOS yigʻmalari ushbu repozitoriyning `codemagic.yaml` fayli orqali Codemagic da (xostingdagi Mac) ishlaydi. Android reliz yigʻmalari GitHub Actions da ishlaydi (`.github/workflows/immuch360-release.yml`).
 
 Bu repozitoriyda hech qanday maxfiy maʼlumot yoʻq: Android imzolash kaliti shifrlangan GitHub Actions maxfiy qiymatlari sifatida, Apple imzolash materiallari esa Codemagic da shifrlangan oʻzgaruvchilar sifatida saqlanadi. Ish oqimi fayllari ularga faqat nomi bilan murojaat qiladi. Oʻz `android/key.jks` faylingiz boʻlmasa, reliz yigʻmasi debug kaliti bilan imzolanadi va GitHub yoki doʻkondagi nusxa ustiga oʻrnatilmaydi (avval uni oʻchiring); debug yigʻmasi uning yoniga Immuch360 debug sifatida oʻrnatiladi. Meta Horizon Store nusxasi relizning boshqa kalit, yaʼni doʻkon ilovasi birinchi marta roʻyxatdan oʻtkazilgan kalit bilan imzolangan `quest` APK si, shuning uchun u ham qoʻlda oʻrnatilgan APK ustiga oʻrnatilmaydi, aksincha ham.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 19-yigʻmadan DLNA mijozi, telefon ulashmasi va Apple fazoviy mediasini aniqlash ilovaning oʻz jurnaliga ham (Logs (Jurnallar), yuqori oʻngdagi profil rasmi menyusida) `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` va `NetworkMediaService` ostida yozadi. 20-yigʻmadan u yerga televizor rejimi `TvMode` va `TvTextEntry` ostida, Plex serverlari `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` va `PlexServerEditPage` ostida, Tapo kameralari esa `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` va `CameraLiveView` ostida yozadi; Plex qatorlarida hech qachon token, manzil yoki sarlavha boʻlmaydi, kamera qatorlarida esa parollar boʻlmaydi. Jurnal qatorlari siz ularni oʻzingiz nusxalamaguningizcha qurilmada qoladi.
 
+<a id="privacy"></a>
 ## Maxfiylik
 
 - **Dasturchiga hech narsa bormaydi**: ilova siz tanlagan Immich serveri bilan (va xaritani ochganingizda oʻsha server ishlatadigan xarita plitkalari xizmati bilan) bogʻlanadi, unda reklama, analitika yoki dasturchi yuritadigan nosozlik hisoboti xizmati yoʻq va Immuch360 dasturchisiga hech narsa yubormaydi.
@@ -849,10 +1029,12 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Toʻliq siyosat [PRIVACY.md](../PRIVACY.md) faylida.
 
+<a id="license-and-trademark"></a>
 ## Litsenziya va savdo belgisi
 
 Bu loyiha Immich ning forki va [GNU AGPL v3](../LICENSE) ostida qoladi. Har bir APK, telefon APK lari ham, ochiq kodli boʻlmagan (Meta Platform Technologies SDK License Agreement) va faqat Meta Quest shlemlarida ishlatiladigan Meta Spatial SDK ni ham oʻz ichiga oladi. Immuch360 Immich jamoasi yoki FUTO bilan bogʻliq emas va ular tomonidan maʼqullanmagan.
 
+<a id="roadmap"></a>
 ## Yoʻl xaritasi
 
 Hali qilinmagan ishlar, eng ehtimoliylari birinchi. Bu yerdagi hech narsa vaʼda emas, [muammolar kuzatuvchisi](https://github.com/freeKC/Immuch360/issues) dagi fikrlar esa nima birinchi kelishini hal qilishga yordam beradi.
@@ -871,6 +1053,7 @@ Hali qilinmagan ishlar, eng ehtimoliylari birinchi. Bu yerdagi hech narsa vaʼda
 - **Plex, keyingi qadam**: 20-yigʻmaning qurilmadagi sinovi (telefonlar, Quest, iPhone, televizor, uydan tashqarida); tokenni kompyuterdan QR kod orqali olib kelish; topilgan serverlar roʻyxatida Plex serverining DLNA qismini yashirish; IPv6.
 - **Upstream**: texnik xizmat koʻrsatuvchilar xohlagan qismlar uchun Immich ga kichik pull requestlar, 360° surat koʻruvchisidan boshlab.
 
+<a id="credits"></a>
 ## Minnatdorchilik
 
 360° surat koʻruvchisi dmitry-brazhenko ning upstream pull requesti [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ga asoslangan, u esa oʻz navbatida bencefr ning [#30192](https://github.com/immich-app/immich/pull/30192) dagi prototipiga qurilgan. Ikkalasiga ham rahmat.

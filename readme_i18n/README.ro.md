@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | Română | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Română</b> · Alte limbi (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: fotografii și videoclipuri 360°, 3D și VR180, din Immich, de pe telefon sau de pe un NAS. Android, iOS și Meta Quest, cu sau fără server">
 </p>
 
 # Immuch360
 
-Immuch360 este aplicația mobilă Immich cu fotografii și videoclipuri 360° în care vă puteți uita în jur și un player gratuit pentru fotografii și videoclipuri plane, 360°, 3D și VR180, pe telefoane și tablete Android, pe iPhone și iPad, pe căștile Meta Quest (Quest 3 și 3S, iar începând cu build-ul 21 Quest 2 și Quest Pro, netestate), iar începând cu build-ul 20 pe Android TV și Google TV. Este pentru cei care filmează cu o cameră 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) sau cu modul de fotografie sferică al unui telefon, ori care au o cască, și vor să își vadă propriile cadre de pe un server Immich, de pe telefonul însuși, de pe un NAS, de pe un server media sau de pe un server Plex: același server, același cont, fără plugin pe server, sau fără niciun server. Începând cu build-ul 20 afișează și camerele Tapo, live și înregistrările de pe cardul lor de memorie.
+Immuch360 este aplicația mobilă Immich cu fotografii și videoclipuri 360° în care vă puteți uita în jur și un player gratuit pentru fotografii și videoclipuri plane, 360°, 3D și VR180, pe telefoane și tablete Android, pe iPhone și iPad, pe căștile Meta Quest (Quest 3 și 3S, iar începând cu build-ul 21 Quest 2 și Quest Pro, netestate), iar începând cu build-ul 20 pe Android TV și Google TV.
+
+Este pentru cei care filmează cu o cameră 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) sau cu modul de fotografie sferică al unui telefon, ori care au o cască, și vor să își vadă propriile cadre de pe un server Immich, de pe telefonul însuși, de pe un NAS, de pe un server media sau de pe un server Plex: același server, același cont, fără plugin pe server, sau fără niciun server. Începând cu build-ul 20 afișează și camerele Tapo, live și înregistrările de pe cardul lor de memorie.
 
 <p align="center">
   <sub>Fork neoficial. Fără legătură cu Immich sau cu FUTO. În engleză, numele se citește „I am much 360”.</sub>
@@ -13,29 +15,52 @@ Immuch360 este aplicația mobilă Immich cu fotografii și videoclipuri 360° î
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">în evaluare</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprobat, build-ul 21 trimis ca primă actualizare &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a><br>
+  App Store: <a href="#where-to-get-it">în evaluare</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprobat, build-ul 21 trimis ca primă actualizare<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 360° nativ</h3>Fotografii și videoclipuri ca o sferă în care vă uitați în jur, cu giroscopul, inclusiv fișierele brute ale camerei (Insta360 începând cu build-ul 16, GoPro și DJI începând cu build-ul 18). Și un player video gratuit: plan, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 3D nativ</h3>360° stereoscopic și VR180, sus și jos sau unul lângă altul, și fotografii spațiale Apple (începând cu build-ul 19): 3D adevărat în cască, un singur ochi pe telefon</td>
-    <td align="center" width="33%"><h3>🎥 2.5D nativ</h3>Profunzime pe un ecran plat dintr-un videoclip stereoscopic, imaginea vă urmărește capul (experimental, telefoane și tablete)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>O aplicație pe telefoane, tablete și în căștile Quest 2, Pro, 3 și 3S, 3D adevărat în cască, iar începând cu build-ul 20 pe Android TV, cu telecomanda</td>
-    <td align="center"><h3>🔌 Cu sau fără server</h3>Serverul dvs. Immich sau galeria telefonului, fără cont</td>
-    <td align="center"><h3>🗄️ Partajări de rețea</h3>Samba (SMB), WebDAV și, începând cu build-ul 19, servere media DLNA găsite în rețea și citite direct, fără nicio descărcare, apoi trimise în Immich când alegeți. Începând cu build-ul 19, un telefon își partajează și propria galerie cu casca</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Pe televizor</h3>Începând cu build-ul 20, același APK pe Android TV și Google TV: fotografii și videoclipuri 360°, serverul și partajările dvs., cu telecomanda</td>
-    <td align="center"><h3>🎬 Plex, fără plex.tv</h3>Începând cu build-ul 20, bibliotecile dvs. Plex, redate din fișierele originale ca 360° să rămână 360°, acasă și în afara casei</td>
-    <td align="center"><h3>📹 Camere Tapo</h3>Începând cu build-ul 20, vizualizarea live și înregistrările de pe cardul de memorie, doar în rețeaua dvs., și un clip trimis în Immich când alegeți</td>
-  </tr>
-</table>
+- 🌐 **360° nativ**<br>Fotografii și videoclipuri ca o sferă în care vă uitați în jur, cu giroscopul, inclusiv fișierele brute ale camerei (Insta360 începând cu build-ul 16, GoPro și DJI începând cu build-ul 18). Și un player video gratuit: plan, 360°, 3D, VR180
+- 👓 **3D nativ**<br>360° stereoscopic și VR180, sus și jos sau unul lângă altul, și fotografii spațiale Apple (începând cu build-ul 19): 3D adevărat în cască, un singur ochi pe telefon
+- 🎥 **2.5D nativ**<br>Profunzime pe un ecran plat dintr-un videoclip stereoscopic, imaginea vă urmărește capul (experimental, telefoane și tablete)
+- 📱 **Android, iOS, Quest, TV**<br>O aplicație pe telefoane, tablete și în căștile Quest 2, Pro, 3 și 3S, 3D adevărat în cască, iar începând cu build-ul 20 pe Android TV, cu telecomanda
+- 🔌 **Cu sau fără server**<br>Serverul dvs. Immich sau galeria telefonului, fără cont
+- 🗄️ **Partajări de rețea**<br>Samba (SMB), WebDAV și, începând cu build-ul 19, servere media DLNA găsite în rețea și citite direct, fără nicio descărcare, apoi trimise în Immich când alegeți. Începând cu build-ul 19, un telefon își partajează și propria galerie cu casca
+- 📺 **Pe televizor**<br>Începând cu build-ul 20, același APK pe Android TV și Google TV: fotografii și videoclipuri 360°, serverul și partajările dvs., cu telecomanda
+- 🎬 **Plex, fără plex.tv**<br>Începând cu build-ul 20, bibliotecile dvs. Plex, redate din fișierele originale ca 360° să rămână 360°, acasă și în afara casei
+- 📹 **Camere Tapo**<br>Începând cu build-ul 20, vizualizarea live și înregistrările de pe cardul de memorie, doar în rețeaua dvs., și un clip trimis în Immich când alegeți
+
+<details>
+<summary><b>Cuprins</b></summary>
+
+- [Fotografii și videoclipuri 360° ca o sferă](#360-photos-and-videos-as-a-sphere)
+- [Fără server și fără cont](#without-a-server-or-an-account)
+- [Partajări de rețea: un NAS, un computer sau un server media](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, fără plex.tv](#plex-media-server-without-plextv)
+- [Partajați acest telefon în rețea](#share-this-phone-on-the-network)
+- [Camere Tapo: vizualizare live și înregistrările de pe cardul de memorie](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Fișiere brute ale camerelor 360°, fără aplicația camerei](#raw-360-camera-files-without-the-cameras-app)
+- [Fotografii și videoclipuri 3D și VR180](#3d-and-vr180-photos-and-videos)
+- [Profunzime pe un ecran plat: Spatial 2.5D (experimental)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Fotografii și videoclipuri spațiale Apple](#apple-spatial-photos-and-videos)
+- [În casca Meta Quest 3](#in-the-meta-quest-3-headset)
+- [Vizionați pe televizor (Android TV și Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Găsiți-vă cadrele 360°: lista 360°](#find-your-360-shots-the-360-list)
+- [Detaliile videoclipului, decodoarele și de ce un videoclip merge sacadat](#video-details-decoders-and-why-a-video-stutters)
+- [Restul este Immich](#everything-else-is-immich)
+- [Comparație cu aplicația Immich și cu alte aplicații](#compared-with-the-immich-app-and-other-apps)
+- [Formate și surse, pe platforme](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [De unde o obțineți](#where-to-get-it)
+- [Compilați singur](#build-it-yourself)
+- [Log-uri](#logs)
+- [Confidențialitate](#privacy)
+- [Licență și marcă](#license-and-trademark)
+- [Planuri](#roadmap)
+- [Mulțumiri](#credits)
+
+</details>
 
 ## Ce problemă aveți?
 
@@ -61,12 +86,19 @@ Când o funcție este recentă, textul spune de la ce build există. Versiunea d
 
 Vă salvați fotografiile pe un server [Immich](https://github.com/immich-app/immich), iar unele provin de la o cameră 360° sau din modul de fotografie sferică al unui telefon. În aplicația mobilă oficială, aceste imagini apar ca o bandă plată și întinsă, iar videoclipurile 360° sunt și ele redate plat. Aplicația web Immich poate afișa o fotografie 360° ca o sferă, aplicația mobilă nu: este cerut din ianuarie 2024 în [discuția #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 le deschide ca o sferă în care vă uitați în jur, pe telefoane și tablete Android și iOS. O fotografie se rotește când o trageți, se mărește prin ciupire sau dublă atingere, continuă să se rotească puțin după o tragere rapidă, pornește din vederea inițială înregistrată de cameră (metadate GPano) și primește o textură mai clară când măriți; panoramele parțiale sunt gestionate (decupaj GPano). Un videoclip este redat într-un player sferic nativ, cu sunet, tragere și giroscop. Fișierele 360° deja îmbinate funcționează peste tot: exporturi din aplicația sau din Studio Insta360, GoPro Player, Ricoh Theta și fotografii sferice de telefon. Fișierele brute venite direct din cameră sunt îmbinate de aplicație, vedeți [Fișiere brute ale camerelor 360°](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 le deschide ca o sferă în care vă uitați în jur, pe telefoane și tablete Android și iOS.
 
-| O fotografie 360° ca o sferă | Un videoclip 360° în playerul 360° |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="O fotografie 360° cu malul unui lac în vizualizatorul sferic: butonul de închidere în stânga sus, butoanele 360°, Aranjament 3D și Giroscop în dreapta sus"> | <img src="../.github/readme/b19-video.png" width="420" alt="Un videoclip 360° cu un drum de coastă redat în playerul 360° al unui telefon ținut orizontal: închidere și numele fișierului în stânga sus, 360° și 3D în dreapta sus, anterior, înapoi, redare, înainte și următor la mijloc, bara de timp jos"> |
-| Închidere în stânga sus; în dreapta sus, butonul 360°/180°, butonul de aranjament 3D și giroscopul | Atingeți imaginea pentru comenzi; 360° și 3D în dreapta sus |
+O fotografie se rotește când o trageți, se mărește prin ciupire sau dublă atingere, continuă să se rotească puțin după o tragere rapidă, pornește din vederea inițială înregistrată de cameră (metadate GPano) și primește o textură mai clară când măriți; panoramele parțiale sunt gestionate (decupaj GPano). Un videoclip este redat într-un player sferic nativ, cu sunet, tragere și giroscop.
+
+Fișierele 360° deja îmbinate funcționează peste tot: exporturi din aplicația sau din Studio Insta360, GoPro Player, Ricoh Theta și fotografii sferice de telefon. Fișierele brute venite direct din cameră sunt îmbinate de aplicație, vedeți [Fișiere brute ale camerelor 360°](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="O fotografie 360° cu malul unui lac în vizualizatorul sferic: butonul de închidere în stânga sus, butoanele 360°, Aranjament 3D și Giroscop în dreapta sus">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Un videoclip 360° cu un drum de coastă redat în playerul 360° al unui telefon ținut orizontal: închidere și numele fișierului în stânga sus, 360° și 3D în dreapta sus, anterior, înapoi, redare, înainte și următor la mijloc, bara de timp jos">
+</p>
+
+- **O fotografie 360° ca o sferă**: închidere în stânga sus; în dreapta sus, butonul 360°/180°, butonul de aranjament 3D și giroscopul.
+- **Un videoclip 360° în playerul 360°**: atingeți imaginea pentru comenzi; 360° și 3D în dreapta sus.
 
 ### Deschideți o fotografie 360° ca o sferă
 
@@ -135,12 +167,17 @@ Pe pagina de autentificare, „Folosește fără server” deschide Immuch360 pe
 
 Videoclipurile dvs. 360° stau pe un NAS sau pe un computer și vreți să le vedeți pe telefon sau în cască fără să le copiați mai întâi. În cască, oamenii ajung să copieze fiecare fișier prin cablu; serverele media precum Plex și Jellyfin redau videoclipurile 360° plat, după cum descriu cererile de pe forumurile lor; aplicația Immich citește doar serverul dvs. Immich.
 
-Immuch360 răsfoiește și redă fotografiile și videoclipurile oricărui server care folosește SMB (Samba, Windows), WebDAV sau, începând cu build-ul 19, DLNA/UPnP (un server media: Jellyfin, minidlna, Gerbera, Emby, un NAS sau un TV box), direct din partajare. Începând cu build-ul 20, un Plex Media Server are un tip propriu, vedeți [Plex Media Server, fără plex.tv](#plex-media-server-without-plextv). Găsește singur serverele din rețeaua dvs. și redă fișierele direct, în aceleași vizualizatoare ca restul aplicației (360°, 3D, VR180, Spatial 2.5D, vizualizarea imersivă din Quest), cu sau fără server Immich, pe telefoane și pe Meta Quest 3. Nimic nu este descărcat. Când un server este conectat, fișierele pe care le alegeți pot fi trimise în contul dvs. Immich (începând cu build-ul 15).
+Immuch360 răsfoiește și redă fotografiile și videoclipurile oricărui server care folosește SMB (Samba, Windows), WebDAV sau, începând cu build-ul 19, DLNA/UPnP (un server media: Jellyfin, minidlna, Gerbera, Emby, un NAS sau un TV box), direct din partajare. Începând cu build-ul 20, un Plex Media Server are un tip propriu, vedeți [Plex Media Server, fără plex.tv](#plex-media-server-without-plextv).
 
-| Adăugați o partajare | Un dosar al unei partajări |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Pagina Adăugați o partajare: Nume, Numele sau adresa serverului, Port (opțional), Partajare, Alegeți o partajare, Dosar de pornire (opțional), Nume de utilizator, Parolă, Testați conexiunea și rezultatul Conectat, 2 elemente în dosarul de pornire"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Un dosar al unei partajări de rețea ca grilă de miniaturi: fotografii 360° cu insigna 360° și un videoclip 360° cu un semn de redare, butonul Selectează în dreapta sus"> |
-| Câmpurile unei noi partajări SMB, după Testați conexiunea | Fotografii 360° și un videoclip, citite direct din partajare |
+Găsește singur serverele din rețeaua dvs. și redă fișierele direct, în aceleași vizualizatoare ca restul aplicației (360°, 3D, VR180, Spatial 2.5D, vizualizarea imersivă din Quest), cu sau fără server Immich, pe telefoane și pe Meta Quest 3. Nimic nu este descărcat. Când un server este conectat, fișierele pe care le alegeți pot fi trimise în contul dvs. Immich (începând cu build-ul 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Pagina Adăugați o partajare: Nume, Numele sau adresa serverului, Port (opțional), Partajare, Alegeți o partajare, Dosar de pornire (opțional), Nume de utilizator, Parolă, Testați conexiunea și rezultatul Conectat, 2 elemente în dosarul de pornire">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Un dosar al unei partajări de rețea ca grilă de miniaturi: fotografii 360° cu insigna 360° și un videoclip 360° cu un semn de redare, butonul Selectează în dreapta sus">
+</p>
+
+- **Adăugați o partajare**: câmpurile unei noi partajări SMB, după Testați conexiunea.
+- **Un dosar al unei partajări**: fotografii 360° și un videoclip, citite direct din partajare.
 
 ### Adăugați o partajare
 
@@ -178,16 +215,26 @@ Fotografia sau videoclipul deschis dintr-o partajare are aceeași opțiune în m
 
 ### Cum se redă fără descărcare
 
-Playerele citesc octeții de care au nevoie printr-o punte din interiorul aplicației (doar adresa loopback, un token aleator pentru fiecare sesiune, intervale de octeți), așa că derularea unui videoclip funcționează și nimic nu este copiat pe dispozitiv. Playerele și vizualizatorul căștii nu primesc niciodată adresa partajării, doar adresa 127.0.0.1 a punții; cererile către server sunt făcute de aplicația însăși. Pentru o redare fluidă, partajarea este citită în blocuri mari, fișierul rămâne deschis între citiri, până la 16 MB sunt citiți înaintea playerului, iar videoclipul redat este citit prin până la șase conexiuni SMB în paralel, separate de conexiunea care servește miniaturile și listările. Un Freebox Server răspunde lent la fiecare citire: o conexiune dă 4,5 MB/s, șase dau 19 MB/s, suficient pentru un export 5.7K la 132 Mbit/s. Cât timp playerul așteaptă date, playerele 360° și Spatial afișează „Se încarcă” cu nivelul de umplere al bufferului de redare; playerul plat afișează „Se încarcă” fără procent cât timp videoclipul se încarcă sau se blochează.
+Playerele citesc octeții de care au nevoie printr-o punte din interiorul aplicației (doar adresa loopback, un token aleator pentru fiecare sesiune, intervale de octeți), așa că derularea unui videoclip funcționează și nimic nu este copiat pe dispozitiv. Playerele și vizualizatorul căștii nu primesc niciodată adresa partajării, doar adresa 127.0.0.1 a punții; cererile către server sunt făcute de aplicația însăși.
+
+Pentru o redare fluidă, partajarea este citită în blocuri mari, fișierul rămâne deschis între citiri, până la 16 MB sunt citiți înaintea playerului, iar videoclipul redat este citit prin până la șase conexiuni SMB în paralel, separate de conexiunea care servește miniaturile și listările. Un Freebox Server răspunde lent la fiecare citire: o conexiune dă 4,5 MB/s, șase dau 19 MB/s, suficient pentru un export 5.7K la 132 Mbit/s.
+
+Cât timp playerul așteaptă date, playerele 360° și Spatial afișează „Se încarcă” cu nivelul de umplere al bufferului de redare; playerul plat afișează „Se încarcă” fără procent cât timp videoclipul se încarcă sau se blochează.
 
 ### Servere media DLNA
 
-Începând cu build-ul 19, aplicația trimite căutarea SSDP a serverelor media către grupul multicast al rețelei și aceeași cerere către portul 1900 al fiecărei adrese din rețeaua locală /24, apoi citește descrierea dispozitivului pentru fiecare server care răspunde și le păstrează pe cele care își publică conținutul (un ContentDirectory). Dosarele și fișierele sunt listate cu acțiunea Browse a serverului, pagină cu pagină, și denumite după titlurile lor: un fișier primește extensia tipului său când titlul nu are una, iar un al doilea fișier cu același titlu într-un dosar devine `name (2)`. Sunetul este lăsat deoparte. Miniaturile sunt coperta albumului sau imaginile mici generate de server, încărcate de aplicația însăși, cu miniatura proprie a aplicației când serverul nu are niciuna. Un fișier este redat din originalul oferit de server, nu dintr-o copie convertită atunci când le oferă pe amândouă, citit prin cereri de interval, așa că derularea funcționează. Verificat cu minidlna și Gerbera; descoperirea într-o rețea reală, Plex, Jellyfin, un NAS, Freebox Server, un iPhone și Quest sunt testul pe dispozitiv al build-ului 19.
+Începând cu build-ul 19, aplicația trimite căutarea SSDP a serverelor media către grupul multicast al rețelei și aceeași cerere către portul 1900 al fiecărei adrese din rețeaua locală /24, apoi citește descrierea dispozitivului pentru fiecare server care răspunde și le păstrează pe cele care își publică conținutul (un ContentDirectory).
+
+Dosarele și fișierele sunt listate cu acțiunea Browse a serverului, pagină cu pagină, și denumite după titlurile lor: un fișier primește extensia tipului său când titlul nu are una, iar un al doilea fișier cu același titlu într-un dosar devine `name (2)`. Sunetul este lăsat deoparte. Miniaturile sunt coperta albumului sau imaginile mici generate de server, încărcate de aplicația însăși, cu miniatura proprie a aplicației când serverul nu are niciuna. Un fișier este redat din originalul oferit de server, nu dintr-o copie convertită atunci când le oferă pe amândouă, citit prin cereri de interval, așa că derularea funcționează.
+
+Verificat cu minidlna și Gerbera; descoperirea într-o rețea reală, Plex, Jellyfin, un NAS, Freebox Server, un iPhone și Quest sunt testul pe dispozitiv al build-ului 19.
 
 <a id="a-share-that-moved"></a>
 ### O partajare care s-a mutat
 
-Începând cu build-ul 19, o partajare DLNA și o partajare de telefon (vedeți [Partajați acest telefon în rețea](#share-this-phone-on-the-network)) păstrează id-ul anunțat de serverul lor. Când una nu mai răspunde la adresa ei (o adresă nouă dată de router, un server repornit pe alt port), pagina dosarului afișează „Se caută (nume) în rețea” și mută partajarea acolo unde răspunde acum: imediat pentru un server DLNA, care nu are parolă, și după o confirmare, „Folosiți noua adresă?”, care arată ambele adrese, pentru o partajare cu nume de utilizator și parolă, deoarece acestea ar fi trimise la noua adresă. Începând cu build-ul 20, un server Plex regăsit la o altă adresă din rețea este și el mutat imediat: certificatul lui dovedește că este același server înainte ca tokenul să fie trimis. O cameră Tapo este căutată după adresa ei MAC din propria pagină, vedeți [Camere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Începând cu build-ul 19, o partajare DLNA și o partajare de telefon (vedeți [Partajați acest telefon în rețea](#share-this-phone-on-the-network)) păstrează id-ul anunțat de serverul lor. Când una nu mai răspunde la adresa ei (o adresă nouă dată de router, un server repornit pe alt port), pagina dosarului afișează „Se caută (nume) în rețea” și mută partajarea acolo unde răspunde acum: imediat pentru un server DLNA, care nu are parolă, și după o confirmare, „Folosiți noua adresă?”, care arată ambele adrese, pentru o partajare cu nume de utilizator și parolă, deoarece acestea ar fi trimise la noua adresă.
+
+Începând cu build-ul 20, un server Plex regăsit la o altă adresă din rețea este și el mutat imediat: certificatul lui dovedește că este același server înainte ca tokenul să fie trimis. O cameră Tapo este căutată după adresa ei MAC din propria pagină, vedeți [Camere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Limitări
 
@@ -227,7 +274,9 @@ Videoclipurile dvs. sunt în Plex, iar Plex vă afișează fotografiile și vide
 
 ### În afara casei
 
-De fiecare dată când deschide serverul, aplicația încearcă mai întâi adresa de acasă și, după 400 ms, adresa din afara casei. Se folosește prima care răspunde cu serverul dvs.; când este adresa din afara casei, pagina dosarului afișează o pictogramă glob cu textul „Conectat prin adresa din afara casei”. Pentru asta trebuie activat Accesul la distanță în Plex (Setări, Acces la distanță), cu un port redirecționat de router: fără plex.tv aplicația nu poate folosi releul Plex, așa că un server fără redirecționare de port se deschide doar acasă, iar în afara casei pagina afișează „Serverul dvs. Plex nu poate fi accesat din afara rețelei de acasă. Activați accesul la distanță cu o redirecționare de port în Plex (Setări, Acces la distanță) sau introduceți adresa sa publică.”
+De fiecare dată când deschide serverul, aplicația încearcă mai întâi adresa de acasă și, după 400 ms, adresa din afara casei. Se folosește prima care răspunde cu serverul dvs.; când este adresa din afara casei, pagina dosarului afișează o pictogramă glob cu textul „Conectat prin adresa din afara casei”.
+
+Pentru asta trebuie activat Accesul la distanță în Plex (Setări, Acces la distanță), cu un port redirecționat de router: fără plex.tv aplicația nu poate folosi releul Plex, așa că un server fără redirecționare de port se deschide doar acasă, iar în afara casei pagina afișează „Serverul dvs. Plex nu poate fi accesat din afara rețelei de acasă. Activați accesul la distanță cu o redirecționare de port în Plex (Setări, Acces la distanță) sau introduceți adresa sa publică.”
 
 Adresa comunicată de server este reînvățată la fiecare conexiune de acasă. Când nu răspunde din afară (un router care își schimbă adresa, două routere unul după altul), introduceți-o pe a dvs. în pagina serverului. Când tokenul nu mai funcționează (v-ați deconectat, de exemplu, din sesiunea de browser din care l-ați copiat), pagina dosarului spune acest lucru și oferă „Lipiți un token nou”, care deschide pagina serverului la câmpul tokenului.
 
@@ -344,15 +393,13 @@ Camerele Insta360 înregistrează cele două cercuri fisheye ale obiectivelor lo
 
 Începând cu build-ul 16, Immuch360 îmbină singur aceste fișiere, pe telefon, pe tabletă sau în cască, fără să instalați nimic pe server:
 
-| Camera și fișierul | Ce face aplicația | De la |
-|---|---|---|
-| Fotografii Insta360 .insp | Îmbinate pe GPU înainte de vizualizatorul sferic, la până la 8192x4096, cu o variantă de rezervă pe CPU la o dimensiune mai mică | Build 16 |
-| Videoclipuri Insta360 .insv care păstrează ambele obiective într-o singură pistă | Îmbinate de un efect GPU în player | Build 16 |
-| Videoclipuri .insv Insta360 X4, X4 Air, X5 și X6, câte o pistă pătrată pentru fiecare obiectiv | Două decodoare simultan, câte unul pentru fiecare obiectiv, și un compozitor GPU care le îmbină în sferă | Build 18 |
-| Insta360 X3 și modelele mai vechi la 5.7K și peste: două fișiere, `_00_` și `_10_` | La fel, celălalt fișier fiind găsit lângă primul | Build 18 |
-| GoPro MAX și MAX 2 .360: două piste cu câte trei fețe de cub | La fel, cu coloanele de suprapunere amestecate | Build 18 |
-| DJI Osmo 360 .osv: două piste pătrate pe 10 biți | La fel, cu calibrarea Kannala-Brandt din fișier | Build 18 |
-| .dng dual fisheye | Apare plat | Încă nu |
+- **Fotografii Insta360 .insp** (build 16): îmbinate pe GPU înainte de vizualizatorul sferic, la până la 8192x4096, cu o variantă de rezervă pe CPU la o dimensiune mai mică.
+- **Videoclipuri Insta360 .insv care păstrează ambele obiective într-o singură pistă** (build 16): îmbinate de un efect GPU în player.
+- **Videoclipuri .insv Insta360 X4, X4 Air, X5 și X6, câte o pistă pătrată pentru fiecare obiectiv** (build 18): două decodoare simultan, câte unul pentru fiecare obiectiv, și un compozitor GPU care le îmbină în sferă.
+- **Insta360 X3 și modelele mai vechi la 5.7K și peste: două fișiere, `_00_` și `_10_`** (build 18): la fel, celălalt fișier fiind găsit lângă primul.
+- **GoPro MAX și MAX 2 .360: două piste cu câte trei fețe de cub** (build 18): la fel, cu coloanele de suprapunere amestecate.
+- **DJI Osmo 360 .osv: două piste pătrate pe 10 biți** (build 18): la fel, cu calibrarea Kannala-Brandt din fișier.
+- **.dng dual fisheye** (încă nu): apare plat.
 
 ### Vizionați un fișier brut
 
@@ -466,7 +513,9 @@ Detectarea a fost verificată pe o fotografie spațială de test scrisă chiar d
 
 Oamenii cumpără un Quest 3 ca să își vadă propriile fotografii și videoclipuri 360°, apoi întreabă unde să pună fișierele, cum să le ducă în cască fără cablu și ce player să folosească: playerele din magazin pentru video 360° și 3D sunt contra cost.
 
-Aceeași aplicație Android rulează pe Quest 3 și 3S, iar începând cu build-ul 21 pe Quest 2 și Quest Pro (netestat), ca o fereastră, cu întreaga bibliotecă. Butonul său 360° deschide o vizualizare imersivă în care fotografia sau videoclipul vă înconjoară și vă uitați în jur întorcând capul, în 3D adevărat pentru fișierele stereoscopice (Meta Spatial SDK). Elementele media vin de pe serverul dvs. Immich, din cască, de pe un NAS, de pe un server media, de pe un telefon sau de pe un server Plex și sunt redate pe loc (un server media și un telefon începând cu build-ul 19, un server Plex începând cu build-ul 20, încă neverificate în cască), iar începând cu build-ul 20 fereastra afișează și camerele Tapo. Este gratuită și open source. Verificată pe un Quest 3 și de un utilizator cu videoclipuri Insta360 X4 8K HEVC.
+Aceeași aplicație Android rulează pe Quest 3 și 3S, iar începând cu build-ul 21 pe Quest 2 și Quest Pro (netestat), ca o fereastră, cu întreaga bibliotecă. Butonul său 360° deschide o vizualizare imersivă în care fotografia sau videoclipul vă înconjoară și vă uitați în jur întorcând capul, în 3D adevărat pentru fișierele stereoscopice (Meta Spatial SDK).
+
+Elementele media vin de pe serverul dvs. Immich, din cască, de pe un NAS, de pe un server media, de pe un telefon sau de pe un server Plex și sunt redate pe loc (un server media și un telefon începând cu build-ul 19, un server Plex începând cu build-ul 20, încă neverificate în cască), iar începând cu build-ul 20 fereastra afișează și camerele Tapo. Este gratuită și open source. Verificată pe un Quest 3 și de un utilizator cu videoclipuri Insta360 X4 8K HEVC.
 
 ### Deschideți vizualizarea imersivă
 
@@ -479,17 +528,20 @@ Aceeași aplicație Android rulează pe Quest 3 și 3S, iar începând cu build-
 
 | Acțiune | Controlere | Mâini |
 |---|---|---|
-| Înapoi la aplicație | B sau Y | Butonul Înapoi al panoului de informații |
-| Redarea sau pauza unui videoclip | Trăgaci, când panoul de informații este ascuns | Butonul Redare sau Pauză al panoului de informații |
+| Înapoi la aplicație | B sau Y | Butonul Înapoi |
+| Redarea sau pauza unui videoclip | Trăgaci, când panoul de informații este ascuns | Butonul Redare sau Pauză |
 | Afișarea sau ascunderea panoului de informații | A, X, butonul de prindere sau meniu | Gestul de meniu sau ciupire când panoul este ascuns |
-| Rotirea vederii, pentru a privi în spate fără a întoarce capul (începând cu build-ul 17) | Joystickul drept la stânga sau la dreapta: 30° la fiecare apăsare, și continuă să se rotească cât îl țineți (un strat de o linie arată unghiul) | Butonul Rotiți al panoului de informații (90°) |
-| Elementul media anterior sau următor | Joystickul stâng la stânga sau la dreapta (oricare dintre ele înainte de build-ul 17; începând cu build-ul 16, un strat de o linie numește elementul, panoul de informații rămâne ascuns) | Butoanele Anterior și Următor ale panoului de informații |
-| 10 secunde înapoi sau înainte într-un videoclip | Joystickul în jos sau în sus (începând cu build-ul 16, un strat de o linie arată timpul, panoul de informații rămâne ascuns) | Cele două butoane de salt sau tragerea barei de timp a panoului de informații |
-| Rotirea imaginii cu 90° | Joystickul în jos sau în sus pe o fotografie (începând cu build-ul 16, stratul de o linie arată unghiul); pe un videoclip, butonul Rotiți al panoului de informații | Butonul Rotiți al panoului de informații |
-| Schimbarea aranjamentului 3D (mono, sus și jos, unul lângă altul) | Butonul 3D al panoului de informații | Butonul 3D al panoului de informații |
-| Sferă completă sau semisferă (VR180) | Butonul 360°/180° al panoului de informații | Butonul 360°/180° al panoului de informații |
+| Rotirea vederii (începând cu build-ul 17) | Joystickul drept la stânga sau la dreapta, 30° la fiecare apăsare | Butonul Rotiți (90°) |
+| Elementul media anterior sau următor | Joystickul stâng la stânga sau la dreapta | Butoanele Anterior și Următor |
+| 10 secunde înapoi sau înainte într-un videoclip | Joystickul în jos sau în sus | Cele două butoane de salt sau tragerea barei de timp |
+| Rotirea imaginii cu 90° | Joystickul în jos sau în sus pe o fotografie, butonul Rotiți pe un videoclip | Butonul Rotiți |
+| Schimbarea aranjamentului 3D (mono, sus și jos, unul lângă altul) | Butonul 3D | Butonul 3D |
+| Sferă completă sau semisferă (VR180) | Butonul 360°/180° | Butonul 360°/180° |
 
-Cu controlerele, butoanele și bara de timp ale panoului de informații funcționează și ele: indicați-le cu raza și apăsați trăgaciul.
+În acest tabel, butoanele și bara de timp sunt cele ale panoului de informații. Cu controlerele funcționează și ele: indicați-le cu raza și apăsați trăgaciul.
+
+- **Rotirea vederii**: pentru a privi în spate fără a întoarce capul. Joystickul drept continuă să rotească vederea cât îl țineți, iar un strat de o linie arată unghiul.
+- **Stratul de o linie**: începând cu build-ul 16, derularea cu joystickul, rotirea unei fotografii sau trecerea la elementul media anterior sau următor afișează un strat de o linie (timpul, unghiul sau numele elementului media), iar panoul de informații rămâne ascuns. Înainte de build-ul 17, oricare dintre joystickuri trecea la elementul media anterior sau următor.
 
 ### Panoul de informații, anterior și următor
 
@@ -497,7 +549,9 @@ Panoul de informații al unui videoclip are o bară de timp (poziție, durată, 
 
 Anterior și următor parcurg elementele media 360° ale locului din care ați venit, fără a ieși din vizualizarea imersivă: cronologia, lista 360° (cu filtrele aplicate), un album, un dosar al unei partajări de rețea sau elementele media ale căștii (Pe acest dispozitiv). Fotografiile și videoclipurile plate sunt sărite. Când reveniți în aplicație din cronologie, dintr-un album sau din lista 360°, ajungeți la elementul pe care îl priveați (pagina unui dosar de partajare rămâne la fișierul deschis), iar videoclipul din care ați deschis vizualizarea imersivă continuă de unde l-ați lăsat.
 
-Începând cu build-ul 17, joystickul drept rotește vederea, așa cum o face joystickul drept în majoritatea aplicațiilor pentru cască: o apăsare rotește cu 30°, ținerea lui continuă rotirea, astfel încât ce este în spatele dvs. ajunge în față fără să întoarceți capul sau scaunul; anterior și următor sunt pe joystickul stâng. Începând cu build-ul 16, în urma părerii unui utilizator despre cască, o derulare, o rotire sau un anterior/următor cu joystickul afișează un strat de o linie (timpul, unghiul sau titlul elementului) care dispare după 1,5 secunde, în loc să deschidă panoul de informații; panoul vine în continuare cu A, X, butonul de prindere sau butonul de meniu. Același build menține funcționarea comutării panoului când controlerele intră în repaus, se trezesc sau lasă locul urmăririi mâinilor și înregistrează aceste tranziții, vedeți [Log-uri](#logs).
+Începând cu build-ul 17, joystickul drept rotește vederea, așa cum o face joystickul drept în majoritatea aplicațiilor pentru cască: o apăsare rotește cu 30°, ținerea lui continuă rotirea, astfel încât ce este în spatele dvs. ajunge în față fără să întoarceți capul sau scaunul; anterior și următor sunt pe joystickul stâng.
+
+Începând cu build-ul 16, în urma părerii unui utilizator despre cască, o derulare, o rotire sau un anterior/următor cu joystickul afișează un strat de o linie (timpul, unghiul sau titlul elementului) care dispare după 1,5 secunde, în loc să deschidă panoul de informații; panoul vine în continuare cu A, X, butonul de prindere sau butonul de meniu. Același build menține funcționarea comutării panoului când controlerele intră în repaus, se trezesc sau lasă locul urmăririi mâinilor și înregistrează aceste tranziții, vedeți [Log-uri](#logs).
 
 O fotografie spațială Apple deschisă cu „Vizualizați în 3D” nu este pusă pe o sferă: plutește în fața dvs., vedeți [Fotografii și videoclipuri spațiale Apple](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Fotografiile afișează mai întâi o previzualizare, apoi originalul, redus la 
 
 Aranjamentele 3D, sus și jos și unul lângă altul, 360° și VR180, sunt afișate în 3D, fiecare ochi primind propria jumătate a cadrului. Aranjamentul vine din fișier când acesta declară unul (videoclipuri), altfel este dedus din forma lui (pătrat: sus și jos, 4:1: unul lângă altul); când este greșit, folosiți butonul 3D al panoului de informații.
 
-| Fotografie 360° în cască | Videoclip 360° în cască | Videoclip 3D 360° în cască |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="O fotografie 360° de jur împrejur în Quest 3, cu panoul de informații: butoanele de aranjament, 360° și Înapoi"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Un videoclip 360° cu un lac redat în Quest 3, cu panoul de informații: butoanele de aranjament, 360°, Pauză și Înapoi"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Un videoclip 360° stereoscopic în Quest 3, cu panoul de informații indicând 3D, sus și jos"> |
-| Vizualizarea imersivă a unei fotografii, cu panoul de informații (aranjament, 360°/180°, Înapoi) | Un videoclip în redare, cu Pauză | Un videoclip stereoscopic sus și jos, fiecare ochi cu imaginea lui (exemplul Kandao Obsidian) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="O fotografie 360° de jur împrejur în Quest 3, cu panoul de informații: butoanele de aranjament, 360° și Înapoi">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Un videoclip 360° cu un lac redat în Quest 3, cu panoul de informații: butoanele de aranjament, 360°, Pauză și Înapoi">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Un videoclip 360° stereoscopic în Quest 3, cu panoul de informații indicând 3D, sus și jos">
+</p>
+
+- **Fotografie 360° în cască**: vizualizarea imersivă a unei fotografii, cu panoul de informații (aranjament, 360°/180°, Înapoi).
+- **Videoclip 360° în cască**: un videoclip în redare, cu Pauză.
+- **Videoclip 3D 360° în cască**: un videoclip stereoscopic sus și jos, fiecare ochi cu imaginea lui (exemplul Kandao Obsidian).
 
 Aceste capturi au fost făcute cu aplicația în franceză, înainte de build-ul 14. Panoul are acum și bara de timp între cele două butoane de salt de 10 secunde, Anterior și Următor, și Rotiți.
 
@@ -598,7 +657,9 @@ Immuch360 pune o insignă 360° pe miniaturile fotografiilor 360° (într-un dos
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Detaliile videoclipului, decodoarele și de ce un videoclip merge sacadat
 
-Oamenii întreabă ce codec, ce dimensiune și ce rată de biți redă Quest 3 și de ce un export 5.7K merge sacadat în cască, deși merge pe telefon. Răspunsul este decodorul hardware: decodorul H.264 al Quest 3 (XR2 Gen 2) ajunge la maximum aproximativ 4096x2304, așa că un videoclip H.264 de 5760x2880 (nivel 6.0, aproximativ 200 Mbit/s, exportul Insta360 obișnuit) se decodează la aproximativ 17 fps în cască, cu artefacte de blocuri, în timp ce același fișier merge bine pe un telefon. Același videoclip în HEVC (H.265) merge bine în cască: un videoclip Insta360 X4 8K HEVC (7680x3840, 29,97 fps, 210 Mbit/s, profil Main nivel 6.1, 8 biți) rulează fluid în vizualizarea imersivă, la rezoluția nativă și fără transcodare (raportat de un utilizator pe un Quest 3).
+Oamenii întreabă ce codec, ce dimensiune și ce rată de biți redă Quest 3 și de ce un export 5.7K merge sacadat în cască, deși merge pe telefon. Răspunsul este decodorul hardware: decodorul H.264 al Quest 3 (XR2 Gen 2) ajunge la maximum aproximativ 4096x2304, așa că un videoclip H.264 de 5760x2880 (nivel 6.0, aproximativ 200 Mbit/s, exportul Insta360 obișnuit) se decodează la aproximativ 17 fps în cască, cu artefacte de blocuri, în timp ce același fișier merge bine pe un telefon.
+
+Același videoclip în HEVC (H.265) merge bine în cască: un videoclip Insta360 X4 8K HEVC (7680x3840, 29,97 fps, 210 Mbit/s, profil Main nivel 6.1, 8 biți) rulează fluid în vizualizarea imersivă, la rezoluția nativă și fără transcodare (raportat de un utilizator pe un Quest 3).
 
 Aplicația Immich are un singur comutator „Forțează videoclipul original” și afișează doar codecul. Immuch360 arată ce este un videoclip și ce decodează dispozitivul și alege fișierul care se poate reda.
 
@@ -623,7 +684,9 @@ Setări, Avansat, „Decodoarele video ale acestui dispozitiv” (începând cu 
 1. Deschideți Setări, Vizualizator resurse, apoi Videoclipuri.
 2. La „Sursa video” („Ce fișier este redat când serverul are o copie transcodificată”), alegeți „Originalul, când acest dispozitiv îl poate decoda”, „Întotdeauna originalul” sau „Întotdeauna fluxul transcodificat”.
 
-Începând cu build-ul 15, alegerea se aplică tuturor videoclipurilor de pe server: playerul plat, playerele 360° și Spatial și vizualizarea imersivă din Quest. Până alegeți ceva, un telefon păstrează ce spunea fostul comutator „Forțează videoclipul original” (dezactivat implicit: fluxul transcodificat, care este chiar originalul când serverul nu l-a transcodificat), iar Quest redă originalul când casca îl poate decoda. Verificarea citește codecul, dimensiunea și rata de cadre din fișier și le compară cu decodoarele hardware (H.264 pe Quest 3 este limitat la cei 4096x2304 măsurați). Un player care nu poate decoda originalul trece la fluxul transcodificat cu un mesaj: „Se redă fluxul transcodificat: originalul (codec și dimensiune) depășește ce decodează acest dispozitiv”.
+Începând cu build-ul 15, alegerea se aplică tuturor videoclipurilor de pe server: playerul plat, playerele 360° și Spatial și vizualizarea imersivă din Quest. Până alegeți ceva, un telefon păstrează ce spunea fostul comutator „Forțează videoclipul original” (dezactivat implicit: fluxul transcodificat, care este chiar originalul când serverul nu l-a transcodificat), iar Quest redă originalul când casca îl poate decoda.
+
+Verificarea citește codecul, dimensiunea și rata de cadre din fișier și le compară cu decodoarele hardware (H.264 pe Quest 3 este limitat la cei 4096x2304 măsurați). Un player care nu poate decoda originalul trece la fluxul transcodificat cu un mesaj: „Se redă fluxul transcodificat: originalul (codec și dimensiune) depășește ce decodează acest dispozitiv”.
 
 În cască, vizualizarea imersivă pornește originalul și, la primele cadre, trece la fluxul transcodificat al serverului când originalul depășește decodoarele, spunând asta pe panoul de informații; când nu există flux transcodificat, când acesta este tot prea mare sau când fișierul vine din cască sau dintr-o partajare de rețea, panoul de informații o spune timp de 10 secunde, cu ce trebuie schimbat. Build-ul 14, cel trimis la Horizon Store, verifică doar H.264 peste 4096x2304 și apoi încearcă la fel fluxul de redare al serverului.
 
@@ -661,87 +724,184 @@ Pentru a arăta o fotografie 360° cuiva care nu are aplicația, distribuiți-o 
 
 Build-ul curent, build-ul 21 (versiunea 3.3.0-rc.0, numărul de build 3030019), se bazează pe Immich 3.3.0-rc.0 (`main` din Immich, încă nu o versiune stabilă). Build-ul 19 a fost testat cu un server Immich 3.2, iar build-urile 20 și 21 nu schimbă nimic din ce cere aplicația serverului. Vă rugăm să raportați problemele în [Issues](https://github.com/freeKC/Immuch360/issues), nu proiectului Immich. Pentru documentația completă a Immich, vedeți [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Comparație cu aplicația Immich și cu alte aplicații
 
 ### De ce există acest fork, într-un tabel
 
-| | Aplicația mobilă Immich | Immuch360 | Stare |
-|---|:---:|:---:|---|
-| Fotografii 360° ca o sferă în care vă uitați în jur (tragere, ciupire, dublă atingere, inerție, vederea inițială a camerei, panorame parțiale) | ❌ bandă plată | ✅ | Testat pe un Galaxy S24+ și pe un iPhone 14 |
-| Giroscop: vă uitați în jur mișcând telefonul | ❌ | ✅ | Testat pe un Galaxy S24+ și pe un iPhone 14 |
-| Videoclipuri 360° într-un player sferic, cu sunet, derulare, alegerea pistei audio și indicator de buffer | ❌ videoclip plat | ✅ Android și iOS (încă fără bară de timp pe iOS) | Testat pe un Galaxy S24+ și pe un iPhone 14 |
-| Fotografii și videoclipuri 360° 3D (stereoscopice) | ❌ imagine dublată | ✅ ochiul stâng pe telefoane, 3D adevărat pe Quest | Testat pe un Galaxy S24+ și pe un Quest 3, cu exemple reale 3D 360° (VRTogether, Vuze, Kandao) și o fotografie 3D; rapoartele de la alte camere sunt binevenite |
-| Fotografii și videoclipuri VR180 (semisferă) | ❌ întinse în jurul sferei | ✅ semisferă, butonul 360°/180° | Testat pe un emulator Android și pe un Galaxy S24+ cu conținut sintetic; părerile de pe dispozitive sunt binevenite |
-| Fotografii spațiale Apple (perechi stereo HEIC) și videoclipuri spațiale (MV-HEVC) | ❌ o fotografie sau un videoclip plat, nimic nu arată că este spațial | ✅ începând cu build-ul 19: fotografii în 3D în Quest, un singur ochi și un rând în detalii în rest | Detectarea verificată pe o fotografie de test scrisă de biblioteca de imagini Apple și pe fișiere sintetice; vizualizarea în cască și fișierele reale de iPhone sunt testul pe dispozitiv al build-ului 19 |
-| Vizualizare imersivă în Meta Quest cu urmărirea capului, bară de timp, anterior și următor, și Rotiți | ❌ | ✅ aceeași aplicație, ca build pentru cască sau ca APK de telefon | Testat pe un Quest 3 (comenzile din build-ul 14, ajustate în build-ul 16 după părerea unui utilizator) și de un utilizator cu videoclipuri Insta360 X4 8K HEVC |
-| Insigna 360° pe miniaturi și o listă 360° cu fișiere brute și filtre (perioadă, sursă, tip, cameră) | ❌ | ✅ filtre începând cu build-ul 18 | Gata |
-| „Vizualizează ca 360°” pentru fișierele pe care serverul nu le marchează | ❌ | ✅ reținut pe telefon | Gata |
-| Spatial 2.5D: profunzime pe un ecran plat dintr-un videoclip stereoscopic | ❌ | ✅ experimental, telefoane și tablete | Testat pe un Galaxy S24+; părerile de pe iPhone sunt binevenite |
-| Folosire fără niciun server, pe galeria dispozitivului | ❌ autentificare obligatorie | ✅ | Testat pe un Galaxy S24+, pe un Quest 3 și pe un emulator Android |
-| Partajări SMB și WebDAV găsite în rețea și redate direct, fără descărcare | ❌ | ✅ toate vizualizatoarele, telefoane și Quest | Testat cu un Freebox Server (SMB) pe un Galaxy S24+ și pe un Quest 3, și cu servere de test Samba și WebDAV pe un emulator Android; părerile despre alte NAS-uri și WebDAV sunt binevenite |
-| Servere media DLNA ca tip de partajare | ❌ | ✅ începând cu build-ul 19 | Verificat cu minidlna și Gerbera în Docker; Plex, Jellyfin, un NAS, Freebox Server, un iPhone și Quest sunt testul pe dispozitiv al build-ului 19 |
-| Trimiterea fișierelor unei partajări în Immich; fișierele dispozitivului trimise manual sunt considerate salvate | ❌ doar fișierele dispozitivului | ✅ începând cu build-ul 15 | Testat pe un emulator Android cu un server de test Samba și un server Immich 3.2 |
-| Partajarea acestui telefon în rețea, pentru cască | ❌ | ✅ începând cu build-ul 19, Android și iOS | Teste unitare și teste de la un capăt la altul cu clientul WebDAV al căștii, pe un computer; un telefon care servește un Quest și partea de iPhone sunt testul pe dispozitiv al build-ului 19 |
-| Bibliotecile unui Plex Media Server redate din fișierele originale, acasă și în afara casei, fără plex.tv | ❌ | ✅ începând cu build-ul 20, toate vizualizatoarele, pe telefoane, tablete, Quest și televizoare | Verificat de pe un computer cu un Plex Media Server 1.42.1 real (asociere, dosare, intervale de octeți, miniaturi, adresa din afara casei); neverificat încă pe dispozitiv |
-| Camere Tapo: vizualizarea live și înregistrările de pe cardul de memorie trimise în Immich când alegeți | ❌ | ✅ începând cu build-ul 20: înregistrări peste tot, live pe Android, Android TV și Quest | Verificat cu o cameră simulată; neverificat încă cu o cameră reală |
-| Android TV și Google TV, comandate cu telecomanda, în același APK | ❌ nu este o aplicație pentru televizor | ✅ începând cu build-ul 20 | Verificat prin teste automate; neverificat încă pe un televizor |
-| Fotografii Insta360 .insp brute și videoclipuri .insv cu o singură pistă | ❌ plat | ✅ începând cu build-ul 16 | Fotografii comparate cu exporturi Insta360 Studio ale unor fișiere X3, videoclipuri pe un emulator Android cu un fișier X3 de rezoluție mică; nu a rulat încă pe un iPhone |
-| Videoclipuri brute cu un obiectiv pe pistă sau pe fișier (Insta360 X4, X4 Air, X5, X6, perechi X3, GoPro .360, DJI .osv) | ❌ plat sau greșit | ✅ începând cu build-ul 18 | Cititoarele și îmbinarea verificate pe fișiere reale X4, pereche X3, GoPro MAX și Osmo 360; redarea este testul pe dispozitiv al build-urilor 18 și 19 |
-| .dng dual fisheye | ❌ plat | ❌ încă nu | Planificat |
-| Videoclipuri de pe server: originalul când dispozitivul îl decodează, altfel fluxul transcodificat; lista decodoarelor video ale dispozitivului | ❌ un singur comutator „Forțează videoclipul original” | ✅ începând cu build-ul 15 | Testat pe un emulator Android; limita H.264 a Quest 3 a fost măsurată în cască |
-| Detaliile tehnice ale unui videoclip: rată de biți, imagine, profil, dacă acest dispozitiv îl decodează | ❌ doar codecul | ✅ începând cu build-ul 18 | Gata |
-| Un player gratuit pentru videoclipuri plate, 360°, 3D și VR180, de pe server, de pe telefon sau de pe un NAS | ❌ doar plate | ✅ (playerele din magazinul Quest 3 sunt contra cost) | |
-| Același server, același cont, se instalează alături de aplicația oficială | | ✅ | |
+| | Aplicația mobilă Immich | Immuch360 |
+|---|:---:|:---:|
+| Fotografii 360° ca o sferă în care vă uitați în jur (tragere, ciupire, dublă atingere, inerție, vederea inițială a camerei, panorame parțiale) | ❌ bandă plată | ✅ |
+| Giroscop: vă uitați în jur mișcând telefonul | ❌ | ✅ |
+| Videoclipuri 360° într-un player sferic, cu sunet, derulare, alegerea pistei audio și indicator de buffer | ❌ videoclip plat | ✅ Android și iOS (încă fără bară de timp pe iOS) |
+| Fotografii și videoclipuri 360° 3D (stereoscopice) | ❌ imagine dublată | ✅ ochiul stâng pe telefoane, 3D adevărat pe Quest |
+| Fotografii și videoclipuri VR180 (semisferă) | ❌ întinse în jurul sferei | ✅ semisferă, butonul 360°/180° |
+| Fotografii spațiale Apple (perechi stereo HEIC) și videoclipuri spațiale (MV-HEVC) | ❌ o fotografie sau un videoclip plat, nimic nu arată că este spațial | ✅ începând cu build-ul 19: fotografii în 3D în Quest, un singur ochi și un rând în detalii în rest |
+| Vizualizare imersivă în Meta Quest cu urmărirea capului, bară de timp, anterior și următor, și Rotiți | ❌ | ✅ aceeași aplicație, ca build pentru cască sau ca APK de telefon |
+| Insigna 360° pe miniaturi și o listă 360° cu fișiere brute și filtre (perioadă, sursă, tip, cameră) | ❌ | ✅ filtre începând cu build-ul 18 |
+| „Vizualizează ca 360°” pentru fișierele pe care serverul nu le marchează | ❌ | ✅ reținut pe telefon |
+| Spatial 2.5D: profunzime pe un ecran plat dintr-un videoclip stereoscopic | ❌ | ✅ experimental, telefoane și tablete |
+| Folosire fără niciun server, pe galeria dispozitivului | ❌ autentificare obligatorie | ✅ |
+| Partajări SMB și WebDAV găsite în rețea și redate direct, fără descărcare | ❌ | ✅ toate vizualizatoarele, telefoane și Quest |
+| Servere media DLNA ca tip de partajare | ❌ | ✅ începând cu build-ul 19 |
+| Trimiterea fișierelor unei partajări în Immich; fișierele dispozitivului trimise manual sunt considerate salvate | ❌ doar fișierele dispozitivului | ✅ începând cu build-ul 15 |
+| Partajarea acestui telefon în rețea, pentru cască | ❌ | ✅ începând cu build-ul 19, Android și iOS |
+| Bibliotecile unui Plex Media Server redate din fișierele originale, acasă și în afara casei, fără plex.tv | ❌ | ✅ începând cu build-ul 20, toate vizualizatoarele, pe telefoane, tablete, Quest și televizoare |
+| Camere Tapo: vizualizarea live și înregistrările de pe cardul de memorie trimise în Immich când alegeți | ❌ | ✅ începând cu build-ul 20: înregistrări peste tot, live pe Android, Android TV și Quest |
+| Android TV și Google TV, comandate cu telecomanda, în același APK | ❌ nu este o aplicație pentru televizor | ✅ începând cu build-ul 20 |
+| Fotografii Insta360 .insp brute și videoclipuri .insv cu o singură pistă | ❌ plat | ✅ începând cu build-ul 16 |
+| Videoclipuri brute cu un obiectiv pe pistă sau pe fișier (Insta360 X4, X4 Air, X5, X6, perechi X3, GoPro .360, DJI .osv) | ❌ plat sau greșit | ✅ începând cu build-ul 18 |
+| .dng dual fisheye | ❌ plat | ❌ încă nu |
+| Videoclipuri de pe server: originalul când dispozitivul îl decodează, altfel fluxul transcodificat; lista decodoarelor video ale dispozitivului | ❌ un singur comutator „Forțează videoclipul original” | ✅ începând cu build-ul 15 |
+| Detaliile tehnice ale unui videoclip: rată de biți, imagine, profil, dacă acest dispozitiv îl decodează | ❌ doar codecul | ✅ începând cu build-ul 18 |
+| Un player gratuit pentru videoclipuri plate, 360°, 3D și VR180, de pe server, de pe telefon sau de pe un NAS | ❌ doar plate | ✅ (playerele din magazinul Quest 3 sunt contra cost) |
+| Același server, același cont, se instalează alături de aplicația oficială | | ✅ |
+
+<details>
+<summary><b>Starea fiecărui rând</b>: cum a fost testat</summary>
+
+- **Fotografii 360° ca o sferă**: testat pe un Galaxy S24+ și pe un iPhone 14.
+- **Giroscop**: testat pe un Galaxy S24+ și pe un iPhone 14.
+- **Videoclipuri 360°**: testat pe un Galaxy S24+ și pe un iPhone 14.
+- **Fotografii și videoclipuri 360° 3D**: testat pe un Galaxy S24+ și pe un Quest 3, cu exemple reale 3D 360° (VRTogether, Vuze, Kandao) și o fotografie 3D; rapoartele de la alte camere sunt binevenite.
+- **VR180**: testat pe un emulator Android și pe un Galaxy S24+ cu conținut sintetic; părerile de pe dispozitive sunt binevenite.
+- **Fotografii și videoclipuri spațiale Apple**: detectarea verificată pe o fotografie de test scrisă de biblioteca de imagini Apple și pe fișiere sintetice; vizualizarea în cască și fișierele reale de iPhone sunt testul pe dispozitiv al build-ului 19.
+- **Vizualizarea imersivă Meta Quest**: testat pe un Quest 3 (comenzile din build-ul 14, ajustate în build-ul 16 după părerea unui utilizator) și de un utilizator cu videoclipuri Insta360 X4 8K HEVC.
+- **Insigna 360° și lista 360°**: gata.
+- **Vizualizează ca 360°**: gata.
+- **Spatial 2.5D**: testat pe un Galaxy S24+; părerile de pe iPhone sunt binevenite.
+- **Fără niciun server**: testat pe un Galaxy S24+, pe un Quest 3 și pe un emulator Android.
+- **Partajări SMB și WebDAV**: testat cu un Freebox Server (SMB) pe un Galaxy S24+ și pe un Quest 3, și cu servere de test Samba și WebDAV pe un emulator Android; părerile despre alte NAS-uri și WebDAV sunt binevenite.
+- **Servere media DLNA**: verificat cu minidlna și Gerbera în Docker; Plex, Jellyfin, un NAS, Freebox Server, un iPhone și Quest sunt testul pe dispozitiv al build-ului 19.
+- **Trimiterea fișierelor unei partajări în Immich**: testat pe un emulator Android cu un server de test Samba și un server Immich 3.2.
+- **Partajarea acestui telefon în rețea**: teste unitare și teste de la un capăt la altul cu clientul WebDAV al căștii, pe un computer; un telefon care servește un Quest și partea de iPhone sunt testul pe dispozitiv al build-ului 19.
+- **Plex Media Server**: verificat de pe un computer cu un Plex Media Server 1.42.1 real (asociere, dosare, intervale de octeți, miniaturi, adresa din afara casei); neverificat încă pe dispozitiv.
+- **Camere Tapo**: verificat cu o cameră simulată; neverificat încă cu o cameră reală.
+- **Android TV și Google TV**: verificat prin teste automate; neverificat încă pe un televizor.
+- **Fotografii Insta360 .insp brute și videoclipuri .insv cu o singură pistă**: fotografii comparate cu exporturi Insta360 Studio ale unor fișiere X3, videoclipuri pe un emulator Android cu un fișier X3 de rezoluție mică; nu a rulat încă pe un iPhone.
+- **Videoclipuri brute cu un obiectiv pe pistă sau pe fișier**: cititoarele și îmbinarea verificate pe fișiere reale X4, pereche X3, GoPro MAX și Osmo 360; redarea este testul pe dispozitiv al build-urilor 18 și 19.
+- **.dng dual fisheye**: planificat.
+- **Videoclipurile de pe server și decodoarele video**: testat pe un emulator Android; limita H.264 a Quest 3 a fost măsurată în cască.
+- **Detaliile tehnice ale unui videoclip**: gata.
+
+</details>
 
 ### Alte aplicații folosite pentru asta
 
-| Ce folosesc oamenii | Ce probleme întâlnesc | Ce face Immuch360 |
-|---|---|---|
-| Aplicația web Immich | Afișează o fotografie 360° ca o sferă, dar ia un .insp brut drept panoramă finalizată și înfășoară cele două cercuri ale lui în jurul sferei; o vizualizare VR este încă doar o cerere ([discuția #14768](https://github.com/immich-app/immich/discussions/14768)) | Îmbină fișierele brute pe dispozitiv și deschide o vizualizare imersivă în Quest |
-| Aplicația sau Studio Insta360 | Necesare pentru a transforma fișierele brute de pe card într-o imagine 360° înainte de vizionare | Deschide direct fișierele brute .insp și .insv, precum și fișierele GoPro .360 și DJI .osv |
-| Plex, Jellyfin, Synology Photos | Fotografii și videoclipuri 360° afișate plat sau nerecunoscute, după cum descriu discuțiile de pe forumurile lor (o cerere Plex este deschisă din 2017) | Citește biblioteca Plex însăși începând cu build-ul 20, sau aceleași dosare prin SMB, WebDAV sau DLNA, și le redă ca o sferă, fără să schimbe nimic pe server |
-| Aplicația Tapo | O aplicație separată, conectată la contul dvs. TP-Link, cu clipurile separate de fotografii | Afișează camera lângă fotografiile dvs., comunică cu ea doar în rețeaua dvs. și păstrează un clip ca videoclip pe care îl puteți trimite în Immich (începând cu build-ul 20) |
-| Aplicația mobilă Immich pe un televizor | Nu este o aplicație pentru televizor: un utilizator raportează că funcționează cu un mouse, nu cu telecomanda | Aceeași aplicație, făcută pentru telecomandă (începând cu build-ul 20) |
-| Copierea fișierelor în cască | Fiecare fișier copiat prin cablu înainte de a-l putea viziona | Redă pe loc din Immich, de pe un NAS, de pe un server media sau de pe un telefon |
-| Playerele 360° și 3D din magazinul Quest | Contra cost | Gratuit și open source (AGPL) |
+- **Aplicația web Immich**
+  - Ce probleme întâlnesc: afișează o fotografie 360° ca o sferă, dar ia un .insp brut drept panoramă finalizată și înfășoară cele două cercuri ale lui în jurul sferei; o vizualizare VR este încă doar o cerere ([discuția #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Ce face Immuch360: îmbină fișierele brute pe dispozitiv și deschide o vizualizare imersivă în Quest.
+- **Aplicația sau Studio Insta360**
+  - Ce probleme întâlnesc: necesare pentru a transforma fișierele brute de pe card într-o imagine 360° înainte de vizionare.
+  - Ce face Immuch360: deschide direct fișierele brute .insp și .insv, precum și fișierele GoPro .360 și DJI .osv.
+- **Plex, Jellyfin, Synology Photos**
+  - Ce probleme întâlnesc: fotografii și videoclipuri 360° afișate plat sau nerecunoscute, după cum descriu discuțiile de pe forumurile lor (o cerere Plex este deschisă din 2017).
+  - Ce face Immuch360: citește biblioteca Plex însăși începând cu build-ul 20, sau aceleași dosare prin SMB, WebDAV sau DLNA, și le redă ca o sferă, fără să schimbe nimic pe server.
+- **Aplicația Tapo**
+  - Ce probleme întâlnesc: o aplicație separată, conectată la contul dvs. TP-Link, cu clipurile separate de fotografii.
+  - Ce face Immuch360: afișează camera lângă fotografiile dvs., comunică cu ea doar în rețeaua dvs. și păstrează un clip ca videoclip pe care îl puteți trimite în Immich (începând cu build-ul 20).
+- **Aplicația mobilă Immich pe un televizor**
+  - Ce probleme întâlnesc: nu este o aplicație pentru televizor: un utilizator raportează că funcționează cu un mouse, nu cu telecomanda.
+  - Ce face Immuch360: aceeași aplicație, făcută pentru telecomandă (începând cu build-ul 20).
+- **Copierea fișierelor în cască**
+  - Ce probleme întâlnesc: fiecare fișier copiat prin cablu înainte de a-l putea viziona.
+  - Ce face Immuch360: redă pe loc din Immich, de pe un NAS, de pe un server media sau de pe un telefon.
+- **Playerele 360° și 3D din magazinul Quest**
+  - Ce probleme întâlnesc: contra cost.
+  - Ce face Immuch360: gratuit și open source (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Formate și surse, pe platforme
 
-Immuch360 este o galerie și, totodată, un player media gratuit: redă ce aplicația oficială nu poate, din sursele celui de-al doilea tabel, în playerul potrivit pentru fiecare fișier.
+Immuch360 este o galerie și, totodată, un player media gratuit: redă ce aplicația oficială nu poate, din sursele celei de-a doua liste, în playerul potrivit pentru fiecare fișier.
 
-| Ce | Telefoane Android | iPhone, iPad | Meta Quest | Android TV, Google TV (începând cu build-ul 20) |
-|---|---|---|---|---|
-| Videoclipuri plate (MP4, MOV, MKV, ce decodează dispozitivul) | Playerul Immich și un player nativ pentru partajările de rețea | La fel, cu excepția fișierelor MKV și AVI dintr-o partajare, pe care iOS nu le deschide (de pe un server sunt redate transcodificat) | În fereastră | Ca pe telefoane; OK pune pauză, stânga și dreapta sar 10 s |
-| Fotografii 360° | Vizualizator sferic, giroscop | La fel | Imersiv, de jur împrejur | Vizualizator sferic rotit cu săgețile, mărit cu tastele de canal |
-| Videoclipuri 360° | Player nativ Media3 pe o sferă, giroscop, derulare, alegerea pistei audio, indicator de buffer | Player nativ SceneKit pe o sferă, giroscop, alegerea pistei audio, indicator de buffer; redare și pauză, încă fără bară de timp | Imersiv, 3D adevărat pentru fișierele stereoscopice, bară de timp cu salturi de 10 secunde, elementul anterior și următor | Playerul Media3 al telefoanelor, rotit cu săgețile |
-| 3D 360° (sus și jos, unul lângă altul) | Ochiul stâng, butonul de aranjament | La fel | Fiecare ochi primește propria jumătate a cadrului | Ochiul stâng, butonul de aranjament |
-| Fotografii și videoclipuri VR180 (semisferă) | Semisferă, butonul 360°/180° | La fel | Semisferă imersivă | Semisferă, butonul 360°/180° |
-| Spatial 2.5D (profunzime pe ecran plat dintr-un videoclip stereoscopic) | Player nativ, urmărirea capului cu camera frontală | La fel | Nu este oferit | Nu este oferit |
-| Fotografii spațiale Apple (perechi stereo HEIC, începând cu build-ul 19) | Ochiul stâng, un rând în detalii spune că este spațială | La fel | Vizualizați în 3D: ambii ochi pe o fotografie care plutește în vizualizarea imersivă, 3D sau 2D, redimensionabilă | Ochiul stâng, un rând în detalii |
-| Videoclipuri spațiale Apple (MV-HEVC, începând cu build-ul 19) | Un singur ochi (stratul de bază), cu o notificare | La fel | Un singur ochi în fereastră, cu o notificare | Un singur ochi, cu o notificare |
-| Fotografii Insta360 .insp brute (începând cu build-ul 16) | Îmbinate pe GPU înainte de vizualizatorul sferic, până la 8192x4096 | La fel | Imersiv, dintr-o imagine îmbinată pregătită pentru cască | Ca pe telefoane |
-| Insta360 .insv brut, ambele obiective într-o singură pistă (începând cu build-ul 16) | Îmbinat de un efect GPU în playerul Media3 | Îmbinat de un shader SceneKit | Imersiv, îmbinat de același efect GPU | Ca pe telefoane |
-| Videoclipuri brute cu un obiectiv pe pistă sau pe fișier (începând cu build-ul 18): Insta360 X4, X4 Air, X5, X6 .insv, perechi X3, GoPro .360, DJI .osv | Două decodoare hardware simultan, câte unul pentru fiecare obiectiv (începând cu build-ul 19, decodoare software pe un dispozitiv fără decodor hardware, până la 2048x2048 pe obiectiv), și un compozitor GL care îmbină în sferă; un singur obiectiv, apoi fluxul transcodificat, apoi videoclipul neîmbinat, când dispozitivul nu poate rula două | Un compozitor AVFoundation propriu cu Metal | Imersiv, aceleași două decodoare și același compozitor (panou de 3840x1920) | Ca pe telefoane, când televizorul rulează două decodoare simultan |
-| Vizualizarea live a camerei Tapo (începând cu build-ul 20) | Player RTSP Media3: SD pe pagină, HD pe ecran complet, buton de sunet | Încă nu: un card spune că vine mai târziu | În fereastră, în HD | Ca pe telefoane |
-| Înregistrările camerei Tapo (începând cu build-ul 20) | Preluate de pe cardul de memorie într-un videoclip H.264 cu sunetul lui, apoi redate cu derulare | La fel | La fel, în fereastră | La fel |
+- **Videoclipuri plate (MP4, MOV, MKV, ce decodează dispozitivul)**
+  - Telefoane Android: playerul Immich și un player nativ pentru partajările de rețea.
+  - iPhone, iPad: la fel, cu excepția fișierelor MKV și AVI dintr-o partajare, pe care iOS nu le deschide (de pe un server sunt redate transcodificat).
+  - Meta Quest: în fereastră.
+  - Android TV, Google TV: ca pe telefoane; OK pune pauză, stânga și dreapta sar 10 s.
+- **Fotografii 360°**
+  - Telefoane Android: vizualizator sferic, giroscop.
+  - iPhone, iPad: la fel.
+  - Meta Quest: imersiv, de jur împrejur.
+  - Android TV, Google TV: vizualizator sferic rotit cu săgețile, mărit cu tastele de canal.
+- **Videoclipuri 360°**
+  - Telefoane Android: player nativ Media3 pe o sferă, giroscop, derulare, alegerea pistei audio, indicator de buffer.
+  - iPhone, iPad: player nativ SceneKit pe o sferă, giroscop, alegerea pistei audio, indicator de buffer; redare și pauză, încă fără bară de timp.
+  - Meta Quest: imersiv, 3D adevărat pentru fișierele stereoscopice, bară de timp cu salturi de 10 secunde, elementul anterior și următor.
+  - Android TV, Google TV: playerul Media3 al telefoanelor, rotit cu săgețile.
+- **3D 360° (sus și jos, unul lângă altul)**
+  - Telefoane Android: ochiul stâng, butonul de aranjament.
+  - iPhone, iPad: la fel.
+  - Meta Quest: fiecare ochi primește propria jumătate a cadrului.
+  - Android TV, Google TV: ochiul stâng, butonul de aranjament.
+- **Fotografii și videoclipuri VR180 (semisferă)**
+  - Telefoane Android: semisferă, butonul 360°/180°.
+  - iPhone, iPad: la fel.
+  - Meta Quest: semisferă imersivă.
+  - Android TV, Google TV: semisferă, butonul 360°/180°.
+- **Spatial 2.5D (profunzime pe ecran plat dintr-un videoclip stereoscopic)**
+  - Telefoane Android: player nativ, urmărirea capului cu camera frontală.
+  - iPhone, iPad: la fel.
+  - Meta Quest: nu este oferit.
+  - Android TV, Google TV: nu este oferit.
+- **Fotografii spațiale Apple (perechi stereo HEIC, începând cu build-ul 19)**
+  - Telefoane Android: ochiul stâng, un rând în detalii spune că este spațială.
+  - iPhone, iPad: la fel.
+  - Meta Quest: Vizualizați în 3D: ambii ochi pe o fotografie care plutește în vizualizarea imersivă, 3D sau 2D, redimensionabilă.
+  - Android TV, Google TV: ochiul stâng, un rând în detalii.
+- **Videoclipuri spațiale Apple (MV-HEVC, începând cu build-ul 19)**
+  - Telefoane Android: un singur ochi (stratul de bază), cu o notificare.
+  - iPhone, iPad: la fel.
+  - Meta Quest: un singur ochi în fereastră, cu o notificare.
+  - Android TV, Google TV: un singur ochi, cu o notificare.
+- **Fotografii Insta360 .insp brute (începând cu build-ul 16)**
+  - Telefoane Android: îmbinate pe GPU înainte de vizualizatorul sferic, până la 8192x4096.
+  - iPhone, iPad: la fel.
+  - Meta Quest: imersiv, dintr-o imagine îmbinată pregătită pentru cască.
+  - Android TV, Google TV: ca pe telefoane.
+- **Insta360 .insv brut, ambele obiective într-o singură pistă (începând cu build-ul 16)**
+  - Telefoane Android: îmbinat de un efect GPU în playerul Media3.
+  - iPhone, iPad: îmbinat de un shader SceneKit.
+  - Meta Quest: imersiv, îmbinat de același efect GPU.
+  - Android TV, Google TV: ca pe telefoane.
+- **Videoclipuri brute cu un obiectiv pe pistă sau pe fișier (începând cu build-ul 18): Insta360 X4, X4 Air, X5, X6 .insv, perechi X3, GoPro .360, DJI .osv**
+  - Telefoane Android: două decodoare hardware simultan, câte unul pentru fiecare obiectiv (începând cu build-ul 19, decodoare software pe un dispozitiv fără decodor hardware, până la 2048x2048 pe obiectiv), și un compozitor GL care îmbină în sferă; un singur obiectiv, apoi fluxul transcodificat, apoi videoclipul neîmbinat, când dispozitivul nu poate rula două.
+  - iPhone, iPad: un compozitor AVFoundation propriu cu Metal.
+  - Meta Quest: imersiv, aceleași două decodoare și același compozitor (panou de 3840x1920).
+  - Android TV, Google TV: ca pe telefoane, când televizorul rulează două decodoare simultan.
+- **Vizualizarea live a camerei Tapo (începând cu build-ul 20)**
+  - Telefoane Android: player RTSP Media3: SD pe pagină, HD pe ecran complet, buton de sunet.
+  - iPhone, iPad: încă nu: un card spune că vine mai târziu.
+  - Meta Quest: în fereastră, în HD.
+  - Android TV, Google TV: ca pe telefoane.
+- **Înregistrările camerei Tapo (începând cu build-ul 20)**
+  - Telefoane Android: preluate de pe cardul de memorie într-un videoclip H.264 cu sunetul lui, apoi redate cu derulare.
+  - iPhone, iPad: la fel.
+  - Meta Quest: la fel, în fereastră.
+  - Android TV, Google TV: la fel.
 
-Coloana TV nu a fost verificată încă pe un televizor, vedeți [Vizionați pe televizor](#watch-on-your-tv-android-tv-and-google-tv); rândurile camerei nu au fost verificate încă cu o cameră reală.
+Intrările Android TV și Google TV, începând cu build-ul 20, nu au fost verificate încă pe un televizor, vedeți [Vizionați pe televizor](#watch-on-your-tv-android-tv-and-google-tv); intrările camerei nu au fost verificate încă cu o cameră reală.
 
-| De unde | Cum |
-|---|---|
-| Serverul dvs. Immich | Originalul sau fluxul transcodificat al serverului, după cum indică Setări, Vizualizator resurse, Sursa video (vedeți [Detaliile videoclipului și decodoarele](#video-details-decoders-and-why-a-video-stutters)). Același cont ca aplicația web |
-| Telefonul sau casca însăși | „Folosește fără server” pe pagina de autentificare sau intrarea Pe acest dispozitiv din fila Librărie |
-| Un NAS sau un computer | Partajări SMB și WebDAV, iar începând cu build-ul 19 servere media DLNA, găsite în rețea, citite direct (un videoclip SMB prin până la șase conexiuni), nimic copiat; începând cu build-ul 15, fișierele pe care le alegeți pot fi trimise în contul dvs. Immich |
-| Un alt telefon (începând cu build-ul 19) | „Partajați acest telefon în rețea” pe acel telefon: casca sau orice client WebDAV din rețea îi citește albumele, lunile și conținutul 360° |
-| Un Plex Media Server (începând cu build-ul 20) | Bibliotecile lui de fotografii, filme și seriale pe dosare, fișierele originale citite direct prin HTTPS verificat cu propriul certificat al serverului, acasă sau prin adresa din afara casei, pe toate platformele; vedeți [Plex Media Server, fără plex.tv](#plex-media-server-without-plextv) |
-| O cameră Tapo (începând cu build-ul 20) | Vizualizarea live cu contul camerei (Android, Android TV, Quest) și înregistrările de pe cardul ei de memorie cu parola contului TP-Link (toate platformele), doar în rețeaua locală; vedeți [Camere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Serverul dvs. Immich**: originalul sau fluxul transcodificat al serverului, după cum indică Setări, Vizualizator resurse, Sursa video (vedeți [Detaliile videoclipului și decodoarele](#video-details-decoders-and-why-a-video-stutters)). Același cont ca aplicația web.
+- **Telefonul sau casca însăși**: „Folosește fără server” pe pagina de autentificare sau intrarea Pe acest dispozitiv din fila Librărie.
+- **Un NAS sau un computer**: partajări SMB și WebDAV, iar începând cu build-ul 19 servere media DLNA, găsite în rețea, citite direct (un videoclip SMB prin până la șase conexiuni), nimic copiat; începând cu build-ul 15, fișierele pe care le alegeți pot fi trimise în contul dvs. Immich.
+- **Un alt telefon (începând cu build-ul 19)**: „Partajați acest telefon în rețea” pe acel telefon: casca sau orice client WebDAV din rețea îi citește albumele, lunile și conținutul 360°.
+- **Un Plex Media Server (începând cu build-ul 20)**: bibliotecile lui de fotografii, filme și seriale pe dosare, fișierele originale citite direct prin HTTPS verificat cu propriul certificat al serverului, acasă sau prin adresa din afara casei, pe toate platformele; vedeți [Plex Media Server, fără plex.tv](#plex-media-server-without-plextv).
+- **O cameră Tapo (începând cu build-ul 20)**: vizualizarea live cu contul camerei (Android, Android TV, Quest) și înregistrările de pe cardul ei de memorie cu parola contului TP-Link (toate platformele), doar în rețeaua locală; vedeți [Camere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 rulează și pe căștile Meta Quest cu Horizon OS v69 sau mai nou. Începând cu build-ul 21, build-ul din Horizon Store este listat pentru Quest 2, Quest Pro, Quest 3 și 3S, cele patru pe care `-release.apk` universal le numește deja; primul Quest nu este, magazinul nu îl mai acceptă. Quest 3 și 3S sunt testate. Quest 2 și Quest Pro nu sunt încă testate: decodoarele lor video sunt mai lente, iar limitele pe care le verifică aplicația au fost măsurate pe un Quest 3, așa că un videoclip H.264 mare poate fi refuzat cu un mesaj sau poate sacada pe ele. Rapoartele de pe aceste două căști sunt binevenite în [Issues](https://github.com/freeKC/Immuch360/issues). Modul de utilizare este descris în [În casca Meta Quest 3](#in-the-meta-quest-3-headset); această secțiune se ocupă de instalare și de ce diferă în cască.
+Immuch360 rulează și pe căștile Meta Quest cu Horizon OS v69 sau mai nou. Începând cu build-ul 21, build-ul din Horizon Store este listat pentru Quest 2, Quest Pro, Quest 3 și 3S, cele patru pe care `-release.apk` universal le numește deja; primul Quest nu este, magazinul nu îl mai acceptă.
 
-Build-ul pentru cască comunică cu serverele doar prin HTTPS, sau prin HTTP simplu cu nume din rețeaua de acasă (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) și cu casca însăși, așa cum cere Horizon Store. Un server introdus ca adresă HTTP simplă cu IP, de exemplu `http://192.168.1.10:2283`, este refuzat de acest build: folosiți HTTPS, un nume din rețeaua de acasă (`nas.local`) sau `-release.apk` universal, care păstrează politica deschisă a telefoanelor. Partajările WebDAV, DLNA și de telefon la o adresă HTTP simplă din rețeaua locală nu sunt afectate: aplicația le citește singură și le dă playerelor doar adresa punții sale locale (de confirmat în cască pentru DLNA și pentru partajarea de telefon, noi în build-ul 19). Începând cu build-ul 20, un server Plex este accesat prin HTTPS, iar o cameră Tapo de aplicația însăși, cu vizualizarea live prin RTSP, care nu este HTTP: niciunul nu ar trebui să fie afectat (de confirmat în cască).
+Quest 3 și 3S sunt testate. Quest 2 și Quest Pro nu sunt încă testate: decodoarele lor video sunt mai lente, iar limitele pe care le verifică aplicația au fost măsurate pe un Quest 3, așa că un videoclip H.264 mare poate fi refuzat cu un mesaj sau poate sacada pe ele. Rapoartele de pe aceste două căști sunt binevenite în [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Modul de utilizare este descris în [În casca Meta Quest 3](#in-the-meta-quest-3-headset); această secțiune se ocupă de instalare și de ce diferă în cască.
+
+Build-ul pentru cască comunică cu serverele doar prin HTTPS, sau prin HTTP simplu cu nume din rețeaua de acasă (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) și cu casca însăși, așa cum cere Horizon Store. Un server introdus ca adresă HTTP simplă cu IP, de exemplu `http://192.168.1.10:2283`, este refuzat de acest build: folosiți HTTPS, un nume din rețeaua de acasă (`nas.local`) sau `-release.apk` universal, care păstrează politica deschisă a telefoanelor.
+
+Partajările WebDAV, DLNA și de telefon la o adresă HTTP simplă din rețeaua locală nu sunt afectate: aplicația le citește singură și le dă playerelor doar adresa punții sale locale (de confirmat în cască pentru DLNA și pentru partajarea de telefon, noi în build-ul 19). Începând cu build-ul 20, un server Plex este accesat prin HTTPS, iar o cameră Tapo de aplicația însăși, cu vizualizarea live prin RTSP, care nu este HTTP: niciunul nu ar trebui să fie afectat (de confirmat în cască).
 
 <a id="install"></a>
 ### Instalare
@@ -762,16 +922,23 @@ Meta a aprobat pagina din Horizon Store pe 7 octombrie 2026 cu build-ul 14, iar 
 
 ### În fereastră
 
-Întreaga aplicație rulează ca o fereastră 2D redimensionabilă: autentificare, cronologie, albume, căutare, fila Librărie (lista 360°, Pe acest dispozitiv, Partajări de rețea), setările și vizualizatoarele de fotografii și videoclipuri, unde se redau fotografiile și videoclipurile plate. În cască, butonul 360° și Vizualizează ca 360° din meniul ⋮ deschid direct vizualizarea imersivă în locul vizualizatorului sferic al telefoanelor, iar butonul Spatial 2.5D și setarea lui nu sunt afișate. Începând cu build-ul 19, o fotografie spațială Apple are un buton Vizualizați în 3D, iar caseta Partajați acest telefon în rețea nu este afișată: casca este cea care citește partajarea unui telefon. Începând cu build-ul 20, serverele Plex și camerele Tapo se deschid și ele în fereastră, vizualizarea live a camerei în HD; setarea „Aspect pentru telecomandă” rămâne pe Automat, ceea ce o lasă dezactivată în cască.
+Întreaga aplicație rulează ca o fereastră 2D redimensionabilă: autentificare, cronologie, albume, căutare, fila Librărie (lista 360°, Pe acest dispozitiv, Partajări de rețea), setările și vizualizatoarele de fotografii și videoclipuri, unde se redau fotografiile și videoclipurile plate.
+
+În cască, butonul 360° și Vizualizează ca 360° din meniul ⋮ deschid direct vizualizarea imersivă în locul vizualizatorului sferic al telefoanelor, iar butonul Spatial 2.5D și setarea lui nu sunt afișate.
+
+Începând cu build-ul 19, o fotografie spațială Apple are un buton Vizualizați în 3D, iar caseta Partajați acest telefon în rețea nu este afișată: casca este cea care citește partajarea unui telefon. Începând cu build-ul 20, serverele Plex și camerele Tapo se deschid și ele în fereastră, vizualizarea live a camerei în HD; setarea „Aspect pentru telecomandă” rămâne pe Automat, ceea ce o lasă dezactivată în cască.
 
 ### În imagini
 
 Capturi făcute în cască cu butonul de captură (butonul Meta și trăgaciul), pe un Quest 3, cu aplicația în franceză; fila Librărie este afișată în modul fără server.
 
-| Fără server | Partajări de rețea |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Fila Librărie fără server: Pe acest dispozitiv și Partajări de rețea"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Pagina Partajări de rețea cu o partajare SMB a unui Freebox Server"> |
-| Fila Librărie în modul fără server: elementele media ale căștii și partajările de rețea | O partajare Samba a unui Freebox Server, citită direct din cască |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Fila Librărie fără server: Pe acest dispozitiv și Partajări de rețea">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Pagina Partajări de rețea cu o partajare SMB a unui Freebox Server">
+</p>
+
+- **Fără server**: fila Librărie în modul fără server, cu elementele media ale căștii și partajările de rețea.
+- **Partajări de rețea**: o partajare Samba a unui Freebox Server, citită direct din cască.
 
 ### Limitări în cască
 
@@ -786,12 +953,18 @@ Capturi făcute în cască cu butonul de captură (butonul Meta și trăgaciul),
 
 Aplicația este pe Google Play pentru telefoane și tablete; versiunea pentru App Store așteaptă evaluarea Apple, pagina din Meta Horizon Store este aprobată și prima ei actualizare este în evaluare la Meta, iar versiunea Google Play pentru televizoare așteaptă evaluarea de către Google a versiunii pentru TV. Versiunea de pe GitHub este întotdeauna cel mai nou build:
 
-| Platformă | Astăzi | În curând |
-|---|---|---|
-| Telefoane și tablete Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) sau APK-ul de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pentru un telefon (`Immuch360-v<version>-release.apk` universal merge peste tot, `-armeabi-v7a` este pentru telefoanele mai vechi pe 32 de biți, iar fișierul `.aab` este pentru Google Play, nu pentru sideload). Build-ul de pe GitHub este de obicei înaintea celui din magazin. În ambele cazuri se instalează alături de aplicația oficială Immich (pachetul `com.aprogsys.immuch360`). | Google Play: build-ul 18 este publicat, build-ul 20 în evaluare la Google din 7 octombrie 2026, în locul build-ului 19 |
-| iPhone și iPad | În așteptarea evaluării Apple. Versiunea aflată în evaluare are funcțiile build-ului 11: încărcarea în Immich și alegerea Sursa video (build 15) și fișierele Insta360 brute (build 16) vor veni cu o actualizare ulterioară din App Store. Codul sursă se compilează cu Xcode sau pe Codemagic, vedeți [Compilați singur](#build-it-yourself). | App Store, în evaluare |
-| Meta Quest 2, Quest Pro, Quest 3 și 3S (Quest 2 și Quest Pro netestate) | Fișierul `-quest-release.apk` de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases) (merge și `-release.apk` universal), instalat prin sideload în modul dezvoltator, vedeți [Instalare](#install). Build-ul din magazin și APK-ul de pe GitHub sunt semnate cu chei diferite: pentru a trece de la unul la altul, dezinstalați mai întâi aplicația (setările și partajările salvate se pierd odată cu ea). | Meta Horizon Store: pagina a fost aprobată pe 7 octombrie 2026 cu build-ul 14, iar build-ul 21, prima ei actualizare, este în evaluare la Meta; canalul alfa al magazinului (doar pentru testeri) primește fiecare build nou |
-| Android TV și Google TV (începând cu build-ul 20) | `Immuch360-v<version>-release.apk` universal de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases), instalat prin sideload cu adb, vedeți [Instalați-o pe televizor](#install-it-on-the-tv). Este aceeași aplicație ca pe telefoane. | Google Play pe televizoare, după evaluarea de către Google a versiunii pentru TV |
+- **Telefoane și tablete Android**
+  - Astăzi: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) sau APK-ul de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pentru un telefon (`Immuch360-v<version>-release.apk` universal merge peste tot, `-armeabi-v7a` este pentru telefoanele mai vechi pe 32 de biți, iar fișierul `.aab` este pentru Google Play, nu pentru sideload). Build-ul de pe GitHub este de obicei înaintea celui din magazin. În ambele cazuri se instalează alături de aplicația oficială Immich (pachetul `com.aprogsys.immuch360`).
+  - În curând: pe Google Play, build-ul 18 este publicat, build-ul 20 în evaluare la Google din 7 octombrie 2026, în locul build-ului 19.
+- **iPhone și iPad**
+  - Astăzi: în așteptarea evaluării Apple. Versiunea aflată în evaluare are funcțiile build-ului 11: încărcarea în Immich și alegerea Sursa video (build 15) și fișierele Insta360 brute (build 16) vor veni cu o actualizare ulterioară din App Store. Codul sursă se compilează cu Xcode sau pe Codemagic, vedeți [Compilați singur](#build-it-yourself).
+  - În curând: App Store, în evaluare.
+- **Meta Quest 2, Quest Pro, Quest 3 și 3S (Quest 2 și Quest Pro netestate)**
+  - Astăzi: fișierul `-quest-release.apk` de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases) (merge și `-release.apk` universal), instalat prin sideload în modul dezvoltator, vedeți [Instalare](#install). Build-ul din magazin și APK-ul de pe GitHub sunt semnate cu chei diferite: pentru a trece de la unul la altul, dezinstalați mai întâi aplicația (setările și partajările salvate se pierd odată cu ea).
+  - În curând: pe Meta Horizon Store, pagina a fost aprobată pe 7 octombrie 2026 cu build-ul 14, iar build-ul 21, prima ei actualizare, este în evaluare la Meta; canalul alfa al magazinului (doar pentru testeri) primește fiecare build nou.
+- **Android TV și Google TV (începând cu build-ul 20)**
+  - Astăzi: `Immuch360-v<version>-release.apk` universal de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases), instalat prin sideload cu adb, vedeți [Instalați-o pe televizor](#install-it-on-the-tv). Este aceeași aplicație ca pe telefoane.
+  - În curând: Google Play pe televizoare, după evaluarea de către Google a versiunii pentru TV.
 
 Linkurile către App Store și Meta Horizon Store vor fi adăugate aici imediat ce paginile sunt publicate. Autentificați-vă cu adresa URL și contul obișnuit al serverului dvs. Immich sau atingeți „Folosește fără server” pe pagina de autentificare pentru a începe cu fotografiile și videoclipurile dispozitivului. APK-ul de pe GitHub nu se actualizează singur: urmăriți pagina Releases, iar după ce ați instalat aplicația dintr-un magazin, luați actualizările din acel magazin.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Capturile de ecran pentru magazine sunt făcute pe build-uri de depanare în simulator, create cu `--dart-define=IMMUCH_SCREENSHOTS=true`, care doar ascunde banda de depanare. Cele două flavor-uri Android sunt aceeași aplicație. Începând cu build-ul 20, `phone` se declară și aplicație pentru televizor (o intrare în lansatorul televizorului și un banner, fără ecran tactil obligatoriu), lucru pe care `quest` îl omite. `quest` are target SDK 34 și păstrează doar permisiunile folosite de cască (fotografii, videoclipuri, notificări): gestionarea fișierelor media, locația în fundal, stocarea veche, audio, locația fișierelor media, locația dispozitivului și camera sunt eliminate în `android/app/src/quest/AndroidManifest.xml`, deoarece Meta Horizon Store le refuză pe primele două și cere o justificare pentru fiecare altă permisiune sensibilă; același fișier numește Quest 2, Quest Pro, Quest 3 și 3S drept dispozitive acceptate și limitează HTTP-ul simplu la casca însăși și la numele din rețeaua de acasă. APK-ul este doar pe 64 de biți datorită celor două argumente suplimentare din linia de comandă (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` este cel cerut de Google Play. Pentru a compila pentru iOS pe propriul Mac, folosiți Xcode și propria echipă de semnare; cu Xcode 26, rulați mai întâi o dată `xcodebuild -downloadComponent MetalToolchain`, deoarece shaderele Spatial au nevoie de el. Fără Mac, build-urile iOS rulează pe Codemagic (un Mac găzduit) pe baza fișierului `codemagic.yaml` din acest depozit. Build-urile de release Android rulează pe GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Capturile de ecran pentru magazine sunt făcute pe build-uri de depanare în simulator, create cu `--dart-define=IMMUCH_SCREENSHOTS=true`, care doar ascunde banda de depanare.
+
+Cele două flavor-uri Android sunt aceeași aplicație. Începând cu build-ul 20, `phone` se declară și aplicație pentru televizor (o intrare în lansatorul televizorului și un banner, fără ecran tactil obligatoriu), lucru pe care `quest` îl omite.
+
+`quest` are target SDK 34 și păstrează doar permisiunile folosite de cască (fotografii, videoclipuri, notificări): gestionarea fișierelor media, locația în fundal, stocarea veche, audio, locația fișierelor media, locația dispozitivului și camera sunt eliminate în `android/app/src/quest/AndroidManifest.xml`, deoarece Meta Horizon Store le refuză pe primele două și cere o justificare pentru fiecare altă permisiune sensibilă; același fișier numește Quest 2, Quest Pro, Quest 3 și 3S drept dispozitive acceptate și limitează HTTP-ul simplu la casca însăși și la numele din rețeaua de acasă. APK-ul este doar pe 64 de biți datorită celor două argumente suplimentare din linia de comandă (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` este cel cerut de Google Play.
+
+Pentru a compila pentru iOS pe propriul Mac, folosiți Xcode și propria echipă de semnare; cu Xcode 26, rulați mai întâi o dată `xcodebuild -downloadComponent MetalToolchain`, deoarece shaderele Spatial au nevoie de el. Fără Mac, build-urile iOS rulează pe Codemagic (un Mac găzduit) pe baza fișierului `codemagic.yaml` din acest depozit. Build-urile de release Android rulează pe GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Niciun secret nu se află în acest depozit: cheia de semnare Android este stocată ca secrete criptate GitHub Actions, iar materialul de semnare Apple ca variabile criptate pe Codemagic. Fișierele workflow le menționează doar după nume. Fără propriul `android/key.jks`, un build de release este semnat cu cheia de depanare și nu se poate instala peste o copie de pe GitHub sau dintr-un magazin (dezinstalați-o mai întâi); un build de depanare se instalează alături, ca Immuch360 debug. Copia din Meta Horizon Store este APK-ul `quest` al versiunii, semnat cu o altă cheie, cea cu care a fost înregistrată inițial aplicația în magazin, așa că nici ea nu se poate instala peste un APK instalat prin sideload, nici invers.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Începând cu build-ul 19, clientul DLNA, partajarea de telefon și detectarea conținutului spațial Apple scriu și în jurnalul propriu al aplicației (Log-uri, în meniul fotografiei de profil din dreapta sus), sub `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` și `NetworkMediaService`. Începând cu build-ul 20, modul TV scrie acolo sub `TvMode` și `TvTextEntry`, serverele Plex sub `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` și `PlexServerEditPage`, iar camerele Tapo sub `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` și `CameraLiveView`; liniile Plex nu conțin niciodată tokenul, o adresă sau un titlu, iar liniile camerelor omit parolele. Liniile de jurnal rămân pe dispozitiv, cu excepția cazului în care le copiați dvs.
 
+<a id="privacy"></a>
 ## Confidențialitate
 
 - **Nimic nu ajunge la dezvoltator**: aplicația comunică cu serverul Immich pe care îl alegeți (și, când deschideți harta, cu serviciul de dale de hartă folosit de acel server), nu are reclame, nici analize, nici serviciu de raportare a erorilor operat de dezvoltator și nu trimite nimic dezvoltatorului Immuch360.
@@ -849,10 +1029,12 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Politica completă se află în [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Licență și marcă
 
 Acest proiect este un fork al Immich și rămâne sub [GNU AGPL v3](../LICENSE). Fiecare APK, inclusiv cele pentru telefon, conține și Meta Spatial SDK, care nu este open source (Meta Platform Technologies SDK License Agreement) și este folosit doar pe căștile Meta Quest. Immuch360 nu este afiliat echipei Immich sau FUTO și nici susținut de acestea.
 
+<a id="roadmap"></a>
 ## Planuri
 
 Ce nu este încă gata, începând cu ce este cel mai probabil. Nimic de aici nu este o promisiune, iar părerile din [sistemul de issues](https://github.com/freeKC/Immuch360/issues) ajută la stabilirea priorităților.
@@ -871,6 +1053,7 @@ Ce nu este încă gata, începând cu ce este cel mai probabil. Nimic de aici nu
 - **Plex, în continuare**: testul pe dispozitiv al build-ului 20 (telefoane, Quest, un iPhone, un televizor, în afara casei); aducerea tokenului de pe computer cu un cod QR; ascunderea părții DLNA a unui server Plex în lista serverelor găsite; IPv6.
 - **Upstream**: pull requesturi mici către Immich pentru părțile pe care le vor menținătorii, începând cu vizualizatorul de fotografii 360°.
 
+<a id="credits"></a>
 ## Mulțumiri
 
 Vizualizatorul de fotografii 360° se bazează pe pull requestul upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) al lui dmitry-brazhenko, construit la rândul lui pe prototipul lui bencefr din [#30192](https://github.com/immich-app/immich/pull/30192). Mulțumiri amândurora.

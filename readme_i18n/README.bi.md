@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | Bislama | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Bislama</b> · Ol narafala lanwis (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: ol foto mo video 360°, 3D mo VR180, we oli kam long Immich, fon blong yu o wan NAS. Android, iOS mo Meta Quest, wetem wan seva o wetaot">
 </p>
 
 # Immuch360
 
-Immuch360 hem i mobael app blong Immich wetem ol foto mo video 360° we yu save lukluk raon insaed long olgeta, mo wan fri pleia blong ol flat foto mo video, mo 360°, 3D mo VR180, long ol Android fon mo tablet, iPhone mo iPad, ol Meta Quest hedset (Quest 3 mo 3S, mo stat long build 21 Quest 2 mo Quest Pro, oli no testem yet), mo stat long build 20, Android TV mo Google TV. Hem i blong ol man we oli tekem foto wetem wan 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) o wetem foto sfia mod blong fon, o we oli gat wan hedset, mo oli wantem lukluk ol foto blong olgeta we oli kam long wan Immich seva, long fon hem wan, long wan NAS, long wan seva blong media o long wan Plex seva: sem seva, sem akaon, i no nidim wan plugin long seva, o i no nidim seva nating. Stat long build 20 hem i soem ol Tapo kamera tu, laef mo ol rekoding long memori kad blong olgeta.
+Immuch360 hem i mobael app blong Immich wetem ol foto mo video 360° we yu save lukluk raon insaed long olgeta, mo wan fri pleia blong ol flat foto mo video, mo 360°, 3D mo VR180, long ol Android fon mo tablet, iPhone mo iPad, ol Meta Quest hedset (Quest 3 mo 3S, mo stat long build 21 Quest 2 mo Quest Pro, oli no testem yet), mo stat long build 20, Android TV mo Google TV.
+
+Hem i blong ol man we oli tekem foto wetem wan 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) o wetem foto sfia mod blong fon, o we oli gat wan hedset, mo oli wantem lukluk ol foto blong olgeta we oli kam long wan Immich seva, long fon hem wan, long wan NAS, long wan seva blong media o long wan Plex seva: sem seva, sem akaon, i no nidim wan plugin long seva, o i no nidim seva nating. Stat long build 20 hem i soem ol Tapo kamera tu, laef mo ol rekoding long memori kad blong olgeta.
 
 <p align="center">
   <sub>Wan fork we i no ofisol. I no joen wetem Immich o FUTO. Nem ia i ridim olsem "I am much 360".</sub>
@@ -13,29 +15,52 @@ Immuch360 hem i mobael app blong Immich wetem ol foto mo video 360° we yu save 
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK blong Android</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">oli stap jekem yet</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store Meta i talem oraet, build 21 oli sendem olsem fas apdet blong hem &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">APK blong Android</a><br>
+  App Store: <a href="#where-to-get-it">oli stap jekem yet</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store Meta i talem oraet, build 21 oli sendem olsem fas apdet blong hem<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 360° insaed long app</h3>Ol foto mo video olsem wan sfia we yu lukluk raon insaed long hem, wetem gyroscope, mo ol raw fael blong kamera tu (Insta360 stat long build 16, GoPro mo DJI stat long build 18). Mo wan fri video pleia tu: flat, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 3D insaed long app</h3>Stereo 360° mo VR180, antap mo andanit o saed long saed, mo ol Apple spatial foto (stat long build 19): tru 3D long hedset, wan ae nomo long fon</td>
-    <td align="center" width="33%"><h3>🎥 2.5D insaed long app</h3>Dip long wan flat skrin we i kam long wan stereo video, pikja i folem hed blong yu (stil testem, ol fon mo tablet)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Wan app long ol fon, ol tablet mo ol Quest 2, Pro, 3 mo 3S hedset, tru 3D long hedset, mo stat long build 20 long Android TV wetem rimot</td>
-    <td align="center"><h3>🔌 Wetem wan seva o wetaot</h3>Immich seva blong yu, o galeri blong fon hem wan, i no nidim akaon</td>
-    <td align="center"><h3>🗄️ Ol netwok sea</h3>Samba (SMB), WebDAV mo, stat long build 19, ol DLNA seva blong media we app i faenem long netwok mo i ridim stret, i no daonlodem wan samting, mo i sendem i go long Immich taem yu wantem. Stat long build 19, wan fon i save serem galeri blong hem wetem hedset tu</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Long TV</h3>Stat long build 20, sem APK long Android TV mo Google TV: ol 360° foto mo video, seva blong yu mo ol sea blong yu, wetem rimot</td>
-    <td align="center"><h3>🎬 Plex, wetaot plex.tv</h3>Stat long build 20, ol Plex laebri blong yu, we app i plei long ol orijinal fael blong 360° i stap 360°, long haos mo aotsaed long haos</td>
-    <td align="center"><h3>📹 Ol Tapo kamera</h3>Stat long build 20, luk laef mo ol rekoding blong memori kad, long netwok blong yu nomo, mo wan klip we i go long Immich taem yu wantem</td>
-  </tr>
-</table>
+- 🌐 **360° insaed long app**<br>Ol foto mo video olsem wan sfia we yu lukluk raon insaed long hem, wetem gyroscope, mo ol raw fael blong kamera tu (Insta360 stat long build 16, GoPro mo DJI stat long build 18). Mo wan fri video pleia tu: flat, 360°, 3D, VR180
+- 👓 **3D insaed long app**<br>Stereo 360° mo VR180, antap mo andanit o saed long saed, mo ol Apple spatial foto (stat long build 19): tru 3D long hedset, wan ae nomo long fon
+- 🎥 **2.5D insaed long app**<br>Dip long wan flat skrin we i kam long wan stereo video, pikja i folem hed blong yu (stil testem, ol fon mo tablet)
+- 📱 **Android, iOS, Quest, TV**<br>Wan app long ol fon, ol tablet mo ol Quest 2, Pro, 3 mo 3S hedset, tru 3D long hedset, mo stat long build 20 long Android TV wetem rimot
+- 🔌 **Wetem wan seva o wetaot**<br>Immich seva blong yu, o galeri blong fon hem wan, i no nidim akaon
+- 🗄️ **Ol netwok sea**<br>Samba (SMB), WebDAV mo, stat long build 19, ol DLNA seva blong media we app i faenem long netwok mo i ridim stret, i no daonlodem wan samting, mo i sendem i go long Immich taem yu wantem. Stat long build 19, wan fon i save serem galeri blong hem wetem hedset tu
+- 📺 **Long TV**<br>Stat long build 20, sem APK long Android TV mo Google TV: ol 360° foto mo video, seva blong yu mo ol sea blong yu, wetem rimot
+- 🎬 **Plex, wetaot plex.tv**<br>Stat long build 20, ol Plex laebri blong yu, we app i plei long ol orijinal fael blong 360° i stap 360°, long haos mo aotsaed long haos
+- 📹 **Ol Tapo kamera**<br>Stat long build 20, luk laef mo ol rekoding blong memori kad, long netwok blong yu nomo, mo wan klip we i go long Immich taem yu wantem
+
+<details>
+<summary><b>Ol samting insaed</b></summary>
+
+- [Ol foto mo video 360° olsem wan sfia](#360-photos-and-videos-as-a-sphere)
+- [Wetaot seva o akaon](#without-a-server-or-an-account)
+- [Ol netwok sea: wan NAS, wan kompiuta o wan seva blong media](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, wetaot plex.tv](#plex-media-server-without-plextv)
+- [Serem fon ia long netwok](#share-this-phone-on-the-network)
+- [Ol Tapo kamera: luk laef mo ol rekoding blong memori kad](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Ol raw fael blong 360° kamera, wetaot app blong kamera](#raw-360-camera-files-without-the-cameras-app)
+- [Ol foto mo video 3D mo VR180](#3d-and-vr180-photos-and-videos)
+- [Dip long wan flat skrin: Spatial 2.5D (stil testem)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Ol Apple spatial foto mo video](#apple-spatial-photos-and-videos)
+- [Insaed long Meta Quest 3 hedset](#in-the-meta-quest-3-headset)
+- [Lukluk long TV blong yu (Android TV mo Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Faenem ol 360° foto blong yu: lis blong 360°](#find-your-360-shots-the-360-list)
+- [Ol tekniko saed blong video, ol decoder mo from wanem wan video i stap stop stop](#video-details-decoders-and-why-a-video-stutters)
+- [Evri narafala samting hem i Immich](#everything-else-is-immich)
+- [Lukluk wetem Immich app mo ol narafala app](#compared-with-the-immich-app-and-other-apps)
+- [Ol fomat mo sos, folem platfom](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Wea blong kasem](#where-to-get-it)
+- [Buildim yu wan](#build-it-yourself)
+- [Ol log](#logs)
+- [Praevesi](#privacy)
+- [Laesens mo trademak](#license-and-trademark)
+- [Plan blong fiuja](#roadmap)
+- [Tangkyu](#credits)
+
+</details>
 
 ## Wanem problem yu gat?
 
@@ -61,12 +86,19 @@ Taem wan samting i niu, tekst i talem stat long wanem build hem i stap. GitHub r
 
 Yu sevem kopi blong ol foto blong yu long wan [Immich](https://github.com/immich-app/immich) seva, mo sam long olgeta oli kam long wan 360° kamera o long foto sfia mod blong wan fon. Long ofisol mobael app, ol foto ia oli soem olsem wan flat longfala pikja, mo ol 360° video oli plei flat tu. Immich web app i save soem wan 360° foto olsem wan sfia, be mobael app i no save: ol man oli stap askem samting ia stat long Janueri 2024 long [diskasen #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 i openem olgeta olsem wan sfia we yu lukluk raon insaed long hem, long ol Android mo iOS fon mo tablet. Wan foto i tanem taem yu pulum, i kam bigwan taem yu pinsim o yu tajem tu taem, i gohed tanem smol taem yu pulum kwik, i stat long fasfala vyu we kamera i rekodem (GPano metadata), mo i kam moa klia taem yu zum; app i save handelem ol panorama we oli no fulwan (GPano krop). Wan video i plei long wan sfia pleia insaed long app, wetem saon, pul mo gyroscope. Ol 360° fael we oli joinem finis oli wok long evri ples: ol fael we Insta360 app o Studio i eksportem, GoPro Player, Ricoh Theta, mo ol foto sfia blong fon. Ol raw fael we oli kam stret long kamera, app i joinem olgeta, luk [Ol raw fael blong 360° kamera](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 i openem olgeta olsem wan sfia we yu lukluk raon insaed long hem, long ol Android mo iOS fon mo tablet.
 
-| Wan 360° foto olsem wan sfia | Wan 360° video long 360° pleia |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="Wan 360° foto blong saed blong wan lek long sfia vyua: baten blong klosem i stap antap long lef, ol baten blong 360°, 3D leaot mo gyroscope oli stap antap long raet"> | <img src="../.github/readme/b19-video.png" width="420" alt="Wan 360° video blong wan rod klosap long solwota i plei long 360° pleia blong wan fon we yu holem saedwei: klosem mo nem blong fael antap long lef, 360° mo 3D antap long raet, bifo, jam i go bak, plei, jam i go fored mo nekis long medel, ba blong taem long botom"> |
-| Klosem i stap antap long lef; antap long raet i gat 360°/180° baten, 3D leaot baten mo gyroscope | Tajem pikja blong luk ol kontrol; 360° mo 3D antap long raet |
+Wan foto i tanem taem yu pulum, i kam bigwan taem yu pinsim o yu tajem tu taem, i gohed tanem smol taem yu pulum kwik, i stat long fasfala vyu we kamera i rekodem (GPano metadata), mo i kam moa klia taem yu zum; app i save handelem ol panorama we oli no fulwan (GPano krop). Wan video i plei long wan sfia pleia insaed long app, wetem saon, pul mo gyroscope.
+
+Ol 360° fael we oli joinem finis oli wok long evri ples: ol fael we Insta360 app o Studio i eksportem, GoPro Player, Ricoh Theta, mo ol foto sfia blong fon. Ol raw fael we oli kam stret long kamera, app i joinem olgeta, luk [Ol raw fael blong 360° kamera](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="Wan 360° foto blong saed blong wan lek long sfia vyua: baten blong klosem i stap antap long lef, ol baten blong 360°, 3D leaot mo gyroscope oli stap antap long raet">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Wan 360° video blong wan rod klosap long solwota i plei long 360° pleia blong wan fon we yu holem saedwei: klosem mo nem blong fael antap long lef, 360° mo 3D antap long raet, bifo, jam i go bak, plei, jam i go fored mo nekis long medel, ba blong taem long botom">
+</p>
+
+- **Wan 360° foto olsem wan sfia**: klosem i stap antap long lef; antap long raet i gat 360°/180° baten, 3D leaot baten mo gyroscope.
+- **Wan 360° video long 360° pleia**: tajem pikja blong luk ol kontrol; 360° mo 3D antap long raet.
 
 ### Openem wan 360° foto olsem wan sfia
 
@@ -135,12 +167,17 @@ Long pej blong login, "Yusum wetaot wan server" i openem Immuch360 long ol foto 
 
 Ol 360° video blong yu oli stap long wan NAS o wan kompiuta, mo yu wantem lukluk olgeta long fon o long hedset be yu no wantem kopiem olgeta fastaem. Wetem hedset, ol man oli kopiem evri fael wanwan long wan kebol; ol seva blong media olsem Plex mo Jellyfin oli plei ol 360° video flat, olsem ol man oli raetem long ol forum blong olgeta; Immich app i ridim Immich seva blong yu nomo.
 
-Immuch360 i save lukluk mo plei ol foto mo video blong eni seva we i toktok SMB (Samba, Windows), WebDAV o, stat long build 19, DLNA/UPnP (wan seva blong media: Jellyfin, minidlna, Gerbera, Emby, wan NAS o wan TV bokis), stret long sea. Stat long build 20, wan Plex Media Server i gat kaen blong hem wan, luk [Plex Media Server, wetaot plex.tv](#plex-media-server-without-plextv). Hem i faenem ol seva long netwok blong yu hem wan, mo i plei ol fael stret long sem ol vyua olsem long ful app (360°, 3D, VR180, Spatial 2.5D, immersive vyu blong Quest), wetem wan Immich seva o wetaot, long ol fon mo long Meta Quest 3. I no daonlodem wan samting. Taem wan seva i konek, yu save sendem ol fael we yu jusum i go long Immich akaon blong yu (stat long build 15).
+Immuch360 i save lukluk mo plei ol foto mo video blong eni seva we i toktok SMB (Samba, Windows), WebDAV o, stat long build 19, DLNA/UPnP (wan seva blong media: Jellyfin, minidlna, Gerbera, Emby, wan NAS o wan TV bokis), stret long sea. Stat long build 20, wan Plex Media Server i gat kaen blong hem wan, luk [Plex Media Server, wetaot plex.tv](#plex-media-server-without-plextv).
 
-| Ademap wan sea | Wan folda blong wan sea |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Pej Ademap wan sea: Nem, Nem o adres blong seva, Pot (sapos yu wantem), Sea, Jusum wan sea, Fasfala folda (sapos yu wantem), Nem blong yusa, Pasword, Testem konekson, mo risal I konek finis, 2 samting long fasfala folda"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Wan folda blong wan netwok sea olsem plante smol pikja: ol 360° foto wetem 360° saen mo wan 360° video wetem saen blong plei, Jusum baten antap long raet"> |
-| Ol ples blong fulumap blong wan niu SMB sea, afta Testem konekson | Ol 360° foto mo wan video, we app i ridim stret long sea |
+Hem i faenem ol seva long netwok blong yu hem wan, mo i plei ol fael stret long sem ol vyua olsem long ful app (360°, 3D, VR180, Spatial 2.5D, immersive vyu blong Quest), wetem wan Immich seva o wetaot, long ol fon mo long Meta Quest 3. I no daonlodem wan samting. Taem wan seva i konek, yu save sendem ol fael we yu jusum i go long Immich akaon blong yu (stat long build 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Pej Ademap wan sea: Nem, Nem o adres blong seva, Pot (sapos yu wantem), Sea, Jusum wan sea, Fasfala folda (sapos yu wantem), Nem blong yusa, Pasword, Testem konekson, mo risal I konek finis, 2 samting long fasfala folda">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Wan folda blong wan netwok sea olsem plante smol pikja: ol 360° foto wetem 360° saen mo wan 360° video wetem saen blong plei, Jusum baten antap long raet">
+</p>
+
+- **Ademap wan sea**: ol ples blong fulumap blong wan niu SMB sea, afta Testem konekson.
+- **Wan folda blong wan sea**: ol 360° foto mo wan video, we app i ridim stret long sea.
 
 ### Ademap wan sea
 
@@ -178,16 +215,26 @@ Foto o video we i open long wan sea i gat sem samting long menu blong hem. Wetao
 
 ### Olsem wanem hem i plei be i no daonlodem
 
-Ol pleia oli ridim ol baet we oli nidim tru wan bris insaed long app (loopback adres nomo, wan token we i jenis evri sesen, ol renj blong baet), ale yu save jam long video mo i no kopiem wan samting i go long divaes. Ol pleia mo vyua blong hedset oli no kasem adres blong sea nating, oli kasem 127.0.0.1 blong bris nomo; app hem wan i sendem ol rikwes i go long seva. Blong video i plei gud, app i ridim sea long ol bigfala blok, fael i stap open bitwin ol rid, app i ridim kasem 16 MB fastaem bifo pleia i nidim, mo video we i stap plei i kam tru kasem sikis SMB konekson long sem taem, we oli no sem konekson we i karem ol smol pikja mo lis. Wan Freebox Server i ansa slo long evri rid: wan konekson i givim 4.5 MB/s, sikis i givim 19 MB/s, we i inaf blong wan 5.7K eksport long 132 Mbit/s. Taem pleia i stap wet, ol 360° mo Spatial pleia oli soem "I stap lodem" wetem hamas bafa i fulap; flat pleia i soem "I stap lodem" wetaot pesen taem video i stap lod o i stop.
+Ol pleia oli ridim ol baet we oli nidim tru wan bris insaed long app (loopback adres nomo, wan token we i jenis evri sesen, ol renj blong baet), ale yu save jam long video mo i no kopiem wan samting i go long divaes. Ol pleia mo vyua blong hedset oli no kasem adres blong sea nating, oli kasem 127.0.0.1 blong bris nomo; app hem wan i sendem ol rikwes i go long seva.
+
+Blong video i plei gud, app i ridim sea long ol bigfala blok, fael i stap open bitwin ol rid, app i ridim kasem 16 MB fastaem bifo pleia i nidim, mo video we i stap plei i kam tru kasem sikis SMB konekson long sem taem, we oli no sem konekson we i karem ol smol pikja mo lis. Wan Freebox Server i ansa slo long evri rid: wan konekson i givim 4.5 MB/s, sikis i givim 19 MB/s, we i inaf blong wan 5.7K eksport long 132 Mbit/s.
+
+Taem pleia i stap wet, ol 360° mo Spatial pleia oli soem "I stap lodem" wetem hamas bafa i fulap; flat pleia i soem "I stap lodem" wetaot pesen taem video i stap lod o i stop.
 
 ### Ol DLNA seva blong media
 
-Stat long build 19, app i sendem SSDP lukaot blong ol seva blong media i go long multicast grup blong netwok, mo sem rikwes i go long pot 1900 blong evri adres blong lokol /24 netwok, afta i ridim diskripsen blong divaes blong evri seva we i ansa mo i kipim olgeta we oli soem ol samting blong olgeta (wan ContentDirectory). App i soem ol folda mo fael wetem Browse aksen blong seva, wan pej afta narawan, mo i givim nem long olgeta folem taetol blong olgeta: wan fael i kasem ekstensen blong kaen blong hem taem taetol i no gat, mo wan seken fael wetem sem taetol long wan folda i kam `name (2)`. App i no soem ol odio. Ol smol pikja oli album pikja o ol smol pikja we seva i mekem, we app hem wan i lodem, mo app i yusum smol pikja blong hem sapos seva i no gat. Wan fael i plei long orijinal we seva i givim, i no wan kopi we oli jenisim taem seva i givim tufala, mo app i ridim wetem ol renj rikwes, ale yu save jam long video. Oli jekem wetem minidlna mo Gerbera; blong faenem ol seva long wan tru netwok, Plex, Jellyfin, wan NAS, Freebox Server, wan iPhone mo Quest, olgeta ia oli divaes test blong build 19.
+Stat long build 19, app i sendem SSDP lukaot blong ol seva blong media i go long multicast grup blong netwok, mo sem rikwes i go long pot 1900 blong evri adres blong lokol /24 netwok, afta i ridim diskripsen blong divaes blong evri seva we i ansa mo i kipim olgeta we oli soem ol samting blong olgeta (wan ContentDirectory).
+
+App i soem ol folda mo fael wetem Browse aksen blong seva, wan pej afta narawan, mo i givim nem long olgeta folem taetol blong olgeta: wan fael i kasem ekstensen blong kaen blong hem taem taetol i no gat, mo wan seken fael wetem sem taetol long wan folda i kam `name (2)`. App i no soem ol odio. Ol smol pikja oli album pikja o ol smol pikja we seva i mekem, we app hem wan i lodem, mo app i yusum smol pikja blong hem sapos seva i no gat. Wan fael i plei long orijinal we seva i givim, i no wan kopi we oli jenisim taem seva i givim tufala, mo app i ridim wetem ol renj rikwes, ale yu save jam long video.
+
+Oli jekem wetem minidlna mo Gerbera; blong faenem ol seva long wan tru netwok, Plex, Jellyfin, wan NAS, Freebox Server, wan iPhone mo Quest, olgeta ia oli divaes test blong build 19.
 
 <a id="a-share-that-moved"></a>
 ### Wan sea we i muv
 
-Stat long build 19, wan DLNA sea mo wan fon sea (luk [Serem fon ia long netwok](#share-this-phone-on-the-network)) oli kipim id we seva blong olgeta i talemaot. Taem wan long olgeta i no moa ansa long adres blong hem (wan niu adres we bokis i givim, wan seva we i statem bakegen long wan narafala pot), pej blong folda blong hem i soem "Stap lukaotem (nem) long netwok" mo i muvum sea i go long ples we hem i ansa naoia: kwiktaem blong wan DLNA seva, we i no gat pasword, mo afta yu talem yes long "Yusum niu adres?", we i soem tufala adres, blong wan sea wetem nem blong yusa mo pasword, from we bambae app i sendem tufala i go long niu adres. Stat long build 20, wan Plex seva we app i faenem bakegen long wan narafala adres blong netwok i muv kwiktaem tu: setifiket blong hem i soem se hem i sem seva bifo app i sendem token. App i lukaotem wan Tapo kamera wetem MAC adres blong hem long pej blong kamera, luk [Ol Tapo kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Stat long build 19, wan DLNA sea mo wan fon sea (luk [Serem fon ia long netwok](#share-this-phone-on-the-network)) oli kipim id we seva blong olgeta i talemaot. Taem wan long olgeta i no moa ansa long adres blong hem (wan niu adres we bokis i givim, wan seva we i statem bakegen long wan narafala pot), pej blong folda blong hem i soem "Stap lukaotem (nem) long netwok" mo i muvum sea i go long ples we hem i ansa naoia: kwiktaem blong wan DLNA seva, we i no gat pasword, mo afta yu talem yes long "Yusum niu adres?", we i soem tufala adres, blong wan sea wetem nem blong yusa mo pasword, from we bambae app i sendem tufala i go long niu adres.
+
+Stat long build 20, wan Plex seva we app i faenem bakegen long wan narafala adres blong netwok i muv kwiktaem tu: setifiket blong hem i soem se hem i sem seva bifo app i sendem token. App i lukaotem wan Tapo kamera wetem MAC adres blong hem long pej blong kamera, luk [Ol Tapo kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Ol samting we i no wok yet
 
@@ -227,7 +274,9 @@ Stat long build 20, Immuch360 i joen stret wetem Plex Media Server blong yu, wet
 
 ### Aotsaed long haos
 
-Evri taem we app i openem seva, hem i traem adres long haos fastaem mo, 400 ms afta, adres aotsaed long haos. App i yusum fas wan we i ansa wetem seva blong yu; taem hem i adres aotsaed long haos, pej blong folda i soem wan wol aekon wetem tekst "I konek tru long adres aotsaed long haos". Blong samting ia i wok, Remote Access i mas on long Plex (Settings, Remote Access) wetem wan pot we bokis blong yu i forwadem: wetaot plex.tv, app i no save yusum relay blong Plex, olsem nao wan seva we i no gat port forwarding i open long haos nomo, mo aotsaed long haos pej i talem "Yu no save kasem Plex seva blong yu aotsaed long netwok blong haos. Tanem on remote access wetem port forwarding long Plex (Settings, Remote Access), o raetem adres blong pablik blong hem."
+Evri taem we app i openem seva, hem i traem adres long haos fastaem mo, 400 ms afta, adres aotsaed long haos. App i yusum fas wan we i ansa wetem seva blong yu; taem hem i adres aotsaed long haos, pej blong folda i soem wan wol aekon wetem tekst "I konek tru long adres aotsaed long haos".
+
+Blong samting ia i wok, Remote Access i mas on long Plex (Settings, Remote Access) wetem wan pot we bokis blong yu i forwadem: wetaot plex.tv, app i no save yusum relay blong Plex, olsem nao wan seva we i no gat port forwarding i open long haos nomo, mo aotsaed long haos pej i talem "Yu no save kasem Plex seva blong yu aotsaed long netwok blong haos. Tanem on remote access wetem port forwarding long Plex (Settings, Remote Access), o raetem adres blong pablik blong hem."
 
 App i lanem bakegen adres we seva i talem evri taem we i konek long haos. Taem adres ia i no ansa long aotsaed (wan bokis we i jenisim adres blong hem, tu rauta wan biaen long narawan), raetem adres blong yu long pej blong seva. Taem token i stop blong wok (eksampol, yu saen aot long braosa sesen we yu bin kopi hem long hem), pej blong folda i talem mo i givim "Pestem wan niu token", we i openem pej blong seva long ples blong token.
 
@@ -344,15 +393,13 @@ Ol Insta360 kamera oli rekodem tu raon pikja blong tufala lens blong olgeta (fis
 
 Stat long build 16, Immuch360 i joinem ol fael ia hem wan, long fon, long tablet o long hedset, mo yu no nidim blong instolem wan samting long seva:
 
-| Kamera mo fael | Wanem app i mekem | Stat long |
-|---|---|---|
-| Insta360 .insp foto | I joinem long GPU bifo sfia vyua, kasem 8192x4096, wetem wan CPU we i mekem long wan smol saes sapos GPU i no save | Build 16 |
-| Insta360 .insv video we i kipim tufala lens long wan trak | Wan GPU efek long pleia i joinem | Build 16 |
-| Insta360 X4, X4 Air, X5 mo X6 .insv video, wan skwea trak blong wan lens | Tu decoder long sem taem, wan blong wan lens, mo wan GPU compositor we i joinem tufala long sfia | Build 18 |
-| Insta360 X3 mo olfala kamera long 5.7K mo antap: tu fael, `_00_` mo `_10_` | Semak, mo app i faenem narafala fael klosap long fas fael | Build 18 |
-| GoPro MAX mo MAX 2 .360: tu trak wetem tri saed blong kiub long evriwan | Semak, wetem ol kolum we oli kavremap oli miks | Build 18 |
-| DJI Osmo 360 .osv: tu skwea 10 bit trak | Semak, wetem Kannala-Brandt kalibresen blong fael | Build 18 |
-| Dual fisheye .dng | I soem flat | I no yet |
+- **Insta360 .insp foto** (build 16): i joinem long GPU bifo sfia vyua, kasem 8192x4096, wetem wan CPU we i mekem long wan smol saes sapos GPU i no save.
+- **Insta360 .insv video we i kipim tufala lens long wan trak** (build 16): wan GPU efek long pleia i joinem.
+- **Insta360 X4, X4 Air, X5 mo X6 .insv video, wan skwea trak blong wan lens** (build 18): tu decoder long sem taem, wan blong wan lens, mo wan GPU compositor we i joinem tufala long sfia.
+- **Insta360 X3 mo olfala kamera long 5.7K mo antap: tu fael, `_00_` mo `_10_`** (build 18): semak, mo app i faenem narafala fael klosap long fas fael.
+- **GoPro MAX mo MAX 2 .360: tu trak wetem tri saed blong kiub long evriwan** (build 18): semak, wetem ol kolum we oli kavremap oli miks.
+- **DJI Osmo 360 .osv: tu skwea 10 bit trak** (build 18): semak, wetem Kannala-Brandt kalibresen blong fael.
+- **Dual fisheye .dng** (i no yet): i soem flat.
 
 ### Lukluk wan raw fael
 
@@ -466,7 +513,9 @@ Oli jekem luksave long wan spatial foto we Apple pikja laebri i raetem mo long o
 
 Ol man oli pem wan Quest 3 blong lukluk ol 360° foto mo video blong olgeta, afta oli askem wea blong putum ol fael, olsem wanem blong putum olgeta long hedset wetaot kebol, mo wanem pleia blong yusum: ol 360° mo 3D video pleia long stoa oli nidim mani.
 
-Sem Android app i ron long Quest 3 mo 3S, mo stat long build 21 long Quest 2 mo Quest Pro (oli no testem yet), olsem wan windo, wetem ful laebri blong yu. 360° baten blong hem i openem wan immersive vyu we foto o video i stap raon long yu mo yu lukluk raon taem yu tanem hed blong yu, long tru 3D blong ol stereo fael (Meta Spatial SDK). Ol media oli kam long Immich seva blong yu, hedset hem wan, wan NAS, wan seva blong media, wan fon o wan Plex seva, mo oli plei long ples blong olgeta (wan seva blong media mo wan fon stat long build 19, wan Plex seva stat long build 20, oli no jekem long hedset yet), mo stat long build 20, windo i soem ol Tapo kamera tu. Hem i fri mo open sos. Oli jekem long wan Quest 3, mo wan yusa i jekem wetem ol Insta360 X4 8K HEVC video.
+Sem Android app i ron long Quest 3 mo 3S, mo stat long build 21 long Quest 2 mo Quest Pro (oli no testem yet), olsem wan windo, wetem ful laebri blong yu. 360° baten blong hem i openem wan immersive vyu we foto o video i stap raon long yu mo yu lukluk raon taem yu tanem hed blong yu, long tru 3D blong ol stereo fael (Meta Spatial SDK).
+
+Ol media oli kam long Immich seva blong yu, hedset hem wan, wan NAS, wan seva blong media, wan fon o wan Plex seva, mo oli plei long ples blong olgeta (wan seva blong media mo wan fon stat long build 19, wan Plex seva stat long build 20, oli no jekem long hedset yet), mo stat long build 20, windo i soem ol Tapo kamera tu. Hem i fri mo open sos. Oli jekem long wan Quest 3, mo wan yusa i jekem wetem ol Insta360 X4 8K HEVC video.
 
 ### Openem immersive vyu
 
@@ -479,17 +528,20 @@ Sem Android app i ron long Quest 3 mo 3S, mo stat long build 21 long Quest 2 mo 
 
 | Aksen | Ol controller | Ol han |
 |---|---|---|
-| Go bak long app | B o Y | Go bak baten blong info panel |
-| Plei o stop smol wan video | Trigger, taem info panel i haed | Plei o Stop smol baten blong info panel |
+| Go bak long app | B o Y | Go bak baten |
+| Plei o stop smol wan video | Trigger, taem info panel i haed | Plei o Stop smol baten |
 | Soem o haedem info panel | A, X, grip o menu | Menu saen wetem han, o pinsim taem panel i haed |
-| Tanem vyu, blong lukluk biaen wetaot tanem hed (stat long build 17) | Raet thumbstick lef o raet: 30° evri pus, mo i gohed tanem taem yu holem (wan smol raeting long wan laen i soem engel) | Tanem baten blong info panel (90°) |
-| Media bifo o nekis | Lef thumbstick lef o raet (eni thumbstick bifo build 17; stat long build 16, wan smol raeting long wan laen i talem nem blong media, info panel i stap haed) | Bifo mo Nekis baten blong info panel |
-| 10 sekon bak o fored long wan video | Thumbstick daon o antap (stat long build 16, wan smol raeting long wan laen i soem taem, info panel i stap haed) | Tufala baten blong jam, o pulum ba blong taem blong info panel |
-| Tanem pikja 90° | Thumbstick daon o antap long wan foto (stat long build 16, smol raeting long wan laen i soem engel); long wan video, Tanem baten blong info panel | Tanem baten blong info panel |
-| Jenisim 3D leaot (mono, antap mo andanit, saed long saed) | 3D baten blong info panel | 3D baten blong info panel |
-| Ful sfia o haf sfia (VR180) | 360°/180° baten blong info panel | 360°/180° baten blong info panel |
+| Tanem vyu (stat long build 17) | Raet thumbstick lef o raet, 30° evri pus | Tanem baten (90°) |
+| Media bifo o nekis | Lef thumbstick lef o raet | Bifo mo Nekis baten |
+| 10 sekon bak o fored long wan video | Thumbstick daon o antap | Tufala baten blong jam, o pulum ba blong taem |
+| Tanem pikja 90° | Thumbstick daon o antap long wan foto, Tanem baten long wan video | Tanem baten |
+| Jenisim 3D leaot (mono, antap mo andanit, saed long saed) | 3D baten | 3D baten |
+| Ful sfia o haf sfia (VR180) | 360°/180° baten | 360°/180° baten |
 
-Wetem ol controller, ol baten mo ba blong taem blong info panel oli wok tu: poenem olgeta wetem laet mo presem trigger.
+Long tebol ia, ol baten mo ba blong taem oli blong info panel. Wetem ol controller oli wok tu: poenem olgeta wetem laet mo presem trigger.
+
+- **Tanem vyu**: blong lukluk biaen wetaot tanem hed. Raet thumbstick i gohed tanem taem yu holem, mo wan smol raeting long wan laen i soem engel.
+- **Smol raeting long wan laen**: stat long build 16, taem yu jam wetem thumbstick, tanem wan foto, o go bifo mo nekis, wan smol raeting long wan laen i kamaot (taem, engel, o nem blong media) mo info panel i stap haed. Bifo build 17, eni thumbstick i go long media bifo o nekis.
 
 ### Info panel, bifo mo nekis
 
@@ -497,7 +549,9 @@ Info panel blong wan video i gat wan ba blong taem (ples, hamas taem, hamas i lo
 
 Bifo mo nekis oli muv long ol 360° media blong ples we yu kam long hem, wetaot lego immersive vyu: taemlaen, lis blong 360° (folem ol filta), wan album, wan folda blong wan netwok sea, o ol media blong hedset hem wan (On this device). App i jam ova long ol flat foto mo video. Taem yu go bak long app long taemlaen, wan album o lis blong 360°, hem i stop long media we yu bin stap lukluk (pej blong wan sea folda i stap long fael we yu bin openem), mo video we yu bin openem immersive vyu long hem i gohed long ples we hem i stop.
 
-Stat long build 17, raet thumbstick i tanem vyu, olsem raet thumbstick i tanem long plante app blong hedset: wan pus i tanem 30°, sapos yu holem i gohed tanem, ale samting we i stap biaen long yu i kam long fes blong yu wetaot yu tanem hed o jea blong yu; bifo mo nekis oli stap long lef thumbstick. Stat long build 16, afta toktok blong wan yusa long hedset, wan jam, tanem o bifo/nekis wetem thumbstick i soem wan smol raeting long wan laen (taem, engel o taetol blong media) we i lus afta 1.5 sekon, i no openem info panel; panel i stil kam wetem A, X, grip o menu baten. Sem build i kipim panel i wok taem ol controller oli slip, oli wekap o oli letem han i tekem ples blong olgeta, mo i raetem ol jenis ia long log, luk [Ol log](#logs).
+Stat long build 17, raet thumbstick i tanem vyu, olsem raet thumbstick i tanem long plante app blong hedset: wan pus i tanem 30°, sapos yu holem i gohed tanem, ale samting we i stap biaen long yu i kam long fes blong yu wetaot yu tanem hed o jea blong yu; bifo mo nekis oli stap long lef thumbstick.
+
+Stat long build 16, afta toktok blong wan yusa long hedset, wan jam, tanem o bifo/nekis wetem thumbstick i soem wan smol raeting long wan laen (taem, engel o taetol blong media) we i lus afta 1.5 sekon, i no openem info panel; panel i stil kam wetem A, X, grip o menu baten. Sem build i kipim panel i wok taem ol controller oli slip, oli wekap o oli letem han i tekem ples blong olgeta, mo i raetem ol jenis ia long log, luk [Ol log](#logs).
 
 Wan Apple spatial foto we yu openem wetem "Luk long 3D" i no stap long wan sfia: hem i flot long fes blong yu, luk [Ol Apple spatial foto mo video](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Ol foto oli soem wan preview fastaem, afta orijinal, we i kam smol kasem 8192x40
 
 Ol 3D leaot, antap mo andanit mo saed long saed, 360° mo VR180, oli soem long 3D, evri ae i kasem haf blong pikja blong hem. Leaot i kam long fael taem fael i talem (ol video), sapos no, app i gesem long sep (skwea: antap mo andanit, 4:1: saed long saed); taem i rong, yusum 3D baten blong info panel.
 
-| 360° foto long hedset | 360° video long hedset | 3D 360° video long hedset |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="Wan 360° foto raon long yu long Quest 3, wetem info panel: ol baten blong leaot, 360° mo Go bak"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Wan 360° video blong wan lek i plei long Quest 3, wetem info panel: ol baten blong leaot, 360°, Stop smol mo Go bak"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Wan stereo 360° video long Quest 3, info panel i ridim 3D, antap mo andanit"> |
-| Immersive vyu blong wan foto, wetem info panel (leaot, 360°/180°, Go bak) | Wan video i stap plei, wetem Stop smol | Wan stereo video antap mo andanit, evri ae i kasem pat blong hem (Kandao Obsidian video) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Wan 360° foto raon long yu long Quest 3, wetem info panel: ol baten blong leaot, 360° mo Go bak">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Wan 360° video blong wan lek i plei long Quest 3, wetem info panel: ol baten blong leaot, 360°, Stop smol mo Go bak">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Wan stereo 360° video long Quest 3, info panel i ridim 3D, antap mo andanit">
+</p>
+
+- **360° foto long hedset**: immersive vyu blong wan foto, wetem info panel (leaot, 360°/180°, Go bak).
+- **360° video long hedset**: wan video i stap plei, wetem Stop smol.
+- **3D 360° video long hedset**: wan stereo video antap mo andanit, evri ae i kasem pat blong hem (Kandao Obsidian video).
 
 Oli tekem ol pikja ia taem app i stap long Franis lanwis, bifo build 14. Naoia panel i gat ba blong taem tu bitwin tufala baten blong jam 10 sekon, Bifo mo Nekis, mo Tanem.
 
@@ -598,7 +657,9 @@ Immuch360 i putum wan 360° saen long smol pikja blong ol 360° foto (long wan n
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Ol tekniko saed blong video, ol decoder mo from wanem wan video i stap stop stop
 
-Ol man oli askem wanem codec, saes mo bit rate Quest 3 i save plei, mo from wanem wan 5.7K eksport i stap stop stop long hedset be i plei gud long fon. Ansa hem i hardware decoder: H.264 decoder blong Quest 3 (XR2 Gen 2) i stop kolosap long 4096x2304, ale wan 5760x2880 H.264 video (levol 6.0, kolosap 200 Mbit/s, nomol Insta360 eksport) i ridim kolosap 17 fps long hedset, wetem ol skwea long pikja, be sem fael i plei gud long wan fon. Sem video long HEVC (H.265) i plei gud long hedset: wan Insta360 X4 8K HEVC video (7680x3840, 29.97 fps, 210 Mbit/s, Main profael levol 6.1, 8 bit) i plei gud long immersive vyu, long stret saes blong hem mo wetaot transcode (wan yusa long wan Quest 3 i talem).
+Ol man oli askem wanem codec, saes mo bit rate Quest 3 i save plei, mo from wanem wan 5.7K eksport i stap stop stop long hedset be i plei gud long fon. Ansa hem i hardware decoder: H.264 decoder blong Quest 3 (XR2 Gen 2) i stop kolosap long 4096x2304, ale wan 5760x2880 H.264 video (levol 6.0, kolosap 200 Mbit/s, nomol Insta360 eksport) i ridim kolosap 17 fps long hedset, wetem ol skwea long pikja, be sem fael i plei gud long wan fon.
+
+Sem video long HEVC (H.265) i plei gud long hedset: wan Insta360 X4 8K HEVC video (7680x3840, 29.97 fps, 210 Mbit/s, Main profael levol 6.1, 8 bit) i plei gud long immersive vyu, long stret saes blong hem mo wetaot transcode (wan yusa long wan Quest 3 i talem).
 
 Immich app i gat wan "Force original video" swij nomo mo i soem codec nomo. Immuch360 i soem wanem video ia i olsem mo wanem divaes i save ridim, mo i jusum fael we bambae i plei.
 
@@ -623,7 +684,9 @@ Settings, Advanced, "Ol video decoder blong divaes ia" (stat long build 15) i so
 1. Openem Settings, Asset Viewer, afta Videos.
 2. Aninit long "Sos blong video" ("Wanem fael i plei taem server i gat wan transcoded kopi"), jusum "Orijinal taem divaes ia i save ridim", "Oltaem orijinal" o "Oltaem transcoded stream".
 
-Stat long build 15, samting we yu jusum i wok blong evri video blong seva: flat pleia, 360° mo Spatial pleia, mo immersive vyu blong Quest. Kasem taem yu jusum, wan fon i kipim wanem olfala swij "Force original video" i talem (i of fastaem: transcoded stream, we i orijinal hem wan taem seva i no transcodem), mo Quest i plei orijinal taem hedset i save ridim. Jek i ridim codec, saes mo hamas pikja long wan sekon long fael mo i lukluk olgeta wetem ol hardware decoder (H.264 long Quest 3 i stop long 4096x2304 we oli mesarem). Wan pleia we i no save ridim orijinal i jenis i go long transcoded stream wetem wan mesej: "I plei transcoded stream: orijinal (codec mo saes) i bitim wanem divaes ia i save ridim".
+Stat long build 15, samting we yu jusum i wok blong evri video blong seva: flat pleia, 360° mo Spatial pleia, mo immersive vyu blong Quest. Kasem taem yu jusum, wan fon i kipim wanem olfala swij "Force original video" i talem (i of fastaem: transcoded stream, we i orijinal hem wan taem seva i no transcodem), mo Quest i plei orijinal taem hedset i save ridim.
+
+Jek i ridim codec, saes mo hamas pikja long wan sekon long fael mo i lukluk olgeta wetem ol hardware decoder (H.264 long Quest 3 i stop long 4096x2304 we oli mesarem). Wan pleia we i no save ridim orijinal i jenis i go long transcoded stream wetem wan mesej: "I plei transcoded stream: orijinal (codec mo saes) i bitim wanem divaes ia i save ridim".
 
 Long hedset, immersive vyu i statem orijinal mo, long ol fas pikja, i jenis i go long transcoded stream blong seva taem orijinal i bitim ol decoder, mo i talem long info panel; taem i no gat transcoded stream, taem hem tu i bigwan tumas, o taem fael i kam long hedset o long wan netwok sea, info panel i talem blong 10 sekon, wetem wanem blong jenisim. Build 14, hemia we oli sendem long Horizon Store, i jekem H.264 we i bitim 4096x2304 nomo, afta i traem plei stream blong seva long sem fasin.
 
@@ -661,87 +724,184 @@ Blong soem wan 360° foto long wan man we i no gat app, serem wetem wan Immich l
 
 Build naoia, build 21 (vesen 3.3.0-rc.0, build namba 3030019), i stanap long Immich 3.3.0-rc.0 (Immich `main`, i no wan stedi release yet). Oli testem build 19 wetem wan Immich 3.2 seva, mo build 20 mo 21 oli no jenisim wan samting long wanem app i askem long seva. Plis talem ol problem long [Issues](https://github.com/freeKC/Immuch360/issues), i no long Immich projek. Blong ful dokumen blong Immich hem wan, luk [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Lukluk wetem Immich app mo ol narafala app
 
 ### From wanem fork ia i stap, long wan tebol
 
-| | Immich mobael app | Immuch360 | Olsem wanem |
-|---|:---:|:---:|---|
-| Ol 360° foto olsem wan sfia we yu lukluk raon insaed (pulum, pinsim, tajem tu taem, i gohed tanem smol, fas vyu blong kamera, ol panorama we oli no fulwan) | ❌ flat longfala pikja | ✅ | Oli testem long wan Galaxy S24+ mo wan iPhone 14 |
-| Gyroscope: lukluk raon taem yu muvum fon | ❌ | ✅ | Oli testem long wan Galaxy S24+ mo wan iPhone 14 |
-| Ol 360° video long wan sfia pleia, wetem saon, jam, jusum odio trak mo wan saen blong lodem | ❌ flat video | ✅ Android mo iOS (i no gat ba blong taem long iOS yet) | Oli testem long wan Galaxy S24+ mo wan iPhone 14 |
-| Ol 3D (stereo) 360° foto mo video | ❌ dabol pikja | ✅ lef ae long ol fon, tru 3D long Quest | Oli testem long wan Galaxy S24+ mo wan Quest 3, wetem ol tru 3D 360° video (VRTogether, Vuze, Kandao) mo wan 3D foto; mifala i glad blong kasem ripot long ol narafala kamera |
-| Ol VR180 (haf sfia) foto mo video | ❌ i strej raon long sfia | ✅ haf sfia, 360°/180° baten | Oli testem long wan Android emulator mo wan Galaxy S24+ wetem ol media blong test; mifala i glad blong kasem toktok long ol divaes |
-| Ol Apple spatial foto (HEIC stereo pea) mo spatial video (MV-HEVC) | ❌ wan flat foto o video, i no gat wan samting i talem se hem i spatial | ✅ stat long build 19: ol foto long 3D long Quest, wan ae mo wan laen blong tekniko saed long ol narafala ples | Oli jekem luksave long wan foto we Apple pikja laebri i raetem mo long ol fael blong test; hedset vyu mo ol tru iPhone fael oli divaes test blong build 19 |
-| Meta Quest immersive vyu wetem hed folem, wan ba blong taem, bifo mo nekis, mo Tanem | ❌ | ✅ sem app, olsem wan hedset build o fon APK | Oli testem long wan Quest 3 (ol kontrol blong build 14, oli stretem long build 16 afta toktok blong wan yusa), mo wan yusa wetem ol Insta360 X4 8K HEVC video |
-| 360° saen long ol smol pikja, mo wan lis blong 360° wetem ol raw fael mo ol filta (taem, sos, kaen, kamera) | ❌ | ✅ ol filta stat long build 18 | Finis |
-| "Lukum olsem 360°" blong ol fael we seva i no makem | ❌ | ✅ fon i tingbaot | Finis |
-| Spatial 2.5D: dip long wan flat skrin long wan stereo video | ❌ | ✅ stil testem, ol fon mo tablet | Oli testem long wan Galaxy S24+; mifala i glad blong kasem toktok blong ol iPhone yusa |
-| Yusum wetaot eni seva, long galeri blong divaes hem wan | ❌ i mas login | ✅ | Oli testem long wan Galaxy S24+, wan Quest 3 mo wan Android emulator |
-| Ol SMB mo WebDAV sea we app i faenem long netwok mo i plei stret, i no daonlodem wan samting | ❌ | ✅ evri vyua, ol fon mo Quest | Oli testem wetem wan Freebox Server (SMB) long wan Galaxy S24+ mo wan Quest 3, mo wetem ol Samba mo WebDAV test seva long wan Android emulator; mifala i glad blong kasem toktok long ol narafala NAS mo WebDAV |
-| Ol DLNA seva blong media olsem wan kaen sea | ❌ | ✅ stat long build 19 | Oli jekem wetem minidlna mo Gerbera long Docker; Plex, Jellyfin, wan NAS, Freebox Server, wan iPhone mo Quest oli divaes test blong build 19 |
-| Sendem ol fael blong wan sea i go long Immich; ol fael blong divaes we yu sendem wetem han, app i kaontem olsem oli gat kopi finis | ❌ ol fael blong divaes nomo | ✅ stat long build 15 | Oli testem long wan Android emulator wetem wan Samba test seva mo wan Immich 3.2 seva |
-| Serem fon ia long netwok, blong hedset | ❌ | ✅ stat long build 19, Android mo iOS | Ol unit test mo end-tu-end test wetem WebDAV klaen blong hedset, long wan kompiuta; wan fon we i givimaot long wan Quest, mo saed blong iPhone, oli divaes test blong build 19 |
-| Ol Plex Media Server laebri we app i plei long ol orijinal fael, long haos mo aotsaed, wetaot plex.tv | ❌ | ✅ stat long build 20, evri vyua, long ol fon, ol tablet, Quest mo ol TV | Oli jekem long wan kompiuta wetem wan tru Plex Media Server 1.42.1 (joen, ol folda, ol byte range, ol smol pikja, adres aotsaed long haos); oli no jekem long wan divaes yet |
-| Ol Tapo kamera: luk laef, mo ol rekoding blong memori kad we oli go long Immich taem yu wantem | ❌ | ✅ stat long build 20: ol rekoding long evri ples, laef long Android, Android TV mo Quest | Oli jekem wetem wan kamera we i giaman; oli no jekem wetem wan tru kamera yet |
-| Android TV mo Google TV, wetem rimot, long sem APK | ❌ i no wan TV app | ✅ stat long build 20 | Oli jekem wetem otomatik test; oli no jekem long wan TV yet |
-| Ol raw Insta360 .insp foto mo ol .insv video wetem wan trak | ❌ flat | ✅ stat long build 16 | Oli jekem ol foto wetem ol Insta360 Studio eksport blong ol X3 fael, ol video long wan Android emulator wetem wan smol X3 fael; i no ron long wan iPhone yet |
-| Ol raw video wetem wan lens long wan trak o long wan fael (Insta360 X4, X4 Air, X5, X6, X3 pea, GoPro .360, DJI .osv) | ❌ flat o rong | ✅ stat long build 18 | Oli jekem ol parser mo joinem long ol tru X4, X3 pea, GoPro MAX mo Osmo 360 fael; blong plei hem i divaes test blong build 18 mo 19 |
-| Dual fisheye .dng | ❌ flat | ❌ i no yet | Oli plan |
-| Ol video blong seva: orijinal taem divaes i save ridim, sapos no, transcoded stream; lis blong ol video decoder blong divaes | ❌ wan "Force original video" swij nomo | ✅ stat long build 15 | Oli testem long wan Android emulator; oli mesarem H.264 limit blong Quest 3 long hedset |
-| Ol tekniko saed blong wan video: bit rate, pikja, profael, sapos divaes ia i save ridim | ❌ codec nomo | ✅ stat long build 18 | Finis |
-| Wan fri pleia blong ol flat, 360°, 3D mo VR180 video, long seva, fon o wan NAS | ❌ flat nomo | ✅ (ol pleia long stoa blong Quest 3 oli nidim mani) | |
-| Sem seva, sem akaon, i instol klosap long ofisol app | | ✅ | |
+| | Immich mobael app | Immuch360 |
+|---|:---:|:---:|
+| Ol 360° foto olsem wan sfia we yu lukluk raon insaed (pulum, pinsim, tajem tu taem, i gohed tanem smol, fas vyu blong kamera, ol panorama we oli no fulwan) | ❌ flat longfala pikja | ✅ |
+| Gyroscope: lukluk raon taem yu muvum fon | ❌ | ✅ |
+| Ol 360° video long wan sfia pleia, wetem saon, jam, jusum odio trak mo wan saen blong lodem | ❌ flat video | ✅ Android mo iOS (i no gat ba blong taem long iOS yet) |
+| Ol 3D (stereo) 360° foto mo video | ❌ dabol pikja | ✅ lef ae long ol fon, tru 3D long Quest |
+| Ol VR180 (haf sfia) foto mo video | ❌ i strej raon long sfia | ✅ haf sfia, 360°/180° baten |
+| Ol Apple spatial foto (HEIC stereo pea) mo spatial video (MV-HEVC) | ❌ wan flat foto o video, i no gat wan samting i talem se hem i spatial | ✅ stat long build 19: ol foto long 3D long Quest, wan ae mo wan laen blong tekniko saed long ol narafala ples |
+| Meta Quest immersive vyu wetem hed folem, wan ba blong taem, bifo mo nekis, mo Tanem | ❌ | ✅ sem app, olsem wan hedset build o fon APK |
+| 360° saen long ol smol pikja, mo wan lis blong 360° wetem ol raw fael mo ol filta (taem, sos, kaen, kamera) | ❌ | ✅ ol filta stat long build 18 |
+| "Lukum olsem 360°" blong ol fael we seva i no makem | ❌ | ✅ fon i tingbaot |
+| Spatial 2.5D: dip long wan flat skrin long wan stereo video | ❌ | ✅ stil testem, ol fon mo tablet |
+| Yusum wetaot eni seva, long galeri blong divaes hem wan | ❌ i mas login | ✅ |
+| Ol SMB mo WebDAV sea we app i faenem long netwok mo i plei stret, i no daonlodem wan samting | ❌ | ✅ evri vyua, ol fon mo Quest |
+| Ol DLNA seva blong media olsem wan kaen sea | ❌ | ✅ stat long build 19 |
+| Sendem ol fael blong wan sea i go long Immich; ol fael blong divaes we yu sendem wetem han, app i kaontem olsem oli gat kopi finis | ❌ ol fael blong divaes nomo | ✅ stat long build 15 |
+| Serem fon ia long netwok, blong hedset | ❌ | ✅ stat long build 19, Android mo iOS |
+| Ol Plex Media Server laebri we app i plei long ol orijinal fael, long haos mo aotsaed, wetaot plex.tv | ❌ | ✅ stat long build 20, evri vyua, long ol fon, ol tablet, Quest mo ol TV |
+| Ol Tapo kamera: luk laef, mo ol rekoding blong memori kad we oli go long Immich taem yu wantem | ❌ | ✅ stat long build 20: ol rekoding long evri ples, laef long Android, Android TV mo Quest |
+| Android TV mo Google TV, wetem rimot, long sem APK | ❌ i no wan TV app | ✅ stat long build 20 |
+| Ol raw Insta360 .insp foto mo ol .insv video wetem wan trak | ❌ flat | ✅ stat long build 16 |
+| Ol raw video wetem wan lens long wan trak o long wan fael (Insta360 X4, X4 Air, X5, X6, X3 pea, GoPro .360, DJI .osv) | ❌ flat o rong | ✅ stat long build 18 |
+| Dual fisheye .dng | ❌ flat | ❌ i no yet |
+| Ol video blong seva: orijinal taem divaes i save ridim, sapos no, transcoded stream; lis blong ol video decoder blong divaes | ❌ wan "Force original video" swij nomo | ✅ stat long build 15 |
+| Ol tekniko saed blong wan video: bit rate, pikja, profael, sapos divaes ia i save ridim | ❌ codec nomo | ✅ stat long build 18 |
+| Wan fri pleia blong ol flat, 360°, 3D mo VR180 video, long seva, fon o wan NAS | ❌ flat nomo | ✅ (ol pleia long stoa blong Quest 3 oli nidim mani) |
+| Sem seva, sem akaon, i instol klosap long ofisol app |  | ✅ |
+
+<details>
+<summary><b>Olsem wanem long evri laen</b>: olsem wanem oli testem</summary>
+
+- **Ol 360° foto olsem wan sfia**: oli testem long wan Galaxy S24+ mo wan iPhone 14.
+- **Gyroscope**: oli testem long wan Galaxy S24+ mo wan iPhone 14.
+- **Ol 360° video**: oli testem long wan Galaxy S24+ mo wan iPhone 14.
+- **Ol 3D 360° foto mo video**: oli testem long wan Galaxy S24+ mo wan Quest 3, wetem ol tru 3D 360° video (VRTogether, Vuze, Kandao) mo wan 3D foto; mifala i glad blong kasem ripot long ol narafala kamera.
+- **VR180**: oli testem long wan Android emulator mo wan Galaxy S24+ wetem ol media blong test; mifala i glad blong kasem toktok long ol divaes.
+- **Ol Apple spatial foto mo video**: oli jekem luksave long wan foto we Apple pikja laebri i raetem mo long ol fael blong test; hedset vyu mo ol tru iPhone fael oli divaes test blong build 19.
+- **Meta Quest immersive vyu**: oli testem long wan Quest 3 (ol kontrol blong build 14, oli stretem long build 16 afta toktok blong wan yusa), mo wan yusa wetem ol Insta360 X4 8K HEVC video.
+- **360° saen mo lis blong 360°**: finis.
+- **Lukum olsem 360°**: finis.
+- **Spatial 2.5D**: oli testem long wan Galaxy S24+; mifala i glad blong kasem toktok blong ol iPhone yusa.
+- **Wetaot eni seva**: oli testem long wan Galaxy S24+, wan Quest 3 mo wan Android emulator.
+- **Ol SMB mo WebDAV sea**: oli testem wetem wan Freebox Server (SMB) long wan Galaxy S24+ mo wan Quest 3, mo wetem ol Samba mo WebDAV test seva long wan Android emulator; mifala i glad blong kasem toktok long ol narafala NAS mo WebDAV.
+- **Ol DLNA seva blong media**: oli jekem wetem minidlna mo Gerbera long Docker; Plex, Jellyfin, wan NAS, Freebox Server, wan iPhone mo Quest oli divaes test blong build 19.
+- **Sendem ol fael blong wan sea i go long Immich**: oli testem long wan Android emulator wetem wan Samba test seva mo wan Immich 3.2 seva.
+- **Serem fon ia long netwok**: ol unit test mo end-tu-end test wetem WebDAV klaen blong hedset, long wan kompiuta; wan fon we i givimaot long wan Quest, mo saed blong iPhone, oli divaes test blong build 19.
+- **Plex Media Server**: oli jekem long wan kompiuta wetem wan tru Plex Media Server 1.42.1 (joen, ol folda, ol byte range, ol smol pikja, adres aotsaed long haos); oli no jekem long wan divaes yet.
+- **Ol Tapo kamera**: oli jekem wetem wan kamera we i giaman; oli no jekem wetem wan tru kamera yet.
+- **Android TV mo Google TV**: oli jekem wetem otomatik test; oli no jekem long wan TV yet.
+- **Ol raw Insta360 .insp foto mo ol .insv video wetem wan trak**: oli jekem ol foto wetem ol Insta360 Studio eksport blong ol X3 fael, ol video long wan Android emulator wetem wan smol X3 fael; i no ron long wan iPhone yet.
+- **Ol raw video wetem wan lens long wan trak o long wan fael**: oli jekem ol parser mo joinem long ol tru X4, X3 pea, GoPro MAX mo Osmo 360 fael; blong plei hem i divaes test blong build 18 mo 19.
+- **Dual fisheye .dng**: oli plan.
+- **Ol video blong seva mo ol video decoder**: oli testem long wan Android emulator; oli mesarem H.264 limit blong Quest 3 long hedset.
+- **Ol tekniko saed blong wan video**: finis.
+
+</details>
 
 ### Ol narafala app we ol man oli yusum blong samting ia
 
-| Wanem ol man oli yusum | Wanem problem oli kasem | Wanem Immuch360 i mekem |
-|---|---|---|
-| Immich web app | Hem i soem wan 360° foto olsem wan sfia, be i tingting se wan raw .insp hem i wan panorama we i finis mo i rapem tufala raon pikja blong hem raon long sfia; wan VR vyu i stil wan samting we ol man oli askem ([diskasen #14768](https://github.com/immich-app/immich/discussions/14768)) | I joinem ol raw fael long divaes, mo i openem wan immersive vyu long Quest |
-| Insta360 app o Studio | Yu nidim blong jenisim ol raw fael blong kad i kam wan 360° pikja bifo yu lukluk | I openem ol raw .insp mo .insv fael stret, mo ol GoPro .360 mo DJI .osv fael |
-| Plex, Jellyfin, Synology Photos | Ol 360° foto mo video oli soem flat o app i no luksave, olsem ol man oli raetem long ol forum blong olgeta (wan Plex rikwes i stap open stat long 2017) | I ridim Plex laebri hem wan stat long build 20, o sem ol folda tru SMB, WebDAV o DLNA, mo i plei olgeta olsem wan sfia, i no jenisim wan samting long seva |
-| Tapo app | Wan narafala app, we i saen in long TP-Link akaon blong yu, wetem ol klip i stap seperet long ol foto blong yu | I soem kamera klosap long ol foto blong yu, i toktok wetem hem long netwok blong yu nomo, mo i kipim wan klip olsem wan video we yu save sendem i go long Immich (stat long build 20) |
-| Immich mobael app long wan TV | I no wan TV app: wan yusa i talem se i wok wetem wan maos, i no wetem rimot | Sem app, we oli mekem blong rimot (stat long build 20) |
-| Kopiem ol fael i go long hedset | Yu mas kopiem evri fael long wan kebol bifo yu save lukluk | I plei stret long Immich, wan NAS, wan seva blong media o wan fon |
-| Ol 360° mo 3D pleia blong Quest stoa | Oli nidim mani | Fri mo open sos (AGPL) |
+- **Immich web app**
+  - Wanem problem oli kasem: hem i soem wan 360° foto olsem wan sfia, be i tingting se wan raw .insp hem i wan panorama we i finis mo i rapem tufala raon pikja blong hem raon long sfia; wan VR vyu i stil wan samting we ol man oli askem ([diskasen #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Wanem Immuch360 i mekem: i joinem ol raw fael long divaes, mo i openem wan immersive vyu long Quest.
+- **Insta360 app o Studio**
+  - Wanem problem oli kasem: yu nidim blong jenisim ol raw fael blong kad i kam wan 360° pikja bifo yu lukluk.
+  - Wanem Immuch360 i mekem: i openem ol raw .insp mo .insv fael stret, mo ol GoPro .360 mo DJI .osv fael.
+- **Plex, Jellyfin, Synology Photos**
+  - Wanem problem oli kasem: ol 360° foto mo video oli soem flat o app i no luksave, olsem ol man oli raetem long ol forum blong olgeta (wan Plex rikwes i stap open stat long 2017).
+  - Wanem Immuch360 i mekem: i ridim Plex laebri hem wan stat long build 20, o sem ol folda tru SMB, WebDAV o DLNA, mo i plei olgeta olsem wan sfia, i no jenisim wan samting long seva.
+- **Tapo app**
+  - Wanem problem oli kasem: wan narafala app, we i saen in long TP-Link akaon blong yu, wetem ol klip i stap seperet long ol foto blong yu.
+  - Wanem Immuch360 i mekem: i soem kamera klosap long ol foto blong yu, i toktok wetem hem long netwok blong yu nomo, mo i kipim wan klip olsem wan video we yu save sendem i go long Immich (stat long build 20).
+- **Immich mobael app long wan TV**
+  - Wanem problem oli kasem: i no wan TV app: wan yusa i talem se i wok wetem wan maos, i no wetem rimot.
+  - Wanem Immuch360 i mekem: sem app, we oli mekem blong rimot (stat long build 20).
+- **Kopiem ol fael i go long hedset**
+  - Wanem problem oli kasem: yu mas kopiem evri fael long wan kebol bifo yu save lukluk.
+  - Wanem Immuch360 i mekem: i plei stret long Immich, wan NAS, wan seva blong media o wan fon.
+- **Ol 360° mo 3D pleia blong Quest stoa**
+  - Wanem problem oli kasem: oli nidim mani.
+  - Wanem Immuch360 i mekem: fri mo open sos (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Ol fomat mo sos, folem platfom
 
-Immuch360 hem i wan galeri, mo hem i wan fri media pleia tu: hem i plei samting we ofisol app i no save plei, long ol sos blong seken tebol, long pleia we i fitim fael.
+Immuch360 hem i wan galeri, mo hem i wan fri media pleia tu: hem i plei samting we ofisol app i no save plei, long ol sos blong seken lis, long pleia we i fitim fael.
 
-| Wanem | Ol Android fon | iPhone, iPad | Meta Quest | Android TV, Google TV (stat long build 20) |
-|---|---|---|---|---|
-| Ol flat video (MP4, MOV, MKV, wanem divaes i save ridim) | Immich pleia, mo wan pleia insaed long app blong ol netwok sea | Semak, be i no ol MKV mo AVI fael blong wan sea, we iOS i no save openem (long wan seva oli plei afta transcode) | Long windo | Olsem long ol fon; OK i stop smol, lef mo raet i jam 10 s |
-| Ol 360° foto | Sfia vyua, gyroscope | Semak | Immersive, raon long yu | Sfia vyua we yu tanem wetem ol aro, zum wetem ol janel baten |
-| Ol 360° video | Media3 pleia insaed long app long wan sfia, gyroscope, jam, jusum odio trak, saen blong lodem | SceneKit pleia insaed long app long wan sfia, gyroscope, jusum odio trak, saen blong lodem; plei mo stop smol, i no gat ba blong taem yet | Immersive, tru 3D blong ol stereo fael, ba blong taem wetem jam blong 10 sekon, media bifo mo nekis | Media3 pleia blong ol fon, we yu tanem wetem ol aro |
-| 3D 360° (antap mo andanit, saed long saed) | Lef ae, leaot baten | Semak | Evri ae i kasem haf blong pikja blong hem | Lef ae, leaot baten |
-| Ol VR180 (haf sfia) foto mo video | Haf sfia, 360°/180° baten | Semak | Immersive haf sfia | Haf sfia, 360°/180° baten |
-| Spatial 2.5D (dip long wan flat skrin long wan stereo video) | Pleia insaed long app, hed folem wetem fron kamera | Semak | I no stap | I no stap |
-| Ol Apple spatial foto (HEIC stereo pea, stat long build 19) | Lef ae, wan laen blong tekniko saed i talem se hem i spatial | Semak | Luk long 3D: tufala ae long wan foto we i flot long immersive vyu, 3D o 2D, yu save jenisim saes | Lef ae, wan laen blong tekniko saed |
-| Ol Apple spatial video (MV-HEVC, stat long build 19) | Wan ae (bes leya), wetem wan mesej | Semak | Wan ae long windo, wetem wan mesej | Wan ae, wetem wan mesej |
-| Ol raw Insta360 .insp foto (stat long build 16) | I joinem long GPU bifo sfia vyua, kasem 8192x4096 | Semak | Immersive, long wan pikja we app i joinem mo i rerem blong hedset | Olsem long ol fon |
-| Raw Insta360 .insv, tufala lens long wan trak (stat long build 16) | Wan GPU efek long Media3 pleia i joinem | Wan SceneKit shader i joinem | Immersive, sem GPU efek i joinem | Olsem long ol fon |
-| Ol raw video wetem wan lens long wan trak o long wan fael (stat long build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3 pea, GoPro .360, DJI .osv | Tu hardware decoder long sem taem, wan blong wan lens (stat long build 19, software decoder long wan divaes we i no gat hardware decoder, kasem 2048x2048 blong wan lens), mo wan GL compositor we i joinem long sfia; wan lens, afta transcoded stream, afta video we i no joinem, taem divaes i no save ronem tu | Wan spesel AVFoundation compositor wetem Metal | Immersive, sem tu decoder mo compositor (3840x1920 panel) | Olsem long ol fon, taem TV i save ronem tu decoder long sem taem |
-| Luk laef blong Tapo kamera (stat long build 20) | Media3 RTSP pleia: SD long pej, HD long ful skrin, saon baten | I no yet: wan kad i talem se bambae i kam | Long windo, long HD | Olsem long ol fon |
-| Ol rekoding blong Tapo kamera (stat long build 20) | App i tekem long memori kad i kam wan H.264 video wetem saon blong hem, afta i plei wetem jam | Semak | Semak, long windo | Semak |
+- **Ol flat video (MP4, MOV, MKV, wanem divaes i save ridim)**
+  - Ol Android fon: Immich pleia, mo wan pleia insaed long app blong ol netwok sea.
+  - iPhone, iPad: semak, be i no ol MKV mo AVI fael blong wan sea, we iOS i no save openem (long wan seva oli plei afta transcode).
+  - Meta Quest: long windo.
+  - Android TV, Google TV: olsem long ol fon; OK i stop smol, lef mo raet i jam 10 s.
+- **Ol 360° foto**
+  - Ol Android fon: sfia vyua, gyroscope.
+  - iPhone, iPad: semak.
+  - Meta Quest: immersive, raon long yu.
+  - Android TV, Google TV: sfia vyua we yu tanem wetem ol aro, zum wetem ol janel baten.
+- **Ol 360° video**
+  - Ol Android fon: Media3 pleia insaed long app long wan sfia, gyroscope, jam, jusum odio trak, saen blong lodem.
+  - iPhone, iPad: SceneKit pleia insaed long app long wan sfia, gyroscope, jusum odio trak, saen blong lodem; plei mo stop smol, i no gat ba blong taem yet.
+  - Meta Quest: immersive, tru 3D blong ol stereo fael, ba blong taem wetem jam blong 10 sekon, media bifo mo nekis.
+  - Android TV, Google TV: Media3 pleia blong ol fon, we yu tanem wetem ol aro.
+- **3D 360° (antap mo andanit, saed long saed)**
+  - Ol Android fon: lef ae, leaot baten.
+  - iPhone, iPad: semak.
+  - Meta Quest: evri ae i kasem haf blong pikja blong hem.
+  - Android TV, Google TV: lef ae, leaot baten.
+- **Ol VR180 (haf sfia) foto mo video**
+  - Ol Android fon: haf sfia, 360°/180° baten.
+  - iPhone, iPad: semak.
+  - Meta Quest: immersive haf sfia.
+  - Android TV, Google TV: haf sfia, 360°/180° baten.
+- **Spatial 2.5D (dip long wan flat skrin long wan stereo video)**
+  - Ol Android fon: pleia insaed long app, hed folem wetem fron kamera.
+  - iPhone, iPad: semak.
+  - Meta Quest: i no stap.
+  - Android TV, Google TV: i no stap.
+- **Ol Apple spatial foto (HEIC stereo pea, stat long build 19)**
+  - Ol Android fon: lef ae, wan laen blong tekniko saed i talem se hem i spatial.
+  - iPhone, iPad: semak.
+  - Meta Quest: Luk long 3D: tufala ae long wan foto we i flot long immersive vyu, 3D o 2D, yu save jenisim saes.
+  - Android TV, Google TV: lef ae, wan laen blong tekniko saed.
+- **Ol Apple spatial video (MV-HEVC, stat long build 19)**
+  - Ol Android fon: wan ae (bes leya), wetem wan mesej.
+  - iPhone, iPad: semak.
+  - Meta Quest: wan ae long windo, wetem wan mesej.
+  - Android TV, Google TV: wan ae, wetem wan mesej.
+- **Ol raw Insta360 .insp foto (stat long build 16)**
+  - Ol Android fon: i joinem long GPU bifo sfia vyua, kasem 8192x4096.
+  - iPhone, iPad: semak.
+  - Meta Quest: immersive, long wan pikja we app i joinem mo i rerem blong hedset.
+  - Android TV, Google TV: olsem long ol fon.
+- **Raw Insta360 .insv, tufala lens long wan trak (stat long build 16)**
+  - Ol Android fon: wan GPU efek long Media3 pleia i joinem.
+  - iPhone, iPad: wan SceneKit shader i joinem.
+  - Meta Quest: immersive, sem GPU efek i joinem.
+  - Android TV, Google TV: olsem long ol fon.
+- **Ol raw video wetem wan lens long wan trak o long wan fael (stat long build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3 pea, GoPro .360, DJI .osv**
+  - Ol Android fon: tu hardware decoder long sem taem, wan blong wan lens (stat long build 19, software decoder long wan divaes we i no gat hardware decoder, kasem 2048x2048 blong wan lens), mo wan GL compositor we i joinem long sfia; wan lens, afta transcoded stream, afta video we i no joinem, taem divaes i no save ronem tu.
+  - iPhone, iPad: wan spesel AVFoundation compositor wetem Metal.
+  - Meta Quest: immersive, sem tu decoder mo compositor (3840x1920 panel).
+  - Android TV, Google TV: olsem long ol fon, taem TV i save ronem tu decoder long sem taem.
+- **Luk laef blong Tapo kamera (stat long build 20)**
+  - Ol Android fon: Media3 RTSP pleia: SD long pej, HD long ful skrin, saon baten.
+  - iPhone, iPad: i no yet: wan kad i talem se bambae i kam.
+  - Meta Quest: long windo, long HD.
+  - Android TV, Google TV: olsem long ol fon.
+- **Ol rekoding blong Tapo kamera (stat long build 20)**
+  - Ol Android fon: app i tekem long memori kad i kam wan H.264 video wetem saon blong hem, afta i plei wetem jam.
+  - iPhone, iPad: semak.
+  - Meta Quest: semak, long windo.
+  - Android TV, Google TV: semak.
 
-Oli no jekem TV kolum long wan TV yet, luk [Lukluk long TV blong yu](#watch-on-your-tv-android-tv-and-google-tv); oli no jekem ol laen blong kamera wetem wan tru kamera yet.
+Oli no jekem ol poen blong Android TV mo Google TV, stat long build 20, long wan TV yet, luk [Lukluk long TV blong yu](#watch-on-your-tv-android-tv-and-google-tv); oli no jekem ol poen blong kamera wetem wan tru kamera yet.
 
-| I kam long | Olsem wanem |
-|---|---|
-| Immich seva blong yu | Orijinal o transcoded stream blong seva, folem wanem Settings, Asset Viewer, Sos blong video i talem (luk [Ol tekniko saed blong video mo ol decoder](#video-details-decoders-and-why-a-video-stutters)). Sem akaon olsem web app |
-| Fon o hedset hem wan | "Yusum wetaot wan server" long pej blong login, o On this device long Laebri tab |
-| Wan NAS o wan kompiuta | Ol SMB mo WebDAV sea, mo stat long build 19 ol DLNA seva blong media, we app i faenem long netwok, i ridim stret (wan SMB video tru kasem sikis konekson), i no kopiem wan samting; stat long build 15, yu save sendem ol fael we yu jusum i go long Immich akaon blong yu |
-| Wan narafala fon (stat long build 19) | "Serem fon ia long netwok" long fon ia: hedset, o eni WebDAV klaen long netwok, i ridim ol album, manis mo 360° media blong hem |
-| Wan Plex Media Server (stat long build 20) | Ol foto, muvi mo TV sho laebri blong hem folem folda, ol orijinal fael we app i ridim stret tru HTTPS we oli jekem wetem setifiket blong seva hem wan, long haos o tru adres aotsaed long haos, long evri platfom; luk [Plex Media Server, wetaot plex.tv](#plex-media-server-without-plextv) |
-| Wan Tapo kamera (stat long build 20) | Luk laef wetem akaon blong kamera (Android, Android TV, Quest), mo ol rekoding blong memori kad blong hem wetem pasword blong TP-Link akaon (evri platfom), long lokol netwok nomo; luk [Ol Tapo kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Immich seva blong yu**: orijinal o transcoded stream blong seva, folem wanem Settings, Asset Viewer, Sos blong video i talem (luk [Ol tekniko saed blong video mo ol decoder](#video-details-decoders-and-why-a-video-stutters)). Sem akaon olsem web app.
+- **Fon o hedset hem wan**: "Yusum wetaot wan server" long pej blong login, o On this device long Laebri tab.
+- **Wan NAS o wan kompiuta**: ol SMB mo WebDAV sea, mo stat long build 19 ol DLNA seva blong media, we app i faenem long netwok, i ridim stret (wan SMB video tru kasem sikis konekson), i no kopiem wan samting; stat long build 15, yu save sendem ol fael we yu jusum i go long Immich akaon blong yu.
+- **Wan narafala fon (stat long build 19)**: "Serem fon ia long netwok" long fon ia: hedset, o eni WebDAV klaen long netwok, i ridim ol album, manis mo 360° media blong hem.
+- **Wan Plex Media Server (stat long build 20)**: ol foto, muvi mo TV sho laebri blong hem folem folda, ol orijinal fael we app i ridim stret tru HTTPS we oli jekem wetem setifiket blong seva hem wan, long haos o tru adres aotsaed long haos, long evri platfom; luk [Plex Media Server, wetaot plex.tv](#plex-media-server-without-plextv).
+- **Wan Tapo kamera (stat long build 20)**: luk laef wetem akaon blong kamera (Android, Android TV, Quest), mo ol rekoding blong memori kad blong hem wetem pasword blong TP-Link akaon (evri platfom), long lokol netwok nomo; luk [Ol Tapo kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 i ron long ol Meta Quest hedset tu, wetem Horizon OS v69 o niufala. Stat long build 21, Horizon Store build i blong Quest 2, Quest Pro, Quest 3 mo 3S, fo divaes we yunivesel `-release.apk` i talem finis; fas Quest i no stap, stoa i no moa akseptem. Oli testem Quest 3 mo 3S. Oli no testem Quest 2 mo Quest Pro yet: ol video decoder blong tufala oli slo moa, mo ol limit we app i jekem oli mesurem long wan Quest 3, ale wan bigfala H.264 video i save kasem wan mesej se i no save plei, o i save stop-stop long tufala. Mifala i glad blong kasem ripot long tufala hedset ia long [Issues](https://github.com/freeKC/Immuch360/issues). Olsem wanem blong yusum i stap long [Insaed long Meta Quest 3 hedset](#in-the-meta-quest-3-headset); pat ia i blong instolem mo wanem i defren long hedset.
+Immuch360 i ron long ol Meta Quest hedset tu, wetem Horizon OS v69 o niufala. Stat long build 21, Horizon Store build i blong Quest 2, Quest Pro, Quest 3 mo 3S, fo divaes we yunivesel `-release.apk` i talem finis; fas Quest i no stap, stoa i no moa akseptem.
 
-Hedset build i toktok wetem ol seva tru HTTPS nomo, o tru plen HTTP wetem ol nem blong haos netwok (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) mo wetem hedset hem wan, olsem Horizon Store i wantem. Wan seva we yu raetem olsem wan plen HTTP adres wetem wan IP, olsem `http://192.168.1.10:2283`, build ia i no letem: yusum HTTPS, wan nem blong haos netwok (`nas.local`), o yunivesel `-release.apk`, we i kipim open fasin blong ol fon. Ol WebDAV, DLNA mo fon sea long wan plen HTTP adres blong lokol netwok oli oraet: app i ridim olgeta hem wan mo i givim long ol pleia blong hem adres blong lokol bris blong hem nomo (oli mas jekem long hedset yet blong DLNA mo fon sea, we oli niu long build 19). Stat long build 20, app i kasem wan Plex seva tru HTTPS, mo wan Tapo kamera tru app hem wan, mo luk laef blong hem i tru RTSP, we i no HTTP: tufala i no sapos blong kasem problem ia (oli mas jekem long hedset yet).
+Oli testem Quest 3 mo 3S. Oli no testem Quest 2 mo Quest Pro yet: ol video decoder blong tufala oli slo moa, mo ol limit we app i jekem oli mesurem long wan Quest 3, ale wan bigfala H.264 video i save kasem wan mesej se i no save plei, o i save stop-stop long tufala. Mifala i glad blong kasem ripot long tufala hedset ia long [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Olsem wanem blong yusum i stap long [Insaed long Meta Quest 3 hedset](#in-the-meta-quest-3-headset); pat ia i blong instolem mo wanem i defren long hedset.
+
+Hedset build i toktok wetem ol seva tru HTTPS nomo, o tru plen HTTP wetem ol nem blong haos netwok (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) mo wetem hedset hem wan, olsem Horizon Store i wantem. Wan seva we yu raetem olsem wan plen HTTP adres wetem wan IP, olsem `http://192.168.1.10:2283`, build ia i no letem: yusum HTTPS, wan nem blong haos netwok (`nas.local`), o yunivesel `-release.apk`, we i kipim open fasin blong ol fon.
+
+Ol WebDAV, DLNA mo fon sea long wan plen HTTP adres blong lokol netwok oli oraet: app i ridim olgeta hem wan mo i givim long ol pleia blong hem adres blong lokol bris blong hem nomo (oli mas jekem long hedset yet blong DLNA mo fon sea, we oli niu long build 19). Stat long build 20, app i kasem wan Plex seva tru HTTPS, mo wan Tapo kamera tru app hem wan, mo luk laef blong hem i tru RTSP, we i no HTTP: tufala i no sapos blong kasem problem ia (oli mas jekem long hedset yet).
 
 <a id="install"></a>
 ### Instolem
@@ -762,16 +922,23 @@ Meta i talem oraet long Horizon Store pej long 7 Oktoba 2026 wetem build 14, mo 
 
 ### Long windo
 
-Ful app i ron olsem wan 2D windo we yu save jenisim saes: login, taemlaen, ol album, lukaotem, Laebri tab (lis blong 360°, On this device, Ol netwok sea), ol seting, mo ol vyua blong foto mo video, we ol flat foto mo video oli plei. Long hedset, 360° baten, mo Lukum olsem 360° long menu ⋮, oli openem immersive vyu stret, i no sfia vyua blong ol fon, mo Spatial 2.5D baten mo seting blong hem oli no soem. Stat long build 19, wan Apple spatial foto i gat wan baten Luk long 3D, mo smol bokis Serem fon ia long netwok i no soem: hedset hem i wan we i ridim sea blong wan fon. Stat long build 20, ol Plex seva mo ol Tapo kamera oli open long windo tu, luk laef blong kamera long HD; seting "Leaot blong rimot kontrol" i stap long Otomatik, we i livim of long hedset.
+Ful app i ron olsem wan 2D windo we yu save jenisim saes: login, taemlaen, ol album, lukaotem, Laebri tab (lis blong 360°, On this device, Ol netwok sea), ol seting, mo ol vyua blong foto mo video, we ol flat foto mo video oli plei.
+
+Long hedset, 360° baten, mo Lukum olsem 360° long menu ⋮, oli openem immersive vyu stret, i no sfia vyua blong ol fon, mo Spatial 2.5D baten mo seting blong hem oli no soem.
+
+Stat long build 19, wan Apple spatial foto i gat wan baten Luk long 3D, mo smol bokis Serem fon ia long netwok i no soem: hedset hem i wan we i ridim sea blong wan fon. Stat long build 20, ol Plex seva mo ol Tapo kamera oli open long windo tu, luk laef blong kamera long HD; seting "Leaot blong rimot kontrol" i stap long Otomatik, we i livim of long hedset.
 
 ### Long ol pikja
 
 Oli tekem ol pikja ia insaed long hedset wetem baten blong tekem pikja (Meta baten mo trigger), long wan Quest 3, taem app i stap long Franis lanwis; Laebri tab i soem long mod wetaot seva.
 
-| Wetaot seva | Ol netwok sea |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Laebri tab wetaot seva: On this device mo Ol netwok sea"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Pej Ol netwok sea wetem wan SMB sea blong wan Freebox Server"> |
-| Laebri tab long mod wetaot seva: ol media blong hedset hem wan mo ol netwok sea | Wan Samba sea blong wan Freebox Server, we hedset i ridim stret |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Laebri tab wetaot seva: On this device mo Ol netwok sea">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Pej Ol netwok sea wetem wan SMB sea blong wan Freebox Server">
+</p>
+
+- **Wetaot seva**: Laebri tab long mod wetaot seva, wetem ol media blong hedset hem wan mo ol netwok sea.
+- **Ol netwok sea**: wan Samba sea blong wan Freebox Server, we hedset i ridim stret.
 
 ### Ol samting we i no wok yet long hedset
 
@@ -786,12 +953,18 @@ Oli tekem ol pikja ia insaed long hedset wetem baten blong tekem pikja (Meta bat
 
 App i stap long Google Play blong ol fon mo tablet; App Store vesen i stap wet blong Apple i jekem, Meta i talem oraet long Meta Horizon Store pej mo i stap jekem fas apdet blong hem, mo Google Play vesen blong ol TV i stap wet blong Google i jekem TV release. GitHub release i gat niufala build oltaem:
 
-| Platfom | Tede | I no longtaem |
-|---|---|---|
-| Ol Android fon mo tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o APK long [Releases](https://github.com/freeKC/Immuch360/releases) pej: `Immuch360-v<version>-arm64-v8a-release.apk` blong wan fon (yunivesel `Immuch360-v<version>-release.apk` i wok long evri ples, `-armeabi-v7a` i blong ol olfala 32 bit fon, mo `.aab` fael i blong Google Play, i no blong instolem wetem han). GitHub build i stap fored long stoa plante taem. Long tufala fasin, hem i instol klosap long ofisol Immich app (pakej `com.aprogsys.immuch360`). | Google Play: build 18 i stap, Google i stap jekem build 20 stat long 7 Oktoba 2026, long ples blong build 19 |
-| iPhone mo iPad | I stap wet blong Apple i jekem. Vesen we oli stap jekem i gat ol samting blong build 11: aplod i go long Immich mo Sos blong video (build 15) mo ol raw Insta360 fael (build 16) bambae oli kam wetem wan App Store apdet afta. Sos kod i save build wetem Xcode o long Codemagic, luk [Buildim yu wan](#build-it-yourself). | App Store, oli stap jekem |
-| Meta Quest 2, Quest Pro, Quest 3 mo 3S (oli no testem Quest 2 mo Quest Pro yet) | `-quest-release.apk` fael long [Releases](https://github.com/freeKC/Immuch360/releases) pej (yunivesel `-release.apk` i wok tu), we yu instolem wetem han long developer mod, luk [Instolem](#install). Stoa build mo GitHub APK oli saenem wetem tu defren ki: blong jenis long wan i go long narawan, tekemaot app fastaem (ol seting mo ol sea we yu sevem oli lus wetem). | Meta Horizon Store: Meta i talem oraet long pej long 7 Oktoba 2026 wetem build 14, mo Meta i stap jekem build 21, fas apdet blong hem; alpha janel blong stoa (blong ol tester nomo) i kasem evri niu build |
-| Android TV mo Google TV (stat long build 20) | Yunivesel `Immuch360-v<version>-release.apk` long [Releases](https://github.com/freeKC/Immuch360/releases) pej, we yu instolem wetem adb, luk [Instolem long TV](#install-it-on-the-tv). Hem i sem app olsem long ol fon. | Google Play long ol TV, afta Google i jekem TV release |
+- **Ol Android fon mo tablet**
+  - Tede: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o APK long [Releases](https://github.com/freeKC/Immuch360/releases) pej: `Immuch360-v<version>-arm64-v8a-release.apk` blong wan fon (yunivesel `Immuch360-v<version>-release.apk` i wok long evri ples, `-armeabi-v7a` i blong ol olfala 32 bit fon, mo `.aab` fael i blong Google Play, i no blong instolem wetem han). GitHub build i stap fored long stoa plante taem. Long tufala fasin, hem i instol klosap long ofisol Immich app (pakej `com.aprogsys.immuch360`).
+  - I no longtaem: long Google Play, build 18 i stap, Google i stap jekem build 20 stat long 7 Oktoba 2026, long ples blong build 19.
+- **iPhone mo iPad**
+  - Tede: i stap wet blong Apple i jekem. Vesen we oli stap jekem i gat ol samting blong build 11: aplod i go long Immich mo Sos blong video (build 15) mo ol raw Insta360 fael (build 16) bambae oli kam wetem wan App Store apdet afta. Sos kod i save build wetem Xcode o long Codemagic, luk [Buildim yu wan](#build-it-yourself).
+  - I no longtaem: App Store, oli stap jekem.
+- **Meta Quest 2, Quest Pro, Quest 3 mo 3S (oli no testem Quest 2 mo Quest Pro yet)**
+  - Tede: `-quest-release.apk` fael long [Releases](https://github.com/freeKC/Immuch360/releases) pej (yunivesel `-release.apk` i wok tu), we yu instolem wetem han long developer mod, luk [Instolem](#install). Stoa build mo GitHub APK oli saenem wetem tu defren ki: blong jenis long wan i go long narawan, tekemaot app fastaem (ol seting mo ol sea we yu sevem oli lus wetem).
+  - I no longtaem: long Meta Horizon Store, Meta i talem oraet long pej long 7 Oktoba 2026 wetem build 14, mo Meta i stap jekem build 21, fas apdet blong hem; alpha janel blong stoa (blong ol tester nomo) i kasem evri niu build.
+- **Android TV mo Google TV (stat long build 20)**
+  - Tede: yunivesel `Immuch360-v<version>-release.apk` long [Releases](https://github.com/freeKC/Immuch360/releases) pej, we yu instolem wetem adb, luk [Instolem long TV](#install-it-on-the-tv). Hem i sem app olsem long ol fon.
+  - I no longtaem: Google Play long ol TV, afta Google i jekem TV release.
 
 Bambae mifala i ademap ol link blong App Store mo Meta Horizon Store long ples ia taem ol pej oli kamaot. Login wetem URL blong Immich seva mo akaon we yu yusum oltaem, o tajem "Yusum wetaot wan server" long pej blong login blong stat wetem ol foto mo video blong divaes hem wan. APK blong GitHub i no apdetem hem wan: lukluk Releases pej, mo taem yu instolem app long wan stoa, kasem ol apdet long stoa ia.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Oli tekem ol pikja blong stoa long ol debug simulator build we oli mekem wetem `--dart-define=IMMUCH_SCREENSHOTS=true`, we i haedem debug banner nomo. Tufala Android flavour oli sem app. Stat long build 20, `phone` flavour i talem se hem i wan TV app tu (wan ples long TV launcher mo wan banner, i no nidim tajskrin), we `quest` flavour i no mekem. `quest` flavour i blong SDK 34 mo i kipim ol pemisen we hedset i yusum nomo (ol foto, ol video, ol notifikesen): media manejmen, lokesen long baekgraon, olfala stoarej, saon, lokesen blong media, lokesen blong divaes mo kamera oli tekemaot long `android/app/src/quest/AndroidManifest.xml`, from we Meta Horizon Store i no letem tufala fas wan mo i askem from wanem blong evri narafala pemisen we i sensitiv; sem fael i talem se Quest 2, Quest Pro, Quest 3 mo 3S oli divaes we i wok, mo i letem plen HTTP blong hedset hem wan mo ol nem blong haos netwok nomo. APK i 64 bit nomo from tufala ekstra samting long komand laen blong hem (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` flavour hem i wanem Google Play i wantem. Blong buildim blong iOS long Mac blong yu, yusum Xcode mo saening tim blong yu; wetem Xcode 26, ronem `xcodebuild -downloadComponent MetalToolchain` wan taem fastaem, from we ol Spatial shader oli nidim. Wetaot wan Mac, ol iOS build oli ron long Codemagic (wan Mac long intanet) long `codemagic.yaml` fael blong repositri ia. Ol Android release build oli ron long GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Oli tekem ol pikja blong stoa long ol debug simulator build we oli mekem wetem `--dart-define=IMMUCH_SCREENSHOTS=true`, we i haedem debug banner nomo.
+
+Tufala Android flavour oli sem app. Stat long build 20, `phone` flavour i talem se hem i wan TV app tu (wan ples long TV launcher mo wan banner, i no nidim tajskrin), we `quest` flavour i no mekem.
+
+`quest` flavour i blong SDK 34 mo i kipim ol pemisen we hedset i yusum nomo (ol foto, ol video, ol notifikesen): media manejmen, lokesen long baekgraon, olfala stoarej, saon, lokesen blong media, lokesen blong divaes mo kamera oli tekemaot long `android/app/src/quest/AndroidManifest.xml`, from we Meta Horizon Store i no letem tufala fas wan mo i askem from wanem blong evri narafala pemisen we i sensitiv; sem fael i talem se Quest 2, Quest Pro, Quest 3 mo 3S oli divaes we i wok, mo i letem plen HTTP blong hedset hem wan mo ol nem blong haos netwok nomo. APK i 64 bit nomo from tufala ekstra samting long komand laen blong hem (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` flavour hem i wanem Google Play i wantem.
+
+Blong buildim blong iOS long Mac blong yu, yusum Xcode mo saening tim blong yu; wetem Xcode 26, ronem `xcodebuild -downloadComponent MetalToolchain` wan taem fastaem, from we ol Spatial shader oli nidim. Wetaot wan Mac, ol iOS build oli ron long Codemagic (wan Mac long intanet) long `codemagic.yaml` fael blong repositri ia. Ol Android release build oli ron long GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 I no gat wan sikret long repositri ia: Android saening ki i stap olsem ol GitHub Actions sikret we oli haed, mo ol Apple saening samting oli stap olsem ol vereabol we oli haed long Codemagic. Ol workflow fael oli talem nem blong olgeta nomo. Wetaot `android/key.jks` blong yu, wan release build i saen wetem debug ki mo i no save instol antap long wan kopi blong GitHub o wan stoa (tekemaot hemia fastaem); wan debug build i instol klosap long hem olsem Immuch360 debug. Meta Horizon Store kopi hem i `quest` APK blong release we oli saenem wetem wan narafala ki, hemia we oli bin yusum fastaem blong rejistarem stoa app, ale hem tu i no save instol antap long wan APK we yu instolem wetem han, mo narawan tu i no save.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Stat long build 19, DLNA klaen, fon sea mo luksave blong ol Apple spatial media oli raetem long log blong app hem wan tu (Logs (Ol log), long menu blong profael pikja antap long raet), aninit long `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` mo `NetworkMediaService`. Stat long build 20, TV mod i raetem long ples ia aninit long `TvMode` mo `TvTextEntry`, ol Plex seva aninit long `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` mo `PlexServerEditPage`, mo ol Tapo kamera aninit long `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` mo `CameraLiveView`; ol Plex laen oli neva gat token, wan adres o wan taetol, mo ol laen blong kamera oli no putum ol pasword. Ol laen blong log oli stap long divaes sapos yu no kopiem olgeta yu wan.
 
+<a id="privacy"></a>
 ## Praevesi
 
 - **I no gat wan samting i go long developa**: app i toktok wetem Immich seva we yu jusum (mo, taem yu openem map, wetem map taeil sevis we seva ia i yusum), i no gat advetaesmen, i no gat analytics, mo i no gat krash ripot sevis we developa i ronem, mo i no sendem wan samting i go long developa blong Immuch360.
@@ -849,10 +1029,12 @@ Stat long build 19, DLNA klaen, fon sea mo luksave blong ol Apple spatial media 
 
 Ful polisi i stap long [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Laesens mo trademak
 
 Projek ia hem i wan fork blong Immich mo i stap aninit long [GNU AGPL v3](../LICENSE). Evri APK, wetem ol APK blong fon, i gat Meta Spatial SDK tu, we i no open sos (Meta Platform Technologies SDK License Agreement) mo app i yusum long ol Meta Quest hedset nomo. Immuch360 i no joen wetem, mo i no gat sapot blong, Immich tim o FUTO.
 
+<a id="roadmap"></a>
 ## Plan blong fiuja
 
 Ol samting we oli no finis yet, olgeta we bambae i kam fastaem i stap antap. I no gat wan samting long ples ia we i wan promis, mo toktok long [lis blong ol problem](https://github.com/freeKC/Immuch360/issues) i halpem blong jusum wanem i kam fastaem.
@@ -871,6 +1053,7 @@ Ol samting we oli no finis yet, olgeta we bambae i kam fastaem i stap antap. I n
 - **Plex, nekis**: divaes test blong build 20 (ol fon, Quest, wan iPhone, wan TV, aotsaed long haos); karem token long kompiuta wetem wan QR kod; haedem DLNA saed blong wan Plex seva long lis blong ol seva we app i faenem; IPv6.
 - **Upstream**: ol smol pull request i go long Immich blong ol pat we ol mentena oli wantem, stat wetem 360° foto vyua.
 
+<a id="credits"></a>
 ## Tangkyu
 
 360° foto vyua i stanap long upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) blong dmitry-brazhenko, we hem tu i stanap long prototaep blong bencefr long [#30192](https://github.com/immich-app/immich/pull/30192). Tangkyu long tufala.

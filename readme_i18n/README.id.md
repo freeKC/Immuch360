@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | Bahasa Indonesia | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Bahasa Indonesia</b> · Bahasa lain (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: foto dan video 360°, 3D, dan VR180, dari Immich, ponsel Anda, atau NAS. Android, iOS, dan Meta Quest, dengan atau tanpa server">
 </p>
 
 # Immuch360
 
-Immuch360 adalah aplikasi seluler Immich dengan foto dan video 360° yang bisa Anda lihat ke segala arah, sekaligus pemutar gratis untuk foto dan video datar, 360°, 3D, dan VR180, di ponsel dan tablet Android, iPhone dan iPad, headset Meta Quest (Quest 3 dan 3S, dan sejak build 21 Quest 2 dan Quest Pro, belum diuji), serta sejak build 20 Android TV dan Google TV. Aplikasi ini untuk orang yang memotret dengan kamera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) atau mode foto bola di ponsel, atau yang memiliki headset, dan ingin menonton hasil jepretan sendiri dari server Immich, dari ponsel itu sendiri, dari NAS, dari server media, atau dari server Plex: server yang sama, akun yang sama, tanpa plugin server, atau tanpa server sama sekali. Sejak build 20 aplikasi ini juga menampilkan kamera Tapo, secara langsung dan rekaman dari kartu memorinya.
+Immuch360 adalah aplikasi seluler Immich dengan foto dan video 360° yang bisa Anda lihat ke segala arah, sekaligus pemutar gratis untuk foto dan video datar, 360°, 3D, dan VR180, di ponsel dan tablet Android, iPhone dan iPad, headset Meta Quest (Quest 3 dan 3S, dan sejak build 21 Quest 2 dan Quest Pro, belum diuji), serta sejak build 20 Android TV dan Google TV.
+
+Aplikasi ini untuk orang yang memotret dengan kamera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) atau mode foto bola di ponsel, atau yang memiliki headset, dan ingin menonton hasil jepretan sendiri dari server Immich, dari ponsel itu sendiri, dari NAS, dari server media, atau dari server Plex: server yang sama, akun yang sama, tanpa plugin server, atau tanpa server sama sekali. Sejak build 20 aplikasi ini juga menampilkan kamera Tapo, secara langsung dan rekaman dari kartu memorinya.
 
 <p align="center">
   <sub>Fork tidak resmi. Tidak berafiliasi dengan Immich maupun FUTO. Namanya dibaca "I am much 360".</sub>
@@ -13,29 +15,52 @@ Immuch360 adalah aplikasi seluler Immich dengan foto dan video 360° yang bisa A
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">sedang ditinjau</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store disetujui, build 21 diajukan sebagai pembaruan pertamanya &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a><br>
+  App Store: <a href="#where-to-get-it">sedang ditinjau</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store disetujui, build 21 diajukan sebagai pembaruan pertamanya<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 360° native</h3>Foto dan video sebagai bola yang bisa dilihat ke segala arah, dengan giroskop, termasuk file mentah kamera (Insta360 sejak build 16, GoPro dan DJI sejak build 18). Juga pemutar video gratis: datar, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 3D native</h3>360° stereoskopis dan VR180, atas/bawah atau berdampingan, serta foto spasial Apple (sejak build 19): 3D sungguhan di headset, satu mata di ponsel</td>
-    <td align="center" width="33%"><h3>🎥 2.5D native</h3>Kedalaman di layar datar dari video stereoskopis, tampilan mengikuti kepala Anda (eksperimental, ponsel dan tablet)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Satu aplikasi di ponsel, tablet, dan headset Quest 2, Pro, 3, dan 3S, 3D sungguhan di headset, dan sejak build 20 di Android TV dengan remote</td>
-    <td align="center"><h3>🔌 Dengan atau tanpa server</h3>Server Immich Anda, atau galeri ponsel itu sendiri, tanpa perlu akun</td>
-    <td align="center"><h3>🗄️ Berbagi jaringan</h3>Samba (SMB), WebDAV, dan sejak build 19 server media DLNA, ditemukan di jaringan dan dibaca langsung, tanpa mengunduh apa pun, lalu dikirim ke Immich bila Anda memilihnya. Sejak build 19 ponsel juga bisa membagikan galerinya sendiri ke headset</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Di TV</h3>Sejak build 20 APK yang sama di Android TV dan Google TV: foto dan video 360°, server Anda dan berbagi Anda, dengan remote</td>
-    <td align="center"><h3>🎬 Plex, tanpa plex.tv</h3>Sejak build 20 pustaka Plex Anda, diputar dari file aslinya agar 360° tetap 360°, di rumah maupun di luar rumah</td>
-    <td align="center"><h3>📹 Kamera Tapo</h3>Sejak build 20 tampilan langsung dan rekaman kartu memori, hanya di jaringan Anda, dan klip dikirim ke Immich saat Anda memilihnya</td>
-  </tr>
-</table>
+- 🌐 **360° native**<br>Foto dan video sebagai bola yang bisa dilihat ke segala arah, dengan giroskop, termasuk file mentah kamera (Insta360 sejak build 16, GoPro dan DJI sejak build 18). Juga pemutar video gratis: datar, 360°, 3D, VR180
+- 👓 **3D native**<br>360° stereoskopis dan VR180, atas/bawah atau berdampingan, serta foto spasial Apple (sejak build 19): 3D sungguhan di headset, satu mata di ponsel
+- 🎥 **2.5D native**<br>Kedalaman di layar datar dari video stereoskopis, tampilan mengikuti kepala Anda (eksperimental, ponsel dan tablet)
+- 📱 **Android, iOS, Quest, TV**<br>Satu aplikasi di ponsel, tablet, dan headset Quest 2, Pro, 3, dan 3S, 3D sungguhan di headset, dan sejak build 20 di Android TV dengan remote
+- 🔌 **Dengan atau tanpa server**<br>Server Immich Anda, atau galeri ponsel itu sendiri, tanpa perlu akun
+- 🗄️ **Berbagi jaringan**<br>Samba (SMB), WebDAV, dan sejak build 19 server media DLNA, ditemukan di jaringan dan dibaca langsung, tanpa mengunduh apa pun, lalu dikirim ke Immich bila Anda memilihnya. Sejak build 19 ponsel juga bisa membagikan galerinya sendiri ke headset
+- 📺 **Di TV**<br>Sejak build 20 APK yang sama di Android TV dan Google TV: foto dan video 360°, server Anda dan berbagi Anda, dengan remote
+- 🎬 **Plex, tanpa plex.tv**<br>Sejak build 20 pustaka Plex Anda, diputar dari file aslinya agar 360° tetap 360°, di rumah maupun di luar rumah
+- 📹 **Kamera Tapo**<br>Sejak build 20 tampilan langsung dan rekaman kartu memori, hanya di jaringan Anda, dan klip dikirim ke Immich saat Anda memilihnya
+
+<details>
+<summary><b>Daftar isi</b></summary>
+
+- [Foto dan video 360° sebagai bola](#360-photos-and-videos-as-a-sphere)
+- [Tanpa server atau akun](#without-a-server-or-an-account)
+- [Berbagi jaringan: NAS, komputer, atau server media](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, tanpa plex.tv](#plex-media-server-without-plextv)
+- [Bagikan ponsel ini di jaringan](#share-this-phone-on-the-network)
+- [Kamera Tapo: tampilan langsung dan rekaman kartu memori](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [File mentah kamera 360°, tanpa aplikasi kamera](#raw-360-camera-files-without-the-cameras-app)
+- [Foto dan video 3D dan VR180](#3d-and-vr180-photos-and-videos)
+- [Kedalaman di layar datar: Spatial 2.5D (eksperimental)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Foto dan video spasial Apple](#apple-spatial-photos-and-videos)
+- [Di headset Meta Quest 3](#in-the-meta-quest-3-headset)
+- [Menonton di TV (Android TV dan Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Temukan jepretan 360° Anda: daftar 360°](#find-your-360-shots-the-360-list)
+- [Detail video, dekoder, dan mengapa video tersendat](#video-details-decoders-and-why-a-video-stutters)
+- [Selebihnya adalah Immich](#everything-else-is-immich)
+- [Perbandingan dengan aplikasi Immich dan aplikasi lain](#compared-with-the-immich-app-and-other-apps)
+- [Format dan sumber, menurut platform](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Tempat mendapatkannya](#where-to-get-it)
+- [Membuatnya sendiri](#build-it-yourself)
+- [Log](#logs)
+- [Privasi](#privacy)
+- [Lisensi dan merek dagang](#license-and-trademark)
+- [Peta jalan](#roadmap)
+- [Kredit](#credits)
+
+</details>
 
 ## Masalah apa yang Anda alami?
 
@@ -61,12 +86,19 @@ Jika sebuah fitur masih baru, teks ini menyebutkan sejak build berapa fitur itu 
 
 Anda mencadangkan foto ke server [Immich](https://github.com/immich-app/immich), dan sebagian berasal dari kamera 360° atau dari mode foto bola di ponsel. Di aplikasi seluler resmi, gambar-gambar itu tampil sebagai strip datar yang melar, dan video 360° juga diputar datar. Aplikasi web Immich bisa menampilkan foto 360° sebagai bola, aplikasi selulernya tidak: fitur ini sudah diminta sejak Januari 2024 di [diskusi #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 membukanya sebagai bola yang bisa dilihat ke segala arah, di ponsel dan tablet Android maupun iOS. Foto berputar saat Anda menyeretnya, diperbesar dengan cubitan atau ketuk dua kali, terus berputar sedikit setelah seretan cepat, dimulai dari tampilan awal yang direkam kamera (metadata GPano), dan mendapat tekstur yang lebih tajam saat Anda memperbesar; panorama parsial juga ditangani (potongan GPano). Video diputar di pemutar bola native dengan suara, seretan, dan giroskop. File 360° yang sudah digabungkan bisa dipakai di mana saja: ekspor dari aplikasi Insta360 atau Studio, GoPro Player, Ricoh Theta, dan foto bola ponsel. File mentah langsung dari kamera digabungkan oleh aplikasi, lihat [File mentah kamera 360°](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 membukanya sebagai bola yang bisa dilihat ke segala arah, di ponsel dan tablet Android maupun iOS.
 
-| Foto 360° sebagai bola | Video 360° di pemutar 360° |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="Foto 360° tepi danau di penampil bola: tombol tutup di kiri atas, tombol 360°, tata letak 3D, dan giroskop di kanan atas"> | <img src="../.github/readme/b19-video.png" width="420" alt="Video 360° jalan pesisir yang diputar di pemutar 360° pada ponsel yang dipegang mendatar: tutup dan nama file di kiri atas, 360° dan 3D di kanan atas, sebelumnya, mundur, putar, maju, dan berikutnya di tengah, bilah waktu di bawah"> |
-| Tutup di kiri atas; di kanan atas tombol 360°/180°, tombol tata letak 3D, dan giroskop | Ketuk gambar untuk kontrol; 360° dan 3D di kanan atas |
+Foto berputar saat Anda menyeretnya, diperbesar dengan cubitan atau ketuk dua kali, terus berputar sedikit setelah seretan cepat, dimulai dari tampilan awal yang direkam kamera (metadata GPano), dan mendapat tekstur yang lebih tajam saat Anda memperbesar; panorama parsial juga ditangani (potongan GPano). Video diputar di pemutar bola native dengan suara, seretan, dan giroskop.
+
+File 360° yang sudah digabungkan bisa dipakai di mana saja: ekspor dari aplikasi Insta360 atau Studio, GoPro Player, Ricoh Theta, dan foto bola ponsel. File mentah langsung dari kamera digabungkan oleh aplikasi, lihat [File mentah kamera 360°](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="Foto 360° tepi danau di penampil bola: tombol tutup di kiri atas, tombol 360°, tata letak 3D, dan giroskop di kanan atas">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Video 360° jalan pesisir yang diputar di pemutar 360° pada ponsel yang dipegang mendatar: tutup dan nama file di kiri atas, 360° dan 3D di kanan atas, sebelumnya, mundur, putar, maju, dan berikutnya di tengah, bilah waktu di bawah">
+</p>
+
+- **Foto 360° sebagai bola**: tutup di kiri atas; di kanan atas tombol 360°/180°, tombol tata letak 3D, dan giroskop.
+- **Video 360° di pemutar 360°**: ketuk gambar untuk kontrol; 360° dan 3D di kanan atas.
 
 ### Membuka foto 360° sebagai bola
 
@@ -135,12 +167,17 @@ Di halaman masuk, "Gunakan tanpa server" membuka Immuch360 pada foto dan video p
 
 Video 360° Anda tersimpan di NAS atau komputer, dan Anda ingin menontonnya di ponsel atau di headset tanpa menyalinnya terlebih dahulu. Di headset, orang akhirnya menyalin setiap file lewat kabel; server media seperti Plex dan Jellyfin memutar video 360° secara datar, seperti yang dijelaskan dalam permintaan di forum mereka; aplikasi Immich hanya membaca server Immich Anda.
 
-Immuch360 menelusuri dan memutar foto dan video dari server apa pun yang mendukung SMB (Samba, Windows), WebDAV, atau sejak build 19 DLNA/UPnP (server media: Jellyfin, minidlna, Gerbera, Emby, NAS, atau TV box), langsung dari berbaginya. Sejak build 20 Plex Media Server memiliki jenisnya sendiri, lihat [Plex Media Server, tanpa plex.tv](#plex-media-server-without-plextv). Aplikasi menemukan sendiri server di jaringan Anda, dan memutar file secara langsung di penampil yang sama dengan bagian lain aplikasi (360°, 3D, VR180, Spatial 2.5D, tampilan imersif Quest), dengan atau tanpa server Immich, di ponsel maupun di Meta Quest 3. Tidak ada yang diunduh. Jika server terhubung, file yang Anda pilih bisa dikirim ke akun Immich Anda (sejak build 15).
+Immuch360 menelusuri dan memutar foto dan video dari server apa pun yang mendukung SMB (Samba, Windows), WebDAV, atau sejak build 19 DLNA/UPnP (server media: Jellyfin, minidlna, Gerbera, Emby, NAS, atau TV box), langsung dari berbaginya. Sejak build 20 Plex Media Server memiliki jenisnya sendiri, lihat [Plex Media Server, tanpa plex.tv](#plex-media-server-without-plextv).
 
-| Menambah berbagi | Folder dari sebuah berbagi |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Halaman Tambah berbagi: Nama, Nama atau alamat server, Port (opsional), Berbagi, Pilih berbagi, Folder awal (opsional), Nama pengguna, Sandi, Uji koneksi, dan hasilnya Terhubung, 2 entri di folder awal"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Folder berbagi jaringan sebagai kisi gambar mini: foto 360° dengan lencana 360° dan video 360° dengan tanda putar, tombol Pilih di kanan atas"> |
-| Kolom berbagi SMB baru, setelah Uji koneksi | Foto 360° dan sebuah video, dibaca langsung dari berbagi |
+Aplikasi menemukan sendiri server di jaringan Anda, dan memutar file secara langsung di penampil yang sama dengan bagian lain aplikasi (360°, 3D, VR180, Spatial 2.5D, tampilan imersif Quest), dengan atau tanpa server Immich, di ponsel maupun di Meta Quest 3. Tidak ada yang diunduh. Jika server terhubung, file yang Anda pilih bisa dikirim ke akun Immich Anda (sejak build 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Halaman Tambah berbagi: Nama, Nama atau alamat server, Port (opsional), Berbagi, Pilih berbagi, Folder awal (opsional), Nama pengguna, Sandi, Uji koneksi, dan hasilnya Terhubung, 2 entri di folder awal">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Folder berbagi jaringan sebagai kisi gambar mini: foto 360° dengan lencana 360° dan video 360° dengan tanda putar, tombol Pilih di kanan atas">
+</p>
+
+- **Menambah berbagi**: kolom berbagi SMB baru, setelah Uji koneksi.
+- **Folder dari sebuah berbagi**: foto 360° dan sebuah video, dibaca langsung dari berbagi.
 
 ### Menambah berbagi
 
@@ -178,16 +215,26 @@ Foto atau video dari berbagi yang sedang dibuka memiliki entri yang sama di menu
 
 ### Cara memutar tanpa mengunduh
 
-Pemutar membaca byte yang dibutuhkan melalui jembatan di dalam aplikasi (hanya alamat loopback, token acak per sesi, rentang byte), sehingga menggeser posisi video berfungsi dan tidak ada yang disalin ke perangkat. Pemutar dan penampil headset tidak pernah mendapat alamat berbagi, hanya 127.0.0.1 milik jembatan; permintaan ke server dilakukan oleh aplikasi itu sendiri. Agar pemutaran lancar, berbagi dibaca dalam blok besar, file tetap terbuka di antara pembacaan, hingga 16 MB dibaca lebih dulu di depan pemutar, dan video yang sedang diputar dibaca melalui hingga enam koneksi SMB paralel, terpisah dari koneksi yang melayani gambar mini dan daftar. Freebox Server menjawab setiap pembacaan dengan lambat: satu koneksi memberi 4,5 MB/s, enam koneksi memberi 19 MB/s, cukup untuk ekspor 5.7K pada 132 Mbit/s. Selama pemutar menunggu data, pemutar 360° dan Spatial menampilkan "Memuat" dengan tingkat isi buffer pemutarannya; pemutar datar menampilkan "Memuat" tanpa persentase selama video dimuat atau tersendat.
+Pemutar membaca byte yang dibutuhkan melalui jembatan di dalam aplikasi (hanya alamat loopback, token acak per sesi, rentang byte), sehingga menggeser posisi video berfungsi dan tidak ada yang disalin ke perangkat. Pemutar dan penampil headset tidak pernah mendapat alamat berbagi, hanya 127.0.0.1 milik jembatan; permintaan ke server dilakukan oleh aplikasi itu sendiri.
+
+Agar pemutaran lancar, berbagi dibaca dalam blok besar, file tetap terbuka di antara pembacaan, hingga 16 MB dibaca lebih dulu di depan pemutar, dan video yang sedang diputar dibaca melalui hingga enam koneksi SMB paralel, terpisah dari koneksi yang melayani gambar mini dan daftar. Freebox Server menjawab setiap pembacaan dengan lambat: satu koneksi memberi 4,5 MB/s, enam koneksi memberi 19 MB/s, cukup untuk ekspor 5.7K pada 132 Mbit/s.
+
+Selama pemutar menunggu data, pemutar 360° dan Spatial menampilkan "Memuat" dengan tingkat isi buffer pemutarannya; pemutar datar menampilkan "Memuat" tanpa persentase selama video dimuat atau tersendat.
 
 ### Server media DLNA
 
-Sejak build 19, aplikasi mengirim pencarian SSDP untuk server media ke grup multicast jaringan, dan permintaan yang sama ke port 1900 di setiap alamat jaringan lokal /24, lalu membaca deskripsi perangkat dari setiap server yang menjawab dan menyimpan server yang menerbitkan kontennya (ContentDirectory). Folder dan file dicantumkan dengan aksi Browse milik server, halaman demi halaman, dan diberi nama sesuai judulnya: file mendapat ekstensi sesuai jenisnya jika judulnya tidak memiliki ekstensi, dan file kedua dengan judul yang sama dalam satu folder menjadi `name (2)`. Audio tidak disertakan. Gambar mini adalah sampul album atau gambar kecil buatan server, dimuat oleh aplikasi itu sendiri, dengan gambar mini buatan aplikasi jika server tidak memilikinya. File diputar dari file asli yang ditawarkan server, bukan salinan hasil konversi jika server menawarkan keduanya, dibaca dengan permintaan rentang, sehingga menggeser posisi berfungsi. Sudah diperiksa dengan minidlna dan Gerbera; penemuan di jaringan nyata, Plex, Jellyfin, NAS, Freebox Server, iPhone, dan Quest adalah uji perangkat untuk build 19.
+Sejak build 19, aplikasi mengirim pencarian SSDP untuk server media ke grup multicast jaringan, dan permintaan yang sama ke port 1900 di setiap alamat jaringan lokal /24, lalu membaca deskripsi perangkat dari setiap server yang menjawab dan menyimpan server yang menerbitkan kontennya (ContentDirectory).
+
+Folder dan file dicantumkan dengan aksi Browse milik server, halaman demi halaman, dan diberi nama sesuai judulnya: file mendapat ekstensi sesuai jenisnya jika judulnya tidak memiliki ekstensi, dan file kedua dengan judul yang sama dalam satu folder menjadi `name (2)`. Audio tidak disertakan. Gambar mini adalah sampul album atau gambar kecil buatan server, dimuat oleh aplikasi itu sendiri, dengan gambar mini buatan aplikasi jika server tidak memilikinya. File diputar dari file asli yang ditawarkan server, bukan salinan hasil konversi jika server menawarkan keduanya, dibaca dengan permintaan rentang, sehingga menggeser posisi berfungsi.
+
+Sudah diperiksa dengan minidlna dan Gerbera; penemuan di jaringan nyata, Plex, Jellyfin, NAS, Freebox Server, iPhone, dan Quest adalah uji perangkat untuk build 19.
 
 <a id="a-share-that-moved"></a>
 ### Berbagi yang berpindah
 
-Sejak build 19, berbagi DLNA dan berbagi ponsel (lihat [Bagikan ponsel ini di jaringan](#share-this-phone-on-the-network)) menyimpan ID yang diumumkan servernya. Jika salah satunya tidak lagi menjawab di alamatnya (alamat baru dari router, server yang dimulai ulang di port lain), halaman foldernya menampilkan "Mencari (nama) di jaringan" dan memindahkan berbagi ke tempat ia menjawab sekarang: langsung untuk server DLNA, yang tidak memiliki sandi, dan setelah konfirmasi, "Gunakan alamat baru?", yang menampilkan kedua alamat, untuk berbagi dengan nama pengguna dan sandi, karena keduanya akan dikirim ke alamat baru. Sejak build 20 server Plex yang ditemukan lagi di alamat lain dalam jaringan juga langsung dipindahkan: sertifikatnya membuktikan bahwa itu server yang sama sebelum token dikirim. Kamera Tapo dicari berdasarkan alamat MAC-nya dari halamannya sendiri, lihat [Kamera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Sejak build 19, berbagi DLNA dan berbagi ponsel (lihat [Bagikan ponsel ini di jaringan](#share-this-phone-on-the-network)) menyimpan ID yang diumumkan servernya. Jika salah satunya tidak lagi menjawab di alamatnya (alamat baru dari router, server yang dimulai ulang di port lain), halaman foldernya menampilkan "Mencari (nama) di jaringan" dan memindahkan berbagi ke tempat ia menjawab sekarang: langsung untuk server DLNA, yang tidak memiliki sandi, dan setelah konfirmasi, "Gunakan alamat baru?", yang menampilkan kedua alamat, untuk berbagi dengan nama pengguna dan sandi, karena keduanya akan dikirim ke alamat baru.
+
+Sejak build 20 server Plex yang ditemukan lagi di alamat lain dalam jaringan juga langsung dipindahkan: sertifikatnya membuktikan bahwa itu server yang sama sebelum token dikirim. Kamera Tapo dicari berdasarkan alamat MAC-nya dari halamannya sendiri, lihat [Kamera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Batasan
 
@@ -227,7 +274,9 @@ Sejak build 20 Immuch360 tersambung langsung dengan Plex Media Server Anda, tanp
 
 ### Di luar rumah
 
-Setiap kali membuka server, aplikasi mencoba alamat rumah terlebih dahulu dan, 400 ms kemudian, alamat di luar rumah. Yang pertama menjawab dengan server Anda yang dipakai; jika itu alamat di luar rumah, halaman folder menampilkan ikon bola dunia berlabel "Terhubung melalui alamat di luar rumah". Ini memerlukan Akses Jarak Jauh yang diaktifkan di Plex (Pengaturan, Akses Jarak Jauh) dengan port yang diteruskan oleh router Anda: tanpa plex.tv aplikasi tidak bisa memakai relay Plex, jadi server tanpa penerusan port hanya terbuka di rumah, dan di luar rumah halaman menampilkan "Server Plex Anda tidak dapat dijangkau dari luar jaringan rumah. Aktifkan akses jarak jauh dengan penerusan port di Plex (Pengaturan, Akses Jarak Jauh), atau ketik alamat publiknya."
+Setiap kali membuka server, aplikasi mencoba alamat rumah terlebih dahulu dan, 400 ms kemudian, alamat di luar rumah. Yang pertama menjawab dengan server Anda yang dipakai; jika itu alamat di luar rumah, halaman folder menampilkan ikon bola dunia berlabel "Terhubung melalui alamat di luar rumah".
+
+Ini memerlukan Akses Jarak Jauh yang diaktifkan di Plex (Pengaturan, Akses Jarak Jauh) dengan port yang diteruskan oleh router Anda: tanpa plex.tv aplikasi tidak bisa memakai relay Plex, jadi server tanpa penerusan port hanya terbuka di rumah, dan di luar rumah halaman menampilkan "Server Plex Anda tidak dapat dijangkau dari luar jaringan rumah. Aktifkan akses jarak jauh dengan penerusan port di Plex (Pengaturan, Akses Jarak Jauh), atau ketik alamat publiknya."
 
 Alamat yang diberitahukan server dipelajari ulang pada setiap koneksi di rumah. Jika alamat itu tidak menjawab dari luar (router yang berganti alamat, dua router berurutan), ketik alamat Anda sendiri di halaman server. Jika token berhenti bekerja (misalnya Anda keluar dari sesi peramban tempat Anda menyalinnya), halaman folder memberitahukannya dan menawarkan "Tempel token baru", yang membuka halaman server pada kolom token.
 
@@ -344,15 +393,13 @@ Kamera Insta360 merekam dua lingkaran fisheye dari lensanya, berdampingan dalam 
 
 Sejak build 16, Immuch360 menggabungkan sendiri file-file tersebut, di ponsel, tablet, atau headset, tanpa perlu memasang apa pun di server:
 
-| Kamera dan file | Yang dilakukan aplikasi | Sejak |
-|---|---|---|
-| Foto Insta360 .insp | Digabungkan di GPU sebelum penampil bola, hingga 8192x4096, dengan cadangan CPU pada ukuran lebih kecil | Build 16 |
-| Video Insta360 .insv yang menyimpan kedua lensa dalam satu trek | Digabungkan oleh efek GPU di pemutar | Build 16 |
-| Video .insv Insta360 X4, X4 Air, X5, dan X6, satu trek persegi per lensa | Dua dekoder sekaligus, satu per lensa, dan kompositor GPU yang menggabungkannya ke dalam bola | Build 18 |
-| Insta360 X3 dan yang lebih lama pada 5.7K ke atas: dua file, `_00_` dan `_10_` | Sama, dengan file lainnya dicari di sebelah file pertama | Build 18 |
-| GoPro MAX dan MAX 2 .360: dua trek, masing-masing tiga sisi kubus | Sama, dengan kolom tumpang tindih dibaurkan | Build 18 |
-| DJI Osmo 360 .osv: dua trek persegi 10 bit | Sama, dengan kalibrasi Kannala-Brandt dari file | Build 18 |
-| .dng fisheye ganda | Tampil datar | Belum |
+- **Foto Insta360 .insp** (build 16): digabungkan di GPU sebelum penampil bola, hingga 8192x4096, dengan cadangan CPU pada ukuran lebih kecil.
+- **Video Insta360 .insv yang menyimpan kedua lensa dalam satu trek** (build 16): digabungkan oleh efek GPU di pemutar.
+- **Video .insv Insta360 X4, X4 Air, X5, dan X6, satu trek persegi per lensa** (build 18): dua dekoder sekaligus, satu per lensa, dan kompositor GPU yang menggabungkannya ke dalam bola.
+- **Insta360 X3 dan yang lebih lama pada 5.7K ke atas: dua file, `_00_` dan `_10_`** (build 18): sama, dengan file lainnya dicari di sebelah file pertama.
+- **GoPro MAX dan MAX 2 .360: dua trek, masing-masing tiga sisi kubus** (build 18): sama, dengan kolom tumpang tindih dibaurkan.
+- **DJI Osmo 360 .osv: dua trek persegi 10 bit** (build 18): sama, dengan kalibrasi Kannala-Brandt dari file.
+- **.dng fisheye ganda** (belum): tampil datar.
 
 ### Menonton file mentah
 
@@ -466,7 +513,9 @@ Deteksi sudah diperiksa pada contoh foto spasial yang ditulis oleh pustaka gamba
 
 Orang membeli Quest 3 untuk menonton foto dan video 360° mereka sendiri, lalu bertanya di mana menaruh file, bagaimana memasukkannya ke headset tanpa kabel, dan pemutar mana yang harus dipakai: pemutar video 360° dan 3D di toko berbayar.
 
-Aplikasi Android yang sama berjalan di Quest 3 dan 3S, dan sejak build 21 di Quest 2 dan Quest Pro (belum diuji), sebagai jendela, dengan seluruh pustaka Anda. Tombol 360°-nya membuka tampilan imersif di mana foto atau video ada di sekeliling Anda dan Anda melihat sekeliling dengan menolehkan kepala, dalam 3D sungguhan untuk file stereoskopis (Meta Spatial SDK). Media berasal dari server Immich Anda, headset itu sendiri, NAS, server media, ponsel, atau server Plex, dan diputar langsung dari tempatnya (server media dan ponsel sejak build 19, server Plex sejak build 20, belum diperiksa di headset), dan sejak build 20 jendela juga menampilkan kamera Tapo. Aplikasi ini gratis dan sumber terbuka. Sudah diperiksa di Quest 3, dan oleh seorang pengguna dengan video Insta360 X4 8K HEVC.
+Aplikasi Android yang sama berjalan di Quest 3 dan 3S, dan sejak build 21 di Quest 2 dan Quest Pro (belum diuji), sebagai jendela, dengan seluruh pustaka Anda. Tombol 360°-nya membuka tampilan imersif di mana foto atau video ada di sekeliling Anda dan Anda melihat sekeliling dengan menolehkan kepala, dalam 3D sungguhan untuk file stereoskopis (Meta Spatial SDK).
+
+Media berasal dari server Immich Anda, headset itu sendiri, NAS, server media, ponsel, atau server Plex, dan diputar langsung dari tempatnya (server media dan ponsel sejak build 19, server Plex sejak build 20, belum diperiksa di headset), dan sejak build 20 jendela juga menampilkan kamera Tapo. Aplikasi ini gratis dan sumber terbuka. Sudah diperiksa di Quest 3, dan oleh seorang pengguna dengan video Insta360 X4 8K HEVC.
 
 ### Membuka tampilan imersif
 
@@ -479,17 +528,20 @@ Aplikasi Android yang sama berjalan di Quest 3 dan 3S, dan sejak build 21 di Que
 
 | Aksi | Kontroler | Tangan |
 |---|---|---|
-| Kembali ke aplikasi | B atau Y | Tombol Kembali di panel info |
-| Memutar atau menjeda video | Pemicu, saat panel info tersembunyi | Tombol Putar atau Jeda di panel info |
+| Kembali ke aplikasi | B atau Y | Tombol Kembali |
+| Memutar atau menjeda video | Pemicu, saat panel info tersembunyi | Tombol Putar atau Jeda |
 | Menampilkan atau menyembunyikan panel info | A, X, grip, atau menu | Gestur menu, atau cubit saat panel tersembunyi |
-| Memutar tampilan, untuk melihat ke belakang tanpa menolehkan kepala (sejak build 17) | Thumbstick kanan ke kiri atau ke kanan: 30° per dorongan, dan terus berputar selama ditahan (lapisan satu baris menampilkan sudutnya) | Tombol Rotasi di panel info (90°) |
-| Media sebelumnya atau berikutnya | Thumbstick kiri ke kiri atau ke kanan (thumbstick mana pun sebelum build 17; sejak build 16 lapisan satu baris menyebutkan nama media, panel info tetap tersembunyi) | Tombol Sebelumnya dan Berikutnya di panel info |
-| Mundur atau maju 10 detik di video | Thumbstick ke bawah atau ke atas (sejak build 16 lapisan satu baris menampilkan waktu, panel info tetap tersembunyi) | Kedua tombol lompat, atau seret bilah waktu di panel info |
-| Memutar gambar 90° | Thumbstick ke bawah atau ke atas pada foto (sejak build 16 lapisan satu baris menampilkan sudutnya); pada video, tombol Rotasi di panel info | Tombol Rotasi di panel info |
-| Mengubah tata letak 3D (mono, atas dan bawah, berdampingan) | Tombol 3D di panel info | Tombol 3D di panel info |
-| Bola penuh atau setengah bola (VR180) | Tombol 360°/180° di panel info | Tombol 360°/180° di panel info |
+| Memutar tampilan (sejak build 17) | Thumbstick kanan ke kiri atau ke kanan, 30° per dorongan | Tombol Rotasi (90°) |
+| Media sebelumnya atau berikutnya | Thumbstick kiri ke kiri atau ke kanan | Tombol Sebelumnya dan Berikutnya |
+| Mundur atau maju 10 detik di video | Thumbstick ke bawah atau ke atas | Kedua tombol lompat, atau seret bilah waktu |
+| Memutar gambar 90° | Thumbstick ke bawah atau ke atas pada foto, tombol Rotasi pada video | Tombol Rotasi |
+| Mengubah tata letak 3D (mono, atas dan bawah, berdampingan) | Tombol 3D | Tombol 3D |
+| Bola penuh atau setengah bola (VR180) | Tombol 360°/180° | Tombol 360°/180° |
 
-Dengan kontroler, tombol dan bilah waktu di panel info juga berfungsi: arahkan sinar ke sana dan tekan pemicu.
+Di tabel ini, tombol dan bilah waktu adalah milik panel info. Dengan kontroler, semuanya juga berfungsi: arahkan sinar ke sana dan tekan pemicu.
+
+- **Memutar tampilan**: untuk melihat ke belakang tanpa menolehkan kepala. Thumbstick kanan terus memutar selama ditahan, dan lapisan satu baris menampilkan sudutnya.
+- **Lapisan satu baris**: sejak build 16, geser posisi, rotasi foto, atau sebelumnya dan berikutnya dengan thumbstick menampilkan lapisan satu baris (waktu, sudut, atau nama media) dan panel info tetap tersembunyi. Sebelum build 17, thumbstick mana pun berpindah ke media sebelumnya atau berikutnya.
 
 ### Panel info, sebelumnya dan berikutnya
 
@@ -497,7 +549,9 @@ Panel info untuk video memiliki bilah waktu (posisi, durasi, berapa banyak yang 
 
 Sebelumnya dan berikutnya berpindah di antara media 360° dari tempat asal Anda, tanpa meninggalkan tampilan imersif: linimasa, daftar 360° (sesuai filter), album, folder berbagi jaringan, atau media headset itu sendiri (Di perangkat ini). Foto dan video datar dilewati. Saat Anda kembali ke aplikasi dari linimasa, album, atau daftar 360°, aplikasi berada di media yang sedang Anda lihat (halaman folder berbagi tetap di file yang Anda buka), dan video tempat Anda membuka tampilan imersif dilanjutkan dari posisi terakhirnya.
 
-Sejak build 17 thumbstick kanan memutar tampilan, seperti thumbstick kanan di sebagian besar aplikasi headset: satu dorongan memutar 30°, menahannya terus memutar, sehingga apa yang ada di belakang Anda datang ke depan tanpa memutar kepala atau kursi Anda; sebelumnya dan berikutnya ada di thumbstick kiri. Sejak build 16, mengikuti masukan pengguna di headset, menggeser posisi, memutar, atau sebelumnya/berikutnya dengan thumbstick menampilkan lapisan satu baris (waktu, sudut, atau judul media) yang memudar setelah 1,5 detik alih-alih memunculkan panel info; panel tetap muncul dengan A, X, grip, atau tombol menu. Build yang sama menjaga agar panel tetap bisa ditampilkan saat kontroler tidur, bangun, atau digantikan pelacakan tangan, dan mencatat peralihan tersebut di log, lihat [Log](#logs).
+Sejak build 17 thumbstick kanan memutar tampilan, seperti thumbstick kanan di sebagian besar aplikasi headset: satu dorongan memutar 30°, menahannya terus memutar, sehingga apa yang ada di belakang Anda datang ke depan tanpa memutar kepala atau kursi Anda; sebelumnya dan berikutnya ada di thumbstick kiri.
+
+Sejak build 16, mengikuti masukan pengguna di headset, menggeser posisi, memutar, atau sebelumnya/berikutnya dengan thumbstick menampilkan lapisan satu baris (waktu, sudut, atau judul media) yang memudar setelah 1,5 detik alih-alih memunculkan panel info; panel tetap muncul dengan A, X, grip, atau tombol menu. Build yang sama menjaga agar panel tetap bisa ditampilkan saat kontroler tidur, bangun, atau digantikan pelacakan tangan, dan mencatat peralihan tersebut di log, lihat [Log](#logs).
 
 Foto spasial Apple yang dibuka dengan "Lihat dalam 3D" tidak ditempatkan di bola: foto itu melayang di depan Anda, lihat [Foto dan video spasial Apple](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Foto menampilkan pratinjau terlebih dahulu, lalu file asli, diperkecil hingga pa
 
 Tata letak 3D, atas dan bawah dan berdampingan, 360° dan VR180, ditampilkan dalam 3D, setiap mata mendapat separuh bingkainya sendiri. Tata letak diambil dari file jika file menyatakannya (video), jika tidak ditebak dari bentuknya (persegi: atas dan bawah, 4:1: berdampingan); jika salah, gunakan tombol 3D di panel info.
 
-| Foto 360° di headset | Video 360° di headset | Video 3D 360° di headset |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="Foto 360° di sekeliling Anda di Quest 3, dengan panel info: tombol tata letak, 360°, dan Kembali"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Video 360° sebuah danau yang diputar di Quest 3, dengan panel info: tombol tata letak, 360°, Jeda, dan Kembali"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Video 360° stereoskopis di Quest 3, panel info bertuliskan 3D, atas dan bawah"> |
-| Tampilan imersif sebuah foto, dengan panel info (tata letak, 360°/180°, Kembali) | Video yang sedang diputar, dengan Jeda | Video stereoskopis atas dan bawah, setiap mata mendapat bagiannya (contoh Kandao Obsidian) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Foto 360° di sekeliling Anda di Quest 3, dengan panel info: tombol tata letak, 360°, dan Kembali">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Video 360° sebuah danau yang diputar di Quest 3, dengan panel info: tombol tata letak, 360°, Jeda, dan Kembali">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Video 360° stereoskopis di Quest 3, panel info bertuliskan 3D, atas dan bawah">
+</p>
+
+- **Foto 360° di headset**: tampilan imersif sebuah foto, dengan panel info (tata letak, 360°/180°, Kembali).
+- **Video 360° di headset**: video yang sedang diputar, dengan Jeda.
+- **Video 3D 360° di headset**: video stereoskopis atas dan bawah, setiap mata mendapat bagiannya (contoh Kandao Obsidian).
 
 Tangkapan ini diambil dengan aplikasi dalam bahasa Prancis, sebelum build 14. Panel kini juga memiliki bilah waktu di antara dua tombol lompat 10 detik, Sebelumnya dan Berikutnya, serta Rotasi.
 
@@ -598,7 +657,9 @@ Immuch360 memberi lencana 360° pada gambar mini foto 360° (di folder berbagi j
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Detail video, dekoder, dan mengapa video tersendat
 
-Orang bertanya kodek, ukuran, dan laju bit apa yang bisa diputar Quest 3, dan mengapa ekspor 5.7K tersendat di headset padahal lancar di ponsel. Jawabannya adalah dekoder perangkat keras: dekoder H.264 di Quest 3 (XR2 Gen 2) mentok di sekitar 4096x2304, sehingga video H.264 5760x2880 (level 6.0, sekitar 200 Mbit/s, ekspor Insta360 yang umum) didekode sekitar 17 fps di headset, dengan artefak kotak-kotak, sementara file yang sama diputar dengan baik di ponsel. Video yang sama dalam HEVC (H.265) diputar dengan baik di headset: video Insta360 X4 8K HEVC (7680x3840, 29,97 fps, 210 Mbit/s, profil Main level 6.1, 8 bit) diputar lancar di tampilan imersif, pada resolusi aslinya dan tanpa transkode (dilaporkan oleh seorang pengguna di Quest 3).
+Orang bertanya kodek, ukuran, dan laju bit apa yang bisa diputar Quest 3, dan mengapa ekspor 5.7K tersendat di headset padahal lancar di ponsel. Jawabannya adalah dekoder perangkat keras: dekoder H.264 di Quest 3 (XR2 Gen 2) mentok di sekitar 4096x2304, sehingga video H.264 5760x2880 (level 6.0, sekitar 200 Mbit/s, ekspor Insta360 yang umum) didekode sekitar 17 fps di headset, dengan artefak kotak-kotak, sementara file yang sama diputar dengan baik di ponsel.
+
+Video yang sama dalam HEVC (H.265) diputar dengan baik di headset: video Insta360 X4 8K HEVC (7680x3840, 29,97 fps, 210 Mbit/s, profil Main level 6.1, 8 bit) diputar lancar di tampilan imersif, pada resolusi aslinya dan tanpa transkode (dilaporkan oleh seorang pengguna di Quest 3).
 
 Aplikasi Immich hanya memiliki satu sakelar "Paksa video asli" dan hanya menampilkan kodek. Immuch360 menampilkan apa sebenarnya video itu dan apa yang bisa didekode perangkat, lalu memilih file yang bisa diputar.
 
@@ -623,7 +684,9 @@ Pengaturan, Tingkat lanjut, "Dekoder video perangkat ini" (sejak build 15) menca
 1. Buka Pengaturan, Penampil Aset, lalu Video.
 2. Di bawah "Sumber video" ("File mana yang diputar jika server memiliki salinan hasil transkode"), pilih "Asli jika perangkat ini dapat mendekodenya", "Selalu asli", atau "Selalu aliran hasil transkode".
 
-Sejak build 15 pilihan ini berlaku untuk setiap video di server: pemutar datar, pemutar 360° dan Spatial, dan tampilan imersif Quest. Sampai Anda memilih, ponsel tetap mengikuti sakelar lama "Paksa video asli" (nonaktif secara bawaan: aliran hasil transkode, yang merupakan file asli itu sendiri jika server tidak mentranskodenya), dan Quest memutar file asli jika headset bisa mendekodenya. Pemeriksaan membaca kodek, ukuran, dan laju bingkai dari file lalu membandingkannya dengan dekoder perangkat keras (H.264 di Quest 3 dibatasi pada hasil pengukuran 4096x2304). Pemutar yang tidak bisa mendekode file asli beralih ke aliran hasil transkode dengan pesan: "Memutar aliran hasil transkode: video asli (kodek dan ukuran) melebihi kemampuan dekode perangkat ini".
+Sejak build 15 pilihan ini berlaku untuk setiap video di server: pemutar datar, pemutar 360° dan Spatial, dan tampilan imersif Quest. Sampai Anda memilih, ponsel tetap mengikuti sakelar lama "Paksa video asli" (nonaktif secara bawaan: aliran hasil transkode, yang merupakan file asli itu sendiri jika server tidak mentranskodenya), dan Quest memutar file asli jika headset bisa mendekodenya.
+
+Pemeriksaan membaca kodek, ukuran, dan laju bingkai dari file lalu membandingkannya dengan dekoder perangkat keras (H.264 di Quest 3 dibatasi pada hasil pengukuran 4096x2304). Pemutar yang tidak bisa mendekode file asli beralih ke aliran hasil transkode dengan pesan: "Memutar aliran hasil transkode: video asli (kodek dan ukuran) melebihi kemampuan dekode perangkat ini".
 
 Di headset, tampilan imersif memulai file asli dan, pada bingkai pertamanya, beralih ke aliran hasil transkode dari server jika file asli melebihi kemampuan dekoder, dan menyebutkannya di panel info; jika tidak ada aliran hasil transkode, jika aliran itu masih terlalu besar, atau jika file berasal dari headset atau berbagi jaringan, panel info menyebutkannya selama 10 detik, beserta apa yang perlu diubah. Build 14, yang dikirim ke Horizon Store, hanya memeriksa H.264 di atas 4096x2304, lalu mencoba aliran pemutaran server dengan cara yang sama.
 
@@ -661,87 +724,184 @@ Untuk menunjukkan foto 360° kepada seseorang yang tidak memiliki aplikasinya, b
 
 Build saat ini, build 21 (versi 3.3.0-rc.0, nomor build 3030019), berbasis Immich 3.3.0-rc.0 (`main` Immich, belum rilis stabil). Build 19 diuji dengan server Immich 3.2, dan build 20 dan 21 tidak mengubah apa pun dalam hal yang diminta aplikasi dari server. Laporkan masalah di [Issues](https://github.com/freeKC/Immuch360/issues), bukan ke proyek Immich. Untuk dokumentasi lengkap Immich itu sendiri, lihat [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Perbandingan dengan aplikasi Immich dan aplikasi lain
 
 ### Mengapa fork ini ada, dalam satu tabel
 
-| | Aplikasi seluler Immich | Immuch360 | Status |
-|---|:---:|:---:|---|
-| Foto 360° sebagai bola yang bisa dilihat ke segala arah (seret, cubit, ketuk dua kali, inersia, tampilan awal kamera, panorama parsial) | ❌ strip datar | ✅ | Diuji di Galaxy S24+ dan iPhone 14 |
-| Giroskop: melihat sekeliling dengan menggerakkan ponsel | ❌ | ✅ | Diuji di Galaxy S24+ dan iPhone 14 |
-| Video 360° di pemutar bola, dengan suara, geser posisi, pilihan trek audio, dan indikator buffering | ❌ video datar | ✅ Android dan iOS (belum ada bilah waktu di iOS) | Diuji di Galaxy S24+ dan iPhone 14 |
-| Foto dan video 360° 3D (stereoskopis) | ❌ gambar ganda | ✅ mata kiri di ponsel, 3D sungguhan di Quest | Diuji di Galaxy S24+ dan Quest 3, dengan contoh 3D 360° sungguhan (VRTogether, Vuze, Kandao) dan sebuah foto 3D; laporan dari kamera lain sangat diharapkan |
-| Foto dan video VR180 (setengah bola) | ❌ melar di sekeliling bola | ✅ setengah bola, tombol 360°/180° | Diuji di emulator Android dan Galaxy S24+ dengan media sintetis; masukan dari perangkat sangat diharapkan |
-| Foto spasial Apple (pasangan stereo HEIC) dan video spasial (MV-HEVC) | ❌ foto atau video datar, tidak ada yang menyatakan bahwa itu spasial | ✅ sejak build 19: foto dalam 3D di Quest, satu mata dan satu baris detail di tempat lain | Deteksi diperiksa pada contoh foto yang ditulis oleh pustaka gambar Apple dan pada file sintetis; tampilan di headset dan file iPhone asli adalah uji perangkat untuk build 19 |
-| Tampilan imersif Meta Quest dengan pelacakan kepala, bilah waktu, sebelumnya dan berikutnya, dan Rotasi | ❌ | ✅ aplikasi yang sama, sebagai build headset atau APK ponsel | Diuji di Quest 3 (kontrol build 14, disesuaikan di build 16 setelah masukan pengguna), dan oleh seorang pengguna dengan video Insta360 X4 8K HEVC |
-| Lencana 360° pada gambar mini, dan daftar 360° dengan file mentah dan filter (periode, sumber, jenis, kamera) | ❌ | ✅ filter sejak build 18 | Selesai |
-| "Lihat sebagai 360°" untuk file yang tidak ditandai server | ❌ | ✅ diingat di ponsel | Selesai |
-| Spatial 2.5D: kedalaman di layar datar dari video stereoskopis | ❌ | ✅ eksperimental, ponsel dan tablet | Diuji di Galaxy S24+; masukan dari pengguna iPhone sangat diharapkan |
-| Pemakaian tanpa server sama sekali, pada galeri perangkat itu sendiri | ❌ wajib masuk | ✅ | Diuji di Galaxy S24+, Quest 3, dan emulator Android |
-| Berbagi SMB dan WebDAV yang ditemukan di jaringan dan diputar langsung, tanpa mengunduh apa pun | ❌ | ✅ setiap penampil, ponsel dan Quest | Diuji dengan Freebox Server (SMB) di Galaxy S24+ dan Quest 3, dan dengan server uji Samba dan WebDAV di emulator Android; masukan untuk NAS dan WebDAV lain sangat diharapkan |
-| Server media DLNA sebagai jenis berbagi | ❌ | ✅ sejak build 19 | Diperiksa dengan minidlna dan Gerbera di Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone, dan Quest adalah uji perangkat untuk build 19 |
-| Mengirim file dari berbagi ke Immich; file perangkat yang dikirim manual dihitung sebagai sudah dicadangkan | ❌ hanya file perangkat | ✅ sejak build 15 | Diuji di emulator Android dengan server uji Samba dan server Immich 3.2 |
-| Bagikan ponsel ini di jaringan, untuk headset | ❌ | ✅ sejak build 19, Android dan iOS | Uji unit dan uji end to end dengan klien WebDAV headset, di komputer; ponsel yang melayani Quest, dan sisi iPhone, adalah uji perangkat untuk build 19 |
-| Pustaka Plex Media Server diputar dari file aslinya, di rumah maupun di luar rumah, tanpa plex.tv | ❌ | ✅ sejak build 20, setiap penampil, di ponsel, tablet, Quest, dan TV | Diperiksa dari komputer terhadap Plex Media Server 1.42.1 sungguhan (penyambungan, folder, rentang byte, thumbnail, alamat di luar rumah); belum diperiksa di perangkat |
-| Kamera Tapo: tampilan langsung, dan rekaman kartu memori yang dikirim ke Immich saat Anda memilihnya | ❌ | ✅ sejak build 20: rekaman di mana saja, tampilan langsung di Android, Android TV, dan Quest | Diperiksa terhadap kamera simulasi; belum diperiksa dengan kamera sungguhan |
-| Android TV dan Google TV, dikendalikan dengan remote, dalam APK yang sama | ❌ bukan aplikasi TV | ✅ sejak build 20 | Diperiksa dengan pengujian otomatis; belum diperiksa di TV |
-| Foto Insta360 .insp mentah dan video .insv satu trek | ❌ datar | ✅ sejak build 16 | Foto diperiksa terhadap ekspor Insta360 Studio dari file X3, video di emulator Android dengan file X3 beresolusi rendah; belum dijalankan di iPhone |
-| Video mentah dengan satu lensa per trek atau per file (Insta360 X4, X4 Air, X5, X6, pasangan X3, GoPro .360, DJI .osv) | ❌ datar atau salah | ✅ sejak build 18 | Parser dan penggabungan diperiksa pada file asli X4, pasangan X3, GoPro MAX, dan Osmo 360; pemutaran adalah uji perangkat untuk build 18 dan 19 |
-| .dng fisheye ganda | ❌ datar | ❌ belum | Direncanakan |
-| Video server: file asli jika perangkat bisa mendekodenya, jika tidak aliran hasil transkode; daftar dekoder video perangkat | ❌ satu sakelar "Paksa video asli" | ✅ sejak build 15 | Diuji di emulator Android; batas H.264 Quest 3 diukur di headset |
-| Detail teknis video: laju bit, gambar, profil, apakah perangkat ini bisa mendekodenya | ❌ hanya kodek | ✅ sejak build 18 | Selesai |
-| Pemutar gratis untuk video datar, 360°, 3D, dan VR180, dari server, ponsel, atau NAS | ❌ hanya datar | ✅ (pemutar di toko Quest 3 berbayar) | |
-| Server sama, akun sama, terpasang berdampingan dengan aplikasi resmi | | ✅ | |
+| | Aplikasi seluler Immich | Immuch360 |
+|---|:---:|:---:|
+| Foto 360° sebagai bola yang bisa dilihat ke segala arah (seret, cubit, ketuk dua kali, inersia, tampilan awal kamera, panorama parsial) | ❌ strip datar | ✅ |
+| Giroskop: melihat sekeliling dengan menggerakkan ponsel | ❌ | ✅ |
+| Video 360° di pemutar bola, dengan suara, geser posisi, pilihan trek audio, dan indikator buffering | ❌ video datar | ✅ Android dan iOS (belum ada bilah waktu di iOS) |
+| Foto dan video 360° 3D (stereoskopis) | ❌ gambar ganda | ✅ mata kiri di ponsel, 3D sungguhan di Quest |
+| Foto dan video VR180 (setengah bola) | ❌ melar di sekeliling bola | ✅ setengah bola, tombol 360°/180° |
+| Foto spasial Apple (pasangan stereo HEIC) dan video spasial (MV-HEVC) | ❌ foto atau video datar, tidak ada yang menyatakan bahwa itu spasial | ✅ sejak build 19: foto dalam 3D di Quest, satu mata dan satu baris detail di tempat lain |
+| Tampilan imersif Meta Quest dengan pelacakan kepala, bilah waktu, sebelumnya dan berikutnya, dan Rotasi | ❌ | ✅ aplikasi yang sama, sebagai build headset atau APK ponsel |
+| Lencana 360° pada gambar mini, dan daftar 360° dengan file mentah dan filter (periode, sumber, jenis, kamera) | ❌ | ✅ filter sejak build 18 |
+| "Lihat sebagai 360°" untuk file yang tidak ditandai server | ❌ | ✅ diingat di ponsel |
+| Spatial 2.5D: kedalaman di layar datar dari video stereoskopis | ❌ | ✅ eksperimental, ponsel dan tablet |
+| Pemakaian tanpa server sama sekali, pada galeri perangkat itu sendiri | ❌ wajib masuk | ✅ |
+| Berbagi SMB dan WebDAV yang ditemukan di jaringan dan diputar langsung, tanpa mengunduh apa pun | ❌ | ✅ setiap penampil, ponsel dan Quest |
+| Server media DLNA sebagai jenis berbagi | ❌ | ✅ sejak build 19 |
+| Mengirim file dari berbagi ke Immich; file perangkat yang dikirim manual dihitung sebagai sudah dicadangkan | ❌ hanya file perangkat | ✅ sejak build 15 |
+| Bagikan ponsel ini di jaringan, untuk headset | ❌ | ✅ sejak build 19, Android dan iOS |
+| Pustaka Plex Media Server diputar dari file aslinya, di rumah maupun di luar rumah, tanpa plex.tv | ❌ | ✅ sejak build 20, setiap penampil, di ponsel, tablet, Quest, dan TV |
+| Kamera Tapo: tampilan langsung, dan rekaman kartu memori yang dikirim ke Immich saat Anda memilihnya | ❌ | ✅ sejak build 20: rekaman di mana saja, tampilan langsung di Android, Android TV, dan Quest |
+| Android TV dan Google TV, dikendalikan dengan remote, dalam APK yang sama | ❌ bukan aplikasi TV | ✅ sejak build 20 |
+| Foto Insta360 .insp mentah dan video .insv satu trek | ❌ datar | ✅ sejak build 16 |
+| Video mentah dengan satu lensa per trek atau per file (Insta360 X4, X4 Air, X5, X6, pasangan X3, GoPro .360, DJI .osv) | ❌ datar atau salah | ✅ sejak build 18 |
+| .dng fisheye ganda | ❌ datar | ❌ belum |
+| Video server: file asli jika perangkat bisa mendekodenya, jika tidak aliran hasil transkode; daftar dekoder video perangkat | ❌ satu sakelar "Paksa video asli" | ✅ sejak build 15 |
+| Detail teknis video: laju bit, gambar, profil, apakah perangkat ini bisa mendekodenya | ❌ hanya kodek | ✅ sejak build 18 |
+| Pemutar gratis untuk video datar, 360°, 3D, dan VR180, dari server, ponsel, atau NAS | ❌ hanya datar | ✅ (pemutar di toko Quest 3 berbayar) |
+| Server sama, akun sama, terpasang berdampingan dengan aplikasi resmi | | ✅ |
+
+<details>
+<summary><b>Status setiap baris</b>: cara pengujiannya</summary>
+
+- **Foto 360° sebagai bola**: diuji di Galaxy S24+ dan iPhone 14.
+- **Giroskop**: diuji di Galaxy S24+ dan iPhone 14.
+- **Video 360°**: diuji di Galaxy S24+ dan iPhone 14.
+- **Foto dan video 360° 3D**: diuji di Galaxy S24+ dan Quest 3, dengan contoh 3D 360° sungguhan (VRTogether, Vuze, Kandao) dan sebuah foto 3D; laporan dari kamera lain sangat diharapkan.
+- **VR180**: diuji di emulator Android dan Galaxy S24+ dengan media sintetis; masukan dari perangkat sangat diharapkan.
+- **Foto dan video spasial Apple**: deteksi diperiksa pada contoh foto yang ditulis oleh pustaka gambar Apple dan pada file sintetis; tampilan di headset dan file iPhone asli adalah uji perangkat untuk build 19.
+- **Tampilan imersif Meta Quest**: diuji di Quest 3 (kontrol build 14, disesuaikan di build 16 setelah masukan pengguna), dan oleh seorang pengguna dengan video Insta360 X4 8K HEVC.
+- **Lencana 360° dan daftar 360°**: selesai.
+- **Lihat sebagai 360°**: selesai.
+- **Spatial 2.5D**: diuji di Galaxy S24+; masukan dari pengguna iPhone sangat diharapkan.
+- **Tanpa server sama sekali**: diuji di Galaxy S24+, Quest 3, dan emulator Android.
+- **Berbagi SMB dan WebDAV**: diuji dengan Freebox Server (SMB) di Galaxy S24+ dan Quest 3, dan dengan server uji Samba dan WebDAV di emulator Android; masukan untuk NAS dan WebDAV lain sangat diharapkan.
+- **Server media DLNA**: diperiksa dengan minidlna dan Gerbera di Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone, dan Quest adalah uji perangkat untuk build 19.
+- **Mengirim file dari berbagi ke Immich**: diuji di emulator Android dengan server uji Samba dan server Immich 3.2.
+- **Bagikan ponsel ini di jaringan**: uji unit dan uji end to end dengan klien WebDAV headset, di komputer; ponsel yang melayani Quest, dan sisi iPhone, adalah uji perangkat untuk build 19.
+- **Plex Media Server**: diperiksa dari komputer terhadap Plex Media Server 1.42.1 sungguhan (penyambungan, folder, rentang byte, thumbnail, alamat di luar rumah); belum diperiksa di perangkat.
+- **Kamera Tapo**: diperiksa terhadap kamera simulasi; belum diperiksa dengan kamera sungguhan.
+- **Android TV dan Google TV**: diperiksa dengan pengujian otomatis; belum diperiksa di TV.
+- **Foto Insta360 .insp mentah dan video .insv satu trek**: foto diperiksa terhadap ekspor Insta360 Studio dari file X3, video di emulator Android dengan file X3 beresolusi rendah; belum dijalankan di iPhone.
+- **Video mentah dengan satu lensa per trek atau per file**: parser dan penggabungan diperiksa pada file asli X4, pasangan X3, GoPro MAX, dan Osmo 360; pemutaran adalah uji perangkat untuk build 18 dan 19.
+- **.dng fisheye ganda**: direncanakan.
+- **Video server dan dekoder video**: diuji di emulator Android; batas H.264 Quest 3 diukur di headset.
+- **Detail teknis video**: selesai.
+
+</details>
 
 ### Aplikasi lain yang dipakai orang untuk ini
 
-| Yang dipakai orang | Kendala yang mereka temui | Yang dilakukan Immuch360 |
-|---|---|---|
-| Aplikasi web Immich | Menampilkan foto 360° sebagai bola, tetapi menganggap .insp mentah sebagai panorama jadi dan membungkus kedua lingkarannya di sekeliling bola; tampilan VR masih berupa permintaan ([diskusi #14768](https://github.com/immich-app/immich/discussions/14768)) | Menggabungkan file mentah di perangkat, dan membuka tampilan imersif di Quest |
-| Aplikasi Insta360 atau Studio | Diperlukan untuk mengubah file mentah dari kartu menjadi gambar 360° sebelum ditonton | Membuka file mentah .insp dan .insv secara langsung, juga file GoPro .360 dan DJI .osv |
-| Plex, Jellyfin, Synology Photos | Foto dan video 360° ditampilkan datar atau tidak dikenali, seperti yang dijelaskan di utas forum mereka (sebuah permintaan untuk Plex sudah terbuka sejak 2017) | Membaca pustaka Plex itu sendiri sejak build 20, atau folder yang sama lewat SMB, WebDAV, atau DLNA, dan memutarnya sebagai bola, tanpa mengubah apa pun di server |
-| Aplikasi Tapo | Aplikasi terpisah, masuk ke akun TP-Link Anda, dengan klip yang terpisah dari foto Anda | Menampilkan kamera di samping foto Anda, berbicara dengannya hanya di jaringan Anda, dan menyimpan klip sebagai video yang bisa Anda kirim ke Immich (sejak build 20) |
-| Aplikasi seluler Immich di TV | Bukan aplikasi TV: seorang pengguna melaporkan bahwa aplikasi itu bekerja dengan mouse, bukan dengan remote | Aplikasi yang sama, dibuat untuk remote (sejak build 20) |
-| Menyalin file ke headset | Setiap file disalin lewat kabel sebelum bisa ditonton | Memutar langsung dari Immich, NAS, server media, atau ponsel |
-| Pemutar 360° dan 3D di toko Quest | Berbayar | Gratis dan sumber terbuka (AGPL) |
+- **Aplikasi web Immich**
+  - Kendala yang mereka temui: menampilkan foto 360° sebagai bola, tetapi menganggap .insp mentah sebagai panorama jadi dan membungkus kedua lingkarannya di sekeliling bola; tampilan VR masih berupa permintaan ([diskusi #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Yang dilakukan Immuch360: menggabungkan file mentah di perangkat, dan membuka tampilan imersif di Quest.
+- **Aplikasi Insta360 atau Studio**
+  - Kendala yang mereka temui: diperlukan untuk mengubah file mentah dari kartu menjadi gambar 360° sebelum ditonton.
+  - Yang dilakukan Immuch360: membuka file mentah .insp dan .insv secara langsung, juga file GoPro .360 dan DJI .osv.
+- **Plex, Jellyfin, Synology Photos**
+  - Kendala yang mereka temui: foto dan video 360° ditampilkan datar atau tidak dikenali, seperti yang dijelaskan di utas forum mereka (sebuah permintaan untuk Plex sudah terbuka sejak 2017).
+  - Yang dilakukan Immuch360: membaca pustaka Plex itu sendiri sejak build 20, atau folder yang sama lewat SMB, WebDAV, atau DLNA, dan memutarnya sebagai bola, tanpa mengubah apa pun di server.
+- **Aplikasi Tapo**
+  - Kendala yang mereka temui: aplikasi terpisah, masuk ke akun TP-Link Anda, dengan klip yang terpisah dari foto Anda.
+  - Yang dilakukan Immuch360: menampilkan kamera di samping foto Anda, berbicara dengannya hanya di jaringan Anda, dan menyimpan klip sebagai video yang bisa Anda kirim ke Immich (sejak build 20).
+- **Aplikasi seluler Immich di TV**
+  - Kendala yang mereka temui: bukan aplikasi TV: seorang pengguna melaporkan bahwa aplikasi itu bekerja dengan mouse, bukan dengan remote.
+  - Yang dilakukan Immuch360: aplikasi yang sama, dibuat untuk remote (sejak build 20).
+- **Menyalin file ke headset**
+  - Kendala yang mereka temui: setiap file disalin lewat kabel sebelum bisa ditonton.
+  - Yang dilakukan Immuch360: memutar langsung dari Immich, NAS, server media, atau ponsel.
+- **Pemutar 360° dan 3D di toko Quest**
+  - Kendala yang mereka temui: berbayar.
+  - Yang dilakukan Immuch360: gratis dan sumber terbuka (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Format dan sumber, menurut platform
 
-Immuch360 adalah galeri, dan juga pemutar media gratis: aplikasi ini memutar apa yang tidak bisa diputar aplikasi resmi, dari sumber-sumber di tabel kedua, di pemutar yang sesuai dengan filenya.
+Immuch360 adalah galeri, dan juga pemutar media gratis: aplikasi ini memutar apa yang tidak bisa diputar aplikasi resmi, dari sumber-sumber di daftar kedua, di pemutar yang sesuai dengan filenya.
 
-| Apa | Ponsel Android | iPhone, iPad | Meta Quest | Android TV, Google TV (sejak build 20) |
-|---|---|---|---|---|
-| Video datar (MP4, MOV, MKV, apa pun yang bisa didekode perangkat) | Pemutar Immich, dan pemutar native untuk berbagi jaringan | Sama, kecuali file MKV dan AVI dari berbagi, yang tidak bisa dibuka iOS (di server diputar hasil transkodenya) | Di jendela | Seperti di ponsel; OK menjeda, kiri dan kanan melompat 10 detik |
-| Foto 360° | Penampil bola, giroskop | Sama | Imersif, di sekeliling Anda | Penampil bola yang diputar dengan tombol panah, diperbesar dengan tombol channel |
-| Video 360° | Pemutar Media3 native pada bola, giroskop, geser posisi, pilihan trek audio, indikator buffering | Pemutar SceneKit native pada bola, giroskop, pilihan trek audio, indikator buffering; putar dan jeda, belum ada bilah waktu | Imersif, 3D sungguhan untuk file stereoskopis, bilah waktu dengan lompatan 10 detik, media sebelumnya dan berikutnya | Pemutar Media3 seperti di ponsel, diputar dengan tombol panah |
-| 3D 360° (atas dan bawah, berdampingan) | Mata kiri, tombol tata letak | Sama | Setiap mata mendapat separuh bingkainya sendiri | Mata kiri, tombol tata letak |
-| Foto dan video VR180 (setengah bola) | Setengah bola, tombol 360°/180° | Sama | Setengah bola imersif | Setengah bola, tombol 360°/180° |
-| Spatial 2.5D (kedalaman layar datar dari video stereoskopis) | Pemutar native, pelacakan kepala dengan kamera depan | Sama | Tidak ditawarkan | Tidak ditawarkan |
-| Foto spasial Apple (pasangan stereo HEIC, sejak build 19) | Mata kiri, satu baris detail menyatakan bahwa foto itu spasial | Sama | Lihat dalam 3D: kedua mata pada foto yang melayang di tampilan imersif, 3D atau 2D, bisa diubah ukurannya | Mata kiri, satu baris detail |
-| Video spasial Apple (MV-HEVC, sejak build 19) | Satu mata (lapisan dasar), dengan pemberitahuan | Sama | Satu mata di jendela, dengan pemberitahuan | Satu mata, dengan pemberitahuan |
-| Foto Insta360 .insp mentah (sejak build 16) | Digabungkan di GPU sebelum penampil bola, hingga 8192x4096 | Sama | Imersif, dari gambar gabungan yang disiapkan untuk headset | Seperti di ponsel |
-| Insta360 .insv mentah, kedua lensa dalam satu trek (sejak build 16) | Digabungkan oleh efek GPU di pemutar Media3 | Digabungkan oleh shader SceneKit | Imersif, digabungkan oleh efek GPU yang sama | Seperti di ponsel |
-| Video mentah dengan satu lensa per trek atau per file (sejak build 18): Insta360 X4, X4 Air, X5, X6 .insv, pasangan X3, GoPro .360, DJI .osv | Dua dekoder perangkat keras sekaligus, satu per lensa (sejak build 19 dekoder perangkat lunak pada perangkat tanpa dekoder perangkat keras, hingga 2048x2048 per lensa), dan kompositor GL yang menggabungkannya ke dalam bola; satu lensa, lalu aliran hasil transkode, lalu video tanpa digabungkan, jika perangkat tidak bisa menjalankan dua | Kompositor AVFoundation khusus dengan Metal | Imersif, dua dekoder dan kompositor yang sama (panel 3840x1920) | Seperti di ponsel, jika TV bisa menjalankan dua dekoder sekaligus |
-| Tampilan langsung kamera Tapo (sejak build 20) | Pemutar RTSP Media3: SD di halaman, HD di layar penuh, tombol suara | Belum: sebuah kartu menyatakan fitur ini akan hadir nanti | Di jendela, dalam HD | Seperti di ponsel |
-| Rekaman kamera Tapo (sejak build 20) | Diambil dari kartu memori menjadi video H.264 dengan suaranya, lalu diputar dengan geser posisi | Sama | Sama, di jendela | Sama |
+- **Video datar (MP4, MOV, MKV, apa pun yang bisa didekode perangkat)**
+  - Ponsel Android: pemutar Immich, dan pemutar native untuk berbagi jaringan.
+  - iPhone, iPad: sama, kecuali file MKV dan AVI dari berbagi, yang tidak bisa dibuka iOS (di server diputar hasil transkodenya).
+  - Meta Quest: di jendela.
+  - Android TV, Google TV: seperti di ponsel; OK menjeda, kiri dan kanan melompat 10 detik.
+- **Foto 360°**
+  - Ponsel Android: penampil bola, giroskop.
+  - iPhone, iPad: sama.
+  - Meta Quest: imersif, di sekeliling Anda.
+  - Android TV, Google TV: penampil bola yang diputar dengan tombol panah, diperbesar dengan tombol channel.
+- **Video 360°**
+  - Ponsel Android: pemutar Media3 native pada bola, giroskop, geser posisi, pilihan trek audio, indikator buffering.
+  - iPhone, iPad: pemutar SceneKit native pada bola, giroskop, pilihan trek audio, indikator buffering; putar dan jeda, belum ada bilah waktu.
+  - Meta Quest: imersif, 3D sungguhan untuk file stereoskopis, bilah waktu dengan lompatan 10 detik, media sebelumnya dan berikutnya.
+  - Android TV, Google TV: pemutar Media3 seperti di ponsel, diputar dengan tombol panah.
+- **3D 360° (atas dan bawah, berdampingan)**
+  - Ponsel Android: mata kiri, tombol tata letak.
+  - iPhone, iPad: sama.
+  - Meta Quest: setiap mata mendapat separuh bingkainya sendiri.
+  - Android TV, Google TV: mata kiri, tombol tata letak.
+- **Foto dan video VR180 (setengah bola)**
+  - Ponsel Android: setengah bola, tombol 360°/180°.
+  - iPhone, iPad: sama.
+  - Meta Quest: setengah bola imersif.
+  - Android TV, Google TV: setengah bola, tombol 360°/180°.
+- **Spatial 2.5D (kedalaman layar datar dari video stereoskopis)**
+  - Ponsel Android: pemutar native, pelacakan kepala dengan kamera depan.
+  - iPhone, iPad: sama.
+  - Meta Quest: tidak ditawarkan.
+  - Android TV, Google TV: tidak ditawarkan.
+- **Foto spasial Apple (pasangan stereo HEIC, sejak build 19)**
+  - Ponsel Android: mata kiri, satu baris detail menyatakan bahwa foto itu spasial.
+  - iPhone, iPad: sama.
+  - Meta Quest: Lihat dalam 3D: kedua mata pada foto yang melayang di tampilan imersif, 3D atau 2D, bisa diubah ukurannya.
+  - Android TV, Google TV: mata kiri, satu baris detail.
+- **Video spasial Apple (MV-HEVC, sejak build 19)**
+  - Ponsel Android: satu mata (lapisan dasar), dengan pemberitahuan.
+  - iPhone, iPad: sama.
+  - Meta Quest: satu mata di jendela, dengan pemberitahuan.
+  - Android TV, Google TV: satu mata, dengan pemberitahuan.
+- **Foto Insta360 .insp mentah (sejak build 16)**
+  - Ponsel Android: digabungkan di GPU sebelum penampil bola, hingga 8192x4096.
+  - iPhone, iPad: sama.
+  - Meta Quest: imersif, dari gambar gabungan yang disiapkan untuk headset.
+  - Android TV, Google TV: seperti di ponsel.
+- **Insta360 .insv mentah, kedua lensa dalam satu trek (sejak build 16)**
+  - Ponsel Android: digabungkan oleh efek GPU di pemutar Media3.
+  - iPhone, iPad: digabungkan oleh shader SceneKit.
+  - Meta Quest: imersif, digabungkan oleh efek GPU yang sama.
+  - Android TV, Google TV: seperti di ponsel.
+- **Video mentah dengan satu lensa per trek atau per file (sejak build 18): Insta360 X4, X4 Air, X5, X6 .insv, pasangan X3, GoPro .360, DJI .osv**
+  - Ponsel Android: dua dekoder perangkat keras sekaligus, satu per lensa (sejak build 19 dekoder perangkat lunak pada perangkat tanpa dekoder perangkat keras, hingga 2048x2048 per lensa), dan kompositor GL yang menggabungkannya ke dalam bola; satu lensa, lalu aliran hasil transkode, lalu video tanpa digabungkan, jika perangkat tidak bisa menjalankan dua.
+  - iPhone, iPad: kompositor AVFoundation khusus dengan Metal.
+  - Meta Quest: imersif, dua dekoder dan kompositor yang sama (panel 3840x1920).
+  - Android TV, Google TV: seperti di ponsel, jika TV bisa menjalankan dua dekoder sekaligus.
+- **Tampilan langsung kamera Tapo (sejak build 20)**
+  - Ponsel Android: pemutar RTSP Media3: SD di halaman, HD di layar penuh, tombol suara.
+  - iPhone, iPad: belum: sebuah kartu menyatakan fitur ini akan hadir nanti.
+  - Meta Quest: di jendela, dalam HD.
+  - Android TV, Google TV: seperti di ponsel.
+- **Rekaman kamera Tapo (sejak build 20)**
+  - Ponsel Android: diambil dari kartu memori menjadi video H.264 dengan suaranya, lalu diputar dengan geser posisi.
+  - iPhone, iPad: sama.
+  - Meta Quest: sama, di jendela.
+  - Android TV, Google TV: sama.
 
-Kolom TV belum diperiksa di TV, lihat [Menonton di TV](#watch-on-your-tv-android-tv-and-google-tv); baris kamera belum diperiksa dengan kamera sungguhan.
+Entri Android TV dan Google TV, sejak build 20, belum diperiksa di TV, lihat [Menonton di TV](#watch-on-your-tv-android-tv-and-google-tv); entri kamera belum diperiksa dengan kamera sungguhan.
 
-| Dari | Caranya |
-|---|---|
-| Server Immich Anda | File asli atau aliran hasil transkode dari server, sesuai Pengaturan, Penampil Aset, "Sumber video" (lihat [Detail video dan dekoder](#video-details-decoders-and-why-a-video-stutters)). Akun yang sama dengan aplikasi web |
-| Ponsel atau headset itu sendiri | "Gunakan tanpa server" di halaman masuk, atau entri Di perangkat ini di tab Pustaka |
-| NAS atau komputer | Berbagi SMB dan WebDAV, dan sejak build 19 server media DLNA, ditemukan di jaringan, dibaca langsung (video SMB lewat hingga enam koneksi), tanpa menyalin apa pun; sejak build 15 file yang Anda pilih bisa dikirim ke akun Immich Anda |
-| Ponsel lain (sejak build 19) | "Bagikan ponsel ini di jaringan" di ponsel tersebut: headset, atau klien WebDAV mana pun di jaringan, membaca album, bulan, dan media 360°-nya |
-| Plex Media Server (sejak build 20) | Pustaka foto, film, dan acara TV-nya per folder, file asli dibaca langsung melalui HTTPS yang diperiksa terhadap sertifikat milik server itu sendiri, di rumah atau melalui alamat di luar rumah, di setiap platform; lihat [Plex Media Server, tanpa plex.tv](#plex-media-server-without-plextv) |
-| Kamera Tapo (sejak build 20) | Tampilan langsung dengan akun kamera (Android, Android TV, Quest), dan rekaman kartu memorinya dengan kata sandi akun TP-Link (setiap platform), hanya di jaringan lokal; lihat [Kamera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Server Immich Anda**: file asli atau aliran hasil transkode dari server, sesuai Pengaturan, Penampil Aset, "Sumber video" (lihat [Detail video dan dekoder](#video-details-decoders-and-why-a-video-stutters)). Akun yang sama dengan aplikasi web.
+- **Ponsel atau headset itu sendiri**: "Gunakan tanpa server" di halaman masuk, atau entri Di perangkat ini di tab Pustaka.
+- **NAS atau komputer**: berbagi SMB dan WebDAV, dan sejak build 19 server media DLNA, ditemukan di jaringan, dibaca langsung (video SMB lewat hingga enam koneksi), tanpa menyalin apa pun; sejak build 15 file yang Anda pilih bisa dikirim ke akun Immich Anda.
+- **Ponsel lain (sejak build 19)**: "Bagikan ponsel ini di jaringan" di ponsel tersebut: headset, atau klien WebDAV mana pun di jaringan, membaca album, bulan, dan media 360°-nya.
+- **Plex Media Server (sejak build 20)**: pustaka foto, film, dan acara TV-nya per folder, file asli dibaca langsung melalui HTTPS yang diperiksa terhadap sertifikat milik server itu sendiri, di rumah atau melalui alamat di luar rumah, di setiap platform; lihat [Plex Media Server, tanpa plex.tv](#plex-media-server-without-plextv).
+- **Kamera Tapo (sejak build 20)**: tampilan langsung dengan akun kamera (Android, Android TV, Quest), dan rekaman kartu memorinya dengan kata sandi akun TP-Link (setiap platform), hanya di jaringan lokal; lihat [Kamera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 juga berjalan di headset Meta Quest dengan Horizon OS v69 atau lebih baru. Sejak build 21, build Horizon Store terdaftar untuk Quest 2, Quest Pro, Quest 3, dan 3S, empat perangkat yang sudah disebutkan oleh `-release.apk` universal; Quest pertama tidak, toko tidak lagi menerimanya. Quest 3 dan 3S sudah diuji. Quest 2 dan Quest Pro belum diuji: dekoder videonya lebih lambat, dan batas yang diperiksa aplikasi diukur di Quest 3, sehingga video H.264 yang besar bisa ditolak dengan sebuah pesan atau tersendat di sana. Laporan dari kedua headset ini sangat diharapkan di [Issues](https://github.com/freeKC/Immuch360/issues). Cara memakainya ada di [Di headset Meta Quest 3](#in-the-meta-quest-3-headset); bagian ini membahas pemasangannya dan apa yang berbeda di headset.
+Immuch360 juga berjalan di headset Meta Quest dengan Horizon OS v69 atau lebih baru. Sejak build 21, build Horizon Store terdaftar untuk Quest 2, Quest Pro, Quest 3, dan 3S, empat perangkat yang sudah disebutkan oleh `-release.apk` universal; Quest pertama tidak, toko tidak lagi menerimanya.
 
-Build headset hanya berkomunikasi dengan server melalui HTTPS, atau melalui HTTP biasa ke nama jaringan rumah (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) dan ke headset itu sendiri, sesuai persyaratan Horizon Store. Server yang diketik sebagai alamat HTTP biasa dengan IP, seperti `http://192.168.1.10:2283`, ditolak oleh build tersebut: gunakan HTTPS, nama jaringan rumah (`nas.local`), atau `-release.apk` universal, yang mempertahankan kebijakan terbuka seperti di ponsel. Berbagi WebDAV, DLNA, dan ponsel di alamat HTTP biasa pada jaringan lokal tidak terpengaruh: aplikasi membacanya sendiri dan hanya memberikan alamat jembatan lokalnya kepada pemutar (masih perlu dikonfirmasi di headset untuk DLNA dan berbagi ponsel, yang baru di build 19). Sejak build 20 server Plex dijangkau melalui HTTPS, dan kamera Tapo oleh aplikasi itu sendiri, dengan tampilan langsungnya melalui RTSP, yang bukan HTTP: keduanya seharusnya tidak terpengaruh (masih perlu dikonfirmasi di headset).
+Quest 3 dan 3S sudah diuji. Quest 2 dan Quest Pro belum diuji: dekoder videonya lebih lambat, dan batas yang diperiksa aplikasi diukur di Quest 3, sehingga video H.264 yang besar bisa ditolak dengan sebuah pesan atau tersendat di sana. Laporan dari kedua headset ini sangat diharapkan di [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Cara memakainya ada di [Di headset Meta Quest 3](#in-the-meta-quest-3-headset); bagian ini membahas pemasangannya dan apa yang berbeda di headset.
+
+Build headset hanya berkomunikasi dengan server melalui HTTPS, atau melalui HTTP biasa ke nama jaringan rumah (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) dan ke headset itu sendiri, sesuai persyaratan Horizon Store. Server yang diketik sebagai alamat HTTP biasa dengan IP, seperti `http://192.168.1.10:2283`, ditolak oleh build tersebut: gunakan HTTPS, nama jaringan rumah (`nas.local`), atau `-release.apk` universal, yang mempertahankan kebijakan terbuka seperti di ponsel.
+
+Berbagi WebDAV, DLNA, dan ponsel di alamat HTTP biasa pada jaringan lokal tidak terpengaruh: aplikasi membacanya sendiri dan hanya memberikan alamat jembatan lokalnya kepada pemutar (masih perlu dikonfirmasi di headset untuk DLNA dan berbagi ponsel, yang baru di build 19). Sejak build 20 server Plex dijangkau melalui HTTPS, dan kamera Tapo oleh aplikasi itu sendiri, dengan tampilan langsungnya melalui RTSP, yang bukan HTTP: keduanya seharusnya tidak terpengaruh (masih perlu dikonfirmasi di headset).
 
 <a id="install"></a>
 ### Pemasangan
@@ -762,16 +922,23 @@ Meta menyetujui listing di Horizon Store pada 7 Oktober 2026 dengan build 14, da
 
 ### Di jendela
 
-Seluruh aplikasi berjalan sebagai jendela 2D yang bisa diubah ukurannya: masuk, linimasa, album, pencarian, tab Pustaka (daftar 360°, Di perangkat ini, Berbagi jaringan), pengaturan, serta penampil foto dan video, tempat foto dan video datar diputar. Di headset, tombol 360°, dan Lihat sebagai 360° di menu ⋮, langsung membuka tampilan imersif alih-alih penampil bola seperti di ponsel, dan tombol Spatial 2.5D beserta pengaturannya tidak ditampilkan. Sejak build 19, foto spasial Apple memiliki tombol Lihat dalam 3D, dan petak Bagikan ponsel ini di jaringan tidak ditampilkan: headset adalah pihak yang membaca berbagi dari ponsel. Sejak build 20 server Plex dan kamera Tapo juga terbuka di jendela, dengan tampilan langsung kamera dalam HD; pengaturan "Tata letak remote" tetap pada Otomatis, yang membiarkannya mati di headset.
+Seluruh aplikasi berjalan sebagai jendela 2D yang bisa diubah ukurannya: masuk, linimasa, album, pencarian, tab Pustaka (daftar 360°, Di perangkat ini, Berbagi jaringan), pengaturan, serta penampil foto dan video, tempat foto dan video datar diputar.
+
+Di headset, tombol 360°, dan Lihat sebagai 360° di menu ⋮, langsung membuka tampilan imersif alih-alih penampil bola seperti di ponsel, dan tombol Spatial 2.5D beserta pengaturannya tidak ditampilkan.
+
+Sejak build 19, foto spasial Apple memiliki tombol Lihat dalam 3D, dan petak Bagikan ponsel ini di jaringan tidak ditampilkan: headset adalah pihak yang membaca berbagi dari ponsel. Sejak build 20 server Plex dan kamera Tapo juga terbuka di jendela, dengan tampilan langsung kamera dalam HD; pengaturan "Tata letak remote" tetap pada Otomatis, yang membiarkannya mati di headset.
 
 ### Dalam gambar
 
 Tangkapan diambil di headset dengan tombol tangkap (tombol Meta dan pemicu), di Quest 3, dengan aplikasi dalam bahasa Prancis; tab Pustaka ditampilkan dalam mode tanpa server.
 
-| Tanpa server | Berbagi jaringan |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Tab Pustaka tanpa server: Di perangkat ini dan Berbagi jaringan"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Halaman Berbagi jaringan dengan berbagi SMB dari Freebox Server"> |
-| Tab Pustaka dalam mode tanpa server: media headset itu sendiri dan berbagi jaringan | Berbagi Samba dari Freebox Server, dibaca langsung dari headset |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Tab Pustaka tanpa server: Di perangkat ini dan Berbagi jaringan">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Halaman Berbagi jaringan dengan berbagi SMB dari Freebox Server">
+</p>
+
+- **Tanpa server**: tab Pustaka dalam mode tanpa server, dengan media headset itu sendiri dan berbagi jaringan.
+- **Berbagi jaringan**: berbagi Samba dari Freebox Server, dibaca langsung dari headset.
 
 ### Batasan di headset
 
@@ -786,12 +953,18 @@ Tangkapan diambil di headset dengan tombol tangkap (tombol Meta dan pemicu), di 
 
 Aplikasi ini ada di Google Play untuk ponsel dan tablet; versi App Store sedang menunggu tinjauan Apple, listing Meta Horizon Store sudah disetujui dan pembaruan pertamanya sedang ditinjau Meta, dan versi Google Play untuk TV menunggu tinjauan Google atas rilis TV. Rilis GitHub selalu berisi build terbaru:
 
-| Platform | Saat ini | Segera |
-|---|---|---|
-| Ponsel dan tablet Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), atau APK di halaman [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk ponsel (`Immuch360-v<version>-release.apk` universal berjalan di mana saja, `-armeabi-v7a` untuk ponsel 32 bit yang lebih lama, dan file `.aab` untuk Google Play, bukan untuk sideload). Build GitHub biasanya lebih baru daripada di toko. Bagaimanapun juga, aplikasi ini terpasang berdampingan dengan aplikasi resmi Immich (paket `com.aprogsys.immuch360`). | Google Play: build 18 sudah tayang, build 20 sedang ditinjau Google sejak 7 Oktober 2026, menggantikan build 19 |
-| iPhone dan iPad | Menunggu tinjauan Apple. Versi yang sedang ditinjau membawa fitur build 11: unggah ke Immich dan pilihan "Sumber video" (build 15) serta file Insta360 mentah (build 16) akan hadir dengan pembaruan App Store berikutnya. Kode sumbernya bisa dibuat dengan Xcode atau di Codemagic, lihat [Membuatnya sendiri](#build-it-yourself). | App Store, sedang ditinjau |
-| Meta Quest 2, Quest Pro, Quest 3, dan 3S (Quest 2 dan Quest Pro belum diuji) | File `-quest-release.apk` dari halaman [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` universal juga berfungsi), dipasang lewat sideload dalam mode pengembang, lihat [Pemasangan](#install). Build toko dan APK GitHub ditandatangani dengan kunci yang berbeda: untuk beralih dari satu ke yang lain, copot pemasangan aplikasi terlebih dahulu (pengaturan dan berbagi yang tersimpan ikut terhapus). | Meta Horizon Store: listing disetujui pada 7 Oktober 2026 dengan build 14, dan build 21, pembaruan pertamanya, sedang ditinjau Meta; kanal alfa toko (khusus penguji) mendapat setiap build baru |
-| Android TV dan Google TV (sejak build 20) | `Immuch360-v<version>-release.apk` universal dari halaman [Releases](https://github.com/freeKC/Immuch360/releases), dipasang lewat sideload dengan adb, lihat [Memasangnya di TV](#install-it-on-the-tv). Ini aplikasi yang sama seperti di ponsel. | Google Play di TV, setelah tinjauan Google atas rilis TV |
+- **Ponsel dan tablet Android**
+  - Saat ini: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), atau APK di halaman [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk ponsel (`Immuch360-v<version>-release.apk` universal berjalan di mana saja, `-armeabi-v7a` untuk ponsel 32 bit yang lebih lama, dan file `.aab` untuk Google Play, bukan untuk sideload). Build GitHub biasanya lebih baru daripada di toko. Bagaimanapun juga, aplikasi ini terpasang berdampingan dengan aplikasi resmi Immich (paket `com.aprogsys.immuch360`).
+  - Segera: di Google Play, build 18 sudah tayang, build 20 sedang ditinjau Google sejak 7 Oktober 2026, menggantikan build 19.
+- **iPhone dan iPad**
+  - Saat ini: menunggu tinjauan Apple. Versi yang sedang ditinjau membawa fitur build 11: unggah ke Immich dan pilihan "Sumber video" (build 15) serta file Insta360 mentah (build 16) akan hadir dengan pembaruan App Store berikutnya. Kode sumbernya bisa dibuat dengan Xcode atau di Codemagic, lihat [Membuatnya sendiri](#build-it-yourself).
+  - Segera: App Store, sedang ditinjau.
+- **Meta Quest 2, Quest Pro, Quest 3, dan 3S (Quest 2 dan Quest Pro belum diuji)**
+  - Saat ini: file `-quest-release.apk` dari halaman [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` universal juga berfungsi), dipasang lewat sideload dalam mode pengembang, lihat [Pemasangan](#install). Build toko dan APK GitHub ditandatangani dengan kunci yang berbeda: untuk beralih dari satu ke yang lain, copot pemasangan aplikasi terlebih dahulu (pengaturan dan berbagi yang tersimpan ikut terhapus).
+  - Segera: di Meta Horizon Store, listing disetujui pada 7 Oktober 2026 dengan build 14, dan build 21, pembaruan pertamanya, sedang ditinjau Meta; kanal alfa toko (khusus penguji) mendapat setiap build baru.
+- **Android TV dan Google TV (sejak build 20)**
+  - Saat ini: `Immuch360-v<version>-release.apk` universal dari halaman [Releases](https://github.com/freeKC/Immuch360/releases), dipasang lewat sideload dengan adb, lihat [Memasangnya di TV](#install-it-on-the-tv). Ini aplikasi yang sama seperti di ponsel.
+  - Segera: Google Play di TV, setelah tinjauan Google atas rilis TV.
 
 Tautan App Store dan Meta Horizon Store akan ditambahkan di sini segera setelah listing-nya terbit. Masuk dengan URL server Immich dan akun yang biasa Anda pakai, atau ketuk "Gunakan tanpa server" di halaman masuk untuk mulai dengan foto dan video perangkat itu sendiri. APK dari GitHub tidak memperbarui dirinya sendiri: pantau halaman Releases, dan setelah Anda memasang aplikasi dari toko, ambil pembaruan dari toko tersebut.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Tangkapan layar untuk toko diambil dari build debug simulator yang dibuat dengan `--dart-define=IMMUCH_SCREENSHOTS=true`, yang hanya menyembunyikan banner debug. Kedua flavor Android adalah aplikasi yang sama. Sejak build 20 flavor `phone` juga menyatakan dirinya sebagai aplikasi TV (entri peluncur TV dan banner, tanpa memerlukan layar sentuh), yang tidak disertakan pada flavor `quest`. Flavor `quest` menargetkan SDK 34 dan hanya mempertahankan izin yang dipakai headset (foto, video, notifikasi): pengelolaan media, lokasi latar belakang, penyimpanan lama, audio, lokasi media, lokasi perangkat, dan kamera dihapus di `android/app/src/quest/AndroidManifest.xml`, karena Meta Horizon Store menolak dua yang pertama dan meminta alasan untuk setiap izin sensitif lainnya; file yang sama menyebutkan Quest 2, Quest Pro, Quest 3, dan 3S sebagai perangkat yang didukung dan membatasi HTTP biasa hanya ke headset itu sendiri dan ke nama jaringan rumah. APK-nya hanya 64 bit karena dua argumen tambahan pada baris perintahnya (`--target-platform android-arm64 --android-project-arg arm64only=true`). Flavor `phone` adalah yang diwajibkan Google Play. Untuk membuat build iOS di Mac Anda sendiri, gunakan Xcode dan tim penandatanganan Anda sendiri; dengan Xcode 26, jalankan `xcodebuild -downloadComponent MetalToolchain` sekali terlebih dahulu, karena shader Spatial memerlukannya. Tanpa Mac, build iOS berjalan di Codemagic (Mac yang di-hosting) dari file `codemagic.yaml` di repositori ini. Build rilis Android berjalan di GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Tangkapan layar untuk toko diambil dari build debug simulator yang dibuat dengan `--dart-define=IMMUCH_SCREENSHOTS=true`, yang hanya menyembunyikan banner debug.
+
+Kedua flavor Android adalah aplikasi yang sama. Sejak build 20 flavor `phone` juga menyatakan dirinya sebagai aplikasi TV (entri peluncur TV dan banner, tanpa memerlukan layar sentuh), yang tidak disertakan pada flavor `quest`.
+
+Flavor `quest` menargetkan SDK 34 dan hanya mempertahankan izin yang dipakai headset (foto, video, notifikasi): pengelolaan media, lokasi latar belakang, penyimpanan lama, audio, lokasi media, lokasi perangkat, dan kamera dihapus di `android/app/src/quest/AndroidManifest.xml`, karena Meta Horizon Store menolak dua yang pertama dan meminta alasan untuk setiap izin sensitif lainnya; file yang sama menyebutkan Quest 2, Quest Pro, Quest 3, dan 3S sebagai perangkat yang didukung dan membatasi HTTP biasa hanya ke headset itu sendiri dan ke nama jaringan rumah. APK-nya hanya 64 bit karena dua argumen tambahan pada baris perintahnya (`--target-platform android-arm64 --android-project-arg arm64only=true`). Flavor `phone` adalah yang diwajibkan Google Play.
+
+Untuk membuat build iOS di Mac Anda sendiri, gunakan Xcode dan tim penandatanganan Anda sendiri; dengan Xcode 26, jalankan `xcodebuild -downloadComponent MetalToolchain` sekali terlebih dahulu, karena shader Spatial memerlukannya. Tanpa Mac, build iOS berjalan di Codemagic (Mac yang di-hosting) dari file `codemagic.yaml` di repositori ini. Build rilis Android berjalan di GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Tidak ada rahasia yang disimpan di repositori ini: kunci penandatanganan Android disimpan sebagai secret GitHub Actions yang terenkripsi, dan materi penandatanganan Apple disimpan sebagai variabel terenkripsi di Codemagic. File workflow hanya merujuknya berdasarkan nama. Tanpa `android/key.jks` milik Anda sendiri, build rilis ditandatangani dengan kunci debug dan tidak bisa dipasang di atas salinan dari GitHub atau toko (copot pemasangan yang itu terlebih dahulu); build debug terpasang berdampingan sebagai Immuch360 debug. Salinan di Meta Horizon Store adalah APK `quest` dari rilis yang ditandatangani dengan kunci lain, yaitu kunci yang dipakai saat aplikasi toko pertama kali didaftarkan, sehingga salinan itu juga tidak bisa dipasang di atas APK hasil sideload, begitu pula sebaliknya.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Sejak build 19, klien DLNA, berbagi ponsel, dan deteksi media spasial Apple juga menulis ke log milik aplikasi (Log, di menu foto profil di kanan atas), dengan `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe`, dan `NetworkMediaService`. Sejak build 20 mode TV menulis di sana dengan `TvMode` dan `TvTextEntry`, server Plex dengan `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem`, dan `PlexServerEditPage`, dan kamera Tapo dengan `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage`, dan `CameraLiveView`; baris Plex tidak pernah memuat token, alamat, atau judul, dan baris kamera tidak menyertakan kata sandi. Baris log tetap berada di perangkat kecuali Anda menyalinnya sendiri.
 
+<a id="privacy"></a>
 ## Privasi
 
 - **Tidak ada yang dikirim ke pengembang**: aplikasi berkomunikasi dengan server Immich yang Anda pilih (dan, saat Anda membuka peta, dengan layanan ubin peta yang dipakai server tersebut), tidak memiliki iklan, analitik, atau layanan pelaporan crash yang dijalankan oleh pengembang, dan tidak mengirim apa pun kepada pengembang Immuch360.
@@ -849,10 +1029,12 @@ Sejak build 19, klien DLNA, berbagi ponsel, dan deteksi media spasial Apple juga
 
 Kebijakan lengkapnya ada di [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Lisensi dan merek dagang
 
 Proyek ini adalah fork dari Immich dan tetap berada di bawah [GNU AGPL v3](../LICENSE). Setiap APK, termasuk untuk ponsel, juga berisi Meta Spatial SDK, yang bukan sumber terbuka (Meta Platform Technologies SDK License Agreement) dan hanya dipakai di headset Meta Quest. Immuch360 tidak berafiliasi dengan, maupun didukung oleh, tim Immich atau FUTO.
 
+<a id="roadmap"></a>
 ## Peta jalan
 
 Hal-hal yang belum selesai, dimulai dari yang paling mungkin. Tidak ada yang di sini merupakan janji, dan masukan di [pelacak issue](https://github.com/freeKC/Immuch360/issues) membantu menentukan apa yang didahulukan.
@@ -871,6 +1053,7 @@ Hal-hal yang belum selesai, dimulai dari yang paling mungkin. Tidak ada yang di 
 - **Plex, berikutnya**: uji perangkat build 20 (ponsel, Quest, iPhone, TV, di luar rumah); membawa token dari komputer dengan kode QR; menyembunyikan sisi DLNA server Plex di daftar server yang ditemukan; IPv6.
 - **Upstream**: pull request kecil ke Immich untuk bagian yang diinginkan para pengelola, dimulai dengan penampil foto 360°.
 
+<a id="credits"></a>
 ## Kredit
 
 Penampil foto 360° didasarkan pada pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) oleh dmitry-brazhenko, yang dibangun di atas prototipe dari bencefr di [#30192](https://github.com/immich-app/immich/pull/30192). Terima kasih kepada keduanya.

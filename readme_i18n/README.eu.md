@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | Euskara | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Euskara</b> · Beste hizkuntzak (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: 360°, 3D eta VR180 argazkiak eta bideoak, Immich-etik, zure telefonotik edo NAS batetik. Android, iOS eta Meta Quest, zerbitzariarekin edo gabe">
 </p>
 
 # Immuch360
 
-Immuch360 Immich-en mugikorreko aplikazioa da, inguruan begiratu daitezkeen 360° argazki eta bideoekin, eta argazki eta bideo lau, 360°, 3D eta VR180 erreproduzitzeko doako erreproduzitzaile bat, Android telefono eta tabletetan, iPhone eta iPad-etan, Meta Quest betaurrekoetan (Quest 3 eta 3S, eta 21. konpilaziotik aurrera Quest 2 eta Quest Pro, probatu gabe), eta 20. konpilaziotik aurrera Android TV eta Google TV-n. 360° kamera batekin (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) edo telefono baten argazki esferikoen moduarekin argazkiak ateratzen dituztenentzat da, edo betaurreko birtualak dituztenentzat, eta beren argazkiak Immich zerbitzari batetik, telefonotik bertatik, NAS batetik, multimedia-zerbitzari batetik edo Plex zerbitzari batetik ikusi nahi dituztenentzat: zerbitzari bera, kontu bera, zerbitzarian pluginik gabe, edo zerbitzaririk gabe. 20. konpilaziotik aurrera Tapo kamerak ere erakusten ditu, zuzenean eta beren memoria-txarteleko grabazioak.
+Immuch360 Immich-en mugikorreko aplikazioa da, inguruan begiratu daitezkeen 360° argazki eta bideoekin, eta argazki eta bideo lau, 360°, 3D eta VR180 erreproduzitzeko doako erreproduzitzaile bat, Android telefono eta tabletetan, iPhone eta iPad-etan, Meta Quest betaurrekoetan (Quest 3 eta 3S, eta 21. konpilaziotik aurrera Quest 2 eta Quest Pro, probatu gabe), eta 20. konpilaziotik aurrera Android TV eta Google TV-n.
+
+360° kamera batekin (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) edo telefono baten argazki esferikoen moduarekin argazkiak ateratzen dituztenentzat da, edo betaurreko birtualak dituztenentzat, eta beren argazkiak Immich zerbitzari batetik, telefonotik bertatik, NAS batetik, multimedia-zerbitzari batetik edo Plex zerbitzari batetik ikusi nahi dituztenentzat: zerbitzari bera, kontu bera, zerbitzarian pluginik gabe, edo zerbitzaririk gabe. 20. konpilaziotik aurrera Tapo kamerak ere erakusten ditu, zuzenean eta beren memoria-txarteleko grabazioak.
 
 <p align="center">
   <sub>Fork ez-ofiziala. Ez dago Immich-ekin ez FUTO-rekin lotuta. Izena "I am much 360" bezala irakurtzen da.</sub>
@@ -13,29 +15,52 @@ Immuch360 Immich-en mugikorreko aplikazioa da, inguruan begiratu daitezkeen 360�
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APKa</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">berrikuspenean</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APKa</a>, Horizon Store onartua, 21. konpilazioa bere lehen eguneratze gisa bidalia &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">Android APKa</a><br>
+  App Store: <a href="#where-to-get-it">berrikuspenean</a><br>
+  Meta Quest: <a href="#meta-quest-3">APKa</a>, Horizon Store onartua, 21. konpilazioa bere lehen eguneratze gisa bidalia<br>
   Android TV: <a href="#install-it-on-the-tv">APKa</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 360° natiboa</h3>Argazkiak eta bideoak inguruan begiratzeko esfera gisa, giroskopioarekin, kamerako fitxategi gordinak barne (Insta360 16. konpilaziotik aurrera, GoPro eta DJI 18. konpilaziotik aurrera). Doako bideo-erreproduzitzailea ere bai: laua, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 3D natiboa</h3>360° estereoskopikoa eta VR180, goian eta behean edo bata bestearen ondoan, eta Apple-ren argazki espazialak (19. konpilaziotik aurrera): benetako 3D betaurrekoetan, begi bakarra telefonoan</td>
-    <td align="center" width="33%"><h3>🎥 2.5D natiboa</h3>Sakonera pantaila lau batean bideo estereoskopiko batetik abiatuta, ikuspegiak zure burua jarraitzen du (esperimentala, telefonoak eta tabletak)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Aplikazio bat telefono, tableta eta Quest 2, Pro, 3 eta 3S betaurrekoetan, benetako 3D betaurrekoetan, eta 20. konpilaziotik aurrera Android TV-n urruneko agintearekin</td>
-    <td align="center"><h3>🔌 Zerbitzariarekin edo gabe</h3>Zure Immich zerbitzaria, edo telefonoaren galeria bera, konturik behar gabe</td>
-    <td align="center"><h3>🗄️ Sareko partekatzeak</h3>Samba (SMB), WebDAV eta, 19. konpilaziotik aurrera, DLNA multimedia-zerbitzariak, sarean aurkituak eta zuzenean irakurriak, ezer deskargatu gabe, eta Immich-era bidaliak zuk erabakitzen duzunean. 19. konpilaziotik aurrera telefono batek bere galeria ere partekatzen du betaurrekoekin</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Telebistan</h3>20. konpilaziotik aurrera APK bera Android TV eta Google TV-n: 360° argazkiak eta bideoak, zure zerbitzaria eta zure partekatzeak, urruneko agintearekin</td>
-    <td align="center"><h3>🎬 Plex, plex.tv gabe</h3>20. konpilaziotik aurrera zure Plex liburutegiak, jatorrizko fitxategietatik erreproduzituak 360° 360° izaten jarraitzeko, etxean eta etxetik kanpo</td>
-    <td align="center"><h3>📹 Tapo kamerak</h3>20. konpilaziotik aurrera zuzeneko ikuspegia eta memoria-txarteleko grabazioak, zure sarean bakarrik, eta klip bat Immich-era bidalia zuk erabakitzen duzunean</td>
-  </tr>
-</table>
+- 🌐 **360° natiboa**<br>Argazkiak eta bideoak inguruan begiratzeko esfera gisa, giroskopioarekin, kamerako fitxategi gordinak barne (Insta360 16. konpilaziotik aurrera, GoPro eta DJI 18. konpilaziotik aurrera). Doako bideo-erreproduzitzailea ere bai: laua, 360°, 3D, VR180
+- 👓 **3D natiboa**<br>360° estereoskopikoa eta VR180, goian eta behean edo bata bestearen ondoan, eta Apple-ren argazki espazialak (19. konpilaziotik aurrera): benetako 3D betaurrekoetan, begi bakarra telefonoan
+- 🎥 **2.5D natiboa**<br>Sakonera pantaila lau batean bideo estereoskopiko batetik abiatuta, ikuspegiak zure burua jarraitzen du (esperimentala, telefonoak eta tabletak)
+- 📱 **Android, iOS, Quest, TV**<br>Aplikazio bat telefono, tableta eta Quest 2, Pro, 3 eta 3S betaurrekoetan, benetako 3D betaurrekoetan, eta 20. konpilaziotik aurrera Android TV-n urruneko agintearekin
+- 🔌 **Zerbitzariarekin edo gabe**<br>Zure Immich zerbitzaria, edo telefonoaren galeria bera, konturik behar gabe
+- 🗄️ **Sareko partekatzeak**<br>Samba (SMB), WebDAV eta, 19. konpilaziotik aurrera, DLNA multimedia-zerbitzariak, sarean aurkituak eta zuzenean irakurriak, ezer deskargatu gabe, eta Immich-era bidaliak zuk erabakitzen duzunean. 19. konpilaziotik aurrera telefono batek bere galeria ere partekatzen du betaurrekoekin
+- 📺 **Telebistan**<br>20. konpilaziotik aurrera APK bera Android TV eta Google TV-n: 360° argazkiak eta bideoak, zure zerbitzaria eta zure partekatzeak, urruneko agintearekin
+- 🎬 **Plex, plex.tv gabe**<br>20. konpilaziotik aurrera zure Plex liburutegiak, jatorrizko fitxategietatik erreproduzituak 360° 360° izaten jarraitzeko, etxean eta etxetik kanpo
+- 📹 **Tapo kamerak**<br>20. konpilaziotik aurrera zuzeneko ikuspegia eta memoria-txarteleko grabazioak, zure sarean bakarrik, eta klip bat Immich-era bidalia zuk erabakitzen duzunean
+
+<details>
+<summary><b>Edukiak</b></summary>
+
+- [360° argazkiak eta bideoak esfera gisa](#360-photos-and-videos-as-a-sphere)
+- [Zerbitzaririk eta konturik gabe](#without-a-server-or-an-account)
+- [Sareko partekatzeak: NAS bat, ordenagailu bat edo multimedia-zerbitzari bat](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, plex.tv gabe](#plex-media-server-without-plextv)
+- [Partekatu telefono hau sarean](#share-this-phone-on-the-network)
+- [Tapo kamerak: zuzeneko ikuspegia eta memoria-txarteleko grabazioak](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [360° kameren fitxategi gordinak, kameraren aplikaziorik gabe](#raw-360-camera-files-without-the-cameras-app)
+- [3D eta VR180 argazkiak eta bideoak](#3d-and-vr180-photos-and-videos)
+- [Sakonera pantaila lau batean: Spatial 2.5D (esperimentala)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Apple-ren argazki eta bideo espazialak](#apple-spatial-photos-and-videos)
+- [Meta Quest 3 betaurrekoetan](#in-the-meta-quest-3-headset)
+- [Ikusi zure telebistan (Android TV eta Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Aurkitu zure 360° argazkiak: 360° zerrenda](#find-your-360-shots-the-360-list)
+- [Bideoaren xehetasunak, deskodetzaileak eta zergatik dituen bideo batek etenak](#video-details-decoders-and-why-a-video-stutters)
+- [Gainerako guztia Immich da](#everything-else-is-immich)
+- [Immich aplikazioarekin eta beste aplikazio batzuekin alderatuta](#compared-with-the-immich-app-and-other-apps)
+- [Formatuak eta iturriak, plataformaren arabera](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Non lortu](#where-to-get-it)
+- [Konpilatu zuk zeuk](#build-it-yourself)
+- [Erregistroak](#logs)
+- [Pribatutasuna](#privacy)
+- [Lizentzia eta marka](#license-and-trademark)
+- [Bide-orria](#roadmap)
+- [Kredituak](#credits)
+
+</details>
 
 ## Zer arazo duzu?
 
@@ -61,12 +86,19 @@ Funtzio bat berria denean, testuak zein konpilaziotik aurrera dagoen esaten du. 
 
 Zure argazkien babes-kopiak [Immich](https://github.com/immich-app/immich) zerbitzari batean egiten dituzu, eta horietako batzuk 360° kamera batetik edo telefono baten argazki esferikoen modutik datoz. Aplikazio mugikor ofizialean irudi horiek zerrenda lau eta luzatu gisa agertzen dira, eta 360° bideoak ere lau erreproduzitzen dira. Immich-en web aplikazioak 360° argazki bat esfera gisa erakuts dezake, aplikazio mugikorrak ez: 2024ko urtarriletik eskatzen da [#6572 eztabaidan](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360-k inguruan begiratzeko esfera gisa irekitzen ditu, Android eta iOS telefono eta tabletetan. Argazki bat arrastatzean biratzen da, atximurkatuz edo bi aldiz sakatuz zoomak egiten ditu, arrastatze azkar baten ondoren pixka bat biratzen jarraitzen du, kamerak grabatutako hasierako ikuspegian hasten da (GPano metadatuak), eta zooma egitean testura zorrotzagoa lortzen du; panoramika partzialak kontuan hartzen dira (GPano moztea). Bideo bat erreproduzitzaile esferiko natibo batean erreproduzitzen da, soinuarekin, arrastatzearekin eta giroskopioarekin. Josita dauden 360° fitxategiek leku guztietan funtzionatzen dute: Insta360 aplikazioko edo Studio-ko esportazioak, GoPro Player, Ricoh Theta eta telefonoen argazki esferikoak. Kameratik zuzenean datozen fitxategi gordinak aplikazioak josten ditu, ikusi [360° kameren fitxategi gordinak](#raw-360-camera-files-without-the-cameras-app).
+Immuch360-k inguruan begiratzeko esfera gisa irekitzen ditu, Android eta iOS telefono eta tabletetan.
 
-| 360° argazki bat esfera gisa | 360° bideo bat 360° erreproduzitzailean |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="Laku-ertz baten 360° argazkia esfera-ikustailean: ixteko botoia goian ezkerrean, 360°, 3D antolaera eta giroskopio botoiak goian eskuinean"> | <img src="../.github/readme/b19-video.png" width="420" alt="Kostaldeko errepide baten 360° bideoa, etzanda dagoen telefono baten 360° erreproduzitzailean: itxi eta fitxategiaren izena goian ezkerrean, 360° eta 3D goian eskuinean, aurrekoa, atzera saltatu, erreproduzitu, aurrera saltatu eta hurrengoa erdian, denbora-barra behean"> |
-| Itxi goian ezkerrean; goian eskuinean 360°/180° botoia, 3D antolaeraren botoia eta giroskopioa | Sakatu irudia kontrolak ikusteko; 360° eta 3D goian eskuinean |
+Argazki bat arrastatzean biratzen da, atximurkatuz edo bi aldiz sakatuz zoomak egiten ditu, arrastatze azkar baten ondoren pixka bat biratzen jarraitzen du, kamerak grabatutako hasierako ikuspegian hasten da (GPano metadatuak), eta zooma egitean testura zorrotzagoa lortzen du; panoramika partzialak kontuan hartzen dira (GPano moztea). Bideo bat erreproduzitzaile esferiko natibo batean erreproduzitzen da, soinuarekin, arrastatzearekin eta giroskopioarekin.
+
+Josita dauden 360° fitxategiek leku guztietan funtzionatzen dute: Insta360 aplikazioko edo Studio-ko esportazioak, GoPro Player, Ricoh Theta eta telefonoen argazki esferikoak. Kameratik zuzenean datozen fitxategi gordinak aplikazioak josten ditu, ikusi [360° kameren fitxategi gordinak](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="Laku-ertz baten 360° argazkia esfera-ikustailean: ixteko botoia goian ezkerrean, 360°, 3D antolaera eta giroskopio botoiak goian eskuinean">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Kostaldeko errepide baten 360° bideoa, etzanda dagoen telefono baten 360° erreproduzitzailean: itxi eta fitxategiaren izena goian ezkerrean, 360° eta 3D goian eskuinean, aurrekoa, atzera saltatu, erreproduzitu, aurrera saltatu eta hurrengoa erdian, denbora-barra behean">
+</p>
+
+- **360° argazki bat esfera gisa**: itxi goian ezkerrean; goian eskuinean 360°/180° botoia, 3D antolaeraren botoia eta giroskopioa.
+- **360° bideo bat 360° erreproduzitzailean**: sakatu irudia kontrolak ikusteko; 360° eta 3D goian eskuinean.
 
 ### Ireki 360° argazki bat esfera gisa
 
@@ -135,12 +167,17 @@ Saioa hasteko orrian, "Erabili zerbitzaririk gabe" aukerak Immuch360 gailuaren a
 
 Zure 360° bideoak NAS batean edo ordenagailu batean daude, eta telefonoan edo betaurrekoetan ikusi nahi dituzu aurretik kopiatu gabe. Betaurrekoetan, jendeak fitxategi bakoitza kable bidez kopiatzen amaitzen du; Plex eta Jellyfin bezalako multimedia-zerbitzariek 360° bideoak lau erreproduzitzen dituzte, beren foroetako eskaerek deskribatzen duten bezala; Immich aplikazioak zure Immich zerbitzaria bakarrik irakurtzen du.
 
-Immuch360-k SMB (Samba, Windows), WebDAV edo, 19. konpilaziotik aurrera, DLNA/UPnP (multimedia-zerbitzari bat: Jellyfin, minidlna, Gerbera, Emby, NAS bat edo TB kutxa bat) hitz egiten duen edozein zerbitzariren argazkiak eta bideoak arakatzen eta erreproduzitzen ditu, zuzenean partekatzetik. 20. konpilaziotik aurrera Plex Media Server batek bere mota propioa du, ikusi [Plex Media Server, plex.tv gabe](#plex-media-server-without-plextv). Zure sareko zerbitzariak berak aurkitzen ditu, eta fitxategiak zuzenean erreproduzitzen ditu aplikazioaren gainerako ikustaile berberetan (360°, 3D, VR180, Spatial 2.5D, Quest-eko ikuspegi murgiltzailea), Immich zerbitzariarekin edo gabe, telefonoetan eta Meta Quest 3 betaurrekoetan. Ez da ezer deskargatzen. Zerbitzari bat konektatuta dagoenean, aukeratzen dituzun fitxategiak zure Immich kontura bidal daitezke (15. konpilaziotik aurrera).
+Immuch360-k SMB (Samba, Windows), WebDAV edo, 19. konpilaziotik aurrera, DLNA/UPnP (multimedia-zerbitzari bat: Jellyfin, minidlna, Gerbera, Emby, NAS bat edo TB kutxa bat) hitz egiten duen edozein zerbitzariren argazkiak eta bideoak arakatzen eta erreproduzitzen ditu, zuzenean partekatzetik. 20. konpilaziotik aurrera Plex Media Server batek bere mota propioa du, ikusi [Plex Media Server, plex.tv gabe](#plex-media-server-without-plextv).
 
-| Gehitu partekatze bat | Partekatze baten karpeta bat |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Gehitu partekatze bat orria: Izena, Zerbitzariaren izena edo helbidea, Ataka (aukerakoa), Partekatzea, Aukeratu partekatze bat, Hasierako karpeta (aukerakoa), Erabiltzaile izena, Pasahitza, Probatu konexioa, eta emaitza Konektatuta, 2 elementu hasierako karpetan"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Sareko partekatze baten karpeta miniaturen sareta gisa: 360° argazkiak 360° ikurrarekin eta 360° bideo bat erreprodukzio-markarekin, Hautatu botoia goian eskuinean"> |
-| SMB partekatze berri baten eremuak, Probatu konexioa sakatu ondoren | 360° argazkiak eta bideo bat, zuzenean partekatzetik irakurriak |
+Zure sareko zerbitzariak berak aurkitzen ditu, eta fitxategiak zuzenean erreproduzitzen ditu aplikazioaren gainerako ikustaile berberetan (360°, 3D, VR180, Spatial 2.5D, Quest-eko ikuspegi murgiltzailea), Immich zerbitzariarekin edo gabe, telefonoetan eta Meta Quest 3 betaurrekoetan. Ez da ezer deskargatzen. Zerbitzari bat konektatuta dagoenean, aukeratzen dituzun fitxategiak zure Immich kontura bidal daitezke (15. konpilaziotik aurrera).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Gehitu partekatze bat orria: Izena, Zerbitzariaren izena edo helbidea, Ataka (aukerakoa), Partekatzea, Aukeratu partekatze bat, Hasierako karpeta (aukerakoa), Erabiltzaile izena, Pasahitza, Probatu konexioa, eta emaitza Konektatuta, 2 elementu hasierako karpetan">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Sareko partekatze baten karpeta miniaturen sareta gisa: 360° argazkiak 360° ikurrarekin eta 360° bideo bat erreprodukzio-markarekin, Hautatu botoia goian eskuinean">
+</p>
+
+- **Gehitu partekatze bat**: SMB partekatze berri baten eremuak, Probatu konexioa sakatu ondoren.
+- **Partekatze baten karpeta bat**: 360° argazkiak eta bideo bat, zuzenean partekatzetik irakurriak.
 
 ### Gehitu partekatze bat
 
@@ -178,16 +215,26 @@ Partekatze bateko argazki edo bideo irekiak sarrera bera du bere menuan. Zerbitz
 
 ### Nola erreproduzitzen den deskargatu gabe
 
-Erreproduzitzaileek behar dituzten byteak aplikazioaren barruko zubi baten bidez irakurtzen dituzte (loopback helbidea bakarrik, ausazko token bat saio bakoitzeko, byte-barrutiak), beraz bideoan aurrera eta atzera egiteak funtzionatzen du eta ez da ezer gailura kopiatzen. Erreproduzitzaileek eta betaurrekoetako ikustaileak ez dute inoiz partekatzearen helbidea jasotzen, zubiaren 127.0.0.1 bakarrik; zerbitzarirako eskaerak aplikazioak berak egiten ditu. Erreprodukzio arina lortzeko, partekatzea bloke handitan irakurtzen da, fitxategia irekita geratzen da irakurketen artean, erreproduzitzailearen aurretik 16 MB arte irakurtzen dira, eta erreproduzitzen ari den bideoa sei SMB konexio paralelo arte erabiliz irakurtzen da, miniaturak eta zerrendak zerbitzatzen dituen konexiotik bereizita. Freebox Server batek poliki erantzuten dio irakurketa bakoitzari: konexio batek 4,5 MB/s ematen ditu, seik 19 MB/s, nahikoa 132 Mbit/s-ko 5.7K esportazio baterako. Erreproduzitzailea datuen zain dagoen bitartean, 360° eta Spatial erreproduzitzaileek "Kargatzen" erakusten dute beren erreprodukzio-bufferraren betetze-mailarekin; erreproduzitzaile lauak "Kargatzen" erakusten du ehunekorik gabe, bideoa kargatzen ari den edo gelditzen den bitartean.
+Erreproduzitzaileek behar dituzten byteak aplikazioaren barruko zubi baten bidez irakurtzen dituzte (loopback helbidea bakarrik, ausazko token bat saio bakoitzeko, byte-barrutiak), beraz bideoan aurrera eta atzera egiteak funtzionatzen du eta ez da ezer gailura kopiatzen. Erreproduzitzaileek eta betaurrekoetako ikustaileak ez dute inoiz partekatzearen helbidea jasotzen, zubiaren 127.0.0.1 bakarrik; zerbitzarirako eskaerak aplikazioak berak egiten ditu.
+
+Erreprodukzio arina lortzeko, partekatzea bloke handitan irakurtzen da, fitxategia irekita geratzen da irakurketen artean, erreproduzitzailearen aurretik 16 MB arte irakurtzen dira, eta erreproduzitzen ari den bideoa sei SMB konexio paralelo arte erabiliz irakurtzen da, miniaturak eta zerrendak zerbitzatzen dituen konexiotik bereizita. Freebox Server batek poliki erantzuten dio irakurketa bakoitzari: konexio batek 4,5 MB/s ematen ditu, seik 19 MB/s, nahikoa 132 Mbit/s-ko 5.7K esportazio baterako.
+
+Erreproduzitzailea datuen zain dagoen bitartean, 360° eta Spatial erreproduzitzaileek "Kargatzen" erakusten dute beren erreprodukzio-bufferraren betetze-mailarekin; erreproduzitzaile lauak "Kargatzen" erakusten du ehunekorik gabe, bideoa kargatzen ari den edo gelditzen den bitartean.
 
 ### DLNA multimedia-zerbitzariak
 
-Aplikazioak, 19. konpilaziotik aurrera, multimedia-zerbitzarien SSDP bilaketa sareko multicast taldera bidaltzen du, eta eskaera bera /24 sare lokaleko helbide bakoitzaren 1900 atakara, ondoren erantzuten duen zerbitzari bakoitzaren gailu-deskribapena irakurtzen du eta beren edukia argitaratzen dutenak gordetzen ditu (ContentDirectory bat). Karpetak eta fitxategiak zerbitzariaren Browse ekintzarekin zerrendatzen dira, orriz orri, eta beren izenburuen arabera izendatzen dira: fitxategi batek bere motaren luzapena jasotzen du izenburuak ez duenean, eta karpeta batean izenburu bera duen bigarren fitxategi bat `name (2)` bihurtzen da. Audioa kanpoan uzten da. Miniaturak zerbitzariak sortzen dituen albumaren azala edo irudi txikiak dira, aplikazioak berak kargatuak, eta aplikazioaren miniatura propioa zerbitzariak bat ere ez duenean. Fitxategi bat zerbitzariak eskaintzen duen jatorrizkotik erreproduzitzen da, bi eskaintzen dituenean kopia bihurtu baten ordez, barruti-eskaerekin irakurria, beraz aurrera eta atzera egiteak funtzionatzen du. minidlna eta Gerbera-ren aurka egiaztatua; benetako sare bateko aurkikuntza, Plex, Jellyfin, NAS bat, Freebox Server-a, iPhone bat eta Quest-a 19. konpilazioaren gailuko probaren parte dira.
+Aplikazioak, 19. konpilaziotik aurrera, multimedia-zerbitzarien SSDP bilaketa sareko multicast taldera bidaltzen du, eta eskaera bera /24 sare lokaleko helbide bakoitzaren 1900 atakara, ondoren erantzuten duen zerbitzari bakoitzaren gailu-deskribapena irakurtzen du eta beren edukia argitaratzen dutenak gordetzen ditu (ContentDirectory bat).
+
+Karpetak eta fitxategiak zerbitzariaren Browse ekintzarekin zerrendatzen dira, orriz orri, eta beren izenburuen arabera izendatzen dira: fitxategi batek bere motaren luzapena jasotzen du izenburuak ez duenean, eta karpeta batean izenburu bera duen bigarren fitxategi bat `name (2)` bihurtzen da. Audioa kanpoan uzten da. Miniaturak zerbitzariak sortzen dituen albumaren azala edo irudi txikiak dira, aplikazioak berak kargatuak, eta aplikazioaren miniatura propioa zerbitzariak bat ere ez duenean. Fitxategi bat zerbitzariak eskaintzen duen jatorrizkotik erreproduzitzen da, bi eskaintzen dituenean kopia bihurtu baten ordez, barruti-eskaerekin irakurria, beraz aurrera eta atzera egiteak funtzionatzen du.
+
+minidlna eta Gerbera-ren aurka egiaztatua; benetako sare bateko aurkikuntza, Plex, Jellyfin, NAS bat, Freebox Server-a, iPhone bat eta Quest-a 19. konpilazioaren gailuko probaren parte dira.
 
 <a id="a-share-that-moved"></a>
 ### Lekuz aldatu den partekatze bat
 
-DLNA partekatze batek eta telefono-partekatze batek (ikusi [Partekatu telefono hau sarean](#share-this-phone-on-the-network)), 19. konpilaziotik aurrera, beren zerbitzariak iragartzen duen IDa gordetzen dute. Batek bere helbidean erantzuteari uzten dionean (routerrak emandako helbide berri bat, beste ataka batean berrabiarazitako zerbitzari bat), bere karpeta-orriak "(izena) bilatzen sarean" erakusten du eta partekatzea orain erantzuten duen lekura eramaten du: berehala DLNA zerbitzari baterako, pasahitzik ez duelako, eta berrespen baten ondoren, "Helbide berria erabili?", bi helbideak erakutsiz, erabiltzaile-izena eta pasahitza dituen partekatze baterako, helbide berrira bidaliko liratekeelako. 20. konpilaziotik aurrera sareko beste helbide batean berriro aurkitutako Plex zerbitzari bat ere berehala lekualdatzen da: bere ziurtagiriak zerbitzari bera dela frogatzen du tokena bidali aurretik. Tapo kamera bat bere MAC helbidearen bidez bilatzen da bere orritik, ikusi [Tapo kamerak](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+DLNA partekatze batek eta telefono-partekatze batek (ikusi [Partekatu telefono hau sarean](#share-this-phone-on-the-network)), 19. konpilaziotik aurrera, beren zerbitzariak iragartzen duen IDa gordetzen dute. Batek bere helbidean erantzuteari uzten dionean (routerrak emandako helbide berri bat, beste ataka batean berrabiarazitako zerbitzari bat), bere karpeta-orriak "(izena) bilatzen sarean" erakusten du eta partekatzea orain erantzuten duen lekura eramaten du: berehala DLNA zerbitzari baterako, pasahitzik ez duelako, eta berrespen baten ondoren, "Helbide berria erabili?", bi helbideak erakutsiz, erabiltzaile-izena eta pasahitza dituen partekatze baterako, helbide berrira bidaliko liratekeelako.
+
+20\. konpilaziotik aurrera sareko beste helbide batean berriro aurkitutako Plex zerbitzari bat ere berehala lekualdatzen da: bere ziurtagiriak zerbitzari bera dela frogatzen du tokena bidali aurretik. Tapo kamera bat bere MAC helbidearen bidez bilatzen da bere orritik, ikusi [Tapo kamerak](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Mugak
 
@@ -227,7 +274,9 @@ Zure bideoak Plex-en daude, eta Plex-ek zure 360° argazkiak eta bideoak lau era
 
 ### Etxetik kanpo
 
-Zerbitzaria irekitzen duen bakoitzean, aplikazioak lehenik etxeko helbidea probatzen du eta, 400 ms geroago, etxetik kanpoko helbidea. Zure zerbitzariarekin erantzuten duen lehena erabiltzen da; etxetik kanpoko helbidea denean, karpeta-orriak globo-ikono bat erakusten du "Etxetik kanpoko helbidearen bidez konektatuta" etiketarekin. Horretarako urruneko sarbidea aktibatuta egon behar da Plex-en (Ezarpenak, Urruneko sarbidea), zure routerrak birbideratutako ataka batekin: plex.tv gabe aplikazioak ezin du Plex-en errelea erabili, beraz ataka-birbideratzerik gabeko zerbitzari bat etxean bakarrik irekitzen da, eta etxetik kanpo orriak dio "Zure Plex zerbitzaria ezin da atzitu etxeko saretik kanpo. Aktibatu urruneko sarbidea ataka-birbideratze batekin Plex-en (Ezarpenak, Urruneko sarbidea), edo idatzi bere helbide publikoa."
+Zerbitzaria irekitzen duen bakoitzean, aplikazioak lehenik etxeko helbidea probatzen du eta, 400 ms geroago, etxetik kanpoko helbidea. Zure zerbitzariarekin erantzuten duen lehena erabiltzen da; etxetik kanpoko helbidea denean, karpeta-orriak globo-ikono bat erakusten du "Etxetik kanpoko helbidearen bidez konektatuta" etiketarekin.
+
+Horretarako urruneko sarbidea aktibatuta egon behar da Plex-en (Ezarpenak, Urruneko sarbidea), zure routerrak birbideratutako ataka batekin: plex.tv gabe aplikazioak ezin du Plex-en errelea erabili, beraz ataka-birbideratzerik gabeko zerbitzari bat etxean bakarrik irekitzen da, eta etxetik kanpo orriak dio "Zure Plex zerbitzaria ezin da atzitu etxeko saretik kanpo. Aktibatu urruneko sarbidea ataka-birbideratze batekin Plex-en (Ezarpenak, Urruneko sarbidea), edo idatzi bere helbide publikoa."
 
 Zerbitzariak esaten duen helbidea berriro ikasten da etxeko konexio bakoitzean. Kanpotik erantzuten ez duenean (helbidea aldatzen duen router bat, bi router segidan), idatzi zurea zerbitzariaren orrian. Tokenak funtzionatzeari uzten dionean (adibidez, kopiatu zenuen nabigatzaile-saioa itxi duzulako), karpeta-orriak hala dio eta "Itsatsi token berri bat" eskaintzen du, zerbitzariaren orria token-eremuan irekitzen duena.
 
@@ -344,15 +393,13 @@ Insta360 kamerek beren objektiboen bi arrain-begi zirkuluak grabatzen dituzte, b
 
 Immuch360-k berak josten ditu fitxategi horiek 16. konpilaziotik aurrera, telefonoan, tabletan edo betaurrekoetan, zerbitzarian ezer instalatu gabe:
 
-| Kamera eta fitxategia | Aplikazioak zer egiten duen | Noiztik |
-|---|---|---|
-| Insta360 .insp argazkiak | GPUan josiak esfera-ikustailearen aurretik, gehienez 8192x4096, tamaina txikiagoko CPU ordezko batekin | 16. konpilazioa |
-| Bi objektiboak pista bakarrean gordetzen dituzten Insta360 .insv bideoak | Erreproduzitzailean GPU efektu batek josiak | 16. konpilazioa |
-| Insta360 X4, X4 Air, X5 eta X6 .insv bideoak, pista karratu bat objektibo bakoitzeko | Bi deskodetzaile aldi berean, bat objektibo bakoitzeko, eta GPU konposatzaile bat esferan josten dituena | 18. konpilazioa |
-| Insta360 X3 eta zaharragoak 5.7K-n eta gehiagotan: bi fitxategi, `_00_` eta `_10_` | Gauza bera, beste fitxategia lehenengoaren ondoan aurkituz | 18. konpilazioa |
-| GoPro MAX eta MAX 2 .360: bi pista, bakoitza kuboaren hiru aurpegirekin | Gauza bera, gainjartze-zutabeak nahastuz | 18. konpilazioa |
-| DJI Osmo 360 .osv: 10 biteko bi pista karratu | Gauza bera, fitxategiaren Kannala-Brandt kalibrazioarekin | 18. konpilazioa |
-| Arrain-begi bikoitzeko .dng | Lau ikusten da | Oraindik ez |
+- **Insta360 .insp argazkiak** (16. konpilazioa): GPUan josiak esfera-ikustailearen aurretik, gehienez 8192x4096, tamaina txikiagoko CPU ordezko batekin.
+- **Bi objektiboak pista bakarrean gordetzen dituzten Insta360 .insv bideoak** (16. konpilazioa): erreproduzitzailean GPU efektu batek josiak.
+- **Insta360 X4, X4 Air, X5 eta X6 .insv bideoak, pista karratu bat objektibo bakoitzeko** (18. konpilazioa): bi deskodetzaile aldi berean, bat objektibo bakoitzeko, eta GPU konposatzaile bat esferan josten dituena.
+- **Insta360 X3 eta zaharragoak 5.7K-n eta gehiagotan: bi fitxategi, `_00_` eta `_10_`** (18. konpilazioa): gauza bera, beste fitxategia lehenengoaren ondoan aurkituz.
+- **GoPro MAX eta MAX 2 .360: bi pista, bakoitza kuboaren hiru aurpegirekin** (18. konpilazioa): gauza bera, gainjartze-zutabeak nahastuz.
+- **DJI Osmo 360 .osv: 10 biteko bi pista karratu** (18. konpilazioa): gauza bera, fitxategiaren Kannala-Brandt kalibrazioarekin.
+- **Arrain-begi bikoitzeko .dng** (oraindik ez): lau ikusten da.
 
 ### Ikusi fitxategi gordin bat
 
@@ -466,7 +513,9 @@ Detekzioa Apple-ren irudi-liburutegiak berak idatzitako argazki espazial lagin b
 
 Jendeak Quest 3 bat erosten du bere 360° argazki eta bideoak ikusteko, eta ondoren galdetzen du non jarri fitxategiak, nola eraman betaurrekoetara kablerik gabe, eta zein erreproduzitzaile erabili: dendako 360° eta 3D bideo-erreproduzitzaileak ordainpekoak dira.
 
-Android aplikazio bera Quest 3 eta 3S betaurrekoetan, eta 21. konpilaziotik aurrera Quest 2 eta Quest Pro betaurrekoetan (probatu gabe), leiho gisa dabil, zure liburutegi osoarekin. Bere 360° botoiak ikuspegi murgiltzaile bat irekitzen du, non argazkia edo bideoa zure inguru osoan dagoen eta burua biratuz begiratzen duzun, benetako 3Dn fitxategi estereoskopikoetarako (Meta Spatial SDK). Multimedia-elementuak zure Immich zerbitzaritik, betaurrekoetatik beraietatik, NAS batetik, multimedia-zerbitzari batetik, telefono batetik edo Plex zerbitzari batetik datoz, bertan erreproduzituak (multimedia-zerbitzari bat eta telefono bat 19. konpilaziotik aurrera, Plex zerbitzari bat 20. konpilaziotik aurrera, oraindik betaurrekoetan egiaztatu gabe), eta 20. konpilaziotik aurrera leihoak Tapo kamerak ere erakusten ditu. Doakoa eta kode irekikoa da. Quest 3 batean egiaztatua, eta erabiltzaile batek Insta360 X4 8K HEVC bideoekin.
+Android aplikazio bera Quest 3 eta 3S betaurrekoetan, eta 21. konpilaziotik aurrera Quest 2 eta Quest Pro betaurrekoetan (probatu gabe), leiho gisa dabil, zure liburutegi osoarekin. Bere 360° botoiak ikuspegi murgiltzaile bat irekitzen du, non argazkia edo bideoa zure inguru osoan dagoen eta burua biratuz begiratzen duzun, benetako 3Dn fitxategi estereoskopikoetarako (Meta Spatial SDK).
+
+Multimedia-elementuak zure Immich zerbitzaritik, betaurrekoetatik beraietatik, NAS batetik, multimedia-zerbitzari batetik, telefono batetik edo Plex zerbitzari batetik datoz, bertan erreproduzituak (multimedia-zerbitzari bat eta telefono bat 19. konpilaziotik aurrera, Plex zerbitzari bat 20. konpilaziotik aurrera, oraindik betaurrekoetan egiaztatu gabe), eta 20. konpilaziotik aurrera leihoak Tapo kamerak ere erakusten ditu. Doakoa eta kode irekikoa da. Quest 3 batean egiaztatua, eta erabiltzaile batek Insta360 X4 8K HEVC bideoekin.
 
 ### Ireki ikuspegi murgiltzailea
 
@@ -479,17 +528,20 @@ Android aplikazio bera Quest 3 eta 3S betaurrekoetan, eta 21. konpilaziotik aurr
 
 | Ekintza | Kontrolagailuak | Eskuak |
 |---|---|---|
-| Itzuli aplikaziora | B edo Y | Informazio-paneleko "Atzera" botoia |
-| Erreproduzitu edo pausatu bideo bat | Katua, informazio-panela ezkutatuta dagoenean | Informazio-paneleko "Erreproduzitu" edo "Pausatu" botoia |
+| Itzuli aplikaziora | B edo Y | "Atzera" botoia |
+| Erreproduzitu edo pausatu bideo bat | Katua, informazio-panela ezkutatuta dagoenean | "Erreproduzitu" edo "Pausatu" botoia |
 | Erakutsi edo ezkutatu informazio-panela | A, X, heltzeko botoia edo menua | Menu-keinua, edo atximurkatu panela ezkutatuta dagoenean |
-| Biratu ikuspegia, atzean begiratzeko burua biratu gabe (17. konpilaziotik aurrera) | Eskuineko joystick-a ezkerrera edo eskuinera: 30° bultzada bakoitzeko, eta biratzen jarraitzen du eutsita dagoen bitartean (lerro bakarreko gainjartze batek angelua erakusten du) | Informazio-paneleko "Biratu" botoia (90°) |
-| Aurreko edo hurrengo multimedia-elementua | Ezkerreko joystick-a ezkerrera edo eskuinera (bi joystick-etako edozein 17. konpilazioa baino lehen; 16. konpilaziotik aurrera lerro bakarreko gainjartze batek elementua izendatzen du, informazio-panela ezkutuan geratzen da) | Informazio-paneleko "Aurrekoa" eta "Hurrengoa" botoiak |
-| 10 segundo atzera edo aurrera bideo batean | Joystick-a behera edo gora (16. konpilaziotik aurrera lerro bakarreko gainjartze batek denbora erakusten du, informazio-panela ezkutuan geratzen da) | Bi saltatzeko botoiak, edo arrastatu informazio-paneleko denbora-barra |
-| Biratu irudia 90° | Joystick-a behera edo gora argazki batean (16. konpilaziotik aurrera lerro bakarreko gainjartzeak angelua erakusten du); bideo batean, informazio-paneleko "Biratu" botoia | Informazio-paneleko "Biratu" botoia |
-| Aldatu 3D antolaera (mono, goian eta behean, bata bestearen ondoan) | Informazio-paneleko 3D botoia | Informazio-paneleko 3D botoia |
-| Esfera osoa edo esfera erdia (VR180) | Informazio-paneleko 360°/180° botoia | Informazio-paneleko 360°/180° botoia |
+| Biratu ikuspegia (17. konpilaziotik aurrera) | Eskuineko joystick-a ezkerrera edo eskuinera, 30° bultzada bakoitzeko | "Biratu" botoia (90°) |
+| Aurreko edo hurrengo multimedia-elementua | Ezkerreko joystick-a ezkerrera edo eskuinera | "Aurrekoa" eta "Hurrengoa" botoiak |
+| 10 segundo atzera edo aurrera bideo batean | Joystick-a behera edo gora | Bi saltatzeko botoiak, edo arrastatu denbora-barra |
+| Biratu irudia 90° | Joystick-a behera edo gora argazki batean, "Biratu" botoia bideo batean | "Biratu" botoia |
+| Aldatu 3D antolaera (mono, goian eta behean, bata bestearen ondoan) | 3D botoia | 3D botoia |
+| Esfera osoa edo esfera erdia (VR180) | 360°/180° botoia | 360°/180° botoia |
 
-Kontrolagailuekin, informazio-paneleko botoiek eta denbora-barrak ere funtzionatzen dute: seinalatu izpiarekin eta sakatu katua.
+Taula honetan, botoiak eta denbora-barra informazio-panelekoak dira. Kontrolagailuekin ere funtzionatzen dute: seinalatu izpiarekin eta sakatu katua.
+
+- **Biratu ikuspegia**: atzean begiratzeko burua biratu gabe. Eskuineko joystick-ak biratzen jarraitzen du eutsita dagoen bitartean, eta lerro bakarreko gainjartze batek angelua erakusten du.
+- **Lerro bakarreko gainjartzea**: 16. konpilaziotik aurrera, joystick-arekin aurrera edo atzera egiteak, argazki bat biratzeak, edo aurrekoa eta hurrengoa aukeratzeak lerro bakarreko gainjartze bat erakusten du (denbora, angelua edo elementuaren izena) eta informazio-panela ezkutuan geratzen da. 17. konpilazioa baino lehen bi joystick-etako edozeinek aurreko edo hurrengo elementura eramaten zuen.
 
 ### Informazio-panela, aurrekoa eta hurrengoa
 
@@ -497,7 +549,9 @@ Bideo baten informazio-panelak denbora-barra bat du (posizioa, iraupena, zenbat 
 
 Aurrekoak eta hurrengoak zatozen lekuko 360° multimedia-elementuak zeharkatzen dituzte, ikuspegi murgiltzailetik irten gabe: denbora-lerroa, 360° zerrenda (iragazita dagoen bezala), album bat, sareko partekatze bateko karpeta bat, edo betaurrekoen multimedia-elementuak (Gailu honetan). Argazki eta bideo lauak saltatu egiten dira. Denbora-lerrotik, album batetik edo 360° zerrendatik aplikaziora itzultzen zarenean, begiratzen ari zinen elementuan kokatzen da (partekatze-karpeta baten orria ireki zenuen fitxategian geratzen da), eta ikuspegi murgiltzailea ireki zenuen bideoa utzi zuen tokitik jarraitzen du.
 
-Eskuineko joystick-ak ikuspegia biratzen du 17. konpilaziotik aurrera, betaurrekoetako aplikazio gehienetan eskuineko joystick-ak biratzen duen bezala: bultzada batek 30° biratzen du, eusteak biratzen jarraitzen du, beraz zure atzean dagoena aurrera dator burua edo aulkia biratu gabe; aurrekoa eta hurrengoa ezkerreko joystick-ean daude. 16. konpilaziotik aurrera, erabiltzaile batek betaurrekoetan emandako iruzkinen ondorioz, joystick-arekin aurrera edo atzera egiteak, biratzeak edo aurrekoa/hurrengoa aukeratzeak lerro bakarreko gainjartze bat erakusten du (denbora, angelua edo elementuaren izenburua), 1,5 segundoren buruan desagertzen dena, informazio-panela ekarri beharrean; panela A, X, heltzeko botoia edo menu-botoiarekin agertzen da oraindik. Konpilazio berak panelaren txandakatzea funtzionatzen mantentzen du kontrolagailuak lo geratzen direnean, esnatzen direnean edo eskuen jarraipenari lekua uzten diotenean, eta trantsizio horiek erregistratzen ditu, ikusi [Erregistroak](#logs).
+Eskuineko joystick-ak ikuspegia biratzen du 17. konpilaziotik aurrera, betaurrekoetako aplikazio gehienetan eskuineko joystick-ak biratzen duen bezala: bultzada batek 30° biratzen du, eusteak biratzen jarraitzen du, beraz zure atzean dagoena aurrera dator burua edo aulkia biratu gabe; aurrekoa eta hurrengoa ezkerreko joystick-ean daude.
+
+16\. konpilaziotik aurrera, erabiltzaile batek betaurrekoetan emandako iruzkinen ondorioz, joystick-arekin aurrera edo atzera egiteak, biratzeak edo aurrekoa/hurrengoa aukeratzeak lerro bakarreko gainjartze bat erakusten du (denbora, angelua edo elementuaren izenburua), 1,5 segundoren buruan desagertzen dena, informazio-panela ekarri beharrean; panela A, X, heltzeko botoia edo menu-botoiarekin agertzen da oraindik. Konpilazio berak panelaren txandakatzea funtzionatzen mantentzen du kontrolagailuak lo geratzen direnean, esnatzen direnean edo eskuen jarraipenari lekua uzten diotenean, eta trantsizio horiek erregistratzen ditu, ikusi [Erregistroak](#logs).
 
 "Ikusi 3Dn" aukerarekin irekitako Apple-ren argazki espazial bat ez da esfera batean jartzen: zure aurrean flotatzen du, ikusi [Apple-ren argazki eta bideo espazialak](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Argazkiek lehenik aurrebista bat erakusten dute, ondoren jatorrizkoa, gehienez 8
 
 3D antolaerak, goian eta behean eta bata bestearen ondoan, 360° eta VR180, 3Dn erakusten dira, begi bakoitzak fotogramaren bere erdia jasoz. Antolaera fitxategitik dator bat adierazten duenean (bideoak), bestela bere formatik asmatzen da (karratua: goian eta behean, 4:1: bata bestearen ondoan); okerra denean, erabili informazio-paneleko 3D botoia.
 
-| 360° argazkia betaurrekoetan | 360° bideoa betaurrekoetan | 3D 360° bideoa betaurrekoetan |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="360° argazki bat zure inguru osoan Quest 3 betaurrekoetan, informazio-panelarekin: antolaera, 360° eta Atzera botoiak"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Laku baten 360° bideoa Quest 3 betaurrekoetan erreproduzitzen, informazio-panelarekin: antolaera, 360°, Pausatu eta Atzera botoiak"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="360° bideo estereoskopiko bat Quest 3 betaurrekoetan, informazio-panelak 3D, goian eta behean dioela"> |
-| Argazki baten ikuspegi murgiltzailea, informazio-panelarekin (antolaera, 360°/180°, Atzera) | Erreproduzitzen ari den bideo bat, Pausatu botoiarekin | Goian eta beheko bideo estereoskopiko bat, begi bakoitzari berea emanez (Kandao Obsidian lagina) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="360° argazki bat zure inguru osoan Quest 3 betaurrekoetan, informazio-panelarekin: antolaera, 360° eta Atzera botoiak">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Laku baten 360° bideoa Quest 3 betaurrekoetan erreproduzitzen, informazio-panelarekin: antolaera, 360°, Pausatu eta Atzera botoiak">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="360° bideo estereoskopiko bat Quest 3 betaurrekoetan, informazio-panelak 3D, goian eta behean dioela">
+</p>
+
+- **360° argazkia betaurrekoetan**: argazki baten ikuspegi murgiltzailea, informazio-panelarekin (antolaera, 360°/180°, Atzera).
+- **360° bideoa betaurrekoetan**: erreproduzitzen ari den bideo bat, Pausatu botoiarekin.
+- **3D 360° bideoa betaurrekoetan**: goian eta beheko bideo estereoskopiko bat, begi bakoitzari berea emanez (Kandao Obsidian lagina).
 
 Pantaila-argazki hauek aplikazioa frantsesez zegoela atera ziren, 14. konpilazioa baino lehen. Panelak orain denbora-barra ere badu 10 segundoko bi saltatzeko botoien artean, "Aurrekoa" eta "Hurrengoa", eta "Biratu".
 
@@ -598,7 +657,9 @@ Immuch360-k 360° ikurra jartzen du 360° argazkien miniaturetan (sareko parteka
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Bideoaren xehetasunak, deskodetzaileak eta zergatik dituen bideo batek etenak
 
-Jendeak galdetzen du zein kodek, tamaina eta bit-emari erreproduzitzen dituen Quest 3k, eta zergatik dituen 5.7K esportazio batek etenak betaurrekoetan telefonoan ondo badabil ere. Erantzuna hardware deskodetzailea da: Quest 3ren (XR2 Gen 2) H.264 deskodetzailea 4096x2304 ingurura iristen da gehienez, beraz 5760x2880-ko H.264 bideo bat (6.0 maila, 200 Mbit/s inguru, ohiko Insta360 esportazioa) 17 fps ingurutan deskodetzen da betaurrekoetan, bloke-artefaktuekin, fitxategi bera telefono batean ondo erreproduzitzen den bitartean. Bideo bera HEVCn (H.265) ondo erreproduzitzen da betaurrekoetan: Insta360 X4 8K HEVC bideo bat (7680x3840, 29,97 fps, 210 Mbit/s, Main profila 6.1 maila, 8 bit) arin erreproduzitzen da ikuspegi murgiltzailean, bere jatorrizko bereizmenean eta transkodetu gabe (Quest 3 bat duen erabiltzaile batek jakinarazia).
+Jendeak galdetzen du zein kodek, tamaina eta bit-emari erreproduzitzen dituen Quest 3k, eta zergatik dituen 5.7K esportazio batek etenak betaurrekoetan telefonoan ondo badabil ere. Erantzuna hardware deskodetzailea da: Quest 3ren (XR2 Gen 2) H.264 deskodetzailea 4096x2304 ingurura iristen da gehienez, beraz 5760x2880-ko H.264 bideo bat (6.0 maila, 200 Mbit/s inguru, ohiko Insta360 esportazioa) 17 fps ingurutan deskodetzen da betaurrekoetan, bloke-artefaktuekin, fitxategi bera telefono batean ondo erreproduzitzen den bitartean.
+
+Bideo bera HEVCn (H.265) ondo erreproduzitzen da betaurrekoetan: Insta360 X4 8K HEVC bideo bat (7680x3840, 29,97 fps, 210 Mbit/s, Main profila 6.1 maila, 8 bit) arin erreproduzitzen da ikuspegi murgiltzailean, bere jatorrizko bereizmenean eta transkodetu gabe (Quest 3 bat duen erabiltzaile batek jakinarazia).
 
 Immich aplikazioak "Jatorrizko bideoa behartu" etengailu bakarra du eta kodeka bakarrik erakusten du. Immuch360-k bideo bat zer den eta gailuak zer deskodetzen duen erakusten du, eta erreproduzitzen den fitxategia aukeratzen du.
 
@@ -623,7 +684,9 @@ Ezarpenak, Aurreratua, "Gailu honen bideo-deskodetzaileak" atalak (15. konpilazi
 1. Ireki Ezarpenak, Baliabide ikuslea, ondoren Bideoak.
 2. "Bideoaren iturria" atalean ("Zein fitxategi erreproduzitzen den zerbitzariak kopia transkodetu bat duenean"), aukeratu "Jatorrizkoa, gailu honek deskodetzen duenean", "Beti jatorrizkoa" edo "Beti jario transkodetua".
 
-Aukera zerbitzariko bideo guztiei aplikatzen zaie 15. konpilaziotik aurrera: erreproduzitzaile laua, 360° eta Spatial erreproduzitzaileak, eta Quest-eko ikuspegi murgiltzailea. Bat aukeratu arte, telefono batek "Jatorrizko bideoa behartu" etengailu zaharrak zioena mantentzen du (lehenespenez desaktibatuta: jario transkodetua, zerbitzariak transkodetu ez duenean jatorrizkoa bera dena), eta Quest-ak jatorrizkoa erreproduzitzen du betaurrekoek deskodetzen dutenean. Egiaztapenak kodeka, tamaina eta fotograma-abiadura fitxategitik irakurtzen ditu eta hardware deskodetzaileekin alderatzen ditu (Quest 3ko H.264 neurtutako 4096x2304-ra mugatzen da). Jatorrizkoa deskodetu ezin duen erreproduzitzaile bat jario transkodetura aldatzen da mezu batekin: "Jario transkodetua erreproduzitzen: jatorrizkoak (kodeka eta tamaina) gailu honek deskodetzen duena gainditzen du".
+Aukera zerbitzariko bideo guztiei aplikatzen zaie 15. konpilaziotik aurrera: erreproduzitzaile laua, 360° eta Spatial erreproduzitzaileak, eta Quest-eko ikuspegi murgiltzailea. Bat aukeratu arte, telefono batek "Jatorrizko bideoa behartu" etengailu zaharrak zioena mantentzen du (lehenespenez desaktibatuta: jario transkodetua, zerbitzariak transkodetu ez duenean jatorrizkoa bera dena), eta Quest-ak jatorrizkoa erreproduzitzen du betaurrekoek deskodetzen dutenean.
+
+Egiaztapenak kodeka, tamaina eta fotograma-abiadura fitxategitik irakurtzen ditu eta hardware deskodetzaileekin alderatzen ditu (Quest 3ko H.264 neurtutako 4096x2304-ra mugatzen da). Jatorrizkoa deskodetu ezin duen erreproduzitzaile bat jario transkodetura aldatzen da mezu batekin: "Jario transkodetua erreproduzitzen: jatorrizkoak (kodeka eta tamaina) gailu honek deskodetzen duena gainditzen du".
 
 Betaurrekoetan ikuspegi murgiltzailea jatorrizkoarekin hasten da eta, bere lehen fotogrametan, zerbitzariaren jario transkodetura aldatzen da jatorrizkoak deskodetzaileak gainditzen dituenean, informazio-panelean hala esanez; jario transkodeturik ez dagoenean, oraindik handiegia denean, edo fitxategia betaurrekoetatik edo sareko partekatze batetik datorrenean, informazio-panelak hala dio 10 segundoz, zer aldatu behar den adieraziz. Horizon Store-ra bidalitako 14. konpilazioak H.264 bakarrik egiaztatzen du 4096x2304tik gora, eta orduan zerbitzariaren erreprodukzio-fluxua probatzen du modu berean.
 
@@ -661,87 +724,184 @@ Aplikazioa ez duen norbaiti 360° argazki bat erakusteko, partekatu Immich-en pa
 
 Uneko konpilazioa, 21. konpilazioa (3.3.0-rc.0 bertsioa, 3030019 konpilazio-zenbakia), Immich 3.3.0-rc.0 bertsioan oinarrituta dago (Immich `main`, oraindik ez bertsio egonkorra). 19. konpilazioa Immich 3.2 zerbitzari batekin probatu zen, eta 20. eta 21. konpilazioek ez dute aldatzen aplikazioak zerbitzariari eskatzen diona. Mesedez, jakinarazi arazoak [Issues](https://github.com/freeKC/Immuch360/issues) atalean, ez Immich proiektuari. Immich-en beraren dokumentazio osoa ikusteko, ikusi [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich aplikazioarekin eta beste aplikazio batzuekin alderatuta
 
 ### Zergatik dagoen fork hau, taula batean
 
-| | Immich aplikazio mugikorra | Immuch360 | Egoera |
-|---|:---:|:---:|---|
-| 360° argazkiak inguruan begiratzeko esfera gisa (arrastatu, atximurkatu, bi aldiz sakatu, inertzia, kameraren hasierako ikuspegia, panoramika partzialak) | ❌ zerrenda laua | ✅ | Galaxy S24+ eta iPhone 14 batean probatua |
-| Giroskopioa: inguruan begiratu telefonoa mugituz | ❌ | ✅ | Galaxy S24+ eta iPhone 14 batean probatua |
-| 360° bideoak erreproduzitzaile esferiko batean, soinuarekin, aurrera eta atzera egitearekin, audio-pistaren aukerarekin eta karga-adierazlearekin | ❌ bideo laua | ✅ Android eta iOS (oraindik denbora-barrarik gabe iOS-en) | Galaxy S24+ eta iPhone 14 batean probatua |
-| 3D (estereoskopikoak) 360° argazkiak eta bideoak | ❌ irudi bikoiztua | ✅ ezkerreko begia telefonoetan, benetako 3D Quest betaurrekoetan | Galaxy S24+ eta Quest 3 batean probatua, benetako 3D 360° laginekin (VRTogether, Vuze, Kandao) eta 3D argazki batekin; beste kamera batzuen txostenak ongi etorriak |
-| VR180 (esfera erdiko) argazkiak eta bideoak | ❌ esferan zehar luzatuak | ✅ esfera erdia, 360°/180° botoia | Android emuladore batean eta Galaxy S24+ batean probatua multimedia sintetikoarekin; gailuetako iruzkinak ongi etorriak |
-| Apple-ren argazki espazialak (HEIC bikote estereoak) eta bideo espazialak (MV-HEVC) | ❌ argazki edo bideo lau bat, ezerk ez du esaten espaziala denik | ✅ 19. konpilaziotik aurrera: argazkiak 3Dn Quest betaurrekoetan, begi bat eta xehetasun-errenkada bat beste leku batzuetan | Detekzioa Apple-ren irudi-liburutegiak idatzitako lagin-argazki batekin eta fitxategi sintetikoekin egiaztatua; betaurrekoetako ikuspegia eta iPhone-ko benetako fitxategiak 19. konpilazioaren gailuko probaren parte dira |
-| Meta Quest ikuspegi murgiltzailea buruaren jarraipenarekin, denbora-barrarekin, aurrekoa eta hurrengoarekin, eta "Biratu" botoiarekin | ❌ | ✅ aplikazio bera, betaurrekoetarako konpilazio gisa edo telefonoko APKa | Quest 3 batean probatua (14. konpilazioko kontrolak, 16. konpilazioan doituak erabiltzaile baten iruzkinen ondoren), eta erabiltzaile batek Insta360 X4 8K HEVC bideoekin |
-| 360° ikurra miniaturetan, eta 360° zerrenda bat fitxategi gordinekin eta iragazkiekin (aldia, iturria, mota, kamera) | ❌ | ✅ iragazkiak 18. konpilaziotik aurrera | Eginda |
-| "Ikusi 360° gisa" zerbitzariak markatzen ez dituen fitxategietarako | ❌ | ✅ telefonoan gogoratua | Eginda |
-| Spatial 2.5D: sakonera pantaila lau batean bideo estereoskopiko batetik abiatuta | ❌ | ✅ esperimentala, telefonoak eta tabletak | Galaxy S24+ batean probatua; iPhone-ko iruzkinak ongi etorriak |
-| Zerbitzaririk gabe erabiltzea, gailuaren galeria berarekin | ❌ saioa hastea derrigorrezkoa | ✅ | Galaxy S24+, Quest 3 eta Android emuladore batean probatua |
-| SMB eta WebDAV partekatzeak sarean aurkituak eta zuzenean erreproduzituak, ezer deskargatu gabe | ❌ | ✅ ikustaile guztiak, telefonoak eta Quest | Freebox Server batekin (SMB) probatua Galaxy S24+ eta Quest 3 batean, eta Samba eta WebDAV proba-zerbitzarien aurka Android emuladore batean; beste NAS eta WebDAV batzuen iruzkinak ongi etorriak |
-| DLNA multimedia-zerbitzariak partekatze-mota gisa | ❌ | ✅ 19. konpilaziotik aurrera | minidlna eta Gerbera-ren aurka egiaztatua Docker-en; Plex, Jellyfin, NAS bat, Freebox Server-a, iPhone bat eta Quest-a 19. konpilazioaren gailuko probaren parte dira |
-| Bidali partekatze bateko fitxategiak Immich-era; eskuz bidalitako gailuko fitxategiak babes-kopia eginda bezala zenbatuak | ❌ gailuko fitxategiak bakarrik | ✅ 15. konpilaziotik aurrera | Android emuladore batean probatua Samba proba-zerbitzari baten eta Immich 3.2 zerbitzari baten aurka |
-| Partekatu telefono hau sarean, betaurrekoetarako | ❌ | ✅ 19. konpilaziotik aurrera, Android eta iOS | Unitate-probak eta muturretik muturrerako probak betaurrekoen WebDAV bezeroarekin, ordenagailu batean; Quest bat zerbitzatzen duen telefono bat, eta iPhone-aren aldea, 19. konpilazioaren gailuko probaren parte dira |
-| Plex Media Server liburutegiak jatorrizko fitxategietatik erreproduzituak, etxean eta etxetik kanpo, plex.tv gabe | ❌ | ✅ 20. konpilaziotik aurrera, ikustaile guztiak, telefono, tableta, Quest eta telebistetan | Ordenagailu batetik egiaztatua benetako Plex Media Server 1.42.1 baten aurka (lotzea, karpetak, byte-tarteak, miniaturak, etxetik kanpoko helbidea); oraindik gailu batean egiaztatu gabe |
-| Tapo kamerak: zuzeneko ikuspegia, eta memoria-txarteleko grabazioak Immich-era bidaliak zuk erabakitzen duzunean | ❌ | ✅ 20. konpilaziotik aurrera: grabazioak leku guztietan, zuzenean Android, Android TV eta Quest betaurrekoetan | Kamera simulatu baten aurka egiaztatua; oraindik benetako kamera batekin egiaztatu gabe |
-| Android TV eta Google TV, urruneko agintearekin gidatuak, APK berean | ❌ ez da telebistarako aplikazioa | ✅ 20. konpilaziotik aurrera | Proba automatikoekin egiaztatua; oraindik telebista batean egiaztatu gabe |
-| Insta360 .insp argazki gordinak eta pista bakarreko .insv bideoak | ❌ lauak | ✅ 16. konpilaziotik aurrera | Argazkiak X3 fitxategien Insta360 Studio esportazioen aurka egiaztatuak, bideoak Android emuladore batean bereizmen txikiko X3 fitxategi batekin; oraindik ez da iPhone batean exekutatu |
-| Objektibo bat pista edo fitxategi bakoitzeko duten bideo gordinak (Insta360 X4, X4 Air, X5, X6, X3 bikoteak, GoPro .360, DJI .osv) | ❌ lauak edo okerrak | ✅ 18. konpilaziotik aurrera | Analizatzaileak eta josketa benetako X4, X3 bikote, GoPro MAX eta Osmo 360 fitxategiekin egiaztatuak; erreprodukzioa 18. eta 19. konpilazioen gailuko probaren parte da |
-| Arrain-begi bikoitzeko .dng | ❌ laua | ❌ oraindik ez | Aurreikusia |
-| Zerbitzariko bideoak: jatorrizkoa gailuak deskodetzen duenean, bestela jario transkodetua; gailuaren bideo-deskodetzaileen zerrenda | ❌ "Jatorrizko bideoa behartu" etengailu bakarra | ✅ 15. konpilaziotik aurrera | Android emuladore batean probatua; Quest 3ren H.264 muga betaurrekoetan neurtu zen |
-| Bideo baten xehetasun teknikoak: bit-emaria, irudia, profila, gailu honek deskodetzen duen ala ez | ❌ kodeka bakarrik | ✅ 18. konpilaziotik aurrera | Eginda |
-| Bideo lau, 360°, 3D eta VR180 bideoetarako doako erreproduzitzaile bat, zerbitzaritik, telefonotik edo NAS batetik | ❌ lauak bakarrik | ✅ (Quest 3 dendako erreproduzitzaileak ordainpekoak dira) | |
-| Zerbitzari bera, kontu bera, aplikazio ofizialaren ondoan instalatzen da | | ✅ | |
+| | Immich aplikazio mugikorra | Immuch360 |
+|---|:---:|:---:|
+| 360° argazkiak inguruan begiratzeko esfera gisa (arrastatu, atximurkatu, bi aldiz sakatu, inertzia, kameraren hasierako ikuspegia, panoramika partzialak) | ❌ zerrenda laua | ✅ |
+| Giroskopioa: inguruan begiratu telefonoa mugituz | ❌ | ✅ |
+| 360° bideoak erreproduzitzaile esferiko batean, soinuarekin, aurrera eta atzera egitearekin, audio-pistaren aukerarekin eta karga-adierazlearekin | ❌ bideo laua | ✅ Android eta iOS (oraindik denbora-barrarik gabe iOS-en) |
+| 3D (estereoskopikoak) 360° argazkiak eta bideoak | ❌ irudi bikoiztua | ✅ ezkerreko begia telefonoetan, benetako 3D Quest betaurrekoetan |
+| VR180 (esfera erdiko) argazkiak eta bideoak | ❌ esferan zehar luzatuak | ✅ esfera erdia, 360°/180° botoia |
+| Apple-ren argazki espazialak (HEIC bikote estereoak) eta bideo espazialak (MV-HEVC) | ❌ argazki edo bideo lau bat, ezerk ez du esaten espaziala denik | ✅ 19. konpilaziotik aurrera: argazkiak 3Dn Quest betaurrekoetan, begi bat eta xehetasun-errenkada bat beste leku batzuetan |
+| Meta Quest ikuspegi murgiltzailea buruaren jarraipenarekin, denbora-barrarekin, aurrekoa eta hurrengoarekin, eta "Biratu" botoiarekin | ❌ | ✅ aplikazio bera, betaurrekoetarako konpilazio gisa edo telefonoko APKa |
+| 360° ikurra miniaturetan, eta 360° zerrenda bat fitxategi gordinekin eta iragazkiekin (aldia, iturria, mota, kamera) | ❌ | ✅ iragazkiak 18. konpilaziotik aurrera |
+| "Ikusi 360° gisa" zerbitzariak markatzen ez dituen fitxategietarako | ❌ | ✅ telefonoan gogoratua |
+| Spatial 2.5D: sakonera pantaila lau batean bideo estereoskopiko batetik abiatuta | ❌ | ✅ esperimentala, telefonoak eta tabletak |
+| Zerbitzaririk gabe erabiltzea, gailuaren galeria berarekin | ❌ saioa hastea derrigorrezkoa | ✅ |
+| SMB eta WebDAV partekatzeak sarean aurkituak eta zuzenean erreproduzituak, ezer deskargatu gabe | ❌ | ✅ ikustaile guztiak, telefonoak eta Quest |
+| DLNA multimedia-zerbitzariak partekatze-mota gisa | ❌ | ✅ 19. konpilaziotik aurrera |
+| Bidali partekatze bateko fitxategiak Immich-era; eskuz bidalitako gailuko fitxategiak babes-kopia eginda bezala zenbatuak | ❌ gailuko fitxategiak bakarrik | ✅ 15. konpilaziotik aurrera |
+| Partekatu telefono hau sarean, betaurrekoetarako | ❌ | ✅ 19. konpilaziotik aurrera, Android eta iOS |
+| Plex Media Server liburutegiak jatorrizko fitxategietatik erreproduzituak, etxean eta etxetik kanpo, plex.tv gabe | ❌ | ✅ 20. konpilaziotik aurrera, ikustaile guztiak, telefono, tableta, Quest eta telebistetan |
+| Tapo kamerak: zuzeneko ikuspegia, eta memoria-txarteleko grabazioak Immich-era bidaliak zuk erabakitzen duzunean | ❌ | ✅ 20. konpilaziotik aurrera: grabazioak leku guztietan, zuzenean Android, Android TV eta Quest betaurrekoetan |
+| Android TV eta Google TV, urruneko agintearekin gidatuak, APK berean | ❌ ez da telebistarako aplikazioa | ✅ 20. konpilaziotik aurrera |
+| Insta360 .insp argazki gordinak eta pista bakarreko .insv bideoak | ❌ lauak | ✅ 16. konpilaziotik aurrera |
+| Objektibo bat pista edo fitxategi bakoitzeko duten bideo gordinak (Insta360 X4, X4 Air, X5, X6, X3 bikoteak, GoPro .360, DJI .osv) | ❌ lauak edo okerrak | ✅ 18. konpilaziotik aurrera |
+| Arrain-begi bikoitzeko .dng | ❌ laua | ❌ oraindik ez |
+| Zerbitzariko bideoak: jatorrizkoa gailuak deskodetzen duenean, bestela jario transkodetua; gailuaren bideo-deskodetzaileen zerrenda | ❌ "Jatorrizko bideoa behartu" etengailu bakarra | ✅ 15. konpilaziotik aurrera |
+| Bideo baten xehetasun teknikoak: bit-emaria, irudia, profila, gailu honek deskodetzen duen ala ez | ❌ kodeka bakarrik | ✅ 18. konpilaziotik aurrera |
+| Bideo lau, 360°, 3D eta VR180 bideoetarako doako erreproduzitzaile bat, zerbitzaritik, telefonotik edo NAS batetik | ❌ lauak bakarrik | ✅ (Quest 3 dendako erreproduzitzaileak ordainpekoak dira) |
+| Zerbitzari bera, kontu bera, aplikazio ofizialaren ondoan instalatzen da | | ✅ |
+
+<details>
+<summary><b>Lerro bakoitzaren egoera</b>: nola probatu zen</summary>
+
+- **360° argazkiak esfera gisa**: Galaxy S24+ eta iPhone 14 batean probatua.
+- **Giroskopioa**: Galaxy S24+ eta iPhone 14 batean probatua.
+- **360° bideoak**: Galaxy S24+ eta iPhone 14 batean probatua.
+- **3D 360° argazkiak eta bideoak**: Galaxy S24+ eta Quest 3 batean probatua, benetako 3D 360° laginekin (VRTogether, Vuze, Kandao) eta 3D argazki batekin; beste kamera batzuen txostenak ongi etorriak.
+- **VR180**: Android emuladore batean eta Galaxy S24+ batean probatua multimedia sintetikoarekin; gailuetako iruzkinak ongi etorriak.
+- **Apple-ren argazki eta bideo espazialak**: detekzioa Apple-ren irudi-liburutegiak idatzitako lagin-argazki batekin eta fitxategi sintetikoekin egiaztatua; betaurrekoetako ikuspegia eta iPhone-ko benetako fitxategiak 19. konpilazioaren gailuko probaren parte dira.
+- **Meta Quest-eko ikuspegi murgiltzailea**: Quest 3 batean probatua (14. konpilazioko kontrolak, 16. konpilazioan doituak erabiltzaile baten iruzkinen ondoren), eta erabiltzaile batek Insta360 X4 8K HEVC bideoekin.
+- **360° ikurra eta 360° zerrenda**: eginda.
+- **Ikusi 360° gisa**: eginda.
+- **Spatial 2.5D**: Galaxy S24+ batean probatua; iPhone-ko iruzkinak ongi etorriak.
+- **Inolako zerbitzaririk gabe**: Galaxy S24+, Quest 3 eta Android emuladore batean probatua.
+- **SMB eta WebDAV partekatzeak**: Freebox Server batekin (SMB) probatua Galaxy S24+ eta Quest 3 batean, eta Samba eta WebDAV proba-zerbitzarien aurka Android emuladore batean; beste NAS eta WebDAV batzuen iruzkinak ongi etorriak.
+- **DLNA multimedia-zerbitzariak**: minidlna eta Gerbera-ren aurka egiaztatua Docker-en; Plex, Jellyfin, NAS bat, Freebox Server-a, iPhone bat eta Quest-a 19. konpilazioaren gailuko probaren parte dira.
+- **Bidali partekatze baten fitxategiak Immich-era**: Android emuladore batean probatua Samba proba-zerbitzari baten eta Immich 3.2 zerbitzari baten aurka.
+- **Partekatu telefono hau sarean**: unitate-probak eta muturretik muturrerako probak betaurrekoen WebDAV bezeroarekin, ordenagailu batean; Quest bat zerbitzatzen duen telefono bat, eta iPhone-aren aldea, 19. konpilazioaren gailuko probaren parte dira.
+- **Plex Media Server**: ordenagailu batetik egiaztatua benetako Plex Media Server 1.42.1 baten aurka (lotzea, karpetak, byte-tarteak, miniaturak, etxetik kanpoko helbidea); oraindik gailu batean egiaztatu gabe.
+- **Tapo kamerak**: kamera simulatu baten aurka egiaztatua; oraindik benetako kamera batekin egiaztatu gabe.
+- **Android TV eta Google TV**: proba automatikoekin egiaztatua; oraindik telebista batean egiaztatu gabe.
+- **Insta360 .insp argazki gordinak eta pista bakarreko .insv bideoak**: argazkiak X3 fitxategien Insta360 Studio esportazioen aurka egiaztatuak, bideoak Android emuladore batean bereizmen txikiko X3 fitxategi batekin; oraindik ez da iPhone batean exekutatu.
+- **Objektibo bat pista edo fitxategi bakoitzeko duten bideo gordinak**: analizatzaileak eta josketa benetako X4, X3 bikote, GoPro MAX eta Osmo 360 fitxategiekin egiaztatuak; erreprodukzioa 18. eta 19. konpilazioen gailuko probaren parte da.
+- **Arrain-begi bikoitzeko .dng**: aurreikusia.
+- **Zerbitzariko bideoak eta bideo-deskodetzaileak**: Android emuladore batean probatua; Quest 3ren H.264 muga betaurrekoetan neurtu zen.
+- **Bideo baten xehetasun teknikoak**: eginda.
+
+</details>
 
 ### Jendeak horretarako erabiltzen dituen beste aplikazio batzuk
 
-| Jendeak zer erabiltzen duen | Zer aurkitzen duten | Immuch360-k zer egiten duen |
-|---|---|---|
-| Immich-en web aplikazioa | 360° argazki bat esfera gisa erakusten du, baina .insp gordin bat panoramika amaitu gisa hartzen du eta bere bi zirkuluak esferaren inguruan biltzen ditu; VR ikuspegi bat eskaera bat da oraindik ([#14768 eztabaida](https://github.com/immich-app/immich/discussions/14768)) | Fitxategi gordinak gailuan josten ditu, eta ikuspegi murgiltzaile bat irekitzen du Quest betaurrekoetan |
-| Insta360 aplikazioa edo Studio | Beharrezkoak txarteleko fitxategi gordinak 360° irudi bihurtzeko ikusi aurretik | .insp eta .insv fitxategi gordinak zuzenean irekitzen ditu, baita GoPro-ren .360 eta DJI-ren .osv fitxategiak ere |
-| Plex, Jellyfin, Synology Photos | 360° argazkiak eta bideoak lau erakutsiak edo ezagutu gabeak, beren foroetako hariek deskribatzen duten bezala (Plex-eko eskaera bat 2017tik dago irekita) | Plex liburutegia bera irakurtzen du 20. konpilaziotik aurrera, edo karpeta berberak SMB, WebDAV edo DLNA bidez, eta esfera gisa erreproduzitzen ditu, zerbitzarian ezer aldatu gabe |
-| Tapo aplikazioa | Aparteko aplikazio bat, zure TP-Link kontuan saioa hasita, klipak zure argazkietatik bereizita | Kamera zure argazkien ondoan erakusten du, zure sarean bakarrik hitz egiten du harekin, eta klip bat Immich-era bidal dezakezun bideo gisa gordetzen du (20. konpilaziotik aurrera) |
-| Immich aplikazio mugikorra telebista batean | Ez da telebistarako aplikazioa: erabiltzaile batek dio saguarekin funtzionatzen duela, ez urruneko agintearekin | Aplikazio bera, urruneko agintearentzat egina (20. konpilaziotik aurrera) |
-| Fitxategiak betaurrekoetara kopiatzea | Fitxategi bakoitza kable bidez kopiatu behar da ikusi aurretik | Bertan erreproduzitzen du Immich-etik, NAS batetik, multimedia-zerbitzari batetik edo telefono batetik |
-| Quest dendako 360° eta 3D erreproduzitzaileak | Ordainpekoak | Doakoa eta kode irekikoa (AGPL) |
+- **Immich-en web aplikazioa**
+  - Zer aurkitzen duten: 360° argazki bat esfera gisa erakusten du, baina .insp gordin bat panoramika amaitu gisa hartzen du eta bere bi zirkuluak esferaren inguruan biltzen ditu; VR ikuspegi bat eskaera bat da oraindik ([#14768 eztabaida](https://github.com/immich-app/immich/discussions/14768)).
+  - Immuch360-k zer egiten duen: fitxategi gordinak gailuan josten ditu, eta ikuspegi murgiltzaile bat irekitzen du Quest betaurrekoetan.
+- **Insta360 aplikazioa edo Studio**
+  - Zer aurkitzen duten: beharrezkoak txarteleko fitxategi gordinak 360° irudi bihurtzeko ikusi aurretik.
+  - Immuch360-k zer egiten duen: .insp eta .insv fitxategi gordinak zuzenean irekitzen ditu, baita GoPro-ren .360 eta DJI-ren .osv fitxategiak ere.
+- **Plex, Jellyfin, Synology Photos**
+  - Zer aurkitzen duten: 360° argazkiak eta bideoak lau erakutsiak edo ezagutu gabeak, beren foroetako hariek deskribatzen duten bezala (Plex-eko eskaera bat 2017tik dago irekita).
+  - Immuch360-k zer egiten duen: Plex liburutegia bera irakurtzen du 20. konpilaziotik aurrera, edo karpeta berberak SMB, WebDAV edo DLNA bidez, eta esfera gisa erreproduzitzen ditu, zerbitzarian ezer aldatu gabe.
+- **Tapo aplikazioa**
+  - Zer aurkitzen duten: aparteko aplikazio bat, zure TP-Link kontuan saioa hasita, klipak zure argazkietatik bereizita.
+  - Immuch360-k zer egiten duen: kamera zure argazkien ondoan erakusten du, zure sarean bakarrik hitz egiten du harekin, eta klip bat Immich-era bidal dezakezun bideo gisa gordetzen du (20. konpilaziotik aurrera).
+- **Immich aplikazio mugikorra telebista batean**
+  - Zer aurkitzen duten: ez da telebistarako aplikazioa: erabiltzaile batek dio saguarekin funtzionatzen duela, ez urruneko agintearekin.
+  - Immuch360-k zer egiten duen: aplikazio bera, urruneko agintearentzat egina (20. konpilaziotik aurrera).
+- **Fitxategiak betaurrekoetara kopiatzea**
+  - Zer aurkitzen duten: fitxategi bakoitza kable bidez kopiatu behar da ikusi aurretik.
+  - Immuch360-k zer egiten duen: bertan erreproduzitzen du Immich-etik, NAS batetik, multimedia-zerbitzari batetik edo telefono batetik.
+- **Quest dendako 360° eta 3D erreproduzitzaileak**
+  - Zer aurkitzen duten: ordainpekoak.
+  - Immuch360-k zer egiten duen: doakoa eta kode irekikoa (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Formatuak eta iturriak, plataformaren arabera
 
-Immuch360 galeria bat da, eta doako multimedia-erreproduzitzaile bat ere bai: aplikazio ofizialak ezin duena erreproduzitzen du, bigarren taulako iturrietatik, fitxategiari egokitzen zaion erreproduzitzailean.
+Immuch360 galeria bat da, eta doako multimedia-erreproduzitzaile bat ere bai: aplikazio ofizialak ezin duena erreproduzitzen du, bigarren zerrendako iturrietatik, fitxategiari egokitzen zaion erreproduzitzailean.
 
-| Zer | Android telefonoak | iPhone, iPad | Meta Quest | Android TV, Google TV (20. konpilaziotik aurrera) |
-|---|---|---|---|---|
-| Bideo lauak (MP4, MOV, MKV, gailuak deskodetzen duena) | Immich erreproduzitzailea, eta erreproduzitzaile natibo bat sareko partekatzeetarako | Berdin, partekatze bateko MKV eta AVI fitxategiak izan ezik, iOS-ek irekitzen ez dituenak (zerbitzari batean transkodetuta erreproduzitzen dira) | Leihoan | Telefonoetan bezala; OK botoiak pausatzen du, ezkerrak eta eskuinak 10 s-ko jauziak egiten dituzte |
-| 360° argazkiak | Esfera-ikustailea, giroskopioa | Berdin | Murgiltzailea, zure inguru osoan | Esfera-ikustailea geziekin biratua, kanal-teklekin handitua |
-| 360° bideoak | Media3 erreproduzitzaile natiboa esfera batean, giroskopioa, aurrera eta atzera egitea, audio-pistaren aukera, karga-adierazlea | SceneKit erreproduzitzaile natiboa esfera batean, giroskopioa, audio-pistaren aukera, karga-adierazlea; erreproduzitu eta pausatu, oraindik denbora-barrarik gabe | Murgiltzailea, benetako 3D fitxategi estereoskopikoetarako, denbora-barra 10 segundoko saltoekin, aurreko eta hurrengo elementua | Telefonoetako Media3 erreproduzitzailea, geziekin biratua |
-| 3D 360° (goian eta behean, bata bestearen ondoan) | Ezkerreko begia, antolaera-botoia | Berdin | Begi bakoitzak fotogramaren bere erdia jasotzen du | Ezkerreko begia, antolaera-botoia |
-| VR180 (esfera erdiko) argazkiak eta bideoak | Esfera erdia, 360°/180° botoia | Berdin | Esfera erdi murgiltzailea | Esfera erdia, 360°/180° botoia |
-| Spatial 2.5D (sakonera pantaila lauan bideo estereoskopiko batetik) | Erreproduzitzaile natiboa, buruaren jarraipena aurreko kamerarekin | Berdin | Ez da eskaintzen | Ez dago eskuragarri |
-| Apple-ren argazki espazialak (HEIC bikote estereoak, 19. konpilaziotik aurrera) | Ezkerreko begia, xehetasun-errenkada batek espaziala dela dio | Berdin | Ikusi 3Dn: bi begiak ikuspegi murgiltzailean flotatzen duen argazki batean, 3D edo 2D, tamaina aldagarria | Ezkerreko begia, xehetasun-errenkada bat |
-| Apple-ren bideo espazialak (MV-HEVC, 19. konpilaziotik aurrera) | Begi bat (oinarrizko geruza), ohar batekin | Berdin | Begi bat leihoan, ohar batekin | Begi bat, ohar batekin |
-| Insta360 .insp argazki gordinak (16. konpilaziotik aurrera) | GPUan josiak esfera-ikustailearen aurretik, gehienez 8192x4096 | Berdin | Murgiltzailea, betaurrekoetarako prestatutako irudi josi batetik | Telefonoetan bezala |
-| Insta360 .insv gordina, bi objektiboak pista bakarrean (16. konpilaziotik aurrera) | Media3 erreproduzitzaileko GPU efektu batek josia | SceneKit shader batek josia | Murgiltzailea, GPU efektu berak josia | Telefonoetan bezala |
-| Objektibo bat pista edo fitxategi bakoitzeko duten bideo gordinak (18. konpilaziotik aurrera): Insta360 X4, X4 Air, X5, X6 .insv, X3 bikoteak, GoPro .360, DJI .osv | Bi hardware deskodetzaile aldi berean, bat objektibo bakoitzeko (19. konpilaziotik aurrera software deskodetzaileak hardware deskodetzailerik gabeko gailu batean, gehienez 2048x2048 objektibo bakoitzeko), eta esferan josten duen GL konposatzaile bat; objektibo bat, ondoren jario transkodetua, ondoren bideoa josi gabe, gailuak bi exekutatu ezin dituenean | AVFoundation konposatzaile pertsonalizatu bat Metal-ekin | Murgiltzailea, bi deskodetzaile eta konposatzaile berberak (3840x1920 panela) | Telefonoetan bezala, telebistak bi deskodetzaile aldi berean erabil ditzakeenean |
-| Tapo kameraren zuzeneko ikuspegia (20. konpilaziotik aurrera) | Media3 RTSP erreproduzitzailea: SD orrian, HD pantaila osoan, soinu-botoia | Oraindik ez: txartel batek geroago iritsiko dela dio | Leihoan, HDn | Telefonoetan bezala |
-| Tapo kameraren grabazioak (20. konpilaziotik aurrera) | Memoria-txarteletik ekarriak bere soinua duen H.264 bideo batean, ondoren aurrera eta atzera egiteko aukerarekin erreproduzituak | Berdin | Berdin, leihoan | Berdin |
+- **Bideo lauak (MP4, MOV, MKV, gailuak deskodetzen duena)**
+  - Android telefonoak: Immich erreproduzitzailea, eta erreproduzitzaile natibo bat sareko partekatzeetarako.
+  - iPhone, iPad: berdin, partekatze bateko MKV eta AVI fitxategiak izan ezik, iOS-ek irekitzen ez dituenak (zerbitzari batean transkodetuta erreproduzitzen dira).
+  - Meta Quest: leihoan.
+  - Android TV, Google TV: telefonoetan bezala; OK botoiak pausatzen du, ezkerrak eta eskuinak 10 s-ko jauziak egiten dituzte.
+- **360° argazkiak**
+  - Android telefonoak: esfera-ikustailea, giroskopioa.
+  - iPhone, iPad: berdin.
+  - Meta Quest: murgiltzailea, zure inguru osoan.
+  - Android TV, Google TV: esfera-ikustailea geziekin biratua, kanal-teklekin handitua.
+- **360° bideoak**
+  - Android telefonoak: Media3 erreproduzitzaile natiboa esfera batean, giroskopioa, aurrera eta atzera egitea, audio-pistaren aukera, karga-adierazlea.
+  - iPhone, iPad: SceneKit erreproduzitzaile natiboa esfera batean, giroskopioa, audio-pistaren aukera, karga-adierazlea; erreproduzitu eta pausatu, oraindik denbora-barrarik gabe.
+  - Meta Quest: murgiltzailea, benetako 3D fitxategi estereoskopikoetarako, denbora-barra 10 segundoko saltoekin, aurreko eta hurrengo elementua.
+  - Android TV, Google TV: telefonoetako Media3 erreproduzitzailea, geziekin biratua.
+- **3D 360° (goian eta behean, bata bestearen ondoan)**
+  - Android telefonoak: ezkerreko begia, antolaera-botoia.
+  - iPhone, iPad: berdin.
+  - Meta Quest: begi bakoitzak fotogramaren bere erdia jasotzen du.
+  - Android TV, Google TV: ezkerreko begia, antolaera-botoia.
+- **VR180 (esfera erdiko) argazkiak eta bideoak**
+  - Android telefonoak: esfera erdia, 360°/180° botoia.
+  - iPhone, iPad: berdin.
+  - Meta Quest: esfera erdi murgiltzailea.
+  - Android TV, Google TV: esfera erdia, 360°/180° botoia.
+- **Spatial 2.5D (sakonera pantaila lauan bideo estereoskopiko batetik)**
+  - Android telefonoak: erreproduzitzaile natiboa, buruaren jarraipena aurreko kamerarekin.
+  - iPhone, iPad: berdin.
+  - Meta Quest: ez da eskaintzen.
+  - Android TV, Google TV: ez dago eskuragarri.
+- **Apple-ren argazki espazialak (HEIC bikote estereoak, 19. konpilaziotik aurrera)**
+  - Android telefonoak: ezkerreko begia, xehetasun-errenkada batek espaziala dela dio.
+  - iPhone, iPad: berdin.
+  - Meta Quest: Ikusi 3Dn: bi begiak ikuspegi murgiltzailean flotatzen duen argazki batean, 3D edo 2D, tamaina aldagarria.
+  - Android TV, Google TV: ezkerreko begia, xehetasun-errenkada bat.
+- **Apple-ren bideo espazialak (MV-HEVC, 19. konpilaziotik aurrera)**
+  - Android telefonoak: begi bat (oinarrizko geruza), ohar batekin.
+  - iPhone, iPad: berdin.
+  - Meta Quest: begi bat leihoan, ohar batekin.
+  - Android TV, Google TV: begi bat, ohar batekin.
+- **Insta360 .insp argazki gordinak (16. konpilaziotik aurrera)**
+  - Android telefonoak: GPUan josiak esfera-ikustailearen aurretik, gehienez 8192x4096.
+  - iPhone, iPad: berdin.
+  - Meta Quest: murgiltzailea, betaurrekoetarako prestatutako irudi josi batetik.
+  - Android TV, Google TV: telefonoetan bezala.
+- **Insta360 .insv gordina, bi objektiboak pista bakarrean (16. konpilaziotik aurrera)**
+  - Android telefonoak: Media3 erreproduzitzaileko GPU efektu batek josia.
+  - iPhone, iPad: SceneKit shader batek josia.
+  - Meta Quest: murgiltzailea, GPU efektu berak josia.
+  - Android TV, Google TV: telefonoetan bezala.
+- **Objektibo bat pista edo fitxategi bakoitzeko duten bideo gordinak (18. konpilaziotik aurrera): Insta360 X4, X4 Air, X5, X6 .insv, X3 bikoteak, GoPro .360, DJI .osv**
+  - Android telefonoak: bi hardware deskodetzaile aldi berean, bat objektibo bakoitzeko (19. konpilaziotik aurrera software deskodetzaileak hardware deskodetzailerik gabeko gailu batean, gehienez 2048x2048 objektibo bakoitzeko), eta esferan josten duen GL konposatzaile bat; objektibo bat, ondoren jario transkodetua, ondoren bideoa josi gabe, gailuak bi exekutatu ezin dituenean.
+  - iPhone, iPad: AVFoundation konposatzaile pertsonalizatu bat Metal-ekin.
+  - Meta Quest: murgiltzailea, bi deskodetzaile eta konposatzaile berberak (3840x1920 panela).
+  - Android TV, Google TV: telefonoetan bezala, telebistak bi deskodetzaile aldi berean erabil ditzakeenean.
+- **Tapo kameraren zuzeneko ikuspegia (20. konpilaziotik aurrera)**
+  - Android telefonoak: Media3 RTSP erreproduzitzailea: SD orrian, HD pantaila osoan, soinu-botoia.
+  - iPhone, iPad: oraindik ez: txartel batek geroago iritsiko dela dio.
+  - Meta Quest: leihoan, HDn.
+  - Android TV, Google TV: telefonoetan bezala.
+- **Tapo kameraren grabazioak (20. konpilaziotik aurrera)**
+  - Android telefonoak: memoria-txarteletik ekarriak bere soinua duen H.264 bideo batean, ondoren aurrera eta atzera egiteko aukerarekin erreproduzituak.
+  - iPhone, iPad: berdin.
+  - Meta Quest: berdin, leihoan.
+  - Android TV, Google TV: berdin.
 
-Telebistaren zutabea ez da oraindik telebista batean egiaztatu, ikusi [Ikusi zure telebistan](#watch-on-your-tv-android-tv-and-google-tv); kameraren errenkadak ez dira oraindik benetako kamera batekin egiaztatu.
+Android TV eta Google TV sarrerak, 20. konpilaziotik aurrera, ez dira oraindik telebista batean egiaztatu, ikusi [Ikusi zure telebistan](#watch-on-your-tv-android-tv-and-google-tv); kameraren sarrerak ez dira oraindik benetako kamera batekin egiaztatu.
 
-| Nondik | Nola |
-|---|---|
-| Zure Immich zerbitzaria | Jatorrizkoa edo zerbitzariaren jario transkodetua, Ezarpenak, Baliabide ikuslea, "Bideoaren iturria" aukerak dioen bezala (ikusi [Bideoaren xehetasunak eta deskodetzaileak](#video-details-decoders-and-why-a-video-stutters)). Web aplikazioaren kontu bera |
-| Telefonoa edo betaurrekoak beraiek | "Erabili zerbitzaririk gabe" saioa hasteko orrian, edo Liburutegia fitxako Gailu honetan sarrera |
-| NAS bat edo ordenagailu bat | SMB eta WebDAV partekatzeak, eta 19. konpilaziotik aurrera DLNA multimedia-zerbitzariak, sarean aurkituak, zuzenean irakurriak (SMB bideo bat sei konexio arte erabiliz), ezer kopiatu gabe; 15. konpilaziotik aurrera aukeratzen dituzun fitxategiak zure Immich kontura bidal daitezke |
-| Beste telefono bat (19. konpilaziotik aurrera) | "Partekatu telefono hau sarean" telefono horretan: betaurrekoek, edo sareko edozein WebDAV bezerok, bere albumak, hilabeteak eta 360° multimedia-elementuak irakurtzen dituzte |
-| Plex Media Server bat (20. konpilaziotik aurrera) | Bere argazki, film eta telesail liburutegiak karpetaka, jatorrizko fitxategiak zuzenean irakurriak zerbitzariaren ziurtagiri propioaren aurka egiaztatutako HTTPS bidez, etxean edo etxetik kanpoko helbidearen bidez, plataforma guztietan; ikusi [Plex Media Server, plex.tv gabe](#plex-media-server-without-plextv) |
-| Tapo kamera bat (20. konpilaziotik aurrera) | Zuzeneko ikuspegia kamera-kontuarekin (Android, Android TV, Quest-a), eta bere memoria-txarteleko grabazioak TP-Link kontuaren pasahitzarekin (plataforma guztiak), sare lokalean bakarrik; ikusi [Tapo kamerak](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Zure Immich zerbitzaria**: jatorrizkoa edo zerbitzariaren jario transkodetua, Ezarpenak, Baliabide ikuslea, "Bideoaren iturria" aukerak dioen bezala (ikusi [Bideoaren xehetasunak eta deskodetzaileak](#video-details-decoders-and-why-a-video-stutters)). Web aplikazioaren kontu bera.
+- **Telefonoa edo betaurrekoak beraiek**: "Erabili zerbitzaririk gabe" saioa hasteko orrian, edo Liburutegia fitxako Gailu honetan sarrera.
+- **NAS bat edo ordenagailu bat**: SMB eta WebDAV partekatzeak, eta 19. konpilaziotik aurrera DLNA multimedia-zerbitzariak, sarean aurkituak, zuzenean irakurriak (SMB bideo bat sei konexio arte erabiliz), ezer kopiatu gabe; 15. konpilaziotik aurrera aukeratzen dituzun fitxategiak zure Immich kontura bidal daitezke.
+- **Beste telefono bat (19. konpilaziotik aurrera)**: "Partekatu telefono hau sarean" telefono horretan: betaurrekoek, edo sareko edozein WebDAV bezerok, bere albumak, hilabeteak eta 360° multimedia-elementuak irakurtzen dituzte.
+- **Plex Media Server bat (20. konpilaziotik aurrera)**: bere argazki, film eta telesail liburutegiak karpetaka, jatorrizko fitxategiak zuzenean irakurriak zerbitzariaren ziurtagiri propioaren aurka egiaztatutako HTTPS bidez, etxean edo etxetik kanpoko helbidearen bidez, plataforma guztietan; ikusi [Plex Media Server, plex.tv gabe](#plex-media-server-without-plextv).
+- **Tapo kamera bat (20. konpilaziotik aurrera)**: zuzeneko ikuspegia kamera-kontuarekin (Android, Android TV, Quest-a), eta bere memoria-txarteleko grabazioak TP-Link kontuaren pasahitzarekin (plataforma guztiak), sare lokalean bakarrik; ikusi [Tapo kamerak](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 Horizon OS v69 edo berriagoa duten Meta Quest betaurrekoetan ere badabil. 21. konpilaziotik aurrera Horizon Store-ko konpilazioa Quest 2, Quest Pro, Quest 3 eta 3S betaurrekoetarako dago zerrendatuta, `-release.apk` unibertsalak jada izendatzen dituen laurak; lehen Quest-a ez, dendak ez du jada onartzen. Quest 3 eta 3S probatuta daude. Quest 2 eta Quest Pro oraindik ez daude probatuta: haien bideo-deskodetzaileak motelagoak dira, eta aplikazioak egiaztatzen dituen mugak Quest 3 batean neurtu ziren, beraz H.264 bideo handi bat mezu batekin baztertu daiteke edo etenka erreproduzitu daiteke haietan. Bi betaurreko horien txostenak ongi etorriak dira [Issues](https://github.com/freeKC/Immuch360/issues) atalean. Nola erabili [Meta Quest 3 betaurrekoetan](#in-the-meta-quest-3-headset) atalean dago; atal hau instalazioari eta betaurrekoetan aldatzen denari buruzkoa da.
+Immuch360 Horizon OS v69 edo berriagoa duten Meta Quest betaurrekoetan ere badabil. 21. konpilaziotik aurrera Horizon Store-ko konpilazioa Quest 2, Quest Pro, Quest 3 eta 3S betaurrekoetarako dago zerrendatuta, `-release.apk` unibertsalak jada izendatzen dituen laurak; lehen Quest-a ez, dendak ez du jada onartzen.
 
-Betaurrekoetarako konpilazioak HTTPS bidez bakarrik komunikatzen da zerbitzariekin, edo HTTP soilaren bidez etxeko sareko izenekin (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) eta betaurrekoekin beraiekin, Horizon Store-k eskatzen duen bezala. IP batekin HTTP helbide soil gisa idatzitako zerbitzari bat, `http://192.168.1.10:2283` bezalakoa, konpilazio horrek baztertzen du: erabili HTTPS, etxeko sareko izen bat (`nas.local`), edo `-release.apk` unibertsala, telefonoen politika irekia mantentzen duena. Sare lokaleko HTTP helbide soil bateko WebDAV, DLNA eta telefono-partekatzeei ez die eragiten: aplikazioak berak irakurtzen ditu eta bere erreproduzitzaileei bere zubi lokalaren helbidea bakarrik ematen die (betaurrekoetan berretsi beharrekoa DLNA eta telefono-partekatzearentzat, 19. konpilazioan berriak). 20. konpilaziotik aurrera Plex zerbitzari batera HTTPS bidez iristen da, eta Tapo kamera batera aplikazioaren beraren bidez, bere zuzeneko ikuspegia RTSP bidez, HTTP ez dena: ez batari ez besteari ez litzaieke eragin behar (betaurrekoetan berretsi beharrekoa).
+Quest 3 eta 3S probatuta daude. Quest 2 eta Quest Pro oraindik ez daude probatuta: haien bideo-deskodetzaileak motelagoak dira, eta aplikazioak egiaztatzen dituen mugak Quest 3 batean neurtu ziren, beraz H.264 bideo handi bat mezu batekin baztertu daiteke edo etenka erreproduzitu daiteke haietan. Bi betaurreko horien txostenak ongi etorriak dira [Issues](https://github.com/freeKC/Immuch360/issues) atalean.
+
+Nola erabili [Meta Quest 3 betaurrekoetan](#in-the-meta-quest-3-headset) atalean dago; atal hau instalazioari eta betaurrekoetan aldatzen denari buruzkoa da.
+
+Betaurrekoetarako konpilazioak HTTPS bidez bakarrik komunikatzen da zerbitzariekin, edo HTTP soilaren bidez etxeko sareko izenekin (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) eta betaurrekoekin beraiekin, Horizon Store-k eskatzen duen bezala. IP batekin HTTP helbide soil gisa idatzitako zerbitzari bat, `http://192.168.1.10:2283` bezalakoa, konpilazio horrek baztertzen du: erabili HTTPS, etxeko sareko izen bat (`nas.local`), edo `-release.apk` unibertsala, telefonoen politika irekia mantentzen duena.
+
+Sare lokaleko HTTP helbide soil bateko WebDAV, DLNA eta telefono-partekatzeei ez die eragiten: aplikazioak berak irakurtzen ditu eta bere erreproduzitzaileei bere zubi lokalaren helbidea bakarrik ematen die (betaurrekoetan berretsi beharrekoa DLNA eta telefono-partekatzearentzat, 19. konpilazioan berriak). 20. konpilaziotik aurrera Plex zerbitzari batera HTTPS bidez iristen da, eta Tapo kamera batera aplikazioaren beraren bidez, bere zuzeneko ikuspegia RTSP bidez, HTTP ez dena: ez batari ez besteari ez litzaieke eragin behar (betaurrekoetan berretsi beharrekoa).
 
 <a id="install"></a>
 ### Instalatu
@@ -762,16 +922,23 @@ Meta-k Horizon Store-ko fitxa onartu zuen 2026ko urriaren 7an 14. konpilazioarek
 
 ### Leihoan
 
-Aplikazio osoa tamaina aldagarriko 2D leiho gisa dabil: saio-hasiera, denbora-lerroa, albumak, bilaketa, Liburutegia fitxa (360° zerrenda, Gailu honetan, Sareko partekatzeak), ezarpenak, eta argazki eta bideo-ikustaileak, non argazki eta bideo lauak erreproduzitzen diren. Betaurrekoetan 360° botoiak, eta ⋮ menuko "Ikusi 360° gisa" aukerak, zuzenean irekitzen dute ikuspegi murgiltzailea telefonoetako esfera-ikustailearen ordez, eta Spatial 2.5D botoia eta bere ezarpena ez dira agertzen. 19. konpilaziotik aurrera Apple-ren argazki espazial batek "Ikusi 3Dn" botoia du, eta "Partekatu telefono hau sarean" lauza ez da agertzen: betaurrekoak dira telefono baten partekatzea irakurtzen dutenak. 20. konpilaziotik aurrera Plex zerbitzariak eta Tapo kamerak ere leihoan irekitzen dira, kameraren zuzeneko ikuspegia HDn; "Urruneko agintearen diseinua" ezarpena Automatikoa balioan geratzen da, eta horrek desaktibatuta uzten du betaurrekoetan.
+Aplikazio osoa tamaina aldagarriko 2D leiho gisa dabil: saio-hasiera, denbora-lerroa, albumak, bilaketa, Liburutegia fitxa (360° zerrenda, Gailu honetan, Sareko partekatzeak), ezarpenak, eta argazki eta bideo-ikustaileak, non argazki eta bideo lauak erreproduzitzen diren.
+
+Betaurrekoetan 360° botoiak, eta ⋮ menuko "Ikusi 360° gisa" aukerak, zuzenean irekitzen dute ikuspegi murgiltzailea telefonoetako esfera-ikustailearen ordez, eta Spatial 2.5D botoia eta bere ezarpena ez dira agertzen.
+
+19\. konpilaziotik aurrera Apple-ren argazki espazial batek "Ikusi 3Dn" botoia du, eta "Partekatu telefono hau sarean" lauza ez da agertzen: betaurrekoak dira telefono baten partekatzea irakurtzen dutenak. 20. konpilaziotik aurrera Plex zerbitzariak eta Tapo kamerak ere leihoan irekitzen dira, kameraren zuzeneko ikuspegia HDn; "Urruneko agintearen diseinua" ezarpena Automatikoa balioan geratzen da, eta horrek desaktibatuta uzten du betaurrekoetan.
 
 ### Irudietan
 
 Betaurrekoetan atera dira pantaila-argazkiak, kaptura-botoiarekin (Meta botoia eta katua), Quest 3 batean, aplikazioa frantsesez zegoela; Liburutegia fitxa zerbitzaririk gabeko moduan erakusten da.
 
-| Zerbitzaririk gabe | Sareko partekatzeak |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Liburutegia fitxa zerbitzaririk gabe: Gailu honetan eta Sareko partekatzeak"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Sareko partekatzeak orria Freebox Server baten SMB partekatze batekin"> |
-| Liburutegia fitxa zerbitzaririk gabeko moduan: betaurrekoen multimedia-elementuak eta sareko partekatzeak | Freebox Server baten Samba partekatze bat, zuzenean betaurrekoetatik irakurria |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Liburutegia fitxa zerbitzaririk gabe: Gailu honetan eta Sareko partekatzeak">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Sareko partekatzeak orria Freebox Server baten SMB partekatze batekin">
+</p>
+
+- **Zerbitzaririk gabe**: Liburutegia fitxa zerbitzaririk gabeko moduan, betaurrekoen multimedia-elementuekin eta sareko partekatzeekin.
+- **Sareko partekatzeak**: Freebox Server baten Samba partekatze bat, zuzenean betaurrekoetatik irakurria.
 
 ### Mugak betaurrekoetan
 
@@ -786,12 +953,18 @@ Betaurrekoetan atera dira pantaila-argazkiak, kaptura-botoiarekin (Meta botoia e
 
 Aplikazioa Google Play-n dago telefono eta tabletetarako; App Store-ko bertsioa Apple-ren berrikuspenaren zain dago, Meta Horizon Store-ko fitxa onartuta dago eta bere lehen eguneratzea Meta-ren berrikuspenean dago, eta telebistetarako Google Play bertsioa telebistarako bertsioaren Google-ren berrikuspenaren zain dago. GitHub-eko bertsioa beti da konpilaziorik berriena:
 
-| Plataforma | Gaur | Laster |
-|---|---|---|
-| Android telefonoak eta tabletak | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), edo [Releases](https://github.com/freeKC/Immuch360/releases) orriko APKa: `Immuch360-v<version>-arm64-v8a-release.apk` telefono baterako (`Immuch360-v<version>-release.apk` unibertsalak leku guztietan funtzionatzen du, `-armeabi-v7a` 32 biteko telefono zaharragoetarako da, eta `.aab` fitxategia Google Play-rako da, ez eskuz instalatzeko). GitHub-eko konpilazioa dendaren aurretik egon ohi da. Edonola ere Immich aplikazio ofizialaren ondoan instalatzen da (`com.aprogsys.immuch360` paketea). | Google Play: 18. konpilazioa argitaratuta dago, 20. konpilazioa Google-ren berrikuspenean 2026ko urriaren 7tik, 19. konpilazioaren ordez |
-| iPhone eta iPad | Apple-ren berrikuspenaren zain. Berrikuspenean dagoen bertsioak 11. konpilazioaren funtzioak ditu: Immich-era igotzea eta "Bideoaren iturria" aukera (15. konpilazioa) eta Insta360 fitxategi gordinak (16. konpilazioa) App Store-ko geroko eguneratze batekin iritsiko dira. Iturburu-kodea Xcode-rekin edo Codemagic-en konpilatzen da, ikusi [Konpilatu zuk zeuk](#build-it-yourself). | App Store, berrikuspenean |
-| Meta Quest 2, Quest Pro, Quest 3 eta 3S (Quest 2 eta Quest Pro probatu gabe) | [Releases](https://github.com/freeKC/Immuch360/releases) orriko `-quest-release.apk` fitxategia (`-release.apk` unibertsalak ere funtzionatzen du), garatzaile moduan eskuz instalatua, ikusi [Instalatu](#install). Dendako konpilazioa eta GitHub-eko APKa gako desberdinekin sinatuta daude: batetik bestera aldatzeko, desinstalatu aplikazioa lehenik (bere ezarpenak eta gordetako partekatzeak berarekin doaz). | Meta Horizon Store: fitxa 2026ko urriaren 7an onartu zen 14. konpilazioarekin, eta 21. konpilazioa, bere lehen eguneratzea, Meta-ren berrikuspenean dago; dendako alfa kanalak (probatzaileentzat bakarrik) konpilazio berri bakoitza jasotzen du |
-| Android TV eta Google TV (20. konpilaziotik aurrera) | [Releases](https://github.com/freeKC/Immuch360/releases) orriko `Immuch360-v<version>-release.apk` unibertsala, adb-rekin eskuz instalatua, ikusi [Instalatu telebistan](#install-it-on-the-tv). Telefonoetako aplikazio bera da. | Google Play telebistetan, telebistarako bertsioaren Google-ren berrikuspenaren ondoren |
+- **Android telefonoak eta tabletak**
+  - Gaur: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), edo [Releases](https://github.com/freeKC/Immuch360/releases) orriko APKa: `Immuch360-v<version>-arm64-v8a-release.apk` telefono baterako (`Immuch360-v<version>-release.apk` unibertsalak leku guztietan funtzionatzen du, `-armeabi-v7a` 32 biteko telefono zaharragoetarako da, eta `.aab` fitxategia Google Play-rako da, ez eskuz instalatzeko). GitHub-eko konpilazioa dendaren aurretik egon ohi da. Edonola ere Immich aplikazio ofizialaren ondoan instalatzen da (`com.aprogsys.immuch360` paketea).
+  - Laster: Google Play-n, 18. konpilazioa argitaratuta dago, 20. konpilazioa Google-ren berrikuspenean 2026ko urriaren 7tik, 19. konpilazioaren ordez.
+- **iPhone eta iPad**
+  - Gaur: Apple-ren berrikuspenaren zain. Berrikuspenean dagoen bertsioak 11. konpilazioaren funtzioak ditu: Immich-era igotzea eta "Bideoaren iturria" aukera (15. konpilazioa) eta Insta360 fitxategi gordinak (16. konpilazioa) App Store-ko geroko eguneratze batekin iritsiko dira. Iturburu-kodea Xcode-rekin edo Codemagic-en konpilatzen da, ikusi [Konpilatu zuk zeuk](#build-it-yourself).
+  - Laster: App Store, berrikuspenean.
+- **Meta Quest 2, Quest Pro, Quest 3 eta 3S (Quest 2 eta Quest Pro probatu gabe)**
+  - Gaur: [Releases](https://github.com/freeKC/Immuch360/releases) orriko `-quest-release.apk` fitxategia (`-release.apk` unibertsalak ere funtzionatzen du), garatzaile moduan eskuz instalatua, ikusi [Instalatu](#install). Dendako konpilazioa eta GitHub-eko APKa gako desberdinekin sinatuta daude: batetik bestera aldatzeko, desinstalatu aplikazioa lehenik (bere ezarpenak eta gordetako partekatzeak berarekin doaz).
+  - Laster: Meta Horizon Store-n, fitxa 2026ko urriaren 7an onartu zen 14. konpilazioarekin, eta 21. konpilazioa, bere lehen eguneratzea, Meta-ren berrikuspenean dago; dendako alfa kanalak (probatzaileentzat bakarrik) konpilazio berri bakoitza jasotzen du.
+- **Android TV eta Google TV (20. konpilaziotik aurrera)**
+  - Gaur: [Releases](https://github.com/freeKC/Immuch360/releases) orriko `Immuch360-v<version>-release.apk` unibertsala, adb-rekin eskuz instalatua, ikusi [Instalatu telebistan](#install-it-on-the-tv). Telefonoetako aplikazio bera da.
+  - Laster: Google Play telebistetan, telebistarako bertsioaren Google-ren berrikuspenaren ondoren.
 
 App Store eta Meta Horizon Store-ko estekak hemen gehituko dira fitxak argitaratu bezain laster. Hasi saioa zure Immich zerbitzariaren ohiko URLarekin eta kontuarekin, edo sakatu "Erabili zerbitzaririk gabe" saioa hasteko orrian gailuaren argazki eta bideoekin hasteko. GitHub-eko APKa ez da bere kabuz eguneratzen: begiratu Releases orria, eta aplikazioa denda batetik instalatu ondoren, hartu eguneratzeak denda horretatik.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Dendetako pantaila-argazkiak simulagailurako arazketa-konpilazioetan ateratzen dira, `--dart-define=IMMUCH_SCREENSHOTS=true` aukerarekin eginak, arazketa-banda ezkutatzen besterik ez duena. Android-eko bi aldaerak (flavours) aplikazio bera dira. 20. konpilaziotik aurrera `phone` aldaerak telebistarako aplikazio gisa ere aurkezten du bere burua (telebistako abiarazleko sarrera bat eta banner bat, ukipen-pantailarik behar gabe), `quest` aldaerak alde batera uzten duena. `quest` aldaerak SDK 34 du helburu eta betaurrekoek erabiltzen dituzten baimenak bakarrik mantentzen ditu (argazkiak, bideoak, jakinarazpenak): multimedia-kudeaketa, atzeko planoko kokapena, biltegiratze zaharra, audioa, multimediaren kokapena, gailuaren kokapena eta kamera `android/app/src/quest/AndroidManifest.xml` fitxategian kentzen dira, Meta Horizon Store-k lehen biak baztertzen dituelako eta beste baimen sentikor bakoitzaren justifikazioa eskatzen duelako; fitxategi berak Quest 2, Quest Pro, Quest 3 eta 3S izendatzen ditu gailu bateragarri gisa eta HTTP soila betaurrekoetara eta etxeko sareko izenetara mugatzen du. APKa 64 bitekoa da bakarrik bere komando-lerroaren bi argumentu gehigarriengatik (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` aldaera da Google Play-k eskatzen duena. iOSerako zure Mac-ean konpilatzeko, erabili Xcode eta zure sinatze-taldea; Xcode 26rekin, exekutatu `xcodebuild -downloadComponent MetalToolchain` behin lehenik, Spatial shader-ek behar dutelako. Mac-ik gabe, iOS konpilazioak Codemagic-en exekutatzen dira (ostatatutako Mac bat) biltegi honetako `codemagic.yaml` fitxategitik. Android-eko bertsio-konpilazioak GitHub Actions-en exekutatzen dira (`.github/workflows/immuch360-release.yml`).
+Dendetako pantaila-argazkiak simulagailurako arazketa-konpilazioetan ateratzen dira, `--dart-define=IMMUCH_SCREENSHOTS=true` aukerarekin eginak, arazketa-banda ezkutatzen besterik ez duena.
+
+Android-eko bi aldaerak (flavours) aplikazio bera dira. 20. konpilaziotik aurrera `phone` aldaerak telebistarako aplikazio gisa ere aurkezten du bere burua (telebistako abiarazleko sarrera bat eta banner bat, ukipen-pantailarik behar gabe), `quest` aldaerak alde batera uzten duena.
+
+`quest` aldaerak SDK 34 du helburu eta betaurrekoek erabiltzen dituzten baimenak bakarrik mantentzen ditu (argazkiak, bideoak, jakinarazpenak): multimedia-kudeaketa, atzeko planoko kokapena, biltegiratze zaharra, audioa, multimediaren kokapena, gailuaren kokapena eta kamera `android/app/src/quest/AndroidManifest.xml` fitxategian kentzen dira, Meta Horizon Store-k lehen biak baztertzen dituelako eta beste baimen sentikor bakoitzaren justifikazioa eskatzen duelako; fitxategi berak Quest 2, Quest Pro, Quest 3 eta 3S izendatzen ditu gailu bateragarri gisa eta HTTP soila betaurrekoetara eta etxeko sareko izenetara mugatzen du. APKa 64 bitekoa da bakarrik bere komando-lerroaren bi argumentu gehigarriengatik (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone` aldaera da Google Play-k eskatzen duena.
+
+iOSerako zure Mac-ean konpilatzeko, erabili Xcode eta zure sinatze-taldea; Xcode 26rekin, exekutatu `xcodebuild -downloadComponent MetalToolchain` behin lehenik, Spatial shader-ek behar dutelako. Mac-ik gabe, iOS konpilazioak Codemagic-en exekutatzen dira (ostatatutako Mac bat) biltegi honetako `codemagic.yaml` fitxategitik. Android-eko bertsio-konpilazioak GitHub Actions-en exekutatzen dira (`.github/workflows/immuch360-release.yml`).
 
 Ez dago sekreturik biltegi honetan: Android-eko sinatze-gakoa GitHub Actions-eko sekretu zifratu gisa gordetzen da, eta Apple-ren sinatze-materiala Codemagic-eko aldagai zifratu gisa. Lan-fluxuen fitxategiek izenez bakarrik aipatzen dituzte. Zure `android/key.jks` propiorik gabe, bertsio-konpilazio bat arazketa-gakoarekin sinatzen da eta ezin da instalatu GitHub-eko edo denda bateko kopia baten gainean (desinstalatu hori lehenik); arazketa-konpilazio bat haren ondoan instalatzen da Immuch360 debug izenarekin. Meta Horizon Store-ko kopia bertsioaren `quest` APKa da beste gako batekin sinatua, dendako aplikazioa lehen aldiz erregistratu zenekoarekin, beraz ezin da instalatu eskuz instalatutako APK baten gainean, ezta alderantziz ere.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 DLNA bezeroak, telefono-partekatzeak eta Apple-ren multimedia espazialaren detekzioak ere aplikazioaren erregistro propioan idazten dute 19. konpilaziotik aurrera ("Erregistroak", goian eskuineko profil-irudiaren menuan), `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` eta `NetworkMediaService` azpian. 20. konpilaziotik aurrera telebista-moduak han idazten du `TvMode` eta `TvTextEntry` azpian, Plex zerbitzariek `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` eta `PlexServerEditPage` azpian, eta Tapo kamerek `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` eta `CameraLiveView` azpian; Plex lerroek ez dute inoiz tokenik, helbiderik edo izenbururik, eta kamera-lerroek pasahitzak kanpoan uzten dituzte. Erregistro-lerroak gailuan geratzen dira zuk zeuk kopiatzen ez badituzu.
 
+<a id="privacy"></a>
 ## Pribatutasuna
 
 - **Ezer ez zaio garatzaileari bidaltzen**: aplikazioa zuk aukeratzen duzun Immich zerbitzariarekin komunikatzen da (eta, mapa irekitzen duzunean, zerbitzari horrek erabiltzen duen mapa-lauzen zerbitzuarekin), ez du publizitaterik, ez analitikarik, ez garatzaileak kudeatutako hutsegite-txostenen zerbitzurik, eta ez dio ezer bidaltzen Immuch360-ren garatzaileari.
@@ -849,10 +1029,12 @@ DLNA bezeroak, telefono-partekatzeak eta Apple-ren multimedia espazialaren detek
 
 Politika osoa [PRIVACY.md](../PRIVACY.md) fitxategian dago.
 
+<a id="license-and-trademark"></a>
 ## Lizentzia eta marka
 
 Proiektu hau Immich-en fork bat da eta [GNU AGPL v3](../LICENSE) lizentziapean jarraitzen du. APK guztiek, telefonokoak barne, Meta Spatial SDK ere badute, kode irekikoa ez dena (Meta Platform Technologies SDK License Agreement) eta Meta Quest betaurrekoetan bakarrik erabiltzen dena. Immuch360 ez dago Immich taldearekin ez FUTO-rekin lotuta, ezta haiek babestuta ere.
 
+<a id="roadmap"></a>
 ## Bide-orria
 
 Oraindik egin gabe dagoena, litekeenena lehenik. Hemen ezer ez da promesa bat, eta [arazo-jarraitzailean](https://github.com/freeKC/Immuch360/issues) emandako iruzkinek lehenik zer datorren erabakitzen laguntzen dute.
@@ -871,6 +1053,7 @@ Oraindik egin gabe dagoena, litekeenena lehenik. Hemen ezer ez da promesa bat, e
 - **Plex, hurrengo urratsak**: 20. konpilazioaren gailuko proba (telefonoak, Quest-a, iPhone bat, telebista bat, etxetik kanpo); tokena ordenagailutik QR kode batekin ekartzea; Plex zerbitzari baten DLNA aldea ezkutatzea aurkitutako zerbitzarien zerrendan; IPv6.
 - **Upstream**: pull request txikiak Immich-era mantentzaileek nahi dituzten zatietarako, 360° argazki-ikustailetik hasita.
 
+<a id="credits"></a>
 ## Kredituak
 
 360° argazki-ikustailea dmitry-brazhenko-ren [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) upstream pull request-ean oinarritzen da, bera ere bencefr-en prototipoan oinarritua, [#30192](https://github.com/immich-app/immich/pull/30192) atalean. Eskerrik asko biei.

@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | Kiswahili | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Kiswahili</b> · Lugha nyingine (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: picha na video za 360°, 3D na VR180, kutoka Immich, simu yako au NAS. Android, iOS na Meta Quest, ukiwa na seva au bila seva">
 </p>
 
 # Immuch360
 
-Immuch360 ni programu ya simu ya Immich yenye picha na video za 360° unazoweza kutazama pande zote, pamoja na kicheza bure cha picha na video bapa, za 360°, 3D na VR180, kwenye simu na kompyuta kibao za Android, iPhone na iPad, headset za Meta Quest (Quest 3 na 3S, na kuanzia build 21 Quest 2 na Quest Pro, haijajaribiwa), na kuanzia build 20 Android TV na Google TV. Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) au kwa hali ya picha ya tufe ya simu, au walio na headset, na wanaotaka kutazama picha zao wenyewe kutoka seva ya Immich, kutoka simu yenyewe, NAS, seva ya midia au seva ya Plex: seva ileile, akaunti ileile, bila programu-jalizi kwenye seva, au bila seva kabisa. Kuanzia build 20 pia inaonyesha kamera za Tapo, moja kwa moja na rekodi za kadi zao za kumbukumbu.
+Immuch360 ni programu ya simu ya Immich yenye picha na video za 360° unazoweza kutazama pande zote, pamoja na kicheza bure cha picha na video bapa, za 360°, 3D na VR180, kwenye simu na kompyuta kibao za Android, iPhone na iPad, headset za Meta Quest (Quest 3 na 3S, na kuanzia build 21 Quest 2 na Quest Pro, haijajaribiwa), na kuanzia build 20 Android TV na Google TV.
+
+Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) au kwa hali ya picha ya tufe ya simu, au walio na headset, na wanaotaka kutazama picha zao wenyewe kutoka seva ya Immich, kutoka simu yenyewe, NAS, seva ya midia au seva ya Plex: seva ileile, akaunti ileile, bila programu-jalizi kwenye seva, au bila seva kabisa. Kuanzia build 20 pia inaonyesha kamera za Tapo, moja kwa moja na rekodi za kadi zao za kumbukumbu.
 
 <p align="center">
   <sub>Fork isiyo rasmi. Haihusiani na Immich wala FUTO. Jina linasomeka kama "I am much 360".</sub>
@@ -13,29 +15,52 @@ Immuch360 ni programu ya simu ya Immich yenye picha na video za 360° unazoweza 
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK ya Android</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">inakaguliwa</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store imeidhinishwa, build 21 imewasilishwa kama sasisho lake la kwanza &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">APK ya Android</a><br>
+  App Store: <a href="#where-to-get-it">inakaguliwa</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store imeidhinishwa, build 21 imewasilishwa kama sasisho lake la kwanza<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 360° asilia</h3>Picha na video kama tufe unalotazama pande zote, kwa jairoskopu, ikiwemo faili ghafi za kamera (Insta360 kuanzia build 16, GoPro na DJI kuanzia build 18). Pia kicheza video bure: bapa, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 3D asilia</h3>360° na VR180 za stereo, juu na chini au ubavu kwa ubavu, na picha za anga za Apple (kuanzia build 19): 3D halisi ndani ya headset, jicho moja kwenye simu</td>
-    <td align="center" width="33%"><h3>🎥 2.5D asilia</h3>Kina kwenye skrini bapa kutoka video ya stereo, mwonekano unafuata kichwa chako (ya majaribio, simu na kompyuta kibao)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Programu moja kwenye simu, kompyuta kibao na headset za Quest 2, Pro, 3 na 3S, 3D halisi ndani ya headset, na kuanzia build 20 kwenye Android TV kwa rimoti</td>
-    <td align="center"><h3>🔌 Ukiwa na seva au bila seva</h3>Seva yako ya Immich, au matunzio ya simu yenyewe, bila haja ya akaunti</td>
-    <td align="center"><h3>🗄️ Hifadhi za mtandao</h3>Samba (SMB), WebDAV na, kuanzia build 19, seva za midia za DLNA zinazopatikana kwenye mtandao na kusomwa moja kwa moja, bila kupakua chochote, na kutumwa kwenye Immich unapoamua. Kuanzia build 19 simu pia inashiriki matunzio yake yenyewe na headset</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Kwenye televisheni</h3>Kuanzia build 20 APK ileile kwenye Android TV na Google TV: picha na video za 360°, seva yako na hifadhi zako, kwa rimoti</td>
-    <td align="center"><h3>🎬 Plex, bila plex.tv</h3>Kuanzia build 20 maktaba zako za Plex, zikichezwa kutoka faili asili ili 360° ibaki 360°, nyumbani na nje ya nyumbani</td>
-    <td align="center"><h3>📹 Kamera za Tapo</h3>Kuanzia build 20 mwonekano wa moja kwa moja na rekodi za kadi ya kumbukumbu, kwenye mtandao wako pekee, na klipu inayotumwa kwa Immich unapochagua</td>
-  </tr>
-</table>
+- 🌐 **360° asilia**<br>Picha na video kama tufe unalotazama pande zote, kwa jairoskopu, ikiwemo faili ghafi za kamera (Insta360 kuanzia build 16, GoPro na DJI kuanzia build 18). Pia kicheza video bure: bapa, 360°, 3D, VR180
+- 👓 **3D asilia**<br>360° na VR180 za stereo, juu na chini au ubavu kwa ubavu, na picha za anga za Apple (kuanzia build 19): 3D halisi ndani ya headset, jicho moja kwenye simu
+- 🎥 **2.5D asilia**<br>Kina kwenye skrini bapa kutoka video ya stereo, mwonekano unafuata kichwa chako (ya majaribio, simu na kompyuta kibao)
+- 📱 **Android, iOS, Quest, TV**<br>Programu moja kwenye simu, kompyuta kibao na headset za Quest 2, Pro, 3 na 3S, 3D halisi ndani ya headset, na kuanzia build 20 kwenye Android TV kwa rimoti
+- 🔌 **Ukiwa na seva au bila seva**<br>Seva yako ya Immich, au matunzio ya simu yenyewe, bila haja ya akaunti
+- 🗄️ **Hifadhi za mtandao**<br>Samba (SMB), WebDAV na, kuanzia build 19, seva za midia za DLNA zinazopatikana kwenye mtandao na kusomwa moja kwa moja, bila kupakua chochote, na kutumwa kwenye Immich unapoamua. Kuanzia build 19 simu pia inashiriki matunzio yake yenyewe na headset
+- 📺 **Kwenye televisheni**<br>Kuanzia build 20 APK ileile kwenye Android TV na Google TV: picha na video za 360°, seva yako na hifadhi zako, kwa rimoti
+- 🎬 **Plex, bila plex.tv**<br>Kuanzia build 20 maktaba zako za Plex, zikichezwa kutoka faili asili ili 360° ibaki 360°, nyumbani na nje ya nyumbani
+- 📹 **Kamera za Tapo**<br>Kuanzia build 20 mwonekano wa moja kwa moja na rekodi za kadi ya kumbukumbu, kwenye mtandao wako pekee, na klipu inayotumwa kwa Immich unapochagua
+
+<details>
+<summary><b>Yaliyomo</b></summary>
+
+- [Picha na video za 360° kama tufe](#360-photos-and-videos-as-a-sphere)
+- [Bila seva wala akaunti](#without-a-server-or-an-account)
+- [Hifadhi za mtandao: NAS, kompyuta au seva ya midia](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, bila plex.tv](#plex-media-server-without-plextv)
+- [Shiriki simu hii kwenye mtandao](#share-this-phone-on-the-network)
+- [Kamera za Tapo: mwonekano wa moja kwa moja na rekodi za kadi ya kumbukumbu](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Faili ghafi za kamera za 360°, bila programu ya kamera](#raw-360-camera-files-without-the-cameras-app)
+- [Picha na video za 3D na VR180](#3d-and-vr180-photos-and-videos)
+- [Kina kwenye skrini bapa: Spatial 2.5D (ya majaribio)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Picha na video za anga za Apple](#apple-spatial-photos-and-videos)
+- [Ndani ya headset ya Meta Quest 3](#in-the-meta-quest-3-headset)
+- [Tazama kwenye televisheni yako (Android TV na Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Pata picha zako za 360°: orodha ya 360°](#find-your-360-shots-the-360-list)
+- [Maelezo ya video, visimbuzi na kwa nini video inakwama](#video-details-decoders-and-why-a-video-stutters)
+- [Mengine yote ni Immich](#everything-else-is-immich)
+- [Ikilinganishwa na programu ya Immich na programu nyingine](#compared-with-the-immich-app-and-other-apps)
+- [Miundo na vyanzo, kwa jukwaa](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Mahali pa kuipata](#where-to-get-it)
+- [Ijenge mwenyewe](#build-it-yourself)
+- [Kumbukumbu](#logs)
+- [Faragha](#privacy)
+- [Leseni na alama ya biashara](#license-and-trademark)
+- [Mpango wa kazi](#roadmap)
+- [Shukrani](#credits)
+
+</details>
 
 ## Una tatizo gani?
 
@@ -61,12 +86,19 @@ Kipengele kinapokuwa kipya, maandishi yanasema kinapatikana kuanzia build ipi. T
 
 Unahifadhi nakala za picha zako kwenye seva ya [Immich](https://github.com/immich-app/immich), na baadhi yake zinatoka kwenye kamera ya 360° au hali ya picha ya tufe ya simu. Katika programu rasmi ya simu, picha hizo zinaonekana kama utepe bapa uliovutwa, na video za 360° pia zinacheza bapa. Programu ya wavuti ya Immich inaweza kuonyesha picha ya 360° kama tufe, programu ya simu haiwezi: hili limeombwa tangu Januari 2024 katika [mjadala #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 inazifungua kama tufe unalotazama pande zote, kwenye simu na kompyuta kibao za Android na iOS. Picha inazunguka unapoivuta, inakuzwa kwa kubana vidole au kugusa mara mbili, inaendelea kuzunguka kidogo baada ya kuvuta haraka, inaanza kwenye mwonekano wa awali ambao kamera ilirekodi (metadata ya GPano), na inapata umbile kali zaidi unapokuza; panorama za sehemu zinashughulikiwa (upunguzaji wa GPano). Video inacheza kwenye kicheza asilia cha tufe chenye sauti, kuvuta na jairoskopu. Faili za 360° zilizounganishwa zinafanya kazi kila mahali: faili zilizosafirishwa kutoka programu ya Insta360 au Studio, GoPro Player, Ricoh Theta, na picha za tufe za simu. Faili ghafi moja kwa moja kutoka kamera zinaunganishwa na programu, tazama [Faili ghafi za kamera za 360°](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 inazifungua kama tufe unalotazama pande zote, kwenye simu na kompyuta kibao za Android na iOS.
 
-| Picha ya 360° kama tufe | Video ya 360° kwenye kicheza cha 360° |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="Picha ya 360° ya ufukwe wa ziwa kwenye kitazamaji cha tufe: kitufe cha kufunga juu kushoto, vitufe vya 360°, mpangilio wa 3D na jairoskopu juu kulia"> | <img src="../.github/readme/b19-video.png" width="420" alt="Video ya 360° ya barabara ya pwani ikicheza kwenye kicheza cha 360° cha simu iliyoshikwa kwa ulalo: kufunga na jina la faili juu kushoto, 360° na 3D juu kulia, iliyotangulia, ruka nyuma, cheza, ruka mbele na inayofuata katikati, upau wa muda chini"> |
-| Kufunga juu kushoto; juu kulia kitufe cha 360°/180°, kitufe cha mpangilio wa 3D na jairoskopu | Gusa picha kupata vidhibiti; 360° na 3D juu kulia |
+Picha inazunguka unapoivuta, inakuzwa kwa kubana vidole au kugusa mara mbili, inaendelea kuzunguka kidogo baada ya kuvuta haraka, inaanza kwenye mwonekano wa awali ambao kamera ilirekodi (metadata ya GPano), na inapata umbile kali zaidi unapokuza; panorama za sehemu zinashughulikiwa (upunguzaji wa GPano). Video inacheza kwenye kicheza asilia cha tufe chenye sauti, kuvuta na jairoskopu.
+
+Faili za 360° zilizounganishwa zinafanya kazi kila mahali: faili zilizosafirishwa kutoka programu ya Insta360 au Studio, GoPro Player, Ricoh Theta, na picha za tufe za simu. Faili ghafi moja kwa moja kutoka kamera zinaunganishwa na programu, tazama [Faili ghafi za kamera za 360°](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="Picha ya 360° ya ufukwe wa ziwa kwenye kitazamaji cha tufe: kitufe cha kufunga juu kushoto, vitufe vya 360°, mpangilio wa 3D na jairoskopu juu kulia">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Video ya 360° ya barabara ya pwani ikicheza kwenye kicheza cha 360° cha simu iliyoshikwa kwa ulalo: kufunga na jina la faili juu kushoto, 360° na 3D juu kulia, iliyotangulia, ruka nyuma, cheza, ruka mbele na inayofuata katikati, upau wa muda chini">
+</p>
+
+- **Picha ya 360° kama tufe**: kufunga juu kushoto; juu kulia kitufe cha 360°/180°, kitufe cha mpangilio wa 3D na jairoskopu.
+- **Video ya 360° kwenye kicheza cha 360°**: gusa picha kupata vidhibiti; 360° na 3D juu kulia.
 
 ### Fungua picha ya 360° kama tufe
 
@@ -135,12 +167,17 @@ Kwenye ukurasa wa kuingia, "Tumia bila seva" inafungua Immuch360 kwenye picha na
 
 Video zako za 360° ziko kwenye NAS au kompyuta, na unataka kuzitazama kwenye simu au ndani ya headset bila kuzinakili kwanza. Ndani ya headset, watu huishia kunakili kila faili kwa kebo; seva za midia kama Plex na Jellyfin zinacheza video za 360° bapa, kama maombi kwenye majukwaa yao yanavyoeleza; programu ya Immich inasoma seva yako ya Immich pekee.
 
-Immuch360 inavinjari na kucheza picha na video za seva yoyote inayotumia SMB (Samba, Windows), WebDAV au, kuanzia build 19, DLNA/UPnP (seva ya midia: Jellyfin, minidlna, Gerbera, Emby, NAS au kisanduku cha TV), moja kwa moja kutoka kwenye hifadhi. Kuanzia build 20 Plex Media Server ina aina yake yenyewe, tazama [Plex Media Server, bila plex.tv](#plex-media-server-without-plextv). Inapata yenyewe seva za mtandao wako, na inacheza faili moja kwa moja katika vitazamaji vilevile vya programu nzima (360°, 3D, VR180, Spatial 2.5D, mwonekano wa uhalisia pepe wa Quest), ukiwa na seva ya Immich au bila, kwenye simu na kwenye Meta Quest 3. Hakuna kinachopakuliwa. Seva ikiwa imeunganishwa, faili unazochagua zinaweza kutumwa kwenye akaunti yako ya Immich (kuanzia build 15).
+Immuch360 inavinjari na kucheza picha na video za seva yoyote inayotumia SMB (Samba, Windows), WebDAV au, kuanzia build 19, DLNA/UPnP (seva ya midia: Jellyfin, minidlna, Gerbera, Emby, NAS au kisanduku cha TV), moja kwa moja kutoka kwenye hifadhi. Kuanzia build 20 Plex Media Server ina aina yake yenyewe, tazama [Plex Media Server, bila plex.tv](#plex-media-server-without-plextv).
 
-| Ongeza hifadhi | Folda ya hifadhi |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Ukurasa wa Ongeza hifadhi: Jina, Jina au anwani ya seva, Lango (si lazima), Hifadhi, Chagua hifadhi, Folda ya kuanzia (si lazima), Jina la mtumiaji, Nenosiri, Jaribu muunganisho, na matokeo Imeunganishwa, vipengee 2 kwenye folda ya kuanzia"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Folda ya hifadhi ya mtandao kama gridi ya vijipicha: picha za 360° zenye beji ya 360° na video ya 360° yenye alama ya kucheza, kitufe cha Chagua juu kulia"> |
-| Sehemu za hifadhi mpya ya SMB, baada ya Jaribu muunganisho | Picha za 360° na video, zinazosomwa moja kwa moja kutoka kwenye hifadhi |
+Inapata yenyewe seva za mtandao wako, na inacheza faili moja kwa moja katika vitazamaji vilevile vya programu nzima (360°, 3D, VR180, Spatial 2.5D, mwonekano wa uhalisia pepe wa Quest), ukiwa na seva ya Immich au bila, kwenye simu na kwenye Meta Quest 3. Hakuna kinachopakuliwa. Seva ikiwa imeunganishwa, faili unazochagua zinaweza kutumwa kwenye akaunti yako ya Immich (kuanzia build 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Ukurasa wa Ongeza hifadhi: Jina, Jina au anwani ya seva, Lango (si lazima), Hifadhi, Chagua hifadhi, Folda ya kuanzia (si lazima), Jina la mtumiaji, Nenosiri, Jaribu muunganisho, na matokeo Imeunganishwa, vipengee 2 kwenye folda ya kuanzia">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Folda ya hifadhi ya mtandao kama gridi ya vijipicha: picha za 360° zenye beji ya 360° na video ya 360° yenye alama ya kucheza, kitufe cha Chagua juu kulia">
+</p>
+
+- **Ongeza hifadhi**: sehemu za hifadhi mpya ya SMB, baada ya Jaribu muunganisho.
+- **Folda ya hifadhi**: picha za 360° na video, zinazosomwa moja kwa moja kutoka kwenye hifadhi.
 
 ### Ongeza hifadhi
 
@@ -178,16 +215,26 @@ Picha au video iliyofunguliwa ya hifadhi ina chaguo hilohilo kwenye menyu yake. 
 
 ### Jinsi inavyocheza bila kupakua
 
-Vicheza vinasoma baiti wanazohitaji kupitia daraja lililo ndani ya programu (anwani ya loopback pekee, tokeni nasibu kwa kila kipindi, masafa ya baiti), kwa hiyo kusogeza ndani ya video kunafanya kazi na hakuna kinachonakiliwa kwenye kifaa. Vicheza na kitazamaji cha headset havipati kamwe anwani ya hifadhi, bali 127.0.0.1 ya daraja tu; maombi kwa seva yanafanywa na programu yenyewe. Kwa uchezaji laini, hifadhi inasomwa kwa vipande vikubwa, faili inabaki wazi kati ya usomaji, hadi MB 16 zinasomwa mapema mbele ya kicheza, na video inayochezwa inasomwa kupitia hadi miunganisho sita ya SMB kwa sambamba, tofauti na muunganisho unaohudumia vijipicha na orodha. Freebox Server inajibu kila usomaji polepole: muunganisho mmoja unatoa 4.5 MB/s, sita zinatoa 19 MB/s, inatosha kwa faili ya 5.7K ya 132 Mbit/s. Wakati kicheza kinasubiri data, vicheza vya 360° na Spatial vinaonyesha "Inapakia" pamoja na kiwango cha ujazo wa bafa ya uchezaji; kicheza bapa kinaonyesha "Inapakia" bila asilimia wakati video inapakia au kukwama.
+Vicheza vinasoma baiti wanazohitaji kupitia daraja lililo ndani ya programu (anwani ya loopback pekee, tokeni nasibu kwa kila kipindi, masafa ya baiti), kwa hiyo kusogeza ndani ya video kunafanya kazi na hakuna kinachonakiliwa kwenye kifaa. Vicheza na kitazamaji cha headset havipati kamwe anwani ya hifadhi, bali 127.0.0.1 ya daraja tu; maombi kwa seva yanafanywa na programu yenyewe.
+
+Kwa uchezaji laini, hifadhi inasomwa kwa vipande vikubwa, faili inabaki wazi kati ya usomaji, hadi MB 16 zinasomwa mapema mbele ya kicheza, na video inayochezwa inasomwa kupitia hadi miunganisho sita ya SMB kwa sambamba, tofauti na muunganisho unaohudumia vijipicha na orodha. Freebox Server inajibu kila usomaji polepole: muunganisho mmoja unatoa 4.5 MB/s, sita zinatoa 19 MB/s, inatosha kwa faili ya 5.7K ya 132 Mbit/s.
+
+Wakati kicheza kinasubiri data, vicheza vya 360° na Spatial vinaonyesha "Inapakia" pamoja na kiwango cha ujazo wa bafa ya uchezaji; kicheza bapa kinaonyesha "Inapakia" bila asilimia wakati video inapakia au kukwama.
 
 ### Seva za midia za DLNA
 
-Kuanzia build 19, programu inatuma utafutaji wa SSDP wa seva za midia kwenye kikundi cha multicast cha mtandao, na ombi hilohilo kwenye lango 1900 la kila anwani ya mtandao wa ndani wa /24, kisha inasoma maelezo ya kifaa ya kila seva inayojibu na kubaki na zile zinazochapisha maudhui yao (ContentDirectory). Folda na faili zinaorodheshwa kwa kitendo cha Browse cha seva, ukurasa kwa ukurasa, na kupewa majina kwa vichwa vyake: faili inapata kiendelezi cha aina yake kichwa chake kisipokuwa nacho, na faili ya pili yenye kichwa kilekile katika folda inakuwa `name (2)`. Sauti inaachwa nje. Vijipicha ni sanaa ya albamu au picha ndogo ambazo seva inatengeneza, zinazopakiwa na programu yenyewe, na kijipicha cha programu yenyewe seva isipokuwa nacho. Faili inacheza kutoka asili ambayo seva inatoa, badala ya nakala iliyobadilishwa inapotoa zote mbili, ikisomwa kwa maombi ya masafa, kwa hiyo kusogeza kunafanya kazi. Imekaguliwa dhidi ya minidlna na Gerbera; ugunduzi kwenye mtandao halisi, Plex, Jellyfin, NAS, Freebox Server, iPhone na Quest ni jaribio la kifaa la build 19.
+Kuanzia build 19, programu inatuma utafutaji wa SSDP wa seva za midia kwenye kikundi cha multicast cha mtandao, na ombi hilohilo kwenye lango 1900 la kila anwani ya mtandao wa ndani wa /24, kisha inasoma maelezo ya kifaa ya kila seva inayojibu na kubaki na zile zinazochapisha maudhui yao (ContentDirectory).
+
+Folda na faili zinaorodheshwa kwa kitendo cha Browse cha seva, ukurasa kwa ukurasa, na kupewa majina kwa vichwa vyake: faili inapata kiendelezi cha aina yake kichwa chake kisipokuwa nacho, na faili ya pili yenye kichwa kilekile katika folda inakuwa `name (2)`. Sauti inaachwa nje. Vijipicha ni sanaa ya albamu au picha ndogo ambazo seva inatengeneza, zinazopakiwa na programu yenyewe, na kijipicha cha programu yenyewe seva isipokuwa nacho. Faili inacheza kutoka asili ambayo seva inatoa, badala ya nakala iliyobadilishwa inapotoa zote mbili, ikisomwa kwa maombi ya masafa, kwa hiyo kusogeza kunafanya kazi.
+
+Imekaguliwa dhidi ya minidlna na Gerbera; ugunduzi kwenye mtandao halisi, Plex, Jellyfin, NAS, Freebox Server, iPhone na Quest ni jaribio la kifaa la build 19.
 
 <a id="a-share-that-moved"></a>
 ### Hifadhi iliyohama
 
-Kuanzia build 19, hifadhi ya DLNA na hifadhi ya simu (tazama [Shiriki simu hii kwenye mtandao](#share-this-phone-on-the-network)) zinabaki na kitambulisho ambacho seva yao inatangaza. Moja inapoacha kujibu kwenye anwani yake (anwani mpya iliyotolewa na kipanga njia, seva iliyowashwa upya kwenye lango jingine), ukurasa wa folda yake unaonyesha "Inatafuta (jina) kwenye mtandao" na kuhamisha hifadhi pale inapojibu sasa: mara moja kwa seva ya DLNA, ambayo haina nenosiri, na baada ya uthibitisho, "Tumia anwani mpya?", unaoonyesha anwani zote mbili, kwa hifadhi yenye jina la mtumiaji na nenosiri, kwa kuwa yangetumwa kwenye anwani mpya. Kuanzia build 20 seva ya Plex inayopatikana tena kwenye anwani nyingine ya mtandao pia inahamishwa mara moja: cheti chake kinathibitisha kuwa ni seva ileile kabla tokeni haijatumwa. Kamera ya Tapo inatafutwa kwa anwani yake ya MAC kutoka ukurasa wake yenyewe, tazama [Kamera za Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Kuanzia build 19, hifadhi ya DLNA na hifadhi ya simu (tazama [Shiriki simu hii kwenye mtandao](#share-this-phone-on-the-network)) zinabaki na kitambulisho ambacho seva yao inatangaza. Moja inapoacha kujibu kwenye anwani yake (anwani mpya iliyotolewa na kipanga njia, seva iliyowashwa upya kwenye lango jingine), ukurasa wa folda yake unaonyesha "Inatafuta (jina) kwenye mtandao" na kuhamisha hifadhi pale inapojibu sasa: mara moja kwa seva ya DLNA, ambayo haina nenosiri, na baada ya uthibitisho, "Tumia anwani mpya?", unaoonyesha anwani zote mbili, kwa hifadhi yenye jina la mtumiaji na nenosiri, kwa kuwa yangetumwa kwenye anwani mpya.
+
+Kuanzia build 20 seva ya Plex inayopatikana tena kwenye anwani nyingine ya mtandao pia inahamishwa mara moja: cheti chake kinathibitisha kuwa ni seva ileile kabla tokeni haijatumwa. Kamera ya Tapo inatafutwa kwa anwani yake ya MAC kutoka ukurasa wake yenyewe, tazama [Kamera za Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Mipaka
 
@@ -227,7 +274,9 @@ Kuanzia build 20 Immuch360 inaoanishwa moja kwa moja na Plex Media Server yako, 
 
 ### Nje ya nyumbani
 
-Kila mara inapofungua seva, programu inajaribu kwanza anwani ya nyumbani na, ms 400 baadaye, anwani ya nje ya nyumbani. Ya kwanza kujibu ikiwa na seva yako ndiyo inayotumika; ikiwa ni anwani ya nje ya nyumbani, ukurasa wa folda unaonyesha aikoni ya dunia yenye maandishi "Imeunganishwa kupitia anwani ya nje ya nyumbani". Hii inahitaji Ufikiaji wa mbali uwe umewashwa katika Plex (Mipangilio, Ufikiaji wa mbali) pamoja na mlango unaosambazwa na kipanga njia chako: bila plex.tv programu haiwezi kutumia relay ya Plex, kwa hiyo seva isiyo na usambazaji wa mlango inafunguka nyumbani pekee, na nje ya nyumbani ukurasa unasema "Seva yako ya Plex haiwezi kufikiwa nje ya mtandao wa nyumbani. Washa ufikiaji wa mbali kwa usambazaji wa mlango katika Plex (Mipangilio, Ufikiaji wa mbali), au andika anwani yake ya umma."
+Kila mara inapofungua seva, programu inajaribu kwanza anwani ya nyumbani na, ms 400 baadaye, anwani ya nje ya nyumbani. Ya kwanza kujibu ikiwa na seva yako ndiyo inayotumika; ikiwa ni anwani ya nje ya nyumbani, ukurasa wa folda unaonyesha aikoni ya dunia yenye maandishi "Imeunganishwa kupitia anwani ya nje ya nyumbani".
+
+Hii inahitaji Ufikiaji wa mbali uwe umewashwa katika Plex (Mipangilio, Ufikiaji wa mbali) pamoja na mlango unaosambazwa na kipanga njia chako: bila plex.tv programu haiwezi kutumia relay ya Plex, kwa hiyo seva isiyo na usambazaji wa mlango inafunguka nyumbani pekee, na nje ya nyumbani ukurasa unasema "Seva yako ya Plex haiwezi kufikiwa nje ya mtandao wa nyumbani. Washa ufikiaji wa mbali kwa usambazaji wa mlango katika Plex (Mipangilio, Ufikiaji wa mbali), au andika anwani yake ya umma."
 
 Anwani ambayo seva inataja inajifunzwa upya katika kila muunganisho nyumbani. Isipojibu kutoka nje (kipanga njia kinachobadilisha anwani yake, vipanga njia viwili mfululizo), andika yako kwenye ukurasa wa seva. Tokeni inapoacha kufanya kazi (kwa mfano, ulitoka kwenye kipindi cha kivinjari ulichoinakili), ukurasa wa folda unasema hivyo na unatoa "Bandika tokeni mpya", inayofungua ukurasa wa seva kwenye sehemu ya tokeni.
 
@@ -344,15 +393,13 @@ Kamera za Insta360 zinarekodi miduara miwili ya fisheye ya lenzi zao, ubavu kwa 
 
 Kuanzia build 16 Immuch360 inaunganisha faili hizo yenyewe, kwenye simu, kompyuta kibao au headset, bila kusakinisha chochote kwenye seva:
 
-| Kamera na faili | Programu inafanya nini | Kuanzia |
-|---|---|---|
-| Picha za Insta360 .insp | Zinaunganishwa kwenye GPU kabla ya kitazamaji cha tufe, hadi 8192x4096, na mbadala wa CPU kwa ukubwa mdogo | Build 16 |
-| Video za Insta360 .insv zinazoweka lenzi zote mbili katika wimbo mmoja | Zinaunganishwa na athari ya GPU kwenye kicheza | Build 16 |
-| Video za Insta360 X4, X4 Air, X5 na X6 .insv, wimbo mmoja wa mraba kwa kila lenzi | Visimbuzi viwili kwa wakati mmoja, kimoja kwa kila lenzi, na kiunganishi cha GPU kinachoziunganisha kuwa tufe | Build 18 |
-| Insta360 X3 na za zamani kwa 5.7K na zaidi: faili mbili, `_00_` na `_10_` | Vilevile, faili nyingine ikipatikana kando ya ya kwanza | Build 18 |
-| GoPro MAX na MAX 2 .360: nyimbo mbili zenye pande tatu za mchemraba kila moja | Vilevile, safu wima zinazopishana zikichanganywa | Build 18 |
-| DJI Osmo 360 .osv: nyimbo mbili za mraba za biti 10 | Vilevile, kwa urekebishaji wa Kannala-Brandt wa faili | Build 18 |
-| Fisheye mbili za .dng | Inaonekana bapa | Bado |
+- **Picha za Insta360 .insp** (build 16): zinaunganishwa kwenye GPU kabla ya kitazamaji cha tufe, hadi 8192x4096, na mbadala wa CPU kwa ukubwa mdogo.
+- **Video za Insta360 .insv zinazoweka lenzi zote mbili katika wimbo mmoja** (build 16): zinaunganishwa na athari ya GPU kwenye kicheza.
+- **Video za Insta360 X4, X4 Air, X5 na X6 .insv, wimbo mmoja wa mraba kwa kila lenzi** (build 18): visimbuzi viwili kwa wakati mmoja, kimoja kwa kila lenzi, na kiunganishi cha GPU kinachoziunganisha kuwa tufe.
+- **Insta360 X3 na za zamani kwa 5.7K na zaidi: faili mbili, `_00_` na `_10_`** (build 18): vilevile, faili nyingine ikipatikana kando ya ya kwanza.
+- **GoPro MAX na MAX 2 .360: nyimbo mbili zenye pande tatu za mchemraba kila moja** (build 18): vilevile, safu wima zinazopishana zikichanganywa.
+- **DJI Osmo 360 .osv: nyimbo mbili za mraba za biti 10** (build 18): vilevile, kwa urekebishaji wa Kannala-Brandt wa faili.
+- **Fisheye mbili za .dng** (bado): inaonekana bapa.
 
 ### Tazama faili ghafi
 
@@ -466,7 +513,9 @@ Utambuzi ulikaguliwa kwenye sampuli ya picha ya anga iliyoandikwa na maktaba ya 
 
 Watu hununua Quest 3 ili kutazama picha na video zao wenyewe za 360°, kisha huuliza waweke faili wapi, wazipeleke vipi kwenye headset bila kebo, na watumie kicheza kipi: vicheza vya dukani vya video za 360° na 3D ni vya kulipia.
 
-Programu ileile ya Android inaendeshwa kwenye Quest 3 na 3S, na kuanzia build 21 kwenye Quest 2 na Quest Pro (haijajaribiwa), kama dirisha, pamoja na maktaba yako yote. Kitufe chake cha 360° kinafungua mwonekano wa uhalisia pepe ambapo picha au video iko pande zote kukuzunguka na unatazama kwa kugeuza kichwa, kwa 3D halisi kwa faili za stereo (Meta Spatial SDK). Midia inatoka seva yako ya Immich, headset yenyewe, NAS, seva ya midia, simu au seva ya Plex, ikichezwa pale ilipo (seva ya midia na simu kuanzia build 19, seva ya Plex kuanzia build 20, bado haijakaguliwa kwenye headset), na kuanzia build 20 dirisha pia linaonyesha kamera za Tapo. Ni bure na chanzo huria. Imekaguliwa kwenye Quest 3, na na mtumiaji mwenye video za 8K HEVC za Insta360 X4.
+Programu ileile ya Android inaendeshwa kwenye Quest 3 na 3S, na kuanzia build 21 kwenye Quest 2 na Quest Pro (haijajaribiwa), kama dirisha, pamoja na maktaba yako yote. Kitufe chake cha 360° kinafungua mwonekano wa uhalisia pepe ambapo picha au video iko pande zote kukuzunguka na unatazama kwa kugeuza kichwa, kwa 3D halisi kwa faili za stereo (Meta Spatial SDK).
+
+Midia inatoka seva yako ya Immich, headset yenyewe, NAS, seva ya midia, simu au seva ya Plex, ikichezwa pale ilipo (seva ya midia na simu kuanzia build 19, seva ya Plex kuanzia build 20, bado haijakaguliwa kwenye headset), na kuanzia build 20 dirisha pia linaonyesha kamera za Tapo. Ni bure na chanzo huria. Imekaguliwa kwenye Quest 3, na na mtumiaji mwenye video za 8K HEVC za Insta360 X4.
 
 ### Fungua mwonekano wa uhalisia pepe
 
@@ -479,17 +528,20 @@ Programu ileile ya Android inaendeshwa kwenye Quest 3 na 3S, na kuanzia build 21
 
 | Kitendo | Vidhibiti | Mikono |
 |---|---|---|
-| Kurudi kwenye programu | B au Y | Kitufe cha Rudi cha paneli ya taarifa |
-| Kucheza au kusitisha video | Kifyatulio, paneli ya taarifa ikiwa imefichwa | Kitufe cha Cheza au Sitisha cha paneli ya taarifa |
+| Kurudi kwenye programu | B au Y | Kitufe cha Rudi |
+| Kucheza au kusitisha video | Kifyatulio, paneli ya taarifa ikiwa imefichwa | Kitufe cha Cheza au Sitisha |
 | Kuonyesha au kuficha paneli ya taarifa | A, X, kitufe cha kushika au menyu | Ishara ya menyu, au kubana vidole paneli ikiwa imefichwa |
-| Kuzungusha mwonekano, kutazama nyuma bila kugeuza kichwa (kuanzia build 17) | Kijiti cha kulia kushoto au kulia: 30° kwa kila msukumo, na kinaendelea kuzungusha kikishikiliwa (maelezo ya mstari mmoja yanaonyesha pembe) | Kitufe cha Zungusha cha paneli ya taarifa (90°) |
-| Midia iliyotangulia au inayofuata | Kijiti cha kushoto kushoto au kulia (kijiti chochote kabla ya build 17; kuanzia build 16 maelezo ya mstari mmoja yanataja midia, paneli ya taarifa inabaki imefichwa) | Vitufe vya Iliyotangulia na Inayofuata vya paneli ya taarifa |
-| Sekunde 10 nyuma au mbele katika video | Kijiti chini au juu (kuanzia build 16 maelezo ya mstari mmoja yanaonyesha muda, paneli ya taarifa inabaki imefichwa) | Vitufe viwili vya kuruka, au vuta upau wa muda wa paneli ya taarifa |
-| Kuzungusha picha kwa 90° | Kijiti chini au juu kwenye picha (kuanzia build 16 maelezo ya mstari mmoja yanaonyesha pembe); kwenye video, kitufe cha Zungusha cha paneli ya taarifa | Kitufe cha Zungusha cha paneli ya taarifa |
-| Kubadilisha mpangilio wa 3D (mono, juu na chini, ubavu kwa ubavu) | Kitufe cha 3D cha paneli ya taarifa | Kitufe cha 3D cha paneli ya taarifa |
-| Tufe kamili au nusu tufe (VR180) | Kitufe cha 360°/180° cha paneli ya taarifa | Kitufe cha 360°/180° cha paneli ya taarifa |
+| Kuzungusha mwonekano (kuanzia build 17) | Kijiti cha kulia kushoto au kulia, 30° kwa kila msukumo | Kitufe cha Zungusha (90°) |
+| Midia iliyotangulia au inayofuata | Kijiti cha kushoto kushoto au kulia | Vitufe vya Iliyotangulia na Inayofuata |
+| Sekunde 10 nyuma au mbele katika video | Kijiti chini au juu | Vitufe viwili vya kuruka, au vuta upau wa muda |
+| Kuzungusha picha kwa 90° | Kijiti chini au juu kwenye picha, kitufe cha Zungusha kwenye video | Kitufe cha Zungusha |
+| Kubadilisha mpangilio wa 3D (mono, juu na chini, ubavu kwa ubavu) | Kitufe cha 3D | Kitufe cha 3D |
+| Tufe kamili au nusu tufe (VR180) | Kitufe cha 360°/180° | Kitufe cha 360°/180° |
 
-Kwa vidhibiti, vitufe na upau wa muda wa paneli ya taarifa vinafanya kazi pia: vielekeze kwa mwale na bonyeza kifyatulio.
+Katika jedwali hili, vitufe na upau wa muda ni vile vya paneli ya taarifa. Kwa vidhibiti vinafanya kazi pia: vielekeze kwa mwale na bonyeza kifyatulio.
+
+- **Kuzungusha mwonekano**: kutazama nyuma bila kugeuza kichwa. Kijiti cha kulia kinaendelea kuzungusha kikishikiliwa, na maelezo ya mstari mmoja yanaonyesha pembe.
+- **Maelezo ya mstari mmoja**: kuanzia build 16, kusogeza, kuzungusha picha, au iliyotangulia na inayofuata kwa kijiti kunaonyesha maelezo ya mstari mmoja (muda, pembe, au jina la midia) na paneli ya taarifa inabaki imefichwa. Kabla ya build 17 kijiti chochote kilienda kwenye midia iliyotangulia au inayofuata.
 
 ### Paneli ya taarifa, iliyotangulia na inayofuata
 
@@ -497,7 +549,9 @@ Paneli ya taarifa ya video ina upau wa muda (mahali, muda, kiasi kilichowekwa kw
 
 Iliyotangulia na inayofuata zinapitia midia ya 360° ya mahali ulipotoka, bila kuacha mwonekano wa uhalisia pepe: rekodi ya matukio, orodha ya 360° (kama ilivyochujwa), albamu, folda ya hifadhi ya mtandao, au midia ya headset yenyewe (On this device). Picha na video bapa zinarukwa. Unaporudi kwenye programu kutoka rekodi ya matukio, albamu au orodha ya 360°, inatua kwenye midia uliyokuwa ukitazama (ukurasa wa folda ya hifadhi unabaki kwenye faili uliyofungua), na video uliyofungulia mwonekano wa uhalisia pepe inaendelea pale ilipoachia.
 
-Kuanzia build 17 kijiti cha kulia kinazungusha mwonekano, kama kijiti cha kulia kinavyozungusha katika programu nyingi za headset: msukumo mmoja unazungusha 30°, kukishikilia kunaendelea kuzungusha, kwa hiyo kilicho nyuma yako kinakuja mbele bila kugeuza kichwa wala kiti; iliyotangulia na inayofuata ziko kwenye kijiti cha kushoto. Kuanzia build 16, kufuatia maoni ya mtumiaji kwenye headset, kusogeza, kuzungusha au iliyotangulia/inayofuata kwa kijiti kunaonyesha maelezo ya mstari mmoja (muda, pembe au kichwa cha midia) yanayofifia baada ya sekunde 1.5 badala ya kuleta paneli ya taarifa; paneli bado inakuja kwa A, X, kitufe cha kushika au kitufe cha menyu. Build hiyohiyo inahakikisha kuwasha na kuzima paneli kunaendelea kufanya kazi vidhibiti vinapolala, kuamka au kupisha ufuatiliaji wa mikono, na kurekodi mabadiliko hayo, tazama [Kumbukumbu](#logs).
+Kuanzia build 17 kijiti cha kulia kinazungusha mwonekano, kama kijiti cha kulia kinavyozungusha katika programu nyingi za headset: msukumo mmoja unazungusha 30°, kukishikilia kunaendelea kuzungusha, kwa hiyo kilicho nyuma yako kinakuja mbele bila kugeuza kichwa wala kiti; iliyotangulia na inayofuata ziko kwenye kijiti cha kushoto.
+
+Kuanzia build 16, kufuatia maoni ya mtumiaji kwenye headset, kusogeza, kuzungusha au iliyotangulia/inayofuata kwa kijiti kunaonyesha maelezo ya mstari mmoja (muda, pembe au kichwa cha midia) yanayofifia baada ya sekunde 1.5 badala ya kuleta paneli ya taarifa; paneli bado inakuja kwa A, X, kitufe cha kushika au kitufe cha menyu. Build hiyohiyo inahakikisha kuwasha na kuzima paneli kunaendelea kufanya kazi vidhibiti vinapolala, kuamka au kupisha ufuatiliaji wa mikono, na kurekodi mabadiliko hayo, tazama [Kumbukumbu](#logs).
 
 Picha ya anga ya Apple inayofunguliwa kwa "Tazama kwa 3D" haiwekwi kwenye tufe: inaelea mbele yako, tazama [Picha na video za anga za Apple](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Picha zinaonyesha onyesho la awali kwanza, kisha asili, iliyopunguzwa hadi 8192x
 
 Mipangilio ya 3D, juu na chini na ubavu kwa ubavu, 360° na VR180, inaonyeshwa kwa 3D, kila jicho likipata nusu yake ya fremu. Mpangilio unatoka kwenye faili inapoutangaza (video), vinginevyo unakisiwa kutoka umbo lake (mraba: juu na chini, 4:1: ubavu kwa ubavu); ukiwa si sahihi, tumia kitufe cha 3D cha paneli ya taarifa.
 
-| Picha ya 360° ndani ya headset | Video ya 360° ndani ya headset | Video ya 3D 360° ndani ya headset |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="Picha ya 360° pande zote kukuzunguka ndani ya Quest 3, pamoja na paneli ya taarifa: vitufe vya mpangilio, 360° na Rudi"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Video ya 360° ya ziwa ikicheza ndani ya Quest 3, pamoja na paneli ya taarifa: vitufe vya mpangilio, 360°, Sitisha na Rudi"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Video ya 360° ya stereo ndani ya Quest 3, paneli ya taarifa ikisoma 3D, juu na chini"> |
-| Mwonekano wa uhalisia pepe wa picha, pamoja na paneli ya taarifa (mpangilio, 360°/180°, Rudi) | Video ikicheza, pamoja na Sitisha | Video ya stereo ya juu na chini, kila jicho likipata picha yake (sampuli ya Kandao Obsidian) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Picha ya 360° pande zote kukuzunguka ndani ya Quest 3, pamoja na paneli ya taarifa: vitufe vya mpangilio, 360° na Rudi">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Video ya 360° ya ziwa ikicheza ndani ya Quest 3, pamoja na paneli ya taarifa: vitufe vya mpangilio, 360°, Sitisha na Rudi">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Video ya 360° ya stereo ndani ya Quest 3, paneli ya taarifa ikisoma 3D, juu na chini">
+</p>
+
+- **Picha ya 360° ndani ya headset**: mwonekano wa uhalisia pepe wa picha, pamoja na paneli ya taarifa (mpangilio, 360°/180°, Rudi).
+- **Video ya 360° ndani ya headset**: video ikicheza, pamoja na Sitisha.
+- **Video ya 3D 360° ndani ya headset**: video ya stereo ya juu na chini, kila jicho likipata picha yake (sampuli ya Kandao Obsidian).
 
 Picha hizi za skrini zilipigwa programu ikiwa kwa Kifaransa, kabla ya build 14. Paneli sasa pia ina upau wa muda kati ya vitufe viwili vya kuruka sekunde 10, Iliyotangulia na Inayofuata, na Zungusha.
 
@@ -598,7 +657,9 @@ Immuch360 inaweka beji ya 360° kwenye vijipicha vya picha za 360° (katika fold
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Maelezo ya video, visimbuzi na kwa nini video inakwama
 
-Watu huuliza Quest 3 inacheza kodeki, ukubwa na kasi ya biti gani, na kwa nini faili ya 5.7K inakwama ndani ya headset ilhali inacheza vizuri kwenye simu. Jibu ni kisimbuzi cha maunzi: kisimbuzi cha H.264 cha Quest 3 (XR2 Gen 2) kinaishia karibu 4096x2304, kwa hiyo video ya H.264 ya 5760x2880 (kiwango 6.0, karibu 200 Mbit/s, faili ya kawaida ya Insta360) inasimbuliwa kwa takriban fps 17 kwenye headset, ikiwa na kasoro za vitalu, ilhali faili hiyohiyo inacheza vizuri kwenye simu. Video hiyohiyo katika HEVC (H.265) inacheza vizuri kwenye headset: video ya 8K HEVC ya Insta360 X4 (7680x3840, 29.97 fps, 210 Mbit/s, wasifu Main kiwango 6.1, biti 8) inacheza vizuri katika mwonekano wa uhalisia pepe, kwa ubora wake asilia na bila kubadilishwa msimbo (imeripotiwa na mtumiaji wa Quest 3).
+Watu huuliza Quest 3 inacheza kodeki, ukubwa na kasi ya biti gani, na kwa nini faili ya 5.7K inakwama ndani ya headset ilhali inacheza vizuri kwenye simu. Jibu ni kisimbuzi cha maunzi: kisimbuzi cha H.264 cha Quest 3 (XR2 Gen 2) kinaishia karibu 4096x2304, kwa hiyo video ya H.264 ya 5760x2880 (kiwango 6.0, karibu 200 Mbit/s, faili ya kawaida ya Insta360) inasimbuliwa kwa takriban fps 17 kwenye headset, ikiwa na kasoro za vitalu, ilhali faili hiyohiyo inacheza vizuri kwenye simu.
+
+Video hiyohiyo katika HEVC (H.265) inacheza vizuri kwenye headset: video ya 8K HEVC ya Insta360 X4 (7680x3840, 29.97 fps, 210 Mbit/s, wasifu Main kiwango 6.1, biti 8) inacheza vizuri katika mwonekano wa uhalisia pepe, kwa ubora wake asilia na bila kubadilishwa msimbo (imeripotiwa na mtumiaji wa Quest 3).
 
 Programu ya Immich ina swichi moja ya "Force original video" na inaonyesha kodeki pekee. Immuch360 inaonyesha video ni nini na kifaa kinasimbua nini, na inachagua faili inayocheza.
 
@@ -623,7 +684,9 @@ Settings, Advanced, "Visimbuzi vya video vya kifaa hiki" (kuanzia build 15) kina
 1. Fungua Settings, Asset Viewer, kisha Videos.
 2. Chini ya "Chanzo cha video" ("Faili ipi inachezwa wakati seva ina nakala iliyobadilishwa msimbo"), chagua "Video asili wakati kifaa hiki kinaweza kuisimbua", "Video asili kila wakati" au "Mtiririko uliobadilishwa msimbo kila wakati".
 
-Kuanzia build 15 chaguo linatumika kwa kila video ya seva: kicheza bapa, vicheza vya 360° na Spatial, na mwonekano wa uhalisia pepe wa Quest. Hadi utakapochagua, simu inabaki na kile ambacho swichi ya zamani ya "Force original video" ilisema (imezimwa kwa chaguomsingi: mtiririko uliobadilishwa msimbo, ambao ni asili yenyewe seva isipoibadilisha msimbo), na Quest inacheza asili headset ikiweza kuisimbua. Ukaguzi unasoma kodeki, ukubwa na kasi ya fremu kutoka kwenye faili na kuvilinganisha na visimbuzi vya maunzi (H.264 kwenye Quest 3 inabanwa hadi 4096x2304 iliyopimwa). Kicheza kisichoweza kusimbua asili kinahamia kwenye mtiririko uliobadilishwa msimbo pamoja na ujumbe: "Inacheza mtiririko uliobadilishwa msimbo: video asili (kodeki na ukubwa) inazidi uwezo wa kifaa hiki kusimbua".
+Kuanzia build 15 chaguo linatumika kwa kila video ya seva: kicheza bapa, vicheza vya 360° na Spatial, na mwonekano wa uhalisia pepe wa Quest. Hadi utakapochagua, simu inabaki na kile ambacho swichi ya zamani ya "Force original video" ilisema (imezimwa kwa chaguomsingi: mtiririko uliobadilishwa msimbo, ambao ni asili yenyewe seva isipoibadilisha msimbo), na Quest inacheza asili headset ikiweza kuisimbua.
+
+Ukaguzi unasoma kodeki, ukubwa na kasi ya fremu kutoka kwenye faili na kuvilinganisha na visimbuzi vya maunzi (H.264 kwenye Quest 3 inabanwa hadi 4096x2304 iliyopimwa). Kicheza kisichoweza kusimbua asili kinahamia kwenye mtiririko uliobadilishwa msimbo pamoja na ujumbe: "Inacheza mtiririko uliobadilishwa msimbo: video asili (kodeki na ukubwa) inazidi uwezo wa kifaa hiki kusimbua".
 
 Ndani ya headset mwonekano wa uhalisia pepe unaanza asili na, katika fremu zake za kwanza, unahamia kwenye mtiririko wa seva uliobadilishwa msimbo asili ikizidi visimbuzi, na kusema hivyo kwenye paneli ya taarifa; pasipo mtiririko uliobadilishwa msimbo, ukiwa bado ni mkubwa mno, au faili ikitoka kwenye headset au hifadhi ya mtandao, paneli ya taarifa inasema hivyo kwa sekunde 10, pamoja na kinachopaswa kubadilishwa. Build 14, iliyowasilishwa kwa Horizon Store, inakagua H.264 juu ya 4096x2304 pekee, kisha inajaribu mtiririko wa uchezaji wa seva kwa njia hiyohiyo.
 
@@ -661,87 +724,184 @@ Kuonyesha picha ya 360° kwa mtu asiye na programu, ishiriki kwa kiungo kilichos
 
 Build ya sasa, build 21 (toleo 3.3.0-rc.0, nambari ya build 3030019), inategemea Immich 3.3.0-rc.0 (Immich `main`, bado si toleo thabiti). Build 19 ilijaribiwa na seva ya Immich 3.2, na build 20 na 21 hazibadilishi chochote katika kile ambacho programu inaomba kutoka kwa seva. Tafadhali ripoti matatizo katika [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich. Kwa nyaraka kamili za Immich yenyewe, tazama [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Ikilinganishwa na programu ya Immich na programu nyingine
 
 ### Kwa nini fork hii ipo, katika jedwali moja
 
-| | Programu ya simu ya Immich | Immuch360 | Hali |
-|---|:---:|:---:|---|
-| Picha za 360° kama tufe unalotazama pande zote (kuvuta, kubana vidole, kugusa mara mbili, mwendo wa kubaki, mwonekano wa awali wa kamera, panorama za sehemu) | ❌ utepe bapa | ✅ | Imejaribiwa kwenye Galaxy S24+ na iPhone 14 |
-| Jairoskopu: tazama pande zote kwa kusogeza simu | ❌ | ✅ | Imejaribiwa kwenye Galaxy S24+ na iPhone 14 |
-| Video za 360° kwenye kicheza cha tufe, chenye sauti, kusogeza, chaguo la wimbo wa sauti na kiashiria cha bafa | ❌ video bapa | ✅ Android na iOS (bado hakuna upau wa muda kwenye iOS) | Imejaribiwa kwenye Galaxy S24+ na iPhone 14 |
-| Picha na video za 360° za 3D (stereo) | ❌ picha mara mbili | ✅ jicho la kushoto kwenye simu, 3D halisi kwenye Quest | Imejaribiwa kwenye Galaxy S24+ na Quest 3, kwa sampuli halisi za 3D 360° (VRTogether, Vuze, Kandao) na picha moja ya 3D; ripoti kutoka kamera nyingine zinakaribishwa |
-| Picha na video za VR180 (nusu tufe) | ❌ zimevutwa kuzunguka tufe | ✅ nusu tufe, kitufe cha 360°/180° | Imejaribiwa kwenye emulator ya Android na Galaxy S24+ kwa midia bandia; maoni ya kifaa yanakaribishwa |
-| Picha za anga za Apple (jozi za stereo za HEIC) na video za anga (MV-HEVC) | ❌ picha au video bapa, hakuna kinachosema ni ya anga | ✅ kuanzia build 19: picha kwa 3D ndani ya Quest, jicho moja na safu ya maelezo kwingineko | Utambuzi umekaguliwa kwenye sampuli ya picha iliyoandikwa na maktaba ya picha ya Apple na kwenye faili bandia; mwonekano wa headset na faili halisi za iPhone ni jaribio la kifaa la build 19 |
-| Mwonekano wa uhalisia pepe wa Meta Quest wenye ufuatiliaji wa kichwa, upau wa muda, iliyotangulia na inayofuata, na Zungusha | ❌ | ✅ programu ileile, kama build ya headset au APK ya simu | Imejaribiwa kwenye Quest 3 (vidhibiti vya build 14, vilivyorekebishwa katika build 16 baada ya maoni ya mtumiaji), na na mtumiaji mwenye video za 8K HEVC za Insta360 X4 |
-| Beji ya 360° kwenye vijipicha, na orodha ya 360° yenye faili ghafi na vichujio (kipindi, chanzo, aina, kamera) | ❌ | ✅ vichujio kuanzia build 18 | Imekamilika |
-| "Tazama kama 360°" kwa faili ambazo seva haiziwekei alama | ❌ | ✅ inakumbukwa kwenye simu | Imekamilika |
-| Spatial 2.5D: kina kwenye skrini bapa kutoka video ya stereo | ❌ | ✅ ya majaribio, simu na kompyuta kibao | Imejaribiwa kwenye Galaxy S24+; maoni kutoka iPhone yanakaribishwa |
-| Matumizi bila seva yoyote, kwenye matunzio ya kifaa chenyewe | ❌ kuingia kunahitajika | ✅ | Imejaribiwa kwenye Galaxy S24+, Quest 3 na emulator ya Android |
-| Hifadhi za SMB na WebDAV zinazopatikana kwenye mtandao na kuchezwa moja kwa moja, bila kupakua chochote | ❌ | ✅ kila kitazamaji, simu na Quest | Imejaribiwa na Freebox Server (SMB) kwenye Galaxy S24+ na Quest 3, na dhidi ya seva za majaribio za Samba na WebDAV kwenye emulator ya Android; maoni kuhusu NAS na WebDAV nyingine yanakaribishwa |
-| Seva za midia za DLNA kama aina ya hifadhi | ❌ | ✅ kuanzia build 19 | Imekaguliwa dhidi ya minidlna na Gerbera ndani ya Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone na Quest ni jaribio la kifaa la build 19 |
-| Kutuma faili za hifadhi kwenye Immich; faili za kifaa zinazotumwa kwa mkono zinahesabiwa kuwa zimehifadhiwa nakala | ❌ faili za kifaa pekee | ✅ kuanzia build 15 | Imejaribiwa kwenye emulator ya Android dhidi ya seva ya majaribio ya Samba na seva ya Immich 3.2 |
-| Shiriki simu hii kwenye mtandao, kwa ajili ya headset | ❌ | ✅ kuanzia build 19, Android na iOS | Majaribio ya vipimo na majaribio kamili kwa mteja wa WebDAV wa headset, kwenye kompyuta; simu inayohudumia Quest, na upande wa iPhone, ni jaribio la kifaa la build 19 |
-| Maktaba za Plex Media Server zikichezwa kutoka faili asili, nyumbani na nje ya nyumbani, bila plex.tv | ❌ | ✅ kuanzia build 20, kila kitazamaji, kwenye simu, kompyuta kibao, Quest na televisheni | Imekaguliwa kutoka kompyuta dhidi ya Plex Media Server 1.42.1 halisi (kuoanisha, folda, masafa ya baiti, vijipicha, anwani ya nje ya nyumbani); bado haijakaguliwa kwenye kifaa |
-| Kamera za Tapo: mwonekano wa moja kwa moja, na rekodi za kadi ya kumbukumbu zinazotumwa kwa Immich unapochagua | ❌ | ✅ kuanzia build 20: rekodi kila mahali, moja kwa moja kwenye Android, Android TV na Quest | Imekaguliwa dhidi ya kamera iliyoigwa; bado haijakaguliwa na kamera halisi |
-| Android TV na Google TV, zikiendeshwa kwa rimoti, katika APK ileile | ❌ si programu ya televisheni | ✅ kuanzia build 20 | Imekaguliwa kwa majaribio ya kiotomatiki; bado haijakaguliwa kwenye televisheni |
-| Picha ghafi za Insta360 .insp na video za .insv za wimbo mmoja | ❌ bapa | ✅ kuanzia build 16 | Picha zimekaguliwa dhidi ya faili za X3 zilizosafirishwa kutoka Insta360 Studio, video kwenye emulator ya Android kwa faili ya X3 ya ubora wa chini; bado hazijaendeshwa kwenye iPhone |
-| Video ghafi zenye lenzi moja kwa kila wimbo au kila faili (Insta360 X4, X4 Air, X5, X6, jozi za X3, GoPro .360, DJI .osv) | ❌ bapa au si sahihi | ✅ kuanzia build 18 | Visomaji na kuunganisha vimekaguliwa kwenye faili halisi za X4, jozi ya X3, GoPro MAX na Osmo 360; uchezaji ni jaribio la kifaa la build 18 na 19 |
-| Fisheye mbili za .dng | ❌ bapa | ❌ bado | Imepangwa |
-| Video za seva: asili kifaa kinapoweza kuisimbua, vinginevyo mtiririko uliobadilishwa msimbo; orodha ya visimbuzi vya video vya kifaa | ❌ swichi moja ya "Force original video" | ✅ kuanzia build 15 | Imejaribiwa kwenye emulator ya Android; kikomo cha H.264 cha Quest 3 kilipimwa kwenye headset |
-| Maelezo ya kiufundi ya video: kasi ya biti, picha, wasifu, kama kifaa hiki kinaisimbua | ❌ kodeki pekee | ✅ kuanzia build 18 | Imekamilika |
-| Kicheza bure cha video bapa, za 360°, 3D na VR180, kutoka seva, simu au NAS | ❌ bapa pekee | ✅ (vicheza vya duka la Quest 3 ni vya kulipia) | |
-| Seva ileile, akaunti ileile, inasakinishwa kando ya programu rasmi | | ✅ | |
+| | Programu ya simu ya Immich | Immuch360 |
+|---|:---:|:---:|
+| Picha za 360° kama tufe unalotazama pande zote (kuvuta, kubana vidole, kugusa mara mbili, mwendo wa kubaki, mwonekano wa awali wa kamera, panorama za sehemu) | ❌ utepe bapa | ✅ |
+| Jairoskopu: tazama pande zote kwa kusogeza simu | ❌ | ✅ |
+| Video za 360° kwenye kicheza cha tufe, chenye sauti, kusogeza, chaguo la wimbo wa sauti na kiashiria cha bafa | ❌ video bapa | ✅ Android na iOS (bado hakuna upau wa muda kwenye iOS) |
+| Picha na video za 360° za 3D (stereo) | ❌ picha mara mbili | ✅ jicho la kushoto kwenye simu, 3D halisi kwenye Quest |
+| Picha na video za VR180 (nusu tufe) | ❌ zimevutwa kuzunguka tufe | ✅ nusu tufe, kitufe cha 360°/180° |
+| Picha za anga za Apple (jozi za stereo za HEIC) na video za anga (MV-HEVC) | ❌ picha au video bapa, hakuna kinachosema ni ya anga | ✅ kuanzia build 19: picha kwa 3D ndani ya Quest, jicho moja na safu ya maelezo kwingineko |
+| Mwonekano wa uhalisia pepe wa Meta Quest wenye ufuatiliaji wa kichwa, upau wa muda, iliyotangulia na inayofuata, na Zungusha | ❌ | ✅ programu ileile, kama build ya headset au APK ya simu |
+| Beji ya 360° kwenye vijipicha, na orodha ya 360° yenye faili ghafi na vichujio (kipindi, chanzo, aina, kamera) | ❌ | ✅ vichujio kuanzia build 18 |
+| "Tazama kama 360°" kwa faili ambazo seva haiziwekei alama | ❌ | ✅ inakumbukwa kwenye simu |
+| Spatial 2.5D: kina kwenye skrini bapa kutoka video ya stereo | ❌ | ✅ ya majaribio, simu na kompyuta kibao |
+| Matumizi bila seva yoyote, kwenye matunzio ya kifaa chenyewe | ❌ kuingia kunahitajika | ✅ |
+| Hifadhi za SMB na WebDAV zinazopatikana kwenye mtandao na kuchezwa moja kwa moja, bila kupakua chochote | ❌ | ✅ kila kitazamaji, simu na Quest |
+| Seva za midia za DLNA kama aina ya hifadhi | ❌ | ✅ kuanzia build 19 |
+| Kutuma faili za hifadhi kwenye Immich; faili za kifaa zinazotumwa kwa mkono zinahesabiwa kuwa zimehifadhiwa nakala | ❌ faili za kifaa pekee | ✅ kuanzia build 15 |
+| Shiriki simu hii kwenye mtandao, kwa ajili ya headset | ❌ | ✅ kuanzia build 19, Android na iOS |
+| Maktaba za Plex Media Server zikichezwa kutoka faili asili, nyumbani na nje ya nyumbani, bila plex.tv | ❌ | ✅ kuanzia build 20, kila kitazamaji, kwenye simu, kompyuta kibao, Quest na televisheni |
+| Kamera za Tapo: mwonekano wa moja kwa moja, na rekodi za kadi ya kumbukumbu zinazotumwa kwa Immich unapochagua | ❌ | ✅ kuanzia build 20: rekodi kila mahali, moja kwa moja kwenye Android, Android TV na Quest |
+| Android TV na Google TV, zikiendeshwa kwa rimoti, katika APK ileile | ❌ si programu ya televisheni | ✅ kuanzia build 20 |
+| Picha ghafi za Insta360 .insp na video za .insv za wimbo mmoja | ❌ bapa | ✅ kuanzia build 16 |
+| Video ghafi zenye lenzi moja kwa kila wimbo au kila faili (Insta360 X4, X4 Air, X5, X6, jozi za X3, GoPro .360, DJI .osv) | ❌ bapa au si sahihi | ✅ kuanzia build 18 |
+| Fisheye mbili za .dng | ❌ bapa | ❌ bado |
+| Video za seva: asili kifaa kinapoweza kuisimbua, vinginevyo mtiririko uliobadilishwa msimbo; orodha ya visimbuzi vya video vya kifaa | ❌ swichi moja ya "Force original video" | ✅ kuanzia build 15 |
+| Maelezo ya kiufundi ya video: kasi ya biti, picha, wasifu, kama kifaa hiki kinaisimbua | ❌ kodeki pekee | ✅ kuanzia build 18 |
+| Kicheza bure cha video bapa, za 360°, 3D na VR180, kutoka seva, simu au NAS | ❌ bapa pekee | ✅ (vicheza vya duka la Quest 3 ni vya kulipia) |
+| Seva ileile, akaunti ileile, inasakinishwa kando ya programu rasmi | | ✅ |
+
+<details>
+<summary><b>Hali ya kila mstari</b>: jinsi ulivyojaribiwa</summary>
+
+- **Picha za 360° kama tufe**: imejaribiwa kwenye Galaxy S24+ na iPhone 14.
+- **Jairoskopu**: imejaribiwa kwenye Galaxy S24+ na iPhone 14.
+- **Video za 360°**: imejaribiwa kwenye Galaxy S24+ na iPhone 14.
+- **Picha na video za 3D 360°**: imejaribiwa kwenye Galaxy S24+ na Quest 3, kwa sampuli halisi za 3D 360° (VRTogether, Vuze, Kandao) na picha moja ya 3D; ripoti kutoka kamera nyingine zinakaribishwa.
+- **VR180**: imejaribiwa kwenye emulator ya Android na Galaxy S24+ kwa midia bandia; maoni ya kifaa yanakaribishwa.
+- **Picha na video za anga za Apple**: utambuzi umekaguliwa kwenye sampuli ya picha iliyoandikwa na maktaba ya picha ya Apple na kwenye faili bandia; mwonekano wa headset na faili halisi za iPhone ni jaribio la kifaa la build 19.
+- **Mwonekano wa uhalisia pepe wa Meta Quest**: imejaribiwa kwenye Quest 3 (vidhibiti vya build 14, vilivyorekebishwa katika build 16 baada ya maoni ya mtumiaji), na na mtumiaji mwenye video za 8K HEVC za Insta360 X4.
+- **Beji ya 360° na orodha ya 360°**: imekamilika.
+- **Tazama kama 360°**: imekamilika.
+- **Spatial 2.5D**: imejaribiwa kwenye Galaxy S24+; maoni kutoka iPhone yanakaribishwa.
+- **Bila seva yoyote**: imejaribiwa kwenye Galaxy S24+, Quest 3 na emulator ya Android.
+- **Hifadhi za SMB na WebDAV**: imejaribiwa na Freebox Server (SMB) kwenye Galaxy S24+ na Quest 3, na dhidi ya seva za majaribio za Samba na WebDAV kwenye emulator ya Android; maoni kuhusu NAS na WebDAV nyingine yanakaribishwa.
+- **Seva za midia za DLNA**: imekaguliwa dhidi ya minidlna na Gerbera ndani ya Docker; Plex, Jellyfin, NAS, Freebox Server, iPhone na Quest ni jaribio la kifaa la build 19.
+- **Kutuma faili za hifadhi kwa Immich**: imejaribiwa kwenye emulator ya Android dhidi ya seva ya majaribio ya Samba na seva ya Immich 3.2.
+- **Shiriki simu hii kwenye mtandao**: majaribio ya vipimo na majaribio kamili kwa mteja wa WebDAV wa headset, kwenye kompyuta; simu inayohudumia Quest, na upande wa iPhone, ni jaribio la kifaa la build 19.
+- **Plex Media Server**: imekaguliwa kutoka kompyuta dhidi ya Plex Media Server 1.42.1 halisi (kuoanisha, folda, masafa ya baiti, vijipicha, anwani ya nje ya nyumbani); bado haijakaguliwa kwenye kifaa.
+- **Kamera za Tapo**: imekaguliwa dhidi ya kamera iliyoigwa; bado haijakaguliwa na kamera halisi.
+- **Android TV na Google TV**: imekaguliwa kwa majaribio ya kiotomatiki; bado haijakaguliwa kwenye televisheni.
+- **Picha ghafi za Insta360 .insp na video za .insv za wimbo mmoja**: picha zimekaguliwa dhidi ya faili za X3 zilizosafirishwa kutoka Insta360 Studio, video kwenye emulator ya Android kwa faili ya X3 ya ubora wa chini; bado hazijaendeshwa kwenye iPhone.
+- **Video ghafi zenye lenzi moja kwa kila wimbo au kila faili**: visomaji na kuunganisha vimekaguliwa kwenye faili halisi za X4, jozi ya X3, GoPro MAX na Osmo 360; uchezaji ni jaribio la kifaa la build 18 na 19.
+- **Fisheye mbili za .dng**: imepangwa.
+- **Video za seva na visimbuzi vya video**: imejaribiwa kwenye emulator ya Android; kikomo cha H.264 cha Quest 3 kilipimwa kwenye headset.
+- **Maelezo ya kiufundi ya video**: imekamilika.
+
+</details>
 
 ### Programu nyingine ambazo watu wanatumia kwa hili
 
-| Kile watu wanatumia | Wanachokutana nacho | Kile Immuch360 inafanya |
-|---|---|---|
-| Programu ya wavuti ya Immich | Inaonyesha picha ya 360° kama tufe, lakini inachukulia .insp ghafi kuwa panorama iliyokamilika na kufunga miduara yake miwili kuzunguka tufe; mwonekano wa VR bado ni ombi ([mjadala #14768](https://github.com/immich-app/immich/discussions/14768)) | Inaunganisha faili ghafi kwenye kifaa, na inafungua mwonekano wa uhalisia pepe ndani ya Quest |
-| Programu ya Insta360 au Studio | Inahitajika kugeuza faili ghafi za kadi kuwa picha ya 360° kabla ya kutazama | Inafungua faili ghafi za .insp na .insv moja kwa moja, pamoja na faili za GoPro .360 na DJI .osv |
-| Plex, Jellyfin, Synology Photos | Picha na video za 360° zinaonyeshwa bapa au hazitambuliwi, kama mijadala kwenye majukwaa yao inavyoeleza (ombi la Plex limekuwa wazi tangu 2017) | Inasoma maktaba ya Plex yenyewe kuanzia build 20, au folda zilezile kupitia SMB, WebDAV au DLNA, na kuzicheza kama tufe, bila kubadilisha chochote kwenye seva |
-| Programu ya Tapo | Programu tofauti, iliyoingia kwenye akaunti yako ya TP-Link, yenye klipu zilizotengwa na picha zako | Inaonyesha kamera kando ya picha zako, inazungumza nayo kwenye mtandao wako pekee, na inabakiza klipu kama video unayoweza kutuma kwa Immich (kuanzia build 20) |
-| Programu ya simu ya Immich kwenye televisheni | Si programu ya televisheni: mtumiaji anaripoti kuwa inafanya kazi kwa kipanya, si kwa rimoti | Programu ileile, iliyoundwa kwa ajili ya rimoti (kuanzia build 20) |
-| Kunakili faili kwenye headset | Kila faili inanakiliwa kwa kebo kabla ya kuweza kuitazama | Inacheza pale ilipo kutoka Immich, NAS, seva ya midia au simu |
-| Vicheza vya 360° na 3D vya duka la Quest | Ni vya kulipia | Bure na chanzo huria (AGPL) |
+- **Programu ya wavuti ya Immich**
+  - Wanachokutana nacho: inaonyesha picha ya 360° kama tufe, lakini inachukulia .insp ghafi kuwa panorama iliyokamilika na kufunga miduara yake miwili kuzunguka tufe; mwonekano wa VR bado ni ombi ([mjadala #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Kile Immuch360 inafanya: inaunganisha faili ghafi kwenye kifaa, na inafungua mwonekano wa uhalisia pepe ndani ya Quest.
+- **Programu ya Insta360 au Studio**
+  - Wanachokutana nacho: inahitajika kugeuza faili ghafi za kadi kuwa picha ya 360° kabla ya kutazama.
+  - Kile Immuch360 inafanya: inafungua faili ghafi za .insp na .insv moja kwa moja, pamoja na faili za GoPro .360 na DJI .osv.
+- **Plex, Jellyfin, Synology Photos**
+  - Wanachokutana nacho: picha na video za 360° zinaonyeshwa bapa au hazitambuliwi, kama mijadala kwenye majukwaa yao inavyoeleza (ombi la Plex limekuwa wazi tangu 2017).
+  - Kile Immuch360 inafanya: inasoma maktaba ya Plex yenyewe kuanzia build 20, au folda zilezile kupitia SMB, WebDAV au DLNA, na kuzicheza kama tufe, bila kubadilisha chochote kwenye seva.
+- **Programu ya Tapo**
+  - Wanachokutana nacho: programu tofauti, iliyoingia kwenye akaunti yako ya TP-Link, yenye klipu zilizotengwa na picha zako.
+  - Kile Immuch360 inafanya: inaonyesha kamera kando ya picha zako, inazungumza nayo kwenye mtandao wako pekee, na inabakiza klipu kama video unayoweza kutuma kwa Immich (kuanzia build 20).
+- **Programu ya simu ya Immich kwenye televisheni**
+  - Wanachokutana nacho: si programu ya televisheni: mtumiaji anaripoti kuwa inafanya kazi kwa kipanya, si kwa rimoti.
+  - Kile Immuch360 inafanya: programu ileile, iliyoundwa kwa ajili ya rimoti (kuanzia build 20).
+- **Kunakili faili kwenye headset**
+  - Wanachokutana nacho: kila faili inanakiliwa kwa kebo kabla ya kuweza kuitazama.
+  - Kile Immuch360 inafanya: inacheza pale ilipo kutoka Immich, NAS, seva ya midia au simu.
+- **Vicheza vya 360° na 3D vya duka la Quest**
+  - Wanachokutana nacho: ni vya kulipia.
+  - Kile Immuch360 inafanya: bure na chanzo huria (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Miundo na vyanzo, kwa jukwaa
 
-Immuch360 ni matunzio, na pia ni kicheza midia bure: inacheza kile ambacho programu rasmi haiwezi, kutoka vyanzo vya jedwali la pili, katika kicheza kinachofaa faili.
+Immuch360 ni matunzio, na pia ni kicheza midia bure: inacheza kile ambacho programu rasmi haiwezi, kutoka vyanzo vya orodha ya pili, katika kicheza kinachofaa faili.
 
-| Nini | Simu za Android | iPhone, iPad | Meta Quest | Android TV, Google TV (kuanzia build 20) |
-|---|---|---|---|---|
-| Video bapa (MP4, MOV, MKV, kile kifaa kinachosimbua) | Kicheza cha Immich, na kicheza asilia kwa hifadhi za mtandao | Vilevile, isipokuwa faili za MKV na AVI za hifadhi, ambazo iOS haizifungui (kwenye seva zinacheza zikiwa zimebadilishwa msimbo) | Ndani ya dirisha | Kama kwenye simu; OK inasitisha, kushoto na kulia zinaruka sekunde 10 |
-| Picha za 360° | Kitazamaji cha tufe, jairoskopu | Vilevile | Uhalisia pepe, pande zote kukuzunguka | Kitazamaji cha tufe kinachogeuzwa kwa mishale, kukuzwa kwa vitufe vya chaneli |
-| Video za 360° | Kicheza asilia cha Media3 kwenye tufe, jairoskopu, kusogeza, chaguo la wimbo wa sauti, kiashiria cha bafa | Kicheza asilia cha SceneKit kwenye tufe, jairoskopu, chaguo la wimbo wa sauti, kiashiria cha bafa; cheza na sitisha, bado hakuna upau wa muda | Uhalisia pepe, 3D halisi kwa faili za stereo, upau wa muda wenye kuruka sekunde 10, midia iliyotangulia na inayofuata | Kicheza cha Media3 cha simu, kinachogeuzwa kwa mishale |
-| 3D 360° (juu na chini, ubavu kwa ubavu) | Jicho la kushoto, kitufe cha mpangilio | Vilevile | Kila jicho linapata nusu yake ya fremu | Jicho la kushoto, kitufe cha mpangilio |
-| Picha na video za VR180 (nusu tufe) | Nusu tufe, kitufe cha 360°/180° | Vilevile | Nusu tufe ya uhalisia pepe | Nusu tufe, kitufe cha 360°/180° |
-| Spatial 2.5D (kina kwenye skrini bapa kutoka video ya stereo) | Kicheza asilia, ufuatiliaji wa kichwa kwa kamera ya mbele | Vilevile | Haitolewi | Haitolewi |
-| Picha za anga za Apple (jozi za stereo za HEIC, kuanzia build 19) | Jicho la kushoto, safu ya maelezo inasema ni ya anga | Vilevile | Tazama kwa 3D: macho yote mawili kwenye picha inayoelea ndani ya mwonekano wa uhalisia pepe, 3D au 2D, ukubwa unaweza kubadilishwa | Jicho la kushoto, safu ya maelezo |
-| Video za anga za Apple (MV-HEVC, kuanzia build 19) | Jicho moja (safu ya msingi), pamoja na tangazo | Vilevile | Jicho moja ndani ya dirisha, pamoja na tangazo | Jicho moja, pamoja na tangazo |
-| Picha ghafi za Insta360 .insp (kuanzia build 16) | Zinaunganishwa kwenye GPU kabla ya kitazamaji cha tufe, hadi 8192x4096 | Vilevile | Uhalisia pepe, kutoka picha iliyounganishwa iliyoandaliwa kwa headset | Kama kwenye simu |
-| Insta360 .insv ghafi, lenzi zote mbili katika wimbo mmoja (kuanzia build 16) | Zinaunganishwa na athari ya GPU kwenye kicheza cha Media3 | Zinaunganishwa na SceneKit shader | Uhalisia pepe, zinaunganishwa na athari ileile ya GPU | Kama kwenye simu |
-| Video ghafi zenye lenzi moja kwa kila wimbo au kila faili (kuanzia build 18): Insta360 X4, X4 Air, X5, X6 .insv, jozi za X3, GoPro .360, DJI .osv | Visimbuzi viwili vya maunzi kwa wakati mmoja, kimoja kwa kila lenzi (kuanzia build 19 vya programu kwenye kifaa kisicho na kisimbuzi cha maunzi, hadi 2048x2048 kwa kila lenzi), na kiunganishi cha GL kinachoviunganisha kuwa tufe; lenzi moja, kisha mtiririko uliobadilishwa msimbo, kisha video bila kuunganishwa, kifaa kisipoweza kuendesha viwili | Kiunganishi maalum cha AVFoundation kwa Metal | Uhalisia pepe, visimbuzi viwili vilevile na kiunganishi (paneli ya 3840x1920) | Kama kwenye simu, televisheni ikiweza kuendesha visimbuzi viwili kwa wakati mmoja |
-| Mwonekano wa moja kwa moja wa kamera ya Tapo (kuanzia build 20) | Kicheza cha Media3 RTSP: SD kwenye ukurasa, HD kwenye skrini nzima, kitufe cha sauti | Bado: kadi inasema unakuja baadaye | Ndani ya dirisha, kwa HD | Kama kwenye simu |
-| Rekodi za kamera ya Tapo (kuanzia build 20) | Zinaletwa kutoka kadi ya kumbukumbu kuwa video ya H.264 pamoja na sauti yake, kisha zinachezwa pamoja na kusogeza | Vilevile | Vilevile, ndani ya dirisha | Vilevile |
+- **Video bapa (MP4, MOV, MKV, kile kifaa kinachosimbua)**
+  - Simu za Android: kicheza cha Immich, na kicheza asilia kwa hifadhi za mtandao.
+  - iPhone, iPad: vilevile, isipokuwa faili za MKV na AVI za hifadhi, ambazo iOS haizifungui (kwenye seva zinacheza zikiwa zimebadilishwa msimbo).
+  - Meta Quest: ndani ya dirisha.
+  - Android TV, Google TV: kama kwenye simu; OK inasitisha, kushoto na kulia zinaruka sekunde 10.
+- **Picha za 360°**
+  - Simu za Android: kitazamaji cha tufe, jairoskopu.
+  - iPhone, iPad: vilevile.
+  - Meta Quest: uhalisia pepe, pande zote kukuzunguka.
+  - Android TV, Google TV: kitazamaji cha tufe kinachogeuzwa kwa mishale, kukuzwa kwa vitufe vya chaneli.
+- **Video za 360°**
+  - Simu za Android: kicheza asilia cha Media3 kwenye tufe, jairoskopu, kusogeza, chaguo la wimbo wa sauti, kiashiria cha bafa.
+  - iPhone, iPad: kicheza asilia cha SceneKit kwenye tufe, jairoskopu, chaguo la wimbo wa sauti, kiashiria cha bafa; cheza na sitisha, bado hakuna upau wa muda.
+  - Meta Quest: uhalisia pepe, 3D halisi kwa faili za stereo, upau wa muda wenye kuruka sekunde 10, midia iliyotangulia na inayofuata.
+  - Android TV, Google TV: kicheza cha Media3 cha simu, kinachogeuzwa kwa mishale.
+- **3D 360° (juu na chini, ubavu kwa ubavu)**
+  - Simu za Android: jicho la kushoto, kitufe cha mpangilio.
+  - iPhone, iPad: vilevile.
+  - Meta Quest: kila jicho linapata nusu yake ya fremu.
+  - Android TV, Google TV: jicho la kushoto, kitufe cha mpangilio.
+- **Picha na video za VR180 (nusu tufe)**
+  - Simu za Android: nusu tufe, kitufe cha 360°/180°.
+  - iPhone, iPad: vilevile.
+  - Meta Quest: nusu tufe ya uhalisia pepe.
+  - Android TV, Google TV: nusu tufe, kitufe cha 360°/180°.
+- **Spatial 2.5D (kina kwenye skrini bapa kutoka video ya stereo)**
+  - Simu za Android: kicheza asilia, ufuatiliaji wa kichwa kwa kamera ya mbele.
+  - iPhone, iPad: vilevile.
+  - Meta Quest: haitolewi.
+  - Android TV, Google TV: haitolewi.
+- **Picha za anga za Apple (jozi za stereo za HEIC, kuanzia build 19)**
+  - Simu za Android: jicho la kushoto, safu ya maelezo inasema ni ya anga.
+  - iPhone, iPad: vilevile.
+  - Meta Quest: Tazama kwa 3D: macho yote mawili kwenye picha inayoelea ndani ya mwonekano wa uhalisia pepe, 3D au 2D, ukubwa unaweza kubadilishwa.
+  - Android TV, Google TV: jicho la kushoto, safu ya maelezo.
+- **Video za anga za Apple (MV-HEVC, kuanzia build 19)**
+  - Simu za Android: jicho moja (safu ya msingi), pamoja na tangazo.
+  - iPhone, iPad: vilevile.
+  - Meta Quest: jicho moja ndani ya dirisha, pamoja na tangazo.
+  - Android TV, Google TV: jicho moja, pamoja na tangazo.
+- **Picha ghafi za Insta360 .insp (kuanzia build 16)**
+  - Simu za Android: zinaunganishwa kwenye GPU kabla ya kitazamaji cha tufe, hadi 8192x4096.
+  - iPhone, iPad: vilevile.
+  - Meta Quest: uhalisia pepe, kutoka picha iliyounganishwa iliyoandaliwa kwa headset.
+  - Android TV, Google TV: kama kwenye simu.
+- **Insta360 .insv ghafi, lenzi zote mbili katika wimbo mmoja (kuanzia build 16)**
+  - Simu za Android: zinaunganishwa na athari ya GPU kwenye kicheza cha Media3.
+  - iPhone, iPad: zinaunganishwa na SceneKit shader.
+  - Meta Quest: uhalisia pepe, zinaunganishwa na athari ileile ya GPU.
+  - Android TV, Google TV: kama kwenye simu.
+- **Video ghafi zenye lenzi moja kwa kila wimbo au kila faili (kuanzia build 18): Insta360 X4, X4 Air, X5, X6 .insv, jozi za X3, GoPro .360, DJI .osv**
+  - Simu za Android: visimbuzi viwili vya maunzi kwa wakati mmoja, kimoja kwa kila lenzi (kuanzia build 19 vya programu kwenye kifaa kisicho na kisimbuzi cha maunzi, hadi 2048x2048 kwa kila lenzi), na kiunganishi cha GL kinachoviunganisha kuwa tufe; lenzi moja, kisha mtiririko uliobadilishwa msimbo, kisha video bila kuunganishwa, kifaa kisipoweza kuendesha viwili.
+  - iPhone, iPad: kiunganishi maalum cha AVFoundation kwa Metal.
+  - Meta Quest: uhalisia pepe, visimbuzi viwili vilevile na kiunganishi (paneli ya 3840x1920).
+  - Android TV, Google TV: kama kwenye simu, televisheni ikiweza kuendesha visimbuzi viwili kwa wakati mmoja.
+- **Mwonekano wa moja kwa moja wa kamera ya Tapo (kuanzia build 20)**
+  - Simu za Android: kicheza cha Media3 RTSP: SD kwenye ukurasa, HD kwenye skrini nzima, kitufe cha sauti.
+  - iPhone, iPad: bado: kadi inasema unakuja baadaye.
+  - Meta Quest: ndani ya dirisha, kwa HD.
+  - Android TV, Google TV: kama kwenye simu.
+- **Rekodi za kamera ya Tapo (kuanzia build 20)**
+  - Simu za Android: zinaletwa kutoka kadi ya kumbukumbu kuwa video ya H.264 pamoja na sauti yake, kisha zinachezwa pamoja na kusogeza.
+  - iPhone, iPad: vilevile.
+  - Meta Quest: vilevile, ndani ya dirisha.
+  - Android TV, Google TV: vilevile.
 
-Safu ya televisheni bado haijakaguliwa kwenye televisheni, tazama [Tazama kwenye televisheni yako](#watch-on-your-tv-android-tv-and-google-tv); mistari ya kamera bado haijakaguliwa na kamera halisi.
+Vipengee vya Android TV na Google TV, kuanzia build 20, bado havijakaguliwa kwenye televisheni, tazama [Tazama kwenye televisheni yako](#watch-on-your-tv-android-tv-and-google-tv); vipengee vya kamera bado havijakaguliwa na kamera halisi.
 
-| Kutoka | Jinsi |
-|---|---|
-| Seva yako ya Immich | Asili au mtiririko wa seva uliobadilishwa msimbo, kama Settings, Asset Viewer, Chanzo cha video kinavyosema (tazama [Maelezo ya video na visimbuzi](#video-details-decoders-and-why-a-video-stutters)). Akaunti ileile ya programu ya wavuti |
-| Simu au headset yenyewe | "Tumia bila seva" kwenye ukurasa wa kuingia, au kipengee cha On this device kwenye kichupo cha Maktaba |
-| NAS au kompyuta | Hifadhi za SMB na WebDAV, na kuanzia build 19 seva za midia za DLNA, zinazopatikana kwenye mtandao, zikisomwa moja kwa moja (video ya SMB kupitia hadi miunganisho sita), hakuna kinachonakiliwa; kuanzia build 15 faili unazochagua zinaweza kutumwa kwenye akaunti yako ya Immich |
-| Simu nyingine (kuanzia build 19) | "Shiriki simu hii kwenye mtandao" kwenye simu hiyo: headset, au mteja yeyote wa WebDAV kwenye mtandao, inasoma albamu zake, miezi na midia ya 360° |
-| Plex Media Server (kuanzia build 20) | Maktaba zake za picha, filamu na vipindi vya TV kwa folda, faili asili zikisomwa moja kwa moja kupitia HTTPS iliyokaguliwa dhidi ya cheti cha seva yenyewe, nyumbani au kupitia anwani ya nje ya nyumbani, kwenye kila jukwaa; tazama [Plex Media Server, bila plex.tv](#plex-media-server-without-plextv) |
-| Kamera ya Tapo (kuanzia build 20) | Mwonekano wa moja kwa moja kwa akaunti ya kamera (Android, Android TV, Quest), na rekodi za kadi yake ya kumbukumbu kwa nenosiri la akaunti ya TP-Link (kila jukwaa), kwenye mtandao wa ndani pekee; tazama [Kamera za Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Seva yako ya Immich**: asili au mtiririko wa seva uliobadilishwa msimbo, kama Settings, Asset Viewer, Chanzo cha video kinavyosema (tazama [Maelezo ya video na visimbuzi](#video-details-decoders-and-why-a-video-stutters)). Akaunti ileile ya programu ya wavuti.
+- **Simu au headset yenyewe**: "Tumia bila seva" kwenye ukurasa wa kuingia, au kipengee cha On this device kwenye kichupo cha Maktaba.
+- **NAS au kompyuta**: hifadhi za SMB na WebDAV, na kuanzia build 19 seva za midia za DLNA, zinazopatikana kwenye mtandao, zikisomwa moja kwa moja (video ya SMB kupitia hadi miunganisho sita), hakuna kinachonakiliwa; kuanzia build 15 faili unazochagua zinaweza kutumwa kwenye akaunti yako ya Immich.
+- **Simu nyingine (kuanzia build 19)**: "Shiriki simu hii kwenye mtandao" kwenye simu hiyo: headset, au mteja yeyote wa WebDAV kwenye mtandao, inasoma albamu zake, miezi na midia ya 360°.
+- **Plex Media Server (kuanzia build 20)**: maktaba zake za picha, filamu na vipindi vya TV kwa folda, faili asili zikisomwa moja kwa moja kupitia HTTPS iliyokaguliwa dhidi ya cheti cha seva yenyewe, nyumbani au kupitia anwani ya nje ya nyumbani, kwenye kila jukwaa; tazama [Plex Media Server, bila plex.tv](#plex-media-server-without-plextv).
+- **Kamera ya Tapo (kuanzia build 20)**: mwonekano wa moja kwa moja kwa akaunti ya kamera (Android, Android TV, Quest), na rekodi za kadi yake ya kumbukumbu kwa nenosiri la akaunti ya TP-Link (kila jukwaa), kwenye mtandao wa ndani pekee; tazama [Kamera za Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 pia inaendeshwa kwenye headset za Meta Quest zenye Horizon OS v69 au baadaye. Kuanzia build 21 build ya Horizon Store imeorodheshwa kwa Quest 2, Quest Pro, Quest 3 na 3S, zile nne ambazo `-release.apk` ya jumla tayari inazitaja; Quest ya kwanza haimo, duka halikubali tena. Quest 3 na 3S zimejaribiwa. Quest 2 na Quest Pro bado hazijajaribiwa: visimbuzi vyao vya video ni vya polepole zaidi, na mipaka ambayo programu inakagua ilipimwa kwenye Quest 3, kwa hiyo video kubwa ya H.264 inaweza kukataliwa kwa ujumbe au kukwama kwenye hizo. Ripoti kutoka headset hizi mbili zinakaribishwa katika [Issues](https://github.com/freeKC/Immuch360/issues). Jinsi ya kuitumia kuko katika [Ndani ya headset ya Meta Quest 3](#in-the-meta-quest-3-headset); sehemu hii inahusu kuisakinisha na kile kinachotofautiana kwenye headset.
+Immuch360 pia inaendeshwa kwenye headset za Meta Quest zenye Horizon OS v69 au baadaye. Kuanzia build 21 build ya Horizon Store imeorodheshwa kwa Quest 2, Quest Pro, Quest 3 na 3S, zile nne ambazo `-release.apk` ya jumla tayari inazitaja; Quest ya kwanza haimo, duka halikubali tena.
 
-Build ya headset inazungumza na seva kupitia HTTPS pekee, au kupitia HTTP ya kawaida kwa majina ya mtandao wa nyumbani (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) na kwa headset yenyewe, kama Horizon Store inavyotaka. Seva iliyoandikwa kama anwani ya HTTP ya kawaida yenye IP, kama `http://192.168.1.10:2283`, inakataliwa na build hiyo: tumia HTTPS, jina la mtandao wa nyumbani (`nas.local`), au `-release.apk` ya jumla, inayobaki na sera wazi ya simu. Hifadhi za WebDAV, DLNA na za simu kwenye anwani ya HTTP ya kawaida ya mtandao wa ndani haziathiriki: programu inazisoma yenyewe na kuvipa vicheza vyake anwani ya daraja lake la ndani pekee (inasubiri kuthibitishwa kwenye headset kwa DLNA na hifadhi ya simu, mpya katika build 19). Kuanzia build 20 seva ya Plex inafikiwa kupitia HTTPS, na kamera ya Tapo na programu yenyewe, mwonekano wake wa moja kwa moja kupitia RTSP, ambayo si HTTP: hakuna kati yao inayopaswa kuathirika (inasubiri kuthibitishwa kwenye headset).
+Quest 3 na 3S zimejaribiwa. Quest 2 na Quest Pro bado hazijajaribiwa: visimbuzi vyao vya video ni vya polepole zaidi, na mipaka ambayo programu inakagua ilipimwa kwenye Quest 3, kwa hiyo video kubwa ya H.264 inaweza kukataliwa kwa ujumbe au kukwama kwenye hizo. Ripoti kutoka headset hizi mbili zinakaribishwa katika [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Jinsi ya kuitumia kuko katika [Ndani ya headset ya Meta Quest 3](#in-the-meta-quest-3-headset); sehemu hii inahusu kuisakinisha na kile kinachotofautiana kwenye headset.
+
+Build ya headset inazungumza na seva kupitia HTTPS pekee, au kupitia HTTP ya kawaida kwa majina ya mtandao wa nyumbani (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) na kwa headset yenyewe, kama Horizon Store inavyotaka. Seva iliyoandikwa kama anwani ya HTTP ya kawaida yenye IP, kama `http://192.168.1.10:2283`, inakataliwa na build hiyo: tumia HTTPS, jina la mtandao wa nyumbani (`nas.local`), au `-release.apk` ya jumla, inayobaki na sera wazi ya simu.
+
+Hifadhi za WebDAV, DLNA na za simu kwenye anwani ya HTTP ya kawaida ya mtandao wa ndani haziathiriki: programu inazisoma yenyewe na kuvipa vicheza vyake anwani ya daraja lake la ndani pekee (inasubiri kuthibitishwa kwenye headset kwa DLNA na hifadhi ya simu, mpya katika build 19). Kuanzia build 20 seva ya Plex inafikiwa kupitia HTTPS, na kamera ya Tapo na programu yenyewe, mwonekano wake wa moja kwa moja kupitia RTSP, ambayo si HTTP: hakuna kati yao inayopaswa kuathirika (inasubiri kuthibitishwa kwenye headset).
 
 <a id="install"></a>
 ### Usakinishaji
@@ -762,16 +922,23 @@ Meta iliidhinisha orodha ya Horizon Store tarehe 7 Oktoba 2026 pamoja na build 1
 
 ### Ndani ya dirisha
 
-Programu nzima inaendeshwa kama dirisha la 2D linaloweza kubadilishwa ukubwa: kuingia, rekodi ya matukio, albamu, utafutaji, kichupo cha Maktaba (orodha ya 360°, On this device, Hifadhi za mtandao), mipangilio, na vitazamaji vya picha na video, ambapo picha na video bapa zinacheza. Kwenye headset kitufe cha 360°, na Tazama kama 360° kwenye menyu ya ⋮, vinafungua mwonekano wa uhalisia pepe moja kwa moja badala ya kitazamaji cha tufe cha simu, na kitufe cha Spatial 2.5D na mpangilio wake havionyeshwi. Kuanzia build 19 picha ya anga ya Apple ina kitufe cha Tazama kwa 3D, na kigae cha Shiriki simu hii kwenye mtandao hakionyeshwi: headset ndiyo inayosoma hifadhi ya simu. Kuanzia build 20 seva za Plex na kamera za Tapo zinafunguka ndani ya dirisha pia, mwonekano wa moja kwa moja wa kamera kwa HD; chaguo la "Mpangilio wa rimoti" linabaki kwenye Kiotomatiki, jambo linaloliacha limezimwa kwenye headset.
+Programu nzima inaendeshwa kama dirisha la 2D linaloweza kubadilishwa ukubwa: kuingia, rekodi ya matukio, albamu, utafutaji, kichupo cha Maktaba (orodha ya 360°, On this device, Hifadhi za mtandao), mipangilio, na vitazamaji vya picha na video, ambapo picha na video bapa zinacheza.
+
+Kwenye headset kitufe cha 360°, na Tazama kama 360° kwenye menyu ya ⋮, vinafungua mwonekano wa uhalisia pepe moja kwa moja badala ya kitazamaji cha tufe cha simu, na kitufe cha Spatial 2.5D na mpangilio wake havionyeshwi.
+
+Kuanzia build 19 picha ya anga ya Apple ina kitufe cha Tazama kwa 3D, na kigae cha Shiriki simu hii kwenye mtandao hakionyeshwi: headset ndiyo inayosoma hifadhi ya simu. Kuanzia build 20 seva za Plex na kamera za Tapo zinafunguka ndani ya dirisha pia, mwonekano wa moja kwa moja wa kamera kwa HD; chaguo la "Mpangilio wa rimoti" linabaki kwenye Kiotomatiki, jambo linaloliacha limezimwa kwenye headset.
 
 ### Kwa picha
 
 Picha za skrini zilizopigwa ndani ya headset kwa kitufe cha kupiga picha (kitufe cha Meta na kifyatulio), kwenye Quest 3, programu ikiwa kwa Kifaransa; kichupo cha Maktaba kinaonyeshwa katika hali ya bila seva.
 
-| Bila seva | Hifadhi za mtandao |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Kichupo cha Maktaba bila seva: On this device na Hifadhi za mtandao"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Ukurasa wa Hifadhi za mtandao wenye hifadhi ya SMB ya Freebox Server"> |
-| Kichupo cha Maktaba katika hali ya bila seva: midia ya headset yenyewe na hifadhi za mtandao | Hifadhi ya Samba ya Freebox Server, ikisomwa moja kwa moja kutoka headset |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Kichupo cha Maktaba bila seva: On this device na Hifadhi za mtandao">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Ukurasa wa Hifadhi za mtandao wenye hifadhi ya SMB ya Freebox Server">
+</p>
+
+- **Bila seva**: kichupo cha Maktaba katika hali ya bila seva, pamoja na midia ya headset yenyewe na hifadhi za mtandao.
+- **Hifadhi za mtandao**: hifadhi ya Samba ya Freebox Server, ikisomwa moja kwa moja kutoka headset.
 
 ### Mipaka kwenye headset
 
@@ -786,12 +953,18 @@ Picha za skrini zilizopigwa ndani ya headset kwa kitufe cha kupiga picha (kitufe
 
 Programu iko kwenye Google Play kwa simu na kompyuta kibao; toleo la App Store linasubiri ukaguzi wa Apple, orodha ya Meta Horizon Store imeidhinishwa na sasisho lake la kwanza linakaguliwa na Meta, na toleo la Google Play kwa televisheni linasubiri ukaguzi wa Google wa toleo la televisheni. Toleo la GitHub huwa build mpya zaidi kila wakati:
 
-| Jukwaa | Leo | Hivi karibuni |
-|---|---|---|
-| Simu na kompyuta kibao za Android | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), au APK kwenye ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` kwa simu (`Immuch360-v<version>-release.apk` ya jumla inafanya kazi kila mahali, `-armeabi-v7a` ni kwa simu za zamani za biti 32, na faili ya `.aab` ni kwa Google Play, si kwa sideload). Build ya GitHub kwa kawaida iko mbele ya duka. Kwa njia yoyote inasakinishwa kando ya programu rasmi ya Immich (kifurushi `com.aprogsys.immuch360`). | Google Play: build 18 imechapishwa, build 20 inakaguliwa na Google tangu tarehe 7 Oktoba 2026, badala ya build 19 |
-| iPhone na iPad | Inasubiri ukaguzi wa Apple. Toleo linalokaguliwa lina vipengele vya build 11: upakiaji kwenye Immich na chaguo la Chanzo cha video (build 15) na faili ghafi za Insta360 (build 16) vitakuja na sasisho la baadaye la App Store. Msimbo chanzo unajengwa kwa Xcode au kwenye Codemagic, tazama [Ijenge mwenyewe](#build-it-yourself). | App Store, inakaguliwa |
-| Meta Quest 2, Quest Pro, Quest 3 na 3S (Quest 2 na Quest Pro hazijajaribiwa) | Faili ya `-quest-release.apk` ya ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` ya jumla inafanya kazi pia), iliyosakinishwa kwa sideload katika hali ya msanidi programu, tazama [Usakinishaji](#install). Build ya duka na APK ya GitHub zimesainiwa kwa funguo tofauti: kubadilisha kutoka moja hadi nyingine, ondoa programu kwanza (mipangilio yake na hifadhi zilizohifadhiwa zinaondoka nayo). | Meta Horizon Store: orodha iliidhinishwa tarehe 7 Oktoba 2026 pamoja na build 14, na build 21, sasisho lake la kwanza, inakaguliwa na Meta; chaneli ya alpha ya duka (wajaribu pekee) inapata kila build mpya |
-| Android TV na Google TV (kuanzia build 20) | `Immuch360-v<version>-release.apk` ya jumla ya ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases), iliyosakinishwa kwa sideload kupitia adb, tazama [Isakinishe kwenye televisheni](#install-it-on-the-tv). Ni programu ileile kama kwenye simu. | Google Play kwenye televisheni, baada ya ukaguzi wa Google wa toleo la televisheni |
+- **Simu na kompyuta kibao za Android**
+  - Leo: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), au APK kwenye ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` kwa simu (`Immuch360-v<version>-release.apk` ya jumla inafanya kazi kila mahali, `-armeabi-v7a` ni kwa simu za zamani za biti 32, na faili ya `.aab` ni kwa Google Play, si kwa sideload). Build ya GitHub kwa kawaida iko mbele ya duka. Kwa njia yoyote inasakinishwa kando ya programu rasmi ya Immich (kifurushi `com.aprogsys.immuch360`).
+  - Hivi karibuni: kwenye Google Play, build 18 imechapishwa, build 20 inakaguliwa na Google tangu tarehe 7 Oktoba 2026, badala ya build 19.
+- **iPhone na iPad**
+  - Leo: inasubiri ukaguzi wa Apple. Toleo linalokaguliwa lina vipengele vya build 11: upakiaji kwenye Immich na chaguo la Chanzo cha video (build 15) na faili ghafi za Insta360 (build 16) vitakuja na sasisho la baadaye la App Store. Msimbo chanzo unajengwa kwa Xcode au kwenye Codemagic, tazama [Ijenge mwenyewe](#build-it-yourself).
+  - Hivi karibuni: App Store, inakaguliwa.
+- **Meta Quest 2, Quest Pro, Quest 3 na 3S (Quest 2 na Quest Pro hazijajaribiwa)**
+  - Leo: faili ya `-quest-release.apk` ya ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` ya jumla inafanya kazi pia), iliyosakinishwa kwa sideload katika hali ya msanidi programu, tazama [Usakinishaji](#install). Build ya duka na APK ya GitHub zimesainiwa kwa funguo tofauti: kubadilisha kutoka moja hadi nyingine, ondoa programu kwanza (mipangilio yake na hifadhi zilizohifadhiwa zinaondoka nayo).
+  - Hivi karibuni: kwenye Meta Horizon Store, orodha iliidhinishwa tarehe 7 Oktoba 2026 pamoja na build 14, na build 21, sasisho lake la kwanza, inakaguliwa na Meta; chaneli ya alpha ya duka (wajaribu pekee) inapata kila build mpya.
+- **Android TV na Google TV (kuanzia build 20)**
+  - Leo: `Immuch360-v<version>-release.apk` ya jumla ya ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases), iliyosakinishwa kwa sideload kupitia adb, tazama [Isakinishe kwenye televisheni](#install-it-on-the-tv). Ni programu ileile kama kwenye simu.
+  - Hivi karibuni: Google Play kwenye televisheni, baada ya ukaguzi wa Google wa toleo la televisheni.
 
 Viungo vya App Store na Meta Horizon Store vitaongezwa hapa mara orodha zitakapochapishwa. Ingia kwa URL ya kawaida ya seva yako ya Immich na akaunti yako, au gusa "Tumia bila seva" kwenye ukurasa wa kuingia ili kuanza na picha na video za kifaa chenyewe. APK kutoka GitHub haijisasishi yenyewe: fuatilia ukurasa wa Releases, na ukishasakinisha programu kutoka dukani, chukua masasisho kutoka duka hilo.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Picha za skrini za duka zinapigwa kwenye build za debug za simulator zilizotengenezwa kwa `--dart-define=IMMUCH_SCREENSHOTS=true`, ambayo inaficha bango la debug pekee. Aina mbili za Android (flavours) ni programu moja. Kuanzia build 20 aina ya `phone` pia inajitangaza kama programu ya televisheni (kiingilio cha kizindua cha televisheni na bango, bila kuhitaji skrini ya kugusa), jambo ambalo aina ya `quest` inaliacha. Aina ya `quest` inalenga SDK 34 na inabakiza ruhusa ambazo headset inatumia pekee (picha, video, arifa): usimamizi wa midia, mahali chinichini, hifadhi ya zamani, sauti, mahali pa midia, mahali pa kifaa na kamera zinaondolewa katika `android/app/src/quest/AndroidManifest.xml`, kwa sababu Meta Horizon Store inakataa mbili za kwanza na inaomba sababu kwa kila ruhusa nyingine nyeti; faili hiyohiyo inataja Quest 2, Quest Pro, Quest 3 na 3S kama vifaa vinavyotumika na inabana HTTP ya kawaida kwa headset yenyewe na kwa majina ya mtandao wa nyumbani. APK ni ya biti 64 pekee kwa sababu ya hoja mbili za ziada za amri yake (`--target-platform android-arm64 --android-project-arg arm64only=true`). Aina ya `phone` ndiyo ambayo Google Play inahitaji. Kujenga kwa iOS kwenye Mac yako mwenyewe, tumia Xcode na timu yako mwenyewe ya kusaini; ukiwa na Xcode 26, endesha `xcodebuild -downloadComponent MetalToolchain` mara moja kwanza, kwa kuwa shader za Spatial zinaihitaji. Bila Mac, build za iOS zinaendeshwa kwenye Codemagic (Mac ya mtandaoni) kutoka faili ya `codemagic.yaml` ya hazina hii. Build za matoleo ya Android zinaendeshwa kwenye GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Picha za skrini za duka zinapigwa kwenye build za debug za simulator zilizotengenezwa kwa `--dart-define=IMMUCH_SCREENSHOTS=true`, ambayo inaficha bango la debug pekee.
+
+Aina mbili za Android (flavours) ni programu moja. Kuanzia build 20 aina ya `phone` pia inajitangaza kama programu ya televisheni (kiingilio cha kizindua cha televisheni na bango, bila kuhitaji skrini ya kugusa), jambo ambalo aina ya `quest` inaliacha.
+
+Aina ya `quest` inalenga SDK 34 na inabakiza ruhusa ambazo headset inatumia pekee (picha, video, arifa): usimamizi wa midia, mahali chinichini, hifadhi ya zamani, sauti, mahali pa midia, mahali pa kifaa na kamera zinaondolewa katika `android/app/src/quest/AndroidManifest.xml`, kwa sababu Meta Horizon Store inakataa mbili za kwanza na inaomba sababu kwa kila ruhusa nyingine nyeti; faili hiyohiyo inataja Quest 2, Quest Pro, Quest 3 na 3S kama vifaa vinavyotumika na inabana HTTP ya kawaida kwa headset yenyewe na kwa majina ya mtandao wa nyumbani. APK ni ya biti 64 pekee kwa sababu ya hoja mbili za ziada za amri yake (`--target-platform android-arm64 --android-project-arg arm64only=true`). Aina ya `phone` ndiyo ambayo Google Play inahitaji.
+
+Kujenga kwa iOS kwenye Mac yako mwenyewe, tumia Xcode na timu yako mwenyewe ya kusaini; ukiwa na Xcode 26, endesha `xcodebuild -downloadComponent MetalToolchain` mara moja kwanza, kwa kuwa shader za Spatial zinaihitaji. Bila Mac, build za iOS zinaendeshwa kwenye Codemagic (Mac ya mtandaoni) kutoka faili ya `codemagic.yaml` ya hazina hii. Build za matoleo ya Android zinaendeshwa kwenye GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Hakuna siri iliyo katika hazina hii: ufunguo wa kusaini wa Android umehifadhiwa kama siri zilizosimbwa za GitHub Actions, na nyenzo za kusaini za Apple zimehifadhiwa kama vigezo vilivyosimbwa kwenye Codemagic. Faili za mtiririko wa kazi zinazitaja kwa jina pekee. Bila `android/key.jks` yako mwenyewe, build ya toleo inasainiwa kwa ufunguo wa debug na haiwezi kusakinishwa juu ya nakala kutoka GitHub au duka (ondoa hiyo kwanza); build ya debug inasakinishwa kando yake kama Immuch360 debug. Nakala ya Meta Horizon Store ni APK ya `quest` ya toleo iliyosainiwa kwa ufunguo mwingine, ule ambao programu ya duka ilisajiliwa nao kwanza, kwa hiyo haiwezi kusakinishwa juu ya APK iliyosakinishwa kwa sideload pia, wala kinyume chake.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Kuanzia build 19 mteja wa DLNA, hifadhi ya simu na utambuzi wa midia za anga za Apple pia vinaandika kwenye kumbukumbu ya programu yenyewe (Logs (Kumbukumbu), kwenye menyu ya picha ya wasifu juu kulia), chini ya `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` na `NetworkMediaService`. Kuanzia build 20 hali ya televisheni inaandika humo chini ya `TvMode` na `TvTextEntry`, seva za Plex chini ya `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` na `PlexServerEditPage`, na kamera za Tapo chini ya `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` na `CameraLiveView`; mistari ya Plex haina kamwe tokeni, anwani wala kichwa, na mistari ya kamera inaacha manenosiri. Mistari ya kumbukumbu inabaki kwenye kifaa isipokuwa uinakili mwenyewe.
 
+<a id="privacy"></a>
 ## Faragha
 
 - **Hakuna kinachoenda kwa msanidi programu**: programu inazungumza na seva ya Immich unayochagua (na, unapofungua ramani, na huduma ya vigae vya ramani ambayo seva hiyo inatumia), haina matangazo, uchanganuzi wala huduma ya kuripoti hitilafu inayoendeshwa na msanidi programu, na haitumi chochote kwa msanidi programu wa Immuch360.
@@ -849,10 +1029,12 @@ Kuanzia build 19 mteja wa DLNA, hifadhi ya simu na utambuzi wa midia za anga za 
 
 Sera kamili iko katika [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Leseni na alama ya biashara
 
 Mradi huu ni fork ya Immich na unabaki chini ya [GNU AGPL v3](../LICENSE). Kila APK, zikiwemo za simu, pia ina Meta Spatial SDK, ambayo si chanzo huria (Meta Platform Technologies SDK License Agreement) na inatumika kwenye headset za Meta Quest pekee. Immuch360 haihusiani na, wala haijaidhinishwa na, timu ya Immich au FUTO.
 
+<a id="roadmap"></a>
 ## Mpango wa kazi
 
 Kile ambacho bado hakijafanywa, kinachowezekana zaidi kwanza. Hakuna hapa ambacho ni ahadi, na maoni kwenye [kifuatiliaji cha masuala](https://github.com/freeKC/Immuch360/issues) yanasaidia kuamua kipi kinakuja kwanza.
@@ -871,6 +1053,7 @@ Kile ambacho bado hakijafanywa, kinachowezekana zaidi kwanza. Hakuna hapa ambach
 - **Plex, kinachofuata**: jaribio la kifaa la build 20 (simu, Quest, iPhone, televisheni, nje ya nyumbani); kuleta tokeni kutoka kompyuta kwa msimbo wa QR; kuficha upande wa DLNA wa seva ya Plex katika orodha ya seva zilizopatikana; IPv6.
 - **Upstream**: pull request ndogo kwa Immich kwa sehemu ambazo watunzaji wanataka, kuanzia na kitazamaji cha picha za 360°.
 
+<a id="credits"></a>
 ## Shukrani
 
 Kitazamaji cha picha za 360° kinategemea pull request ya upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ya dmitry-brazhenko, ambayo yenyewe imejengwa juu ya mfano wa awali wa bencefr katika [#30192](https://github.com/immich-app/immich/pull/30192). Asanteni nyote wawili.

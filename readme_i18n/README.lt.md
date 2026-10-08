@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | Lietuvių | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Lietuvių</b> · Kitos kalbos (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: 360°, 3D ir VR180 nuotraukos ir vaizdo įrašai iš Immich, telefono ar NAS. Android, iOS ir Meta Quest, su serveriu arba be jo">
 </p>
 
 # Immuch360
 
-Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašais, kuriuose galima apsidairyti, ir nemokamas grotuvas plokščioms, 360°, 3D ir VR180 nuotraukoms ir vaizdo įrašams, skirtas Android telefonams ir planšetėms, iPhone ir iPad, Meta Quest akiniams (Quest 3 ir 3S, o nuo 21 surinkimo Quest 2 ir Quest Pro, neišbandyta), o nuo 20 surinkimo ir Android TV bei Google TV. Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) arba telefono fotosferos režimu, arba turi VR akinius, ir nori žiūrėti savo kadrus iš Immich serverio, paties telefono, NAS, medijos serverio ar Plex serverio: tas pats serveris, ta pati paskyra, jokio serverio papildinio arba visai be serverio. Nuo 20 surinkimo ji taip pat rodo Tapo kameras: tiesioginį vaizdą ir jų atminties kortelės įrašus.
+Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašais, kuriuose galima apsidairyti, ir nemokamas grotuvas plokščioms, 360°, 3D ir VR180 nuotraukoms ir vaizdo įrašams, skirtas Android telefonams ir planšetėms, iPhone ir iPad, Meta Quest akiniams (Quest 3 ir 3S, o nuo 21 surinkimo Quest 2 ir Quest Pro, neišbandyta), o nuo 20 surinkimo ir Android TV bei Google TV.
+
+Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) arba telefono fotosferos režimu, arba turi VR akinius, ir nori žiūrėti savo kadrus iš Immich serverio, paties telefono, NAS, medijos serverio ar Plex serverio: tas pats serveris, ta pati paskyra, jokio serverio papildinio arba visai be serverio. Nuo 20 surinkimo ji taip pat rodo Tapo kameras: tiesioginį vaizdą ir jų atminties kortelės įrašus.
 
 <p align="center">
   <sub>Neoficiali atšaka. Nesusijusi su Immich ar FUTO. Pavadinimas skaitomas kaip „I am much 360“.</sub>
@@ -13,29 +15,52 @@ Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašai
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">peržiūrima</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store patvirtinta, 21 surinkimas pateiktas kaip pirmasis atnaujinimas &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
+  App Store: <a href="#where-to-get-it">peržiūrima</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store patvirtinta, 21 surinkimas pateiktas kaip pirmasis atnaujinimas<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 Tikras 360°</h3>Nuotraukos ir vaizdo įrašai kaip sfera, kurioje apsidairote, su giroskopu, įskaitant neapdorotus kameros failus (Insta360 nuo 16 surinkimo, GoPro ir DJI nuo 18 surinkimo). Taip pat nemokamas vaizdo grotuvas: plokšti, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 Tikras 3D</h3>Stereoskopiniai 360° ir VR180, viršuje ir apačioje arba vienas šalia kito, ir Apple erdvinės nuotraukos (nuo 19 surinkimo): tikras 3D akiniuose, viena akis telefone</td>
-    <td align="center" width="33%"><h3>🎥 Tikras 2.5D</h3>Gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo, vaizdas seka jūsų galvą (eksperimentinis, telefonai ir planšetės)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Viena programa telefonuose, planšetėse ir Quest 2, Pro, 3 ir 3S akiniuose, tikras 3D akiniuose, o nuo 20 surinkimo ir Android TV su nuotolinio valdymo pulteliu</td>
-    <td align="center"><h3>🔌 Su serveriu arba be jo</h3>Jūsų Immich serveris arba paties telefono galerija, paskyros nereikia</td>
-    <td align="center"><h3>🗄️ Tinklo bendrinimai</h3>Samba (SMB), WebDAV ir, nuo 19 surinkimo, DLNA medijos serveriai, randami tinkle ir skaitomi tiesiogiai, nieko neatsisiunčiant, o į Immich siunčiami, kai pasirenkate. Nuo 19 surinkimo telefonas taip pat bendrina savo galeriją su akiniais</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Televizoriuje</h3>Nuo 20 surinkimo tas pats APK Android TV ir Google TV: 360° nuotraukos ir vaizdo įrašai, jūsų serveris ir jūsų bendrinimai, valdomi pulteliu</td>
-    <td align="center"><h3>🎬 Plex, be plex.tv</h3>Nuo 20 surinkimo jūsų Plex bibliotekos, leidžiamos iš originalių failų, kad 360° liktų 360°, namuose ir už jų ribų</td>
-    <td align="center"><h3>📹 Tapo kameros</h3>Nuo 20 surinkimo tiesioginis vaizdas ir atminties kortelės įrašai, tik jūsų tinkle, o įrašas siunčiamas į Immich, kai pasirenkate</td>
-  </tr>
-</table>
+- 🌐 **Tikras 360°**<br>Nuotraukos ir vaizdo įrašai kaip sfera, kurioje apsidairote, su giroskopu, įskaitant neapdorotus kameros failus (Insta360 nuo 16 surinkimo, GoPro ir DJI nuo 18 surinkimo). Taip pat nemokamas vaizdo grotuvas: plokšti, 360°, 3D, VR180
+- 👓 **Tikras 3D**<br>Stereoskopiniai 360° ir VR180, viršuje ir apačioje arba vienas šalia kito, ir Apple erdvinės nuotraukos (nuo 19 surinkimo): tikras 3D akiniuose, viena akis telefone
+- 🎥 **Tikras 2.5D**<br>Gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo, vaizdas seka jūsų galvą (eksperimentinis, telefonai ir planšetės)
+- 📱 **Android, iOS, Quest, TV**<br>Viena programa telefonuose, planšetėse ir Quest 2, Pro, 3 ir 3S akiniuose, tikras 3D akiniuose, o nuo 20 surinkimo ir Android TV su nuotolinio valdymo pulteliu
+- 🔌 **Su serveriu arba be jo**<br>Jūsų Immich serveris arba paties telefono galerija, paskyros nereikia
+- 🗄️ **Tinklo bendrinimai**<br>Samba (SMB), WebDAV ir, nuo 19 surinkimo, DLNA medijos serveriai, randami tinkle ir skaitomi tiesiogiai, nieko neatsisiunčiant, o į Immich siunčiami, kai pasirenkate. Nuo 19 surinkimo telefonas taip pat bendrina savo galeriją su akiniais
+- 📺 **Televizoriuje**<br>Nuo 20 surinkimo tas pats APK Android TV ir Google TV: 360° nuotraukos ir vaizdo įrašai, jūsų serveris ir jūsų bendrinimai, valdomi pulteliu
+- 🎬 **Plex, be plex.tv**<br>Nuo 20 surinkimo jūsų Plex bibliotekos, leidžiamos iš originalių failų, kad 360° liktų 360°, namuose ir už jų ribų
+- 📹 **Tapo kameros**<br>Nuo 20 surinkimo tiesioginis vaizdas ir atminties kortelės įrašai, tik jūsų tinkle, o įrašas siunčiamas į Immich, kai pasirenkate
+
+<details>
+<summary><b>Turinys</b></summary>
+
+- [360° nuotraukos ir vaizdo įrašai kaip sfera](#360-photos-and-videos-as-a-sphere)
+- [Be serverio ir paskyros](#without-a-server-or-an-account)
+- [Tinklo bendrinimai: NAS, kompiuteris ar medijos serveris](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, be plex.tv](#plex-media-server-without-plextv)
+- [Bendrinti šį telefoną tinkle](#share-this-phone-on-the-network)
+- [Tapo kameros: tiesioginis vaizdas ir atminties kortelės įrašai](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Neapdoroti 360° kameros failai, be kameros programos](#raw-360-camera-files-without-the-cameras-app)
+- [3D ir VR180 nuotraukos ir vaizdo įrašai](#3d-and-vr180-photos-and-videos)
+- [Gylis plokščiame ekrane: Spatial 2.5D (eksperimentinis)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Apple erdvinės nuotraukos ir vaizdo įrašai](#apple-spatial-photos-and-videos)
+- [Meta Quest 3 akiniuose](#in-the-meta-quest-3-headset)
+- [Žiūrėti televizoriuje (Android TV ir Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Raskite savo 360° kadrus: 360° sąrašas](#find-your-360-shots-the-360-list)
+- [Vaizdo įrašo informacija, dekoderiai ir kodėl vaizdo įrašas stringa](#video-details-decoders-and-why-a-video-stutters)
+- [Visa kita yra Immich](#everything-else-is-immich)
+- [Palyginimas su Immich programa ir kitomis programomis](#compared-with-the-immich-app-and-other-apps)
+- [Formatai ir šaltiniai pagal platformą](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Kur ją gauti](#where-to-get-it)
+- [Susikurkite patys](#build-it-yourself)
+- [Žurnalai](#logs)
+- [Privatumas](#privacy)
+- [Licencija ir prekės ženklas](#license-and-trademark)
+- [Planai](#roadmap)
+- [Padėkos](#credits)
+
+</details>
 
 ## Kokia jūsų problema?
 
@@ -61,12 +86,19 @@ Kai funkcija nauja, tekste nurodoma, nuo kurio surinkimo (build) ji yra. GitHub 
 
 Savo nuotraukų atsargines kopijas darote [Immich](https://github.com/immich-app/immich) serveryje, ir kai kurios iš jų yra iš 360° kameros arba telefono fotosferos režimo. Oficialioje mobiliojoje programoje tos nuotraukos rodomos kaip plokščia, ištempta juosta, o 360° vaizdo įrašai taip pat rodomi plokšti. Immich žiniatinklio programa gali parodyti 360° nuotrauką kaip sferą, mobilioji programa negali: to prašoma nuo 2024 m. sausio [diskusijoje #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 jas atveria kaip sferą, kurioje galima apsidairyti, Android ir iOS telefonuose bei planšetėse. Nuotrauka sukasi, kai ją tempiate, priartinama suėmus pirštais arba dukart bakstelėjus, po greito tempimo dar šiek tiek sukasi, atsiveria pradiniame vaizde, kurį įrašė kamera (GPano metaduomenys), ir priartinus gauna ryškesnę tekstūrą; dalinės panoramos palaikomos (GPano apkarpymas). Vaizdo įrašas leidžiamas savajame sferiniame grotuve su garsu, tempimu ir giroskopu. Sujungti 360° failai veikia visur: eksportai iš Insta360 programos ar Studio, GoPro Player, Ricoh Theta ir telefonų fotosferos. Neapdorotus failus tiesiai iš kameros sujungia pati programa, žr. [Neapdoroti 360° kameros failai](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 jas atveria kaip sferą, kurioje galima apsidairyti, Android ir iOS telefonuose bei planšetėse.
 
-| 360° nuotrauka kaip sfera | 360° vaizdo įrašas 360° grotuve |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="Ežero kranto 360° nuotrauka sferos peržiūroje: uždarymo mygtukas viršuje kairėje, 360°, 3D išdėstymo ir giroskopo mygtukai viršuje dešinėje"> | <img src="../.github/readme/b19-video.png" width="420" alt="Pakrantės kelio 360° vaizdo įrašas, leidžiamas telefono, laikomo gulsčiai, 360° grotuve: uždarymas ir failo pavadinimas viršuje kairėje, 360° ir 3D viršuje dešinėje, ankstesnis, atgal, paleisti, pirmyn ir kitas viduryje, laiko juosta apačioje"> |
-| Uždarymas viršuje kairėje; viršuje dešinėje 360°/180° mygtukas, 3D išdėstymo mygtukas ir giroskopas | Bakstelėkite vaizdą, kad pamatytumėte valdiklius; 360° ir 3D viršuje dešinėje |
+Nuotrauka sukasi, kai ją tempiate, priartinama suėmus pirštais arba dukart bakstelėjus, po greito tempimo dar šiek tiek sukasi, atsiveria pradiniame vaizde, kurį įrašė kamera (GPano metaduomenys), ir priartinus gauna ryškesnę tekstūrą; dalinės panoramos palaikomos (GPano apkarpymas). Vaizdo įrašas leidžiamas savajame sferiniame grotuve su garsu, tempimu ir giroskopu.
+
+Sujungti 360° failai veikia visur: eksportai iš Insta360 programos ar Studio, GoPro Player, Ricoh Theta ir telefonų fotosferos. Neapdorotus failus tiesiai iš kameros sujungia pati programa, žr. [Neapdoroti 360° kameros failai](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="Ežero kranto 360° nuotrauka sferos peržiūroje: uždarymo mygtukas viršuje kairėje, 360°, 3D išdėstymo ir giroskopo mygtukai viršuje dešinėje">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Pakrantės kelio 360° vaizdo įrašas, leidžiamas telefono, laikomo gulsčiai, 360° grotuve: uždarymas ir failo pavadinimas viršuje kairėje, 360° ir 3D viršuje dešinėje, ankstesnis, atgal, paleisti, pirmyn ir kitas viduryje, laiko juosta apačioje">
+</p>
+
+- **360° nuotrauka kaip sfera**: uždarymas viršuje kairėje; viršuje dešinėje 360°/180° mygtukas, 3D išdėstymo mygtukas ir giroskopas.
+- **360° vaizdo įrašas 360° grotuve**: bakstelėkite vaizdą, kad pamatytumėte valdiklius; 360° ir 3D viršuje dešinėje.
 
 ### Atverti 360° nuotrauką kaip sferą
 
@@ -135,12 +167,17 @@ Prisijungimo puslapyje „Naudoti be serverio“ atveria Immuch360 su paties įr
 
 Jūsų 360° vaizdo įrašai yra NAS ar kompiuteryje, ir norite juos žiūrėti telefone ar akiniuose pirma nekopijuodami. Akiniuose žmonės galiausiai kopijuoja kiekvieną failą laidu; medijos serveriai, tokie kaip Plex ir Jellyfin, 360° vaizdo įrašus leidžia plokščius, kaip aprašo prašymai jų forumuose; Immich programa skaito tik jūsų Immich serverį.
 
-Immuch360 naršo ir leidžia bet kurio serverio, kalbančio SMB (Samba, Windows), WebDAV arba, nuo 19 surinkimo, DLNA/UPnP (medijos serveris: Jellyfin, minidlna, Gerbera, Emby, NAS ar TV priedėlis), nuotraukas ir vaizdo įrašus tiesiai iš bendrinimo. Nuo 20 surinkimo Plex Media Server turi savo tipą, žr. [Plex Media Server, be plex.tv](#plex-media-server-without-plextv). Ji pati randa jūsų tinklo serverius ir leidžia failus tiesiogiai tose pačiose peržiūrose kaip ir likusi programa (360°, 3D, VR180, Spatial 2.5D, Quest įtraukianti peržiūra), su Immich serveriu arba be jo, telefonuose ir Meta Quest 3. Niekas neatsisiunčiama. Kai serveris prijungtas, pasirinktus failus galima nusiųsti į jūsų Immich paskyrą (nuo 15 surinkimo).
+Immuch360 naršo ir leidžia bet kurio serverio, kalbančio SMB (Samba, Windows), WebDAV arba, nuo 19 surinkimo, DLNA/UPnP (medijos serveris: Jellyfin, minidlna, Gerbera, Emby, NAS ar TV priedėlis), nuotraukas ir vaizdo įrašus tiesiai iš bendrinimo. Nuo 20 surinkimo Plex Media Server turi savo tipą, žr. [Plex Media Server, be plex.tv](#plex-media-server-without-plextv).
 
-| Pridėti bendrinimą | Bendrinimo aplankas |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Puslapis Pridėti bendrinimą: Pavadinimas, Serverio pavadinimas arba adresas, Prievadas (neprivaloma), Bendrinimas, Pasirinkite bendrinimą, Pradinis aplankas (neprivaloma), Naudotojo vardas, Slaptažodis, Išbandyti ryšį ir rezultatas Prisijungta, pradiniame aplanke įrašų: 2"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Tinklo bendrinimo aplankas kaip miniatiūrų tinklelis: 360° nuotraukos su 360° ženkleliu ir 360° vaizdo įrašas su paleidimo žyme, mygtukas Pasirinkti viršuje dešinėje"> |
-| Naujo SMB bendrinimo laukai po „Išbandyti ryšį“ | 360° nuotraukos ir vaizdo įrašas, skaitomi tiesiogiai iš bendrinimo |
+Ji pati randa jūsų tinklo serverius ir leidžia failus tiesiogiai tose pačiose peržiūrose kaip ir likusi programa (360°, 3D, VR180, Spatial 2.5D, Quest įtraukianti peržiūra), su Immich serveriu arba be jo, telefonuose ir Meta Quest 3. Niekas neatsisiunčiama. Kai serveris prijungtas, pasirinktus failus galima nusiųsti į jūsų Immich paskyrą (nuo 15 surinkimo).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Puslapis Pridėti bendrinimą: Pavadinimas, Serverio pavadinimas arba adresas, Prievadas (neprivaloma), Bendrinimas, Pasirinkite bendrinimą, Pradinis aplankas (neprivaloma), Naudotojo vardas, Slaptažodis, Išbandyti ryšį ir rezultatas Prisijungta, pradiniame aplanke įrašų: 2">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Tinklo bendrinimo aplankas kaip miniatiūrų tinklelis: 360° nuotraukos su 360° ženkleliu ir 360° vaizdo įrašas su paleidimo žyme, mygtukas Pasirinkti viršuje dešinėje">
+</p>
+
+- **Pridėti bendrinimą**: naujo SMB bendrinimo laukai po „Išbandyti ryšį“.
+- **Bendrinimo aplankas**: 360° nuotraukos ir vaizdo įrašas, skaitomi tiesiogiai iš bendrinimo.
 
 ### Pridėti bendrinimą
 
@@ -178,16 +215,26 @@ Atverta bendrinimo nuotrauka ar vaizdo įrašas turi tą patį punktą savo meni
 
 ### Kaip leidžiama neatsisiunčiant
 
-Grotuvai skaito reikiamus baitus per tiltą programos viduje (tik grįžtamojo ryšio adresas, atsitiktinis kiekvienos sesijos raktas, baitų intervalai), todėl persukimas vaizdo įraše veikia ir niekas nekopijuojama į įrenginį. Grotuvai ir akinių peržiūra niekada negauna bendrinimo adreso, tik tilto 127.0.0.1; užklausas serveriui siunčia pati programa. Kad atkūrimas būtų sklandus, bendrinimas skaitomas dideliais blokais, failas tarp skaitymų lieka atviras, iki 16 MB nuskaitoma iš anksto prieš grotuvą, o leidžiamas vaizdo įrašas skaitomas iki šešiais lygiagrečiais SMB ryšiais, atskirai nuo ryšio, aptarnaujančio miniatiūras ir sąrašus. Freebox Server į kiekvieną skaitymą atsako lėtai: vienas ryšys duoda 4,5 MB/s, šeši duoda 19 MB/s, to pakanka 5.7K eksportui 132 Mbit/s sparta. Kol grotuvas laukia duomenų, 360° ir Spatial grotuvai rodo „Kraunama“ su atkūrimo buferio užpildymu; plokščias grotuvas rodo „Kraunama“ be procentų, kol vaizdo įrašas įkeliamas ar užstringa.
+Grotuvai skaito reikiamus baitus per tiltą programos viduje (tik grįžtamojo ryšio adresas, atsitiktinis kiekvienos sesijos raktas, baitų intervalai), todėl persukimas vaizdo įraše veikia ir niekas nekopijuojama į įrenginį. Grotuvai ir akinių peržiūra niekada negauna bendrinimo adreso, tik tilto 127.0.0.1; užklausas serveriui siunčia pati programa.
+
+Kad atkūrimas būtų sklandus, bendrinimas skaitomas dideliais blokais, failas tarp skaitymų lieka atviras, iki 16 MB nuskaitoma iš anksto prieš grotuvą, o leidžiamas vaizdo įrašas skaitomas iki šešiais lygiagrečiais SMB ryšiais, atskirai nuo ryšio, aptarnaujančio miniatiūras ir sąrašus. Freebox Server į kiekvieną skaitymą atsako lėtai: vienas ryšys duoda 4,5 MB/s, šeši duoda 19 MB/s, to pakanka 5.7K eksportui 132 Mbit/s sparta.
+
+Kol grotuvas laukia duomenų, 360° ir Spatial grotuvai rodo „Kraunama“ su atkūrimo buferio užpildymu; plokščias grotuvas rodo „Kraunama“ be procentų, kol vaizdo įrašas įkeliamas ar užstringa.
 
 ### DLNA medijos serveriai
 
-Nuo 19 surinkimo programa siunčia SSDP medijos serverių paiešką į tinklo daugiaadresę grupę ir tą pačią užklausą į kiekvieno vietinio /24 tinklo adreso 1900 prievadą, tada nuskaito kiekvieno atsakiusio serverio įrenginio aprašą ir pasilieka tuos, kurie skelbia savo turinį (ContentDirectory). Aplankai ir failai išvardijami serverio veiksmu Browse, puslapis po puslapio, ir pavadinami jų pavadinimais: failas gauna savo tipo plėtinį, kai jo pavadinime jo nėra, o antras failas tuo pačiu pavadinimu aplanke tampa `name (2)`. Garso failai praleidžiami. Miniatiūros yra albumo viršeliai arba serverio sukurti maži paveikslėliai, įkeliami pačios programos, o kai serveris jų neturi, naudojama pačios programos miniatiūra. Failas leidžiamas iš originalo, kurį siūlo serveris, o ne iš konvertuotos kopijos, kai siūlomi abu, ir skaitomas intervalų užklausomis, todėl persukimas veikia. Patikrinta su minidlna ir Gerbera; paieška tikrame tinkle, Plex, Jellyfin, NAS, Freebox Server, iPhone ir Quest yra 19 surinkimo įrenginių bandymas.
+Nuo 19 surinkimo programa siunčia SSDP medijos serverių paiešką į tinklo daugiaadresę grupę ir tą pačią užklausą į kiekvieno vietinio /24 tinklo adreso 1900 prievadą, tada nuskaito kiekvieno atsakiusio serverio įrenginio aprašą ir pasilieka tuos, kurie skelbia savo turinį (ContentDirectory).
+
+Aplankai ir failai išvardijami serverio veiksmu Browse, puslapis po puslapio, ir pavadinami jų pavadinimais: failas gauna savo tipo plėtinį, kai jo pavadinime jo nėra, o antras failas tuo pačiu pavadinimu aplanke tampa `name (2)`. Garso failai praleidžiami. Miniatiūros yra albumo viršeliai arba serverio sukurti maži paveikslėliai, įkeliami pačios programos, o kai serveris jų neturi, naudojama pačios programos miniatiūra. Failas leidžiamas iš originalo, kurį siūlo serveris, o ne iš konvertuotos kopijos, kai siūlomi abu, ir skaitomas intervalų užklausomis, todėl persukimas veikia.
+
+Patikrinta su minidlna ir Gerbera; paieška tikrame tinkle, Plex, Jellyfin, NAS, Freebox Server, iPhone ir Quest yra 19 surinkimo įrenginių bandymas.
 
 <a id="a-share-that-moved"></a>
 ### Bendrinimas, kuris persikėlė
 
-Nuo 19 surinkimo DLNA bendrinimas ir telefono bendrinimas (žr. [Bendrinti šį telefoną tinkle](#share-this-phone-on-the-network)) išlaiko identifikatorių, kurį skelbia jų serveris. Kai vienas jų nebeatsako savo adresu (naujas maršrutizatoriaus suteiktas adresas, serveris, paleistas iš naujo kitu prievadu), jo aplanko puslapyje rodoma „Ieškoma (pavadinimas) tinkle“ ir bendrinimas perkeliamas ten, kur jis dabar atsako: iš karto DLNA serveriui, kuris neturi slaptažodžio, o bendrinimui su naudotojo vardu ir slaptažodžiu po patvirtinimo „Naudoti naują adresą?“, kuriame rodomi abu adresai, nes jie būtų išsiųsti naujuoju adresu. Nuo 20 surinkimo Plex serveris, vėl rastas kitu tinklo adresu, taip pat perkeliamas iš karto: jo sertifikatas įrodo, kad tai tas pats serveris, prieš išsiunčiant prieigos raktą. Tapo kameros ieškoma pagal jos MAC adresą iš jos pačios puslapio, žr. [Tapo kameros](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Nuo 19 surinkimo DLNA bendrinimas ir telefono bendrinimas (žr. [Bendrinti šį telefoną tinkle](#share-this-phone-on-the-network)) išlaiko identifikatorių, kurį skelbia jų serveris. Kai vienas jų nebeatsako savo adresu (naujas maršrutizatoriaus suteiktas adresas, serveris, paleistas iš naujo kitu prievadu), jo aplanko puslapyje rodoma „Ieškoma (pavadinimas) tinkle“ ir bendrinimas perkeliamas ten, kur jis dabar atsako: iš karto DLNA serveriui, kuris neturi slaptažodžio, o bendrinimui su naudotojo vardu ir slaptažodžiu po patvirtinimo „Naudoti naują adresą?“, kuriame rodomi abu adresai, nes jie būtų išsiųsti naujuoju adresu.
+
+Nuo 20 surinkimo Plex serveris, vėl rastas kitu tinklo adresu, taip pat perkeliamas iš karto: jo sertifikatas įrodo, kad tai tas pats serveris, prieš išsiunčiant prieigos raktą. Tapo kameros ieškoma pagal jos MAC adresą iš jos pačios puslapio, žr. [Tapo kameros](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Apribojimai
 
@@ -227,7 +274,9 @@ Nuo 20 surinkimo Immuch360 susiejama su jūsų Plex Media Server tiesiogiai, be 
 
 ### Ne namuose
 
-Kiekvieną kartą atverdama serverį programa pirmiausia bando namų adresą, o po 400 ms adresą už namų ribų. Naudojamas pirmasis, kuris atsako su jūsų serveriu; kai tai adresas už namų ribų, aplanko puslapyje rodoma gaublio piktograma su užrašu „Prisijungta per adresą už namų ribų“. Tam reikia Plex įjungtos nuotolinės prieigos (Nustatymai, Nuotolinė prieiga) su jūsų maršrutizatoriaus peradresuotu prievadu: be plex.tv programa negali naudoti Plex retransliacijos, todėl serveris be prievado peradresavimo atsidaro tik namuose, o ne namuose puslapyje rašoma „Jūsų Plex serverio negalima pasiekti už namų tinklo ribų. Įjunkite nuotolinę prieigą su prievado peradresavimu Plex (Nustatymai, Nuotolinė prieiga) arba įveskite jo viešąjį adresą.“
+Kiekvieną kartą atverdama serverį programa pirmiausia bando namų adresą, o po 400 ms adresą už namų ribų. Naudojamas pirmasis, kuris atsako su jūsų serveriu; kai tai adresas už namų ribų, aplanko puslapyje rodoma gaublio piktograma su užrašu „Prisijungta per adresą už namų ribų“.
+
+Tam reikia Plex įjungtos nuotolinės prieigos (Nustatymai, Nuotolinė prieiga) su jūsų maršrutizatoriaus peradresuotu prievadu: be plex.tv programa negali naudoti Plex retransliacijos, todėl serveris be prievado peradresavimo atsidaro tik namuose, o ne namuose puslapyje rašoma „Jūsų Plex serverio negalima pasiekti už namų tinklo ribų. Įjunkite nuotolinę prieigą su prievado peradresavimu Plex (Nustatymai, Nuotolinė prieiga) arba įveskite jo viešąjį adresą.“
 
 Adresas, kurį praneša serveris, išmokstamas iš naujo per kiekvieną prisijungimą namuose. Kai jis neatsako iš išorės (maršrutizatorius, kuris keičia savo adresą, du maršrutizatoriai iš eilės), įveskite savąjį serverio puslapyje. Kai prieigos raktas nustoja veikti (pavyzdžiui, atsijungėte nuo naršyklės seanso, iš kurio jį nukopijavote), aplanko puslapyje tai pranešama ir siūloma „Įklijuoti naują prieigos raktą“, kuris atveria serverio puslapį ties prieigos rakto lauku.
 
@@ -344,15 +393,13 @@ Insta360 kameros įrašo du savo objektyvų „žuvies akies“ apskritimus, vie
 
 Nuo 16 surinkimo Immuch360 šiuos failus sujungia pati, telefone, planšetėje ar akiniuose, serveryje nieko nediegiant:
 
-| Kamera ir failas | Ką daro programa | Nuo |
-|---|---|---|
-| Insta360 .insp nuotraukos | Sujungiamos GPU prieš sferos peržiūrą, iki 8192x4096, su atsarginiu CPU variantu mažesniu dydžiu | 16 surinkimas |
-| Insta360 .insv vaizdo įrašai, kuriuose abu objektyvai viename takelyje | Sujungiami GPU efektu grotuve | 16 surinkimas |
-| Insta360 X4, X4 Air, X5 ir X6 .insv vaizdo įrašai, po vieną kvadratinį takelį kiekvienam objektyvui | Du dekoderiai vienu metu, po vieną kiekvienam objektyvui, ir GPU kompozitorius, kuris juos sujungia į sferą | 18 surinkimas |
-| Insta360 X3 ir senesnės, 5.7K ir daugiau: du failai, `_00_` ir `_10_` | Taip pat, kitas failas randamas šalia pirmojo | 18 surinkimas |
-| GoPro MAX ir MAX 2 .360: du takeliai po tris kubo sieneles | Taip pat, persidengiantys stulpeliai sulieti | 18 surinkimas |
-| DJI Osmo 360 .osv: du kvadratiniai 10 bitų takeliai | Taip pat, su failo Kannala-Brandt kalibravimu | 18 surinkimas |
-| Dvigubos „žuvies akies“ .dng | Rodoma plokščia | Dar ne |
+- **Insta360 .insp nuotraukos** (16 surinkimas): sujungiamos GPU prieš sferos peržiūrą, iki 8192x4096, su atsarginiu CPU variantu mažesniu dydžiu.
+- **Insta360 .insv vaizdo įrašai, kuriuose abu objektyvai viename takelyje** (16 surinkimas): sujungiami GPU efektu grotuve.
+- **Insta360 X4, X4 Air, X5 ir X6 .insv vaizdo įrašai, po vieną kvadratinį takelį kiekvienam objektyvui** (18 surinkimas): du dekoderiai vienu metu, po vieną kiekvienam objektyvui, ir GPU kompozitorius, kuris juos sujungia į sferą.
+- **Insta360 X3 ir senesnės, 5.7K ir daugiau: du failai, `_00_` ir `_10_`** (18 surinkimas): taip pat, kitas failas randamas šalia pirmojo.
+- **GoPro MAX ir MAX 2 .360: du takeliai po tris kubo sieneles** (18 surinkimas): taip pat, persidengiantys stulpeliai sulieti.
+- **DJI Osmo 360 .osv: du kvadratiniai 10 bitų takeliai** (18 surinkimas): taip pat, su failo Kannala-Brandt kalibravimu.
+- **Dvigubos „žuvies akies“ .dng** (dar ne): rodoma plokščia.
 
 ### Žiūrėti neapdorotą failą
 
@@ -466,7 +513,9 @@ Atpažinimas patikrintas su pavyzdine erdvine nuotrauka, įrašyta pačios Apple
 
 Žmonės perka Quest 3, kad žiūrėtų savo 360° nuotraukas ir vaizdo įrašus, o tada klausia, kur dėti failus, kaip juos perkelti į akinius be laido ir kokį grotuvą naudoti: parduotuvės 360° ir 3D vaizdo grotuvai yra mokami.
 
-Ta pati Android programa veikia Quest 3 ir 3S akiniuose, o nuo 21 surinkimo ir Quest 2 bei Quest Pro (neišbandyta), kaip langas, su visa jūsų biblioteka. Jos 360° mygtukas atveria įtraukiančią peržiūrą, kurioje nuotrauka ar vaizdo įrašas yra aplink jus, o apsidairote sukdami galvą, stereoskopiniams failams tikru 3D (Meta Spatial SDK). Medija ateina iš jūsų Immich serverio, pačių akinių, NAS, medijos serverio, telefono ar Plex serverio ir leidžiama vietoje (medijos serveris ir telefonas nuo 19 surinkimo, Plex serveris nuo 20 surinkimo, akiniuose dar nepatikrinta), o nuo 20 surinkimo lange rodomos ir Tapo kameros. Ji nemokama ir atvirojo kodo. Patikrinta Quest 3 akiniuose, taip pat naudotojo su Insta360 X4 8K HEVC vaizdo įrašais.
+Ta pati Android programa veikia Quest 3 ir 3S akiniuose, o nuo 21 surinkimo ir Quest 2 bei Quest Pro (neišbandyta), kaip langas, su visa jūsų biblioteka. Jos 360° mygtukas atveria įtraukiančią peržiūrą, kurioje nuotrauka ar vaizdo įrašas yra aplink jus, o apsidairote sukdami galvą, stereoskopiniams failams tikru 3D (Meta Spatial SDK).
+
+Medija ateina iš jūsų Immich serverio, pačių akinių, NAS, medijos serverio, telefono ar Plex serverio ir leidžiama vietoje (medijos serveris ir telefonas nuo 19 surinkimo, Plex serveris nuo 20 surinkimo, akiniuose dar nepatikrinta), o nuo 20 surinkimo lange rodomos ir Tapo kameros. Ji nemokama ir atvirojo kodo. Patikrinta Quest 3 akiniuose, taip pat naudotojo su Insta360 X4 8K HEVC vaizdo įrašais.
 
 ### Atverti įtraukiančią peržiūrą
 
@@ -479,17 +528,20 @@ Ta pati Android programa veikia Quest 3 ir 3S akiniuose, o nuo 21 surinkimo ir Q
 
 | Veiksmas | Valdikliai | Rankos |
 |---|---|---|
-| Grįžti į programą | B arba Y | Informacijos skydelio mygtukas „Atgal“ |
-| Paleisti ar pristabdyti vaizdo įrašą | Gaidukas, kai informacijos skydelis paslėptas | Informacijos skydelio mygtukas „Paleisti“ arba „Pristabdyti“ |
+| Grįžti į programą | B arba Y | Mygtukas „Atgal“ |
+| Paleisti ar pristabdyti vaizdo įrašą | Gaidukas, kai informacijos skydelis paslėptas | Mygtukas „Paleisti“ arba „Pristabdyti“ |
 | Rodyti ar slėpti informacijos skydelį | A, X, griebimo mygtukas arba meniu | Meniu gestas arba suėmimas pirštais, kai skydelis paslėptas |
-| Pasukti vaizdą, kad pažiūrėtumėte atgal nesukdami galvos (nuo 17 surinkimo) | Dešinioji lazdelė kairėn ar dešinėn: 30° vienu paspaudimu, o laikant sukasi toliau (vienos eilutės perdanga rodo kampą) | Informacijos skydelio mygtukas „Pasukti“ (90°) |
-| Ankstesnė ar kita medija | Kairioji lazdelė kairėn ar dešinėn (iki 17 surinkimo bet kuri lazdelė; nuo 16 surinkimo vienos eilutės perdanga nurodo mediją, informacijos skydelis lieka paslėptas) | Informacijos skydelio mygtukai „Ankstesnis“ ir „Kitas“ |
-| 10 sekundžių atgal ar pirmyn vaizdo įraše | Lazdelė žemyn ar aukštyn (nuo 16 surinkimo vienos eilutės perdanga rodo laiką, informacijos skydelis lieka paslėptas) | Du peršokimo mygtukai arba informacijos skydelio laiko juostos tempimas |
-| Pasukti vaizdą 90° | Lazdelė žemyn ar aukštyn nuotraukoje (nuo 16 surinkimo vienos eilutės perdanga rodo kampą); vaizdo įraše informacijos skydelio mygtukas „Pasukti“ | Informacijos skydelio mygtukas „Pasukti“ |
-| Pakeisti 3D išdėstymą (mono, viršuje ir apačioje, vienas šalia kito) | Informacijos skydelio 3D mygtukas | Informacijos skydelio 3D mygtukas |
-| Visa sfera ar pusė sferos (VR180) | Informacijos skydelio 360°/180° mygtukas | Informacijos skydelio 360°/180° mygtukas |
+| Pasukti vaizdą (nuo 17 surinkimo) | Dešinioji lazdelė kairėn ar dešinėn, 30° vienu paspaudimu | Mygtukas „Pasukti“ (90°) |
+| Ankstesnė ar kita medija | Kairioji lazdelė kairėn ar dešinėn | Mygtukai „Ankstesnis“ ir „Kitas“ |
+| 10 sekundžių atgal ar pirmyn vaizdo įraše | Lazdelė žemyn ar aukštyn | Du peršokimo mygtukai arba laiko juostos tempimas |
+| Pasukti vaizdą 90° | Lazdelė žemyn ar aukštyn nuotraukoje, mygtukas „Pasukti“ vaizdo įraše | Mygtukas „Pasukti“ |
+| Pakeisti 3D išdėstymą (mono, viršuje ir apačioje, vienas šalia kito) | 3D mygtukas | 3D mygtukas |
+| Visa sfera ar pusė sferos (VR180) | 360°/180° mygtukas | 360°/180° mygtukas |
 
-Su valdikliais informacijos skydelio mygtukai ir laiko juosta taip pat veikia: nukreipkite į juos spindulį ir paspauskite gaiduką.
+Šioje lentelėje mygtukai ir laiko juosta yra informacijos skydelio. Su valdikliais jie taip pat veikia: nukreipkite į juos spindulį ir paspauskite gaiduką.
+
+- **Pasukti vaizdą**: kad pažiūrėtumėte atgal nesukdami galvos. Laikoma dešinioji lazdelė sukasi toliau, o vienos eilutės perdanga rodo kampą.
+- **Vienos eilutės perdanga**: nuo 16 surinkimo persukimas, nuotraukos pasukimas arba ankstesnė ir kita medija lazdele rodo vienos eilutės perdangą (laiką, kampą arba medijos pavadinimą), o informacijos skydelis lieka paslėptas. Iki 17 surinkimo bet kuri lazdelė perjungdavo į ankstesnę ar kitą mediją.
 
 ### Informacijos skydelis, ankstesnis ir kitas
 
@@ -497,7 +549,9 @@ Vaizdo įrašo informacijos skydelis turi laiko juostą (padėtis, trukmė, kiek
 
 Ankstesnis ir kitas pereina per vietos, iš kurios atėjote, 360° mediją, neišeinant iš įtraukiančios peržiūros: laiko skalė, 360° sąrašas (su filtrais), albumas, tinklo bendrinimo aplankas arba pačių akinių medija („Šiame įrenginyje“). Plokščios nuotraukos ir vaizdo įrašai praleidžiami. Kai grįžtate į programą iš laiko skalės, albumo ar 360° sąrašo, ji atsiveria ties medija, kurią žiūrėjote (bendrinimo aplanko puslapis lieka ties failu, kurį atvėrėte), o vaizdo įrašas, kuriame atvėrėte įtraukiančią peržiūrą, tęsiamas nuo ten, kur sustojo.
 
-Nuo 17 surinkimo dešinioji lazdelė suka vaizdą, kaip daugumoje akinių programų: paspaudimas pasuka 30°, laikymas suka toliau, todėl tai, kas už jūsų, atsiduria priekyje nesukant galvos ar kėdės; ankstesnis ir kitas yra kairiojoje lazdelėje. Nuo 16 surinkimo, atsižvelgiant į naudotojo atsiliepimą akiniuose, persukimas, pasukimas ar ankstesnis/kitas lazdele rodo vienos eilutės perdangą (laiką, kampą ar medijos pavadinimą), kuri išnyksta po 1,5 sekundės, užuot iškvietusi informacijos skydelį; skydelis vis tiek atsiranda su A, X, griebimo ar meniu mygtuku. Tas pats surinkimas išlaiko skydelio perjungimą veikiantį, kai valdikliai užmiega, pabunda ar užleidžia vietą rankų sekimui, ir šiuos perėjimus įrašo į žurnalą, žr. [Žurnalai](#logs).
+Nuo 17 surinkimo dešinioji lazdelė suka vaizdą, kaip daugumoje akinių programų: paspaudimas pasuka 30°, laikymas suka toliau, todėl tai, kas už jūsų, atsiduria priekyje nesukant galvos ar kėdės; ankstesnis ir kitas yra kairiojoje lazdelėje.
+
+Nuo 16 surinkimo, atsižvelgiant į naudotojo atsiliepimą akiniuose, persukimas, pasukimas ar ankstesnis/kitas lazdele rodo vienos eilutės perdangą (laiką, kampą ar medijos pavadinimą), kuri išnyksta po 1,5 sekundės, užuot iškvietusi informacijos skydelį; skydelis vis tiek atsiranda su A, X, griebimo ar meniu mygtuku. Tas pats surinkimas išlaiko skydelio perjungimą veikiantį, kai valdikliai užmiega, pabunda ar užleidžia vietą rankų sekimui, ir šiuos perėjimus įrašo į žurnalą, žr. [Žurnalai](#logs).
 
 Apple erdvinė nuotrauka, atverta su „Žiūrėti 3D“, nededama ant sferos: ji plūduriuoja priešais jus, žr. [Apple erdvinės nuotraukos ir vaizdo įrašai](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Nuotraukos pirmiausia rodo peržiūrą, tada originalą, sumažintą iki ne daug
 
 3D išdėstymai, viršuje ir apačioje bei vienas šalia kito, 360° ir VR180, rodomi 3D, kiekviena akis gauna savo kadro pusę. Išdėstymas imamas iš failo, kai jis jį nurodo (vaizdo įrašai), kitu atveju spėjamas iš formos (kvadratas: viršuje ir apačioje, 4:1: vienas šalia kito); kai jis neteisingas, naudokite informacijos skydelio 3D mygtuką.
 
-| 360° nuotrauka akiniuose | 360° vaizdo įrašas akiniuose | 3D 360° vaizdo įrašas akiniuose |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="360° nuotrauka aplink jus Quest 3 akiniuose, su informacijos skydeliu: išdėstymo, 360° ir Atgal mygtukai"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Ežero 360° vaizdo įrašas, leidžiamas Quest 3 akiniuose, su informacijos skydeliu: išdėstymo, 360°, Pristabdyti ir Atgal mygtukai"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Stereoskopinis 360° vaizdo įrašas Quest 3 akiniuose, informacijos skydelyje rašoma 3D, viršuje ir apačioje"> |
-| Nuotraukos įtraukianti peržiūra su informacijos skydeliu (išdėstymas, 360°/180°, „Atgal“) | Leidžiamas vaizdo įrašas su „Pristabdyti“ | Viršuje ir apačioje stereoskopinis vaizdo įrašas, kiekviena akis aptarnaujama (Kandao Obsidian pavyzdys) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="360° nuotrauka aplink jus Quest 3 akiniuose, su informacijos skydeliu: išdėstymo, 360° ir Atgal mygtukai">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Ežero 360° vaizdo įrašas, leidžiamas Quest 3 akiniuose, su informacijos skydeliu: išdėstymo, 360°, Pristabdyti ir Atgal mygtukai">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Stereoskopinis 360° vaizdo įrašas Quest 3 akiniuose, informacijos skydelyje rašoma 3D, viršuje ir apačioje">
+</p>
+
+- **360° nuotrauka akiniuose**: nuotraukos įtraukianti peržiūra su informacijos skydeliu (išdėstymas, 360°/180°, „Atgal“).
+- **360° vaizdo įrašas akiniuose**: leidžiamas vaizdo įrašas su „Pristabdyti“.
+- **3D 360° vaizdo įrašas akiniuose**: viršuje ir apačioje stereoskopinis vaizdo įrašas, kiekviena akis aptarnaujama (Kandao Obsidian pavyzdys).
 
 Šios ekrano nuotraukos darytos su programa prancūzų kalba, prieš 14 surinkimą. Dabar skydelyje taip pat yra laiko juosta tarp dviejų 10 sekundžių peršokimo mygtukų, „Ankstesnis“ ir „Kitas“ bei „Pasukti“.
 
@@ -598,7 +657,9 @@ Immuch360 deda 360° ženklelį ant 360° nuotraukų miniatiūrų (tinklo bendri
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Vaizdo įrašo informacija, dekoderiai ir kodėl vaizdo įrašas stringa
 
-Žmonės klausia, kokį kodeką, dydį ir bitų spartą leidžia Quest 3 ir kodėl 5.7K eksportas akiniuose stringa, nors telefone leidžiamas. Atsakymas yra aparatinis dekoderis: Quest 3 (XR2 Gen 2) H.264 dekoderio riba yra apie 4096x2304, todėl 5760x2880 H.264 vaizdo įrašas (6.0 lygis, apie 200 Mbit/s, įprastas Insta360 eksportas) akiniuose dekoduojamas maždaug 17 kadrų/s greičiu, su blokų artefaktais, o tas pats failas telefone leidžiamas gerai. Tas pats vaizdo įrašas HEVC (H.265) formatu akiniuose leidžiamas gerai: Insta360 X4 8K HEVC vaizdo įrašas (7680x3840, 29,97 kadro/s, 210 Mbit/s, Main profilis, 6.1 lygis, 8 bitai) įtraukiančioje peržiūroje leidžiamas sklandžiai, sava raiška ir be perkodavimo (pranešė naudotojas su Quest 3).
+Žmonės klausia, kokį kodeką, dydį ir bitų spartą leidžia Quest 3 ir kodėl 5.7K eksportas akiniuose stringa, nors telefone leidžiamas. Atsakymas yra aparatinis dekoderis: Quest 3 (XR2 Gen 2) H.264 dekoderio riba yra apie 4096x2304, todėl 5760x2880 H.264 vaizdo įrašas (6.0 lygis, apie 200 Mbit/s, įprastas Insta360 eksportas) akiniuose dekoduojamas maždaug 17 kadrų/s greičiu, su blokų artefaktais, o tas pats failas telefone leidžiamas gerai.
+
+Tas pats vaizdo įrašas HEVC (H.265) formatu akiniuose leidžiamas gerai: Insta360 X4 8K HEVC vaizdo įrašas (7680x3840, 29,97 kadro/s, 210 Mbit/s, Main profilis, 6.1 lygis, 8 bitai) įtraukiančioje peržiūroje leidžiamas sklandžiai, sava raiška ir be perkodavimo (pranešė naudotojas su Quest 3).
 
 Immich programa turi vieną jungiklį „Priversti originalų vaizdo įrašą“ ir rodo tik kodeką. Immuch360 rodo, kas yra vaizdo įrašas ir ką dekoduoja įrenginys, ir parenka failą, kuris bus leidžiamas.
 
@@ -623,7 +684,9 @@ Eilutė rodoma tik nuskaičius failą ir tik tai, ką failas nurodo. Apple erdvi
 1. Atverkite „Nustatymai“, „Elementų peržiūra“, tada „Video“.
 2. Skiltyje „Vaizdo įrašo šaltinis“ („Kuris failas leidžiamas, kai serveris turi perkoduotą kopiją“) pasirinkite „Originalas, kai šis įrenginys gali jį dekoduoti“, „Visada originalas“ arba „Visada perkoduotas srautas“.
 
-Nuo 15 surinkimo pasirinkimas taikomas kiekvienam serverio vaizdo įrašui: plokščiam grotuvui, 360° ir Spatial grotuvams ir Quest įtraukiančiai peržiūrai. Kol nieko nepasirinkote, telefonas laikosi to, ką nurodė buvęs jungiklis „Priversti originalų vaizdo įrašą“ (numatytai išjungtas: perkoduotas srautas, kuris yra pats originalas, kai serveris jo neperkodavo), o Quest leidžia originalą, kai akiniai jį dekoduoja. Patikra nuskaito kodeką, dydį ir kadrų dažnį iš failo ir palygina juos su aparatiniais dekoderiais (H.264 Quest 3 akiniuose ribojamas išmatuotu 4096x2304). Grotuvas, negalintis dekoduoti originalo, pereina prie perkoduoto srauto su pranešimu: „Leidžiamas perkoduotas srautas: originalas (kodekas ir dydis) viršija tai, ką šis įrenginys dekoduoja“.
+Nuo 15 surinkimo pasirinkimas taikomas kiekvienam serverio vaizdo įrašui: plokščiam grotuvui, 360° ir Spatial grotuvams ir Quest įtraukiančiai peržiūrai. Kol nieko nepasirinkote, telefonas laikosi to, ką nurodė buvęs jungiklis „Priversti originalų vaizdo įrašą“ (numatytai išjungtas: perkoduotas srautas, kuris yra pats originalas, kai serveris jo neperkodavo), o Quest leidžia originalą, kai akiniai jį dekoduoja.
+
+Patikra nuskaito kodeką, dydį ir kadrų dažnį iš failo ir palygina juos su aparatiniais dekoderiais (H.264 Quest 3 akiniuose ribojamas išmatuotu 4096x2304). Grotuvas, negalintis dekoduoti originalo, pereina prie perkoduoto srauto su pranešimu: „Leidžiamas perkoduotas srautas: originalas (kodekas ir dydis) viršija tai, ką šis įrenginys dekoduoja“.
 
 Akiniuose įtraukianti peržiūra paleidžia originalą ir, ties pirmaisiais kadrais, pereina prie serverio perkoduoto srauto, kai originalas viršija dekoderius, ir apie tai praneša informacijos skydelyje; kai perkoduoto srauto nėra, kai jis vis tiek per didelis arba kai failas yra iš akinių ar tinklo bendrinimo, informacijos skydelis apie tai praneša 10 sekundžių, nurodydamas, ką pakeisti. 14 surinkimas, pateiktas Horizon Store, tikrina tik H.264 virš 4096x2304, o tada tokiu pat būdu bando serverio atkūrimo srautą.
 
@@ -661,87 +724,184 @@ Kad parodytumėte 360° nuotrauką žmogui, kuris neturi programos, bendrinkite 
 
 Dabartinis surinkimas, 21 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030019), paremtas Immich 3.3.0-rc.0 (Immich `main`, dar ne stabili laida). 19 surinkimas buvo išbandytas su Immich 3.2 serveriu, o 20 ir 21 surinkimai nieko nekeičia tame, ko programa prašo iš serverio. Problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui. Visa paties Immich dokumentacija yra [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Palyginimas su Immich programa ir kitomis programomis
 
 ### Kodėl ši atšaka egzistuoja, vienoje lentelėje
 
-| | Immich mobilioji programa | Immuch360 | Būsena |
-|---|:---:|:---:|---|
-| 360° nuotraukos kaip sfera, kurioje apsidairote (tempimas, suėmimas pirštais, dvigubas bakstelėjimas, inercija, pradinis kameros vaizdas, dalinės panoramos) | ❌ plokščia juosta | ✅ | Išbandyta Galaxy S24+ ir iPhone 14 |
-| Giroskopas: apsidairykite judindami telefoną | ❌ | ✅ | Išbandyta Galaxy S24+ ir iPhone 14 |
-| 360° vaizdo įrašai sferiniame grotuve, su garsu, persukimu, garso takelio pasirinkimu ir buferio indikatoriumi | ❌ plokščias vaizdo įrašas | ✅ Android ir iOS (iOS kol kas be laiko juostos) | Išbandyta Galaxy S24+ ir iPhone 14 |
-| 3D (stereoskopinės) 360° nuotraukos ir vaizdo įrašai | ❌ dvigubas vaizdas | ✅ kairioji akis telefonuose, tikras 3D Quest akiniuose | Išbandyta Galaxy S24+ ir Quest 3, su tikrais 3D 360° pavyzdžiais (VRTogether, Vuze, Kandao) ir 3D nuotrauka; pranešimai apie kitas kameras laukiami |
-| VR180 (pusės sferos) nuotraukos ir vaizdo įrašai | ❌ ištempta aplink sferą | ✅ pusė sferos, 360°/180° mygtukas | Išbandyta Android emuliatoriuje ir Galaxy S24+ su sintetine medija; atsiliepimai iš įrenginių laukiami |
-| Apple erdvinės nuotraukos (HEIC stereo poros) ir erdviniai vaizdo įrašai (MV-HEVC) | ❌ plokščia nuotrauka ar vaizdo įrašas, niekas nenurodo, kad tai erdvinis | ✅ nuo 19 surinkimo: nuotraukos 3D vaizdu Quest akiniuose, kitur viena akis ir informacijos eilutė | Atpažinimas patikrintas su pavyzdine nuotrauka, įrašyta Apple vaizdų bibliotekos, ir su sintetiniais failais; akinių vaizdas ir tikri iPhone failai yra 19 surinkimo įrenginių bandymas |
-| Meta Quest įtraukianti peržiūra su galvos sekimu, laiko juosta, ankstesniu ir kitu bei pasukimu | ❌ | ✅ ta pati programa, kaip akinių surinkimas arba telefono APK | Išbandyta Quest 3 akiniuose (14 surinkimo valdikliai, pakoreguoti 16 surinkime po naudotojo atsiliepimo) ir naudotojo su Insta360 X4 8K HEVC vaizdo įrašais |
-| 360° ženklelis ant miniatiūrų ir 360° sąrašas su neapdorotais failais ir filtrais (laikotarpis, šaltinis, tipas, kamera) | ❌ | ✅ filtrai nuo 18 surinkimo | Atlikta |
-| „Žiūrėti kaip 360°“ failams, kurių serveris nepažymi | ❌ | ✅ įsimenama telefone | Atlikta |
-| Spatial 2.5D: gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo | ❌ | ✅ eksperimentinis, telefonai ir planšetės | Išbandyta Galaxy S24+; atsiliepimai iš iPhone laukiami |
-| Naudojimas be jokio serverio, su paties įrenginio galerija | ❌ reikia prisijungti | ✅ | Išbandyta Galaxy S24+, Quest 3 ir Android emuliatoriuje |
-| SMB ir WebDAV bendrinimai, randami tinkle ir leidžiami tiesiogiai, nieko neatsisiunčiant | ❌ | ✅ kiekviena peržiūra, telefonai ir Quest | Išbandyta su Freebox Server (SMB) Galaxy S24+ ir Quest 3, taip pat su Samba ir WebDAV bandomaisiais serveriais Android emuliatoriuje; atsiliepimai apie kitus NAS ir WebDAV laukiami |
-| DLNA medijos serveriai kaip bendrinimo tipas | ❌ | ✅ nuo 19 surinkimo | Patikrinta su minidlna ir Gerbera Docker aplinkoje; Plex, Jellyfin, NAS, Freebox Server, iPhone ir Quest yra 19 surinkimo įrenginių bandymas |
-| Bendrinimo failų siuntimas į Immich; rankiniu būdu išsiųsti įrenginio failai laikomi turinčiais atsarginę kopiją | ❌ tik įrenginio failai | ✅ nuo 15 surinkimo | Išbandyta Android emuliatoriuje su Samba bandomuoju serveriu ir Immich 3.2 serveriu |
-| Bendrinti šį telefoną tinkle, akiniams | ❌ | ✅ nuo 19 surinkimo, Android ir iOS | Vienetų testai ir ištisiniai testai su akinių WebDAV klientu, kompiuteryje; telefonas, aptarnaujantis Quest, ir iPhone pusė yra 19 surinkimo įrenginių bandymas |
-| Plex Media Server bibliotekos, leidžiamos iš originalių failų, namuose ir ne namuose, be plex.tv | ❌ | ✅ nuo 20 surinkimo, kiekviena peržiūra, telefonuose, planšetėse, Quest ir televizoriuose | Patikrinta iš kompiuterio su tikru Plex Media Server 1.42.1 (susiejimas, aplankai, baitų intervalai, miniatiūros, adresas už namų ribų); įrenginyje dar nepatikrinta |
-| Tapo kameros: tiesioginis vaizdas ir atminties kortelės įrašai, siunčiami į Immich, kai pasirenkate | ❌ | ✅ nuo 20 surinkimo: įrašai visur, tiesiogiai Android, Android TV ir Quest | Patikrinta su imituota kamera; su tikra kamera dar nepatikrinta |
-| Android TV ir Google TV, valdomi pulteliu, tame pačiame APK | ❌ ne televizoriaus programa | ✅ nuo 20 surinkimo | Patikrinta automatiniais testais; televizoriuje dar nepatikrinta |
-| Neapdorotos Insta360 .insp nuotraukos ir vieno takelio .insv vaizdo įrašai | ❌ plokšti | ✅ nuo 16 surinkimo | Nuotraukos palygintos su Insta360 Studio X3 failų eksportais, vaizdo įrašai Android emuliatoriuje su mažos raiškos X3 failu; iPhone telefone dar nepaleista |
-| Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile (Insta360 X4, X4 Air, X5, X6, X3 poros, GoPro .360, DJI .osv) | ❌ plokšti arba neteisingi | ✅ nuo 18 surinkimo | Analizatoriai ir sujungimas patikrinti su tikrais X4, X3 poros, GoPro MAX ir Osmo 360 failais; atkūrimas yra 18 ir 19 surinkimų įrenginių bandymas |
-| Dvigubos „žuvies akies“ .dng | ❌ plokšti | ❌ dar ne | Planuojama |
-| Serverio vaizdo įrašai: originalas, kai įrenginys jį dekoduoja, kitaip perkoduotas srautas; įrenginio vaizdo dekoderių sąrašas | ❌ vienas jungiklis „Priversti originalų vaizdo įrašą“ | ✅ nuo 15 surinkimo | Išbandyta Android emuliatoriuje; Quest 3 H.264 riba išmatuota akiniuose |
-| Vaizdo įrašo techninė informacija: bitų sparta, vaizdas, profilis, ar šis įrenginys jį dekoduoja | ❌ tik kodekas | ✅ nuo 18 surinkimo | Atlikta |
-| Nemokamas grotuvas plokštiems, 360°, 3D ir VR180 vaizdo įrašams iš serverio, telefono ar NAS | ❌ tik plokšti | ✅ (Quest 3 parduotuvės grotuvai mokami) | |
-| Tas pats serveris, ta pati paskyra, įdiegiama šalia oficialios programos | | ✅ | |
+| | Immich mobilioji programa | Immuch360 |
+|---|:---:|:---:|
+| 360° nuotraukos kaip sfera, kurioje apsidairote (tempimas, suėmimas pirštais, dvigubas bakstelėjimas, inercija, pradinis kameros vaizdas, dalinės panoramos) | ❌ plokščia juosta | ✅ |
+| Giroskopas: apsidairykite judindami telefoną | ❌ | ✅ |
+| 360° vaizdo įrašai sferiniame grotuve, su garsu, persukimu, garso takelio pasirinkimu ir buferio indikatoriumi | ❌ plokščias vaizdo įrašas | ✅ Android ir iOS (iOS kol kas be laiko juostos) |
+| 3D (stereoskopinės) 360° nuotraukos ir vaizdo įrašai | ❌ dvigubas vaizdas | ✅ kairioji akis telefonuose, tikras 3D Quest akiniuose |
+| VR180 (pusės sferos) nuotraukos ir vaizdo įrašai | ❌ ištempta aplink sferą | ✅ pusė sferos, 360°/180° mygtukas |
+| Apple erdvinės nuotraukos (HEIC stereo poros) ir erdviniai vaizdo įrašai (MV-HEVC) | ❌ plokščia nuotrauka ar vaizdo įrašas, niekas nenurodo, kad tai erdvinis | ✅ nuo 19 surinkimo: nuotraukos 3D vaizdu Quest akiniuose, kitur viena akis ir informacijos eilutė |
+| Meta Quest įtraukianti peržiūra su galvos sekimu, laiko juosta, ankstesniu ir kitu bei pasukimu | ❌ | ✅ ta pati programa, kaip akinių surinkimas arba telefono APK |
+| 360° ženklelis ant miniatiūrų ir 360° sąrašas su neapdorotais failais ir filtrais (laikotarpis, šaltinis, tipas, kamera) | ❌ | ✅ filtrai nuo 18 surinkimo |
+| „Žiūrėti kaip 360°“ failams, kurių serveris nepažymi | ❌ | ✅ įsimenama telefone |
+| Spatial 2.5D: gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo | ❌ | ✅ eksperimentinis, telefonai ir planšetės |
+| Naudojimas be jokio serverio, su paties įrenginio galerija | ❌ reikia prisijungti | ✅ |
+| SMB ir WebDAV bendrinimai, randami tinkle ir leidžiami tiesiogiai, nieko neatsisiunčiant | ❌ | ✅ kiekviena peržiūra, telefonai ir Quest |
+| DLNA medijos serveriai kaip bendrinimo tipas | ❌ | ✅ nuo 19 surinkimo |
+| Bendrinimo failų siuntimas į Immich; rankiniu būdu išsiųsti įrenginio failai laikomi turinčiais atsarginę kopiją | ❌ tik įrenginio failai | ✅ nuo 15 surinkimo |
+| Bendrinti šį telefoną tinkle, akiniams | ❌ | ✅ nuo 19 surinkimo, Android ir iOS |
+| Plex Media Server bibliotekos, leidžiamos iš originalių failų, namuose ir ne namuose, be plex.tv | ❌ | ✅ nuo 20 surinkimo, kiekviena peržiūra, telefonuose, planšetėse, Quest ir televizoriuose |
+| Tapo kameros: tiesioginis vaizdas ir atminties kortelės įrašai, siunčiami į Immich, kai pasirenkate | ❌ | ✅ nuo 20 surinkimo: įrašai visur, tiesiogiai Android, Android TV ir Quest |
+| Android TV ir Google TV, valdomi pulteliu, tame pačiame APK | ❌ ne televizoriaus programa | ✅ nuo 20 surinkimo |
+| Neapdorotos Insta360 .insp nuotraukos ir vieno takelio .insv vaizdo įrašai | ❌ plokšti | ✅ nuo 16 surinkimo |
+| Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile (Insta360 X4, X4 Air, X5, X6, X3 poros, GoPro .360, DJI .osv) | ❌ plokšti arba neteisingi | ✅ nuo 18 surinkimo |
+| Dvigubos „žuvies akies“ .dng | ❌ plokšti | ❌ dar ne |
+| Serverio vaizdo įrašai: originalas, kai įrenginys jį dekoduoja, kitaip perkoduotas srautas; įrenginio vaizdo dekoderių sąrašas | ❌ vienas jungiklis „Priversti originalų vaizdo įrašą“ | ✅ nuo 15 surinkimo |
+| Vaizdo įrašo techninė informacija: bitų sparta, vaizdas, profilis, ar šis įrenginys jį dekoduoja | ❌ tik kodekas | ✅ nuo 18 surinkimo |
+| Nemokamas grotuvas plokštiems, 360°, 3D ir VR180 vaizdo įrašams iš serverio, telefono ar NAS | ❌ tik plokšti | ✅ (Quest 3 parduotuvės grotuvai mokami) |
+| Tas pats serveris, ta pati paskyra, įdiegiama šalia oficialios programos | | ✅ |
+
+<details>
+<summary><b>Kiekvienos eilutės būsena</b>: kaip tai išbandyta</summary>
+
+- **360° nuotraukos kaip sfera**: išbandyta Galaxy S24+ ir iPhone 14.
+- **Giroskopas**: išbandyta Galaxy S24+ ir iPhone 14.
+- **360° vaizdo įrašai**: išbandyta Galaxy S24+ ir iPhone 14.
+- **3D 360° nuotraukos ir vaizdo įrašai**: išbandyta Galaxy S24+ ir Quest 3, su tikrais 3D 360° pavyzdžiais (VRTogether, Vuze, Kandao) ir 3D nuotrauka; pranešimai apie kitas kameras laukiami.
+- **VR180**: išbandyta Android emuliatoriuje ir Galaxy S24+ su sintetine medija; atsiliepimai iš įrenginių laukiami.
+- **Apple erdvinės nuotraukos ir vaizdo įrašai**: atpažinimas patikrintas su pavyzdine nuotrauka, įrašyta Apple vaizdų bibliotekos, ir su sintetiniais failais; akinių vaizdas ir tikri iPhone failai yra 19 surinkimo įrenginių bandymas.
+- **Meta Quest įtraukianti peržiūra**: išbandyta Quest 3 akiniuose (14 surinkimo valdikliai, pakoreguoti 16 surinkime po naudotojo atsiliepimo) ir naudotojo su Insta360 X4 8K HEVC vaizdo įrašais.
+- **360° ženklelis ir 360° sąrašas**: atlikta.
+- **Žiūrėti kaip 360°**: atlikta.
+- **Spatial 2.5D**: išbandyta Galaxy S24+; atsiliepimai iš iPhone laukiami.
+- **Be jokio serverio**: išbandyta Galaxy S24+, Quest 3 ir Android emuliatoriuje.
+- **SMB ir WebDAV bendrinimai**: išbandyta su Freebox Server (SMB) Galaxy S24+ ir Quest 3, taip pat su Samba ir WebDAV bandomaisiais serveriais Android emuliatoriuje; atsiliepimai apie kitus NAS ir WebDAV laukiami.
+- **DLNA medijos serveriai**: patikrinta su minidlna ir Gerbera Docker aplinkoje; Plex, Jellyfin, NAS, Freebox Server, iPhone ir Quest yra 19 surinkimo įrenginių bandymas.
+- **Bendrinimo failų siuntimas į Immich**: išbandyta Android emuliatoriuje su Samba bandomuoju serveriu ir Immich 3.2 serveriu.
+- **Bendrinti šį telefoną tinkle**: vienetų testai ir ištisiniai testai su akinių WebDAV klientu, kompiuteryje; telefonas, aptarnaujantis Quest, ir iPhone pusė yra 19 surinkimo įrenginių bandymas.
+- **Plex Media Server**: patikrinta iš kompiuterio su tikru Plex Media Server 1.42.1 (susiejimas, aplankai, baitų intervalai, miniatiūros, adresas už namų ribų); įrenginyje dar nepatikrinta.
+- **Tapo kameros**: patikrinta su imituota kamera; su tikra kamera dar nepatikrinta.
+- **Android TV ir Google TV**: patikrinta automatiniais testais; televizoriuje dar nepatikrinta.
+- **Neapdorotos Insta360 .insp nuotraukos ir vieno takelio .insv vaizdo įrašai**: nuotraukos palygintos su Insta360 Studio X3 failų eksportais, vaizdo įrašai Android emuliatoriuje su mažos raiškos X3 failu; iPhone telefone dar nepaleista.
+- **Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile**: analizatoriai ir sujungimas patikrinti su tikrais X4, X3 poros, GoPro MAX ir Osmo 360 failais; atkūrimas yra 18 ir 19 surinkimų įrenginių bandymas.
+- **Dvigubos „žuvies akies“ .dng**: planuojama.
+- **Serverio vaizdo įrašai ir vaizdo dekoderiai**: išbandyta Android emuliatoriuje; Quest 3 H.264 riba išmatuota akiniuose.
+- **Vaizdo įrašo techninė informacija**: atlikta.
+
+</details>
 
 ### Kitos programos, kurias žmonės tam naudoja
 
-| Ką naudoja žmonės | Su kuo susiduria | Ką daro Immuch360 |
-|---|---|---|
-| Immich žiniatinklio programa | Ji rodo 360° nuotrauką kaip sferą, bet neapdorotą .insp laiko baigta panorama ir apvynioja jos du apskritimus aplink sferą; VR peržiūra vis dar tik prašymas ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)) | Sujungia neapdorotus failus įrenginyje ir atveria įtraukiančią peržiūrą Quest akiniuose |
-| Insta360 programa arba Studio | Reikalinga, kad kortelės neapdoroti failai prieš žiūrint taptų 360° vaizdu | Tiesiai atveria neapdorotus .insp ir .insv failus, taip pat GoPro .360 ir DJI .osv failus |
-| Plex, Jellyfin, Synology Photos | 360° nuotraukos ir vaizdo įrašai rodomi plokšti arba neatpažįstami, kaip aprašo temos jų forumuose (Plex prašymas atviras nuo 2017 m.) | Nuo 20 surinkimo skaito pačią Plex biblioteką arba tuos pačius aplankus per SMB, WebDAV ar DLNA ir leidžia juos kaip sferą, serveryje nieko nekeisdama |
-| Tapo programėlė | Atskira programa, prisijungusi prie jūsų TP-Link paskyros, kurioje įrašai laikomi atskirai nuo jūsų nuotraukų | Rodo kamerą šalia jūsų nuotraukų, kalbasi su ja tik jūsų tinkle ir išsaugo įrašą kaip vaizdo įrašą, kurį galite nusiųsti į Immich (nuo 20 surinkimo) |
-| Immich mobilioji programa televizoriuje | Ne televizoriaus programa: naudotojas praneša, kad ji veikia su pele, o ne su pulteliu | Ta pati programa, pritaikyta pulteliui (nuo 20 surinkimo) |
-| Failų kopijavimas į akinius | Kiekvienas failas kopijuojamas laidu, kol galima žiūrėti | Leidžia vietoje iš Immich, NAS, medijos serverio ar telefono |
-| Quest parduotuvės 360° ir 3D grotuvai | Mokami | Nemokama ir atvirojo kodo (AGPL) |
+- **Immich žiniatinklio programa**
+  - Su kuo susiduria: ji rodo 360° nuotrauką kaip sferą, bet neapdorotą .insp laiko baigta panorama ir apvynioja jos du apskritimus aplink sferą; VR peržiūra vis dar tik prašymas ([diskusija #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Ką daro Immuch360: sujungia neapdorotus failus įrenginyje ir atveria įtraukiančią peržiūrą Quest akiniuose.
+- **Insta360 programa arba Studio**
+  - Su kuo susiduria: reikalinga, kad kortelės neapdoroti failai prieš žiūrint taptų 360° vaizdu.
+  - Ką daro Immuch360: tiesiai atveria neapdorotus .insp ir .insv failus, taip pat GoPro .360 ir DJI .osv failus.
+- **Plex, Jellyfin, Synology Photos**
+  - Su kuo susiduria: 360° nuotraukos ir vaizdo įrašai rodomi plokšti arba neatpažįstami, kaip aprašo temos jų forumuose (Plex prašymas atviras nuo 2017 m.).
+  - Ką daro Immuch360: nuo 20 surinkimo skaito pačią Plex biblioteką arba tuos pačius aplankus per SMB, WebDAV ar DLNA ir leidžia juos kaip sferą, serveryje nieko nekeisdama.
+- **Tapo programėlė**
+  - Su kuo susiduria: atskira programa, prisijungusi prie jūsų TP-Link paskyros, kurioje įrašai laikomi atskirai nuo jūsų nuotraukų.
+  - Ką daro Immuch360: rodo kamerą šalia jūsų nuotraukų, kalbasi su ja tik jūsų tinkle ir išsaugo įrašą kaip vaizdo įrašą, kurį galite nusiųsti į Immich (nuo 20 surinkimo).
+- **Immich mobilioji programa televizoriuje**
+  - Su kuo susiduria: ne televizoriaus programa: naudotojas praneša, kad ji veikia su pele, o ne su pulteliu.
+  - Ką daro Immuch360: ta pati programa, pritaikyta pulteliui (nuo 20 surinkimo).
+- **Failų kopijavimas į akinius**
+  - Su kuo susiduria: kiekvienas failas kopijuojamas laidu, kol galima žiūrėti.
+  - Ką daro Immuch360: leidžia vietoje iš Immich, NAS, medijos serverio ar telefono.
+- **Quest parduotuvės 360° ir 3D grotuvai**
+  - Su kuo susiduria: mokami.
+  - Ką daro Immuch360: nemokama ir atvirojo kodo (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Formatai ir šaltiniai pagal platformą
 
-Immuch360 yra galerija, ir ji taip pat yra nemokamas medijos grotuvas: ji leidžia tai, ko negali oficiali programa, iš antrosios lentelės šaltinių, failui tinkamame grotuve.
+Immuch360 yra galerija, ir ji taip pat yra nemokamas medijos grotuvas: ji leidžia tai, ko negali oficiali programa, iš antrojo sąrašo šaltinių, failui tinkamame grotuve.
 
-| Kas | Android telefonai | iPhone, iPad | Meta Quest | Android TV, Google TV (nuo 20 surinkimo) |
-|---|---|---|---|---|
-| Plokšti vaizdo įrašai (MP4, MOV, MKV, ką dekoduoja įrenginys) | Immich grotuvas, o tinklo bendrinimams savasis grotuvas | Taip pat, išskyrus bendrinimo MKV ir AVI failus, kurių iOS neatveria (serveryje jie leidžiami perkoduoti) | Lange | Kaip telefonuose; OK pristabdo, kairėn ir dešinėn peršoka 10 s |
-| 360° nuotraukos | Sferos peržiūra, giroskopas | Taip pat | Įtraukianti, aplink jus | Sferos peržiūra, sukama rodyklėmis, mastelis keičiamas kanalo mygtukais |
-| 360° vaizdo įrašai | Savasis Media3 grotuvas ant sferos, giroskopas, persukimas, garso takelio pasirinkimas, buferio indikatorius | Savasis SceneKit grotuvas ant sferos, giroskopas, garso takelio pasirinkimas, buferio indikatorius; paleidimas ir pristabdymas, laiko juostos kol kas nėra | Įtraukianti, tikras 3D stereoskopiniams failams, laiko juosta su 10 sekundžių peršokimais, ankstesnė ir kita medija | Telefonų Media3 grotuvas, sukamas rodyklėmis |
-| 3D 360° (viršuje ir apačioje, vienas šalia kito) | Kairioji akis, išdėstymo mygtukas | Taip pat | Kiekviena akis gauna savo kadro pusę | Kairioji akis, išdėstymo mygtukas |
-| VR180 (pusės sferos) nuotraukos ir vaizdo įrašai | Pusė sferos, 360°/180° mygtukas | Taip pat | Įtraukianti pusė sferos | Pusė sferos, 360°/180° mygtukas |
-| Spatial 2.5D (gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo) | Savasis grotuvas, galvos sekimas priekine kamera | Taip pat | Nesiūloma | Nesiūloma |
-| Apple erdvinės nuotraukos (HEIC stereo poros, nuo 19 surinkimo) | Kairioji akis, informacijos eilutė nurodo, kad tai erdvinė | Taip pat | „Žiūrėti 3D“: abi akys nuotraukoje, plūduriuojančioje įtraukiančioje peržiūroje, 3D arba 2D, keičiamo dydžio | Kairioji akis, informacijos eilutė |
-| Apple erdviniai vaizdo įrašai (MV-HEVC, nuo 19 surinkimo) | Viena akis (bazinis sluoksnis), su pranešimu | Taip pat | Viena akis lange, su pranešimu | Viena akis, su pranešimu |
-| Neapdorotos Insta360 .insp nuotraukos (nuo 16 surinkimo) | Sujungiamos GPU prieš sferos peržiūrą, iki 8192x4096 | Taip pat | Įtraukianti, iš sujungto vaizdo, paruošto akiniams | Kaip telefonuose |
-| Neapdoroti Insta360 .insv, abu objektyvai viename takelyje (nuo 16 surinkimo) | Sujungiami GPU efektu Media3 grotuve | Sujungiami SceneKit šešėliuokle | Įtraukianti, sujungiama tuo pačiu GPU efektu | Kaip telefonuose |
-| Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile (nuo 18 surinkimo): Insta360 X4, X4 Air, X5, X6 .insv, X3 poros, GoPro .360, DJI .osv | Du aparatiniai dekoderiai vienu metu, po vieną kiekvienam objektyvui (nuo 19 surinkimo programiniai įrenginyje be aparatinio dekoderio, iki 2048x2048 kiekvienam objektyvui), ir GL kompozitorius, kuris sujungia į sferą; vienas objektyvas, tada perkoduotas srautas, tada nesujungtas vaizdo įrašas, kai įrenginys negali paleisti dviejų | Pritaikytas AVFoundation kompozitorius su Metal | Įtraukianti, tie patys du dekoderiai ir kompozitorius (3840x1920 skydelis) | Kaip telefonuose, kai televizorius gali paleisti du dekoderius vienu metu |
-| Tapo kameros tiesioginis vaizdas (nuo 20 surinkimo) | Media3 RTSP grotuvas: SD puslapyje, HD visame ekrane, garso mygtukas | Dar ne: kortelė praneša, kad tai atsiras vėliau | Lange, HD raiška | Kaip telefonuose |
-| Tapo kameros įrašai (nuo 20 surinkimo) | Gaunami iš atminties kortelės į H.264 vaizdo įrašą su garsu, tada leidžiami su persukimu | Taip pat | Taip pat, lange | Taip pat |
+- **Plokšti vaizdo įrašai (MP4, MOV, MKV, ką dekoduoja įrenginys)**
+  - Android telefonai: Immich grotuvas, o tinklo bendrinimams savasis grotuvas.
+  - iPhone, iPad: taip pat, išskyrus bendrinimo MKV ir AVI failus, kurių iOS neatveria (serveryje jie leidžiami perkoduoti).
+  - Meta Quest: lange.
+  - Android TV, Google TV: kaip telefonuose; OK pristabdo, kairėn ir dešinėn peršoka 10 s.
+- **360° nuotraukos**
+  - Android telefonai: sferos peržiūra, giroskopas.
+  - iPhone, iPad: taip pat.
+  - Meta Quest: įtraukianti, aplink jus.
+  - Android TV, Google TV: sferos peržiūra, sukama rodyklėmis, mastelis keičiamas kanalo mygtukais.
+- **360° vaizdo įrašai**
+  - Android telefonai: savasis Media3 grotuvas ant sferos, giroskopas, persukimas, garso takelio pasirinkimas, buferio indikatorius.
+  - iPhone, iPad: savasis SceneKit grotuvas ant sferos, giroskopas, garso takelio pasirinkimas, buferio indikatorius; paleidimas ir pristabdymas, laiko juostos kol kas nėra.
+  - Meta Quest: įtraukianti, tikras 3D stereoskopiniams failams, laiko juosta su 10 sekundžių peršokimais, ankstesnė ir kita medija.
+  - Android TV, Google TV: telefonų Media3 grotuvas, sukamas rodyklėmis.
+- **3D 360° (viršuje ir apačioje, vienas šalia kito)**
+  - Android telefonai: kairioji akis, išdėstymo mygtukas.
+  - iPhone, iPad: taip pat.
+  - Meta Quest: kiekviena akis gauna savo kadro pusę.
+  - Android TV, Google TV: kairioji akis, išdėstymo mygtukas.
+- **VR180 (pusės sferos) nuotraukos ir vaizdo įrašai**
+  - Android telefonai: pusė sferos, 360°/180° mygtukas.
+  - iPhone, iPad: taip pat.
+  - Meta Quest: įtraukianti pusė sferos.
+  - Android TV, Google TV: pusė sferos, 360°/180° mygtukas.
+- **Spatial 2.5D (gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo)**
+  - Android telefonai: savasis grotuvas, galvos sekimas priekine kamera.
+  - iPhone, iPad: taip pat.
+  - Meta Quest: nesiūloma.
+  - Android TV, Google TV: nesiūloma.
+- **Apple erdvinės nuotraukos (HEIC stereo poros, nuo 19 surinkimo)**
+  - Android telefonai: kairioji akis, informacijos eilutė nurodo, kad tai erdvinė.
+  - iPhone, iPad: taip pat.
+  - Meta Quest: „Žiūrėti 3D“: abi akys nuotraukoje, plūduriuojančioje įtraukiančioje peržiūroje, 3D arba 2D, keičiamo dydžio.
+  - Android TV, Google TV: kairioji akis, informacijos eilutė.
+- **Apple erdviniai vaizdo įrašai (MV-HEVC, nuo 19 surinkimo)**
+  - Android telefonai: viena akis (bazinis sluoksnis), su pranešimu.
+  - iPhone, iPad: taip pat.
+  - Meta Quest: viena akis lange, su pranešimu.
+  - Android TV, Google TV: viena akis, su pranešimu.
+- **Neapdorotos Insta360 .insp nuotraukos (nuo 16 surinkimo)**
+  - Android telefonai: sujungiamos GPU prieš sferos peržiūrą, iki 8192x4096.
+  - iPhone, iPad: taip pat.
+  - Meta Quest: įtraukianti, iš sujungto vaizdo, paruošto akiniams.
+  - Android TV, Google TV: kaip telefonuose.
+- **Neapdoroti Insta360 .insv, abu objektyvai viename takelyje (nuo 16 surinkimo)**
+  - Android telefonai: sujungiami GPU efektu Media3 grotuve.
+  - iPhone, iPad: sujungiami SceneKit šešėliuokle.
+  - Meta Quest: įtraukianti, sujungiama tuo pačiu GPU efektu.
+  - Android TV, Google TV: kaip telefonuose.
+- **Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile (nuo 18 surinkimo): Insta360 X4, X4 Air, X5, X6 .insv, X3 poros, GoPro .360, DJI .osv**
+  - Android telefonai: du aparatiniai dekoderiai vienu metu, po vieną kiekvienam objektyvui (nuo 19 surinkimo programiniai įrenginyje be aparatinio dekoderio, iki 2048x2048 kiekvienam objektyvui), ir GL kompozitorius, kuris sujungia į sferą; vienas objektyvas, tada perkoduotas srautas, tada nesujungtas vaizdo įrašas, kai įrenginys negali paleisti dviejų.
+  - iPhone, iPad: pritaikytas AVFoundation kompozitorius su Metal.
+  - Meta Quest: įtraukianti, tie patys du dekoderiai ir kompozitorius (3840x1920 skydelis).
+  - Android TV, Google TV: kaip telefonuose, kai televizorius gali paleisti du dekoderius vienu metu.
+- **Tapo kameros tiesioginis vaizdas (nuo 20 surinkimo)**
+  - Android telefonai: Media3 RTSP grotuvas: SD puslapyje, HD visame ekrane, garso mygtukas.
+  - iPhone, iPad: dar ne: kortelė praneša, kad tai atsiras vėliau.
+  - Meta Quest: lange, HD raiška.
+  - Android TV, Google TV: kaip telefonuose.
+- **Tapo kameros įrašai (nuo 20 surinkimo)**
+  - Android telefonai: gaunami iš atminties kortelės į H.264 vaizdo įrašą su garsu, tada leidžiami su persukimu.
+  - iPhone, iPad: taip pat.
+  - Meta Quest: taip pat, lange.
+  - Android TV, Google TV: taip pat.
 
-Televizoriaus stulpelis dar nepatikrintas televizoriuje, žr. [Žiūrėti televizoriuje](#watch-on-your-tv-android-tv-and-google-tv); kamerų eilutės dar nepatikrintos su tikra kamera.
+Android TV ir Google TV punktai, nuo 20 surinkimo, dar nepatikrinti televizoriuje, žr. [Žiūrėti televizoriuje](#watch-on-your-tv-android-tv-and-google-tv); kamerų punktai dar nepatikrinti su tikra kamera.
 
-| Iš kur | Kaip |
-|---|---|
-| Jūsų Immich serveris | Originalas arba serverio perkoduotas srautas, kaip nurodo „Nustatymai“, „Elementų peržiūra“, „Vaizdo įrašo šaltinis“ (žr. [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters)). Ta pati paskyra kaip žiniatinklio programoje |
-| Pats telefonas ar akiniai | „Naudoti be serverio“ prisijungimo puslapyje arba skirtuko „Biblioteka“ punktas „Šiame įrenginyje“ |
-| NAS ar kompiuteris | SMB ir WebDAV bendrinimai, o nuo 19 surinkimo DLNA medijos serveriai, randami tinkle, skaitomi tiesiogiai (SMB vaizdo įrašas iki šešiais ryšiais), nieko nekopijuojant; nuo 15 surinkimo pasirinktus failus galima nusiųsti į jūsų Immich paskyrą |
-| Kitas telefonas (nuo 19 surinkimo) | „Bendrinti šį telefoną tinkle“ tame telefone: akiniai arba bet kuris tinklo WebDAV klientas skaito jo albumus, mėnesius ir 360° mediją |
-| Plex Media Server (nuo 20 surinkimo) | Jo nuotraukų, filmų ir TV laidų bibliotekos pagal aplankus, originalūs failai skaitomi tiesiogiai per HTTPS, patikrintą pagal paties serverio sertifikatą, namuose arba per adresą už namų ribų, visose platformose; žr. [Plex Media Server, be plex.tv](#plex-media-server-without-plextv) |
-| Tapo kamera (nuo 20 surinkimo) | Tiesioginis vaizdas su kameros paskyra (Android, Android TV, Quest akiniai) ir jos atminties kortelės įrašai su TP-Link paskyros slaptažodžiu (visos platformos), tik vietiniame tinkle; žr. [Tapo kameros](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Jūsų Immich serveris**: originalas arba serverio perkoduotas srautas, kaip nurodo „Nustatymai“, „Elementų peržiūra“, „Vaizdo įrašo šaltinis“ (žr. [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters)). Ta pati paskyra kaip žiniatinklio programoje.
+- **Pats telefonas ar akiniai**: „Naudoti be serverio“ prisijungimo puslapyje arba skirtuko „Biblioteka“ punktas „Šiame įrenginyje“.
+- **NAS ar kompiuteris**: SMB ir WebDAV bendrinimai, o nuo 19 surinkimo DLNA medijos serveriai, randami tinkle, skaitomi tiesiogiai (SMB vaizdo įrašas iki šešiais ryšiais), nieko nekopijuojant; nuo 15 surinkimo pasirinktus failus galima nusiųsti į jūsų Immich paskyrą.
+- **Kitas telefonas (nuo 19 surinkimo)**: „Bendrinti šį telefoną tinkle“ tame telefone: akiniai arba bet kuris tinklo WebDAV klientas skaito jo albumus, mėnesius ir 360° mediją.
+- **Plex Media Server (nuo 20 surinkimo)**: jo nuotraukų, filmų ir TV laidų bibliotekos pagal aplankus, originalūs failai skaitomi tiesiogiai per HTTPS, patikrintą pagal paties serverio sertifikatą, namuose arba per adresą už namų ribų, visose platformose; žr. [Plex Media Server, be plex.tv](#plex-media-server-without-plextv).
+- **Tapo kamera (nuo 20 surinkimo)**: tiesioginis vaizdas su kameros paskyra (Android, Android TV, Quest akiniai) ir jos atminties kortelės įrašai su TP-Link paskyros slaptažodžiu (visos platformos), tik vietiniame tinkle; žr. [Tapo kameros](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 taip pat veikia Meta Quest akiniuose su Horizon OS v69 ar naujesne. Nuo 21 surinkimo Horizon Store surinkimas skirtas Quest 2, Quest Pro, Quest 3 ir 3S, tiems keturiems, kuriuos jau nurodo universalus `-release.apk`; pirmasis Quest ne, parduotuvė jo nebepriima. Quest 3 ir 3S išbandyti. Quest 2 ir Quest Pro dar neišbandyti: jų vaizdo dekoderiai lėtesni, o ribos, kurias tikrina programa, buvo išmatuotos su Quest 3, todėl didelis H.264 vaizdo įrašas juose gali būti atmestas su pranešimu arba strigti. Pranešimai iš šių dviejų akinių laukiami [Issues](https://github.com/freeKC/Immuch360/issues). Kaip ją naudoti, aprašyta skyriuje [Meta Quest 3 akiniuose](#in-the-meta-quest-3-headset); šis skyrius apie diegimą ir tai, kuo skiriasi akiniuose.
+Immuch360 taip pat veikia Meta Quest akiniuose su Horizon OS v69 ar naujesne. Nuo 21 surinkimo Horizon Store surinkimas skirtas Quest 2, Quest Pro, Quest 3 ir 3S, tiems keturiems, kuriuos jau nurodo universalus `-release.apk`; pirmasis Quest ne, parduotuvė jo nebepriima.
 
-Akinių surinkimas su serveriais kalba tik per HTTPS arba per paprastą HTTP su namų tinklo pavadinimais (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ir su pačiais akiniais, kaip reikalauja Horizon Store. Serveris, įvestas kaip paprastas HTTP adresas su IP, pvz., `http://192.168.1.10:2283`, tame surinkime atmetamas: naudokite HTTPS, namų tinklo pavadinimą (`nas.local`) arba universalų `-release.apk`, kuris išlaiko atvirą telefonų politiką. WebDAV, DLNA ir telefono bendrinimams paprastu vietinio tinklo HTTP adresu tai negalioja: programa juos skaito pati ir savo grotuvams perduoda tik savo vietinio tilto adresą (DLNA ir telefono bendrinimui, naujiems 19 surinkime, akiniuose dar reikia patvirtinti). Nuo 20 surinkimo Plex serveris pasiekiamas per HTTPS, o Tapo kamerą pasiekia pati programa, jos tiesioginis vaizdas perduodamas per RTSP, kuris nėra HTTP: nė vieno iš jų tai neturėtų paliesti (akiniuose dar reikia patvirtinti).
+Quest 3 ir 3S išbandyti. Quest 2 ir Quest Pro dar neišbandyti: jų vaizdo dekoderiai lėtesni, o ribos, kurias tikrina programa, buvo išmatuotos su Quest 3, todėl didelis H.264 vaizdo įrašas juose gali būti atmestas su pranešimu arba strigti. Pranešimai iš šių dviejų akinių laukiami [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Kaip ją naudoti, aprašyta skyriuje [Meta Quest 3 akiniuose](#in-the-meta-quest-3-headset); šis skyrius apie diegimą ir tai, kuo skiriasi akiniuose.
+
+Akinių surinkimas su serveriais kalba tik per HTTPS arba per paprastą HTTP su namų tinklo pavadinimais (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) ir su pačiais akiniais, kaip reikalauja Horizon Store. Serveris, įvestas kaip paprastas HTTP adresas su IP, pvz., `http://192.168.1.10:2283`, tame surinkime atmetamas: naudokite HTTPS, namų tinklo pavadinimą (`nas.local`) arba universalų `-release.apk`, kuris išlaiko atvirą telefonų politiką.
+
+WebDAV, DLNA ir telefono bendrinimams paprastu vietinio tinklo HTTP adresu tai negalioja: programa juos skaito pati ir savo grotuvams perduoda tik savo vietinio tilto adresą (DLNA ir telefono bendrinimui, naujiems 19 surinkime, akiniuose dar reikia patvirtinti). Nuo 20 surinkimo Plex serveris pasiekiamas per HTTPS, o Tapo kamerą pasiekia pati programa, jos tiesioginis vaizdas perduodamas per RTSP, kuris nėra HTTP: nė vieno iš jų tai neturėtų paliesti (akiniuose dar reikia patvirtinti).
 
 <a id="install"></a>
 ### Diegimas
@@ -762,16 +922,23 @@ Meta patvirtino Horizon Store įrašą 2026 m. spalio 7 d. su 14 surinkimu, o 21
 
 ### Lange
 
-Visa programa veikia kaip keičiamo dydžio 2D langas: prisijungimas, laiko skalė, albumai, paieška, skirtukas „Biblioteka“ (360° sąrašas, „Šiame įrenginyje“, „Tinklo bendrinimai“), nustatymai ir nuotraukų bei vaizdo įrašų peržiūros, kuriose leidžiamos plokščios nuotraukos ir vaizdo įrašai. Akiniuose 360° mygtukas ir „Žiūrėti kaip 360°“ meniu ⋮ tiesiai atveria įtraukiančią peržiūrą, o ne telefonų sferos peržiūrą, o mygtukas Spatial 2.5D ir jo nustatymas nerodomi. Nuo 19 surinkimo Apple erdvinė nuotrauka turi mygtuką „Žiūrėti 3D“, o plytelė „Bendrinti šį telefoną tinkle“ nerodoma: akiniai yra tie, kurie skaito telefono bendrinimą. Nuo 20 surinkimo Plex serveriai ir Tapo kameros taip pat atsidaro lange, kameros tiesioginis vaizdas HD raiška; nustatymas „Išdėstymas nuotolinio valdymo pulteliui“ lieka „Automatinis“, todėl akiniuose jis išjungtas.
+Visa programa veikia kaip keičiamo dydžio 2D langas: prisijungimas, laiko skalė, albumai, paieška, skirtukas „Biblioteka“ (360° sąrašas, „Šiame įrenginyje“, „Tinklo bendrinimai“), nustatymai ir nuotraukų bei vaizdo įrašų peržiūros, kuriose leidžiamos plokščios nuotraukos ir vaizdo įrašai.
+
+Akiniuose 360° mygtukas ir „Žiūrėti kaip 360°“ meniu ⋮ tiesiai atveria įtraukiančią peržiūrą, o ne telefonų sferos peržiūrą, o mygtukas Spatial 2.5D ir jo nustatymas nerodomi.
+
+Nuo 19 surinkimo Apple erdvinė nuotrauka turi mygtuką „Žiūrėti 3D“, o plytelė „Bendrinti šį telefoną tinkle“ nerodoma: akiniai yra tie, kurie skaito telefono bendrinimą. Nuo 20 surinkimo Plex serveriai ir Tapo kameros taip pat atsidaro lange, kameros tiesioginis vaizdas HD raiška; nustatymas „Išdėstymas nuotolinio valdymo pulteliui“ lieka „Automatinis“, todėl akiniuose jis išjungtas.
 
 ### Paveikslėliuose
 
 Ekrano nuotraukos darytos akiniuose fiksavimo mygtuku (Meta mygtukas ir gaidukas), Quest 3 akiniuose, su programa prancūzų kalba; skirtukas „Biblioteka“ parodytas režimu be serverio.
 
-| Be serverio | Tinklo bendrinimai |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Skirtukas Biblioteka be serverio: Šiame įrenginyje ir Tinklo bendrinimai"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Puslapis Tinklo bendrinimai su Freebox Server SMB bendrinimu"> |
-| Skirtukas „Biblioteka“ režimu be serverio: pačių akinių medija ir tinklo bendrinimai | Freebox Server Samba bendrinimas, skaitomas tiesiogiai iš akinių |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Skirtukas Biblioteka be serverio: Šiame įrenginyje ir Tinklo bendrinimai">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Puslapis Tinklo bendrinimai su Freebox Server SMB bendrinimu">
+</p>
+
+- **Be serverio**: skirtukas „Biblioteka“ režimu be serverio, su pačių akinių medija ir tinklo bendrinimais.
+- **Tinklo bendrinimai**: Freebox Server Samba bendrinimas, skaitomas tiesiogiai iš akinių.
 
 ### Apribojimai akiniuose
 
@@ -786,12 +953,18 @@ Ekrano nuotraukos darytos akiniuose fiksavimo mygtuku (Meta mygtukas ir gaidukas
 
 Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Apple peržiūros, Meta Horizon Store įrašas patvirtintas ir jo pirmasis atnaujinimas yra Meta peržiūroje, o Google Play versija televizoriams laukia Google peržiūros televizoriaus leidimui. GitHub leidime visada naujausias surinkimas:
 
-| Platforma | Šiandien | Netrukus |
-|---|---|---|
-| Android telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`). | Google Play: 18 surinkimas jau veikia, 20 surinkimas Google peržiūroje nuo 2026 m. spalio 7 d., vietoj 19 surinkimo |
-| iPhone ir iPad | Laukia Apple peržiūros. Peržiūrima versija turi 11 surinkimo funkcijas: įkėlimas į Immich ir „Vaizdo įrašo šaltinis“ pasirinkimas (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su vėlesniu App Store atnaujinimu. Šaltinio kodas kompiliuojamas su Xcode arba Codemagic, žr. [Susikurkite patys](#build-it-yourself). | App Store, peržiūrima |
-| Meta Quest 2, Quest Pro, Quest 3 ir 3S (Quest 2 ir Quest Pro neišbandyti) | Puslapio [Releases](https://github.com/freeKC/Immuch360/releases) failas `-quest-release.apk` (universalus `-release.apk` taip pat veikia), įdiegtas šoniniu būdu kūrėjo režimu, žr. [Diegimas](#install). Parduotuvės surinkimas ir GitHub APK pasirašyti skirtingais raktais: norėdami pereiti nuo vieno prie kito, pirmiausia pašalinkite programą (jos nustatymai ir išsaugoti bendrinimai dingsta kartu). | Meta Horizon Store: įrašas patvirtintas 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas, pirmasis jo atnaujinimas, yra Meta peržiūroje; parduotuvės alfa kanalas (tik bandytojams) gauna kiekvieną naują surinkimą |
-| Android TV ir Google TV (nuo 20 surinkimo) | Universalus `Immuch360-v<version>-release.apk` iš puslapio [Releases](https://github.com/freeKC/Immuch360/releases), įdiegtas šoniniu būdu su adb, žr. [Įdiegti televizoriuje](#install-it-on-the-tv). Tai ta pati programa kaip telefonuose. | Google Play televizoriams, po Google peržiūros televizoriaus leidimui |
+- **Android telefonai ir planšetės**
+  - Šiandien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`).
+  - Netrukus: Google Play parduotuvėje 18 surinkimas jau veikia, 20 surinkimas Google peržiūroje nuo 2026 m. spalio 7 d., vietoj 19 surinkimo.
+- **iPhone ir iPad**
+  - Šiandien: laukia Apple peržiūros. Peržiūrima versija turi 11 surinkimo funkcijas: įkėlimas į Immich ir „Vaizdo įrašo šaltinis“ pasirinkimas (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su vėlesniu App Store atnaujinimu. Šaltinio kodas kompiliuojamas su Xcode arba Codemagic, žr. [Susikurkite patys](#build-it-yourself).
+  - Netrukus: App Store, peržiūrima.
+- **Meta Quest 2, Quest Pro, Quest 3 ir 3S (Quest 2 ir Quest Pro neišbandyti)**
+  - Šiandien: puslapio [Releases](https://github.com/freeKC/Immuch360/releases) failas `-quest-release.apk` (universalus `-release.apk` taip pat veikia), įdiegtas šoniniu būdu kūrėjo režimu, žr. [Diegimas](#install). Parduotuvės surinkimas ir GitHub APK pasirašyti skirtingais raktais: norėdami pereiti nuo vieno prie kito, pirmiausia pašalinkite programą (jos nustatymai ir išsaugoti bendrinimai dingsta kartu).
+  - Netrukus: Meta Horizon Store parduotuvėje įrašas patvirtintas 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas, pirmasis jo atnaujinimas, yra Meta peržiūroje; parduotuvės alfa kanalas (tik bandytojams) gauna kiekvieną naują surinkimą.
+- **Android TV ir Google TV (nuo 20 surinkimo)**
+  - Šiandien: universalus `Immuch360-v<version>-release.apk` iš puslapio [Releases](https://github.com/freeKC/Immuch360/releases), įdiegtas šoniniu būdu su adb, žr. [Įdiegti televizoriuje](#install-it-on-the-tv). Tai ta pati programa kaip telefonuose.
+  - Netrukus: Google Play televizoriams, po Google peržiūros televizoriaus leidimui.
 
 App Store ir Meta Horizon Store nuorodos bus pridėtos čia, kai tik įrašai bus paskelbti. Prisijunkite su savo įprastu Immich serverio URL ir paskyra arba prisijungimo puslapyje bakstelėkite „Naudoti be serverio“, kad pradėtumėte nuo paties įrenginio nuotraukų ir vaizdo įrašų. APK iš GitHub pats neatsinaujina: stebėkite puslapį Releases, o įdiegę programą iš parduotuvės, atnaujinimus imkite iš tos parduotuvės.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Parduotuvių ekrano nuotraukos daromos derinimo simuliatoriaus surinkimuose, sukurtuose su `--dart-define=IMMUCH_SCREENSHOTS=true`, kuris tik paslepia derinimo juostelę. Du Android variantai yra ta pati programa. Nuo 20 surinkimo variantas `phone` taip pat deklaruoja save kaip televizoriaus programą (televizoriaus paleidiklio įrašas ir reklamjuostė, jutiklinis ekranas nebūtinas), o variantas `quest` to nedaro. Variantas `quest` taikosi į SDK 34 ir išlaiko tik akinių naudojamus leidimus (nuotraukos, vaizdo įrašai, pranešimai): medijos valdymas, foninė vieta, senoji saugykla, garsas, medijos vieta, įrenginio vieta ir kamera pašalinti faile `android/app/src/quest/AndroidManifest.xml`, nes Meta Horizon Store atmeta pirmuosius du ir prašo pagrįsti kiekvieną kitą jautrų leidimą; tas pats failas nurodo Quest 2, Quest Pro, Quest 3 ir 3S kaip palaikomus įrenginius ir riboja paprastą HTTP iki pačių akinių ir namų tinklo pavadinimų. APK yra tik 64 bitų dėl dviejų papildomų jo komandinės eilutės argumentų (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variantas `phone` yra tai, ko reikalauja Google Play. Norėdami kurti iOS savo Mac kompiuteryje, naudokite Xcode ir savo pasirašymo komandą; su Xcode 26 pirmiausia vieną kartą paleiskite `xcodebuild -downloadComponent MetalToolchain`, nes jo reikia Spatial šešėliuoklėms. Be Mac iOS surinkimai vykdomi Codemagic (talpinamas Mac) pagal šios saugyklos failą `codemagic.yaml`. Android leidimų surinkimai vykdomi GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Parduotuvių ekrano nuotraukos daromos derinimo simuliatoriaus surinkimuose, sukurtuose su `--dart-define=IMMUCH_SCREENSHOTS=true`, kuris tik paslepia derinimo juostelę.
+
+Du Android variantai yra ta pati programa. Nuo 20 surinkimo variantas `phone` taip pat deklaruoja save kaip televizoriaus programą (televizoriaus paleidiklio įrašas ir reklamjuostė, jutiklinis ekranas nebūtinas), o variantas `quest` to nedaro.
+
+Variantas `quest` taikosi į SDK 34 ir išlaiko tik akinių naudojamus leidimus (nuotraukos, vaizdo įrašai, pranešimai): medijos valdymas, foninė vieta, senoji saugykla, garsas, medijos vieta, įrenginio vieta ir kamera pašalinti faile `android/app/src/quest/AndroidManifest.xml`, nes Meta Horizon Store atmeta pirmuosius du ir prašo pagrįsti kiekvieną kitą jautrų leidimą; tas pats failas nurodo Quest 2, Quest Pro, Quest 3 ir 3S kaip palaikomus įrenginius ir riboja paprastą HTTP iki pačių akinių ir namų tinklo pavadinimų. APK yra tik 64 bitų dėl dviejų papildomų jo komandinės eilutės argumentų (`--target-platform android-arm64 --android-project-arg arm64only=true`). Variantas `phone` yra tai, ko reikalauja Google Play.
+
+Norėdami kurti iOS savo Mac kompiuteryje, naudokite Xcode ir savo pasirašymo komandą; su Xcode 26 pirmiausia vieną kartą paleiskite `xcodebuild -downloadComponent MetalToolchain`, nes jo reikia Spatial šešėliuoklėms. Be Mac iOS surinkimai vykdomi Codemagic (talpinamas Mac) pagal šios saugyklos failą `codemagic.yaml`. Android leidimų surinkimai vykdomi GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Šioje saugykloje nėra jokių paslapčių: Android pasirašymo raktas saugomas kaip užšifruotos GitHub Actions paslaptys, o Apple pasirašymo medžiaga saugoma kaip užšifruoti kintamieji Codemagic. Darbo eigos failai juos nurodo tik pavadinimu. Be savo `android/key.jks` leidimo surinkimas pasirašomas derinimo raktu ir negali būti įdiegtas ant kopijos iš GitHub ar parduotuvės (pirmiausia pašalinkite ją); derinimo surinkimas įdiegiamas šalia jos kaip Immuch360 debug. Meta Horizon Store kopija yra leidimo `quest` APK, pasirašytas kitu raktu, tuo, su kuriuo parduotuvės programa buvo pirmą kartą užregistruota, todėl ji taip pat negali būti įdiegta ant šoniniu būdu įdiegto APK, nei atvirkščiai.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Nuo 19 surinkimo DLNA klientas, telefono bendrinimas ir Apple erdvinės medijos atpažinimas taip pat rašo į pačios programos žurnalą („Logai“, profilio nuotraukos meniu viršuje dešinėje), su žymomis `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ir `NetworkMediaService`. Nuo 20 surinkimo televizoriaus režimas ten rašo su žymomis `TvMode` ir `TvTextEntry`, Plex serveriai su `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ir `PlexServerEditPage`, o Tapo kameros su `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ir `CameraLiveView`; Plex eilutėse niekada nėra prieigos rakto, adreso ar pavadinimo, o kamerų eilutėse nėra slaptažodžių. Žurnalo eilutės lieka įrenginyje, nebent patys jas nukopijuojate.
 
+<a id="privacy"></a>
 ## Privatumas
 
 - **Niekas nesiunčiama kūrėjui**: programa bendrauja su jūsų pasirinktu Immich serveriu (o atvėrus žemėlapį ir su žemėlapio plytelių paslauga, kurią naudoja tas serveris), neturi reklamos, analitikos ar kūrėjo valdomos strigčių ataskaitų paslaugos ir nieko nesiunčia Immuch360 kūrėjui.
@@ -849,10 +1029,12 @@ Nuo 19 surinkimo DLNA klientas, telefono bendrinimas ir Apple erdvinės medijos 
 
 Visa politika pateikta faile [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Licencija ir prekės ženklas
 
 Šis projektas yra Immich atšaka ir lieka pagal [GNU AGPL v3](../LICENSE). Kiekviename APK, įskaitant telefonų, taip pat yra Meta Spatial SDK, kuris nėra atvirojo kodo (Meta Platform Technologies SDK License Agreement) ir naudojamas tik Meta Quest akiniuose. Immuch360 nėra susijusi su Immich komanda ar FUTO ir jų nepatvirtinta.
 
+<a id="roadmap"></a>
 ## Planai
 
 Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o atsiliepimai [pranešimų sekiklyje](https://github.com/freeKC/Immuch360/issues) padeda nuspręsti, kas bus pirma.
@@ -871,6 +1053,7 @@ Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o at
 - **Plex, toliau**: 20 surinkimo bandymas įrenginiuose (telefonai, Quest akiniai, iPhone, televizorius, ne namuose); prieigos rakto perkėlimas iš kompiuterio QR kodu; Plex serverio DLNA pusės slėpimas rastų serverių sąraše; IPv6.
 - **Į pagrindinį projektą**: nedideli pakeitimų prašymai (pull request) Immich toms dalims, kurių nori prižiūrėtojai, pradedant 360° nuotraukų peržiūra.
 
+<a id="credits"></a>
 ## Padėkos
 
 360° nuotraukų peržiūra paremta pagrindinio projekto pakeitimų prašymu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), kurį parengė dmitry-brazhenko, o šis remiasi bencefr prototipu [#30192](https://github.com/immich-app/immich/pull/30192). Ačiū abiem.

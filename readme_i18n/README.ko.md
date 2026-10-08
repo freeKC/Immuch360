@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | 한국어 | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>한국어</b> · 다른 언어 (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: Immich, 휴대폰 또는 NAS에 있는 360°, 3D, VR180 사진과 동영상. Android, iOS, Meta Quest에서, 서버가 있어도 없어도">
 </p>
 
 # Immuch360
 
-Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모바일 앱이자, 평면, 360°, 3D, VR180 사진과 동영상을 위한 무료 플레이어로, Android 휴대폰과 태블릿, iPhone과 iPad, Meta Quest 헤드셋(Quest 3와 3S, 그리고 빌드 21부터 Quest 2와 Quest Pro, 테스트하지 않음), 그리고 빌드 20부터 Android TV와 Google TV에서 동작합니다. 360° 카메라(Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360)나 휴대폰의 포토 스피어 모드로 촬영하거나 헤드셋을 가진 사람이, 직접 찍은 사진과 동영상을 Immich 서버, 휴대폰 자체, NAS, 미디어 서버 또는 Plex 서버에서 보기 위한 앱입니다. 같은 서버, 같은 계정을 쓰고, 서버 플러그인은 필요 없으며, 서버가 아예 없어도 됩니다. 빌드 20부터는 Tapo 카메라의 실시간 화면과 메모리 카드의 녹화도 보여 줍니다.
+Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모바일 앱이자, 평면, 360°, 3D, VR180 사진과 동영상을 위한 무료 플레이어로, Android 휴대폰과 태블릿, iPhone과 iPad, Meta Quest 헤드셋(Quest 3와 3S, 그리고 빌드 21부터 Quest 2와 Quest Pro, 테스트하지 않음), 그리고 빌드 20부터 Android TV와 Google TV에서 동작합니다.
+
+360° 카메라(Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360)나 휴대폰의 포토 스피어 모드로 촬영하거나 헤드셋을 가진 사람이, 직접 찍은 사진과 동영상을 Immich 서버, 휴대폰 자체, NAS, 미디어 서버 또는 Plex 서버에서 보기 위한 앱입니다. 같은 서버, 같은 계정을 쓰고, 서버 플러그인은 필요 없으며, 서버가 아예 없어도 됩니다. 빌드 20부터는 Tapo 카메라의 실시간 화면과 메모리 카드의 녹화도 보여 줍니다.
 
 <p align="center">
   <sub>비공식 포크입니다. Immich 및 FUTO와 관련이 없습니다. 이름은 "I am much 360"처럼 읽습니다.</sub>
@@ -13,29 +15,52 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">심사 중</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store 승인됨, 빌드 21을 첫 업데이트로 제출 &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
+  App Store: <a href="#where-to-get-it">심사 중</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store 승인됨, 빌드 21을 첫 업데이트로 제출<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 네이티브 360°</h3>자이로스코프로 둘러보는 구 형태의 사진과 동영상, 카메라 RAW 파일 포함(Insta360은 빌드 16부터, GoPro와 DJI는 빌드 18부터). 평면, 360°, 3D, VR180을 위한 무료 동영상 플레이어도 함께</td>
-    <td align="center" width="33%"><h3>👓 네이티브 3D</h3>입체 360°와 VR180, 위아래 또는 좌우 배치, Apple 공간 사진(빌드 19부터): 헤드셋에서는 진짜 3D, 휴대폰에서는 한쪽 눈</td>
-    <td align="center" width="33%"><h3>🎥 네이티브 2.5D</h3>입체 동영상으로 평면 화면에 깊이를 더하고, 시점이 머리를 따라갑니다(실험적, 휴대폰과 태블릿)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>휴대폰, 태블릿, Quest 2, Pro, 3, 3S 헤드셋에서 하나의 앱, 헤드셋에서는 진짜 3D, 그리고 빌드 20부터 리모컨으로 쓰는 Android TV</td>
-    <td align="center"><h3>🔌 서버가 있어도 없어도</h3>Immich 서버 또는 휴대폰 자체 갤러리, 계정 필요 없음</td>
-    <td align="center"><h3>🗄️ 네트워크 공유</h3>Samba(SMB), WebDAV, 그리고 빌드 19부터 DLNA 미디어 서버를 네트워크에서 찾아 실시간으로 읽습니다. 아무것도 다운로드하지 않고, 원할 때 Immich로 보냅니다. 빌드 19부터는 휴대폰이 자기 갤러리를 헤드셋과 공유할 수도 있습니다</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 TV에서</h3>빌드 20부터 Android TV와 Google TV에서 같은 APK로: 360° 사진과 동영상, 내 서버와 공유를 리모컨으로</td>
-    <td align="center"><h3>🎬 Plex, plex.tv 없이</h3>빌드 20부터 Plex 라이브러리를 원본 파일로 재생하므로 360°는 360° 그대로, 집에서도 밖에서도</td>
-    <td align="center"><h3>📹 Tapo 카메라</h3>빌드 20부터 실시간 화면과 메모리 카드의 녹화를 내 네트워크에서만 보고, 원할 때 클립을 Immich로 보냅니다</td>
-  </tr>
-</table>
+- 🌐 **네이티브 360°**<br>자이로스코프로 둘러보는 구 형태의 사진과 동영상, 카메라 RAW 파일 포함(Insta360은 빌드 16부터, GoPro와 DJI는 빌드 18부터). 평면, 360°, 3D, VR180을 위한 무료 동영상 플레이어도 함께
+- 👓 **네이티브 3D**<br>입체 360°와 VR180, 위아래 또는 좌우 배치, Apple 공간 사진(빌드 19부터): 헤드셋에서는 진짜 3D, 휴대폰에서는 한쪽 눈
+- 🎥 **네이티브 2.5D**<br>입체 동영상으로 평면 화면에 깊이를 더하고, 시점이 머리를 따라갑니다(실험적, 휴대폰과 태블릿)
+- 📱 **Android, iOS, Quest, TV**<br>휴대폰, 태블릿, Quest 2, Pro, 3, 3S 헤드셋에서 하나의 앱, 헤드셋에서는 진짜 3D, 그리고 빌드 20부터 리모컨으로 쓰는 Android TV
+- 🔌 **서버가 있어도 없어도**<br>Immich 서버 또는 휴대폰 자체 갤러리, 계정 필요 없음
+- 🗄️ **네트워크 공유**<br>Samba(SMB), WebDAV, 그리고 빌드 19부터 DLNA 미디어 서버를 네트워크에서 찾아 실시간으로 읽습니다. 아무것도 다운로드하지 않고, 원할 때 Immich로 보냅니다. 빌드 19부터는 휴대폰이 자기 갤러리를 헤드셋과 공유할 수도 있습니다
+- 📺 **TV에서**<br>빌드 20부터 Android TV와 Google TV에서 같은 APK로: 360° 사진과 동영상, 내 서버와 공유를 리모컨으로
+- 🎬 **Plex, plex.tv 없이**<br>빌드 20부터 Plex 라이브러리를 원본 파일로 재생하므로 360°는 360° 그대로, 집에서도 밖에서도
+- 📹 **Tapo 카메라**<br>빌드 20부터 실시간 화면과 메모리 카드의 녹화를 내 네트워크에서만 보고, 원할 때 클립을 Immich로 보냅니다
+
+<details>
+<summary><b>목차</b></summary>
+
+- [구 형태로 보는 360° 사진과 동영상](#360-photos-and-videos-as-a-sphere)
+- [서버도 계정도 없이](#without-a-server-or-an-account)
+- [네트워크 공유: NAS, 컴퓨터 또는 미디어 서버](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, plex.tv 없이](#plex-media-server-without-plextv)
+- [이 휴대폰을 네트워크에서 공유](#share-this-phone-on-the-network)
+- [Tapo 카메라: 실시간 화면과 메모리 카드의 녹화](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [카메라 앱 없이 보는 360° 카메라 RAW 파일](#raw-360-camera-files-without-the-cameras-app)
+- [3D와 VR180 사진과 동영상](#3d-and-vr180-photos-and-videos)
+- [평면 화면의 깊이: Spatial 2.5D (실험적)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Apple 공간 사진과 동영상](#apple-spatial-photos-and-videos)
+- [Meta Quest 3 헤드셋에서](#in-the-meta-quest-3-headset)
+- [TV에서 보기 (Android TV와 Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [360° 사진 찾기: 360° 목록](#find-your-360-shots-the-360-list)
+- [동영상 정보, 디코더, 그리고 동영상이 끊기는 이유](#video-details-decoders-and-why-a-video-stutters)
+- [나머지는 모두 Immich](#everything-else-is-immich)
+- [Immich 앱 및 다른 앱과의 비교](#compared-with-the-immich-app-and-other-apps)
+- [플랫폼별 형식과 출처](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [받는 곳](#where-to-get-it)
+- [직접 빌드하기](#build-it-yourself)
+- [로그](#logs)
+- [개인정보](#privacy)
+- [라이선스와 상표](#license-and-trademark)
+- [로드맵](#roadmap)
+- [감사의 말](#credits)
+
+</details>
 
 ## 어떤 문제가 있나요?
 
@@ -61,12 +86,19 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
 
 사진을 [Immich](https://github.com/immich-app/immich) 서버에 백업하는데, 그중 일부는 360° 카메라나 휴대폰의 포토 스피어 모드로 찍은 것입니다. 공식 모바일 앱에서는 이런 사진이 납작하게 늘어난 띠로 보이고, 360° 동영상도 평면으로 재생됩니다. Immich 웹 앱은 360° 사진을 구 형태로 보여 줄 수 있지만 모바일 앱은 그렇지 못합니다. 이 기능은 2024년 1월부터 [discussion #6572](https://github.com/immich-app/immich/discussions/6572)에서 요청되어 왔습니다.
 
-Immuch360은 Android와 iOS 휴대폰과 태블릿에서 이런 사진과 동영상을 둘러볼 수 있는 구 형태로 엽니다. 사진은 드래그하면 돌아가고, 핀치나 두 번 탭으로 확대되며, 빠르게 드래그한 뒤에는 조금 더 돌아가고, 카메라가 기록한 초기 시점(GPano 메타데이터)에서 시작하며, 확대하면 더 선명한 텍스처를 받습니다. 부분 파노라마도 처리합니다(GPano crop). 동영상은 소리, 드래그, 자이로스코프를 지원하는 네이티브 구형 플레이어에서 재생됩니다. 스티칭된 360° 파일은 어디서나 동작합니다. Insta360 앱이나 Studio에서 내보낸 파일, GoPro Player, Ricoh Theta, 휴대폰 포토 스피어가 그렇습니다. 카메라에서 바로 가져온 RAW 파일은 앱이 스티칭합니다. [360° 카메라 RAW 파일](#raw-360-camera-files-without-the-cameras-app)을 보세요.
+Immuch360은 Android와 iOS 휴대폰과 태블릿에서 이런 사진과 동영상을 둘러볼 수 있는 구 형태로 엽니다.
 
-| 구 형태로 보는 360° 사진 | 360° 플레이어에서 재생되는 360° 동영상 |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="구 뷰어에 표시된 호숫가 360° 사진: 왼쪽 위에 닫기 버튼, 오른쪽 위에 360°, 3D 배치, 자이로스코프 버튼"> | <img src="../.github/readme/b19-video.png" width="420" alt="휴대폰을 가로로 들고 360° 플레이어에서 재생 중인 해안 도로 360° 동영상: 왼쪽 위에 닫기와 파일 이름, 오른쪽 위에 360°와 3D, 가운데에 이전, 뒤로 건너뛰기, 재생, 앞으로 건너뛰기, 다음, 아래쪽에 시간 막대"> |
-| 왼쪽 위에 닫기, 오른쪽 위에 360°/180° 버튼, 3D 배치 버튼, 자이로스코프 | 화면을 탭하면 컨트롤이 나타납니다. 오른쪽 위에 360°와 3D |
+사진은 드래그하면 돌아가고, 핀치나 두 번 탭으로 확대되며, 빠르게 드래그한 뒤에는 조금 더 돌아가고, 카메라가 기록한 초기 시점(GPano 메타데이터)에서 시작하며, 확대하면 더 선명한 텍스처를 받습니다. 부분 파노라마도 처리합니다(GPano crop). 동영상은 소리, 드래그, 자이로스코프를 지원하는 네이티브 구형 플레이어에서 재생됩니다.
+
+스티칭된 360° 파일은 어디서나 동작합니다. Insta360 앱이나 Studio에서 내보낸 파일, GoPro Player, Ricoh Theta, 휴대폰 포토 스피어가 그렇습니다. 카메라에서 바로 가져온 RAW 파일은 앱이 스티칭합니다. [360° 카메라 RAW 파일](#raw-360-camera-files-without-the-cameras-app)을 보세요.
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="구 뷰어에 표시된 호숫가 360° 사진: 왼쪽 위에 닫기 버튼, 오른쪽 위에 360°, 3D 배치, 자이로스코프 버튼">
+  <img src="../.github/readme/b19-video.png" width="420" alt="휴대폰을 가로로 들고 360° 플레이어에서 재생 중인 해안 도로 360° 동영상: 왼쪽 위에 닫기와 파일 이름, 오른쪽 위에 360°와 3D, 가운데에 이전, 뒤로 건너뛰기, 재생, 앞으로 건너뛰기, 다음, 아래쪽에 시간 막대">
+</p>
+
+- **구 형태로 보는 360° 사진**: 왼쪽 위에 닫기, 오른쪽 위에 360°/180° 버튼, 3D 배치 버튼, 자이로스코프.
+- **360° 플레이어에서 재생되는 360° 동영상**: 화면을 탭하면 컨트롤이 나타납니다. 오른쪽 위에 360°와 3D.
 
 ### 360° 사진을 구 형태로 열기
 
@@ -135,12 +167,17 @@ Immich 서버가 없거나 계정을 만들고 싶지 않고, 그저 휴대폰�
 
 360° 동영상이 NAS나 컴퓨터에 있고, 먼저 복사하지 않고 휴대폰이나 헤드셋에서 보고 싶을 수 있습니다. 헤드셋에서는 결국 파일을 하나씩 케이블로 복사하게 되고, Plex나 Jellyfin 같은 미디어 서버는 각 포럼의 요청 글에서 보듯 360° 동영상을 평면으로 재생하며, Immich 앱은 Immich 서버만 읽습니다.
 
-Immuch360은 SMB(Samba, Windows), WebDAV, 그리고 빌드 19부터 DLNA/UPnP(미디어 서버: Jellyfin, minidlna, Gerbera, Emby, NAS 또는 TV 박스)를 지원하는 모든 서버의 사진과 동영상을 공유에서 바로 둘러보고 재생합니다. 빌드 20부터 Plex Media Server는 별도의 형식을 가집니다. [Plex Media Server, plex.tv 없이](#plex-media-server-without-plextv)를 보세요. 네트워크의 서버를 스스로 찾고, 앱의 다른 부분과 같은 뷰어(360°, 3D, VR180, Spatial 2.5D, Quest 몰입형 보기)에서 파일을 실시간으로 재생합니다. Immich 서버가 있든 없든, 휴대폰과 Meta Quest 3 모두에서 됩니다. 아무것도 다운로드하지 않습니다. 서버가 연결되어 있으면 고른 파일을 Immich 계정으로 보낼 수 있습니다(빌드 15부터).
+Immuch360은 SMB(Samba, Windows), WebDAV, 그리고 빌드 19부터 DLNA/UPnP(미디어 서버: Jellyfin, minidlna, Gerbera, Emby, NAS 또는 TV 박스)를 지원하는 모든 서버의 사진과 동영상을 공유에서 바로 둘러보고 재생합니다. 빌드 20부터 Plex Media Server는 별도의 형식을 가집니다. [Plex Media Server, plex.tv 없이](#plex-media-server-without-plextv)를 보세요.
 
-| 공유 추가 | 공유의 폴더 |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="공유 추가 화면: 이름, 서버 이름 또는 주소, 포트 (선택 사항), 공유 이름, 공유 선택, 시작 폴더 (선택 사항), 계정명, 비밀번호, 연결 테스트, 그리고 결과 연결됨, 시작 폴더에 항목 2개"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="썸네일 격자로 보이는 네트워크 공유 폴더: 360° 배지가 붙은 360° 사진들과 재생 표시가 붙은 360° 동영상, 오른쪽 위에 선택 버튼"> |
-| 연결 테스트를 마친 새 SMB 공유의 입력란 | 공유에서 실시간으로 읽은 360° 사진과 동영상 |
+네트워크의 서버를 스스로 찾고, 앱의 다른 부분과 같은 뷰어(360°, 3D, VR180, Spatial 2.5D, Quest 몰입형 보기)에서 파일을 실시간으로 재생합니다. Immich 서버가 있든 없든, 휴대폰과 Meta Quest 3 모두에서 됩니다. 아무것도 다운로드하지 않습니다. 서버가 연결되어 있으면 고른 파일을 Immich 계정으로 보낼 수 있습니다(빌드 15부터).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="공유 추가 화면: 이름, 서버 이름 또는 주소, 포트 (선택 사항), 공유 이름, 공유 선택, 시작 폴더 (선택 사항), 계정명, 비밀번호, 연결 테스트, 그리고 결과 연결됨, 시작 폴더에 항목 2개">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="썸네일 격자로 보이는 네트워크 공유 폴더: 360° 배지가 붙은 360° 사진들과 재생 표시가 붙은 360° 동영상, 오른쪽 위에 선택 버튼">
+</p>
+
+- **공유 추가**: 연결 테스트를 마친 새 SMB 공유의 입력란.
+- **공유의 폴더**: 공유에서 실시간으로 읽은 360° 사진과 동영상.
 
 ### 공유 추가
 
@@ -178,16 +215,26 @@ Immuch360은 SMB(Samba, Windows), WebDAV, 그리고 빌드 19부터 DLNA/UPnP(�
 
 ### 다운로드 없이 재생하는 방법
 
-플레이어는 필요한 바이트를 앱 안의 브리지(루프백 주소 전용, 세션마다 무작위 토큰, 바이트 범위)를 통해 읽으므로, 동영상 탐색이 되고 기기에는 아무것도 복사되지 않습니다. 플레이어와 헤드셋 뷰어는 공유 주소를 받지 않고 브리지의 127.0.0.1만 받으며, 서버로 가는 요청은 앱이 직접 보냅니다. 부드러운 재생을 위해 공유를 큰 블록 단위로 읽고, 읽는 사이에도 파일을 열어 두며, 플레이어보다 최대 16 MB를 미리 읽고, 재생 중인 동영상은 썸네일과 목록을 처리하는 연결과는 별도로 최대 여섯 개의 SMB 연결로 동시에 읽습니다. Freebox Server는 읽기마다 응답이 느려서, 연결 하나로는 4.5 MB/s, 여섯 개로는 19 MB/s가 나오며, 이는 132 Mbit/s의 5.7K 내보내기 파일에 충분합니다. 플레이어가 데이터를 기다리는 동안 360°와 Spatial 플레이어는 재생 버퍼가 찬 정도와 함께 "버퍼링 중"을 표시하고, 평면 플레이어는 동영상을 불러오거나 멈춰 있는 동안 백분율 없이 "버퍼링 중"을 표시합니다.
+플레이어는 필요한 바이트를 앱 안의 브리지(루프백 주소 전용, 세션마다 무작위 토큰, 바이트 범위)를 통해 읽으므로, 동영상 탐색이 되고 기기에는 아무것도 복사되지 않습니다. 플레이어와 헤드셋 뷰어는 공유 주소를 받지 않고 브리지의 127.0.0.1만 받으며, 서버로 가는 요청은 앱이 직접 보냅니다.
+
+부드러운 재생을 위해 공유를 큰 블록 단위로 읽고, 읽는 사이에도 파일을 열어 두며, 플레이어보다 최대 16 MB를 미리 읽고, 재생 중인 동영상은 썸네일과 목록을 처리하는 연결과는 별도로 최대 여섯 개의 SMB 연결로 동시에 읽습니다. Freebox Server는 읽기마다 응답이 느려서, 연결 하나로는 4.5 MB/s, 여섯 개로는 19 MB/s가 나오며, 이는 132 Mbit/s의 5.7K 내보내기 파일에 충분합니다.
+
+플레이어가 데이터를 기다리는 동안 360°와 Spatial 플레이어는 재생 버퍼가 찬 정도와 함께 "버퍼링 중"을 표시하고, 평면 플레이어는 동영상을 불러오거나 멈춰 있는 동안 백분율 없이 "버퍼링 중"을 표시합니다.
 
 ### DLNA 미디어 서버
 
-빌드 19부터 앱은 미디어 서버를 찾는 SSDP 검색을 네트워크의 멀티캐스트 그룹으로 보내고, 같은 요청을 로컬 /24 네트워크의 모든 주소의 1900번 포트로 보낸 다음, 응답한 각 서버의 장치 설명을 읽어 콘텐츠를 공개하는(ContentDirectory) 서버만 남깁니다. 폴더와 파일은 서버의 Browse 동작으로 한 페이지씩 나열되고 제목으로 이름이 붙습니다. 제목에 확장자가 없으면 형식에 맞는 확장자가 붙고, 한 폴더에서 같은 제목의 두 번째 파일은 `name (2)`가 됩니다. 오디오는 제외됩니다. 썸네일은 앨범 아트나 서버가 만든 작은 이미지를 앱이 직접 불러오며, 서버에 없으면 앱 자체 썸네일을 씁니다. 파일은 서버가 제공하는 원본으로 재생하며, 원본과 변환된 사본을 둘 다 제공할 때도 원본을 고르고, 범위 요청으로 읽으므로 탐색이 됩니다. minidlna와 Gerbera로 확인했습니다. 실제 네트워크에서의 검색, Plex, Jellyfin, NAS, Freebox Server, iPhone, Quest는 빌드 19의 기기 테스트 대상입니다.
+빌드 19부터 앱은 미디어 서버를 찾는 SSDP 검색을 네트워크의 멀티캐스트 그룹으로 보내고, 같은 요청을 로컬 /24 네트워크의 모든 주소의 1900번 포트로 보낸 다음, 응답한 각 서버의 장치 설명을 읽어 콘텐츠를 공개하는(ContentDirectory) 서버만 남깁니다.
+
+폴더와 파일은 서버의 Browse 동작으로 한 페이지씩 나열되고 제목으로 이름이 붙습니다. 제목에 확장자가 없으면 형식에 맞는 확장자가 붙고, 한 폴더에서 같은 제목의 두 번째 파일은 `name (2)`가 됩니다. 오디오는 제외됩니다. 썸네일은 앨범 아트나 서버가 만든 작은 이미지를 앱이 직접 불러오며, 서버에 없으면 앱 자체 썸네일을 씁니다. 파일은 서버가 제공하는 원본으로 재생하며, 원본과 변환된 사본을 둘 다 제공할 때도 원본을 고르고, 범위 요청으로 읽으므로 탐색이 됩니다.
+
+minidlna와 Gerbera로 확인했습니다. 실제 네트워크에서의 검색, Plex, Jellyfin, NAS, Freebox Server, iPhone, Quest는 빌드 19의 기기 테스트 대상입니다.
 
 <a id="a-share-that-moved"></a>
 ### 위치가 바뀐 공유
 
-빌드 19부터 DLNA 공유와 휴대폰 공유([이 휴대폰을 네트워크에서 공유](#share-this-phone-on-the-network) 참조)는 서버가 알리는 ID를 보관합니다. 공유가 원래 주소에서 더 이상 응답하지 않으면(공유기가 새 주소를 준 경우, 서버가 다른 포트로 다시 시작된 경우), 폴더 화면에 "네트워크에서 (이름)을(를) 찾는 중"이 표시되고 공유를 지금 응답하는 곳으로 옮깁니다. 비밀번호가 없는 DLNA 서버는 바로 옮기고, 계정명과 비밀번호가 있는 공유는 그 정보가 새 주소로 전송되므로 두 주소를 보여 주는 "새 주소를 사용할까요?" 확인을 거친 뒤에 옮깁니다. 빌드 20부터는 네트워크의 다른 주소에서 다시 찾은 Plex 서버도 바로 옮깁니다. 토큰을 보내기 전에 인증서로 같은 서버임을 증명하기 때문입니다. Tapo 카메라는 자체 화면에서 MAC 주소로 찾습니다. [Tapo 카메라](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)를 보세요.
+빌드 19부터 DLNA 공유와 휴대폰 공유([이 휴대폰을 네트워크에서 공유](#share-this-phone-on-the-network) 참조)는 서버가 알리는 ID를 보관합니다. 공유가 원래 주소에서 더 이상 응답하지 않으면(공유기가 새 주소를 준 경우, 서버가 다른 포트로 다시 시작된 경우), 폴더 화면에 "네트워크에서 (이름)을(를) 찾는 중"이 표시되고 공유를 지금 응답하는 곳으로 옮깁니다. 비밀번호가 없는 DLNA 서버는 바로 옮기고, 계정명과 비밀번호가 있는 공유는 그 정보가 새 주소로 전송되므로 두 주소를 보여 주는 "새 주소를 사용할까요?" 확인을 거친 뒤에 옮깁니다.
+
+빌드 20부터는 네트워크의 다른 주소에서 다시 찾은 Plex 서버도 바로 옮깁니다. 토큰을 보내기 전에 인증서로 같은 서버임을 증명하기 때문입니다. Tapo 카메라는 자체 화면에서 MAC 주소로 찾습니다. [Tapo 카메라](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)를 보세요.
 
 ### 제한 사항
 
@@ -227,7 +274,9 @@ Immuch360은 SMB(Samba, Windows), WebDAV, 그리고 빌드 19부터 DLNA/UPnP(�
 
 ### 집 밖에서
 
-앱은 서버를 열 때마다 먼저 집 주소를 시도하고, 400 ms 뒤에 집 밖 주소를 시도합니다. 내 서버로 먼저 응답하는 주소를 씁니다. 그것이 집 밖 주소이면 폴더 화면에 "집 밖 주소로 연결됨"이라는 지구본 아이콘이 표시됩니다. 이를 위해서는 Plex에서 원격 접속(설정, 원격 접속)을 켜고 공유기에서 포트를 포워딩해야 합니다. plex.tv 없이는 앱이 Plex의 릴레이를 쓸 수 없으므로, 포트 포워딩이 없는 서버는 집에서만 열리고, 집 밖에서는 화면에 "집 네트워크 밖에서는 Plex 서버에 접속할 수 없습니다. Plex에서 포트 포워딩으로 원격 접속을 켜거나 (설정, 원격 접속), 서버의 공인 주소를 입력하세요."라고 표시됩니다.
+앱은 서버를 열 때마다 먼저 집 주소를 시도하고, 400 ms 뒤에 집 밖 주소를 시도합니다. 내 서버로 먼저 응답하는 주소를 씁니다. 그것이 집 밖 주소이면 폴더 화면에 "집 밖 주소로 연결됨"이라는 지구본 아이콘이 표시됩니다.
+
+이를 위해서는 Plex에서 원격 접속(설정, 원격 접속)을 켜고 공유기에서 포트를 포워딩해야 합니다. plex.tv 없이는 앱이 Plex의 릴레이를 쓸 수 없으므로, 포트 포워딩이 없는 서버는 집에서만 열리고, 집 밖에서는 화면에 "집 네트워크 밖에서는 Plex 서버에 접속할 수 없습니다. Plex에서 포트 포워딩으로 원격 접속을 켜거나 (설정, 원격 접속), 서버의 공인 주소를 입력하세요."라고 표시됩니다.
 
 서버가 알려 주는 주소는 집에서 연결할 때마다 새로 익힙니다. 밖에서 그 주소가 응답하지 않으면(주소가 바뀌는 공유기, 공유기 두 대를 연달아 쓰는 경우) 서버 화면에 직접 입력하세요. 토큰이 더 이상 동작하지 않으면(예를 들어 토큰을 복사해 온 브라우저 세션에서 로그아웃한 경우) 폴더 화면이 그렇다고 알려 주고 "새 토큰 붙여 넣기"를 제안하며, 이것은 서버 화면을 토큰 칸에서 엽니다.
 
@@ -344,15 +393,13 @@ Insta360 카메라는 두 렌즈의 어안 원 두 개를 한 이미지에 나�
 
 빌드 16부터 Immuch360은 서버에 아무것도 설치하지 않고 휴대폰, 태블릿 또는 헤드셋에서 이런 파일을 직접 스티칭합니다.
 
-| 카메라와 파일 | 앱이 하는 일 | 시작 빌드 |
-|---|---|---|
-| Insta360 .insp 사진 | 구 뷰어에 앞서 GPU에서 최대 8192x4096으로 스티칭, 실패하면 CPU에서 더 작은 크기로 | 빌드 16 |
-| 두 렌즈를 한 트랙에 담은 Insta360 .insv 동영상 | 플레이어의 GPU 효과로 스티칭 | 빌드 16 |
-| 렌즈마다 정사각형 트랙이 하나씩인 Insta360 X4, X4 Air, X5, X6 .insv 동영상 | 렌즈마다 하나씩 디코더 두 개를 동시에 쓰고, GPU 합성기가 구로 스티칭 | 빌드 18 |
-| 5.7K 이상의 Insta360 X3 및 이전 모델: 두 파일, `_00_`과 `_10_` | 위와 같으며, 나머지 파일은 첫 파일 옆에서 찾음 | 빌드 18 |
-| GoPro MAX와 MAX 2 .360: 각각 큐브 면 세 개를 담은 트랙 두 개 | 위와 같으며, 겹치는 열을 블렌딩 | 빌드 18 |
-| DJI Osmo 360 .osv: 10비트 정사각형 트랙 두 개 | 위와 같으며, 파일의 Kannala-Brandt 보정값 사용 | 빌드 18 |
-| 듀얼 어안 .dng | 평면으로 표시 | 아직 없음 |
+- **Insta360 .insp 사진** (빌드 16): 구 뷰어에 앞서 GPU에서 최대 8192x4096으로 스티칭, 실패하면 CPU에서 더 작은 크기로.
+- **두 렌즈를 한 트랙에 담은 Insta360 .insv 동영상** (빌드 16): 플레이어의 GPU 효과로 스티칭.
+- **렌즈마다 정사각형 트랙이 하나씩인 Insta360 X4, X4 Air, X5, X6 .insv 동영상** (빌드 18): 렌즈마다 하나씩 디코더 두 개를 동시에 쓰고, GPU 합성기가 구로 스티칭.
+- **5.7K 이상의 Insta360 X3 및 이전 모델: 두 파일, `_00_`과 `_10_`** (빌드 18): 위와 같으며, 나머지 파일은 첫 파일 옆에서 찾음.
+- **GoPro MAX와 MAX 2 .360: 각각 큐브 면 세 개를 담은 트랙 두 개** (빌드 18): 위와 같으며, 겹치는 열을 블렌딩.
+- **DJI Osmo 360 .osv: 10비트 정사각형 트랙 두 개** (빌드 18): 위와 같으며, 파일의 Kannala-Brandt 보정값 사용.
+- **듀얼 어안 .dng** (아직 없음): 평면으로 표시.
 
 ### RAW 파일 보기
 
@@ -466,7 +513,9 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 많은 사람이 자기 360° 사진과 동영상을 보려고 Quest 3를 사지만, 그다음에는 파일을 어디에 둘지, 케이블 없이 어떻게 헤드셋으로 옮길지, 어떤 플레이어를 쓸지 묻게 됩니다. 스토어의 360°와 3D 동영상 플레이어는 유료입니다.
 
-같은 Android 앱이 Quest 3와 3S에서, 그리고 빌드 21부터 Quest 2와 Quest Pro(테스트하지 않음)에서 창으로 실행되며, 라이브러리 전체를 볼 수 있습니다. 360° 버튼은 사진이나 동영상이 사방을 둘러싸고 머리를 돌려 둘러보는 몰입형 보기를 열며, 입체 파일은 진짜 3D로 보입니다(Meta Spatial SDK). 미디어는 Immich 서버, 헤드셋 자체, NAS, 미디어 서버, 휴대폰 또는 Plex 서버에서 오며 그 자리에서 재생됩니다(미디어 서버와 휴대폰은 빌드 19부터, Plex 서버는 빌드 20부터, 헤드셋에서는 아직 확인하지 않음). 빌드 20부터는 창에 Tapo 카메라도 표시됩니다. 무료이며 오픈 소스입니다. Quest 3에서 확인했고, Insta360 X4 8K HEVC 동영상을 쓰는 사용자도 확인했습니다.
+같은 Android 앱이 Quest 3와 3S에서, 그리고 빌드 21부터 Quest 2와 Quest Pro(테스트하지 않음)에서 창으로 실행되며, 라이브러리 전체를 볼 수 있습니다. 360° 버튼은 사진이나 동영상이 사방을 둘러싸고 머리를 돌려 둘러보는 몰입형 보기를 열며, 입체 파일은 진짜 3D로 보입니다(Meta Spatial SDK).
+
+미디어는 Immich 서버, 헤드셋 자체, NAS, 미디어 서버, 휴대폰 또는 Plex 서버에서 오며 그 자리에서 재생됩니다(미디어 서버와 휴대폰은 빌드 19부터, Plex 서버는 빌드 20부터, 헤드셋에서는 아직 확인하지 않음). 빌드 20부터는 창에 Tapo 카메라도 표시됩니다. 무료이며 오픈 소스입니다. Quest 3에서 확인했고, Insta360 X4 8K HEVC 동영상을 쓰는 사용자도 확인했습니다.
 
 ### 몰입형 보기 열기
 
@@ -479,17 +528,20 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 | 동작 | 컨트롤러 | 손 |
 |---|---|---|
-| 앱으로 돌아가기 | B 또는 Y | 정보 패널의 뒤로 버튼 |
-| 동영상 재생 또는 일시 정지 | 정보 패널이 숨겨져 있을 때 트리거 | 정보 패널의 재생 또는 일시 정지 버튼 |
+| 앱으로 돌아가기 | B 또는 Y | 뒤로 버튼 |
+| 동영상 재생 또는 일시 정지 | 정보 패널이 숨겨져 있을 때 트리거 | 재생 또는 일시 정지 버튼 |
 | 정보 패널 보이기 또는 숨기기 | A, X, 그립 또는 메뉴 | 메뉴 제스처, 또는 패널이 숨겨져 있을 때 핀치 |
-| 머리를 돌리지 않고 뒤를 보도록 시점 돌리기(빌드 17부터) | 오른쪽 썸스틱 왼쪽 또는 오른쪽: 한 번에 30°, 누르고 있으면 계속 돌아감(한 줄 오버레이에 각도 표시) | 정보 패널의 회전 버튼(90°) |
-| 이전 또는 다음 미디어 | 왼쪽 썸스틱 왼쪽 또는 오른쪽(빌드 17 전에는 양쪽 썸스틱. 빌드 16부터 한 줄 오버레이에 미디어 이름이 나오고 정보 패널은 숨겨진 채로 있음) | 정보 패널의 이전과 다음 버튼 |
-| 동영상에서 10초 뒤로 또는 앞으로 | 썸스틱 아래 또는 위(빌드 16부터 한 줄 오버레이에 시간이 나오고 정보 패널은 숨겨진 채로 있음) | 두 건너뛰기 버튼, 또는 정보 패널의 시간 막대 드래그 |
-| 이미지를 90° 돌리기 | 사진에서는 썸스틱 아래 또는 위(빌드 16부터 한 줄 오버레이에 각도 표시), 동영상에서는 정보 패널의 회전 버튼 | 정보 패널의 회전 버튼 |
-| 3D 배치 바꾸기(모노, 위아래, 좌우) | 정보 패널의 3D 버튼 | 정보 패널의 3D 버튼 |
-| 전체 구 또는 반구(VR180) | 정보 패널의 360°/180° 버튼 | 정보 패널의 360°/180° 버튼 |
+| 시점 돌리기(빌드 17부터) | 오른쪽 썸스틱 왼쪽 또는 오른쪽, 한 번에 30° | 회전 버튼(90°) |
+| 이전 또는 다음 미디어 | 왼쪽 썸스틱 왼쪽 또는 오른쪽 | 이전과 다음 버튼 |
+| 동영상에서 10초 뒤로 또는 앞으로 | 썸스틱 아래 또는 위 | 두 건너뛰기 버튼, 또는 시간 막대 드래그 |
+| 이미지를 90° 돌리기 | 사진에서는 썸스틱 아래 또는 위, 동영상에서는 회전 버튼 | 회전 버튼 |
+| 3D 배치 바꾸기(모노, 위아래, 좌우) | 3D 버튼 | 3D 버튼 |
+| 전체 구 또는 반구(VR180) | 360°/180° 버튼 | 360°/180° 버튼 |
 
-컨트롤러로도 정보 패널의 버튼과 시간 막대를 쓸 수 있습니다. 레이로 가리키고 트리거를 누르세요.
+이 표의 버튼과 시간 막대는 정보 패널에 있는 것입니다. 컨트롤러로도 쓸 수 있습니다. 레이로 가리키고 트리거를 누르세요.
+
+- **시점 돌리기**: 머리를 돌리지 않고 뒤를 보기 위한 것입니다. 오른쪽 썸스틱을 누르고 있으면 계속 돌아가고, 한 줄 오버레이에 각도가 표시됩니다.
+- **한 줄 오버레이**: 빌드 16부터 썸스틱으로 탐색하거나, 사진을 돌리거나, 이전과 다음으로 넘어가면 한 줄 오버레이(시간, 각도 또는 미디어 이름)가 나오고 정보 패널은 숨겨진 채로 있습니다. 빌드 17 전에는 양쪽 썸스틱 모두 이전 또는 다음 미디어로 넘어갔습니다.
 
 ### 정보 패널, 이전과 다음
 
@@ -497,7 +549,9 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 이전과 다음은 몰입형 보기를 떠나지 않고, 들어온 곳의 360° 미디어 사이를 이동합니다. 타임라인, 360° 목록(필터를 적용한 그대로), 앨범, 네트워크 공유의 폴더, 또는 헤드셋 자체 미디어(이 장치에서)입니다. 평면 사진과 동영상은 건너뜁니다. 타임라인, 앨범 또는 360° 목록에서 들어왔다가 앱으로 돌아가면 보고 있던 미디어에 위치하며(공유 폴더 화면은 처음 연 파일에 그대로 머묾), 몰입형 보기를 처음 연 동영상은 멈춘 곳에서 이어서 재생됩니다.
 
-빌드 17부터는 대부분의 헤드셋 앱에서처럼 오른쪽 썸스틱이 시점을 돌립니다. 한 번 밀면 30° 돌고, 누르고 있으면 계속 돌아가므로, 머리나 의자를 돌리지 않아도 뒤에 있는 것이 앞으로 옵니다. 이전과 다음은 왼쪽 썸스틱에 있습니다. 빌드 16부터는 헤드셋 사용자의 의견에 따라, 썸스틱으로 탐색, 회전, 이전/다음을 하면 정보 패널을 띄우는 대신 1.5초 뒤에 사라지는 한 줄 오버레이(시간, 각도 또는 미디어 제목)를 보여 줍니다. 패널은 여전히 A, X, 그립 또는 메뉴 버튼으로 나타납니다. 같은 빌드에서 컨트롤러가 절전되거나, 깨어나거나, 손 추적으로 넘어갈 때도 패널 전환이 계속 동작하며, 이런 전환을 로그에 남깁니다. [로그](#logs)를 보세요.
+빌드 17부터는 대부분의 헤드셋 앱에서처럼 오른쪽 썸스틱이 시점을 돌립니다. 한 번 밀면 30° 돌고, 누르고 있으면 계속 돌아가므로, 머리나 의자를 돌리지 않아도 뒤에 있는 것이 앞으로 옵니다. 이전과 다음은 왼쪽 썸스틱에 있습니다.
+
+빌드 16부터는 헤드셋 사용자의 의견에 따라, 썸스틱으로 탐색, 회전, 이전/다음을 하면 정보 패널을 띄우는 대신 1.5초 뒤에 사라지는 한 줄 오버레이(시간, 각도 또는 미디어 제목)를 보여 줍니다. 패널은 여전히 A, X, 그립 또는 메뉴 버튼으로 나타납니다. 같은 빌드에서 컨트롤러가 절전되거나, 깨어나거나, 손 추적으로 넘어갈 때도 패널 전환이 계속 동작하며, 이런 전환을 로그에 남깁니다. [로그](#logs)를 보세요.
 
 "3D로 보기"로 연 Apple 공간 사진은 구에 입혀지지 않고 눈앞에 떠 있습니다. [Apple 공간 사진과 동영상](#apple-spatial-photos-and-videos)을 보세요.
 
@@ -507,10 +561,15 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 위아래와 좌우 3D 배치는 360°든 VR180이든 3D로 보이며, 각 눈이 프레임의 자기 절반을 받습니다. 배치는 파일이 선언하면(동영상) 그것을 쓰고, 그렇지 않으면 모양으로 추측합니다(정사각형: 위아래, 4:1: 좌우). 틀렸다면 정보 패널의 3D 버튼을 쓰세요.
 
-| 헤드셋에서 본 360° 사진 | 헤드셋에서 본 360° 동영상 | 헤드셋에서 본 3D 360° 동영상 |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="Quest 3에서 사방을 둘러싼 360° 사진과 정보 패널: 배치, 360°, 뒤로 버튼"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="Quest 3에서 재생 중인 호수의 360° 동영상과 정보 패널: 배치, 360°, 일시 정지, 뒤로 버튼"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Quest 3에서 본 입체 360° 동영상, 정보 패널에 3D, 위아래 표시"> |
-| 정보 패널(배치, 360°/180°, 뒤로)이 있는 사진의 몰입형 보기 | 일시 정지 버튼과 함께 재생 중인 동영상 | 각 눈에 맞게 제공되는 위아래 입체 동영상(Kandao Obsidian 샘플) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Quest 3에서 사방을 둘러싼 360° 사진과 정보 패널: 배치, 360°, 뒤로 버튼">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Quest 3에서 재생 중인 호수의 360° 동영상과 정보 패널: 배치, 360°, 일시 정지, 뒤로 버튼">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Quest 3에서 본 입체 360° 동영상, 정보 패널에 3D, 위아래 표시">
+</p>
+
+- **헤드셋에서 본 360° 사진**: 정보 패널(배치, 360°/180°, 뒤로)이 있는 사진의 몰입형 보기.
+- **헤드셋에서 본 360° 동영상**: 일시 정지 버튼과 함께 재생 중인 동영상.
+- **헤드셋에서 본 3D 360° 동영상**: 각 눈에 맞게 제공되는 위아래 입체 동영상(Kandao Obsidian 샘플).
 
 이 캡처는 빌드 14 이전에 앱을 프랑스어로 설정한 상태에서 찍었습니다. 지금 패널에는 10초 건너뛰기 버튼 두 개 사이의 시간 막대, 이전과 다음, 회전도 있습니다.
 
@@ -598,7 +657,9 @@ Immuch360은 360° 사진의 썸네일에 360° 배지를 붙이고(네트워크
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## 동영상 정보, 디코더, 그리고 동영상이 끊기는 이유
 
-사람들은 Quest 3가 어떤 코덱, 크기, 비트레이트를 재생하는지, 그리고 5.7K 내보내기 파일이 휴대폰에서는 재생되는데 헤드셋에서는 왜 끊기는지 묻습니다. 답은 하드웨어 디코더에 있습니다. Quest 3(XR2 Gen 2)의 H.264 디코더는 약 4096x2304가 한계이므로, 5760x2880 H.264 동영상(레벨 6.0, 약 200 Mbit/s, 일반적인 Insta360 내보내기 파일)은 헤드셋에서 블록 깨짐과 함께 약 17 fps로 디코딩되지만, 같은 파일이 휴대폰에서는 잘 재생됩니다. 같은 동영상을 HEVC(H.265)로 만들면 헤드셋에서 잘 재생됩니다. Insta360 X4 8K HEVC 동영상(7680x3840, 29.97 fps, 210 Mbit/s, Main 프로파일 레벨 6.1, 8비트)은 몰입형 보기에서 원래 해상도 그대로, 트랜스코딩 없이 부드럽게 재생됩니다(Quest 3 사용자가 보고함).
+사람들은 Quest 3가 어떤 코덱, 크기, 비트레이트를 재생하는지, 그리고 5.7K 내보내기 파일이 휴대폰에서는 재생되는데 헤드셋에서는 왜 끊기는지 묻습니다. 답은 하드웨어 디코더에 있습니다. Quest 3(XR2 Gen 2)의 H.264 디코더는 약 4096x2304가 한계이므로, 5760x2880 H.264 동영상(레벨 6.0, 약 200 Mbit/s, 일반적인 Insta360 내보내기 파일)은 헤드셋에서 블록 깨짐과 함께 약 17 fps로 디코딩되지만, 같은 파일이 휴대폰에서는 잘 재생됩니다.
+
+같은 동영상을 HEVC(H.265)로 만들면 헤드셋에서 잘 재생됩니다. Insta360 X4 8K HEVC 동영상(7680x3840, 29.97 fps, 210 Mbit/s, Main 프로파일 레벨 6.1, 8비트)은 몰입형 보기에서 원래 해상도 그대로, 트랜스코딩 없이 부드럽게 재생됩니다(Quest 3 사용자가 보고함).
 
 Immich 앱에는 "원본 동영상 강제 사용" 스위치 하나만 있고, 코덱만 보여 줍니다. Immuch360은 동영상이 어떤 것인지와 기기가 무엇을 디코딩하는지 보여 주고, 재생할 수 있는 파일을 고릅니다.
 
@@ -623,7 +684,9 @@ Immich 앱에는 "원본 동영상 강제 사용" 스위치 하나만 있고, �
 1. 설정, 보기 옵션, 그다음 동영상을 엽니다.
 2. "동영상 소스"("서버에 트랜스코딩된 사본이 있을 때 재생할 파일") 아래에서 "이 기기에서 디코딩할 수 있을 때 원본", "항상 원본" 또는 "항상 트랜스코딩된 스트림"을 고릅니다.
 
-빌드 15부터 이 선택은 서버의 모든 동영상에 적용됩니다. 평면 플레이어, 360°와 Spatial 플레이어, Quest 몰입형 보기입니다. 하나를 고르기 전까지 휴대폰은 예전 "원본 동영상 강제 사용" 스위치의 값을 그대로 따르고(기본값은 꺼짐: 트랜스코딩된 스트림이며, 서버가 트랜스코딩하지 않았다면 원본 자체), Quest는 헤드셋이 디코딩할 수 있으면 원본을 재생합니다. 검사는 파일에서 코덱, 크기, 프레임 속도를 읽어 하드웨어 디코더와 비교합니다(Quest 3의 H.264는 측정값인 4096x2304로 제한). 원본을 디코딩할 수 없는 플레이어는 "트랜스코딩된 스트림 재생 중: 원본(코덱과 크기)이 이 기기의 디코딩 범위를 넘습니다"라는 메시지와 함께 트랜스코딩된 스트림으로 바꿉니다.
+빌드 15부터 이 선택은 서버의 모든 동영상에 적용됩니다. 평면 플레이어, 360°와 Spatial 플레이어, Quest 몰입형 보기입니다. 하나를 고르기 전까지 휴대폰은 예전 "원본 동영상 강제 사용" 스위치의 값을 그대로 따르고(기본값은 꺼짐: 트랜스코딩된 스트림이며, 서버가 트랜스코딩하지 않았다면 원본 자체), Quest는 헤드셋이 디코딩할 수 있으면 원본을 재생합니다.
+
+검사는 파일에서 코덱, 크기, 프레임 속도를 읽어 하드웨어 디코더와 비교합니다(Quest 3의 H.264는 측정값인 4096x2304로 제한). 원본을 디코딩할 수 없는 플레이어는 "트랜스코딩된 스트림 재생 중: 원본(코덱과 크기)이 이 기기의 디코딩 범위를 넘습니다"라는 메시지와 함께 트랜스코딩된 스트림으로 바꿉니다.
 
 헤드셋에서 몰입형 보기는 원본으로 시작하고, 원본이 디코더 한계를 넘으면 첫 프레임에서 서버의 트랜스코딩된 스트림으로 바꾸며 정보 패널에 그렇게 알립니다. 트랜스코딩된 스트림이 없거나, 그것도 너무 크거나, 파일이 헤드셋이나 네트워크 공유에서 온 것이면 정보 패널에 10초 동안 그 사실과 무엇을 바꿔야 하는지 표시합니다. Horizon Store에 제출한 빌드 14는 4096x2304를 넘는 H.264만 검사하고, 그런 경우 같은 방식으로 서버의 재생 스트림을 시도합니다.
 
@@ -661,87 +724,184 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 현재 빌드인 빌드 21(버전 3.3.0-rc.0, 빌드 번호 3030019)은 Immich 3.3.0-rc.0(Immich `main`, 아직 안정 릴리스가 아님)을 기반으로 합니다. 빌드 19는 Immich 3.2 서버로 테스트했고, 빌드 20과 21은 앱이 서버에 요청하는 내용을 전혀 바꾸지 않습니다. 문제는 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려 주세요. Immich 자체의 전체 문서는 [immich.app](https://immich.app)을 보세요.
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich 앱 및 다른 앱과의 비교
 
 ### 이 포크가 있는 이유, 표 하나로
 
-| | Immich 모바일 앱 | Immuch360 | 상태 |
-|---|:---:|:---:|---|
-| 둘러볼 수 있는 구 형태의 360° 사진(드래그, 핀치, 두 번 탭, 관성, 카메라의 초기 시점, 부분 파노라마) | ❌ 납작한 띠 | ✅ | Galaxy S24+와 iPhone 14에서 테스트 |
-| 자이로스코프: 휴대폰을 움직여 둘러보기 | ❌ | ✅ | Galaxy S24+와 iPhone 14에서 테스트 |
-| 소리, 탐색, 오디오 트랙 선택, 버퍼링 표시를 갖춘 구형 플레이어의 360° 동영상 | ❌ 평면 동영상 | ✅ Android와 iOS(iOS는 아직 시간 막대 없음) | Galaxy S24+와 iPhone 14에서 테스트 |
-| 3D(입체) 360° 사진과 동영상 | ❌ 두 겹 이미지 | ✅ 휴대폰은 왼쪽 눈, Quest는 진짜 3D | 실제 3D 360° 샘플(VRTogether, Vuze, Kandao)과 3D 사진 한 장으로 Galaxy S24+와 Quest 3에서 테스트. 다른 카메라 보고 환영 |
-| VR180(반구) 사진과 동영상 | ❌ 구 전체로 늘어남 | ✅ 반구, 360°/180° 버튼 | 합성 미디어로 Android 에뮬레이터와 Galaxy S24+에서 테스트. 기기 의견 환영 |
-| Apple 공간 사진(HEIC 스테레오 쌍)과 공간 동영상(MV-HEVC) | ❌ 평면 사진이나 동영상, 공간 미디어라는 표시 없음 | ✅ 빌드 19부터: Quest에서 사진을 3D로, 그 밖에서는 한쪽 눈과 정보 줄 | 인식 기능은 Apple 이미지 라이브러리로 만든 샘플 사진과 합성 파일로 확인. 헤드셋 보기와 실제 iPhone 파일은 빌드 19의 기기 테스트 대상 |
-| 머리 추적, 시간 막대, 이전과 다음, 회전을 갖춘 Meta Quest 몰입형 보기 | ❌ | ✅ 같은 앱, 헤드셋 빌드나 휴대폰 APK로 | Quest 3에서 테스트(빌드 14의 조작, 사용자 의견에 따라 빌드 16에서 조정), Insta360 X4 8K HEVC 동영상을 쓰는 사용자도 테스트 |
-| 썸네일의 360° 배지, RAW 파일과 필터(기간, 출처, 종류, 카메라)를 갖춘 360° 목록 | ❌ | ✅ 필터는 빌드 18부터 | 완료 |
-| 서버가 표시하지 않는 파일을 위한 "360°로 보기" | ❌ | ✅ 휴대폰에 기억 | 완료 |
-| Spatial 2.5D: 입체 동영상으로 평면 화면에 깊이 | ❌ | ✅ 실험적, 휴대폰과 태블릿 | Galaxy S24+에서 테스트. iPhone 의견 환영 |
-| 서버 없이 기기 자체 갤러리로 사용 | ❌ 로그인 필수 | ✅ | Galaxy S24+, Quest 3, Android 에뮬레이터에서 테스트 |
-| 네트워크에서 찾아 실시간으로 재생하는 SMB와 WebDAV 공유, 다운로드 없음 | ❌ | ✅ 모든 뷰어, 휴대폰과 Quest | Galaxy S24+와 Quest 3에서 Freebox Server(SMB)로, Android 에뮬레이터에서 Samba와 WebDAV 테스트 서버로 테스트. 다른 NAS와 WebDAV 의견 환영 |
-| 공유 형식으로서의 DLNA 미디어 서버 | ❌ | ✅ 빌드 19부터 | Docker에서 minidlna와 Gerbera로 확인. Plex, Jellyfin, NAS, Freebox Server, iPhone, Quest는 빌드 19의 기기 테스트 대상 |
-| 공유의 파일을 Immich로 보내기, 직접 보낸 기기 파일을 백업된 것으로 집계 | ❌ 기기 파일만 | ✅ 빌드 15부터 | Android 에뮬레이터에서 Samba 테스트 서버와 Immich 3.2 서버로 테스트 |
-| 헤드셋을 위해 이 휴대폰을 네트워크에서 공유 | ❌ | ✅ 빌드 19부터, Android와 iOS | 컴퓨터에서 단위 테스트와 헤드셋 WebDAV 클라이언트로 종단 간 테스트. Quest에 제공하는 휴대폰과 iPhone 쪽은 빌드 19의 기기 테스트 대상 |
-| plex.tv 없이 원본 파일로 재생하는 Plex Media Server 라이브러리, 집에서도 밖에서도 | ❌ | ✅ 빌드 20부터, 모든 뷰어, 휴대폰, 태블릿, Quest, TV에서 | 컴퓨터에서 실제 Plex Media Server 1.42.1을 상대로 확인(연결, 폴더, 바이트 범위, 썸네일, 집 밖 주소). 아직 기기에서 확인하지 않음 |
-| Tapo 카메라: 실시간 화면, 그리고 원할 때 Immich로 보내는 메모리 카드의 녹화 | ❌ | ✅ 빌드 20부터: 녹화는 모든 곳에서, 실시간은 Android, Android TV, Quest에서 | 시뮬레이션한 카메라로 확인. 아직 실제 카메라로 확인하지 않음 |
-| 리모컨으로 조작하는 Android TV와 Google TV, 같은 APK로 | ❌ TV 앱이 아님 | ✅ 빌드 20부터 | 자동화된 테스트로 확인. 아직 TV에서 확인하지 않음 |
-| Insta360 RAW .insp 사진과 한 트랙 .insv 동영상 | ❌ 평면 | ✅ 빌드 16부터 | 사진은 X3 파일의 Insta360 Studio 내보내기와 비교 확인, 동영상은 저해상도 X3 파일로 Android 에뮬레이터에서 확인. 아직 iPhone에서 실행하지 않음 |
-| 렌즈마다 트랙이나 파일이 하나씩인 RAW 동영상(Insta360 X4, X4 Air, X5, X6, X3 두 파일, GoPro .360, DJI .osv) | ❌ 평면 또는 잘못된 표시 | ✅ 빌드 18부터 | 파서와 스티칭은 실제 X4, X3 두 파일, GoPro MAX, Osmo 360 파일로 확인. 재생은 빌드 18과 19의 기기 테스트 대상 |
-| 듀얼 어안 .dng | ❌ 평면 | ❌ 아직 없음 | 계획됨 |
-| 서버 동영상: 기기가 디코딩할 수 있으면 원본, 아니면 트랜스코딩된 스트림. 기기의 동영상 디코더 목록 | ❌ "원본 동영상 강제 사용" 스위치 하나 | ✅ 빌드 15부터 | Android 에뮬레이터에서 테스트. Quest 3의 H.264 한계는 헤드셋에서 측정 |
-| 동영상의 기술 정보: 비트레이트, 영상, 프로파일, 이 기기에서 디코딩할 수 있는지 | ❌ 코덱만 | ✅ 빌드 18부터 | 완료 |
-| 서버, 휴대폰 또는 NAS의 평면, 360°, 3D, VR180 동영상을 위한 무료 플레이어 | ❌ 평면만 | ✅ (Quest 3 스토어의 플레이어는 유료) | |
-| 같은 서버, 같은 계정, 공식 앱 옆에 설치 | | ✅ | |
+| | Immich 모바일 앱 | Immuch360 |
+|---|:---:|:---:|
+| 둘러볼 수 있는 구 형태의 360° 사진(드래그, 핀치, 두 번 탭, 관성, 카메라의 초기 시점, 부분 파노라마) | ❌ 납작한 띠 | ✅ |
+| 자이로스코프: 휴대폰을 움직여 둘러보기 | ❌ | ✅ |
+| 소리, 탐색, 오디오 트랙 선택, 버퍼링 표시를 갖춘 구형 플레이어의 360° 동영상 | ❌ 평면 동영상 | ✅ Android와 iOS(iOS는 아직 시간 막대 없음) |
+| 3D(입체) 360° 사진과 동영상 | ❌ 두 겹 이미지 | ✅ 휴대폰은 왼쪽 눈, Quest는 진짜 3D |
+| VR180(반구) 사진과 동영상 | ❌ 구 전체로 늘어남 | ✅ 반구, 360°/180° 버튼 |
+| Apple 공간 사진(HEIC 스테레오 쌍)과 공간 동영상(MV-HEVC) | ❌ 평면 사진이나 동영상, 공간 미디어라는 표시 없음 | ✅ 빌드 19부터: Quest에서 사진을 3D로, 그 밖에서는 한쪽 눈과 정보 줄 |
+| 머리 추적, 시간 막대, 이전과 다음, 회전을 갖춘 Meta Quest 몰입형 보기 | ❌ | ✅ 같은 앱, 헤드셋 빌드나 휴대폰 APK로 |
+| 썸네일의 360° 배지, RAW 파일과 필터(기간, 출처, 종류, 카메라)를 갖춘 360° 목록 | ❌ | ✅ 필터는 빌드 18부터 |
+| 서버가 표시하지 않는 파일을 위한 "360°로 보기" | ❌ | ✅ 휴대폰에 기억 |
+| Spatial 2.5D: 입체 동영상으로 평면 화면에 깊이 | ❌ | ✅ 실험적, 휴대폰과 태블릿 |
+| 서버 없이 기기 자체 갤러리로 사용 | ❌ 로그인 필수 | ✅ |
+| 네트워크에서 찾아 실시간으로 재생하는 SMB와 WebDAV 공유, 다운로드 없음 | ❌ | ✅ 모든 뷰어, 휴대폰과 Quest |
+| 공유 형식으로서의 DLNA 미디어 서버 | ❌ | ✅ 빌드 19부터 |
+| 공유의 파일을 Immich로 보내기, 직접 보낸 기기 파일을 백업된 것으로 집계 | ❌ 기기 파일만 | ✅ 빌드 15부터 |
+| 헤드셋을 위해 이 휴대폰을 네트워크에서 공유 | ❌ | ✅ 빌드 19부터, Android와 iOS |
+| plex.tv 없이 원본 파일로 재생하는 Plex Media Server 라이브러리, 집에서도 밖에서도 | ❌ | ✅ 빌드 20부터, 모든 뷰어, 휴대폰, 태블릿, Quest, TV에서 |
+| Tapo 카메라: 실시간 화면, 그리고 원할 때 Immich로 보내는 메모리 카드의 녹화 | ❌ | ✅ 빌드 20부터: 녹화는 모든 곳에서, 실시간은 Android, Android TV, Quest에서 |
+| 리모컨으로 조작하는 Android TV와 Google TV, 같은 APK로 | ❌ TV 앱이 아님 | ✅ 빌드 20부터 |
+| Insta360 RAW .insp 사진과 한 트랙 .insv 동영상 | ❌ 평면 | ✅ 빌드 16부터 |
+| 렌즈마다 트랙이나 파일이 하나씩인 RAW 동영상(Insta360 X4, X4 Air, X5, X6, X3 두 파일, GoPro .360, DJI .osv) | ❌ 평면 또는 잘못된 표시 | ✅ 빌드 18부터 |
+| 듀얼 어안 .dng | ❌ 평면 | ❌ 아직 없음 |
+| 서버 동영상: 기기가 디코딩할 수 있으면 원본, 아니면 트랜스코딩된 스트림. 기기의 동영상 디코더 목록 | ❌ "원본 동영상 강제 사용" 스위치 하나 | ✅ 빌드 15부터 |
+| 동영상의 기술 정보: 비트레이트, 영상, 프로파일, 이 기기에서 디코딩할 수 있는지 | ❌ 코덱만 | ✅ 빌드 18부터 |
+| 서버, 휴대폰 또는 NAS의 평면, 360°, 3D, VR180 동영상을 위한 무료 플레이어 | ❌ 평면만 | ✅ (Quest 3 스토어의 플레이어는 유료) |
+| 같은 서버, 같은 계정, 공식 앱 옆에 설치 | | ✅ |
+
+<details>
+<summary><b>각 줄의 상태</b>: 어떻게 테스트했는지</summary>
+
+- **구 형태의 360° 사진**: Galaxy S24+와 iPhone 14에서 테스트.
+- **자이로스코프**: Galaxy S24+와 iPhone 14에서 테스트.
+- **360° 동영상**: Galaxy S24+와 iPhone 14에서 테스트.
+- **3D 360° 사진과 동영상**: 실제 3D 360° 샘플(VRTogether, Vuze, Kandao)과 3D 사진 한 장으로 Galaxy S24+와 Quest 3에서 테스트. 다른 카메라 보고 환영.
+- **VR180**: 합성 미디어로 Android 에뮬레이터와 Galaxy S24+에서 테스트. 기기 의견 환영.
+- **Apple 공간 사진과 동영상**: 인식 기능은 Apple 이미지 라이브러리로 만든 샘플 사진과 합성 파일로 확인. 헤드셋 보기와 실제 iPhone 파일은 빌드 19의 기기 테스트 대상.
+- **Meta Quest 몰입형 보기**: Quest 3에서 테스트(빌드 14의 조작, 사용자 의견에 따라 빌드 16에서 조정), Insta360 X4 8K HEVC 동영상을 쓰는 사용자도 테스트.
+- **360° 배지와 360° 목록**: 완료.
+- **360°로 보기**: 완료.
+- **Spatial 2.5D**: Galaxy S24+에서 테스트. iPhone 의견 환영.
+- **서버 없이**: Galaxy S24+, Quest 3, Android 에뮬레이터에서 테스트.
+- **SMB와 WebDAV 공유**: Galaxy S24+와 Quest 3에서 Freebox Server(SMB)로, Android 에뮬레이터에서 Samba와 WebDAV 테스트 서버로 테스트. 다른 NAS와 WebDAV 의견 환영.
+- **DLNA 미디어 서버**: Docker에서 minidlna와 Gerbera로 확인. Plex, Jellyfin, NAS, Freebox Server, iPhone, Quest는 빌드 19의 기기 테스트 대상.
+- **공유의 파일을 Immich로 보내기**: Android 에뮬레이터에서 Samba 테스트 서버와 Immich 3.2 서버로 테스트.
+- **이 휴대폰을 네트워크에서 공유**: 컴퓨터에서 단위 테스트와 헤드셋 WebDAV 클라이언트로 종단 간 테스트. Quest에 제공하는 휴대폰과 iPhone 쪽은 빌드 19의 기기 테스트 대상.
+- **Plex Media Server**: 컴퓨터에서 실제 Plex Media Server 1.42.1을 상대로 확인(연결, 폴더, 바이트 범위, 썸네일, 집 밖 주소). 아직 기기에서 확인하지 않음.
+- **Tapo 카메라**: 시뮬레이션한 카메라로 확인. 아직 실제 카메라로 확인하지 않음.
+- **Android TV와 Google TV**: 자동화된 테스트로 확인. 아직 TV에서 확인하지 않음.
+- **Insta360 RAW .insp 사진과 한 트랙 .insv 동영상**: 사진은 X3 파일의 Insta360 Studio 내보내기와 비교 확인, 동영상은 저해상도 X3 파일로 Android 에뮬레이터에서 확인. 아직 iPhone에서 실행하지 않음.
+- **렌즈마다 트랙이나 파일이 하나씩인 RAW 동영상**: 파서와 스티칭은 실제 X4, X3 두 파일, GoPro MAX, Osmo 360 파일로 확인. 재생은 빌드 18과 19의 기기 테스트 대상.
+- **듀얼 어안 .dng**: 계획됨.
+- **서버 동영상과 동영상 디코더**: Android 에뮬레이터에서 테스트. Quest 3의 H.264 한계는 헤드셋에서 측정.
+- **동영상의 기술 정보**: 완료.
+
+</details>
 
 ### 이런 용도로 사람들이 쓰는 다른 앱
 
-| 사람들이 쓰는 것 | 부딪히는 문제 | Immuch360이 하는 일 |
-|---|---|---|
-| Immich 웹 앱 | 360° 사진을 구 형태로 보여 주지만, RAW .insp를 완성된 파노라마로 여겨 두 원을 구에 감싸 버립니다. VR 보기는 아직 요청 단계입니다([discussion #14768](https://github.com/immich-app/immich/discussions/14768)) | 기기에서 RAW 파일을 스티칭하고, Quest에서 몰입형 보기를 엽니다 |
-| Insta360 앱 또는 Studio | 보기 전에 카드의 RAW 파일을 360° 이미지로 바꿀 때 필요 | RAW .insp와 .insv 파일, 그리고 GoPro .360과 DJI .osv 파일을 바로 엽니다 |
-| Plex, Jellyfin, Synology Photos | 각 포럼의 글에서 보듯 360° 사진과 동영상이 평면으로 보이거나 인식되지 않음(Plex 요청은 2017년부터 열려 있음) | 빌드 20부터 Plex 라이브러리 자체를 읽거나, 같은 폴더를 SMB, WebDAV 또는 DLNA로 읽어 서버에서 아무것도 바꾸지 않고 구 형태로 재생합니다 |
-| Tapo 앱 | TP-Link 계정으로 로그인하는 별도의 앱이며, 클립이 사진과 따로 있음 | 사진 옆에 카메라를 보여 주고, 내 네트워크에서만 카메라와 통신하며, 클립을 Immich로 보낼 수 있는 동영상으로 보관합니다(빌드 20부터) |
-| TV의 Immich 모바일 앱 | TV 앱이 아님: 리모컨이 아니라 마우스로 동작한다는 사용자 보고가 있음 | 리모컨에 맞춘 같은 앱(빌드 20부터) |
-| 헤드셋으로 파일 복사 | 보기 전에 파일마다 케이블로 복사 | Immich, NAS, 미디어 서버 또는 휴대폰에서 그 자리에서 재생합니다 |
-| Quest 스토어의 360°와 3D 플레이어 | 유료 | 무료이며 오픈 소스(AGPL) |
+- **Immich 웹 앱**
+  - 부딪히는 문제: 360° 사진을 구 형태로 보여 주지만, RAW .insp를 완성된 파노라마로 여겨 두 원을 구에 감싸 버립니다. VR 보기는 아직 요청 단계입니다([discussion #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Immuch360이 하는 일: 기기에서 RAW 파일을 스티칭하고, Quest에서 몰입형 보기를 엽니다.
+- **Insta360 앱 또는 Studio**
+  - 부딪히는 문제: 보기 전에 카드의 RAW 파일을 360° 이미지로 바꿀 때 필요.
+  - Immuch360이 하는 일: RAW .insp와 .insv 파일, 그리고 GoPro .360과 DJI .osv 파일을 바로 엽니다.
+- **Plex, Jellyfin, Synology Photos**
+  - 부딪히는 문제: 각 포럼의 글에서 보듯 360° 사진과 동영상이 평면으로 보이거나 인식되지 않음(Plex 요청은 2017년부터 열려 있음).
+  - Immuch360이 하는 일: 빌드 20부터 Plex 라이브러리 자체를 읽거나, 같은 폴더를 SMB, WebDAV 또는 DLNA로 읽어 서버에서 아무것도 바꾸지 않고 구 형태로 재생합니다.
+- **Tapo 앱**
+  - 부딪히는 문제: TP-Link 계정으로 로그인하는 별도의 앱이며, 클립이 사진과 따로 있음.
+  - Immuch360이 하는 일: 사진 옆에 카메라를 보여 주고, 내 네트워크에서만 카메라와 통신하며, 클립을 Immich로 보낼 수 있는 동영상으로 보관합니다(빌드 20부터).
+- **TV의 Immich 모바일 앱**
+  - 부딪히는 문제: TV 앱이 아님: 리모컨이 아니라 마우스로 동작한다는 사용자 보고가 있음.
+  - Immuch360이 하는 일: 리모컨에 맞춘 같은 앱(빌드 20부터).
+- **헤드셋으로 파일 복사**
+  - 부딪히는 문제: 보기 전에 파일마다 케이블로 복사.
+  - Immuch360이 하는 일: Immich, NAS, 미디어 서버 또는 휴대폰에서 그 자리에서 재생합니다.
+- **Quest 스토어의 360°와 3D 플레이어**
+  - 부딪히는 문제: 유료.
+  - Immuch360이 하는 일: 무료이며 오픈 소스(AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## 플랫폼별 형식과 출처
 
-Immuch360은 갤러리이면서 무료 미디어 플레이어이기도 합니다. 공식 앱이 재생하지 못하는 것을 두 번째 표의 출처에서 가져와 파일에 맞는 플레이어로 재생합니다.
+Immuch360은 갤러리이면서 무료 미디어 플레이어이기도 합니다. 공식 앱이 재생하지 못하는 것을 두 번째 목록의 출처에서 가져와 파일에 맞는 플레이어로 재생합니다.
 
-| 무엇 | Android 휴대폰 | iPhone, iPad | Meta Quest | Android TV, Google TV(빌드 20부터) |
-|---|---|---|---|---|
-| 평면 동영상(MP4, MOV, MKV, 기기가 디코딩하는 것) | Immich 플레이어, 네트워크 공유에는 네이티브 플레이어 | 같음, 단 iOS가 열지 못하는 공유의 MKV와 AVI 파일은 제외(서버에 있으면 트랜스코딩되어 재생) | 창에서 | 휴대폰과 같음. OK로 일시 정지, 왼쪽과 오른쪽으로 10초 건너뛰기 |
-| 360° 사진 | 구 뷰어, 자이로스코프 | 같음 | 몰입형, 사방을 둘러쌈 | 화살표로 돌리고 채널 키로 확대/축소하는 구 뷰어 |
-| 360° 동영상 | 구에 입힌 네이티브 Media3 플레이어, 자이로스코프, 탐색, 오디오 트랙 선택, 버퍼링 표시 | 구에 입힌 네이티브 SceneKit 플레이어, 자이로스코프, 오디오 트랙 선택, 버퍼링 표시. 재생과 일시 정지만 있고 시간 막대는 아직 없음 | 몰입형, 입체 파일은 진짜 3D, 10초 건너뛰기가 있는 시간 막대, 이전과 다음 미디어 | 휴대폰의 Media3 플레이어를 화살표로 돌림 |
-| 3D 360°(위아래, 좌우) | 왼쪽 눈, 배치 버튼 | 같음 | 각 눈이 프레임의 자기 절반을 받음 | 왼쪽 눈, 배치 버튼 |
-| VR180(반구) 사진과 동영상 | 반구, 360°/180° 버튼 | 같음 | 몰입형 반구 | 반구, 360°/180° 버튼 |
-| Spatial 2.5D(입체 동영상으로 평면 화면에 깊이) | 네이티브 플레이어, 전면 카메라로 머리 추적 | 같음 | 제공하지 않음 | 제공하지 않음 |
-| Apple 공간 사진(HEIC 스테레오 쌍, 빌드 19부터) | 왼쪽 눈, 정보 줄에 공간 사진이라고 표시 | 같음 | 3D로 보기: 몰입형 보기에 떠 있는 사진에 두 눈, 3D 또는 2D, 크기 조절 가능 | 왼쪽 눈, 정보 줄 |
-| Apple 공간 동영상(MV-HEVC, 빌드 19부터) | 한쪽 눈(기본 레이어), 안내 표시 | 같음 | 창에서 한쪽 눈, 안내 표시 | 한쪽 눈, 안내 표시 |
-| Insta360 RAW .insp 사진(빌드 16부터) | 구 뷰어에 앞서 GPU에서 스티칭, 최대 8192x4096 | 같음 | 몰입형, 헤드셋용으로 준비한 스티칭 이미지 | 휴대폰과 같음 |
-| 두 렌즈를 한 트랙에 담은 Insta360 RAW .insv(빌드 16부터) | Media3 플레이어의 GPU 효과로 스티칭 | SceneKit 셰이더로 스티칭 | 몰입형, 같은 GPU 효과로 스티칭 | 휴대폰과 같음 |
-| 렌즈마다 트랙이나 파일이 하나씩인 RAW 동영상(빌드 18부터): Insta360 X4, X4 Air, X5, X6 .insv, X3 두 파일, GoPro .360, DJI .osv | 렌즈마다 하나씩 하드웨어 디코더 두 개를 동시에 쓰고(빌드 19부터 하드웨어 디코더가 없는 기기에서는 소프트웨어 디코더, 렌즈당 최대 2048x2048), GL 합성기가 구로 스티칭. 기기가 두 개를 돌리지 못하면 렌즈 하나, 그다음 트랜스코딩된 스트림, 그다음 스티칭하지 않은 동영상 | Metal로 만든 자체 AVFoundation 합성기 | 몰입형, 같은 디코더 두 개와 합성기(3840x1920 패널) | TV가 디코더 두 개를 동시에 돌릴 수 있으면 휴대폰과 같음 |
-| Tapo 카메라 실시간 화면(빌드 20부터) | Media3 RTSP 플레이어: 카메라 화면에서는 SD, 전체 화면에서는 HD, 소리 버튼 | 아직 안 됨: 나중에 제공된다는 카드가 표시됨 | 창에서, HD로 | 휴대폰과 같음 |
-| Tapo 카메라 녹화(빌드 20부터) | 메모리 카드에서 소리가 있는 H.264 동영상으로 가져온 뒤 탐색과 함께 재생 | 같음 | 같음, 창에서 | 같음 |
+- **평면 동영상(MP4, MOV, MKV, 기기가 디코딩하는 것)**
+  - Android 휴대폰: Immich 플레이어, 네트워크 공유에는 네이티브 플레이어.
+  - iPhone, iPad: 같음, 단 iOS가 열지 못하는 공유의 MKV와 AVI 파일은 제외(서버에 있으면 트랜스코딩되어 재생).
+  - Meta Quest: 창에서.
+  - Android TV, Google TV: 휴대폰과 같음. OK로 일시 정지, 왼쪽과 오른쪽으로 10초 건너뛰기.
+- **360° 사진**
+  - Android 휴대폰: 구 뷰어, 자이로스코프.
+  - iPhone, iPad: 같음.
+  - Meta Quest: 몰입형, 사방을 둘러쌈.
+  - Android TV, Google TV: 화살표로 돌리고 채널 키로 확대/축소하는 구 뷰어.
+- **360° 동영상**
+  - Android 휴대폰: 구에 입힌 네이티브 Media3 플레이어, 자이로스코프, 탐색, 오디오 트랙 선택, 버퍼링 표시.
+  - iPhone, iPad: 구에 입힌 네이티브 SceneKit 플레이어, 자이로스코프, 오디오 트랙 선택, 버퍼링 표시. 재생과 일시 정지만 있고 시간 막대는 아직 없음.
+  - Meta Quest: 몰입형, 입체 파일은 진짜 3D, 10초 건너뛰기가 있는 시간 막대, 이전과 다음 미디어.
+  - Android TV, Google TV: 휴대폰의 Media3 플레이어를 화살표로 돌림.
+- **3D 360°(위아래, 좌우)**
+  - Android 휴대폰: 왼쪽 눈, 배치 버튼.
+  - iPhone, iPad: 같음.
+  - Meta Quest: 각 눈이 프레임의 자기 절반을 받음.
+  - Android TV, Google TV: 왼쪽 눈, 배치 버튼.
+- **VR180(반구) 사진과 동영상**
+  - Android 휴대폰: 반구, 360°/180° 버튼.
+  - iPhone, iPad: 같음.
+  - Meta Quest: 몰입형 반구.
+  - Android TV, Google TV: 반구, 360°/180° 버튼.
+- **Spatial 2.5D(입체 동영상으로 평면 화면에 깊이)**
+  - Android 휴대폰: 네이티브 플레이어, 전면 카메라로 머리 추적.
+  - iPhone, iPad: 같음.
+  - Meta Quest: 제공하지 않음.
+  - Android TV, Google TV: 제공하지 않음.
+- **Apple 공간 사진(HEIC 스테레오 쌍, 빌드 19부터)**
+  - Android 휴대폰: 왼쪽 눈, 정보 줄에 공간 사진이라고 표시.
+  - iPhone, iPad: 같음.
+  - Meta Quest: 3D로 보기: 몰입형 보기에 떠 있는 사진에 두 눈, 3D 또는 2D, 크기 조절 가능.
+  - Android TV, Google TV: 왼쪽 눈, 정보 줄.
+- **Apple 공간 동영상(MV-HEVC, 빌드 19부터)**
+  - Android 휴대폰: 한쪽 눈(기본 레이어), 안내 표시.
+  - iPhone, iPad: 같음.
+  - Meta Quest: 창에서 한쪽 눈, 안내 표시.
+  - Android TV, Google TV: 한쪽 눈, 안내 표시.
+- **Insta360 RAW .insp 사진(빌드 16부터)**
+  - Android 휴대폰: 구 뷰어에 앞서 GPU에서 스티칭, 최대 8192x4096.
+  - iPhone, iPad: 같음.
+  - Meta Quest: 몰입형, 헤드셋용으로 준비한 스티칭 이미지.
+  - Android TV, Google TV: 휴대폰과 같음.
+- **두 렌즈를 한 트랙에 담은 Insta360 RAW .insv(빌드 16부터)**
+  - Android 휴대폰: Media3 플레이어의 GPU 효과로 스티칭.
+  - iPhone, iPad: SceneKit 셰이더로 스티칭.
+  - Meta Quest: 몰입형, 같은 GPU 효과로 스티칭.
+  - Android TV, Google TV: 휴대폰과 같음.
+- **렌즈마다 트랙이나 파일이 하나씩인 RAW 동영상(빌드 18부터): Insta360 X4, X4 Air, X5, X6 .insv, X3 두 파일, GoPro .360, DJI .osv**
+  - Android 휴대폰: 렌즈마다 하나씩 하드웨어 디코더 두 개를 동시에 쓰고(빌드 19부터 하드웨어 디코더가 없는 기기에서는 소프트웨어 디코더, 렌즈당 최대 2048x2048), GL 합성기가 구로 스티칭. 기기가 두 개를 돌리지 못하면 렌즈 하나, 그다음 트랜스코딩된 스트림, 그다음 스티칭하지 않은 동영상.
+  - iPhone, iPad: Metal로 만든 자체 AVFoundation 합성기.
+  - Meta Quest: 몰입형, 같은 디코더 두 개와 합성기(3840x1920 패널).
+  - Android TV, Google TV: TV가 디코더 두 개를 동시에 돌릴 수 있으면 휴대폰과 같음.
+- **Tapo 카메라 실시간 화면(빌드 20부터)**
+  - Android 휴대폰: Media3 RTSP 플레이어: 카메라 화면에서는 SD, 전체 화면에서는 HD, 소리 버튼.
+  - iPhone, iPad: 아직 안 됨: 나중에 제공된다는 카드가 표시됨.
+  - Meta Quest: 창에서, HD로.
+  - Android TV, Google TV: 휴대폰과 같음.
+- **Tapo 카메라 녹화(빌드 20부터)**
+  - Android 휴대폰: 메모리 카드에서 소리가 있는 H.264 동영상으로 가져온 뒤 탐색과 함께 재생.
+  - iPhone, iPad: 같음.
+  - Meta Quest: 같음, 창에서.
+  - Android TV, Google TV: 같음.
 
-TV 열은 아직 TV에서 확인하지 않았습니다. [TV에서 보기](#watch-on-your-tv-android-tv-and-google-tv)를 보세요. 카메라 행은 아직 실제 카메라로 확인하지 않았습니다.
+빌드 20부터의 Android TV와 Google TV 항목은 아직 TV에서 확인하지 않았습니다. [TV에서 보기](#watch-on-your-tv-android-tv-and-google-tv)를 보세요. 카메라 항목은 아직 실제 카메라로 확인하지 않았습니다.
 
-| 출처 | 방법 |
-|---|---|
-| Immich 서버 | 설정, 보기 옵션, 동영상 소스에 따라 원본 또는 서버의 트랜스코딩된 스트림([동영상 정보와 디코더](#video-details-decoders-and-why-a-video-stutters) 참조). 웹 앱과 같은 계정 |
-| 휴대폰이나 헤드셋 자체 | 로그인 화면의 "서버 없이 사용", 또는 라이브러리 탭의 이 장치에서 항목 |
-| NAS나 컴퓨터 | SMB와 WebDAV 공유, 그리고 빌드 19부터 DLNA 미디어 서버를 네트워크에서 찾아 실시간으로 읽음(SMB 동영상은 최대 여섯 개 연결로), 아무것도 복사하지 않음. 빌드 15부터 고른 파일을 Immich 계정으로 보낼 수 있음 |
-| 다른 휴대폰(빌드 19부터) | 그 휴대폰에서 "이 휴대폰을 네트워크에서 공유": 헤드셋이나 네트워크의 WebDAV 클라이언트가 앨범, 월, 360° 미디어를 읽음 |
-| Plex Media Server(빌드 20부터) | 사진, 영화, TV 프로그램 라이브러리를 폴더별로, 서버 자체 인증서로 확인한 HTTPS로 원본 파일을 실시간으로 읽음, 집에서 또는 집 밖 주소로, 모든 플랫폼에서. [Plex Media Server, plex.tv 없이](#plex-media-server-without-plextv) 참조 |
-| Tapo 카메라(빌드 20부터) | 카메라 계정으로 실시간 화면(Android, Android TV, Quest), TP-Link 계정 비밀번호로 메모리 카드의 녹화(모든 플랫폼), 로컬 네트워크에서만. [Tapo 카메라](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) 참조 |
+- **Immich 서버**: 설정, 보기 옵션, 동영상 소스에 따라 원본 또는 서버의 트랜스코딩된 스트림([동영상 정보와 디코더](#video-details-decoders-and-why-a-video-stutters) 참조). 웹 앱과 같은 계정.
+- **휴대폰이나 헤드셋 자체**: 로그인 화면의 "서버 없이 사용", 또는 라이브러리 탭의 이 장치에서 항목.
+- **NAS나 컴퓨터**: SMB와 WebDAV 공유, 그리고 빌드 19부터 DLNA 미디어 서버를 네트워크에서 찾아 실시간으로 읽음(SMB 동영상은 최대 여섯 개 연결로), 아무것도 복사하지 않음. 빌드 15부터 고른 파일을 Immich 계정으로 보낼 수 있음.
+- **다른 휴대폰(빌드 19부터)**: 그 휴대폰에서 "이 휴대폰을 네트워크에서 공유": 헤드셋이나 네트워크의 WebDAV 클라이언트가 앨범, 월, 360° 미디어를 읽음.
+- **Plex Media Server(빌드 20부터)**: 사진, 영화, TV 프로그램 라이브러리를 폴더별로, 서버 자체 인증서로 확인한 HTTPS로 원본 파일을 실시간으로 읽음, 집에서 또는 집 밖 주소로, 모든 플랫폼에서. [Plex Media Server, plex.tv 없이](#plex-media-server-without-plextv) 참조.
+- **Tapo 카메라(빌드 20부터)**: 카메라 계정으로 실시간 화면(Android, Android TV, Quest), TP-Link 계정 비밀번호로 메모리 카드의 녹화(모든 플랫폼), 로컬 네트워크에서만. [Tapo 카메라](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) 참조.
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360은 Horizon OS v69 이상의 Meta Quest 헤드셋에서도 실행됩니다. 빌드 21부터 Horizon Store 빌드는 범용 `-release.apk`가 이미 지정한 네 기기인 Quest 2, Quest Pro, Quest 3, 3S에 등록되어 있습니다. 첫 Quest는 스토어가 더 이상 받지 않으므로 포함되지 않습니다. Quest 3와 3S는 테스트했습니다. Quest 2와 Quest Pro는 아직 테스트하지 않았습니다. 이 기기들의 동영상 디코더는 더 느리고, 앱이 확인하는 한계는 Quest 3에서 측정한 값이므로, 큰 H.264 동영상은 메시지와 함께 거부되거나 끊길 수 있습니다. 이 두 헤드셋에 대한 보고는 [Issues](https://github.com/freeKC/Immuch360/issues)에 남겨 주시면 감사하겠습니다. 사용 방법은 [Meta Quest 3 헤드셋에서](#in-the-meta-quest-3-headset)에 있고, 이 절은 설치와 헤드셋에서 달라지는 점을 다룹니다.
+Immuch360은 Horizon OS v69 이상의 Meta Quest 헤드셋에서도 실행됩니다. 빌드 21부터 Horizon Store 빌드는 범용 `-release.apk`가 이미 지정한 네 기기인 Quest 2, Quest Pro, Quest 3, 3S에 등록되어 있습니다. 첫 Quest는 스토어가 더 이상 받지 않으므로 포함되지 않습니다.
 
-헤드셋 빌드는 Horizon Store의 요구에 따라 HTTPS로만, 또는 홈 네트워크 이름(`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`)과 헤드셋 자체에 대해서만 일반 HTTP로 서버와 통신합니다. `http://192.168.1.10:2283`처럼 IP를 쓴 일반 HTTP 주소로 입력한 서버는 이 빌드에서 거부됩니다. HTTPS나 홈 네트워크 이름(`nas.local`)을 쓰거나, 휴대폰과 같은 개방 정책을 유지하는 범용 `-release.apk`를 쓰세요. 로컬 네트워크의 일반 HTTP 주소에 있는 WebDAV, DLNA, 휴대폰 공유는 해당되지 않습니다. 앱이 직접 읽고 플레이어에는 로컬 브리지 주소만 넘기기 때문입니다(빌드 19에서 새로 생긴 DLNA와 휴대폰 공유는 헤드셋에서 확인 예정). 빌드 20부터 Plex 서버는 HTTPS로 접속하고, Tapo 카메라는 앱이 직접 접속하며 그 실시간 화면은 HTTP가 아닌 RTSP를 씁니다. 따라서 둘 다 해당되지 않을 것입니다(헤드셋에서 확인 예정).
+Quest 3와 3S는 테스트했습니다. Quest 2와 Quest Pro는 아직 테스트하지 않았습니다. 이 기기들의 동영상 디코더는 더 느리고, 앱이 확인하는 한계는 Quest 3에서 측정한 값이므로, 큰 H.264 동영상은 메시지와 함께 거부되거나 끊길 수 있습니다. 이 두 헤드셋에 대한 보고는 [Issues](https://github.com/freeKC/Immuch360/issues)에 남겨 주시면 감사하겠습니다.
+
+사용 방법은 [Meta Quest 3 헤드셋에서](#in-the-meta-quest-3-headset)에 있고, 이 절은 설치와 헤드셋에서 달라지는 점을 다룹니다.
+
+헤드셋 빌드는 Horizon Store의 요구에 따라 HTTPS로만, 또는 홈 네트워크 이름(`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`)과 헤드셋 자체에 대해서만 일반 HTTP로 서버와 통신합니다. `http://192.168.1.10:2283`처럼 IP를 쓴 일반 HTTP 주소로 입력한 서버는 이 빌드에서 거부됩니다. HTTPS나 홈 네트워크 이름(`nas.local`)을 쓰거나, 휴대폰과 같은 개방 정책을 유지하는 범용 `-release.apk`를 쓰세요.
+
+로컬 네트워크의 일반 HTTP 주소에 있는 WebDAV, DLNA, 휴대폰 공유는 해당되지 않습니다. 앱이 직접 읽고 플레이어에는 로컬 브리지 주소만 넘기기 때문입니다(빌드 19에서 새로 생긴 DLNA와 휴대폰 공유는 헤드셋에서 확인 예정). 빌드 20부터 Plex 서버는 HTTPS로 접속하고, Tapo 카메라는 앱이 직접 접속하며 그 실시간 화면은 HTTP가 아닌 RTSP를 씁니다. 따라서 둘 다 해당되지 않을 것입니다(헤드셋에서 확인 예정).
 
 <a id="install"></a>
 ### 설치
@@ -762,16 +922,23 @@ Meta는 2026년 10월 7일에 빌드 14로 Horizon Store 등록을 승인했고,
 
 ### 창에서
 
-앱 전체가 크기를 바꿀 수 있는 2D 창으로 실행됩니다. 로그인, 타임라인, 앨범, 검색, 라이브러리 탭(360° 목록, 이 장치에서, 네트워크 공유), 설정, 그리고 평면 사진과 동영상이 재생되는 사진 및 동영상 뷰어가 있습니다. 헤드셋에서는 360° 버튼과 ⋮ 메뉴의 "360°로 보기"가 휴대폰의 구 뷰어 대신 몰입형 보기를 바로 열고, Spatial 2.5D 버튼과 그 설정은 표시되지 않습니다. 빌드 19부터 Apple 공간 사진에는 "3D로 보기" 버튼이 있고, "이 휴대폰을 네트워크에서 공유" 타일은 표시되지 않습니다. 헤드셋은 휴대폰의 공유를 읽는 쪽이기 때문입니다. 빌드 20부터 Plex 서버와 Tapo 카메라도 창에서 열리며, 카메라 실시간 화면은 HD입니다. "리모컨 레이아웃" 설정은 자동으로 유지되므로 헤드셋에서는 꺼져 있습니다.
+앱 전체가 크기를 바꿀 수 있는 2D 창으로 실행됩니다. 로그인, 타임라인, 앨범, 검색, 라이브러리 탭(360° 목록, 이 장치에서, 네트워크 공유), 설정, 그리고 평면 사진과 동영상이 재생되는 사진 및 동영상 뷰어가 있습니다.
+
+헤드셋에서는 360° 버튼과 ⋮ 메뉴의 "360°로 보기"가 휴대폰의 구 뷰어 대신 몰입형 보기를 바로 열고, Spatial 2.5D 버튼과 그 설정은 표시되지 않습니다.
+
+빌드 19부터 Apple 공간 사진에는 "3D로 보기" 버튼이 있고, "이 휴대폰을 네트워크에서 공유" 타일은 표시되지 않습니다. 헤드셋은 휴대폰의 공유를 읽는 쪽이기 때문입니다. 빌드 20부터 Plex 서버와 Tapo 카메라도 창에서 열리며, 카메라 실시간 화면은 HD입니다. "리모컨 레이아웃" 설정은 자동으로 유지되므로 헤드셋에서는 꺼져 있습니다.
 
 ### 사진으로 보기
 
 Quest 3에서 앱을 프랑스어로 설정하고 캡처 버튼(Meta 버튼과 트리거)으로 헤드셋 안에서 찍은 캡처입니다. 라이브러리 탭은 서버 없는 모드로 표시했습니다.
 
-| 서버 없이 | 네트워크 공유 |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="서버 없는 라이브러리 탭: 이 장치에서와 네트워크 공유"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Freebox Server SMB 공유가 있는 네트워크 공유 화면"> |
-| 서버 없는 모드의 라이브러리 탭: 헤드셋 자체 미디어와 네트워크 공유 | 헤드셋에서 실시간으로 읽는 Freebox Server의 Samba 공유 |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="서버 없는 라이브러리 탭: 이 장치에서와 네트워크 공유">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Freebox Server SMB 공유가 있는 네트워크 공유 화면">
+</p>
+
+- **서버 없이**: 서버 없는 모드의 라이브러리 탭, 헤드셋 자체 미디어와 네트워크 공유가 보입니다.
+- **네트워크 공유**: 헤드셋에서 실시간으로 읽는 Freebox Server의 Samba 공유.
 
 ### 헤드셋의 제한 사항
 
@@ -786,12 +953,18 @@ Quest 3에서 앱을 프랑스어로 설정하고 캡처 버튼(Meta 버튼과 �
 
 앱은 휴대폰과 태블릿용으로 Google Play에 있습니다. App Store 버전은 Apple의 심사를, Meta Horizon Store 등록은 승인되었고 첫 업데이트는 Meta의 심사 중이며, TV용 Google Play 버전은 TV 릴리스에 대한 Google의 심사를 기다리고 있습니다. GitHub 릴리스에는 언제나 최신 빌드가 있습니다.
 
-| 플랫폼 | 지금 | 곧 |
-|---|---|---|
-| Android 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), 또는 [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 APK: 휴대폰용은 `Immuch360-v<version>-arm64-v8a-release.apk`(범용 `Immuch360-v<version>-release.apk`는 어디서나 동작, `-armeabi-v7a`는 오래된 32비트 휴대폰용, `.aab` 파일은 Google Play용이며 사이드로드용이 아님). GitHub 빌드가 보통 스토어보다 앞서 있습니다. 어느 쪽이든 공식 Immich 앱 옆에 따로 설치됩니다(패키지 `com.aprogsys.immuch360`). | Google Play: 빌드 18 공개 중, 빌드 20은 2026년 10월 7일부터 Google 심사 중, 빌드 19 대신 |
-| iPhone과 iPad | Apple의 심사를 기다리는 중입니다. 심사 중인 버전에는 빌드 11의 기능이 들어 있으며, Immich로 업로드와 동영상 소스 선택(빌드 15), Insta360 RAW 파일(빌드 16)은 이후 App Store 업데이트와 함께 옵니다. 소스는 Xcode나 Codemagic에서 빌드됩니다. [직접 빌드하기](#build-it-yourself)를 보세요. | App Store, 심사 중 |
-| Meta Quest 2, Quest Pro, Quest 3와 3S(Quest 2와 Quest Pro는 테스트하지 않음) | [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 `-quest-release.apk` 파일(범용 `-release.apk`도 동작)을 개발자 모드에서 사이드로드합니다. [설치](#install)를 보세요. 스토어 빌드와 GitHub APK는 서로 다른 키로 서명되어 있으므로, 한쪽에서 다른 쪽으로 바꾸려면 먼저 앱을 제거해야 합니다(설정과 저장한 공유도 함께 사라짐). | Meta Horizon Store: 2026년 10월 7일에 빌드 14로 등록이 승인되었고, 첫 업데이트인 빌드 21이 Meta 심사 중. 스토어의 알파 채널(테스터 전용)은 새 빌드를 매번 받음 |
-| Android TV와 Google TV(빌드 20부터) | [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 범용 `Immuch360-v<version>-release.apk`를 adb로 사이드로드합니다. [TV에 설치하기](#install-it-on-the-tv)를 보세요. 휴대폰과 같은 앱입니다. | TV용 Google Play, TV 릴리스에 대한 Google 심사 후 |
+- **Android 휴대폰과 태블릿**
+  - 지금: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), 또는 [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 APK: 휴대폰용은 `Immuch360-v<version>-arm64-v8a-release.apk`(범용 `Immuch360-v<version>-release.apk`는 어디서나 동작, `-armeabi-v7a`는 오래된 32비트 휴대폰용, `.aab` 파일은 Google Play용이며 사이드로드용이 아님). GitHub 빌드가 보통 스토어보다 앞서 있습니다. 어느 쪽이든 공식 Immich 앱 옆에 따로 설치됩니다(패키지 `com.aprogsys.immuch360`).
+  - 곧: Google Play에서는 빌드 18 공개 중, 빌드 20은 2026년 10월 7일부터 Google 심사 중, 빌드 19 대신.
+- **iPhone과 iPad**
+  - 지금: Apple의 심사를 기다리는 중입니다. 심사 중인 버전에는 빌드 11의 기능이 들어 있으며, Immich로 업로드와 동영상 소스 선택(빌드 15), Insta360 RAW 파일(빌드 16)은 이후 App Store 업데이트와 함께 옵니다. 소스는 Xcode나 Codemagic에서 빌드됩니다. [직접 빌드하기](#build-it-yourself)를 보세요.
+  - 곧: App Store, 심사 중.
+- **Meta Quest 2, Quest Pro, Quest 3와 3S(Quest 2와 Quest Pro는 테스트하지 않음)**
+  - 지금: [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 `-quest-release.apk` 파일(범용 `-release.apk`도 동작)을 개발자 모드에서 사이드로드합니다. [설치](#install)를 보세요. 스토어 빌드와 GitHub APK는 서로 다른 키로 서명되어 있으므로, 한쪽에서 다른 쪽으로 바꾸려면 먼저 앱을 제거해야 합니다(설정과 저장한 공유도 함께 사라짐).
+  - 곧: Meta Horizon Store에서는 2026년 10월 7일에 빌드 14로 등록이 승인되었고, 첫 업데이트인 빌드 21이 Meta 심사 중. 스토어의 알파 채널(테스터 전용)은 새 빌드를 매번 받음.
+- **Android TV와 Google TV(빌드 20부터)**
+  - 지금: [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 범용 `Immuch360-v<version>-release.apk`를 adb로 사이드로드합니다. [TV에 설치하기](#install-it-on-the-tv)를 보세요. 휴대폰과 같은 앱입니다.
+  - 곧: TV용 Google Play, TV 릴리스에 대한 Google 심사 후.
 
 App Store와 Meta Horizon Store 링크는 등록이 공개되는 대로 여기에 추가하겠습니다. 평소의 Immich 서버 URL과 계정으로 로그인하거나, 로그인 화면에서 "서버 없이 사용"을 탭해 기기 자체의 사진과 동영상으로 시작하세요. GitHub에서 받은 APK는 스스로 업데이트되지 않으니 Releases 페이지를 확인하세요. 스토어에서 앱을 설치했다면 업데이트도 그 스토어에서 받으세요.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-스토어 스크린샷은 `--dart-define=IMMUCH_SCREENSHOTS=true`로 만든 디버그 시뮬레이터 빌드에서 찍으며, 이 옵션은 디버그 배너만 숨깁니다. 두 Android 플레이버는 같은 앱입니다. 빌드 20부터 `phone` 플레이버는 자신을 TV 앱으로도 선언하며(TV 런처 항목과 배너, 터치스크린 불필요), `quest` 플레이버는 이를 뺍니다. `quest` 플레이버는 SDK 34를 타깃으로 하고 헤드셋이 쓰는 권한(사진, 동영상, 알림)만 유지합니다. 미디어 관리, 백그라운드 위치, 레거시 저장소, 오디오, 미디어 위치, 기기 위치, 카메라 권한은 `android/app/src/quest/AndroidManifest.xml`에서 제거하는데, Meta Horizon Store가 처음 두 가지를 거부하고 나머지 민감한 권한마다 사유를 요구하기 때문입니다. 같은 파일은 Quest 2, Quest Pro, Quest 3, 3S를 지원 기기로 지정하고, 일반 HTTP를 헤드셋 자체와 홈 네트워크 이름으로 제한합니다. 이 APK가 64비트 전용인 것은 명령줄의 추가 인수 두 개(`--target-platform android-arm64 --android-project-arg arm64only=true`) 때문입니다. `phone` 플레이버는 Google Play가 요구하는 것입니다. 자기 Mac에서 iOS용으로 빌드하려면 Xcode와 자신의 서명 팀을 쓰세요. Xcode 26에서는 Spatial 셰이더에 필요하므로 먼저 `xcodebuild -downloadComponent MetalToolchain`을 한 번 실행하세요. Mac이 없으면 이 저장소의 `codemagic.yaml` 파일로 Codemagic(호스팅된 Mac)에서 iOS 빌드를 돌립니다. Android 릴리스 빌드는 GitHub Actions(`.github/workflows/immuch360-release.yml`)에서 돌아갑니다.
+스토어 스크린샷은 `--dart-define=IMMUCH_SCREENSHOTS=true`로 만든 디버그 시뮬레이터 빌드에서 찍으며, 이 옵션은 디버그 배너만 숨깁니다.
+
+두 Android 플레이버는 같은 앱입니다. 빌드 20부터 `phone` 플레이버는 자신을 TV 앱으로도 선언하며(TV 런처 항목과 배너, 터치스크린 불필요), `quest` 플레이버는 이를 뺍니다.
+
+`quest` 플레이버는 SDK 34를 타깃으로 하고 헤드셋이 쓰는 권한(사진, 동영상, 알림)만 유지합니다. 미디어 관리, 백그라운드 위치, 레거시 저장소, 오디오, 미디어 위치, 기기 위치, 카메라 권한은 `android/app/src/quest/AndroidManifest.xml`에서 제거하는데, Meta Horizon Store가 처음 두 가지를 거부하고 나머지 민감한 권한마다 사유를 요구하기 때문입니다. 같은 파일은 Quest 2, Quest Pro, Quest 3, 3S를 지원 기기로 지정하고, 일반 HTTP를 헤드셋 자체와 홈 네트워크 이름으로 제한합니다. 이 APK가 64비트 전용인 것은 명령줄의 추가 인수 두 개(`--target-platform android-arm64 --android-project-arg arm64only=true`) 때문입니다. `phone` 플레이버는 Google Play가 요구하는 것입니다.
+
+자기 Mac에서 iOS용으로 빌드하려면 Xcode와 자신의 서명 팀을 쓰세요. Xcode 26에서는 Spatial 셰이더에 필요하므로 먼저 `xcodebuild -downloadComponent MetalToolchain`을 한 번 실행하세요. Mac이 없으면 이 저장소의 `codemagic.yaml` 파일로 Codemagic(호스팅된 Mac)에서 iOS 빌드를 돌립니다. Android 릴리스 빌드는 GitHub Actions(`.github/workflows/immuch360-release.yml`)에서 돌아갑니다.
 
 이 저장소에는 비밀 정보가 없습니다. Android 서명 키는 암호화된 GitHub Actions 시크릿으로, Apple 서명 자료는 Codemagic의 암호화된 변수로 보관됩니다. 워크플로 파일은 이들을 이름으로만 참조합니다. 자신의 `android/key.jks`가 없으면 릴리스 빌드는 디버그 키로 서명되어 GitHub나 스토어에서 받은 앱 위에 설치할 수 없으며(먼저 그 앱을 제거해야 함), 디버그 빌드는 Immuch360 debug라는 이름으로 그 옆에 설치됩니다. Meta Horizon Store 사본은 릴리스의 `quest` APK를 다른 키, 즉 스토어 앱을 처음 등록할 때 쓴 키로 서명한 것이므로, 사이드로드한 APK 위에 설치할 수 없고 그 반대도 마찬가지입니다.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 빌드 19부터 DLNA 클라이언트, 휴대폰 공유, Apple 공간 미디어 인식도 앱 자체 로그(오른쪽 위 프로필 사진 메뉴의 로그)에 `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe`, `NetworkMediaService` 이름으로 기록합니다. 빌드 20부터는 TV 모드가 `TvMode`와 `TvTextEntry`, Plex 서버가 `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem`, `PlexServerEditPage`, Tapo 카메라가 `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage`, `CameraLiveView` 이름으로 그곳에 기록합니다. Plex 줄에는 토큰, 주소, 제목이 절대 들어가지 않고, 카메라 줄에는 비밀번호가 빠집니다. 로그 줄은 직접 복사하지 않는 한 기기에 남습니다.
 
+<a id="privacy"></a>
 ## 개인정보
 
 - **개발자에게 가는 것은 없습니다**: 앱은 사용자가 고른 Immich 서버와(지도를 열면 그 서버가 쓰는 지도 타일 서비스와도) 통신하며, 광고, 분석, 개발자가 운영하는 충돌 보고 서비스가 없고, Immuch360 개발자에게 아무것도 보내지 않습니다.
@@ -849,10 +1029,12 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 전체 방침은 [PRIVACY.md](../PRIVACY.md)에 있습니다.
 
+<a id="license-and-trademark"></a>
 ## 라이선스와 상표
 
 이 프로젝트는 Immich의 포크이며 [GNU AGPL v3](../LICENSE)를 따릅니다. 휴대폰용을 포함한 모든 APK에는 오픈 소스가 아닌(Meta Platform Technologies SDK License Agreement) Meta Spatial SDK도 들어 있으며, 이는 Meta Quest 헤드셋에서만 사용됩니다. Immuch360은 Immich 팀이나 FUTO와 관련이 없고, 그들의 보증을 받지도 않았습니다.
 
+<a id="roadmap"></a>
 ## 로드맵
 
 아직 하지 않은 일을 가능성이 높은 순서로 적었습니다. 여기 있는 것은 약속이 아니며, [이슈 트래커](https://github.com/freeKC/Immuch360/issues)에 의견을 주시면 무엇을 먼저 할지 정하는 데 도움이 됩니다.
@@ -871,6 +1053,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 - **Plex, 다음 단계**: 빌드 20의 기기 테스트(휴대폰, Quest, iPhone, TV, 집 밖), 컴퓨터의 토큰을 QR 코드로 가져오기, 찾은 서버 목록에서 Plex 서버의 DLNA 쪽 숨기기, IPv6.
 - **업스트림**: 관리자가 원하는 부분을 Immich에 작은 풀 리퀘스트로 보내기, 360° 사진 뷰어부터.
 
+<a id="credits"></a>
 ## 감사의 말
 
 360° 사진 뷰어는 dmitry-brazhenko의 업스트림 풀 리퀘스트 [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)를 바탕으로 하며, 이 풀 리퀘스트는 [#30192](https://github.com/immich-app/immich/pull/30192)에 있는 bencefr의 프로토타입을 토대로 만들어졌습니다. 두 분께 감사드립니다.

@@ -1,11 +1,13 @@
-[English](../README.md) | [Afrikaans](README.af.md) | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | Esperanto | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Esperanto</b> · Aliaj lingvoj (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: 360°-, 3D- kaj VR180-fotoj kaj -videoj, el Immich, via telefono aŭ NAS. Android, iOS kaj Meta Quest, kun aŭ sen servilo">
 </p>
 
 # Immuch360
 
-Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, en kiuj vi povas ĉirkaŭrigardi, kaj senpaga ludilo por ebenaj, 360°-, 3D- kaj VR180-fotoj kaj -videoj, en Android-telefonoj kaj -tabulkomputiloj, iPhone kaj iPad, Meta-Quest-kaskoj (Quest 3 kaj 3S, kaj ekde kompilaĵo 21 la Quest 2 kaj Quest Pro, netestite), kaj ekde kompilaĵo 20 en Android TV kaj Google TV. Ĝi estas por homoj, kiuj filmas per 360°-fotilo (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) aŭ per la sfera foto-reĝimo de telefono, aŭ kiuj havas VR-kaskon, kaj volas spekti siajn proprajn bildojn el Immich-servilo, el la telefono mem, el NAS, el aŭdvida servilo aŭ el Plex-servilo: sama servilo, sama konto, neniu servila kromprogramo, aŭ tute neniu servilo. Ekde kompilaĵo 20 ĝi ankaŭ montras Tapo-kameraojn, rekte kaj la registraĵojn de ilia memorkarto.
+Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, en kiuj vi povas ĉirkaŭrigardi, kaj senpaga ludilo por ebenaj, 360°-, 3D- kaj VR180-fotoj kaj -videoj, en Android-telefonoj kaj -tabulkomputiloj, iPhone kaj iPad, Meta-Quest-kaskoj (Quest 3 kaj 3S, kaj ekde kompilaĵo 21 la Quest 2 kaj Quest Pro, netestite), kaj ekde kompilaĵo 20 en Android TV kaj Google TV.
+
+Ĝi estas por homoj, kiuj filmas per 360°-fotilo (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) aŭ per la sfera foto-reĝimo de telefono, aŭ kiuj havas VR-kaskon, kaj volas spekti siajn proprajn bildojn el Immich-servilo, el la telefono mem, el NAS, el aŭdvida servilo aŭ el Plex-servilo: sama servilo, sama konto, neniu servila kromprogramo, aŭ tute neniu servilo. Ekde kompilaĵo 20 ĝi ankaŭ montras Tapo-kameraojn, rekte kaj la registraĵojn de ilia memorkarto.
 
 <p align="center">
   <sub>Neoficiala forko. Ne ligita al Immich nek al FUTO. La nomo legiĝas kiel "I am much 360".</sub>
@@ -13,29 +15,52 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">en kontrolado</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprobita, kompilaĵo 21 sendita kiel ĝia unua ĝisdatigo &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
+  App Store: <a href="#where-to-get-it">en kontrolado</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprobita, kompilaĵo 21 sendita kiel ĝia unua ĝisdatigo<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 Denaska 360°</h3>Fotoj kaj videoj kiel sfero, en kiu vi ĉirkaŭrigardas, per la giroskopo, krudaj dosieroj de la fotilo inkluzive (Insta360 ekde kompilaĵo 16, GoPro kaj DJI ekde kompilaĵo 18). Ankaŭ senpaga videoludilo: ebena, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 Denaska 3D</h3>Stereoskopa 360° kaj VR180, supre kaj malsupre aŭ flank-al-flanke, kaj spacaj fotoj de Apple (ekde kompilaĵo 19): vera 3D en la kasko, unu okulo en telefono</td>
-    <td align="center" width="33%"><h3>🎥 Denaska 2.5D</h3>Profundo sur ebena ekrano el stereoskopa video, la vido sekvas vian kapon (eksperimenta, telefonoj kaj tabulkomputiloj)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Unu aplikaĵo en telefonoj, tabulkomputiloj kaj la kaskoj Quest 2, Pro, 3 kaj 3S, vera 3D en la kasko, kaj ekde kompilaĵo 20 en Android TV per la teleregilo</td>
-    <td align="center"><h3>🔌 Kun aŭ sen servilo</h3>Via Immich-servilo, aŭ la propra galerio de la telefono, sen bezono de konto</td>
-    <td align="center"><h3>🗄️ Retaj kunhavigoj</h3>Samba (SMB), WebDAV kaj, ekde kompilaĵo 19, DLNA-aŭdvidaj serviloj trovitaj en la reto kaj legataj rekte, nenio elŝutita, kaj senditaj al Immich kiam vi decidas. Ekde kompilaĵo 19 telefono ankaŭ kunhavigas sian propran galerion kun la kasko</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 En la televidilo</h3>Ekde kompilaĵo 20 la sama APK en Android TV kaj Google TV: 360°-fotoj kaj -videoj, via servilo kaj viaj kunhavigoj, per la teleregilo</td>
-    <td align="center"><h3>🎬 Plex, sen plex.tv</h3>Ekde kompilaĵo 20 viaj Plex-bibliotekoj, ludataj el la originalaj dosieroj, por ke 360° restu 360°, hejme kaj ekster la hejmo</td>
-    <td align="center"><h3>📹 Tapo-kameraoj</h3>Ekde kompilaĵo 20 la rekta vido kaj la registraĵoj de la memorkarto, nur en via reto, kaj klipo sendita al Immich kiam vi decidas</td>
-  </tr>
-</table>
+- 🌐 **Denaska 360°**<br>Fotoj kaj videoj kiel sfero, en kiu vi ĉirkaŭrigardas, per la giroskopo, krudaj dosieroj de la fotilo inkluzive (Insta360 ekde kompilaĵo 16, GoPro kaj DJI ekde kompilaĵo 18). Ankaŭ senpaga videoludilo: ebena, 360°, 3D, VR180
+- 👓 **Denaska 3D**<br>Stereoskopa 360° kaj VR180, supre kaj malsupre aŭ flank-al-flanke, kaj spacaj fotoj de Apple (ekde kompilaĵo 19): vera 3D en la kasko, unu okulo en telefono
+- 🎥 **Denaska 2.5D**<br>Profundo sur ebena ekrano el stereoskopa video, la vido sekvas vian kapon (eksperimenta, telefonoj kaj tabulkomputiloj)
+- 📱 **Android, iOS, Quest, TV**<br>Unu aplikaĵo en telefonoj, tabulkomputiloj kaj la kaskoj Quest 2, Pro, 3 kaj 3S, vera 3D en la kasko, kaj ekde kompilaĵo 20 en Android TV per la teleregilo
+- 🔌 **Kun aŭ sen servilo**<br>Via Immich-servilo, aŭ la propra galerio de la telefono, sen bezono de konto
+- 🗄️ **Retaj kunhavigoj**<br>Samba (SMB), WebDAV kaj, ekde kompilaĵo 19, DLNA-aŭdvidaj serviloj trovitaj en la reto kaj legataj rekte, nenio elŝutita, kaj senditaj al Immich kiam vi decidas. Ekde kompilaĵo 19 telefono ankaŭ kunhavigas sian propran galerion kun la kasko
+- 📺 **En la televidilo**<br>Ekde kompilaĵo 20 la sama APK en Android TV kaj Google TV: 360°-fotoj kaj -videoj, via servilo kaj viaj kunhavigoj, per la teleregilo
+- 🎬 **Plex, sen plex.tv**<br>Ekde kompilaĵo 20 viaj Plex-bibliotekoj, ludataj el la originalaj dosieroj, por ke 360° restu 360°, hejme kaj ekster la hejmo
+- 📹 **Tapo-kameraoj**<br>Ekde kompilaĵo 20 la rekta vido kaj la registraĵoj de la memorkarto, nur en via reto, kaj klipo sendita al Immich kiam vi decidas
+
+<details>
+<summary><b>Enhavo</b></summary>
+
+- [360°-fotoj kaj -videoj kiel sfero](#360-photos-and-videos-as-a-sphere)
+- [Sen servilo aŭ konto](#without-a-server-or-an-account)
+- [Retaj kunhavigoj: NAS, komputilo aŭ aŭdvida servilo](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, sen plex.tv](#plex-media-server-without-plextv)
+- [Kunhavigi ĉi tiun telefonon en la reto](#share-this-phone-on-the-network)
+- [Tapo-kameraoj: rekta vido kaj la registraĵoj de la memorkarto](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Krudaj dosieroj de 360°-fotiloj, sen la aplikaĵo de la fotilo](#raw-360-camera-files-without-the-cameras-app)
+- [3D- kaj VR180-fotoj kaj -videoj](#3d-and-vr180-photos-and-videos)
+- [Profundo sur ebena ekrano: Spatial 2.5D (eksperimenta)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Spacaj fotoj kaj videoj de Apple](#apple-spatial-photos-and-videos)
+- [En la kasko Meta Quest 3](#in-the-meta-quest-3-headset)
+- [Spekti en via televidilo (Android TV kaj Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Trovu viajn 360°-bildojn: la 360°-listo](#find-your-360-shots-the-360-list)
+- [Detaloj de video, malkodiloj kaj kial video saltetas](#video-details-decoders-and-why-a-video-stutters)
+- [Ĉio alia estas Immich](#everything-else-is-immich)
+- [Kompare kun la aplikaĵo de Immich kaj aliaj aplikaĵoj](#compared-with-the-immich-app-and-other-apps)
+- [Formatoj kaj fontoj, laŭ platformo](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Kie akiri ĝin](#where-to-get-it)
+- [Konstrui ĝin mem](#build-it-yourself)
+- [Protokoloj](#logs)
+- [Privateco](#privacy)
+- [Permesilo kaj varmarko](#license-and-trademark)
+- [Vojmapo](#roadmap)
+- [Dankoj](#credits)
+
+</details>
 
 ## Kiun problemon vi havas?
 
@@ -61,12 +86,19 @@ Kiam funkcio estas freŝa, la teksto diras, ekde kiu kompilaĵo ĝi ekzistas. La
 
 Vi savkopias viajn fotojn al [Immich](https://github.com/immich-app/immich)-servilo, kaj kelkaj el ili venas de 360°-fotilo aŭ de la sfera foto-reĝimo de telefono. En la oficiala poŝaparata aplikaĵo tiuj bildoj aperas kiel ebena, etendita strio, kaj ankaŭ 360°-videoj ludiĝas ebene. La TTT-aplikaĵo de Immich povas montri 360°-foton kiel sferon, la poŝaparata aplikaĵo ne povas: tio estas petata ekde januaro 2024 en [diskuto #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 malfermas ilin kiel sferon, en kiu vi ĉirkaŭrigardas, en Android- kaj iOS-telefonoj kaj -tabulkomputiloj. Foto turniĝas kiam vi trenas ĝin, zomiĝas per pinĉo aŭ duobla tuŝeto, daŭre turniĝas iomete post rapida treno, komenciĝas ĉe la komenca vido, kiun la fotilo registris (GPano-metadatenoj), kaj ricevas pli akran teksturon kiam vi zomas; partaj panoramoj estas traktataj (GPano-tondo). Video ludiĝas en denaska sfera ludilo kun sono, treno kaj giroskopo. Jam kunkudritaj 360°-dosieroj funkcias ĉie: eksportaĵoj el la aplikaĵo aŭ Studio de Insta360, GoPro Player, Ricoh Theta, kaj sferaj fotoj de telefonoj. Krudajn dosierojn rekte el la fotilo kunkudras la aplikaĵo, vidu [Krudaj dosieroj de 360°-fotiloj](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 malfermas ilin kiel sferon, en kiu vi ĉirkaŭrigardas, en Android- kaj iOS-telefonoj kaj -tabulkomputiloj.
 
-| 360°-foto kiel sfero | 360°-video en la 360°-ludilo |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="360°-foto de lagobordo en la sfera montrilo: la ferma butono supre maldekstre, la butonoj 360°, 3D-aranĝo kaj giroskopo supre dekstre"> | <img src="../.github/readme/b19-video.png" width="420" alt="360°-video de marborda vojo ludata en la 360°-ludilo de telefono tenata horizontale: fermi kaj la dosiernomo supre maldekstre, 360° kaj 3D supre dekstre, antaŭa, salti malantaŭen, ludi, salti antaŭen kaj sekva en la mezo, la tempobreto malsupre"> |
-| Fermi supre maldekstre; supre dekstre la butono 360°/180°, la butono de 3D-aranĝo kaj la giroskopo | Tuŝetu la bildon por la regiloj; 360° kaj 3D supre dekstre |
+Foto turniĝas kiam vi trenas ĝin, zomiĝas per pinĉo aŭ duobla tuŝeto, daŭre turniĝas iomete post rapida treno, komenciĝas ĉe la komenca vido, kiun la fotilo registris (GPano-metadatenoj), kaj ricevas pli akran teksturon kiam vi zomas; partaj panoramoj estas traktataj (GPano-tondo). Video ludiĝas en denaska sfera ludilo kun sono, treno kaj giroskopo.
+
+Jam kunkudritaj 360°-dosieroj funkcias ĉie: eksportaĵoj el la aplikaĵo aŭ Studio de Insta360, GoPro Player, Ricoh Theta, kaj sferaj fotoj de telefonoj. Krudajn dosierojn rekte el la fotilo kunkudras la aplikaĵo, vidu [Krudaj dosieroj de 360°-fotiloj](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="360°-foto de lagobordo en la sfera montrilo: la ferma butono supre maldekstre, la butonoj 360°, 3D-aranĝo kaj giroskopo supre dekstre">
+  <img src="../.github/readme/b19-video.png" width="420" alt="360°-video de marborda vojo ludata en la 360°-ludilo de telefono tenata horizontale: fermi kaj la dosiernomo supre maldekstre, 360° kaj 3D supre dekstre, antaŭa, salti malantaŭen, ludi, salti antaŭen kaj sekva en la mezo, la tempobreto malsupre">
+</p>
+
+- **360°-foto kiel sfero**: fermi supre maldekstre; supre dekstre la butono 360°/180°, la butono de 3D-aranĝo kaj la giroskopo.
+- **360°-video en la 360°-ludilo**: tuŝetu la bildon por la regiloj; 360° kaj 3D supre dekstre.
 
 ### Malfermi 360°-foton kiel sferon
 
@@ -135,12 +167,17 @@ En la ensaluta paĝo, "Uzi sen servilo" malfermas Immuch360 kun la propraj fotoj
 
 Viaj 360°-videoj troviĝas en NAS aŭ komputilo, kaj vi volas spekti ilin en la telefono aŭ en la kasko sen unue kopii ilin. Por la kasko, homoj finfine kopias ĉiun dosieron per kablo; aŭdvidaj serviloj kiel Plex kaj Jellyfin ludas 360°-videojn ebene, kiel priskribas petoj en iliaj forumoj; la aplikaĵo de Immich legas nur vian Immich-servilon.
 
-Immuch360 foliumas kaj ludas la fotojn kaj videojn de iu ajn servilo, kiu parolas SMB (Samba, Windows), WebDAV aŭ, ekde kompilaĵo 19, DLNA/UPnP (aŭdvida servilo: Jellyfin, minidlna, Gerbera, Emby, NAS aŭ televida skatolo), rekte el la kunhavigo. Ekde kompilaĵo 20 Plex Media Server havas propran tipon, vidu [Plex Media Server, sen plex.tv](#plex-media-server-without-plextv). Ĝi mem trovas la servilojn de via reto, kaj ludas la dosierojn rekte en la samaj montriloj kiel la cetero de la aplikaĵo (360°, 3D, VR180, Spatial 2.5D, enmergiĝa vido de la Quest), kun aŭ sen Immich-servilo, en telefonoj kaj en Meta Quest 3. Nenio estas elŝutata. Kiam servilo estas konektita, la dosieroj, kiujn vi elektas, povas esti senditaj al via Immich-konto (ekde kompilaĵo 15).
+Immuch360 foliumas kaj ludas la fotojn kaj videojn de iu ajn servilo, kiu parolas SMB (Samba, Windows), WebDAV aŭ, ekde kompilaĵo 19, DLNA/UPnP (aŭdvida servilo: Jellyfin, minidlna, Gerbera, Emby, NAS aŭ televida skatolo), rekte el la kunhavigo. Ekde kompilaĵo 20 Plex Media Server havas propran tipon, vidu [Plex Media Server, sen plex.tv](#plex-media-server-without-plextv).
 
-| Aldoni kunhavigon | Dosierujo de kunhavigo |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="La paĝo Aldoni kunhavigon: Nomo, Nomo aŭ adreso de la servilo, Pordo (nedeviga), Kunhavigo, Elektu kunhavigon, Komenca dosierujo (nedeviga), Uzantnomo, Pasvorto, Testi la konekton, kaj la rezulto Konektita, 2 eroj en la komenca dosierujo"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="Dosierujo de reta kunhavigo kiel krado de miniaturoj: 360°-fotoj kun la 360°-insigno kaj 360°-video kun ludsigno, la butono Elekti supre dekstre"> |
-| La kampoj de nova SMB-kunhavigo, post Testi la konekton | 360°-fotoj kaj video, legataj rekte el la kunhavigo |
+Ĝi mem trovas la servilojn de via reto, kaj ludas la dosierojn rekte en la samaj montriloj kiel la cetero de la aplikaĵo (360°, 3D, VR180, Spatial 2.5D, enmergiĝa vido de la Quest), kun aŭ sen Immich-servilo, en telefonoj kaj en Meta Quest 3. Nenio estas elŝutata. Kiam servilo estas konektita, la dosieroj, kiujn vi elektas, povas esti senditaj al via Immich-konto (ekde kompilaĵo 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="La paĝo Aldoni kunhavigon: Nomo, Nomo aŭ adreso de la servilo, Pordo (nedeviga), Kunhavigo, Elektu kunhavigon, Komenca dosierujo (nedeviga), Uzantnomo, Pasvorto, Testi la konekton, kaj la rezulto Konektita, 2 eroj en la komenca dosierujo">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Dosierujo de reta kunhavigo kiel krado de miniaturoj: 360°-fotoj kun la 360°-insigno kaj 360°-video kun ludsigno, la butono Elekti supre dekstre">
+</p>
+
+- **Aldoni kunhavigon**: la kampoj de nova SMB-kunhavigo, post Testi la konekton.
+- **Dosierujo de kunhavigo**: 360°-fotoj kaj video, legataj rekte el la kunhavigo.
 
 ### Aldoni kunhavigon
 
@@ -178,16 +215,26 @@ La malfermita foto aŭ video de kunhavigo havas la saman eron en sia menuo. Sen 
 
 ### Kiel ĝi ludas sen elŝuti
 
-La ludiloj legas la bajtojn, kiujn ili bezonas, tra ponto ene de la aplikaĵo (nur loka cirkla adreso, hazarda ĵetono po seanco, bajtaj intervaloj), do salti en video funkcias kaj nenio estas kopiata al la aparato. La ludiloj kaj la kaska montrilo neniam ricevas la adreson de la kunhavigo, nur la 127.0.0.1 de la ponto; la petojn al la servilo faras la aplikaĵo mem. Por glata ludado la kunhavigo estas legata en grandaj blokoj, la dosiero restas malfermita inter legoj, ĝis 16 MB estas legataj antaŭ la ludilo, kaj la ludata video estas legata per ĝis ses paralelaj SMB-konektoj, apartaj de la konekto, kiu servas miniaturojn kaj listojn. Freebox Server respondas malrapide al ĉiu lego: unu konekto donas 4,5 MB/s, ses donas 19 MB/s, sufiĉe por 5.7K-eksportaĵo je 132 Mbit/s. Dum la ludilo atendas datenojn, la ludiloj 360° kaj Spatial montras "Ŝargado" kun la pleneco de sia ludbufro; la ebena ludilo montras "Ŝargado" sen procento dum la video ŝargiĝas aŭ haltas.
+La ludiloj legas la bajtojn, kiujn ili bezonas, tra ponto ene de la aplikaĵo (nur loka cirkla adreso, hazarda ĵetono po seanco, bajtaj intervaloj), do salti en video funkcias kaj nenio estas kopiata al la aparato. La ludiloj kaj la kaska montrilo neniam ricevas la adreson de la kunhavigo, nur la 127.0.0.1 de la ponto; la petojn al la servilo faras la aplikaĵo mem.
+
+Por glata ludado la kunhavigo estas legata en grandaj blokoj, la dosiero restas malfermita inter legoj, ĝis 16 MB estas legataj antaŭ la ludilo, kaj la ludata video estas legata per ĝis ses paralelaj SMB-konektoj, apartaj de la konekto, kiu servas miniaturojn kaj listojn. Freebox Server respondas malrapide al ĉiu lego: unu konekto donas 4,5 MB/s, ses donas 19 MB/s, sufiĉe por 5.7K-eksportaĵo je 132 Mbit/s.
+
+Dum la ludilo atendas datenojn, la ludiloj 360° kaj Spatial montras "Ŝargado" kun la pleneco de sia ludbufro; la ebena ludilo montras "Ŝargado" sen procento dum la video ŝargiĝas aŭ haltas.
 
 ### DLNA-aŭdvidaj serviloj
 
-Ekde kompilaĵo 19, la aplikaĵo sendas la SSDP-serĉon de aŭdvidaj serviloj al la multelanĉa grupo de la reto, kaj la saman peton al la pordo 1900 de ĉiu adreso de la loka /24-reto, poste legas la aparatan priskribon de ĉiu servilo, kiu respondas, kaj gardas tiujn, kiuj publikigas sian enhavon (ContentDirectory). Dosierujoj kaj dosieroj estas listigataj per la ago Browse de la servilo, paĝon post paĝo, kaj nomataj laŭ siaj titoloj: dosiero ricevas la finaĵon de sia tipo kiam ĝia titolo ne havas ĝin, kaj dua dosiero kun la sama titolo en dosierujo iĝas `name (2)`. Sono estas preterlasata. Miniaturoj estas la albumkovrilo aŭ la malgrandaj bildoj, kiujn faras la servilo, ŝargataj de la aplikaĵo mem, kun la propra miniaturo de la aplikaĵo kiam la servilo havas neniun. Dosiero ludiĝas el la originalo, kiun la servilo proponas, prefere ol konvertita kopio kiam ĝi proponas ambaŭ, legata per intervalaj petoj, do salti funkcias. Kontrolita kontraŭ minidlna kaj Gerbera; malkovro en vera reto, Plex, Jellyfin, NAS, la Freebox Server, iPhone kaj la Quest estas la aparata testo de kompilaĵo 19.
+Ekde kompilaĵo 19, la aplikaĵo sendas la SSDP-serĉon de aŭdvidaj serviloj al la multelanĉa grupo de la reto, kaj la saman peton al la pordo 1900 de ĉiu adreso de la loka /24-reto, poste legas la aparatan priskribon de ĉiu servilo, kiu respondas, kaj gardas tiujn, kiuj publikigas sian enhavon (ContentDirectory).
+
+Dosierujoj kaj dosieroj estas listigataj per la ago Browse de la servilo, paĝon post paĝo, kaj nomataj laŭ siaj titoloj: dosiero ricevas la finaĵon de sia tipo kiam ĝia titolo ne havas ĝin, kaj dua dosiero kun la sama titolo en dosierujo iĝas `name (2)`. Sono estas preterlasata. Miniaturoj estas la albumkovrilo aŭ la malgrandaj bildoj, kiujn faras la servilo, ŝargataj de la aplikaĵo mem, kun la propra miniaturo de la aplikaĵo kiam la servilo havas neniun. Dosiero ludiĝas el la originalo, kiun la servilo proponas, prefere ol konvertita kopio kiam ĝi proponas ambaŭ, legata per intervalaj petoj, do salti funkcias.
+
+Kontrolita kontraŭ minidlna kaj Gerbera; malkovro en vera reto, Plex, Jellyfin, NAS, la Freebox Server, iPhone kaj la Quest estas la aparata testo de kompilaĵo 19.
 
 <a id="a-share-that-moved"></a>
 ### Kunhavigo, kiu moviĝis
 
-Ekde kompilaĵo 19, DLNA-kunhavigo kaj telefona kunhavigo (vidu [Kunhavigi ĉi tiun telefonon en la reto](#share-this-phone-on-the-network)) gardas la identigilon, kiun ilia servilo anoncas. Kiam unu ne plu respondas ĉe sia adreso (nova adreso donita de la enkursigilo, servilo rekomencita ĉe alia pordo), ĝia dosieruja paĝo montras "Serĉante (nomo) en la reto" kaj movas la kunhavigon al la loko, kie ĝi nun respondas: tuj por DLNA-servilo, kiu ne havas pasvorton, kaj post konfirmo, "Ĉu uzi la novan adreson?", montranta ambaŭ adresojn, por kunhavigo kun uzantnomo kaj pasvorto, ĉar ili estus senditaj al la nova adreso. Ekde kompilaĵo 20 Plex-servilo retrovita ĉe alia adreso de la reto ankaŭ moviĝas tuj: ĝia atestilo pruvas, ke ĝi estas la sama servilo, antaŭ ol la ĵetono estas sendita. Tapo-kamerao estas serĉata per sia MAC-adreso el sia propra paĝo, vidu [Tapo-kameraoj](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Ekde kompilaĵo 19, DLNA-kunhavigo kaj telefona kunhavigo (vidu [Kunhavigi ĉi tiun telefonon en la reto](#share-this-phone-on-the-network)) gardas la identigilon, kiun ilia servilo anoncas. Kiam unu ne plu respondas ĉe sia adreso (nova adreso donita de la enkursigilo, servilo rekomencita ĉe alia pordo), ĝia dosieruja paĝo montras "Serĉante (nomo) en la reto" kaj movas la kunhavigon al la loko, kie ĝi nun respondas: tuj por DLNA-servilo, kiu ne havas pasvorton, kaj post konfirmo, "Ĉu uzi la novan adreson?", montranta ambaŭ adresojn, por kunhavigo kun uzantnomo kaj pasvorto, ĉar ili estus senditaj al la nova adreso.
+
+Ekde kompilaĵo 20 Plex-servilo retrovita ĉe alia adreso de la reto ankaŭ moviĝas tuj: ĝia atestilo pruvas, ke ĝi estas la sama servilo, antaŭ ol la ĵetono estas sendita. Tapo-kamerao estas serĉata per sia MAC-adreso el sia propra paĝo, vidu [Tapo-kameraoj](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Limigoj
 
@@ -227,7 +274,9 @@ Ekde kompilaĵo 20 Immuch360 pariĝas rekte kun via Plex Media Server, sen plex.
 
 ### Ekster la hejmo
 
-Ĉiufoje kiam ĝi malfermas la servilon, la aplikaĵo unue provas la hejman adreson kaj, 400 ms poste, la adreson ekster la hejmo. La unua, kiu respondas kun via servilo, estas uzata; kiam ĝi estas la adreso ekster la hejmo, la dosieruja paĝo montras globan piktogramon kun la etikedo "Konektita per la adreso ekster la hejmo". Tio bezonas, ke Fora aliro estu ŝaltita en Plex (Agordoj, Fora aliro) kun pordo plusendita de via enkursigilo: sen plex.tv la aplikaĵo ne povas uzi la relajson de Plex, do servilo sen pordoplusendo malfermiĝas nur hejme, kaj ekster la hejmo la paĝo diras "Via Plex-servilo ne estas atingebla ekster via hejma reto. Ŝaltu foran aliron kun pordoplusendo en Plex (Agordoj, Fora aliro), aŭ tajpu ĝian publikan adreson."
+Ĉiufoje kiam ĝi malfermas la servilon, la aplikaĵo unue provas la hejman adreson kaj, 400 ms poste, la adreson ekster la hejmo. La unua, kiu respondas kun via servilo, estas uzata; kiam ĝi estas la adreso ekster la hejmo, la dosieruja paĝo montras globan piktogramon kun la etikedo "Konektita per la adreso ekster la hejmo".
+
+Tio bezonas, ke Fora aliro estu ŝaltita en Plex (Agordoj, Fora aliro) kun pordo plusendita de via enkursigilo: sen plex.tv la aplikaĵo ne povas uzi la relajson de Plex, do servilo sen pordoplusendo malfermiĝas nur hejme, kaj ekster la hejmo la paĝo diras "Via Plex-servilo ne estas atingebla ekster via hejma reto. Ŝaltu foran aliron kun pordoplusendo en Plex (Agordoj, Fora aliro), aŭ tajpu ĝian publikan adreson."
 
 La adreso, kiun la servilo diras, estas relernata ĉe ĉiu konekto hejme. Kiam ĝi ne respondas de ekstere (enkursigilo, kiu ŝanĝas sian adreson, du enkursigiloj en vico), tajpu la vian en la paĝo de la servilo. Kiam la ĵetono ĉesas funkcii (ekzemple, vi elsalutis el la retumila seanco, el kiu vi kopiis ĝin), la dosieruja paĝo diras tion kaj proponas "Alglui novan ĵetonon", kiu malfermas la paĝon de la servilo ĉe la ĵetona kampo.
 
@@ -344,15 +393,13 @@ Insta360-fotiloj registras la du fiŝokulajn cirklojn de siaj objektivoj, flank-
 
 Ekde kompilaĵo 16 Immuch360 mem kunkudras tiujn dosierojn, en la telefono, la tabulkomputilo aŭ la kasko, sen instali ion ajn en la servilo:
 
-| Fotilo kaj dosiero | Kion faras la aplikaĵo | Ekde |
-|---|---|---|
-| Insta360-fotoj .insp | Kunkudritaj en la GPU antaŭ la sfera montrilo, ĝis 8192x4096, kun CPU-rezervo je pli malgranda grandeco | Kompilaĵo 16 |
-| Insta360-videoj .insv, kiuj tenas ambaŭ objektivojn en unu trako | Kunkudritaj per GPU-efiko en la ludilo | Kompilaĵo 16 |
-| Insta360-videoj .insv de X4, X4 Air, X5 kaj X6, unu kvadrata trako po objektivo | Du malkodiloj samtempe, po unu por objektivo, kaj GPU-kunmetilo, kiu kunkudras ilin en la sferon | Kompilaĵo 18 |
-| Insta360 X3 kaj pli malnovaj je 5.7K kaj pli: du dosieroj, `_00_` kaj `_10_` | La samo, la alia dosiero trovata apud la unua | Kompilaĵo 18 |
-| GoPro MAX kaj MAX 2 .360: du trakoj de po tri kubaj edroj | La samo, kun la interkovraj kolumnoj miksitaj | Kompilaĵo 18 |
-| DJI Osmo 360 .osv: du kvadrataj 10-bitaj trakoj | La samo, kun la Kannala-Brandt-kalibrado de la dosiero | Kompilaĵo 18 |
-| Dufiŝokula .dng | Aperas ebena | Ankoraŭ ne |
+- **Insta360-fotoj .insp** (kompilaĵo 16): kunkudritaj en la GPU antaŭ la sfera montrilo, ĝis 8192x4096, kun CPU-rezervo je pli malgranda grandeco.
+- **Insta360-videoj .insv, kiuj tenas ambaŭ objektivojn en unu trako** (kompilaĵo 16): kunkudritaj per GPU-efiko en la ludilo.
+- **Insta360-videoj .insv de X4, X4 Air, X5 kaj X6, unu kvadrata trako po objektivo** (kompilaĵo 18): du malkodiloj samtempe, po unu por objektivo, kaj GPU-kunmetilo, kiu kunkudras ilin en la sferon.
+- **Insta360 X3 kaj pli malnovaj je 5.7K kaj pli: du dosieroj, `_00_` kaj `_10_`** (kompilaĵo 18): la samo, la alia dosiero trovata apud la unua.
+- **GoPro MAX kaj MAX 2 .360: du trakoj de po tri kubaj edroj** (kompilaĵo 18): la samo, kun la interkovraj kolumnoj miksitaj.
+- **DJI Osmo 360 .osv: du kvadrataj 10-bitaj trakoj** (kompilaĵo 18): la samo, kun la Kannala-Brandt-kalibrado de la dosiero.
+- **Dufiŝokula .dng** (ankoraŭ ne): aperas ebena.
 
 ### Spekti krudan dosieron
 
@@ -466,7 +513,9 @@ La detekto estis kontrolita per ekzempla spaca foto skribita de la propra bildbi
 
 Homoj aĉetas Quest 3 por spekti siajn proprajn 360°-fotojn kaj -videojn, poste demandas, kien meti la dosierojn, kiel transigi ilin al la kasko sen kablo, kaj kiun ludilon uzi: la vendejaj ludiloj por 360°- kaj 3D-video estas pagendaj.
 
-La sama Android-aplikaĵo funkcias en la Quest 3 kaj 3S, kaj ekde kompilaĵo 21 en la Quest 2 kaj Quest Pro (netestite), kiel fenestro, kun via tuta biblioteko. Ĝia butono 360° malfermas enmergiĝan vidon, kie la foto aŭ video estas tute ĉirkaŭ vi kaj vi ĉirkaŭrigardas turnante la kapon, en vera 3D por stereoskopaj dosieroj (Meta Spatial SDK). La aŭdvidaĵoj venas de via Immich-servilo, la kasko mem, NAS, aŭdvida servilo, telefono aŭ Plex-servilo, ludataj surloke (aŭdvida servilo kaj telefono ekde kompilaĵo 19, Plex-servilo ekde kompilaĵo 20, ankoraŭ ne kontrolitaj en la kasko), kaj ekde kompilaĵo 20 la fenestro ankaŭ montras la Tapo-kameraojn. Ĝi estas senpaga kaj malfermitkoda. Kontrolita en Quest 3, kaj de uzanto kun Insta360-X4-videoj 8K HEVC.
+La sama Android-aplikaĵo funkcias en la Quest 3 kaj 3S, kaj ekde kompilaĵo 21 en la Quest 2 kaj Quest Pro (netestite), kiel fenestro, kun via tuta biblioteko. Ĝia butono 360° malfermas enmergiĝan vidon, kie la foto aŭ video estas tute ĉirkaŭ vi kaj vi ĉirkaŭrigardas turnante la kapon, en vera 3D por stereoskopaj dosieroj (Meta Spatial SDK).
+
+La aŭdvidaĵoj venas de via Immich-servilo, la kasko mem, NAS, aŭdvida servilo, telefono aŭ Plex-servilo, ludataj surloke (aŭdvida servilo kaj telefono ekde kompilaĵo 19, Plex-servilo ekde kompilaĵo 20, ankoraŭ ne kontrolitaj en la kasko), kaj ekde kompilaĵo 20 la fenestro ankaŭ montras la Tapo-kameraojn. Ĝi estas senpaga kaj malfermitkoda. Kontrolita en Quest 3, kaj de uzanto kun Insta360-X4-videoj 8K HEVC.
 
 ### Malfermi la enmergiĝan vidon
 
@@ -479,17 +528,20 @@ La sama Android-aplikaĵo funkcias en la Quest 3 kaj 3S, kaj ekde kompilaĵo 21 
 
 | Ago | Regiloj | Manoj |
 |---|---|---|
-| Reen al la aplikaĵo | B aŭ Y | Butono "Malantaŭen" de la informa panelo |
-| Ludi aŭ paŭzi videon | Ĉano, kiam la informa panelo estas kaŝita | Butono "Ludi" aŭ "Paŭzi" de la informa panelo |
+| Reen al la aplikaĵo | B aŭ Y | Butono "Malantaŭen" |
+| Ludi aŭ paŭzi videon | Ĉano, kiam la informa panelo estas kaŝita | Butono "Ludi" aŭ "Paŭzi" |
 | Montri aŭ kaŝi la informan panelon | A, X, tenbutono aŭ menuo | Menua gesto, aŭ pinĉo kiam la panelo estas kaŝita |
-| Turni la vidon, por rigardi malantaŭen sen turni la kapon (ekde kompilaĵo 17) | Dekstra stirstangeto maldekstren aŭ dekstren: 30° po puŝo, kaj ĝi daŭre turnas dum tenata (unulinia surmetaĵo montras la angulon) | Butono "Turni" de la informa panelo (90°) |
-| Antaŭa aŭ sekva aŭdvidaĵo | Maldekstra stirstangeto maldekstren aŭ dekstren (iu ajn stirstangeto antaŭ kompilaĵo 17; ekde kompilaĵo 16 unulinia surmetaĵo nomas la aŭdvidaĵon, la informa panelo restas kaŝita) | Butonoj "Antaŭa" kaj "Sekva" de la informa panelo |
-| 10 sekundojn malantaŭen aŭ antaŭen en video | Stirstangeto malsupren aŭ supren (ekde kompilaĵo 16 unulinia surmetaĵo montras la tempon, la informa panelo restas kaŝita) | La du saltbutonoj, aŭ trenu la tempobreton de la informa panelo |
-| Turni la bildon je 90° | Stirstangeto malsupren aŭ supren ĉe foto (ekde kompilaĵo 16 la unulinia surmetaĵo montras la angulon); ĉe video, la butono "Turni" de la informa panelo | Butono "Turni" de la informa panelo |
-| Ŝanĝi la 3D-aranĝon (mono, supre kaj malsupre, flank-al-flanke) | Butono 3D de la informa panelo | Butono 3D de la informa panelo |
-| Plena sfero aŭ duonsfero (VR180) | Butono 360°/180° de la informa panelo | Butono 360°/180° de la informa panelo |
+| Turni la vidon (ekde kompilaĵo 17) | Dekstra stirstangeto maldekstren aŭ dekstren, 30° po puŝo | Butono "Turni" (90°) |
+| Antaŭa aŭ sekva aŭdvidaĵo | Maldekstra stirstangeto maldekstren aŭ dekstren | Butonoj "Antaŭa" kaj "Sekva" |
+| 10 sekundojn malantaŭen aŭ antaŭen en video | Stirstangeto malsupren aŭ supren | La du saltbutonoj, aŭ trenu la tempobreton |
+| Turni la bildon je 90° | Stirstangeto malsupren aŭ supren ĉe foto, butono "Turni" ĉe video | Butono "Turni" |
+| Ŝanĝi la 3D-aranĝon (mono, supre kaj malsupre, flank-al-flanke) | Butono 3D | Butono 3D |
+| Plena sfero aŭ duonsfero (VR180) | Butono 360°/180° | Butono 360°/180° |
 
-Per regiloj, la butonoj kaj la tempobreto de la informa panelo ankaŭ funkcias: celu ilin per la radio kaj premu la ĉanon.
+En ĉi tiu tabelo, la butonoj kaj la tempobreto estas tiuj de la informa panelo. Per regiloj ili ankaŭ funkcias: celu ilin per la radio kaj premu la ĉanon.
+
+- **Turni la vidon**: por rigardi malantaŭen sen turni la kapon. La dekstra stirstangeto daŭre turnas dum tenata, kaj unulinia surmetaĵo montras la angulon.
+- **Unulinia surmetaĵo**: ekde kompilaĵo 16, stirstangeta salto, turno de foto, aŭ antaŭa kaj sekva montras unulinian surmetaĵon (la tempo, la angulo aŭ la nomo de la aŭdvidaĵo) kaj la informa panelo restas kaŝita. Antaŭ kompilaĵo 17 iu ajn stirstangeto iris al la antaŭa aŭ sekva aŭdvidaĵo.
 
 ### La informa panelo, antaŭa kaj sekva
 
@@ -497,7 +549,9 @@ La informa panelo de video havas tempobreton (pozicio, daŭro, kiom estas bufrit
 
 Antaŭa kaj sekva trairas la 360°-aŭdvidaĵojn de la loko, el kiu vi venis, sen forlasi la enmergiĝan vidon: la templinio, la 360°-listo (kiel filtrita), albumo, dosierujo de reta kunhavigo, aŭ la propraj aŭdvidaĵoj de la kasko (Ĉe tiu ĉi aparato). Ebenaj fotoj kaj videoj estas preterlasataj. Kiam vi reiras al la aplikaĵo el la templinio, albumo aŭ la 360°-listo, ĝi alvenas ĉe la aŭdvidaĵo, kiun vi rigardis (paĝo de kunhavigita dosierujo restas ĉe la dosiero, kiun vi malfermis), kaj la video, ĉe kiu vi malfermis la enmergiĝan vidon, daŭrigas de kie ĝi haltis.
 
-Ekde kompilaĵo 17 la dekstra stirstangeto turnas la vidon, kiel la dekstra stirstangeto turnas en la plej multaj kaskaj aplikaĵoj: puŝo turnas je 30°, teni ĝin daŭre turnas, do tio, kio estas malantaŭ vi, venas antaŭen sen turni la kapon aŭ la seĝon; antaŭa kaj sekva estas sur la maldekstra stirstangeto. Ekde kompilaĵo 16, sekve de komentoj de uzanto pri la kasko, stirstangeta salto, turno aŭ antaŭa/sekva montras unulinian surmetaĵon (la tempo, la angulo aŭ la titolo de la aŭdvidaĵo), kiu forvelkas post 1,5 sekundoj anstataŭ alvoki la informan panelon; la panelo ankoraŭ venas per A, X, la tenbutono aŭ la menua butono. La sama kompilaĵo tenas la panelan baskulon funkcianta kiam la regiloj dormas, vekiĝas aŭ cedas al manspurado, kaj protokolas tiujn transirojn, vidu [Protokoloj](#logs).
+Ekde kompilaĵo 17 la dekstra stirstangeto turnas la vidon, kiel la dekstra stirstangeto turnas en la plej multaj kaskaj aplikaĵoj: puŝo turnas je 30°, teni ĝin daŭre turnas, do tio, kio estas malantaŭ vi, venas antaŭen sen turni la kapon aŭ la seĝon; antaŭa kaj sekva estas sur la maldekstra stirstangeto.
+
+Ekde kompilaĵo 16, sekve de komentoj de uzanto pri la kasko, stirstangeta salto, turno aŭ antaŭa/sekva montras unulinian surmetaĵon (la tempo, la angulo aŭ la titolo de la aŭdvidaĵo), kiu forvelkas post 1,5 sekundoj anstataŭ alvoki la informan panelon; la panelo ankoraŭ venas per A, X, la tenbutono aŭ la menua butono. La sama kompilaĵo tenas la panelan baskulon funkcianta kiam la regiloj dormas, vekiĝas aŭ cedas al manspurado, kaj protokolas tiujn transirojn, vidu [Protokoloj](#logs).
 
 Spaca foto de Apple malfermita per "Vidi en 3D" ne estas metita sur sferon: ĝi ŝvebas antaŭ vi, vidu [Spacaj fotoj kaj videoj de Apple](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Fotoj unue montras antaŭvidon, poste la originalon, malgrandigitan al maksimume
 
 3D-aranĝoj, supre kaj malsupre kaj flank-al-flanke, 360° kaj VR180, estas montrataj en 3D, ĉiu okulo ricevante sian propran duonon de la kadro. La aranĝo venas el la dosiero kiam ĝi deklaras unu (videoj), alie ĝi estas divenata el ĝia formo (kvadrata: supre kaj malsupre, 4:1: flank-al-flanke); kiam ĝi estas malĝusta, uzu la butonon 3D de la informa panelo.
 
-| 360°-foto en la kasko | 360°-video en la kasko | 3D-360°-video en la kasko |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="360°-foto tute ĉirkaŭ vi en la Quest 3, kun la informa panelo: butonoj de aranĝo, 360° kaj Malantaŭen"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="360°-video de lago ludata en la Quest 3, kun la informa panelo: butonoj de aranĝo, 360°, Paŭzi kaj Malantaŭen"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="Stereoskopa 360°-video en la Quest 3, la informa panelo montranta 3D, supre kaj malsupre"> |
-| La enmergiĝa vido de foto, kun la informa panelo (aranĝo, 360°/180°, Malantaŭen) | Video ludata, kun Paŭzi | Supre-kaj-malsupra stereoskopa video, ĉiu okulo servata (la ekzemplo Kandao Obsidian) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="360°-foto tute ĉirkaŭ vi en la Quest 3, kun la informa panelo: butonoj de aranĝo, 360° kaj Malantaŭen">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="360°-video de lago ludata en la Quest 3, kun la informa panelo: butonoj de aranĝo, 360°, Paŭzi kaj Malantaŭen">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Stereoskopa 360°-video en la Quest 3, la informa panelo montranta 3D, supre kaj malsupre">
+</p>
+
+- **360°-foto en la kasko**: la enmergiĝa vido de foto, kun la informa panelo (aranĝo, 360°/180°, Malantaŭen).
+- **360°-video en la kasko**: video ludata, kun Paŭzi.
+- **3D-360°-video en la kasko**: supre-kaj-malsupra stereoskopa video, ĉiu okulo servata (la ekzemplo Kandao Obsidian).
 
 Tiuj ekrankopioj estis faritaj kun la aplikaĵo en la franca, antaŭ kompilaĵo 14. La panelo nun ankaŭ havas la tempobreton inter la du 10-sekundaj saltbutonoj, "Antaŭa" kaj "Sekva", kaj "Turni".
 
@@ -598,7 +657,9 @@ Immuch360 metas 360°-insignon sur la miniaturojn de 360°-fotoj (en dosierujo d
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Detaloj de video, malkodiloj kaj kial video saltetas
 
-Homoj demandas, kiun kodekon, grandecon kaj bitrapidon la Quest 3 ludas, kaj kial 5.7K-eksportaĵo saltetas en la kasko dum ĝi ludiĝas en la telefono. La respondo estas la aparatara malkodilo: la H.264-malkodilo de la Quest 3 (XR2 Gen 2) atingas maksimume ĉirkaŭ 4096x2304, do 5760x2880-H.264-video (nivelo 6.0, ĉirkaŭ 200 Mbit/s, la kutima Insta360-eksportaĵo) malkodiĝas je ĉirkaŭ 17 fps en la kasko, kun blokaj artefaktoj, dum la sama dosiero ludiĝas bone en telefono. La sama video en HEVC (H.265) ludiĝas bone en la kasko: Insta360-X4-video 8K HEVC (7680x3840, 29,97 fps, 210 Mbit/s, profilo Main nivelo 6.1, 8 bitoj) ludiĝas glate en la enmergiĝa vido, je sia denaska distingivo kaj sen transkodado (raportita de uzanto kun Quest 3).
+Homoj demandas, kiun kodekon, grandecon kaj bitrapidon la Quest 3 ludas, kaj kial 5.7K-eksportaĵo saltetas en la kasko dum ĝi ludiĝas en la telefono. La respondo estas la aparatara malkodilo: la H.264-malkodilo de la Quest 3 (XR2 Gen 2) atingas maksimume ĉirkaŭ 4096x2304, do 5760x2880-H.264-video (nivelo 6.0, ĉirkaŭ 200 Mbit/s, la kutima Insta360-eksportaĵo) malkodiĝas je ĉirkaŭ 17 fps en la kasko, kun blokaj artefaktoj, dum la sama dosiero ludiĝas bone en telefono.
+
+La sama video en HEVC (H.265) ludiĝas bone en la kasko: Insta360-X4-video 8K HEVC (7680x3840, 29,97 fps, 210 Mbit/s, profilo Main nivelo 6.1, 8 bitoj) ludiĝas glate en la enmergiĝa vido, je sia denaska distingivo kaj sen transkodado (raportita de uzanto kun Quest 3).
 
 La aplikaĵo de Immich havas unu ŝaltilon "Force original video" kaj montras nur la kodekon. Immuch360 montras, kio estas video kaj kion la aparato malkodas, kaj elektas la dosieron, kiu ludiĝas.
 
@@ -623,7 +684,9 @@ Agordoj, Altnivelaj agordoj, "Videomalkodiloj de ĉi tiu aparato" (ekde kompila�
 1. Malfermu Agordoj, Montrilo de elemento, poste "Videos" (Videoj).
 2. Sub "Videofonto" ("Kiu dosiero ludiĝas kiam la servilo havas transkoditan kopion"), elektu "La originalo kiam ĉi tiu aparato malkodas ĝin", "Ĉiam la originalo" aŭ "Ĉiam la transkodita fluo".
 
-Ekde kompilaĵo 15 la elekto validas por ĉiu servila video: la ebena ludilo, la ludiloj 360° kaj Spatial, kaj la enmergiĝa vido de la Quest. Ĝis vi elektas, telefono gardas tion, kion diris la iama ŝaltilo "Force original video" (malŝaltita defaŭlte: la transkodita fluo, kiu estas la originalo mem kiam la servilo ne transkodis ĝin), kaj la Quest ludas la originalon kiam la kasko malkodas ĝin. La kontrolo legas la kodekon, grandecon kaj kadran rapidon el la dosiero kaj komparas ilin kun la aparataraj malkodiloj (H.264 en la Quest 3 estas limigita al la mezuritaj 4096x2304). Ludilo, kiu ne povas malkodi la originalon, ŝanĝas al la transkodita fluo kun mesaĝo: "Ludas la transkoditan fluon: la originalo (kodeko kaj grandeco) superas tion, kion ĉi tiu aparato malkodas".
+Ekde kompilaĵo 15 la elekto validas por ĉiu servila video: la ebena ludilo, la ludiloj 360° kaj Spatial, kaj la enmergiĝa vido de la Quest. Ĝis vi elektas, telefono gardas tion, kion diris la iama ŝaltilo "Force original video" (malŝaltita defaŭlte: la transkodita fluo, kiu estas la originalo mem kiam la servilo ne transkodis ĝin), kaj la Quest ludas la originalon kiam la kasko malkodas ĝin.
+
+La kontrolo legas la kodekon, grandecon kaj kadran rapidon el la dosiero kaj komparas ilin kun la aparataraj malkodiloj (H.264 en la Quest 3 estas limigita al la mezuritaj 4096x2304). Ludilo, kiu ne povas malkodi la originalon, ŝanĝas al la transkodita fluo kun mesaĝo: "Ludas la transkoditan fluon: la originalo (kodeko kaj grandeco) superas tion, kion ĉi tiu aparato malkodas".
 
 En la kasko la enmergiĝa vido komencas la originalon kaj, ĉe ĝiaj unuaj kadroj, ŝanĝas al la transkodita fluo de la servilo kiam la originalo superas la malkodilojn, dirante tion sur la informa panelo; kiam ne estas transkodita fluo, kiam ĝi ankoraŭ estas tro granda, aŭ kiam la dosiero venas de la kasko aŭ de reta kunhavigo, la informa panelo diras tion dum 10 sekundoj, kun tio, kion ŝanĝi. Kompilaĵo 14, tiu sendita al la Horizon Store, kontrolas nur H.264 super 4096x2304, kaj tiam provas la ludfluon de la servilo same.
 
@@ -661,87 +724,184 @@ Por montri 360°-foton al iu, kiu ne havas la aplikaĵon, kunhavigu ĝin per kun
 
 La nuna kompilaĵo, kompilaĵo 21 (versio 3.3.0-rc.0, kompilaĵa numero 3030019), baziĝas sur Immich 3.3.0-rc.0 (Immich `main`, ankoraŭ ne stabila eldono). Kompilaĵo 19 estis testita kun Immich-3.2-servilo, kaj kompilaĵoj 20 kaj 21 ŝanĝas nenion en tio, kion la aplikaĵo petas de la servilo. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la projekto Immich. Por la plena dokumentaro de Immich mem, vidu [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Kompare kun la aplikaĵo de Immich kaj aliaj aplikaĵoj
 
 ### Kial ĉi tiu forko ekzistas, en unu tabelo
 
-| | Poŝaparata aplikaĵo de Immich | Immuch360 | Stato |
-|---|:---:|:---:|---|
-| 360°-fotoj kiel sfero, en kiu vi ĉirkaŭrigardas (treni, pinĉi, duobla tuŝeto, inercio, la komenca vido de la fotilo, partaj panoramoj) | ❌ ebena strio | ✅ | Testita en Galaxy S24+ kaj iPhone 14 |
-| Giroskopo: ĉirkaŭrigardi movante la telefonon | ❌ | ✅ | Testita en Galaxy S24+ kaj iPhone 14 |
-| 360°-videoj en sfera ludilo, kun sono, saltado, elekto de sontrako kaj bufra indikilo | ❌ ebena video | ✅ Android kaj iOS (ankoraŭ sen tempobreto en iOS) | Testita en Galaxy S24+ kaj iPhone 14 |
-| 3D (stereoskopaj) 360°-fotoj kaj -videoj | ❌ duobligita bildo | ✅ maldekstra okulo en telefonoj, vera 3D en la Quest | Testita en Galaxy S24+ kaj Quest 3, kun veraj 3D-360°-ekzemploj (VRTogether, Vuze, Kandao) kaj 3D-foto; raportoj pri aliaj fotiloj bonvenaj |
-| VR180 (duonsferaj) fotoj kaj videoj | ❌ etenditaj ĉirkaŭ la sfero | ✅ duonsfero, butono 360°/180° | Testita en Android-emulilo kaj Galaxy S24+ kun sintezaj aŭdvidaĵoj; aparataj komentoj bonvenaj |
-| Spacaj fotoj de Apple (HEIC-stereo-paroj) kaj spacaj videoj (MV-HEVC) | ❌ ebena foto aŭ video, nenio diras, ke ĝi estas spaca | ✅ ekde kompilaĵo 19: fotoj en 3D en la Quest, unu okulo kaj detala vico aliloke | Detekto kontrolita per ekzempla foto skribita de la bildbiblioteko de Apple kaj per sintezaj dosieroj; la kaska vido kaj veraj iPhone-dosieroj estas la aparata testo de kompilaĵo 19 |
-| Enmergiĝa vido de Meta Quest kun kapspurado, tempobreto, antaŭa kaj sekva, kaj "Turni" | ❌ | ✅ sama aplikaĵo, kiel kaska kompilaĵo aŭ la telefona APK | Testita en Quest 3 (regiloj de kompilaĵo 14, alĝustigitaj en kompilaĵo 16 post komentoj de uzanto), kaj de uzanto kun Insta360-X4-videoj 8K HEVC |
-| 360°-insigno sur miniaturoj, kaj 360°-listo kun krudaj dosieroj kaj filtriloj (periodo, fonto, tipo, fotilo) | ❌ | ✅ filtriloj ekde kompilaĵo 18 | Farita |
-| "Vidi kiel 360°" por dosieroj, kiujn la servilo ne markas | ❌ | ✅ memorata en la telefono | Farita |
-| Spatial 2.5D: profundo sur ebena ekrano el stereoskopa video | ❌ | ✅ eksperimenta, telefonoj kaj tabulkomputiloj | Testita en Galaxy S24+; komentoj el iPhone bonvenaj |
-| Uzo sen ajna servilo, kun la propra galerio de la aparato | ❌ ensaluto deviga | ✅ | Testita en Galaxy S24+, Quest 3 kaj Android-emulilo |
-| SMB- kaj WebDAV-kunhavigoj trovitaj en la reto kaj ludataj rekte, nenio elŝutita | ❌ | ✅ ĉiu montrilo, telefonoj kaj Quest | Testita kun Freebox Server (SMB) en Galaxy S24+ kaj Quest 3, kaj kontraŭ Samba- kaj WebDAV-testserviloj en Android-emulilo; komentoj pri aliaj NAS kaj WebDAV bonvenaj |
-| DLNA-aŭdvidaj serviloj kiel kunhaviga tipo | ❌ | ✅ ekde kompilaĵo 19 | Kontrolita kontraŭ minidlna kaj Gerbera en Docker; Plex, Jellyfin, NAS, la Freebox Server, iPhone kaj la Quest estas la aparata testo de kompilaĵo 19 |
-| Sendi la dosierojn de kunhavigo al Immich; aparataj dosieroj senditaj permane kalkulataj kiel savkopiitaj | ❌ nur aparataj dosieroj | ✅ ekde kompilaĵo 15 | Testita en Android-emulilo kontraŭ Samba-testservilo kaj Immich-3.2-servilo |
-| Kunhavigi ĉi tiun telefonon en la reto, por la kasko | ❌ | ✅ ekde kompilaĵo 19, Android kaj iOS | Unuotestoj kaj tutvojaj testoj kun la WebDAV-kliento de la kasko, en komputilo; telefono servanta Quest, kaj la iPhone-flanko, estas la aparata testo de kompilaĵo 19 |
-| Bibliotekoj de Plex Media Server ludataj el la originalaj dosieroj, hejme kaj ekster la hejmo, sen plex.tv | ❌ | ✅ ekde kompilaĵo 20, ĉiu montrilo, en telefonoj, tabulkomputiloj, la Quest kaj televidiloj | Kontrolita el komputilo kontraŭ vera Plex Media Server 1.42.1 (parigo, dosierujoj, bajtintervaloj, miniaturoj, la adreso ekster la hejmo); ankoraŭ ne kontrolita en aparato |
-| Tapo-kameraoj: la rekta vido, kaj la registraĵoj de la memorkarto senditaj al Immich kiam vi decidas | ❌ | ✅ ekde kompilaĵo 20: registraĵoj ĉie, rekte en Android, Android TV kaj la Quest | Kontrolita kontraŭ simulita kamerao; ankoraŭ ne kontrolita kun vera kamerao |
-| Android TV kaj Google TV, regataj per la teleregilo, en la sama APK | ❌ ne televida aplikaĵo | ✅ ekde kompilaĵo 20 | Kontrolita per aŭtomataj testoj; ankoraŭ ne kontrolita en televidilo |
-| Krudaj Insta360-fotoj .insp kaj unutrakaj videoj .insv | ❌ ebenaj | ✅ ekde kompilaĵo 16 | Fotoj kontrolitaj kontraŭ Insta360-Studio-eksportaĵoj de X3-dosieroj, videoj en Android-emulilo kun malaltdistingiva X3-dosiero; ankoraŭ ne funkciigitaj en iPhone |
-| Krudaj videoj kun unu objektivo po trako aŭ po dosiero (Insta360 X4, X4 Air, X5, X6, X3-paroj, GoPro .360, DJI .osv) | ❌ ebenaj aŭ malĝustaj | ✅ ekde kompilaĵo 18 | Analiziloj kaj kunkudrado kontrolitaj per veraj X4-, X3-paraj, GoPro-MAX- kaj Osmo-360-dosieroj; ludado estas la aparata testo de kompilaĵoj 18 kaj 19 |
-| Dufiŝokula .dng | ❌ ebena | ❌ ankoraŭ ne | Planita |
-| Servilaj videoj: la originalo kiam la aparato malkodas ĝin, alie la transkodita fluo; listo de la videomalkodiloj de la aparato | ❌ unu ŝaltilo "Force original video" | ✅ ekde kompilaĵo 15 | Testita en Android-emulilo; la H.264-limo de la Quest 3 estis mezurita en la kasko |
-| Teknikaj detaloj de video: bitrapido, bildo, profilo, ĉu ĉi tiu aparato malkodas ĝin | ❌ nur kodeko | ✅ ekde kompilaĵo 18 | Farita |
-| Senpaga ludilo por ebenaj, 360°-, 3D- kaj VR180-videoj, el la servilo, la telefono aŭ NAS | ❌ nur ebenaj | ✅ (la ludiloj de la Quest-3-vendejo estas pagendaj) | |
-| Sama servilo, sama konto, instaliĝas apud la oficiala aplikaĵo | | ✅ | |
+| | Poŝaparata aplikaĵo de Immich | Immuch360 |
+|---|:---:|:---:|
+| 360°-fotoj kiel sfero, en kiu vi ĉirkaŭrigardas (treni, pinĉi, duobla tuŝeto, inercio, la komenca vido de la fotilo, partaj panoramoj) | ❌ ebena strio | ✅ |
+| Giroskopo: ĉirkaŭrigardi movante la telefonon | ❌ | ✅ |
+| 360°-videoj en sfera ludilo, kun sono, saltado, elekto de sontrako kaj bufra indikilo | ❌ ebena video | ✅ Android kaj iOS (ankoraŭ sen tempobreto en iOS) |
+| 3D (stereoskopaj) 360°-fotoj kaj -videoj | ❌ duobligita bildo | ✅ maldekstra okulo en telefonoj, vera 3D en la Quest |
+| VR180 (duonsferaj) fotoj kaj videoj | ❌ etenditaj ĉirkaŭ la sfero | ✅ duonsfero, butono 360°/180° |
+| Spacaj fotoj de Apple (HEIC-stereo-paroj) kaj spacaj videoj (MV-HEVC) | ❌ ebena foto aŭ video, nenio diras, ke ĝi estas spaca | ✅ ekde kompilaĵo 19: fotoj en 3D en la Quest, unu okulo kaj detala vico aliloke |
+| Enmergiĝa vido de Meta Quest kun kapspurado, tempobreto, antaŭa kaj sekva, kaj "Turni" | ❌ | ✅ sama aplikaĵo, kiel kaska kompilaĵo aŭ la telefona APK |
+| 360°-insigno sur miniaturoj, kaj 360°-listo kun krudaj dosieroj kaj filtriloj (periodo, fonto, tipo, fotilo) | ❌ | ✅ filtriloj ekde kompilaĵo 18 |
+| "Vidi kiel 360°" por dosieroj, kiujn la servilo ne markas | ❌ | ✅ memorata en la telefono |
+| Spatial 2.5D: profundo sur ebena ekrano el stereoskopa video | ❌ | ✅ eksperimenta, telefonoj kaj tabulkomputiloj |
+| Uzo sen ajna servilo, kun la propra galerio de la aparato | ❌ ensaluto deviga | ✅ |
+| SMB- kaj WebDAV-kunhavigoj trovitaj en la reto kaj ludataj rekte, nenio elŝutita | ❌ | ✅ ĉiu montrilo, telefonoj kaj Quest |
+| DLNA-aŭdvidaj serviloj kiel kunhaviga tipo | ❌ | ✅ ekde kompilaĵo 19 |
+| Sendi la dosierojn de kunhavigo al Immich; aparataj dosieroj senditaj permane kalkulataj kiel savkopiitaj | ❌ nur aparataj dosieroj | ✅ ekde kompilaĵo 15 |
+| Kunhavigi ĉi tiun telefonon en la reto, por la kasko | ❌ | ✅ ekde kompilaĵo 19, Android kaj iOS |
+| Bibliotekoj de Plex Media Server ludataj el la originalaj dosieroj, hejme kaj ekster la hejmo, sen plex.tv | ❌ | ✅ ekde kompilaĵo 20, ĉiu montrilo, en telefonoj, tabulkomputiloj, la Quest kaj televidiloj |
+| Tapo-kameraoj: la rekta vido, kaj la registraĵoj de la memorkarto senditaj al Immich kiam vi decidas | ❌ | ✅ ekde kompilaĵo 20: registraĵoj ĉie, rekte en Android, Android TV kaj la Quest |
+| Android TV kaj Google TV, regataj per la teleregilo, en la sama APK | ❌ ne televida aplikaĵo | ✅ ekde kompilaĵo 20 |
+| Krudaj Insta360-fotoj .insp kaj unutrakaj videoj .insv | ❌ ebenaj | ✅ ekde kompilaĵo 16 |
+| Krudaj videoj kun unu objektivo po trako aŭ po dosiero (Insta360 X4, X4 Air, X5, X6, X3-paroj, GoPro .360, DJI .osv) | ❌ ebenaj aŭ malĝustaj | ✅ ekde kompilaĵo 18 |
+| Dufiŝokula .dng | ❌ ebena | ❌ ankoraŭ ne |
+| Servilaj videoj: la originalo kiam la aparato malkodas ĝin, alie la transkodita fluo; listo de la videomalkodiloj de la aparato | ❌ unu ŝaltilo "Force original video" | ✅ ekde kompilaĵo 15 |
+| Teknikaj detaloj de video: bitrapido, bildo, profilo, ĉu ĉi tiu aparato malkodas ĝin | ❌ nur kodeko | ✅ ekde kompilaĵo 18 |
+| Senpaga ludilo por ebenaj, 360°-, 3D- kaj VR180-videoj, el la servilo, la telefono aŭ NAS | ❌ nur ebenaj | ✅ (la ludiloj de la Quest-3-vendejo estas pagendaj) |
+| Sama servilo, sama konto, instaliĝas apud la oficiala aplikaĵo | | ✅ |
+
+<details>
+<summary><b>Stato de ĉiu linio</b>: kiel ĝi estis testita</summary>
+
+- **360°-fotoj kiel sfero**: testita en Galaxy S24+ kaj iPhone 14.
+- **Giroskopo**: testita en Galaxy S24+ kaj iPhone 14.
+- **360°-videoj**: testita en Galaxy S24+ kaj iPhone 14.
+- **3D-360°-fotoj kaj -videoj**: testita en Galaxy S24+ kaj Quest 3, kun veraj 3D-360°-ekzemploj (VRTogether, Vuze, Kandao) kaj 3D-foto; raportoj pri aliaj fotiloj bonvenaj.
+- **VR180**: testita en Android-emulilo kaj Galaxy S24+ kun sintezaj aŭdvidaĵoj; aparataj komentoj bonvenaj.
+- **Spacaj fotoj kaj videoj de Apple**: detekto kontrolita per ekzempla foto skribita de la bildbiblioteko de Apple kaj per sintezaj dosieroj; la kaska vido kaj veraj iPhone-dosieroj estas la aparata testo de kompilaĵo 19.
+- **Enmergiĝa vido de Meta Quest**: testita en Quest 3 (regiloj de kompilaĵo 14, alĝustigitaj en kompilaĵo 16 post komentoj de uzanto), kaj de uzanto kun Insta360-X4-videoj 8K HEVC.
+- **360°-insigno kaj 360°-listo**: farita.
+- **Vidi kiel 360°**: farita.
+- **Spatial 2.5D**: testita en Galaxy S24+; komentoj el iPhone bonvenaj.
+- **Sen ajna servilo**: testita en Galaxy S24+, Quest 3 kaj Android-emulilo.
+- **SMB- kaj WebDAV-kunhavigoj**: testita kun Freebox Server (SMB) en Galaxy S24+ kaj Quest 3, kaj kontraŭ Samba- kaj WebDAV-testserviloj en Android-emulilo; komentoj pri aliaj NAS kaj WebDAV bonvenaj.
+- **DLNA-aŭdvidaj serviloj**: kontrolita kontraŭ minidlna kaj Gerbera en Docker; Plex, Jellyfin, NAS, la Freebox Server, iPhone kaj la Quest estas la aparata testo de kompilaĵo 19.
+- **Sendi la dosierojn de kunhavigo al Immich**: testita en Android-emulilo kontraŭ Samba-testservilo kaj Immich-3.2-servilo.
+- **Kunhavigi ĉi tiun telefonon en la reto**: unuotestoj kaj tutvojaj testoj kun la WebDAV-kliento de la kasko, en komputilo; telefono servanta Quest, kaj la iPhone-flanko, estas la aparata testo de kompilaĵo 19.
+- **Plex Media Server**: kontrolita el komputilo kontraŭ vera Plex Media Server 1.42.1 (parigo, dosierujoj, bajtintervaloj, miniaturoj, la adreso ekster la hejmo); ankoraŭ ne kontrolita en aparato.
+- **Tapo-kameraoj**: kontrolita kontraŭ simulita kamerao; ankoraŭ ne kontrolita kun vera kamerao.
+- **Android TV kaj Google TV**: kontrolita per aŭtomataj testoj; ankoraŭ ne kontrolita en televidilo.
+- **Krudaj Insta360-fotoj .insp kaj unutrakaj videoj .insv**: fotoj kontrolitaj kontraŭ Insta360-Studio-eksportaĵoj de X3-dosieroj, videoj en Android-emulilo kun malaltdistingiva X3-dosiero; ankoraŭ ne funkciigitaj en iPhone.
+- **Krudaj videoj kun unu objektivo po trako aŭ po dosiero**: analiziloj kaj kunkudrado kontrolitaj per veraj X4-, X3-paraj, GoPro-MAX- kaj Osmo-360-dosieroj; ludado estas la aparata testo de kompilaĵoj 18 kaj 19.
+- **Dufiŝokula .dng**: planita.
+- **Servilaj videoj kaj la video-malkodiloj**: testita en Android-emulilo; la H.264-limo de la Quest 3 estis mezurita en la kasko.
+- **Teknikaj detaloj de video**: farita.
+
+</details>
 
 ### Aliaj aplikaĵoj, kiujn homoj uzas por tio
 
-| Kion homoj uzas | Kion ili renkontas | Kion faras Immuch360 |
-|---|---|---|
-| La TTT-aplikaĵo de Immich | Ĝi montras 360°-foton kiel sferon, sed prenas krudan .insp por finita panoramo kaj volvas ĝiajn du cirklojn ĉirkaŭ la sfero; VR-vido ankoraŭ estas peto ([diskuto #14768](https://github.com/immich-app/immich/discussions/14768)) | Kunkudras krudajn dosierojn en la aparato, kaj malfermas enmergiĝan vidon en la Quest |
-| La aplikaĵo aŭ Studio de Insta360 | Necesaj por igi la krudajn dosierojn de la karto 360°-bildo antaŭ spekti | Malfermas la krudajn .insp- kaj .insv-dosierojn rekte, kaj la GoPro-dosierojn .360 kaj DJI-dosierojn .osv |
-| Plex, Jellyfin, Synology Photos | 360°-fotoj kaj -videoj montrataj ebenaj aŭ nerekonataj, kiel priskribas fadenoj en iliaj forumoj (Plex-peto estas malfermita ekde 2017) | Legas la Plex-bibliotekon mem ekde kompilaĵo 20, aŭ la samajn dosierujojn per SMB, WebDAV aŭ DLNA, kaj ludas ilin kiel sferon, sen ŝanĝi ion ajn en la servilo |
-| La aplikaĵo Tapo | Aparta aplikaĵo, ensalutinta en vian TP-Link-konton, kun la klipoj apartaj de viaj fotoj | Montras la kameraon apud viaj fotoj, parolas kun ĝi nur en via reto, kaj konservas klipon kiel videon, kiun vi povas sendi al Immich (ekde kompilaĵo 20) |
-| La poŝaparata aplikaĵo de Immich en televidilo | Ne televida aplikaĵo: uzanto raportas, ke ĝi funkcias per muso, ne per la teleregilo | La sama aplikaĵo, farita por la teleregilo (ekde kompilaĵo 20) |
-| Kopii dosierojn al la kasko | Ĉiu dosiero kopiita per kablo antaŭ ol vi povas spekti ĝin | Ludas surloke el Immich, NAS, aŭdvida servilo aŭ telefono |
-| La 360°- kaj 3D-ludiloj de la Quest-vendejo | Pagendaj | Senpaga kaj malfermitkoda (AGPL) |
+- **La TTT-aplikaĵo de Immich**
+  - Kion ili renkontas: ĝi montras 360°-foton kiel sferon, sed prenas krudan .insp por finita panoramo kaj volvas ĝiajn du cirklojn ĉirkaŭ la sfero; VR-vido ankoraŭ estas peto ([diskuto #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Kion faras Immuch360: kunkudras krudajn dosierojn en la aparato, kaj malfermas enmergiĝan vidon en la Quest.
+- **La aplikaĵo aŭ Studio de Insta360**
+  - Kion ili renkontas: necesaj por igi la krudajn dosierojn de la karto 360°-bildo antaŭ spekti.
+  - Kion faras Immuch360: malfermas la krudajn .insp- kaj .insv-dosierojn rekte, kaj la GoPro-dosierojn .360 kaj DJI-dosierojn .osv.
+- **Plex, Jellyfin, Synology Photos**
+  - Kion ili renkontas: 360°-fotoj kaj -videoj montrataj ebenaj aŭ nerekonataj, kiel priskribas fadenoj en iliaj forumoj (Plex-peto estas malfermita ekde 2017).
+  - Kion faras Immuch360: legas la Plex-bibliotekon mem ekde kompilaĵo 20, aŭ la samajn dosierujojn per SMB, WebDAV aŭ DLNA, kaj ludas ilin kiel sferon, sen ŝanĝi ion ajn en la servilo.
+- **La aplikaĵo Tapo**
+  - Kion ili renkontas: aparta aplikaĵo, ensalutinta en vian TP-Link-konton, kun la klipoj apartaj de viaj fotoj.
+  - Kion faras Immuch360: montras la kameraon apud viaj fotoj, parolas kun ĝi nur en via reto, kaj konservas klipon kiel videon, kiun vi povas sendi al Immich (ekde kompilaĵo 20).
+- **La poŝaparata aplikaĵo de Immich en televidilo**
+  - Kion ili renkontas: ne televida aplikaĵo: uzanto raportas, ke ĝi funkcias per muso, ne per la teleregilo.
+  - Kion faras Immuch360: la sama aplikaĵo, farita por la teleregilo (ekde kompilaĵo 20).
+- **Kopii dosierojn al la kasko**
+  - Kion ili renkontas: ĉiu dosiero kopiita per kablo antaŭ ol vi povas spekti ĝin.
+  - Kion faras Immuch360: ludas surloke el Immich, NAS, aŭdvida servilo aŭ telefono.
+- **La 360°- kaj 3D-ludiloj de la Quest-vendejo**
+  - Kion ili renkontas: pagendaj.
+  - Kion faras Immuch360: senpaga kaj malfermitkoda (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Formatoj kaj fontoj, laŭ platformo
 
-Immuch360 estas galerio, kaj ĝi ankaŭ estas senpaga aŭdvida ludilo: ĝi ludas tion, kion la oficiala aplikaĵo ne povas, el la fontoj de la dua tabelo, en la ludilo, kiu konvenas al la dosiero.
+Immuch360 estas galerio, kaj ĝi ankaŭ estas senpaga aŭdvida ludilo: ĝi ludas tion, kion la oficiala aplikaĵo ne povas, el la fontoj de la dua listo, en la ludilo, kiu konvenas al la dosiero.
 
-| Kio | Android-telefonoj | iPhone, iPad | Meta Quest | Android TV, Google TV (ekde kompilaĵo 20) |
-|---|---|---|---|---|
-| Ebenaj videoj (MP4, MOV, MKV, tio, kion la aparato malkodas) | Immich-ludilo, kaj denaska ludilo por retaj kunhavigoj | Same, krom la MKV- kaj AVI-dosieroj de kunhavigo, kiujn iOS ne malfermas (en servilo ili ludiĝas transkoditaj) | En la fenestro | Kiel en telefonoj; OK paŭzas, maldekstren kaj dekstren saltas 10 s |
-| 360°-fotoj | Sfera montrilo, giroskopo | Same | Enmergiĝe, tute ĉirkaŭ vi | Sfera montrilo turnata per la sagoj, zomata per la kanalaj klavoj |
-| 360°-videoj | Denaska Media3-ludilo sur sfero, giroskopo, saltado, elekto de sontrako, bufra indikilo | Denaska SceneKit-ludilo sur sfero, giroskopo, elekto de sontrako, bufra indikilo; ludi kaj paŭzi, ankoraŭ sen tempobreto | Enmergiĝe, vera 3D por stereoskopaj dosieroj, tempobreto kun 10-sekundaj saltoj, antaŭa kaj sekva aŭdvidaĵo | La Media3-ludilo de telefonoj, turnata per la sagoj |
-| 3D 360° (supre kaj malsupre, flank-al-flanke) | Maldekstra okulo, aranĝa butono | Same | Ĉiu okulo ricevas sian propran duonon de la kadro | Maldekstra okulo, aranĝa butono |
-| VR180 (duonsferaj) fotoj kaj videoj | Duonsfero, butono 360°/180° | Same | Enmergiĝa duonsfero | Duonsfero, butono 360°/180° |
-| Spatial 2.5D (profundo sur ebena ekrano el stereoskopa video) | Denaska ludilo, kapspurado per la antaŭa fotilo | Same | Ne proponata | Ne proponata |
-| Spacaj fotoj de Apple (HEIC-stereo-paroj, ekde kompilaĵo 19) | Maldekstra okulo, detala vico diras, ke ĝi estas spaca | Same | Vidi en 3D: ambaŭ okuloj sur foto ŝvebanta en la enmergiĝa vido, 3D aŭ 2D, regrandigebla | Maldekstra okulo, detala vico |
-| Spacaj videoj de Apple (MV-HEVC, ekde kompilaĵo 19) | Unu okulo (la baza tavolo), kun avizo | Same | Unu okulo en la fenestro, kun avizo | Unu okulo, kun avizo |
-| Krudaj Insta360-fotoj .insp (ekde kompilaĵo 16) | Kunkudritaj en la GPU antaŭ la sfera montrilo, ĝis 8192x4096 | Same | Enmergiĝe, el kunkudrita bildo preparita por la kasko | Kiel en telefonoj |
-| Kruda Insta360 .insv, ambaŭ objektivoj en unu trako (ekde kompilaĵo 16) | Kunkudrita per GPU-efiko en la Media3-ludilo | Kunkudrita per SceneKit-ombrigilo | Enmergiĝe, kunkudrita per la sama GPU-efiko | Kiel en telefonoj |
-| Krudaj videoj kun unu objektivo po trako aŭ po dosiero (ekde kompilaĵo 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-paroj, GoPro .360, DJI .osv | Du aparataraj malkodiloj samtempe, po unu por objektivo (ekde kompilaĵo 19 programaraj en aparato sen aparatara malkodilo, ĝis 2048x2048 po objektivo), kaj GL-kunmetilo, kiu kunkudras en la sferon; unu objektivo, poste la transkodita fluo, poste la video nekunkudrita, kiam la aparato ne povas funkciigi du | Propra AVFoundation-kunmetilo kun Metal | Enmergiĝe, samaj du malkodiloj kaj kunmetilo (panelo 3840x1920) | Kiel en telefonoj, kiam la televidilo funkciigas du malkodilojn samtempe |
-| Rekta vido de Tapo-kamerao (ekde kompilaĵo 20) | Media3-RTSP-ludilo: SD en la paĝo, HD en plenekrano, sona butono | Ankoraŭ ne: karto diras, ke ĝi venos poste | En la fenestro, en HD | Kiel en telefonoj |
-| Registraĵoj de Tapo-kamerao (ekde kompilaĵo 20) | Prenitaj de la memorkarto en H.264-videon kun sia sono, poste ludataj kun saltado | Same | Same, en la fenestro | Same |
+- **Ebenaj videoj (MP4, MOV, MKV, tio, kion la aparato malkodas)**
+  - Android-telefonoj: Immich-ludilo, kaj denaska ludilo por retaj kunhavigoj.
+  - iPhone, iPad: same, krom la MKV- kaj AVI-dosieroj de kunhavigo, kiujn iOS ne malfermas (en servilo ili ludiĝas transkoditaj).
+  - Meta Quest: en la fenestro.
+  - Android TV, Google TV: kiel en telefonoj; OK paŭzas, maldekstren kaj dekstren saltas 10 s.
+- **360°-fotoj**
+  - Android-telefonoj: sfera montrilo, giroskopo.
+  - iPhone, iPad: same.
+  - Meta Quest: enmergiĝe, tute ĉirkaŭ vi.
+  - Android TV, Google TV: sfera montrilo turnata per la sagoj, zomata per la kanalaj klavoj.
+- **360°-videoj**
+  - Android-telefonoj: denaska Media3-ludilo sur sfero, giroskopo, saltado, elekto de sontrako, bufra indikilo.
+  - iPhone, iPad: denaska SceneKit-ludilo sur sfero, giroskopo, elekto de sontrako, bufra indikilo; ludi kaj paŭzi, ankoraŭ sen tempobreto.
+  - Meta Quest: enmergiĝe, vera 3D por stereoskopaj dosieroj, tempobreto kun 10-sekundaj saltoj, antaŭa kaj sekva aŭdvidaĵo.
+  - Android TV, Google TV: la Media3-ludilo de telefonoj, turnata per la sagoj.
+- **3D 360° (supre kaj malsupre, flank-al-flanke)**
+  - Android-telefonoj: maldekstra okulo, aranĝa butono.
+  - iPhone, iPad: same.
+  - Meta Quest: ĉiu okulo ricevas sian propran duonon de la kadro.
+  - Android TV, Google TV: maldekstra okulo, aranĝa butono.
+- **VR180 (duonsferaj) fotoj kaj videoj**
+  - Android-telefonoj: duonsfero, butono 360°/180°.
+  - iPhone, iPad: same.
+  - Meta Quest: enmergiĝa duonsfero.
+  - Android TV, Google TV: duonsfero, butono 360°/180°.
+- **Spatial 2.5D (profundo sur ebena ekrano el stereoskopa video)**
+  - Android-telefonoj: denaska ludilo, kapspurado per la antaŭa fotilo.
+  - iPhone, iPad: same.
+  - Meta Quest: ne proponata.
+  - Android TV, Google TV: ne proponata.
+- **Spacaj fotoj de Apple (HEIC-stereo-paroj, ekde kompilaĵo 19)**
+  - Android-telefonoj: maldekstra okulo, detala vico diras, ke ĝi estas spaca.
+  - iPhone, iPad: same.
+  - Meta Quest: Vidi en 3D: ambaŭ okuloj sur foto ŝvebanta en la enmergiĝa vido, 3D aŭ 2D, regrandigebla.
+  - Android TV, Google TV: maldekstra okulo, detala vico.
+- **Spacaj videoj de Apple (MV-HEVC, ekde kompilaĵo 19)**
+  - Android-telefonoj: unu okulo (la baza tavolo), kun avizo.
+  - iPhone, iPad: same.
+  - Meta Quest: unu okulo en la fenestro, kun avizo.
+  - Android TV, Google TV: unu okulo, kun avizo.
+- **Krudaj Insta360-fotoj .insp (ekde kompilaĵo 16)**
+  - Android-telefonoj: kunkudritaj en la GPU antaŭ la sfera montrilo, ĝis 8192x4096.
+  - iPhone, iPad: same.
+  - Meta Quest: enmergiĝe, el kunkudrita bildo preparita por la kasko.
+  - Android TV, Google TV: kiel en telefonoj.
+- **Kruda Insta360 .insv, ambaŭ objektivoj en unu trako (ekde kompilaĵo 16)**
+  - Android-telefonoj: kunkudrita per GPU-efiko en la Media3-ludilo.
+  - iPhone, iPad: kunkudrita per SceneKit-ombrigilo.
+  - Meta Quest: enmergiĝe, kunkudrita per la sama GPU-efiko.
+  - Android TV, Google TV: kiel en telefonoj.
+- **Krudaj videoj kun unu objektivo po trako aŭ po dosiero (ekde kompilaĵo 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-paroj, GoPro .360, DJI .osv**
+  - Android-telefonoj: du aparataraj malkodiloj samtempe, po unu por objektivo (ekde kompilaĵo 19 programaraj en aparato sen aparatara malkodilo, ĝis 2048x2048 po objektivo), kaj GL-kunmetilo, kiu kunkudras en la sferon; unu objektivo, poste la transkodita fluo, poste la video nekunkudrita, kiam la aparato ne povas funkciigi du.
+  - iPhone, iPad: propra AVFoundation-kunmetilo kun Metal.
+  - Meta Quest: enmergiĝe, samaj du malkodiloj kaj kunmetilo (panelo 3840x1920).
+  - Android TV, Google TV: kiel en telefonoj, kiam la televidilo funkciigas du malkodilojn samtempe.
+- **Rekta vido de Tapo-kamerao (ekde kompilaĵo 20)**
+  - Android-telefonoj: Media3-RTSP-ludilo: SD en la paĝo, HD en plenekrano, sona butono.
+  - iPhone, iPad: ankoraŭ ne: karto diras, ke ĝi venos poste.
+  - Meta Quest: en la fenestro, en HD.
+  - Android TV, Google TV: kiel en telefonoj.
+- **Registraĵoj de Tapo-kamerao (ekde kompilaĵo 20)**
+  - Android-telefonoj: prenitaj de la memorkarto en H.264-videon kun sia sono, poste ludataj kun saltado.
+  - iPhone, iPad: same.
+  - Meta Quest: same, en la fenestro.
+  - Android TV, Google TV: same.
 
-La televida kolumno ankoraŭ ne estis kontrolita en televidilo, vidu [Spekti en via televidilo](#watch-on-your-tv-android-tv-and-google-tv); la kameraaj vicoj ankoraŭ ne estis kontrolitaj kun vera kamerao.
+La eroj de Android TV kaj Google TV, ekde kompilaĵo 20, ankoraŭ ne estis kontrolitaj en televidilo, vidu [Spekti en via televidilo](#watch-on-your-tv-android-tv-and-google-tv); la kameraaj eroj ankoraŭ ne estis kontrolitaj kun vera kamerao.
 
-| De | Kiel |
-|---|---|
-| Via Immich-servilo | La originalo aŭ la transkodita fluo de la servilo, laŭ Agordoj, Montrilo de elemento, "Videofonto" (vidu [Detaloj de video kaj malkodiloj](#video-details-decoders-and-why-a-video-stutters)). Sama konto kiel la TTT-aplikaĵo |
-| La telefono aŭ kasko mem | "Uzi sen servilo" en la ensaluta paĝo, aŭ la ero Ĉe tiu ĉi aparato de la langeto Bibliteko |
-| NAS aŭ komputilo | SMB- kaj WebDAV-kunhavigoj, kaj ekde kompilaĵo 19 DLNA-aŭdvidaj serviloj, trovitaj en la reto, legataj rekte (SMB-video per ĝis ses konektoj), nenio kopiita; ekde kompilaĵo 15 la dosieroj, kiujn vi elektas, povas esti senditaj al via Immich-konto |
-| Alia telefono (ekde kompilaĵo 19) | "Kunhavigi ĉi tiun telefonon en la reto" en tiu telefono: la kasko, aŭ iu ajn WebDAV-kliento de la reto, legas ĝiajn albumojn, monatojn kaj 360°-aŭdvidaĵojn |
-| Plex Media Server (ekde kompilaĵo 20) | Ĝiaj bibliotekoj de fotoj, filmoj kaj televidaj serioj laŭ dosierujo, la originalaj dosieroj legataj rekte per HTTPS kontrolita kontraŭ la propra atestilo de la servilo, hejme aŭ per la adreso ekster la hejmo, en ĉiu platformo; vidu [Plex Media Server, sen plex.tv](#plex-media-server-without-plextv) |
-| Tapo-kamerao (ekde kompilaĵo 20) | La rekta vido per la kamerao-konto (Android, Android TV, la Quest), kaj la registraĵoj de ĝia memorkarto per la pasvorto de la TP-Link-konto (ĉiu platformo), nur en la loka reto; vidu [Tapo-kameraoj](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Via Immich-servilo**: la originalo aŭ la transkodita fluo de la servilo, laŭ Agordoj, Montrilo de elemento, "Videofonto" (vidu [Detaloj de video kaj malkodiloj](#video-details-decoders-and-why-a-video-stutters)). Sama konto kiel la TTT-aplikaĵo.
+- **La telefono aŭ kasko mem**: "Uzi sen servilo" en la ensaluta paĝo, aŭ la ero Ĉe tiu ĉi aparato de la langeto Bibliteko.
+- **NAS aŭ komputilo**: SMB- kaj WebDAV-kunhavigoj, kaj ekde kompilaĵo 19 DLNA-aŭdvidaj serviloj, trovitaj en la reto, legataj rekte (SMB-video per ĝis ses konektoj), nenio kopiita; ekde kompilaĵo 15 la dosieroj, kiujn vi elektas, povas esti senditaj al via Immich-konto.
+- **Alia telefono (ekde kompilaĵo 19)**: "Kunhavigi ĉi tiun telefonon en la reto" en tiu telefono: la kasko, aŭ iu ajn WebDAV-kliento de la reto, legas ĝiajn albumojn, monatojn kaj 360°-aŭdvidaĵojn.
+- **Plex Media Server (ekde kompilaĵo 20)**: ĝiaj bibliotekoj de fotoj, filmoj kaj televidaj serioj laŭ dosierujo, la originalaj dosieroj legataj rekte per HTTPS kontrolita kontraŭ la propra atestilo de la servilo, hejme aŭ per la adreso ekster la hejmo, en ĉiu platformo; vidu [Plex Media Server, sen plex.tv](#plex-media-server-without-plextv).
+- **Tapo-kamerao (ekde kompilaĵo 20)**: la rekta vido per la kamerao-konto (Android, Android TV, la Quest), kaj la registraĵoj de ĝia memorkarto per la pasvorto de la TP-Link-konto (ĉiu platformo), nur en la loka reto; vidu [Tapo-kameraoj](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 ankaŭ funkcias en la Meta-Quest-kaskoj kun Horizon OS v69 aŭ posta. Ekde kompilaĵo 21 la Horizon-Store-kompilaĵo estas listigita por la Quest 2, Quest Pro, Quest 3 kaj 3S, la kvar, kiujn la universala `-release.apk` jam nomas; la unua Quest ne, la vendejo ne plu akceptas ĝin. La Quest 3 kaj 3S estas testitaj. La Quest 2 kaj Quest Pro ankoraŭ ne estas testitaj: iliaj video-malkodiloj estas pli malrapidaj, kaj la limoj, kiujn la aplikaĵo kontrolas, estis mezuritaj en Quest 3, do granda H.264-video povas esti rifuzita kun mesaĝo aŭ heziti en ili. Raportoj de ĉi tiuj du kaskoj estas bonvenaj en [Issues](https://github.com/freeKC/Immuch360/issues). Kiel uzi ĝin estas en [En la kasko Meta Quest 3](#in-the-meta-quest-3-headset); ĉi tiu sekcio temas pri la instalado kaj pri tio, kio diferencas en la kasko.
+Immuch360 ankaŭ funkcias en la Meta-Quest-kaskoj kun Horizon OS v69 aŭ posta. Ekde kompilaĵo 21 la Horizon-Store-kompilaĵo estas listigita por la Quest 2, Quest Pro, Quest 3 kaj 3S, la kvar, kiujn la universala `-release.apk` jam nomas; la unua Quest ne, la vendejo ne plu akceptas ĝin.
 
-La kaska kompilaĵo komunikas kun serviloj nur per HTTPS, aŭ per simpla HTTP kun nomoj de la hejma reto (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) kaj kun la kasko mem, kiel postulas la Horizon Store. Servilo tajpita kiel simpla HTTP-adreso kun IP, kiel `http://192.168.1.10:2283`, estas rifuzata de tiu kompilaĵo: uzu HTTPS, nomon de la hejma reto (`nas.local`), aŭ la universalan `-release.apk`, kiu gardas la malferman politikon de la telefonoj. WebDAV-, DLNA- kaj telefonaj kunhavigoj ĉe simpla HTTP-adreso de la loka reto ne estas koncernataj: la aplikaĵo mem legas ilin kaj donas al siaj ludiloj nur la adreson de sia loka ponto (konfirmota en la kasko por DLNA kaj la telefona kunhavigo, novaj en kompilaĵo 19). Ekde kompilaĵo 20 Plex-servilo estas atingata per HTTPS, kaj Tapo-kamerao de la aplikaĵo mem, ĝia rekta vido per RTSP, kiu ne estas HTTP: neniu el ili devus esti koncernata (konfirmota en la kasko).
+La Quest 3 kaj 3S estas testitaj. La Quest 2 kaj Quest Pro ankoraŭ ne estas testitaj: iliaj video-malkodiloj estas pli malrapidaj, kaj la limoj, kiujn la aplikaĵo kontrolas, estis mezuritaj en Quest 3, do granda H.264-video povas esti rifuzita kun mesaĝo aŭ heziti en ili. Raportoj de ĉi tiuj du kaskoj estas bonvenaj en [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Kiel uzi ĝin estas en [En la kasko Meta Quest 3](#in-the-meta-quest-3-headset); ĉi tiu sekcio temas pri la instalado kaj pri tio, kio diferencas en la kasko.
+
+La kaska kompilaĵo komunikas kun serviloj nur per HTTPS, aŭ per simpla HTTP kun nomoj de la hejma reto (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) kaj kun la kasko mem, kiel postulas la Horizon Store. Servilo tajpita kiel simpla HTTP-adreso kun IP, kiel `http://192.168.1.10:2283`, estas rifuzata de tiu kompilaĵo: uzu HTTPS, nomon de la hejma reto (`nas.local`), aŭ la universalan `-release.apk`, kiu gardas la malferman politikon de la telefonoj.
+
+WebDAV-, DLNA- kaj telefonaj kunhavigoj ĉe simpla HTTP-adreso de la loka reto ne estas koncernataj: la aplikaĵo mem legas ilin kaj donas al siaj ludiloj nur la adreson de sia loka ponto (konfirmota en la kasko por DLNA kaj la telefona kunhavigo, novaj en kompilaĵo 19). Ekde kompilaĵo 20 Plex-servilo estas atingata per HTTPS, kaj Tapo-kamerao de la aplikaĵo mem, ĝia rekta vido per RTSP, kiu ne estas HTTP: neniu el ili devus esti koncernata (konfirmota en la kasko).
 
 <a id="install"></a>
 ### Instali
@@ -762,16 +922,23 @@ Meta aprobis la Horizon-Store-listeron la 7-an de oktobro 2026 kun kompilaĵo 14
 
 ### En la fenestro
 
-La tuta aplikaĵo funkcias kiel regrandigebla 2D-fenestro: ensaluto, templinio, albumoj, serĉo, la langeto Bibliteko (360°-listo, Ĉe tiu ĉi aparato, Retaj kunhavigoj), la agordoj, kaj la foto- kaj videomontriloj, kie ebenaj fotoj kaj videoj ludiĝas. En la kasko la butono 360°, kaj "Vidi kiel 360°" en la menuo ⋮, rekte malfermas la enmergiĝan vidon anstataŭ la sfera montrilo de telefonoj, kaj la butono Spatial 2.5D kaj ĝia agordo ne estas montrataj. Ekde kompilaĵo 19 spaca foto de Apple havas butonon "Vidi en 3D", kaj la kahelo "Kunhavigi ĉi tiun telefonon en la reto" ne estas montrata: la kasko estas tiu, kiu legas la kunhavigon de telefono. Ekde kompilaĵo 20 la Plex-serviloj kaj la Tapo-kameraoj ankaŭ malfermiĝas en la fenestro, la rekta vido de la kamerao en HD; la agordo "Aranĝo por teleregilo" restas je Aŭtomata, kio lasas ĝin malŝaltita en la kasko.
+La tuta aplikaĵo funkcias kiel regrandigebla 2D-fenestro: ensaluto, templinio, albumoj, serĉo, la langeto Bibliteko (360°-listo, Ĉe tiu ĉi aparato, Retaj kunhavigoj), la agordoj, kaj la foto- kaj videomontriloj, kie ebenaj fotoj kaj videoj ludiĝas.
+
+En la kasko la butono 360°, kaj "Vidi kiel 360°" en la menuo ⋮, rekte malfermas la enmergiĝan vidon anstataŭ la sfera montrilo de telefonoj, kaj la butono Spatial 2.5D kaj ĝia agordo ne estas montrataj.
+
+Ekde kompilaĵo 19 spaca foto de Apple havas butonon "Vidi en 3D", kaj la kahelo "Kunhavigi ĉi tiun telefonon en la reto" ne estas montrata: la kasko estas tiu, kiu legas la kunhavigon de telefono. Ekde kompilaĵo 20 la Plex-serviloj kaj la Tapo-kameraoj ankaŭ malfermiĝas en la fenestro, la rekta vido de la kamerao en HD; la agordo "Aranĝo por teleregilo" restas je Aŭtomata, kio lasas ĝin malŝaltita en la kasko.
 
 ### En bildoj
 
 Ekrankopioj faritaj en la kasko per la kapta butono (Meta-butono kaj ĉano), en Quest 3, kun la aplikaĵo en la franca; la langeto Bibliteko estas montrata en la reĝimo sen servilo.
 
-| Sen servilo | Retaj kunhavigoj |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="La langeto Bibliteko sen servilo: Ĉe tiu ĉi aparato kaj Retaj kunhavigoj"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="La paĝo Retaj kunhavigoj kun SMB-kunhavigo de Freebox Server"> |
-| La langeto Bibliteko en la reĝimo sen servilo: la propraj aŭdvidaĵoj de la kasko kaj la retaj kunhavigoj | Samba-kunhavigo de Freebox Server, legata rekte el la kasko |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="La langeto Bibliteko sen servilo: Ĉe tiu ĉi aparato kaj Retaj kunhavigoj">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="La paĝo Retaj kunhavigoj kun SMB-kunhavigo de Freebox Server">
+</p>
+
+- **Sen servilo**: la langeto Bibliteko en la reĝimo sen servilo, kun la propraj aŭdvidaĵoj de la kasko kaj la retaj kunhavigoj.
+- **Retaj kunhavigoj**: Samba-kunhavigo de Freebox Server, legata rekte el la kasko.
 
 ### Limigoj en la kasko
 
@@ -786,12 +953,18 @@ Ekrankopioj faritaj en la kasko per la kapta butono (Meta-butono kaj ĉano), en 
 
 La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Store-versio atendas la kontrolon de Apple, la Meta-Horizon-Store-listero estas aprobita kaj ĝia unua ĝisdatigo estas en la kontrolo de Meta, kaj la Google-Play-versio por televidiloj atendas la kontrolon de Google de la televida eldono. La GitHub-eldono ĉiam estas la plej nova kompilaĵo:
 
-| Platformo | Hodiaŭ | Baldaŭ |
-|---|---|---|
-| Android-telefonoj kaj -tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), aŭ la APK en la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` por telefono (la universala `Immuch360-v<version>-release.apk` funkcias ĉie, `-armeabi-v7a` estas por pli malnovaj 32-bitaj telefonoj, kaj la dosiero `.aab` estas por Google Play, ne por flankinstalado). La GitHub-kompilaĵo kutime estas antaŭ la vendejo. Ĉiuokaze ĝi instaliĝas apud la oficiala aplikaĵo de Immich (pakaĵo `com.aprogsys.immuch360`). | Google Play: kompilaĵo 18 estas publika, kompilaĵo 20 en la kontrolo de Google ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 19 |
-| iPhone kaj iPad | Atendas la kontrolon de Apple. La kontrolata versio portas la funkciojn de kompilaĵo 11: la alŝuto al Immich kaj la elekto "Videofonto" (kompilaĵo 15) kaj la krudaj Insta360-dosieroj (kompilaĵo 16) venos kun posta App-Store-ĝisdatigo. La fontkodo konstruiĝas per Xcode aŭ en Codemagic, vidu [Konstrui ĝin mem](#build-it-yourself). | App Store, en kontrolado |
-| Meta Quest 2, Quest Pro, Quest 3 kaj 3S (la Quest 2 kaj Quest Pro netestitaj) | La dosiero `-quest-release.apk` de la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases) (la universala `-release.apk` ankaŭ funkcias), flankinstalita en programista reĝimo, vidu [Instali](#install). La vendeja kompilaĵo kaj la GitHub-APK estas subskribitaj per malsamaj ŝlosiloj: por ŝanĝi de unu al la alia, unue malinstalu la aplikaĵon (ĝiaj agordoj kaj konservitaj kunhavigoj foriras kun ĝi). | Meta Horizon Store: la listero estis aprobita la 7-an de oktobro 2026 kun kompilaĵo 14, kaj kompilaĵo 21, ĝia unua ĝisdatigo, estas en la kontrolo de Meta; la alfa-kanalo de la vendejo (nur por testantoj) ricevas ĉiun novan kompilaĵon |
-| Android TV kaj Google TV (ekde kompilaĵo 20) | La universala `Immuch360-v<version>-release.apk` de la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases), flankinstalita per adb, vidu [Instali ĝin en la televidilo](#install-it-on-the-tv). Ĝi estas la sama aplikaĵo kiel en telefonoj. | Google Play en televidiloj, post la kontrolo de Google de la televida eldono |
+- **Android-telefonoj kaj -tabulkomputiloj**
+  - Hodiaŭ: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), aŭ la APK en la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` por telefono (la universala `Immuch360-v<version>-release.apk` funkcias ĉie, `-armeabi-v7a` estas por pli malnovaj 32-bitaj telefonoj, kaj la dosiero `.aab` estas por Google Play, ne por flankinstalado). La GitHub-kompilaĵo kutime estas antaŭ la vendejo. Ĉiuokaze ĝi instaliĝas apud la oficiala aplikaĵo de Immich (pakaĵo `com.aprogsys.immuch360`).
+  - Baldaŭ: en Google Play, kompilaĵo 18 estas publika, kompilaĵo 20 en la kontrolo de Google ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 19.
+- **iPhone kaj iPad**
+  - Hodiaŭ: atendas la kontrolon de Apple. La kontrolata versio portas la funkciojn de kompilaĵo 11: la alŝuto al Immich kaj la elekto "Videofonto" (kompilaĵo 15) kaj la krudaj Insta360-dosieroj (kompilaĵo 16) venos kun posta App-Store-ĝisdatigo. La fontkodo konstruiĝas per Xcode aŭ en Codemagic, vidu [Konstrui ĝin mem](#build-it-yourself).
+  - Baldaŭ: App Store, en kontrolado.
+- **Meta Quest 2, Quest Pro, Quest 3 kaj 3S (la Quest 2 kaj Quest Pro netestitaj)**
+  - Hodiaŭ: la dosiero `-quest-release.apk` de la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases) (la universala `-release.apk` ankaŭ funkcias), flankinstalita en programista reĝimo, vidu [Instali](#install). La vendeja kompilaĵo kaj la GitHub-APK estas subskribitaj per malsamaj ŝlosiloj: por ŝanĝi de unu al la alia, unue malinstalu la aplikaĵon (ĝiaj agordoj kaj konservitaj kunhavigoj foriras kun ĝi).
+  - Baldaŭ: en la Meta Horizon Store, la listero estis aprobita la 7-an de oktobro 2026 kun kompilaĵo 14, kaj kompilaĵo 21, ĝia unua ĝisdatigo, estas en la kontrolo de Meta; la alfa-kanalo de la vendejo (nur por testantoj) ricevas ĉiun novan kompilaĵon.
+- **Android TV kaj Google TV (ekde kompilaĵo 20)**
+  - Hodiaŭ: la universala `Immuch360-v<version>-release.apk` de la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases), flankinstalita per adb, vidu [Instali ĝin en la televidilo](#install-it-on-the-tv). Ĝi estas la sama aplikaĵo kiel en telefonoj.
+  - Baldaŭ: Google Play en televidiloj, post la kontrolo de Google de la televida eldono.
 
 La ligiloj al App Store kaj Meta Horizon Store estos aldonitaj ĉi tie tuj kiam la listeroj estos publikigitaj. Ensalutu per via kutima Immich-servila URL kaj konto, aŭ tuŝetu "Uzi sen servilo" en la ensaluta paĝo por komenci kun la propraj fotoj kaj videoj de la aparato. La APK el GitHub ne ĝisdatigas sin mem: observu la paĝon Eldonoj, kaj post kiam vi instalis la aplikaĵon el vendejo, prenu la ĝisdatigojn el tiu vendejo.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Vendejaj ekrankopioj estas faritaj per sencimigaj simulilaj kompilaĵoj faritaj kun `--dart-define=IMMUCH_SCREENSHOTS=true`, kiu nur kaŝas la sencimigan rubandon. La du Android-variantoj (flavours) estas la sama aplikaĵo. Ekde kompilaĵo 20 la varianto `phone` ankaŭ deklaras sin televida aplikaĵo (televida lanĉila enigo kaj rubando, neniu tuŝekrano bezonata), kion la varianto `quest` preterlasas. La varianto `quest` celas SDK 34 kaj gardas nur la permesojn, kiujn la kasko uzas (fotoj, videoj, sciigoj): aŭdvidaĵa administrado, fona loko, malnova konservejo, sono, aŭdvidaĵa loko, aparata loko kaj fotilo estas forigitaj en `android/app/src/quest/AndroidManifest.xml`, ĉar la Meta Horizon Store rifuzas la unuajn du kaj petas pravigon por ĉiu alia sentema; la sama dosiero nomas la Quest 2, Quest Pro, Quest 3 kaj 3S kiel siajn subtenatajn aparatojn kaj limigas simplan HTTP al la kasko mem kaj al nomoj de la hejma reto. La APK estas nur 64-bita pro la du kromaj argumentoj de sia komandlinio (`--target-platform android-arm64 --android-project-arg arm64only=true`). La varianto `phone` estas tio, kion Google Play postulas. Por konstrui por iOS en via propra Mac, uzu Xcode kaj vian propran subskriban teamon; kun Xcode 26, rulu `xcodebuild -downloadComponent MetalToolchain` unufoje antaŭe, ĉar la Spatial-ombrigiloj bezonas ĝin. Sen Mac, iOS-kompilaĵoj funkcias en Codemagic (gastigata Mac) el la dosiero `codemagic.yaml` de ĉi tiu deponejo. Android-eldonaj kompilaĵoj funkcias en GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Vendejaj ekrankopioj estas faritaj per sencimigaj simulilaj kompilaĵoj faritaj kun `--dart-define=IMMUCH_SCREENSHOTS=true`, kiu nur kaŝas la sencimigan rubandon.
+
+La du Android-variantoj (flavours) estas la sama aplikaĵo. Ekde kompilaĵo 20 la varianto `phone` ankaŭ deklaras sin televida aplikaĵo (televida lanĉila enigo kaj rubando, neniu tuŝekrano bezonata), kion la varianto `quest` preterlasas.
+
+La varianto `quest` celas SDK 34 kaj gardas nur la permesojn, kiujn la kasko uzas (fotoj, videoj, sciigoj): aŭdvidaĵa administrado, fona loko, malnova konservejo, sono, aŭdvidaĵa loko, aparata loko kaj fotilo estas forigitaj en `android/app/src/quest/AndroidManifest.xml`, ĉar la Meta Horizon Store rifuzas la unuajn du kaj petas pravigon por ĉiu alia sentema; la sama dosiero nomas la Quest 2, Quest Pro, Quest 3 kaj 3S kiel siajn subtenatajn aparatojn kaj limigas simplan HTTP al la kasko mem kaj al nomoj de la hejma reto. La APK estas nur 64-bita pro la du kromaj argumentoj de sia komandlinio (`--target-platform android-arm64 --android-project-arg arm64only=true`). La varianto `phone` estas tio, kion Google Play postulas.
+
+Por konstrui por iOS en via propra Mac, uzu Xcode kaj vian propran subskriban teamon; kun Xcode 26, rulu `xcodebuild -downloadComponent MetalToolchain` unufoje antaŭe, ĉar la Spatial-ombrigiloj bezonas ĝin. Sen Mac, iOS-kompilaĵoj funkcias en Codemagic (gastigata Mac) el la dosiero `codemagic.yaml` de ĉi tiu deponejo. Android-eldonaj kompilaĵoj funkcias en GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Neniu sekreto loĝas en ĉi tiu deponejo: la Android-subskriba ŝlosilo estas konservita kiel ĉifritaj sekretoj de GitHub Actions, kaj la Apple-subskriba materialo kiel ĉifritaj variabloj en Codemagic. La laborfluaj dosieroj nur referencas ilin laŭ nomo. Sen via propra `android/key.jks`, eldona kompilaĵo estas subskribita per la sencimiga ŝlosilo kaj ne povas instaliĝi super kopio el GitHub aŭ vendejo (unue malinstalu tiun); sencimiga kompilaĵo instaliĝas apud ĝi kiel Immuch360 debug. La Meta-Horizon-Store-kopio estas la `quest`-APK de la eldono subskribita per alia ŝlosilo, tiu, per kiu la vendeja aplikaĵo unue estis registrita, do ĝi ankaŭ ne povas instaliĝi super flankinstalita APK, nek inverse.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Ekde kompilaĵo 19 la DLNA-kliento, la telefona kunhavigo kaj la detekto de spacaj aŭdvidaĵoj de Apple ankaŭ skribas en la propran protokolon de la aplikaĵo ("Protokoloj", en la menuo de la profila bildo supre dekstre), sub `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` kaj `NetworkMediaService`. Ekde kompilaĵo 20 la televida reĝimo skribas tien sub `TvMode` kaj `TvTextEntry`, la Plex-serviloj sub `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` kaj `PlexServerEditPage`, kaj la Tapo-kameraoj sub `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` kaj `CameraLiveView`; la Plex-linioj neniam enhavas la ĵetonon, adreson aŭ titolon, kaj la kameraaj linioj preterlasas la pasvortojn. Protokolaj linioj restas en la aparato, krom se vi mem kopias ilin.
 
+<a id="privacy"></a>
 ## Privateco
 
 - **Nenio iras al la programisto**: la aplikaĵo komunikas kun la Immich-servilo, kiun vi elektas (kaj, kiam vi malfermas la mapon, kun la mapkahela servo, kiun tiu servilo uzas), havas nek reklamojn, nek analizon, nek kraŝraportan servon funkciigatan de la programisto, kaj sendas nenion al la programisto de Immuch360.
@@ -849,10 +1029,12 @@ Ekde kompilaĵo 19 la DLNA-kliento, la telefona kunhavigo kaj la detekto de spac
 
 La plena politiko estas en [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Permesilo kaj varmarko
 
 Ĉi tiu projekto estas forko de Immich kaj restas sub la [GNU AGPL v3](../LICENSE). Ĉiu APK, inkluzive de la telefonaj, ankaŭ enhavas la Meta Spatial SDK, kiu ne estas malfermitkoda (Meta Platform Technologies SDK License Agreement) kaj estas uzata nur en Meta-Quest-kaskoj. Immuch360 estas nek ligita al, nek aprobita de, la teamo de Immich aŭ FUTO.
 
+<a id="roadmap"></a>
 ## Vojmapo
 
 Kio ankoraŭ ne estas farita, la plej verŝajna unue. Nenio ĉi tie estas promeso, kaj komentoj en la [cimspurilo](https://github.com/freeKC/Immuch360/issues) helpas decidi, kio venos unue.
@@ -871,6 +1053,7 @@ Kio ankoraŭ ne estas farita, la plej verŝajna unue. Nenio ĉi tie estas promes
 - **Plex, sekve**: la aparata testo de kompilaĵo 20 (telefonoj, la Quest, iPhone, televidilo, ekster la hejmo); alporti la ĵetonon el la komputilo per QR-kodo; kaŝi la DLNA-flankon de Plex-servilo en la listo de trovitaj serviloj; IPv6.
 - **Kontraŭflue (upstream)**: malgrandaj tirpetoj al Immich por la partoj, kiujn la prizorgantoj volas, komencante per la 360°-fotomontrilo.
 
+<a id="credits"></a>
 ## Dankoj
 
 La 360°-fotomontrilo baziĝas sur la kontraŭflua tirpeto [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) de dmitry-brazhenko, mem konstruita sur la prototipo de bencefr en [#30192](https://github.com/immich-app/immich/pull/30192). Dankon al ambaŭ.

@@ -1,11 +1,13 @@
-[English](../README.md) | Afrikaans | [العربية](README.ar.md) | [Azərbaycanca](README.az.md) | [Беларуская](README.be.md) | [Български](README.bg.md) | [Bislama](README.bi.md) | [বাংলা](README.bn.md) | [Brezhoneg](README.br.md) | [Bosanski](README.bs.md) | [Català](README.ca.md) | [Čeština](README.cs.md) | [Чӑвашла](README.cv.md) | [Dansk](README.da.md) | [Deutsch](README.de.md) | [Deutsch (Schweiz)](README.de_CH.md) | [Ελληνικά](README.el.md) | [English (UK)](README.en_GB.md) | [Esperanto](README.eo.md) | [Español](README.es.md) | [Eesti](README.et.md) | [Euskara](README.eu.md) | [فارسی](README.fa.md) | [Suomi](README.fi.md) | [Filipino](README.fil.md) | [Français](README.fr.md) | [Gaeilge](README.ga.md) | [Galego](README.gl.md) | [Alemannisch](README.gsw.md) | [ગુજરાતી](README.gu.md) | [עברית](README.he.md) | [हिन्दी](README.hi.md) | [Hrvatski](README.hr.md) | [Magyar](README.hu.md) | [Հայերեն](README.hy.md) | [Bahasa Indonesia](README.id.md) | [Íslenska](README.is.md) | [Italiano](README.it.md) | [日本語](README.ja.md) | [ქართული](README.ka.md) | [Taqbaylit](README.kab.md) | [Қазақша](README.kk.md) | [ខ្មែរ](README.km.md) | [Kurmancî](README.kmr.md) | [ಕನ್ನಡ](README.kn.md) | [한국어](README.ko.md) | [ภาษาเขมรถิ่นไทย](README.kxm.md) | [Lëtzebuergesch](README.lb.md) | [Lombard](README.lmo.md) | [Lietuvių](README.lt.md) | [Latviešu](README.lv.md) | [Bahasa Melayu Kelantan](README.mfa.md) | [Te reo Māori](README.mi.md) | [Македонски](README.mk.md) | [മലയാളം](README.ml.md) | [Монгол](README.mn.md) | [मराठी](README.mr.md) | [Bahasa Melayu](README.ms.md) | [Norsk bokmål](README.nb_NO.md) | [नेपाली](README.ne.md) | [Nederlands](README.nl.md) | [Norsk nynorsk](README.nn.md) | [ਪੰਜਾਬੀ](README.pa.md) | [Polski](README.pl.md) | [Português](README.pt.md) | [Português (Brasil)](README.pt_BR.md) | [Română](README.ro.md) | [Русский](README.ru.md) | [සිංහල](README.si.md) | [Slovenčina](README.sk.md) | [Slovenščina](README.sl.md) | [Shqip](README.sq.md) | [Српски](README.sr_Cyrl.md) | [Srpski](README.sr_Latn.md) | [Svenska](README.sv.md) | [Kiswahili](README.sw.md) | [Schwäbisch](README.swg.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md) | [ไทย](README.th.md) | [Tagalog](README.tl.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [اردو](README.ur.md) | [Oʻzbekcha](README.uz.md) | [Tiếng Việt](README.vi.md) | [粵語](README.yue_Hant.md) | [简体中文](README.zh_Hans.md) | [繁體中文](README.zh_Hant.md)
+<details><summary>🌐 <b>Afrikaans</b> · Ander tale (88)</summary><a href="../README.md">English</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
   <img src="../.github/readme/banner-2026-10.png" width="760" alt="Immuch360: 360°-, 3D- en VR180-foto's en -video's, van Immich, jou foon of 'n NAS. Android, iOS en Meta Quest, met of sonder 'n bediener">
 </p>
 
 # Immuch360
 
-Immuch360 is die Immich-mobiele app met 360°-foto's en -video's waarin jy kan rondkyk, en 'n gratis speler vir plat, 360°-, 3D- en VR180-foto's en -video's, op Android-fone en -tablette, iPhones en iPads, Meta Quest-kopstukke (Quest 3 en 3S, en vanaf bou 21 die Quest 2 en Quest Pro, ongetoets), en vanaf bou 20 Android TV en Google TV. Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) of die fotosfeermodus van 'n foon afneem, of wat 'n kopstuk besit, en hul eie opnames wil kyk vanaf 'n Immich-bediener, die foon self, 'n NAS, 'n mediabediener of 'n Plex-bediener: dieselfde bediener, dieselfde rekening, geen bedienerinprop nie, of glad geen bediener nie. Vanaf bou 20 wys dit ook Tapo-kameras, regstreeks en die opnames van hul geheuekaart.
+Immuch360 is die Immich-mobiele app met 360°-foto's en -video's waarin jy kan rondkyk, en 'n gratis speler vir plat, 360°-, 3D- en VR180-foto's en -video's, op Android-fone en -tablette, iPhones en iPads, Meta Quest-kopstukke (Quest 3 en 3S, en vanaf bou 21 die Quest 2 en Quest Pro, ongetoets), en vanaf bou 20 Android TV en Google TV.
+
+Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) of die fotosfeermodus van 'n foon afneem, of wat 'n kopstuk besit, en hul eie opnames wil kyk vanaf 'n Immich-bediener, die foon self, 'n NAS, 'n mediabediener of 'n Plex-bediener: dieselfde bediener, dieselfde rekening, geen bedienerinprop nie, of glad geen bediener nie. Vanaf bou 20 wys dit ook Tapo-kameras, regstreeks en die opnames van hul geheuekaart.
 
 <p align="center">
   <sub>Nie-amptelike vurk. Nie verbonde aan Immich of FUTO nie. Die naam lees as "I am much 360".</sub>
@@ -13,29 +15,52 @@ Immuch360 is die Immich-mobiele app met 360°-foto's en -video's waarin jy kan r
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a> &nbsp;·&nbsp;
-  App Store: <a href="#where-to-get-it">word nagegaan</a> &nbsp;·&nbsp;
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store goedgekeur, bou 21 as sy eerste opdatering ingedien &nbsp;·&nbsp;
+  <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
+  App Store: <a href="#where-to-get-it">word nagegaan</a><br>
+  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store goedgekeur, bou 21 as sy eerste opdatering ingedien<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a>
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>🌐 Ingeboude 360°</h3>Foto's en video's as 'n sfeer waarin jy rondkyk, met die giroskoop, rou kameralêers ingesluit (Insta360 vanaf bou 16, GoPro en DJI vanaf bou 18). Ook 'n gratis videospeler: plat, 360°, 3D, VR180</td>
-    <td align="center" width="33%"><h3>👓 Ingeboude 3D</h3>Stereoskopiese 360° en VR180, bo/onder of langs mekaar, en Apple se ruimtelike foto's (vanaf bou 19): ware 3D in die kopstuk, een oog op 'n foon</td>
-    <td align="center" width="33%"><h3>🎥 Ingeboude 2.5D</h3>Diepte op 'n plat skerm uit 'n stereoskopiese video, die aansig volg jou kop (eksperimenteel, fone en tablette)</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📱 Android, iOS, Quest, TV</h3>Een app op fone, tablette en die Quest 2-, Pro-, 3- en 3S-kopstukke, ware 3D in die kopstuk, en vanaf bou 20 op Android TV met die afstandbeheer</td>
-    <td align="center"><h3>🔌 Met of sonder 'n bediener</h3>Jou Immich-bediener, of die foon se eie galery, geen rekening nodig nie</td>
-    <td align="center"><h3>🗄️ Netwerkdeelplekke</h3>Samba (SMB), WebDAV en, vanaf bou 19, DLNA-mediabedieners wat op die netwerk gevind en regstreeks gelees word, niks word afgelaai nie, en na Immich gestuur wanneer jy wil. Vanaf bou 19 deel 'n foon ook sy eie galery met die kopstuk</td>
-  </tr>
-  <tr>
-    <td align="center"><h3>📺 Op die TV</h3>Vanaf bou 20 dieselfde APK op Android TV en Google TV: 360°-foto's en -video's, jou bediener en jou deelplekke, met die afstandbeheer</td>
-    <td align="center"><h3>🎬 Plex, sonder plex.tv</h3>Vanaf bou 20 jou Plex-biblioteke, gespeel vanaf die oorspronklike lêers sodat 360° 360° bly, tuis en weg van die huis</td>
-    <td align="center"><h3>📹 Tapo-kameras</h3>Vanaf bou 20 die regstreekse beeld en die opnames van die geheuekaart, slegs op jou netwerk, en 'n greep na Immich gestuur wanneer jy wil</td>
-  </tr>
-</table>
+- 🌐 **Ingeboude 360°**<br>Foto's en video's as 'n sfeer waarin jy rondkyk, met die giroskoop, rou kameralêers ingesluit (Insta360 vanaf bou 16, GoPro en DJI vanaf bou 18). Ook 'n gratis videospeler: plat, 360°, 3D, VR180
+- 👓 **Ingeboude 3D**<br>Stereoskopiese 360° en VR180, bo/onder of langs mekaar, en Apple se ruimtelike foto's (vanaf bou 19): ware 3D in die kopstuk, een oog op 'n foon
+- 🎥 **Ingeboude 2.5D**<br>Diepte op 'n plat skerm uit 'n stereoskopiese video, die aansig volg jou kop (eksperimenteel, fone en tablette)
+- 📱 **Android, iOS, Quest, TV**<br>Een app op fone, tablette en die Quest 2-, Pro-, 3- en 3S-kopstukke, ware 3D in die kopstuk, en vanaf bou 20 op Android TV met die afstandbeheer
+- 🔌 **Met of sonder 'n bediener**<br>Jou Immich-bediener, of die foon se eie galery, geen rekening nodig nie
+- 🗄️ **Netwerkdeelplekke**<br>Samba (SMB), WebDAV en, vanaf bou 19, DLNA-mediabedieners wat op die netwerk gevind en regstreeks gelees word, niks word afgelaai nie, en na Immich gestuur wanneer jy wil. Vanaf bou 19 deel 'n foon ook sy eie galery met die kopstuk
+- 📺 **Op die TV**<br>Vanaf bou 20 dieselfde APK op Android TV en Google TV: 360°-foto's en -video's, jou bediener en jou deelplekke, met die afstandbeheer
+- 🎬 **Plex, sonder plex.tv**<br>Vanaf bou 20 jou Plex-biblioteke, gespeel vanaf die oorspronklike lêers sodat 360° 360° bly, tuis en weg van die huis
+- 📹 **Tapo-kameras**<br>Vanaf bou 20 die regstreekse beeld en die opnames van die geheuekaart, slegs op jou netwerk, en 'n greep na Immich gestuur wanneer jy wil
+
+<details>
+<summary><b>Inhoud</b></summary>
+
+- [360°-foto's en -video's as 'n sfeer](#360-photos-and-videos-as-a-sphere)
+- [Sonder 'n bediener of 'n rekening](#without-a-server-or-an-account)
+- [Netwerkdeelplekke: 'n NAS, 'n rekenaar of 'n mediabediener](#network-shares-a-nas-a-computer-or-a-media-server)
+- [Plex Media Server, sonder plex.tv](#plex-media-server-without-plextv)
+- [Deel hierdie foon op die netwerk](#share-this-phone-on-the-network)
+- [Tapo-kameras: regstreekse beeld en die opnames van die geheuekaart](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Rou 360°-kameralêers, sonder die kamera se app](#raw-360-camera-files-without-the-cameras-app)
+- [3D- en VR180-foto's en -video's](#3d-and-vr180-photos-and-videos)
+- [Diepte op 'n plat skerm: Spatial 2.5D (eksperimenteel)](#depth-on-a-flat-screen-spatial-25d-experimental)
+- [Apple se ruimtelike foto's en video's](#apple-spatial-photos-and-videos)
+- [In die Meta Quest 3-kopstuk](#in-the-meta-quest-3-headset)
+- [Kyk op jou TV (Android TV en Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
+- [Vind jou 360°-opnames: die 360°-lys](#find-your-360-shots-the-360-list)
+- [Videobesonderhede, dekodeerders en waarom 'n video hakkel](#video-details-decoders-and-why-a-video-stutters)
+- [Alles anders is Immich](#everything-else-is-immich)
+- [Vergeleke met die Immich-app en ander apps](#compared-with-the-immich-app-and-other-apps)
+- [Formate en bronne, per platform](#formats-and-sources-by-platform)
+- [Meta Quest 3](#meta-quest-3)
+- [Waar om dit te kry](#where-to-get-it)
+- [Bou dit self](#build-it-yourself)
+- [Logboeke](#logs)
+- [Privaatheid](#privacy)
+- [Lisensie en handelsmerk](#license-and-trademark)
+- [Padkaart](#roadmap)
+- [Erkennings](#credits)
+
+</details>
 
 ## Watter probleem het jy?
 
@@ -61,12 +86,19 @@ Wanneer 'n funksie nuut is, sê die teks vanaf watter bou dit daar is. Die GitHu
 
 Jy rugsteun jou foto's na 'n [Immich](https://github.com/immich-app/immich)-bediener, en sommige daarvan kom van 'n 360°-kamera of van die fotosfeermodus van 'n foon. In die amptelike mobiele app wys daardie foto's as 'n plat, uitgerekte strook, en 360°-video's speel ook plat. Die Immich-webapp kan 'n 360°-foto as 'n sfeer wys, die mobiele app kan nie: dit word sedert Januarie 2024 versoek in [bespreking #6572](https://github.com/immich-app/immich/discussions/6572).
 
-Immuch360 maak hulle oop as 'n sfeer waarin jy rondkyk, op Android- en iOS-fone en -tablette. 'n Foto draai soos jy dit sleep, zoem met 'n knyp of 'n dubbeltik, draai nog 'n bietjie na 'n vinnige sleep, begin by die aanvanklike aansig wat die kamera aangeteken het (GPano-metadata), en kry 'n skerper tekstuur wanneer jy inzoem; gedeeltelike panoramas word hanteer (GPano-uitsnede). 'n Video speel in 'n ingeboude sferiese speler met klank, sleep en die giroskoop. Aanmekaargewerkte 360°-lêers werk oral: uitvoere uit die Insta360-app of Studio, GoPro Player, Ricoh Theta, en fotosfere van fone. Rou lêers reguit van die kamera word deur die app aanmekaargewerk, sien [Rou 360°-kameralêers](#raw-360-camera-files-without-the-cameras-app).
+Immuch360 maak hulle oop as 'n sfeer waarin jy rondkyk, op Android- en iOS-fone en -tablette.
 
-| 'n 360°-foto as 'n sfeer | 'n 360°-video in die 360°-speler |
-|---|---|
-| <img src="../.github/readme/b19-sphere.png" width="260" alt="'n 360°-foto van 'n meeroewer in die sfeerkyker: die sluitknoppie links bo, die 360°-, 3D-uitleg- en giroskoopknoppies regs bo"> | <img src="../.github/readme/b19-video.png" width="420" alt="'n 360°-video van 'n kuspad wat speel in die 360°-speler van 'n foon wat dwars gehou word: sluit en die lêernaam links bo, 360° en 3D regs bo, vorige, terugspring, speel, vorentoe spring en volgende in die middel, die tydbalk onder"> |
-| Sluit links bo; regs bo die 360°/180°-knoppie, die 3D-uitlegknoppie en die giroskoop | Tik op die beeld vir die kontroles; 360° en 3D regs bo |
+'n Foto draai soos jy dit sleep, zoem met 'n knyp of 'n dubbeltik, draai nog 'n bietjie na 'n vinnige sleep, begin by die aanvanklike aansig wat die kamera aangeteken het (GPano-metadata), en kry 'n skerper tekstuur wanneer jy inzoem; gedeeltelike panoramas word hanteer (GPano-uitsnede). 'n Video speel in 'n ingeboude sferiese speler met klank, sleep en die giroskoop.
+
+Aanmekaargewerkte 360°-lêers werk oral: uitvoere uit die Insta360-app of Studio, GoPro Player, Ricoh Theta, en fotosfere van fone. Rou lêers reguit van die kamera word deur die app aanmekaargewerk, sien [Rou 360°-kameralêers](#raw-360-camera-files-without-the-cameras-app).
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.png" width="260" alt="'n 360°-foto van 'n meeroewer in die sfeerkyker: die sluitknoppie links bo, die 360°-, 3D-uitleg- en giroskoopknoppies regs bo">
+  <img src="../.github/readme/b19-video.png" width="420" alt="'n 360°-video van 'n kuspad wat speel in die 360°-speler van 'n foon wat dwars gehou word: sluit en die lêernaam links bo, 360° en 3D regs bo, vorige, terugspring, speel, vorentoe spring en volgende in die middel, die tydbalk onder">
+</p>
+
+- **'n 360°-foto as 'n sfeer**: sluit links bo; regs bo die 360°/180°-knoppie, die 3D-uitlegknoppie en die giroskoop.
+- **'n 360°-video in die 360°-speler**: tik op die beeld vir die kontroles; 360° en 3D regs bo.
 
 ### Maak 'n 360°-foto as 'n sfeer oop
 
@@ -135,12 +167,17 @@ Op die aanmeldbladsy maak "Gebruik sonder ’n bediener" Immuch360 oop op die to
 
 Jou 360°-video's lê op 'n NAS of 'n rekenaar, en jy wil hulle op die foon of in die kopstuk kyk sonder om hulle eers te kopieer. Met 'n kopstuk kopieer mense uiteindelik elke lêer oor 'n kabel; mediabedieners soos Plex en Jellyfin speel 360°-video's plat, soos versoeke op hul forums beskryf; die Immich-app lees net jou Immich-bediener.
 
-Immuch360 blaai deur en speel die foto's en video's van enige bediener wat SMB (Samba, Windows), WebDAV of, vanaf bou 19, DLNA/UPnP ('n mediabediener: Jellyfin, minidlna, Gerbera, Emby, 'n NAS of 'n TV-kassie) praat, reguit vanaf die deelplek. Vanaf bou 20 het 'n Plex Media Server 'n eie tipe, sien [Plex Media Server, sonder plex.tv](#plex-media-server-without-plextv). Dit vind self die bedieners op jou netwerk, en speel die lêers regstreeks in dieselfde kykers as die res van die app (360°, 3D, VR180, Spatial 2.5D, die Quest se meevoerende aansig), met of sonder 'n Immich-bediener, op fone en op die Meta Quest 3. Niks word afgelaai nie. Wanneer 'n bediener gekoppel is, kan die lêers wat jy kies na jou Immich-rekening gestuur word (vanaf bou 15).
+Immuch360 blaai deur en speel die foto's en video's van enige bediener wat SMB (Samba, Windows), WebDAV of, vanaf bou 19, DLNA/UPnP ('n mediabediener: Jellyfin, minidlna, Gerbera, Emby, 'n NAS of 'n TV-kassie) praat, reguit vanaf die deelplek. Vanaf bou 20 het 'n Plex Media Server 'n eie tipe, sien [Plex Media Server, sonder plex.tv](#plex-media-server-without-plextv).
 
-| Voeg 'n deelplek by | 'n Vouer van 'n deelplek |
-|---|---|
-| <img src="../.github/readme/b19-add-share.png" width="260" alt="Die bladsy Voeg 'n deelplek by: Naam, Bedienernaam of -adres, Poort (opsioneel), Deelplek, Kies 'n deelplek, Beginvouer (opsioneel), Gebruikersnaam, Wagwoord, Toets die verbinding, en die resultaat Gekoppel, 2 items in die beginvouer"> | <img src="../.github/readme/b19-share-folder.png" width="260" alt="'n Vouer van 'n netwerkdeelplek as 'n rooster duimnaelskets: 360°-foto's met die 360°-kenteken en 'n 360°-video met 'n speelmerk, die Kies-knoppie regs bo"> |
-| Die velde van 'n nuwe SMB-deelplek, na Toets die verbinding | 360°-foto's en 'n video, regstreeks van die deelplek gelees |
+Dit vind self die bedieners op jou netwerk, en speel die lêers regstreeks in dieselfde kykers as die res van die app (360°, 3D, VR180, Spatial 2.5D, die Quest se meevoerende aansig), met of sonder 'n Immich-bediener, op fone en op die Meta Quest 3. Niks word afgelaai nie. Wanneer 'n bediener gekoppel is, kan die lêers wat jy kies na jou Immich-rekening gestuur word (vanaf bou 15).
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Die bladsy Voeg 'n deelplek by: Naam, Bedienernaam of -adres, Poort (opsioneel), Deelplek, Kies 'n deelplek, Beginvouer (opsioneel), Gebruikersnaam, Wagwoord, Toets die verbinding, en die resultaat Gekoppel, 2 items in die beginvouer">
+  <img src="../.github/readme/b19-share-folder.png" width="260" alt="'n Vouer van 'n netwerkdeelplek as 'n rooster duimnaelskets: 360°-foto's met die 360°-kenteken en 'n 360°-video met 'n speelmerk, die Kies-knoppie regs bo">
+</p>
+
+- **Voeg 'n deelplek by**: die velde van 'n nuwe SMB-deelplek, na Toets die verbinding.
+- **'n Vouer van 'n deelplek**: 360°-foto's en 'n video, regstreeks van die deelplek gelees.
 
 ### Voeg 'n deelplek by
 
@@ -178,16 +215,26 @@ Die oop foto of video van 'n deelplek het dieselfde inskrywing in sy kieslys. So
 
 ### Hoe dit speel sonder om af te laai
 
-Die spelers lees die grepe wat hulle nodig het deur 'n brug binne die app (slegs die teruglusadres, 'n ewekansige teken per sessie, greepreekse), so spoel in 'n video werk en niks word na die toestel gekopieer nie. Die spelers en die kopstukkyker kry nooit die adres van die deelplek nie, net die brug se 127.0.0.1; die versoeke na die bediener word deur die app self gerig. Vir gladde afspeel word die deelplek in groot blokke gelees, die lêer bly tussen lesings oop, tot 16 MB word voor die speler uit gelees, en die video wat speel, word oor tot ses SMB-verbindings parallel gelees, apart van die verbinding wat duimnaelskets en lyste bedien. 'n Freebox Server antwoord elke lesing stadig: een verbinding gee 4,5 MB/s, ses gee 19 MB/s, genoeg vir 'n 5.7K-uitvoer teen 132 Mbit/s. Terwyl die speler vir data wag, wys die 360°- en Spatial-spelers "Laai tans" met die vlak van hul afspeelbuffer; die plat speler wys "Laai tans" sonder 'n persentasie terwyl die video laai of vashaak.
+Die spelers lees die grepe wat hulle nodig het deur 'n brug binne die app (slegs die teruglusadres, 'n ewekansige teken per sessie, greepreekse), so spoel in 'n video werk en niks word na die toestel gekopieer nie. Die spelers en die kopstukkyker kry nooit die adres van die deelplek nie, net die brug se 127.0.0.1; die versoeke na die bediener word deur die app self gerig.
+
+Vir gladde afspeel word die deelplek in groot blokke gelees, die lêer bly tussen lesings oop, tot 16 MB word voor die speler uit gelees, en die video wat speel, word oor tot ses SMB-verbindings parallel gelees, apart van die verbinding wat duimnaelskets en lyste bedien. 'n Freebox Server antwoord elke lesing stadig: een verbinding gee 4,5 MB/s, ses gee 19 MB/s, genoeg vir 'n 5.7K-uitvoer teen 132 Mbit/s.
+
+Terwyl die speler vir data wag, wys die 360°- en Spatial-spelers "Laai tans" met die vlak van hul afspeelbuffer; die plat speler wys "Laai tans" sonder 'n persentasie terwyl die video laai of vashaak.
 
 ### DLNA-mediabedieners
 
-Vanaf bou 19 stuur die app die SSDP-soektog na mediabedieners na die multisaaigroep van die netwerk, en dieselfde versoek na poort 1900 van elke adres van die plaaslike /24-netwerk, lees dan die toestelbeskrywing van elke bediener wat antwoord en behou dié wat hul inhoud publiseer ('n ContentDirectory). Vouers en lêers word met die bediener se Browse-aksie gelys, bladsy vir bladsy, en volgens hul titels benoem: 'n lêer kry die uitbreiding van sy tipe wanneer sy titel geen het nie, en 'n tweede lêer met dieselfde titel in 'n vouer word `name (2)`. Klank word weggelaat. Duimnaelskets is die albumkuns of die klein prentjies wat die bediener maak, deur die app self gelaai, met die app se eie duimnaelskets wanneer die bediener geen het nie. 'n Lêer speel vanaf die oorspronklike wat die bediener aanbied, eerder as 'n omgeskakelde kopie wanneer dit albei aanbied, gelees met reeksversoeke, so spoel werk. Nagegaan teen minidlna en Gerbera; ontdekking op 'n regte netwerk, Plex, Jellyfin, 'n NAS, die Freebox Server, 'n iPhone en die Quest is die toesteltoets van bou 19.
+Vanaf bou 19 stuur die app die SSDP-soektog na mediabedieners na die multisaaigroep van die netwerk, en dieselfde versoek na poort 1900 van elke adres van die plaaslike /24-netwerk, lees dan die toestelbeskrywing van elke bediener wat antwoord en behou dié wat hul inhoud publiseer ('n ContentDirectory).
+
+Vouers en lêers word met die bediener se Browse-aksie gelys, bladsy vir bladsy, en volgens hul titels benoem: 'n lêer kry die uitbreiding van sy tipe wanneer sy titel geen het nie, en 'n tweede lêer met dieselfde titel in 'n vouer word `name (2)`. Klank word weggelaat. Duimnaelskets is die albumkuns of die klein prentjies wat die bediener maak, deur die app self gelaai, met die app se eie duimnaelskets wanneer die bediener geen het nie. 'n Lêer speel vanaf die oorspronklike wat die bediener aanbied, eerder as 'n omgeskakelde kopie wanneer dit albei aanbied, gelees met reeksversoeke, so spoel werk.
+
+Nagegaan teen minidlna en Gerbera; ontdekking op 'n regte netwerk, Plex, Jellyfin, 'n NAS, die Freebox Server, 'n iPhone en die Quest is die toesteltoets van bou 19.
 
 <a id="a-share-that-moved"></a>
 ### 'n Deelplek wat geskuif het
 
-Vanaf bou 19 behou 'n DLNA-deelplek en 'n foondeelplek (sien [Deel hierdie foon op die netwerk](#share-this-phone-on-the-network)) die id wat hul bediener aankondig. Wanneer een nie meer by sy adres antwoord nie ('n nuwe adres wat die roeteerder gegee het, 'n bediener wat op 'n ander poort herbegin is), wys sy vouerbladsy "Soek tans na (naam) op die netwerk" en skuif die deelplek na waar dit nou antwoord: dadelik vir 'n DLNA-bediener, wat geen wagwoord het nie, en na 'n bevestiging, "Gebruik die nuwe adres?", wat albei adresse wys, vir 'n deelplek met 'n gebruikersnaam en wagwoord, aangesien dié na die nuwe adres gestuur sou word. Vanaf bou 20 skuif 'n Plex-bediener wat weer by 'n ander adres van die netwerk gevind word ook dadelik: sy sertifikaat bewys dat dit dieselfde bediener is voordat die token gestuur word. 'n Tapo-kamera word volgens sy MAC-adres vanaf sy eie bladsy gesoek, sien [Tapo-kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Vanaf bou 19 behou 'n DLNA-deelplek en 'n foondeelplek (sien [Deel hierdie foon op die netwerk](#share-this-phone-on-the-network)) die id wat hul bediener aankondig. Wanneer een nie meer by sy adres antwoord nie ('n nuwe adres wat die roeteerder gegee het, 'n bediener wat op 'n ander poort herbegin is), wys sy vouerbladsy "Soek tans na (naam) op die netwerk" en skuif die deelplek na waar dit nou antwoord: dadelik vir 'n DLNA-bediener, wat geen wagwoord het nie, en na 'n bevestiging, "Gebruik die nuwe adres?", wat albei adresse wys, vir 'n deelplek met 'n gebruikersnaam en wagwoord, aangesien dié na die nuwe adres gestuur sou word.
+
+Vanaf bou 20 skuif 'n Plex-bediener wat weer by 'n ander adres van die netwerk gevind word ook dadelik: sy sertifikaat bewys dat dit dieselfde bediener is voordat die token gestuur word. 'n Tapo-kamera word volgens sy MAC-adres vanaf sy eie bladsy gesoek, sien [Tapo-kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 ### Beperkings
 
@@ -227,7 +274,9 @@ Vanaf bou 20 koppel Immuch360 direk met jou Plex Media Server, sonder plex.tv: d
 
 ### Weg van die huis
 
-Elke keer as dit die bediener oopmaak, probeer die app eers die adres tuis en, 400 ms later, die adres buite die huis. Die eerste een wat met jou bediener antwoord, word gebruik; wanneer dit die adres buite die huis is, wys die vouerbladsy 'n aardbol-ikoon met die etiket "Gekoppel via die adres buite die huis". Dit vereis dat Remote Access in Plex aangeskakel is (Settings, Remote Access) met 'n poort wat deur jou roeteerder aangestuur word: sonder plex.tv kan die app nie die aflos van Plex gebruik nie, so 'n bediener sonder poortaanstuur gaan slegs tuis oop, en weg van die huis sê die bladsy "Jou Plex-bediener kan nie van buite jou tuisnetwerk bereik word nie. Skakel afstandtoegang aan met 'n poortaanstuur in Plex (Instellings, Afstandtoegang), of tik sy publieke adres in."
+Elke keer as dit die bediener oopmaak, probeer die app eers die adres tuis en, 400 ms later, die adres buite die huis. Die eerste een wat met jou bediener antwoord, word gebruik; wanneer dit die adres buite die huis is, wys die vouerbladsy 'n aardbol-ikoon met die etiket "Gekoppel via die adres buite die huis".
+
+Dit vereis dat Remote Access in Plex aangeskakel is (Settings, Remote Access) met 'n poort wat deur jou roeteerder aangestuur word: sonder plex.tv kan die app nie die aflos van Plex gebruik nie, so 'n bediener sonder poortaanstuur gaan slegs tuis oop, en weg van die huis sê die bladsy "Jou Plex-bediener kan nie van buite jou tuisnetwerk bereik word nie. Skakel afstandtoegang aan met 'n poortaanstuur in Plex (Instellings, Afstandtoegang), of tik sy publieke adres in."
 
 Die adres wat die bediener gee, word by elke verbinding tuis weer geleer. Wanneer dit nie van buite antwoord nie ('n roeteerder wat sy adres verander, twee roeteerders agter mekaar), tik joune in op die bladsy van die bediener. Wanneer die token ophou werk (jy het byvoorbeeld uitgeteken by die blaaiersessie waaruit jy dit gekopieer het), sê die vouerbladsy so en bied "Plak 'n nuwe token" aan, wat die bladsy van die bediener by die tokenveld oopmaak.
 
@@ -344,15 +393,13 @@ Insta360-kameras neem die twee visoogsirkels van hul lense op, langs mekaar in e
 
 Vanaf bou 16 werk Immuch360 daardie lêers self aanmekaar, op die foon, die tablet of die kopstuk, met niks om op die bediener te installeer nie:
 
-| Kamera en lêer | Wat die app doen | Vanaf |
-|---|---|---|
-| Insta360 .insp-foto's | Op die GPU aanmekaargewerk voor die sfeerkyker, tot 8192x4096, met 'n CPU-terugval teen 'n kleiner grootte | Bou 16 |
-| Insta360 .insv-video's wat albei lense in een snit hou | Deur 'n GPU-effek in die speler aanmekaargewerk | Bou 16 |
-| Insta360 X4-, X4 Air-, X5- en X6-.insv-video's, een vierkantige snit per lens | Twee dekodeerders tegelyk, een per lens, en 'n GPU-saamsteller wat hulle in die sfeer aanmekaarwerk | Bou 18 |
-| Insta360 X3 en ouer teen 5.7K en hoër: twee lêers, `_00_` en `_10_` | Dieselfde, waar die ander lêer langs die eerste een gevind word | Bou 18 |
-| GoPro MAX en MAX 2 .360: twee snitte van elk drie kubusvlakke | Dieselfde, met die oorvleuelende kolomme vermeng | Bou 18 |
-| DJI Osmo 360 .osv: twee vierkantige 10-bis-snitte | Dieselfde, met die Kannala-Brandt-kalibrasie van die lêer | Bou 18 |
-| Dubbele-visoog-.dng | Wys plat | Nog nie |
+- **Insta360 .insp-foto's** (bou 16): op die GPU aanmekaargewerk voor die sfeerkyker, tot 8192x4096, met 'n CPU-terugval teen 'n kleiner grootte.
+- **Insta360 .insv-video's wat albei lense in een snit hou** (bou 16): deur 'n GPU-effek in die speler aanmekaargewerk.
+- **Insta360 X4-, X4 Air-, X5- en X6-.insv-video's, een vierkantige snit per lens** (bou 18): twee dekodeerders tegelyk, een per lens, en 'n GPU-saamsteller wat hulle in die sfeer aanmekaarwerk.
+- **Insta360 X3 en ouer teen 5.7K en hoër: twee lêers, `_00_` en `_10_`** (bou 18): dieselfde, waar die ander lêer langs die eerste een gevind word.
+- **GoPro MAX en MAX 2 .360: twee snitte van elk drie kubusvlakke** (bou 18): dieselfde, met die oorvleuelende kolomme vermeng.
+- **DJI Osmo 360 .osv: twee vierkantige 10-bis-snitte** (bou 18): dieselfde, met die Kannala-Brandt-kalibrasie van die lêer.
+- **Dubbele-visoog-.dng** (nog nie): wys plat.
 
 ### Kyk na 'n rou lêer
 
@@ -466,7 +513,9 @@ Die herkenning is nagegaan op 'n voorbeeld van 'n ruimtelike foto wat deur Apple
 
 Mense koop 'n Quest 3 om hul eie 360°-foto's en -video's te kyk, en vra dan waar om die lêers te sit, hoe om hulle sonder 'n kabel op die kopstuk te kry, en watter speler om te gebruik: die winkelspelers vir 360°- en 3D-video kos geld.
 
-Dieselfde Android-app loop op die Quest 3 en 3S, en vanaf bou 21 op die Quest 2 en Quest Pro (ongetoets), as 'n venster, met jou hele biblioteek. Sy 360°-knoppie maak 'n meevoerende aansig oop waar die foto of video reg rondom jou is en jy rondkyk deur jou kop te draai, in ware 3D vir stereoskopiese lêers (Meta Spatial SDK). Die media kom van jou Immich-bediener, die kopstuk self, 'n NAS, 'n mediabediener, 'n foon of 'n Plex-bediener, en word ter plaatse gespeel ('n mediabediener en 'n foon vanaf bou 19, 'n Plex-bediener vanaf bou 20, nog nie op die kopstuk nagegaan nie), en vanaf bou 20 wys die venster ook die Tapo-kameras. Dit is gratis en oopbron. Nagegaan op 'n Quest 3, en deur 'n gebruiker met Insta360 X4 8K HEVC-video's.
+Dieselfde Android-app loop op die Quest 3 en 3S, en vanaf bou 21 op die Quest 2 en Quest Pro (ongetoets), as 'n venster, met jou hele biblioteek. Sy 360°-knoppie maak 'n meevoerende aansig oop waar die foto of video reg rondom jou is en jy rondkyk deur jou kop te draai, in ware 3D vir stereoskopiese lêers (Meta Spatial SDK).
+
+Die media kom van jou Immich-bediener, die kopstuk self, 'n NAS, 'n mediabediener, 'n foon of 'n Plex-bediener, en word ter plaatse gespeel ('n mediabediener en 'n foon vanaf bou 19, 'n Plex-bediener vanaf bou 20, nog nie op die kopstuk nagegaan nie), en vanaf bou 20 wys die venster ook die Tapo-kameras. Dit is gratis en oopbron. Nagegaan op 'n Quest 3, en deur 'n gebruiker met Insta360 X4 8K HEVC-video's.
 
 ### Maak die meevoerende aansig oop
 
@@ -479,17 +528,20 @@ Dieselfde Android-app loop op die Quest 3 en 3S, en vanaf bou 21 op die Quest 2 
 
 | Aksie | Beheerders | Hande |
 |---|---|---|
-| Terug na die app | B of Y | Terug-knoppie van die inligtingspaneel |
-| Speel of pouseer 'n video | Sneller, wanneer die inligtingspaneel versteek is | Speel- of Pouseer-knoppie van die inligtingspaneel |
+| Terug na die app | B of Y | Terug-knoppie |
+| Speel of pouseer 'n video | Sneller, wanneer die inligtingspaneel versteek is | Speel- of Pouseer-knoppie |
 | Wys of versteek die inligtingspaneel | A, X, greep of kieslys | Kieslysgebaar, of knyp wanneer die paneel versteek is |
-| Draai die aansig, om agter jou te kyk sonder om jou kop te draai (vanaf bou 17) | Regterduimstok links of regs: 30° per druk, en dit hou aan draai terwyl dit vasgehou word ('n eenreël-oorlegsel wys die hoek) | Draai-knoppie van die inligtingspaneel (90°) |
-| Vorige of volgende media | Linkerduimstok links of regs (enige duimstok voor bou 17; vanaf bou 16 noem 'n eenreël-oorlegsel die media, die inligtingspaneel bly versteek) | Vorige- en Volgende-knoppies van die inligtingspaneel |
-| 10 sekondes terug of vorentoe in 'n video | Duimstok af of op (vanaf bou 16 wys 'n eenreël-oorlegsel die tyd, die inligtingspaneel bly versteek) | Die twee springknoppies, of sleep die tydbalk van die inligtingspaneel |
-| Draai die beeld met 90° | Duimstok af of op, op 'n foto (vanaf bou 16 wys die eenreël-oorlegsel die hoek); op 'n video, die Draai-knoppie van die inligtingspaneel | Draai-knoppie van die inligtingspaneel |
-| Verander die 3D-uitleg (mono, bo en onder, langs mekaar) | 3D-knoppie van die inligtingspaneel | 3D-knoppie van die inligtingspaneel |
-| Volle sfeer of halwe sfeer (VR180) | 360°/180°-knoppie van die inligtingspaneel | 360°/180°-knoppie van die inligtingspaneel |
+| Draai die aansig (vanaf bou 17) | Regterduimstok links of regs, 30° per druk | Draai-knoppie (90°) |
+| Vorige of volgende media | Linkerduimstok links of regs | Vorige- en Volgende-knoppies |
+| 10 sekondes terug of vorentoe in 'n video | Duimstok af of op | Die twee springknoppies, of sleep die tydbalk |
+| Draai die beeld met 90° | Duimstok af of op op 'n foto, Draai-knoppie op 'n video | Draai-knoppie |
+| Verander die 3D-uitleg (mono, bo en onder, langs mekaar) | 3D-knoppie | 3D-knoppie |
+| Volle sfeer of halwe sfeer (VR180) | 360°/180°-knoppie | 360°/180°-knoppie |
 
-Met beheerders werk die knoppies en die tydbalk van die inligtingspaneel ook: wys daarna met die straal en druk die sneller.
+In hierdie tabel is die knoppies en die tydbalk dié van die inligtingspaneel. Met beheerders werk hulle ook: wys daarna met die straal en druk die sneller.
+
+- **Draai die aansig**: om agter jou te kyk sonder om jou kop te draai. Die regterduimstok hou aan draai terwyl dit vasgehou word, en 'n eenreël-oorlegsel wys die hoek.
+- **Eenreël-oorlegsel**: vanaf bou 16 wys 'n duimstok-spoel, 'n draai van 'n foto, of vorige en volgende 'n eenreël-oorlegsel (die tyd, die hoek, of die naam van die media) en die inligtingspaneel bly versteek. Voor bou 17 het enige duimstok na die vorige of volgende media gegaan.
 
 ### Die inligtingspaneel, vorige en volgende
 
@@ -497,7 +549,9 @@ Die inligtingspaneel van 'n video het 'n tydbalk (posisie, duur, hoeveel gebuffe
 
 Vorige en volgende beweeg deur die 360°-media van die plek waarvandaan jy gekom het, sonder om die meevoerende aansig te verlaat: die tydlyn, die 360°-lys (soos gefiltreer), 'n album, 'n vouer van 'n netwerkdeelplek, of die kopstuk se eie media (On this device). Plat foto's en video's word oorgeslaan. Wanneer jy vanaf die tydlyn, 'n album of die 360°-lys terug na die app gaan, land dit op die media waarna jy gekyk het ('n deelplekvouerbladsy bly op die lêer wat jy oopgemaak het), en die video waarop jy die meevoerende aansig oopgemaak het, gaan voort waar dit opgehou het.
 
-Vanaf bou 17 draai die regterduimstok die aansig, soos die regterduimstok in die meeste kopstuk-apps draai: 'n druk draai met 30°, as jy dit vashou, draai dit aanhoudend, so wat agter jou is, kom voor jou sonder dat jy jou kop of jou stoel draai; vorige en volgende is op die linkerduimstok. Vanaf bou 16, na 'n gebruiker se terugvoer op die kopstuk, wys 'n spoel, draai of vorige/volgende met die duimstok 'n eenreël-oorlegsel (die tyd, die hoek of die titel van die media) wat na 1,5 sekondes vervaag, in plaas daarvan om die inligtingspaneel op te bring; die paneel kom steeds met A, X, die greep of die kieslysknoppie. Dieselfde bou hou die paneelskakelaar werkend wanneer die beheerders slaap, wakker word of plek maak vir handvolging, en teken daardie oorgange aan, sien [Logboeke](#logs).
+Vanaf bou 17 draai die regterduimstok die aansig, soos die regterduimstok in die meeste kopstuk-apps draai: 'n druk draai met 30°, as jy dit vashou, draai dit aanhoudend, so wat agter jou is, kom voor jou sonder dat jy jou kop of jou stoel draai; vorige en volgende is op die linkerduimstok.
+
+Vanaf bou 16, na 'n gebruiker se terugvoer op die kopstuk, wys 'n spoel, draai of vorige/volgende met die duimstok 'n eenreël-oorlegsel (die tyd, die hoek of die titel van die media) wat na 1,5 sekondes vervaag, in plaas daarvan om die inligtingspaneel op te bring; die paneel kom steeds met A, X, die greep of die kieslysknoppie. Dieselfde bou hou die paneelskakelaar werkend wanneer die beheerders slaap, wakker word of plek maak vir handvolging, en teken daardie oorgange aan, sien [Logboeke](#logs).
 
 'n Apple-ruimtelike foto wat met "Bekyk in 3D" oopgemaak is, word nie op 'n sfeer geplaas nie: dit sweef voor jou, sien [Apple se ruimtelike foto's en video's](#apple-spatial-photos-and-videos).
 
@@ -507,10 +561,15 @@ Foto's wys eers 'n voorskou, dan die oorspronklike, verklein tot hoogstens 8192x
 
 3D-uitlegte, bo en onder en langs mekaar, 360° en VR180, word in 3D gewys, met elke oog wat sy eie helfte van die raam kry. Die uitleg kom uit die lêer wanneer dit een verklaar (video's), andersins word dit uit sy vorm geraai (vierkantig: bo en onder, 4:1: langs mekaar); wanneer dit verkeerd is, gebruik die 3D-knoppie van die inligtingspaneel.
 
-| 360°-foto in die kopstuk | 360°-video in die kopstuk | 3D-360°-video in die kopstuk |
-|---|---|---|
-| <img src="../.github/readme/quest-immersive-360-photo.jpg" width="300" alt="'n 360°-foto reg rondom jou in die Quest 3, met die inligtingspaneel: uitleg-, 360°- en Terug-knoppies"> | <img src="../.github/readme/quest-immersive-360-video.jpg" width="300" alt="'n 360°-video van 'n meer wat in die Quest 3 speel, met die inligtingspaneel: uitleg-, 360°-, Pouseer- en Terug-knoppies"> | <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="300" alt="'n Stereoskopiese 360°-video in die Quest 3, die inligtingspaneel lees 3D, bo en onder"> |
-| Die meevoerende aansig van 'n foto, met die inligtingspaneel (uitleg, 360°/180°, Terug) | 'n Video wat speel, met Pouseer | 'n Bo-en-onder stereoskopiese video, elke oog bedien (die Kandao Obsidian-voorbeeld) |
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="'n 360°-foto reg rondom jou in die Quest 3, met die inligtingspaneel: uitleg-, 360°- en Terug-knoppies">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="'n 360°-video van 'n meer wat in die Quest 3 speel, met die inligtingspaneel: uitleg-, 360°-, Pouseer- en Terug-knoppies">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="'n Stereoskopiese 360°-video in die Quest 3, die inligtingspaneel lees 3D, bo en onder">
+</p>
+
+- **360°-foto in die kopstuk**: die meevoerende aansig van 'n foto, met die inligtingspaneel (uitleg, 360°/180°, Terug).
+- **360°-video in die kopstuk**: 'n video wat speel, met Pouseer.
+- **3D-360°-video in die kopstuk**: 'n bo-en-onder stereoskopiese video, elke oog bedien (die Kandao Obsidian-voorbeeld).
 
 Hierdie skermskote is geneem met die app in Frans, voor bou 14. Die paneel het nou ook die tydbalk tussen die twee knoppies wat 10 sekondes spring, Vorige en Volgende, en Draai.
 
@@ -598,7 +657,9 @@ Immuch360 sit 'n 360°-kenteken op die duimnaelskets van 360°-foto's (in 'n net
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
 ## Videobesonderhede, dekodeerders en waarom 'n video hakkel
 
-Mense vra watter kodek, grootte en bistempo die Quest 3 speel, en waarom 'n 5.7K-uitvoer in die kopstuk hakkel terwyl dit op die foon speel. Die antwoord is die hardeware-dekodeerder: die H.264-dekodeerder van die Quest 3 (XR2 Gen 2) bereik sy maksimum rondom 4096x2304, so 'n 5760x2880 H.264-video (vlak 6.0, sowat 200 Mbit/s, die gewone Insta360-uitvoer) dekodeer teen sowat 17 fps op die kopstuk, met blokartefakte, terwyl dieselfde lêer goed op 'n foon speel. Dieselfde video in HEVC (H.265) speel goed op die kopstuk: 'n Insta360 X4 8K HEVC-video (7680x3840, 29,97 fps, 210 Mbit/s, Main-profiel vlak 6.1, 8 bis) speel glad in die meevoerende aansig, teen sy oorspronklike resolusie en sonder transkodering (deur 'n gebruiker op 'n Quest 3 gerapporteer).
+Mense vra watter kodek, grootte en bistempo die Quest 3 speel, en waarom 'n 5.7K-uitvoer in die kopstuk hakkel terwyl dit op die foon speel. Die antwoord is die hardeware-dekodeerder: die H.264-dekodeerder van die Quest 3 (XR2 Gen 2) bereik sy maksimum rondom 4096x2304, so 'n 5760x2880 H.264-video (vlak 6.0, sowat 200 Mbit/s, die gewone Insta360-uitvoer) dekodeer teen sowat 17 fps op die kopstuk, met blokartefakte, terwyl dieselfde lêer goed op 'n foon speel.
+
+Dieselfde video in HEVC (H.265) speel goed op die kopstuk: 'n Insta360 X4 8K HEVC-video (7680x3840, 29,97 fps, 210 Mbit/s, Main-profiel vlak 6.1, 8 bis) speel glad in die meevoerende aansig, teen sy oorspronklike resolusie en sonder transkodering (deur 'n gebruiker op 'n Quest 3 gerapporteer).
 
 Die Immich-app het een skakelaar, "Force original video", en wys net die kodek. Immuch360 wys wat 'n video is en wat die toestel dekodeer, en kies die lêer wat speel.
 
@@ -623,7 +684,9 @@ Settings, Gevorderd, "Videodekodeerders van hierdie toestel" (vanaf bou 15) lys 
 1. Maak Settings, Asset Viewer, dan Video’s oop.
 2. Onder "Videobron" ("Watter lêer speel wanneer die bediener ’n getranskodeerde kopie het"), kies "Die oorspronklike wanneer hierdie toestel dit dekodeer", "Altyd die oorspronklike" of "Altyd die getranskodeerde stroom".
 
-Vanaf bou 15 geld die keuse vir elke bedienervideo: die plat speler, die 360°- en Spatial-spelers, en die Quest se meevoerende aansig. Totdat jy een kies, behou 'n foon wat die vorige skakelaar "Force original video" gesê het (by verstek af: die getranskodeerde stroom, wat die oorspronklike self is wanneer die bediener dit nie getranskodeer het nie), en die Quest speel die oorspronklike wanneer die kopstuk dit dekodeer. Die kontrole lees die kodek, grootte en raamtempo uit die lêer en vergelyk dit met die hardeware-dekodeerders (H.264 op die Quest 3 word tot die gemete 4096x2304 beperk). 'n Speler wat die oorspronklike nie kan dekodeer nie, skakel oor na die getranskodeerde stroom met 'n boodskap: "Speel die getranskodeerde stroom: die oorspronklike (kodek en grootte) oorskry wat hierdie toestel dekodeer".
+Vanaf bou 15 geld die keuse vir elke bedienervideo: die plat speler, die 360°- en Spatial-spelers, en die Quest se meevoerende aansig. Totdat jy een kies, behou 'n foon wat die vorige skakelaar "Force original video" gesê het (by verstek af: die getranskodeerde stroom, wat die oorspronklike self is wanneer die bediener dit nie getranskodeer het nie), en die Quest speel die oorspronklike wanneer die kopstuk dit dekodeer.
+
+Die kontrole lees die kodek, grootte en raamtempo uit die lêer en vergelyk dit met die hardeware-dekodeerders (H.264 op die Quest 3 word tot die gemete 4096x2304 beperk). 'n Speler wat die oorspronklike nie kan dekodeer nie, skakel oor na die getranskodeerde stroom met 'n boodskap: "Speel die getranskodeerde stroom: die oorspronklike (kodek en grootte) oorskry wat hierdie toestel dekodeer".
 
 In die kopstuk begin die meevoerende aansig die oorspronklike en skakel, by sy eerste rame, oor na die bediener se getranskodeerde stroom wanneer die oorspronklike bo die dekodeerders is, en sê so op die inligtingspaneel; wanneer daar geen getranskodeerde stroom is nie, wanneer dit steeds te groot is, of wanneer die lêer van die kopstuk of 'n netwerkdeelplek kom, sê die inligtingspaneel so vir 10 sekondes, met wat om te verander. Bou 14, die een wat by die Horizon Store ingedien is, kontroleer slegs H.264 bo 4096x2304, en probeer dan die bediener se afspeelstroom op dieselfde manier.
 
@@ -661,87 +724,184 @@ Om 'n 360°-foto te wys aan iemand wat nie die app het nie, deel dit met 'n gede
 
 Die huidige bou, bou 21 (weergawe 3.3.0-rc.0, bounommer 3030019), is gebaseer op Immich 3.3.0-rc.0 (Immich `main`, nog nie 'n stabiele vrystelling nie). Bou 19 is getoets met 'n Immich 3.2-bediener, en boue 20 en 21 verander niks aan wat die app van die bediener vra nie. Rapporteer asseblief probleme in [Issues](https://github.com/freeKC/Immuch360/issues), nie aan die Immich-projek nie. Vir die volledige dokumentasie van Immich self, sien [immich.app](https://immich.app).
 
+<a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Vergeleke met die Immich-app en ander apps
 
 ### Waarom hierdie vurk bestaan, in een tabel
 
-| | Immich-mobiele app | Immuch360 | Status |
-|---|:---:|:---:|---|
-| 360°-foto's as 'n sfeer waarin jy rondkyk (sleep, knyp, dubbeltik, traagheid, die kamera se aanvanklike aansig, gedeeltelike panoramas) | ❌ plat strook | ✅ | Getoets op 'n Galaxy S24+ en 'n iPhone 14 |
-| Giroskoop: kyk rond deur die foon te beweeg | ❌ | ✅ | Getoets op 'n Galaxy S24+ en 'n iPhone 14 |
-| 360°-video's in 'n sferiese speler, met klank, spoel, keuse van klanksnit en 'n bufferaanwyser | ❌ plat video | ✅ Android en iOS (nog geen tydbalk op iOS nie) | Getoets op 'n Galaxy S24+ en 'n iPhone 14 |
-| 3D- (stereoskopiese) 360°-foto's en -video's | ❌ dubbele beeld | ✅ linkeroog op fone, ware 3D op die Quest | Getoets op 'n Galaxy S24+ en 'n Quest 3, met regte 3D-360°-voorbeelde (VRTogether, Vuze, Kandao) en 'n 3D-foto; verslae van ander kameras welkom |
-| VR180- (halwe sfeer) foto's en video's | ❌ rondom die sfeer uitgerek | ✅ halwe sfeer, 360°/180°-knoppie | Getoets op 'n Android-emulator en 'n Galaxy S24+ met sintetiese media; terugvoer van toestelle welkom |
-| Apple se ruimtelike foto's (HEIC-stereopare) en ruimtelike video's (MV-HEVC) | ❌ 'n plat foto of video, niks sê dat dit ruimtelik is nie | ✅ vanaf bou 19: foto's in 3D in die Quest, een oog en 'n besonderhede-ry elders | Herkenning nagegaan op 'n voorbeeldfoto wat deur Apple se beeldbiblioteek geskryf is en op sintetiese lêers; die kopstukaansig en regte iPhone-lêers is die toesteltoets van bou 19 |
-| Meta Quest meevoerende aansig met kopvolging, 'n tydbalk, vorige en volgende, en Draai | ❌ | ✅ dieselfde app, as 'n kopstukbou of die foon-APK | Getoets op 'n Quest 3 (kontroles van bou 14, aangepas in bou 16 na 'n gebruiker se terugvoer), en deur 'n gebruiker met Insta360 X4 8K HEVC-video's |
-| 360°-kenteken op duimnaelskets, en 'n 360°-lys met rou lêers en filters (tydperk, bron, tipe, kamera) | ❌ | ✅ filters vanaf bou 18 | Klaar |
-| "Bekyk as 360°" vir lêers wat die bediener nie merk nie | ❌ | ✅ op die foon onthou | Klaar |
-| Spatial 2.5D: diepte op 'n plat skerm uit 'n stereoskopiese video | ❌ | ✅ eksperimenteel, fone en tablette | Getoets op 'n Galaxy S24+; iPhone-terugvoer welkom |
-| Gebruik sonder enige bediener, op die toestel se eie galery | ❌ aanmelding vereis | ✅ | Getoets op 'n Galaxy S24+, 'n Quest 3 en 'n Android-emulator |
-| SMB- en WebDAV-deelplekke op die netwerk gevind en regstreeks gespeel, niks afgelaai nie | ❌ | ✅ elke kyker, fone en Quest | Getoets met 'n Freebox Server (SMB) op 'n Galaxy S24+ en 'n Quest 3, en teen Samba- en WebDAV-toetsbedieners op 'n Android-emulator; terugvoer oor ander NAS'e en WebDAV welkom |
-| DLNA-mediabedieners as 'n deelpleksoort | ❌ | ✅ vanaf bou 19 | Nagegaan teen minidlna en Gerbera in Docker; Plex, Jellyfin, 'n NAS, die Freebox Server, 'n iPhone en die Quest is die toesteltoets van bou 19 |
-| Stuur die lêers van 'n deelplek na Immich; toestellêers wat met die hand gestuur is, tel as gerugsteun | ❌ slegs toestellêers | ✅ vanaf bou 15 | Getoets op 'n Android-emulator teen 'n Samba-toetsbediener en 'n Immich 3.2-bediener |
-| Deel hierdie foon op die netwerk, vir die kopstuk | ❌ | ✅ vanaf bou 19, Android en iOS | Eenheidstoetse en end-tot-end-toetse met die kopstuk se WebDAV-kliënt, op 'n rekenaar; 'n foon wat 'n Quest bedien, en die iPhone-kant, is die toesteltoets van bou 19 |
-| Plex Media Server-biblioteke gespeel vanaf die oorspronklike lêers, tuis en weg van die huis, sonder plex.tv | ❌ | ✅ vanaf bou 20, elke kyker, op fone, tablette, die Quest en TV's | Vanaf 'n rekenaar teen 'n regte Plex Media Server 1.42.1 nagegaan (koppeling, vouers, byte-reekse, duimnaelskets, die adres buite die huis); nog nie op 'n toestel nagegaan nie |
-| Tapo-kameras: die regstreekse beeld, en die opnames van die geheuekaart na Immich gestuur wanneer jy wil | ❌ | ✅ vanaf bou 20: opnames oral, regstreeks op Android, Android TV en die Quest | Teen 'n gesimuleerde kamera nagegaan; nog nie met 'n regte kamera nagegaan nie |
-| Android TV en Google TV, met die afstandbeheer bestuur, in dieselfde APK | ❌ nie 'n TV-app nie | ✅ vanaf bou 20 | Deur outomatiese toetse nagegaan; nog nie op 'n TV nagegaan nie |
-| Rou Insta360 .insp-foto's en eensnit-.insv-video's | ❌ plat | ✅ vanaf bou 16 | Foto's nagegaan teen Insta360 Studio-uitvoere van X3-lêers, video's op 'n Android-emulator met 'n X3-lêer van lae resolusie; nog nie op 'n iPhone geloop nie |
-| Rou video's met een lens per snit of per lêer (Insta360 X4, X4 Air, X5, X6, X3-pare, GoPro .360, DJI .osv) | ❌ plat of verkeerd | ✅ vanaf bou 18 | Ontleders en aanmekaarwerk nagegaan op regte X4-, X3-paar-, GoPro MAX- en Osmo 360-lêers; afspeel is die toesteltoets van bou 18 en 19 |
-| Dubbele-visoog-.dng | ❌ plat | ❌ nog nie | Beplan |
-| Bedienervideo's: die oorspronklike wanneer die toestel dit dekodeer, anders die getranskodeerde stroom; lys van die toestel se videodekodeerders | ❌ een skakelaar "Force original video" | ✅ vanaf bou 15 | Getoets op 'n Android-emulator; die H.264-limiet van die Quest 3 is op die kopstuk gemeet |
-| Tegniese besonderhede van 'n video: bistempo, beeld, profiel, of hierdie toestel dit dekodeer | ❌ slegs kodek | ✅ vanaf bou 18 | Klaar |
-| 'n Gratis speler vir plat, 360°-, 3D- en VR180-video's, vanaf die bediener, die foon of 'n NAS | ❌ slegs plat | ✅ (die spelers in die Quest 3-winkel kos geld) | |
-| Dieselfde bediener, dieselfde rekening, installeer langs die amptelike app | | ✅ | |
+| | Immich-mobiele app | Immuch360 |
+|---|:---:|:---:|
+| 360°-foto's as 'n sfeer waarin jy rondkyk (sleep, knyp, dubbeltik, traagheid, die kamera se aanvanklike aansig, gedeeltelike panoramas) | ❌ plat strook | ✅ |
+| Giroskoop: kyk rond deur die foon te beweeg | ❌ | ✅ |
+| 360°-video's in 'n sferiese speler, met klank, spoel, keuse van klanksnit en 'n bufferaanwyser | ❌ plat video | ✅ Android en iOS (nog geen tydbalk op iOS nie) |
+| 3D- (stereoskopiese) 360°-foto's en -video's | ❌ dubbele beeld | ✅ linkeroog op fone, ware 3D op die Quest |
+| VR180- (halwe sfeer) foto's en video's | ❌ rondom die sfeer uitgerek | ✅ halwe sfeer, 360°/180°-knoppie |
+| Apple se ruimtelike foto's (HEIC-stereopare) en ruimtelike video's (MV-HEVC) | ❌ 'n plat foto of video, niks sê dat dit ruimtelik is nie | ✅ vanaf bou 19: foto's in 3D in die Quest, een oog en 'n besonderhede-ry elders |
+| Meta Quest meevoerende aansig met kopvolging, 'n tydbalk, vorige en volgende, en Draai | ❌ | ✅ dieselfde app, as 'n kopstukbou of die foon-APK |
+| 360°-kenteken op duimnaelskets, en 'n 360°-lys met rou lêers en filters (tydperk, bron, tipe, kamera) | ❌ | ✅ filters vanaf bou 18 |
+| "Bekyk as 360°" vir lêers wat die bediener nie merk nie | ❌ | ✅ op die foon onthou |
+| Spatial 2.5D: diepte op 'n plat skerm uit 'n stereoskopiese video | ❌ | ✅ eksperimenteel, fone en tablette |
+| Gebruik sonder enige bediener, op die toestel se eie galery | ❌ aanmelding vereis | ✅ |
+| SMB- en WebDAV-deelplekke op die netwerk gevind en regstreeks gespeel, niks afgelaai nie | ❌ | ✅ elke kyker, fone en Quest |
+| DLNA-mediabedieners as 'n deelpleksoort | ❌ | ✅ vanaf bou 19 |
+| Stuur die lêers van 'n deelplek na Immich; toestellêers wat met die hand gestuur is, tel as gerugsteun | ❌ slegs toestellêers | ✅ vanaf bou 15 |
+| Deel hierdie foon op die netwerk, vir die kopstuk | ❌ | ✅ vanaf bou 19, Android en iOS |
+| Plex Media Server-biblioteke gespeel vanaf die oorspronklike lêers, tuis en weg van die huis, sonder plex.tv | ❌ | ✅ vanaf bou 20, elke kyker, op fone, tablette, die Quest en TV's |
+| Tapo-kameras: die regstreekse beeld, en die opnames van die geheuekaart na Immich gestuur wanneer jy wil | ❌ | ✅ vanaf bou 20: opnames oral, regstreeks op Android, Android TV en die Quest |
+| Android TV en Google TV, met die afstandbeheer bestuur, in dieselfde APK | ❌ nie 'n TV-app nie | ✅ vanaf bou 20 |
+| Rou Insta360 .insp-foto's en eensnit-.insv-video's | ❌ plat | ✅ vanaf bou 16 |
+| Rou video's met een lens per snit of per lêer (Insta360 X4, X4 Air, X5, X6, X3-pare, GoPro .360, DJI .osv) | ❌ plat of verkeerd | ✅ vanaf bou 18 |
+| Dubbele-visoog-.dng | ❌ plat | ❌ nog nie |
+| Bedienervideo's: die oorspronklike wanneer die toestel dit dekodeer, anders die getranskodeerde stroom; lys van die toestel se videodekodeerders | ❌ een skakelaar "Force original video" | ✅ vanaf bou 15 |
+| Tegniese besonderhede van 'n video: bistempo, beeld, profiel, of hierdie toestel dit dekodeer | ❌ slegs kodek | ✅ vanaf bou 18 |
+| 'n Gratis speler vir plat, 360°-, 3D- en VR180-video's, vanaf die bediener, die foon of 'n NAS | ❌ slegs plat | ✅ (die spelers in die Quest 3-winkel kos geld) |
+| Dieselfde bediener, dieselfde rekening, installeer langs die amptelike app |  | ✅ |
+
+<details>
+<summary><b>Status van elke reël</b>: hoe dit getoets is</summary>
+
+- **360°-foto's as 'n sfeer**: getoets op 'n Galaxy S24+ en 'n iPhone 14.
+- **Giroskoop**: getoets op 'n Galaxy S24+ en 'n iPhone 14.
+- **360°-video's**: getoets op 'n Galaxy S24+ en 'n iPhone 14.
+- **3D-360°-foto's en -video's**: getoets op 'n Galaxy S24+ en 'n Quest 3, met regte 3D-360°-voorbeelde (VRTogether, Vuze, Kandao) en 'n 3D-foto; verslae van ander kameras welkom.
+- **VR180**: getoets op 'n Android-emulator en 'n Galaxy S24+ met sintetiese media; terugvoer van toestelle welkom.
+- **Apple se ruimtelike foto's en video's**: herkenning nagegaan op 'n voorbeeldfoto wat deur Apple se beeldbiblioteek geskryf is en op sintetiese lêers; die kopstukaansig en regte iPhone-lêers is die toesteltoets van bou 19.
+- **Meta Quest meevoerende aansig**: getoets op 'n Quest 3 (kontroles van bou 14, aangepas in bou 16 na 'n gebruiker se terugvoer), en deur 'n gebruiker met Insta360 X4 8K HEVC-video's.
+- **360°-kenteken en 360°-lys**: klaar.
+- **Bekyk as 360°**: klaar.
+- **Spatial 2.5D**: getoets op 'n Galaxy S24+; iPhone-terugvoer welkom.
+- **Sonder enige bediener**: getoets op 'n Galaxy S24+, 'n Quest 3 en 'n Android-emulator.
+- **SMB- en WebDAV-deelplekke**: getoets met 'n Freebox Server (SMB) op 'n Galaxy S24+ en 'n Quest 3, en teen Samba- en WebDAV-toetsbedieners op 'n Android-emulator; terugvoer oor ander NAS'e en WebDAV welkom.
+- **DLNA-mediabedieners**: nagegaan teen minidlna en Gerbera in Docker; Plex, Jellyfin, 'n NAS, die Freebox Server, 'n iPhone en die Quest is die toesteltoets van bou 19.
+- **Stuur die lêers van 'n deelplek na Immich**: getoets op 'n Android-emulator teen 'n Samba-toetsbediener en 'n Immich 3.2-bediener.
+- **Deel hierdie foon op die netwerk**: eenheidstoetse en end-tot-end-toetse met die kopstuk se WebDAV-kliënt, op 'n rekenaar; 'n foon wat 'n Quest bedien, en die iPhone-kant, is die toesteltoets van bou 19.
+- **Plex Media Server**: vanaf 'n rekenaar teen 'n regte Plex Media Server 1.42.1 nagegaan (koppeling, vouers, byte-reekse, duimnaelskets, die adres buite die huis); nog nie op 'n toestel nagegaan nie.
+- **Tapo-kameras**: teen 'n gesimuleerde kamera nagegaan; nog nie met 'n regte kamera nagegaan nie.
+- **Android TV en Google TV**: deur outomatiese toetse nagegaan; nog nie op 'n TV nagegaan nie.
+- **Rou Insta360 .insp-foto's en eensnit-.insv-video's**: foto's nagegaan teen Insta360 Studio-uitvoere van X3-lêers, video's op 'n Android-emulator met 'n X3-lêer van lae resolusie; nog nie op 'n iPhone geloop nie.
+- **Rou video's met een lens per snit of per lêer**: ontleders en aanmekaarwerk nagegaan op regte X4-, X3-paar-, GoPro MAX- en Osmo 360-lêers; afspeel is die toesteltoets van bou 18 en 19.
+- **Dubbele-visoog-.dng**: beplan.
+- **Bedienervideo's en die videodekodeerders**: getoets op 'n Android-emulator; die H.264-limiet van die Quest 3 is op die kopstuk gemeet.
+- **Tegniese besonderhede van 'n video**: klaar.
+
+</details>
 
 ### Ander apps wat mense hiervoor gebruik
 
-| Wat mense gebruik | Waarteen hulle vasloop | Wat Immuch360 doen |
-|---|---|---|
-| Die Immich-webapp | Dit wys 'n 360°-foto as 'n sfeer, maar neem 'n rou .insp vir 'n voltooide panorama en draai sy twee sirkels om die sfeer; 'n VR-aansig is steeds 'n versoek ([bespreking #14768](https://github.com/immich-app/immich/discussions/14768)) | Werk rou lêers op die toestel aanmekaar, en maak 'n meevoerende aansig in die Quest oop |
-| Die Insta360-app of Studio | Nodig om die rou lêers van die kaart in 'n 360°-beeld om te skakel voordat jy kan kyk | Maak die rou .insp- en .insv-lêers direk oop, en die GoPro .360- en DJI .osv-lêers |
-| Plex, Jellyfin, Synology Photos | 360°-foto's en -video's plat gewys of nie herken nie, soos drade op hul forums beskryf ('n Plex-versoek is sedert 2017 oop) | Lees die Plex-biblioteek self vanaf bou 20, of dieselfde vouers oor SMB, WebDAV of DLNA, en speel hulle as 'n sfeer, sonder om iets op die bediener te verander |
-| Die Tapo-app | 'n Aparte app, by jou TP-Link-rekening aangemeld, met die grepe apart van jou foto's | Wys die kamera langs jou foto's, praat slegs op jou netwerk daarmee, en hou 'n greep as 'n video wat jy na Immich kan stuur (vanaf bou 20) |
-| Die Immich-mobiele app op 'n TV | Nie 'n TV-app nie: 'n gebruiker meld dat dit met 'n muis werk, nie met die afstandbeheer nie | Dieselfde app, gemaak vir die afstandbeheer (vanaf bou 20) |
-| Lêers na die kopstuk kopieer | Elke lêer oor 'n kabel gekopieer voordat jy dit kan kyk | Speel ter plaatse vanaf Immich, 'n NAS, 'n mediabediener of 'n foon |
-| Die 360°- en 3D-spelers van die Quest-winkel | Kos geld | Gratis en oopbron (AGPL) |
+- **Die Immich-webapp**
+  - Waarteen hulle vasloop: dit wys 'n 360°-foto as 'n sfeer, maar neem 'n rou .insp vir 'n voltooide panorama en draai sy twee sirkels om die sfeer; 'n VR-aansig is steeds 'n versoek ([bespreking #14768](https://github.com/immich-app/immich/discussions/14768)).
+  - Wat Immuch360 doen: werk rou lêers op die toestel aanmekaar, en maak 'n meevoerende aansig in die Quest oop.
+- **Die Insta360-app of Studio**
+  - Waarteen hulle vasloop: nodig om die rou lêers van die kaart in 'n 360°-beeld om te skakel voordat jy kan kyk.
+  - Wat Immuch360 doen: maak die rou .insp- en .insv-lêers direk oop, en die GoPro .360- en DJI .osv-lêers.
+- **Plex, Jellyfin, Synology Photos**
+  - Waarteen hulle vasloop: 360°-foto's en -video's plat gewys of nie herken nie, soos drade op hul forums beskryf ('n Plex-versoek is sedert 2017 oop).
+  - Wat Immuch360 doen: lees die Plex-biblioteek self vanaf bou 20, of dieselfde vouers oor SMB, WebDAV of DLNA, en speel hulle as 'n sfeer, sonder om iets op die bediener te verander.
+- **Die Tapo-app**
+  - Waarteen hulle vasloop: 'n aparte app, by jou TP-Link-rekening aangemeld, met die grepe apart van jou foto's.
+  - Wat Immuch360 doen: wys die kamera langs jou foto's, praat slegs op jou netwerk daarmee, en hou 'n greep as 'n video wat jy na Immich kan stuur (vanaf bou 20).
+- **Die Immich-mobiele app op 'n TV**
+  - Waarteen hulle vasloop: nie 'n TV-app nie: 'n gebruiker meld dat dit met 'n muis werk, nie met die afstandbeheer nie.
+  - Wat Immuch360 doen: dieselfde app, gemaak vir die afstandbeheer (vanaf bou 20).
+- **Lêers na die kopstuk kopieer**
+  - Waarteen hulle vasloop: elke lêer oor 'n kabel gekopieer voordat jy dit kan kyk.
+  - Wat Immuch360 doen: speel ter plaatse vanaf Immich, 'n NAS, 'n mediabediener of 'n foon.
+- **Die 360°- en 3D-spelers van die Quest-winkel**
+  - Waarteen hulle vasloop: kos geld.
+  - Wat Immuch360 doen: gratis en oopbron (AGPL).
 
+<a id="formats-and-sources-by-platform"></a>
 ## Formate en bronne, per platform
 
-Immuch360 is 'n galery, en dit is ook 'n gratis mediaspeler: dit speel wat die amptelike app nie kan nie, vanaf die bronne van die tweede tabel, in die speler wat by die lêer pas.
+Immuch360 is 'n galery, en dit is ook 'n gratis mediaspeler: dit speel wat die amptelike app nie kan nie, vanaf die bronne van die tweede lys, in die speler wat by die lêer pas.
 
-| Wat | Android-fone | iPhone, iPad | Meta Quest | Android TV, Google TV (vanaf bou 20) |
-|---|---|---|---|---|
-| Plat video's (MP4, MOV, MKV, wat die toestel dekodeer) | Immich-speler, en 'n ingeboude speler vir netwerkdeelplekke | Dieselfde, behalwe die MKV- en AVI-lêers van 'n deelplek, wat iOS nie oopmaak nie (op 'n bediener speel hulle getranskodeer) | In die venster | Soos op fone; OK pouseer, links en regs spring 10 s |
-| 360°-foto's | Sfeerkyker, giroskoop | Dieselfde | Meevoerend, reg rondom jou | Sfeerkyker met die pyltjies gedraai, met die kanaalknoppies gezoem |
-| 360°-video's | Ingeboude Media3-speler op 'n sfeer, giroskoop, spoel, keuse van klanksnit, bufferaanwyser | Ingeboude SceneKit-speler op 'n sfeer, giroskoop, keuse van klanksnit, bufferaanwyser; speel en pouse, nog geen tydbalk nie | Meevoerend, ware 3D vir stereoskopiese lêers, tydbalk met spronge van 10 sekondes, vorige en volgende media | Die Media3-speler van fone, met die pyltjies gedraai |
-| 3D-360° (bo en onder, langs mekaar) | Linkeroog, uitlegknoppie | Dieselfde | Elke oog kry sy eie helfte van die raam | Linkeroog, uitlegknoppie |
-| VR180- (halwe sfeer) foto's en video's | Halwe sfeer, 360°/180°-knoppie | Dieselfde | Meevoerende halwe sfeer | Halwe sfeer, 360°/180°-knoppie |
-| Spatial 2.5D (diepte op 'n plat skerm uit 'n stereoskopiese video) | Ingeboude speler, kopvolging met die voorkamera | Dieselfde | Nie aangebied nie | Nie aangebied nie |
-| Apple se ruimtelike foto's (HEIC-stereopare, vanaf bou 19) | Linkeroog, 'n besonderhede-ry sê dat dit ruimtelik is | Dieselfde | Bekyk in 3D: albei oë op 'n foto wat in die meevoerende aansig sweef, 3D of 2D, verstelbare grootte | Linkeroog, 'n besonderhede-ry |
-| Apple se ruimtelike video's (MV-HEVC, vanaf bou 19) | Een oog (die basislaag), met 'n kennisgewing | Dieselfde | Een oog in die venster, met 'n kennisgewing | Een oog, met 'n kennisgewing |
-| Rou Insta360 .insp-foto's (vanaf bou 16) | Op die GPU aanmekaargewerk voor die sfeerkyker, tot 8192x4096 | Dieselfde | Meevoerend, vanaf 'n aanmekaargewerkte beeld wat vir die kopstuk voorberei is | Soos op fone |
-| Rou Insta360 .insv, albei lense in een snit (vanaf bou 16) | Aanmekaargewerk deur 'n GPU-effek in die Media3-speler | Aanmekaargewerk deur 'n SceneKit-shader | Meevoerend, aanmekaargewerk deur dieselfde GPU-effek | Soos op fone |
-| Rou video's met een lens per snit of per lêer (vanaf bou 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-pare, GoPro .360, DJI .osv | Twee hardeware-dekodeerders tegelyk, een per lens (vanaf bou 19 sagteware-dekodeerders op 'n toestel sonder hardeware-dekodeerder, tot 2048x2048 per lens), en 'n GL-saamsteller wat in die sfeer aanmekaarwerk; een lens, dan die getranskodeerde stroom, dan die video sonder aanmekaarwerk, wanneer die toestel nie twee kan laat loop nie | 'n Pasgemaakte AVFoundation-saamsteller met Metal | Meevoerend, dieselfde twee dekodeerders en saamsteller (3840x1920-paneel) | Soos op fone, wanneer die TV twee dekodeerders gelyktydig laat loop |
-| Tapo-kamera, regstreekse beeld (vanaf bou 20) | Media3-RTSP-speler: SD op die bladsy, HD in volskerm, klankknoppie | Nog nie: 'n kaart sê dit kom later | In die venster, in HD | Soos op fone |
-| Tapo-kamera, opnames (vanaf bou 20) | Van die geheuekaart gehaal in 'n H.264-video met sy klank, dan met spoel gespeel | Dieselfde | Dieselfde, in die venster | Dieselfde |
+- **Plat video's (MP4, MOV, MKV, wat die toestel dekodeer)**
+  - Android-fone: Immich-speler, en 'n ingeboude speler vir netwerkdeelplekke.
+  - iPhone, iPad: dieselfde, behalwe die MKV- en AVI-lêers van 'n deelplek, wat iOS nie oopmaak nie (op 'n bediener speel hulle getranskodeer).
+  - Meta Quest: in die venster.
+  - Android TV, Google TV: soos op fone; OK pouseer, links en regs spring 10 s.
+- **360°-foto's**
+  - Android-fone: sfeerkyker, giroskoop.
+  - iPhone, iPad: dieselfde.
+  - Meta Quest: meevoerend, reg rondom jou.
+  - Android TV, Google TV: sfeerkyker met die pyltjies gedraai, met die kanaalknoppies gezoem.
+- **360°-video's**
+  - Android-fone: ingeboude Media3-speler op 'n sfeer, giroskoop, spoel, keuse van klanksnit, bufferaanwyser.
+  - iPhone, iPad: ingeboude SceneKit-speler op 'n sfeer, giroskoop, keuse van klanksnit, bufferaanwyser; speel en pouse, nog geen tydbalk nie.
+  - Meta Quest: meevoerend, ware 3D vir stereoskopiese lêers, tydbalk met spronge van 10 sekondes, vorige en volgende media.
+  - Android TV, Google TV: die Media3-speler van fone, met die pyltjies gedraai.
+- **3D-360° (bo en onder, langs mekaar)**
+  - Android-fone: linkeroog, uitlegknoppie.
+  - iPhone, iPad: dieselfde.
+  - Meta Quest: elke oog kry sy eie helfte van die raam.
+  - Android TV, Google TV: linkeroog, uitlegknoppie.
+- **VR180- (halwe sfeer) foto's en video's**
+  - Android-fone: halwe sfeer, 360°/180°-knoppie.
+  - iPhone, iPad: dieselfde.
+  - Meta Quest: meevoerende halwe sfeer.
+  - Android TV, Google TV: halwe sfeer, 360°/180°-knoppie.
+- **Spatial 2.5D (diepte op 'n plat skerm uit 'n stereoskopiese video)**
+  - Android-fone: ingeboude speler, kopvolging met die voorkamera.
+  - iPhone, iPad: dieselfde.
+  - Meta Quest: nie aangebied nie.
+  - Android TV, Google TV: nie aangebied nie.
+- **Apple se ruimtelike foto's (HEIC-stereopare, vanaf bou 19)**
+  - Android-fone: linkeroog, 'n besonderhede-ry sê dat dit ruimtelik is.
+  - iPhone, iPad: dieselfde.
+  - Meta Quest: Bekyk in 3D: albei oë op 'n foto wat in die meevoerende aansig sweef, 3D of 2D, verstelbare grootte.
+  - Android TV, Google TV: linkeroog, 'n besonderhede-ry.
+- **Apple se ruimtelike video's (MV-HEVC, vanaf bou 19)**
+  - Android-fone: een oog (die basislaag), met 'n kennisgewing.
+  - iPhone, iPad: dieselfde.
+  - Meta Quest: een oog in die venster, met 'n kennisgewing.
+  - Android TV, Google TV: een oog, met 'n kennisgewing.
+- **Rou Insta360 .insp-foto's (vanaf bou 16)**
+  - Android-fone: op die GPU aanmekaargewerk voor die sfeerkyker, tot 8192x4096.
+  - iPhone, iPad: dieselfde.
+  - Meta Quest: meevoerend, vanaf 'n aanmekaargewerkte beeld wat vir die kopstuk voorberei is.
+  - Android TV, Google TV: soos op fone.
+- **Rou Insta360 .insv, albei lense in een snit (vanaf bou 16)**
+  - Android-fone: aanmekaargewerk deur 'n GPU-effek in die Media3-speler.
+  - iPhone, iPad: aanmekaargewerk deur 'n SceneKit-shader.
+  - Meta Quest: meevoerend, aanmekaargewerk deur dieselfde GPU-effek.
+  - Android TV, Google TV: soos op fone.
+- **Rou video's met een lens per snit of per lêer (vanaf bou 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-pare, GoPro .360, DJI .osv**
+  - Android-fone: twee hardeware-dekodeerders tegelyk, een per lens (vanaf bou 19 sagteware-dekodeerders op 'n toestel sonder hardeware-dekodeerder, tot 2048x2048 per lens), en 'n GL-saamsteller wat in die sfeer aanmekaarwerk; een lens, dan die getranskodeerde stroom, dan die video sonder aanmekaarwerk, wanneer die toestel nie twee kan laat loop nie.
+  - iPhone, iPad: 'n pasgemaakte AVFoundation-saamsteller met Metal.
+  - Meta Quest: meevoerend, dieselfde twee dekodeerders en saamsteller (3840x1920-paneel).
+  - Android TV, Google TV: soos op fone, wanneer die TV twee dekodeerders gelyktydig laat loop.
+- **Tapo-kamera, regstreekse beeld (vanaf bou 20)**
+  - Android-fone: Media3-RTSP-speler: SD op die bladsy, HD in volskerm, klankknoppie.
+  - iPhone, iPad: nog nie: 'n kaart sê dit kom later.
+  - Meta Quest: in die venster, in HD.
+  - Android TV, Google TV: soos op fone.
+- **Tapo-kamera, opnames (vanaf bou 20)**
+  - Android-fone: van die geheuekaart gehaal in 'n H.264-video met sy klank, dan met spoel gespeel.
+  - iPhone, iPad: dieselfde.
+  - Meta Quest: dieselfde, in die venster.
+  - Android TV, Google TV: dieselfde.
 
-Die TV-kolom is nog nie op 'n TV nagegaan nie, sien [Kyk op jou TV](#watch-on-your-tv-android-tv-and-google-tv); die kamerarye is nog nie met 'n regte kamera nagegaan nie.
+Die Android TV- en Google TV-inskrywings, vanaf bou 20, is nog nie op 'n TV nagegaan nie, sien [Kyk op jou TV](#watch-on-your-tv-android-tv-and-google-tv); die kamera-inskrywings is nog nie met 'n regte kamera nagegaan nie.
 
-| Vanaf | Hoe |
-|---|---|
-| Jou Immich-bediener | Die oorspronklike of die bediener se getranskodeerde stroom, soos Settings, Asset Viewer, Videobron sê (sien [Videobesonderhede en dekodeerders](#video-details-decoders-and-why-a-video-stutters)). Dieselfde rekening as die webapp |
-| Die foon of kopstuk self | "Gebruik sonder ’n bediener" op die aanmeldbladsy, of die inskrywing On this device van die Biblioteek-oortjie |
-| 'n NAS of 'n rekenaar | SMB- en WebDAV-deelplekke, en vanaf bou 19 DLNA-mediabedieners, op die netwerk gevind, regstreeks gelees ('n SMB-video oor tot ses verbindings), niks gekopieer nie; vanaf bou 15 kan die lêers wat jy kies na jou Immich-rekening gestuur word |
-| 'n Ander foon (vanaf bou 19) | "Deel hierdie foon op die netwerk" op daardie foon: die kopstuk, of enige WebDAV-kliënt op die netwerk, lees sy albums, maande en 360°-media |
-| 'n Plex Media Server (vanaf bou 20) | Sy foto-, fliek- en TV-reeksbiblioteke per vouer, die oorspronklike lêers regstreeks oor HTTPS gelees, nagegaan teen die bediener se eie sertifikaat, tuis of deur die adres buite die huis, op elke platform; sien [Plex Media Server, sonder plex.tv](#plex-media-server-without-plextv) |
-| 'n Tapo-kamera (vanaf bou 20) | Die regstreekse beeld met die kamerarekening (Android, Android TV, die Quest), en die opnames van sy geheuekaart met die TP-Link-rekening se wagwoord (elke platform), slegs op die plaaslike netwerk; sien [Tapo-kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) |
+- **Jou Immich-bediener**: die oorspronklike of die bediener se getranskodeerde stroom, soos Settings, Asset Viewer, Videobron sê (sien [Videobesonderhede en dekodeerders](#video-details-decoders-and-why-a-video-stutters)). Dieselfde rekening as die webapp.
+- **Die foon of kopstuk self**: "Gebruik sonder ’n bediener" op die aanmeldbladsy, of die inskrywing On this device van die Biblioteek-oortjie.
+- **'n NAS of 'n rekenaar**: SMB- en WebDAV-deelplekke, en vanaf bou 19 DLNA-mediabedieners, op die netwerk gevind, regstreeks gelees ('n SMB-video oor tot ses verbindings), niks gekopieer nie; vanaf bou 15 kan die lêers wat jy kies na jou Immich-rekening gestuur word.
+- **'n Ander foon (vanaf bou 19)**: "Deel hierdie foon op die netwerk" op daardie foon: die kopstuk, of enige WebDAV-kliënt op die netwerk, lees sy albums, maande en 360°-media.
+- **'n Plex Media Server (vanaf bou 20)**: sy foto-, fliek- en TV-reeksbiblioteke per vouer, die oorspronklike lêers regstreeks oor HTTPS gelees, nagegaan teen die bediener se eie sertifikaat, tuis of deur die adres buite die huis, op elke platform; sien [Plex Media Server, sonder plex.tv](#plex-media-server-without-plextv).
+- **'n Tapo-kamera (vanaf bou 20)**: die regstreekse beeld met die kamerarekening (Android, Android TV, die Quest), en die opnames van sy geheuekaart met die TP-Link-rekening se wagwoord (elke platform), slegs op die plaaslike netwerk; sien [Tapo-kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
 
-Immuch360 loop ook op die Meta Quest-kopstukke met Horizon OS v69 of later. Vanaf bou 21 is die Horizon Store-bou gelys vir die Quest 2, Quest Pro, Quest 3 en 3S, die vier wat die universele `-release.apk` reeds noem; die eerste Quest nie, die winkel aanvaar dit nie meer nie. Die Quest 3 en 3S is getoets. Die Quest 2 en Quest Pro is nog nie getoets nie: hul videodekodeerders is stadiger, en die limiete wat die app kontroleer, is op 'n Quest 3 gemeet, so 'n groot H.264-video kan met 'n boodskap geweier word of daarop hakkel. Verslae van hierdie twee kopstukke is welkom in [Issues](https://github.com/freeKC/Immuch360/issues). Hoe om dit te gebruik, staan in [In die Meta Quest 3-kopstuk](#in-the-meta-quest-3-headset); hierdie afdeling gaan oor die installering en wat op die kopstuk verskil.
+Immuch360 loop ook op die Meta Quest-kopstukke met Horizon OS v69 of later. Vanaf bou 21 is die Horizon Store-bou gelys vir die Quest 2, Quest Pro, Quest 3 en 3S, die vier wat die universele `-release.apk` reeds noem; die eerste Quest nie, die winkel aanvaar dit nie meer nie.
 
-Die kopstukbou praat slegs met bedieners oor HTTPS, of oor gewone HTTP met name van die tuisnetwerk (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) en met die kopstuk self, soos die Horizon Store vereis. 'n Bediener wat as 'n gewone HTTP-adres met 'n IP ingetik is, soos `http://192.168.1.10:2283`, word deur daardie bou geweier: gebruik HTTPS, 'n tuisnetwerknaam (`nas.local`), of die universele `-release.apk`, wat die oop beleid van die fone behou. WebDAV-, DLNA- en foondeelplekke op 'n gewone HTTP-adres van die plaaslike netwerk word nie geraak nie: die app lees hulle self en gee sy spelers net die adres van sy plaaslike brug (nog op die kopstuk te bevestig vir DLNA en die foondeelplek, nuut in bou 19). Vanaf bou 20 word 'n Plex-bediener oor HTTPS bereik, en 'n Tapo-kamera deur die app self, sy regstreekse beeld oor RTSP, wat nie HTTP is nie: geeneen behoort geraak te word nie (nog op die kopstuk te bevestig).
+Die Quest 3 en 3S is getoets. Die Quest 2 en Quest Pro is nog nie getoets nie: hul videodekodeerders is stadiger, en die limiete wat die app kontroleer, is op 'n Quest 3 gemeet, so 'n groot H.264-video kan met 'n boodskap geweier word of daarop hakkel. Verslae van hierdie twee kopstukke is welkom in [Issues](https://github.com/freeKC/Immuch360/issues).
+
+Hoe om dit te gebruik, staan in [In die Meta Quest 3-kopstuk](#in-the-meta-quest-3-headset); hierdie afdeling gaan oor die installering en wat op die kopstuk verskil.
+
+Die kopstukbou praat slegs met bedieners oor HTTPS, of oor gewone HTTP met name van die tuisnetwerk (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) en met die kopstuk self, soos die Horizon Store vereis. 'n Bediener wat as 'n gewone HTTP-adres met 'n IP ingetik is, soos `http://192.168.1.10:2283`, word deur daardie bou geweier: gebruik HTTPS, 'n tuisnetwerknaam (`nas.local`), of die universele `-release.apk`, wat die oop beleid van die fone behou.
+
+WebDAV-, DLNA- en foondeelplekke op 'n gewone HTTP-adres van die plaaslike netwerk word nie geraak nie: die app lees hulle self en gee sy spelers net die adres van sy plaaslike brug (nog op die kopstuk te bevestig vir DLNA en die foondeelplek, nuut in bou 19). Vanaf bou 20 word 'n Plex-bediener oor HTTPS bereik, en 'n Tapo-kamera deur die app self, sy regstreekse beeld oor RTSP, wat nie HTTP is nie: geeneen behoort geraak te word nie (nog op die kopstuk te bevestig).
 
 <a id="install"></a>
 ### Installeer
@@ -762,16 +922,23 @@ Meta het die Horizon Store-inskrywing op 7 Oktober 2026 met bou 14 goedgekeur, e
 
 ### In die venster
 
-Die hele app loop as 'n 2D-venster waarvan die grootte verander kan word: aanmelding, tydlyn, albums, soek, die Biblioteek-oortjie (360°-lys, On this device, Netwerkdeelplekke), die instellings, en die foto- en videokykers, waar plat foto's en video's speel. Op die kopstuk maak die 360°-knoppie, en Bekyk as 360° in die ⋮-kieslys, die meevoerende aansig direk oop in plaas van die sfeerkyker van fone, en die Spatial 2.5D-knoppie en sy instelling word nie gewys nie. Vanaf bou 19 het 'n Apple-ruimtelike foto 'n knoppie Bekyk in 3D, en die teël Deel hierdie foon op die netwerk word nie gewys nie: die kopstuk is die een wat 'n foon se deelplek lees. Vanaf bou 20 gaan die Plex-bedieners en die Tapo-kameras ook in die venster oop, die kamera se regstreekse beeld in HD; die instelling "Uitleg vir afstandbeheer" bly op Outomaties, wat dit op die kopstuk af laat.
+Die hele app loop as 'n 2D-venster waarvan die grootte verander kan word: aanmelding, tydlyn, albums, soek, die Biblioteek-oortjie (360°-lys, On this device, Netwerkdeelplekke), die instellings, en die foto- en videokykers, waar plat foto's en video's speel.
+
+Op die kopstuk maak die 360°-knoppie, en Bekyk as 360° in die ⋮-kieslys, die meevoerende aansig direk oop in plaas van die sfeerkyker van fone, en die Spatial 2.5D-knoppie en sy instelling word nie gewys nie.
+
+Vanaf bou 19 het 'n Apple-ruimtelike foto 'n knoppie Bekyk in 3D, en die teël Deel hierdie foon op die netwerk word nie gewys nie: die kopstuk is die een wat 'n foon se deelplek lees. Vanaf bou 20 gaan die Plex-bedieners en die Tapo-kameras ook in die venster oop, die kamera se regstreekse beeld in HD; die instelling "Uitleg vir afstandbeheer" bly op Outomaties, wat dit op die kopstuk af laat.
 
 ### In prente
 
 Skermskote in die kopstuk geneem met die vasvangknoppie (Meta-knoppie en sneller), op 'n Quest 3, met die app in Frans; die Biblioteek-oortjie word gewys in die modus sonder 'n bediener.
 
-| Sonder 'n bediener | Netwerkdeelplekke |
-|---|---|
-| <img src="../.github/readme/quest-library-without-server.jpg" width="380" alt="Die Biblioteek-oortjie sonder 'n bediener: On this device en Netwerkdeelplekke"> | <img src="../.github/readme/quest-network-shares.jpg" width="380" alt="Die Netwerkdeelplekke-bladsy met 'n SMB-deelplek van 'n Freebox Server"> |
-| Die Biblioteek-oortjie in die modus sonder 'n bediener: die kopstuk se eie media en die netwerkdeelplekke | 'n Samba-deelplek van 'n Freebox Server, regstreeks vanaf die kopstuk gelees |
+<p align="center">
+  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Die Biblioteek-oortjie sonder 'n bediener: On this device en Netwerkdeelplekke">
+  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Die Netwerkdeelplekke-bladsy met 'n SMB-deelplek van 'n Freebox Server">
+</p>
+
+- **Sonder 'n bediener**: die Biblioteek-oortjie in die modus sonder 'n bediener, met die kopstuk se eie media en die netwerkdeelplekke.
+- **Netwerkdeelplekke**: 'n Samba-deelplek van 'n Freebox Server, regstreeks vanaf die kopstuk gelees.
 
 ### Beperkings op die kopstuk
 
@@ -786,12 +953,18 @@ Skermskote in die kopstuk geneem met die vasvangknoppie (Meta-knoppie en sneller
 
 Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir Apple se nagaan, die Meta Horizon Store-inskrywing is goedgekeur en sy eerste opdatering word deur Meta nagegaan, en die Google Play-weergawe vir TV's wag vir Google se nagaan van die TV-vrystelling. Die GitHub-vrystelling is altyd die nuutste bou:
 
-| Platform | Vandag | Binnekort |
-|---|---|---|
-| Android-fone en -tablette | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), of die APK op die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy: `Immuch360-v<version>-arm64-v8a-release.apk` vir 'n foon (die universele `Immuch360-v<version>-release.apk` werk oral, `-armeabi-v7a` is vir ouer 32-bis-fone, en die `.aab`-lêer is vir Google Play, nie vir installering met die hand nie). Die GitHub-bou is gewoonlik voor die winkel. Hoe ook al, dit installeer langs die amptelike Immich-app (pakket `com.aprogsys.immuch360`). | Google Play: bou 18 is regstreeks, bou 20 word sedert 7 Oktober 2026 deur Google nagegaan, in die plek van bou 19 |
-| iPhone en iPad | Wag vir Apple se nagaan. Die weergawe wat nagegaan word, dra die funksies van bou 11: die oplaai na Immich en die Videobron-keuse (bou 15) en die rou Insta360-lêers (bou 16) sal met 'n latere App Store-opdatering kom. Die bronkode bou met Xcode of op Codemagic, sien [Bou dit self](#build-it-yourself). | App Store, word nagegaan |
-| Meta Quest 2, Quest Pro, Quest 3 en 3S (die Quest 2 en Quest Pro ongetoets) | Die `-quest-release.apk`-lêer van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy (die universele `-release.apk` werk ook), met die hand geïnstalleer in ontwikkelaarmodus, sien [Installeer](#install). Die winkelbou en die GitHub-APK is met verskillende sleutels onderteken: om van die een na die ander oor te skakel, deïnstalleer eers die app (sy instellings en gestoorde deelplekke gaan daarmee saam). | Meta Horizon Store: die inskrywing is op 7 Oktober 2026 met bou 14 goedgekeur, en bou 21, sy eerste opdatering, word deur Meta nagegaan; die winkel se alfakanaal (slegs toetsers) kry elke nuwe bou |
-| Android TV en Google TV (vanaf bou 20) | Die universele `Immuch360-v<version>-release.apk` van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy, met adb met die hand geïnstalleer, sien [Installeer dit op die TV](#install-it-on-the-tv). Dit is dieselfde app as op fone. | Google Play op TV's, na Google se nagaan van die TV-vrystelling |
+- **Android-fone en -tablette**
+  - Vandag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), of die APK op die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy: `Immuch360-v<version>-arm64-v8a-release.apk` vir 'n foon (die universele `Immuch360-v<version>-release.apk` werk oral, `-armeabi-v7a` is vir ouer 32-bis-fone, en die `.aab`-lêer is vir Google Play, nie vir installering met die hand nie). Die GitHub-bou is gewoonlik voor die winkel. Hoe ook al, dit installeer langs die amptelike Immich-app (pakket `com.aprogsys.immuch360`).
+  - Binnekort: op Google Play is bou 18 regstreeks, bou 20 word sedert 7 Oktober 2026 deur Google nagegaan, in die plek van bou 19.
+- **iPhone en iPad**
+  - Vandag: wag vir Apple se nagaan. Die weergawe wat nagegaan word, dra die funksies van bou 11: die oplaai na Immich en die Videobron-keuse (bou 15) en die rou Insta360-lêers (bou 16) sal met 'n latere App Store-opdatering kom. Die bronkode bou met Xcode of op Codemagic, sien [Bou dit self](#build-it-yourself).
+  - Binnekort: App Store, word nagegaan.
+- **Meta Quest 2, Quest Pro, Quest 3 en 3S (die Quest 2 en Quest Pro ongetoets)**
+  - Vandag: die `-quest-release.apk`-lêer van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy (die universele `-release.apk` werk ook), met die hand geïnstalleer in ontwikkelaarmodus, sien [Installeer](#install). Die winkelbou en die GitHub-APK is met verskillende sleutels onderteken: om van die een na die ander oor te skakel, deïnstalleer eers die app (sy instellings en gestoorde deelplekke gaan daarmee saam).
+  - Binnekort: op die Meta Horizon Store is die inskrywing op 7 Oktober 2026 met bou 14 goedgekeur, en bou 21, sy eerste opdatering, word deur Meta nagegaan; die winkel se alfakanaal (slegs toetsers) kry elke nuwe bou.
+- **Android TV en Google TV (vanaf bou 20)**
+  - Vandag: die universele `Immuch360-v<version>-release.apk` van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy, met adb met die hand geïnstalleer, sien [Installeer dit op die TV](#install-it-on-the-tv). Dit is dieselfde app as op fone.
+  - Binnekort: Google Play op TV's, na Google se nagaan van die TV-vrystelling.
 
 Die App Store- en Meta Horizon Store-skakels sal hier bygevoeg word sodra die inskrywings gepubliseer is. Meld aan met jou gewone Immich-bediener-URL en -rekening, of tik op "Gebruik sonder ’n bediener" op die aanmeldbladsy om op die toestel se eie foto's en video's te begin. Die APK van GitHub werk homself nie op nie: hou die Releases-bladsy dop, en sodra jy die app uit 'n winkel geïnstalleer het, kry die opdaterings uit daardie winkel.
 
@@ -812,7 +985,13 @@ flutter build apk --release --flavor quest --target-platform android-arm64 --and
 flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
 ```
 
-Winkelskermskote word geneem op debug-simulatorboue wat gemaak is met `--dart-define=IMMUCH_SCREENSHOTS=true`, wat net die debug-banier versteek. Die twee Android-geure is dieselfde app. Vanaf bou 20 verklaar die `phone`-een homself ook as 'n TV-app ('n TV-lanseerderinskrywing en 'n banier, geen raakskerm vereis nie), wat die `quest`-een weglaat. Die `quest`-een teiken SDK 34 en hou slegs die toestemmings wat die kopstuk gebruik (foto's, video's, kennisgewings): mediabestuur, agtergrondligging, verouderde berging, klank, medialigging, toestelligging en kamera word verwyder in `android/app/src/quest/AndroidManifest.xml`, omdat die Meta Horizon Store die eerste twee weier en vir 'n regverdiging van elke ander sensitiewe een vra; dieselfde lêer noem die Quest 2, Quest Pro, Quest 3 en 3S as sy ondersteunde toestelle en beperk gewone HTTP tot die kopstuk self en tot name van die tuisnetwerk. Die APK is slegs 64-bis as gevolg van die twee ekstra argumente van sy opdragreël (`--target-platform android-arm64 --android-project-arg arm64only=true`). Die `phone`-een is wat Google Play vereis. Om vir iOS op jou eie Mac te bou, gebruik Xcode en jou eie ondertekeningspan; met Xcode 26, voer eers een keer `xcodebuild -downloadComponent MetalToolchain` uit, aangesien die Spatial-shaders dit nodig het. Sonder 'n Mac loop iOS-boue op Codemagic ('n gehuisveste Mac) vanaf die `codemagic.yaml`-lêer van hierdie bewaarplek. Android-vrystellingsboue loop op GitHub Actions (`.github/workflows/immuch360-release.yml`).
+Winkelskermskote word geneem op debug-simulatorboue wat gemaak is met `--dart-define=IMMUCH_SCREENSHOTS=true`, wat net die debug-banier versteek.
+
+Die twee Android-geure is dieselfde app. Vanaf bou 20 verklaar die `phone`-een homself ook as 'n TV-app ('n TV-lanseerderinskrywing en 'n banier, geen raakskerm vereis nie), wat die `quest`-een weglaat.
+
+Die `quest`-een teiken SDK 34 en hou slegs die toestemmings wat die kopstuk gebruik (foto's, video's, kennisgewings): mediabestuur, agtergrondligging, verouderde berging, klank, medialigging, toestelligging en kamera word verwyder in `android/app/src/quest/AndroidManifest.xml`, omdat die Meta Horizon Store die eerste twee weier en vir 'n regverdiging van elke ander sensitiewe een vra; dieselfde lêer noem die Quest 2, Quest Pro, Quest 3 en 3S as sy ondersteunde toestelle en beperk gewone HTTP tot die kopstuk self en tot name van die tuisnetwerk. Die APK is slegs 64-bis as gevolg van die twee ekstra argumente van sy opdragreël (`--target-platform android-arm64 --android-project-arg arm64only=true`). Die `phone`-een is wat Google Play vereis.
+
+Om vir iOS op jou eie Mac te bou, gebruik Xcode en jou eie ondertekeningspan; met Xcode 26, voer eers een keer `xcodebuild -downloadComponent MetalToolchain` uit, aangesien die Spatial-shaders dit nodig het. Sonder 'n Mac loop iOS-boue op Codemagic ('n gehuisveste Mac) vanaf die `codemagic.yaml`-lêer van hierdie bewaarplek. Android-vrystellingsboue loop op GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
 Geen geheim woon in hierdie bewaarplek nie: die Android-ondertekeningsleutel word as geënkripteerde GitHub Actions-geheime gestoor, en die Apple-ondertekeningsmateriaal as geënkripteerde veranderlikes op Codemagic. Die werkvloeilêers verwys slegs by naam daarna. Sonder jou eie `android/key.jks` word 'n vrystellingsbou met die debug-sleutel onderteken en kan dit nie oor 'n kopie van GitHub of 'n winkel installeer nie (deïnstalleer daardie een eers); 'n debug-bou installeer langsaan as Immuch360 debug. Die Meta Horizon Store-kopie is die `quest`-APK van die vrystelling, onderteken met 'n ander sleutel, die een waarmee die winkelapp eerste geregistreer is, so dit kan ook nie oor 'n met die hand geïnstalleerde APK installeer nie, en ook nie andersom nie.
 
@@ -836,6 +1015,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Vanaf bou 19 skryf die DLNA-kliënt, die foondeelplek en die herkenning van Apple-ruimtelike media ook na die app se eie log (Logs (Logboeke), in die kieslys van die profielfoto regs bo), onder `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` en `NetworkMediaService`. Vanaf bou 20 skryf die TV-modus daar onder `TvMode` en `TvTextEntry`, die Plex-bedieners onder `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` en `PlexServerEditPage`, en die Tapo-kameras onder `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` en `CameraLiveView`; die Plex-reëls bevat nooit die token, 'n adres of 'n titel nie, en die kamerareëls laat die wagwoorde weg. Logreëls bly op die toestel tensy jy hulle self kopieer.
 
+<a id="privacy"></a>
 ## Privaatheid
 
 - **Niks gaan na die ontwikkelaar nie**: die app praat met die Immich-bediener wat jy kies (en, wanneer jy die kaart oopmaak, met die kaartteëldiens wat daardie bediener gebruik), het geen advertensies, geen analise en geen ongelukrapporteringsdiens wat deur die ontwikkelaar bedryf word nie, en stuur niks na die ontwikkelaar van Immuch360 nie.
@@ -849,10 +1029,12 @@ Vanaf bou 19 skryf die DLNA-kliënt, die foondeelplek en die herkenning van Appl
 
 Die volledige beleid staan in [PRIVACY.md](../PRIVACY.md).
 
+<a id="license-and-trademark"></a>
 ## Lisensie en handelsmerk
 
 Hierdie projek is 'n vurk van Immich en bly onder die [GNU AGPL v3](../LICENSE). Elke APK, die foon-APK's ingesluit, bevat ook die Meta Spatial SDK, wat nie oopbron is nie (Meta Platform Technologies SDK License Agreement) en slegs op Meta Quest-kopstukke gebruik word. Immuch360 is nie verbonde aan, of onderskryf deur, die Immich-span of FUTO nie.
 
+<a id="roadmap"></a>
 ## Padkaart
 
 Wat nog nie klaar is nie, die waarskynlikste eerste. Niks hier is 'n belofte nie, en terugvoer op die [probleemlys](https://github.com/freeKC/Immuch360/issues) help besluit wat eerste kom.
@@ -871,6 +1053,7 @@ Wat nog nie klaar is nie, die waarskynlikste eerste. Niks hier is 'n belofte nie
 - **Plex, volgende**: die toesteltoets van bou 20 (fone, die Quest, 'n iPhone, 'n TV, weg van die huis); die token met 'n QR-kode van die rekenaar af bring; die DLNA-kant van 'n Plex-bediener in die lys van gevonde bedieners versteek; IPv6.
 - **Stroomop**: klein pull requests na Immich vir die dele wat die onderhouers wil hê, met die 360°-fotokyker eerste.
 
+<a id="credits"></a>
 ## Erkennings
 
 Die 360°-fotokyker is gebaseer op die stroomop-pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) deur dmitry-brazhenko, self gebou op die prototipe deur bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Dankie aan albei.
