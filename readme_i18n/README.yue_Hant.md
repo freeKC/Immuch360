@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 App，同時亦係一個免費播放器，可以喺 Android 手機同平板、iPhone 同 iPad、Meta Quest 頭戴裝置（Quest 3 同 3S，由建置 21 開始仲有 Quest 2 同 Quest Pro，未測試），仲有由建置 20 開始嘅 Android TV 同 Google TV 上面播平面、360°、3D 同 VR180 相片同影片。
+Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 App，同時亦係一個免費播放器，可以喺 Android 手機同平板、iPhone 同 iPad、Meta Quest 頭戴裝置（Quest 3 同 3S，由建置 21 開始仲有 Quest 2 同 Quest Pro，未測試），仲有由建置 20 開始嘅 Android TV 同 Google TV 上面播平面、360°、3D 同 VR180 相片同影片。Immuch360 Desktop，即係 Windows 電腦上面嘅同一個 App，已經以預覽版推出，睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)。
 
 佢啱用 360° 相機（Insta360、GoPro MAX、DJI Osmo 360、Ricoh Theta、Samsung Gear 360）或者電話全景球模式影相嘅人，又或者有頭戴裝置嘅人，等佢哋可以睇返自己喺 Immich 伺服器、電話本身、NAS、媒體伺服器或者 Plex 伺服器入面嘅相片同影片：同一部伺服器，同一個帳戶，伺服器唔使裝外掛，甚至完全唔使伺服器。由建置 20 開始，佢仲可以睇 Tapo 鏡頭，包括直播畫面同記憶卡入面嘅錄影。
 
@@ -18,13 +18,14 @@ Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
   App Store：<a href="#where-to-get-it">審批緊</a><br>
   Meta Quest：<a href="#meta-quest-3">APK</a>，Horizon Store 已批，建置 21 已經交咗做第一次更新<br>
-  Android TV：<a href="#install-it-on-the-tv">APK</a>
+  Android TV：<a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">下載預覽版</a>
 </p>
 
 - 🌐 **原生 360°**<br>相片同影片以球面顯示，可以四圍睇，支援陀螺儀，包括相機 RAW 檔案（Insta360 由建置 16 開始，GoPro 同 DJI 由建置 18 開始）。仲有免費影片播放器：平面、360°、3D、VR180
 - 👓 **原生 3D**<br>立體 360° 同 VR180，上下或者左右排列，仲有 Apple 空間相片（由建置 19 開始）：頭戴裝置入面係真 3D，電話上面顯示一隻眼
 - 🎥 **原生 2.5D**<br>由立體影片喺平面螢幕上面整出深度，畫面跟住你個頭移動（實驗性，手機同平板）
-- 📱 **Android、iOS、Quest、電視**<br>一個 App 用喺電話、平板同 Quest 2、Pro、3 同 3S 頭戴裝置，頭戴裝置入面係真 3D，由建置 20 開始仲可以喺 Android TV 用遙控器操作
+- 📱 **Android、iOS、Quest、電視**<br>一個 App 用喺電話、平板同 Quest 2、Pro、3 同 3S 頭戴裝置，頭戴裝置入面係真 3D，由建置 20 開始仲可以喺 Android TV 用遙控器操作，另外有 Windows 預覽版
 - 🔌 **有冇伺服器都得**<br>你嘅 Immich 伺服器，或者電話自己嘅相簿，唔使帳戶
 - 🗄️ **網絡共享**<br>Samba（SMB）、WebDAV，仲有由建置 19 開始嘅 DLNA 媒體伺服器，喺網絡上自動搵到，即時讀取，乜都唔使下載，你揀咗先至傳去 Immich。由建置 19 開始，電話仲可以將自己嘅相簿分享畀頭戴裝置
 - 📺 **喺電視上面**<br>由建置 20 開始，同一個 APK 用得喺 Android TV 同 Google TV：360° 相片同影片、你嘅伺服器同你嘅共享，全部用遙控器操作
@@ -52,6 +53,7 @@ Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 
 - [同 Immich App 同其他 App 比較](#compared-with-the-immich-app-and-other-apps)
 - [各平台支援嘅格式同來源](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [喺 Windows 電腦上面：Immuch360 Desktop（預覽版）](#on-a-windows-computer-immuch360-desktop-preview)
 - [喺邊度攞](#where-to-get-it)
 - [自己建置](#build-it-yourself)
 - [紀錄](#logs)
@@ -77,6 +79,7 @@ Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 
 - **「我想喺電視上面用遙控器睇我啲 360° 相片同影片，同埋 NAS 或者 Plex 伺服器入面啲影片。」** 睇[喺電視上面睇](#watch-on-your-tv-android-tv-and-google-tv)。
 - **「我喺成堆相入面搵唔到我啲 360° 相。」** 睇 [360° 清單](#find-your-360-shots-the-360-list)。
 - **「我段 360° 影片會窒，或者播緊一個好矇嘅副本。」** 睇[影片詳情同解碼器](#video-details-decoders-and-why-a-video-stutters)。
+- **「我想喺 Windows 電腦上面用我嘅 360° 相片同 Immich 媒體庫，連埋電腦資料夾、我部 NAS 同我部 Plex 伺服器入面嘅相，仲要將部電腦分享俾我個頭戴裝置。」** 睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)（預覽版，暫時淨係得相片）。
 - **「Immich App 啲功能我仲用唔用到？」** 用到，只係有兩個細改動，睇[其他全部都係 Immich](#everything-else-is-immich)。
 
 如果功能比較新，內文會講明由邊個建置開始有。GitHub 發佈頁一定係最新嘅建置，各個 App 商店之後先跟上：睇[喺邊度攞](#where-to-get-it)。
@@ -749,6 +752,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | 直接播 Plex Media Server 媒體庫入面嘅原檔，喺屋企同出面都得，唔使 plex.tv | ❌ | ✅ 由建置 20 開始，所有查閱器，電話、平板、Quest 同電視都得 |
 | Tapo 鏡頭：直播畫面，同埋按你揀嘅傳去 Immich 嘅記憶卡錄影 | ❌ | ✅ 由建置 20 開始：錄影所有平台都得，直播畫面喺 Android、Android TV 同 Quest |
 | Android TV 同 Google TV，用遙控器操作，同一個 APK | ❌ 唔係電視 App | ✅ 由建置 20 開始 |
+| Windows 電腦上面嘅同一個 App | ❌ 淨係電話同平板 | ✅ 預覽版，暫時未有影片 |
 | Insta360 .insp RAW 相片同單軌道 .insv 影片 | ❌ 平面 | ✅ 由建置 16 開始 |
 | 每條軌道或者每個檔案一個鏡頭嘅 RAW 影片（Insta360 X4、X4 Air、X5、X6、X3 一對檔案、GoPro .360、DJI .osv） | ❌ 平面或者錯誤 | ✅ 由建置 18 開始 |
 | 雙魚眼 .dng | ❌ 平面 | ❌ 未支援 |
@@ -778,6 +782,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 - **Plex Media Server**：已經喺電腦度對住一部真正嘅 Plex Media Server 1.42.1 檢查過（配對、資料夾、位元組範圍、縮圖、屋企以外嘅地址）；未喺裝置上檢查。
 - **Tapo 鏡頭**：對住模擬鏡頭檢查過；未用真正嘅鏡頭檢查。
 - **Android TV 同 Google TV**：用自動化測試檢查過；未喺電視上面檢查。
+- **Windows 電腦上面嘅同一個 App**：Windows 上面有 475 個桌面自動測試；喺一部 Windows 11 電腦上面，App 啟動到、打開到 Immich 伺服器上面儲存咗嘅工作階段、同步到，亦都正常關閉；逐個功能嘅人手測試仲進行緊。
 - **Insta360 .insp RAW 相片同單軌道 .insv 影片**：相片已同 X3 檔案嘅 Insta360 Studio 匯出結果比較過，影片已喺 Android 模擬器用低解像度 X3 檔案檢查過；未喺 iPhone 上面行過。
 - **每條軌道或者每個檔案一個鏡頭嘅 RAW 影片**：解析器同拼接已用真實嘅 X4、X3 一對檔案、GoPro MAX 同 Osmo 360 檔案檢查過；播放係建置 18 同 19 嘅裝置測試。
 - **雙魚眼 .dng**：計劃中。
@@ -883,12 +888,15 @@ Immuch360 係一個相簿，亦係一個免費媒體播放器：佢可以由第�
 
 Android TV 同 Google TV 嗰幾項（由建置 20 開始）仲未喺電視上面檢查過，睇[喺電視上面睇](#watch-on-your-tv-android-tv-and-google-tv)；鏡頭嗰幾項仲未用真正嘅鏡頭檢查過。
 
+喺 Windows 上面，Immuch360 Desktop 預覽版用滑鼠同鍵盤顯示平面同 360° 相片（包括 Insta360 原始 .insp 相片），來源有伺服器、電腦嘅資料夾、共享同 Plex；佢暫時仲未播到影片，影片會顯示一個預留位置圖（睇[暫時未有](#not-there-yet)）。
+
 - **你嘅 Immich 伺服器**：按「設定」、「文件查閱器」、「影片來源」嘅設定，播原檔或者伺服器嘅轉碼串流（睇[影片詳情同解碼器](#video-details-decoders-and-why-a-video-stutters)）。同網頁版用同一個帳戶。
 - **電話或者頭戴裝置本身**：登入頁嘅「唔連伺服器使用」，或者「媒體庫」分頁嘅「喺呢部裝置度」項目。
 - **NAS 或者電腦**：SMB 同 WebDAV 共享，仲有由建置 19 開始嘅 DLNA 媒體伺服器，喺網絡上自動搵到，即時讀取（SMB 影片最多用六條連線），乜都唔使複製；由建置 15 開始，你揀嘅檔案可以傳去你嘅 Immich 帳戶。
 - **另一部電話（由建置 19 開始）**：喺嗰部電話度用「喺網絡上分享呢部電話」：頭戴裝置，或者網絡入面任何 WebDAV 用戶端，都讀到佢嘅相簿、月份同 360° 媒體。
 - **Plex Media Server（由建置 20 開始）**：按資料夾睇佢嘅相片、電影同電視節目媒體庫，經 HTTPS 即時讀原檔，用伺服器自己嘅證書檢查，喺屋企或者經屋企以外嘅地址都得，所有平台都用到；睇 [Plex Media Server，唔使 plex.tv](#plex-media-server-without-plextv)。
 - **Tapo 鏡頭（由建置 20 開始）**：用鏡頭帳戶睇直播畫面（Android、Android TV、Quest），用 TP-Link 帳戶密碼睇記憶卡入面嘅錄影（所有平台），只限本地網絡；睇 [Tapo 鏡頭](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)。
+- **Windows 電腦嘅資料夾（桌面預覽版）**：你喺 Immuch360 Desktop 揀嘅資料夾，代替電話嘅相簿嚟讀取；部電腦亦都可以將佢哋分享俾頭戴裝置，睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)。
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Meta 喺 2026 年 10 月 7 日批咗連同建置 14 交嘅 Horizon Store 上架�
 - **APK 大小**：Spatial SDK 會加大約 56 MB 嘅 64 位元 ARM 原生程式碼，電話版都有，雖然電話永遠唔會載入佢。
 - **授權**：沉浸式檢視用咗 Meta Spatial SDK，按 Meta Platform Technologies SDK License Agreement 發佈。
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## 喺 Windows 電腦上面：Immuch360 Desktop（預覽版）
+
+你嘅 Immich 媒體庫喺伺服器上面，其他相片放喺部電腦嘅資料夾入面，影片喺 NAS 或者 Plex 伺服器度，而你想喺大螢幕上面四圍睇你嘅 360° 相片，或者喺頭戴裝置入面睇部電腦嘅相。Immuch360 Desktop 就係 Windows 電腦上面嘅同一個 App，同電話 App 用同一套原始碼建置。
+
+喺電腦上面，Immich 提供嘅係瀏覽器入面嘅網頁 App。**Immuch360 Desktop 多咗乜嘢**：唔使任何伺服器或者帳戶就用到部電腦嘅資料夾，喺 App 入面瀏覽 SMB、WebDAV、DLNA 同 Plex 共享，Insta360 原始 .insp 相片以球面打開，仲有喺屋企將部電腦分享俾 Meta Quest。
+
+呢第一個建置係預覽版：相片用得，影片會喺之後嘅桌面建置加入。電話、平板、Quest 同電視 App 唔會因此改變，繼續叫 Immuch360。
+
+<a id="download-and-install-on-windows"></a>
+### 喺 Windows 下載同安裝
+
+第一個建置係 GitHub 預發佈版本 [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1)。檔案係 `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip`（33.5 MB，解壓之後 65 個檔案），仲有用嚟核對嘅 `SHA256SUMS.txt`。佢由 `desktop` 分支嘅 commit 21f285c34 建置：電話建置 20 加埋電腦版本。要用 64 位元嘅 Windows 10 或者 11。
+
+1. 下載個 ZIP，解壓去任何地方，例如「文件」。
+2. 喺解壓咗嘅資料夾度啟動 `immuch360.exe`。成個資料夾要保持完整：程式要用到佢旁邊嘅檔案。
+3. 啲檔案暫時未簽署，所以 Windows SmartScreen 可能會顯示「Windows 已保護您的電腦」：揀「其他資訊」，再揀「仍要執行」。如果開咗智慧型應用程式控制，佢會封鎖未簽署嘅程式。
+4. 等個視窗出嚟。新建置第一次啟動要 10 秒到大約一分鐘，好大機會係 Microsoft Defender 掃緊啲新檔案：呢段時間唔好再啟動多次個 App。之後啟動只係要一兩秒。
+5. 喺登入頁，用伺服器地址、你嘅電郵同密碼登入你嘅 Immich 伺服器，或者撳「唔連伺服器使用」。
+
+要核對個 ZIP，就喺下載咗嘅資料夾度開命令提示字元，執行 `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256`：結果會同 `SHA256SUMS.txt` 入面寫嘅一樣。暫時未有安裝程式，亦都未有自動更新：留意 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面，下一個建置都係咁樣解壓。
+
+### 預覽版做到乜嘢
+
+- **你嘅 Immich 伺服器**：時間線、相簿、人物、回憶同搜尋，仲有原尺寸嘅伺服器相片，同電話上面一樣。
+- **唔連伺服器**：你嘅相片同影片資料夾（建議用「圖片」同「影片」）代替電話嘅相簿。你揀咗嘅資料夾以外乜嘢都唔會讀，唔連伺服器嗰陣乜嘢都唔會離開部電腦。
+- **上載同備份**：App 開住嘅時候，由呢啲資料夾上載去你嘅 Immich 伺服器。
+- **以球面睇 360° 相片**，用滑鼠同鍵盤；Insta360 相機嘅原始 .insp 相片好似喺電話上面咁打開。
+- **網絡共享**：Samba (SMB)、WebDAV 同 DLNA 媒體伺服器，仲有唔使 plex.tv 嘅 Plex 伺服器，瀏覽方法同電話一樣：入面嘅相片打開到，影片就要等影片播放器（睇[暫時未有](#not-there-yet)）。Tapo 鏡頭方面，有記憶卡錄影：清單，同埋攞一段片段。
+- **喺網絡上分享呢部電腦**：你啲資料夾嘅相簿、月份同 360° 媒體，唯讀，俾屋企嘅 Meta Quest 或者其他裝置用，好似電話分享自己咁。
+- **檔案**：由伺服器下載嘅嘢會放去你揀嘅資料夾，「儲存去資料夾」會保留所揀相片同影片嘅副本，「紀錄」頁面有「將紀錄儲存做檔案」。
+
+### 喺電腦上面用
+
+1. **揀你嘅資料夾。** 唔連伺服器嗰陣，時間線一開始係「揀你啲相片同影片嘅資料夾」：撳「加資料夾」。連住伺服器嗰陣，未揀資料夾之前，同一張卡會喺「媒體庫」嘅「喺呢部電腦度」下面，同埋要備份嘅相簿入面出現。之後佢哋會有一行「呢部電腦上面嘅資料夾」，「設定」嘅「呢部電腦」都有。
+2. **雲端、USB 同網絡資料夾。** OneDrive（或者其他雲端硬碟）淨係放喺網上嘅檔案會計數但唔會讀，所以加資料夾唔會下載晒你成個雲端：「下載並加入」會喺你想要嗰陣攞返嚟。用另一個磁碟機代號接返嘅 USB 磁碟機會保留佢嘅相片。網絡資料夾，同埋記憶卡或者 USB 磁碟機上面嘅資料夾（等 Windows 仍然可以退出佢），唔會監察變動：喺嗰度加咗檔案之後請用「重新整理」。
+3. **喺 360° 相片入面四圍睇**：用滑鼠拖，用滾輪、雙擊或者 + 同 - 縮放（任何鍵盤配置都得，包括 AZERTY），用方向鍵移動。F 或者 F11 切換全螢幕，Escape 離開；Home 同 End 跳去第一張同最後一張相；I 顯示詳細資料。
+4. **一張張相咁睇**：喺平面相片入面，左右方向鍵，或者滑鼠郁嗰陣喺兩邊出現嘅箭嘴，會去上一張同下一張。喺描述欄打嘅字母會留喺文字入面。
+5. **將部電腦分享俾頭戴裝置**：打開「媒體庫」，再打開「網絡共享」；第一格係「喺網絡上分享呢部電腦」，即係[喺網絡上分享呢部電話](#share-this-phone-on-the-network)嘅電腦版。開啟「喺網絡上分享相片同影片」，然後照嗰個章節講嘅方法喺頭戴裝置度加部電腦。App 關咗或者一個鐘冇用之後，分享會停。
+6. **允許網絡存取**：Windows 可能會問准唔准 Immuch360 Desktop 用網絡。喺私人網絡上面要允許，否則頭戴裝置搵唔到部電腦。喺 Windows 標記做公用嘅網絡（咖啡店、酒店），或者佢分唔到類型嘅網絡，除非你揀「只喺今次工作階段分享」，否則分享唔會開始；部電腦亦都只會喺佢分享緊嘅網絡上面公佈自己。
+7. **「設定」嘅「呢部電腦」**：資料夾、下載資料夾、用嚟搵共享同分享部電腦嘅網絡介面卡（有幾張嗰陣，例如 Wi-Fi 同乙太網絡），仲有信任嘅憑證：你自己伺服器嘅憑證機構，以 PEM 檔案提供，用喺 Windows 自己唔信任嘅 HTTPS 地址。用戶端憑證喺「設定」、「進階」度匯入，同電話一樣。
+
+### 同電話 App 比較
+
+- **備份喺 App 開住嗰陣運行**（或者最小化嗰陣），唔係喺視窗關咗之後喺背景運行。上載緊或者部電腦分享緊嗰陣關視窗，會先問你。
+- **用資料夾代替相簿**：App 讀你揀嘅資料夾，喺部電腦度保留自己嘅索引、縮圖同快取。
+- **一個視窗**：第二次打開 App 會叫返第一個視窗出嚟，而唔係開多一個副本。
+- **你啲資料夾入面乜嘢都唔會刪**：「由裝置刪除」收埋咗，「刪除」淨係移除伺服器上面嘅副本，直至 App 可以將檔案送去 Windows 資源回收筒為止。
+- **滑鼠同鍵盤**代替觸控同陀螺儀。
+
+<a id="not-there-yet"></a>
+### 暫時未有
+
+- **影片**：暫時顯示一個預留位置圖，縮圖就顯示菲林圖示。下一步係播放：先係平面影片，然後係 360°、3D 同 VR180 影片同原始 360° 影片。
+- **Spatial 2.5D**，之後會配合網絡攝影機；**Tapo 即時畫面**；**地圖**同「地點」檢視；**用 OAuth 登入**（請改用電郵同密碼登入）；**Google Cast**；**通知**。
+- **安裝程式、已簽署嘅建置同自動更新**：呢個建置係一個有 `immuch360.exe` 嘅資料夾。
+- **Linux 同 macOS**：佢哋嘅項目喺原始碼入面，但係未喺嗰啲系統上面建置或者試過；佢哋會喺 Windows 之後推出。
+- **翻譯**：電腦版本嘅新文字暫時只有英文。
+
+### 已知問題
+
+- **頭戴裝置讀緊分享電腦上面嘅檔案嗰陣**（播緊嘅影片、下載緊嘅相片），Windows 唔可以改名、搬或者刪除嗰個檔案，仲話佢喺 Immuch360 Desktop 度開咗：請先停止播放。備份唔會咁樣霸住你啲檔案：檔案上載緊嗰陣都可以改名、搬或者刪除。
+- **未夠完善嘅地方**：上面嘅功能喺 Windows 上面通過咗自動測試（475 個桌面測試），喺一部 Windows 11 電腦上面，App 啟動到、打開到 Immich 伺服器上面儲存咗嘅工作階段、同步到，亦都正常關閉。喺真電腦上面逐個功能人手測試仲進行緊。
+
+如果有問題，請附上喺「紀錄」頁面儲存嘅紀錄，開一個 [issue](https://github.com/freeKC/Immuch360/issues)，睇[紀錄](#logs)。分享之前請檢查吓紀錄：入面可能有你嘅伺服器地址。
+
+<a id="build-it-yourself-on-windows"></a>
+### 喺 Windows 自己建置
+
+你需要 x64 上面嘅 Windows 10 或者 11、Windows 版 Flutter 3.47.2、有「Desktop development with C++」工作負載嘅 Visual Studio 2022 或者佢嘅 Build Tools、喺 Windows 設定開咗嘅開發人員模式（Flutter 嘅外掛程式要用），同埋用嚟執行打包指令碼嘅 Python 3。
+
+1. 攞 `desktop` 分支，然後執行程式碼產生。佢會用 Java 同 Node，所以要喺 Linux、macOS 或者 WSL 度執行；用 WSL 嘅話，將 clone 放喺 Windows 磁碟機上面，WSL 會喺 `/mnt/c` 或者 `/mnt/d` 下面見到：
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. 喺 Windows，同一個 `mobile` 資料夾入面，建置個 App：
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. `Release` 資料夾喺建置佢嘅電腦上面行得到。要喺另一部電腦用，就保留成個資料夾，再喺 `immuch360.exe` 旁邊加 Visual C++ 執行階段。喺 clone 嘅根目錄，打包指令碼會複製佢，剔走淨係 Android 先用到嘅嘢，檢查 App 載入嘅每個 DLL 都喺資料夾入面或者 Windows 本身入面，然後整個 ZIP：
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+`desktop` 分支嘅 CI（`.github/workflows/immuch360-desktop.yml`）喺 Linux 上面行電話嘅檢查同成套測試，喺 Windows 上面行桌面測試，仲會建置同一個 ZIP；佢嘅 Linux 同 macOS 工作（`flutter build linux` 同 `flutter build macos`，用同一個 `-t lib/main_desktop.dart`）暫時未喺嗰啲系統上面行過。
+
 <a id="where-to-get-it"></a>
 ## 喺邊度攞
 
-個 App 嘅電話同平板版本已經喺 Google Play 上架；App Store 版本等緊 Apple 審批，Meta Horizon Store 上架申請已經批咗，佢嘅第一次更新等緊 Meta 審批，而電視用嘅 Google Play 版本就等緊 Google 審批電視版本。GitHub 發佈頁一定係最新嘅建置：
+個 App 嘅電話同平板版本已經喺 Google Play 上架；App Store 版本等緊 Apple 審批，Meta Horizon Store 上架申請已經批咗，佢嘅第一次更新等緊 Meta 審批，而電視用嘅 Google Play 版本就等緊 Google 審批電視版本。Windows 用嘅 Immuch360 Desktop 喺 GitHub 有預覽版。GitHub 發佈頁一定係最新嘅建置：
 
 - **Android 手機同平板**
   - 而家：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或者 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅 APK：電話用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用嘅 `Immuch360-v<version>-release.apk` 邊度都用到，`-armeabi-v7a` 係畀舊款 32 位元電話用，`.aab` 檔案係畀 Google Play 用，唔係用嚟側載）。GitHub 建置通常行得比商店前。兩種都會同官方 Immich App 並排安裝（套件 `com.aprogsys.immuch360`）。
@@ -965,6 +1074,9 @@ Meta 喺 2026 年 10 月 7 日批咗連同建置 14 交嘅 Horizon Store 上架�
 - **Android TV 同 Google TV（由建置 20 開始）**
   - 而家：[Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅通用 `Immuch360-v<version>-release.apk`，用 adb 側載，睇[喺電視上面安裝](#install-it-on-the-tv)。佢同電話上面係同一個 App。
   - 就快：電視用嘅 Google Play，要等 Google 審批電視版本。
+- **Windows 10 同 11，64 位元（預覽版）**
+  - 而家：Immuch360 Desktop，即係[桌面預發佈版本](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1)嘅 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip`，照[喺 Windows 下載同安裝](#download-and-install-on-windows)講嘅方法解壓同啟動。暫時淨係得相片：影片會喺之後嘅桌面建置加入。
+  - 就快：影片播放；安裝程式、已簽署嘅建置同更新遲啲先有。
 
 App Store 同 Meta Horizon Store 嘅連結一上架就會加喺呢度。用你平時嘅 Immich 伺服器網址同帳戶登入，或者喺登入頁撳「唔連伺服器使用」，由裝置自己嘅相片同影片開始。GitHub 嘅 APK 唔會自己更新：留意 Releases 頁面；如果你係由商店安裝個 App，就由嗰個商店攞更新。
 
@@ -993,12 +1105,15 @@ flutter build ios --release                                                  # i
 
 想喺你自己部 Mac 上面建置 iOS 版本，就用 Xcode 同你自己嘅簽署團隊；用 Xcode 26 嘅話，要先行一次 `xcodebuild -downloadComponent MetalToolchain`，因為 Spatial 著色器需要佢。冇 Mac 嘅話，iOS 建置可以用呢個儲存庫嘅 `codemagic.yaml` 檔案喺 Codemagic（一部託管 Mac）上面行。Android 發佈建置喺 GitHub Actions 上面行（`.github/workflows/immuch360-release.yml`）。
 
+Immuch360 Desktop，即係 Windows 版本，用 Windows 版 Flutter 由 `desktop` 分支建置：步驟喺[喺 Windows 自己建置](#build-it-yourself-on-windows)。
+
 呢個儲存庫入面冇任何機密資料：Android 簽署金鑰以加密嘅 GitHub Actions secrets 儲存，Apple 簽署資料以加密變數儲存喺 Codemagic。工作流程檔案只係用名稱引用佢哋。如果冇你自己嘅 `android/key.jks`，發佈建置會用除錯金鑰簽署，唔可以蓋過由 GitHub 或者商店安裝嘅版本（要先解除安裝嗰個）；除錯建置會以 Immuch360 debug 嘅名同佢並排安裝。Meta Horizon Store 嘅版本係發佈版本入面嘅 `quest` APK，用另一條金鑰簽署，即係商店 App 最初登記時用嗰條，所以佢都唔可以蓋過側載嘅 APK，反過嚟都一樣。
 
 ### 分支
 
 - **`main`**：Immich `main`，停喺 `immuch360` 所基於嘅 commit（目前嘅建置係 2026 年 9 月 29 日），永遠唔會改；分支重新建基於較新嘅 Immich 時佢先會向前移。
 - **`immuch360`**：呢個分支喺 Immich 之上嘅改動。每個發佈版本都會講明基於邊個 Immich 版本。
+- **`desktop`**：Immuch360 Desktop，即係電腦版本，建基於 `immuch360`。電話嘅發佈版本會合併入去，桌面預發佈版本都係由佢建置（桌面建置 1 嚟自 commit 21f285c34，即係電話建置 20 加埋電腦版本）。佢唔會改 `mobile/android` 同 `mobile/ios` 下面任何嘢。
 
 <a id="logs"></a>
 ## 紀錄
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 由建置 19 開始，DLNA 用戶端、電話共享同 Apple 空間媒體嘅辨認都會寫入 App 自己嘅紀錄（右上角頭像選單入面嘅「紀錄」），標籤係 `Ssdp`、`DlnaFileSystem`、`NetworkBrowserPage`、`PhoneShare`、`PhoneShareServer`、`AppleSpatialService`、`HeicStereoProbe` 同 `NetworkMediaService`。由建置 20 開始，電視模式會寫喺 `TvMode` 同 `TvTextEntry` 標籤下面，Plex 伺服器寫喺 `Gdm`、`UdpTransport`、`PlexClient`、`PlexFileSystem` 同 `PlexServerEditPage`，Tapo 鏡頭寫喺 `TapoDiscovery`、`TapoHttps`、`TapoLogin`、`TapoControl`、`TapoMedia`、`TapoFileSystem`、`TapoTest`、`TapoCamera`、`CameraPage`、`CameraEditPage` 同 `CameraLiveView`；Plex 嘅紀錄從來唔會有權杖、地址或者標題，鏡頭嘅紀錄唔會有密碼。紀錄只會留喺部裝置度，除非你自己複製出去。
 
+喺電腦上面（Immuch360 Desktop），「紀錄」頁面仲有「將紀錄儲存做檔案」：儲存紀錄，或者有最近當機嘅時候，儲存一個包括紀錄同最近當機報告嘅 ZIP（嗰陣建議嘅檔名會以「with-crash-reports」結尾）。當機報告係一個細細嘅 minidump：啲執行緒、佢哋停喺邊度，同埋淨係追蹤佢哋嘅呼叫需要嘅嘢，有程式檔案嘅名但冇佢哋嘅資料夾；唔包括 App 嘅記憶體。分享之前請檢查吓紀錄：入面可能有你嘅伺服器地址。
+
 <a id="privacy"></a>
 ## 私隱
 
@@ -1026,19 +1143,21 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 - **電視**：部裝置係咪電視係喺裝置上面判斷；乜都唔會傳出去。
 - **電話共享**：只限本地網絡，要用戶名稱同密碼，經普通 HTTP（睇[喺網絡上分享呢部電話](#share-this-phone-on-the-network)）。
 - **鏡頭**：只有 Spatial 2.5D 播放器會用，喺部裝置度處理；影像永遠唔會儲存，亦唔會傳去任何地方。
+- **喺電腦上面**（Immuch360 Desktop，Windows 預覽版）：App 淨係讀你揀嘅資料夾，喺部電腦度保留索引、縮圖同快取，用 Windows 嘅資料保護儲存密碼同權杖，只限你嘅 Windows 帳戶用。電腦分享跟電話分享嘅規則，喺 Windows 標記做公用或者佢分唔到類型嘅網絡上面唔會開始，除非你話要。
 
 完整嘅政策喺 [PRIVACY.md](../PRIVACY.md)。
 
 <a id="license-and-trademark"></a>
 ## 授權同商標
 
-呢個項目係 Immich 嘅分支，繼續採用 [GNU AGPL v3](../LICENSE)。每個 APK，包括電話版，都包含 Meta Spatial SDK，佢唔係開源（Meta Platform Technologies SDK License Agreement），只會喺 Meta Quest 頭戴裝置上面用。Immuch360 同 Immich 團隊或者 FUTO 冇關係，亦冇得到佢哋認可。
+呢個項目係 Immich 嘅分支，繼續採用 [GNU AGPL v3](../LICENSE)。每個 APK，包括電話版，都包含 Meta Spatial SDK，佢唔係開源（Meta Platform Technologies SDK License Agreement），只會喺 Meta Quest 頭戴裝置上面用；Windows 版本 Immuch360 Desktop 冇包括佢。Immuch360 同 Immich 團隊或者 FUTO 冇關係，亦冇得到佢哋認可。
 
 <a id="roadmap"></a>
 ## 路線圖
 
 仲未做嘅嘢，最有可能先做嘅排先。呢度冇任何承諾，喺 [issue tracker](https://github.com/freeKC/Immuch360/issues) 上面嘅回饋會幫手決定先做邊樣。
 
+- **Immuch360 Desktop，先做 Windows**：第一個預覽版已經推出（睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)）。下一步係影片播放（先係平面影片，然後係 360°、3D、VR180 同原始檔案），喺一部手提電腦嘅兩張顯示卡上面實測；然後喺 Windows 電腦上面逐個功能測試同修正；然後係配合網絡攝影機嘅 Spatial 2.5D；然後係 Linux 同 macOS、安裝套件、簽署同更新。
 - **Google Play**：建置 18 已經上架；建置 20 由 2026 年 10 月 7 日開始等緊 Google 審批，取代建置 19。建置 21 喺電話同平板上面乜都冇改。
 - **App Store**：3.3.0 版本等緊 Apple 審批；佢有建置 11 嘅功能，所以上傳去 Immich 同影片解碼器檢查（建置 15），同埋 Insta360 RAW 檔案（建置 16），會喺下一次 App Store 更新推出。上架之後連結會加喺呢度。
 - **Meta Horizon Store**：Meta 喺 2026 年 10 月 7 日批咗連同建置 14 交嘅上架申請。建置 21 已經交咗做佢嘅第一次更新：佢帶嚟建置 14 之後嘅所有嘢（由共享上載去 Immich、按頭戴裝置解碼到嘅格式揀影片來源、Insta360、GoPro 同 DJI 嘅 RAW 檔案、DLNA、電話共享、Apple 空間相片、Plex Media Server 媒體庫、Tapo 鏡頭），商店會為 Quest 2、Quest Pro、Quest 3 同 3S 上架。商店頁面公開之後，商店連結會加喺呢度；側載咗嘅版本要先解除安裝（睇[安裝](#install)）。

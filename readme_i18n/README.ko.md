@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모바일 앱이자, 평면, 360°, 3D, VR180 사진과 동영상을 위한 무료 플레이어로, Android 휴대폰과 태블릿, iPhone과 iPad, Meta Quest 헤드셋(Quest 3와 3S, 그리고 빌드 21부터 Quest 2와 Quest Pro, 테스트하지 않음), 그리고 빌드 20부터 Android TV와 Google TV에서 동작합니다.
+Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모바일 앱이자, 평면, 360°, 3D, VR180 사진과 동영상을 위한 무료 플레이어로, Android 휴대폰과 태블릿, iPhone과 iPad, Meta Quest 헤드셋(Quest 3와 3S, 그리고 빌드 21부터 Quest 2와 Quest Pro, 테스트하지 않음), 그리고 빌드 20부터 Android TV와 Google TV에서 동작합니다. Windows 컴퓨터에서 쓰는 같은 앱인 Immuch360 Desktop이 미리 보기로 나왔습니다. [Windows 컴퓨터에서](#on-a-windows-computer-immuch360-desktop-preview)를 보세요.
 
 360° 카메라(Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360)나 휴대폰의 포토 스피어 모드로 촬영하거나 헤드셋을 가진 사람이, 직접 찍은 사진과 동영상을 Immich 서버, 휴대폰 자체, NAS, 미디어 서버 또는 Plex 서버에서 보기 위한 앱입니다. 같은 서버, 같은 계정을 쓰고, 서버 플러그인은 필요 없으며, 서버가 아예 없어도 됩니다. 빌드 20부터는 Tapo 카메라의 실시간 화면과 메모리 카드의 녹화도 보여 줍니다.
 
@@ -18,13 +18,14 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
   App Store: <a href="#where-to-get-it">심사 중</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store 승인됨, 빌드 21을 첫 업데이트로 제출<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">미리 보기 다운로드</a>
 </p>
 
 - 🌐 **네이티브 360°**<br>자이로스코프로 둘러보는 구 형태의 사진과 동영상, 카메라 RAW 파일 포함(Insta360은 빌드 16부터, GoPro와 DJI는 빌드 18부터). 평면, 360°, 3D, VR180을 위한 무료 동영상 플레이어도 함께
 - 👓 **네이티브 3D**<br>입체 360°와 VR180, 위아래 또는 좌우 배치, Apple 공간 사진(빌드 19부터): 헤드셋에서는 진짜 3D, 휴대폰에서는 한쪽 눈
 - 🎥 **네이티브 2.5D**<br>입체 동영상으로 평면 화면에 깊이를 더하고, 시점이 머리를 따라갑니다(실험적, 휴대폰과 태블릿)
-- 📱 **Android, iOS, Quest, TV**<br>휴대폰, 태블릿, Quest 2, Pro, 3, 3S 헤드셋에서 하나의 앱, 헤드셋에서는 진짜 3D, 그리고 빌드 20부터 리모컨으로 쓰는 Android TV
+- 📱 **Android, iOS, Quest, TV**<br>휴대폰, 태블릿, Quest 2, Pro, 3, 3S 헤드셋에서 하나의 앱, 헤드셋에서는 진짜 3D, 빌드 20부터 리모컨으로 쓰는 Android TV, 그리고 Windows 미리 보기
 - 🔌 **서버가 있어도 없어도**<br>Immich 서버 또는 휴대폰 자체 갤러리, 계정 필요 없음
 - 🗄️ **네트워크 공유**<br>Samba(SMB), WebDAV, 그리고 빌드 19부터 DLNA 미디어 서버를 네트워크에서 찾아 실시간으로 읽습니다. 아무것도 다운로드하지 않고, 원할 때 Immich로 보냅니다. 빌드 19부터는 휴대폰이 자기 갤러리를 헤드셋과 공유할 수도 있습니다
 - 📺 **TV에서**<br>빌드 20부터 Android TV와 Google TV에서 같은 APK로: 360° 사진과 동영상, 내 서버와 공유를 리모컨으로
@@ -52,6 +53,7 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
 - [Immich 앱 및 다른 앱과의 비교](#compared-with-the-immich-app-and-other-apps)
 - [플랫폼별 형식과 출처](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Windows 컴퓨터에서: Immuch360 Desktop(미리 보기)](#on-a-windows-computer-immuch360-desktop-preview)
 - [받는 곳](#where-to-get-it)
 - [직접 빌드하기](#build-it-yourself)
 - [로그](#logs)
@@ -77,6 +79,7 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
 - **"360° 사진과 동영상, 그리고 NAS나 Plex 서버의 동영상을 TV에서 리모컨으로 보고 싶습니다."** [TV에서 보기](#watch-on-your-tv-android-tv-and-google-tv)를 보세요.
 - **"수많은 사진 사이에서 360° 사진을 찾을 수 없습니다."** [360° 목록](#find-your-360-shots-the-360-list)을 보세요.
 - **"360° 동영상이 끊기거나, 흐릿한 사본이 재생됩니다."** [동영상 정보와 디코더](#video-details-decoders-and-why-a-video-stutters)를 보세요.
+- **"Windows PC에서 360° 사진과 Immich 라이브러리를 보고 싶어요. PC 폴더의 사진, NAS와 Plex 서버도 함께 보고, PC를 헤드셋과 공유하고 싶어요."** [Windows 컴퓨터에서](#on-a-windows-computer-immuch360-desktop-preview)를 보세요(미리 보기이며, 지금은 사진만 됩니다).
 - **"Immich 앱의 기능은 그대로 남나요?"** 네, 작은 차이 두 가지를 빼면 그대로입니다. [나머지는 모두 Immich](#everything-else-is-immich)를 보세요.
 
 최근에 추가된 기능은 어느 빌드부터 있는지 본문에 적혀 있습니다. GitHub 릴리스에는 언제나 최신 빌드가 있고, 스토어는 나중에 따라옵니다. [받는 곳](#where-to-get-it)을 보세요.
@@ -749,6 +752,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | plex.tv 없이 원본 파일로 재생하는 Plex Media Server 라이브러리, 집에서도 밖에서도 | ❌ | ✅ 빌드 20부터, 모든 뷰어, 휴대폰, 태블릿, Quest, TV에서 |
 | Tapo 카메라: 실시간 화면, 그리고 원할 때 Immich로 보내는 메모리 카드의 녹화 | ❌ | ✅ 빌드 20부터: 녹화는 모든 곳에서, 실시간은 Android, Android TV, Quest에서 |
 | 리모컨으로 조작하는 Android TV와 Google TV, 같은 APK로 | ❌ TV 앱이 아님 | ✅ 빌드 20부터 |
+| Windows 컴퓨터에서 쓰는 같은 앱 | ❌ 휴대폰과 태블릿만 | ✅ 미리 보기, 동영상은 아직 |
 | Insta360 RAW .insp 사진과 한 트랙 .insv 동영상 | ❌ 평면 | ✅ 빌드 16부터 |
 | 렌즈마다 트랙이나 파일이 하나씩인 RAW 동영상(Insta360 X4, X4 Air, X5, X6, X3 두 파일, GoPro .360, DJI .osv) | ❌ 평면 또는 잘못된 표시 | ✅ 빌드 18부터 |
 | 듀얼 어안 .dng | ❌ 평면 | ❌ 아직 없음 |
@@ -778,6 +782,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 - **Plex Media Server**: 컴퓨터에서 실제 Plex Media Server 1.42.1을 상대로 확인(연결, 폴더, 바이트 범위, 썸네일, 집 밖 주소). 아직 기기에서 확인하지 않음.
 - **Tapo 카메라**: 시뮬레이션한 카메라로 확인. 아직 실제 카메라로 확인하지 않음.
 - **Android TV와 Google TV**: 자동화된 테스트로 확인. 아직 TV에서 확인하지 않음.
+- **Windows 컴퓨터에서 쓰는 같은 앱**: Windows에서 데스크톱 자동화 테스트 475개, 그리고 Windows 11 PC에서 앱이 시작되고, Immich 서버에 저장된 세션을 열고, 동기화하고, 깔끔하게 종료됩니다. 각 기능을 직접 손으로 테스트하는 작업은 진행 중입니다.
 - **Insta360 RAW .insp 사진과 한 트랙 .insv 동영상**: 사진은 X3 파일의 Insta360 Studio 내보내기와 비교 확인, 동영상은 저해상도 X3 파일로 Android 에뮬레이터에서 확인. 아직 iPhone에서 실행하지 않음.
 - **렌즈마다 트랙이나 파일이 하나씩인 RAW 동영상**: 파서와 스티칭은 실제 X4, X3 두 파일, GoPro MAX, Osmo 360 파일로 확인. 재생은 빌드 18과 19의 기기 테스트 대상.
 - **듀얼 어안 .dng**: 계획됨.
@@ -883,12 +888,15 @@ Immuch360은 갤러리이면서 무료 미디어 플레이어이기도 합니다
 
 빌드 20부터의 Android TV와 Google TV 항목은 아직 TV에서 확인하지 않았습니다. [TV에서 보기](#watch-on-your-tv-android-tv-and-google-tv)를 보세요. 카메라 항목은 아직 실제 카메라로 확인하지 않았습니다.
 
+Windows에서는 Immuch360 Desktop 미리 보기가 평면 사진과 360° 사진을, Insta360 원본 .insp 사진까지 포함해, 마우스와 키보드로 보여 줍니다. 서버, PC의 폴더, 공유, Plex에서 가져올 수 있습니다. 동영상은 아직 재생하지 않고 자리 표시 이미지가 나옵니다([아직 없는 것](#not-there-yet) 참조).
+
 - **Immich 서버**: 설정, 보기 옵션, 동영상 소스에 따라 원본 또는 서버의 트랜스코딩된 스트림([동영상 정보와 디코더](#video-details-decoders-and-why-a-video-stutters) 참조). 웹 앱과 같은 계정.
 - **휴대폰이나 헤드셋 자체**: 로그인 화면의 "서버 없이 사용", 또는 라이브러리 탭의 이 장치에서 항목.
 - **NAS나 컴퓨터**: SMB와 WebDAV 공유, 그리고 빌드 19부터 DLNA 미디어 서버를 네트워크에서 찾아 실시간으로 읽음(SMB 동영상은 최대 여섯 개 연결로), 아무것도 복사하지 않음. 빌드 15부터 고른 파일을 Immich 계정으로 보낼 수 있음.
 - **다른 휴대폰(빌드 19부터)**: 그 휴대폰에서 "이 휴대폰을 네트워크에서 공유": 헤드셋이나 네트워크의 WebDAV 클라이언트가 앨범, 월, 360° 미디어를 읽음.
 - **Plex Media Server(빌드 20부터)**: 사진, 영화, TV 프로그램 라이브러리를 폴더별로, 서버 자체 인증서로 확인한 HTTPS로 원본 파일을 실시간으로 읽음, 집에서 또는 집 밖 주소로, 모든 플랫폼에서. [Plex Media Server, plex.tv 없이](#plex-media-server-without-plextv) 참조.
 - **Tapo 카메라(빌드 20부터)**: 카메라 계정으로 실시간 화면(Android, Android TV, Quest), TP-Link 계정 비밀번호로 메모리 카드의 녹화(모든 플랫폼), 로컬 네트워크에서만. [Tapo 카메라](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card) 참조.
+- **Windows 컴퓨터의 폴더(데스크톱 미리 보기)**: Immuch360 Desktop에서 고른 폴더를 휴대폰 갤러리 대신 읽습니다. 컴퓨터는 이 폴더를 헤드셋과 공유할 수도 있습니다. [Windows 컴퓨터에서](#on-a-windows-computer-immuch360-desktop-preview)를 보세요.
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Quest 3에서 앱을 프랑스어로 설정하고 캡처 버튼(Meta 버튼과 �
 - **APK 크기**: Spatial SDK가 64비트 ARM 네이티브 코드 약 56 MB를 더하며, 전혀 불러오지 않는 휴대폰에서도 마찬가지입니다.
 - **라이선스**: 몰입형 보기는 Meta Platform Technologies SDK License Agreement에 따라 배포되는 Meta Spatial SDK를 사용합니다.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Windows 컴퓨터에서: Immuch360 Desktop(미리 보기)
+
+Immich 라이브러리는 서버에 있고, 다른 사진은 PC의 폴더에, 동영상은 NAS나 Plex 서버에 있습니다. 360° 사진을 큰 화면에서 둘러보거나, PC의 사진을 헤드셋에서 보여 주고 싶을 수 있습니다. Immuch360 Desktop은 Windows 컴퓨터에서 쓰는 같은 앱으로, 휴대폰 앱과 같은 소스로 빌드됩니다.
+
+컴퓨터에서 Immich는 브라우저용 웹 앱을 제공합니다. **Immuch360 Desktop이 더하는 것**: 서버나 계정 없이 PC의 폴더, 앱에서 탐색하는 SMB, WebDAV, DLNA, Plex 공유, 구로 열리는 Insta360 원본 .insp 사진, 그리고 집에서 Meta Quest와 PC 공유입니다.
+
+이 첫 빌드는 미리 보기입니다. 사진은 되고, 동영상은 다음 데스크톱 빌드에서 옵니다. 휴대폰, 태블릿, Quest, TV 앱은 이로 인해 바뀌지 않으며 Immuch360이라는 이름을 그대로 씁니다.
+
+<a id="download-and-install-on-windows"></a>
+### Windows에서 다운로드와 설치
+
+첫 빌드는 GitHub 사전 릴리스 [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1)입니다. 파일은 `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip`(33.5 MB, 압축을 풀면 파일 65개)이고, 확인용 `SHA256SUMS.txt`가 함께 있습니다. `desktop` 브랜치의 커밋 21f285c34에서 빌드했으며, 휴대폰 빌드 20에 컴퓨터 버전을 더한 것입니다. Windows 10 또는 11, 64비트가 필요합니다.
+
+1. ZIP을 다운로드하고 원하는 곳, 예를 들어 문서 폴더에 압축을 풉니다.
+2. 압축을 푼 폴더에서 `immuch360.exe`를 실행합니다. 폴더는 통째로 두세요. 프로그램은 옆에 있는 파일들이 필요합니다.
+3. 파일은 아직 서명되지 않았으므로 Windows SmartScreen이 "Windows의 PC 보호"를 표시할 수 있습니다. "추가 정보"를 누른 다음 "실행"을 누르세요. 스마트 앱 컨트롤이 켜져 있으면 서명되지 않은 프로그램은 차단됩니다.
+4. 창이 뜰 때까지 기다리세요. 새 빌드를 처음 시작할 때는 10초에서 1분 정도 걸리며, Microsoft Defender가 새 파일을 검사하기 때문일 가능성이 큽니다. 그동안 앱을 다시 시작하지 마세요. 다음부터는 1, 2초면 시작됩니다.
+5. 로그인 화면에서 Immich 서버 주소, 이메일, 비밀번호로 로그인하거나 "서버 없이 사용"을 클릭합니다.
+
+ZIP을 확인하려면 다운로드한 폴더에서 명령 프롬프트로 `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256`을 실행하세요. 결과는 `SHA256SUMS.txt`에 적힌 값과 같아야 합니다. 설치 프로그램과 자동 업데이트는 아직 없습니다. [Releases](https://github.com/freeKC/Immuch360/releases) 페이지를 지켜보다가 다음 빌드도 같은 방법으로 압축을 풀면 됩니다.
+
+### 미리 보기에서 되는 것
+
+- **Immich 서버**: 휴대폰처럼 타임라인, 앨범, 인물, 추억, 검색, 그리고 원본 크기의 서버 사진.
+- **서버 없이**: 사진과 동영상 폴더(사진과 동영상 폴더가 제안됨)가 휴대폰의 갤러리를 대신합니다. 고른 폴더 밖은 아무것도 읽지 않으며, 서버가 없으면 아무것도 컴퓨터 밖으로 나가지 않습니다.
+- 앱이 열려 있는 동안 이 폴더에서 Immich 서버로 **업로드와 백업**.
+- 마우스와 키보드로 보는 **구 형태의 360° 사진**. Insta360 카메라의 원본 .insp 사진도 휴대폰처럼 열립니다.
+- **네트워크 공유**: Samba(SMB), WebDAV, DLNA 미디어 서버, plex.tv 없이 쓰는 Plex 서버를 휴대폰처럼 탐색합니다. 사진은 열리고, 동영상은 동영상 플레이어를 기다립니다([아직 없는 것](#not-there-yet) 참조). Tapo 카메라는 메모리 카드의 녹화 목록을 보고 클립을 가져올 수 있습니다.
+- **이 컴퓨터를 네트워크에서 공유**: 폴더의 앨범, 월, 360° 미디어를 읽기 전용으로, 휴대폰이 자신을 공유하듯 집에 있는 Meta Quest나 다른 기기에 공유합니다.
+- **파일**: 서버에서 받는 다운로드는 고른 폴더로 가고, "폴더에 저장"은 선택한 사진과 동영상의 사본을 남기며, 로그 페이지에는 "로그를 파일로 저장"이 있습니다.
+
+### 컴퓨터에서 쓰기
+
+1. **폴더를 고릅니다.** 서버 없이 쓰면 타임라인이 "사진과 동영상 폴더 선택"으로 시작합니다. "폴더 추가"를 클릭하세요. 서버가 있으면 같은 카드가 라이브러리의 "이 컴퓨터에서" 아래와 백업할 앨범에, 폴더를 고를 때까지 나타납니다. 그다음에는 "이 컴퓨터의 폴더" 줄이 생기고, 설정의 "이 컴퓨터"에도 생깁니다.
+2. **클라우드, USB, 네트워크 폴더.** OneDrive(또는 다른 클라우드 드라이브)가 온라인에만 두는 파일은 개수에는 들어가지만 읽지는 않으므로, 폴더를 추가해도 클라우드 전체를 다운로드하지 않습니다. 원할 때 "다운로드하고 포함"으로 가져오세요. 다른 드라이브 문자로 다시 연결된 USB 드라이브도 사진을 유지합니다. 네트워크 폴더와 메모리 카드나 USB 드라이브의 폴더(Windows가 계속 꺼낼 수 있도록)는 변경을 감시하지 않습니다. 그곳에 파일을 추가한 뒤에는 새로 고침을 쓰세요.
+3. **360° 사진 둘러보기**: 마우스로 끌고, 휠, 더블 클릭 또는 + 와 - 로 확대 축소하고(AZERTY를 포함해 어떤 키보드 배열에서도), 화살표 키로 움직입니다. F 또는 F11은 전체 화면으로 바꾸고 Escape로 나옵니다. Home과 End는 첫 사진과 마지막 사진으로 가고, I는 세부 정보를 보여 줍니다.
+4. **사진에서 사진으로**: 평면 사진에서는 왼쪽, 오른쪽 화살표, 또는 마우스를 움직이면 가장자리에 나타나는 화살표 버튼으로 이전, 다음 사진으로 갑니다. 설명 칸에 입력한 글자는 글 안에 그대로 남습니다.
+5. **컴퓨터를 헤드셋과 공유**: 라이브러리를 열고 네트워크 공유로 갑니다. 첫 번째 타일이 "이 컴퓨터를 네트워크에서 공유"이며, [이 휴대폰을 네트워크에서 공유](#share-this-phone-on-the-network)의 컴퓨터 쪽입니다. "네트워크에서 사진과 동영상 공유"를 켠 다음, 그 절의 설명대로 헤드셋에 컴퓨터를 추가하세요. 공유는 앱을 닫거나 한 시간 동안 쓰지 않으면 멈춥니다.
+6. **네트워크 허용**: Windows가 Immuch360 Desktop이 네트워크를 써도 되는지 물을 수 있습니다. 개인 네트워크에서 허용하세요. 그러지 않으면 헤드셋이 컴퓨터를 찾지 못합니다. Windows가 공용으로 표시한 네트워크(카페, 호텔)나 종류를 알 수 없는 네트워크에서는 "이 세션 동안 공유"를 고르지 않는 한 공유가 시작되지 않으며, 컴퓨터는 공유 중인 네트워크에서만 자신을 알립니다.
+7. **설정, "이 컴퓨터"**: 폴더, 다운로드 폴더, 공유를 찾고 컴퓨터를 공유하는 데 쓰는 네트워크 어댑터(예를 들어 Wi-Fi와 이더넷처럼 여러 개일 때), 그리고 신뢰할 인증서: Windows가 스스로 신뢰하지 않는 HTTPS 주소를 위한, 내 서버의 인증 기관 PEM 파일입니다. 클라이언트 인증서는 휴대폰처럼 설정, 고급에서 가져옵니다.
+
+### 휴대폰 앱과 비교
+
+- **백업은 앱이 열려 있는 동안 실행됩니다**(최소화 포함). 창을 닫은 채 백그라운드에서는 실행되지 않습니다. 업로드 중이거나 컴퓨터를 공유하는 중에 창을 닫으면 먼저 묻습니다.
+- **갤러리 대신 폴더**: 앱은 고른 폴더를 읽고, 자체 색인, 미리 보기 이미지, 캐시를 컴퓨터에 둡니다.
+- **창 하나**: 앱을 두 번째로 열면 두 번째 사본을 시작하지 않고 첫 번째 창을 다시 보여 줍니다.
+- **폴더에서는 아무것도 지우지 않습니다**: "기기에서 삭제"는 숨겨지고, 삭제는 서버 사본만 지웁니다. 앱이 파일을 Windows 휴지통으로 보낼 수 있을 때까지 그렇습니다.
+- 터치와 자이로스코프 대신 **마우스와 키보드**.
+
+<a id="not-there-yet"></a>
+### 아직 없는 것
+
+- **동영상**: 지금은 자리 표시 이미지가 나오고, 미리 보기 이미지는 필름 아이콘입니다. 재생은 다음에 옵니다. 먼저 평면 동영상, 그다음 360°, 3D, VR180 동영상과 원본 360° 동영상입니다.
+- **Spatial 2.5D**, 나중에 웹캠과 함께. **Tapo 실시간 화면**, **지도**와 장소 보기, **OAuth 로그인**(대신 이메일과 비밀번호로 로그인), **Google Cast**, **알림**.
+- **설치 프로그램, 서명된 빌드, 자동 업데이트**: 이 빌드는 `immuch360.exe`가 든 폴더입니다.
+- **Linux와 macOS**: 프로젝트는 소스에 있지만, 아직 그 시스템에서 빌드하거나 써 보지 않았습니다. Windows 다음에 옵니다.
+- **번역**: 컴퓨터 버전의 새 문구는 지금은 영어입니다.
+
+### 알려진 문제
+
+- **헤드셋이 공유된 컴퓨터의 파일을 읽는 동안**(재생 중인 동영상, 다운로드 중인 사진), Windows는 그 파일의 이름을 바꾸거나 옮기거나 지울 수 없고 Immuch360 Desktop에서 열려 있다고 알립니다. 먼저 재생을 멈추세요. 백업은 그런 식으로 파일을 붙잡지 않습니다. 업로드 중에도 파일의 이름을 바꾸거나 옮기거나 지울 수 있습니다.
+- **다듬어지지 않은 부분**: 위의 기능은 Windows에서 자동화 테스트(데스크톱 테스트 475개)를 통과하고, Windows 11 PC에서 앱이 시작되고, Immich 서버에 저장된 세션을 열고, 동기화하고, 깔끔하게 종료됩니다. 실제 PC에서 모든 기능을 손으로 테스트하는 작업은 아직 진행 중입니다.
+
+문제가 생기면 로그 페이지에서 저장한 로그를 붙여 [이슈](https://github.com/freeKC/Immuch360/issues)를 열어 주세요. [로그](#logs)를 참조하세요. 공유하기 전에 로그를 확인하세요. 서버 주소가 들어 있을 수 있습니다.
+
+<a id="build-it-yourself-on-windows"></a>
+### Windows에서 직접 빌드
+
+x64용 Windows 10 또는 11, Windows용 Flutter 3.47.2, "C++를 사용한 데스크톱 개발" 워크로드가 있는 Visual Studio 2022 또는 그 Build Tools, Windows 설정에서 켠 개발자 모드(Flutter가 플러그인에 필요로 함), 그리고 번들 스크립트용 Python 3이 필요합니다.
+
+1. `desktop` 브랜치를 받고 코드 생성을 실행합니다. Java와 Node를 쓰므로 Linux, macOS 또는 WSL에서 실행하세요. WSL을 쓸 때는 클론을 Windows 드라이브에 두세요. WSL에서는 `/mnt/c` 또는 `/mnt/d` 아래에 보입니다.
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Windows에서, 같은 `mobile` 폴더에서 앱을 빌드합니다.
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. `Release` 폴더는 그것을 빌드한 PC에서 실행됩니다. 다른 PC에서 쓰려면 폴더를 통째로 두고 `immuch360.exe` 옆에 Visual C++ 런타임을 추가하세요. 클론의 루트에서 번들 스크립트가 런타임을 복사하고, Android에만 쓰이는 것을 빼고, 앱이 불러오는 모든 DLL이 폴더나 Windows 자체에 있는지 확인한 뒤 ZIP을 만듭니다.
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+`desktop` 브랜치의 CI(`.github/workflows/immuch360-desktop.yml`)는 Linux에서 휴대폰 검사와 전체 테스트 모음을, Windows에서 데스크톱 테스트를 실행하고 같은 ZIP을 빌드합니다. Linux와 macOS 작업(`flutter build linux`와 `flutter build macos`, 같은 `-t lib/main_desktop.dart` 사용)은 아직 그 시스템에서 실행된 적이 없습니다.
+
 <a id="where-to-get-it"></a>
 ## 받는 곳
 
-앱은 휴대폰과 태블릿용으로 Google Play에 있습니다. App Store 버전은 Apple의 심사를, Meta Horizon Store 등록은 승인되었고 첫 업데이트는 Meta의 심사 중이며, TV용 Google Play 버전은 TV 릴리스에 대한 Google의 심사를 기다리고 있습니다. GitHub 릴리스에는 언제나 최신 빌드가 있습니다.
+앱은 휴대폰과 태블릿용으로 Google Play에 있습니다. App Store 버전은 Apple의 심사를, Meta Horizon Store 등록은 승인되었고 첫 업데이트는 Meta의 심사 중이며, TV용 Google Play 버전은 TV 릴리스에 대한 Google의 심사를 기다리고 있습니다. Windows용 Immuch360 Desktop은 GitHub에서 미리 보기로 제공됩니다. GitHub 릴리스에는 언제나 최신 빌드가 있습니다.
 
 - **Android 휴대폰과 태블릿**
   - 지금: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), 또는 [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 APK: 휴대폰용은 `Immuch360-v<version>-arm64-v8a-release.apk`(범용 `Immuch360-v<version>-release.apk`는 어디서나 동작, `-armeabi-v7a`는 오래된 32비트 휴대폰용, `.aab` 파일은 Google Play용이며 사이드로드용이 아님). GitHub 빌드가 보통 스토어보다 앞서 있습니다. 어느 쪽이든 공식 Immich 앱 옆에 따로 설치됩니다(패키지 `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Quest 3에서 앱을 프랑스어로 설정하고 캡처 버튼(Meta 버튼과 �
 - **Android TV와 Google TV(빌드 20부터)**
   - 지금: [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 범용 `Immuch360-v<version>-release.apk`를 adb로 사이드로드합니다. [TV에 설치하기](#install-it-on-the-tv)를 보세요. 휴대폰과 같은 앱입니다.
   - 곧: TV용 Google Play, TV 릴리스에 대한 Google 심사 후.
+- **Windows 10과 11, 64비트(미리 보기)**
+  - 지금: Immuch360 Desktop, [데스크톱 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1)의 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip`을 [Windows에서 다운로드와 설치](#download-and-install-on-windows)의 설명대로 압축을 풀고 실행합니다. 지금은 사진만 됩니다. 동영상은 다음 데스크톱 빌드에서 옵니다.
+  - 곧: 동영상 재생. 설치 프로그램, 서명된 빌드, 업데이트는 그 뒤에.
 
 App Store와 Meta Horizon Store 링크는 등록이 공개되는 대로 여기에 추가하겠습니다. 평소의 Immich 서버 URL과 계정으로 로그인하거나, 로그인 화면에서 "서버 없이 사용"을 탭해 기기 자체의 사진과 동영상으로 시작하세요. GitHub에서 받은 APK는 스스로 업데이트되지 않으니 Releases 페이지를 확인하세요. 스토어에서 앱을 설치했다면 업데이트도 그 스토어에서 받으세요.
 
@@ -993,12 +1105,15 @@ flutter build ios --release                                                  # i
 
 자기 Mac에서 iOS용으로 빌드하려면 Xcode와 자신의 서명 팀을 쓰세요. Xcode 26에서는 Spatial 셰이더에 필요하므로 먼저 `xcodebuild -downloadComponent MetalToolchain`을 한 번 실행하세요. Mac이 없으면 이 저장소의 `codemagic.yaml` 파일로 Codemagic(호스팅된 Mac)에서 iOS 빌드를 돌립니다. Android 릴리스 빌드는 GitHub Actions(`.github/workflows/immuch360-release.yml`)에서 돌아갑니다.
 
+Windows 버전인 Immuch360 Desktop은 `desktop` 브랜치에서 Windows용 Flutter로 빌드합니다. 단계는 [Windows에서 직접 빌드](#build-it-yourself-on-windows)에 있습니다.
+
 이 저장소에는 비밀 정보가 없습니다. Android 서명 키는 암호화된 GitHub Actions 시크릿으로, Apple 서명 자료는 Codemagic의 암호화된 변수로 보관됩니다. 워크플로 파일은 이들을 이름으로만 참조합니다. 자신의 `android/key.jks`가 없으면 릴리스 빌드는 디버그 키로 서명되어 GitHub나 스토어에서 받은 앱 위에 설치할 수 없으며(먼저 그 앱을 제거해야 함), 디버그 빌드는 Immuch360 debug라는 이름으로 그 옆에 설치됩니다. Meta Horizon Store 사본은 릴리스의 `quest` APK를 다른 키, 즉 스토어 앱을 처음 등록할 때 쓴 키로 서명한 것이므로, 사이드로드한 APK 위에 설치할 수 없고 그 반대도 마찬가지입니다.
 
 ### 브랜치
 
 - **`main`**: `immuch360`이 기반으로 하는 커밋의 Immich `main`(현재 빌드는 2026년 9월 29일)으로, 수정하지 않습니다. 포크를 더 새로운 Immich로 리베이스할 때 앞으로 이동합니다.
 - **`immuch360`**: Immich 위에 얹은 이 포크의 변경 사항입니다. 각 릴리스에 어느 Immich 버전을 기반으로 하는지 적혀 있습니다.
+- **`desktop`**: 컴퓨터 버전인 Immuch360 Desktop으로, `immuch360` 위에 있습니다. 휴대폰 릴리스가 여기에 병합되고, 데스크톱 사전 릴리스는 여기서 빌드됩니다(데스크톱 빌드 1은 커밋 21f285c34에서, 휴대폰 빌드 20에 컴퓨터 버전을 더한 것). 이 브랜치에서는 `mobile/android`와 `mobile/ios` 아래가 바뀌지 않습니다.
 
 <a id="logs"></a>
 ## 로그
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 빌드 19부터 DLNA 클라이언트, 휴대폰 공유, Apple 공간 미디어 인식도 앱 자체 로그(오른쪽 위 프로필 사진 메뉴의 로그)에 `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe`, `NetworkMediaService` 이름으로 기록합니다. 빌드 20부터는 TV 모드가 `TvMode`와 `TvTextEntry`, Plex 서버가 `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem`, `PlexServerEditPage`, Tapo 카메라가 `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage`, `CameraLiveView` 이름으로 그곳에 기록합니다. Plex 줄에는 토큰, 주소, 제목이 절대 들어가지 않고, 카메라 줄에는 비밀번호가 빠집니다. 로그 줄은 직접 복사하지 않는 한 기기에 남습니다.
 
+컴퓨터(Immuch360 Desktop)에서는 로그 페이지에 "로그를 파일로 저장"도 있습니다. 로그를 저장하거나, 최근 충돌 보고서가 있으면 로그와 보고서를 담은 ZIP을 저장합니다(이때 제안되는 이름은 "with-crash-reports"로 끝남). 충돌 보고서는 작은 미니덤프입니다. 스레드, 스레드가 멈춘 위치, 호출을 따라가는 데 꼭 필요한 것만 담고, 프로그램 파일의 이름은 있지만 폴더는 없습니다. 앱의 메모리는 담지 않습니다. 공유하기 전에 로그를 확인하세요. 서버 주소가 들어 있을 수 있습니다.
+
 <a id="privacy"></a>
 ## 개인정보
 
@@ -1026,19 +1143,21 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 - **TV**: 기기가 TV인지는 기기 안에서 판단하며, 아무것도 보내지 않습니다.
 - **휴대폰 공유**: 로컬 네트워크 전용이며, 계정명과 비밀번호를 쓰고, 일반 HTTP로 동작합니다([이 휴대폰을 네트워크에서 공유](#share-this-phone-on-the-network) 참조).
 - **카메라**: 기기 안에서 Spatial 2.5D 플레이어만 사용하며, 이미지는 저장되거나 어디로도 전송되지 않습니다.
+- **컴퓨터에서**(Immuch360 Desktop, Windows 미리 보기): 앱은 고른 폴더만 읽고, 색인, 미리 보기 이미지, 캐시를 컴퓨터에 두며, 비밀번호와 토큰은 Windows 데이터 보호로 내 Windows 계정 전용으로 저장합니다. 컴퓨터 공유는 휴대폰 공유의 규칙을 따르며, Windows가 공용으로 표시한 네트워크나 종류를 알 수 없는 네트워크에서는 직접 고르지 않는 한 시작되지 않습니다.
 
 전체 방침은 [PRIVACY.md](../PRIVACY.md)에 있습니다.
 
 <a id="license-and-trademark"></a>
 ## 라이선스와 상표
 
-이 프로젝트는 Immich의 포크이며 [GNU AGPL v3](../LICENSE)를 따릅니다. 휴대폰용을 포함한 모든 APK에는 오픈 소스가 아닌(Meta Platform Technologies SDK License Agreement) Meta Spatial SDK도 들어 있으며, 이는 Meta Quest 헤드셋에서만 사용됩니다. Immuch360은 Immich 팀이나 FUTO와 관련이 없고, 그들의 보증을 받지도 않았습니다.
+이 프로젝트는 Immich의 포크이며 [GNU AGPL v3](../LICENSE)를 따릅니다. 휴대폰용을 포함한 모든 APK에는 오픈 소스가 아닌(Meta Platform Technologies SDK License Agreement) Meta Spatial SDK도 들어 있으며, 이는 Meta Quest 헤드셋에서만 사용됩니다. Windows 버전인 Immuch360 Desktop에는 들어 있지 않습니다. Immuch360은 Immich 팀이나 FUTO와 관련이 없고, 그들의 보증을 받지도 않았습니다.
 
 <a id="roadmap"></a>
 ## 로드맵
 
 아직 하지 않은 일을 가능성이 높은 순서로 적었습니다. 여기 있는 것은 약속이 아니며, [이슈 트래커](https://github.com/freeKC/Immuch360/issues)에 의견을 주시면 무엇을 먼저 할지 정하는 데 도움이 됩니다.
 
+- **Immuch360 Desktop, Windows부터**: 첫 미리 보기가 나왔습니다([Windows 컴퓨터에서](#on-a-windows-computer-immuch360-desktop-preview) 참조). 다음은 동영상 재생(먼저 평면 동영상, 그다음 360°, 3D, VR180, 원본 파일)으로, 노트북의 두 그래픽 카드에서 측정합니다. 그다음 Windows PC에서 각 기능의 테스트와 수정, 그다음 웹캠을 쓰는 Spatial 2.5D, 그다음 Linux와 macOS, 패키지, 서명, 업데이트입니다.
 - **Google Play**: 빌드 18이 공개되어 있고, 빌드 20은 빌드 19 대신 2026년 10월 7일부터 Google 심사 중입니다. 빌드 21은 휴대폰과 태블릿에서 아무것도 바꾸지 않습니다.
 - **App Store**: 버전 3.3.0이 Apple의 심사를 기다리고 있습니다. 빌드 11의 기능이 들어 있으므로, Immich로 업로드와 동영상 디코더 검사(빌드 15), Insta360 RAW 파일(빌드 16)은 다음 App Store 업데이트와 함께 옵니다. 공개되면 링크를 여기에 추가하겠습니다.
 - **Meta Horizon Store**: Meta는 2026년 10월 7일에 빌드 14로 등록을 승인했습니다. 빌드 21이 첫 업데이트로 제출되었습니다. 빌드 14 이후의 모든 것(공유에서 Immich로 업로드, 헤드셋이 디코딩하는 것에 따라 고르는 동영상 소스, Insta360, GoPro, DJI RAW 파일, DLNA, 휴대폰 공유, Apple 공간 사진, Plex Media Server 라이브러리, Tapo 카메라)을 담고 있으며, 스토어는 이를 Quest 2, Quest Pro, Quest 3, 3S용으로 등록합니다. 스토어 페이지가 공개되면 링크를 여기에 추가하겠습니다. 사이드로드한 사본은 먼저 제거해야 합니다([설치](#install) 참조).

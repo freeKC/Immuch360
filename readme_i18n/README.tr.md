@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sunan Immich mobil uygulamasıdır; aynı zamanda Android telefon ve tabletlerde, iPhone ve iPad'lerde, Meta Quest başlıklarında (Quest 3 ve 3S, derleme 21'den itibaren de Quest 2 ve Quest Pro, test edilmedi) ve derleme 20'den itibaren Android TV ve Google TV'de düz, 360°, 3D ve VR180 fotoğraf ve videolar için ücretsiz bir oynatıcıdır.
+Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sunan Immich mobil uygulamasıdır; aynı zamanda Android telefon ve tabletlerde, iPhone ve iPad'lerde, Meta Quest başlıklarında (Quest 3 ve 3S, derleme 21'den itibaren de Quest 2 ve Quest Pro, test edilmedi) ve derleme 20'den itibaren Android TV ve Google TV'de düz, 360°, 3D ve VR180 fotoğraf ve videolar için ücretsiz bir oynatıcıdır. Aynı uygulamanın bir Windows bilgisayardaki hâli olan Immuch360 Desktop önizleme olarak çıktı, bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview).
 
 360° kamerayla (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ya da bir telefonun fotoğraf küresi moduyla çekim yapan veya bir VR başlığı olan ve kendi çekimlerini bir Immich sunucusundan, telefonun kendisinden, bir NAS'tan, bir medya sunucusundan veya bir Plex sunucusundan izlemek isteyenler içindir: aynı sunucu, aynı hesap, sunucu eklentisi yok, isterseniz hiç sunucu yok. Derleme 20'den itibaren Tapo kameraları da gösterir: canlı görüntüyü ve hafıza kartlarındaki kayıtları.
 
@@ -18,13 +18,14 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
   App Store: <a href="#where-to-get-it">inceleniyor</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store onaylandı, ilk güncellemesi olarak derleme 21 gönderildi<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">önizleme indirmesi</a>
 </p>
 
 - 🌐 **Yerleşik 360°**<br>İçinde etrafınıza bakabileceğiniz bir küre olarak fotoğraf ve videolar, jiroskopla, ham kamera dosyaları dahil (Insta360 derleme 16'dan, GoPro ve DJI derleme 18'den itibaren). Ayrıca ücretsiz bir video oynatıcı: düz, 360°, 3D, VR180
 - 👓 **Yerleşik 3D**<br>Stereoskopik 360° ve VR180, üst/alt veya yan yana, ve Apple uzamsal fotoğrafları (derleme 19'dan itibaren): başlıkta gerçek 3D, telefonda tek göz
 - 🎥 **Yerleşik 2.5D**<br>Stereoskopik bir videodan düz ekranda derinlik, görüntü başınızı takip eder (deneysel, telefonlar ve tabletler)
-- 📱 **Android, iOS, Quest, TV**<br>Telefonlarda, tabletlerde ve Quest 2, Pro, 3 ve 3S başlıklarında tek uygulama, başlıkta gerçek 3D, derleme 20'den itibaren de Android TV'de uzaktan kumandayla
+- 📱 **Android, iOS, Quest, TV**<br>Telefonlarda, tabletlerde ve Quest 2, Pro, 3 ve 3S başlıklarında tek uygulama, başlıkta gerçek 3D, derleme 20'den itibaren Android TV'de uzaktan kumandayla ve bir Windows önizlemesi
 - 🔌 **Sunucuyla veya sunucusuz**<br>Immich sunucunuz ya da telefonun kendi galerisi, hesap gerekmez
 - 🗄️ **Ağ paylaşımları**<br>Samba (SMB), WebDAV ve derleme 19'dan itibaren DLNA medya sunucuları; ağda bulunur ve canlı okunur, hiçbir şey indirilmez, siz istediğinizde Immich'e gönderilir. Derleme 19'dan itibaren bir telefon kendi galerisini de başlıkla paylaşır
 - 📺 **Televizyonda**<br>Derleme 20'den itibaren aynı APK Android TV ve Google TV'de: 360° fotoğraf ve videolar, sunucunuz ve paylaşımlarınız, uzaktan kumandayla
@@ -52,6 +53,7 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
 - [Immich uygulaması ve diğer uygulamalarla karşılaştırma](#compared-with-the-immich-app-and-other-apps)
 - [Platforma göre biçimler ve kaynaklar](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Bir Windows bilgisayarda: Immuch360 Desktop (önizleme)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Nereden edinilir](#where-to-get-it)
 - [Kendiniz derleyin](#build-it-yourself)
 - [Günlükler](#logs)
@@ -77,6 +79,7 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
 - **"360° fotoğraf ve videolarımı, NAS'ımın veya Plex sunucumun videolarını televizyonda, uzaktan kumandayla izlemek istiyorum."** Bkz. [Televizyonunuzda izleyin](#watch-on-your-tv-android-tv-and-google-tv).
 - **"360° çekimlerimi diğerlerinin arasında bulamıyorum."** Bkz. [360° listesi](#find-your-360-shots-the-360-list).
 - **"360° videom takılıyor ya da bulanık bir kopyayı oynatıyor."** Bkz. [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters).
+- **"360° fotoğraflarımı ve Immich kütüphanemi Windows bilgisayarımda istiyorum; klasörlerindeki fotoğraflar, NAS'ım ve Plex sunucum da olsun, bilgisayar da başlığımla paylaşılsın."** Bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview) (bir önizleme, şimdilik yalnızca fotoğraflar).
 - **"Immich uygulamasının yaptıklarını koruyor muyum?"** Evet, iki küçük değişiklikle, bkz. [Geri kalan her şey Immich](#everything-else-is-immich).
 
 Bir özellik yeniyse, metin hangi derlemeden itibaren bulunduğunu belirtir. En yeni derleme her zaman GitHub sürümündedir, mağazalar daha sonra gelir: bkz. [Nereden edinilir](#where-to-get-it).
@@ -749,6 +752,7 @@ Güncel derleme, derleme 21 (sürüm 3.3.0-rc.0, derleme numarası 3030019), Imm
 | Orijinal dosyalardan oynatılan Plex Media Server kütüphaneleri, evde ve dışarıda, plex.tv olmadan | ❌ | ✅ derleme 20'den itibaren, her görüntüleyicide, telefonlarda, tabletlerde, Quest'te ve televizyonlarda |
 | Tapo kameralar: canlı görüntü ve istediğinizde Immich'e gönderilen hafıza kartı kayıtları | ❌ | ✅ derleme 20'den itibaren: kayıtlar her yerde, canlı görüntü Android, Android TV ve Quest'te |
 | Android TV ve Google TV, kumandayla, aynı APK'da | ❌ bir televizyon uygulaması değil | ✅ derleme 20'den itibaren |
+| Bir Windows bilgisayarda aynı uygulama | ❌ yalnızca telefon ve tablet | ✅ önizleme, henüz video yok |
 | Ham Insta360 .insp fotoğrafları ve tek parçalı .insv videoları | ❌ düz | ✅ derleme 16'dan itibaren |
 | Parça veya dosya başına bir mercekli ham videolar (Insta360 X4, X4 Air, X5, X6, X3 çiftleri, GoPro .360, DJI .osv) | ❌ düz veya hatalı | ✅ derleme 18'den itibaren |
 | Çift balıkgözü .dng | ❌ düz | ❌ henüz değil |
@@ -778,6 +782,7 @@ Güncel derleme, derleme 21 (sürüm 3.3.0-rc.0, derleme numarası 3030019), Imm
 - **Plex Media Server**: bir bilgisayardan gerçek bir Plex Media Server 1.42.1'e karşı doğrulandı (eşleştirme, klasörler, bayt aralıkları, küçük resimler, ev dışı adres); henüz bir cihazda doğrulanmadı.
 - **Tapo kameralar**: simüle edilmiş bir kameraya karşı doğrulandı; henüz gerçek bir kamerayla doğrulanmadı.
 - **Android TV ve Google TV**: otomatik testlerle doğrulandı; henüz bir televizyonda doğrulanmadı.
+- **Bir Windows bilgisayarda aynı uygulama**: Windows'ta 475 otomatik masaüstü testi; bir Windows 11 bilgisayarda uygulama açılıyor, bir Immich sunucusundaki kayıtlı oturumu açıyor, eşitliyor ve sorunsuz kapanıyor; her işlevin elle testi sürüyor.
 - **Ham Insta360 .insp fotoğrafları ve tek parçalı .insv videoları**: fotoğraflar X3 dosyalarının Insta360 Studio dışa aktarımlarıyla, videolar düşük çözünürlüklü bir X3 dosyasıyla bir Android emülatöründe doğrulandı; henüz bir iPhone'da çalıştırılmadı.
 - **Parça veya dosya başına bir mercekli ham videolar**: ayrıştırıcılar ve birleştirme gerçek X4, X3 çifti, GoPro MAX ve Osmo 360 dosyalarında doğrulandı; oynatma derleme 18 ve 19'un cihaz testidir.
 - **Çift balıkgözü .dng**: planlandı.
@@ -883,12 +888,15 @@ Immuch360 bir galeridir ve aynı zamanda ücretsiz bir medya oynatıcıdır: res
 
 Derleme 20'den itibaren gelen Android TV ve Google TV maddeleri henüz bir televizyonda doğrulanmadı, bkz. [Televizyonunuzda izleyin](#watch-on-your-tv-android-tv-and-google-tv); kamera maddeleri henüz gerçek bir kamerayla doğrulanmadı.
 
+Windows'ta Immuch360 Desktop önizlemesi düz ve 360° fotoğrafları, ham Insta360 .insp fotoğrafları dahil, fare ve klavyeyle gösterir; sunucudan, bilgisayarın klasörlerinden, paylaşımlardan ve Plex'ten. Henüz video oynatmaz, videolar bir yer tutucu gösterir (bkz. [Henüz yok](#not-there-yet)).
+
 - **Immich sunucunuz**: Ayarlar, İçerik Görüntüleyici, Video kaynağı'nın söylediği gibi orijinal veya sunucunun dönüştürülmüş akışı (bkz. [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters)). Web uygulamasıyla aynı hesap.
 - **Telefonun veya başlığın kendisi**: giriş sayfasında "Sunucu olmadan kullan" ya da Kütüphane sekmesindeki Bu cihazda öğesi.
 - **Bir NAS veya bir bilgisayar**: SMB ve WebDAV paylaşımları, derleme 19'dan itibaren de DLNA medya sunucuları; ağda bulunur, canlı okunur (bir SMB videosu en fazla altı bağlantı üzerinden), hiçbir şey kopyalanmaz; derleme 15'ten itibaren seçtiğiniz dosyalar Immich hesabınıza gönderilebilir.
 - **Başka bir telefon (derleme 19'dan itibaren)**: o telefonda "Bu telefonu ağda paylaş": başlık ya da ağdaki herhangi bir WebDAV istemcisi onun albümlerini, aylarını ve 360° medyasını okur.
 - **Bir Plex Media Server (derleme 20'den itibaren)**: klasöre göre fotoğraf, film ve dizi kütüphaneleri; orijinal dosyalar, sunucunun kendi sertifikasıyla doğrulanan HTTPS üzerinden canlı okunur, evde veya ev dışı adres üzerinden, her platformda; bkz. [Plex Media Server, plex.tv olmadan](#plex-media-server-without-plextv).
 - **Bir Tapo kamera (derleme 20'den itibaren)**: kamera hesabıyla canlı görüntü (Android, Android TV, Quest) ve TP-Link hesabı şifresiyle hafıza kartındaki kayıtlar (her platform), yalnızca yerel ağda; bkz. [Tapo kameralar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Bir Windows bilgisayarın klasörleri (masaüstü önizlemesi)**: Immuch360 Desktop'ta seçtiğiniz klasörler, bir telefonun galerisi yerine okunur; bilgisayar bunları başlıkla da paylaşabilir, bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Başlıkta, yakalama düğmesiyle (Meta düğmesi ve tetik) bir Quest 3 üzerind
 - **APK boyutu**: Spatial SDK, hiç yüklenmediği telefonlarda da, yaklaşık 56 MB 64-bit ARM yerel kodu ekler.
 - **Lisans**: sürükleyici görünüm, Meta Platform Technologies SDK License Agreement kapsamında dağıtılan Meta Spatial SDK'yı kullanır.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Bir Windows bilgisayarda: Immuch360 Desktop (önizleme)
+
+Immich kütüphaneniz bir sunucuda, başka fotoğraflar bilgisayarın klasörlerinde, videolar bir NAS'ta veya bir Plex sunucusunda duruyor; 360° fotoğraflarınızda büyük bir ekranda etrafınıza bakmak ya da bilgisayarın fotoğraflarını başlıkta göstermek istiyorsunuz. Immuch360 Desktop, aynı uygulamanın bir Windows bilgisayardaki hâlidir ve telefon uygulamalarıyla aynı kaynaklardan derlenir.
+
+Bir bilgisayarda Immich, tarayıcıda çalışan web uygulamasını sunar. **Immuch360 Desktop'ın kattıkları**: hiçbir sunucu veya hesap gerekmeden bilgisayarın klasörleri, uygulamadan gezilen SMB, WebDAV, DLNA ve Plex paylaşımları, küre olarak açılan ham Insta360 .insp fotoğrafları ve evde bir Meta Quest ile paylaşılan bilgisayar.
+
+Bu ilk derleme bir önizlemedir: fotoğraflar çalışır, videolar sonraki masaüstü derlemeleriyle gelecek. Telefon, tablet, Quest ve televizyon uygulamaları bundan etkilenmez ve Immuch360 adını korur.
+
+<a id="download-and-install-on-windows"></a>
+### Windows'a indirin ve kurun
+
+İlk derleme, GitHub ön sürümü [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Dosyası `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, açıldığında 65 dosya), doğrulamak için de `SHA256SUMS.txt` var. `desktop` dalından, 21f285c34 commit'inden derlendi: telefon derlemesi 20 artı bilgisayar sürümü. Windows 10 veya 11, 64 bit gerekir.
+
+1. ZIP'i indirin ve istediğiniz yere açın, örneğin Belgeler'e.
+2. Açılan klasördeki `immuch360.exe` dosyasını başlatın. Klasörü bütün olarak tutun: programın yanındaki dosyalara ihtiyacı var.
+3. Dosyalar henüz imzalı değil, bu yüzden Windows SmartScreen "Windows protected your PC" gösterebilir: "More info", ardından "Run anyway" seçin. Akıllı Uygulama Denetimi açıksa imzasız programları engeller.
+4. Pencereyi bekleyin. Yeni bir derlemenin ilk açılışı 10 saniye ile yaklaşık bir dakika sürer, büyük olasılıkla Microsoft Defender yeni dosyaları tararken: bu sırada uygulamayı yeniden başlatmayın. Sonraki açılışlar bir iki saniye sürer.
+5. Giriş sayfasında Immich sunucunuza adresi, e-postanız ve şifrenizle oturum açın ya da "Sunucu olmadan kullan"a tıklayın.
+
+ZIP'i doğrulamak için indirmenin bulunduğu klasörde bir komut isteminde `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` çalıştırın: sonuç `SHA256SUMS.txt` içinde yazanla aynıdır. Henüz yükleyici ve otomatik güncelleme yok: [Releases](https://github.com/freeKC/Immuch360/releases) sayfasını takip edin ve sonraki derlemeyi aynı şekilde açın.
+
+### Önizlemenin yaptıkları
+
+- **Immich sunucunuz**: zaman çizelgesi, albümler, kişiler, anılar ve arama, sunucu fotoğrafları da tam boyutta, bir telefondaki gibi.
+- **Sunucu olmadan**: fotoğraf ve video klasörleriniz (Resimler ve Videolar önerilir) bir telefonun galerisinin yerini alır. Seçtiğiniz klasörlerin dışında hiçbir şey okunmaz ve sunucu olmadan hiçbir şey bilgisayardan çıkmaz.
+- **Yükleme ve yedekleme**, bu klasörlerden Immich sunucunuza, uygulama açıkken.
+- **Küre olarak 360° fotoğraflar**, fare ve klavyeyle; Insta360 kameraların ham .insp fotoğrafları telefonlardaki gibi açılır.
+- **Ağ paylaşımları**: Samba (SMB), WebDAV ve DLNA medya sunucuları ve plex.tv olmadan Plex sunucuları, telefonlardaki gibi gezilir: fotoğrafları açılır, videoları video oynatıcısını bekler (bkz. [Henüz yok](#not-there-yet)). Tapo kameralar için hafıza kartındaki kayıtlar: liste ve bir klibin indirilmesi.
+- **Bu bilgisayarı ağda paylaşın**: klasörlerinizin albümleri, ayları ve 360° medyası, salt okunur, evdeki bir Meta Quest veya başka bir cihaz için, bir telefonun kendini paylaştığı gibi.
+- **Dosyalar**: sunucudan yapılan indirmeler seçtiğiniz bir klasöre gider, "Bir klasöre kaydet" seçili fotoğraf ve videoların bir kopyasını saklar, Günlükler sayfasında da "Günlükleri bir dosyaya kaydet" bulunur.
+
+### Bir bilgisayarda kullanın
+
+1. **Klasörlerinizi seçin.** Sunucu olmadan zaman çizelgesi "Fotoğraf ve videolarınızın klasörlerini seçin" ile başlar: "Klasör ekle"ye tıklayın. Bir sunucuyla aynı kart, bir klasör seçilene kadar Kütüphane'de "Bu bilgisayarda" altında ve yedeklenecek albümlerde görünür. Sonra bunlarda bir "Bu bilgisayardaki klasörler" satırı olur, Ayarlar'da da "Bu bilgisayar" altında.
+2. **Bulut, USB ve ağ klasörleri.** OneDrive'ın (veya başka bir bulut sürücünün) yalnızca çevrim içi tuttuğu dosyalar sayılır ama okunmaz, böylece bir klasör eklemek bütün bulutunuzu indirmez: "İndir ve dahil et" onları istediğinizde getirir. Başka bir harfle geri gelen bir USB sürücü fotoğraflarını korur. Ağ klasörleri ile bir hafıza kartındaki veya USB sürücüdeki klasörler (Windows onu yine de çıkarabilsin diye) değişiklikler için izlenmez: oraya dosya ekledikten sonra Yenile'yi kullanın.
+3. **Bir 360° fotoğrafta etrafınıza bakın**: fareyle sürükleyin, tekerlekle, çift tıklamayla veya + ve - ile yakınlaştırın (her klavye düzeninde, AZERTY dahil), ok tuşlarıyla hareket edin. F veya F11 tam ekrana geçer, Escape çıkar; Home ve End ilk ve son fotoğrafa gider; I ayrıntıları gösterir.
+4. **Fotoğraftan fotoğrafa geçin**: düz bir fotoğrafta sol ve sağ oklar ya da fare hareket ederken kenarlarda beliren oklar önceki ve sonrakine gider. Açıklama alanına yazılan harfler metinde kalır.
+5. **Bilgisayarı başlıkla paylaşın**: Kütüphane'yi, ardından Ağ paylaşımları'nı açın; ilk kutucuk "Bu bilgisayarı ağda paylaş"tır, [Bu telefonu ağda paylaş](#share-this-phone-on-the-network) bölümünün bilgisayar tarafı. "Fotoğrafları ve videoları ağda paylaş"ı açın, ardından bilgisayarı başlıkta o bölümün anlattığı gibi ekleyin. Paylaşım, uygulama kapatıldığında veya bir saat kullanılmadığında durur.
+6. **Ağa izin verin**: Windows, Immuch360 Desktop'ın ağı kullanıp kullanamayacağını sorabilir. Özel ağlarda izin verin, yoksa başlık bilgisayarı bulamaz. Windows'un genel olarak işaretlediği bir ağda (bir kafe, bir otel) ya da türünü belirleyemediği bir ağda, "Bu oturum için paylaş"ı seçmedikçe paylaşım başlamaz; bilgisayar da kendini yalnızca paylaştığı ağda duyurur.
+7. **Ayarlar, "Bu bilgisayar"**: klasörler, indirme klasörü, paylaşımları bulmak ve bilgisayarı paylaşmak için kullanılan ağ bağdaştırıcısı (birden fazlası varsa, örneğin Wi-Fi ve Ethernet) ve güvenilen sertifikalar: Windows'un kendiliğinden güvenmediği bir HTTPS adresi için kendi sunucunuzun sertifika yetkilisi, bir PEM dosyası olarak. İstemci sertifikaları telefonlardaki gibi Ayarlar, Gelişmiş'te içe aktarılır.
+
+### Telefon uygulamalarıyla karşılaştırma
+
+- **Yedekleme uygulama açıkken çalışır** (ya da simge durumundayken), pencere kapalıyken arka planda değil. Yüklemeler sürerken ya da bilgisayar paylaşılırken pencereyi kapatmak önce sorar.
+- **Galeri yerine klasörler**: uygulama seçtiğiniz klasörleri okur ve kendi dizinini, küçük resimlerini ve önbelleğini bilgisayarda tutar.
+- **Tek pencere**: uygulamayı ikinci kez açmak ikinci bir kopya başlatmak yerine ilk pencereyi geri getirir.
+- **Klasörlerinizden hiçbir şey silinmez**: "Cihazdan sil" gizlidir ve Sil yalnızca sunucudaki kopyayı kaldırır, uygulama dosyaları Windows geri dönüşüm kutusuna gönderebilene kadar.
+- **Fare ve klavye**, dokunma ve jiroskop yerine.
+
+<a id="not-there-yet"></a>
+### Henüz yok
+
+- **Videolar**: şimdilik bir yer tutucu, küçük resimleri de bir film simgesi gösterir. Oynatma sırada: önce düz videolar, ardından 360°, 3D ve VR180 videolar ve ham 360° videolar.
+- **Spatial 2.5D**, daha sonra web kamerasıyla; **Tapo canlı görüntüsü**; **harita** ve Yerler görünümü; **OAuth ile oturum açma** (onun yerine e-posta ve şifreyle oturum açın); **Google Cast**; **bildirimler**.
+- **Bir yükleyici, imzalı bir derleme ve otomatik güncellemeler**: bu derleme `immuch360.exe` içeren bir klasördür.
+- **Linux ve macOS**: projeleri kaynaklarda var, ama henüz bu sistemlerde derlenmediler ve denenmediler; Windows'tan sonra gelecekler.
+- **Çeviriler**: bilgisayar sürümünün yeni metinleri şimdilik İngilizce.
+
+### Bilinen sorunlar
+
+- **Başlık paylaşılan bilgisayardan bir dosya okurken** (oynattığı bir video, indirdiği bir fotoğraf) Windows o dosyayı yeniden adlandıramaz, taşıyamaz veya silemez ve dosyanın Immuch360 Desktop'ta açık olduğunu söyler: önce oynatmayı durdurun. Yedeklemeler dosyalarınızı bu şekilde tutmaz: bir dosya yüklenirken yeniden adlandırılabilir, taşınabilir veya silinebilir.
+- **Pürüzler**: yukarıdaki işlevler Windows'taki otomatik testlerini geçiyor (475 masaüstü testi), bir Windows 11 bilgisayarda da uygulama açılıyor, bir Immich sunucusundaki kayıtlı oturumu açıyor, eşitliyor ve sorunsuz kapanıyor. Her işlevin gerçek bir bilgisayarda elle testi hâlâ sürüyor.
+
+Bir şeyler ters giderse lütfen Günlükler sayfasından kaydedilen günlükle bir [sorun kaydı](https://github.com/freeKC/Immuch360/issues) açın, bkz. [Günlükler](#logs). Paylaşmadan önce günlüğü kontrol edin: sunucu adresinizi içerebilir.
+
+<a id="build-it-yourself-on-windows"></a>
+### Windows'ta kendiniz derleyin
+
+x64 üzerinde Windows 10 veya 11, Windows için Flutter 3.47.2, "Desktop development with C++" iş yüküyle Visual Studio 2022 veya Build Tools'u, Windows ayarlarında açılmış Geliştirici Modu (Flutter eklentiler için buna ihtiyaç duyar) ve paketleme betiği için Python 3 gerekir.
+
+1. `desktop` dalını alın ve kod üretimini çalıştırın. Java ve Node kullanır, bu yüzden Linux, macOS veya WSL'de çalıştırın; WSL ile klonu bir Windows sürücüsünde tutun, WSL onu `/mnt/c` veya `/mnt/d` altında görür:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Windows'ta, aynı `mobile` klasöründe uygulamayı derleyin:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. `Release` klasörü onu derleyen bilgisayarda çalışır. Başka bir bilgisayar için klasörün tamamını tutun ve `immuch360.exe` dosyasının yanına Visual C++ çalışma zamanını ekleyin. Klonun kökünden paketleme betiği onu kopyalar, yalnızca Android'e yarayanları dışarıda bırakır, uygulamanın yüklediği her DLL'in klasörde veya Windows'un kendisinde olduğunu denetler ve ZIP'i oluşturur:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+`desktop` dalının CI'ı (`.github/workflows/immuch360-desktop.yml`) telefon kapılarını ve tüm test paketini Linux'ta, masaüstü testlerini Windows'ta çalıştırır ve aynı ZIP'i derler; Linux ve macOS işleri (aynı `-t lib/main_desktop.dart` ile `flutter build linux` ve `flutter build macos`) henüz bu sistemlerde çalışmadı.
+
 <a id="where-to-get-it"></a>
 ## Nereden edinilir
 
-Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple'ın incelemesini bekliyor, Meta Horizon Store kaydı onaylandı ve ilk güncellemesi Meta'nın incelemesinde, televizyonlar için Google Play sürümü de televizyon sürümünün Google tarafından incelenmesini bekliyor. En yeni derleme her zaman GitHub sürümündedir:
+Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple'ın incelemesini bekliyor, Meta Horizon Store kaydı onaylandı ve ilk güncellemesi Meta'nın incelemesinde, televizyonlar için Google Play sürümü de televizyon sürümünün Google tarafından incelenmesini bekliyor. Windows için Immuch360 Desktop, GitHub'da bir önizleme. En yeni derleme her zaman GitHub sürümündedir:
 
 - **Android telefon ve tabletler**
   - Bugün: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ya da [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki APK: telefon için `Immuch360-v<version>-arm64-v8a-release.apk` (evrensel `Immuch360-v<version>-release.apk` her yerde çalışır, `-armeabi-v7a` eski 32 bit telefonlar içindir, `.aab` dosyası ise yandan yükleme için değil Google Play içindir). GitHub derlemesi genellikle mağazadakinden ileridedir. Her iki durumda da resmi Immich uygulamasının yanına kurulur (paket `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple
 - **Android TV ve Google TV (derleme 20'den itibaren)**
   - Bugün: [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki evrensel `Immuch360-v<version>-release.apk`, adb ile yandan yüklenir, bkz. [Televizyona kurun](#install-it-on-the-tv). Telefonlardaki uygulamanın aynısıdır.
   - Yakında: televizyonlarda Google Play, televizyon sürümünün Google tarafından incelenmesinden sonra.
+- **Windows 10 ve 11, 64 bit (önizleme)**
+  - Bugün: Immuch360 Desktop, [masaüstü ön sürümünün](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` ZIP'i, [Windows'a indirin ve kurun](#download-and-install-on-windows) bölümünün anlattığı gibi açılıp başlatılır. Şimdilik yalnızca fotoğraflar: videolar sonraki masaüstü derlemeleriyle gelecek.
+  - Yakında: video oynatma; bir yükleyici, imzalı bir derleme ve güncellemeler daha sonra.
 
 App Store ve Meta Horizon Store bağlantıları, kayıtlar yayımlanır yayımlanmaz buraya eklenecek. Her zamanki Immich sunucu URL'niz ve hesabınızla oturum açın ya da cihazın kendi fotoğraf ve videolarıyla başlamak için giriş sayfasında "Sunucu olmadan kullan"a dokunun. GitHub'dan alınan APK kendini güncellemez: Releases sayfasını takip edin ve uygulamayı bir mağazadan kurduysanız güncellemeleri o mağazadan alın.
 
@@ -993,12 +1105,15 @@ Mağaza ekran görüntüleri, yalnızca hata ayıklama şeridini gizleyen `--dar
 
 Kendi Mac'inizde iOS için derlemek üzere Xcode'u ve kendi imzalama ekibinizi kullanın; Xcode 26 ile, Spatial shader'ları gerektirdiği için önce bir kez `xcodebuild -downloadComponent MetalToolchain` çalıştırın. Mac olmadan iOS derlemeleri, bu deponun `codemagic.yaml` dosyasıyla Codemagic'te (barındırılan bir Mac) çalışır. Android sürüm derlemeleri GitHub Actions'ta çalışır (`.github/workflows/immuch360-release.yml`).
 
+Windows sürümü Immuch360 Desktop, `desktop` dalından Windows için Flutter ile derlenir: adımlar [Windows'ta kendiniz derleyin](#build-it-yourself-on-windows) bölümünde.
+
 Bu depoda hiçbir gizli bilgi bulunmaz: Android imzalama anahtarı şifrelenmiş GitHub Actions gizli bilgileri olarak, Apple imzalama materyali de Codemagic'te şifrelenmiş değişkenler olarak saklanır. İş akışı dosyaları onlara yalnızca adlarıyla başvurur. Kendi `android/key.jks` dosyanız olmadan bir sürüm derlemesi hata ayıklama anahtarıyla imzalanır ve GitHub'dan veya bir mağazadan alınmış bir kopyanın üzerine kurulamaz (önce onu kaldırın); bir hata ayıklama derlemesi onun yanına Immuch360 debug olarak kurulur. Meta Horizon Store kopyası, sürümün başka bir anahtarla, mağaza uygulamasının ilk kaydedildiği anahtarla imzalanmış `quest` APK'sıdır; bu yüzden o da yandan yüklenmiş bir APK'nın üzerine kurulamaz, tersi de olmaz.
 
 ### Dallar
 
 - **`main`**: `immuch360`'ın temel aldığı commit'teki Immich `main` (güncel derlemeler için 29 Eylül 2026), hiç değiştirilmez; çatal daha yeni bir Immich üzerine yeniden temellendirildiğinde ilerler.
 - **`immuch360`**: bu çatalın Immich üzerindeki değişiklikleri. Her sürüm hangi Immich sürümünü temel aldığını belirtir.
+- **`desktop`**: bilgisayar sürümü Immuch360 Desktop, `immuch360` üzerinde. Telefon sürümleri onunla birleştirilir, masaüstü ön sürümleri de ondan derlenir (masaüstü derlemesi 1, 21f285c34 commit'inden: telefon derlemesi 20 artı bilgisayar sürümü). Onda `mobile/android` ve `mobile/ios` altındaki hiçbir şey değişmez.
 
 <a id="logs"></a>
 ## Günlükler
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Derleme 19'dan itibaren DLNA istemcisi, telefon paylaşımı ve Apple uzamsal medyasının algılanması, uygulamanın kendi günlüğüne de (sağ üstteki profil resminin menüsünde Günlükler) `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ve `NetworkMediaService` altında yazar. Derleme 20'den itibaren oraya televizyon modu `TvMode` ve `TvTextEntry`, Plex sunucuları `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ve `PlexServerEditPage`, Tapo kameralar da `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ve `CameraLiveView` altında yazar; Plex satırları asla belirteci, bir adresi veya bir başlığı içermez, kamera satırları da şifreleri dışarıda bırakır. Günlük satırları, siz kendiniz kopyalamadıkça cihazda kalır.
 
+Bir bilgisayarda (Immuch360 Desktop) Günlükler sayfasında ayrıca "Günlükleri bir dosyaya kaydet" bulunur: günlük ya da, varsa, günlük ve son çökmelerin raporlarından oluşan bir ZIP (önerilen adı o zaman "with-crash-reports" ile biter). Bir çökme raporu küçük bir minidump'tır: iş parçacıkları, nerede durdukları ve yalnızca çağrılarını izlemek için gerekenler, program dosyalarının adlarıyla ama klasörleri olmadan; uygulamanın belleği değil. Paylaşmadan önce günlüğü kontrol edin: sunucu adresinizi içerebilir.
+
 <a id="privacy"></a>
 ## Gizlilik
 
@@ -1026,19 +1143,21 @@ Derleme 19'dan itibaren DLNA istemcisi, telefon paylaşımı ve Apple uzamsal me
 - **Televizyon**: cihazın bir televizyon olup olmadığı cihazda okunur; hiçbir şey gönderilmez.
 - **Telefon paylaşımı**: yalnızca yerel ağ, kullanıcı adı ve şifreyle, düz HTTP üzerinden (bkz. [Bu telefonu ağda paylaş](#share-this-phone-on-the-network)).
 - **Kamera**: yalnızca Spatial 2.5D oynatıcısı tarafından, cihazda kullanılır; görüntüler asla saklanmaz ve hiçbir yere gönderilmez.
+- **Bir bilgisayarda** (Immuch360 Desktop, Windows önizlemesi): uygulama yalnızca seçtiğiniz klasörleri okur, dizinini, küçük resimlerini ve önbelleğini bilgisayarda tutar, şifreleri ve belirteçleri Windows'un veri korumasıyla yalnızca sizin Windows hesabınız için saklar. Bilgisayar paylaşımı telefon paylaşımının kurallarına uyar ve siz istemedikçe Windows'un genel olarak işaretlediği ya da türünü belirleyemediği bir ağda başlamaz.
 
 Politikanın tamamı [PRIVACY.md](../PRIVACY.md) dosyasındadır.
 
 <a id="license-and-trademark"></a>
 ## Lisans ve ticari marka
 
-Bu proje Immich'in bir çatalıdır ve [GNU AGPL v3](../LICENSE) lisansı altında kalır. Telefon APK'ları dahil her APK, açık kaynak olmayan (Meta Platform Technologies SDK License Agreement) ve yalnızca Meta Quest başlıklarında kullanılan Meta Spatial SDK'yı da içerir. Immuch360, Immich ekibi veya FUTO ile bağlantılı değildir ve onlar tarafından onaylanmamıştır.
+Bu proje Immich'in bir çatalıdır ve [GNU AGPL v3](../LICENSE) lisansı altında kalır. Telefon APK'ları dahil her APK, açık kaynak olmayan (Meta Platform Technologies SDK License Agreement) ve yalnızca Meta Quest başlıklarında kullanılan Meta Spatial SDK'yı da içerir; Windows sürümü Immuch360 Desktop onu içermez. Immuch360, Immich ekibi veya FUTO ile bağlantılı değildir ve onlar tarafından onaylanmamıştır.
 
 <a id="roadmap"></a>
 ## Yol haritası
 
 Henüz yapılmamış olanlar, en olası olanlar önce. Buradaki hiçbir şey bir söz değildir ve [sorun takipçisindeki](https://github.com/freeKC/Immuch360/issues) geri bildirimler neyin önce geleceğine karar vermeye yardımcı olur.
 
+- **Immuch360 Desktop, önce Windows**: ilk önizleme çıktı (bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview)). Sırada video oynatma (önce düz videolar, ardından 360°, 3D, VR180 ve ham dosyalar), bir dizüstü bilgisayarın iki ekran kartında ölçülerek; ardından her işlevin bir Windows bilgisayarda testi ve düzeltmeleri; ardından web kamerasıyla Spatial 2.5D; ardından Linux ve macOS, paketler, imzalama ve güncellemeler.
 - **Google Play**: derleme 18 yayında; derleme 19'un yerine derleme 20, 7 Ekim 2026'dan beri Google'ın incelemesinde. Derleme 21 telefon ve tabletlerde hiçbir şeyi değiştirmez.
 - **App Store**: sürüm 3.3.0 Apple'ın incelemesini bekliyor; derleme 11'in özelliklerini taşıyor, bu yüzden Immich'e yükleme ve video kod çözücü denetimi (derleme 15) ile ham Insta360 dosyaları (derleme 16) bir sonraki App Store güncellemesiyle gelecek. Bağlantı yayına girdiğinde buraya eklenecek.
 - **Meta Horizon Store**: Meta, kaydı 7 Ekim 2026'da derleme 14 ile onayladı. Derleme 21 ilk güncellemesi olarak gönderildi: derleme 14'ten bu yana gelen her şeyi getirir (bir paylaşımdan Immich'e yüklemeler, başlığın çözebildiklerine göre seçilen video kaynağı, ham Insta360, GoPro ve DJI dosyaları, DLNA, telefon paylaşımı, Apple uzamsal fotoğrafları, Plex Media Server kütüphaneleri, Tapo kameralar) ve mağaza onu Quest 2, Quest Pro, Quest 3 ve 3S için listeler. Sayfa herkese açık olduğunda mağaza bağlantısı buraya eklenecek; yandan yüklenmiş bir kopyanın önce kaldırılması gerekir (bkz. [Kurulum](#install)).

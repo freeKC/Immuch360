@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašais, kuriuose galima apsidairyti, ir nemokamas grotuvas plokščioms, 360°, 3D ir VR180 nuotraukoms ir vaizdo įrašams, skirtas Android telefonams ir planšetėms, iPhone ir iPad, Meta Quest akiniams (Quest 3 ir 3S, o nuo 21 surinkimo Quest 2 ir Quest Pro, neišbandyta), o nuo 20 surinkimo ir Android TV bei Google TV.
+Immuch360 yra Immich mobilioji programa su 360° nuotraukomis ir vaizdo įrašais, kuriuose galima apsidairyti, ir nemokamas grotuvas plokščioms, 360°, 3D ir VR180 nuotraukoms ir vaizdo įrašams, skirtas Android telefonams ir planšetėms, iPhone ir iPad, Meta Quest akiniams (Quest 3 ir 3S, o nuo 21 surinkimo Quest 2 ir Quest Pro, neišbandyta), o nuo 20 surinkimo ir Android TV bei Google TV. Immuch360 Desktop, ta pati programa Windows kompiuteryje, išleista kaip peržiūros versija, žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview).
 
 Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) arba telefono fotosferos režimu, arba turi VR akinius, ir nori žiūrėti savo kadrus iš Immich serverio, paties telefono, NAS, medijos serverio ar Plex serverio: tas pats serveris, ta pati paskyra, jokio serverio papildinio arba visai be serverio. Nuo 20 surinkimo ji taip pat rodo Tapo kameras: tiesioginį vaizdą ir jų atminties kortelės įrašus.
 
@@ -18,13 +18,14 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
   App Store: <a href="#where-to-get-it">peržiūrima</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store patvirtinta, 21 surinkimas pateiktas kaip pirmasis atnaujinimas<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">peržiūros versijos atsisiuntimas</a>
 </p>
 
 - 🌐 **Tikras 360°**<br>Nuotraukos ir vaizdo įrašai kaip sfera, kurioje apsidairote, su giroskopu, įskaitant neapdorotus kameros failus (Insta360 nuo 16 surinkimo, GoPro ir DJI nuo 18 surinkimo). Taip pat nemokamas vaizdo grotuvas: plokšti, 360°, 3D, VR180
 - 👓 **Tikras 3D**<br>Stereoskopiniai 360° ir VR180, viršuje ir apačioje arba vienas šalia kito, ir Apple erdvinės nuotraukos (nuo 19 surinkimo): tikras 3D akiniuose, viena akis telefone
 - 🎥 **Tikras 2.5D**<br>Gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo, vaizdas seka jūsų galvą (eksperimentinis, telefonai ir planšetės)
-- 📱 **Android, iOS, Quest, TV**<br>Viena programa telefonuose, planšetėse ir Quest 2, Pro, 3 ir 3S akiniuose, tikras 3D akiniuose, o nuo 20 surinkimo ir Android TV su nuotolinio valdymo pulteliu
+- 📱 **Android, iOS, Quest, TV**<br>Viena programa telefonuose, planšetėse ir Quest 2, Pro, 3 ir 3S akiniuose, tikras 3D akiniuose, nuo 20 surinkimo Android TV su nuotolinio valdymo pulteliu, ir Windows peržiūros versija
 - 🔌 **Su serveriu arba be jo**<br>Jūsų Immich serveris arba paties telefono galerija, paskyros nereikia
 - 🗄️ **Tinklo bendrinimai**<br>Samba (SMB), WebDAV ir, nuo 19 surinkimo, DLNA medijos serveriai, randami tinkle ir skaitomi tiesiogiai, nieko neatsisiunčiant, o į Immich siunčiami, kai pasirenkate. Nuo 19 surinkimo telefonas taip pat bendrina savo galeriją su akiniais
 - 📺 **Televizoriuje**<br>Nuo 20 surinkimo tas pats APK Android TV ir Google TV: 360° nuotraukos ir vaizdo įrašai, jūsų serveris ir jūsų bendrinimai, valdomi pulteliu
@@ -52,6 +53,7 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
 - [Palyginimas su Immich programa ir kitomis programomis](#compared-with-the-immich-app-and-other-apps)
 - [Formatai ir šaltiniai pagal platformą](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Windows kompiuteryje: Immuch360 Desktop (peržiūros versija)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Kur ją gauti](#where-to-get-it)
 - [Susikurkite patys](#build-it-yourself)
 - [Žurnalai](#logs)
@@ -77,6 +79,7 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
 - **„Noriu žiūrėti savo 360° nuotraukas ir vaizdo įrašus, taip pat savo NAS ar Plex serverio vaizdo įrašus televizoriuje, valdydamas pulteliu.“** Žr. [Žiūrėti televizoriuje](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Negaliu rasti savo 360° kadrų tarp visų kitų.“** Žr. [360° sąrašas](#find-your-360-shots-the-360-list).
 - **„Mano 360° vaizdo įrašas stringa arba rodoma neryški kopija.“** Žr. [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters).
+- **„Noriu savo 360° nuotraukų ir Immich bibliotekos Windows kompiuteryje, kartu su jo aplankų, mano NAS ir Plex serverio nuotraukomis, o kompiuterį bendrinti su akiniais.“** Žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview) (peržiūros versija, kol kas tik nuotraukos).
 - **„Ar išlieka tai, ką daro Immich programa?“** Taip, su dviem nedideliais pakeitimais, žr. [Visa kita yra Immich](#everything-else-is-immich).
 
 Kai funkcija nauja, tekste nurodoma, nuo kurio surinkimo (build) ji yra. GitHub leidime visada yra naujausias surinkimas, parduotuvės atsilieka: žr. [Kur ją gauti](#where-to-get-it).
@@ -749,6 +752,7 @@ Dabartinis surinkimas, 21 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030
 | Plex Media Server bibliotekos, leidžiamos iš originalių failų, namuose ir ne namuose, be plex.tv | ❌ | ✅ nuo 20 surinkimo, kiekviena peržiūra, telefonuose, planšetėse, Quest ir televizoriuose |
 | Tapo kameros: tiesioginis vaizdas ir atminties kortelės įrašai, siunčiami į Immich, kai pasirenkate | ❌ | ✅ nuo 20 surinkimo: įrašai visur, tiesiogiai Android, Android TV ir Quest |
 | Android TV ir Google TV, valdomi pulteliu, tame pačiame APK | ❌ ne televizoriaus programa | ✅ nuo 20 surinkimo |
+| Ta pati programa Windows kompiuteryje | ❌ tik telefonai ir planšetės | ✅ peržiūros versija, dar be vaizdo įrašų |
 | Neapdorotos Insta360 .insp nuotraukos ir vieno takelio .insv vaizdo įrašai | ❌ plokšti | ✅ nuo 16 surinkimo |
 | Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile (Insta360 X4, X4 Air, X5, X6, X3 poros, GoPro .360, DJI .osv) | ❌ plokšti arba neteisingi | ✅ nuo 18 surinkimo |
 | Dvigubos „žuvies akies“ .dng | ❌ plokšti | ❌ dar ne |
@@ -778,6 +782,7 @@ Dabartinis surinkimas, 21 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030
 - **Plex Media Server**: patikrinta iš kompiuterio su tikru Plex Media Server 1.42.1 (susiejimas, aplankai, baitų intervalai, miniatiūros, adresas už namų ribų); įrenginyje dar nepatikrinta.
 - **Tapo kameros**: patikrinta su imituota kamera; su tikra kamera dar nepatikrinta.
 - **Android TV ir Google TV**: patikrinta automatiniais testais; televizoriuje dar nepatikrinta.
+- **Ta pati programa Windows kompiuteryje**: 475 automatiniai darbalaukio testai Windows sistemoje, o Windows 11 kompiuteryje programa paleidžiama, atveria išsaugotą sesiją Immich serveryje, sinchronizuoja ir tvarkingai užsidaro; kiekvienos funkcijos rankinis tikrinimas vyksta.
 - **Neapdorotos Insta360 .insp nuotraukos ir vieno takelio .insv vaizdo įrašai**: nuotraukos palygintos su Insta360 Studio X3 failų eksportais, vaizdo įrašai Android emuliatoriuje su mažos raiškos X3 failu; iPhone telefone dar nepaleista.
 - **Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile**: analizatoriai ir sujungimas patikrinti su tikrais X4, X3 poros, GoPro MAX ir Osmo 360 failais; atkūrimas yra 18 ir 19 surinkimų įrenginių bandymas.
 - **Dvigubos „žuvies akies“ .dng**: planuojama.
@@ -883,12 +888,15 @@ Immuch360 yra galerija, ir ji taip pat yra nemokamas medijos grotuvas: ji leidž
 
 Android TV ir Google TV punktai, nuo 20 surinkimo, dar nepatikrinti televizoriuje, žr. [Žiūrėti televizoriuje](#watch-on-your-tv-android-tv-and-google-tv); kamerų punktai dar nepatikrinti su tikra kamera.
 
+Windows sistemoje Immuch360 Desktop peržiūros versija rodo nuotraukas, plokščias ir 360°, įskaitant neapdorotas Insta360 .insp nuotraukas, su pele ir klaviatūra, iš serverio, kompiuterio aplankų, bendrinimų ir Plex; vaizdo įrašų ji dar neleidžia, vietoj jų rodomas pakaitalas (žr. [Dar nėra](#not-there-yet)).
+
 - **Jūsų Immich serveris**: originalas arba serverio perkoduotas srautas, kaip nurodo „Nustatymai“, „Elementų peržiūra“, „Vaizdo įrašo šaltinis“ (žr. [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters)). Ta pati paskyra kaip žiniatinklio programoje.
 - **Pats telefonas ar akiniai**: „Naudoti be serverio“ prisijungimo puslapyje arba skirtuko „Biblioteka“ punktas „Šiame įrenginyje“.
 - **NAS ar kompiuteris**: SMB ir WebDAV bendrinimai, o nuo 19 surinkimo DLNA medijos serveriai, randami tinkle, skaitomi tiesiogiai (SMB vaizdo įrašas iki šešiais ryšiais), nieko nekopijuojant; nuo 15 surinkimo pasirinktus failus galima nusiųsti į jūsų Immich paskyrą.
 - **Kitas telefonas (nuo 19 surinkimo)**: „Bendrinti šį telefoną tinkle“ tame telefone: akiniai arba bet kuris tinklo WebDAV klientas skaito jo albumus, mėnesius ir 360° mediją.
 - **Plex Media Server (nuo 20 surinkimo)**: jo nuotraukų, filmų ir TV laidų bibliotekos pagal aplankus, originalūs failai skaitomi tiesiogiai per HTTPS, patikrintą pagal paties serverio sertifikatą, namuose arba per adresą už namų ribų, visose platformose; žr. [Plex Media Server, be plex.tv](#plex-media-server-without-plextv).
 - **Tapo kamera (nuo 20 surinkimo)**: tiesioginis vaizdas su kameros paskyra (Android, Android TV, Quest akiniai) ir jos atminties kortelės įrašai su TP-Link paskyros slaptažodžiu (visos platformos), tik vietiniame tinkle; žr. [Tapo kameros](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Windows kompiuterio aplankai (darbalaukio peržiūros versija)**: aplankai, kuriuos pasirenkate Immuch360 Desktop, skaitomi vietoj telefono galerijos; kompiuteris taip pat gali juos bendrinti su akiniais, žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Ekrano nuotraukos darytos akiniuose fiksavimo mygtuku (Meta mygtukas ir gaidukas
 - **APK dydis**: Spatial SDK prideda apie 56 MB 64 bitų ARM savojo kodo, taip pat ir telefonuose, kur jis niekada neįkeliamas.
 - **Licencija**: įtraukianti peržiūra naudoja Meta Spatial SDK, platinamą pagal Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Windows kompiuteryje: Immuch360 Desktop (peržiūros versija)
+
+Jūsų Immich biblioteka yra serveryje, kitos nuotraukos guli kompiuterio aplankuose, vaizdo įrašai NAS arba Plex serveryje, ir norėtumėte apsidairyti savo 360° nuotraukose dideliame ekrane arba parodyti kompiuterio nuotraukas akiniuose. Immuch360 Desktop yra ta pati programa Windows kompiuteryje, sukurta iš tų pačių šaltinių kaip ir telefonų programos.
+
+Kompiuteryje Immich siūlo savo žiniatinklio programą naršyklėje. **Ką prideda Immuch360 Desktop**: kompiuterio aplankus be jokio serverio ar paskyros, SMB, WebDAV, DLNA ir Plex bendrinimus, naršomus iš programos, neapdorotas Insta360 .insp nuotraukas, atveriamas kaip sfera, ir kompiuterį, bendrinamą su Meta Quest namuose.
+
+Šis pirmasis surinkimas yra peržiūros versija: nuotraukos veikia, vaizdo įrašai ateis su kitais darbalaukio surinkimais. Telefono, planšetės, Quest ir televizoriaus programos dėl to nesikeičia ir išlaiko pavadinimą Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Atsisiuntimas ir įdiegimas Windows sistemoje
+
+Pirmasis surinkimas yra GitHub išankstinis leidimas [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Jo failas yra `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 failai išskleidus), su `SHA256SUMS.txt` jam patikrinti. Jis sukurtas iš šakos `desktop` ties įsipareigojimu 21f285c34: telefono 20 surinkimas plius kompiuterio versija. Reikia Windows 10 arba 11, 64 bitų.
+
+1. Atsisiųskite ZIP ir išskleiskite jį bet kur, pavyzdžiui, į „Dokumentai“.
+2. Paleiskite `immuch360.exe` iš išskleisto aplanko. Laikykite aplanką visą: programai reikia šalia esančių failų.
+3. Failai dar nepasirašyti, todėl Windows SmartScreen gali parodyti „Windows protected your PC“: pasirinkite „More info“, tada „Run anyway“. Kur įjungtas Smart App Control, jis blokuoja nepasirašytas programas.
+4. Palaukite lango. Pirmasis naujo surinkimo paleidimas trunka nuo 10 sekundžių iki maždaug minutės, greičiausiai kol Microsoft Defender tikrina naujus failus: tuo metu nepaleiskite programos dar kartą. Kiti paleidimai trunka sekundę ar dvi.
+5. Prisijungimo puslapyje prisijunkite prie savo Immich serverio su jo adresu, savo el. paštu ir slaptažodžiu arba spustelėkite „Naudoti be serverio“.
+
+Norėdami patikrinti ZIP, komandų eilutėje, atsisiuntimo aplanke, paleiskite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256`: rezultatas turi sutapti su įrašytu `SHA256SUMS.txt`. Diegimo programos ir automatinio atnaujinimo dar nėra: stebėkite puslapį [Releases](https://github.com/freeKC/Immuch360/releases) ir kitą surinkimą išskleiskite taip pat.
+
+### Ką daro peržiūros versija
+
+- **Jūsų Immich serveris**: laiko skalė, albumai, žmonės, prisiminimai ir paieška, o serverio nuotraukos visu dydžiu, kaip telefone.
+- **Be serverio**: jūsų nuotraukų ir vaizdo įrašų aplankai (siūlomi „Paveikslėliai“ ir „Vaizdo įrašai“) pakeičia telefono galeriją. Niekas neskaitoma už jūsų pasirinktų aplankų ribų, o be serverio niekas nepalieka kompiuterio.
+- **Įkėlimas ir atsarginės kopijos** iš tų aplankų į jūsų Immich serverį, kol programa atidaryta.
+- **360° nuotraukos kaip sfera**, su pele ir klaviatūra; neapdorotos Insta360 kamerų .insp nuotraukos atsiveria kaip telefonuose.
+- **Tinklo bendrinimai**: Samba (SMB), WebDAV ir DLNA medijos serveriai bei Plex serveriai be plex.tv, naršomi kaip telefonuose: jų nuotraukos atsiveria, jų vaizdo įrašai laukia vaizdo grotuvo (žr. [Dar nėra](#not-there-yet)). Tapo kameroms: atminties kortelės įrašai, jų sąrašas ir klipo parsisiuntimas.
+- **Bendrinti šį kompiuterį tinkle**: jūsų aplankų albumai, mėnesiai ir 360° medija, tik skaitymui, Meta Quest akiniams ar kitam namų įrenginiui, kaip telefonas bendrina save.
+- **Failai**: atsisiuntimai iš serverio patenka į jūsų pasirinktą aplanką, „Save to a folder“ (Išsaugoti aplanke) išsaugo pasirinktų nuotraukų ir vaizdo įrašų kopiją, o puslapyje „Logai“ yra „Save logs to a file“ (Išsaugoti žurnalą faile).
+
+### Naudojimas kompiuteryje
+
+1. **Pasirinkite aplankus.** Be serverio laiko skalė prasideda kortele „Choose the folders of your photos and videos“ (Pasirinkite savo nuotraukų ir vaizdo įrašų aplankus): spustelėkite „Add a folder“ (Pridėti aplanką). Su serveriu ta pati kortelė rodoma skirtuke „Biblioteka“ po „On this computer“ (Šiame kompiuteryje) ir tarp albumų atsarginei kopijai, kol aplankas nepasirinktas. Vėliau ten yra eilutė „Folders on this computer“ (Aplankai šiame kompiuteryje), kaip ir „Nustatymai“, „This computer“ (Šis kompiuteris).
+2. **Debesies, USB ir tinklo aplankai.** Failai, kuriuos OneDrive (ar kitas debesies diskas) laiko tik internete, suskaičiuojami, bet neskaitomi, todėl pridėjus aplanką neatsisiunčiamas visas jūsų debesis: „Download and include“ (Atsisiųsti ir įtraukti) juos parsiunčia, kai jų norite. USB diskas, grįžęs su kita raide, išlaiko savo nuotraukas. Tinklo aplankai ir aplankai atminties kortelėje ar USB diske (kad Windows vis tiek galėtų jį išstumti) nestebimi dėl pakeitimų: pridėję ten failų, naudokite „Refresh“ (Atnaujinti).
+3. **Apsidairykite 360° nuotraukoje**: vilkite pele, artinkite ratuku, dvigubu spustelėjimu arba + ir - (bet kuriame klaviatūros išdėstyme, įskaitant AZERTY), judėkite rodyklių klavišais. F arba F11 įjungia viso ekrano režimą, o Escape iš jo išeina; Home ir End pereina prie pirmos ir paskutinės nuotraukos; I rodo informaciją.
+4. **Pereikite nuo nuotraukos prie nuotraukos**: plokščioje nuotraukoje kairė ir dešinė rodyklės arba kraštuose judant pelei pasirodantys rodyklių ženklai pereina prie ankstesnės ir kitos. Raidės, rašomos aprašymo lauke, lieka tekste.
+5. **Bendrinkite kompiuterį su akiniais**: atverkite „Biblioteka“, tada „Tinklo bendrinimai“; pirmoji plytelė yra „Share this computer on the network“ (Bendrinti šį kompiuterį tinkle), kompiuterio atitikmuo [Bendrinti šį telefoną tinkle](#share-this-phone-on-the-network). Įjunkite „Share photos and videos on the network“ (Bendrinti nuotraukas ir vaizdo įrašus tinkle), tada pridėkite kompiuterį akiniuose, kaip nurodyta tame skyriuje. Bendrinimas sustoja, kai programa uždaroma arba po valandos nenaudojimo.
+6. **Leiskite tinklą**: Windows gali paklausti, ar Immuch360 Desktop gali naudoti tinklą. Leiskite privačiuose tinkluose, kitaip akiniai neras kompiuterio. Tinkle, kurį Windows pažymi kaip viešą (kavinė, viešbutis), arba tinkle, kurio tipo ji negali nustatyti, bendrinimas neprasideda, nebent pasirenkate „Share for this session“ (Bendrinti šiai sesijai), o kompiuteris skelbia save tik tinkle, kuriame bendrina.
+7. **„Nustatymai“, „This computer“ (Šis kompiuteris)**: aplankai, atsisiuntimų aplankas, tinklo adapteris, naudojamas bendrinimams rasti ir kompiuteriui bendrinti (kai jų yra keli, pavyzdžiui, Wi-Fi ir Ethernet), ir patikimi sertifikatai: jūsų paties serverio sertifikatų įstaiga, kaip PEM failas, HTTPS adresui, kuriuo Windows pati nepasitiki. Kliento sertifikatai importuojami „Nustatymai“, „Sudėtingesnis“, kaip telefonuose.
+
+### Palyginimas su telefonų programomis
+
+- **Atsarginės kopijos daromos, kol programa atidaryta** (arba sumažinta), o ne fone uždarius langą. Uždarant langą, kol vyksta įkėlimai arba kol kompiuteris bendrinamas, pirmiausia paklausiama.
+- **Aplankai vietoj galerijos**: programa skaito jūsų pasirinktus aplankus ir kompiuteryje laiko savo rodyklę, miniatiūras ir podėlį.
+- **Vienas langas**: atveriant programą antrą kartą grąžinamas pirmasis langas, o ne paleidžiama antra kopija.
+- **Iš jūsų aplankų niekas neištrinama**: „Ištrinti iš įrenginio“ paslėpta, o „Ištrinti“ pašalina tik serverio kopiją, kol programa negalės siųsti failų į Windows šiukšlinę.
+- **Pelė ir klaviatūra** vietoj lietimo ir giroskopo.
+
+<a id="not-there-yet"></a>
+### Dar nėra
+
+- **Vaizdo įrašai**: kol kas jie rodo pakaitalą, o jų miniatiūros juostos piktogramą. Atkūrimas bus kitas: pirmiausia plokšti vaizdo įrašai, tada 360°, 3D ir VR180 vaizdo įrašai bei neapdoroti 360° vaizdo įrašai.
+- **Spatial 2.5D**, vėliau su internetine kamera; **Tapo tiesioginis vaizdas**; **žemėlapis** ir vietų rodinys; **prisijungimas su OAuth** (vietoj to prisijunkite el. paštu ir slaptažodžiu); **Google Cast**; **pranešimai**.
+- **Diegimo programa, pasirašytas surinkimas ir automatiniai atnaujinimai**: šis surinkimas yra aplankas su `immuch360.exe`.
+- **Linux ir macOS**: jų projektai yra šaltiniuose, bet jie dar nebuvo sukurti ar išbandyti tose sistemose; jie ateis po Windows.
+- **Vertimai**: nauji kompiuterio versijos tekstai kol kas yra anglų kalba.
+
+### Žinomos problemos
+
+- **Kol akiniai skaito failą iš bendrinamo kompiuterio** (leidžiamą vaizdo įrašą, atsisiunčiamą nuotrauką), Windows negali to failo pervadinti, perkelti ar ištrinti ir sako, kad jis atidarytas Immuch360 Desktop: pirmiausia sustabdykite atkūrimą. Atsarginės kopijos taip jūsų failų nelaiko: failą galima pervadinti, perkelti ar ištrinti, kol jis įkeliamas.
+- **Nebaigtos vietos**: aukščiau išvardytos funkcijos praeina savo automatinius testus Windows sistemoje (475 darbalaukio testai), o Windows 11 kompiuteryje programa paleidžiama, atveria išsaugotą sesiją Immich serveryje, sinchronizuoja ir tvarkingai užsidaro. Kiekvienos funkcijos rankinis tikrinimas tikrame kompiuteryje dar vyksta.
+
+Jei kas nors nepavyksta, prašome atidaryti [pranešimą apie problemą](https://github.com/freeKC/Immuch360/issues) su žurnalu, išsaugotu puslapyje „Logai“, žr. [Žurnalai](#logs). Prieš bendrindami patikrinkite žurnalą: jame gali būti jūsų serverio adresas.
+
+<a id="build-it-yourself-on-windows"></a>
+### Susikurkite patys Windows sistemoje
+
+Jums reikia Windows 10 arba 11 x64, Flutter 3.47.2 Windows sistemai, Visual Studio 2022 arba jo Build Tools su darbo krūviu „Desktop development with C++“, Windows nustatymuose įjungto Developer Mode (Flutter jo reikia įskiepiams) ir Python 3 paketo scenarijui.
+
+1. Gaukite šaką `desktop` ir paleiskite kodo generavimą. Jis naudoja Java ir Node, todėl paleiskite jį Linux, macOS arba WSL; su WSL laikykite kloną Windows diske, kurį WSL mato kaip `/mnt/c` arba `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Windows sistemoje, tame pačiame aplanke `mobile`, sukurkite programą:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Aplankas `Release` veikia kompiuteryje, kuris jį sukūrė. Kitam kompiuteriui laikykite visą aplanką ir šalia `immuch360.exe` pridėkite Visual C++ vykdymo aplinką. Iš klono šakninio aplanko paketo scenarijus ją nukopijuoja, praleidžia tai, kas reikalinga tik Android, patikrina, ar kiekvienas programos įkeliamas DLL yra aplanke arba pačioje Windows, ir sukuria ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+Šakos `desktop` CI (`.github/workflows/immuch360-desktop.yml`) paleidžia telefono patikras ir visą testų rinkinį Linux sistemoje, darbalaukio testus Windows sistemoje ir sukuria tą patį ZIP; jo Linux ir macOS užduotys (`flutter build linux` ir `flutter build macos`, su tuo pačiu `-t lib/main_desktop.dart`) tose sistemose dar nebuvo paleistos.
+
 <a id="where-to-get-it"></a>
 ## Kur ją gauti
 
-Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Apple peržiūros, Meta Horizon Store įrašas patvirtintas ir jo pirmasis atnaujinimas yra Meta peržiūroje, o Google Play versija televizoriams laukia Google peržiūros televizoriaus leidimui. GitHub leidime visada naujausias surinkimas:
+Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Apple peržiūros, Meta Horizon Store įrašas patvirtintas ir jo pirmasis atnaujinimas yra Meta peržiūroje, o Google Play versija televizoriams laukia Google peržiūros televizoriaus leidimui. Immuch360 Desktop, skirta Windows, yra peržiūros versija GitHub. GitHub leidime visada naujausias surinkimas:
 
 - **Android telefonai ir planšetės**
   - Šiandien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Ap
 - **Android TV ir Google TV (nuo 20 surinkimo)**
   - Šiandien: universalus `Immuch360-v<version>-release.apk` iš puslapio [Releases](https://github.com/freeKC/Immuch360/releases), įdiegtas šoniniu būdu su adb, žr. [Įdiegti televizoriuje](#install-it-on-the-tv). Tai ta pati programa kaip telefonuose.
   - Netrukus: Google Play televizoriams, po Google peržiūros televizoriaus leidimui.
+- **Windows 10 ir 11, 64 bitų (peržiūros versija)**
+  - Šiandien: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` iš [darbalaukio išankstinio leidimo](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), išskleistas ir paleistas, kaip nurodyta [Atsisiuntimas ir įdiegimas Windows sistemoje](#download-and-install-on-windows). Kol kas tik nuotraukos: vaizdo įrašai ateis su kitais darbalaukio surinkimais.
+  - Netrukus: vaizdo įrašų atkūrimas; vėliau diegimo programa, pasirašytas surinkimas ir atnaujinimai.
 
 App Store ir Meta Horizon Store nuorodos bus pridėtos čia, kai tik įrašai bus paskelbti. Prisijunkite su savo įprastu Immich serverio URL ir paskyra arba prisijungimo puslapyje bakstelėkite „Naudoti be serverio“, kad pradėtumėte nuo paties įrenginio nuotraukų ir vaizdo įrašų. APK iš GitHub pats neatsinaujina: stebėkite puslapį Releases, o įdiegę programą iš parduotuvės, atnaujinimus imkite iš tos parduotuvės.
 
@@ -993,12 +1105,15 @@ Variantas `quest` taikosi į SDK 34 ir išlaiko tik akinių naudojamus leidimus 
 
 Norėdami kurti iOS savo Mac kompiuteryje, naudokite Xcode ir savo pasirašymo komandą; su Xcode 26 pirmiausia vieną kartą paleiskite `xcodebuild -downloadComponent MetalToolchain`, nes jo reikia Spatial šešėliuoklėms. Be Mac iOS surinkimai vykdomi Codemagic (talpinamas Mac) pagal šios saugyklos failą `codemagic.yaml`. Android leidimų surinkimai vykdomi GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, Windows versija, kuriama iš šakos `desktop` su Flutter Windows sistemai: žingsniai pateikti [Susikurkite patys Windows sistemoje](#build-it-yourself-on-windows).
+
 Šioje saugykloje nėra jokių paslapčių: Android pasirašymo raktas saugomas kaip užšifruotos GitHub Actions paslaptys, o Apple pasirašymo medžiaga saugoma kaip užšifruoti kintamieji Codemagic. Darbo eigos failai juos nurodo tik pavadinimu. Be savo `android/key.jks` leidimo surinkimas pasirašomas derinimo raktu ir negali būti įdiegtas ant kopijos iš GitHub ar parduotuvės (pirmiausia pašalinkite ją); derinimo surinkimas įdiegiamas šalia jos kaip Immuch360 debug. Meta Horizon Store kopija yra leidimo `quest` APK, pasirašytas kitu raktu, tuo, su kuriuo parduotuvės programa buvo pirmą kartą užregistruota, todėl ji taip pat negali būti įdiegta ant šoniniu būdu įdiegto APK, nei atvirkščiai.
 
 ### Šakos
 
 - **`main`**: Immich `main` ties įsipareigojimu, kuriuo paremta `immuch360` (dabartiniams surinkimams 2026 m. rugsėjo 29 d.), niekada nekeičiama; ji pajuda į priekį, kai atšaka perbazuojama ant naujesnio Immich.
 - **`immuch360`**: šios atšakos pakeitimai ant Immich. Kiekviename leidime nurodoma, kokia Immich versija jis paremtas.
+- **`desktop`**: Immuch360 Desktop, kompiuterio versija, ant `immuch360`. Telefono leidimai į ją suliejami, o darbalaukio išankstiniai leidimai kuriami iš jos (darbalaukio surinkimas 1 iš įsipareigojimo 21f285c34, telefono 20 surinkimas plius kompiuterio versija). Joje niekas po `mobile/android` ir `mobile/ios` nesikeičia.
 
 <a id="logs"></a>
 ## Žurnalai
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Nuo 19 surinkimo DLNA klientas, telefono bendrinimas ir Apple erdvinės medijos atpažinimas taip pat rašo į pačios programos žurnalą („Logai“, profilio nuotraukos meniu viršuje dešinėje), su žymomis `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ir `NetworkMediaService`. Nuo 20 surinkimo televizoriaus režimas ten rašo su žymomis `TvMode` ir `TvTextEntry`, Plex serveriai su `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ir `PlexServerEditPage`, o Tapo kameros su `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ir `CameraLiveView`; Plex eilutėse niekada nėra prieigos rakto, adreso ar pavadinimo, o kamerų eilutėse nėra slaptažodžių. Žurnalo eilutės lieka įrenginyje, nebent patys jas nukopijuojate.
 
+Kompiuteryje (Immuch360 Desktop) puslapyje „Logai“ taip pat yra „Save logs to a file“ (Išsaugoti žurnalą faile): žurnalas arba žurnalo ir paskutinių strigčių ataskaitų ZIP, kai jų yra (tada siūlomas pavadinimas baigiasi „with-crash-reports“). Strigties ataskaita yra mažas minidump: gijos, kur jos sustojo, ir tik tai, ko reikia jų iškvietimams sekti, su programos failų pavadinimais, bet be jų aplankų; ne programos atmintis. Prieš bendrindami patikrinkite žurnalą: jame gali būti jūsų serverio adresas.
+
 <a id="privacy"></a>
 ## Privatumas
 
@@ -1026,19 +1143,21 @@ Nuo 19 surinkimo DLNA klientas, telefono bendrinimas ir Apple erdvinės medijos 
 - **Televizorius**: ar įrenginys yra televizorius, nustatoma pačiame įrenginyje; niekas nesiunčiama.
 - **Telefono bendrinimas**: tik vietinis tinklas, su naudotojo vardu ir slaptažodžiu, per paprastą HTTP (žr. [Bendrinti šį telefoną tinkle](#share-this-phone-on-the-network)).
 - **Kamera**: naudojama tik Spatial 2.5D grotuvo, įrenginyje; vaizdai niekada nesaugomi ir niekur nesiunčiami.
+- **Kompiuteryje** (Immuch360 Desktop, Windows peržiūros versija): programa skaito tik jūsų pasirinktus aplankus, kompiuteryje laiko savo rodyklę, miniatiūras ir podėlį, o slaptažodžius ir prieigos raktus saugo su Windows duomenų apsauga, tik jūsų Windows paskyrai. Kompiuterio bendrinimas laikosi telefono bendrinimo taisyklių ir neprasideda tinkle, kurį Windows pažymi kaip viešą arba kurio tipo ji negali nustatyti, nebent jūs to norite.
 
 Visa politika pateikta faile [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Licencija ir prekės ženklas
 
-Šis projektas yra Immich atšaka ir lieka pagal [GNU AGPL v3](../LICENSE). Kiekviename APK, įskaitant telefonų, taip pat yra Meta Spatial SDK, kuris nėra atvirojo kodo (Meta Platform Technologies SDK License Agreement) ir naudojamas tik Meta Quest akiniuose. Immuch360 nėra susijusi su Immich komanda ar FUTO ir jų nepatvirtinta.
+Šis projektas yra Immich atšaka ir lieka pagal [GNU AGPL v3](../LICENSE). Kiekviename APK, įskaitant telefonų, taip pat yra Meta Spatial SDK, kuris nėra atvirojo kodo (Meta Platform Technologies SDK License Agreement) ir naudojamas tik Meta Quest akiniuose; Immuch360 Desktop, Windows versijoje, jo nėra. Immuch360 nėra susijusi su Immich komanda ar FUTO ir jų nepatvirtinta.
 
 <a id="roadmap"></a>
 ## Planai
 
 Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o atsiliepimai [pranešimų sekiklyje](https://github.com/freeKC/Immuch360/issues) padeda nuspręsti, kas bus pirma.
 
+- **Immuch360 Desktop, pirmiausia Windows**: pirmoji peržiūros versija išleista (žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview)). Toliau vaizdo įrašų atkūrimas (pirmiausia plokšti vaizdo įrašai, tada 360°, 3D, VR180 ir neapdoroti failai), išmatuotas su dviem nešiojamojo kompiuterio vaizdo plokštėmis; tada kiekvienos funkcijos tikrinimas Windows kompiuteryje ir jos pataisymai; tada Spatial 2.5D su internetine kamera; tada Linux ir macOS, paketai, pasirašymas ir atnaujinimai.
 - **Google Play**: 18 surinkimas jau veikia; 20 surinkimas Google peržiūroje nuo 2026 m. spalio 7 d., vietoj 19 surinkimo. 21 surinkimas telefonuose ir planšetėse nieko nekeičia.
 - **App Store**: versija 3.3.0 laukia Apple peržiūros; ji turi 11 surinkimo funkcijas, todėl įkėlimas į Immich ir vaizdo dekoderių patikra (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su kitu App Store atnaujinimu. Nuoroda bus pridėta čia, kai ji veiks.
 - **Meta Horizon Store**: Meta patvirtino įrašą 2026 m. spalio 7 d. su 14 surinkimu. 21 surinkimas pateiktas kaip pirmasis jo atnaujinimas: jis atneša viską nuo 14 surinkimo (įkėlimus iš bendrinimo į Immich, vaizdo įrašo šaltinį, parenkamą pagal tai, ką akiniai dekoduoja, neapdorotus Insta360, GoPro ir DJI failus, DLNA, telefono bendrinimą, Apple erdvines nuotraukas, Plex Media Server bibliotekas, Tapo kameras), o parduotuvė jį skelbia Quest 2, Quest Pro, Quest 3 ir 3S. Parduotuvės nuoroda bus pridėta čia, kai puslapis taps viešas; šoniniu būdu įdiegtą kopiją pirmiausia reikės pašalinti (žr. [Diegimas](#install)).

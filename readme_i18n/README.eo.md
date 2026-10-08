@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, en kiuj vi povas ĉirkaŭrigardi, kaj senpaga ludilo por ebenaj, 360°-, 3D- kaj VR180-fotoj kaj -videoj, en Android-telefonoj kaj -tabulkomputiloj, iPhone kaj iPad, Meta-Quest-kaskoj (Quest 3 kaj 3S, kaj ekde kompilaĵo 21 la Quest 2 kaj Quest Pro, netestite), kaj ekde kompilaĵo 20 en Android TV kaj Google TV.
+Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, en kiuj vi povas ĉirkaŭrigardi, kaj senpaga ludilo por ebenaj, 360°-, 3D- kaj VR180-fotoj kaj -videoj, en Android-telefonoj kaj -tabulkomputiloj, iPhone kaj iPad, Meta-Quest-kaskoj (Quest 3 kaj 3S, kaj ekde kompilaĵo 21 la Quest 2 kaj Quest Pro, netestite), kaj ekde kompilaĵo 20 en Android TV kaj Google TV. Immuch360 Desktop, la sama aplikaĵo en Windows-komputilo, aperis kiel antaŭversio, vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview).
 
 Ĝi estas por homoj, kiuj filmas per 360°-fotilo (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) aŭ per la sfera foto-reĝimo de telefono, aŭ kiuj havas VR-kaskon, kaj volas spekti siajn proprajn bildojn el Immich-servilo, el la telefono mem, el NAS, el aŭdvida servilo aŭ el Plex-servilo: sama servilo, sama konto, neniu servila kromprogramo, aŭ tute neniu servilo. Ekde kompilaĵo 20 ĝi ankaŭ montras Tapo-kameraojn, rekte kaj la registraĵojn de ilia memorkarto.
 
@@ -18,13 +18,14 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
   <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
   App Store: <a href="#where-to-get-it">en kontrolado</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprobita, kompilaĵo 21 sendita kiel ĝia unua ĝisdatigo<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">elŝuto de la antaŭversio</a>
 </p>
 
 - 🌐 **Denaska 360°**<br>Fotoj kaj videoj kiel sfero, en kiu vi ĉirkaŭrigardas, per la giroskopo, krudaj dosieroj de la fotilo inkluzive (Insta360 ekde kompilaĵo 16, GoPro kaj DJI ekde kompilaĵo 18). Ankaŭ senpaga videoludilo: ebena, 360°, 3D, VR180
 - 👓 **Denaska 3D**<br>Stereoskopa 360° kaj VR180, supre kaj malsupre aŭ flank-al-flanke, kaj spacaj fotoj de Apple (ekde kompilaĵo 19): vera 3D en la kasko, unu okulo en telefono
 - 🎥 **Denaska 2.5D**<br>Profundo sur ebena ekrano el stereoskopa video, la vido sekvas vian kapon (eksperimenta, telefonoj kaj tabulkomputiloj)
-- 📱 **Android, iOS, Quest, TV**<br>Unu aplikaĵo en telefonoj, tabulkomputiloj kaj la kaskoj Quest 2, Pro, 3 kaj 3S, vera 3D en la kasko, kaj ekde kompilaĵo 20 en Android TV per la teleregilo
+- 📱 **Android, iOS, Quest, TV**<br>Unu aplikaĵo en telefonoj, tabulkomputiloj kaj la kaskoj Quest 2, Pro, 3 kaj 3S, vera 3D en la kasko, ekde kompilaĵo 20 en Android TV per la teleregilo, kaj antaŭversio por Windows
 - 🔌 **Kun aŭ sen servilo**<br>Via Immich-servilo, aŭ la propra galerio de la telefono, sen bezono de konto
 - 🗄️ **Retaj kunhavigoj**<br>Samba (SMB), WebDAV kaj, ekde kompilaĵo 19, DLNA-aŭdvidaj serviloj trovitaj en la reto kaj legataj rekte, nenio elŝutita, kaj senditaj al Immich kiam vi decidas. Ekde kompilaĵo 19 telefono ankaŭ kunhavigas sian propran galerion kun la kasko
 - 📺 **En la televidilo**<br>Ekde kompilaĵo 20 la sama APK en Android TV kaj Google TV: 360°-fotoj kaj -videoj, via servilo kaj viaj kunhavigoj, per la teleregilo
@@ -52,6 +53,7 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
 - [Kompare kun la aplikaĵo de Immich kaj aliaj aplikaĵoj](#compared-with-the-immich-app-and-other-apps)
 - [Formatoj kaj fontoj, laŭ platformo](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [En Windows-komputilo: Immuch360 Desktop (antaŭversio)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Kie akiri ĝin](#where-to-get-it)
 - [Konstrui ĝin mem](#build-it-yourself)
 - [Protokoloj](#logs)
@@ -77,6 +79,7 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
 - **"Mi volas spekti miajn 360°-fotojn kaj -videojn, kaj la videojn de mia NAS aŭ de mia Plex-servilo, en la televidilo, per la teleregilo."** Vidu [Spekti en via televidilo](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Mi ne trovas miajn 360°-bildojn inter ĉiuj aliaj."** Vidu [La 360°-listo](#find-your-360-shots-the-360-list).
 - **"Mia 360°-video saltetas, aŭ ludas malklaran kopion."** Vidu [Detaloj de video kaj malkodiloj](#video-details-decoders-and-why-a-video-stutters).
+- **"Mi volas miajn 360°-fotojn kaj mian Immich-bibliotekon en mia Windows-komputilo, kun la fotoj de ĝiaj dosierujoj, mia NAS kaj mia Plex-servilo, kaj la komputilon kunhavigitan kun mia kasko."** Vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview) (antaŭversio, nur fotoj nuntempe).
 - **"Ĉu mi konservas tion, kion faras la aplikaĵo de Immich?"** Jes, kun du malgrandaj ŝanĝoj, vidu [Ĉio alia estas Immich](#everything-else-is-immich).
 
 Kiam funkcio estas freŝa, la teksto diras, ekde kiu kompilaĵo ĝi ekzistas. La eldono en GitHub ĉiam havas la plej novan kompilaĵon, la vendejoj sekvas poste: vidu [Kie akiri ĝin](#where-to-get-it).
@@ -749,6 +752,7 @@ La nuna kompilaĵo, kompilaĵo 21 (versio 3.3.0-rc.0, kompilaĵa numero 3030019)
 | Bibliotekoj de Plex Media Server ludataj el la originalaj dosieroj, hejme kaj ekster la hejmo, sen plex.tv | ❌ | ✅ ekde kompilaĵo 20, ĉiu montrilo, en telefonoj, tabulkomputiloj, la Quest kaj televidiloj |
 | Tapo-kameraoj: la rekta vido, kaj la registraĵoj de la memorkarto senditaj al Immich kiam vi decidas | ❌ | ✅ ekde kompilaĵo 20: registraĵoj ĉie, rekte en Android, Android TV kaj la Quest |
 | Android TV kaj Google TV, regataj per la teleregilo, en la sama APK | ❌ ne televida aplikaĵo | ✅ ekde kompilaĵo 20 |
+| La sama aplikaĵo en Windows-komputilo | ❌ nur telefonoj kaj tabulkomputiloj | ✅ antaŭversio, ankoraŭ sen videoj |
 | Krudaj Insta360-fotoj .insp kaj unutrakaj videoj .insv | ❌ ebenaj | ✅ ekde kompilaĵo 16 |
 | Krudaj videoj kun unu objektivo po trako aŭ po dosiero (Insta360 X4, X4 Air, X5, X6, X3-paroj, GoPro .360, DJI .osv) | ❌ ebenaj aŭ malĝustaj | ✅ ekde kompilaĵo 18 |
 | Dufiŝokula .dng | ❌ ebena | ❌ ankoraŭ ne |
@@ -778,6 +782,7 @@ La nuna kompilaĵo, kompilaĵo 21 (versio 3.3.0-rc.0, kompilaĵa numero 3030019)
 - **Plex Media Server**: kontrolita el komputilo kontraŭ vera Plex Media Server 1.42.1 (parigo, dosierujoj, bajtintervaloj, miniaturoj, la adreso ekster la hejmo); ankoraŭ ne kontrolita en aparato.
 - **Tapo-kameraoj**: kontrolita kontraŭ simulita kamerao; ankoraŭ ne kontrolita kun vera kamerao.
 - **Android TV kaj Google TV**: kontrolita per aŭtomataj testoj; ankoraŭ ne kontrolita en televidilo.
+- **La sama aplikaĵo en Windows-komputilo**: 475 aŭtomataj labortablaj testoj en Windows, kaj en Windows-11-komputilo la aplikaĵo startas, malfermas konservitan seancon ĉe Immich-servilo, sinkronigas kaj fermiĝas ĝuste; la mana testado de ĉiu funkcio estas daŭranta.
 - **Krudaj Insta360-fotoj .insp kaj unutrakaj videoj .insv**: fotoj kontrolitaj kontraŭ Insta360-Studio-eksportaĵoj de X3-dosieroj, videoj en Android-emulilo kun malaltdistingiva X3-dosiero; ankoraŭ ne funkciigitaj en iPhone.
 - **Krudaj videoj kun unu objektivo po trako aŭ po dosiero**: analiziloj kaj kunkudrado kontrolitaj per veraj X4-, X3-paraj, GoPro-MAX- kaj Osmo-360-dosieroj; ludado estas la aparata testo de kompilaĵoj 18 kaj 19.
 - **Dufiŝokula .dng**: planita.
@@ -883,12 +888,15 @@ Immuch360 estas galerio, kaj ĝi ankaŭ estas senpaga aŭdvida ludilo: ĝi ludas
 
 La eroj de Android TV kaj Google TV, ekde kompilaĵo 20, ankoraŭ ne estis kontrolitaj en televidilo, vidu [Spekti en via televidilo](#watch-on-your-tv-android-tv-and-google-tv); la kameraaj eroj ankoraŭ ne estis kontrolitaj kun vera kamerao.
 
+En Windows, la antaŭversio de Immuch360 Desktop montras la fotojn, ebenajn kaj 360°, inkluzive de krudaj Insta360-fotoj .insp, per la muso kaj la klavaro, el la servilo, la dosierujoj de la komputilo, la kunhavigoj kaj Plex; ĝi ankoraŭ ne ludas videojn, kiuj montras lokokupilon (vidu [Ankoraŭ ne](#not-there-yet)).
+
 - **Via Immich-servilo**: la originalo aŭ la transkodita fluo de la servilo, laŭ Agordoj, Montrilo de elemento, "Videofonto" (vidu [Detaloj de video kaj malkodiloj](#video-details-decoders-and-why-a-video-stutters)). Sama konto kiel la TTT-aplikaĵo.
 - **La telefono aŭ kasko mem**: "Uzi sen servilo" en la ensaluta paĝo, aŭ la ero Ĉe tiu ĉi aparato de la langeto Bibliteko.
 - **NAS aŭ komputilo**: SMB- kaj WebDAV-kunhavigoj, kaj ekde kompilaĵo 19 DLNA-aŭdvidaj serviloj, trovitaj en la reto, legataj rekte (SMB-video per ĝis ses konektoj), nenio kopiita; ekde kompilaĵo 15 la dosieroj, kiujn vi elektas, povas esti senditaj al via Immich-konto.
 - **Alia telefono (ekde kompilaĵo 19)**: "Kunhavigi ĉi tiun telefonon en la reto" en tiu telefono: la kasko, aŭ iu ajn WebDAV-kliento de la reto, legas ĝiajn albumojn, monatojn kaj 360°-aŭdvidaĵojn.
 - **Plex Media Server (ekde kompilaĵo 20)**: ĝiaj bibliotekoj de fotoj, filmoj kaj televidaj serioj laŭ dosierujo, la originalaj dosieroj legataj rekte per HTTPS kontrolita kontraŭ la propra atestilo de la servilo, hejme aŭ per la adreso ekster la hejmo, en ĉiu platformo; vidu [Plex Media Server, sen plex.tv](#plex-media-server-without-plextv).
 - **Tapo-kamerao (ekde kompilaĵo 20)**: la rekta vido per la kamerao-konto (Android, Android TV, la Quest), kaj la registraĵoj de ĝia memorkarto per la pasvorto de la TP-Link-konto (ĉiu platformo), nur en la loka reto; vidu [Tapo-kameraoj](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **La dosierujoj de Windows-komputilo (labortabla antaŭversio)**: la dosierujoj, kiujn vi elektas en Immuch360 Desktop, legataj anstataŭ la galerio de telefono; la komputilo ankaŭ povas kunhavigi ilin kun la kasko, vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Ekrankopioj faritaj en la kasko per la kapta butono (Meta-butono kaj ĉano), en 
 - **APK-grandeco**: la Spatial SDK aldonas ĉirkaŭ 56 MB da 64-bita ARM-denaska kodo, ankaŭ en telefonoj, kie ĝi neniam estas ŝargata.
 - **Permesilo**: la enmergiĝa vido uzas la Meta Spatial SDK, distribuatan laŭ la Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## En Windows-komputilo: Immuch360 Desktop (antaŭversio)
+
+Via Immich-biblioteko estas en servilo, aliaj fotoj troviĝas en la dosierujoj de la komputilo, la videoj en NAS aŭ Plex-servilo, kaj vi ŝatus ĉirkaŭrigardi en viaj 360°-fotoj sur granda ekrano, aŭ montri la fotojn de la komputilo en la kasko. Immuch360 Desktop estas la sama aplikaĵo en Windows-komputilo, konstruita el la sama fontkodo kiel la telefonaj aplikaĵoj.
+
+En komputilo, Immich proponas sian retaplikaĵon en retumilo. **Kion aldonas Immuch360 Desktop**: la dosierujojn de la komputilo sen ajna servilo aŭ konto, SMB-, WebDAV-, DLNA- kaj Plex-kunhavigojn foliumatajn el la aplikaĵo, krudajn Insta360-fotojn .insp malfermatajn kiel sferon, kaj la komputilon kunhavigitan kun Meta Quest hejme.
+
+Ĉi tiu unua kompilaĵo estas antaŭversio: fotoj funkcias, videoj venos kun la venontaj labortablaj kompilaĵoj. La telefonaj, tabulkomputilaj, Quest- kaj televidaj aplikaĵoj ne ŝanĝiĝas pro ĝi kaj gardas la nomon Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Elŝuti kaj instali en Windows
+
+La unua kompilaĵo estas la GitHub-antaŭeldono [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Ĝia dosiero estas `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 dosieroj post malpakado), kun `SHA256SUMS.txt` por kontroli ĝin. Ĝi estis konstruita el la branĉo `desktop` ĉe la enmeto 21f285c34: la telefona kompilaĵo 20 plus la komputila versio. Ĝi bezonas Windows 10 aŭ 11, 64-bitan.
+
+1. Elŝutu la ZIP-dosieron kaj malpaku ĝin ie ajn, ekzemple en Dokumentoj.
+2. Startigu `immuch360.exe` el la malpakita dosierujo. Gardu la dosierujon tuta: la programo bezonas la dosierojn apud si.
+3. La dosieroj ankoraŭ ne estas subskribitaj, do Windows SmartScreen eble montros "Windows protected your PC": elektu "More info", poste "Run anyway". Kie Smart App Control estas ŝaltita, ĝi blokas nesubskribitajn programojn.
+4. Atendu la fenestron. La unua starto de nova kompilaĵo daŭras de 10 sekundoj ĝis ĉirkaŭ unu minuto, plej verŝajne dum Microsoft Defender skanas la novajn dosierojn: ne startigu la aplikaĵon denove intertempe. La sekvaj startoj daŭras sekundon aŭ du.
+5. En la ensaluta paĝo, ensalutu al via Immich-servilo per ĝia adreso, via retpoŝtadreso kaj via pasvorto, aŭ alklaku "Uzi sen servilo".
+
+Por kontroli la ZIP-dosieron, rulu `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` en komandinvito, en la dosierujo de la elŝuto: la rezulto estas tiu skribita en `SHA256SUMS.txt`. Ankoraŭ ne ekzistas instalilo nek aŭtomata ĝisdatigo: observu la paĝon [Eldonoj](https://github.com/freeKC/Immuch360/releases), kaj malpaku la sekvan kompilaĵon same.
+
+### Kion faras la antaŭversio
+
+- **Via Immich-servilo**: la templinio, albumoj, homoj, memoraĵoj kaj serĉo, kaj la servilaj fotoj en plena grando, kiel en telefono.
+- **Sen servilo**: la dosierujoj de viaj fotoj kaj videoj (Bildoj kaj Videoj estas proponataj) anstataŭas la galerion de telefono. Nenio estas legata ekster la dosierujoj, kiujn vi elektis, kaj sen servilo nenio forlasas la komputilon.
+- **Alŝuto kaj savkopio** el tiuj dosierujoj al via Immich-servilo, dum la aplikaĵo estas malfermita.
+- **360°-fotoj kiel sfero**, per la muso kaj la klavaro; la krudaj fotoj .insp de Insta360-kameraoj malfermiĝas kiel en telefonoj.
+- **Retaj kunhavigoj**: Samba (SMB), WebDAV kaj DLNA-aŭdvidaj serviloj, kaj Plex-serviloj sen plex.tv, foliumataj kiel en telefonoj: iliaj fotoj malfermiĝas, iliaj videoj atendas la videoludilon (vidu [Ankoraŭ ne](#not-there-yet)). Por Tapo-kameraoj, la registraĵoj de la memorkarto: la listo, kaj la preno de klipo.
+- **Kunhavigi ĉi tiun komputilon en la reto**: la albumoj, monatoj kaj 360°-aŭdvidaĵoj de viaj dosierujoj, nur legeblaj, por Meta Quest aŭ alia aparato hejme, kiel telefono kunhavigas sin mem.
+- **Dosieroj**: elŝutoj el la servilo iras en dosierujon, kiun vi elektas, "Konservi en dosierujon" gardas kopion de la elektitaj fotoj kaj videoj, kaj la paĝo Protokoloj havas "Konservi la protokolojn en dosieron".
+
+### Uzi ĝin en komputilo
+
+1. **Elektu viajn dosierujojn.** Sen servilo, la templinio komenciĝas per "Elektu la dosierujojn de viaj fotoj kaj videoj": alklaku "Aldoni dosierujon". Kun servilo, la sama karto aperas en la Bibliteko sub "En ĉi tiu komputilo", kaj en la savkopiotaj albumoj, ĝis dosierujo estas elektita. Poste ili havas linion "Dosierujoj en ĉi tiu komputilo", same kiel Agordoj, "Ĉi tiu komputilo".
+2. **Nubaj, USB- kaj retaj dosierujoj.** Dosieroj, kiujn OneDrive (aŭ alia nuba disko) gardas nur enrete, estas kalkulataj sed ne legataj, do aldoni dosierujon ne elŝutas vian tutan nubon: "Elŝuti kaj inkluzivi" prenas ilin kiam vi volas ilin. USB-disko, kiu revenas sub alia litero, gardas siajn fotojn. Retaj dosierujoj, kaj dosierujoj en memorkarto aŭ USB-disko (por ke Windows ankoraŭ povu elĵeti ĝin), ne estas observataj pri ŝanĝoj: uzu Refreŝigi post aldono de dosieroj tie.
+3. **Ĉirkaŭrigardi en 360°-foto**: trenu per la muso, zomu per la rado, duobla klako aŭ + kaj - (sur ajna klavararanĝo, AZERTY inkluzive), moviĝu per la sagoklavoj. F aŭ F11 ŝaltas plenekranan reĝimon kaj Escape forlasas ĝin; Home kaj End iras al la unua kaj la lasta foto; I montras la detalojn.
+4. **Iri de foto al foto**: en ebena foto, la maldekstra kaj dekstra sagoj, aŭ la ĉevronoj, kiuj aperas ĉe la randoj dum la muso moviĝas, iras al la antaŭa kaj la sekva. Literoj tajpitaj en la priskriba kampo restas en la teksto.
+5. **Kunhavigi la komputilon kun la kasko**: malfermu la Bibliteko, poste Retaj kunhavigoj; la unua kahelo estas "Kunhavigi ĉi tiun komputilon en la reto", la komputila flanko de [Kunhavigi ĉi tiun telefonon en la reto](#share-this-phone-on-the-network). Ŝaltu "Kunhavigi fotojn kaj filmojn en la reto", poste aldonu la komputilon en la kasko kiel tiu sekcio diras. La kunhavigo ĉesas kiam la aplikaĵo estas fermita aŭ post unu horo sen uzo.
+6. **Permesi la reton**: Windows eble demandos, ĉu Immuch360 Desktop rajtas uzi la reton. Permesu ĝin en privataj retoj, alie la kasko ne povas trovi la komputilon. En reto, kiun Windows markas kiel publikan (kafejo, hotelo), aŭ kies tipon ĝi ne povas diri, la kunhavigo ne startas, krom se vi elektas "Kunhavigi por ĉi tiu seanco", kaj la komputilo anoncas sin nur en reto, en kiu ĝi kunhavigas.
+7. **Agordoj, "Ĉi tiu komputilo"**: la dosierujoj, la elŝuta dosierujo, la retadaptilo uzata por trovi kunhavigojn kaj por kunhavigi la komputilon (kiam ĝi havas plurajn, Wi-Fi kaj Ethernet ekzemple), kaj fidataj atestiloj: la atestila aŭtoritato de via propra servilo, kiel PEM-dosiero, por HTTPS-adreso, al kiu Windows ne fidas per si mem. Klientaj atestiloj estas importataj en Agordoj, Altnivelaj agordoj, kiel en telefonoj.
+
+### Kompare kun la telefonaj aplikaĵoj
+
+- **Savkopio funkcias dum la aplikaĵo estas malfermita** (aŭ minimumigita), ne fone kun la fenestro fermita. Fermi la fenestron dum alŝutoj funkcias, aŭ dum la komputilo estas kunhavigita, unue demandas.
+- **Dosierujoj anstataŭ galerio**: la aplikaĵo legas la dosierujojn, kiujn vi elektas, kaj gardas sian propran indekson, bildetojn kaj kaŝmemoron en la komputilo.
+- **Unu fenestro**: malfermi la aplikaĵon duan fojon revenigas la unuan fenestron anstataŭ starti duan kopion.
+- **Nenio estas forigata el viaj dosierujoj**: "Forigi de la aparato" estas kaŝita, kaj Forigi forigas nur la servilan kopion, ĝis la aplikaĵo povos sendi dosierojn al la Windows-rubujo.
+- **Muso kaj klavaro** anstataŭ tuŝo kaj la giroskopo.
+
+<a id="not-there-yet"></a>
+### Ankoraŭ ne
+
+- **Videoj**: ili montras lokokupilon nuntempe, kaj iliaj bildetoj filman piktogramon. Ludado venos poste: unue ebenaj videoj, poste 360°-, 3D- kaj VR180-videoj kaj la krudaj 360°-videoj.
+- **Spatial 2.5D**, poste kun la retkamerao; la **Tapo-viva vido**; la **mapo** kaj la vido Lokoj; **ensaluto per OAuth** (ensalutu per retpoŝtadreso kaj pasvorto anstataŭe); **Google Cast**; **sciigoj**.
+- **Instalilo, subskribita kompilaĵo kaj aŭtomataj ĝisdatigoj**: ĉi tiu kompilaĵo estas dosierujo kun `immuch360.exe`.
+- **Linux kaj macOS**: iliaj projektoj estas en la fontkodo, sed ili ankoraŭ ne estis konstruitaj aŭ provitaj en tiuj sistemoj; ili venos post Windows.
+- **Tradukoj**: la novaj tekstoj de la komputila versio estas en la angla nuntempe.
+
+### Konataj problemoj
+
+- **Dum la kasko legas dosieron el la kunhavigita komputilo** (video, kiun ĝi ludas, foto, kiun ĝi elŝutas), Windows ne povas renomi, movi aŭ forigi tiun dosieron kaj diras, ke ĝi estas malfermita en Immuch360 Desktop: unue haltigu la ludadon. Savkopioj ne tenas viajn dosierojn tiel: dosiero povas esti renomita, movita aŭ forigita dum ĝi estas alŝutata.
+- **Malglataĵoj**: la supraj funkcioj sukcese trapasas siajn aŭtomatajn testojn en Windows (475 labortablaj testoj), kaj en Windows-11-komputilo la aplikaĵo startas, malfermas konservitan seancon ĉe Immich-servilo, sinkronigas kaj fermiĝas ĝuste. La mana testado de ĉiu funkcio en vera komputilo ankoraŭ daŭras.
+
+Se io misfunkcias, bonvolu malfermi [raporton](https://github.com/freeKC/Immuch360/issues) kun la protokolo konservita el la paĝo Protokoloj, vidu [Protokoloj](#logs). Kontrolu la protokolon antaŭ ol kunhavigi ĝin: ĝi povas enhavi vian servilan adreson.
+
+<a id="build-it-yourself-on-windows"></a>
+### Konstrui ĝin mem en Windows
+
+Vi bezonas Windows 10 aŭ 11 sur x64, Flutter 3.47.2 por Windows, Visual Studio 2022 aŭ ĝiajn Build Tools kun la laborŝarĝo "Desktop development with C++", Programistan reĝimon ŝaltitan en la agordoj de Windows (Flutter bezonas ĝin por la kromprogramoj), kaj Python 3 por la pakiga skripto.
+
+1. Akiru la branĉon `desktop` kaj rulu la kodgeneradon. Ĝi uzas Java kaj Node, do rulu ĝin en Linux, macOS aŭ en WSL; kun WSL, gardu la klonon en Windows-disko, kiun WSL vidas sub `/mnt/c` aŭ `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. En Windows, en la sama dosierujo `mobile`, konstruu la aplikaĵon:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. La dosierujo `Release` funkcias en la komputilo, kiu konstruis ĝin. Por alia komputilo, gardu la tutan dosierujon kaj aldonu la Visual C++-rultempon apud `immuch360.exe`. El la radiko de la klono, la pakiga skripto kopias ĝin, preterlasas tion, kio servas nur al Android, kontrolas, ke ĉiu DLL, kiun la aplikaĵo ŝargas, estas en la dosierujo aŭ en Windows mem, kaj kreas la ZIP-dosieron:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+La CI de la branĉo `desktop` (`.github/workflows/immuch360-desktop.yml`) rulas la telefonajn kontrolojn kaj la tutan testaron en Linux, la labortablajn testojn en Windows, kaj konstruas la saman ZIP-dosieron; ĝiaj Linux- kaj macOS-taskoj (`flutter build linux` kaj `flutter build macos`, kun la sama `-t lib/main_desktop.dart`) ankoraŭ ne funkciis en tiuj sistemoj.
+
 <a id="where-to-get-it"></a>
 ## Kie akiri ĝin
 
-La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Store-versio atendas la kontrolon de Apple, la Meta-Horizon-Store-listero estas aprobita kaj ĝia unua ĝisdatigo estas en la kontrolo de Meta, kaj la Google-Play-versio por televidiloj atendas la kontrolon de Google de la televida eldono. La GitHub-eldono ĉiam estas la plej nova kompilaĵo:
+La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Store-versio atendas la kontrolon de Apple, la Meta-Horizon-Store-listero estas aprobita kaj ĝia unua ĝisdatigo estas en la kontrolo de Meta, kaj la Google-Play-versio por televidiloj atendas la kontrolon de Google de la televida eldono. Immuch360 Desktop, por Windows, estas antaŭversio en GitHub. La GitHub-eldono ĉiam estas la plej nova kompilaĵo:
 
 - **Android-telefonoj kaj -tabulkomputiloj**
   - Hodiaŭ: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), aŭ la APK en la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` por telefono (la universala `Immuch360-v<version>-release.apk` funkcias ĉie, `-armeabi-v7a` estas por pli malnovaj 32-bitaj telefonoj, kaj la dosiero `.aab` estas por Google Play, ne por flankinstalado). La GitHub-kompilaĵo kutime estas antaŭ la vendejo. Ĉiuokaze ĝi instaliĝas apud la oficiala aplikaĵo de Immich (pakaĵo `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Stor
 - **Android TV kaj Google TV (ekde kompilaĵo 20)**
   - Hodiaŭ: la universala `Immuch360-v<version>-release.apk` de la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases), flankinstalita per adb, vidu [Instali ĝin en la televidilo](#install-it-on-the-tv). Ĝi estas la sama aplikaĵo kiel en telefonoj.
   - Baldaŭ: Google Play en televidiloj, post la kontrolo de Google de la televida eldono.
+- **Windows 10 kaj 11, 64-bita (antaŭversio)**
+  - Hodiaŭ: Immuch360 Desktop, la ZIP-dosiero `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` de la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), malpakita kaj startigita kiel diras [Elŝuti kaj instali en Windows](#download-and-install-on-windows). Nur fotoj nuntempe: videoj venos kun la venontaj labortablaj kompilaĵoj.
+  - Baldaŭ: videoludado; instalilo, subskribita kompilaĵo kaj ĝisdatigoj poste.
 
 La ligiloj al App Store kaj Meta Horizon Store estos aldonitaj ĉi tie tuj kiam la listeroj estos publikigitaj. Ensalutu per via kutima Immich-servila URL kaj konto, aŭ tuŝetu "Uzi sen servilo" en la ensaluta paĝo por komenci kun la propraj fotoj kaj videoj de la aparato. La APK el GitHub ne ĝisdatigas sin mem: observu la paĝon Eldonoj, kaj post kiam vi instalis la aplikaĵon el vendejo, prenu la ĝisdatigojn el tiu vendejo.
 
@@ -993,12 +1105,15 @@ La varianto `quest` celas SDK 34 kaj gardas nur la permesojn, kiujn la kasko uza
 
 Por konstrui por iOS en via propra Mac, uzu Xcode kaj vian propran subskriban teamon; kun Xcode 26, rulu `xcodebuild -downloadComponent MetalToolchain` unufoje antaŭe, ĉar la Spatial-ombrigiloj bezonas ĝin. Sen Mac, iOS-kompilaĵoj funkcias en Codemagic (gastigata Mac) el la dosiero `codemagic.yaml` de ĉi tiu deponejo. Android-eldonaj kompilaĵoj funkcias en GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, la Windows-versio, konstruiĝas el la branĉo `desktop` per Flutter por Windows: la paŝoj estas en [Konstrui ĝin mem en Windows](#build-it-yourself-on-windows).
+
 Neniu sekreto loĝas en ĉi tiu deponejo: la Android-subskriba ŝlosilo estas konservita kiel ĉifritaj sekretoj de GitHub Actions, kaj la Apple-subskriba materialo kiel ĉifritaj variabloj en Codemagic. La laborfluaj dosieroj nur referencas ilin laŭ nomo. Sen via propra `android/key.jks`, eldona kompilaĵo estas subskribita per la sencimiga ŝlosilo kaj ne povas instaliĝi super kopio el GitHub aŭ vendejo (unue malinstalu tiun); sencimiga kompilaĵo instaliĝas apud ĝi kiel Immuch360 debug. La Meta-Horizon-Store-kopio estas la `quest`-APK de la eldono subskribita per alia ŝlosilo, tiu, per kiu la vendeja aplikaĵo unue estis registrita, do ĝi ankaŭ ne povas instaliĝi super flankinstalita APK, nek inverse.
 
 ### Branĉoj
 
 - **`main`**: Immich `main` ĉe la enmeto, sur kiu `immuch360` baziĝas (29-a de septembro 2026 por la nunaj kompilaĵoj), neniam modifita; ĝi antaŭeniras kiam la forko estas rebazita sur pli nova Immich.
 - **`immuch360`**: la ŝanĝoj de ĉi tiu forko super Immich. Ĉiu eldono diras, sur kiu Immich-versio ĝi baziĝas.
+- **`desktop`**: Immuch360 Desktop, la komputila versio, super `immuch360`. La telefonaj eldonoj estas kunfandataj en ĝin, kaj la labortablaj antaŭeldonoj estas konstruataj el ĝi (desktop build 1 el la enmeto 21f285c34, la telefona kompilaĵo 20 plus la komputila versio). Nenio sub `mobile/android` kaj `mobile/ios` ŝanĝiĝas en ĝi.
 
 <a id="logs"></a>
 ## Protokoloj
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Ekde kompilaĵo 19 la DLNA-kliento, la telefona kunhavigo kaj la detekto de spacaj aŭdvidaĵoj de Apple ankaŭ skribas en la propran protokolon de la aplikaĵo ("Protokoloj", en la menuo de la profila bildo supre dekstre), sub `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` kaj `NetworkMediaService`. Ekde kompilaĵo 20 la televida reĝimo skribas tien sub `TvMode` kaj `TvTextEntry`, la Plex-serviloj sub `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` kaj `PlexServerEditPage`, kaj la Tapo-kameraoj sub `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` kaj `CameraLiveView`; la Plex-linioj neniam enhavas la ĵetonon, adreson aŭ titolon, kaj la kameraaj linioj preterlasas la pasvortojn. Protokolaj linioj restas en la aparato, krom se vi mem kopias ilin.
 
+En komputilo (Immuch360 Desktop), la paĝo Protokoloj ankaŭ havas "Konservi la protokolojn en dosieron": la protokolo, aŭ ZIP-dosiero kun la protokolo kaj la raportoj de la lastaj kraŝoj, kiam estas iuj (ĝia proponata nomo tiam finiĝas per "with-crash-reports"). Kraŝraporto estas malgranda minidump: la fadenoj, kie ili haltis kaj nur tio, kio necesas por sekvi iliajn vokojn, kun la nomoj de la programdosieroj sed ne iliaj dosierujoj; ne la memoro de la aplikaĵo. Kontrolu la protokolon antaŭ ol kunhavigi ĝin: ĝi povas enhavi vian servilan adreson.
+
 <a id="privacy"></a>
 ## Privateco
 
@@ -1026,19 +1143,21 @@ Ekde kompilaĵo 19 la DLNA-kliento, la telefona kunhavigo kaj la detekto de spac
 - **Televidilo**: ĉu la aparato estas televidilo, tio estas legata en la aparato; nenio estas sendata.
 - **Telefona kunhavigo**: nur loka reto, kun uzantnomo kaj pasvorto, per simpla HTTP (vidu [Kunhavigi ĉi tiun telefonon en la reto](#share-this-phone-on-the-network)).
 - **Fotilo**: uzata nur de la ludilo Spatial 2.5D, en la aparato; la bildoj neniam estas konservataj kaj neniam senditaj ien ajn.
+- **En komputilo** (Immuch360 Desktop, Windows-antaŭversio): la aplikaĵo legas nur la dosierujojn, kiujn vi elektas, gardas sian indekson, bildetojn kaj kaŝmemoron en la komputilo, kaj konservas pasvortojn kaj ĵetonojn per la datumprotekto de Windows, nur por via Windows-konto. La komputila kunhavigo sekvas la regulojn de la telefona kunhavigo, kaj ne startas en reto, kiun Windows markas kiel publikan, aŭ kies tipon ĝi ne povas diri, krom se vi tion decidas.
 
 La plena politiko estas en [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Permesilo kaj varmarko
 
-Ĉi tiu projekto estas forko de Immich kaj restas sub la [GNU AGPL v3](../LICENSE). Ĉiu APK, inkluzive de la telefonaj, ankaŭ enhavas la Meta Spatial SDK, kiu ne estas malfermitkoda (Meta Platform Technologies SDK License Agreement) kaj estas uzata nur en Meta-Quest-kaskoj. Immuch360 estas nek ligita al, nek aprobita de, la teamo de Immich aŭ FUTO.
+Ĉi tiu projekto estas forko de Immich kaj restas sub la [GNU AGPL v3](../LICENSE). Ĉiu APK, inkluzive de la telefonaj, ankaŭ enhavas la Meta Spatial SDK, kiu ne estas malfermitkoda (Meta Platform Technologies SDK License Agreement) kaj estas uzata nur en Meta-Quest-kaskoj; Immuch360 Desktop, la Windows-versio, ne enhavas ĝin. Immuch360 estas nek ligita al, nek aprobita de, la teamo de Immich aŭ FUTO.
 
 <a id="roadmap"></a>
 ## Vojmapo
 
 Kio ankoraŭ ne estas farita, la plej verŝajna unue. Nenio ĉi tie estas promeso, kaj komentoj en la [cimspurilo](https://github.com/freeKC/Immuch360/issues) helpas decidi, kio venos unue.
 
+- **Immuch360 Desktop, unue Windows**: la unua antaŭversio aperis (vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview)). Poste, videoludado (unue ebenaj videoj, poste 360°, 3D, VR180 kaj la krudaj dosieroj), mezurata sur la du grafikaj kartoj de tekkomputilo; poste la testado de ĉiu funkcio en Windows-komputilo kaj ĝiaj korektoj; poste Spatial 2.5D kun la retkamerao; poste Linux kaj macOS, pakaĵoj, subskribado kaj ĝisdatigoj.
 - **Google Play**: kompilaĵo 18 estas publika; kompilaĵo 20 estas en la kontrolo de Google ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 19. Kompilaĵo 21 ŝanĝas nenion en telefonoj kaj tabulkomputiloj.
 - **App Store**: versio 3.3.0 atendas la kontrolon de Apple; ĝi portas la funkciojn de kompilaĵo 11, do la alŝuto al Immich kaj la kontrolo de videomalkodiloj (kompilaĵo 15) kaj la krudaj Insta360-dosieroj (kompilaĵo 16) venos kun la sekva App-Store-ĝisdatigo. La ligilo estos aldonita ĉi tie kiam ĝi estos publika.
 - **Meta Horizon Store**: Meta aprobis la listeron la 7-an de oktobro 2026 kun kompilaĵo 14. Kompilaĵo 21 estas sendita kiel ĝia unua ĝisdatigo: ĝi alportas ĉion ekde kompilaĵo 14 (alŝutoj el kunhavigo al Immich, la video-fonto elektita laŭ tio, kion la kasko malkodas, krudaj dosieroj de Insta360, GoPro kaj DJI, DLNA, la telefona kunhavigo, spacaj fotoj de Apple, bibliotekoj de Plex Media Server, Tapo-kameraoj), kaj la vendejo listigas ĝin por la Quest 2, Quest Pro, Quest 3 kaj 3S. La vendeja ligilo estos aldonita ĉi tie, kiam la paĝo estos publika; flankinstalita kopio devas unue esti malinstalita (vidu [Instali](#install)).

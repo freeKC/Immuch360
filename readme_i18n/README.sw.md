@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 ni programu ya simu ya Immich yenye picha na video za 360° unazoweza kutazama pande zote, pamoja na kicheza bure cha picha na video bapa, za 360°, 3D na VR180, kwenye simu na kompyuta kibao za Android, iPhone na iPad, headset za Meta Quest (Quest 3 na 3S, na kuanzia build 21 Quest 2 na Quest Pro, haijajaribiwa), na kuanzia build 20 Android TV na Google TV.
+Immuch360 ni programu ya simu ya Immich yenye picha na video za 360° unazoweza kutazama pande zote, pamoja na kicheza bure cha picha na video bapa, za 360°, 3D na VR180, kwenye simu na kompyuta kibao za Android, iPhone na iPad, headset za Meta Quest (Quest 3 na 3S, na kuanzia build 21 Quest 2 na Quest Pro, haijajaribiwa), na kuanzia build 20 Android TV na Google TV. Immuch360 Desktop, programu ileile kwenye kompyuta ya Windows, imetoka kama toleo la majaribio, tazama [Kwenye kompyuta ya Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) au kwa hali ya picha ya tufe ya simu, au walio na headset, na wanaotaka kutazama picha zao wenyewe kutoka seva ya Immich, kutoka simu yenyewe, NAS, seva ya midia au seva ya Plex: seva ileile, akaunti ileile, bila programu-jalizi kwenye seva, au bila seva kabisa. Kuanzia build 20 pia inaonyesha kamera za Tapo, moja kwa moja na rekodi za kadi zao za kumbukumbu.
 
@@ -18,13 +18,14 @@ Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, D
   <a href="https://github.com/freeKC/Immuch360/releases">APK ya Android</a><br>
   App Store: <a href="#where-to-get-it">inakaguliwa</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store imeidhinishwa, build 21 imewasilishwa kama sasisho lake la kwanza<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">pakua toleo la majaribio</a>
 </p>
 
 - 🌐 **360° asilia**<br>Picha na video kama tufe unalotazama pande zote, kwa jairoskopu, ikiwemo faili ghafi za kamera (Insta360 kuanzia build 16, GoPro na DJI kuanzia build 18). Pia kicheza video bure: bapa, 360°, 3D, VR180
 - 👓 **3D asilia**<br>360° na VR180 za stereo, juu na chini au ubavu kwa ubavu, na picha za anga za Apple (kuanzia build 19): 3D halisi ndani ya headset, jicho moja kwenye simu
 - 🎥 **2.5D asilia**<br>Kina kwenye skrini bapa kutoka video ya stereo, mwonekano unafuata kichwa chako (ya majaribio, simu na kompyuta kibao)
-- 📱 **Android, iOS, Quest, TV**<br>Programu moja kwenye simu, kompyuta kibao na headset za Quest 2, Pro, 3 na 3S, 3D halisi ndani ya headset, na kuanzia build 20 kwenye Android TV kwa rimoti
+- 📱 **Android, iOS, Quest, TV**<br>Programu moja kwenye simu, kompyuta kibao na headset za Quest 2, Pro, 3 na 3S, 3D halisi ndani ya headset, kuanzia build 20 kwenye Android TV kwa rimoti, na toleo la majaribio la Windows
 - 🔌 **Ukiwa na seva au bila seva**<br>Seva yako ya Immich, au matunzio ya simu yenyewe, bila haja ya akaunti
 - 🗄️ **Hifadhi za mtandao**<br>Samba (SMB), WebDAV na, kuanzia build 19, seva za midia za DLNA zinazopatikana kwenye mtandao na kusomwa moja kwa moja, bila kupakua chochote, na kutumwa kwenye Immich unapoamua. Kuanzia build 19 simu pia inashiriki matunzio yake yenyewe na headset
 - 📺 **Kwenye televisheni**<br>Kuanzia build 20 APK ileile kwenye Android TV na Google TV: picha na video za 360°, seva yako na hifadhi zako, kwa rimoti
@@ -52,6 +53,7 @@ Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, D
 - [Ikilinganishwa na programu ya Immich na programu nyingine](#compared-with-the-immich-app-and-other-apps)
 - [Miundo na vyanzo, kwa jukwaa](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Kwenye kompyuta ya Windows: Immuch360 Desktop (toleo la majaribio)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Mahali pa kuipata](#where-to-get-it)
 - [Ijenge mwenyewe](#build-it-yourself)
 - [Kumbukumbu](#logs)
@@ -77,6 +79,7 @@ Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, D
 - **"Nataka kutazama picha na video zangu za 360°, na video za NAS yangu au seva yangu ya Plex, kwenye televisheni, kwa rimoti."** Tazama [Tazama kwenye televisheni yako](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Siwezi kupata picha zangu za 360° kati ya nyingine zote."** Tazama [Orodha ya 360°](#find-your-360-shots-the-360-list).
 - **"Video yangu ya 360° inakwama, au inacheza nakala yenye ukungu."** Tazama [Maelezo ya video na visimbuzi](#video-details-decoders-and-why-a-video-stutters).
+- **"Nataka picha zangu za 360° na maktaba yangu ya Immich kwenye kompyuta yangu ya Windows, pamoja na picha za folda zake, NAS yangu na seva yangu ya Plex, na kompyuta ishirikiwe na headset yangu."** Tazama [Kwenye kompyuta ya Windows](#on-a-windows-computer-immuch360-desktop-preview) (toleo la majaribio, picha pekee kwa sasa).
 - **"Je, nabaki na kile ambacho programu ya Immich inafanya?"** Ndiyo, kwa mabadiliko mawili madogo, tazama [Mengine yote ni Immich](#everything-else-is-immich).
 
 Kipengele kinapokuwa kipya, maandishi yanasema kinapatikana kuanzia build ipi. Toleo la GitHub huwa na build mpya zaidi kila wakati, maduka hufuata baadaye: tazama [Mahali pa kuipata](#where-to-get-it).
@@ -749,6 +752,7 @@ Build ya sasa, build 21 (toleo 3.3.0-rc.0, nambari ya build 3030019), inategemea
 | Maktaba za Plex Media Server zikichezwa kutoka faili asili, nyumbani na nje ya nyumbani, bila plex.tv | ❌ | ✅ kuanzia build 20, kila kitazamaji, kwenye simu, kompyuta kibao, Quest na televisheni |
 | Kamera za Tapo: mwonekano wa moja kwa moja, na rekodi za kadi ya kumbukumbu zinazotumwa kwa Immich unapochagua | ❌ | ✅ kuanzia build 20: rekodi kila mahali, moja kwa moja kwenye Android, Android TV na Quest |
 | Android TV na Google TV, zikiendeshwa kwa rimoti, katika APK ileile | ❌ si programu ya televisheni | ✅ kuanzia build 20 |
+| Programu ileile kwenye kompyuta ya Windows | ❌ simu na kompyuta kibao pekee | ✅ toleo la majaribio, bado bila video |
 | Picha ghafi za Insta360 .insp na video za .insv za wimbo mmoja | ❌ bapa | ✅ kuanzia build 16 |
 | Video ghafi zenye lenzi moja kwa kila wimbo au kila faili (Insta360 X4, X4 Air, X5, X6, jozi za X3, GoPro .360, DJI .osv) | ❌ bapa au si sahihi | ✅ kuanzia build 18 |
 | Fisheye mbili za .dng | ❌ bapa | ❌ bado |
@@ -778,6 +782,7 @@ Build ya sasa, build 21 (toleo 3.3.0-rc.0, nambari ya build 3030019), inategemea
 - **Plex Media Server**: imekaguliwa kutoka kompyuta dhidi ya Plex Media Server 1.42.1 halisi (kuoanisha, folda, masafa ya baiti, vijipicha, anwani ya nje ya nyumbani); bado haijakaguliwa kwenye kifaa.
 - **Kamera za Tapo**: imekaguliwa dhidi ya kamera iliyoigwa; bado haijakaguliwa na kamera halisi.
 - **Android TV na Google TV**: imekaguliwa kwa majaribio ya kiotomatiki; bado haijakaguliwa kwenye televisheni.
+- **Programu ileile kwenye kompyuta ya Windows**: majaribio 475 ya kiotomatiki ya kompyuta kwenye Windows, na kwenye PC ya Windows 11 programu inaanza, inafungua kipindi kilichohifadhiwa kwenye seva ya Immich, inasawazisha na kufunga vizuri; jaribio la kila kipengele kwa mkono linaendelea.
 - **Picha ghafi za Insta360 .insp na video za .insv za wimbo mmoja**: picha zimekaguliwa dhidi ya faili za X3 zilizosafirishwa kutoka Insta360 Studio, video kwenye emulator ya Android kwa faili ya X3 ya ubora wa chini; bado hazijaendeshwa kwenye iPhone.
 - **Video ghafi zenye lenzi moja kwa kila wimbo au kila faili**: visomaji na kuunganisha vimekaguliwa kwenye faili halisi za X4, jozi ya X3, GoPro MAX na Osmo 360; uchezaji ni jaribio la kifaa la build 18 na 19.
 - **Fisheye mbili za .dng**: imepangwa.
@@ -883,12 +888,15 @@ Immuch360 ni matunzio, na pia ni kicheza midia bure: inacheza kile ambacho progr
 
 Vipengee vya Android TV na Google TV, kuanzia build 20, bado havijakaguliwa kwenye televisheni, tazama [Tazama kwenye televisheni yako](#watch-on-your-tv-android-tv-and-google-tv); vipengee vya kamera bado havijakaguliwa na kamera halisi.
 
+Kwenye Windows, toleo la majaribio la Immuch360 Desktop linaonyesha picha, bapa na za 360°, zikiwemo picha ghafi za Insta360 .insp, kwa kipanya na kibodi, kutoka kwenye seva, folda za kompyuta, hifadhi na Plex; bado halichezi video, zinaonyesha kishikilia nafasi (tazama [Bado hakijafika](#not-there-yet)).
+
 - **Seva yako ya Immich**: asili au mtiririko wa seva uliobadilishwa msimbo, kama Settings, Asset Viewer, Chanzo cha video kinavyosema (tazama [Maelezo ya video na visimbuzi](#video-details-decoders-and-why-a-video-stutters)). Akaunti ileile ya programu ya wavuti.
 - **Simu au headset yenyewe**: "Tumia bila seva" kwenye ukurasa wa kuingia, au kipengee cha On this device kwenye kichupo cha Maktaba.
 - **NAS au kompyuta**: hifadhi za SMB na WebDAV, na kuanzia build 19 seva za midia za DLNA, zinazopatikana kwenye mtandao, zikisomwa moja kwa moja (video ya SMB kupitia hadi miunganisho sita), hakuna kinachonakiliwa; kuanzia build 15 faili unazochagua zinaweza kutumwa kwenye akaunti yako ya Immich.
 - **Simu nyingine (kuanzia build 19)**: "Shiriki simu hii kwenye mtandao" kwenye simu hiyo: headset, au mteja yeyote wa WebDAV kwenye mtandao, inasoma albamu zake, miezi na midia ya 360°.
 - **Plex Media Server (kuanzia build 20)**: maktaba zake za picha, filamu na vipindi vya TV kwa folda, faili asili zikisomwa moja kwa moja kupitia HTTPS iliyokaguliwa dhidi ya cheti cha seva yenyewe, nyumbani au kupitia anwani ya nje ya nyumbani, kwenye kila jukwaa; tazama [Plex Media Server, bila plex.tv](#plex-media-server-without-plextv).
 - **Kamera ya Tapo (kuanzia build 20)**: mwonekano wa moja kwa moja kwa akaunti ya kamera (Android, Android TV, Quest), na rekodi za kadi yake ya kumbukumbu kwa nenosiri la akaunti ya TP-Link (kila jukwaa), kwenye mtandao wa ndani pekee; tazama [Kamera za Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Folda za kompyuta ya Windows (toleo la majaribio la kompyuta)**: folda unazochagua katika Immuch360 Desktop, zinazosomwa badala ya galeri ya simu; kompyuta inaweza pia kuzishiriki na headset, tazama [Kwenye kompyuta ya Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Picha za skrini zilizopigwa ndani ya headset kwa kitufe cha kupiga picha (kitufe
 - **Ukubwa wa APK**: Spatial SDK inaongeza karibu MB 56 za msimbo asilia wa ARM wa biti 64, hata kwenye simu, ambapo haupakiwi kamwe.
 - **Leseni**: mwonekano wa uhalisia pepe unatumia Meta Spatial SDK, inayosambazwa chini ya Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Kwenye kompyuta ya Windows: Immuch360 Desktop (toleo la majaribio)
+
+Maktaba yako ya Immich iko kwenye seva, picha nyingine ziko kwenye folda za kompyuta, video kwenye NAS au seva ya Plex, na ungependa kutazama pande zote za picha zako za 360° kwenye skrini kubwa, au kuonyesha picha za kompyuta ndani ya headset. Immuch360 Desktop ni programu ileile kwenye kompyuta ya Windows, iliyojengwa kutoka kwenye msimbo uleule kama programu za simu.
+
+Kwenye kompyuta, Immich inatoa programu yake ya wavuti ndani ya kivinjari. **Kile ambacho Immuch360 Desktop inaongeza**: folda za kompyuta bila seva wala akaunti yoyote, hifadhi za SMB, WebDAV, DLNA na Plex zinazovinjariwa kutoka kwenye programu, picha ghafi za Insta360 .insp zinazofunguliwa kama tufe, na kompyuta inayoshirikiwa na Meta Quest nyumbani.
+
+Build hii ya kwanza ni toleo la majaribio: picha zinafanya kazi, video zinakuja na build zijazo za kompyuta. Programu za simu, kompyuta kibao, Quest na televisheni hazibadiliki kwa sababu yake na zinabaki na jina Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Pakua na usakinishe kwenye Windows
+
+Build ya kwanza ni toleo la awali la GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Faili yake ni `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (MB 33.5, faili 65 baada ya kufunguliwa), pamoja na `SHA256SUMS.txt` ya kuikagua. Ilijengwa kutoka tawi la `desktop` kwenye commit 21f285c34: build 20 ya simu pamoja na toleo la kompyuta. Inahitaji Windows 10 au 11, biti 64.
+
+1. Pakua ZIP na uifungue mahali popote, kwa mfano kwenye Documents.
+2. Anzisha `immuch360.exe` kutoka kwenye folda iliyofunguliwa. Iweke folda ikiwa kamili: programu inahitaji faili zilizo kando yake.
+3. Faili bado hazijatiwa sahihi, kwa hivyo Windows SmartScreen inaweza kuonyesha "Windows protected your PC": chagua "More info", kisha "Run anyway". Mahali ambapo Smart App Control imewashwa, inazuia programu zisizotiwa sahihi.
+4. Subiri dirisha. Kuanza kwa mara ya kwanza kwa build mpya huchukua kuanzia sekunde 10 hadi takriban dakika moja, kwa uwezekano mkubwa wakati Microsoft Defender inachanganua faili mpya: usianzishe programu tena wakati huo. Kuanza kunakofuata huchukua sekunde moja au mbili.
+5. Kwenye ukurasa wa kuingia, ingia kwenye seva yako ya Immich kwa anwani yake, barua pepe yako na nenosiri lako, au bofya "Tumia bila seva".
+
+Ili kukagua ZIP, endesha `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` kwenye command prompt, ndani ya folda ya upakuaji: matokeo ni yale yaliyoandikwa katika `SHA256SUMS.txt`. Bado hakuna kisakinishi wala sasisho la kiotomatiki: fuatilia ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases), na ufungue build inayofuata kwa njia ileile.
+
+### Kile ambacho toleo la majaribio linafanya
+
+- **Seva yako ya Immich**: rekodi ya matukio, albamu, watu, kumbukumbu na utafutaji, na picha za seva kwa ukubwa kamili, kama kwenye simu.
+- **Bila seva**: folda za picha na video zako (Pictures na Videos zinapendekezwa) zinachukua nafasi ya galeri ya simu. Hakuna kinachosomwa nje ya folda ulizochagua, na bila seva hakuna kinachotoka kwenye kompyuta.
+- **Kupakia na kuhifadhi nakala** kutoka kwenye folda hizo hadi seva yako ya Immich, wakati programu iko wazi.
+- **Picha za 360° kama tufe**, kwa kipanya na kibodi; picha ghafi za .insp za kamera za Insta360 zinafunguka kama kwenye simu.
+- **Hifadhi za mtandao**: seva za midia za Samba (SMB), WebDAV na DLNA, na seva za Plex bila plex.tv, zinazovinjariwa kama kwenye simu: picha zake zinafunguka, video zake zinasubiri kicheza video (tazama [Bado hakijafika](#not-there-yet)). Kwa kamera za Tapo, rekodi za kadi ya kumbukumbu: orodha, na kuleta kipande.
+- **Shiriki kompyuta hii kwenye mtandao**: albamu, miezi na midia za 360° za folda zako, kwa kusoma tu, kwa Meta Quest au kifaa kingine nyumbani, kama simu inavyojishiriki yenyewe.
+- **Faili**: vipakuliwa kutoka kwenye seva vinaenda kwenye folda unayochagua, "Hifadhi kwenye folda" inaweka nakala ya picha na video zilizochaguliwa, na ukurasa wa Logs (Kumbukumbu) una "Hifadhi kumbukumbu kwenye faili".
+
+### Itumie kwenye kompyuta
+
+1. **Chagua folda zako.** Bila seva, rekodi ya matukio inaanza na "Chagua folda za picha na video zako": bofya "Ongeza folda". Ukiwa na seva, kadi ileile inaonekana kwenye Maktaba chini ya "Kwenye kompyuta hii", na kwenye albamu za kuhifadhi nakala, hadi folda ichaguliwe. Baadaye zina mstari wa "Folda kwenye kompyuta hii", na Settings pia, "Kompyuta hii".
+2. **Folda za wingu, USB na mtandao.** Faili ambazo OneDrive (au hifadhi nyingine ya wingu) inaziweka mtandaoni pekee zinahesabiwa lakini hazisomwi, kwa hivyo kuongeza folda hakupakui wingu lako lote: "Pakua na ujumuishe" inazileta unapozitaka. Diski ya USB inayorudi chini ya herufi nyingine inabaki na picha zake. Folda za mtandao, na folda zilizo kwenye kadi ya kumbukumbu au diski ya USB (ili Windows bado iweze kuiondoa), hazifuatiliwi kwa mabadiliko: tumia Onyesha upya baada ya kuongeza faili humo.
+3. **Tazama pande zote za picha ya 360°**: buruta kwa kipanya, kuza kwa gurudumu, kubofya mara mbili au + na - (kwenye mpangilio wowote wa kibodi, pamoja na AZERTY), sogea kwa vitufe vya mishale. F au F11 inabadilisha kwenda skrini nzima na Escape inaiacha; Home na End zinaenda kwenye picha ya kwanza na ya mwisho; I inaonyesha maelezo.
+4. **Nenda kutoka picha moja hadi nyingine**: kwenye picha bapa, mishale ya kushoto na kulia, au alama za mshale zinazoonekana kwenye kingo kipanya kinaposogea, zinaenda kwenye iliyotangulia na inayofuata. Herufi zinazoandikwa kwenye sehemu ya maelezo zinabaki ndani ya maandishi.
+5. **Shiriki kompyuta na headset**: fungua Maktaba, kisha Hifadhi za mtandao; kigae cha kwanza ni "Shiriki kompyuta hii kwenye mtandao", upande wa kompyuta wa [Shiriki simu hii kwenye mtandao](#share-this-phone-on-the-network). Washa "Shiriki picha na video kwenye mtandao", kisha ongeza kompyuta ndani ya headset kama sehemu hiyo inavyosema. Kushiriki kunasimama programu ikifungwa au baada ya saa moja bila matumizi.
+6. **Ruhusu mtandao**: Windows inaweza kuuliza kama Immuch360 Desktop inaweza kutumia mtandao. Iruhusu kwenye mitandao ya faragha, vinginevyo headset haiwezi kupata kompyuta. Kwenye mtandao ambao Windows inauweka kama wa umma (mkahawa, hoteli), au ambao haiwezi kujua aina yake, kushiriki hakuanzi isipokuwa uchague "Shiriki kwa kipindi hiki", na kompyuta inajitangaza tu kwenye mtandao inaoshiriki.
+7. **Settings, "Kompyuta hii"**: folda, folda ya vipakuliwa, adapta ya mtandao inayotumiwa kupata hifadhi na kushiriki kompyuta (inapokuwa na zaidi ya moja, Wi-Fi na Ethernet kwa mfano), na vyeti vinavyoaminika: mamlaka ya vyeti ya seva yako mwenyewe, kama faili ya PEM, kwa anwani ya HTTPS ambayo Windows haiiamini yenyewe. Vyeti vya mteja vinaingizwa katika Settings, Advanced, kama kwenye simu.
+
+### Ikilinganishwa na programu za simu
+
+- **Kuhifadhi nakala kunaendelea wakati programu iko wazi** (au imepunguzwa), si chinichini dirisha likiwa limefungwa. Kufunga dirisha wakati upakiaji unaendelea, au wakati kompyuta inashirikiwa, kunauliza kwanza.
+- **Folda badala ya galeri**: programu inasoma folda unazochagua na inaweka faharasa yake, vijipicha na akiba kwenye kompyuta.
+- **Dirisha moja**: kufungua programu mara ya pili kunarudisha dirisha la kwanza badala ya kuanzisha nakala ya pili.
+- **Hakuna kinachofutwa kutoka kwenye folda zako**: "Futa kutoka kwenye kifaa" imefichwa, na Futa inaondoa nakala ya seva pekee, hadi programu iweze kutuma faili kwenye pipa la taka la Windows.
+- **Kipanya na kibodi** badala ya mguso na gyroscope.
+
+<a id="not-there-yet"></a>
+### Bado hakijafika
+
+- **Video**: kwa sasa zinaonyesha kishikilia nafasi, na vijipicha vyake ikoni ya filamu. Uchezaji unakuja baadaye: video bapa kwanza, kisha video za 360°, 3D na VR180 na video ghafi za 360°.
+- **Spatial 2.5D**, baadaye kwa kamera ya wavuti; **mwonekano wa moja kwa moja wa Tapo**; **ramani** na mwonekano wa Places; **kuingia kwa OAuth** (ingia kwa barua pepe na nenosiri badala yake); **Google Cast**; **arifa**.
+- **Kisakinishi, build iliyotiwa sahihi na masasisho ya kiotomatiki**: build hii ni folda yenye `immuch360.exe`.
+- **Linux na macOS**: miradi yao iko kwenye msimbo, lakini bado haijajengwa wala kujaribiwa kwenye mifumo hiyo; zinakuja baada ya Windows.
+- **Tafsiri**: maandishi mapya ya toleo la kompyuta yako kwa Kiingereza kwa sasa.
+
+### Matatizo yanayojulikana
+
+- **Wakati headset inasoma faili kutoka kwenye kompyuta inayoshirikiwa** (video inayocheza, picha inayopakua), Windows haiwezi kubadilisha jina, kuhamisha au kufuta faili hiyo na inasema iko wazi katika Immuch360 Desktop: simamisha uchezaji kwanza. Kuhifadhi nakala hakushikilii faili zako kwa njia hiyo: faili inaweza kubadilishwa jina, kuhamishwa au kufutwa wakati inapakiwa.
+- **Kasoro ndogo**: vipengele vilivyo hapo juu vinafaulu majaribio yao ya kiotomatiki kwenye Windows (majaribio 475 ya kompyuta), na kwenye PC ya Windows 11 programu inaanza, inafungua kipindi kilichohifadhiwa kwenye seva ya Immich, inasawazisha na kufunga vizuri. Jaribio la kila kipengele kwa mkono kwenye PC halisi bado linaendelea.
+
+Jambo likienda vibaya, tafadhali fungua [suala](https://github.com/freeKC/Immuch360/issues) pamoja na kumbukumbu iliyohifadhiwa kutoka kwenye ukurasa wa Logs (Kumbukumbu), tazama [Kumbukumbu](#logs). Kagua kumbukumbu kabla ya kuishiriki: inaweza kuwa na anwani ya seva yako.
+
+<a id="build-it-yourself-on-windows"></a>
+### Ijenge mwenyewe kwenye Windows
+
+Unahitaji Windows 10 au 11 kwenye x64, Flutter 3.47.2 kwa Windows, Visual Studio 2022 au Build Tools zake pamoja na workload ya "Desktop development with C++", Developer Mode imewashwa kwenye mipangilio ya Windows (Flutter inaihitaji kwa plugins), na Python 3 kwa skripti ya kufunga kifurushi.
+
+1. Pata tawi la `desktop` na uendeshe uzalishaji wa msimbo. Unatumia Java na Node, kwa hivyo uendeshe kwenye Linux, macOS au ndani ya WSL; ukitumia WSL, weka nakala kwenye diski ya Windows, ambayo WSL inaiona chini ya `/mnt/c` au `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Kwenye Windows, ndani ya folda ileile ya `mobile`, jenga programu:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Folda ya `Release` inafanya kazi kwenye PC iliyoijenga. Kwa PC nyingine, weka folda nzima na uongeze Visual C++ runtime kando ya `immuch360.exe`. Kutoka kwenye mzizi wa nakala, skripti ya kufunga kifurushi inainakili, inaacha kile kinachotumikia Android pekee, inakagua kwamba kila DLL ambayo programu inapakia iko kwenye folda au ndani ya Windows yenyewe, na inatengeneza ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+CI ya tawi la `desktop` (`.github/workflows/immuch360-desktop.yml`) inaendesha ukaguzi wa simu na majaribio yote kwenye Linux, majaribio ya kompyuta kwenye Windows, na inajenga ZIP ileile; kazi zake za Linux na macOS (`flutter build linux` na `flutter build macos`, pamoja na `-t lib/main_desktop.dart` ileile) bado hazijaendeshwa kwenye mifumo hiyo.
+
 <a id="where-to-get-it"></a>
 ## Mahali pa kuipata
 
-Programu iko kwenye Google Play kwa simu na kompyuta kibao; toleo la App Store linasubiri ukaguzi wa Apple, orodha ya Meta Horizon Store imeidhinishwa na sasisho lake la kwanza linakaguliwa na Meta, na toleo la Google Play kwa televisheni linasubiri ukaguzi wa Google wa toleo la televisheni. Toleo la GitHub huwa build mpya zaidi kila wakati:
+Programu iko kwenye Google Play kwa simu na kompyuta kibao; toleo la App Store linasubiri ukaguzi wa Apple, orodha ya Meta Horizon Store imeidhinishwa na sasisho lake la kwanza linakaguliwa na Meta, na toleo la Google Play kwa televisheni linasubiri ukaguzi wa Google wa toleo la televisheni. Immuch360 Desktop, kwa Windows, ni toleo la majaribio kwenye GitHub. Toleo la GitHub huwa build mpya zaidi kila wakati:
 
 - **Simu na kompyuta kibao za Android**
   - Leo: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), au APK kwenye ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` kwa simu (`Immuch360-v<version>-release.apk` ya jumla inafanya kazi kila mahali, `-armeabi-v7a` ni kwa simu za zamani za biti 32, na faili ya `.aab` ni kwa Google Play, si kwa sideload). Build ya GitHub kwa kawaida iko mbele ya duka. Kwa njia yoyote inasakinishwa kando ya programu rasmi ya Immich (kifurushi `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Programu iko kwenye Google Play kwa simu na kompyuta kibao; toleo la App Store l
 - **Android TV na Google TV (kuanzia build 20)**
   - Leo: `Immuch360-v<version>-release.apk` ya jumla ya ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases), iliyosakinishwa kwa sideload kupitia adb, tazama [Isakinishe kwenye televisheni](#install-it-on-the-tv). Ni programu ileile kama kwenye simu.
   - Hivi karibuni: Google Play kwenye televisheni, baada ya ukaguzi wa Google wa toleo la televisheni.
+- **Windows 10 na 11, biti 64 (toleo la majaribio)**
+  - Leo: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` ya [toleo la awali la kompyuta](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), iliyofunguliwa na kuanzishwa kama [Pakua na usakinishe kwenye Windows](#download-and-install-on-windows) inavyosema. Picha pekee kwa sasa: video zinakuja na build zijazo za kompyuta.
+  - Hivi karibuni: uchezaji wa video; kisakinishi, build iliyotiwa sahihi na masasisho baadaye.
 
 Viungo vya App Store na Meta Horizon Store vitaongezwa hapa mara orodha zitakapochapishwa. Ingia kwa URL ya kawaida ya seva yako ya Immich na akaunti yako, au gusa "Tumia bila seva" kwenye ukurasa wa kuingia ili kuanza na picha na video za kifaa chenyewe. APK kutoka GitHub haijisasishi yenyewe: fuatilia ukurasa wa Releases, na ukishasakinisha programu kutoka dukani, chukua masasisho kutoka duka hilo.
 
@@ -993,12 +1105,15 @@ Aina ya `quest` inalenga SDK 34 na inabakiza ruhusa ambazo headset inatumia peke
 
 Kujenga kwa iOS kwenye Mac yako mwenyewe, tumia Xcode na timu yako mwenyewe ya kusaini; ukiwa na Xcode 26, endesha `xcodebuild -downloadComponent MetalToolchain` mara moja kwanza, kwa kuwa shader za Spatial zinaihitaji. Bila Mac, build za iOS zinaendeshwa kwenye Codemagic (Mac ya mtandaoni) kutoka faili ya `codemagic.yaml` ya hazina hii. Build za matoleo ya Android zinaendeshwa kwenye GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, toleo la Windows, hujengwa kutoka tawi la `desktop` kwa Flutter ya Windows: hatua ziko katika [Ijenge mwenyewe kwenye Windows](#build-it-yourself-on-windows).
+
 Hakuna siri iliyo katika hazina hii: ufunguo wa kusaini wa Android umehifadhiwa kama siri zilizosimbwa za GitHub Actions, na nyenzo za kusaini za Apple zimehifadhiwa kama vigezo vilivyosimbwa kwenye Codemagic. Faili za mtiririko wa kazi zinazitaja kwa jina pekee. Bila `android/key.jks` yako mwenyewe, build ya toleo inasainiwa kwa ufunguo wa debug na haiwezi kusakinishwa juu ya nakala kutoka GitHub au duka (ondoa hiyo kwanza); build ya debug inasakinishwa kando yake kama Immuch360 debug. Nakala ya Meta Horizon Store ni APK ya `quest` ya toleo iliyosainiwa kwa ufunguo mwingine, ule ambao programu ya duka ilisajiliwa nao kwanza, kwa hiyo haiwezi kusakinishwa juu ya APK iliyosakinishwa kwa sideload pia, wala kinyume chake.
 
 ### Matawi
 
 - **`main`**: Immich `main` kwenye commit ambayo `immuch360` inategemea (29 Septemba 2026 kwa build za sasa), haibadilishwi kamwe; inasogea mbele fork inapofanyiwa rebase juu ya Immich mpya zaidi.
 - **`immuch360`**: mabadiliko ya fork hii juu ya Immich. Kila toleo linasema linategemea toleo gani la Immich.
+- **`desktop`**: Immuch360 Desktop, toleo la kompyuta, juu ya `immuch360`. Matoleo ya simu yanaunganishwa ndani yake, na matoleo ya awali ya kompyuta hujengwa kutoka kwake (build ya kompyuta 1 kutoka commit 21f285c34, build 20 ya simu pamoja na toleo la kompyuta). Hakuna kitu chini ya `mobile/android` na `mobile/ios` kinachobadilika ndani yake.
 
 <a id="logs"></a>
 ## Kumbukumbu
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Kuanzia build 19 mteja wa DLNA, hifadhi ya simu na utambuzi wa midia za anga za Apple pia vinaandika kwenye kumbukumbu ya programu yenyewe (Logs (Kumbukumbu), kwenye menyu ya picha ya wasifu juu kulia), chini ya `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` na `NetworkMediaService`. Kuanzia build 20 hali ya televisheni inaandika humo chini ya `TvMode` na `TvTextEntry`, seva za Plex chini ya `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` na `PlexServerEditPage`, na kamera za Tapo chini ya `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` na `CameraLiveView`; mistari ya Plex haina kamwe tokeni, anwani wala kichwa, na mistari ya kamera inaacha manenosiri. Mistari ya kumbukumbu inabaki kwenye kifaa isipokuwa uinakili mwenyewe.
 
+Kwenye kompyuta (Immuch360 Desktop), ukurasa wa Logs (Kumbukumbu) pia una "Hifadhi kumbukumbu kwenye faili": kumbukumbu, au ZIP ya kumbukumbu na ripoti za hitilafu za mwisho za kuacha kufanya kazi zikiwepo (jina linalopendekezwa basi linaishia na "with-crash-reports"). Ripoti ya hitilafu ni minidump ndogo: nyuzi, mahali zilipositishwa na kile tu kinachohitajika kufuatilia miito yao, pamoja na majina ya faili za programu lakini si folda zake; si kumbukumbu ya programu. Kagua kumbukumbu kabla ya kuishiriki: inaweza kuwa na anwani ya seva yako.
+
 <a id="privacy"></a>
 ## Faragha
 
@@ -1026,19 +1143,21 @@ Kuanzia build 19 mteja wa DLNA, hifadhi ya simu na utambuzi wa midia za anga za 
 - **Televisheni**: iwapo kifaa ni televisheni kunasomwa kwenye kifaa; hakuna kinachotumwa.
 - **Hifadhi ya simu**: mtandao wa ndani pekee, kwa jina la mtumiaji na nenosiri, kupitia HTTP ya kawaida (tazama [Shiriki simu hii kwenye mtandao](#share-this-phone-on-the-network)).
 - **Kamera**: inatumika na kicheza cha Spatial 2.5D pekee, kwenye kifaa; picha hazihifadhiwi kamwe na hazitumwi popote.
+- **Kwenye kompyuta** (Immuch360 Desktop, toleo la majaribio la Windows): programu inasoma folda unazochagua pekee, inaweka faharasa yake, vijipicha na akiba kwenye kompyuta, na inahifadhi manenosiri na tokeni kwa ulinzi wa data wa Windows, kwa akaunti yako ya Windows pekee. Hifadhi ya kompyuta inafuata kanuni za hifadhi ya simu, na haianzi kwenye mtandao ambao Windows inauweka kama wa umma, au ambao haiwezi kujua aina yake, isipokuwa ukiruhusu.
 
 Sera kamili iko katika [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Leseni na alama ya biashara
 
-Mradi huu ni fork ya Immich na unabaki chini ya [GNU AGPL v3](../LICENSE). Kila APK, zikiwemo za simu, pia ina Meta Spatial SDK, ambayo si chanzo huria (Meta Platform Technologies SDK License Agreement) na inatumika kwenye headset za Meta Quest pekee. Immuch360 haihusiani na, wala haijaidhinishwa na, timu ya Immich au FUTO.
+Mradi huu ni fork ya Immich na unabaki chini ya [GNU AGPL v3](../LICENSE). Kila APK, zikiwemo za simu, pia ina Meta Spatial SDK, ambayo si chanzo huria (Meta Platform Technologies SDK License Agreement) na inatumika kwenye headset za Meta Quest pekee; Immuch360 Desktop, toleo la Windows, haina SDK hiyo. Immuch360 haihusiani na, wala haijaidhinishwa na, timu ya Immich au FUTO.
 
 <a id="roadmap"></a>
 ## Mpango wa kazi
 
 Kile ambacho bado hakijafanywa, kinachowezekana zaidi kwanza. Hakuna hapa ambacho ni ahadi, na maoni kwenye [kifuatiliaji cha masuala](https://github.com/freeKC/Immuch360/issues) yanasaidia kuamua kipi kinakuja kwanza.
 
+- **Immuch360 Desktop, Windows kwanza**: toleo la kwanza la majaribio limetoka (tazama [Kwenye kompyuta ya Windows](#on-a-windows-computer-immuch360-desktop-preview)). Kinachofuata, uchezaji wa video (video bapa kwanza, kisha 360°, 3D, VR180 na faili ghafi), uliopimwa kwenye kadi mbili za michoro za kompyuta mpakato; kisha jaribio la kila kipengele kwenye PC ya Windows na marekebisho yake; kisha Spatial 2.5D kwa kamera ya wavuti; kisha Linux na macOS, vifurushi, sahihi na masasisho.
 - **Google Play**: build 18 imechapishwa; build 20 inakaguliwa na Google tangu tarehe 7 Oktoba 2026, badala ya build 19. Build 21 haibadilishi chochote kwenye simu na kompyuta kibao.
 - **App Store**: toleo 3.3.0 linasubiri ukaguzi wa Apple; lina vipengele vya build 11, kwa hiyo upakiaji kwenye Immich na ukaguzi wa visimbuzi vya video (build 15) na faili ghafi za Insta360 (build 16) vitakuja na sasisho linalofuata la App Store. Kiungo kitaongezwa hapa litakapochapishwa.
 - **Meta Horizon Store**: Meta iliidhinisha orodha tarehe 7 Oktoba 2026 pamoja na build 14. Build 21 imewasilishwa kama sasisho lake la kwanza: inaleta kila kitu tangu build 14 (kupakia kutoka hifadhi kwenda Immich, chanzo cha video kinachochaguliwa kulingana na kile headset inachosimbua, faili ghafi za Insta360, GoPro na DJI, DLNA, hifadhi ya simu, picha za anga za Apple, maktaba za Plex Media Server, kamera za Tapo), na duka linaiorodhesha kwa Quest 2, Quest Pro, Quest 3 na 3S. Kiungo cha duka kitaongezwa hapa ukurasa ukishakuwa wa umma; nakala iliyosakinishwa kwa sideload lazima iondolewe kwanza (tazama [Usakinishaji](#install)).

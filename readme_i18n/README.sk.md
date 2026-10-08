@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 je mobilná aplikácia Immich s fotkami a videami 360°, v ktorých sa môžete rozhliadať, a s bezplatným prehrávačom plochých, 360°, 3D a VR180 fotiek a videí na telefónoch a tabletoch s Androidom, na iPhonoch a iPadoch, na headsetoch Meta Quest (Quest 3 a 3S a od zostavy 21 Quest 2 a Quest Pro, netestované) a od zostavy 20 aj na Android TV a Google TV.
+Immuch360 je mobilná aplikácia Immich s fotkami a videami 360°, v ktorých sa môžete rozhliadať, a s bezplatným prehrávačom plochých, 360°, 3D a VR180 fotiek a videí na telefónoch a tabletoch s Androidom, na iPhonoch a iPadoch, na headsetoch Meta Quest (Quest 3 a 3S a od zostavy 21 Quest 2 a Quest Pro, netestované) a od zostavy 20 aj na Android TV a Google TV. Immuch360 Desktop, tá istá aplikácia na počítači s Windows, vyšla ako ukážková verzia, pozrite si [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 Je určená ľuďom, ktorí fotia kamerou 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) alebo v režime fotosféry telefónu, prípadne majú headset, a chcú si pozerať vlastné zábery zo servera Immich, priamo z telefónu, z NAS, z mediálneho servera alebo zo servera Plex: rovnaký server, rovnaký účet, žiadny doplnok na serveri, alebo úplne bez servera. Od zostavy 20 zobrazuje aj kamery Tapo, naživo aj záznamy z ich pamäťovej karty.
 
@@ -18,13 +18,14 @@ Je určená ľuďom, ktorí fotia kamerou 360° (Insta360, GoPro MAX, DJI Osmo 3
   <a href="https://github.com/freeKC/Immuch360/releases">APK pre Android</a><br>
   App Store: <a href="#where-to-get-it">v posudzovaní</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store schválený, zostava 21 odoslaná ako jeho prvá aktualizácia<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">stiahnuť ukážkovú verziu</a>
 </p>
 
 - 🌐 **Natívne 360°**<br>Fotky a videá ako guľa, v ktorej sa rozhliadate, s gyroskopom, vrátane nespracovaných súborov z kamery (Insta360 od zostavy 16, GoPro a DJI od zostavy 18). K tomu bezplatný videoprehrávač: ploché, 360°, 3D, VR180
 - 👓 **Natívne 3D**<br>Stereoskopické 360° a VR180, hore a dole alebo vedľa seba, a priestorové fotky Apple (od zostavy 19): skutočné 3D v headsete, jedno oko na telefóne
 - 🎥 **Natívne 2.5D**<br>Hĺbka na plochej obrazovke zo stereoskopického videa, pohľad sleduje vašu hlavu (experimentálne, telefóny a tablety)
-- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikácia na telefónoch, tabletoch a v headsetoch Quest 2, Pro, 3 a 3S, skutočné 3D v headsete a od zostavy 20 na Android TV s diaľkovým ovládačom
+- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikácia na telefónoch, tabletoch a v headsetoch Quest 2, Pro, 3 a 3S, skutočné 3D v headsete, od zostavy 20 na Android TV s diaľkovým ovládačom a ukážková verzia pre Windows
 - 🔌 **So serverom alebo bez neho**<br>Váš server Immich alebo vlastná galéria telefónu, bez potreby účtu
 - 🗄️ **Sieťové úložiská**<br>Samba (SMB), WebDAV a od zostavy 19 aj mediálne servery DLNA nájdené v sieti a čítané naživo, nič sa nesťahuje, a keď sa rozhodnete, odoslané do Immich. Od zostavy 19 telefón tiež zdieľa svoju galériu s headsetom
 - 📺 **Na televízore**<br>Od zostavy 20 ten istý APK na Android TV a Google TV: fotky a videá 360°, váš server a vaše zdieľania, s diaľkovým ovládačom
@@ -52,6 +53,7 @@ Je určená ľuďom, ktorí fotia kamerou 360° (Insta360, GoPro MAX, DJI Osmo 3
 - [Porovnanie s aplikáciou Immich a inými aplikáciami](#compared-with-the-immich-app-and-other-apps)
 - [Formáty a zdroje podľa platformy](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Na počítači s Windows: Immuch360 Desktop (ukážková verzia)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Kde ju získať](#where-to-get-it)
 - [Zostavte si ju sami](#build-it-yourself)
 - [Záznamy](#logs)
@@ -77,6 +79,7 @@ Je určená ľuďom, ktorí fotia kamerou 360° (Insta360, GoPro MAX, DJI Osmo 3
 - **„Chcem si pozerať svoje fotky a videá 360° a videá z môjho NAS alebo servera Plex na televízore, s diaľkovým ovládačom.“** Pozrite si [Pozerajte na televízore](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Nemôžem nájsť svoje zábery 360° medzi všetkými ostatnými.“** Pozrite si [Zoznam 360°](#find-your-360-shots-the-360-list).
 - **„Moje video 360° trhá alebo prehráva rozmazanú kópiu.“** Pozrite si [Podrobnosti videa a dekodéry](#video-details-decoders-and-why-a-video-stutters).
+- **„Chcem svoje fotky 360° a svoju knižnicu Immich na svojom PC s Windows, s fotkami z jeho priečinkov, mojím NAS a mojím serverom Plex, a PC zdieľané s mojím headsetom.“** Pozrite si [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview) (ukážková verzia, zatiaľ len fotky).
 - **„Zostane mi všetko, čo robí aplikácia Immich?“** Áno, s dvoma malými zmenami, pozrite si [Všetko ostatné je Immich](#everything-else-is-immich).
 
 Keď je funkcia nová, text uvádza, od ktorej zostavy je k dispozícii. Vydanie na GitHube má vždy najnovšiu zostavu, obchody nasledujú neskôr: pozrite si [Kde ju získať](#where-to-get-it).
@@ -749,6 +752,7 @@ Aktuálna zostava, zostava 21 (verzia 3.3.0-rc.0, číslo zostavy 3030019), vych
 | Knižnice Plex Media Server prehrávané z pôvodných súborov, doma aj mimo domova, bez plex.tv | ❌ | ✅ od zostavy 20, všetky zobrazenia, na telefónoch, tabletoch, Queste a televízoroch |
 | Kamery Tapo: živý obraz a záznamy z pamäťovej karty odoslané do Immich, keď sa rozhodnete | ❌ | ✅ od zostavy 20: záznamy všade, naživo na Androide, Android TV a Queste |
 | Android TV a Google TV, ovládané diaľkovým ovládačom, v tom istom APK | ❌ nie je aplikácia pre televízor | ✅ od zostavy 20 |
+| Tá istá aplikácia na počítači s Windows | ❌ len telefóny a tablety | ✅ ukážka, zatiaľ bez videí |
 | Nespracované fotky Insta360 .insp a videá .insv s jednou stopou | ❌ ploché | ✅ od zostavy 16 |
 | Nespracované videá s jedným objektívom na stopu alebo na súbor (Insta360 X4, X4 Air, X5, X6, páry X3, GoPro .360, DJI .osv) | ❌ ploché alebo nesprávne | ✅ od zostavy 18 |
 | Dvojitý fisheye .dng | ❌ plochý | ❌ zatiaľ nie |
@@ -778,6 +782,7 @@ Aktuálna zostava, zostava 21 (verzia 3.3.0-rc.0, číslo zostavy 3030019), vych
 - **Plex Media Server**: overené z počítača voči skutočnému Plex Media Server 1.42.1 (párovanie, priečinky, rozsahy bajtov, miniatúry, adresa mimo domova); zatiaľ neoverené na zariadení.
 - **Kamery Tapo**: overené voči simulovanej kamere; zatiaľ neoverené so skutočnou kamerou.
 - **Android TV a Google TV**: overené automatickými testami; zatiaľ neoverené na televízore.
+- **Tá istá aplikácia na počítači s Windows**: 475 automatických testov pre počítač na Windows a na PC s Windows 11 sa aplikácia spustí, otvorí uloženú reláciu na serveri Immich, zosynchronizuje sa a korektne sa zavrie; ručné testovanie každej funkcie prebieha.
 - **Nespracované fotky Insta360 .insp a videá .insv s jednou stopou**: fotky overené porovnaním s exportmi Insta360 Studio zo súborov X3, videá na emulátore Androidu so súborom X3 s nízkym rozlíšením; na iPhone zatiaľ nespustené.
 - **Nespracované videá s jedným objektívom na stopu alebo na súbor**: parsery a spájanie overené na skutočných súboroch X4, páru X3, GoPro MAX a Osmo 360; prehrávanie je testom zostáv 18 a 19 na zariadeniach.
 - **Dvojitý fisheye .dng**: plánované.
@@ -883,12 +888,15 @@ Immuch360 je galéria a zároveň bezplatný prehrávač médií: prehrá to, č
 
 Položky Android TV a Google TV, od zostavy 20, ešte neboli overené na televízore, pozrite si [Pozerajte na televízore](#watch-on-your-tv-android-tv-and-google-tv); položky kamery ešte neboli overené so skutočnou kamerou.
 
+Na Windows zobrazuje ukážková verzia Immuch360 Desktop fotky, ploché aj 360°, vrátane surových fotiek .insp z Insta360, s myšou a klávesnicou, zo servera, z priečinkov PC, zo sieťových úložísk a z Plexu; videá zatiaľ neprehráva, namiesto nich sa zobrazí zástupný obrázok (pozrite si [Ešte to nie je](#not-there-yet)).
+
 - **Váš server Immich**: originál alebo prekódovaný stream servera, podľa Nastavenia, Prehliadač médií, Zdroj videa (pozrite si [Podrobnosti videa a dekodéry](#video-details-decoders-and-why-a-video-stutters)). Rovnaký účet ako webová aplikácia.
 - **Samotný telefón alebo headset**: „Používať bez servera“ na prihlasovacej stránke alebo položka Na tomto zariadení na karte Knižnica.
 - **NAS alebo počítač**: zdieľania SMB a WebDAV a od zostavy 19 mediálne servery DLNA, nájdené v sieti, čítané naživo (video SMB cez až šesť pripojení), nič sa nekopíruje; od zostavy 15 môžete vybrané súbory odoslať do svojho účtu Immich.
 - **Iný telefón (od zostavy 19)**: „Zdieľať tento telefón v sieti“ na tom telefóne: headset alebo akýkoľvek klient WebDAV v sieti číta jeho albumy, mesiace a médiá 360°.
 - **Plex Media Server (od zostavy 20)**: jeho knižnice fotiek, filmov a seriálov podľa priečinkov, pôvodné súbory čítané naživo cez HTTPS overené voči vlastnému certifikátu servera, doma alebo cez adresu mimo domova, na každej platforme; pozrite si [Plex Media Server bez plex.tv](#plex-media-server-without-plextv).
 - **Kamera Tapo (od zostavy 20)**: živý obraz s účtom kamery (Android, Android TV, Quest) a záznamy z jej pamäťovej karty s heslom účtu TP-Link (každá platforma), iba v miestnej sieti; pozrite si [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Priečinky počítača s Windows (ukážková verzia pre počítač)**: priečinky, ktoré si vyberiete v Immuch360 Desktop, čítané namiesto galérie telefónu; počítač ich môže aj zdieľať s headsetom, pozrite si [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Snímky urobené v headsete tlačidlom snímky obrazovky (tlačidlo Meta a spú�
 - **Veľkosť APK**: Spatial SDK pridáva približne 56 MB natívneho kódu ARM 64-bit, aj na telefónoch, kde sa nikdy nenačíta.
 - **Licencia**: pohlcujúce zobrazenie používa Meta Spatial SDK, distribuované podľa Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Na počítači s Windows: Immuch360 Desktop (ukážková verzia)
+
+Vaša knižnica Immich je na serveri, ďalšie fotky sú v priečinkoch PC, videá na NAS alebo na serveri Plex a chceli by ste sa rozhliadať vo svojich fotkách 360° na veľkej obrazovke alebo ukázať fotky z PC v headsete. Immuch360 Desktop je tá istá aplikácia na počítači s Windows, zostavená z rovnakých zdrojových kódov ako aplikácie pre telefóny.
+
+Na počítači ponúka Immich svoju webovú aplikáciu v prehliadači. **Čo pridáva Immuch360 Desktop**: priečinky PC bez akéhokoľvek servera či účtu, sieťové úložiská SMB, WebDAV, DLNA a Plex prehliadané z aplikácie, surové fotky .insp z Insta360 otvorené ako guľa a PC zdieľané s Meta Quest doma.
+
+Táto prvá zostava je ukážková verzia: fotky fungujú, videá prídu s ďalšími zostavami pre počítač. Aplikácie pre telefón, tablet, Quest a TV sa s ňou nemenia a ponechávajú si názov Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Stiahnutie a inštalácia na Windows
+
+Prvá zostava je predbežné vydanie na GitHube [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Jej súbor je `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 súborov po rozbalení), so súborom `SHA256SUMS.txt` na kontrolu. Bola zostavená z vetvy `desktop` na commite 21f285c34: zostava 20 pre telefóny plus verzia pre počítač. Potrebuje Windows 10 alebo 11, 64-bitový.
+
+1. Stiahnite ZIP a rozbaľte ho kamkoľvek, napríklad do Dokumentov.
+2. Spustite `immuch360.exe` z rozbaleného priečinka. Ponechajte priečinok celý: program potrebuje súbory vedľa seba.
+3. Súbory zatiaľ nie sú podpísané, takže Windows SmartScreen môže zobraziť „Systém Windows ochránil váš počítač“: zvoľte „Ďalšie informácie“, potom „Spustiť aj tak“. Kde je zapnuté Inteligentné ovládanie aplikácií, blokuje nepodpísané programy.
+4. Počkajte na okno. Prvé spustenie novej zostavy trvá od 10 sekúnd do približne minúty, najpravdepodobnejšie kým Microsoft Defender kontroluje nové súbory: medzitým aplikáciu znova nespúšťajte. Ďalšie spustenia trvajú sekundu alebo dve.
+5. Na prihlasovacej stránke sa prihláste na svoj server Immich s jeho adresou, svojím e-mailom a heslom, alebo kliknite na „Používať bez servera“.
+
+Ak chcete ZIP skontrolovať, spustite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` v príkazovom riadku, v priečinku so stiahnutým súborom: výsledok je ten, ktorý je zapísaný v `SHA256SUMS.txt`. Inštalátor ani automatická aktualizácia zatiaľ nie sú: sledujte stránku [Releases](https://github.com/freeKC/Immuch360/releases) a ďalšiu zostavu rozbaľte rovnako.
+
+### Čo ukážková verzia robí
+
+- **Váš server Immich**: časová os, albumy, ľudia, spomienky a vyhľadávanie a fotky zo servera v plnej veľkosti, ako na telefóne.
+- **Bez servera**: priečinky vašich fotiek a videí (navrhnuté sú Obrázky a Videá) nahrádzajú galériu telefónu. Mimo vybraných priečinkov sa nič nečíta a bez servera nič neopustí počítač.
+- **Nahrávanie a zálohovanie** z týchto priečinkov na váš server Immich, kým je aplikácia otvorená.
+- **Fotky 360° ako guľa**, s myšou a klávesnicou; surové fotky .insp z kamier Insta360 sa otvárajú ako na telefónoch.
+- **Sieťové úložiská**: Samba (SMB), WebDAV a mediálne servery DLNA a servery Plex bez plex.tv, prehliadané ako na telefónoch: ich fotky sa otvoria, ich videá čakajú na prehrávač videa (pozrite si [Ešte to nie je](#not-there-yet)). Pre kamery Tapo záznamy z pamäťovej karty: zoznam a stiahnutie klipu.
+- **Zdieľať tento počítač v sieti**: albumy, mesiace a médiá 360° z vašich priečinkov, len na čítanie, pre Meta Quest alebo iné zariadenie doma, tak ako sa zdieľa telefón.
+- **Súbory**: stiahnuté súbory zo servera idú do priečinka, ktorý si vyberiete, „Uložiť do priečinka“ uchová kópiu vybraných fotiek a videí a stránka Záznamy má „Uložiť záznamy do súboru“.
+
+### Používanie na počítači
+
+1. **Vyberte si priečinky.** Bez servera začína časová os kartou „Vyberte priečinky svojich fotiek a videí“: kliknite na „Pridať priečinok“. So serverom sa tá istá karta zobrazí v Knižnici pod „Na tomto počítači“ a v albumoch na zálohovanie, kým sa nevyberie priečinok. Potom tam je riadok „Priečinky na tomto počítači“, rovnako ako v Nastaveniach, „Tento počítač“.
+2. **Cloudové, USB a sieťové priečinky.** Súbory, ktoré OneDrive (alebo iný cloudový disk) uchováva iba online, sa započítajú, ale nečítajú, takže pridanie priečinka nestiahne celý váš cloud: „Stiahnuť a zahrnúť“ ich stiahne, keď ich chcete. Disk USB, ktorý sa vráti pod iným písmenom, si ponechá svoje fotky. Sieťové priečinky a priečinky na pamäťovej karte alebo disku USB (aby ho Windows mohol stále vysunúť) sa nesledujú kvôli zmenám: po pridaní súborov tam použite Obnoviť.
+3. **Rozhliadnite sa vo fotke 360°**: ťahajte myšou, približujte kolieskom, dvojitým kliknutím alebo + a - (na akomkoľvek rozložení klávesnice, vrátane AZERTY), pohybujte sa šípkami. F alebo F11 prepne na celú obrazovku a Escape ju zavrie; Home a End prejdú na prvú a poslednú fotku; I zobrazí podrobnosti.
+4. **Prechádzajte z fotky na fotku**: v plochej fotke šípky doľava a doprava, alebo šípky, ktoré sa zobrazia na okrajoch pri pohybe myši, prejdú na predchádzajúcu a nasledujúcu. Písmená napísané do poľa popisu zostanú v texte.
+5. **Zdieľajte počítač s headsetom**: otvorte Knižnicu, potom Sieťové úložiská; prvá dlaždica je „Zdieľať tento počítač v sieti“, počítačová strana časti [Zdieľať tento telefón v sieti](#share-this-phone-on-the-network). Zapnite „Zdieľať fotky a videá v sieti“, potom pridajte počítač v headsete tak, ako hovorí tá časť. Zdieľanie sa zastaví, keď sa aplikácia zavrie, alebo po hodine bez používania.
+6. **Povoľte sieť**: Windows sa môže opýtať, či Immuch360 Desktop môže používať sieť. Povoľte to v súkromných sieťach, inak headset počítač nenájde. V sieti, ktorú Windows označí ako verejnú (kaviareň, hotel), alebo ktorej typ nevie určiť, sa zdieľanie nespustí, pokiaľ nezvolíte „Zdieľať pre túto reláciu“, a počítač sa ohlasuje iba v sieti, v ktorej zdieľa.
+7. **Nastavenia, „Tento počítač“**: priečinky, priečinok na sťahovanie, sieťový adaptér používaný na hľadanie úložísk a na zdieľanie počítača (keď ich má niekoľko, napríklad Wi-Fi a Ethernet) a dôveryhodné certifikáty: certifikačná autorita vášho vlastného servera, ako súbor PEM, pre adresu HTTPS, ktorej Windows sám nedôveruje. Klientske certifikáty sa importujú v Nastaveniach, Pokročilé, ako na telefónoch.
+
+### V porovnaní s aplikáciami pre telefóny
+
+- **Zálohovanie beží, kým je aplikácia otvorená** (alebo minimalizovaná), nie na pozadí so zatvoreným oknom. Zatvorenie okna počas nahrávania alebo počas zdieľania počítača si najprv vyžiada potvrdenie.
+- **Priečinky namiesto galérie**: aplikácia číta priečinky, ktoré si vyberiete, a uchováva si vlastný index, miniatúry a vyrovnávaciu pamäť v počítači.
+- **Jedno okno**: druhé otvorenie aplikácie vráti prvé okno namiesto spustenia druhej kópie.
+- **Z vašich priečinkov sa nič nemaže**: „Odstrániť zo zariadenia“ je skryté a Odstrániť odstráni iba kópiu na serveri, kým aplikácia nebude vedieť posielať súbory do koša Windows.
+- **Myš a klávesnica** namiesto dotyku a gyroskopu.
+
+<a id="not-there-yet"></a>
+### Ešte to nie je
+
+- **Videá**: zatiaľ zobrazujú zástupný obrázok a ich miniatúry ikonu filmu. Prehrávanie príde ako ďalšie: najprv ploché videá, potom videá 360°, 3D a VR180 a surové videá 360°.
+- **Spatial 2.5D**, neskôr s webovou kamerou; **živý obraz Tapo**; **mapa** a zobrazenie Miesta; **prihlásenie cez OAuth** (prihláste sa namiesto toho e-mailom a heslom); **Google Cast**; **upozornenia**.
+- **Inštalátor, podpísaná zostava a automatické aktualizácie**: táto zostava je priečinok s `immuch360.exe`.
+- **Linux a macOS**: ich projekty sú v zdrojových kódoch, ale na týchto systémoch zatiaľ neboli zostavené ani vyskúšané; prídu po Windows.
+- **Preklady**: nové texty verzie pre počítač sú zatiaľ v angličtine.
+
+### Známe problémy
+
+- **Kým headset číta súbor zo zdieľaného počítača** (video, ktoré prehráva, fotku, ktorú sťahuje), Windows nemôže tento súbor premenovať, presunúť ani odstrániť a hlási, že je otvorený v Immuch360 Desktop: najprv zastavte prehrávanie. Zálohovanie vaše súbory takto neblokuje: súbor sa dá premenovať, presunúť alebo odstrániť počas nahrávania.
+- **Nedokončené detaily**: funkcie vyššie prechádzajú automatickými testami na Windows (475 testov pre počítač) a na PC s Windows 11 sa aplikácia spustí, otvorí uloženú reláciu na serveri Immich, zosynchronizuje sa a korektne sa zavrie. Ručné testovanie každej funkcie na skutočnom PC stále prebieha.
+
+Ak sa niečo pokazí, otvorte prosím [issue](https://github.com/freeKC/Immuch360/issues) so záznamom uloženým zo stránky Záznamy, pozrite si [Záznamy](#logs). Pred zdieľaním záznam skontrolujte: môže obsahovať adresu vášho servera.
+
+<a id="build-it-yourself-on-windows"></a>
+### Zostavte si ju sami na Windows
+
+Potrebujete Windows 10 alebo 11 na x64, Flutter 3.47.2 pre Windows, Visual Studio 2022 alebo jeho Build Tools so sadou funkcií „Desktop development with C++“, Režim vývojára zapnutý v nastaveniach Windows (Flutter ho potrebuje pre doplnky) a Python 3 pre skript na balenie.
+
+1. Získajte vetvu `desktop` a spustite generovanie kódu. Používa Javu a Node, takže ho spustite na Linuxe, macOS alebo vo WSL; s WSL majte klon na disku Windows, ktorý WSL vidí pod `/mnt/c` alebo `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Na Windows, v tom istom priečinku `mobile`, zostavte aplikáciu:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Priečinok `Release` beží na PC, ktoré ho zostavilo. Pre iné PC ponechajte celý priečinok a pridajte vedľa `immuch360.exe` runtime Visual C++. Z koreňa klonu ho skript na balenie skopíruje, vynechá to, čo slúži iba Androidu, skontroluje, či každá DLL, ktorú aplikácia načíta, je v priečinku alebo priamo vo Windows, a vytvorí ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+CI vetvy `desktop` (`.github/workflows/immuch360-desktop.yml`) spúšťa kontroly pre telefóny a celú sadu testov na Linuxe, testy pre počítač na Windows a zostaví ten istý ZIP; jej úlohy pre Linux a macOS (`flutter build linux` a `flutter build macos`, s rovnakým `-t lib/main_desktop.dart`) na týchto systémoch zatiaľ nebežali.
+
 <a id="where-to-get-it"></a>
 ## Kde ju získať
 
-Aplikácia je na Google Play pre telefóny a tablety; verzia pre App Store čaká na posúdenie spoločnosťou Apple, záznam v Meta Horizon Store je schválený a jeho prvá aktualizácia je v posudzovaní spoločnosťou Meta a verzia Google Play pre televízory čaká na posúdenie verzie pre televízory spoločnosťou Google. Vydanie na GitHube je vždy najnovšia zostava:
+Aplikácia je na Google Play pre telefóny a tablety; verzia pre App Store čaká na posúdenie spoločnosťou Apple, záznam v Meta Horizon Store je schválený a jeho prvá aktualizácia je v posudzovaní spoločnosťou Meta a verzia Google Play pre televízory čaká na posúdenie verzie pre televízory spoločnosťou Google. Immuch360 Desktop pre Windows je ukážková verzia na GitHube. Vydanie na GitHube je vždy najnovšia zostava:
 
 - **Telefóny a tablety s Androidom**
   - Dnes: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) alebo APK na stránke [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pre telefón (univerzálny `Immuch360-v<version>-release.apk` funguje všade, `-armeabi-v7a` je pre staršie 32-bitové telefóny a súbor `.aab` je pre Google Play, nie na sideload). Zostava na GitHube je zvyčajne pred obchodom. V každom prípade sa inštaluje vedľa oficiálnej aplikácie Immich (balík `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Aplikácia je na Google Play pre telefóny a tablety; verzia pre App Store čak�
 - **Android TV a Google TV (od zostavy 20)**
   - Dnes: univerzálny `Immuch360-v<version>-release.apk` zo stránky [Releases](https://github.com/freeKC/Immuch360/releases), nainštalovaný cez sideload pomocou adb, pozrite si [Inštalácia do televízora](#install-it-on-the-tv). Je to tá istá aplikácia ako na telefónoch.
   - Čoskoro: Google Play na televízoroch, po posúdení verzie pre televízory spoločnosťou Google.
+- **Windows 10 a 11, 64-bitový (ukážková verzia)**
+  - Dnes: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` z [predbežného vydania pre počítač](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), rozbalený a spustený tak, ako hovorí [Stiahnutie a inštalácia na Windows](#download-and-install-on-windows). Zatiaľ len fotky: videá prídu s ďalšími zostavami pre počítač.
+  - Čoskoro: prehrávanie videa; inštalátor, podpísaná zostava a aktualizácie neskôr.
 
 Odkazy na App Store a Meta Horizon Store tu pribudnú hneď, ako budú záznamy zverejnené. Prihláste sa svojou obvyklou adresou URL servera Immich a účtom, alebo na prihlasovacej stránke ťuknite na „Používať bez servera“ a začnite s fotkami a videami samotného zariadenia. APK z GitHubu sa sám neaktualizuje: sledujte stránku Releases a keď si aplikáciu nainštalujete z obchodu, aktualizácie preberajte z toho obchodu.
 
@@ -993,12 +1105,15 @@ Dva varianty (flavor) pre Android sú tá istá aplikácia. Od zostavy 20 sa `ph
 
 Ak chcete zostavovať pre iOS na vlastnom Macu, použite Xcode a vlastný tím na podpisovanie; s Xcode 26 najprv raz spustite `xcodebuild -downloadComponent MetalToolchain`, pretože ho potrebujú shadery Spatial. Bez Macu sa zostavy pre iOS spúšťajú na Codemagic (hosťovaný Mac) zo súboru `codemagic.yaml` tohto repozitára. Zostavy vydaní pre Android bežia na GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, verzia pre Windows, sa zostavuje z vetvy `desktop` pomocou Flutteru pre Windows: postup je v časti [Zostavte si ju sami na Windows](#build-it-yourself-on-windows).
+
 V tomto repozitári nie je žiadne tajomstvo: podpisový kľúč pre Android je uložený ako šifrované tajomstvá GitHub Actions a podpisové materiály Apple ako šifrované premenné na Codemagic. Súbory workflow na ne odkazujú iba menom. Bez vlastného `android/key.jks` sa zostava vydania podpíše ladiacim kľúčom a nedá sa nainštalovať cez kópiu z GitHubu alebo z obchodu (najprv ju odinštalujte); ladiaca zostava sa nainštaluje vedľa nej ako Immuch360 debug. Kópia v Meta Horizon Store je APK `quest` z vydania podpísaný iným kľúčom, tým, s ktorým bola aplikácia v obchode pôvodne zaregistrovaná, takže ani ju nemožno nainštalovať cez APK nainštalovaný cez sideload, ani naopak.
 
 ### Vetvy
 
 - **`main`**: Immich `main` na commite, z ktorého `immuch360` vychádza (29. septembra 2026 pre aktuálne zostavy), nikdy sa nemení; posúva sa vpred, keď sa fork prenesie (rebase) na novší Immich.
 - **`immuch360`**: zmeny tohto forku nad Immich. Každé vydanie uvádza, z ktorej verzie Immich vychádza.
+- **`desktop`**: Immuch360 Desktop, verzia pre počítač, nad `immuch360`. Vydania pre telefóny sa do nej zlučujú a predbežné vydania pre počítač sa z nej zostavujú (desktop build 1 z commitu 21f285c34, zostava 20 pre telefóny plus verzia pre počítač). Nič v `mobile/android` a `mobile/ios` sa v nej nemení.
 
 <a id="logs"></a>
 ## Záznamy
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Od zostavy 19 zapisujú klient DLNA, zdieľanie telefónu a rozpoznávanie priestorových médií Apple aj do vlastného záznamu aplikácie (Záznamy v ponuke profilovej fotky vpravo hore) pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` a `NetworkMediaService`. Od zostavy 20 tam režim televízora zapisuje pod `TvMode` a `TvTextEntry`, servery Plex pod `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` a `PlexServerEditPage` a kamery Tapo pod `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` a `CameraLiveView`; riadky Plexu nikdy neobsahujú token, adresu ani názov a riadky kamier vynechávajú heslá. Riadky záznamu zostávajú v zariadení, pokiaľ ich sami neskopírujete.
 
+Na počítači (Immuch360 Desktop) má stránka Záznamy aj „Uložiť záznamy do súboru“: záznam, alebo ZIP so záznamom a hláseniami o posledných pádoch, ak nejaké sú (navrhnutý názov sa potom končí na „with-crash-reports“). Hlásenie o páde je malý minidump: vlákna, miesto, kde sa zastavili, a iba to, čo je potrebné na sledovanie ich volaní, s názvami súborov programu, ale bez ich priečinkov; nie pamäť aplikácie. Pred zdieľaním záznam skontrolujte: môže obsahovať adresu vášho servera.
+
 <a id="privacy"></a>
 ## Súkromie
 
@@ -1026,19 +1143,21 @@ Od zostavy 19 zapisujú klient DLNA, zdieľanie telefónu a rozpoznávanie pries
 - **Televízor**: to, či je zariadenie televízor, sa zisťuje v zariadení; nič sa neodosiela.
 - **Zdieľanie telefónu**: iba miestna sieť, s používateľským menom a heslom, cez obyčajné HTTP (pozrite si [Zdieľať tento telefón v sieti](#share-this-phone-on-the-network)).
 - **Kamera**: používa ju iba prehrávač Spatial 2.5D, v zariadení; obrázky sa nikdy neukladajú a nikam sa neodosielajú.
+- **Na počítači** (Immuch360 Desktop, ukážková verzia pre Windows): aplikácia číta iba priečinky, ktoré si vyberiete, uchováva index, miniatúry a vyrovnávaciu pamäť v počítači a ukladá heslá a tokeny s ochranou údajov Windows, iba pre váš účet Windows. Zdieľanie počítača sa riadi pravidlami zdieľania telefónu a nespustí sa v sieti, ktorú Windows označí ako verejnú, alebo ktorej typ nevie určiť, pokiaľ to sami nepovolíte.
 
 Úplné zásady sú v [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Licencia a ochranná známka
 
-Tento projekt je forkom Immich a zostáva pod licenciou [GNU AGPL v3](../LICENSE). Každý APK, vrátane tých pre telefóny, obsahuje aj Meta Spatial SDK, ktoré nie je open source (Meta Platform Technologies SDK License Agreement) a používa sa iba na headsetoch Meta Quest. Immuch360 nie je pridružený k tímu Immich ani k FUTO a nie je nimi podporovaný.
+Tento projekt je forkom Immich a zostáva pod licenciou [GNU AGPL v3](../LICENSE). Každý APK, vrátane tých pre telefóny, obsahuje aj Meta Spatial SDK, ktoré nie je open source (Meta Platform Technologies SDK License Agreement) a používa sa iba na headsetoch Meta Quest; Immuch360 Desktop, verzia pre Windows, ho neobsahuje. Immuch360 nie je pridružený k tímu Immich ani k FUTO a nie je nimi podporovaný.
 
 <a id="roadmap"></a>
 ## Plán
 
 Čo zatiaľ nie je hotové, od najpravdepodobnejšieho. Nič z toho nie je sľub a spätná väzba v [systéme hlásení](https://github.com/freeKC/Immuch360/issues) pomáha rozhodnúť, čo príde ako prvé.
 
+- **Immuch360 Desktop, najprv Windows**: prvá ukážková verzia vyšla (pozrite si [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview)). Ďalej prehrávanie videa (najprv ploché videá, potom 360°, 3D, VR180 a surové súbory), merané na dvoch grafických kartách notebooku; potom testovanie každej funkcie na PC s Windows a jej opravy; potom Spatial 2.5D s webovou kamerou; potom Linux a macOS, balíky, podpisovanie a aktualizácie.
 - **Google Play**: zostava 18 je zverejnená; zostava 20 je v posudzovaní spoločnosťou Google od 7. októbra 2026, namiesto zostavy 19. Zostava 21 na telefónoch a tabletoch nič nemení.
 - **App Store**: verzia 3.3.0 čaká na posúdenie spoločnosťou Apple; obsahuje funkcie zostavy 11, takže nahrávanie do Immich a kontrola videodekodéra (zostava 15) a nespracované súbory Insta360 (zostava 16) prídu s ďalšou aktualizáciou v App Store. Odkaz tu pribudne, keď bude verzia zverejnená.
 - **Meta Horizon Store**: spoločnosť Meta schválila záznam 7. októbra 2026 so zostavou 14. Zostava 21 je odoslaná ako jeho prvá aktualizácia: prináša všetko od zostavy 14 (odosielanie zo zdieľania do Immich, zdroj videa zvolený podľa toho, čo headset dekóduje, nespracované súbory Insta360, GoPro a DJI, DLNA, zdieľanie telefónu, priestorové fotky Apple, knižnice Plex Media Server, kamery Tapo) a obchod ju uvádza pre Quest 2, Quest Pro, Quest 3 a 3S. Odkaz na obchod tu pribudne, keď bude stránka verejná; kópiu nainštalovanú cez sideload treba najprv odinštalovať (pozrite si [Inštalácia](#install)).

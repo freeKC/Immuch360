@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 je Immich mobilna aplikacija sa 360° fotografijama i video zapisima u kojima možete da gledate oko sebe, i besplatan plejer za ravne, 360°, 3D i VR180 fotografije i video zapise, na Android telefonima i tabletima, iPhone i iPad uređajima, na Meta Quest naočarima (Quest 3 i 3S, a od bilda 21 Quest 2 i Quest Pro, netestirano), a od bilda 20 i na Android TV-u i Google TV-u.
+Immuch360 je Immich mobilna aplikacija sa 360° fotografijama i video zapisima u kojima možete da gledate oko sebe, i besplatan plejer za ravne, 360°, 3D i VR180 fotografije i video zapise, na Android telefonima i tabletima, iPhone i iPad uređajima, na Meta Quest naočarima (Quest 3 i 3S, a od bilda 21 Quest 2 i Quest Pro, netestirano), a od bilda 20 i na Android TV-u i Google TV-u. Immuch360 Desktop, ista aplikacija na Windows računaru, objavljen je kao probna verzija, pogledajte [Na Windows računaru](#on-a-windows-computer-immuch360-desktop-preview).
 
 Namenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) ili režimom foto sfere na telefonu, ili koji imaju VR naočare, i žele da gledaju sopstvene snimke sa Immich servera, sa samog telefona, sa NAS-a, medijskog servera ili Plex servera: isti server, isti nalog, bez dodatka za server, ili potpuno bez servera. Od bilda 20 prikazuje i Tapo kamere, uživo i snimke sa njihove memorijske kartice.
 
@@ -18,13 +18,14 @@ Namenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 360
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
   App Store: <a href="#where-to-get-it">na pregledu</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store odobren, bild 21 predat kao njegovo prvo ažuriranje<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">preuzimanje probne verzije</a>
 </p>
 
 - 🌐 **Izvorni 360°**<br>Fotografije i video zapisi kao sfera u kojoj gledate oko sebe, uz žiroskop, uključujući neobrađene datoteke kamere (Insta360 od bilda 16, GoPro i DJI od bilda 18). Uz to i besplatan video plejer: ravno, 360°, 3D, VR180
 - 👓 **Izvorni 3D**<br>Stereoskopski 360° i VR180, gore i dole ili jedno pored drugog, i Apple prostorne fotografije (od bilda 19): pravi 3D u naočarima, jedno oko na telefonu
 - 🎥 **Izvorni 2.5D**<br>Dubina na ravnom ekranu iz stereoskopskog videa, prikaz prati vašu glavu (eksperimentalno, telefoni i tableti)
-- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikacija na telefonima, tabletima i naočarima Quest 2, Pro, 3 i 3S, pravi 3D u naočarima, a od bilda 20 i na Android TV-u uz daljinski upravljač
+- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikacija na telefonima, tabletima i naočarima Quest 2, Pro, 3 i 3S, pravi 3D u naočarima, od bilda 20 i na Android TV-u uz daljinski upravljač, i probna verzija za Windows
 - 🔌 **Sa serverom ili bez njega**<br>Vaš Immich server, ili galerija samog telefona, bez naloga
 - 🗄️ **Mrežni deljeni resursi**<br>Samba (SMB), WebDAV i, od bilda 19, DLNA medijski serveri pronađeni na mreži i čitani uživo, ništa se ne preuzima, a šalju se na Immich kada vi odlučite. Od bilda 19 telefon takođe deli svoju galeriju sa naočarima
 - 📺 **Na televizoru**<br>Od bilda 20 isti APK na Android TV-u i Google TV-u: 360° fotografije i video zapisi, vaš server i vaši deljeni resursi, uz daljinski upravljač
@@ -52,6 +53,7 @@ Namenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 360
 - [U poređenju sa Immich aplikacijom i drugim aplikacijama](#compared-with-the-immich-app-and-other-apps)
 - [Formati i izvori, po platformi](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Na Windows računaru: Immuch360 Desktop (probna verzija)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Gde je preuzeti](#where-to-get-it)
 - [Napravite je sami](#build-it-yourself)
 - [Evidencija](#logs)
@@ -77,6 +79,7 @@ Namenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 360
 - **"Želim da gledam svoje 360° fotografije i video zapise, i video zapise sa svog NAS-a ili Plex servera, na televizoru, uz daljinski upravljač."** Pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ne mogu da pronađem svoje 360° snimke među svim ostalima."** Pogledajte [Lista 360°](#find-your-360-shots-the-360-list).
 - **"Moj 360° video zastajkuje ili reprodukuje mutnu kopiju."** Pogledajte [Detalji videa i dekoderi](#video-details-decoders-and-why-a-video-stutters).
+- **"Želim svoje 360° fotografije i svoju Immich biblioteku na svom Windows računaru, sa fotografijama iz njegovih fascikli, sa svog NAS-a i svog Plex servera, i da računar delim sa svojim naočarima."** Pogledajte [Na Windows računaru](#on-a-windows-computer-immuch360-desktop-preview) (probna verzija, za sada samo fotografije).
 - **"Da li zadržavam ono što radi Immich aplikacija?"** Da, uz dve male izmene, pogledajte [Sve ostalo je Immich](#everything-else-is-immich).
 
 Kada je neka funkcija nova, tekst navodi od kog bilda postoji. GitHub izdanje uvek ima najnoviji bild, prodavnice kasnije stižu: pogledajte [Gde je preuzeti](#where-to-get-it).
@@ -749,6 +752,7 @@ Trenutni bild, bild 21 (verzija 3.3.0-rc.0, broj bilda 3030019), zasnovan je na 
 | Plex Media Server biblioteke reprodukovane iz originalnih datoteka, kod kuće i van nje, bez plex.tv | ❌ | ✅ od bilda 20, svi pregledači, na telefonima, tabletima, Quest i televizorima |
 | Tapo kamere: prikaz uživo i snimci sa memorijske kartice poslati na Immich kada vi to izaberete | ❌ | ✅ od bilda 20: snimci svuda, uživo na Android-u, Android TV-u i Quest |
 | Android TV i Google TV, upravljanje daljinskim upravljačem, u istom APK-u | ❌ nije aplikacija za televizor | ✅ od bilda 20 |
+| Ista aplikacija na Windows računaru | ❌ samo telefoni i tableti | ✅ probna verzija, još bez video zapisa |
 | Neobrađene Insta360 .insp fotografije i .insv video zapisi sa jednim zapisom | ❌ ravno | ✅ od bilda 16 |
 | Neobrađeni video zapisi sa jednim sočivom po zapisu ili po datoteci (Insta360 X4, X4 Air, X5, X6, X3 parovi, GoPro .360, DJI .osv) | ❌ ravno ili pogrešno | ✅ od bilda 18 |
 | Dvostruko riblje oko u .dng | ❌ ravno | ❌ još ne |
@@ -778,6 +782,7 @@ Trenutni bild, bild 21 (verzija 3.3.0-rc.0, broj bilda 3030019), zasnovan je na 
 - **Plex Media Server**: provereno sa računara na pravom Plex Media Serveru 1.42.1 (uparivanje, fascikle, opsezi bajtova, sličice, adresa van kuće); još nije provereno na uređaju.
 - **Tapo kamere**: provereno na simuliranoj kameri; još nije provereno sa pravom kamerom.
 - **Android TV i Google TV**: provereno automatskim testovima; još nije provereno na televizoru.
+- **Ista aplikacija na Windows računaru**: 475 automatskih testova za računar na Windows-u, a na Windows 11 računaru aplikacija se pokreće, otvara sačuvanu sesiju na Immich serveru, sinhronizuje i uredno se zatvara; ručno testiranje svake funkcije je u toku.
 - **Neobrađene Insta360 .insp fotografije i .insv video zapisi sa jednim zapisom**: fotografije proverene u poređenju sa izvozima X3 datoteka iz Insta360 Studio-a, video zapisi na Android emulatoru sa X3 datotekom niske rezolucije; još nije pokrenuto na iPhone-u.
 - **Neobrađeni video zapisi sa jednim sočivom po zapisu ili po datoteci**: parseri i spajanje provereni na stvarnim datotekama sa X4, X3 para, GoPro MAX i Osmo 360; reprodukcija je test na uređajima za bildove 18 i 19.
 - **Dvostruko riblje oko u .dng**: planirano.
@@ -883,12 +888,15 @@ Immuch360 je galerija, a i besplatan medijski plejer: reprodukuje ono što zvani
 
 Stavke za Android TV i Google TV, od bilda 20, još nisu proverene na televizoru, pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv); stavke za kameru još nisu proverene sa pravom kamerom.
 
+Na Windows-u, probna verzija Immuch360 Desktop prikazuje fotografije, ravne i 360°, uključujući sirove Insta360 .insp fotografije, mišem i tastaturom, sa servera, iz fascikli računara, sa deljenih resursa i sa Plex-a; još ne reprodukuje video zapise, oni prikazuju zamenski prikaz (pogledajte [Još nije tu](#not-there-yet)).
+
 - **Vaš Immich server**: original ili transkodirani strim servera, kako kaže Podešavanja, Pregledač imovine, Izvor videa (pogledajte [Detalji videa i dekoderi](#video-details-decoders-and-why-a-video-stutters)). Isti nalog kao veb aplikacija.
 - **Sam telefon ili naočare**: "Koristi bez servera" na stranici za prijavu, ili stavka Na ovom uređaju u kartici Biblioteka.
 - **NAS ili računar**: SMB i WebDAV deljeni resursi, a od bilda 19 i DLNA medijski serveri, pronađeni na mreži, čitani uživo (SMB video preko najviše šest veza), ništa se ne kopira; od bilda 15 datoteke koje izaberete mogu da se pošalju na vaš Immich nalog.
 - **Drugi telefon (od bilda 19)**: "Deli ovaj telefon na mreži" na tom telefonu: naočare, ili bilo koji WebDAV klijent na mreži, čitaju njegove albume, mesece i 360° medije.
 - **Plex Media Server (od bilda 20)**: njegove biblioteke fotografija, filmova i TV serija po fasciklama, originalne datoteke čitane uživo preko HTTPS-a provereno prema sopstvenom sertifikatu servera, kod kuće ili preko adrese van kuće, na svim platformama; pogledajte [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv).
 - **Tapo kamera (od bilda 20)**: prikaz uživo sa nalogom kamere (Android, Android TV, Quest) i snimci sa njene memorijske kartice sa šifrom TP-Link naloga (sve platforme), samo na lokalnoj mreži; pogledajte [Tapo kamere](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Fascikle Windows računara (probna verzija za računar)**: fascikle koje izaberete u Immuch360 Desktop, čitane umesto galerije telefona; računar može i da ih deli sa naočarima, pogledajte [Na Windows računaru](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Snimci napravljeni u naočarima dugmetom za snimanje ekrana (Meta dugme i okida�
 - **Veličina APK-a**: Spatial SDK dodaje oko 56 MB izvornog 64-bitnog ARM koda, i na telefonima, gde se nikada ne učitava.
 - **Licenca**: imerzivni prikaz koristi Meta Spatial SDK, koji se distribuira pod Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Na Windows računaru: Immuch360 Desktop (probna verzija)
+
+Vaša Immich biblioteka je na serveru, druge fotografije stoje u fasciklama računara, video zapisi na NAS-u ili Plex serveru, a voleli biste da gledate oko sebe u svojim 360° fotografijama na velikom ekranu, ili da fotografije sa računara prikažete u naočarima. Immuch360 Desktop je ista aplikacija na Windows računaru, napravljena iz istog izvornog koda kao aplikacije za telefone.
+
+Na računaru Immich nudi svoju veb aplikaciju u pregledaču. **Šta Immuch360 Desktop dodaje**: fascikle računara bez ikakvog servera ili naloga, SMB, WebDAV, DLNA i Plex deljene resurse koje pregledate iz aplikacije, sirove Insta360 .insp fotografije otvorene kao sfera, i računar deljen sa Meta Quest naočarima kod kuće.
+
+Ovaj prvi bild je probna verzija: fotografije rade, video zapisi stižu sa sledećim bildovima za računar. Aplikacije za telefon, tablet, Quest i televizor se zbog toga ne menjaju i zadržavaju ime Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Preuzimanje i instalacija na Windows-u
+
+Prvi bild je GitHub probno izdanje [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Njegova datoteka je `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 datoteka posle raspakivanja), uz `SHA256SUMS.txt` za proveru. Napravljen je iz grane `desktop` na commit-u 21f285c34: bild 20 za telefone plus verzija za računar. Potreban mu je Windows 10 ili 11, 64-bitni.
+
+1. Preuzmite ZIP i raspakujte ga bilo gde, na primer u Dokumente.
+2. Pokrenite `immuch360.exe` iz raspakovane fascikle. Čuvajte fasciklu celu: programu su potrebne datoteke pored njega.
+3. Datoteke još nisu potpisane, pa Windows SmartScreen može da prikaže "Windows je zaštitio vaš računar": izaberite "Više informacija", zatim "Ipak pokreni". Gde je Smart App Control uključen, on blokira nepotpisane programe.
+4. Sačekajte prozor. Prvo pokretanje novog bilda traje od 10 sekundi do oko minut, najverovatnije dok Microsoft Defender skenira nove datoteke: ne pokrećite aplikaciju ponovo u međuvremenu. Sledeća pokretanja traju sekundu ili dve.
+5. Na stranici za prijavu, prijavite se na svoj Immich server pomoću njegove adrese, svoje e-pošte i lozinke, ili kliknite na "Koristi bez servera".
+
+Da biste proverili ZIP, pokrenite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` u komandnoj liniji, u fascikli preuzimanja: rezultat je onaj koji je upisan u `SHA256SUMS.txt`. Još nema instalera ni automatskog ažuriranja: pratite stranicu [Releases](https://github.com/freeKC/Immuch360/releases), i raspakujte sledeći bild na isti način.
+
+### Šta probna verzija radi
+
+- **Vaš Immich server**: vremenska linija, albumi, osobe, uspomene i pretraga, i fotografije sa servera u punoj veličini, kao na telefonu.
+- **Bez servera**: fascikle vaših fotografija i video zapisa (predlažu se Slike i Video zapisi) zamenjuju galeriju telefona. Ništa se ne čita van fascikli koje ste izabrali, a bez servera ništa ne napušta računar.
+- **Otpremanje i rezervna kopija** iz tih fascikli na vaš Immich server, dok je aplikacija otvorena.
+- **360° fotografije kao sfera**, mišem i tastaturom; sirove .insp fotografije Insta360 kamera otvaraju se kao na telefonima.
+- **Mrežni deljeni resursi**: Samba (SMB), WebDAV i DLNA medijski serveri, i Plex serveri bez plex.tv, pregledani kao na telefonima: njihove fotografije se otvaraju, njihovi video zapisi čekaju video plejer (pogledajte [Još nije tu](#not-there-yet)). Za Tapo kamere, snimci sa memorijske kartice: lista, i preuzimanje snimka.
+- **Deli ovaj računar na mreži**: albumi, meseci i 360° mediji vaših fascikli, samo za čitanje, za Meta Quest ili drugi uređaj kod kuće, kao što telefon deli sam sebe.
+- **Datoteke**: preuzimanja sa servera idu u fasciklu koju izaberete, "Sačuvaj u fasciklu" čuva kopiju izabranih fotografija i video zapisa, a stranica Evidencija ima "Sačuvaj evidenciju u datoteku".
+
+### Korišćenje na računaru
+
+1. **Izaberite svoje fascikle.** Bez servera, vremenska linija počinje sa "Izaberite fascikle svojih fotografija i video zapisa": kliknite na "Dodaj fasciklu". Sa serverom, ista kartica se prikazuje u Biblioteci pod "Na ovom računaru", i u albumima za rezervnu kopiju, dok se ne izabere fascikla. Posle toga imaju red "Fascikle na ovom računaru", kao i Podešavanja, "Ovaj računar".
+2. **Fascikle u oblaku, na USB-u i na mreži.** Datoteke koje OneDrive (ili drugi disk u oblaku) čuva samo na mreži se broje ali se ne čitaju, pa dodavanje fascikle ne preuzima ceo vaš oblak: "Preuzmi i uključi" ih donosi kada ih želite. USB disk koji se vrati pod drugim slovom zadržava svoje fotografije. Mrežne fascikle, i fascikle na memorijskoj kartici ili USB disku (da bi Windows i dalje mogao da ga izbaci), ne prate se zbog promena: koristite Osveži posle dodavanja datoteka tamo.
+3. **Gledajte oko sebe u 360° fotografiji**: prevlačite mišem, zumirajte točkićem, dvostrukim klikom ili sa + i - (na bilo kom rasporedu tastature, uključujući AZERTY), pomerajte se strelicama. F ili F11 prebacuje na ceo ekran a Escape ga napušta; Home i End idu na prvu i poslednju fotografiju; I prikazuje detalje.
+4. **Idite od fotografije do fotografije**: u ravnoj fotografiji, strelice levo i desno, ili strelice koje se pojavljuju na ivicama dok se miš pomera, idu na prethodnu i sledeću. Slova otkucana u polju za opis ostaju u tekstu.
+5. **Delite računar sa naočarima**: otvorite Biblioteku, zatim Mrežni deljeni resursi; prva pločica je "Deli ovaj računar na mreži", strana računara od [Deli ovaj telefon na mreži](#share-this-phone-on-the-network). Uključite "Deli fotografije i video zapise na mreži", zatim dodajte računar u naočarima kako kaže taj odeljak. Deljenje prestaje kada se aplikacija zatvori ili posle sat vremena bez korišćenja.
+6. **Dozvolite mrežu**: Windows može da pita da li Immuch360 Desktop sme da koristi mrežu. Dozvolite to na privatnim mrežama, inače naočare ne mogu da pronađu računar. Na mreži koju Windows označava kao javnu (kafić, hotel), ili onoj čiji tip ne može da odredi, deljenje se ne pokreće osim ako ne izaberete "Deli za ovu sesiju", a računar se najavljuje samo na mreži na kojoj deli.
+7. **Podešavanja, "Ovaj računar"**: fascikle, fascikla za preuzimanja, mrežni adapter koji se koristi za pronalaženje deljenih resursa i za deljenje računara (kada ih ima više, na primer Wi-Fi i Ethernet), i pouzdani sertifikati: sertifikaciono telo vašeg sopstvenog servera, kao PEM datoteka, za HTTPS adresu kojoj Windows sam ne veruje. Klijentski sertifikati se uvoze u Podešavanja, Napredno, kao na telefonima.
+
+### U poređenju sa aplikacijama za telefon
+
+- **Rezervna kopija radi dok je aplikacija otvorena** (ili umanjena), ne u pozadini sa zatvorenim prozorom. Zatvaranje prozora dok traje otpremanje, ili dok se računar deli, prvo traži potvrdu.
+- **Fascikle umesto galerije**: aplikacija čita fascikle koje izaberete i čuva svoj indeks, sličice i keš na računaru.
+- **Jedan prozor**: ponovno otvaranje aplikacije vraća prvi prozor umesto da pokrene drugu kopiju.
+- **Ništa se ne briše iz vaših fascikli**: "Izbriši sa uređaja" je skriveno, a Izbriši uklanja samo kopiju na serveru, dok aplikacija ne bude mogla da šalje datoteke u Windows korpu za otpatke.
+- **Miš i tastatura** umesto dodira i žiroskopa.
+
+<a id="not-there-yet"></a>
+### Još nije tu
+
+- **Video zapisi**: za sada prikazuju zamenski prikaz, a njihove sličice ikonu filma. Reprodukcija stiže sledeća: prvo ravni video zapisi, zatim 360°, 3D i VR180 video zapisi i sirovi 360° video zapisi.
+- **Spatial 2.5D**, kasnije sa veb kamerom; **Tapo prikaz uživo**; **mapa** i prikaz Mesta; **prijava preko OAuth-a** (umesto toga prijavite se e-poštom i lozinkom); **Google Cast**; **obaveštenja**.
+- **Instaler, potpisan bild i automatska ažuriranja**: ovaj bild je fascikla sa `immuch360.exe`.
+- **Linux i macOS**: njihovi projekti su u izvornom kodu, ali još nisu napravljeni ni isprobani na tim sistemima; dolaze posle Windows-a.
+- **Prevodi**: novi tekstovi verzije za računar su za sada na engleskom.
+
+### Poznati problemi
+
+- **Dok naočare čitaju datoteku sa deljenog računara** (video koji reprodukuju, fotografiju koju preuzimaju), Windows ne može da preimenuje, premesti ili izbriše tu datoteku i kaže da je otvorena u Immuch360 Desktop: prvo zaustavite reprodukciju. Rezervne kopije ne drže vaše datoteke na taj način: datoteka može da se preimenuje, premesti ili izbriše dok se otprema.
+- **Neuglađeni delovi**: gore navedene funkcije prolaze svoje automatske testove na Windows-u (475 testova za računar), a na Windows 11 računaru aplikacija se pokreće, otvara sačuvanu sesiju na Immich serveru, sinhronizuje i uredno se zatvara. Ručno testiranje svake funkcije na pravom računaru je još u toku.
+
+Ako nešto pođe naopako, molimo vas da otvorite [prijavu problema](https://github.com/freeKC/Immuch360/issues) sa evidencijom sačuvanom sa stranice Evidencija, pogledajte [Evidencija](#logs). Proverite evidenciju pre nego što je podelite: može da sadrži adresu vašeg servera.
+
+<a id="build-it-yourself-on-windows"></a>
+### Napravite je sami na Windows-u
+
+Potreban vam je Windows 10 ili 11 na x64, Flutter 3.47.2 za Windows, Visual Studio 2022 ili njegov Build Tools sa radnim opterećenjem "Desktop development with C++", uključen Režim za programere u Windows podešavanjima (Flutter-u je potreban za dodatke), i Python 3 za skriptu za pakovanje.
+
+1. Preuzmite granu `desktop` i pokrenite generisanje koda. Koristi Java i Node, pa ga pokrenite na Linux-u, macOS-u ili u WSL-u; sa WSL-om, držite klon na Windows disku, koji WSL vidi pod `/mnt/c` ili `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Na Windows-u, u istoj fascikli `mobile`, napravite aplikaciju:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Fascikla `Release` radi na računaru koji ju je napravio. Za drugi računar, sačuvajte celu fasciklu i dodajte Visual C++ runtime pored `immuch360.exe`. Iz korena klona, skripta za pakovanje ga kopira, izostavlja ono što služi samo Android-u, proverava da je svaki DLL koji aplikacija učitava u fascikli ili u samom Windows-u, i pravi ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+CI grane `desktop` (`.github/workflows/immuch360-desktop.yml`) pokreće provere za telefone i ceo skup testova na Linux-u, testove za računar na Windows-u, i pravi isti ZIP; njegovi poslovi za Linux i macOS (`flutter build linux` i `flutter build macos`, sa istim `-t lib/main_desktop.dart`) još nisu pokrenuti na tim sistemima.
+
 <a id="where-to-get-it"></a>
 ## Gde je preuzeti
 
-Aplikacija je na Google Play-u za telefone i tablete; verzija za App Store čeka Apple-ov pregled, oglas u Meta Horizon Store-u je odobren a njegovo prvo ažuriranje je na Meta-inom pregledu, a Google Play verzija za televizore čeka Google-ov pregled izdanja za televizore. GitHub izdanje je uvek najnoviji bild:
+Aplikacija je na Google Play-u za telefone i tablete; verzija za App Store čeka Apple-ov pregled, oglas u Meta Horizon Store-u je odobren a njegovo prvo ažuriranje je na Meta-inom pregledu, a Google Play verzija za televizore čeka Google-ov pregled izdanja za televizore. Immuch360 Desktop, za Windows, je probna verzija na GitHub-u. GitHub izdanje je uvek najnoviji bild:
 
 - **Android telefoni i tableti**
   - Danas: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi svuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za instalaciju sa strane). GitHub bild je obično ispred prodavnice. U svakom slučaju instalira se pored zvanične Immich aplikacije (paket `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Aplikacija je na Google Play-u za telefone i tablete; verzija za App Store čeka
 - **Android TV i Google TV (od bilda 20)**
   - Danas: univerzalni `Immuch360-v<version>-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases), instaliran sa strane preko adb-a, pogledajte [Instaliranje na televizor](#install-it-on-the-tv). To je ista aplikacija kao na telefonima.
   - Uskoro: Google Play na televizorima, posle Google-ovog pregleda izdanja za televizore.
+- **Windows 10 i 11, 64-bitni (probna verzija)**
+  - Danas: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` iz [probnog izdanja za računar](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), raspakovan i pokrenut kako kaže [Preuzimanje i instalacija na Windows-u](#download-and-install-on-windows). Za sada samo fotografije: video zapisi stižu sa sledećim bildovima za računar.
+  - Uskoro: reprodukcija video zapisa; kasnije instaler, potpisan bild i ažuriranja.
 
 Linkovi za App Store i Meta Horizon Store biće dodati ovde čim oglasi budu objavljeni. Prijavite se sa uobičajenom adresom svog Immich servera i nalogom, ili dodirnite "Koristi bez servera" na stranici za prijavu da biste počeli sa fotografijama i video zapisima samog uređaja. APK sa GitHub-a se ne ažurira sam: pratite stranicu Releases, a kada aplikaciju instalirate iz prodavnice, ažuriranja preuzimajte iz te prodavnice.
 
@@ -993,12 +1105,15 @@ Varijanta `quest` cilja SDK 34 i zadržava samo dozvole koje naočare koriste (f
 
 Da biste napravili iOS verziju na sopstvenom Mac-u, koristite Xcode i sopstveni tim za potpisivanje; sa Xcode 26 prvo jednom pokrenite `xcodebuild -downloadComponent MetalToolchain`, jer je potreban Spatial shaderima. Bez Mac-a, iOS bildovi se prave na Codemagic-u (Mac u oblaku) iz datoteke `codemagic.yaml` ovog repozitorijuma. Android bildovi za izdanja prave se na GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, Windows verzija, gradi se iz grane `desktop` pomoću Flutter-a za Windows: koraci su u [Napravite je sami na Windows-u](#build-it-yourself-on-windows).
+
 U ovom repozitorijumu nema nijedne tajne: Android ključ za potpisivanje čuva se kao šifrovane tajne u GitHub Actions, a Apple materijal za potpisivanje kao šifrovane promenljive na Codemagic-u. Datoteke tokova rada ih navode samo po imenu. Bez sopstvenog `android/key.jks`, bild za izdanje se potpisuje debug ključem i ne može da se instalira preko kopije sa GitHub-a ili iz prodavnice (prvo deinstalirajte tu kopiju); debug bild se instalira pored nje kao Immuch360 debug. Kopija iz Meta Horizon Store-a je `quest` APK izdanja potpisan drugim ključem, onim sa kojim je aplikacija prvi put registrovana u prodavnici, pa ni ona ne može da se instalira preko APK-a instaliranog sa strane, niti obrnuto.
 
 ### Grane
 
 - **`main`**: Immich `main` na komitu na kom se zasniva `immuch360` (29. septembar 2026. za trenutne bildove), nikada izmenjen; pomera se napred kada se fork ponovo zasnuje (rebase) na novijem Immich-u.
 - **`immuch360`**: izmene ovog forka na vrhu Immich-a. Svako izdanje navodi na kojoj se verziji Immich-a zasniva.
+- **`desktop`**: Immuch360 Desktop, verzija za računar, na vrhu `immuch360`. Izdanja za telefone se spajaju u nju, a probna izdanja za računar grade se iz nje (bild za računar 1 iz commit-a 21f285c34, bild 20 za telefone plus verzija za računar). Ništa u `mobile/android` i `mobile/ios` se u njoj ne menja.
 
 <a id="logs"></a>
 ## Evidencija
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Od bilda 19 DLNA klijent, deljeni resurs telefona i prepoznavanje Apple prostornih medija upisuju i u sopstvenu evidenciju aplikacije (Evidencija, u meniju slike profila gore desno), pod `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` i `NetworkMediaService`. Od bilda 20 režim za televizor tamo upisuje pod `TvMode` i `TvTextEntry`, Plex serveri pod `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` i `PlexServerEditPage`, a Tapo kamere pod `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` i `CameraLiveView`; Plex redovi nikada ne sadrže token, adresu ni naslov, a redovi kamere izostavljaju šifre. Redovi evidencije ostaju na uređaju osim ako ih sami ne kopirate.
 
+Na računaru (Immuch360 Desktop), stranica Evidencija ima i "Sačuvaj evidenciju u datoteku": evidenciju, ili ZIP sa evidencijom i izveštajima o poslednjim padovima kada ih ima (predloženo ime se tada završava sa "with-crash-reports"). Izveštaj o padu je mali minidump: niti, mesto gde su stale i samo ono što je potrebno da se prate njihovi pozivi, sa imenima programskih datoteka ali ne i njihovih fascikli; ne i memorija aplikacije. Proverite evidenciju pre nego što je podelite: može da sadrži adresu vašeg servera.
+
 <a id="privacy"></a>
 ## Privatnost
 
@@ -1026,19 +1143,21 @@ Od bilda 19 DLNA klijent, deljeni resurs telefona i prepoznavanje Apple prostorn
 - **Televizor**: da li je uređaj televizor utvrđuje se na samom uređaju; ništa se ne šalje.
 - **Deljeni resurs telefona**: samo lokalna mreža, sa korisničkim imenom i šifrom, preko običnog HTTP-a (pogledajte [Deli ovaj telefon na mreži](#share-this-phone-on-the-network)).
 - **Kamera**: koristi je samo Spatial 2.5D plejer, na uređaju; slike se nikada ne čuvaju i nikada se nikuda ne šalju.
+- **Na računaru** (Immuch360 Desktop, probna verzija za Windows): aplikacija čita samo fascikle koje izaberete, čuva svoj indeks, sličice i keš na računaru, a lozinke i tokene čuva pomoću Windows zaštite podataka, samo za vaš Windows nalog. Deljenje računara prati pravila deljenja telefona, i ne pokreće se na mreži koju Windows označava kao javnu, ili čiji tip ne može da odredi, osim ako to ne zatražite.
 
 Potpuna politika je u [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Licenca i žig
 
-Ovaj projekat je fork Immich-a i ostaje pod [GNU AGPL v3](../LICENSE). Svaki APK, uključujući one za telefone, sadrži i Meta Spatial SDK, koji nije otvorenog koda (Meta Platform Technologies SDK License Agreement) i koristi se samo na Meta Quest naočarima. Immuch360 nije povezan sa Immich timom ni sa FUTO, niti ga oni podržavaju.
+Ovaj projekat je fork Immich-a i ostaje pod [GNU AGPL v3](../LICENSE). Svaki APK, uključujući one za telefone, sadrži i Meta Spatial SDK, koji nije otvorenog koda (Meta Platform Technologies SDK License Agreement) i koristi se samo na Meta Quest naočarima; Immuch360 Desktop, Windows verzija, ga ne sadrži. Immuch360 nije povezan sa Immich timom ni sa FUTO, niti ga oni podržavaju.
 
 <a id="roadmap"></a>
 ## Plan razvoja
 
 Ono što još nije urađeno, najverovatnije prvo. Ništa ovde nije obećanje, a povratne informacije u [sistemu za prijavu problema](https://github.com/freeKC/Immuch360/issues) pomažu da se odluči šta dolazi prvo.
 
+- **Immuch360 Desktop, prvo Windows**: prva probna verzija je objavljena (pogledajte [Na Windows računaru](#on-a-windows-computer-immuch360-desktop-preview)). Sledeće je reprodukcija video zapisa (prvo ravni video zapisi, zatim 360°, 3D, VR180 i sirove datoteke), merena na dve grafičke kartice laptopa; zatim testiranje svake funkcije na Windows računaru i ispravke; zatim Spatial 2.5D sa veb kamerom; zatim Linux i macOS, paketi, potpisivanje i ažuriranja.
 - **Google Play**: bild 18 je objavljen; bild 20 je na Google-ovom pregledu od 7. oktobra 2026., umesto bilda 19. Bild 21 ne menja ništa na telefonima i tabletima.
 - **App Store**: verzija 3.3.0 čeka Apple-ov pregled; ima funkcije bilda 11, pa otpremanje na Immich i provera video dekodera (bild 15) i neobrađene Insta360 datoteke (bild 16) stižu sa sledećim ažuriranjem u App Store-u. Link će biti dodat ovde kada bude objavljena.
 - **Meta Horizon Store**: Meta je odobrila oglas 7. oktobra 2026. sa bildom 14. Bild 21 je predat kao njegovo prvo ažuriranje: donosi sve od bilda 14 (otpremanja sa deljenog resursa na Immich, izvor videa izabran prema onome što naočare dekodiraju, neobrađene Insta360, GoPro i DJI datoteke, DLNA, deljenje telefona, Apple prostorne fotografije, Plex Media Server biblioteke, Tapo kamere), a prodavnica ga navodi za Quest 2, Quest Pro, Quest 3 i 3S. Link za prodavnicu biće dodat ovde kada stranica postane javna; kopija instalirana sa strane mora prvo da se deinstalira (pogledajte [Instalacija](#install)).

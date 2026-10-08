@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà bạn có thể nhìn quanh bên trong, đồng thời là trình phát miễn phí cho ảnh và video phẳng, 360°, 3D và VR180, trên điện thoại và máy tính bảng Android, iPhone và iPad, kính Meta Quest (Quest 3 và 3S, và từ bản dựng 21 là Quest 2 và Quest Pro, chưa kiểm thử), và từ bản dựng 20 là Android TV và Google TV.
+Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà bạn có thể nhìn quanh bên trong, đồng thời là trình phát miễn phí cho ảnh và video phẳng, 360°, 3D và VR180, trên điện thoại và máy tính bảng Android, iPhone và iPad, kính Meta Quest (Quest 3 và 3S, và từ bản dựng 21 là Quest 2 và Quest Pro, chưa kiểm thử), và từ bản dựng 20 là Android TV và Google TV. Immuch360 Desktop, chính ứng dụng này trên máy tính Windows, đã ra mắt dưới dạng bản xem trước, xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 Ứng dụng dành cho những ai chụp bằng máy ảnh 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) hoặc chế độ ảnh cầu của điện thoại, hoặc có kính thực tế ảo, và muốn xem ảnh của chính mình từ máy chủ Immich, từ chính điện thoại, từ NAS, máy chủ đa phương tiện hay máy chủ Plex: cùng máy chủ, cùng tài khoản, không cần plugin trên máy chủ, hoặc không cần máy chủ nào cả. Từ bản dựng 20, ứng dụng còn hiển thị camera Tapo, cả hình ảnh trực tiếp lẫn các bản ghi trên thẻ nhớ của chúng.
 
@@ -18,13 +18,14 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
   App Store: <a href="#where-to-get-it">đang xét duyệt</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store đã duyệt, bản dựng 21 đã gửi làm bản cập nhật đầu tiên<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">tải bản xem trước</a>
 </p>
 
 - 🌐 **360° tích hợp**<br>Ảnh và video dưới dạng hình cầu để bạn nhìn quanh, có con quay hồi chuyển, kể cả tệp thô của máy ảnh (Insta360 từ bản dựng 16, GoPro và DJI từ bản dựng 18). Kèm một trình phát video miễn phí: phẳng, 360°, 3D, VR180
 - 👓 **3D tích hợp**<br>360° và VR180 lập thể, trên/dưới hoặc cạnh nhau, và ảnh không gian của Apple (từ bản dựng 19): 3D thật trong kính, một mắt trên điện thoại
 - 🎥 **2.5D tích hợp**<br>Chiều sâu trên màn hình phẳng từ video lập thể, góc nhìn đi theo đầu bạn (thử nghiệm, điện thoại và máy tính bảng)
-- 📱 **Android, iOS, Quest, TV**<br>Một ứng dụng cho điện thoại, máy tính bảng và các kính Quest 2, Pro, 3 và 3S, 3D thật trong kính, và từ bản dựng 20 trên Android TV với điều khiển từ xa
+- 📱 **Android, iOS, Quest, TV**<br>Một ứng dụng cho điện thoại, máy tính bảng và các kính Quest 2, Pro, 3 và 3S, 3D thật trong kính, từ bản dựng 20 trên Android TV với điều khiển từ xa, và một bản xem trước cho Windows
 - 🔌 **Có hoặc không có máy chủ**<br>Máy chủ Immich của bạn, hoặc thư viện ảnh của chính điện thoại, không cần tài khoản
 - 🗄️ **Chia sẻ mạng**<br>Samba (SMB), WebDAV và, từ bản dựng 19, máy chủ đa phương tiện DLNA, được tìm thấy trên mạng và đọc trực tiếp, không tải gì về, và gửi lên Immich khi bạn chọn. Từ bản dựng 19, điện thoại còn chia sẻ thư viện ảnh của chính nó cho kính
 - 📺 **Trên TV**<br>Từ bản dựng 20, cùng một APK trên Android TV và Google TV: ảnh và video 360°, máy chủ và các chia sẻ của bạn, với điều khiển từ xa
@@ -52,6 +53,7 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 - [So sánh với ứng dụng Immich và các ứng dụng khác](#compared-with-the-immich-app-and-other-apps)
 - [Định dạng và nguồn, theo nền tảng](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Trên máy tính Windows: Immuch360 Desktop (bản xem trước)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Tải ở đâu](#where-to-get-it)
 - [Tự dựng ứng dụng](#build-it-yourself)
 - [Nhật ký](#logs)
@@ -77,6 +79,7 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 - **"Tôi muốn xem ảnh và video 360° của mình, cùng video trên NAS hoặc máy chủ Plex, trên TV, bằng điều khiển từ xa."** Xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Tôi không tìm được ảnh 360° giữa mọi ảnh khác."** Xem [Danh sách 360°](#find-your-360-shots-the-360-list).
 - **"Video 360° của tôi bị giật, hoặc phát ra một bản mờ."** Xem [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters).
+- **"Tôi muốn có ảnh 360° và thư viện Immich trên máy tính Windows, cùng ảnh trong các thư mục của máy, NAS và máy chủ Plex của tôi, và chia sẻ máy tính với kính của tôi."** Xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview) (bản xem trước, hiện chỉ có ảnh).
 - **"Tôi có giữ được những gì ứng dụng Immich làm không?"** Có, với hai thay đổi nhỏ, xem [Mọi thứ khác là Immich](#everything-else-is-immich).
 
 Khi một tính năng còn mới, nội dung sẽ ghi rõ nó có từ bản dựng nào. Bản phát hành trên GitHub luôn có bản dựng mới nhất, các cửa hàng cập nhật sau: xem [Tải ở đâu](#where-to-get-it).
@@ -749,6 +752,7 @@ Bản dựng hiện tại, bản dựng 21 (phiên bản 3.3.0-rc.0, số bản 
 | Thư viện Plex Media Server phát từ tệp gốc, ở nhà và khi đi xa, không cần plex.tv | ❌ | ✅ từ bản dựng 20, mọi trình xem, trên điện thoại, máy tính bảng, Quest và TV |
 | Camera Tapo: hình ảnh trực tiếp, và các bản ghi trên thẻ nhớ gửi lên Immich khi bạn chọn | ❌ | ✅ từ bản dựng 20: bản ghi ở mọi nơi, trực tiếp trên Android, Android TV và Quest |
 | Android TV và Google TV, điều khiển bằng điều khiển từ xa, trong cùng một APK | ❌ không phải ứng dụng TV | ✅ từ bản dựng 20 |
+| Cùng ứng dụng trên máy tính Windows | ❌ chỉ điện thoại và máy tính bảng | ✅ bản xem trước, chưa có video |
 | Ảnh thô Insta360 .insp và video .insv một luồng | ❌ phẳng | ✅ từ bản dựng 16 |
 | Video thô mỗi ống kính một luồng hoặc một tệp (Insta360 X4, X4 Air, X5, X6, cặp X3, GoPro .360, DJI .osv) | ❌ phẳng hoặc sai | ✅ từ bản dựng 18 |
 | .dng mắt cá kép | ❌ phẳng | ❌ chưa có |
@@ -778,6 +782,7 @@ Bản dựng hiện tại, bản dựng 21 (phiên bản 3.3.0-rc.0, số bản 
 - **Plex Media Server**: đã kiểm tra từ máy tính với một Plex Media Server 1.42.1 thật (ghép nối, thư mục, khoảng byte, ảnh thu nhỏ, địa chỉ bên ngoài nhà); chưa kiểm tra trên thiết bị.
 - **Camera Tapo**: đã kiểm tra với một camera mô phỏng; chưa kiểm tra với camera thật.
 - **Android TV và Google TV**: đã kiểm tra bằng các bài kiểm thử tự động; chưa kiểm tra trên TV.
+- **Cùng ứng dụng trên máy tính Windows**: 475 bài kiểm thử tự động cho máy tính trên Windows, và trên một PC Windows 11 ứng dụng khởi động, mở một phiên đã lưu trên máy chủ Immich, đồng bộ và đóng gọn gàng; việc kiểm thử thủ công từng chức năng đang được tiến hành.
 - **Ảnh thô Insta360 .insp và video .insv một luồng**: ảnh được so với bản xuất Insta360 Studio của tệp X3, video kiểm tra trên trình giả lập Android với tệp X3 độ phân giải thấp; chưa chạy trên iPhone.
 - **Video thô mỗi ống kính một luồng hoặc một tệp**: bộ phân tích và phần ghép nối đã kiểm tra trên tệp X4, cặp X3, GoPro MAX và Osmo 360 thật; việc phát là phần kiểm tra trên thiết bị của bản dựng 18 và 19.
 - **.dng mắt cá kép**: đã lên kế hoạch.
@@ -883,12 +888,15 @@ Immuch360 là một thư viện ảnh, và cũng là một trình phát đa phư
 
 Các mục Android TV và Google TV, từ bản dựng 20, chưa được kiểm tra trên TV, xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv); các mục về camera chưa được kiểm tra với camera thật.
 
+Trên Windows, bản xem trước Immuch360 Desktop hiển thị ảnh, phẳng và 360°, kể cả ảnh thô .insp của Insta360, bằng chuột và bàn phím, từ máy chủ, các thư mục của máy tính, các chia sẻ và Plex; nó chưa phát video, video hiển thị một hình giữ chỗ (xem [Chưa có](#not-there-yet)).
+
 - **Máy chủ Immich của bạn**: bản gốc hoặc luồng đã chuyển mã của máy chủ, theo Cài đặt, Duyệt tài nguyên, Nguồn video (xem [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters)). Cùng tài khoản với ứng dụng web.
 - **Chính điện thoại hoặc kính**: "Sử dụng không cần máy chủ" trên trang đăng nhập, hoặc mục Trên thiết bị này của thẻ Thư viện.
 - **NAS hoặc máy tính**: chia sẻ SMB và WebDAV, và từ bản dựng 19 là máy chủ đa phương tiện DLNA, được tìm thấy trên mạng, đọc trực tiếp (video SMB qua tối đa sáu kết nối), không sao chép gì; từ bản dựng 15, các tệp bạn chọn có thể gửi lên tài khoản Immich của bạn.
 - **Một điện thoại khác (từ bản dựng 19)**: "Chia sẻ điện thoại này trên mạng" trên điện thoại đó: kính, hoặc bất kỳ ứng dụng WebDAV nào trong mạng, đọc album, tháng và nội dung 360° của nó.
 - **Plex Media Server (từ bản dựng 20)**: các thư viện ảnh, phim và chương trình TV theo thư mục, các tệp gốc được đọc trực tiếp qua HTTPS và kiểm tra bằng chứng chỉ riêng của máy chủ, ở nhà hoặc qua địa chỉ bên ngoài nhà, trên mọi nền tảng; xem [Plex Media Server, không cần plex.tv](#plex-media-server-without-plextv).
 - **Camera Tapo (từ bản dựng 20)**: hình ảnh trực tiếp với tài khoản camera (Android, Android TV, Quest), và các bản ghi trên thẻ nhớ với mật khẩu tài khoản TP-Link (mọi nền tảng), chỉ trong mạng cục bộ; xem [Camera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Các thư mục của máy tính Windows (bản xem trước cho máy tính)**: các thư mục bạn chọn trong Immuch360 Desktop, được đọc thay cho thư viện ảnh của điện thoại; máy tính cũng có thể chia sẻ chúng với kính, xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Từ bản dựng 19, ảnh không gian của Apple có nút Xem ở dạng 3D, 
 - **Dung lượng APK**: Spatial SDK thêm khoảng 56 MB mã native ARM 64-bit, kể cả trên điện thoại, nơi nó không bao giờ được nạp.
 - **Giấy phép**: chế độ xem nhập vai dùng Meta Spatial SDK, được phân phối theo Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Trên máy tính Windows: Immuch360 Desktop (bản xem trước)
+
+Thư viện Immich của bạn nằm trên một máy chủ, những ảnh khác nằm trong các thư mục của PC, video trên NAS hoặc máy chủ Plex, và bạn muốn nhìn quanh trong ảnh 360° trên màn hình lớn, hoặc xem ảnh của PC trong kính. Immuch360 Desktop là chính ứng dụng này trên máy tính Windows, được dựng từ cùng mã nguồn với các ứng dụng điện thoại.
+
+Trên máy tính, Immich cung cấp ứng dụng web chạy trong trình duyệt. **Những gì Immuch360 Desktop bổ sung**: các thư mục của PC mà không cần máy chủ hay tài khoản, các chia sẻ SMB, WebDAV, DLNA và Plex duyệt ngay trong ứng dụng, ảnh thô .insp của Insta360 mở dưới dạng hình cầu, và PC được chia sẻ với Meta Quest trong nhà.
+
+Bản dựng đầu tiên này là bản xem trước: ảnh đã hoạt động, video sẽ có trong các bản dựng máy tính tiếp theo. Các ứng dụng cho điện thoại, máy tính bảng, Quest và TV không thay đổi và vẫn mang tên Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Tải về và cài đặt trên Windows
+
+Bản dựng đầu tiên là bản phát hành trước trên GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Tệp của nó là `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 tệp sau khi giải nén), kèm `SHA256SUMS.txt` để kiểm tra. Nó được dựng từ nhánh `desktop` tại commit 21f285c34: bản dựng điện thoại 20 cộng với phiên bản máy tính. Cần Windows 10 hoặc 11, 64 bit.
+
+1. Tải tệp ZIP về và giải nén ở bất kỳ đâu, ví dụ trong Documents.
+2. Chạy `immuch360.exe` từ thư mục đã giải nén. Giữ nguyên cả thư mục: chương trình cần các tệp nằm cạnh nó.
+3. Các tệp chưa được ký, nên Windows SmartScreen có thể hiện "Windows protected your PC": chọn "More info", rồi "Run anyway". Nơi Smart App Control được bật, nó chặn các chương trình chưa ký.
+4. Chờ cửa sổ hiện ra. Lần khởi động đầu tiên của một bản dựng mới mất từ 10 giây đến khoảng một phút, nhiều khả năng do Microsoft Defender đang quét các tệp mới: đừng khởi động lại ứng dụng trong lúc đó. Các lần sau chỉ mất một hai giây.
+5. Trên trang đăng nhập, đăng nhập vào máy chủ Immich bằng địa chỉ, email và mật khẩu của bạn, hoặc nhấp "Sử dụng không cần máy chủ".
+
+Để kiểm tra tệp ZIP, chạy `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` trong cửa sổ dòng lệnh, tại thư mục chứa tệp tải về: kết quả trùng với giá trị ghi trong `SHA256SUMS.txt`. Chưa có trình cài đặt và chưa tự động cập nhật: hãy theo dõi trang [Releases](https://github.com/freeKC/Immuch360/releases), và giải nén bản dựng tiếp theo theo cùng cách.
+
+### Bản xem trước làm được gì
+
+- **Máy chủ Immich của bạn**: dòng thời gian, album, mọi người, kỷ niệm và tìm kiếm, cùng ảnh trên máy chủ ở kích thước đầy đủ, như trên điện thoại.
+- **Không cần máy chủ**: các thư mục ảnh và video của bạn (gợi ý Pictures và Videos) thay cho thư viện ảnh của điện thoại. Không có gì được đọc ngoài các thư mục bạn đã chọn, và khi không có máy chủ thì không có gì rời khỏi máy tính.
+- **Tải lên và sao lưu** từ các thư mục đó lên máy chủ Immich của bạn, trong khi ứng dụng đang mở.
+- **Ảnh 360° dưới dạng hình cầu**, bằng chuột và bàn phím; ảnh thô .insp của camera Insta360 mở được như trên điện thoại.
+- **Chia sẻ mạng**: Samba (SMB), WebDAV và máy chủ đa phương tiện DLNA, cùng máy chủ Plex không cần plex.tv, duyệt như trên điện thoại: ảnh của chúng mở được, video của chúng chờ trình phát video (xem [Chưa có](#not-there-yet)). Với camera Tapo, các bản ghi trên thẻ nhớ: danh sách, và tải một đoạn.
+- **Chia sẻ máy tính này trên mạng**: album, tháng và nội dung 360° trong các thư mục của bạn, chỉ đọc, cho Meta Quest hoặc thiết bị khác trong nhà, như một điện thoại tự chia sẻ.
+- **Tệp**: các tệp tải về từ máy chủ được lưu vào thư mục bạn chọn, "Lưu vào thư mục" giữ một bản sao các ảnh và video đã chọn, và trang Nhật ký có "Lưu nhật ký ra tệp".
+
+### Sử dụng trên máy tính
+
+1. **Chọn thư mục.** Khi không có máy chủ, dòng thời gian bắt đầu bằng "Chọn thư mục ảnh và video của bạn": nhấp "Thêm thư mục". Khi có máy chủ, cùng thẻ đó hiện trong Thư viện, dưới "Trên máy tính này", và trong các album cần sao lưu, cho đến khi một thư mục được chọn. Sau đó chúng có một dòng "Thư mục trên máy tính này", và Cài đặt cũng vậy, ở mục "Máy tính này".
+2. **Thư mục đám mây, USB và mạng.** Các tệp mà OneDrive (hoặc ổ đám mây khác) chỉ giữ trực tuyến được đếm nhưng không được đọc, nên việc thêm thư mục không tải toàn bộ đám mây của bạn về: "Tải về và đưa vào" lấy chúng khi bạn cần. Một ổ USB quay lại với ký tự ổ khác vẫn giữ ảnh của nó. Thư mục mạng, và thư mục trên thẻ nhớ hoặc ổ USB (để Windows vẫn có thể tháo ổ ra), không được theo dõi thay đổi: hãy dùng Làm mới sau khi thêm tệp vào đó.
+3. **Nhìn quanh trong ảnh 360°**: kéo bằng chuột, thu phóng bằng con lăn, nhấp đúp hoặc + và - (trên mọi bố cục bàn phím, kể cả AZERTY), di chuyển bằng các phím mũi tên. F hoặc F11 chuyển sang toàn màn hình và Escape thoát ra; Home và End đến ảnh đầu tiên và cuối cùng; I hiển thị chi tiết.
+4. **Chuyển từ ảnh này sang ảnh khác**: trong ảnh phẳng, mũi tên trái và phải, hoặc các dấu mũi tên hiện ở hai cạnh khi chuột di chuyển, đến ảnh trước và ảnh sau. Các chữ gõ trong ô mô tả vẫn nằm trong văn bản.
+5. **Chia sẻ máy tính với kính**: mở Thư viện, rồi Chia sẻ mạng; ô đầu tiên là "Chia sẻ máy tính này trên mạng", phía máy tính của [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network). Bật "Chia sẻ ảnh và video trên mạng", rồi thêm máy tính trong kính như phần đó hướng dẫn. Việc chia sẻ dừng khi ứng dụng bị đóng hoặc sau một giờ không sử dụng.
+6. **Cho phép mạng**: Windows có thể hỏi Immuch360 Desktop có được dùng mạng không. Hãy cho phép trên mạng riêng tư, nếu không kính sẽ không tìm thấy máy tính. Trên mạng Windows đánh dấu là công cộng (quán cà phê, khách sạn), hoặc mạng mà nó không xác định được loại, việc chia sẻ không bắt đầu trừ khi bạn chọn "Chia sẻ cho phiên này", và máy tính chỉ tự công bố trên mạng mà nó chia sẻ.
+7. **Cài đặt, "Máy tính này"**: các thư mục, thư mục tải về, bộ điều hợp mạng dùng để tìm chia sẻ và chia sẻ máy tính (khi máy có nhiều bộ, ví dụ Wi-Fi và Ethernet), và các chứng chỉ tin cậy: tổ chức cấp chứng chỉ của máy chủ riêng của bạn, dưới dạng tệp PEM, cho một địa chỉ HTTPS mà Windows không tự tin cậy. Chứng chỉ máy khách được nhập trong Cài đặt, Nâng cao, như trên điện thoại.
+
+### So với các ứng dụng điện thoại
+
+- **Sao lưu chạy khi ứng dụng đang mở** (hoặc thu nhỏ), không chạy nền khi cửa sổ đã đóng. Đóng cửa sổ khi đang tải lên, hoặc khi máy tính đang được chia sẻ, sẽ hỏi trước.
+- **Thư mục thay cho thư viện ảnh**: ứng dụng đọc các thư mục bạn chọn và giữ chỉ mục, hình thu nhỏ và bộ nhớ đệm riêng trên máy tính.
+- **Một cửa sổ**: mở ứng dụng lần thứ hai sẽ đưa cửa sổ đầu tiên trở lại thay vì khởi động bản thứ hai.
+- **Không có gì bị xóa khỏi thư mục của bạn**: "Xóa khỏi thiết bị" bị ẩn, và Xóa chỉ gỡ bản trên máy chủ, cho đến khi ứng dụng có thể chuyển tệp vào thùng rác của Windows.
+- **Chuột và bàn phím** thay cho cảm ứng và con quay hồi chuyển.
+
+<a id="not-there-yet"></a>
+### Chưa có
+
+- **Video**: hiện hiển thị một hình giữ chỗ, và hình thu nhỏ là biểu tượng cuộn phim. Phát video là bước tiếp theo: trước tiên video phẳng, sau đó video 360°, 3D và VR180 và video 360° thô.
+- **Spatial 2.5D**, sau này với webcam; **xem trực tiếp Tapo**; **bản đồ** và chế độ xem Địa điểm; **đăng nhập bằng OAuth** (thay vào đó hãy đăng nhập bằng email và mật khẩu); **Google Cast**; **thông báo**.
+- **Trình cài đặt, bản dựng được ký và cập nhật tự động**: bản dựng này là một thư mục chứa `immuch360.exe`.
+- **Linux và macOS**: dự án của chúng có trong mã nguồn, nhưng chưa được dựng hay thử trên các hệ thống đó; chúng sẽ đến sau Windows.
+- **Bản dịch**: các văn bản mới của phiên bản máy tính hiện chỉ có tiếng Anh.
+
+### Vấn đề đã biết
+
+- **Khi kính đang đọc một tệp từ máy tính được chia sẻ** (một video nó đang phát, một ảnh nó đang tải về), Windows không thể đổi tên, di chuyển hay xóa tệp đó và báo rằng tệp đang mở trong Immuch360 Desktop: hãy dừng phát trước. Việc sao lưu không giữ tệp của bạn theo cách đó: một tệp vẫn có thể được đổi tên, di chuyển hoặc xóa trong khi đang tải lên.
+- **Những chỗ chưa trơn tru**: các chức năng trên đều vượt qua kiểm thử tự động trên Windows (475 bài kiểm thử cho máy tính), và trên một PC Windows 11 ứng dụng khởi động, mở một phiên đã lưu trên máy chủ Immich, đồng bộ và đóng gọn gàng. Việc kiểm thử thủ công từng chức năng trên một PC thật vẫn đang được tiến hành.
+
+Nếu có gì trục trặc, xin hãy mở một [issue](https://github.com/freeKC/Immuch360/issues) kèm nhật ký được lưu từ trang Nhật ký, xem [Nhật ký](#logs). Hãy kiểm tra nhật ký trước khi chia sẻ: nó có thể chứa địa chỉ máy chủ của bạn.
+
+<a id="build-it-yourself-on-windows"></a>
+### Tự dựng trên Windows
+
+Bạn cần Windows 10 hoặc 11 trên x64, Flutter 3.47.2 cho Windows, Visual Studio 2022 hoặc Build Tools của nó với workload "Desktop development with C++", Chế độ nhà phát triển được bật trong cài đặt Windows (Flutter cần nó cho các plugin), và Python 3 cho tập lệnh đóng gói.
+
+1. Lấy nhánh `desktop` và chạy bước sinh mã. Bước này dùng Java và Node, nên hãy chạy trên Linux, macOS hoặc trong WSL; với WSL, hãy giữ bản clone trên một ổ Windows, mà WSL thấy ở `/mnt/c` hoặc `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Trên Windows, trong cùng thư mục `mobile`, dựng ứng dụng:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Thư mục `Release` chạy được trên PC đã dựng nó. Với PC khác, hãy giữ nguyên cả thư mục và thêm Visual C++ runtime bên cạnh `immuch360.exe`. Từ thư mục gốc của bản clone, tập lệnh đóng gói sao chép nó, bỏ những gì chỉ phục vụ Android, kiểm tra rằng mọi DLL ứng dụng nạp đều có trong thư mục hoặc trong chính Windows, và tạo tệp ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+CI của nhánh `desktop` (`.github/workflows/immuch360-desktop.yml`) chạy các bước kiểm tra của điện thoại và toàn bộ bộ kiểm thử trên Linux, các bài kiểm thử máy tính trên Windows, và dựng cùng tệp ZIP; các job Linux và macOS của nó (`flutter build linux` và `flutter build macos`, với cùng `-t lib/main_desktop.dart`) chưa chạy trên các hệ thống đó.
+
 <a id="where-to-get-it"></a>
 ## Tải ở đâu
 
-Ứng dụng có trên Google Play cho điện thoại và máy tính bảng; phiên bản App Store đang chờ Apple xét duyệt, trang trên Meta Horizon Store đã được duyệt và bản cập nhật đầu tiên đang được Meta xét duyệt, và phiên bản Google Play cho TV đang chờ Google xét duyệt bản phát hành cho TV. Bản phát hành trên GitHub luôn là bản dựng mới nhất:
+Ứng dụng có trên Google Play cho điện thoại và máy tính bảng; phiên bản App Store đang chờ Apple xét duyệt, trang trên Meta Horizon Store đã được duyệt và bản cập nhật đầu tiên đang được Meta xét duyệt, và phiên bản Google Play cho TV đang chờ Google xét duyệt bản phát hành cho TV. Immuch360 Desktop cho Windows là một bản xem trước trên GitHub. Bản phát hành trên GitHub luôn là bản dựng mới nhất:
 
 - **Điện thoại và máy tính bảng Android**
   - Hiện nay: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), hoặc APK trên trang [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` cho điện thoại (bản phổ thông `Immuch360-v<version>-release.apk` chạy ở mọi nơi, `-armeabi-v7a` dành cho điện thoại 32 bit đời cũ, và tệp `.aab` dành cho Google Play, không dùng để cài thủ công). Bản dựng trên GitHub thường đi trước cửa hàng. Dù cách nào, ứng dụng cũng cài song song với ứng dụng Immich chính thức (gói `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Từ bản dựng 19, ảnh không gian của Apple có nút Xem ở dạng 3D, 
 - **Android TV và Google TV (từ bản dựng 20)**
   - Hiện nay: bản phổ thông `Immuch360-v<version>-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases), cài thủ công bằng adb, xem [Cài đặt trên TV](#install-it-on-the-tv). Đây là cùng một ứng dụng như trên điện thoại.
   - Sắp tới: Google Play trên TV, sau khi Google xét duyệt bản phát hành cho TV.
+- **Windows 10 và 11, 64 bit (bản xem trước)**
+  - Hiện nay: Immuch360 Desktop, tệp ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` của [bản phát hành trước cho máy tính](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), giải nén và chạy như [Tải về và cài đặt trên Windows](#download-and-install-on-windows) hướng dẫn. Hiện chỉ có ảnh: video sẽ có trong các bản dựng máy tính tiếp theo.
+  - Sắp tới: phát video; trình cài đặt, bản dựng được ký và cập nhật sẽ đến sau.
 
 Liên kết App Store và Meta Horizon Store sẽ được thêm vào đây ngay khi các trang được phát hành. Đăng nhập bằng URL máy chủ Immich và tài khoản quen thuộc của bạn, hoặc chạm "Sử dụng không cần máy chủ" trên trang đăng nhập để bắt đầu với ảnh và video của chính thiết bị. APK tải từ GitHub không tự cập nhật: hãy theo dõi trang Releases, và khi bạn đã cài ứng dụng từ một cửa hàng, hãy nhận cập nhật từ cửa hàng đó.
 
@@ -993,12 +1105,15 @@ Flavor `quest` nhắm SDK 34 và chỉ giữ các quyền mà kính dùng (ảnh
 
 Để dựng cho iOS trên máy Mac của bạn, hãy dùng Xcode và nhóm ký của riêng bạn; với Xcode 26, chạy `xcodebuild -downloadComponent MetalToolchain` một lần trước, vì các shader của Spatial cần nó. Không có Mac, bản dựng iOS chạy trên Codemagic (một máy Mac được lưu trữ) từ tệp `codemagic.yaml` của kho mã này. Bản dựng phát hành Android chạy trên GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, phiên bản Windows, được dựng từ nhánh `desktop` bằng Flutter cho Windows: các bước nằm trong [Tự dựng trên Windows](#build-it-yourself-on-windows).
+
 Không có bí mật nào nằm trong kho mã này: khóa ký Android được lưu dưới dạng secret đã mã hóa của GitHub Actions, và tài liệu ký của Apple được lưu dưới dạng biến đã mã hóa trên Codemagic. Các tệp workflow chỉ tham chiếu chúng theo tên. Không có `android/key.jks` của riêng bạn, bản dựng phát hành được ký bằng khóa debug và không cài đè được lên bản lấy từ GitHub hay cửa hàng (hãy gỡ bản đó trước); bản dựng debug được cài song song dưới tên Immuch360 debug. Bản trên Meta Horizon Store là APK `quest` của bản phát hành được ký bằng một khóa khác, chính là khóa mà ứng dụng trên cửa hàng được đăng ký lần đầu, nên nó cũng không cài đè lên APK cài thủ công được, và ngược lại.
 
 ### Nhánh
 
 - **`main`**: Immich `main` tại commit mà `immuch360` dựa trên (ngày 29 tháng 9 năm 2026 cho các bản dựng hiện tại), không bao giờ bị sửa đổi; nhánh này tiến lên khi bản fork được rebase lên Immich mới hơn.
 - **`immuch360`**: các thay đổi của bản fork này trên nền Immich. Mỗi bản phát hành ghi rõ nó dựa trên phiên bản Immich nào.
+- **`desktop`**: Immuch360 Desktop, phiên bản máy tính, trên nền `immuch360`. Các bản phát hành điện thoại được hợp nhất vào đó, và các bản phát hành trước cho máy tính được dựng từ đó (bản dựng máy tính 1 từ commit 21f285c34, bản dựng điện thoại 20 cộng với phiên bản máy tính). Không có gì trong `mobile/android` và `mobile/ios` thay đổi trên nhánh này.
 
 <a id="logs"></a>
 ## Nhật ký
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Từ bản dựng 19, ứng dụng DLNA, chia sẻ điện thoại và việc nhận diện nội dung không gian của Apple cũng ghi vào nhật ký riêng của ứng dụng (Nhật ký, trong menu ảnh đại diện ở góc trên bên phải), dưới `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` và `NetworkMediaService`. Từ bản dựng 20, chế độ TV ghi vào đó dưới `TvMode` và `TvTextEntry`, các máy chủ Plex dưới `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` và `PlexServerEditPage`, và các camera Tapo dưới `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` và `CameraLiveView`; các dòng của Plex không bao giờ chứa mã token, địa chỉ hay tiêu đề, và các dòng của camera bỏ qua mật khẩu. Các dòng nhật ký ở lại trên thiết bị trừ khi bạn tự sao chép chúng.
 
+Trên máy tính (Immuch360 Desktop), trang Nhật ký còn có "Lưu nhật ký ra tệp": nhật ký, hoặc một tệp ZIP gồm nhật ký và các báo cáo về những lần sập gần nhất khi có (khi đó tên gợi ý kết thúc bằng "with-crash-reports"). Một báo cáo sập là một minidump nhỏ: các luồng, nơi chúng dừng lại và chỉ những gì cần để lần theo các lời gọi của chúng, với tên các tệp chương trình nhưng không có thư mục của chúng; không phải bộ nhớ của ứng dụng. Hãy kiểm tra nhật ký trước khi chia sẻ: nó có thể chứa địa chỉ máy chủ của bạn.
+
 <a id="privacy"></a>
 ## Quyền riêng tư
 
@@ -1026,19 +1143,21 @@ Từ bản dựng 19, ứng dụng DLNA, chia sẻ điện thoại và việc nh
 - **TV**: việc thiết bị có phải là TV hay không được xác định ngay trên thiết bị; không có gì được gửi đi.
 - **Chia sẻ điện thoại**: chỉ mạng cục bộ, có tên người dùng và mật khẩu, qua HTTP thường (xem [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network)).
 - **Camera**: chỉ trình phát Spatial 2.5D dùng, trên thiết bị; hình ảnh không bao giờ được lưu và không gửi đi đâu.
+- **Trên máy tính** (Immuch360 Desktop, bản xem trước cho Windows): ứng dụng chỉ đọc các thư mục bạn chọn, giữ chỉ mục, hình thu nhỏ và bộ nhớ đệm trên máy tính, và lưu mật khẩu và token bằng cơ chế bảo vệ dữ liệu của Windows, chỉ dành cho tài khoản Windows của bạn. Việc chia sẻ máy tính tuân theo các quy tắc của việc chia sẻ điện thoại, và không bắt đầu trên mạng Windows đánh dấu là công cộng, hoặc mạng mà nó không xác định được loại, trừ khi bạn đồng ý.
 
 Chính sách đầy đủ có trong [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Giấy phép và nhãn hiệu
 
-Dự án này là một bản fork của Immich và vẫn theo giấy phép [GNU AGPL v3](../LICENSE). Mọi APK, kể cả APK cho điện thoại, đều chứa Meta Spatial SDK, vốn không phải mã nguồn mở (Meta Platform Technologies SDK License Agreement) và chỉ được dùng trên kính Meta Quest. Immuch360 không liên kết với, cũng không được chứng thực bởi, nhóm Immich hay FUTO.
+Dự án này là một bản fork của Immich và vẫn theo giấy phép [GNU AGPL v3](../LICENSE). Mọi APK, kể cả APK cho điện thoại, đều chứa Meta Spatial SDK, vốn không phải mã nguồn mở (Meta Platform Technologies SDK License Agreement) và chỉ được dùng trên kính Meta Quest; Immuch360 Desktop, phiên bản Windows, không chứa nó. Immuch360 không liên kết với, cũng không được chứng thực bởi, nhóm Immich hay FUTO.
 
 <a id="roadmap"></a>
 ## Lộ trình
 
 Những gì chưa làm, việc nhiều khả năng nhất đứng trước. Không có gì ở đây là lời hứa, và phản hồi trên [trình theo dõi vấn đề](https://github.com/freeKC/Immuch360/issues) giúp quyết định việc gì làm trước.
 
+- **Immuch360 Desktop, Windows trước**: bản xem trước đầu tiên đã ra mắt (xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview)). Tiếp theo là phát video (trước tiên video phẳng, sau đó 360°, 3D, VR180 và các tệp thô), đo trên hai card đồ họa của một máy tính xách tay; rồi kiểm thử từng chức năng trên một PC Windows và các bản sửa lỗi; rồi Spatial 2.5D với webcam; rồi Linux và macOS, gói cài đặt, ký số và cập nhật.
 - **Google Play**: bản dựng 18 đang phát hành; bản dựng 20 đang được Google xét duyệt từ ngày 7 tháng 10 năm 2026, thay cho bản dựng 19. Bản dựng 21 không thay đổi gì trên điện thoại và máy tính bảng.
 - **App Store**: phiên bản 3.3.0 đang chờ Apple xét duyệt; nó có các tính năng của bản dựng 11, nên tải lên Immich và kiểm tra bộ giải mã video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong bản cập nhật App Store tiếp theo. Liên kết sẽ được thêm vào đây khi phát hành.
 - **Meta Horizon Store**: Meta đã duyệt trang ngày 7 tháng 10 năm 2026 với bản dựng 14. Bản dựng 21 đã được gửi làm bản cập nhật đầu tiên: nó mang đến mọi thứ kể từ bản dựng 14 (tải lên Immich từ một chia sẻ, nguồn video chọn theo những gì kính giải mã được, tệp thô Insta360, GoPro và DJI, DLNA, chia sẻ từ điện thoại, ảnh không gian Apple, thư viện Plex Media Server, camera Tapo), và cửa hàng đăng ký nó cho Quest 2, Quest Pro, Quest 3 và 3S. Liên kết cửa hàng sẽ được thêm vào đây khi trang được công khai; bản cài thủ công phải được gỡ trước (xem [Cài đặt ứng dụng](#install)).

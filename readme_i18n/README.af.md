@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 is die Immich-mobiele app met 360°-foto's en -video's waarin jy kan rondkyk, en 'n gratis speler vir plat, 360°-, 3D- en VR180-foto's en -video's, op Android-fone en -tablette, iPhones en iPads, Meta Quest-kopstukke (Quest 3 en 3S, en vanaf bou 21 die Quest 2 en Quest Pro, ongetoets), en vanaf bou 20 Android TV en Google TV.
+Immuch360 is die Immich-mobiele app met 360°-foto's en -video's waarin jy kan rondkyk, en 'n gratis speler vir plat, 360°-, 3D- en VR180-foto's en -video's, op Android-fone en -tablette, iPhones en iPads, Meta Quest-kopstukke (Quest 3 en 3S, en vanaf bou 21 die Quest 2 en Quest Pro, ongetoets), en vanaf bou 20 Android TV en Google TV. Immuch360 Desktop, dieselfde app op 'n Windows-rekenaar, is as 'n voorskou beskikbaar, sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview).
 
 Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) of die fotosfeermodus van 'n foon afneem, of wat 'n kopstuk besit, en hul eie opnames wil kyk vanaf 'n Immich-bediener, die foon self, 'n NAS, 'n mediabediener of 'n Plex-bediener: dieselfde bediener, dieselfde rekening, geen bedienerinprop nie, of glad geen bediener nie. Vanaf bou 20 wys dit ook Tapo-kameras, regstreeks en die opnames van hul geheuekaart.
 
@@ -18,13 +18,14 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
   <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
   App Store: <a href="#where-to-get-it">word nagegaan</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store goedgekeur, bou 21 as sy eerste opdatering ingedien<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">voorskou-aflaai</a>
 </p>
 
 - 🌐 **Ingeboude 360°**<br>Foto's en video's as 'n sfeer waarin jy rondkyk, met die giroskoop, rou kameralêers ingesluit (Insta360 vanaf bou 16, GoPro en DJI vanaf bou 18). Ook 'n gratis videospeler: plat, 360°, 3D, VR180
 - 👓 **Ingeboude 3D**<br>Stereoskopiese 360° en VR180, bo/onder of langs mekaar, en Apple se ruimtelike foto's (vanaf bou 19): ware 3D in die kopstuk, een oog op 'n foon
 - 🎥 **Ingeboude 2.5D**<br>Diepte op 'n plat skerm uit 'n stereoskopiese video, die aansig volg jou kop (eksperimenteel, fone en tablette)
-- 📱 **Android, iOS, Quest, TV**<br>Een app op fone, tablette en die Quest 2-, Pro-, 3- en 3S-kopstukke, ware 3D in die kopstuk, en vanaf bou 20 op Android TV met die afstandbeheer
+- 📱 **Android, iOS, Quest, TV**<br>Een app op fone, tablette en die Quest 2-, Pro-, 3- en 3S-kopstukke, ware 3D in die kopstuk, vanaf bou 20 op Android TV met die afstandbeheer, en 'n Windows-voorskou
 - 🔌 **Met of sonder 'n bediener**<br>Jou Immich-bediener, of die foon se eie galery, geen rekening nodig nie
 - 🗄️ **Netwerkdeelplekke**<br>Samba (SMB), WebDAV en, vanaf bou 19, DLNA-mediabedieners wat op die netwerk gevind en regstreeks gelees word, niks word afgelaai nie, en na Immich gestuur wanneer jy wil. Vanaf bou 19 deel 'n foon ook sy eie galery met die kopstuk
 - 📺 **Op die TV**<br>Vanaf bou 20 dieselfde APK op Android TV en Google TV: 360°-foto's en -video's, jou bediener en jou deelplekke, met die afstandbeheer
@@ -52,6 +53,7 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
 - [Vergeleke met die Immich-app en ander apps](#compared-with-the-immich-app-and-other-apps)
 - [Formate en bronne, per platform](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Op 'n Windows-rekenaar: Immuch360 Desktop (voorskou)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Waar om dit te kry](#where-to-get-it)
 - [Bou dit self](#build-it-yourself)
 - [Logboeke](#logs)
@@ -77,6 +79,7 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
 - **"Ek wil my 360°-foto's en -video's, en die video's van my NAS of my Plex-bediener, op die TV kyk, met die afstandbeheer."** Sien [Kyk op jou TV](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ek kan nie my 360°-opnames tussen al die ander vind nie."** Sien [Die 360°-lys](#find-your-360-shots-the-360-list).
 - **"My 360°-video hakkel, of speel 'n wasige kopie."** Sien [Videobesonderhede en dekodeerders](#video-details-decoders-and-why-a-video-stutters).
+- **"Ek wil my 360°-foto's en my Immich-biblioteek op my Windows-rekenaar hê, met die foto's van sy vouers, my NAS en my Plex-bediener, en die rekenaar met my kopstuk gedeel."** Sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview) ('n voorskou, voorlopig slegs foto's).
 - **"Behou ek wat die Immich-app doen?"** Ja, met twee klein veranderinge, sien [Alles anders is Immich](#everything-else-is-immich).
 
 Wanneer 'n funksie nuut is, sê die teks vanaf watter bou dit daar is. Die GitHub-vrystelling het altyd die nuutste bou, die winkels volg later: sien [Waar om dit te kry](#where-to-get-it).
@@ -749,6 +752,7 @@ Die huidige bou, bou 21 (weergawe 3.3.0-rc.0, bounommer 3030019), is gebaseer op
 | Plex Media Server-biblioteke gespeel vanaf die oorspronklike lêers, tuis en weg van die huis, sonder plex.tv | ❌ | ✅ vanaf bou 20, elke kyker, op fone, tablette, die Quest en TV's |
 | Tapo-kameras: die regstreekse beeld, en die opnames van die geheuekaart na Immich gestuur wanneer jy wil | ❌ | ✅ vanaf bou 20: opnames oral, regstreeks op Android, Android TV en die Quest |
 | Android TV en Google TV, met die afstandbeheer bestuur, in dieselfde APK | ❌ nie 'n TV-app nie | ✅ vanaf bou 20 |
+| Dieselfde app op 'n Windows-rekenaar | ❌ slegs fone en tablette | ✅ voorskou, nog geen video's nie |
 | Rou Insta360 .insp-foto's en eensnit-.insv-video's | ❌ plat | ✅ vanaf bou 16 |
 | Rou video's met een lens per snit of per lêer (Insta360 X4, X4 Air, X5, X6, X3-pare, GoPro .360, DJI .osv) | ❌ plat of verkeerd | ✅ vanaf bou 18 |
 | Dubbele-visoog-.dng | ❌ plat | ❌ nog nie |
@@ -778,6 +782,7 @@ Die huidige bou, bou 21 (weergawe 3.3.0-rc.0, bounommer 3030019), is gebaseer op
 - **Plex Media Server**: vanaf 'n rekenaar teen 'n regte Plex Media Server 1.42.1 nagegaan (koppeling, vouers, byte-reekse, duimnaelskets, die adres buite die huis); nog nie op 'n toestel nagegaan nie.
 - **Tapo-kameras**: teen 'n gesimuleerde kamera nagegaan; nog nie met 'n regte kamera nagegaan nie.
 - **Android TV en Google TV**: deur outomatiese toetse nagegaan; nog nie op 'n TV nagegaan nie.
+- **Dieselfde app op 'n Windows-rekenaar**: 475 outomatiese rekenaartoetse op Windows, en op 'n Windows 11-rekenaar begin die app, maak 'n gestoorde sessie op 'n Immich-bediener oop, sinkroniseer en sluit skoon af; die toets van elke funksie met die hand is aan die gang.
 - **Rou Insta360 .insp-foto's en eensnit-.insv-video's**: foto's nagegaan teen Insta360 Studio-uitvoere van X3-lêers, video's op 'n Android-emulator met 'n X3-lêer van lae resolusie; nog nie op 'n iPhone geloop nie.
 - **Rou video's met een lens per snit of per lêer**: ontleders en aanmekaarwerk nagegaan op regte X4-, X3-paar-, GoPro MAX- en Osmo 360-lêers; afspeel is die toesteltoets van bou 18 en 19.
 - **Dubbele-visoog-.dng**: beplan.
@@ -883,12 +888,15 @@ Immuch360 is 'n galery, en dit is ook 'n gratis mediaspeler: dit speel wat die a
 
 Die Android TV- en Google TV-inskrywings, vanaf bou 20, is nog nie op 'n TV nagegaan nie, sien [Kyk op jou TV](#watch-on-your-tv-android-tv-and-google-tv); die kamera-inskrywings is nog nie met 'n regte kamera nagegaan nie.
 
+Op Windows wys die Immuch360 Desktop-voorskou die foto's, plat en 360°, rou Insta360 .insp-foto's ingesluit, met die muis en die sleutelbord, van die bediener, die vouers van die rekenaar, die deelplekke en Plex; dit speel nog nie video's nie, hulle wys 'n plekhouer (sien [Nog nie daar nie](#not-there-yet)).
+
 - **Jou Immich-bediener**: die oorspronklike of die bediener se getranskodeerde stroom, soos Settings, Asset Viewer, Videobron sê (sien [Videobesonderhede en dekodeerders](#video-details-decoders-and-why-a-video-stutters)). Dieselfde rekening as die webapp.
 - **Die foon of kopstuk self**: "Gebruik sonder ’n bediener" op die aanmeldbladsy, of die inskrywing On this device van die Biblioteek-oortjie.
 - **'n NAS of 'n rekenaar**: SMB- en WebDAV-deelplekke, en vanaf bou 19 DLNA-mediabedieners, op die netwerk gevind, regstreeks gelees ('n SMB-video oor tot ses verbindings), niks gekopieer nie; vanaf bou 15 kan die lêers wat jy kies na jou Immich-rekening gestuur word.
 - **'n Ander foon (vanaf bou 19)**: "Deel hierdie foon op die netwerk" op daardie foon: die kopstuk, of enige WebDAV-kliënt op die netwerk, lees sy albums, maande en 360°-media.
 - **'n Plex Media Server (vanaf bou 20)**: sy foto-, fliek- en TV-reeksbiblioteke per vouer, die oorspronklike lêers regstreeks oor HTTPS gelees, nagegaan teen die bediener se eie sertifikaat, tuis of deur die adres buite die huis, op elke platform; sien [Plex Media Server, sonder plex.tv](#plex-media-server-without-plextv).
 - **'n Tapo-kamera (vanaf bou 20)**: die regstreekse beeld met die kamerarekening (Android, Android TV, die Quest), en die opnames van sy geheuekaart met die TP-Link-rekening se wagwoord (elke platform), slegs op die plaaslike netwerk; sien [Tapo-kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Die vouers van 'n Windows-rekenaar (rekenaarvoorskou)**: die vouers wat jy in Immuch360 Desktop kies, gelees in die plek van 'n foon se galery; die rekenaar kan hulle ook met die kopstuk deel, sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Skermskote in die kopstuk geneem met die vasvangknoppie (Meta-knoppie en sneller
 - **APK-grootte**: die Spatial SDK voeg sowat 56 MB 64-bis ARM-masjienkode by, ook op fone, waar dit nooit gelaai word nie.
 - **Lisensie**: die meevoerende aansig gebruik die Meta Spatial SDK, versprei onder die Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Op 'n Windows-rekenaar: Immuch360 Desktop (voorskou)
+
+Jou Immich-biblioteek is op 'n bediener, ander foto's lê in die vouers van die rekenaar, die video's op 'n NAS of 'n Plex-bediener, en jy wil graag in jou 360°-foto's op 'n groot skerm rondkyk, of die foto's van die rekenaar in die kopstuk wys. Immuch360 Desktop is dieselfde app op 'n Windows-rekenaar, gebou uit dieselfde bronne as die foonapps.
+
+Op 'n rekenaar bied Immich sy webapp in 'n blaaier aan. **Wat Immuch360 Desktop byvoeg**: die vouers van die rekenaar sonder enige bediener of rekening, SMB-, WebDAV-, DLNA- en Plex-deelplekke wat vanuit die app deurblaai word, rou Insta360 .insp-foto's wat as 'n sfeer oopgemaak word, en die rekenaar wat tuis met 'n Meta Quest gedeel word.
+
+Hierdie eerste bou is 'n voorskou: foto's werk, video's kom met die volgende rekenaarboue. Die foon-, tablet-, Quest- en TV-apps verander nie daarmee nie en behou die naam Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Laai af en installeer op Windows
+
+Die eerste bou is die GitHub-voorvrystelling [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Sy lêer is `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 lêers sodra uitgepak), met `SHA256SUMS.txt` om dit na te gaan. Dit is gebou vanaf die `desktop`-tak by commit 21f285c34: die foonbou 20 plus die rekenaarweergawe. Dit benodig Windows 10 of 11, 64 bis.
+
+1. Laai die ZIP af en pak dit enige plek uit, byvoorbeeld in Documents.
+2. Begin `immuch360.exe` vanuit die uitgepakte vouer. Hou die vouer heel: die program benodig die lêers langsaan.
+3. Die lêers is nog nie onderteken nie, so Windows SmartScreen kan "Windows protected your PC" wys: kies "More info", dan "Run anyway". Waar Smart App Control aan is, blokkeer dit ononderteken programme.
+4. Wag vir die venster. Die eerste begin van 'n nuwe bou neem van 10 sekondes tot omtrent 'n minuut, heel waarskynlik terwyl Microsoft Defender die nuwe lêers skandeer: begin nie die app intussen weer nie. Die volgende beginne neem 'n sekonde of twee.
+5. Op die aanmeldbladsy, meld aan by jou Immich-bediener met sy adres, jou e-pos en jou wagwoord, of klik op "Gebruik sonder ’n bediener".
+
+Om die ZIP na te gaan, voer `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` in 'n opdragprompt uit, in die vouer van die aflaai: die resultaat is die een wat in `SHA256SUMS.txt` geskryf is. Daar is nog geen installeerder en geen outomatiese opdatering nie: hou die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy dop, en pak die volgende bou op dieselfde manier uit.
+
+### Wat die voorskou doen
+
+- **Jou Immich-bediener**: die tydlyn, albums, mense, herinneringe en soektog, en die bedienerfoto's op volle grootte, soos op 'n foon.
+- **Sonder 'n bediener**: die vouers van jou foto's en video's (Pictures en Videos word voorgestel) vervang die galery van 'n foon. Niks word buite die vouers wat jy gekies het gelees nie, en sonder 'n bediener verlaat niks die rekenaar nie.
+- **Oplaai en rugsteun** vanuit daardie vouers na jou Immich-bediener, terwyl die app oop is.
+- **360°-foto's as 'n sfeer**, met die muis en die sleutelbord; die rou .insp-foto's van Insta360-kameras gaan oop soos op fone.
+- **Netwerkdeelplekke**: Samba (SMB), WebDAV en DLNA-mediabedieners, en Plex-bedieners sonder plex.tv, deurblaai soos op fone: hul foto's gaan oop, hul video's wag vir die videospeler (sien [Nog nie daar nie](#not-there-yet)). Vir Tapo-kameras, die opnames van die geheuekaart: die lys, en die aflaai van 'n snit.
+- **Deel hierdie rekenaar op die netwerk**: die albums, maande en 360°-media van jou vouers, slegs lees, vir 'n Meta Quest of 'n ander toestel tuis, soos 'n foon homself deel.
+- **Lêers**: aflaaie van die bediener gaan in 'n vouer wat jy kies, "Save to a folder" (Stoor in 'n vouer) hou 'n kopie van die gekose foto's en video's, en die Logs-bladsy het "Save logs to a file" (Stoor logboeke in 'n lêer).
+
+### Gebruik dit op 'n rekenaar
+
+1. **Kies jou vouers.** Sonder 'n bediener begin die tydlyn met "Choose the folders of your photos and videos": klik op "Add a folder". Met 'n bediener wys dieselfde kaart in die Biblioteek onder "On this computer", en in die albums om te rugsteun, totdat 'n vouer gekies is. Daarna het hulle 'n reël "Folders on this computer", en so ook Settings, "This computer".
+2. **Wolk-, USB- en netwerkvouers.** Lêers wat OneDrive (of 'n ander wolkskyf) slegs aanlyn hou, word getel maar nie gelees nie, so die byvoeg van 'n vouer laai nie jou hele wolk af nie: "Download and include" haal hulle wanneer jy hulle wil hê. 'n USB-skyf wat onder 'n ander letter terugkom, behou sy foto's. Netwerkvouers, en vouers op 'n geheuekaart of 'n USB-skyf (sodat Windows dit steeds kan uitskiet), word nie vir veranderinge dopgehou nie: gebruik Refresh nadat jy lêers daar bygevoeg het.
+3. **Kyk rond in 'n 360°-foto**: sleep met die muis, zoem met die wiel, 'n dubbelklik of + en - (op enige sleutelborduitleg, AZERTY ingesluit), beweeg met die pyltjiesleutels. F of F11 skakel na volskerm en Escape verlaat dit; Home en End gaan na die eerste en die laaste foto; I wys die besonderhede.
+4. **Gaan van foto na foto**: in 'n plat foto gaan die linker- en regterpyltjies, of die winkelhake wat by die rande wys terwyl die muis beweeg, na die vorige en die volgende een. Letters wat in die beskrywingsveld getik word, bly in die teks.
+5. **Deel die rekenaar met die kopstuk**: maak die Biblioteek oop, dan Netwerkdeelplekke; die eerste teël is "Share this computer on the network", die rekenaarkant van [Deel hierdie foon op die netwerk](#share-this-phone-on-the-network). Skakel "Share photos and videos on the network" aan, en voeg dan die rekenaar in die kopstuk by soos daardie afdeling sê. Die deelplek stop wanneer die app gesluit word of na 'n uur sonder gebruik.
+6. **Laat die netwerk toe**: Windows kan vra of Immuch360 Desktop die netwerk mag gebruik. Laat dit op private netwerke toe, anders kan die kopstuk nie die rekenaar vind nie. Op 'n netwerk wat Windows as publiek merk ('n kafee, 'n hotel), of een waarvan dit die tipe nie kan bepaal nie, begin die deelplek nie tensy jy "Share for this session" kies nie, en die rekenaar kondig homself slegs aan op 'n netwerk waarop dit deel.
+7. **Settings, "This computer"**: die vouers, die aflaaivouer, die netwerkadapter wat gebruik word om deelplekke te vind en die rekenaar te deel (wanneer dit verskeie het, Wi-Fi en Ethernet byvoorbeeld), en vertroude sertifikate: die sertifikaatowerheid van jou eie bediener, as 'n PEM-lêer, vir 'n HTTPS-adres wat Windows nie vanself vertrou nie. Kliëntsertifikate word ingevoer in Settings, Gevorderd, soos op fone.
+
+### Vergeleke met die foonapps
+
+- **Rugsteun loop terwyl die app oop is** (of geminimeer), nie in die agtergrond met die venster gesluit nie. Om die venster te sluit terwyl oplaaie loop, of terwyl die rekenaar gedeel word, vra eers.
+- **Vouers in plaas van 'n galery**: die app lees die vouers wat jy kies en hou sy eie indeks, duimnaels en kas op die rekenaar.
+- **Een venster**: om die app 'n tweede keer oop te maak, bring die eerste venster terug in plaas daarvan om 'n tweede kopie te begin.
+- **Niks word uit jou vouers geskrap nie**: "Delete from device" is versteek, en Delete verwyder slegs die bedienerkopie, totdat die app lêers na die Windows-asblik kan stuur.
+- **Muis en sleutelbord** in die plek van aanraking en die giroskoop.
+
+<a id="not-there-yet"></a>
+### Nog nie daar nie
+
+- **Video's**: hulle wys voorlopig 'n plekhouer, en hul duimnaels 'n filmikoon. Afspeel kom volgende: eers plat video's, dan 360°-, 3D- en VR180-video's en die rou 360°-video's.
+- **Spatial 2.5D**, later met die webkamera; die **Tapo-regstreekse beeld**; die **kaart** en die Places-aansig; **aanmelding met OAuth** (meld eerder aan met 'n e-pos en 'n wagwoord); **Google Cast**; **kennisgewings**.
+- **'n Installeerder, 'n ondertekende bou en outomatiese opdaterings**: hierdie bou is 'n vouer met `immuch360.exe`.
+- **Linux en macOS**: hul projekte is in die bronne, maar hulle is nog nie op daardie stelsels gebou of probeer nie; hulle kom na Windows.
+- **Vertalings**: die nuwe tekste van die rekenaarweergawe is voorlopig in Engels.
+
+### Bekende probleme
+
+- **Terwyl die kopstuk 'n lêer van die gedeelde rekenaar lees** ('n video wat dit speel, 'n foto wat dit aflaai), kan Windows daardie lêer nie hernoem, skuif of skrap nie en sê dit is oop in Immuch360 Desktop: stop eers die afspeel. Rugsteun hou nie jou lêers so vas nie: 'n lêer kan hernoem, geskuif of geskrap word terwyl dit opgelaai word.
+- **Growwe kante**: die funksies hierbo slaag hul outomatiese toetse op Windows (475 rekenaartoetse), en op 'n Windows 11-rekenaar begin die app, maak 'n gestoorde sessie op 'n Immich-bediener oop, sinkroniseer en sluit skoon af. Die toets van elke funksie met die hand op 'n regte rekenaar is nog aan die gang.
+
+As iets verkeerd loop, maak asseblief 'n [probleem](https://github.com/freeKC/Immuch360/issues) oop met die log wat vanaf die Logs-bladsy gestoor is, sien [Logboeke](#logs). Gaan die log na voordat jy dit deel: dit kan jou bedieneradres bevat.
+
+<a id="build-it-yourself-on-windows"></a>
+### Bou dit self op Windows
+
+Jy benodig Windows 10 of 11 op x64, Flutter 3.47.2 vir Windows, Visual Studio 2022 of sy Build Tools met die werklading "Desktop development with C++", Developer Mode aangeskakel in die Windows-instellings (Flutter benodig dit vir die inproppe), en Python 3 vir die bundelskrip.
+
+1. Kry die `desktop`-tak en voer die kodegenerering uit. Dit gebruik Java en Node, so voer dit uit op Linux, macOS of in WSL; met WSL, hou die kloon op 'n Windows-skyf, wat WSL onder `/mnt/c` of `/mnt/d` sien:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Bou die app op Windows, in dieselfde `mobile`-vouer:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Die `Release`-vouer loop op die rekenaar wat dit gebou het. Vir 'n ander rekenaar, hou die hele vouer en voeg die Visual C++-looptyd langs `immuch360.exe` by. Vanaf die wortel van die kloon kopieer die bundelskrip dit, laat weg wat slegs Android dien, gaan na dat elke DLL wat die app laai in die vouer of in Windows self is, en maak die ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+Die CI van die `desktop`-tak (`.github/workflows/immuch360-desktop.yml`) voer die foonhekke en die hele toetsreeks op Linux uit, die rekenaartoetse op Windows, en bou dieselfde ZIP; sy Linux- en macOS-take (`flutter build linux` en `flutter build macos`, met dieselfde `-t lib/main_desktop.dart`) het nog nie op daardie stelsels geloop nie.
+
 <a id="where-to-get-it"></a>
 ## Waar om dit te kry
 
-Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir Apple se nagaan, die Meta Horizon Store-inskrywing is goedgekeur en sy eerste opdatering word deur Meta nagegaan, en die Google Play-weergawe vir TV's wag vir Google se nagaan van die TV-vrystelling. Die GitHub-vrystelling is altyd die nuutste bou:
+Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir Apple se nagaan, die Meta Horizon Store-inskrywing is goedgekeur en sy eerste opdatering word deur Meta nagegaan, en die Google Play-weergawe vir TV's wag vir Google se nagaan van die TV-vrystelling. Immuch360 Desktop, vir Windows, is 'n voorskou op GitHub. Die GitHub-vrystelling is altyd die nuutste bou:
 
 - **Android-fone en -tablette**
   - Vandag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), of die APK op die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy: `Immuch360-v<version>-arm64-v8a-release.apk` vir 'n foon (die universele `Immuch360-v<version>-release.apk` werk oral, `-armeabi-v7a` is vir ouer 32-bis-fone, en die `.aab`-lêer is vir Google Play, nie vir installering met die hand nie). Die GitHub-bou is gewoonlik voor die winkel. Hoe ook al, dit installeer langs die amptelike Immich-app (pakket `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir A
 - **Android TV en Google TV (vanaf bou 20)**
   - Vandag: die universele `Immuch360-v<version>-release.apk` van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy, met adb met die hand geïnstalleer, sien [Installeer dit op die TV](#install-it-on-the-tv). Dit is dieselfde app as op fone.
   - Binnekort: Google Play op TV's, na Google se nagaan van die TV-vrystelling.
+- **Windows 10 en 11, 64 bis (voorskou)**
+  - Vandag: Immuch360 Desktop, die ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` van die [rekenaar-voorvrystelling](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), uitgepak en begin soos [Laai af en installeer op Windows](#download-and-install-on-windows) sê. Voorlopig slegs foto's: video's kom met die volgende rekenaarboue.
+  - Binnekort: videospeel; later 'n installeerder, 'n ondertekende bou en opdaterings.
 
 Die App Store- en Meta Horizon Store-skakels sal hier bygevoeg word sodra die inskrywings gepubliseer is. Meld aan met jou gewone Immich-bediener-URL en -rekening, of tik op "Gebruik sonder ’n bediener" op die aanmeldbladsy om op die toestel se eie foto's en video's te begin. Die APK van GitHub werk homself nie op nie: hou die Releases-bladsy dop, en sodra jy die app uit 'n winkel geïnstalleer het, kry die opdaterings uit daardie winkel.
 
@@ -993,12 +1105,15 @@ Die `quest`-een teiken SDK 34 en hou slegs die toestemmings wat die kopstuk gebr
 
 Om vir iOS op jou eie Mac te bou, gebruik Xcode en jou eie ondertekeningspan; met Xcode 26, voer eers een keer `xcodebuild -downloadComponent MetalToolchain` uit, aangesien die Spatial-shaders dit nodig het. Sonder 'n Mac loop iOS-boue op Codemagic ('n gehuisveste Mac) vanaf die `codemagic.yaml`-lêer van hierdie bewaarplek. Android-vrystellingsboue loop op GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, die Windows-weergawe, word vanaf die `desktop`-tak met Flutter vir Windows gebou: die stappe is in [Bou dit self op Windows](#build-it-yourself-on-windows).
+
 Geen geheim woon in hierdie bewaarplek nie: die Android-ondertekeningsleutel word as geënkripteerde GitHub Actions-geheime gestoor, en die Apple-ondertekeningsmateriaal as geënkripteerde veranderlikes op Codemagic. Die werkvloeilêers verwys slegs by naam daarna. Sonder jou eie `android/key.jks` word 'n vrystellingsbou met die debug-sleutel onderteken en kan dit nie oor 'n kopie van GitHub of 'n winkel installeer nie (deïnstalleer daardie een eers); 'n debug-bou installeer langsaan as Immuch360 debug. Die Meta Horizon Store-kopie is die `quest`-APK van die vrystelling, onderteken met 'n ander sleutel, die een waarmee die winkelapp eerste geregistreer is, so dit kan ook nie oor 'n met die hand geïnstalleerde APK installeer nie, en ook nie andersom nie.
 
 ### Takke
 
 - **`main`**: Immich `main` by die commit waarop `immuch360` gebaseer is (29 September 2026 vir die huidige boue), nooit verander nie; dit skuif vorentoe wanneer die vurk op 'n nuwer Immich herbaseer word.
 - **`immuch360`**: die veranderinge van hierdie vurk bo-op Immich. Elke vrystelling sê op watter Immich-weergawe dit gebaseer is.
+- **`desktop`**: Immuch360 Desktop, die rekenaarweergawe, bo-op `immuch360`. Die foonvrystellings word daarin saamgevoeg, en die rekenaar-voorvrystellings word daaruit gebou (rekenaarbou 1 vanaf commit 21f285c34, die foonbou 20 plus die rekenaarweergawe). Niks onder `mobile/android` en `mobile/ios` verander daarop nie.
 
 <a id="logs"></a>
 ## Logboeke
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Vanaf bou 19 skryf die DLNA-kliënt, die foondeelplek en die herkenning van Apple-ruimtelike media ook na die app se eie log (Logs (Logboeke), in die kieslys van die profielfoto regs bo), onder `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` en `NetworkMediaService`. Vanaf bou 20 skryf die TV-modus daar onder `TvMode` en `TvTextEntry`, die Plex-bedieners onder `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` en `PlexServerEditPage`, en die Tapo-kameras onder `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` en `CameraLiveView`; die Plex-reëls bevat nooit die token, 'n adres of 'n titel nie, en die kamerareëls laat die wagwoorde weg. Logreëls bly op die toestel tensy jy hulle self kopieer.
 
+Op 'n rekenaar (Immuch360 Desktop) het die Logs-bladsy ook "Save logs to a file" (Stoor logboeke in 'n lêer): die log, of 'n ZIP van die log en die verslae van die laaste omvalle wanneer daar is (sy voorgestelde naam eindig dan op "with-crash-reports"). 'n Omvalverslag is 'n klein minidump: die drade, waar hulle gestop het en slegs wat nodig is om hul oproepe te volg, met die name van die programlêers maar nie hul vouers nie; nie die geheue van die app nie. Gaan die log na voordat jy dit deel: dit kan jou bedieneradres bevat.
+
 <a id="privacy"></a>
 ## Privaatheid
 
@@ -1026,19 +1143,21 @@ Vanaf bou 19 skryf die DLNA-kliënt, die foondeelplek en die herkenning van Appl
 - **TV**: of die toestel 'n TV is, word op die toestel self vasgestel; niks word gestuur nie.
 - **Foondeelplek**: slegs die plaaslike netwerk, met 'n gebruikersnaam en wagwoord, oor gewone HTTP (sien [Deel hierdie foon op die netwerk](#share-this-phone-on-the-network)).
 - **Kamera**: slegs deur die Spatial 2.5D-speler gebruik, op die toestel; die beelde word nooit gestoor nie en nooit êrens heen gestuur nie.
+- **Op 'n rekenaar** (Immuch360 Desktop, Windows-voorskou): die app lees slegs die vouers wat jy kies, hou sy indeks, duimnaels en kas op die rekenaar, en stoor wagwoorde en tokens met die databeskerming van Windows, slegs vir jou Windows-rekening. Die rekenaardeelplek volg die reëls van die foondeelplek, en begin nie op 'n netwerk wat Windows as publiek merk, of waarvan dit die tipe nie kan bepaal nie, tensy jy so sê.
 
 Die volledige beleid staan in [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Lisensie en handelsmerk
 
-Hierdie projek is 'n vurk van Immich en bly onder die [GNU AGPL v3](../LICENSE). Elke APK, die foon-APK's ingesluit, bevat ook die Meta Spatial SDK, wat nie oopbron is nie (Meta Platform Technologies SDK License Agreement) en slegs op Meta Quest-kopstukke gebruik word. Immuch360 is nie verbonde aan, of onderskryf deur, die Immich-span of FUTO nie.
+Hierdie projek is 'n vurk van Immich en bly onder die [GNU AGPL v3](../LICENSE). Elke APK, die foon-APK's ingesluit, bevat ook die Meta Spatial SDK, wat nie oopbron is nie (Meta Platform Technologies SDK License Agreement) en slegs op Meta Quest-kopstukke gebruik word; Immuch360 Desktop, die Windows-weergawe, bevat dit nie. Immuch360 is nie verbonde aan, of onderskryf deur, die Immich-span of FUTO nie.
 
 <a id="roadmap"></a>
 ## Padkaart
 
 Wat nog nie klaar is nie, die waarskynlikste eerste. Niks hier is 'n belofte nie, en terugvoer op die [probleemlys](https://github.com/freeKC/Immuch360/issues) help besluit wat eerste kom.
 
+- **Immuch360 Desktop, eers Windows**: die eerste voorskou is uit (sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview)). Volgende, videospeel (eers plat video's, dan 360°, 3D, VR180 en die rou lêers), gemeet op die twee grafiese kaarte van 'n skootrekenaar; dan die toets van elke funksie op 'n Windows-rekenaar en die regstellings daarvan; dan Spatial 2.5D met die webkamera; dan Linux en macOS, pakkette, ondertekening en opdaterings.
 - **Google Play**: bou 18 is regstreeks; bou 20 word sedert 7 Oktober 2026 deur Google nagegaan, in die plek van bou 19. Bou 21 verander niks op fone en tablette nie.
 - **App Store**: weergawe 3.3.0 wag vir Apple se nagaan; dit dra die funksies van bou 11, so die oplaai na Immich en die kontrole van videodekodeerders (bou 15) en die rou Insta360-lêers (bou 16) kom met die volgende App Store-opdatering. Die skakel sal hier bygevoeg word wanneer dit regstreeks is.
 - **Meta Horizon Store**: Meta het die inskrywing op 7 Oktober 2026 met bou 14 goedgekeur. Bou 21 is as sy eerste opdatering ingedien: dit bring alles sedert bou 14 (oplaaie vanaf 'n deelplek na Immich, die videobron gekies volgens wat die kopstuk dekodeer, rou Insta360-, GoPro- en DJI-lêers, DLNA, die foondeelplek, Apple-ruimtelike foto's, Plex Media Server-biblioteke, Tapo-kameras), en die winkel lys dit vir die Quest 2, Quest Pro, Quest 3 en 3S. Die winkelskakel sal hier bygevoeg word sodra die bladsy publiek is; 'n met die hand geïnstalleerde kopie moet eers gedeïnstalleer word (sien [Installeer](#install)).

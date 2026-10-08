@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 eo arload hezoug Immich gant luc'hskeudennoù ha videoioù 360° a c'hallit sellet tro-dro enno, hag ul lenner digoust evit al luc'hskeudennoù hag ar videoioù plat, 360°, 3D ha VR180, war ar pellgomzerioù hag an tabletennoù Android, an iPhone hag an iPad, ar c'haskoù Meta Quest (Quest 3 ha 3S, hag adalek ar build 21 ar Quest 2 hag ar Quest Pro, n'int ket amprouet), hag adalek ar build 20 Android TV ha Google TV.
+Immuch360 eo arload hezoug Immich gant luc'hskeudennoù ha videoioù 360° a c'hallit sellet tro-dro enno, hag ul lenner digoust evit al luc'hskeudennoù hag ar videoioù plat, 360°, 3D ha VR180, war ar pellgomzerioù hag an tabletennoù Android, an iPhone hag an iPad, ar c'haskoù Meta Quest (Quest 3 ha 3S, hag adalek ar build 21 ar Quest 2 hag ar Quest Pro, n'int ket amprouet), hag adalek ar build 20 Android TV ha Google TV. Immuch360 Desktop, an hevelep arload war un urzhiataer Windows, a zo deuet er-maez evel ur stumm rakwel, gwelit [War un urzhiataer Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 Graet eo evit an dud a denn skeudennoù gant ur c'hamera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) pe gant mod photo sphere ur pellgomzer, pe o deus ur c'hasked, hag a fell dezho sellet ouzh o skeudennoù dezho eus ur servijer Immich, eus ar pellgomzer e-unan, eus un NAS, eus ur servijer media pe eus ur servijer Plex: an hevelep servijer, an hevelep kont, lugent servijer ebet, pe servijer ebet zoken. Adalek ar build 20 e tiskouez ivez ar c'hameraioù Tapo, war-eeun hag enrolladennoù o c'hartenn-vemor.
 
@@ -18,13 +18,14 @@ Graet eo evit an dud a denn skeudennoù gant ur c'hamera 360° (Insta360, GoPro 
   <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a><br>
   App Store: <a href="#where-to-get-it">o vezañ gwiriet</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprouet, build 21 kinniget evel e hizivadenn gentañ<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">pellgargañ ar stumm rakwel</a>
 </p>
 
 - 🌐 **360° genidik**<br>Luc'hskeudennoù ha videoioù evel ur sferenn ma c'hallit sellet tro-dro enni, gant ar jiroskop, restroù kriz ar c'hamera e-barzh (Insta360 adalek ar build 16, GoPro ha DJI adalek ar build 18). Ul lenner video digoust ivez: plat, 360°, 3D, VR180
 - 👓 **3D genidik**<br>360° ha VR180 stereoskopek, a-us/a-is pe kostez-ha-kostez, ha luc'hskeudennoù spasel Apple (adalek ar build 19): gwir 3D er c'hasked, ul lagad war ur pellgomzer
 - 🎥 **2.5D genidik**<br>Donder war ur skramm plat diwar ur video stereoskopek, ar gwel a heuilh ho penn (arnodel, pellgomzerioù ha tabletennoù)
-- 📱 **Android, iOS, Quest, TV**<br>Un arload war ar pellgomzerioù, an tabletennoù hag ar c'haskoù Quest 2, Pro, 3 ha 3S, gwir 3D er c'hasked, hag adalek ar build 20 war Android TV gant ar pellureer
+- 📱 **Android, iOS, Quest, TV**<br>Un arload war ar pellgomzerioù, an tabletennoù hag ar c'haskoù Quest 2, Pro, 3 ha 3S, gwir 3D er c'hasked, adalek ar build 20 war Android TV gant ar pellureer, hag ur stumm rakwel evit Windows
 - 🔌 **Gant pe hep servijer**<br>Ho servijer Immich, pe galeri ar pellgomzer e-unan, kont ebet ret
 - 🗄️ **Rannadennoù rouedad**<br>Samba (SMB), WebDAV ha, adalek ar build 19, servijerioù media DLNA kavet war ar rouedad ha lennet war-eeun, netra pellgarget, ha kaset da Immich pa fell deoc'h. Adalek ar build 19 e c'hall ur pellgomzer rannañ e c'haleri e-unan gant ar c'hasked ivez
 - 📺 **War ar skinwel**<br>Adalek ar build 20 an hevelep APK war Android TV ha Google TV: luc'hskeudennoù ha videoioù 360°, ho servijer hag ho rannadennoù, gant ar pellureer
@@ -52,6 +53,7 @@ Graet eo evit an dud a denn skeudennoù gant ur c'hamera 360° (Insta360, GoPro 
 - [Keñveriet gant an arload Immich hag arloadoù all](#compared-with-the-immich-app-and-other-apps)
 - [Furmadoù ha mammennoù, dre savenn](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [War un urzhiataer Windows: Immuch360 Desktop (stumm rakwel)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Pelec'h e kaout](#where-to-get-it)
 - [E sevel hoc'h-unan](#build-it-yourself)
 - [Kerzhlevrioù](#logs)
@@ -77,6 +79,7 @@ Graet eo evit an dud a denn skeudennoù gant ur c'hamera 360° (Insta360, GoPro 
 - **"Fellout a ra din sellet ouzh va luc'hskeudennoù ha videoioù 360°, hag ouzh videoioù va NAS pe va servijer Plex, war ar skinwel, gant ar pellureer."** Gwelit [Sellet war ho skinwel](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ne gavan ket va skeudennoù 360° e-touez an holl re all."** Gwelit [Ar roll 360°](#find-your-360-shots-the-360-list).
 - **"Va video 360° a chom a-sav a-dammoù, pe e lenn un eilskouerenn drubuilh."** Gwelit [Munudoù ar video hag an diskoderioù](#video-details-decoders-and-why-a-video-stutters).
+- **"Me a fell din kaout ma luc'hskeudennoù 360° ha ma levraoueg Immich war ma urzhiataer Windows, gant luc'hskeudennoù e deuliadoù, ma NAS ha ma servijer Plex, hag an urzhiataer rannet gant ma c'hasked."** Gwelit [War un urzhiataer Windows](#on-a-windows-computer-immuch360-desktop-preview) (ur stumm rakwel, luc'hskeudennoù hepken evit ar mare).
 - **"Ha mirout a ran ar pezh a ra an arload Immich?"** Ya, gant daou cheñchamant bihan, gwelit [Immich eo an holl draoù all](#everything-else-is-immich).
 
 Pa vez nevez un arc'hwel, e lavar an destenn adalek peseurt build emañ eno. An embannadur GitHub en deus atav ar build nevesañ, ar stalioù a zeu diwezhatoc'h: gwelit [Pelec'h e kaout](#where-to-get-it).
@@ -749,6 +752,7 @@ Ar build bremanel, ar build 21 (stumm 3.3.0-rc.0, niverenn build 3030019), a zo 
 | Levraouegoù Plex Media Server lennet diwar ar restroù orin, er gêr hag er-maez, hep plex.tv | ❌ | ✅ adalek ar build 20, pep gweler, war ar pellgomzerioù, an tabletennoù, ar Quest hag ar skinwelioù |
 | Kameraioù Tapo: ar sell war-eeun, hag enrolladennoù ar gartenn-vemor kaset da Immich pa garit | ❌ | ✅ adalek ar build 20: an enrolladennoù e pep lec'h, war-eeun war Android, Android TV hag ar Quest |
 | Android TV ha Google TV, renet gant ar pellureer, en hevelep APK | ❌ n'eo ket un arload skinwel | ✅ adalek ar build 20 |
+| An hevelep arload war un urzhiataer Windows | ❌ pellgomzerioù ha tabletennoù hepken | ✅ stumm rakwel, video ebet c'hoazh |
 | Luc'hskeudennoù Insta360 .insp kriz ha videoioù .insv ur roudenn | ❌ plat | ✅ adalek ar build 16 |
 | Videoioù kriz gant ul lunedenn dre roudenn pe dre restr (Insta360 X4, X4 Air, X5, X6, koubladoù X3, GoPro .360, DJI .osv) | ❌ plat pe fall | ✅ adalek ar build 18 |
 | .dng dual fisheye | ❌ plat | ❌ n'eo ket c'hoazh |
@@ -778,6 +782,7 @@ Ar build bremanel, ar build 21 (stumm 3.3.0-rc.0, niverenn build 3030019), a zo 
 - **Plex Media Server**: gwiriet diwar un urzhiataer gant ur gwir Plex Media Server 1.42.1 (kevreañ, teuliadoù, lodennoù oktedoù, munudennoù, ar chomlec'h er-maez eus an ti); n'eo ket bet gwiriet war ur benveg c'hoazh.
 - **Kameraioù Tapo**: gwiriet gant ur c'hamera simulet; n'eo ket bet gwiriet gant ur gwir gamera c'hoazh.
 - **Android TV ha Google TV**: gwiriet gant amprouennoù emgefre; n'eo ket bet gwiriet war ur skinwel c'hoazh.
+- **An hevelep arload war un urzhiataer Windows**: 475 amprouenn emgefre evit an urzhiataer war Windows, ha war un urzhiataer Windows 11 e loc'h an arload, e tigor un dalc'h enrollet war ur servijer Immich, e kempred hag e serr ervat; amprouiñ pep arc'hwel gant an dorn a zo war ober.
 - **Luc'hskeudennoù Insta360 .insp kriz ha videoioù .insv ur roudenn**: luc'hskeudennoù gwiriet keñver ouzh ezporzhiadurioù Insta360 Studio eus restroù X3, videoioù war un emuler Android gant ur restr X3 izel he spisder; n'eo ket bet lañset war un iPhone c'hoazh.
 - **Videoioù kriz gant ul lunedenn dre roudenn pe dre restr**: dielfennerioù ha gwriañ gwiriet war restroù gwir X4, koublad X3, GoPro MAX hag Osmo 360; al lenn a vo amprouet war ar benvegoù gant ar builds 18 ha 19.
 - **.dng dual fisheye**: raktreset.
@@ -883,12 +888,15 @@ Ur galeri eo Immuch360, hag ul lenner media digoust ivez: lenn a ra ar pezh n'ha
 
 Elfennoù Android TV ha Google TV, adalek ar build 20, n'int ket bet gwiriet war ur skinwel c'hoazh, gwelit [Sellet war ho skinwel](#watch-on-your-tv-android-tv-and-google-tv); elfennoù ar c'hamera n'int ket bet gwiriet gant ur gwir gamera c'hoazh.
 
+War Windows, stumm rakwel Immuch360 Desktop a ziskouez al luc'hskeudennoù, plat ha 360°, al luc'hskeudennoù kriz Insta360 .insp e-barzh, gant al logodenn hag ar c'hlavier, eus ar servijer, teuliadoù an urzhiataer, ar rannadennoù ha Plex; ne lenn ket ar videoioù c'hoazh, ur skeudenn e-lec'h a vez diskouezet en o lec'h (gwelit [N'emañ ket c'hoazh](#not-there-yet)).
+
 - **Ho servijer Immich**: an orin pe red treuzkodet ar servijer, evel ma lavar Settings, Asset Viewer, Mammenn ar video (gwelit [Munudoù ar video hag an diskoderioù](#video-details-decoders-and-why-a-video-stutters)). An hevelep kont hag an arload web.
 - **Ar pellgomzer pe ar c'hasked e-unan**: "Implijout hep servijer" war ar bajenn gevreañ, pe an elfenn On this device eus an ivinell Levraoueg.
 - **Un NAS pe un urzhiataer**: rannadennoù SMB ha WebDAV, hag adalek ar build 19 servijerioù media DLNA, kavet war ar rouedad, lennet war-eeun (ur video SMB dre betek c'hwec'h kevreadur), netra eilet; adalek ar build 15 ar restroù a zibabit a c'hall bezañ kaset d'ho kont Immich.
 - **Ur pellgomzer all (adalek ar build 19)**: "Rannañ ar pellgomzer-mañ war ar rouedad" war ar pellgomzer-se: ar c'hasked, pe forzh peseurt arval WebDAV eus ar rouedad, a lenn e albomoù, e vizioù hag e vedia 360°.
 - **Ur Plex Media Server (adalek ar build 20)**: e levraouegoù luc'hskeudennoù, filmoù hag heuliadoù TV dre deuliad, ar restroù orin lennet war-eeun dre HTTPS gwiriet gant testeni ar servijer e-unan, er gêr pe dre ar chomlec'h er-maez eus an ti, war pep savenn; gwelit [Plex Media Server, hep plex.tv](#plex-media-server-without-plextv).
 - **Ur c'hamera Tapo (adalek ar build 20)**: ar sell war-eeun gant kont ar c'hamera (Android, Android TV, ar Quest), hag enrolladennoù he c'hartenn-vemor gant ger-tremen ar gont TP-Link (pep savenn), war ar rouedad lec'hel hepken; gwelit [Kameraioù Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Teuliadoù un urzhiataer Windows (stumm rakwel an urzhiataer)**: an teuliadoù a zibabit e Immuch360 Desktop, lennet e-lec'h galeri ur pellgomzer; an urzhiataer a c'hall o rannañ gant ar c'hasked ivez, gwelit [War un urzhiataer Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Skrammdapadennoù tapet er c'hasked gant ar bouton tapout (bouton Meta ha dic'he
 - **Ment an APK**: ar Spatial SDK a ouzhpenn war-dro 56 MB a god genidik ARM 64-bit, war ar pellgomzerioù ivez, ma ne vez morse karget.
 - **Lañvaz**: ar gwel soubus a implij ar Meta Spatial SDK, skignet dindan ar Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## War un urzhiataer Windows: Immuch360 Desktop (stumm rakwel)
+
+Emañ ho levraoueg Immich war ur servijer, luc'hskeudennoù all a zo e teuliadoù an urzhiataer, ar videoioù war un NAS pe ur servijer Plex, ha karout a rafec'h sellet tro-dro en ho luc'hskeudennoù 360° war ur skramm bras, pe diskouez luc'hskeudennoù an urzhiataer er c'hasked. Immuch360 Desktop eo an hevelep arload war un urzhiataer Windows, savet diwar an hevelep mammennoù hag an arloadoù pellgomzer.
+
+War un urzhiataer e kinnig Immich e arload web en ur merdeer. **Ar pezh a ouzhpenn Immuch360 Desktop**: teuliadoù an urzhiataer hep servijer na kont ebet, rannadennoù SMB, WebDAV, DLNA ha Plex furchet eus an arload, luc'hskeudennoù kriz Insta360 .insp digoret evel ur sferenn, hag an urzhiataer rannet gant ur Meta Quest er gêr.
+
+Ar build kentañ-mañ zo ur stumm rakwel: al luc'hskeudennoù a ya en-dro, ar videoioù a zeuio gant ar builds urzhiataer da-heul. An arloadoù pellgomzer, tabletenn, Quest ha skinwel ne cheñchont ket gantañ hag a vir an anv Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Pellgargañ ha staliañ war Windows
+
+Ar build kentañ eo ar rak-embannadur GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). E restr eo `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 restr goude bezañ diwasket), gant `SHA256SUMS.txt` evit e wiriañ. Savet eo bet diwar ar skourr `desktop` d'ar commit 21f285c34: ar build pellgomzer 20 gant stumm an urzhiataer ouzhpenn. Ezhomm en deus eus Windows 10 pe 11, 64 bit.
+
+1. Pellgargit ar ZIP ha diwaskit anezhañ e forzh pelec'h, da skouer e Documents.
+2. Loc'hit `immuch360.exe` eus an teuliad diwasket. Mirit an teuliad a-bezh: ezhomm en deus ar programm eus ar restroù e-kichen.
+3. N'eo ket sinet ar restroù c'hoazh, neuze Windows SmartScreen a c'hall diskouez "Windows protected your PC": dibabit "More info", goude "Run anyway". Pa vez enaouet Smart App Control e stank ar programmoù n'int ket sinet.
+4. Gortozit ar prenestr. Al loc'hadenn gentañ eus ur build nevez a bad etre 10 eilenn ha war-dro ur vunutenn, moarvat e-pad ma skann Microsoft Defender ar restroù nevez: na loc'hit ket an arload en-dro e-keit-se. Al loc'hadennoù da-heul a bad un eilenn pe ziv.
+5. War ar bajenn gevreañ, kevreit ouzh ho servijer Immich gant e chomlec'h, ho postel hag ho ker-tremen, pe klikit war "Implijout hep servijer".
+
+Evit gwiriañ ar ZIP, lañsit `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` en ul linenn-urzhiañ, e teuliad ar pellgargadenn: an disoc'h eo an hini skrivet e `SHA256SUMS.txt`. N'eus stalier ebet nag hizivadenn emgefre ebet c'hoazh: evezhiit ouzh ar bajenn [Releases](https://github.com/freeKC/Immuch360/releases), ha diwaskit ar build da-heul en hevelep doare.
+
+### Ar pezh a ra ar stumm rakwel
+
+- **Ho servijer Immich**: al linenn-amzer, an albomoù, an dud, an eñvorennoù hag ar c'hlask, ha luc'hskeudennoù ar servijer en o ment leun, evel war ur pellgomzer.
+- **Hep servijer**: teuliadoù ho luc'hskeudennoù hag ho videoioù (Pictures ha Videos a vez kinniget) a gemer lec'h galeri ur pellgomzer. Netra ne vez lennet er-maez eus an teuliadoù dibabet ganeoc'h, ha hep servijer ne guita netra an urzhiataer.
+- **Pellgas ha gwareziñ** eus an teuliadoù-se d'ho servijer Immich, e-keit ha ma vez digor an arload.
+- **Luc'hskeudennoù 360° evel ur sferenn**, gant al logodenn hag ar c'hlavier; luc'hskeudennoù kriz .insp ar c'hameraioù Insta360 a zigor evel war ar pellgomzerioù.
+- **Rannadennoù rouedad**: Samba (SMB), WebDAV ha servijerioù media DLNA, ha servijerioù Plex hep plex.tv, furchet evel war ar pellgomzerioù: o luc'hskeudennoù a zigor, o videoioù a c'hortoz al lenner video (gwelit [N'emañ ket c'hoazh](#not-there-yet)). Evit ar c'hameraioù Tapo, enrolladennoù ar gartenn-vemor: ar roll, ha kerc'hat ur c'hlip.
+- **Rannañ an urzhiataer-mañ war ar rouedad**: albomoù, mizioù ha media 360° ho teuliadoù, evit lenn hepken, evit ur Meta Quest pe ur benveg all er gêr, evel ma rann ur pellgomzer anezhañ e-unan.
+- **Restroù**: ar pellgargadennoù eus ar servijer a ya en un teuliad dibabet ganeoc'h, "Save to a folder" (Enrollañ en un teuliad) a vir un eilskouerenn eus al luc'hskeudennoù hag ar videoioù diuzet, ha pajenn Logs he deus "Save logs to a file" (Enrollañ ar c'herzhlevrioù en ur restr).
+
+### Hen implijout war un urzhiataer
+
+1. **Dibabit ho teuliadoù.** Hep servijer e krog al linenn-amzer gant "Choose the folders of your photos and videos": klikit war "Add a folder". Gant ur servijer e vez diskouezet an hevelep kartenn el Levraoueg dindan "On this computer", hag en albomoù da wareziñ, betek ma vo dibabet un teuliad. Goude-se o deus ul linenn "Folders on this computer", ha Settings, "This computer" ivez.
+2. **Teuliadoù koumoul, USB ha rouedad.** Ar restroù a vir OneDrive (pe ur bladenn goumoul all) enlinenn hepken a vez jedet met ne vezont ket lennet, neuze ouzhpennañ un teuliad ne bellgarg ket ho koumoul a-bezh: "Download and include" a gerc'h anezho pa fell deoc'h. Ur bladenn USB a zistro dindan ul lizherenn all a vir he luc'hskeudennoù. An teuliadoù rouedad, hag an teuliadoù war ur gartenn-vemor pe ur bladenn USB (evit ma c'hallfe Windows he diskas c'hoazh), n'int ket evezhiet evit ar c'hemmoù: implijit Refresh goude bezañ ouzhpennet restroù eno.
+3. **Sellit tro-dro en ul luc'hskeudenn 360°**: riklit gant al logodenn, zoumit gant ar rodig, ur c'hlik doubl pe + ha - (war forzh peseurt aozadur klavier, AZERTY e-barzh), fiñvit gant an alc'hwezioù bir. F pe F11 a dremen d'ar skramm a-bezh hag Escape a zilez anezhañ; Home hag End a ya d'al luc'hskeudenn gentañ ha d'an hini ziwezhañ; I a ziskouez ar munudoù.
+4. **Mont eus ul luc'hskeudenn d'eben**: en ul luc'hskeudenn blat, ar biroù kleiz ha dehou, pe ar chevronoù a vez diskouezet war an harzoù pa fiñv al logodenn, a ya d'an hini a-raok ha d'an hini da-heul. Al lizherennoù skrivet e maezienn an deskrivadur a chom en destenn.
+5. **Rannañ an urzhiataer gant ar c'hasked**: digorit al Levraoueg, goude Rannadennoù rouedad; ar garrezenn gentañ eo "Share this computer on the network", tu an urzhiataer eus [Rannañ ar pellgomzer-mañ war ar rouedad](#share-this-phone-on-the-network). Enaouit "Share photos and videos on the network", ha goude ouzhpennit an urzhiataer er c'hasked evel ma lavar ar rann-se. Ar rannadenn a ehan pa vez serret an arload pe goude un eurvezh hep implij.
+6. **Aotreañ ar rouedad**: Windows a c'hall goulenn hag-eñ e c'hall Immuch360 Desktop implijout ar rouedad. Aotreit anezhañ war ar rouedadoù prevez, a-hend-all ne c'hallo ket ar c'hasked kavout an urzhiataer. War ur rouedad merket foran gant Windows (ur c'hafedi, un ostaleri), pe unan n'hall ket anavezout he seurt, ne loc'h ket ar rannadenn nemet ma tibabit "Share for this session", ha n'en em embann an urzhiataer nemet war ur rouedad ma rann warni.
+7. **Settings, "This computer"**: an teuliadoù, teuliad ar pellgargadennoù, an azasaer rouedad implijet evit kavout rannadennoù hag evit rannañ an urzhiataer (pa'z eus meur a hini, Wi-Fi hag Ethernet da skouer), hag an testenioù fiziet: aotrouniezh testeniañ ho servijer deoc'h, evel ur restr PEM, evit ur chomlec'h HTTPS na fiz ket Windows ennañ drezañ e-unan. An testenioù arval a vez enporzhiet e Settings, Advanced (Araokaet), evel war ar pellgomzerioù.
+
+### E-keñver an arloadoù pellgomzer
+
+- **Ar gwareziñ a ya en-dro e-keit ha ma vez digor an arload** (pe bihanaet), ha n'eo ket en drekleur gant ar prenestr serret. Serriñ ar prenestr e-pad ma ya pellgasadennoù en-dro, pe e-pad ma vez rannet an urzhiataer, a c'houlenn da gentañ.
+- **Teuliadoù e-lec'h ur galeri**: an arload a lenn an teuliadoù a zibabit hag a vir e ibil, e skeudennigoù hag e grubuilh dezhañ e-unan war an urzhiataer.
+- **Ur prenestr hepken**: digeriñ an arload un eil gwech a zegas ar prenestr kentañ en-dro e-lec'h loc'hañ un eil eilskouerenn.
+- **Netra ne vez dilamet eus ho teuliadoù**: "Delete from device" a zo kuzhet, ha Delete ne zilam nemet eilskouerenn ar servijer, betek ma c'hallo an arload kas restroù da boubellenn Windows.
+- **Logodenn ha klavier** e-lec'h ar stekiñ hag ar gyroskop.
+
+<a id="not-there-yet"></a>
+### N'emañ ket c'hoazh
+
+- **Videoioù**: ur skeudenn e-lec'h a vez diskouezet en o lec'h evit ar mare, hag un arlun film en o skeudennigoù. Al lenn a zeuio da-heul: ar videoioù plat da gentañ, goude ar videoioù 360°, 3D ha VR180 hag ar videoioù 360° kriz.
+- **Spatial 2.5D**, diwezhatoc'h gant ar webkam; ar **sell war-eeun Tapo**; ar **gartenn** ha gwel Places; **kevreañ gant OAuth** (kevreit gant ur postel hag ur ger-tremen en e lec'h); **Google Cast**; ar **c'hemennoù**.
+- **Ur stalier, ur build sinet hag hizivadennoù emgefre**: ar build-mañ zo un teuliad gant `immuch360.exe`.
+- **Linux ha macOS**: o raktresoù a zo er mammennoù, met n'int ket bet savet pe amprouet war ar reizhiadoù-se c'hoazh; dont a raint goude Windows.
+- **Troidigezhioù**: testennoù nevez stumm an urzhiataer a zo e saozneg evit ar mare.
+
+### Kudennoù anavezet
+
+- **E-pad ma lenn ar c'hasked ur restr eus an urzhiataer rannet** (ur video a lenn, ul luc'hskeudenn a bellgarg), Windows n'hall ket adenvel, dilec'hiañ pe dilemel ar restr-se hag a lavar emañ digor e Immuch360 Desktop: paouezit al lenn da gentañ. Ar gwareziñ ne zalc'h ket ho restroù evel-se: ur restr a c'hall bezañ adanvet, dilec'hiet pe dilamet e-pad ma vez pellgaset.
+- **Traoù diechu**: an arc'hwelioù a-us a dremen o amprouennoù emgefre war Windows (475 amprouenn urzhiataer), ha war un urzhiataer Windows 11 e loc'h an arload, e tigor un dalc'h enrollet war ur servijer Immich, e kempred hag e serr ervat. Amprouiñ pep arc'hwel gant an dorn war ur gwir urzhiataer a zo war ober c'hoazh.
+
+Ma ne ya ket mat un dra bennak, digorit ur [gudenn](https://github.com/freeKC/Immuch360/issues) mar plij gant ar c'herzhlevr enrollet eus pajenn Logs, gwelit [Kerzhlevrioù](#logs). Gwiriit ar c'herzhlevr a-raok e rannañ: gallout a ra kenderc'hel chomlec'h ho servijer.
+
+<a id="build-it-yourself-on-windows"></a>
+### Sevel anezhañ hoc'h-unan war Windows
+
+Ezhomm ho peus eus Windows 10 pe 11 war x64, Flutter 3.47.2 evit Windows, Visual Studio 2022 pe e Build Tools gant ar garg labour "Desktop development with C++", Developer Mode enaouet e arventennoù Windows (Flutter en deus ezhomm anezhañ evit an enlugelladoù), ha Python 3 evit ar skript pakañ.
+
+1. Tapit ar skourr `desktop` ha lañsit ar c'henel kod. Implijout a ra Java ha Node, neuze lañsit anezhañ war Linux, macOS pe e WSL; gant WSL, mirit ar c'hlon war ur bladenn Windows, a wel WSL dindan `/mnt/c` pe `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. War Windows, en hevelep teuliad `mobile`, savit an arload:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. An teuliad `Release` a ya en-dro war an urzhiataer en deus e savet. Evit un urzhiataer all, mirit an teuliad a-bezh hag ouzhpennit ar runtime Visual C++ e-kichen `immuch360.exe`. Eus gwrizienn ar c'hlon, ar skript pakañ a eil anezhañ, a lez a-gostez ar pezh na servij nemet da Android, a wir emañ pep DLL karget gant an arload en teuliad pe e Windows e-unan, hag a ra ar ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+CI ar skourr `desktop` (`.github/workflows/immuch360-desktop.yml`) a lañs gwiriadurioù ar pellgomzer hag an holl amprouennoù war Linux, amprouennoù an urzhiataer war Windows, hag a sav an hevelep ZIP; e labourioù Linux ha macOS (`flutter build linux` ha `flutter build macos`, gant an hevelep `-t lib/main_desktop.dart`) n'int ket bet lañset war ar reizhiadoù-se c'hoazh.
+
 <a id="where-to-get-it"></a>
 ## Pelec'h e kaout
 
-Emañ an arload war Google Play evit ar pellgomzerioù hag an tabletennoù; stumm an App Store a c'hortoz gwiriadur Apple, fichenn ar Meta Horizon Store a zo aprouet hag he hizivadenn gentañ a zo o vezañ gwiriet gant Meta, ha stumm Google Play evit ar skinwelioù a c'hortoz gwiriadur Google eus an embannadur skinwel. An embannadur GitHub eo atav ar build nevesañ:
+Emañ an arload war Google Play evit ar pellgomzerioù hag an tabletennoù; stumm an App Store a c'hortoz gwiriadur Apple, fichenn ar Meta Horizon Store a zo aprouet hag he hizivadenn gentañ a zo o vezañ gwiriet gant Meta, ha stumm Google Play evit ar skinwelioù a c'hortoz gwiriadur Google eus an embannadur skinwel. Immuch360 Desktop, evit Windows, a zo ur stumm rakwel war GitHub. An embannadur GitHub eo atav ar build nevesañ:
 
 - **Pellgomzerioù ha tabletennoù Android**
   - Hiziv: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), pe an APK war ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` evit ur pellgomzer (an `Immuch360-v<version>-release.apk` hollek a ya en-dro e pep lec'h, `-armeabi-v7a` a zo evit ar pellgomzerioù kozh 32 bit, hag ar restr `.aab` a zo evit Google Play, n'eo ket evit staliañ gant an dorn). Build GitHub a zo alies war-raok ar stal. N'eus forzh penaos, e vez staliet e-kichen an arload Immich ofisiel (pakad `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Emañ an arload war Google Play evit ar pellgomzerioù hag an tabletennoù; stum
 - **Android TV ha Google TV (adalek ar build 20)**
   - Hiziv: an `Immuch360-v<version>-release.apk` hollek eus ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases), staliet gant an dorn gant adb, gwelit [Staliañ anezhañ war ar skinwel](#install-it-on-the-tv). An hevelep arload eo hag war ar pellgomzerioù.
   - A-benn nebeut: Google Play war ar skinwelioù, goude gwiriadur Google eus an embannadur skinwel.
+- **Windows 10 hag 11, 64 bit (stumm rakwel)**
+  - Hiziv: Immuch360 Desktop, ar ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` eus ar [rak-embannadur urzhiataer](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), diwasket ha loc'het evel ma lavar [Pellgargañ ha staliañ war Windows](#download-and-install-on-windows). Luc'hskeudennoù hepken evit ar mare: ar videoioù a zeuio gant ar builds urzhiataer da-heul.
+  - A-benn nebeut: lenn ar videoioù; diwezhatoc'h ur stalier, ur build sinet hag hizivadennoù.
 
 Liammoù an App Store hag ar Meta Horizon Store a vo ouzhpennet amañ kerkent ha ma vo embannet ar fichennoù. Kevreit gant URL ho servijer Immich boas hag ho kont, pe stokit "Implijout hep servijer" war ar bajenn gevreañ evit kregiñ gant luc'hskeudennoù ha videoioù ar benveg e-unan. An APK eus GitHub ne hizivaat ket e-unan: evezhiit ouzh ar bajenn Releases, ha kerkent ha ma ho peus staliet an arload diwar ur stal, kemerit an hizivadennoù diwar ar stal-se.
 
@@ -993,12 +1105,15 @@ An hini `quest` a vuk ar SDK 34 hag a vir nemet an aotreoù a implij ar c'hasked
 
 Evit sevel evit iOS war ho Mac deoc'h, implijit Xcode hag ho skipailh sinañ deoc'h; gant Xcode 26, lañsit `xcodebuild -downloadComponent MetalToolchain` ur wech da gentañ, rak ar shaderioù Spatial o deus ezhomm anezhañ. Hep Mac, ar builds iOS a dro war Codemagic (ur Mac herberc'hiet) diwar ar restr `codemagic.yaml` eus ar c'havlec'h-mañ. Ar builds embann Android a dro war GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, ar stumm Windows, a vez savet eus ar skourr `desktop` gant Flutter evit Windows: emañ ar pazennoù e [Sevel anezhañ hoc'h-unan war Windows](#build-it-yourself-on-windows).
+
 Sekred ebet n'emañ er c'havlec'h-mañ: alc'hwez sinañ Android a zo miret evel sekredoù GitHub Actions enrineget, ha danvez sinañ Apple evel argemmennoù enrineget war Codemagic. Ar restroù workflow ne reont dave dezho nemet dre o anv. Hep ho `android/key.jks` deoc'h, ur build embann a vez sinet gant an alc'hwez debug ha n'hall ket bezañ staliet war-c'horre un eilskouerenn eus GitHub pe eus ur stal (distaliit honnezh da gentañ); ur build debug a vez staliet en he c'hichen evel Immuch360 debug. Eilskouerenn ar Meta Horizon Store eo an APK `quest` eus an embannadur sinet gant un alc'hwez all, an hini m'eo bet enrollet arload ar stal gantañ da gentañ, neuze n'hall ket bezañ staliet war-c'horre un APK staliet gant an dorn kennebeut, nag ar c'hontrol.
 
 ### Skourroù
 
 - **`main`**: Immich `main` d'ar commit ma'z eo diazezet `immuch360` warnañ (29 a viz Gwengolo 2026 evit ar builds bremanel), morse kemmet; mont a ra war-raok pa vez adlakaet ar forc'h war un Immich nevesoc'h.
 - **`immuch360`**: kemmoù ar forc'h-mañ a-us da Immich. Pep embannadur a lavar war beseurt stumm Immich eo diazezet.
+- **`desktop`**: Immuch360 Desktop, stumm an urzhiataer, a-us da `immuch360`. An embannadurioù pellgomzer a vez kendeuzet ennañ, hag ar rak-embannadurioù urzhiataer a vez savet diwarnañ (ar build urzhiataer 1 eus ar commit 21f285c34, ar build pellgomzer 20 gant stumm an urzhiataer ouzhpenn). Netra dindan `mobile/android` ha `mobile/ios` ne cheñch warnañ.
 
 <a id="logs"></a>
 ## Kerzhlevrioù
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Adalek ar build 19, an arval DLNA, rannadenn ar pellgomzer ha dinoadur ar media spasel Apple a skriv ivez e kerzhlevr an arload e-unan (Logs (Kerzhlevrioù), e lañser skeudenn ar profil e-krec'h a-zehou), dindan `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ha `NetworkMediaService`. Adalek ar build 20 e skriv ar mod skinwel eno dindan `TvMode` ha `TvTextEntry`, ar servijerioù Plex dindan `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ha `PlexServerEditPage`, hag ar c'hameraioù Tapo dindan `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ha `CameraLiveView`; linennoù Plex n'o deus biskoazh ar jedouer, ur chomlec'h pe un titl, ha linennoù ar c'hamera a lez ar gerioù-tremen a-gostez. Linennoù ar c'herzhlevr a chom war ar benveg nemet ma eilit anezho hoc'h-unan.
 
+War un urzhiataer (Immuch360 Desktop), pajenn Logs he deus ivez "Save logs to a file" (Enrollañ ar c'herzhlevrioù en ur restr): ar c'herzhlevr, pe ur ZIP gant ar c'herzhlevr ha danevelloù ar c'hrac'hadennoù diwezhañ pa vez re (e anv kinniget a echu neuze gant "with-crash-reports"). Un danevell grac'hadenn zo ur minidump bihan: an neudennoù, el lec'h m'int bet paouezet ha nemet ar pezh a zo ret evit heuliañ o galvoù, gant anvioù restroù ar programm met hep o zeuliadoù; n'eo ket memor an arload. Gwiriit ar c'herzhlevr a-raok e rannañ: gallout a ra kenderc'hel chomlec'h ho servijer.
+
 <a id="privacy"></a>
 ## Buhez prevez
 
@@ -1026,19 +1143,21 @@ Adalek ar build 19, an arval DLNA, rannadenn ar pellgomzer ha dinoadur ar media 
 - **Skinwel**: gouzout hag-eñ eo ur skinwel ar benveg a vez lennet war ar benveg; netra ne vez kaset.
 - **Rannadenn ar pellgomzer**: rouedad lec'hel hepken, gant un anv implijer hag ur ger-tremen, dre HTTP eeun (gwelit [Rannañ ar pellgomzer-mañ war ar rouedad](#share-this-phone-on-the-network)).
 - **Kamera**: implijet gant al lenner Spatial 2.5D hepken, war ar benveg; ar skeudennoù n'int morse enrollet ha morse kaset e lec'h ebet.
+- **War un urzhiataer** (Immuch360 Desktop, stumm rakwel Windows): an arload ne lenn nemet an teuliadoù a zibabit, a vir e ibil, e skeudennigoù hag e grubuilh war an urzhiataer, hag a enroll ar gerioù-tremen hag ar jedouerioù gant gwarez roadennoù Windows, evit ho kont Windows hepken. Rannadenn an urzhiataer a heul reolennoù rannadenn ar pellgomzer, ha ne loc'h ket war ur rouedad merket foran gant Windows, pe ur rouedad n'hall ket anavezout he seurt, nemet ma lavarit.
 
 Ar reolenn a-bezh a zo e [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Lañvaz ha merk
 
-Ar raktres-mañ zo ur forc'h eus Immich hag a chom dindan an [GNU AGPL v3](../LICENSE). Pep APK, re ar pellgomzerioù e-barzh, en deus ivez ar Meta Spatial SDK, n'eo ket mammenn digor (Meta Platform Technologies SDK License Agreement) ha na vez implijet nemet war ar c'haskedoù Meta Quest. Immuch360 n'eo ket stag ouzh skipailh Immich nag ouzh FUTO, ha n'eo ket kennerzhet ganto.
+Ar raktres-mañ zo ur forc'h eus Immich hag a chom dindan an [GNU AGPL v3](../LICENSE). Pep APK, re ar pellgomzerioù e-barzh, en deus ivez ar Meta Spatial SDK, n'eo ket mammenn digor (Meta Platform Technologies SDK License Agreement) ha na vez implijet nemet war ar c'haskedoù Meta Quest; Immuch360 Desktop, ar stumm Windows, n'en deus ket anezhañ. Immuch360 n'eo ket stag ouzh skipailh Immich nag ouzh FUTO, ha n'eo ket kennerzhet ganto.
 
 <a id="roadmap"></a>
 ## Steuñv-labour
 
 Ar pezh n'eo ket graet c'hoazh, an hini moarvat da gentañ. Netra amañ n'eo ur bromesa, hag an evezhiadennoù war ar [roll kudennoù](https://github.com/freeKC/Immuch360/issues) a sikour da zivizout petra a zeu da gentañ.
 
+- **Immuch360 Desktop, Windows da gentañ**: deuet eo er-maez ar stumm rakwel kentañ (gwelit [War un urzhiataer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Da-heul, lenn ar videoioù (ar videoioù plat da gentañ, goude 360°, 3D, VR180 hag ar restroù kriz), muzuliet war div gartenn grafek un urzhiataer hezoug; goude amprouiñ pep arc'hwel war un urzhiataer Windows hag e reizhadurioù; goude Spatial 2.5D gant ar webkam; goude Linux ha macOS, pakadoù, sinañ hag hizivadennoù.
 - **Google Play**: ar build 18 a zo enlinenn; ar build 20 a zo o vezañ gwiriet gant Google abaoe ar 7 a viz Here 2026, e-lec'h ar build 19. Ar build 21 ne cheñch netra war ar pellgomzerioù hag an tabletennoù.
 - **App Store**: ar stumm 3.3.0 a c'hortoz gwiriadur Apple; arc'hwelioù ar build 11 en deus, neuze ar pellgas da Immich ha gwiriadur an diskoder video (build 15) hag ar restroù kriz Insta360 (build 16) a zeuio gant an hizivadenn App Store war-lerc'h. Al liamm a vo ouzhpennet amañ pa vo enlinenn.
 - **Meta Horizon Store**: Meta en deus aprouet ar fichenn d'ar 7 a viz Here 2026 gant ar build 14. Ar build 21 a zo bet kinniget evel he hizivadenn gentañ: degas a ra kement tra abaoe ar build 14 (ar pellgasoù eus ur rannadenn da Immich, ar vammenn video dibabet diouzh ar pezh a ziskod ar c'hasked, ar restroù kriz Insta360, GoPro ha DJI, DLNA, rannadenn ar pellgomzer, al luc'hskeudennoù spasel Apple, al levraouegoù Plex Media Server, ar c'hameraioù Tapo), hag ar stal he roll evit ar Quest 2, ar Quest Pro, ar Quest 3 hag ar 3S. Al liamm stal a vo ouzhpennet amañ kerkent ha ma vo foran ar bajenn; un eilskouerenn staliet gant an dorn a rank bezañ distaliet da gentañ (gwelit [Staliañ](#install)).

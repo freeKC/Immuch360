@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 este aplicația mobilă Immich cu fotografii și videoclipuri 360° în care vă puteți uita în jur și un player gratuit pentru fotografii și videoclipuri plane, 360°, 3D și VR180, pe telefoane și tablete Android, pe iPhone și iPad, pe căștile Meta Quest (Quest 3 și 3S, iar începând cu build-ul 21 Quest 2 și Quest Pro, netestate), iar începând cu build-ul 20 pe Android TV și Google TV.
+Immuch360 este aplicația mobilă Immich cu fotografii și videoclipuri 360° în care vă puteți uita în jur și un player gratuit pentru fotografii și videoclipuri plane, 360°, 3D și VR180, pe telefoane și tablete Android, pe iPhone și iPad, pe căștile Meta Quest (Quest 3 și 3S, iar începând cu build-ul 21 Quest 2 și Quest Pro, netestate), iar începând cu build-ul 20 pe Android TV și Google TV. Immuch360 Desktop, aceeași aplicație pe un computer cu Windows, a apărut ca previzualizare, vedeți [Pe un computer cu Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 Este pentru cei care filmează cu o cameră 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) sau cu modul de fotografie sferică al unui telefon, ori care au o cască, și vor să își vadă propriile cadre de pe un server Immich, de pe telefonul însuși, de pe un NAS, de pe un server media sau de pe un server Plex: același server, același cont, fără plugin pe server, sau fără niciun server. Începând cu build-ul 20 afișează și camerele Tapo, live și înregistrările de pe cardul lor de memorie.
 
@@ -18,13 +18,14 @@ Este pentru cei care filmează cu o cameră 360° (Insta360, GoPro MAX, DJI Osmo
   <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a><br>
   App Store: <a href="#where-to-get-it">în evaluare</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprobat, build-ul 21 trimis ca primă actualizare<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">descărcare previzualizare</a>
 </p>
 
 - 🌐 **360° nativ**<br>Fotografii și videoclipuri ca o sferă în care vă uitați în jur, cu giroscopul, inclusiv fișierele brute ale camerei (Insta360 începând cu build-ul 16, GoPro și DJI începând cu build-ul 18). Și un player video gratuit: plan, 360°, 3D, VR180
 - 👓 **3D nativ**<br>360° stereoscopic și VR180, sus și jos sau unul lângă altul, și fotografii spațiale Apple (începând cu build-ul 19): 3D adevărat în cască, un singur ochi pe telefon
 - 🎥 **2.5D nativ**<br>Profunzime pe un ecran plat dintr-un videoclip stereoscopic, imaginea vă urmărește capul (experimental, telefoane și tablete)
-- 📱 **Android, iOS, Quest, TV**<br>O aplicație pe telefoane, tablete și în căștile Quest 2, Pro, 3 și 3S, 3D adevărat în cască, iar începând cu build-ul 20 pe Android TV, cu telecomanda
+- 📱 **Android, iOS, Quest, TV**<br>O aplicație pe telefoane, tablete și în căștile Quest 2, Pro, 3 și 3S, 3D adevărat în cască, începând cu build-ul 20 pe Android TV, cu telecomanda, și o previzualizare pentru Windows
 - 🔌 **Cu sau fără server**<br>Serverul dvs. Immich sau galeria telefonului, fără cont
 - 🗄️ **Partajări de rețea**<br>Samba (SMB), WebDAV și, începând cu build-ul 19, servere media DLNA găsite în rețea și citite direct, fără nicio descărcare, apoi trimise în Immich când alegeți. Începând cu build-ul 19, un telefon își partajează și propria galerie cu casca
 - 📺 **Pe televizor**<br>Începând cu build-ul 20, același APK pe Android TV și Google TV: fotografii și videoclipuri 360°, serverul și partajările dvs., cu telecomanda
@@ -52,6 +53,7 @@ Este pentru cei care filmează cu o cameră 360° (Insta360, GoPro MAX, DJI Osmo
 - [Comparație cu aplicația Immich și cu alte aplicații](#compared-with-the-immich-app-and-other-apps)
 - [Formate și surse, pe platforme](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Pe un computer cu Windows: Immuch360 Desktop (previzualizare)](#on-a-windows-computer-immuch360-desktop-preview)
 - [De unde o obțineți](#where-to-get-it)
 - [Compilați singur](#build-it-yourself)
 - [Log-uri](#logs)
@@ -77,6 +79,7 @@ Este pentru cei care filmează cu o cameră 360° (Insta360, GoPro MAX, DJI Osmo
 - **„Vreau să văd fotografiile și videoclipurile mele 360°, precum și videoclipurile de pe NAS sau de pe serverul meu Plex, pe televizor, cu telecomanda.”** Vedeți [Vizionați pe televizor](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Nu îmi găsesc cadrele 360° printre toate celelalte.”** Vedeți [Lista 360°](#find-your-360-shots-the-360-list).
 - **„Videoclipul meu 360° merge sacadat sau redă o copie neclară.”** Vedeți [Detaliile videoclipului și decodoarele](#video-details-decoders-and-why-a-video-stutters).
+- **„Vreau fotografiile mele 360° și biblioteca mea Immich pe PC-ul meu cu Windows, cu fotografiile din dosarele lui, NAS-ul meu și serverul meu Plex, iar PC-ul partajat cu casca mea.”** Vedeți [Pe un computer cu Windows](#on-a-windows-computer-immuch360-desktop-preview) (o previzualizare, deocamdată doar fotografii).
 - **„Păstrez tot ce face aplicația Immich?”** Da, cu două mici schimbări, vedeți [Restul este Immich](#everything-else-is-immich).
 
 Când o funcție este recentă, textul spune de la ce build există. Versiunea de pe GitHub are întotdeauna cel mai nou build, magazinele urmează mai târziu: vedeți [De unde o obțineți](#where-to-get-it).
@@ -749,6 +752,7 @@ Build-ul curent, build-ul 21 (versiunea 3.3.0-rc.0, numărul de build 3030019), 
 | Bibliotecile unui Plex Media Server redate din fișierele originale, acasă și în afara casei, fără plex.tv | ❌ | ✅ începând cu build-ul 20, toate vizualizatoarele, pe telefoane, tablete, Quest și televizoare |
 | Camere Tapo: vizualizarea live și înregistrările de pe cardul de memorie trimise în Immich când alegeți | ❌ | ✅ începând cu build-ul 20: înregistrări peste tot, live pe Android, Android TV și Quest |
 | Android TV și Google TV, comandate cu telecomanda, în același APK | ❌ nu este o aplicație pentru televizor | ✅ începând cu build-ul 20 |
+| Aceeași aplicație pe un computer cu Windows | ❌ doar telefoane și tablete | ✅ previzualizare, încă fără videoclipuri |
 | Fotografii Insta360 .insp brute și videoclipuri .insv cu o singură pistă | ❌ plat | ✅ începând cu build-ul 16 |
 | Videoclipuri brute cu un obiectiv pe pistă sau pe fișier (Insta360 X4, X4 Air, X5, X6, perechi X3, GoPro .360, DJI .osv) | ❌ plat sau greșit | ✅ începând cu build-ul 18 |
 | .dng dual fisheye | ❌ plat | ❌ încă nu |
@@ -778,6 +782,7 @@ Build-ul curent, build-ul 21 (versiunea 3.3.0-rc.0, numărul de build 3030019), 
 - **Plex Media Server**: verificat de pe un computer cu un Plex Media Server 1.42.1 real (asociere, dosare, intervale de octeți, miniaturi, adresa din afara casei); neverificat încă pe dispozitiv.
 - **Camere Tapo**: verificat cu o cameră simulată; neverificat încă cu o cameră reală.
 - **Android TV și Google TV**: verificat prin teste automate; neverificat încă pe un televizor.
+- **Aceeași aplicație pe un computer cu Windows**: 475 de teste automate pentru desktop pe Windows, iar pe un PC cu Windows 11 aplicația pornește, deschide o sesiune salvată pe un server Immich, sincronizează și se închide corect; testarea manuală a fiecărei funcții este în curs.
 - **Fotografii Insta360 .insp brute și videoclipuri .insv cu o singură pistă**: fotografii comparate cu exporturi Insta360 Studio ale unor fișiere X3, videoclipuri pe un emulator Android cu un fișier X3 de rezoluție mică; nu a rulat încă pe un iPhone.
 - **Videoclipuri brute cu un obiectiv pe pistă sau pe fișier**: cititoarele și îmbinarea verificate pe fișiere reale X4, pereche X3, GoPro MAX și Osmo 360; redarea este testul pe dispozitiv al build-urilor 18 și 19.
 - **.dng dual fisheye**: planificat.
@@ -883,12 +888,15 @@ Immuch360 este o galerie și, totodată, un player media gratuit: redă ce aplic
 
 Intrările Android TV și Google TV, începând cu build-ul 20, nu au fost verificate încă pe un televizor, vedeți [Vizionați pe televizor](#watch-on-your-tv-android-tv-and-google-tv); intrările camerei nu au fost verificate încă cu o cameră reală.
 
+Pe Windows, previzualizarea Immuch360 Desktop afișează fotografiile, plane și 360°, inclusiv fotografiile brute .insp de la Insta360, cu mouse-ul și tastatura, de pe server, din dosarele PC-ului, din partajări și din Plex; încă nu redă videoclipuri, care afișează un substituent (vedeți [Încă nu este disponibil](#not-there-yet)).
+
 - **Serverul dvs. Immich**: originalul sau fluxul transcodificat al serverului, după cum indică Setări, Vizualizator resurse, Sursa video (vedeți [Detaliile videoclipului și decodoarele](#video-details-decoders-and-why-a-video-stutters)). Același cont ca aplicația web.
 - **Telefonul sau casca însăși**: „Folosește fără server” pe pagina de autentificare sau intrarea Pe acest dispozitiv din fila Librărie.
 - **Un NAS sau un computer**: partajări SMB și WebDAV, iar începând cu build-ul 19 servere media DLNA, găsite în rețea, citite direct (un videoclip SMB prin până la șase conexiuni), nimic copiat; începând cu build-ul 15, fișierele pe care le alegeți pot fi trimise în contul dvs. Immich.
 - **Un alt telefon (începând cu build-ul 19)**: „Partajați acest telefon în rețea” pe acel telefon: casca sau orice client WebDAV din rețea îi citește albumele, lunile și conținutul 360°.
 - **Un Plex Media Server (începând cu build-ul 20)**: bibliotecile lui de fotografii, filme și seriale pe dosare, fișierele originale citite direct prin HTTPS verificat cu propriul certificat al serverului, acasă sau prin adresa din afara casei, pe toate platformele; vedeți [Plex Media Server, fără plex.tv](#plex-media-server-without-plextv).
 - **O cameră Tapo (începând cu build-ul 20)**: vizualizarea live cu contul camerei (Android, Android TV, Quest) și înregistrările de pe cardul ei de memorie cu parola contului TP-Link (toate platformele), doar în rețeaua locală; vedeți [Camere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Dosarele unui computer cu Windows (previzualizare desktop)**: dosarele pe care le alegeți în Immuch360 Desktop, citite în locul galeriei unui telefon; computerul le poate și partaja cu casca, vedeți [Pe un computer cu Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Capturi făcute în cască cu butonul de captură (butonul Meta și trăgaciul),
 - **Dimensiunea APK-ului**: Spatial SDK adaugă aproximativ 56 MB de cod nativ ARM pe 64 de biți, și pe telefoane, unde nu este încărcat niciodată.
 - **Licență**: vizualizarea imersivă folosește Meta Spatial SDK, distribuit sub Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Pe un computer cu Windows: Immuch360 Desktop (previzualizare)
+
+Biblioteca dvs. Immich este pe un server, alte fotografii stau în dosarele PC-ului, videoclipurile pe un NAS sau pe un server Plex, și ați vrea să vă uitați în jur în fotografiile 360° pe un ecran mare sau să arătați fotografiile PC-ului în cască. Immuch360 Desktop este aceeași aplicație pe un computer cu Windows, compilată din aceleași surse ca aplicațiile de telefon.
+
+Pe un computer, Immich oferă aplicația web într-un browser. **Ce adaugă Immuch360 Desktop**: dosarele PC-ului fără niciun server sau cont, partajări SMB, WebDAV, DLNA și Plex răsfoite din aplicație, fotografii brute .insp de la Insta360 deschise ca sferă, și PC-ul partajat cu un Meta Quest acasă.
+
+Acest prim build este o previzualizare: fotografiile funcționează, videoclipurile vin cu următoarele build-uri desktop. Aplicațiile pentru telefon, tabletă, Quest și TV nu se schimbă odată cu el și își păstrează numele Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Descărcare și instalare pe Windows
+
+Primul build este pre-versiunea de pe GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Fișierul său este `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 de fișiere după dezarhivare), cu `SHA256SUMS.txt` pentru verificare. A fost compilat din ramura `desktop` la commitul 21f285c34: build-ul 20 de telefon plus versiunea pentru computer. Are nevoie de Windows 10 sau 11, pe 64 de biți.
+
+1. Descărcați ZIP-ul și dezarhivați-l oriunde, de exemplu în Documente.
+2. Porniți `immuch360.exe` din dosarul dezarhivat. Păstrați dosarul întreg: programul are nevoie de fișierele de lângă el.
+3. Fișierele nu sunt încă semnate, așa că Windows SmartScreen poate afișa „Windows protected your PC”: alegeți „More info”, apoi „Run anyway”. Acolo unde Smart App Control este activat, acesta blochează programele nesemnate.
+4. Așteptați fereastra. Prima pornire a unui build nou durează între 10 secunde și aproximativ un minut, cel mai probabil cât timp Microsoft Defender scanează fișierele noi: nu porniți aplicația din nou între timp. Pornirile următoare durează o secundă sau două.
+5. Pe pagina de autentificare, conectați-vă la serverul dvs. Immich cu adresa lui, e-mailul și parola dvs., sau faceți clic pe „Folosește fără server”.
+
+Pentru a verifica ZIP-ul, rulați `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` într-un prompt de comandă, în dosarul descărcării: rezultatul este cel scris în `SHA256SUMS.txt`. Încă nu există un program de instalare și nici actualizare automată: urmăriți pagina [Releases](https://github.com/freeKC/Immuch360/releases) și dezarhivați build-ul următor la fel.
+
+### Ce face previzualizarea
+
+- **Serverul dvs. Immich**: cronologia, albumele, persoanele, amintirile și căutarea, și fotografiile de pe server la dimensiune completă, ca pe un telefon.
+- **Fără server**: dosarele fotografiilor și videoclipurilor dvs. (Imagini și Videoclipuri sunt sugerate) înlocuiesc galeria unui telefon. Nimic nu este citit în afara dosarelor alese, iar fără server nimic nu părăsește computerul.
+- **Încărcare și backup** din aceste dosare pe serverul dvs. Immich, cât timp aplicația este deschisă.
+- **Fotografii 360° ca sferă**, cu mouse-ul și tastatura; fotografiile brute .insp ale camerelor Insta360 se deschid ca pe telefoane.
+- **Partajări de rețea**: Samba (SMB), WebDAV și servere media DLNA, și servere Plex fără plex.tv, răsfoite ca pe telefoane: fotografiile lor se deschid, videoclipurile lor așteaptă playerul video (vedeți [Încă nu este disponibil](#not-there-yet)). Pentru camerele Tapo, înregistrările de pe cardul de memorie: lista și descărcarea unui clip.
+- **Partajarea acestui computer în rețea**: albumele, lunile și conținutul 360° din dosarele dvs., doar pentru citire, pentru un Meta Quest sau alt dispozitiv de acasă, așa cum se partajează un telefon.
+- **Fișiere**: descărcările de pe server merg într-un dosar ales de dvs., „Salvează într-un dosar” păstrează o copie a fotografiilor și videoclipurilor selectate, iar pagina Log-uri are „Salvează log-urile într-un fișier”.
+
+### Folosirea pe un computer
+
+1. **Alegeți-vă dosarele.** Fără server, cronologia începe cu „Alegeți dosarele fotografiilor și videoclipurilor dvs.”: faceți clic pe „Adaugă un dosar”. Cu server, aceeași casetă apare în Librărie, sub „Pe acest computer”, și în albumele de salvat, până când este ales un dosar. După aceea, acestea au o linie „Dosare pe acest computer”, la fel ca Setări, „Acest computer”.
+2. **Dosare din cloud, USB și de rețea.** Fișierele pe care OneDrive (sau alt spațiu în cloud) le păstrează doar online sunt numărate, dar nu citite, așa că adăugarea unui dosar nu descarcă tot cloudul: „Descarcă și include” le aduce când le vreți. O unitate USB care revine cu altă literă își păstrează fotografiile. Dosarele de rețea și dosarele de pe un card de memorie sau de pe o unitate USB (pentru ca Windows să o poată scoate în continuare) nu sunt urmărite pentru modificări: folosiți Reîmprospătare după ce adăugați fișiere acolo.
+3. **Uitați-vă în jur într-o fotografie 360°**: trageți cu mouse-ul, măriți cu rotița, cu dublu clic sau cu + și - (pe orice aranjament de tastatură, inclusiv AZERTY), deplasați-vă cu săgețile. F sau F11 trece pe ecran complet și Escape iese; Home și End duc la prima și la ultima fotografie; I afișează detaliile.
+4. **Treceți de la o fotografie la alta**: într-o fotografie plană, săgețile stânga și dreapta, sau săgețile care apar pe margini cât timp mișcați mouse-ul, duc la cea anterioară și la cea următoare. Literele tastate în câmpul de descriere rămân în text.
+5. **Partajați computerul cu casca**: deschideți Librărie, apoi Partajări de rețea; prima casetă este „Partajați acest computer în rețea”, partea de computer a secțiunii [Partajați acest telefon în rețea](#share-this-phone-on-the-network). Activați „Partajați fotografii și videoclipuri în rețea”, apoi adăugați computerul în cască așa cum spune acea secțiune. Partajarea se oprește când aplicația este închisă sau după o oră fără utilizare.
+6. **Permiteți rețeaua**: Windows poate întreba dacă Immuch360 Desktop poate folosi rețeaua. Permiteți pe rețelele private, altfel casca nu găsește computerul. Pe o rețea pe care Windows o marchează ca publică (o cafenea, un hotel), sau al cărei tip nu îl poate stabili, partajarea nu pornește decât dacă alegeți „Partajează pentru această sesiune”, iar computerul se anunță doar pe o rețea pe care partajează.
+7. **Setări, „Acest computer”**: dosarele, dosarul de descărcare, adaptorul de rețea folosit pentru a găsi partajări și pentru a partaja computerul (când are mai multe, Wi-Fi și Ethernet de exemplu), și certificatele de încredere: autoritatea de certificare a propriului dvs. server, ca fișier PEM, pentru o adresă HTTPS în care Windows nu are încredere de la sine. Certificatele client se importă în Setări, Avansat, ca pe telefoane.
+
+### Comparat cu aplicațiile de telefon
+
+- **Backupul rulează cât timp aplicația este deschisă** (sau minimizată), nu în fundal cu fereastra închisă. Închiderea ferestrei în timpul încărcărilor sau cât timp computerul este partajat cere întâi confirmarea.
+- **Dosare în loc de galerie**: aplicația citește dosarele pe care le alegeți și își păstrează propriul index, miniaturile și cache-ul pe computer.
+- **O singură fereastră**: deschiderea aplicației a doua oară aduce înapoi prima fereastră în loc să pornească o a doua copie.
+- **Nimic nu se șterge din dosarele dvs.**: „Șterge de pe dispozitiv” este ascuns, iar Șterge elimină doar copia de pe server, până când aplicația va putea trimite fișiere în coșul de reciclare Windows.
+- **Mouse și tastatură** în locul atingerii și al giroscopului.
+
+<a id="not-there-yet"></a>
+### Încă nu este disponibil
+
+- **Videoclipuri**: deocamdată afișează un substituent, iar miniaturile lor o pictogramă de film. Redarea urmează: întâi videoclipurile plane, apoi videoclipurile 360°, 3D și VR180 și videoclipurile 360° brute.
+- **Spatial 2.5D**, mai târziu cu camera web; **vizualizarea live Tapo**; **harta** și vizualizarea Locuri; **autentificarea cu OAuth** (conectați-vă în schimb cu un e-mail și o parolă); **Google Cast**; **notificările**.
+- **Un program de instalare, un build semnat și actualizări automate**: acest build este un dosar cu `immuch360.exe`.
+- **Linux și macOS**: proiectele lor sunt în surse, dar încă nu au fost compilate sau încercate pe aceste sisteme; vin după Windows.
+- **Traduceri**: textele noi ale versiunii pentru computer sunt deocamdată în engleză.
+
+### Probleme cunoscute
+
+- **Cât timp casca citește un fișier de pe computerul partajat** (un videoclip pe care îl redă, o fotografie pe care o descarcă), Windows nu poate redenumi, muta sau șterge acel fișier și spune că este deschis în Immuch360 Desktop: opriți întâi redarea. Backupurile nu vă blochează fișierele în acest fel: un fișier poate fi redenumit, mutat sau șters în timp ce este încărcat.
+- **Asperități**: funcțiile de mai sus trec testele automate pe Windows (475 de teste desktop), iar pe un PC cu Windows 11 aplicația pornește, deschide o sesiune salvată pe un server Immich, sincronizează și se închide corect. Testarea manuală a fiecărei funcții pe un PC real este încă în curs.
+
+Dacă ceva nu merge, vă rog să deschideți un [issue](https://github.com/freeKC/Immuch360/issues) cu log-ul salvat din pagina Log-uri, vedeți [Log-uri](#logs). Verificați log-ul înainte de a-l partaja: poate conține adresa serverului dvs.
+
+<a id="build-it-yourself-on-windows"></a>
+### Compilați-l singur pe Windows
+
+Aveți nevoie de Windows 10 sau 11 pe x64, Flutter 3.47.2 pentru Windows, Visual Studio 2022 sau Build Tools-ul său cu sarcina de lucru „Desktop development with C++”, modul dezvoltator activat în setările Windows (Flutter are nevoie de el pentru pluginuri) și Python 3 pentru scriptul de împachetare.
+
+1. Luați ramura `desktop` și rulați generarea de cod. Folosește Java și Node, așa că rulați-o pe Linux, macOS sau în WSL; cu WSL, păstrați clona pe o unitate Windows, pe care WSL o vede sub `/mnt/c` sau `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Pe Windows, în același dosar `mobile`, compilați aplicația:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Dosarul `Release` rulează pe PC-ul care l-a compilat. Pentru alt PC, păstrați dosarul întreg și adăugați runtime-ul Visual C++ lângă `immuch360.exe`. Din rădăcina clonei, scriptul de împachetare îl copiază, lasă deoparte ce servește doar pentru Android, verifică faptul că fiecare DLL încărcat de aplicație este în dosar sau în Windows însuși, și creează ZIP-ul:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+CI-ul ramurii `desktop` (`.github/workflows/immuch360-desktop.yml`) rulează verificările de telefon și întreaga suită de teste pe Linux, testele desktop pe Windows, și construiește același ZIP; joburile sale pentru Linux și macOS (`flutter build linux` și `flutter build macos`, cu același `-t lib/main_desktop.dart`) nu au rulat încă pe aceste sisteme.
+
 <a id="where-to-get-it"></a>
 ## De unde o obțineți
 
-Aplicația este pe Google Play pentru telefoane și tablete; versiunea pentru App Store așteaptă evaluarea Apple, pagina din Meta Horizon Store este aprobată și prima ei actualizare este în evaluare la Meta, iar versiunea Google Play pentru televizoare așteaptă evaluarea de către Google a versiunii pentru TV. Versiunea de pe GitHub este întotdeauna cel mai nou build:
+Aplicația este pe Google Play pentru telefoane și tablete; versiunea pentru App Store așteaptă evaluarea Apple, pagina din Meta Horizon Store este aprobată și prima ei actualizare este în evaluare la Meta, iar versiunea Google Play pentru televizoare așteaptă evaluarea de către Google a versiunii pentru TV. Immuch360 Desktop, pentru Windows, este o previzualizare pe GitHub. Versiunea de pe GitHub este întotdeauna cel mai nou build:
 
 - **Telefoane și tablete Android**
   - Astăzi: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) sau APK-ul de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pentru un telefon (`Immuch360-v<version>-release.apk` universal merge peste tot, `-armeabi-v7a` este pentru telefoanele mai vechi pe 32 de biți, iar fișierul `.aab` este pentru Google Play, nu pentru sideload). Build-ul de pe GitHub este de obicei înaintea celui din magazin. În ambele cazuri se instalează alături de aplicația oficială Immich (pachetul `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Aplicația este pe Google Play pentru telefoane și tablete; versiunea pentru Ap
 - **Android TV și Google TV (începând cu build-ul 20)**
   - Astăzi: `Immuch360-v<version>-release.apk` universal de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases), instalat prin sideload cu adb, vedeți [Instalați-o pe televizor](#install-it-on-the-tv). Este aceeași aplicație ca pe telefoane.
   - În curând: Google Play pe televizoare, după evaluarea de către Google a versiunii pentru TV.
+- **Windows 10 și 11, pe 64 de biți (previzualizare)**
+  - Astăzi: Immuch360 Desktop, ZIP-ul `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` al [pre-versiunii desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), dezarhivat și pornit cum spune [Descărcare și instalare pe Windows](#download-and-install-on-windows). Deocamdată doar fotografii: videoclipurile vin cu următoarele build-uri desktop.
+  - În curând: redarea video; un program de instalare, un build semnat și actualizări mai târziu.
 
 Linkurile către App Store și Meta Horizon Store vor fi adăugate aici imediat ce paginile sunt publicate. Autentificați-vă cu adresa URL și contul obișnuit al serverului dvs. Immich sau atingeți „Folosește fără server” pe pagina de autentificare pentru a începe cu fotografiile și videoclipurile dispozitivului. APK-ul de pe GitHub nu se actualizează singur: urmăriți pagina Releases, iar după ce ați instalat aplicația dintr-un magazin, luați actualizările din acel magazin.
 
@@ -993,12 +1105,15 @@ Cele două flavor-uri Android sunt aceeași aplicație. Începând cu build-ul 2
 
 Pentru a compila pentru iOS pe propriul Mac, folosiți Xcode și propria echipă de semnare; cu Xcode 26, rulați mai întâi o dată `xcodebuild -downloadComponent MetalToolchain`, deoarece shaderele Spatial au nevoie de el. Fără Mac, build-urile iOS rulează pe Codemagic (un Mac găzduit) pe baza fișierului `codemagic.yaml` din acest depozit. Build-urile de release Android rulează pe GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, versiunea pentru Windows, se compilează din ramura `desktop` cu Flutter pentru Windows: pașii sunt în [Compilați-l singur pe Windows](#build-it-yourself-on-windows).
+
 Niciun secret nu se află în acest depozit: cheia de semnare Android este stocată ca secrete criptate GitHub Actions, iar materialul de semnare Apple ca variabile criptate pe Codemagic. Fișierele workflow le menționează doar după nume. Fără propriul `android/key.jks`, un build de release este semnat cu cheia de depanare și nu se poate instala peste o copie de pe GitHub sau dintr-un magazin (dezinstalați-o mai întâi); un build de depanare se instalează alături, ca Immuch360 debug. Copia din Meta Horizon Store este APK-ul `quest` al versiunii, semnat cu o altă cheie, cea cu care a fost înregistrată inițial aplicația în magazin, așa că nici ea nu se poate instala peste un APK instalat prin sideload, nici invers.
 
 ### Ramuri
 
 - **`main`**: `main` din Immich la commitul pe care se bazează `immuch360` (29 septembrie 2026 pentru build-urile actuale), niciodată modificat; avansează când fork-ul este rebazat pe un Immich mai nou.
 - **`immuch360`**: modificările acestui fork peste Immich. Fiecare versiune spune pe ce versiune de Immich se bazează.
+- **`desktop`**: Immuch360 Desktop, versiunea pentru computer, peste `immuch360`. Versiunile de telefon sunt îmbinate în ea, iar pre-versiunile desktop sunt compilate din ea (desktop build 1 din commitul 21f285c34, build-ul 20 de telefon plus versiunea pentru computer). Nimic din `mobile/android` și `mobile/ios` nu se schimbă pe ea.
 
 <a id="logs"></a>
 ## Log-uri
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Începând cu build-ul 19, clientul DLNA, partajarea de telefon și detectarea conținutului spațial Apple scriu și în jurnalul propriu al aplicației (Log-uri, în meniul fotografiei de profil din dreapta sus), sub `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` și `NetworkMediaService`. Începând cu build-ul 20, modul TV scrie acolo sub `TvMode` și `TvTextEntry`, serverele Plex sub `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` și `PlexServerEditPage`, iar camerele Tapo sub `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` și `CameraLiveView`; liniile Plex nu conțin niciodată tokenul, o adresă sau un titlu, iar liniile camerelor omit parolele. Liniile de jurnal rămân pe dispozitiv, cu excepția cazului în care le copiați dvs.
 
+Pe un computer (Immuch360 Desktop), pagina Log-uri are și „Salvează log-urile într-un fișier”: log-ul, sau un ZIP cu log-ul și rapoartele ultimelor blocări, când există (numele sugerat se termină atunci cu „with-crash-reports”). Un raport de blocare este un mic minidump: firele de execuție, locul unde s-au oprit și doar ce este necesar pentru a le urmări apelurile, cu numele fișierelor programului, dar nu și dosarele lor; nu memoria aplicației. Verificați log-ul înainte de a-l partaja: poate conține adresa serverului dvs.
+
 <a id="privacy"></a>
 ## Confidențialitate
 
@@ -1026,19 +1143,21 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 - **TV**: faptul că dispozitivul este un televizor se citește pe dispozitiv; nu se trimite nimic.
 - **Partajarea de telefon**: doar rețeaua locală, cu nume de utilizator și parolă, prin HTTP simplu (vedeți [Partajați acest telefon în rețea](#share-this-phone-on-the-network)).
 - **Cameră**: folosită doar de playerul Spatial 2.5D, pe dispozitiv; imaginile nu sunt stocate niciodată și nu sunt trimise nicăieri.
+- **Pe un computer** (Immuch360 Desktop, previzualizare pentru Windows): aplicația citește doar dosarele pe care le alegeți, își păstrează indexul, miniaturile și cache-ul pe computer, și stochează parolele și tokenurile cu protecția datelor din Windows, doar pentru contul dvs. Windows. Partajarea computerului urmează regulile partajării telefonului și nu pornește pe o rețea pe care Windows o marchează ca publică, sau al cărei tip nu îl poate stabili, decât dacă cereți acest lucru.
 
 Politica completă se află în [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Licență și marcă
 
-Acest proiect este un fork al Immich și rămâne sub [GNU AGPL v3](../LICENSE). Fiecare APK, inclusiv cele pentru telefon, conține și Meta Spatial SDK, care nu este open source (Meta Platform Technologies SDK License Agreement) și este folosit doar pe căștile Meta Quest. Immuch360 nu este afiliat echipei Immich sau FUTO și nici susținut de acestea.
+Acest proiect este un fork al Immich și rămâne sub [GNU AGPL v3](../LICENSE). Fiecare APK, inclusiv cele pentru telefon, conține și Meta Spatial SDK, care nu este open source (Meta Platform Technologies SDK License Agreement) și este folosit doar pe căștile Meta Quest; Immuch360 Desktop, versiunea pentru Windows, nu îl conține. Immuch360 nu este afiliat echipei Immich sau FUTO și nici susținut de acestea.
 
 <a id="roadmap"></a>
 ## Planuri
 
 Ce nu este încă gata, începând cu ce este cel mai probabil. Nimic de aici nu este o promisiune, iar părerile din [sistemul de issues](https://github.com/freeKC/Immuch360/issues) ajută la stabilirea priorităților.
 
+- **Immuch360 Desktop, întâi pe Windows**: prima previzualizare a apărut (vedeți [Pe un computer cu Windows](#on-a-windows-computer-immuch360-desktop-preview)). Urmează redarea video (întâi videoclipurile plane, apoi 360°, 3D, VR180 și fișierele brute), măsurată pe cele două plăci grafice ale unui laptop; apoi testarea fiecărei funcții pe un PC cu Windows și corecturile ei; apoi Spatial 2.5D cu camera web; apoi Linux și macOS, pachete, semnare și actualizări.
 - **Google Play**: build-ul 18 este publicat; build-ul 20 este în evaluare la Google din 7 octombrie 2026, în locul build-ului 19. Build-ul 21 nu schimbă nimic pe telefoane și tablete.
 - **App Store**: versiunea 3.3.0 așteaptă evaluarea Apple; are funcțiile build-ului 11, așa că încărcarea în Immich și verificarea decodorului video (build 15) și fișierele Insta360 brute (build 16) vin cu următoarea actualizare din App Store. Linkul va fi adăugat aici când va fi disponibilă.
 - **Meta Horizon Store**: Meta a aprobat pagina pe 7 octombrie 2026 cu build-ul 14. Build-ul 21 a fost trimis ca prima ei actualizare: aduce tot ce a apărut de la build-ul 14 (încărcări dintr-o partajare în Immich, sursa video aleasă după ce decodează casca, fișiere brute Insta360, GoPro și DJI, DLNA, partajarea telefonului, fotografii spațiale Apple, biblioteci Plex Media Server, camere Tapo), iar magazinul îl listează pentru Quest 2, Quest Pro, Quest 3 și 3S. Linkul către magazin va fi adăugat aici după ce pagina devine publică; o copie instalată prin sideload trebuie dezinstalată mai întâi (vedeți [Instalare](#install)).

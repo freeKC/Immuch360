@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 er Immich-mobilappen med 360°-bilete og -videoar du kan sjå deg rundt i, og ein gratis avspelar for flate bilete og videoar, 360°, 3D og VR180, på Android-telefonar og -nettbrett, iPhone og iPad, Meta Quest-headsett (Quest 3 og 3S, og frå build 21 Quest 2 og Quest Pro, ikkje testa), og frå build 20 Android TV og Google TV.
+Immuch360 er Immich-mobilappen med 360°-bilete og -videoar du kan sjå deg rundt i, og ein gratis avspelar for flate bilete og videoar, 360°, 3D og VR180, på Android-telefonar og -nettbrett, iPhone og iPad, Meta Quest-headsett (Quest 3 og 3S, og frå build 21 Quest 2 og Quest Pro, ikkje testa), og frå build 20 Android TV og Google TV. Immuch360 Desktop, den same appen på ei Windows-datamaskin, er ute som førehandsversjon, sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview).
 
 Han er laga for deg som fotograferer med eit 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) eller med fotosfæremodusen på ein telefon, eller som har eit headsett, og vil sjå dine eigne opptak frå ein Immich-tenar, sjølve telefonen, ein NAS, ein medietenar eller ein Plex-tenar: same tenar, same konto, ikkje noko tillegg på tenaren, eller ingen tenar i det heile. Frå build 20 viser han også Tapo-kamera, direkte og med opptaka på minnekortet deira.
 
@@ -18,13 +18,14 @@ Han er laga for deg som fotograferer med eit 360°-kamera (Insta360, GoPro MAX, 
   <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
   App Store: <a href="#where-to-get-it">under gjennomgang</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store godkjend, build 21 send inn som første oppdatering<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">last ned førehandsversjonen</a>
 </p>
 
 - 🌐 **Innebygd 360°**<br>Bilete og videoar som ei kule du ser deg rundt i, med gyroskopet, rå kamerafiler inkludert (Insta360 frå build 16, GoPro og DJI frå build 18). Også ein gratis videoavspelar: flat, 360°, 3D, VR180
 - 👓 **Innebygd 3D**<br>Stereoskopisk 360° og VR180, topp og botn eller side om side, og romlege bilete frå Apple (frå build 19): ekte 3D i headsettet, eitt auge på ein telefon
 - 🎥 **Innebygd 2.5D**<br>Djupn på ein flat skjerm frå ein stereoskopisk video, biletet følgjer hovudet ditt (eksperimentelt, telefonar og nettbrett)
-- 📱 **Android, iOS, Quest, TV**<br>Éin app på telefonar, nettbrett og headsetta Quest 2, Pro, 3 og 3S, ekte 3D i headsettet, og frå build 20 på Android TV med fjernkontrollen
+- 📱 **Android, iOS, Quest, TV**<br>Éin app på telefonar, nettbrett og headsetta Quest 2, Pro, 3 og 3S, ekte 3D i headsettet, frå build 20 på Android TV med fjernkontrollen, og ein førehandsversjon for Windows
 - 🔌 **Med eller utan tenar**<br>Immich-tenaren din, eller telefonen sitt eige galleri, utan konto
 - 🗄️ **Nettverksdelingar**<br>Samba (SMB), WebDAV og, frå build 19, DLNA-medietenarar, funne på nettverket og lesne direkte, ingenting blir lasta ned, og sende til Immich når du vel det. Frå build 19 deler ein telefon også sitt eige galleri med headsettet
 - 📺 **På TV-en**<br>Frå build 20 den same APK-en på Android TV og Google TV: 360°-bilete og -videoar, tenaren din og delingane dine, med fjernkontrollen
@@ -52,6 +53,7 @@ Han er laga for deg som fotograferer med eit 360°-kamera (Insta360, GoPro MAX, 
 - [Samanlikna med Immich-appen og andre appar](#compared-with-the-immich-app-and-other-apps)
 - [Format og kjelder, etter plattform](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [På ei Windows-datamaskin: Immuch360 Desktop (førehandsversjon)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Kvar du får han](#where-to-get-it)
 - [Bygg han sjølv](#build-it-yourself)
 - [Loggar](#logs)
@@ -77,6 +79,7 @@ Han er laga for deg som fotograferer med eit 360°-kamera (Insta360, GoPro MAX, 
 - **"Eg vil sjå 360°-bileta og -videoane mine, og videoane på NAS-en eller Plex-tenaren min, på TV-en, med fjernkontrollen."** Sjå [Sjå på TV-en](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Eg finn ikkje 360°-opptaka mine mellom alle dei andre."** Sjå [360°-lista](#find-your-360-shots-the-360-list).
 - **"360°-videoen min hakkar, eller spelar av ein uskarp kopi."** Sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters).
+- **"Eg vil ha 360°-bileta mine og Immich-biblioteket mitt på Windows-PC-en, med bileta i mappene på PC-en, NAS-en og Plex-tenaren min, og PC-en delt med headsettet."** Sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview) (ein førehandsversjon, førebels berre bilete).
 - **"Held eg på det Immich-appen gjer?"** Ja, med to små endringar, sjå [Alt anna er Immich](#everything-else-is-immich).
 
 Når ein funksjon er ny, står det i teksten frå kva build han finst. GitHub-utgivinga har alltid den nyaste builden, butikkane kjem etter: sjå [Kvar du får han](#where-to-get-it).
@@ -749,6 +752,7 @@ Den gjeldande builden, build 21 (versjon 3.3.0-rc.0, buildnummer 3030019), er ba
 | Plex Media Server-bibliotek spelte av frå originalfilene, heime og borte, utan plex.tv | ❌ | ✅ frå build 20, alle visingar, på telefonar, nettbrett, Quest og TV-ar |
 | Tapo-kamera: direktebiletet, og opptaka på minnekortet sende til Immich når du vel det | ❌ | ✅ frå build 20: opptak overalt, direkte på Android, Android TV og Quest |
 | Android TV og Google TV, styrt med fjernkontrollen, i den same APK-en | ❌ ikkje ein TV-app | ✅ frå build 20 |
+| Den same appen på ei Windows-datamaskin | ❌ berre telefonar og nettbrett | ✅ førehandsversjon, ingen videoar enno |
 | Rå Insta360 .insp-bilete og .insv-videoar med eitt spor | ❌ flatt | ✅ frå build 16 |
 | Rå videoar med eitt objektiv per spor eller per fil (Insta360 X4, X4 Air, X5, X6, X3-par, GoPro .360, DJI .osv) | ❌ flatt eller feil | ✅ frå build 18 |
 | Dobbel fiskeauge-.dng | ❌ flatt | ❌ ikkje enno |
@@ -778,6 +782,7 @@ Den gjeldande builden, build 21 (versjon 3.3.0-rc.0, buildnummer 3030019), er ba
 - **Plex Media Server**: kontrollert frå ei datamaskin mot ein ekte Plex Media Server 1.42.1 (samankopling, mapper, byteområde, miniatyrbilete, adressa utanfor heimen); ikkje kontrollert på ei eining enno.
 - **Tapo-kamera**: kontrollert mot eit simulert kamera; ikkje kontrollert med eit ekte kamera enno.
 - **Android TV og Google TV**: kontrollert med automatiserte testar; ikkje kontrollert på ein TV enno.
+- **Den same appen på ei Windows-datamaskin**: 475 automatiserte skrivebordstestar på Windows, og på ein Windows 11-PC startar appen, opnar ei lagra økt på ein Immich-tenar, synkroniserer og blir lukka ryddig; testen av kvar funksjon for hand pågår.
 - **Rå Insta360 .insp-bilete og .insv-videoar med eitt spor**: bilete kontrollerte mot Insta360 Studio-eksportar av X3-filer, videoar på ein Android-emulator med ei X3-fil i låg oppløysing; ikkje køyrt på ein iPhone enno.
 - **Rå videoar med eitt objektiv per spor eller per fil**: parsarar og samansetjing kontrollerte på ekte filer frå X4, X3-par, GoPro MAX og Osmo 360; avspeling er einingstesten for build 18 og 19.
 - **Dobbel fiskeauge-.dng**: planlagt.
@@ -883,12 +888,15 @@ Immuch360 er eit galleri, og også ein gratis mediespelar: han spelar av det den
 
 Oppføringane for Android TV og Google TV, frå build 20, er ikkje kontrollerte på ein TV enno, sjå [Sjå på TV-en](#watch-on-your-tv-android-tv-and-google-tv); kameraoppføringane er ikkje kontrollerte med eit ekte kamera enno.
 
+På Windows viser førehandsversjonen av Immuch360 Desktop bileta, flate og 360°, også rå .insp-bilete frå Insta360, med mus og tastatur, frå tenaren, mappene på PC-en, delingane og Plex; han spelar ikkje av videoar enno, dei viser ein plasshaldar (sjå [Ikkje på plass enno](#not-there-yet)).
+
 - **Immich-tenaren din**: originalen eller den omkoda straumen frå tenaren, slik Innstillingar, Asset Viewer, Videokjelde seier (sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters)). Same konto som nettappen.
 - **Sjølve telefonen eller headsettet**: "Bruk utan tenar" på innloggingssida, eller oppføringa On this device i Bibliotek-fana.
 - **Ein NAS eller ei datamaskin**: SMB- og WebDAV-delingar, og frå build 19 DLNA-medietenarar, funne på nettverket, lesne direkte (ein SMB-video over opptil seks tilkoplingar), ingenting kopiert; frå build 15 kan filene du vel bli sende til Immich-kontoen din.
 - **Ein annan telefon (frå build 19)**: "Del denne telefonen på nettverket" på den telefonen: headsettet, eller ein kvar WebDAV-klient på nettverket, les albuma, månadene og 360°-media.
 - **Ein Plex Media Server (frå build 20)**: bilet-, film- og TV-seriebiblioteka etter mappe, originalfilene lesne direkte over HTTPS kontrollert mot det eigne sertifikatet til tenaren, heime eller gjennom adressa utanfor heimen, på alle plattformer; sjå [Plex Media Server, utan plex.tv](#plex-media-server-without-plextv).
 - **Eit Tapo-kamera (frå build 20)**: direktebiletet med kamerakontoen (Android, Android TV, Quest), og opptaka på minnekortet med passordet til TP-Link-kontoen (alle plattformer), berre på det lokale nettverket; sjå [Tapo-kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Mappene på ei Windows-datamaskin (førehandsversjon for skrivebord)**: mappene du vel i Immuch360 Desktop, lesne i staden for galleriet på ein telefon; datamaskina kan også dele dei med headsettet, sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Skjermbilete tekne i headsettet med opptaksknappen (Meta-knappen og avtrekkaren)
 - **APK-storleik**: Spatial SDK legg til om lag 56 MB med innebygd 64-bits ARM-kode, også på telefonar, der han aldri blir lasta inn.
 - **Lisens**: den oppslukande visinga brukar Meta Spatial SDK, distribuert under Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## På ei Windows-datamaskin: Immuch360 Desktop (førehandsversjon)
+
+Immich-biblioteket ditt ligg på ein tenar, andre bilete ligg i mappene på PC-en, videoane på ein NAS eller ein Plex-tenar, og du vil gjerne sjå deg rundt i 360°-bileta dine på ein stor skjerm, eller vise bileta frå PC-en i headsettet. Immuch360 Desktop er den same appen på ei Windows-datamaskin, bygd frå dei same kjeldene som telefonappane.
+
+På ei datamaskin tilbyr Immich nettappen sin i ein nettlesar. **Kva Immuch360 Desktop legg til**: mappene på PC-en utan tenar eller konto, SMB-, WebDAV-, DLNA- og Plex-delingar som ein blar i frå appen, rå .insp-bilete frå Insta360 opna som ei kule, og PC-en delt med ein Meta Quest heime.
+
+Denne første builden er ein førehandsversjon: bilete fungerer, videoar kjem med dei neste skrivebordsbuildane. Appane for telefon, nettbrett, Quest og TV blir ikkje endra av han og held på namnet Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Last ned og installer på Windows
+
+Den første builden er GitHub-førehandsutgivinga [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Fila er `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 filer når ho er pakka ut), med `SHA256SUMS.txt` for å kontrollere ho. Han vart bygd frå `desktop`-greina ved commit 21f285c34: telefonbuild 20 pluss datamaskinversjonen. Han krev Windows 10 eller 11, 64 bit.
+
+1. Last ned ZIP-fila og pakk ho ut kvar som helst, til dømes i Dokument.
+2. Start `immuch360.exe` frå den utpakka mappa. Hald mappa samla: programmet treng filene ved sida av seg.
+3. Filene er ikkje signerte enno, så Windows SmartScreen kan vise "Windows beskyttet PC-en din": vel "Mer informasjon", deretter "Kjør likevel". Der Smart App Control er slått på, blokkerer han usignerte program.
+4. Vent på vindauget. Den første oppstarten av ein ny build tek frå 10 sekund til om lag eitt minutt, truleg medan Microsoft Defender skannar dei nye filene: ikkje start appen på nytt i mellomtida. Dei neste oppstartane tek eit sekund eller to.
+5. På innloggingssida loggar du inn på Immich-tenaren din med adressa, e-postadressa og passordet ditt, eller klikkar på "Bruk utan tenar".
+
+For å kontrollere ZIP-fila køyrer du `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` i ein ledetekst, i mappa med nedlastinga: resultatet er det som står i `SHA256SUMS.txt`. Det finst enno ikkje noko installasjonsprogram og inga automatisk oppdatering: følg med på sida [Releases](https://github.com/freeKC/Immuch360/releases), og pakk ut neste build på same måten.
+
+### Kva førehandsversjonen gjer
+
+- **Immich-tenaren din**: tidslinja, albuma, personane, minna og søket, og tenarbileta i full storleik, som på ein telefon.
+- **Utan tenar**: mappene med bileta og videoane dine (Bilete og Videoar blir føreslegne) erstattar galleriet på ein telefon. Ingenting blir lese utanfor mappene du valde, og utan tenar forlèt ingenting datamaskina.
+- **Opplasting og sikkerheitskopi** frå desse mappene til Immich-tenaren din, medan appen er open.
+- **360°-bilete som ei kule**, med mus og tastatur; dei rå .insp-bileta frå Insta360-kamera blir opna som på telefonar.
+- **Nettverksdelingar**: Samba (SMB), WebDAV og DLNA-medietenarar, og Plex-tenarar utan plex.tv, ein blar i dei som på telefonar: bileta blir opna, videoane ventar på videoavspelaren (sjå [Ikkje på plass enno](#not-there-yet)). For Tapo-kamera, opptaka på minnekortet: lista, og henting av eit klipp.
+- **Del denne datamaskina på nettverket**: albuma, månadene og 360°-media i mappene dine, skriveverna, for ein Meta Quest eller ei anna eining heime, slik ein telefon deler seg sjølv.
+- **Filer**: nedlastingar frå tenaren hamnar i ei mappe du vel, "Lagre i ei mappe" held på ein kopi av dei valde bileta og videoane, og Logs-sida (Loggar) har "Lagre loggar i ei fil".
+
+### Bruk han på ei datamaskin
+
+1. **Vel mappene dine.** Utan tenar startar tidslinja med "Vel mappene med bileta og videoane dine": klikk på "Legg til ei mappe". Med tenar blir det same kortet vist i Bibliotek under "På denne datamaskina", og i albuma som skal sikkerheitskopierast, til ei mappe er vald. Etterpå har dei ei linje "Mapper på denne datamaskina", og det har også Innstillingar, "Denne datamaskina".
+2. **Sky-, USB- og nettverksmapper.** Filer som OneDrive (eller ei anna skylagring) berre har på nett, blir talde men ikkje lesne, så å leggje til ei mappe lastar ikkje ned heile skya di: "Last ned og ta med" hentar dei når du vil ha dei. Ein USB-stasjon som kjem tilbake under ein annan bokstav, held på bileta sine. Nettverksmapper, og mapper på eit minnekort eller ein USB-stasjon (slik at Windows framleis kan løyse han ut), blir ikkje overvaka for endringar: bruk Oppdater etter at du har lagt til filer der.
+3. **Sjå deg rundt i eit 360°-bilete**: dra med musa, zoom med hjulet, eit dobbeltklikk eller + og - (på alle tastaturoppsett, også AZERTY), flytt med piltastane. F eller F11 byter til fullskjerm og Escape går ut av han; Home og End går til det første og det siste biletet; I viser detaljane.
+4. **Gå frå bilete til bilete**: i eit flatt bilete går venstre- og høgrepila, eller vinkelteikna som blir viste i kantane medan musa rører seg, til førre og neste bilete. Bokstavar som blir skrivne i skildringsfeltet, blir verande i teksten.
+5. **Del datamaskina med headsettet**: opne Bibliotek, deretter Nettverksdelingar; den første flisa er "Del denne datamaskina på nettverket", datamaskinsida av [Del denne telefonen på nettverket](#share-this-phone-on-the-network). Slå på "Del bilete og videoar på nettverket", og legg deretter til datamaskina i headsettet slik den delen skildrar. Delinga stoppar når appen blir lukka eller etter ein time utan bruk.
+6. **Tillat nettverket**: Windows kan spørje om Immuch360 Desktop kan bruke nettverket. Tillat det på private nettverk, elles finn ikkje headsettet datamaskina. På eit nettverk Windows merkjer som offentleg (ein kafé, eit hotell), eller eit nettverk Windows ikkje kan avgjere typen til, startar ikkje delinga med mindre du vel "Del for denne økta", og datamaskina kunngjer seg berre på eit nettverk ho deler på.
+7. **Innstillingar, "Denne datamaskina"**: mappene, nedlastingsmappa, nettverkskortet som blir brukt til å finne delingar og dele datamaskina (når ho har fleire, til dømes Wi-Fi og Ethernet), og klarerte sertifikat: sertifiseringsinstansen til din eigen tenar, som ei PEM-fil, for ei HTTPS-adresse Windows ikkje stolar på av seg sjølv. Klientsertifikat blir importerte i Innstillingar, Avansert, som på telefonar.
+
+### Samanlikna med telefonappane
+
+- **Sikkerheitskopien køyrer medan appen er open** (eller minimert), ikkje i bakgrunnen med vindauget lukka. Å lukke vindauget medan opplastingar går, eller medan datamaskina er delt, spør først.
+- **Mapper i staden for eit galleri**: appen les mappene du vel og held sin eigen indeks, miniatyrbilete og hurtigbuffer på datamaskina.
+- **Eitt vindauge**: å opne appen ein gong til hentar fram det første vindauget i staden for å starte ein kopi til.
+- **Ingenting blir sletta frå mappene dine**: "Slett frå eininga" er gøymd, og Slett fjernar berre tenarkopien, til appen kan sende filer til papirkorga i Windows.
+- **Mus og tastatur** i staden for berøring og gyroskopet.
+
+<a id="not-there-yet"></a>
+### Ikkje på plass enno
+
+- **Videoar**: dei viser ein plasshaldar førebels, og miniatyrbileta deira eit filmikon. Avspeling kjem neste gong: flate videoar først, deretter 360°-, 3D- og VR180-videoar og dei rå 360°-videoane.
+- **Spatial 2.5D**, seinare med webkameraet; **Tapo-direktebiletet**; **kartet** og Stader-visinga; **innlogging med OAuth** (logg inn med e-post og passord i staden); **Google Cast**; **varsel**.
+- **Eit installasjonsprogram, ein signert build og automatiske oppdateringar**: denne builden er ei mappe med `immuch360.exe`.
+- **Linux og macOS**: prosjekta deira ligg i kjeldene, men dei er ikkje bygde eller prøvde på desse systema enno; dei kjem etter Windows.
+- **Omsetjingar**: dei nye tekstane i datamaskinversjonen er førebels på engelsk.
+
+### Kjende problem
+
+- **Medan headsettet les ei fil frå den delte datamaskina** (ein video det spelar av, eit bilete det lastar ned), kan ikkje Windows gje nytt namn til, flytte eller slette den fila og seier at ho er open i Immuch360 Desktop: stopp avspelinga først. Sikkerheitskopiar held ikkje filene dine på den måten: ei fil kan få nytt namn, flyttast eller slettast medan ho blir lasta opp.
+- **Ujamne kantar**: funksjonane ovanfor består dei automatiserte testane sine på Windows (475 skrivebordstestar), og på ein Windows 11-PC startar appen, opnar ei lagra økt på ein Immich-tenar, synkroniserer og blir lukka ryddig. Testen av kvar funksjon for hand på ein ekte PC pågår framleis.
+
+Om noko går gale, opne gjerne ei [sak](https://github.com/freeKC/Immuch360/issues) med loggen lagra frå Logs-sida (Loggar), sjå [Loggar](#logs). Sjekk loggen før du deler han: han kan innehalde tenaradressa di.
+
+<a id="build-it-yourself-on-windows"></a>
+### Bygg han sjølv på Windows
+
+Du treng Windows 10 eller 11 på x64, Flutter 3.47.2 for Windows, Visual Studio 2022 eller Build Tools for det med arbeidsmengda "Desktop development with C++", utviklarmodus slått på i Windows-innstillingane (Flutter treng han for programtillegga), og Python 3 for pakkeskriptet.
+
+1. Hent `desktop`-greina og køyr kodegenereringa. Ho brukar Java og Node, så køyr ho på Linux, macOS eller i WSL; med WSL held du klonen på ein Windows-stasjon, som WSL ser under `/mnt/c` eller `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. På Windows, i den same `mobile`-mappa, bygg appen:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. `Release`-mappa køyrer på PC-en som bygde ho. For ein annan PC held du på heile mappa og legg Visual C++-køyretida ved sida av `immuch360.exe`. Frå rota av klonen kopierer pakkeskriptet ho, utelèt det som berre tener Android, kontrollerer at kvar DLL appen lastar, finst i mappa eller i sjølve Windows, og lagar ZIP-fila:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+CI-en for `desktop`-greina (`.github/workflows/immuch360-desktop.yml`) køyrer telefonkontrollane og heile testpakken på Linux, skrivebordstestane på Windows, og byggjer den same ZIP-fila; Linux- og macOS-jobbane (`flutter build linux` og `flutter build macos`, med den same `-t lib/main_desktop.dart`) har ikkje køyrt på desse systema enno.
+
 <a id="where-to-get-it"></a>
 ## Kvar du får han
 
-Appen finst på Google Play for telefonar og nettbrett; App Store-versjonen ventar på gjennomgang hos Apple, Meta Horizon Store-oppføringa er godkjend og den første oppdateringa er under gjennomgang hos Meta, og Google Play-versjonen for TV-ar ventar på gjennomgangen til Google av TV-utgivinga. GitHub-utgivinga er alltid den nyaste builden:
+Appen finst på Google Play for telefonar og nettbrett; App Store-versjonen ventar på gjennomgang hos Apple, Meta Horizon Store-oppføringa er godkjend og den første oppdateringa er under gjennomgang hos Meta, og Google Play-versjonen for TV-ar ventar på gjennomgangen til Google av TV-utgivinga. Immuch360 Desktop, for Windows, er ein førehandsversjon på GitHub. GitHub-utgivinga er alltid den nyaste builden:
 
 - **Android-telefonar og -nettbrett**
   - I dag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eller APK-en på sida [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` for ein telefon (den universelle `Immuch360-v<version>-release.apk` fungerer overalt, `-armeabi-v7a` er for eldre 32-bits telefonar, og `.aab`-fila er for Google Play, ikkje for sideloading). GitHub-builden ligg vanlegvis føre butikken. Same korleis blir han installert ved sida av den offisielle Immich-appen (pakke `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Appen finst på Google Play for telefonar og nettbrett; App Store-versjonen vent
 - **Android TV og Google TV (frå build 20)**
   - I dag: den universelle `Immuch360-v<version>-release.apk` frå sida [Releases](https://github.com/freeKC/Immuch360/releases), sideloada med adb, sjå [Installer han på TV-en](#install-it-on-the-tv). Det er den same appen som på telefonar.
   - Snart: Google Play på TV-ar, etter gjennomgangen til Google av TV-utgivinga.
+- **Windows 10 og 11, 64 bit (førehandsversjon)**
+  - I dag: Immuch360 Desktop, ZIP-fila `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` frå [førehandsutgivinga for skrivebord](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), pakka ut og starta slik [Last ned og installer på Windows](#download-and-install-on-windows) skildrar. Førebels berre bilete: videoar kjem med dei neste skrivebordsbuildane.
+  - Snart: videoavspeling; eit installasjonsprogram, ein signert build og oppdateringar seinare.
 
 Lenkjene til App Store og Meta Horizon Store blir lagde til her så snart oppføringane er publiserte. Logg inn med den vanlege URL-en til Immich-tenaren din og kontoen din, eller trykk på "Bruk utan tenar" på innloggingssida for å starte med eininga sine eigne bilete og videoar. APK-en frå GitHub oppdaterer seg ikkje sjølv: følg med på Releases-sida, og når du har installert appen frå ein butikk, hentar du oppdateringane frå den butikken.
 
@@ -993,12 +1105,15 @@ Dei to Android-variantane (flavours) er den same appen. Frå build 20 oppgjev `p
 
 For å byggje for iOS på din eigen Mac brukar du Xcode og ditt eige signeringsteam; med Xcode 26 køyrer du `xcodebuild -downloadComponent MetalToolchain` éin gong først, sidan Spatial-shaderane treng han. Utan Mac køyrer iOS-buildar på Codemagic (ein drifta Mac) frå fila `codemagic.yaml` i dette repositoriet. Android-utgivingsbuildar køyrer på GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, Windows-versjonen, blir bygd frå `desktop`-greina med Flutter for Windows: stega står i [Bygg han sjølv på Windows](#build-it-yourself-on-windows).
+
 Ingen løyndomar ligg i dette repositoriet: Android-signeringsnøkkelen er lagra som krypterte løyndomar i GitHub Actions, og Apple-signeringsmaterialet som krypterte variablar på Codemagic. Arbeidsflytfilene viser berre til dei ved namn. Utan din eigen `android/key.jks` blir ein utgivingsbuild signert med debug-nøkkelen og kan ikkje installerast over ein kopi frå GitHub eller ein butikk (avinstaller han først); ein debug-build blir installert ved sida av som Immuch360 debug. Kopien i Meta Horizon Store er `quest`-APK-en frå utgivinga signert med ein annan nøkkel, den butikkappen først vart registrert med, så han kan heller ikkje installerast over ein sideloada APK, og heller ikkje omvendt.
 
 ### Greiner
 
 - **`main`**: Immich `main` på commiten `immuch360` er basert på (29. september 2026 for dei gjeldande buildane), aldri endra; han blir flytta framover når forken blir rebasa på ein nyare Immich.
 - **`immuch360`**: endringane i denne forken oppå Immich. Kvar utgiving oppgjev kva Immich-versjon ho er basert på.
+- **`desktop`**: Immuch360 Desktop, datamaskinversjonen, oppå `immuch360`. Telefonutgivingane blir fletta inn i ho, og førehandsutgivingane for skrivebord blir bygde frå ho (skrivebordsbuild 1 frå commit 21f285c34, telefonbuild 20 pluss datamaskinversjonen). Ingenting under `mobile/android` og `mobile/ios` blir endra i ho.
 
 <a id="logs"></a>
 ## Loggar
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Frå build 19 skriv DLNA-klienten, telefondelinga og attkjenninga av romlege media frå Apple også til appen sin eigen logg (Logs (Loggar), i menyen bak profilbiletet øvst til høgre), under `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` og `NetworkMediaService`. Frå build 20 skriv TV-modusen der under `TvMode` og `TvTextEntry`, Plex-tenarane under `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` og `PlexServerEditPage`, og Tapo-kameraa under `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` og `CameraLiveView`; Plex-linjene inneheld aldri tokenet, ei adresse eller ein tittel, og kameralinjene utelèt passorda. Logglinjene blir verande på eininga med mindre du kopierer dei sjølv.
 
+På ei datamaskin (Immuch360 Desktop) har Logs-sida (Loggar) også "Lagre loggar i ei fil": loggen, eller ein ZIP med loggen og rapportane frå dei siste krasja når det finst nokon (det føreslegne namnet sluttar då med "with-crash-reports"). Ein krasjrapport er ein liten minidump: trådane, kvar dei stoppa og berre det som trengst for å følgje kalla deira, med namna på programfilene men ikkje mappene deira; ikkje minnet til appen. Sjekk loggen før du deler han: han kan innehalde tenaradressa di.
+
 <a id="privacy"></a>
 ## Personvern
 
@@ -1026,19 +1143,21 @@ Frå build 19 skriv DLNA-klienten, telefondelinga og attkjenninga av romlege med
 - **TV**: om eininga er ein TV, blir avgjort på eininga; ingenting blir sendt.
 - **Telefondeling**: berre lokalt nettverk, med brukarnamn og passord, over vanleg HTTP (sjå [Del denne telefonen på nettverket](#share-this-phone-on-the-network)).
 - **Kamera**: blir berre brukt av Spatial 2.5D-avspelaren, på eininga; bileta blir aldri lagra og aldri sende nokon stad.
+- **På ei datamaskin** (Immuch360 Desktop, førehandsversjon for Windows): appen les berre mappene du vel, held indeksen, miniatyrbileta og hurtigbufferen på datamaskina, og lagrar passord og token med datavernet i Windows, berre for Windows-kontoen din. Delinga av datamaskina følgjer reglane for telefondelinga, og startar ikkje på eit nettverk Windows merkjer som offentleg, eller som Windows ikkje kan avgjere typen til, med mindre du seier det.
 
 Heile personvernfråsegna står i [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Lisens og varemerke
 
-Dette prosjektet er ein fork av Immich og blir verande under [GNU AGPL v3](../LICENSE). Kvar APK, også telefon-APK-ane, inneheld også Meta Spatial SDK, som ikkje er open kjeldekode (Meta Platform Technologies SDK License Agreement) og berre blir brukt på Meta Quest-headsett. Immuch360 er verken knytt til eller godkjend av Immich-teamet eller FUTO.
+Dette prosjektet er ein fork av Immich og blir verande under [GNU AGPL v3](../LICENSE). Kvar APK, også telefon-APK-ane, inneheld også Meta Spatial SDK, som ikkje er open kjeldekode (Meta Platform Technologies SDK License Agreement) og berre blir brukt på Meta Quest-headsett; Immuch360 Desktop, Windows-versjonen, inneheld det ikkje. Immuch360 er verken knytt til eller godkjend av Immich-teamet eller FUTO.
 
 <a id="roadmap"></a>
 ## Vegkart
 
 Det som ikkje er gjort enno, det mest sannsynlege først. Ingenting her er ein lovnad, og tilbakemeldingar i [saksoversikta](https://github.com/freeKC/Immuch360/issues) hjelper til med å avgjere kva som kjem først.
 
+- **Immuch360 Desktop, Windows først**: den første førehandsversjonen er ute (sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview)). Deretter videoavspeling (flate videoar først, så 360°, 3D, VR180 og råfilene), målt på dei to grafikkorta i ein berbar PC; så testen av kvar funksjon på ein Windows-PC og rettingane; så Spatial 2.5D med webkameraet; så Linux og macOS, pakkar, signering og oppdateringar.
 - **Google Play**: build 18 er publisert; build 20 er under gjennomgang hos Google sidan 7. oktober 2026, i staden for build 19. Build 21 endrar ingenting på telefonar og nettbrett.
 - **App Store**: versjon 3.3.0 ventar på gjennomgang hos Apple; han har funksjonane frå build 11, så opplasting til Immich og kontrollen av videodekodarar (build 15) og dei rå Insta360-filene (build 16) kjem med neste App Store-oppdatering. Lenkja blir lagd til her når han er publisert.
 - **Meta Horizon Store**: Meta godkjende oppføringa 7. oktober 2026 med build 14. Build 21 er send inn som den første oppdateringa hennar: han har alt sidan build 14 (opplasting frå ei deling til Immich, videokjelda vald ut frå kva headsettet dekodar, rå filer frå Insta360, GoPro og DJI, DLNA, telefondelinga, romlege bilete frå Apple, Plex Media Server-bibliotek, Tapo-kamera), og butikken fører han opp for Quest 2, Quest Pro, Quest 3 og 3S. Butikklenkja blir lagd til her når sida er offentleg; ein sideloada kopi må avinstallerast først (sjå [Installer](#install)).

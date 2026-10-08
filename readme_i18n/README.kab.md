@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 d asnas aziraz n Immich s tewlafin d tvidyutin 360° anda tzemreḍ ad tmuqleḍ yal tama, daɣen d ameɣri baṭel i tewlafin d tvidyutin timsawin, 360°, 3D d VR180, ɣef tiliɣriyin d ttablit Android, iPhone d iPad, ticacitin Meta Quest (Quest 3 d 3S, u seg lebni 21 Quest 2 d Quest Pro, ur ttwarmen ara), u seg lebni 20 Android TV d Google TV.
+Immuch360 d asnas aziraz n Immich s tewlafin d tvidyutin 360° anda tzemreḍ ad tmuqleḍ yal tama, daɣen d ameɣri baṭel i tewlafin d tvidyutin timsawin, 360°, 3D d VR180, ɣef tiliɣriyin d ttablit Android, iPhone d iPad, ticacitin Meta Quest (Quest 3 d 3S, u seg lebni 21 Quest 2 d Quest Pro, ur ttwarmen ara), u seg lebni 20 Android TV d Google TV. Immuch360 Desktop, yiwen usnas-nni ɣef uselkim Windows, yeffeɣ-d d lqem n tirmit, wali [Ɣef uselkim Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 Yettwaxdem i wid yettṣewwiren s tkamirat 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) neɣ s uskar n tewlaft tasfirt n tiliɣri, neɣ i wid yesɛan tacacit, u bɣan ad walin tiwlafin-nsen seg uqeddac Immich, seg tiliɣri s yiman-is, seg NAS, seg uqeddac n yimidyaten neɣ seg uqeddac Plex: d yiwen uqeddac, d yiwen umiḍan, war azegrir n uqeddac, neɣ war aqeddac akk. Seg lebni 20 yesskanay-d daɣen tikamiṛatin Tapo, srid d yiseklasen n tkarḍa-nsent n tkatut.
 
@@ -18,13 +18,14 @@ Yettwaxdem i wid yettṣewwiren s tkamirat 360° (Insta360, GoPro MAX, DJI Osmo 
   <a href="https://github.com/freeKC/Immuch360/releases">APK n Android</a><br>
   App Store: <a href="#where-to-get-it">deg usenqed</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store yettwaqbel, lebni 21 yettwazen d aleqqem-is amezwaru<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">asider n lqem n tirmit</a>
 </p>
 
 - 🌐 **360° unṣib**<br>Tiwlafin d tvidyutin am tsfirt anda tmuqleḍ yal tama, s ujiroskop, ula d ifuyla RAW n tkamiratin (Insta360 seg lebni 16, GoPro d DJI seg lebni 18). Daɣen ameɣri n tvidyutin baṭel: amsawi, 360°, 3D, VR180
 - 👓 **3D unṣib**<br>360° stiriyu d VR180, s ufella/s wadda neɣ rrif ɣer rrif, akked tewlafin timennawin n Apple (seg lebni 19): 3D n tidet deg tcacit, yiwet n tiṭ ɣef tiliɣri
 - 🎥 **2.5D unṣib**<br>Tiɣmert ɣef ugdil amsawi seg tvidyut stiriyu, tamuɣli tettḍafar aqerru-ik (s tirmit, tiliɣriyin d ttablit)
-- 📱 **Android, iOS, Quest, TV**<br>Yiwen usnas ɣef tiliɣriyin, ttablit d ticacitin Quest 2, Pro, 3 d 3S, 3D n tidet deg tcacit, u seg lebni 20 ɣef Android TV s tilikumand
+- 📱 **Android, iOS, Quest, TV**<br>Yiwen usnas ɣef tiliɣriyin, ttablit d ticacitin Quest 2, Pro, 3 d 3S, 3D n tidet deg tcacit, seg lebni 20 ɣef Android TV s tilikumand, d lqem n tirmit i Windows
 - 🔌 **S uqeddac neɣ war aqeddac**<br>Aqeddac-ik Immich, neɣ tamidelt n tiliɣri s yiman-is, war amiḍan
 - 🗄️ **Ifuyla n uẓeṭṭa**<br>Samba (SMB), WebDAV d, seg lebni 19, iqeddacen n yimidyaten DLNA i d-yettwafen deg uẓeṭṭa u ttwaɣran srid, ulac ayen yettwasidren, u ttwaznen ɣer Immich mi ara tefreneḍ. Seg lebni 19 tiliɣri tezmer daɣen ad tebḍu tamidelt-is d tcacit
 - 📺 **Ɣef tiliẓri**<br>Seg lebni 20 yiwen APK-nni ɣef Android TV d Google TV: tiwlafin d tvidyutin 360°, aqeddac-ik d yifuyla-k yettwabḍan, s tilikumand
@@ -52,6 +53,7 @@ Yettwaxdem i wid yettṣewwiren s tkamirat 360° (Insta360, GoPro MAX, DJI Osmo 
 - [Asemres ɣer usnas Immich d yisnasen nniḍen](#compared-with-the-immich-app-and-other-apps)
 - [Imasalen d yiɣbula, s tɣerɣert](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Ɣef uselkim Windows: Immuch360 Desktop (lqem n tirmit)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Anda ara t-id-tafeḍ](#where-to-get-it)
 - [Bnu-t s yiman-ik](#build-it-yourself)
 - [Iɣmisen](#logs)
@@ -77,6 +79,7 @@ Yettwaxdem i wid yettṣewwiren s tkamirat 360° (Insta360, GoPro MAX, DJI Osmo 
 - **«Bɣiɣ ad waliɣ tiwlafin-iw d tvidyutin-iw 360°, d tvidyutin n NAS-iw neɣ n uqeddac-iw Plex, ɣef tiliẓri, s tilikumand.»** Wali [Wali ɣef tiliẓri](#watch-on-your-tv-android-tv-and-google-tv).
 - **«Ur ufiɣ ara tiwlafin-iw 360° gar tiyaḍ akk.»** Wali [Tabdart 360°](#find-your-360-shots-the-360-list).
 - **«Tavidyut-iw 360° tettḥebbis, neɣ yettwaɣra unɣal yessewhamen.»** Wali [Talɣut n tvidyut d yidekuduren](#video-details-decoders-and-why-a-video-stutters).
+- **«Bɣiɣ tiwlafin-iw 360° d temkarḍit-iw Immich ɣef uselkim-iw Windows, s tewlafin n yikaramen-is, NAS-iw d uqeddac-iw Plex, u aselkim yettwabḍa d tcacit-iw.»** Wali [Ɣef uselkim Windows](#on-a-windows-computer-immuch360-desktop-preview) (lqem n tirmit, tiwlafin kan i tura).
 - **«Ad ḥerzeɣ ayen akk yettxeddim usnas Immich?»** Ih, s sin n yibeddilen imecṭaḥ, wali [Ayen nniḍen akk d Immich](#everything-else-is-immich).
 
 Mi ara tili tmahilt d tamaynut, aḍris yenna-d seg wanwa lebni i tella. Asiẓreg n GitHub yesɛa yal tikkelt lebni aneggaru, tihuna ad d-ḍefrent ticki: wali [Anda ara t-id-tafeḍ](#where-to-get-it).
@@ -749,6 +752,7 @@ Lebni n tura, lebni 21 (lqem 3.3.0-rc.0, uṭṭun n lebni 3030019), yebna ɣef 
 | Timkarḍiyin n Plex Media Server ttwaɣrant seg yifuyla iṣliyen, deg uxxam d beṛṛa n uxxam, war plex.tv | ❌ | ✅ seg lebni 20, yal ameskan, ɣef tiliɣriyin, ttablit, Quest d tiliẓriyin |
 | Tikamiṛatin Tapo: tamuɣli tusridt, d yiseklasen n tkarḍa n tkatut ttwaznen ɣer Immich mi ara tebɣuḍ | ❌ | ✅ seg lebni 20: iseklasen anda yebɣu yili, srid ɣef Android, Android TV d Quest |
 | Android TV d Google TV, s tilikumand, deg yiwen APK-nni | ❌ mačči d asnas n tiliẓri | ✅ seg lebni 20 |
+| Yiwen usnas-nni ɣef uselkim Windows | ❌ tiliɣriyin d ttablit kan | ✅ lqem n tirmit, ulac tividyutin yakan |
 | Tiwlafin RAW n Insta360 .insp d tvidyutin .insv s yiwen ubrid | ❌ timsawin | ✅ seg lebni 16 |
 | Tividyutin RAW s yiwet n talentilt i yal abrid neɣ i yal afaylu (Insta360 X4, X4 Air, X5, X6, tiyugiwin X3, GoPro .360, DJI .osv) | ❌ timsawin neɣ ur ṣeḥḥent ara | ✅ seg lebni 18 |
 | .dng s snat n tiṭṭawin fisheye | ❌ tamsawit | ❌ mazal |
@@ -778,6 +782,7 @@ Lebni n tura, lebni 21 (lqem 3.3.0-rc.0, uṭṭun n lebni 3030019), yebna ɣef 
 - **Plex Media Server**: yettwasenqed seg uselkim ɣef Plex Media Server 1.42.1 n tidet (tuqqna, ikaramen, tigrumma n yibiten, tugniwin timecṭuḥin, tansa beṛṛa n uxxam); ur yettwasenqed ara yakan ɣef yibenk.
 - **Tikamiṛatin Tapo**: yettwasenqed ɣef tkamiṛat yettwasemrasen; ur yettwasenqed ara yakan s tkamiṛat n tidet.
 - **Android TV d Google TV**: yettwasenqed s yisekyaden iwurmanen; ur yettwasenqed ara yakan ɣef tiliẓri.
+- **Yiwen usnas-nni ɣef uselkim Windows**: 475 n yisekyaden iwurmanen n desktop ɣef Windows, u ɣef uselkim Windows 11 asnas yekker, yeldi tiɣimit yettwaḥerzen ɣef uqeddac Immich, yemtawi u yettwamdal akken iwata; asekyed s ufus n yal tawuri iteddu.
 - **Tiwlafin RAW n Insta360 .insp d tvidyutin .insv s yiwen ubrid**: tiwlafin ttwasenqdent mgal isifeḍ n Insta360 Studio n yifuyla X3, tividyutin ɣef umserwes Android s ufaylu X3 n tbadut tamecṭuḥt; ur teddun ara yakan ɣef iPhone.
 - **Tividyutin RAW s yiwet n talentilt i yal abrid neɣ i yal afaylu**: imsefsayen d usdukkel ttwasenqden ɣef yifuyla n tidet X4, tayugit X3, GoPro MAX d Osmo 360; taɣuri d asekyed ɣef yibenk n lebni 18 d 19.
 - **.dng s snat n tiṭṭawin fisheye**: yettwaheyya.
@@ -883,12 +888,15 @@ Immuch360 d tamidelt, u daɣen d ameɣri n yimidyaten baṭel: yeqqar ayen ur ye
 
 Inekcumen Android TV d Google TV, seg lebni 20, ur ttwasenqden ara yakan ɣef tiliẓri, wali [Wali ɣef tiliẓri](#watch-on-your-tv-android-tv-and-google-tv); inekcumen n tkamiṛat ur ttwasenqden ara yakan s tkamiṛat n tidet.
 
+Ɣef Windows, lqem n tirmit n Immuch360 Desktop yesskanay-d tiwlafin, timsawin d 360°, ula d tiwlafin tiẓegzawin Insta360 .insp, s tɣerdayt d unasiw, seg uqeddac, seg yikaramen n uselkim, seg yifuyla n uẓeṭṭa d Plex; ur yeqqar ara yakan tividyutin, ttbanent-d s tugna n wadeg (wali [Ur yewwiḍ ara yakan](#not-there-yet)).
+
 - **Aqeddac-ik Immich**: aṣli neɣ tavidyut yettwabeddlen n uqeddac, akken i d-yenna Settings, Asset Viewer, Aɣbalu n tvidyut (wali [Talɣut n tvidyut d yidekuduren](#video-details-decoders-and-why-a-video-stutters)). Yiwen umiḍan am usnas web.
 - **Tiliɣri neɣ tacacit s yiman-is**: «Seqdec war aqeddac» deg usebter n tuqqna, neɣ aferdis On this device n yiccer Tamkarḍit.
 - **NAS neɣ aselkim**: ifuyla yettwabḍan SMB d WebDAV, u seg lebni 19 iqeddacen n yimidyaten DLNA, i d-yettwafen deg uẓeṭṭa, ttwaɣran srid (tavidyut SMB s sḍis n tuqqniwin akk ugar), ulac ayen yettwanɣalen; seg lebni 15 ifuyla i tefreneḍ zemren ad ttwaznen ɣer umiḍan-ik Immich.
 - **Tiliɣri nniḍen (seg lebni 19)**: «Bḍu tiliɣri-a deg uẓeṭṭa» ɣef tiliɣri-nni: tacacit, neɣ yal amsaɣ WebDAV n uẓeṭṭa, teqqar ilbumen-is, ayyuren-is d yimidyaten-is 360°.
 - **Plex Media Server (seg lebni 20)**: timkarḍiyin-is n tewlafin, n yisaragen d tsɣunin n TV s ukaram, ifuyla iṣliyen ttwaɣran srid s HTTPS yettwasenqden s uselkin n uqeddac s yiman-is, deg uxxam neɣ s tansa beṛṛa n uxxam, ɣef yal tiɣerɣert; wali [Plex Media Server, war plex.tv](#plex-media-server-without-plextv).
 - **Takamiṛat Tapo (seg lebni 20)**: tamuɣli tusridt s umiḍan n tkamiṛat (Android, Android TV, Quest), d yiseklasen n tkarḍa-s n tkatut s wawal uffir n umiḍan TP-Link (yal tiɣerɣert), deg uẓeṭṭa adigan kan; wali [Tikamiṛatin Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Ikaramen n uselkim Windows (lqem n tirmit n desktop)**: ikaramen i tferneḍ deg Immuch360 Desktop, ttwaɣran deg wadeg n temkarḍit n tiliɣri; aselkim yezmer daɣen ad ten-yebḍu d tcacit, wali [Ɣef uselkim Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Tugniwin yettwaṭṭfen deg tcacit s tqeffalt n tuṭṭfa (taqeffalt Meta d td
 - **Tiddi n APK**: Spatial SDK yerna azal n 56 MB n tengalt tagensayt ARM 64-bit, ula ɣef tiliɣriyin, anda werǧin tettwasali.
 - **Turagt**: ameskan immersif yesseqdac Meta Spatial SDK, yettwazuzren s Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Ɣef uselkim Windows: Immuch360 Desktop (lqem n tirmit)
+
+Tamkarḍit-ik Immich tella ɣef uqeddac, tiwlafin nniḍen llant deg yikaramen n uselkim, tividyutin ɣef NAS neɣ ɣef uqeddac Plex, u tebɣiḍ ad tmuqleḍ yal tama deg tewlafin-ik 360° ɣef ugdil ameqqran, neɣ ad tesskneḍ tiwlafin n uselkim deg tcacit. Immuch360 Desktop d yiwen usnas-nni ɣef uselkim Windows, yettwabna seg yiɣbula-nni n yisnasen n tiliɣri.
+
+Ɣef uselkim, Immich yettak-d asnas-is web deg yiminig. **Ayen i d-yerna Immuch360 Desktop**: ikaramen n uselkim war aqeddac neɣ amiḍan, ifuyla n uẓeṭṭa SMB, WebDAV, DLNA d Plex ttwasnirmen seg usnas, tiwlafin tiẓegzawin Insta360 .insp ttwaldint am tkurt, d uselkim yettwabḍan d Meta Quest deg uxxam.
+
+Lebni-a amezwaru d lqem n tirmit: tiwlafin teddunt, tividyutin ad d-asent s yilebniyen n desktop i d-iteddun. Isnasen n tiliɣri, ttablit, Quest d tiliẓri ur ttbeddilen ara yid-s, u ḥerzen isem Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Asider d usebded ɣef Windows
+
+Lebni amezwaru d asiẓreg uzwir n GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Afaylu-ines d `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 n yifuyla mi ara yettwasefsi), s `SHA256SUMS.txt` akken ad t-tesneqdeḍ. Yettwabna seg ufurk `desktop` deg commit 21f285c34: lebni 20 n tiliɣri d lqem n uselkim. Yesra Windows 10 neɣ 11, 64 bit.
+
+1. Sider ZIP u sefsi-t anida tebɣiḍ, amedya deg Documents.
+2. Sekker `immuch360.exe` seg ukaram yettwasefsin. Eǧǧ akaram akken yella: ahil yesra ifuyla i yellan ɣer yidis-is.
+3. Ifuyla ur ttwazemlen ara yakan, ihi Windows SmartScreen yezmer ad d-yesken «Windows protected your PC»: fren «More info», syin «Run anyway». Anida yermed Smart App Control, ad yesewḥel ihilen ur nettwazmel ara.
+4. Ṛǧu asfaylu. Asenker amezwaru n lebni amaynut yettawi seg 10 n tsinin alamma d azal n yiwet n tesdat, ahat axaṭer Microsoft Defender yesseqdac ifuyla imaynuten: ur sekker ara asnas tikkelt nniḍen deg wakud-nni. Isenkaren i d-iteddun ttawin yiwet neɣ snat n tsinin.
+5. Deg usebter n tuqqna, qqen ɣer uqeddac-ik Immich s tansa-ines, imayl-ik d wawal-ik uffir, neɣ sit ɣef «Seqdec war aqeddac».
+
+Akken ad tesneqdeḍ ZIP, sekker `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` deg tdiwent n tiludna, deg ukaram n usider: agmuḍ d win yettwarun deg `SHA256SUMS.txt`. Ulac yakan amsebded neɣ aleqqem awurman: ḍfer asebter [Releases](https://github.com/freeKC/Immuch360/releases), u sefsi lebni i d-iteddun s yiwet n tarrayt-nni.
+
+### Ayen yettxeddim lqem n tirmit
+
+- **Aqeddac-ik Immich**: tasnakudt, ilbumen, imdanen, tiktiwin d unadi, d tewlafin n uqeddac s teɣzi tummidt, am ɣef tiliɣri.
+- **War aqeddac**: ikaramen n tewlafin d tvidyutin-ik (ttwasumren Pictures d Videos) ttaɣen adeg n temkarḍit n tiliɣri. Ulac ayen yettwaɣran beṛṛa n yikaramen i tferneḍ, u war aqeddac ulac ayen yeffɣen seg uselkim.
+- **Asali d uḥraz** seg yikaramen-nni ɣer uqeddac-ik Immich, mi ara yeldi usnas.
+- **Tiwlafin 360° am tkurt**, s tɣerdayt d unasiw; tiwlafin tiẓegzawin .insp n tkamiṛatin Insta360 ttwaldint am ɣef tiliɣriyin.
+- **Ifuyla n uẓeṭṭa**: Samba (SMB), WebDAV d yiqeddacen n umidya DLNA, d yiqeddacen Plex war plex.tv, ttwasnirmen am ɣef tiliɣriyin: tiwlafin-nsen ttwaldint, tividyutin-nsen ttraǧunt ameɣri n tvidyut (wali [Ur yewwiḍ ara yakan](#not-there-yet)). I tkamiṛatin Tapo, iseklasen n tkarḍa n tkatut: tabdart, d tririt n tvidyut tamecṭuḥt.
+- **Bḍu aselkim-a deg uẓeṭṭa**: ilbumen, ayyuren d umidya 360° n yikaramen-ik, i tɣuri kan, i Meta Quest neɣ ibenk nniḍen deg uxxam, am akken tiliɣri tebḍu iman-is.
+- **Ifuyla**: isidar seg uqeddac teddun ɣer ukaram i tferneḍ, «Sekles deg ukaram» yeḥrez anɣal n tewlafin d tvidyutin yettwafernen, u asebter Iɣmisen yesɛa «Sekles iɣmisen deg ufaylu».
+
+### Aseqdec-is ɣef uselkim
+
+1. **Fren ikaramen-ik.** War aqeddac, tasnakudt tebda s «Fren ikaramen n tewlafin d tvidyutin-ik»: sit ɣef «Rnu akaram». S uqeddac, tkarḍa-nni yiwet tettban-d deg Temkarḍit ddaw «Ɣef uselkim-a», d deg yilbumen ara yettwaḥerzen, alamma yettwafren ukaram. Syin akkin sɛan izirig «Ikaramen ɣef uselkim-a», akken daɣen Settings, «Aselkim-a».
+2. **Ikaramen n usigna, USB d uẓeṭṭa.** Ifuyla i yeḥrez OneDrive (neɣ adebṣi nniḍen n usigna) srid kan ttwaḥesben maca ur ttwaɣran ara, ihi arnu n ukaram ur yessidir ara asigna-ik meṛṛa: «Sider u sekcem» ad ten-id-yawi mi ara tebɣuḍ. Adebṣi USB i d-yuɣalen s usekkil nniḍen yeḥrez tiwlafin-is. Ikaramen n uẓeṭṭa, d yikaramen ɣef tkarḍa n tkatut neɣ ɣef udebṣi USB (akken Windows ad yizmir mazal ad t-yessuffeɣ), ur ttwaɛassen ara i yibeddilen: seqdec Smiren mbeɛd ma ternid ifuyla dinna.
+3. **Muqel yal tama deg tewlaft 360°**: zuɣer s tɣerdayt, simɣer s tṛuda, s usiti uslig neɣ s + d - (ɣef yal taneɣruft n unasiw, ula d AZERTY), mbiwel s tqeffalin n yineccaben. F neɣ F11 yettɛeddi ɣer ugdil ačuran, Escape yeffeɣ seg-s; Home d End teddun ɣer tewlaft tamezwarut d tneggarut; I yesskan-d talqayt.
+4. **Ddu seg tewlaft ɣer tayeḍ**: deg tewlaft timsit, ineccaben n uzelmaḍ d uyeffus, neɣ ineccaben imecṭaḥ i d-yettbanen ɣef yiran mi ara tembiwil tɣerdayt, teddun ɣer tin yezrin d tin i d-iteddun. Isekkilen yettwarun deg wurti n uglam qqimen deg uḍris.
+5. **Bḍu aselkim d tcacit**: ldi Tamkarḍit, syin Ifuyla n uẓeṭṭa; tamkarḍit tamecṭuḥt tamezwarut d «Bḍu aselkim-a deg uẓeṭṭa», tama n uselkim n [Bḍu tiliɣri-a deg uẓeṭṭa](#share-this-phone-on-the-network). Rmed «Bḍu tiwlafin d tvidyutin deg uẓeṭṭa», syin rnu aselkim deg tcacit akken i d-yenna uḥric-nni. Beṭṭu yettḥebbis mi ara yettwamdel usnas neɣ mbeɛd yiwet n tsaɛet war aseqdec.
+6. **Sireg aẓeṭṭa**: Windows yezmer ad d-yesteqsi ma yella Immuch360 Desktop yezmer ad yesseqdec aẓeṭṭa. Sireg-it deg yiẓeṭṭan usligen, neɣ m ulac tacacit ur tettaf ara aselkim. Deg uẓeṭṭa i yecreḍ Windows d azayez (lqahwa, asensu), neɣ win ur yezmir ara ad yissin anaw-is, beṭṭu ur yettebdu ara ma yella ur tferneḍ ara «Bḍu i tɣimit-a», u aselkim ur d-yettbeggin iman-is ara ala deg uẓeṭṭa anida yettebḍu.
+7. **Settings, «Aselkim-a»**: ikaramen, akaram n yisidar, amsadu n uẓeṭṭa yettwasqedcen i tifin n yifuyla n uẓeṭṭa d beṭṭu n uselkim (mi ara llan aṭas, Wi-Fi d Ethernet amedya), d iselkinen yettwamanen: adabu n uselkin n uqeddac-ik, d afaylu PEM, i tansa HTTPS ur yettamen ara Windows s yiman-is. Iselkinen n umsaɣ ttwakecmen deg Settings, Advanced, am ɣef tiliɣriyin.
+
+### Asserwes d yisnasen n tiliɣri
+
+- **Aḥraz iteddu mi ara yeldi usnas** (neɣ yettwasemẓi), mačči deg ugilal s usfaylu yettwamedlen. Amdal n usfaylu mi ara teddun yisalayen, neɣ mi ara yettwabḍu uselkim, ad d-yesteqsi uqbel.
+- **Ikaramen deg wadeg n temkarḍit**: asnas yeqqar ikaramen i tferneḍ u yeḥrez amatar-is, tugniwin-is timecṭuḥin d tuffirt-is ɣef uselkim.
+- **Yiwen usfaylu**: alday n usnas tikkelt tis snat yerra-d asfaylu amezwaru deg wadeg n usenker n wenɣal wis sin.
+- **Ulac ayen yettwakksen seg yikaramen-ik**: «Kkes seg yibenk» yeffer, u Kkes yekkes kan anɣal n uqeddac, alamma yezmer usnas ad yazen ifuyla ɣer tqecwalt n Windows.
+- **Taɣerdayt d unasiw** deg wadeg n tunnalt d ujiruskup.
+
+<a id="not-there-yet"></a>
+### Ur yewwiḍ ara yakan
+
+- **Tividyutin**: i tura ttbanent-d s tugna n wadeg, u tugniwin-nsent timecṭuḥin s tignit n usaru. Taɣuri ad d-tas deffir: tividyutin timsawin qbel, syin tividyutin 360°, 3D d VR180 d tividyutin 360° tiẓegzawin.
+- **Spatial 2.5D**, ticki s tkamiṛat web; **tamuɣli tusridt Tapo**; **takarḍa** d tmuɣli n Yideggen; **tuqqna s OAuth** (qqen s imayl d wawal uffir deg wadeg-is); **Google Cast**; **ilɣa**.
+- **Amsebded, lebni yettwazemlen d yileqman iwurmanen**: lebni-a d akaram s `immuch360.exe`.
+- **Linux d macOS**: isenfaren-nsen llan deg yiɣbula, maca ur ttwabnan ara, ur ttwarmen ara yakan ɣef yinagrawen-nni; ad d-asen deffir Windows.
+- **Tisuqqilin**: iḍrisen imaynuten n lqem n uselkim llan s teglizit i tura.
+
+### Uguren yettwassnen
+
+- **Mi ara teqqar tcacit afaylu seg uselkim yettwabḍan** (tavidyut i teqqar, tawlaft i tessider), Windows ur yezmir ara ad yebeddel isem, ad yesmutti neɣ ad yekkes afaylu-nni u ad d-yini yeldi deg Immuch360 Desktop: ḥbes taɣuri qbel. Aḥraz ur yeṭṭaf ara ifuyla-ik akka: afaylu yezmer ad yettwabeddel yisem-is, ad yettwasmutti neɣ ad yettwakkes mi ara yettwasali.
+- **Ayen mazal ur yeḥdiq ara**: tiwuriwin nnig-a ɛeddant isekyaden-nsent iwurmanen ɣef Windows (475 n yisekyaden n desktop), u ɣef uselkim Windows 11 asnas yekker, yeldi tiɣimit yettwaḥerzen ɣef uqeddac Immich, yemtawi u yettwamdal akken iwata. Asekyed s ufus n yal tawuri ɣef uselkim n tidet mazal-it iteddu.
+
+Ma yella kra ur iteddu ara, ttxil ldi [issue](https://github.com/freeKC/Immuch360/issues) s uɣmis yettwaḥerzen seg usebter Iɣmisen, wali [Iɣmisen](#logs). Senqed aɣmis uqbel ad t-tebḍuḍ: yezmer ad yegber tansa n uqeddac-ik.
+
+<a id="build-it-yourself-on-windows"></a>
+### Bnu-t s yiman-ik ɣef Windows
+
+Tesriḍ Windows 10 neɣ 11 ɣef x64, Flutter 3.47.2 i Windows, Visual Studio 2022 neɣ Build Tools-is s workload «Desktop development with C++», Developer Mode yermed deg yiɣewwaṛen n Windows (Flutter yesra-t i yizegrar), d Python 3 i uskript n ukemmus.
+
+1. Awi afurk `desktop` u sekker asirew n tengalt. Yesseqdac Java d Node, ihi sekker-it ɣef Linux, macOS neɣ deg WSL; s WSL, eǧǧ aserwes ɣef udebṣi n Windows, i iwala WSL ddaw `/mnt/c` neɣ `/mnt/d`:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Ɣef Windows, deg ukaram-nni `mobile`, bnu asnas:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Akaram `Release` iteddu ɣef uselkim i t-yebnan. I uselkim nniḍen, ḥrez akaram meṛṛa u rnu runtime n Visual C++ ɣer yidis n `immuch360.exe`. Seg uẓar n userwes, askript n ukemmus yessenɣal-it, yeǧǧa ayen yeqdacen kan i Android, yesenqad ma yal DLL i d-yessali usnas yella deg ukaram neɣ deg Windows s yiman-is, u yesnulfuy-d ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+CI n ufurk `desktop` (`.github/workflows/immuch360-desktop.yml`) yesseddu isenqaden n tiliɣri d tegrumma n yisekyaden meṛṛa ɣef Linux, isekyaden n desktop ɣef Windows, u yebennu ZIP-nni; tiwuriwin-is Linux d macOS (`flutter build linux` d `flutter build macos`, s yiwen `-t lib/main_desktop.dart`-nni) ur teddint ara yakan ɣef yinagrawen-nni.
+
 <a id="where-to-get-it"></a>
 ## Anda ara t-id-tafeḍ
 
-Asnas yella deg Google Play i tiliɣriyin d ttablit; lqem n App Store yettraǧu asenqed n Apple, tabdart n Meta Horizon Store tettwaqbel u aleqqem-is amezwaru deg usenqed n Meta, u lqem n Google Play i tiliẓriyin yettraǧu asenqed n Google i usiẓreg n tiliẓri. Asiẓreg n GitHub yesɛa yal tikkelt lebni aneggaru:
+Asnas yella deg Google Play i tiliɣriyin d ttablit; lqem n App Store yettraǧu asenqed n Apple, tabdart n Meta Horizon Store tettwaqbel u aleqqem-is amezwaru deg usenqed n Meta, u lqem n Google Play i tiliẓriyin yettraǧu asenqed n Google i usiẓreg n tiliẓri. Immuch360 Desktop, i Windows, d lqem n tirmit ɣef GitHub. Asiẓreg n GitHub yesɛa yal tikkelt lebni aneggaru:
 
 - **Tiliɣriyin d ttablit Android**
   - Ass-a: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), neɣ APK deg usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` i tiliɣri (`Immuch360-v<version>-release.apk` amatu yetteddu anda yebɣu yili, `-armeabi-v7a` i tiliɣriyin tiqburin s 32 bit, u afaylu `.aab` d win n Google Play, mačči i usebded s ufus). Lebni n GitHub s umata yezwar taḥanutt. Akken yebɣu yili, yettwasbedd ɣer tama n usnas unṣib Immich (akemmus `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Asnas yella deg Google Play i tiliɣriyin d ttablit; lqem n App Store yettraǧu 
 - **Android TV d Google TV (seg lebni 20)**
   - Ass-a: `Immuch360-v<version>-release.apk` amatu n usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases), yettwasbedden s adb, wali [Sebded-it ɣef tiliẓri](#install-it-on-the-tv). D asnas-nni n tiliɣriyin.
   - Ticki: Google Play ɣef tiliẓriyin, deffir usenqed n Google i usiẓreg n tiliẓri.
+- **Windows 10 d 11, 64 bit (lqem n tirmit)**
+  - Ass-a: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` n [usiẓreg uzwir n desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), yettwasefsin u yettwasekker akken i d-yenna [Asider d usebded ɣef Windows](#download-and-install-on-windows). Tiwlafin kan i tura: tividyutin ad d-asent s yilebniyen n desktop i d-iteddun.
+  - Ticki: taɣuri n tvidyut; amsebded, lebni yettwazemlen d yileqman ticki.
 
 Iseɣwan n App Store d Meta Horizon Store ad ttwarnun da mi ara d-teffeɣ tebdart. Kcem s tansa URL d umiḍan-ik Immich yezgan, neɣ sit ɣef «Seqdec war aqeddac» deg usebter n tuqqna akken ad tebduḍ s tewlafin d tvidyutin n yibenk s yiman-is. APK n GitHub ur yettales ara aleqqem s yiman-is: ḍfer asebter Isiẓrigen, u mi ara tesbeddeḍ asnas seg tḥanutt, awi ileqman seg tḥanutt-nni.
 
@@ -993,12 +1105,15 @@ Tin n `quest` tettnadi SDK 34 u teḥrez kan tisirag i tesseqdac tcacit (tiwlafi
 
 Akken ad tebnuḍ i iOS ɣef Mac-ik, seqdec Xcode d tarbaɛt-ik n uzmul; s Xcode 26, sekker `xcodebuild -downloadComponent MetalToolchain` yiwet n tikkelt qbel, acku ishaderen Spatial sran-t. War Mac, ilmisen iOS ttedun ɣef Codemagic (Mac yettusneblen) seg ufaylu `codemagic.yaml` n ukufi-a. Ilmisen n usiẓreg Android ttedun ɣef GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, lqem n Windows, yettwabna seg ufurk `desktop` s Flutter i Windows: isurifen llan deg [Bnu-t s yiman-ik ɣef Windows](#build-it-yourself-on-windows).
+
 Ulac ula d yiwet n tbaḍnit deg ukufi-a: tasarut n uzmul Android tettwaḥraz d tibaḍniyin GitHub Actions yettwawgelhen, u ayen n uzmul n Apple yettwaḥraz d imuttiyen yettwawgelhen ɣef Codemagic. Ifuyla n workflow ttbedren-ten kan s yisem. War `android/key.jks` inek, lebni n usiẓreg yettwazmal s tsarut debug u ur yezmir ara ad yettwasbedd ɣef unɣal seg GitHub neɣ seg tḥanutt (kkes-it qbel); lebni debug yettwasbedd ɣer tama-s am Immuch360 debug. Anɣal n Meta Horizon Store d APK `quest` n usiẓreg yettwazemlen s tsarut nniḍen, tin s wacu i yettwajerred usnas n tḥanutt i tikkelt tamezwarut, ihi ur yezmir ara ad yettwasbedd ɣef APK yettwasbedden s ufus, u ula d akessaḍ.
 
 ### Ifurkan
 
 - **`main`**: Immich `main` deg usmekti ɣef yebna `immuch360` (29 ctembeṛ 2026 i yilmisen n tura), werǧin yettwabeddel; yettɛeddi ɣer zdat mi ara yettwales ufurk ɣef Immich amaynut ugar.
 - **`immuch360`**: ibeddilen n ufurk-a ɣef Immich. Yal asiẓreg yenna-d ɣef wanwa lqem n Immich i yebna.
+- **`desktop`**: Immuch360 Desktop, lqem n uselkim, ɣef `immuch360`. Isiẓrigen n tiliɣri ttwasdukklen ɣur-s, u isiẓrigen uzwiren n desktop ttwabnan seg-s (desktop build 1 seg commit 21f285c34, lebni 20 n tiliɣri d lqem n uselkim). Ulac ayen yettbeddilen ddaw `mobile/android` d `mobile/ios` deg-s.
 
 <a id="logs"></a>
 ## Iɣmisen
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Seg lebni 19 amsaɣ DLNA, afaylu yettwabḍan n tiliɣri d tagrut n yimidyaten imennawen n Apple ttarun daɣen deg uɣmis n usnas s yiman-is (Logs (Iɣmisen), deg wumuɣ n tugna n umaɣnu d asawen s ayeffus), ddaw `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` d `NetworkMediaService`. Seg lebni 20 askar n tiliẓri yettaru dinna ddaw `TvMode` d `TvTextEntry`, iqeddacen Plex ddaw `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` d `PlexServerEditPage`, u tikamiṛatin Tapo ddaw `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` d `CameraLiveView`; izirigen n Plex werǧin gebren ajuṭu, tansa neɣ azwel, u izirigen n tkamiṛat ur gebren ara awalen uffiren. Izirigen n uɣmis qqimen ɣef yibenk alamma tneɣleḍ-ten s yiman-ik.
 
+Ɣef uselkim (Immuch360 Desktop), asebter Iɣmisen yesɛa daɣen «Sekles iɣmisen deg ufaylu»: aɣmis, neɣ ZIP n uɣmis d yineqqisen n yiɣelluyen ineggura ma llan (isem yettwasumren ad yekfu s «with-crash-reports»). Aneqqis n uɣelluy d minidump amecṭuḥ: inezzaɣ, anida i ḥebsen d wayen kan yettusran i uḍfar n yiɣuniyen-nsen, s yismawen n yifuyla n uhil maca war ikaramen-nsen; mačči d takatut n usnas. Senqed aɣmis uqbel ad t-tebḍuḍ: yezmer ad yegber tansa n uqeddac-ik.
+
 <a id="privacy"></a>
 ## Tabaḍnit
 
@@ -1026,19 +1143,21 @@ Seg lebni 19 amsaɣ DLNA, afaylu yettwabḍan n tiliɣri d tagrut n yimidyaten i
 - **Tiliẓri**: ma yella yibenk d tiliẓri yettwaɣer ɣef yibenk; ulac ayen yettwazenen.
 - **Afaylu yettwabḍan n tiliɣri**: aẓeṭṭa adigan kan, s yisem n useqdac d wawal uffir, s HTTP amagnu (wali [Bḍu tiliɣri-a deg uẓeṭṭa](#share-this-phone-on-the-network)).
 - **Takamirat**: tettwaseqdac kan s umeɣri Spatial 2.5D, ɣef yibenk; tugniwin werǧin ttwaḥerzent, werǧin ttwaznent ɣer wanda nniḍen.
+- **Ɣef uselkim** (Immuch360 Desktop, lqem n tirmit n Windows): asnas yeqqar kan ikaramen i tferneḍ, yeḥrez amatar-is, tugniwin-is timecṭuḥin d tuffirt-is ɣef uselkim, u yeḥrez awalen uffiren d yijuṭuyen s ummesten n yisefka n Windows, i umiḍan-ik Windows kan. Beṭṭu n uselkim yeḍfer ilugan n beṭṭu n tiliɣri, u ur yettebdu ara deg uẓeṭṭa i yecreḍ Windows d azayez, neɣ win ur yezmir ara ad yissin anaw-is, ma yella ur t-tenniḍ ara.
 
 Tasertit tummidt tella deg [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Turagt d tecreḍt tazenzut
 
-Asenfar-a d afurk n Immich u yeqqim ddaw [GNU AGPL v3](../LICENSE). Yal APK, ula d tid n tiliɣriyin, tegber daɣen Meta Spatial SDK, ur nelli d aɣbalu yeldin (Meta Platform Technologies SDK License Agreement) u yettwaseqdac kan ɣef tcacyin Meta Quest. Immuch360 ur yeqqin ara, ur yettwaɛwen ara sɣur terbaɛt n Immich neɣ FUTO.
+Asenfar-a d afurk n Immich u yeqqim ddaw [GNU AGPL v3](../LICENSE). Yal APK, ula d tid n tiliɣriyin, tegber daɣen Meta Spatial SDK, ur nelli d aɣbalu yeldin (Meta Platform Technologies SDK License Agreement) u yettwaseqdac kan ɣef tcacyin Meta Quest; Immuch360 Desktop, lqem n Windows, ur t-yegbir ara. Immuch360 ur yeqqin ara, ur yettwaɛwen ara sɣur terbaɛt n Immich neɣ FUTO.
 
 <a id="roadmap"></a>
 ## Abrid n zdat
 
 Ayen ur yemmid ara yakan, win yettbanen d amezwaru qbel. Ulac dagi ula d yiwet n lewɛed, u tamuɣli-nwen deg [umfaraz n wuguren](https://github.com/freeKC/Immuch360/issues) tettɛawan i wakken ad nefren ayen ara d-yasen d amezwaru.
 
+- **Immuch360 Desktop, Windows qbel**: lqem n tirmit amezwaru yeffeɣ-d (wali [Ɣef uselkim Windows](#on-a-windows-computer-immuch360-desktop-preview)). Syin, taɣuri n tvidyut (tividyutin timsawin qbel, syin 360°, 3D, VR180 d yifuyla iẓegzawen), tettwaktal ɣef snat n tkarḍiwin tudlifin n uselkim aziraz; syin asekyed n yal tawuri ɣef uselkim Windows d yiseɣtiyen-is; syin Spatial 2.5D s tkamiṛat web; syin Linux d macOS, ikemmusen, azmal d yileqman.
 - **Google Play**: lebni 18 yella; lebni 20 deg usenqed n Google seg 7 tubeṛ 2026, deg wadeg n lebni 19. Lebni 21 ur ibeddel acemma ɣef tiliɣriyin d ttablit.
 - **App Store**: lqem 3.3.0 yettraǧu asenqed n Apple; yesɛa timahilin n lebni 11, ihi asali ɣer Immich d usenqed n yidekuduren n tvidyut (lebni 15) d yifuyla RAW n Insta360 (lebni 16) ad d-asen s uleqqem n App Store i d-iteddun. Aseɣwen ad yettwarnu da mi ara yili yeffeɣ.
 - **Meta Horizon Store**: Meta tqebbel tabdart ass n 7 tubeṛ 2026 s lebni 14. Lebni 21 yettwazen d aleqqem-is amezwaru: yettawi-d akk ayen yellan seg lebni 14 (asali seg ufaylu yettwabḍan ɣer Immich, aɣbalu n tvidyut yettwafernen akken yezmer ad t-yeskud tcacit, ifuyla RAW n Insta360, GoPro d DJI, DLNA, beṭṭu n tiliɣri, tiwlafin timennawin n Apple, timkarḍiyin n Plex Media Server, tikamiṛatin Tapo), u taḥanutt tebder-it i Quest 2, Quest Pro, Quest 3 d 3S. Aseɣwen n tḥanutt ad yettwarnu da mi ara yuɣal usebter d azayez; anɣal yettwasbedden s ufus ilaq ad yettwakkes qbel (wali [Asebded](#install)).

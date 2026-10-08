@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Ko Immuch360 te taupānga waea a Immich me ngā whakaahua me ngā ataata 360° ka taea e koe te titiro huri noa, me tētahi pūrei utu kore mō ngā whakaahua me ngā ataata papatahi, 360°, 3D me VR180, i ngā waea me ngā papahiko Android, i ngā iPhone me ngā iPad, i ngā pōtae Meta Quest (te Quest 3 me te 3S, ā, mai i te hanga 21 te Quest 2 me te Quest Pro, kāore anō kia whakamātauria), ā, mai i te hanga 20 i Android TV me Google TV.
+Ko Immuch360 te taupānga waea a Immich me ngā whakaahua me ngā ataata 360° ka taea e koe te titiro huri noa, me tētahi pūrei utu kore mō ngā whakaahua me ngā ataata papatahi, 360°, 3D me VR180, i ngā waea me ngā papahiko Android, i ngā iPhone me ngā iPad, i ngā pōtae Meta Quest (te Quest 3 me te 3S, ā, mai i te hanga 21 te Quest 2 me te Quest Pro, kāore anō kia whakamātauria), ā, mai i te hanga 20 i Android TV me Google TV. Kua puta a Immuch360 Desktop, te taupānga ōrite i tētahi rorohiko Windows, hei arokite, tirohia [I tētahi rorohiko Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 Mō te hunga e hopu ana ki tētahi kāmera 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360), ki te aratau pōro whakaahua rānei o tētahi waea, mō te hunga rānei he pōtae ō rātou, ā, e hiahia ana ki te mātakitaki i ā rātou ake hopu mai i tētahi tūmau Immich, i te waea tonu, i tētahi NAS, i tētahi tūmau pāpāho, i tētahi tūmau Plex rānei: te tūmau ōrite, te pūkete ōrite, kāore he mono tūmau, kāore rānei he tūmau. Mai i te hanga 20 ka whakaatu anō i ngā kāmera Tapo, ora tonu, me ngā hopukanga o tō rātou kāri pūmahara.
 
@@ -18,13 +18,14 @@ Mō te hunga e hopu ana ki tētahi kāmera 360° (Insta360, GoPro MAX, DJI Osmo 
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
   App Store: <a href="#where-to-get-it">kei te arotakehia</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store kua whakaaetia, kua tukuna te hanga 21 hei whakahōu tuatahi<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">tikiake arokite</a>
 </p>
 
 - 🌐 **360° taketake**<br>Ko ngā whakaahua me ngā ataata hei pōro e titiro huri noa ai koe, me te pūhurihuri, tae atu ki ngā kōnae kāmera mata (Insta360 mai i te hanga 16, GoPro me DJI mai i te hanga 18). He pūrei ataata utu kore anō: papatahi, 360°, 3D, VR180
 - 👓 **3D taketake**<br>Ngā 360° me ngā VR180 stereo, runga me raro, taha ki te taha rānei, me ngā whakaahua mokowā Apple (mai i te hanga 19): he 3D tūturu i te pōtae, kotahi te karu i te waea
 - 🎥 **2.5D taketake**<br>He hōhonutanga i runga i te mata papatahi mai i tētahi ataata stereo, ka whai te tirohanga i tō māhunga (whakamātautau, ngā waea me ngā papahiko)
-- 📱 **Android, iOS, Quest, TV**<br>Kotahi te taupānga i ngā waea, i ngā papahiko me ngā pōtae Quest 2, Pro, 3 me 3S, he 3D tūturu i te pōtae, ā, mai i te hanga 20 i Android TV me te mamao
+- 📱 **Android, iOS, Quest, TV**<br>Kotahi te taupānga i ngā waea, i ngā papahiko me ngā pōtae Quest 2, Pro, 3 me 3S, he 3D tūturu i te pōtae, mai i te hanga 20 i Android TV me te mamao, me tētahi arokite Windows
 - 🔌 **Me te tūmau, me te kore rānei**<br>Tō tūmau Immich, te taiwhanga rānei o te waea tonu, kāore he pūkete e hiahiatia ana
 - 🗄️ **Ngā tiritiri whatunga**<br>Samba (SMB), WebDAV, ā, mai i te hanga 19, ngā tūmau pāpāho DLNA ka kitea i te whatunga, ka pānuitia tōtika, kāore he mea e tikiake ana, ka tukuna ki Immich ina kōwhiri koe. Mai i te hanga 19 ka tiri hoki te waea i tōna ake taiwhanga ki te pōtae
 - 📺 **I te pouaka whakaata**<br>Mai i te hanga 20 ko te APK ōrite i Android TV me Google TV: ngā whakaahua me ngā ataata 360°, tō tūmau me ō tiritiri, me te mamao
@@ -52,6 +53,7 @@ Mō te hunga e hopu ana ki tētahi kāmera 360° (Insta360, GoPro MAX, DJI Osmo 
 - [Te whakatairite ki te taupānga Immich me ētahi atu taupānga](#compared-with-the-immich-app-and-other-apps)
 - [Ngā hōputu me ngā mātāpuna, mā te pūhara](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [I tētahi rorohiko Windows: Immuch360 Desktop (arokite)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Me pēhea te whiwhi](#where-to-get-it)
 - [Hangaia e koe anō](#build-it-yourself)
 - [Ngā rangitaki](#logs)
@@ -77,6 +79,7 @@ Mō te hunga e hopu ana ki tētahi kāmera 360° (Insta360, GoPro MAX, DJI Osmo 
 - **“E hiahia ana ahau ki te mātakitaki i aku whakaahua me aku ataata 360°, me ngā ataata o taku NAS, o taku tūmau Plex rānei, i te pouaka whakaata, me te mamao.”** Tirohia [Mātakitaki i tō pouaka whakaata](#watch-on-your-tv-android-tv-and-google-tv).
 - **“Kāore e kitea e au aku hopu 360° i waenga i ērā atu katoa.”** Tirohia [Te rārangi 360°](#find-your-360-shots-the-360-list).
 - **“Ka haukotikoti taku ataata 360°, ka purei rānei i tētahi tārua mōrehu.”** Tirohia [Ngā taipitopito ataata me ngā pūwetewete](#video-details-decoders-and-why-a-video-stutters).
+- **“E hiahia ana ahau ki aku whakaahua 360° me taku pātaka Immich i taku PC Windows, me ngā whakaahua o ōna kōpaki, o taku NAS me taku tūmau Plex, ā, kia tiritiria te PC ki taku pōtae.”** Tirohia [I tētahi rorohiko Windows](#on-a-windows-computer-immuch360-desktop-preview) (he arokite, he whakaahua anake i tēnei wā).
 - **“Ka mau tonu ngā mahi a te taupānga Immich?”** Āe, me ētahi panoni iti e rua, tirohia [He Immich katoa ērā atu](#everything-else-is-immich).
 
 Ina hou tētahi āhuatanga, ka kī te tuhinga mai i tēhea hanga (build) ka wātea. Kei te tuku GitHub te hanga hou rawa i ngā wā katoa, ka whai mai ngā toa ā muri: tirohia [Me pēhea te whiwhi](#where-to-get-it).
@@ -749,6 +752,7 @@ Ko te hanga o nāianei, te hanga 21 (putanga 3.3.0-rc.0, nama hanga 3030019), e 
 | Ngā pātaka Plex Media Server ka purei mai i ngā kōnae taketake, i te kāinga, i waho hoki, me te kore plex.tv | ❌ | ✅ mai i te hanga 20, ia mātaki, i ngā waea, ngā papahiko, te Quest me ngā pouaka whakaata |
 | Ngā kāmera Tapo: te tirohanga ora, me ngā hopukanga o te kāri pūmahara ka tukuna ki Immich ina kōwhiri koe | ❌ | ✅ mai i te hanga 20: ngā hopukanga i ngā wāhi katoa, ora i Android, Android TV me te Quest |
 | Android TV me Google TV, ka whakahaeretia e te mamao, i te APK ōrite | ❌ ehara i te taupānga pouaka whakaata | ✅ mai i te hanga 20 |
+| Te taupānga ōrite i tētahi rorohiko Windows | ❌ ngā waea me ngā papahiko anake | ✅ arokite, kāore anō he ataata |
 | Ngā whakaahua Insta360 .insp mata me ngā ataata .insv ara kotahi | ❌ papatahi | ✅ mai i te hanga 16 |
 | Ngā ataata mata kotahi te arotahi mō ia ara, mō ia kōnae rānei (Insta360 X4, X4 Air, X5, X6, ngā takirua X3, GoPro .360, DJI .osv) | ❌ papatahi, hē rānei | ✅ mai i te hanga 18 |
 | .dng fisheye rua | ❌ papatahi | ❌ kāore anō |
@@ -778,6 +782,7 @@ Ko te hanga o nāianei, te hanga 21 (putanga 3.3.0-rc.0, nama hanga 3030019), e 
 - **Plex Media Server**: I tirohia mai i tētahi rorohiko ki tētahi Plex Media Server 1.42.1 tūturu (te takirua, ngā kōpaki, ngā awhe paita, ngā koromātiti, te wāhitau i waho o te kāinga); kāore anō kia tirohia i tētahi pūrere.
 - **Ngā kāmera Tapo**: I tirohia ki tētahi kāmera whaihanga; kāore anō kia tirohia ki tētahi kāmera tūturu.
 - **Android TV me Google TV**: I tirohia e ngā whakamātautau aunoa; kāore anō kia tirohia i tētahi pouaka whakaata.
+- **Te taupānga ōrite i tētahi rorohiko Windows**: 475 ngā whakamātautau papamahi aunoa i Windows, ā, i tētahi PC Windows 11 ka tīmata te taupānga, ka whakatuwhera i tētahi wātū kua tiakina i tētahi tūmau Immich, ka tukutahi, ka kati mārie; kei te haere tonu te whakamātautau ā-ringa o ia mahinga.
 - **Ngā whakaahua Insta360 .insp mata me ngā ataata .insv ara kotahi**: I tirohia ngā whakaahua ki ngā kaweake Insta360 Studio o ngā kōnae X3, ngā ataata i tētahi kaiwhaihanga Android me tētahi kōnae X3 taumira iti; kāore anō kia rere i tētahi iPhone.
 - **Ngā ataata mata kotahi te arotahi mō ia ara, mō ia kōnae rānei**: I tirohia ngā kaitātari me te tuitui ki ngā kōnae X4, takirua X3, GoPro MAX me Osmo 360 tūturu; ko te purei te whakamātautau pūrere o ngā hanga 18 me 19.
 - **.dng fisheye rua**: kua whakamaheretia.
@@ -883,12 +888,15 @@ He taiwhanga a Immuch360, ā, he pūrei pāpāho utu kore anō: ka purei i ngā 
 
 Kāore anō ngā tāurunga Android TV me Google TV, mai i te hanga 20, kia tirohia i tētahi pouaka whakaata, tirohia [Mātakitaki i tō pouaka whakaata](#watch-on-your-tv-android-tv-and-google-tv); kāore anō ngā tāurunga kāmera kia tirohia ki tētahi kāmera tūturu.
 
+I Windows, ka whakaatu te arokite Immuch360 Desktop i ngā whakaahua, papatahi me te 360°, tae atu ki ngā whakaahua .insp mata o Insta360, me te kiore me te papapātuhi, mai i te tūmau, i ngā kōpaki o te PC, i ngā tiritiri me Plex; kāore anō ia kia purei ataata, ka whakaatu he puri wāhi (tirohia [Kāore anō kia tae](#not-there-yet)).
+
 - **Tō tūmau Immich**: te taketake, te rerenga kua whakawaehere anō rānei o te tūmau, e ai ki “Settings”, “Asset Viewer”, “Te mātāpuna ataata” (tirohia [Ngā taipitopito ataata me ngā pūwetewete](#video-details-decoders-and-why-a-video-stutters)). Te pūkete ōrite ki te taupānga tukutuku.
 - **Te waea, te pōtae rānei tonu**: “Whakamahia me te kore tūmau” i te whārangi takiuru, te tāurunga “On this device” rānei o te ripa “Pātaka”.
 - **He NAS, he rorohiko rānei**: ngā tiritiri SMB me WebDAV, ā, mai i te hanga 19 ngā tūmau pāpāho DLNA, ka kitea i te whatunga, ka pānuitia tōtika (he ataata SMB mā te ono hononga te nui rawa), kāore he mea e tāruatia; mai i te hanga 15 ka taea ngā kōnae ka kōwhiria e koe te tuku ki tō pūkete Immich.
 - **Tētahi atu waea (mai i te hanga 19)**: “Tiritiri i tēnei waea i te whatunga” i taua waea: ka pānui te pōtae, tētahi kiritaki WebDAV rānei o te whatunga, i ōna pukaemi, ōna marama me ōna pāpāho 360°.
 - **He Plex Media Server (mai i te hanga 20)**: ōna pātaka whakaahua, kiriata me ngā hōtaka pouaka whakaata mā te kōpaki, ko ngā kōnae taketake ka pānui ora mā te HTTPS kua tirohia ki te tiwhikete ake o te tūmau, i te kāinga, mā te wāhitau i waho o te kāinga rānei, i ngā pūhara katoa; tirohia [Plex Media Server, me te kore plex.tv](#plex-media-server-without-plextv).
 - **He kāmera Tapo (mai i te hanga 20)**: te tirohanga ora me te pūkete kāmera (Android, Android TV, te Quest), me ngā hopukanga o tōna kāri pūmahara me te kupuhipa o te pūkete TP-Link (ngā pūhara katoa), i te whatunga ā-rohe anake; tirohia [Ngā kāmera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Ngā kōpaki o tētahi rorohiko Windows (arokite papamahi)**: ngā kōpaki ka kōwhiria e koe i Immuch360 Desktop, ka pānuitia hei whakakapi i te kohinga o tētahi waea; ka taea hoki e te rorohiko te tiritiri ki te pōtae, tirohia [I tētahi rorohiko Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ He hopuāhua i tangohia i te pōtae ki te pātene hopu (te pātene Meta me te ke
 - **Te rahi APK**: ka tāpiri te Spatial SDK i te 56 MB pea o te waehere taketake ARM 64 moka, i ngā waea hoki, kāore rawa nei e utaina.
 - **Raihana**: ka whakamahi te mātaki rumaki i te Meta Spatial SDK, ka tohaina i raro i te Meta Platform Technologies SDK License Agreement.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## I tētahi rorohiko Windows: Immuch360 Desktop (arokite)
+
+Kei tētahi tūmau tō pātaka Immich, kei ngā kōpaki o te PC ētahi atu whakaahua, kei tētahi NAS, tūmau Plex rānei ngā ataata, ā, e hiahia ana koe ki te titiro huri noa i ō whakaahua 360° i tētahi mata nui, ki te whakaatu rānei i ngā whakaahua o te PC i te pōtae. Ko Immuch360 Desktop te taupānga ōrite i tētahi rorohiko Windows, i hangaia mai i ngā pūtake ōrite ki ngā taupānga waea.
+
+I tētahi rorohiko, ka tuku a Immich i tōna taupānga tukutuku i tētahi pūtirotiro. **Ngā mea ka tāpiritia e Immuch360 Desktop**: ngā kōpaki o te PC me te kore tūmau, pūkete rānei, ngā tiritiri SMB, WebDAV, DLNA me Plex ka tirotirohia mai i te taupānga, ngā whakaahua .insp mata o Insta360 ka whakatuwheratia hei pōro, me te PC ka tiritiria ki tētahi Meta Quest i te kāinga.
+
+He arokite tēnei hanga tuatahi: ka mahi ngā whakaahua, ka tae mai ngā ataata me ngā hanga papamahi e whai ake nei. Kāore ngā taupānga waea, papahiko, Quest me te pouaka whakaata e panoni nā tēnei, ā, ka mau tonu te ingoa Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Tikiake me te tāuta i Windows
+
+Ko te hanga tuatahi te tuku-mua GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Ko tōna kōnae ko `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33.5 MB, 65 ngā kōnae ina wetekōpakihia), me `SHA256SUMS.txt` hei tirotiro. I hangaia mai i te peka `desktop` i te commit 21f285c34: te hanga waea 20 me te putanga rorohiko. E hiahia ana ki Windows 10, 11 rānei, 64 moka.
+
+1. Tikiake te ZIP, ka wetekōpaki ki hea rānei, hei tauira ki Documents.
+2. Tīmatahia te `immuch360.exe` mai i te kōpaki kua wetekōpakihia. Puritia te kōpaki katoa: e hiahia ana te papatono ki ngā kōnae kei tōna taha.
+3. Kāore anō ngā kōnae kia hainatia, nō reira ka whakaatu pea a Windows SmartScreen i te “Windows protected your PC”: kōwhiria te “More info”, kātahi ko te “Run anyway”. Ki te kā a Smart App Control, ka aukatia e ia ngā papatono kāore i hainatia.
+4. Tatari mō te matapihi. Ko te tīmatanga tuatahi o tētahi hanga hou ka roa mai i te 10 hēkona ki te kotahi meneti pea, tērā pea i te wā e matawai ana a Microsoft Defender i ngā kōnae hou: kaua e tīmata anō i te taupānga i taua wā. Ko ngā tīmatanga e whai ake nei he hēkona kotahi, e rua rānei.
+5. I te whārangi takiuru, takiuru ki tō tūmau Immich me tōna wāhitau, tō īmēra me tō kupuhipa, pāwhiri rānei i te “Whakamahia me te kore tūmau”.
+
+Hei tirotiro i te ZIP, whakahaerehia te `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` i tētahi pūtohu tono, i te kōpaki o te tikiake: ko te hua te mea kua tuhia ki `SHA256SUMS.txt`. Kāore anō he kaitāuta, he whakahōu aunoa rānei: mātakitakihia te whārangi [Releases](https://github.com/freeKC/Immuch360/releases), ā, wetekōpakihia te hanga e whai ake nei i te ara ōrite.
+
+### Ngā mahi a te arokite
+
+- **Tō tūmau Immich**: te rārangi wā, ngā pukaemi, ngā tāngata, ngā maharatanga me te rapu, me ngā whakaahua tūmau i te rahi katoa, pēnei i tētahi waea.
+- **Me te kore tūmau**: ka whakakapi ngā kōpaki o ō whakaahua me ō ataata (ka tūtohua a Pictures me Videos) i te kohinga o tētahi waea. Kāore he mea e pānuitia ki waho i ngā kōpaki i kōwhiria e koe, ā, me te kore tūmau kāore he mea e wehe atu i te rorohiko.
+- **Tukuake me te taurua** mai i aua kōpaki ki tō tūmau Immich, i te wā e tuwhera ana te taupānga.
+- **Ngā whakaahua 360° hei pōro**, me te kiore me te papapātuhi; ka tuwhera ngā whakaahua .insp mata o ngā kāmera Insta360 pēnei i ngā waea.
+- **Ngā tiritiri whatunga**: Samba (SMB), WebDAV me ngā tūmau pāpāho DLNA, me ngā tūmau Plex me te kore plex.tv, ka tirotirohia pēnei i ngā waea: ka tuwhera ō rātou whakaahua, ka tatari ō rātou ataata ki te pūrei ataata (tirohia [Kāore anō kia tae](#not-there-yet)). Mō ngā kāmera Tapo, ngā hopukanga o te kāri pūmahara: te rārangi, me te tiki i tētahi topenga.
+- **Tiritiri i tēnei rorohiko i te whatunga**: ngā pukaemi, ngā marama me ngā pāpāho 360° o ō kōpaki, pānui anake, mō tētahi Meta Quest, tētahi atu pūrere rānei i te kāinga, pēnei i te tiritiri a tētahi waea i a ia anō.
+- **Ngā kōnae**: ka haere ngā tikiake mai i te tūmau ki tētahi kōpaki ka kōwhiria e koe, ka pupuri te “Save to a folder” (Tiaki ki tētahi kōpaki) i tētahi tārua o ngā whakaahua me ngā ataata kua tīpakohia, ā, kei te whārangi “Logs” (Rangitaki) te “Save logs to a file” (Tiaki i ngā rangitaki ki tētahi kōnae).
+
+### Whakamahia i tētahi rorohiko
+
+1. **Kōwhiria ō kōpaki.** Me te kore tūmau, ka tīmata te rārangi wā ki te “Choose the folders of your photos and videos” (Kōwhiria ngā kōpaki o ō whakaahua me ō ataata): pāwhiria te “Add a folder” (Tāpiri kōpaki). Me tētahi tūmau, ka puta taua kāri anō i te “Pātaka” i raro i te “On this computer” (I tēnei rorohiko), me ngā pukaemi hei taurua, kia kōwhiria rā anō tētahi kōpaki. Ā muri ake, he rārangi “Folders on this computer” (Ngā kōpaki i tēnei rorohiko) tō rātou, pērā anō a “Settings”, “This computer” (Tēnei rorohiko).
+2. **Ngā kōpaki kapua, USB me te whatunga.** Ko ngā kōnae e puritia ana e OneDrive (e tētahi atu puku kapua rānei) i runga ipurangi anake ka tatauria engari kāore e pānuitia, nō reira kāore te tāpiri kōpaki e tikiake i tō kapua katoa: ka tikina e “Download and include” (Tikiake, whakaurua) ina hiahia koe. Ko tētahi puku USB ka hoki mai i raro i tētahi atu reta ka mau tonu ōna whakaahua. Ko ngā kōpaki whatunga, me ngā kōpaki i tētahi kāri pūmahara, puku USB rānei (kia taea tonu e Windows te pana atu), kāore e mātakitakihia mō ngā panonitanga: whakamahia te “Refresh” (Whakahou) i muri i te tāpiri kōnae ki reira.
+3. **Titiro huri noa i tētahi whakaahua 360°**: tō me te kiore, topa me te wīra, me te pāwhiri rua, me te + me te - rānei (i tētahi tahora papapātuhi, tae atu ki AZERTY), neke me ngā pātuhi pere. Ka huri a F, F11 rānei ki te mata katoa, ā, ka puta a Escape i reira; ka haere a Home me End ki te whakaahua tuatahi me te whakamutunga; ka whakaatu a I i ngā taipitopito.
+4. **Haere mai i tētahi whakaahua ki tētahi**: i tētahi whakaahua papatahi, ka haere ngā pere mauī me te matau, ngā tohu pere rānei e puta ana i ngā tapa i te wā e neke ana te kiore, ki te mea o mua me te mea e whai ake nei. Ka noho ngā reta ka patohia ki te āpure whakaahuatanga ki te kuputuhi.
+5. **Tiritiri i te rorohiko ki te pōtae**: whakatuwheratia te “Pātaka”, kātahi ko “Ngā tiritiri whatunga”; ko te taera tuatahi ko te “Share this computer on the network” (Tiritiri i tēnei rorohiko i te whatunga), te taha rorohiko o [Tiritiri i tēnei waea i te whatunga](#share-this-phone-on-the-network). Whakakāngia te “Share photos and videos on the network” (Tiritiri whakaahua me ngā ataata i te whatunga), kātahi ka tāpiri i te rorohiko i te pōtae pēnei i tā taua wāhanga e kī ana. Ka mutu te tiritiri ina katia te taupānga, i muri rānei i te haora kotahi kāore i whakamahia.
+6. **Tukuna te whatunga**: ka pātai pea a Windows mēnā ka taea e Immuch360 Desktop te whakamahi i te whatunga. Tukuna i ngā whatunga tūmataiti, ki te kore ka kore e kitea e te pōtae te rorohiko. I tētahi whatunga ka tohua e Windows hei tūmatanui (he kawhe, he hōtera), i tētahi rānei kāore e mōhiotia tōna momo, kāore te tiritiri e tīmata ki te kore koe e kōwhiri i te “Share for this session” (Tiritiri mō tēnei wātū), ā, ka pānui te rorohiko i a ia anō i tētahi whatunga e tiritiri ana ia anake.
+7. **“Settings”, “This computer” (Tēnei rorohiko)**: ngā kōpaki, te kōpaki tikiake, te urutau whatunga e whakamahia ana hei kimi tiritiri, hei tiritiri hoki i te rorohiko (ina maha ōna, Wi-Fi me Ethernet hei tauira), me ngā tiwhikete whakawhirinaki: te mana tiwhikete o tō ake tūmau, hei kōnae PEM, mō tētahi wāhitau HTTPS kāore a Windows e whakawhirinaki ana ake. Ka kawea mai ngā tiwhikete kiritaki i “Settings”, “Advanced”, pēnei i ngā waea.
+
+### Ka whakatairitea ki ngā taupānga waea
+
+- **Ka rere te taurua i te wā e tuwhera ana te taupānga** (kua whakaitia rānei), kaua i muri me te matapihi kua katia. Mā te kati i te matapihi i te wā e rere ana ngā tukuake, i te wā rānei e tiritiria ana te rorohiko, ka pātai i te tuatahi.
+- **Ngā kōpaki hei whakakapi i te kohinga**: ka pānui te taupānga i ngā kōpaki ka kōwhiria e koe, ā, ka pupuri i tōna ake taupū, karakōnui me te keteroki i te rorohiko.
+- **Kotahi te matapihi**: mā te whakatuwhera anō i te taupānga ka whakahokia mai te matapihi tuatahi, kaua e tīmata i tētahi tārua tuarua.
+- **Kāore he mea e mukua i ō kōpaki**: kua hunaia te “Delete from device” (Muku i te pūrere), ā, ka tango te “Delete” (Muku) i te tārua tūmau anake, kia taea rā anō e te taupānga te tuku kōnae ki te ipu para o Windows.
+- **Te kiore me te papapātuhi** hei whakakapi i te pā me te nekehanga hurihuri.
+
+<a id="not-there-yet"></a>
+### Kāore anō kia tae
+
+- **Ngā ataata**: ka whakaatu i tētahi puri wāhi i tēnei wā, ā, he tohu kiriata ō rātou karakōnui. Ka whai ake te pūrei: ngā ataata papatahi i te tuatahi, kātahi ko ngā ataata 360°, 3D me VR180 me ngā ataata 360° mata.
+- **Spatial 2.5D**, ā muri ake me te kāmera tukutuku; te **tirohanga ora Tapo**; te **mahere** me te tirohanga Wāhi; **te takiuru me OAuth** (takiuru kē me tētahi īmēra me tētahi kupuhipa); **Google Cast**; **ngā pānui**.
+- **He kaitāuta, he hanga kua hainatia me ngā whakahōu aunoa**: he kōpaki tēnei hanga me `immuch360.exe`.
+- **Linux me macOS**: kei ngā pūtake ō rātou kaupapa, engari kāore anō kia hangaia, kia whakamātauria rānei i aua pūnaha; ka tae mai i muri i Windows.
+- **Ngā whakamāoritanga**: kei te reo Pākehā ngā kuputuhi hou o te putanga rorohiko i tēnei wā.
+
+### Ngā raru e mōhiotia ana
+
+- **I te wā e pānui ana te pōtae i tētahi kōnae mai i te rorohiko kua tiritiria** (he ataata e puritia ana, he whakaahua e tikiakehia ana), kāore e taea e Windows te whakaingoa anō, te neke, te muku rānei i taua kōnae, ā, ka kī kei te tuwhera i Immuch360 Desktop: whakatūria te pūrei i te tuatahi. Kāore ngā taurua e pupuri pērā i ō kōnae: ka taea te whakaingoa anō, te neke, te muku rānei i tētahi kōnae i te wā e tukuakehia ana.
+- **Ngā tapa taratara**: ka puta ngā mahinga o runga i ō rātou whakamātautau aunoa i Windows (475 ngā whakamātautau papamahi), ā, i tētahi PC Windows 11 ka tīmata te taupānga, ka whakatuwhera i tētahi wātū kua tiakina i tētahi tūmau Immich, ka tukutahi, ka kati mārie. Kei te haere tonu te whakamātautau ā-ringa o ia mahinga i tētahi PC tūturu.
+
+Ki te hē tētahi mea, tēnā koa whakatuwherahia he [take](https://github.com/freeKC/Immuch360/issues) me te rangitaki kua tiakina mai i te whārangi “Logs” (Rangitaki), tirohia [Ngā rangitaki](#logs). Tirohia te rangitaki i mua i te tiritiri: tērā pea kei roto tō wāhitau tūmau.
+
+<a id="build-it-yourself-on-windows"></a>
+### Hangaia e koe anō i Windows
+
+E hiahia ana koe ki Windows 10, 11 rānei i x64, Flutter 3.47.2 mō Windows, Visual Studio 2022, ōna Build Tools rānei me te kawenga mahi “Desktop development with C++”, Developer Mode kua whakakāngia i ngā tautuhinga Windows (e hiahia ana a Flutter mō ngā mono), me Python 3 mō te hōtuhi pūtea.
+
+1. Tikina te peka `desktop`, ka whakahaere i te whakaputa waehere. Ka whakamahi ia i Java me Node, nō reira whakahaerehia i Linux, i macOS, i WSL rānei; me WSL, puritia te tārua ki tētahi puku Windows, ka kitea e WSL i raro i `/mnt/c`, `/mnt/d` rānei:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. I Windows, i te kōpaki `mobile` ōrite, hangaia te taupānga:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Ka rere te kōpaki `Release` i te PC nāna i hanga. Mō tētahi atu PC, puritia te kōpaki katoa, ka tāpiri i te wāhanga whakahaere Visual C++ ki te taha o `immuch360.exe`. Mai i te pūtake o te tārua, ka tāruatia e te hōtuhi pūtea, ka waiho ngā mea mō Android anake, ka tirotiro kei te kōpaki, kei Windows tonu rānei ia DLL ka utaina e te taupānga, ā, ka hanga i te ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+Ka whakahaere te CI o te peka `desktop` (`.github/workflows/immuch360-desktop.yml`) i ngā kēti waea me te huinga whakamātautau katoa i Linux, i ngā whakamātautau papamahi i Windows, ā, ka hanga i te ZIP ōrite; kāore anō ōna mahi Linux me macOS (`flutter build linux` me `flutter build macos`, me te `-t lib/main_desktop.dart` ōrite) kia rere i aua pūnaha.
+
 <a id="where-to-get-it"></a>
 ## Me pēhea te whiwhi
 
-Kei Google Play te taupānga mō ngā waea me ngā papahiko; kei te tatari te putanga App Store ki te arotake a Apple, kua whakaaetia te whakarārangitanga Meta Horizon Store, ā, kei te arotake a Meta tōna whakahōu tuatahi, ā, kei te tatari te putanga Google Play mō ngā pouaka whakaata ki te arotake a Google i te tuku pouaka whakaata. Ko te tuku GitHub te hanga hou rawa i ngā wā katoa:
+Kei Google Play te taupānga mō ngā waea me ngā papahiko; kei te tatari te putanga App Store ki te arotake a Apple, kua whakaaetia te whakarārangitanga Meta Horizon Store, ā, kei te arotake a Meta tōna whakahōu tuatahi, ā, kei te tatari te putanga Google Play mō ngā pouaka whakaata ki te arotake a Google i te tuku pouaka whakaata. He arokite i GitHub a Immuch360 Desktop, mō Windows. Ko te tuku GitHub te hanga hou rawa i ngā wā katoa:
 
 - **Ngā waea me ngā papahiko Android**
   - I tēnei rā: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), te APK rānei i te whārangi [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` mō tētahi waea (ka mahi te `Immuch360-v<version>-release.apk` whānui ki hea, mō ngā waea 32 moka tawhito te `-armeabi-v7a`, ā, mō Google Play te kōnae `.aab`, kaua mō te sideload). Kei mua te hanga GitHub i te toa i te nuinga o te wā. Ahakoa he aha, ka tāuta i te taha o te taupānga Immich ōkawa (mōkihi `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ Kei Google Play te taupānga mō ngā waea me ngā papahiko; kei te tatari te pu
 - **Android TV me Google TV (mai i te hanga 20)**
   - I tēnei rā: te `Immuch360-v<version>-release.apk` whānui o te whārangi [Releases](https://github.com/freeKC/Immuch360/releases), kua sideload ki te adb, tirohia [Tāuta ki te pouaka whakaata](#install-it-on-the-tv). Ko te taupānga ōrite ki ngā waea.
   - Ākuanei: Google Play i ngā pouaka whakaata, i muri i te arotake a Google i te tuku pouaka whakaata.
+- **Windows 10 me 11, 64 moka (arokite)**
+  - I tēnei rā: Immuch360 Desktop, te ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` o te [tuku-mua papamahi](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), kua wetekōpakihia, kua tīmataria pēnei i tā [Tikiake me te tāuta i Windows](#download-and-install-on-windows) e kī ana. He whakaahua anake i tēnei wā: ka tae mai ngā ataata me ngā hanga papamahi e whai ake nei.
+  - Ākuanei: te pūrei ataata; he kaitāuta, he hanga kua hainatia me ngā whakahōu ā muri ake.
 
 Ka tāpiritia ki konei ngā hononga App Store me Meta Horizon Store ina whakaputaina ngā whakarārangitanga. Takiuru me tō URL tūmau Immich me tō pūkete noa, pātō rānei i te “Whakamahia me te kore tūmau” i te whārangi takiuru kia tīmata ki ngā whakaahua me ngā ataata o te pūrere tonu. Kāore te APK mai i GitHub e whakahou i a ia anō: mātakitakihia te whārangi Releases, ā, ina tāuta koe i te taupānga mai i tētahi toa, tikina ngā whakahōu mai i taua toa.
 
@@ -993,12 +1105,15 @@ Ko te `quest` ka whāia te SDK 34, ā, ka pupuri noa i ngā whakaaetanga e whaka
 
 Hei hanga mō iOS i tō ake Mac, whakamahia a Xcode me tō ake tīma haina; me Xcode 26, whakahaerehia a `xcodebuild -downloadComponent MetalToolchain` kotahi te wā i te tuatahi, nō te mea e hiahiatia ana e ngā kaiwhakamarumaru Spatial. Me te kore Mac, ka rere ngā hanga iOS i Codemagic (he Mac kua manaakitia) mai i te kōnae `codemagic.yaml` o tēnei pūkete. Ka rere ngā hanga tuku Android i GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Ka hangaia a Immuch360 Desktop, te putanga Windows, mai i te peka `desktop` me Flutter mō Windows: kei [Hangaia e koe anō i Windows](#build-it-yourself-on-windows) ngā hipanga.
+
 Kāore he muna e noho ana i tēnei pūkete: ka penapenatia te kī haina Android hei muna GitHub Actions kua whakamunatia, ā, ka penapenatia ngā rauemi haina Apple hei taurangi kua whakamunatia i Codemagic. Ka tohu noa ngā kōnae rerenga mahi ki a rātou mā te ingoa. Me te kore tō ake `android/key.jks`, ka hainatia tētahi hanga tuku ki te kī patuiro, ā, kāore e taea te tāuta ki runga i tētahi tārua nō GitHub, nō tētahi toa rānei (wetetāutahia tērā i te tuatahi); ka tāuta tētahi hanga patuiro i tōna taha hei Immuch360 debug. Ko te tārua Meta Horizon Store ko te APK `quest` o te tuku kua hainatia ki tētahi atu kī, te kī i rēhitatia tuatahitia ai te taupānga toa, nō reira kāore hoki e taea te tāuta ki runga i tētahi APK kua sideload, i te huringa kōaro rānei.
 
 ### Ngā peka
 
 - **`main`**: Immich `main` i te tuku e ahu mai ai a `immuch360` (29 o Mahuru 2026 mō ngā hanga o nāianei), kāore rawa e panonitia; ka neke whakamua ina rebase te peka ki runga i tētahi Immich hou ake.
 - **`immuch360`**: ngā panonitanga o tēnei peka i runga ake i a Immich. Ka kī ia tuku ko tēhea putanga Immich e ahu mai ai.
+- **`desktop`**: Immuch360 Desktop, te putanga rorohiko, i runga ake i `immuch360`. Ka hanumitia ngā tuku waea ki roto, ā, ka hangaia ngā tuku-mua papamahi mai i reira (te hanga papamahi 1 mai i te commit 21f285c34, te hanga waea 20 me te putanga rorohiko). Kāore he mea i raro i `mobile/android` me `mobile/ios` e panoni ana i runga.
 
 <a id="logs"></a>
 ## Ngā rangitaki
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Mai i te hanga 19 ka tuhi anō te kiritaki DLNA, te tiritiri waea me te kitenga o te pāpāho mokowā Apple ki te rangitaki ake o te taupānga (“Logs” (Rangitaki), i te tahua o te pikitia kōtaha kei runga matau), i raro i `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` me `NetworkMediaService`. Mai i te hanga 20 ka tuhi te aratau pouaka whakaata ki reira i raro i `TvMode` me `TvTextEntry`, ngā tūmau Plex i raro i `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` me `PlexServerEditPage`, ā, ngā kāmera Tapo i raro i `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` me `CameraLiveView`; kāore rawa ngā rārangi Plex e mau i te tohu, i tētahi wāhitau, i tētahi taitara rānei, ā, ka waiho e ngā rārangi kāmera ngā kupuhipa. Ka noho ngā rārangi rangitaki ki te pūrere ki te kore koe e tārua i a koe anō.
 
+I tētahi rorohiko (Immuch360 Desktop), kei te whārangi “Logs” (Rangitaki) hoki te “Save logs to a file” (Tiaki i ngā rangitaki ki tētahi kōnae): te rangitaki, he ZIP rānei o te rangitaki me ngā pūrongo o ngā tukinga whakamutunga ina he mea anō (ka mutu tōna ingoa tūtohu ki te “with-crash-reports”). He minidump iti tētahi pūrongo tukinga: ngā miro, te wāhi i tū ai rātou me ngā mea anake e hiahiatia ana hei whai i ō rātou karanga, me ngā ingoa o ngā kōnae papatono engari kaua ō rātou kōpaki; kaua te pūmahara o te taupānga. Tirohia te rangitaki i mua i te tiritiri: tērā pea kei roto tō wāhitau tūmau.
+
 <a id="privacy"></a>
 ## Tūmataiti
 
@@ -1026,19 +1143,21 @@ Mai i te hanga 19 ka tuhi anō te kiritaki DLNA, te tiritiri waea me te kitenga 
 - **Pouaka whakaata**: ka pānuitia i te pūrere mēnā he pouaka whakaata te pūrere; kāore he mea e tukuna.
 - **Te tiritiri waea**: whatunga ā-rohe anake, me tētahi ingoa kaiwhakamahi me te kupuhipa, mā te HTTP noa (tirohia [Tiritiri i tēnei waea i te whatunga](#share-this-phone-on-the-network)).
 - **Kāmera**: ka whakamahia e te pūrei Spatial 2.5D anake, i te pūrere; kāore rawa ngā whakaahua e penapenatia, kāore rawa e tukuna ki hea.
+- **I tētahi rorohiko** (Immuch360 Desktop, arokite Windows): ka pānui te taupānga i ngā kōpaki ka kōwhiria e koe anake, ka pupuri i tōna taupū, karakōnui me te keteroki i te rorohiko, ā, ka penapena i ngā kupuhipa me ngā tohu me te whakamaru raraunga o Windows, mō tō pūkete Windows anake. Ka whai te tiritiri rorohiko i ngā ture o te tiritiri waea, ā, kāore e tīmata i tētahi whatunga ka tohua e Windows hei tūmatanui, kāore rānei e mōhiotia tōna momo, ki te kore koe e kī.
 
 Kei [PRIVACY.md](../PRIVACY.md) te kaupapahere katoa.
 
 <a id="license-and-trademark"></a>
 ## Raihana me te tohu hokohoko
 
-He peka tēnei kaupapa nō Immich, ā, ka noho tonu i raro i te [GNU AGPL v3](../LICENSE). Kei ia APK, tae atu ki ērā o ngā waea, te Meta Spatial SDK hoki, ehara nei i te puna tuwhera (Meta Platform Technologies SDK License Agreement), ā, ka whakamahia i ngā pōtae Meta Quest anake. Kāore a Immuch360 e hono ana ki te tīma Immich, ki FUTO rānei, kāore hoki i whakamanatia e rātou.
+He peka tēnei kaupapa nō Immich, ā, ka noho tonu i raro i te [GNU AGPL v3](../LICENSE). Kei ia APK, tae atu ki ērā o ngā waea, te Meta Spatial SDK hoki, ehara nei i te puna tuwhera (Meta Platform Technologies SDK License Agreement), ā, ka whakamahia i ngā pōtae Meta Quest anake; kāore i roto i Immuch360 Desktop, te putanga Windows. Kāore a Immuch360 e hono ana ki te tīma Immich, ki FUTO rānei, kāore hoki i whakamanatia e rātou.
 
 <a id="roadmap"></a>
 ## Mahere ara
 
 Ngā mea kāore anō kia oti, ko te mea tūpono rawa i te tuatahi. Ehara tētahi mea i konei i te kupu taurangi, ā, ka āwhina ngā urupare i te [pūaroturuki take](https://github.com/freeKC/Immuch360/issues) ki te whakatau he aha ka tae tuatahi.
 
+- **Immuch360 Desktop, ko Windows i te tuatahi**: kua puta te arokite tuatahi (tirohia [I tētahi rorohiko Windows](#on-a-windows-computer-immuch360-desktop-preview)). Ka whai ake, te pūrei ataata (ngā ataata papatahi i te tuatahi, kātahi ko te 360°, 3D, VR180 me ngā kōnae mata), ka inea i ngā kāri whakairoiro e rua o tētahi rorohiko pōnaho; kātahi ko te whakamātautau o ia mahinga i tētahi PC Windows me ōna whakatika; kātahi ko Spatial 2.5D me te kāmera tukutuku; kātahi ko Linux me macOS, ngā mōkihi, te haina me ngā whakahōu.
 - **Google Play**: kei te ora te hanga 18; kei te arotake a Google te hanga 20 mai i te 7 o Whiringa-ā-nuku 2026, hei whakakapi i te hanga 19. Kāore te hanga 21 e panoni i tētahi mea i ngā waea me ngā papahiko.
 - **App Store**: kei te tatari te putanga 3.3.0 ki te arotake a Apple; kei a ia ngā āhuatanga o te hanga 11, nō reira ko te tukuake ki Immich me te arowhai pūwetewete ataata (hanga 15) me ngā kōnae Insta360 mata (hanga 16) ka tae mai me te whakahōu App Store e whai ake ana. Ka tāpiritia te hononga ki konei ina ora.
 - **Meta Horizon Store**: i whakaaetia e Meta te whakarārangitanga i te 7 o Whiringa-ā-nuku 2026 me te hanga 14. Kua tukuna te hanga 21 hei whakahōu tuatahi: ka mauria mai ngā mea katoa mai i te hanga 14 (ngā tukuake mai i tētahi tiritiri ki Immich, te puna ataata ka kōwhiria i ngā mea ka taea e te pōtae te wetewaehere, ngā kōnae mata Insta360, GoPro me DJI, DLNA, te tiritiri waea, ngā whakaahua mokowā Apple, ngā pātaka Plex Media Server, ngā kāmera Tapo), ā, ka whakarārangitia e te toa mō te Quest 2, te Quest Pro, te Quest 3 me te 3S. Ka tāpiritia te hononga toa ki konei ina tūmatanui te whārangi; me wetetāuta i te tuatahi tētahi tārua kua sideload (tirohia [Tāuta](#install)).

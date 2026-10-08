@@ -5,7 +5,7 @@
 
 # Immuch360
 
-Immuch360 ass d'Immich-App fir den Handy mat 360°-Fotoen a -Videoen, an deenen Dir Iech ronderëm kucke kënnt, an e gratis Player fir flaach, 360°-, 3D- a VR180-Fotoen a -Videoen, op Android-Telefonen an -Tabletten, iPhonen an iPaden, op de Meta-Quest-Headsets (Quest 3 an 3S, an ab dem Build 21 d'Quest 2 an d'Quest Pro, net getest), an ab dem Build 20 op Android TV a Google TV.
+Immuch360 ass d'Immich-App fir den Handy mat 360°-Fotoen a -Videoen, an deenen Dir Iech ronderëm kucke kënnt, an e gratis Player fir flaach, 360°-, 3D- a VR180-Fotoen a -Videoen, op Android-Telefonen an -Tabletten, iPhonen an iPaden, op de Meta-Quest-Headsets (Quest 3 an 3S, an ab dem Build 21 d'Quest 2 an d'Quest Pro, net getest), an ab dem Build 20 op Android TV a Google TV. Immuch360 Desktop, déi selwecht App op engem Windows-Computer, ass als Preview eraus, kuckt [Op engem Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview).
 
 Si ass fir Leit, déi mat enger 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) oder mam Photo-Sphere-Modus vun engem Telefon fotograféieren, oder déi en Headset hunn, an hir eege Biller vun engem Immich-Server, vum Telefon selwer, vun engem NAS, vun engem Medieserver oder vun engem Plex-Server kucke wëllen: selwechte Server, selwechte Kont, keen Server-Plugin, oder guer keen Server. Ab dem Build 20 weist si och Tapo-Kameraen, live an d'Opnamen op hirer Späicherkaart.
 
@@ -18,13 +18,14 @@ Si ass fir Leit, déi mat enger 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360,
   <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
   App Store: <a href="#where-to-get-it">gëtt gepréift</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store guttgeheescht, de Build 21 als éischten Update agereecht<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a>
+  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">Preview eroflueden</a>
 </p>
 
 - 🌐 **Natiivt 360°**<br>Fotoen a Videoen als Kugel, an där Dir Iech mam Gyroskop ronderëm kuckt, rau Kamerafichieren abegraff (Insta360 ab dem Build 16, GoPro an DJI ab dem Build 18). Och e gratis Videoplayer: flaach, 360°, 3D, VR180
 - 👓 **Natiivt 3D**<br>Stereoskopescht 360° a VR180, uewen an ënnen oder nieftenee, an Apple-Raumfotoen (ab dem Build 19): richtegt 3D am Headset, een A op engem Telefon
 - 🎥 **Natiivt 2.5D**<br>Déift op engem flaachen Ecran aus engem stereoskopesche Video, d'Usiicht follegt Ärem Kapp (experimentell, Telefonen an Tabletten)
-- 📱 **Android, iOS, Quest, TV**<br>Eng App op Telefonen, Tabletten an de Headsets Quest 2, Pro, 3 an 3S, richtegt 3D am Headset, an ab dem Build 20 op Android TV mat der Fernbedienung
+- 📱 **Android, iOS, Quest, TV**<br>Eng App op Telefonen, Tabletten an de Headsets Quest 2, Pro, 3 an 3S, richtegt 3D am Headset, ab dem Build 20 op Android TV mat der Fernbedienung, an eng Windows-Preview
 - 🔌 **Mat oder ouni Server**<br>Ären Immich-Server, oder d'Galerie vum Telefon selwer, kee Kont néideg
 - 🗄️ **Netzwierkfreeginn**<br>Samba (SMB), WebDAV an, ab dem Build 19, DLNA-Medieserveren, am Netzwierk fonnt a live gelies, näischt gëtt erofgelueden, an op Immich geschéckt, wann Dir et wëllt. Ab dem Build 19 deelt en Telefon och seng eege Galerie mam Headset
 - 📺 **Um Fernseh**<br>Ab dem Build 20 déi selwecht APK op Android TV a Google TV: 360°-Fotoen a -Videoen, Äre Server an Är Freeginnen, mat der Fernbedienung
@@ -52,6 +53,7 @@ Si ass fir Leit, déi mat enger 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360,
 - [Am Verglach mat der Immich-App an aneren Appen](#compared-with-the-immich-app-and-other-apps)
 - [Formater a Quellen, no Plattform](#formats-and-sources-by-platform)
 - [Meta Quest 3](#meta-quest-3)
+- [Op engem Windows-Computer: Immuch360 Desktop (Preview)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Wou kritt een et](#where-to-get-it)
 - [Selwer bauen](#build-it-yourself)
 - [Logs](#logs)
@@ -77,6 +79,7 @@ Si ass fir Leit, déi mat enger 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360,
 - **"Ech wëll meng 360°-Fotoen a -Videoen, an d'Videoe vu mengem NAS oder vu mengem Plex-Server, um Fernseh kucken, mat der Fernbedienung."** Kuckt [Um Fernseh kucken](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ech fannen meng 360°-Biller net ënner all deenen aneren."** Kuckt [D'360°-Lëscht](#find-your-360-shots-the-360-list).
 - **"Mäin 360°-Video ruckelt oder spillt eng onschaarf Kopie of."** Kuckt [Videodetailer an Decoderen](#video-details-decoders-and-why-a-video-stutters).
+- **"Ech wëll meng 360°-Fotoen a meng Immich-Bibliothéik op mengem Windows-PC, mat de Fotoe vu sengen Dossieren, mengem NAS a mengem Plex-Server, an de PC mat mengem Headset gedeelt."** Kuckt [Op engem Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview) (eng Preview, fir de Moment nëmme Fotoen).
 - **"Behalen ech dat, wat d'Immich-App mécht?"** Jo, mat zwou klengen Ännerungen, kuckt [Alles anescht ass Immich](#everything-else-is-immich).
 
 Wann eng Funktioun nei ass, steet am Text, ab wéi engem Build se do ass. D'GitHub-Release huet ëmmer den neiste Build, d'Stores kommen duerno: kuckt [Wou kritt een et](#where-to-get-it).
@@ -749,6 +752,7 @@ Den aktuelle Build, de Build 21 (Versioun 3.3.0-rc.0, Buildnummer 3030019), bas�
 | Bibliothéike vun engem Plex Media Server, vun den Originalfichieren ofgespillt, doheem an ënnerwee, ouni plex.tv | ❌ | ✅ ab dem Build 20, all Betruechter, op Telefonen, Tabletten, der Quest a Fernseher |
 | Tapo-Kameraen: d'Live-Bild, an d'Opnamen op der Späicherkaart, op Immich geschéckt, wann Dir et wëllt | ❌ | ✅ ab dem Build 20: Opnamen iwwerall, live op Android, Android TV an der Quest |
 | Android TV a Google TV, mat der Fernbedienung bedéngt, an der selwechter APK | ❌ keng Fernseh-App | ✅ ab dem Build 20 |
+| Déi selwecht App op engem Windows-Computer | ❌ nëmmen Telefonen an Tabletten | ✅ Preview, nach keng Videoen |
 | Rau Insta360-.insp-Fotoen a .insv-Videoe mat enger Spuer | ❌ flaach | ✅ ab dem Build 16 |
 | Rau Videoe mat engem Objektiv pro Spuer oder pro Fichier (Insta360 X4, X4 Air, X5, X6, X3-Pairen, GoPro .360, DJI .osv) | ❌ flaach oder falsch | ✅ ab dem Build 18 |
 | Dual-Fisheye-.dng | ❌ flaach | ❌ nach net |
@@ -778,6 +782,7 @@ Den aktuelle Build, de Build 21 (Versioun 3.3.0-rc.0, Buildnummer 3030019), bas�
 - **Plex Media Server**: vun engem Computer aus géint en echte Plex Media Server 1.42.1 getest (Verbindung, Dossieren, Byte-Beräicher, Miniaturen, d'Adress ausserhalb vun doheem); nach net op engem Apparat getest.
 - **Tapo-Kameraen**: géint eng simuléiert Kamera getest; nach net mat enger echter Kamera getest.
 - **Android TV a Google TV**: duerch automatesch Tester gepréift; nach net op engem Fernseh getest.
+- **Déi selwecht App op engem Windows-Computer**: 475 automatesch Desktop-Tester op Windows, an op engem Windows-11-PC start d'App, mécht eng gespäichert Sessioun op engem Immich-Server op, synchroniséiert a mécht propper zou; den Test vun all Funktioun mat der Hand leeft nach.
 - **Rau Insta360-.insp-Fotoen a .insv-Videoe mat enger Spuer**: Fotoe géint Insta360-Studio-Exporter vun X3-Fichieren getest, Videoen op engem Android-Emulator mat engem X3-Fichier mat niddreger Opléisung; nach net op engem iPhone gelaf.
 - **Rau Videoe mat engem Objektiv pro Spuer oder pro Fichier**: Parser an Zesummesetzen op echten X4-, X3-Pair-, GoPro-MAX- an Osmo-360-Fichieren getest; d'Ofspillen ass den Apparatstest vun de Builds 18 an 19.
 - **Dual-Fisheye-.dng**: geplangt.
@@ -883,12 +888,15 @@ Immuch360 ass eng Galerie, an et ass och e gratis Medieplayer: et spillt dat of,
 
 D'Android-TV- a Google-TV-Agäng, ab dem Build 20, sinn nach net op engem Fernseh getest, kuckt [Um Fernseh kucken](#watch-on-your-tv-android-tv-and-google-tv); d'Kamera-Agäng sinn nach net mat enger echter Kamera getest.
 
+Op Windows weist d'Preview vun Immuch360 Desktop d'Fotoen, flaach an 360°, och déi rau Insta360-.insp-Fotoen, mat der Maus an der Tastatur, vum Server, aus den Dossiere vum PC, de Freeginnen a Plex; Videoe spillt se nach net of, si weisen e Plazhalter (kuckt [Nach net do](#not-there-yet)).
+
 - **Ären Immich-Server**: d'Original oder den transkodéierte Stream vum Server, esou wéi Settings, Asset Viewer, Videoquell et seet (kuckt [Videodetailer an Decoderen](#video-details-decoders-and-why-a-video-stutters)). Selwechte Kont wéi d'Web-App.
 - **Den Telefon oder den Headset selwer**: "Ouni Server benotzen" op der Umeldungssäit, oder den Element On this device am Tab Bibliothéik.
 - **En NAS oder e Computer**: SMB- a WebDAV-Freeginnen, an ab dem Build 19 DLNA-Medieserveren, am Netzwierk fonnt, live gelies (e SMB-Video iwwer bis zu sechs Verbindungen), näischt kopéiert; ab dem Build 15 kënnen d'Fichieren, déi Dir auswielt, op Ären Immich-Kont geschéckt ginn.
 - **En aneren Telefon (ab dem Build 19)**: "Dësen Telefon am Netzwierk deelen" op deem Telefon: den Headset, oder all WebDAV-Client am Netzwierk, liest seng Alben, Méint an 360°-Medien.
 - **E Plex Media Server (ab dem Build 20)**: seng Foto-, Film- a Fernsehseriebibliothéiken no Dossier, d'Originalfichieren live iwwer HTTPS gelies, géint dat eegent Zertifikat vum Server gepréift, doheem oder iwwer d'Adress ausserhalb vun doheem, op all Plattform; kuckt [Plex Media Server, ouni plex.tv](#plex-media-server-without-plextv).
 - **Eng Tapo-Kamera (ab dem Build 20)**: d'Live-Bild mam Kamerakont (Android, Android TV, d'Quest), an d'Opnamen op hirer Späicherkaart mam Passwuert vum TP-Link-Kont (all Plattform), nëmmen am lokalen Netzwierk; kuckt [Tapo-Kameraen](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **D'Dossiere vun engem Windows-Computer (Desktop-Preview)**: d'Dossieren, déi Dir an Immuch360 Desktop auswielt, gelies amplaz vun der Galerie vun engem Telefon; de Computer kann se och mam Headset deelen, kuckt [Op engem Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
 ## Meta Quest 3
@@ -948,10 +956,111 @@ Biller, déi am Headset mam Capture-Knäppchen (Meta-Knäppchen an Trigger) op e
 - **Gréisst vun der APK**: de Spatial SDK bréngt ongeféier 56 MB natiive 64-Bit-ARM-Code derbäi, och op Telefonen, wou en ni gelueden gëtt.
 - **Lizenz**: d'immersiv Usiicht benotzt de Meta Spatial SDK, deen ënner dem Meta Platform Technologies SDK License Agreement verdeelt gëtt.
 
+<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
+## Op engem Windows-Computer: Immuch360 Desktop (Preview)
+
+Är Immich-Bibliothéik ass op engem Server, aner Fotoe leien an den Dossiere vum PC, d'Videoen op engem NAS oder engem Plex-Server, an Dir wëllt Iech an Ären 360°-Fotoen op engem grousse Bildschierm ronderëm kucken, oder d'Fotoe vum PC am Headset weisen. Immuch360 Desktop ass déi selwecht App op engem Windows-Computer, aus deene selwechte Quelle gebaut wéi d'Telefon-Apps.
+
+Op engem Computer bitt Immich seng Web-App an engem Browser un. **Wat Immuch360 Desktop dobäisetzt**: d'Dossiere vum PC ouni Server an ouni Kont, SMB-, WebDAV-, DLNA- a Plex-Freeginnen, aus der App duerchsicht, rau Insta360-.insp-Fotoen als Kugel opgemaach, an de PC doheem mat enger Meta Quest gedeelt.
+
+Dësen éischte Build ass eng Preview: Fotoe funktionéieren, Videoe kommen mat den nächsten Desktop-Builds. D'Apps fir Telefon, Tablet, Quest a Fernseh änneren sech domat net a behalen den Numm Immuch360.
+
+<a id="download-and-install-on-windows"></a>
+### Op Windows eroflueden an installéieren
+
+Den éischte Build ass d'GitHub-Pre-Release [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Säi Fichier ass `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33.5 MB, 65 Fichieren no dem Auspaken), mat `SHA256SUMS.txt` fir en ze kontrolléieren. E gouf aus der Branche `desktop` beim Commit 21f285c34 gebaut: den Telefon-Build 20 plus d'Computerversioun. E brauch Windows 10 oder 11, 64 Bit.
+
+1. Luet d'ZIP erof a paakt se iergendwou aus, zum Beispill an Documents.
+2. Start `immuch360.exe` aus dem ausgepaakten Dossier. Loosst den Dossier ganz: de Programm brauch d'Fichieren dernieft.
+3. D'Fichiere sinn nach net signéiert, dofir kann Windows SmartScreen "Windows protected your PC" weisen: wielt "More info", dann "Run anyway". Wou Smart App Control un ass, blockéiert et net signéiert Programmer.
+4. Waart op d'Fënster. Den éischte Start vun engem neie Build dauert tëscht 10 Sekonnen an ongeféier enger Minutt, wahrscheinlech well Microsoft Defender déi nei Fichiere scannt: start d'App an der Zäit net nach eng Kéier. Déi nächst Starte daueren eng oder zwou Sekonnen.
+5. Op der Umeldungssäit meld Iech op Ärem Immich-Server mat senger Adress, Ärer E-Mail an Ärem Passwuert un, oder klickt op "Ouni Server benotzen".
+
+Fir d'ZIP ze kontrolléieren, lancéiert `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` an enger Kommandozeil, am Dossier vum Download: d'Resultat ass dat, wat an `SHA256SUMS.txt` steet. Et gëtt nach keen Installateur an keen automateschen Update: kuckt op d'Säit [Releases](https://github.com/freeKC/Immuch360/releases), a paakt den nächste Build op déi selwecht Aart aus.
+
+### Wat d'Preview mécht
+
+- **Ären Immich-Server**: d'Timeline, Alben, Leit, Erënnerungen a Sich, an d'Fotoe vum Server a voller Gréisst, wéi op engem Telefon.
+- **Ouni Server**: d'Dossiere vun Äre Fotoen a Videoen (Pictures a Videos ginn proposéiert) ersetzen d'Galerie vun engem Telefon. Näischt gëtt ausserhalb vun den Dossieren gelies, déi Dir ausgewielt hutt, an ouni Server verléisst näischt de Computer.
+- **Eroplueden a Sécherung** aus deenen Dossieren op Ären Immich-Server, soulaang d'App op ass.
+- **360°-Fotoen als Kugel**, mat der Maus an der Tastatur; déi rau .insp-Fotoe vun Insta360-Kameraë ginn op wéi op Telefonen.
+- **Netzwierkfreeginnen**: Samba (SMB), WebDAV an DLNA-Medieserveren, a Plex-Serveren ouni plex.tv, duerchsicht wéi op Telefonen: hir Fotoe ginn op, hir Videoe waarden op de Videoplayer (kuckt [Nach net do](#not-there-yet)). Fir Tapo-Kameraen, d'Opnamen op der Späicherkaart: d'Lëscht, an d'Eroflueden vun engem Clip.
+- **Dëse Computer am Netzwierk deelen**: d'Alben, Méint an 360°-Medie vun Ären Dossieren, nëmme fir ze liesen, fir eng Meta Quest oder en aneren Apparat doheem, sou wéi en Telefon sech selwer deelt.
+- **Fichieren**: Downloads vum Server kommen an en Dossier, deen Dir auswielt, "An en Dossier späicheren" behält eng Kopie vun den ausgewielte Fotoen a Videoen, an d'Säit Logs huet "Logs an e Fichier späicheren".
+
+### Op engem Computer benotzen
+
+1. **Wielt Är Dossieren.** Ouni Server fänkt d'Timeline mat "Wielt d'Dossiere vun Äre Fotoen a Videoen" un: klickt op "En Dossier derbäisetzen". Mat engem Server weist sech déi selwecht Kaart an der Bibliothéik ënner "Op dësem Computer", an an den Alben fir d'Sécherung, bis en Dossier ausgewielt ass. Duerno hu se eng Zeil "Dossieren op dësem Computer", an d'Settings och, "Dëse Computer".
+2. **Cloud-, USB- an Netzwierkdossieren.** Fichieren, déi OneDrive (oder eng aner Cloud) nëmmen online hält, ginn gezielt, awer net gelies, sou datt d'Derbäisetze vun engem Dossier net Är ganz Cloud eroflued: "Eroflueden an derbäihuelen" hëlt se, wann Dir se wëllt. Eng USB-Disk, déi ënner engem anere Buschtaf zréckkënnt, behält hir Fotoen. Netzwierkdossieren, an Dossieren op enger Späicherkaart oder enger USB-Disk (fir datt Windows se nach auswerfe kann), ginn net op Ännerungen iwwerwaacht: benotzt Aktualiséieren, nodeems Dir do Fichieren derbäigesat hutt.
+3. **An enger 360°-Foto ronderëm kucken**: mat der Maus zéien, mam Rad, engem Duebelklick oder + an - zoomen (op all Tastaturlayout, och AZERTY), mat de Pfeiltasten beweegen. F oder F11 wiesselt op de ganze Bildschierm an Escape verléisst en; Home an End ginn op déi éischt an déi lescht Foto; I weist d'Detailer.
+4. **Vu Foto zu Foto goen**: an enger flaacher Foto ginn déi lénks a riets Pfeiler, oder d'Chevronen, déi sech u de Rand weisen, wann d'Maus sech beweegt, op déi vireg an déi nächst. Buschtawen, déi am Beschreiwungsfeld getippt ginn, bleiwen am Text.
+5. **De Computer mam Headset deelen**: maacht d'Bibliothéik op, dann Netzwierkfreeginn; déi éischt Kachel ass "Dëse Computer am Netzwierk deelen", d'Computersäit vun [Dësen Telefon am Netzwierk deelen](#share-this-phone-on-the-network). Maacht "Fotoen a Videoen am Netzwierk deelen" un, dann setzt de Computer am Headset derbäi, wéi deen Abschnitt et seet. D'Deele stoppt, wann d'App zougemaach gëtt oder no enger Stonn ouni Benotzung.
+6. **D'Netzwierk erlaben**: Windows kann froen, ob Immuch360 Desktop d'Netzwierk benotzen däerf. Erlaabt et op private Netzwierker, soss fënnt den Headset de Computer net. Op engem Netzwierk, dat Windows als ëffentlech markéiert (e Café, en Hotel), oder engem, deem säin Typ et net erkennt, start d'Deelen net, ausser Dir wielt "Fir dës Sessioun deelen", an de Computer mellt sech nëmmen op engem Netzwierk, op deem en deelt.
+7. **Settings, "Dëse Computer"**: d'Dossieren, den Download-Dossier, den Netzwierkadapter fir Freeginnen ze fannen an de Computer ze deelen (wann e méi der huet, Wi-Fi an Ethernet zum Beispill), a vertrauenswierdeg Zertifikater: d'Zertifizéierungsstell vun Ärem eegene Server, als PEM-Fichier, fir eng HTTPS-Adress, där Windows net vu sech aus vertraut. Client-Zertifikater ginn an de Settings, Advanced importéiert, wéi op Telefonen.
+
+### Am Verglach mat den Telefon-Apps
+
+- **D'Sécherung leeft, soulaang d'App op ass** (oder miniméiert), net am Hannergrond bei zouener Fënster. D'Fënster zoumaachen, wärend Uploads lafen, oder wärend de Computer gedeelt gëtt, freet als éischt.
+- **Dossieren amplaz vun enger Galerie**: d'App liest d'Dossieren, déi Dir auswielt, an hält hiren eegenen Index, Miniaturen a Cache um Computer.
+- **Eng Fënster**: d'App eng zweete Kéier opmaachen bréngt déi éischt Fënster zréck, amplaz eng zweet Kopie ze starten.
+- **Näischt gëtt aus Ären Dossiere geläscht**: "Vum Apparat läschen" ass verstoppt, a Läschen hëlt nëmmen d'Kopie um Server ewech, bis d'App Fichieren an de Pabeierkuerf vu Windows schécke kann.
+- **Maus an Tastatur** amplaz vu Touch an dem Gyroskop.
+
+<a id="not-there-yet"></a>
+### Nach net do
+
+- **Videoen**: fir de Moment weise se e Plazhalter, an hir Miniaturen e Film-Symbol. D'Ofspille kënnt als nächst: als éischt flaach Videoen, dann 360°-, 3D- a VR180-Videoen an déi rau 360°-Videoen.
+- **Spatial 2.5D**, méi spéit mat der Webcam; d'**Tapo-Live-Bild**; d'**Kaart** an d'Plazen-Usiicht; **Umeldung mat OAuth** (meld Iech amplaz mat enger E-Mail an engem Passwuert un); **Google Cast**; **Notifikatiounen**.
+- **En Installateur, e signéierte Build an automatesch Updates**: dëse Build ass en Dossier mat `immuch360.exe`.
+- **Linux a macOS**: hir Projete sinn an de Quellen, awer si goufen op deene Systemer nach net gebaut oder probéiert; si kommen no Windows.
+- **Iwwersetzungen**: déi nei Texter vun der Computerversioun sinn fir de Moment op Englesch.
+
+### Bekannte Problemer
+
+- **Wärend den Headset e Fichier vum gedeelte Computer liest** (e Video, deen e spillt, eng Foto, déi en erofluet), kann Windows dee Fichier net ëmbenennen, verréckelen oder läschen a seet, en wier an Immuch360 Desktop op: stoppt als éischt d'Ofspillen. Sécherungen halen Är Fichieren net op déi Aart: e Fichier kann ëmbenannt, verréckelt oder geläscht ginn, wärend en eropgeluede gëtt.
+- **Rau Kanten**: d'Funktiounen uewendriwwer bestinn hir automatesch Tester op Windows (475 Desktop-Tester), an op engem Windows-11-PC start d'App, mécht eng gespäichert Sessioun op engem Immich-Server op, synchroniséiert a mécht propper zou. Den Test vun all Funktioun mat der Hand op engem richtege PC leeft nach.
+
+Wann eppes schifgeet, maacht w.e.g. en [Issue](https://github.com/freeKC/Immuch360/issues) op, mam Log, deen Dir vun der Säit Logs gespäichert hutt, kuckt [Logs](#logs). Kontrolléiert de Log, ier Dir en deelt: en kann Är Serveradress enthalen.
+
+<a id="build-it-yourself-on-windows"></a>
+### Selwer op Windows bauen
+
+Dir braucht Windows 10 oder 11 op x64, Flutter 3.47.2 fir Windows, Visual Studio 2022 oder seng Build Tools mat der Workload "Desktop development with C++", den Developer Mode an de Windows-Astellungen ugeschalt (Flutter brauch en fir d'Plugins), a Python 3 fir de Bundle-Skript.
+
+1. Huelt d'Branche `desktop` a lancéiert d'Code-Generatioun. Si benotzt Java an Node, lancéiert se also op Linux, macOS oder an WSL; mat WSL, loosst de Klon op enger Windows-Disk, déi WSL ënner `/mnt/c` oder `/mnt/d` gesäit:
+
+   ```bash
+   git clone https://github.com/freeKC/Immuch360.git
+   cd Immuch360
+   git switch desktop
+   cd mobile
+   mise install
+   mise run install
+   mise run codegen
+   ```
+
+2. Op Windows, am selwechten Dossier `mobile`, baut d'App:
+
+   ```bat
+   flutter pub get
+   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
+   flutter run -d windows -t lib/main_desktop.dart
+   REM the app, in build\windows\x64\runner\Release\immuch360.exe
+   flutter build windows --release -t lib/main_desktop.dart
+   ```
+
+3. Den Dossier `Release` leeft op dem PC, deen en gebaut huet. Fir en anere PC, behaalt de ganzen Dossier a setzt d'Visual-C++-Runtime nieft `immuch360.exe`. Vun der Wuerzel vum Klon kopéiert de Bundle-Skript se, léisst ewech, wat nëmmen Android déngt, kontrolléiert, datt all DLL, déi d'App lued, am Dossier oder a Windows selwer ass, a mécht d'ZIP:
+
+   ```bat
+   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
+   ```
+
+D'CI vun der Branche `desktop` (`.github/workflows/immuch360-desktop.yml`) leeft d'Telefon-Kontrollen an déi ganz Testsuite op Linux, d'Desktop-Tester op Windows, a baut déi selwecht ZIP; hir Linux- a macOS-Jobs (`flutter build linux` an `flutter build macos`, mam selwechte `-t lib/main_desktop.dart`) sinn op deene Systemer nach net gelaf.
+
 <a id="where-to-get-it"></a>
 ## Wou kritt een et
 
-D'App ass op Google Play fir Telefonen an Tabletten; d'Versioun am App Store waart op d'Préiwung vun Apple, d'Fiche am Meta Horizon Store ass guttgeheescht an hiren éischten Update gëtt vu Meta gepréift, an d'Versioun op Google Play fir Fernseher waart op d'Préiwung vun der Fernseh-Release duerch Google. D'GitHub-Release ass ëmmer den neiste Build:
+D'App ass op Google Play fir Telefonen an Tabletten; d'Versioun am App Store waart op d'Préiwung vun Apple, d'Fiche am Meta Horizon Store ass guttgeheescht an hiren éischten Update gëtt vu Meta gepréift, an d'Versioun op Google Play fir Fernseher waart op d'Préiwung vun der Fernseh-Release duerch Google. Immuch360 Desktop, fir Windows, ass eng Preview op GitHub. D'GitHub-Release ass ëmmer den neiste Build:
 
 - **Android-Telefonen an -Tabletten**
   - Haut: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder d'APK op der Säit [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fir en Telefon (déi universell `Immuch360-v<version>-release.apk` funktionéiert iwwerall, `-armeabi-v7a` ass fir méi al 32-Bit-Telefonen, an de Fichier `.aab` ass fir Google Play, net fir ze sideloaden). De GitHub-Build ass normalerweis virum Store. Esou oder esou gëtt se nieft der offizieller Immich-App installéiert (Package `com.aprogsys.immuch360`).
@@ -965,6 +1074,9 @@ D'App ass op Google Play fir Telefonen an Tabletten; d'Versioun am App Store waa
 - **Android TV a Google TV (ab dem Build 20)**
   - Haut: déi universell `Immuch360-v<version>-release.apk` vun der Säit [Releases](https://github.com/freeKC/Immuch360/releases), mat adb gesideloadt, kuckt [Op dem Fernseh installéieren](#install-it-on-the-tv). Et ass déi selwecht App wéi op Telefonen.
   - Geschwënn: Google Play op Fernseher, no der Préiwung vun der Fernseh-Release duerch Google.
+- **Windows 10 an 11, 64 Bit (Preview)**
+  - Haut: Immuch360 Desktop, d'ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` vun der [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), ausgepaakt a gestart, wéi [Op Windows eroflueden an installéieren](#download-and-install-on-windows) et seet. Fir de Moment nëmme Fotoen: Videoe kommen mat den nächsten Desktop-Builds.
+  - Geschwënn: Videoofspillen; en Installateur, e signéierte Build an Updates méi spéit.
 
 D'Linken op den App Store an de Meta Horizon Store kommen hei derbäi, soubal d'Fiche publizéiert sinn. Meld Iech mat Ärer gewinnter URL vum Immich-Server an Ärem Kont un, oder tippt op "Ouni Server benotzen" op der Umeldungssäit, fir mat den eegene Fotoen a Videoe vum Apparat unzefänken. D'APK vu GitHub aktualiséiert sech net selwer: kuckt op der Säit Releases no, a wann Dir d'App eemol aus engem Store installéiert hutt, huelt d'Updates aus deem Store.
 
@@ -993,12 +1105,15 @@ De `quest` zilt op d'SDK 34 a behält nëmmen d'Autorisatiounen, déi den Headse
 
 Fir op Ärem eegene Mac fir iOS ze bauen, benotzt Xcode an Ärt eegent Signing-Team; mat Xcode 26, lancéiert eemol virdrun `xcodebuild -downloadComponent MetalToolchain`, well d'Spatial-Shaderen et brauchen. Ouni Mac lafen iOS-Builds op Codemagic (e gehoste Mac) aus dem Fichier `codemagic.yaml` vun dësem Repository. Android-Release-Builds lafen op GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
+Immuch360 Desktop, d'Windows-Versioun, gëtt aus der Branche `desktop` mat Flutter fir Windows gebaut: d'Schrëtt sinn an [Selwer op Windows bauen](#build-it-yourself-on-windows).
+
 Keen Geheimnis ass an dësem Repository: den Android-Signaturschlëssel ass als verschlësselt GitHub-Actions-Secrets gespäichert, an d'Apple-Signaturmaterial als verschlësselt Variabelen op Codemagic. D'Workflow-Fichieren nennen se nëmmen mam Numm. Ouni Ären eegene `android/key.jks` gëtt e Release-Build mam Debug-Schlëssel ënnerschriwwen a kann net iwwer eng Kopie vu GitHub oder engem Store installéiert ginn (deinstalléiert déi als éischt); e Debug-Build gëtt dernieft als Immuch360 debug installéiert. D'Kopie am Meta Horizon Store ass d'`quest`-APK vun der Release, mat engem anere Schlëssel ënnerschriwwen, deem, mat deem d'Store-App fir d'éischt registréiert gouf, dofir kann se och net iwwer eng gesideloadt APK installéiert ginn, an ëmgedréint och net.
 
 ### Brancher
 
 - **`main`**: Immich `main` um Commit, op deem `immuch360` baséiert (29. September 2026 fir déi aktuell Builds), ni geännert; e geet virun, wann d'Fork op eng méi nei Immich-Versioun rebaséiert gëtt.
 - **`immuch360`**: d'Ännerunge vun dëser Fork iwwer Immich. All Release seet, op wéi enger Immich-Versioun se baséiert.
+- **`desktop`**: Immuch360 Desktop, d'Computerversioun, iwwer `immuch360`. D'Telefon-Releases ginn dran zesummegefouert, an d'Desktop-Pre-Releases ginn draus gebaut (Desktop-Build 1 vum Commit 21f285c34, den Telefon-Build 20 plus d'Computerversioun). Näischt ënner `mobile/android` an `mobile/ios` ännert sech do.
 
 <a id="logs"></a>
 ## Logs
@@ -1015,6 +1130,8 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Ab dem Build 19 schreiwen den DLNA-Client, d'Telefonfreeginn an d'Erkennung vun Apple-Raummedien och an dat eegent Log vun der App (Logs (Logbicher), am Menü vum Profilbild uewe riets), ënner `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` an `NetworkMediaService`. Ab dem Build 20 schreift de Fernsehmodus do ënner `TvMode` an `TvTextEntry`, d'Plex-Serveren ënner `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` an `PlexServerEditPage`, an d'Tapo-Kameraen ënner `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` an `CameraLiveView`; d'Plex-Zeilen enthalen ni den Token, eng Adress oder en Titel, an d'Kamerazeilen loossen d'Passwierder ewech. D'Logzeile bleiwen um Apparat, ausser Dir kopéiert se selwer.
 
+Op engem Computer (Immuch360 Desktop) huet d'Säit Logs och "Logs an e Fichier späicheren": de Log, oder eng ZIP vum Log an de Berichter vun de leschten Ofstierz, wann et der gëtt (hire proposéierten Numm hält dann op "with-crash-reports" op). E Crashbericht ass e klenge Minidump: d'Threads, wou se gestoppt hunn an nëmmen dat, wat gebraucht gëtt, fir hiren Opriff ze verfollegen, mat den Nimm vun de Programmfichieren, awer net hiren Dossieren; net de Späicher vun der App. Kontrolléiert de Log, ier Dir en deelt: en kann Är Serveradress enthalen.
+
 <a id="privacy"></a>
 ## Dateschutz
 
@@ -1026,19 +1143,21 @@ Ab dem Build 19 schreiwen den DLNA-Client, d'Telefonfreeginn an d'Erkennung vun 
 - **Fernseh**: ob den Apparat e Fernseh ass, gëtt um Apparat gelies; näischt gëtt geschéckt.
 - **Telefonfreeginn**: nëmmen dat lokaalt Netzwierk, mat Benotzernumm a Passwuert, iwwer einfacht HTTP (kuckt [Dësen Telefon am Netzwierk deelen](#share-this-phone-on-the-network)).
 - **Kamera**: nëmme vum Spatial-2.5D-Player benotzt, um Apparat; d'Biller ginn ni gespäichert an ni iergendwouhi geschéckt.
+- **Op engem Computer** (Immuch360 Desktop, Windows-Preview): d'App liest nëmmen d'Dossieren, déi Dir auswielt, hält hiren Index, Miniaturen a Cache um Computer, a späichert Passwierder an Tokens mam Dateschutz vu Windows, nëmme fir Äre Windows-Kont. D'Deele vum Computer follegt de Reegele vun der Telefonfreeginn, a start net op engem Netzwierk, dat Windows als ëffentlech markéiert, oder deem säin Typ et net erkennt, ausser Dir sot et.
 
 Déi komplett Dateschutzerklärung ass an [PRIVACY.md](../PRIVACY.md).
 
 <a id="license-and-trademark"></a>
 ## Lizenz a Mark
 
-Dëse Projet ass eng Fork vun Immich a bleift ënner der [GNU AGPL v3](../LICENSE). All APK, och déi fir Telefonen, enthält och de Meta Spatial SDK, deen net Open Source ass (Meta Platform Technologies SDK License Agreement) an nëmmen op Meta-Quest-Headsets benotzt gëtt. Immuch360 ass weder mam Immich-Team nach mat FUTO verbonnen, nach vun hinnen ënnerstëtzt.
+Dëse Projet ass eng Fork vun Immich a bleift ënner der [GNU AGPL v3](../LICENSE). All APK, och déi fir Telefonen, enthält och de Meta Spatial SDK, deen net Open Source ass (Meta Platform Technologies SDK License Agreement) an nëmmen op Meta-Quest-Headsets benotzt gëtt; Immuch360 Desktop, d'Windows-Versioun, enthält en net. Immuch360 ass weder mam Immich-Team nach mat FUTO verbonnen, nach vun hinnen ënnerstëtzt.
 
 <a id="roadmap"></a>
 ## Plang
 
 Wat nach net gemaach ass, dat Wahrscheinlechst als éischt. Näischt hei ass e Verspriechen, a Feedback am [Issue-Tracker](https://github.com/freeKC/Immuch360/issues) hëlleft ze decidéieren, wat als éischt kënnt.
 
+- **Immuch360 Desktop, Windows als éischt**: déi éischt Preview ass eraus (kuckt [Op engem Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview)). Als nächst d'Videoofspillen (als éischt flaach Videoen, dann 360°, 3D, VR180 an déi rau Fichieren), op deenen zwou Grafikkaarte vun engem Laptop gemooss; dann den Test vun all Funktioun op engem Windows-PC a seng Korrekturen; dann Spatial 2.5D mat der Webcam; dann Linux a macOS, Paketen, Signatur an Updates.
 - **Google Play**: de Build 18 ass online; de Build 20 gëtt zënter dem 7. Oktober 2026 vu Google gepréift, amplaz vum Build 19. De Build 21 ännert näischt op Telefonen an Tabletten.
 - **App Store**: d'Versioun 3.3.0 waart op d'Préiwung vun Apple; si huet d'Funktioune vum Build 11, dofir kommen d'Eroplueden op Immich an den Test vun de Videodecoderen (Build 15) an déi rau Insta360-Fichieren (Build 16) mam nächsten Update am App Store. De Link kënnt hei derbäi, wann se online ass.
 - **Meta Horizon Store**: Meta huet d'Fiche de 7. Oktober 2026 mam Build 14 guttgeheescht. De Build 21 ass als hiren éischten Update agereecht: hie bréngt alles zënter dem Build 14 (Uploads vun enger Freeginn op Immich, d'Videoquell no deem gewielt, wat den Headset decodéiert, rau Insta360-, GoPro- an DJI-Fichieren, DLNA, d'Telefonfreeginn, raimlech Apple-Fotoen, Bibliothéike vun engem Plex Media Server, Tapo-Kameraen), an de Store lëscht en fir d'Quest 2, d'Quest Pro, d'Quest 3 an 3S. De Link op de Store kënnt hei derbäi, soubal d'Säit ëffentlech ass; eng gesideloadt Kopie muss als éischt deinstalléiert ginn (kuckt [Installéieren](#install)).
