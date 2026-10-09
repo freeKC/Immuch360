@@ -13,14 +13,19 @@ Immuch360 היא אפליקציית Immich לנייד עם תמונות וסרט
   <sub>פורק לא רשמי. אין קשר ל-Immich או ל-FUTO. השם נקרא "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK ל-Android</a><br>
-  App Store: <a href="#where-to-get-it">בבדיקה</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, ‏Horizon Store אושר, בילד 21 הוגש כעדכון הראשון שלו<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">הורדת התצוגה המקדימה</a>, בילד מחשב 2
-</p>
+<div align="center">
+
+| פלטפורמה | איפה להשיג | מצב ב-9 באוקטובר 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> טלפונים וטאבלטים עם **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | בילד 20 ב-Google Play מאז 7 באוקטובר 2026, בילד 21 ב-GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ו-iPad** | App Store | גרסה 3.3.0 ממתינה לבדיקה של Apple; בינתיים [בנו אותה בעצמכם](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ו-3S | [APK](#meta-quest-3) · Horizon Store | הדף אושר, בילד 21 בבדיקה של Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ו-Google TV** | [APK](#install-it-on-the-tv) · Google Play | בילד 21 ב-GitHub; הדף ב-Google Play לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP של התצוגה המקדימה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | בילד מחשב 2 ב-Windows: תמונות וסרטונים שטוחים, סרטוני 360° בהמשך; macOS ו-Linux מאוחר יותר, מאותו קוד מקור |
+
+*המצב מתעדכן בכל גרסה; הפרטים ב[איפה להשיג](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° מובנה**<br>תמונות וסרטונים ככדור שמביטים בו לכל הכיוונים, עם הג'ירוסקופ, כולל קבצים גולמיים של המצלמה (Insta360 מבילד 16, ‏GoPro ו-DJI מבילד 18). וגם נגן וידאו חינמי: שטוח, 360°, ‏3D, ‏VR180
 - 👓 **3D מובנה**<br>360° סטריאוסקופי ו-VR180, למעלה ולמטה או זה לצד זה, ותמונות מרחביות של Apple (מבילד 19): 3D אמיתי במשקפת, עין אחת בטלפון
@@ -1072,7 +1077,7 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
 
 - **טלפונים וטאבלטים עם Android**
   - היום: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), או ה-APK בדף [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` לטלפון (ה-`Immuch360-v<version>-release.apk` האוניברסלי עובד בכל מקום, `-armeabi-v7a` מיועד לטלפונים ישנים של 32 ביט, וקובץ ה-`.aab` מיועד ל-Google Play, לא להתקנה ידנית). הבילד ב-GitHub בדרך כלל מקדים את החנות. בכל מקרה הוא מותקן לצד אפליקציית Immich הרשמית (חבילה `com.aprogsys.immuch360`).
-  - בקרוב: ב-Google Play, בילד 18 פעיל, בילד 20 בבדיקה של Google מאז 7 באוקטובר 2026, במקום בילד 19.
+  - בקרוב: ב-Google Play, בילד 20 פעיל מאז 7 באוקטובר 2026, במקום בילד 18; בילד 21 לא משנה דבר בטלפונים ובטאבלטים.
 - **iPhone ו-iPad**
   - היום: ממתין לבדיקה של Apple. הגרסה שבבדיקה כוללת את התכונות של בילד 11: ההעלאה ל-Immich ובחירת מקור הווידאו (בילד 15) והקבצים הגולמיים של Insta360 (בילד 16) יגיעו עם עדכון מאוחר יותר ב-App Store. קוד המקור נבנה עם Xcode או ב-Codemagic, ראו [בנו אותה בעצמכם](#build-it-yourself).
   - בקרוב: App Store, בבדיקה.
@@ -1081,7 +1086,7 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
   - בקרוב: ב-Meta Horizon Store, הדף אושר ב-7 באוקטובר 2026 עם בילד 14, ובילד 21, העדכון הראשון שלו, בבדיקה של Meta; ערוץ האלפא של החנות (בודקים בלבד) מקבל כל בילד חדש.
 - **‏Android TV ו-Google TV (מבילד 20)**
   - היום: ה-`Immuch360-v<version>-release.apk` האוניברסלי מדף [Releases](https://github.com/freeKC/Immuch360/releases), מותקן ידנית עם adb, ראו [התקנה בטלוויזיה](#install-it-on-the-tv). זו אותה אפליקציה כמו בטלפונים.
-  - בקרוב: Google Play בטלוויזיות, אחרי הבדיקה של Google לגרסת הטלוויזיה.
+  - בקרוב: Google Play בטלוויזיות, שהדף שלו לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026.
 - **Windows 10 ו-11, ‏64 ביט (תצוגה מקדימה)**
   - היום: Immuch360 Desktop, קובץ ה-ZIP ‏`Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` של [גרסת הקדם למחשב](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), מחולץ ומופעל כמו שמתואר ב[הורדה והתקנה ב-Windows](#download-and-install-on-windows). בינתיים תמונות וסרטונים שטוחים: סרטוני 360°, ‏3D ו-VR180 יגיעו עם בילדי המחשב הבאים.
   - בקרוב: סרטוני 360°, ‏3D, ‏VR180 וסרטוני 360° גולמיים; מתקין, בילד חתום ועדכונים בהמשך.
@@ -1165,22 +1170,24 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 קובץ ה-ZIP ל-Windows של Immuch360 Desktop, ורק הוא, מכיל גם את נגן הווידאו שלה: libmpv, הספרייה של [mpv](https://mpv.io), עם [FFmpeg](https://ffmpeg.org) בתוכה, שמופעלת על ידי התוספים של [media_kit](https://github.com/media-kit/media-kit). ‏mpv ו-FFmpeg נבנים בלי החלקים שלהם שהם GPL בלבד, והקוד שלהם תחת GNU LGPL גרסה 2.1 ואילך; כשהם נבנים יחד, `libmpv-2.dll` מופץ תחת GNU LGPL גרסה 3 ואילך. האפליקציה טוענת אותו בזמן ריצה, כך שאתם יכולים להחליף אותו בבנייה משלכם. טקסטי הרישיונות נמצאים בתיקייה `licenses` של ה-ZIP, וכל ספרייה עם הרישיון והמקורות שלה מפורטת ב-[NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+השמות Android, ‏Android TV ו-Google TV הם סימנים מסחריים של Google LLC; ‏Apple, ‏iPhone, ‏iPad ו-macOS הם סימנים מסחריים של Apple Inc.; ‏Meta ו-Meta Quest הם סימנים מסחריים של Meta Platforms, Inc.; ‏Windows הוא סימן מסחרי של קבוצת החברות Microsoft; ‏Linux הוא הסימן המסחרי הרשום של Linus Torvalds בארצות הברית ובמדינות אחרות. הלוגואים שלהם מופיעים בטבלת הפלטפורמות רק כדי להראות היכן Immuch360 פועלת, ואינם מרמזים על תמיכה או על קשר כלשהם. רובוט ה-Android משוכפל או שונה מיצירה שנוצרה ושותפה על ידי Google, ונעשה בו שימוש בהתאם לתנאים המתוארים ב-Creative Commons 3.0 Attribution License. ‏Tux, הפינגווין של Linux, הוא של Larry Ewing ‏(lewing@isc.tamu.edu), צויר עם The GIMP, בגרסה הווקטורית של Simon Budig ו-Garrett LeSage. מקורות ורישיונות הלוגואים: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## מפת דרכים
 
 מה שעוד לא בוצע, הסביר ביותר קודם. שום דבר כאן אינו הבטחה, ומשוב ב[מעקב הבעיות](https://github.com/freeKC/Immuch360/issues) עוזר להחליט מה בא קודם.
 
 - **Immuch360 Desktop, קודם Windows**: בילד מחשב 2 יצא, עם סרטונים שטוחים, והמקורות של גרסת המחשב נמצאים בענף הראשי של הפורק, `immuch360`, מאז 9 באוקטובר 2026 (ראו [במחשב Windows](#on-a-windows-computer-immuch360-desktop-preview)). אחר כך, סרטוני 360°, ‏3D, ‏VR180 וסרטוני 360° גולמיים ב-Windows, עם שתי העדשות של הקבצים הגולמיים והתצוגה החיה של Tapo; ואז הבדיקה של כל פונקציה במחשב Windows והתיקונים שלה; ואז Spatial 2.5D עם מצלמת הרשת; ואז Linux ו-macOS, חבילות, חתימה ועדכונים.
-- **Google Play**: בילד 18 פעיל; בילד 20 בבדיקה של Google מאז 7 באוקטובר 2026, במקום בילד 19. בילד 21 לא משנה דבר בטלפונים ובטאבלטים.
+- **Google Play**: בילד 20 פעיל מאז 7 באוקטובר 2026, במקום בילד 18; הדף לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026. בילד 21 לא משנה דבר בטלפונים ובטאבלטים.
 - **App Store**: גרסה 3.3.0 ממתינה לבדיקה של Apple; היא כוללת את התכונות של בילד 11, ולכן ההעלאה ל-Immich ובדיקת מפענחי הווידאו (בילד 15) והקבצים הגולמיים של Insta360 (בילד 16) יגיעו עם העדכון הבא ב-App Store. הקישור יתווסף כאן כשהיא תהיה זמינה.
 - **Meta Horizon Store**: ‏Meta אישרה את הדף ב-7 באוקטובר 2026 עם בילד 14. בילד 21 הוגש כעדכון הראשון שלו: הוא מביא את כל מה שנוסף מאז בילד 14 (העלאות משיתוף ל-Immich, מקור הווידאו שנבחר לפי מה שהמשקפת מפענחת, קבצים גולמיים של Insta360, ‏GoPro ו-DJI, ‏DLNA, שיתוף הטלפון, תמונות מרחביות של Apple, ספריות Plex Media Server, מצלמות Tapo), והחנות מציעה אותו ל-Quest 2, ‏Quest Pro, ‏Quest 3 ו-3S. הקישור לחנות יתווסף כאן כשהדף יהיה ציבורי; עותק שהותקן ידנית יצטרך להיות מוסר קודם (ראו [התקנה](#install)).
-- **דפי החנויות**: הדף ב-Google Play נכתב מחדש באוקטובר 2026 עם צילומי מסך חדשים, ויקבל צילומי מסך של טלוויזיה ובאנר טלוויזיה עם גרסת הטלוויזיה. הטקסט ב-App Store עדיין מתאר את הבילדים הראשונים (תמונות וסרטונים ב-360°, קבצים גולמיים שמוצגים שטוחים); הוא יציג את מציגי ה-3D, ה-VR180 וה-Spatial, את המצב בלי שרת, את שיתופי הרשת, את נגן המדיה ואת הקבצים הגולמיים של Insta360. הטקסט ב-Meta Horizon Store כבר מציג את נגן המדיה.
+- **דפי החנויות**: הדף ב-Google Play נכתב מחדש באוקטובר 2026 עם צילומי מסך חדשים, וצילומי המסך של הטלוויזיה ובאנר הטלוויזיה נוספו אליו ב-8 באוקטובר 2026; הדף לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026. הטקסט ב-App Store עדיין מתאר את הבילדים הראשונים (תמונות וסרטונים ב-360°, קבצים גולמיים שמוצגים שטוחים); הוא יציג את מציגי ה-3D, ה-VR180 וה-Spatial, את המצב בלי שרת, את שיתופי הרשת, את נגן המדיה ואת הקבצים הגולמיים של Insta360. הטקסט ב-Meta Horizon Store כבר מציג את נגן המדיה.
 - **קבצים גולמיים של מצלמות 360°, הבא בתור**: מחוון התקדמות בזמן שתמונה גולמית מוכנה למשקפת; יישור של סרטוני GoPro ו-DJI מנתוני התנועה שלהם; ‏.dng עם עין דג כפולה; דיווחים ממכשירים על הניגון עם שתי עדשות של בילד 18 ‏(X4, ‏X5, ‏X6, ‏GoPro MAX 2, ‏Osmo 360) כדי לאשר את התפרים ואת תקציבי המפענחים.
 - **DLNA, שיתוף הטלפון ומדיה מרחבית של Apple, הבא בתור**: הדיווחים ממכשירים של בילד 19 ‏(Plex, ‏Jellyfin, ‏NAS וה-Freebox Server ב-DLNA; טלפון שמגיש ל-Quest, גם בנקודה החמה שלו; תמונות וסרטונים מרחביים אמיתיים מ-iPhone במשקפת); הרשאת ה-multicast שהתבקשה מ-Apple, כדי ש-iPhone ימצאו כל שרת DLNA; הקודם והבא בין תמונות מרחביות במשקפת; תג מרחבי על תמונות מהשרת בציר הזמן; סרטונים מרחביים ב-3D ב-Quest, אם המפענחים שלו יאפשרו זאת.
 - **נגני 360° בטלפונים, הבא בתור**: פס זמן בנגן הווידאו 360° ב-iOS (לזה של Android יש), הקודם/הבא בנגני ה-360° בטלפונים כמו בתצוגה האימרסיבית ב-Quest, ותמונות בנגן הווידאו 360° המובנה.
 - **שיתופי רשת, הצעדים הבאים**: החלקה מקובץ אחד בתיקייה לבא אחריו בדפי התמונה והסרטון (התצוגה האימרסיבית ב-Quest כבר עוברת על קבצי ה-360° של תיקייה), אימות Digest ל-WebDAV, שם המשתמש מתוך רשומת ה-Bonjour.
 - **סרטונים שטוחים**: בחירת רצועת השמע בנגן השטוח של הטלפונים, לסרטונים מהשרת, מהמכשיר ומשיתופים כאחד (לנגני ה-360° וה-Spatial יש אותה, וגם לנגן השטוח של Immuch360 Desktop).
-- **Android TV, הבא בתור**: בדיקת המכשיר של בילד 20 באמולטור Google TV ובטלוויזיה אמיתית, ואז גרסת הטלוויזיה ב-Google Play (צילומי מסך של טלוויזיה, באנר הטלוויזיה, הבדיקה של Google); בהמשך, ערוצים במסך הבית של הטלוויזיה.
+- **Android TV, הבא בתור**: בדיקת המכשיר של בילד 20 באמולטור Google TV ובטלוויזיה אמיתית, וגרסת הטלוויזיה ב-Google Play אחרי ש-Google תבדוק את הדף לטלוויזיות; בהמשך, ערוצים במסך הבית של הטלוויזיה.
 - **מצלמות Tapo, הבא בתור**: בדיקת המכשיר של בילד 20 עם מצלמות אמיתיות; התצוגה החיה ב-iPhone וב-iPad; הקלטות H.265; ניגון קטע בזמן שהוא מובא; יום שלם של הקלטות על ציר זמן אחד.
 - **Plex, הבא בתור**: בדיקת המכשיר של בילד 20 (טלפונים, ה-Quest, ‏iPhone, טלוויזיה, מחוץ לבית); העברת האסימון מהמחשב עם קוד QR; הסתרת צד ה-DLNA של שרת Plex ברשימת השרתים שנמצאו; IPv6.
 - **Upstream**: בקשות משיכה (pull requests) קטנות ל-Immich עבור החלקים שהמתחזקים רוצים, החל ממציג תמונות ה-360°.

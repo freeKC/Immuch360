@@ -13,14 +13,19 @@ Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, D
   <sub>Epävirallinen haara (fork). Ei yhteydessä Immichiin eikä FUTOon. Nimi luetaan "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
-  App Store: <a href="#where-to-get-it">tarkastettavana</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store hyväksytty, koontiversio 21 lähetetty sen ensimmäisenä päivityksenä<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">esiversion lataus</a>, desktop build 2
-</p>
+<div align="center">
+
+| Alusta | Mistä sen saa | Tilanne 9. lokakuuta 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | koontiversio 20 Google Playssa 7. lokakuuta 2026 lähtien, koontiversio 21 GitHubissa |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versio 3.3.0 odottaa Applen tarkastusta; sillä välin [kokoa se itse](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | sivu hyväksytty, koontiversio 21 Metan tarkastettavana |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | koontiversio 21 GitHubissa; Google Playn TV-sivu on Googlen tarkastettavana 9. lokakuuta 2026 lähtien |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Esiversion ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | työpöydän koontiversio 2 Windowsissa: kuvat ja tavalliset videot, 360°-videot seuraavaksi; macOS ja Linux myöhemmin, samoista lähteistä |
+
+*Tilanteet päivitetään jokaisen julkaisun yhteydessä; tarkemmat tiedot ovat kohdassa [Mistä sen saa](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Natiivi 360°**<br>Kuvat ja videot pallona, jossa katselet ympärillesi gyroskoopilla, kameran käsittelemättömät tiedostot mukaan lukien (Insta360 koontiversiosta 16 alkaen, GoPro ja DJI koontiversiosta 18 alkaen). Myös ilmainen videosoitin: tavallinen, 360°, 3D, VR180
 - 👓 **Natiivi 3D**<br>Stereoskooppinen 360° ja VR180, ylä- ja alaosa tai rinnakkain, sekä Applen tilakuvat (koontiversiosta 19 alkaen): aito 3D laseissa, yksi silmä puhelimessa
@@ -1072,7 +1077,7 @@ Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa
 
 - **Android-puhelimet ja -tabletit**
   - Nyt: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) tai APK [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta: puhelimelle `Immuch360-v<version>-arm64-v8a-release.apk` (yleinen `Immuch360-v<version>-release.apk` toimii kaikkialla, `-armeabi-v7a` on vanhemmille 32-bittisille puhelimille, ja `.aab`-tiedosto on Google Playta varten, ei sivulataamiseen). GitHubin koontiversio on yleensä kauppaa edellä. Kummassakin tapauksessa se asentuu virallisen Immich-sovelluksen rinnalle (paketti `com.aprogsys.immuch360`).
-  - Pian: Google Playssa koontiversio 18 on julkaistu, koontiversio 20 Googlen tarkastettavana 7. lokakuuta 2026 lähtien, koontiversion 19 sijaan.
+  - Pian: Google Playssa koontiversio 20 on ollut julkaistuna 7. lokakuuta 2026 lähtien, koontiversion 18 sijaan; koontiversio 21 ei muuta mitään puhelimissa ja tableteissa.
 - **iPhone ja iPad**
   - Nyt: odottaa Applen tarkastusta. Tarkastettavana olevassa versiossa on koontiversion 11 ominaisuudet: lähetys Immichiin ja "Videon lähde" -valinta (koontiversio 15) sekä käsittelemättömät Insta360-tiedostot (koontiversio 16) tulevat myöhemmässä App Store -päivityksessä. Lähdekoodin voi koota Xcodella tai Codemagicissa, katso [Kokoa se itse](#build-it-yourself).
   - Pian: App Store, tarkastettavana.
@@ -1081,7 +1086,7 @@ Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa
   - Pian: Meta Horizon Storessa sivu hyväksyttiin 7. lokakuuta 2026 koontiversion 14 kanssa, ja koontiversio 21, sen ensimmäinen päivitys, on Metan tarkastettavana; kaupan alfakanava (vain testaajille) saa jokaisen uuden koontiversion.
 - **Android TV ja Google TV (koontiversiosta 20 alkaen)**
   - Nyt: yleinen `Immuch360-v<version>-release.apk` [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta, sivuladattuna adb:llä, katso [Asentaminen televisioon](#install-it-on-the-tv). Se on sama sovellus kuin puhelimissa.
-  - Pian: Google Play televisioissa, Googlen TV-julkaisun tarkastuksen jälkeen.
+  - Pian: Google Play televisioissa; sen TV-sivu on ollut Googlen tarkastettavana 9. lokakuuta 2026 lähtien.
 - **Windows 10 ja 11, 64-bittinen (esiversio)**
   - Nyt: Immuch360 Desktop, [työpöydän esijulkaisun](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`, purettuna ja käynnistettynä niin kuin [Lataa ja asenna Windowsiin](#download-and-install-on-windows) neuvoo. Toistaiseksi kuvat ja tavalliset videot: 360°-, 3D- ja VR180-videot tulevat seuraavissa työpöydän koontiversioissa.
   - Pian: 360°-, 3D-, VR180- ja raa'at 360°-videot; asennusohjelma, allekirjoitettu koontiversio ja päivitykset myöhemmin.
@@ -1165,22 +1170,24 @@ Tämä projekti on Immichin haara ja pysyy [GNU AGPL v3](../LICENSE) -lisenssin 
 
 Immuch360 Desktopin Windows-ZIP, ja vain se, sisältää myös videosoittimensa: libmpv, [mpv](https://mpv.io):n kirjasto, jonka sisällä on [FFmpeg](https://ffmpeg.org), ja jota ohjaavat [media_kit](https://github.com/media-kit/media-kit)-laajennukset. mpv ja FFmpeg on koottu ilman niiden vain GPL-lisensoituja osia, ja niiden koodi on GNU LGPL -lisenssin version 2.1 tai uudemman alainen; yhdessä koottuna `libmpv-2.dll` jaetaan GNU LGPL -lisenssin version 3 tai uudemman alaisena. Sovellus lataa sen ajon aikana, joten voit korvata sen omalla koonnillasi. Lisenssitekstit ovat ZIPin `licenses`-kansiossa, ja jokainen kirjasto lisensseineen ja lähdekoodeineen on lueteltu tiedostossa [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV ja Google TV ovat Google LLC:n tavaramerkkejä; Apple, iPhone, iPad ja macOS ovat Apple Inc.:n tavaramerkkejä; Meta ja Meta Quest ovat Meta Platforms, Inc.:n tavaramerkkejä; Windows on Microsoft-yhtiöryhmän tavaramerkki; Linux on Linus Torvaldsin rekisteröity tavaramerkki Yhdysvalloissa ja muissa maissa. Niiden logot näkyvät alustataulukossa vain osoittamassa, missä Immuch360 toimii, eivätkä ne viittaa mihinkään tukeen tai yhteyteen. Android-robotti on toisinnettu tai muokattu Googlen luomasta ja jakamasta teoksesta, ja sitä käytetään Creative Commons 3.0 Attribution License -lisenssissä kuvattujen ehtojen mukaisesti. Tux, Linux-pingviini, on Larry Ewingin (lewing@isc.tamu.edu) tekemä, piirretty The GIMP -ohjelmalla, Simon Budigin ja Garrett LeSagen vektoriversiona. Logojen lähteet ja lisenssit: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Tiekartta
 
 Mitä ei ole vielä tehty, todennäköisimmät ensin. Mikään tässä ei ole lupaus, ja palaute [vikaseurannassa](https://github.com/freeKC/Immuch360/issues) auttaa päättämään, mikä tulee ensin.
 
 - **Immuch360 Desktop, ensin Windows**: desktop build 2 on julkaistu tavallisten videoiden kanssa, ja työpöytäversion lähdekoodit ovat 9. lokakuuta 2026 alkaen forkin päähaarassa `immuch360` (katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview)). Seuraavaksi 360°-, 3D-, VR180- ja raa'at 360°-videot Windowsissa, raakatiedostojen kaksi objektiivia ja Tapon live-näkymä mukaan lukien; sitten jokaisen toiminnon testaus Windows-tietokoneella ja sen korjaukset; sitten Spatial 2.5D verkkokameralla; sitten Linux ja macOS, paketit, allekirjoitus ja päivitykset.
-- **Google Play**: koontiversio 18 on julkaistu; koontiversio 20 on Googlen tarkastettavana 7. lokakuuta 2026 lähtien, koontiversion 19 sijaan. Koontiversio 21 ei muuta mitään puhelimissa ja tableteissa.
+- **Google Play**: koontiversio 20 on ollut julkaistuna 7. lokakuuta 2026 lähtien, koontiversion 18 sijaan; TV-sivu on ollut Googlen tarkastettavana 9. lokakuuta 2026 lähtien. Koontiversio 21 ei muuta mitään puhelimissa ja tableteissa.
 - **App Store**: versio 3.3.0 odottaa Applen tarkastusta; siinä on koontiversion 11 ominaisuudet, joten lähetys Immichiin ja videodekooderien tarkistus (koontiversio 15) sekä käsittelemättömät Insta360-tiedostot (koontiversio 16) tulevat seuraavassa App Store -päivityksessä. Linkki lisätään tänne, kun se on julkaistu.
 - **Meta Horizon Store**: Meta hyväksyi sivun 7. lokakuuta 2026 koontiversion 14 kanssa. Koontiversio 21 on lähetetty sen ensimmäisenä päivityksenä: se tuo kaiken koontiversion 14 jälkeen tulleen (lähetykset jaosta Immichiin, videolähde valittuna sen mukaan, mitä lasit pystyvät purkamaan, Insta360-, GoPro- ja DJI-raakatiedostot, DLNA, puhelimen jakaminen, Applen tilakuvat, Plex Media Server -kirjastot, Tapo-kamerat), ja kauppa listaa sen Quest 2:lle, Quest Prolle, Quest 3:lle ja 3S:lle. Kaupan linkki lisätään tänne, kun sivu on julkinen; sivuladattu kopio on ensin poistettava (katso [Asentaminen](#install)).
-- **Kauppasivut**: Google Playn sivu kirjoitettiin uudelleen lokakuussa 2026 uusin kuvakaappauksin, ja se saa TV-julkaisun myötä TV-kuvakaappaukset ja TV-bannerin. App Storen teksti kuvaa yhä ensimmäisiä koontiversioita (360°-kuvat ja -videot, käsittelemättömät tiedostot litteinä); siinä esitellään jatkossa 3D-, VR180- ja Spatial-katselimet, ilman palvelinta -tila, verkkojaot, mediasoitin ja käsittelemättömät Insta360-tiedostot. Meta Horizon Storen teksti esittelee jo mediasoittimen.
+- **Kauppasivut**: Google Playn sivu kirjoitettiin uudelleen lokakuussa 2026 uusin kuvakaappauksin, ja sen TV-kuvakaappaukset ja TV-banneri lisättiin 8. lokakuuta 2026; TV-sivu on ollut Googlen tarkastettavana 9. lokakuuta 2026 lähtien. App Storen teksti kuvaa yhä ensimmäisiä koontiversioita (360°-kuvat ja -videot, käsittelemättömät tiedostot litteinä); siinä esitellään jatkossa 3D-, VR180- ja Spatial-katselimet, ilman palvelinta -tila, verkkojaot, mediasoitin ja käsittelemättömät Insta360-tiedostot. Meta Horizon Storen teksti esittelee jo mediasoittimen.
 - **360°-kameroiden käsittelemättömät tiedostot, seuraavaksi**: edistymisilmaisin, kun käsittelemätöntä kuvaa valmistellaan laseja varten; GoPro- ja DJI-videoiden oikaisu niiden omista liiketiedoista; kaksoiskalansilmä-.dng; laiteraportit koontiversion 18 kahden objektiivin toistosta (X4, X5, X6, GoPro MAX 2, Osmo 360) saumojen ja dekooderien kapasiteetin vahvistamiseksi.
 - **DLNA, puhelinjako ja Applen tilamedia, seuraavaksi**: koontiversion 19 laiteraportit (Plex, Jellyfin, NAS-laite ja Freebox Server DLNA:n kautta; Questia palveleva puhelin, myös omassa yhteyspisteessään; todelliset iPhonen tilakuvat ja -videot laseissa); Applelta pyydetty multicast-oikeus, jotta iPhonet löytävät jokaisen DLNA-palvelimen; edellinen ja seuraava tilakuvien välillä laseissa; tilamerkki palvelimen kuviin aikajanalla; tilavideot 3D:nä Questissa, jos sen dekooderit sen sallivat.
 - **Puhelinten 360°-soittimet, seuraavaksi**: aikajana iOS:n 360°-videosoittimeen (Androidin soittimessa se on), edellinen/seuraava puhelinten 360°-soittimiin kuten Questin immersiivisessä näkymässä sekä kuvat natiiviin 360°-videosoittimeen.
 - **Verkkojaot, seuraavat vaiheet**: pyyhkäisy kansion tiedostosta seuraavaan kuva- ja videosivuilla (Questin immersiivinen näkymä käy jo läpi kansion 360°-tiedostot), Digest-todennus WebDAVille, käyttäjänimi Bonjour-tietueesta.
 - **Tavalliset videot**: ääniraidan valinta puhelinten tavalliseen soittimeen, samalla tavalla palvelimen, laitteen ja jakojen videoille (360°- ja Spatial-soittimissa se on, kuten myös Immuch360 Desktopin tavallisessa soittimessa).
-- **Android TV, seuraavaksi**: koontiversion 20 laitetesti Google TV -emulaattorissa ja oikeassa televisiossa, sitten TV-julkaisu Google Playssa (TV-kuvakaappaukset, TV-banneri, Googlen tarkastus); myöhemmin kanavat television aloitusnäytölle.
+- **Android TV, seuraavaksi**: koontiversion 20 laitetesti Google TV -emulaattorissa ja oikeassa televisiossa, ja TV-julkaisu Google Playssa, kun Google on tarkastanut TV-sivun; myöhemmin kanavat television aloitusnäytölle.
 - **Tapo-kamerat, seuraavaksi**: koontiversion 20 laitetesti oikeilla kameroilla; suora kuva iPhonessa ja iPadissa; H.265-tallenteet; leikkeen toisto haun aikana; koko päivän tallenteet yhdellä aikajanalla.
 - **Plex, seuraavaksi**: koontiversion 20 laitetesti (puhelimet, Quest, iPhone, televisio, kodin ulkopuolella); tunnuksen tuominen tietokoneelta QR-koodilla; Plex-palvelimen DLNA-puolen piilottaminen löydettyjen palvelimien luettelosta; IPv6.
 - **Upstream**: pieniä pull requesteja Immichiin niistä osista, joita ylläpitäjät haluavat, alkaen 360°-kuvakatselimesta.

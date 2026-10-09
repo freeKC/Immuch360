@@ -13,14 +13,19 @@ Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 
   <sub>非官方分支。同 Immich 或者 FUTO 冇關係。個名讀做「I am much 360」。</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store：<a href="#where-to-get-it">審批緊</a><br>
-  Meta Quest：<a href="#meta-quest-3">APK</a>，Horizon Store 已批，建置 21 已經交咗做第一次更新<br>
-  Android TV：<a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">下載預覽版</a>，桌面建置 2
-</p>
+<div align="center">
+
+| 平台 | 喺邊度攞 | 2026 年 10 月 9 日狀態 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機同平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play 上面由 2026 年 10 月 7 日開始係建置 20，GitHub 上面係建置 21 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 同 iPad** | App Store | 版本 3.3.0 等緊 Apple 審批；期間可以[自己建置](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 同 3S | [APK](#meta-quest-3) · Horizon Store | 上架頁面已批，建置 21 等緊 Meta 審批 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 同 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上面係建置 21；電視用嘅 Google Play 上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [預覽版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Windows 上面嘅桌面建置 2：相片同平面影片，360° 影片下一步加入；macOS 同 Linux 遲啲推出，用同一套原始碼 |
+
+*狀態會喺每次發佈更新；詳情睇[喺邊度攞](#where-to-get-it)。*
+
+</div>
 
 - 🌐 **原生 360°**<br>相片同影片以球面顯示，可以四圍睇，支援陀螺儀，包括相機 RAW 檔案（Insta360 由建置 16 開始，GoPro 同 DJI 由建置 18 開始）。仲有免費影片播放器：平面、360°、3D、VR180
 - 👓 **原生 3D**<br>立體 360° 同 VR180，上下或者左右排列，仲有 Apple 空間相片（由建置 19 開始）：頭戴裝置入面係真 3D，電話上面顯示一隻眼
@@ -1072,7 +1077,7 @@ Immuch360 Desktop 嘅 CI（`.github/workflows/immuch360-desktop.yml`）喺跟住
 
 - **Android 手機同平板**
   - 而家：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或者 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅 APK：電話用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用嘅 `Immuch360-v<version>-release.apk` 邊度都用到，`-armeabi-v7a` 係畀舊款 32 位元電話用，`.aab` 檔案係畀 Google Play 用，唔係用嚟側載）。GitHub 建置通常行得比商店前。兩種都會同官方 Immich App 並排安裝（套件 `com.aprogsys.immuch360`）。
-  - 就快：喺 Google Play，建置 18 已經上架，建置 20 由 2026 年 10 月 7 日開始等緊 Google 審批，取代建置 19。
+  - 就快：喺 Google Play，建置 20 由 2026 年 10 月 7 日開始已經上架，取代建置 18；建置 21 喺電話同平板上面乜都冇改。
 - **iPhone 同 iPad**
   - 而家：等緊 Apple 審批。審批緊嘅版本有建置 11 嘅功能：上傳去 Immich 同「影片來源」選擇（建置 15），同埋 Insta360 RAW 檔案（建置 16），會喺之後嘅 App Store 更新推出。原始碼可以用 Xcode 或者喺 Codemagic 上面建置，睇[自己建置](#build-it-yourself)。
   - 就快：App Store，審批緊。
@@ -1081,7 +1086,7 @@ Immuch360 Desktop 嘅 CI（`.github/workflows/immuch360-desktop.yml`）喺跟住
   - 就快：喺 Meta Horizon Store，上架申請喺 2026 年 10 月 7 日連同建置 14 批咗，而建置 21，即係佢嘅第一次更新，等緊 Meta 審批；商店嘅 alpha 頻道（只限測試人員）會收到每個新建置。
 - **Android TV 同 Google TV（由建置 20 開始）**
   - 而家：[Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅通用 `Immuch360-v<version>-release.apk`，用 adb 側載，睇[喺電視上面安裝](#install-it-on-the-tv)。佢同電話上面係同一個 App。
-  - 就快：電視用嘅 Google Play，要等 Google 審批電視版本。
+  - 就快：電視用嘅 Google Play，佢嘅上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批。
 - **Windows 10 同 11，64 位元（預覽版）**
   - 而家：Immuch360 Desktop，即係[桌面預發佈版本](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2)嘅 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`，照[喺 Windows 下載同安裝](#download-and-install-on-windows)講嘅方法解壓同啟動。暫時有相片同平面影片：360°、3D 同 VR180 影片會喺之後嘅桌面建置加入。
   - 就快：360°、3D、VR180 同原始 360° 影片；安裝程式、已簽署嘅建置同更新遲啲先有。
@@ -1165,22 +1170,24 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Immuch360 Desktop 嘅 Windows ZIP，而且淨係佢，仲帶住佢嘅影片播放器：libmpv，即係 [mpv](https://mpv.io) 嘅程式庫，入面有 [FFmpeg](https://ffmpeg.org)，由 [media_kit](https://github.com/media-kit/media-kit) 嘅外掛程式驅動。mpv 同 FFmpeg 建置嗰陣冇包括佢哋淨係 GPL 嘅部分，佢哋嘅程式碼採用 GNU LGPL 2.1 版或者之後嘅版本；一齊建置出嚟嘅 `libmpv-2.dll` 以 GNU LGPL 3 版或者之後嘅版本發佈。App 喺執行期間先載入佢，所以你可以用你自己建置嘅版本取代佢。授權文字喺 ZIP 嘅 `licenses` 資料夾入面，每個程式庫連同授權同原始碼都列喺 [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md)。
 
+Android、Android TV 同 Google TV 係 Google LLC 嘅商標；Apple、iPhone、iPad 同 macOS 係 Apple Inc. 嘅商標；Meta 同 Meta Quest 係 Meta Platforms, Inc. 嘅商標；Windows 係 Microsoft 集團旗下公司嘅商標；Linux 係 Linus Torvalds 喺美國同其他國家嘅註冊商標。佢哋嘅標誌出現喺平台表入面，只係用嚟顯示 Immuch360 喺邊度運行，並唔代表任何認可或者關聯。Android 機械人係根據 Google 創作同分享嘅作品複製或者修改，並按照 Creative Commons 3.0 Attribution License 所述嘅條款使用。Linux 企鵝 Tux 由 Larry Ewing (lewing@isc.tamu.edu) 用 The GIMP 繪製，向量版本由 Simon Budig 同 Garrett LeSage 製作。標誌嘅來源同授權：[.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md)。
+
 <a id="roadmap"></a>
 ## 路線圖
 
 仲未做嘅嘢，最有可能先做嘅排先。呢度冇任何承諾，喺 [issue tracker](https://github.com/freeKC/Immuch360/issues) 上面嘅回饋會幫手決定先做邊樣。
 
 - **Immuch360 Desktop，先做 Windows**：桌面建置 2 已經推出，有平面影片，而桌面版嘅原始碼由 2026 年 10 月 9 日開始已經喺呢個分支嘅主分支 `immuch360` 入面（睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)）。下一步係 Windows 上面嘅 360°、3D、VR180 同原始 360° 影片，連埋原始檔案嘅兩個鏡頭同 Tapo 即時畫面；然後喺 Windows 電腦上面逐個功能測試同修正；然後係配合網絡攝影機嘅 Spatial 2.5D；然後係 Linux 同 macOS、安裝套件、簽署同更新。
-- **Google Play**：建置 18 已經上架；建置 20 由 2026 年 10 月 7 日開始等緊 Google 審批，取代建置 19。建置 21 喺電話同平板上面乜都冇改。
+- **Google Play**：建置 20 由 2026 年 10 月 7 日開始已經上架，取代建置 18；電視用嘅上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批。建置 21 喺電話同平板上面乜都冇改。
 - **App Store**：3.3.0 版本等緊 Apple 審批；佢有建置 11 嘅功能，所以上傳去 Immich 同影片解碼器檢查（建置 15），同埋 Insta360 RAW 檔案（建置 16），會喺下一次 App Store 更新推出。上架之後連結會加喺呢度。
 - **Meta Horizon Store**：Meta 喺 2026 年 10 月 7 日批咗連同建置 14 交嘅上架申請。建置 21 已經交咗做佢嘅第一次更新：佢帶嚟建置 14 之後嘅所有嘢（由共享上載去 Immich、按頭戴裝置解碼到嘅格式揀影片來源、Insta360、GoPro 同 DJI 嘅 RAW 檔案、DLNA、電話共享、Apple 空間相片、Plex Media Server 媒體庫、Tapo 鏡頭），商店會為 Quest 2、Quest Pro、Quest 3 同 3S 上架。商店頁面公開之後，商店連結會加喺呢度；側載咗嘅版本要先解除安裝（睇[安裝](#install)）。
-- **商店介紹**：Google Play 嘅介紹喺 2026 年 10 月重寫咗，仲換咗新截圖，推出電視版本嗰陣會再加電視截圖同電視橫額。App Store 嘅文字仍然係描述最初嘅建置（360° 相片同影片、RAW 檔案顯示成平面）；之後會介紹 3D、VR180 同 Spatial 查閱器、冇伺服器模式、網絡共享、媒體播放器同 Insta360 RAW 檔案。Meta Horizon Store 嘅文字已經有介紹媒體播放器。
+- **商店介紹**：Google Play 嘅介紹喺 2026 年 10 月重寫咗，仲換咗新截圖，電視截圖同電視橫額喺 2026 年 10 月 8 日加咗入去；電視用嘅介紹由 2026 年 10 月 9 日開始等緊 Google 審批。App Store 嘅文字仍然係描述最初嘅建置（360° 相片同影片、RAW 檔案顯示成平面）；之後會介紹 3D、VR180 同 Spatial 查閱器、冇伺服器模式、網絡共享、媒體播放器同 Insta360 RAW 檔案。Meta Horizon Store 嘅文字已經有介紹媒體播放器。
 - **360° 相機 RAW 檔案，下一步**：為頭戴裝置準備 RAW 相片時嘅進度指示；用 GoPro 同 DJI 影片自己嘅動作數據校正地平線；雙魚眼 .dng；建置 18 雙鏡頭播放嘅裝置報告（X4、X5、X6、GoPro MAX 2、Osmo 360），確認接縫同解碼器負荷。
 - **DLNA、電話共享同 Apple 空間格式，下一步**：建置 19 嘅裝置報告（經 DLNA 嘅 Plex、Jellyfin、NAS 同 Freebox Server；電話為 Quest 提供服務，包括經電話嘅熱點；喺頭戴裝置入面睇真實嘅 iPhone 空間相片同影片）；向 Apple 申請多點傳送權限，等 iPhone 可以搵到所有 DLNA 伺服器；喺頭戴裝置入面喺空間相片之間用上一個同下一個；時間線入面伺服器相片嘅空間標記；如果 Quest 嘅解碼器做得到，喺 Quest 上面用 3D 播空間影片。
 - **電話上面嘅 360° 播放器，下一步**：iOS 360° 影片播放器嘅時間軸（Android 版已經有），電話 360° 播放器好似 Quest 沉浸式檢視噉有上一個/下一個，同埋喺原生 360° 影片播放器入面睇相片。
 - **網絡共享，下一步**：喺相片同影片頁面由資料夾一個檔案掃去下一個（Quest 沉浸式檢視已經可以喺資料夾嘅 360° 檔案之間切換），WebDAV 嘅 Digest 驗證，由 Bonjour 記錄攞用戶名稱。
 - **平面影片**：喺電話嘅平面播放器揀音軌，伺服器、裝置同共享影片都一樣（360° 同 Spatial 播放器已經有，Immuch360 Desktop 嘅平面播放器都有）。
-- **Android TV，下一步**：喺 Google TV 模擬器同真正嘅電視上面做建置 20 嘅裝置測試，然後喺 Google Play 推出電視版本（電視截圖、電視橫額、Google 審批）；之後喺電視主畫面提供頻道。
+- **Android TV，下一步**：喺 Google TV 模擬器同真正嘅電視上面做建置 20 嘅裝置測試，等 Google 審批完電視用嘅上架頁面之後，就喺 Google Play 推出電視版本；之後喺電視主畫面提供頻道。
 - **Tapo 鏡頭，下一步**：用真正嘅鏡頭做建置 20 嘅裝置測試；iPhone 同 iPad 上面嘅直播畫面；H.265 錄影；一邊攞片段一邊播；將成日嘅錄影放喺一條時間線上面。
 - **Plex，下一步**：建置 20 嘅裝置測試（電話、Quest、iPhone、電視、出咗街）；用 QR code 由電腦帶權杖過嚟；喺搵到嘅伺服器清單入面收埋 Plex 伺服器嘅 DLNA 部分；IPv6。
 - **上游**：向 Immich 提交細嘅 pull request，提供維護者想要嘅部分，由 360° 相片查閱器開始。

@@ -13,14 +13,19 @@ See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI
   <sub>Mitteametlik haru (fork). Ei ole seotud Immichi ega FUTO-ga. Nime võib lugeda kui "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Androidi APK</a><br>
-  App Store: <a href="#where-to-get-it">ülevaatusel</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store heaks kiidetud, järk 21 esitatud selle esimese uuendusena<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">eelvaate allalaadimine</a>, desktop build 2
-</p>
+<div align="center">
+
+| Platvorm | Kust seda saada | Olek 9. oktoobril 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonid ja tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | järk 20 Google Plays alates 7. oktoobrist 2026, järk 21 GitHubis |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versioon 3.3.0 ootab Apple'i ülevaatust; seni [ehita see ise](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | kirje heaks kiidetud, järk 21 Meta ülevaatusel |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | järk 21 GitHubis; Google Play kirje teleritele on Google'i ülevaatusel alates 9. oktoobrist 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Eelvaate ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | töölauajärk 2 Windowsis: fotod ja tasapinnalised videod, 360° videod järgmisena; macOS ja Linux hiljem, samadest lähtekoodidest |
+
+*Olekuid uuendatakse iga väljalaskega; üksikasjad on jaotises [Kust seda saada](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Omane 360°**<br>Fotod ja videod sfäärina, milles saad güroskoobiga ringi vaadata, kaasa arvatud kaamera töötlemata failid (Insta360 alates järgust 16, GoPro ja DJI alates järgust 18). Ka tasuta videomängija: tasapinnaline, 360°, 3D, VR180
 - 👓 **Omane 3D**<br>Stereoskoopiline 360° ja VR180, üleval ja all või kõrvuti, ning Apple'i ruumilised fotod (alates järgust 19): tõeline 3D peakomplektis, üks silm telefonis
@@ -1072,7 +1077,7 @@ Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon 
 
 - **Android-telefonid ja -tahvelarvutid**
   - Täna: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) või APK lehelt [Releases](https://github.com/freeKC/Immuch360/releases): telefoni jaoks `Immuch360-v<version>-arm64-v8a-release.apk` (universaalne `Immuch360-v<version>-release.apk` töötab kõikjal, `-armeabi-v7a` on vanematele 32-bitistele telefonidele ja fail `.aab` on Google Play jaoks, mitte käsitsi installimiseks). GitHubi järk on tavaliselt poest ees. Mõlemal juhul installitakse see ametliku Immichi rakenduse kõrvale (pakett `com.aprogsys.immuch360`).
-  - Varsti: Google Plays on järk 18 avaldatud, järk 20 on Google'i ülevaatusel alates 7. oktoobrist 2026, järgu 19 asemel.
+  - Varsti: Google Plays on järk 20 avaldatud alates 7. oktoobrist 2026, järgu 18 asemel; järk 21 ei muuda telefonides ja tahvelarvutites midagi.
 - **iPhone ja iPad**
   - Täna: ootab Apple'i ülevaatust. Ülevaatusel olev versioon sisaldab järgu 11 funktsioone: üleslaadimine Immichisse ja valik "Video allikas" (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad hilisema App Store'i uuendusega. Lähtekoodi saab ehitada Xcode'iga või Codemagicus, vaata [Ehita see ise](#build-it-yourself).
   - Varsti: App Store, ülevaatusel.
@@ -1081,7 +1086,7 @@ Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon 
   - Varsti: Meta Horizon Store'is kiideti kirje heaks 7. oktoobril 2026 koos järguga 14 ja järk 21, selle esimene uuendus, on Meta ülevaatusel; poe alfakanal (ainult testijatele) saab iga uue järgu.
 - **Android TV ja Google TV (alates järgust 20)**
   - Täna: lehe [Releases](https://github.com/freeKC/Immuch360/releases) universaalne `Immuch360-v<version>-release.apk`, käsitsi installitud adb abil, vaata [Telerisse installimine](#install-it-on-the-tv). See on sama rakendus mis telefonides.
-  - Varsti: Google Play teleritel, pärast Google'i ülevaatust teleri väljalaske jaoks.
+  - Varsti: Google Play teleritel, mille kirje on Google'i ülevaatusel alates 9. oktoobrist 2026.
 - **Windows 10 ja 11, 64-bitine (eelvaade)**
   - Täna: Immuch360 Desktop, [töölaua eelväljalaske](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`, lahti pakitud ja käivitatud nii, nagu ütleb [Laadi alla ja installi Windowsis](#download-and-install-on-windows). Praegu fotod ja tasapinnalised videod: 360°, 3D ja VR180 videod tulevad järgmiste töölauajärkudega.
   - Varsti: 360°, 3D, VR180 ja töötlemata 360° videod; installer, allkirjastatud järk ja uuendused hiljem.
@@ -1165,22 +1170,24 @@ See projekt on Immichi haru ja jääb [GNU AGPL v3](../LICENSE) litsentsi alla. 
 
 Immuch360 Desktopi Windowsi ZIP, ja ainult see, sisaldab ka oma videomängijat: libmpv, [mpv](https://mpv.io) teek, mille sees on [FFmpeg](https://ffmpeg.org), juhituna [media_kit](https://github.com/media-kit/media-kit) pistikprogrammidega. mpv ja FFmpeg on ehitatud ilma nende ainult GPL osadeta ning nende kood on GNU LGPL versiooni 2.1 või hilisema all; koos ehitatuna levitatakse `libmpv-2.dll` GNU LGPL versiooni 3 või hilisema all. Rakendus laadib selle käitusajal, nii et võid selle asendada oma ehitusega. Litsentsitekstid on ZIP-i kaustas `licenses` ning iga teek koos oma litsentsi ja lähtekoodiga on loetletud failis [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV ja Google TV on Google LLC kaubamärgid; Apple, iPhone, iPad ja macOS on Apple Inc. kaubamärgid; Meta ja Meta Quest on Meta Platforms, Inc. kaubamärgid; Windows on Microsofti ettevõtete grupi kaubamärk; Linux on USA-s ja teistes riikides registreeritud kaubamärk, mille omanik on Linus Torvalds. Nende logod on platvormide tabelis ainult selleks, et näidata, kus Immuch360 töötab, ega viita mingile toetusele ega seotusele. Android-robot on reprodutseeritud või muudetud Google'i loodud ja jagatud teosest ning seda kasutatakse litsentsis Creative Commons 3.0 Attribution License kirjeldatud tingimustel. Tux, Linux-pingviin, on Larry Ewingi (lewing@isc.tamu.edu) looming, joonistatud programmiga The GIMP; vektorversiooni autorid on Simon Budig ja Garrett LeSage. Logode allikad ja litsentsid: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Teekaart
 
 Mis on veel tegemata, kõige tõenäolisemad eespool. Miski siin pole lubadus ning tagasiside [veahalduris](https://github.com/freeKC/Immuch360/issues) aitab otsustada, mis tuleb esimesena.
 
 - **Immuch360 Desktop, esmalt Windows**: desktop build 2 on ilmunud, tasapinnaliste videotega, ja töölauaversiooni lähtekood on alates 9. oktoobrist 2026 forki põhiharus `immuch360` (vaata [Windowsi arvutis](#on-a-windows-computer-immuch360-desktop-preview)). Järgmisena 360°, 3D, VR180 ja töötlemata 360° videod Windowsis, töötlemata failide kahe objektiivi ja Tapo otsepildiga; siis iga funktsiooni testimine Windowsi arvutis ja selle parandused; siis Spatial 2.5D veebikaameraga; siis Linux ja macOS, paketid, allkirjastamine ja uuendused.
-- **Google Play**: järk 18 on avaldatud; järk 20 on Google'i ülevaatusel alates 7. oktoobrist 2026, järgu 19 asemel. Järk 21 ei muuda telefonides ja tahvelarvutites midagi.
+- **Google Play**: järk 20 on avaldatud alates 7. oktoobrist 2026, järgu 18 asemel; telerite kirje on Google'i ülevaatusel alates 9. oktoobrist 2026. Järk 21 ei muuda telefonides ja tahvelarvutites midagi.
 - **App Store**: versioon 3.3.0 ootab Apple'i ülevaatust; see sisaldab järgu 11 funktsioone, seega üleslaadimine Immichisse ja videodekoodrite kontroll (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad järgmise App Store'i uuendusega. Link lisatakse siia, kui see on avaldatud.
 - **Meta Horizon Store**: Meta kiitis kirje heaks 7. oktoobril 2026 koos järguga 14. Järk 21 on esitatud selle esimese uuendusena: see toob kõik alates järgust 14 (üleslaadimised jaost Immichisse, videoallikas valitud selle järgi, mida peakomplekt dekodeerib, Insta360, GoPro ja DJI töötlemata failid, DLNA, telefoni jagamine, Apple'i ruumilised fotod, Plex Media Serveri kogud, Tapo kaamerad) ja pood pakub seda Quest 2, Quest Pro, Quest 3 ja 3S jaoks. Poe link lisatakse siia, kui leht on avalik; käsitsi installitud koopia tuleb kõigepealt desinstallida (vaata [Installimine](#install)).
-- **Poekirjed**: Google Play kirje kirjutati 2026. aasta oktoobris uute ekraanipiltidega ümber ja saab teleri väljalaskega teleri ekraanipildid ja teleri bänneri. App Store'i tekst kirjeldab endiselt esimesi järke (360° fotod ja videod, töötlemata failid tasapinnalisena); see tutvustab tulevikus 3D, VR180 ja Spatial vaatureid, serverita režiimi, võrgujagusid, meediamängijat ja töötlemata Insta360 faile. Meta Horizon Store'i tekst tutvustab juba meediamängijat.
+- **Poekirjed**: Google Play kirje kirjutati 2026. aasta oktoobris uute ekraanipiltidega ümber ning selle teleri ekraanipildid ja teleri bänner lisati 8. oktoobril 2026; telerite kirje on Google'i ülevaatusel alates 9. oktoobrist 2026. App Store'i tekst kirjeldab endiselt esimesi järke (360° fotod ja videod, töötlemata failid tasapinnalisena); see tutvustab tulevikus 3D, VR180 ja Spatial vaatureid, serverita režiimi, võrgujagusid, meediamängijat ja töötlemata Insta360 faile. Meta Horizon Store'i tekst tutvustab juba meediamängijat.
 - **360° kaamerate töötlemata failid, edasi**: edenemisnäidik, kui töötlemata fotot peakomplekti jaoks ette valmistatakse; GoPro ja DJI videote loodimine nende enda liikumisandmete põhjal; kahe kalasilmaga .dng; seadmete teated järgu 18 kahe objektiiviga esituse kohta (X4, X5, X6, GoPro MAX 2, Osmo 360), et kinnitada õmblusi ja dekoodrite eelarvet.
 - **DLNA, telefoni jagu ja Apple'i ruumiline meedia, edasi**: järgu 19 seadmete teated (Plex, Jellyfin, NAS ja Freebox Server DLNA kaudu; Questi teenindav telefon, ka oma kuumkohas; päris iPhone'i ruumilised fotod ja videod peakomplektis); Apple'ilt küsitud multiedastuse õigus, et iPhone'id leiaksid iga DLNA serveri; eelmine ja järgmine ruumiliste fotode vahel peakomplektis; ruumilise märgi lisamine serveri fotodele ajajoonel; ruumilised videod 3D-s Questis, kui selle dekoodrid seda võimaldavad.
 - **Telefonide 360° mängijad, edasi**: ajariba iOS-i 360° videomängijas (Androidi omal see on), eelmine/järgmine telefonide 360° mängijates nagu Questi kaasahaaravas vaates ja fotod omases 360° videomängijas.
 - **Võrgujaod, järgmised sammud**: kausta ühest failist järgmisse pühkimine foto- ja videolehtedel (Questi kaasahaarav vaade käib juba kausta 360° failid läbi), Digest autentimine WebDAV-i jaoks, kasutajanimi Bonjouri kirjest.
 - **Tasapinnalised videod**: helirea valik telefonide tasapinnalises mängijas, ühtviisi serveri, seadme ja jagude videote jaoks (360° ja Spatial mängijatel see on, samuti Immuch360 Desktopi tasapinnalisel mängijal).
-- **Android TV, edasi**: järgu 20 seadmetest Google TV emulaatoris ja päris teleris, seejärel teleri väljalase Google Plays (teleri ekraanipildid, teleri bänner, Google'i ülevaatus); hiljem kanalid teleri avakuval.
+- **Android TV, edasi**: järgu 20 seadmetest Google TV emulaatoris ja päris teleris ning teleri väljalase Google Plays, kui Google on telerite kirje üle vaadanud; hiljem kanalid teleri avakuval.
 - **Tapo kaamerad, edasi**: järgu 20 seadmetest päris kaameratega; otsepilt iPhone'is ja iPadis; H.265 salvestised; klipi esitamine selle toomise ajal; terve päeva salvestised ühel ajajoonel.
 - **Plex, edasi**: järgu 20 seadmetest (telefonid, Quest, iPhone, teler, väljaspool kodu); tõendi toomine arvutist QR-koodiga; Plex serveri DLNA poole peitmine leitud serverite loendis; IPv6.
 - **Upstream**: väikesed pull request'id Immichile nende osade jaoks, mida hooldajad soovivad, alustades 360° fotovaaturist.

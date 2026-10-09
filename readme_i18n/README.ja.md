@@ -13,14 +13,19 @@ Immuch360 は、見回せる 360° の写真と動画に対応した Immich モ�
   <sub>非公式のフォークです。Immich および FUTO とは提携していません。名前は「I am much 360」と読みます。</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store：<a href="#where-to-get-it">審査中</a><br>
-  Meta Quest：<a href="#meta-quest-3">APK</a>、Horizon Store は承認済み、最初のアップデートとしてビルド 21 を提出済み<br>
-  Android TV：<a href="#install-it-on-the-tv">APK</a><br>
-  Windows：<a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">プレビュー版をダウンロード</a>、desktop build 2
-</p>
+<div align="center">
+
+| プラットフォーム | 入手方法 | 2026 年 10 月 9 日時点の状況 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** スマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 2026 年 10 月 7 日から Google Play にビルド 20、GitHub にビルド 21 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone と iPad** | App Store | バージョン 3.3.0 は Apple の審査待ち、それまでは[自分でビルドする](#build-it-yourself)ことができます |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 と 3S | [APK](#meta-quest-3) · Horizon Store | ストアページは承認済み、ビルド 21 は Meta の審査中 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV と Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub にビルド 21、テレビ向け Google Play のストアページは 2026 年 10 月 9 日から Google の審査中 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [プレビュー版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | desktop build 2 は Windows 用：写真と平面動画、360° 動画は次に対応、macOS と Linux は同じソースから後日対応 |
+
+*状況はリリースごとに更新します。詳しくは[入手方法](#where-to-get-it)をご覧ください。*
+
+</div>
 
 - 🌐 **ネイティブ 360°**<br>写真と動画を見回せる球体として表示、ジャイロスコープ対応、カメラの RAW ファイルにも対応（Insta360 はビルド 16 から、GoPro と DJI はビルド 18 から）。無料の動画プレーヤーも搭載：平面、360°、3D、VR180
 - 👓 **ネイティブ 3D**<br>ステレオ 360° と VR180、上下または左右の配置、Apple の空間写真（ビルド 19 から）：ヘッドセットでは本物の 3D、スマートフォンでは片目
@@ -1072,7 +1077,7 @@ Immuch360 Desktop の CI（`.github/workflows/immuch360-desktop.yml`）は、`im
 
 - **Android のスマートフォンとタブレット**
   - 現在：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)、または [Releases](https://github.com/freeKC/Immuch360/releases) ページの APK：スマートフォンには `Immuch360-v<version>-arm64-v8a-release.apk`（ユニバーサル版の `Immuch360-v<version>-release.apk` はどこでも動作し、`-armeabi-v7a` は古い 32 ビットのスマートフォン用、`.aab` ファイルは Google Play 用でサイドロード用ではありません）。GitHub のビルドは通常ストアより先行しています。どちらの場合も、公式の Immich アプリと並べてインストールできます（パッケージ `com.aprogsys.immuch360`）。
-  - 今後：Google Play では、ビルド 18 が公開中、ビルド 19 に代えてビルド 20 が 2026 年 10 月 7 日から Google の審査中。
+  - 今後：Google Play では、ビルド 18 に代えてビルド 20 が 2026 年 10 月 7 日から公開中。ビルド 21 では、スマートフォンとタブレットについては何も変わりません。
 - **iPhone と iPad**
   - 現在：Apple の審査待ちです。審査中のバージョンにはビルド 11 の機能が含まれています：Immich へのアップロードと「動画のソース」の選択（ビルド 15）、Insta360 の RAW ファイル（ビルド 16）は、後の App Store のアップデートで届きます。ソースは Xcode または Codemagic でビルドできます。[自分でビルドする](#build-it-yourself) を参照してください。
   - 今後：App Store、審査中。
@@ -1081,7 +1086,7 @@ Immuch360 Desktop の CI（`.github/workflows/immuch360-desktop.yml`）は、`im
   - 今後：Meta Horizon Store では、2026 年 10 月 7 日にビルド 14 で掲載が承認され、最初のアップデートであるビルド 21 が Meta の審査中。ストアのアルファチャンネル（テスターのみ）には新しいビルドが毎回届きます。
 - **Android TV と Google TV（ビルド 20 から）**
   - 現在：[Releases](https://github.com/freeKC/Immuch360/releases) ページのユニバーサル版 `Immuch360-v<version>-release.apk` を adb でサイドロードします。[テレビにインストールする](#install-it-on-the-tv) を参照してください。スマートフォンと同じアプリです。
-  - 今後：テレビ向けの Google Play、テレビ向けリリースの Google の審査後。
+  - 今後：テレビ向けの Google Play、そのストアページは 2026 年 10 月 9 日から Google の審査中。
 - **Windows 10 と 11、64 ビット（プレビュー版）**
   - 現在：Immuch360 Desktop、[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) の ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` を、[Windows でのダウンロードとインストール](#download-and-install-on-windows) のとおりに展開して起動します。今のところ写真と平面の動画：360°、3D、VR180 の動画は次のデスクトップ ビルドで対応します。
   - 今後：360°、3D、VR180、未加工の 360° 動画。その後、インストーラー、署名済みビルド、更新。
@@ -1165,22 +1170,24 @@ desktop build 2 からは、パソコンの動画プレーヤーもそこに `De
 
 Immuch360 Desktop の Windows 用 ZIP、そしてそれだけには、動画プレーヤーも含まれています：[mpv](https://mpv.io) のライブラリである libmpv で、内部に [FFmpeg](https://ffmpeg.org) を含み、[media_kit](https://github.com/media-kit/media-kit) のプラグインで制御されます。mpv と FFmpeg は GPL 専用の部分を除いてビルドされ、そのコードは GNU LGPL バージョン 2.1 以降のもとにあります。まとめてビルドした `libmpv-2.dll` は GNU LGPL バージョン 3 以降のもとで配布されます。アプリは実行時にこれを読み込むので、自分でビルドしたものに置き換えることができます。ライセンス文は ZIP の `licenses` フォルダーにあり、各ライブラリとそのライセンス、ソースは [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) に一覧があります。
 
+Android、Android TV、Google TV は Google LLC の商標です。Apple、iPhone、iPad、macOS は Apple Inc. の商標です。Meta と Meta Quest は Meta Platforms, Inc. の商標です。Windows は Microsoft グループ企業の商標です。Linux は米国およびその他の国における Linus Torvalds の登録商標です。これらのロゴは Immuch360 が動作する場所を示すためだけにプラットフォームの表に載せており、いかなる推奨や提携も意味するものではありません。Android ロボットは、Google が作成および提供している作品から複製または変更したもので、Creative Commons 3.0 Attribution License に記載された条件に従って使用しています。Linux のペンギン Tux は Larry Ewing (lewing@isc.tamu.edu) が The GIMP で描いたもので、Simon Budig と Garrett LeSage によるベクター版を使用しています。ロゴの出典とライセンス：[.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md)。
+
 <a id="roadmap"></a>
 ## ロードマップ
 
 まだ実現していないことを、可能性の高い順に並べています。ここにあるものは約束ではありません。[Issue トラッカー](https://github.com/freeKC/Immuch360/issues) でのフィードバックが、何を優先するかを決める助けになります。
 
 - **Immuch360 Desktop、まず Windows から**：平面の動画に対応した desktop build 2 を公開し、2026 年 10 月 9 日からデスクトップのソースはフォークのメインブランチ `immuch360` に入っています（[Windows パソコンで](#on-a-windows-computer-immuch360-desktop-preview) を参照）。次は Windows での 360°、3D、VR180、未加工の 360° 動画で、未加工ファイルの 2 つのレンズと Tapo のライブ映像も含みます。その後、Windows パソコンでの各機能のテストと修正、ウェブカメラを使った Spatial 2.5D、そして Linux と macOS、パッケージ、署名、更新です。
-- **Google Play**：ビルド 18 が公開中です。ビルド 19 に代えて、ビルド 20 が 2026 年 10 月 7 日から Google の審査中です。ビルド 21 では、スマートフォンとタブレットについては何も変わりません。
+- **Google Play**：ビルド 18 に代えて、ビルド 20 が 2026 年 10 月 7 日から公開中です。テレビ向けのストアページは 2026 年 10 月 9 日から Google の審査中です。ビルド 21 では、スマートフォンとタブレットについては何も変わりません。
 - **App Store**：バージョン 3.3.0 が Apple の審査待ちです。ビルド 11 の機能が含まれているため、Immich へのアップロードと動画デコーダーのチェック（ビルド 15）、Insta360 の RAW ファイル（ビルド 16）は次の App Store のアップデートで届きます。公開されたらリンクをここに追加します。
 - **Meta Horizon Store**：Meta は 2026 年 10 月 7 日にビルド 14 で掲載を承認しました。ビルド 21 を最初のアップデートとして提出しています：ビルド 14 以降のすべて（共有から Immich へのアップロード、ヘッドセットがデコードできるものに応じた動画ソースの選択、Insta360、GoPro、DJI の RAW ファイル、DLNA、スマートフォンの共有、Apple の空間写真、Plex Media Server のライブラリ、Tapo カメラ）が含まれ、ストアでは Quest 2、Quest Pro、Quest 3、3S を対象としています。ページが公開されたら、ストアのリンクをここに追加します。サイドロードしたものは先にアンインストールする必要があります（[インストール](#install) を参照）。
-- **ストアの掲載文**：Google Play の掲載文は 2026 年 10 月に新しいスクリーンショットとともに書き直しており、テレビ向けリリースに合わせてテレビのスクリーンショットとテレビ用バナーを追加します。App Store の説明文はまだ初期のビルド（360° の写真と動画、RAW ファイルは平面表示）を説明しています。今後は 3D、VR180、Spatial のビューアー、サーバーなしのモード、ネットワーク共有、メディアプレーヤー、Insta360 の RAW ファイルを紹介します。Meta Horizon Store の説明文では、すでにメディアプレーヤーを紹介しています。
+- **ストアの掲載文**：Google Play の掲載文は 2026 年 10 月に新しいスクリーンショットとともに書き直し、2026 年 10 月 8 日にテレビのスクリーンショットとテレビ用バナーを追加しました。テレビ向けのストアページは 2026 年 10 月 9 日から Google の審査中です。App Store の説明文はまだ初期のビルド（360° の写真と動画、RAW ファイルは平面表示）を説明しています。今後は 3D、VR180、Spatial のビューアー、サーバーなしのモード、ネットワーク共有、メディアプレーヤー、Insta360 の RAW ファイルを紹介します。Meta Horizon Store の説明文では、すでにメディアプレーヤーを紹介しています。
 - **カメラの RAW 360° ファイル、次の作業**：ヘッドセット用に RAW 写真を準備している間の進行状況インジケーター。GoPro と DJI の動画の、それぞれのモーションデータによる水平補正。デュアル魚眼の .dng。継ぎ目とデコーダーの余裕を確認するための、ビルド 18 の 2 つのレンズの再生に関する実機での報告（X4、X5、X6、GoPro MAX 2、Osmo 360）。
 - **DLNA、電話の共有、Apple の空間メディア、次の作業**：ビルド 19 の実機での報告（DLNA での Plex、Jellyfin、NAS、Freebox Server。テザリングを含め Quest に配信するスマートフォン。ヘッドセットでの実際の iPhone の空間写真と空間ビデオ）。iPhone がすべての DLNA サーバーを見つけられるよう Apple に申請しているマルチキャストのエンタイトルメント。ヘッドセットでの空間写真間の前へと次へ。タイムラインでのサーバーの写真への空間バッジ。デコーダーが対応していれば、Quest での空間ビデオの 3D 表示。
 - **スマートフォンの 360° プレーヤー、次の作業**：iOS の 360° 動画プレーヤーのタイムバー（Android 版にはあります）、Quest のイマーシブビューのような、スマートフォンの 360° プレーヤーでの前へ・次へ、ネイティブの 360° 動画プレーヤーでの写真の表示。
 - **ネットワーク共有、次の作業**：写真と動画の画面で、フォルダー内のファイルから次のファイルへのスワイプ（Quest のイマーシブビューはすでにフォルダー内の 360° ファイルを移動できます）、WebDAV の Digest 認証、Bonjour のレコードからのユーザー名の取得。
 - **平面の動画**：サーバー、デバイス、共有のどの動画でも、スマートフォンの平面のプレーヤーで音声トラックを選べるようにすること（360° と Spatial のプレーヤー、そして Immuch360 Desktop の平面のプレーヤーにはあります）。
-- **Android TV、次の予定**：Google TV エミュレーターと実際のテレビでのビルド 20 のデバイステスト、続いて Google Play でのテレビ向けリリース（テレビのスクリーンショット、テレビ用バナー、Google の審査）。その後、テレビのホーム画面のチャンネル。
+- **Android TV、次の予定**：Google TV エミュレーターと実際のテレビでのビルド 20 のデバイステスト、そして Google によるテレビ向けストアページの審査が済みしだい、Google Play でのテレビ向けリリース。その後、テレビのホーム画面のチャンネル。
 - **Tapo カメラ、次の予定**：実際のカメラでのビルド 20 のデバイステスト、iPhone と iPad でのライブ映像、H.265 の録画、取得中のクリップの再生、1 日分の録画を 1 本のタイムラインで表示。
 - **Plex、次の予定**：ビルド 20 のデバイステスト（スマートフォン、Quest、iPhone、テレビ、外出先）、QR コードでのコンピューターからのトークンの受け渡し、見つかったサーバーの一覧で Plex サーバーの DLNA 側を隠すこと、IPv6。
 - **アップストリーム**：360° 写真ビューアーから始めて、メンテナーが望む部分について Immich に小さなプルリクエストを送ること。

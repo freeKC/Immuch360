@@ -13,14 +13,19 @@ Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI
   <sub>Neoficiāls atzarojums. Nav saistīts ar Immich vai FUTO. Nosaukums lasāms kā „I am much 360”.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">tiek pārskatīts</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store apstiprināts, 21. būvējums iesniegts kā tā pirmais atjauninājums<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">priekšskatījuma lejupielāde</a>, darbvirsmas būvējums 2
-</p>
+<div align="center">
+
+| Platforma | Kur iegūt | Statuss 2026. gada 9. oktobrī |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20. būvējums Google Play kopš 2026. gada 7. oktobra, 21. būvējums GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone un iPad** | App Store | versija 3.3.0 gaida Apple pārskatīšanu; pa to laiku [izveidojiet to paši](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 un 3S | [APK](#meta-quest-3) · Horizon Store | ieraksts apstiprināts, 21. būvējums Meta pārskatīšanā |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV un Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21. būvējums GitHub; Google Play ieraksts televizoriem ir Google pārskatīšanā kopš 2026. gada 9. oktobra |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Priekšskatījuma ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | darbvirsmas būvējums 2 operētājsistēmā Windows: foto un plakani video, 360° video drīzumā; macOS un Linux vēlāk, no tiem pašiem avotiem |
+
+*Statusi tiek atjaunināti katrā laidienā; sīkāka informācija sadaļā [Kur to iegūt](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Īsts 360°**<br>Foto un video kā sfēra, kurā paskatīties apkārt, ar žiroskopu, ieskaitot neapstrādātus kameras failus (Insta360 no 16. būvējuma, GoPro un DJI no 18. būvējuma). Arī bezmaksas video atskaņotājs: plakani, 360°, 3D, VR180
 - 👓 **Īsts 3D**<br>Stereoskopiski 360° un VR180, augšā un apakšā vai blakus, un Apple telpiskie foto (no 19. būvējuma): īsts 3D brillēs, viena acs tālrunī
@@ -1072,7 +1077,7 @@ Lietotne ir Google Play tālruņiem un planšetdatoriem; App Store versija gaida
 
 - **Android tālruņi un planšetdatori**
   - Šodien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) vai APK lapā [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` tālrunim (universālais `Immuch360-v<version>-release.apk` darbojas visur, `-armeabi-v7a` ir vecākiem 32 bitu tālruņiem, un `.aab` fails ir paredzēts Google Play, ne instalēšanai no sāniem). GitHub būvējums parasti ir priekšā veikalam. Jebkurā gadījumā tā instalējas blakus oficiālajai Immich lietotnei (pakotne `com.aprogsys.immuch360`).
-  - Drīzumā: Google Play veikalā 18. būvējums ir pieejams, 20. būvējums Google pārskatīšanā kopš 2026. gada 7. oktobra, 19. būvējuma vietā.
+  - Drīzumā: Google Play veikalā 20. būvējums ir pieejams kopš 2026. gada 7. oktobra, 18. būvējuma vietā; 21. būvējums tālruņos un planšetdatoros neko nemaina.
 - **iPhone un iPad**
   - Šodien: gaida Apple pārskatīšanu. Pārskatāmajai versijai ir 11. būvējuma funkcijas: augšupielāde uz Immich un izvēle „Video avots” (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar vēlāku App Store atjauninājumu. Pirmkods kompilējas ar Xcode vai Codemagic, skatiet [Izveidojiet to paši](#build-it-yourself).
   - Drīzumā: App Store, tiek pārskatīts.
@@ -1081,7 +1086,7 @@ Lietotne ir Google Play tālruņiem un planšetdatoriem; App Store versija gaida
   - Drīzumā: Meta Horizon Store veikalā ieraksts tika apstiprināts 2026. gada 7. oktobrī ar 14. būvējumu, un 21. būvējums, tā pirmais atjauninājums, ir Meta pārskatīšanā; veikala alfa kanāls (tikai testētājiem) saņem katru jauno būvējumu.
 - **Android TV un Google TV (no 20. būvējuma)**
   - Šodien: universālais `Immuch360-v<version>-release.apk` lapā [Releases](https://github.com/freeKC/Immuch360/releases), instalēts no sāniem ar adb, skatiet [Instalēt to televizorā](#install-it-on-the-tv). Tā ir tā pati lietotne kā tālruņos.
-  - Drīzumā: Google Play televizoriem, pēc Google pārskatīšanas televizora laidienam.
+  - Drīzumā: Google Play televizoriem, kura ieraksts ir Google pārskatīšanā kopš 2026. gada 9. oktobra.
 - **Windows 10 un 11, 64 bitu (priekšskatījums)**
   - Šodien: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` no [darbvirsmas pirmslaidiena](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), atarhivēts un palaists, kā norādīts sadaļā [Lejupielāde un instalēšana Windows sistēmā](#download-and-install-on-windows). Pagaidām foto un plakanie video: 360°, 3D un VR180 video nāks ar nākamajiem darbvirsmas būvējumiem.
   - Drīzumā: 360°, 3D, VR180 un neapstrādātie 360° video; vēlāk instalētājs, parakstīts būvējums un atjauninājumi.
@@ -1165,22 +1170,24 @@ Pilna politika ir failā [PRIVACY.md](../PRIVACY.md).
 
 Immuch360 Desktop Windows ZIP, un tikai tas, satur arī savu video atskaņotāju: libmpv, [mpv](https://mpv.io) bibliotēku, ar [FFmpeg](https://ffmpeg.org) tajā, ko vada [media_kit](https://github.com/media-kit/media-kit) spraudņi. mpv un FFmpeg ir būvēti bez savām tikai GPL daļām, un to kods ir saskaņā ar GNU LGPL 2.1 vai jaunāku versiju; kopā būvēts, `libmpv-2.dll` tiek izplatīts saskaņā ar GNU LGPL 3 vai jaunāku versiju. Lietotne to ielādē izpildes laikā, tāpēc jūs varat to aizstāt ar savu būvējumu. Licenču teksti ir ZIP mapē `licenses`, un katra bibliotēka ar savu licenci un pirmkodu ir uzskaitīta [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV un Google TV ir Google LLC preču zīmes; Apple, iPhone, iPad un macOS ir Apple Inc. preču zīmes; Meta un Meta Quest ir Meta Platforms, Inc. preču zīmes; Windows ir Microsoft uzņēmumu grupas preču zīme; Linux ir Linus Torvalds reģistrēta preču zīme ASV un citās valstīs. To logotipi platformu tabulā parādīti tikai, lai norādītu, kur darbojas Immuch360, un nenozīmē nekādu atbalstu vai saistību. Android robots ir reproducēts vai pārveidots no darba, ko radījis un kopīgojis Google, un tiek izmantots saskaņā ar noteikumiem, kas aprakstīti Creative Commons 3.0 Attribution License. Tux, Linux pingvīnu, radījis Larry Ewing (lewing@isc.tamu.edu), zīmējot ar The GIMP, vektora versiju veidojuši Simon Budig un Garrett LeSage. Logotipu avoti un licences: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Ceļvedis
 
 Kas vēl nav izdarīts, visticamākais vispirms. Nekas šeit nav solījums, un atsauksmes [problēmu sekotājā](https://github.com/freeKC/Immuch360/issues) palīdz izlemt, kas nāks vispirms.
 
 - **Immuch360 Desktop, vispirms Windows**: darbvirsmas būvējums 2 ir iznācis, ar plakaniem video, un darbvirsmas pirmkods kopš 2026. gada 9. oktobra ir atzarojuma galvenajā zarā `immuch360` (skatiet [Windows datorā](#on-a-windows-computer-immuch360-desktop-preview)). Tālāk 360°, 3D, VR180 un neapstrādātie 360° video Windows sistēmā, ar neapstrādāto failu abiem objektīviem un Tapo tiešraidi; tad katras funkcijas pārbaude Windows datorā un tās labojumi; tad Spatial 2.5D ar tīmekļa kameru; tad Linux un macOS, pakotnes, parakstīšana un atjauninājumi.
-- **Google Play**: 18. būvējums ir pieejams; 20. būvējums ir Google pārskatīšanā kopš 2026. gada 7. oktobra, 19. būvējuma vietā. 21. būvējums tālruņos un planšetdatoros neko nemaina.
+- **Google Play**: 20. būvējums ir pieejams kopš 2026. gada 7. oktobra, 18. būvējuma vietā; ieraksts televizoriem ir Google pārskatīšanā kopš 2026. gada 9. oktobra. 21. būvējums tālruņos un planšetdatoros neko nemaina.
 - **App Store**: versija 3.3.0 gaida Apple pārskatīšanu; tai ir 11. būvējuma funkcijas, tāpēc augšupielāde uz Immich un video dekoderu pārbaude (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar nākamo App Store atjauninājumu. Saite tiks pievienota šeit, kad tā būs aktīva.
 - **Meta Horizon Store**: Meta apstiprināja ierakstu 2026. gada 7. oktobrī ar 14. būvējumu. 21. būvējums ir iesniegts kā tā pirmais atjauninājums: tas atnes visu kopš 14. būvējuma (augšupielādes no koplietojuma uz Immich, video avotu, kas izvēlēts pēc tā, ko brilles spēj dekodēt, neapstrādātus Insta360, GoPro un DJI failus, DLNA, tālruņa koplietojumu, Apple telpiskos foto, Plex Media Server bibliotēkas, Tapo kameras), un veikals to piedāvā Quest 2, Quest Pro, Quest 3 un 3S. Veikala saite tiks pievienota šeit, kad lapa būs publiska; no sāniem instalēta kopija vispirms būs jāatinstalē (skatiet [Instalēšana](#install)).
-- **Veikalu ieraksti**: Google Play ieraksts tika pārrakstīts 2026. gada oktobrī ar jauniem ekrānuzņēmumiem, un līdz ar televizora laidienu tas iegūs televizora ekrānuzņēmumus un televizora reklāmkarogu. App Store teksts joprojām apraksta pirmos būvējumus (360° foto un video, neapstrādāti faili rādīti plakani); tas iepazīstinās ar 3D, VR180 un Spatial skatītājiem, režīmu bez servera, tīkla koplietojumiem, multivides atskaņotāju un neapstrādātajiem Insta360 failiem. Meta Horizon Store teksts jau iepazīstina ar multivides atskaņotāju.
+- **Veikalu ieraksti**: Google Play ieraksts tika pārrakstīts 2026. gada oktobrī ar jauniem ekrānuzņēmumiem, un tā televizora ekrānuzņēmumi un televizora reklāmkarogs tika pievienoti 2026. gada 8. oktobrī; ieraksts televizoriem ir Google pārskatīšanā kopš 2026. gada 9. oktobra. App Store teksts joprojām apraksta pirmos būvējumus (360° foto un video, neapstrādāti faili rādīti plakani); tas iepazīstinās ar 3D, VR180 un Spatial skatītājiem, režīmu bez servera, tīkla koplietojumiem, multivides atskaņotāju un neapstrādātajiem Insta360 failiem. Meta Horizon Store teksts jau iepazīstina ar multivides atskaņotāju.
 - **Neapstrādāti 360° kameras faili, tālāk**: progresa indikators, kamēr neapstrādāts foto tiek sagatavots brillēm; GoPro un DJI video izlīdzināšana pēc to pašu kustības datiem; dubultā „zivs acs” .dng; ziņojumi no ierīcēm par 18. būvējuma divu objektīvu atskaņošanu (X4, X5, X6, GoPro MAX 2, Osmo 360), lai apstiprinātu šuves un dekoderu resursus.
 - **DLNA, tālruņa koplietojums un Apple telpiskie faili, tālāk**: 19. būvējuma ziņojumi no ierīcēm (Plex, Jellyfin, NAS un Freebox Server caur DLNA; tālrunis, kas apkalpo Quest, arī savā tīklājā; īsti iPhone telpiskie foto un video brillēs); multiraides tiesības, kas lūgtas no Apple, lai iPhone atrastu katru DLNA serveri; iepriekšējais un nākamais starp telpiskajiem foto brillēs; telpiskā nozīmīte uz servera foto laika skalā; telpiskie video 3D formātā Quest brillēs, ja to dekoderi to ļaus.
 - **360° atskaņotāji tālruņos, tālāk**: laika josla iOS 360° video atskaņotājā (Android atskaņotājam tā ir), iepriekšējais/nākamais tālruņu 360° atskaņotājos kā Quest imersīvajā skatā, un foto iebūvētajā 360° video atskaņotājā.
 - **Tīkla koplietojumi, nākamie soļi**: pārvilkšana no viena mapes faila uz nākamo foto un video lapās (Quest imersīvais skats jau iet cauri mapes 360° failiem), Digest autentifikācija WebDAV, lietotājvārds no Bonjour ieraksta.
 - **Plakani video**: audio celiņa izvēle tālruņu plakanajā atskaņotājā, vienādi servera, ierīces un koplietojuma video (360° un Spatial atskaņotājiem tā ir, un tāpat Immuch360 Desktop plakanajam atskaņotājam).
-- **Android TV, tālāk**: 20. būvējuma ierīču tests Google TV emulatorā un īstā televizorā, tad televizora laidiens Google Play (televizora ekrānuzņēmumi, televizora reklāmkarogs, Google pārskatīšana); vēlāk kanāli televizora sākuma ekrānā.
+- **Android TV, tālāk**: 20. būvējuma ierīču tests Google TV emulatorā un īstā televizorā, un televizora laidiens Google Play, kad Google būs pārskatījis ierakstu televizoriem; vēlāk kanāli televizora sākuma ekrānā.
 - **Tapo kameras, tālāk**: 20. būvējuma ierīču tests ar īstām kamerām; tiešraide iPhone un iPad; H.265 ieraksti; klipa atskaņošana, kamēr tas tiek iegūts; visas dienas ieraksti vienā laika joslā.
 - **Plex, tālāk**: 20. būvējuma ierīču tests (tālruņi, Quest brilles, iPhone, televizors, ārpus mājām); marķiera pārnešana no datora ar QR kodu; Plex servera DLNA puses paslēpšana atrasto serveru sarakstā; IPv6.
 - **Augšupstraume**: nelieli izmaiņu pieprasījumi (pull request) Immich tām daļām, ko vēlas uzturētāji, sākot ar 360° foto skatītāju.

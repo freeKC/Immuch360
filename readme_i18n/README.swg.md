@@ -13,14 +13,19 @@ Se isch fir Leit, die mit ra 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360, Ri
   <sub>Inoffizieller Fork. Ghört ned zu Immich ond ned zu FUTO. Dr Nama liest sich wia "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
-  App Store: <a href="#where-to-get-it">en dr Prüfong</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store freigeba, Build 21 als erschts Update eigreicht<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">Vorschau runterlada</a>, Desktop-Build 2
-</p>
+<div align="center">
+
+| Plattform | Wo mr's kriagt | Stand am 9. Oktober 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** Telefon ond Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 20 uff Google Play seit em 7. Oktober 2026, Build 21 uff GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ond iPad** | App Store | Version 3.3.0 wartet uff d Prüfong vo Apple; bis dahin [selber baua](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ond 3S | [APK](#meta-quest-3) · Horizon Store | Eitrag freigeba, Build 21 en dr Prüfong bei Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ond Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 21 uff GitHub; dr Google-Play-Eitrag für Fernseher isch seit em 9. Oktober 2026 en dr Prüfong vo Google |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Vorschau-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Desktop-Build 2 uff Windows: Fotos ond flache Videos, 360°-Videos kommet als nächschts; macOS ond Linux schpäter, aus de gleiche Quella |
+
+*D Stände werdet bei jedem Release aktualisiert; d Einzelheita stehet onter [Wo mr's kriagt](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° direkt drin**<br>Fotos ond Videos als Kugl, en dr mr sich omguckt, mit em Gyroskop, au d Rohdateia vo dr Kamera (Insta360 ab Build 16, GoPro ond DJI ab Build 18). Dazu a kostaloser Videoplayer: flach, 360°, 3D, VR180
 - 👓 **3D direkt drin**<br>Stereoskopischs 360° ond VR180, oba ond onda oder nebanander, ond räumliche Fotos vo Apple (ab Build 19): echts 3D em Headset, oi Aug uffm Telefon
@@ -1072,7 +1077,7 @@ D App gibt's uff Google Play fir Telefon ond Tablets; d Version fürn App Store 
 
 - **Android-Telefon ond -Tablets**
   - Heit: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder d APK uff dr Seite [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fir a Telefon (d universelle `Immuch360-v<version>-release.apk` goht überall, `-armeabi-v7a` isch fir ältere 32-Bit-Telefon, ond d Datei `.aab` isch fir Google Play, ned zom seitlich Lada). Dr GitHub-Build isch meischtens em Store voraus. So oder so wird er nebe dr offizielle Immich-App installiert (Paket `com.aprogsys.immuch360`).
-  - Bald: uff Google Play isch Build 18 online, Build 20 seit em 7. Oktober 2026 en dr Prüfong vo Google, anstatt vo Build 19.
+  - Bald: uff Google Play isch Build 20 seit em 7. Oktober 2026 online, anstatt vo Build 18; Build 21 ändert nix uffm Telefon ond uffm Tablet.
 - **iPhone ond iPad**
   - Heit: wartet uff d Prüfong vo Apple. D Version en dr Prüfong hot d Funktiona vo Build 11: s Hochlada zu Immich ond d Wahl Videoquelle (Build 15) ond d rohe Insta360-Dateia (Build 16) kommet mit ma schpätera Update em App Store. Dr Quellcode baut sich mit Xcode oder uff Codemagic, guck bei [Selber baua](#build-it-yourself).
   - Bald: App Store, en dr Prüfong.
@@ -1081,7 +1086,7 @@ D App gibt's uff Google Play fir Telefon ond Tablets; d Version fürn App Store 
   - Bald: em Meta Horizon Store isch dr Eintrag am 7. Oktober 2026 mit Build 14 freigeba worra, ond Build 21, sei erschts Update, isch en dr Prüfong vo Meta; dr Alpha-Kanal vom Store (bloß Teschter) kriagt jeden neie Build.
 - **Android TV ond Google TV (ab Build 20)**
   - Heit: d universelle `Immuch360-v<version>-release.apk` vo dr Seite [Releases](https://github.com/freeKC/Immuch360/releases), seitlich glada mit adb, guck bei [Uffm Fernseher installiera](#install-it-on-the-tv). Des isch die gleiche App wia uffm Telefon.
-  - Bald: Google Play uff Fernseher, noch dr Prüfong vom Fernseher-Release durch Google.
+  - Bald: Google Play uff Fernseher, dr Eintrag dafür isch seit em 9. Oktober 2026 en dr Prüfong vo Google.
 - **Windows 10 ond 11, 64 Bit (Vorschau)**
   - Heit: Immuch360 Desktop, d ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` vom [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), ausgpackt ond gstartet, wia's bei [Uff Windows runterlada ond installiera](#download-and-install-on-windows) schtoht. Vorerscht Fotos ond flache Videos: 360°-, 3D- ond VR180-Videos kommet mit de nägschte Desktop-Builds.
   - Bald: 360°-, 3D-, VR180- ond rohe 360°-Videos; an Installer, an signierta Build ond Updates schpäter.
@@ -1165,22 +1170,24 @@ Des Projekt isch a Fork vo Immich ond bleibt onder dr [GNU AGPL v3](../LICENSE).
 
 D Windows-ZIP vo Immuch360 Desktop, ond bloß die, hot au ihren Videoplayer drin: libmpv, d Bibliothek vo [mpv](https://mpv.io), mit [FFmpeg](https://ffmpeg.org) drin, gsteuert vo de Plugins vo [media_kit](https://github.com/media-kit/media-kit). mpv ond FFmpeg send ohne ihre Teil baut, wo bloß GPL send, ond ihr Code isch onder dr GNU LGPL Version 2.1 oder schpäter; zamma baut wird `libmpv-2.dll` onder dr GNU LGPL Version 3 oder schpäter verteilt. D App lädt se zur Laufzeit, drom derfsch se durch dein eigena Build ersetza. D Lizenztexte send em Ordner `licenses` vo dr ZIP, ond jede Bibliothek mit ihrer Lizenz ond ihre Quella schtoht en [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV ond Google TV send Marka vo Google LLC; Apple, iPhone, iPad ond macOS send Marka vo Apple Inc.; Meta ond Meta Quest send Marka vo Meta Platforms, Inc.; Windows isch a Mark vo dr Microsoft-Unternehmensgruppe; Linux isch d eitragene Mark vo Linus Torvalds en de USA ond en andere Länder. Ihre Logos stehet en dr Plattformtabell bloß, om zom zeiga, wo Immuch360 lauft, ond bedeutet koi Empfehlong ond koi Verbindong. Dr Android-Roboter isch nachbildet oder abgändert noch ma Werk, wo Google gschaffa ond teilt hot, ond wird noch de Bedingonga gnutzt, wo en dr Creative Commons 3.0 Attribution License beschrieba send. Tux, dr Linux-Pinguin, isch vom Larry Ewing (lewing@isc.tamu.edu), gmolt mit The GIMP, en dr Vektorversion vom Simon Budig ond vom Garrett LeSage. Quella ond Lizenza vo de Logos: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Fahrplan
 
 Was no ned fertig isch, s Wahrscheinlichschte zerscht. Nix dovo isch a Versprecha, ond Rückmeldonga em [Issue-Tracker](https://github.com/freeKC/Immuch360/issues) helfet zom entscheida, was zerscht kommt.
 
 - **Immuch360 Desktop, Windows zerscht**: dr Desktop-Build 2 isch draußa, mit flache Videos, ond d Desktop-Quella send seit em 9. Oktober 2026 em Hauptzweig vom Fork, `immuch360` (guck bei [Uff ma Windows-Rechner](#on-a-windows-computer-immuch360-desktop-preview)). Als nägschts 360°-, 3D-, VR180- ond rohe 360°-Videos uff Windows, mit de zwoi Objektiv vo rohe Dateia ond dr Tapo-Liveaasicht; dann dr Tescht vo jeder Funktion uff ma Windows-PC ond d Korrekture; dann Spatial 2.5D mit dr Webcam; dann Linux ond macOS, Pakete, Signiera ond Updates.
-- **Google Play**: Build 18 isch online; Build 20 isch seit em 7. Oktober 2026 en dr Prüfong vo Google, anstatt vo Build 19. Build 21 ändert nix uffm Telefon ond uffm Tablet.
+- **Google Play**: Build 20 isch seit em 7. Oktober 2026 online, anstatt vo Build 18; dr Eintrag fir Fernseher isch seit em 9. Oktober 2026 en dr Prüfong vo Google. Build 21 ändert nix uffm Telefon ond uffm Tablet.
 - **App Store**: d Version 3.3.0 wartet uff d Prüfong vo Apple; se hot d Funktiona vo Build 11, drom kommet s Hochlada zu Immich ond d Prüfong vo de Videodecoder (Build 15) ond d rohe Insta360-Dateia (Build 16) mit em nägschta Update em App Store. Dr Link kommt do nei, wenn se online isch.
 - **Meta Horizon Store**: Meta hot dr Eintrag am 7. Oktober 2026 mit Build 14 freigeba. Build 21 isch als sei erschts Update eigreicht: er bringt älles seit Build 14 (Uploads vo ra Freigab an Immich, d Videoquelle nach dem gwählt, was s Headset dekodiera ko, rohe Dateia vo Insta360, GoPro ond DJI, DLNA, d Telefon-Freigab, räumliche Fotos vo Apple, Plex-Media-Server-Bibliotheka, Tapo-Kameras), ond dr Store listet ihn fir d Quest 2, Quest Pro, Quest 3 ond 3S. Dr Store-Link kommt do nei, sobald d Seite öffentlich isch; a seitlich gladene Kopie muss erscht deinstalliert werda (guck bei [Installiera](#install)).
-- **Store-Einträg**: dr Eintrag uff Google Play isch em Oktober 2026 mit neie Bildschirmfotos nei gschrieba worra, ond kriagt mit em Fernseher-Release Fernseher-Bildschirmfotos ond a Fernseher-Banner. Dr Text em App Store beschreibt no d erschte Builds (360°-Fotos ond -Videos, Rohdateia flach aazeigt); er wird d Aasichta fir 3D, VR180 ond Spatial, da Modus ohne Server, d Netzwerkfreigaba, da Medieplayer ond d rohe Insta360-Dateia vorstella. Dr Text em Meta Horizon Store stellt da Medieplayer scho vor.
+- **Store-Einträg**: dr Eintrag uff Google Play isch em Oktober 2026 mit neie Bildschirmfotos nei gschrieba worra, ond seine Fernseher-Bildschirmfotos ond sei Fernseher-Banner send am 8. Oktober 2026 dazukomma; dr Eintrag fir Fernseher isch seit em 9. Oktober 2026 en dr Prüfong vo Google. Dr Text em App Store beschreibt no d erschte Builds (360°-Fotos ond -Videos, Rohdateia flach aazeigt); er wird d Aasichta fir 3D, VR180 ond Spatial, da Modus ohne Server, d Netzwerkfreigaba, da Medieplayer ond d rohe Insta360-Dateia vorstella. Dr Text em Meta Horizon Store stellt da Medieplayer scho vor.
 - **Rohdateia vo 360°-Kameras, als nägschts**: a Fortschrittsaazeig, solang a rohs Foto fürs Headset vorbereitet wird; Graderichta vo GoPro- ond DJI-Videos aus ihre eigene Bewegongsdata; Doppel-Fischaug als .dng; Berichte vo Geräte zom Abspiela mit zwoi Objektiv vo Build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360), om Nähte ond Decoder-Budgets zom bschtätiga.
 - **DLNA, Telefon-Freigab ond räumliche Medien vo Apple, als nägschts**: d Geräteberichte vo Build 19 (Plex, Jellyfin, a NAS ond dr Freebox Server über DLNA; a Telefon, des a Quest versorgt, au über sein Hotspot; echte räumliche Fotos ond Videos vom iPhone em Headset); d Multicast-Berechtigong, die bei Apple aagfrogt isch, damit iPhones jeden DLNA-Server findet; vorigs ond nägschts zwischa räumliche Fotos em Headset; a räumlichs Abzeicha uff Server-Fotos en dr Zeitleischte; räumliche Videos en 3D uff dr Quest, wenn ihre Decoder des zulasset.
 - **360°-Player uffm Telefon, als nägschts**: a Zeitleischte em iOS-360°-Videoplayer (dr vo Android hot oine), vorigs/nägschts en de 360°-Player vom Telefon wia en dr immersive Aasicht vo dr Quest, ond Fotos em eigene 360°-Videoplayer.
 - **Netzwerkfreigaba, nägschte Schritt**: wischa vo oiner Datei vom Ordner zur nägschta uff de Foto- ond Videoseita (d immersive Aasicht vo dr Quest goht scho durch d 360°-Dateia vo ma Ordner), Digest-Aameldong fir WebDAV, dr Benutzernama aus em Bonjour-Eintrag.
 - **Flache Videos**: d Wahl vo dr Tonspur em flacha Player vom Telefon, fir Server-, Geräte- ond Freigab-Videos gleichermaßa (dr 360°- ond dr Spatial-Player hen se, ond dr flache Player vo Immuch360 Desktop au).
-- **Android TV, als nägschts**: dr Gerätetescht vo Build 20 uffm Google-TV-Emulator ond uff ma echta Fernseher, dann s Fernseher-Release uff Google Play (Fernseher-Bildschirmfotos, s Fernseher-Banner, d Prüfong vo Google); schpäter Kanäl uffm Startbildschirm vom Fernseher.
+- **Android TV, als nägschts**: dr Gerätetescht vo Build 20 uffm Google-TV-Emulator ond uff ma echta Fernseher, ond s Fernseher-Release uff Google Play, sobald Google da Eintrag fir Fernseher prüft hot; schpäter Kanäl uffm Startbildschirm vom Fernseher.
 - **Tapo-Kameras, als nägschts**: dr Gerätetescht vo Build 20 mit echte Kameras; s Live-Bild uffm iPhone ond iPad; H.265-Aufnahma; an Clip abspiela, während er no gholt wird; d Aufnahma vo ma ganza Tag uff oiner Zeitleischte.
 - **Plex, als nägschts**: dr Gerätetescht vo Build 20 (Telefon, d Quest, a iPhone, a Fernseher, onderwegs); s Token mit ma QR-Code vom Computer rüberhola; d DLNA-Seite vo ma Plex-Server en dr Lischte vo de gfondene Server verstecka; IPv6.
 - **Upstream**: kleine Pull Requests an Immich fir d Teil, die d Maintainer wellet, aagfanga mit dr 360°-Fotoaasicht.

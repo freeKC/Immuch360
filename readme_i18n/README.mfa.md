@@ -13,14 +13,19 @@ Dio untuk ore hok ambik gambo nga kamera 360° (Insta360, GoPro MAX, DJI Osmo 36
   <sub>Cabang tok rasmi. Takdok kaito nga Immich ke FUTO. Namo dio dibaco macey "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">tengoh disemak</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store doh diluluske, binaan 21 doh dihanta sebagai kemas kini pertamo dio<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">muat turun pratonton</a>, binaan desktop 2
-</p>
+<div align="center">
+
+| Platform | Mano nok dapat | Status pado 9 Oktober 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon nga tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 20 kat Google Play sejak 7 Oktober 2026, binaan 21 kat GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone nga iPad** | App Store | versi 3.3.0 tengoh tunggu semakan Apple; sementaro tu, [bina sendiri](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [APK](#meta-quest-3) · Horizon Store | senarai doh diluluske, binaan 21 dalam semakan Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV nga Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 21 kat GitHub; senarai Google Play untuk TV dale semaka Google sejak 9 Oktober 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | binaan desktop 2 kat Windows: gambo nga video rata, video 360° lepah ni; macOS nga Linux kemudie, dari sumber hok samo |
+
+*Status dikemas kini tiap kali keluaran baru; butirannyo ado dalam [Mano nok dapat](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° asli**<br>Gambo nga video jadi sfera hok demo buleh tengok kelilin, nga giroskop, fail mentoh kamera pong buleh (Insta360 dari binaan 16, GoPro nga DJI dari binaan 18). Ado gak pemain video percumo: rata, 360°, 3D, VR180
 - 👓 **3D asli**<br>360° nga VR180 stereo, atah nga bawoh ke sebeloh-sebeloh, nga gambo ruang Apple (dari binaan 19): 3D betul dale headset, satu mato kat fon
@@ -1072,7 +1077,7 @@ Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tun
 
 - **Fon nga tablet Android**
   - Hari ni: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ke APK kat muko [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk fon (`Immuch360-v<version>-release.apk` universal jale kat mano-mano, `-armeabi-v7a` untuk fon 32 bit lamo, nga fail `.aab` untuk Google Play, buke untuk sideload). Binaan GitHub biasonyo lagi dulu dari kedai. Mano-mano pong, dio pasang sebeloh aplikasi Immich rasmi (pakej `com.aprogsys.immuch360`).
-  - Tak lamo lagi: kat Google Play, binaan 18 doh ado, binaan 20 dale semaka Google sejak 7 Oktober 2026, ganti binaan 19.
+  - Tak lamo lagi: kat Google Play, binaan 20 doh ado sejak 7 Oktober 2026, ganti binaan 18; binaan 21 tok ubah gapo-gapo kat fon nga tablet.
 - **iPhone nga iPad**
   - Hari ni: tengoh tunggu semaka Apple. Versi hok tengoh disemak ado ciri binaan 11: muat naik ko Immich nga pilihe "Sumber video" (binaan 15) nga fail Insta360 mentoh (binaan 16) akan mari nga kemas kini App Store kemudie. Kod sumber dibina nga Xcode ke kat Codemagic, tengok [Bina sendiri](#build-it-yourself).
   - Tak lamo lagi: App Store, tengoh disemak.
@@ -1081,7 +1086,7 @@ Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tun
   - Tak lamo lagi: kat Meta Horizon Store, senarai doh diluluske pado 7 Oktober 2026 nga binaan 14, nga binaan 21, kemas kini pertamo dio, dale semaka Meta; saluran alpha kedai (penguji jah) dapat tiap binaan baru.
 - **Android TV nga Google TV (dari binaan 20)**
   - Hari ni: `Immuch360-v<version>-release.apk` universal dari muko [Releases](https://github.com/freeKC/Immuch360/releases), di-sideload nga adb, tengok [Pasang dio kat TV](#install-it-on-the-tv). Dio aplikasi samo macey kat fon.
-  - Tak lamo lagi: Google Play kat TV, lepah semaka Google untuk keluare TV.
+  - Tak lamo lagi: Google Play kat TV, hok senarai dio dale semaka Google sejak 9 Oktober 2026.
 - **Windows 10 nga 11, 64 bit (pratonton)**
   - Hari ni: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` dari [pra-keluare desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), dinyahzip nga dimulo macey [Muat turun nga pasang kat Windows](#download-and-install-on-windows) kato. Gambo nga video rata buat maso ni: video 360°, 3D nga VR180 mari nga binaan desktop lepah ni.
   - Tak lamo lagi: video 360°, 3D, VR180 nga video mentah 360°; pemasang, binaan bertandatange nga kemas kini kemudia.
@@ -1165,22 +1170,24 @@ Projek ni cabang Immich nga kekal bawoh [GNU AGPL v3](../LICENSE). Tiap APK, ter
 
 ZIP Windows Immuch360 Desktop, nga dio jah, pong bawo pemain video dio: libmpv, pustako [mpv](https://mpv.io), nga [FFmpeg](https://ffmpeg.org) dale dio, dikawal dek plugin [media_kit](https://github.com/media-kit/media-kit). mpv nga FFmpeg dibina tanpo bahagian dio hok GPL jah, nga kod dio bawoh GNU LGPL versi 2.1 ke lepah tu; bilo dibina samo, `libmpv-2.dll` diedar bawoh GNU LGPL versi 3 ke lepah tu. Aplikasi muat dio maso jale, jadi demo buleh ganti dio nga binaan demo sendiri. Teks lesen ado dale folder `licenses` ZIP tu, nga tiap pustako nga lesen nga sumber dio disenarai dale [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV nga Google TV tu cap dagange Google LLC; Apple, iPhone, iPad nga macOS tu cap dagange Apple Inc.; Meta nga Meta Quest tu cap dagange Meta Platforms, Inc.; Windows tu cap dagange kumpule syarikat Microsoft; Linux tu cap dagange berdaftar Linus Torvalds kat Amerika Syarikat nga negeri lain. Logo dio ado dale jadual platform untuk tunjuk mano Immuch360 jale jah, nga tok bermakno apo-apo sokonge ke kaito. Robot Android dihasilke balik ke diubah dari karya hok dicipta nga dikongsi dek Google nga diguno ikut syarat hok diterang dale Creative Commons 3.0 Attribution License. Tux, penguin Linux, karya Larry Ewing (lewing@isc.tamu.edu), dilukis nga The GIMP, dale versi vektor dek Simon Budig nga Garrett LeSage. Sumber nga lesen logo: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Pelan jale
 
 Gapo hok belum siap, hok paling mungki dulu. Takdok gapo sini janji, nga maklum balas dale [penjejak isu](https://github.com/freeKC/Immuch360/issues) tolong putuh gapo mari dulu.
 
 - **Immuch360 Desktop, Windows dulu**: binaan desktop 2 doh kelua, nga video rata, nga sumber desktop ado dale cabang utamo fork ni, `immuch360`, sejak 9 Oktober 2026 (tengok [Kat komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Lepah ni, video 360°, 3D, VR180 nga video mentah 360° kat Windows, nga duo kanta fail mentah nga paparan langsung Tapo; lepah tu uji tiap fungsi kat PC Windows nga pembaika dio; lepah tu Spatial 2.5D nga kamera web; lepah tu Linux nga macOS, pakej, tandatange nga kemas kini.
-- **Google Play**: binaan 18 doh ado; binaan 20 dale semaka Google sejak 7 Oktober 2026, ganti binaan 19. Binaan 21 tok ubah gapo-gapo kat fon nga tablet.
+- **Google Play**: binaan 20 doh ado sejak 7 Oktober 2026, ganti binaan 18; senarai untuk TV dale semaka Google sejak 9 Oktober 2026. Binaan 21 tok ubah gapo-gapo kat fon nga tablet.
 - **App Store**: versi 3.3.0 tengoh tunggu semaka Apple; dio ado ciri binaan 11, jadi muat naik ko Immich nga semaka penyahkod video (binaan 15) nga fail Insta360 mentoh (binaan 16) mari nga kemas kini App Store lepah. Pauta akan ditamboh sini bilo dio doh ado.
 - **Meta Horizon Store**: Meta doh luluske senarai pado 7 Oktober 2026 nga binaan 14. Binaan 21 doh dihanta sebagai kemas kini pertamo dio: dio bawok semuo sejak binaan 14 (muat naik dari kongsi ko Immich, sumber video hok dipilih ikut gapo hok headset buleh nyahkod, fail mentoh Insta360, GoPro nga DJI, DLNA, kongsi fon, gambo ruang Apple, pustako Plex Media Server, kamera Tapo), nga kedai senarai dio untuk Quest 2, Quest Pro, Quest 3 nga 3S. Pauta kedai akan ditamboh sini bilo muko tu jadi awam; salina hok di-sideload keno nyahpasang dulu (tengok [Pasang](#install)).
-- **Senarai kedai**: senarai Google Play ditulis balik dale Oktober 2026 nga tangkapa skrin baru, nga akan dapat tangkapa skrin TV nga sepanduk TV samo nga keluare TV. Teks App Store masih terang binaan awal (gambo nga video 360°, fail mentoh tunjuk rata); dio akan perkenal pemapar 3D, VR180 nga Spatial, mod tanpo server, kongsi rangkaie, pemain media nga fail Insta360 mentoh. Teks Meta Horizon Store doh perkenal pemain media.
+- **Senarai kedai**: senarai Google Play ditulis balik dale Oktober 2026 nga tangkapa skrin baru, nga tangkapa skrin TV nga sepanduk TV dio ditamboh pado 8 Oktober 2026; senarai untuk TV dale semaka Google sejak 9 Oktober 2026. Teks App Store masih terang binaan awal (gambo nga video 360°, fail mentoh tunjuk rata); dio akan perkenal pemapar 3D, VR180 nga Spatial, mod tanpo server, kongsi rangkaie, pemain media nga fail Insta360 mentoh. Teks Meta Horizon Store doh perkenal pemain media.
 - **Fail kamera 360° mentoh, lepah ni**: penunjuk kemajua maso gambo mentoh disedio untuk headset; ratake video GoPro nga DJI dari data gerak dio sendiri; .dng fisheye bergando; lapora peranti pasal main balik duo lensa binaan 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) nok sahke sambunge nga bajet penyahkod.
 - **DLNA, kongsi fon nga ruang Apple, lepah ni**: lapora peranti binaan 19 (Plex, Jellyfin, NAS nga Freebox Server melalui DLNA; fon hok layan Quest, kat hotspot dio pong; gambo nga video ruang iPhone betul dale headset); hak multicast hok dimintak dari Apple, supayo iPhone jumpo tiap server DLNA; sebelum nga lepah antaro gambo ruang dale headset; lencana ruang kat gambo server dale garis maso; video ruang dale 3D kat Quest, kalu penyahkod dio bui.
 - **Pemain 360° kat fon, lepah ni**: bar maso dale pemain video 360° iOS (pemain Android doh ado), sebelum/lepah dale pemain 360° fon macey dale paparan imersif Quest, nga gambo dale pemain video 360° asli.
 - **Kongsi rangkaie, langkah lepah**: leret dari satu fail folder ko fail lepah dale muko gambo nga video (paparan imersif Quest doh lalu fail 360° dale folder), pengesahe Digest untuk WebDAV, namo pengguno dari rekod Bonjour.
 - **Video rata**: pilihe trek bunyi dale pemain rata fon, untuk video server, peranti nga kongsi samo jugok (pemain 360° nga Spatial doh ado, samo jugok pemain rata Immuch360 Desktop).
-- **Android TV, lepah ni**: uji peranti binaan 20 kat emulator Google TV nga TV betul, lepah tu keluare TV kat Google Play (tangkapa skrin TV, sepanduk TV, semaka Google); kemudie, saluran kat skrin utamo TV.
+- **Android TV, lepah ni**: uji peranti binaan 20 kat emulator Google TV nga TV betul, nga keluare TV kat Google Play bilo Google doh semak senarai untuk TV; kemudie, saluran kat skrin utamo TV.
 - **Kamera Tapo, lepah ni**: uji peranti binaan 20 nga kamera betul; paparan langsung kat iPhone nga iPad; rakaman H.265; maing klip maso dio tengoh diambik; rakaman sehari suntuk dale satu garis maso.
 - **Plex, lepah ni**: uji peranti binaan 20 (fon, Quest, iPhone, TV, jauh dari rumoh); bawok token dari komputer nga kod QR; sorok bahagian DLNA server Plex dale senarai server hok jumpo; IPv6.
 - **Hulu**: pull request kecik ko Immich untuk bahagian hok penyelenggara nok, mulo nga pemapar gambo 360°.

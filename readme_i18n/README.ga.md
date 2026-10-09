@@ -13,14 +13,19 @@ Tá sé dóibh siúd a ghlacann pictiúir le ceamara 360° (Insta360, GoPro MAX,
   <sub>Forc neamhoifigiúil. Níl baint aige le Immich ná le FUTO. Léitear an t-ainm mar “I am much 360”.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a><br>
-  App Store: <a href="#where-to-get-it">á athbhreithniú</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store ceadaithe, tógáil 21 curtha isteach mar a chéad nuashonrú<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">íoslódáil an réamhamhairc</a>, tógáil deisce 2
-</p>
+<div align="center">
+
+| Ardán | Cá bhfaighidh tú í | Stádas ar 9 Deireadh Fómhair 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Gutháin agus táibléid **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | tógáil 20 ar Google Play ó 7 Deireadh Fómhair 2026, tógáil 21 ar GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone agus iPad** | App Store | leagan 3.3.0 ag fanacht ar athbhreithniú Apple; idir an dá linn, [tóg tú féin í](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 agus 3S | [APK](#meta-quest-3) · Horizon Store | liostú ceadaithe, tógáil 21 á hathbhreithniú ag Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV agus Google TV** | [APK](#install-it-on-the-tv) · Google Play | tógáil 21 ar GitHub; tá liostú Google Play do theilifíseáin á athbhreithniú ag Google ó 9 Deireadh Fómhair 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP an réamhamhairc](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | tógáil deisce 2 ar Windows: grianghraif agus físeáin chothroma, físeáin 360° ina dhiaidh sin; macOS agus Linux níos déanaí, ó na foinsí céanna |
+
+*Nuashonraítear na stádais le gach eisiúint; tá na sonraí in [Cá bhfaighidh tú í](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° dúchasach**<br>Grianghraif agus físeáin mar sféar a mbreathnaíonn tú timpeall ann, leis an ngíreascóp, comhaid amha ceamara san áireamh (Insta360 ó thógáil 16, GoPro agus DJI ó thógáil 18). Seinnteoir físe saor in aisce freisin: cothrom, 360°, 3D, VR180
 - 👓 **3D dúchasach**<br>360° steiréascópach agus VR180, barr agus bun nó taobh le taobh, agus grianghraif spásúla Apple (ó thógáil 19): fíor-3D sa chluasán, súil amháin ar ghuthán
@@ -1072,7 +1077,7 @@ Tá an aip ar Google Play do ghutháin agus do tháibléid; tá leagan an App St
 
 - **Gutháin agus táibléid Android**
   - Inniu: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), nó an APK ar an leathanach [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` do ghuthán (oibríonn an `Immuch360-v<version>-release.apk` uilíoch i ngach áit, tá `-armeabi-v7a` do ghutháin 32 giotán níos sine, agus tá an comhad `.aab` do Google Play, ní le haghaidh taobhlódála). Bíonn tógáil GitHub chun tosaigh ar an siopa de ghnáth. Ar aon nós suiteáiltear í in aice le haip oifigiúil Immich (pacáiste `com.aprogsys.immuch360`).
-  - Go luath: ar Google Play, tá tógáil 18 beo, tógáil 20 á hathbhreithniú ag Google ó 7 Deireadh Fómhair 2026, in ionad thógáil 19.
+  - Go luath: ar Google Play, tá tógáil 20 beo ó 7 Deireadh Fómhair 2026, in ionad thógáil 18; ní athraíonn tógáil 21 aon rud ar ghutháin ná ar tháibléid.
 - **iPhone agus iPad**
   - Inniu: ag fanacht ar athbhreithniú Apple. Tá gnéithe thógáil 11 sa leagan atá á athbhreithniú: tiocfaidh an uaslódáil chuig Immich agus an rogha Foinse físe (tógáil 15) agus na comhaid amha Insta360 (tógáil 16) le nuashonrú App Store níos déanaí. Tógtar an cód foinseach le Xcode nó ar Codemagic, féach [Tóg tú féin í](#build-it-yourself).
   - Go luath: App Store, á athbhreithniú.
@@ -1081,7 +1086,7 @@ Tá an aip ar Google Play do ghutháin agus do tháibléid; tá leagan an App St
   - Go luath: ar an Meta Horizon Store, ceadaíodh an liostú ar 7 Deireadh Fómhair 2026 le tógáil 14, agus tá tógáil 21, a chéad nuashonrú, á hathbhreithniú ag Meta; faigheann cainéal alfa an tsiopa (tástálaithe amháin) gach tógáil nua.
 - **Android TV agus Google TV (ó thógáil 20)**
   - Inniu: an `Immuch360-v<version>-release.apk` uilíoch ón leathanach [Releases](https://github.com/freeKC/Immuch360/releases), taobhlódáilte le adb, féach [Í a shuiteáil ar an teilifís](#install-it-on-the-tv). Is í an aip chéanna í agus atá ar ghutháin.
-  - Go luath: Google Play ar theilifíseáin, tar éis athbhreithniú Google ar an eisiúint teilifíse.
+  - Go luath: Google Play ar theilifíseáin, a bhfuil a liostú á athbhreithniú ag Google ó 9 Deireadh Fómhair 2026.
 - **Windows 10 agus 11, 64 giotán (réamhamharc)**
   - Inniu: Immuch360 Desktop, an ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` den [réamheisiúint deisce](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), dízipeáilte agus tosaithe mar a deir [Íoslódáil agus suiteáil ar Windows](#download-and-install-on-windows). Grianghraif agus físeáin chothroma faoi láthair: tagann físeáin 360°, 3D agus VR180 leis na chéad tógálacha deisce eile.
   - Go luath: físeáin 360°, 3D, VR180 agus físeáin amha 360°; suiteálaí, tógáil shínithe agus nuashonruithe níos déanaí.
@@ -1165,22 +1170,24 @@ Is forc de Immich an tionscadal seo agus fanann sé faoi [GNU AGPL v3](../LICENS
 
 Iompraíonn ZIP Windows Immuch360 Desktop, agus é sin amháin, a sheinnteoir físe freisin: libmpv, leabharlann [mpv](https://mpv.io), le [FFmpeg](https://ffmpeg.org) taobh istigh di, á tiomáint ag breiseáin [media_kit](https://github.com/media-kit/media-kit). Tógtar mpv agus FFmpeg gan a gcodanna atá GPL amháin, agus tá a gcód faoin GNU LGPL leagan 2.1 nó níos déanaí; tógtha le chéile, dáiltear `libmpv-2.dll` faoin GNU LGPL leagan 3 nó níos déanaí. Lódálann an aip í ag am rite, mar sin is féidir leat do thógáil féin a chur ina háit. Tá téacsanna na gceadúnas san fhillteán `licenses` den ZIP, agus tá gach leabharlann lena ceadúnas agus a foinsí liostaithe in [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Is trádmharcanna de chuid Google LLC iad Android, Android TV agus Google TV; is trádmharcanna de chuid Apple Inc. iad Apple, iPhone, iPad agus macOS; is trádmharcanna de chuid Meta Platforms, Inc. iad Meta agus Meta Quest; is trádmharc de chuid ghrúpa cuideachtaí Microsoft é Windows; is é Linux trádmharc cláraithe Linus Torvalds sna Stáit Aontaithe agus i dtíortha eile. Ní thaispeántar a lógónna i dtábla na n-ardán ach chun a thaispeáint cá ritheann Immuch360, agus ní thugann siad le tuiscint aon fhormhuiniú ná aon chleamhnacht. Atáirgeadh nó athraíodh an róbat Android ó shaothar a chruthaigh agus a roinn Google, agus úsáidtear é de réir na dtéarmaí a thuairiscítear sa Creative Commons 3.0 Attribution License. Is é Larry Ewing (lewing@isc.tamu.edu) a rinne Tux, piongain Linux, agus é tarraingthe le The GIMP, sa leagan veicteora le Simon Budig agus Garrett LeSage. Foinsí agus ceadúnais na lógónna: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Treochlár
 
 An méid nach bhfuil déanta fós, an rud is dóichí ar dtús. Ní gealltanas aon rud anseo, agus cabhraíonn aiseolas ar an [rianaire fadhbanna](https://github.com/freeKC/Immuch360/issues) le cinneadh a dhéanamh cad a thiocfaidh ar dtús.
 
 - **Immuch360 Desktop, Windows ar dtús**: tá tógáil deisce 2 amuigh, le físeáin chothroma, agus tá foinsí an leagain deisce i bpríomhchraobh an fhorc, `immuch360`, ón 9 Deireadh Fómhair 2026 (féach [Ar ríomhaire Windows](#on-a-windows-computer-immuch360-desktop-preview)). Ina dhiaidh sin, físeáin 360°, 3D, VR180 agus físeáin amha 360° ar Windows, le dhá lionsa na gcomhad amha agus radharc beo Tapo; ansin tástáil gach feidhme ar ríomhaire Windows agus a ceartúcháin; ansin Spatial 2.5D leis an gceamara gréasáin; ansin Linux agus macOS, pacáistí, síniú agus nuashonruithe.
-- **Google Play**: tá tógáil 18 beo; tá tógáil 20 á hathbhreithniú ag Google ó 7 Deireadh Fómhair 2026, in ionad thógáil 19. Ní athraíonn tógáil 21 aon rud ar ghutháin ná ar tháibléid.
+- **Google Play**: tá tógáil 20 beo ó 7 Deireadh Fómhair 2026, in ionad thógáil 18; tá an liostú do theilifíseáin á athbhreithniú ag Google ó 9 Deireadh Fómhair 2026. Ní athraíonn tógáil 21 aon rud ar ghutháin ná ar tháibléid.
 - **App Store**: tá leagan 3.3.0 ag fanacht ar athbhreithniú Apple; tá gnéithe thógáil 11 ann, mar sin tagann an uaslódáil chuig Immich agus seiceáil na ndíchódóirí físe (tógáil 15) agus na comhaid amha Insta360 (tógáil 16) leis an gcéad nuashonrú App Store eile. Cuirfear an nasc anseo nuair a bheidh sé beo.
 - **Meta Horizon Store**: cheadaigh Meta an liostú ar 7 Deireadh Fómhair 2026 le tógáil 14. Tá tógáil 21 curtha isteach mar a chéad nuashonrú: tugann sí gach rud ó thógáil 14 (uaslódálacha ó chomhroinnt chuig Immich, foinse an fhíseáin roghnaithe de réir a ndíchódaíonn an cluasán, comhaid amha Insta360, GoPro agus DJI, DLNA, comhroinnt an ghutháin, grianghraif spásúla Apple, leabharlanna Plex Media Server, ceamaraí Tapo), agus liostaíonn an siopa í do Quest 2, Quest Pro, Quest 3 agus 3S. Cuirfear nasc an tsiopa anseo nuair a bheidh an leathanach poiblí; beidh ort cóip thaobhlódáilte a dhíshuiteáil ar dtús (féach [Suiteáil](#install)).
-- **Liostuithe na siopaí**: athscríobhadh liostú Google Play i nDeireadh Fómhair 2026 le gabhálacha scáileáin nua, agus gheobhaidh sé gabhálacha scáileáin teilifíse agus meirge teilifíse leis an eisiúint teilifíse. Déanann téacs an App Store cur síos ar na chéad tógálacha fós (grianghraif agus físeáin 360°, comhaid amha taispeánta cothrom); cuirfidh sé i láthair na hamharcóirí 3D, VR180 agus Spatial, an mód gan freastalaí, an chomhroinnt líonra, an seinnteoir meán agus na comhaid amha Insta360. Cuireann téacs an Meta Horizon Store an seinnteoir meán i láthair cheana.
+- **Liostuithe na siopaí**: athscríobhadh liostú Google Play i nDeireadh Fómhair 2026 le gabhálacha scáileáin nua, agus cuireadh a ghabhálacha scáileáin teilifíse agus a mheirge teilifíse leis ar 8 Deireadh Fómhair 2026; tá an liostú do theilifíseáin á athbhreithniú ag Google ó 9 Deireadh Fómhair 2026. Déanann téacs an App Store cur síos ar na chéad tógálacha fós (grianghraif agus físeáin 360°, comhaid amha taispeánta cothrom); cuirfidh sé i láthair na hamharcóirí 3D, VR180 agus Spatial, an mód gan freastalaí, an chomhroinnt líonra, an seinnteoir meán agus na comhaid amha Insta360. Cuireann téacs an Meta Horizon Store an seinnteoir meán i láthair cheana.
 - **Comhaid amha ceamaraí 360°, an chéad rud eile**: táscaire dul chun cinn fad a ullmhaítear grianghraf amh don chluasán; leibhéaladh físeáin GoPro agus DJI óna sonraí gluaiseachta féin; .dng súil éisc dhúbailte; tuairiscí ó ghléasanna ar athsheinm dhá lionsa thógáil 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) chun uamanna agus buiséid díchódóirí a dheimhniú.
 - **DLNA, comhroinnt an ghutháin agus spásúil Apple, an chéad rud eile**: tuairiscí ó ghléasanna do thógáil 19 (Plex, Jellyfin, NAS agus an Freebox Server thar DLNA; guthán ag freastal ar Quest, ar a bhall te freisin; fíorghrianghraif agus fíorfhíseáin spásúla iPhone sa chluasán); an teidlíocht ilchraolta a iarradh ar Apple, ionas go n-aimseoidh iPhone gach freastalaí DLNA; roimhe seo agus ar aghaidh idir grianghraif spásúla sa chluasán; suaitheantas spásúil ar ghrianghraif an fhreastalaí san amlíne; físeáin spásúla i 3D ar an Quest, má cheadaíonn a dhíchódóirí é.
 - **Seinnteoirí 360° ar ghutháin, an chéad rud eile**: barra ama i seinnteoir físe 360° iOS (tá ceann ag an gceann Android), roimhe seo/ar aghaidh i seinnteoirí 360° na ngutháin mar atá in amharc tumthach an Quest, agus grianghraif sa seinnteoir físe 360° dúchasach.
 - **Comhroinnt líonra, na chéad chéimeanna eile**: svaidhpeáil ó chomhad amháin i bhfillteán go dtí an chéad cheann eile ar na leathanaigh grianghraif agus físe (téann amharc tumthach an Quest trí chomhaid 360° fillteáin cheana), fíordheimhniú Digest do WebDAV, an t-ainm úsáideora ó thaifead Bonjour.
 - **Físeáin chothroma**: rogha an riain fuaime i seinnteoir cothrom na ngutháin, d'fhíseáin fhreastalaí, ghléis agus chomhroinnte araon (tá sé ag na seinnteoirí 360° agus Spatial, agus ag seinnteoir cothrom Immuch360 Desktop freisin).
-- **Android TV, an chéad rud eile**: tástáil ghléis thógáil 20 ar aithriseoir Google TV agus ar fhíortheilifís, ansin an eisiúint teilifíse ar Google Play (gabhálacha scáileáin teilifíse, meirge teilifíse, athbhreithniú Google); níos déanaí, cainéil ar scáileán baile na teilifíse.
+- **Android TV, an chéad rud eile**: tástáil ghléis thógáil 20 ar aithriseoir Google TV agus ar fhíortheilifís, agus an eisiúint teilifíse ar Google Play nuair a bheidh an liostú do theilifíseáin athbhreithnithe ag Google; níos déanaí, cainéil ar scáileán baile na teilifíse.
 - **Ceamaraí Tapo, an chéad rud eile**: tástáil ghléis thógáil 20 le fíorcheamaraí; an radharc beo ar iPhone agus iPad; taifeadtaí H.265; gearrthóg a sheinm fad a bhítear á fáil; lá iomlán taifeadtaí ar amlíne amháin.
 - **Plex, an chéad rud eile**: tástáil ghléis thógáil 20 (gutháin, an Quest, iPhone, teilifís, as baile); an comhartha a thabhairt ón ríomhaire le cód QR; taobh DLNA freastalaí Plex a fholú i liosta na bhfreastalaithe aimsithe; IPv6.
 - **Upstream**: iarratais tarraingthe bheaga chuig Immich do na codanna is mian leis na cothaitheoirí, ag tosú leis an amharcóir grianghraf 360°.

@@ -13,14 +13,19 @@ Azoknak szól, akik 360°-os kamerával (Insta360, GoPro MAX, DJI Osmo 360, Rico
   <sub>Nem hivatalos fork. Nem áll kapcsolatban az Immichhel és a FUTO-val. A név kiejtése: „I am much 360”.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">ellenőrzés alatt</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store jóváhagyva, a 21-es build az első frissítéseként beküldve<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">előzetes verzió letöltése</a>, desktop build 2
-</p>
+<div align="center">
+
+| Platform | Honnan szerezhető be | Állapot 2026. október 9-én |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20-as build a Google Playen 2026. október 7. óta, 21-es build a GitHubon |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone és iPad** | App Store | a 3.3.0-s verzió az Apple ellenőrzésére vár; addig is [saját fordítás](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 és 3S | [APK](#meta-quest-3) · Horizon Store | az adatlap jóváhagyva, a 21-es build a Meta ellenőrzésén |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV és Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21-es build a GitHubon; a tévés Google Play-bejegyzés 2026. október 9. óta a Google ellenőrzése alatt |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Előzetes ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | desktop build 2 Windowson: fotók és sík videók, a 360°-os videók következnek; macOS és Linux később, ugyanabból a forráskódból |
+
+*Az állapotok minden kiadásnál frissülnek; a részletek: [Honnan szerezhető be](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Natív 360°**<br>Fotók és videók körbenézhető gömbként, giroszkóppal, a kamerák nyers fájljait is beleértve (Insta360 a 16-os buildtől, GoPro és DJI a 18-as buildtől). Ingyenes videolejátszó is: sík, 360°, 3D, VR180
 - 👓 **Natív 3D**<br>Sztereoszkópikus 360° és VR180, felül/alul vagy egymás mellett, valamint Apple térbeli fotók (a 19-es buildtől): valódi 3D a headsetben, egy szem a telefonon
@@ -1072,7 +1077,7 @@ Az alkalmazás elérhető a Google Playen telefonokra és táblagépekre; az App
 
 - **Android telefonok és táblagépek**
   - Ma: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), vagy az APK a [Releases](https://github.com/freeKC/Immuch360/releases) oldalon: telefonhoz `Immuch360-v<version>-arm64-v8a-release.apk` (az univerzális `Immuch360-v<version>-release.apk` mindenhol működik, a `-armeabi-v7a` a régebbi 32 bites telefonokhoz való, a `.aab` fájl pedig a Google Playnek szól, nem oldalról telepítéshez). A GitHub-build általában előrébb jár, mint az áruház. Mindkét esetben a hivatalos Immich alkalmazás mellé települ (csomag: `com.aprogsys.immuch360`).
-  - Hamarosan: a Google Playen a 18-as build élő, a 20-as 2026. október 7. óta a Google ellenőrzése alatt, a 19-es helyett.
+  - Hamarosan: a Google Playen a 20-as build 2026. október 7. óta élő, a 18-as helyett; a 21-es build semmit sem változtat a telefonokon és a táblagépeken.
 - **iPhone és iPad**
   - Ma: az Apple jóváhagyására vár. Az ellenőrzés alatt álló verzió a 11-es build funkcióit tartalmazza: az Immichbe való feltöltés és a Videóforrás választás (15-ös build), valamint a nyers Insta360 fájlok (16-os build) egy későbbi App Store-frissítéssel érkeznek. A forráskód Xcode-dal vagy Codemagicen fordítható, lásd [Saját fordítás](#build-it-yourself).
   - Hamarosan: App Store, ellenőrzés alatt.
@@ -1081,7 +1086,7 @@ Az alkalmazás elérhető a Google Playen telefonokra és táblagépekre; az App
   - Hamarosan: a Meta Horizon Store-ban a bejegyzést 2026. október 7-én jóváhagyták a 14-es builddel, és a 21-es build, az első frissítése, a Meta ellenőrzése alatt áll; az áruház alfa csatornája (csak tesztelőknek) minden új buildet megkap.
 - **Android TV és Google TV (a 20-as buildtől)**
   - Ma: a [Releases](https://github.com/freeKC/Immuch360/releases) oldal univerzális `Immuch360-v<version>-release.apk` fájlja, adb-vel oldalról telepítve, lásd [Telepítés a tévére](#install-it-on-the-tv). Ugyanaz az alkalmazás, mint a telefonokon.
-  - Hamarosan: Google Play tévéken, a tévés kiadás Google általi ellenőrzése után.
+  - Hamarosan: Google Play tévéken, amelynek tévés bejegyzése 2026. október 9. óta a Google ellenőrzése alatt van.
 - **Windows 10 és 11, 64 bites (előzetes verzió)**
   - Ma: Immuch360 Desktop, a [desktop előzetes kiadás](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIP-je, kicsomagolva és elindítva, ahogy a [Letöltés és telepítés Windowson](#download-and-install-on-windows) leírja. Egyelőre fotók és sík videók: a 360°-os, 3D és VR180 videók a következő asztali buildekkel jönnek.
   - Hamarosan: 360°-os, 3D, VR180 és nyers 360°-os videók; később telepítő, aláírt build és frissítések.
@@ -1165,22 +1170,24 @@ Ez a projekt az Immich forkja, és a [GNU AGPL v3](../LICENSE) alatt marad. Mind
 
 Az Immuch360 Desktop windowsos ZIP-je, és csak az, a videolejátszóját is tartalmazza: a libmpv-t, az [mpv](https://mpv.io) könyvtárát, benne az [FFmpeg](https://ffmpeg.org) programmal, amelyet a [media_kit](https://github.com/media-kit/media-kit) bővítményei vezérelnek. Az mpv és az FFmpeg a csak GPL alatti részeik nélkül készül, és a kódjuk a GNU LGPL 2.1-es vagy későbbi verziója alatt áll; együtt fordítva a `libmpv-2.dll` a GNU LGPL 3-as vagy későbbi verziója alatt terjeszthető. Az alkalmazás futásidőben tölti be, így lecserélheti a saját buildjére. A licencszövegek a ZIP `licenses` mappájában vannak, és minden könyvtár a licencével és a forrásaival együtt fel van sorolva a [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) fájlban.
 
+Az Android, az Android TV és a Google TV a Google LLC védjegyei; az Apple, az iPhone, az iPad és a macOS az Apple Inc. védjegyei; a Meta és a Meta Quest a Meta Platforms, Inc. védjegyei; a Windows a Microsoft vállalatcsoport védjegye; a Linux Linus Torvalds bejegyzett védjegye az Egyesült Államokban és más országokban. Logóik csak azért szerepelnek a platformtáblázatban, hogy megmutassák, hol fut az Immuch360, és semmilyen támogatást vagy kapcsolatot nem jelentenek. Az Android robot a Google által létrehozott és megosztott munka reprodukciója vagy módosítása, és a Creative Commons 3.0 Attribution License-ben leírt feltételek szerint használjuk. Tux, a Linux pingvin, Larry Ewing (lewing@isc.tamu.edu) munkája, The GIMP programmal rajzolva, Simon Budig és Garrett LeSage vektoros változatában. A logók forrásai és licencei: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Ütemterv
 
 Ami még nincs kész, a legvalószínűbbel kezdve. Semmi sem ígéret itt, és a visszajelzések a [hibakövetőben](https://github.com/freeKC/Immuch360/issues) segítenek eldönteni, mi kerüljön sorra először.
 
 - **Immuch360 Desktop, először Windowsra**: megjelent a desktop build 2 a sík videókkal, és 2026. október 9. óta az asztali források a fork fő ágában, az `immuch360` ágban vannak (lásd [Windows rendszerű számítógépen](#on-a-windows-computer-immuch360-desktop-preview)). Következnek a 360°-os, 3D, VR180 és nyers 360°-os videók Windowson, a nyers fájlok két objektívjével és a Tapo élő képpel; aztán minden funkció tesztelése egy windowsos PC-n és a javítások; aztán a Spatial 2.5D a webkamerával; aztán Linux és macOS, csomagok, aláírás és frissítések.
-- **Google Play**: a 18-as build élő; a 20-as 2026. október 7. óta a Google ellenőrzése alatt van, a 19-es helyett. A 21-es build semmit sem változtat a telefonokon és a táblagépeken.
+- **Google Play**: a 20-as build 2026. október 7. óta élő, a 18-as helyett; a tévés bejegyzés 2026. október 9. óta a Google ellenőrzése alatt van. A 21-es build semmit sem változtat a telefonokon és a táblagépeken.
 - **App Store**: a 3.3.0 verzió az Apple jóváhagyására vár; a 11-es build funkcióit tartalmazza, így az Immichbe való feltöltés és a videodekóder-ellenőrzés (15-ös build), valamint a nyers Insta360 fájlok (16-os build) a következő App Store-frissítéssel érkeznek. A link akkor kerül ide, amikor élesbe kerül.
 - **Meta Horizon Store**: a Meta 2026. október 7-én jóváhagyta a bejegyzést a 14-es builddel. A 21-es build az első frissítéseként van beküldve: mindent hoz, ami a 14-es build óta készült (feltöltés egy megosztásból az Immichbe, a videóforrás aszerint kiválasztva, amit a headset dekódol, nyers Insta360, GoPro és DJI fájlok, DLNA, a telefonos megosztás, Apple térbeli fotók, Plex Media Server könyvtárak, Tapo kamerák), és az áruház a Quest 2-re, a Quest Próra, a Quest 3-ra és a 3S-re listázza. Az áruházi link ide kerül, amint az oldal nyilvános; egy oldalról telepített példányt előbb el kell távolítani (lásd [Telepítés](#install)).
-- **Áruházi leírások**: a Google Play-bejegyzést 2026 októberében új képernyőképekkel átírták, és a tévés kiadással tévés képernyőképeket és tévés szalaghirdetést kap. Az App Store szövege még az első buildeket írja le (360°-os fotók és videók, síkban megjelenő nyers fájlok); be fogja mutatni a 3D, VR180 és Spatial nézegetőket, a szerver nélküli módot, a hálózati megosztásokat, a médialejátszót és a nyers Insta360 fájlokat. A Meta Horizon Store szövege már bemutatja a médialejátszót.
+- **Áruházi leírások**: a Google Play-bejegyzést 2026 októberében új képernyőképekkel átírták, tévés képernyőképei és tévés szalaghirdetése pedig 2026. október 8-án kerültek fel; a tévés bejegyzés 2026. október 9. óta a Google ellenőrzése alatt van. Az App Store szövege még az első buildeket írja le (360°-os fotók és videók, síkban megjelenő nyers fájlok); be fogja mutatni a 3D, VR180 és Spatial nézegetőket, a szerver nélküli módot, a hálózati megosztásokat, a médialejátszót és a nyers Insta360 fájlokat. A Meta Horizon Store szövege már bemutatja a médialejátszót.
 - **Nyers 360°-os kamerafájlok, következő lépések**: folyamatjelző, amíg egy nyers fotó a headset számára készül; a GoPro és DJI videók vízszintezése a saját mozgásadataik alapján; kettős halszemes .dng; eszközös beszámolók a 18-as build kétobjektíves lejátszásáról (X4, X5, X6, GoPro MAX 2, Osmo 360) az illesztési vonalak és a dekóderkeretek megerősítéséhez.
 - **DLNA, telefonos megosztás és Apple térbeli médiák, következő lépések**: a 19-es build eszközös beszámolói (Plex, Jellyfin, egy NAS és a Freebox Server DLNA-n; egy Questet kiszolgáló telefon, a hotspotján is; valódi iPhone-os térbeli fotók és videók a headsetben); az Apple-től kért multicast jogosultság, hogy az iPhone-ok minden DLNA-szervert megtaláljanak; előző és következő a térbeli fotók között a headsetben; térbeli jelvény a szerveres fotókon az idővonalon; térbeli videók 3D-ben a Queston, ha a dekóderei engedik.
 - **360°-os lejátszók telefonon, következő lépések**: idősáv az iOS-es 360°-os videolejátszóban (az androidosban már van), előző/következő a telefonok 360°-os lejátszóiban, ahogy a Quest immerzív nézetében, és fotók a natív 360°-os videolejátszóban.
 - **Hálózati megosztások, következő lépések**: lapozás egy mappa egyik fájljáról a következőre a fotó- és videóoldalakon (a Quest immerzív nézete már végigmegy egy mappa 360°-os fájljain), Digest hitelesítés WebDAV-hoz, a felhasználónév a Bonjour-rekordból.
 - **Sík videók**: a hangsáv kiválasztása a telefonok sík lejátszójában, a szerveres, eszközös és megosztásos videókhoz egyaránt (a 360°-os és a Spatial lejátszóban már megvan, és az Immuch360 Desktop sík lejátszójában is).
-- **Android TV, következő lépések**: a 20-as build eszköztesztje a Google TV emulátoron és egy valódi tévén, majd a tévés kiadás a Google Playen (tévés képernyőképek, a tévés szalaghirdetés, a Google ellenőrzése); később csatornák a tévé kezdőképernyőjén.
+- **Android TV, következő lépések**: a 20-as build eszköztesztje a Google TV emulátoron és egy valódi tévén, valamint a tévés kiadás a Google Playen, amint a Google ellenőrizte a tévés bejegyzést; később csatornák a tévé kezdőképernyőjén.
 - **Tapo kamerák, következő lépések**: a 20-as build eszköztesztje valódi kamerákkal; az élő kép iPhone-on és iPaden; a H.265 felvételek; egy klip lejátszása letöltés közben; egy teljes nap felvételei egyetlen idővonalon.
 - **Plex, következő lépések**: a 20-as build eszköztesztje (telefonok, a Quest, egy iPhone, egy tévé, otthonon kívül); a token átvitele a számítógépről QR-kóddal; egy Plex szerver DLNA-oldalának elrejtése a megtalált szerverek listájában; IPv6.
 - **Upstream**: kis pull requestek az Immichnek azokhoz a részekhez, amelyeket a karbantartók szeretnének, a 360°-os fotónézegetővel kezdve.

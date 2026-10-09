@@ -13,14 +13,19 @@ Mō te hunga e hopu ana ki tētahi kāmera 360° (Insta360, GoPro MAX, DJI Osmo 
   <sub>He peka kore ōkawa. Kāore e hono ana ki Immich, ki FUTO rānei. Ka pānuitia te ingoa pēnei i “I am much 360”.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">kei te arotakehia</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store kua whakaaetia, kua tukuna te hanga 21 hei whakahōu tuatahi<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">tikiake arokite</a>, hanga papamahi 2
-</p>
+<div align="center">
+
+| Pūhara | Me pēhea te whiwhi | Tūnga i te 9 Whiringa-ā-nuku 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> ngā waea me ngā papahiko **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | hanga 20 i Google Play mai i te 7 o Whiringa-ā-nuku 2026, hanga 21 i GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone me iPad** | App Store | kei te tatari te putanga 3.3.0 ki te arotake a Apple; i tēnei wā, [hangaia e koe anō](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 me 3S | [APK](#meta-quest-3) · Horizon Store | kua whakaaetia te rārangi, kei te arotakehia te hanga 21 e Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV me Google TV** | [APK](#install-it-on-the-tv) · Google Play | hanga 21 i GitHub; kei te arotake a Google te whakarārangitanga Google Play mō ngā pouaka whakaata mai i te 9 o Whiringa-ā-nuku 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP arokite](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | hanga papamahi 2 i Windows: ngā whakaahua me ngā ataata papatahi, ā muri ake ngā ataata 360°; macOS me Linux ā muri ake, mai i ngā pūtake kotahi |
+
+*Ka whakahōungia ngā tūnga i ia tukunga; kei [Me pēhea te whiwhi](#where-to-get-it) ngā taipitopito.*
+
+</div>
 
 - 🌐 **360° taketake**<br>Ko ngā whakaahua me ngā ataata hei pōro e titiro huri noa ai koe, me te pūhurihuri, tae atu ki ngā kōnae kāmera mata (Insta360 mai i te hanga 16, GoPro me DJI mai i te hanga 18). He pūrei ataata utu kore anō: papatahi, 360°, 3D, VR180
 - 👓 **3D taketake**<br>Ngā 360° me ngā VR180 stereo, runga me raro, taha ki te taha rānei, me ngā whakaahua mokowā Apple (mai i te hanga 19): he 3D tūturu i te pōtae, kotahi te karu i te waea
@@ -1072,7 +1077,7 @@ Kei Google Play te taupānga mō ngā waea me ngā papahiko; kei te tatari te pu
 
 - **Ngā waea me ngā papahiko Android**
   - I tēnei rā: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), te APK rānei i te whārangi [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` mō tētahi waea (ka mahi te `Immuch360-v<version>-release.apk` whānui ki hea, mō ngā waea 32 moka tawhito te `-armeabi-v7a`, ā, mō Google Play te kōnae `.aab`, kaua mō te sideload). Kei mua te hanga GitHub i te toa i te nuinga o te wā. Ahakoa he aha, ka tāuta i te taha o te taupānga Immich ōkawa (mōkihi `com.aprogsys.immuch360`).
-  - Ākuanei: i Google Play, kei te ora te hanga 18, kei te arotake a Google te hanga 20 mai i te 7 o Whiringa-ā-nuku 2026, hei whakakapi i te hanga 19.
+  - Ākuanei: i Google Play, kei te ora te hanga 20 mai i te 7 o Whiringa-ā-nuku 2026, hei whakakapi i te hanga 18; kāore te hanga 21 e panoni i tētahi mea i ngā waea me ngā papahiko.
 - **iPhone me iPad**
   - I tēnei rā: kei te tatari ki te arotake a Apple. Kei te putanga e arotakehia ana ngā āhuatanga o te hanga 11: ko te tukuake ki Immich me te kōwhiringa “Te mātāpuna ataata” (hanga 15) me ngā kōnae Insta360 mata (hanga 16) ka tae mai me tētahi whakahōu App Store ā muri. Ka hanga te waehere puna ki a Xcode, ki Codemagic rānei, tirohia [Hangaia e koe anō](#build-it-yourself).
   - Ākuanei: App Store, kei te arotakehia.
@@ -1081,7 +1086,7 @@ Kei Google Play te taupānga mō ngā waea me ngā papahiko; kei te tatari te pu
   - Ākuanei: i te Meta Horizon Store, i whakaaetia te whakarārangitanga i te 7 o Whiringa-ā-nuku 2026 me te hanga 14, ā, kei te arotake a Meta te hanga 21, tōna whakahōu tuatahi; ka whiwhi te hongere alpha o te toa (ngā kaiwhakamātau anake) i ia hanga hou.
 - **Android TV me Google TV (mai i te hanga 20)**
   - I tēnei rā: te `Immuch360-v<version>-release.apk` whānui o te whārangi [Releases](https://github.com/freeKC/Immuch360/releases), kua sideload ki te adb, tirohia [Tāuta ki te pouaka whakaata](#install-it-on-the-tv). Ko te taupānga ōrite ki ngā waea.
-  - Ākuanei: Google Play i ngā pouaka whakaata, i muri i te arotake a Google i te tuku pouaka whakaata.
+  - Ākuanei: Google Play i ngā pouaka whakaata, kei te arotake a Google tōna whakarārangitanga mai i te 9 o Whiringa-ā-nuku 2026.
 - **Windows 10 me 11, 64 moka (arokite)**
   - I tēnei rā: Immuch360 Desktop, te ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` o te [tuku-mua papamahi](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), kua wetekōpakihia, kua tīmataria pēnei i tā [Tikiake me te tāuta i Windows](#download-and-install-on-windows) e kī ana. He whakaahua me ngā ataata papatahi i tēnei wā: ka tae mai ngā ataata 360°, 3D me VR180 me ngā hanga papamahi e whai ake nei.
   - Ākuanei: ngā ataata 360°, 3D, VR180 me ngā ataata 360° mata; he kaitāuta, he hanga kua hainatia me ngā whakahōu ā muri ake.
@@ -1165,22 +1170,24 @@ He peka tēnei kaupapa nō Immich, ā, ka noho tonu i raro i te [GNU AGPL v3](..
 
 Ko te ZIP Windows o Immuch360 Desktop, ko ia anake, kei a ia hoki tōna pūrei ataata: libmpv, te whare pukapuka o [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org) i roto, ka whakahaerehia e ngā mono o [media_kit](https://github.com/media-kit/media-kit). Kua hangaia a mpv me FFmpeg me te kore o ō rātou wāhanga GPL anake, ā, kei raro tō rātou waehere i te GNU LGPL putanga 2.1, i muri mai rānei; ina hangaia tahitia, ka tohaina a `libmpv-2.dll` i raro i te GNU LGPL putanga 3, i muri mai rānei. Ka utaina e te taupānga i te wā whakahaere, nō reira ka taea e koe te whakakapi ki tōu ake hanga. Kei te kōpaki `licenses` o te ZIP ngā kuputuhi raihana, ā, kua rārangitia ia whare pukapuka me tōna raihana me ōna pūtake i [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+He tohu hokohoko a Android, Android TV me Google TV nā Google LLC; he tohu hokohoko a Apple, iPhone, iPad me macOS nā Apple Inc.; he tohu hokohoko a Meta me Meta Quest nā Meta Platforms, Inc.; he tohu hokohoko a Windows nā te rōpū kamupene o Microsoft; ko Linux te tohu hokohoko rēhita a Linus Torvalds i Amerika me ētahi atu whenua. Ka puta ō rātou waitohu i te ripanga pūhara hei whakaatu noa i te wāhi e rere ai a Immuch360, ā, kāore e tohu ana i tētahi tautoko, hononga rānei. Kua tāruatia, kua whakarerekētia rānei te karetao Android i ngā mahi i hangaia, i tiritiria e Google, ā, ka whakamahia i runga i ngā tikanga e whakaahuatia ana i te Creative Commons 3.0 Attribution License. Nā Larry Ewing (lewing@isc.tamu.edu) a Tux, te kororā Linux, i tuhia ki The GIMP, ā, nā Simon Budig rāua ko Garrett LeSage te putanga pere. Ngā pūtake me ngā raihana o ngā waitohu: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Mahere ara
 
 Ngā mea kāore anō kia oti, ko te mea tūpono rawa i te tuatahi. Ehara tētahi mea i konei i te kupu taurangi, ā, ka āwhina ngā urupare i te [pūaroturuki take](https://github.com/freeKC/Immuch360/issues) ki te whakatau he aha ka tae tuatahi.
 
 - **Immuch360 Desktop, ko Windows i te tuatahi**: kua puta te hanga papamahi 2, me ngā ataata papatahi, ā, kei te peka matua o te peka, `immuch360`, ngā pūtake papamahi mai i te 9 o Oketopa 2026 (tirohia [I tētahi rorohiko Windows](#on-a-windows-computer-immuch360-desktop-preview)). Ka whai ake, ngā ataata 360°, 3D, VR180 me ngā ataata 360° mata i Windows, me ngā arotahi e rua o ngā kōnae mata me te tirohanga ora Tapo; kātahi ko te whakamātautau o ia mahinga i tētahi PC Windows me ōna whakatika; kātahi ko Spatial 2.5D me te kāmera tukutuku; kātahi ko Linux me macOS, ngā mōkihi, te haina me ngā whakahōu.
-- **Google Play**: kei te ora te hanga 18; kei te arotake a Google te hanga 20 mai i te 7 o Whiringa-ā-nuku 2026, hei whakakapi i te hanga 19. Kāore te hanga 21 e panoni i tētahi mea i ngā waea me ngā papahiko.
+- **Google Play**: kei te ora te hanga 20 mai i te 7 o Whiringa-ā-nuku 2026, hei whakakapi i te hanga 18; kei te arotake a Google te whakarārangitanga mō ngā pouaka whakaata mai i te 9 o Whiringa-ā-nuku 2026. Kāore te hanga 21 e panoni i tētahi mea i ngā waea me ngā papahiko.
 - **App Store**: kei te tatari te putanga 3.3.0 ki te arotake a Apple; kei a ia ngā āhuatanga o te hanga 11, nō reira ko te tukuake ki Immich me te arowhai pūwetewete ataata (hanga 15) me ngā kōnae Insta360 mata (hanga 16) ka tae mai me te whakahōu App Store e whai ake ana. Ka tāpiritia te hononga ki konei ina ora.
 - **Meta Horizon Store**: i whakaaetia e Meta te whakarārangitanga i te 7 o Whiringa-ā-nuku 2026 me te hanga 14. Kua tukuna te hanga 21 hei whakahōu tuatahi: ka mauria mai ngā mea katoa mai i te hanga 14 (ngā tukuake mai i tētahi tiritiri ki Immich, te puna ataata ka kōwhiria i ngā mea ka taea e te pōtae te wetewaehere, ngā kōnae mata Insta360, GoPro me DJI, DLNA, te tiritiri waea, ngā whakaahua mokowā Apple, ngā pātaka Plex Media Server, ngā kāmera Tapo), ā, ka whakarārangitia e te toa mō te Quest 2, te Quest Pro, te Quest 3 me te 3S. Ka tāpiritia te hononga toa ki konei ina tūmatanui te whārangi; me wetetāuta i te tuatahi tētahi tārua kua sideload (tirohia [Tāuta](#install)).
-- **Ngā whakarārangitanga toa**: i tuhia anō te whakarārangitanga Google Play i Whiringa-ā-nuku 2026 me ngā hopuāhua hou, ā, ka whiwhi i ngā hopuāhua pouaka whakaata me tētahi haki pouaka whakaata me te tuku pouaka whakaata. Kei te whakaahua tonu te kupu App Store i ngā hanga tuatahi (ngā whakaahua me ngā ataata 360°, ngā kōnae mata ka whakaaturia papatahi); ka whakaatu ia i ngā mātaki 3D, VR180 me Spatial, te aratau kāore he tūmau, ngā tiritiri whatunga, te pūrei pāpāho me ngā kōnae Insta360 mata. Kei te whakaatu kē te kupu Meta Horizon Store i te pūrei pāpāho.
+- **Ngā whakarārangitanga toa**: i tuhia anō te whakarārangitanga Google Play i Whiringa-ā-nuku 2026 me ngā hopuāhua hou, ā, i tāpirihia ōna hopuāhua pouaka whakaata me tōna haki pouaka whakaata i te 8 o Whiringa-ā-nuku 2026; kei te arotake a Google te whakarārangitanga mō ngā pouaka whakaata mai i te 9 o Whiringa-ā-nuku 2026. Kei te whakaahua tonu te kupu App Store i ngā hanga tuatahi (ngā whakaahua me ngā ataata 360°, ngā kōnae mata ka whakaaturia papatahi); ka whakaatu ia i ngā mātaki 3D, VR180 me Spatial, te aratau kāore he tūmau, ngā tiritiri whatunga, te pūrei pāpāho me ngā kōnae Insta360 mata. Kei te whakaatu kē te kupu Meta Horizon Store i te pūrei pāpāho.
 - **Ngā kōnae kāmera 360° mata, ā muri**: he tohu kauneke i te wā e whakaritea ana tētahi whakaahua mata mō te pōtae; te whakarite i ngā ataata GoPro me DJI mai i ō rātou ake raraunga nekehanga; .dng fisheye rua; ngā pūrongo pūrere mō te purei arotahi rua o te hanga 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) hei whakaū i ngā hononga me ngā tahua pūwetewete.
 - **DLNA, te tiritiri waea me te mokowā Apple, ā muri**: ngā pūrongo pūrere o te hanga 19 (Plex, Jellyfin, tētahi NAS me te Freebox Server mā te DLNA; tētahi waea e tuku ana ki tētahi Quest, i tōna wāhi whakapā hoki; ngā whakaahua me ngā ataata mokowā iPhone tūturu i te pōtae); te mana multicast i tonoa ki a Apple, kia kitea ai e ngā iPhone ia tūmau DLNA; te o mua me te o muri i waenga i ngā whakaahua mokowā i te pōtae; he tohu mokowā i ngā whakaahua tūmau i te rārangi wā; ngā ataata mokowā i te 3D i te Quest, mēnā ka whakaaetia e ōna pūwetewete.
 - **Ngā pūrei 360° i ngā waea, ā muri**: he pae wā i te pūrei ataata 360° iOS (kei te pūrei Android kē), te o mua/o muri i ngā pūrei 360° o ngā waea pērā i te mātaki rumaki o te Quest, me ngā whakaahua i te pūrei ataata 360° taketake.
 - **Ngā tiritiri whatunga, ngā hipanga e whai ake ana**: te kōrere mai i tētahi kōnae o tētahi kōpaki ki tērā e whai ake ana i ngā whārangi whakaahua me te ataata (kei te haere kē te mātaki rumaki o te Quest i ngā kōnae 360° o tētahi kōpaki), te motuhēhēnga Digest mō te WebDAV, te ingoa kaiwhakamahi mai i te rekoata Bonjour.
 - **Ngā ataata papatahi**: te kōwhiringa ara ororongo i te pūrei papatahi o ngā waea, mō ngā ataata tūmau, pūrere me te tiritiri anō (kei ngā pūrei 360° me Spatial kē, pērā anō i te pūrei papatahi o Immuch360 Desktop).
-- **Android TV, e whai ake ana**: te whakamātautau pūrere o te hanga 20 i te kaiwhaihanga Google TV me tētahi pouaka whakaata tūturu, kātahi ko te tuku pouaka whakaata i Google Play (ngā hopuāhua pouaka whakaata, te haki pouaka whakaata, te arotake a Google); ā muri ake, ngā hongere i te mata kāinga o te pouaka whakaata.
+- **Android TV, e whai ake ana**: te whakamātautau pūrere o te hanga 20 i te kaiwhaihanga Google TV me tētahi pouaka whakaata tūturu, me te tuku pouaka whakaata i Google Play ina oti i a Google te arotake i te whakarārangitanga mō ngā pouaka whakaata; ā muri ake, ngā hongere i te mata kāinga o te pouaka whakaata.
 - **Ngā kāmera Tapo, e whai ake ana**: te whakamātautau pūrere o te hanga 20 me ngā kāmera tūturu; te tirohanga ora i te iPhone me te iPad; ngā hopukanga H.265; te purei i tētahi topenga i te wā e tikina ana; ngā hopukanga o tētahi rā katoa i tētahi rārangi wā kotahi.
 - **Plex, e whai ake ana**: te whakamātautau pūrere o te hanga 20 (ngā waea, te Quest, tētahi iPhone, tētahi pouaka whakaata, i waho atu i te kāinga); te kawe mai i te tohu i te rorohiko mā tētahi waehere QR; te huna i te taha DLNA o tētahi tūmau Plex i te rārangi o ngā tūmau kua kitea; IPv6.
 - **Ki runga**: ngā pull request iti ki a Immich mō ngā wāhanga e hiahiatia ana e ngā kaitiaki, ka tīmata ki te mātaki whakaahua 360°.

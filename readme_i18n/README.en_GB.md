@@ -13,14 +13,19 @@ It is for people who shoot with a 360° camera (Insta360, GoPro MAX, DJI Osmo 36
   <sub>Unofficial fork. Not affiliated with Immich or FUTO. The name reads as "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">under review</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store approved, build 21 submitted as its first update<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">preview download</a>, desktop build 2
-</p>
+<div align="center">
+
+| Platform | Where to get it | Status on 9 October 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 on Google Play since 7 October 2026, build 21 on GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.0 waiting for Apple's review; [build it yourself](#build-it-yourself) meanwhile |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [APK](#meta-quest-3) · Horizon Store | listing approved, build 21 under Meta's review |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 on GitHub; the Google Play listing for TVs is under Google's review since 9 October 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | desktop build 2 on Windows: photos and flat videos, 360° videos next; macOS and Linux later, from the same sources |
+
+*Statuses are updated at each release; the details are in [Where to get it](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Native 360°**<br>Photos and videos as a sphere you look around in, with the gyroscope, raw camera files included (Insta360 from build 16, GoPro and DJI from build 18). A free video player too: flat, 360°, 3D, VR180
 - 👓 **Native 3D**<br>Stereoscopic 360° and VR180, top/bottom or side by side, and Apple spatial photos (from build 19): true 3D in the headset, one eye on a phone
@@ -1072,7 +1077,7 @@ The app is on Google Play for phones and tablets; the App Store version is waiti
 
 - **Android phones and tablets**
   - Today: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone (the universal `Immuch360-v<version>-release.apk` works everywhere, `-armeabi-v7a` is for older 32 bit phones, and the `.aab` file is for Google Play, not for sideloading). The GitHub build is usually ahead of the store. Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`).
-  - Soon: on Google Play, build 18 is live, build 20 in Google's review since 7 October 2026, in place of build 19.
+  - Soon: on Google Play, build 20 has been live since 7 October 2026, in place of build 18; build 21 changes nothing on phones and tablets.
 - **iPhone and iPad**
   - Today: waiting for Apple's review. The version under review carries the features of build 11: the upload to Immich and the Video source choice (build 15) and the raw Insta360 files (build 16) will come with a later App Store update. The source builds with Xcode or on Codemagic, see [Build it yourself](#build-it-yourself).
   - Soon: App Store, under review.
@@ -1081,7 +1086,7 @@ The app is on Google Play for phones and tablets; the App Store version is waiti
   - Soon: on the Meta Horizon Store, the listing was approved on 7 October 2026 with build 14, and build 21, its first update, is in Meta's review; the store's alpha channel (testers only) gets each new build.
 - **Android TV and Google TV (from build 20)**
   - Today: the universal `Immuch360-v<version>-release.apk` of the [Releases](https://github.com/freeKC/Immuch360/releases) page, sideloaded with adb, see [Install it on the TV](#install-it-on-the-tv). It is the same app as on phones.
-  - Soon: Google Play on TVs, after Google's review of the TV release.
+  - Soon: Google Play on TVs, whose listing has been under Google's review since 9 October 2026.
 - **Windows 10 and 11, 64 bit (preview)**
   - Today: Immuch360 Desktop, the ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` of the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), unzipped and started as [Download and install on Windows](#download-and-install-on-windows) says. Photos and flat videos for now: 360°, 3D and VR180 videos come with the next desktop builds.
   - Soon: 360°, 3D, VR180 and raw 360° videos; an installer, a signed build and updates later.
@@ -1165,22 +1170,24 @@ This project is a fork of Immich and stays under the [GNU AGPL v3](../LICENSE). 
 
 The Windows ZIP of Immuch360 Desktop, and only it, also carries its video player: libmpv, the library of [mpv](https://mpv.io), with [FFmpeg](https://ffmpeg.org) inside it, driven by the plugins of [media_kit](https://github.com/media-kit/media-kit). mpv and FFmpeg are built without their parts that are GPL only, and their code is under the GNU LGPL version 2.1 or later; built together, `libmpv-2.dll` is distributed under the GNU LGPL version 3 or later. The app loads it at run time, so you may replace it with your own build. The licence texts are in the `licenses` folder of the ZIP, and every library with its licence and its sources is listed in [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV and Google TV are trademarks of Google LLC; Apple, iPhone, iPad and macOS are trademarks of Apple Inc.; Meta and Meta Quest are trademarks of Meta Platforms, Inc.; Windows is a trademark of the Microsoft group of companies; Linux is the registered trademark of Linus Torvalds in the U.S. and other countries. Their logos appear in the platform table only to show where Immuch360 runs and do not imply any endorsement or affiliation. The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License. Tux, the Linux penguin, is by Larry Ewing (lewing@isc.tamu.edu), drawn with The GIMP, in the vector version by Simon Budig and Garrett LeSage. Sources and licences of the logos: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Roadmap
 
 What is not done yet, the most likely first. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
 - **Immuch360 Desktop, Windows first**: desktop build 2 is out, with flat videos, and the desktop sources are in the main branch of the fork, `immuch360`, since 9 October 2026 (see [On a Windows computer](#on-a-windows-computer-immuch360-desktop-preview)). Next, 360°, 3D, VR180 and raw 360° videos on Windows, with the two lenses of raw files and the Tapo live view; then the test of each function on a Windows PC and its fixes; then Spatial 2.5D with the webcam; then Linux and macOS, packages, signing and updates.
-- **Google Play**: build 18 is live; build 20 is in Google's review since 7 October 2026, in place of build 19. Build 21 changes nothing on phones and tablets.
+- **Google Play**: build 20 has been live since 7 October 2026, in place of build 18; the listing for TVs has been under Google's review since 9 October 2026. Build 21 changes nothing on phones and tablets.
 - **App Store**: version 3.3.0 is waiting for Apple's review; it carries the features of build 11, so the upload to Immich and the video decoder check (build 15) and the raw Insta360 files (build 16) come with the next App Store update. The link will be added here when it is live.
 - **Meta Horizon Store**: Meta approved the listing on 7 October 2026 with build 14. Build 21 is submitted as its first update: it brings everything since build 14 (uploads from a share to Immich, the video source chosen from what the headset decodes, raw Insta360, GoPro and DJI files, DLNA, the phone share, Apple spatial photos, Plex Media Server libraries, Tapo cameras), and the store lists it for the Quest 2, Quest Pro, Quest 3 and 3S. The store link will be added here once the page is public; a sideloaded copy has to be uninstalled first (see [Install](#install)).
-- **Store listings**: the Google Play listing was rewritten in October 2026 with new screenshots, and gains TV screenshots and a TV banner with the TV release. The App Store text still describes the first builds (360° photos and videos, raw files shown flat); it will present the 3D, VR180 and Spatial viewers, the mode without a server, network shares, the media player and the raw Insta360 files. The Meta Horizon Store text already presents the media player.
+- **Store listings**: the Google Play listing was rewritten in October 2026 with new screenshots, and its TV screenshots and TV banner were added on 8 October 2026; the listing for TVs has been under Google's review since 9 October 2026. The App Store text still describes the first builds (360° photos and videos, raw files shown flat); it will present the 3D, VR180 and Spatial viewers, the mode without a server, network shares, the media player and the raw Insta360 files. The Meta Horizon Store text already presents the media player.
 - **Raw 360° camera files, next**: a progress indicator while a raw photo is prepared for the headset; levelling of GoPro and DJI videos from their own motion data; dual fisheye .dng; device reports on the two lens playback of build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) to confirm seams and decoder budgets.
 - **DLNA, phone share and Apple spatial, next**: the device reports of build 19 (Plex, Jellyfin, a NAS and the Freebox Server over DLNA; a phone serving a Quest, on its hotspot too; real iPhone spatial photos and videos in the headset); the multicast entitlement asked from Apple, so that iPhones find every DLNA server; previous and next between spatial photos in the headset; a spatial badge on server photos in the timeline; spatial videos in 3D on the Quest, if its decoders allow it.
 - **360° players on phones, next**: a time bar in the iOS 360° video player (the Android one has it), previous/next in the 360° players of phones as in the Quest immersive view, and photos in the native 360° video player.
 - **Network shares, next steps**: swiping from one file of a folder to the next in the photo and video pages (the Quest immersive view already goes through the 360° files of a folder), Digest authentication for WebDAV, the username from the Bonjour record.
 - **Flat videos**: the audio track choice in the flat player of phones, for server, device and share videos alike (the 360° and Spatial players have it, and so does the flat player of Immuch360 Desktop).
-- **Android TV, next**: the device test of build 20 on the Google TV emulator and a real TV, then the TV release on Google Play (TV screenshots, the TV banner, Google's review); later, channels on the TV home screen.
+- **Android TV, next**: the device test of build 20 on the Google TV emulator and a real TV, and the TV release on Google Play once Google has reviewed the listing for TVs; later, channels on the TV home screen.
 - **Tapo cameras, next**: the device test of build 20 with real cameras; the live view on iPhone and iPad; H.265 recordings; playing a clip while it is fetched; a whole day of recordings on one time line.
 - **Plex, next**: the device test of build 20 (phones, the Quest, an iPhone, a TV, away from home); bringing the token from the computer with a QR code; hiding the DLNA side of a Plex server in the list of found servers; IPv6.
 - **Upstream**: small pull requests to Immich for the parts the maintainers want, starting with the 360° photo viewer.

@@ -13,14 +13,19 @@ Graet eo evit an dud a denn skeudennoù gant ur c'hamera 360° (Insta360, GoPro 
   <sub>Forc'h n'eo ket ofisiel. N'eo ket stag ouzh Immich nag ouzh FUTO. An anv a lenner evel "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a><br>
-  App Store: <a href="#where-to-get-it">o vezañ gwiriet</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprouet, build 21 kinniget evel e hizivadenn gentañ<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">pellgargañ ar stumm rakwel</a>, build urzhiataer 2
-</p>
+<div align="center">
+
+| Platform | Pelec'h e kaout | Stad d'ar 9 a viz Here 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Pellgomzerioù ha tabletennoù **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 war Google Play abaoe ar 7 a viz Here 2026, build 21 war GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone hag iPad** | App Store | stumm 3.3.0 o c'hortoz gwiriadur Apple; [e sevel hoc'h-unan](#build-it-yourself) e-keit-se |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ha 3S | [APK](#meta-quest-3) · Horizon Store | fichenn aprouet, build 21 o vezañ gwiriet gant Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ha Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 war GitHub; fichenn Google Play evit ar skinwelioù o vezañ gwiriet gant Google abaoe an 9 a viz Here 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP rakwel](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | build urzhiataer 2 war Windows: luc'hskeudennoù ha videoioù plat, ar videoioù 360° da-heul; macOS ha Linux diwezhatoc'h, diwar an hevelep mammennoù |
+
+*Ar stadoù a vez hizivaet gant pep embannadur; ar munudoù a zo e [Pelec'h e kaout](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° genidik**<br>Luc'hskeudennoù ha videoioù evel ur sferenn ma c'hallit sellet tro-dro enni, gant ar jiroskop, restroù kriz ar c'hamera e-barzh (Insta360 adalek ar build 16, GoPro ha DJI adalek ar build 18). Ul lenner video digoust ivez: plat, 360°, 3D, VR180
 - 👓 **3D genidik**<br>360° ha VR180 stereoskopek, a-us/a-is pe kostez-ha-kostez, ha luc'hskeudennoù spasel Apple (adalek ar build 19): gwir 3D er c'hasked, ul lagad war ur pellgomzer
@@ -1072,7 +1077,7 @@ Emañ an arload war Google Play evit ar pellgomzerioù hag an tabletennoù; stum
 
 - **Pellgomzerioù ha tabletennoù Android**
   - Hiziv: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), pe an APK war ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` evit ur pellgomzer (an `Immuch360-v<version>-release.apk` hollek a ya en-dro e pep lec'h, `-armeabi-v7a` a zo evit ar pellgomzerioù kozh 32 bit, hag ar restr `.aab` a zo evit Google Play, n'eo ket evit staliañ gant an dorn). Build GitHub a zo alies war-raok ar stal. N'eus forzh penaos, e vez staliet e-kichen an arload Immich ofisiel (pakad `com.aprogsys.immuch360`).
-  - A-benn nebeut: war Google Play, ar build 18 a zo enlinenn, ar build 20 o vezañ gwiriet gant Google abaoe ar 7 a viz Here 2026, e-lec'h ar build 19.
+  - A-benn nebeut: war Google Play, ar build 20 a zo enlinenn abaoe ar 7 a viz Here 2026, e-lec'h ar build 18; ar build 21 ne cheñch netra war ar pellgomzerioù hag an tabletennoù.
 - **iPhone hag iPad**
   - Hiziv: o c'hortoz gwiriadur Apple. Ar stumm o vezañ gwiriet en deus arc'hwelioù ar build 11: ar pellgas da Immich hag an dibab Mammenn ar video (build 15) hag ar restroù kriz Insta360 (build 16) a zeuio gant un hizivadenn diwezhatoc'h eus an App Store. Ar c'hod mammenn a vez savet gant Xcode pe war Codemagic, gwelit [E sevel hoc'h-unan](#build-it-yourself).
   - A-benn nebeut: App Store, o vezañ gwiriet.
@@ -1081,7 +1086,7 @@ Emañ an arload war Google Play evit ar pellgomzerioù hag an tabletennoù; stum
   - A-benn nebeut: war ar Meta Horizon Store, ar fichenn a zo bet aprouet d'ar 7 a viz Here 2026 gant ar build 14, hag ar build 21, he hizivadenn gentañ, a zo o vezañ gwiriet gant Meta; kanol alpha ar stal (evit an amprouerien hepken) a resev pep build nevez.
 - **Android TV ha Google TV (adalek ar build 20)**
   - Hiziv: an `Immuch360-v<version>-release.apk` hollek eus ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases), staliet gant an dorn gant adb, gwelit [Staliañ anezhañ war ar skinwel](#install-it-on-the-tv). An hevelep arload eo hag war ar pellgomzerioù.
-  - A-benn nebeut: Google Play war ar skinwelioù, goude gwiriadur Google eus an embannadur skinwel.
+  - A-benn nebeut: Google Play war ar skinwelioù, hag e fichenn a zo o vezañ gwiriet gant Google abaoe an 9 a viz Here 2026.
 - **Windows 10 hag 11, 64 bit (stumm rakwel)**
   - Hiziv: Immuch360 Desktop, ar ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` eus ar [rak-embannadur urzhiataer](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), diwasket ha loc'het evel ma lavar [Pellgargañ ha staliañ war Windows](#download-and-install-on-windows). Luc'hskeudennoù ha videoioù plat evit ar mare: ar videoioù 360°, 3D ha VR180 a zeuio gant ar builds urzhiataer da-heul.
   - A-benn nebeut: videoioù 360°, 3D, VR180 ha videoioù 360° kriz; diwezhatoc'h ur stalier, ur build sinet hag hizivadennoù.
@@ -1165,22 +1170,24 @@ Ar raktres-mañ zo ur forc'h eus Immich hag a chom dindan an [GNU AGPL v3](../LI
 
 ZIP Windows Immuch360 Desktop, hag eñ hepken, a gas ivez e lenner video: libmpv, levraoueg [mpv](https://mpv.io), gant [FFmpeg](https://ffmpeg.org) e-barzh, bleniet gant lugantoù [media_kit](https://github.com/media-kit/media-kit). mpv ha FFmpeg a vez savet hep o lodennoù a zo GPL hepken, hag o c'hod a zo dindan an GNU LGPL stumm 2.1 pe nevesoc'h; savet asambles, `libmpv-2.dll` a vez skignet dindan an GNU LGPL stumm 3 pe nevesoc'h. An arload a garg anezhañ e-pad an erounit, neuze e c'hallit e erlec'hiañ gant ho puild deoc'h. Testennoù al lañvazioù a zo en teuliad `licenses` eus ar ZIP, ha pep levraoueg gant he lañvaz hag he mammennoù a zo renablet e [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV ha Google TV a zo merkoù kenwerzh Google LLC; Apple, iPhone, iPad ha macOS a zo merkoù kenwerzh Apple Inc.; Meta ha Meta Quest a zo merkoù kenwerzh Meta Platforms, Inc.; Windows a zo ur merk kenwerzh eus strollad embregerezhioù Microsoft; Linux a zo merk kenwerzh enrollet Linus Torvalds er Stadoù-Unanet hag e broioù all. O logoioù a zeu war wel e taolenn ar platformoù hepken evit diskouez pelec'h ez a Immuch360 en-dro, ha ne dalvezont ket e vefe skoazell pe liamm ebet. Ar robot Android a zo adproduet pe kemmet diwar ul labour krouet ha rannet gant Google, hag implijet hervez an termenoù displeget e Creative Commons 3.0 Attribution License. Tux, pinguin Linux, a zo gant Larry Ewing (lewing@isc.tamu.edu), treset gant The GIMP, er stumm vektorel gant Simon Budig ha Garrett LeSage. Mammennoù ha lañvazioù al logoioù: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Steuñv-labour
 
 Ar pezh n'eo ket graet c'hoazh, an hini moarvat da gentañ. Netra amañ n'eo ur bromesa, hag an evezhiadennoù war ar [roll kudennoù](https://github.com/freeKC/Immuch360/issues) a sikour da zivizout petra a zeu da gentañ.
 
 - **Immuch360 Desktop, Windows da gentañ**: deuet eo er-maez ar build urzhiataer 2, gant ar videoioù plat, ha mammennoù an urzhiataer a zo e skourr pennañ ar forc'h, `immuch360`, abaoe an 9 a viz Here 2026 (gwelit [War un urzhiataer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Da-heul, ar videoioù 360°, 3D, VR180 hag ar videoioù 360° kriz war Windows, gant an div lintilh eus ar restroù kriz ha gwel war-eeun Tapo; goude amprouiñ pep arc'hwel war un urzhiataer Windows hag e reizhadurioù; goude Spatial 2.5D gant ar webkam; goude Linux ha macOS, pakadoù, sinañ hag hizivadennoù.
-- **Google Play**: ar build 18 a zo enlinenn; ar build 20 a zo o vezañ gwiriet gant Google abaoe ar 7 a viz Here 2026, e-lec'h ar build 19. Ar build 21 ne cheñch netra war ar pellgomzerioù hag an tabletennoù.
+- **Google Play**: ar build 20 a zo enlinenn abaoe ar 7 a viz Here 2026, e-lec'h ar build 18; ar fichenn evit ar skinwelioù a zo o vezañ gwiriet gant Google abaoe an 9 a viz Here 2026. Ar build 21 ne cheñch netra war ar pellgomzerioù hag an tabletennoù.
 - **App Store**: ar stumm 3.3.0 a c'hortoz gwiriadur Apple; arc'hwelioù ar build 11 en deus, neuze ar pellgas da Immich ha gwiriadur an diskoder video (build 15) hag ar restroù kriz Insta360 (build 16) a zeuio gant an hizivadenn App Store war-lerc'h. Al liamm a vo ouzhpennet amañ pa vo enlinenn.
 - **Meta Horizon Store**: Meta en deus aprouet ar fichenn d'ar 7 a viz Here 2026 gant ar build 14. Ar build 21 a zo bet kinniget evel he hizivadenn gentañ: degas a ra kement tra abaoe ar build 14 (ar pellgasoù eus ur rannadenn da Immich, ar vammenn video dibabet diouzh ar pezh a ziskod ar c'hasked, ar restroù kriz Insta360, GoPro ha DJI, DLNA, rannadenn ar pellgomzer, al luc'hskeudennoù spasel Apple, al levraouegoù Plex Media Server, ar c'hameraioù Tapo), hag ar stal he roll evit ar Quest 2, ar Quest Pro, ar Quest 3 hag ar 3S. Al liamm stal a vo ouzhpennet amañ kerkent ha ma vo foran ar bajenn; un eilskouerenn staliet gant an dorn a rank bezañ distaliet da gentañ (gwelit [Staliañ](#install)).
-- **Fichennoù ar stalioù**: fichenn Google Play a zo bet adskrivet e miz Here 2026 gant skrammdapadennoù nevez, hag e resevo skrammdapadennoù skinwel hag ur vandenn skinwel gant an embannadur skinwel. Testenn an App Store a zeskriv c'hoazh ar builds kentañ (luc'hskeudennoù ha videoioù 360°, restroù kriz diskouezet plat); kinnig a raio ar gwelerioù 3D, VR180 ha Spatial, ar mod hep servijer, ar rannadennoù rouedad, al lenner media hag ar restroù kriz Insta360. Testenn ar Meta Horizon Store a ginnig al lenner media dija.
+- **Fichennoù ar stalioù**: fichenn Google Play a zo bet adskrivet e miz Here 2026 gant skrammdapadennoù nevez, hag he skrammdapadennoù skinwel hag he bandenn skinwel a zo bet ouzhpennet d'an 8 a viz Here 2026; ar fichenn evit ar skinwelioù a zo o vezañ gwiriet gant Google abaoe an 9 a viz Here 2026. Testenn an App Store a zeskriv c'hoazh ar builds kentañ (luc'hskeudennoù ha videoioù 360°, restroù kriz diskouezet plat); kinnig a raio ar gwelerioù 3D, VR180 ha Spatial, ar mod hep servijer, ar rannadennoù rouedad, al lenner media hag ar restroù kriz Insta360. Testenn ar Meta Horizon Store a ginnig al lenner media dija.
 - **Restroù kriz ar c'hameraoù 360°, da heul**: un arouez araokadur e-pad ma vez prientet ul luc'hskeudenn kriz evit ar c'hasked; lakaat a-blaen videoioù GoPro ha DJI diouzh o roadennoù fiñv dezho; .dng dual fisheye; danevelloù benvegoù war lenn div lunedenn ar build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) evit kadarnaat ar gwriadoù ha budjed an diskoderioù.
 - **DLNA, rannadenn ar pellgomzer ha spasel Apple, da heul**: danevelloù benvegoù ar build 19 (Plex, Jellyfin, un NAS hag ar Freebox Server dre DLNA; ur pellgomzer o pourchas d'ur Quest, war e boent tizhout ivez; luc'hskeudennoù ha videoioù spasel gwir eus iPhone er c'hasked); an aotre multicast goulennet digant Apple, evit ma kavfe an iPhone pep servijer DLNA; kent ha da-heul etre al luc'hskeudennoù spasel er c'hasked; ur merk spasel war luc'hskeudennoù ar servijer el linenn-amzer; videoioù spasel e 3D war ar Quest, ma aotre e ziskoderioù.
 - **Lennerioù 360° war ar pellgomzerioù, da heul**: ur varrenn amzer e lenner video 360° iOS (hini Android en deus unan), kent/da-heul e lennerioù 360° ar pellgomzerioù evel er gwel soubus Quest, ha luc'hskeudennoù el lenner video 360° genidik.
 - **Rannadennoù rouedad, pazennoù war-lerc'h**: riklañ eus ur restr eus un teuliad d'an hini war-lerc'h er pajennoù luc'hskeudenn ha video (ar gwel soubus Quest a dremen dija dre restroù 360° un teuliad), dilesadur Digest evit WebDAV, an anv implijer diwar enrolladenn Bonjour.
 - **Videoioù plat**: an dibab roudenn son e lenner plat ar pellgomzerioù, evit videoioù ar servijer, ar benveg hag ar rannadennoù kement ha kement (al lennerioù 360° ha Spatial o deus anezhañ, ha lenner plat Immuch360 Desktop ivez).
-- **Android TV, da heul**: amprouadenn ar build 20 war ar c'hendarvaner Google TV ha war ur gwir skinwel, goude an embannadur skinwel war Google Play (skrammdapadennoù skinwel, ar vandenn skinwel, gwiriadur Google); diwezhatoc'h, chadennoù war skramm degemer ar skinwel.
+- **Android TV, da heul**: amprouadenn ar build 20 war ar c'hendarvaner Google TV ha war ur gwir skinwel, hag an embannadur skinwel war Google Play kerkent ha ma vo bet gwiriet ar fichenn evit ar skinwelioù gant Google; diwezhatoc'h, chadennoù war skramm degemer ar skinwel.
 - **Kameraioù Tapo, da heul**: amprouadenn ar build 20 gant gwir gameraioù; ar sell war-eeun war iPhone hag iPad; enrolladennoù H.265; lenn ur c'hlip tra ma vez tapet; un devezh a-bezh a enrolladennoù war ul linenn-amzer hepken.
 - **Plex, da heul**: amprouadenn ar build 20 war ar benvegoù (pellgomzerioù, ar Quest, un iPhone, ur skinwel, er-maez eus ar gêr); degas ar jedouer eus an urzhiataer gant ur c'hod QR; kuzhat lodenn DLNA ur servijer Plex e roll ar servijerioù kavet; IPv6.
 - **Upstream**: pull requests bihan da Immich evit al lodennoù a fell d'ar re a ra war-dro ar raktres, o kregiñ gant gweler al luc'hskeudennoù 360°.

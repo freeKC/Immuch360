@@ -13,14 +13,19 @@ Immuch360 Immich-en mugikorreko aplikazioa da, inguruan begiratu daitezkeen 360�
   <sub>Fork ez-ofiziala. Ez dago Immich-ekin ez FUTO-rekin lotuta. Izena "I am much 360" bezala irakurtzen da.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APKa</a><br>
-  App Store: <a href="#where-to-get-it">berrikuspenean</a><br>
-  Meta Quest: <a href="#meta-quest-3">APKa</a>, Horizon Store onartua, 21. konpilazioa bere lehen eguneratze gisa bidalia<br>
-  Android TV: <a href="#install-it-on-the-tv">APKa</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">aurrebistaren deskarga</a>, desktop build 2
-</p>
+<div align="center">
+
+| Plataforma | Non lortu | Egoera 2026ko urriaren 9an |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefono eta tabletak | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20. konpilazioa Google Play-n 2026ko urriaren 7tik, 21. konpilazioa GitHub-en |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone eta iPad** | App Store | 3.3.0 bertsioa Apple-ren berrikuspenaren zain; bitartean, [konpilatu zuk zeuk](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 eta 3S | [APK](#meta-quest-3) · Horizon Store | fitxa onartuta, 21. konpilazioa Meta-ren berrikuspenean |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV eta Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21. konpilazioa GitHub-en; telebistetarako Google Play-ko fitxa Google-ren berrikuspenean dago 2026ko urriaren 9tik |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Aurrebistaren ZIPa](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | 2. mahaigaineko konpilazioa Windows-en: argazkiak eta bideo lauak, 360° bideoak gero; macOS eta Linux geroago, iturburu beretatik |
+
+*Egoerak bertsio bakoitzean eguneratzen dira; xehetasunak [Non lortu](#where-to-get-it) atalean daude.*
+
+</div>
 
 - 🌐 **360° natiboa**<br>Argazkiak eta bideoak inguruan begiratzeko esfera gisa, giroskopioarekin, kamerako fitxategi gordinak barne (Insta360 16. konpilaziotik aurrera, GoPro eta DJI 18. konpilaziotik aurrera). Doako bideo-erreproduzitzailea ere bai: laua, 360°, 3D, VR180
 - 👓 **3D natiboa**<br>360° estereoskopikoa eta VR180, goian eta behean edo bata bestearen ondoan, eta Apple-ren argazki espazialak (19. konpilaziotik aurrera): benetako 3D betaurrekoetan, begi bakarra telefonoan
@@ -1072,7 +1077,7 @@ Aplikazioa Google Play-n dago telefono eta tabletetarako; App Store-ko bertsioa 
 
 - **Android telefonoak eta tabletak**
   - Gaur: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), edo [Releases](https://github.com/freeKC/Immuch360/releases) orriko APKa: `Immuch360-v<version>-arm64-v8a-release.apk` telefono baterako (`Immuch360-v<version>-release.apk` unibertsalak leku guztietan funtzionatzen du, `-armeabi-v7a` 32 biteko telefono zaharragoetarako da, eta `.aab` fitxategia Google Play-rako da, ez eskuz instalatzeko). GitHub-eko konpilazioa dendaren aurretik egon ohi da. Edonola ere Immich aplikazio ofizialaren ondoan instalatzen da (`com.aprogsys.immuch360` paketea).
-  - Laster: Google Play-n, 18. konpilazioa argitaratuta dago, 20. konpilazioa Google-ren berrikuspenean 2026ko urriaren 7tik, 19. konpilazioaren ordez.
+  - Laster: Google Play-n, 20. konpilazioa argitaratuta dago 2026ko urriaren 7tik, 18. konpilazioaren ordez; 21. konpilazioak ez du ezer aldatzen telefono eta tabletetan.
 - **iPhone eta iPad**
   - Gaur: Apple-ren berrikuspenaren zain. Berrikuspenean dagoen bertsioak 11. konpilazioaren funtzioak ditu: Immich-era igotzea eta "Bideoaren iturria" aukera (15. konpilazioa) eta Insta360 fitxategi gordinak (16. konpilazioa) App Store-ko geroko eguneratze batekin iritsiko dira. Iturburu-kodea Xcode-rekin edo Codemagic-en konpilatzen da, ikusi [Konpilatu zuk zeuk](#build-it-yourself).
   - Laster: App Store, berrikuspenean.
@@ -1081,7 +1086,7 @@ Aplikazioa Google Play-n dago telefono eta tabletetarako; App Store-ko bertsioa 
   - Laster: Meta Horizon Store-n, fitxa 2026ko urriaren 7an onartu zen 14. konpilazioarekin, eta 21. konpilazioa, bere lehen eguneratzea, Meta-ren berrikuspenean dago; dendako alfa kanalak (probatzaileentzat bakarrik) konpilazio berri bakoitza jasotzen du.
 - **Android TV eta Google TV (20. konpilaziotik aurrera)**
   - Gaur: [Releases](https://github.com/freeKC/Immuch360/releases) orriko `Immuch360-v<version>-release.apk` unibertsala, adb-rekin eskuz instalatua, ikusi [Instalatu telebistan](#install-it-on-the-tv). Telefonoetako aplikazio bera da.
-  - Laster: Google Play telebistetan, telebistarako bertsioaren Google-ren berrikuspenaren ondoren.
+  - Laster: Google Play telebistetan; telebistetarako fitxa Google-ren berrikuspenean dago 2026ko urriaren 9tik.
 - **Windows 10 eta 11, 64 bit (aurrebista)**
   - Gaur: Immuch360 Desktop, [mahaigaineko aurre-bertsioaren](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIPa, deskonprimitua eta abiarazia [Deskargatu eta instalatu Windowsen](#download-and-install-on-windows) atalak dioen bezala. Oraingoz argazkiak eta bideo lauak: 360°, 3D eta VR180 bideoak hurrengo mahaigaineko konpilazioekin etorriko dira.
   - Laster: 360°, 3D, VR180 eta 360° bideo gordinak; instalatzaile bat, konpilazio sinatu bat eta eguneratzeak geroago.
@@ -1165,22 +1170,24 @@ Proiektu hau Immich-en fork bat da eta [GNU AGPL v3](../LICENSE) lizentziapean j
 
 Immuch360 Desktop-en Windowserako ZIPak, eta hark bakarrik, bere bideo-erreproduzitzailea ere badakar: libmpv, [mpv](https://mpv.io)-ren liburutegia, [FFmpeg](https://ffmpeg.org) barnean duela, [media_kit](https://github.com/media-kit/media-kit)-en pluginek gidatua. mpv eta FFmpeg GPL soilik diren zatirik gabe eraikitzen dira, eta haien kodea GNU LGPL 2.1 bertsiopean edo berriagoan dago; elkarrekin eraikita, `libmpv-2.dll` GNU LGPL 3 bertsiopean edo berriagoan banatzen da. Aplikazioak exekuzio-garaian kargatzen du, beraz zure konpilazio propioarekin ordez dezakezu. Lizentzien testuak ZIPeko `licenses` karpetan daude, eta liburutegi bakoitza bere lizentziarekin eta iturburu-kodearekin [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) fitxategian zerrendatuta dago.
 
+Android, Android TV eta Google TV Google LLC-ren marka komertzialak dira; Apple, iPhone, iPad eta macOS Apple Inc.-ren marka komertzialak dira; Meta eta Meta Quest Meta Platforms, Inc.-ren marka komertzialak dira; Windows Microsoft enpresa-taldearen marka komertziala da; Linux Linus Torvalds-en marka erregistratua da Estatu Batuetan eta beste herrialde batzuetan. Haien logoak plataformen taulan agertzen dira Immuch360 non dabilen erakusteko soilik, eta ez dute inolako babesik edo loturarik adierazten. Android robota Google-k sortu eta partekatutako lan batetik erreproduzitu edo aldatu da, eta Creative Commons 3.0 Attribution License lizentzian deskribatutako baldintzen arabera erabiltzen da. Tux, Linux pinguinoa, Larry Ewing-ena da (lewing@isc.tamu.edu), The GIMP-ekin marraztua, Simon Budig eta Garrett LeSage-ren bertsio bektorialean. Logoen iturriak eta lizentziak: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Bide-orria
 
 Oraindik egin gabe dagoena, litekeenena lehenik. Hemen ezer ez da promesa bat, eta [arazo-jarraitzailean](https://github.com/freeKC/Immuch360/issues) emandako iruzkinek lehenik zer datorren erabakitzen laguntzen dute.
 
 - **Immuch360 Desktop, Windows lehenik**: desktop build 2 argitaratu da, bideo lauekin, eta mahaigaineko iturburu-kodea fork-aren adar nagusian dago, `immuch360`, 2026ko urriaren 9az geroztik (ikusi [Windows ordenagailu batean](#on-a-windows-computer-immuch360-desktop-preview)). Hurrengoa, 360°, 3D, VR180 eta 360° bideo gordinak Windowsen, fitxategi gordinen bi objektiboekin eta Tapo zuzeneko ikuspegiarekin; gero funtzio bakoitzaren proba Windows PC batean eta haren zuzenketak; gero Spatial 2.5D web-kamerarekin; gero Linux eta macOS, paketeak, sinadura eta eguneratzeak.
-- **Google Play**: 18. konpilazioa argitaratuta dago; 20. konpilazioa Google-ren berrikuspenean dago 2026ko urriaren 7tik, 19. konpilazioaren ordez. 21. konpilazioak ez du ezer aldatzen telefono eta tabletetan.
+- **Google Play**: 20. konpilazioa argitaratuta dago 2026ko urriaren 7tik, 18. konpilazioaren ordez; telebistetarako fitxa Google-ren berrikuspenean dago 2026ko urriaren 9tik. 21. konpilazioak ez du ezer aldatzen telefono eta tabletetan.
 - **App Store**: 3.3.0 bertsioa Apple-ren berrikuspenaren zain dago; 11. konpilazioaren funtzioak ditu, beraz Immich-era igotzea eta bideo-deskodetzaileen egiaztapena (15. konpilazioa) eta Insta360 fitxategi gordinak (16. konpilazioa) App Store-ko hurrengo eguneratzearekin iritsiko dira. Esteka hemen gehituko da argitaratuta dagoenean.
 - **Meta Horizon Store**: Meta-k fitxa onartu zuen 2026ko urriaren 7an 14. konpilazioarekin. 21. konpilazioa bere lehen eguneratze gisa bidali da: 14. konpilaziotik hona dagoen guztia dakar (partekatze batetik Immich-era igoerak, betaurrekoek deskodetzen dutenaren arabera aukeratutako bideo-iturria, Insta360, GoPro eta DJI fitxategi gordinak, DLNA, telefonoaren partekatzea, Apple-ren argazki espazialak, Plex Media Server liburutegiak, Tapo kamerak), eta dendak Quest 2, Quest Pro, Quest 3 eta 3S betaurrekoetarako eskaintzen du. Dendako esteka hemen gehituko da orria publikoa denean; eskuz instalatutako kopia bat lehenik desinstalatu behar da (ikusi [Instalatu](#install)).
-- **Dendetako fitxak**: Google Play-ko fitxa 2026ko urrian berridatzi zen pantaila-argazki berriekin, eta telebistako pantaila-argazkiak eta telebistako banner bat jasoko ditu telebistarako bertsioarekin. App Store-ko testuak lehen konpilazioak deskribatzen ditu oraindik (360° argazkiak eta bideoak, fitxategi gordinak lau erakutsiak); 3D, VR180 eta Spatial ikustaileak, zerbitzaririk gabeko modua, sareko partekatzeak, multimedia-erreproduzitzailea eta Insta360 fitxategi gordinak aurkeztuko ditu. Meta Horizon Store-ko testuak multimedia-erreproduzitzailea aurkezten du jada.
+- **Dendetako fitxak**: Google Play-ko fitxa 2026ko urrian berridatzi zen pantaila-argazki berriekin, eta haren telebistako pantaila-argazkiak eta telebistako bannerra 2026ko urriaren 8an gehitu ziren; telebistetarako fitxa Google-ren berrikuspenean dago 2026ko urriaren 9tik. App Store-ko testuak lehen konpilazioak deskribatzen ditu oraindik (360° argazkiak eta bideoak, fitxategi gordinak lau erakutsiak); 3D, VR180 eta Spatial ikustaileak, zerbitzaririk gabeko modua, sareko partekatzeak, multimedia-erreproduzitzailea eta Insta360 fitxategi gordinak aurkeztuko ditu. Meta Horizon Store-ko testuak multimedia-erreproduzitzailea aurkezten du jada.
 - **360° kameren fitxategi gordinak, hurrengo urratsak**: aurrerapen-adierazle bat argazki gordin bat betaurrekoetarako prestatzen den bitartean; GoPro eta DJI bideoen berdinketa beren mugimendu-datuetatik abiatuta; arrain-begi bikoitzeko .dng; 18. konpilazioko bi objektiboko erreprodukzioari buruzko gailuetako txostenak (X4, X5, X6, GoPro MAX 2, Osmo 360) josturak eta deskodetzaileen aurrekontuak berresteko.
 - **DLNA, telefono-partekatzea eta Apple-ren multimedia espaziala, hurrengo urratsak**: 19. konpilazioaren gailuetako txostenak (Plex, Jellyfin, NAS bat eta Freebox Server-a DLNA bidez; Quest bat zerbitzatzen duen telefono bat, bere sarbide-puntuan ere bai; iPhone-ko benetako argazki eta bideo espazialak betaurrekoetan); Apple-ri eskatutako multicast eskubidea, iPhone-ek DLNA zerbitzari guztiak aurki ditzaten; aurrekoa eta hurrengoa argazki espazialen artean betaurrekoetan; ikur espazial bat zerbitzariko argazkietan denbora-lerroan; bideo espazialak 3Dn Quest-ean, bere deskodetzaileek ahalbidetzen badute.
 - **360° erreproduzitzaileak telefonoetan, hurrengo urratsak**: denbora-barra bat iOS-eko 360° bideo-erreproduzitzailean (Android-ekoak badu), aurrekoa/hurrengoa telefonoetako 360° erreproduzitzaileetan Quest-eko ikuspegi murgiltzailean bezala, eta argazkiak 360° bideo-erreproduzitzaile natiboan.
 - **Sareko partekatzeak, hurrengo urratsak**: karpeta bateko fitxategi batetik hurrengora irristatzea argazki eta bideo-orrietan (Quest-eko ikuspegi murgiltzaileak jada karpeta bateko 360° fitxategiak zeharkatzen ditu), Digest autentifikazioa WebDAVerako, erabiltzaile-izena Bonjour erregistrotik.
 - **Bideo lauak**: audio-pistaren aukera telefonoetako erreproduzitzaile lauan, zerbitzariko, gailuko eta partekatzeetako bideoetarako berdin (360° eta Spatial erreproduzitzaileek badute, baita Immuch360 Desktop-en erreproduzitzaile lauak ere).
-- **Android TV, hurrengo urratsak**: 20. konpilazioaren gailuko proba Google TV emuladorean eta benetako telebista batean, ondoren telebistarako bertsioa Google Play-n (telebistako pantaila-argazkiak, telebistako bannerra, Google-ren berrikuspena); geroago, kanalak telebistaren hasierako pantailan.
+- **Android TV, hurrengo urratsak**: 20. konpilazioaren gailuko proba Google TV emuladorean eta benetako telebista batean, eta telebistarako bertsioa Google Play-n, Google-k telebistetarako fitxa berrikusi ondoren; geroago, kanalak telebistaren hasierako pantailan.
 - **Tapo kamerak, hurrengo urratsak**: 20. konpilazioaren gailuko proba benetako kamerekin; zuzeneko ikuspegia iPhone eta iPad-en; H.265 grabazioak; klip bat ekartzen ari den bitartean erreproduzitzea; grabazio-egun oso bat denbora-lerro bakarrean.
 - **Plex, hurrengo urratsak**: 20. konpilazioaren gailuko proba (telefonoak, Quest-a, iPhone bat, telebista bat, etxetik kanpo); tokena ordenagailutik QR kode batekin ekartzea; Plex zerbitzari baten DLNA aldea ezkutatzea aurkitutako zerbitzarien zerrendan; IPv6.
 - **Upstream**: pull request txikiak Immich-era mantentzaileek nahi dituzten zatietarako, 360° argazki-ikustailetik hasita.

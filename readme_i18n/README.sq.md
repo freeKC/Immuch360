@@ -13,14 +13,19 @@ Immuch360 është aplikacioni celular i Immich me foto dhe video 360° në të c
   <sub>Fork jozyrtar. Nuk ka lidhje me Immich apo me FUTO. Në anglisht, emri lexohet si “I am much 360”.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK për Android</a><br>
-  App Store: <a href="#where-to-get-it">në shqyrtim</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store i miratuar, ndërtimi 21 i dërguar si përditësimi i tij i parë<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">shkarkimi i versionit paraprak</a>, desktop build 2
-</p>
+<div align="center">
+
+| Platforma | Ku ta merrni | Gjendja më 9 tetor 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefona dhe tableta **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ndërtimi 20 në Google Play që nga 7 tetor 2026, ndërtimi 21 në GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dhe iPad** | App Store | versioni 3.3.0 në pritje të shqyrtimit të Apple; ndërkohë, [ndërtojeni vetë](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [APK](#meta-quest-3) · Horizon Store | faqja e miratuar, ndërtimi 21 në shqyrtim te Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#install-it-on-the-tv) · Google Play | ndërtimi 21 në GitHub; faqja e Google Play për televizorë është në shqyrtim te Google që nga 9 tetor 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP i versionit paraprak](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | ndërtimi 2 për desktop në Windows: foto dhe video të sheshta, më pas videot 360°; macOS dhe Linux më vonë, nga të njëjtat burime |
+
+*Gjendjet përditësohen me çdo publikim; hollësitë janë te [Ku ta merrni](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° vendas**<br>Foto dhe video si një sferë në të cilën shikoni përreth, me xhiroskopin, përfshirë skedarët e papërpunuar të kamerës (Insta360 nga ndërtimi 16, GoPro dhe DJI nga ndërtimi 18). Edhe një luajtës videoje falas: i sheshtë, 360°, 3D, VR180
 - 👓 **3D vendas**<br>360° stereoskopike dhe VR180, lart dhe poshtë ose krah për krah, si dhe fotot hapësinore Apple (nga ndërtimi 19): 3D i vërtetë në kufjet VR, një sy në telefon
@@ -1072,7 +1077,7 @@ Aplikacioni është në Google Play për telefona dhe tableta; versioni i App St
 
 - **Telefona dhe tableta Android**
   - Sot: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ose APK-ja në faqen [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` për një telefon (`Immuch360-v<version>-release.apk` universal funksionon kudo, `-armeabi-v7a` është për telefona më të vjetër 32 bit, dhe skedari `.aab` është për Google Play, jo për sideload). Ndërtimi i GitHub zakonisht është përpara dyqanit. Në çdo rast instalohet pranë aplikacionit zyrtar Immich (paketa `com.aprogsys.immuch360`).
-  - Së shpejti: në Google Play, ndërtimi 18 është i publikuar, ndërtimi 20 në shqyrtim te Google që nga 7 tetor 2026, në vend të ndërtimit 19.
+  - Së shpejti: në Google Play, ndërtimi 20 është i publikuar që nga 7 tetor 2026, në vend të ndërtimit 18; ndërtimi 21 nuk ndryshon asgjë në telefona dhe tableta.
 - **iPhone dhe iPad**
   - Sot: në pritje të shqyrtimit të Apple. Versioni në shqyrtim ka veçoritë e ndërtimit 11: ngarkimi në Immich dhe zgjedhja Burimi i videos (ndërtimi 15) dhe skedarët Insta360 të papërpunuar (ndërtimi 16) do të vijnë me një përditësim të mëvonshëm të App Store. Kodi burimor ndërtohet me Xcode ose në Codemagic, shihni [Ndërtojeni vetë](#build-it-yourself).
   - Së shpejti: App Store, në shqyrtim.
@@ -1081,7 +1086,7 @@ Aplikacioni është në Google Play për telefona dhe tableta; versioni i App St
   - Së shpejti: në Meta Horizon Store, faqja u miratua më 7 tetor 2026 me ndërtimin 14, dhe ndërtimi 21, përditësimi i saj i parë, është në shqyrtim nga Meta; kanali alfa i dyqanit (vetëm për testuesit) merr çdo ndërtim të ri.
 - **Android TV dhe Google TV (nga ndërtimi 20)**
   - Sot: `Immuch360-v<version>-release.apk` universal i faqes [Releases](https://github.com/freeKC/Immuch360/releases), i instaluar me sideload me adb, shihni [Instalojeni në televizor](#install-it-on-the-tv). Është i njëjti aplikacion si në telefona.
-  - Së shpejti: Google Play në televizorë, pas shqyrtimit të Google për publikimin për televizor.
+  - Së shpejti: Google Play në televizorë, faqja e të cilit për televizorë është në shqyrtim te Google që nga 9 tetor 2026.
 - **Windows 10 dhe 11, 64 bit (version paraprak)**
   - Sot: Immuch360 Desktop, ZIP-i `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` i [publikimit paraprak për desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), i shpaketuar dhe i nisur siç thotë [Shkarkimi dhe instalimi në Windows](#download-and-install-on-windows). Foto dhe video të sheshta për tani: videot 360°, 3D dhe VR180 vijnë me ndërtimet e ardhshme për desktop.
   - Së shpejti: videot 360°, 3D, VR180 dhe videot e papërpunuara 360°; një instalues, një ndërtim i nënshkruar dhe përditësime më vonë.
@@ -1165,22 +1170,24 @@ Ky projekt është një fork i Immich dhe mbetet nën [GNU AGPL v3](../LICENSE).
 
 ZIP-i për Windows i Immuch360 Desktop, dhe vetëm ai, përmban gjithashtu luajtësin e tij të videove: libmpv, librarinë e [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org) brenda saj, të drejtuar nga shtojcat e [media_kit](https://github.com/media-kit/media-kit). mpv dhe FFmpeg janë ndërtuar pa pjesët e tyre që janë vetëm GPL, dhe kodi i tyre është nën GNU LGPL versioni 2.1 ose më i ri; të ndërtuara së bashku, `libmpv-2.dll` shpërndahet nën GNU LGPL versioni 3 ose më i ri. Aplikacioni e ngarkon gjatë ekzekutimit, kështu që mund ta zëvendësoni me ndërtimin tuaj. Tekstet e licencave janë në dosjen `licenses` të ZIP-it, dhe çdo librari me licencën dhe burimet e saj renditet në [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV dhe Google TV janë marka tregtare të Google LLC; Apple, iPhone, iPad dhe macOS janë marka tregtare të Apple Inc.; Meta dhe Meta Quest janë marka tregtare të Meta Platforms, Inc.; Windows është markë tregtare e grupit të kompanive Microsoft; Linux është markë tregtare e regjistruar e Linus Torvalds në SHBA dhe në vende të tjera. Logot e tyre shfaqen në tabelën e platformave vetëm për të treguar ku funksionon Immuch360 dhe nuk nënkuptojnë asnjë miratim apo lidhje. Roboti Android riprodhohet ose modifikohet nga vepra e krijuar dhe e ndarë nga Google dhe përdoret sipas kushteve të përshkruara në Creative Commons 3.0 Attribution License. Tux, pinguini i Linux, është vepër e Larry Ewing (lewing@isc.tamu.edu), i vizatuar me The GIMP, në versionin vektorial nga Simon Budig dhe Garrett LeSage. Burimet dhe licencat e logove: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Plani
 
 Çfarë nuk është bërë ende, më e mundshmja e para. Asgjë këtu nuk është premtim, dhe komentet në [gjurmuesin e problemeve](https://github.com/freeKC/Immuch360/issues) ndihmojnë të vendoset çfarë vjen e para.
 
 - **Immuch360 Desktop, fillimisht Windows**: desktop build 2 ka dalë, me video të sheshta, dhe burimet e desktop-it janë në degën kryesore të fork-ut, `immuch360`, që nga 9 tetori 2026 (shihni [Në një kompjuter me Windows](#on-a-windows-computer-immuch360-desktop-preview)). Më pas, videot 360°, 3D, VR180 dhe videot e papërpunuara 360° në Windows, me dy lentet e skedarëve të papërpunuar dhe pamjen e drejtpërdrejtë Tapo; pastaj testimi i çdo funksioni në një PC me Windows dhe rregullimet e tij; pastaj Spatial 2.5D me kamerën web; pastaj Linux dhe macOS, paketat, nënshkrimi dhe përditësimet.
-- **Google Play**: ndërtimi 18 është i publikuar; ndërtimi 20 është në shqyrtim te Google që nga 7 tetor 2026, në vend të ndërtimit 19. Ndërtimi 21 nuk ndryshon asgjë në telefona dhe tableta.
+- **Google Play**: ndërtimi 20 është i publikuar që nga 7 tetor 2026, në vend të ndërtimit 18; faqja për televizorë është në shqyrtim te Google që nga 9 tetor 2026. Ndërtimi 21 nuk ndryshon asgjë në telefona dhe tableta.
 - **App Store**: versioni 3.3.0 pret shqyrtimin e Apple; ka veçoritë e ndërtimit 11, prandaj ngarkimi në Immich dhe kontrolli i dekoderit të videos (ndërtimi 15) dhe skedarët Insta360 të papërpunuar (ndërtimi 16) vijnë me përditësimin e radhës të App Store. Lidhja do të shtohet këtu kur të jetë e publikuar.
 - **Meta Horizon Store**: Meta e miratoi faqen më 7 tetor 2026 me ndërtimin 14. Ndërtimi 21 është dërguar si përditësimi i saj i parë: sjell gjithçka që nga ndërtimi 14 (ngarkimet nga një ndarje në Immich, burimi i videos i zgjedhur sipas asaj që dekodojnë kufjet VR, skedarët e papërpunuar Insta360, GoPro dhe DJI, DLNA, ndarjen e telefonit, fotot hapësinore Apple, bibliotekat e Plex Media Server, kamerat Tapo), dhe dyqani e liston për Quest 2, Quest Pro, Quest 3 dhe 3S. Lidhja e dyqanit do të shtohet këtu sapo faqja të bëhet publike; një kopje e instaluar me sideload duhet çinstaluar më parë (shihni [Instalimi](#install)).
-- **Faqet në dyqane**: faqja e Google Play u rishkrua në tetor 2026 me pamje ekrani të reja, dhe me publikimin për televizor merr pamje ekrani televizori dhe një baner televizori. Teksti i App Store ende përshkruan ndërtimet e para (foto dhe video 360°, skedarë të papërpunuar të shfaqur të sheshtë); ai do të paraqesë shikuesit 3D, VR180 dhe Spatial, modalitetin pa server, ndarjet e rrjetit, luajtësin e medias dhe skedarët Insta360 të papërpunuar. Teksti i Meta Horizon Store e paraqet tashmë luajtësin e medias.
+- **Faqet në dyqane**: faqja e Google Play u rishkrua në tetor 2026 me pamje ekrani të reja, dhe pamjet e ekranit të televizorit dhe baneri i televizorit iu shtuan më 8 tetor 2026; faqja për televizorë është në shqyrtim te Google që nga 9 tetor 2026. Teksti i App Store ende përshkruan ndërtimet e para (foto dhe video 360°, skedarë të papërpunuar të shfaqur të sheshtë); ai do të paraqesë shikuesit 3D, VR180 dhe Spatial, modalitetin pa server, ndarjet e rrjetit, luajtësin e medias dhe skedarët Insta360 të papërpunuar. Teksti i Meta Horizon Store e paraqet tashmë luajtësin e medias.
 - **Skedarët e papërpunuar të kamerave 360°, në vijim**: një tregues ecurie ndërsa një foto e papërpunuar përgatitet për kufjet VR; nivelimi i videove GoPro dhe DJI nga të dhënat e tyre të lëvizjes; .dng me dy fisheye; raporte nga pajisjet për luajtjen me dy objektiva të ndërtimit 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) për të konfirmuar qepjet dhe kufijtë e dekoderëve.
 - **DLNA, ndarja e telefonit dhe hapësinoret Apple, në vijim**: raportet nga pajisjet e ndërtimit 19 (Plex, Jellyfin, një NAS dhe Freebox Server përmes DLNA; një telefon që i shërben një Quest-i, edhe në hotspotin e tij; foto dhe video hapësinore reale nga iPhone në kufjet VR); e drejta (entitlement) për multicast e kërkuar nga Apple, që iPhone-at të gjejnë çdo server DLNA; i mëparshmi dhe i radhës midis fotove hapësinore në kufjet VR; një distinktiv hapësinor në fotot e serverit në kronologji; videot hapësinore në 3D në Quest, nëse e lejojnë dekoderët e tij.
 - **Luajtësit 360° në telefona, në vijim**: një shirit kohe në luajtësin e videove 360° të iOS (ai i Android-it e ka), i mëparshmi/i radhës në luajtësit 360° të telefonave si në pamjen zhytëse të Quest-it, dhe foto në luajtësin vendas të videove 360°.
 - **Ndarjet e rrjetit, hapat e radhës**: rrëshqitja nga një skedar i dosjes te tjetri në faqet e fotos dhe videos (pamja zhytëse e Quest-it kalon tashmë nëpër skedarët 360° të një dosjeje), vërtetimi Digest për WebDAV, emri i përdoruesit nga regjistrimi Bonjour.
 - **Videot e sheshta**: zgjedhja e pistës audio në luajtësin e sheshtë të telefonave, njësoj për videot e serverit, të pajisjes dhe të ndarjeve (luajtësit 360° dhe Spatial e kanë, ashtu si edhe luajtësi i sheshtë i Immuch360 Desktop).
-- **Android TV, hapat e radhës**: testi në pajisje i ndërtimit 20 në emulatorin Google TV dhe në një televizor të vërtetë, pastaj publikimi për televizor në Google Play (pamje ekrani televizori, baneri i televizorit, shqyrtimi i Google); më vonë, kanale në ekranin kryesor të televizorit.
+- **Android TV, hapat e radhës**: testi në pajisje i ndërtimit 20 në emulatorin Google TV dhe në një televizor të vërtetë, dhe publikimi për televizor në Google Play pasi Google të ketë shqyrtuar faqen për televizorë; më vonë, kanale në ekranin kryesor të televizorit.
 - **Kamerat Tapo, hapat e radhës**: testi në pajisje i ndërtimit 20 me kamera të vërteta; pamja e drejtpërdrejtë në iPhone dhe iPad; regjistrimet H.265; luajtja e një klipi ndërsa merret; një ditë e tërë regjistrimesh në një kronologji të vetme.
 - **Plex, hapat e radhës**: testi në pajisje i ndërtimit 20 (telefona, Quest, një iPhone, një televizor, jashtë shtëpisë); sjellja e tokenit nga kompjuteri me një kod QR; fshehja e anës DLNA të një serveri Plex në listën e serverëve të gjetur; IPv6.
 - **Upstream**: pull request të vegjël për Immich për pjesët që duan mirëmbajtësit, duke filluar nga shikuesi i fotove 360°.

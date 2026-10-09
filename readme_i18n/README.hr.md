@@ -13,14 +13,19 @@ Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 3
   <sub>Neslužbeni fork. Nije povezan s Immichem ni s FUTO-om. Ime se čita „I am much 360“.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">u pregledu</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store odobren, build 21 poslan kao njegovo prvo ažuriranje<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">preuzimanje pretpregleda</a>, desktop build 2
-</p>
+<div align="center">
+
+| Platforma | Gdje je nabaviti | Stanje 9. listopada 2026. |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 na Google Playu od 7. listopada 2026., build 21 na GitHubu |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | verzija 3.3.0 čeka Appleov pregled; dotad [izgradite je sami](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | stranica odobrena, build 21 u Metinom pregledu |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 na GitHubu; stranica na Google Playu za televizore u Googleovu je pregledu od 9. listopada 2026. |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pretpregleda](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | desktop build 2 na Windowsu: fotografije i ravni videozapisi, 360° videozapisi zatim; macOS i Linux kasnije, iz istih izvora |
+
+*Stanja se ažuriraju sa svakim izdanjem; detalji su u [Gdje je nabaviti](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Izvorni 360°**<br>Fotografije i videozapisi kao sfera u kojoj se osvrćete, sa žiroskopom, uključujući neobrađene datoteke kamere (Insta360 od builda 16, GoPro i DJI od builda 18). I besplatni video reproduktor: ravni, 360°, 3D, VR180
 - 👓 **Izvorni 3D**<br>Stereoskopski 360° i VR180, gore i dolje ili jedno pored drugog, te Appleove prostorne fotografije (od builda 19): pravi 3D u naočalama, jedno oko na telefonu
@@ -1072,7 +1077,7 @@ Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka 
 
 - **Android telefoni i tableti**
   - Danas: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi posvuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za ručnu instalaciju). GitHub build obično je ispred trgovine. U svakom slučaju instalira se pokraj službene aplikacije Immich (paket `com.aprogsys.immuch360`).
-  - Uskoro: na Google Playu, build 18 je objavljen, build 20 u Googleovu pregledu od 7. listopada 2026., umjesto builda 19.
+  - Uskoro: na Google Playu, build 20 je objavljen od 7. listopada 2026., umjesto builda 18; build 21 ne mijenja ništa na telefonima i tabletima.
 - **iPhone i iPad**
   - Danas: čeka Appleov pregled. Verzija u pregledu ima značajke builda 11: prijenos na Immich i odabir Izvor videozapisa (build 15) te neobrađene Insta360 datoteke (build 16) stići će s kasnijim ažuriranjem u App Storeu. Izvorni kod se gradi u Xcodeu ili na Codemagicu, pogledajte [Izgradite je sami](#build-it-yourself).
   - Uskoro: App Store, u pregledu.
@@ -1081,7 +1086,7 @@ Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka 
   - Uskoro: u trgovini Meta Horizon Store, stranica je odobrena 7. listopada 2026. s buildom 14, a build 21, njezino prvo ažuriranje, u Metinom je pregledu; alfa kanal trgovine (samo testeri) dobiva svaki novi build.
 - **Android TV i Google TV (od builda 20)**
   - Danas: univerzalni `Immuch360-v<version>-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases), ručno instaliran s adb-om, pogledajte [Instalacija na televizor](#install-it-on-the-tv). To je ista aplikacija kao na telefonima.
-  - Uskoro: Google Play na televizorima, nakon Googleova pregleda TV izdanja.
+  - Uskoro: Google Play na televizorima, čija je stranica u Googleovu pregledu od 9. listopada 2026.
 - **Windows 10 i 11, 64-bitni (pretpregled)**
   - Danas: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` iz [desktop predizdanja](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), raspakiran i pokrenut kako kaže [Preuzimanje i instalacija na Windowsu](#download-and-install-on-windows). Zasad fotografije i ravni videozapisi: 360°, 3D i VR180 videozapisi dolaze sa sljedećim desktop buildovima.
   - Uskoro: 360°, 3D, VR180 i neobrađeni 360° videozapisi; instalacijski program, potpisani build i ažuriranja kasnije.
@@ -1165,22 +1170,24 @@ Ovaj projekt je fork Immicha i ostaje pod licencom [GNU AGPL v3](../LICENSE). Sv
 
 Windows ZIP Immuch360 Desktopa, i samo on, sadrži i njegov videoreproduktor: libmpv, biblioteku [mpv](https://mpv.io), s [FFmpeg](https://ffmpeg.org) unutar nje, kojom upravljaju dodaci [media_kit](https://github.com/media-kit/media-kit). mpv i FFmpeg izgrađeni su bez svojih dijelova koji su samo pod GPL-om, a njihov kod je pod licencom GNU LGPL verzije 2.1 ili novije; izgrađen zajedno, `libmpv-2.dll` distribuira se pod licencom GNU LGPL verzije 3 ili novije. Aplikacija ga učitava pri pokretanju, pa ga možete zamijeniti vlastitim buildom. Tekstovi licenci nalaze se u mapi `licenses` u ZIP-u, a svaka biblioteka s licencom i izvorima navedena je u [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV i Google TV zaštitni su znakovi tvrtke Google LLC; Apple, iPhone, iPad i macOS zaštitni su znakovi tvrtke Apple Inc.; Meta i Meta Quest zaštitni su znakovi tvrtke Meta Platforms, Inc.; Windows je zaštitni znak grupe tvrtki Microsoft; Linux je registrirani zaštitni znak čiji je vlasnik Linus Torvalds, u SAD-u i drugim zemljama. Njihovi logotipi prikazani su u tablici platformi samo kako bi pokazali gdje Immuch360 radi i ne podrazumijevaju nikakvu potporu ni povezanost. Android robot reproduciran je ili izmijenjen na temelju djela koje je izradio i podijelio Google, a koristi se u skladu s uvjetima opisanima u licenci Creative Commons 3.0 Attribution License. Tux, Linuxov pingvin, djelo je autora Larry Ewing (lewing@isc.tamu.edu), nacrtan u programu The GIMP, u vektorskoj verziji autora Simon Budig i Garrett LeSage. Izvori i licence logotipa: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Plan razvoja
 
 Ono što još nije gotovo, najvjerojatnije prvo. Ništa od ovoga nije obećanje, a povratne informacije na [praćenju problema](https://github.com/freeKC/Immuch360/issues) pomažu odlučiti što ide prvo.
 
 - **Immuch360 Desktop, najprije Windows**: desktop build 2 je izašao, s ravnim videozapisima, a desktop izvori su u glavnoj grani forka, `immuch360`, od 9. listopada 2026. (pogledajte [Na Windows računalu](#on-a-windows-computer-immuch360-desktop-preview)). Zatim 360°, 3D, VR180 i neobrađeni 360° videozapisi na Windowsu, s dva objektiva neobrađenih datoteka i prikazom uživo s kamera Tapo; zatim testiranje svake funkcije na Windows računalu i njegovi ispravci; zatim Spatial 2.5D s web-kamerom; zatim Linux i macOS, paketi, potpisivanje i ažuriranja.
-- **Google Play**: build 18 je objavljen; build 20 je u Googleovu pregledu od 7. listopada 2026., umjesto builda 19. Build 21 ne mijenja ništa na telefonima i tabletima.
+- **Google Play**: build 20 je objavljen od 7. listopada 2026., umjesto builda 18; stranica za televizore u Googleovu je pregledu od 9. listopada 2026. Build 21 ne mijenja ništa na telefonima i tabletima.
 - **App Store**: verzija 3.3.0 čeka Appleov pregled; ima značajke builda 11, pa prijenos na Immich i provjera video dekodera (build 15) te neobrađene Insta360 datoteke (build 16) stižu sa sljedećim ažuriranjem u App Storeu. Poveznica će biti dodana ovdje kada bude objavljena.
 - **Meta Horizon Store**: Meta je odobrila stranicu 7. listopada 2026. s buildom 14. Build 21 poslan je kao njezino prvo ažuriranje: donosi sve od builda 14 (prijenosi s dijeljenog resursa na Immich, izvor videozapisa odabran prema onome što naočale dekodiraju, neobrađene datoteke Insta360, GoPro i DJI, DLNA, dijeljenje telefona, Appleove prostorne fotografije, knjižnice Plex Media Servera, kamere Tapo), a trgovina ga nudi za Quest 2, Quest Pro, Quest 3 i 3S. Poveznica na trgovinu bit će dodana ovdje kada stranica postane javna; ručno instaliranu kopiju najprije treba deinstalirati (pogledajte [Instalacija](#install)).
-- **Stranice u trgovinama**: stranica na Google Playu prepisana je u listopadu 2026. s novim snimkama zaslona, a s TV izdanjem dobiva TV snimke zaslona i TV natpis. Tekst za App Store još opisuje prve buildove (360° fotografije i videozapisi, neobrađene datoteke prikazane ravno); predstavit će 3D, VR180 i Spatial preglednike, način bez poslužitelja, mrežne dijeljene resurse, medijski reproduktor i neobrađene Insta360 datoteke. Tekst za Meta Horizon Store već predstavlja medijski reproduktor.
+- **Stranice u trgovinama**: stranica na Google Playu prepisana je u listopadu 2026. s novim snimkama zaslona, a njezine TV snimke zaslona i TV natpis dodani su 8. listopada 2026.; stranica za televizore u Googleovu je pregledu od 9. listopada 2026. Tekst za App Store još opisuje prve buildove (360° fotografije i videozapisi, neobrađene datoteke prikazane ravno); predstavit će 3D, VR180 i Spatial preglednike, način bez poslužitelja, mrežne dijeljene resurse, medijski reproduktor i neobrađene Insta360 datoteke. Tekst za Meta Horizon Store već predstavlja medijski reproduktor.
 - **Neobrađene datoteke 360° kamera, sljedeće**: pokazatelj napretka dok se neobrađena fotografija priprema za naočale; izravnavanje GoPro i DJI videozapisa iz njihovih vlastitih podataka o kretanju; dvostruki fisheye .dng; izvješća s uređaja o reprodukciji s dva objektiva iz builda 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) radi potvrde spojeva i kapaciteta dekodera.
 - **DLNA, dijeljeni resurs telefona i Appleovi prostorni mediji, sljedeće**: izvješća s uređaja za build 19 (Plex, Jellyfin, NAS i Freebox Server putem DLNA-a; telefon koji poslužuje Quest, i na svom hotspotu; stvarne prostorne fotografije i videozapisi s iPhonea u naočalama); multicast ovlaštenje zatraženo od Applea, kako bi iPhonei pronašli svaki DLNA poslužitelj; prethodno i sljedeće između prostornih fotografija u naočalama; prostorna oznaka na fotografijama s poslužitelja na vremenskoj crti; prostorni videozapisi u 3D-u na Questu, ako to njegovi dekoderi dopuštaju.
 - **360° reproduktori na telefonima, sljedeće**: vremenska traka u iOS 360° video reproduktoru (Android je ima), prethodno/sljedeće u 360° reproduktorima na telefonima kao u imerzivnom prikazu na Questu, te fotografije u izvornom 360° video reproduktoru.
 - **Mrežni dijeljeni resursi, sljedeći koraci**: prelazak povlačenjem s jedne datoteke u mapi na sljedeću na stranicama fotografija i videozapisa (imerzivni prikaz na Questu već prolazi kroz 360° datoteke u mapi), Digest autentifikacija za WebDAV, korisničko ime iz Bonjour zapisa.
 - **Ravni videozapisi**: odabir audio zapisa u ravnom reproduktoru na telefonima, jednako za videozapise s poslužitelja, uređaja i dijeljenih resursa (360° i Spatial reproduktori ga imaju, kao i ravni reproduktor Immuch360 Desktopa).
-- **Android TV, sljedeće**: test builda 20 na uređaju, na Google TV emulatoru i stvarnom televizoru, zatim TV izdanje na Google Playu (TV snimke zaslona, TV natpis, Googleov pregled); kasnije, kanali na početnom zaslonu televizora.
+- **Android TV, sljedeće**: test builda 20 na uređaju, na Google TV emulatoru i stvarnom televizoru, te TV izdanje na Google Playu nakon što Google pregleda stranicu za televizore; kasnije, kanali na početnom zaslonu televizora.
 - **Kamere Tapo, sljedeće**: test builda 20 na uređaju sa stvarnim kamerama; prikaz uživo na iPhoneu i iPadu; snimke u H.265; reprodukcija isječka dok se preuzima; cijeli dan snimki na jednoj vremenskoj crti.
 - **Plex, sljedeće**: test builda 20 na uređaju (telefoni, Quest, iPhone, televizor, izvan kuće); prijenos tokena s računala QR kodom; skrivanje DLNA strane Plex poslužitelja na popisu pronađenih poslužitelja; IPv6.
 - **Upstream**: mali pull requestovi za Immich za dijelove koje održavatelji žele, počevši od preglednika 360° fotografija.

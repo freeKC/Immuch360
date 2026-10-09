@@ -13,14 +13,19 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
   <sub>Neoficiali atšaka. Nesusijusi su Immich ar FUTO. Pavadinimas skaitomas kaip „I am much 360“.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">peržiūrima</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store patvirtinta, 21 surinkimas pateiktas kaip pirmasis atnaujinimas<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">peržiūros versijos atsisiuntimas</a>, darbalaukio surinkimas 2
-</p>
+<div align="center">
+
+| Platforma | Kur gauti | Būsena 2026 m. spalio 9 d. |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20 surinkimas Google Play nuo 2026 m. spalio 7 d., 21 surinkimas GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ir iPad** | App Store | 3.3.0 versija laukia Apple peržiūros; tuo metu [susikurkite patys](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [APK](#meta-quest-3) · Horizon Store | įrašas patvirtintas, 21 surinkimas Meta peržiūroje |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21 surinkimas GitHub; Google Play įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Peržiūros ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | darbalaukio surinkimas 2 Windows sistemoje: nuotraukos ir plokšti vaizdo įrašai, 360° vaizdo įrašai netrukus; macOS ir Linux vėliau, iš tų pačių šaltinių |
+
+*Būsenos atnaujinamos su kiekvienu leidimu; išsami informacija skyriuje [Kur ją gauti](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Tikras 360°**<br>Nuotraukos ir vaizdo įrašai kaip sfera, kurioje apsidairote, su giroskopu, įskaitant neapdorotus kameros failus (Insta360 nuo 16 surinkimo, GoPro ir DJI nuo 18 surinkimo). Taip pat nemokamas vaizdo grotuvas: plokšti, 360°, 3D, VR180
 - 👓 **Tikras 3D**<br>Stereoskopiniai 360° ir VR180, viršuje ir apačioje arba vienas šalia kito, ir Apple erdvinės nuotraukos (nuo 19 surinkimo): tikras 3D akiniuose, viena akis telefone
@@ -1072,7 +1077,7 @@ Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Ap
 
 - **Android telefonai ir planšetės**
   - Šiandien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`).
-  - Netrukus: Google Play parduotuvėje 18 surinkimas jau veikia, 20 surinkimas Google peržiūroje nuo 2026 m. spalio 7 d., vietoj 19 surinkimo.
+  - Netrukus: Google Play parduotuvėje 20 surinkimas veikia nuo 2026 m. spalio 7 d., vietoj 18 surinkimo; 21 surinkimas telefonuose ir planšetėse nieko nekeičia.
 - **iPhone ir iPad**
   - Šiandien: laukia Apple peržiūros. Peržiūrima versija turi 11 surinkimo funkcijas: įkėlimas į Immich ir „Vaizdo įrašo šaltinis“ pasirinkimas (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su vėlesniu App Store atnaujinimu. Šaltinio kodas kompiliuojamas su Xcode arba Codemagic, žr. [Susikurkite patys](#build-it-yourself).
   - Netrukus: App Store, peržiūrima.
@@ -1081,7 +1086,7 @@ Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Ap
   - Netrukus: Meta Horizon Store parduotuvėje įrašas patvirtintas 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas, pirmasis jo atnaujinimas, yra Meta peržiūroje; parduotuvės alfa kanalas (tik bandytojams) gauna kiekvieną naują surinkimą.
 - **Android TV ir Google TV (nuo 20 surinkimo)**
   - Šiandien: universalus `Immuch360-v<version>-release.apk` iš puslapio [Releases](https://github.com/freeKC/Immuch360/releases), įdiegtas šoniniu būdu su adb, žr. [Įdiegti televizoriuje](#install-it-on-the-tv). Tai ta pati programa kaip telefonuose.
-  - Netrukus: Google Play televizoriams, po Google peržiūros televizoriaus leidimui.
+  - Netrukus: Google Play televizoriams; jo įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d.
 - **Windows 10 ir 11, 64 bitų (peržiūros versija)**
   - Šiandien: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` iš [darbalaukio išankstinio leidimo](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), išskleistas ir paleistas, kaip nurodyta [Atsisiuntimas ir įdiegimas Windows sistemoje](#download-and-install-on-windows). Kol kas nuotraukos ir plokšti vaizdo įrašai: 360°, 3D ir VR180 vaizdo įrašai ateis su kitais darbalaukio surinkimais.
   - Netrukus: 360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai; vėliau diegimo programa, pasirašytas surinkimas ir atnaujinimai.
@@ -1165,22 +1170,24 @@ Visa politika pateikta faile [PRIVACY.md](../PRIVACY.md).
 
 Immuch360 Desktop Windows ZIP, ir tik jis, taip pat turi savo vaizdo grotuvą: libmpv, [mpv](https://mpv.io) biblioteką, su joje esančiu [FFmpeg](https://ffmpeg.org), valdomą [media_kit](https://github.com/media-kit/media-kit) įskiepių. mpv ir FFmpeg sukurti be savo dalių, kurios yra tik GPL, o jų kodas yra pagal GNU LGPL 2.1 ar vėlesnę versiją; sukurtas kartu, `libmpv-2.dll` platinamas pagal GNU LGPL 3 ar vėlesnę versiją. Programa jį įkelia vykdymo metu, todėl galite jį pakeisti savo surinkimu. Licencijų tekstai yra ZIP aplanke `licenses`, o kiekviena biblioteka su savo licencija ir šaltiniais išvardyta [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV ir Google TV yra Google LLC prekės ženklai; Apple, iPhone, iPad ir macOS yra Apple Inc. prekės ženklai; Meta ir Meta Quest yra Meta Platforms, Inc. prekės ženklai; Windows yra Microsoft įmonių grupės prekės ženklas; Linux yra registruotasis Linus Torvalds prekės ženklas JAV ir kitose šalyse. Jų logotipai platformų lentelėje rodomi tik tam, kad parodytų, kur veikia Immuch360, ir nereiškia jokio pritarimo ar sąsajos. Android robotas atkurtas arba pakeistas pagal Google sukurtą ir bendrinamą kūrinį ir naudojamas pagal sąlygas, aprašytas Creative Commons 3.0 Attribution License. Tux, Linux pingvinas, yra Larry Ewing (lewing@isc.tamu.edu) kūrinys, nupieštas su The GIMP, vektorinę versiją sukūrė Simon Budig ir Garrett LeSage. Logotipų šaltiniai ir licencijos: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Planai
 
 Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o atsiliepimai [pranešimų sekiklyje](https://github.com/freeKC/Immuch360/issues) padeda nuspręsti, kas bus pirma.
 
 - **Immuch360 Desktop, pirmiausia Windows**: išleistas darbalaukio surinkimas 2 su plokščiais vaizdo įrašais, o nuo 2026 m. spalio 9 d. darbalaukio šaltiniai yra pagrindinėje atšakos šakoje `immuch360` (žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview)). Toliau 360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai Windows sistemoje, su dviem neapdorotų failų objektyvais ir Tapo tiesioginiu vaizdu; tada kiekvienos funkcijos tikrinimas Windows kompiuteryje ir jos pataisymai; tada Spatial 2.5D su internetine kamera; tada Linux ir macOS, paketai, pasirašymas ir atnaujinimai.
-- **Google Play**: 18 surinkimas jau veikia; 20 surinkimas Google peržiūroje nuo 2026 m. spalio 7 d., vietoj 19 surinkimo. 21 surinkimas telefonuose ir planšetėse nieko nekeičia.
+- **Google Play**: 20 surinkimas veikia nuo 2026 m. spalio 7 d., vietoj 18 surinkimo; įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. 21 surinkimas telefonuose ir planšetėse nieko nekeičia.
 - **App Store**: versija 3.3.0 laukia Apple peržiūros; ji turi 11 surinkimo funkcijas, todėl įkėlimas į Immich ir vaizdo dekoderių patikra (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su kitu App Store atnaujinimu. Nuoroda bus pridėta čia, kai ji veiks.
 - **Meta Horizon Store**: Meta patvirtino įrašą 2026 m. spalio 7 d. su 14 surinkimu. 21 surinkimas pateiktas kaip pirmasis jo atnaujinimas: jis atneša viską nuo 14 surinkimo (įkėlimus iš bendrinimo į Immich, vaizdo įrašo šaltinį, parenkamą pagal tai, ką akiniai dekoduoja, neapdorotus Insta360, GoPro ir DJI failus, DLNA, telefono bendrinimą, Apple erdvines nuotraukas, Plex Media Server bibliotekas, Tapo kameras), o parduotuvė jį skelbia Quest 2, Quest Pro, Quest 3 ir 3S. Parduotuvės nuoroda bus pridėta čia, kai puslapis taps viešas; šoniniu būdu įdiegtą kopiją pirmiausia reikės pašalinti (žr. [Diegimas](#install)).
-- **Parduotuvių įrašai**: Google Play įrašas perrašytas 2026 m. spalį su naujomis ekrano nuotraukomis, o su televizoriaus leidimu jame atsiras televizoriaus ekrano nuotraukos ir televizoriaus reklamjuostė. App Store tekstas vis dar aprašo pirmuosius surinkimus (360° nuotraukos ir vaizdo įrašai, neapdoroti failai rodomi plokšti); jis pristatys 3D, VR180 ir Spatial peržiūras, režimą be serverio, tinklo bendrinimus, medijos grotuvą ir neapdorotus Insta360 failus. Meta Horizon Store tekstas jau pristato medijos grotuvą.
+- **Parduotuvių įrašai**: Google Play įrašas perrašytas 2026 m. spalį su naujomis ekrano nuotraukomis, o jo televizoriaus ekrano nuotraukos ir televizoriaus reklamjuostė pridėtos 2026 m. spalio 8 d.; įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. App Store tekstas vis dar aprašo pirmuosius surinkimus (360° nuotraukos ir vaizdo įrašai, neapdoroti failai rodomi plokšti); jis pristatys 3D, VR180 ir Spatial peržiūras, režimą be serverio, tinklo bendrinimus, medijos grotuvą ir neapdorotus Insta360 failus. Meta Horizon Store tekstas jau pristato medijos grotuvą.
 - **Neapdoroti 360° kameros failai, toliau**: eigos indikatorius, kol neapdorota nuotrauka ruošiama akiniams; GoPro ir DJI vaizdo įrašų išlyginimas pagal jų pačių judesio duomenis; dvigubos „žuvies akies“ .dng; pranešimai iš įrenginių apie 18 surinkimo dviejų objektyvų atkūrimą (X4, X5, X6, GoPro MAX 2, Osmo 360), kad būtų patvirtintos siūlės ir dekoderių ištekliai.
 - **DLNA, telefono bendrinimas ir Apple erdvinė medija, toliau**: 19 surinkimo pranešimai iš įrenginių (Plex, Jellyfin, NAS ir Freebox Server per DLNA; telefonas, aptarnaujantis Quest, taip pat per savo prieigos tašką; tikros iPhone erdvinės nuotraukos ir vaizdo įrašai akiniuose); daugiaadresio ryšio teisė, kurios prašoma iš Apple, kad iPhone rastų kiekvieną DLNA serverį; ankstesnis ir kitas tarp erdvinių nuotraukų akiniuose; erdvinis ženklelis ant serverio nuotraukų laiko skalėje; erdviniai vaizdo įrašai 3D vaizdu Quest akiniuose, jei leis jų dekoderiai.
 - **360° grotuvai telefonuose, toliau**: laiko juosta iOS 360° vaizdo grotuve (Android grotuvas ją turi), ankstesnis/kitas telefonų 360° grotuvuose kaip Quest įtraukiančioje peržiūroje ir nuotraukos savajame 360° vaizdo grotuve.
 - **Tinklo bendrinimai, kiti žingsniai**: braukimas nuo vieno aplanko failo prie kito nuotraukų ir vaizdo įrašų puslapiuose (Quest įtraukianti peržiūra jau pereina per aplanko 360° failus), Digest autentifikavimas WebDAV, naudotojo vardas iš Bonjour įrašo.
 - **Plokšti vaizdo įrašai**: garso takelio pasirinkimas telefonų plokščiame grotuve, vienodai serverio, įrenginio ir bendrinimo vaizdo įrašams (360° ir Spatial grotuvai jį turi, kaip ir Immuch360 Desktop plokščias grotuvas).
-- **Android TV, toliau**: 20 surinkimo bandymas Google TV emuliatoriuje ir tikrame televizoriuje, tada televizoriaus leidimas Google Play (televizoriaus ekrano nuotraukos, televizoriaus reklamjuostė, Google peržiūra); vėliau kanalai televizoriaus pradiniame ekrane.
+- **Android TV, toliau**: 20 surinkimo bandymas Google TV emuliatoriuje ir tikrame televizoriuje, ir televizoriaus leidimas Google Play, kai Google peržiūrės įrašą televizoriams; vėliau kanalai televizoriaus pradiniame ekrane.
 - **Tapo kameros, toliau**: 20 surinkimo bandymas su tikromis kameromis; tiesioginis vaizdas iPhone ir iPad; H.265 įrašai; įrašo leidimas dar jį gaunant; visos dienos įrašai vienoje laiko juostoje.
 - **Plex, toliau**: 20 surinkimo bandymas įrenginiuose (telefonai, Quest akiniai, iPhone, televizorius, ne namuose); prieigos rakto perkėlimas iš kompiuterio QR kodu; Plex serverio DLNA pusės slėpimas rastų serverių sąraše; IPv6.
 - **Į pagrindinį projektą**: nedideli pakeitimų prašymai (pull request) Immich toms dalims, kurių nori prižiūrėtojai, pradedant 360° nuotraukų peržiūra.

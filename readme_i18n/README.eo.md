@@ -13,14 +13,19 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
   <sub>Neoficiala forko. Ne ligita al Immich nek al FUTO. La nomo legiĝas kiel "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
-  App Store: <a href="#where-to-get-it">en kontrolado</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprobita, kompilaĵo 21 sendita kiel ĝia unua ĝisdatigo<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">elŝuto de la antaŭversio</a>, desktop build 2
-</p>
+<div align="center">
+
+| Platformo | Kie akiri ĝin | Stato je la 9-a de oktobro 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilaĵo 20 en Google Play ekde la 7-a de oktobro 2026, kompilaĵo 21 en GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone kaj iPad** | App Store | versio 3.3.0 atendas la kontrolon de Apple; intertempe [konstruu ĝin mem](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [APK](#meta-quest-3) · Horizon Store | listero aprobita, kompilaĵo 21 en la kontrolo de Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilaĵo 21 en GitHub; la Google-Play-listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP de la antaŭversio](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | labortabla kompilaĵo 2 en Windows: fotoj kaj ebenaj videoj, 360°-videoj poste; macOS kaj Linux pli malfrue, el la samaj fontoj |
+
+*La statoj estas ĝisdatigataj ĉe ĉiu eldono; la detaloj estas en [Kie akiri ĝin](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Denaska 360°**<br>Fotoj kaj videoj kiel sfero, en kiu vi ĉirkaŭrigardas, per la giroskopo, krudaj dosieroj de la fotilo inkluzive (Insta360 ekde kompilaĵo 16, GoPro kaj DJI ekde kompilaĵo 18). Ankaŭ senpaga videoludilo: ebena, 360°, 3D, VR180
 - 👓 **Denaska 3D**<br>Stereoskopa 360° kaj VR180, supre kaj malsupre aŭ flank-al-flanke, kaj spacaj fotoj de Apple (ekde kompilaĵo 19): vera 3D en la kasko, unu okulo en telefono
@@ -1072,7 +1077,7 @@ La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Stor
 
 - **Android-telefonoj kaj -tabulkomputiloj**
   - Hodiaŭ: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), aŭ la APK en la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` por telefono (la universala `Immuch360-v<version>-release.apk` funkcias ĉie, `-armeabi-v7a` estas por pli malnovaj 32-bitaj telefonoj, kaj la dosiero `.aab` estas por Google Play, ne por flankinstalado). La GitHub-kompilaĵo kutime estas antaŭ la vendejo. Ĉiuokaze ĝi instaliĝas apud la oficiala aplikaĵo de Immich (pakaĵo `com.aprogsys.immuch360`).
-  - Baldaŭ: en Google Play, kompilaĵo 18 estas publika, kompilaĵo 20 en la kontrolo de Google ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 19.
+  - Baldaŭ: en Google Play, kompilaĵo 20 estas publika ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 18; kompilaĵo 21 ŝanĝas nenion en telefonoj kaj tabulkomputiloj.
 - **iPhone kaj iPad**
   - Hodiaŭ: atendas la kontrolon de Apple. La kontrolata versio portas la funkciojn de kompilaĵo 11: la alŝuto al Immich kaj la elekto "Videofonto" (kompilaĵo 15) kaj la krudaj Insta360-dosieroj (kompilaĵo 16) venos kun posta App-Store-ĝisdatigo. La fontkodo konstruiĝas per Xcode aŭ en Codemagic, vidu [Konstrui ĝin mem](#build-it-yourself).
   - Baldaŭ: App Store, en kontrolado.
@@ -1081,7 +1086,7 @@ La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Stor
   - Baldaŭ: en la Meta Horizon Store, la listero estis aprobita la 7-an de oktobro 2026 kun kompilaĵo 14, kaj kompilaĵo 21, ĝia unua ĝisdatigo, estas en la kontrolo de Meta; la alfa-kanalo de la vendejo (nur por testantoj) ricevas ĉiun novan kompilaĵon.
 - **Android TV kaj Google TV (ekde kompilaĵo 20)**
   - Hodiaŭ: la universala `Immuch360-v<version>-release.apk` de la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases), flankinstalita per adb, vidu [Instali ĝin en la televidilo](#install-it-on-the-tv). Ĝi estas la sama aplikaĵo kiel en telefonoj.
-  - Baldaŭ: Google Play en televidiloj, post la kontrolo de Google de la televida eldono.
+  - Baldaŭ: Google Play en televidiloj, kies listero estas en la kontrolo de Google ekde la 9-a de oktobro 2026.
 - **Windows 10 kaj 11, 64-bita (antaŭversio)**
   - Hodiaŭ: Immuch360 Desktop, la ZIP-dosiero `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` de la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), malpakita kaj startigita kiel diras [Elŝuti kaj instali en Windows](#download-and-install-on-windows). Fotoj kaj ebenaj videoj nuntempe: 360°-, 3D- kaj VR180-videoj venos kun la venontaj labortablaj kompilaĵoj.
   - Baldaŭ: 360°-, 3D-, VR180- kaj krudaj 360°-videoj; instalilo, subskribita kompilaĵo kaj ĝisdatigoj poste.
@@ -1165,22 +1170,24 @@ La plena politiko estas en [PRIVACY.md](../PRIVACY.md).
 
 La Windows-ZIP-dosiero de Immuch360 Desktop, kaj nur ĝi, ankaŭ portas sian videoludilon: libmpv, la biblioteko de [mpv](https://mpv.io), kun [FFmpeg](https://ffmpeg.org) en ĝi, stirata de la kromprogramoj de [media_kit](https://github.com/media-kit/media-kit). mpv kaj FFmpeg estas konstruitaj sen siaj partoj, kiuj estas nur GPL, kaj ilia kodo estas sub la GNU LGPL versio 2.1 aŭ posta; konstruita kune, `libmpv-2.dll` estas distribuata sub la GNU LGPL versio 3 aŭ posta. La aplikaĵo ŝargas ĝin dum rultempo, do vi rajtas anstataŭigi ĝin per via propra konstruaĵo. La permesilaj tekstoj estas en la dosierujo `licenses` de la ZIP-dosiero, kaj ĉiu biblioteko kun sia permesilo kaj sia fontkodo estas listigita en [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV kaj Google TV estas varmarkoj de Google LLC; Apple, iPhone, iPad kaj macOS estas varmarkoj de Apple Inc.; Meta kaj Meta Quest estas varmarkoj de Meta Platforms, Inc.; Windows estas varmarko de la Microsoft-grupo de kompanioj; Linux estas la registrita varmarko de Linus Torvalds en Usono kaj aliaj landoj. Iliaj emblemoj aperas en la tabelo de platformoj nur por montri, kie Immuch360 funkcias, kaj ne implicas ian ajn subtenon aŭ aliĝon. La Android-roboto estas reproduktita aŭ modifita el verko kreita kaj kunhavigita de Google kaj uzata laŭ la kondiĉoj priskribitaj en la Creative Commons 3.0 Attribution License. Tux, la Linux-pingveno, estas de Larry Ewing (lewing@isc.tamu.edu), desegnita per The GIMP, en la vektora versio de Simon Budig kaj Garrett LeSage. Fontoj kaj permesiloj de la emblemoj: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Vojmapo
 
 Kio ankoraŭ ne estas farita, la plej verŝajna unue. Nenio ĉi tie estas promeso, kaj komentoj en la [cimspurilo](https://github.com/freeKC/Immuch360/issues) helpas decidi, kio venos unue.
 
 - **Immuch360 Desktop, unue Windows**: desktop build 2 aperis, kun ebenaj videoj, kaj la labortabla fontkodo estas en la ĉefa branĉo de la forko, `immuch360`, ekde la 9-a de oktobro 2026 (vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview)). Poste, 360°-, 3D-, VR180- kaj krudaj 360°-videoj en Windows, kun la du objektivoj de krudaj dosieroj kaj la Tapo-viva vido; poste la testado de ĉiu funkcio en Windows-komputilo kaj ĝiaj korektoj; poste Spatial 2.5D kun la retkamerao; poste Linux kaj macOS, pakaĵoj, subskribado kaj ĝisdatigoj.
-- **Google Play**: kompilaĵo 18 estas publika; kompilaĵo 20 estas en la kontrolo de Google ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 19. Kompilaĵo 21 ŝanĝas nenion en telefonoj kaj tabulkomputiloj.
+- **Google Play**: kompilaĵo 20 estas publika ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 18; la listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026. Kompilaĵo 21 ŝanĝas nenion en telefonoj kaj tabulkomputiloj.
 - **App Store**: versio 3.3.0 atendas la kontrolon de Apple; ĝi portas la funkciojn de kompilaĵo 11, do la alŝuto al Immich kaj la kontrolo de videomalkodiloj (kompilaĵo 15) kaj la krudaj Insta360-dosieroj (kompilaĵo 16) venos kun la sekva App-Store-ĝisdatigo. La ligilo estos aldonita ĉi tie kiam ĝi estos publika.
 - **Meta Horizon Store**: Meta aprobis la listeron la 7-an de oktobro 2026 kun kompilaĵo 14. Kompilaĵo 21 estas sendita kiel ĝia unua ĝisdatigo: ĝi alportas ĉion ekde kompilaĵo 14 (alŝutoj el kunhavigo al Immich, la video-fonto elektita laŭ tio, kion la kasko malkodas, krudaj dosieroj de Insta360, GoPro kaj DJI, DLNA, la telefona kunhavigo, spacaj fotoj de Apple, bibliotekoj de Plex Media Server, Tapo-kameraoj), kaj la vendejo listigas ĝin por la Quest 2, Quest Pro, Quest 3 kaj 3S. La vendeja ligilo estos aldonita ĉi tie, kiam la paĝo estos publika; flankinstalita kopio devas unue esti malinstalita (vidu [Instali](#install)).
-- **Vendejaj listeroj**: la Google-Play-listero estis reverkita en oktobro 2026 kun novaj ekrankopioj, kaj ricevos televidajn ekrankopiojn kaj televidan rubandon kun la televida eldono. La App-Store-teksto ankoraŭ priskribas la unuajn kompilaĵojn (360°-fotoj kaj -videoj, krudaj dosieroj montrataj ebenaj); ĝi prezentos la montrilojn 3D, VR180 kaj Spatial, la reĝimon sen servilo, retajn kunhavigojn, la aŭdvidan ludilon kaj la krudajn Insta360-dosierojn. La teksto de la Meta Horizon Store jam prezentas la aŭdvidan ludilon.
+- **Vendejaj listeroj**: la Google-Play-listero estis reverkita en oktobro 2026 kun novaj ekrankopioj, kaj ĝiaj televidaj ekrankopioj kaj televida rubando estis aldonitaj la 8-an de oktobro 2026; la listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026. La App-Store-teksto ankoraŭ priskribas la unuajn kompilaĵojn (360°-fotoj kaj -videoj, krudaj dosieroj montrataj ebenaj); ĝi prezentos la montrilojn 3D, VR180 kaj Spatial, la reĝimon sen servilo, retajn kunhavigojn, la aŭdvidan ludilon kaj la krudajn Insta360-dosierojn. La teksto de la Meta Horizon Store jam prezentas la aŭdvidan ludilon.
 - **Krudaj dosieroj de 360°-fotiloj, sekve**: progresindikilo dum kruda foto estas preparata por la kasko; nivelado de GoPro- kaj DJI-videoj el iliaj propraj movaj datenoj; dufiŝokula .dng; aparataj raportoj pri la duobjektiva ludado de kompilaĵo 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) por konfirmi kudrojn kaj malkodilajn buĝetojn.
 - **DLNA, telefona kunhavigo kaj spacaj aŭdvidaĵoj de Apple, sekve**: la aparataj raportoj de kompilaĵo 19 (Plex, Jellyfin, NAS kaj la Freebox Server per DLNA; telefono servanta Quest, ankaŭ per sia retpunkto; veraj spacaj fotoj kaj videoj de iPhone en la kasko); la multelanĉa rajto petita de Apple, por ke iPhone-oj trovu ĉiun DLNA-servilon; antaŭa kaj sekva inter spacaj fotoj en la kasko; spaca insigno sur servilaj fotoj en la templinio; spacaj videoj en 3D en la Quest, se ĝiaj malkodiloj permesas tion.
 - **360°-ludiloj en telefonoj, sekve**: tempobreto en la iOS-a 360°-videoludilo (la Android-a havas ĝin), antaŭa/sekva en la 360°-ludiloj de telefonoj kiel en la enmergiĝa vido de la Quest, kaj fotoj en la denaska 360°-videoludilo.
 - **Retaj kunhavigoj, sekvaj paŝoj**: ŝovi de unu dosiero de dosierujo al la sekva en la foto- kaj videopaĝoj (la enmergiĝa vido de la Quest jam trairas la 360°-dosierojn de dosierujo), Digest-aŭtentigo por WebDAV, la uzantnomo el la Bonjour-registro.
 - **Ebenaj videoj**: la elekto de sontrako en la ebena ludilo de telefonoj, egale por servilaj, aparataj kaj kunhavigaj videoj (la ludiloj 360° kaj Spatial havas ĝin, kaj ankaŭ la ebena ludilo de Immuch360 Desktop).
-- **Android TV, sekve**: la aparata testo de kompilaĵo 20 en la Google-TV-imitilo kaj en vera televidilo, poste la televida eldono en Google Play (televidaj ekrankopioj, la televida rubando, la kontrolo de Google); poste, kanaloj sur la hejmekrano de la televidilo.
+- **Android TV, sekve**: la aparata testo de kompilaĵo 20 en la Google-TV-imitilo kaj en vera televidilo, kaj la televida eldono en Google Play, kiam Google estos kontrolinta la listeron por televidiloj; poste, kanaloj sur la hejmekrano de la televidilo.
 - **Tapo-kameraoj, sekve**: la aparata testo de kompilaĵo 20 kun veraj kameraoj; la rekta vido en iPhone kaj iPad; H.265-registraĵoj; ludi klipon dum ĝi estas prenata; tuta tago de registraĵoj sur unu templinio.
 - **Plex, sekve**: la aparata testo de kompilaĵo 20 (telefonoj, la Quest, iPhone, televidilo, ekster la hejmo); alporti la ĵetonon el la komputilo per QR-kodo; kaŝi la DLNA-flankon de Plex-servilo en la listo de trovitaj serviloj; IPv6.
 - **Kontraŭflue (upstream)**: malgrandaj tirpetoj al Immich por la partoj, kiujn la prizorgantoj volas, komencante per la 360°-fotomontrilo.

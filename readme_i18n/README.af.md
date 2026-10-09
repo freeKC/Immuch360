@@ -13,14 +13,19 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
   <sub>Nie-amptelike vurk. Nie verbonde aan Immich of FUTO nie. Die naam lees as "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android-APK</a><br>
-  App Store: <a href="#where-to-get-it">word nagegaan</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store goedgekeur, bou 21 as sy eerste opdatering ingedien<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">voorskou-aflaai</a>, rekenaarbou 2
-</p>
+<div align="center">
+
+| Platform | Waar om dit te kry | Status op 9 Oktober 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-fone en -tablette | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bou 20 sedert 7 Oktober 2026 op Google Play, bou 21 op GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone en iPad** | App Store | weergawe 3.3.0 wag vir Apple se nagaan; [bou dit self](#build-it-yourself) intussen |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | inskrywing goedgekeur, bou 21 word deur Meta nagegaan |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | bou 21 op GitHub; die Google Play-inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Voorskou-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | rekenaarbou 2 op Windows: foto's en plat video's, 360°-video's volgende; macOS en Linux later, uit dieselfde bronne |
+
+*Statusse word by elke vrystelling bygewerk; die besonderhede is in [Waar om dit te kry](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Ingeboude 360°**<br>Foto's en video's as 'n sfeer waarin jy rondkyk, met die giroskoop, rou kameralêers ingesluit (Insta360 vanaf bou 16, GoPro en DJI vanaf bou 18). Ook 'n gratis videospeler: plat, 360°, 3D, VR180
 - 👓 **Ingeboude 3D**<br>Stereoskopiese 360° en VR180, bo/onder of langs mekaar, en Apple se ruimtelike foto's (vanaf bou 19): ware 3D in die kopstuk, een oog op 'n foon
@@ -1072,7 +1077,7 @@ Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir A
 
 - **Android-fone en -tablette**
   - Vandag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), of die APK op die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy: `Immuch360-v<version>-arm64-v8a-release.apk` vir 'n foon (die universele `Immuch360-v<version>-release.apk` werk oral, `-armeabi-v7a` is vir ouer 32-bis-fone, en die `.aab`-lêer is vir Google Play, nie vir installering met die hand nie). Die GitHub-bou is gewoonlik voor die winkel. Hoe ook al, dit installeer langs die amptelike Immich-app (pakket `com.aprogsys.immuch360`).
-  - Binnekort: op Google Play is bou 18 regstreeks, bou 20 word sedert 7 Oktober 2026 deur Google nagegaan, in die plek van bou 19.
+  - Binnekort: op Google Play is bou 20 sedert 7 Oktober 2026 regstreeks, in die plek van bou 18; bou 21 verander niks op fone en tablette nie.
 - **iPhone en iPad**
   - Vandag: wag vir Apple se nagaan. Die weergawe wat nagegaan word, dra die funksies van bou 11: die oplaai na Immich en die Videobron-keuse (bou 15) en die rou Insta360-lêers (bou 16) sal met 'n latere App Store-opdatering kom. Die bronkode bou met Xcode of op Codemagic, sien [Bou dit self](#build-it-yourself).
   - Binnekort: App Store, word nagegaan.
@@ -1081,7 +1086,7 @@ Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir A
   - Binnekort: op die Meta Horizon Store is die inskrywing op 7 Oktober 2026 met bou 14 goedgekeur, en bou 21, sy eerste opdatering, word deur Meta nagegaan; die winkel se alfakanaal (slegs toetsers) kry elke nuwe bou.
 - **Android TV en Google TV (vanaf bou 20)**
   - Vandag: die universele `Immuch360-v<version>-release.apk` van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy, met adb met die hand geïnstalleer, sien [Installeer dit op die TV](#install-it-on-the-tv). Dit is dieselfde app as op fone.
-  - Binnekort: Google Play op TV's, na Google se nagaan van die TV-vrystelling.
+  - Binnekort: Google Play op TV's, waarvan die inskrywing sedert 9 Oktober 2026 deur Google nagegaan word.
 - **Windows 10 en 11, 64 bis (voorskou)**
   - Vandag: Immuch360 Desktop, die ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` van die [rekenaar-voorvrystelling](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), uitgepak en begin soos [Laai af en installeer op Windows](#download-and-install-on-windows) sê. Voorlopig foto's en plat video's: 360°-, 3D- en VR180-video's kom met die volgende rekenaarboue.
   - Binnekort: 360°-, 3D-, VR180- en rou 360°-video's; later 'n installeerder, 'n ondertekende bou en opdaterings.
@@ -1165,22 +1170,24 @@ Hierdie projek is 'n vurk van Immich en bly onder die [GNU AGPL v3](../LICENSE).
 
 Die Windows-ZIP van Immuch360 Desktop, en slegs dit, dra ook sy videospeler: libmpv, die biblioteek van [mpv](https://mpv.io), met [FFmpeg](https://ffmpeg.org) daarin, aangedryf deur die inproppe van [media_kit](https://github.com/media-kit/media-kit). mpv en FFmpeg word gebou sonder hul dele wat slegs GPL is, en hul kode is onder die GNU LGPL weergawe 2.1 of later; saam gebou, word `libmpv-2.dll` onder die GNU LGPL weergawe 3 of later versprei. Die app laai dit tydens looptyd, sodat jy dit met jou eie bou kan vervang. Die lisensietekste is in die `licenses`-vouer van die ZIP, en elke biblioteek met sy lisensie en sy bronne word gelys in [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV en Google TV is handelsmerke van Google LLC; Apple, iPhone, iPad en macOS is handelsmerke van Apple Inc.; Meta en Meta Quest is handelsmerke van Meta Platforms, Inc.; Windows is 'n handelsmerk van die Microsoft-groep maatskappye; Linux is die geregistreerde handelsmerk van Linus Torvalds in die VSA en ander lande. Hul logo's verskyn slegs in die platformtabel om te wys waar Immuch360 loop, en impliseer geen onderskrywing of verbintenis nie. Die Android-robot is gereproduseer of gewysig uit werk wat deur Google geskep en gedeel is, en word gebruik volgens die voorwaardes beskryf in die Creative Commons 3.0 Attribution License. Tux, die Linux-pikkewyn, is deur Larry Ewing (lewing@isc.tamu.edu), geteken met The GIMP, in die vektorweergawe deur Simon Budig en Garrett LeSage. Bronne en lisensies van die logo's: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Padkaart
 
 Wat nog nie klaar is nie, die waarskynlikste eerste. Niks hier is 'n belofte nie, en terugvoer op die [probleemlys](https://github.com/freeKC/Immuch360/issues) help besluit wat eerste kom.
 
 - **Immuch360 Desktop, eers Windows**: rekenaarbou 2 is uit, met plat video's, en die rekenaarbronne is in die hooftak van die vurk, `immuch360`, sedert 9 Oktober 2026 (sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview)). Volgende, 360°-, 3D-, VR180- en rou 360°-video's op Windows, met die twee lense van rou lêers en die regstreekse beeld van Tapo; dan die toets van elke funksie op 'n Windows-rekenaar en die regstellings daarvan; dan Spatial 2.5D met die webkamera; dan Linux en macOS, pakkette, ondertekening en opdaterings.
-- **Google Play**: bou 18 is regstreeks; bou 20 word sedert 7 Oktober 2026 deur Google nagegaan, in die plek van bou 19. Bou 21 verander niks op fone en tablette nie.
+- **Google Play**: bou 20 is sedert 7 Oktober 2026 regstreeks, in die plek van bou 18; die inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan. Bou 21 verander niks op fone en tablette nie.
 - **App Store**: weergawe 3.3.0 wag vir Apple se nagaan; dit dra die funksies van bou 11, so die oplaai na Immich en die kontrole van videodekodeerders (bou 15) en die rou Insta360-lêers (bou 16) kom met die volgende App Store-opdatering. Die skakel sal hier bygevoeg word wanneer dit regstreeks is.
 - **Meta Horizon Store**: Meta het die inskrywing op 7 Oktober 2026 met bou 14 goedgekeur. Bou 21 is as sy eerste opdatering ingedien: dit bring alles sedert bou 14 (oplaaie vanaf 'n deelplek na Immich, die videobron gekies volgens wat die kopstuk dekodeer, rou Insta360-, GoPro- en DJI-lêers, DLNA, die foondeelplek, Apple-ruimtelike foto's, Plex Media Server-biblioteke, Tapo-kameras), en die winkel lys dit vir die Quest 2, Quest Pro, Quest 3 en 3S. Die winkelskakel sal hier bygevoeg word sodra die bladsy publiek is; 'n met die hand geïnstalleerde kopie moet eers gedeïnstalleer word (sien [Installeer](#install)).
-- **Winkelinskrywings**: die Google Play-inskrywing is in Oktober 2026 herskryf met nuwe skermskote, en kry TV-skermskote en 'n TV-banier met die TV-vrystelling. Die App Store-teks beskryf steeds die eerste boue (360°-foto's en -video's, rou lêers plat gewys); dit sal die 3D-, VR180- en Spatial-kykers, die modus sonder 'n bediener, netwerkdeelplekke, die mediaspeler en die rou Insta360-lêers voorstel. Die Meta Horizon Store-teks stel reeds die mediaspeler voor.
+- **Winkelinskrywings**: die Google Play-inskrywing is in Oktober 2026 herskryf met nuwe skermskote, en sy TV-skermskote en TV-banier is op 8 Oktober 2026 bygevoeg; die inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan. Die App Store-teks beskryf steeds die eerste boue (360°-foto's en -video's, rou lêers plat gewys); dit sal die 3D-, VR180- en Spatial-kykers, die modus sonder 'n bediener, netwerkdeelplekke, die mediaspeler en die rou Insta360-lêers voorstel. Die Meta Horizon Store-teks stel reeds die mediaspeler voor.
 - **Rou 360°-kameralêers, volgende**: 'n vorderingsaanwyser terwyl 'n rou foto vir die kopstuk voorberei word; gelykmaak van GoPro- en DJI-video's uit hul eie bewegingsdata; dubbele-visoog-.dng; toestelverslae oor die tweelens-afspeel van bou 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) om nate en dekodeerderbegrotings te bevestig.
 - **DLNA, foondeelplek en Apple-ruimtelik, volgende**: die toestelverslae van bou 19 (Plex, Jellyfin, 'n NAS en die Freebox Server oor DLNA; 'n foon wat 'n Quest bedien, ook op sy warmkol; regte iPhone-ruimtelike foto's en -video's in die kopstuk); die multisaaireg wat by Apple aangevra is, sodat iPhones elke DLNA-bediener vind; vorige en volgende tussen ruimtelike foto's in die kopstuk; 'n ruimtelike kenteken op bedienerfoto's in die tydlyn; ruimtelike video's in 3D op die Quest, as sy dekodeerders dit toelaat.
 - **360°-spelers op fone, volgende**: 'n tydbalk in die iOS-360°-videospeler (die Android-een het dit), vorige/volgende in die 360°-spelers van fone soos in die Quest se meevoerende aansig, en foto's in die ingeboude 360°-videospeler.
 - **Netwerkdeelplekke, volgende stappe**: swiep van een lêer van 'n vouer na die volgende in die foto- en videobladsye (die Quest se meevoerende aansig gaan reeds deur die 360°-lêers van 'n vouer), Digest-verifikasie vir WebDAV, die gebruikersnaam uit die Bonjour-rekord.
 - **Plat video's**: die keuse van klanksnit in die plat speler van fone, vir bediener-, toestel- en deelplekvideo's gelyk (die 360°- en Spatial-spelers het dit, en so ook die plat speler van Immuch360 Desktop).
-- **Android TV, volgende**: die toesteltoets van bou 20 op die Google TV-emulator en 'n regte TV, dan die TV-vrystelling op Google Play (TV-skermskote, die TV-banier, Google se nagaan); later, kanale op die TV-tuisskerm.
+- **Android TV, volgende**: die toesteltoets van bou 20 op die Google TV-emulator en 'n regte TV, en die TV-vrystelling op Google Play sodra Google die inskrywing vir TV's nagegaan het; later, kanale op die TV-tuisskerm.
 - **Tapo-kameras, volgende**: die toesteltoets van bou 20 met regte kameras; die regstreekse beeld op iPhone en iPad; H.265-opnames; 'n greep speel terwyl dit gehaal word; 'n hele dag se opnames op een tydlyn.
 - **Plex, volgende**: die toesteltoets van bou 20 (fone, die Quest, 'n iPhone, 'n TV, weg van die huis); die token met 'n QR-kode van die rekenaar af bring; die DLNA-kant van 'n Plex-bediener in die lys van gevonde bedieners versteek; IPv6.
 - **Stroomop**: klein pull requests na Immich vir die dele wat die onderhouers wil hê, met die 360°-fotokyker eerste.

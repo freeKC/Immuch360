@@ -13,14 +13,19 @@ Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh T
   <sub>Forkeke ne fermî. Ne girêdayî Immich an FUTO ye. Nav wekî "I am much 360" tê xwendin.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">di nirxandinê de</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store pejirand, build 21 wekî nûkirina wê ya yekem hat şandin<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">daxistina pêşdîtinê</a>, build a desktop 2
-</p>
+<div align="center">
+
+| Platform | Ji ku derê bistînî | Rewş di 9ê Cotmeha 2026an de |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon û tabletên **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 ji 7ê Cotmeha 2026an ve li ser Google Play, build 21 li ser GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.0 li benda nirxandina Apple ye; heta wê demê [bi xwe ava bike](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [APK](#meta-quest-3) · Horizon Store | tomar hat pejirandin, build 21 di nirxandina Meta de ye |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 li ser GitHub; tomara Google Play ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP a pêşdîtinê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | build a desktop 2 li ser Windows: wêne û vîdyoyên dûz, vîdyoyên 360° paşê; macOS û Linux paşê, ji heman çavkaniyan |
+
+*Rewş di her weşanê de tên nûkirin; hûrgilî di [Ji ku derê bistînî](#where-to-get-it) de ne.*
+
+</div>
 
 - 🌐 **360° ya xwecihî**<br>Wêne û vîdyo wekî gogekê ku tu bi jîroskopê li dora xwe lê dinêrî, pelên xav ên kamerayê jî tê de (Insta360 ji build 16, GoPro û DJI ji build 18). Lîstikvanekî vîdyoyê yê belaş jî: dûz, 360°, 3D, VR180
 - 👓 **3D ya xwecihî**<br>360° û VR180 ya stereoskopîk, jor û jêr an li kêleka hev, û wêneyên fezayî yên Apple (ji build 19): di kaskê de 3D ya rastîn, li ser telefonê yek çav
@@ -1072,7 +1077,7 @@ Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li be
 
 - **Telefon û tabletên Android**
   - Îro: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), an APK li ser rûpela [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` ji bo telefonekê (`Immuch360-v<version>-release.apk` a gerdûnî li her derê dixebite, `-armeabi-v7a` ji bo telefonên kevin ên 32 bit e, û pela `.aab` ji bo Google Play ye, ne ji bo sideloadkirinê). Build a GitHub bi gelemperî li pêş firoşgehê ye. Bi her awayî ew li kêleka sepana fermî ya Immich tê sazkirin (pakêta `com.aprogsys.immuch360`).
-  - Di demeke nêzîk de: li ser Google Play, build 18 zindî ye, build 20 ji 7ê Cotmeha 2026an ve di nirxandina Google de ye, li şûna build 19.
+  - Di demeke nêzîk de: li ser Google Play, build 20 ji 7ê Cotmeha 2026an ve zindî ye, li şûna build 18; build 21 li ser telefon û tabletan tiştekî naguherîne.
 - **iPhone û iPad**
   - Îro: li benda nirxandina Apple ye. Guhertoya di nirxandinê de taybetmendiyên build 11 hene: barkirina li Immich û bijartina Çavkaniya vîdyoyê (build 15) û pelên xav ên Insta360 (build 16) dê bi nûkirineke paşê ya App Store bên. Çavkanî bi Xcode an li ser Codemagic tê avakirin, binêre [Bi xwe ava bike](#build-it-yourself).
   - Di demeke nêzîk de: App Store, di nirxandinê de.
@@ -1081,7 +1086,7 @@ Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li be
   - Di demeke nêzîk de: li ser Meta Horizon Store, tomar di 7ê Cotmeha 2026an de bi build 14 hat pejirandin, û build 21, nûkirina wê ya yekem, di nirxandina Meta de ye; kanala alpha ya firoşgehê (tenê ceribandvan) her build a nû digire.
 - **Android TV û Google TV (ji build 20)**
   - Îro: `Immuch360-v<version>-release.apk` a gerdûnî ya rûpela [Releases](https://github.com/freeKC/Immuch360/releases), bi adb sideloadkirî, binêre [Wê li ser televizyonê saz bike](#install-it-on-the-tv). Ew heman sepan e wek li ser telefonan.
-  - Di demeke nêzîk de: Google Play li ser televizyonan, piştî nirxandina Google ya weşana televizyonê.
+  - Di demeke nêzîk de: Google Play li ser televizyonan, ku tomara wê ji 9ê Cotmeha 2026an ve di nirxandina Google de ye.
 - **Windows 10 û 11, 64 bit (pêşdîtin)**
   - Îro: Immuch360 Desktop, ZIP a `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ya [pêş-weşana desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), vekirî û dest pê kirî wekî ku [Li ser Windows daxistin û sazkirin](#download-and-install-on-windows) dibêje. Niha wêne û vîdyoyên dûz: vîdyoyên 360°, 3D û VR180 bi buildên desktop ên din re tên.
   - Di demeke nêzîk de: vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360°; sazkerek, buildeke îmzekirî û nûkirin paşê.
@@ -1165,22 +1170,24 @@ Ev proje forkeke Immich e û di bin [GNU AGPL v3](../LICENSE) de dimîne. Her AP
 
 ZIP a Windows ya Immuch360 Desktop, û tenê ew, lîstikvanê xwe yê vîdyoyê jî hildigire: libmpv, pirtûkxaneya [mpv](https://mpv.io), bi [FFmpeg](https://ffmpeg.org) di hundirê wê de, ku ji aliyê pêvekên [media_kit](https://github.com/media-kit/media-kit) ve tê ajotin. mpv û FFmpeg bêyî beşên xwe yên ku tenê GPL in hatine avakirin, û koda wan di bin GNU LGPL guhertoya 2.1 an paşê de ye; bi hev re avakirî, `libmpv-2.dll` di bin GNU LGPL guhertoya 3 an paşê de tê belavkirin. Sepan wê di dema xebitandinê de bar dike, ji ber vê yekê tu dikarî wê bi avakirina xwe biguherînî. Nivîsên lîsansê di peldanka `licenses` ya ZIP de ne, û her pirtûkxane bi lîsans û çavkaniyên xwe di [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) de hatiye rêzkirin.
 
+Android, Android TV û Google TV markeyên Google LLC ne; Apple, iPhone, iPad û macOS markeyên Apple Inc. ne; Meta û Meta Quest markeyên Meta Platforms, Inc. ne; Windows markeyeke koma şirketên Microsoft e; Linux markeya tomarkirî ya Linus Torvalds e li DYA û welatên din. Logoyên wan di tabloya platforman de tenê ji bo nîşandana cihên ku Immuch360 lê dixebite xuya dibin û tu piştgirî an girêdanê nîşan nadin. Robotê Android ji karekî ku Google afirandiye û parve kiriye hatiye dubarekirin an guhertin, û li gorî şertên ku di Creative Commons 3.0 Attribution License de hatine şirovekirin tê bikaranîn. Tux, pengûenê Linux, ji aliyê Larry Ewing (lewing@isc.tamu.edu) ve bi The GIMP hatiye xêzkirin, di guhertoya vektorî ya Simon Budig û Garrett LeSage de. Çavkanî û lîsansên logoyan: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Nexşeya rê
 
 Tiştên ku hîn nehatine kirin, yên herî muhtemel pêşî. Tiştek li vir ne soz e, û nerînên li ser [issue tracker](https://github.com/freeKC/Immuch360/issues) alîkariyê dikin ku were biryardan ka çi pêşî tê.
 
 - **Immuch360 Desktop, pêşî Windows**: build a desktop 2 derketiye, bi vîdyoyên dûz, û çavkaniyên desktop ji 9ê Cotmeha 2026an ve di şaxa sereke ya forkê de ne, `immuch360` (binêre [Li ser komputereke Windows](#on-a-windows-computer-immuch360-desktop-preview)). Paşê, vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360° li ser Windows, bi her du lensên pelên xav û dîtina zindî ya Tapo; paşê ceribandina her fonksiyonê li ser PC yeke Windows û rastkirinên wê; paşê Spatial 2.5D bi webcamê; paşê Linux û macOS, pakêt, îmzekirin û nûkirin.
-- **Google Play**: build 18 zindî ye; build 20 ji 7ê Cotmeha 2026an ve di nirxandina Google de ye, li şûna build 19. Build 21 li ser telefon û tabletan tiştekî naguherîne.
+- **Google Play**: build 20 ji 7ê Cotmeha 2026an ve zindî ye, li şûna build 18; tomara ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye. Build 21 li ser telefon û tabletan tiştekî naguherîne.
 - **App Store**: guhertoya 3.3.0 li benda nirxandina Apple ye; ew taybetmendiyên build 11 digire, ji ber vê yekê barkirina li Immich û kontrola dekodera vîdyoyê (build 15) û pelên xav ên Insta360 (build 16) bi nûkirina din a App Store tên. Girêdan dê gava zindî bibe li vir were zêdekirin.
 - **Meta Horizon Store**: Meta tomar di 7ê Cotmeha 2026an de bi build 14 pejirand. Build 21 wekî nûkirina wê ya yekem hatiye şandin: ew her tiştê ji build 14 û vir ve tîne (barkirin ji parvekirinekê bo Immich, çavkaniya vîdyoyê ku li gorî tiştê kask dikare dekod bike tê hilbijartin, pelên xav ên Insta360, GoPro û DJI, DLNA, parvekirina telefonê, wêneyên fezayî yên Apple, kitêbxaneyên Plex Media Server, kamerayên Tapo), û firoşgeh wê ji bo Quest 2, Quest Pro, Quest 3 û 3S tomar dike. Girêdana firoşgehê dê gava rûpel giştî bibe li vir were zêdekirin; kopiyeke sideloadkirî divê pêşî were rakirin (binêre [Sazkirin](#install)).
-- **Tomarên firoşgehan**: tomara Google Play di Cotmeha 2026an de bi wêneyên ekranê yên nû ji nû ve hat nivîsandin, û bi weşana televizyonê re wêneyên ekranê yên televizyonê û banera televizyonê digire. Nivîsa App Store hîn build ên yekem şirove dike (wêne û vîdyoyên 360°, pelên xav dûz tên nîşandan); ew ê dîtinvanên 3D, VR180 û Spatial, moda bêyî server, parvekirinên torê, lîstikvanê medyayê û pelên xav ên Insta360 bide nasîn. Nivîsa Meta Horizon Store berê lîstikvanê medyayê dide nasîn.
+- **Tomarên firoşgehan**: tomara Google Play di Cotmeha 2026an de bi wêneyên ekranê yên nû ji nû ve hat nivîsandin, û wêneyên ekranê yên televizyonê û banera televizyonê di 8ê Cotmeha 2026an de lê hatin zêdekirin; tomara ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye. Nivîsa App Store hîn build ên yekem şirove dike (wêne û vîdyoyên 360°, pelên xav dûz tên nîşandan); ew ê dîtinvanên 3D, VR180 û Spatial, moda bêyî server, parvekirinên torê, lîstikvanê medyayê û pelên xav ên Insta360 bide nasîn. Nivîsa Meta Horizon Store berê lîstikvanê medyayê dide nasîn.
 - **Pelên xav ên kameraya 360°, ya din**: nîşaneyeke pêşveçûnê dema wêneyekî xav ji bo kaskê tê amadekirin; rastkirina vîdyoyên GoPro û DJI ji daneyên wan ên tevgerê; dual fisheye .dng; raporên cîhazan li ser lîstina du-lensî ya build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) ji bo piştrastkirina dirûn û budceyên dekoderan.
 - **DLNA, parvekirina telefonê û fezaya Apple, ya din**: raporên cîhazan ên build 19 (Plex, Jellyfin, NAS û Freebox Server bi DLNA; telefonek ku Quest xizmet dike, li ser hotspota xwe jî; wêne û vîdyoyên fezayî yên rastîn ên iPhone di kaskê de); mafê multicast ê ku ji Apple hatiye xwestin, da ku iPhone her serverekî DLNA bibînin; ya berê û ya din di navbera wêneyên fezayî de di kaskê de; nîşaneyeke fezayî li ser wêneyên serverê di demjimêrê de; vîdyoyên fezayî bi 3D li ser Quest, heke dekoderên wê destûrê bidin.
 - **Lîstikvanên 360° li ser telefonan, ya din**: xeta demê di lîstikvanê vîdyoyê yê 360° yê iOS de (yê Android heye), ya berê/ya din di lîstikvanên 360° yên telefonan de wek di dîmena binavbûyî ya Quest de, û wêne di lîstikvanê vîdyoyê yê 360° yê xwecihî de.
 - **Parvekirinên torê, gavên din**: derbasbûn bi kişandinê ji pelekî peldankekê bo yê din di rûpelên wêne û vîdyoyan de (dîmena binavbûyî ya Quest berê di nav pelên 360° yên peldankekê de diçe), nasandina Digest ji bo WebDAV, navê bikarhêner ji tomara Bonjour.
 - **Vîdyoyên dûz**: bijartina şopa dengî di lîstikvanê dûz ê telefonan de, ji bo vîdyoyên server, cîhaz û parvekirinê bi heman awayî (lîstikvanên 360° û Spatial wê hene, û lîstikvanê dûz ê Immuch360 Desktop jî).
-- **Android TV, gavên din**: ceribandina cîhazê ya build 20 li ser emulatorê Google TV û televizyoneke rastîn, paşê weşana televizyonê li ser Google Play (wêneyên ekranê yên televizyonê, banera televizyonê, nirxandina Google); paşê, kanal li ser ekrana sereke ya televizyonê.
+- **Android TV, gavên din**: ceribandina cîhazê ya build 20 li ser emulatorê Google TV û televizyoneke rastîn, û weşana televizyonê li ser Google Play gava ku Google tomara ji bo televizyonan nirxand; paşê, kanal li ser ekrana sereke ya televizyonê.
 - **Kamerayên Tapo, gavên din**: ceribandina cîhazê ya build 20 bi kamerayên rastîn; dîtina zindî li ser iPhone û iPad; tomarên H.265; lîstina klîpekê dema tê anîn; tomarên rojeke tevahî li ser yek xeta demê.
 - **Plex, gavên din**: ceribandina cîhazê ya build 20 (telefon, Quest, iPhone, televizyon, li derveyî malê); anîna tokenê ji komputerê bi koda QR; veşartina aliyê DLNA yê serverekî Plex di lîsteya serverên dîtî de; IPv6.
 - **Upstream**: pull requestên biçûk ji Immich re ji bo beşên ku parastvan dixwazin, bi dîtinvanê wêneyên 360° dest pê dike.

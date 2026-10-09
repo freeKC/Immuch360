@@ -13,14 +13,19 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
   <sub>비공식 포크입니다. Immich 및 FUTO와 관련이 없습니다. 이름은 "I am much 360"처럼 읽습니다.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">심사 중</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store 승인됨, 빌드 21을 첫 업데이트로 제출<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">미리 보기 다운로드</a>, 데스크톱 빌드 2
-</p>
+<div align="center">
+
+| 플랫폼 | 받는 곳 | 2026년 10월 9일 기준 상태 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 2026년 10월 7일부터 Google Play에 빌드 20, GitHub에 빌드 21 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.0이 Apple의 심사를 기다리는 중; 그동안은 [직접 빌드하기](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3와 3S | [APK](#meta-quest-3) · Horizon Store | 등록 승인됨, 빌드 21은 Meta 심사 중 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub에 빌드 21; TV용 Google Play 등록 정보는 2026년 10월 9일부터 Google 심사 중 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [미리 보기 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Windows용 데스크톱 빌드 2: 사진과 평면 동영상, 360° 동영상은 다음에; macOS와 Linux는 같은 소스로 나중에 |
+
+*상태는 릴리스마다 갱신됩니다. 자세한 내용은 [받는 곳](#where-to-get-it)에 있습니다.*
+
+</div>
 
 - 🌐 **네이티브 360°**<br>자이로스코프로 둘러보는 구 형태의 사진과 동영상, 카메라 RAW 파일 포함(Insta360은 빌드 16부터, GoPro와 DJI는 빌드 18부터). 평면, 360°, 3D, VR180을 위한 무료 동영상 플레이어도 함께
 - 👓 **네이티브 3D**<br>입체 360°와 VR180, 위아래 또는 좌우 배치, Apple 공간 사진(빌드 19부터): 헤드셋에서는 진짜 3D, 휴대폰에서는 한쪽 눈
@@ -1072,7 +1077,7 @@ Immuch360 Desktop의 CI(`.github/workflows/immuch360-desktop.yml`)는 `immuch360
 
 - **Android 휴대폰과 태블릿**
   - 지금: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), 또는 [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 APK: 휴대폰용은 `Immuch360-v<version>-arm64-v8a-release.apk`(범용 `Immuch360-v<version>-release.apk`는 어디서나 동작, `-armeabi-v7a`는 오래된 32비트 휴대폰용, `.aab` 파일은 Google Play용이며 사이드로드용이 아님). GitHub 빌드가 보통 스토어보다 앞서 있습니다. 어느 쪽이든 공식 Immich 앱 옆에 따로 설치됩니다(패키지 `com.aprogsys.immuch360`).
-  - 곧: Google Play에서는 빌드 18 공개 중, 빌드 20은 2026년 10월 7일부터 Google 심사 중, 빌드 19 대신.
+  - 곧: Google Play에서는 2026년 10월 7일부터 빌드 18 대신 빌드 20 공개 중, 빌드 21은 휴대폰과 태블릿에서 아무것도 바꾸지 않음.
 - **iPhone과 iPad**
   - 지금: Apple의 심사를 기다리는 중입니다. 심사 중인 버전에는 빌드 11의 기능이 들어 있으며, Immich로 업로드와 동영상 소스 선택(빌드 15), Insta360 RAW 파일(빌드 16)은 이후 App Store 업데이트와 함께 옵니다. 소스는 Xcode나 Codemagic에서 빌드됩니다. [직접 빌드하기](#build-it-yourself)를 보세요.
   - 곧: App Store, 심사 중.
@@ -1081,7 +1086,7 @@ Immuch360 Desktop의 CI(`.github/workflows/immuch360-desktop.yml`)는 `immuch360
   - 곧: Meta Horizon Store에서는 2026년 10월 7일에 빌드 14로 등록이 승인되었고, 첫 업데이트인 빌드 21이 Meta 심사 중. 스토어의 알파 채널(테스터 전용)은 새 빌드를 매번 받음.
 - **Android TV와 Google TV(빌드 20부터)**
   - 지금: [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 범용 `Immuch360-v<version>-release.apk`를 adb로 사이드로드합니다. [TV에 설치하기](#install-it-on-the-tv)를 보세요. 휴대폰과 같은 앱입니다.
-  - 곧: TV용 Google Play, TV 릴리스에 대한 Google 심사 후.
+  - 곧: TV용 Google Play, TV용 등록 정보는 2026년 10월 9일부터 Google 심사 중.
 - **Windows 10과 11, 64비트(미리 보기)**
   - 지금: Immuch360 Desktop, [데스크톱 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2)의 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`을 [Windows에서 다운로드와 설치](#download-and-install-on-windows)의 설명대로 압축을 풀고 실행합니다. 지금은 사진과 평면 동영상이 됩니다. 360°, 3D, VR180 동영상은 다음 데스크톱 빌드에서 옵니다.
   - 곧: 360°, 3D, VR180, 원본 360° 동영상. 설치 프로그램, 서명된 빌드, 업데이트는 그 뒤에.
@@ -1165,22 +1170,24 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Immuch360 Desktop의 Windows ZIP에만 동영상 플레이어가 함께 들어 있습니다. [mpv](https://mpv.io)의 라이브러리인 libmpv로, 안에 [FFmpeg](https://ffmpeg.org)가 들어 있고 [media_kit](https://github.com/media-kit/media-kit)의 플러그인이 구동합니다. mpv와 FFmpeg는 GPL 전용 부분을 빼고 빌드했으며, 그 코드는 GNU LGPL 버전 2.1 이상을 따릅니다. 함께 빌드한 `libmpv-2.dll`은 GNU LGPL 버전 3 이상으로 배포됩니다. 앱은 실행 중에 이를 불러오므로, 직접 빌드한 것으로 바꿀 수 있습니다. 라이선스 전문은 ZIP의 `licenses` 폴더에 있고, 모든 라이브러리와 그 라이선스, 소스는 [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md)에 나와 있습니다.
 
+Android, Android TV, Google TV는 Google LLC의 상표이고, Apple, iPhone, iPad, macOS는 Apple Inc.의 상표이며, Meta와 Meta Quest는 Meta Platforms, Inc.의 상표이고, Windows는 Microsoft 그룹 계열사의 상표이며, Linux는 미국 및 기타 국가에서 Linus Torvalds의 등록 상표입니다. 이 로고들은 Immuch360이 어디에서 실행되는지 보여 주려고 플랫폼 표에만 넣었으며, 어떠한 보증이나 제휴도 뜻하지 않습니다. Android 로봇은 Google이 만들고 공유한 저작물을 복제하거나 수정한 것으로, Creative Commons 3.0 Attribution License에 설명된 조건에 따라 사용합니다. Linux 펭귄 Tux는 Larry Ewing(lewing@isc.tamu.edu)이 The GIMP로 그렸으며, 벡터 버전은 Simon Budig와 Garrett LeSage가 만들었습니다. 로고의 출처와 라이선스: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## 로드맵
 
 아직 하지 않은 일을 가능성이 높은 순서로 적었습니다. 여기 있는 것은 약속이 아니며, [이슈 트래커](https://github.com/freeKC/Immuch360/issues)에 의견을 주시면 무엇을 먼저 할지 정하는 데 도움이 됩니다.
 
 - **Immuch360 Desktop, Windows부터**: 평면 동영상을 지원하는 데스크톱 빌드 2가 나왔고, 2026년 10월 9일부터 데스크톱 소스가 포크의 기본 브랜치인 `immuch360`에 있습니다([Windows 컴퓨터에서](#on-a-windows-computer-immuch360-desktop-preview) 참조). 다음은 Windows에서 360°, 3D, VR180, 원본 360° 동영상으로, 원본 파일의 두 렌즈와 Tapo 실시간 화면도 함께입니다. 그다음 Windows PC에서 각 기능의 테스트와 수정, 그다음 웹캠을 쓰는 Spatial 2.5D, 그다음 Linux와 macOS, 패키지, 서명, 업데이트입니다.
-- **Google Play**: 빌드 18이 공개되어 있고, 빌드 20은 빌드 19 대신 2026년 10월 7일부터 Google 심사 중입니다. 빌드 21은 휴대폰과 태블릿에서 아무것도 바꾸지 않습니다.
+- **Google Play**: 빌드 20이 빌드 18 대신 2026년 10월 7일부터 공개되어 있고, TV용 등록 정보는 2026년 10월 9일부터 Google 심사 중입니다. 빌드 21은 휴대폰과 태블릿에서 아무것도 바꾸지 않습니다.
 - **App Store**: 버전 3.3.0이 Apple의 심사를 기다리고 있습니다. 빌드 11의 기능이 들어 있으므로, Immich로 업로드와 동영상 디코더 검사(빌드 15), Insta360 RAW 파일(빌드 16)은 다음 App Store 업데이트와 함께 옵니다. 공개되면 링크를 여기에 추가하겠습니다.
 - **Meta Horizon Store**: Meta는 2026년 10월 7일에 빌드 14로 등록을 승인했습니다. 빌드 21이 첫 업데이트로 제출되었습니다. 빌드 14 이후의 모든 것(공유에서 Immich로 업로드, 헤드셋이 디코딩하는 것에 따라 고르는 동영상 소스, Insta360, GoPro, DJI RAW 파일, DLNA, 휴대폰 공유, Apple 공간 사진, Plex Media Server 라이브러리, Tapo 카메라)을 담고 있으며, 스토어는 이를 Quest 2, Quest Pro, Quest 3, 3S용으로 등록합니다. 스토어 페이지가 공개되면 링크를 여기에 추가하겠습니다. 사이드로드한 사본은 먼저 제거해야 합니다([설치](#install) 참조).
-- **스토어 소개 문구**: Google Play 소개는 2026년 10월에 새 스크린샷과 함께 다시 썼고, TV 릴리스와 함께 TV 스크린샷과 TV 배너가 추가됩니다. App Store 문구는 아직 초기 빌드(360° 사진과 동영상, 평면으로 보이는 RAW 파일)를 설명합니다. 앞으로 3D, VR180, Spatial 뷰어, 서버 없는 모드, 네트워크 공유, 미디어 플레이어, Insta360 RAW 파일을 소개할 예정입니다. Meta Horizon Store 문구는 이미 미디어 플레이어를 소개합니다.
+- **스토어 소개 문구**: Google Play 소개는 2026년 10월에 새 스크린샷과 함께 다시 썼고, TV 스크린샷과 TV 배너는 2026년 10월 8일에 추가했습니다. TV용 등록 정보는 2026년 10월 9일부터 Google 심사 중입니다. App Store 문구는 아직 초기 빌드(360° 사진과 동영상, 평면으로 보이는 RAW 파일)를 설명합니다. 앞으로 3D, VR180, Spatial 뷰어, 서버 없는 모드, 네트워크 공유, 미디어 플레이어, Insta360 RAW 파일을 소개할 예정입니다. Meta Horizon Store 문구는 이미 미디어 플레이어를 소개합니다.
 - **360° 카메라 RAW 파일, 다음 단계**: 헤드셋용으로 RAW 사진을 준비하는 동안의 진행 표시, GoPro와 DJI 동영상의 자체 움직임 데이터를 이용한 수평 맞추기, 듀얼 어안 .dng, 이음새와 디코더 여유를 확인하기 위한 빌드 18의 두 렌즈 재생에 대한 기기 보고(X4, X5, X6, GoPro MAX 2, Osmo 360).
 - **DLNA, 휴대폰 공유, Apple 공간 미디어, 다음 단계**: 빌드 19의 기기 보고(DLNA로 Plex, Jellyfin, NAS, Freebox Server. 핫스팟을 포함해 Quest에 제공하는 휴대폰. 헤드셋에서 실제 iPhone 공간 사진과 동영상), iPhone이 모든 DLNA 서버를 찾도록 Apple에 요청한 멀티캐스트 권한, 헤드셋에서 공간 사진 사이의 이전과 다음, 타임라인의 서버 사진에 공간 배지, 디코더가 허락한다면 Quest에서 공간 동영상을 3D로.
 - **휴대폰의 360° 플레이어, 다음 단계**: iOS 360° 동영상 플레이어의 시간 막대(Android에는 있음), Quest 몰입형 보기처럼 휴대폰 360° 플레이어의 이전/다음, 네이티브 360° 동영상 플레이어에서 사진 보기.
 - **네트워크 공유, 다음 단계**: 사진과 동영상 화면에서 폴더의 한 파일에서 다음 파일로 스와이프(Quest 몰입형 보기는 이미 폴더의 360° 파일을 넘겨 봄), WebDAV의 Digest 인증, Bonjour 레코드에서 계정명 가져오기.
 - **평면 동영상**: 서버, 기기, 공유 동영상 모두에 대해 휴대폰 평면 플레이어의 오디오 트랙 선택(360°와 Spatial 플레이어에는 있고, Immuch360 Desktop의 평면 플레이어에도 있음).
-- **Android TV, 다음 단계**: Google TV 에뮬레이터와 실제 TV에서 빌드 20의 기기 테스트, 그다음 Google Play의 TV 릴리스(TV 스크린샷, TV 배너, Google 심사). 나중에는 TV 홈 화면의 채널.
+- **Android TV, 다음 단계**: Google TV 에뮬레이터와 실제 TV에서 빌드 20의 기기 테스트, 그리고 Google이 TV용 등록 정보를 심사한 뒤 Google Play의 TV 릴리스. 나중에는 TV 홈 화면의 채널.
 - **Tapo 카메라, 다음 단계**: 실제 카메라로 빌드 20의 기기 테스트, iPhone과 iPad의 실시간 화면, H.265 녹화, 가져오는 동안 클립 재생, 하루치 녹화를 하나의 타임라인에서 보기.
 - **Plex, 다음 단계**: 빌드 20의 기기 테스트(휴대폰, Quest, iPhone, TV, 집 밖), 컴퓨터의 토큰을 QR 코드로 가져오기, 찾은 서버 목록에서 Plex 서버의 DLNA 쪽 숨기기, IPv6.
 - **업스트림**: 관리자가 원하는 부분을 Immich에 작은 풀 리퀘스트로 보내기, 360° 사진 뷰어부터.

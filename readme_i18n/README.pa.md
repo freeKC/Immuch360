@@ -13,14 +13,19 @@ Immuch360 Immich ਦੀ ਮੋਬਾਈਲ ਐਪ ਹੈ, ਜਿਸ ਵਿੱਚ
   <sub>ਗ਼ੈਰ-ਅਧਿਕਾਰਤ ਫੋਰਕ। Immich ਜਾਂ FUTO ਨਾਲ ਸੰਬੰਧਿਤ ਨਹੀਂ। ਨਾਮ ਨੂੰ "I am much 360" ਵਾਂਗ ਪੜ੍ਹਿਆ ਜਾਂਦਾ ਹੈ।</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">ਸਮੀਖਿਆ ਅਧੀਨ</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store ਮਨਜ਼ੂਰ, ਬਿਲਡ 21 ਪਹਿਲੇ ਅੱਪਡੇਟ ਵਜੋਂ ਭੇਜਿਆ<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">ਪ੍ਰੀਵਿਊ ਡਾਊਨਲੋਡ</a>, ਡੈਸਕਟਾਪ ਬਿਲਡ 2
-</p>
+<div align="center">
+
+| ਪਲੇਟਫਾਰਮ | ਕਿੱਥੋਂ ਪ੍ਰਾਪਤ ਕਰੀਏ | 9 ਅਕਤੂਬਰ 2026 ਨੂੰ ਸਥਿਤੀ |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ਫ਼ੋਨ ਅਤੇ ਟੈਬਲੈੱਟ | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 7 ਅਕਤੂਬਰ 2026 ਤੋਂ Google Play 'ਤੇ ਬਿਲਡ 20, GitHub 'ਤੇ ਬਿਲਡ 21 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ਅਤੇ iPad** | App Store | ਵਰਜਨ 3.3.0 Apple ਦੀ ਸਮੀਖਿਆ ਦੀ ਉਡੀਕ ਵਿੱਚ; ਤਦ ਤੱਕ [ਖ਼ੁਦ ਬਿਲਡ ਕਰੋ](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ਅਤੇ 3S | [APK](#meta-quest-3) · Horizon Store | ਲਿਸਟਿੰਗ ਮਨਜ਼ੂਰ, ਬਿਲਡ 21 Meta ਦੀ ਸਮੀਖਿਆ ਵਿੱਚ |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ਅਤੇ Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 'ਤੇ ਬਿਲਡ 21; ਟੀਵੀ ਲਈ Google Play ਲਿਸਟਿੰਗ 9 ਅਕਤੂਬਰ 2026 ਤੋਂ Google ਦੀ ਸਮੀਖਿਆ ਵਿੱਚ |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ਪ੍ਰੀਵਿਊ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Windows 'ਤੇ ਡੈਸਕਟਾਪ ਬਿਲਡ 2: ਫ਼ੋਟੋਆਂ ਅਤੇ ਸਮਤਲ ਵੀਡੀਓ, 360° ਵੀਡੀਓ ਅਗਲੇ ਪੜਾਅ ਵਿੱਚ; macOS ਅਤੇ Linux ਬਾਅਦ ਵਿੱਚ, ਉਹਨਾਂ ਹੀ ਸਰੋਤਾਂ ਤੋਂ |
+
+*ਹਰ ਰਿਲੀਜ਼ 'ਤੇ ਸਥਿਤੀਆਂ ਅੱਪਡੇਟ ਕੀਤੀਆਂ ਜਾਂਦੀਆਂ ਹਨ; ਵੇਰਵੇ [ਕਿੱਥੋਂ ਪ੍ਰਾਪਤ ਕਰੀਏ](#where-to-get-it) ਵਿੱਚ ਹਨ।*
+
+</div>
 
 - 🌐 **ਨੇਟਿਵ 360°**<br>ਫ਼ੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਇੱਕ ਗੋਲੇ ਵਜੋਂ ਜਿਸ ਵਿੱਚ ਤੁਸੀਂ ਚਾਰੇ ਪਾਸੇ ਦੇਖਦੇ ਹੋ, ਜਾਇਰੋਸਕੋਪ ਨਾਲ, ਕੈਮਰੇ ਦੀਆਂ RAW ਫ਼ਾਈਲਾਂ ਸਮੇਤ (Insta360 ਬਿਲਡ 16 ਤੋਂ, GoPro ਅਤੇ DJI ਬਿਲਡ 18 ਤੋਂ)। ਇੱਕ ਮੁਫ਼ਤ ਵੀਡੀਓ ਪਲੇਅਰ ਵੀ: ਸਮਤਲ, 360°, 3D, VR180
 - 👓 **ਨੇਟਿਵ 3D**<br>ਸਟੀਰੀਓਸਕੋਪਿਕ 360° ਅਤੇ VR180, ਉੱਪਰ ਅਤੇ ਹੇਠਾਂ ਜਾਂ ਨਾਲ-ਨਾਲ, ਅਤੇ Apple ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ (ਬਿਲਡ 19 ਤੋਂ): ਹੈੱਡਸੈੱਟ ਵਿੱਚ ਅਸਲ 3D, ਫ਼ੋਨ 'ਤੇ ਇੱਕ ਅੱਖ
@@ -1072,7 +1077,7 @@ Immuch360 Desktop ਦਾ CI (`.github/workflows/immuch360-desktop.yml`) `desktop
 
 - **Android ਫ਼ੋਨ ਅਤੇ ਟੈਬਲੈੱਟ**
   - ਅੱਜ: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ਜਾਂ [Releases](https://github.com/freeKC/Immuch360/releases) ਪੰਨੇ 'ਤੇ APK: ਫ਼ੋਨ ਲਈ `Immuch360-v<version>-arm64-v8a-release.apk` (ਯੂਨੀਵਰਸਲ `Immuch360-v<version>-release.apk` ਹਰ ਥਾਂ ਚੱਲਦਾ ਹੈ, `-armeabi-v7a` ਪੁਰਾਣੇ 32 ਬਿੱਟ ਫ਼ੋਨਾਂ ਲਈ ਹੈ, ਅਤੇ `.aab` ਫ਼ਾਈਲ Google Play ਲਈ ਹੈ, ਸਾਈਡਲੋਡ ਲਈ ਨਹੀਂ)। GitHub ਬਿਲਡ ਆਮ ਤੌਰ 'ਤੇ ਸਟੋਰ ਤੋਂ ਅੱਗੇ ਹੁੰਦਾ ਹੈ। ਕਿਸੇ ਵੀ ਤਰ੍ਹਾਂ, ਇਹ ਅਧਿਕਾਰਤ Immich ਐਪ ਦੇ ਨਾਲ ਸਥਾਪਤ ਹੁੰਦੀ ਹੈ (ਪੈਕੇਜ `com.aprogsys.immuch360`)।
-  - ਜਲਦੀ: Google Play 'ਤੇ, ਬਿਲਡ 18 ਪ੍ਰਕਾਸ਼ਿਤ ਹੈ, ਬਿਲਡ 19 ਦੀ ਥਾਂ ਬਿਲਡ 20 7 ਅਕਤੂਬਰ 2026 ਤੋਂ Google ਦੀ ਸਮੀਖਿਆ ਅਧੀਨ।
+  - ਜਲਦੀ: Google Play 'ਤੇ, ਬਿਲਡ 18 ਦੀ ਥਾਂ ਬਿਲਡ 20 7 ਅਕਤੂਬਰ 2026 ਤੋਂ ਪ੍ਰਕਾਸ਼ਿਤ ਹੈ; ਬਿਲਡ 21 ਫ਼ੋਨਾਂ ਅਤੇ ਟੈਬਲੈੱਟਾਂ 'ਤੇ ਕੁਝ ਨਹੀਂ ਬਦਲਦਾ।
 - **iPhone ਅਤੇ iPad**
   - ਅੱਜ: Apple ਦੀ ਸਮੀਖਿਆ ਦੀ ਉਡੀਕ। ਸਮੀਖਿਆ ਅਧੀਨ ਸੰਸਕਰਣ ਵਿੱਚ ਬਿਲਡ 11 ਦੀਆਂ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਹਨ: Immich 'ਤੇ ਅੱਪਲੋਡ ਅਤੇ ਵੀਡੀਓ ਸਰੋਤ ਚੋਣ (ਬਿਲਡ 15) ਅਤੇ RAW Insta360 ਫ਼ਾਈਲਾਂ (ਬਿਲਡ 16) ਬਾਅਦ ਦੇ App Store ਅੱਪਡੇਟ ਨਾਲ ਆਉਣਗੀਆਂ। ਸਰੋਤ ਕੋਡ Xcode ਵਿੱਚ ਜਾਂ Codemagic 'ਤੇ ਬਿਲਡ ਹੁੰਦਾ ਹੈ, ਦੇਖੋ [ਖ਼ੁਦ ਬਿਲਡ ਕਰੋ](#build-it-yourself)।
   - ਜਲਦੀ: App Store, ਸਮੀਖਿਆ ਅਧੀਨ।
@@ -1081,7 +1086,7 @@ Immuch360 Desktop ਦਾ CI (`.github/workflows/immuch360-desktop.yml`) `desktop
   - ਜਲਦੀ: Meta Horizon Store 'ਤੇ, ਸੂਚੀ 7 ਅਕਤੂਬਰ 2026 ਨੂੰ ਬਿਲਡ 14 ਨਾਲ ਮਨਜ਼ੂਰ ਹੋਈ, ਅਤੇ ਉਸਦਾ ਪਹਿਲਾ ਅੱਪਡੇਟ, ਬਿਲਡ 21, Meta ਦੀ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ; ਸਟੋਰ ਦਾ ਅਲਫ਼ਾ ਚੈਨਲ (ਸਿਰਫ਼ ਟੈਸਟਰ) ਹਰ ਨਵਾਂ ਬਿਲਡ ਪ੍ਰਾਪਤ ਕਰਦਾ ਹੈ।
 - **Android TV ਅਤੇ Google TV (ਬਿਲਡ 20 ਤੋਂ)**
   - ਅੱਜ: [Releases](https://github.com/freeKC/Immuch360/releases) ਪੰਨੇ ਦਾ ਯੂਨੀਵਰਸਲ `Immuch360-v<version>-release.apk`, adb ਨਾਲ ਸਾਈਡਲੋਡ ਕੀਤਾ, ਦੇਖੋ [ਇਸਨੂੰ ਟੀਵੀ 'ਤੇ ਸਥਾਪਤ ਕਰੋ](#install-it-on-the-tv)। ਇਹ ਫ਼ੋਨਾਂ ਵਾਲੀ ਉਹੀ ਐਪ ਹੈ।
-  - ਜਲਦੀ: ਟੀਵੀਆਂ 'ਤੇ Google Play, ਟੀਵੀ ਰਿਲੀਜ਼ ਦੀ Google ਸਮੀਖਿਆ ਤੋਂ ਬਾਅਦ।
+  - ਜਲਦੀ: ਟੀਵੀਆਂ 'ਤੇ Google Play, ਜਿਸਦੀ ਸੂਚੀ 9 ਅਕਤੂਬਰ 2026 ਤੋਂ Google ਦੀ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ।
 - **Windows 10 ਅਤੇ 11, 64 bit (ਪ੍ਰੀਵਿਊ)**
   - ਅੱਜ: Immuch360 Desktop, [ਡੈਸਕਟਾਪ ਪ੍ਰੀ-ਰਿਲੀਜ਼](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ਦੀ ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`, ਜਿਵੇਂ [Windows 'ਤੇ ਡਾਊਨਲੋਡ ਅਤੇ ਸਥਾਪਤ ਕਰੋ](#download-and-install-on-windows) ਦੱਸਦਾ ਹੈ ਉਵੇਂ ਅਨਜ਼ਿਪ ਕਰਕੇ ਸ਼ੁਰੂ ਕੀਤੀ। ਹਾਲੇ ਫ਼ੋਟੋਆਂ ਅਤੇ ਸਮਤਲ ਵੀਡੀਓ: 360°, 3D ਅਤੇ VR180 ਵੀਡੀਓ ਅਗਲੇ ਡੈਸਕਟਾਪ ਬਿਲਡਾਂ ਨਾਲ ਆਉਣਗੇ।
   - ਜਲਦੀ: 360°, 3D, VR180 ਅਤੇ ਕੱਚੇ 360° ਵੀਡੀਓ; ਬਾਅਦ ਵਿੱਚ ਇੰਸਟਾਲਰ, ਦਸਤਖ਼ਤ ਕੀਤਾ ਬਿਲਡ ਅਤੇ ਅੱਪਡੇਟ।
@@ -1165,22 +1170,24 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Immuch360 Desktop ਦੀ Windows ZIP ਵਿੱਚ, ਅਤੇ ਸਿਰਫ਼ ਉਸ ਵਿੱਚ, ਇਸਦਾ ਵੀਡੀਓ ਪਲੇਅਰ ਵੀ ਹੁੰਦਾ ਹੈ: libmpv, [mpv](https://mpv.io) ਦੀ ਲਾਇਬ੍ਰੇਰੀ, ਅੰਦਰ [FFmpeg](https://ffmpeg.org) ਸਮੇਤ, [media_kit](https://github.com/media-kit/media-kit) ਦੇ ਪਲੱਗਇਨਾਂ ਦੁਆਰਾ ਚਲਾਈ ਜਾਂਦੀ। mpv ਅਤੇ FFmpeg ਆਪਣੇ ਸਿਰਫ਼ GPL ਵਾਲੇ ਹਿੱਸਿਆਂ ਤੋਂ ਬਿਨਾਂ ਬਿਲਡ ਕੀਤੇ ਗਏ ਹਨ, ਅਤੇ ਉਹਨਾਂ ਦਾ ਕੋਡ GNU LGPL ਸੰਸਕਰਣ 2.1 ਜਾਂ ਬਾਅਦ ਵਾਲੇ ਅਧੀਨ ਹੈ; ਇਕੱਠੇ ਬਿਲਡ ਕੀਤੇ, `libmpv-2.dll` GNU LGPL ਸੰਸਕਰਣ 3 ਜਾਂ ਬਾਅਦ ਵਾਲੇ ਅਧੀਨ ਵੰਡੀ ਜਾਂਦੀ ਹੈ। ਐਪ ਇਸਨੂੰ ਚੱਲਦੇ ਸਮੇਂ ਲੋਡ ਕਰਦੀ ਹੈ, ਇਸ ਲਈ ਤੁਸੀਂ ਇਸਨੂੰ ਆਪਣੇ ਬਿਲਡ ਨਾਲ ਬਦਲ ਸਕਦੇ ਹੋ। ਲਾਇਸੈਂਸ ਟੈਕਸਟ ZIP ਦੇ `licenses` ਫੋਲਡਰ ਵਿੱਚ ਹਨ, ਅਤੇ ਹਰ ਲਾਇਬ੍ਰੇਰੀ ਆਪਣੇ ਲਾਇਸੈਂਸ ਅਤੇ ਸਰੋਤਾਂ ਸਮੇਤ [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) ਵਿੱਚ ਸੂਚੀਬੱਧ ਹੈ।
 
+Android, Android TV ਅਤੇ Google TV, Google LLC ਦੇ ਟ੍ਰੇਡਮਾਰਕ ਹਨ; Apple, iPhone, iPad ਅਤੇ macOS, Apple Inc. ਦੇ ਟ੍ਰੇਡਮਾਰਕ ਹਨ; Meta ਅਤੇ Meta Quest, Meta Platforms, Inc. ਦੇ ਟ੍ਰੇਡਮਾਰਕ ਹਨ; Windows, Microsoft ਕੰਪਨੀ ਸਮੂਹ ਦਾ ਟ੍ਰੇਡਮਾਰਕ ਹੈ; Linux ਅਮਰੀਕਾ ਅਤੇ ਹੋਰ ਦੇਸ਼ਾਂ ਵਿੱਚ Linus Torvalds ਦਾ ਰਜਿਸਟਰਡ ਟ੍ਰੇਡਮਾਰਕ ਹੈ। ਇਹਨਾਂ ਦੇ ਲੋਗੋ ਪਲੇਟਫ਼ਾਰਮ ਸਾਰਣੀ ਵਿੱਚ ਸਿਰਫ਼ ਇਹ ਦਿਖਾਉਣ ਲਈ ਹਨ ਕਿ Immuch360 ਕਿੱਥੇ ਚੱਲਦਾ ਹੈ, ਅਤੇ ਇਹ ਕਿਸੇ ਸਮਰਥਨ ਜਾਂ ਸੰਬੰਧ ਨੂੰ ਨਹੀਂ ਦਰਸਾਉਂਦੇ। Android ਰੋਬੋਟ Google ਵੱਲੋਂ ਬਣਾਏ ਅਤੇ ਸਾਂਝੇ ਕੀਤੇ ਕੰਮ ਤੋਂ ਦੁਬਾਰਾ ਬਣਾਇਆ ਜਾਂ ਸੋਧਿਆ ਗਿਆ ਹੈ ਅਤੇ Creative Commons 3.0 Attribution License ਵਿੱਚ ਦੱਸੀਆਂ ਸ਼ਰਤਾਂ ਅਨੁਸਾਰ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ। Linux ਦਾ ਪੈਂਗੁਇਨ Tux, Larry Ewing (lewing@isc.tamu.edu) ਦੀ ਰਚਨਾ ਹੈ, The GIMP ਨਾਲ ਬਣਾਇਆ ਗਿਆ, ਅਤੇ ਇਸਦਾ ਵੈਕਟਰ ਸੰਸਕਰਣ Simon Budig ਅਤੇ Garrett LeSage ਦਾ ਹੈ। ਲੋਗੋਆਂ ਦੇ ਸਰੋਤ ਅਤੇ ਲਾਇਸੈਂਸ: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md)।
+
 <a id="roadmap"></a>
 ## ਅਗਲੀ ਯੋਜਨਾ
 
 ਜੋ ਹਾਲੇ ਨਹੀਂ ਹੋਇਆ, ਸਭ ਤੋਂ ਸੰਭਾਵਿਤ ਪਹਿਲਾਂ। ਇੱਥੇ ਕੁਝ ਵੀ ਵਾਅਦਾ ਨਹੀਂ ਹੈ, ਅਤੇ [issue tracker](https://github.com/freeKC/Immuch360/issues) 'ਤੇ ਫੀਡਬੈਕ ਇਹ ਫ਼ੈਸਲਾ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਦਾ ਹੈ ਕਿ ਪਹਿਲਾਂ ਕੀ ਆਵੇ।
 
 - **Immuch360 Desktop, ਪਹਿਲਾਂ Windows**: ਡੈਸਕਟਾਪ ਬਿਲਡ 2 ਸਮਤਲ ਵੀਡੀਓ ਨਾਲ ਜਾਰੀ ਹੋ ਚੁੱਕਾ ਹੈ, ਅਤੇ 9 ਅਕਤੂਬਰ 2026 ਤੋਂ ਡੈਸਕਟਾਪ ਦੇ ਸਰੋਤ ਫੋਰਕ ਦੀ ਮੁੱਖ ਬ੍ਰਾਂਚ, `immuch360`, ਵਿੱਚ ਹਨ (ਦੇਖੋ [Windows ਕੰਪਿਊਟਰ 'ਤੇ](#on-a-windows-computer-immuch360-desktop-preview))। ਅੱਗੇ, Windows 'ਤੇ 360°, 3D, VR180 ਅਤੇ ਕੱਚੇ 360° ਵੀਡੀਓ, ਕੱਚੀਆਂ ਫ਼ਾਈਲਾਂ ਦੇ ਦੋ ਲੈਂਜ਼ਾਂ ਅਤੇ Tapo ਲਾਈਵ ਦ੍ਰਿਸ਼ ਸਮੇਤ; ਫਿਰ Windows PC 'ਤੇ ਹਰ ਫੰਕਸ਼ਨ ਦਾ ਟੈਸਟ ਅਤੇ ਉਸਦੇ ਸੁਧਾਰ; ਫਿਰ ਵੈੱਬਕੈਮ ਨਾਲ Spatial 2.5D; ਫਿਰ Linux ਅਤੇ macOS, ਪੈਕੇਜ, ਦਸਤਖ਼ਤ ਅਤੇ ਅੱਪਡੇਟ।
-- **Google Play**: ਬਿਲਡ 18 ਪ੍ਰਕਾਸ਼ਿਤ ਹੈ; ਬਿਲਡ 19 ਦੀ ਥਾਂ ਬਿਲਡ 20 7 ਅਕਤੂਬਰ 2026 ਤੋਂ Google ਦੀ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ। ਬਿਲਡ 21 ਫ਼ੋਨਾਂ ਅਤੇ ਟੈਬਲੈੱਟਾਂ 'ਤੇ ਕੁਝ ਨਹੀਂ ਬਦਲਦਾ।
+- **Google Play**: ਬਿਲਡ 18 ਦੀ ਥਾਂ ਬਿਲਡ 20 7 ਅਕਤੂਬਰ 2026 ਤੋਂ ਪ੍ਰਕਾਸ਼ਿਤ ਹੈ; ਟੀਵੀਆਂ ਲਈ ਸੂਚੀ 9 ਅਕਤੂਬਰ 2026 ਤੋਂ Google ਦੀ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ। ਬਿਲਡ 21 ਫ਼ੋਨਾਂ ਅਤੇ ਟੈਬਲੈੱਟਾਂ 'ਤੇ ਕੁਝ ਨਹੀਂ ਬਦਲਦਾ।
 - **App Store**: ਸੰਸਕਰਣ 3.3.0 Apple ਦੀ ਸਮੀਖਿਆ ਦੀ ਉਡੀਕ ਕਰ ਰਿਹਾ ਹੈ; ਇਸ ਵਿੱਚ ਬਿਲਡ 11 ਦੀਆਂ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਹਨ, ਇਸ ਲਈ Immich 'ਤੇ ਅੱਪਲੋਡ ਅਤੇ ਵੀਡੀਓ ਡੀਕੋਡਰ ਜਾਂਚ (ਬਿਲਡ 15) ਅਤੇ RAW Insta360 ਫ਼ਾਈਲਾਂ (ਬਿਲਡ 16) ਅਗਲੇ App Store ਅੱਪਡੇਟ ਨਾਲ ਆਉਣਗੀਆਂ। ਪ੍ਰਕਾਸ਼ਿਤ ਹੋਣ 'ਤੇ ਲਿੰਕ ਇੱਥੇ ਜੋੜਿਆ ਜਾਵੇਗਾ।
 - **Meta Horizon Store**: Meta ਨੇ 7 ਅਕਤੂਬਰ 2026 ਨੂੰ ਬਿਲਡ 14 ਨਾਲ ਸੂਚੀ ਮਨਜ਼ੂਰ ਕੀਤੀ। ਬਿਲਡ 21 ਉਸਦੇ ਪਹਿਲੇ ਅੱਪਡੇਟ ਵਜੋਂ ਭੇਜਿਆ ਗਿਆ ਹੈ: ਇਹ ਬਿਲਡ 14 ਤੋਂ ਬਾਅਦ ਦਾ ਸਭ ਕੁਝ ਲਿਆਉਂਦਾ ਹੈ (ਸ਼ੇਅਰ ਤੋਂ Immich 'ਤੇ ਅੱਪਲੋਡ, ਹੈੱਡਸੈੱਟ ਜੋ ਡੀਕੋਡ ਕਰਦਾ ਹੈ ਉਸ ਅਨੁਸਾਰ ਚੁਣਿਆ ਵੀਡੀਓ ਸਰੋਤ, Insta360, GoPro ਅਤੇ DJI ਦੀਆਂ RAW ਫ਼ਾਈਲਾਂ, DLNA, ਫ਼ੋਨ ਸ਼ੇਅਰ, Apple ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ, Plex Media Server ਲਾਇਬ੍ਰੇਰੀਆਂ, Tapo ਕੈਮਰੇ), ਅਤੇ ਸਟੋਰ ਇਸਨੂੰ Quest 2, Quest Pro, Quest 3 ਅਤੇ 3S ਲਈ ਸੂਚੀਬੱਧ ਕਰਦਾ ਹੈ। ਪੰਨਾ ਜਨਤਕ ਹੋਣ 'ਤੇ ਸਟੋਰ ਲਿੰਕ ਇੱਥੇ ਜੋੜਿਆ ਜਾਵੇਗਾ; ਸਾਈਡਲੋਡ ਕੀਤੀ ਕਾਪੀ ਪਹਿਲਾਂ ਅਣਸਥਾਪਤ ਕਰਨੀ ਪਵੇਗੀ (ਦੇਖੋ [ਸਥਾਪਨਾ](#install))।
-- **ਸਟੋਰ ਸੂਚੀਆਂ**: Google Play ਸੂਚੀ ਅਕਤੂਬਰ 2026 ਵਿੱਚ ਨਵੇਂ ਸਕ੍ਰੀਨਸ਼ੌਟਾਂ ਨਾਲ ਦੁਬਾਰਾ ਲਿਖੀ ਗਈ ਸੀ, ਅਤੇ ਟੀਵੀ ਰਿਲੀਜ਼ ਨਾਲ ਟੀਵੀ ਸਕ੍ਰੀਨਸ਼ੌਟ ਅਤੇ ਟੀਵੀ ਬੈਨਰ ਪ੍ਰਾਪਤ ਕਰੇਗੀ। App Store ਦੀ ਲਿਖਤ ਹਾਲੇ ਵੀ ਪਹਿਲੇ ਬਿਲਡਾਂ (360° ਫ਼ੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ, ਸਮਤਲ ਦਿਖਾਈਆਂ RAW ਫ਼ਾਈਲਾਂ) ਦਾ ਵਰਣਨ ਕਰਦੀ ਹੈ; ਇਹ 3D, VR180 ਅਤੇ Spatial ਵਿਊਅਰ, ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ ਮੋਡ, ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ, ਮੀਡੀਆ ਪਲੇਅਰ ਅਤੇ RAW Insta360 ਫ਼ਾਈਲਾਂ ਪੇਸ਼ ਕਰੇਗੀ। Meta Horizon Store ਦੀ ਲਿਖਤ ਪਹਿਲਾਂ ਹੀ ਮੀਡੀਆ ਪਲੇਅਰ ਪੇਸ਼ ਕਰਦੀ ਹੈ।
+- **ਸਟੋਰ ਸੂਚੀਆਂ**: Google Play ਸੂਚੀ ਅਕਤੂਬਰ 2026 ਵਿੱਚ ਨਵੇਂ ਸਕ੍ਰੀਨਸ਼ੌਟਾਂ ਨਾਲ ਦੁਬਾਰਾ ਲਿਖੀ ਗਈ ਸੀ, ਅਤੇ ਇਸਦੇ ਟੀਵੀ ਸਕ੍ਰੀਨਸ਼ੌਟ ਅਤੇ ਟੀਵੀ ਬੈਨਰ 8 ਅਕਤੂਬਰ 2026 ਨੂੰ ਜੋੜੇ ਗਏ; ਟੀਵੀਆਂ ਲਈ ਸੂਚੀ 9 ਅਕਤੂਬਰ 2026 ਤੋਂ Google ਦੀ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ। App Store ਦੀ ਲਿਖਤ ਹਾਲੇ ਵੀ ਪਹਿਲੇ ਬਿਲਡਾਂ (360° ਫ਼ੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ, ਸਮਤਲ ਦਿਖਾਈਆਂ RAW ਫ਼ਾਈਲਾਂ) ਦਾ ਵਰਣਨ ਕਰਦੀ ਹੈ; ਇਹ 3D, VR180 ਅਤੇ Spatial ਵਿਊਅਰ, ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ ਮੋਡ, ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ, ਮੀਡੀਆ ਪਲੇਅਰ ਅਤੇ RAW Insta360 ਫ਼ਾਈਲਾਂ ਪੇਸ਼ ਕਰੇਗੀ। Meta Horizon Store ਦੀ ਲਿਖਤ ਪਹਿਲਾਂ ਹੀ ਮੀਡੀਆ ਪਲੇਅਰ ਪੇਸ਼ ਕਰਦੀ ਹੈ।
 - **360° ਕੈਮਰਿਆਂ ਦੀਆਂ RAW ਫ਼ਾਈਲਾਂ, ਅੱਗੇ**: ਹੈੱਡਸੈੱਟ ਲਈ RAW ਫ਼ੋਟੋ ਤਿਆਰ ਹੋਣ ਦੌਰਾਨ ਪ੍ਰਗਤੀ ਸੂਚਕ; GoPro ਅਤੇ DJI ਵੀਡੀਓ ਨੂੰ ਉਹਨਾਂ ਦੇ ਆਪਣੇ ਗਤੀ ਡਾਟੇ ਤੋਂ ਸਿੱਧਾ ਕਰਨਾ; ਡੁਅਲ ਫਿਸ਼ਆਈ .dng; ਜੋੜਾਂ ਅਤੇ ਡੀਕੋਡਰ ਸਮਰੱਥਾ ਦੀ ਪੁਸ਼ਟੀ ਲਈ ਬਿਲਡ 18 ਦੇ ਦੋ ਲੈਂਜ਼ ਪਲੇਬੈਕ ਬਾਰੇ ਡਿਵਾਈਸ ਰਿਪੋਰਟਾਂ (X4, X5, X6, GoPro MAX 2, Osmo 360)।
 - **DLNA, ਫ਼ੋਨ ਸ਼ੇਅਰ ਅਤੇ Apple ਸਪੇਸ਼ੀਅਲ, ਅੱਗੇ**: ਬਿਲਡ 19 ਦੀਆਂ ਡਿਵਾਈਸ ਰਿਪੋਰਟਾਂ (DLNA ਰਾਹੀਂ Plex, Jellyfin, NAS ਅਤੇ Freebox Server; Quest ਨੂੰ ਸੇਵਾ ਦੇਣ ਵਾਲਾ ਫ਼ੋਨ, ਉਸਦੇ ਹੌਟਸਪੌਟ 'ਤੇ ਵੀ; ਹੈੱਡਸੈੱਟ ਵਿੱਚ ਅਸਲ iPhone ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ); Apple ਤੋਂ ਮੰਗਿਆ ਮਲਟੀਕਾਸਟ ਅਧਿਕਾਰ, ਤਾਂ ਜੋ iPhone ਹਰ DLNA ਸਰਵਰ ਲੱਭ ਸਕਣ; ਹੈੱਡਸੈੱਟ ਵਿੱਚ ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ ਵਿਚਕਾਰ ਪਿਛਲਾ ਅਤੇ ਅਗਲਾ; ਟਾਈਮਲਾਈਨ ਵਿੱਚ ਸਰਵਰ ਫ਼ੋਟੋਆਂ 'ਤੇ ਸਪੇਸ਼ੀਅਲ ਬੈਜ; Quest 'ਤੇ ਸਪੇਸ਼ੀਅਲ ਵੀਡੀਓ 3D ਵਿੱਚ, ਜੇ ਉਸਦੇ ਡੀਕੋਡਰ ਇਜਾਜ਼ਤ ਦੇਣ।
 - **ਫ਼ੋਨਾਂ 'ਤੇ 360° ਪਲੇਅਰ, ਅੱਗੇ**: iOS 360° ਵੀਡੀਓ ਪਲੇਅਰ ਵਿੱਚ ਸਮਾਂ ਪੱਟੀ (Android ਵਾਲੇ ਵਿੱਚ ਹੈ), Quest ਇਮਰਸਿਵ ਦ੍ਰਿਸ਼ ਵਾਂਗ ਫ਼ੋਨਾਂ ਦੇ 360° ਪਲੇਅਰਾਂ ਵਿੱਚ ਪਿਛਲਾ/ਅਗਲਾ, ਅਤੇ ਨੇਟਿਵ 360° ਵੀਡੀਓ ਪਲੇਅਰ ਵਿੱਚ ਫ਼ੋਟੋਆਂ।
 - **ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ, ਅਗਲੇ ਕਦਮ**: ਫ਼ੋਟੋ ਅਤੇ ਵੀਡੀਓ ਪੰਨਿਆਂ ਵਿੱਚ ਫੋਲਡਰ ਦੀ ਇੱਕ ਫ਼ਾਈਲ ਤੋਂ ਅਗਲੀ 'ਤੇ ਸਵਾਈਪ (Quest ਇਮਰਸਿਵ ਦ੍ਰਿਸ਼ ਪਹਿਲਾਂ ਹੀ ਫੋਲਡਰ ਦੀਆਂ 360° ਫ਼ਾਈਲਾਂ ਵਿੱਚੋਂ ਲੰਘਦਾ ਹੈ), WebDAV ਲਈ Digest ਪ੍ਰਮਾਣੀਕਰਨ, Bonjour ਰਿਕਾਰਡ ਤੋਂ ਵਰਤੋਂਕਾਰ ਨਾਮ।
 - **ਸਮਤਲ ਵੀਡੀਓ**: ਫ਼ੋਨਾਂ ਦੇ ਸਮਤਲ ਪਲੇਅਰ ਵਿੱਚ ਆਡੀਓ ਟਰੈਕ ਚੋਣ, ਸਰਵਰ, ਡਿਵਾਈਸ ਅਤੇ ਸ਼ੇਅਰ ਦੀਆਂ ਵੀਡੀਓ ਲਈ (360° ਅਤੇ Spatial ਪਲੇਅਰਾਂ ਵਿੱਚ ਇਹ ਹੈ, ਅਤੇ Immuch360 Desktop ਦੇ ਸਮਤਲ ਪਲੇਅਰ ਵਿੱਚ ਵੀ)।
-- **Android TV, ਅੱਗੇ**: Google TV ਇਮੂਲੇਟਰ ਅਤੇ ਅਸਲ ਟੀਵੀ 'ਤੇ ਬਿਲਡ 20 ਦਾ ਡਿਵਾਈਸ ਟੈਸਟ, ਫਿਰ Google Play 'ਤੇ ਟੀਵੀ ਰਿਲੀਜ਼ (ਟੀਵੀ ਸਕ੍ਰੀਨਸ਼ੌਟ, ਟੀਵੀ ਬੈਨਰ, Google ਦੀ ਸਮੀਖਿਆ); ਬਾਅਦ ਵਿੱਚ, ਟੀਵੀ ਦੀ ਹੋਮ ਸਕ੍ਰੀਨ 'ਤੇ ਚੈਨਲ।
+- **Android TV, ਅੱਗੇ**: Google TV ਇਮੂਲੇਟਰ ਅਤੇ ਅਸਲ ਟੀਵੀ 'ਤੇ ਬਿਲਡ 20 ਦਾ ਡਿਵਾਈਸ ਟੈਸਟ, ਅਤੇ Google ਵੱਲੋਂ ਟੀਵੀਆਂ ਲਈ ਸੂਚੀ ਦੀ ਸਮੀਖਿਆ ਹੋਣ ਤੋਂ ਬਾਅਦ Google Play 'ਤੇ ਟੀਵੀ ਰਿਲੀਜ਼; ਬਾਅਦ ਵਿੱਚ, ਟੀਵੀ ਦੀ ਹੋਮ ਸਕ੍ਰੀਨ 'ਤੇ ਚੈਨਲ।
 - **Tapo ਕੈਮਰੇ, ਅੱਗੇ**: ਅਸਲ ਕੈਮਰਿਆਂ ਨਾਲ ਬਿਲਡ 20 ਦਾ ਡਿਵਾਈਸ ਟੈਸਟ; iPhone ਅਤੇ iPad 'ਤੇ ਲਾਈਵ ਦ੍ਰਿਸ਼; H.265 ਰਿਕਾਰਡਿੰਗਾਂ; ਲਿਆਂਦੀ ਜਾ ਰਹੀ ਕਲਿੱਪ ਨੂੰ ਚਲਾਉਣਾ; ਇੱਕ ਟਾਈਮਲਾਈਨ 'ਤੇ ਪੂਰੇ ਦਿਨ ਦੀਆਂ ਰਿਕਾਰਡਿੰਗਾਂ।
 - **Plex, ਅੱਗੇ**: ਬਿਲਡ 20 ਦਾ ਡਿਵਾਈਸ ਟੈਸਟ (ਫ਼ੋਨ, Quest, iPhone, ਟੀਵੀ, ਘਰ ਤੋਂ ਬਾਹਰ); QR ਕੋਡ ਨਾਲ ਕੰਪਿਊਟਰ ਤੋਂ ਟੋਕਨ ਲਿਆਉਣਾ; ਮਿਲੇ ਸਰਵਰਾਂ ਦੀ ਸੂਚੀ ਵਿੱਚ Plex ਸਰਵਰ ਦਾ DLNA ਪਾਸਾ ਲੁਕਾਉਣਾ; IPv6।
 - **ਅੱਪਸਟ੍ਰੀਮ**: ਸੰਭਾਲਕਰਤਾ ਜੋ ਹਿੱਸੇ ਚਾਹੁਣ ਉਹਨਾਂ ਲਈ Immich ਨੂੰ ਛੋਟੀਆਂ ਪੁੱਲ ਰਿਕਵੈਸਟਾਂ, 360° ਫ਼ੋਟੋ ਵਿਊਅਰ ਤੋਂ ਸ਼ੁਰੂ ਕਰਕੇ।

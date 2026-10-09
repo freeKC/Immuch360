@@ -13,14 +13,19 @@ Immuch360 вӑл 360° сӑнӳкерчӗксемпе видеосем ӑшӗн�
   <sub>Официаллӑ мар форк. Immich-па та, FUTO-па та ҫыхӑнман. Ячӗ «I am much 360» пек вуланать.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">тӗрӗсленӗвре</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store ырланӑ, build 21-а пӗрремӗш ҫӗнелӳ евӗр панӑ<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">тӗрӗслев версине тиесе илесси</a>, desktop build 2
-</p>
+<div align="center">
+
+| Платформа | Ӑҫта илмелле | 2026 ҫулхи юпа уйӑхӗн 9-мӗшӗнчи тӑрӑм |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** телефонӗсемпе планшечӗсем | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play ҫинче 2026 ҫулхи юпа уйӑхӗн 7-мӗшӗнченпе build 20, GitHub ҫинче build 21 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone тата iPad** | App Store | 3.3.0 версие Apple тӗрӗсленине кӗтет; хальлӗхе [хӑвӑр хатӗрлӗр](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 тата 3S | [APK](#meta-quest-3) · Horizon Store | страницӑна ырланӑ, build 21 Meta тӗрӗслевӗнче |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV тата Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub ҫинче build 21; телевизорсем валли Google Play страници 2026 ҫулхи юпа уйӑхӗн 9-мӗшӗнченпе Google тӗрӗслевӗнче |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Тӗрӗслев ZIP-ӗ](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Windows ҫинче desktop build 2: сӑнӳкерчӗксемпе тикӗс видеосем, 360° видеосем малалла; macOS тата Linux каярах, ҫав ҫӑлкуҫсенченех |
+
+*Тӑрӑмсене кашни релизра ҫӗнетеҫҫӗ; тӗплӗнрех [Ӑҫта илмелле](#where-to-get-it) пайӗнче.*
+
+</div>
 
 - 🌐 **Тӑван 360°**<br>Сӑнӳкерчӗксемпе видеосем сфера евӗр, унта гироскоппа таврана пӑхатӑр, камерӑн чӗрӗ файлӗсем те (Insta360 build 16-ран, GoPro тата DJI build 18-ран). Тата тӳлевсӗр видео плеер: тикӗс, 360°, 3D, VR180
 - 👓 **Тӑван 3D**<br>Стереоскопи 360° тата VR180, ҫӳлте/аялта е юнашар, тата Apple-ӑн тӑвӑмлӑ сӑнӳкерчӗкӗсем (build 19-ран): шлемра чӑн 3D, телефонра пӗр куҫ
@@ -1072,7 +1077,7 @@ Immuch360 Desktop-ӑн CI-ӗ (`.github/workflows/immuch360-desktop.yml`) `immuch
 
 - **Android телефонӗсемпе планшечӗсем**
   - Паян: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), е [Releases](https://github.com/freeKC/Immuch360/releases) страницӑри APK: телефон валли `Immuch360-v<version>-arm64-v8a-release.apk` (универсаллӑ `Immuch360-v<version>-release.apk` пур ҫӗрте те ӗҫлет, `-armeabi-v7a` кивӗрех 32 битлӑ телефонсем валли, `.aab` файлӗ Google Play валли, sideload валли мар). GitHub build-ӗ ытларах чухне лавккаран малта пырать. Кирек мӗнле пулсан та вӑл официаллӑ Immich приложенийӗ ҫумне лартӑнать (`com.aprogsys.immuch360` пакет).
-  - Часах: Google Play ҫинче build 18 ӗҫлет, build 20 2026 ҫулхи юпа уйӑхӗн 7-мӗшӗнченпе Google тӗрӗслевӗнче, build 19 вырӑнне.
+  - Часах: Google Play ҫинче build 20 2026 ҫулхи юпа уйӑхӗн 7-мӗшӗнченпе ӗҫлет, build 18 вырӑнне; build 21 телефонсемпе планшетсенче нимӗн те улӑштармасть.
 - **iPhone тата iPad**
   - Паян: Apple тӗрӗсленине кӗтет. Тӗрӗслеври версире build 11 функцийӗсем: Immich-а тиесе ярасси тата «Видео ҫӑлкуҫӗ» суйлавӗ (build 15) тата чӗрӗ Insta360 файлӗсем (build 16) App Store-ӑн кайрахри ҫӗнелӗвӗпе килӗҫ. Ҫӑлкуҫ кодне Xcode-па е Codemagic ҫинче хатӗрлеме пулать, пӑхӑр [Хӑвӑр хатӗрлесси](#build-it-yourself).
   - Часах: App Store, тӗрӗслевре.
@@ -1081,7 +1086,7 @@ Immuch360 Desktop-ӑн CI-ӗ (`.github/workflows/immuch360-desktop.yml`) `immuch
   - Часах: Meta Horizon Store ҫинче страницӑна 2026 ҫулхи юпа уйӑхӗн 7-мӗшӗнче build 14-па ырланӑ, build 21, унӑн пӗрремӗш ҫӗнелӗвӗ, Meta тӗрӗслевӗнче; лавккан alpha каналӗ (тестерсем валли кӑна) кашни ҫӗнӗ build-а илет.
 - **Android TV тата Google TV (build 20-ран)**
   - Паян: [Releases](https://github.com/freeKC/Immuch360/releases) страницӑри универсаллӑ `Immuch360-v<version>-release.apk`, adb-па sideload мелӗпе лартнӑ, пӑхӑр [Телевизор ҫине лартасси](#install-it-on-the-tv). Вӑл телефонсенчи пекех ҫав приложени.
-  - Часах: телевизорсем ҫинчи Google Play, Google телевизор релизне тӗрӗсленӗ хыҫҫӑн.
+  - Часах: телевизорсем ҫинчи Google Play, унӑн телевизорсем валли страници 2026 ҫулхи юпа уйӑхӗн 9-мӗшӗнченпе Google тӗрӗслевӗнче.
 - **Windows 10 тата 11, 64 бит (тӗрӗслев версийӗ)**
   - Паян: Immuch360 Desktop, [desktop малтанхи релизӗн](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIP-ӗ, [Windows ҫине тиесе илесси тата лартасси](#download-and-install-on-windows) каланӑ пек уҫса хута янӑскер. Халлӗхе сӑнӳкерчӗксемпе тикӗс видеосем: 360°, 3D тата VR180 видеосем малалли desktop build-семпе килеҫҫӗ.
   - Часах: 360°, 3D, VR180 тата чӗрӗ 360° видеосем; лартакан программа, алӑ пуснӑ build тата ҫӗнелӳсем каярах.
@@ -1165,22 +1170,24 @@ Desktop build 2-ран компьютерӗн видео плеерӗ унта `
 
 Immuch360 Desktop-ӑн Windows ZIP-ӗ, вӑл кӑна, хӑйӗн видео плеерне те тытать: libmpv, [mpv](https://mpv.io) библиотеки, ӑшӗнче [FFmpeg](https://ffmpeg.org), ӑна [media_kit](https://github.com/media-kit/media-kit) плагинӗсем ертсе пыраҫҫӗ. mpv тата FFmpeg-а GPL кӑна пайӗсемсӗр тӑваҫҫӗ, вӗсен кодӗ GNU LGPL 2.1 версийӗпе е ҫӗнӗрех версипе; пӗрле тунӑ `libmpv-2.dll` GNU LGPL 3 версийӗпе е ҫӗнӗрех версипе саланать. Приложени ӑна ӗҫленӗ вӑхӑтра тиет, ҫавӑнпа эсир ӑна хӑвӑр build-па улӑштарма пултаратӑр. Лицензи текстӗсем ZIP-ӑн `licenses` папкинче, кашни библиотека хӑйӗн лицензийӗпе тата ҫӑлкуҫ кодӗпе [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) файлта асӑннӑ.
 
+Android, Android TV тата Google TV Google LLC компанин товар паллисем; Apple, iPhone, iPad тата macOS Apple Inc. компанин товар паллисем; Meta тата Meta Quest Meta Platforms, Inc. компанин товар паллисем; Windows Microsoft компанисен ушкӑнӗн товар палли; Linux АПШра тата ытти ҫӗршывсенче регистрациленӗ товар палли, унӑн хуҫи Linus Torvalds. Вӗсен логотипӗсем платформӑсен таблицинче Immuch360 ӑҫта ӗҫленине кӑтартас тесе кӑна тӑраҫҫӗ, вӗсем нимӗнле ырлава та, ҫыхӑнӑва та пӗлтермеҫҫӗ. The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License. Tux, the Linux penguin, is by Larry Ewing (lewing@isc.tamu.edu), drawn with The GIMP, in the vector version by Simon Budig and Garrett LeSage. Логотипсен ҫӑлкуҫӗсемпе лицензийӗсем: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Аталану плана
 
 Мӗн халлӗхе тумасӑр юлнӑ, чи пулма пултараканни малта. Кунта нимӗн те сӑмах пани мар, [issue tracker](https://github.com/freeKC/Immuch360/issues) ҫинчи отзывсем малтан мӗн тумаллине татса пама пулӑшаҫҫӗ.
 
 - **Immuch360 Desktop, малтан Windows**: desktop build 2 тухрӗ, тикӗс видеосемпе, desktop ҫӑлкуҫ кодӗ 2026 ҫулхи юпа уйӑхӗн 9-мӗшӗнчен форкӑн тӗп турачӗнче, `immuch360` (пӑхӑр [Windows компьютерӗ ҫинче](#on-a-windows-computer-immuch360-desktop-preview)). Малалла, Windows ҫинче 360°, 3D, VR180 тата чӗрӗ 360° видеосем, чӗрӗ файлсен икӗ объективӗпе тата Tapo тӳрӗ эфирӗпе; унтан кашни функцие Windows компьютерӗ ҫинче тӗрӗслесси тата унӑн тӳрлетӗвӗсем; унтан веб-камерӑпа Spatial 2.5D; унтан Linux тата macOS, пакетсем, алӑ пусни тата ҫӗнелӳсем.
-- **Google Play**: build 18 ӗҫлет; build 20 2026 ҫулхи юпа уйӑхӗн 7-мӗшӗнченпе Google тӗрӗслевӗнче, build 19 вырӑнне. Build 21 телефонсемпе планшетсенче нимӗн те улӑштармасть.
+- **Google Play**: build 20 2026 ҫулхи юпа уйӑхӗн 7-мӗшӗнченпе ӗҫлет, build 18 вырӑнне; телевизорсем валли страница 2026 ҫулхи юпа уйӑхӗн 9-мӗшӗнченпе Google тӗрӗслевӗнче. Build 21 телефонсемпе планшетсенче нимӗн те улӑштармасть.
 - **App Store**: 3.3.0 версийӗ Apple тӗрӗсленине кӗтет; унра build 11 функцийӗсем, ҫавӑнпа Immich-а тиесе ярасси тата видео декодерне тӗрӗслесси (build 15) тата чӗрӗ Insta360 файлӗсем (build 16) App Store-ӑн тепӗр ҫӗнелӗвӗпе килеҫҫӗ. Ӗҫлеме тытӑнсан каҫӑ кунта хушӑнать.
 - **Meta Horizon Store**: Meta страницӑна 2026 ҫулхи юпа уйӑхӗн 7-мӗшӗнче build 14-па ырланӑ. Build 21-а унӑн пӗрремӗш ҫӗнелӗвӗ евӗр панӑ: вӑл build 14-ран пуҫласа мӗн пуррине пурне те илсе килет (тетел папкинчен Immich-а тиесси, шлем декодерлама пултарнине кура суйланӑ видео ҫӑлкуҫӗ, Insta360, GoPro тата DJI чӗрӗ файлӗсем, DLNA, телефона тетелте уҫасси, Apple тӑвӑмлӑ сӑнӳкерчӗкӗсем, Plex Media Server библиотекисем, Tapo камерисем), лавкка ӑна Quest 2, Quest Pro, Quest 3 тата 3S валли кӑтартать. Страница уҫӑ пулсан лавкка каҫи кунта хушӑнать; sideload мелӗпе лартнӑ копие малтан кӑларса пӑрахмалла (пӑхӑр [Лартасси](#install)).
-- **Лавккасенчи страницӑсем**: Google Play страницине 2026 ҫулхи юпа уйӑхӗнче ҫӗнӗ скриншотсемпе ҫӗнӗрен ҫырнӑ, телевизор релизӗпе вӑл телевизор скриншочӗсене тата телевизор баннерне илӗ. App Store текстӗ халӗ те пӗрремӗш build-сене ҫырса кӑтартать (360° сӑнӳкерчӗксемпе видеосем, чӗрӗ файлсем тикӗс курӑнаҫҫӗ); вӑл 3D, VR180 тата Spatial пӑхавҫисене, серверсӑр режима, тетел папкисене, медиа плеера тата чӗрӗ Insta360 файлӗсене кӑтартӗ. Meta Horizon Store текстӗ медиа плеера халех кӑтартать.
+- **Лавккасенчи страницӑсем**: Google Play страницине 2026 ҫулхи юпа уйӑхӗнче ҫӗнӗ скриншотсемпе ҫӗнӗрен ҫырнӑ, унӑн телевизор скриншочӗсене тата телевизор баннерне 2026 ҫулхи юпа уйӑхӗн 8-мӗшӗнче хушнӑ; телевизорсем валли страница 2026 ҫулхи юпа уйӑхӗн 9-мӗшӗнченпе Google тӗрӗслевӗнче. App Store текстӗ халӗ те пӗрремӗш build-сене ҫырса кӑтартать (360° сӑнӳкерчӗксемпе видеосем, чӗрӗ файлсем тикӗс курӑнаҫҫӗ); вӑл 3D, VR180 тата Spatial пӑхавҫисене, серверсӑр режима, тетел папкисене, медиа плеера тата чӗрӗ Insta360 файлӗсене кӑтартӗ. Meta Horizon Store текстӗ медиа плеера халех кӑтартать.
 - **360° камерӑсен чӗрӗ файлӗсем, малалла**: чӗрӗ сӑнӳкерчӗке шлем валли хатӗрленӗ чухне ӗҫ мӗн таран пынине кӑтартакан палӑ; GoPro тата DJI видеовӗсене хӑйсен хускану даннӑйӗсемпе тӳрлетесси; икӗ fisheye .dng; build 18-ӑн икӗ объективлӑ выляттарӑвӗ ҫинчен хатӗрсенчен килнӗ пӗлтерӳсем (X4, X5, X6, GoPro MAX 2, Osmo 360), ҫӗвӗсене тата декодер бюджечӗсене ҫирӗплетме.
 - **DLNA, телефон папки тата Apple тӑвӑмлӑ медиийӗ, малалла**: build 19-ӑн хатӗрсем ҫинчи пӗлтерӗвӗсем (DLNA урлӑ Plex, Jellyfin, NAS тата Freebox Server; Quest-а медиа паракан телефон, унӑн хотспочӗ урлӑ та; шлемри чӑн iPhone тӑвӑмлӑ сӑнӳкерчӗкӗсемпе видеовӗсем); iPhone-сем кашни DLNA серверне тупччӑр тесе Apple-ран ыйтнӑ multicast ирӗкӗ; шлемра тӑвӑмлӑ сӑнӳкерчӗксем хушшинче малтанхи тата малалли; вӑхӑт шкалинчи серверти сӑнӳкерчӗксем ҫинче тӑвӑмлӑх палли; Quest ҫинче тӑвӑмлӑ видеосем 3D-ра, унӑн декодерӗсем май парсан.
 - **Телефонсенчи 360° плеерсем, малалла**: iOS 360° видео плеерӗнче вӑхӑт йӗрри (Android плеерӗнче пур), телефонсенчи 360° плеерсенче Quest иммерсивлӑ курӑнӑмӗнчи пек малтанхи/малалли, тӑван 360° видео плеерӗнче сӑнӳкерчӗксем.
 - **Тетел папкисем, малалли утӑмсем**: сӑнӳкерчӗк тата видео страницисенче папкӑри пӗр файлтан теприне шӑвӑнтарса куҫасси (Quest иммерсивлӑ курӑнӑмӗ папкӑн 360° файлӗсем тӑрӑх халех куҫать), WebDAV валли Digest аутентификацийӗ, Bonjour ҫырӑвӗнчи усӑ куракан ячӗ.
 - **Тикӗс видеосем**: телефонсен тикӗс плеерӗнче сасӑ йӗрне суйласси, сервер, хатӗр тата тетел папкин видеовӗсем валли пӗр пек (360° тата Spatial плеерӗсенче вӑл пур, Immuch360 Desktop-ӑн тикӗс плеерӗнче те).
-- **Android TV, малалла**: build 20-ӑн Google TV эмуляторӗнчи тата чӑн телевизорти тестӗ, унтан Google Play ҫинчи телевизор релизӗ (телевизор скриншочӗсем, телевизор баннерӗ, Google тӗрӗслевӗ); каярах телевизорӑн тӗп экранӗнчи каналсем.
+- **Android TV, малалла**: build 20-ӑн Google TV эмуляторӗнчи тата чӑн телевизорти тестӗ, тата Google телевизорсем валли страницӑна тӗрӗсленӗ хыҫҫӑн Google Play ҫинчи телевизор релизӗ; каярах телевизорӑн тӗп экранӗнчи каналсем.
 - **Tapo камерисем, малалла**: build 20-ӑн чӑн камерӑсемпе тестӗ; iPhone тата iPad ҫинчи тӳрӗ эфир; H.265 ҫырса илнисем; клипа илнӗ вӑхӑтрах выляттарасси; пӗтӗм кунӑн ҫырса илнисене пӗр вӑхӑт йӗрринче кӑтартасси.
 - **Plex, малалла**: build 20-ӑн хатӗрсем ҫинчи тестӗ (телефонсем, Quest, iPhone, телевизор, килтен тулашра); токена компьютертан QR кодпа куҫарасси; тупнӑ серверсен списокӗнче Plex серверӗн DLNA енне пытарасси; IPv6.
 - **Upstream**: тытса тӑракансем кирлӗ тесе шутлакан пайсем валли Immich-а пӗчӗк pull request-сем, 360° сӑнӳкерчӗк пӑхавҫинчен пуҫласа.

@@ -13,14 +13,19 @@ Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, D
   <sub>Fork isiyo rasmi. Haihusiani na Immich wala FUTO. Jina linasomeka kama "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK ya Android</a><br>
-  App Store: <a href="#where-to-get-it">inakaguliwa</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store imeidhinishwa, build 21 imewasilishwa kama sasisho lake la kwanza<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">pakua toleo la majaribio</a>, build ya kompyuta 2
-</p>
+<div align="center">
+
+| Jukwaa | Mahali pa kuipata | Hali tarehe 9 Oktoba 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 kwenye Google Play tangu tarehe 7 Oktoba 2026, build 21 kwenye GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone na iPad** | App Store | toleo 3.3.0 linasubiri ukaguzi wa Apple; kwa sasa [ijenge mwenyewe](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [APK](#meta-quest-3) · Horizon Store | ukurasa umeidhinishwa, build 21 inakaguliwa na Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 kwenye GitHub; ukurasa wa Google Play kwa TV unakaguliwa na Google tangu tarehe 9 Oktoba 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP ya majaribio](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | build ya kompyuta 2 kwenye Windows: picha na video bapa, video za 360° zitafuata; macOS na Linux baadaye, kutoka kwa msimbo uleule |
+
+*Hali husasishwa kila toleo jipya; maelezo yako katika [Mahali pa kuipata](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° asilia**<br>Picha na video kama tufe unalotazama pande zote, kwa jairoskopu, ikiwemo faili ghafi za kamera (Insta360 kuanzia build 16, GoPro na DJI kuanzia build 18). Pia kicheza video bure: bapa, 360°, 3D, VR180
 - 👓 **3D asilia**<br>360° na VR180 za stereo, juu na chini au ubavu kwa ubavu, na picha za anga za Apple (kuanzia build 19): 3D halisi ndani ya headset, jicho moja kwenye simu
@@ -1072,7 +1077,7 @@ Programu iko kwenye Google Play kwa simu na kompyuta kibao; toleo la App Store l
 
 - **Simu na kompyuta kibao za Android**
   - Leo: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), au APK kwenye ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` kwa simu (`Immuch360-v<version>-release.apk` ya jumla inafanya kazi kila mahali, `-armeabi-v7a` ni kwa simu za zamani za biti 32, na faili ya `.aab` ni kwa Google Play, si kwa sideload). Build ya GitHub kwa kawaida iko mbele ya duka. Kwa njia yoyote inasakinishwa kando ya programu rasmi ya Immich (kifurushi `com.aprogsys.immuch360`).
-  - Hivi karibuni: kwenye Google Play, build 18 imechapishwa, build 20 inakaguliwa na Google tangu tarehe 7 Oktoba 2026, badala ya build 19.
+  - Hivi karibuni: kwenye Google Play, build 20 imechapishwa tangu tarehe 7 Oktoba 2026, badala ya build 18; build 21 haibadilishi chochote kwenye simu na kompyuta kibao.
 - **iPhone na iPad**
   - Leo: inasubiri ukaguzi wa Apple. Toleo linalokaguliwa lina vipengele vya build 11: upakiaji kwenye Immich na chaguo la Chanzo cha video (build 15) na faili ghafi za Insta360 (build 16) vitakuja na sasisho la baadaye la App Store. Msimbo chanzo unajengwa kwa Xcode au kwenye Codemagic, tazama [Ijenge mwenyewe](#build-it-yourself).
   - Hivi karibuni: App Store, inakaguliwa.
@@ -1081,7 +1086,7 @@ Programu iko kwenye Google Play kwa simu na kompyuta kibao; toleo la App Store l
   - Hivi karibuni: kwenye Meta Horizon Store, orodha iliidhinishwa tarehe 7 Oktoba 2026 pamoja na build 14, na build 21, sasisho lake la kwanza, inakaguliwa na Meta; chaneli ya alpha ya duka (wajaribu pekee) inapata kila build mpya.
 - **Android TV na Google TV (kuanzia build 20)**
   - Leo: `Immuch360-v<version>-release.apk` ya jumla ya ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases), iliyosakinishwa kwa sideload kupitia adb, tazama [Isakinishe kwenye televisheni](#install-it-on-the-tv). Ni programu ileile kama kwenye simu.
-  - Hivi karibuni: Google Play kwenye televisheni, baada ya ukaguzi wa Google wa toleo la televisheni.
+  - Hivi karibuni: Google Play kwenye televisheni, ambayo orodha yake inakaguliwa na Google tangu tarehe 9 Oktoba 2026.
 - **Windows 10 na 11, biti 64 (toleo la majaribio)**
   - Leo: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ya [toleo la awali la kompyuta](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), iliyofunguliwa na kuanzishwa kama [Pakua na usakinishe kwenye Windows](#download-and-install-on-windows) inavyosema. Picha na video bapa kwa sasa: video za 360°, 3D na VR180 zinakuja na build zijazo za kompyuta.
   - Hivi karibuni: video za 360°, 3D, VR180 na video ghafi za 360°; kisakinishi, build iliyotiwa sahihi na masasisho baadaye.
@@ -1165,22 +1170,24 @@ Mradi huu ni fork ya Immich na unabaki chini ya [GNU AGPL v3](../LICENSE). Kila 
 
 ZIP ya Windows ya Immuch360 Desktop, na hiyo pekee, pia inabeba kicheza video chake: libmpv, maktaba ya [mpv](https://mpv.io), ikiwa na [FFmpeg](https://ffmpeg.org) ndani yake, inayoendeshwa na plugins za [media_kit](https://github.com/media-kit/media-kit). mpv na FFmpeg zimejengwa bila sehemu zao zilizo za GPL pekee, na msimbo wao uko chini ya GNU LGPL toleo la 2.1 au la baadaye; zikijengwa pamoja, `libmpv-2.dll` inasambazwa chini ya GNU LGPL toleo la 3 au la baadaye. Programu inaipakia wakati wa kuendesha, kwa hivyo unaweza kuibadilisha na build yako mwenyewe. Maandishi ya leseni yako kwenye folda ya `licenses` ya ZIP, na kila maktaba pamoja na leseni yake na msimbo wake imeorodheshwa katika [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV na Google TV ni alama za biashara za Google LLC; Apple, iPhone, iPad na macOS ni alama za biashara za Apple Inc.; Meta na Meta Quest ni alama za biashara za Meta Platforms, Inc.; Windows ni alama ya biashara ya kundi la kampuni za Microsoft; Linux ni alama ya biashara iliyosajiliwa ya Linus Torvalds nchini Marekani na nchi nyingine. Nembo zao zinaonekana kwenye jedwali la majukwaa ili tu kuonyesha mahali Immuch360 inapofanya kazi, na hazimaanishi uidhinishaji wala uhusiano wowote. Roboti ya Android imetolewa tena au kurekebishwa kutoka kwa kazi iliyoundwa na kushirikiwa na Google, na inatumiwa kulingana na masharti yaliyoelezwa katika Creative Commons 3.0 Attribution License. Tux, pengwini wa Linux, ni kazi ya Larry Ewing (lewing@isc.tamu.edu), iliyochorwa kwa The GIMP, katika toleo la vekta la Simon Budig na Garrett LeSage. Vyanzo na leseni za nembo: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Mpango wa kazi
 
 Kile ambacho bado hakijafanywa, kinachowezekana zaidi kwanza. Hakuna hapa ambacho ni ahadi, na maoni kwenye [kifuatiliaji cha masuala](https://github.com/freeKC/Immuch360/issues) yanasaidia kuamua kipi kinakuja kwanza.
 
 - **Immuch360 Desktop, Windows kwanza**: build ya kompyuta 2 imetoka, ikiwa na video bapa, na msimbo wa kompyuta uko kwenye tawi kuu la fork, `immuch360`, tangu tarehe 9 Oktoba 2026 (tazama [Kwenye kompyuta ya Windows](#on-a-windows-computer-immuch360-desktop-preview)). Kinachofuata, video za 360°, 3D, VR180 na video ghafi za 360° kwenye Windows, pamoja na lenzi mbili za faili ghafi na mwonekano wa moja kwa moja wa Tapo; kisha jaribio la kila kipengele kwenye PC ya Windows na marekebisho yake; kisha Spatial 2.5D kwa kamera ya wavuti; kisha Linux na macOS, vifurushi, sahihi na masasisho.
-- **Google Play**: build 18 imechapishwa; build 20 inakaguliwa na Google tangu tarehe 7 Oktoba 2026, badala ya build 19. Build 21 haibadilishi chochote kwenye simu na kompyuta kibao.
+- **Google Play**: build 20 imechapishwa tangu tarehe 7 Oktoba 2026, badala ya build 18; orodha ya televisheni inakaguliwa na Google tangu tarehe 9 Oktoba 2026. Build 21 haibadilishi chochote kwenye simu na kompyuta kibao.
 - **App Store**: toleo 3.3.0 linasubiri ukaguzi wa Apple; lina vipengele vya build 11, kwa hiyo upakiaji kwenye Immich na ukaguzi wa visimbuzi vya video (build 15) na faili ghafi za Insta360 (build 16) vitakuja na sasisho linalofuata la App Store. Kiungo kitaongezwa hapa litakapochapishwa.
 - **Meta Horizon Store**: Meta iliidhinisha orodha tarehe 7 Oktoba 2026 pamoja na build 14. Build 21 imewasilishwa kama sasisho lake la kwanza: inaleta kila kitu tangu build 14 (kupakia kutoka hifadhi kwenda Immich, chanzo cha video kinachochaguliwa kulingana na kile headset inachosimbua, faili ghafi za Insta360, GoPro na DJI, DLNA, hifadhi ya simu, picha za anga za Apple, maktaba za Plex Media Server, kamera za Tapo), na duka linaiorodhesha kwa Quest 2, Quest Pro, Quest 3 na 3S. Kiungo cha duka kitaongezwa hapa ukurasa ukishakuwa wa umma; nakala iliyosakinishwa kwa sideload lazima iondolewe kwanza (tazama [Usakinishaji](#install)).
-- **Orodha za maduka**: orodha ya Google Play iliandikwa upya Oktoba 2026 pamoja na picha mpya za skrini, na itapata picha za skrini za televisheni na bango la televisheni pamoja na toleo la televisheni. Maandishi ya App Store bado yanaeleza build za kwanza (picha na video za 360°, faili ghafi zikionyeshwa bapa); yatatambulisha vitazamaji vya 3D, VR180 na Spatial, hali ya bila seva, hifadhi za mtandao, kicheza midia na faili ghafi za Insta360. Maandishi ya Meta Horizon Store tayari yanatambulisha kicheza midia.
+- **Orodha za maduka**: orodha ya Google Play iliandikwa upya Oktoba 2026 pamoja na picha mpya za skrini, na picha zake za skrini za televisheni na bango lake la televisheni viliongezwa tarehe 8 Oktoba 2026; orodha ya televisheni inakaguliwa na Google tangu tarehe 9 Oktoba 2026. Maandishi ya App Store bado yanaeleza build za kwanza (picha na video za 360°, faili ghafi zikionyeshwa bapa); yatatambulisha vitazamaji vya 3D, VR180 na Spatial, hali ya bila seva, hifadhi za mtandao, kicheza midia na faili ghafi za Insta360. Maandishi ya Meta Horizon Store tayari yanatambulisha kicheza midia.
 - **Faili ghafi za kamera za 360°, kinachofuata**: kiashiria cha maendeleo wakati picha ghafi inaandaliwa kwa headset; kunyoosha video za GoPro na DJI kutoka data zao zenyewe za mwendo; fisheye mbili za .dng; ripoti za vifaa kuhusu uchezaji wa lenzi mbili wa build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) ili kuthibitisha mishono na uwezo wa visimbuzi.
 - **DLNA, hifadhi ya simu na anga ya Apple, kinachofuata**: ripoti za vifaa za build 19 (Plex, Jellyfin, NAS na Freebox Server kupitia DLNA; simu inayohudumia Quest, pia kupitia hotspot yake; picha na video halisi za anga za iPhone ndani ya headset); haki ya multicast iliyoombwa kutoka Apple, ili iPhone zipate kila seva ya DLNA; iliyotangulia na inayofuata kati ya picha za anga ndani ya headset; beji ya anga kwenye picha za seva katika rekodi ya matukio; video za anga kwa 3D kwenye Quest, ikiwa visimbuzi vyake vinaruhusu.
 - **Vicheza vya 360° kwenye simu, kinachofuata**: upau wa muda katika kicheza video cha 360° cha iOS (cha Android kinao), iliyotangulia/inayofuata katika vicheza vya 360° vya simu kama ilivyo kwenye mwonekano wa uhalisia pepe wa Quest, na picha katika kicheza asilia cha video za 360°.
 - **Hifadhi za mtandao, hatua zinazofuata**: kutelezesha kutoka faili moja ya folda hadi inayofuata katika kurasa za picha na video (mwonekano wa uhalisia pepe wa Quest tayari unapitia faili za 360° za folda), uthibitishaji wa Digest kwa WebDAV, jina la mtumiaji kutoka rekodi ya Bonjour.
 - **Video bapa**: chaguo la wimbo wa sauti katika kicheza bapa cha simu, kwa video za seva, kifaa na hifadhi sawasawa (vicheza vya 360° na Spatial vinalo, na kicheza bapa cha Immuch360 Desktop pia kinalo).
-- **Android TV, kinachofuata**: jaribio la kifaa la build 20 kwenye kiigaji cha Google TV na televisheni halisi, kisha toleo la televisheni kwenye Google Play (picha za skrini za televisheni, bango la televisheni, ukaguzi wa Google); baadaye, chaneli kwenye skrini ya mwanzo ya televisheni.
+- **Android TV, kinachofuata**: jaribio la kifaa la build 20 kwenye kiigaji cha Google TV na televisheni halisi, na toleo la televisheni kwenye Google Play mara Google itakapomaliza kukagua orodha ya televisheni; baadaye, chaneli kwenye skrini ya mwanzo ya televisheni.
 - **Kamera za Tapo, kinachofuata**: jaribio la kifaa la build 20 kwa kamera halisi; mwonekano wa moja kwa moja kwenye iPhone na iPad; rekodi za H.265; kucheza klipu inapoletwa; rekodi za siku nzima kwenye mstari mmoja wa muda.
 - **Plex, kinachofuata**: jaribio la kifaa la build 20 (simu, Quest, iPhone, televisheni, nje ya nyumbani); kuleta tokeni kutoka kompyuta kwa msimbo wa QR; kuficha upande wa DLNA wa seva ya Plex katika orodha ya seva zilizopatikana; IPv6.
 - **Upstream**: pull request ndogo kwa Immich kwa sehemu ambazo watunzaji wanataka, kuanzia na kitazamaji cha picha za 360°.

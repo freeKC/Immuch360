@@ -13,14 +13,19 @@ Ia untuk mereka yang merakam dengan kamera 360° (Insta360, GoPro MAX, DJI Osmo 
   <sub>Fork tidak rasmi. Tidak bergabung dengan Immich atau FUTO. Nama ini dibaca seperti "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK Android</a><br>
-  App Store: <a href="#where-to-get-it">sedang disemak</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store diluluskan, binaan 21 dihantar sebagai kemas kini pertamanya<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">muat turun pratonton</a>, binaan desktop 2
-</p>
+<div align="center">
+
+| Platform | Di mana untuk mendapatkannya | Status pada 9 Oktober 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 20 di Google Play sejak 7 Oktober 2026, binaan 21 di GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.0 menunggu semakan Apple; sementara itu, [bina sendiri](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | penyenaraian diluluskan, binaan 21 dalam semakan Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 21 di GitHub; penyenaraian Google Play untuk TV dalam semakan Google sejak 9 Oktober 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | binaan desktop 2 pada Windows: foto dan video rata, video 360° seterusnya; macOS dan Linux kemudian, daripada sumber yang sama |
+
+*Status dikemas kini pada setiap keluaran; butirannya ada di [Di mana untuk mendapatkannya](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° asli**<br>Foto dan video sebagai sfera yang boleh anda lihat sekeliling, dengan giroskop, termasuk fail kamera mentah (Insta360 dari binaan 16, GoPro dan DJI dari binaan 18). Juga pemain video percuma: rata, 360°, 3D, VR180
 - 👓 **3D asli**<br>360° stereoskopik dan VR180, atas dan bawah atau sebelah-menyebelah, serta foto ruang Apple (dari binaan 19): 3D sebenar dalam set kepala, satu mata pada telefon
@@ -1072,7 +1077,7 @@ Aplikasi ini ada di Google Play untuk telefon dan tablet; versi App Store sedang
 
 - **Telefon dan tablet Android**
   - Hari ini: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), atau APK pada halaman [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk telefon (`Immuch360-v<version>-release.apk` universal berfungsi di mana-mana, `-armeabi-v7a` untuk telefon 32 bit yang lebih lama, dan fail `.aab` untuk Google Play, bukan untuk sideload). Binaan GitHub biasanya lebih awal daripada gedung. Walau bagaimanapun, ia dipasang di sebelah aplikasi rasmi Immich (pakej `com.aprogsys.immuch360`).
-  - Tidak lama lagi: di Google Play, binaan 18 tersedia, binaan 20 dalam semakan Google sejak 7 Oktober 2026, menggantikan binaan 19.
+  - Tidak lama lagi: di Google Play, binaan 20 tersedia sejak 7 Oktober 2026, menggantikan binaan 18; binaan 21 tidak mengubah apa-apa pada telefon dan tablet.
 - **iPhone dan iPad**
   - Hari ini: menunggu semakan Apple. Versi yang sedang disemak membawa ciri binaan 11: muat naik ke Immich dan pilihan Sumber video (binaan 15) serta fail Insta360 mentah (binaan 16) akan datang bersama kemas kini App Store yang kemudian. Kod sumber dibina dengan Xcode atau pada Codemagic, lihat [Bina sendiri](#build-it-yourself).
   - Tidak lama lagi: App Store, sedang disemak.
@@ -1081,7 +1086,7 @@ Aplikasi ini ada di Google Play untuk telefon dan tablet; versi App Store sedang
   - Tidak lama lagi: di Meta Horizon Store, penyenaraian diluluskan pada 7 Oktober 2026 bersama binaan 14, dan binaan 21, kemas kini pertamanya, dalam semakan Meta; saluran alfa gedung (penguji sahaja) menerima setiap binaan baharu.
 - **Android TV dan Google TV (dari binaan 20)**
   - Hari ini: `Immuch360-v<version>-release.apk` universal daripada halaman [Releases](https://github.com/freeKC/Immuch360/releases), dipasang secara sideload dengan adb, lihat [Pasangnya pada TV](#install-it-on-the-tv). Ia aplikasi yang sama seperti pada telefon.
-  - Tidak lama lagi: Google Play pada TV, selepas semakan Google terhadap keluaran TV.
+  - Tidak lama lagi: Google Play pada TV, yang penyenaraiannya dalam semakan Google sejak 9 Oktober 2026.
 - **Windows 10 dan 11, 64 bit (pratonton)**
   - Hari ini: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` daripada [pra-keluaran desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), dinyahzip dan dimulakan seperti yang diterangkan dalam [Muat turun dan pasang pada Windows](#download-and-install-on-windows). Foto dan video rata buat masa ini: video 360°, 3D dan VR180 datang dengan binaan desktop seterusnya.
   - Tidak lama lagi: video 360°, 3D, VR180 dan video 360° mentah; pemasang, binaan bertandatangan dan kemas kini kemudian.
@@ -1165,22 +1170,24 @@ Projek ini ialah fork Immich dan kekal di bawah [GNU AGPL v3](../LICENSE). Setia
 
 ZIP Windows Immuch360 Desktop, dan hanya ZIP itu, juga membawa pemain videonya: libmpv, pustaka [mpv](https://mpv.io), dengan [FFmpeg](https://ffmpeg.org) di dalamnya, dipandu oleh pemalam [media_kit](https://github.com/media-kit/media-kit). mpv dan FFmpeg dibina tanpa bahagiannya yang GPL sahaja, dan kodnya di bawah GNU LGPL versi 2.1 atau lebih baharu; apabila dibina bersama, `libmpv-2.dll` diedarkan di bawah GNU LGPL versi 3 atau lebih baharu. Aplikasi memuatkannya semasa berjalan, jadi anda boleh menggantikannya dengan binaan anda sendiri. Teks lesen ada dalam folder `licenses` dalam ZIP, dan setiap pustaka bersama lesen dan sumbernya disenaraikan dalam [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV dan Google TV ialah tanda dagangan Google LLC; Apple, iPhone, iPad dan macOS ialah tanda dagangan Apple Inc.; Meta dan Meta Quest ialah tanda dagangan Meta Platforms, Inc.; Windows ialah tanda dagangan kumpulan syarikat Microsoft; Linux ialah tanda dagangan berdaftar Linus Torvalds di A.S. dan negara lain. Logo-logo ini muncul dalam jadual platform hanya untuk menunjukkan di mana Immuch360 berjalan dan tidak membayangkan sebarang sokongan atau gabungan. Robot Android dihasilkan semula atau diubah suai daripada karya yang dicipta dan dikongsi oleh Google dan digunakan mengikut syarat yang diterangkan dalam Creative Commons 3.0 Attribution License. Tux, penguin Linux, ialah karya Larry Ewing (lewing@isc.tamu.edu), dilukis dengan The GIMP, dalam versi vektor oleh Simon Budig dan Garrett LeSage. Sumber dan lesen logo: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Pelan hala tuju
 
 Apa yang belum siap, yang paling mungkin dahulu. Tiada apa di sini merupakan janji, dan maklum balas dalam [penjejak isu](https://github.com/freeKC/Immuch360/issues) membantu menentukan apa yang didahulukan.
 
 - **Immuch360 Desktop, Windows dahulu**: binaan desktop 2 sudah tersedia, dengan video rata, dan sumber desktop berada dalam cabang utama fork, `immuch360`, sejak 9 Oktober 2026 (lihat [Pada komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Seterusnya, video 360°, 3D, VR180 dan video 360° mentah pada Windows, dengan dua kanta fail mentah dan paparan langsung Tapo; kemudian ujian setiap fungsi pada PC Windows dan pembetulannya; kemudian Spatial 2.5D dengan kamera web; kemudian Linux dan macOS, pakej, tandatangan dan kemas kini.
-- **Google Play**: binaan 18 tersedia; binaan 20 dalam semakan Google sejak 7 Oktober 2026, menggantikan binaan 19. Binaan 21 tidak mengubah apa-apa pada telefon dan tablet.
+- **Google Play**: binaan 20 tersedia sejak 7 Oktober 2026, menggantikan binaan 18; penyenaraian untuk TV dalam semakan Google sejak 9 Oktober 2026. Binaan 21 tidak mengubah apa-apa pada telefon dan tablet.
 - **App Store**: versi 3.3.0 sedang menunggu semakan Apple; ia membawa ciri binaan 11, jadi muat naik ke Immich dan semakan penyahkod video (binaan 15) serta fail Insta360 mentah (binaan 16) akan datang bersama kemas kini App Store seterusnya. Pautan akan ditambah di sini apabila ia tersedia.
 - **Meta Horizon Store**: Meta meluluskan penyenaraian pada 7 Oktober 2026 bersama binaan 14. Binaan 21 telah dihantar sebagai kemas kini pertamanya: ia membawa semua yang ada sejak binaan 14 (muat naik daripada perkongsian ke Immich, sumber video dipilih mengikut apa yang dapat dinyahkod oleh set kepala, fail mentah Insta360, GoPro dan DJI, DLNA, perkongsian telefon, foto ruang Apple, pustaka Plex Media Server, kamera Tapo), dan gedung menyenaraikannya untuk Quest 2, Quest Pro, Quest 3 dan 3S. Pautan gedung akan ditambah di sini setelah halaman menjadi umum; salinan sideload perlu dinyahpasang dahulu (lihat [Pasang](#install)).
-- **Penyenaraian gedung**: penyenaraian Google Play telah ditulis semula pada Oktober 2026 dengan tangkapan skrin baharu, dan akan mendapat tangkapan skrin TV serta sepanduk TV bersama keluaran TV. Teks App Store masih menerangkan binaan awal (foto dan video 360°, fail mentah dipaparkan rata); ia akan memperkenalkan pemapar 3D, VR180 dan Spatial, mod tanpa pelayan, perkongsian rangkaian, pemain media dan fail Insta360 mentah. Teks Meta Horizon Store sudah memperkenalkan pemain media.
+- **Penyenaraian gedung**: penyenaraian Google Play telah ditulis semula pada Oktober 2026 dengan tangkapan skrin baharu, dan tangkapan skrin TV serta sepanduk TV ditambah pada 8 Oktober 2026; penyenaraian untuk TV dalam semakan Google sejak 9 Oktober 2026. Teks App Store masih menerangkan binaan awal (foto dan video 360°, fail mentah dipaparkan rata); ia akan memperkenalkan pemapar 3D, VR180 dan Spatial, mod tanpa pelayan, perkongsian rangkaian, pemain media dan fail Insta360 mentah. Teks Meta Horizon Store sudah memperkenalkan pemain media.
 - **Fail mentah kamera 360°, seterusnya**: penunjuk kemajuan semasa foto mentah disediakan untuk set kepala; perataan video GoPro dan DJI daripada data gerakan mereka sendiri; .dng fisheye berkembar; laporan peranti tentang main balik dua lensa binaan 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) untuk mengesahkan sambungan dan bajet penyahkod.
 - **DLNA, perkongsian telefon dan media ruang Apple, seterusnya**: laporan peranti binaan 19 (Plex, Jellyfin, NAS dan Freebox Server melalui DLNA; telefon yang menyediakan kandungan kepada Quest, termasuk melalui tempat liputannya; foto dan video ruang iPhone sebenar dalam set kepala); hak multicast yang dipohon daripada Apple, supaya iPhone menemui setiap pelayan DLNA; sebelumnya dan seterusnya antara foto ruang dalam set kepala; lencana ruang pada foto pelayan dalam garis masa; video ruang dalam 3D pada Quest, jika penyahkodnya membenarkan.
 - **Pemain 360° pada telefon, seterusnya**: bar masa dalam pemain video 360° iOS (pemain Android sudah ada), sebelumnya/seterusnya dalam pemain 360° telefon seperti dalam paparan imersif Quest, dan foto dalam pemain video 360° asli.
 - **Perkongsian rangkaian, langkah seterusnya**: meleret dari satu fail folder ke fail seterusnya pada halaman foto dan video (paparan imersif Quest sudah bergerak melalui fail 360° dalam folder), pengesahan Digest untuk WebDAV, nama pengguna daripada rekod Bonjour.
 - **Video rata**: pilihan trek audio dalam pemain rata telefon, untuk video pelayan, peranti dan perkongsian (pemain 360° dan Spatial sudah ada, begitu juga pemain rata Immuch360 Desktop).
-- **Android TV, seterusnya**: ujian peranti binaan 20 pada emulator Google TV dan TV sebenar, kemudian keluaran TV di Google Play (tangkapan skrin TV, sepanduk TV, semakan Google); kemudian, saluran pada skrin utama TV.
+- **Android TV, seterusnya**: ujian peranti binaan 20 pada emulator Google TV dan TV sebenar, dan keluaran TV di Google Play sebaik sahaja Google selesai menyemak penyenaraian untuk TV; kemudian, saluran pada skrin utama TV.
 - **Kamera Tapo, seterusnya**: ujian peranti binaan 20 dengan kamera sebenar; paparan langsung pada iPhone dan iPad; rakaman H.265; memainkan klip semasa ia diambil; rakaman sepanjang hari pada satu garis masa.
 - **Plex, seterusnya**: ujian peranti binaan 20 (telefon, Quest, iPhone, TV, di luar rumah); membawa token dari komputer dengan kod QR; menyembunyikan bahagian DLNA pelayan Plex dalam senarai pelayan yang ditemui; IPv6.
 - **Upstream**: pull request kecil kepada Immich untuk bahagian yang dikehendaki oleh penyelenggara, bermula dengan pemapar foto 360°.

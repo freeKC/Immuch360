@@ -13,14 +13,19 @@ Immuch360 همان برنامهٔ موبایل Immich است با عکس‌ها 
   <sub>فورک غیررسمی. وابسته به Immich یا FUTO نیست. نام آن «I am much 360» خوانده می‌شود.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK اندروید</a><br>
-  App Store: <a href="#where-to-get-it">در حال بررسی</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>، Horizon Store تأیید شده، بیلد 21 به‌عنوان نخستین به‌روزرسانی آن فرستاده شده<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">دانلود پیش‌نمایش</a>، desktop build 2
-</p>
+<div align="center">
+
+| پلتفرم | از کجا تهیه کنیم | وضعیت در 9 اکتبر 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** تلفن‌ها و تبلت‌ها | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | بیلد 20 از 7 اکتبر 2026 در Google Play، بیلد 21 روی GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone و iPad** | App Store | نسخهٔ 3.3.0 منتظر بررسی Apple؛ تا آن زمان [خودتان بسازید](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2، Pro، 3 و 3S | [APK](#meta-quest-3) · Horizon Store | صفحه تأیید شده، بیلد 21 در حال بررسی Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV و Google TV** | [APK](#install-it-on-the-tv) · Google Play | بیلد 21 روی GitHub؛ صفحهٔ Google Play برای تلویزیون‌ها از 9 اکتبر 2026 در حال بررسی Google است |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP پیش‌نمایش](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | بیلد دسکتاپ 2 روی Windows: عکس‌ها و ویدیوهای تخت، ویدیوهای 360° در ادامه؛ macOS و Linux بعدها، از همان منابع |
+
+*وضعیت‌ها در هر انتشار به‌روز می‌شوند؛ جزئیات در [از کجا تهیه کنیم](#where-to-get-it) آمده است.*
+
+</div>
 
 - 🌐 **360° بومی**<br>عکس‌ها و ویدیوها به‌صورت کره‌ای که در آن به اطراف نگاه می‌کنید، با ژیروسکوپ، همراه با فایل‌های خام دوربین (Insta360 از بیلد 16، GoPro و DJI از بیلد 18). یک پخش‌کنندهٔ ویدیوی رایگان هم هست: تخت، 360°، 3D، VR180
 - 👓 **3D بومی**<br>360° استریوسکوپی و VR180، بالا و پایین یا کنار هم، و عکس‌های فضایی Apple (از بیلد 19): 3D واقعی در هدست، یک چشم روی تلفن
@@ -1072,7 +1077,7 @@ CI مربوط به Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`)
 
 - **تلفن‌ها و تبلت‌های Android**
   - امروز: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)، یا APK در صفحهٔ [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` برای تلفن (`Immuch360-v<version>-release.apk` جهانی همه‌جا کار می‌کند، `-armeabi-v7a` برای تلفن‌های قدیمی‌تر 32 بیتی است، و فایل `.aab` برای Google Play است، نه برای نصب دستی). بیلد GitHub معمولاً از فروشگاه جلوتر است. در هر صورت کنار برنامهٔ رسمی Immich نصب می‌شود (بستهٔ `com.aprogsys.immuch360`).
-  - به‌زودی: در Google Play، بیلد 18 منتشر شده، بیلد 20 از 7 اکتبر 2026 در حال بررسی Google است، به‌جای بیلد 19.
+  - به‌زودی: در Google Play، بیلد 20 از 7 اکتبر 2026 منتشر شده است، به‌جای بیلد 18؛ بیلد 21 هیچ چیز را روی تلفن‌ها و تبلت‌ها تغییر نمی‌دهد.
 - **iPhone و iPad**
   - امروز: منتظر بررسی Apple. نسخهٔ در حال بررسی قابلیت‌های بیلد 11 را دارد: بارگذاری در Immich و انتخاب «منبع ویدیو» (بیلد 15) و فایل‌های خام Insta360 (بیلد 16) با یک به‌روزرسانی بعدی App Store می‌آیند. کد منبع با Xcode یا روی Codemagic ساخته می‌شود، ببینید [خودتان بسازید](#build-it-yourself).
   - به‌زودی: App Store، در حال بررسی.
@@ -1081,7 +1086,7 @@ CI مربوط به Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`)
   - به‌زودی: در Meta Horizon Store، صفحه در 7 اکتبر 2026 با بیلد 14 تأیید شد، و بیلد 21، نخستین به‌روزرسانی آن، در حال بررسی Meta است؛ کانال آلفای فروشگاه (فقط برای آزمایش‌کنندگان) هر بیلد تازه را دریافت می‌کند.
 - **Android TV و Google TV (از بیلد 20)**
   - امروز: `Immuch360-v<version>-release.apk` جهانی در صفحهٔ [Releases](https://github.com/freeKC/Immuch360/releases)، که با adb به‌صورت دستی نصب می‌شود، ببینید [نصب روی تلویزیون](#install-it-on-the-tv). همان برنامهٔ تلفن‌هاست.
-  - به‌زودی: Google Play روی تلویزیون‌ها، پس از بررسی Google برای نسخهٔ تلویزیون.
+  - به‌زودی: Google Play روی تلویزیون‌ها، که صفحهٔ آن از 9 اکتبر 2026 در حال بررسی Google است.
 - **Windows 10 و 11، 64 بیتی (پیش‌نمایش)**
   - امروز: Immuch360 Desktop، فایل ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` از [پیش‌انتشار دسکتاپ](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2)، که همان‌طور که [دانلود و نصب روی Windows](#download-and-install-on-windows) می‌گوید استخراج و اجرا می‌شود. فعلاً عکس‌ها و ویدیوهای تخت: ویدیوهای 360°، 3D و VR180 با بیلدهای بعدی دسکتاپ می‌آیند.
   - به‌زودی: ویدیوهای 360°، 3D، VR180 و ویدیوهای خام 360°؛ یک نصب‌کننده، یک بیلد امضاشده و به‌روزرسانی‌ها بعداً.
@@ -1165,22 +1170,24 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 فایل ZIP مربوط به Windows از Immuch360 Desktop، و فقط همین فایل، پخش‌کنندهٔ ویدیوی خود را هم دارد: libmpv، کتابخانهٔ [mpv](https://mpv.io)، با [FFmpeg](https://ffmpeg.org) در درون آن، که با افزونه‌های [media_kit](https://github.com/media-kit/media-kit) هدایت می‌شود. mpv و FFmpeg بدون بخش‌هایی که فقط GPL هستند ساخته می‌شوند، و کد آن‌ها تحت GNU LGPL نسخهٔ 2.1 یا بالاتر است؛ با ساخته شدن در کنار هم، `libmpv-2.dll` تحت GNU LGPL نسخهٔ 3 یا بالاتر توزیع می‌شود. برنامه آن را در زمان اجرا بارگذاری می‌کند، بنابراین می‌توانید آن را با ساخت خودتان جایگزین کنید. متن مجوزها در پوشهٔ `licenses` فایل ZIP است، و هر کتابخانه همراه با مجوز و کد منبعش در [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) فهرست شده است.
 
+Android، Android TV و Google TV علامت‌های تجاری Google LLC هستند؛ Apple، iPhone، iPad و macOS علامت‌های تجاری Apple Inc. هستند؛ Meta و Meta Quest علامت‌های تجاری Meta Platforms, Inc. هستند؛ Windows علامت تجاری گروه شرکت‌های Microsoft است؛ Linux علامت تجاری ثبت‌شدهٔ Linus Torvalds در ایالات متحده و کشورهای دیگر است. لوگوهای آن‌ها فقط برای نشان دادن جایی که Immuch360 اجرا می‌شود در جدول پلتفرم‌ها آمده‌اند و به معنای هیچ‌گونه تأیید یا وابستگی نیستند. ربات Android از اثری که Google ساخته و به اشتراک گذاشته است بازتولید یا اصلاح شده و مطابق شرایط شرح‌داده‌شده در Creative Commons 3.0 Attribution License به کار می‌رود. Tux، پنگوئن Linux، اثر Larry Ewing (lewing@isc.tamu.edu) است، کشیده‌شده با The GIMP، در نسخهٔ برداری Simon Budig و Garrett LeSage. منابع و مجوزهای لوگوها: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## نقشهٔ راه
 
 آنچه هنوز انجام نشده، محتمل‌ترین‌ها اول. هیچ چیز اینجا وعده نیست، و بازخورد در [پیگیر مشکلات](https://github.com/freeKC/Immuch360/issues) کمک می‌کند تصمیم گرفته شود چه چیزی اول بیاید.
 
 - **Immuch360 Desktop، اول Windows**: desktop build 2 با ویدیوهای تخت منتشر شده است، و کد منبع دسکتاپ از 9 اکتبر 2026 در شاخهٔ اصلی فورک، `immuch360`، است (ببینید: [روی یک رایانهٔ Windows](#on-a-windows-computer-immuch360-desktop-preview)). سپس ویدیوهای 360°، 3D، VR180 و ویدیوهای خام 360° روی Windows، همراه با دو لنز فایل‌های خام و نمای زندهٔ Tapo؛ سپس آزمودن هر قابلیت روی یک رایانهٔ Windows و رفع اشکال‌های آن؛ سپس Spatial 2.5D با وب‌کم؛ سپس Linux و macOS، بسته‌ها، امضا و به‌روزرسانی‌ها.
-- **Google Play**: بیلد 18 منتشر شده است؛ بیلد 20 از 7 اکتبر 2026 در حال بررسی Google است، به‌جای بیلد 19. بیلد 21 هیچ چیز را روی تلفن‌ها و تبلت‌ها تغییر نمی‌دهد.
+- **Google Play**: بیلد 20 از 7 اکتبر 2026 منتشر شده است، به‌جای بیلد 18؛ صفحهٔ تلویزیون‌ها از 9 اکتبر 2026 در حال بررسی Google است. بیلد 21 هیچ چیز را روی تلفن‌ها و تبلت‌ها تغییر نمی‌دهد.
 - **App Store**: نسخهٔ 3.3.0 منتظر بررسی Apple است؛ قابلیت‌های بیلد 11 را دارد، بنابراین بارگذاری در Immich و بررسی رمزگشاهای ویدیو (بیلد 15) و فایل‌های خام Insta360 (بیلد 16) با به‌روزرسانی بعدی App Store می‌آیند. پیوند پس از انتشار اینجا اضافه خواهد شد.
 - **Meta Horizon Store**: Meta صفحه را در 7 اکتبر 2026 با بیلد 14 تأیید کرد. بیلد 21 به‌عنوان نخستین به‌روزرسانی آن فرستاده شده است: همهٔ چیزهای پس از بیلد 14 را می‌آورد (بارگذاری از یک اشتراک به Immich، منبع ویدیو که بر پایهٔ آنچه هدست رمزگشایی می‌کند انتخاب می‌شود، فایل‌های خام Insta360، GoPro و DJI، DLNA، اشتراک تلفن، عکس‌های فضایی Apple، کتابخانه‌های Plex Media Server، دوربین‌های Tapo)، و فروشگاه آن را برای Quest 2، Quest Pro، Quest 3 و 3S فهرست می‌کند. پیوند فروشگاه وقتی صفحه عمومی شد اینجا اضافه خواهد شد؛ نسخهٔ نصب‌شدهٔ دستی باید اول حذف شود (ببینید [نصب](#install)).
-- **صفحه‌های فروشگاه**: صفحهٔ Google Play در اکتبر 2026 با تصاویر تازه بازنویسی شد، و با نسخهٔ تلویزیون تصاویر تلویزیون و یک بنر تلویزیون می‌گیرد. متن App Store هنوز نخستین بیلدها را توصیف می‌کند (عکس‌ها و ویدیوهای 360°، فایل‌های خام تخت نشان داده‌شده)؛ نمایشگرهای 3D، VR180 و Spatial، حالت بدون سرور، اشتراک‌های شبکه، پخش‌کنندهٔ رسانه و فایل‌های خام Insta360 را معرفی خواهد کرد. متن Meta Horizon Store همین حالا پخش‌کنندهٔ رسانه را معرفی می‌کند.
+- **صفحه‌های فروشگاه**: صفحهٔ Google Play در اکتبر 2026 با تصاویر تازه بازنویسی شد، و تصاویر تلویزیون و بنر تلویزیون آن در 8 اکتبر 2026 افزوده شدند؛ صفحهٔ تلویزیون‌ها از 9 اکتبر 2026 در حال بررسی Google است. متن App Store هنوز نخستین بیلدها را توصیف می‌کند (عکس‌ها و ویدیوهای 360°، فایل‌های خام تخت نشان داده‌شده)؛ نمایشگرهای 3D، VR180 و Spatial، حالت بدون سرور، اشتراک‌های شبکه، پخش‌کنندهٔ رسانه و فایل‌های خام Insta360 را معرفی خواهد کرد. متن Meta Horizon Store همین حالا پخش‌کنندهٔ رسانه را معرفی می‌کند.
 - **فایل‌های خام دوربین‌های 360°، گام بعدی**: نشانگر پیشرفت هنگام آماده‌سازی یک عکس خام برای هدست؛ تراز کردن ویدیوهای GoPro و DJI از دادهٔ حرکتی خودشان؛ .dng دو چشم‌ماهی؛ گزارش‌های دستگاه دربارهٔ پخش دو لنزی بیلد 18 (X4، X5، X6، GoPro MAX 2، Osmo 360) برای تأیید درزها و ظرفیت رمزگشاها.
 - **DLNA، اشتراک تلفن و رسانهٔ فضایی Apple، گام بعدی**: گزارش‌های دستگاه بیلد 19 (Plex، Jellyfin، یک NAS و Freebox Server از طریق DLNA؛ تلفنی که به یک Quest سرویس می‌دهد، روی نقطه اتصال خودش هم؛ عکس‌ها و ویدیوهای فضایی واقعی iPhone در هدست)؛ مجوز multicast درخواست‌شده از Apple، تا iPhoneها همهٔ سرورهای DLNA را پیدا کنند؛ قبلی و بعدی میان عکس‌های فضایی در هدست؛ نشان فضایی روی عکس‌های سرور در خط زمانی؛ ویدیوهای فضایی به‌صورت 3D در Quest، اگر رمزگشاهای آن اجازه دهند.
 - **پخش‌کننده‌های 360° روی تلفن‌ها، گام بعدی**: نوار زمان در پخش‌کنندهٔ ویدیوی 360° در iOS (نسخهٔ Android آن را دارد)، قبلی/بعدی در پخش‌کننده‌های 360° تلفن‌ها مانند نمای فراگیر Quest، و عکس‌ها در پخش‌کنندهٔ ویدیوی 360° بومی.
 - **اشتراک‌های شبکه، گام‌های بعدی**: کشیدن از یک فایل پوشه به فایل بعدی در صفحه‌های عکس و ویدیو (نمای فراگیر Quest همین حالا فایل‌های 360° یک پوشه را مرور می‌کند)، احراز هویت Digest برای WebDAV، نام کاربری از رکورد Bonjour.
 - **ویدیوهای تخت**: انتخاب ترک صوتی در پخش‌کنندهٔ تخت تلفن‌ها، به یک شکل برای ویدیوهای سرور، دستگاه و اشتراک (پخش‌کننده‌های 360° و Spatial آن را دارند، و پخش‌کنندهٔ تخت Immuch360 Desktop هم همین‌طور).
-- **Android TV، گام بعدی**: آزمون روی دستگاه بیلد 20 روی شبیه‌ساز Google TV و یک تلویزیون واقعی، سپس نسخهٔ تلویزیون در Google Play (تصاویر تلویزیون، بنر تلویزیون، بررسی Google)؛ بعدها، کانال‌ها روی صفحهٔ اصلی تلویزیون.
+- **Android TV، گام بعدی**: آزمون روی دستگاه بیلد 20 روی شبیه‌ساز Google TV و یک تلویزیون واقعی، و نسخهٔ تلویزیون در Google Play پس از آنکه Google صفحهٔ تلویزیون‌ها را بررسی کند؛ بعدها، کانال‌ها روی صفحهٔ اصلی تلویزیون.
 - **دوربین‌های Tapo، گام بعدی**: آزمون روی دستگاه بیلد 20 با دوربین‌های واقعی؛ تصویر زنده روی iPhone و iPad؛ ضبط‌های H.265؛ پخش یک کلیپ هنگام دریافت آن؛ یک روز کامل ضبط روی یک خط زمانی.
 - **Plex، گام بعدی**: آزمون روی دستگاه بیلد 20 (تلفن‌ها، Quest، یک iPhone، یک تلویزیون، بیرون از خانه)؛ آوردن توکن از رایانه با یک کد QR؛ پنهان کردن بخش DLNA یک سرور Plex در فهرست سرورهای پیدا شده؛ IPv6.
 - **Upstream**: pull requestهای کوچک به Immich برای بخش‌هایی که نگه‌دارندگان می‌خواهند، با شروع از نمایشگر عکس 360°.

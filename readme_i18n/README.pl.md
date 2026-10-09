@@ -13,14 +13,19 @@ Jest dla osób, które fotografują kamerą 360° (Insta360, GoPro MAX, DJI Osmo
   <sub>Nieoficjalny fork. Niezwiązany z Immich ani FUTO. Nazwę czyta się jak "I am much 360".</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK na Androida</a><br>
-  App Store: <a href="#where-to-get-it">w trakcie weryfikacji</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store zatwierdzony, kompilacja 21 przesłana jako pierwsza aktualizacja<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">pobierz wersję zapoznawczą</a>, kompilacja na komputery 2
-</p>
+<div align="center">
+
+| Platforma | Gdzie ją pobrać | Stan na 9 października 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefony i tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilacja 20 w Google Play od 7 października 2026, kompilacja 21 na GitHubie |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | wersja 3.3.0 czeka na weryfikację Apple; tymczasem [zbuduj ją samodzielnie](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | wpis zatwierdzony, kompilacja 21 w weryfikacji Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilacja 21 na GitHubie; strona w Google Play dla telewizorów jest w weryfikacji Google od 9 października 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP wersji zapoznawczej](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | kompilacja na komputery 2 na Windows: zdjęcia i płaskie filmy, filmy 360° w następnej kolejności; macOS i Linux później, z tych samych źródeł |
+
+*Stany są aktualizowane przy każdym wydaniu; szczegóły w sekcji [Gdzie ją pobrać](#where-to-get-it).*
+
+</div>
 
 - 🌐 **Natywne 360°**<br>Zdjęcia i filmy jako sfera, w której się rozglądasz, z żyroskopem, łącznie z surowymi plikami z kamery (Insta360 od kompilacji 16, GoPro i DJI od kompilacji 18). Do tego darmowy odtwarzacz wideo: płaskie, 360°, 3D, VR180
 - 👓 **Natywne 3D**<br>Stereoskopowe 360° i VR180, góra i dół lub obok siebie, oraz zdjęcia przestrzenne Apple (od kompilacji 19): prawdziwe 3D w goglach, jedno oko na telefonie
@@ -1072,7 +1077,7 @@ Aplikacja jest w Google Play na telefony i tablety; wersja dla App Store czeka n
 
 - **Telefony i tablety z Androidem**
   - Dziś: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) albo APK na stronie [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` dla telefonu (uniwersalny `Immuch360-v<version>-release.apk` działa wszędzie, `-armeabi-v7a` jest dla starszych telefonów 32-bitowych, a plik `.aab` jest dla Google Play, nie do ręcznej instalacji). Kompilacja z GitHuba zwykle wyprzedza sklep. W obu przypadkach instaluje się obok oficjalnej aplikacji Immich (pakiet `com.aprogsys.immuch360`).
-  - Wkrótce: w Google Play kompilacja 18 jest dostępna, kompilacja 20 w weryfikacji przez Google od 7 października 2026, zamiast kompilacji 19.
+  - Wkrótce: w Google Play kompilacja 20 jest dostępna od 7 października 2026, zamiast kompilacji 18; kompilacja 21 nie zmienia niczego na telefonach i tabletach.
 - **iPhone i iPad**
   - Dziś: czeka na weryfikację przez Apple. Wersja w trakcie weryfikacji ma funkcje kompilacji 11: przesyłanie do Immich i wybór Źródło wideo (kompilacja 15) oraz surowe pliki Insta360 (kompilacja 16) przyjdą z późniejszą aktualizacją w App Store. Kod źródłowy kompiluje się w Xcode lub na Codemagic, zobacz [Zbuduj ją samodzielnie](#build-it-yourself).
   - Wkrótce: App Store, w trakcie weryfikacji.
@@ -1081,7 +1086,7 @@ Aplikacja jest w Google Play na telefony i tablety; wersja dla App Store czeka n
   - Wkrótce: w Meta Horizon Store strona została zatwierdzona 7 października 2026 z kompilacją 14, a kompilacja 21, jej pierwsza aktualizacja, jest w weryfikacji przez Meta; kanał alfa sklepu (tylko testerzy) dostaje każdą nową kompilację.
 - **Android TV i Google TV (od kompilacji 20)**
   - Dziś: uniwersalny `Immuch360-v<version>-release.apk` ze strony [Releases](https://github.com/freeKC/Immuch360/releases), zainstalowany ręcznie przez adb, zobacz [Instalacja na telewizorze](#install-it-on-the-tv). To ta sama aplikacja co na telefonach.
-  - Wkrótce: Google Play na telewizorach, po weryfikacji wydania na telewizory przez Google.
+  - Wkrótce: Google Play na telewizorach; strona dla telewizorów jest w weryfikacji przez Google od 9 października 2026.
 - **Windows 10 i 11, 64 bit (wersja zapoznawcza)**
   - Dziś: Immuch360 Desktop, plik ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` z [wydania wstępnego na komputery](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), rozpakowany i uruchomiony tak, jak opisuje [Pobieranie i instalacja na Windows](#download-and-install-on-windows). Na razie zdjęcia i płaskie filmy: filmy 360°, 3D i VR180 przyjdą z kolejnymi kompilacjami na komputery.
   - Wkrótce: filmy 360°, 3D, VR180 i surowe filmy 360°; później instalator, podpisana kompilacja i aktualizacje.
@@ -1165,22 +1170,24 @@ Ten projekt jest forkiem Immich i pozostaje na licencji [GNU AGPL v3](../LICENSE
 
 ZIP Immuch360 Desktop na Windows, i tylko on, zawiera też swój odtwarzacz wideo: libmpv, bibliotekę [mpv](https://mpv.io), z [FFmpeg](https://ffmpeg.org) w środku, sterowaną przez wtyczki [media_kit](https://github.com/media-kit/media-kit). mpv i FFmpeg są skompilowane bez części objętych wyłącznie licencją GPL, a ich kod jest na licencji GNU LGPL w wersji 2.1 lub nowszej; skompilowana razem `libmpv-2.dll` jest rozpowszechniana na licencji GNU LGPL w wersji 3 lub nowszej. Aplikacja ładuje ją w czasie działania, więc możesz zastąpić ją własną kompilacją. Teksty licencji są w folderze `licenses` w ZIP, a każda biblioteka wraz z licencją i źródłami jest wymieniona w [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV i Google TV są znakami towarowymi Google LLC; Apple, iPhone, iPad i macOS są znakami towarowymi Apple Inc.; Meta i Meta Quest są znakami towarowymi Meta Platforms, Inc.; Windows jest znakiem towarowym grupy przedsiębiorstw Microsoft; Linux jest w USA i innych krajach zastrzeżonym znakiem towarowym, którego właścicielem jest Linus Torvalds. Ich logo pojawiają się w tabeli platform wyłącznie po to, by pokazać, gdzie działa Immuch360, i nie oznaczają żadnego poparcia ani powiązania. Robot Android jest odtworzony lub zmodyfikowany na podstawie utworu stworzonego i udostępnionego przez Google i jest używany zgodnie z warunkami opisanymi w Creative Commons 3.0 Attribution License. Autorem Tuxa, pingwina Linuksa, jest Larry Ewing (lewing@isc.tamu.edu); narysowano go w The GIMP, a wersję wektorową przygotowali Simon Budig i Garrett LeSage. Źródła i licencje logo: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Plan rozwoju
 
 Co nie jest jeszcze gotowe, od najbardziej prawdopodobnego. Nic tutaj nie jest obietnicą, a opinie w [systemie zgłoszeń](https://github.com/freeKC/Immuch360/issues) pomagają zdecydować, co będzie pierwsze.
 
 - **Immuch360 Desktop, najpierw Windows**: kompilacja na komputery 2 jest dostępna, z płaskimi filmami, a źródła wersji na komputery są od 9 października 2026 w głównej gałęzi forka, `immuch360` (zobacz [Na komputerze z Windows](#on-a-windows-computer-immuch360-desktop-preview)). Następnie filmy 360°, 3D, VR180 i surowe filmy 360° na Windows, z dwoma obiektywami plików surowych i podglądem na żywo Tapo; potem test każdej funkcji na komputerze z Windows i poprawki; potem Spatial 2.5D z kamerą internetową; potem Linux i macOS, pakiety, podpisywanie i aktualizacje.
-- **Google Play**: kompilacja 18 jest dostępna; kompilacja 20 jest w weryfikacji przez Google od 7 października 2026, zamiast kompilacji 19. Kompilacja 21 nie zmienia niczego na telefonach i tabletach.
+- **Google Play**: kompilacja 20 jest dostępna od 7 października 2026, zamiast kompilacji 18; strona dla telewizorów jest w weryfikacji przez Google od 9 października 2026. Kompilacja 21 nie zmienia niczego na telefonach i tabletach.
 - **App Store**: wersja 3.3.0 czeka na weryfikację przez Apple; ma funkcje kompilacji 11, więc przesyłanie do Immich i kontrola dekoderów wideo (kompilacja 15) oraz surowe pliki Insta360 (kompilacja 16) przyjdą z następną aktualizacją w App Store. Link zostanie tu dodany, gdy wersja będzie dostępna.
 - **Meta Horizon Store**: Meta zatwierdziła stronę 7 października 2026 z kompilacją 14. Kompilacja 21 została przesłana jako jej pierwsza aktualizacja: przynosi wszystko od kompilacji 14 (wysyłanie z udziału do Immich, źródło wideo wybierane według tego, co gogle dekodują, surowe pliki Insta360, GoPro i DJI, DLNA, udostępnianie telefonu, zdjęcia przestrzenne Apple, biblioteki Plex Media Server, kamery Tapo), a sklep oferuje ją dla Quest 2, Quest Pro, Quest 3 i 3S. Link do sklepu zostanie tu dodany, gdy strona będzie publiczna; ręcznie zainstalowaną kopię trzeba najpierw odinstalować (zobacz [Instalacja](#install)).
-- **Strony w sklepach**: strona w Google Play została przepisana w październiku 2026 z nowymi zrzutami ekranu i wraz z wydaniem na telewizory dostanie zrzuty ekranu z telewizora i baner TV. Tekst w App Store nadal opisuje pierwsze kompilacje (zdjęcia i filmy 360°, surowe pliki wyświetlane płasko); przedstawi przeglądarki 3D, VR180 i Spatial, tryb bez serwera, udziały sieciowe, odtwarzacz multimediów i surowe pliki Insta360. Tekst w Meta Horizon Store już przedstawia odtwarzacz multimediów.
+- **Strony w sklepach**: strona w Google Play została przepisana w październiku 2026 z nowymi zrzutami ekranu, a zrzuty ekranu z telewizora i baner TV zostały dodane 8 października 2026; strona dla telewizorów jest w weryfikacji przez Google od 9 października 2026. Tekst w App Store nadal opisuje pierwsze kompilacje (zdjęcia i filmy 360°, surowe pliki wyświetlane płasko); przedstawi przeglądarki 3D, VR180 i Spatial, tryb bez serwera, udziały sieciowe, odtwarzacz multimediów i surowe pliki Insta360. Tekst w Meta Horizon Store już przedstawia odtwarzacz multimediów.
 - **Surowe pliki z kamer 360°, dalej**: wskaźnik postępu podczas przygotowywania surowego zdjęcia dla gogli; poziomowanie filmów GoPro i DJI na podstawie ich własnych danych o ruchu; podwójne rybie oko .dng; raporty z urządzeń o odtwarzaniu z dwoma obiektywami z kompilacji 18 (X4, X5, X6, GoPro MAX 2, Osmo 360), aby potwierdzić szwy i budżety dekoderów.
 - **DLNA, udział telefonu i przestrzenne Apple, dalej**: raporty z urządzeń dla kompilacji 19 (Plex, Jellyfin, NAS i Freebox Server przez DLNA; telefon obsługujący Questa, także przez swój hotspot; prawdziwe zdjęcia i filmy przestrzenne z iPhone'a w goglach); uprawnienie multicast, o które poproszono Apple, aby iPhone'y znajdowały każdy serwer DLNA; poprzedni i następny między zdjęciami przestrzennymi w goglach; plakietka przestrzenna na zdjęciach z serwera na osi czasu; filmy przestrzenne w 3D na Queście, jeśli pozwolą na to jego dekodery.
 - **Odtwarzacze 360° na telefonach, dalej**: pasek czasu w odtwarzaczu filmów 360° na iOS (ten na Androidzie go ma), poprzedni/następny w odtwarzaczach 360° na telefonach, jak w widoku immersyjnym na Queście, oraz zdjęcia w natywnym odtwarzaczu filmów 360°.
 - **Udziały sieciowe, kolejne kroki**: przesuwanie palcem od jednego pliku folderu do następnego na stronach zdjęć i filmów (widok immersyjny na Queście już przechodzi przez pliki 360° folderu), uwierzytelnianie Digest dla WebDAV, nazwa użytkownika z rekordu Bonjour.
 - **Płaskie filmy**: wybór ścieżki dźwiękowej w płaskim odtwarzaczu telefonów, zarówno dla filmów z serwera, z urządzenia, jak i z udziałów (odtwarzacze 360° i Spatial go mają, podobnie jak płaski odtwarzacz Immuch360 Desktop).
-- **Android TV, dalej**: test kompilacji 20 na urządzeniach, na emulatorze Google TV i prawdziwym telewizorze, potem wydanie na telewizory w Google Play (zrzuty ekranu z telewizora, baner TV, weryfikacja przez Google); później kanały na ekranie głównym telewizora.
+- **Android TV, dalej**: test kompilacji 20 na urządzeniach, na emulatorze Google TV i prawdziwym telewizorze, oraz wydanie na telewizory w Google Play, gdy Google zweryfikuje stronę dla telewizorów; później kanały na ekranie głównym telewizora.
 - **Kamery Tapo, dalej**: test kompilacji 20 z prawdziwymi kamerami; podgląd na żywo na iPhonie i iPadzie; nagrania H.265; odtwarzanie klipu w trakcie pobierania; cały dzień nagrań na jednej osi czasu.
 - **Plex, dalej**: test kompilacji 20 na urządzeniach (telefony, Quest, iPhone, telewizor, poza domem); przenoszenie tokenu z komputera kodem QR; ukrywanie strony DLNA serwera Plex na liście znalezionych serwerów; IPv6.
 - **Upstream**: małe pull requesty do Immich dla części, których chcą opiekunowie, zaczynając od przeglądarki zdjęć 360°.

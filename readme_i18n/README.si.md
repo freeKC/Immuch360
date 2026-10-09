@@ -13,14 +13,19 @@ Immuch360 යනු ඔබට වටපිට බැලිය හැකි 360°
   <sub>නිල නොවන fork එකකි. Immich හෝ FUTO සමඟ සම්බන්ධයක් නැත. ඉංග්‍රීසියෙන් නම කියවෙන්නේ "I am much 360" ලෙස ය.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">සමාලෝචනය වෙමින්</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store අනුමතයි, බිල්ඩ් 21 පළමු යාවත්කාලීනය ලෙස ඉදිරිපත් කර ඇත<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">පෙරදසුන බාගත කරන්න</a>, desktop build 2
-</p>
+<div align="center">
+
+| වේදිකාව | එය ලබා ගන්නේ කොහෙන්ද | 2026 ඔක්තෝබර් 9 දින තත්ත්වය |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** දුරකථන සහ ටැබ්ලට් | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 2026 ඔක්තෝබර් 7 සිට Google Play හි බිල්ඩ් 20, GitHub හි බිල්ඩ් 21 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone සහ iPad** | App Store | 3.3.0 අනුවාදය Apple හි සමාලෝචනය සඳහා රැඳී සිටී; ඒ අතරතුර [ඔබම එය ගොඩනඟන්න](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 සහ 3S | [APK](#meta-quest-3) · Horizon Store | ලැයිස්තුගත කිරීම අනුමතයි, බිල්ඩ් 21 Meta හි සමාලෝචනයේ |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV සහ Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub හි බිල්ඩ් 21; රූපවාහිනී සඳහා Google Play ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [පෙරදසුන ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Windows මත desktop බිල්ඩ් 2: ඡායාරූප සහ පැතලි වීඩියෝ, ඊළඟට 360° වීඩියෝ; macOS සහ Linux පසුව, එකම මූලාශ්‍රවලින් |
+
+*සෑම නිකුතුවකදීම තත්ත්වයන් යාවත්කාලීන කෙරේ; විස්තර [එය ලබා ගන්නේ කොහෙන්ද](#where-to-get-it) හි ඇත.*
+
+</div>
 
 - 🌐 **ස්වදේශීය 360°**<br>ගයිරොස්කෝපය සමඟ ඔබට වටපිට බැලිය හැකි ගෝලයක් ලෙස ඡායාරූප සහ වීඩියෝ, කැමරාවේ RAW ගොනු ද ඇතුළුව (Insta360 බිල්ඩ් 16 සිට, GoPro සහ DJI බිල්ඩ් 18 සිට). නොමිලේ වීඩියෝ වාදකයක් ද: පැතලි, 360°, 3D, VR180
 - 👓 **ස්වදේශීය 3D**<br>ස්ටීරියෝස්කෝපික් 360° සහ VR180, ඉහළ සහ පහළ හෝ පැත්තෙන් පැත්තට, සහ Apple අවකාශීය ඡායාරූප (බිල්ඩ් 19 සිට): හෙඩ්සෙට් එකේ සැබෑ 3D, දුරකථනයේ එක් ඇසක්
@@ -1072,7 +1077,7 @@ Immuch360 Desktop හි CI (`.github/workflows/immuch360-desktop.yml`) `immuch3
 
 - **Android දුරකථන සහ ටැබ්ලට්**
   - අද: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), හෝ [Releases](https://github.com/freeKC/Immuch360/releases) පිටුවේ APK එක: දුරකථනයක් සඳහා `Immuch360-v<version>-arm64-v8a-release.apk` (සාර්වත්‍ර `Immuch360-v<version>-release.apk` සෑම තැනකම ක්‍රියා කරයි, `-armeabi-v7a` පැරණි බිටු 32 දුරකථන සඳහා ය, `.aab` ගොනුව Google Play සඳහා මිස sideload කිරීමට නොවේ). GitHub බිල්ඩ් එක සාමාන්‍යයෙන් ගබඩාවට වඩා ඉදිරියෙන් ඇත. කෙසේ වෙතත් එය නිල Immich යෙදුම අසල ස්ථාපනය වේ (පැකේජය `com.aprogsys.immuch360`).
-  - ළඟදීම: Google Play හි, බිල්ඩ් 18 සජීවීව ඇත, බිල්ඩ් 19 වෙනුවට බිල්ඩ් 20 2026 ඔක්තෝබර් 7 සිට Google හි සමාලෝචනයේ ඇත.
+  - ළඟදීම: Google Play හි, බිල්ඩ් 18 වෙනුවට බිල්ඩ් 20 2026 ඔක්තෝබර් 7 සිට සජීවීව ඇත; බිල්ඩ් 21 දුරකථන සහ ටැබ්ලට් මත කිසිවක් වෙනස් නොකරයි.
 - **iPhone සහ iPad**
   - අද: Apple හි සමාලෝචනය සඳහා රැඳී සිටී. සමාලෝචනය වන අනුවාදයේ බිල්ඩ් 11 හි විශේෂාංග ඇත: Immich වෙත උඩුගත කිරීම සහ වීඩියෝ මූලාශ්‍රය තේරීම (බිල්ඩ් 15) සහ RAW Insta360 ගොනු (බිල්ඩ් 16) පසු App Store යාවත්කාලීනයක් සමඟ එයි. මූලාශ්‍ර කේතය Xcode සමඟ හෝ Codemagic මත ගොඩනැගේ, බලන්න [ඔබම එය ගොඩනඟන්න](#build-it-yourself).
   - ළඟදීම: App Store, සමාලෝචනය වෙමින්.
@@ -1081,7 +1086,7 @@ Immuch360 Desktop හි CI (`.github/workflows/immuch360-desktop.yml`) `immuch3
   - ළඟදීම: Meta Horizon Store හි, ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 7 දින බිල්ඩ් 14 සමඟ අනුමත කරන ලදී, එහි පළමු යාවත්කාලීනය වන බිල්ඩ් 21 Meta හි සමාලෝචනයේ ඇත; ගබඩාවේ ඇල්ෆා නාලිකාවට (පරීක්ෂකයින් සඳහා පමණි) සෑම නව බිල්ඩ් එකක්ම ලැබේ.
 - **Android TV සහ Google TV (බිල්ඩ් 20 සිට)**
   - අද: [Releases](https://github.com/freeKC/Immuch360/releases) පිටුවේ සාර්වත්‍ර `Immuch360-v<version>-release.apk`, adb සමඟ sideload කර, බලන්න [එය රූපවාහිනියේ ස්ථාපනය කරන්න](#install-it-on-the-tv). එය දුරකථනවල ඇති එම යෙදුමම වේ.
-  - ළඟදීම: රූපවාහිනී මත Google Play, රූපවාහිනී නිකුතුවේ Google හි සමාලෝචනයෙන් පසු.
+  - ළඟදීම: රූපවාහිනී මත Google Play, එහි රූපවාහිනී ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත.
 - **Windows 10 සහ 11, 64 bit (පෙරදසුන)**
   - අද: Immuch360 Desktop, [desktop පූර්ව නිකුතුවේ](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIP එක, [Windows මත බාගත කර ස්ථාපනය කරන්න](#download-and-install-on-windows) පවසන පරිදි දිග හැර ආරම්භ කර ඇත. දැනට ඡායාරූප සහ පැතලි වීඩියෝ: 360°, 3D සහ VR180 වීඩියෝ ඊළඟ desktop බිල්ඩ් සමඟ පැමිණේ.
   - ළඟදීම: 360°, 3D, VR180 සහ අමු 360° වීඩියෝ; ස්ථාපකයක්, අත්සන් කළ බිල්ඩ් එකක් සහ යාවත්කාලීන පසුව.
@@ -1165,22 +1170,24 @@ desktop build 2 සිට පරිගණකයේ වීඩියෝ වාද�
 
 Immuch360 Desktop හි Windows ZIP එකේ, සහ එහි පමණක්, එහි වීඩියෝ වාදකය ද ඇත: [mpv](https://mpv.io) හි පුස්තකාලය වන libmpv, එය තුළ [FFmpeg](https://ffmpeg.org) සමඟ, [media_kit](https://github.com/media-kit/media-kit) හි plugins මගින් පාලනය වේ. mpv සහ FFmpeg ඒවායේ GPL පමණක් වන කොටස් නොමැතිව ගොඩනඟා ඇති අතර, ඒවායේ කේතය GNU LGPL 2.1 අනුවාදය හෝ ඊට පසු අනුවාදයක් යටතේ ඇත; එකට ගොඩනැඟූ `libmpv-2.dll` GNU LGPL 3 අනුවාදය හෝ ඊට පසු අනුවාදයක් යටතේ බෙදා හරිනු ලැබේ. යෙදුම එය ධාවන කාලයේදී පූරණය කරයි, එබැවින් ඔබට එය ඔබේම බිල්ඩ් එකකින් ප්‍රතිස්ථාපනය කළ හැක. බලපත්‍ර පාඨ ZIP එකේ `licenses` ෆෝල්ඩරයේ ඇති අතර, සෑම පුස්තකාලයක්ම එහි බලපත්‍රය සහ මූලාශ්‍ර සමඟ [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) හි ලැයිස්තුගත කර ඇත.
 
+Android, Android TV සහ Google TV යනු Google LLC හි වෙළඳ ලකුණු වේ; Apple, iPhone, iPad සහ macOS යනු Apple Inc. හි වෙළඳ ලකුණු වේ; Meta සහ Meta Quest යනු Meta Platforms, Inc. හි වෙළඳ ලකුණු වේ; Windows යනු Microsoft සමාගම් සමූහයේ වෙළඳ ලකුණකි; Linux යනු එක්සත් ජනපදයේ සහ අනෙකුත් රටවල Linus Torvalds හි ලියාපදිංචි වෙළඳ ලකුණයි. ඒවායේ ලාංඡන වේදිකා වගුවේ දිස් වන්නේ Immuch360 ක්‍රියා කරන්නේ කොතැනද යන්න පෙන්වීමට පමණක් වන අතර, ඒවා කිසිදු අනුමැතියක් හෝ සම්බන්ධතාවක් අදහස් නොකරයි. The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License. Tux, the Linux penguin, is by Larry Ewing (lewing@isc.tamu.edu), drawn with The GIMP, in the vector version by Simon Budig and Garrett LeSage. ලාංඡනවල මූලාශ්‍ර සහ බලපත්‍ර: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## මාර්ග සිතියම
 
 තවම නිම නොකළ දේ, වඩාත්ම සිදුවිය හැකි දේ මුලින්. මෙහි කිසිවක් පොරොන්දුවක් නොවේ, [issue tracker](https://github.com/freeKC/Immuch360/issues) හි ප්‍රතිචාර මුලින් එන්නේ කුමක්දැයි තීරණය කිරීමට උපකාරී වේ.
 
 - **Immuch360 Desktop, පළමුව Windows**: පැතලි වීඩියෝ සමඟ desktop build 2 නිකුත් වී ඇත, සහ 2026 ඔක්තෝබර් 9 සිට desktop මූලාශ්‍ර fork එකේ ප්‍රධාන ශාඛාව වන `immuch360` හි ඇත (බලන්න [Windows පරිගණකයක](#on-a-windows-computer-immuch360-desktop-preview)). ඊළඟට, Windows මත 360°, 3D, VR180 සහ අමු 360° වීඩියෝ, අමු ගොනුවල කාච දෙක සහ Tapo සජීවී දර්ශනය සමඟ; ඉන්පසු Windows පරිගණකයක එක් එක් කාර්යය පරීක්ෂා කිරීම සහ එහි නිවැරදි කිරීම්; ඉන්පසු වෙබ්කැමය සමඟ Spatial 2.5D; ඉන්පසු Linux සහ macOS, පැකේජ, අත්සන් කිරීම සහ යාවත්කාලීන.
-- **Google Play**: බිල්ඩ් 18 සජීවීව ඇත; බිල්ඩ් 19 වෙනුවට බිල්ඩ් 20 2026 ඔක්තෝබර් 7 සිට Google හි සමාලෝචනයේ ඇත. බිල්ඩ් 21 දුරකථන සහ ටැබ්ලට් මත කිසිවක් වෙනස් නොකරයි.
+- **Google Play**: බිල්ඩ් 18 වෙනුවට බිල්ඩ් 20 2026 ඔක්තෝබර් 7 සිට සජීවීව ඇත; රූපවාහිනී සඳහා ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත. බිල්ඩ් 21 දුරකථන සහ ටැබ්ලට් මත කිසිවක් වෙනස් නොකරයි.
 - **App Store**: අනුවාදය 3.3.0 Apple හි සමාලෝචනය සඳහා රැඳී සිටී; එහි බිල්ඩ් 11 හි විශේෂාංග ඇත, එබැවින් Immich වෙත උඩුගත කිරීම සහ වීඩියෝ විකේතක පරීක්ෂාව (බිල්ඩ් 15) සහ RAW Insta360 ගොනු (බිල්ඩ් 16) ඊළඟ App Store යාවත්කාලීනය සමඟ එයි. එය සජීවී වූ විට සබැඳිය මෙහි එක් කෙරේ.
 - **Meta Horizon Store**: Meta 2026 ඔක්තෝබර් 7 දින බිල්ඩ් 14 සමඟ ලැයිස්තුගත කිරීම අනුමත කළේය. බිල්ඩ් 21 එහි පළමු යාවත්කාලීනය ලෙස ඉදිරිපත් කර ඇත: එය බිල්ඩ් 14 සිට ආ සියල්ල ගෙන එයි (බෙදාගැනීමකින් Immich වෙත උඩුගත කිරීම්, හෙඩ්සෙට් එක විකේතනය කරන දෙයින් තෝරාගත් වීඩියෝ මූලාශ්‍රය, RAW Insta360, GoPro සහ DJI ගොනු, DLNA, දුරකථන බෙදාගැනීම, Apple අවකාශීය ඡායාරූප, Plex Media Server පුස්තකාල, Tapo කැමරා), ගබඩාව එය Quest 2, Quest Pro, Quest 3 සහ 3S සඳහා ලැයිස්තුගත කරයි. පිටුව ප්‍රසිද්ධ වූ පසු ගබඩා සබැඳිය මෙහි එක් කෙරේ; sideload කළ පිටපතක් මුලින් අස්ථාපනය කළ යුතුය (බලන්න [ස්ථාපනය](#install)).
-- **ගබඩා ලැයිස්තුගත කිරීම්**: Google Play ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් මාසයේ නව තිර රූප සමඟ නැවත ලියන ලද අතර, රූපවාහිනී නිකුතුව සමඟ රූපවාහිනී තිර රූප සහ රූපවාහිනී බැනරයක් ලැබේ. App Store පෙළ තවමත් පළමු බිල්ඩ් (360° ඡායාරූප සහ වීඩියෝ, පැතලිව පෙන්වන RAW ගොනු) විස්තර කරයි; එය 3D, VR180 සහ Spatial දර්ශක, සේවාදායකයක් නොමැති ප්‍රකාරය, ජාල බෙදාගැනීම්, මාධ්‍ය වාදකය සහ RAW Insta360 ගොනු ඉදිරිපත් කරනු ඇත. Meta Horizon Store පෙළ දැනටමත් මාධ්‍ය වාදකය ඉදිරිපත් කරයි.
+- **ගබඩා ලැයිස්තුගත කිරීම්**: Google Play ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් මාසයේ නව තිර රූප සමඟ නැවත ලියන ලද අතර, එහි රූපවාහිනී තිර රූප සහ රූපවාහිනී බැනරය 2026 ඔක්තෝබර් 8 දින එක් කරන ලදී; රූපවාහිනී සඳහා ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත. App Store පෙළ තවමත් පළමු බිල්ඩ් (360° ඡායාරූප සහ වීඩියෝ, පැතලිව පෙන්වන RAW ගොනු) විස්තර කරයි; එය 3D, VR180 සහ Spatial දර්ශක, සේවාදායකයක් නොමැති ප්‍රකාරය, ජාල බෙදාගැනීම්, මාධ්‍ය වාදකය සහ RAW Insta360 ගොනු ඉදිරිපත් කරනු ඇත. Meta Horizon Store පෙළ දැනටමත් මාධ්‍ය වාදකය ඉදිරිපත් කරයි.
 - **360° කැමරා RAW ගොනු, ඊළඟට**: RAW ඡායාරූපයක් හෙඩ්සෙට් එක සඳහා සූදානම් කරන අතරතුර ප්‍රගති දර්ශකයක්; GoPro සහ DJI වීඩියෝ ඒවායේම චලන දත්තවලින් සමතලා කිරීම; dual fisheye .dng; මැහුම් සහ විකේතක සීමා තහවුරු කිරීමට බිල්ඩ් 18 හි කාච දෙකේ වාදනය (X4, X5, X6, GoPro MAX 2, Osmo 360) පිළිබඳ උපාංග වාර්තා.
 - **DLNA, දුරකථන බෙදාගැනීම සහ Apple අවකාශීය, ඊළඟට**: බිල්ඩ් 19 හි උපාංග වාර්තා (DLNA හරහා Plex, Jellyfin, NAS එකක් සහ Freebox Server; Quest එකකට සපයන දුරකථනයක්, එහි හොට්ස්පොට් හරහා ද; හෙඩ්සෙට් එකේ සැබෑ iPhone අවකාශීය ඡායාරූප සහ වීඩියෝ); iPhone වලට සෑම DLNA සේවාදායකයක්ම සොයාගත හැකි වන පරිදි Apple වෙතින් ඉල්ලූ multicast අයිතිය (entitlement); හෙඩ්සෙට් එකේ අවකාශීය ඡායාරූප අතර පෙර සහ ඊළඟ; කාලරේඛාවේ සේවාදායක ඡායාරූප මත අවකාශීය ලාංඡනයක්; Quest හි විකේතක ඉඩ දෙන්නේ නම්, එහි අවකාශීය වීඩියෝ 3D ලෙස.
 - **දුරකථනවල 360° වාදක, ඊළඟට**: iOS 360° වීඩියෝ වාදකයේ කාල තීරුවක් (Android එකේ එය ඇත), Quest ගිලී යන දර්ශනයේ මෙන් දුරකථනවල 360° වාදකවල පෙර/ඊළඟ, සහ ස්වදේශීය 360° වීඩියෝ වාදකයේ ඡායාරූප.
 - **ජාල බෙදාගැනීම්, ඊළඟ පියවර**: ඡායාරූප සහ වීඩියෝ පිටුවල ෆෝල්ඩරයක එක් ගොනුවකින් ඊළඟට ස්වයිප් කිරීම (Quest ගිලී යන දර්ශනය දැනටමත් ෆෝල්ඩරයක 360° ගොනු හරහා ගමන් කරයි), WebDAV සඳහා Digest සත්‍යාපනය, Bonjour වාර්තාවෙන් පරිශීලක නාමය.
 - **පැතලි වීඩියෝ**: සේවාදායක, උපාංග සහ බෙදාගැනීම් වීඩියෝ සඳහා එක සේ, දුරකථනවල පැතලි වාදකයේ ශ්‍රව්‍ය ධාවන පථ තේරීම (360° සහ Spatial වාදකවල එය ඇත, Immuch360 Desktop හි පැතලි වාදකයේ ද එසේමය).
-- **Android TV, ඊළඟ පියවර**: Google TV ඉමියුලේටරයේ සහ සැබෑ රූපවාහිනියක බිල්ඩ් 20 හි උපාංග පරීක්ෂණය, ඉන්පසු Google Play හි රූපවාහිනී නිකුතුව (රූපවාහිනී තිර රූප, රූපවාහිනී බැනරය, Google හි සමාලෝචනය); පසුව, රූපවාහිනී මුල් තිරයේ නාලිකා.
+- **Android TV, ඊළඟ පියවර**: Google TV ඉමියුලේටරයේ සහ සැබෑ රූපවාහිනියක බිල්ඩ් 20 හි උපාංග පරීක්ෂණය, සහ Google විසින් රූපවාහිනී සඳහා ලැයිස්තුගත කිරීම සමාලෝචනය කළ පසු Google Play හි රූපවාහිනී නිකුතුව; පසුව, රූපවාහිනී මුල් තිරයේ නාලිකා.
 - **Tapo කැමරා, ඊළඟ පියවර**: සැබෑ කැමරා සමඟ බිල්ඩ් 20 හි උපාංග පරීක්ෂණය; iPhone සහ iPad මත සජීවී දර්ශනය; H.265 පටිගත කිරීම්; ක්ලිපයක් ගෙන එන අතරතුර එය වාදනය කිරීම; එක් කාලරේඛාවක මුළු දිනයක පටිගත කිරීම්.
 - **Plex, ඊළඟ පියවර**: බිල්ඩ් 20 හි උපාංග පරීක්ෂණය (දුරකථන, Quest, iPhone එකක්, රූපවාහිනියක්, නිවසින් පිටත); QR කේතයක් සමඟ පරිගණකයෙන් ටෝකනය ගෙන ඒම; හමු වූ සේවාදායක ලැයිස්තුවේ Plex සේවාදායකයක DLNA පැත්ත සැඟවීම; IPv6.
 - **Upstream**: නඩත්තුකරුවන්ට අවශ්‍ය කොටස් සඳහා Immich වෙත කුඩා pull request, 360° ඡායාරූප දර්ශකයෙන් ආරම්භ කර.

@@ -13,14 +13,19 @@ Immuch360 és l'aplicació mòbil de l'Immich amb fotos i vídeos 360° on pots 
   <sub>Fork no oficial. No està afiliat a l'Immich ni a FUTO. El nom es llegeix com «I am much 360».</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">APK d'Android</a><br>
-  App Store: <a href="#where-to-get-it">en revisió</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprovada, compilació 21 enviada com a primera actualització<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">baixada de la versió preliminar</a>, compilació d'escriptori 2
-</p>
+<div align="center">
+
+| Plataforma | On aconseguir-la | Estat a 9 d'octubre de 2026 |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**, telèfons i tauletes | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | compilació 20 a Google Play des del 7 d'octubre de 2026, compilació 21 a GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | versió 3.3.0 a l'espera de la revisió d'Apple; mentrestant, [compila-la tu mateix](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | fitxa aprovada, compilació 21 en revisió de Meta |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | compilació 21 a GitHub; la fitxa de Google Play per a televisors és en revisió de Google des del 9 d'octubre de 2026 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP preliminar](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | compilació d'escriptori 2 a Windows: fotos i vídeos plans, vídeos 360° a continuació; macOS i Linux més endavant, a partir de les mateixes fonts |
+
+*Els estats s'actualitzen a cada versió; els detalls són a [On aconseguir-la](#where-to-get-it).*
+
+</div>
 
 - 🌐 **360° natiu**<br>Fotos i vídeos com una esfera on mires al voltant, amb el giroscopi, inclosos els fitxers en brut de la càmera (Insta360 des de la compilació 16, GoPro i DJI des de la 18). També un reproductor de vídeo gratuït: pla, 360°, 3D, VR180
 - 👓 **3D natiu**<br>360° estereoscòpic i VR180, a dalt/a baix o un al costat de l'altre, i fotos espacials d'Apple (des de la compilació 19): 3D real al casc, un sol ull al telèfon
@@ -1072,7 +1077,7 @@ L'aplicació és a Google Play per a telèfons i tauletes; la versió de l'App S
 
 - **Telèfons i tauletes Android**
   - Avui: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o l'APK de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` per a un telèfon (l'universal `Immuch360-v<version>-release.apk` funciona a tot arreu, `-armeabi-v7a` és per a telèfons antics de 32 bits, i el fitxer `.aab` és per a Google Play, no per instal·lar manualment). La compilació de GitHub sol anar per davant de la botiga. En tots dos casos s'instal·la al costat de l'aplicació oficial de l'Immich (paquet `com.aprogsys.immuch360`).
-  - Aviat: a Google Play, la compilació 18 està publicada, la compilació 20 en revisió de Google des del 7 d'octubre de 2026, en lloc de la compilació 19.
+  - Aviat: a Google Play, la compilació 20 està publicada des del 7 d'octubre de 2026, en lloc de la compilació 18; la compilació 21 no canvia res en telèfons i tauletes.
 - **iPhone i iPad**
   - Avui: espera la revisió d'Apple. La versió en revisió té les funcions de la compilació 11: la pujada a l'Immich i l'elecció Font del vídeo (compilació 15) i els fitxers en brut d'Insta360 (compilació 16) arribaran amb una actualització posterior de l'App Store. El codi font es compila amb Xcode o a Codemagic, consulta [Compila-la tu mateix](#build-it-yourself).
   - Aviat: App Store, en revisió.
@@ -1081,7 +1086,7 @@ L'aplicació és a Google Play per a telèfons i tauletes; la versió de l'App S
   - Aviat: a la Meta Horizon Store, la fitxa es va aprovar el 7 d'octubre de 2026 amb la compilació 14, i la compilació 21, la seva primera actualització, és en revisió de Meta; el canal alfa de la botiga (només per a provadors) rep cada compilació nova.
 - **Android TV i Google TV (des de la compilació 20)**
   - Avui: L'`Immuch360-v<version>-release.apk` universal de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases), instal·lat manualment amb adb, consulta [Instal·la-la al televisor](#install-it-on-the-tv). És la mateixa aplicació que als telèfons.
-  - Aviat: Google Play als televisors, després de la revisió de Google de la versió per a televisor.
+  - Aviat: Google Play als televisors, la fitxa dels quals és en revisió de Google des del 9 d'octubre de 2026.
 - **Windows 10 i 11, 64 bits (versió preliminar)**
   - Avui: Immuch360 Desktop, el ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` de la [versió prèvia d'escriptori](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), descomprimit i iniciat com explica [Baixa-la i instal·la-la a Windows](#download-and-install-on-windows). De moment fotos i vídeos plans: els vídeos 360°, 3D i VR180 arriben amb les properes compilacions d'escriptori.
   - Aviat: els vídeos 360°, 3D, VR180 i 360° en brut; un instal·lador, una compilació signada i actualitzacions més endavant.
@@ -1165,22 +1170,24 @@ Aquest projecte és un fork de l'Immich i continua sota la [GNU AGPL v3](../LICE
 
 El ZIP per a Windows d'Immuch360 Desktop, i només ell, també porta el seu reproductor de vídeo: libmpv, la biblioteca de [mpv](https://mpv.io), amb [FFmpeg](https://ffmpeg.org) a dins, controlada pels connectors de [media_kit](https://github.com/media-kit/media-kit). mpv i FFmpeg es compilen sense les seves parts que són només GPL, i el seu codi està sota la GNU LGPL versió 2.1 o posterior; compilades juntes, `libmpv-2.dll` es distribueix sota la GNU LGPL versió 3 o posterior. L'aplicació la carrega en temps d'execució, així que la pots substituir per la teva pròpia compilació. Els textos de les llicències són a la carpeta `licenses` del ZIP, i cada biblioteca amb la seva llicència i les seves fonts apareix a [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
 
+Android, Android TV i Google TV són marques comercials de Google LLC; Apple, iPhone, iPad i macOS són marques comercials d'Apple Inc.; Meta i Meta Quest són marques comercials de Meta Platforms, Inc.; Windows és una marca comercial del grup d'empreses de Microsoft; Linux és la marca registrada de Linus Torvalds als Estats Units i en altres països. Els seus logotips apareixen a la taula de plataformes només per mostrar on funciona Immuch360 i no impliquen cap aval ni cap afiliació. El robot d'Android es reprodueix o es modifica a partir d'una obra creada i compartida per Google i s'utilitza segons els termes descrits a la llicència Creative Commons 3.0 Attribution License. Tux, el pingüí de Linux, és obra de Larry Ewing (lewing@isc.tamu.edu), dibuixat amb The GIMP, en la versió vectorial de Simon Budig i Garrett LeSage. Fonts i llicències dels logotips: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Full de ruta
 
 El que encara no està fet, el més probable primer. Res d'això és una promesa, i els comentaris al [gestor d'incidències](https://github.com/freeKC/Immuch360/issues) ajuden a decidir què va primer.
 
 - **Immuch360 Desktop, primer Windows**: la compilació d'escriptori 2 ja ha sortit, amb vídeos plans, i les fonts d'escriptori són a la branca principal del fork, `immuch360`, des del 9 d'octubre de 2026 (consulta [En un ordinador Windows](#on-a-windows-computer-immuch360-desktop-preview)). Després, els vídeos 360°, 3D, VR180 i 360° en brut a Windows, amb les dues lents dels fitxers en brut i la visualització en directe de Tapo; després la prova de cada funció en un PC Windows i les seves correccions; després Spatial 2.5D amb la càmera web; després Linux i macOS, paquets, signatura i actualitzacions.
-- **Google Play**: la compilació 18 està publicada; la compilació 20 és en revisió de Google des del 7 d'octubre de 2026, en lloc de la compilació 19. La compilació 21 no canvia res en telèfons i tauletes.
+- **Google Play**: la compilació 20 està publicada des del 7 d'octubre de 2026, en lloc de la compilació 18; la fitxa per a televisors és en revisió de Google des del 9 d'octubre de 2026. La compilació 21 no canvia res en telèfons i tauletes.
 - **App Store**: la versió 3.3.0 espera la revisió d'Apple; té les funcions de la compilació 11, de manera que la pujada a l'Immich i la comprovació dels descodificadors de vídeo (compilació 15) i els fitxers en brut d'Insta360 (compilació 16) arribaran amb la propera actualització de l'App Store. L'enllaç s'afegirà aquí quan estigui publicada.
 - **Meta Horizon Store**: Meta va aprovar la fitxa el 7 d'octubre de 2026 amb la compilació 14. La compilació 21 s'ha enviat com a primera actualització: porta tot el que hi ha des de la compilació 14 (pujades des d'un recurs compartit a l'Immich, la font de vídeo triada segons el que descodifica el casc, fitxers en brut d'Insta360, GoPro i DJI, DLNA, el telèfon compartit a la xarxa, fotos espacials d'Apple, biblioteques de Plex Media Server, càmeres Tapo), i la botiga l'ofereix per a les Quest 2, Quest Pro, Quest 3 i 3S. L'enllaç de la botiga s'afegirà aquí quan la pàgina sigui pública; una còpia instal·lada manualment s'haurà de desinstal·lar primer (consulta [Instal·lació](#install)).
-- **Fitxes de les botigues**: la fitxa de Google Play es va reescriure l'octubre del 2026 amb captures noves, i guanyarà captures de televisor i una bandera de televisor amb la versió per a televisor. El text de l'App Store encara descriu les primeres compilacions (fotos i vídeos 360°, fitxers en brut mostrats plans); presentarà els visualitzadors 3D, VR180 i Spatial, el mode sense servidor, els recursos compartits de xarxa, el reproductor multimèdia i els fitxers en brut d'Insta360. El text de la Meta Horizon Store ja presenta el reproductor multimèdia.
+- **Fitxes de les botigues**: la fitxa de Google Play es va reescriure l'octubre del 2026 amb captures noves, i les seves captures de televisor i la seva bandera de televisor s'hi van afegir el 8 d'octubre de 2026; la fitxa per a televisors és en revisió de Google des del 9 d'octubre de 2026. El text de l'App Store encara descriu les primeres compilacions (fotos i vídeos 360°, fitxers en brut mostrats plans); presentarà els visualitzadors 3D, VR180 i Spatial, el mode sense servidor, els recursos compartits de xarxa, el reproductor multimèdia i els fitxers en brut d'Insta360. El text de la Meta Horizon Store ja presenta el reproductor multimèdia.
 - **Fitxers en brut de càmeres 360°, a continuació**: un indicador de progrés mentre es prepara una foto en brut per al casc; anivellament dels vídeos GoPro i DJI a partir de les seves pròpies dades de moviment; .dng de doble ull de peix; informes de dispositius sobre la reproducció de dos objectius de la compilació 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) per confirmar les costures i la capacitat dels descodificadors.
 - **DLNA, recurs compartit de telèfon i contingut espacial d'Apple, a continuació**: els informes de dispositius de la compilació 19 (Plex, Jellyfin, un NAS i el Freebox Server per DLNA; un telèfon que serveix unes Quest, també al seu punt d'accés; fotos i vídeos espacials reals d'iPhone al casc); el dret de multicast demanat a Apple, perquè els iPhone trobin tots els servidors DLNA; anterior i següent entre fotos espacials al casc; un distintiu espacial a les fotos del servidor a la cronologia; vídeos espacials en 3D a les Quest, si els seus descodificadors ho permeten.
 - **Reproductors 360° als telèfons, a continuació**: una barra de temps al reproductor de vídeo 360° d'iOS (el d'Android ja en té), anterior/següent als reproductors 360° dels telèfons com a la vista immersiva de les Quest, i fotos al reproductor de vídeo 360° natiu.
 - **Recursos compartits de xarxa, propers passos**: lliscar d'un fitxer d'una carpeta al següent a les pàgines de foto i de vídeo (la vista immersiva de les Quest ja recorre els fitxers 360° d'una carpeta), autenticació Digest per a WebDAV, el nom d'usuari a partir del registre Bonjour.
 - **Vídeos plans**: l'elecció de pista d'àudio al reproductor pla dels telèfons, per a vídeos del servidor, del dispositiu i de recursos compartits per igual (els reproductors 360° i Spatial ja la tenen, i també el reproductor pla d'Immuch360 Desktop).
-- **Android TV, a continuació**: la prova en dispositius de la compilació 20 a l'emulador de Google TV i en un televisor real, després la versió per a televisor a Google Play (captures de televisor, la bandera de televisor, la revisió de Google); més endavant, canals a la pantalla d'inici del televisor.
+- **Android TV, a continuació**: la prova en dispositius de la compilació 20 a l'emulador de Google TV i en un televisor real, i la versió per a televisor a Google Play un cop Google hagi revisat la fitxa per a televisors; més endavant, canals a la pantalla d'inici del televisor.
 - **Càmeres Tapo, a continuació**: la prova en dispositius de la compilació 20 amb càmeres reals; la visualització en directe a l'iPhone i l'iPad; els enregistraments H.265; reproduir un clip mentre s'obté; tot un dia d'enregistraments en una sola línia de temps.
 - **Plex, a continuació**: la prova en dispositius de la compilació 20 (telèfons, les Quest, un iPhone, un televisor, fora de casa); portar el testimoni des de l'ordinador amb un codi QR; amagar la part DLNA d'un servidor Plex a la llista de servidors trobats; IPv6.
 - **Upstream**: petites pull requests a l'Immich per a les parts que vulguin els mantenidors, començant pel visualitzador de fotos 360°.

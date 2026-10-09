@@ -13,14 +13,19 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
   <sub>Resmi olmayan bir çatal. Immich veya FUTO ile bağlantılı değildir. Adı "I am much 360" diye okunur.</sub>
 </p>
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.aprogsys.immuch360"><b>Google Play</b></a> &nbsp;·&nbsp;
-  <a href="https://github.com/freeKC/Immuch360/releases">Android APK</a><br>
-  App Store: <a href="#where-to-get-it">inceleniyor</a><br>
-  Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store onaylandı, ilk güncellemesi olarak derleme 21 gönderildi<br>
-  Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">önizleme indirmesi</a>, masaüstü derlemesi 2
-</p>
+<div align="center">
+
+| Platform | Nereden edinilir | 9 Ekim 2026 itibarıyla durum |
+|---|---|---|
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon ve tabletler | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play'de 7 Ekim 2026'dan beri derleme 20, GitHub'da derleme 21 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ve iPad** | App Store | 3.3.0 sürümü Apple incelemesini bekliyor; bu arada [kendiniz derleyin](#build-it-yourself) |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ve 3S | [APK](#meta-quest-3) · Horizon Store | liste onaylandı, derleme 21 Meta incelemesinde |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ve Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub'da derleme 21; televizyonlar için Google Play kaydı 9 Ekim 2026'dan beri Google incelemesinde |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Önizleme ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Windows'ta masaüstü derlemesi 2: fotoğraflar ve düz videolar, sırada 360° videolar; macOS ve Linux daha sonra, aynı kaynaklardan |
+
+*Durumlar her sürümde güncellenir; ayrıntılar [Nereden edinilir](#where-to-get-it) bölümünde.*
+
+</div>
 
 - 🌐 **Yerleşik 360°**<br>İçinde etrafınıza bakabileceğiniz bir küre olarak fotoğraf ve videolar, jiroskopla, ham kamera dosyaları dahil (Insta360 derleme 16'dan, GoPro ve DJI derleme 18'den itibaren). Ayrıca ücretsiz bir video oynatıcı: düz, 360°, 3D, VR180
 - 👓 **Yerleşik 3D**<br>Stereoskopik 360° ve VR180, üst/alt veya yan yana, ve Apple uzamsal fotoğrafları (derleme 19'dan itibaren): başlıkta gerçek 3D, telefonda tek göz
@@ -1072,7 +1077,7 @@ Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple
 
 - **Android telefon ve tabletler**
   - Bugün: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ya da [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki APK: telefon için `Immuch360-v<version>-arm64-v8a-release.apk` (evrensel `Immuch360-v<version>-release.apk` her yerde çalışır, `-armeabi-v7a` eski 32 bit telefonlar içindir, `.aab` dosyası ise yandan yükleme için değil Google Play içindir). GitHub derlemesi genellikle mağazadakinden ileridedir. Her iki durumda da resmi Immich uygulamasının yanına kurulur (paket `com.aprogsys.immuch360`).
-  - Yakında: Google Play'de derleme 18 yayında, derleme 19'un yerine derleme 20 ise 7 Ekim 2026'dan beri Google'ın incelemesinde.
+  - Yakında: Google Play'de derleme 18'in yerine derleme 20, 7 Ekim 2026'dan beri yayında; derleme 21 telefon ve tabletlerde hiçbir şeyi değiştirmez.
 - **iPhone ve iPad**
   - Bugün: Apple'ın incelemesini bekliyor. İncelenen sürüm derleme 11'in özelliklerini taşır: Immich'e yükleme ve Video kaynağı seçimi (derleme 15) ile ham Insta360 dosyaları (derleme 16) daha sonraki bir App Store güncellemesiyle gelecek. Kaynak kod Xcode ile veya Codemagic üzerinde derlenir, bkz. [Kendiniz derleyin](#build-it-yourself).
   - Yakında: App Store, inceleniyor.
@@ -1081,7 +1086,7 @@ Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple
   - Yakında: Meta Horizon Store'da kayıt 7 Ekim 2026'da derleme 14 ile onaylandı ve ilk güncellemesi olan derleme 21 Meta'nın incelemesinde; mağazanın alfa kanalı (yalnızca test edenler) her yeni derlemeyi alır.
 - **Android TV ve Google TV (derleme 20'den itibaren)**
   - Bugün: [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki evrensel `Immuch360-v<version>-release.apk`, adb ile yandan yüklenir, bkz. [Televizyona kurun](#install-it-on-the-tv). Telefonlardaki uygulamanın aynısıdır.
-  - Yakında: televizyonlarda Google Play, televizyon sürümünün Google tarafından incelenmesinden sonra.
+  - Yakında: televizyonlarda Google Play; televizyonlar için kayıt 9 Ekim 2026'dan beri Google'ın incelemesinde.
 - **Windows 10 ve 11, 64 bit (önizleme)**
   - Bugün: Immuch360 Desktop, [masaüstü ön sürümünün](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIP'i, [Windows'a indirin ve kurun](#download-and-install-on-windows) bölümünün anlattığı gibi açılıp başlatılır. Şimdilik fotoğraflar ve düz videolar: 360°, 3D ve VR180 videolar sonraki masaüstü derlemeleriyle gelecek.
   - Yakında: 360°, 3D, VR180 ve ham 360° videolar; bir yükleyici, imzalı bir derleme ve güncellemeler daha sonra.
@@ -1165,22 +1170,24 @@ Bu proje Immich'in bir çatalıdır ve [GNU AGPL v3](../LICENSE) lisansı altın
 
 Immuch360 Desktop'ın Windows ZIP'i, yalnızca o, video oynatıcısını da taşır: [mpv](https://mpv.io) kütüphanesi libmpv, içinde [FFmpeg](https://ffmpeg.org) ile, [media_kit](https://github.com/media-kit/media-kit) eklentileriyle yönetilir. mpv ve FFmpeg yalnızca GPL olan bölümleri olmadan derlenir ve kodları GNU LGPL sürüm 2.1 veya sonrası altındadır; birlikte derlenen `libmpv-2.dll`, GNU LGPL sürüm 3 veya sonrası altında dağıtılır. Uygulama onu çalışma anında yükler, böylece onu kendi derlemenizle değiştirebilirsiniz. Lisans metinleri ZIP'in `licenses` klasöründedir; her kütüphane, lisansı ve kaynaklarıyla birlikte [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) dosyasında listelenir.
 
+Android, Android TV ve Google TV, Google LLC'nin ticari markalarıdır; Apple, iPhone, iPad ve macOS, Apple Inc.'in ticari markalarıdır; Meta ve Meta Quest, Meta Platforms, Inc.'in ticari markalarıdır; Windows, Microsoft şirketler grubunun ticari markasıdır; Linux, Linus Torvalds'ın ABD'de ve diğer ülkelerde tescilli ticari markasıdır. Logoları platform tablosunda yalnızca Immuch360'ın nerede çalıştığını göstermek için yer alır ve herhangi bir onay ya da bağlantı anlamına gelmez. Android robotu, Google tarafından oluşturulup paylaşılan çalışmadan çoğaltılmış veya değiştirilmiştir ve Creative Commons 3.0 Attribution License'ta açıklanan koşullara göre kullanılmaktadır. Linux pengueni Tux, Larry Ewing (lewing@isc.tamu.edu) tarafından The GIMP ile çizilmiştir; vektör sürümü Simon Budig ve Garrett LeSage'e aittir. Logoların kaynakları ve lisansları: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+
 <a id="roadmap"></a>
 ## Yol haritası
 
 Henüz yapılmamış olanlar, en olası olanlar önce. Buradaki hiçbir şey bir söz değildir ve [sorun takipçisindeki](https://github.com/freeKC/Immuch360/issues) geri bildirimler neyin önce geleceğine karar vermeye yardımcı olur.
 
 - **Immuch360 Desktop, önce Windows**: masaüstü derlemesi 2 düz videolarla çıktı, masaüstü kaynakları da 9 Ekim 2026'dan beri çatalın ana dalı `immuch360` içinde (bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview)). Sırada Windows'ta 360°, 3D, VR180 ve ham 360° videolar, ham dosyaların iki lensi ve Tapo canlı görüntüsüyle; ardından her işlevin bir Windows bilgisayarda testi ve düzeltmeleri; ardından web kamerasıyla Spatial 2.5D; ardından Linux ve macOS, paketler, imzalama ve güncellemeler.
-- **Google Play**: derleme 18 yayında; derleme 19'un yerine derleme 20, 7 Ekim 2026'dan beri Google'ın incelemesinde. Derleme 21 telefon ve tabletlerde hiçbir şeyi değiştirmez.
+- **Google Play**: derleme 18'in yerine derleme 20, 7 Ekim 2026'dan beri yayında; televizyonlar için kayıt 9 Ekim 2026'dan beri Google'ın incelemesinde. Derleme 21 telefon ve tabletlerde hiçbir şeyi değiştirmez.
 - **App Store**: sürüm 3.3.0 Apple'ın incelemesini bekliyor; derleme 11'in özelliklerini taşıyor, bu yüzden Immich'e yükleme ve video kod çözücü denetimi (derleme 15) ile ham Insta360 dosyaları (derleme 16) bir sonraki App Store güncellemesiyle gelecek. Bağlantı yayına girdiğinde buraya eklenecek.
 - **Meta Horizon Store**: Meta, kaydı 7 Ekim 2026'da derleme 14 ile onayladı. Derleme 21 ilk güncellemesi olarak gönderildi: derleme 14'ten bu yana gelen her şeyi getirir (bir paylaşımdan Immich'e yüklemeler, başlığın çözebildiklerine göre seçilen video kaynağı, ham Insta360, GoPro ve DJI dosyaları, DLNA, telefon paylaşımı, Apple uzamsal fotoğrafları, Plex Media Server kütüphaneleri, Tapo kameralar) ve mağaza onu Quest 2, Quest Pro, Quest 3 ve 3S için listeler. Sayfa herkese açık olduğunda mağaza bağlantısı buraya eklenecek; yandan yüklenmiş bir kopyanın önce kaldırılması gerekir (bkz. [Kurulum](#install)).
-- **Mağaza kayıtları**: Google Play kaydı Ekim 2026'da yeni ekran görüntüleriyle yeniden yazıldı ve televizyon sürümüyle televizyon ekran görüntüleri ve bir televizyon bandı kazanacak. App Store metni hâlâ ilk derlemeleri anlatıyor (360° fotoğraf ve videolar, düz gösterilen ham dosyalar); 3D, VR180 ve Spatial görüntüleyicilerini, sunucusuz modu, ağ paylaşımlarını, medya oynatıcıyı ve ham Insta360 dosyalarını tanıtacak. Meta Horizon Store metni medya oynatıcıyı zaten tanıtıyor.
+- **Mağaza kayıtları**: Google Play kaydı Ekim 2026'da yeni ekran görüntüleriyle yeniden yazıldı, televizyon ekran görüntüleri ve televizyon bandı da 8 Ekim 2026'da eklendi; televizyonlar için kayıt 9 Ekim 2026'dan beri Google'ın incelemesinde. App Store metni hâlâ ilk derlemeleri anlatıyor (360° fotoğraf ve videolar, düz gösterilen ham dosyalar); 3D, VR180 ve Spatial görüntüleyicilerini, sunucusuz modu, ağ paylaşımlarını, medya oynatıcıyı ve ham Insta360 dosyalarını tanıtacak. Meta Horizon Store metni medya oynatıcıyı zaten tanıtıyor.
 - **Ham 360° kamera dosyaları, sırada**: ham bir fotoğraf başlık için hazırlanırken bir ilerleme göstergesi; GoPro ve DJI videolarının kendi hareket verileriyle düzeltilmesi; çift balıkgözü .dng; dikişleri ve kod çözücü bütçelerini doğrulamak için derleme 18'in iki mercekli oynatmasına dair cihaz raporları (X4, X5, X6, GoPro MAX 2, Osmo 360).
 - **DLNA, telefon paylaşımı ve Apple uzamsal, sırada**: derleme 19'un cihaz raporları (DLNA üzerinden Plex, Jellyfin, bir NAS ve Freebox Server; erişim noktası üzerinden de, bir Quest'e hizmet veren bir telefon; başlıkta gerçek iPhone uzamsal fotoğraf ve videoları); iPhone'ların her DLNA sunucusunu bulabilmesi için Apple'dan istenen çok noktaya yayın yetkisi; başlıkta uzamsal fotoğraflar arasında önceki ve sonraki; zaman çizelgesindeki sunucu fotoğraflarında bir uzamsal rozeti; kod çözücüleri izin verirse Quest'te uzamsal videoların 3D olarak gösterilmesi.
 - **Telefonlarda 360° oynatıcılar, sırada**: iOS 360° video oynatıcısında bir zaman çubuğu (Android'dekinde var), Quest sürükleyici görünümündeki gibi telefonların 360° oynatıcılarında önceki/sonraki ve yerleşik 360° video oynatıcısında fotoğraflar.
 - **Ağ paylaşımları, sonraki adımlar**: fotoğraf ve video sayfalarında bir klasördeki bir dosyadan sonrakine kaydırma (Quest sürükleyici görünümü bir klasörün 360° dosyaları arasında zaten geziniyor), WebDAV için Digest kimlik doğrulaması, Bonjour kaydından kullanıcı adı.
 - **Düz videolar**: sunucu, cihaz ve paylaşım videoları için aynı şekilde, telefonların düz oynatıcısında ses parçası seçimi (360° ve Spatial oynatıcılarında var, Immuch360 Desktop'ın düz oynatıcısında da).
-- **Android TV, sırada**: derleme 20'nin Google TV emülatöründe ve gerçek bir televizyonda cihaz testi, ardından Google Play'de televizyon sürümü (televizyon ekran görüntüleri, televizyon bandı, Google'ın incelemesi); daha sonra televizyon ana ekranında kanallar.
+- **Android TV, sırada**: derleme 20'nin Google TV emülatöründe ve gerçek bir televizyonda cihaz testi ve Google televizyonlar için kaydı inceledikten sonra Google Play'de televizyon sürümü; daha sonra televizyon ana ekranında kanallar.
 - **Tapo kameralar, sırada**: derleme 20'nin gerçek kameralarla cihaz testi; iPhone ve iPad'de canlı görüntü; H.265 kayıtlar; bir klibi alınırken oynatmak; bütün bir günün kayıtları tek bir zaman çizelgesinde.
 - **Plex, sırada**: derleme 20'nin cihaz testi (telefonlar, Quest, bir iPhone, bir televizyon, evden uzakta); belirteci bilgisayardan bir QR koduyla getirmek; bulunan sunucular listesinde bir Plex sunucusunun DLNA tarafını gizlemek; IPv6.
 - **Upstream**: bakımcıların istediği parçalar için, 360° fotoğraf görüntüleyiciden başlayarak Immich'e küçük pull request'ler.
