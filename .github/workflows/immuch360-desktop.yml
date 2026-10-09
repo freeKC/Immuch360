@@ -324,6 +324,27 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Xcode with the macOS 26 SDK
+        run: |
+          # connectivity_plus 7.3 reads NWPath.isUltraConstrained (behind #available(macOS 26.0, *)), which only the
+          # macOS 26 SDK declares; the default Xcode of macos-15 is 16.4, with the macOS 15.5 SDK. The image also has
+          # Xcode 26 (26.0.1 to 26.3 in its readme, images/macos/macos-15-Readme.md of actions/runner-images): the newest
+          shopt -s nullglob
+          found=(/Applications/Xcode_26.*.app)
+          if [ ${#found[@]} = 0 ]; then
+            echo "::error::No Xcode 26 on this runner image; move the job to macos-26"
+            exit 1
+          fi
+          xcode=$(printf '%s\n' "${found[@]}" | sort -V | tail -1)
+          sudo xcode-select -s "$xcode/Contents/Developer"
+          xcodebuild -version
+          sdk=$(xcrun --sdk macosx --show-sdk-version)
+          echo "$xcode, macOS SDK $sdk"
+          if [ "${sdk%%.*}" -lt 26 ]; then
+            echo "::error::$xcode has the macOS $sdk SDK, not 26 or later"
+            exit 1
+          fi
+
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
         with:

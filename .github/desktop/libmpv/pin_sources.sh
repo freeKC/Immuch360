@@ -65,7 +65,17 @@ for p in "$@"; do
     if ! git -C "$dir" cat-file -e "$pin^{commit}" 2> /dev/null; then
       git -C "$dir" fetch -q --filter=tree:0 --no-tags origin "$pin"
     fi
-    git -C "$dir" -c advice.detachedHead=false checkout -q --detach "$pin"
+    # On a branch whose upstream is the pin, not a detached HEAD: the recipe's clean up step after each install
+    # (reset_head.sh of cmake/custom_steps.cmake) runs "git rev-parse @{u}" and "git reset --hard @{u}", which fail
+    # with "HEAD does not point to a branch" on a detached HEAD, and would move a branch tracking origin back to its
+    # head. Both local branches stay in the clone, so the build jobs find them in the packed sources.
+    git -C "$dir" branch -f immuch360-lock "$pin"
+    git -C "$dir" checkout -q -B immuch360-pinned immuch360-lock
+    git -C "$dir" branch -q --set-upstream-to=immuch360-lock immuch360-pinned
+    if [ "$(git -C "$dir" rev-parse '@{u}')" != "$pin" ]; then
+      echo "$p: the upstream of its branch is not its pin" >&2
+      exit 1
+    fi
     # Submodules the clone initialised follow the commit, as a clone of that commit would have them
     if git -C "$dir" submodule status 2> /dev/null | grep -q '^[ +U]'; then
       git -C "$dir" submodule update -q --init --recursive
