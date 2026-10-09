@@ -12,11 +12,14 @@ import 'dart:ui' as ui;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
+import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -29,6 +32,7 @@ import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
@@ -40,6 +44,7 @@ import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.da
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -1167,7 +1172,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   // A drag released while the finger still moves keeps turning the view, like a flick. The gyroscope already
   // moves it, and after lifting one finger of a pinch the other one is still on the screen.
   void _onScaleEnd(ScaleEndDetails details) {
-    if (details.pointerCount > 0 || _pinched || _gyroEnabled) {
+    // Nor on a computer that asks for fewer animations (desktop_shortcuts.dart)
+    if (details.pointerCount > 0 || _pinched || _gyroEnabled || desktopReducedMotion(context)) {
       return;
     }
     final degreesPerPixel = _fov / context.size!.height;
@@ -1200,6 +1206,14 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
 
   void _onDoubleTap() => _zoomTo(doubleTapFov(_fov));
 
+  void _onPointerSignal(PointerSignalEvent event) {
+    final factor = wheelZoomFactor(event);
+    if (factor != null) {
+      // Claimed, so that a scrollable around the viewer does not scroll with the same notch
+      GestureBinding.instance.pointerSignalResolver.register(event, (_) => _zoomBy(factor));
+    }
+  }
+
   void _zoomTo(double fov) {
     _zoomTarget = fov;
     _zoomAnimation = Tween(begin: _fov, end: fov).chain(CurveTween(curve: Curves.easeOutCubic)).animate(_zoom);
@@ -1225,8 +1239,9 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       }
       return KeyEventResult.handled;
     }
-    final zoomIn = remoteZoomInKeys.contains(key);
-    if (zoomIn || remoteZoomOutKeys.contains(key)) {
+    // By key, and on a computer by the character typed, + and - of any keyboard layout (remote_keys.dart)
+    final zoomIn = isRemoteZoomIn(event);
+    if (zoomIn || isRemoteZoomOut(event)) {
       if (isRemotePress(event)) {
         _zoomBy(zoomIn ? 1 / _remoteZoomFactor : _remoteZoomFactor);
       }
@@ -1280,6 +1295,9 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
       return;
     }
     _keyTurn.stop();
+    if (desktopReducedMotion(context)) {
+      return;
+    }
     _inertiaVelocity = velocity;
     _lastInertiaTick = Duration.zero;
     _inertia.stop();
@@ -1346,6 +1364,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     final hasGPanoCrop = gpanoCrop != null && isPartialSphere(gpanoCrop);
     // The remote control layout: zoom buttons, no gyroscope (a TV has none), a hint for the arrows
     final tvMode = ref.watch(tvModeProvider);
+    // No gyroscope on a computer either
+    final hasGyroscope = ref.watch(deviceFeaturesProvider.select((features) => features.gyroscope));
     if (tvMode && showsSphere) {
       _startLookHint();
     }
@@ -1399,7 +1419,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                   tooltip: stereoLayout.label(context.t),
                   onPressed: () => _showNextStereoLayout(stereoLayout),
                 ),
-              if (showsSphere && !isHorizonOs && !tvMode)
+              if (showsSphere && !isHorizonOs && !tvMode && hasGyroscope)
                 IconButton(
                   isSelected: _gyroEnabled,
                   icon: const Icon(Icons.explore_outlined),
@@ -1407,6 +1427,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                   tooltip: context.t.panorama_gyroscope,
                   onPressed: () => _setGyroEnabled(!_gyroEnabled),
                 ),
+              // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
+              if (CurrentPlatform.isDesktop) const DesktopFullScreenButton(),
             ],
           ),
         ),
@@ -1439,6 +1461,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                   onPointerDown: _onPointerDown,
                   onPointerUp: _onPointerUp,
                   onPointerCancel: _onPointerUp,
+                  // The mouse wheel zooms on a computer (lib/desktop/window/desktop_shortcuts.dart)
+                  onPointerSignal: CurrentPlatform.isDesktop ? _onPointerSignal : null,
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onScaleStart: (_) => _fovAtScaleStart = _fov,

@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/colors.dart';
+import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -50,6 +52,8 @@ class NetworkVideoControls extends ConsumerWidget {
                     : AnimatedPlayPause(color: Colors.white, playing: isPlaying, shadows: _shadows),
                 onPressed: notifier.toggle,
               ),
+              // The computers' player lists the audio tracks of a video that has several
+              if (CurrentPlatform.isDesktop) const DesktopAudioTrackButton(shadows: _shadows),
               const Spacer(),
               IgnorePointer(
                 child: Text(

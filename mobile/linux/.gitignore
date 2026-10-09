@@ -1,0 +1,5 @@
+flutter/ephemeral
+
+# Written by flutter pub get from the plugin list, like GeneratedPluginRegistrant of the phone projects
+flutter/generated_plugin_registrant.*
+flutter/generated_plugins.cmake

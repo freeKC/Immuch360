@@ -1,0 +1,366 @@
+name: Immuch360 Desktop
+
+# Immuch360 Desktop (Windows, macOS, Linux) from the same sources as the phone apps. Runs on the desktop branch, its
+# pull requests and the upstream sync branches; the Android release workflow (immuch360-release.yml) is not touched.
+#
+# Jobs:
+#   codegen        the generated Dart once for every job (Windows and macOS need neither Java nor node), and the
+#                  version numbers of the desktop builds (.github/desktop/desktop_version.py)
+#   gates          the checks that keep the phones as they are and the desktop code in its place, without Flutter
+#   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists
+#   linux, macos   compile the desktop app (Linux on the oldest supported Ubuntu, for its glibc)
+#   windows        desktop tests on a real Windows, the release build, and the ZIP for the owner as an artifact
+#                  named Immuch360-Desktop-<version>-windows-x64.zip (unsigned, internal until the first release)
+#   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
+#                  point 7 in the run summary. An upstream sync reaches the desktop branch through the phone branch;
+#                  an upstream-sync/* branch is made from the desktop branch to see the effect of a sync before it lands.
+#
+# Runner labels and actions are pinned: windows-latest is now the Visual Studio 2026 image while the desktop builds
+# with Visual Studio 2022, like the owner's PC. The workflow builds pull request code, so it reads the repository only,
+# keeps no token in the checkouts and uses no secret; .github/desktop/check_workflow.py holds it to that.
+
+on:
+  push:
+    branches: [desktop, 'upstream-sync/**']
+    tags: ['v*']
+  pull_request:
+    branches: [desktop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MISE_YES: '1'
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+
+jobs:
+  codegen:
+    name: Code generation and version
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    outputs:
+      build_number: ${{ steps.version.outputs.build_number }}
+      file_version: ${{ steps.version.outputs.file_version }}
+      label: ${{ steps.version.outputs.label }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The whole history without file contents: the fork's release tags give the desktop build number
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Version numbers
+        id: version
+        run: python3 .github/desktop/desktop_version.py --github-output
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install toolchains (Flutter 3.47.2, Java 21, OpenAPI generator)
+        run: |
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+
+      - name: Dependencies and code generation
+        run: |
+          mise //mobile:install:ci
+          mise //mobile:codegen
+
+      # Every file the code generation wrote, whatever its pattern: the untracked files of lib, generated and test
+      - name: Pack the generated Dart
+        working-directory: mobile
+        run: |
+          git ls-files --others -- lib generated test | grep -v '/\.dart_tool/' > "$RUNNER_TEMP/generated-dart.txt"
+          tar -cf generated-dart.tar -T "$RUNNER_TEMP/generated-dart.txt"
+          echo "$(wc -l < "$RUNNER_TEMP/generated-dart.txt") generated files"
+
+      - name: Upload the generated Dart
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: generated-dart
+          path: mobile/generated-dart.tar
+          retention-days: 3
+          if-no-files-found: error
+
+  gates:
+    name: Phone gates and lints
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The phone branch is needed for its merge base
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Desktop packages imported under mobile/lib/desktop only
+        run: python3 .github/desktop/check_desktop_imports.py
+
+      - name: No new iOS or Android ternary
+        run: python3 .github/desktop/check_platform_ternaries.py
+
+      - name: Every platform line has a verdict in PLATFORM-AUDIT.md
+        run: python3 .github/desktop/check_platform_audit.py
+
+      - name: Every pigeon host API answered on the computers
+        run: python3 .github/desktop/check_pigeon_desktop.py
+
+      - name: This workflow pinned and without secrets
+        run: python3 .github/desktop/check_workflow.py
+
+      # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
+      - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
+        if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
+        run: python3 .github/desktop/check_phone_projects.py --phone-ref origin/immuch360
+
+      # The plugin baseline of the test job compares names only: a package of the phones moved to another version by a
+      # desktop package shows here, in mobile/pubspec.lock against the phone branch
+      - name: Packages of the phone builds as on the phone branch
+        if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
+        run: python3 .github/desktop/check_phone_packages.py --phone-ref origin/immuch360
+
+  test:
+    name: Analyze, mobile suite, plugin baseline
+    runs-on: ubuntu-24.04
+    needs: codegen
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install Flutter
+        run: cd mobile && mise install
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Flutter dependencies
+        working-directory: mobile
+        run: |
+          tar -xf generated-dart.tar && rm generated-dart.tar
+          mise exec -- flutter pub get --enforce-lockfile
+
+      - name: Android and iOS plugin lists equal the baseline
+        run: python3 .github/desktop/check_plugin_baseline.py
+
+      - name: Analyze
+        working-directory: mobile
+        run: mise exec -- flutter analyze
+
+      # Upstream checks the format of lib; the desktop files follow the same rule, the shared files keep upstream's state
+      - name: Desktop files formatted
+        working-directory: mobile
+        run: |
+          mise exec -- dart format --output=none --set-exit-if-changed lib/desktop lib/main_desktop.dart \
+            test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows
+
+      # The whole suite: the phone regression gate, test/desktop included
+      - name: Tests
+        working-directory: mobile
+        run: mise exec -- flutter test
+
+  linux:
+    name: Linux build
+    runs-on: ubuntu-22.04
+    needs: codegen
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The list of the Flutter Linux setup (clang, CMake, Ninja, GTK, liblzma, libstdc++ 12 for the clang of 22.04),
+      # libsecret for flutter_secure_storage_linux, WebKitGTK 4.1 and libsoup 3 for desktop_webview_window (the OAuth
+      # window of flutter_web_auth_2)
+      - name: Linux build packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
+            libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install Flutter
+        run: cd mobile && mise install
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Build
+        working-directory: mobile
+        env:
+          BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
+        run: |
+          tar -xf generated-dart.tar && rm generated-dart.tar
+          mise exec -- flutter pub get --enforce-lockfile
+          mise exec -- flutter build linux --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+
+  windows:
+    name: Windows desktop tests, build and ZIP
+    runs-on: windows-2022
+    needs: codegen
+    if: github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')
+    timeout-minutes: 75
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # mise's Flutter package (aqua) names the Unix launchers bin/flutter and bin/dart, while a Windows host runs
+      # bin\flutter.bat: the same version through the Flutter action, kept equal to mobile/mise.toml by check_workflow.py
+      - name: Install Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: 3.47.2
+          channel: stable
+          cache: true
+
+      - name: Toolchain versions
+        run: |
+          flutter --version
+          flutter doctor -v
+          python --version
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Flutter dependencies
+        working-directory: mobile
+        run: |
+          tar -xf generated-dart.tar && rm generated-dart.tar
+          flutter pub get --enforce-lockfile
+
+      - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts)
+        working-directory: mobile
+        run: flutter test test/desktop
+
+      - name: Build
+        working-directory: mobile
+        env:
+          BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
+        run: flutter build windows --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+
+      # The Release folder plus the Visual C++ runtime, without dartjni.dll, each DLL import checked against what a
+      # clean Windows has, and the file version of the executable checked; the debug symbols, if the build made any,
+      # apart
+      - name: Folder and ZIP
+        id: bundle
+        env:
+          LABEL: ${{ needs.codegen.outputs.label }}
+          FILE_VERSION: ${{ needs.codegen.outputs.file_version }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          zip="dist/Immuch360-Desktop-$LABEL-windows-x64.zip"
+          python .github/desktop/windows_bundle.py --release mobile/build/windows/x64/runner/Release --out dist \
+            --zip "$zip" --symbols dist/symbols --file-version "$FILE_VERSION" --info "version=$LABEL" \
+            --info "file version=$FILE_VERSION" --info "commit=$GITHUB_SHA" --info "built by=$RUN_URL"
+          echo "zip=$zip" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Immuch360 Desktop for Windows x64"
+            echo
+            echo "| File | Size | SHA-256 |"
+            echo "|---|---|---|"
+            echo "| \`$(basename "$zip")\` | $(( $(stat -c %s "$zip") / 1048576 )) MB | \`$(sha256sum "$zip" | cut -d' ' -f1)\` |"
+            echo
+            echo "File version $FILE_VERSION. Unsigned internal build: SmartScreen may ask for a confirmation, Smart App Control blocks it."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Uploaded as it is, so that the download is the ZIP itself and not a ZIP inside a ZIP
+      - name: Upload the ZIP
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ steps.bundle.outputs.zip }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload the debug symbols
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: immuch360-desktop-windows-x64-symbols
+          path: dist/symbols/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  macos:
+    name: macOS build (compile only)
+    runs-on: macos-15
+    needs: codegen
+    if: github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install Flutter
+        run: cd mobile && mise install
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Build without signing
+        working-directory: mobile
+        env:
+          BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
+        run: |
+          tar -xf generated-dart.tar && rm generated-dart.tar
+          mise exec -- flutter pub get --enforce-lockfile
+          mise exec -- flutter build macos --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+
+  # An upstream change of a pigeon contract, of main.dart or of the HTTP clients shows on the day of the merge: the
+  # test and linux jobs of the same run analyze, test and build the sync; this job adds what to read by hand
+  upstream-sync:
+    name: Upstream sync checklist
+    runs-on: ubuntu-24.04
+    if: startsWith(github.ref, 'refs/heads/upstream-sync/')
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The desktop branch is needed for its merge base
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Sync checklist (in the run summary)
+        run: python3 .github/desktop/upstream_sync_report.py --base origin/desktop --summary "$GITHUB_STEP_SUMMARY"

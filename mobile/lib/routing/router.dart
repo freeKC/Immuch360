@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/library/folders.page.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -13,6 +14,7 @@ import 'package:immich_mobile/domain/models/person.model.dart';
 import 'package:immich_mobile/domain/models/user.model.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/models/folder/recursive_folder.model.dart';
 import 'package:immich_mobile/models/shared_link/shared_link.model.dart';
 import 'package:immich_mobile/models/upload/share_intent_attachment.model.dart';
@@ -228,6 +230,9 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CameraDayRoute.page, guards: [_authGuard, _duplicateGuard]),
     // Share this phone on the network (phones only)
     AutoRoute(page: PhoneShareRoute.page, guards: [_authGuard, _duplicateGuard]),
+    // Immuch360 Desktop: the folders of the library on a computer. Registered there only, so that the phone builds,
+    // where the condition is a constant, leave out the folders page and the folder library behind it
+    if (CurrentPlatform.isDesktop) AutoRoute(page: FoldersRoute.page, guards: [_duplicateGuard]),
     // required to handle all deeplinks in deep_link.service.dart
     // auto_route_library#1722
     RedirectRoute(path: '*', redirectTo: '/'),

@@ -22,6 +22,9 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/network/interface_rank.dart';
+import 'package:immich_mobile/desktop/network/windows_dns_sd.dart';
+import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/phone_share/phone_gallery_tree.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
@@ -361,7 +364,7 @@ class PhoneShareEnvironment {
 }
 
 final phoneShareEnvironmentProvider = Provider<PhoneShareEnvironment>((ref) {
-  final api = PhoneShareApi();
+  final api = PlatformApis.phoneShare();
   final files = PlatformPhoneShareFiles(api);
   return PhoneShareEnvironment(
     api: api,
@@ -376,15 +379,19 @@ final phoneShareEnvironmentProvider = Provider<PhoneShareEnvironment>((ref) {
         files: files,
         username: username,
         password: password,
-        servedAddresses: phoneShareLocalAddresses,
+        // A computer listens only where it is shared: not on WSL, VPN or public networks (interface_rank.dart)
+        servedAddresses: CurrentPlatform.isDesktop ? desktopShareLocalAddresses : phoneShareLocalAddresses,
         preferredPort: preferredPort,
       );
     },
-    advertise: bonsoirAdvertise,
-    localAddresses: phoneShareLocalAddresses,
+    // bonsoir_windows crashes the app; Windows announces through dnsapi, on the network the share listens on only
+    // (lib/desktop/network/windows_dns_sd.dart)
+    advertise: CurrentPlatform.isWindows ? windowsShareAdvertise : bonsoirAdvertise,
+    // The computers rank their own network interfaces (lib/desktop/network/interface_rank.dart)
+    localAddresses: CurrentPlatform.isDesktop ? desktopShareLocalAddresses : phoneShareLocalAddresses,
     networkChanges: () => Connectivity().onConnectivityChanged.map<void>((_) {}),
     lifecycle: appLifecycleStates,
-    deviceName: phoneShareDeviceName,
+    deviceName: CurrentPlatform.isDesktop ? desktopShareDeviceName : phoneShareDeviceName,
     installId: () => phoneShareInstallId(ref.read(storeServiceProvider)),
     setUpEvents: (events) => PhoneShareEvents.setUp(events),
     isIOS: CurrentPlatform.isIOS,

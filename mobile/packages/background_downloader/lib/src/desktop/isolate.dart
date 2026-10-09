@@ -17,6 +17,7 @@ import 'data_isolate.dart';
 import 'desktop_downloader.dart';
 import 'download_isolate.dart';
 import 'parallel_download_isolate.dart';
+import 'transfer_security.dart';
 import 'upload_isolate.dart';
 
 /// global variables, unique to this isolate
@@ -63,7 +64,15 @@ Future<void> doTask((RootIsolateToken, SendPort) isolateArguments) async {
     Duration? requestTimeout,
     Map<String, dynamic> proxy,
     bool bypassTLSCertificateValidation,
+    DesktopTransferSecurity? transferSecurity,
+    Map<String, String> transferHeaders,
   ) = await messagesToIsolate.next;
+  // Immuch360: the app's TLS material and the session cookie of the task's server (transfer_security.dart)
+  DesktopDownloader.useTaskTransfer(
+    transferSecurity,
+    originalTask.url,
+    transferHeaders,
+  );
   DesktopDownloader.setHttpClient(
     requestTimeout,
     proxy,

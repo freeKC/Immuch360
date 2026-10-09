@@ -1,0 +1,27 @@
+name: flutter_secure_storage_windows
+description: >-
+  The Windows side of flutter_secure_storage for Immuch360 Desktop: the secrets of the app in one file of its support
+  folder, sealed by DPAPI through dart:ffi, without the C++ plugin (which needs ATL).
+publish_to: 'none'
+# The version of the package it replaces, through dependency_overrides in mobile/pubspec.yaml
+version: 3.1.2+immuch360
+
+environment:
+  sdk: '>=3.12.0 <4.0.0'
+  flutter: '>=3.38.0'
+
+dependencies:
+  ffi: ^2.2.0
+  flutter:
+    sdk: flutter
+  flutter_secure_storage_platform_interface: ^1.1.2
+  path: ^1.9.1
+  path_provider: ^2.1.6
+
+flutter:
+  plugin:
+    implements: flutter_secure_storage
+    platforms:
+      # A Dart plugin only: no pluginClass, so the Windows build compiles no C++ for it
+      windows:
+        dartPluginClass: FlutterSecureStorageWindows

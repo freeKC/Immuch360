@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:immich_mobile/desktop/network/client_certificate_import.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/network_api.g.dart';
@@ -87,7 +89,10 @@ class _SslClientCertSettingsState extends State<SslClientCertSettings> {
         cancel: context.t.cancel,
         confirm: context.t.confirm,
       );
-      await networkApi.selectCertificate(styling);
+      // A computer has no system certificate picker: the certificate is imported from a file
+      await (CurrentPlatform.isDesktop
+          ? importClientCertificate(context, styling)
+          : networkApi.selectCertificate(styling));
       setState(() => isCertExist = true);
       showMessage(StaticTranslations.instance.client_cert_import_success_msg);
     } catch (e) {

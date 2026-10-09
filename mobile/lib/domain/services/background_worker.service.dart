@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/data/data_controller.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/hash.service.dart';
 import 'package:immich_mobile/domain/services/local_sync.service.dart';
@@ -76,7 +77,7 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   bool _isCleanedUp = false;
 
   BackgroundWorkerBgService({required this._dataController, required ApiService apiService})
-    : _backgroundHostApi = BackgroundWorkerBgHostApi() {
+    : _backgroundHostApi = PlatformApis.backgroundWorkerBg() {
     final ref = ProviderContainer(
       overrides: Store.overrideWith(dataController: _dataController, apiService: apiService),
     );

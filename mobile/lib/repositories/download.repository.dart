@@ -5,7 +5,9 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:collection/collection.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
+import 'package:immich_mobile/desktop/files/download_folder.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/models/download/livephotos_medatada.model.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
@@ -128,6 +130,8 @@ class DownloadRepository {
     if (taskIndex == 0) {
       return Future.value(const []);
     }
-    return _downloader.enqueueAll(tasks.slice(0, taskIndex));
+    final queued = tasks.slice(0, taskIndex);
+    // A computer has no app sandbox: its tasks land in a private temporary folder, not in the user's Documents
+    return _downloader.enqueueAll(CurrentPlatform.isDesktop ? queued.map(desktopDownloadTask).toList() : queued);
   }
 }

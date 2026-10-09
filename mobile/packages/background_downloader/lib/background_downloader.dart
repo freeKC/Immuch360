@@ -4,6 +4,9 @@
 library;
 
 export 'src/database.dart';
+// Immuch360: the app's TLS material and session cookie for the desktop transfers (see IMMUCH360-NOTE.md)
+export 'src/desktop/transfer_security.dart'
+    show DesktopTransferSecurity, configureDesktopTransfers;
 export 'src/exceptions.dart';
 export 'src/file_downloader.dart';
 export 'src/models.dart';

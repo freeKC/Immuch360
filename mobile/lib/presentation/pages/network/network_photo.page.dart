@@ -4,12 +4,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/window/full_screen.dart';
+import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
@@ -367,6 +370,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                       tooltip: '360°',
                       onPressed: () => unawaited(_open360(photo)),
                     ),
+                  // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
+                  if (CurrentPlatform.isDesktop) const DesktopFullScreenButton(),
                   if (photo != null && (!is360 || canUpload))
                     PopupMenuButton<void>(
                       tooltip: context.t.more,
@@ -407,7 +412,15 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
             child: Focus(focusNode: _appBarFocus, onKeyEvent: _onAppBarKey, child: appBar),
           ),
           body: photo != null
-              ? _buildPhoto(photo)
+              // Immuch360 Desktop: previous and next for the mouse (lib/desktop/window/hover_chevrons.dart)
+              ? CurrentPlatform.isDesktop
+                    ? withDesktopPageChevrons(
+                        _buildPhoto(photo),
+                        canNavigate: (step) =>
+                            networkFolderNeighbourRoute(widget.sourceId, widget.folder, widget.path, step) != null,
+                        onNavigate: _openNeighbour,
+                      )
+                    : _buildPhoto(photo)
               : snapshot.connectionState != ConnectionState.done
               ? const NetworkLoadingView(color: Colors.white70)
               : Focus(

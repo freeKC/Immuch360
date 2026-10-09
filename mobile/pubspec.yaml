@@ -83,6 +83,16 @@ dependencies:
   wakelock_plus: ^1.3.3
   worker_manager: ^7.2.9
   web_socket: ^1.0.1
+  # Immuch360 Desktop: the window (title, smallest size, close guard, full screen); Windows, macOS and Linux only, used
+  # under lib/desktop/ only
+  window_manager: ^0.5.2
+  # Immuch360 Desktop: video through libmpv, used under lib/desktop/ only. The three packages are copies of one
+  # media-kit commit in packages/ (dependency_overrides below, changes in their IMMUCH360-NOTE.md); the libmpv and ANGLE
+  # libraries come with the Windows libs package, whose plugin declares windows only. Never media_kit_libs_video: it
+  # brings the Android and iOS libs packages, which would put libmpv into the phone apps
+  media_kit: ^1.2.6
+  media_kit_video: ^2.0.1
+  media_kit_libs_windows_video: ^1.0.11
   socket_io_client:
     git:
       url: https://github.com/mertalev/socket.io-client-dart
@@ -128,6 +138,20 @@ dependency_overrides:
   background_downloader:
     path: packages/background_downloader
   bonsoir: ^5.1.11
+  # Immuch360 Desktop: the Windows side of flutter_secure_storage in Dart (DPAPI), without the C++ plugin that needs
+  # the ATL component of Visual Studio (see packages/flutter_secure_storage_windows)
+  flutter_secure_storage_windows:
+    path: packages/flutter_secure_storage_windows
+  # Immuch360 Desktop: copies of github.com/media-kit/media-kit at c533e446755f51cf53c7e57aea873f2aa5355f81 (the newest
+  # commit of main on 2026-10-08): media_kit without its web asset, which every app build would bundle, phones
+  # included; media_kit_video with the computers as its only plugin platforms and two patches; the Windows libs package
+  # with a build fix (see their IMMUCH360-NOTE.md)
+  media_kit:
+    path: packages/media_kit
+  media_kit_libs_windows_video:
+    path: packages/media_kit_libs_windows_video
+  media_kit_video:
+    path: packages/media_kit_video
   objective_c:
     git:
       url: https://github.com/mertalev/native
@@ -171,6 +195,14 @@ flutter_launcher_icons:
   android: 'ic_launcher'
   ios: false
   remove_alpha_ios: true
+  # Immuch360 Desktop
+  windows:
+    generate: true
+    image_path: 'assets/immich-logo.png'
+    icon_size: 256
+  macos:
+    generate: true
+    image_path: 'assets/immich-logo-w-bg.png'
 
 analyzer:
   exclude:

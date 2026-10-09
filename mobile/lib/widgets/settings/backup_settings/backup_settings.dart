@@ -23,9 +23,14 @@ class BackupSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return SettingsSubPageScaffold(
       settings: [
-        SettingGroupTitle(title: context.t.network_requirements, icon: Icons.cell_tower),
-        const _UseCellularForVideosButton(),
-        const _UseCellularForPhotosButton(),
+        // A computer has no mobile data and no system scheduler: its backup runs while the app is open
+        if (CurrentPlatform.isDesktop)
+          ListTile(leading: const Icon(Icons.info_outline), title: Text(context.t.desktop_backup_while_open))
+        else ...[
+          SettingGroupTitle(title: context.t.network_requirements, icon: Icons.cell_tower),
+          const _UseCellularForVideosButton(),
+          const _UseCellularForPhotosButton(),
+        ],
         if (CurrentPlatform.isAndroid) ...[
           const Divider(),
           SettingGroupTitle(title: context.t.background_options, icon: Icons.charging_station_rounded),

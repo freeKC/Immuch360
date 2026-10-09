@@ -15,15 +15,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
+import 'package:immich_mobile/desktop/platform/desktop_overrides.dart';
 import 'package:immich_mobile/domain/services/background_worker.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/pages/common/splash_screen.page.dart';
-import 'package:immich_mobile/platform/background_worker_lock_api.g.dart';
-import 'package:immich_mobile/platform/native_sync_api.g.dart';
-import 'package:immich_mobile/platform/permission_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
@@ -53,6 +53,16 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:timezone/data/latest.dart';
 
 void main() async {
+  // The computers start from lib/main_desktop.dart, which sets up the window first
+  if (CurrentPlatform.isDesktop) {
+    throw StateError('Immuch360 Desktop starts from lib/main_desktop.dart: flutter run -t lib/main_desktop.dart');
+  }
+  await runImmich();
+}
+
+/// The start of the app, shared with the desktop entry point (main_desktop.dart): [beforeStart] runs once the binding
+/// exists, before anything else
+Future<void> runImmich({Future<void> Function()? beforeStart}) async {
   try {
     // https://github.com/flutter/flutter/issues/118384
     // Android only: Render maps into a TextureView
@@ -61,13 +71,14 @@ void main() async {
     MapLibreMap.useHybridComposition = true;
 
     ImmichWidgetsBinding();
-    unawaited(BackgroundWorkerLockService(BackgroundWorkerLockApi()).lock());
+    await beforeStart?.call();
+    unawaited(BackgroundWorkerLockService(PlatformApis.backgroundWorkerLock()).lock());
     await EasyLocalization.ensureInitialized();
     final (dataController, apiService) = await Bootstrap.initDomain();
     await initApp();
     // Warm-up isolate pool for worker manager
     await workerManagerPatch.init(dynamicSpawning: true, isolatesCount: max(Platform.numberOfProcessors - 1, 5));
-    await migrateDatabaseIfNeeded(dataController.db, NativeSyncApi(), PermissionApi());
+    await migrateDatabaseIfNeeded(dataController.db, PlatformApis.nativeSync(), PlatformApis.permission());
     // Before the first frame, so that the first screen is already laid out for the remote on a TV
     final tvDevice = await readTvDeviceInfo();
 
@@ -76,6 +87,7 @@ void main() async {
         overrides: [
           ...Store.overrideWith(dataController: dataController, apiService: apiService),
           tvDeviceProvider.overrideWithValue(tvDevice),
+          if (CurrentPlatform.isDesktop) ...desktopOverrides(),
         ],
         child: const MainWidget(),
       ),
@@ -172,6 +184,10 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
 
   Future<void> initApp() async {
     WidgetsBinding.instance.addObserver(this);
+    // A computer has no system bars, and flutter_local_notifications 17 no Windows implementation
+    if (CurrentPlatform.isDesktop) {
+      return;
+    }
     // Draw the app from edge to edge
     unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
     await _setNavigationBarColor();
@@ -301,7 +317,9 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         darkTheme: getThemeData(colorScheme: immichTheme.dark, locale: context.locale, tvMode: tvMode),
         theme: getThemeData(colorScheme: immichTheme.light, locale: context.locale, tvMode: tvMode),
         builder: (context, child) {
-          final app = KeyedSubtree(key: _appKey, child: child!);
+          final keyed = KeyedSubtree(key: _appKey, child: child!);
+          // The keys and the close guard of the window on a computer, see DesktopShell
+          final app = CurrentPlatform.isDesktop ? desktopAppShell(keyed) : keyed;
           return ImmichTranslationProvider(
             translations: ImmichTranslations(
               submit: context.t.submit,

@@ -10,6 +10,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
@@ -18,7 +19,6 @@ import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
-import 'package:immich_mobile/platform/video_thumbnail_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
@@ -193,7 +193,7 @@ Future<Directory> networkVideoThumbnailDirectory() async =>
 
 final networkVideoThumbnailServiceProvider = Provider<NetworkVideoThumbnailService>(
   (_) => NetworkVideoThumbnailService(
-    api: VideoThumbnailApi(),
+    api: PlatformApis.videoThumbnail(),
     diskCache: VideoThumbnailDiskCache(networkVideoThumbnailDirectory),
     waitForPhotos: NetworkThumbnailImage.whenIdle,
   ),

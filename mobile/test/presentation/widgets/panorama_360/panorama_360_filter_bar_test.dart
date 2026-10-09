@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -92,6 +93,17 @@ void main() {
     expect(find.text('On the server'), findsNothing);
     expect(find.text('On this device'), findsNothing);
     expect(find.text('Photos'), findsOneWidget);
+  });
+
+  testWidgets('names the device source "On this computer" on a computer', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    try {
+      await pumpBar(tester);
+      expect(find.text('On this computer'), findsOneWidget);
+      expect(find.text('On this device'), findsNothing);
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
   });
 
   testWidgets('shows Shared with me only when shared media exist', (tester) async {

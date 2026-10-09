@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/platform/view_intent_api.g.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-final viewIntentServiceProvider = Provider((ref) => ViewIntentService(ViewIntentHostApi()));
+final viewIntentServiceProvider = Provider((ref) => ViewIntentService(PlatformApis.viewIntent()));
 
 class ViewIntentService {
   final ViewIntentHostApi _viewIntentHostApi;

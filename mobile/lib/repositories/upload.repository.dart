@@ -6,8 +6,10 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:immich_mobile/constants/constants.dart';
+import 'package:immich_mobile/desktop/library/shared_file.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:logging/logging.dart';
 
@@ -67,7 +69,14 @@ class UploadRepository {
     Client? httpClient,
   }) {
     return _upload(
-      buildFile: () => MultipartFile("assetData", file.openRead(), file.lengthSync(), filename: originalFileName),
+      buildFile: () => MultipartFile(
+        "assetData",
+        // Immuch360 Desktop: on Windows, read so that the user can still rename, move or delete the file during an
+        // upload of several minutes (desktop/library/shared_file.dart)
+        CurrentPlatform.isWindows ? openSharedRead(file.path) : file.openRead(),
+        file.lengthSync(),
+        filename: originalFileName,
+      ),
       fields: fields,
       cancelToken: cancelToken,
       onProgress: onProgress,

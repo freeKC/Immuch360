@@ -39,6 +39,11 @@ class AppLifeCycleNotifier extends StateNotifier<AppLifeCycleEnum> {
   /// A suspended app can lose the listening socket of the network share bridge without any event: once back in the
   /// foreground the bridge is bound again on the same port, so the URLs the players hold stay valid.
   Future<void> _rebindMediaBridge() async {
+    // A computer keeps its sockets, and comes back to "resumed" each time its window gets the focus again: binding
+    // again there would cut the videos the players stream from the bridge
+    if (CurrentPlatform.isDesktop) {
+      return;
+    }
     try {
       final bridge = _ref.read(mediaBridgeProvider);
       if (bridge is! LocalMediaBridge || !bridge.isRunning) {

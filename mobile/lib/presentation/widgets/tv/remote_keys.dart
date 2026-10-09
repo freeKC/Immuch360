@@ -5,6 +5,8 @@
 import 'dart:math';
 
 import 'package:flutter/services.dart';
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 
 /// OK of a remote, Enter of a keyboard, A of a game pad
 final remoteOkKeys = {
@@ -21,21 +23,30 @@ final remotePlayPauseKeys = {
   LogicalKeyboardKey.mediaPause,
 };
 
-/// Zoom in: channel up (most remotes have no zoom key), the zoom and page keys, the right shoulder of a game pad
-final remoteZoomInKeys = {
+/// Zoom in: channel up (most remotes have no zoom key), the zoom and page keys, the right shoulder of a game pad;
+/// on a computer also + and = (desktop_shortcuts.dart)
+Set<LogicalKeyboardKey> get remoteZoomInKeys => CurrentPlatform.isDesktop ? _desktopZoomInKeys : _remoteZoomInKeys;
+
+final _remoteZoomInKeys = {
   LogicalKeyboardKey.channelUp,
   LogicalKeyboardKey.zoomIn,
   LogicalKeyboardKey.pageUp,
   LogicalKeyboardKey.gameButtonRight1,
 };
 
-/// Zoom out: channel down, the zoom and page keys, the left shoulder of a game pad
-final remoteZoomOutKeys = {
+final _desktopZoomInKeys = desktopZoomInKeys(_remoteZoomInKeys);
+
+/// Zoom out: channel down, the zoom and page keys, the left shoulder of a game pad; on a computer also -
+Set<LogicalKeyboardKey> get remoteZoomOutKeys => CurrentPlatform.isDesktop ? _desktopZoomOutKeys : _remoteZoomOutKeys;
+
+final _remoteZoomOutKeys = {
   LogicalKeyboardKey.channelDown,
   LogicalKeyboardKey.zoomOut,
   LogicalKeyboardKey.pageDown,
   LogicalKeyboardKey.gameButtonLeft1,
 };
+
+final _desktopZoomOutKeys = desktopZoomOutKeys(_remoteZoomOutKeys);
 
 /// The next item of a viewer
 final remoteNextItemKeys = {LogicalKeyboardKey.mediaTrackNext};
@@ -43,14 +54,37 @@ final remoteNextItemKeys = {LogicalKeyboardKey.mediaTrackNext};
 /// The previous item of a viewer
 final remotePreviousItemKeys = {LogicalKeyboardKey.mediaTrackPrevious};
 
-/// Fast forward
-final remoteSeekForwardKeys = {LogicalKeyboardKey.mediaFastForward};
+/// The first item of a viewer: none on a remote, Home on a computer (desktop_shortcuts.dart)
+Set<LogicalKeyboardKey> get remoteFirstItemKeys => CurrentPlatform.isDesktop ? desktopFirstItemKeys : const {};
 
-/// Rewind
-final remoteSeekBackwardKeys = {LogicalKeyboardKey.mediaRewind};
+/// The last item of a viewer: none on a remote, End on a computer
+Set<LogicalKeyboardKey> get remoteLastItemKeys => CurrentPlatform.isDesktop ? desktopLastItemKeys : const {};
 
-/// The details of the item shown
-final remoteDetailsKeys = {LogicalKeyboardKey.info};
+/// Fast forward; on a computer also L, while no text field has the keyboard (desktop_shortcuts.dart)
+Set<LogicalKeyboardKey> get remoteSeekForwardKeys =>
+    CurrentPlatform.isDesktop ? desktopSeekForwardKeys(_remoteSeekForwardKeys) : _remoteSeekForwardKeys;
+
+final _remoteSeekForwardKeys = {LogicalKeyboardKey.mediaFastForward};
+
+/// Rewind; on a computer also J
+Set<LogicalKeyboardKey> get remoteSeekBackwardKeys =>
+    CurrentPlatform.isDesktop ? desktopSeekBackwardKeys(_remoteSeekBackwardKeys) : _remoteSeekBackwardKeys;
+
+final _remoteSeekBackwardKeys = {LogicalKeyboardKey.mediaRewind};
+
+/// The details of the item shown; on a computer also I
+Set<LogicalKeyboardKey> get remoteDetailsKeys =>
+    CurrentPlatform.isDesktop ? desktopDetailsKeys(_remoteDetailsKeys) : _remoteDetailsKeys;
+
+final _remoteDetailsKeys = {LogicalKeyboardKey.info};
+
+/// Whether [event] zooms in: a key of [remoteZoomInKeys], or on a computer any key that types "+"
+bool isRemoteZoomIn(KeyEvent event) =>
+    remoteZoomInKeys.contains(event.logicalKey) || (CurrentPlatform.isDesktop && typesZoomInCharacter(event));
+
+/// Whether [event] zooms out: a key of [remoteZoomOutKeys], or on a computer any key that types "-"
+bool isRemoteZoomOut(KeyEvent event) =>
+    remoteZoomOutKeys.contains(event.logicalKey) || (CurrentPlatform.isDesktop && typesZoomOutCharacter(event));
 
 /// How far left and right, fast forward and rewind move a playing video (the Play TV criterion TV-PC)
 const remoteSeekStep = Duration(seconds: 10);

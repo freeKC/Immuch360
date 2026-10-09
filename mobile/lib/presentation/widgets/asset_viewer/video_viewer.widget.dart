@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/apple_spatial.service.dart';
@@ -114,7 +116,9 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         // Read first, so that it is used up even when the video plays anyway. Back from the Spatial 2.5D player,
         // a video that it left playing but that became ready in the background waits for this to play.
         final playAfterExternalPlayer = _notifier.takePlayOnForeground();
-        if (_shouldPlayOnForeground || playAfterExternalPlayer) {
+        // A computer comes back to resumed at each focus change, never through the paused below: only what an
+        // external player left playing plays on there, not a video the user paused, never started or saw to its end
+        if ((_shouldPlayOnForeground && !CurrentPlatform.isDesktop) || playAfterExternalPlayer) {
           await _notifier.play();
         }
       case AppLifecycleState.paused:
@@ -385,11 +389,20 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       child: Stack(
         children: [
           if (!_isVideoReady || widget.asset.isMotionPhoto || !showPlayer) Positioned.fill(child: widget.image),
-          if (showPlayer) ...[
+          if (showPlayer && CurrentPlatform.isDesktop && !DesktopVideoView.available)
+            // A computer without the video library (Linux and macOS until their packages come): the poster stays,
+            // with the line saying so, rather than a player that never gets ready
+            const Positioned.fill(child: DesktopVideoPlaceholder())
+          else if (showPlayer) ...[
             Visibility.maintain(
               visible: _isVideoReady,
               // A platform view must never take the focus: the keys of a remote would go to the native view
-              child: ExcludeFocus(child: NativeVideoPlayerView(onViewReady: _initController)),
+              child: ExcludeFocus(
+                // The computers play through media_kit (lib/desktop/video), with a controller of the same type
+                child: CurrentPlatform.isDesktop
+                    ? DesktopVideoView(onViewReady: _initController)
+                    : NativeVideoPlayerView(onViewReady: _initController),
+              ),
             ),
             Center(
               child: AnimatedOpacity(

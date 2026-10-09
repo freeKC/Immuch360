@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -11,6 +12,7 @@ import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
@@ -359,7 +361,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         // Read first, so that it is used up even when the video plays anyway. Back from the Spatial 2.5D player,
         // a video that it left playing but that became ready in the background waits for this to play.
         final playAfterExternalPlayer = _notifier.takePlayOnForeground();
-        if (_shouldPlayOnForeground || playAfterExternalPlayer) {
+        // A computer comes back to resumed at each focus change, never through the paused below: only what an
+        // external player left playing plays on there, not a video the user paused, never started or saw to its end
+        if ((_shouldPlayOnForeground && !CurrentPlatform.isDesktop) || playAfterExternalPlayer) {
           await _notifier.play();
         }
       case AppLifecycleState.paused:
@@ -774,7 +778,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                 child: Visibility.maintain(
                   visible: _isVideoReady,
                   // A platform view must never take the focus: the keys of a remote would go to the native view
-                  child: ExcludeFocus(child: NativeVideoPlayerView(onViewReady: _initController)),
+                  child: ExcludeFocus(
+                    // The computers play through media_kit (lib/desktop/video), with a controller of the same type
+                    child: CurrentPlatform.isDesktop
+                        ? DesktopVideoView(onViewReady: _initController)
+                        : NativeVideoPlayerView(onViewReady: _initController),
+                  ),
                 ),
               ),
             ),

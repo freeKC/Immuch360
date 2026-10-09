@@ -1,8 +1,8 @@
 // The page of a camera: the live tile (the camera account through the API, the SD stream on a phone, HD in full screen,
 // the sound, the Live badge, Back leaving full screen first), the model and the memory card, the days by month, the
 // cache, what a login learned saved with the camera, a new certificate asked to the user, a camera found again at a new
-// address (asked to the user when no certificate was pinned yet), Retry asking the camera again after a refusal, and
-// nothing read without the TP-Link password.
+// address (asked to the user when no certificate was pinned yet), Retry asking the camera again after a refusal,
+// nothing read without the TP-Link password, and the live view announced for later on iPhone and on a computer.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -133,6 +133,23 @@ void main() {
       await pump(tester);
       expect(find.byKey(const Key('camera_live_later')), findsOneWidget);
       expect(live.sources, isEmpty);
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('tells that the live view comes later on a computer, without an Android view', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    try {
+      await pump(tester);
+      expect(find.byKey(const Key('camera_live_later')), findsOneWidget);
+      expect(find.text('The live view comes to Immuch360 Desktop in a later version.'), findsOneWidget);
+      expect(find.byType(PlatformViewLink), findsNothing);
+      expect(find.byKey(const Key('camera_platform_view')), findsNothing);
+      expect(find.byKey(const Key('camera_live_full_screen')), findsNothing);
+      expect(live.sources, isEmpty);
+      // The recordings stay
+      expect(find.byKey(const Key('camera_day_2026-09-18')), findsOneWidget);
     } finally {
       debugDefaultTargetPlatformOverride = null;
     }

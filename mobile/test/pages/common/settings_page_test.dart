@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -94,6 +95,28 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('login page'), findsOneWidget);
+  });
+
+  testWidgets('a computer lists "This computer" and leaves out free up space and the notifications', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    try {
+      await pumpSettings(tester, local: false);
+
+      expect(find.widgetWithText(SettingsCard, 'This computer'), findsOneWidget);
+      for (final title in ['Free Up Space', 'Notifications']) {
+        expect(find.widgetWithText(SettingsCard, title), findsNothing, reason: title);
+      }
+      for (final title in ['Backup', 'Networking', 'Sync Status', ...deviceSections]) {
+        expect(find.widgetWithText(SettingsCard, title), findsOneWidget, reason: title);
+      }
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('a phone has no "This computer" section', (tester) async {
+    await pumpSettings(tester, local: false);
+    expect(find.widgetWithText(SettingsCard, 'This computer'), findsNothing);
   });
 
   test('marks only the backup, connection and sync sections as needing a server', () {

@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/library/folders.page.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
@@ -29,6 +31,10 @@ class LocalSessionPermissionBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // A computer has no gallery permission: the folders the user chooses are the consent
+    if (CurrentPlatform.isDesktop) {
+      return const FoldersBanner();
+    }
     final status = ref.watch(galleryPermissionNotifier);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),

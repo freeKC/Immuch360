@@ -55,7 +55,9 @@ class LockAction extends AssetActionBuilder {
     }
 
     final (:shouldLock, :assetIds, :localIds) = state;
-    if (shouldLock && localIds.isNotEmpty) {
+    // A computer removes none of its files (they wait for the system's trash): no warning about a deletion that does
+    // not happen, and the message below says the local copies were kept
+    if (shouldLock && localIds.isNotEmpty && !CurrentPlatform.isDesktop) {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (_) => ConfirmDialog(

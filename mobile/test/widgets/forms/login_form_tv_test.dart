@@ -1,9 +1,10 @@
 // The login form with a remote control: a TV that never reached a server starts on "Use without a server", the
 // address, the email and the password are typed in the native text dialog, and OAuth, which opens a web page, is
-// replaced by a line that says so.
+// replaced by a line that says so. A computer has the same line until OAuth is checked there.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -210,6 +211,28 @@ void main() {
     expect(email.kind, TvTextKind.email);
     expect(find.text('user@example.org'), findsOneWidget);
     expect(focusedIn(entryOf(ImmichPasswordInput)), isTrue, reason: 'then the password');
+  });
+
+  testWidgets('a computer says that OAuth is not there yet, instead of its button', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    try {
+      await pumpLoginForm(tester, tvMode: false);
+      await tester.enterText(find.byType(TextFormField).first, 'https://photos.example.org');
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(ImmichTextButton, 'Sign in with SSO'), findsNothing);
+      expect(
+        find.text(
+          'Signing in with Sign in with SSO is not available in Immuch360 Desktop yet. Sign in with an email and a '
+          'password instead.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.byType(ImmichEmailInput), findsOneWidget);
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
   });
 
   testWidgets('out of the remote control layout the fields are typed in and OAuth is a button', (tester) async {

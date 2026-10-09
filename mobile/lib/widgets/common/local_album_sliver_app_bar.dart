@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 
 class LocalAlbumsSliverAppBar extends StatelessWidget {
@@ -15,7 +16,7 @@ class LocalAlbumsSliverAppBar extends StatelessWidget {
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
       automaticallyImplyLeading: true,
       centerTitle: true,
-      title: Text(context.t.on_this_device),
+      title: Text(CurrentPlatform.isDesktop ? context.t.on_this_computer : context.t.on_this_device),
     );
   }
 }

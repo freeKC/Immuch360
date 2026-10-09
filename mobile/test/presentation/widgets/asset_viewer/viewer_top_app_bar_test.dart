@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -2057,6 +2058,31 @@ void main() {
         expect(calls, isEmpty, reason: 'unsupported $unsupported: the viewer goes on playing');
         verifyNever(() => spatialVideoApi.open(any()));
         expect(find.text('Spatial 2.5D is not available on this device'), findsOneWidget);
+      }
+    });
+
+    testWidgets('says on a computer that the player comes in a later version', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        when(spatialVideoApi.capabilities).thenAnswer(
+          (_) async => SpatialCapabilities(
+            supported: false,
+            frontCamera: false,
+            cameraPermissionGranted: false,
+            reason: 'not on the computers yet',
+          ),
+        );
+        await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
+
+        await tester.tap(spatialButton);
+        await tester.pumpAndSettle();
+
+        expect(calls, isEmpty);
+        verifyNever(() => spatialVideoApi.open(any()));
+        expect(find.text('Spatial 2.5D comes to Immuch360 Desktop in a later version'), findsOneWidget);
+        expect(find.text('Spatial 2.5D is not available on this device'), findsNothing);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
       }
     });
 

@@ -1,19 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
 import 'package:immich_mobile/widgets/settings/preference_settings/haptic_setting.dart';
 import 'package:immich_mobile/widgets/settings/preference_settings/share_setting.dart';
 import 'package:immich_mobile/widgets/settings/preference_settings/theme_setting.dart';
 import 'package:immich_mobile/widgets/settings/preference_settings/tv_layout_setting.dart';
 import 'package:immich_ui/immich_ui.dart';
 
-class PreferenceSetting extends StatelessWidget {
+class PreferenceSetting extends ConsumerWidget {
   const PreferenceSetting({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // A computer has no vibration motor (deviceFeaturesProvider)
+    final hasHaptics = ref.watch(deviceFeaturesProvider.select((features) => features.haptics));
     final preferenceSettings = [
       const ThemeSetting(),
-      const HapticSetting(),
+      if (hasHaptics) const HapticSetting(),
       const ShareSetting(),
       // Android only: Android TV, and the phones and tablets driven by a keyboard or a game pad
       if (defaultTargetPlatform == TargetPlatform.android) const TvLayoutSetting(),

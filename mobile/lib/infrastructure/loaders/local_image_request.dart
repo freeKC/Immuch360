@@ -28,6 +28,16 @@ class LocalImageRequest extends ImageRequest {
       return null;
     }
 
+    // The computers answer with the encoded file, decoded here at the requested size; the phones decode natively
+    if (info case {'pointer': final int pointer, 'length': final int length}) {
+      final encoded = await _fromEncodedPlatformImage(
+        pointer,
+        length,
+        decodeSize: ui.Size(width.toDouble(), height.toDouble()),
+      );
+      return encoded == null ? null : ImageInfo(image: encoded.image, scale: scale);
+    }
+
     final frame = await _fromDecodedPlatformImage(info["pointer"]!, info["width"]!, info["height"]!, info["rowBytes"]!);
     return frame == null ? null : ImageInfo(image: frame.image, scale: scale);
   }

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
-import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:immich_mobile/widgets/map/map_thumbnail.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
@@ -30,8 +30,9 @@ class ExifMap extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // The map is gesture only and its tap opens another app: not on a TV
-    if (ref.watch(tvModeProvider)) {
+    // The map is gesture only and its tap opens another app: not on a TV, and maplibre_gl has no desktop
+    // implementation (deviceFeaturesProvider)
+    if (!ref.watch(deviceFeaturesProvider.select((features) => features.maps))) {
       return const SizedBox.shrink();
     }
     final hasCoordinates = exifInfo.hasCoordinates;

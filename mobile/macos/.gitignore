@@ -1,0 +1,10 @@
+# Flutter-related
+**/Flutter/ephemeral/
+**/Pods/
+
+# Xcode-related
+**/dgph
+**/xcuserdata/
+
+# Written by flutter pub get from the plugin list, like GeneratedPluginRegistrant of the phone projects
+Flutter/GeneratedPluginRegistrant.swift

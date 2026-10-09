@@ -4,11 +4,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
@@ -113,6 +115,9 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
           )
         : null;
 
+    // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
+    final fullScreenButton = CurrentPlatform.isDesktop ? const DesktopFullScreenButton() : null;
+
     final actions = <Widget>[
       if (asset.isMotionPhoto) const MotionPhotoActionButton(iconOnly: true),
       if (album != null && album.isActivityEnabled && album.isShared)
@@ -172,7 +177,11 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       middle: showingDetails ? null : _AssetInfoTitle(asset: asset),
                       trailing:
                           !showingDetails &&
-                              (!isViewOnly || panoramaButton != null || spatialButton != null || view3dButton != null)
+                              (!isViewOnly ||
+                                  panoramaButton != null ||
+                                  spatialButton != null ||
+                                  view3dButton != null ||
+                                  fullScreenButton != null)
                           ? ImmichColorOverride(
                               color: Colors.white,
                               child: Focus(
@@ -185,6 +194,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                     ?view3dButton,
                                     ?panoramaButton,
                                     ?spatialButton,
+                                    ?fullScreenButton,
                                     if (!isViewOnly) ...(isInLockedView ? lockedViewActions : actions),
                                   ],
                                 ),
