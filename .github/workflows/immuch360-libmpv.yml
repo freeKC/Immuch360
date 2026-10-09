@@ -351,6 +351,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           git config --global --add safe.directory '*'
+          # The recipe applies its patches with "git am --3way", which records a commit and needs a committer
+          git config --global user.name "libmpv build"
+          git config --global user.email "libmpv-build@localhost"
           python -m pip --version || pacman -Sy --needed --noconfirm python-pip
           python -m pip install --break-system-packages --require-hashes \
             -r immuch360/.github/desktop/libmpv/meson-requirements.txt
@@ -415,7 +418,11 @@ jobs:
       BUILD_IMAGE: ${{ needs.image.outputs.image }}
     steps:
       - name: Git settings
-        run: git config --global --add safe.directory '*'
+        run: |
+          git config --global --add safe.directory '*'
+          # The recipe applies its patches with "git am --3way", which records a commit and needs a committer
+          git config --global user.name "libmpv build"
+          git config --global user.email "libmpv-build@localhost"
 
       - name: Check out the FFmpeg and mpv files of this repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
