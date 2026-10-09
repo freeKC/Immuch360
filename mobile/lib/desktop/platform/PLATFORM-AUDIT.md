@@ -128,7 +128,7 @@ the gate is per desktop and is noted.
 
 ## Desktop gates added outside these lines
 
-The wiring points of phase 1 that do not replace one of the lines above, each guarded by `CurrentPlatform.isDesktop`
+The wiring points of phase 1, and of the video of phase 2, that do not replace one of the lines above, each guarded by `CurrentPlatform.isDesktop`
 or `deviceFeaturesProvider` so that the phones run exactly as before:
 
 | File | Hand over |
@@ -145,7 +145,9 @@ or `deviceFeaturesProvider` so that the phones run exactly as before:
 | `lib/providers/network/phone_share.provider.dart` | on Windows, the share announced through dnsapi (`windowsShareAdvertise`) on the network it listens on only, instead of bonsoir on every interface |
 | `lib/presentation/widgets/asset_viewer/panorama_viewer.widget.dart` | gyroscope button gated by `deviceFeaturesProvider`; mouse wheel zoom |
 | `lib/presentation/widgets/tv/remote_keys.dart` | zoom key sets with the keyboard keys on the computers |
-| `lib/presentation/widgets/asset_viewer/video_viewer.widget.dart`, `lib/presentation/pages/network/network_video.page.dart` | `DesktopVideoPlaceholder` instead of the native player |
+| `lib/presentation/widgets/asset_viewer/video_viewer.widget.dart`, `lib/presentation/pages/network/network_video.page.dart` | `DesktopVideoView` (media_kit, `lib/desktop/video`) instead of `NativeVideoPlayerView`, handing the pages a controller of the same type; the placeholder of phase 1 where libmpv is missing |
+| `lib/widgets/asset_viewer/video_controls.dart`, `lib/presentation/widgets/network/network_video_controls.widget.dart` | the audio track menu of the desktop player (`DesktopAudioTrackButton`) for a video with several tracks |
+| `lib/providers/app_life_cycle.provider.dart` | the media bridge is not bound again on "resumed", which a computer reports each time its window gets the focus back: that would cut the videos streamed through it |
 | `lib/pages/common/settings.page.dart`, `lib/widgets/common/app_bar_dialog/app_bar_dialog.dart` | "This computer" section, its `ComputerSettings` built behind the gate too so that the phone builds leave it out; free up space and notifications not offered |
 | `lib/widgets/settings/backup_settings/backup_settings.dart` | backup while the app is open, no cellular options |
 | `lib/presentation/pages/library.page.dart`, `lib/widgets/asset_viewer/detail_panel/exif_map.dart` | maps through `deviceFeaturesProvider.maps`; "On this computer" on the card of the device albums |

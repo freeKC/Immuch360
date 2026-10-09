@@ -195,6 +195,45 @@ void main() {
     });
   });
 
+  group('video frames', () {
+    DesktopLocalImageApi withFrames(Future<Uint8List?> Function(String path, int box) grab) =>
+        DesktopLocalImageApi(fileForAsset: (id) async => files[id], thumbnails: cache, videoFrame: grab);
+
+    test('a video gets a frame of itself, grabbed once and then read from the thumbnail cache', () async {
+      final frame = await pngOf(64, 36);
+      final file = put('v1', 'clip.mp4', [0, 1, 2, 3]);
+      final grabs = <(String, int)>[];
+      final images = withFrames((path, box) async {
+        grabs.add((path, box));
+        return frame;
+      });
+
+      expect(takeEncoded(await request(images, 'v1', isVideo: true)), frame);
+      await images.idle();
+      expect(takeEncoded(await request(images, 'v1', isVideo: true)), frame);
+      expect(grabs, [(file.path, 320)], reason: 'the second time from the cache');
+
+      // The viewer's larger request gets the frame of the largest box
+      expect(takeEncoded(await request(images, 'v1', isVideo: true, width: 0, height: 0)), frame);
+      expect(grabs.last, (file.path, 1024));
+      await images.idle();
+    });
+
+    test('a video that gives no frame gets the film tile, and is not grabbed again in the session', () async {
+      put('v1', 'broken.mp4', [0, 1, 2, 3]);
+      var grabs = 0;
+      final images = withFrames((path, box) async {
+        grabs++;
+        return null;
+      });
+      final tile = takeEncoded(await request(images, 'v1', isVideo: true));
+      expect(sniffImageFormat(tile), SniffedFormat.png);
+      takeEncoded(await request(images, 'v1', isVideo: true));
+      expect(grabs, 1);
+      expect(Directory(p.join(root.path, 'thumbs')).existsSync(), isFalse, reason: 'tiles are not cached on disk');
+    });
+  });
+
   group('tiles', () {
     test('a video gets the film tile at the size of its bucket, the same for every video', () async {
       put('v1', 'one.mp4', [0, 1, 2]);

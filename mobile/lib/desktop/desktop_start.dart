@@ -2,6 +2,7 @@
 // the phones share (runImmich in main.dart).
 
 import 'package:immich_mobile/desktop/platform/desktop_view_intent_api.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
 import 'package:immich_mobile/desktop/window/window_setup.dart';
 
@@ -10,5 +11,6 @@ import 'package:immich_mobile/desktop/window/window_setup.dart';
 Future<void> startDesktop(List<String> args) async {
   DesktopViewIntentHostApi.addLaunchPaths(args.where((arg) => !arg.startsWith('-')));
   listenForLaterStarts();
+  setUpDesktopVideo();
   await setUpDesktopWindow();
 }

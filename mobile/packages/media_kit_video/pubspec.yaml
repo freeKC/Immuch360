@@ -1,0 +1,42 @@
+name: media_kit_video
+description: Native implementation for video playback in package:media_kit.
+homepage: https://github.com/media-kit/media-kit
+repository: https://github.com/media-kit/media-kit
+# Copy of media_kit_video from github.com/media-kit/media-kit at c533e446755f51cf53c7e57aea873f2aa5355f81, used by
+# Immuch360 Desktop through dependency_overrides in mobile/pubspec.yaml; the changes are listed in IMMUCH360-NOTE.md
+publish_to: 'none'
+version: 2.0.1+immuch360
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.27.4"
+
+topics:
+  - video
+  - video-player
+  - audio
+  - audio-player
+  - cross-platform
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  media_kit: ^1.2.6
+
+  plugin_platform_interface: ^2.1.8
+  synchronized: ^3.3.0
+  universal_platform: ^1.1.0
+  wakelock_plus: ^1.3.0
+  web: ^1.1.1
+
+flutter:
+  plugin:
+    # The computers only: the phone builds of Immuch360 keep their own players and must not register this plugin
+    # (nor bundle libmpv through it)
+    platforms:
+      windows:
+        pluginClass: MediaKitVideoPluginCApi
+      linux:
+        pluginClass: MediaKitVideoPlugin
+      macos:
+        pluginClass: MediaKitVideoPlugin

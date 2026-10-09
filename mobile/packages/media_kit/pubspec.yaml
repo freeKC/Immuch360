@@ -1,0 +1,41 @@
+name: media_kit
+description: A cross-platform video player & audio player for Flutter & Dart. Performant, stable, feature-proof & modular.
+homepage: https://github.com/media-kit/media-kit
+repository: https://github.com/media-kit/media-kit
+# Copy of media_kit from github.com/media-kit/media-kit at c533e446755f51cf53c7e57aea873f2aa5355f81, used by
+# Immuch360 Desktop through dependency_overrides in mobile/pubspec.yaml; the changes are listed in IMMUCH360-NOTE.md
+publish_to: 'none'
+version: 1.2.6+immuch360
+environment:
+  sdk: ^3.6.0
+
+topics:
+  - video
+  - video-player
+  - audio
+  - audio-player
+  - cross-platform
+
+dependencies:
+  collection: ^1.19.0
+  http: ^1.2.2
+  image: ^4.8.0
+  meta: ^1.15.0
+  path: ^1.9.1
+  safe_local_storage: ^2.0.3
+  synchronized: ^3.3.0
+  universal_platform: ^1.1.0
+  uri_parser: ^3.0.2
+  uuid: ^4.5.3
+  web: ^1.1.1
+
+ffigen:
+  name: MPV
+  output: bin/generated/libmpv/bindings.dart
+  headers:
+    entry-points:
+      - headers/client.h
+  dart-bool: true
+
+# No flutter assets: upstream declares assets/web/hls1.4.10.js for its web player, and Flutter bundles the assets of
+# every dependency into every build, so the Android and iOS apps of Immuch360 would carry it too

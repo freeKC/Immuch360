@@ -675,7 +675,7 @@ The current build, build 20 (version 3.3.0-rc.0, build number 3030018), is based
 | Server videos: the original when the device decodes it, else the transcoded stream; list of the device's video decoders | ❌ one "Force original video" switch | ✅ from build 15 | Tested on an Android emulator; the Quest 3 H.264 limit was measured on the headset |
 | Technical details of a video: bit rate, picture, profile, whether this device decodes it | ❌ codec only | ✅ from build 18 | Done |
 | A free player for flat, 360°, 3D and VR180 videos, from the server, the phone or a NAS | ❌ flat only | ✅ (the Quest 3 store players are paid) | |
-| The same app on a Windows computer, with the mouse and the keyboard | ❌ (the web app, in a browser) | In progress: Immuch360 Desktop, photos, your server, the folders of the computer and the shares, no video yet | Automated tests on Windows; started, synced with an Immich server and closed on a Windows 11 PC; not published, see [On a Windows computer](#on-a-windows-computer-immuch360-desktop-in-progress) |
+| The same app on a Windows computer, with the mouse and the keyboard | ❌ (the web app, in a browser) | In progress: Immuch360 Desktop, photos and flat videos, your server, the folders of the computer and the shares; 360°, 3D and VR180 videos still flat | Automated tests on Windows; started, synced with an Immich server, a video played and closed on a Windows 11 PC; not published, see [On a Windows computer](#on-a-windows-computer-immuch360-desktop-in-progress) |
 | Same server, same account, installs next to the official app | | ✅ | |
 
 ### Other apps people use for this
@@ -766,7 +766,7 @@ Captures taken in the headset with the capture button (Meta button and trigger),
 
 ## On a Windows computer: Immuch360 Desktop (in progress)
 
-Immuch360 Desktop is the same app for computers, built from the same sources as the phone apps: Windows first, then Linux and macOS. It is not published yet, so there is no download: the first public Windows version comes once videos play (see the [Roadmap](#roadmap)). Until then you can build it yourself from the `desktop` branch, see [Build it yourself](#build-it-yourself). The phone, tablet, Quest and TV apps do not change with it and keep the name Immuch360; the computer version is called Immuch360 Desktop.
+Immuch360 Desktop is the same app for computers, built from the same sources as the phone apps: Windows first, then Linux and macOS. It is not published yet, so there is no download: the first public Windows version comes once 360°, 3D, VR180 and raw videos play too (see the [Roadmap](#roadmap)). Until then you can build it yourself from the `desktop` branch, see [Build it yourself](#build-it-yourself). The phone, tablet, Quest and TV apps do not change with it and keep the name Immuch360; the computer version is called Immuch360 Desktop.
 
 ### What the first Windows builds do
 
@@ -774,7 +774,8 @@ Immuch360 Desktop is the same app for computers, built from the same sources as 
 - **Without a server**: click "Use without a server" on the login page, then choose the folders of your photos and videos (Pictures and Videos are suggested). This replaces the gallery of a phone: nothing is read outside the folders you chose, and without a server nothing leaves the computer.
 - **Upload and backup** from those folders to your Immich server, while the app is open.
 - **360° photos as a sphere**, with the mouse and the keyboard; the raw .insp photos of Insta360 cameras open as on phones.
-- **Network shares**: Samba (SMB), WebDAV and DLNA media servers, and Plex servers without plex.tv, browsed as on phones: their photos open, their videos wait for the video player (see [Not there yet](#not-there-yet)). For Tapo cameras, the recordings of the memory card: the list, and fetching a clip.
+- **Network shares**: Samba (SMB), WebDAV and DLNA media servers, and Plex servers without plex.tv, browsed as on phones: their photos open and their videos play. For Tapo cameras, the recordings of the memory card: the list, fetching a clip and playing it.
+- **Flat videos**: the videos of your folders, of your Immich server (the original or the transcoded stream, see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)), of the shares, of Plex servers and the Tapo recordings play in the window, with the controls of the phones (play, pause, the time bar), and a menu of the audio tracks for a video that has several. The videos of your folders and of the shares show a frame of the video as their thumbnail, instead of a film icon. 360°, 3D, VR180 and raw 360° videos play flat for now, see [Not there yet](#not-there-yet).
 - **Share this computer on the network**: the albums, months and 360° media of your folders, read only, for a Meta Quest 3 or another device at home, as a phone shares itself.
 - **Files**: downloads from the server go into a folder you choose, "Save to a folder" keeps a copy of the selected photos and videos, and the log page has "Save logs to a file".
 
@@ -794,18 +795,30 @@ Immuch360 Desktop is the same app for computers, built from the same sources as 
 
 ### Not there yet
 
-- **Videos**: they show a placeholder for now, and their thumbnails a film icon. Playback comes next: flat videos first, then 360°, 3D and VR180 videos and the raw 360° videos, measured on two graphics cards.
+- **360°, 3D, VR180 and raw 360° videos**: they play flat for now, as the file holds them (the whole sphere unrolled, the two eyes side by side, or the round picture of the lenses of a raw file), and the 360° button stays on photos. The 360° video player, the 3D and VR180 layouts and the stitching of raw files come next, once they are measured on the two graphics cards of a laptop.
 - **Spatial 2.5D**, later with the webcam; the **Tapo live view**; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
 - **An installer, a signed build and updates**: the first builds are a folder with `immuch360.exe`. Windows SmartScreen may warn about an unsigned app.
-- **Linux and macOS**: their projects are in the sources, but they have not been built or tried on those systems yet; they come after Windows.
+- **Linux and macOS**: their projects are in the sources, but they have not been built or tried on those systems yet, and their video player is not in them yet (videos would show a placeholder); they come after Windows.
 - **Translations**: the new texts of the computer version are in English only until its first public release.
 
 ### Known problems
 
 - **The first start of a new build is slow**: from 10 seconds to about a minute on the test PC before the window shows, most likely while Microsoft Defender scans the new files, which are not signed yet. Wait for the window rather than starting the app again; the next starts take one or two seconds.
-- **While the headset reads a file from the shared computer** (a video it plays, a photo it downloads), Windows cannot rename, move or delete that file and says it is open in Immuch360 Desktop: stop the playback first. Backups do not hold your files that way: a file can be renamed, moved or deleted while it is uploaded.
+- **While a video of your folders plays in the app, or while the headset reads a file from the shared computer** (a video it plays, a photo it downloads), Windows cannot rename, move or delete that file and says it is open in Immuch360 Desktop: close the video, or stop the playback in the headset, first. Backups do not hold your files that way: a file can be renamed, moved or deleted while it is uploaded.
+- **Very large videos on a laptop with two graphics chips**: Windows runs the app on the integrated one unless told otherwise. On the test PC, an 8K HEVC video showed only about half of its frames there, and all of them on the dedicated NVIDIA chip. In the Windows settings, System, Display, Graphics, add `immuch360.exe` and choose "High performance"; the picture stays right when the window moves to a screen driven by the other chip. H.264 videos wider than 4096 pixels (the 5.7K of 360° cameras) are decoded by the processor, since the graphics chips of the test PC refuse them: about three of its cores, without a dropped frame; HEVC (H.265) is decoded by the graphics chip.
+- **Videos are drawn at most 1440 lines high**, then scaled to the window: on a 4K screen in full screen, a 4K or 8K video is a little softer than in a dedicated video player. This keeps an 8K video within the memory and the graphics power of a laptop.
 
-These first builds pass their automated tests on Windows, and on a Windows 11 PC the app starts, opens a saved session on an Immich server, syncs and closes cleanly. The test of every function above on a real PC is still to come, so expect rough edges.
+These first builds pass their automated tests on Windows, and on a Windows 11 PC the app starts, opens a saved session on an Immich server, syncs, plays a video and closes cleanly. Flat videos of 5.7K and 8K at 132 and 215 Mbit/s were measured there from a file, a Samba share and an Immich server, both servers running on that PC, so a real network was not part of the measure. The test of every function above on a real PC is still to come, so expect rough edges.
+
+### Licences of the video player
+
+Videos play through libmpv, the library of the [mpv](https://mpv.io) player, with [FFmpeg](https://ffmpeg.org) inside it, driven by the Flutter plugins of [media_kit](https://github.com/media-kit/media-kit). The Windows build places these files next to `immuch360.exe`:
+
+- **`libmpv-2.dll`**: mpv, built without its parts that are GPL only (`-Dgpl=false`), and FFmpeg, configured with `--disable-gpl --disable-nonfree --enable-version3`, with the libraries linked into them. As a whole it is under the GNU Lesser General Public License version 3 or later ([LGPL 3](https://www.gnu.org/licenses/lgpl-3.0.html)), each part keeping its own licence and copyright. The app loads it at run time by its name, so you may replace it with your own build of mpv's library (client API 2): the app uses whichever `libmpv-2.dll` sits next to `immuch360.exe`. The current builds carry the archive `mpv-dev-x86_64-20241021-git-0f78584.7z` of [media-kit/libmpv-win32-video-cmake](https://github.com/media-kit/libmpv-win32-video-cmake) (tag `20241021`): mpv v0.39.0-179-g0f78584518, from [mpv-player/mpv](https://github.com/mpv-player/mpv) at commit `0f78584518`, and FFmpeg N-117622-g8d940a07d, from [FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg) at commit `8d940a07d`. A build of this repository's own workflow (`.github/workflows/immuch360-libmpv.yml`), published with an archive of all its sources, is meant to replace it before the first public release.
+- **`libEGL.dll` and `libGLESv2.dll`**: ANGLE, OpenGL ES over Direct3D 11 (BSD-3-Clause). **`vk_swiftshader.dll` and `vulkan-1.dll`**: SwiftShader and the Vulkan loader (Apache-2.0). **`d3dcompiler_47.dll`**: Microsoft's shader compiler, a redistributable file of the Windows SDK.
+- **`media_kit`, `media_kit_video` and `media_kit_libs_windows_video`** (MIT): copied under `mobile/packages`, each with an `IMMUCH360-NOTE.md` listing what changed.
+
+Every library inside `libmpv-2.dll` with its licence, and where to get the corresponding sources, is listed in [NOTICES.md](mobile/packages/media_kit_video/windows/NOTICES.md). Portions of this software are copyright © The FreeType Project (https://freetype.org). All rights reserved. This software is based in part on the work of the Independent JPEG Group.
 
 ## Where to get it
 
@@ -848,7 +861,7 @@ REM the app, in build\windows\x64\runner\Release\immuch360.exe
 flutter build windows --release -t lib/main_desktop.dart
 ```
 
-The `Release` folder runs on the PC that built it. For another PC, keep the whole folder and add the Visual C++ runtime next to `immuch360.exe`: `python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>` copies it, leaves out what only serves Android, and checks that every DLL the app loads is in the folder or in Windows itself. The CI of the `desktop` branch (`.github/workflows/immuch360-desktop.yml`) runs the phone gates (the plugins and the package versions of the phone builds, nothing changed under `mobile/android` and `mobile/ios` nor in the Android and iOS code of the packages kept in `mobile/packages`) and the whole test suite on Linux, the desktop tests on Windows, and builds the same ZIP; it also has jobs for the Linux and macOS builds (`flutter build linux` and `flutter build macos`, with the same `-t lib/main_desktop.dart`), which have not run on those systems yet.
+The first build downloads the libraries of the video player (libmpv and ANGLE, see [Licences of the video player](#licences-of-the-video-player)) from GitHub and checks each archive by its SHA-256 before it bundles them. The `Release` folder runs on the PC that built it. For another PC, keep the whole folder and add the Visual C++ runtime next to `immuch360.exe`: `python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>` copies it, leaves out what only serves Android, and checks that every DLL the app loads is in the folder or in Windows itself. The CI of the `desktop` branch (`.github/workflows/immuch360-desktop.yml`) runs the phone gates (the plugins and the package versions of the phone builds, nothing changed under `mobile/android` and `mobile/ios` nor in the Android and iOS code of the packages kept in `mobile/packages`) and the whole test suite on Linux, the desktop tests on Windows, and builds the same ZIP; it also has jobs for the Linux and macOS builds (`flutter build linux` and `flutter build macos`, with the same `-t lib/main_desktop.dart`), which have not run on those systems yet.
 
 No secret lives in this repository: the Android signing key is stored as encrypted GitHub Actions secrets, and the Apple signing material is stored as encrypted variables on Codemagic. The workflow files only reference them by name. Without your own `android/key.jks`, a release build is signed with the debug key and cannot install over a copy from GitHub or a store (uninstall that one first); a debug build installs next to it as Immuch360 debug. The Meta Horizon Store copy is the `quest` APK of the release signed with another key, the one the store app was first registered with, so it cannot install over a sideloaded APK either, nor the other way round.
 
@@ -872,7 +885,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 From build 19 the DLNA client, the phone share and the detection of Apple spatial media also write to the app's own log (Logs, in the menu of the profile picture at the top right), under `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` and `NetworkMediaService`. From build 20 the TV mode writes there under `TvMode` and `TvTextEntry`, the Plex servers under `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` and `PlexServerEditPage`, and the Tapo cameras under `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` and `CameraLiveView`; the Plex lines never hold the token, an address or a title, and the camera lines leave the passwords out. Log lines stay on the device unless you copy them yourself.
 
-On a computer (Immuch360 Desktop), the Logs page also has "Save logs to a file": the log, or a ZIP of the log and the reports of the last crashes when there are some (its suggested name then ends with "with-crash-reports"). A crash report is a small minidump: the threads, where they stopped and only what is needed to follow their calls, with the names of the program files but not their folders; not the memory of the app. Check the log before sharing it: it can contain your server address.
+On a computer (Immuch360 Desktop), the Logs page also has "Save logs to a file": the log, or a ZIP of the log and the reports of the last crashes when there are some (its suggested name then ends with "with-crash-reports"). A crash report is a small minidump: the threads, where they stopped and only what is needed to follow their calls, with the names of the program files but not their folders; not the memory of the app. The video player writes there under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` and `VideoThumbnailGrabber`, mpv's own warnings included, with tokens and passwords removed. Check the log before sharing it: it can contain your server address.
 
 ## Privacy
 
@@ -884,19 +897,19 @@ On a computer (Immuch360 Desktop), the Logs page also has "Save logs to a file":
 - **TV**: whether the device is a TV is read on the device; nothing is sent.
 - **Phone share**: local network only, with a user name and password, over plain HTTP (see [Share this phone on the network](#share-this-phone-on-the-network)).
 - **Camera**: used only by the Spatial 2.5D player, on the device; the images are never stored and never sent anywhere.
-- **On a computer** (Immuch360 Desktop, in progress): the app reads only the folders you choose, keeps its index, thumbnails and cache on the computer, and stores passwords and tokens with the data protection of Windows, for your Windows account only. The computer share follows the rules of the phone share, and does not start on a network Windows marks as public, or whose type it cannot tell, unless you say so.
+- **On a computer** (Immuch360 Desktop, in progress): the app reads only the folders you choose, keeps its index, thumbnails and cache on the computer, and stores passwords and tokens with the data protection of Windows, for your Windows account only. Videos play in the app's own player; the videos of your server reach it through the app, so the player never holds your session token, and what it reads ahead stays in memory, not on the disk. The computer share follows the rules of the phone share, and does not start on a network Windows marks as public, or whose type it cannot tell, unless you say so.
 
 The full policy is in [PRIVACY.md](PRIVACY.md).
 
 ## License and trademark
 
-This project is a fork of Immich and stays under the [GNU AGPL v3](LICENSE). Every APK, the phone ones included, also contains the Meta Spatial SDK, which is not open source (Meta Platform Technologies SDK License Agreement) and is only used on Meta Quest headsets; Immuch360 Desktop, the Windows version, does not contain it. Immuch360 is not affiliated with, nor endorsed by, the Immich team or FUTO.
+This project is a fork of Immich and stays under the [GNU AGPL v3](LICENSE). Every APK, the phone ones included, also contains the Meta Spatial SDK, which is not open source (Meta Platform Technologies SDK License Agreement) and is only used on Meta Quest headsets; Immuch360 Desktop, the Windows version, does not contain it; it carries libmpv (mpv and FFmpeg, GNU LGPL version 3 or later) and the other files of its video player, see [Licences of the video player](#licences-of-the-video-player). Immuch360 is not affiliated with, nor endorsed by, the Immich team or FUTO.
 
 ## Roadmap
 
 What is not done yet, the most likely first. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
-- **Immuch360 Desktop, Windows first**: the first Windows builds are in test (see [On a Windows computer](#on-a-windows-computer-immuch360-desktop-in-progress)). Next, the test of each function on a Windows PC and its fixes; then video playback (flat, then 360°, 3D, VR180 and the raw files), measured on the two graphics cards of a laptop, and the first public Windows version; then Spatial 2.5D with the webcam; then Linux and macOS, packages, signing and updates.
+- **Immuch360 Desktop, Windows first**: the first Windows builds are in test, and flat videos now play in them (see [On a Windows computer](#on-a-windows-computer-immuch360-desktop-in-progress)). Next, the 360° video player measured on the two graphics cards of a laptop, then 360°, 3D, VR180 and raw videos, the two lenses of raw files and the Tapo live view; the test of each function on a Windows PC and its fixes; then the first public Windows version; then Spatial 2.5D with the webcam; then Linux and macOS, packages, signing and updates.
 - **Google Play**: build 18 is live; build 19 is in Google's review since 6 October 2026, and build 20 follows.
 - **App Store**: version 3.3.0 is waiting for Apple's review; it carries the features of build 11, so the upload to Immich and the video decoder check (build 15) and the raw Insta360 files (build 16) come with the next App Store update. The link will be added here when it is live.
 - **Meta Horizon Store**: the listing was submitted for Meta's review on 3 October 2026 with build 14, and the store's alpha channel gets each new build for the next update. Once the listing is approved, the Quest 3 no longer needs sideloading and the store link will be added here; a sideloaded copy has to be uninstalled first (see [Install](#install)).
@@ -905,7 +918,7 @@ What is not done yet, the most likely first. Nothing here is a promise, and feed
 - **DLNA, phone share and Apple spatial, next**: the device reports of build 19 (Plex, Jellyfin, a NAS and the Freebox Server over DLNA; a phone serving a Quest, on its hotspot too; real iPhone spatial photos and videos in the headset); the multicast entitlement asked from Apple, so that iPhones find every DLNA server; previous and next between spatial photos in the headset; a spatial badge on server photos in the timeline; spatial videos in 3D on the Quest, if its decoders allow it.
 - **360° players on phones, next**: a time bar in the iOS 360° video player (the Android one has it), previous/next in the 360° players of phones as in the Quest immersive view, and photos in the native 360° video player.
 - **Network shares, next steps**: swiping from one file of a folder to the next in the photo and video pages (the Quest immersive view already goes through the 360° files of a folder), Digest authentication for WebDAV, the user name from the Bonjour record.
-- **Flat videos**: the audio track choice in the flat player, for server, device and share videos alike (the 360° and Spatial players have it).
+- **Flat videos**: the audio track choice in the flat player of phones, for server, device and share videos alike (the 360° and Spatial players have it, and so does the flat player of Immuch360 Desktop).
 - **Android TV, next**: the device test of build 20 on the Google TV emulator and a real TV, then the TV release on Google Play (TV screenshots, the TV banner, Google's review); later, channels on the TV home screen.
 - **Tapo cameras, next**: the device test of build 20 with real cameras; the live view on iPhone and iPad; H.265 recordings; playing a clip while it is fetched; a whole day of recordings on one time line.
 - **Plex, next**: the device test of build 20 (phones, the Quest, an iPhone, a TV, away from home); bringing the token from the computer with a QR code; hiding the DLNA side of a Plex server in the list of found servers; IPv6.
@@ -914,6 +927,8 @@ What is not done yet, the most likely first. Nothing here is a promise, and feed
 ## Credits
 
 The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192). Thanks to both.
+
+Immuch360 Desktop plays videos with [media_kit](https://github.com/media-kit/media-kit) and [mpv](https://mpv.io); see [Licences of the video player](#licences-of-the-video-player).
 
 The Tapo cameras of build 20 were written from what the open source projects [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) and [python-kasa](https://github.com/python-kasa/python-kasa) document about these cameras.
 

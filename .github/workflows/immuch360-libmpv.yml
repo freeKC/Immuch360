@@ -1,0 +1,507 @@
+name: Immuch360 libmpv for Windows
+
+# Rebuilds libmpv-2.dll (mpv with FFmpeg), the library media_kit plays video with in Immuch360 Desktop, for Windows x64
+# and arm64, and publishes both archives with their SHA-256, their licence texts and their sources, as artifacts of the
+# run and on a release of its own tag (libmpv-windows-<date>-<run number>). media_kit_libs_windows_video pins that
+# release in mobile/packages/media_kit_libs_windows_video/windows/CMakeLists.txt (switch IMMUCH360_LIBMPV_FROM_CI).
+#
+# Why: media_kit_libs_windows_video downloads media-kit's archive of 2024-10-21 (FFmpeg N-117622), older than the
+# FFmpeg security fixes since, for an app that opens files and streams it does not control (plan 20, 2.2 and 2.7;
+# design 20, 2.1). The licences are in mobile/packages/media_kit_video/windows/NOTICES.md.
+#
+# The recipe. media-kit/libmpv-win32-video-cmake, a fork of shinchiro/mpv-winbuild-cmake, cross-compiles mpv and the
+# libraries it needs with LLVM and mingw-w64 in an Arch Linux container. Its master became the audio only configuration
+# on 2025-12-11 (merge 54b5655: no video decoder, mpv without OpenGL) and its last runs failed; its fork
+# Predidit/libmpv-win32-video-cmake keeps the video recipe building on hosted runners (green on 2026-09-15). This
+# workflow checks that fork out at a pinned commit and copies the two files of .github/desktop/libmpv/ over it: FFmpeg
+# and mpv in media_kit's video configuration, without the fork's own patches (one of them turns TLS certificate
+# verification off by default). The recipe, FFmpeg and mpv are inputs, so an FFmpeg security release is one dispatch
+# away; the defaults are the commits the fork built green.
+#
+# Time on hosted runners (4 processors): the toolchain (LLVM with clang and lld, then the mingw-w64 runtime for both
+# targets) about 2 to 3 hours when it is not in the cache (the recipe's own toolchain workflow, which builds LLVM twice
+# for profile guided optimisation, takes 3.1 to 4.8 hours there); then each architecture, in parallel, about 1 to 3
+# hours from cold. The toolchain is cached by recipe commit, so a rerun within a week starts at the libraries. Every job
+# stays under the 6 hour limit of hosted jobs; standard runners cost no minutes on a public repository.
+#
+# Jobs:
+#   sources    the sources of every library mpv needs, downloaded once so that both architectures build the same
+#              commits; packed for the build jobs, and without git data for the release
+#   toolchain  LLVM and the two mingw-w64 sysroots, from the cache or built
+#   libmpv     x86_64 and aarch64: the libraries and libmpv-2.dll, then an archive laid out like media-kit's
+#              (libmpv-2.dll, libmpv.dll.a, include/mpv), plus licenses/ and BUILDINFO.txt
+#   publish    SHA256SUMS.txt and the release: a pre-release that is never marked latest, so the phone release stays
+#              first on the release page; the run summary prints the lines to paste into the CMake of the libs package
+#
+# Triggers: by hand (workflow_dispatch, once this file is on the default branch); every quarter (schedule, default
+# branch only); pushes to the desktop branch that change this file or .github/desktop/libmpv/, which is how the first
+# run happens before the desktop branch is merged. No secret is used; only the publish job can write (the release).
+
+on:
+  workflow_dispatch:
+    inputs:
+      recipe_repository:
+        description: 'Build recipe repository (owner/name)'
+        required: false
+        default: 'Predidit/libmpv-win32-video-cmake'
+        type: string
+      recipe_ref:
+        description: 'Full commit of the recipe (the toolchain cache is keyed by it)'
+        required: false
+        default: 'fdf75129fc694b5ca555ce73cffc43bb6943ae13'
+        type: string
+      ffmpeg_ref:
+        description: 'FFmpeg commit or tag, for example n8.1.3'
+        required: false
+        default: '5b9a3ad71a4b54979e7afc3a1a4269763c4f41fc'
+        type: string
+      mpv_ref:
+        description: 'mpv commit or tag'
+        required: false
+        default: '0b7ed670f7c353dd3dd4f8ae0fc788a181a15aa6'
+        type: string
+      publish:
+        description: 'Publish a release (otherwise the archives stay artifacts of the run)'
+        required: false
+        default: true
+        type: boolean
+  schedule:
+    # First day of each quarter; FFmpeg security releases are dispatched by hand with ffmpeg_ref
+    - cron: '17 3 1 1,4,7,10 *'
+  push:
+    branches: [desktop]
+    paths:
+      - .github/workflows/immuch360-libmpv.yml
+      - .github/desktop/libmpv/**
+
+permissions:
+  contents: read
+
+# One build at a time: two would share nothing and fight for the toolchain cache; a newer trigger waits
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  # Schedules and pushes have no inputs: the defaults below are the same as those of workflow_dispatch
+  RECIPE_REPOSITORY: ${{ inputs.recipe_repository || 'Predidit/libmpv-win32-video-cmake' }}
+  RECIPE_REF: ${{ inputs.recipe_ref || 'fdf75129fc694b5ca555ce73cffc43bb6943ae13' }}
+  FFMPEG_REF: ${{ inputs.ffmpeg_ref || '5b9a3ad71a4b54979e7afc3a1a4269763c4f41fc' }}
+  MPV_REF: ${{ inputs.mpv_ref || '0b7ed670f7c353dd3dd4f8ae0fc788a181a15aa6' }}
+  # The container image is pinned by digest in each job (job containers cannot read env); written here for BUILDINFO
+  BUILD_IMAGE: ghcr.io/shinchiro/archlinux@sha256:2b81f07c567b051455b9539770a71b53dd3add5f9ef52eca95ac01a2272e9fdf
+  # Bump the version when the toolchain job changes what it leaves in the cache
+  TOOLCHAIN_CACHE: libmpv-toolchain-v1
+  MESON_VERSION: '1.12.1'
+
+jobs:
+  sources:
+    name: Library sources
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    container:
+      image: ghcr.io/shinchiro/archlinux@sha256:2b81f07c567b051455b9539770a71b53dd3add5f9ef52eca95ac01a2272e9fdf
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Inputs
+        run: |
+          # The inputs reach cmake and file names: refuse anything but plain names
+          [[ "$RECIPE_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || { echo "recipe_repository: owner/name"; exit 1; }
+          [[ "$RECIPE_REF" =~ ^[0-9a-f]{40}$ ]] || { echo "recipe_ref: a full commit"; exit 1; }
+          for ref in "$FFMPEG_REF" "$MPV_REF"; do
+            [[ "$ref" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "not a commit or tag: $ref"; exit 1; }
+          done
+          git config --global --add safe.directory '*'
+
+      - name: Release tag
+        id: tag
+        run: echo "tag=libmpv-windows-$(date -u +%Y%m%d)-${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the FFmpeg and mpv files of this repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: immuch360
+          sparse-checkout: .github/desktop/libmpv
+
+      - name: Check out the recipe
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: ${{ env.RECIPE_REPOSITORY }}
+          ref: ${{ env.RECIPE_REF }}
+          path: recipe
+
+      - name: Meson and the FFmpeg and mpv files
+        run: |
+          python -m pip --version || pacman -Sy --needed --noconfirm python-pip
+          python -m pip install --break-system-packages "meson==$MESON_VERSION"
+          meson --version
+          ninja --version
+          cp immuch360/.github/desktop/libmpv/ffmpeg.cmake immuch360/.github/desktop/libmpv/mpv.cmake recipe/packages/
+
+      - name: Download what mpv needs
+        run: |
+          cmake -DTARGET_ARCH=x86_64-w64-mingw32 -DCOMPILER_TOOLCHAIN=clang \
+            -DCMAKE_INSTALL_PREFIX="$PWD/clang_root" -DMINGW_INSTALL_PREFIX="$PWD/build_x86_64/x86_64-w64-mingw32" \
+            -DSINGLE_SOURCE_LOCATION="$PWD/src_packages" -DRUSTUP_LOCATION="$PWD/clang_root/install_rustup" \
+            -DIMMUCH360_FFMPEG_REF="$FFMPEG_REF" -DIMMUCH360_MPV_REF="$MPV_REF" \
+            -G Ninja -B build_x86_64 -S recipe
+          # Every package in mpv's dependency graph; arm64 needs the same less the NVIDIA headers
+          ninja -C build_x86_64 -t inputs mpv \
+            | grep -oE 'packages/[^/]+-prefix/src/[^/]+-stamp/' | sed -E 's#packages/([^/]+)-prefix/.*#\1#' \
+            | sort -u > packages.txt
+          if ! grep -qx ffmpeg packages.txt || ! grep -qx mpv packages.txt; then
+            echo "no mpv dependency graph"
+            exit 1
+          fi
+          mapfile -t downloads < <(sed 's/$/-download/' packages.txt)
+          echo "${#downloads[@]} packages"
+          ninja -C build_x86_64 "${downloads[@]}"
+
+      - name: List the commits
+        run: |
+          {
+            echo "# package  repository or archive  commit or SHA-256"
+            while read -r p; do
+              d="src_packages/$p"
+              if [ -d "$d/.git" ]; then
+                echo "$p $(git -C "$d" remote get-url origin) $(git -C "$d" rev-parse HEAD)"
+              else
+                for f in "$d"/*.tar.*; do
+                  if [ -f "$f" ]; then echo "$p $(basename "$f") $(sha256sum "$f" | cut -d' ' -f1)"; fi
+                done
+              fi
+            done < packages.txt
+          } > SOURCES.txt
+          cat SOURCES.txt
+
+      - name: Pack the sources
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          mapfile -t dirs < <(sed 's#^#src_packages/#' packages.txt)
+          # With git data for the build jobs, which check the commits out as they are
+          tar -cf - packages.txt SOURCES.txt "${dirs[@]}" | zstd -T0 -3 -q -o build-sources.tar.zst
+          # Without it for the release: the corresponding source of the DLL, with the recipe and the FFmpeg and mpv files
+          rm -rf recipe/.git
+          tar --exclude=.git -cf - SOURCES.txt recipe immuch360/.github/desktop/libmpv "${dirs[@]}" \
+            | xz -T0 -6 > "$TAG-sources.tar.xz"
+          ls -l build-sources.tar.zst "$TAG-sources.tar.xz"
+
+      - name: Upload the sources for the build jobs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: build-sources
+          path: build-sources.tar.zst
+          retention-days: 3
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Upload the sources for the release
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-sources
+          path: ${{ steps.tag.outputs.tag }}-sources.tar.xz
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+
+  toolchain:
+    name: LLVM and mingw-w64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    container:
+      image: ghcr.io/shinchiro/archlinux@sha256:2b81f07c567b051455b9539770a71b53dd3add5f9ef52eca95ac01a2272e9fdf
+    steps:
+      - name: Look for it in the cache
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            clang_root
+            build_x86_64
+            build_aarch64
+          key: ${{ env.TOOLCHAIN_CACHE }}-${{ env.RECIPE_REF }}
+          lookup-only: true
+
+      - name: Check out the recipe
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: ${{ env.RECIPE_REPOSITORY }}
+          ref: ${{ env.RECIPE_REF }}
+          path: recipe
+
+      - name: Build LLVM, then the mingw-w64 runtime of each target
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          git config --global --add safe.directory '*'
+          python -m pip --version || pacman -Sy --needed --noconfirm python-pip
+          python -m pip install --break-system-packages "meson==$MESON_VERSION"
+          for bit in x86_64 aarch64; do
+            cmake -DTARGET_ARCH="$bit-w64-mingw32" -DCOMPILER_TOOLCHAIN=clang \
+              -DCMAKE_INSTALL_PREFIX="$PWD/clang_root" -DMINGW_INSTALL_PREFIX="$PWD/build_$bit/$bit-w64-mingw32" \
+              -DSINGLE_SOURCE_LOCATION="$PWD/src_packages" -DRUSTUP_LOCATION="$PWD/clang_root/install_rustup" \
+              -G Ninja -B "build_$bit" -S recipe
+            # LLVM itself is shared by both targets; no profile guided second build, which would add about 1.5 hours
+            if [ "$bit" = x86_64 ]; then ninja -C "build_$bit" llvm; fi
+            ninja -C "build_$bit" llvm-clang
+          done
+
+      - name: Keep the licences of the runtime the DLL links, then the sysroots only
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          lic=clang_root/share/immuch360-licenses
+          mkdir -p "$lic/llvm-runtimes" "$lic/mingw-w64"
+          for d in libcxx libcxxabi libunwind compiler-rt; do
+            if [ -f "src_packages/llvm/$d/LICENSE.TXT" ]; then
+              cp "src_packages/llvm/$d/LICENSE.TXT" "$lic/llvm-runtimes/$d-LICENSE.TXT"
+            fi
+          done
+          cp src_packages/mingw-w64/COPYING "$lic/mingw-w64/COPYING" || true
+          cp src_packages/mingw-w64/mingw-w64-libraries/winpthreads/COPYING "$lic/mingw-w64/winpthreads-COPYING" || true
+          ls -R "$lic"
+          rm -rf build_*/toolchain build_*/packages src_packages
+          du -sh clang_root build_x86_64 build_aarch64
+
+      - name: Save it in the cache
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            clang_root
+            build_x86_64
+            build_aarch64
+          key: ${{ env.TOOLCHAIN_CACHE }}-${{ env.RECIPE_REF }}
+
+  libmpv:
+    name: libmpv ${{ matrix.arch }}
+    needs: [sources, toolchain]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    container:
+      image: ghcr.io/shinchiro/archlinux@sha256:2b81f07c567b051455b9539770a71b53dd3add5f9ef52eca95ac01a2272e9fdf
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
+    env:
+      ARCH: ${{ matrix.arch }}
+    steps:
+      - name: Git settings
+        run: git config --global --add safe.directory '*'
+
+      - name: Check out the FFmpeg and mpv files of this repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: immuch360
+          sparse-checkout: .github/desktop/libmpv
+
+      - name: Check out the recipe
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: ${{ env.RECIPE_REPOSITORY }}
+          ref: ${{ env.RECIPE_REF }}
+          path: recipe
+
+      - name: Restore the toolchain
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            clang_root
+            build_x86_64
+            build_aarch64
+          key: ${{ env.TOOLCHAIN_CACHE }}-${{ env.RECIPE_REF }}
+          fail-on-cache-miss: true
+
+      - name: Download the sources
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: build-sources
+
+      - name: Unpack the sources, Meson and the FFmpeg and mpv files
+        run: |
+          zstd -d -q -c build-sources.tar.zst | tar -xf -
+          rm build-sources.tar.zst
+          python -m pip --version || pacman -Sy --needed --noconfirm python-pip
+          python -m pip install --break-system-packages "meson==$MESON_VERSION"
+          cp immuch360/.github/desktop/libmpv/ffmpeg.cmake immuch360/.github/desktop/libmpv/mpv.cmake recipe/packages/
+
+      - name: Build libmpv
+        run: |
+          cmake -DTARGET_ARCH="$ARCH-w64-mingw32" -DCOMPILER_TOOLCHAIN=clang \
+            -DCMAKE_INSTALL_PREFIX="$PWD/clang_root" -DMINGW_INSTALL_PREFIX="$PWD/build_$ARCH/$ARCH-w64-mingw32" \
+            -DSINGLE_SOURCE_LOCATION="$PWD/src_packages" -DRUSTUP_LOCATION="$PWD/clang_root/install_rustup" \
+            -DCLANG_PACKAGES_LTO=ON -DIMMUCH360_FFMPEG_REF="$FFMPEG_REF" -DIMMUCH360_MPV_REF="$MPV_REF" \
+            -G Ninja --fresh -B "build_$ARCH" -S recipe
+          ninja -C "build_$ARCH" mpv
+
+      - name: Archive
+        id: archive
+        run: |
+          shopt -s nullglob
+          dirs=("build_$ARCH/mpv-dev-$ARCH-"*-git-*)
+          if [ ${#dirs[@]} != 1 ] || [ ! -d "${dirs[0]}" ]; then
+            echo "expected one mpv-dev folder: ${dirs[*]}"
+            exit 1
+          fi
+          dev=${dirs[0]}
+          name=$(basename "$dev")
+          for f in libmpv-2.dll libmpv.dll.a include/mpv/client.h include/mpv/render.h include/mpv/render_gl.h include/mpv/stream_cb.h; do
+            [ -f "$dev/$f" ] || { echo "missing $f"; exit 1; }
+          done
+
+          ninja -C "build_$ARCH" -t inputs mpv \
+            | grep -oE 'packages/[^/]+-prefix/src/[^/]+-stamp/' | sed -E 's#packages/([^/]+)-prefix/.*#\1#' \
+            | sort -u > "packages-$ARCH.txt"
+          # Licence texts of every library built for the DLL and of the runtime it links
+          while read -r p; do
+            src="src_packages/$p"
+            mkdir -p "$dev/licenses/$p"
+            for f in "$src"/LICENSE* "$src"/LICENCE* "$src"/COPYING* "$src"/Copyright "$src"/NOTICE* "$src"/LICENSES; do
+              if [ -e "$f" ]; then cp -r "$f" "$dev/licenses/$p/"; fi
+            done
+            rmdir --ignore-fail-on-non-empty "$dev/licenses/$p"
+          done < "packages-$ARCH.txt"
+          cp -r clang_root/share/immuch360-licenses/. "$dev/licenses/"
+
+          {
+            echo "libmpv-2.dll for Windows $ARCH, built for Immuch360 Desktop"
+            echo "run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "repository commit: $GITHUB_SHA"
+            echo "recipe: https://github.com/$RECIPE_REPOSITORY at $RECIPE_REF, with .github/desktop/libmpv/ffmpeg.cmake and mpv.cmake"
+            echo "container: $BUILD_IMAGE"
+            echo "mpv: $MPV_REF ($(git -C src_packages/mpv describe --tags --always 2>/dev/null))"
+            echo "FFmpeg: $FFMPEG_REF ($(git -C src_packages/ffmpeg describe --tags --always 2>/dev/null))"
+            echo "target: $ARCH-w64-mingw32, $(grep -E '^GCC_ARCH:' "build_$ARCH/CMakeCache.txt")"
+            echo "LLVM: $(clang_root/bin/clang --version | head -1)"
+            echo
+            echo "Libraries built for the DLL (package, repository or archive, commit or SHA-256):"
+            awk 'NR == FNR { keep[$1]; next } $1 in keep' "packages-$ARCH.txt" SOURCES.txt
+          } > "$dev/BUILDINFO.txt"
+          cp "$dev/BUILDINFO.txt" "BUILDINFO-$ARCH.txt"
+          cat "BUILDINFO-$ARCH.txt"
+
+          # Files at the root of the archive, as in media-kit's: the libs package moves include/mpv to include
+          (cd "$dev" && 7z a -m0=lzma2 -mx=9 -ms=on "../../$name.7z" ./* > /dev/null)
+          sha256sum "$name.7z" | tee "$name.7z.sha256"
+          echo "file=$name.7z" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: archive-${{ matrix.arch }}
+          path: |
+            ${{ steps.archive.outputs.file }}
+            ${{ steps.archive.outputs.file }}.sha256
+            BUILDINFO-${{ matrix.arch }}.txt
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Collect the build logs
+        if: always()
+        run: |
+          mkdir -p "logs-$ARCH"
+          find "build_$ARCH" -type f \( -iname '*-*.log' -o -path '*/ffbuild/config.log' -o -name meson-log.txt \) \
+            -exec cp --parents {} "logs-$ARCH/" \; 2>/dev/null || true
+          tar -cf - "logs-$ARCH" | zstd -T0 -q -o "logs-$ARCH.tar.zst"
+
+      - name: Upload the build logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: logs-${{ matrix.arch }}
+          path: logs-${{ matrix.arch }}.tar.zst
+          retention-days: 7
+          if-no-files-found: ignore
+
+  publish:
+    name: Release
+    needs: [sources, libmpv]
+    if: github.event_name != 'workflow_dispatch' || inputs.publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write # creates the release and its tag; the only write of the workflow
+    env:
+      TAG: ${{ needs.sources.outputs.tag }}
+    steps:
+      - name: Download the archives
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: archive-*
+          path: dist
+          merge-multiple: true
+
+      - name: Download the sources
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-sources
+          path: dist
+
+      - name: Checksums and notes
+        working-directory: dist
+        run: |
+          rm -f ./*.sha256
+          x64=$(ls mpv-dev-x86_64-*.7z)
+          arm64=$(ls mpv-dev-aarch64-*.7z)
+          sha256sum "$x64" "$arm64" "$TAG-sources.tar.xz" > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+          sha() { grep -F " $1" SHA256SUMS.txt | cut -d' ' -f1; }
+          {
+            echo "set(IMMUCH360_LIBMPV_TAG \"$TAG\")"
+            echo "set(IMMUCH360_LIBMPV_X64 \"$x64\")"
+            echo "set(IMMUCH360_LIBMPV_X64_SHA256 \"$(sha "$x64")\")"
+            echo "set(IMMUCH360_LIBMPV_ARM64 \"$arm64\")"
+            echo "set(IMMUCH360_LIBMPV_ARM64_SHA256 \"$(sha "$arm64")\")"
+          } > ../cmake-pin.txt
+          {
+            echo "libmpv-2.dll (mpv with FFmpeg) for Windows x64 and arm64, built by .github/workflows/immuch360-libmpv.yml for Immuch360 Desktop. Not an app release: the Windows build of the app downloads one of these archives and checks it by its SHA-256."
+            echo
+            echo "- mpv: \`$MPV_REF\`; FFmpeg: \`$FFMPEG_REF\`; recipe: \`$RECIPE_REPOSITORY\` at \`$RECIPE_REF\`. Every library and its commit: \`BUILDINFO-x86_64.txt\`, \`BUILDINFO-aarch64.txt\`."
+            echo "- Licence: GNU LGPL version 3 or later for the DLL as a whole (mpv LGPL-2.1-or-later, FFmpeg configured with --enable-version3); the licence texts are in \`licenses/\` inside each archive, the notices in \`mobile/packages/media_kit_video/windows/NOTICES.md\`."
+            echo "- Corresponding source: \`$TAG-sources.tar.xz\`."
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo
+            echo "SHA-256:"
+            echo
+            echo '```'
+            cat SHA256SUMS.txt
+            echo '```'
+          } > ../notes.md
+
+      - name: Release
+        working-directory: dist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            # A rerun of this job after an upload failed halfway
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber ./*
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+              --title "libmpv for Windows, $TAG" --notes-file ../notes.md --prerelease --latest=false ./*
+          fi
+
+      - name: Lines for the CMake of the libs package
+        run: |
+          {
+            echo "### libmpv $TAG"
+            echo
+            echo "Paste into \`mobile/packages/media_kit_libs_windows_video/windows/CMakeLists.txt\`, then turn \`IMMUCH360_LIBMPV_FROM_CI\` on there:"
+            echo
+            echo '```cmake'
+            cat cmake-pin.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          cat cmake-pin.txt

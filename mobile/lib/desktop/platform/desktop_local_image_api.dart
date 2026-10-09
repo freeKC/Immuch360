@@ -11,6 +11,8 @@ import 'package:immich_mobile/desktop/library/decode_queue.dart';
 import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
 import 'package:immich_mobile/desktop/library/thumbnail_cache.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
+import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:immich_mobile/platform/local_image_api.g.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -24,16 +26,20 @@ import 'package:thumbhash/thumbhash.dart' as thumbhash_codec;
 ///   whole timeline.
 /// - Larger and unsized requests, and animated images (preferEncoded), get the file itself: the engine decodes it at
 ///   the requested size (EXIF orientation included).
-/// - A video, until the desktop player grabs frames, and a file the engine cannot decode (HEIC or a camera raw file
-///   without a decoder of the system) get a tile: a film icon, or the format's name.
+/// - A video gets a frame taken by the desktop player's frame grabber (video_thumbnail_grabber.dart), kept in the
+///   thumbnail cache like the photos' thumbnails; the film tile without libmpv, or when the video gives no frame.
+/// - A file the engine cannot decode (HEIC or a camera raw file without a decoder of the system) gets a tile with
+///   the format's name.
 class DesktopLocalImageApi implements LocalImageApi {
   DesktopLocalImageApi({
     Future<File?> Function(String assetId)? fileForAsset,
     ThumbnailCache? thumbnails,
     int concurrentDecodes = 3,
+    this._videoFrame,
   }) : _fileForAsset = fileForAsset ?? _libraryFile,
        _thumbnails = thumbnails ?? ThumbnailCache.shared,
-       _queue = DecodeQueue(concurrentDecodes);
+       _queue = DecodeQueue(concurrentDecodes),
+       _videoQueue = DecodeQueue(1);
 
   @override
   // ignore: non_constant_identifier_names
@@ -55,6 +61,21 @@ class DesktopLocalImageApi implements LocalImageApi {
   final Future<File?> Function(String assetId) _fileForAsset;
   final ThumbnailCache _thumbnails;
   final DecodeQueue _queue;
+
+  /// The frame grabs, one at a time, the latest requested first, apart from the photos: a grab may take seconds (an
+  /// 8K video, a slow disk), and the photos of the timeline do not wait for it
+  final DecodeQueue _videoQueue;
+  final VideoFrameGrab? _videoFrame;
+
+  /// Where in a video its thumbnail is taken: past a black first frame or a fade in, as for the share tiles
+  /// (NetworkVideoThumbnailService.frameTimeMs)
+  static const videoFrameTime = Duration(seconds: 1);
+
+  /// The frame grab of the app once libmpv loaded at start, null before and without it
+  static VideoFrameGrab? get _appVideoFrame => desktopVideoAvailable ? _grabLibraryFrame : null;
+
+  static Future<Uint8List?> _grabLibraryFrame(String path, int box) =>
+      VideoThumbnailGrabber.shared.grab(path, time: videoFrameTime, box: (width: box, height: box, cover: true));
 
   final _running = <int>{};
   final _cancelled = <int>{};
@@ -95,6 +116,7 @@ class DesktopLocalImageApi implements LocalImageApi {
     if (_running.contains(requestId)) {
       _cancelled.add(requestId);
       _queue.cancel(requestId);
+      _videoQueue.cancel(requestId);
     }
   }
 
@@ -129,7 +151,7 @@ class DesktopLocalImageApi implements LocalImageApi {
     final bucket = preferEncoded ? null : ThumbnailCache.bucketFor(width, height);
     final tileSize = bucket ?? ThumbnailCache.buckets.last;
     if (isVideo) {
-      return _tile(tileSize, video: true);
+      return _videoImage(file, assetId, requestId, tileSize);
     }
 
     final FileStat stat;
@@ -178,6 +200,46 @@ class DesktopLocalImageApi implements LocalImageApi {
     });
   }
 
+  /// A frame of the video [file] covering a [box] by [box] square, from the thumbnail cache or grabbed once; the film
+  /// tile without a frame grab or when the video gives no frame. Any request of a video, the larger ones too, gets a
+  /// thumbnail: the viewer shows it until the player shows the video.
+  Future<Uint8List?> _videoImage(File file, String assetId, int requestId, int box) async {
+    final grab = _videoFrame ?? _appVideoFrame;
+    if (grab == null) {
+      return _tile(box, video: true);
+    }
+    final FileStat stat;
+    try {
+      // ignore: avoid_slow_async_io
+      stat = await file.stat();
+    } on FileSystemException {
+      return null;
+    }
+    if (stat.type != FileSystemEntityType.file || _cancelled.contains(requestId)) {
+      return null;
+    }
+    final version = '${file.path}|${stat.size}|${stat.modified.millisecondsSinceEpoch}';
+    if (stat.size == 0 || _undecodable.contains(version)) {
+      return _tile(box, video: true);
+    }
+    final source = ThumbnailSource(assetId: assetId, length: stat.size, modified: stat.modified);
+    final cached = await _thumbnails.read(source, box);
+    if (cached != null || _cancelled.contains(requestId)) {
+      return cached;
+    }
+    return _videoQueue.run('$version|$box', requestId, () async {
+      final frame = await grab(file.path, box);
+      if (frame == null || frame.isEmpty) {
+        _undecodable.add(version);
+        return _tile(box, video: true);
+      }
+      final write = _thumbnails.write(source, box, frame);
+      _writes.add(write);
+      unawaited(write.whenComplete(() => _writes.remove(write)));
+      return frame;
+    });
+  }
+
   /// The tile for a video, or for a file of the [label] format the engine cannot show; made once per kind and size
   Future<Uint8List> _tile(int size, {bool video = false, String? label}) {
     final key = '$video|${video ? '' : label}|$size';
@@ -199,6 +261,9 @@ class DesktopLocalImageApi implements LocalImageApi {
     }
   }
 }
+
+/// A JPEG of a frame of the video at [path] covering a [box] by [box] square, null when it gives none
+typedef VideoFrameGrab = Future<Uint8List?> Function(String path, int box);
 
 /// The format of [path] as the tile shows it: its extension in capitals (HEIC, DNG), null without one
 String? formatLabel(String path) {

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/apple_spatial.service.dart';
@@ -386,14 +386,16 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       child: Stack(
         children: [
           if (!_isVideoReady || widget.asset.isMotionPhoto || !showPlayer) Positioned.fill(child: widget.image),
-          if (showPlayer && CurrentPlatform.isDesktop)
-            // No video player on the computers yet: the poster stays, with a line saying so
-            const Positioned.fill(child: DesktopVideoPlaceholder())
-          else if (showPlayer) ...[
+          if (showPlayer) ...[
             Visibility.maintain(
               visible: _isVideoReady,
               // A platform view must never take the focus: the keys of a remote would go to the native view
-              child: ExcludeFocus(child: NativeVideoPlayerView(onViewReady: _initController)),
+              child: ExcludeFocus(
+                // The computers play through media_kit (lib/desktop/video), with a controller of the same type
+                child: CurrentPlatform.isDesktop
+                    ? DesktopVideoView(onViewReady: _initController)
+                    : NativeVideoPlayerView(onViewReady: _initController),
+              ),
             ),
             Center(
               child: AnimatedOpacity(

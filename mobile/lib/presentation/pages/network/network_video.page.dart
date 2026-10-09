@@ -4,7 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -770,16 +770,18 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       onTap: () => setState(() => _showControls = !_showControls),
       child: Stack(
         children: [
-          if (isRouteActive && CurrentPlatform.isDesktop)
-            // No video player on the computers yet: a line says so
-            const Positioned.fill(child: DesktopVideoPlaceholder())
-          else if (isRouteActive)
+          if (isRouteActive)
             Positioned.fill(
               child: IgnorePointer(
                 child: Visibility.maintain(
                   visible: _isVideoReady,
                   // A platform view must never take the focus: the keys of a remote would go to the native view
-                  child: ExcludeFocus(child: NativeVideoPlayerView(onViewReady: _initController)),
+                  child: ExcludeFocus(
+                    // The computers play through media_kit (lib/desktop/video), with a controller of the same type
+                    child: CurrentPlatform.isDesktop
+                        ? DesktopVideoView(onViewReady: _initController)
+                        : NativeVideoPlayerView(onViewReady: _initController),
+                  ),
                 ),
               ),
             ),
