@@ -19,13 +19,13 @@ Immuch360 içində ətrafa baxa biləcəyiniz 360° foto və videoları olan Imm
   App Store: <a href="#where-to-get-it">yoxlanılır</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store təsdiqlənib, 21-ci yığım ilk yeniləmə kimi təqdim edilib<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">sınaq versiyasını endir</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">sınaq versiyasını endir</a>, masaüstü yığımı 2
 </p>
 
 - 🌐 **Daxili 360°**<br>İçində ətrafa baxdığınız sfera kimi foto və videolar, giroskopla, kameraların xam faylları da daxil (Insta360 16-cı yığımdan, GoPro və DJI 18-ci yığımdan). Həm də pulsuz video pleyer: düz, 360°, 3D, VR180
 - 👓 **Daxili 3D**<br>Stereoskopik 360° və VR180, yuxarı/aşağı və ya yan-yana, həmçinin Apple məkan fotoları (19-cu yığımdan): VR eynəyində əsl 3D, telefonda bir göz
 - 🎥 **Daxili 2.5D**<br>Stereoskopik videodan düz ekranda dərinlik, görüntü başınızı izləyir (eksperimental, telefon və planşetlər)
-- 📱 **Android, iOS, Quest, TV**<br>Telefonlarda, planşetlərdə və Quest 2, Pro, 3 və 3S VR eynəklərində bir tətbiq, VR eynəyində əsl 3D, 20-ci yığımdan pultla Android TV-də, həm də Windows sınaq versiyası
+- 📱 **Android, iOS, Quest, TV**<br>Telefonlarda, planşetlərdə və Quest 2, Pro, 3 və 3S VR eynəklərində bir tətbiq, VR eynəyində əsl 3D, 20-ci yığımdan pultla Android TV-də, həm də fotolar və düz videolarla Windows sınaq versiyası
 - 🔌 **Serverlə və ya serversiz**<br>Sizin Immich serveriniz və ya telefonun öz qalereyası, hesab lazım deyil
 - 🗄️ **Şəbəkə paylaşımları**<br>Samba (SMB), WebDAV və 19-cu yığımdan DLNA media serverləri: şəbəkədə tapılır və birbaşa oxunur, heç nə endirilmir, istədiyiniz zaman Immich-ə göndərilir. 19-cu yığımdan telefon öz qalereyasını VR eynəyi ilə də paylaşır
 - 📺 **Televizorda**<br>20-ci yığımdan Android TV və Google TV-də eyni APK: 360° foto və videolar, serveriniz və paylaşımlarınız, pultla
@@ -79,7 +79,7 @@ Immuch360 içində ətrafa baxa biləcəyiniz 360° foto və videoları olan Imm
 - **"360° foto və videolarıma, NAS-dakı və ya Plex serverimdəki videolara televizorda, pultla baxmaq istəyirəm."** Baxın: [Televizorunuzda baxın](#watch-on-your-tv-android-tv-and-google-tv).
 - **"360° çəkilişlərimi digərlərinin arasında tapa bilmirəm."** Baxın: [360° siyahısı](#find-your-360-shots-the-360-list).
 - **"360° videom ilişir və ya bulanıq nüsxə oynayır."** Baxın: [Video təfərrüatları və dekoderlər](#video-details-decoders-and-why-a-video-stutters).
-- **"360° fotolarımı və Immich kitabxanamı Windows kompüterimdə istəyirəm, onun qovluqlarındakı fotolarla, NAS-ımla və Plex serverimlə birlikdə, kompüteri də VR eynəyimlə paylaşmaq istəyirəm."** Baxın: [Windows kompüterində](#on-a-windows-computer-immuch360-desktop-preview) (sınaq versiyası, hələlik yalnız fotolar).
+- **"360° fotolarımı və Immich kitabxanamı Windows kompüterimdə istəyirəm, onun qovluqlarındakı foto və videolarla, NAS-ımla və Plex serverimlə birlikdə, kompüteri də VR eynəyimlə paylaşmaq istəyirəm."** Baxın: [Windows kompüterində](#on-a-windows-computer-immuch360-desktop-preview) (sınaq versiyası: hələlik fotolar və düz videolar, 360° videolar sonra).
 - **"Immich tətbiqinin etdiklərini saxlayıram?"** Bəli, iki kiçik dəyişikliklə, baxın: [Qalan hər şey Immich-dir](#everything-else-is-immich).
 
 Funksiya yenidirsə, mətn onun hansı yığımdan mövcud olduğunu deyir. GitHub buraxılışında həmişə ən yeni yığım olur, mağazalar sonra gəlir: baxın [Haradan əldə etmək olar](#where-to-get-it).
@@ -752,7 +752,7 @@ Cari yığım, 21-ci yığım (versiya 3.3.0-rc.0, yığım nömrəsi 3030019), 
 | Orijinal fayllardan oynadılan Plex Media Server kitabxanaları, evdə və evdən kənarda, plex.tv olmadan | ❌ | ✅ 20-ci yığımdan, hər görüntüləyici, telefonlarda, planşetlərdə, Quest-də və televizorlarda |
 | Tapo kameraları: canlı görüntü və istədiyiniz zaman Immich-ə göndərilən yaddaş kartı yazıları | ❌ | ✅ 20-ci yığımdan: yazılar hər yerdə, canlı Android, Android TV və Quest-də |
 | Pultla idarə olunan Android TV və Google TV, eyni APK-da | ❌ televizor tətbiqi deyil | ✅ 20-ci yığımdan |
-| Windows kompüterində eyni tətbiq | ❌ yalnız telefon və planşetlər | ✅ sınaq versiyası, hələ video yoxdur |
+| Windows kompüterində eyni tətbiq | ❌ yalnız telefon və planşetlər | ✅ sınaq versiyası, fotolar və düz videolar |
 | Xam Insta360 .insp fotoları və bir trekli .insv videoları | ❌ düz | ✅ 16-cı yığımdan |
 | Hər trek və ya hər fayl üçün bir linzalı xam videolar (Insta360 X4, X4 Air, X5, X6, X3 cütləri, GoPro .360, DJI .osv) | ❌ düz və ya səhv | ✅ 18-ci yığımdan |
 | İkiqat fişeyli .dng | ❌ düz | ❌ hələ yox |
@@ -782,7 +782,7 @@ Cari yığım, 21-ci yığım (versiya 3.3.0-rc.0, yığım nömrəsi 3030019), 
 - **Plex Media Server**: kompüterdən real Plex Media Server 1.42.1 ilə yoxlanılıb (qoşulma, qovluqlar, bayt diapazonları, miniatürlər, evdən kənar ünvan); hələ cihazda yoxlanılmayıb.
 - **Tapo kameraları**: simulyasiya edilmiş kamera ilə yoxlanılıb; hələ real kamera ilə yoxlanılmayıb.
 - **Android TV və Google TV**: avtomatlaşdırılmış testlərlə yoxlanılıb; hələ televizorda yoxlanılmayıb.
-- **Windows kompüterində eyni tətbiq**: Windows-da 475 avtomatlaşdırılmış masaüstü testi, Windows 11 kompüterində isə tətbiq açılır, Immich serverində saxlanılmış sessiyanı açır, sinxronlaşdırır və düzgün bağlanır; hər funksiyanın əl ilə yoxlanılması davam edir.
+- **Windows kompüterində eyni tətbiq**: 663 avtomatlaşdırılmış masaüstü testindən 656-sı Windows-da keçir (7-si qəsdən ötürülür), Windows 11 kompüterində isə tətbiq açılır, Immich serverində saxlanılmış sessiyanı açır, sinxronlaşdırır, video oynadır və düzgün bağlanır; hər funksiyanın əl ilə yoxlanılması davam edir.
 - **Xam Insta360 .insp fotoları və bir trekli .insv videoları**: fotolar X3 fayllarının Insta360 Studio ixracları ilə, videolar Android emulyatorunda aşağı keyfiyyətli X3 faylı ilə yoxlanılıb; hələ iPhone-da işə salınmayıb.
 - **Hər trek və ya hər fayl üçün bir linzalı xam videolar**: analizatorlar və birləşdirmə real X4, X3 cütü, GoPro MAX və Osmo 360 faylları üzərində yoxlanılıb; oynatma 18-ci və 19-cu yığımların cihaz testidir.
 - **İkiqat fişeyli .dng**: planlaşdırılıb.
@@ -825,16 +825,19 @@ Immuch360 qalereyadır, həm də pulsuz media pleyerdir: rəsmi tətbiqin oynada
   - iPhone, iPad: eyni, iOS-un açmadığı paylaşımdakı MKV və AVI faylları istisna olmaqla (serverdə onlar transkod edilərək oynayır).
   - Meta Quest: pəncərədə.
   - Android TV, Google TV: telefonlarda olduğu kimi; OK fasilə verir, sol və sağ 10 s atlayır.
+  - Windows (masaüstü yığımı 2-dən): libmpv pleyeri, ikinci siyahının hər mənbəyindən; Enter fasilə verir, sol və sağ və ya J və L 10 s atlayır.
 - **360° fotolar**
   - Android telefonları: sfera görüntüləyicisi, giroskop.
   - iPhone, iPad: eyni.
   - Meta Quest: immersiv, ətrafınızı bürüyür.
   - Android TV, Google TV: oxlarla fırladılan, kanal düymələri ilə miqyası dəyişən sfera görüntüləyicisi.
+  - Windows: sfera görüntüləyicisi, siçan və klaviatura.
 - **360° videolar**
   - Android telefonları: sferada daxili Media3 pleyeri, giroskop, irəli-geri keçid, səs treki seçimi, buferləmə göstəricisi.
   - iPhone, iPad: sferada daxili SceneKit pleyeri, giroskop, səs treki seçimi, buferləmə göstəricisi; oynatma və fasilə, hələ zaman zolağı yoxdur.
   - Meta Quest: immersiv, stereoskopik fayllar üçün əsl 3D, 10 saniyəlik atlamalı zaman zolağı, əvvəlki və növbəti media.
   - Android TV, Google TV: telefonların Media3 pleyeri, oxlarla fırladılır.
+  - Windows: hələ yox, hələlik düz göstərilir.
 - **3D 360° (yuxarı və aşağı, yan-yana)**
   - Android telefonları: sol göz, düzülüş düyməsi.
   - iPhone, iPad: eyni.
@@ -888,7 +891,7 @@ Immuch360 qalereyadır, həm də pulsuz media pleyerdir: rəsmi tətbiqin oynada
 
 20-ci yığımdan olan Android TV və Google TV qeydləri hələ televizorda yoxlanılmayıb, baxın: [Televizorunuzda baxın](#watch-on-your-tv-android-tv-and-google-tv); kamera qeydləri isə hələ real kamera ilə yoxlanılmayıb.
 
-Windows-da Immuch360 Desktop sınaq versiyası fotoları, düz və 360°, xam Insta360 .insp fotoları da daxil olmaqla, siçan və klaviatura ilə göstərir: serverdən, kompüterin qovluqlarından, paylaşımlardan və Plex-dən; videoları hələ oynatmır, onların yerində yer tutucu görünür (baxın: [Hələ olmayanlar](#not-there-yet)).
+Windows-da Immuch360 Desktop sınaq versiyası fotoları, düz və 360°, xam Insta360 .insp fotoları da daxil olmaqla, siçan və klaviatura ilə göstərir, masaüstü yığımı 2-dən isə düz videoları oynadır: serverdən, kompüterin qovluqlarından, paylaşımlardan, Plex-dən və Tapo yazılarından; 360°, 3D, VR180 və xam 360° videolar hələlik düz və ya yer tutucu kimi göstərilir (baxın: [Hələ olmayanlar](#not-there-yet)).
 
 - **Immich serveriniz**: Settings, Asset Viewer, "Video mənbəyi"-nin dediyi kimi orijinal və ya serverin transkod edilmiş axını (baxın: [Video təfərrüatları və dekoderlər](#video-details-decoders-and-why-a-video-stutters)). Veb tətbiqlə eyni hesab.
 - **Telefonun və ya VR eynəyinin özü**: giriş səhifəsində "Serversiz istifadə et" və ya Kitabxana bölməsindəki On this device elementi.
@@ -959,24 +962,24 @@ VR eynəyində çəkiliş düyməsi ilə (Meta düyməsi və tətik), Quest 3-d�
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Windows kompüterində: Immuch360 Desktop (sınaq versiyası)
 
-Immich kitabxananız serverdədir, digər fotolar kompüterin qovluqlarındadır, videolar NAS-da və ya Plex serverində, siz isə 360° fotolarınızda böyük ekranda ətrafa baxmaq, ya da kompüterin fotolarını VR eynəyində göstərmək istəyirsiniz. Immuch360 Desktop Windows kompüterində eyni tətbiqdir, telefon tətbiqləri ilə eyni mənbə kodundan yığılıb.
+Immich kitabxananız serverdədir, digər foto və videolar kompüterin qovluqlarındadır, daha çox video NAS-da və ya Plex serverində, siz isə böyük ekranda 360° fotolarınızda ətrafa baxmaq və videolarınızı oynatmaq, ya da kompüterin fotolarını VR eynəyində göstərmək istəyirsiniz. Immuch360 Desktop Windows kompüterində eyni tətbiqdir, telefon tətbiqləri ilə eyni mənbə kodundan yığılıb.
 
-Kompüterdə Immich brauzerdə öz veb-tətbiqini təklif edir. **Immuch360 Desktop-ın əlavə etdikləri**: heç bir server və ya hesab olmadan kompüterin qovluqları, tətbiqdən gəzilən SMB, WebDAV, DLNA və Plex paylaşımları, kürə kimi açılan xam Insta360 .insp fotoları və evdə Meta Quest ilə paylaşılan kompüter.
+Kompüterdə Immich brauzerdə öz veb-tətbiqini təklif edir. **Immuch360 Desktop-ın əlavə etdikləri**: heç bir server və ya hesab olmadan kompüterin qovluqları, tətbiqdən gəzilən və oynadılan SMB, WebDAV, DLNA və Plex paylaşımları, kürə kimi açılan xam Insta360 .insp fotoları və evdə Meta Quest ilə paylaşılan kompüter.
 
-Bu ilk yığım sınaq versiyasıdır: fotolar işləyir, videolar növbəti masaüstü yığımları ilə gəlir. Telefon, planşet, Quest və televizor tətbiqləri bununla dəyişmir və Immuch360 adını saxlayır.
+Bu, sınaq versiyasıdır: masaüstü yığımı 2-dən fotolar və düz videolar işləyir; 360°, 3D və VR180 videolar növbəti masaüstü yığımları ilə gəlir. 9 oktyabr 2026-dan masaüstü mənbə kodu forkun əsas budağındadır, `immuch360`, beləliklə telefonlar, VR eynəkləri, televizorlar və kompüterlər eyni mənbə kodundan buraxılır. Telefon, planşet, Quest və televizor tətbiqləri bununla dəyişmir və Immuch360 adını saxlayır.
 
 <a id="download-and-install-on-windows"></a>
 ### Windows-da endirin və quraşdırın
 
-İlk yığım GitHub ilkin buraxılışıdır: [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Onun faylı `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip`-dir (33,5 MB, açıldıqdan sonra 65 fayl), yoxlamaq üçün `SHA256SUMS.txt` ilə birlikdə. O, `desktop` budağından 21f285c34 commit-ində yığılıb: telefonun 20-ci yığımı üstəgəl kompüter versiyası. Windows 10 və ya 11, 64 bit tələb edir.
+Cari yığım GitHub ilkin buraxılışıdır: [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Onun faylı `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`-dir (təxminən 57 MB, açıldıqdan sonra 78 fayl, video pleyer və onun `licenses` qovluğu daxil olmaqla), yoxlamaq üçün `SHA256SUMS.txt` ilə birlikdə. O, əsas budaqdan, `immuch360`, 5b723bd25 commit-ində yığılıb: telefonun 21-ci yığımının mənbə kodu üstəgəl kompüter versiyası. Windows 10 və ya 11, 64 bit tələb edir.
 
 1. ZIP-i endirin və istənilən yerə açın, məsələn Documents qovluğuna.
-2. Açılmış qovluqdan `immuch360.exe`-ni işə salın. Qovluğu bütöv saxlayın: proqrama yanındakı fayllar lazımdır.
+2. Açılmış qovluqdan `immuch360.exe`-ni işə salın. Qovluğu bütöv saxlayın: proqrama yanındakı fayllar lazımdır, video pleyer də daxil olmaqla.
 3. Fayllar hələ imzalanmayıb, ona görə Windows SmartScreen "Windows protected your PC" göstərə bilər: "More info", sonra "Run anyway" seçin. Smart App Control aktiv olduqda imzalanmamış proqramları bloklayır.
 4. Pəncərəni gözləyin. Yeni yığımın ilk açılışı 10 saniyədən təxminən bir dəqiqəyə qədər çəkir, çox güman ki, Microsoft Defender yeni faylları yoxlayarkən: bu vaxt tətbiqi yenidən işə salmayın. Sonrakı açılışlar bir-iki saniyə çəkir.
 5. Giriş səhifəsində Immich serverinizə onun ünvanı, e-poçtunuz və parolunuzla daxil olun, ya da "Serversiz istifadə et"-ə klikləyin.
 
-ZIP-i yoxlamaq üçün endirmə qovluğunda komanda sətrində `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` icra edin: nəticə `SHA256SUMS.txt`-də yazılanla eyni olmalıdır. Hələ quraşdırıcı və avtomatik yeniləmə yoxdur: [Releases](https://github.com/freeKC/Immuch360/releases) səhifəsini izləyin və növbəti yığımı da eyni şəkildə açın.
+ZIP-i yoxlamaq üçün endirmə qovluğunda komanda sətrində `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` icra edin: nəticə `SHA256SUMS.txt`-də yazılanla eyni olmalıdır. Hələ quraşdırıcı və avtomatik yeniləmə yoxdur: [Releases](https://github.com/freeKC/Immuch360/releases) səhifəsini izləyin və növbəti yığımı da eyni şəkildə açın.
 
 ### Sınaq versiyası nə edir
 
@@ -984,7 +987,8 @@ ZIP-i yoxlamaq üçün endirmə qovluğunda komanda sətrində `certutil -hashfi
 - **Serversiz**: foto və video qovluqlarınız (Pictures və Videos təklif olunur) telefonun qalereyasını əvəz edir. Seçdiyiniz qovluqlardan kənarda heç nə oxunmur, serversiz isə heç nə kompüterdən çıxmır.
 - **Yükləmə və ehtiyat nüsxə** həmin qovluqlardan Immich serverinizə, tətbiq açıq olduqca.
 - **Kürə kimi 360° fotolar**, siçan və klaviatura ilə; Insta360 kameralarının xam .insp fotoları telefonlarda olduğu kimi açılır.
-- **Şəbəkə paylaşımları**: Samba (SMB), WebDAV və DLNA media serverləri, plex.tv olmadan Plex serverləri, telefonlarda olduğu kimi gəzilir: fotoları açılır, videoları video pleyeri gözləyir (baxın: [Hələ olmayanlar](#not-there-yet)). Tapo kameraları üçün yaddaş kartının yazıları: siyahı və klipin götürülməsi.
+- **Düz videolar** (masaüstü yığımı 2-dən): qovluqlarınızın, Immich serverinizin (orijinal və ya transkod edilmiş axın, baxın: [Video təfərrüatları və dekoderlər](#video-details-decoders-and-why-a-video-stutters)), SMB, WebDAV və DLNA paylaşımlarının, Plex serverlərinin videoları və Tapo yazıları pəncərədə oynadılır, telefonlardakı idarəetmə elementləri ilə (oynat, fasilə, zaman zolağı), buferləmə göstəricisi və bir neçə səs treki olan video üçün səs trekləri menyusu ilə. Qovluqlarınızdakı və paylaşımlardakı videolar miniatür kimi film nişanı əvəzinə videonun bir kadrını göstərir.
+- **Şəbəkə paylaşımları**: Samba (SMB), WebDAV və DLNA media serverləri, plex.tv olmadan Plex serverləri, telefonlarda olduğu kimi gəzilir: fotoları açılır, videoları oynadılır. Tapo kameraları üçün yaddaş kartının yazıları: siyahı, klipin götürülməsi və oynadılması.
 - **Bu kompüteri şəbəkədə paylaş**: qovluqlarınızın albomları, ayları və 360° mediası, yalnız oxumaq üçün, evdəki Meta Quest və ya başqa cihaz üçün, telefonun özünü paylaşdığı kimi.
 - **Fayllar**: serverdən endirmələr seçdiyiniz qovluğa düşür, "Save to a folder" (Qovluğa saxla) seçilmiş foto və videoların nüsxəsini saxlayır, Logs səhifəsində isə "Save logs to a file" (Jurnalları fayla saxla) var.
 
@@ -994,9 +998,11 @@ ZIP-i yoxlamaq üçün endirmə qovluğunda komanda sətrində `certutil -hashfi
 2. **Bulud, USB və şəbəkə qovluqları.** OneDrive-ın (və ya başqa bulud diskinin) yalnız onlayn saxladığı fayllar sayılır, amma oxunmur, ona görə qovluq əlavə etmək bütün buludunuzu endirmir: "Download and include" onları istədiyiniz zaman gətirir. Başqa hərflə geri qayıdan USB disk öz fotolarını saxlayır. Şəbəkə qovluqları, yaddaş kartında və ya USB diskdə olan qovluqlar (Windows onu yenə çıxara bilsin deyə) dəyişikliklər üçün izlənilmir: ora fayl əlavə etdikdən sonra Refresh istifadə edin.
 3. **360° fotoda ətrafa baxın**: siçanla dartın, təkərlə, ikiqat kliklə və ya + və - ilə böyüdün (istənilən klaviatura düzülüşündə, AZERTY də daxil olmaqla), ox düymələri ilə hərəkət edin. F və ya F11 tam ekrana keçir, Escape ondan çıxır; Home və End ilk və son fotoya keçir; I təfərrüatları göstərir.
 4. **Fotodan fotoya keçin**: düz fotoda sol və sağ oxlar, ya da siçan hərəkət etdikcə kənarlarda görünən künc işarələri əvvəlki və növbəti fotoya keçir. Təsvir sahəsində yazılan hərflər mətndə qalır.
-5. **Kompüteri VR eynəyi ilə paylaşın**: Kitabxananı, sonra Şəbəkə paylaşımlarını açın; ilk plitə "Share this computer on the network"-dür, [Bu telefonu şəbəkədə paylaş](#share-this-phone-on-the-network) funksiyasının kompüter tərəfi. "Share photos and videos on the network"-ü açın, sonra həmin bölmədə deyildiyi kimi kompüteri VR eynəyinə əlavə edin. Paylaşım tətbiq bağlandıqda və ya bir saat istifadə olunmadıqda dayanır.
-6. **Şəbəkəyə icazə verin**: Windows Immuch360 Desktop-ın şəbəkədən istifadə edib-etməyəcəyini soruşa bilər. Özəl şəbəkələrdə icazə verin, əks halda VR eynəyi kompüteri tapa bilməz. Windows-un ictimai kimi işarələdiyi şəbəkədə (kafe, otel) və ya növünü müəyyən edə bilmədiyi şəbəkədə "Share for this session" seçməsəniz paylaşım başlamır, kompüter isə özünü yalnız paylaşdığı şəbəkədə elan edir.
-7. **Settings, "This computer"**: qovluqlar, endirmə qovluğu, paylaşımları tapmaq və kompüteri paylaşmaq üçün istifadə olunan şəbəkə adapteri (bir neçəsi olduqda, məsələn Wi-Fi və Ethernet) və etibarlı sertifikatlar: Windows-un özü etibar etmədiyi HTTPS ünvanı üçün öz serverinizin sertifikat mərkəzi, PEM faylı kimi. Müştəri sertifikatları telefonlarda olduğu kimi Settings, Advanced (Qabaqcıl) bölməsində idxal olunur.
+5. **Video oynadın**: onu zaman xəttindən, qovluqdan, paylaşımdan, Plex-dən və ya Tapo kamerasının yazılarından açın; pəncərədə oynadılır. Enter və ya klaviaturanın oynatma və fasilə düyməsi fasilə verir və yenidən oynadır. Oynayarkən sol və sağ oxlar, ya da J və L, 10 saniyə geri və ya irəli atlayır; fasilədə oxlar əvvəlki və növbəti videoya keçir. F və ya F11 fotolarda olduğu kimi tam ekrana keçir. "Audio track" düyməsi bir neçə səs treki olan videonun səs trekləri arasında seçim edir.
+6. **Video dayandıqda**: fasilədəki video pəncərəyə qayıtdığınızda fasilədə qalır. Sonuna çatmadan kəsilən video, məsələn paylaşım və ya server cavab verməyi dayandırdıqda, bunu bildirir: onu yenidən açın, dayandığı yerdən fasilədə davam edəcək. Qovluqda və ya paylaşımda tapılan pleylist faylına əməl olunmur.
+7. **Kompüteri VR eynəyi ilə paylaşın**: Kitabxananı, sonra Şəbəkə paylaşımlarını açın; ilk plitə "Share this computer on the network"-dür, [Bu telefonu şəbəkədə paylaş](#share-this-phone-on-the-network) funksiyasının kompüter tərəfi. "Share photos and videos on the network"-ü açın, sonra həmin bölmədə deyildiyi kimi kompüteri VR eynəyinə əlavə edin. Paylaşım tətbiq bağlandıqda və ya bir saat istifadə olunmadıqda dayanır.
+8. **Şəbəkəyə icazə verin**: Windows Immuch360 Desktop-ın şəbəkədən istifadə edib-etməyəcəyini soruşa bilər. Özəl şəbəkələrdə icazə verin, əks halda VR eynəyi kompüteri tapa bilməz. Windows-un ictimai kimi işarələdiyi şəbəkədə (kafe, otel) və ya növünü müəyyən edə bilmədiyi şəbəkədə "Share for this session" seçməsəniz paylaşım başlamır, kompüter isə özünü yalnız paylaşdığı şəbəkədə elan edir.
+9. **Settings, "This computer"**: qovluqlar, endirmə qovluğu, paylaşımları tapmaq və kompüteri paylaşmaq üçün istifadə olunan şəbəkə adapteri (bir neçəsi olduqda, məsələn Wi-Fi və Ethernet) və etibarlı sertifikatlar: Windows-un özü etibar etmədiyi HTTPS ünvanı üçün öz serverinizin sertifikat mərkəzi, PEM faylı kimi. Müştəri sertifikatları telefonlarda olduğu kimi Settings, Advanced (Qabaqcıl) bölməsində idxal olunur.
 
 ### Telefon tətbiqləri ilə müqayisə
 
@@ -1005,20 +1011,24 @@ ZIP-i yoxlamaq üçün endirmə qovluğunda komanda sətrində `certutil -hashfi
 - **Bir pəncərə**: tətbiqi ikinci dəfə açmaq ikinci nüsxəni işə salmaq əvəzinə birinci pəncərəni geri gətirir.
 - **Qovluqlarınızdan heç nə silinmir**: "Delete from device" gizlədilib, Delete isə yalnız server nüsxəsini silir, tətbiq faylları Windows zibil qutusuna göndərə bilənə qədər.
 - **Siçan və klaviatura** toxunuş və giroskop əvəzinə.
+- **Hər mənbə üçün bir video pleyer**: libmpv serverin, qovluqların, paylaşımların və Plex-in videolarını eyni cür oynadır, onun düz pleyerində isə telefonların düz pleyerində hələ olmayan səs treki menyusu artıq var.
 
 <a id="not-there-yet"></a>
 ### Hələ olmayanlar
 
-- **Videolar**: hələlik onların yerində yer tutucu, miniatürlərində isə film nişanı görünür. Oynatma növbətidir: əvvəlcə düz videolar, sonra 360°, 3D və VR180 videolar və xam 360° videolar.
+- **360°, 3D, VR180 və xam 360° videolar**: hələlik fayldakı kimi düz göstərilir (bütün sfera açılmış, iki göz yan-yana və ya obyektivlərin dairəvi şəkilləri), ya da yer tutucu kimi, 360° düyməsi isə fotolarda qalır. Onların pleyerləri növbəti masaüstü yığımları ilə gəlir.
 - **Spatial 2.5D**, sonra veb-kamera ilə; **Tapo canlı görüntüsü**; **xəritə** və Places görünüşü; **OAuth ilə giriş** (əvəzinə e-poçt və parolla daxil olun); **Google Cast**; **bildirişlər**.
 - **Quraşdırıcı, imzalanmış yığım və avtomatik yeniləmələr**: bu yığım `immuch360.exe` olan qovluqdur.
-- **Linux və macOS**: onların layihələri mənbə kodundadır, lakin hələ həmin sistemlərdə yığılmayıb və sınanmayıb; Windows-dan sonra gəlir.
+- **Linux və macOS**: onların layihələri mənbə kodundadır, lakin hələ həmin sistemlərdə yığılmayıb və sınanmayıb, onların video pleyeri də hələ orada yoxdur; Windows-dan sonra gəlir.
 - **Tərcümələr**: kompüter versiyasının yeni mətnləri hələlik ingilis dilindədir.
 
 ### Məlum problemlər
 
-- **VR eynəyi paylaşılan kompüterdən fayl oxuyarkən** (oynatdığı video, endirdiyi foto), Windows həmin faylın adını dəyişə, köçürə və ya silə bilmir və onun Immuch360 Desktop-da açıq olduğunu deyir: əvvəlcə oynatmanı dayandırın. Ehtiyat nüsxə fayllarınızı bu cür tutmur: fayl yüklənərkən adı dəyişdirilə, köçürülə və ya silinə bilər.
-- **Kələ-kötür yerlər**: yuxarıdakı funksiyalar Windows-da avtomatlaşdırılmış testlərdən keçir (475 masaüstü testi), Windows 11 kompüterində isə tətbiq açılır, Immich serverində saxlanılmış sessiyanı açır, sinxronlaşdırır və düzgün bağlanır. Hər funksiyanın real kompüterdə əl ilə yoxlanılması hələ davam edir.
+- **Yeni yığımın ilk açılışı yavaşdır**: pəncərə görünənə qədər 10 saniyədən təxminən bir dəqiqəyə qədər, çox güman ki, Microsoft Defender hələ imzalanmamış yeni faylları yoxlayarkən. Tətbiqi yenidən işə salmaq əvəzinə pəncərəni gözləyin; sonrakı açılışlar bir-iki saniyə çəkir.
+- **8K HEVC videolara ayrıca qrafik çip lazımdır**: test noutbukunda daxili Intel UHD çipi 8K HEVC videonun kadrlarının təxminən yarısını göstərdi, ayrıca NVIDIA çipi isə 8K HEVC və 5.7K H.264-ü bir kadr itirmədən oynatdı. Başqa cür deyilməsə, Windows tətbiqi daxili çipdə işlədir: Windows parametrlərində, System, Display, Graphics, `immuch360.exe`-ni əlavə edin və "High performance" seçin. Daxili çipdə onun dekoderinin qəbul etmədiyi 5.7K H.264 video prosessor tərəfindən kadr itirmədən dekod edilir.
+- **Videolar ən çoxu 1440 sətir hündürlüyündə çəkilir**, sonra pəncərəyə miqyaslanır: 4K ekranda tam ekranda 4K və ya 8K video ayrıca video pleyerdəkindən bir az yumşaq görünür. Bu, 8K videonu noutbukun qrafik gücü daxilində saxlayır.
+- **Qovluqlarınızdakı video tətbiqdə oynayarkən, ya da VR eynəyi paylaşılan kompüterdən fayl oxuyarkən** (oynatdığı video, endirdiyi foto), Windows həmin faylın adını dəyişə, köçürə və ya silə bilmir və onun Immuch360 Desktop-da açıq olduğunu deyir: əvvəlcə videonu bağlayın, ya da VR eynəyində oynatmanı dayandırın. Ehtiyat nüsxə fayllarınızı bu cür tutmur: fayl yüklənərkən adı dəyişdirilə, köçürülə və ya silinə bilər.
+- **Kələ-kötür yerlər**: 663 masaüstü testindən 656-sı Windows-da keçir (7-si qəsdən ötürülür), bir-birinin ardınca açılan 200 pleyer heç bir sızma qoymur, Windows 11 kompüterində isə tətbiq açılır, Immich serverində saxlanılmış sessiyanı açır, sinxronlaşdırır, video oynadır və düzgün bağlanır. Hər funksiyanın real kompüterdə əl ilə yoxlanılması hələ davam edir.
 
 Nəsə səhv getsə, zəhmət olmasa Logs səhifəsindən saxlanılmış jurnalla [problem bildirişi](https://github.com/freeKC/Immuch360/issues) açın, baxın: [Jurnallar](#logs). Paylaşmazdan əvvəl jurnalı yoxlayın: orada server ünvanınız ola bilər.
 
@@ -1027,19 +1037,17 @@ Nəsə səhv getsə, zəhmət olmasa Logs səhifəsindən saxlanılmış jurnall
 
 Sizə x64 üzərində Windows 10 və ya 11, Windows üçün Flutter 3.47.2, "Desktop development with C++" iş yükü ilə Visual Studio 2022 və ya onun Build Tools-u, Windows parametrlərində aktiv Developer Mode (Flutter-ə plaginlər üçün lazımdır) və paketləmə skripti üçün Python 3 lazımdır.
 
-1. `desktop` budağını götürün və kod generasiyasını icra edin. O, Java və Node istifadə edir, ona görə onu Linux, macOS və ya WSL-də icra edin; WSL ilə klonu Windows diskində saxlayın, WSL onu `/mnt/c` və ya `/mnt/d` altında görür:
+1. Mənbə kodunu götürün və kod generasiyasını icra edin. Əsas budaq, `immuch360`, kompüter versiyasını da yığır: keçiləcək budaq yoxdur. Kod generasiyası Java və Node istifadə edir, ona görə onu Linux, macOS və ya WSL-də icra edin; WSL ilə klonu Windows diskində saxlayın, WSL onu `/mnt/c` və ya `/mnt/d` altında görür:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Windows-da, eyni `mobile` qovluğunda tətbiqi yığın:
+2. Windows-da, eyni `mobile` qovluğunda tətbiqi yığın. İlk yığım video pleyerin kitabxanalarını (libmpv və ANGLE) GitHub-dan endirir və hər arxivi SHA-256-sı ilə yoxlayır:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Sizə x64 üzərində Windows 10 və ya 11, Windows üçün Flutter 3.47.2, "Des
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. `Release` qovluğu onu yığan kompüterdə işləyir. Başqa kompüter üçün bütün qovluğu saxlayın və Visual C++ icra mühitini `immuch360.exe`-nin yanına əlavə edin. Klonun kökündən paketləmə skripti onu kopyalayır, yalnız Android-ə xidmət edənləri çıxarır, tətbiqin yüklədiyi hər DLL-in qovluqda və ya Windows-un özündə olduğunu yoxlayır və ZIP yaradır:
+3. `Release` qovluğu onu yığan kompüterdə işləyir. Başqa kompüter üçün bütün qovluğu saxlayın və Visual C++ icra mühitini `immuch360.exe`-nin yanına əlavə edin. Klonun kökündən paketləmə skripti onu kopyalayır, yalnız Android-ə xidmət edənləri çıxarır, video pleyerin lisenziyalarını əlavə edir, tətbiqin yüklədiyi hər DLL-in qovluqda və ya Windows-un özündə olduğunu yoxlayır və ZIP yaradır:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-`desktop` budağının CI-ı (`.github/workflows/immuch360-desktop.yml`) telefon yoxlamalarını və bütün test dəstini Linux-da, masaüstü testlərini Windows-da icra edir və eyni ZIP-i yığır; onun Linux və macOS tapşırıqları (`flutter build linux` və `flutter build macos`, eyni `-t lib/main_desktop.dart` ilə) hələ həmin sistemlərdə işləməyib.
+Immuch360 Desktop-ın CI-ı (`.github/workflows/immuch360-desktop.yml`) `immuch360`-ı izləyən `desktop` budağında işləyir: telefon yoxlamaları (telefon yığımlarında heç nə dəyişmir) və bütün test dəsti Linux-da, masaüstü testləri Windows-da və eyni ZIP; onun Linux və macOS tapşırıqları (`flutter build linux` və `flutter build macos`, eyni `-t lib/main_desktop.dart` ilə) hələ həmin sistemlərdə işləməyib.
 
 <a id="where-to-get-it"></a>
 ## Haradan əldə etmək olar
@@ -1075,8 +1083,8 @@ Tətbiq telefon və planşetlər üçün Google Play-dədir; App Store versiyas�
   - Bu gün: [Releases](https://github.com/freeKC/Immuch360/releases) səhifəsinin universal `Immuch360-v<version>-release.apk` faylı, adb ilə əl ilə quraşdırılır, baxın: [Televizorda quraşdırın](#install-it-on-the-tv). Telefonlardakı ilə eyni tətbiqdir.
   - Tezliklə: televizorlarda Google Play, televizor buraxılışının Google tərəfindən yoxlanılmasından sonra.
 - **Windows 10 və 11, 64 bit (sınaq versiyası)**
-  - Bu gün: Immuch360 Desktop, [masaüstü ilkin buraxılışının](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` ZIP faylı, [Windows-da endirin və quraşdırın](#download-and-install-on-windows) bölməsində deyildiyi kimi açılır və işə salınır. Hələlik yalnız fotolar: videolar növbəti masaüstü yığımları ilə gəlir.
-  - Tezliklə: video oynatma; daha sonra quraşdırıcı, imzalanmış yığım və yeniləmələr.
+  - Bu gün: Immuch360 Desktop, [masaüstü ilkin buraxılışının](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIP faylı, [Windows-da endirin və quraşdırın](#download-and-install-on-windows) bölməsində deyildiyi kimi açılır və işə salınır. Hələlik fotolar və düz videolar: 360°, 3D və VR180 videolar növbəti masaüstü yığımları ilə gəlir.
+  - Tezliklə: 360°, 3D, VR180 və xam 360° videolar; daha sonra quraşdırıcı, imzalanmış yığım və yeniləmələr.
 
 App Store və Meta Horizon Store linkləri səhifələr dərc edilən kimi bura əlavə olunacaq. Adi Immich server URL-iniz və hesabınızla daxil olun, ya da cihazın öz foto və videoları ilə başlamaq üçün giriş səhifəsində "Serversiz istifadə et"-ə toxunun. GitHub-dan olan APK özünü yeniləmir: Releases səhifəsini izləyin, tətbiqi mağazadan quraşdırdıqdan sonra isə yeniləmələri həmin mağazadan alın.
 
@@ -1105,15 +1113,15 @@ Mağaza ekran görüntüləri yalnız debug lentini gizlədən `--dart-define=IM
 
 Öz Mac-inizdə iOS üçün yığmaq üçün Xcode və öz imzalama komandanızdan istifadə edin; Xcode 26 ilə əvvəlcə bir dəfə `xcodebuild -downloadComponent MetalToolchain` işə salın, çünki Spatial şeyderləri buna ehtiyac duyur. Mac olmadan iOS yığımları bu repozitoriyanın `codemagic.yaml` faylından Codemagic-də (host edilən Mac) işləyir. Android buraxılış yığımları GitHub Actions-da işləyir (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, Windows versiyası, `desktop` budağından Windows üçün Flutter ilə yığılır: addımlar [Windows-da özünüz yığın](#build-it-yourself-on-windows) bölməsindədir.
+Immuch360 Desktop, Windows versiyası, eyni mənbə kodundan, `immuch360` budağından, Windows üçün Flutter ilə yığılır: addımlar [Windows-da özünüz yığın](#build-it-yourself-on-windows) bölməsindədir.
 
 Bu repozitoriyada heç bir sirr yoxdur: Android imzalama açarı şifrələnmiş GitHub Actions sirləri kimi, Apple imzalama materialları isə Codemagic-də şifrələnmiş dəyişənlər kimi saxlanılır. İş axını faylları onlara yalnız adla istinad edir. Öz `android/key.jks` faylınız olmadan buraxılış yığımı debug açarı ilə imzalanır və GitHub-dan və ya mağazadan olan nüsxənin üzərinə quraşdırıla bilməz (əvvəlcə onu silin); debug yığımı isə onun yanında Immuch360 debug kimi quraşdırılır. Meta Horizon Store nüsxəsi buraxılışın başqa açarla, mağaza tətbiqinin ilk qeydiyyatdan keçdiyi açarla imzalanmış `quest` APK-sıdır, ona görə o da əl ilə quraşdırılmış APK-nın üzərinə quraşdırıla bilməz, əksinə də.
 
 ### Budaqlar
 
 - **`main`**: `immuch360`-ın əsaslandığı commit-dəki Immich `main` (cari yığımlar üçün 29 sentyabr 2026), heç vaxt dəyişdirilmir; fork daha yeni Immich üzərinə rebase edildikdə irəli gedir.
-- **`immuch360`**: bu forkun Immich üzərindəki dəyişiklikləri. Hər buraxılış hansı Immich versiyasına əsaslandığını göstərir.
-- **`desktop`**: Immuch360 Desktop, kompüter versiyası, `immuch360` üzərində. Telefon buraxılışları ona birləşdirilir, masaüstü ilkin buraxılışları isə ondan yığılır (masaüstü yığımı 1, 21f285c34 commit-indən: telefonun 20-ci yığımı üstəgəl kompüter versiyası). Onda `mobile/android` və `mobile/ios` altında heç nə dəyişmir.
+- **`immuch360`**: bu forkun Immich üzərindəki dəyişiklikləri, 9 oktyabr 2026-dan Immuch360 Desktop da daxil olmaqla. Hər buraxılış hansı Immich versiyasına əsaslandığını göstərir.
+- **`desktop`**: Immuch360 Desktop, kompüter versiyası, burada `immuch360` üzərində yığılırdı, ta ki 9 oktyabr 2026-da telefonlar, VR eynəkləri, televizorlar və kompüterlər eyni mənbə kodundan buraxılsın deyə ona birləşdirilənə qədər. İndi o, `immuch360`-ı izləyir və masaüstü ilkin buraxılışlarının teqlərini daşıyır ([masaüstü yığımı 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 21f285c34 commit-indən, [masaüstü yığımı 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25-dən). Kompüter versiyası `mobile/android` və `mobile/ios` altında heç nəyi dəyişmir.
 
 <a id="logs"></a>
 ## Jurnallar
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 19-cu yığımdan DLNA müştərisi, telefon paylaşımı və Apple məkan medialarının aşkarlanması tətbiqin öz jurnalına da yazır (Logs (Jurnallar), yuxarı sağdakı profil şəkli menyusunda) `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` və `NetworkMediaService` altında. 20-ci yığımdan televizor rejimi ora `TvMode` və `TvTextEntry`, Plex serverləri `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` və `PlexServerEditPage`, Tapo kameraları isə `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` və `CameraLiveView` altında yazır; Plex sətirlərində heç vaxt token, ünvan və ya başlıq olmur, kamera sətirləri isə parolları buraxır. Jurnal sətirləri özünüz kopyalamasanız cihazda qalır.
 
-Kompüterdə (Immuch360 Desktop) Logs səhifəsində "Save logs to a file" (Jurnalları fayla saxla) də var: jurnal, ya da son çökmələr olduqda jurnal və onların hesabatlarından ibarət ZIP (onda təklif olunan ad "with-crash-reports" ilə bitir). Çökmə hesabatı kiçik minidump-dır: axınlar, harada dayandıqları və yalnız onların çağırışlarını izləmək üçün lazım olanlar, proqram fayllarının adları ilə, lakin qovluqları olmadan; tətbiqin yaddaşı deyil. Paylaşmazdan əvvəl jurnalı yoxlayın: orada server ünvanınız ola bilər.
+Kompüterdə (Immuch360 Desktop) Logs səhifəsində "Save logs to a file" (Jurnalları fayla saxla) də var: jurnal, ya da son çökmələr olduqda jurnal və onların hesabatlarından ibarət ZIP (onda təklif olunan ad "with-crash-reports" ilə bitir). Çökmə hesabatı kiçik minidump-dır: axınlar, harada dayandıqları və yalnız onların çağırışlarını izləmək üçün lazım olanlar, proqram fayllarının adları ilə, lakin qovluqları olmadan; tətbiqin yaddaşı deyil.
+
+Masaüstü yığımı 2-dən kompüterin video pleyeri ora `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` və `VideoThumbnailGrabber` altında yazır, mpv-nin öz xəbərdarlıqları da daxil olmaqla, tokenlər və parollar silinmiş halda. Paylaşmazdan əvvəl jurnalı yoxlayın: orada server ünvanınız ola bilər.
 
 <a id="privacy"></a>
 ## Məxfilik
@@ -1144,6 +1154,7 @@ Kompüterdə (Immuch360 Desktop) Logs səhifəsində "Save logs to a file" (Jurn
 - **Telefon paylaşımı**: yalnız yerli şəbəkə, istifadəçi adı və parolla, adi HTTP üzərindən (baxın: [Bu telefonu şəbəkədə paylaş](#share-this-phone-on-the-network)).
 - **Kamera**: yalnız Spatial 2.5D pleyeri tərəfindən, cihazda istifadə olunur; şəkillər heç vaxt saxlanılmır və heç yerə göndərilmir.
 - **Kompüterdə** (Immuch360 Desktop, Windows sınaq versiyası): tətbiq yalnız seçdiyiniz qovluqları oxuyur, indeksini, miniatürlərini və keşini kompüterdə saxlayır, parolları və tokenləri Windows-un məlumat qorunması ilə, yalnız sizin Windows hesabınız üçün saxlayır. Kompüter paylaşımı telefon paylaşımının qaydalarına əməl edir və Windows-un ictimai kimi işarələdiyi, ya da növünü müəyyən edə bilmədiyi şəbəkədə, siz istəməsəniz, başlamır.
+- **Kompüterdə video pleyer** (masaüstü yığımı 2-dən): serverinizin videoları ona tətbiq vasitəsilə çatır, beləliklə pleyer heç vaxt sessiya tokeninizi saxlamır, əvvəlcədən oxuduqları isə diskdə deyil, yaddaşda qalır. O, yalnız ona verilən faylı açır: qovluqdakı və ya paylaşımdakı, əslində pleylist və ya axın təsviri olan fayl onu başqa yerə qoşulmağa məcbur etmir.
 
 Tam siyasət [PRIVACY.md](../PRIVACY.md) faylındadır.
 
@@ -1152,12 +1163,14 @@ Tam siyasət [PRIVACY.md](../PRIVACY.md) faylındadır.
 
 Bu layihə Immich-in forkudur və [GNU AGPL v3](../LICENSE) altında qalır. Hər APK, telefon APK-ları da daxil olmaqla, açıq mənbəli olmayan (Meta Platform Technologies SDK License Agreement) və yalnız Meta Quest VR eynəklərində istifadə olunan Meta Spatial SDK-nı da ehtiva edir; Immuch360 Desktop, Windows versiyası, onu ehtiva etmir. Immuch360 Immich komandası və ya FUTO ilə əlaqəli deyil və onlar tərəfindən təsdiqlənməyib.
 
+Immuch360 Desktop-ın Windows ZIP-i, və yalnız o, öz video pleyerini də daşıyır: libmpv, [mpv](https://mpv.io)-nin kitabxanası, içində [FFmpeg](https://ffmpeg.org) ilə, [media_kit](https://github.com/media-kit/media-kit) plaginləri tərəfindən idarə olunur. mpv və FFmpeg yalnız GPL olan hissələri olmadan yığılır və onların kodu GNU LGPL 2.1 və ya daha sonrakı versiya altındadır; birlikdə yığıldıqda `libmpv-2.dll` GNU LGPL 3 və ya daha sonrakı versiya altında yayılır. Tətbiq onu icra zamanı yükləyir, ona görə onu öz yığımınızla əvəz edə bilərsiniz. Lisenziya mətnləri ZIP-in `licenses` qovluğundadır, hər kitabxana öz lisenziyası və mənbə kodu ilə [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) faylında sadalanır.
+
 <a id="roadmap"></a>
 ## Yol xəritəsi
 
 Hələ hazır olmayanlar, ən ehtimallısı əvvəl. Burada heç nə vəd deyil, [problem izləyicisindəki](https://github.com/freeKC/Immuch360/issues) rəylər isə nəyin əvvəl gələcəyinə qərar verməyə kömək edir.
 
-- **Immuch360 Desktop, əvvəlcə Windows**: ilk sınaq versiyası çıxıb (baxın: [Windows kompüterində](#on-a-windows-computer-immuch360-desktop-preview)). Sonra video oynatma (əvvəlcə düz videolar, sonra 360°, 3D, VR180 və xam fayllar), noutbukun iki videokartında ölçülməklə; sonra hər funksiyanın Windows kompüterində yoxlanılması və düzəlişləri; sonra veb-kamera ilə Spatial 2.5D; sonra Linux və macOS, paketlər, imzalama və yeniləmələr.
+- **Immuch360 Desktop, əvvəlcə Windows**: masaüstü yığımı 2 düz videolarla çıxıb, masaüstü mənbə kodu isə 9 oktyabr 2026-dan forkun əsas budağındadır, `immuch360` (baxın: [Windows kompüterində](#on-a-windows-computer-immuch360-desktop-preview)). Sonra Windows-da 360°, 3D, VR180 və xam 360° videolar, xam faylların iki obyektivi və Tapo canlı görüntüsü ilə; sonra hər funksiyanın Windows kompüterində yoxlanılması və düzəlişləri; sonra veb-kamera ilə Spatial 2.5D; sonra Linux və macOS, paketlər, imzalama və yeniləmələr.
 - **Google Play**: 18-ci yığım dərc olunub; 19-cu yığımın yerinə 20-ci yığım 7 oktyabr 2026-dan Google tərəfindən yoxlanılır. 21-ci yığım telefon və planşetlərdə heç nəyi dəyişmir.
 - **App Store**: 3.3.0 versiyası Apple-ın yoxlamasını gözləyir; o, 11-ci yığımın funksiyalarını daşıyır, ona görə Immich-ə yükləmə və video dekoder yoxlaması (15-ci yığım), həmçinin xam Insta360 faylları (16-cı yığım) növbəti App Store yeniləməsi ilə gəlir. Link dərc ediləndə bura əlavə olunacaq.
 - **Meta Horizon Store**: Meta səhifəni 7 oktyabr 2026-da 14-cü yığımla təsdiqləyib. 21-ci yığım onun ilk yeniləməsi kimi təqdim edilib: 14-cü yığımdan bəri hər şeyi gətirir (paylaşımdan Immich-ə yükləmələr, VR eynəyinin dekod etdiyinə görə seçilən video mənbəyi, xam Insta360, GoPro və DJI faylları, DLNA, telefon paylaşımı, Apple məkan fotoları, Plex Media Server kitabxanaları, Tapo kameraları), mağaza isə onu Quest 2, Quest Pro, Quest 3 və 3S üçün siyahıya alır. Səhifə ictimai olduqdan sonra mağaza linki bura əlavə olunacaq; əl ilə quraşdırılmış nüsxə əvvəlcə silinməlidir (baxın: [Quraşdırma](#install)).
@@ -1166,7 +1179,7 @@ Hələ hazır olmayanlar, ən ehtimallısı əvvəl. Burada heç nə vəd deyil,
 - **DLNA, telefon paylaşımı və Apple məkan mediası, növbəti**: 19-cu yığımın cihaz hesabatları (DLNA ilə Plex, Jellyfin, NAS və Freebox Server; Quest-ə, həm də öz hotspotunda xidmət edən telefon; VR eynəyində real iPhone məkan foto və videoları); iPhone-ların bütün DLNA serverlərini tapması üçün Apple-dan istənilən multicast icazəsi; VR eynəyində məkan fotoları arasında əvvəlki və növbəti; zaman xəttində server fotolarında məkan nişanı; dekoderləri imkan verərsə Quest-də 3D-də məkan videoları.
 - **Telefonlarda 360° pleyerlər, növbəti**: iOS 360° video pleyerində zaman zolağı (Android pleyerində var), Quest-in immersiv görünüşündəki kimi telefonların 360° pleyerlərində əvvəlki/növbəti və daxili 360° video pleyerində fotolar.
 - **Şəbəkə paylaşımları, növbəti addımlar**: foto və video səhifələrində qovluğun bir faylından növbətisinə sürüşdürmə (Quest-in immersiv görünüşü artıq qovluğun 360° faylları üzrə keçir), WebDAV üçün Digest autentifikasiyası, Bonjour qeydindən istifadəçi adı.
-- **Düz videolar**: server, cihaz və paylaşım videoları üçün eyni dərəcədə düz pleyerdə səs treki seçimi (360° və Spatial pleyerlərində var).
+- **Düz videolar**: server, cihaz və paylaşım videoları üçün eyni dərəcədə telefonların düz pleyerində səs treki seçimi (360° və Spatial pleyerlərində var, Immuch360 Desktop-ın düz pleyerində də).
 - **Android TV, növbəti**: 20-ci yığımın Google TV emulyatorunda və real televizorda cihaz testi, sonra Google Play-də televizor buraxılışı (televizor ekran görüntüləri, televizor banneri, Google-ın yoxlaması); daha sonra televizorun əsas ekranında kanallar.
 - **Tapo kameraları, növbəti**: 20-ci yığımın real kameralarla cihaz testi; iPhone və iPad-də canlı görüntü; H.265 yazıları; klipi alınarkən oynatmaq; bütün günün yazıları bir zaman xəttində.
 - **Plex, növbəti**: 20-ci yığımın cihaz testi (telefonlar, Quest, iPhone, televizor, evdən kənarda); tokeni kompüterdən QR kodu ilə ötürmək; tapılmış serverlər siyahısında Plex serverinin DLNA tərəfini gizlətmək; IPv6.

@@ -19,13 +19,13 @@ See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI
   App Store: <a href="#where-to-get-it">ülevaatusel</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store heaks kiidetud, järk 21 esitatud selle esimese uuendusena<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">eelvaate allalaadimine</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">eelvaate allalaadimine</a>, desktop build 2
 </p>
 
 - 🌐 **Omane 360°**<br>Fotod ja videod sfäärina, milles saad güroskoobiga ringi vaadata, kaasa arvatud kaamera töötlemata failid (Insta360 alates järgust 16, GoPro ja DJI alates järgust 18). Ka tasuta videomängija: tasapinnaline, 360°, 3D, VR180
 - 👓 **Omane 3D**<br>Stereoskoopiline 360° ja VR180, üleval ja all või kõrvuti, ning Apple'i ruumilised fotod (alates järgust 19): tõeline 3D peakomplektis, üks silm telefonis
 - 🎥 **Omane 2.5D**<br>Sügavus tasasel ekraanil stereoskoopilisest videost, vaade järgib sinu pead (katseline, telefonid ja tahvelarvutid)
-- 📱 **Android, iOS, Quest, TV**<br>Üks rakendus telefonides, tahvelarvutites ning Quest 2, Pro, 3 ja 3S peakomplektides, tõeline 3D peakomplektis, alates järgust 20 Android TV-s puldiga ning Windowsi eelvaade
+- 📱 **Android, iOS, Quest, TV**<br>Üks rakendus telefonides, tahvelarvutites ning Quest 2, Pro, 3 ja 3S peakomplektides, tõeline 3D peakomplektis, alates järgust 20 Android TV-s puldiga ning Windowsi eelvaade fotode ja tasapinnaliste videotega
 - 🔌 **Serveriga või ilma**<br>Sinu Immichi server või telefoni enda galerii, kontot pole vaja
 - 🗄️ **Võrgujaod**<br>Samba (SMB), WebDAV ja alates järgust 19 DLNA meediaserverid, mis leitakse võrgust ja loetakse otse, midagi alla laadimata, ning saadetakse Immichisse, kui sina nii otsustad. Alates järgust 19 jagab ka telefon oma galeriid peakomplektiga
 - 📺 **Teleris**<br>Alates järgust 20 sama APK Android TV-s ja Google TV-s: 360° fotod ja videod, sinu server ja sinu jaod, puldiga
@@ -79,7 +79,7 @@ See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI
 - **"Ma tahan vaadata oma 360° fotosid ja videoid ning oma NAS-i või Plex serveri videoid teleris, puldiga."** Vaata [Vaata oma teleris](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ma ei leia oma 360° kaadreid kõigi teiste seast üles."** Vaata [360° loend](#find-your-360-shots-the-360-list).
 - **"Minu 360° video hakib või mängib uduse koopiana."** Vaata [Video üksikasjad ja dekoodrid](#video-details-decoders-and-why-a-video-stutters).
-- **"Tahan oma 360° fotosid ja Immichi kogu oma Windowsi arvutis, koos selle kaustade fotode, minu NAS-i ja minu Plex serveriga, ning arvutit jagatuna minu peakomplektiga."** Vaata [Windowsi arvutis](#on-a-windows-computer-immuch360-desktop-preview) (eelvaade, praegu ainult fotod).
+- **"Tahan oma 360° fotosid ja Immichi kogu oma Windowsi arvutis, koos selle kaustade fotode ja videotega, minu NAS-i ja minu Plex serveriga, ning arvutit jagatuna minu peakomplektiga."** Vaata [Windowsi arvutis](#on-a-windows-computer-immuch360-desktop-preview) (eelvaade: praegu fotod ja tasapinnalised videod, 360° videod hiljem).
 - **"Kas see, mida Immichi rakendus teeb, jääb alles?"** Jah, kahe väikese muudatusega, vaata [Kõik muu on Immich](#everything-else-is-immich).
 
 Kui funktsioon on uus, märgib tekst, millisest järgust alates see olemas on. GitHubi väljalaskes on alati uusim järk, poed tulevad hiljem järele: vaata [Kust seda saada](#where-to-get-it).
@@ -752,7 +752,7 @@ Praegune järk, järk 21 (versioon 3.3.0-rc.0, järgu number 3030019), põhineb 
 | Plex Media Serveri kogud, esitatuna originaalfailidest, kodus ja väljaspool kodu, ilma plex.tv-ta | ❌ | ✅ alates järgust 20, kõik vaaturid, telefonides, tahvelarvutites, Questis ja teleritel |
 | Tapo kaamerad: otsepilt ja mälukaardi salvestised, mis saadetakse Immichisse siis, kui sina otsustad | ❌ | ✅ alates järgust 20: salvestised kõikjal, otsepilt Androidis, Android TV-s ja Questis |
 | Android TV ja Google TV, puldiga juhitav, samas APK-s | ❌ pole telerirakendus | ✅ alates järgust 20 |
-| Sama rakendus Windowsi arvutis | ❌ ainult telefonid ja tahvelarvutid | ✅ eelvaade, videoid veel pole |
+| Sama rakendus Windowsi arvutis | ❌ ainult telefonid ja tahvelarvutid | ✅ eelvaade, fotod ja tasapinnalised videod |
 | Töötlemata Insta360 .insp fotod ja ühe rajaga .insv videod | ❌ tasapinnalised | ✅ alates järgust 16 |
 | Töötlemata videod, üks objektiiv raja või faili kohta (Insta360 X4, X4 Air, X5, X6, X3 paarid, GoPro .360, DJI .osv) | ❌ tasapinnalised või valed | ✅ alates järgust 18 |
 | Kahe kalasilmaga .dng | ❌ tasapinnaline | ❌ veel mitte |
@@ -782,7 +782,7 @@ Praegune järk, järk 21 (versioon 3.3.0-rc.0, järgu number 3030019), põhineb 
 - **Plex Media Server**: kontrollitud arvutist päris Plex Media Server 1.42.1 vastu (sidumine, kaustad, baidivahemikud, pisipildid, kodust väljaspool kasutatav aadress); seadmes veel kontrollimata.
 - **Tapo kaamerad**: kontrollitud simuleeritud kaamera vastu; päris kaameraga veel kontrollimata.
 - **Android TV ja Google TV**: kontrollitud automaattestidega; teleris veel kontrollimata.
-- **Sama rakendus Windowsi arvutis**: 475 automaatset töölauatesti Windowsis ning Windows 11 arvutis rakendus käivitub, avab salvestatud seansi Immichi serveris, sünkroonib ja sulgub korrektselt; iga funktsiooni käsitsi testimine on pooleli.
+- **Sama rakendus Windowsi arvutis**: 663 automaatsest töölauatestist 656 läbivad Windowsis (7 jäetakse teadlikult vahele) ning Windows 11 arvutis rakendus käivitub, avab salvestatud seansi Immichi serveris, sünkroonib, esitab video ja sulgub korrektselt; iga funktsiooni käsitsi testimine on pooleli.
 - **Töötlemata Insta360 .insp fotod ja ühe rajaga .insv videod**: fotosid kontrolliti X3 failide Insta360 Studio ekspordi vastu, videoid Androidi emulaatoris madala eraldusvõimega X3 failiga; iPhone'is veel käivitamata.
 - **Töötlemata videod, üks objektiiv raja või faili kohta**: parserid ja kokkuõmblemine kontrollitud päris X4, X3 paari, GoPro MAX-i ja Osmo 360 failidega; esitamine on järkude 18 ja 19 seadmetesti osa.
 - **Kahe kalasilmaga .dng**: plaanis.
@@ -825,16 +825,19 @@ Immuch360 on galerii ja ka tasuta meediamängija: see esitab seda, mida ametlik 
   - iPhone, iPad: sama, välja arvatud jao MKV ja AVI failid, mida iOS ei ava (serveris mängivad need transkodeerituna).
   - Meta Quest: aknas.
   - Android TV, Google TV: nagu telefonides; OK peatab, vasak ja parem hüppavad 10 s.
+  - Windows (alates desktop build 2-st): libmpv mängija, teise loendi igast allikast; Enter peatab, vasak ja parem või J ja L hüppavad 10 s.
 - **360° fotod**
   - Android-telefonid: sfäärivaatur, güroskoop.
   - iPhone, iPad: sama.
   - Meta Quest: kaasahaaravalt, kõikjal sinu ümber.
   - Android TV, Google TV: sfäärivaatur, mida pööratakse nooltega ja suumitakse kanaliklahvidega.
+  - Windows: sfäärivaatur, hiir ja klaviatuur.
 - **360° videod**
   - Android-telefonid: omane Media3 mängija sfääril, güroskoop, kerimine, helirea valik, puhverdamise näidik.
   - iPhone, iPad: omane SceneKiti mängija sfääril, güroskoop, helirea valik, puhverdamise näidik; esitamine ja paus, ajariba veel pole.
   - Meta Quest: kaasahaaravalt, stereoskoopiliste failide puhul tõeline 3D, ajariba 10-sekundiliste hüpetega, eelmine ja järgmine meediafail.
   - Android TV, Google TV: telefonide Media3 mängija, mida pööratakse nooltega.
+  - Windows: veel mitte, praegu näidatakse tasapinnalisena.
 - **3D 360° (üleval ja all, kõrvuti)**
   - Android-telefonid: vasak silm, paigutuse nupp.
   - iPhone, iPad: sama.
@@ -888,7 +891,7 @@ Immuch360 on galerii ja ka tasuta meediamängija: see esitab seda, mida ametlik 
 
 Android TV ja Google TV kirjeid, alates järgust 20, pole veel teleris kontrollitud, vaata [Vaata oma teleris](#watch-on-your-tv-android-tv-and-google-tv); kaamera kirjeid pole veel päris kaameraga kontrollitud.
 
-Windowsis näitab Immuch360 Desktopi eelvaade fotosid, tasapinnalisi ja 360°, kaasa arvatud Insta360 töötlemata .insp fotod, hiire ja klaviatuuriga, serverist, arvuti kaustadest, jagudest ja Plexist; videoid see veel ei esita, nende asemel on kohatäide (vaata [Veel puudu](#not-there-yet)).
+Windowsis näitab Immuch360 Desktopi eelvaade fotosid, tasapinnalisi ja 360°, kaasa arvatud Insta360 töötlemata .insp fotod, hiire ja klaviatuuriga, ning alates desktop build 2-st esitab see tasapinnalisi videoid, serverist, arvuti kaustadest, jagudest, Plexist ja Tapo salvestistest; 360°, 3D, VR180 ja töötlemata 360° videoid näidatakse praegu tasapinnalisena või kohatäitena (vaata [Veel puudu](#not-there-yet)).
 
 - **Sinu Immichi server**: originaal või serveri transkodeeritud voog, nagu ütleb Seaded, Üksuste vaatur, "Video allikas" (vaata [Video üksikasjad ja dekoodrid](#video-details-decoders-and-why-a-video-stutters)). Sama konto nagu veebirakendusel.
 - **Telefon või peakomplekt ise**: sisselogimislehel "Kasuta ilma serverita" või vahekaardi Kogu kirje Sellel seadmel.
@@ -959,24 +962,24 @@ Ekraanipildid on tehtud peakomplektis jäädvustusnupuga (Meta nupp ja päästik
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Windowsi arvutis: Immuch360 Desktop (eelvaade)
 
-Sinu Immichi kogu on serveris, teised fotod on arvuti kaustades, videod NAS-is või Plex serveris, ja sa tahaksid oma 360° fotodes suurel ekraanil ringi vaadata või näidata arvuti fotosid peakomplektis. Immuch360 Desktop on sama rakendus Windowsi arvutis, ehitatud samadest lähtekoodidest kui telefonirakendused.
+Sinu Immichi kogu on serveris, teised fotod ja videod on arvuti kaustades, veel videoid NAS-is või Plex serveris, ja sa tahaksid oma 360° fotodes suurel ekraanil ringi vaadata ja oma videoid esitada või näidata arvuti fotosid peakomplektis. Immuch360 Desktop on sama rakendus Windowsi arvutis, ehitatud samadest lähtekoodidest kui telefonirakendused.
 
-Arvutis pakub Immich oma veebirakendust brauseris. **Mida Immuch360 Desktop lisab**: arvuti kaustad ilma serveri ja kontota, SMB, WebDAV, DLNA ja Plex jaod sirvitavad rakendusest, Insta360 töötlemata .insp fotod avatuna sfäärina ning arvuti jagatuna Meta Questiga kodus.
+Arvutis pakub Immich oma veebirakendust brauseris. **Mida Immuch360 Desktop lisab**: arvuti kaustad ilma serveri ja kontota, SMB, WebDAV, DLNA ja Plex jaod sirvitavad ja esitatavad rakendusest, Insta360 töötlemata .insp fotod avatuna sfäärina ning arvuti jagatuna Meta Questiga kodus.
 
-See esimene järk on eelvaade: fotod töötavad, videod tulevad järgmiste töölauajärkudega. Telefoni-, tahvelarvuti-, Questi- ja telerirakendused sellega ei muutu ning kannavad edasi nime Immuch360.
+See on eelvaade: alates desktop build 2-st töötavad fotod ja tasapinnalised videod; 360°, 3D ja VR180 videod tulevad järgmiste töölauajärkudega. Alates 9. oktoobrist 2026 on töölauaversiooni lähtekood forki põhiharus `immuch360`, nii et telefonid, peakomplektid, telerid ja arvutid tulevad samadest lähtekoodidest. Telefoni-, tahvelarvuti-, Questi- ja telerirakendused sellega ei muutu ning kannavad edasi nime Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Laadi alla ja installi Windowsis
 
-Esimene järk on GitHubi eelväljalase [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Selle fail on `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, lahtipakituna 65 faili) ning kontrollimiseks `SHA256SUMS.txt`. See ehitati harust `desktop` commitil 21f285c34: telefoni järk 20 pluss arvutiversioon. Vaja on Windows 10 või 11, 64-bitist.
+Praegune järk on GitHubi eelväljalase [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Selle fail on `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (umbes 57 MB, lahtipakituna 78 faili, sealhulgas videomängija ja selle kaust `licenses`) ning kontrollimiseks `SHA256SUMS.txt`. See ehitati põhiharust `immuch360` commitil 5b723bd25: telefoni järgu 21 lähtekood pluss arvutiversioon. Vaja on Windows 10 või 11, 64-bitist.
 
 1. Laadi ZIP alla ja paki see lahti ükskõik kuhu, näiteks kausta Dokumendid.
-2. Käivita lahtipakitud kaustast `immuch360.exe`. Hoia kaust tervikuna: programm vajab selle kõrval olevaid faile.
+2. Käivita lahtipakitud kaustast `immuch360.exe`. Hoia kaust tervikuna: programm vajab selle kõrval olevaid faile, sealhulgas videomängijat.
 3. Failid pole veel allkirjastatud, seega võib Windows SmartScreen näidata teadet "Windows kaitses teie arvutit": vali "Lisateave", seejärel "Käivita ikkagi". Kui Smart App Control on sisse lülitatud, blokeerib see allkirjastamata programmid.
 4. Oota akent. Uue järgu esimene käivitus võtab 10 sekundist umbes minutini, kõige tõenäolisemalt seetõttu, et Microsoft Defender skannib uusi faile: ära käivita rakendust vahepeal uuesti. Järgmised käivitused võtavad sekundi või kaks.
 5. Logi sisselogimislehel oma Immichi serverisse selle aadressi, oma e-posti ja parooliga või klõpsa "Kasuta ilma serverita".
 
-ZIP-i kontrollimiseks käivita käsuviibas allalaadimise kaustas `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256`: tulemus on sama, mis on kirjas failis `SHA256SUMS.txt`. Installerit ega automaatset uuendamist veel pole: jälgi lehte [Releases](https://github.com/freeKC/Immuch360/releases) ja paki järgmine järk samamoodi lahti.
+ZIP-i kontrollimiseks käivita käsuviibas allalaadimise kaustas `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256`: tulemus on sama, mis on kirjas failis `SHA256SUMS.txt`. Installerit ega automaatset uuendamist veel pole: jälgi lehte [Releases](https://github.com/freeKC/Immuch360/releases) ja paki järgmine järk samamoodi lahti.
 
 ### Mida eelvaade teeb
 
@@ -984,7 +987,8 @@ ZIP-i kontrollimiseks käivita käsuviibas allalaadimise kaustas `certutil -hash
 - **Ilma serverita**: sinu fotode ja videote kaustad (soovitatakse Pildid ja Videod) asendavad telefoni galeriid. Väljaspool valitud kaustu ei loeta midagi ja ilma serverita ei lahku arvutist midagi.
 - **Üleslaadimine ja varundamine** nendest kaustadest sinu Immichi serverisse, kuni rakendus on avatud.
 - **360° fotod sfäärina**, hiire ja klaviatuuriga; Insta360 kaamerate töötlemata .insp fotod avanevad nagu telefonides.
-- **Võrgujaod**: Samba (SMB), WebDAV ja DLNA meediaserverid ning Plex serverid ilma plex.tv-ta, sirvitavad nagu telefonides: nende fotod avanevad, nende videod ootavad videomängijat (vaata [Veel puudu](#not-there-yet)). Tapo kaamerate puhul mälukaardi salvestised: loend ja klipi toomine.
+- **Tasapinnalised videod** (alates desktop build 2-st): sinu kaustade videod, sinu Immichi serveri videod (originaal või transkoodimisega voog, vaata [Video üksikasjad ja dekoodrid](#video-details-decoders-and-why-a-video-stutters)), SMB, WebDAV ja DLNA jagude, Plex serverite ja Tapo salvestiste videod mängivad aknas, telefonide juhtnuppudega (esita, paus, ajariba), puhverdamise näidiku ja heliradade menüüga video jaoks, millel on neid mitu. Sinu kaustade ja jagude videod näitavad pisipildina kaadrit videost, filmiikooni asemel.
+- **Võrgujaod**: Samba (SMB), WebDAV ja DLNA meediaserverid ning Plex serverid ilma plex.tv-ta, sirvitavad nagu telefonides: nende fotod avanevad ja nende videod mängivad. Tapo kaamerate puhul mälukaardi salvestised: loend, klipi toomine ja selle esitamine.
 - **Jaga seda arvutit võrgus**: sinu kaustade albumid, kuud ja 360° meedia, kirjutuskaitstult, Meta Questile või mõnele muule kodusele seadmele, nagu telefon jagab iseennast.
 - **Failid**: serverist allalaaditud failid lähevad sinu valitud kausta, "Salvesta kausta" hoiab valitud fotodest ja videotest koopia ning lehel Logid on "Salvesta logid faili".
 
@@ -994,9 +998,11 @@ ZIP-i kontrollimiseks käivita käsuviibas allalaadimise kaustas `certutil -hash
 2. **Pilve-, USB- ja võrgukaustad.** Failid, mida OneDrive (või mõni muu pilveketas) hoiab ainult võrgus, loetakse kokku, kuid neid ei loeta, nii et kausta lisamine ei laadi alla kogu sinu pilve: "Laadi alla ja kaasa" toob need, kui neid soovid. USB-ketas, mis tuleb tagasi teise tähe all, säilitab oma fotod. Võrgukaustu ning mälukaardil või USB-kettal olevaid kaustu (et Windows saaks selle ikka välja võtta) ei jälgita muudatuste suhtes: kasuta pärast sinna failide lisamist nuppu Värskenda.
 3. **Vaata 360° fotos ringi**: lohista hiirega, suumi rattaga, topeltklõpsuga või klahvidega + ja - (igal klaviatuuripaigutusel, ka AZERTY), liigu nooleklahvidega. F või F11 lülitab täisekraanile ja Escape väljub sellest; Home ja End viivad esimese ja viimase foto juurde; I näitab üksikasju.
 4. **Liigu fotolt fotole**: tasapinnalises fotos viivad vasak- ja paremnool või hiire liikumisel servadesse ilmuvad noolenupud eelmise ja järgmise juurde. Kirjelduse väljale trükitud tähed jäävad teksti.
-5. **Jaga arvutit peakomplektiga**: ava Kogu, seejärel Võrgujaod; esimene paan on "Jaga seda arvutit võrgus", lehe [Jaga seda telefoni võrgus](#share-this-phone-on-the-network) arvutipoolne vaste. Lülita sisse "Jaga fotosid ja videoid võrgus" ja lisa siis arvuti peakomplektis, nagu see jaotis ütleb. Jagamine peatub, kui rakendus suletakse, või pärast tund aega kasutamata olekut.
-6. **Luba võrk**: Windows võib küsida, kas Immuch360 Desktop tohib võrku kasutada. Luba see privaatvõrkudes, muidu ei leia peakomplekt arvutit üles. Võrgus, mille Windows märgib avalikuks (kohvik, hotell), või mille tüüpi see ei oska öelda, jagamine ei käivitu, kui sa ei vali "Jaga selle seansi jaoks", ja arvuti kuulutab end välja ainult võrgus, kus ta jagab.
-7. **Seaded, "See arvuti"**: kaustad, allalaadimiste kaust, võrguadapter, mida kasutatakse jagude leidmiseks ja arvuti jagamiseks (kui neid on mitu, näiteks Wi-Fi ja Ethernet), ning usaldusväärsed sertifikaadid: sinu enda serveri sertifitseerimisasutus PEM-failina HTTPS-aadressi jaoks, mida Windows ise ei usalda. Klientsertifikaadid imporditakse jaotises Seaded, Täpsemad valikud, nagu telefonides.
+5. **Esita video**: ava see ajajoonelt, kaustast, jaost, Plexist või Tapo kaamera salvestistest; see mängib aknas. Enter või klaviatuuri esitus- ja pausiklahv peatab ja jätkab esitust. Esituse ajal hüppavad vasak- ja paremnool või J ja L 10 sekundit tagasi või edasi; pausi ajal viivad nooled eelmise ja järgmise juurde. F või F11 lülitab täisekraanile, nagu fotode puhul. Nupp "Helirada" valib video heliradade vahel, kui neid on mitu.
+6. **Kui video peatub**: pausil video jääb pausile, kui naased aknasse. Video, mis katkeb enne lõppu, näiteks kui jagu või server lakkab vastamast, ütleb seda: ava see uuesti ja see jätkab sealt, kus peatus, pausil. Kaustast või jaost leitud esitusloendi faili ei järgita.
+7. **Jaga arvutit peakomplektiga**: ava Kogu, seejärel Võrgujaod; esimene paan on "Jaga seda arvutit võrgus", lehe [Jaga seda telefoni võrgus](#share-this-phone-on-the-network) arvutipoolne vaste. Lülita sisse "Jaga fotosid ja videoid võrgus" ja lisa siis arvuti peakomplektis, nagu see jaotis ütleb. Jagamine peatub, kui rakendus suletakse, või pärast tund aega kasutamata olekut.
+8. **Luba võrk**: Windows võib küsida, kas Immuch360 Desktop tohib võrku kasutada. Luba see privaatvõrkudes, muidu ei leia peakomplekt arvutit üles. Võrgus, mille Windows märgib avalikuks (kohvik, hotell), või mille tüüpi see ei oska öelda, jagamine ei käivitu, kui sa ei vali "Jaga selle seansi jaoks", ja arvuti kuulutab end välja ainult võrgus, kus ta jagab.
+9. **Seaded, "See arvuti"**: kaustad, allalaadimiste kaust, võrguadapter, mida kasutatakse jagude leidmiseks ja arvuti jagamiseks (kui neid on mitu, näiteks Wi-Fi ja Ethernet), ning usaldusväärsed sertifikaadid: sinu enda serveri sertifitseerimisasutus PEM-failina HTTPS-aadressi jaoks, mida Windows ise ei usalda. Klientsertifikaadid imporditakse jaotises Seaded, Täpsemad valikud, nagu telefonides.
 
 ### Võrreldes telefonirakendustega
 
@@ -1005,20 +1011,24 @@ ZIP-i kontrollimiseks käivita käsuviibas allalaadimise kaustas `certutil -hash
 - **Üks aken**: rakenduse teistkordne avamine toob tagasi esimese akna, selle asemel et käivitada teine koopia.
 - **Sinu kaustadest ei kustutata midagi**: "Kustuta seadmest" on peidetud ja Kustuta eemaldab ainult serveri koopia, kuni rakendus suudab saata faile Windowsi prügikasti.
 - **Hiir ja klaviatuur** puute ja güroskoobi asemel.
+- **Üks videomängija kõigi allikate jaoks**: libmpv esitab ühtmoodi serveri, kaustade, jagude ja Plexi videoid ning selle tasapinnalisel mängijal on juba heliradade menüü, mida telefonide tasapinnalisel mängijal veel pole.
 
 <a id="not-there-yet"></a>
 ### Veel puudu
 
-- **Videod**: praegu näitavad need kohatäidet ja nende pisipildid filmiikooni. Taasesitus tuleb järgmisena: kõigepealt tasapinnalised videod, seejärel 360°, 3D ja VR180 videod ning töötlemata 360° videod.
+- **360°, 3D, VR180 ja töötlemata 360° videod**: praegu näidatakse neid tasapinnalisena, nii nagu fail neid hoiab (kogu sfäär lahtirullituna, kaks silma kõrvuti või objektiivide ümmargused pildid), või kohatäitena, ning 360° nupp jääb fotodele. Nende mängijad tulevad järgmiste töölauajärkudega.
 - **Spatial 2.5D**, hiljem veebikaameraga; **Tapo otsepilt**; **kaart** ja vaade Kohad; **sisselogimine OAuthiga** (logi selle asemel sisse e-posti ja parooliga); **Google Cast**; **teavitused**.
 - **Installer, allkirjastatud järk ja automaatsed uuendused**: see järk on kaust, milles on `immuch360.exe`.
-- **Linux ja macOS**: nende projektid on lähtekoodis, kuid neid pole nendes süsteemides veel ehitatud ega proovitud; need tulevad pärast Windowsi.
+- **Linux ja macOS**: nende projektid on lähtekoodis, kuid neid pole nendes süsteemides veel ehitatud ega proovitud ning nende videomängijat neis veel pole; need tulevad pärast Windowsi.
 - **Tõlked**: arvutiversiooni uued tekstid on praegu inglise keeles.
 
 ### Teadaolevad probleemid
 
-- **Kui peakomplekt loeb jagatud arvutist faili** (videot, mida see esitab, fotot, mida see alla laadib), ei saa Windows seda faili ümber nimetada, teisaldada ega kustutada ning ütleb, et see on avatud Immuch360 Desktopis: peata esmalt taasesitus. Varundused ei hoia sinu faile sel moel kinni: faili saab üleslaadimise ajal ümber nimetada, teisaldada või kustutada.
-- **Konarused**: ülaltoodud funktsioonid läbivad Windowsis oma automaattestid (475 töölauatesti) ning Windows 11 arvutis rakendus käivitub, avab salvestatud seansi Immichi serveris, sünkroonib ja sulgub korrektselt. Iga funktsiooni käsitsi testimine päris arvutis on alles pooleli.
+- **Uue järgu esimene käivitus on aeglane**: 10 sekundist umbes minutini enne akna ilmumist, kõige tõenäolisemalt seetõttu, et Microsoft Defender skannib uusi faile, mis pole veel allkirjastatud. Oota akent, selle asemel et rakendust uuesti käivitada; järgmised käivitused võtavad sekundi või kaks.
+- **8K HEVC videod vajavad eraldi graafikakiipi**: testsülearvutis näitas integreeritud Intel UHD kiip umbes pooli 8K HEVC video kaadritest, samas kui eraldi NVIDIA kiip esitas 8K HEVC ja 5.7K H.264 videot ühtegi kaadrit kaotamata. Windows käitab rakendust integreeritud kiibil, kui pole teisiti öeldud: Windowsi sätetes, Süsteem, Kuva, Graafika, lisa `immuch360.exe` ja vali "Suur jõudlus". Integreeritud kiibil dekodeerib 5.7K H.264 video, mille selle dekooder tagasi lükkab, protsessor ilma kaadrit kaotamata.
+- **Videoid joonistatakse kõige rohkem 1440 rea kõrgusena**, seejärel skaleeritakse aknale: 4K ekraanil täisekraanis on 4K või 8K video veidi pehmem kui eraldi videomängijas. Nii püsib 8K video sülearvuti graafikavõimsuse piires.
+- **Kui sinu kaustade video mängib rakenduses või kui peakomplekt loeb jagatud arvutist faili** (videot, mida see esitab, fotot, mida see alla laadib), ei saa Windows seda faili ümber nimetada, teisaldada ega kustutada ning ütleb, et see on avatud Immuch360 Desktopis: sulge esmalt video või peata taasesitus peakomplektis. Varundused ei hoia sinu faile sel moel kinni: faili saab üleslaadimise ajal ümber nimetada, teisaldada või kustutada.
+- **Konarused**: 663 töölauatestist 656 läbivad Windowsis (7 jäetakse teadlikult vahele), 200 üksteise järel avatud mängijat ei jäta lekkeid ning Windows 11 arvutis rakendus käivitub, avab salvestatud seansi Immichi serveris, sünkroonib, esitab video ja sulgub korrektselt. Iga funktsiooni käsitsi testimine päris arvutis on alles pooleli.
 
 Kui midagi läheb valesti, ava palun [veateade](https://github.com/freeKC/Immuch360/issues) koos lehelt Logid salvestatud logiga, vaata [Logid](#logs). Kontrolli logi enne jagamist: see võib sisaldada sinu serveri aadressi.
 
@@ -1027,19 +1037,17 @@ Kui midagi läheb valesti, ava palun [veateade](https://github.com/freeKC/Immuch
 
 Vaja on Windows 10 või 11 x64-l, Flutter 3.47.2 Windowsile, Visual Studio 2022 või selle Build Tools koos töökoormusega "Desktop development with C++", Windowsi seadetes sisse lülitatud arendajarežiimi (Flutter vajab seda pistikprogrammide jaoks) ja Python 3 pakkimisskripti jaoks.
 
-1. Hangi haru `desktop` ja käivita koodi genereerimine. See kasutab Javat ja Node'i, seega käivita see Linuxis, macOS-is või WSL-is; WSL-iga hoia kloon Windowsi kettal, mida WSL näeb asukohas `/mnt/c` või `/mnt/d`:
+1. Hangi lähtekood ja käivita koodi genereerimine. Põhiharu `immuch360` ehitab ka arvutiversiooni: haru vahetada pole vaja. Koodi genereerimine kasutab Javat ja Node'i, seega käivita see Linuxis, macOS-is või WSL-is; WSL-iga hoia kloon Windowsi kettal, mida WSL näeb asukohas `/mnt/c` või `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Ehita Windowsis samas kaustas `mobile` rakendus:
+2. Ehita Windowsis samas kaustas `mobile` rakendus. Esimene ehitus laadib GitHubist alla videomängija teegid (libmpv ja ANGLE) ja kontrollib iga arhiivi selle SHA-256 järgi:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Vaja on Windows 10 või 11 x64-l, Flutter 3.47.2 Windowsile, Visual Studio 2022 
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. Kaust `Release` töötab arvutis, mis selle ehitas. Teise arvuti jaoks hoia kogu kaust alles ja lisa Visual C++ käituskeskkond faili `immuch360.exe` kõrvale. Klooni juurkaustast kopeerib pakkimisskript selle, jätab välja selle, mis teenib ainult Androidi, kontrollib, et iga DLL, mille rakendus laadib, on kaustas või Windowsis endas, ja teeb ZIP-i:
+3. Kaust `Release` töötab arvutis, mis selle ehitas. Teise arvuti jaoks hoia kogu kaust alles ja lisa Visual C++ käituskeskkond faili `immuch360.exe` kõrvale. Klooni juurkaustast kopeerib pakkimisskript selle, jätab välja selle, mis teenib ainult Androidi, lisab videomängija litsentsid, kontrollib, et iga DLL, mille rakendus laadib, on kaustas või Windowsis endas, ja teeb ZIP-i:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-Haru `desktop` CI (`.github/workflows/immuch360-desktop.yml`) käivitab Linuxis telefoni kontrollid ja kogu testikomplekti, Windowsis töölauatestid ning ehitab sama ZIP-i; selle Linuxi ja macOS-i tööd (`flutter build linux` ja `flutter build macos`, sama `-t lib/main_desktop.dart`-iga) pole nendes süsteemides veel käinud.
+Immuch360 Desktopi CI (`.github/workflows/immuch360-desktop.yml`) töötab harus `desktop`, mis järgib haru `immuch360`: Linuxis telefoni kontrollid (telefoni järkudes ei muutu midagi) ja kogu testikomplekt, Windowsis töölauatestid ning sama ZIP; selle Linuxi ja macOS-i tööd (`flutter build linux` ja `flutter build macos`, sama `-t lib/main_desktop.dart`-iga) pole nendes süsteemides veel käinud.
 
 <a id="where-to-get-it"></a>
 ## Kust seda saada
@@ -1075,8 +1083,8 @@ Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon 
   - Täna: lehe [Releases](https://github.com/freeKC/Immuch360/releases) universaalne `Immuch360-v<version>-release.apk`, käsitsi installitud adb abil, vaata [Telerisse installimine](#install-it-on-the-tv). See on sama rakendus mis telefonides.
   - Varsti: Google Play teleritel, pärast Google'i ülevaatust teleri väljalaske jaoks.
 - **Windows 10 ja 11, 64-bitine (eelvaade)**
-  - Täna: Immuch360 Desktop, [töölaua eelväljalaske](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip`, lahti pakitud ja käivitatud nii, nagu ütleb [Laadi alla ja installi Windowsis](#download-and-install-on-windows). Praegu ainult fotod: videod tulevad järgmiste töölauajärkudega.
-  - Varsti: video taasesitus; installer, allkirjastatud järk ja uuendused hiljem.
+  - Täna: Immuch360 Desktop, [töölaua eelväljalaske](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`, lahti pakitud ja käivitatud nii, nagu ütleb [Laadi alla ja installi Windowsis](#download-and-install-on-windows). Praegu fotod ja tasapinnalised videod: 360°, 3D ja VR180 videod tulevad järgmiste töölauajärkudega.
+  - Varsti: 360°, 3D, VR180 ja töötlemata 360° videod; installer, allkirjastatud järk ja uuendused hiljem.
 
 App Store'i ja Meta Horizon Store'i lingid lisatakse siia kohe, kui kirjed on avaldatud. Logi sisse oma tavapärase Immichi serveri URL-i ja kontoga või puuduta sisselogimislehel "Kasuta ilma serverita", et alustada seadme enda fotode ja videotega. GitHubi APK ei uuenda end ise: jälgi lehte Releases ja kui oled rakenduse poest installinud, võta uuendused sellest poest.
 
@@ -1105,15 +1113,15 @@ Variant `quest` sihib SDK 34 ja säilitab ainult peakomplekti kasutatavad load (
 
 iOS-i jaoks oma Macis ehitamiseks kasuta Xcode'i ja oma allkirjastamismeeskonda; Xcode 26 puhul käivita kõigepealt üks kord `xcodebuild -downloadComponent MetalToolchain`, sest Spatiali varjutajad vajavad seda. Ilma Macita töötavad iOS-i järgud Codemagicus (hostitud Mac) selle hoidla failist `codemagic.yaml`. Androidi väljalaskejärgud töötavad GitHub Actionsis (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, Windowsi versioon, ehitatakse harust `desktop` Flutteriga Windowsile: sammud on jaotises [Ehita see ise Windowsis](#build-it-yourself-on-windows).
+Immuch360 Desktop, Windowsi versioon, ehitatakse samadest lähtekoodidest, harust `immuch360`, Flutteriga Windowsile: sammud on jaotises [Ehita see ise Windowsis](#build-it-yourself-on-windows).
 
 Selles hoidlas pole ühtegi saladust: Androidi allkirjastamisvõti on salvestatud GitHub Actionsi krüptitud saladustena ja Apple'i allkirjastamismaterjal Codemagicu krüptitud muutujatena. Töövoo failid viitavad neile ainult nime järgi. Ilma sinu enda `android/key.jks` failita allkirjastatakse väljalaskejärk silumisvõtmega ja seda ei saa installida GitHubist või poest pärit koopia peale (desinstalli see kõigepealt); silumisjärk installitakse selle kõrvale nimega Immuch360 debug. Meta Horizon Store'i koopia on väljalaske `quest` APK, mis on allkirjastatud teise võtmega, sellega, millega poe rakendus esmalt registreeriti, seega ei saa seda installida ka käsitsi installitud APK peale ega vastupidi.
 
 ### Harud
 
 - **`main`**: Immichi `main` sellel commitil, millel `immuch360` põhineb (praeguste järkude puhul 29. september 2026), mida kunagi ei muudeta; see liigub edasi, kui haru baseeritakse ümber uuemale Immichile.
-- **`immuch360`**: selle haru muudatused Immichi peal. Iga väljalase ütleb, millisel Immichi versioonil see põhineb.
-- **`desktop`**: Immuch360 Desktop, arvutiversioon, haru `immuch360` peal. Telefoni väljalasked ühendatakse sellesse ja töölaua eelväljalasked ehitatakse sellest (desktop build 1 commitist 21f285c34, telefoni järk 20 pluss arvutiversioon). Selles ei muutu miski kaustades `mobile/android` ja `mobile/ios`.
+- **`immuch360`**: selle haru muudatused Immichi peal, alates 9. oktoobrist 2026 koos Immuch360 Desktopiga. Iga väljalase ütleb, millisel Immichi versioonil see põhineb.
+- **`desktop`**: koht, kus Immuch360 Desktop, arvutiversioon, ehitati haru `immuch360` peal, kuni see 9. oktoobril 2026 sellesse ühendati, et telefonid, peakomplektid, telerid ja arvutid tuleksid samadest lähtekoodidest. Nüüd järgib see haru `immuch360` ja kannab töölaua eelväljalasete silte ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) commitist 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) commitist 5b723bd25). Arvutiversioon ei muuda midagi kaustades `mobile/android` ja `mobile/ios`.
 
 <a id="logs"></a>
 ## Logid
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Alates järgust 19 kirjutavad DLNA klient, telefoni jagu ja Apple'i ruumilise meedia tuvastus ka rakenduse enda logisse ("Logid", profiilipildi menüüs üleval paremal) siltide `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ja `NetworkMediaService` all. Alates järgust 20 kirjutab telerirežiim sinna siltide `TvMode` ja `TvTextEntry` all, Plex serverid siltide `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ja `PlexServerEditPage` all ning Tapo kaamerad siltide `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ja `CameraLiveView` all; Plexi read ei sisalda kunagi tõendit, aadressi ega pealkirja ning kaamera read jätavad paroolid välja. Logiread jäävad seadmesse, kui sa neid ise ei kopeeri.
 
-Arvutis (Immuch360 Desktop) on lehel Logid ka "Salvesta logid faili": logi või ZIP logi ja viimaste krahhide aruannetega, kui neid on (selle soovitatud nimi lõpeb siis sõnadega "with-crash-reports"). Krahhiaruanne on väike minidump: lõimed, kus need peatusid, ja ainult see, mida on vaja nende kutsete jälgimiseks, programmifailide nimedega, kuid ilma nende kaustadeta; mitte rakenduse mälu. Kontrolli logi enne jagamist: see võib sisaldada sinu serveri aadressi.
+Arvutis (Immuch360 Desktop) on lehel Logid ka "Salvesta logid faili": logi või ZIP logi ja viimaste krahhide aruannetega, kui neid on (selle soovitatud nimi lõpeb siis sõnadega "with-crash-reports"). Krahhiaruanne on väike minidump: lõimed, kus need peatusid, ja ainult see, mida on vaja nende kutsete jälgimiseks, programmifailide nimedega, kuid ilma nende kaustadeta; mitte rakenduse mälu.
+
+Alates desktop build 2-st kirjutab arvuti videomängija sinna siltidega `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` ja `VideoThumbnailGrabber`, kaasa arvatud mpv enda hoiatused, tõendite ja paroolideta. Kontrolli logi enne jagamist: see võib sisaldada sinu serveri aadressi.
 
 <a id="privacy"></a>
 ## Privaatsus
@@ -1144,6 +1154,7 @@ Arvutis (Immuch360 Desktop) on lehel Logid ka "Salvesta logid faili": logi või 
 - **Telefoni jagu**: ainult kohtvõrk, kasutajanime ja parooliga, lihtsa HTTP kaudu (vaata [Jaga seda telefoni võrgus](#share-this-phone-on-the-network)).
 - **Kaamera**: seda kasutab ainult Spatial 2.5D mängija, seadmes; pilte ei salvestata kunagi ega saadeta kuhugi.
 - **Arvutis** (Immuch360 Desktop, Windowsi eelvaade): rakendus loeb ainult sinu valitud kaustu, hoiab oma indeksit, pisipilte ja vahemälu arvutis ning salvestab paroolid ja tõendid Windowsi andmekaitsega, ainult sinu Windowsi konto jaoks. Arvuti jagamine järgib telefoni jao reegleid ega käivitu võrgus, mille Windows märgib avalikuks või mille tüüpi see ei oska öelda, kui sa seda ise ei soovi.
+- **Videomängija arvutis** (alates desktop build 2-st): sinu serveri videod jõuavad selleni rakenduse kaudu, nii et mängija ei hoia kunagi sinu seansitõendit, ja see, mida ta ette loeb, jääb mällu, mitte kettale. See avab ainult talle antud faili: kausta või jao fail, mis on tegelikult esitusloend või voo kirjeldus, ei pane seda kuhugi mujale ühenduma.
 
 Täielik põhimõte on failis [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ Täielik põhimõte on failis [PRIVACY.md](../PRIVACY.md).
 
 See projekt on Immichi haru ja jääb [GNU AGPL v3](../LICENSE) litsentsi alla. Iga APK, ka telefonide omad, sisaldab ka Meta Spatial SDK-d, mis pole avatud lähtekoodiga (Meta Platform Technologies SDK License Agreement) ja mida kasutatakse ainult Meta Questi peakomplektides; Immuch360 Desktop, Windowsi versioon, seda ei sisalda. Immuch360 ei ole seotud Immichi meeskonna ega FUTO-ga ega nende poolt heaks kiidetud.
 
+Immuch360 Desktopi Windowsi ZIP, ja ainult see, sisaldab ka oma videomängijat: libmpv, [mpv](https://mpv.io) teek, mille sees on [FFmpeg](https://ffmpeg.org), juhituna [media_kit](https://github.com/media-kit/media-kit) pistikprogrammidega. mpv ja FFmpeg on ehitatud ilma nende ainult GPL osadeta ning nende kood on GNU LGPL versiooni 2.1 või hilisema all; koos ehitatuna levitatakse `libmpv-2.dll` GNU LGPL versiooni 3 või hilisema all. Rakendus laadib selle käitusajal, nii et võid selle asendada oma ehitusega. Litsentsitekstid on ZIP-i kaustas `licenses` ning iga teek koos oma litsentsi ja lähtekoodiga on loetletud failis [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Teekaart
 
 Mis on veel tegemata, kõige tõenäolisemad eespool. Miski siin pole lubadus ning tagasiside [veahalduris](https://github.com/freeKC/Immuch360/issues) aitab otsustada, mis tuleb esimesena.
 
-- **Immuch360 Desktop, esmalt Windows**: esimene eelvaade on ilmunud (vaata [Windowsi arvutis](#on-a-windows-computer-immuch360-desktop-preview)). Järgmisena video taasesitus (kõigepealt tasapinnalised videod, seejärel 360°, 3D, VR180 ja töötlemata failid), mõõdetuna sülearvuti kahel graafikakaardil; siis iga funktsiooni testimine Windowsi arvutis ja selle parandused; siis Spatial 2.5D veebikaameraga; siis Linux ja macOS, paketid, allkirjastamine ja uuendused.
+- **Immuch360 Desktop, esmalt Windows**: desktop build 2 on ilmunud, tasapinnaliste videotega, ja töölauaversiooni lähtekood on alates 9. oktoobrist 2026 forki põhiharus `immuch360` (vaata [Windowsi arvutis](#on-a-windows-computer-immuch360-desktop-preview)). Järgmisena 360°, 3D, VR180 ja töötlemata 360° videod Windowsis, töötlemata failide kahe objektiivi ja Tapo otsepildiga; siis iga funktsiooni testimine Windowsi arvutis ja selle parandused; siis Spatial 2.5D veebikaameraga; siis Linux ja macOS, paketid, allkirjastamine ja uuendused.
 - **Google Play**: järk 18 on avaldatud; järk 20 on Google'i ülevaatusel alates 7. oktoobrist 2026, järgu 19 asemel. Järk 21 ei muuda telefonides ja tahvelarvutites midagi.
 - **App Store**: versioon 3.3.0 ootab Apple'i ülevaatust; see sisaldab järgu 11 funktsioone, seega üleslaadimine Immichisse ja videodekoodrite kontroll (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad järgmise App Store'i uuendusega. Link lisatakse siia, kui see on avaldatud.
 - **Meta Horizon Store**: Meta kiitis kirje heaks 7. oktoobril 2026 koos järguga 14. Järk 21 on esitatud selle esimese uuendusena: see toob kõik alates järgust 14 (üleslaadimised jaost Immichisse, videoallikas valitud selle järgi, mida peakomplekt dekodeerib, Insta360, GoPro ja DJI töötlemata failid, DLNA, telefoni jagamine, Apple'i ruumilised fotod, Plex Media Serveri kogud, Tapo kaamerad) ja pood pakub seda Quest 2, Quest Pro, Quest 3 ja 3S jaoks. Poe link lisatakse siia, kui leht on avalik; käsitsi installitud koopia tuleb kõigepealt desinstallida (vaata [Installimine](#install)).
@@ -1166,7 +1179,7 @@ Mis on veel tegemata, kõige tõenäolisemad eespool. Miski siin pole lubadus ni
 - **DLNA, telefoni jagu ja Apple'i ruumiline meedia, edasi**: järgu 19 seadmete teated (Plex, Jellyfin, NAS ja Freebox Server DLNA kaudu; Questi teenindav telefon, ka oma kuumkohas; päris iPhone'i ruumilised fotod ja videod peakomplektis); Apple'ilt küsitud multiedastuse õigus, et iPhone'id leiaksid iga DLNA serveri; eelmine ja järgmine ruumiliste fotode vahel peakomplektis; ruumilise märgi lisamine serveri fotodele ajajoonel; ruumilised videod 3D-s Questis, kui selle dekoodrid seda võimaldavad.
 - **Telefonide 360° mängijad, edasi**: ajariba iOS-i 360° videomängijas (Androidi omal see on), eelmine/järgmine telefonide 360° mängijates nagu Questi kaasahaaravas vaates ja fotod omases 360° videomängijas.
 - **Võrgujaod, järgmised sammud**: kausta ühest failist järgmisse pühkimine foto- ja videolehtedel (Questi kaasahaarav vaade käib juba kausta 360° failid läbi), Digest autentimine WebDAV-i jaoks, kasutajanimi Bonjouri kirjest.
-- **Tasapinnalised videod**: helirea valik tasapinnalises mängijas, ühtviisi serveri, seadme ja jagude videote jaoks (360° ja Spatial mängijatel see on).
+- **Tasapinnalised videod**: helirea valik telefonide tasapinnalises mängijas, ühtviisi serveri, seadme ja jagude videote jaoks (360° ja Spatial mängijatel see on, samuti Immuch360 Desktopi tasapinnalisel mängijal).
 - **Android TV, edasi**: järgu 20 seadmetest Google TV emulaatoris ja päris teleris, seejärel teleri väljalase Google Plays (teleri ekraanipildid, teleri bänner, Google'i ülevaatus); hiljem kanalid teleri avakuval.
 - **Tapo kaamerad, edasi**: järgu 20 seadmetest päris kaameratega; otsepilt iPhone'is ja iPadis; H.265 salvestised; klipi esitamine selle toomise ajal; terve päeva salvestised ühel ajajoonel.
 - **Plex, edasi**: järgu 20 seadmetest (telefonid, Quest, iPhone, teler, väljaspool kodu); tõendi toomine arvutist QR-koodiga; Plex serveri DLNA poole peitmine leitud serverite loendis; IPv6.

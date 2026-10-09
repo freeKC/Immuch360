@@ -19,13 +19,13 @@ Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI
   App Store: <a href="#where-to-get-it">tiek pārskatīts</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store apstiprināts, 21. būvējums iesniegts kā tā pirmais atjauninājums<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">priekšskatījuma lejupielāde</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">priekšskatījuma lejupielāde</a>, darbvirsmas būvējums 2
 </p>
 
 - 🌐 **Īsts 360°**<br>Foto un video kā sfēra, kurā paskatīties apkārt, ar žiroskopu, ieskaitot neapstrādātus kameras failus (Insta360 no 16. būvējuma, GoPro un DJI no 18. būvējuma). Arī bezmaksas video atskaņotājs: plakani, 360°, 3D, VR180
 - 👓 **Īsts 3D**<br>Stereoskopiski 360° un VR180, augšā un apakšā vai blakus, un Apple telpiskie foto (no 19. būvējuma): īsts 3D brillēs, viena acs tālrunī
 - 🎥 **Īsts 2.5D**<br>Dziļums plakanā ekrānā no stereoskopiska video, skats seko jūsu galvai (eksperimentāls, tālruņi un planšetdatori)
-- 📱 **Android, iOS, Quest, TV**<br>Viena lietotne tālruņos, planšetdatoros un Quest 2, Pro, 3 un 3S brillēs, īsts 3D brillēs, no 20. būvējuma Android TV ar tālvadības pulti, un Windows priekšskatījums
+- 📱 **Android, iOS, Quest, TV**<br>Viena lietotne tālruņos, planšetdatoros un Quest 2, Pro, 3 un 3S brillēs, īsts 3D brillēs, no 20. būvējuma Android TV ar tālvadības pulti, un Windows priekšskatījums ar foto un plakaniem video
 - 🔌 **Ar serveri vai bez tā**<br>Jūsu Immich serveris vai paša tālruņa galerija, konts nav vajadzīgs
 - 🗄️ **Tīkla koplietojumi**<br>Samba (SMB), WebDAV un, no 19. būvējuma, DLNA multivides serveri, atrasti tīklā un lasīti tieši, nekas netiek lejupielādēts, un nosūtīti uz Immich, kad to izvēlaties. No 19. būvējuma tālrunis arī koplieto savu galeriju ar brillēm
 - 📺 **Televizorā**<br>No 20. būvējuma tas pats APK Android TV un Google TV: 360° foto un video, jūsu serveris un jūsu koplietojumi, ar tālvadības pulti
@@ -79,7 +79,7 @@ Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI
 - **„Es gribu skatīties savus 360° foto un video, kā arī sava NAS vai Plex servera video televizorā, ar tālvadības pulti.”** Skatiet [Skatīties televizorā](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Es nevaru atrast savus 360° uzņēmumus starp visiem pārējiem.”** Skatiet [360° saraksts](#find-your-360-shots-the-360-list).
 - **„Mans 360° video raustās vai atskaņo izplūdušu kopiju.”** Skatiet [Video informācija un dekoderi](#video-details-decoders-and-why-a-video-stutters).
-- **„Es gribu savus 360° foto un savu Immich bibliotēku Windows datorā, kopā ar tā mapju, mana NAS un mana Plex servera foto, un datoru koplietot ar brillēm.”** Skatiet [Windows datorā](#on-a-windows-computer-immuch360-desktop-preview) (priekšskatījums, pagaidām tikai foto).
+- **„Es gribu savus 360° foto un savu Immich bibliotēku Windows datorā, kopā ar tā mapju, mana NAS un mana Plex servera foto un video, un datoru koplietot ar brillēm.”** Skatiet [Windows datorā](#on-a-windows-computer-immuch360-desktop-preview) (priekšskatījums: pagaidām foto un plakanie video, 360° video vēlāk).
 - **„Vai saglabājas tas, ko dara Immich lietotne?”** Jā, ar divām nelielām izmaiņām, skatiet [Viss pārējais ir Immich](#everything-else-is-immich).
 
 Ja funkcija ir jauna, tekstā norādīts, no kura būvējuma (build) tā ir pieejama. GitHub laidienā vienmēr ir jaunākais būvējums, veikali seko vēlāk: skatiet [Kur to iegūt](#where-to-get-it).
@@ -752,7 +752,7 @@ Pašreizējais būvējums, 21. būvējums (versija 3.3.0-rc.0, būvējuma numurs
 | Plex Media Server bibliotēkas, atskaņotas no oriģinālajiem failiem, mājās un ārpus tām, bez plex.tv | ❌ | ✅ no 20. būvējuma, katrs skatītājs, tālruņos, planšetdatoros, Quest un televizoros |
 | Tapo kameras: tiešraide un atmiņas kartes ieraksti, nosūtīti uz Immich, kad jūs to izvēlaties | ❌ | ✅ no 20. būvējuma: ieraksti visur, tiešraide Android, Android TV un Quest |
 | Android TV un Google TV, vadīts ar tālvadības pulti, tajā pašā APK | ❌ nav televizora lietotne | ✅ no 20. būvējuma |
-| Tā pati lietotne Windows datorā | ❌ tikai tālruņi un planšetdatori | ✅ priekšskatījums, vēl bez video |
+| Tā pati lietotne Windows datorā | ❌ tikai tālruņi un planšetdatori | ✅ priekšskatījums, foto un plakanie video |
 | Neapstrādāti Insta360 .insp foto un viena celiņa .insv video | ❌ plakani | ✅ no 16. būvējuma |
 | Neapstrādāti video ar vienu objektīvu katrā celiņā vai failā (Insta360 X4, X4 Air, X5, X6, X3 pāri, GoPro .360, DJI .osv) | ❌ plakani vai nepareizi | ✅ no 18. būvējuma |
 | Dubultā „zivs acs” .dng | ❌ plakans | ❌ vēl ne |
@@ -782,7 +782,7 @@ Pašreizējais būvējums, 21. būvējums (versija 3.3.0-rc.0, būvējuma numurs
 - **Plex Media Server**: pārbaudīts no datora pret īstu Plex Media Server 1.42.1 (savienošana pārī, mapes, baitu diapazoni, sīktēli, adrese ārpus mājām); ierīcē vēl nav pārbaudīts.
 - **Tapo kameras**: pārbaudīts pret simulētu kameru; ar īstu kameru vēl nav pārbaudīts.
 - **Android TV un Google TV**: pārbaudīts ar automatizētiem testiem; televizorā vēl nav pārbaudīts.
-- **Tā pati lietotne Windows datorā**: 475 automatizēti darbvirsmas testi Windows sistēmā, un Windows 11 datorā lietotne startē, atver saglabātu sesiju Immich serverī, sinhronizē un korekti aizveras; katras funkcijas pārbaude ar rokām notiek.
+- **Tā pati lietotne Windows datorā**: 656 no 663 automatizētajiem darbvirsmas testiem Windows sistēmā tiek izturēti (7 apzināti izlaisti), un Windows 11 datorā lietotne startē, atver saglabātu sesiju Immich serverī, sinhronizē, atskaņo video un korekti aizveras; katras funkcijas pārbaude ar rokām notiek.
 - **Neapstrādāti Insta360 .insp foto un viena celiņa .insv video**: foto salīdzināti ar Insta360 Studio X3 failu eksportiem, video Android emulatorā ar zemas izšķirtspējas X3 failu; iPhone tālrunī vēl nav darbināts.
 - **Neapstrādāti video ar vienu objektīvu katrā celiņā vai failā**: parsētāji un sašūšana pārbaudīti ar īstiem X4, X3 pāra, GoPro MAX un Osmo 360 failiem; atskaņošana ir 18. un 19. būvējuma ierīču tests.
 - **Dubultā „zivs acs” .dng**: plānots.
@@ -825,16 +825,19 @@ Immuch360 ir galerija, un tā ir arī bezmaksas multivides atskaņotājs: tā at
   - iPhone, iPad: tāpat, izņemot koplietojuma MKV un AVI failus, ko iOS neatver (serverī tie tiek atskaņoti transkodēti).
   - Meta Quest: logā.
   - Android TV, Google TV: kā tālruņos; OK pauzē, pa kreisi un pa labi pārlec 10 s.
+  - Windows (no darbvirsmas būvējuma 2): libmpv atskaņotājs, no katra otrā saraksta avota; Enter pauzē, pa kreisi un pa labi vai J un L pārlec 10 s.
 - **360° foto**
   - Android tālruņi: sfēras skatītājs, žiroskops.
   - iPhone, iPad: tāpat.
   - Meta Quest: imersīvi, visapkārt jums.
   - Android TV, Google TV: sfēras skatītājs, griezts ar bultiņām, tālummainīts ar kanālu taustiņiem.
+  - Windows: sfēras skatītājs, pele un tastatūra.
 - **360° video**
   - Android tālruņi: iebūvēts Media3 atskaņotājs uz sfēras, žiroskops, pārtīšana, audio celiņa izvēle, bufera indikators.
   - iPhone, iPad: iebūvēts SceneKit atskaņotājs uz sfēras, žiroskops, audio celiņa izvēle, bufera indikators; atskaņošana un pauze, laika joslas vēl nav.
   - Meta Quest: imersīvi, īsts 3D stereoskopiskiem failiem, laika josla ar 10 sekunžu pārlēcieniem, iepriekšējais un nākamais fails.
   - Android TV, Google TV: tālruņu Media3 atskaņotājs, griezts ar bultiņām.
+  - Windows: vēl nē, pagaidām rādīts plakans.
 - **3D 360° (augšā un apakšā, blakus)**
   - Android tālruņi: kreisā acs, izkārtojuma poga.
   - iPhone, iPad: tāpat.
@@ -888,7 +891,7 @@ Immuch360 ir galerija, un tā ir arī bezmaksas multivides atskaņotājs: tā at
 
 Android TV un Google TV ieraksti, no 20. būvējuma, vēl nav pārbaudīti televizorā, skatiet [Skatīties televizorā](#watch-on-your-tv-android-tv-and-google-tv); kameru ieraksti vēl nav pārbaudīti ar īstu kameru.
 
-Windows sistēmā Immuch360 Desktop priekšskatījums rāda foto, plakanos un 360°, ieskaitot neapstrādātos Insta360 .insp foto, ar peli un tastatūru, no servera, datora mapēm, koplietojumiem un Plex; video tas vēl neatskaņo, to vietā redzams aizvietotājs (skatiet [Vēl nav](#not-there-yet)).
+Windows sistēmā Immuch360 Desktop priekšskatījums rāda foto, plakanos un 360°, ieskaitot neapstrādātos Insta360 .insp foto, ar peli un tastatūru, un no darbvirsmas būvējuma 2 tas atskaņo plakanos video no servera, datora mapēm, koplietojumiem, Plex un Tapo ierakstiem; 360°, 3D, VR180 un neapstrādātie 360° video pagaidām tiek rādīti plakani vai kā aizvietotājs (skatiet [Vēl nav](#not-there-yet)).
 
 - **Jūsu Immich serveris**: oriģināls vai servera transkodētā straume, kā nosaka „Iestatījumi”, „Failu skatītājs”, „Video avots” (skatiet [Video informācija un dekoderi](#video-details-decoders-and-why-a-video-stutters)). Tas pats konts kā tīmekļa lietotnē.
 - **Pats tālrunis vai brilles**: „Lietot bez servera” pieslēgšanās lapā vai cilnes „Bibliotēka” ieraksts „Šajā ierīcē”.
@@ -959,24 +962,24 @@ Ekrānuzņēmumi uzņemti brillēs ar uzņemšanas pogu (Meta poga un mēlīte),
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Windows datorā: Immuch360 Desktop (priekšskatījums)
 
-Jūsu Immich bibliotēka ir serverī, citi foto atrodas datora mapēs, video NAS vai Plex serverī, un jūs gribētu paskatīties apkārt savos 360° foto uz liela ekrāna vai parādīt datora foto brillēs. Immuch360 Desktop ir tā pati lietotne Windows datorā, izveidota no tiem pašiem pirmkodiem kā tālruņu lietotnes.
+Jūsu Immich bibliotēka ir serverī, citi foto un video atrodas datora mapēs, vēl citi video NAS vai Plex serverī, un jūs gribētu paskatīties apkārt savos 360° foto un atskaņot savus video uz liela ekrāna vai parādīt datora foto brillēs. Immuch360 Desktop ir tā pati lietotne Windows datorā, izveidota no tiem pašiem pirmkodiem kā tālruņu lietotnes.
 
-Datorā Immich piedāvā savu tīmekļa lietotni pārlūkā. **Ko pievieno Immuch360 Desktop**: datora mapes bez jebkāda servera vai konta, SMB, WebDAV, DLNA un Plex koplietojumus, pārlūkotus no lietotnes, neapstrādātos Insta360 .insp foto, atvērtus kā sfēru, un datoru, koplietotu ar Meta Quest mājās.
+Datorā Immich piedāvā savu tīmekļa lietotni pārlūkā. **Ko pievieno Immuch360 Desktop**: datora mapes bez jebkāda servera vai konta, SMB, WebDAV, DLNA un Plex koplietojumus, pārlūkotus un atskaņotus no lietotnes, neapstrādātos Insta360 .insp foto, atvērtus kā sfēru, un datoru, koplietotu ar Meta Quest mājās.
 
-Šis pirmais būvējums ir priekšskatījums: foto darbojas, video nāks ar nākamajiem darbvirsmas būvējumiem. Tālruņa, planšetdatora, Quest un televizora lietotnes ar to nemainās un saglabā nosaukumu Immuch360.
+Šis ir priekšskatījums: no darbvirsmas būvējuma 2 darbojas foto un plakanie video; 360°, 3D un VR180 video nāks ar nākamajiem darbvirsmas būvējumiem. Kopš 2026. gada 9. oktobra darbvirsmas pirmkods ir atzarojuma galvenajā zarā `immuch360`, tāpēc tālruņi, brilles, televizori un datori tiek izlaisti no tiem pašiem pirmkodiem. Tālruņa, planšetdatora, Quest un televizora lietotnes ar to nemainās un saglabā nosaukumu Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Lejupielāde un instalēšana Windows sistēmā
 
-Pirmais būvējums ir GitHub pirmslaidiens [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Tā fails ir `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 faili pēc atarhivēšanas), ar `SHA256SUMS.txt` tā pārbaudei. Tas ir izveidots no zara `desktop` pie revīzijas 21f285c34: tālruņa 20. būvējums plus datora versija. Tam vajag Windows 10 vai 11, 64 bitu.
+Pašreizējais būvējums ir GitHub pirmslaidiens [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Tā fails ir `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (apmēram 57 MB, 78 faili pēc atarhivēšanas, ieskaitot video atskaņotāju un tā mapi `licenses`), ar `SHA256SUMS.txt` tā pārbaudei. Tas ir izveidots no galvenā zara `immuch360` pie revīzijas 5b723bd25: tālruņa 21. būvējuma pirmkods plus datora versija. Tam vajag Windows 10 vai 11, 64 bitu.
 
 1. Lejupielādējiet ZIP un atarhivējiet to jebkur, piemēram, mapē „Dokumenti”.
-2. Palaidiet `immuch360.exe` no atarhivētās mapes. Saglabājiet mapi veselu: programmai vajag blakus esošos failus.
+2. Palaidiet `immuch360.exe` no atarhivētās mapes. Saglabājiet mapi veselu: programmai vajag blakus esošos failus, ieskaitot video atskaņotāju.
 3. Faili vēl nav parakstīti, tāpēc Windows SmartScreen var parādīt „Windows protected your PC”: izvēlieties „More info”, tad „Run anyway”. Kur ieslēgts Smart App Control, tas bloķē neparakstītas programmas.
 4. Gaidiet logu. Jauna būvējuma pirmā palaišana ilgst no 10 sekundēm līdz apmēram minūtei, visticamāk, kamēr Microsoft Defender skenē jaunos failus: pa to laiku nepalaidiet lietotni vēlreiz. Nākamās palaišanas ilgst sekundi vai divas.
 5. Pieslēgšanās lapā pieslēdzieties savam Immich serverim ar tā adresi, savu e-pastu un paroli, vai noklikšķiniet „Lietot bez servera”.
 
-Lai pārbaudītu ZIP, komandu uzvednē, lejupielādes mapē, palaidiet `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256`: rezultātam jāsakrīt ar `SHA256SUMS.txt` ierakstīto. Instalētāja un automātiskas atjaunināšanas vēl nav: sekojiet lapai [Releases](https://github.com/freeKC/Immuch360/releases) un nākamo būvējumu atarhivējiet tāpat.
+Lai pārbaudītu ZIP, komandu uzvednē, lejupielādes mapē, palaidiet `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256`: rezultātam jāsakrīt ar `SHA256SUMS.txt` ierakstīto. Instalētāja un automātiskas atjaunināšanas vēl nav: sekojiet lapai [Releases](https://github.com/freeKC/Immuch360/releases) un nākamo būvējumu atarhivējiet tāpat.
 
 ### Ko dara priekšskatījums
 
@@ -984,7 +987,8 @@ Lai pārbaudītu ZIP, komandu uzvednē, lejupielādes mapē, palaidiet `certutil
 - **Bez servera**: jūsu foto un video mapes (tiek ieteiktas „Attēli” un „Video”) aizstāj tālruņa galeriju. Nekas netiek lasīts ārpus jūsu izvēlētajām mapēm, un bez servera nekas neatstāj datoru.
 - **Augšupielāde un dublēšana** no šīm mapēm uz jūsu Immich serveri, kamēr lietotne ir atvērta.
 - **360° foto kā sfēra**, ar peli un tastatūru; Insta360 kameru neapstrādātie .insp foto atveras kā tālruņos.
-- **Tīkla koplietojumi**: Samba (SMB), WebDAV un DLNA multivides serveri, un Plex serveri bez plex.tv, pārlūkoti kā tālruņos: to foto atveras, to video gaida video atskaņotāju (skatiet [Vēl nav](#not-there-yet)). Tapo kamerām atmiņas kartes ieraksti: saraksts un klipa ielāde.
+- **Plakanie video** (no darbvirsmas būvējuma 2): jūsu mapju, jūsu Immich servera (oriģināls vai pārkodētā straume, skatiet [Video informācija un dekoderi](#video-details-decoders-and-why-a-video-stutters)), SMB, WebDAV un DLNA koplietojumu, Plex serveru video un Tapo ieraksti tiek atskaņoti logā, ar tālruņu vadīklām (atskaņot, pauze, laika josla), buferēšanas indikatoru un audio celiņu izvēlni video, kuram to ir vairāki. Jūsu mapju un koplietojumu video kā sīktēlu rāda video kadru, nevis filmas ikonu.
+- **Tīkla koplietojumi**: Samba (SMB), WebDAV un DLNA multivides serveri, un Plex serveri bez plex.tv, pārlūkoti kā tālruņos: to foto atveras un to video tiek atskaņoti. Tapo kamerām atmiņas kartes ieraksti: saraksts, klipa ielāde un tā atskaņošana.
 - **Koplietot šo datoru tīklā**: jūsu mapju albumi, mēneši un 360° multivide, tikai lasīšanai, Meta Quest brillēm vai citai ierīcei mājās, kā tālrunis koplieto sevi.
 - **Faili**: lejupielādes no servera nonāk jūsu izvēlētā mapē, „Save to a folder” (Saglabāt mapē) saglabā atlasīto foto un video kopiju, un lapā „Žurnāli” ir „Save logs to a file” (Saglabāt žurnālus failā).
 
@@ -994,9 +998,11 @@ Lai pārbaudītu ZIP, komandu uzvednē, lejupielādes mapē, palaidiet `certutil
 2. **Mākoņa, USB un tīkla mapes.** Faili, ko OneDrive (vai cits mākoņa disks) tur tikai tiešsaistē, tiek saskaitīti, bet netiek lasīti, tāpēc mapes pievienošana nelejupielādē visu jūsu mākoni: „Download and include” (Lejupielādēt un iekļaut) tos ielādē, kad tie jums vajadzīgi. USB disks, kas atgriežas ar citu burtu, saglabā savus foto. Tīkla mapes un mapes atmiņas kartē vai USB diskā (lai Windows to joprojām varētu izstumt) netiek uzraudzītas izmaiņām: pēc failu pievienošanas tur izmantojiet „Refresh” (Atsvaidzināt).
 3. **Paskatieties apkārt 360° foto**: velciet ar peli, tuviniet ar ritenīti, dubultklikšķi vai + un - (jebkurā tastatūras izkārtojumā, ieskaitot AZERTY), pārvietojieties ar bultiņu taustiņiem. F vai F11 pārslēdz pilnekrāna režīmu, un Escape no tā iziet; Home un End pāriet uz pirmo un pēdējo foto; I rāda informāciju.
 4. **Pārejiet no foto uz foto**: plakanā foto kreisā un labā bultiņa vai šķautnes, kas parādās malās, kamēr pele kustas, pāriet uz iepriekšējo un nākamo. Burti, kas ierakstīti apraksta laukā, paliek tekstā.
-5. **Koplietojiet datoru ar brillēm**: atveriet „Bibliotēka”, tad „Tīkla koplietojumi”; pirmā flīze ir „Share this computer on the network” (Koplietot šo datoru tīklā), datora puse no [Koplietot šo tālruni tīklā](#share-this-phone-on-the-network). Ieslēdziet „Share photos and videos on the network” (Koplietot foto un video tīklā), tad pievienojiet datoru brillēs, kā norādīts tajā sadaļā. Koplietošana apstājas, kad lietotne tiek aizvērta vai pēc stundas bez lietošanas.
-6. **Atļaujiet tīklu**: Windows var jautāt, vai Immuch360 Desktop drīkst izmantot tīklu. Atļaujiet to privātos tīklos, citādi brilles nevar atrast datoru. Tīklā, ko Windows atzīmē kā publisku (kafejnīca, viesnīca), vai tīklā, kura veidu tā nevar noteikt, koplietošana nesākas, ja vien neizvēlaties „Share for this session” (Koplietot šai sesijai), un dators sevi izsludina tikai tīklā, kurā tas koplieto.
-7. **„Iestatījumi”, „This computer” (Šis dators)**: mapes, lejupielāžu mape, tīkla adapteris, ko izmanto koplietojumu atrašanai un datora koplietošanai (kad tādu ir vairāki, piemēram, Wi-Fi un Ethernet), un uzticami sertifikāti: jūsu paša servera sertifikātu iestāde, kā PEM fails, HTTPS adresei, kurai Windows pati neuzticas. Klienta sertifikāti tiek importēti sadaļā „Iestatījumi”, „Papildu”, kā tālruņos.
+5. **Atskaņojiet video**: atveriet to no laika skalas, mapes, koplietojuma, Plex vai Tapo kameras ierakstiem; tas tiek atskaņots logā. Enter vai tastatūras atskaņošanas un pauzes taustiņš pauzē un atsāk atskaņošanu. Atskaņošanas laikā kreisā un labā bultiņa vai J un L pārlec 10 sekundes atpakaļ vai uz priekšu; pauzē bultiņas pāriet uz iepriekšējo un nākamo. F vai F11 pārslēdz pilnekrāna režīmu, tāpat kā foto. Poga „Audio track” (Audio celiņš) izvēlas starp audio celiņiem video, kuram to ir vairāki.
+6. **Kad video apstājas**: pauzēts video paliek pauzēts, kad atgriežaties logā. Video, kas pārtraukts pirms beigām, piemēram, kad koplietojums vai serveris pārstāj atbildēt, to paziņo: atveriet to vēlreiz, un tas turpinās no vietas, kur apstājās, pauzēts. Mapē vai koplietojumā atrasts atskaņošanas saraksta fails netiek izmantots.
+7. **Koplietojiet datoru ar brillēm**: atveriet „Bibliotēka”, tad „Tīkla koplietojumi”; pirmā flīze ir „Share this computer on the network” (Koplietot šo datoru tīklā), datora puse no [Koplietot šo tālruni tīklā](#share-this-phone-on-the-network). Ieslēdziet „Share photos and videos on the network” (Koplietot foto un video tīklā), tad pievienojiet datoru brillēs, kā norādīts tajā sadaļā. Koplietošana apstājas, kad lietotne tiek aizvērta vai pēc stundas bez lietošanas.
+8. **Atļaujiet tīklu**: Windows var jautāt, vai Immuch360 Desktop drīkst izmantot tīklu. Atļaujiet to privātos tīklos, citādi brilles nevar atrast datoru. Tīklā, ko Windows atzīmē kā publisku (kafejnīca, viesnīca), vai tīklā, kura veidu tā nevar noteikt, koplietošana nesākas, ja vien neizvēlaties „Share for this session” (Koplietot šai sesijai), un dators sevi izsludina tikai tīklā, kurā tas koplieto.
+9. **„Iestatījumi”, „This computer” (Šis dators)**: mapes, lejupielāžu mape, tīkla adapteris, ko izmanto koplietojumu atrašanai un datora koplietošanai (kad tādu ir vairāki, piemēram, Wi-Fi un Ethernet), un uzticami sertifikāti: jūsu paša servera sertifikātu iestāde, kā PEM fails, HTTPS adresei, kurai Windows pati neuzticas. Klienta sertifikāti tiek importēti sadaļā „Iestatījumi”, „Papildu”, kā tālruņos.
 
 ### Salīdzinājumā ar tālruņu lietotnēm
 
@@ -1005,20 +1011,24 @@ Lai pārbaudītu ZIP, komandu uzvednē, lejupielādes mapē, palaidiet `certutil
 - **Viens logs**: atverot lietotni otrreiz, tiek atgriezts pirmais logs, nevis palaista otra kopija.
 - **No jūsu mapēm nekas netiek dzēsts**: „Dzēst no ierīces” ir paslēpts, un „Dzēst” noņem tikai servera kopiju, līdz lietotne varēs sūtīt failus uz Windows atkritni.
 - **Pele un tastatūra** pieskārienu un žiroskopa vietā.
+- **Viens video atskaņotājs visiem avotiem**: libmpv vienādi atskaņo servera, mapju, koplietojumu un Plex video, un tā plakanajam atskaņotājam jau ir audio celiņu izvēlne, kuras tālruņu plakanajam atskaņotājam vēl nav.
 
 <a id="not-there-yet"></a>
 ### Vēl nav
 
-- **Video**: pagaidām tie rāda aizvietotāju, un to sīktēli filmas ikonu. Atskaņošana nāks nākamā: vispirms plakanie video, tad 360°, 3D un VR180 video un neapstrādātie 360° video.
+- **360°, 3D, VR180 un neapstrādātie 360° video**: pagaidām tie tiek rādīti plakani, tā, kā fails tos glabā (visa sfēra izritināta, abas acis blakus vai objektīvu apaļie attēli), vai kā aizvietotājs, un 360° poga paliek tikai foto. To atskaņotāji nāks ar nākamajiem darbvirsmas būvējumiem.
 - **Spatial 2.5D**, vēlāk ar tīmekļa kameru; **Tapo tiešraide**; **karte** un vietu skats; **pieslēgšanās ar OAuth** (tā vietā pieslēdzieties ar e-pastu un paroli); **Google Cast**; **paziņojumi**.
 - **Instalētājs, parakstīts būvējums un automātiski atjauninājumi**: šis būvējums ir mape ar `immuch360.exe`.
-- **Linux un macOS**: to projekti ir pirmkodā, bet tie vēl nav izveidoti vai izmēģināti šajās sistēmās; tie nāks pēc Windows.
+- **Linux un macOS**: to projekti ir pirmkodā, bet tie vēl nav izveidoti vai izmēģināti šajās sistēmās, un to video atskaņotāja tajos vēl nav; tie nāks pēc Windows.
 - **Tulkojumi**: datora versijas jaunie teksti pagaidām ir angļu valodā.
 
 ### Zināmās problēmas
 
-- **Kamēr brilles lasa failu no koplietotā datora** (video, ko tās atskaņo, foto, ko tās lejupielādē), Windows nevar šo failu pārdēvēt, pārvietot vai dzēst un saka, ka tas ir atvērts Immuch360 Desktop: vispirms apturiet atskaņošanu. Dublēšana jūsu failus tā netur: failu var pārdēvēt, pārvietot vai dzēst, kamēr tas tiek augšupielādēts.
-- **Nepabeigtas vietas**: iepriekš minētās funkcijas iztur savus automatizētos testus Windows sistēmā (475 darbvirsmas testi), un Windows 11 datorā lietotne startē, atver saglabātu sesiju Immich serverī, sinhronizē un korekti aizveras. Katras funkcijas pārbaude ar rokām īstā datorā vēl notiek.
+- **Jauna būvējuma pirmā palaišana ir lēna**: no 10 sekundēm līdz apmēram minūtei, pirms parādās logs, visticamāk, kamēr Microsoft Defender skenē jaunos failus, kas vēl nav parakstīti. Gaidiet logu, nevis palaidiet lietotni vēlreiz; nākamās palaišanas ilgst sekundi vai divas.
+- **8K HEVC video vajag atsevišķu grafikas mikroshēmu**: testa klēpjdatorā integrētā Intel UHD mikroshēma rādīja apmēram pusi no 8K HEVC video kadriem, kamēr atsevišķā NVIDIA mikroshēma atskaņoja 8K HEVC un 5.7K H.264 bez neviena izlaista kadra. Windows palaiž lietotni uz integrētās mikroshēmas, ja nav norādīts citādi: Windows iestatījumos, „Sistēma”, „Displejs”, „Grafika”, pievienojiet `immuch360.exe` un izvēlieties „Augsta veiktspēja”. Uz integrētās mikroshēmas 5.7K H.264 video, ko tās dekoderis atsaka, atkodē procesors bez neviena zaudēta kadra.
+- **Video tiek zīmēti ne augstāk par 1440 rindām**, tad mērogoti pēc loga: 4K ekrānā pilnekrāna režīmā 4K vai 8K video ir nedaudz mīkstāks nekā atsevišķā video atskaņotājā. Tas notur 8K video klēpjdatora grafiskās jaudas robežās.
+- **Kamēr lietotnē tiek atskaņots jūsu mapju video vai kamēr brilles lasa failu no koplietotā datora** (video, ko tās atskaņo, foto, ko tās lejupielādē), Windows nevar šo failu pārdēvēt, pārvietot vai dzēst un saka, ka tas ir atvērts Immuch360 Desktop: vispirms aizveriet video vai apturiet atskaņošanu brillēs. Dublēšana jūsu failus tā netur: failu var pārdēvēt, pārvietot vai dzēst, kamēr tas tiek augšupielādēts.
+- **Nepabeigtas vietas**: 656 no 663 darbvirsmas testiem Windows sistēmā tiek izturēti (7 ir apzināti izlaisti), 200 cits pēc cita atvērti atskaņotāji neatstāj nekādu noplūdi, un Windows 11 datorā lietotne startē, atver saglabātu sesiju Immich serverī, sinhronizē, atskaņo video un korekti aizveras. Katras funkcijas pārbaude ar rokām īstā datorā vēl notiek.
 
 Ja kaut kas nenotiek, kā vajag, lūdzu, atveriet [problēmas pieteikumu](https://github.com/freeKC/Immuch360/issues) ar žurnālu, kas saglabāts lapā „Žurnāli”, skatiet [Žurnāli](#logs). Pirms koplietošanas pārbaudiet žurnālu: tajā var būt jūsu servera adrese.
 
@@ -1027,19 +1037,17 @@ Ja kaut kas nenotiek, kā vajag, lūdzu, atveriet [problēmas pieteikumu](https:
 
 Jums vajag Windows 10 vai 11 x64, Flutter 3.47.2 Windows sistēmai, Visual Studio 2022 vai tā Build Tools ar darba slodzi „Desktop development with C++”, Windows iestatījumos ieslēgtu Developer Mode (Flutter tas vajadzīgs spraudņiem) un Python 3 komplektēšanas skriptam.
 
-1. Iegūstiet zaru `desktop` un palaidiet koda ģenerēšanu. Tā izmanto Java un Node, tāpēc palaidiet to Linux, macOS vai WSL; ar WSL glabājiet klonu Windows diskā, ko WSL redz kā `/mnt/c` vai `/mnt/d`:
+1. Iegūstiet pirmkodu un palaidiet koda ģenerēšanu. Galvenais zars `immuch360` būvē arī datora versiju: nav zara, uz kuru pārslēgties. Koda ģenerēšana izmanto Java un Node, tāpēc palaidiet to Linux, macOS vai WSL; ar WSL glabājiet klonu Windows diskā, ko WSL redz kā `/mnt/c` vai `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Windows sistēmā, tajā pašā mapē `mobile`, izveidojiet lietotni:
+2. Windows sistēmā, tajā pašā mapē `mobile`, izveidojiet lietotni. Pirmais būvējums lejupielādē video atskaņotāja bibliotēkas (libmpv un ANGLE) no GitHub un pārbauda katru arhīvu pēc tā SHA-256:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Jums vajag Windows 10 vai 11 x64, Flutter 3.47.2 Windows sistēmai, Visual Studi
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. Mape `Release` darbojas datorā, kas to izveidoja. Citam datoram saglabājiet visu mapi un blakus `immuch360.exe` pievienojiet Visual C++ izpildlaiku. No klona saknes komplektēšanas skripts to nokopē, izlaiž to, kas noder tikai Android, pārbauda, vai katrs DLL, ko lietotne ielādē, ir mapē vai pašā Windows, un izveido ZIP:
+3. Mape `Release` darbojas datorā, kas to izveidoja. Citam datoram saglabājiet visu mapi un blakus `immuch360.exe` pievienojiet Visual C++ izpildlaiku. No klona saknes komplektēšanas skripts to nokopē, izlaiž to, kas noder tikai Android, pievieno video atskaņotāja licences, pārbauda, vai katrs DLL, ko lietotne ielādē, ir mapē vai pašā Windows, un izveido ZIP:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-Zara `desktop` CI (`.github/workflows/immuch360-desktop.yml`) palaiž tālruņa pārbaudes un visu testu komplektu Linux sistēmā, darbvirsmas testus Windows sistēmā un izveido to pašu ZIP; tā Linux un macOS darbi (`flutter build linux` un `flutter build macos`, ar to pašu `-t lib/main_desktop.dart`) šajās sistēmās vēl nav palaisti.
+Immuch360 Desktop CI (`.github/workflows/immuch360-desktop.yml`) darbojas zarā `desktop`, kas seko `immuch360`: tālruņa pārbaudes (tālruņa būvējumos nekas nemainās) un viss testu komplekts Linux sistēmā, darbvirsmas testi Windows sistēmā un tas pats ZIP; tā Linux un macOS darbi (`flutter build linux` un `flutter build macos`, ar to pašu `-t lib/main_desktop.dart`) šajās sistēmās vēl nav palaisti.
 
 <a id="where-to-get-it"></a>
 ## Kur to iegūt
@@ -1075,8 +1083,8 @@ Lietotne ir Google Play tālruņiem un planšetdatoriem; App Store versija gaida
   - Šodien: universālais `Immuch360-v<version>-release.apk` lapā [Releases](https://github.com/freeKC/Immuch360/releases), instalēts no sāniem ar adb, skatiet [Instalēt to televizorā](#install-it-on-the-tv). Tā ir tā pati lietotne kā tālruņos.
   - Drīzumā: Google Play televizoriem, pēc Google pārskatīšanas televizora laidienam.
 - **Windows 10 un 11, 64 bitu (priekšskatījums)**
-  - Šodien: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` no [darbvirsmas pirmslaidiena](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), atarhivēts un palaists, kā norādīts sadaļā [Lejupielāde un instalēšana Windows sistēmā](#download-and-install-on-windows). Pagaidām tikai foto: video nāks ar nākamajiem darbvirsmas būvējumiem.
-  - Drīzumā: video atskaņošana; vēlāk instalētājs, parakstīts būvējums un atjauninājumi.
+  - Šodien: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` no [darbvirsmas pirmslaidiena](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), atarhivēts un palaists, kā norādīts sadaļā [Lejupielāde un instalēšana Windows sistēmā](#download-and-install-on-windows). Pagaidām foto un plakanie video: 360°, 3D un VR180 video nāks ar nākamajiem darbvirsmas būvējumiem.
+  - Drīzumā: 360°, 3D, VR180 un neapstrādātie 360° video; vēlāk instalētājs, parakstīts būvējums un atjauninājumi.
 
 App Store un Meta Horizon Store saites tiks pievienotas šeit, tiklīdz ieraksti būs publicēti. Pieslēdzieties ar savu parasto Immich servera URL un kontu vai pieslēgšanās lapā pieskarieties „Lietot bez servera”, lai sāktu ar pašas ierīces foto un video. APK no GitHub pats neatjauninās: sekojiet lapai Releases, un, kad lietotne ir instalēta no veikala, ņemiet atjauninājumus no šī veikala.
 
@@ -1105,15 +1113,15 @@ Variants `quest` mērķē uz SDK 34 un patur tikai brillēs izmantotās atļauja
 
 Lai būvētu iOS savā Mac datorā, izmantojiet Xcode un savu parakstīšanas komandu; ar Xcode 26 vispirms vienreiz palaidiet `xcodebuild -downloadComponent MetalToolchain`, jo to vajag Spatial ēnotājiem. Bez Mac iOS būvējumi darbojas Codemagic (mitināts Mac) no šīs repozitorija faila `codemagic.yaml`. Android laidienu būvējumi darbojas GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, Windows versija, tiek būvēta no zara `desktop` ar Flutter Windows sistēmai: soļi ir sadaļā [Izveidojiet to paši Windows sistēmā](#build-it-yourself-on-windows).
+Immuch360 Desktop, Windows versija, tiek būvēta no tiem pašiem pirmkodiem, zara `immuch360`, ar Flutter Windows sistēmai: soļi ir sadaļā [Izveidojiet to paši Windows sistēmā](#build-it-yourself-on-windows).
 
 Šajā repozitorijā nav neviena noslēpuma: Android parakstīšanas atslēga glabājas kā šifrēti GitHub Actions noslēpumi, un Apple parakstīšanas materiāli glabājas kā šifrēti mainīgie Codemagic. Darbplūsmas faili uz tiem atsaucas tikai pēc nosaukuma. Bez sava `android/key.jks` laidiena būvējums tiek parakstīts ar atkļūdošanas atslēgu un nevar instalēties pār kopiju no GitHub vai veikala (vispirms atinstalējiet to); atkļūdošanas būvējums instalējas blakus tai kā Immuch360 debug. Meta Horizon Store kopija ir laidiena `quest` APK, parakstīts ar citu atslēgu, to, ar kuru veikala lietotne pirmo reizi tika reģistrēta, tāpēc tā arī nevar instalēties pār no sāniem instalētu APK, ne otrādi.
 
 ### Zari
 
 - **`main`**: Immich `main` pie revīzijas, uz kuras balstās `immuch360` (pašreizējiem būvējumiem 2026. gada 29. septembris), nekad netiek mainīts; tas virzās uz priekšu, kad atzarojums tiek pārbāzēts uz jaunāku Immich.
-- **`immuch360`**: šī atzarojuma izmaiņas virs Immich. Katrā laidienā norādīts, uz kuras Immich versijas tas balstās.
-- **`desktop`**: Immuch360 Desktop, datora versija, virs `immuch360`. Tālruņa laidieni tiek sapludināti tajā, un darbvirsmas pirmslaidieni tiek būvēti no tā (darbvirsmas būvējums 1 no revīzijas 21f285c34, tālruņa 20. būvējums plus datora versija). Nekas zem `mobile/android` un `mobile/ios` tajā nemainās.
+- **`immuch360`**: šī atzarojuma izmaiņas virs Immich, kopš 2026. gada 9. oktobra ieskaitot Immuch360 Desktop. Katrā laidienā norādīts, uz kuras Immich versijas tas balstās.
+- **`desktop`**: šeit Immuch360 Desktop, datora versija, tika būvēta virs `immuch360`, līdz 2026. gada 9. oktobrī tā tika sapludināta tajā, lai tālruņi, brilles, televizori un datori tiktu izlaisti no tiem pašiem pirmkodiem. Tagad tas seko `immuch360` un nes darbvirsmas pirmslaidienu birkas ([darbvirsmas būvējums 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) no revīzijas 21f285c34, [darbvirsmas būvējums 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) no 5b723bd25). Datora versija neko nemaina zem `mobile/android` un `mobile/ios`.
 
 <a id="logs"></a>
 ## Žurnāli
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 No 19. būvējuma DLNA klients, tālruņa koplietojums un Apple telpiskās multivides atpazīšana raksta arī lietotnes pašas žurnālā („Žurnāli”, profila attēla izvēlnē augšā pa labi), ar tagiem `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` un `NetworkMediaService`. No 20. būvējuma televizora režīms tur raksta ar tagiem `TvMode` un `TvTextEntry`, Plex serveri ar `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` un `PlexServerEditPage`, un Tapo kameras ar `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` un `CameraLiveView`; Plex rindās nekad nav marķiera, adreses vai nosaukuma, un kameru rindās nav paroļu. Žurnāla rindas paliek ierīcē, ja vien jūs tās paši nenokopējat.
 
-Datorā (Immuch360 Desktop) lapā „Žurnāli” ir arī „Save logs to a file” (Saglabāt žurnālus failā): žurnāls vai žurnāla un pēdējo avāriju pārskatu ZIP, ja tādi ir (tad tā ieteiktais nosaukums beidzas ar „with-crash-reports”). Avārijas pārskats ir neliels minidump: pavedieni, kur tie apstājās, un tikai tas, kas vajadzīgs to izsaukumu izsekošanai, ar programmas failu nosaukumiem, bet bez to mapēm; ne lietotnes atmiņa. Pirms koplietošanas pārbaudiet žurnālu: tajā var būt jūsu servera adrese.
+Datorā (Immuch360 Desktop) lapā „Žurnāli” ir arī „Save logs to a file” (Saglabāt žurnālus failā): žurnāls vai žurnāla un pēdējo avāriju pārskatu ZIP, ja tādi ir (tad tā ieteiktais nosaukums beidzas ar „with-crash-reports”). Avārijas pārskats ir neliels minidump: pavedieni, kur tie apstājās, un tikai tas, kas vajadzīgs to izsaukumu izsekošanai, ar programmas failu nosaukumiem, bet bez to mapēm; ne lietotnes atmiņa.
+
+No darbvirsmas būvējuma 2 datora video atskaņotājs tur raksta ar birkām `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` un `VideoThumbnailGrabber`, ieskaitot paša mpv brīdinājumus, ar noņemtiem marķieriem un parolēm. Pirms koplietošanas pārbaudiet žurnālu: tajā var būt jūsu servera adrese.
 
 <a id="privacy"></a>
 ## Privātums
@@ -1144,6 +1154,7 @@ Datorā (Immuch360 Desktop) lapā „Žurnāli” ir arī „Save logs to a file
 - **Tālruņa koplietojums**: tikai lokālais tīkls, ar lietotājvārdu un paroli, caur vienkāršu HTTP (skatiet [Koplietot šo tālruni tīklā](#share-this-phone-on-the-network)).
 - **Kamera**: izmanto tikai Spatial 2.5D atskaņotājs, ierīcē; attēli nekad netiek glabāti un nekur netiek sūtīti.
 - **Datorā** (Immuch360 Desktop, Windows priekšskatījums): lietotne lasa tikai jūsu izvēlētās mapes, datorā glabā savu indeksu, sīktēlus un kešatmiņu, un paroles un marķierus glabā ar Windows datu aizsardzību, tikai jūsu Windows kontam. Datora koplietojums ievēro tālruņa koplietojuma noteikumus un nesākas tīklā, ko Windows atzīmē kā publisku vai kura veidu tā nevar noteikt, ja vien jūs to nevēlaties.
+- **Video atskaņotājs datorā** (no darbvirsmas būvējuma 2): jūsu servera video to sasniedz caur lietotni, tāpēc atskaņotājs nekad neglabā jūsu sesijas marķieri, un tas, ko tas nolasa uz priekšu, paliek atmiņā, nevis diskā. Tas atver tikai tam nodoto failu: mapes vai koplietojuma fails, kas patiesībā ir atskaņošanas saraksts vai straumes apraksts, neliek tam pieslēgties nekur citur.
 
 Pilna politika ir failā [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ Pilna politika ir failā [PRIVACY.md](../PRIVACY.md).
 
 Šis projekts ir Immich atzarojums un paliek saskaņā ar [GNU AGPL v3](../LICENSE). Katrā APK, ieskaitot tālruņu, ir arī Meta Spatial SDK, kas nav atvērtā koda (Meta Platform Technologies SDK License Agreement) un tiek izmantots tikai Meta Quest brillēs; Immuch360 Desktop, Windows versijā, tā nav. Immuch360 nav saistīta ar Immich komandu vai FUTO, un tās to neatbalsta.
 
+Immuch360 Desktop Windows ZIP, un tikai tas, satur arī savu video atskaņotāju: libmpv, [mpv](https://mpv.io) bibliotēku, ar [FFmpeg](https://ffmpeg.org) tajā, ko vada [media_kit](https://github.com/media-kit/media-kit) spraudņi. mpv un FFmpeg ir būvēti bez savām tikai GPL daļām, un to kods ir saskaņā ar GNU LGPL 2.1 vai jaunāku versiju; kopā būvēts, `libmpv-2.dll` tiek izplatīts saskaņā ar GNU LGPL 3 vai jaunāku versiju. Lietotne to ielādē izpildes laikā, tāpēc jūs varat to aizstāt ar savu būvējumu. Licenču teksti ir ZIP mapē `licenses`, un katra bibliotēka ar savu licenci un pirmkodu ir uzskaitīta [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Ceļvedis
 
 Kas vēl nav izdarīts, visticamākais vispirms. Nekas šeit nav solījums, un atsauksmes [problēmu sekotājā](https://github.com/freeKC/Immuch360/issues) palīdz izlemt, kas nāks vispirms.
 
-- **Immuch360 Desktop, vispirms Windows**: pirmais priekšskatījums ir iznācis (skatiet [Windows datorā](#on-a-windows-computer-immuch360-desktop-preview)). Tālāk video atskaņošana (vispirms plakanie video, tad 360°, 3D, VR180 un neapstrādātie faili), izmērīta uz abām klēpjdatora grafiskajām kartēm; tad katras funkcijas pārbaude Windows datorā un tās labojumi; tad Spatial 2.5D ar tīmekļa kameru; tad Linux un macOS, pakotnes, parakstīšana un atjauninājumi.
+- **Immuch360 Desktop, vispirms Windows**: darbvirsmas būvējums 2 ir iznācis, ar plakaniem video, un darbvirsmas pirmkods kopš 2026. gada 9. oktobra ir atzarojuma galvenajā zarā `immuch360` (skatiet [Windows datorā](#on-a-windows-computer-immuch360-desktop-preview)). Tālāk 360°, 3D, VR180 un neapstrādātie 360° video Windows sistēmā, ar neapstrādāto failu abiem objektīviem un Tapo tiešraidi; tad katras funkcijas pārbaude Windows datorā un tās labojumi; tad Spatial 2.5D ar tīmekļa kameru; tad Linux un macOS, pakotnes, parakstīšana un atjauninājumi.
 - **Google Play**: 18. būvējums ir pieejams; 20. būvējums ir Google pārskatīšanā kopš 2026. gada 7. oktobra, 19. būvējuma vietā. 21. būvējums tālruņos un planšetdatoros neko nemaina.
 - **App Store**: versija 3.3.0 gaida Apple pārskatīšanu; tai ir 11. būvējuma funkcijas, tāpēc augšupielāde uz Immich un video dekoderu pārbaude (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar nākamo App Store atjauninājumu. Saite tiks pievienota šeit, kad tā būs aktīva.
 - **Meta Horizon Store**: Meta apstiprināja ierakstu 2026. gada 7. oktobrī ar 14. būvējumu. 21. būvējums ir iesniegts kā tā pirmais atjauninājums: tas atnes visu kopš 14. būvējuma (augšupielādes no koplietojuma uz Immich, video avotu, kas izvēlēts pēc tā, ko brilles spēj dekodēt, neapstrādātus Insta360, GoPro un DJI failus, DLNA, tālruņa koplietojumu, Apple telpiskos foto, Plex Media Server bibliotēkas, Tapo kameras), un veikals to piedāvā Quest 2, Quest Pro, Quest 3 un 3S. Veikala saite tiks pievienota šeit, kad lapa būs publiska; no sāniem instalēta kopija vispirms būs jāatinstalē (skatiet [Instalēšana](#install)).
@@ -1166,7 +1179,7 @@ Kas vēl nav izdarīts, visticamākais vispirms. Nekas šeit nav solījums, un a
 - **DLNA, tālruņa koplietojums un Apple telpiskie faili, tālāk**: 19. būvējuma ziņojumi no ierīcēm (Plex, Jellyfin, NAS un Freebox Server caur DLNA; tālrunis, kas apkalpo Quest, arī savā tīklājā; īsti iPhone telpiskie foto un video brillēs); multiraides tiesības, kas lūgtas no Apple, lai iPhone atrastu katru DLNA serveri; iepriekšējais un nākamais starp telpiskajiem foto brillēs; telpiskā nozīmīte uz servera foto laika skalā; telpiskie video 3D formātā Quest brillēs, ja to dekoderi to ļaus.
 - **360° atskaņotāji tālruņos, tālāk**: laika josla iOS 360° video atskaņotājā (Android atskaņotājam tā ir), iepriekšējais/nākamais tālruņu 360° atskaņotājos kā Quest imersīvajā skatā, un foto iebūvētajā 360° video atskaņotājā.
 - **Tīkla koplietojumi, nākamie soļi**: pārvilkšana no viena mapes faila uz nākamo foto un video lapās (Quest imersīvais skats jau iet cauri mapes 360° failiem), Digest autentifikācija WebDAV, lietotājvārds no Bonjour ieraksta.
-- **Plakani video**: audio celiņa izvēle plakanajā atskaņotājā, vienādi servera, ierīces un koplietojuma video (360° un Spatial atskaņotājiem tā ir).
+- **Plakani video**: audio celiņa izvēle tālruņu plakanajā atskaņotājā, vienādi servera, ierīces un koplietojuma video (360° un Spatial atskaņotājiem tā ir, un tāpat Immuch360 Desktop plakanajam atskaņotājam).
 - **Android TV, tālāk**: 20. būvējuma ierīču tests Google TV emulatorā un īstā televizorā, tad televizora laidiens Google Play (televizora ekrānuzņēmumi, televizora reklāmkarogs, Google pārskatīšana); vēlāk kanāli televizora sākuma ekrānā.
 - **Tapo kameras, tālāk**: 20. būvējuma ierīču tests ar īstām kamerām; tiešraide iPhone un iPad; H.265 ieraksti; klipa atskaņošana, kamēr tas tiek iegūts; visas dienas ieraksti vienā laika joslā.
 - **Plex, tālāk**: 20. būvējuma ierīču tests (tālruņi, Quest brilles, iPhone, televizors, ārpus mājām); marķiera pārnešana no datora ar QR kodu; Plex servera DLNA puses paslēpšana atrasto serveru sarakstā; IPv6.

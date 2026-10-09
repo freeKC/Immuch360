@@ -19,13 +19,13 @@ Tá sé dóibh siúd a ghlacann pictiúir le ceamara 360° (Insta360, GoPro MAX,
   App Store: <a href="#where-to-get-it">á athbhreithniú</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store ceadaithe, tógáil 21 curtha isteach mar a chéad nuashonrú<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">íoslódáil an réamhamhairc</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">íoslódáil an réamhamhairc</a>, tógáil deisce 2
 </p>
 
 - 🌐 **360° dúchasach**<br>Grianghraif agus físeáin mar sféar a mbreathnaíonn tú timpeall ann, leis an ngíreascóp, comhaid amha ceamara san áireamh (Insta360 ó thógáil 16, GoPro agus DJI ó thógáil 18). Seinnteoir físe saor in aisce freisin: cothrom, 360°, 3D, VR180
 - 👓 **3D dúchasach**<br>360° steiréascópach agus VR180, barr agus bun nó taobh le taobh, agus grianghraif spásúla Apple (ó thógáil 19): fíor-3D sa chluasán, súil amháin ar ghuthán
 - 🎥 **2.5D dúchasach**<br>Doimhneacht ar scáileán cothrom ó fhíseán steiréascópach, leanann an t-amharc do cheann (turgnamhach, gutháin agus táibléid)
-- 📱 **Android, iOS, Quest, TV**<br>Aip amháin ar ghutháin, ar tháibléid agus ar na cluasáin Quest 2, Pro, 3 agus 3S, fíor-3D sa chluasán, ó thógáil 20 ar Android TV leis an gcianrialtán, agus réamhamharc Windows
+- 📱 **Android, iOS, Quest, TV**<br>Aip amháin ar ghutháin, ar tháibléid agus ar na cluasáin Quest 2, Pro, 3 agus 3S, fíor-3D sa chluasán, ó thógáil 20 ar Android TV leis an gcianrialtán, agus réamhamharc Windows le grianghraif agus físeáin chothroma
 - 🔌 **Le freastalaí nó gan freastalaí**<br>Do fhreastalaí Immich, nó gailearaí an ghutháin féin, gan gá le cuntas
 - 🗄️ **Comhroinnt líonra**<br>Samba (SMB), WebDAV agus, ó thógáil 19, freastalaithe meán DLNA a aimsítear ar an líonra agus a léitear beo, gan aon rud a íoslódáil, agus a sheoltar chuig Immich nuair is mian leat. Ó thógáil 19 comhroinneann guthán a ghailearaí féin leis an gcluasán freisin
 - 📺 **Ar an teilifís**<br>Ó thógáil 20 an APK céanna ar Android TV agus Google TV: grianghraif agus físeáin 360°, do fhreastalaí agus do chomhroinntí, leis an gcianrialtán
@@ -79,7 +79,7 @@ Tá sé dóibh siúd a ghlacann pictiúir le ceamara 360° (Insta360, GoPro MAX,
 - **“Ba mhaith liom féachaint ar mo ghrianghraif agus m'fhíseáin 360°, agus ar fhíseáin mo NAS nó mo fhreastalaí Plex, ar an teilifís, leis an gcianrialtán.”** Féach [Féach ar do theilifís](#watch-on-your-tv-android-tv-and-google-tv).
 - **“Ní féidir liom mo phictiúir 360° a aimsiú i measc na gcinn eile go léir.”** Féach [An liosta 360°](#find-your-360-shots-the-360-list).
 - **“Stadann mo fhíseán 360°, nó seinneann sé cóip dhoiléir.”** Féach [Sonraí físe agus díchódóirí](#video-details-decoders-and-why-a-video-stutters).
-- **“Ba mhaith liom mo ghrianghraif 360° agus mo leabharlann Immich ar mo ríomhaire Windows, le grianghraif a fhillteán, mo NAS agus mo fhreastalaí Plex, agus an ríomhaire comhroinnte le mo chluasán.”** Féach [Ar ríomhaire Windows](#on-a-windows-computer-immuch360-desktop-preview) (réamhamharc, grianghraif amháin faoi láthair).
+- **“Ba mhaith liom mo ghrianghraif 360° agus mo leabharlann Immich ar mo ríomhaire Windows, le grianghraif agus físeáin a fhillteán, mo NAS agus mo fhreastalaí Plex, agus an ríomhaire comhroinnte le mo chluasán.”** Féach [Ar ríomhaire Windows](#on-a-windows-computer-immuch360-desktop-preview) (réamhamharc: grianghraif agus físeáin chothroma faoi láthair, físeáin 360° níos déanaí).
 - **“An gcoinním a ndéanann aip Immich?”** Coinníonn, le dhá athrú bheaga, féach [Is Immich gach rud eile](#everything-else-is-immich).
 
 Nuair is gné nua í, luann an téacs cén tógáil óna bhfuil sí ann. Bíonn an tógáil is nuaí i gcónaí ag an eisiúint ar GitHub, agus tagann na siopaí ina dhiaidh sin: féach [Cá bhfaighidh tú í](#where-to-get-it).
@@ -752,7 +752,7 @@ Tá an tógáil reatha, tógáil 21 (leagan 3.3.0-rc.0, uimhir tógála 3030019)
 | Leabharlanna Plex Media Server seinnte ó na bunchomhaid, sa bhaile agus as baile, gan plex.tv | ❌ | ✅ ó thógáil 20, gach amharcóir, ar ghutháin, ar tháibléid, ar an Quest agus ar theilifíseáin |
 | Ceamaraí Tapo: an radharc beo, agus taifeadtaí an chárta cuimhne seolta chuig Immich nuair a roghnaíonn tú | ❌ | ✅ ó thógáil 20: taifeadtaí i ngach áit, beo ar Android, Android TV agus an Quest |
 | Android TV agus Google TV, stiúrtha leis an gcianrialtán, san APK céanna | ❌ ní aip teilifíse í | ✅ ó thógáil 20 |
-| An aip chéanna ar ríomhaire Windows | ❌ gutháin agus táibléid amháin | ✅ réamhamharc, gan físeáin fós |
+| An aip chéanna ar ríomhaire Windows | ❌ gutháin agus táibléid amháin | ✅ réamhamharc, grianghraif agus físeáin chothroma |
 | Grianghraif amha Insta360 .insp agus físeáin amha .insv aon riain | ❌ cothrom | ✅ ó thógáil 16 |
 | Físeáin amha le lionsa amháin in aghaidh an riain nó in aghaidh an chomhaid (Insta360 X4, X4 Air, X5, X6, péirí X3, GoPro .360, DJI .osv) | ❌ cothrom nó mícheart | ✅ ó thógáil 18 |
 | .dng súil éisc dhúbailte | ❌ cothrom | ❌ ní fós |
@@ -782,7 +782,7 @@ Tá an tógáil reatha, tógáil 21 (leagan 3.3.0-rc.0, uimhir tógála 3030019)
 - **Plex Media Server**: seiceáilte ó ríomhaire in aghaidh fíor-Plex Media Server 1.42.1 (péireáil, fillteáin, raonta beart, mionsamhlacha, an seoladh lasmuigh den bhaile); gan seiceáil ar ghléas fós.
 - **Ceamaraí Tapo**: seiceáilte in aghaidh ceamara ionsamhlaithe; gan seiceáil le fíorcheamara fós.
 - **Android TV agus Google TV**: seiceáilte le tástálacha uathoibrithe; gan seiceáil ar theilifís fós.
-- **An aip chéanna ar ríomhaire Windows**: 475 tástáil uathoibrithe deisce ar Windows, agus ar ríomhaire Windows 11 tosaíonn an aip, osclaíonn sí seisiún sábháilte ar fhreastalaí Immich, sioncronaíonn sí agus dúntar go glan í; tá tástáil gach feidhme de láimh ar siúl.
+- **An aip chéanna ar ríomhaire Windows**: éiríonn le 656 de na 663 tástáil uathoibrithe deisce ar Windows (7 scipeáilte d'aon ghnó), agus ar ríomhaire Windows 11 tosaíonn an aip, osclaíonn sí seisiún sábháilte ar fhreastalaí Immich, sioncronaíonn sí, seinneann sí físeán agus dúntar go glan í; tá tástáil gach feidhme de láimh ar siúl.
 - **Grianghraif amha Insta360 .insp agus físeáin amha .insv aon riain**: grianghraif seiceáilte i gcoinne easpórtálacha Insta360 Studio de chomhaid X3, físeáin ar aithriseoir Android le comhad X3 íseal-taifigh; gan rith ar iPhone fós.
 - **Físeáin amha le lionsa amháin in aghaidh an riain nó in aghaidh an chomhaid**: parsálaithe agus fuáil seiceáilte ar fhíorchomhaid X4, péire X3, GoPro MAX agus Osmo 360; is í an athsheinm an tástáil ar ghléasanna do thógálacha 18 agus 19.
 - **.dng súil éisc dhúbailte**: beartaithe.
@@ -825,16 +825,19 @@ Is gailearaí é Immuch360, agus is seinnteoir meán saor in aisce é freisin: s
   - iPhone, iPad: mar an gcéanna, ach amháin comhaid MKV agus AVI comhroinnte, nach n-osclaíonn iOS (ar fhreastalaí seinntear traschódaithe iad).
   - Meta Quest: san fhuinneog.
   - Android TV, Google TV: mar ar ghutháin; cuireann OK ar sos, léimeann clé agus deas 10 s.
+  - Windows (ó thógáil deisce 2): an seinnteoir libmpv, ó gach foinse den dara liosta; cuireann Enter ar sos, léimeann clé agus deas nó J agus L 10 s.
 - **Grianghraif 360°**
   - Gutháin Android: amharcóir sféarúil, gíreascóp.
   - iPhone, iPad: mar an gcéanna.
   - Meta Quest: tumthach, timpeall ort.
   - Android TV, Google TV: amharcóir sféarúil casta leis na saigheada, zúmáil le heochracha na gcainéal.
+  - Windows: amharcóir sféarúil, luch agus méarchlár.
 - **Físeáin 360°**
   - Gutháin Android: seinnteoir dúchasach Media3 ar sféar, gíreascóp, cuardach, rogha riain fuaime, táscaire maolánaithe.
   - iPhone, iPad: seinnteoir dúchasach SceneKit ar sféar, gíreascóp, rogha riain fuaime, táscaire maolánaithe; seinn agus sos, gan barra ama fós.
   - Meta Quest: tumthach, fíor-3D do chomhaid steiréascópacha, barra ama le scipeanna 10 soicind, an meán roimhe agus ina dhiaidh.
   - Android TV, Google TV: seinnteoir Media3 na ngutháin, casta leis na saigheada.
+  - Windows: níl fós, taispeánta cothrom faoi láthair.
 - **3D 360° (barr agus bun, taobh le taobh)**
   - Gutháin Android: súil chlé, cnaipe leagain amach.
   - iPhone, iPad: mar an gcéanna.
@@ -888,7 +891,7 @@ Is gailearaí é Immuch360, agus is seinnteoir meán saor in aisce é freisin: s
 
 Níor seiceáladh na hiontrálacha Android TV agus Google TV, ó thógáil 20, ar theilifís fós, féach [Féach ar do theilifís](#watch-on-your-tv-android-tv-and-google-tv); níor seiceáladh iontrálacha na gceamaraí le fíorcheamara fós.
 
-Ar Windows, taispeánann réamhamharc Immuch360 Desktop na grianghraif, cothrom agus 360°, grianghraif amha .insp Insta360 san áireamh, leis an luch agus leis an méarchlár, ón bhfreastalaí, ó fhillteáin an ríomhaire, ó na comhroinntí agus ó Plex; ní sheinneann sé físeáin fós, taispeánann siad íomhá ionadaí (féach [Níl sé ann fós](#not-there-yet)).
+Ar Windows, taispeánann réamhamharc Immuch360 Desktop na grianghraif, cothrom agus 360°, grianghraif amha .insp Insta360 san áireamh, leis an luch agus leis an méarchlár, agus ó thógáil deisce 2 seinneann sé físeáin chothroma, ón bhfreastalaí, ó fhillteáin an ríomhaire, ó na comhroinntí, ó Plex agus ó thaifeadtaí Tapo; taispeántar físeáin 360°, 3D, VR180 agus físeáin amha 360° cothrom nó mar íomhá ionadaí faoi láthair (féach [Níl sé ann fós](#not-there-yet)).
 
 - **Do fhreastalaí Immich**: an bunleagan nó sruth traschódaithe an fhreastalaí, de réir Socruithe, Amharcóir Sócmhainní, Foinse físe (féach [Sonraí físe agus díchódóirí](#video-details-decoders-and-why-a-video-stutters)). An cuntas céanna leis an aip ghréasáin.
 - **An guthán nó an cluasán féin**: “Úsáid gan freastalaí” ar an leathanach logála isteach, nó an iontráil Ar an ngléas seo sa chluaisín Leabharlann.
@@ -959,24 +962,24 @@ Gabhálacha a glacadh sa chluasán leis an gcnaipe gabhála (cnaipe Meta agus tr
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Ar ríomhaire Windows: Immuch360 Desktop (réamhamharc)
 
-Tá do leabharlann Immich ar fhreastalaí, tá grianghraif eile i bhfillteáin an ríomhaire, na físeáin ar NAS nó ar fhreastalaí Plex, agus ba mhaith leat breathnú timpeall i do ghrianghraif 360° ar scáileán mór, nó grianghraif an ríomhaire a thaispeáint sa chluasán. Is é Immuch360 Desktop an aip chéanna ar ríomhaire Windows, tógtha ó na foinsí céanna leis na haipeanna gutháin.
+Tá do leabharlann Immich ar fhreastalaí, tá grianghraif agus físeáin eile i bhfillteáin an ríomhaire, tuilleadh físeán ar NAS nó ar fhreastalaí Plex, agus ba mhaith leat breathnú timpeall i do ghrianghraif 360° agus do chuid físeán a sheinm ar scáileán mór, nó grianghraif an ríomhaire a thaispeáint sa chluasán. Is é Immuch360 Desktop an aip chéanna ar ríomhaire Windows, tógtha ó na foinsí céanna leis na haipeanna gutháin.
 
-Ar ríomhaire, cuireann Immich a aip ghréasáin ar fáil i mbrabhsálaí. **An rud a chuireann Immuch360 Desktop leis**: fillteáin an ríomhaire gan freastalaí ná cuntas, comhroinntí SMB, WebDAV, DLNA agus Plex brabhsáilte ón aip, grianghraif amha .insp Insta360 oscailte mar sféar, agus an ríomhaire comhroinnte le Meta Quest sa bhaile.
+Ar ríomhaire, cuireann Immich a aip ghréasáin ar fáil i mbrabhsálaí. **An rud a chuireann Immuch360 Desktop leis**: fillteáin an ríomhaire gan freastalaí ná cuntas, comhroinntí SMB, WebDAV, DLNA agus Plex brabhsáilte agus seinnte ón aip, grianghraif amha .insp Insta360 oscailte mar sféar, agus an ríomhaire comhroinnte le Meta Quest sa bhaile.
 
-Is réamhamharc an chéad tógáil seo: oibríonn grianghraif, tagann físeáin leis na chéad tógálacha deisce eile. Ní athraíonn na haipeanna gutháin, táibléid, Quest agus teilifíse leis, agus coinníonn siad an t-ainm Immuch360.
+Is réamhamharc é seo: ó thógáil deisce 2, oibríonn grianghraif agus físeáin chothroma; tagann físeáin 360°, 3D agus VR180 leis na chéad tógálacha deisce eile. Ón 9 Deireadh Fómhair 2026 tá foinsí an leagain deisce i bpríomhchraobh an fhorc, `immuch360`, ionas go n-eisítear gutháin, cluasáin, teilifíseáin agus ríomhairí ó na foinsí céanna. Ní athraíonn na haipeanna gutháin, táibléid, Quest agus teilifíse leis, agus coinníonn siad an t-ainm Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Íoslódáil agus suiteáil ar Windows
 
-Is í an chéad tógáil an réamheisiúint GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Is é a comhad `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33.5 MB, 65 comhad nuair a dhízipeáiltear é), le `SHA256SUMS.txt` chun é a sheiceáil. Tógadh í ón gcraobh `desktop` ag an tiomantas 21f285c34: tógáil 20 an ghutháin móide an leagan ríomhaire. Teastaíonn Windows 10 nó 11, 64 giotán, uaithi.
+Is í an tógáil reatha an réamheisiúint GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Is é a comhad `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (thart ar 57 MB, 78 comhad nuair a dhízipeáiltear é, an seinnteoir físe agus a fhillteán `licenses` san áireamh), le `SHA256SUMS.txt` chun é a sheiceáil. Tógadh í ón bpríomhchraobh, `immuch360`, ag an tiomantas 5b723bd25: foinsí thógáil 21 an ghutháin móide an leagan ríomhaire. Teastaíonn Windows 10 nó 11, 64 giotán, uaithi.
 
 1. Íoslódáil an ZIP agus dízipeáil é áit ar bith, mar shampla in Documents.
-2. Tosaigh `immuch360.exe` ón bhfillteán dízipeáilte. Coinnigh an fillteán iomlán: teastaíonn na comhaid in aice leis ón ríomhchlár.
+2. Tosaigh `immuch360.exe` ón bhfillteán dízipeáilte. Coinnigh an fillteán iomlán: teastaíonn na comhaid in aice leis ón ríomhchlár, an seinnteoir físe san áireamh.
 3. Níl na comhaid sínithe fós, mar sin d'fhéadfadh Windows SmartScreen “Windows protected your PC” a thaispeáint: roghnaigh “More info”, ansin “Run anyway”. Nuair atá Smart App Control ar siúl, cuireann sé bac ar ríomhchláir gan síniú.
 4. Fan leis an bhfuinneog. Tógann an chéad tosú de thógáil nua idir 10 soicind agus timpeall nóiméad, is dócha fad is atá Microsoft Defender ag scanadh na gcomhad nua: ná tosaigh an aip arís idir an dá linn. Tógann na tosuithe ina dhiaidh sin soicind nó dhó.
 5. Ar an leathanach logála isteach, logáil isteach ar do fhreastalaí Immich lena sheoladh, do ríomhphost agus do phasfhocal, nó cliceáil “Úsáid gan freastalaí”.
 
-Chun an ZIP a sheiceáil, rith `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` i dtréadlíne na n-orduithe, i bhfillteán na híoslódála: is é an toradh an ceann atá scríofa in `SHA256SUMS.txt`. Níl suiteálaí ná nuashonrú uathoibríoch ann fós: coinnigh súil ar an leathanach [Releases](https://github.com/freeKC/Immuch360/releases), agus dízipeáil an chéad tógáil eile ar an mbealach céanna.
+Chun an ZIP a sheiceáil, rith `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` i dtréadlíne na n-orduithe, i bhfillteán na híoslódála: is é an toradh an ceann atá scríofa in `SHA256SUMS.txt`. Níl suiteálaí ná nuashonrú uathoibríoch ann fós: coinnigh súil ar an leathanach [Releases](https://github.com/freeKC/Immuch360/releases), agus dízipeáil an chéad tógáil eile ar an mbealach céanna.
 
 ### A ndéanann an réamhamharc
 
@@ -984,7 +987,8 @@ Chun an ZIP a sheiceáil, rith `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-
 - **Gan freastalaí**: tagann fillteáin do ghrianghraf agus d'fhíseán (moltar Pictures agus Videos) in ionad ghailearaí an ghutháin. Ní léitear aon rud lasmuigh de na fillteáin a roghnaigh tú, agus gan freastalaí ní fhágann aon rud an ríomhaire.
 - **Uaslódáil agus cúltaca** ó na fillteáin sin chuig do fhreastalaí Immich, fad is atá an aip oscailte.
 - **Grianghraif 360° mar sféar**, leis an luch agus leis an méarchlár; osclaítear grianghraif amha .insp ceamaraí Insta360 mar a dhéantar ar ghutháin.
-- **Comhroinnt líonra**: Samba (SMB), WebDAV agus freastalaithe meán DLNA, agus freastalaithe Plex gan plex.tv, brabhsáilte mar ar ghutháin: osclaítear a ngrianghraif, fanann a bhfíseáin leis an seinnteoir físe (féach [Níl sé ann fós](#not-there-yet)). I gcás ceamaraí Tapo, taifeadtaí an chárta cuimhne: an liosta, agus gearrthóg a fháil.
+- **Físeáin chothroma** (ó thógáil deisce 2): seinntear sa fhuinneog físeáin do chuid fillteán, do fhreastalaí Immich (an bunleagan nó an sruth traschódaithe, féach [Sonraí físe agus díchódóirí](#video-details-decoders-and-why-a-video-stutters)), chomhroinntí SMB, WebDAV agus DLNA, fhreastalaithe Plex agus thaifeadtaí Tapo, le rialuithe na ngutháin (seinn, sos, an barra ama), táscaire maoláin, agus roghchlár de na rianta fuaime d'fhíseán a bhfuil roinnt acu. Taispeánann físeáin do chuid fillteán agus na gcomhroinntí fráma den fhíseán mar mhionsamhail, in ionad deilbhín scannáin.
+- **Comhroinnt líonra**: Samba (SMB), WebDAV agus freastalaithe meán DLNA, agus freastalaithe Plex gan plex.tv, brabhsáilte mar ar ghutháin: osclaítear a ngrianghraif agus seinntear a bhfíseáin. I gcás ceamaraí Tapo, taifeadtaí an chárta cuimhne: an liosta, gearrthóg a fháil agus í a sheinm.
 - **Comhroinn an ríomhaire seo ar an líonra**: albaim, míonna agus meáin 360° do chuid fillteán, inléite amháin, do Meta Quest nó gléas eile sa bhaile, mar a chomhroinneann guthán é féin.
 - **Comhaid**: téann íoslódálacha ón bhfreastalaí i bhfillteán a roghnaíonn tú, coinníonn “Sábháil i bhfillteán” cóip de na grianghraif agus na físeáin roghnaithe, agus tá “Sábháil logaí i gcomhad” ar an leathanach Logaí.
 
@@ -994,9 +998,11 @@ Chun an ZIP a sheiceáil, rith `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-
 2. **Fillteáin néil, USB agus líonra.** Comhairtear na comhaid nach gcoinníonn OneDrive (nó tiomáint néil eile) ach ar líne, ach ní léitear iad, mar sin ní íoslódálann fillteán a chur leis do néal ar fad: faigheann “Íoslódáil agus cuir san áireamh” iad nuair a theastaíonn siad uait. Coinníonn tiomáint USB a thagann ar ais faoi litir eile a cuid grianghraf. Ní fhairtear fillteáin líonra, ná fillteáin ar chárta cuimhne nó ar thiomáint USB (ionas gur féidir le Windows í a dhíchur fós), le haghaidh athruithe: úsáid Athnuaigh tar éis comhaid a chur leo.
 3. **Breathnaigh timpeall i ngrianghraf 360°**: tarraing leis an luch, zúmáil leis an roth, déchliceáil nó + agus - (ar aon leagan amach méarchláir, AZERTY san áireamh), bog leis na saigheadeochracha. Athraíonn F nó F11 go lánscáileán agus fágann Escape é; téann Home agus End chuig an gcéad ghrianghraf agus an ceann deireanach; taispeánann I na sonraí.
 4. **Téigh ó ghrianghraf go grianghraf**: i ngrianghraf cothrom, téann na saigheada clé agus deas, nó na sardóga a thaispeántar ag na himill nuair a bhogann an luch, chuig an gceann roimhe agus an chéad cheann eile. Fanann litreacha a chlóscríobhtar i réimse an tuairisc sa téacs.
-5. **Comhroinn an ríomhaire leis an gcluasán**: oscail an Leabharlann, ansin Comhroinnt líonra; is í an chéad tíl “Comhroinn an ríomhaire seo ar an líonra”, taobh an ríomhaire de [Comhroinn an fón seo ar an líonra](#share-this-phone-on-the-network). Cuir “Comhroinn grianghraif agus físeáin ar an líonra” ar siúl, ansin cuir an ríomhaire leis sa chluasán mar a deir an chuid sin. Stopann an chomhroinnt nuair a dhúntar an aip nó tar éis uair an chloig gan úsáid.
-6. **Ceadaigh an líonra**: d'fhéadfadh Windows fiafraí an féidir le Immuch360 Desktop an líonra a úsáid. Ceadaigh é ar líonraí príobháideacha, nó ní féidir leis an gcluasán an ríomhaire a aimsiú. Ar líonra a mharcálann Windows mar phoiblí (caife, óstán), nó nach féidir leis a chineál a aithint, ní thosaíonn an chomhroinnt mura roghnaíonn tú “Comhroinn don seisiún seo”, agus ní fhógraíonn an ríomhaire é féin ach ar líonra ina bhfuil sé ag comhroinnt.
-7. **Socruithe, “An ríomhaire seo”**: na fillteáin, fillteán na n-íoslódálacha, an cuibheoir líonra a úsáidtear chun comhroinntí a aimsiú agus chun an ríomhaire a chomhroinnt (nuair atá níos mó ná ceann amháin aige, Wi-Fi agus Ethernet mar shampla), agus teastais iontaofa: údarás deimhnithe do fhreastalaí féin, mar chomhad PEM, do sheoladh HTTPS nach bhfuil muinín ag Windows as leis féin. Iompórtáiltear teastais chliaint i Socruithe, Ardleibhéal, mar ar ghutháin.
+5. **Seinn físeán**: oscail é ón amlíne, ó fhillteán, ó chomhroinnt, ó Plex nó ó thaifeadtaí ceamara Tapo; seinntear é sa fhuinneog. Cuireann Enter, nó eochair seinnte agus sosa an mhéarchláir, ar sos é agus seinneann arís é. Fad is atá sé á sheinm, léimeann na saigheada clé agus deas, nó J agus L, 10 soicind siar nó ar aghaidh; ar sos, téann na saigheada chuig an gceann roimhe agus an chéad cheann eile. Athraíonn F nó F11 go lánscáileán, mar a dhéantar le grianghraif. Roghnaíonn an cnaipe “Rian fuaime” i measc rianta fuaime físeáin a bhfuil roinnt acu.
+6. **Nuair a stopann físeán**: fanann físeán ar sos ar sos nuair a thagann tú ar ais chuig an bhfuinneog. Deir físeán a gearradh roimh a dheireadh amhlaidh, nuair a stopann an chomhroinnt nó an freastalaí ag freagairt mar shampla: oscail arís é agus leanann sé ar aghaidh ón áit ar stad sé, ar sos. Ní leantar comhad seinnliosta a aimsítear i bhfillteán nó i gcomhroinnt.
+7. **Comhroinn an ríomhaire leis an gcluasán**: oscail an Leabharlann, ansin Comhroinnt líonra; is í an chéad tíl “Comhroinn an ríomhaire seo ar an líonra”, taobh an ríomhaire de [Comhroinn an fón seo ar an líonra](#share-this-phone-on-the-network). Cuir “Comhroinn grianghraif agus físeáin ar an líonra” ar siúl, ansin cuir an ríomhaire leis sa chluasán mar a deir an chuid sin. Stopann an chomhroinnt nuair a dhúntar an aip nó tar éis uair an chloig gan úsáid.
+8. **Ceadaigh an líonra**: d'fhéadfadh Windows fiafraí an féidir le Immuch360 Desktop an líonra a úsáid. Ceadaigh é ar líonraí príobháideacha, nó ní féidir leis an gcluasán an ríomhaire a aimsiú. Ar líonra a mharcálann Windows mar phoiblí (caife, óstán), nó nach féidir leis a chineál a aithint, ní thosaíonn an chomhroinnt mura roghnaíonn tú “Comhroinn don seisiún seo”, agus ní fhógraíonn an ríomhaire é féin ach ar líonra ina bhfuil sé ag comhroinnt.
+9. **Socruithe, “An ríomhaire seo”**: na fillteáin, fillteán na n-íoslódálacha, an cuibheoir líonra a úsáidtear chun comhroinntí a aimsiú agus chun an ríomhaire a chomhroinnt (nuair atá níos mó ná ceann amháin aige, Wi-Fi agus Ethernet mar shampla), agus teastais iontaofa: údarás deimhnithe do fhreastalaí féin, mar chomhad PEM, do sheoladh HTTPS nach bhfuil muinín ag Windows as leis féin. Iompórtáiltear teastais chliaint i Socruithe, Ardleibhéal, mar ar ghutháin.
 
 ### I gcomparáid leis na haipeanna gutháin
 
@@ -1005,20 +1011,24 @@ Chun an ZIP a sheiceáil, rith `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-
 - **Fuinneog amháin**: má osclaítear an aip an dara huair, tugtar an chéad fhuinneog ar ais in ionad an dara cóip a thosú.
 - **Ní scriostar aon rud as do chuid fillteán**: tá “Scrios ón ngléas” i bhfolach, agus ní bhaineann Scrios ach cóip an fhreastalaí, go dtí gur féidir leis an aip comhaid a sheoladh chuig bosca athchúrsála Windows.
 - **Luch agus méarchlár** in ionad tadhaill agus an ghíroscóip.
+- **Seinnteoir físe amháin do gach foinse**: seinneann libmpv físeáin an fhreastalaí, na bhfillteán, na gcomhroinntí agus Plex ar an mbealach céanna, agus tá an roghchlár rianta fuaime cheana féin ag a sheinnteoir cothrom, rud nach bhfuil fós ag seinnteoir cothrom na ngutháin.
 
 <a id="not-there-yet"></a>
 ### Níl sé ann fós
 
-- **Físeáin**: taispeánann siad íomhá ionadaí faoi láthair, agus a mionsamhlacha deilbhín scannáin. Tagann an athsheinm ina dhiaidh seo: físeáin chothroma ar dtús, ansin físeáin 360°, 3D agus VR180 agus na físeáin amha 360°.
+- **Físeáin 360°, 3D, VR180 agus físeáin amha 360°**: taispeántar cothrom iad faoi láthair, mar a choinníonn an comhad iad (an sféar iomlán leata amach, an dá shúil taobh le taobh, nó pictiúir chruinne na lionsaí), nó mar íomhá ionadaí, agus fanann an cnaipe 360° ar ghrianghraif. Tagann a seinnteoirí leis na chéad tógálacha deisce eile.
 - **Spatial 2.5D**, níos déanaí leis an gceamara gréasáin; **radharc beo Tapo**; an **léarscáil** agus an t-amharc Áiteanna; **logáil isteach le OAuth** (logáil isteach le ríomhphost agus pasfhocal ina ionad); **Google Cast**; **fógraí**.
 - **Suiteálaí, tógáil shínithe agus nuashonruithe uathoibríocha**: is fillteán le `immuch360.exe` an tógáil seo.
-- **Linux agus macOS**: tá a dtionscadail sna foinsí, ach níor tógadh ná níor triaileadh iad ar na córais sin fós; tagann siad i ndiaidh Windows.
+- **Linux agus macOS**: tá a dtionscadail sna foinsí, ach níor tógadh ná níor triaileadh iad ar na córais sin fós, agus níl a seinnteoir físe iontu fós; tagann siad i ndiaidh Windows.
 - **Aistriúcháin**: tá téacsanna nua an leagain ríomhaire i mBéarla faoi láthair.
 
 ### Fadhbanna aitheanta
 
-- **Fad is atá an cluasán ag léamh comhaid ón ríomhaire comhroinnte** (físeán a sheinneann sé, grianghraf a íoslódálann sé), ní féidir le Windows an comhad sin a athainmniú, a bhogadh ná a scriosadh agus deir sé go bhfuil sé oscailte in Immuch360 Desktop: stop an athsheinm ar dtús. Ní choinníonn cúltacaí do chomhaid ar an mbealach sin: is féidir comhad a athainmniú, a bhogadh nó a scriosadh fad is atá sé á uaslódáil.
-- **Imill gharbha**: éiríonn leis na feidhmeanna thuas ina dtástálacha uathoibrithe ar Windows (475 tástáil deisce), agus ar ríomhaire Windows 11 tosaíonn an aip, osclaíonn sí seisiún sábháilte ar fhreastalaí Immich, sioncronaíonn sí agus dúntar go glan í. Tá tástáil gach feidhme de láimh ar fhíor-ríomhaire ar siúl fós.
+- **Bíonn an chéad tosú de thógáil nua mall**: ó 10 soicind go dtí timpeall nóiméad sula dtaispeántar an fhuinneog, is dóichí fad is atá Microsoft Defender ag scanadh na gcomhad nua, nach bhfuil sínithe fós. Fan leis an bhfuinneog seachas an aip a thosú arís; tógann na tosuithe ina dhiaidh sin soicind nó dhó.
+- **Teastaíonn sliseanna grafaice tiomnaithe ó fhíseáin 8K HEVC**: ar an ríomhaire glúine tástála, níor thaispeáin an tslis chomhtháite Intel UHD ach thart ar leath de fhrámaí físeáin 8K HEVC, cé gur sheinn an tslis thiomnaithe NVIDIA 8K HEVC agus 5.7K H.264 gan fráma a chailleadh. Ritheann Windows an aip ar an tslis chomhtháite mura n-insítear a mhalairt dó: i socruithe Windows, System, Display, Graphics, cuir `immuch360.exe` leis agus roghnaigh “High performance”. Ar an tslis chomhtháite, díchódaíonn an próiseálaí físeán 5.7K H.264, a ndiúltaíonn a díchódóir dó, gan fráma a chailleadh.
+- **Tarraingítear físeáin 1440 líne ar airde ar a mhéad**, ansin scálaítear iad don fhuinneog: ar scáileán 4K ar lánscáileán, bíonn físeán 4K nó 8K beagán níos boige ná i seinnteoir físe tiomnaithe. Coinníonn sé seo físeán 8K laistigh de chumhacht ghrafaice ríomhaire glúine.
+- **Fad is atá físeán de do chuid fillteán á sheinm san aip, nó fad is atá an cluasán ag léamh comhaid ón ríomhaire comhroinnte** (físeán a sheinneann sé, grianghraf a íoslódálann sé), ní féidir le Windows an comhad sin a athainmniú, a bhogadh ná a scriosadh agus deir sé go bhfuil sé oscailte in Immuch360 Desktop: dún an físeán, nó stop an athsheinm sa chluasán, ar dtús. Ní choinníonn cúltacaí do chomhaid ar an mbealach sin: is féidir comhad a athainmniú, a bhogadh nó a scriosadh fad is atá sé á uaslódáil.
+- **Imill gharbha**: éiríonn le 656 de na 663 tástáil deisce ar Windows (7 scipeáilte d'aon ghnó), ní fhágann 200 seinnteoir a osclaítear ceann i ndiaidh a chéile aon sceitheadh, agus ar ríomhaire Windows 11 tosaíonn an aip, osclaíonn sí seisiún sábháilte ar fhreastalaí Immich, sioncronaíonn sí, seinneann sí físeán agus dúntar go glan í. Tá tástáil gach feidhme de láimh ar fhíor-ríomhaire ar siúl fós.
 
 Má théann rud éigin mícheart, oscail [issue](https://github.com/freeKC/Immuch360/issues), le do thoil, leis an loga a sábháladh ón leathanach Logaí, féach [Logaí](#logs). Seiceáil an loga sula gcomhroinneann tú é: d'fhéadfadh seoladh do fhreastalaí a bheith ann.
 
@@ -1027,19 +1037,17 @@ Má théann rud éigin mícheart, oscail [issue](https://github.com/freeKC/Immuc
 
 Teastaíonn Windows 10 nó 11 ar x64 uait, Flutter 3.47.2 do Windows, Visual Studio 2022 nó a Build Tools leis an ualach oibre “Desktop development with C++”, Developer Mode curtha ar siúl i socruithe Windows (teastaíonn sé ó Flutter do na breiseáin), agus Python 3 don script phacáistithe.
 
-1. Faigh an chraobh `desktop` agus rith giniúint an chóid. Úsáideann sí Java agus Node, mar sin rith í ar Linux, macOS nó in WSL; le WSL, coinnigh an clón ar thiomáint Windows, a fheiceann WSL faoi `/mnt/c` nó `/mnt/d`:
+1. Faigh na foinsí agus rith giniúint an chóid. Tógann an phríomhchraobh, `immuch360`, an leagan ríomhaire freisin: níl craobh ar bith le haistriú chuici. Úsáideann giniúint an chóid Java agus Node, mar sin rith í ar Linux, macOS nó in WSL; le WSL, coinnigh an clón ar thiomáint Windows, a fheiceann WSL faoi `/mnt/c` nó `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Ar Windows, san fhillteán `mobile` céanna, tóg an aip:
+2. Ar Windows, san fhillteán `mobile` céanna, tóg an aip. Íoslódálann an chéad tógáil leabharlanna an tseinnteora físe (libmpv agus ANGLE) ó GitHub agus seiceálann sí gach cartlann de réir a SHA-256:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Teastaíonn Windows 10 nó 11 ar x64 uait, Flutter 3.47.2 do Windows, Visual Stu
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. Ritheann an fillteán `Release` ar an ríomhaire a thóg é. Do ríomhaire eile, coinnigh an fillteán iomlán agus cuir am rite Visual C++ in aice le `immuch360.exe`. Ó fhréamh an chlóin, cóipeálann an script phacáistithe é, fágann sí amach a bhfuil ag freastal ar Android amháin, seiceálann sí go bhfuil gach DLL a lódálann an aip san fhillteán nó in Windows féin, agus déanann sí an ZIP:
+3. Ritheann an fillteán `Release` ar an ríomhaire a thóg é. Do ríomhaire eile, coinnigh an fillteán iomlán agus cuir am rite Visual C++ in aice le `immuch360.exe`. Ó fhréamh an chlóin, cóipeálann an script phacáistithe é, fágann sí amach a bhfuil ag freastal ar Android amháin, cuireann sí ceadúnais an tseinnteora físe leis, seiceálann sí go bhfuil gach DLL a lódálann an aip san fhillteán nó in Windows féin, agus déanann sí an ZIP:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-Ritheann CI na craoibhe `desktop` (`.github/workflows/immuch360-desktop.yml`) seiceálacha an ghutháin agus an tsraith tástálacha iomlán ar Linux, na tástálacha deisce ar Windows, agus tógann sí an ZIP céanna; níor rith a jabanna Linux agus macOS (`flutter build linux` agus `flutter build macos`, leis an `-t lib/main_desktop.dart` céanna) ar na córais sin fós.
+Ritheann CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) ar an gcraobh `desktop`, a leanann `immuch360`: seiceálacha an ghutháin (ní athraíonn aon rud i dtógálacha an ghutháin) agus an tsraith tástálacha iomlán ar Linux, na tástálacha deisce ar Windows, agus an ZIP céanna; níor rith a jabanna Linux agus macOS (`flutter build linux` agus `flutter build macos`, leis an `-t lib/main_desktop.dart` céanna) ar na córais sin fós.
 
 <a id="where-to-get-it"></a>
 ## Cá bhfaighidh tú í
@@ -1075,8 +1083,8 @@ Tá an aip ar Google Play do ghutháin agus do tháibléid; tá leagan an App St
   - Inniu: an `Immuch360-v<version>-release.apk` uilíoch ón leathanach [Releases](https://github.com/freeKC/Immuch360/releases), taobhlódáilte le adb, féach [Í a shuiteáil ar an teilifís](#install-it-on-the-tv). Is í an aip chéanna í agus atá ar ghutháin.
   - Go luath: Google Play ar theilifíseáin, tar éis athbhreithniú Google ar an eisiúint teilifíse.
 - **Windows 10 agus 11, 64 giotán (réamhamharc)**
-  - Inniu: Immuch360 Desktop, an ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` den [réamheisiúint deisce](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), dízipeáilte agus tosaithe mar a deir [Íoslódáil agus suiteáil ar Windows](#download-and-install-on-windows). Grianghraif amháin faoi láthair: tagann físeáin leis na chéad tógálacha deisce eile.
-  - Go luath: athsheinm físeáin; suiteálaí, tógáil shínithe agus nuashonruithe níos déanaí.
+  - Inniu: Immuch360 Desktop, an ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` den [réamheisiúint deisce](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), dízipeáilte agus tosaithe mar a deir [Íoslódáil agus suiteáil ar Windows](#download-and-install-on-windows). Grianghraif agus físeáin chothroma faoi láthair: tagann físeáin 360°, 3D agus VR180 leis na chéad tógálacha deisce eile.
+  - Go luath: físeáin 360°, 3D, VR180 agus físeáin amha 360°; suiteálaí, tógáil shínithe agus nuashonruithe níos déanaí.
 
 Cuirfear naisc an App Store agus an Meta Horizon Store anseo a luaithe a fhoilseofar na liostuithe. Logáil isteach le URL agus cuntas do ghnáthfhreastalaí Immich, nó tapáil “Úsáid gan freastalaí” ar an leathanach logála isteach chun tosú ar ghrianghraif agus ar fhíseáin an ghléis féin. Ní nuashonraíonn an APK ó GitHub é féin: coinnigh súil ar an leathanach Releases, agus nuair atá an aip suiteáilte agat ó shiopa, faigh na nuashonruithe ón siopa sin.
 
@@ -1105,15 +1113,15 @@ Díríonn an blas `quest` ar SDK 34 agus ní choinníonn sé ach na ceadanna a �
 
 Chun tógáil do iOS ar do Mac féin, úsáid Xcode agus d'fhoireann sínithe féin; le Xcode 26, rith `xcodebuild -downloadComponent MetalToolchain` uair amháin ar dtús, mar teastaíonn sé ó scáthóirí Spatial. Gan Mac, ritheann tógálacha iOS ar Codemagic (Mac óstáilte) ón gcomhad `codemagic.yaml` sa stór seo. Ritheann tógálacha eisiúna Android ar GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
-Tógtar Immuch360 Desktop, an leagan Windows, ón gcraobh `desktop` le Flutter do Windows: tá na céimeanna in [Tóg tú féin é ar Windows](#build-it-yourself-on-windows).
+Tógtar Immuch360 Desktop, an leagan Windows, ó na foinsí céanna, an chraobh `immuch360`, le Flutter do Windows: tá na céimeanna in [Tóg tú féin é ar Windows](#build-it-yourself-on-windows).
 
 Níl aon rún sa stór seo: stóráiltear eochair shínithe Android mar rúin chriptithe GitHub Actions, agus ábhar sínithe Apple mar athróga criptithe ar Codemagic. Ní thagraíonn na comhaid sreabhadh oibre dóibh ach de réir ainm. Gan do `android/key.jks` féin, sínítear tógáil eisiúna leis an eochair dhífhabhtaithe agus ní féidir í a shuiteáil thar chóip ó GitHub nó ó shiopa (díshuiteáil an chóip sin ar dtús); suiteáiltear tógáil dhífhabhtaithe lena taobh mar Immuch360 debug. Is í cóip an Meta Horizon Store APK `quest` na heisiúna sínithe le heochair eile, an ceann lenar cláraíodh aip an tsiopa ar dtús, mar sin ní féidir í a shuiteáil thar APK taobhlódáilte ach oiread, ná a mhalairt.
 
 ### Craobhacha
 
 - **`main`**: Immich `main` ag an tiomantas ar a bhfuil `immuch360` bunaithe (29 Meán Fómhair 2026 do na tógálacha reatha), nach n-athraítear riamh; bogann sé ar aghaidh nuair a athbhunaítear an forc ar Immich níos nuaí.
-- **`immuch360`**: athruithe an fhorc seo ar bharr Immich. Luann gach eisiúint cén leagan Immich ar a bhfuil sí bunaithe.
-- **`desktop`**: Immuch360 Desktop, an leagan ríomhaire, ar bharr `immuch360`. Cumasctar eisiúintí an ghutháin isteach ann, agus tógtar na réamheisiúintí deisce uaidh (tógáil deisce 1 ón tiomantas 21f285c34, tógáil 20 an ghutháin móide an leagan ríomhaire). Ní athraíonn aon rud faoi `mobile/android` agus `mobile/ios` air.
+- **`immuch360`**: athruithe an fhorc seo ar bharr Immich, Immuch360 Desktop san áireamh ón 9 Deireadh Fómhair 2026. Luann gach eisiúint cén leagan Immich ar a bhfuil sí bunaithe.
+- **`desktop`**: an áit ar tógadh Immuch360 Desktop, an leagan ríomhaire, ar bharr `immuch360`, go dtí gur cumascadh isteach ann é an 9 Deireadh Fómhair 2026 ionas go n-eisítear gutháin, cluasáin, teilifíseáin agus ríomhairí ó na foinsí céanna. Leanann sí `immuch360` anois agus iompraíonn sí clibeanna na réamheisiúintí deisce ([tógáil deisce 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) ón tiomantas 21f285c34, [tógáil deisce 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ó 5b723bd25). Ní athraíonn an leagan ríomhaire aon rud faoi `mobile/android` agus `mobile/ios`.
 
 <a id="logs"></a>
 ## Logaí
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Ó thógáil 19 scríobhann an cliant DLNA, comhroinnt an ghutháin agus aithint mheáin spásúla Apple chuig loga na haipe féin freisin (Logaí, i roghchlár an phictiúir phróifíle ag barr ar dheis), faoi `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` agus `NetworkMediaService`. Ó thógáil 20 scríobhann an mód teilifíse ansin faoi `TvMode` agus `TvTextEntry`, na freastalaithe Plex faoi `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` agus `PlexServerEditPage`, agus na ceamaraí Tapo faoi `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` agus `CameraLiveView`; ní bhíonn an comhartha, seoladh ná teideal riamh i línte Plex, agus fágann línte na gceamaraí na pasfhocail amach. Fanann línte an loga ar an ngléas mura gcóipeálann tú féin iad.
 
-Ar ríomhaire (Immuch360 Desktop), tá “Sábháil logaí i gcomhad” ar an leathanach Logaí freisin: an loga, nó ZIP den loga agus de thuairiscí na dtuairteanna deireanacha nuair atá cinn ann (críochnaíonn an t-ainm a mholtar ansin le “with-crash-reports”). Is minidump beag é tuairisc tuairte: na snáitheanna, an áit ar stad siad agus a bhfuil ag teastáil chun a nglaonna a leanúint, le hainmneacha chomhaid an ríomhchláir ach gan a bhfillteáin; ní cuimhne na haipe. Seiceáil an loga sula gcomhroinneann tú é: d'fhéadfadh seoladh do fhreastalaí a bheith ann.
+Ar ríomhaire (Immuch360 Desktop), tá “Sábháil logaí i gcomhad” ar an leathanach Logaí freisin: an loga, nó ZIP den loga agus de thuairiscí na dtuairteanna deireanacha nuair atá cinn ann (críochnaíonn an t-ainm a mholtar ansin le “with-crash-reports”). Is minidump beag é tuairisc tuairte: na snáitheanna, an áit ar stad siad agus a bhfuil ag teastáil chun a nglaonna a leanúint, le hainmneacha chomhaid an ríomhchláir ach gan a bhfillteáin; ní cuimhne na haipe.
+
+Ó thógáil deisce 2 scríobhann seinnteoir físe an ríomhaire ansin faoi `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` agus `VideoThumbnailGrabber`, rabhaidh mpv féin san áireamh, agus comharthaí agus pasfhocail bainte amach. Seiceáil an loga sula gcomhroinneann tú é: d'fhéadfadh seoladh do fhreastalaí a bheith ann.
 
 <a id="privacy"></a>
 ## Príobháideacht
@@ -1144,6 +1154,7 @@ Ar ríomhaire (Immuch360 Desktop), tá “Sábháil logaí i gcomhad” ar an le
 - **Comhroinnt an ghutháin**: líonra áitiúil amháin, le hainm úsáideora agus pasfhocal, thar HTTP simplí (féach [Comhroinn an fón seo ar an líonra](#share-this-phone-on-the-network)).
 - **Ceamara**: ní úsáideann ach an seinnteoir Spatial 2.5D é, ar an ngléas; ní stóráiltear riamh na híomhánna agus ní sheoltar áit ar bith iad.
 - **Ar ríomhaire** (Immuch360 Desktop, réamhamharc Windows): ní léann an aip ach na fillteáin a roghnaíonn tú, coinníonn sí a hinnéacs, a mionsamhlacha agus a taisce ar an ríomhaire, agus stórálann sí pasfhocail agus comharthaí le cosaint sonraí Windows, do do chuntas Windows amháin. Leanann comhroinnt an ríomhaire rialacha chomhroinnt an ghutháin, agus ní thosaíonn sí ar líonra a mharcálann Windows mar phoiblí, nó nach féidir leis a chineál a aithint, mura ndeir tú é.
+- **An seinnteoir físe ar ríomhaire** (ó thógáil deisce 2): sroicheann físeáin do fhreastalaí é tríd an aip, mar sin ní choinníonn an seinnteoir do chomhartha seisiúin riamh, agus fanann a léann sé roimh ré sa chuimhne, ní ar an diosca. Ní osclaíonn sé ach an comhad a thugtar dó: ní chuireann comhad d'fhillteán nó de chomhroinnt atá ina sheinnliosta nó ina thuairisc srutha i ndáiríre ceangal áit ar bith eile air.
 
 Tá an polasaí iomlán in [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ Tá an polasaí iomlán in [PRIVACY.md](../PRIVACY.md).
 
 Is forc de Immich an tionscadal seo agus fanann sé faoi [GNU AGPL v3](../LICENSE). Tá an Meta Spatial SDK i ngach APK freisin, iad siúd do ghutháin san áireamh, agus ní foinse oscailte é (Meta Platform Technologies SDK License Agreement) agus ní úsáidtear é ach ar chluasáin Meta Quest; níl sé in Immuch360 Desktop, an leagan Windows. Níl Immuch360 cleamhnaithe le foireann Immich ná le FUTO, ná formhuinithe acu.
 
+Iompraíonn ZIP Windows Immuch360 Desktop, agus é sin amháin, a sheinnteoir físe freisin: libmpv, leabharlann [mpv](https://mpv.io), le [FFmpeg](https://ffmpeg.org) taobh istigh di, á tiomáint ag breiseáin [media_kit](https://github.com/media-kit/media-kit). Tógtar mpv agus FFmpeg gan a gcodanna atá GPL amháin, agus tá a gcód faoin GNU LGPL leagan 2.1 nó níos déanaí; tógtha le chéile, dáiltear `libmpv-2.dll` faoin GNU LGPL leagan 3 nó níos déanaí. Lódálann an aip í ag am rite, mar sin is féidir leat do thógáil féin a chur ina háit. Tá téacsanna na gceadúnas san fhillteán `licenses` den ZIP, agus tá gach leabharlann lena ceadúnas agus a foinsí liostaithe in [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Treochlár
 
 An méid nach bhfuil déanta fós, an rud is dóichí ar dtús. Ní gealltanas aon rud anseo, agus cabhraíonn aiseolas ar an [rianaire fadhbanna](https://github.com/freeKC/Immuch360/issues) le cinneadh a dhéanamh cad a thiocfaidh ar dtús.
 
-- **Immuch360 Desktop, Windows ar dtús**: tá an chéad réamhamharc amuigh (féach [Ar ríomhaire Windows](#on-a-windows-computer-immuch360-desktop-preview)). Ina dhiaidh sin, athsheinm físeáin (físeáin chothroma ar dtús, ansin 360°, 3D, VR180 agus na comhaid amha), tomhaiste ar dhá chárta grafaice ríomhaire glúine; ansin tástáil gach feidhme ar ríomhaire Windows agus a ceartúcháin; ansin Spatial 2.5D leis an gceamara gréasáin; ansin Linux agus macOS, pacáistí, síniú agus nuashonruithe.
+- **Immuch360 Desktop, Windows ar dtús**: tá tógáil deisce 2 amuigh, le físeáin chothroma, agus tá foinsí an leagain deisce i bpríomhchraobh an fhorc, `immuch360`, ón 9 Deireadh Fómhair 2026 (féach [Ar ríomhaire Windows](#on-a-windows-computer-immuch360-desktop-preview)). Ina dhiaidh sin, físeáin 360°, 3D, VR180 agus físeáin amha 360° ar Windows, le dhá lionsa na gcomhad amha agus radharc beo Tapo; ansin tástáil gach feidhme ar ríomhaire Windows agus a ceartúcháin; ansin Spatial 2.5D leis an gceamara gréasáin; ansin Linux agus macOS, pacáistí, síniú agus nuashonruithe.
 - **Google Play**: tá tógáil 18 beo; tá tógáil 20 á hathbhreithniú ag Google ó 7 Deireadh Fómhair 2026, in ionad thógáil 19. Ní athraíonn tógáil 21 aon rud ar ghutháin ná ar tháibléid.
 - **App Store**: tá leagan 3.3.0 ag fanacht ar athbhreithniú Apple; tá gnéithe thógáil 11 ann, mar sin tagann an uaslódáil chuig Immich agus seiceáil na ndíchódóirí físe (tógáil 15) agus na comhaid amha Insta360 (tógáil 16) leis an gcéad nuashonrú App Store eile. Cuirfear an nasc anseo nuair a bheidh sé beo.
 - **Meta Horizon Store**: cheadaigh Meta an liostú ar 7 Deireadh Fómhair 2026 le tógáil 14. Tá tógáil 21 curtha isteach mar a chéad nuashonrú: tugann sí gach rud ó thógáil 14 (uaslódálacha ó chomhroinnt chuig Immich, foinse an fhíseáin roghnaithe de réir a ndíchódaíonn an cluasán, comhaid amha Insta360, GoPro agus DJI, DLNA, comhroinnt an ghutháin, grianghraif spásúla Apple, leabharlanna Plex Media Server, ceamaraí Tapo), agus liostaíonn an siopa í do Quest 2, Quest Pro, Quest 3 agus 3S. Cuirfear nasc an tsiopa anseo nuair a bheidh an leathanach poiblí; beidh ort cóip thaobhlódáilte a dhíshuiteáil ar dtús (féach [Suiteáil](#install)).
@@ -1166,7 +1179,7 @@ An méid nach bhfuil déanta fós, an rud is dóichí ar dtús. Ní gealltanas a
 - **DLNA, comhroinnt an ghutháin agus spásúil Apple, an chéad rud eile**: tuairiscí ó ghléasanna do thógáil 19 (Plex, Jellyfin, NAS agus an Freebox Server thar DLNA; guthán ag freastal ar Quest, ar a bhall te freisin; fíorghrianghraif agus fíorfhíseáin spásúla iPhone sa chluasán); an teidlíocht ilchraolta a iarradh ar Apple, ionas go n-aimseoidh iPhone gach freastalaí DLNA; roimhe seo agus ar aghaidh idir grianghraif spásúla sa chluasán; suaitheantas spásúil ar ghrianghraif an fhreastalaí san amlíne; físeáin spásúla i 3D ar an Quest, má cheadaíonn a dhíchódóirí é.
 - **Seinnteoirí 360° ar ghutháin, an chéad rud eile**: barra ama i seinnteoir físe 360° iOS (tá ceann ag an gceann Android), roimhe seo/ar aghaidh i seinnteoirí 360° na ngutháin mar atá in amharc tumthach an Quest, agus grianghraif sa seinnteoir físe 360° dúchasach.
 - **Comhroinnt líonra, na chéad chéimeanna eile**: svaidhpeáil ó chomhad amháin i bhfillteán go dtí an chéad cheann eile ar na leathanaigh grianghraif agus físe (téann amharc tumthach an Quest trí chomhaid 360° fillteáin cheana), fíordheimhniú Digest do WebDAV, an t-ainm úsáideora ó thaifead Bonjour.
-- **Físeáin chothroma**: rogha an riain fuaime sa seinnteoir cothrom, d'fhíseáin fhreastalaí, ghléis agus chomhroinnte araon (tá sé ag na seinnteoirí 360° agus Spatial).
+- **Físeáin chothroma**: rogha an riain fuaime i seinnteoir cothrom na ngutháin, d'fhíseáin fhreastalaí, ghléis agus chomhroinnte araon (tá sé ag na seinnteoirí 360° agus Spatial, agus ag seinnteoir cothrom Immuch360 Desktop freisin).
 - **Android TV, an chéad rud eile**: tástáil ghléis thógáil 20 ar aithriseoir Google TV agus ar fhíortheilifís, ansin an eisiúint teilifíse ar Google Play (gabhálacha scáileáin teilifíse, meirge teilifíse, athbhreithniú Google); níos déanaí, cainéil ar scáileán baile na teilifíse.
 - **Ceamaraí Tapo, an chéad rud eile**: tástáil ghléis thógáil 20 le fíorcheamaraí; an radharc beo ar iPhone agus iPad; taifeadtaí H.265; gearrthóg a sheinm fad a bhítear á fáil; lá iomlán taifeadtaí ar amlíne amháin.
 - **Plex, an chéad rud eile**: tástáil ghléis thógáil 20 (gutháin, an Quest, iPhone, teilifís, as baile); an comhartha a thabhairt ón ríomhaire le cód QR; taobh DLNA freastalaí Plex a fholú i liosta na bhfreastalaithe aimsithe; IPv6.

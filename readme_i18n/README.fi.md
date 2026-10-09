@@ -19,13 +19,13 @@ Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, D
   App Store: <a href="#where-to-get-it">tarkastettavana</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store hyväksytty, koontiversio 21 lähetetty sen ensimmäisenä päivityksenä<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">esiversion lataus</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">esiversion lataus</a>, desktop build 2
 </p>
 
 - 🌐 **Natiivi 360°**<br>Kuvat ja videot pallona, jossa katselet ympärillesi gyroskoopilla, kameran käsittelemättömät tiedostot mukaan lukien (Insta360 koontiversiosta 16 alkaen, GoPro ja DJI koontiversiosta 18 alkaen). Myös ilmainen videosoitin: tavallinen, 360°, 3D, VR180
 - 👓 **Natiivi 3D**<br>Stereoskooppinen 360° ja VR180, ylä- ja alaosa tai rinnakkain, sekä Applen tilakuvat (koontiversiosta 19 alkaen): aito 3D laseissa, yksi silmä puhelimessa
 - 🎥 **Natiivi 2.5D**<br>Syvyyttä tasaiselle näytölle stereoskooppisesta videosta, näkymä seuraa päätäsi (kokeellinen, puhelimet ja tabletit)
-- 📱 **Android, iOS, Quest, TV**<br>Yksi sovellus puhelimissa, tableteissa sekä Quest 2-, Pro-, 3- ja 3S-laseissa, aito 3D laseissa, koontiversiosta 20 alkaen Android TV:ssä kaukosäätimellä sekä Windows-esiversio
+- 📱 **Android, iOS, Quest, TV**<br>Yksi sovellus puhelimissa, tableteissa sekä Quest 2-, Pro-, 3- ja 3S-laseissa, aito 3D laseissa, koontiversiosta 20 alkaen Android TV:ssä kaukosäätimellä sekä Windows-esiversio kuville ja tavallisille videoille
 - 🔌 **Palvelimen kanssa tai ilman**<br>Immich-palvelimesi tai puhelimen oma galleria, tiliä ei tarvita
 - 🗄️ **Verkkojaot**<br>Samba (SMB), WebDAV ja koontiversiosta 19 alkaen DLNA-mediapalvelimet, jotka löydetään verkosta ja luetaan suoraan, mitään lataamatta, ja lähetetään Immichiin, kun itse päätät. Koontiversiosta 19 alkaen puhelin jakaa myös oman galleriansa lasien kanssa
 - 📺 **Televisiossa**<br>Koontiversiosta 20 alkaen sama APK Android TV:ssä ja Google TV:ssä: 360°-kuvat ja -videot, palvelimesi ja jakosi, kaukosäätimellä
@@ -79,7 +79,7 @@ Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, D
 - **"Haluan katsella 360°-kuviani ja -videoitani sekä NAS-laitteeni tai Plex-palvelimeni videoita televisiosta kaukosäätimellä."** Katso [Katsele televisiosta](#watch-on-your-tv-android-tv-and-google-tv).
 - **"En löydä 360°-kuviani kaikkien muiden joukosta."** Katso [360°-luettelo](#find-your-360-shots-the-360-list).
 - **"360°-videoni nykii tai toistaa sumean kopion."** Katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters).
-- **"Haluan 360°-kuvani ja Immich-kirjastoni Windows-tietokoneelleni, sen kansioiden kuvien, NAS-laitteeni ja Plex-palvelimeni kanssa, ja tietokoneen jaettuna laseilleni."** Katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview) (esiversio, toistaiseksi vain kuvat).
+- **"Haluan 360°-kuvani ja Immich-kirjastoni Windows-tietokoneelleni, sen kansioiden kuvien ja videoiden, NAS-laitteeni ja Plex-palvelimeni kanssa, ja tietokoneen jaettuna laseilleni."** Katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview) (esiversio: toistaiseksi kuvat ja tavalliset videot, 360°-videot myöhemmin).
 - **"Säilyykö se, mitä Immich-sovellus tekee?"** Kyllä, kahdella pienellä muutoksella, katso [Kaikki muu on Immichiä](#everything-else-is-immich).
 
 Kun ominaisuus on uusi, teksti kertoo, mistä koontiversiosta alkaen se on mukana. GitHub-julkaisussa on aina uusin koontiversio, kaupat tulevat perässä: katso [Mistä sen saa](#where-to-get-it).
@@ -752,7 +752,7 @@ Nykyinen koontiversio, koontiversio 21 (versio 3.3.0-rc.0, koontinumero 3030019)
 | Plex Media Server -kirjastot toistettuina alkuperäisistä tiedostoista, kotona ja kodin ulkopuolella, ilman plex.tv:tä | ❌ | ✅ koontiversiosta 20 alkaen, kaikki katselimet, puhelimissa, tableteissa, Questissa ja televisioissa |
 | Tapo-kamerat: suora kuva ja muistikortin tallenteet lähetettyinä Immichiin, kun itse päätät | ❌ | ✅ koontiversiosta 20 alkaen: tallenteet kaikkialla, suora kuva Androidissa, Android TV:ssä ja Questissa |
 | Android TV ja Google TV kaukosäätimellä ohjattuna, samassa APK:ssa | ❌ ei TV-sovellus | ✅ koontiversiosta 20 alkaen |
-| Sama sovellus Windows-tietokoneella | ❌ vain puhelimet ja tabletit | ✅ esiversio, ei vielä videoita |
+| Sama sovellus Windows-tietokoneella | ❌ vain puhelimet ja tabletit | ✅ esiversio, kuvat ja tavalliset videot |
 | Käsittelemättömät Insta360 .insp -kuvat ja yhden raidan .insv -videot | ❌ litteitä | ✅ koontiversiosta 16 alkaen |
 | Käsittelemättömät videot, joissa yksi objektiivi raitaa tai tiedostoa kohden (Insta360 X4, X4 Air, X5, X6, X3-parit, GoPro .360, DJI .osv) | ❌ litteitä tai vääriä | ✅ koontiversiosta 18 alkaen |
 | Kaksoiskalansilmä-.dng | ❌ litteä | ❌ ei vielä |
@@ -782,7 +782,7 @@ Nykyinen koontiversio, koontiversio 21 (versio 3.3.0-rc.0, koontinumero 3030019)
 - **Plex Media Server**: tarkistettu tietokoneelta oikeaa Plex Media Server 1.42.1:tä vasten (parin muodostus, kansiot, tavualueet, pikkukuvat, kodin ulkopuolinen osoite); ei vielä tarkistettu laitteella.
 - **Tapo-kamerat**: tarkistettu simuloitua kameraa vasten; ei vielä tarkistettu oikealla kameralla.
 - **Android TV ja Google TV**: tarkistettu automaattisilla testeillä; ei vielä tarkistettu televisiossa.
-- **Sama sovellus Windows-tietokoneella**: 475 automaattista työpöytätestiä Windowsissa, ja Windows 11 -tietokoneella sovellus käynnistyy, avaa tallennetun istunnon Immich-palvelimella, synkronoi ja sulkeutuu siististi; jokaisen toiminnon käsin testaus on käynnissä.
+- **Sama sovellus Windows-tietokoneella**: 656 automaattista työpöytätestiä 663:sta menee läpi Windowsissa (7 ohitetaan tarkoituksella), ja Windows 11 -tietokoneella sovellus käynnistyy, avaa tallennetun istunnon Immich-palvelimella, synkronoi, toistaa videon ja sulkeutuu siististi; jokaisen toiminnon käsin testaus on käynnissä.
 - **Käsittelemättömät Insta360 .insp -kuvat ja yhden raidan .insv -videot**: kuvat tarkistettu X3-tiedostojen Insta360 Studio -vientejä vasten, videot Android-emulaattorissa matalaresoluutioisella X3-tiedostolla; ei vielä ajettu iPhonessa.
 - **Käsittelemättömät videot, joissa yksi objektiivi raitaa tai tiedostoa kohden**: jäsentimet ja yhdistäminen tarkistettu todellisilla X4-, X3-pari-, GoPro MAX- ja Osmo 360 -tiedostoilla; toisto kuuluu koontiversioiden 18 ja 19 laitetestiin.
 - **Kaksoiskalansilmä-.dng**: suunnitteilla.
@@ -825,16 +825,19 @@ Immuch360 on galleria ja myös ilmainen mediasoitin: se toistaa sen, mihin viral
   - iPhone, iPad: sama, paitsi jaon MKV- ja AVI-tiedostot, joita iOS ei avaa (palvelimella ne toistuvat transkoodattuina).
   - Meta Quest: ikkunassa.
   - Android TV, Google TV: kuten puhelimissa; OK keskeyttää, vasen ja oikea hyppäävät 10 s.
+  - Windows (desktop build 2:sta alkaen): libmpv-soitin, jokaisesta toisen luettelon lähteestä; Enter keskeyttää, vasen ja oikea tai J ja L hyppäävät 10 s.
 - **360°-kuvat**
   - Android-puhelimet: pallokatselin, gyroskooppi.
   - iPhone, iPad: sama.
   - Meta Quest: immersiivisesti, kaikkialla ympärilläsi.
   - Android TV, Google TV: pallokatselin nuolilla käännettynä, zoomaus kanavanäppäimillä.
+  - Windows: pallokatselin, hiiri ja näppäimistö.
 - **360°-videot**
   - Android-puhelimet: natiivi Media3-soitin pallolla, gyroskooppi, kelaus, ääniraidan valinta, puskurointi-ilmaisin.
   - iPhone, iPad: natiivi SceneKit-soitin pallolla, gyroskooppi, ääniraidan valinta, puskurointi-ilmaisin; toisto ja tauko, ei vielä aikajanaa.
   - Meta Quest: immersiivisesti, aito 3D stereoskooppisille tiedostoille, aikajana 10 sekunnin hypyillä, edellinen ja seuraava media.
   - Android TV, Google TV: puhelinten Media3-soitin nuolilla käännettynä.
+  - Windows: ei vielä, näytetään toistaiseksi tasaisena.
 - **3D 360° (ylä- ja alaosa, rinnakkain)**
   - Android-puhelimet: vasen silmä, asettelupainike.
   - iPhone, iPad: sama.
@@ -888,7 +891,7 @@ Immuch360 on galleria ja myös ilmainen mediasoitin: se toistaa sen, mihin viral
 
 Android TV- ja Google TV -kohtia, koontiversiosta 20 alkaen, ei ole vielä tarkistettu televisiossa, katso [Katsele televisiosta](#watch-on-your-tv-android-tv-and-google-tv); kamerakohtia ei ole vielä tarkistettu oikealla kameralla.
 
-Windowsissa Immuch360 Desktopin esiversio näyttää kuvat, tavalliset ja 360°, myös Insta360:n raa'at .insp-kuvat, hiirellä ja näppäimistöllä, palvelimelta, tietokoneen kansioista, jaoista ja Plexistä; videoita se ei vielä toista, vaan niiden tilalla näkyy paikkamerkki (katso [Ei vielä mukana](#not-there-yet)).
+Windowsissa Immuch360 Desktopin esiversio näyttää kuvat, tavalliset ja 360°, myös Insta360:n raa'at .insp-kuvat, hiirellä ja näppäimistöllä, ja desktop build 2:sta alkaen se toistaa tavallisia videoita, palvelimelta, tietokoneen kansioista, jaoista, Plexistä ja Tapon tallenteista; 360°-, 3D-, VR180- ja raa'at 360°-videot näytetään toistaiseksi tasaisina tai paikkamerkkinä (katso [Ei vielä mukana](#not-there-yet)).
 
 - **Immich-palvelimesi**: alkuperäinen tai palvelimen transkoodattu striimi sen mukaan, mitä Asetukset, Katselin, "Videon lähde" sanoo (katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters)). Sama tili kuin verkkosovelluksessa.
 - **Puhelin tai lasit itse**: "Käytä ilman palvelinta" kirjautumissivulla tai Kirjasto-välilehden Laitteella-kohta.
@@ -959,24 +962,24 @@ Kuvakaappaukset on otettu laseissa kaappauspainikkeella (Meta-painike ja liipais
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Windows-tietokoneella: Immuch360 Desktop (esiversio)
 
-Immich-kirjastosi on palvelimella, muita kuvia on tietokoneen kansioissa, videot NAS-laitteella tai Plex-palvelimella, ja haluaisit katsella ympärillesi 360°-kuvissasi isolla näytöllä tai näyttää tietokoneen kuvat laseissa. Immuch360 Desktop on sama sovellus Windows-tietokoneella, koottu samoista lähdekoodeista kuin puhelinsovellukset.
+Immich-kirjastosi on palvelimella, muita kuvia ja videoita on tietokoneen kansioissa, lisää videoita NAS-laitteella tai Plex-palvelimella, ja haluaisit katsella ympärillesi 360°-kuvissasi ja toistaa videoitasi isolla näytöllä tai näyttää tietokoneen kuvat laseissa. Immuch360 Desktop on sama sovellus Windows-tietokoneella, koottu samoista lähdekoodeista kuin puhelinsovellukset.
 
-Tietokoneella Immich tarjoaa verkkosovelluksensa selaimessa. **Mitä Immuch360 Desktop lisää**: tietokoneen kansiot ilman palvelinta tai tiliä, SMB-, WebDAV-, DLNA- ja Plex-jaot selattavina sovelluksesta, Insta360:n raa'at .insp-kuvat avattuina pallona sekä tietokoneen jaettuna Meta Questille kotona.
+Tietokoneella Immich tarjoaa verkkosovelluksensa selaimessa. **Mitä Immuch360 Desktop lisää**: tietokoneen kansiot ilman palvelinta tai tiliä, SMB-, WebDAV-, DLNA- ja Plex-jaot selattavina ja toistettavina sovelluksesta, Insta360:n raa'at .insp-kuvat avattuina pallona sekä tietokoneen jaettuna Meta Questille kotona.
 
-Tämä ensimmäinen koontiversio on esiversio: kuvat toimivat, videot tulevat seuraavissa työpöydän koontiversioissa. Puhelin-, tabletti-, Quest- ja TV-sovellukset eivät muutu sen myötä ja pitävät nimen Immuch360.
+Tämä on esiversio: desktop build 2:sta alkaen kuvat ja tavalliset videot toimivat; 360°-, 3D- ja VR180-videot tulevat seuraavissa työpöydän koontiversioissa. 9. lokakuuta 2026 alkaen työpöytäversion lähdekoodit ovat forkin päähaarassa `immuch360`, joten puhelimet, lasit, televisiot ja tietokoneet julkaistaan samoista lähdekoodeista. Puhelin-, tabletti-, Quest- ja TV-sovellukset eivät muutu sen myötä ja pitävät nimen Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Lataa ja asenna Windowsiin
 
-Ensimmäinen koontiversio on GitHubin esijulkaisu [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Sen tiedosto on `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 Mt, purettuna 65 tiedostoa), ja tarkistusta varten `SHA256SUMS.txt`. Se koottiin `desktop`-haarasta commitissa 21f285c34: puhelimen koontiversio 20 sekä tietokoneversio. Se vaatii 64-bittisen Windows 10:n tai 11:n.
+Nykyinen koontiversio on GitHubin esijulkaisu [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Sen tiedosto on `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (noin 57 Mt, purettuna 78 tiedostoa, mukana videosoitin ja sen `licenses`-kansio), ja tarkistusta varten `SHA256SUMS.txt`. Se koottiin päähaarasta `immuch360` commitissa 5b723bd25: puhelimen koontiversion 21 lähdekoodit sekä tietokoneversio. Se vaatii 64-bittisen Windows 10:n tai 11:n.
 
 1. Lataa ZIP ja pura se minne tahansa, esimerkiksi Tiedostot-kansioon.
-2. Käynnistä `immuch360.exe` puretusta kansiosta. Pidä kansio kokonaisena: ohjelma tarvitsee vieressään olevat tiedostot.
+2. Käynnistä `immuch360.exe` puretusta kansiosta. Pidä kansio kokonaisena: ohjelma tarvitsee vieressään olevat tiedostot, myös videosoittimen.
 3. Tiedostoja ei ole vielä allekirjoitettu, joten Windows SmartScreen voi näyttää ilmoituksen "Windows suojasi tietokonettasi": valitse "Lisätietoja" ja sitten "Suorita silti". Jos Smart App Control on käytössä, se estää allekirjoittamattomat ohjelmat.
 4. Odota ikkunaa. Uuden koontiversion ensimmäinen käynnistys kestää 10 sekunnista noin minuuttiin, todennäköisimmin siksi, että Microsoft Defender tarkistaa uudet tiedostot: älä käynnistä sovellusta uudelleen sillä välin. Seuraavat käynnistykset kestävät sekunnin tai kaksi.
 5. Kirjaudu kirjautumissivulla Immich-palvelimellesi sen osoitteella, sähköpostillasi ja salasanallasi, tai napsauta "Käytä ilman palvelinta".
 
-Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` komentokehotteessa latauksen kansiossa: tuloksen on oltava sama kuin `SHA256SUMS.txt`-tiedostossa. Asennusohjelmaa tai automaattista päivitystä ei vielä ole: seuraa [Releases](https://github.com/freeKC/Immuch360/releases)-sivua ja pura seuraava koontiversio samalla tavalla.
+Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` komentokehotteessa latauksen kansiossa: tuloksen on oltava sama kuin `SHA256SUMS.txt`-tiedostossa. Asennusohjelmaa tai automaattista päivitystä ei vielä ole: seuraa [Releases](https://github.com/freeKC/Immuch360/releases)-sivua ja pura seuraava koontiversio samalla tavalla.
 
 ### Mitä esiversio tekee
 
@@ -984,7 +987,8 @@ Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 - **Ilman palvelinta**: kuviesi ja videoidesi kansiot (Kuvat ja Videot ehdotetaan) korvaavat puhelimen gallerian. Valitsemiesi kansioiden ulkopuolelta ei lueta mitään, ja ilman palvelinta mikään ei lähde tietokoneelta.
 - **Lataus palvelimelle ja varmuuskopiointi** näistä kansioista Immich-palvelimellesi, kun sovellus on auki.
 - **360°-kuvat pallona**, hiirellä ja näppäimistöllä; Insta360-kameroiden raa'at .insp-kuvat avautuvat kuten puhelimissa.
-- **Verkkojaot**: Samba (SMB), WebDAV ja DLNA-mediapalvelimet sekä Plex-palvelimet ilman plex.tv:tä, selattavina kuten puhelimissa: niiden kuvat avautuvat, niiden videot odottavat videosoitinta (katso [Ei vielä mukana](#not-there-yet)). Tapo-kameroista muistikortin tallenteet: luettelo ja leikkeen nouto.
+- **Tavalliset videot** (desktop build 2:sta alkaen): kansioidesi videot, Immich-palvelimesi videot (alkuperäinen tai transkoodattu virta, katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters)), SMB-, WebDAV- ja DLNA-jakojen, Plex-palvelinten ja Tapon tallenteiden videot toistuvat ikkunassa puhelinten säätimin (toisto, tauko, aikajana), puskurointi-ilmaisimella ja ääniraitojen valikolla videolle, jossa niitä on useita. Kansioidesi ja jakojen videot näyttävät pikkukuvanaan kuvan videosta filmikuvakkeen sijaan.
+- **Verkkojaot**: Samba (SMB), WebDAV ja DLNA-mediapalvelimet sekä Plex-palvelimet ilman plex.tv:tä, selattavina kuten puhelimissa: niiden kuvat avautuvat ja niiden videot toistuvat. Tapo-kameroista muistikortin tallenteet: luettelo, leikkeen nouto ja sen toisto.
 - **Jaa tämä tietokone verkossa**: kansioidesi albumit, kuukaudet ja 360°-media, vain luku, Meta Questille tai muulle kodin laitteelle, kuten puhelin jakaa itsensä.
 - **Tiedostot**: palvelimelta ladatut tiedostot menevät valitsemaasi kansioon, "Tallenna kansioon" säilyttää kopion valituista kuvista ja videoista, ja Lokit-sivulla on "Tallenna lokit tiedostoon".
 
@@ -994,9 +998,11 @@ Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 2. **Pilvi-, USB- ja verkkokansiot.** Tiedostot, jotka OneDrive (tai muu pilviasema) säilyttää vain verkossa, lasketaan mutta niitä ei lueta, joten kansion lisääminen ei lataa koko pilveäsi: "Lataa ja sisällytä" noutaa ne, kun haluat. Toisella kirjaimella palaava USB-asema säilyttää kuvansa. Verkkokansioita sekä muistikortilla tai USB-asemalla olevia kansioita (jotta Windows voi yhä poistaa aseman) ei seurata muutosten varalta: käytä Päivitä-toimintoa, kun olet lisännyt sinne tiedostoja.
 3. **Katsele ympärillesi 360°-kuvassa**: vedä hiirellä, zoomaa rullalla, kaksoisnapsautuksella tai näppäimillä + ja - (millä tahansa näppäimistöasettelulla, myös AZERTY), liiku nuolinäppäimillä. F tai F11 vaihtaa koko näytön tilaan ja Escape poistuu siitä; Home ja End siirtävät ensimmäiseen ja viimeiseen kuvaan; I näyttää tiedot.
 4. **Siirry kuvasta toiseen**: tavallisessa kuvassa vasen ja oikea nuoli, tai reunoille hiiren liikkuessa ilmestyvät nuolipainikkeet, siirtävät edelliseen ja seuraavaan. Kuvauskenttään kirjoitetut kirjaimet jäävät tekstiin.
-5. **Jaa tietokone laseille**: avaa Kirjasto ja sitten Verkkojaot; ensimmäinen ruutu on "Jaa tämä tietokone verkossa", tietokoneen vastine kohdalle [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network). Ota käyttöön "Jaa kuvia ja videoita verkossa" ja lisää sitten tietokone laseissa niin kuin kyseinen osio neuvoo. Jakaminen loppuu, kun sovellus suljetaan tai tunnin käyttämättömyyden jälkeen.
-6. **Salli verkko**: Windows voi kysyä, saako Immuch360 Desktop käyttää verkkoa. Salli se yksityisissä verkoissa, muuten lasit eivät löydä tietokonetta. Verkossa, jonka Windows merkitsee julkiseksi (kahvila, hotelli), tai jonka tyyppiä se ei tunnista, jakaminen ei käynnisty, ellet valitse "Jaa tämän istunnon ajan", ja tietokone ilmoittaa itsestään vain verkossa, jossa se jakaa.
-7. **Asetukset, "Tämä tietokone"**: kansiot, latauskansio, verkkosovitin, jolla etsitään jakoja ja jaetaan tietokone (kun niitä on useita, esimerkiksi Wi-Fi ja Ethernet), sekä luotetut varmenteet: oman palvelimesi varmentaja PEM-tiedostona HTTPS-osoitteelle, johon Windows ei itse luota. Asiakasvarmenteet tuodaan kohdassa Asetukset, Edistyneet, kuten puhelimissa.
+5. **Toista video**: avaa se aikajanalta, kansiosta, jaosta, Plexistä tai Tapo-kameran tallenteista; se toistuu ikkunassa. Enter tai näppäimistön toisto- ja taukonäppäin keskeyttää ja jatkaa toistoa. Toiston aikana vasen ja oikea nuoli tai J ja L hyppäävät 10 sekuntia taakse tai eteen; tauolla nuolet siirtävät edelliseen ja seuraavaan. F tai F11 vaihtaa koko näytön tilaan, kuten kuvissa. "Ääniraita"-painike valitsee ääniraitojen välillä videossa, jossa niitä on useita.
+6. **Kun video pysähtyy**: tauolla oleva video pysyy tauolla, kun palaat ikkunaan. Ennen loppuaan katkennut video, esimerkiksi kun jako tai palvelin lakkaa vastaamasta, kertoo siitä: avaa se uudelleen, niin se jatkaa siitä, mihin se jäi, tauolla. Kansiosta tai jaosta löytyvää soittolistatiedostoa ei seurata.
+7. **Jaa tietokone laseille**: avaa Kirjasto ja sitten Verkkojaot; ensimmäinen ruutu on "Jaa tämä tietokone verkossa", tietokoneen vastine kohdalle [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network). Ota käyttöön "Jaa kuvia ja videoita verkossa" ja lisää sitten tietokone laseissa niin kuin kyseinen osio neuvoo. Jakaminen loppuu, kun sovellus suljetaan tai tunnin käyttämättömyyden jälkeen.
+8. **Salli verkko**: Windows voi kysyä, saako Immuch360 Desktop käyttää verkkoa. Salli se yksityisissä verkoissa, muuten lasit eivät löydä tietokonetta. Verkossa, jonka Windows merkitsee julkiseksi (kahvila, hotelli), tai jonka tyyppiä se ei tunnista, jakaminen ei käynnisty, ellet valitse "Jaa tämän istunnon ajan", ja tietokone ilmoittaa itsestään vain verkossa, jossa se jakaa.
+9. **Asetukset, "Tämä tietokone"**: kansiot, latauskansio, verkkosovitin, jolla etsitään jakoja ja jaetaan tietokone (kun niitä on useita, esimerkiksi Wi-Fi ja Ethernet), sekä luotetut varmenteet: oman palvelimesi varmentaja PEM-tiedostona HTTPS-osoitteelle, johon Windows ei itse luota. Asiakasvarmenteet tuodaan kohdassa Asetukset, Edistyneet, kuten puhelimissa.
 
 ### Verrattuna puhelinsovelluksiin
 
@@ -1005,20 +1011,24 @@ Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 - **Yksi ikkuna**: sovelluksen avaaminen toisen kerran tuo ensimmäisen ikkunan takaisin sen sijaan, että käynnistäisi toisen kopion.
 - **Kansioistasi ei poisteta mitään**: "Poista laitteelta" on piilotettu, ja Poista poistaa vain palvelimen kopion, kunnes sovellus osaa lähettää tiedostoja Windowsin roskakoriin.
 - **Hiiri ja näppäimistö** kosketuksen ja gyroskoopin sijaan.
+- **Yksi videosoitin kaikille lähteille**: libmpv toistaa samalla tavalla palvelimen, kansioiden, jakojen ja Plexin videot, ja sen tavallisessa soittimessa on jo ääniraitavalikko, jota puhelinten tavallisessa soittimessa ei vielä ole.
 
 <a id="not-there-yet"></a>
 ### Ei vielä mukana
 
-- **Videot**: toistaiseksi niiden tilalla näkyy paikkamerkki ja niiden pikkukuvissa filmikuvake. Toisto tulee seuraavaksi: ensin tavalliset videot, sitten 360°-, 3D- ja VR180-videot sekä raa'at 360°-videot.
+- **360°-, 3D-, VR180- ja raa'at 360°-videot**: ne näytetään toistaiseksi tasaisina, sellaisina kuin tiedosto ne sisältää (koko pallo levitettynä, kaksi silmää rinnakkain tai objektiivien pyöreät kuvat), tai paikkamerkkinä, ja 360°-painike on vain kuvissa. Niiden soittimet tulevat seuraavissa työpöydän koontiversioissa.
 - **Spatial 2.5D**, myöhemmin verkkokameralla; **Tapon live-näkymä**; **kartta** ja Paikat-näkymä; **kirjautuminen OAuthilla** (kirjaudu sen sijaan sähköpostilla ja salasanalla); **Google Cast**; **ilmoitukset**.
 - **Asennusohjelma, allekirjoitettu koontiversio ja automaattiset päivitykset**: tämä koontiversio on kansio, jossa on `immuch360.exe`.
-- **Linux ja macOS**: niiden projektit ovat lähdekoodeissa, mutta niitä ei ole vielä koottu eikä kokeiltu noissa järjestelmissä; ne tulevat Windowsin jälkeen.
+- **Linux ja macOS**: niiden projektit ovat lähdekoodeissa, mutta niitä ei ole vielä koottu eikä kokeiltu noissa järjestelmissä, eikä niiden videosoitin ole vielä mukana; ne tulevat Windowsin jälkeen.
 - **Käännökset**: tietokoneversion uudet tekstit ovat toistaiseksi englanniksi.
 
 ### Tunnetut ongelmat
 
-- **Kun lasit lukevat tiedostoa jaetulta tietokoneelta** (toistamaansa videota, lataamaansa kuvaa), Windows ei voi nimetä uudelleen, siirtää tai poistaa kyseistä tiedostoa ja sanoo sen olevan auki Immuch360 Desktopissa: pysäytä toisto ensin. Varmuuskopiot eivät lukitse tiedostojasi näin: tiedoston voi nimetä uudelleen, siirtää tai poistaa sen latautuessa palvelimelle.
-- **Keskeneräisyydet**: yllä olevat toiminnot läpäisevät automaattiset testinsä Windowsissa (475 työpöytätestiä), ja Windows 11 -tietokoneella sovellus käynnistyy, avaa tallennetun istunnon Immich-palvelimella, synkronoi ja sulkeutuu siististi. Jokaisen toiminnon käsin testaus oikealla tietokoneella on vielä kesken.
+- **Uuden koontiversion ensimmäinen käynnistys on hidas**: 10 sekunnista noin minuuttiin ennen kuin ikkuna näkyy, todennäköisimmin siksi, että Microsoft Defender tarkistaa uudet tiedostot, joita ei ole vielä allekirjoitettu. Odota ikkunaa äläkä käynnistä sovellusta uudelleen; seuraavat käynnistykset kestävät sekunnin tai kaksi.
+- **8K HEVC -videot tarvitsevat erillisen näytönohjaimen**: testikannettavassa integroitu Intel UHD -piiri näytti noin puolet 8K HEVC -videon kuvista, kun taas erillinen NVIDIA-piiri toisti 8K HEVC- ja 5.7K H.264 -videot ilman pudonneita kuvia. Windows ajaa sovellusta integroidulla piirillä, ellei toisin määrätä: lisää Windowsin asetuksissa kohdassa Järjestelmä, Näyttö, Grafiikka `immuch360.exe` ja valitse "Suuri suorituskyky". Integroidulla piirillä 5.7K H.264 -videon, jonka sen dekooderi hylkää, purkaa suoritin ilman menetettyjä kuvia.
+- **Videot piirretään enintään 1440 rivin korkuisina** ja skaalataan sitten ikkunaan: 4K-näytöllä koko näytön tilassa 4K- tai 8K-video on hieman pehmeämpi kuin erillisessä videosoittimessa. Näin 8K-video pysyy kannettavan tietokoneen grafiikkatehon rajoissa.
+- **Kun kansioidesi video toistuu sovelluksessa tai kun lasit lukevat tiedostoa jaetulta tietokoneelta** (toistamaansa videota, lataamaansa kuvaa), Windows ei voi nimetä uudelleen, siirtää tai poistaa kyseistä tiedostoa ja sanoo sen olevan auki Immuch360 Desktopissa: sulje ensin video tai pysäytä toisto laseissa. Varmuuskopiot eivät lukitse tiedostojasi näin: tiedoston voi nimetä uudelleen, siirtää tai poistaa sen latautuessa palvelimelle.
+- **Keskeneräisyydet**: 656 työpöytätestiä 663:sta menee läpi Windowsissa (7 ohitetaan tarkoituksella), 200 peräkkäin avattua soitinta ei jätä vuotoja, ja Windows 11 -tietokoneella sovellus käynnistyy, avaa tallennetun istunnon Immich-palvelimella, synkronoi, toistaa videon ja sulkeutuu siististi. Jokaisen toiminnon käsin testaus oikealla tietokoneella on vielä kesken.
 
 Jos jokin menee vikaan, avaa [vikailmoitus](https://github.com/freeKC/Immuch360/issues) ja liitä mukaan Lokit-sivulta tallennettu loki, katso [Lokit](#logs). Tarkista loki ennen sen jakamista: se voi sisältää palvelimesi osoitteen.
 
@@ -1027,19 +1037,17 @@ Jos jokin menee vikaan, avaa [vikailmoitus](https://github.com/freeKC/Immuch360/
 
 Tarvitset Windows 10:n tai 11:n x64:lle, Flutter 3.47.2:n Windowsille, Visual Studio 2022:n tai sen Build Toolsin "Desktop development with C++" -työkuormalla, Windowsin asetuksista käyttöön otetun kehittäjätilan (Flutter tarvitsee sitä laajennuksia varten) sekä Python 3:n paketointiskriptiä varten.
 
-1. Hae `desktop`-haara ja suorita koodin generointi. Se käyttää Javaa ja Nodea, joten suorita se Linuxissa, macOS:ssä tai WSL:ssä; WSL:n kanssa pidä klooni Windows-asemalla, jonka WSL näkee polussa `/mnt/c` tai `/mnt/d`:
+1. Hae lähdekoodit ja suorita koodin generointi. Päähaara `immuch360` kokoaa myös tietokoneversion: haaraa ei tarvitse vaihtaa. Koodin generointi käyttää Javaa ja Nodea, joten suorita se Linuxissa, macOS:ssä tai WSL:ssä; WSL:n kanssa pidä klooni Windows-asemalla, jonka WSL näkee polussa `/mnt/c` tai `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Kokoa sovellus Windowsissa samassa `mobile`-kansiossa:
+2. Kokoa sovellus Windowsissa samassa `mobile`-kansiossa. Ensimmäinen koonti lataa videosoittimen kirjastot (libmpv ja ANGLE) GitHubista ja tarkistaa jokaisen arkiston sen SHA-256:n avulla:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Tarvitset Windows 10:n tai 11:n x64:lle, Flutter 3.47.2:n Windowsille, Visual St
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. `Release`-kansio toimii tietokoneella, joka sen kokosi. Toista tietokonetta varten pidä koko kansio ja lisää Visual C++ -ajonaikainen ympäristö `immuch360.exe`-tiedoston viereen. Kloonin juuresta paketointiskripti kopioi sen, jättää pois sen, mikä palvelee vain Androidia, tarkistaa, että jokainen sovelluksen lataama DLL on kansiossa tai itse Windowsissa, ja tekee ZIPin:
+3. `Release`-kansio toimii tietokoneella, joka sen kokosi. Toista tietokonetta varten pidä koko kansio ja lisää Visual C++ -ajonaikainen ympäristö `immuch360.exe`-tiedoston viereen. Kloonin juuresta paketointiskripti kopioi sen, jättää pois sen, mikä palvelee vain Androidia, lisää videosoittimen lisenssit, tarkistaa, että jokainen sovelluksen lataama DLL on kansiossa tai itse Windowsissa, ja tekee ZIPin:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-`desktop`-haaran CI (`.github/workflows/immuch360-desktop.yml`) ajaa puhelimen tarkistukset ja koko testisarjan Linuxissa, työpöytätestit Windowsissa ja kokoaa saman ZIPin; sen Linux- ja macOS-työt (`flutter build linux` ja `flutter build macos`, samalla `-t lib/main_desktop.dart`) eivät ole vielä ajautuneet noissa järjestelmissä.
+Immuch360 Desktopin CI (`.github/workflows/immuch360-desktop.yml`) ajetaan `desktop`-haarassa, joka seuraa `immuch360`-haaraa: puhelimen tarkistukset (puhelinten koontiversioissa ei muutu mitään) ja koko testisarja Linuxissa, työpöytätestit Windowsissa sekä sama ZIP; sen Linux- ja macOS-työt (`flutter build linux` ja `flutter build macos`, samalla `-t lib/main_desktop.dart`) eivät ole vielä ajautuneet noissa järjestelmissä.
 
 <a id="where-to-get-it"></a>
 ## Mistä sen saa
@@ -1075,8 +1083,8 @@ Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa
   - Nyt: yleinen `Immuch360-v<version>-release.apk` [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta, sivuladattuna adb:llä, katso [Asentaminen televisioon](#install-it-on-the-tv). Se on sama sovellus kuin puhelimissa.
   - Pian: Google Play televisioissa, Googlen TV-julkaisun tarkastuksen jälkeen.
 - **Windows 10 ja 11, 64-bittinen (esiversio)**
-  - Nyt: Immuch360 Desktop, [työpöydän esijulkaisun](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip`, purettuna ja käynnistettynä niin kuin [Lataa ja asenna Windowsiin](#download-and-install-on-windows) neuvoo. Toistaiseksi vain kuvat: videot tulevat seuraavissa työpöydän koontiversioissa.
-  - Pian: videotoisto; asennusohjelma, allekirjoitettu koontiversio ja päivitykset myöhemmin.
+  - Nyt: Immuch360 Desktop, [työpöydän esijulkaisun](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`, purettuna ja käynnistettynä niin kuin [Lataa ja asenna Windowsiin](#download-and-install-on-windows) neuvoo. Toistaiseksi kuvat ja tavalliset videot: 360°-, 3D- ja VR180-videot tulevat seuraavissa työpöydän koontiversioissa.
+  - Pian: 360°-, 3D-, VR180- ja raa'at 360°-videot; asennusohjelma, allekirjoitettu koontiversio ja päivitykset myöhemmin.
 
 App Storen ja Meta Horizon Storen linkit lisätään tänne heti, kun sivut on julkaistu. Kirjaudu tavallisella Immich-palvelimesi URL-osoitteella ja tililläsi, tai napauta kirjautumissivulla "Käytä ilman palvelinta" aloittaaksesi laitteen omilla kuvilla ja videoilla. GitHubin APK ei päivity itsestään: seuraa Releases-sivua, ja kun olet asentanut sovelluksen kaupasta, hae päivitykset siitä kaupasta.
 
@@ -1105,15 +1113,15 @@ Androidin kaksi varianttia (flavour) ovat sama sovellus. Koontiversiosta 20 alka
 
 Kun kokoat iOS:lle omalla Macillasi, käytä Xcodea ja omaa allekirjoitustiimiäsi; Xcode 26:lla aja ensin kerran `xcodebuild -downloadComponent MetalToolchain`, koska Spatial-shaderit tarvitsevat sitä. Ilman Macia iOS-koontiversiot ajetaan Codemagicissa (palveluna tarjottu Mac) tämän tietovaraston `codemagic.yaml`-tiedostosta. Androidin julkaisukoontiversiot ajetaan GitHub Actionsissa (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, Windows-versio, kootaan `desktop`-haarasta Flutterilla Windowsille: vaiheet ovat kohdassa [Kokoa se itse Windowsissa](#build-it-yourself-on-windows).
+Immuch360 Desktop, Windows-versio, kootaan samoista lähdekoodeista, `immuch360`-haarasta, Flutterilla Windowsille: vaiheet ovat kohdassa [Kokoa se itse Windowsissa](#build-it-yourself-on-windows).
 
 Tässä tietovarastossa ei ole salaisuuksia: Androidin allekirjoitusavain on tallennettu salattuina GitHub Actions -salaisuuksina ja Applen allekirjoitusmateriaali salattuina muuttujina Codemagiciin. Työnkulkutiedostot viittaavat niihin vain nimellä. Ilman omaa `android/key.jks`-tiedostoa julkaisukoontiversio allekirjoitetaan debug-avaimella, eikä sitä voi asentaa GitHubista tai kaupasta tulleen kopion päälle (poista se ensin); debug-koontiversio asentuu sen rinnalle nimellä Immuch360 debug. Meta Horizon Storen kopio on julkaisun `quest`-APK, joka on allekirjoitettu toisella avaimella, sillä, jolla kaupan sovellus alun perin rekisteröitiin, joten sitäkään ei voi asentaa sivuladatun APK:n päälle, eikä päinvastoin.
 
 ### Haarat
 
 - **`main`**: Immichin `main` siinä commitissa, johon `immuch360` perustuu (nykyisten koontiversioiden osalta 29. syyskuuta 2026), koskaan muuttamatta; se siirtyy eteenpäin, kun haara rebasetaan uudemman Immichin päälle.
-- **`immuch360`**: tämän haaran muutokset Immichin päällä. Jokainen julkaisu kertoo, mihin Immich-versioon se perustuu.
-- **`desktop`**: Immuch360 Desktop, tietokoneversio, `immuch360`-haaran päällä. Puhelinjulkaisut yhdistetään siihen, ja työpöydän esijulkaisut kootaan siitä (desktop build 1 commitista 21f285c34, puhelimen koontiversio 20 sekä tietokoneversio). Mikään `mobile/android`- ja `mobile/ios`-kansioissa ei muutu siinä.
+- **`immuch360`**: tämän haaran muutokset Immichin päällä, 9. lokakuuta 2026 alkaen myös Immuch360 Desktop. Jokainen julkaisu kertoo, mihin Immich-versioon se perustuu.
+- **`desktop`**: haara, jossa Immuch360 Desktop, tietokoneversio, rakennettiin `immuch360`-haaran päälle, kunnes se yhdistettiin siihen 9. lokakuuta 2026, jotta puhelimet, lasit, televisiot ja tietokoneet julkaistaan samoista lähdekoodeista. Nyt se seuraa `immuch360`-haaraa ja kantaa työpöydän esijulkaisujen tunnisteita ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) commitista 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) commitista 5b723bd25). Tietokoneversio ei muuta mitään `mobile/android`- ja `mobile/ios`-kansioissa.
 
 <a id="logs"></a>
 ## Lokit
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Koontiversiosta 19 alkaen DLNA-asiakas, puhelinjako ja Applen tilamedian tunnistus kirjoittavat myös sovelluksen omaan lokiin ("Lokit", ylhäällä oikealla olevan profiilikuvan valikossa) tunnisteilla `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` ja `NetworkMediaService`. Koontiversiosta 20 alkaen TV-tila kirjoittaa sinne tunnisteilla `TvMode` ja `TvTextEntry`, Plex-palvelimet tunnisteilla `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` ja `PlexServerEditPage` sekä Tapo-kamerat tunnisteilla `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` ja `CameraLiveView`; Plexin rivit eivät koskaan sisällä tunnusta, osoitetta tai nimikettä, ja kameran rivit jättävät salasanat pois. Lokirivit pysyvät laitteella, ellet kopioi niitä itse.
 
-Tietokoneella (Immuch360 Desktop) Lokit-sivulla on myös "Tallenna lokit tiedostoon": loki tai ZIP, jossa on loki ja viimeisimpien kaatumisten raportit, jos niitä on (sen ehdotettu nimi päättyy silloin "with-crash-reports"). Kaatumisraportti on pieni minidump: säikeet, mihin ne pysähtyivät ja vain se, mitä tarvitaan niiden kutsujen seuraamiseen, ohjelmatiedostojen nimet mutta ei niiden kansioita; ei sovelluksen muistia. Tarkista loki ennen sen jakamista: se voi sisältää palvelimesi osoitteen.
+Tietokoneella (Immuch360 Desktop) Lokit-sivulla on myös "Tallenna lokit tiedostoon": loki tai ZIP, jossa on loki ja viimeisimpien kaatumisten raportit, jos niitä on (sen ehdotettu nimi päättyy silloin "with-crash-reports"). Kaatumisraportti on pieni minidump: säikeet, mihin ne pysähtyivät ja vain se, mitä tarvitaan niiden kutsujen seuraamiseen, ohjelmatiedostojen nimet mutta ei niiden kansioita; ei sovelluksen muistia.
+
+Desktop build 2:sta alkaen tietokoneen videosoitin kirjoittaa sinne tunnisteilla `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` ja `VideoThumbnailGrabber`, mukaan lukien mpv:n omat varoitukset, tunnukset ja salasanat poistettuina. Tarkista loki ennen sen jakamista: se voi sisältää palvelimesi osoitteen.
 
 <a id="privacy"></a>
 ## Yksityisyys
@@ -1144,6 +1154,7 @@ Tietokoneella (Immuch360 Desktop) Lokit-sivulla on myös "Tallenna lokit tiedost
 - **Puhelinjako**: vain lähiverkko, käyttäjänimellä ja salasanalla, tavallisen HTTP:n kautta (katso [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network)).
 - **Kamera**: vain Spatial 2.5D -soitin käyttää sitä, laitteella; kuvia ei koskaan tallenneta eikä lähetetä minnekään.
 - **Tietokoneella** (Immuch360 Desktop, Windows-esiversio): sovellus lukee vain valitsemasi kansiot, säilyttää hakemistonsa, pikkukuvansa ja välimuistinsa tietokoneella sekä tallentaa salasanat ja tunnukset Windowsin tietosuojauksella, vain Windows-tilillesi. Tietokoneen jakaminen noudattaa puhelinjaon sääntöjä, eikä se käynnisty verkossa, jonka Windows merkitsee julkiseksi tai jonka tyyppiä se ei tunnista, ellet itse niin päätä.
+- **Videosoitin tietokoneella** (desktop build 2:sta alkaen): palvelimesi videot tulevat sille sovelluksen kautta, joten soitin ei koskaan saa istuntotunnustasi, ja se, mitä se lukee etukäteen, pysyy muistissa eikä päädy levylle. Se avaa vain sille annetun tiedoston: kansion tai jaon tiedosto, joka on todellisuudessa soittolista tai virran kuvaus, ei saa sitä yhdistämään minnekään muualle.
 
 Koko käytäntö on tiedostossa [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ Koko käytäntö on tiedostossa [PRIVACY.md](../PRIVACY.md).
 
 Tämä projekti on Immichin haara ja pysyy [GNU AGPL v3](../LICENSE) -lisenssin alaisena. Jokainen APK, myös puhelinten, sisältää lisäksi Meta Spatial SDK:n, joka ei ole avointa lähdekoodia (Meta Platform Technologies SDK License Agreement) ja jota käytetään vain Meta Quest -laseissa; Immuch360 Desktop, Windows-versio, ei sisällä sitä. Immuch360 ei ole yhteydessä Immich-tiimiin eikä FUTOon, eivätkä ne ole hyväksyneet sitä.
 
+Immuch360 Desktopin Windows-ZIP, ja vain se, sisältää myös videosoittimensa: libmpv, [mpv](https://mpv.io):n kirjasto, jonka sisällä on [FFmpeg](https://ffmpeg.org), ja jota ohjaavat [media_kit](https://github.com/media-kit/media-kit)-laajennukset. mpv ja FFmpeg on koottu ilman niiden vain GPL-lisensoituja osia, ja niiden koodi on GNU LGPL -lisenssin version 2.1 tai uudemman alainen; yhdessä koottuna `libmpv-2.dll` jaetaan GNU LGPL -lisenssin version 3 tai uudemman alaisena. Sovellus lataa sen ajon aikana, joten voit korvata sen omalla koonnillasi. Lisenssitekstit ovat ZIPin `licenses`-kansiossa, ja jokainen kirjasto lisensseineen ja lähdekoodeineen on lueteltu tiedostossa [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Tiekartta
 
 Mitä ei ole vielä tehty, todennäköisimmät ensin. Mikään tässä ei ole lupaus, ja palaute [vikaseurannassa](https://github.com/freeKC/Immuch360/issues) auttaa päättämään, mikä tulee ensin.
 
-- **Immuch360 Desktop, ensin Windows**: ensimmäinen esiversio on julkaistu (katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview)). Seuraavaksi videotoisto (ensin tavalliset videot, sitten 360°, 3D, VR180 ja raakatiedostot), mitattuna kannettavan tietokoneen kahdella näytönohjaimella; sitten jokaisen toiminnon testaus Windows-tietokoneella ja sen korjaukset; sitten Spatial 2.5D verkkokameralla; sitten Linux ja macOS, paketit, allekirjoitus ja päivitykset.
+- **Immuch360 Desktop, ensin Windows**: desktop build 2 on julkaistu tavallisten videoiden kanssa, ja työpöytäversion lähdekoodit ovat 9. lokakuuta 2026 alkaen forkin päähaarassa `immuch360` (katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview)). Seuraavaksi 360°-, 3D-, VR180- ja raa'at 360°-videot Windowsissa, raakatiedostojen kaksi objektiivia ja Tapon live-näkymä mukaan lukien; sitten jokaisen toiminnon testaus Windows-tietokoneella ja sen korjaukset; sitten Spatial 2.5D verkkokameralla; sitten Linux ja macOS, paketit, allekirjoitus ja päivitykset.
 - **Google Play**: koontiversio 18 on julkaistu; koontiversio 20 on Googlen tarkastettavana 7. lokakuuta 2026 lähtien, koontiversion 19 sijaan. Koontiversio 21 ei muuta mitään puhelimissa ja tableteissa.
 - **App Store**: versio 3.3.0 odottaa Applen tarkastusta; siinä on koontiversion 11 ominaisuudet, joten lähetys Immichiin ja videodekooderien tarkistus (koontiversio 15) sekä käsittelemättömät Insta360-tiedostot (koontiversio 16) tulevat seuraavassa App Store -päivityksessä. Linkki lisätään tänne, kun se on julkaistu.
 - **Meta Horizon Store**: Meta hyväksyi sivun 7. lokakuuta 2026 koontiversion 14 kanssa. Koontiversio 21 on lähetetty sen ensimmäisenä päivityksenä: se tuo kaiken koontiversion 14 jälkeen tulleen (lähetykset jaosta Immichiin, videolähde valittuna sen mukaan, mitä lasit pystyvät purkamaan, Insta360-, GoPro- ja DJI-raakatiedostot, DLNA, puhelimen jakaminen, Applen tilakuvat, Plex Media Server -kirjastot, Tapo-kamerat), ja kauppa listaa sen Quest 2:lle, Quest Prolle, Quest 3:lle ja 3S:lle. Kaupan linkki lisätään tänne, kun sivu on julkinen; sivuladattu kopio on ensin poistettava (katso [Asentaminen](#install)).
@@ -1166,7 +1179,7 @@ Mitä ei ole vielä tehty, todennäköisimmät ensin. Mikään tässä ei ole lu
 - **DLNA, puhelinjako ja Applen tilamedia, seuraavaksi**: koontiversion 19 laiteraportit (Plex, Jellyfin, NAS-laite ja Freebox Server DLNA:n kautta; Questia palveleva puhelin, myös omassa yhteyspisteessään; todelliset iPhonen tilakuvat ja -videot laseissa); Applelta pyydetty multicast-oikeus, jotta iPhonet löytävät jokaisen DLNA-palvelimen; edellinen ja seuraava tilakuvien välillä laseissa; tilamerkki palvelimen kuviin aikajanalla; tilavideot 3D:nä Questissa, jos sen dekooderit sen sallivat.
 - **Puhelinten 360°-soittimet, seuraavaksi**: aikajana iOS:n 360°-videosoittimeen (Androidin soittimessa se on), edellinen/seuraava puhelinten 360°-soittimiin kuten Questin immersiivisessä näkymässä sekä kuvat natiiviin 360°-videosoittimeen.
 - **Verkkojaot, seuraavat vaiheet**: pyyhkäisy kansion tiedostosta seuraavaan kuva- ja videosivuilla (Questin immersiivinen näkymä käy jo läpi kansion 360°-tiedostot), Digest-todennus WebDAVille, käyttäjänimi Bonjour-tietueesta.
-- **Tavalliset videot**: ääniraidan valinta tavalliseen soittimeen, samalla tavalla palvelimen, laitteen ja jakojen videoille (360°- ja Spatial-soittimissa se on).
+- **Tavalliset videot**: ääniraidan valinta puhelinten tavalliseen soittimeen, samalla tavalla palvelimen, laitteen ja jakojen videoille (360°- ja Spatial-soittimissa se on, kuten myös Immuch360 Desktopin tavallisessa soittimessa).
 - **Android TV, seuraavaksi**: koontiversion 20 laitetesti Google TV -emulaattorissa ja oikeassa televisiossa, sitten TV-julkaisu Google Playssa (TV-kuvakaappaukset, TV-banneri, Googlen tarkastus); myöhemmin kanavat television aloitusnäytölle.
 - **Tapo-kamerat, seuraavaksi**: koontiversion 20 laitetesti oikeilla kameroilla; suora kuva iPhonessa ja iPadissa; H.265-tallenteet; leikkeen toisto haun aikana; koko päivän tallenteet yhdellä aikajanalla.
 - **Plex, seuraavaksi**: koontiversion 20 laitetesti (puhelimet, Quest, iPhone, televisio, kodin ulkopuolella); tunnuksen tuominen tietokoneelta QR-koodilla; Plex-palvelimen DLNA-puolen piilottaminen löydettyjen palvelimien luettelosta; IPv6.

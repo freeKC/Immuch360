@@ -19,13 +19,13 @@ Immuch360 është aplikacioni celular i Immich me foto dhe video 360° në të c
   App Store: <a href="#where-to-get-it">në shqyrtim</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store i miratuar, ndërtimi 21 i dërguar si përditësimi i tij i parë<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">shkarkimi i versionit paraprak</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">shkarkimi i versionit paraprak</a>, desktop build 2
 </p>
 
 - 🌐 **360° vendas**<br>Foto dhe video si një sferë në të cilën shikoni përreth, me xhiroskopin, përfshirë skedarët e papërpunuar të kamerës (Insta360 nga ndërtimi 16, GoPro dhe DJI nga ndërtimi 18). Edhe një luajtës videoje falas: i sheshtë, 360°, 3D, VR180
 - 👓 **3D vendas**<br>360° stereoskopike dhe VR180, lart dhe poshtë ose krah për krah, si dhe fotot hapësinore Apple (nga ndërtimi 19): 3D i vërtetë në kufjet VR, një sy në telefon
 - 🎥 **2.5D vendas**<br>Thellësi në një ekran të sheshtë nga një video stereoskopike, pamja ndjek kokën tuaj (eksperimentale, telefona dhe tableta)
-- 📱 **Android, iOS, Quest, TV**<br>Një aplikacion në telefona, tableta dhe kufjet Quest 2, Pro, 3 dhe 3S, 3D i vërtetë në kufjet VR, nga ndërtimi 20 në Android TV me telekomandë, dhe një version paraprak për Windows
+- 📱 **Android, iOS, Quest, TV**<br>Një aplikacion në telefona, tableta dhe kufjet Quest 2, Pro, 3 dhe 3S, 3D i vërtetë në kufjet VR, nga ndërtimi 20 në Android TV me telekomandë, dhe një version paraprak për Windows me foto dhe video të sheshta
 - 🔌 **Me ose pa server**<br>Serveri juaj Immich, ose vetë galeria e telefonit, pa nevojë për llogari
 - 🗄️ **Ndarjet e rrjetit**<br>Samba (SMB), WebDAV dhe, nga ndërtimi 19, serverë medias DLNA të gjetur në rrjet dhe të lexuar drejtpërdrejt, pa shkarkuar asgjë, dhe të dërguar në Immich kur të zgjidhni. Nga ndërtimi 19, një telefon ndan edhe galerinë e tij me kufjet VR
 - 📺 **Në televizor**<br>Nga ndërtimi 20 e njëjta APK në Android TV dhe Google TV: foto dhe video 360°, serveri juaj dhe ndarjet tuaja, me telekomandë
@@ -79,7 +79,7 @@ Immuch360 është aplikacioni celular i Immich me foto dhe video 360° në të c
 - **“Dua të shoh fotot dhe videot e mia 360°, dhe videot e NAS-it tim ose të serverit tim Plex, në televizor, me telekomandë.”** Shihni [Shikojini në televizor](#watch-on-your-tv-android-tv-and-google-tv).
 - **“Nuk i gjej dot pamjet e mia 360° mes gjithë të tjerave.”** Shihni [Lista 360°](#find-your-360-shots-the-360-list).
 - **“Videoja ime 360° ngec ose luan një kopje të turbullt.”** Shihni [Detajet e videos dhe dekoderët](#video-details-decoders-and-why-a-video-stutters).
-- **“Dua fotot e mia 360° dhe bibliotekën time Immich në PC-në time me Windows, me fotot e dosjeve të saj, NAS-in tim dhe serverin tim Plex, dhe PC-në të ndarë me kufjet e mia VR.”** Shihni [Në një kompjuter me Windows](#on-a-windows-computer-immuch360-desktop-preview) (version paraprak, vetëm foto për tani).
+- **“Dua fotot e mia 360° dhe bibliotekën time Immich në PC-në time me Windows, me fotot dhe videot e dosjeve të saj, NAS-in tim dhe serverin tim Plex, dhe PC-në të ndarë me kufjet e mia VR.”** Shihni [Në një kompjuter me Windows](#on-a-windows-computer-immuch360-desktop-preview) (version paraprak: foto dhe video të sheshta për tani, videot 360° më vonë).
 - **“A mbetet gjithçka që bën aplikacioni Immich?”** Po, me dy ndryshime të vogla, shihni [Gjithçka tjetër është Immich](#everything-else-is-immich).
 
 Kur një veçori është e re, teksti tregon nga cili ndërtim ekziston. Publikimi në GitHub ka gjithmonë ndërtimin më të ri, dyqanet vijnë më vonë: shihni [Ku ta merrni](#where-to-get-it).
@@ -752,7 +752,7 @@ Ndërtimi aktual, ndërtimi 21 (versioni 3.3.0-rc.0, numri i ndërtimit 3030019)
 | Bibliotekat e një Plex Media Server të luajtura nga skedarët origjinalë, në shtëpi dhe jashtë, pa plex.tv | ❌ | ✅ nga ndërtimi 20, të gjithë shikuesit, në telefona, tableta, Quest dhe televizorë |
 | Kamerat Tapo: pamja e drejtpërdrejtë, dhe regjistrimet e kartës së kujtesës të dërguara në Immich kur ta zgjidhni | ❌ | ✅ nga ndërtimi 20: regjistrimet kudo, drejtpërdrejt në Android, Android TV dhe Quest |
 | Android TV dhe Google TV, të drejtuara me telekomandë, në të njëjtën APK | ❌ nuk është aplikacion televizori | ✅ nga ndërtimi 20 |
-| I njëjti aplikacion në një kompjuter me Windows | ❌ vetëm telefona dhe tableta | ✅ paraprak, ende pa video |
+| I njëjti aplikacion në një kompjuter me Windows | ❌ vetëm telefona dhe tableta | ✅ paraprak, foto dhe video të sheshta |
 | Foto Insta360 .insp të papërpunuara dhe video .insv me një pistë | ❌ të sheshta | ✅ nga ndërtimi 16 |
 | Video të papërpunuara me një objektiv për pistë ose për skedar (Insta360 X4, X4 Air, X5, X6, çifte X3, GoPro .360, DJI .osv) | ❌ të sheshta ose të gabuara | ✅ nga ndërtimi 18 |
 | .dng me dy fisheye | ❌ i sheshtë | ❌ ende jo |
@@ -782,7 +782,7 @@ Ndërtimi aktual, ndërtimi 21 (versioni 3.3.0-rc.0, numri i ndërtimit 3030019)
 - **Plex Media Server**: verifikuar nga një kompjuter kundrejt një Plex Media Server 1.42.1 të vërtetë (çiftimi, dosjet, intervalet e bajtëve, miniaturat, adresa jashtë shtëpisë); ende i paverifikuar në pajisje.
 - **Kamerat Tapo**: verifikuar kundrejt një kamere të simuluar; ende i paverifikuar me një kamerë të vërtetë.
 - **Android TV dhe Google TV**: verifikuar me teste të automatizuara; ende i paverifikuar në një televizor.
-- **I njëjti aplikacion në një kompjuter me Windows**: 475 teste të automatizuara për desktop në Windows, dhe në një PC me Windows 11 aplikacioni niset, hap një seancë të ruajtur në një server Immich, sinkronizohet dhe mbyllet pa probleme; testimi me dorë i çdo funksioni është në vazhdim.
+- **I njëjti aplikacion në një kompjuter me Windows**: 656 nga 663 testet e automatizuara për desktop kalojnë në Windows (7 të anashkaluara qëllimisht), dhe në një PC me Windows 11 aplikacioni niset, hap një seancë të ruajtur në një server Immich, sinkronizohet, luan një video dhe mbyllet pa probleme; testimi me dorë i çdo funksioni është në vazhdim.
 - **Foto Insta360 .insp të papërpunuara dhe video .insv me një pistë**: fotot u verifikuan kundrejt eksporteve të Insta360 Studio të skedarëve X3, videot në një emulator Android me një skedar X3 me rezolucion të ulët; ende nuk ka punuar në një iPhone.
 - **Video të papërpunuara me një objektiv për pistë ose për skedar**: lexuesit dhe bashkimi u verifikuan në skedarë realë X4, çift X3, GoPro MAX dhe Osmo 360; luajtja është testi në pajisje i ndërtimeve 18 dhe 19.
 - **.dng me dy fisheye**: i planifikuar.
@@ -825,16 +825,19 @@ Immuch360 është një galeri, dhe është edhe një luajtës medias falas: luan
   - iPhone, iPad: njësoj, përveç skedarëve MKV dhe AVI të një ndarjeje, që iOS nuk i hap (në një server luhen të transkoduar).
   - Meta Quest: në dritare.
   - Android TV, Google TV: si në telefona; OK ndal, majtas dhe djathtas kapërcejnë 10 s.
+  - Windows (nga desktop build 2): luajtësi libmpv, nga të gjitha burimet e listës së dytë; Enter ndal, majtas dhe djathtas ose J dhe L kapërcejnë 10 s.
 - **Foto 360°**
   - Telefonat Android: shikuesi sferik, xhiroskopi.
   - iPhone, iPad: njësoj.
   - Meta Quest: zhytëse, rreth jush.
   - Android TV, Google TV: shikuesi sferik i rrotulluar me shigjetat, i zmadhuar me tastet e kanaleve.
+  - Windows: shikuesi sferik, miu dhe tastiera.
 - **Video 360°**
   - Telefonat Android: luajtësi vendas Media3 në një sferë, xhiroskopi, kalim përpara e prapa, zgjedhja e pistës audio, treguesi i ngarkimit.
   - iPhone, iPad: luajtësi vendas SceneKit në një sferë, xhiroskopi, zgjedhja e pistës audio, treguesi i ngarkimit; luaj dhe pauzë, ende pa shirit kohe.
   - Meta Quest: zhytëse, 3D i vërtetë për skedarët stereoskopikë, shirit kohe me kapërcime 10 sekondash, media e mëparshme dhe e radhës.
   - Android TV, Google TV: luajtësi Media3 i telefonave, i rrotulluar me shigjetat.
+  - Windows: ende jo, shfaqen të sheshta për tani.
 - **3D 360° (lart dhe poshtë, krah për krah)**
   - Telefonat Android: syri i majtë, butoni i paraqitjes.
   - iPhone, iPad: njësoj.
@@ -888,7 +891,7 @@ Immuch360 është një galeri, dhe është edhe një luajtës medias falas: luan
 
 Hyrjet Android TV dhe Google TV, nga ndërtimi 20, nuk janë verifikuar ende në një televizor, shihni [Shikojini në televizor](#watch-on-your-tv-android-tv-and-google-tv); hyrjet e kamerës nuk janë verifikuar ende me një kamerë të vërtetë.
 
-Në Windows, versioni paraprak i Immuch360 Desktop shfaq fotot, të sheshta dhe 360°, përfshirë fotot e papërpunuara .insp të Insta360, me miun dhe tastierën, nga serveri, dosjet e PC-së, ndarjet dhe Plex; ende nuk luan video, ato shfaqin një vendmbajtës (shihni [Ende jo gati](#not-there-yet)).
+Në Windows, versioni paraprak i Immuch360 Desktop shfaq fotot, të sheshta dhe 360°, përfshirë fotot e papërpunuara .insp të Insta360, me miun dhe tastierën, dhe nga desktop build 2 luan videot e sheshta, nga serveri, dosjet e PC-së, ndarjet, Plex dhe regjistrimet Tapo; videot 360°, 3D, VR180 dhe videot e papërpunuara 360° shfaqen për tani të sheshta ose si vendmbajtës (shihni [Ende jo gati](#not-there-yet)).
 
 - **Serveri juaj Immich**: origjinali ose transmetimi i transkoduar i serverit, siç thotë Cilësimet, Shikuesi i asetit, Burimi i videos (shihni [Detajet e videos dhe dekoderët](#video-details-decoders-and-why-a-video-stutters)). E njëjta llogari si aplikacioni web.
 - **Vetë telefoni ose kufjet VR**: “Përdor pa server” në faqen e hyrjes, ose zëri On this device i skedës Biblioteka.
@@ -959,24 +962,24 @@ Pamje të bëra në kufjet VR me butonin e kapjes së ekranit (butoni Meta dhe k
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Në një kompjuter me Windows: Immuch360 Desktop (version paraprak)
 
-Biblioteka juaj Immich është në një server, foto të tjera ndodhen në dosjet e PC-së, videot në një NAS ose në një server Plex, dhe do të donit të shikonit përreth në fotot tuaja 360° në një ekran të madh, ose t’i shfaqni fotot e PC-së në kufjet VR. Immuch360 Desktop është i njëjti aplikacion në një kompjuter me Windows, i ndërtuar nga të njëjtat burime si aplikacionet e telefonit.
+Biblioteka juaj Immich është në një server, foto dhe video të tjera ndodhen në dosjet e PC-së, video të tjera në një NAS ose në një server Plex, dhe do të donit të shikonit përreth në fotot tuaja 360° dhe të luanit videot tuaja në një ekran të madh, ose t’i shfaqni fotot e PC-së në kufjet VR. Immuch360 Desktop është i njëjti aplikacion në një kompjuter me Windows, i ndërtuar nga të njëjtat burime si aplikacionet e telefonit.
 
-Në një kompjuter, Immich ofron aplikacionin e tij web në një shfletues. **Çfarë shton Immuch360 Desktop**: dosjet e PC-së pa asnjë server apo llogari, ndarjet SMB, WebDAV, DLNA dhe Plex të shfletuara nga aplikacioni, fotot e papërpunuara .insp të Insta360 të hapura si sferë, dhe PC-në të ndarë me një Meta Quest në shtëpi.
+Në një kompjuter, Immich ofron aplikacionin e tij web në një shfletues. **Çfarë shton Immuch360 Desktop**: dosjet e PC-së pa asnjë server apo llogari, ndarjet SMB, WebDAV, DLNA dhe Plex të shfletuara dhe të luajtura nga aplikacioni, fotot e papërpunuara .insp të Insta360 të hapura si sferë, dhe PC-në të ndarë me një Meta Quest në shtëpi.
 
-Ky ndërtim i parë është version paraprak: fotot funksionojnë, videot vijnë me ndërtimet e ardhshme për desktop. Aplikacionet për telefon, tabletë, Quest dhe TV nuk ndryshojnë me të dhe e mbajnë emrin Immuch360.
+Ky është version paraprak: nga desktop build 2, fotot dhe videot e sheshta funksionojnë; videot 360°, 3D dhe VR180 vijnë me ndërtimet e ardhshme për desktop. Që nga 9 tetori 2026 burimet e desktop-it janë në degën kryesore të fork-ut, `immuch360`, kështu që telefonat, kufjet VR, televizorët dhe kompjuterët dalin nga të njëjtat burime. Aplikacionet për telefon, tabletë, Quest dhe TV nuk ndryshojnë me të dhe e mbajnë emrin Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Shkarkimi dhe instalimi në Windows
 
-Ndërtimi i parë është publikimi paraprak në GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Skedari i tij është `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 skedarë pasi të shpaketohet), me `SHA256SUMS.txt` për ta verifikuar. U ndërtua nga dega `desktop` në commit-in 21f285c34: ndërtimi 20 i telefonit plus versioni për kompjuter. Kërkon Windows 10 ose 11, 64 bit.
+Ndërtimi aktual është publikimi paraprak në GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Skedari i tij është `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (rreth 57 MB, 78 skedarë pasi të shpaketohet, përfshirë luajtësin e videove dhe dosjen e tij `licenses`), me `SHA256SUMS.txt` për ta verifikuar. U ndërtua nga dega kryesore, `immuch360`, në commit-in 5b723bd25: burimet e ndërtimit 21 të telefonit plus versioni për kompjuter. Kërkon Windows 10 ose 11, 64 bit.
 
 1. Shkarkoni ZIP-in dhe shpaketojeni kudo, për shembull në Dokumente.
-2. Nisni `immuch360.exe` nga dosja e shpaketuar. Mbajeni dosjen të plotë: programi ka nevojë për skedarët pranë tij.
+2. Nisni `immuch360.exe` nga dosja e shpaketuar. Mbajeni dosjen të plotë: programi ka nevojë për skedarët pranë tij, përfshirë luajtësin e videove.
 3. Skedarët ende nuk janë të nënshkruar, prandaj Windows SmartScreen mund të shfaqë “Windows protected your PC”: zgjidhni “More info”, pastaj “Run anyway”. Aty ku Smart App Control është aktiv, ai bllokon programet e panënshkruara.
 4. Prisni dritaren. Nisja e parë e një ndërtimi të ri zgjat nga 10 sekonda deri në rreth një minutë, me shumë gjasa ndërsa Microsoft Defender skanon skedarët e rinj: mos e nisni aplikacionin përsëri ndërkohë. Nisjet e mëpasshme zgjasin një ose dy sekonda.
 5. Në faqen e hyrjes, identifikohuni në serverin tuaj Immich me adresën e tij, email-in dhe fjalëkalimin tuaj, ose klikoni “Përdor pa server”.
 
-Për të verifikuar ZIP-in, ekzekutoni `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` në një dritare komandash, në dosjen e shkarkimit: rezultati është ai i shkruar në `SHA256SUMS.txt`. Ende nuk ka instalues as përditësim automatik: ndiqni faqen [Releases](https://github.com/freeKC/Immuch360/releases) dhe shpaketojeni ndërtimin e radhës në të njëjtën mënyrë.
+Për të verifikuar ZIP-in, ekzekutoni `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` në një dritare komandash, në dosjen e shkarkimit: rezultati është ai i shkruar në `SHA256SUMS.txt`. Ende nuk ka instalues as përditësim automatik: ndiqni faqen [Releases](https://github.com/freeKC/Immuch360/releases) dhe shpaketojeni ndërtimin e radhës në të njëjtën mënyrë.
 
 ### Çfarë bën versioni paraprak
 
@@ -984,7 +987,8 @@ Për të verifikuar ZIP-in, ekzekutoni `certutil -hashfile Immuch360-Desktop-3.3
 - **Pa server**: dosjet e fotove dhe videove tuaja (sugjerohen Pictures dhe Videos) zëvendësojnë galerinë e një telefoni. Asgjë nuk lexohet jashtë dosjeve që keni zgjedhur, dhe pa server asgjë nuk largohet nga kompjuteri.
 - **Ngarkimi dhe kopja rezervë** nga ato dosje në serverin tuaj Immich, ndërsa aplikacioni është i hapur.
 - **Fotot 360° si sferë**, me miun dhe tastierën; fotot e papërpunuara .insp të kamerave Insta360 hapen si në telefona.
-- **Ndarjet e rrjetit**: Samba (SMB), WebDAV dhe serverat e mediave DLNA, dhe serverat Plex pa plex.tv, të shfletuar si në telefona: fotot e tyre hapen, videot e tyre presin luajtësin e videove (shihni [Ende jo gati](#not-there-yet)). Për kamerat Tapo, regjistrimet e kartës së kujtesës: lista, dhe marrja e një klipi.
+- **Videot e sheshta** (nga desktop build 2): videot e dosjeve tuaja, të serverit tuaj Immich (origjinali ose transmetimi i transkoduar, shihni [Detajet e videos dhe dekoderët](#video-details-decoders-and-why-a-video-stutters)), të ndarjeve SMB, WebDAV dhe DLNA, të serverave Plex dhe regjistrimet Tapo luhen në dritare, me kontrollet e telefonave (luaj, ndal, shiriti i kohës), një tregues ngarkimi, dhe një menu të pistave audio për një video që ka disa. Videot e dosjeve tuaja dhe të ndarjeve shfaqin një kuadër të videos si miniaturë, në vend të një ikone filmi.
+- **Ndarjet e rrjetit**: Samba (SMB), WebDAV dhe serverat e mediave DLNA, dhe serverat Plex pa plex.tv, të shfletuar si në telefona: fotot e tyre hapen dhe videot e tyre luhen. Për kamerat Tapo, regjistrimet e kartës së kujtesës: lista, marrja e një klipi dhe luajtja e tij.
 - **Ndaje këtë kompjuter në rrjet**: albumet, muajt dhe mediat 360° të dosjeve tuaja, vetëm për lexim, për një Meta Quest ose një pajisje tjetër në shtëpi, ashtu si një telefon ndan veten.
 - **Skedarët**: shkarkimet nga serveri shkojnë në një dosje që zgjidhni ju, “Ruaje në një dosje” mban një kopje të fotove dhe videove të përzgjedhura, dhe faqja Regjistrat ka “Ruaji regjistrat në një skedar”.
 
@@ -994,9 +998,11 @@ Për të verifikuar ZIP-in, ekzekutoni `certutil -hashfile Immuch360-Desktop-3.3
 2. **Dosjet në cloud, USB dhe rrjet.** Skedarët që OneDrive (ose një disk tjetër cloud) i mban vetëm në internet numërohen, por nuk lexohen, kështu që shtimi i një dosjeje nuk e shkarkon gjithë cloud-in tuaj: “Shkarko dhe përfshi” i merr kur i doni. Një disk USB që kthehet me një shkronjë tjetër i ruan fotot e tij. Dosjet e rrjetit, dhe dosjet në një kartë kujtese ose në një disk USB (që Windows të mund ta nxjerrë ende), nuk ndiqen për ndryshime: përdorni Rifresko pasi të shtoni skedarë atje.
 3. **Shikoni përreth në një foto 360°**: tërhiqni me miun, zmadhoni me rrotën, me klikim të dyfishtë ose me + dhe - (në çdo paraqitje tastiere, përfshirë AZERTY), lëvizni me shigjetat. F ose F11 kalon në ekran të plotë dhe Escape del prej tij; Home dhe End shkojnë te fotoja e parë dhe e fundit; I shfaq detajet.
 4. **Kaloni nga një foto te tjetra**: në një foto të sheshtë, shigjetat majtas dhe djathtas, ose shigjetat që shfaqen në skaje ndërsa lëviz miu, shkojnë te e mëparshmja dhe te e radhës. Shkronjat e shtypura në fushën e përshkrimit mbeten në tekst.
-5. **Ndani kompjuterin me kufjet VR**: hapni Biblioteka, pastaj Ndarjet e rrjetit; pllakëza e parë është “Ndaje këtë kompjuter në rrjet”, ana e kompjuterit e [Ndaje këtë telefon në rrjet](#share-this-phone-on-the-network). Aktivizoni “Ndaj fotot dhe videot në rrjet”, pastaj shtoni kompjuterin në kufjet VR siç thotë ai seksion. Ndarja ndalon kur aplikacioni mbyllet ose pas një ore pa përdorim.
-6. **Lejoni rrjetin**: Windows mund të pyesë nëse Immuch360 Desktop mund ta përdorë rrjetin. Lejojeni në rrjetet private, përndryshe kufjet VR nuk e gjejnë kompjuterin. Në një rrjet që Windows e shënon si publik (një kafe, një hotel), ose llojin e të cilit nuk e dallon, ndarja nuk niset nëse nuk zgjidhni “Ndaj për këtë seancë”, dhe kompjuteri e njofton veten vetëm në një rrjet ku ndan.
-7. **Cilësimet, “Ky kompjuter”**: dosjet, dosja e shkarkimeve, përshtatësi i rrjetit që përdoret për të gjetur ndarjet dhe për të ndarë kompjuterin (kur ka disa, Wi-Fi dhe Ethernet për shembull), dhe certifikatat e besuara: autoriteti i certifikatave i serverit tuaj, si skedar PEM, për një adresë HTTPS të cilës Windows nuk i beson vetë. Certifikatat e klientit importohen te Cilësimet, Të avancuara, si në telefona.
+5. **Luani një video**: hapeni nga kronologjia, nga një dosje, nga një ndarje, nga Plex ose nga regjistrimet e një kamere Tapo; ajo luhet në dritare. Enter, ose tasti i luajtjes dhe ndalimit i tastierës, e ndal dhe e luan përsëri. Ndërsa luhet, shigjetat majtas dhe djathtas, ose J dhe L, kapërcejnë 10 sekonda prapa ose përpara; kur është e ndalur, shigjetat shkojnë te e mëparshmja dhe te e radhës. F ose F11 kalon në ekran të plotë, si për fotot. Butoni “Pistë audio” zgjedh mes pistave audio të një videoje që ka disa.
+6. **Kur një video ndalon**: një video e ndalur mbetet e ndalur kur ktheheni te dritarja. Një video e ndërprerë para fundit, për shembull kur ndarja ose serveri pushon së përgjigjuri, e thotë këtë: hapeni përsëri dhe ajo vazhdon aty ku ndaloi, e ndalur. Një skedar playlist i gjetur në një dosje ose në një ndarje nuk ndiqet.
+7. **Ndani kompjuterin me kufjet VR**: hapni Biblioteka, pastaj Ndarjet e rrjetit; pllakëza e parë është “Ndaje këtë kompjuter në rrjet”, ana e kompjuterit e [Ndaje këtë telefon në rrjet](#share-this-phone-on-the-network). Aktivizoni “Ndaj fotot dhe videot në rrjet”, pastaj shtoni kompjuterin në kufjet VR siç thotë ai seksion. Ndarja ndalon kur aplikacioni mbyllet ose pas një ore pa përdorim.
+8. **Lejoni rrjetin**: Windows mund të pyesë nëse Immuch360 Desktop mund ta përdorë rrjetin. Lejojeni në rrjetet private, përndryshe kufjet VR nuk e gjejnë kompjuterin. Në një rrjet që Windows e shënon si publik (një kafe, një hotel), ose llojin e të cilit nuk e dallon, ndarja nuk niset nëse nuk zgjidhni “Ndaj për këtë seancë”, dhe kompjuteri e njofton veten vetëm në një rrjet ku ndan.
+9. **Cilësimet, “Ky kompjuter”**: dosjet, dosja e shkarkimeve, përshtatësi i rrjetit që përdoret për të gjetur ndarjet dhe për të ndarë kompjuterin (kur ka disa, Wi-Fi dhe Ethernet për shembull), dhe certifikatat e besuara: autoriteti i certifikatave i serverit tuaj, si skedar PEM, për një adresë HTTPS të cilës Windows nuk i beson vetë. Certifikatat e klientit importohen te Cilësimet, Të avancuara, si në telefona.
 
 ### Krahasuar me aplikacionet e telefonit
 
@@ -1005,20 +1011,24 @@ Për të verifikuar ZIP-in, ekzekutoni `certutil -hashfile Immuch360-Desktop-3.3
 - **Një dritare**: hapja e aplikacionit për herë të dytë sjell përsëri dritaren e parë në vend që të nisë një kopje të dytë.
 - **Asgjë nuk fshihet nga dosjet tuaja**: “Fshi nga pajisja” është i fshehur, dhe Fshi heq vetëm kopjen e serverit, derisa aplikacioni të mund t’i dërgojë skedarët në koshin e riciklimit të Windows.
 - **Miu dhe tastiera** në vend të prekjes dhe xhiroskopit.
+- **Një luajtës videosh për çdo burim**: libmpv luan njësoj videot e serverit, të dosjeve, të ndarjeve dhe të Plex, dhe luajtësi i tij i sheshtë e ka tashmë menunë e pistave audio që luajtësi i sheshtë i telefonave ende nuk e ka.
 
 <a id="not-there-yet"></a>
 ### Ende jo gati
 
-- **Videot**: për tani shfaqin një vendmbajtës, dhe miniaturat e tyre një ikonë filmi. Luajtja vjen më pas: fillimisht videot e sheshta, pastaj videot 360°, 3D dhe VR180 dhe videot e papërpunuara 360°.
+- **Videot 360°, 3D, VR180 dhe videot e papërpunuara 360°**: për tani shfaqen të sheshta, ashtu siç i mban skedari (e gjithë sfera e shpalosur, dy sytë krah për krah, ose pamjet e rrumbullakëta të lenteve), ose si vendmbajtës, dhe butoni 360° mbetet vetëm te fotot. Luajtësit e tyre vijnë me ndërtimet e ardhshme për desktop.
 - **Spatial 2.5D**, më vonë me kamerën web; **pamja e drejtpërdrejtë Tapo**; **harta** dhe pamja Vendet; **hyrja me OAuth** (identifikohuni në vend të saj me një email dhe një fjalëkalim); **Google Cast**; **njoftimet**.
 - **Një instalues, një ndërtim i nënshkruar dhe përditësime automatike**: ky ndërtim është një dosje me `immuch360.exe`.
-- **Linux dhe macOS**: projektet e tyre janë në burime, por ende nuk janë ndërtuar as provuar në ato sisteme; vijnë pas Windows.
+- **Linux dhe macOS**: projektet e tyre janë në burime, por ende nuk janë ndërtuar as provuar në ato sisteme, dhe luajtësi i tyre i videove ende nuk është në to; vijnë pas Windows.
 - **Përkthimet**: tekstet e reja të versionit për kompjuter janë në anglisht për tani.
 
 ### Probleme të njohura
 
-- **Ndërsa kufjet VR lexojnë një skedar nga kompjuteri i ndarë** (një video që luajnë, një foto që shkarkojnë), Windows nuk mund ta riemërtojë, zhvendosë ose fshijë atë skedar dhe thotë se është i hapur në Immuch360 Desktop: ndaleni më parë luajtjen. Kopjet rezervë nuk i mbajnë skedarët tuaj në atë mënyrë: një skedar mund të riemërtohet, zhvendoset ose fshihet ndërsa ngarkohet.
-- **Ashpërsi**: funksionet e mësipërme kalojnë testet e tyre të automatizuara në Windows (475 teste për desktop), dhe në një PC me Windows 11 aplikacioni niset, hap një seancë të ruajtur në një server Immich, sinkronizohet dhe mbyllet pa probleme. Testimi me dorë i çdo funksioni në një PC të vërtetë është ende në vazhdim.
+- **Nisja e parë e një ndërtimi të ri është e ngadaltë**: nga 10 sekonda deri në rreth një minutë para se të shfaqet dritarja, me shumë gjasa ndërsa Microsoft Defender skanon skedarët e rinj, që ende nuk janë të nënshkruar. Prisni dritaren në vend që ta nisni aplikacionin përsëri; nisjet e mëpasshme zgjasin një ose dy sekonda.
+- **Videot 8K HEVC kanë nevojë për një çip grafik të dedikuar**: në laptopin e testimit, çipi i integruar Intel UHD shfaqi rreth gjysmën e kuadrove të një videoje 8K HEVC, ndërsa çipi i dedikuar NVIDIA luajti 8K HEVC dhe 5.7K H.264 pa asnjë kuadër të humbur. Windows e nis aplikacionin në çipin e integruar nëse nuk i thuhet ndryshe: në cilësimet e Windows, System, Display, Graphics, shtoni `immuch360.exe` dhe zgjidhni “High performance”. Në çipin e integruar, një video 5.7K H.264, të cilën dekoderi i tij e refuzon, dekodohet nga procesori pa asnjë kuadër të humbur.
+- **Videot vizatohen me lartësi më së shumti 1440 rreshta**, pastaj shkallëzohen sipas dritares: në një ekran 4K në ekran të plotë, një video 4K ose 8K është pak më pak e mprehtë se në një luajtës videosh të dedikuar. Kjo e mban një video 8K brenda fuqisë grafike të një laptopi.
+- **Ndërsa një video e dosjeve tuaja luhet në aplikacion, ose ndërsa kufjet VR lexojnë një skedar nga kompjuteri i ndarë** (një video që luajnë, një foto që shkarkojnë), Windows nuk mund ta riemërtojë, zhvendosë ose fshijë atë skedar dhe thotë se është i hapur në Immuch360 Desktop: mbylleni më parë videon, ose ndaleni luajtjen në kufjet VR. Kopjet rezervë nuk i mbajnë skedarët tuaj në atë mënyrë: një skedar mund të riemërtohet, zhvendoset ose fshihet ndërsa ngarkohet.
+- **Ashpërsi**: 656 nga 663 testet për desktop kalojnë në Windows (7 janë anashkaluar qëllimisht), 200 luajtës të hapur njëri pas tjetrit nuk lënë asnjë rrjedhje, dhe në një PC me Windows 11 aplikacioni niset, hap një seancë të ruajtur në një server Immich, sinkronizohet, luan një video dhe mbyllet pa probleme. Testimi me dorë i çdo funksioni në një PC të vërtetë është ende në vazhdim.
 
 Nëse diçka nuk shkon, ju lutem hapni një [issue](https://github.com/freeKC/Immuch360/issues) me regjistrin e ruajtur nga faqja Regjistrat, shihni [Regjistrat](#logs). Kontrollojeni regjistrin para se ta ndani: mund të përmbajë adresën e serverit tuaj.
 
@@ -1027,19 +1037,17 @@ Nëse diçka nuk shkon, ju lutem hapni një [issue](https://github.com/freeKC/Im
 
 Ju duhen Windows 10 ose 11 në x64, Flutter 3.47.2 për Windows, Visual Studio 2022 ose Build Tools të tij me ngarkesën e punës “Desktop development with C++”, Developer Mode i aktivizuar në cilësimet e Windows (Flutter ka nevojë për të për shtojcat), dhe Python 3 për skriptin e paketimit.
 
-1. Merrni degën `desktop` dhe ekzekutoni gjenerimin e kodit. Ai përdor Java dhe Node, prandaj ekzekutojeni në Linux, macOS ose në WSL; me WSL, mbajeni klonin në një disk Windows, të cilin WSL e sheh nën `/mnt/c` ose `/mnt/d`:
+1. Merrni burimet dhe ekzekutoni gjenerimin e kodit. Dega kryesore, `immuch360`, ndërton edhe versionin për kompjuter: nuk ka degë për të ndërruar. Gjenerimi i kodit përdor Java dhe Node, prandaj ekzekutojeni në Linux, macOS ose në WSL; me WSL, mbajeni klonin në një disk Windows, të cilin WSL e sheh nën `/mnt/c` ose `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Në Windows, në të njëjtën dosje `mobile`, ndërtoni aplikacionin:
+2. Në Windows, në të njëjtën dosje `mobile`, ndërtoni aplikacionin. Ndërtimi i parë shkarkon nga GitHub libraritë e luajtësit të videove (libmpv dhe ANGLE) dhe kontrollon çdo arkiv sipas SHA-256 të tij:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Ju duhen Windows 10 ose 11 në x64, Flutter 3.47.2 për Windows, Visual Studio 2
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. Dosja `Release` punon në PC-në që e ndërtoi. Për një PC tjetër, mbajeni të gjithë dosjen dhe shtoni runtime-in Visual C++ pranë `immuch360.exe`. Nga rrënja e klonit, skripti i paketimit e kopjon atë, lë jashtë atë që shërben vetëm për Android, kontrollon që çdo DLL që ngarkon aplikacioni është në dosje ose në vetë Windows, dhe krijon ZIP-in:
+3. Dosja `Release` punon në PC-në që e ndërtoi. Për një PC tjetër, mbajeni të gjithë dosjen dhe shtoni runtime-in Visual C++ pranë `immuch360.exe`. Nga rrënja e klonit, skripti i paketimit e kopjon atë, lë jashtë atë që shërben vetëm për Android, shton licencat e luajtësit të videove, kontrollon që çdo DLL që ngarkon aplikacioni është në dosje ose në vetë Windows, dhe krijon ZIP-in:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI e degës `desktop` (`.github/workflows/immuch360-desktop.yml`) ekzekuton kontrollet e telefonit dhe gjithë grupin e testeve në Linux, testet për desktop në Windows, dhe ndërton të njëjtin ZIP; punët e saj për Linux dhe macOS (`flutter build linux` dhe `flutter build macos`, me të njëjtin `-t lib/main_desktop.dart`) ende nuk kanë punuar në ato sisteme.
+CI e Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) punon në degën `desktop`, e cila ndjek `immuch360`: kontrollet e telefonit (asgjë nuk ndryshon në ndërtimet e telefonit) dhe gjithë grupi i testeve në Linux, testet për desktop në Windows, dhe i njëjti ZIP; punët e saj për Linux dhe macOS (`flutter build linux` dhe `flutter build macos`, me të njëjtin `-t lib/main_desktop.dart`) ende nuk kanë punuar në ato sisteme.
 
 <a id="where-to-get-it"></a>
 ## Ku ta merrni
@@ -1075,8 +1083,8 @@ Aplikacioni është në Google Play për telefona dhe tableta; versioni i App St
   - Sot: `Immuch360-v<version>-release.apk` universal i faqes [Releases](https://github.com/freeKC/Immuch360/releases), i instaluar me sideload me adb, shihni [Instalojeni në televizor](#install-it-on-the-tv). Është i njëjti aplikacion si në telefona.
   - Së shpejti: Google Play në televizorë, pas shqyrtimit të Google për publikimin për televizor.
 - **Windows 10 dhe 11, 64 bit (version paraprak)**
-  - Sot: Immuch360 Desktop, ZIP-i `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` i [publikimit paraprak për desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), i shpaketuar dhe i nisur siç thotë [Shkarkimi dhe instalimi në Windows](#download-and-install-on-windows). Vetëm foto për tani: videot vijnë me ndërtimet e ardhshme për desktop.
-  - Së shpejti: luajtja e videove; një instalues, një ndërtim i nënshkruar dhe përditësime më vonë.
+  - Sot: Immuch360 Desktop, ZIP-i `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` i [publikimit paraprak për desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), i shpaketuar dhe i nisur siç thotë [Shkarkimi dhe instalimi në Windows](#download-and-install-on-windows). Foto dhe video të sheshta për tani: videot 360°, 3D dhe VR180 vijnë me ndërtimet e ardhshme për desktop.
+  - Së shpejti: videot 360°, 3D, VR180 dhe videot e papërpunuara 360°; një instalues, një ndërtim i nënshkruar dhe përditësime më vonë.
 
 Lidhjet e App Store dhe Meta Horizon Store do të shtohen këtu sapo të publikohen faqet. Hyni me URL-në dhe llogarinë tuaj të zakonshme të serverit Immich, ose prekni “Përdor pa server” në faqen e hyrjes për të filluar me fotot dhe videot e vetë pajisjes. APK-ja nga GitHub nuk përditësohet vetë: ndiqni faqen Releases, dhe pasi ta keni instaluar aplikacionin nga një dyqan, merrini përditësimet nga ai dyqan.
 
@@ -1105,15 +1113,15 @@ Dy variantet (flavor) Android janë i njëjti aplikacion. Nga ndërtimi 20 `phon
 
 Për të ndërtuar për iOS në Mac-un tuaj, përdorni Xcode dhe ekipin tuaj të nënshkrimit; me Xcode 26, ekzekutoni një herë fillimisht `xcodebuild -downloadComponent MetalToolchain`, sepse shader-at Spatial kanë nevojë për të. Pa Mac, ndërtimet iOS ekzekutohen në Codemagic (një Mac i strehuar) nga skedari `codemagic.yaml` i këtij depoje. Ndërtimet e publikimit Android ekzekutohen në GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, versioni për Windows, ndërtohet nga dega `desktop` me Flutter për Windows: hapat janë te [Ndërtojeni vetë në Windows](#build-it-yourself-on-windows).
+Immuch360 Desktop, versioni për Windows, ndërtohet nga të njëjtat burime, dega `immuch360`, me Flutter për Windows: hapat janë te [Ndërtojeni vetë në Windows](#build-it-yourself-on-windows).
 
 Asnjë sekret nuk ndodhet në këtë depo: çelësi i nënshkrimit Android ruhet si sekrete të koduara të GitHub Actions, dhe materiali i nënshkrimit Apple si variabla të koduara në Codemagic. Skedarët e workflow-it u referohen vetëm me emër. Pa `android/key.jks` tuajin, një ndërtim publikimi nënshkruhet me çelësin e korrigjimit dhe nuk mund të instalohet mbi një kopje nga GitHub ose nga një dyqan (çinstalojeni fillimisht atë); një ndërtim korrigjimi instalohet pranë saj si Immuch360 debug. Kopja e Meta Horizon Store është APK-ja `quest` e publikimit e nënshkruar me një çelës tjetër, atë me të cilin u regjistrua fillimisht aplikacioni i dyqanit, prandaj as ajo nuk mund të instalohet mbi një APK të instaluar me sideload, as anasjelltas.
 
 ### Degët
 
 - **`main`**: `main` i Immich në commit-in mbi të cilin bazohet `immuch360` (29 shtator 2026 për ndërtimet aktuale), nuk ndryshohet kurrë; ecën përpara kur fork-u rebazohet mbi një Immich më të ri.
-- **`immuch360`**: ndryshimet e këtij fork-u mbi Immich. Çdo publikim tregon mbi cilin version të Immich bazohet.
-- **`desktop`**: Immuch360 Desktop, versioni për kompjuter, mbi `immuch360`. Publikimet e telefonit bashkohen në të, dhe publikimet paraprake për desktop ndërtohen prej saj (desktop build 1 nga commit-i 21f285c34, ndërtimi 20 i telefonit plus versioni për kompjuter). Asgjë nën `mobile/android` dhe `mobile/ios` nuk ndryshon në të.
+- **`immuch360`**: ndryshimet e këtij fork-u mbi Immich, përfshirë Immuch360 Desktop që nga 9 tetori 2026. Çdo publikim tregon mbi cilin version të Immich bazohet.
+- **`desktop`**: aty ku Immuch360 Desktop, versioni për kompjuter, u ndërtua mbi `immuch360`, derisa u bashkua në të më 9 tetor 2026, që telefonat, kufjet VR, televizorët dhe kompjuterët të dalin nga të njëjtat burime. Tani ajo ndjek `immuch360` dhe mban etiketat e publikimeve paraprake për desktop ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) nga commit-i 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) nga 5b723bd25). Versioni për kompjuter nuk ndryshon asgjë nën `mobile/android` dhe `mobile/ios`.
 
 <a id="logs"></a>
 ## Regjistrat
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Nga ndërtimi 19, klienti DLNA, ndarja e telefonit dhe zbulimi i mediave hapësinore Apple shkruajnë edhe në regjistrin e vetë aplikacionit (Regjistrat, në menynë e fotos së profilit lart djathtas), nën `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` dhe `NetworkMediaService`. Nga ndërtimi 20 modaliteti i televizorit shkruan aty nën `TvMode` dhe `TvTextEntry`, serverët Plex nën `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` dhe `PlexServerEditPage`, dhe kamerat Tapo nën `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` dhe `CameraLiveView`; rreshtat e Plex nuk përmbajnë kurrë tokenin, një adresë ose një titull, dhe rreshtat e kamerave i lënë jashtë fjalëkalimet. Rreshtat e regjistrit mbeten në pajisje, përveç nëse i kopjoni vetë.
 
-Në një kompjuter (Immuch360 Desktop), faqja Regjistrat ka gjithashtu “Ruaji regjistrat në një skedar”: regjistrin, ose një ZIP me regjistrin dhe raportet e rrëzimeve të fundit kur ka të tilla (emri i sugjeruar atëherë përfundon me “with-crash-reports”). Një raport rrëzimi është një minidump i vogël: thread-et, ku u ndalën dhe vetëm ajo që nevojitet për të ndjekur thirrjet e tyre, me emrat e skedarëve të programit por jo dosjet e tyre; jo memorien e aplikacionit. Kontrollojeni regjistrin para se ta ndani: mund të përmbajë adresën e serverit tuaj.
+Në një kompjuter (Immuch360 Desktop), faqja Regjistrat ka gjithashtu “Ruaji regjistrat në një skedar”: regjistrin, ose një ZIP me regjistrin dhe raportet e rrëzimeve të fundit kur ka të tilla (emri i sugjeruar atëherë përfundon me “with-crash-reports”). Një raport rrëzimi është një minidump i vogël: thread-et, ku u ndalën dhe vetëm ajo që nevojitet për të ndjekur thirrjet e tyre, me emrat e skedarëve të programit por jo dosjet e tyre; jo memorien e aplikacionit.
+
+Nga desktop build 2, luajtësi i videove i kompjuterit shkruan aty nën `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` dhe `VideoThumbnailGrabber`, përfshirë paralajmërimet e vetë mpv, me tokenat dhe fjalëkalimet të hequra. Kontrollojeni regjistrin para se ta ndani: mund të përmbajë adresën e serverit tuaj.
 
 <a id="privacy"></a>
 ## Privatësia
@@ -1144,6 +1154,7 @@ Në një kompjuter (Immuch360 Desktop), faqja Regjistrat ka gjithashtu “Ruaji 
 - **Ndarja e telefonit**: vetëm rrjet lokal, me emër përdoruesi dhe fjalëkalim, përmes HTTP të thjeshtë (shihni [Ndaje këtë telefon në rrjet](#share-this-phone-on-the-network)).
 - **Kamera**: përdoret vetëm nga luajtësi Spatial 2.5D, në pajisje; pamjet nuk ruhen kurrë dhe nuk dërgohen askund.
 - **Në një kompjuter** (Immuch360 Desktop, version paraprak për Windows): aplikacioni lexon vetëm dosjet që zgjidhni, mban indeksin, miniaturat dhe memorien e përkohshme në kompjuter, dhe ruan fjalëkalimet dhe tokenat me mbrojtjen e të dhënave të Windows, vetëm për llogarinë tuaj Windows. Ndarja e kompjuterit ndjek rregullat e ndarjes së telefonit, dhe nuk niset në një rrjet që Windows e shënon si publik, ose llojin e të cilit nuk e dallon, përveç nëse e kërkoni ju.
+- **Luajtësi i videove në një kompjuter** (nga desktop build 2): videot e serverit tuaj i arrijnë atij përmes aplikacionit, kështu që luajtësi nuk e mban kurrë tokenin e seancës suaj, dhe ajo që lexon përpara mbetet në memorie, jo në disk. Ai hap vetëm skedarin që i jepet: një skedar i një dosjeje ose i një ndarjeje që në fakt është një playlist ose një përshkrim transmetimi nuk e bën të lidhet diku tjetër.
 
 Politika e plotë është te [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ Politika e plotë është te [PRIVACY.md](../PRIVACY.md).
 
 Ky projekt është një fork i Immich dhe mbetet nën [GNU AGPL v3](../LICENSE). Çdo APK, përfshirë ato për telefona, përmban gjithashtu Meta Spatial SDK, që nuk është me burim të hapur (Meta Platform Technologies SDK License Agreement) dhe përdoret vetëm në kufjet Meta Quest; Immuch360 Desktop, versioni për Windows, nuk e përmban. Immuch360 nuk është i lidhur me ekipin e Immich apo me FUTO, dhe nuk miratohet prej tyre.
 
+ZIP-i për Windows i Immuch360 Desktop, dhe vetëm ai, përmban gjithashtu luajtësin e tij të videove: libmpv, librarinë e [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org) brenda saj, të drejtuar nga shtojcat e [media_kit](https://github.com/media-kit/media-kit). mpv dhe FFmpeg janë ndërtuar pa pjesët e tyre që janë vetëm GPL, dhe kodi i tyre është nën GNU LGPL versioni 2.1 ose më i ri; të ndërtuara së bashku, `libmpv-2.dll` shpërndahet nën GNU LGPL versioni 3 ose më i ri. Aplikacioni e ngarkon gjatë ekzekutimit, kështu që mund ta zëvendësoni me ndërtimin tuaj. Tekstet e licencave janë në dosjen `licenses` të ZIP-it, dhe çdo librari me licencën dhe burimet e saj renditet në [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Plani
 
 Çfarë nuk është bërë ende, më e mundshmja e para. Asgjë këtu nuk është premtim, dhe komentet në [gjurmuesin e problemeve](https://github.com/freeKC/Immuch360/issues) ndihmojnë të vendoset çfarë vjen e para.
 
-- **Immuch360 Desktop, fillimisht Windows**: versioni i parë paraprak ka dalë (shihni [Në një kompjuter me Windows](#on-a-windows-computer-immuch360-desktop-preview)). Më pas, luajtja e videove (fillimisht videot e sheshta, pastaj 360°, 3D, VR180 dhe skedarët e papërpunuar), e matur në dy kartat grafike të një laptopi; pastaj testimi i çdo funksioni në një PC me Windows dhe rregullimet e tij; pastaj Spatial 2.5D me kamerën web; pastaj Linux dhe macOS, paketat, nënshkrimi dhe përditësimet.
+- **Immuch360 Desktop, fillimisht Windows**: desktop build 2 ka dalë, me video të sheshta, dhe burimet e desktop-it janë në degën kryesore të fork-ut, `immuch360`, që nga 9 tetori 2026 (shihni [Në një kompjuter me Windows](#on-a-windows-computer-immuch360-desktop-preview)). Më pas, videot 360°, 3D, VR180 dhe videot e papërpunuara 360° në Windows, me dy lentet e skedarëve të papërpunuar dhe pamjen e drejtpërdrejtë Tapo; pastaj testimi i çdo funksioni në një PC me Windows dhe rregullimet e tij; pastaj Spatial 2.5D me kamerën web; pastaj Linux dhe macOS, paketat, nënshkrimi dhe përditësimet.
 - **Google Play**: ndërtimi 18 është i publikuar; ndërtimi 20 është në shqyrtim te Google që nga 7 tetor 2026, në vend të ndërtimit 19. Ndërtimi 21 nuk ndryshon asgjë në telefona dhe tableta.
 - **App Store**: versioni 3.3.0 pret shqyrtimin e Apple; ka veçoritë e ndërtimit 11, prandaj ngarkimi në Immich dhe kontrolli i dekoderit të videos (ndërtimi 15) dhe skedarët Insta360 të papërpunuar (ndërtimi 16) vijnë me përditësimin e radhës të App Store. Lidhja do të shtohet këtu kur të jetë e publikuar.
 - **Meta Horizon Store**: Meta e miratoi faqen më 7 tetor 2026 me ndërtimin 14. Ndërtimi 21 është dërguar si përditësimi i saj i parë: sjell gjithçka që nga ndërtimi 14 (ngarkimet nga një ndarje në Immich, burimi i videos i zgjedhur sipas asaj që dekodojnë kufjet VR, skedarët e papërpunuar Insta360, GoPro dhe DJI, DLNA, ndarjen e telefonit, fotot hapësinore Apple, bibliotekat e Plex Media Server, kamerat Tapo), dhe dyqani e liston për Quest 2, Quest Pro, Quest 3 dhe 3S. Lidhja e dyqanit do të shtohet këtu sapo faqja të bëhet publike; një kopje e instaluar me sideload duhet çinstaluar më parë (shihni [Instalimi](#install)).
@@ -1166,7 +1179,7 @@ Ky projekt është një fork i Immich dhe mbetet nën [GNU AGPL v3](../LICENSE).
 - **DLNA, ndarja e telefonit dhe hapësinoret Apple, në vijim**: raportet nga pajisjet e ndërtimit 19 (Plex, Jellyfin, një NAS dhe Freebox Server përmes DLNA; një telefon që i shërben një Quest-i, edhe në hotspotin e tij; foto dhe video hapësinore reale nga iPhone në kufjet VR); e drejta (entitlement) për multicast e kërkuar nga Apple, që iPhone-at të gjejnë çdo server DLNA; i mëparshmi dhe i radhës midis fotove hapësinore në kufjet VR; një distinktiv hapësinor në fotot e serverit në kronologji; videot hapësinore në 3D në Quest, nëse e lejojnë dekoderët e tij.
 - **Luajtësit 360° në telefona, në vijim**: një shirit kohe në luajtësin e videove 360° të iOS (ai i Android-it e ka), i mëparshmi/i radhës në luajtësit 360° të telefonave si në pamjen zhytëse të Quest-it, dhe foto në luajtësin vendas të videove 360°.
 - **Ndarjet e rrjetit, hapat e radhës**: rrëshqitja nga një skedar i dosjes te tjetri në faqet e fotos dhe videos (pamja zhytëse e Quest-it kalon tashmë nëpër skedarët 360° të një dosjeje), vërtetimi Digest për WebDAV, emri i përdoruesit nga regjistrimi Bonjour.
-- **Videot e sheshta**: zgjedhja e pistës audio në luajtësin e sheshtë, njësoj për videot e serverit, të pajisjes dhe të ndarjeve (luajtësit 360° dhe Spatial e kanë).
+- **Videot e sheshta**: zgjedhja e pistës audio në luajtësin e sheshtë të telefonave, njësoj për videot e serverit, të pajisjes dhe të ndarjeve (luajtësit 360° dhe Spatial e kanë, ashtu si edhe luajtësi i sheshtë i Immuch360 Desktop).
 - **Android TV, hapat e radhës**: testi në pajisje i ndërtimit 20 në emulatorin Google TV dhe në një televizor të vërtetë, pastaj publikimi për televizor në Google Play (pamje ekrani televizori, baneri i televizorit, shqyrtimi i Google); më vonë, kanale në ekranin kryesor të televizorit.
 - **Kamerat Tapo, hapat e radhës**: testi në pajisje i ndërtimit 20 me kamera të vërteta; pamja e drejtpërdrejtë në iPhone dhe iPad; regjistrimet H.265; luajtja e një klipi ndërsa merret; një ditë e tërë regjistrimesh në një kronologji të vetme.
 - **Plex, hapat e radhës**: testi në pajisje i ndërtimit 20 (telefona, Quest, një iPhone, një televizor, jashtë shtëpisë); sjellja e tokenit nga kompjuteri me një kod QR; fshehja e anës DLNA të një serveri Plex në listën e serverëve të gjetur; IPv6.

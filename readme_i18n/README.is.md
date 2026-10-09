@@ -19,13 +19,13 @@ Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hæg
   App Store: <a href="#where-to-get-it">í yfirferð</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store samþykkt, smíð 21 send inn sem fyrsta uppfærsla<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">sækja forútgáfu</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">sækja forútgáfu</a>, desktop build 2
 </p>
 
 - 🌐 **Innbyggt 360°**<br>Myndir og myndskeið sem kúla sem hægt er að líta í kringum sig í, með gíróskópi, óunnar skrár úr myndavélum meðtaldar (Insta360 frá smíð 16, GoPro og DJI frá smíð 18). Einnig ókeypis myndskeiðaspilari: flatt, 360°, 3D, VR180
 - 👓 **Innbyggt 3D**<br>Steríó 360° og VR180, efst/neðst eða hlið við hlið, og rýmismyndir frá Apple (frá smíð 19): raunverulegt 3D í gleraugunum, eitt auga í síma
 - 🎥 **Innbyggt 2.5D**<br>Dýpt á flötum skjá úr steríómyndskeiði, sjónarhornið fylgir höfðinu (tilraun, símar og spjaldtölvur)
-- 📱 **Android, iOS, Quest, TV**<br>Eitt forrit í símum, spjaldtölvum og Quest 2, Pro, 3 og 3S gleraugunum, raunverulegt 3D í gleraugunum, frá smíð 20 á Android TV með fjarstýringunni, og forútgáfa fyrir Windows
+- 📱 **Android, iOS, Quest, TV**<br>Eitt forrit í símum, spjaldtölvum og Quest 2, Pro, 3 og 3S gleraugunum, raunverulegt 3D í gleraugunum, frá smíð 20 á Android TV með fjarstýringunni, og forútgáfa fyrir Windows með myndum og flötum myndskeiðum
 - 🔌 **Með eða án vélþjóns**<br>Þinn Immich-vélþjónn, eða myndasafn símans sjálfs, enginn aðgangur nauðsynlegur
 - 🗄️ **Netdeilingar**<br>Samba (SMB), WebDAV og, frá smíð 19, DLNA-miðlaþjónar sem finnast á netinu og eru lesnir beint, ekkert sótt, og sendir í Immich þegar þú velur. Frá smíð 19 getur sími líka deilt eigin myndasafni með gleraugunum
 - 📺 **Í sjónvarpinu**<br>Frá smíð 20 sama APK á Android TV og Google TV: 360° myndir og myndskeið, vélþjónninn þinn og deilingarnar þínar, með fjarstýringunni
@@ -79,7 +79,7 @@ Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hæg
 - **„Ég vil horfa á 360° myndirnar mínar og myndskeiðin, og myndskeiðin af NAS-inu mínu eða Plex-þjóninum, í sjónvarpinu, með fjarstýringunni.“** Sjá [Horfðu í sjónvarpinu](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Ég finn ekki 360° myndirnar mínar innan um allar hinar.“** Sjá [360° listinn](#find-your-360-shots-the-360-list).
 - **„360° myndskeiðið mitt hikstar, eða óskýrt afrit er spilað.“** Sjá [Upplýsingar um myndskeið og afkóðarar](#video-details-decoders-and-why-a-video-stutters).
-- **„Ég vil hafa 360° myndirnar mínar og Immich-safnið mitt á Windows-tölvunni minni, með myndunum úr möppum hennar, NAS-inu mínu og Plex-þjóninum mínum, og tölvunni deilt með gleraugunum mínum.“** Sjá [Á Windows-tölvu](#on-a-windows-computer-immuch360-desktop-preview) (forútgáfa, aðeins myndir í bili).
+- **„Ég vil hafa 360° myndirnar mínar og Immich-safnið mitt á Windows-tölvunni minni, með myndunum og myndskeiðunum úr möppum hennar, NAS-inu mínu og Plex-þjóninum mínum, og tölvunni deilt með gleraugunum mínum.“** Sjá [Á Windows-tölvu](#on-a-windows-computer-immuch360-desktop-preview) (forútgáfa: myndir og flöt myndskeið í bili, 360° myndskeið síðar).
 - **„Held ég öllu sem Immich-forritið gerir?“** Já, með tveimur smávægilegum breytingum, sjá [Allt annað er Immich](#everything-else-is-immich).
 
 Þegar eiginleiki er nýr kemur fram í textanum frá hvaða smíð hann er til staðar. Útgáfan á GitHub er alltaf með nýjustu smíðina, verslanirnar koma á eftir: sjá [Hvar á að sækja það](#where-to-get-it).
@@ -752,7 +752,7 @@ Núverandi smíð, smíð 21 (útgáfa 3.3.0-rc.0, smíðanúmer 3030019), byggi
 | Plex Media Server söfn spiluð úr upprunalegu skránum, heima og að heiman, án plex.tv | ❌ | ✅ frá smíð 20, allir skoðarar, í símum, spjaldtölvum, Quest og sjónvörpum |
 | Tapo-myndavélar: bein mynd, og upptökur minniskortsins sendar í Immich þegar þú velur | ❌ | ✅ frá smíð 20: upptökur alls staðar, bein mynd á Android, Android TV og Quest |
 | Android TV og Google TV, stýrt með fjarstýringunni, í sama APK | ❌ ekki sjónvarpsforrit | ✅ frá smíð 20 |
-| Sama forritið á Windows-tölvu | ❌ aðeins símar og spjaldtölvur | ✅ forútgáfa, engin myndskeið enn |
+| Sama forritið á Windows-tölvu | ❌ aðeins símar og spjaldtölvur | ✅ forútgáfa, myndir og flöt myndskeið |
 | Óunnar Insta360 .insp myndir og .insv myndskeið með einni rás | ❌ flatt | ✅ frá smíð 16 |
 | Óunnin myndskeið með eina linsu á rás eða á skrá (Insta360 X4, X4 Air, X5, X6, X3-pör, GoPro .360, DJI .osv) | ❌ flatt eða rangt | ✅ frá smíð 18 |
 | Tvöfalt fiskauga .dng | ❌ flatt | ❌ ekki enn |
@@ -782,7 +782,7 @@ Núverandi smíð, smíð 21 (útgáfa 3.3.0-rc.0, smíðanúmer 3030019), byggi
 - **Plex Media Server**: prófað úr tölvu gegn raunverulegum Plex Media Server 1.42.1 (pörun, möppur, bætabil, smámyndir, vistfangið utan heimilis); ekki enn prófað á tæki.
 - **Tapo-myndavélar**: prófað gegn hermdri myndavél; ekki enn prófað með raunverulegri myndavél.
 - **Android TV og Google TV**: prófað með sjálfvirkum prófunum; ekki enn prófað í sjónvarpi.
-- **Sama forritið á Windows-tölvu**: 475 sjálfvirkar prófanir fyrir tölvuútgáfuna á Windows, og á Windows 11 tölvu ræsist forritið, opnar vistaða setu á Immich-vélþjóni, samstillir og lokast eðlilega; handvirk prófun hverrar aðgerðar er í gangi.
+- **Sama forritið á Windows-tölvu**: 656 af 663 sjálfvirkum prófunum fyrir tölvuútgáfuna standast á Windows (7 sleppt af ásettu ráði), og á Windows 11 tölvu ræsist forritið, opnar vistaða setu á Immich-vélþjóni, samstillir, spilar myndskeið og lokast eðlilega; handvirk prófun hverrar aðgerðar er í gangi.
 - **Óunnar Insta360 .insp myndir og .insv myndskeið með einni rás**: myndir bornar saman við útflutning Insta360 Studio á X3-skrám, myndskeið á Android-hermi með X3-skrá í lágri upplausn; ekki enn keyrt á iPhone.
 - **Óunnin myndskeið með eina linsu á rás eða á skrá**: þáttarar og samskeyting prófuð á raunverulegum X4-, X3-pars-, GoPro MAX- og Osmo 360-skrám; spilun er tækjaprófun smíða 18 og 19.
 - **Tvöfalt fiskauga .dng**: á áætlun.
@@ -825,16 +825,19 @@ Immuch360 er myndasafn, og það er líka ókeypis margmiðlunarspilari: það s
   - iPhone, iPad: sama, nema MKV- og AVI-skrár á deilingu, sem iOS opnar ekki (á vélþjóni spilast þær umkóðaðar).
   - Meta Quest: í glugganum.
   - Android TV, Google TV: eins og í símum; OK gerir hlé, vinstri og hægri stökkva 10 s.
+  - Windows (frá desktop build 2): libmpv spilarinn, frá hverjum uppruna seinni listans; Enter gerir hlé, vinstri og hægri eða J og L stökkva 10 s.
 - **360° myndir**
   - Android-símar: kúluskoðari, gíróskóp.
   - iPhone, iPad: sama.
   - Meta Quest: umlykjandi, allt í kringum þig.
   - Android TV, Google TV: kúluskoðari sem snúið er með örvunum, aðdráttur með rásahnöppunum.
+  - Windows: kúluskoðari, mús og lyklaborð.
 - **360° myndskeið**
   - Android-símar: innbyggður Media3 spilari á kúlu, gíróskóp, spólun, val á hljóðrás, biðminnisvísir.
   - iPhone, iPad: innbyggður SceneKit spilari á kúlu, gíróskóp, val á hljóðrás, biðminnisvísir; spila og hlé, engin tímastika enn.
   - Meta Quest: umlykjandi, raunverulegt 3D fyrir steríóskrár, tímastika með 10 sekúndna stökkum, fyrra og næsta efni.
   - Android TV, Google TV: Media3 spilari símanna, snúið með örvunum.
+  - Windows: ekki enn, sýnd flöt í bili.
 - **3D 360° (efst og neðst, hlið við hlið)**
   - Android-símar: vinstra auga, uppsetningarhnappur.
   - iPhone, iPad: sama.
@@ -888,7 +891,7 @@ Immuch360 er myndasafn, og það er líka ókeypis margmiðlunarspilari: það s
 
 Færslurnar fyrir Android TV og Google TV, frá smíð 20, hafa ekki enn verið prófaðar í sjónvarpi, sjá [Horfðu í sjónvarpinu](#watch-on-your-tv-android-tv-and-google-tv); myndavélafærslurnar hafa ekki enn verið prófaðar með raunverulegri myndavél.
 
-Á Windows sýnir Immuch360 Desktop forútgáfan myndirnar, flatar og 360°, óunnar Insta360 .insp myndir meðtaldar, með músinni og lyklaborðinu, frá vélþjóninum, möppum tölvunnar, deilingunum og Plex; hún spilar ekki enn myndskeið, þau sýna staðgengil (sjá [Ekki komið enn](#not-there-yet)).
+Á Windows sýnir Immuch360 Desktop forútgáfan myndirnar, flatar og 360°, óunnar Insta360 .insp myndir meðtaldar, með músinni og lyklaborðinu, og frá desktop build 2 spilar hún flöt myndskeið, frá vélþjóninum, möppum tölvunnar, deilingunum, Plex og Tapo-upptökunum; 360°, 3D, VR180 og óunnin 360° myndskeið eru sýnd flöt eða sem staðgengill í bili (sjá [Ekki komið enn](#not-there-yet)).
 
 - **Immich-vélþjónninn þinn**: frumritið eða umkóðaða streymi vélþjónsins, eins og Settings, Skoðun Eigna, Uppruni myndskeiðs segir til um (sjá [Upplýsingar um myndskeið og afkóðarar](#video-details-decoders-and-why-a-video-stutters)). Sami aðgangur og í vefforritinu.
 - **Síminn eða gleraugun sjálf**: „Nota án vélþjóns“ á innskráningarsíðunni, eða On this device atriðið í Safn-flipanum.
@@ -959,24 +962,24 @@ Skjámyndir teknar í gleraugunum með myndatökuhnappinum (Meta-hnappur og gikk
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Á Windows-tölvu: Immuch360 Desktop (forútgáfa)
 
-Immich-safnið þitt er á vélþjóni, aðrar myndir eru í möppum tölvunnar, myndskeiðin á NAS eða Plex-þjóni, og þig langar að líta í kringum þig í 360° myndunum þínum á stórum skjá, eða sýna myndir tölvunnar í gleraugunum. Immuch360 Desktop er sama forritið á Windows-tölvu, smíðað úr sama frumkóða og símaforritin.
+Immich-safnið þitt er á vélþjóni, aðrar myndir og myndskeið eru í möppum tölvunnar, fleiri myndskeið á NAS eða Plex-þjóni, og þig langar að líta í kringum þig í 360° myndunum þínum og spila myndskeiðin þín á stórum skjá, eða sýna myndir tölvunnar í gleraugunum. Immuch360 Desktop er sama forritið á Windows-tölvu, smíðað úr sama frumkóða og símaforritin.
 
-Á tölvu býður Immich upp á vefforritið sitt í vafra. **Það sem Immuch360 Desktop bætir við**: möppur tölvunnar án nokkurs vélþjóns eða aðgangs, SMB-, WebDAV-, DLNA- og Plex-deilingar skoðaðar úr forritinu, óunnar Insta360 .insp myndir opnaðar sem kúla, og tölvunni deilt með Meta Quest heima.
+Á tölvu býður Immich upp á vefforritið sitt í vafra. **Það sem Immuch360 Desktop bætir við**: möppur tölvunnar án nokkurs vélþjóns eða aðgangs, SMB-, WebDAV-, DLNA- og Plex-deilingar skoðaðar og spilaðar úr forritinu, óunnar Insta360 .insp myndir opnaðar sem kúla, og tölvunni deilt með Meta Quest heima.
 
-Þessi fyrsta smíð er forútgáfa: myndir virka, myndskeið koma með næstu smíðum fyrir tölvu. Forritin fyrir síma, spjaldtölvur, Quest og sjónvörp breytast ekki við hana og halda nafninu Immuch360.
+Þetta er forútgáfa: frá desktop build 2 virka myndir og flöt myndskeið; 360°, 3D og VR180 myndskeið koma með næstu smíðum fyrir tölvu. Frá 9. október 2026 er frumkóði tölvuútgáfunnar í aðalgrein afleiðunnar, `immuch360`, svo símar, gleraugu, sjónvörp og tölvur eru gefin út úr sama frumkóða. Forritin fyrir síma, spjaldtölvur, Quest og sjónvörp breytast ekki við hana og halda nafninu Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Sækja og setja upp á Windows
 
-Fyrsta smíðin er GitHub-forútgáfan [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Skráin hennar er `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 skrár þegar búið er að afþjappa), með `SHA256SUMS.txt` til að staðfesta hana. Hún var smíðuð úr `desktop` greininni við commit 21f285c34: símasmíð 20 að viðbættri tölvuútgáfunni. Hún þarf Windows 10 eða 11, 64 bita.
+Núverandi smíð er GitHub-forútgáfan [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Skráin hennar er `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (um 57 MB, 78 skrár þegar búið er að afþjappa, myndskeiðsspilarinn og `licenses` mappa hans meðtalin), með `SHA256SUMS.txt` til að staðfesta hana. Hún var smíðuð úr aðalgreininni, `immuch360`, við commit 5b723bd25: frumkóði símasmíðar 21 að viðbættri tölvuútgáfunni. Hún þarf Windows 10 eða 11, 64 bita.
 
 1. Sæktu ZIP-skrána og afþjappaðu hana hvar sem er, til dæmis í Documents.
-2. Ræstu `immuch360.exe` úr afþjöppuðu möppunni. Haltu möppunni heilli: forritið þarf skrárnar við hliðina á sér.
+2. Ræstu `immuch360.exe` úr afþjöppuðu möppunni. Haltu möppunni heilli: forritið þarf skrárnar við hliðina á sér, myndskeiðsspilarann meðtalinn.
 3. Skrárnar eru ekki enn undirritaðar, svo Windows SmartScreen getur sýnt „Windows protected your PC“: veldu „More info“, síðan „Run anyway“. Þar sem Smart App Control er virkt lokar það á óundirrituð forrit.
 4. Bíddu eftir glugganum. Fyrsta ræsing nýrrar smíðar tekur frá 10 sekúndum upp í um eina mínútu, líklegast á meðan Microsoft Defender skannar nýju skrárnar: ekki ræsa forritið aftur á meðan. Næstu ræsingar taka eina eða tvær sekúndur.
 5. Á innskráningarsíðunni skaltu skrá þig inn á Immich-vélþjóninn þinn með vistfangi hans, netfanginu þínu og lykilorðinu þínu, eða smella á „Nota án vélþjóns“.
 
-Til að staðfesta ZIP-skrána skaltu keyra `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` í skipanalínu, í möppu niðurhalsins: niðurstaðan er sú sem stendur í `SHA256SUMS.txt`. Það er enn hvorki uppsetningarforrit né sjálfvirk uppfærsla: fylgstu með [Releases](https://github.com/freeKC/Immuch360/releases) síðunni, og afþjappaðu næstu smíð á sama hátt.
+Til að staðfesta ZIP-skrána skaltu keyra `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` í skipanalínu, í möppu niðurhalsins: niðurstaðan er sú sem stendur í `SHA256SUMS.txt`. Það er enn hvorki uppsetningarforrit né sjálfvirk uppfærsla: fylgstu með [Releases](https://github.com/freeKC/Immuch360/releases) síðunni, og afþjappaðu næstu smíð á sama hátt.
 
 ### Hvað forútgáfan gerir
 
@@ -984,7 +987,8 @@ Til að staðfesta ZIP-skrána skaltu keyra `certutil -hashfile Immuch360-Deskto
 - **Án vélþjóns**: möppur mynda þinna og myndskeiða (Pictures og Videos eru lagðar til) koma í stað myndasafns símans. Ekkert er lesið utan möppanna sem þú valdir, og án vélþjóns fer ekkert út af tölvunni.
 - **Upphleðsla og öryggisafritun** úr þessum möppum á Immich-vélþjóninn þinn, á meðan forritið er opið.
 - **360° myndir sem kúla**, með músinni og lyklaborðinu; óunnar .insp myndir Insta360 myndavéla opnast eins og í símum.
-- **Netdeilingar**: Samba (SMB), WebDAV og DLNA-miðlaþjónar, og Plex-þjónar án plex.tv, skoðað eins og í símum: myndir þeirra opnast, myndskeið þeirra bíða eftir myndskeiðsspilaranum (sjá [Ekki komið enn](#not-there-yet)). Fyrir Tapo-myndavélar, upptökur minniskortsins: listinn, og að sækja myndbút.
+- **Flöt myndskeið** (frá desktop build 2): myndskeið mappanna þinna, Immich-vélþjónsins þíns (upprunalega skráin eða umkóðaði straumurinn, sjá [Upplýsingar um myndskeið og afkóðarar](#video-details-decoders-and-why-a-video-stutters)), SMB-, WebDAV- og DLNA-deilinga, Plex-þjóna og Tapo-upptökurnar spilast í glugganum, með stýringum símanna (spila, hlé, tímastikan), biðminnisvísi, og valmynd hljóðrása fyrir myndskeið sem hefur fleiri en eina. Myndskeið mappanna þinna og deilinganna sýna ramma úr myndskeiðinu sem smámynd, í stað filmutákns.
+- **Netdeilingar**: Samba (SMB), WebDAV og DLNA-miðlaþjónar, og Plex-þjónar án plex.tv, skoðað eins og í símum: myndir þeirra opnast og myndskeið þeirra spilast. Fyrir Tapo-myndavélar, upptökur minniskortsins: listinn, að sækja myndbút og spila hann.
 - **Deila þessari tölvu á netinu**: myndasöfn, mánuðir og 360° efni mappanna þinna, aðeins til lestrar, fyrir Meta Quest eða annað tæki heima, eins og sími deilir sjálfum sér.
 - **Skrár**: niðurhal frá vélþjóninum fer í möppu sem þú velur, „Vista í möppu“ geymir afrit af völdum myndum og myndskeiðum, og Atvikaskrár-síðan er með „Vista atvikaskrár í skrá“.
 
@@ -994,9 +998,11 @@ Til að staðfesta ZIP-skrána skaltu keyra `certutil -hashfile Immuch360-Deskto
 2. **Ský-, USB- og netmöppur.** Skrár sem OneDrive (eða annað skýjadrif) geymir aðeins á netinu eru taldar en ekki lesnar, svo að bæta við möppu sækir ekki allt skýið þitt: „Sækja og hafa með“ sækir þær þegar þú vilt. USB-drif sem kemur aftur undir öðrum staf heldur myndunum sínum. Netmöppur, og möppur á minniskorti eða USB-drifi (svo Windows geti enn tekið það út), eru ekki vaktaðar fyrir breytingum: notaðu Endurnýja eftir að þú bætir skrám þar við.
 3. **Líttu í kringum þig í 360° mynd**: dragðu með músinni, aðdráttur með hjólinu, tvísmelli eða + og - (á hvaða lyklaborðsuppsetningu sem er, AZERTY meðtalið), færðu þig með örvalyklunum. F eða F11 skiptir yfir á allan skjáinn og Escape fer úr honum; Home og End fara á fyrstu og síðustu myndina; I sýnir upplýsingarnar.
 4. **Farðu á milli mynda**: í flatri mynd fara vinstri og hægri örvarnar, eða örvarnar sem birtast við jaðrana þegar músin hreyfist, á fyrri og næstu mynd. Stafir sem slegnir eru inn í lýsingarreitinn haldast í textanum.
-5. **Deildu tölvunni með gleraugunum**: opnaðu Safn, síðan Netdeilingar; fyrsti reiturinn er „Deila þessari tölvu á netinu“, tölvuhliðin á [Deila þessum síma á netinu](#share-this-phone-on-the-network). Kveiktu á „Deila myndum og myndskeiðum á netinu“, bættu síðan tölvunni við í gleraugunum eins og sá hluti segir. Deilingin stöðvast þegar forritinu er lokað eða eftir klukkustund án notkunar.
-6. **Leyfðu netið**: Windows getur spurt hvort Immuch360 Desktop megi nota netið. Leyfðu það á einkanetum, annars finna gleraugun ekki tölvuna. Á neti sem Windows merkir sem almennt (kaffihús, hótel), eða neti sem það getur ekki greint tegundina á, hefst deilingin ekki nema þú veljir „Deila fyrir þessa setu“, og tölvan auglýsir sig aðeins á neti sem hún deilir á.
-7. **Settings, „Þessi tölva“**: möppurnar, niðurhalsmappan, netkortið sem er notað til að finna deilingar og til að deila tölvunni (þegar þau eru fleiri en eitt, Wi-Fi og Ethernet til dæmis), og treyst skilríki: vottunaraðili þíns eigin vélþjóns, sem PEM-skrá, fyrir HTTPS-vistfang sem Windows treystir ekki af sjálfu sér. Biðlaraskilríki eru flutt inn í Settings, Fyrir lengra komna, eins og í símum.
+5. **Spilaðu myndskeið**: opnaðu það úr tímalínunni, möppu, deilingu, Plex eða upptökum Tapo-myndavélar; það spilast í glugganum. Enter, eða spila- og hlélykill lyklaborðsins, gerir hlé og spilar aftur. Á meðan það spilast stökkva vinstri og hægri örvarnar, eða J og L, 10 sekúndur aftur á bak eða áfram; í hléi fara örvarnar á fyrra og næsta. F eða F11 skiptir yfir á allan skjáinn, eins og fyrir myndir. Hnappurinn „Hljóðrás“ velur á milli hljóðrása myndskeiðs sem hefur fleiri en eina.
+6. **Þegar myndskeið stöðvast**: myndskeið í hléi helst í hléi þegar þú kemur aftur í gluggann. Myndskeið sem rofnar fyrir endann, til dæmis þegar deilingin eða vélþjónninn hættir að svara, segir frá því: opnaðu það aftur og það heldur áfram þar sem það stöðvaðist, í hléi. Spilunarlistaskrá sem finnst í möppu eða deilingu er ekki fylgt.
+7. **Deildu tölvunni með gleraugunum**: opnaðu Safn, síðan Netdeilingar; fyrsti reiturinn er „Deila þessari tölvu á netinu“, tölvuhliðin á [Deila þessum síma á netinu](#share-this-phone-on-the-network). Kveiktu á „Deila myndum og myndskeiðum á netinu“, bættu síðan tölvunni við í gleraugunum eins og sá hluti segir. Deilingin stöðvast þegar forritinu er lokað eða eftir klukkustund án notkunar.
+8. **Leyfðu netið**: Windows getur spurt hvort Immuch360 Desktop megi nota netið. Leyfðu það á einkanetum, annars finna gleraugun ekki tölvuna. Á neti sem Windows merkir sem almennt (kaffihús, hótel), eða neti sem það getur ekki greint tegundina á, hefst deilingin ekki nema þú veljir „Deila fyrir þessa setu“, og tölvan auglýsir sig aðeins á neti sem hún deilir á.
+9. **Settings, „Þessi tölva“**: möppurnar, niðurhalsmappan, netkortið sem er notað til að finna deilingar og til að deila tölvunni (þegar þau eru fleiri en eitt, Wi-Fi og Ethernet til dæmis), og treyst skilríki: vottunaraðili þíns eigin vélþjóns, sem PEM-skrá, fyrir HTTPS-vistfang sem Windows treystir ekki af sjálfu sér. Biðlaraskilríki eru flutt inn í Settings, Fyrir lengra komna, eins og í símum.
 
 ### Samanburður við símaforritin
 
@@ -1005,20 +1011,24 @@ Til að staðfesta ZIP-skrána skaltu keyra `certutil -hashfile Immuch360-Deskto
 - **Einn gluggi**: ef forritið er opnað í annað sinn kemur fyrsti glugginn aftur í stað þess að annað eintak ræsist.
 - **Engu er eytt úr möppunum þínum**: „Eyða úr tæki“ er falið, og Eyða fjarlægir aðeins afritið á vélþjóninum, þar til forritið getur sent skrár í ruslafötu Windows.
 - **Mús og lyklaborð** í stað snertingar og snúðs.
+- **Einn myndskeiðsspilari fyrir allan uppruna**: libmpv spilar myndskeið vélþjónsins, mappanna, deilinganna og Plex eins, og flati spilarinn hans er þegar með hljóðrásavalmyndina sem flati spilari símanna hefur ekki enn.
 
 <a id="not-there-yet"></a>
 ### Ekki komið enn
 
-- **Myndskeið**: þau sýna staðgengil í bili, og smámyndir þeirra filmutákn. Spilun kemur næst: fyrst flöt myndskeið, síðan 360°, 3D og VR180 myndskeið og óunnin 360° myndskeið.
+- **360°, 3D, VR180 og óunnin 360° myndskeið**: þau eru sýnd flöt í bili, eins og skráin geymir þau (öll kúlan útflött, augun tvö hlið við hlið, eða kringlóttar myndir linsanna), eða sem staðgengill, og 360° hnappurinn er aðeins á myndum. Spilarar þeirra koma með næstu smíðum fyrir tölvu.
 - **Spatial 2.5D**, síðar með vefmyndavélinni; **bein mynd Tapo**; **kortið** og Staðir-sýnin; **innskráning með OAuth** (skráðu þig inn með netfangi og lykilorði í staðinn); **Google Cast**; **tilkynningar**.
 - **Uppsetningarforrit, undirrituð smíð og sjálfvirkar uppfærslur**: þessi smíð er mappa með `immuch360.exe`.
-- **Linux og macOS**: verkefni þeirra eru í frumkóðanum, en þau hafa ekki enn verið smíðuð eða prófuð á þeim kerfum; þau koma á eftir Windows.
+- **Linux og macOS**: verkefni þeirra eru í frumkóðanum, en þau hafa ekki enn verið smíðuð eða prófuð á þeim kerfum, og myndskeiðsspilari þeirra er ekki enn í þeim; þau koma á eftir Windows.
 - **Þýðingar**: nýju textar tölvuútgáfunnar eru á ensku í bili.
 
 ### Þekkt vandamál
 
-- **Á meðan gleraugun lesa skrá af deildu tölvunni** (myndskeið sem þau spila, mynd sem þau sækja), getur Windows ekki endurnefnt, fært eða eytt þeirri skrá og segir að hún sé opin í Immuch360 Desktop: stöðvaðu spilunina fyrst. Öryggisafritun heldur ekki skránum þínum á þann hátt: skrá má endurnefna, færa eða eyða á meðan henni er hlaðið upp.
-- **Hnökrar**: aðgerðirnar hér að ofan standast sjálfvirkar prófanir sínar á Windows (475 prófanir fyrir tölvuútgáfuna), og á Windows 11 tölvu ræsist forritið, opnar vistaða setu á Immich-vélþjóni, samstillir og lokast eðlilega. Handvirk prófun hverrar aðgerðar á raunverulegri tölvu er enn í gangi.
+- **Fyrsta ræsing nýrrar smíðar er hæg**: frá 10 sekúndum upp í um eina mínútu áður en glugginn birtist, líklegast á meðan Microsoft Defender skannar nýju skrárnar, sem eru ekki enn undirritaðar. Bíddu eftir glugganum frekar en að ræsa forritið aftur; næstu ræsingar taka eina eða tvær sekúndur.
+- **8K HEVC myndskeið þurfa sérstakan skjákubb**: á prófunarfartölvunni sýndi innbyggði Intel UHD kubburinn um helming ramma 8K HEVC myndskeiðs, á meðan sérstaki NVIDIA kubburinn spilaði 8K HEVC og 5.7K H.264 án þess að tapa ramma. Windows keyrir forritið á innbyggða kubbnum nema annað sé tekið fram: í stillingum Windows, System, Display, Graphics, bættu við `immuch360.exe` og veldu „High performance“. Á innbyggða kubbnum er 5.7K H.264 myndskeið, sem afkóðari hans hafnar, afkóðað af örgjörvanum án þess að ramma tapist.
+- **Myndskeið eru teiknuð í mesta lagi 1440 línur á hæð**, síðan kvörðuð að glugganum: á 4K skjá í fullri skjástærð er 4K eða 8K myndskeið aðeins mýkra en í sérstökum myndskeiðsspilara. Þetta heldur 8K myndskeiði innan grafíkgetu fartölvu.
+- **Á meðan myndskeið úr möppunum þínum spilast í forritinu, eða á meðan gleraugun lesa skrá af deildu tölvunni** (myndskeið sem þau spila, mynd sem þau sækja), getur Windows ekki endurnefnt, fært eða eytt þeirri skrá og segir að hún sé opin í Immuch360 Desktop: lokaðu myndskeiðinu, eða stöðvaðu spilunina í gleraugunum, fyrst. Öryggisafritun heldur ekki skránum þínum á þann hátt: skrá má endurnefna, færa eða eyða á meðan henni er hlaðið upp.
+- **Hnökrar**: 656 af 663 prófunum tölvuútgáfunnar standast á Windows (7 er sleppt af ásettu ráði), 200 spilarar opnaðir hver á eftir öðrum skilja ekki eftir neinn leka, og á Windows 11 tölvu ræsist forritið, opnar vistaða setu á Immich-vélþjóni, samstillir, spilar myndskeið og lokast eðlilega. Handvirk prófun hverrar aðgerðar á raunverulegri tölvu er enn í gangi.
 
 Ef eitthvað fer úrskeiðis, vinsamlegast opnaðu [verkbeiðni](https://github.com/freeKC/Immuch360/issues) með atvikaskránni sem var vistuð af Atvikaskrár-síðunni, sjá [Atvikaskrár](#logs). Skoðaðu atvikaskrána áður en þú deilir henni: hún getur innihaldið vistfang vélþjónsins þíns.
 
@@ -1027,19 +1037,17 @@ Ef eitthvað fer úrskeiðis, vinsamlegast opnaðu [verkbeiðni](https://github.
 
 Þú þarft Windows 10 eða 11 á x64, Flutter 3.47.2 fyrir Windows, Visual Studio 2022 eða Build Tools þess með „Desktop development with C++“ vinnuálaginu, þróunarstillingu (Developer Mode) virka í stillingum Windows (Flutter þarf hana fyrir viðbæturnar), og Python 3 fyrir pökkunarskriftuna.
 
-1. Sæktu `desktop` greinina og keyrðu kóðagerðina. Hún notar Java og Node, svo keyrðu hana á Linux, macOS eða í WSL; með WSL skaltu hafa klónið á Windows-drifi, sem WSL sér undir `/mnt/c` eða `/mnt/d`:
+1. Sæktu frumkóðann og keyrðu kóðagerðina. Aðalgreinin, `immuch360`, smíðar líka tölvuútgáfuna: það er engin grein til að skipta yfir í. Kóðagerðin notar Java og Node, svo keyrðu hana á Linux, macOS eða í WSL; með WSL skaltu hafa klónið á Windows-drifi, sem WSL sér undir `/mnt/c` eða `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Á Windows, í sömu `mobile` möppu, smíðaðu forritið:
+2. Á Windows, í sömu `mobile` möppu, smíðaðu forritið. Fyrsta smíðin sækir söfn myndskeiðsspilarans (libmpv og ANGLE) af GitHub og staðfestir hvert safnskjal með SHA-256 þess:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Ef eitthvað fer úrskeiðis, vinsamlegast opnaðu [verkbeiðni](https://github.
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. `Release` mappan keyrir á tölvunni sem smíðaði hana. Fyrir aðra tölvu skaltu halda allri möppunni og bæta Visual C++ keyrsluumhverfinu við hliðina á `immuch360.exe`. Frá rót klónsins afritar pökkunarskriftan það, sleppir því sem aðeins þjónar Android, staðfestir að hvert DLL sem forritið hleður sé í möppunni eða í Windows sjálfu, og býr til ZIP-skrána:
+3. `Release` mappan keyrir á tölvunni sem smíðaði hana. Fyrir aðra tölvu skaltu halda allri möppunni og bæta Visual C++ keyrsluumhverfinu við hliðina á `immuch360.exe`. Frá rót klónsins afritar pökkunarskriftan það, sleppir því sem aðeins þjónar Android, bætir við leyfum myndskeiðsspilarans, staðfestir að hvert DLL sem forritið hleður sé í möppunni eða í Windows sjálfu, og býr til ZIP-skrána:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI `desktop` greinarinnar (`.github/workflows/immuch360-desktop.yml`) keyrir símaprófin og alla prófunarsvítuna á Linux, prófanir tölvuútgáfunnar á Windows, og smíðar sömu ZIP-skrá; Linux- og macOS-verk hennar (`flutter build linux` og `flutter build macos`, með sama `-t lib/main_desktop.dart`) hafa ekki enn keyrt á þeim kerfum.
+CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) keyrir á `desktop` greininni, sem fylgir `immuch360`: símaprófin (ekkert breytist í símasmíðunum) og alla prófunarsvítuna á Linux, prófanir tölvuútgáfunnar á Windows, og sömu ZIP-skrá; Linux- og macOS-verk hennar (`flutter build linux` og `flutter build macos`, með sama `-t lib/main_desktop.dart`) hafa ekki enn keyrt á þeim kerfum.
 
 <a id="where-to-get-it"></a>
 ## Hvar á að sækja það
@@ -1075,8 +1083,8 @@ Forritið er á Google Play fyrir síma og spjaldtölvur; App Store útgáfan b�
   - Í dag: alhliða `Immuch360-v<version>-release.apk` á síðunni [Releases](https://github.com/freeKC/Immuch360/releases), hliðhlaðið með adb, sjá [Settu það upp í sjónvarpinu](#install-it-on-the-tv). Það er sama forritið og í símunum.
   - Bráðum: Google Play á sjónvörpum, eftir yfirferð Google á sjónvarpsútgáfunni.
 - **Windows 10 og 11, 64 bita (forútgáfa)**
-  - Í dag: Immuch360 Desktop, ZIP-skráin `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` úr [forútgáfunni fyrir tölvu](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), afþjöppuð og ræst eins og [Sækja og setja upp á Windows](#download-and-install-on-windows) segir. Aðeins myndir í bili: myndskeið koma með næstu smíðum fyrir tölvu.
-  - Bráðum: spilun myndskeiða; uppsetningarforrit, undirrituð smíð og uppfærslur síðar.
+  - Í dag: Immuch360 Desktop, ZIP-skráin `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` úr [forútgáfunni fyrir tölvu](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), afþjöppuð og ræst eins og [Sækja og setja upp á Windows](#download-and-install-on-windows) segir. Myndir og flöt myndskeið í bili: 360°, 3D og VR180 myndskeið koma með næstu smíðum fyrir tölvu.
+  - Bráðum: 360°, 3D, VR180 og óunnin 360° myndskeið; uppsetningarforrit, undirrituð smíð og uppfærslur síðar.
 
 Tenglum á App Store og Meta Horizon Store verður bætt hér við um leið og færslurnar eru birtar. Skráðu þig inn með venjulegri slóð Immich-vélþjónsins og aðganginum þínum, eða ýttu á „Nota án vélþjóns“ á innskráningarsíðunni til að byrja á myndum og myndskeiðum tækisins sjálfs. APK-skráin frá GitHub uppfærir sig ekki sjálf: fylgstu með síðunni Releases, og þegar þú hefur sett forritið upp úr verslun skaltu fá uppfærslurnar úr þeirri verslun.
 
@@ -1105,15 +1113,15 @@ Android-útgáfurnar tvær (flavours) eru sama forritið. Frá smíð 20 lýsir 
 
 Til að smíða fyrir iOS á eigin Mac skaltu nota Xcode og eigið undirritunarteymi; með Xcode 26 skaltu keyra `xcodebuild -downloadComponent MetalToolchain` einu sinni fyrst, þar sem Spatial-skyggingarnar þurfa það. Án Mac keyra iOS-smíðar á Codemagic (hýstum Mac) út frá skránni `codemagic.yaml` í þessari geymslu. Útgáfusmíðar fyrir Android keyra á GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, Windows-útgáfan, er smíðuð úr `desktop` greininni með Flutter fyrir Windows: skrefin eru í [Smíðaðu það sjálf(ur) á Windows](#build-it-yourself-on-windows).
+Immuch360 Desktop, Windows-útgáfan, er smíðuð úr sama frumkóða, `immuch360` greininni, með Flutter fyrir Windows: skrefin eru í [Smíðaðu það sjálf(ur) á Windows](#build-it-yourself-on-windows).
 
 Ekkert leyndarmál er í þessari geymslu: undirritunarlykill Android er geymdur sem dulkóðuð leyndarmál í GitHub Actions, og undirritunargögn Apple sem dulkóðaðar breytur á Codemagic. Verkflæðisskrárnar vísa aðeins í þau með nafni. Án þíns eigin `android/key.jks` er útgáfusmíð undirrituð með villuleitarlyklinum og getur ekki sest upp ofan á eintak frá GitHub eða verslun (fjarlægðu það fyrst); villuleitarsmíð sest upp við hliðina sem Immuch360 debug. Eintakið í Meta Horizon Store er `quest` APK-skrá útgáfunnar undirrituð með öðrum lykli, þeim sem forrit verslunarinnar var fyrst skráð með, svo það getur heldur ekki sest upp ofan á hliðhlaðna APK-skrá, né öfugt.
 
 ### Greinar
 
 - **`main`**: `main` hjá Immich við commit-ið sem `immuch360` byggir á (29. september 2026 fyrir núverandi smíðar), aldrei breytt; hún færist fram þegar afleiðan er endurgrunnuð (rebase) á nýrra Immich.
-- **`immuch360`**: breytingar þessarar afleiðu ofan á Immich. Hver útgáfa segir á hvaða útgáfu Immich hún byggir.
-- **`desktop`**: Immuch360 Desktop, tölvuútgáfan, ofan á `immuch360`. Símaútgáfurnar eru sameinaðar inn í hana, og forútgáfur fyrir tölvu eru smíðaðar úr henni (desktop build 1 úr commit 21f285c34, símasmíð 20 að viðbættri tölvuútgáfunni). Ekkert undir `mobile/android` og `mobile/ios` breytist í henni.
+- **`immuch360`**: breytingar þessarar afleiðu ofan á Immich, Immuch360 Desktop meðtalið frá 9. október 2026. Hver útgáfa segir á hvaða útgáfu Immich hún byggir.
+- **`desktop`**: þar sem Immuch360 Desktop, tölvuútgáfan, var smíðuð ofan á `immuch360`, þar til hún var sameinuð inn í hana 9. október 2026 svo að símar, gleraugu, sjónvörp og tölvur séu gefin út úr sama frumkóða. Hún fylgir nú `immuch360` og ber merki forútgáfanna fyrir tölvu ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) úr commit 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) úr 5b723bd25). Tölvuútgáfan breytir engu undir `mobile/android` og `mobile/ios`.
 
 <a id="logs"></a>
 ## Atvikaskrár
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Frá smíð 19 skrifa DLNA-biðlarinn, símadeilingin og greining rýmisefnis frá Apple einnig í eigin atvikaskrá forritsins (Logs (Atvikaskrár), í valmynd prófílmyndarinnar efst til hægri), undir `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` og `NetworkMediaService`. Frá smíð 20 skrifar sjónvarpshamurinn þangað undir `TvMode` og `TvTextEntry`, Plex-þjónarnir undir `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` og `PlexServerEditPage`, og Tapo-myndavélarnar undir `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` og `CameraLiveView`; Plex-línurnar innihalda aldrei tókann, vistfang eða titil, og myndavélalínurnar sleppa lykilorðunum. Línur atvikaskrárinnar haldast í tækinu nema þú afritir þær sjálf(ur).
 
-Á tölvu (Immuch360 Desktop) er Atvikaskrár-síðan líka með „Vista atvikaskrár í skrá“: atvikaskrána, eða ZIP-skrá með atvikaskránni og skýrslum síðustu hrunanna þegar þær eru til (tillagða nafnið endar þá á „with-crash-reports“). Hrunskýrsla er lítið minidump: þræðirnir, hvar þeir stöðvuðust og aðeins það sem þarf til að rekja köll þeirra, með nöfnum forritaskránna en ekki möppum þeirra; ekki minni forritsins. Skoðaðu atvikaskrána áður en þú deilir henni: hún getur innihaldið vistfang vélþjónsins þíns.
+Á tölvu (Immuch360 Desktop) er Atvikaskrár-síðan líka með „Vista atvikaskrár í skrá“: atvikaskrána, eða ZIP-skrá með atvikaskránni og skýrslum síðustu hrunanna þegar þær eru til (tillagða nafnið endar þá á „with-crash-reports“). Hrunskýrsla er lítið minidump: þræðirnir, hvar þeir stöðvuðust og aðeins það sem þarf til að rekja köll þeirra, með nöfnum forritaskránna en ekki möppum þeirra; ekki minni forritsins.
+
+Frá desktop build 2 skrifar myndskeiðsspilari tölvunnar þangað undir `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` og `VideoThumbnailGrabber`, eigin viðvaranir mpv meðtaldar, með tókum og lykilorðum fjarlægðum. Skoðaðu atvikaskrána áður en þú deilir henni: hún getur innihaldið vistfang vélþjónsins þíns.
 
 <a id="privacy"></a>
 ## Persónuvernd
@@ -1144,6 +1154,7 @@ Frá smíð 19 skrifa DLNA-biðlarinn, símadeilingin og greining rýmisefnis fr
 - **Símadeiling**: aðeins staðarnet, með notandanafni og lykilorði, yfir venjulegt HTTP (sjá [Deila þessum síma á netinu](#share-this-phone-on-the-network)).
 - **Myndavél**: aðeins notuð af Spatial 2.5D spilaranum, í tækinu; myndirnar eru aldrei geymdar og aldrei sendar neitt.
 - **Á tölvu** (Immuch360 Desktop, forútgáfa fyrir Windows): forritið les aðeins möppurnar sem þú velur, geymir skrá sína, smámyndir og skyndiminni á tölvunni, og vistar lykilorð og tóka með gagnavernd Windows, aðeins fyrir Windows-aðganginn þinn. Tölvudeilingin fylgir reglum símadeilingarinnar, og hefst ekki á neti sem Windows merkir sem almennt, eða neti sem það getur ekki greint tegundina á, nema þú segir svo.
+- **Myndskeiðsspilarinn á tölvu** (frá desktop build 2): myndskeið vélþjónsins þíns berast honum í gegnum forritið, svo spilarinn hefur aldrei setutókann þinn, og það sem hann les fyrirfram helst í minni, ekki á diskinum. Hann opnar aðeins skrána sem honum er gefin: skrá í möppu eða deilingu sem er í raun spilunarlisti eða lýsing á straumi fær hann ekki til að tengjast neitt annað.
 
 Öll stefnan er í [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ Frá smíð 19 skrifa DLNA-biðlarinn, símadeilingin og greining rýmisefnis fr
 
 Þetta verkefni er afleiða af Immich og er áfram undir [GNU AGPL v3](../LICENSE). Hver APK-skrá, símaskrárnar meðtaldar, inniheldur einnig Meta Spatial SDK, sem er ekki opinn hugbúnaður (Meta Platform Technologies SDK License Agreement) og er aðeins notað á Meta Quest gleraugum; Immuch360 Desktop, Windows-útgáfan, inniheldur það ekki. Immuch360 er hvorki tengt né stutt af Immich-teyminu eða FUTO.
 
+Windows ZIP-skrá Immuch360 Desktop, og hún ein, inniheldur einnig myndskeiðsspilarann sinn: libmpv, safn [mpv](https://mpv.io), með [FFmpeg](https://ffmpeg.org) innbyggt, stýrt af viðbótum [media_kit](https://github.com/media-kit/media-kit). mpv og FFmpeg eru smíðuð án þeirra hluta sem eru eingöngu GPL, og kóði þeirra er undir GNU LGPL útgáfu 2.1 eða síðari; smíðuð saman er `libmpv-2.dll` dreift undir GNU LGPL útgáfu 3 eða síðari. Forritið hleður það við keyrslu, svo þú mátt skipta því út fyrir eigin smíð. Leyfistextarnir eru í `licenses` möppu ZIP-skrárinnar, og hvert safn með leyfi sínu og frumkóða er talið upp í [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Áætlun
 
 Það sem er ekki enn búið, það líklegasta fyrst. Ekkert hér er loforð, og ábendingar á [verkbeiðnalistanum](https://github.com/freeKC/Immuch360/issues) hjálpa til við að ákveða hvað kemur fyrst.
 
-- **Immuch360 Desktop, Windows fyrst**: fyrsta forútgáfan er komin út (sjá [Á Windows-tölvu](#on-a-windows-computer-immuch360-desktop-preview)). Næst, spilun myndskeiða (fyrst flöt myndskeið, síðan 360°, 3D, VR180 og óunnu skrárnar), mæld á tveimur skjákortum fartölvu; síðan prófun hverrar aðgerðar á Windows-tölvu og lagfæringar hennar; síðan Spatial 2.5D með vefmyndavélinni; síðan Linux og macOS, pakkar, undirritun og uppfærslur.
+- **Immuch360 Desktop, Windows fyrst**: desktop build 2 er komin út, með flötum myndskeiðum, og frumkóði tölvuútgáfunnar er í aðalgrein afleiðunnar, `immuch360`, frá 9. október 2026 (sjá [Á Windows-tölvu](#on-a-windows-computer-immuch360-desktop-preview)). Næst, 360°, 3D, VR180 og óunnin 360° myndskeið á Windows, með linsunum tveimur í óunnum skrám og beinni mynd Tapo; síðan prófun hverrar aðgerðar á Windows-tölvu og lagfæringar hennar; síðan Spatial 2.5D með vefmyndavélinni; síðan Linux og macOS, pakkar, undirritun og uppfærslur.
 - **Google Play**: smíð 18 er í boði; smíð 20 er í yfirferð hjá Google síðan 7. október 2026, í stað smíðar 19. Smíð 21 breytir engu í símum og spjaldtölvum.
 - **App Store**: útgáfa 3.3.0 bíður yfirferðar Apple; hún er með eiginleika smíðar 11, svo upphleðsla í Immich og prófun myndskeiðsafkóðara (smíð 15) og óunnar Insta360-skrár (smíð 16) koma með næstu uppfærslu í App Store. Tenglinum verður bætt hér við þegar hún er komin í loftið.
 - **Meta Horizon Store**: Meta samþykkti færsluna 7. október 2026 með smíð 14. Smíð 21 er send inn sem fyrsta uppfærsla hennar: hún færir allt frá smíð 14 (upphleðslur úr deilingu í Immich, myndskeiðsuppsprettan valin eftir því hvað gleraugun afkóða, óunnar Insta360, GoPro og DJI skrár, DLNA, símadeilinguna, rýmismyndir frá Apple, Plex Media Server söfn, Tapo-myndavélar), og verslunin skráir hana fyrir Quest 2, Quest Pro, Quest 3 og 3S. Tengli verslunarinnar verður bætt hér við þegar síðan er opinber; fyrst þarf að fjarlægja hliðhlaðið eintak (sjá [Uppsetning](#install)).
@@ -1166,7 +1179,7 @@ Frá smíð 19 skrifa DLNA-biðlarinn, símadeilingin og greining rýmisefnis fr
 - **DLNA, símadeiling og rýmisefni frá Apple, næst**: tækjaskýrslur smíðar 19 (Plex, Jellyfin, NAS og Freebox Server yfir DLNA; sími sem þjónar Quest, líka á heitum reit sínum; raunverulegar rýmismyndir og rýmismyndskeið úr iPhone í gleraugunum); fjölvarpsheimildin sem beðið var um hjá Apple, svo að iPhone finni alla DLNA-vélþjóna; fyrra og næsta á milli rýmismynda í gleraugunum; rýmismerki á myndum vélþjónsins í tímalínunni; rýmismyndskeið í 3D á Quest, ef afkóðarar hans leyfa það.
 - **360° spilarar í símum, næst**: tímastika í 360° myndskeiðaspilara iOS (Android-spilarinn er með hana), fyrra/næsta í 360° spilurum símanna eins og í umlykjandi sýn Quest, og myndir í innbyggða 360° myndskeiðaspilaranum.
 - **Netdeilingar, næstu skref**: strjúka frá einni skrá í möppu yfir í þá næstu á síðum mynda og myndskeiða (umlykjandi sýn Quest fer nú þegar í gegnum 360° skrár möppu), Digest-auðkenning fyrir WebDAV, notandanafnið úr Bonjour-færslunni.
-- **Flöt myndskeið**: val á hljóðrás í flata spilaranum, fyrir myndskeið af vélþjóni, úr tæki og af deilingu jafnt (360° og Spatial spilararnir eru með það).
+- **Flöt myndskeið**: val á hljóðrás í flata spilara símanna, fyrir myndskeið af vélþjóni, úr tæki og af deilingu jafnt (360° og Spatial spilararnir eru með það, og flati spilari Immuch360 Desktop líka).
 - **Android TV, næst**: tækjaprófun smíðar 20 á Google TV herminum og raunverulegu sjónvarpi, síðan sjónvarpsútgáfan á Google Play (sjónvarpsskjámyndir, sjónvarpsborðinn, yfirferð Google); síðar, rásir á heimaskjá sjónvarpsins.
 - **Tapo-myndavélar, næst**: tækjaprófun smíðar 20 með raunverulegum myndavélum; bein mynd á iPhone og iPad; H.265 upptökur; að spila myndskeið á meðan það er sótt; heill dagur af upptökum á einni tímalínu.
 - **Plex, næst**: tækjaprófun smíðar 20 (símar, Quest, iPhone, sjónvarp, að heiman); að flytja tókann úr tölvunni með QR-kóða; að fela DLNA-hlið Plex-þjóns á listanum yfir fundna þjóna; IPv6.

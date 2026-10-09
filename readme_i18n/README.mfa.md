@@ -19,13 +19,13 @@ Dio untuk ore hok ambik gambo nga kamera 360° (Insta360, GoPro MAX, DJI Osmo 36
   App Store: <a href="#where-to-get-it">tengoh disemak</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store doh diluluske, binaan 21 doh dihanta sebagai kemas kini pertamo dio<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">muat turun pratonton</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">muat turun pratonton</a>, binaan desktop 2
 </p>
 
 - 🌐 **360° asli**<br>Gambo nga video jadi sfera hok demo buleh tengok kelilin, nga giroskop, fail mentoh kamera pong buleh (Insta360 dari binaan 16, GoPro nga DJI dari binaan 18). Ado gak pemain video percumo: rata, 360°, 3D, VR180
 - 👓 **3D asli**<br>360° nga VR180 stereo, atah nga bawoh ke sebeloh-sebeloh, nga gambo ruang Apple (dari binaan 19): 3D betul dale headset, satu mato kat fon
 - 🎥 **2.5D asli**<br>Dalang kat skrin rata dari video stereo, pandange ikut kepalo demo (cubo-cubo, fon nga tablet)
-- 📱 **Android, iOS, Quest, TV**<br>Satu aplikasi kat fon, tablet nga headset Quest 2, Pro, 3 nga 3S, 3D betul dale headset, dari binaan 20 kat Android TV nga alat kawalan jauh, nga pratonton Windows
+- 📱 **Android, iOS, Quest, TV**<br>Satu aplikasi kat fon, tablet nga headset Quest 2, Pro, 3 nga 3S, 3D betul dale headset, dari binaan 20 kat Android TV nga alat kawalan jauh, nga pratonton Windows nga gambo nga video rata
 - 🔌 **Ado server ke takdok**<br>Server Immich demo, ke galeri fon tu sendiri, tok payoh akaun
 - 🗄️ **Kongsi rangkaie**<br>Samba (SMB), WebDAV nga, dari binaan 19, server media DLNA hok jumpo dale rangkaie pah dibaco teruh, takdok gapo hok dimuat turun, pah dihanta ko Immich bilo demo pilih. Dari binaan 19 fon pong buleh kongsi galeri dio nga headset
 - 📺 **Kat TV**<br>Dari binaan 20 APK samo kat Android TV nga Google TV: gambo nga video 360°, server demo nga kongsi demo, nga alat kawalan jauh
@@ -79,7 +79,7 @@ Dio untuk ore hok ambik gambo nga kamera 360° (Insta360, GoPro MAX, DJI Osmo 36
 - **"Ambo nok tengok gambo nga video 360° ambo, nga video NAS ke server Plex ambo, kat TV, nga alat kawalan jauh."** Tengok [Tengok kat TV demo](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ambo tok jumpo gambo 360° ambo dale semuo gambo lain."** Tengok [Senarai 360°](#find-your-360-shots-the-360-list).
 - **"Video 360° ambo tersekat-sekat, ke maing salina kabur."** Tengok [Butir video nga penyahkod](#video-details-decoders-and-why-a-video-stutters).
-- **"Ambo nok gambo 360° ambo nga pustako Immich ambo kat PC Windows, nga gambo dale folder dio, NAS ambo nga server Plex ambo, pah PC tu dikongsi nga headset ambo."** Tengok [Kat komputer Windows](#on-a-windows-computer-immuch360-desktop-preview) (pratonton, gambo jah buat maso ni).
+- **"Ambo nok gambo 360° ambo nga pustako Immich ambo kat PC Windows, nga gambo nga video dale folder dio, NAS ambo nga server Plex ambo, pah PC tu dikongsi nga headset ambo."** Tengok [Kat komputer Windows](#on-a-windows-computer-immuch360-desktop-preview) (pratonton: gambo nga video rata buat maso ni, video 360° kemudia).
 - **"Ambo masih dapat gapo hok aplikasi Immich buat?"** Dapat, nga duo ubaha kecik, tengok [Hok lain semuo Immich](#everything-else-is-immich).
 
 Bilo satu ciri tu baru, teks ni sebut dari binaan (build) mano dio ado. Keluare GitHub sokmo ado binaan paling baru, kedai ikut kemudie: tengok [Mano nok dapat](#where-to-get-it).
@@ -752,7 +752,7 @@ Binaan skang, binaan 21 (versi 3.3.0-rc.0, nombor binaan 3030019), berasas Immic
 | Pustako Plex Media Server dimaing dari fail asal, kat rumoh nga kat luar, tanpo plex.tv | ❌ | ✅ dari binaan 20, tiap-tiap pemapar, kat fon, tablet, Quest nga TV |
 | Kamera Tapo: paparan langsung, nga rakaman kad memori dihanta ko Immich bilo demo pilih | ❌ | ✅ dari binaan 20: rakaman kat mano-mano, langsung kat Android, Android TV nga Quest |
 | Android TV nga Google TV, dikawal nga alat kawalan jauh, dale APK samo | ❌ buke aplikasi TV | ✅ dari binaan 20 |
-| Aplikasi samo kat komputer Windows | ❌ fon nga tablet jah | ✅ pratonton, belum ado video |
+| Aplikasi samo kat komputer Windows | ❌ fon nga tablet jah | ✅ pratonton, gambo nga video rata |
 | Gambo Insta360 .insp mentoh nga video .insv satu trek | ❌ rata | ✅ dari binaan 16 |
 | Video mentoh nga satu lensa tiap trek ke tiap fail (Insta360 X4, X4 Air, X5, X6, pasange X3, GoPro .360, DJI .osv) | ❌ rata ke saloh | ✅ dari binaan 18 |
 | .dng fisheye bergando | ❌ rata | ❌ belum lagi |
@@ -782,7 +782,7 @@ Binaan skang, binaan 21 (versi 3.3.0-rc.0, nombor binaan 3030019), berasas Immic
 - **Plex Media Server**: disemak dari komputer nga Plex Media Server 1.42.1 betul (berpasang, folder, julat bait, lakara kecik, alamat di luar rumoh); belum disemak kat peranti lagi.
 - **Kamera Tapo**: disemak nga kamera simulasi; belum disemak nga kamera betul lagi.
 - **Android TV nga Google TV**: disemak nga uji automatik; belum disemak kat TV lagi.
-- **Aplikasi samo kat komputer Windows**: 475 uji desktop automatik kat Windows, nga kat PC Windows 11 aplikasi ni mulo, bukak sesi hok disimpang kat server Immich, selaras nga tutup elok; uji tiap fungsi nga tange tengoh jale.
+- **Aplikasi samo kat komputer Windows**: 656 dari 663 uji desktop automatik lulus kat Windows (7 dilangkau sengajo), nga kat PC Windows 11 aplikasi ni mulo, bukak sesi hok disimpang kat server Immich, selaras, maing video nga tutup elok; uji tiap fungsi nga tange tengoh jale.
 - **Gambo Insta360 .insp mentoh nga video .insv satu trek**: gambo disemak nga eksport Insta360 Studio fail X3, video kat emulator Android nga fail X3 resolusi rendoh; belum jale kat iPhone lagi.
 - **Video mentoh nga satu lensa tiap trek ke tiap fail**: penghurai nga cantum disemak nga fail X4, pasange X3, GoPro MAX nga Osmo 360 betul; main balik tu ujian peranti binaan 18 nga 19.
 - **.dng fisheye bergando**: dirancang.
@@ -825,16 +825,19 @@ Immuch360 tu galeri, nga dio pong pemain media percumo: dio maing gapo hok aplik
   - iPhone, iPad: samo, kecuali fail MKV nga AVI dale kongsi, hok iOS tok bukak (kat server dio maing doh ditranskod).
   - Meta Quest: dale tingkap.
   - Android TV, Google TV: macey kat fon; OK jeda, kiri nga kane lompat 10 s.
+  - Windows (dari binaan desktop 2): pemain libmpv, dari tiap sumber dale senarai keduo; Enter jeda, kiri nga kane ke J nga L lompat 10 s.
 - **Gambo 360°**
   - Fon Android: pemapar sfera, giroskop.
   - iPhone, iPad: samo.
   - Meta Quest: imersif, keliling demo.
   - Android TV, Google TV: pemapar sfera dipusing nga anak panah, dizum nga kekunci saluran.
+  - Windows: pemapar sfera, tetikus nga papan kekunci.
 - **Video 360°**
   - Fon Android: pemain Media3 asli kat sfera, giroskop, cari, pilihe trek bunyi, penunjuk timbal.
   - iPhone, iPad: pemain SceneKit asli kat sfera, giroskop, pilihe trek bunyi, penunjuk timbal; maing nga henti sekejap, belum ado bar maso.
   - Meta Quest: imersif, 3D betul untuk fail stereo, bar maso nga lompat 10 saat, media sebelum nga lepah.
   - Android TV, Google TV: pemain Media3 fon, dipusing nga anak panah.
+  - Windows: belum lagi, ditunjuk rata buat maso ni.
 - **3D 360° (atah nga bawoh, sebeloh-sebeloh)**
   - Fon Android: mato kiri, butang susune.
   - iPhone, iPad: samo.
@@ -888,7 +891,7 @@ Immuch360 tu galeri, nga dio pong pemain media percumo: dio maing gapo hok aplik
 
 Bahagian Android TV nga Google TV, dari binaan 20, belum disemak kat TV lagi, tengok [Tengok kat TV demo](#watch-on-your-tv-android-tv-and-google-tv); bahagian kamera belum disemak nga kamera betul lagi.
 
-Kat Windows, pratonton Immuch360 Desktop tunjuk gambo, rata nga 360°, termasuk gambo mentah .insp Insta360, nga tetikus nga papan kekunci, dari server, folder PC, kongsi nga Plex; dio belum maing video lagi, video tunjuk pemegang tempat (tengok [Belum ado lagi](#not-there-yet)).
+Kat Windows, pratonton Immuch360 Desktop tunjuk gambo, rata nga 360°, termasuk gambo mentah .insp Insta360, nga tetikus nga papan kekunci, nga dari binaan desktop 2 dio maing video rata, dari server, folder PC, kongsi, Plex nga rakaman Tapo; video 360°, 3D, VR180 nga video mentah 360° ditunjuk rata ke jadi pemegang tempat buat maso ni (tengok [Belum ado lagi](#not-there-yet)).
 
 - **Server Immich demo**: hok asal ke strim hok doh ditranskod dari server, macey "Settings", "Asset Viewer", "Sumber video" kato (tengok [Butir video nga penyahkod](#video-details-decoders-and-why-a-video-stutters)). Akaun samo macey aplikasi web.
 - **Fon ke headset tu sendiri**: "Guno tanpo server" kat muko log masuk, ke menu "On this device" dale tab "Pustako".
@@ -959,24 +962,24 @@ Tangkapa diambik dale headset nga butang tangkap (butang Meta nga picu), kat Que
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Kat komputer Windows: Immuch360 Desktop (pratonton)
 
-Pustako Immich demo ado kat server, gambo lain duduk dale folder PC, video kat NAS ke server Plex, pah demo nok tengok kelilin gambo 360° demo kat skrin beso, ke tunjuk gambo PC dale headset. Immuch360 Desktop tu aplikasi samo kat komputer Windows, dibina dari sumber samo nga aplikasi fon.
+Pustako Immich demo ado kat server, gambo nga video lain duduk dale folder PC, lagi banyok video kat NAS ke server Plex, pah demo nok tengok kelilin gambo 360° demo nga maing video demo kat skrin beso, ke tunjuk gambo PC dale headset. Immuch360 Desktop tu aplikasi samo kat komputer Windows, dibina dari sumber samo nga aplikasi fon.
 
-Kat komputer, Immich bui aplikasi web dio dale pelayar. **Gapo hok Immuch360 Desktop tamboh**: folder PC tanpo server ke akaun, kongsi SMB, WebDAV, DLNA nga Plex hok dilayari dari aplikasi, gambo mentah .insp Insta360 hok dibukak jadi sfera, nga PC hok dikongsi nga Meta Quest kat rumoh.
+Kat komputer, Immich bui aplikasi web dio dale pelayar. **Gapo hok Immuch360 Desktop tamboh**: folder PC tanpo server ke akaun, kongsi SMB, WebDAV, DLNA nga Plex hok dilayari nga dimaing dari aplikasi, gambo mentah .insp Insta360 hok dibukak jadi sfera, nga PC hok dikongsi nga Meta Quest kat rumoh.
 
-Binaan pertamo ni pratonton: gambo jale, video mari nga binaan desktop lepah ni. Aplikasi fon, tablet, Quest nga TV tok berubah sebab ni nga kekal namo Immuch360.
+Ni pratonton: dari binaan desktop 2, gambo nga video rata jale; video 360°, 3D nga VR180 mari nga binaan desktop lepah ni. Sejak 9 Oktober 2026 sumber desktop ado dale cabang utamo fork ni, `immuch360`, jadi fon, headset, TV nga komputer kelua dari sumber samo. Aplikasi fon, tablet, Quest nga TV tok berubah sebab ni nga kekal namo Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Muat turun nga pasang kat Windows
 
-Binaan pertamo tu pra-keluare GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Fail dio `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33.5 MB, 65 fail lepah dinyahzip), nga `SHA256SUMS.txt` nok semak dio. Dio dibina dari cabang `desktop` pado commit 21f285c34: binaan fon 20 tamboh versi komputer. Dio perlu Windows 10 ke 11, 64 bit.
+Binaan semaso tu pra-keluare GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Fail dio `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (lebih kurang 57 MB, 78 fail lepah dinyahzip, termasuk pemain video nga folder `licenses` dio), nga `SHA256SUMS.txt` nok semak dio. Dio dibina dari cabang utamo, `immuch360`, pado commit 5b723bd25: sumber binaan fon 21 tamboh versi komputer. Dio perlu Windows 10 ke 11, 64 bit.
 
 1. Muat turun ZIP tu pah nyahzip kat mano-mano, contoh dale Documents.
-2. Mulo `immuch360.exe` dari folder hok doh dinyahzip. Jago folder tu penoh: program perlu fail sebeloh dio.
+2. Mulo `immuch360.exe` dari folder hok doh dinyahzip. Jago folder tu penoh: program perlu fail sebeloh dio, termasuk pemain video.
 3. Fail belum ditandatange lagi, jadi Windows SmartScreen mungki tunjuk "Windows protected your PC": pilih "More info", lepah tu "Run anyway". Kalu Smart App Control buka, dio sekat program hok tok ditandatange.
 4. Tunggu tetingkap kelua. Mulo pertamo binaan baru ambik maso dari 10 saat sampa lebih kurang seminit, mungki maso Microsoft Defender imbas fail baru: jange mulo aplikasi sekali lagi maso tu. Mulo lepah tu ambik sesaat duo.
 5. Kat muko log masuk, log masuk ko server Immich demo nga alamat dio, emel nga kato lalue demo, ke klik "Guno tanpo server".
 
-Nok semak ZIP tu, jale `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` dale command prompt, dale folder muat turun: hasil dio samo nga hok ditulis dale `SHA256SUMS.txt`. Belum ado pemasang ke kemas kini automatik lagi: perhati muko [Releases](https://github.com/freeKC/Immuch360/releases), pah nyahzip binaan lepah ni nga caro samo.
+Nok semak ZIP tu, jale `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` dale command prompt, dale folder muat turun: hasil dio samo nga hok ditulis dale `SHA256SUMS.txt`. Belum ado pemasang ke kemas kini automatik lagi: perhati muko [Releases](https://github.com/freeKC/Immuch360/releases), pah nyahzip binaan lepah ni nga caro samo.
 
 ### Gapo pratonton ni buat
 
@@ -984,7 +987,8 @@ Nok semak ZIP tu, jale `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 - **Tanpo server**: folder gambo nga video demo (Pictures nga Videos dicadang) ganti galeri fon. Takdok gapo dibaco luar folder hok demo pilih, nga tanpo server takdok gapo kelua dari komputer.
 - **Muat naik nga sandare** dari folder tu ko server Immich demo, maso aplikasi bukak.
 - **Gambo 360° jadi sfera**, nga tetikus nga papan kekunci; gambo mentah .insp kamera Insta360 bukak macey kat fon.
-- **Kongsi rangkaie**: Samba (SMB), WebDAV nga server media DLNA, nga server Plex tanpo plex.tv, dilayari macey kat fon: gambo dio bukak, video dio tunggu pemain video (tengok [Belum ado lagi](#not-there-yet)). Untuk kamera Tapo, rakaman kad memori: senarai dio, nga ambik satu klip.
+- **Video rata** (dari binaan desktop 2): video dale folder demo, server Immich demo (asal ke strim hok ditranskod, tengok [Butir video nga penyahkod](#video-details-decoders-and-why-a-video-stutters)), kongsi SMB, WebDAV nga DLNA, server Plex nga rakaman Tapo maing dale tetingkap, nga kawale fon (main, jeda, bar maso), penunjuk penimbal, nga menu trek bunyi untuk video hok ado banyok. Video dale folder demo nga dale kongsi tunjuk satu bingkai video jadi lakare kecik dio, ganti ikon filem.
+- **Kongsi rangkaie**: Samba (SMB), WebDAV nga server media DLNA, nga server Plex tanpo plex.tv, dilayari macey kat fon: gambo dio bukak nga video dio maing. Untuk kamera Tapo, rakaman kad memori: senarai dio, ambik satu klip nga maing dio.
 - **Kongsi komputer ni dale rangkaie**: album, bule nga media 360° folder demo, baco jah, untuk Meta Quest ke peranti lain kat rumoh, macey fon kongsi diri dio.
 - **Fail**: muat turun dari server masuk dale folder hok demo pilih, "Save to a folder" (Simpang dale folder) simpang salina gambo nga video hok dipilih, nga muko "Logs" (Log) ado "Save logs to a file" (Simpang log dale fail).
 
@@ -994,9 +998,11 @@ Nok semak ZIP tu, jale `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 2. **Folder awan, USB nga rangkaie.** Fail hok OneDrive (ke pemacu awan lain) simpang dale talian jah dikira tapi tok dibaco, jadi tamboh folder tok muat turun semuo awan demo: "Download and include" (Muat turun nga masuk) ambik dio bilo demo nok. Pemacu USB hok balik nga huruf lain kekal gambo dio. Folder rangkaie, nga folder kat kad memori ke pemacu USB (supayo Windows masih buleh keluarke dio), tok diperhati untuk perubaha: guno "Refresh" (Segar semulo) lepah tamboh fail situ.
 3. **Tengok kelilin gambo 360°**: seret nga tetikus, zum nga roda, klik duo kali ke + nga - (kat mano-mano susun atur papan kekunci, termasuk AZERTY), gerak nga kekunci anak panah. F ke F11 tukar ko skrin penoh nga Escape kelua dari dio; Home nga End pegi ko gambo pertamo nga terakhir; I tunjuk butire.
 4. **Pegi dari gambo ko gambo**: dale gambo rata, anak panah kiri nga kane, ke chevron hok kelua kat tepi maso tetikus gerak, pegi ko hok sebelum nga hok lepah. Huruf hok ditaip dale medan penerange kekal dale teks.
-5. **Kongsi komputer nga headset**: bukak "Pustako", lepah tu "Kongsi rangkaie"; jubin pertamo "Share this computer on the network" (Kongsi komputer ni dale rangkaie), belah komputer [Kongsi fon ni dale rangkaie](#share-this-phone-on-the-network). Buka "Share photos and videos on the network" (Kongsi gambo nga video dale rangkaie), lepah tu tamboh komputer dale headset macey bahagian tu kato. Kongsi berhenti bilo aplikasi ditutup ke lepah sejam tok diguno.
-6. **Bena rangkaie**: Windows mungki tanyo samo ado Immuch360 Desktop buleh guno rangkaie. Bena dio kat rangkaie peribadi, kalu tok headset tok leh jumpo komputer. Kat rangkaie hok Windows tando awam (kedai kopi, hotel), ke hok jenih dio tok leh tahu, kongsi tok mulo melainke demo pilih "Share for this session" (Kongsi untuk sesi ni), nga komputer umum diri dio kat rangkaie hok dio kongsi jah.
-7. **"Settings", "This computer" (Komputer ni)**: folder, folder muat turun, penyesuai rangkaie hok diguno nok cari kongsi nga kongsi komputer (bilo ado lebih dari satu, Wi-Fi nga Ethernet contoh dio), nga sijil dipercayo: pihak berkuaso sijil server demo sendiri, sebagai fail PEM, untuk alamat HTTPS hok Windows tok percayo sendiri. Sijil klien diimport dale "Settings", "Advanced", macey kat fon.
+5. **Maing video**: bukak dio dari garis maso, folder, kongsi, Plex ke rakaman kamera Tapo; dio maing dale tetingkap. Enter, ke kekunci main nga jeda papan kekunci, jeda nga maing balik. Maso dio maing, anak panah kiri nga kane, ke J nga L, lompat 10 saat ko belakang ke ko depan; maso jeda, anak panah pegi ko hok sebelum nga hok lepah. F ke F11 tukar ko skrin penoh, macey untuk gambo. Butang "Audio track" (Trek bunyi) pilih antaro trek bunyi video hok ado banyok.
+6. **Bilo video berhenti**: video hok dijeda kekal jeda bilo demo balik ko tetingkap. Video hok terputuh sebelum habih, contoh bilo kongsi ke server berhenti jawab, kato macey tu: bukak dio sekali lagi nga dio sambung dari tempat dio berhenti, dale keadaa jeda. Fail senarai main hok jumpo dale folder ke kongsi tok diikut.
+7. **Kongsi komputer nga headset**: bukak "Pustako", lepah tu "Kongsi rangkaie"; jubin pertamo "Share this computer on the network" (Kongsi komputer ni dale rangkaie), belah komputer [Kongsi fon ni dale rangkaie](#share-this-phone-on-the-network). Buka "Share photos and videos on the network" (Kongsi gambo nga video dale rangkaie), lepah tu tamboh komputer dale headset macey bahagian tu kato. Kongsi berhenti bilo aplikasi ditutup ke lepah sejam tok diguno.
+8. **Bena rangkaie**: Windows mungki tanyo samo ado Immuch360 Desktop buleh guno rangkaie. Bena dio kat rangkaie peribadi, kalu tok headset tok leh jumpo komputer. Kat rangkaie hok Windows tando awam (kedai kopi, hotel), ke hok jenih dio tok leh tahu, kongsi tok mulo melainke demo pilih "Share for this session" (Kongsi untuk sesi ni), nga komputer umum diri dio kat rangkaie hok dio kongsi jah.
+9. **"Settings", "This computer" (Komputer ni)**: folder, folder muat turun, penyesuai rangkaie hok diguno nok cari kongsi nga kongsi komputer (bilo ado lebih dari satu, Wi-Fi nga Ethernet contoh dio), nga sijil dipercayo: pihak berkuaso sijil server demo sendiri, sebagai fail PEM, untuk alamat HTTPS hok Windows tok percayo sendiri. Sijil klien diimport dale "Settings", "Advanced", macey kat fon.
 
 ### Banding nga aplikasi fon
 
@@ -1005,20 +1011,24 @@ Nok semak ZIP tu, jale `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 - **Satu tetingkap**: bukak aplikasi kali keduo bawo balik tetingkap pertamo, buke mulo salina keduo.
 - **Takdok gapo dipadam dari folder demo**: "Delete from device" (Padam dari peranti) disorok, nga "Delete" (Padam) buang salina server jah, sampa aplikasi buleh hanta fail ko tong kitar semulo Windows.
 - **Tetikus nga papan kekunci** ganti sentuh nga giroskop.
+- **Satu pemain video untuk semuo sumber**: libmpv maing video server, folder, kongsi nga Plex samo jugok, nga pemain rata dio doh ado menu trek bunyi hok pemain rata fon belum ado lagi.
 
 <a id="not-there-yet"></a>
 ### Belum ado lagi
 
-- **Video**: maso ni dio tunjuk pemegang tempat, nga lakare kecik dio ikon filem. Main video mari lepah ni: video rata dulu, lepah tu video 360°, 3D nga VR180 nga video mentah 360°.
+- **Video 360°, 3D, VR180 nga video mentah 360°**: maso ni dio ditunjuk rata, macey fail simpang dio (sfera penoh dibentang, duo mato sebeloh-menyebeloh, ke gambo bulat kanta), ke jadi pemegang tempat, nga butang 360° kekal untuk gambo jah. Pemain dio mari nga binaan desktop lepah ni.
 - **Spatial 2.5D**, kemudia nga kamera web; **paparan langsung Tapo**; **peta** nga paparan Tempat; **log masuk nga OAuth** (log masuk nga emel nga kato lalue ganti dio); **Google Cast**; **pemberitahua**.
 - **Pemasang, binaan bertandatange nga kemas kini automatik**: binaan ni satu folder nga `immuch360.exe`.
-- **Linux nga macOS**: projek dio ado dale sumber, tapi belum dibina ke dicubo kat sistem tu lagi; dio mari lepah Windows.
+- **Linux nga macOS**: projek dio ado dale sumber, tapi belum dibina ke dicubo kat sistem tu lagi, nga pemain video dio belum ado dale dio; dio mari lepah Windows.
 - **Terjemaha**: teks baru versi komputer dale bahaso Inggeris buat maso ni.
 
 ### Masalah hok diketahui
 
-- **Maso headset baco fail dari komputer hok dikongsi** (video hok dio maing, gambo hok dio muat turun), Windows tok leh tukar namo, alih ke padam fail tu nga kato dio terbukak dale Immuch360 Desktop: berhenti main dulu. Sandare tok pegang fail demo macey tu: fail buleh ditukar namo, dialih ke dipadam maso dio dimuat naik.
-- **Bahagian belum licin**: fungsi kat atah lulus uji automatik dio kat Windows (475 uji desktop), nga kat PC Windows 11 aplikasi mulo, bukak sesi hok disimpang kat server Immich, selaras nga tutup elok. Uji tiap fungsi nga tange kat PC betul masih tengoh jale.
+- **Mulo pertamo binaan baru lambat**: dari 10 saat sampa lebih kurang seminit sebelum tetingkap kelua, mungki maso Microsoft Defender imbas fail baru, hok belum ditandatange lagi. Tunggu tetingkap, jange mulo aplikasi sekali lagi; mulo lepah tu ambik sesaat duo.
+- **Video 8K HEVC perlu cip grafik khas**: kat laptop uji, cip Intel UHD bersepadu tunjuk lebih kurang separuh bingkai video 8K HEVC, tapi cip NVIDIA khas maing 8K HEVC nga 5.7K H.264 tanpo bingkai jatuh. Windows jale aplikasi kat cip bersepadu melainke disuruh lain: dale tetapa Windows, System, Display, Graphics, tamboh `immuch360.exe` pah pilih "High performance". Kat cip bersepadu, video 5.7K H.264, hok penyahkod dio tolak, dinyahkod dek pemproses tanpo bingkai hilang.
+- **Video dilukis paling tinggi 1440 baris**, lepah tu diskala ikut tetingkap: kat skrin 4K dale skrin penoh, video 4K ke 8K sikit lembut berbanding dale pemain video khas. Ni jago video 8K dale kuaso grafik laptop.
+- **Maso video dari folder demo maing dale aplikasi, ke maso headset baco fail dari komputer hok dikongsi** (video hok dio maing, gambo hok dio muat turun), Windows tok leh tukar namo, alih ke padam fail tu nga kato dio terbukak dale Immuch360 Desktop: tutup video tu, ke berhenti main dale headset, dulu. Sandare tok pegang fail demo macey tu: fail buleh ditukar namo, dialih ke dipadam maso dio dimuat naik.
+- **Bahagian belum licin**: 656 dari 663 uji desktop lulus kat Windows (7 dilangkau sengajo), 200 pemain hok dibukak satu lepah satu tok tinggal kebocora, nga kat PC Windows 11 aplikasi mulo, bukak sesi hok disimpang kat server Immich, selaras, maing video nga tutup elok. Uji tiap fungsi nga tange kat PC betul masih tengoh jale.
 
 Kalu ado gapo tok keno, tolong bukak [isu](https://github.com/freeKC/Immuch360/issues) nga log hok disimpang dari muko "Logs" (Log), tengok [Log](#logs). Semak log dulu sebelum kongsi: dio buleh ado alamat server demo.
 
@@ -1027,19 +1037,17 @@ Kalu ado gapo tok keno, tolong bukak [isu](https://github.com/freeKC/Immuch360/i
 
 Demo perlu Windows 10 ke 11 kat x64, Flutter 3.47.2 untuk Windows, Visual Studio 2022 ke Build Tools dio nga beban kijo "Desktop development with C++", Developer Mode dibuka dale tetapa Windows (Flutter perlu dio untuk plugin), nga Python 3 untuk skrip bundle.
 
-1. Ambik cabang `desktop` pah jale penjanaan kod. Dio guno Java nga Node, jadi jale dio kat Linux, macOS ke dale WSL; nga WSL, simpang klon kat pemacu Windows, hok WSL nampok bawoh `/mnt/c` ke `/mnt/d`:
+1. Ambik sumber pah jale penjanaan kod. Cabang utamo, `immuch360`, bina versi komputer jugok: takdok cabang nok tukar. Penjanaan kod guno Java nga Node, jadi jale dio kat Linux, macOS ke dale WSL; nga WSL, simpang klon kat pemacu Windows, hok WSL nampok bawoh `/mnt/c` ke `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Kat Windows, dale folder `mobile` hok samo, bina aplikasi:
+2. Kat Windows, dale folder `mobile` hok samo, bina aplikasi. Binaan pertamo muat turun pustako pemain video (libmpv nga ANGLE) dari GitHub nga semak tiap arkib ikut SHA-256 dio:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Demo perlu Windows 10 ke 11 kat x64, Flutter 3.47.2 untuk Windows, Visual Studio
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. Folder `Release` jale kat PC hok bina dio. Untuk PC lain, simpang folder tu penoh nga tamboh runtime Visual C++ sebeloh `immuch360.exe`. Dari akar klon, skrip bundle salin dio, tinggal gapo hok untuk Android jah, semak tiap DLL hok aplikasi muat ado dale folder ke dale Windows sendiri, nga buat ZIP:
+3. Folder `Release` jale kat PC hok bina dio. Untuk PC lain, simpang folder tu penoh nga tamboh runtime Visual C++ sebeloh `immuch360.exe`. Dari akar klon, skrip bundle salin dio, tinggal gapo hok untuk Android jah, tamboh lesen pemain video, semak tiap DLL hok aplikasi muat ado dale folder ke dale Windows sendiri, nga buat ZIP:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI cabang `desktop` (`.github/workflows/immuch360-desktop.yml`) jale semaka fon nga semuo suite uji kat Linux, uji desktop kat Windows, nga bina ZIP samo; kijo Linux nga macOS dio (`flutter build linux` nga `flutter build macos`, nga `-t lib/main_desktop.dart` hok samo) belum jale kat sistem tu lagi.
+CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) jale kat cabang `desktop`, hok ikut `immuch360`: semaka fon (takdok gapo berubah dale binaan fon) nga semuo suite uji kat Linux, uji desktop kat Windows, nga ZIP samo; kijo Linux nga macOS dio (`flutter build linux` nga `flutter build macos`, nga `-t lib/main_desktop.dart` hok samo) belum jale kat sistem tu lagi.
 
 <a id="where-to-get-it"></a>
 ## Mano nok dapat
@@ -1075,8 +1083,8 @@ Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tun
   - Hari ni: `Immuch360-v<version>-release.apk` universal dari muko [Releases](https://github.com/freeKC/Immuch360/releases), di-sideload nga adb, tengok [Pasang dio kat TV](#install-it-on-the-tv). Dio aplikasi samo macey kat fon.
   - Tak lamo lagi: Google Play kat TV, lepah semaka Google untuk keluare TV.
 - **Windows 10 nga 11, 64 bit (pratonton)**
-  - Hari ni: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` dari [pra-keluare desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), dinyahzip nga dimulo macey [Muat turun nga pasang kat Windows](#download-and-install-on-windows) kato. Gambo jah buat maso ni: video mari nga binaan desktop lepah ni.
-  - Tak lamo lagi: main video; pemasang, binaan bertandatange nga kemas kini kemudia.
+  - Hari ni: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` dari [pra-keluare desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), dinyahzip nga dimulo macey [Muat turun nga pasang kat Windows](#download-and-install-on-windows) kato. Gambo nga video rata buat maso ni: video 360°, 3D nga VR180 mari nga binaan desktop lepah ni.
+  - Tak lamo lagi: video 360°, 3D, VR180 nga video mentah 360°; pemasang, binaan bertandatange nga kemas kini kemudia.
 
 Pauta App Store nga Meta Horizon Store akan ditamboh sini bilo senarai doh diterbit. Log masuk nga URL server Immich nga akaun biaso demo, ke ketuk "Guno tanpo server" kat muko log masuk nok mulo nga gambo nga video peranti tu sendiri. APK dari GitHub tok kemas kini sendiri: perhati muko Releases, nga bilo demo doh pasang aplikasi dari kedai, ambik kemas kini dari kedai tu.
 
@@ -1105,15 +1113,15 @@ Hok `quest` sasar SDK 34 nga simpang kebenara hok headset guno jah (gambo, video
 
 Nok bina untuk iOS kat Mac demo sendiri, guno Xcode nga pasuke tandatange demo sendiri; nga Xcode 26, jale `xcodebuild -downloadComponent MetalToolchain` sekali dulu, sebab shader Spatial perlu dio. Tanpo Mac, binaan iOS jale kat Codemagic (Mac dihos) dari fail `codemagic.yaml` repositori ni. Binaan keluare Android jale kat GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, versi Windows, dibina dari cabang `desktop` nga Flutter untuk Windows: langkah dio ado dale [Bina sendiri kat Windows](#build-it-yourself-on-windows).
+Immuch360 Desktop, versi Windows, dibina dari sumber samo, cabang `immuch360`, nga Flutter untuk Windows: langkah dio ado dale [Bina sendiri kat Windows](#build-it-yourself-on-windows).
 
 Takdok rahsio dale repositori ni: kunci tandatange Android disimpang sebagai rahsio GitHub Actions hok disulitke, nga bahan tandatange Apple disimpang sebagai pembolehubah hok disulitke kat Codemagic. Fail aliran kijo sebut dio ikut namo jah. Tanpo `android/key.jks` demo sendiri, binaan keluare ditandatange nga kunci nyahpepijat nga tok leh pasang atah salina dari GitHub ke kedai (nyahpasang hok tu dulu); binaan nyahpepijat pasang sebeloh dio sebagai Immuch360 debug. Salina Meta Horizon Store tu APK `quest` dari keluare hok ditandatange nga kunci lain, kunci hok aplikasi kedai mulo-mulo didaftar nga dio, jadi dio pong tok leh pasang atah APK hok di-sideload, ke sebaliknyo.
 
 ### Cawange
 
 - **`main`**: Immich `main` kat commit hok `immuch360` berasas (29 September 2026 untuk binaan skang), tok penah diubah; dio maju bilo cabang ni di-rebase atah Immich hok lagi baru.
-- **`immuch360`**: ubaha cabang ni atah Immich. Tiap keluare sebut versi Immich mano dio berasas.
-- **`desktop`**: Immuch360 Desktop, versi komputer, atah `immuch360`. Keluare fon digabung masuk dio, nga pra-keluare desktop dibina dari dio (binaan desktop 1 dari commit 21f285c34, binaan fon 20 tamboh versi komputer). Takdok gapo bawoh `mobile/android` nga `mobile/ios` berubah kat dio.
+- **`immuch360`**: ubaha cabang ni atah Immich, termasuk Immuch360 Desktop sejak 9 Oktober 2026. Tiap keluare sebut versi Immich mano dio berasas.
+- **`desktop`**: tempat Immuch360 Desktop, versi komputer, dibina atah `immuch360`, sampa dio digabung masuk `immuch360` pado 9 Oktober 2026 supayo fon, headset, TV nga komputer kelua dari sumber samo. Kini dio ikut `immuch360` nga bawo tag pra-keluare desktop ([binaan desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) dari commit 21f285c34, [binaan desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) dari 5b723bd25). Versi komputer tok ubah gapo-gapo bawoh `mobile/android` nga `mobile/ios`.
 
 <a id="logs"></a>
 ## Log
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Dari binaan 19 klien DLNA, kongsi fon nga pengenala media ruang Apple pong tulis ko log aplikasi sendiri ("Logs" (Log), dale menu gambo profil kat atah kane), bawoh `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` nga `NetworkMediaService`. Dari binaan 20 mod TV tulis situ bawoh `TvMode` nga `TvTextEntry`, server Plex bawoh `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` nga `PlexServerEditPage`, nga kamera Tapo bawoh `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` nga `CameraLiveView`; baris Plex tok pernah ado token, alamat ke tajuk, nga baris kamera tinggal kato lalue. Baris log kekal dale peranti melainke demo salin dio sendiri.
 
-Kat komputer (Immuch360 Desktop), muko "Logs" (Log) pong ado "Save logs to a file" (Simpang log dale fail): log, ke ZIP log nga laporan ranap terakhir bilo ado (namo hok dicadang lepah tu habih nga "with-crash-reports"). Laporan ranap tu minidump kecik: thread, mano dio berhenti nga gapo hok perlu jah nok ikut panggile dio, nga namo fail program tapi buke folder dio; buke memori aplikasi. Semak log dulu sebelum kongsi: dio buleh ado alamat server demo.
+Kat komputer (Immuch360 Desktop), muko "Logs" (Log) pong ado "Save logs to a file" (Simpang log dale fail): log, ke ZIP log nga laporan ranap terakhir bilo ado (namo hok dicadang lepah tu habih nga "with-crash-reports"). Laporan ranap tu minidump kecik: thread, mano dio berhenti nga gapo hok perlu jah nok ikut panggile dio, nga namo fail program tapi buke folder dio; buke memori aplikasi.
+
+Dari binaan desktop 2 pemain video komputer tulis situ bawoh `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` nga `VideoThumbnailGrabber`, termasuk amaran mpv sendiri, nga token nga kato lalue dibuang. Semak log dulu sebelum kongsi: dio buleh ado alamat server demo.
 
 <a id="privacy"></a>
 ## Privasi
@@ -1144,6 +1154,7 @@ Kat komputer (Immuch360 Desktop), muko "Logs" (Log) pong ado "Save logs to a fil
 - **Kongsi fon**: rangkaie tempate jah, nga namo pengguno nga kato lalue, melalui HTTP biaso (tengok [Kongsi fon ni dale rangkaie](#share-this-phone-on-the-network)).
 - **Kamera**: diguno dek pemain Spatial 2.5D jah, dale peranti; gambo tok penah disimpang nga tok penah dihanta ko mano-mano.
 - **Kat komputer** (Immuch360 Desktop, pratonton Windows): aplikasi baco folder hok demo pilih jah, simpang indeks, lakare kecik nga cache dio kat komputer, nga simpang kato lalue nga token nga perlindunge data Windows, untuk akaun Windows demo jah. Kongsi komputer ikut peratura kongsi fon, nga tok mulo kat rangkaie hok Windows tando awam, ke hok jenih dio tok leh tahu, melainke demo kato.
+- **Pemain video kat komputer** (dari binaan desktop 2): video server demo sampa ko dio melalui aplikasi, jadi pemain tok pernah pegang token sesi demo, nga gapo hok dio baco awal duduk dale memori, buke kat cakera. Dio bukak fail hok dibui ko dio jah: fail folder ke kongsi hok sebenarnyo senarai main ke penerange strim tok buat dio sambung ko tempat lain.
 
 Dasar penoh ado dale [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ Dasar penoh ado dale [PRIVACY.md](../PRIVACY.md).
 
 Projek ni cabang Immich nga kekal bawoh [GNU AGPL v3](../LICENSE). Tiap APK, termasuk hok untuk fon, pong ado Meta Spatial SDK, hok buke sumber terbuko (Meta Platform Technologies SDK License Agreement) nga diguno kat headset Meta Quest jah; Immuch360 Desktop, versi Windows, takdok dio. Immuch360 takdok kaito nga, nga tok disokong dek, pasuke Immich ke FUTO.
 
+ZIP Windows Immuch360 Desktop, nga dio jah, pong bawo pemain video dio: libmpv, pustako [mpv](https://mpv.io), nga [FFmpeg](https://ffmpeg.org) dale dio, dikawal dek plugin [media_kit](https://github.com/media-kit/media-kit). mpv nga FFmpeg dibina tanpo bahagian dio hok GPL jah, nga kod dio bawoh GNU LGPL versi 2.1 ke lepah tu; bilo dibina samo, `libmpv-2.dll` diedar bawoh GNU LGPL versi 3 ke lepah tu. Aplikasi muat dio maso jale, jadi demo buleh ganti dio nga binaan demo sendiri. Teks lesen ado dale folder `licenses` ZIP tu, nga tiap pustako nga lesen nga sumber dio disenarai dale [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Pelan jale
 
 Gapo hok belum siap, hok paling mungki dulu. Takdok gapo sini janji, nga maklum balas dale [penjejak isu](https://github.com/freeKC/Immuch360/issues) tolong putuh gapo mari dulu.
 
-- **Immuch360 Desktop, Windows dulu**: pratonton pertamo doh kelua (tengok [Kat komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Lepah ni, main video (video rata dulu, lepah tu 360°, 3D, VR180 nga fail mentah), diukur kat duo kad grafik laptop; lepah tu uji tiap fungsi kat PC Windows nga pembaika dio; lepah tu Spatial 2.5D nga kamera web; lepah tu Linux nga macOS, pakej, tandatange nga kemas kini.
+- **Immuch360 Desktop, Windows dulu**: binaan desktop 2 doh kelua, nga video rata, nga sumber desktop ado dale cabang utamo fork ni, `immuch360`, sejak 9 Oktober 2026 (tengok [Kat komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Lepah ni, video 360°, 3D, VR180 nga video mentah 360° kat Windows, nga duo kanta fail mentah nga paparan langsung Tapo; lepah tu uji tiap fungsi kat PC Windows nga pembaika dio; lepah tu Spatial 2.5D nga kamera web; lepah tu Linux nga macOS, pakej, tandatange nga kemas kini.
 - **Google Play**: binaan 18 doh ado; binaan 20 dale semaka Google sejak 7 Oktober 2026, ganti binaan 19. Binaan 21 tok ubah gapo-gapo kat fon nga tablet.
 - **App Store**: versi 3.3.0 tengoh tunggu semaka Apple; dio ado ciri binaan 11, jadi muat naik ko Immich nga semaka penyahkod video (binaan 15) nga fail Insta360 mentoh (binaan 16) mari nga kemas kini App Store lepah. Pauta akan ditamboh sini bilo dio doh ado.
 - **Meta Horizon Store**: Meta doh luluske senarai pado 7 Oktober 2026 nga binaan 14. Binaan 21 doh dihanta sebagai kemas kini pertamo dio: dio bawok semuo sejak binaan 14 (muat naik dari kongsi ko Immich, sumber video hok dipilih ikut gapo hok headset buleh nyahkod, fail mentoh Insta360, GoPro nga DJI, DLNA, kongsi fon, gambo ruang Apple, pustako Plex Media Server, kamera Tapo), nga kedai senarai dio untuk Quest 2, Quest Pro, Quest 3 nga 3S. Pauta kedai akan ditamboh sini bilo muko tu jadi awam; salina hok di-sideload keno nyahpasang dulu (tengok [Pasang](#install)).
@@ -1166,7 +1179,7 @@ Gapo hok belum siap, hok paling mungki dulu. Takdok gapo sini janji, nga maklum 
 - **DLNA, kongsi fon nga ruang Apple, lepah ni**: lapora peranti binaan 19 (Plex, Jellyfin, NAS nga Freebox Server melalui DLNA; fon hok layan Quest, kat hotspot dio pong; gambo nga video ruang iPhone betul dale headset); hak multicast hok dimintak dari Apple, supayo iPhone jumpo tiap server DLNA; sebelum nga lepah antaro gambo ruang dale headset; lencana ruang kat gambo server dale garis maso; video ruang dale 3D kat Quest, kalu penyahkod dio bui.
 - **Pemain 360° kat fon, lepah ni**: bar maso dale pemain video 360° iOS (pemain Android doh ado), sebelum/lepah dale pemain 360° fon macey dale paparan imersif Quest, nga gambo dale pemain video 360° asli.
 - **Kongsi rangkaie, langkah lepah**: leret dari satu fail folder ko fail lepah dale muko gambo nga video (paparan imersif Quest doh lalu fail 360° dale folder), pengesahe Digest untuk WebDAV, namo pengguno dari rekod Bonjour.
-- **Video rata**: pilihe trek bunyi dale pemain rata, untuk video server, peranti nga kongsi samo jugok (pemain 360° nga Spatial doh ado).
+- **Video rata**: pilihe trek bunyi dale pemain rata fon, untuk video server, peranti nga kongsi samo jugok (pemain 360° nga Spatial doh ado, samo jugok pemain rata Immuch360 Desktop).
 - **Android TV, lepah ni**: uji peranti binaan 20 kat emulator Google TV nga TV betul, lepah tu keluare TV kat Google Play (tangkapa skrin TV, sepanduk TV, semaka Google); kemudie, saluran kat skrin utamo TV.
 - **Kamera Tapo, lepah ni**: uji peranti binaan 20 nga kamera betul; paparan langsung kat iPhone nga iPad; rakaman H.265; maing klip maso dio tengoh diambik; rakaman sehari suntuk dale satu garis maso.
 - **Plex, lepah ni**: uji peranti binaan 20 (fon, Quest, iPhone, TV, jauh dari rumoh); bawok token dari komputer nga kod QR; sorok bahagian DLNA server Plex dale senarai server hok jumpo; IPv6.

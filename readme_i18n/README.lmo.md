@@ -19,13 +19,13 @@ L'è per chi el fotografa con ona fotocamera 360° (Insta360, GoPro MAX, DJI Osm
   App Store: <a href="#where-to-get-it">in revision</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store aprovaa, la build 21 mandada come sò primm aggiornament<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">descarega l'anteprima</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">descarega l'anteprima</a>, build desktop 2
 </p>
 
 - 🌐 **360° nativ**<br>Foto e video come ona sfera de vardà intorna cont el giroscopi, anca i file gregg de la fotocamera (Insta360 de la build 16, GoPro e DJI de la build 18). Anca on lettor video gratis: piatt, 360°, 3D, VR180
 - 👓 **3D nativ**<br>360° e VR180 stereoscopich, de sora e de sota o vun visin a l'alter, e i fotografie spaziai Apple (de la build 19): 3D vera in del visor, on œucc domà sul telefon
 - 🎥 **2.5D nativ**<br>Profonditaa sora on schermo piatt de on video stereoscopich, la vista la va adree a la toa testa (sperimental, telefon e tablet)
-- 📱 **Android, iOS, Quest, TV**<br>Ona app sui telefon, sui tablet e sui visor Quest 2, Pro, 3 e 3S, 3D vera in del visor, de la build 20 su Android TV col telecomand, e on'anteprima per Windows
+- 📱 **Android, iOS, Quest, TV**<br>Ona app sui telefon, sui tablet e sui visor Quest 2, Pro, 3 e 3S, 3D vera in del visor, de la build 20 su Android TV col telecomand, e on'anteprima per Windows con foto e video piatt
 - 🔌 **Con o senza server**<br>El tò server Immich, o la galleria del telefon istess, nissun account de bisogn
 - 🗄️ **Condivision de ret**<br>Samba (SMB), WebDAV e, de la build 19, server multimediai DLNA trovaa in la ret e lezzuu dal viv, nient descaregaa, e mandaa a Immich quand te voeret. De la build 19 on telefon el condivid anca la soa galleria col visor
 - 📺 **Su la TV**<br>De la build 20 el medesim APK su Android TV e Google TV: foto e video a 360°, el tò server e i tò condivision, col telecomand
@@ -79,7 +79,7 @@ L'è per chi el fotografa con ona fotocamera 360° (Insta360, GoPro MAX, DJI Osm
 - **"Voeuri vardà i mè foto e video a 360°, e i video del mè NAS o del mè server Plex, su la TV, col telecomand."** Varda [Vardà su la toa TV](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Troeuvi minga i mè scatt a 360° in mezz a tucc i alter."** Varda [La lista 360°](#find-your-360-shots-the-360-list).
 - **"El mè video a 360° el va a scatt, o el fa andà ona còpia sfuocada."** Varda [Detali video e decoder](#video-details-decoders-and-why-a-video-stutters).
-- **"Voeuri i mè foto a 360° e la mia biblioteca Immich sul mè PC Windows, con i foto di sò cartelle, el mè NAS e el mè server Plex, e el PC condivis col mè visor."** Varda [Su on computer Windows](#on-a-windows-computer-immuch360-desktop-preview) (on'anteprima, per adess domà foto).
+- **"Voeuri i mè foto a 360° e la mia biblioteca Immich sul mè PC Windows, con i foto e i video di sò cartelle, el mè NAS e el mè server Plex, e el PC condivis col mè visor."** Varda [Su on computer Windows](#on-a-windows-computer-immuch360-desktop-preview) (on'anteprima: per adess foto e video piatt, i video a 360° pussee in là).
 - **"Tegni quell che l'app Immich la fa?"** Sì, con dò piccole modifiche, varda [Tutt el rest l'è Immich](#everything-else-is-immich).
 
 Quand ona funzion l'è noeuva, el test el dis de che build la gh'è. La release su GitHub la gh'ha semper la build pussee noeuva, i store vegnen dopo: varda [Indove trovall](#where-to-get-it).
@@ -752,7 +752,7 @@ La build de adess, la build 21 (version 3.3.0-rc.0, numer de build 3030019), la 
 | Bibliotech de on Plex Media Server fà andà di file original, a cà e foeura de cà, senza plex.tv | ❌ | ✅ de la build 20, ogni visualizador, sui telefon, sui tablet, sul Quest e su la TV |
 | Telecamere Tapo: la vista dal viv, e i registrazion de la scheda de memoria mandaa a Immich quand te voeuret | ❌ | ✅ de la build 20: registrazion dappertutt, dal viv su Android, Android TV e el Quest |
 | Android TV e Google TV, comandaa col telecomand, in del medesim APK | ❌ minga on'app per la TV | ✅ de la build 20 |
-| La medesima app su on computer Windows | ❌ domà telefon e tablet | ✅ anteprima, anmò nissun video |
+| La medesima app su on computer Windows | ❌ domà telefon e tablet | ✅ anteprima, foto e video piatt |
 | Foto gregie Insta360 .insp e video .insv a ona traccia | ❌ piatt | ✅ de la build 16 |
 | Video gregg con on obietiv per traccia o per file (Insta360 X4, X4 Air, X5, X6, cobbie X3, GoPro .360, DJI .osv) | ❌ piatt o sbagliaa | ✅ de la build 18 |
 | Dual fisheye .dng | ❌ piatt | ❌ anmò no |
@@ -782,7 +782,7 @@ La build de adess, la build 21 (version 3.3.0-rc.0, numer de build 3030019), la 
 - **Plex Media Server**: provaa de on computer con on vero Plex Media Server 1.42.1 (accoppiament, cartell, intervai de byte, miniatur, l'indirizz foeura de cà); anmò minga provaa su on dispositiv.
 - **Telecamere Tapo**: provaa con ona telecamera simulada; anmò minga provaa con ona telecamera vera.
 - **Android TV e Google TV**: controllaa de test automatich; anmò minga provaa su ona TV.
-- **La medesima app su on computer Windows**: 475 test automatich desktop su Windows, e su on PC Windows 11 l'app la partiss, la derv ona session salvada su on server Immich, la sincronizza e la se sara polida; la prova a man de ogni funzion l'è in cors.
+- **La medesima app su on computer Windows**: 656 di 663 test automatich desktop passen su Windows (7 saltaa apposta), e su on PC Windows 11 l'app la partiss, la derv ona session salvada su on server Immich, la sincronizza, la fa andà on video e la se sara polida; la prova a man de ogni funzion l'è in cors.
 - **Foto gregie Insta360 .insp e video .insv a ona traccia**: foto confrontade con esportazion Insta360 Studio de file X3, video su on emulador Android con on file X3 a bassa risoluzion; anmò mai andaa su on iPhone.
 - **Video gregg con on obietiv per traccia o per file**: parser e giontadura provaa su file veri X4, cobbia X3, GoPro MAX e Osmo 360; la riproduzion l'è la proeuva sui dispositiv di build 18 e 19.
 - **Dual fisheye .dng**: previst.
@@ -825,16 +825,19 @@ Immuch360 l'è ona galleria, e l'è anca on lettor multimedial gratis: el fa and
   - iPhone, iPad: l'istess, foeura che i file MKV e AVI de ona condivision, che iOS el derv minga (su on server van transcodificaa).
   - Meta Quest: in la finestra.
   - Android TV, Google TV: come sui telefon; OK el mett in pausa, sinistra e drita salten 10 s.
+  - Windows (de la build desktop 2): el lettor libmpv, de ogni sorgent de la segonda lista; Enter el mett in pausa, sinistra e drita o J e L salten 10 s.
 - **Foto a 360°**
   - Telefon Android: visualizador a sfera, giroscopi.
   - iPhone, iPad: l'istess.
   - Meta Quest: immersiva, tutt intorna a ti.
   - Android TV, Google TV: visualizador a sfera giraa cont i frecce, zoom coi tast di canai.
+  - Windows: visualizador a sfera, mouse e tastiera.
 - **Video a 360°**
   - Telefon Android: lettor nativ Media3 su ona sfera, giroscopi, cor inanz e indree, scelta de la traccia audio, segn de cargament.
   - iPhone, iPad: lettor nativ SceneKit su ona sfera, giroscopi, scelta de la traccia audio, segn de cargament; fà partì e pausa, anmò nissuna barra del temp.
   - Meta Quest: immersiva, 3D vera per i file stereoscopich, barra del temp con salt de 10 second, media precedent e seguent.
   - Android TV, Google TV: el lettor Media3 di telefon, giraa cont i frecce.
+  - Windows: anmò minga, per adess mostraa piatt.
 - **3D 360° (de sora e de sota, vun visin a l'alter)**
   - Telefon Android: œucc sinister, boton de la disposizion.
   - iPhone, iPad: l'istess.
@@ -888,7 +891,7 @@ Immuch360 l'è ona galleria, e l'è anca on lettor multimedial gratis: el fa and
 
 I vos Android TV e Google TV, de la build 20, hinn anmò minga stade provade su ona TV, varda [Vardà su la toa TV](#watch-on-your-tv-android-tv-and-google-tv); i vos di telecamere hinn anmò minga stade provade con ona telecamera vera.
 
-Su Windows, l'anteprima de Immuch360 Desktop la mostra i foto, piatt e a 360°, anca i foto .insp grezz de Insta360, col mouse e la tastiera, del server, di cartelle del PC, di condivision e de Plex; la fa minga anmò andà i video, che mostren on segnaposto (varda [Anmò minga chì](#not-there-yet)).
+Su Windows, l'anteprima de Immuch360 Desktop la mostra i foto, piatt e a 360°, anca i foto .insp grezz de Insta360, col mouse e la tastiera, e de la build desktop 2 la fa andà i video piatt, del server, di cartelle del PC, di condivision, de Plex e di registrazion Tapo; i video a 360°, 3D, VR180 e i video a 360° grezz vegnen mostraa piatt o con on segnaposto per adess (varda [Anmò minga chì](#not-there-yet)).
 
 - **El tò server Immich**: l'original o el stream transcodificaa del server, come el dis Settings, Asset Viewer, Sorgent del video (varda [Detali video e decoder](#video-details-decoders-and-why-a-video-stutters)). Medesim account de l'app web.
 - **El telefon o el visor istess**: "Dovra senza server" in la pagina d'access, o la voce On this device de la scheda Biblioteca.
@@ -959,24 +962,24 @@ Catture fade in del visor col boton de cattura (boton Meta e grilett), su on Que
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Su on computer Windows: Immuch360 Desktop (anteprima)
 
-La toa biblioteca Immich l'è su on server, alter foto stann in di cartelle del PC, i video su on NAS o on server Plex, e te voeuret vardà tutt intorna i tò foto a 360° su on schermo grand, o mostrà i foto del PC in del visor. Immuch360 Desktop l'è la medesima app su on computer Windows, fada cont i medesim sorgent di app per telefon.
+La toa biblioteca Immich l'è su on server, alter foto e video stann in di cartelle del PC, alter video su on NAS o on server Plex, e te voeuret vardà tutt intorna i tò foto a 360° e fà andà i tò video su on schermo grand, o mostrà i foto del PC in del visor. Immuch360 Desktop l'è la medesima app su on computer Windows, fada cont i medesim sorgent di app per telefon.
 
-Su on computer, Immich el propon la soa app web in d'on browser. **Quell che Immuch360 Desktop el gionta**: i cartelle del PC senza nissun server o account, i condivision SMB, WebDAV, DLNA e Plex vardade de l'app, i foto .insp grezz de Insta360 averte come ona sfera, e el PC condivis con on Meta Quest a cà.
+Su on computer, Immich el propon la soa app web in d'on browser. **Quell che Immuch360 Desktop el gionta**: i cartelle del PC senza nissun server o account, i condivision SMB, WebDAV, DLNA e Plex vardade e fade andà de l'app, i foto .insp grezz de Insta360 averte come ona sfera, e el PC condivis con on Meta Quest a cà.
 
-Sta primma build l'è on'anteprima: i foto funzionen, i video rivaran con i pròssime build desktop. I app per telefon, tablet, Quest e TV cambien minga per quest e tegnen el nom Immuch360.
+Quella chì l'è on'anteprima: de la build desktop 2, i foto e i video piatt funzionen; i video a 360°, 3D e VR180 rivaran con i pròssime build desktop. Del 9 de ottober 2026 i sorgent desktop hinn in del ram principal del fork, `immuch360`, inscì telefon, visor, TV e computer vegnen foeura di medesim sorgent. I app per telefon, tablet, Quest e TV cambien minga per quest e tegnen el nom Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Descarega e installa su Windows
 
-La primma build l'è la pre-release de GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). El sò file l'è `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33.5 MB, 65 file dopo avell decompress), con `SHA256SUMS.txt` per controllall. L'è stada fada del ram `desktop` al commit 21f285c34: la build 20 del telefon pussee la version per computer. La gh'ha bisogn de Windows 10 o 11, 64 bit.
+La build attual l'è la pre-release de GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). El sò file l'è `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (circa 57 MB, 78 file dopo avell decompress, compres el lettor video e la soa cartella `licenses`), con `SHA256SUMS.txt` per controllall. L'è stada fada del ram principal, `immuch360`, al commit 5b723bd25: i sorgent de la build 21 del telefon pussee la version per computer. La gh'ha bisogn de Windows 10 o 11, 64 bit.
 
 1. Descarega el ZIP e decompressel indove te voeuret, per esempi in Documents.
-2. Fa partì `immuch360.exe` de la cartella decompressa. Tegn la cartella intrega: el program el gh'ha bisogn di file che gh'è arent.
+2. Fa partì `immuch360.exe` de la cartella decompressa. Tegn la cartella intrega: el program el gh'ha bisogn di file che gh'è arent, compres el lettor video.
 3. I file hinn anmò minga firmaa, inscì Windows SmartScreen el pò mostrà "Windows protected your PC": sceglie "More info", poeu "Run anyway". Indove Smart App Control l'è pizzaa, el bloca i program minga firmaa.
 4. Speta la finestra. La primma partenza de ona build noeuva la dura de 10 second a squas on minut, pussee che alter intanta che Microsoft Defender el controlla i file noeuv: fa minga partì l'app ancamò in sto temp. I partenze dopo duren on second o dò.
 5. In la pagina d'access, entra in del tò server Immich con el sò indirizz, la toa email e la toa password, o clicca "Dovra senza server".
 
-Per controllà el ZIP, fa andà `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` in d'on prompt di comand, in la cartella del descaregament: el resultaa l'è quell scritt in `SHA256SUMS.txt`. Gh'è anmò minga on installador né on aggiornament automatich: tegn d'oeucc la pagina [Releases](https://github.com/freeKC/Immuch360/releases), e decompress la pròssima build in la medesima manera.
+Per controllà el ZIP, fa andà `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` in d'on prompt di comand, in la cartella del descaregament: el resultaa l'è quell scritt in `SHA256SUMS.txt`. Gh'è anmò minga on installador né on aggiornament automatich: tegn d'oeucc la pagina [Releases](https://github.com/freeKC/Immuch360/releases), e decompress la pròssima build in la medesima manera.
 
 ### Quell che l'anteprima la fa
 
@@ -984,7 +987,8 @@ Per controllà el ZIP, fa andà `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0
 - **Senza server**: i cartelle di tò foto e video (Pictures e Videos hinn proponude) ciapen el post de la galleria de on telefon. Nagott el vegn lezzuu foeura di cartelle che te seet sceglii, e senza server nagott el va foeura del computer.
 - **Caregament e backup** de quei cartelle al tò server Immich, intanta che l'app l'è averta.
 - **Foto a 360° come ona sfera**, col mouse e la tastiera; i foto .insp grezz di camere Insta360 se derven come sui telefon.
-- **Condivision de ret**: Samba (SMB), WebDAV e server multimedial DLNA, e server Plex senza plex.tv, vardaa come sui telefon: i sò foto se derven, i sò video speten el lettor video (varda [Anmò minga chì](#not-there-yet)). Per i telecamere Tapo, i registrazion de la scheda de memoria: la lista, e el descaregament de on clip.
+- **Video piatt** (de la build desktop 2): i video di tò cartelle, del tò server Immich (l'original o el fluss transcodificaa, varda [Detaj di video e decodificador](#video-details-decoders-and-why-a-video-stutters)), di condivision SMB, WebDAV e DLNA, di server Plex e i registrazion Tapo vann in la finestra, coi comand di telefon (play, pausa, la barra del temp), on indicador de caregament, e on menù di tracce audio per on video che el ghe n'ha pussee de vuna. I video di tò cartelle e di condivision mostren on fotogramma del video come miniadura, al post de on'icona de film.
+- **Condivision de ret**: Samba (SMB), WebDAV e server multimedial DLNA, e server Plex senza plex.tv, vardaa come sui telefon: i sò foto se derven e i sò video vann. Per i telecamere Tapo, i registrazion de la scheda de memoria: la lista, el descaregament de on clip e la soa riproduzion.
 - **Condivid quell computer chì in la ret**: i album, i mes e i media a 360° di tò cartelle, domà in lettura, per on Meta Quest o on alter dispositiv a cà, come on telefon el condivid se istess.
 - **File**: i descaregament del server vann in d'ona cartella che te sceglet, "Salva in d'ona cartella" la tegn ona còpia di foto e video selezionaa, e la pagina Log la gh'ha "Salva i log in d'on file".
 
@@ -994,9 +998,11 @@ Per controllà el ZIP, fa andà `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0
 2. **Cartelle cloud, USB e de ret.** I file che OneDrive (o on alter disch cloud) el tegn domà online vegnen contaa ma minga lezzuu, inscì giontà ona cartella la descarega minga tutt el tò cloud: "Descarega e includ" i va a toeu quand te i voeuret. On disch USB che el torna con on'altra lettera el tegn i sò foto. I cartelle de ret, e i cartelle su ona scheda de memoria o on disch USB (per fà in manera che Windows el poda anmò tirall foeura), vegnen minga controllade per i cambiament: dovra Aggiorna dopo avè giontaa di file lì.
 3. **Varda tutt intorna in d'ona foto a 360°**: tira col mouse, zooma con la roeuda, on doppi clic o + e - (su ogni disposizion de la tastiera, anca AZERTY), moeuves con i frecc. F o F11 el passa al schermo pien e Escape el ven foeura; Home e End vann a la primma e a l'ultima foto; I el mostra i detaj.
 4. **Va de foto in foto**: in d'ona foto piatta, i frecc a sinistra e a drita, o i chevron che se veden ai bord intanta che el mouse el se moeuv, vann a quella prima e a quella dopo. I letter scritt in del camp de la descrizion resten in del test.
-5. **Condivid el computer col visor**: derv la Biblioteca, poeu Condivision de ret; el prim riquader l'è "Condivid quell computer chì in la ret", la part del computer de [Condivid quell telefon chì in la ret](#share-this-phone-on-the-network). Pizza "Condivid foto e video in la ret", poeu gionta el computer in del visor come la dis quella sezion. La condivision la se ferma quand l'app la vegn sarada o dopo on'ora senza dovrala.
-6. **Permett la ret**: Windows el pò domandà se Immuch360 Desktop el pò dovrà la ret. Permettel in di ret privade, sedenò el visor el pò minga trovà el computer. In d'ona ret che Windows el segna come pubblica (on caffè, on albergh), o vuna de la quala el sa minga el tipo, la condivision la partiss minga se te sceglet minga "Condivid per sta session", e el computer el se annuncia domà in d'ona ret indove el condivid.
-7. **Settings, "Sto computer"**: i cartelle, la cartella di descaregament, l'adattador de ret dovraa per trovà i condivision e per condivid el computer (quand ghe n'ha pussee de vun, Wi-Fi e Ethernet per esempi), e i certificaa fidaa: l'autorità de certificazion del tò server, come file PEM, per on indirizz HTTPS che Windows el se fida minga de per lù. I certificaa client vegnen importaa in Settings, Advanced, come sui telefon.
+5. **Fa andà on video**: dervel de la timeline, de ona cartella, de ona condivision, de Plex o di registrazion de ona telecamera Tapo; el va in la finestra. Enter, o el tast play e pausa de la tastiera, el mett in pausa e el fa ripartì. Intanta che el va, i frecc a sinistra e a drita, o J e L, salten 10 second indree o inanz; in pausa, i frecc vann a quell prima e a quell dopo. F o F11 el passa al schermo pien, come per i foto. El boton "Traccia audio" el sceglie tra i tracce audio de on video che el ghe n'ha pussee de vuna.
+6. **Quand on video el se ferma**: on video in pausa el resta in pausa quand te tornet a la finestra. On video interrott prima de la fin, per esempi quand la condivision o el server el respond pu, el le dis: dervel ancamò e el riparte de indove el s'era fermaa, in pausa. On file de playlist trovaa in d'ona cartella o in d'ona condivision el vegn minga seguii.
+7. **Condivid el computer col visor**: derv la Biblioteca, poeu Condivision de ret; el prim riquader l'è "Condivid quell computer chì in la ret", la part del computer de [Condivid quell telefon chì in la ret](#share-this-phone-on-the-network). Pizza "Condivid foto e video in la ret", poeu gionta el computer in del visor come la dis quella sezion. La condivision la se ferma quand l'app la vegn sarada o dopo on'ora senza dovrala.
+8. **Permett la ret**: Windows el pò domandà se Immuch360 Desktop el pò dovrà la ret. Permettel in di ret privade, sedenò el visor el pò minga trovà el computer. In d'ona ret che Windows el segna come pubblica (on caffè, on albergh), o vuna de la quala el sa minga el tipo, la condivision la partiss minga se te sceglet minga "Condivid per sta session", e el computer el se annuncia domà in d'ona ret indove el condivid.
+9. **Settings, "Sto computer"**: i cartelle, la cartella di descaregament, l'adattador de ret dovraa per trovà i condivision e per condivid el computer (quand ghe n'ha pussee de vun, Wi-Fi e Ethernet per esempi), e i certificaa fidaa: l'autorità de certificazion del tò server, come file PEM, per on indirizz HTTPS che Windows el se fida minga de per lù. I certificaa client vegnen importaa in Settings, Advanced, come sui telefon.
 
 ### A confront cont i app per telefon
 
@@ -1005,20 +1011,24 @@ Per controllà el ZIP, fa andà `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0
 - **Ona finestra**: dervì l'app ona segonda volta la porta indree la primma finestra al post de fà partì ona segonda còpia.
 - **Nagott el vegn scancellaa di tò cartelle**: "Scancella del dispositiv" l'è scondud, e Scancella el tira via domà la còpia del server, fin che l'app la podarà mandà i file in del cestin de Windows.
 - **Mouse e tastiera** al post del tocch e del giroscopi.
+- **On lettor video per ogni sorgent**: libmpv el fa andà i video del server, di cartelle, di condivision e de Plex a la medesima manera, e el sò lettor piatt el gh'ha giamò el menù di tracce audio che el lettor piatt di telefon el gh'ha anmò minga.
 
 <a id="not-there-yet"></a>
 ### Anmò minga chì
 
-- **Video**: per adess mostren on segnaposto, e i sò miniadure on'icona de film. La riproduzion la riva dopo: prima i video piatt, poeu i video a 360°, 3D e VR180 e i video a 360° grezz.
+- **Video a 360°, 3D, VR180 e video a 360° grezz**: per adess vegnen mostraa piatt, come el file el i tegn (tutta la sfera slargada, i dò oeucc vun arent a l'alter, o i imagin rotond di obiettiv), o con on segnaposto, e el boton 360° el resta sui foto. I sò lettor rivaran con i pròssime build desktop.
 - **Spatial 2.5D**, pussee in là con la webcam; la **vista dal viv Tapo**; la **mappa** e la vista di Loeugh; l'**access con OAuth** (entra con email e password al sò post); **Google Cast**; i **notifiche**.
 - **On installador, ona build firmada e i aggiornament automatich**: sta build l'è ona cartella con `immuch360.exe`.
-- **Linux e macOS**: i sò progett hinn in di sorgent, ma hinn anmò minga stad fad o provaa su quei sistema; rivaran dopo Windows.
+- **Linux e macOS**: i sò progett hinn in di sorgent, ma hinn anmò minga stad fad o provaa su quei sistema, e el sò lettor video l'è anmò minga denter; rivaran dopo Windows.
 - **Traduzion**: i test noeuv de la version per computer hinn in inglés per adess.
 
 ### Problema conossuu
 
-- **Intanta che el visor el lezz on file del computer condivis** (on video che el fa andà, ona foto che el descarega), Windows el pò minga rinominà, spostà o scancellà quell file e el dis che l'è avert in Immuch360 Desktop: ferma prima la riproduzion. I backup tegnen minga i tò file in sta manera: on file el pò vess rinominaa, spostaa o scancellaa intanta che el vegn caregaa.
-- **Robe anmò de limà**: i funzion de sora passen i sò test automatich su Windows (475 test desktop), e su on PC Windows 11 l'app la partiss, la derv ona session salvada su on server Immich, la sincronizza e la se sara polida. La prova de ogni funzion a man su on PC ver l'è anmò in cors.
+- **La primma partenza de ona build noeuva l'è lenta**: de 10 second a squas on minut prima che la finestra la se veda, pussee che alter intanta che Microsoft Defender el controlla i file noeuv, che hinn anmò minga firmaa. Speta la finestra invece de fà partì l'app ancamò; i partenze dopo duren on second o dò.
+- **I video 8K HEVC gh'hann bisogn de on chip grafich dedicaa**: sul portatil de prova, el chip integraa Intel UHD l'ha mostraa circa la metà di fotogramma de on video 8K HEVC, intanta che el chip dedicaa NVIDIA l'ha faa andà 8K HEVC e 5.7K H.264 senza perd nanca on fotogramma. Windows el fa andà l'app sul chip integraa se ghe se dis minga alter: in di impostazion de Windows, System, Display, Graphics, gionta `immuch360.exe` e sceglie "High performance". Sul chip integraa, on video 5.7K H.264, che el sò decodificador el refuda, el vegn decodificaa del processor senza perd on fotogramma.
+- **I video vegnen disegnaa al massim alt 1440 righe**, poeu ridimensionaa a la finestra: su on schermo 4K a schermo pien, on video 4K o 8K l'è on poo men nitid che in d'on lettor video dedicaa. Quest el tegn on video 8K dent la potenza grafica de on portatil.
+- **Intanta che on video di tò cartelle el va in l'app, o intanta che el visor el lezz on file del computer condivis** (on video che el fa andà, ona foto che el descarega), Windows el pò minga rinominà, spostà o scancellà quell file e el dis che l'è avert in Immuch360 Desktop: sara prima el video, o ferma la riproduzion in del visor. I backup tegnen minga i tò file in sta manera: on file el pò vess rinominaa, spostaa o scancellaa intanta che el vegn caregaa.
+- **Robe anmò de limà**: 656 di 663 test desktop passen su Windows (7 hinn saltaa apposta), 200 lettor dervii vun dopo l'alter lassen minga perdite, e su on PC Windows 11 l'app la partiss, la derv ona session salvada su on server Immich, la sincronizza, la fa andà on video e la se sara polida. La prova de ogni funzion a man su on PC ver l'è anmò in cors.
 
 Se quaicòss el va mal, per piasè derv ona [issue](https://github.com/freeKC/Immuch360/issues) col log salvaa de la pagina Log, varda [Log](#logs). Controlla el log prima de condividel: el pò contegnì l'indirizz del tò server.
 
@@ -1027,19 +1037,17 @@ Se quaicòss el va mal, per piasè derv ona [issue](https://github.com/freeKC/Im
 
 Te gh'heet bisogn de Windows 10 o 11 su x64, Flutter 3.47.2 per Windows, Visual Studio 2022 o i sò Build Tools col carigh de lavor "Desktop development with C++", el Developer Mode pizzaa in di impostazion de Windows (Flutter el ghe n'ha bisogn per i plugin), e Python 3 per el script del pacchett.
 
-1. Toeu el ram `desktop` e fa andà la generazion del codes. La dovra Java e Node, inscì falla andà su Linux, macOS o in WSL; con WSL, tegn el clon su on disch Windows, che WSL el ved sota `/mnt/c` o `/mnt/d`:
+1. Toeu i sorgent e fa andà la generazion del codes. El ram principal, `immuch360`, el fa anca la version per computer: gh'è nissun ram de cambià. La generazion del codes la dovra Java e Node, inscì falla andà su Linux, macOS o in WSL; con WSL, tegn el clon su on disch Windows, che WSL el ved sota `/mnt/c` o `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Su Windows, in la medesima cartella `mobile`, fa la build de l'app:
+2. Su Windows, in la medesima cartella `mobile`, fa la build de l'app. La primma build la descarega i librerie del lettor video (libmpv e ANGLE) de GitHub e la controlla ogni archivi col sò SHA-256:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Te gh'heet bisogn de Windows 10 o 11 su x64, Flutter 3.47.2 per Windows, Visual 
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. La cartella `Release` la va sul PC che l'ha fada. Per on alter PC, tegn tutta la cartella e gionta el runtime Visual C++ arent a `immuch360.exe`. De la radis del clon, el script del pacchett el la copia, el lassa foeura quell che el serv domà a Android, el controlla che ogni DLL che l'app la carega l'è in la cartella o in Windows istess, e el fa el ZIP:
+3. La cartella `Release` la va sul PC che l'ha fada. Per on alter PC, tegn tutta la cartella e gionta el runtime Visual C++ arent a `immuch360.exe`. De la radis del clon, el script del pacchett el la copia, el lassa foeura quell che el serv domà a Android, el gionta i licenze del lettor video, el controlla che ogni DLL che l'app la carega l'è in la cartella o in Windows istess, e el fa el ZIP:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-La CI del ram `desktop` (`.github/workflows/immuch360-desktop.yml`) la fa andà i controj del telefon e tutta la serie de test su Linux, i test desktop su Windows, e la fa el medesim ZIP; i sò lavor Linux e macOS (`flutter build linux` e `flutter build macos`, col medesim `-t lib/main_desktop.dart`) hinn anmò minga andaa su quei sistema.
+La CI de Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) la va sul ram `desktop`, che el segue `immuch360`: i controj del telefon (nagott el cambia in di build del telefon) e tutta la serie de test su Linux, i test desktop su Windows, e el medesim ZIP; i sò lavor Linux e macOS (`flutter build linux` e `flutter build macos`, col medesim `-t lib/main_desktop.dart`) hinn anmò minga andaa su quei sistema.
 
 <a id="where-to-get-it"></a>
 ## Indove trovall
@@ -1075,8 +1083,8 @@ L'app l'è su Google Play per telefon e tablet; la version per l'App Store la sp
   - Incoeu: l'universal `Immuch360-v<version>-release.apk` de la pagina [Releases](https://github.com/freeKC/Immuch360/releases), installaa a man con adb, varda [Installall su la TV](#install-it-on-the-tv). L'è la medesima app di telefon.
   - Prest: Google Play su la TV, dopo la revision de Google de la release per la TV.
 - **Windows 10 e 11, 64 bit (anteprima)**
-  - Incoeu: Immuch360 Desktop, el ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` de la [pre-release desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), decompress e fad partì come el dis [Descarega e installa su Windows](#download-and-install-on-windows). Domà foto per adess: i video rivaran con i pròssime build desktop.
-  - Prest: la riproduzion di video; on installador, ona build firmada e i aggiornament pussee in là.
+  - Incoeu: Immuch360 Desktop, el ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` de la [pre-release desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), decompress e fad partì come el dis [Descarega e installa su Windows](#download-and-install-on-windows). Foto e video piatt per adess: i video a 360°, 3D e VR180 rivaran con i pròssime build desktop.
+  - Prest: i video a 360°, 3D, VR180 e i video a 360° grezz; on installador, ona build firmada e i aggiornament pussee in là.
 
 I link de l'App Store e del Meta Horizon Store vegnaran giontaa chì appena che i schede hinn publicade. Fà l'access col solit URL del tò server Immich e el tò account, o tocca "Dovra senza server" in la pagina d'access per partì coi foto e video del dispositiv istess. L'APK de GitHub el se aggiorna minga de per lù: tegn d'oeucc la pagina Releases, e quand t'hee installaa l'app de on store, ciapa i aggiornament de quell store lì.
 
@@ -1105,15 +1113,15 @@ Quell `quest` el punta al SDK 34 e el tegn domà i permess che el visor el dovra
 
 Per compilà per iOS sul tò Mac, dovra Xcode e el tò team de firma; con Xcode 26, fà andà `xcodebuild -downloadComponent MetalToolchain` ona volta prima, perché i shader Spatial ghe n'hann de bisogn. Senza on Mac, i build iOS van su Codemagic (on Mac ospitaa) del file `codemagic.yaml` de sto repository. I build de release Android van su GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, la version Windows, la se fa del ram `desktop` con Flutter per Windows: i passagg hinn in [Fall de per ti su Windows](#build-it-yourself-on-windows).
+Immuch360 Desktop, la version Windows, la se fa di medesim sorgent, el ram `immuch360`, con Flutter per Windows: i passagg hinn in [Fall de per ti su Windows](#build-it-yourself-on-windows).
 
 In sto repository gh'è nissun segrett: la ciav de firma Android l'è salvada come segrett criptaa de GitHub Actions, e el material de firma Apple l'è salvaa come variabil criptade su Codemagic. I file de workflow i nominen domà. Senza el tò `android/key.jks`, ona build de release la vegn firmada con la ciav debug e la pò minga installass sora ona còpia de GitHub o de on store (disinstalla quella prima); ona build debug la se installa visin come Immuch360 debug. La còpia del Meta Horizon Store l'è l'APK `quest` de la release firmaa con on'altra ciav, quella con la quai l'app del store l'è stada registrada la prima volta, inscì la pò minga installass sora on APK installaa a man, e nanca el contrari.
 
 ### Branch
 
 - **`main`**: Immich `main` al commit su cui `immuch360` el se basa (29 de setember 2026 per i build de adess), mai modificaa; el va inanz quand el fork el vegn ribasaa su on Immich pussee noeuv.
-- **`immuch360`**: i modifiche de sto fork sora Immich. Ogni release la dis su che version de Immich la se basa.
-- **`desktop`**: Immuch360 Desktop, la version per computer, sora `immuch360`. I release del telefon vegnen unide denter, e i pre-release desktop vegnen fade de lì (la build desktop 1 del commit 21f285c34, la build 20 del telefon pussee la version per computer). Nagott sota `mobile/android` e `mobile/ios` el cambia lì.
+- **`immuch360`**: i modifiche de sto fork sora Immich, compres Immuch360 Desktop del 9 de ottober 2026. Ogni release la dis su che version de Immich la se basa.
+- **`desktop`**: indove Immuch360 Desktop, la version per computer, l'è stada fada sora `immuch360`, fin che l'è stada unida denter el 9 de ottober 2026 perché telefon, visor, TV e computer vegnen foeura di medesim sorgent. Adess el segue `immuch360` e el porta i tag di pre-release desktop ([build desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) del commit 21f285c34, [build desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) del 5b723bd25). La version per computer la cambia nagott sota `mobile/android` e `mobile/ios`.
 
 <a id="logs"></a>
 ## Log
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 De la build 19 el client DLNA, la condivision del telefon e el riconossiment di media spaziai Apple scriven anca in del log de l'app istessa (Logs (Log), in del menù de la foto del profil in alt a drita), sota `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` e `NetworkMediaService`. De la build 20 la modalità TV la scriv lì sota `TvMode` e `TvTextEntry`, i server Plex sota `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` e `PlexServerEditPage`, e i telecamere Tapo sota `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` e `CameraLiveView`; i righe Plex gh'hann mai denter el token, on indirizz o on titol, e i righe di telecamere lassen foeura i password. I righe de log resten sul dispositiv fin che te i copiet minga de per ti.
 
-Su on computer (Immuch360 Desktop), la pagina Log la gh'ha anca "Salva i log in d'on file": el log, o on ZIP del log e di rapport di ultim crash quand ghe n'è (el sò nom proponuu el finiss allora con "with-crash-reports"). On rapport de crash l'è on minidump piscinin: i thread, indove se hinn fermaa e domà quell che serv per seguì i sò ciamad, coi nom di file del program ma minga i sò cartelle; minga la memoria de l'app. Controlla el log prima de condividel: el pò contegnì l'indirizz del tò server.
+Su on computer (Immuch360 Desktop), la pagina Log la gh'ha anca "Salva i log in d'on file": el log, o on ZIP del log e di rapport di ultim crash quand ghe n'è (el sò nom proponuu el finiss allora con "with-crash-reports"). On rapport de crash l'è on minidump piscinin: i thread, indove se hinn fermaa e domà quell che serv per seguì i sò ciamad, coi nom di file del program ma minga i sò cartelle; minga la memoria de l'app.
+
+De la build desktop 2 el lettor video del computer el scriv lì sota `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` e `VideoThumbnailGrabber`, compres i avvis de mpv istess, con token e password tiraa via. Controlla el log prima de condividel: el pò contegnì l'indirizz del tò server.
 
 <a id="privacy"></a>
 ## Privacy
@@ -1144,6 +1154,7 @@ Su on computer (Immuch360 Desktop), la pagina Log la gh'ha anca "Salva i log in 
 - **Condivision del telefon**: domà ret local, con nom utent e password, in HTTP semplice (varda [Condivid quell telefon chì in la ret](#share-this-phone-on-the-network)).
 - **Fotocamera**: doperada domà del lettor Spatial 2.5D, sul dispositiv; i imagin vegnen mai salvaa e mai mandaa de nissuna part.
 - **Su on computer** (Immuch360 Desktop, anteprima Windows): l'app la lezz domà i cartelle che te sceglet, la tegn el sò indes, i miniadure e la cache sul computer, e la salva password e token con la protezion di dati de Windows, domà per el tò account Windows. La condivision del computer la segue i regol de la condivision del telefon, e la partiss minga in d'ona ret che Windows el segna come pubblica, o de la quala el sa minga el tipo, se te le diset minga ti.
+- **El lettor video su on computer** (de la build desktop 2): i video del tò server ghe riven a traverso l'app, inscì el lettor el tegn mai el tò token de session, e quell che el lezz in anticip el resta in memoria, minga sul disch. El derv domà el file che ghe vegn daa: on file de ona cartella o de ona condivision che in verità l'è ona playlist o ona descrizion de fluss el le fa minga collegà de nissuna altra part.
 
 La politica completa l'è in [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ La politica completa l'è in [PRIVACY.md](../PRIVACY.md).
 
 Sto progett chì l'è on fork de Immich e el resta sota la [GNU AGPL v3](../LICENSE). Ogni APK, anca quei per telefon, el gh'ha dent anca el Meta Spatial SDK, che l'è minga open source (Meta Platform Technologies SDK License Agreement) e el vegn doperaa domà sui visor Meta Quest; Immuch360 Desktop, la version Windows, el le gh'ha minga. Immuch360 l'è minga ligaa al team de Immich o a FUTO, e nanca aprovaa de lor.
 
+El ZIP Windows de Immuch360 Desktop, e domà quell, el porta anca el sò lettor video: libmpv, la libreria de [mpv](https://mpv.io), con [FFmpeg](https://ffmpeg.org) denter, comandada di plugin de [media_kit](https://github.com/media-kit/media-kit). mpv e FFmpeg hinn faa senza i sò part che hinn domà GPL, e el sò codes l'è sota la GNU LGPL version 2.1 o pussee noeuva; faa insemma, `libmpv-2.dll` el vegn distribuii sota la GNU LGPL version 3 o pussee noeuva. L'app la le carega quand la va, inscì te podet cambiall con la toa build. I test di licenze hinn in la cartella `licenses` del ZIP, e ogni libreria con la soa licenza e i sò sorgent l'è in la lista de [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Roadmap
 
 Quell che l'è anmò minga fà, el pussee probabil prima. Nient de chì l'è ona promessa, e i comment sul [tracker di segnalazion](https://github.com/freeKC/Immuch360/issues) giutten a decid cosa el ven prima.
 
-- **Immuch360 Desktop, prima Windows**: la primma anteprima l'è sortida (varda [Su on computer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Dopo, la riproduzion di video (prima i video piatt, poeu 360°, 3D, VR180 e i file grezz), misurada su i dò schede grafiche de on portatil; poeu la prova de ogni funzion su on PC Windows e i sò correzion; poeu Spatial 2.5D con la webcam; poeu Linux e macOS, pacchett, firma e aggiornament.
+- **Immuch360 Desktop, prima Windows**: la build desktop 2 l'è sortida, coi video piatt, e i sorgent desktop hinn in del ram principal del fork, `immuch360`, del 9 de ottober 2026 (varda [Su on computer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Dopo, i video a 360°, 3D, VR180 e i video a 360° grezz su Windows, coi dò obiettiv di file grezz e la vista dal viv Tapo; poeu la prova de ogni funzion su on PC Windows e i sò correzion; poeu Spatial 2.5D con la webcam; poeu Linux e macOS, pacchett, firma e aggiornament.
 - **Google Play**: la build 18 l'è pubblicada; la build 20 l'è in revision de Google del 7 de otober 2026, al post de la build 19. La build 21 la cambia nient sui telefon e sui tablet.
 - **App Store**: la version 3.3.0 la speta la revision de Apple; la gh'ha i funzion de la build 11, inscì el caregament su Immich e el control di decoder video (build 15) e i file gregg Insta360 (build 16) vegnen con l'aggiornament dopo de l'App Store. El link el vegnarà giontaa chì quand l'è in linia.
 - **Meta Horizon Store**: Meta la gh'ha aprovaa la scheda el 7 de otober 2026 con la build 14. La build 21 l'è stada mandada come sò primm aggiornament: la porta tutt quell che gh'è de la build 14 (i caregament de ona condivision a Immich, la sorgent video sceglida segond quell che el visor el decodifica, i file gregg Insta360, GoPro e DJI, DLNA, la condivision del telefon, i foto spaziai Apple, i bibliotech de Plex Media Server, i telecamere Tapo), e el store el la elenca per el Quest 2, el Quest Pro, el Quest 3 e el 3S. El link del store el vegnarà giontaa chì quand la pagina la sarà pubblica; ona còpia installada a man la gh'ha de vess disinstallada prima (varda [Installazion](#install)).
@@ -1166,7 +1179,7 @@ Quell che l'è anmò minga fà, el pussee probabil prima. Nient de chì l'è ona
 - **DLNA, condivision del telefon e Apple spatial, dopo**: i rapport sui dispositiv de la build 19 (Plex, Jellyfin, on NAS e el Freebox Server via DLNA; on telefon che el serviss on Quest, anca sul sò hotspot; foto e video spaziai veri de iPhone in del visor); el dirit multicast domandaa a Apple, inscì i iPhone troeuven ogni server DLNA; precedent e seguent tra foto spaziai in del visor; on distintiv spazial sui foto del server in la timeline; video spaziai in 3D sul Quest, se i sò decoder el permetten.
 - **Lettor 360° sui telefon, dopo**: ona barra del temp in del lettor video 360° de iOS (quell Android el ghe l'ha), precedent/seguent in di lettor 360° di telefon come in la vista immersiva del Quest, e foto in del lettor video 360° nativ.
 - **Condivision de ret, i pass dopo**: scorr de on file de ona cartella al seguent in di pagine de foto e video (la vista immersiva del Quest la passa giamò tra i file 360° de ona cartella), autenticazion Digest per WebDAV, el nom utent del record Bonjour.
-- **Video piatt**: la scelta de la traccia audio in del lettor piatt, per i video del server, del dispositiv e di condivision (i lettor 360° e Spatial ghe l'hann).
+- **Video piatt**: la scelta de la traccia audio in del lettor piatt di telefon, per i video del server, del dispositiv e di condivision (i lettor 360° e Spatial ghe l'hann, e anca el lettor piatt de Immuch360 Desktop).
 - **Android TV, i pass dopo**: la proeuva sui dispositiv de la build 20 su l'emulador Google TV e su ona TV vera, poeu la release per la TV su Google Play (screenshot de la TV, el banner TV, la revision de Google); pussee tard, canai su la schermada principal de la TV.
 - **Telecamere Tapo, i pass dopo**: la proeuva sui dispositiv de la build 20 con telecamere vere; la vista dal viv su iPhone e iPad; i registrazion H.265; fà andà on clip intanta che el vegn ciapaa; on dì intreg de registrazion su ona sola linea del temp.
 - **Plex, i pass dopo**: la proeuva sui dispositiv de la build 20 (telefon, el Quest, on iPhone, ona TV, foeura de cà); portà el token del computer con on codes QR; scond la part DLNA de on server Plex in la lista di server trovaa; IPv6.

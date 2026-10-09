@@ -19,13 +19,13 @@ U 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360
   App Store: <a href="#where-to-get-it">koʻrib chiqilmoqda</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store tasdiqlandi, 21-yigʻma birinchi yangilanish sifatida yuborildi<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">dastlabki koʻrinishni yuklab olish</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">dastlabki koʻrinishni yuklab olish</a>, kompyuter 2-yigʻmasi
 </p>
 
 - 🌐 **Oʻrnatilgan 360°**<br>Ichida atrofga qaraydigan sfera koʻrinishidagi suratlar va videolar, giroskop bilan, kameraning xom fayllari ham (Insta360 16-yigʻmadan, GoPro va DJI 18-yigʻmadan). Yana bepul video pleyer: tekis, 360°, 3D, VR180
 - 👓 **Oʻrnatilgan 3D**<br>Stereoskopik 360° va VR180, yuqori va pastki yoki yonma-yon, hamda Apple fazoviy suratlari (19-yigʻmadan): shlemda haqiqiy 3D, telefonda bitta koʻz
 - 🎥 **Oʻrnatilgan 2.5D**<br>Stereoskopik videodan tekis ekranda chuqurlik, koʻrinish boshingizni kuzatadi (tajribaviy, telefonlar va planshetlar)
-- 📱 **Android, iOS, Quest, TV**<br>Telefonlar, planshetlar va Quest 2, Pro, 3 va 3S shlemlarida bitta ilova, shlemda haqiqiy 3D, 20-yigʻmadan Android TV da pult bilan, hamda Windows uchun dastlabki koʻrinish
+- 📱 **Android, iOS, Quest, TV**<br>Telefonlar, planshetlar va Quest 2, Pro, 3 va 3S shlemlarida bitta ilova, shlemda haqiqiy 3D, 20-yigʻmadan Android TV da pult bilan, hamda suratlar va tekis videolar bilan Windows uchun dastlabki koʻrinish
 - 🔌 **Server bilan yoki serversiz**<br>Sizning Immich serveringiz yoki telefonning oʻz galereyasi, hisob kerak emas
 - 🗄️ **Tarmoq ulashmalari**<br>Samba (SMB), WebDAV va 19-yigʻmadan DLNA media serverlari, tarmoqda topiladi va jonli oʻqiladi, hech narsa yuklab olinmaydi, siz tanlaganingizda Immich ga yuboriladi. 19-yigʻmadan telefon oʻz galereyasini shlem bilan ham ulashadi
 - 📺 **Televizorda**<br>20-yigʻmadan Android TV va Google TV da oʻsha APK: 360° suratlar va videolar, serveringiz va ulashmalaringiz, pult bilan
@@ -79,7 +79,7 @@ U 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360
 - **"360° suratlar va videolarimni, NAS yoki Plex serverimdagi videolarni televizorda, pult bilan koʻrishni xohlayman."** Qarang: [Televizoringizda koʻring](#watch-on-your-tv-android-tv-and-google-tv).
 - **"360° suratlarimni boshqalari orasidan topa olmayman."** Qarang: [360° roʻyxati](#find-your-360-shots-the-360-list).
 - **"360° videom qotib qoladi yoki xira nusxasi ijro etiladi."** Qarang: [Video tafsilotlari va dekoderlar](#video-details-decoders-and-why-a-video-stutters).
-- **"360° suratlarim va Immich kutubxonam Windows kompyuterimda boʻlishini, uning jildlari, NAS im va Plex serverimdagi suratlar bilan birga, kompyuter esa shlemim bilan ulashilishini xohlayman."** Qarang: [Windows kompyuterida](#on-a-windows-computer-immuch360-desktop-preview) (dastlabki koʻrinish, hozircha faqat suratlar).
+- **"360° suratlarim va Immich kutubxonam Windows kompyuterimda boʻlishini, uning jildlaridagi suratlar va videolar, NAS im va Plex serverim bilan birga, kompyuter esa shlemim bilan ulashilishini xohlayman."** Qarang: [Windows kompyuterida](#on-a-windows-computer-immuch360-desktop-preview) (dastlabki koʻrinish: hozircha suratlar va tekis videolar, 360° videolar keyinroq).
 - **"Immich ilovasi qiladigan narsalar saqlanib qoladimi?"** Ha, ikki kichik oʻzgarish bilan, qarang: [Qolgan hammasi Immich](#everything-else-is-immich).
 
 Funksiya yangi boʻlsa, matnda u qaysi yigʻmadan beri borligi aytiladi. GitHub relizida har doim eng yangi yigʻma boʻladi, doʻkonlar keyinroq yetib keladi: qarang [Qayerdan olish mumkin](#where-to-get-it).
@@ -752,7 +752,7 @@ Joriy yigʻma, 21-yigʻma (versiya 3.3.0-rc.0, yigʻma raqami 3030019), Immich 3
 | Plex Media Server kutubxonalari asl fayllardan ijro etiladi, uyda va tashqarida, plex.tv siz | ❌ | ✅ 20-yigʻmadan, har bir koʻruvchida, telefonlar, planshetlar, Quest va televizorlarda |
 | Tapo kameralari: jonli tasvir va siz xohlaganda Immich ga yuboriladigan xotira kartasi yozuvlari | ❌ | ✅ 20-yigʻmadan: yozuvlar hamma joyda, jonli tasvir Android, Android TV va Quest da |
 | Android TV va Google TV, pult bilan boshqariladi, oʻsha APK da | ❌ televizor ilovasi emas | ✅ 20-yigʻmadan |
-| Windows kompyuterida xuddi shu ilova | ❌ faqat telefon va planshetlar | ✅ dastlabki koʻrinish, hali video yoʻq |
+| Windows kompyuterida xuddi shu ilova | ❌ faqat telefon va planshetlar | ✅ dastlabki koʻrinish, suratlar va tekis videolar |
 | Xom Insta360 .insp suratlari va bitta trekli .insv videolari | ❌ tekis | ✅ 16-yigʻmadan |
 | Har bir trek yoki faylda bitta obyektivli xom videolar (Insta360 X4, X4 Air, X5, X6, X3 juftliklari, GoPro .360, DJI .osv) | ❌ tekis yoki notoʻgʻri | ✅ 18-yigʻmadan |
 | Ikki baliqkoʻz .dng | ❌ tekis | ❌ hali emas |
@@ -782,7 +782,7 @@ Joriy yigʻma, 21-yigʻma (versiya 3.3.0-rc.0, yigʻma raqami 3030019), Immich 3
 - **Plex Media Server**: kompyuterdan haqiqiy Plex Media Server 1.42.1 ga nisbatan tekshirildi (bogʻlanish, jildlar, bayt diapazonlari, eskizlar, uydan tashqaridagi manzil); hali qurilmada tekshirilmagan.
 - **Tapo kameralari**: simulyatsiya qilingan kameraga nisbatan tekshirildi; hali haqiqiy kamera bilan tekshirilmagan.
 - **Android TV va Google TV**: avtomatik testlar bilan tekshirildi; hali televizorda tekshirilmagan.
-- **Windows kompyuterida xuddi shu ilova**: Windows da 475 ta avtomatik kompyuter testi, Windows 11 li kompyuterda esa ilova ishga tushadi, Immich serveridagi saqlangan seansni ochadi, sinxronlaydi va toza yopiladi; har bir funksiyani qoʻlda sinash davom etmoqda.
+- **Windows kompyuterida xuddi shu ilova**: Windows da 663 ta avtomatik kompyuter testidan 656 tasi oʻtadi (7 tasi ataylab oʻtkazib yuboriladi), Windows 11 li kompyuterda esa ilova ishga tushadi, Immich serveridagi saqlangan seansni ochadi, sinxronlaydi, video ijro etadi va toza yopiladi; har bir funksiyani qoʻlda sinash davom etmoqda.
 - **Xom Insta360 .insp suratlari va bitta trekli .insv videolari**: suratlar X3 fayllarining Insta360 Studio eksportlari bilan, videolar Android emulyatorida past oʻlchamli X3 fayli bilan tekshirildi; hali iPhone da ishga tushmagan.
 - **Har bir trek yoki faylda bitta obyektivli xom videolar**: tahlilchilar va tikish haqiqiy X4, X3 juftligi, GoPro MAX va Osmo 360 fayllarida tekshirildi; ijro 18 va 19-yigʻmalarning qurilmadagi sinovidir.
 - **Ikki baliqkoʻz .dng**: rejalashtirilgan.
@@ -825,16 +825,19 @@ Immuch360 galereya, shuningdek bepul media pleyer: u rasmiy ilova ijro eta olmay
   - iPhone, iPad: xuddi shunday, iOS ochmaydigan ulashmadagi MKV va AVI fayllaridan tashqari (serverda ular transkodlangan holda ijro etiladi).
   - Meta Quest: oynada.
   - Android TV, Google TV: telefonlardagi kabi; OK pauza qiladi, chap va oʻng 10 s sakraydi.
+  - Windows (kompyuter 2-yigʻmasidan): libmpv pleyeri, ikkinchi roʻyxatdagi har bir manbadan; Enter pauza qiladi, chap va oʻng yoki J va L 10 s sakraydi.
 - **360° suratlar**
   - Android telefonlar: sfera koʻruvchisi, giroskop.
   - iPhone, iPad: xuddi shunday.
   - Meta Quest: immersiv, sizni oʻrab oladi.
   - Android TV, Google TV: strelkalar bilan buriladigan, kanal tugmalari bilan masshtablanadigan sfera koʻruvchisi.
+  - Windows: sfera koʻruvchisi, sichqoncha va klaviatura.
 - **360° videolar**
   - Android telefonlar: sferada oʻrnatilgan Media3 pleyeri, giroskop, oʻtkazish, audio trek tanlovi, buferlash koʻrsatkichi.
   - iPhone, iPad: sferada oʻrnatilgan SceneKit pleyeri, giroskop, audio trek tanlovi, buferlash koʻrsatkichi; ijro va pauza, hozircha vaqt chizigʻi yoʻq.
   - Meta Quest: immersiv, stereoskopik fayllar uchun haqiqiy 3D, 10 soniyalik oʻtkazishli vaqt chizigʻi, oldingi va keyingi media.
   - Android TV, Google TV: telefonlarning Media3 pleyeri, strelkalar bilan buriladi.
+  - Windows: hali yoʻq, hozircha tekis koʻrsatiladi.
 - **3D 360° (yuqori va pastki, yonma-yon)**
   - Android telefonlar: chap koʻz, joylashuv tugmasi.
   - iPhone, iPad: xuddi shunday.
@@ -888,7 +891,7 @@ Immuch360 galereya, shuningdek bepul media pleyer: u rasmiy ilova ijro eta olmay
 
 Android TV va Google TV bandlari, 20-yigʻmadan, hali televizorda tekshirilmagan, qarang: [Televizoringizda koʻring](#watch-on-your-tv-android-tv-and-google-tv); kamera bandlari hali haqiqiy kamera bilan tekshirilmagan.
 
-Windows da Immuch360 Desktop dastlabki koʻrinishi tekis va 360° suratlarni, Insta360 ning xom .insp suratlari ham, sichqoncha va klaviatura bilan koʻrsatadi: serverdan, kompyuter jildlaridan, ulashmalardan va Plex dan; u hali video ijro etmaydi, ular oʻrnida joy egallovchi koʻrsatiladi (qarang: [Hali yoʻq](#not-there-yet)).
+Windows da Immuch360 Desktop dastlabki koʻrinishi tekis va 360° suratlarni, Insta360 ning xom .insp suratlari ham, sichqoncha va klaviatura bilan koʻrsatadi, kompyuter 2-yigʻmasidan esa tekis videolarni ijro etadi: serverdan, kompyuter jildlaridan, ulashmalardan, Plex dan va Tapo yozuvlaridan; 360°, 3D, VR180 va xom 360° videolar hozircha tekis yoki joy egallovchi sifatida koʻrsatiladi (qarang: [Hali yoʻq](#not-there-yet)).
 
 - **Immich serveringiz**: Settings, Asset Viewer, Video manbasi aytganidek asl fayl yoki serverning transkodlangan oqimi (qarang: [Video tafsilotlari va dekoderlar](#video-details-decoders-and-why-a-video-stutters)). Veb ilovadagi oʻsha hisob.
 - **Telefon yoki shlemning oʻzi**: kirish sahifasidagi "Serversiz foydalanish" yoki Kutubxona yorligʻidagi On this device bandi.
@@ -959,24 +962,24 @@ Skrinshotlar shlemda suratga olish tugmasi (Meta tugmasi va tepki) bilan, Quest 
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Windows kompyuterida: Immuch360 Desktop (dastlabki koʻrinish)
 
-Immich kutubxonangiz serverda, boshqa suratlar kompyuter jildlarida, videolar NAS yoki Plex serverida turibdi, siz esa 360° suratlaringizda katta ekranda atrofga qarashni yoki kompyuterdagi suratlarni shlemda koʻrsatishni xohlaysiz. Immuch360 Desktop bu Windows kompyuteridagi xuddi shu ilova, telefon ilovalari bilan bir xil manba kodidan yigʻilgan.
+Immich kutubxonangiz serverda, boshqa suratlar va videolar kompyuter jildlarida, yana boshqa videolar NAS yoki Plex serverida turibdi, siz esa 360° suratlaringizda katta ekranda atrofga qarashni va videolaringizni ijro etishni yoki kompyuterdagi suratlarni shlemda koʻrsatishni xohlaysiz. Immuch360 Desktop bu Windows kompyuteridagi xuddi shu ilova, telefon ilovalari bilan bir xil manba kodidan yigʻilgan.
 
-Kompyuterda Immich brauzerda ishlaydigan veb ilovasini taklif qiladi. **Immuch360 Desktop nimani qoʻshadi**: hech qanday server yoki hisobsiz kompyuter jildlari, ilovadan koʻrib chiqiladigan SMB, WebDAV, DLNA va Plex ulashmalari, sfera sifatida ochiladigan Insta360 ning xom .insp suratlari va uydagi Meta Quest bilan ulashilgan kompyuter.
+Kompyuterda Immich brauzerda ishlaydigan veb ilovasini taklif qiladi. **Immuch360 Desktop nimani qoʻshadi**: hech qanday server yoki hisobsiz kompyuter jildlari, ilovadan koʻrib chiqiladigan va ijro etiladigan SMB, WebDAV, DLNA va Plex ulashmalari, sfera sifatida ochiladigan Insta360 ning xom .insp suratlari va uydagi Meta Quest bilan ulashilgan kompyuter.
 
-Bu birinchi yigʻma dastlabki koʻrinish: suratlar ishlaydi, videolar keyingi kompyuter yigʻmalari bilan keladi. Telefon, planshet, Quest va televizor ilovalari bundan oʻzgarmaydi va Immuch360 nomini saqlaydi.
+Bu dastlabki koʻrinish: kompyuter 2-yigʻmasidan suratlar va tekis videolar ishlaydi; 360°, 3D va VR180 videolar keyingi kompyuter yigʻmalari bilan keladi. 2026-yil 9-oktabrdan beri kompyuter versiyasining manba kodi forkning asosiy tarmogʻi `immuch360` da, shuning uchun telefonlar, shlemlar, televizorlar va kompyuterlar bir xil manba kodidan chiqadi. Telefon, planshet, Quest va televizor ilovalari bundan oʻzgarmaydi va Immuch360 nomini saqlaydi.
 
 <a id="download-and-install-on-windows"></a>
 ### Windows ga yuklab olish va oʻrnatish
 
-Birinchi yigʻma GitHub dagi oldindan reliz [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Uning fayli `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, ochilgandan keyin 65 ta fayl), tekshirish uchun `SHA256SUMS.txt` bilan. U `desktop` tarmogʻidan 21f285c34 kommitida yigʻilgan: telefonning 20-yigʻmasi va kompyuter versiyasi. Unga Windows 10 yoki 11, 64 bit kerak.
+Joriy yigʻma GitHub dagi oldindan reliz [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Uning fayli `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (taxminan 57 MB, ochilgandan keyin 78 ta fayl, video pleyer va uning `licenses` jildi bilan birga), tekshirish uchun `SHA256SUMS.txt` bilan. U asosiy tarmoq `immuch360` dan 5b723bd25 kommitida yigʻilgan: telefonning 21-yigʻmasi manba kodi va kompyuter versiyasi. Unga Windows 10 yoki 11, 64 bit kerak.
 
 1. ZIP ni yuklab oling va istalgan joyga oching, masalan Hujjatlar ga.
-2. Ochilgan jilddan `immuch360.exe` ni ishga tushiring. Jildni butunligicha saqlang: dasturga yonidagi fayllar kerak.
+2. Ochilgan jilddan `immuch360.exe` ni ishga tushiring. Jildni butunligicha saqlang: dasturga yonidagi fayllar kerak, video pleyer ham.
 3. Fayllar hali imzolanmagan, shuning uchun Windows SmartScreen "Windows protected your PC" ni koʻrsatishi mumkin: "More info" ni, keyin "Run anyway" ni tanlang. Smart App Control yoqilgan boʻlsa, u imzosiz dasturlarni bloklaydi.
 4. Oynani kuting. Yangi yigʻmaning birinchi ishga tushishi 10 soniyadan bir daqiqagacha vaqt oladi, katta ehtimol bilan Microsoft Defender yangi fayllarni tekshirayotganda: bu orada ilovani qayta ishga tushirmang. Keyingi ishga tushirishlar bir-ikki soniya oladi.
 5. Kirish sahifasida Immich serveringizga uning manzili, elektron pochtangiz va parolingiz bilan kiring yoki "Serversiz foydalanish" ni bosing.
 
-ZIP ni tekshirish uchun yuklab olingan jildda buyruqlar satrida `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` ni ishga tushiring: natija `SHA256SUMS.txt` da yozilgani bilan bir xil boʻladi. Hali oʻrnatuvchi va avtomatik yangilanish yoʻq: [Releases](https://github.com/freeKC/Immuch360/releases) sahifasini kuzatib boring va keyingi yigʻmani ham xuddi shunday oching.
+ZIP ni tekshirish uchun yuklab olingan jildda buyruqlar satrida `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` ni ishga tushiring: natija `SHA256SUMS.txt` da yozilgani bilan bir xil boʻladi. Hali oʻrnatuvchi va avtomatik yangilanish yoʻq: [Releases](https://github.com/freeKC/Immuch360/releases) sahifasini kuzatib boring va keyingi yigʻmani ham xuddi shunday oching.
 
 ### Dastlabki koʻrinish nima qiladi
 
@@ -984,7 +987,8 @@ ZIP ni tekshirish uchun yuklab olingan jildda buyruqlar satrida `certutil -hashf
 - **Serversiz**: suratlaringiz va videolaringiz jildlari (Rasmlar va Videolar taklif qilinadi) telefon galereyasining oʻrnini egallaydi. Siz tanlagan jildlardan tashqarida hech narsa oʻqilmaydi, serversiz esa hech narsa kompyuterdan chiqmaydi.
 - **Yuklash va zaxiralash** shu jildlardan Immich serveringizga, ilova ochiq turganda.
 - **Sfera sifatida 360° suratlar**, sichqoncha va klaviatura bilan; Insta360 kameralarining xom .insp suratlari telefonlardagidek ochiladi.
-- **Tarmoq ulashmalari**: Samba (SMB), WebDAV va DLNA media serverlari, hamda plex.tv siz Plex serverlari, telefonlardagidek koʻrib chiqiladi: ularning suratlari ochiladi, videolari esa video pleyerni kutadi (qarang: [Hali yoʻq](#not-there-yet)). Tapo kameralari uchun xotira kartasidagi yozuvlar: roʻyxat va klipni olish.
+- **Tekis videolar** (kompyuter 2-yigʻmasidan): jildlaringiz, Immich serveringiz (asl yoki qayta kodlangan oqim, qarang: [Video tafsilotlari va dekoderlar](#video-details-decoders-and-why-a-video-stutters)), SMB, WebDAV va DLNA ulashmalari, Plex serverlari videolari va Tapo yozuvlari oynada ijro etiladi, telefonlardagi boshqaruvlar (ijro, pauza, vaqt chizigʻi), buferlash koʻrsatkichi va bir nechta audio treki boʻlgan video uchun audio treklar menyusi bilan. Jildlaringiz va ulashmalar videolari eskiz sifatida plyonka belgisi oʻrniga videodan bir kadrni koʻrsatadi.
+- **Tarmoq ulashmalari**: Samba (SMB), WebDAV va DLNA media serverlari, hamda plex.tv siz Plex serverlari, telefonlardagidek koʻrib chiqiladi: ularning suratlari ochiladi, videolari ijro etiladi. Tapo kameralari uchun xotira kartasidagi yozuvlar: roʻyxat, klipni olish va uni ijro etish.
 - **Bu kompyuterni tarmoqda ulashish**: jildlaringizning albomlari, oylari va 360° mediasi, faqat oʻqish uchun, uydagi Meta Quest yoki boshqa qurilma uchun, xuddi telefon oʻzini ulashgandek.
 - **Fayllar**: serverdan yuklab olinganlar siz tanlagan jildga tushadi, "Jildga saqlash" tanlangan suratlar va videolarning nusxasini saqlaydi, Jurnallar sahifasida esa "Jurnallarni faylga saqlash" bor.
 
@@ -994,9 +998,11 @@ ZIP ni tekshirish uchun yuklab olingan jildda buyruqlar satrida `certutil -hashf
 2. **Bulut, USB va tarmoq jildlari.** OneDrive (yoki boshqa bulut disk) faqat onlayn saqlaydigan fayllar sanaladi, lekin oʻqilmaydi, shuning uchun jild qoʻshish butun bulutingizni yuklab olmaydi: "Yuklab olish va qoʻshish" ularni siz xohlaganingizda olib keladi. Boshqa harf bilan qaytgan USB disk oʻz suratlarini saqlab qoladi. Tarmoq jildlari, shuningdek xotira kartasi yoki USB diskdagi jildlar (Windows uni baribir chiqarib olishi uchun) oʻzgarishlar uchun kuzatilmaydi: u yerga fayl qoʻshgandan keyin Refresh (Yangilash) dan foydalaning.
 3. **360° suratda atrofga qarang**: sichqoncha bilan torting, gʻildirak, ikki marta bosish yoki + va - bilan kattalashtiring (har qanday klaviatura tartibida, AZERTY ham), strelka tugmalari bilan harakatlaning. F yoki F11 toʻliq ekranga oʻtkazadi, Escape undan chiqaradi; Home va End birinchi va oxirgi suratga oʻtadi; I tafsilotlarni koʻrsatadi.
 4. **Suratdan suratga oʻting**: tekis suratda chap va oʻng strelkalar yoki sichqoncha harakatlanganda chetlarda paydo boʻladigan burchakli belgilar oldingi va keyingisiga oʻtadi. Tavsif maydoniga yozilgan harflar matnda qoladi.
-5. **Kompyuterni shlem bilan ulashing**: Kutubxona ni, keyin Tarmoq ulashmalari ni oching; birinchi katakcha "Bu kompyuterni tarmoqda ulashish", [Bu telefonni tarmoqda ulashish](#share-this-phone-on-the-network) ning kompyuter tomoni. "Suratlar va videolarni tarmoqda ulashish" ni yoqing, keyin kompyuterni shlemda oʻsha boʻlimda aytilganidek qoʻshing. Ulashish ilova yopilganda yoki bir soat ishlatilmaganda toʻxtaydi.
-6. **Tarmoqqa ruxsat bering**: Windows Immuch360 Desktop tarmoqdan foydalana oladimi, deb soʻrashi mumkin. Xususiy tarmoqlarda ruxsat bering, aks holda shlem kompyuterni topa olmaydi. Windows ommaviy deb belgilagan tarmoqda (kafe, mehmonxona) yoki turini aniqlay olmagan tarmoqda siz "Shu seans uchun ulashish" ni tanlamaguningizcha ulashish boshlanmaydi, kompyuter esa oʻzini faqat ulashayotgan tarmoqda eʼlon qiladi.
-7. **Settings, "This computer" (Shu kompyuter)**: jildlar, yuklab olish jildi, ulashmalarni topish va kompyuterni ulashish uchun ishlatiladigan tarmoq adapteri (bir nechta boʻlsa, masalan Wi-Fi va Ethernet) va ishonchli sertifikatlar: oʻz serveringizning sertifikatlash markazi, PEM fayl sifatida, Windows oʻzi ishonmaydigan HTTPS manzil uchun. Mijoz sertifikatlari telefonlardagidek Settings, Advanced (Kengaytirilgan) da import qilinadi.
+5. **Video ijro eting**: uni vaqt chizigʻidan, jilddan, ulashmadan, Plex dan yoki Tapo kamerasining yozuvlaridan oching; u oynada ijro etiladi. Enter yoki klaviaturaning ijro va pauza tugmasi pauza qiladi va yana ijro etadi. Ijro paytida chap va oʻng strelkalar yoki J va L 10 soniya orqaga yoki oldinga sakraydi; pauzada strelkalar oldingi va keyingisiga oʻtadi. F yoki F11 suratlardagidek toʻliq ekranga oʻtkazadi. "Audio trek" tugmasi bir nechta audio treki boʻlgan videoning treklari orasidan tanlaydi.
+6. **Video toʻxtaganda**: pauzadagi video oynaga qaytganingizda pauzada qoladi. Oxiriga yetmay uzilgan video, masalan ulashma yoki server javob bermay qolganda, buni aytadi: uni qayta oching, u toʻxtagan joyidan pauzada davom etadi. Jild yoki ulashmada topilgan pleylist fayliga amal qilinmaydi.
+7. **Kompyuterni shlem bilan ulashing**: Kutubxona ni, keyin Tarmoq ulashmalari ni oching; birinchi katakcha "Bu kompyuterni tarmoqda ulashish", [Bu telefonni tarmoqda ulashish](#share-this-phone-on-the-network) ning kompyuter tomoni. "Suratlar va videolarni tarmoqda ulashish" ni yoqing, keyin kompyuterni shlemda oʻsha boʻlimda aytilganidek qoʻshing. Ulashish ilova yopilganda yoki bir soat ishlatilmaganda toʻxtaydi.
+8. **Tarmoqqa ruxsat bering**: Windows Immuch360 Desktop tarmoqdan foydalana oladimi, deb soʻrashi mumkin. Xususiy tarmoqlarda ruxsat bering, aks holda shlem kompyuterni topa olmaydi. Windows ommaviy deb belgilagan tarmoqda (kafe, mehmonxona) yoki turini aniqlay olmagan tarmoqda siz "Shu seans uchun ulashish" ni tanlamaguningizcha ulashish boshlanmaydi, kompyuter esa oʻzini faqat ulashayotgan tarmoqda eʼlon qiladi.
+9. **Settings, "This computer" (Shu kompyuter)**: jildlar, yuklab olish jildi, ulashmalarni topish va kompyuterni ulashish uchun ishlatiladigan tarmoq adapteri (bir nechta boʻlsa, masalan Wi-Fi va Ethernet) va ishonchli sertifikatlar: oʻz serveringizning sertifikatlash markazi, PEM fayl sifatida, Windows oʻzi ishonmaydigan HTTPS manzil uchun. Mijoz sertifikatlari telefonlardagidek Settings, Advanced (Kengaytirilgan) da import qilinadi.
 
 ### Telefon ilovalari bilan taqqoslash
 
@@ -1005,20 +1011,24 @@ ZIP ni tekshirish uchun yuklab olingan jildda buyruqlar satrida `certutil -hashf
 - **Bitta oyna**: ilovani ikkinchi marta ochish ikkinchi nusxani ishga tushirish oʻrniga birinchi oynani qaytaradi.
 - **Jildlaringizdan hech narsa oʻchirilmaydi**: "Qurilmadan oʻchirish" yashirilgan, Oʻchirish esa faqat serverdagi nusxani olib tashlaydi, ilova fayllarni Windows savatiga yubora olmaguncha.
 - **Sichqoncha va klaviatura**, teginish va giroskop oʻrniga.
+- **Har bir manba uchun bitta video pleyer**: libmpv server, jildlar, ulashmalar va Plex videolarini birdek ijro etadi, uning tekis pleyerida esa telefonlarning tekis pleyerida hali yoʻq audio trek menyusi allaqachon bor.
 
 <a id="not-there-yet"></a>
 ### Hali yoʻq
 
-- **Videolar**: hozircha ular oʻrnida joy egallovchi, eskizlarida esa plyonka belgisi koʻrsatiladi. Ijro keyingi navbatda: avval tekis videolar, keyin 360°, 3D va VR180 videolar hamda xom 360° videolar.
+- **360°, 3D, VR180 va xom 360° videolar**: hozircha ular fayl saqlaganidek tekis koʻrsatiladi (yoyilgan butun sfera, yonma-yon ikki koʻz yoki linzalarning dumaloq tasvirlari) yoki joy egallovchi sifatida, 360° tugmasi esa suratlarda qoladi. Ularning pleyerlari keyingi kompyuter yigʻmalari bilan keladi.
 - **Spatial 2.5D**, keyinroq veb-kamera bilan; **Tapo jonli koʻrinishi**; **xarita** va Joylar koʻrinishi; **OAuth bilan kirish** (oʻrniga elektron pochta va parol bilan kiring); **Google Cast**; **bildirishnomalar**.
 - **Oʻrnatuvchi, imzolangan yigʻma va avtomatik yangilanishlar**: bu yigʻma `immuch360.exe` boʻlgan jild.
-- **Linux va macOS**: ularning loyihalari manba kodida bor, lekin hali bu tizimlarda yigʻilmagan va sinab koʻrilmagan; ular Windows dan keyin keladi.
+- **Linux va macOS**: ularning loyihalari manba kodida bor, lekin hali bu tizimlarda yigʻilmagan va sinab koʻrilmagan, ularning video pleyeri ham hali unda yoʻq; ular Windows dan keyin keladi.
 - **Tarjimalar**: kompyuter versiyasining yangi matnlari hozircha ingliz tilida.
 
 ### Maʼlum muammolar
 
-- **Shlem ulashilgan kompyuterdan faylni oʻqiyotganda** (ijro etayotgan video, yuklab olayotgan surat), Windows u faylni qayta nomlay, koʻchira yoki oʻchira olmaydi va u Immuch360 Desktop da ochiq ekanini aytadi: avval ijroni toʻxtating. Zaxiralash fayllaringizni bunday ushlab turmaydi: fayl yuklanayotganda uni qayta nomlash, koʻchirish yoki oʻchirish mumkin.
-- **Gʻadir-budurlar**: yuqoridagi funksiyalar Windows dagi avtomatik testlaridan oʻtadi (475 ta kompyuter testi), Windows 11 li kompyuterda esa ilova ishga tushadi, Immich serveridagi saqlangan seansni ochadi, sinxronlaydi va toza yopiladi. Har bir funksiyani haqiqiy kompyuterda qoʻlda sinash hali davom etmoqda.
+- **Yangi yigʻmaning birinchi ishga tushishi sekin**: oyna koʻrinishidan oldin 10 soniyadan bir daqiqagacha, katta ehtimol bilan Microsoft Defender hali imzolanmagan yangi fayllarni tekshirayotganda. Ilovani qayta ishga tushirish oʻrniga oynani kuting; keyingi ishga tushirishlar bir-ikki soniya oladi.
+- **8K HEVC videolarga alohida grafik chip kerak**: sinov noutbukida oʻrnatilgan Intel UHD chipi 8K HEVC videoning taxminan yarim kadrlarini koʻrsatdi, alohida NVIDIA chipi esa 8K HEVC va 5.7K H.264 ni birorta kadr tushirmasdan ijro etdi. Boshqacha aytilmasa, Windows ilovani oʻrnatilgan chipda ishga tushiradi: Windows sozlamalarida System, Display, Graphics da `immuch360.exe` ni qoʻshing va "High performance" ni tanlang. Oʻrnatilgan chipda uning dekoderi rad etadigan 5.7K H.264 videoni protsessor birorta kadr yoʻqotmasdan dekodlaydi.
+- **Videolar koʻpi bilan 1440 qator balandlikda chiziladi**, keyin oynaga moslab masshtablanadi: 4K ekranda toʻliq ekranda 4K yoki 8K video alohida video pleyerdagidan biroz yumshoqroq boʻladi. Bu 8K videoni noutbukning grafik quvvati doirasida saqlaydi.
+- **Jildlaringizdagi video ilovada ijro etilayotganda yoki shlem ulashilgan kompyuterdan faylni oʻqiyotganda** (ijro etayotgan video, yuklab olayotgan surat), Windows u faylni qayta nomlay, koʻchira yoki oʻchira olmaydi va u Immuch360 Desktop da ochiq ekanini aytadi: avval videoni yoping yoki shlemdagi ijroni toʻxtating. Zaxiralash fayllaringizni bunday ushlab turmaydi: fayl yuklanayotganda uni qayta nomlash, koʻchirish yoki oʻchirish mumkin.
+- **Gʻadir-budurlar**: Windows da 663 ta kompyuter testidan 656 tasi oʻtadi (7 tasi ataylab oʻtkazib yuboriladi), ketma-ket ochilgan 200 ta pleyer hech qanday sizib chiqish qoldirmaydi, Windows 11 li kompyuterda esa ilova ishga tushadi, Immich serveridagi saqlangan seansni ochadi, sinxronlaydi, video ijro etadi va toza yopiladi. Har bir funksiyani haqiqiy kompyuterda qoʻlda sinash hali davom etmoqda.
 
 Biror narsa notoʻgʻri ketsa, iltimos, Jurnallar sahifasidan saqlangan jurnal bilan [issue](https://github.com/freeKC/Immuch360/issues) oching, qarang: [Jurnallar](#logs). Ulashishdan oldin jurnalni tekshiring: unda server manzilingiz boʻlishi mumkin.
 
@@ -1027,19 +1037,17 @@ Biror narsa notoʻgʻri ketsa, iltimos, Jurnallar sahifasidan saqlangan jurnal b
 
 Sizga x64 dagi Windows 10 yoki 11, Windows uchun Flutter 3.47.2, "Desktop development with C++" ish yuklamasi bilan Visual Studio 2022 yoki uning Build Tools i, Windows sozlamalarida yoqilgan Dasturchi rejimi (Flutter plaginlar uchun unga muhtoj) va paketlash skripti uchun Python 3 kerak.
 
-1. `desktop` tarmogʻini oling va kod generatsiyasini ishga tushiring. U Java va Node dan foydalanadi, shuning uchun uni Linux, macOS yoki WSL da ishga tushiring; WSL bilan klonni Windows diskida saqlang, WSL uni `/mnt/c` yoki `/mnt/d` ostida koʻradi:
+1. Manba kodini oling va kod generatsiyasini ishga tushiring. Asosiy tarmoq `immuch360` kompyuter versiyasini ham yigʻadi: oʻtiladigan tarmoq yoʻq. Kod generatsiyasi Java va Node dan foydalanadi, shuning uchun uni Linux, macOS yoki WSL da ishga tushiring; WSL bilan klonni Windows diskida saqlang, WSL uni `/mnt/c` yoki `/mnt/d` ostida koʻradi:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Windows da, oʻsha `mobile` jildida ilovani yigʻing:
+2. Windows da, oʻsha `mobile` jildida ilovani yigʻing. Birinchi yigʻma video pleyer kutubxonalarini (libmpv va ANGLE) GitHub dan yuklab oladi va har bir arxivni uning SHA-256 i boʻyicha tekshiradi:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Sizga x64 dagi Windows 10 yoki 11, Windows uchun Flutter 3.47.2, "Desktop develo
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. `Release` jildi uni yigʻgan kompyuterda ishlaydi. Boshqa kompyuter uchun butun jildni saqlang va `immuch360.exe` yoniga Visual C++ ish vaqti muhitini qoʻshing. Klonning ildizidan paketlash skripti uni nusxalaydi, faqat Android ga xizmat qiladiganlarni chiqarib tashlaydi, ilova yuklaydigan har bir DLL jildda yoki Windows ning oʻzida borligini tekshiradi va ZIP ni yaratadi:
+3. `Release` jildi uni yigʻgan kompyuterda ishlaydi. Boshqa kompyuter uchun butun jildni saqlang va `immuch360.exe` yoniga Visual C++ ish vaqti muhitini qoʻshing. Klonning ildizidan paketlash skripti uni nusxalaydi, faqat Android ga xizmat qiladiganlarni chiqarib tashlaydi, video pleyer litsenziyalarini qoʻshadi, ilova yuklaydigan har bir DLL jildda yoki Windows ning oʻzida borligini tekshiradi va ZIP ni yaratadi:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-`desktop` tarmogʻining CI i (`.github/workflows/immuch360-desktop.yml`) telefon tekshiruvlarini va butun test toʻplamini Linux da, kompyuter testlarini Windows da ishga tushiradi va xuddi shu ZIP ni yigʻadi; uning Linux va macOS vazifalari (`flutter build linux` va `flutter build macos`, xuddi shu `-t lib/main_desktop.dart` bilan) hali bu tizimlarda ishga tushmagan.
+Immuch360 Desktop ning CI i (`.github/workflows/immuch360-desktop.yml`) `immuch360` ga ergashadigan `desktop` tarmogʻida ishlaydi: telefon tekshiruvlari (telefon yigʻmalarida hech narsa oʻzgarmaydi) va butun test toʻplami Linux da, kompyuter testlari Windows da, hamda xuddi shu ZIP; uning Linux va macOS vazifalari (`flutter build linux` va `flutter build macos`, xuddi shu `-t lib/main_desktop.dart` bilan) hali bu tizimlarda ishga tushmagan.
 
 <a id="where-to-get-it"></a>
 ## Qayerdan olish mumkin
@@ -1075,8 +1083,8 @@ Ilova telefonlar va planshetlar uchun Google Play da bor; App Store versiyasi Ap
   - Bugun: [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi universal `Immuch360-v<version>-release.apk`, adb bilan qoʻlda oʻrnatiladi, qarang: [Televizorga oʻrnatish](#install-it-on-the-tv). Bu telefonlardagi oʻsha ilova.
   - Tez orada: televizorlarda Google Play, televizor relizi Google tomonidan koʻrib chiqilgandan keyin.
 - **Windows 10 va 11, 64 bit (dastlabki koʻrinish)**
-  - Bugun: Immuch360 Desktop, [kompyuter oldindan relizining](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` ZIP i, [Windows ga yuklab olish va oʻrnatish](#download-and-install-on-windows) da aytilganidek ochilib, ishga tushiriladi. Hozircha faqat suratlar: videolar keyingi kompyuter yigʻmalari bilan keladi.
-  - Tez orada: video ijrosi; oʻrnatuvchi, imzolangan yigʻma va yangilanishlar keyinroq.
+  - Bugun: Immuch360 Desktop, [kompyuter oldindan relizining](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIP i, [Windows ga yuklab olish va oʻrnatish](#download-and-install-on-windows) da aytilganidek ochilib, ishga tushiriladi. Hozircha suratlar va tekis videolar: 360°, 3D va VR180 videolar keyingi kompyuter yigʻmalari bilan keladi.
+  - Tez orada: 360°, 3D, VR180 va xom 360° videolar; oʻrnatuvchi, imzolangan yigʻma va yangilanishlar keyinroq.
 
 App Store va Meta Horizon Store havolalari sahifalar eʼlon qilinishi bilan shu yerga qoʻshiladi. Odatdagi Immich server URL manzilingiz va hisobingiz bilan kiring yoki qurilmaning oʻz suratlari va videolari bilan boshlash uchun kirish sahifasida "Serversiz foydalanish" ga bosing. GitHub dan olingan APK oʻzini yangilamaydi: Releases sahifasini kuzatib boring, ilovani doʻkondan oʻrnatgan boʻlsangiz esa yangilanishlarni oʻsha doʻkondan oling.
 
@@ -1105,15 +1113,15 @@ Ikki Android varianti (flavor) bir xil ilova. 20-yigʻmadan `phone` varianti oʻ
 
 Oʻz Mac ingizda iOS uchun yigʻish uchun Xcode va oʻz imzolash jamoangizdan foydalaning; Xcode 26 bilan avval bir marta `xcodebuild -downloadComponent MetalToolchain` ni ishga tushiring, chunki u Spatial shaderlari uchun kerak. Mac siz iOS yigʻmalari ushbu repozitoriyning `codemagic.yaml` fayli orqali Codemagic da (xostingdagi Mac) ishlaydi. Android reliz yigʻmalari GitHub Actions da ishlaydi (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, ya'ni Windows versiyasi, `desktop` tarmogʻidan Windows uchun Flutter bilan yigʻiladi: qadamlar [Windows da oʻzingiz yigʻing](#build-it-yourself-on-windows) da.
+Immuch360 Desktop, ya'ni Windows versiyasi, xuddi shu manba kodidan, `immuch360` tarmogʻidan, Windows uchun Flutter bilan yigʻiladi: qadamlar [Windows da oʻzingiz yigʻing](#build-it-yourself-on-windows) da.
 
 Bu repozitoriyda hech qanday maxfiy maʼlumot yoʻq: Android imzolash kaliti shifrlangan GitHub Actions maxfiy qiymatlari sifatida, Apple imzolash materiallari esa Codemagic da shifrlangan oʻzgaruvchilar sifatida saqlanadi. Ish oqimi fayllari ularga faqat nomi bilan murojaat qiladi. Oʻz `android/key.jks` faylingiz boʻlmasa, reliz yigʻmasi debug kaliti bilan imzolanadi va GitHub yoki doʻkondagi nusxa ustiga oʻrnatilmaydi (avval uni oʻchiring); debug yigʻmasi uning yoniga Immuch360 debug sifatida oʻrnatiladi. Meta Horizon Store nusxasi relizning boshqa kalit, yaʼni doʻkon ilovasi birinchi marta roʻyxatdan oʻtkazilgan kalit bilan imzolangan `quest` APK si, shuning uchun u ham qoʻlda oʻrnatilgan APK ustiga oʻrnatilmaydi, aksincha ham.
 
 ### Tarmoqlar
 
 - **`main`**: `immuch360` asoslangan kommitdagi Immich `main` (joriy yigʻmalar uchun 2026-yil 29-sentabr), hech qachon oʻzgartirilmaydi; fork yangiroq Immich ga qayta asoslanganda u oldinga siljiydi.
-- **`immuch360`**: bu forkning Immich ustidagi oʻzgarishlari. Har bir reliz qaysi Immich versiyasiga asoslanganini aytadi.
-- **`desktop`**: Immuch360 Desktop, ya'ni kompyuter versiyasi, `immuch360` ustida. Telefon relizlari unga birlashtiriladi, kompyuter oldindan relizlari esa undan yigʻiladi (kompyuter 1-yigʻmasi 21f285c34 kommitidan: telefonning 20-yigʻmasi va kompyuter versiyasi). Unda `mobile/android` va `mobile/ios` ostidagi hech narsa oʻzgarmaydi.
+- **`immuch360`**: bu forkning Immich ustidagi oʻzgarishlari, 2026-yil 9-oktabrdan beri Immuch360 Desktop ham. Har bir reliz qaysi Immich versiyasiga asoslanganini aytadi.
+- **`desktop`**: Immuch360 Desktop, ya'ni kompyuter versiyasi, `immuch360` ustida yigʻilgan tarmoq; 2026-yil 9-oktabrda telefonlar, shlemlar, televizorlar va kompyuterlar bir xil manba kodidan chiqishi uchun u unga birlashtirildi. Endi u `immuch360` ga ergashadi va kompyuter oldindan relizlari teglarini saqlaydi ([kompyuter 1-yigʻmasi](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 21f285c34 kommitidan, [kompyuter 2-yigʻmasi](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25 dan). Kompyuter versiyasi `mobile/android` va `mobile/ios` ostida hech narsani oʻzgartirmaydi.
 
 <a id="logs"></a>
 ## Jurnallar
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 19-yigʻmadan DLNA mijozi, telefon ulashmasi va Apple fazoviy mediasini aniqlash ilovaning oʻz jurnaliga ham (Logs (Jurnallar), yuqori oʻngdagi profil rasmi menyusida) `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` va `NetworkMediaService` ostida yozadi. 20-yigʻmadan u yerga televizor rejimi `TvMode` va `TvTextEntry` ostida, Plex serverlari `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` va `PlexServerEditPage` ostida, Tapo kameralari esa `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` va `CameraLiveView` ostida yozadi; Plex qatorlarida hech qachon token, manzil yoki sarlavha boʻlmaydi, kamera qatorlarida esa parollar boʻlmaydi. Jurnal qatorlari siz ularni oʻzingiz nusxalamaguningizcha qurilmada qoladi.
 
-Kompyuterda (Immuch360 Desktop) Jurnallar sahifasida "Jurnallarni faylga saqlash" ham bor: jurnal yoki, soʻnggi nosozliklar boʻlsa, jurnal va ularning hisobotlaridan iborat ZIP (u holda taklif qilingan nom "with-crash-reports" bilan tugaydi). Nosozlik hisoboti kichik minidump: oqimlar, ular qayerda toʻxtagani va faqat ularning chaqiruvlarini kuzatish uchun kerakli narsalar, dastur fayllarining nomlari bilan, lekin jildlarisiz; ilova xotirasi emas. Ulashishdan oldin jurnalni tekshiring: unda server manzilingiz boʻlishi mumkin.
+Kompyuterda (Immuch360 Desktop) Jurnallar sahifasida "Jurnallarni faylga saqlash" ham bor: jurnal yoki, soʻnggi nosozliklar boʻlsa, jurnal va ularning hisobotlaridan iborat ZIP (u holda taklif qilingan nom "with-crash-reports" bilan tugaydi). Nosozlik hisoboti kichik minidump: oqimlar, ular qayerda toʻxtagani va faqat ularning chaqiruvlarini kuzatish uchun kerakli narsalar, dastur fayllarining nomlari bilan, lekin jildlarisiz; ilova xotirasi emas.
+
+Kompyuter 2-yigʻmasidan kompyuterning video pleyeri u yerga `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` va `VideoThumbnailGrabber` ostida yozadi, mpv ning oʻz ogohlantirishlari ham, tokenlar va parollar olib tashlangan holda. Ulashishdan oldin jurnalni tekshiring: unda server manzilingiz boʻlishi mumkin.
 
 <a id="privacy"></a>
 ## Maxfiylik
@@ -1144,6 +1154,7 @@ Kompyuterda (Immuch360 Desktop) Jurnallar sahifasida "Jurnallarni faylga saqlash
 - **Telefon ulashmasi**: faqat mahalliy tarmoq, foydalanuvchi nomi va parol bilan, oddiy HTTP orqali (qarang: [Bu telefonni tarmoqda ulashish](#share-this-phone-on-the-network)).
 - **Kamera**: faqat Spatial 2.5D pleyeri tomonidan, qurilmada ishlatiladi; tasvirlar hech qachon saqlanmaydi va hech qayerga yuborilmaydi.
 - **Kompyuterda** (Immuch360 Desktop, Windows uchun dastlabki koʻrinish): ilova faqat siz tanlagan jildlarni oʻqiydi, indeksi, eskizlari va keshini kompyuterda saqlaydi, parollar va tokenlarni esa Windows maʼlumotlar himoyasi bilan faqat sizning Windows hisobingiz uchun saqlaydi. Kompyuter ulashmasi telefon ulashmasi qoidalariga amal qiladi va siz aytmaguningizcha Windows ommaviy deb belgilagan yoki turini aniqlay olmagan tarmoqda boshlanmaydi.
+- **Kompyuterdagi video pleyer** (kompyuter 2-yigʻmasidan): serveringiz videolari unga ilova orqali yetib boradi, shuning uchun pleyer hech qachon seans tokeningizni ushlamaydi, oldindan oʻqiganlari esa diskda emas, xotirada qoladi. U faqat oʻziga berilgan faylni ochadi: jild yoki ulashmadagi aslida pleylist yoki oqim tavsifi boʻlgan fayl uni boshqa joyga ulanishga majburlamaydi.
 
 Toʻliq siyosat [PRIVACY.md](../PRIVACY.md) faylida.
 
@@ -1152,12 +1163,14 @@ Toʻliq siyosat [PRIVACY.md](../PRIVACY.md) faylida.
 
 Bu loyiha Immich ning forki va [GNU AGPL v3](../LICENSE) ostida qoladi. Har bir APK, telefon APK lari ham, ochiq kodli boʻlmagan (Meta Platform Technologies SDK License Agreement) va faqat Meta Quest shlemlarida ishlatiladigan Meta Spatial SDK ni ham oʻz ichiga oladi; Immuch360 Desktop, ya'ni Windows versiyasi, uni oʻz ichiga olmaydi. Immuch360 Immich jamoasi yoki FUTO bilan bogʻliq emas va ular tomonidan maʼqullanmagan.
 
+Immuch360 Desktop ning Windows ZIP i, va faqat u, oʻz video pleyerini ham olib keladi: libmpv, [mpv](https://mpv.io) kutubxonasi, ichida [FFmpeg](https://ffmpeg.org) bilan, [media_kit](https://github.com/media-kit/media-kit) plaginlari orqali boshqariladi. mpv va FFmpeg faqat GPL boʻlgan qismlarisiz yigʻilgan va ularning kodi GNU LGPL 2.1 yoki undan keyingi versiyasi ostida; birga yigʻilgan `libmpv-2.dll` GNU LGPL 3 yoki undan keyingi versiyasi ostida tarqatiladi. Ilova uni ishlash vaqtida yuklaydi, shuning uchun uni oʻz yigʻmangiz bilan almashtirishingiz mumkin. Litsenziya matnlari ZIP ning `licenses` jildida, har bir kutubxona esa litsenziyasi va manba kodi bilan [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) da sanab oʻtilgan.
+
 <a id="roadmap"></a>
 ## Yoʻl xaritasi
 
 Hali qilinmagan ishlar, eng ehtimoliylari birinchi. Bu yerdagi hech narsa vaʼda emas, [muammolar kuzatuvchisi](https://github.com/freeKC/Immuch360/issues) dagi fikrlar esa nima birinchi kelishini hal qilishga yordam beradi.
 
-- **Immuch360 Desktop, avval Windows**: birinchi dastlabki koʻrinish chiqdi (qarang: [Windows kompyuterida](#on-a-windows-computer-immuch360-desktop-preview)). Keyin video ijrosi (avval tekis videolar, keyin 360°, 3D, VR180 va xom fayllar), noutbukning ikkala videokartasida oʻlchab; keyin har bir funksiyani Windows kompyuterida sinash va tuzatishlar; keyin veb-kamera bilan Spatial 2.5D; keyin Linux va macOS, paketlar, imzolash va yangilanishlar.
+- **Immuch360 Desktop, avval Windows**: kompyuter 2-yigʻmasi tekis videolar bilan chiqdi, kompyuter versiyasining manba kodi esa 2026-yil 9-oktabrdan beri forkning asosiy tarmogʻi `immuch360` da (qarang: [Windows kompyuterida](#on-a-windows-computer-immuch360-desktop-preview)). Keyin Windows da 360°, 3D, VR180 va xom 360° videolar, xom fayllarning ikki linzasi va Tapo jonli koʻrinishi bilan; keyin har bir funksiyani Windows kompyuterida sinash va tuzatishlar; keyin veb-kamera bilan Spatial 2.5D; keyin Linux va macOS, paketlar, imzolash va yangilanishlar.
 - **Google Play**: 18-yigʻma faol; 19-yigʻma oʻrniga 20-yigʻma 2026-yil 7-oktabrdan beri Google ning koʻrib chiqishida. 21-yigʻma telefon va planshetlarda hech narsani oʻzgartirmaydi.
 - **App Store**: 3.3.0 versiyasi Apple ning koʻrib chiqishini kutmoqda; unda 11-yigʻmaning funksiyalari bor, shuning uchun Immich ga yuklash va video dekoder tekshiruvi (15-yigʻma) hamda xom Insta360 fayllari (16-yigʻma) keyingi App Store yangilanishi bilan keladi. Havola u faollashganda shu yerga qoʻshiladi.
 - **Meta Horizon Store**: Meta sahifani 2026-yil 7-oktabrda 14-yigʻma bilan tasdiqladi. 21-yigʻma uning birinchi yangilanishi sifatida yuborildi: u 14-yigʻmadan beri qoʻshilgan hamma narsani olib keladi (ulashmadan Immich ga yuklash, shlem dekodlay oladigan narsaga qarab tanlanadigan video manbai, Insta360, GoPro va DJI xom fayllari, DLNA, telefon ulashmasi, Apple fazoviy suratlari, Plex Media Server kutubxonalari, Tapo kameralari), doʻkon esa uni Quest 2, Quest Pro, Quest 3 va 3S uchun roʻyxatga oladi. Sahifa ochiq boʻlgach doʻkon havolasi shu yerga qoʻshiladi; qoʻlda oʻrnatilgan nusxani avval oʻchirish kerak (qarang: [Oʻrnatish](#install)).
@@ -1166,7 +1179,7 @@ Hali qilinmagan ishlar, eng ehtimoliylari birinchi. Bu yerdagi hech narsa vaʼda
 - **DLNA, telefon ulashmasi va Apple fazoviy media, keyingi**: 19-yigʻmaning qurilma hisobotlari (DLNA orqali Plex, Jellyfin, NAS va Freebox Server; Quest ga tarqatadigan telefon, uning hotspoti orqali ham; shlemda haqiqiy iPhone fazoviy suratlari va videolari); iPhone lar har bir DLNA serverni topishi uchun Apple dan soʻralgan multicast ruxsati; shlemda fazoviy suratlar orasida oldingi va keyingi; vaqt chizigʻidagi server suratlarida fazoviy belgi; dekoderlari imkon bersa, Quest da fazoviy videolarni 3D da koʻrsatish.
 - **Telefonlardagi 360° pleyerlar, keyingi**: iOS 360° video pleyerida vaqt chizigʻi (Android dagisida bor), Quest ning immersiv koʻrinishidagi kabi telefonlarning 360° pleyerlarida oldingi/keyingi, va oʻrnatilgan 360° video pleyerida suratlar.
 - **Tarmoq ulashmalari, keyingi qadamlar**: surat va video sahifalarida jilddagi bir fayldan keyingisiga surib oʻtish (Quest ning immersiv koʻrinishi jilddagi 360° fayllar boʻylab allaqachon yuradi), WebDAV uchun Digest autentifikatsiyasi, Bonjour yozuvidan foydalanuvchi nomi.
-- **Tekis videolar**: tekis pleyerda audio trek tanlovi, server, qurilma va ulashma videolari uchun birdek (360° va Spatial pleyerlarida u bor).
+- **Tekis videolar**: telefonlarning tekis pleyerida audio trek tanlovi, server, qurilma va ulashma videolari uchun birdek (360° va Spatial pleyerlarida u bor, Immuch360 Desktop ning tekis pleyerida ham).
 - **Android TV, keyingi qadam**: 20-yigʻmaning Google TV emulyatorida va haqiqiy televizorda qurilmadagi sinovi, keyin Google Play da televizor relizi (televizor skrinshotlari, televizor banneri, Google ning koʻrib chiqishi); keyinroq televizor bosh ekranida kanallar.
 - **Tapo kameralari, keyingi qadam**: 20-yigʻmaning haqiqiy kameralar bilan qurilmadagi sinovi; iPhone va iPad da jonli tasvir; H.265 yozuvlar; klipni olinayotgan paytda ijro etish; butun kunlik yozuvlar bitta vaqt chizigʻida.
 - **Plex, keyingi qadam**: 20-yigʻmaning qurilmadagi sinovi (telefonlar, Quest, iPhone, televizor, uydan tashqarida); tokenni kompyuterdan QR kod orqali olib kelish; topilgan serverlar roʻyxatida Plex serverining DLNA qismini yashirish; IPv6.

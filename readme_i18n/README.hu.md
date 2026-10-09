@@ -19,13 +19,13 @@ Azoknak szól, akik 360°-os kamerával (Insta360, GoPro MAX, DJI Osmo 360, Rico
   App Store: <a href="#where-to-get-it">ellenőrzés alatt</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store jóváhagyva, a 21-es build az első frissítéseként beküldve<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">előzetes verzió letöltése</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">előzetes verzió letöltése</a>, desktop build 2
 </p>
 
 - 🌐 **Natív 360°**<br>Fotók és videók körbenézhető gömbként, giroszkóppal, a kamerák nyers fájljait is beleértve (Insta360 a 16-os buildtől, GoPro és DJI a 18-as buildtől). Ingyenes videolejátszó is: sík, 360°, 3D, VR180
 - 👓 **Natív 3D**<br>Sztereoszkópikus 360° és VR180, felül/alul vagy egymás mellett, valamint Apple térbeli fotók (a 19-es buildtől): valódi 3D a headsetben, egy szem a telefonon
 - 🎥 **Natív 2.5D**<br>Mélység sík képernyőn egy sztereoszkópikus videóból, a nézet követi a fejét (kísérleti, telefonok és táblagépek)
-- 📱 **Android, iOS, Quest, TV**<br>Egy alkalmazás telefonokon, táblagépeken és a Quest 2, Pro, 3 és 3S headseteken, valódi 3D a headsetben, a 20-as buildtől Android TV-n, távirányítóval, és egy előzetes Windows-verzió
+- 📱 **Android, iOS, Quest, TV**<br>Egy alkalmazás telefonokon, táblagépeken és a Quest 2, Pro, 3 és 3S headseteken, valódi 3D a headsetben, a 20-as buildtől Android TV-n, távirányítóval, és egy előzetes Windows-verzió fotókkal és sík videókkal
 - 🔌 **Szerverrel vagy anélkül**<br>Az Ön Immich szervere, vagy a telefon saját galériája, fiók nélkül
 - 🗄️ **Hálózati megosztások**<br>Samba (SMB), WebDAV és a 19-es buildtől DLNA médiaszerverek, a hálózaton megtalálva és élőben olvasva, semmi sem töltődik le, és ha úgy dönt, elküldhetők az Immichbe. A 19-es buildtől egy telefon a saját galériáját is megoszthatja a headsettel
 - 📺 **A tévén**<br>A 20-as buildtől ugyanaz az APK Android TV-n és Google TV-n: 360°-os fotók és videók, a szervere és a megosztásai, távirányítóval
@@ -79,7 +79,7 @@ Azoknak szól, akik 360°-os kamerával (Insta360, GoPro MAX, DJI Osmo 360, Rico
 - **„A 360°-os fotóimat és videóimat, valamint a NAS-om vagy a Plex szerverem videóit a tévén szeretném nézni, távirányítóval.”** Lásd: [Nézés a tévén](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Nem találom a 360°-os felvételeimet a többi között.”** Lásd: [A 360°-os lista](#find-your-360-shots-the-360-list).
 - **„A 360°-os videóm akadozik, vagy egy elmosódott másolat játszódik le.”** Lásd: [Videóadatok és dekóderek](#video-details-decoders-and-why-a-video-stutters).
-- **„A 360°-os fotóimat és az Immich-könyvtáramat a windowsos PC-men szeretném látni, a mappáinak fotóival, a NAS-ommal és a Plex szerveremmel együtt, és a PC-t megosztani a headsetemmel.”** Lásd: [Windows rendszerű számítógépen](#on-a-windows-computer-immuch360-desktop-preview) (előzetes verzió, egyelőre csak fotók).
+- **„A 360°-os fotóimat és az Immich-könyvtáramat a windowsos PC-men szeretném látni, a mappáinak fotóival és videóival, a NAS-ommal és a Plex szerveremmel együtt, és a PC-t megosztani a headsetemmel.”** Lásd: [Windows rendszerű számítógépen](#on-a-windows-computer-immuch360-desktop-preview) (előzetes verzió: egyelőre fotók és sík videók, a 360°-os videók később).
 - **„Megmarad minden, amit az Immich alkalmazás tud?”** Igen, két apró eltéréssel, lásd: [Minden más Immich](#everything-else-is-immich).
 
 Ha egy funkció új, a szöveg megadja, melyik buildtől érhető el. A GitHub-kiadásban mindig a legújabb build van, az áruházak később követik: lásd [Honnan szerezhető be](#where-to-get-it).
@@ -752,7 +752,7 @@ A jelenlegi build, a 21-es (3.3.0-rc.0 verzió, 3030019-es buildszám), az Immic
 | Plex Media Server könyvtárai az eredeti fájlokból lejátszva, otthon és otthonon kívül, plex.tv nélkül | ❌ | ✅ a 20-as buildtől, minden nézegetőben, telefonokon, táblagépeken, a Questen és tévéken |
 | Tapo kamerák: az élő kép és a memóriakártya felvételei, az Immichbe küldve, amikor Ön úgy dönt | ❌ | ✅ a 20-as buildtől: felvételek mindenhol, élő kép Androidon, Android TV-n és a Questen |
 | Android TV és Google TV, távirányítóval vezérelve, ugyanabban az APK-ban | ❌ nem tévéalkalmazás | ✅ a 20-as buildtől |
-| Ugyanez az alkalmazás Windows rendszerű számítógépen | ❌ csak telefonok és táblagépek | ✅ előzetes verzió, videók még nincsenek |
+| Ugyanez az alkalmazás Windows rendszerű számítógépen | ❌ csak telefonok és táblagépek | ✅ előzetes verzió, fotók és sík videók |
 | Nyers Insta360 .insp fotók és egysávos .insv videók | ❌ sík | ✅ a 16-os buildtől |
 | Nyers videók sávonként vagy fájlonként egy objektívvel (Insta360 X4, X4 Air, X5, X6, X3-párok, GoPro .360, DJI .osv) | ❌ sík vagy hibás | ✅ a 18-as buildtől |
 | Kettős halszemes .dng | ❌ sík | ❌ még nem |
@@ -782,7 +782,7 @@ A jelenlegi build, a 21-es (3.3.0-rc.0 verzió, 3030019-es buildszám), az Immic
 - **Plex Media Server**: számítógépről ellenőrizve egy valódi Plex Media Server 1.42.1 ellen (párosítás, mappák, bájttartományok, bélyegképek, az otthonon kívüli cím); eszközön még nincs ellenőrizve.
 - **Tapo kamerák**: szimulált kamera ellen ellenőrizve; valódi kamerával még nincs ellenőrizve.
 - **Android TV és Google TV**: automatizált tesztekkel ellenőrizve; tévén még nincs ellenőrizve.
-- **Ugyanez az alkalmazás Windows rendszerű számítógépen**: 475 automatizált asztali teszt Windowson, és egy Windows 11-es PC-n az alkalmazás elindul, megnyit egy mentett munkamenetet egy Immich szerveren, szinkronizál és rendben bezárul; minden funkció kézi tesztelése folyamatban van.
+- **Ugyanez az alkalmazás Windows rendszerű számítógépen**: a 663 automatizált asztali tesztből 656 átmegy Windowson (7 szándékosan kihagyva), és egy Windows 11-es PC-n az alkalmazás elindul, megnyit egy mentett munkamenetet egy Immich szerveren, szinkronizál, lejátszik egy videót és rendben bezárul; minden funkció kézi tesztelése folyamatban van.
 - **Nyers Insta360 .insp fotók és egysávos .insv videók**: fotók X3 fájlok Insta360 Studio-exportjaival összevetve, videók Android-emulátoron egy alacsony felbontású X3 fájllal; iPhone-on még nem futott.
 - **Nyers videók sávonként vagy fájlonként egy objektívvel**: elemzők és összeillesztés valódi X4, X3-pár, GoPro MAX és Osmo 360 fájlokon ellenőrizve; a lejátszás a 18-as és 19-es build eszközös tesztje.
 - **Kettős halszemes .dng**: tervezett.
@@ -825,16 +825,19 @@ Az Immuch360 galéria, és egyben ingyenes médialejátszó is: lejátssza, amit
   - iPhone, iPad: ugyanez, kivéve egy megosztás MKV és AVI fájljait, amelyeket az iOS nem nyit meg (szerverről átkódolva játszódnak le).
   - Meta Quest: az ablakban.
   - Android TV, Google TV: mint telefonokon; az OK szüneteltet, a bal és a jobb 10 mp-et ugrik.
+  - Windows (a desktop build 2-től): a libmpv lejátszó, a második lista minden forrásából; az Enter szüneteltet, a bal és a jobb, vagy a J és az L 10 mp-et ugrik.
 - **360°-os fotók**
   - Android telefonok: gömbnézegető, giroszkóp.
   - iPhone, iPad: ugyanez.
   - Meta Quest: immerzív, körös-körül.
   - Android TV, Google TV: nyilakkal forgatható gömbnézegető, nagyítás a csatornagombokkal.
+  - Windows: gömbnézegető, egérrel és billentyűzettel.
 - **360°-os videók**
   - Android telefonok: natív Media3 lejátszó gömbön, giroszkóp, tekerés, hangsávválasztás, pufferelésjelző.
   - iPhone, iPad: natív SceneKit lejátszó gömbön, giroszkóp, hangsávválasztás, pufferelésjelző; lejátszás és szünet, idősáv még nincs.
   - Meta Quest: immerzív, sztereoszkópikus fájloknál valódi 3D, idősáv 10 másodperces ugrásokkal, előző és következő média.
   - Android TV, Google TV: a telefonok Media3 lejátszója, nyilakkal forgatva.
+  - Windows: még nem, egyelőre síkban jelennek meg.
 - **3D 360° (felül és alul, egymás mellett)**
   - Android telefonok: bal szem, elrendezés gomb.
   - iPhone, iPad: ugyanez.
@@ -888,7 +891,7 @@ Az Immuch360 galéria, és egyben ingyenes médialejátszó is: lejátssza, amit
 
 Az Android TV és Google TV bejegyzéseket, a 20-as buildtől, még nem ellenőrizték tévén, lásd [Nézés a tévén](#watch-on-your-tv-android-tv-and-google-tv); a kamerás bejegyzéseket még nem ellenőrizték valódi kamerával.
 
-Windowson az Immuch360 Desktop előzetes verziója megjeleníti a fotókat, síkban és 360°-ban, a nyers Insta360 .insp fotókat is, egérrel és billentyűzettel, a szerverről, a PC mappáiból, a megosztásokból és a Plexből; videókat még nem játszik le, azok helyén helyőrző látszik (lásd [Ami még hiányzik](#not-there-yet)).
+Windowson az Immuch360 Desktop előzetes verziója megjeleníti a fotókat, síkban és 360°-ban, a nyers Insta360 .insp fotókat is, egérrel és billentyűzettel, és a desktop build 2-től lejátssza a sík videókat, a szerverről, a PC mappáiból, a megosztásokból, a Plexből és a Tapo felvételeiből; a 360°-os, 3D, VR180 és nyers 360°-os videók egyelőre síkban vagy helyőrzőként jelennek meg (lásd [Ami még hiányzik](#not-there-yet)).
 
 - **Az Ön Immich szervere**: az eredeti vagy a szerver átkódolt adatfolyama, ahogy a Beállítások, Elemnézegető, Videóforrás előírja (lásd [Videóadatok és dekóderek](#video-details-decoders-and-why-a-video-stutters)). Ugyanaz a fiók, mint a webalkalmazásban.
 - **Maga a telefon vagy a headset**: „Használat szerver nélkül” a bejelentkezési oldalon, vagy a Képtár lap Ezen az eszközön eleme.
@@ -959,24 +962,24 @@ A headsetben a rögzítés gombbal (Meta gomb és ravasz) készült képernyők�
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Windows rendszerű számítógépen: Immuch360 Desktop (előzetes verzió)
 
-Az Immich-könyvtára egy szerveren van, más fotók a PC mappáiban vannak, a videók egy NAS-on vagy egy Plex szerveren, és szeretne nagy képernyőn körbenézni a 360°-os fotóiban, vagy a PC fotóit a headsetben megmutatni. Az Immuch360 Desktop ugyanez az alkalmazás Windows rendszerű számítógépen, ugyanazokból a forrásokból készül, mint a telefonos alkalmazások.
+Az Immich-könyvtára egy szerveren van, más fotók és videók a PC mappáiban vannak, további videók egy NAS-on vagy egy Plex szerveren, és szeretne nagy képernyőn körbenézni a 360°-os fotóiban és lejátszani a videóit, vagy a PC fotóit a headsetben megmutatni. Az Immuch360 Desktop ugyanez az alkalmazás Windows rendszerű számítógépen, ugyanazokból a forrásokból készül, mint a telefonos alkalmazások.
 
-Számítógépen az Immich a webes alkalmazását kínálja böngészőben. **Amit az Immuch360 Desktop hozzáad**: a PC mappái szerver és fiók nélkül, SMB-, WebDAV-, DLNA- és Plex-megosztások böngészése az alkalmazásból, a nyers Insta360 .insp fotók gömbként megnyitva, és a PC megosztása egy otthoni Meta Questtel.
+Számítógépen az Immich a webes alkalmazását kínálja böngészőben. **Amit az Immuch360 Desktop hozzáad**: a PC mappái szerver és fiók nélkül, SMB-, WebDAV-, DLNA- és Plex-megosztások böngészése és lejátszása az alkalmazásból, a nyers Insta360 .insp fotók gömbként megnyitva, és a PC megosztása egy otthoni Meta Questtel.
 
-Ez az első build előzetes verzió: a fotók működnek, a videók a következő asztali buildekkel jönnek. A telefonos, táblagépes, Quest és tévés alkalmazások ettől nem változnak, és megtartják az Immuch360 nevet.
+Ez előzetes verzió: a desktop build 2-től a fotók és a sík videók működnek; a 360°-os, 3D és VR180 videók a következő asztali buildekkel jönnek. 2026. október 9. óta az asztali források a fork fő ágában, az `immuch360` ágban vannak, így a telefonok, a headsetek, a tévék és a számítógépek ugyanazokból a forrásokból kapják a kiadásaikat. A telefonos, táblagépes, Quest és tévés alkalmazások ettől nem változnak, és megtartják az Immuch360 nevet.
 
 <a id="download-and-install-on-windows"></a>
 ### Letöltés és telepítés Windowson
 
-Az első build a GitHub-on található [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) előzetes kiadás. A fájlja `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, kicsomagolva 65 fájl), az ellenőrzéshez `SHA256SUMS.txt` tartozik hozzá. A `desktop` ágból készült, a 21f285c34 commitnál: a 20-as telefonos build plusz a számítógépes verzió. Windows 10 vagy 11 kell hozzá, 64 bites.
+A jelenlegi build a GitHub-on található [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) előzetes kiadás. A fájlja `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (körülbelül 57 MB, kicsomagolva 78 fájl, a videolejátszóval és annak `licenses` mappájával együtt), az ellenőrzéshez `SHA256SUMS.txt` tartozik hozzá. A fő ágból, az `immuch360` ágból készült, az 5b723bd25 commitnál: a 21-es telefonos build forrásai plusz a számítógépes verzió. Windows 10 vagy 11 kell hozzá, 64 bites.
 
 1. Töltse le a ZIP-et, és csomagolja ki bárhová, például a Dokumentumok mappába.
-2. Indítsa el az `immuch360.exe` fájlt a kicsomagolt mappából. A mappát tartsa egyben: a programnak szüksége van a mellette lévő fájlokra.
+2. Indítsa el az `immuch360.exe` fájlt a kicsomagolt mappából. A mappát tartsa egyben: a programnak szüksége van a mellette lévő fájlokra, a videolejátszót is beleértve.
 3. A fájlok még nincsenek aláírva, ezért a Windows SmartScreen a „A Windows megvédte a számítógépet” üzenetet jelenítheti meg: válassza a „További információ”, majd a „Futtatás mindenképp” lehetőséget. Ahol az Intelligens alkalmazásvezérlés be van kapcsolva, az letiltja az aláíratlan programokat.
 4. Várja meg az ablakot. Egy új build első indítása 10 másodperctől körülbelül egy percig tart, valószínűleg azért, mert közben a Microsoft Defender átvizsgálja az új fájlokat: eközben ne indítsa el újra az alkalmazást. A további indítások egy-két másodpercig tartanak.
 5. A bejelentkezési oldalon jelentkezzen be az Immich szerverére a címével, az e-mail-címével és a jelszavával, vagy kattintson a „Használat szerver nélkül” gombra.
 
-A ZIP ellenőrzéséhez futtassa a `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` parancsot egy parancssorban, a letöltés mappájában: az eredmény az, ami a `SHA256SUMS.txt` fájlban áll. Telepítő és automatikus frissítés még nincs: figyelje a [Releases](https://github.com/freeKC/Immuch360/releases) oldalt, és a következő buildet ugyanígy csomagolja ki.
+A ZIP ellenőrzéséhez futtassa a `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` parancsot egy parancssorban, a letöltés mappájában: az eredmény az, ami a `SHA256SUMS.txt` fájlban áll. Telepítő és automatikus frissítés még nincs: figyelje a [Releases](https://github.com/freeKC/Immuch360/releases) oldalt, és a következő buildet ugyanígy csomagolja ki.
 
 ### Mit tud az előzetes verzió
 
@@ -984,7 +987,8 @@ A ZIP ellenőrzéséhez futtassa a `certutil -hashfile Immuch360-Desktop-3.3.0-r
 - **Szerver nélkül**: a fotói és videói mappái (a Képek és a Videók mappát ajánlja fel) helyettesítik egy telefon galériáját. A kiválasztott mappákon kívül semmit nem olvas, és szerver nélkül semmi nem hagyja el a számítógépet.
 - **Feltöltés és biztonsági mentés** ezekből a mappákból az Immich szerverére, amíg az alkalmazás nyitva van.
 - **360°-os fotók gömbként**, egérrel és billentyűzettel; az Insta360 kamerák nyers .insp fotói úgy nyílnak meg, mint a telefonokon.
-- **Hálózati megosztások**: Samba (SMB), WebDAV és DLNA médiaszerverek, valamint Plex szerverek plex.tv nélkül, böngészve, mint a telefonokon: a fotóik megnyílnak, a videóik a videolejátszóra várnak (lásd [Ami még hiányzik](#not-there-yet)). A Tapo kameráknál a memóriakártya felvételei: a lista és egy klip letöltése.
+- **Sík videók** (a desktop build 2-től): a mappái, az Immich szervere (az eredeti vagy az átkódolt adatfolyam, lásd [Videóadatok és dekóderek](#video-details-decoders-and-why-a-video-stutters)), az SMB-, WebDAV- és DLNA-megosztások, a Plex szerverek videói és a Tapo felvételei az ablakban játszódnak le, a telefonok vezérlőivel (lejátszás, szünet, az idősáv), pufferelésjelzővel, és a hangsávok menüjével, ha egy videónak több is van. A mappái és a megosztások videói bélyegképként a videó egy képkockáját mutatják filmikon helyett.
+- **Hálózati megosztások**: Samba (SMB), WebDAV és DLNA médiaszerverek, valamint Plex szerverek plex.tv nélkül, böngészve, mint a telefonokon: a fotóik megnyílnak, a videóik lejátszódnak. A Tapo kameráknál a memóriakártya felvételei: a lista, egy klip letöltése és lejátszása.
 - **A számítógép megosztása a hálózaton**: a mappái albumai, hónapjai és 360°-os médiái, csak olvasásra, egy Meta Quest vagy más otthoni eszköz számára, ahogy egy telefon megosztja magát.
 - **Fájlok**: a szerverről letöltött fájlok egy választott mappába kerülnek, a „Mentés mappába” megőrzi a kijelölt fotók és videók másolatát, a Naplók oldalon pedig ott a „Naplók mentése fájlba”.
 
@@ -994,9 +998,11 @@ A ZIP ellenőrzéséhez futtassa a `certutil -hashfile Immuch360-Desktop-3.3.0-r
 2. **Felhős, USB- és hálózati mappák.** A OneDrive (vagy más felhőtárhely) által csak online tárolt fájlokat megszámolja, de nem olvassa be, így egy mappa hozzáadása nem tölti le az egész felhőjét: a „Letöltés és felvétel” akkor hozza le őket, amikor kéri. Egy más betűjellel visszatérő USB-meghajtó megtartja a fotóit. A hálózati mappákat, valamint a memóriakártyán vagy USB-meghajtón lévő mappákat (hogy a Windows továbbra is ki tudja adni) nem figyeli változásokra: ha ott fájlokat adott hozzá, használja a Frissítést.
 3. **Körbenézés egy 360°-os fotóban**: húzza az egérrel, nagyítson a görgővel, dupla kattintással vagy a + és - billentyűvel (bármely billentyűzetkiosztáson, az AZERTY-n is), mozogjon a nyílbillentyűkkel. Az F vagy az F11 teljes képernyőre vált, az Escape kilép belőle; a Home és az End az első és az utolsó fotóra ugrik; az I a részleteket mutatja.
 4. **Lépkedés a fotók között**: egy sík fotóban a bal és jobb nyíl, vagy a széleken az egér mozgatásakor megjelenő nyilacskák az előzőre és a következőre lépnek. A leírás mezőbe gépelt betűk a szövegben maradnak.
-5. **A számítógép megosztása a headsettel**: nyissa meg a Képtárat, majd a Hálózati megosztásokat; az első csempe „A számítógép megosztása a hálózaton”, az [A telefon megosztása a hálózaton](#share-this-phone-on-the-network) számítógépes megfelelője. Kapcsolja be a „Fotók és videók megosztása a hálózaton” kapcsolót, majd vegye fel a számítógépet a headsetben, ahogy az a szakasz leírja. A megosztás leáll, amikor az alkalmazást bezárják, vagy egy óra használaton kívüli idő után.
-6. **A hálózat engedélyezése**: a Windows megkérdezheti, használhatja-e az Immuch360 Desktop a hálózatot. Engedélyezze magánhálózatokon, különben a headset nem találja a számítógépet. Olyan hálózaton, amelyet a Windows nyilvánosnak jelöl (kávézó, szálloda), vagy amelynek típusát nem tudja megállapítani, a megosztás nem indul el, hacsak nem választja a „Megosztás erre a munkamenetre” lehetőséget, és a számítógép csak olyan hálózaton jelenti be magát, amelyen megoszt.
-7. **Beállítások, „Ez a számítógép”**: a mappák, a letöltési mappa, a megosztások kereséséhez és a számítógép megosztásához használt hálózati adapter (ha több van, például Wi-Fi és Ethernet), valamint a megbízható tanúsítványok: a saját szervere hitelesítésszolgáltatója, PEM-fájlként, egy olyan HTTPS-címhez, amelyben a Windows magától nem bízik meg. Az ügyféltanúsítványokat a Beállítások, Haladó alatt lehet importálni, mint a telefonokon.
+5. **Videó lejátszása**: nyissa meg az idővonalról, egy mappából, egy megosztásból, a Plexből vagy egy Tapo kamera felvételei közül; az ablakban játszódik le. Az Enter, vagy a billentyűzet lejátszás/szünet gombja szünetelteti és újraindítja. Lejátszás közben a bal és jobb nyíl, vagy a J és az L, 10 másodpercet ugrik vissza vagy előre; szüneteltetve a nyilak az előzőre és a következőre lépnek. Az F vagy az F11 teljes képernyőre vált, mint a fotóknál. A „Hangsáv” gomb választ egy több hangsávos videó hangsávjai közül.
+6. **Ha egy videó leáll**: a szüneteltetett videó szüneteltetve marad, amikor visszatér az ablakhoz. A vége előtt megszakadt videó, például ha a megosztás vagy a szerver nem válaszol tovább, ezt jelzi: nyissa meg újra, és ott folytatódik, ahol megállt, szüneteltetve. Egy mappában vagy megosztásban talált lejátszásilista-fájlt nem követ.
+7. **A számítógép megosztása a headsettel**: nyissa meg a Képtárat, majd a Hálózati megosztásokat; az első csempe „A számítógép megosztása a hálózaton”, az [A telefon megosztása a hálózaton](#share-this-phone-on-the-network) számítógépes megfelelője. Kapcsolja be a „Fotók és videók megosztása a hálózaton” kapcsolót, majd vegye fel a számítógépet a headsetben, ahogy az a szakasz leírja. A megosztás leáll, amikor az alkalmazást bezárják, vagy egy óra használaton kívüli idő után.
+8. **A hálózat engedélyezése**: a Windows megkérdezheti, használhatja-e az Immuch360 Desktop a hálózatot. Engedélyezze magánhálózatokon, különben a headset nem találja a számítógépet. Olyan hálózaton, amelyet a Windows nyilvánosnak jelöl (kávézó, szálloda), vagy amelynek típusát nem tudja megállapítani, a megosztás nem indul el, hacsak nem választja a „Megosztás erre a munkamenetre” lehetőséget, és a számítógép csak olyan hálózaton jelenti be magát, amelyen megoszt.
+9. **Beállítások, „Ez a számítógép”**: a mappák, a letöltési mappa, a megosztások kereséséhez és a számítógép megosztásához használt hálózati adapter (ha több van, például Wi-Fi és Ethernet), valamint a megbízható tanúsítványok: a saját szervere hitelesítésszolgáltatója, PEM-fájlként, egy olyan HTTPS-címhez, amelyben a Windows magától nem bízik meg. Az ügyféltanúsítványokat a Beállítások, Haladó alatt lehet importálni, mint a telefonokon.
 
 ### Összevetés a telefonos alkalmazásokkal
 
@@ -1005,20 +1011,24 @@ A ZIP ellenőrzéséhez futtassa a `certutil -hashfile Immuch360-Desktop-3.3.0-r
 - **Egyetlen ablak**: ha az alkalmazást másodszor is megnyitja, az első ablak jön vissza, nem indul el egy második példány.
 - **A mappáiból semmi nem törlődik**: a „Törlés az eszközről” rejtve van, a Törlés pedig csak a szerveren lévő példányt távolítja el, amíg az alkalmazás nem tud fájlokat a Windows lomtárába küldeni.
 - **Egér és billentyűzet** az érintés és a giroszkóp helyett.
+- **Egyetlen videolejátszó minden forráshoz**: a libmpv egyformán játssza le a szerver, a mappák, a megosztások és a Plex videóit, és a sík lejátszójában már ott a hangsávmenü, amely a telefonok sík lejátszójában még nincs meg.
 
 <a id="not-there-yet"></a>
 ### Ami még hiányzik
 
-- **Videók**: egyelőre helyőrző látszik a helyükön, a bélyegképükön pedig egy filmikon. A lejátszás következik: először a sík videók, aztán a 360°-os, 3D és VR180 videók és a nyers 360°-os videók.
+- **360°-os, 3D, VR180 és nyers 360°-os videók**: egyelőre síkban jelennek meg, ahogy a fájl tárolja őket (a kiterített teljes gömb, a két szem egymás mellett, vagy az objektívek kerek képei), vagy helyőrzőként, és a 360° gomb csak a fotóknál van. A lejátszóik a következő asztali buildekkel jönnek.
 - **Spatial 2.5D**, később a webkamerával; a **Tapo élő kép**; a **térkép** és a Helyek nézet; a **bejelentkezés OAuth-tal** (helyette e-mail-címmel és jelszóval jelentkezzen be); a **Google Cast**; az **értesítések**.
 - **Telepítő, aláírt build és automatikus frissítések**: ez a build egy mappa az `immuch360.exe` fájllal.
-- **Linux és macOS**: a projektjeik benne vannak a forrásokban, de ezeken a rendszereken még nem készült build és nem próbálták ki őket; a Windows után jönnek.
+- **Linux és macOS**: a projektjeik benne vannak a forrásokban, de ezeken a rendszereken még nem készült build és nem próbálták ki őket, és a videolejátszójuk sincs még bennük; a Windows után jönnek.
 - **Fordítások**: a számítógépes verzió új szövegei egyelőre angolul vannak.
 
 ### Ismert problémák
 
-- **Amíg a headset egy fájlt olvas a megosztott számítógépről** (lejátszott videót, letöltött fotót), a Windows nem tudja átnevezni, áthelyezni vagy törölni azt a fájlt, és azt írja, hogy meg van nyitva az Immuch360 Desktopban: előbb állítsa le a lejátszást. A biztonsági mentés nem tartja így fogva a fájljait: egy fájl feltöltés közben is átnevezhető, áthelyezhető vagy törölhető.
-- **Csiszolatlan részek**: a fenti funkciók átmennek az automatizált tesztjeiken Windowson (475 asztali teszt), és egy Windows 11-es PC-n az alkalmazás elindul, megnyit egy mentett munkamenetet egy Immich szerveren, szinkronizál és rendben bezárul. Minden funkció kézi tesztelése valódi PC-n még folyamatban van.
+- **Egy új build első indítása lassú**: 10 másodperctől körülbelül egy percig tart, mire megjelenik az ablak, valószínűleg azért, mert közben a Microsoft Defender átvizsgálja az új fájlokat, amelyek még nincsenek aláírva. Várja meg az ablakot, ahelyett hogy újra elindítaná az alkalmazást; a további indítások egy-két másodpercig tartanak.
+- **A 8K HEVC videókhoz dedikált grafikus chip kell**: a tesztlaptopon az integrált Intel UHD chip egy 8K HEVC videó képkockáinak nagyjából a felét mutatta, míg a dedikált NVIDIA chip képkockavesztés nélkül játszotta le a 8K HEVC és az 5.7K H.264 videót. A Windows az integrált chipen futtatja az alkalmazást, hacsak másként nem rendelkezik: a Windows beállításaiban, Rendszer, Kijelző, Grafika alatt adja hozzá az `immuch360.exe` fájlt, és válassza a „Nagy teljesítmény” lehetőséget. Az integrált chipen az 5.7K H.264 videót, amelyet a dekódere elutasít, a processzor dekódolja képkockavesztés nélkül.
+- **A videók legfeljebb 1440 sor magasan rajzolódnak ki**, aztán az ablakhoz méreteződnek: egy 4K-s képernyőn teljes képernyős módban egy 4K-s vagy 8K-s videó kicsit kevésbé éles, mint egy erre szolgáló videolejátszóban. Így egy 8K-s videó belefér egy laptop grafikus teljesítményébe.
+- **Amíg a mappái egyik videója lejátszódik az alkalmazásban, vagy amíg a headset egy fájlt olvas a megosztott számítógépről** (lejátszott videót, letöltött fotót), a Windows nem tudja átnevezni, áthelyezni vagy törölni azt a fájlt, és azt írja, hogy meg van nyitva az Immuch360 Desktopban: előbb zárja be a videót, vagy állítsa le a lejátszást a headsetben. A biztonsági mentés nem tartja így fogva a fájljait: egy fájl feltöltés közben is átnevezhető, áthelyezhető vagy törölhető.
+- **Csiszolatlan részek**: a 663 asztali tesztből 656 átmegy Windowson (7 szándékosan ki van hagyva), 200 egymás után megnyitott lejátszó nem hagy szivárgást, és egy Windows 11-es PC-n az alkalmazás elindul, megnyit egy mentett munkamenetet egy Immich szerveren, szinkronizál, lejátszik egy videót és rendben bezárul. Minden funkció kézi tesztelése valódi PC-n még folyamatban van.
 
 Ha valami nem működik, kérjük, nyisson egy [hibajegyet](https://github.com/freeKC/Immuch360/issues) a Naplók oldalról mentett naplóval, lásd [Naplók](#logs). Megosztás előtt nézze át a naplót: tartalmazhatja a szervere címét.
 
@@ -1027,19 +1037,17 @@ Ha valami nem működik, kérjük, nyisson egy [hibajegyet](https://github.com/f
 
 Szükséges hozzá Windows 10 vagy 11 x64-en, Flutter 3.47.2 Windowsra, Visual Studio 2022 vagy a Build Tools a „Desktop development with C++” munkaterheléssel, a Windows beállításaiban bekapcsolt fejlesztői mód (a Flutternek a bővítményekhez kell), és Python 3 a csomagoló szkripthez.
 
-1. Szerezze be a `desktop` ágat, és futtassa a kódgenerálást. Ez Javát és Node-ot használ, ezért Linuxon, macOS-en vagy WSL-ben futtassa; WSL esetén a klónt tartsa egy Windows-meghajtón, amelyet a WSL a `/mnt/c` vagy `/mnt/d` alatt lát:
+1. Szerezze be a forrásokat, és futtassa a kódgenerálást. A fő ág, az `immuch360`, a számítógépes verziót is elkészíti: nincs másik ág, amelyre át kellene váltani. A kódgenerálás Javát és Node-ot használ, ezért Linuxon, macOS-en vagy WSL-ben futtassa; WSL esetén a klónt tartsa egy Windows-meghajtón, amelyet a WSL a `/mnt/c` vagy `/mnt/d` alatt lát:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Windowson, ugyanabban a `mobile` mappában, készítse el az alkalmazást:
+2. Windowson, ugyanabban a `mobile` mappában, készítse el az alkalmazást. Az első build letölti a GitHubról a videolejátszó könyvtárait (libmpv és ANGLE), és minden archívumot ellenőriz az SHA-256 értéke alapján:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Szükséges hozzá Windows 10 vagy 11 x64-en, Flutter 3.47.2 Windowsra, Visual S
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. A `Release` mappa azon a PC-n fut, amelyik elkészítette. Másik PC-hez tartsa egyben az egész mappát, és tegye a Visual C++ futtatókörnyezetet az `immuch360.exe` mellé. A klón gyökeréből a csomagoló szkript bemásolja, kihagyja azt, ami csak az Androidot szolgálja, ellenőrzi, hogy az alkalmazás által betöltött minden DLL ott van-e a mappában vagy magában a Windowsban, és elkészíti a ZIP-et:
+3. A `Release` mappa azon a PC-n fut, amelyik elkészítette. Másik PC-hez tartsa egyben az egész mappát, és tegye a Visual C++ futtatókörnyezetet az `immuch360.exe` mellé. A klón gyökeréből a csomagoló szkript bemásolja, kihagyja azt, ami csak az Androidot szolgálja, hozzáadja a videolejátszó licenceit, ellenőrzi, hogy az alkalmazás által betöltött minden DLL ott van-e a mappában vagy magában a Windowsban, és elkészíti a ZIP-et:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-A `desktop` ág CI-je (`.github/workflows/immuch360-desktop.yml`) Linuxon futtatja a telefonos ellenőrzéseket és a teljes tesztkészletet, Windowson az asztali teszteket, és elkészíti ugyanazt a ZIP-et; a Linux és macOS feladatai (`flutter build linux` és `flutter build macos`, ugyanazzal a `-t lib/main_desktop.dart` kapcsolóval) ezeken a rendszereken még nem futottak.
+Az Immuch360 Desktop CI-je (`.github/workflows/immuch360-desktop.yml`) a `desktop` ágon fut, amely az `immuch360` ágat követi: Linuxon a telefonos ellenőrzések (a telefonos buildekben semmi nem változik) és a teljes tesztkészlet, Windowson az asztali tesztek, és ugyanaz a ZIP; a Linux és macOS feladatai (`flutter build linux` és `flutter build macos`, ugyanazzal a `-t lib/main_desktop.dart` kapcsolóval) ezeken a rendszereken még nem futottak.
 
 <a id="where-to-get-it"></a>
 ## Honnan szerezhető be
@@ -1075,8 +1083,8 @@ Az alkalmazás elérhető a Google Playen telefonokra és táblagépekre; az App
   - Ma: a [Releases](https://github.com/freeKC/Immuch360/releases) oldal univerzális `Immuch360-v<version>-release.apk` fájlja, adb-vel oldalról telepítve, lásd [Telepítés a tévére](#install-it-on-the-tv). Ugyanaz az alkalmazás, mint a telefonokon.
   - Hamarosan: Google Play tévéken, a tévés kiadás Google általi ellenőrzése után.
 - **Windows 10 és 11, 64 bites (előzetes verzió)**
-  - Ma: Immuch360 Desktop, a [desktop előzetes kiadás](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` ZIP-je, kicsomagolva és elindítva, ahogy a [Letöltés és telepítés Windowson](#download-and-install-on-windows) leírja. Egyelőre csak fotók: a videók a következő asztali buildekkel jönnek.
-  - Hamarosan: videolejátszás; később telepítő, aláírt build és frissítések.
+  - Ma: Immuch360 Desktop, a [desktop előzetes kiadás](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIP-je, kicsomagolva és elindítva, ahogy a [Letöltés és telepítés Windowson](#download-and-install-on-windows) leírja. Egyelőre fotók és sík videók: a 360°-os, 3D és VR180 videók a következő asztali buildekkel jönnek.
+  - Hamarosan: 360°-os, 3D, VR180 és nyers 360°-os videók; később telepítő, aláírt build és frissítések.
 
 Az App Store és a Meta Horizon Store linkjei a bejegyzések közzététele után azonnal ide kerülnek. Jelentkezzen be a szokásos Immich szerver URL-jével és fiókjával, vagy koppintson a bejelentkezési oldalon a „Használat szerver nélkül” gombra, hogy az eszköz saját fotóival és videóival kezdjen. A GitHubról származó APK nem frissül magától: figyelje a Releases oldalt, és ha egyszer áruházból telepítette az alkalmazást, a frissítéseket is abból az áruházból kapja.
 
@@ -1105,15 +1113,15 @@ A `quest` az SDK 34-et célozza, és csak a headset által használt engedélyek
 
 Ha saját Macen szeretne iOS-re fordítani, használja az Xcode-ot és a saját aláíró csapatát; Xcode 26 esetén előbb egyszer futtassa le az `xcodebuild -downloadComponent MetalToolchain` parancsot, mert a Spatial shaderekhez szükséges. Mac nélkül az iOS-buildek a Codemagicen (bérelt Mac) futnak, ennek a tárolónak a `codemagic.yaml` fájlja alapján. Az androidos kiadási buildek a GitHub Actionsön futnak (`.github/workflows/immuch360-release.yml`).
 
-Az Immuch360 Desktop, a Windows-verzió, a `desktop` ágból készül a Windowsra szánt Flutterrel: a lépések a [Saját build Windowson](#build-it-yourself-on-windows) részben vannak.
+Az Immuch360 Desktop, a Windows-verzió, ugyanazokból a forrásokból, az `immuch360` ágból készül a Windowsra szánt Flutterrel: a lépések a [Saját build Windowson](#build-it-yourself-on-windows) részben vannak.
 
 Ebben a tárolóban nincs titok: az androidos aláírókulcs titkosított GitHub Actions-titokként, az Apple aláírási anyagai titkosított változókként vannak tárolva a Codemagicen. A workflow-fájlok csak név szerint hivatkoznak rájuk. Saját `android/key.jks` nélkül a kiadási build a debug kulccsal lesz aláírva, és nem telepíthető egy GitHubról vagy áruházból származó példányra (azt előbb távolítsa el); a debug build Immuch360 debug néven mellé települ. A Meta Horizon Store-példány a kiadás `quest` APK-ja egy másik kulccsal aláírva, azzal, amellyel az áruházi alkalmazást először regisztrálták, így egy oldalról telepített APK-ra sem telepíthető, és fordítva sem.
 
 ### Ágak
 
 - **`main`**: az Immich `main` ága abban a commitban, amelyre az `immuch360` épül (a jelenlegi buildeknél 2026. szeptember 29.), soha nem módosítva; akkor lép előre, amikor a fork egy újabb Immichre kerül át (rebase).
-- **`immuch360`**: ennek a forknak a változtatásai az Immich fölött. Minden kiadás megadja, melyik Immich-verzión alapul.
-- **`desktop`**: az Immuch360 Desktop, a számítógépes verzió, az `immuch360` fölött. A telefonos kiadások beleolvadnak, és az asztali előzetes kiadások ebből készülnek (a desktop build 1 a 21f285c34 commitból, a 20-as telefonos build plusz a számítógépes verzió). A `mobile/android` és `mobile/ios` alatt semmi nem változik rajta.
+- **`immuch360`**: ennek a forknak a változtatásai az Immich fölött, 2026. október 9. óta az Immuch360 Desktoppal együtt. Minden kiadás megadja, melyik Immich-verzión alapul.
+- **`desktop`**: itt készült az Immuch360 Desktop, a számítógépes verzió, az `immuch360` fölött, amíg 2026. október 9-én bele nem olvadt, hogy a telefonok, a headsetek, a tévék és a számítógépek ugyanazokból a forrásokból kapják a kiadásaikat. Most az `immuch360` ágat követi, és az asztali előzetes kiadások címkéit hordozza ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) a 21f285c34 commitból, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) az 5b723bd25 commitból). A számítógépes verzió semmit nem változtat a `mobile/android` és `mobile/ios` alatt.
 
 <a id="logs"></a>
 ## Naplók
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 A 19-es buildtől a DLNA-kliens, a telefonos megosztás és az Apple térbeli médiák felismerése az alkalmazás saját naplójába is ír (Naplók, a jobb felső profilkép menüjében), a `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` és `NetworkMediaService` néven. A 20-as buildtől a tévémód `TvMode` és `TvTextEntry`, a Plex szerverek `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` és `PlexServerEditPage`, a Tapo kamerák pedig `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` és `CameraLiveView` néven írnak ide; a Plex-sorok soha nem tartalmazzák a tokent, a hálózati címet vagy a médiák címét, a kamerasorokból pedig kimaradnak a jelszavak. A naplósorok az eszközön maradnak, hacsak nem másolja ki őket saját maga.
 
-Számítógépen (Immuch360 Desktop) a Naplók oldalon van egy „Naplók mentése fájlba” is: a napló, vagy ha vannak, a napló és a legutóbbi összeomlások jelentéseinek ZIP-je (ilyenkor a javasolt név „with-crash-reports” végződésű). Egy összeomlási jelentés egy kis minidump: a szálak, hol álltak meg, és csak az, ami a hívásaik követéséhez kell, a programfájlok nevével, de a mappáik nélkül; az alkalmazás memóriája nincs benne. Megosztás előtt nézze át a naplót: tartalmazhatja a szervere címét.
+Számítógépen (Immuch360 Desktop) a Naplók oldalon van egy „Naplók mentése fájlba” is: a napló, vagy ha vannak, a napló és a legutóbbi összeomlások jelentéseinek ZIP-je (ilyenkor a javasolt név „with-crash-reports” végződésű). Egy összeomlási jelentés egy kis minidump: a szálak, hol álltak meg, és csak az, ami a hívásaik követéséhez kell, a programfájlok nevével, de a mappáik nélkül; az alkalmazás memóriája nincs benne.
+
+A desktop build 2-től a számítógép videolejátszója is ide ír, a `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` és `VideoThumbnailGrabber` címkék alatt, az mpv saját figyelmeztetéseivel együtt, a tokenek és jelszavak eltávolításával. Megosztás előtt nézze át a naplót: tartalmazhatja a szervere címét.
 
 <a id="privacy"></a>
 ## Adatvédelem
@@ -1144,6 +1154,7 @@ Számítógépen (Immuch360 Desktop) a Naplók oldalon van egy „Naplók menté
 - **Telefonos megosztás**: csak helyi hálózat, felhasználónévvel és jelszóval, egyszerű HTTP-n (lásd [A telefon megosztása a hálózaton](#share-this-phone-on-the-network)).
 - **Kamera**: csak a Spatial 2.5D lejátszó használja, az eszközön; a képek soha nem tárolódnak, és soha nem kerülnek elküldésre.
 - **Számítógépen** (Immuch360 Desktop, előzetes Windows-verzió): az alkalmazás csak a kiválasztott mappákat olvassa, az indexét, bélyegképeit és gyorsítótárát a számítógépen tartja, a jelszavakat és tokeneket pedig a Windows adatvédelmével tárolja, csak az Ön Windows-fiókja számára. A számítógép megosztása a telefonos megosztás szabályait követi, és nem indul el olyan hálózaton, amelyet a Windows nyilvánosnak jelöl, vagy amelynek típusát nem tudja megállapítani, hacsak Ön nem kéri.
+- **A videolejátszó számítógépen** (a desktop build 2-től): a szervere videói az alkalmazáson keresztül jutnak el hozzá, így a lejátszó soha nem kapja meg a munkamenet-tokenjét, és amit előre beolvas, az a memóriában marad, nem a lemezen. Csak a neki átadott fájlt nyitja meg: egy mappa vagy megosztás olyan fájlja, amely valójában lejátszási lista vagy adatfolyam-leírás, nem készteti arra, hogy máshová kapcsolódjon.
 
 A teljes szabályzat a [PRIVACY.md](../PRIVACY.md) fájlban található.
 
@@ -1152,12 +1163,14 @@ A teljes szabályzat a [PRIVACY.md](../PRIVACY.md) fájlban található.
 
 Ez a projekt az Immich forkja, és a [GNU AGPL v3](../LICENSE) alatt marad. Minden APK, a telefonosakat is beleértve, tartalmazza a Meta Spatial SDK-t is, amely nem nyílt forráskódú (Meta Platform Technologies SDK License Agreement), és csak Meta Quest headseteken használatos; az Immuch360 Desktop, a Windows-verzió, nem tartalmazza. Az Immuch360 nem áll kapcsolatban az Immich csapatával vagy a FUTO-val, és nem élvezi a támogatásukat.
 
+Az Immuch360 Desktop windowsos ZIP-je, és csak az, a videolejátszóját is tartalmazza: a libmpv-t, az [mpv](https://mpv.io) könyvtárát, benne az [FFmpeg](https://ffmpeg.org) programmal, amelyet a [media_kit](https://github.com/media-kit/media-kit) bővítményei vezérelnek. Az mpv és az FFmpeg a csak GPL alatti részeik nélkül készül, és a kódjuk a GNU LGPL 2.1-es vagy későbbi verziója alatt áll; együtt fordítva a `libmpv-2.dll` a GNU LGPL 3-as vagy későbbi verziója alatt terjeszthető. Az alkalmazás futásidőben tölti be, így lecserélheti a saját buildjére. A licencszövegek a ZIP `licenses` mappájában vannak, és minden könyvtár a licencével és a forrásaival együtt fel van sorolva a [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) fájlban.
+
 <a id="roadmap"></a>
 ## Ütemterv
 
 Ami még nincs kész, a legvalószínűbbel kezdve. Semmi sem ígéret itt, és a visszajelzések a [hibakövetőben](https://github.com/freeKC/Immuch360/issues) segítenek eldönteni, mi kerüljön sorra először.
 
-- **Immuch360 Desktop, először Windowsra**: megjelent az első előzetes verzió (lásd [Windows rendszerű számítógépen](#on-a-windows-computer-immuch360-desktop-preview)). Következik a videolejátszás (először a sík videók, aztán a 360°-os, 3D, VR180 videók és a nyers fájlok), egy laptop két grafikus kártyáján mérve; aztán minden funkció tesztelése egy windowsos PC-n és a javítások; aztán a Spatial 2.5D a webkamerával; aztán Linux és macOS, csomagok, aláírás és frissítések.
+- **Immuch360 Desktop, először Windowsra**: megjelent a desktop build 2 a sík videókkal, és 2026. október 9. óta az asztali források a fork fő ágában, az `immuch360` ágban vannak (lásd [Windows rendszerű számítógépen](#on-a-windows-computer-immuch360-desktop-preview)). Következnek a 360°-os, 3D, VR180 és nyers 360°-os videók Windowson, a nyers fájlok két objektívjével és a Tapo élő képpel; aztán minden funkció tesztelése egy windowsos PC-n és a javítások; aztán a Spatial 2.5D a webkamerával; aztán Linux és macOS, csomagok, aláírás és frissítések.
 - **Google Play**: a 18-as build élő; a 20-as 2026. október 7. óta a Google ellenőrzése alatt van, a 19-es helyett. A 21-es build semmit sem változtat a telefonokon és a táblagépeken.
 - **App Store**: a 3.3.0 verzió az Apple jóváhagyására vár; a 11-es build funkcióit tartalmazza, így az Immichbe való feltöltés és a videodekóder-ellenőrzés (15-ös build), valamint a nyers Insta360 fájlok (16-os build) a következő App Store-frissítéssel érkeznek. A link akkor kerül ide, amikor élesbe kerül.
 - **Meta Horizon Store**: a Meta 2026. október 7-én jóváhagyta a bejegyzést a 14-es builddel. A 21-es build az első frissítéseként van beküldve: mindent hoz, ami a 14-es build óta készült (feltöltés egy megosztásból az Immichbe, a videóforrás aszerint kiválasztva, amit a headset dekódol, nyers Insta360, GoPro és DJI fájlok, DLNA, a telefonos megosztás, Apple térbeli fotók, Plex Media Server könyvtárak, Tapo kamerák), és az áruház a Quest 2-re, a Quest Próra, a Quest 3-ra és a 3S-re listázza. Az áruházi link ide kerül, amint az oldal nyilvános; egy oldalról telepített példányt előbb el kell távolítani (lásd [Telepítés](#install)).
@@ -1166,7 +1179,7 @@ Ami még nincs kész, a legvalószínűbbel kezdve. Semmi sem ígéret itt, és 
 - **DLNA, telefonos megosztás és Apple térbeli médiák, következő lépések**: a 19-es build eszközös beszámolói (Plex, Jellyfin, egy NAS és a Freebox Server DLNA-n; egy Questet kiszolgáló telefon, a hotspotján is; valódi iPhone-os térbeli fotók és videók a headsetben); az Apple-től kért multicast jogosultság, hogy az iPhone-ok minden DLNA-szervert megtaláljanak; előző és következő a térbeli fotók között a headsetben; térbeli jelvény a szerveres fotókon az idővonalon; térbeli videók 3D-ben a Queston, ha a dekóderei engedik.
 - **360°-os lejátszók telefonon, következő lépések**: idősáv az iOS-es 360°-os videolejátszóban (az androidosban már van), előző/következő a telefonok 360°-os lejátszóiban, ahogy a Quest immerzív nézetében, és fotók a natív 360°-os videolejátszóban.
 - **Hálózati megosztások, következő lépések**: lapozás egy mappa egyik fájljáról a következőre a fotó- és videóoldalakon (a Quest immerzív nézete már végigmegy egy mappa 360°-os fájljain), Digest hitelesítés WebDAV-hoz, a felhasználónév a Bonjour-rekordból.
-- **Sík videók**: a hangsáv kiválasztása a sík lejátszóban, a szerveres, eszközös és megosztásos videókhoz egyaránt (a 360°-os és a Spatial lejátszóban már megvan).
+- **Sík videók**: a hangsáv kiválasztása a telefonok sík lejátszójában, a szerveres, eszközös és megosztásos videókhoz egyaránt (a 360°-os és a Spatial lejátszóban már megvan, és az Immuch360 Desktop sík lejátszójában is).
 - **Android TV, következő lépések**: a 20-as build eszköztesztje a Google TV emulátoron és egy valódi tévén, majd a tévés kiadás a Google Playen (tévés képernyőképek, a tévés szalaghirdetés, a Google ellenőrzése); később csatornák a tévé kezdőképernyőjén.
 - **Tapo kamerák, következő lépések**: a 20-as build eszköztesztje valódi kamerákkal; az élő kép iPhone-on és iPaden; a H.265 felvételek; egy klip lejátszása letöltés közben; egy teljes nap felvételei egyetlen idővonalon.
 - **Plex, következő lépések**: a 20-as build eszköztesztje (telefonok, a Quest, egy iPhone, egy tévé, otthonon kívül); a token átvitele a számítógépről QR-kóddal; egy Plex szerver DLNA-oldalának elrejtése a megtalált szerverek listájában; IPv6.

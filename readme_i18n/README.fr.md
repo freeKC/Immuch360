@@ -19,13 +19,13 @@ Elle s'adresse à ceux qui filment avec une caméra 360° (Insta360, GoPro MAX, 
   App Store : <a href="#where-to-get-it">en cours d'examen</a><br>
   Meta Quest : <a href="#meta-quest-3">APK</a>, Horizon Store approuvé, build 21 soumis comme première mise à jour<br>
   Android TV : <a href="#install-it-on-the-tv">APK</a><br>
-  Windows : <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">téléchargement de la préversion</a>
+  Windows : <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">téléchargement de la préversion</a>, build ordinateur 2
 </p>
 
 - 🌐 **360° natif**<br>Photos et vidéos en sphère dans laquelle on regarde autour de soi, avec le gyroscope, fichiers bruts de caméra compris (Insta360 dès le build 16, GoPro et DJI dès le build 18). Et un lecteur vidéo gratuit : à plat, 360°, 3D, VR180
 - 👓 **3D natif**<br>360° stéréoscopique et VR180, haut et bas ou côte à côte, et photos spatiales Apple (dès le build 19) : vraie 3D dans le casque, un seul œil sur un téléphone
 - 🎥 **2.5D natif**<br>De la profondeur sur un écran plat à partir d'une vidéo stéréoscopique, la vue suit votre tête (expérimental, téléphones et tablettes)
-- 📱 **Android, iOS, Quest, TV**<br>Une application sur les téléphones, les tablettes et les casques Quest 2, Pro, 3 et 3S, vraie 3D dans le casque, dès le build 20 sur Android TV avec la télécommande, et une préversion Windows
+- 📱 **Android, iOS, Quest, TV**<br>Une application sur les téléphones, les tablettes et les casques Quest 2, Pro, 3 et 3S, vraie 3D dans le casque, dès le build 20 sur Android TV avec la télécommande, et une préversion Windows avec les photos et les vidéos à plat
 - 🔌 **Avec ou sans serveur**<br>Votre serveur Immich, ou la galerie du téléphone lui-même, sans compte
 - 🗄️ **Partages réseau**<br>Samba (SMB), WebDAV et, dès le build 19, serveurs multimédias DLNA trouvés sur le réseau et lus en direct, rien n'est téléchargé, et envoyés vers Immich quand vous le décidez. Dès le build 19, un téléphone partage aussi sa propre galerie avec le casque
 - 📺 **Sur le téléviseur**<br>Dès le build 20, le même APK sur Android TV et Google TV : photos et vidéos 360°, votre serveur et vos partages, avec la télécommande
@@ -79,7 +79,7 @@ Elle s'adresse à ceux qui filment avec une caméra 360° (Insta360, GoPro MAX, 
 - **« Je veux regarder mes photos et vidéos 360°, et les vidéos de mon NAS ou de mon serveur Plex, sur le téléviseur, avec la télécommande. »** Voir [Regarder sur votre téléviseur](#watch-on-your-tv-android-tv-and-google-tv).
 - **« Je ne retrouve pas mes prises 360° parmi toutes les autres. »** Voir [La liste 360°](#find-your-360-shots-the-360-list).
 - **« Ma vidéo 360° saccade, ou lit une copie floue. »** Voir [Détails vidéo et décodeurs](#video-details-decoders-and-why-a-video-stutters).
-- **« Je veux mes photos 360° et ma bibliothèque Immich sur mon PC Windows, avec les photos de ses dossiers, mon NAS et mon serveur Plex, et le PC partagé avec mon casque. »** Voir [Sur un ordinateur Windows](#on-a-windows-computer-immuch360-desktop-preview) (une préversion, photos uniquement pour l'instant).
+- **« Je veux mes photos 360° et ma bibliothèque Immich sur mon PC Windows, avec les photos et vidéos de ses dossiers, mon NAS et mon serveur Plex, et le PC partagé avec mon casque. »** Voir [Sur un ordinateur Windows](#on-a-windows-computer-immuch360-desktop-preview) (une préversion : photos et vidéos à plat pour l'instant, vidéos 360° plus tard).
 - **« Est-ce que je garde ce que fait l'application Immich ? »** Oui, avec deux petits changements, voir [Tout le reste, c'est Immich](#everything-else-is-immich).
 
 Quand une fonction est récente, le texte indique à partir de quel build elle est là. La release GitHub a toujours le build le plus récent, les stores suivent plus tard : voir [Où l'obtenir](#where-to-get-it).
@@ -752,7 +752,7 @@ Le build actuel, le build 21 (version 3.3.0-rc.0, numéro de build 3030019), est
 | Bibliothèques Plex Media Server lues depuis les fichiers originaux, à la maison et en déplacement, sans plex.tv | ❌ | ✅ dès le build 20, tous les visualiseurs, sur les téléphones, les tablettes, le Quest et les téléviseurs |
 | Caméras Tapo : la vue en direct, et les enregistrements de la carte mémoire envoyés vers Immich quand vous le décidez | ❌ | ✅ dès le build 20 : enregistrements partout, direct sur Android, Android TV et le Quest |
 | Android TV et Google TV, pilotés par la télécommande, dans le même APK | ❌ pas une application TV | ✅ dès le build 20 |
-| La même application sur un ordinateur Windows | ❌ téléphones et tablettes uniquement | ✅ préversion, pas encore de vidéos |
+| La même application sur un ordinateur Windows | ❌ téléphones et tablettes uniquement | ✅ préversion, photos et vidéos à plat |
 | Photos Insta360 .insp brutes et vidéos .insv brutes à une seule piste | ❌ à plat | ✅ dès le build 16 |
 | Vidéos brutes avec un objectif par piste ou par fichier (Insta360 X4, X4 Air, X5, X6, paires X3, GoPro .360, DJI .osv) | ❌ à plat ou fausses | ✅ dès le build 18 |
 | .dng double fisheye | ❌ à plat | ❌ pas encore |
@@ -782,7 +782,7 @@ Le build actuel, le build 21 (version 3.3.0-rc.0, numéro de build 3030019), est
 - **Plex Media Server** : vérifié depuis un ordinateur face à un vrai Plex Media Server 1.42.1 (association, dossiers, plages d'octets, miniatures, adresse hors du domicile) ; pas encore vérifié sur un appareil.
 - **Caméras Tapo** : vérifié face à une caméra simulée ; pas encore vérifié avec une vraie caméra.
 - **Android TV et Google TV** : vérifié par des tests automatisés ; pas encore vérifié sur un téléviseur.
-- **La même application sur un ordinateur Windows** : 475 tests automatisés de la version ordinateur sur Windows, et sur un PC Windows 11 l'application démarre, ouvre une session enregistrée sur un serveur Immich, synchronise et se ferme proprement ; le test à la main de chaque fonction est en cours.
+- **La même application sur un ordinateur Windows** : 656 des 663 tests automatisés de la version ordinateur passent sur Windows (7 ignorés à dessein), et sur un PC Windows 11 l'application démarre, ouvre une session enregistrée sur un serveur Immich, synchronise, lit une vidéo et se ferme proprement ; le test à la main de chaque fonction est en cours.
 - **Photos Insta360 .insp brutes et vidéos .insv brutes à une seule piste** : photos vérifiées face aux exports Insta360 Studio de fichiers X3, vidéos sur un émulateur Android avec un fichier X3 basse résolution ; pas encore lancé sur un iPhone.
 - **Vidéos brutes avec un objectif par piste ou par fichier** : analyseurs et assemblage vérifiés sur de vrais fichiers X4, paire X3, GoPro MAX et Osmo 360 ; la lecture est le test sur appareil des builds 18 et 19.
 - **.dng double fisheye** : prévu.
@@ -825,16 +825,19 @@ Immuch360 est une galerie, et c'est aussi un lecteur multimédia gratuit : il li
   - iPhone, iPad : pareil, sauf les fichiers MKV et AVI d'un partage, qu'iOS n'ouvre pas (sur un serveur, ils sont lus transcodés).
   - Meta Quest : dans la fenêtre.
   - Android TV, Google TV : comme sur les téléphones ; OK met en pause, gauche et droite sautent de 10 s.
+  - Windows (dès le build ordinateur 2) : le lecteur libmpv, depuis toutes les sources de la deuxième liste ; Entrée met en pause, gauche et droite ou J et L sautent de 10 s.
 - **Photos 360°**
   - Téléphones Android : visualiseur sphérique, gyroscope.
   - iPhone, iPad : pareil.
   - Meta Quest : immersives, tout autour de vous.
   - Android TV, Google TV : visualiseur sphérique tourné avec les flèches, zoom avec les touches de chaîne.
+  - Windows : visualiseur sphérique, souris et clavier.
 - **Vidéos 360°**
   - Téléphones Android : lecteur natif Media3 sur une sphère, gyroscope, déplacement dans la vidéo, choix de la piste audio, indicateur de chargement.
   - iPhone, iPad : lecteur natif SceneKit sur une sphère, gyroscope, choix de la piste audio, indicateur de chargement ; lecture et pause, pas encore de barre de temps.
   - Meta Quest : immersives, vraie 3D pour les fichiers stéréoscopiques, barre de temps avec sauts de 10 secondes, média précédent et suivant.
   - Android TV, Google TV : le lecteur Media3 des téléphones, tourné avec les flèches.
+  - Windows : pas encore, affichées à plat pour l'instant.
 - **3D 360° (haut et bas, côte à côte)**
   - Téléphones Android : œil gauche, bouton de disposition.
   - iPhone, iPad : pareil.
@@ -888,7 +891,7 @@ Immuch360 est une galerie, et c'est aussi un lecteur multimédia gratuit : il li
 
 Les entrées Android TV et Google TV, dès le build 20, n'ont pas encore été vérifiées sur un téléviseur, voir [Regarder sur votre téléviseur](#watch-on-your-tv-android-tv-and-google-tv) ; les entrées des caméras n'ont pas encore été vérifiées avec une vraie caméra.
 
-Sur Windows, la préversion Immuch360 Desktop affiche les photos, à plat et 360°, photos brutes Insta360 .insp comprises, à la souris et au clavier, depuis le serveur, les dossiers du PC, les partages et Plex ; elle ne lit pas encore les vidéos, qui affichent une image d'attente (voir [Pas encore là](#not-there-yet)).
+Sur Windows, la préversion Immuch360 Desktop affiche les photos, à plat et 360°, photos brutes Insta360 .insp comprises, à la souris et au clavier, et dès le build ordinateur 2 elle lit les vidéos à plat, depuis le serveur, les dossiers du PC, les partages, Plex et les enregistrements Tapo ; les vidéos 360°, 3D, VR180 et 360° brutes s'affichent à plat ou avec une image d'attente pour l'instant (voir [Pas encore là](#not-there-yet)).
 
 - **Votre serveur Immich** : l'original ou le flux transcodé du serveur, selon Paramètres, Visualiseur d'éléments, Source vidéo (voir [Détails vidéo et décodeurs](#video-details-decoders-and-why-a-video-stutters)). Même compte que l'application web.
 - **Le téléphone ou le casque lui-même** : « Utiliser sans serveur » sur la page de connexion, ou l'entrée Sur cet appareil de l'onglet Bibliothèque.
@@ -959,24 +962,24 @@ Captures faites dans le casque avec le bouton de capture (bouton Meta et gâchet
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Sur un ordinateur Windows : Immuch360 Desktop (préversion)
 
-Votre bibliothèque Immich est sur un serveur, d'autres photos sont dans les dossiers du PC, les vidéos sur un NAS ou un serveur Plex, et vous aimeriez regarder autour de vous dans vos photos 360° sur un grand écran, ou montrer les photos du PC dans le casque. Immuch360 Desktop est la même application sur un ordinateur Windows, compilée à partir des mêmes sources que les applications pour téléphone.
+Votre bibliothèque Immich est sur un serveur, d'autres photos et vidéos sont dans les dossiers du PC, d'autres vidéos sur un NAS ou un serveur Plex, et vous aimeriez regarder autour de vous dans vos photos 360° et lire vos vidéos sur un grand écran, ou montrer les photos du PC dans le casque. Immuch360 Desktop est la même application sur un ordinateur Windows, compilée à partir des mêmes sources que les applications pour téléphone.
 
-Sur un ordinateur, Immich propose son application web dans un navigateur. **Ce qu'Immuch360 Desktop ajoute** : les dossiers du PC sans serveur ni compte, les partages SMB, WebDAV, DLNA et Plex parcourus depuis l'application, les photos brutes Insta360 .insp ouvertes en sphère, et le PC partagé avec un Meta Quest à la maison.
+Sur un ordinateur, Immich propose son application web dans un navigateur. **Ce qu'Immuch360 Desktop ajoute** : les dossiers du PC sans serveur ni compte, les partages SMB, WebDAV, DLNA et Plex parcourus et lus depuis l'application, les photos brutes Insta360 .insp ouvertes en sphère, et le PC partagé avec un Meta Quest à la maison.
 
-Ce premier build est une préversion : les photos fonctionnent, les vidéos arrivent avec les prochains builds ordinateur. Les applications pour téléphone, tablette, Quest et téléviseur ne changent pas avec lui et gardent le nom Immuch360.
+C'est une préversion : dès le build ordinateur 2, les photos et les vidéos à plat fonctionnent ; les vidéos 360°, 3D et VR180 arrivent avec les prochains builds ordinateur. Depuis le 9 octobre 2026, les sources de la version ordinateur sont dans la branche principale du fork, `immuch360`, donc téléphones, casques, téléviseurs et ordinateurs sortent des mêmes sources. Les applications pour téléphone, tablette, Quest et téléviseur ne changent pas avec lui et gardent le nom Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Télécharger et installer sur Windows
 
-Le premier build est la pré-release GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Son fichier est `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 Mo, 65 fichiers une fois décompressé), avec `SHA256SUMS.txt` pour le vérifier. Il a été compilé depuis la branche `desktop` au commit 21f285c34 : le build 20 des téléphones plus la version ordinateur. Il demande Windows 10 ou 11, 64 bits.
+Le build actuel est la pré-release GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Son fichier est `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (environ 57 Mo, 78 fichiers une fois décompressé, le lecteur vidéo et son dossier `licenses` compris), avec `SHA256SUMS.txt` pour le vérifier. Il a été compilé depuis la branche principale, `immuch360`, au commit 5b723bd25 : les sources du build 21 des téléphones plus la version ordinateur. Il demande Windows 10 ou 11, 64 bits.
 
 1. Téléchargez le ZIP et décompressez-le où vous voulez, par exemple dans Documents.
-2. Lancez `immuch360.exe` depuis le dossier décompressé. Gardez le dossier entier : le programme a besoin des fichiers qui sont à côté de lui.
+2. Lancez `immuch360.exe` depuis le dossier décompressé. Gardez le dossier entier : le programme a besoin des fichiers qui sont à côté de lui, le lecteur vidéo compris.
 3. Les fichiers ne sont pas encore signés, donc Windows SmartScreen peut afficher « Windows a protégé votre ordinateur » : choisissez « Informations complémentaires », puis « Exécuter quand même ». Là où le Contrôle intelligent des applications est activé, il bloque les programmes non signés.
 4. Attendez la fenêtre. Le premier démarrage d'un nouveau build prend de 10 secondes à environ une minute, très probablement pendant que Microsoft Defender analyse les nouveaux fichiers : ne relancez pas l'application entre-temps. Les démarrages suivants prennent une seconde ou deux.
 5. Sur la page de connexion, connectez-vous à votre serveur Immich avec son adresse, votre e-mail et votre mot de passe, ou cliquez sur « Utiliser sans serveur ».
 
-Pour vérifier le ZIP, lancez `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` dans une invite de commandes, dans le dossier du téléchargement : le résultat est celui écrit dans `SHA256SUMS.txt`. Il n'y a pas encore d'installateur ni de mise à jour automatique : surveillez la page [Releases](https://github.com/freeKC/Immuch360/releases), et décompressez le build suivant de la même façon.
+Pour vérifier le ZIP, lancez `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` dans une invite de commandes, dans le dossier du téléchargement : le résultat est celui écrit dans `SHA256SUMS.txt`. Il n'y a pas encore d'installateur ni de mise à jour automatique : surveillez la page [Releases](https://github.com/freeKC/Immuch360/releases), et décompressez le build suivant de la même façon.
 
 ### Ce que fait la préversion
 
@@ -984,7 +987,8 @@ Pour vérifier le ZIP, lancez `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-d
 - **Sans serveur** : les dossiers de vos photos et vidéos (Images et Vidéos sont proposés) remplacent la galerie d'un téléphone. Rien n'est lu hors des dossiers que vous avez choisis, et sans serveur rien ne quitte l'ordinateur.
 - **Envoi et sauvegarde** depuis ces dossiers vers votre serveur Immich, tant que l'application est ouverte.
 - **Photos 360° en sphère**, à la souris et au clavier ; les photos brutes .insp des caméras Insta360 s'ouvrent comme sur les téléphones.
-- **Partages réseau** : Samba (SMB), WebDAV et serveurs multimédias DLNA, et serveurs Plex sans plex.tv, parcourus comme sur les téléphones : leurs photos s'ouvrent, leurs vidéos attendent le lecteur vidéo (voir [Pas encore là](#not-there-yet)). Pour les caméras Tapo, les enregistrements de la carte mémoire : la liste, et la récupération d'un clip.
+- **Vidéos à plat** (dès le build ordinateur 2) : les vidéos de vos dossiers, de votre serveur Immich (l'original ou le flux transcodé, voir [Détails vidéo et décodeurs](#video-details-decoders-and-why-a-video-stutters)), des partages SMB, WebDAV et DLNA, des serveurs Plex et les enregistrements Tapo se lisent dans la fenêtre, avec les commandes des téléphones (lecture, pause, la barre de temps), un indicateur de chargement, et un menu des pistes audio pour une vidéo qui en a plusieurs. Les vidéos de vos dossiers et des partages affichent une image de la vidéo comme miniature, au lieu d'une icône de film.
+- **Partages réseau** : Samba (SMB), WebDAV et serveurs multimédias DLNA, et serveurs Plex sans plex.tv, parcourus comme sur les téléphones : leurs photos s'ouvrent et leurs vidéos se lisent. Pour les caméras Tapo, les enregistrements de la carte mémoire : la liste, la récupération d'un clip et sa lecture.
 - **Partager cet ordinateur sur le réseau** : les albums, les mois et les médias 360° de vos dossiers, en lecture seule, pour un Meta Quest ou un autre appareil de la maison, comme un téléphone se partage lui-même.
 - **Fichiers** : les téléchargements depuis le serveur vont dans un dossier que vous choisissez, « Enregistrer dans un dossier » garde une copie des photos et vidéos sélectionnées, et la page Journaux a « Enregistrer les journaux dans un fichier ».
 
@@ -994,9 +998,11 @@ Pour vérifier le ZIP, lancez `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-d
 2. **Dossiers cloud, USB et réseau.** Les fichiers que OneDrive (ou un autre lecteur cloud) garde uniquement en ligne sont comptés mais pas lus, donc ajouter un dossier ne télécharge pas tout votre cloud : « Télécharger et inclure » les récupère quand vous les voulez. Un disque USB qui revient sous une autre lettre garde ses photos. Les dossiers réseau, et les dossiers sur une carte mémoire ou un disque USB (pour que Windows puisse toujours l'éjecter), ne sont pas surveillés : utilisez Actualiser après y avoir ajouté des fichiers.
 3. **Regarder autour de soi dans une photo 360°** : faites glisser avec la souris, zoomez avec la molette, un double clic ou + et - (sur toutes les dispositions de clavier, AZERTY compris), déplacez-vous avec les flèches. F ou F11 passe en plein écran et Échap en sort ; Début et Fin vont à la première et à la dernière photo ; I affiche les détails.
 4. **Aller de photo en photo** : dans une photo à plat, les flèches gauche et droite, ou les chevrons qui apparaissent sur les bords quand la souris bouge, vont à la précédente et à la suivante. Les lettres tapées dans le champ de description restent dans le texte.
-5. **Partager l'ordinateur avec le casque** : ouvrez la Bibliothèque, puis Partages réseau ; la première tuile est « Partager cet ordinateur sur le réseau », le côté ordinateur de [Partager ce téléphone sur le réseau](#share-this-phone-on-the-network). Activez « Partager les photos et vidéos sur le réseau », puis ajoutez l'ordinateur dans le casque comme l'indique cette section. Le partage s'arrête quand l'application est fermée ou après une heure sans utilisation.
-6. **Autoriser le réseau** : Windows peut demander si Immuch360 Desktop peut utiliser le réseau. Autorisez-le sur les réseaux privés, sinon le casque ne trouve pas l'ordinateur. Sur un réseau que Windows marque comme public (un café, un hôtel), ou dont il ne sait pas dire le type, le partage ne démarre pas sauf si vous choisissez « Partager pour cette session », et l'ordinateur ne s'annonce que sur un réseau où il partage.
-7. **Paramètres, « Cet ordinateur »** : les dossiers, le dossier de téléchargement, la carte réseau utilisée pour trouver les partages et pour partager l'ordinateur (quand il en a plusieurs, Wi-Fi et Ethernet par exemple), et les certificats de confiance : l'autorité de certification de votre propre serveur, en fichier PEM, pour une adresse HTTPS à laquelle Windows ne fait pas confiance de lui-même. Les certificats client s'importent dans Paramètres, Avancé, comme sur les téléphones.
+5. **Lire une vidéo** : ouvrez-la depuis la timeline, un dossier, un partage, Plex ou les enregistrements d'une caméra Tapo ; elle se lit dans la fenêtre. Entrée, ou la touche lecture et pause du clavier, met en pause et relance la lecture. Pendant la lecture, les flèches gauche et droite, ou J et L, reculent ou avancent de 10 secondes ; en pause, les flèches vont à la précédente et à la suivante. F ou F11 passe en plein écran, comme pour les photos. Le bouton « Piste audio » choisit parmi les pistes audio d'une vidéo qui en a plusieurs.
+6. **Quand une vidéo s'arrête** : une vidéo en pause reste en pause quand vous revenez à la fenêtre. Une vidéo coupée avant sa fin, quand le partage ou le serveur ne répond plus par exemple, le signale : ouvrez-la de nouveau et elle reprend là où elle s'est arrêtée, en pause. Un fichier de liste de lecture trouvé dans un dossier ou un partage n'est pas suivi.
+7. **Partager l'ordinateur avec le casque** : ouvrez la Bibliothèque, puis Partages réseau ; la première tuile est « Partager cet ordinateur sur le réseau », le côté ordinateur de [Partager ce téléphone sur le réseau](#share-this-phone-on-the-network). Activez « Partager les photos et vidéos sur le réseau », puis ajoutez l'ordinateur dans le casque comme l'indique cette section. Le partage s'arrête quand l'application est fermée ou après une heure sans utilisation.
+8. **Autoriser le réseau** : Windows peut demander si Immuch360 Desktop peut utiliser le réseau. Autorisez-le sur les réseaux privés, sinon le casque ne trouve pas l'ordinateur. Sur un réseau que Windows marque comme public (un café, un hôtel), ou dont il ne sait pas dire le type, le partage ne démarre pas sauf si vous choisissez « Partager pour cette session », et l'ordinateur ne s'annonce que sur un réseau où il partage.
+9. **Paramètres, « Cet ordinateur »** : les dossiers, le dossier de téléchargement, la carte réseau utilisée pour trouver les partages et pour partager l'ordinateur (quand il en a plusieurs, Wi-Fi et Ethernet par exemple), et les certificats de confiance : l'autorité de certification de votre propre serveur, en fichier PEM, pour une adresse HTTPS à laquelle Windows ne fait pas confiance de lui-même. Les certificats client s'importent dans Paramètres, Avancé, comme sur les téléphones.
 
 ### Comparaison avec les applications pour téléphone
 
@@ -1005,20 +1011,24 @@ Pour vérifier le ZIP, lancez `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-d
 - **Une seule fenêtre** : ouvrir l'application une deuxième fois ramène la première fenêtre au lieu de lancer une deuxième copie.
 - **Rien n'est supprimé de vos dossiers** : « Supprimer de l'appareil » est masqué, et Supprimer n'enlève que la copie du serveur, jusqu'à ce que l'application sache envoyer les fichiers dans la corbeille de Windows.
 - **Souris et clavier** à la place du tactile et du gyroscope.
+- **Un seul lecteur vidéo pour toutes les sources** : libmpv lit de la même façon les vidéos du serveur, des dossiers, des partages et de Plex, et son lecteur à plat a déjà le menu des pistes audio que le lecteur à plat des téléphones n'a pas encore.
 
 <a id="not-there-yet"></a>
 ### Pas encore là
 
-- **Vidéos** : elles affichent une image d'attente pour l'instant, et leurs miniatures une icône de film. La lecture vient ensuite : les vidéos à plat d'abord, puis les vidéos 360°, 3D et VR180 et les vidéos 360° brutes.
+- **Vidéos 360°, 3D, VR180 et 360° brutes** : elles s'affichent à plat pour l'instant, telles que le fichier les contient (toute la sphère dépliée, les deux yeux côte à côte, ou les images rondes des objectifs), ou avec une image d'attente, et le bouton 360° reste sur les photos. Leurs lecteurs arrivent avec les prochains builds ordinateur.
 - **Spatial 2.5D**, plus tard avec la webcam ; la **vue en direct Tapo** ; la **carte** et la vue Lieux ; la **connexion avec OAuth** (connectez-vous avec un e-mail et un mot de passe à la place) ; **Google Cast** ; les **notifications**.
 - **Un installateur, un build signé et les mises à jour automatiques** : ce build est un dossier avec `immuch360.exe`.
-- **Linux et macOS** : leurs projets sont dans les sources, mais ils n'ont pas encore été compilés ni essayés sur ces systèmes ; ils viennent après Windows.
+- **Linux et macOS** : leurs projets sont dans les sources, mais ils n'ont pas encore été compilés ni essayés sur ces systèmes, et leur lecteur vidéo n'y est pas encore ; ils viennent après Windows.
 - **Traductions** : les nouveaux textes de la version ordinateur sont en anglais pour l'instant.
 
 ### Problèmes connus
 
-- **Pendant que le casque lit un fichier de l'ordinateur partagé** (une vidéo qu'il lit, une photo qu'il télécharge), Windows ne peut pas renommer, déplacer ni supprimer ce fichier et indique qu'il est ouvert dans Immuch360 Desktop : arrêtez d'abord la lecture. Les sauvegardes ne bloquent pas vos fichiers ainsi : un fichier peut être renommé, déplacé ou supprimé pendant son envoi.
-- **Des angles à arrondir** : les fonctions ci-dessus passent leurs tests automatisés sur Windows (475 tests de la version ordinateur), et sur un PC Windows 11 l'application démarre, ouvre une session enregistrée sur un serveur Immich, synchronise et se ferme proprement. Le test de chaque fonction à la main sur un vrai PC est encore en cours.
+- **Le premier démarrage d'un nouveau build est lent** : de 10 secondes à environ une minute avant que la fenêtre s'affiche, très probablement pendant que Microsoft Defender analyse les nouveaux fichiers, qui ne sont pas encore signés. Attendez la fenêtre plutôt que de relancer l'application ; les démarrages suivants prennent une seconde ou deux.
+- **Les vidéos 8K HEVC demandent une puce graphique dédiée** : sur le portable de test, la puce intégrée Intel UHD affichait environ la moitié des images d'une vidéo 8K HEVC, alors que la puce dédiée NVIDIA lisait le 8K HEVC et le 5,7K H.264 sans perdre une image. Windows fait tourner l'application sur la puce intégrée sauf indication contraire : dans les paramètres de Windows, Système, Écran, Graphiques, ajoutez `immuch360.exe` et choisissez « Performances élevées ». Sur la puce intégrée, une vidéo 5,7K H.264, que son décodeur refuse, est décodée par le processeur sans perdre une image.
+- **Les vidéos sont dessinées sur 1440 lignes de haut au plus**, puis mises à l'échelle de la fenêtre : sur un écran 4K en plein écran, une vidéo 4K ou 8K est un peu moins nette que dans un lecteur vidéo dédié. Cela garde une vidéo 8K dans les capacités graphiques d'un portable.
+- **Pendant qu'une vidéo de vos dossiers se lit dans l'application, ou que le casque lit un fichier de l'ordinateur partagé** (une vidéo qu'il lit, une photo qu'il télécharge), Windows ne peut pas renommer, déplacer ni supprimer ce fichier et indique qu'il est ouvert dans Immuch360 Desktop : fermez d'abord la vidéo, ou arrêtez la lecture dans le casque. Les sauvegardes ne bloquent pas vos fichiers ainsi : un fichier peut être renommé, déplacé ou supprimé pendant son envoi.
+- **Des angles à arrondir** : 656 des 663 tests de la version ordinateur passent sur Windows (7 sont ignorés à dessein), 200 lecteurs ouverts l'un après l'autre ne laissent aucune fuite, et sur un PC Windows 11 l'application démarre, ouvre une session enregistrée sur un serveur Immich, synchronise, lit une vidéo et se ferme proprement. Le test de chaque fonction à la main sur un vrai PC est encore en cours.
 
 Si quelque chose ne va pas, merci d'ouvrir une [issue](https://github.com/freeKC/Immuch360/issues) avec le journal enregistré depuis la page Journaux, voir [Journaux](#logs). Vérifiez le journal avant de le partager : il peut contenir l'adresse de votre serveur.
 
@@ -1027,19 +1037,17 @@ Si quelque chose ne va pas, merci d'ouvrir une [issue](https://github.com/freeKC
 
 Il vous faut Windows 10 ou 11 en x64, Flutter 3.47.2 pour Windows, Visual Studio 2022 ou ses Build Tools avec la charge de travail « Développement Desktop en C++ », le Mode développeur activé dans les paramètres de Windows (Flutter en a besoin pour les plugins), et Python 3 pour le script d'assemblage.
 
-1. Récupérez la branche `desktop` et lancez la génération de code. Elle utilise Java et Node, donc lancez-la sur Linux, macOS ou dans WSL ; avec WSL, gardez le clone sur un disque Windows, que WSL voit sous `/mnt/c` ou `/mnt/d` :
+1. Récupérez les sources et lancez la génération de code. La branche principale, `immuch360`, compile aussi la version ordinateur : il n'y a pas de branche vers laquelle basculer. La génération de code utilise Java et Node, donc lancez-la sur Linux, macOS ou dans WSL ; avec WSL, gardez le clone sur un disque Windows, que WSL voit sous `/mnt/c` ou `/mnt/d` :
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Sur Windows, dans le même dossier `mobile`, compilez l'application :
+2. Sur Windows, dans le même dossier `mobile`, compilez l'application. Le premier build télécharge les bibliothèques du lecteur vidéo (libmpv et ANGLE) depuis GitHub et vérifie chaque archive par son SHA-256 :
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Il vous faut Windows 10 ou 11 en x64, Flutter 3.47.2 pour Windows, Visual Studio
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. Le dossier `Release` fonctionne sur le PC qui l'a compilé. Pour un autre PC, gardez le dossier entier et ajoutez le runtime Visual C++ à côté de `immuch360.exe`. Depuis la racine du clone, le script d'assemblage le copie, laisse de côté ce qui ne sert qu'à Android, vérifie que chaque DLL que charge l'application est dans le dossier ou dans Windows lui-même, et crée le ZIP :
+3. Le dossier `Release` fonctionne sur le PC qui l'a compilé. Pour un autre PC, gardez le dossier entier et ajoutez le runtime Visual C++ à côté de `immuch360.exe`. Depuis la racine du clone, le script d'assemblage le copie, laisse de côté ce qui ne sert qu'à Android, ajoute les licences du lecteur vidéo, vérifie que chaque DLL que charge l'application est dans le dossier ou dans Windows lui-même, et crée le ZIP :
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-La CI de la branche `desktop` (`.github/workflows/immuch360-desktop.yml`) lance les vérifications des téléphones et toute la suite de tests sur Linux, les tests de la version ordinateur sur Windows, et compile le même ZIP ; ses tâches Linux et macOS (`flutter build linux` et `flutter build macos`, avec le même `-t lib/main_desktop.dart`) n'ont pas encore tourné sur ces systèmes.
+La CI d'Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) tourne sur la branche `desktop`, qui suit `immuch360` : les vérifications des téléphones (rien ne change dans les builds téléphone) et toute la suite de tests sur Linux, les tests de la version ordinateur sur Windows, et le même ZIP ; ses tâches Linux et macOS (`flutter build linux` et `flutter build macos`, avec le même `-t lib/main_desktop.dart`) n'ont pas encore tourné sur ces systèmes.
 
 <a id="where-to-get-it"></a>
 ## Où l'obtenir
@@ -1075,8 +1083,8 @@ L'application est sur Google Play pour les téléphones et les tablettes ; la ve
   - Aujourd'hui : le `Immuch360-v<version>-release.apk` universel de la page [Releases](https://github.com/freeKC/Immuch360/releases), installé en sideload avec adb, voir [L'installer sur le téléviseur](#install-it-on-the-tv). C'est la même application que sur les téléphones.
   - Bientôt : Google Play sur les téléviseurs, après l'examen par Google de la version TV.
 - **Windows 10 et 11, 64 bits (préversion)**
-  - Aujourd'hui : Immuch360 Desktop, le ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` de la [pré-release ordinateur](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), décompressé et lancé comme l'indique [Télécharger et installer sur Windows](#download-and-install-on-windows). Photos uniquement pour l'instant : les vidéos arrivent avec les prochains builds ordinateur.
-  - Bientôt : la lecture des vidéos ; un installateur, un build signé et les mises à jour plus tard.
+  - Aujourd'hui : Immuch360 Desktop, le ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` de la [pré-release ordinateur](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), décompressé et lancé comme l'indique [Télécharger et installer sur Windows](#download-and-install-on-windows). Photos et vidéos à plat pour l'instant : les vidéos 360°, 3D et VR180 arrivent avec les prochains builds ordinateur.
+  - Bientôt : les vidéos 360°, 3D, VR180 et 360° brutes ; un installateur, un build signé et les mises à jour plus tard.
 
 Les liens App Store et Meta Horizon Store seront ajoutés ici dès que les fiches seront publiées. Connectez-vous avec l'URL et le compte de votre serveur Immich habituel, ou touchez « Utiliser sans serveur » sur la page de connexion pour démarrer sur les photos et vidéos de l'appareil lui-même. L'APK de GitHub ne se met pas à jour seul : surveillez la page Releases, et une fois l'application installée depuis un store, prenez les mises à jour depuis ce store.
 
@@ -1105,15 +1113,15 @@ La flavor `quest` cible le SDK 34 et ne garde que les autorisations que le casqu
 
 Pour compiler pour iOS sur votre propre Mac, utilisez Xcode et votre propre équipe de signature ; avec Xcode 26, lancez d'abord une fois `xcodebuild -downloadComponent MetalToolchain`, car les shaders Spatial en ont besoin. Sans Mac, les builds iOS tournent sur Codemagic (un Mac hébergé) à partir du fichier `codemagic.yaml` de ce dépôt. Les builds Android de release tournent sur GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, la version Windows, se compile depuis la branche `desktop` avec Flutter pour Windows : les étapes sont dans [Le compiler soi-même sur Windows](#build-it-yourself-on-windows).
+Immuch360 Desktop, la version Windows, se compile depuis les mêmes sources, la branche `immuch360`, avec Flutter pour Windows : les étapes sont dans [Le compiler soi-même sur Windows](#build-it-yourself-on-windows).
 
 Aucun secret ne se trouve dans ce dépôt : la clé de signature Android est stockée sous forme de secrets GitHub Actions chiffrés, et le matériel de signature Apple sous forme de variables chiffrées sur Codemagic. Les fichiers de workflow n'y font référence que par leur nom. Sans votre propre `android/key.jks`, un build de release est signé avec la clé debug et ne peut pas s'installer par-dessus une copie venant de GitHub ou d'un store (désinstallez celle-ci d'abord) ; un build debug s'installe à côté sous le nom Immuch360 debug. La copie Meta Horizon Store est l'APK `quest` de la release signé avec une autre clé, celle avec laquelle l'application du store a été enregistrée au départ, donc elle ne peut pas non plus s'installer par-dessus un APK installé en sideload, ni l'inverse.
 
 ### Branches
 
 - **`main`** : Immich `main` au commit sur lequel `immuch360` est basée (29 septembre 2026 pour les builds actuels), jamais modifiée ; elle avance quand le fork est rebasé sur un Immich plus récent.
-- **`immuch360`** : les changements de ce fork par-dessus Immich. Chaque release indique sur quelle version d'Immich elle est basée.
-- **`desktop`** : Immuch360 Desktop, la version ordinateur, par-dessus `immuch360`. Les releases téléphone y sont fusionnées, et les pré-releases ordinateur sont compilées à partir d'elle (le build ordinateur 1 depuis le commit 21f285c34, le build 20 des téléphones plus la version ordinateur). Rien sous `mobile/android` et `mobile/ios` n'y change.
+- **`immuch360`** : les changements de ce fork par-dessus Immich, Immuch360 Desktop compris depuis le 9 octobre 2026. Chaque release indique sur quelle version d'Immich elle est basée.
+- **`desktop`** : là où Immuch360 Desktop, la version ordinateur, a été construite par-dessus `immuch360`, jusqu'à sa fusion dans celle-ci le 9 octobre 2026 pour que téléphones, casques, téléviseurs et ordinateurs sortent des mêmes sources. Elle suit maintenant `immuch360` et porte les tags des pré-releases ordinateur ([build ordinateur 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) depuis le commit 21f285c34, [build ordinateur 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) depuis 5b723bd25). La version ordinateur ne change rien sous `mobile/android` et `mobile/ios`.
 
 <a id="logs"></a>
 ## Journaux
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Dès le build 19, le client DLNA, le partage de téléphone et la détection des médias spatiaux Apple écrivent aussi dans le journal propre de l'application (Journaux, dans le menu de la photo de profil en haut à droite), sous `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` et `NetworkMediaService`. Dès le build 20, le mode TV y écrit sous `TvMode` et `TvTextEntry`, les serveurs Plex sous `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` et `PlexServerEditPage`, et les caméras Tapo sous `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` et `CameraLiveView` ; les lignes Plex ne contiennent jamais le jeton, une adresse ni un titre, et les lignes des caméras laissent les mots de passe de côté. Les lignes de journal restent sur l'appareil, sauf si vous les copiez vous-même.
 
-Sur un ordinateur (Immuch360 Desktop), la page Journaux a aussi « Enregistrer les journaux dans un fichier » : le journal, ou un ZIP du journal et des rapports des derniers plantages quand il y en a (son nom proposé se termine alors par « with-crash-reports »). Un rapport de plantage est un petit minidump : les threads, où ils se sont arrêtés et seulement ce qu'il faut pour suivre leurs appels, avec les noms des fichiers du programme mais pas leurs dossiers ; pas la mémoire de l'application. Vérifiez le journal avant de le partager : il peut contenir l'adresse de votre serveur.
+Sur un ordinateur (Immuch360 Desktop), la page Journaux a aussi « Enregistrer les journaux dans un fichier » : le journal, ou un ZIP du journal et des rapports des derniers plantages quand il y en a (son nom proposé se termine alors par « with-crash-reports »). Un rapport de plantage est un petit minidump : les threads, où ils se sont arrêtés et seulement ce qu'il faut pour suivre leurs appels, avec les noms des fichiers du programme mais pas leurs dossiers ; pas la mémoire de l'application.
+
+Dès le build ordinateur 2, le lecteur vidéo de l'ordinateur y écrit sous `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` et `VideoThumbnailGrabber`, avertissements propres de mpv compris, jetons et mots de passe retirés. Vérifiez le journal avant de le partager : il peut contenir l'adresse de votre serveur.
 
 <a id="privacy"></a>
 ## Vie privée
@@ -1144,6 +1154,7 @@ Sur un ordinateur (Immuch360 Desktop), la page Journaux a aussi « Enregistrer l
 - **Partage de téléphone** : réseau local uniquement, avec un nom d'utilisateur et un mot de passe, en HTTP simple (voir [Partager ce téléphone sur le réseau](#share-this-phone-on-the-network)).
 - **Caméra** : utilisée uniquement par le lecteur Spatial 2.5D, sur l'appareil ; les images ne sont jamais stockées et jamais envoyées nulle part.
 - **Sur un ordinateur** (Immuch360 Desktop, préversion Windows) : l'application ne lit que les dossiers que vous choisissez, garde son index, ses miniatures et son cache sur l'ordinateur, et stocke les mots de passe et les jetons avec la protection des données de Windows, pour votre seul compte Windows. Le partage de l'ordinateur suit les règles du partage de téléphone, et ne démarre pas sur un réseau que Windows marque comme public, ou dont il ne sait pas dire le type, sauf si vous le décidez.
+- **Le lecteur vidéo sur un ordinateur** (dès le build ordinateur 2) : les vidéos de votre serveur lui parviennent par l'application, donc le lecteur ne détient jamais votre jeton de session, et ce qu'il lit à l'avance reste en mémoire, pas sur le disque. Il n'ouvre que le fichier qu'on lui donne : un fichier d'un dossier ou d'un partage qui est en fait une liste de lecture ou une description de flux ne le fait se connecter nulle part ailleurs.
 
 La politique complète est dans [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ La politique complète est dans [PRIVACY.md](../PRIVACY.md).
 
 Ce projet est un fork d'Immich et reste sous [GNU AGPL v3](../LICENSE). Chaque APK, ceux des téléphones compris, contient aussi le Meta Spatial SDK, qui n'est pas open source (Meta Platform Technologies SDK License Agreement) et n'est utilisé que sur les casques Meta Quest ; Immuch360 Desktop, la version Windows, ne le contient pas. Immuch360 n'est pas affilié à l'équipe Immich ni à FUTO, et n'est pas approuvé par elles.
 
+Le ZIP Windows d'Immuch360 Desktop, et lui seul, contient aussi son lecteur vidéo : libmpv, la bibliothèque de [mpv](https://mpv.io), avec [FFmpeg](https://ffmpeg.org) à l'intérieur, pilotée par les plugins de [media_kit](https://github.com/media-kit/media-kit). mpv et FFmpeg sont compilés sans leurs parties uniquement GPL, et leur code est sous GNU LGPL version 2.1 ou ultérieure ; compilés ensemble, `libmpv-2.dll` est distribuée sous GNU LGPL version 3 ou ultérieure. L'application la charge à l'exécution, vous pouvez donc la remplacer par votre propre build. Les textes des licences sont dans le dossier `licenses` du ZIP, et chaque bibliothèque avec sa licence et ses sources est listée dans [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Feuille de route
 
 Ce qui n'est pas encore fait, le plus probable d'abord. Rien ici n'est une promesse, et les retours sur le [suivi des issues](https://github.com/freeKC/Immuch360/issues) aident à décider de ce qui vient en premier.
 
-- **Immuch360 Desktop, Windows d'abord** : la première préversion est sortie (voir [Sur un ordinateur Windows](#on-a-windows-computer-immuch360-desktop-preview)). Ensuite, la lecture des vidéos (les vidéos à plat d'abord, puis 360°, 3D, VR180 et les fichiers bruts), mesurée sur les deux cartes graphiques d'un portable ; puis le test de chaque fonction sur un PC Windows et ses corrections ; puis Spatial 2.5D avec la webcam ; puis Linux et macOS, les paquets, la signature et les mises à jour.
+- **Immuch360 Desktop, Windows d'abord** : le build ordinateur 2 est sorti, avec les vidéos à plat, et les sources de la version ordinateur sont dans la branche principale du fork, `immuch360`, depuis le 9 octobre 2026 (voir [Sur un ordinateur Windows](#on-a-windows-computer-immuch360-desktop-preview)). Ensuite, les vidéos 360°, 3D, VR180 et 360° brutes sur Windows, avec les deux objectifs des fichiers bruts et la vue en direct Tapo ; puis le test de chaque fonction sur un PC Windows et ses corrections ; puis Spatial 2.5D avec la webcam ; puis Linux et macOS, les paquets, la signature et les mises à jour.
 - **Google Play** : le build 18 est en ligne ; le build 20 est en cours d'examen chez Google depuis le 7 octobre 2026, à la place du build 19. Le build 21 ne change rien sur les téléphones et les tablettes.
 - **App Store** : la version 3.3.0 attend l'examen d'Apple ; elle a les fonctions du build 11, donc l'envoi vers Immich et la vérification des décodeurs vidéo (build 15) et les fichiers Insta360 bruts (build 16) viennent avec la prochaine mise à jour App Store. Le lien sera ajouté ici quand elle sera en ligne.
 - **Meta Horizon Store** : Meta a approuvé la fiche le 7 octobre 2026 avec le build 14. Le build 21 est soumis comme sa première mise à jour : il apporte tout ce qui est venu depuis le build 14 (envois d'un partage vers Immich, source vidéo choisie selon ce que décode le casque, fichiers bruts Insta360, GoPro et DJI, DLNA, le partage du téléphone, photos spatiales Apple, bibliothèques Plex Media Server, caméras Tapo), et le store le propose pour les Quest 2, Quest Pro, Quest 3 et 3S. Le lien du store sera ajouté ici dès que la page sera publique ; une copie installée en sideload devra d'abord être désinstallée (voir [Installer](#install)).
@@ -1166,7 +1179,7 @@ Ce qui n'est pas encore fait, le plus probable d'abord. Rien ici n'est une prome
 - **DLNA, partage de téléphone et spatial Apple, la suite** : les retours sur appareil du build 19 (Plex, Jellyfin, un NAS et le Freebox Server en DLNA ; un téléphone qui sert un Quest, sur son point d'accès aussi ; de vraies photos et vidéos spatiales d'iPhone dans le casque) ; l'autorisation multicast demandée à Apple, pour que les iPhone trouvent tous les serveurs DLNA ; précédent et suivant entre photos spatiales dans le casque ; un badge spatial sur les photos du serveur dans la timeline ; les vidéos spatiales en 3D sur le Quest, si ses décodeurs le permettent.
 - **Lecteurs 360° sur téléphone, la suite** : une barre de temps dans le lecteur vidéo 360° iOS (celui d'Android l'a), précédent/suivant dans les lecteurs 360° des téléphones comme dans la vue immersive du Quest, et les photos dans le lecteur vidéo 360° natif.
 - **Partages réseau, prochaines étapes** : glisser d'un fichier d'un dossier au suivant dans les pages photo et vidéo (la vue immersive du Quest parcourt déjà les fichiers 360° d'un dossier), l'authentification Digest pour WebDAV, le nom d'utilisateur tiré de l'enregistrement Bonjour.
-- **Vidéos à plat** : le choix de la piste audio dans le lecteur à plat, pour les vidéos du serveur, de l'appareil et des partages (les lecteurs 360° et Spatial l'ont).
+- **Vidéos à plat** : le choix de la piste audio dans le lecteur à plat des téléphones, pour les vidéos du serveur, de l'appareil et des partages (les lecteurs 360° et Spatial l'ont, tout comme le lecteur à plat d'Immuch360 Desktop).
 - **Android TV, la suite** : le test sur appareil du build 20 sur l'émulateur Google TV et un vrai téléviseur, puis la version TV sur Google Play (captures TV, bannière TV, examen de Google) ; plus tard, des chaînes sur l'écran d'accueil du téléviseur.
 - **Caméras Tapo, la suite** : le test sur appareil du build 20 avec de vraies caméras ; la vue en direct sur iPhone et iPad ; les enregistrements H.265 ; lire un clip pendant sa récupération ; toute une journée d'enregistrements sur une seule ligne de temps.
 - **Plex, la suite** : le test sur appareil du build 20 (téléphones, le Quest, un iPhone, un téléviseur, hors de chez soi) ; apporter le jeton depuis l'ordinateur avec un QR code ; masquer le côté DLNA d'un serveur Plex dans la liste des serveurs trouvés ; IPv6.

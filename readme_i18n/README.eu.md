@@ -19,13 +19,13 @@ Immuch360 Immich-en mugikorreko aplikazioa da, inguruan begiratu daitezkeen 360�
   App Store: <a href="#where-to-get-it">berrikuspenean</a><br>
   Meta Quest: <a href="#meta-quest-3">APKa</a>, Horizon Store onartua, 21. konpilazioa bere lehen eguneratze gisa bidalia<br>
   Android TV: <a href="#install-it-on-the-tv">APKa</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">aurrebistaren deskarga</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">aurrebistaren deskarga</a>, desktop build 2
 </p>
 
 - 🌐 **360° natiboa**<br>Argazkiak eta bideoak inguruan begiratzeko esfera gisa, giroskopioarekin, kamerako fitxategi gordinak barne (Insta360 16. konpilaziotik aurrera, GoPro eta DJI 18. konpilaziotik aurrera). Doako bideo-erreproduzitzailea ere bai: laua, 360°, 3D, VR180
 - 👓 **3D natiboa**<br>360° estereoskopikoa eta VR180, goian eta behean edo bata bestearen ondoan, eta Apple-ren argazki espazialak (19. konpilaziotik aurrera): benetako 3D betaurrekoetan, begi bakarra telefonoan
 - 🎥 **2.5D natiboa**<br>Sakonera pantaila lau batean bideo estereoskopiko batetik abiatuta, ikuspegiak zure burua jarraitzen du (esperimentala, telefonoak eta tabletak)
-- 📱 **Android, iOS, Quest, TV**<br>Aplikazio bat telefono, tableta eta Quest 2, Pro, 3 eta 3S betaurrekoetan, benetako 3D betaurrekoetan, 20. konpilaziotik aurrera Android TV-n urruneko agintearekin, eta Windowserako aurrebista bat
+- 📱 **Android, iOS, Quest, TV**<br>Aplikazio bat telefono, tableta eta Quest 2, Pro, 3 eta 3S betaurrekoetan, benetako 3D betaurrekoetan, 20. konpilaziotik aurrera Android TV-n urruneko agintearekin, eta Windowserako aurrebista bat argazkiekin eta bideo lauekin
 - 🔌 **Zerbitzariarekin edo gabe**<br>Zure Immich zerbitzaria, edo telefonoaren galeria bera, konturik behar gabe
 - 🗄️ **Sareko partekatzeak**<br>Samba (SMB), WebDAV eta, 19. konpilaziotik aurrera, DLNA multimedia-zerbitzariak, sarean aurkituak eta zuzenean irakurriak, ezer deskargatu gabe, eta Immich-era bidaliak zuk erabakitzen duzunean. 19. konpilaziotik aurrera telefono batek bere galeria ere partekatzen du betaurrekoekin
 - 📺 **Telebistan**<br>20. konpilaziotik aurrera APK bera Android TV eta Google TV-n: 360° argazkiak eta bideoak, zure zerbitzaria eta zure partekatzeak, urruneko agintearekin
@@ -79,7 +79,7 @@ Immuch360 Immich-en mugikorreko aplikazioa da, inguruan begiratu daitezkeen 360�
 - **"Nire 360° argazkiak eta bideoak, eta nire NASeko edo Plex zerbitzariko bideoak, telebistan ikusi nahi ditut, urruneko agintearekin."** Ikusi [Ikusi zure telebistan](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ez ditut nire 360° argazkiak aurkitzen beste guztien artean."** Ikusi [360° zerrenda](#find-your-360-shots-the-360-list).
 - **"Nire 360° bideoak etenak ditu, edo kopia lauso bat erreproduzitzen du."** Ikusi [Bideoaren xehetasunak eta deskodetzaileak](#video-details-decoders-and-why-a-video-stutters).
-- **"Nire 360° argazkiak eta nire Immich liburutegia nire Windows PCan nahi ditut, bere karpetetako argazkiekin, nire NASarekin eta nire Plex zerbitzariarekin, eta PCa nire betaurrekoekin partekatuta."** Ikusi [Windows ordenagailu batean](#on-a-windows-computer-immuch360-desktop-preview) (aurrebista bat, oraingoz argazkiak bakarrik).
+- **"Nire 360° argazkiak eta nire Immich liburutegia nire Windows PCan nahi ditut, bere karpetetako argazki eta bideoekin, nire NASarekin eta nire Plex zerbitzariarekin, eta PCa nire betaurrekoekin partekatuta."** Ikusi [Windows ordenagailu batean](#on-a-windows-computer-immuch360-desktop-preview) (aurrebista bat: oraingoz argazkiak eta bideo lauak, 360° bideoak geroago).
 - **"Immich aplikazioak egiten duena mantentzen dut?"** Bai, bi aldaketa txikirekin, ikusi [Gainerako guztia Immich da](#everything-else-is-immich).
 
 Funtzio bat berria denean, testuak zein konpilaziotik aurrera dagoen esaten du. GitHub-eko bertsioak beti dauka konpilaziorik berriena, dendak geroago iristen dira: ikusi [Non lortu](#where-to-get-it).
@@ -752,7 +752,7 @@ Uneko konpilazioa, 21. konpilazioa (3.3.0-rc.0 bertsioa, 3030019 konpilazio-zenb
 | Plex Media Server liburutegiak jatorrizko fitxategietatik erreproduzituak, etxean eta etxetik kanpo, plex.tv gabe | ❌ | ✅ 20. konpilaziotik aurrera, ikustaile guztiak, telefono, tableta, Quest eta telebistetan |
 | Tapo kamerak: zuzeneko ikuspegia, eta memoria-txarteleko grabazioak Immich-era bidaliak zuk erabakitzen duzunean | ❌ | ✅ 20. konpilaziotik aurrera: grabazioak leku guztietan, zuzenean Android, Android TV eta Quest betaurrekoetan |
 | Android TV eta Google TV, urruneko agintearekin gidatuak, APK berean | ❌ ez da telebistarako aplikazioa | ✅ 20. konpilaziotik aurrera |
-| Aplikazio bera Windows ordenagailu batean | ❌ telefono eta tabletak bakarrik | ✅ aurrebista, oraindik bideorik gabe |
+| Aplikazio bera Windows ordenagailu batean | ❌ telefono eta tabletak bakarrik | ✅ aurrebista, argazkiak eta bideo lauak |
 | Insta360 .insp argazki gordinak eta pista bakarreko .insv bideoak | ❌ lauak | ✅ 16. konpilaziotik aurrera |
 | Objektibo bat pista edo fitxategi bakoitzeko duten bideo gordinak (Insta360 X4, X4 Air, X5, X6, X3 bikoteak, GoPro .360, DJI .osv) | ❌ lauak edo okerrak | ✅ 18. konpilaziotik aurrera |
 | Arrain-begi bikoitzeko .dng | ❌ laua | ❌ oraindik ez |
@@ -782,7 +782,7 @@ Uneko konpilazioa, 21. konpilazioa (3.3.0-rc.0 bertsioa, 3030019 konpilazio-zenb
 - **Plex Media Server**: ordenagailu batetik egiaztatua benetako Plex Media Server 1.42.1 baten aurka (lotzea, karpetak, byte-tarteak, miniaturak, etxetik kanpoko helbidea); oraindik gailu batean egiaztatu gabe.
 - **Tapo kamerak**: kamera simulatu baten aurka egiaztatua; oraindik benetako kamera batekin egiaztatu gabe.
 - **Android TV eta Google TV**: proba automatikoekin egiaztatua; oraindik telebista batean egiaztatu gabe.
-- **Aplikazio bera Windows ordenagailu batean**: mahaigaineko 475 proba automatiko Windowsen, eta Windows 11 PC batean aplikazioa abiarazi egiten da, Immich zerbitzari bateko saio gorde bat irekitzen du, sinkronizatzen du eta behar bezala ixten da; funtzio bakoitzaren eskuzko proba abian da.
+- **Aplikazio bera Windows ordenagailu batean**: mahaigaineko 663 proba automatikoetatik 656 gainditzen dira Windowsen (7 nahita saltatuak), eta Windows 11 PC batean aplikazioa abiarazi egiten da, Immich zerbitzari bateko saio gorde bat irekitzen du, sinkronizatzen du, bideo bat erreproduzitzen du eta behar bezala ixten da; funtzio bakoitzaren eskuzko proba abian da.
 - **Insta360 .insp argazki gordinak eta pista bakarreko .insv bideoak**: argazkiak X3 fitxategien Insta360 Studio esportazioen aurka egiaztatuak, bideoak Android emuladore batean bereizmen txikiko X3 fitxategi batekin; oraindik ez da iPhone batean exekutatu.
 - **Objektibo bat pista edo fitxategi bakoitzeko duten bideo gordinak**: analizatzaileak eta josketa benetako X4, X3 bikote, GoPro MAX eta Osmo 360 fitxategiekin egiaztatuak; erreprodukzioa 18. eta 19. konpilazioen gailuko probaren parte da.
 - **Arrain-begi bikoitzeko .dng**: aurreikusia.
@@ -825,16 +825,19 @@ Immuch360 galeria bat da, eta doako multimedia-erreproduzitzaile bat ere bai: ap
   - iPhone, iPad: berdin, partekatze bateko MKV eta AVI fitxategiak izan ezik, iOS-ek irekitzen ez dituenak (zerbitzari batean transkodetuta erreproduzitzen dira).
   - Meta Quest: leihoan.
   - Android TV, Google TV: telefonoetan bezala; OK botoiak pausatzen du, ezkerrak eta eskuinak 10 s-ko jauziak egiten dituzte.
+  - Windows (desktop build 2-tik aurrera): libmpv erreproduzitzailea, bigarren zerrendako iturri guztietatik; Enter teklak pausatzen du, ezkerrak eta eskuinak edo J eta L teklek 10 s-ko jauziak egiten dituzte.
 - **360° argazkiak**
   - Android telefonoak: esfera-ikustailea, giroskopioa.
   - iPhone, iPad: berdin.
   - Meta Quest: murgiltzailea, zure inguru osoan.
   - Android TV, Google TV: esfera-ikustailea geziekin biratua, kanal-teklekin handitua.
+  - Windows: esfera-ikustailea, sagua eta teklatua.
 - **360° bideoak**
   - Android telefonoak: Media3 erreproduzitzaile natiboa esfera batean, giroskopioa, aurrera eta atzera egitea, audio-pistaren aukera, karga-adierazlea.
   - iPhone, iPad: SceneKit erreproduzitzaile natiboa esfera batean, giroskopioa, audio-pistaren aukera, karga-adierazlea; erreproduzitu eta pausatu, oraindik denbora-barrarik gabe.
   - Meta Quest: murgiltzailea, benetako 3D fitxategi estereoskopikoetarako, denbora-barra 10 segundoko saltoekin, aurreko eta hurrengo elementua.
   - Android TV, Google TV: telefonoetako Media3 erreproduzitzailea, geziekin biratua.
+  - Windows: oraindik ez, lau erakusten dira oraingoz.
 - **3D 360° (goian eta behean, bata bestearen ondoan)**
   - Android telefonoak: ezkerreko begia, antolaera-botoia.
   - iPhone, iPad: berdin.
@@ -888,7 +891,7 @@ Immuch360 galeria bat da, eta doako multimedia-erreproduzitzaile bat ere bai: ap
 
 Android TV eta Google TV sarrerak, 20. konpilaziotik aurrera, ez dira oraindik telebista batean egiaztatu, ikusi [Ikusi zure telebistan](#watch-on-your-tv-android-tv-and-google-tv); kameraren sarrerak ez dira oraindik benetako kamera batekin egiaztatu.
 
-Windowsen, Immuch360 Desktop-en aurrebistak argazkiak erakusten ditu, lauak eta 360°-koak, Insta360-ren .insp argazki gordinak barne, saguarekin eta teklatuarekin, zerbitzaritik, PCaren karpetetatik, partekatzeetatik eta Plexetik; oraindik ez ditu bideoak erreproduzitzen, leku-marka bat erakusten dute (ikusi [Oraindik ez](#not-there-yet)).
+Windowsen, Immuch360 Desktop-en aurrebistak argazkiak erakusten ditu, lauak eta 360°-koak, Insta360-ren .insp argazki gordinak barne, saguarekin eta teklatuarekin, eta desktop build 2-tik aurrera bideo lauak erreproduzitzen ditu, zerbitzaritik, PCaren karpetetatik, partekatzeetatik, Plexetik eta Tapo grabazioetatik; 360°, 3D, VR180 eta 360° bideo gordinak lau edo leku-marka gisa erakusten dira oraingoz (ikusi [Oraindik ez](#not-there-yet)).
 
 - **Zure Immich zerbitzaria**: jatorrizkoa edo zerbitzariaren jario transkodetua, Ezarpenak, Baliabide ikuslea, "Bideoaren iturria" aukerak dioen bezala (ikusi [Bideoaren xehetasunak eta deskodetzaileak](#video-details-decoders-and-why-a-video-stutters)). Web aplikazioaren kontu bera.
 - **Telefonoa edo betaurrekoak beraiek**: "Erabili zerbitzaririk gabe" saioa hasteko orrian, edo Liburutegia fitxako Gailu honetan sarrera.
@@ -959,24 +962,24 @@ Betaurrekoetan atera dira pantaila-argazkiak, kaptura-botoiarekin (Meta botoia e
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## Windows ordenagailu batean: Immuch360 Desktop (aurrebista)
 
-Zure Immich liburutegia zerbitzari batean dago, beste argazki batzuk PCaren karpetetan daude, bideoak NAS batean edo Plex zerbitzari batean, eta zure 360° argazkietan pantaila handi batean inguruan begiratu nahiko zenuke, edo PCaren argazkiak betaurrekoetan erakutsi. Immuch360 Desktop aplikazio bera da Windows ordenagailu batean, telefonoko aplikazioen iturburu-kode beretik eraikia.
+Zure Immich liburutegia zerbitzari batean dago, beste argazki eta bideo batzuk PCaren karpetetan daude, bideo gehiago NAS batean edo Plex zerbitzari batean, eta zure 360° argazkietan pantaila handi batean inguruan begiratu eta zure bideoak erreproduzitu nahiko zenituzke, edo PCaren argazkiak betaurrekoetan erakutsi. Immuch360 Desktop aplikazio bera da Windows ordenagailu batean, telefonoko aplikazioen iturburu-kode beretik eraikia.
 
-Ordenagailu batean, Immich-ek bere web aplikazioa eskaintzen du nabigatzaile batean. **Immuch360 Desktop-ek gehitzen duena**: PCaren karpetak zerbitzaririk eta konturik gabe, SMB, WebDAV, DLNA eta Plex partekatzeak aplikaziotik arakatuta, Insta360-ren .insp argazki gordinak esfera gisa irekita, eta PCa etxeko Meta Quest batekin partekatuta.
+Ordenagailu batean, Immich-ek bere web aplikazioa eskaintzen du nabigatzaile batean. **Immuch360 Desktop-ek gehitzen duena**: PCaren karpetak zerbitzaririk eta konturik gabe, SMB, WebDAV, DLNA eta Plex partekatzeak aplikaziotik arakatuta eta erreproduzituta, Insta360-ren .insp argazki gordinak esfera gisa irekita, eta PCa etxeko Meta Quest batekin partekatuta.
 
-Lehen konpilazio hau aurrebista bat da: argazkiek funtzionatzen dute, bideoak hurrengo mahaigaineko konpilazioekin etorriko dira. Telefono, tableta, Quest eta telebistako aplikazioak ez dira aldatzen honekin, eta Immuch360 izena mantentzen dute.
+Aurrebista bat da: desktop build 2-tik aurrera, argazkiek eta bideo lauek funtzionatzen dute; 360°, 3D eta VR180 bideoak hurrengo mahaigaineko konpilazioekin etorriko dira. 2026ko urriaren 9az geroztik mahaigaineko iturburu-kodea fork-aren adar nagusian dago, `immuch360`, beraz telefonoak, betaurrekoak, telebistak eta ordenagailuak iturburu-kode beretik ateratzen dira. Telefono, tableta, Quest eta telebistako aplikazioak ez dira aldatzen honekin, eta Immuch360 izena mantentzen dute.
 
 <a id="download-and-install-on-windows"></a>
 ### Deskargatu eta instalatu Windowsen
 
-Lehen konpilazioa GitHub-eko aurre-bertsio hau da: [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Bere fitxategia `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` da (33,5 MB, 65 fitxategi deskonprimitu ondoren), `SHA256SUMS.txt` fitxategiarekin hura egiaztatzeko. `desktop` adarretik eraiki zen, 21f285c34 commit-ean: telefonoko 20. konpilazioa gehi ordenagailuko bertsioa. Windows 10 edo 11 behar du, 64 bitekoa.
+Uneko konpilazioa GitHub-eko aurre-bertsio hau da: [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Bere fitxategia `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` da (57 MB inguru, 78 fitxategi deskonprimitu ondoren, bideo-erreproduzitzailea eta bere `licenses` karpeta barne), `SHA256SUMS.txt` fitxategiarekin hura egiaztatzeko. Adar nagusitik, `immuch360`, eraiki zen, 5b723bd25 commit-ean: telefonoko 21. konpilazioaren iturburu-kodea gehi ordenagailuko bertsioa. Windows 10 edo 11 behar du, 64 bitekoa.
 
 1. Deskargatu ZIPa eta deskonprimitu edonon, adibidez Dokumentuak karpetan.
-2. Abiarazi `immuch360.exe` deskonprimitutako karpetatik. Gorde karpeta osorik: programak ondoan dituen fitxategiak behar ditu.
+2. Abiarazi `immuch360.exe` deskonprimitutako karpetatik. Gorde karpeta osorik: programak ondoan dituen fitxategiak behar ditu, bideo-erreproduzitzailea barne.
 3. Fitxategiak oraindik ez daude sinatuta, beraz Windows SmartScreen-ek "Windows protected your PC" erakuts dezake: aukeratu "More info", ondoren "Run anyway". Smart App Control aktibatuta dagoen tokietan, sinatu gabeko programak blokeatzen ditu.
 4. Itxaron leihoari. Konpilazio berri baten lehen abiaraztea 10 segundotik minutu bat ingurura bitartekoa da, seguruenik Microsoft Defender fitxategi berriak eskaneatzen ari den bitartean: ez abiarazi aplikazioa berriro bitartean. Hurrengo abiarazteek segundo bat edo bi behar dituzte.
 5. Saioa hasteko orrian, hasi saioa zure Immich zerbitzarian bere helbidearekin, zure posta elektronikoarekin eta zure pasahitzarekin, edo egin klik "Erabili zerbitzaririk gabe" aukeran.
 
-ZIPa egiaztatzeko, exekutatu `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` komando-gonbita batean, deskargaren karpetan: emaitza `SHA256SUMS.txt` fitxategian idatzita dagoena da. Oraindik ez dago instalatzailerik ez eguneratze automatikorik: begiratu [Releases](https://github.com/freeKC/Immuch360/releases) orria, eta deskonprimitu hurrengo konpilazioa modu berean.
+ZIPa egiaztatzeko, exekutatu `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` komando-gonbita batean, deskargaren karpetan: emaitza `SHA256SUMS.txt` fitxategian idatzita dagoena da. Oraindik ez dago instalatzailerik ez eguneratze automatikorik: begiratu [Releases](https://github.com/freeKC/Immuch360/releases) orria, eta deskonprimitu hurrengo konpilazioa modu berean.
 
 ### Zer egiten du aurrebistak
 
@@ -984,7 +987,8 @@ ZIPa egiaztatzeko, exekutatu `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-de
 - **Zerbitzaririk gabe**: zure argazki eta bideoen karpetek (Irudiak eta Bideoak proposatzen dira) telefono baten galeria ordezkatzen dute. Ez da ezer irakurtzen aukeratu dituzun karpetetatik kanpo, eta zerbitzaririk gabe ezerk ez du ordenagailua uzten.
 - **Igoera eta babeskopia** karpeta horietatik zure Immich zerbitzarira, aplikazioa irekita dagoen bitartean.
 - **360° argazkiak esfera gisa**, saguarekin eta teklatuarekin; Insta360 kameren .insp argazki gordinak telefonoetan bezala irekitzen dira.
-- **Sareko partekatzeak**: Samba (SMB), WebDAV eta DLNA multimedia zerbitzariak, eta Plex zerbitzariak plex.tv gabe, telefonoetan bezala arakatuta: haien argazkiak irekitzen dira, haien bideoek bideo-erreproduzitzailearen zain daude (ikusi [Oraindik ez](#not-there-yet)). Tapo kameretarako, memoria-txartelaren grabazioak: zerrenda, eta klip bat eskuratzea.
+- **Bideo lauak** (desktop build 2-tik aurrera): zure karpetetako bideoak, zure Immich zerbitzarikoak (jatorrizkoa edo transkodetutako fluxua, ikusi [Bideoaren xehetasunak eta deskodetzaileak](#video-details-decoders-and-why-a-video-stutters)), SMB, WebDAV eta DLNA partekatzeetakoak, Plex zerbitzarietakoak eta Tapo grabazioak leihoan erreproduzitzen dira, telefonoetako kontrolekin (erreproduzitu, pausatu, denbora-barra), karga-adierazle batekin, eta audio-pisten menu batekin hainbat dituen bideo baterako. Zure karpetetako eta partekatzeetako bideoek bideoaren fotograma bat erakusten dute miniatura gisa, film-ikono baten ordez.
+- **Sareko partekatzeak**: Samba (SMB), WebDAV eta DLNA multimedia zerbitzariak, eta Plex zerbitzariak plex.tv gabe, telefonoetan bezala arakatuta: haien argazkiak irekitzen dira eta haien bideoak erreproduzitzen dira. Tapo kameretarako, memoria-txartelaren grabazioak: zerrenda, klip bat eskuratzea eta erreproduzitzea.
 - **Partekatu ordenagailu hau sarean**: zure karpeten albumak, hilabeteak eta 360° multimedia, irakurtzeko soilik, Meta Quest baterako edo etxeko beste gailu baterako, telefono batek bere burua partekatzen duen bezala.
 - **Fitxategiak**: zerbitzaritiko deskargak zuk aukeratutako karpeta batera doaz, "Gorde karpeta batean" aukerak hautatutako argazki eta bideoen kopia bat gordetzen du, eta Erregistroak orriak "Gorde erregistroak fitxategi batean" du.
 
@@ -994,9 +998,11 @@ ZIPa egiaztatzeko, exekutatu `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-de
 2. **Hodeiko, USBko eta sareko karpetak.** OneDrive-k (edo beste hodei-unitate batek) linean soilik gordetzen dituen fitxategiak zenbatu egiten dira baina ez dira irakurtzen, beraz karpeta bat gehitzeak ez du zure hodei osoa deskargatzen: "Deskargatu eta sartu" aukerak eskuratzen ditu nahi dituzunean. Beste letra batekin itzultzen den USB unitate batek bere argazkiak mantentzen ditu. Sareko karpetak, eta memoria-txartel edo USB unitate bateko karpetak (Windowsek hura atera ahal izan dezan), ez dira aldaketen bila zaintzen: erabili Freskatu bertan fitxategiak gehitu ondoren.
 3. **Begiratu inguruan 360° argazki batean**: arrastatu saguarekin, egin zoom gurpilarekin, klik bikoitz batekin edo + eta - teklekin (edozein teklatu-diseinutan, AZERTY barne), mugitu gezi-teklekin. F edo F11 teklak pantaila osora pasatzen du eta Escape teklak irteten da; Home eta End teklek lehen eta azken argazkira eramaten dute; I teklak xehetasunak erakusten ditu.
 4. **Joan argazkitik argazkira**: argazki lau batean, ezkerreko eta eskuineko geziek, edo sagua mugitzean ertzetan agertzen diren txebroiek, aurrekora eta hurrengora eramaten dute. Deskribapen-eremuan idatzitako letrak testuan geratzen dira.
-5. **Partekatu ordenagailua betaurrekoekin**: ireki Liburutegia, ondoren Sareko partekatzeak; lehen lauza "Partekatu ordenagailu hau sarean" da, [Partekatu telefono hau sarean](#share-this-phone-on-the-network) atalaren ordenagailuko aldea. Aktibatu "Partekatu argazkiak eta bideoak sarean", eta gero gehitu ordenagailua betaurrekoetan atal horrek dioen bezala. Partekatzea gelditu egiten da aplikazioa ixten denean edo ordubete erabili gabe egon ondoren.
-6. **Baimendu sarea**: Windowsek galde dezake ea Immuch360 Desktop-ek sarea erabil dezakeen. Baimendu sare pribatuetan, bestela betaurrekoek ezin dute ordenagailua aurkitu. Windowsek publiko gisa markatzen duen sare batean (kafetegi bat, hotel bat), edo mota zein den jakin ezin duen batean, partekatzea ez da abiarazten "Partekatu saio honetarako" aukeratzen ez baduzu, eta ordenagailuak partekatzen duen sarean bakarrik iragartzen du bere burua.
-7. **Ezarpenak, "Ordenagailu hau"**: karpetak, deskargen karpeta, partekatzeak aurkitzeko eta ordenagailua partekatzeko erabiltzen den sare-egokigailua (bat baino gehiago dituenean, Wi-Fi eta Ethernet adibidez), eta ziurtagiri fidagarriak: zure zerbitzariaren ziurtagiri-agintaritza, PEM fitxategi gisa, Windowsek berez fidatzen ez duen HTTPS helbide baterako. Bezero-ziurtagiriak Ezarpenak, Aurreratua atalean inportatzen dira, telefonoetan bezala.
+5. **Erreproduzitu bideo bat**: ireki denbora-lerrotik, karpeta batetik, partekatze batetik, Plexetik edo Tapo kamera baten grabazioetatik; leihoan erreproduzitzen da. Enter teklak, edo teklatuaren erreproduzitu eta pausatu teklak, pausatu eta berriro erreproduzitzen du. Erreproduzitzen ari den bitartean, ezkerreko eta eskuineko geziek, edo J eta L teklek, 10 segundo atzera edo aurrera egiten dute; pausatuta, geziek aurrekora eta hurrengora eramaten dute. F edo F11 teklak pantaila osora pasatzen du, argazkietan bezala. "Audio-pista" botoiak hainbat dituen bideo baten audio-pisten artean aukeratzen du.
+6. **Bideo bat gelditzen denean**: pausatutako bideo bat pausatuta geratzen da leihora itzultzen zarenean. Amaiera baino lehen eten den bideo batek hala dio, adibidez partekatzeak edo zerbitzariak erantzuteari uzten dionean: ireki berriro eta gelditu zen tokitik jarraitzen du, pausatuta. Karpeta batean edo partekatze batean aurkitutako erreprodukzio-zerrenda fitxategi bati ez zaio jarraitzen.
+7. **Partekatu ordenagailua betaurrekoekin**: ireki Liburutegia, ondoren Sareko partekatzeak; lehen lauza "Partekatu ordenagailu hau sarean" da, [Partekatu telefono hau sarean](#share-this-phone-on-the-network) atalaren ordenagailuko aldea. Aktibatu "Partekatu argazkiak eta bideoak sarean", eta gero gehitu ordenagailua betaurrekoetan atal horrek dioen bezala. Partekatzea gelditu egiten da aplikazioa ixten denean edo ordubete erabili gabe egon ondoren.
+8. **Baimendu sarea**: Windowsek galde dezake ea Immuch360 Desktop-ek sarea erabil dezakeen. Baimendu sare pribatuetan, bestela betaurrekoek ezin dute ordenagailua aurkitu. Windowsek publiko gisa markatzen duen sare batean (kafetegi bat, hotel bat), edo mota zein den jakin ezin duen batean, partekatzea ez da abiarazten "Partekatu saio honetarako" aukeratzen ez baduzu, eta ordenagailuak partekatzen duen sarean bakarrik iragartzen du bere burua.
+9. **Ezarpenak, "Ordenagailu hau"**: karpetak, deskargen karpeta, partekatzeak aurkitzeko eta ordenagailua partekatzeko erabiltzen den sare-egokigailua (bat baino gehiago dituenean, Wi-Fi eta Ethernet adibidez), eta ziurtagiri fidagarriak: zure zerbitzariaren ziurtagiri-agintaritza, PEM fitxategi gisa, Windowsek berez fidatzen ez duen HTTPS helbide baterako. Bezero-ziurtagiriak Ezarpenak, Aurreratua atalean inportatzen dira, telefonoetan bezala.
 
 ### Telefonoko aplikazioekin alderatuta
 
@@ -1005,20 +1011,24 @@ ZIPa egiaztatzeko, exekutatu `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-de
 - **Leiho bakarra**: aplikazioa bigarren aldiz irekitzeak lehen leihoa itzultzen du, bigarren kopia bat abiarazi ordez.
 - **Ez da ezer ezabatzen zure karpetetatik**: "Ezabatu gailutik" ezkutatuta dago, eta Ezabatu aukerak zerbitzariko kopia bakarrik kentzen du, aplikazioak fitxategiak Windowsen birziklapen-ontzira bidali ahal izan arte.
 - **Sagua eta teklatua** ukipenaren eta giroskopioaren ordez.
+- **Bideo-erreproduzitzaile bakarra iturri guztietarako**: libmpv-k berdin erreproduzitzen ditu zerbitzariko, karpetetako, partekatzeetako eta Plexeko bideoak, eta bere erreproduzitzaile lauak badu jada telefonoetako erreproduzitzaile lauak oraindik ez duen audio-pisten menua.
 
 <a id="not-there-yet"></a>
 ### Oraindik ez
 
-- **Bideoak**: oraingoz leku-marka bat erakusten dute, eta haien miniaturek film-ikono bat. Erreprodukzioa da hurrengoa: lehenik bideo lauak, gero 360°, 3D eta VR180 bideoak eta 360° bideo gordinak.
+- **360°, 3D, VR180 eta 360° bideo gordinak**: oraingoz lau erakusten dira, fitxategiak gordetzen dituen bezala (esfera osoa zabalduta, bi begiak elkarren ondoan, edo objektiboen irudi biribilak), edo leku-marka gisa, eta 360° botoia argazkietan geratzen da. Haien erreproduzitzaileak hurrengo mahaigaineko konpilazioekin etorriko dira.
 - **Spatial 2.5D**, geroago web-kamerarekin; **Tapo zuzeneko ikuspegia**; **mapa** eta Lekuak ikuspegia; **OAuth bidezko saio-hasiera** (hasi saioa posta elektroniko eta pasahitz batekin horren ordez); **Google Cast**; **jakinarazpenak**.
 - **Instalatzaile bat, konpilazio sinatu bat eta eguneratze automatikoak**: konpilazio hau `immuch360.exe` duen karpeta bat da.
-- **Linux eta macOS**: haien proiektuak iturburu-kodean daude, baina oraindik ez dira sistema horietan eraiki ez probatu; Windowsen ondoren etorriko dira.
+- **Linux eta macOS**: haien proiektuak iturburu-kodean daude, baina oraindik ez dira sistema horietan eraiki ez probatu, eta haien bideo-erreproduzitzailea oraindik ez dago bertan; Windowsen ondoren etorriko dira.
 - **Itzulpenak**: ordenagailuko bertsioaren testu berriak ingelesez daude oraingoz.
 
 ### Arazo ezagunak
 
-- **Betaurrekoek ordenagailu partekatuko fitxategi bat irakurtzen duten bitartean** (erreproduzitzen duten bideo bat, deskargatzen duten argazki bat), Windowsek ezin du fitxategi hori berrizendatu, mugitu edo ezabatu, eta Immuch360 Desktop-en irekita dagoela dio: gelditu lehenik erreprodukzioa. Babeskopiek ez dituzte zure fitxategiak horrela blokeatzen: fitxategi bat berrizenda, mugi edo ezaba daiteke igotzen ari den bitartean.
-- **Ertz zakarrak**: goiko funtzioek beren proba automatikoak gainditzen dituzte Windowsen (mahaigaineko 475 proba), eta Windows 11 PC batean aplikazioa abiarazi egiten da, Immich zerbitzari bateko saio gorde bat irekitzen du, sinkronizatzen du eta behar bezala ixten da. Funtzio guztien eskuzko proba PC erreal batean abian da oraindik.
+- **Konpilazio berri baten lehen abiaraztea motela da**: 10 segundotik minutu bat ingurura leihoa agertu aurretik, seguruenik Microsoft Defender fitxategi berriak eskaneatzen ari den bitartean, oraindik sinatuta ez daudenak. Itxaron leihoari aplikazioa berriro abiarazi beharrean; hurrengo abiarazteek segundo bat edo bi behar dituzte.
+- **8K HEVC bideoek txip grafiko dedikatu bat behar dute**: probako eramangarrian, Intel UHD txip integratuak 8K HEVC bideo baten fotogramen erdia inguru erakusten zuen, NVIDIA txip dedikatuak 8K HEVC eta 5.7K H.264 fotogramarik galdu gabe erreproduzitzen zituen bitartean. Windowsek aplikazioa txip integratuan exekutatzen du kontrakoa esaten ez bazaio: Windowsen ezarpenetan, System, Display, Graphics, gehitu `immuch360.exe` eta aukeratu "High performance". Txip integratuan, bere deskodetzaileak baztertzen duen 5.7K H.264 bideo bat prozesadoreak deskodetzen du fotogramarik galdu gabe.
+- **Bideoak gehienez 1440 lerroko altueran marrazten dira**, gero leihora eskalatzen dira: 4K pantaila batean pantaila osoan, 4K edo 8K bideo bat bideo-erreproduzitzaile dedikatu batean baino zertxobait leunagoa da. Horrela 8K bideo bat eramangarri baten ahalmen grafikoaren barruan geratzen da.
+- **Zure karpetetako bideo bat aplikazioan erreproduzitzen ari den bitartean, edo betaurrekoek ordenagailu partekatuko fitxategi bat irakurtzen duten bitartean** (erreproduzitzen duten bideo bat, deskargatzen duten argazki bat), Windowsek ezin du fitxategi hori berrizendatu, mugitu edo ezabatu, eta Immuch360 Desktop-en irekita dagoela dio: itxi lehenik bideoa, edo gelditu erreprodukzioa betaurrekoetan. Babeskopiek ez dituzte zure fitxategiak horrela blokeatzen: fitxategi bat berrizenda, mugi edo ezaba daiteke igotzen ari den bitartean.
+- **Ertz zakarrak**: mahaigaineko 663 probetatik 656 gainditzen dira Windowsen (7 nahita saltatzen dira), bata bestearen atzetik irekitako 200 erreproduzitzailek ez dute ihesik uzten, eta Windows 11 PC batean aplikazioa abiarazi egiten da, Immich zerbitzari bateko saio gorde bat irekitzen du, sinkronizatzen du, bideo bat erreproduzitzen du eta behar bezala ixten da. Funtzio guztien eskuzko proba PC erreal batean abian da oraindik.
 
 Zerbait gaizki badoa, ireki [arazo-txosten](https://github.com/freeKC/Immuch360/issues) bat Erregistroak orritik gordetako erregistroarekin, ikusi [Erregistroak](#logs). Egiaztatu erregistroa partekatu aurretik: zure zerbitzariaren helbidea izan dezake.
 
@@ -1027,19 +1037,17 @@ Zerbait gaizki badoa, ireki [arazo-txosten](https://github.com/freeKC/Immuch360/
 
 Hau behar duzu: Windows 10 edo 11 x64 gainean, Flutter 3.47.2 Windowserako, Visual Studio 2022 edo bere Build Tools "Desktop development with C++" lan-kargarekin, Garatzaile modua aktibatuta Windowsen ezarpenetan (Flutter-ek pluginetarako behar du), eta Python 3 paketatze-scripterako.
 
-1. Lortu `desktop` adarra eta exekutatu kode-sorkuntza. Java eta Node erabiltzen ditu, beraz exekutatu Linuxen, macOSen edo WSLn; WSLrekin, gorde klona Windows unitate batean, WSLk `/mnt/c` edo `/mnt/d` azpian ikusten duena:
+1. Lortu iturburu-kodea eta exekutatu kode-sorkuntza. Adar nagusiak, `immuch360`, ordenagailuko bertsioa ere eraikitzen du: ez dago aldatu beharreko adarrik. Kode-sorkuntzak Java eta Node erabiltzen ditu, beraz exekutatu Linuxen, macOSen edo WSLn; WSLrekin, gorde klona Windows unitate batean, WSLk `/mnt/c` edo `/mnt/d` azpian ikusten duena:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. Windowsen, `mobile` karpeta berean, eraiki aplikazioa:
+2. Windowsen, `mobile` karpeta berean, eraiki aplikazioa. Lehen konpilazioak bideo-erreproduzitzailearen liburutegiak (libmpv eta ANGLE) GitHub-etik deskargatzen ditu eta artxibo bakoitza bere SHA-256 bidez egiaztatzen du:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Hau behar duzu: Windows 10 edo 11 x64 gainean, Flutter 3.47.2 Windowserako, Visu
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. `Release` karpetak hura eraiki zuen PCan funtzionatzen du. Beste PC baterako, gorde karpeta osoa eta gehitu Visual C++ exekuzio-ingurunea `immuch360.exe` fitxategiaren ondoan. Klonaren erroan, paketatze-scriptak hura kopiatzen du, Androidi bakarrik balio diona kanpoan uzten du, aplikazioak kargatzen duen DLL bakoitza karpetan edo Windowsen bertan dagoela egiaztatzen du, eta ZIPa sortzen du:
+3. `Release` karpetak hura eraiki zuen PCan funtzionatzen du. Beste PC baterako, gorde karpeta osoa eta gehitu Visual C++ exekuzio-ingurunea `immuch360.exe` fitxategiaren ondoan. Klonaren erroan, paketatze-scriptak hura kopiatzen du, Androidi bakarrik balio diona kanpoan uzten du, bideo-erreproduzitzailearen lizentziak gehitzen ditu, aplikazioak kargatzen duen DLL bakoitza karpetan edo Windowsen bertan dagoela egiaztatzen du, eta ZIPa sortzen du:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-`desktop` adarraren CIak (`.github/workflows/immuch360-desktop.yml`) telefonoko kontrolak eta proba-multzo osoa exekutatzen ditu Linuxen, mahaigaineko probak Windowsen, eta ZIP bera eraikitzen du; bere Linux eta macOS lanak (`flutter build linux` eta `flutter build macos`, `-t lib/main_desktop.dart` berarekin) oraindik ez dira sistema horietan exekutatu.
+Immuch360 Desktop-en CIa (`.github/workflows/immuch360-desktop.yml`) `desktop` adarrean exekutatzen da, `immuch360` jarraitzen duena: telefonoko kontrolak (ezer ez da aldatzen telefonoko konpilazioetan) eta proba-multzo osoa Linuxen, mahaigaineko probak Windowsen, eta ZIP bera; bere Linux eta macOS lanak (`flutter build linux` eta `flutter build macos`, `-t lib/main_desktop.dart` berarekin) oraindik ez dira sistema horietan exekutatu.
 
 <a id="where-to-get-it"></a>
 ## Non lortu
@@ -1075,8 +1083,8 @@ Aplikazioa Google Play-n dago telefono eta tabletetarako; App Store-ko bertsioa 
   - Gaur: [Releases](https://github.com/freeKC/Immuch360/releases) orriko `Immuch360-v<version>-release.apk` unibertsala, adb-rekin eskuz instalatua, ikusi [Instalatu telebistan](#install-it-on-the-tv). Telefonoetako aplikazio bera da.
   - Laster: Google Play telebistetan, telebistarako bertsioaren Google-ren berrikuspenaren ondoren.
 - **Windows 10 eta 11, 64 bit (aurrebista)**
-  - Gaur: Immuch360 Desktop, [mahaigaineko aurre-bertsioaren](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` ZIPa, deskonprimitua eta abiarazia [Deskargatu eta instalatu Windowsen](#download-and-install-on-windows) atalak dioen bezala. Oraingoz argazkiak bakarrik: bideoak hurrengo mahaigaineko konpilazioekin etorriko dira.
-  - Laster: bideo-erreprodukzioa; instalatzaile bat, konpilazio sinatu bat eta eguneratzeak geroago.
+  - Gaur: Immuch360 Desktop, [mahaigaineko aurre-bertsioaren](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIPa, deskonprimitua eta abiarazia [Deskargatu eta instalatu Windowsen](#download-and-install-on-windows) atalak dioen bezala. Oraingoz argazkiak eta bideo lauak: 360°, 3D eta VR180 bideoak hurrengo mahaigaineko konpilazioekin etorriko dira.
+  - Laster: 360°, 3D, VR180 eta 360° bideo gordinak; instalatzaile bat, konpilazio sinatu bat eta eguneratzeak geroago.
 
 App Store eta Meta Horizon Store-ko estekak hemen gehituko dira fitxak argitaratu bezain laster. Hasi saioa zure Immich zerbitzariaren ohiko URLarekin eta kontuarekin, edo sakatu "Erabili zerbitzaririk gabe" saioa hasteko orrian gailuaren argazki eta bideoekin hasteko. GitHub-eko APKa ez da bere kabuz eguneratzen: begiratu Releases orria, eta aplikazioa denda batetik instalatu ondoren, hartu eguneratzeak denda horretatik.
 
@@ -1105,15 +1113,15 @@ Android-eko bi aldaerak (flavours) aplikazio bera dira. 20. konpilaziotik aurrer
 
 iOSerako zure Mac-ean konpilatzeko, erabili Xcode eta zure sinatze-taldea; Xcode 26rekin, exekutatu `xcodebuild -downloadComponent MetalToolchain` behin lehenik, Spatial shader-ek behar dutelako. Mac-ik gabe, iOS konpilazioak Codemagic-en exekutatzen dira (ostatatutako Mac bat) biltegi honetako `codemagic.yaml` fitxategitik. Android-eko bertsio-konpilazioak GitHub Actions-en exekutatzen dira (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, Windowserako bertsioa, `desktop` adarretik eraikitzen da Windowserako Flutter-ekin: urratsak [Eraiki zuk zeuk Windowsen](#build-it-yourself-on-windows) atalean daude.
+Immuch360 Desktop, Windowserako bertsioa, iturburu-kode beretik eraikitzen da, `immuch360` adarretik, Windowserako Flutter-ekin: urratsak [Eraiki zuk zeuk Windowsen](#build-it-yourself-on-windows) atalean daude.
 
 Ez dago sekreturik biltegi honetan: Android-eko sinatze-gakoa GitHub Actions-eko sekretu zifratu gisa gordetzen da, eta Apple-ren sinatze-materiala Codemagic-eko aldagai zifratu gisa. Lan-fluxuen fitxategiek izenez bakarrik aipatzen dituzte. Zure `android/key.jks` propiorik gabe, bertsio-konpilazio bat arazketa-gakoarekin sinatzen da eta ezin da instalatu GitHub-eko edo denda bateko kopia baten gainean (desinstalatu hori lehenik); arazketa-konpilazio bat haren ondoan instalatzen da Immuch360 debug izenarekin. Meta Horizon Store-ko kopia bertsioaren `quest` APKa da beste gako batekin sinatua, dendako aplikazioa lehen aldiz erregistratu zenekoarekin, beraz ezin da instalatu eskuz instalatutako APK baten gainean, ezta alderantziz ere.
 
 ### Adarrak
 
 - **`main`**: Immich `main`, `immuch360` oinarritzen den commit-ean (2026ko irailaren 29a uneko konpilazioetarako), inoiz aldatu gabea; aurrera egiten du fork-a Immich berriago baten gainean birbaseatzen denean.
-- **`immuch360`**: fork honen aldaketak Immich-en gainean. Bertsio bakoitzak zein Immich bertsiotan oinarritzen den esaten du.
-- **`desktop`**: Immuch360 Desktop, ordenagailuko bertsioa, `immuch360`-ren gainean. Telefonoko bertsioak bertan batzen dira, eta mahaigaineko aurre-bertsioak bertatik eraikitzen dira (desktop build 1, 21f285c34 commit-etik, telefonoko 20. konpilazioa gehi ordenagailuko bertsioa). `mobile/android` eta `mobile/ios` azpiko ezer ez da aldatzen bertan.
+- **`immuch360`**: fork honen aldaketak Immich-en gainean, Immuch360 Desktop barne 2026ko urriaren 9az geroztik. Bertsio bakoitzak zein Immich bertsiotan oinarritzen den esaten du.
+- **`desktop`**: Immuch360 Desktop, ordenagailuko bertsioa, `immuch360`-ren gainean eraiki zen tokia, 2026ko urriaren 9an hartan batu zen arte, telefonoak, betaurrekoak, telebistak eta ordenagailuak iturburu-kode beretik atera daitezen. Orain `immuch360` jarraitzen du eta mahaigaineko aurre-bertsioen etiketak ditu ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), 21f285c34 commit-etik, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), 5b723bd25-etik). Ordenagailuko bertsioak ez du ezer aldatzen `mobile/android` eta `mobile/ios` azpian.
 
 <a id="logs"></a>
 ## Erregistroak
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 DLNA bezeroak, telefono-partekatzeak eta Apple-ren multimedia espazialaren detekzioak ere aplikazioaren erregistro propioan idazten dute 19. konpilaziotik aurrera ("Erregistroak", goian eskuineko profil-irudiaren menuan), `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` eta `NetworkMediaService` azpian. 20. konpilaziotik aurrera telebista-moduak han idazten du `TvMode` eta `TvTextEntry` azpian, Plex zerbitzariek `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` eta `PlexServerEditPage` azpian, eta Tapo kamerek `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` eta `CameraLiveView` azpian; Plex lerroek ez dute inoiz tokenik, helbiderik edo izenbururik, eta kamera-lerroek pasahitzak kanpoan uzten dituzte. Erregistro-lerroak gailuan geratzen dira zuk zeuk kopiatzen ez badituzu.
 
-Ordenagailu batean (Immuch360 Desktop), Erregistroak orriak "Gorde erregistroak fitxategi batean" ere badu: erregistroa, edo erregistroaren eta azken hutsegiteen txostenen ZIP bat, halakorik dagoenean (orduan bere izen proposatua "with-crash-reports" amaiera du). Hutsegite-txosten bat minidump txiki bat da: hariak, non gelditu ziren eta haien deiei jarraitzeko behar dena bakarrik, programaren fitxategien izenekin baina ez haien karpetekin; ez aplikazioaren memoria. Egiaztatu erregistroa partekatu aurretik: zure zerbitzariaren helbidea izan dezake.
+Ordenagailu batean (Immuch360 Desktop), Erregistroak orriak "Gorde erregistroak fitxategi batean" ere badu: erregistroa, edo erregistroaren eta azken hutsegiteen txostenen ZIP bat, halakorik dagoenean (orduan bere izen proposatua "with-crash-reports" amaiera du). Hutsegite-txosten bat minidump txiki bat da: hariak, non gelditu ziren eta haien deiei jarraitzeko behar dena bakarrik, programaren fitxategien izenekin baina ez haien karpetekin; ez aplikazioaren memoria.
+
+Desktop build 2-tik aurrera ordenagailuko bideo-erreproduzitzaileak bertan idazten du `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` eta `VideoThumbnailGrabber` etiketekin, mpv-ren beraren abisuak barne, tokenak eta pasahitzak kenduta. Egiaztatu erregistroa partekatu aurretik: zure zerbitzariaren helbidea izan dezake.
 
 <a id="privacy"></a>
 ## Pribatutasuna
@@ -1144,6 +1154,7 @@ Ordenagailu batean (Immuch360 Desktop), Erregistroak orriak "Gorde erregistroak 
 - **Telefono-partekatzea**: sare lokala bakarrik, erabiltzaile-izenarekin eta pasahitzarekin, HTTP soilaren bidez (ikusi [Partekatu telefono hau sarean](#share-this-phone-on-the-network)).
 - **Kamera**: Spatial 2.5D erreproduzitzaileak bakarrik erabiltzen du, gailuan; irudiak ez dira inoiz gordetzen ez inora bidaltzen.
 - **Ordenagailu batean** (Immuch360 Desktop, Windowserako aurrebista): aplikazioak zuk aukeratzen dituzun karpetak bakarrik irakurtzen ditu, bere indizea, miniaturak eta cachea ordenagailuan gordetzen ditu, eta pasahitzak eta tokenak Windowsen datu-babesarekin gordetzen ditu, zure Windows kontuarentzat bakarrik. Ordenagailuaren partekatzeak telefono-partekatzearen arauak jarraitzen ditu, eta ez da abiarazten Windowsek publiko gisa markatzen duen sare batean, edo mota zein den jakin ezin duen batean, zuk hala esaten ez baduzu.
+- **Bideo-erreproduzitzailea ordenagailu batean** (desktop build 2-tik aurrera): zure zerbitzariko bideoak aplikazioaren bidez iristen zaizkio, beraz erreproduzitzaileak ez du inoiz zure saio-tokena izaten, eta aldez aurretik irakurtzen duena memorian geratzen da, ez diskoan. Ematen zaion fitxategia bakarrik irekitzen du: karpeta bateko edo partekatze bateko fitxategi batek, benetan erreprodukzio-zerrenda bat edo fluxu-deskribapen bat denak, ez du beste inora konektarazten.
 
 Politika osoa [PRIVACY.md](../PRIVACY.md) fitxategian dago.
 
@@ -1152,12 +1163,14 @@ Politika osoa [PRIVACY.md](../PRIVACY.md) fitxategian dago.
 
 Proiektu hau Immich-en fork bat da eta [GNU AGPL v3](../LICENSE) lizentziapean jarraitzen du. APK guztiek, telefonokoak barne, Meta Spatial SDK ere badute, kode irekikoa ez dena (Meta Platform Technologies SDK License Agreement) eta Meta Quest betaurrekoetan bakarrik erabiltzen dena; Immuch360 Desktop-ek, Windowserako bertsioak, ez du. Immuch360 ez dago Immich taldearekin ez FUTO-rekin lotuta, ezta haiek babestuta ere.
 
+Immuch360 Desktop-en Windowserako ZIPak, eta hark bakarrik, bere bideo-erreproduzitzailea ere badakar: libmpv, [mpv](https://mpv.io)-ren liburutegia, [FFmpeg](https://ffmpeg.org) barnean duela, [media_kit](https://github.com/media-kit/media-kit)-en pluginek gidatua. mpv eta FFmpeg GPL soilik diren zatirik gabe eraikitzen dira, eta haien kodea GNU LGPL 2.1 bertsiopean edo berriagoan dago; elkarrekin eraikita, `libmpv-2.dll` GNU LGPL 3 bertsiopean edo berriagoan banatzen da. Aplikazioak exekuzio-garaian kargatzen du, beraz zure konpilazio propioarekin ordez dezakezu. Lizentzien testuak ZIPeko `licenses` karpetan daude, eta liburutegi bakoitza bere lizentziarekin eta iturburu-kodearekin [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md) fitxategian zerrendatuta dago.
+
 <a id="roadmap"></a>
 ## Bide-orria
 
 Oraindik egin gabe dagoena, litekeenena lehenik. Hemen ezer ez da promesa bat, eta [arazo-jarraitzailean](https://github.com/freeKC/Immuch360/issues) emandako iruzkinek lehenik zer datorren erabakitzen laguntzen dute.
 
-- **Immuch360 Desktop, Windows lehenik**: lehen aurrebista argitaratu da (ikusi [Windows ordenagailu batean](#on-a-windows-computer-immuch360-desktop-preview)). Hurrengoa, bideo-erreprodukzioa (lehenik bideo lauak, gero 360°, 3D, VR180 eta fitxategi gordinak), eramangarri baten bi txartel grafikoetan neurtua; gero funtzio bakoitzaren proba Windows PC batean eta haren zuzenketak; gero Spatial 2.5D web-kamerarekin; gero Linux eta macOS, paketeak, sinadura eta eguneratzeak.
+- **Immuch360 Desktop, Windows lehenik**: desktop build 2 argitaratu da, bideo lauekin, eta mahaigaineko iturburu-kodea fork-aren adar nagusian dago, `immuch360`, 2026ko urriaren 9az geroztik (ikusi [Windows ordenagailu batean](#on-a-windows-computer-immuch360-desktop-preview)). Hurrengoa, 360°, 3D, VR180 eta 360° bideo gordinak Windowsen, fitxategi gordinen bi objektiboekin eta Tapo zuzeneko ikuspegiarekin; gero funtzio bakoitzaren proba Windows PC batean eta haren zuzenketak; gero Spatial 2.5D web-kamerarekin; gero Linux eta macOS, paketeak, sinadura eta eguneratzeak.
 - **Google Play**: 18. konpilazioa argitaratuta dago; 20. konpilazioa Google-ren berrikuspenean dago 2026ko urriaren 7tik, 19. konpilazioaren ordez. 21. konpilazioak ez du ezer aldatzen telefono eta tabletetan.
 - **App Store**: 3.3.0 bertsioa Apple-ren berrikuspenaren zain dago; 11. konpilazioaren funtzioak ditu, beraz Immich-era igotzea eta bideo-deskodetzaileen egiaztapena (15. konpilazioa) eta Insta360 fitxategi gordinak (16. konpilazioa) App Store-ko hurrengo eguneratzearekin iritsiko dira. Esteka hemen gehituko da argitaratuta dagoenean.
 - **Meta Horizon Store**: Meta-k fitxa onartu zuen 2026ko urriaren 7an 14. konpilazioarekin. 21. konpilazioa bere lehen eguneratze gisa bidali da: 14. konpilaziotik hona dagoen guztia dakar (partekatze batetik Immich-era igoerak, betaurrekoek deskodetzen dutenaren arabera aukeratutako bideo-iturria, Insta360, GoPro eta DJI fitxategi gordinak, DLNA, telefonoaren partekatzea, Apple-ren argazki espazialak, Plex Media Server liburutegiak, Tapo kamerak), eta dendak Quest 2, Quest Pro, Quest 3 eta 3S betaurrekoetarako eskaintzen du. Dendako esteka hemen gehituko da orria publikoa denean; eskuz instalatutako kopia bat lehenik desinstalatu behar da (ikusi [Instalatu](#install)).
@@ -1166,7 +1179,7 @@ Oraindik egin gabe dagoena, litekeenena lehenik. Hemen ezer ez da promesa bat, e
 - **DLNA, telefono-partekatzea eta Apple-ren multimedia espaziala, hurrengo urratsak**: 19. konpilazioaren gailuetako txostenak (Plex, Jellyfin, NAS bat eta Freebox Server-a DLNA bidez; Quest bat zerbitzatzen duen telefono bat, bere sarbide-puntuan ere bai; iPhone-ko benetako argazki eta bideo espazialak betaurrekoetan); Apple-ri eskatutako multicast eskubidea, iPhone-ek DLNA zerbitzari guztiak aurki ditzaten; aurrekoa eta hurrengoa argazki espazialen artean betaurrekoetan; ikur espazial bat zerbitzariko argazkietan denbora-lerroan; bideo espazialak 3Dn Quest-ean, bere deskodetzaileek ahalbidetzen badute.
 - **360° erreproduzitzaileak telefonoetan, hurrengo urratsak**: denbora-barra bat iOS-eko 360° bideo-erreproduzitzailean (Android-ekoak badu), aurrekoa/hurrengoa telefonoetako 360° erreproduzitzaileetan Quest-eko ikuspegi murgiltzailean bezala, eta argazkiak 360° bideo-erreproduzitzaile natiboan.
 - **Sareko partekatzeak, hurrengo urratsak**: karpeta bateko fitxategi batetik hurrengora irristatzea argazki eta bideo-orrietan (Quest-eko ikuspegi murgiltzaileak jada karpeta bateko 360° fitxategiak zeharkatzen ditu), Digest autentifikazioa WebDAVerako, erabiltzaile-izena Bonjour erregistrotik.
-- **Bideo lauak**: audio-pistaren aukera erreproduzitzaile lauan, zerbitzariko, gailuko eta partekatzeetako bideoetarako berdin (360° eta Spatial erreproduzitzaileek badute).
+- **Bideo lauak**: audio-pistaren aukera telefonoetako erreproduzitzaile lauan, zerbitzariko, gailuko eta partekatzeetako bideoetarako berdin (360° eta Spatial erreproduzitzaileek badute, baita Immuch360 Desktop-en erreproduzitzaile lauak ere).
 - **Android TV, hurrengo urratsak**: 20. konpilazioaren gailuko proba Google TV emuladorean eta benetako telebista batean, ondoren telebistarako bertsioa Google Play-n (telebistako pantaila-argazkiak, telebistako bannerra, Google-ren berrikuspena); geroago, kanalak telebistaren hasierako pantailan.
 - **Tapo kamerak, hurrengo urratsak**: 20. konpilazioaren gailuko proba benetako kamerekin; zuzeneko ikuspegia iPhone eta iPad-en; H.265 grabazioak; klip bat ekartzen ari den bitartean erreproduzitzea; grabazio-egun oso bat denbora-lerro bakarrean.
 - **Plex, hurrengo urratsak**: 20. konpilazioaren gailuko proba (telefonoak, Quest-a, iPhone bat, telebista bat, etxetik kanpo); tokena ordenagailutik QR kode batekin ekartzea; Plex zerbitzari baten DLNA aldea ezkutatzea aurkitutako zerbitzarien zerrendan; IPv6.

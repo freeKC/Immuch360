@@ -19,13 +19,13 @@ Den är till för dig som fotograferar med en 360°-kamera (Insta360, GoPro MAX,
   App Store: <a href="#where-to-get-it">under granskning</a><br>
   Meta Quest: <a href="#meta-quest-3">APK</a>, Horizon Store godkänd, bygge 21 inskickat som dess första uppdatering<br>
   Android TV: <a href="#install-it-on-the-tv">APK</a><br>
-  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1">hämta förhandsversionen</a>
+  Windows: <a href="https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2">hämta förhandsversionen</a>, datorbygge 2
 </p>
 
 - 🌐 **Inbyggt 360°**<br>Foton och videor som en sfär du ser dig omkring i, med gyroskopet, även kamerans råfiler (Insta360 från bygge 16, GoPro och DJI från bygge 18). Dessutom en gratis videospelare: platt, 360°, 3D, VR180
 - 👓 **Inbyggt 3D**<br>Stereoskopisk 360° och VR180, topp och botten eller sida vid sida, och Apples spatiala foton (från bygge 19): äkta 3D i headsetet, ett öga på en telefon
 - 🎥 **Inbyggt 2.5D**<br>Djup på en platt skärm från en stereoskopisk video, vyn följer ditt huvud (experimentellt, telefoner och surfplattor)
-- 📱 **Android, iOS, Quest, TV**<br>En app på telefoner, surfplattor och headseten Quest 2, Pro, 3 och 3S, äkta 3D i headsetet, från bygge 20 på Android TV med fjärrkontrollen, och en förhandsversion för Windows
+- 📱 **Android, iOS, Quest, TV**<br>En app på telefoner, surfplattor och headseten Quest 2, Pro, 3 och 3S, äkta 3D i headsetet, från bygge 20 på Android TV med fjärrkontrollen, och en förhandsversion för Windows med foton och platta videor
 - 🔌 **Med eller utan server**<br>Din Immich-server, eller telefonens eget galleri, inget konto behövs
 - 🗄️ **Nätverksresurser**<br>Samba (SMB), WebDAV och, från bygge 19, DLNA-mediaservrar som hittas i nätverket och läses direkt, inget laddas ner, och skickas till Immich när du vill. Från bygge 19 delar en telefon också sitt eget galleri med headsetet
 - 📺 **På tv:n**<br>Från bygge 20 samma APK på Android TV och Google TV: 360°-foton och -videor, din server och dina resurser, med fjärrkontrollen
@@ -79,7 +79,7 @@ Den är till för dig som fotograferar med en 360°-kamera (Insta360, GoPro MAX,
 - **"Jag vill titta på mina 360°-foton och -videor, och videorna på min NAS eller min Plex-server, på tv:n, med fjärrkontrollen."** Se [Titta på din tv](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Jag hittar inte mina 360°-bilder bland alla andra."** Se [360°-listan](#find-your-360-shots-the-360-list).
 - **"Min 360°-video hackar, eller spelar en suddig kopia."** Se [Videodetaljer och avkodare](#video-details-decoders-and-why-a-video-stutters).
-- **"Jag vill ha mina 360°-foton och mitt Immich-bibliotek på min Windows-dator, med fotona i dess mappar, min NAS och min Plex-server, och dela datorn med mitt headset."** Se [På en Windows-dator](#on-a-windows-computer-immuch360-desktop-preview) (en förhandsversion, bara foton än så länge).
+- **"Jag vill ha mina 360°-foton och mitt Immich-bibliotek på min Windows-dator, med fotona och videorna i dess mappar, min NAS och min Plex-server, och dela datorn med mitt headset."** Se [På en Windows-dator](#on-a-windows-computer-immuch360-desktop-preview) (en förhandsversion: foton och platta videor än så länge, 360°-videor senare).
 - **"Behåller jag det som Immich-appen gör?"** Ja, med två små ändringar, se [Allt annat är Immich](#everything-else-is-immich).
 
 När en funktion är ny anger texten från vilket bygge den finns. GitHub-versionen har alltid det senaste bygget, butikerna kommer efter: se [Var du hämtar den](#where-to-get-it).
@@ -752,7 +752,7 @@ Det aktuella bygget, bygge 21 (version 3.3.0-rc.0, byggnummer 3030019), bygger p
 | Plex Media Server-bibliotek som spelas upp från originalfilerna, hemma och borta, utan plex.tv | ❌ | ✅ från bygge 20, alla visare, på telefoner, surfplattor, Quest och tv-apparater |
 | Tapo-kameror: livebilden, och inspelningarna på minneskortet som skickas till Immich när du vill | ❌ | ✅ från bygge 20: inspelningar överallt, live på Android, Android TV och Quest |
 | Android TV och Google TV, styrt med fjärrkontrollen, i samma APK | ❌ ingen tv-app | ✅ från bygge 20 |
-| Samma app på en Windows-dator | ❌ bara telefoner och surfplattor | ✅ förhandsversion, inga videor än |
+| Samma app på en Windows-dator | ❌ bara telefoner och surfplattor | ✅ förhandsversion, foton och platta videor |
 | Råa Insta360 .insp-foton och .insv-videor med ett spår | ❌ platt | ✅ från bygge 16 |
 | Råvideor med ett objektiv per spår eller per fil (Insta360 X4, X4 Air, X5, X6, X3-par, GoPro .360, DJI .osv) | ❌ platt eller fel | ✅ från bygge 18 |
 | Dubbel fisheye i .dng | ❌ platt | ❌ inte än |
@@ -782,7 +782,7 @@ Det aktuella bygget, bygge 21 (version 3.3.0-rc.0, byggnummer 3030019), bygger p
 - **Plex Media Server**: kontrollerat från en dator mot en riktig Plex Media Server 1.42.1 (parkoppling, mappar, byteintervall, miniatyrer, adressen utanför hemmet); ännu inte kontrollerat på en enhet.
 - **Tapo-kameror**: kontrollerat mot en simulerad kamera; ännu inte kontrollerat med en riktig kamera.
 - **Android TV och Google TV**: kontrollerat med automatiska tester; ännu inte kontrollerat på en tv.
-- **Samma app på en Windows-dator**: 475 automatiska skrivbordstester på Windows, och på en Windows 11-dator startar appen, öppnar en sparad session på en Immich-server, synkroniserar och stängs utan problem; testet av varje funktion för hand pågår.
+- **Samma app på en Windows-dator**: 656 av de 663 automatiska skrivbordstesterna klaras på Windows (7 hoppas över avsiktligt), och på en Windows 11-dator startar appen, öppnar en sparad session på en Immich-server, synkroniserar, spelar upp en video och stängs utan problem; testet av varje funktion för hand pågår.
 - **Råa Insta360 .insp-foton och .insv-videor med ett spår**: foton kontrollerade mot exporter från Insta360 Studio av X3-filer, videor på en Android-emulator med en X3-fil i låg upplösning; ännu inte kört på en iPhone.
 - **Råvideor med ett objektiv per spår eller per fil**: tolkare och ihopfogning kontrollerade på riktiga filer från X4, X3-par, GoPro MAX och Osmo 360; uppspelningen ingår i testet på riktiga enheter för byggena 18 och 19.
 - **Dubbel fisheye i .dng**: planerat.
@@ -825,16 +825,19 @@ Immuch360 är ett galleri, och det är också en gratis mediaspelare: den spelar
   - iPhone, iPad: samma, utom MKV- och AVI-filer på en resurs, som iOS inte öppnar (på en server spelas de omkodade).
   - Meta Quest: i fönstret.
   - Android TV, Google TV: som på telefoner; OK pausar, vänster och höger hoppar 10 s.
+  - Windows (från datorbygge 2): libmpv-spelaren, från alla källor i den andra listan; Enter pausar, vänster och höger eller J och L hoppar 10 s.
 - **360°-foton**
   - Android-telefoner: sfärvisare, gyroskop.
   - iPhone, iPad: samma.
   - Meta Quest: immersivt, runt omkring dig.
   - Android TV, Google TV: sfärvisare som vrids med pilarna, zoomas med kanalknapparna.
+  - Windows: sfärvisare, mus och tangentbord.
 - **360°-videor**
   - Android-telefoner: inbyggd Media3-spelare på en sfär, gyroskop, spolning, val av ljudspår, buffringsindikator.
   - iPhone, iPad: inbyggd SceneKit-spelare på en sfär, gyroskop, val av ljudspår, buffringsindikator; spela upp och pausa, inget tidsreglage än.
   - Meta Quest: immersivt, äkta 3D för stereoskopiska filer, tidsreglage med hopp på 10 sekunder, föregående och nästa media.
   - Android TV, Google TV: telefonernas Media3-spelare, vriden med pilarna.
+  - Windows: inte än, visas platt tills vidare.
 - **3D 360° (topp och botten, sida vid sida)**
   - Android-telefoner: vänster öga, layoutknapp.
   - iPhone, iPad: samma.
@@ -888,7 +891,7 @@ Immuch360 är ett galleri, och det är också en gratis mediaspelare: den spelar
 
 Posterna för Android TV och Google TV, från bygge 20, har inte kontrollerats på en tv än, se [Titta på din tv](#watch-on-your-tv-android-tv-and-google-tv); posterna om kameror har inte kontrollerats med en riktig kamera än.
 
-På Windows visar förhandsversionen av Immuch360 Desktop fotona, platta och 360°, även råa Insta360 .insp-foton, med mus och tangentbord, från servern, datorns mappar, resurserna och Plex; den spelar inte upp videor än, de visar en platshållare (se [Inte där än](#not-there-yet)).
+På Windows visar förhandsversionen av Immuch360 Desktop fotona, platta och 360°, även råa Insta360 .insp-foton, med mus och tangentbord, och från datorbygge 2 spelar den upp platta videor, från servern, datorns mappar, resurserna, Plex och Tapo-inspelningarna; 360°-, 3D-, VR180- och råa 360°-videor visas platt eller som en platshållare tills vidare (se [Inte där än](#not-there-yet)).
 
 - **Din Immich-server**: originalet eller serverns omkodade ström, så som Inställningar, Objektvisare, Videokälla säger (se [Videodetaljer och avkodare](#video-details-decoders-and-why-a-video-stutters)). Samma konto som webbappen.
 - **Själva telefonen eller headsetet**: "Använd utan server" på inloggningssidan, eller posten På enheten på fliken Bibliotek.
@@ -959,24 +962,24 @@ Skärmbilder tagna i headsetet med skärmbildsknappen (Meta-knappen och avtrycka
 <a id="on-a-windows-computer-immuch360-desktop-preview"></a>
 ## På en Windows-dator: Immuch360 Desktop (förhandsversion)
 
-Ditt Immich-bibliotek finns på en server, andra foton ligger i datorns mappar, videorna på en NAS eller en Plex-server, och du vill se dig omkring i dina 360°-foton på en stor skärm, eller visa datorns foton i headsetet. Immuch360 Desktop är samma app på en Windows-dator, byggd från samma källkod som telefonapparna.
+Ditt Immich-bibliotek finns på en server, andra foton och videor ligger i datorns mappar, fler videor på en NAS eller en Plex-server, och du vill se dig omkring i dina 360°-foton och spela upp dina videor på en stor skärm, eller visa datorns foton i headsetet. Immuch360 Desktop är samma app på en Windows-dator, byggd från samma källkod som telefonapparna.
 
-På en dator erbjuder Immich sin webbapp i en webbläsare. **Det Immuch360 Desktop lägger till**: datorns mappar utan någon server eller något konto, SMB-, WebDAV-, DLNA- och Plex-resurser som du bläddrar i från appen, råa Insta360 .insp-foton som öppnas som en sfär, och datorn delad med en Meta Quest hemma.
+På en dator erbjuder Immich sin webbapp i en webbläsare. **Det Immuch360 Desktop lägger till**: datorns mappar utan någon server eller något konto, SMB-, WebDAV-, DLNA- och Plex-resurser som du bläddrar i och spelar upp från appen, råa Insta360 .insp-foton som öppnas som en sfär, och datorn delad med en Meta Quest hemma.
 
-Det här första bygget är en förhandsversion: foton fungerar, videor kommer med nästa datorbyggen. Apparna för telefon, surfplatta, Quest och tv ändras inte av det och behåller namnet Immuch360.
+Det här är en förhandsversion: från datorbygge 2 fungerar foton och platta videor; 360°-, 3D- och VR180-videor kommer med nästa datorbyggen. Sedan den 9 oktober 2026 finns datorns källkod i forkens huvudgren, `immuch360`, så telefoner, headset, tv-apparater och datorer levereras från samma källkod. Apparna för telefon, surfplatta, Quest och tv ändras inte av det och behåller namnet Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Ladda ner och installera på Windows
 
-Det första bygget är förhandsversionen på GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 1 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1). Filen är `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` (33,5 MB, 65 filer när den packats upp), med `SHA256SUMS.txt` för att kontrollera den. Den byggdes från grenen `desktop` vid commit 21f285c34: telefonbygge 20 plus datorversionen. Den kräver Windows 10 eller 11, 64 bitar.
+Det aktuella bygget är förhandsversionen på GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Filen är `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (ungefär 57 MB, 78 filer när den packats upp, videospelaren och dess mapp `licenses` inräknade), med `SHA256SUMS.txt` för att kontrollera den. Den byggdes från huvudgrenen, `immuch360`, vid commit 5b723bd25: källkoden för telefonbygge 21 plus datorversionen. Den kräver Windows 10 eller 11, 64 bitar.
 
 1. Ladda ner ZIP-filen och packa upp den var som helst, till exempel i Dokument.
-2. Starta `immuch360.exe` från den uppackade mappen. Behåll mappen hel: programmet behöver filerna bredvid sig.
+2. Starta `immuch360.exe` från den uppackade mappen. Behåll mappen hel: programmet behöver filerna bredvid sig, videospelaren inräknad.
 3. Filerna är inte signerade än, så Windows SmartScreen kan visa "Windows skyddade datorn": välj "Mer information" och sedan "Kör ändå". Där Smart App Control är påslaget blockeras osignerade program.
 4. Vänta på fönstret. Den första starten av ett nytt bygge tar från 10 sekunder till ungefär en minut, troligen medan Microsoft Defender genomsöker de nya filerna: starta inte appen igen under tiden. Följande starter tar en eller två sekunder.
 5. På inloggningssidan loggar du in på din Immich-server med dess adress, din e-postadress och ditt lösenord, eller klickar på "Använd utan server".
 
-För att kontrollera ZIP-filen kör du `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip SHA256` i en kommandotolk, i mappen där nedladdningen ligger: resultatet är det som står i `SHA256SUMS.txt`. Det finns ännu ingen installerare och ingen automatisk uppdatering: håll koll på sidan [Releases](https://github.com/freeKC/Immuch360/releases), och packa upp nästa bygge på samma sätt.
+För att kontrollera ZIP-filen kör du `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` i en kommandotolk, i mappen där nedladdningen ligger: resultatet är det som står i `SHA256SUMS.txt`. Det finns ännu ingen installerare och ingen automatisk uppdatering: håll koll på sidan [Releases](https://github.com/freeKC/Immuch360/releases), och packa upp nästa bygge på samma sätt.
 
 ### Vad förhandsversionen gör
 
@@ -984,7 +987,8 @@ För att kontrollera ZIP-filen kör du `certutil -hashfile Immuch360-Desktop-3.3
 - **Utan server**: mapparna med dina foton och videor (Bilder och Videoklipp föreslås) ersätter en telefons galleri. Ingenting läses utanför mapparna du har valt, och utan server lämnar ingenting datorn.
 - **Uppladdning och säkerhetskopiering** från de mapparna till din Immich-server, medan appen är öppen.
 - **360°-foton som en sfär**, med mus och tangentbord; de råa .insp-fotona från Insta360-kameror öppnas som på telefoner.
-- **Nätverksresurser**: Samba (SMB), WebDAV och DLNA-mediaservrar, och Plex-servrar utan plex.tv, som du bläddrar i som på telefoner: deras foton öppnas, deras videor väntar på videospelaren (se [Inte där än](#not-there-yet)). För Tapo-kameror, inspelningarna på minneskortet: listan, och hämtning av ett klipp.
+- **Platta videor** (från datorbygge 2): videorna i dina mappar, på din Immich-server (originalet eller den omkodade strömmen, se [Videodetaljer och avkodare](#video-details-decoders-and-why-a-video-stutters)), på SMB-, WebDAV- och DLNA-resurser, på Plex-servrar och Tapo-inspelningarna spelas upp i fönstret, med telefonernas kontroller (spela upp, pausa, tidslinjen), en buffringsindikator, och en meny med ljudspåren för en video som har flera. Videorna i dina mappar och på resurserna visar en bildruta ur videon som miniatyr, i stället för en filmikon.
+- **Nätverksresurser**: Samba (SMB), WebDAV och DLNA-mediaservrar, och Plex-servrar utan plex.tv, som du bläddrar i som på telefoner: deras foton öppnas och deras videor spelas upp. För Tapo-kameror, inspelningarna på minneskortet: listan, hämtning av ett klipp och uppspelning av det.
 - **Dela den här datorn i nätverket**: albumen, månaderna och 360°-medierna i dina mappar, skrivskyddade, för en Meta Quest eller en annan enhet hemma, på samma sätt som en telefon delar sig själv.
 - **Filer**: nedladdningar från servern hamnar i en mapp du väljer, "Spara i en mapp" behåller en kopia av de valda fotona och videorna, och sidan Loggar har "Spara loggar till en fil".
 
@@ -994,9 +998,11 @@ För att kontrollera ZIP-filen kör du `certutil -hashfile Immuch360-Desktop-3.3
 2. **Moln-, USB- och nätverksmappar.** Filer som OneDrive (eller en annan molnlagring) bara behåller online räknas men läses inte, så att lägga till en mapp hämtar inte hela ditt moln: "Hämta och ta med" hämtar dem när du vill ha dem. En USB-enhet som kommer tillbaka under en annan bokstav behåller sina foton. Nätverksmappar, och mappar på ett minneskort eller en USB-enhet (så att Windows fortfarande kan mata ut den), bevakas inte för ändringar: använd Uppdatera när du har lagt till filer där.
 3. **Se dig omkring i ett 360°-foto**: dra med musen, zooma med hjulet, ett dubbelklick eller + och - (på alla tangentbordslayouter, även AZERTY), flytta med piltangenterna. F eller F11 växlar till helskärm och Escape lämnar den; Home och End går till det första och det sista fotot; I visar detaljerna.
 4. **Gå från foto till foto**: i ett platt foto går vänster- och högerpilen, eller vinkelpilarna som visas vid kanterna medan musen rör sig, till föregående och nästa foto. Bokstäver som skrivs i beskrivningsfältet stannar i texten.
-5. **Dela datorn med headsetet**: öppna Bibliotek, sedan Nätverksresurser; den första rutan är "Dela den här datorn i nätverket", datorns motsvarighet till [Dela den här telefonen i nätverket](#share-this-phone-on-the-network). Slå på "Dela foton och videor i nätverket", och lägg sedan till datorn i headsetet som det avsnittet beskriver. Delningen stoppas när appen stängs eller efter en timme utan användning.
-6. **Tillåt nätverket**: Windows kan fråga om Immuch360 Desktop får använda nätverket. Tillåt det på privata nätverk, annars kan headsetet inte hitta datorn. På ett nätverk som Windows markerar som offentligt (ett kafé, ett hotell), eller ett vars typ det inte kan avgöra, startar delningen inte om du inte väljer "Dela för den här sessionen", och datorn tillkännager sig bara på ett nätverk där den delar.
-7. **Inställningar, "Den här datorn"**: mapparna, nedladdningsmappen, nätverkskortet som används för att hitta resurser och för att dela datorn (när den har flera, till exempel Wi-Fi och Ethernet), och betrodda certifikat: certifikatutfärdaren för din egen server, som en PEM-fil, för en HTTPS-adress som Windows inte litar på av sig självt. Klientcertifikat importeras i Inställningar, Avancerat, som på telefoner.
+5. **Spela upp en video**: öppna den från tidslinjen, en mapp, en resurs, Plex eller inspelningarna från en Tapo-kamera; den spelas upp i fönstret. Enter, eller tangentbordets tangent för uppspelning och paus, pausar och spelar upp igen. Under uppspelningen hoppar vänster- och högerpilen, eller J och L, 10 sekunder bakåt eller framåt; i paus går pilarna till föregående och nästa. F eller F11 växlar till helskärm, som för foton. Knappen "Ljudspår" väljer bland ljudspåren i en video som har flera.
+6. **När en video stannar**: en pausad video förblir pausad när du kommer tillbaka till fönstret. En video som avbryts före slutet, till exempel när resursen eller servern slutar svara, säger det: öppna den igen så fortsätter den där den stannade, pausad. En spellistfil som hittas i en mapp eller en resurs följs inte.
+7. **Dela datorn med headsetet**: öppna Bibliotek, sedan Nätverksresurser; den första rutan är "Dela den här datorn i nätverket", datorns motsvarighet till [Dela den här telefonen i nätverket](#share-this-phone-on-the-network). Slå på "Dela foton och videor i nätverket", och lägg sedan till datorn i headsetet som det avsnittet beskriver. Delningen stoppas när appen stängs eller efter en timme utan användning.
+8. **Tillåt nätverket**: Windows kan fråga om Immuch360 Desktop får använda nätverket. Tillåt det på privata nätverk, annars kan headsetet inte hitta datorn. På ett nätverk som Windows markerar som offentligt (ett kafé, ett hotell), eller ett vars typ det inte kan avgöra, startar delningen inte om du inte väljer "Dela för den här sessionen", och datorn tillkännager sig bara på ett nätverk där den delar.
+9. **Inställningar, "Den här datorn"**: mapparna, nedladdningsmappen, nätverkskortet som används för att hitta resurser och för att dela datorn (när den har flera, till exempel Wi-Fi och Ethernet), och betrodda certifikat: certifikatutfärdaren för din egen server, som en PEM-fil, för en HTTPS-adress som Windows inte litar på av sig självt. Klientcertifikat importeras i Inställningar, Avancerat, som på telefoner.
 
 ### Jämfört med telefonapparna
 
@@ -1005,20 +1011,24 @@ För att kontrollera ZIP-filen kör du `certutil -hashfile Immuch360-Desktop-3.3
 - **Ett fönster**: om du öppnar appen en andra gång kommer det första fönstret fram i stället för att en andra kopia startas.
 - **Ingenting raderas från dina mappar**: "Radera från enheten" är dolt, och Radera tar bara bort serverns kopia, tills appen kan skicka filer till Windows papperskorg.
 - **Mus och tangentbord** i stället för pekskärm och gyroskop.
+- **En videospelare för alla källor**: libmpv spelar upp videorna från servern, mapparna, resurserna och Plex på samma sätt, och dess platta spelare har redan menyn för ljudspår som telefonernas platta spelare inte har än.
 
 <a id="not-there-yet"></a>
 ### Inte där än
 
-- **Videor**: de visar en platshållare tills vidare, och deras miniatyrer en filmikon. Uppspelning kommer härnäst: platta videor först, sedan 360°-, 3D- och VR180-videor och de råa 360°-videorna.
+- **360°-, 3D-, VR180- och råa 360°-videor**: de visas platt tills vidare, så som filen lagrar dem (hela sfären utrullad, de två ögonen sida vid sida, eller objektivens runda bilder), eller som en platshållare, och 360°-knappen finns bara för foton. Deras spelare kommer med nästa datorbyggen.
 - **Spatial 2.5D**, senare med webbkameran; **Tapo-livebilden**; **kartan** och vyn Platser; **inloggning med OAuth** (logga in med e-postadress och lösenord i stället); **Google Cast**; **aviseringar**.
 - **En installerare, ett signerat bygge och automatiska uppdateringar**: det här bygget är en mapp med `immuch360.exe`.
-- **Linux och macOS**: deras projekt finns i källkoden, men de har inte byggts eller provats på de systemen än; de kommer efter Windows.
+- **Linux och macOS**: deras projekt finns i källkoden, men de har inte byggts eller provats på de systemen än, och deras videospelare finns inte med i dem än; de kommer efter Windows.
 - **Översättningar**: datorversionens nya texter är på engelska tills vidare.
 
 ### Kända problem
 
-- **Medan headsetet läser en fil från den delade datorn** (en video det spelar upp, ett foto det hämtar), kan Windows inte byta namn på, flytta eller radera den filen och säger att den är öppen i Immuch360 Desktop: stoppa uppspelningen först. Säkerhetskopieringar låser inte dina filer på det sättet: en fil kan byta namn, flyttas eller raderas medan den laddas upp.
-- **Ojämnheter**: funktionerna ovan klarar sina automatiska tester på Windows (475 skrivbordstester), och på en Windows 11-dator startar appen, öppnar en sparad session på en Immich-server, synkroniserar och stängs utan problem. Testet av varje funktion för hand på en riktig dator pågår fortfarande.
+- **Den första starten av ett nytt bygge är långsam**: från 10 sekunder till ungefär en minut innan fönstret visas, troligen medan Microsoft Defender genomsöker de nya filerna, som inte är signerade än. Vänta på fönstret i stället för att starta appen igen; följande starter tar en eller två sekunder.
+- **8K HEVC-videor kräver ett separat grafikchip**: på testdatorn, en bärbar, visade det integrerade Intel UHD-chipet ungefär hälften av bildrutorna i en 8K HEVC-video, medan det separata NVIDIA-chipet spelade upp 8K HEVC och 5,7K H.264 utan en enda tappad bildruta. Windows kör appen på det integrerade chipet om inget annat anges: i Windows-inställningarna, System, Skärm, Grafik, lägg till `immuch360.exe` och välj "Hög prestanda". På det integrerade chipet avkodas en 5,7K H.264-video, som dess avkodare vägrar, av processorn utan en förlorad bildruta.
+- **Videor ritas högst 1440 linjer höga**, och skalas sedan till fönstret: på en 4K-skärm i helskärm är en 4K- eller 8K-video lite mjukare än i en renodlad videospelare. Det håller en 8K-video inom grafikkapaciteten hos en bärbar dator.
+- **Medan en video från dina mappar spelas upp i appen, eller medan headsetet läser en fil från den delade datorn** (en video det spelar upp, ett foto det hämtar), kan Windows inte byta namn på, flytta eller radera den filen och säger att den är öppen i Immuch360 Desktop: stäng videon, eller stoppa uppspelningen i headsetet, först. Säkerhetskopieringar låser inte dina filer på det sättet: en fil kan byta namn, flyttas eller raderas medan den laddas upp.
+- **Ojämnheter**: 656 av de 663 skrivbordstesterna klaras på Windows (7 hoppas över avsiktligt), 200 spelare som öppnas efter varandra lämnar inget läckage, och på en Windows 11-dator startar appen, öppnar en sparad session på en Immich-server, synkroniserar, spelar upp en video och stängs utan problem. Testet av varje funktion för hand på en riktig dator pågår fortfarande.
 
 Om något går fel, öppna gärna ett [ärende](https://github.com/freeKC/Immuch360/issues) med loggen sparad från sidan Loggar, se [Loggar](#logs). Kontrollera loggen innan du delar den: den kan innehålla din serveradress.
 
@@ -1027,19 +1037,17 @@ Om något går fel, öppna gärna ett [ärende](https://github.com/freeKC/Immuch
 
 Du behöver Windows 10 eller 11 på x64, Flutter 3.47.2 för Windows, Visual Studio 2022 eller dess Build Tools med arbetsbelastningen "Skrivbordsutveckling med C++", Utvecklarläge påslaget i Windows-inställningarna (Flutter behöver det för pluginprogrammen), och Python 3 för paketeringsskriptet.
 
-1. Hämta grenen `desktop` och kör kodgenereringen. Den använder Java och Node, så kör den på Linux, macOS eller i WSL; med WSL, behåll klonen på en Windows-enhet, som WSL ser under `/mnt/c` eller `/mnt/d`:
+1. Hämta källkoden och kör kodgenereringen. Huvudgrenen, `immuch360`, bygger även datorversionen: det finns ingen gren att byta till. Kodgenereringen använder Java och Node, så kör den på Linux, macOS eller i WSL; med WSL, behåll klonen på en Windows-enhet, som WSL ser under `/mnt/c` eller `/mnt/d`:
 
    ```bash
    git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360
-   git switch desktop
-   cd mobile
+   cd Immuch360/mobile
    mise install
    mise run install
    mise run codegen
    ```
 
-2. På Windows, i samma mapp `mobile`, bygger du appen:
+2. På Windows, i samma mapp `mobile`, bygger du appen. Det första bygget hämtar videospelarens bibliotek (libmpv och ANGLE) från GitHub och kontrollerar varje arkiv med dess SHA-256:
 
    ```bat
    flutter pub get
@@ -1049,13 +1057,13 @@ Du behöver Windows 10 eller 11 på x64, Flutter 3.47.2 för Windows, Visual Stu
    flutter build windows --release -t lib/main_desktop.dart
    ```
 
-3. Mappen `Release` körs på datorn som byggde den. För en annan dator, behåll hela mappen och lägg till Visual C++-körmiljön bredvid `immuch360.exe`. Från klonens rot kopierar paketeringsskriptet den, utelämnar det som bara tjänar Android, kontrollerar att varje DLL som appen laddar finns i mappen eller i Windows självt, och skapar ZIP-filen:
+3. Mappen `Release` körs på datorn som byggde den. För en annan dator, behåll hela mappen och lägg till Visual C++-körmiljön bredvid `immuch360.exe`. Från klonens rot kopierar paketeringsskriptet den, utelämnar det som bara tjänar Android, lägger till videospelarens licenser, kontrollerar att varje DLL som appen laddar finns i mappen eller i Windows självt, och skapar ZIP-filen:
 
    ```bat
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI-flödet för grenen `desktop` (`.github/workflows/immuch360-desktop.yml`) kör telefonkontrollerna och hela testsviten på Linux, datortesterna på Windows, och bygger samma ZIP-fil; dess jobb för Linux och macOS (`flutter build linux` och `flutter build macos`, med samma `-t lib/main_desktop.dart`) har inte körts på de systemen än.
+CI-flödet för Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) körs på grenen `desktop`, som följer `immuch360`: telefonkontrollerna (ingenting ändras i telefonbyggena) och hela testsviten på Linux, datortesterna på Windows, och samma ZIP-fil; dess jobb för Linux och macOS (`flutter build linux` och `flutter build macos`, med samma `-t lib/main_desktop.dart`) har inte körts på de systemen än.
 
 <a id="where-to-get-it"></a>
 ## Var du hämtar den
@@ -1075,8 +1083,8 @@ Appen finns på Google Play för telefoner och surfplattor; versionen för App S
   - I dag: den universella `Immuch360-v<version>-release.apk` från sidan [Releases](https://github.com/freeKC/Immuch360/releases), sidladdad med adb, se [Installera den på tv:n](#install-it-on-the-tv). Det är samma app som på telefoner.
   - Snart: Google Play på tv-apparater, efter Googles granskning av tv-versionen.
 - **Windows 10 och 11, 64 bitar (förhandsversion)**
-  - I dag: Immuch360 Desktop, ZIP-filen `Immuch360-Desktop-3.3.0-rc.0-desktop.1-windows-x64.zip` från [förhandsversionen för datorn](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), uppackad och startad som [Ladda ner och installera på Windows](#download-and-install-on-windows) beskriver. Bara foton tills vidare: videor kommer med nästa datorbyggen.
-  - Snart: videouppspelning; en installerare, ett signerat bygge och uppdateringar senare.
+  - I dag: Immuch360 Desktop, ZIP-filen `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` från [förhandsversionen för datorn](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), uppackad och startad som [Ladda ner och installera på Windows](#download-and-install-on-windows) beskriver. Foton och platta videor tills vidare: 360°-, 3D- och VR180-videor kommer med nästa datorbyggen.
+  - Snart: 360°-, 3D-, VR180- och råa 360°-videor; en installerare, ett signerat bygge och uppdateringar senare.
 
 Länkarna till App Store och Meta Horizon Store läggs till här så snart listningarna har publicerats. Logga in med din vanliga adress till Immich-servern och ditt vanliga konto, eller tryck på "Använd utan server" på inloggningssidan för att börja med enhetens egna foton och videor. APK-filen från GitHub uppdaterar sig inte själv: håll koll på sidan Releases, och när du har installerat appen från en butik tar du uppdateringarna från den butiken.
 
@@ -1105,15 +1113,15 @@ Varianten `quest` riktar sig mot SDK 34 och behåller bara de behörigheter som 
 
 För att bygga för iOS på din egen Mac använder du Xcode och ditt eget signeringsteam; med Xcode 26 kör du `xcodebuild -downloadComponent MetalToolchain` en gång först, eftersom Spatial-shaders behöver det. Utan Mac körs iOS-byggen på Codemagic (en Mac i molnet) utifrån filen `codemagic.yaml` i det här repositoriet. Android-versionsbyggen körs på GitHub Actions (`.github/workflows/immuch360-release.yml`).
 
-Immuch360 Desktop, Windows-versionen, byggs från grenen `desktop` med Flutter för Windows: stegen finns i [Bygg den själv på Windows](#build-it-yourself-on-windows).
+Immuch360 Desktop, Windows-versionen, byggs från samma källkod, grenen `immuch360`, med Flutter för Windows: stegen finns i [Bygg den själv på Windows](#build-it-yourself-on-windows).
 
 Ingen hemlighet finns i det här repositoriet: Android-signeringsnyckeln lagras som krypterade hemligheter i GitHub Actions, och Apples signeringsmaterial lagras som krypterade variabler på Codemagic. Arbetsflödesfilerna refererar bara till dem med namn. Utan din egen `android/key.jks` signeras ett versionsbygge med felsökningsnyckeln och kan inte installeras över en kopia från GitHub eller en butik (avinstallera den först); ett felsökningsbygge installeras bredvid den som Immuch360 debug. Kopian i Meta Horizon Store är versionens `quest`-APK signerad med en annan nyckel, den som butiksappen först registrerades med, så den kan inte heller installeras över en sidladdad APK, och inte heller tvärtom.
 
 ### Grenar
 
 - **`main`**: Immich `main` vid den commit som `immuch360` bygger på (29 september 2026 för de aktuella byggena), aldrig ändrad; den flyttas framåt när forken rebaseras på en nyare Immich.
-- **`immuch360`**: den här forkens ändringar ovanpå Immich. Varje version anger vilken Immich-version den bygger på.
-- **`desktop`**: Immuch360 Desktop, datorversionen, ovanpå `immuch360`. Telefonversionerna slås ihop in i den, och förhandsversionerna för datorn byggs från den (datorbygge 1 från commit 21f285c34, telefonbygge 20 plus datorversionen). Ingenting under `mobile/android` och `mobile/ios` ändras i den.
+- **`immuch360`**: den här forkens ändringar ovanpå Immich, Immuch360 Desktop inräknad sedan den 9 oktober 2026. Varje version anger vilken Immich-version den bygger på.
+- **`desktop`**: där Immuch360 Desktop, datorversionen, byggdes ovanpå `immuch360`, tills den slogs ihop in i den den 9 oktober 2026 så att telefoner, headset, tv-apparater och datorer levereras från samma källkod. Den följer nu `immuch360` och bär taggarna för förhandsversionerna för datorn ([datorbygge 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) från commit 21f285c34, [datorbygge 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) från 5b723bd25). Datorversionen ändrar ingenting under `mobile/android` och `mobile/ios`.
 
 <a id="logs"></a>
 ## Loggar
@@ -1130,7 +1138,9 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 
 Från bygge 19 skriver även DLNA-klienten, telefonresursen och identifieringen av Apples spatiala medier till appens egen logg (Loggar, i menyn under profilbilden uppe till höger), under `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` och `NetworkMediaService`. Från bygge 20 skriver tv-läget där under `TvMode` och `TvTextEntry`, Plex-servrarna under `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` och `PlexServerEditPage`, och Tapo-kamerorna under `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` och `CameraLiveView`; Plex-raderna innehåller aldrig token, en adress eller en titel, och kameraraderna utelämnar lösenorden. Loggraderna stannar på enheten om du inte själv kopierar dem.
 
-På en dator (Immuch360 Desktop) har sidan Loggar även "Spara loggar till en fil": loggen, eller en ZIP-fil med loggen och rapporterna om de senaste kraschena när det finns några (det föreslagna namnet slutar då med "with-crash-reports"). En kraschrapport är en liten minidump: trådarna, var de stannade och bara det som behövs för att följa deras anrop, med namnen på programfilerna men inte deras mappar; inte appens minne. Kontrollera loggen innan du delar den: den kan innehålla din serveradress.
+På en dator (Immuch360 Desktop) har sidan Loggar även "Spara loggar till en fil": loggen, eller en ZIP-fil med loggen och rapporterna om de senaste kraschena när det finns några (det föreslagna namnet slutar då med "with-crash-reports"). En kraschrapport är en liten minidump: trådarna, var de stannade och bara det som behövs för att följa deras anrop, med namnen på programfilerna men inte deras mappar; inte appens minne.
+
+Från datorbygge 2 skriver datorns videospelare där under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` och `VideoThumbnailGrabber`, mpv:s egna varningar inräknade, med token och lösenord borttagna. Kontrollera loggen innan du delar den: den kan innehålla din serveradress.
 
 <a id="privacy"></a>
 ## Integritet
@@ -1144,6 +1154,7 @@ På en dator (Immuch360 Desktop) har sidan Loggar även "Spara loggar till en fi
 - **Telefonresurs**: endast lokalt nätverk, med användarnamn och lösenord, över vanlig HTTP (se [Dela den här telefonen i nätverket](#share-this-phone-on-the-network)).
 - **Kamera**: används bara av Spatial 2.5D-spelaren, på enheten; bilderna sparas aldrig och skickas aldrig någonstans.
 - **På en dator** (Immuch360 Desktop, förhandsversion för Windows): appen läser bara mapparna du väljer, har sitt index, sina miniatyrer och sin cache på datorn, och lagrar lösenord och token med Windows dataskydd, bara för ditt Windows-konto. Datorns delning följer samma regler som telefonens delning, och startar inte på ett nätverk som Windows markerar som offentligt, eller vars typ det inte kan avgöra, om du inte säger till.
+- **Videospelaren på en dator** (från datorbygge 2): videorna från din server når den genom appen, så spelaren har aldrig din sessionstoken, och det den läser i förväg stannar i minnet, inte på disken. Den öppnar bara den fil den får: en fil i en mapp eller en resurs som i själva verket är en spellista eller en strömbeskrivning får den inte att ansluta någon annanstans.
 
 Den fullständiga policyn finns i [PRIVACY.md](../PRIVACY.md).
 
@@ -1152,12 +1163,14 @@ Den fullständiga policyn finns i [PRIVACY.md](../PRIVACY.md).
 
 Det här projektet är en fork av Immich och förblir under [GNU AGPL v3](../LICENSE). Varje APK, även telefonernas, innehåller också Meta Spatial SDK, som inte är öppen källkod (Meta Platform Technologies SDK License Agreement) och bara används på Meta Quest-headset; Immuch360 Desktop, Windows-versionen, innehåller den inte. Immuch360 är inte knuten till, och inte godkänd av, Immich-teamet eller FUTO.
 
+ZIP-filen för Windows av Immuch360 Desktop, och bara den, innehåller också sin videospelare: libmpv, biblioteket i [mpv](https://mpv.io), med [FFmpeg](https://ffmpeg.org) inuti, styrt av pluginprogrammen i [media_kit](https://github.com/media-kit/media-kit). mpv och FFmpeg byggs utan sina delar som bara är GPL, och deras kod är under GNU LGPL version 2.1 eller senare; byggda tillsammans distribueras `libmpv-2.dll` under GNU LGPL version 3 eller senare. Appen laddar den vid körning, så du får ersätta den med ditt eget bygge. Licenstexterna finns i mappen `licenses` i ZIP-filen, och varje bibliotek med sin licens och sin källkod listas i [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
+
 <a id="roadmap"></a>
 ## Färdplan
 
 Det som inte är klart än, det mest sannolika först. Inget här är ett löfte, och återkoppling i [ärendehanteraren](https://github.com/freeKC/Immuch360/issues) hjälper till att bestämma vad som kommer först.
 
-- **Immuch360 Desktop, Windows först**: den första förhandsversionen är ute (se [På en Windows-dator](#on-a-windows-computer-immuch360-desktop-preview)). Härnäst videouppspelning (platta videor först, sedan 360°, 3D, VR180 och de råa filerna), mätt på de två grafikkorten i en bärbar dator; sedan testet av varje funktion på en Windows-dator och dess rättelser; sedan Spatial 2.5D med webbkameran; sedan Linux och macOS, paket, signering och uppdateringar.
+- **Immuch360 Desktop, Windows först**: datorbygge 2 är ute, med platta videor, och datorns källkod finns i forkens huvudgren, `immuch360`, sedan den 9 oktober 2026 (se [På en Windows-dator](#on-a-windows-computer-immuch360-desktop-preview)). Härnäst 360°-, 3D-, VR180- och råa 360°-videor på Windows, med de två objektiven i råa filer och Tapo-livebilden; sedan testet av varje funktion på en Windows-dator och dess rättelser; sedan Spatial 2.5D med webbkameran; sedan Linux och macOS, paket, signering och uppdateringar.
 - **Google Play**: bygge 18 är publicerat; bygge 20 är under Googles granskning sedan den 7 oktober 2026, i stället för bygge 19. Bygge 21 ändrar ingenting på telefoner och surfplattor.
 - **App Store**: version 3.3.0 väntar på Apples granskning; den har funktionerna i bygge 11, så uppladdningen till Immich och kontrollen av videoavkodare (bygge 15) och de råa Insta360-filerna (bygge 16) kommer med nästa uppdatering i App Store. Länken läggs till här när den är publicerad.
 - **Meta Horizon Store**: Meta godkände listningen den 7 oktober 2026 med bygge 14. Bygge 21 är inskickat som dess första uppdatering: det innehåller allt sedan bygge 14 (uppladdningar från en resurs till Immich, videokällan vald utifrån vad headsetet avkodar, råfiler från Insta360, GoPro och DJI, DLNA, telefonresursen, Apples spatiala foton, Plex Media Server-bibliotek, Tapo-kameror), och butiken listar det för Quest 2, Quest Pro, Quest 3 och 3S. Butikslänken läggs till här när sidan är offentlig; en sidladdad kopia måste avinstalleras först (se [Installera](#install)).
@@ -1166,7 +1179,7 @@ Det som inte är klart än, det mest sannolika först. Inget här är ett löfte
 - **DLNA, telefonresurs och Apples spatiala medier, härnäst**: enhetsrapporterna för bygge 19 (Plex, Jellyfin, en NAS och Freebox Server via DLNA; en telefon som delar ut till en Quest, även på sin surfzon; riktiga spatiala foton och videor från iPhone i headsetet); multicastbehörigheten som har begärts hos Apple, så att iPhone hittar alla DLNA-servrar; föregående och nästa mellan spatiala foton i headsetet; en spatial märkning på serverfoton i tidslinjen; spatiala videor i 3D på Quest, om dess avkodare tillåter det.
 - **360°-spelare på telefoner, härnäst**: ett tidsreglage i iOS 360°-videospelaren (den på Android har ett), föregående/nästa i telefonernas 360°-spelare som i den immersiva vyn i Quest, och foton i den inbyggda 360°-videospelaren.
 - **Nätverksresurser, nästa steg**: svepning från en fil i en mapp till nästa på foto- och videosidorna (den immersiva vyn i Quest går redan igenom 360°-filerna i en mapp), Digest-autentisering för WebDAV, användarnamnet från Bonjour-posten.
-- **Platta videor**: val av ljudspår i den platta spelaren, för server-, enhets- och resursvideor (360°- och Spatial-spelarna har det).
+- **Platta videor**: val av ljudspår i telefonernas platta spelare, för server-, enhets- och resursvideor (360°- och Spatial-spelarna har det, och det har även den platta spelaren i Immuch360 Desktop).
 - **Android TV, härnäst**: enhetstestet för bygge 20 i Google TV-emulatorn och på en riktig tv, sedan tv-versionen på Google Play (tv-skärmbilder, tv-banderollen, Googles granskning); senare kanaler på tv:ns startskärm.
 - **Tapo-kameror, härnäst**: enhetstestet för bygge 20 med riktiga kameror; livebilden på iPhone och iPad; H.265-inspelningar; att spela upp ett klipp medan det hämtas; en hel dags inspelningar på en tidslinje.
 - **Plex, härnäst**: enhetstestet för bygge 20 (telefoner, Quest, en iPhone, en tv, borta från hemmet); att föra över token från datorn med en QR-kod; att dölja DLNA-sidan av en Plex-server i listan över hittade servrar; IPv6.
