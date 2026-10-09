@@ -42,25 +42,29 @@ void main() {
 
   String path(String relative) => p.joinAll([root.path, ...relative.split('/')]);
 
-  ScriptRun bundle({List<String> extra = const []}) => runCiScript('windows_bundle.py', [
-    '--release',
-    path('Release'),
-    '--out',
-    path('dist'),
-    '--crt-dir',
-    path('CRT'),
-    '--system-dir',
-    path('System32'),
-    '--zip',
-    path('dist/Immuch360-Desktop-test-windows-x64.zip'),
-    '--symbols',
-    path('dist/symbols'),
-    '--info',
-    'version=3.3.0-rc.0-20',
-    '--info',
-    'commit=abc1234',
-    ...extra,
-  ]);
+  /// The default version is a release label (desktop_version.py on a release tag); --libmpv points into the fixture
+  /// tree so that no libmpv folder of the machine is ever read
+  ScriptRun bundle({List<String> extra = const [], String version = '3.3.0-rc.0-20', String release = 'Release'}) =>
+      runCiScript('windows_bundle.py', [
+        '--release',
+        path(release),
+        '--out',
+        path('dist'),
+        '--crt-dir',
+        path('CRT'),
+        '--system-dir',
+        path('System32'),
+        '--zip',
+        path('dist/Immuch360-Desktop-test-windows-x64.zip'),
+        '--symbols',
+        path('dist/symbols'),
+        '--info',
+        'version=$version',
+        '--info',
+        'commit=abc1234',
+        if (release == 'Release') ...['--libmpv', path('x64/libmpv')],
+        ...extra,
+      ]);
 
   Set<String> bundled() => Directory(path('dist/Immuch360 Desktop'))
       .listSync(recursive: true)
@@ -209,6 +213,130 @@ void main() {
         expect(run.exitCode, 1, reason: '$run');
         expect(run.output, contains('immuch360.exe: no version resource'));
         expect(bundle(extra: ['--file-version', '3.3.0-rc.0']).exitCode, 2);
+      });
+    });
+
+    group('the licences of the video player', () {
+      const internal = '3.3.0-rc.0-20-abc1234';
+      const notices = [
+        'licenses/NOTICES.md',
+        'licenses/LGPL-3.0.txt',
+        'licenses/GPL-3.0.txt',
+        'licenses/Apache-2.0.txt',
+        'licenses/ANGLE-BSD-3-Clause.txt',
+      ];
+      const zipFile = 'dist/Immuch360-Desktop-test-windows-x64.zip';
+      String buildInfo() => File(path('dist/Immuch360 Desktop/BUILD-INFO.txt')).readAsStringSync();
+
+      /// libmpv-2.dll and ANGLE's libEGL.dll, as media_kit_libs_windows_video bundles them
+      void writeVideo([String release = 'Release']) {
+        writePe('$release/libmpv-2.dll', fakePe(imports: _kernel));
+        writePe('$release/libEGL.dll', fakePe(imports: _kernel));
+      }
+
+      /// The archive of the fork's workflow as the Windows build extracts it: the same DLL, BUILDINFO.txt, licenses/
+      void writeForkArchive() {
+        writePe('x64/libmpv/libmpv-2.dll', fakePe(imports: _kernel));
+        writeFiles(root, {
+          'x64/libmpv/BUILDINFO.txt': 'libmpv-2.dll for Windows x86_64, built for Immuch360 Desktop',
+          'x64/libmpv/licenses/ffmpeg/COPYING.LGPLv2.1': 'GNU LESSER GENERAL PUBLIC LICENSE',
+        });
+      }
+
+      test('travel with the video player: NOTICES.md and the texts of the repository in licenses/', () {
+        writeBuild();
+        writeVideo();
+        final run = bundle(version: internal);
+        expect(run.exitCode, 0, reason: '$run');
+        expect(bundled(), containsAll(notices));
+        expect(
+          File(path('dist/Immuch360 Desktop/licenses/LGPL-3.0.txt')).readAsStringSync(),
+          contains('GNU LESSER GENERAL PUBLIC LICENSE'),
+        );
+        expect(buildInfo(), contains('licenses/NOTICES.md'));
+        expect(buildInfo(), contains("not a build of the fork's workflow"));
+        final zip = Process.runSync(python!.first, [...python!.skip(1), '-m', 'zipfile', '-l', path(zipFile)]);
+        expect(zip.stdout, contains('Immuch360 Desktop/licenses/GPL-3.0.txt'));
+      });
+
+      test('a release ZIP is refused with a libmpv the fork did not build, and made on the owner\'s decision', () {
+        writeBuild();
+        writeVideo();
+        var run = bundle();
+        expect(run.exitCode, 1, reason: '$run');
+        expect(run.output, contains('no ZIP: a release ZIP would carry a libmpv-2.dll (LGPL)'));
+        expect(File(path(zipFile)).existsSync(), isFalse);
+        expect(bundled(), containsAll(notices));
+
+        run = bundle(version: internal, extra: ['--public']);
+        expect(run.exitCode, 1, reason: '$run');
+        expect(File(path(zipFile)).existsSync(), isFalse);
+
+        run = bundle(extra: ['--accept-2024-libmpv']);
+        expect(run.exitCode, 0, reason: '$run');
+        expect(run.output, contains('warning: release ZIP'));
+        expect(File(path(zipFile)).existsSync(), isTrue);
+      });
+
+      test(
+        'a version without a pre-release part: the tag build is a release, a build with an all-digit commit is not',
+        () {
+          writeBuild();
+          writeVideo();
+          var run = bundle(version: '3.3.0-20');
+          expect(run.exitCode, 1, reason: '$run');
+          expect(File(path(zipFile)).existsSync(), isFalse);
+
+          run = bundle(version: '3.3.0-20-1234567');
+          expect(run.exitCode, 0, reason: '$run');
+          expect(File(path(zipFile)).existsSync(), isTrue);
+        },
+      );
+
+      test("the fork's libmpv: the release ZIP is made, with its licences and BUILDINFO.txt", () {
+        writeBuild();
+        writeVideo();
+        writeForkArchive();
+        final run = bundle();
+        expect(run.exitCode, 0, reason: '$run');
+        expect(
+          bundled(),
+          containsAll([...notices, 'licenses/libmpv/BUILDINFO.txt', 'licenses/libmpv/ffmpeg/COPYING.LGPLv2.1']),
+        );
+        expect(buildInfo(), contains('built by the fork'));
+        expect(File(path(zipFile)).existsSync(), isTrue);
+      });
+
+      test('an archive of the fork holding another DLL does not count', () {
+        writeBuild();
+        writeVideo();
+        writeForkArchive();
+        writePe('x64/libmpv/libmpv-2.dll', fakePe(imports: ['USER32.dll', ..._kernel]));
+        final run = bundle();
+        expect(run.exitCode, 1, reason: '$run');
+        expect(bundled(), isNot(contains('licenses/libmpv/BUILDINFO.txt')));
+      });
+
+      test('finds the extracted archive two levels above the Release folder, as flutter build lays them out', () {
+        writeBuild();
+        Directory(path('x64/runner')).createSync(recursive: true);
+        Directory(path('Release')).renameSync(path('x64/runner/Release'));
+        writeVideo('x64/runner/Release');
+        writeForkArchive();
+        final run = bundle(release: 'x64/runner/Release');
+        expect(run.exitCode, 0, reason: '$run');
+        expect(bundled(), contains('licenses/libmpv/BUILDINFO.txt'));
+      });
+
+      test('stops when a licence text is missing', () {
+        writeBuild();
+        writeVideo();
+        writeFiles(root, {'notices/NOTICES.md': '# Notices'});
+        final run = bundle(version: internal, extra: ['--notices', path('notices')]);
+        expect(run.exitCode, 2, reason: '$run');
+        expect(run.output, contains('the licences of the video player must travel with it'));
+        expect(run.output, contains('LGPL-3.0.txt'));
+        expect(File(path(zipFile)).existsSync(), isFalse);
       });
     });
 

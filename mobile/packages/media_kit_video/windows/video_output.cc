@@ -9,6 +9,7 @@
 #include "video_output.h"
 
 #include <algorithm>
+#include <exception>
 
 // Limit the frame size to 1080p in software rendering.
 // This is for performance reasons & to avoid allocating too much memory.
@@ -159,6 +160,15 @@ void VideoOutput::Render() {
   if (texture_id_) {
     // H/W
     if (surface_manager_ != nullptr) {
+      // Immuch360: a frame drawn on a lost device never shows; Dart replaces
+      // the player (IMMUCH360-NOTE.md, patch 4).
+      if (device_lost_) {
+        return;
+      }
+      if (surface_manager_->IsDeviceLost()) {
+        ReportDeviceLost();
+        return;
+      }
       surface_manager_->Draw([&]() {
         mpv_opengl_fbo fbo{
             0,
@@ -269,8 +279,17 @@ void VideoOutput::Resize(int64_t required_width, int64_t required_height) {
   std::cout << required_width << " " << required_height << std::endl;
   // Unregister previously registered texture & delete underlying objects.
   if (texture_id_) {
+    const auto previous_id = texture_id_;
+    {
+      // Immuch360: zeroed under the lock its callbacks read it with, before
+      // the texture is unregistered and its entries erased: a frame asked for
+      // meanwhile gets no texture rather than an id no longer in |textures_|
+      // (IMMUCH360-NOTE.md, patch 5).
+      std::lock_guard<std::mutex> lock(textures_mutex_);
+      texture_id_ = 0;
+    }
     registrar_->texture_registrar()->UnregisterTexture(
-        texture_id_, [&, id = texture_id_]() {
+        previous_id, [&, id = previous_id]() {
           if (id) {
             std::cout << "media_kit: VideoOutput: Free Texture: " << id
                       << std::endl;
@@ -292,14 +311,25 @@ void VideoOutput::Resize(int64_t required_width, int64_t required_height) {
             }
           }
         });
-    texture_id_ = 0;
   }
   // H/W
   if (surface_manager_ != nullptr) {
+    if (device_lost_) {
+      return;
+    }
     // Destroy internal ID3D11Texture2D & EGLSurface & create new with updated
     // dimensions while preserving previous EGLDisplay & EGLContext.
-    surface_manager_->SetSize(static_cast<int32_t>(required_width),
-                              static_cast<int32_t>(required_height));
+    try {
+      surface_manager_->SetSize(static_cast<int32_t>(required_width),
+                                static_cast<int32_t>(required_height));
+    } catch (const std::exception& error) {
+      // Immuch360: no texture can be made on a lost device. The exception
+      // used to end in the thread pool's task, with |texture_id_| already 0
+      // and Dart never told (IMMUCH360-NOTE.md, patch 4).
+      std::cout << "media_kit: VideoOutput: " << error.what() << std::endl;
+      ReportDeviceLost();
+      return;
+    }
     auto texture = std::make_unique<FlutterDesktopGpuSurfaceDescriptor>();
     texture->struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor);
     texture->handle = surface_manager_->handle();
@@ -320,16 +350,22 @@ void VideoOutput::Resize(int64_t required_width, int64_t required_height) {
               }
             }));
     // Register new texture.
-    texture_id_ =
+    // Immuch360: |texture_id_| changes only once the texture is in |textures_|,
+    // under the lock its callbacks take: a frame Flutter asked for meanwhile
+    // looked |texture_id_| up in |textures_|, did not find it and threw
+    // std::out_of_range inside the engine, which ended the app
+    // (IMMUCH360-NOTE.md, patch 5).
+    const auto id =
         registrar_->texture_registrar()->RegisterTexture(texture_variant.get());
-    std::cout << "media_kit: VideoOutput: Create Texture: " << texture_id_
-              << std::endl;
-    std::lock_guard<std::mutex> lock(textures_mutex_);
-    textures_.emplace(std::make_pair(texture_id_, std::move(texture)));
-    texture_variants_.emplace(
-        std::make_pair(texture_id_, std::move(texture_variant)));
+    std::cout << "media_kit: VideoOutput: Create Texture: " << id << std::endl;
+    {
+      std::lock_guard<std::mutex> lock(textures_mutex_);
+      textures_.emplace(std::make_pair(id, std::move(texture)));
+      texture_variants_.emplace(std::make_pair(id, std::move(texture_variant)));
+      texture_id_ = id;
+    }
     // Notify public texture update callback.
-    texture_update_callback_(texture_id_, required_width, required_height);
+    texture_update_callback_(id, required_width, required_height);
   }
   // S/W
   if (pixel_buffer_ != nullptr) {
@@ -349,18 +385,31 @@ void VideoOutput::Resize(int64_t required_width, int64_t required_height) {
           }
         }));
     // Register new texture.
-    texture_id_ =
+    // Immuch360: published under the lock, as for H/W above (patch 5).
+    const auto id =
         registrar_->texture_registrar()->RegisterTexture(texture_variant.get());
-    std::cout << "media_kit: VideoOutput: Create Texture: " << texture_id_
-              << std::endl;
-    std::lock_guard<std::mutex> lock(textures_mutex_);
-    pixel_buffer_textures_.emplace(
-        std::make_pair(texture_id_, std::move(pixel_buffer_texture)));
-    texture_variants_.emplace(
-        std::make_pair(texture_id_, std::move(texture_variant)));
+    std::cout << "media_kit: VideoOutput: Create Texture: " << id << std::endl;
+    {
+      std::lock_guard<std::mutex> lock(textures_mutex_);
+      pixel_buffer_textures_.emplace(
+          std::make_pair(id, std::move(pixel_buffer_texture)));
+      texture_variants_.emplace(std::make_pair(id, std::move(texture_variant)));
+      texture_id_ = id;
+    }
     // Notify public texture update callback.
-    texture_update_callback_(texture_id_, required_width, required_height);
+    texture_update_callback_(id, required_width, required_height);
   }
+}
+
+void VideoOutput::ReportDeviceLost() {
+  if (device_lost_) {
+    return;
+  }
+  device_lost_ = true;
+  std::cout << "media_kit: VideoOutput: Direct3D device lost" << std::endl;
+  // Texture ID 0 is never given otherwise: the Dart side of Immuch360 reads it
+  // as "no picture any more" (DesktopPlayer.textureLost).
+  texture_update_callback_(0, 0, 0);
 }
 
 int64_t VideoOutput::GetVideoWidth() {

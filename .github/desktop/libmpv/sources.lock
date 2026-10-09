@@ -1,0 +1,75 @@
+# Commits of the git sources of libmpv-2.dll, read by pin_sources.sh in .github/workflows/immuch360-libmpv.yml.
+#
+# Why: most packages of the build recipe clone the head of a branch on the day of the run, so two runs of the same
+# workflow would build different code, and a bad commit pushed to any of some fifty repositories would reach a
+# published DLL unseen. Every git package mpv needs is pinned here; a run stops if one is missing. FFmpeg and mpv are
+# not listed: the workflow inputs pin them. Archives (libiconv, the Opus models) are pinned by their SHA-256 in the
+# recipe itself.
+#
+# Updating: a run dispatched with sources=heads (and the quarterly run) builds from the heads, publishes nothing, and
+# prints these lines with the commits it used in its summary; review the changes, paste them here and push.
+# The toolchain lines (llvm on release/22.x, mingw-w64, cppwinrt) are also the key of the toolchain cache: change them
+# by hand, with git ls-remote on the recipe's repository and branch.
+#
+# Resolved 2026-10-09 with git ls-remote on the repository and branch of each package of the recipe at fdf75129, or
+# its GIT_TAG or GIT_RESET when the recipe already pins one.
+#
+# package commit
+
+# Libraries (closure of the mpv target, x86_64; arm64 is the same less nvcodec-headers)
+amf-headers 8c648005e07d4309033282bfd9947df2c7e76104
+angle-headers 0cb8023c01f92b29f3738ea7472d06f8f059ed84
+avisynth-headers 21fdc997f9724b994896ba5520ddf64d677976b3
+brotli 392b261debb0f478811ddacb98b118da36b06158
+bzip2 66c46b8c9436613fd81bc5d03f63a61933a4dcc3
+dav1d 99f3354ed0b9b4bf3c7c9347318dbcc522c94af5
+expat 56a5d8d8ec486a2e1614a2d70ecae8f14c868c06
+fast_float 54571f86e3a8124c39bc4765ff64d766b4e25efc
+fontconfig 44d723faee5c2a8b19bcadd6d1cfe1fbe47bc8bc
+freetype2 e2526d30e673c3063209bcbad8bdfc7fe1745fc3
+fribidi 24f15eee832eafa5d63319b666d50e488668ce31
+glad 0a7cf1af9e25e02821587bd4095807fc90b6426a
+glslang 9a1dc7519823c28fe46a4e7092ed512c040937fd
+graphengine 91c6af4c795c5396d8b974f24b4d2e2ecca04e2d
+harfbuzz 4834503eddaffb9b401695ebbe470d5a220c5922
+highway 79d25d0b95876f725e7245c1ab2c3ec8b3b69f9d
+lcms2 15c24e7ded91184c38c46c096804fa7272765737
+libass f61db567e6593df3470e91594bcd4ad2d0473aff
+libbs2b 5ca2d59888df047f1e4b028e3a2fd5be8b5a7277
+libjpeg 43ea809765004508d8da72ebe562cf570c6a62b2
+libjxl ef67fde2ec16d52e644c5a0969230b9a85e3eb31
+libmodplug d1b97ed0020bc620a059d3675d1854b40bd2608d
+libmysofa 648eed03472e6720a1ea45d1a1f86c4efb569ff9
+libplacebo 3330a515d62139259c26239014f286e233bd3a5c
+libpng 18ea3e9404a09f42d92f952a4c0d1dd3d688182a
+libsdl2 74be4c2836da0940f0144d0d97852606f9ab11e9
+libsoxr 945b592b70470e29f917f4de89b4281fbbd540c0
+libsrt 0bad6e3ff8f8cfee5065cb4599a312ecbaf2c9cc
+libssh 7b3ba877209ae2355f12f4a7ab56022337caaaf5
+libunibreak f8172fe771ef620112247cadfb876aecaa4f769e
+libvpl 674d015bcb294bc39fa276e99a652ea045423e82
+libwebp 5dd76fc11dc7e421b4c9e96300e895652d0f8bab
+libxml2 c43dc98d27ac315a48d93dbd399c6c22cf7125b1
+libzimg 67e0603271c080e22c8429856dd4a8a56587e61e
+nvcodec-headers eddcea9e27f6b772057c9b3f87de2cc1737faffc
+ogg 06a5e0262cdc28aa4ae6797627a783b5010440f0
+openal-soft 09e2be796e34ad4b6b129204ba2d187bf4577924
+openssl d8bf6cdd4849925c30e4f1911c7acb49cb34b702
+opus 503d81b138d76621aae4b12786e90de48aa8db3a
+shaderc ba3e587dbc13d423c713e964ac08e094731a034d
+speex 05895229896dc942d453446eba6f9f5ddcf95422
+spirv-cross aa217aeb6c9f0ace7a0ab233b28807edf45eb165
+spirv-headers 86f980c731e62ae4eaf383d320449d71687936bf
+spirv-tools e56740d931256cc464d4d1a76149f69469c33f70
+uchardet 06029ec3340cdf6bf9a6a537dafb3f39eda0560e
+vorbis 1b75110b5a2754ba1931d82dd83cb822b266a21d
+vulkan 6a5ae1ea5f55d52be776663dc7f765f5a8502e4c
+vulkan-header c46850864f4661461b0f6cb9922c058ffea4915e
+xxhash 680bf463fa1ca0461b9a7c2dab7556e1f54cf4cf
+zlib f18efb822a2fc24a1209a836d51bb217476fc08e
+zstd 49cf51799ea051457f57243527aa2058f999f005
+
+# Toolchain
+llvm ca7933e47d3a3451d81e72ac174dcb5aa28b59d1
+mingw-w64 2bcf06abc9ec5f8f73c743896b815a7a7654f9ae
+cppwinrt 856eaff70a48d6b053c2ad3dffec15b81ca34b10

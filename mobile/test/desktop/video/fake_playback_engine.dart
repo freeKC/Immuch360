@@ -31,6 +31,8 @@ class FakePlaybackEngine implements PlaybackEngine {
   @override
   final ValueNotifier<bool> completed = ValueNotifier(false);
   @override
+  final ValueNotifier<bool> textureLost = ValueNotifier(false);
+  @override
   final ValueNotifier<VideoFrameSize?> videoSize = ValueNotifier(null);
   @override
   final ValueNotifier<bool?> hasVideo = ValueNotifier(null);
@@ -63,6 +65,9 @@ class FakePlaybackEngine implements PlaybackEngine {
 
   /// Whether a seek shows its frame by itself
   bool autoRestartOnSeek = true;
+
+  /// While set, [setVolume] waits for it: the test lands a dispose or a stop in the middle of an open
+  Completer<void>? holdVolume;
 
   void emit(PlayerEventKind kind, [String? message]) => _events.add(PlayerEvent(kind, message));
 
@@ -125,7 +130,10 @@ class FakePlaybackEngine implements PlaybackEngine {
   Future<void> setRate(double rate) async => this.rate = rate;
 
   @override
-  Future<void> setVolume(double volume) async => this.volume = volume;
+  Future<void> setVolume(double volume) async {
+    await holdVolume?.future;
+    this.volume = volume;
+  }
 
   @override
   Future<void> setLoop(bool loop) async => this.loop = loop;

@@ -1,0 +1,5 @@
+# Meson for the libmpv build (.github/workflows/immuch360-libmpv.yml), installed with pip --require-hashes so that
+# what PyPI serves under this version is checked against the files of 1.12.1 as they were on 2026-10-09
+meson==1.12.1 \
+    --hash=sha256:930bc7542cbd9f57009e182fd014eba48cf1a0180a7b9006d2d32d8f168d8b02 \
+    --hash=sha256:ab0a6ca09f8ef70c564c8241fb5a23957886a0b53fb58412b5e07eaf07dba743

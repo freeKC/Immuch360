@@ -9,6 +9,11 @@
 //   played are noted, and the next call that needs the player reopens the video there;
 // - mpv says when a frame of the new file is on the texture (playback-restart): "ready" waits for it, so that a
 //   reused player never shows the last frame of the previous video;
+// - mpv takes a file it can no longer read (a share or a server gone, a drive pulled out) for its end: an end well
+//   before the duration is reported as the error the phones give, and a load of the same video again (the Retry of
+//   the network page) starts where it stopped;
+// - a player whose graphics device was lost (a driver update, a GPU reset) shows no picture any more: the pool
+//   replaces it, and the video opens again where it was in the new one;
 // - buffering: the position stands still while mpv waits for its cache, which is how the existing controls tell a
 //   stall (VideoPlayerNotifier, NetworkVideoBufferingIndicator); [buffering] gives mpv's own state as well;
 // - audio tracks, which the phones' flat players do not offer: listed here for the audio track button of the
@@ -50,6 +55,11 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
 
   /// How long "ready" waits for the frame size once a frame is shown, for a file whose video track mpv sizes late
   static const readyWithoutSize = Duration(seconds: 2);
+
+  /// How far before its duration a video may end and still count as ended, at least: the last frame of a file is a
+  /// frame or so before the duration its container declares, and a stop further back is a file that could not be read
+  /// on. One hundredth of the duration when that is more, for a duration FFmpeg estimates (a stream without index).
+  static const endTolerance = Duration(seconds: 2);
 
   final DesktopVideoSourceResolver _resolve;
   late final PlayerLease _lease;
@@ -114,6 +124,14 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   /// Where the video was when the pool took the player away, see [_onSuspend]
   ({Duration position, bool playing})? _resumeAt;
 
+  /// Where a video stopped when its file could no longer be read, see [_onCompleted]: a load of the same source
+  /// starts there
+  ({String path, Duration position})? _stoppedEarly;
+
+  /// The load after [_stoppedEarly] reports "paused" once ready, so that play goes on from there rather than "ended",
+  /// which the controls would replay from the start
+  bool _pausedWhenReady = false;
+
   PlaybackEngine? _engine;
   StreamSubscription<PlayerEvent>? _events;
 
@@ -152,6 +170,9 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
 
   @override
   Future<void> loadVideoSource(VideoSource videoSource) async {
+    final stoppedEarly = _stoppedEarly;
+    _stoppedEarly = null;
+    final start = stoppedEarly != null && stoppedEarly.path == videoSource.path ? stoppedEarly.position : Duration.zero;
     await stop();
     final generation = ++_generation;
     _videoSource = null;
@@ -159,6 +180,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _resource = null;
     _resumeAt = null;
     _audioChosen = false;
+    _pausedWhenReady = start > Duration.zero;
     // A load that fails the same way twice is still told to the page
     onError.value = null;
     final String resource;
@@ -177,7 +199,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     if (engine == null || generation != _generation) {
       return;
     }
-    await _open(engine, generation, Duration.zero);
+    await _open(engine, generation, start);
   }
 
   @override
@@ -186,10 +208,12 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     if (engine == null) {
       return;
     }
-    if (_unloaded) {
-      await _open(engine, _generation, Duration.zero);
+    if (_unloaded && !await _open(engine, _generation, Duration.zero)) {
+      return;
     }
-    await engine.play();
+    if (!await _onEngine(engine, engine.play)) {
+      return;
+    }
     onPlaybackStatusChanged.value = PlaybackStatus.playing;
     await setPlaybackSpeed(_speed);
     activeDesktopVideo.value = this;
@@ -215,7 +239,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _positionPending = false;
     final engine = _engine;
     if (engine != null && !_unloaded) {
-      await engine.stop();
+      // After an open still running, never before it: the file would stay open
+      await _onEngine(engine, engine.stop);
     }
     _unloaded = true;
     _buffering.value = false;
@@ -322,48 +347,107 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     if (_disposed) {
       return null;
     }
+    if (!identical(_lease.engine, engine)) {
+      // Another page took it before this one used it (both asked at once): taken back at the next call
+      return null;
+    }
     if (!identical(engine, _engine)) {
       _bind(engine);
     }
     final resume = _resumeAt;
     _resumeAt = null;
     if (wasSuspended && resume != null && !_unloaded) {
-      await _open(engine, _generation, resumeAt ?? resume.position);
-      if (resume.playing) {
-        await engine.play();
+      if (await _open(engine, _generation, resumeAt ?? resume.position) &&
+          resume.playing &&
+          await _onEngine(engine, engine.play)) {
         onPlaybackStatusChanged.value = PlaybackStatus.playing;
       }
     }
     return engine;
   }
 
-  /// Opens the video of this controller at [start] in [engine], with the volume and the loop of the page
-  Future<void> _open(PlaybackEngine engine, int generation, Duration start) async {
+  /// Opens the video of this controller at [start] in [engine], with the volume and the loop of the page. False when
+  /// nothing was opened: the controller was disposed, stopped or loaded again meanwhile, or the pool took the player.
+  Future<bool> _open(PlaybackEngine engine, int generation, Duration start) {
     final resource = _resource;
     if (resource == null) {
-      return;
+      return Future.value(false);
     }
     _unloaded = false;
     _ready = false;
     _restarted = false;
-    try {
-      await engine.setVolume(_volume);
-      await engine.setLoop(_loop);
-      await engine.open(resource, start: start, streamed: resource.startsWith('http'));
-    } catch (error) {
-      _fail(generation, 'The video could not be opened: ${redactPlayerText('$error')}');
-    }
+    // Opened again from its start or elsewhere (a replay, a seek): the place where the file stopped is no longer used
+    _stoppedEarly = null;
+    // Checked before each call, the page may have gone or the pool taken the player while the previous one ran: an
+    // open that came after the pool's stop would leave the file held by a parked player
+    bool current() => !_disposed && generation == _generation && identical(_lease.engine, engine);
+    return _lease.guard(() async {
+      try {
+        if (!current()) {
+          return _openDropped(engine, generation, start);
+        }
+        await engine.setVolume(_volume);
+        if (!current()) {
+          return _openDropped(engine, generation, start);
+        }
+        await engine.setLoop(_loop);
+        if (!current()) {
+          return _openDropped(engine, generation, start);
+        }
+        await engine.open(resource, start: start, streamed: resource.startsWith('http'));
+        return true;
+      } catch (error) {
+        _fail(generation, 'The video could not be opened: ${redactPlayerText('$error')}');
+        return false;
+      }
+    });
   }
+
+  /// An open left undone because the pool took the player: the video opens at [start] in the next one
+  bool _openDropped(PlaybackEngine engine, int generation, Duration start) {
+    if (!_disposed && generation == _generation && !identical(_lease.engine, engine)) {
+      _resumeAt ??= (position: start, playing: false);
+    }
+    return false;
+  }
+
+  /// Runs [action] on [engine] after what the lease runs before it, when the lease still holds [engine]; false when it
+  /// does not (the pool took it: the action would reach another page's video)
+  Future<bool> _onEngine(PlaybackEngine engine, Future<void> Function() action) => _lease.guard(() async {
+    if (!identical(_lease.engine, engine)) {
+      return false;
+    }
+    await action();
+    return true;
+  });
 
   /// Called by the pool before it gives the player to another page: where the video was, to come back to it
   Future<void> _onSuspend() async {
     final engine = _engine;
     if (engine != null && !_unloaded) {
-      _resumeAt = (position: engine.position.value, playing: _status == PlaybackStatus.playing);
+      // An open the pool cut short already noted where it was to start
+      _resumeAt ??= (position: engine.position.value, playing: _status == PlaybackStatus.playing);
     }
     _unbind();
     if (_status == PlaybackStatus.playing) {
       onPlaybackStatusChanged.value = PlaybackStatus.paused;
+    }
+  }
+
+  /// The texture of the player can no longer show a picture: the pool replaces the player, and the video opens again
+  /// where it was, playing if it played
+  void _onTextureLost() {
+    final engine = _engine;
+    if (engine == null || !engine.textureLost.value || _disposed) {
+      return;
+    }
+    unawaited(_replacePlayer());
+  }
+
+  Future<void> _replacePlayer() async {
+    await _lease.discard();
+    if (!_disposed && !_unloaded) {
+      await _engineForUse();
     }
   }
 
@@ -375,11 +459,16 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.videoSize.addListener(_checkReady);
     engine.hasVideo.addListener(_checkReady);
     engine.completed.addListener(_onCompleted);
+    engine.textureLost.addListener(_onTextureLost);
     engine.buffering.addListener(_onBuffering);
     engine.audioTracks.addListener(_onAudioTracks);
     engine.audioTrack.addListener(_onAudioTrack);
     _events = engine.events.listen(_onEvent);
     _videoController.value = engine.videoController;
+    // Lost while another page held it, or before: no change comes to tell it
+    if (engine.textureLost.value) {
+      _onTextureLost();
+    }
   }
 
   void _unbind() {
@@ -392,6 +481,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.videoSize.removeListener(_checkReady);
     engine.hasVideo.removeListener(_checkReady);
     engine.completed.removeListener(_onCompleted);
+    engine.textureLost.removeListener(_onTextureLost);
     engine.buffering.removeListener(_onBuffering);
     engine.audioTracks.removeListener(_onAudioTracks);
     engine.audioTrack.removeListener(_onAudioTrack);
@@ -414,7 +504,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
           _checkReady();
         }
       case PlayerEventKind.failed:
-        // Before "ready" (a file libmpv cannot open) or after (the share or the server went away while it played)
+        // A file libmpv cannot open, before "ready". Once a file plays, mpv 0.39 takes a read error for its end and
+        // sends no failure: see [_onCompleted]
         if (!_unloaded) {
           _fail(_generation, event.message ?? 'The video could not be played');
         }
@@ -443,6 +534,12 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
       'height': size?.height ?? 0,
       'duration': duration.inMilliseconds,
     });
+    if (_pausedWhenReady) {
+      _pausedWhenReady = false;
+      if (_status == PlaybackStatus.stopped) {
+        onPlaybackStatusChanged.value = PlaybackStatus.paused;
+      }
+    }
     activeDesktopVideo.value = this;
     onPlaybackReady.notifyListeners();
   }
@@ -487,6 +584,21 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
       return;
     }
     _sendPosition();
+    final position = engine.position.value;
+    final duration = engine.duration.value;
+    final tolerance = duration ~/ 100 > endTolerance ? duration ~/ 100 : endTolerance;
+    if (duration > Duration.zero && position < duration - tolerance) {
+      // mpv 0.39 takes a read error for the end of the file, after FFmpeg's reconnects too, plays what it had, and
+      // stops there (keep-open) without a failure: the share, the server or the drive went away
+      final path = _videoSource?.path;
+      _fail(_generation, 'The video stopped before its end: its file could no longer be read');
+      if (path != null) {
+        _stoppedEarly = (path: path, position: position);
+      }
+      // The decoder and the connection are let go; the position stays on the page
+      unawaited(_onEngine(engine, engine.stop));
+      return;
+    }
     onPlaybackStatusChanged.value = PlaybackStatus.stopped;
     onPlaybackEnded.notifyListeners();
   }

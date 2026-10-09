@@ -4,7 +4,8 @@
 // view calls, after its first frame as a platform view does, and disposes it with itself, as the native view does.
 //
 // Without libmpv (Linux and macOS until their libs packages come in phase 4, or a Windows install whose DLL did not
-// load) it shows the placeholder of phase 1, and the controller reports the load as an error, which the network page
+// load) the viewer shows the placeholder of phase 1 in its place ([DesktopVideoView.available]); on the network page
+// the view shows it, hidden until a video is ready, and the controller reports the load as an error, which the page
 // shows with its Retry.
 
 import 'package:flutter/material.dart';
@@ -32,6 +33,9 @@ class DesktopVideoView extends ConsumerStatefulWidget {
   /// server for the sources
   final PlayerPool? pool;
   final DesktopVideoSourceResolver? resolve;
+
+  /// Whether this computer plays videos: libmpv was loaded at start (desktop_video_setup.dart)
+  static bool get available => desktopVideoAvailable;
 
   @override
   ConsumerState<DesktopVideoView> createState() => _DesktopVideoViewState();

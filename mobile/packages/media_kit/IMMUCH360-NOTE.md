@@ -2,7 +2,10 @@ Copy of `media_kit` 1.2.6 (MIT, https://github.com/media-kit/media-kit, folder `
 `c533e446755f51cf53c7e57aea873f2aa5355f81` of `main` (2026-08-30), the newest commit of `main` on 2026-10-08, which
 carries the 2026 fixes the pub.dev release 1.2.6 of 2025-12-13 lacks (#1440, #1446, `observeEvent` of #1429). Used by
 Immuch360 Desktop through `dependency_overrides` in `mobile/pubspec.yaml`, with the copies of `media_kit_video` and
-`media_kit_libs_windows_video` of the same commit. The MIT notice is in `LICENSE`, as upstream has it. The Dart code
+`media_kit_libs_windows_video` of the same commit. The MIT notice is in `LICENSE`, as upstream has it. `lib/ffi/` is
+upstream's copy of `package:ffi` 1.2.1 (the Dart project authors, BSD-3-Clause), whose file headers refer to a LICENSE
+and an AUTHORS file that upstream left out: both are added there, from the pub.dev archive of that version, and the
+licence is also in `mobile/packages/media_kit_video/windows/NOTICES.md`, which the Windows ZIP carries. The Dart code
 under `lib/` is unchanged but for punctuation (four em dashes of doc comments in
 `lib/src/player/platform_player.dart` and `lib/src/player/web/utils/duration.dart` became commas and brackets, the
 fork's texts having none) and for the patch below.

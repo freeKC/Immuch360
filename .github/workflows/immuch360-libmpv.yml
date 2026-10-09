@@ -16,7 +16,14 @@ name: Immuch360 libmpv for Windows
 # workflow checks that fork out at a pinned commit and copies the two files of .github/desktop/libmpv/ over it: FFmpeg
 # and mpv in media_kit's video configuration, without the fork's own patches (one of them turns TLS certificate
 # verification off by default). The recipe, FFmpeg and mpv are inputs, so an FFmpeg security release is one dispatch
-# away; the defaults are the commits the fork built green.
+# away; the defaults are the commits the fork built green. Every other git package of the recipe would clone the head
+# of its branch on the day of the run: the sources and toolchain jobs check each one out at its commit in
+# .github/desktop/libmpv/sources.lock (pin_sources.sh), so that a run builds known code and a release always does.
+#
+# The container. shinchiro/archlinux, the Arch Linux image the recipe is made for, is rebuilt every day and its registry
+# keeps only the newest image: a digest of it is gone within a day or two. The image job copies the pinned digest once
+# into this repository's own package (ghcr.io/<owner>/libmpv-build, same digest) and every build job pulls it from
+# there; when the digest is in neither place, the run stops in its first minute and says what to pin.
 #
 # Time on hosted runners (4 processors): the toolchain (LLVM with clang and lld, then the mingw-w64 runtime for both
 # targets) about 2 to 3 hours when it is not in the cache (the recipe's own toolchain workflow, which builds LLVM twice
@@ -25,17 +32,21 @@ name: Immuch360 libmpv for Windows
 # stays under the 6 hour limit of hosted jobs; standard runners cost no minutes on a public repository.
 #
 # Jobs:
-#   sources    the sources of every library mpv needs, downloaded once so that both architectures build the same
-#              commits; packed for the build jobs, and without git data for the release
-#   toolchain  LLVM and the two mingw-w64 sysroots, from the cache or built
+#   image      the build container: found in this repository's package, or copied there from shinchiro's
+#   sources    the sources of every library mpv needs, downloaded once and checked out at their pins so that both
+#              architectures build the same commits; packed for the build jobs, and without git data for the release
+#   toolchain  LLVM and the two mingw-w64 sysroots at their pins, from the cache or built
 #   libmpv     x86_64 and aarch64: the libraries and libmpv-2.dll, then an archive laid out like media-kit's
 #              (libmpv-2.dll, libmpv.dll.a, include/mpv), plus licenses/ and BUILDINFO.txt
 #   publish    SHA256SUMS.txt and the release: a pre-release that is never marked latest, so the phone release stays
 #              first on the release page; the run summary prints the lines to paste into the CMake of the libs package
 #
 # Triggers: by hand (workflow_dispatch, once this file is on the default branch); every quarter (schedule, default
-# branch only); pushes to the desktop branch that change this file or .github/desktop/libmpv/, which is how the first
-# run happens before the desktop branch is merged. No secret is used; only the publish job can write (the release).
+# branch only), from the head of every library, to show what a refresh of the lock would bring: it publishes nothing
+# and its summary prints the new lock lines; pushes to the desktop branch that change this file or
+# .github/desktop/libmpv/ (the lock included), which is how the first run happens before the desktop branch is merged.
+# Only a run from pinned sources publishes. No secret is used; two jobs can write: image (packages, the copy of the
+# container) and publish (contents, the release).
 
 on:
   workflow_dispatch:
@@ -60,13 +71,22 @@ on:
         required: false
         default: '0b7ed670f7c353dd3dd4f8ae0fc788a181a15aa6'
         type: string
+      sources:
+        description: 'pinned: the commits of .github/desktop/libmpv/sources.lock; heads: the head of each library (never published)'
+        required: false
+        default: pinned
+        type: choice
+        options:
+          - pinned
+          - heads
       publish:
         description: 'Publish a release (otherwise the archives stay artifacts of the run)'
         required: false
         default: true
         type: boolean
   schedule:
-    # First day of each quarter; FFmpeg security releases are dispatched by hand with ffmpeg_ref
+    # First day of each quarter, from the heads (see the header); FFmpeg security releases are dispatched by hand with
+    # ffmpeg_ref
     - cron: '17 3 1 1,4,7,10 *'
   push:
     branches: [desktop]
@@ -76,6 +96,7 @@ on:
 
 permissions:
   contents: read
+  packages: read # the build jobs pull their container from this repository's package
 
 # One build at a time: two would share nothing and fight for the toolchain cache; a newer trigger waits
 concurrency:
@@ -92,21 +113,65 @@ env:
   RECIPE_REF: ${{ inputs.recipe_ref || 'fdf75129fc694b5ca555ce73cffc43bb6943ae13' }}
   FFMPEG_REF: ${{ inputs.ffmpeg_ref || '5b9a3ad71a4b54979e7afc3a1a4269763c4f41fc' }}
   MPV_REF: ${{ inputs.mpv_ref || '0b7ed670f7c353dd3dd4f8ae0fc788a181a15aa6' }}
-  # The container image is pinned by digest in each job (job containers cannot read env); written here for BUILDINFO
-  BUILD_IMAGE: ghcr.io/shinchiro/archlinux@sha256:2b81f07c567b051455b9539770a71b53dd3add5f9ef52eca95ac01a2272e9fdf
+  # The quarterly run builds from the heads; every other run from sources.lock unless dispatched with heads
+  SOURCES_MODE: ${{ github.event_name == 'schedule' && 'heads' || inputs.sources || 'pinned' }}
+  # The build container (see the header): its digest, and the registry it was first published to. To pin a new one,
+  # take the digest of ghcr.io/shinchiro/archlinux:latest and push within a day, before shinchiro replaces it.
+  BUILD_IMAGE_DIGEST: sha256:c7dffe77b57d98b10e327dde12d3977faf4cb90aa7cb4f5eeac4e9d68d724239
+  BUILD_IMAGE_UPSTREAM: ghcr.io/shinchiro/archlinux
   # Bump the version when the toolchain job changes what it leaves in the cache
   TOOLCHAIN_CACHE: libmpv-toolchain-v1
-  MESON_VERSION: '1.12.1'
+  # Meson comes from PyPI, checked by the hashes of .github/desktop/libmpv/meson-requirements.txt
 
 jobs:
+  image:
+    name: Build container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      packages: write # copies the pinned image into this repository's package when it is not there yet
+    outputs:
+      image: ${{ steps.image.outputs.image }}
+    steps:
+      - name: Find the pinned image, or copy it
+        id: image
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [[ "$BUILD_IMAGE_DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]] || { echo "BUILD_IMAGE_DIGEST: sha256:<64 hex>"; exit 1; }
+          own="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/libmpv-build"
+          command -v skopeo > /dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq skopeo; }
+          skopeo login ghcr.io --username "$GITHUB_ACTOR" --password-stdin <<< "$GH_TOKEN" > /dev/null
+          if skopeo inspect --raw "docker://$own@$BUILD_IMAGE_DIGEST" > /dev/null 2>&1; then
+            echo "found: $own@$BUILD_IMAGE_DIGEST"
+          elif skopeo inspect --raw "docker://$BUILD_IMAGE_UPSTREAM@$BUILD_IMAGE_DIGEST" > /dev/null 2>&1; then
+            # --preserve-digests: the copy keeps the pinned digest, or fails
+            skopeo copy --preserve-digests --retry-times 3 \
+              "docker://$BUILD_IMAGE_UPSTREAM@$BUILD_IMAGE_DIGEST" "docker://$own:arch-${BUILD_IMAGE_DIGEST:7:12}"
+            skopeo inspect --raw "docker://$own@$BUILD_IMAGE_DIGEST" > /dev/null
+            echo "copied from $BUILD_IMAGE_UPSTREAM: $own@$BUILD_IMAGE_DIGEST"
+          else
+            gone="The build image $BUILD_IMAGE_DIGEST is neither in $own nor in $BUILD_IMAGE_UPSTREAM any more."
+            gone+=" Pin the digest of $BUILD_IMAGE_UPSTREAM:latest in BUILD_IMAGE_DIGEST and push within a day, before"
+            gone+=" it is replaced: skopeo inspect --format '{{.Digest}}' docker://$BUILD_IMAGE_UPSTREAM:latest"
+            echo "::error::$gone"
+            exit 1
+          fi
+          echo "image=$own@$BUILD_IMAGE_DIGEST" >> "$GITHUB_OUTPUT"
+
   sources:
     name: Library sources
+    needs: image
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     container:
-      image: ghcr.io/shinchiro/archlinux@sha256:2b81f07c567b051455b9539770a71b53dd3add5f9ef52eca95ac01a2272e9fdf
+      image: ${{ needs.image.outputs.image }} # zizmor: ignore[unpinned-images] digest pinned by the image job
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
+      pinned: ${{ steps.pins.outputs.pinned }}
     steps:
       - name: Inputs
         run: |
@@ -140,7 +205,8 @@ jobs:
       - name: Meson and the FFmpeg and mpv files
         run: |
           python -m pip --version || pacman -Sy --needed --noconfirm python-pip
-          python -m pip install --break-system-packages "meson==$MESON_VERSION"
+          python -m pip install --break-system-packages --require-hashes \
+            -r immuch360/.github/desktop/libmpv/meson-requirements.txt
           meson --version
           ninja --version
           cp immuch360/.github/desktop/libmpv/ffmpeg.cmake immuch360/.github/desktop/libmpv/mpv.cmake recipe/packages/
@@ -163,6 +229,27 @@ jobs:
           mapfile -t downloads < <(sed 's/$/-download/' packages.txt)
           echo "${#downloads[@]} packages"
           ninja -C build_x86_64 "${downloads[@]}"
+
+      - name: Check the sources out at their pins
+        id: pins
+        run: |
+          mapfile -t packages < packages.txt
+          bash immuch360/.github/desktop/libmpv/pin_sources.sh immuch360/.github/desktop/libmpv/sources.lock \
+            src_packages "$SOURCES_MODE" "${packages[@]}" > pins.txt
+          if [ "$SOURCES_MODE" = pinned ]; then
+            echo "pinned=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pinned=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Library heads of this run (not published)"
+              echo
+              echo "Lines for \`.github/desktop/libmpv/sources.lock\`, once the changes since the lock are reviewed:"
+              echo
+              echo '```'
+              cat pins.txt
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: List the commits
         run: |
@@ -214,11 +301,32 @@ jobs:
 
   toolchain:
     name: LLVM and mingw-w64
+    needs: image
     runs-on: ubuntu-24.04
     timeout-minutes: 350
     container:
-      image: ghcr.io/shinchiro/archlinux@sha256:2b81f07c567b051455b9539770a71b53dd3add5f9ef52eca95ac01a2272e9fdf
+      image: ${{ needs.image.outputs.image }} # zizmor: ignore[unpinned-images] digest pinned by the image job
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+    outputs:
+      key: ${{ steps.key.outputs.key }}
     steps:
+      - name: Check out the pins of this repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: immuch360
+          sparse-checkout: .github/desktop/libmpv
+
+      - name: Cache key
+        id: key
+        run: |
+          # The toolchain pins are part of the key, so that a new LLVM or mingw-w64 commit builds a new toolchain
+          pins=$(awk '$1 == "llvm" || $1 == "mingw-w64" || $1 == "cppwinrt"' \
+            immuch360/.github/desktop/libmpv/sources.lock | sort | sha256sum | cut -c1-16)
+          echo "key=$TOOLCHAIN_CACHE-$RECIPE_REF-$pins" >> "$GITHUB_OUTPUT"
+
       - name: Look for it in the cache
         id: cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -227,7 +335,7 @@ jobs:
             clang_root
             build_x86_64
             build_aarch64
-          key: ${{ env.TOOLCHAIN_CACHE }}-${{ env.RECIPE_REF }}
+          key: ${{ steps.key.outputs.key }}
           lookup-only: true
 
       - name: Check out the recipe
@@ -244,14 +352,21 @@ jobs:
         run: |
           git config --global --add safe.directory '*'
           python -m pip --version || pacman -Sy --needed --noconfirm python-pip
-          python -m pip install --break-system-packages "meson==$MESON_VERSION"
+          python -m pip install --break-system-packages --require-hashes \
+            -r immuch360/.github/desktop/libmpv/meson-requirements.txt
           for bit in x86_64 aarch64; do
             cmake -DTARGET_ARCH="$bit-w64-mingw32" -DCOMPILER_TOOLCHAIN=clang \
               -DCMAKE_INSTALL_PREFIX="$PWD/clang_root" -DMINGW_INSTALL_PREFIX="$PWD/build_$bit/$bit-w64-mingw32" \
               -DSINGLE_SOURCE_LOCATION="$PWD/src_packages" -DRUSTUP_LOCATION="$PWD/clang_root/install_rustup" \
               -G Ninja -B "build_$bit" -S recipe
-            # LLVM itself is shared by both targets; no profile guided second build, which would add about 1.5 hours
-            if [ "$bit" = x86_64 ]; then ninja -C "build_$bit" llvm; fi
+            if [ "$bit" = x86_64 ]; then
+              # The git sources first, checked out at their pins; the toolchain is never built from the heads
+              ninja -C "build_$bit" llvm-download mingw-w64-download cppwinrt-download
+              bash immuch360/.github/desktop/libmpv/pin_sources.sh immuch360/.github/desktop/libmpv/sources.lock \
+                src_packages pinned llvm mingw-w64 cppwinrt
+              # LLVM itself is shared by both targets; no profile guided second build, which would add about 1.5 hours
+              ninja -C "build_$bit" llvm
+            fi
             ninja -C "build_$bit" llvm-clang
           done
 
@@ -279,21 +394,25 @@ jobs:
             clang_root
             build_x86_64
             build_aarch64
-          key: ${{ env.TOOLCHAIN_CACHE }}-${{ env.RECIPE_REF }}
+          key: ${{ steps.key.outputs.key }}
 
   libmpv:
     name: libmpv ${{ matrix.arch }}
-    needs: [sources, toolchain]
+    needs: [image, sources, toolchain]
     runs-on: ubuntu-24.04
     timeout-minutes: 350
     container:
-      image: ghcr.io/shinchiro/archlinux@sha256:2b81f07c567b051455b9539770a71b53dd3add5f9ef52eca95ac01a2272e9fdf
+      image: ${{ needs.image.outputs.image }} # zizmor: ignore[unpinned-images] digest pinned by the image job
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
     strategy:
       fail-fast: false
       matrix:
         arch: [x86_64, aarch64]
     env:
       ARCH: ${{ matrix.arch }}
+      BUILD_IMAGE: ${{ needs.image.outputs.image }}
     steps:
       - name: Git settings
         run: git config --global --add safe.directory '*'
@@ -320,7 +439,7 @@ jobs:
             clang_root
             build_x86_64
             build_aarch64
-          key: ${{ env.TOOLCHAIN_CACHE }}-${{ env.RECIPE_REF }}
+          key: ${{ needs.toolchain.outputs.key }}
           fail-on-cache-miss: true
 
       - name: Download the sources
@@ -333,7 +452,8 @@ jobs:
           zstd -d -q -c build-sources.tar.zst | tar -xf -
           rm build-sources.tar.zst
           python -m pip --version || pacman -Sy --needed --noconfirm python-pip
-          python -m pip install --break-system-packages "meson==$MESON_VERSION"
+          python -m pip install --break-system-packages --require-hashes \
+            -r immuch360/.github/desktop/libmpv/meson-requirements.txt
           cp immuch360/.github/desktop/libmpv/ffmpeg.cmake immuch360/.github/desktop/libmpv/mpv.cmake recipe/packages/
 
       - name: Build libmpv
@@ -380,6 +500,7 @@ jobs:
             echo "repository commit: $GITHUB_SHA"
             echo "recipe: https://github.com/$RECIPE_REPOSITORY at $RECIPE_REF, with .github/desktop/libmpv/ffmpeg.cmake and mpv.cmake"
             echo "container: $BUILD_IMAGE"
+            echo "sources: $SOURCES_MODE (pinned: the commits of .github/desktop/libmpv/sources.lock)"
             echo "mpv: $MPV_REF ($(git -C src_packages/mpv describe --tags --always 2>/dev/null))"
             echo "FFmpeg: $FFMPEG_REF ($(git -C src_packages/ffmpeg describe --tags --always 2>/dev/null))"
             echo "target: $ARCH-w64-mingw32, $(grep -E '^GCC_ARCH:' "build_$ARCH/CMakeCache.txt")"
@@ -428,7 +549,10 @@ jobs:
   publish:
     name: Release
     needs: [sources, libmpv]
-    if: github.event_name != 'workflow_dispatch' || inputs.publish
+    # Only pinned sources are published: never the quarterly run from the heads, and by hand only when asked
+    if: >-
+      needs.sources.outputs.pinned == 'true' && github.event_name != 'schedule'
+      && (github.event_name != 'workflow_dispatch' || inputs.publish)
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:

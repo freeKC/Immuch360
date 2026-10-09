@@ -6,6 +6,9 @@
 //   win_flutter.sh --env IMMUCH360_MEASURE_CLIPS --log measure-2a \
 //     test integration_test/desktop_video_measure_test.dart -d windows
 //   grep '^MEASURE ' /tmp/desk-logs/measure-2a.log | cut -c9- > /tmp/desk-measure/2a/measure.jsonl
+// flutter test runs it in a debug build. For figures of the app as shipped, build it as an app in profile mode and
+// start the executable with the same variables; the records land in IMMUCH360_MEASURE_OUT:
+//   win_flutter.sh build windows --profile -t integration_test/desktop_video_measure_test.dart
 //
 // Without any variable it makes the reference runs only, which need no clip: an uncompressed AVI written to the
 // temporary folder (or mpv's lavfi pattern when the libmpv build has that input), played at window size by a bare
@@ -16,9 +19,11 @@
 //   IMMUCH360_MEASURE_CLIPS        label=path entries separated by ";" or new lines; one run per clip
 //   IMMUCH360_MEASURE_SECONDS      seconds of each measured phase (default 10)
 //   IMMUCH360_MEASURE_HWDEC        mpv's hwdec (default "auto", what media_kit asks when the app gives nothing)
-//   IMMUCH360_MEASURE_RENDER       "window": the texture at the window's physical size, its height capped by
-//                                  IMMUCH360_MEASURE_MAX_HEIGHT (default 1440, design 2.11); "source": media_kit's
-//                                  default, the size of the video
+//   IMMUCH360_MEASURE_RENDER       "app" (default): the texture as the app's players size it, the shape of the
+//                                  video at most IMMUCH360_MEASURE_MAX_HEIGHT lines high (default 1440, design 2.11,
+//                                  DesktopPlayerOptions.maxRenderHeight); "window": the window's physical size,
+//                                  capped the same way (the size spikes 1 and 6 of 2026-10-09 were measured at);
+//                                  "source": the size of the video, uncapped
 //   IMMUCH360_MEASURE_SHADER       a user shader (an mpv hook file) loaded through glsl-shaders; "probe" loads the
 //                                  built-in probe hook (MAINPRESUB at OUTPUT size, one float parameter)
 //   IMMUCH360_MEASURE_PARAM        name:min:max of the shader parameter changed while measuring (default yaw:-180:180)
@@ -36,6 +41,13 @@
 //                                  ("primary,secondary,primary"; "primary" is the screen of the taskbar, "secondary"
 //                                  the first other one, or a monitor number from 0); spike 6
 //   IMMUCH360_MEASURE_WINDOW_SIZE  the window's size in physical pixels on each screen (default 1600x900)
+//   IMMUCH360_MEASURE_MEMORY       label of a clip of IMMUCH360_MEASURE_CLIPS for the memory case (plan 2.7, the 8K
+//                                  risk): two views of the app play it, first one after the other as a swipe does,
+//                                  then both at once, the most the pool allows, while the thumbnail grabber takes
+//                                  frames of it; the working set and the GPU memory (dedicated and shared) are sampled
+//                                  at each step
+//   IMMUCH360_MEASURE_MEMORY_THROUGH  "bridge": the memory case reads the clip through the media bridge, with the
+//                                  cache of a share video; "file" (default): as a video of the folders
 //   IMMUCH360_MEASURE_BRIDGE       label=kind:path entries, played through the app's media bridge (spike 1):
 //                                    local:<file>            a file of this computer, the bridge's own cost
 //                                    smb:<path in share>     IMMUCH360_MEASURE_SMB_HOST, _SHARE, _USER, _PASSWORD
@@ -49,7 +61,9 @@
 // What a run records (one JSON object per run, also printed on one line after "MEASURE "): the GPU and OpenGL ES
 // version mpv reports, the screen and window, the render size, hwdec-current, the codec and size, per phase the
 // counters frame-drop-count, decoder-frame-drop-count, vo-delayed-frame-count and mistimed-frame-count, Flutter's
-// frame times (build, raster, total), the time paused for the cache, the process memory, the "dumb mode" and
+// frame times (build, raster, total), the time paused for the cache, the process memory (the working set, and on
+// Windows the GPU memory the driver holds for the process: test/desktop/video/gpu_memory_support.dart), the size of
+// the texture media_kit draws into, the "dumb mode" and
 // "Disabling" lines of mpv while a hook is loaded, and the redacted lines of mpv's log about the renderer and the
 // decoder. Clip paths, URLs, the bridge token, the share's host and user and every password never reach a record or
 // the output: labels name the clips, and every log line is filtered (test/desktop/video/mpv_measure_support.dart).
@@ -86,6 +100,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:native_video_player/native_video_player.dart' show VideoSource, VideoSourceType;
 import 'package:path/path.dart' as p;
 
+import '../test/desktop/video/gpu_memory_support.dart';
 import '../test/desktop/video/mpv_measure_support.dart';
 
 /// mpv's counters, read before and after each phase
@@ -164,12 +179,18 @@ class _Config {
       bridge = _entries(env['IMMUCH360_MEASURE_BRIDGE']),
       seconds = int.tryParse(env['IMMUCH360_MEASURE_SECONDS'] ?? '') ?? 10,
       hwdec = (env['IMMUCH360_MEASURE_HWDEC'] ?? '').isEmpty ? 'auto' : env['IMMUCH360_MEASURE_HWDEC']!,
-      renderAtWindowSize = env['IMMUCH360_MEASURE_RENDER'] != 'source',
+      renderMode = switch (env['IMMUCH360_MEASURE_RENDER']) {
+        'window' => 'window',
+        'source' => 'source',
+        _ => 'app',
+      },
       maxRenderHeight = int.tryParse(env['IMMUCH360_MEASURE_MAX_HEIGHT'] ?? '') ?? 1440,
       shader = (env['IMMUCH360_MEASURE_SHADER'] ?? '').isEmpty ? null : env['IMMUCH360_MEASURE_SHADER'],
       soakPlayers = int.tryParse(env['IMMUCH360_MEASURE_SOAK'] ?? '') ?? 0,
       soakClip = env['IMMUCH360_MEASURE_SOAK_CLIP'],
       soakThroughPool = env['IMMUCH360_MEASURE_SOAK_MODE'] == 'pool',
+      memoryClip = env['IMMUCH360_MEASURE_MEMORY'],
+      memoryThroughBridge = env['IMMUCH360_MEASURE_MEMORY_THROUGH'] == 'bridge',
       appOptions = env['IMMUCH360_MEASURE_OPTIONS'] == 'app',
       ticker = env['IMMUCH360_MEASURE_TICKER'] != 'off',
       screens = [
@@ -197,12 +218,16 @@ class _Config {
   final List<(String, String)> bridge;
   final int seconds;
   final String hwdec;
-  final bool renderAtWindowSize;
+
+  /// "app", "window" or "source" (see IMMUCH360_MEASURE_RENDER)
+  final String renderMode;
   final int maxRenderHeight;
   final String? shader;
   final int soakPlayers;
   final String? soakClip;
   final bool soakThroughPool;
+  final String? memoryClip;
+  final bool memoryThroughBridge;
   final bool appOptions;
   final bool ticker;
   final List<String> screens;
@@ -878,14 +903,33 @@ class _Harness {
     };
   }
 
-  /// The texture size: the window's physical size with its height capped (design 2.11), or the video's own
+  /// The fixed texture size of the "window" mode: the window's physical size with its height capped (design 2.11);
+  /// null in the other modes, where the texture follows the video
   (int, int)? renderSize(WidgetTester tester) {
-    if (!config.renderAtWindowSize) {
+    if (config.renderMode != 'window') {
       return null;
     }
     final size = tester.view.physicalSize;
     final scale = size.height > config.maxRenderHeight ? config.maxRenderHeight / size.height : 1.0;
     return ((size.width * scale).round(), (size.height * scale).round());
+  }
+
+  /// The cap media_kit_video applies to every texture it sizes after the video (its IMMUCH360-NOTE.md, patch 3):
+  /// the app's in "app" mode, none in "source" mode (0: DesktopPlayer.create only sets it when it is null). Returns
+  /// the value before, to be given back when the run ends.
+  int? applyRenderCap() {
+    final before = VideoController.maxOutputHeight;
+    VideoController.maxOutputHeight = switch (config.renderMode) {
+      'app' => config.maxRenderHeight,
+      'source' => 0,
+      _ => before,
+    };
+    return before;
+  }
+
+  static List<double>? textureOf(VideoController? controller) {
+    final rect = controller?.rect.value;
+    return rect == null ? null : [rect.width, rect.height];
   }
 
   Future<String?> shaderFile() async {
@@ -939,6 +983,7 @@ class _Harness {
       }
     });
     final size = renderSize(tester);
+    final capBefore = applyRenderCap();
     final controller = VideoController(
       player,
       configuration: VideoControllerConfiguration(hwdec: config.hwdec, width: size?.$1, height: size?.$2),
@@ -949,7 +994,10 @@ class _Harness {
       'label': label,
       'buildMode': kReleaseMode ? 'release' : (kProfileMode ? 'profile' : 'debug'),
       'screen': screen(tester),
-      'renderSize': size == null ? 'source' : [size.$1, size.$2],
+      'renderMode': config.renderMode,
+      'renderSize': size == null
+          ? (config.renderMode == 'app' ? 'video, at most ${config.maxRenderHeight} lines' : 'video')
+          : [size.$1, size.$2],
       'hwdecOption': config.hwdec,
       'options': config.appOptions ? 'app' : 'mediakit',
       'ticker': config.ticker,
@@ -976,10 +1024,12 @@ class _Harness {
       // The phases of a run with several screens outlast a 30 s clip: it plays again from the start
       await native.setProperty('loop-file', 'inf');
       final rssBefore = ProcessInfo.currentRss;
+      final gpuBefore = GpuProcessMemory.sample();
       final opened = Stopwatch()..start();
       record['source'] = await open(player);
       await controller.waitUntilFirstFrameRendered.timeout(const Duration(seconds: 30));
       record['firstFrameMs'] = opened.elapsedMilliseconds;
+      record['texture'] = textureOf(controller);
       await player.play();
       // Lets the decoder settle (and hwdec-current tell what it got) before the first phase
       await Future<void>.delayed(const Duration(seconds: 3));
@@ -1057,6 +1107,8 @@ class _Harness {
             'hwdecCurrent': config.scrub(await native.getProperty('hwdec-current', waitForInitialization: false)),
             'voPasses': (await native.getProperty('vo-passes', waitForInitialization: false)).length,
             'rssMB': ProcessInfo.currentRss ~/ (1 << 20),
+            'gpuMemory': GpuProcessMemory.sample(),
+            'texture': textureOf(controller),
             // Processor time of the whole process over the phase, in logical processors busy (24 on the owner's PC):
             // a software decoder shows here and nowhere else
             'cpuCores': cpuBefore == null || cpuAfter == null
@@ -1075,6 +1127,8 @@ class _Harness {
         'rssBeforeMB': rssBefore ~/ (1 << 20),
         'rssAfterMB': ProcessInfo.currentRss ~/ (1 << 20),
         'maxRssMB': ProcessInfo.maxRss ~/ (1 << 20),
+        'gpuBefore': gpuBefore,
+        'gpuAfter': GpuProcessMemory.sample(),
       };
       record['process'] = _WindowsProcess.sample();
     } catch (error) {
@@ -1090,6 +1144,7 @@ class _Harness {
       await errorSubscription.cancel();
       await logSubscription.cancel();
       await player.dispose();
+      VideoController.maxOutputHeight = capBefore;
     }
     return record;
   }
@@ -1310,6 +1365,159 @@ class _Harness {
     return record;
   }
 
+  /// The 8K memory risk of plan 2.7, with two views of the app on [path]: first a swipe (the first view paused, then
+  /// the second opened, which takes the first one's player: one decoder), then the most the pool allows, both views
+  /// playing (a page opened over a large video that plays on) while the frame grabber takes frames, as a folder
+  /// showing its tiles does. Each step samples the working set and the GPU memory: the decoder surfaces sit in the
+  /// second, in shared system memory on an integrated GPU, and the working set does not show them.
+  Future<Map<String, Object?>> memory(WidgetTester tester, String label, String path) async {
+    final record = <String, Object?>{
+      'phase': config.phase,
+      'kind': 'memory',
+      'label': label,
+      'buildMode': kReleaseMode ? 'release' : (kProfileMode ? 'profile' : 'debug'),
+      'screen': screen(tester),
+      'through': config.memoryThroughBridge ? 'bridge' : 'file',
+      'renderSize': 'video, at most ${config.maxRenderHeight} lines',
+    };
+    final steps = <Map<String, Object?>>[];
+    record['steps'] = steps;
+    final controllers = <int, MediaKitVideoPlayerController>{};
+    final capBefore = VideoController.maxOutputHeight;
+    VideoController.maxOutputHeight = config.maxRenderHeight;
+    final bridge = config.memoryThroughBridge ? LocalMediaBridge() : null;
+    final fileSystem = bridge == null ? null : _LocalFileSystem(File(path));
+    Map<String, Object?> sample(String step) => {
+      'step': step,
+      'rssMB': ProcessInfo.currentRss ~/ (1 << 20),
+      'gpuMemory': GpuProcessMemory.sample(),
+      'textures': [
+        for (final view in controllers.keys.toList()..sort()) textureOf(controllers[view]!.videoController.value),
+      ],
+      'pool': {
+        'active': desktopPlayerPool.activeCount(PlayerKind.playback),
+        'idle': desktopPlayerPool.idleCount(PlayerKind.playback),
+      },
+    };
+    try {
+      var source = path;
+      var type = VideoSourceType.file;
+      if (bridge != null) {
+        await bridge.start();
+        bridge.register(fileSystem!);
+        source = bridge.urlFor(fileSystem.source.id, p.basename(path)).toString();
+        type = VideoSourceType.network;
+      }
+      final videoSource = await VideoSource.init(path: source, type: type);
+      steps.add(sample('start'));
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: ColoredBox(
+              color: Colors.black,
+              child: Row(
+                children: [
+                  for (final view in [0, 1])
+                    Expanded(
+                      child: DesktopVideoView(
+                        key: ValueKey('memory-$view'),
+                        pool: desktopPlayerPool,
+                        resolve: (source) async => source.path,
+                        onViewReady: (controller) => controllers[view] = controller as MediaKitVideoPlayerController,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      Future<void> loadAndPlay(int view) async {
+        final controller = controllers[view];
+        if (controller == null) {
+          throw StateError('view $view has no controller');
+        }
+        final ready = Completer<void>();
+        void onReady() {
+          if (!ready.isCompleted) {
+            ready.complete();
+          }
+        }
+
+        controller.onPlaybackReady.addListener(onReady);
+        try {
+          await controller.loadVideoSource(videoSource).timeout(const Duration(seconds: 30));
+          await ready.future.timeout(const Duration(seconds: 30));
+          await controller.play();
+        } finally {
+          controller.onPlaybackReady.removeListener(onReady);
+        }
+      }
+
+      // Long enough for the decoder's surfaces and the demuxer cache to fill
+      final settle = Duration(seconds: max(5, config.seconds));
+      await loadAndPlay(0);
+      await Future<void>.delayed(settle);
+      steps.add(sample('first view playing'));
+      // A swipe: the page left is paused before the next one opens, which takes its player (one decoder)
+      await controllers[0]!.pause();
+      await loadAndPlay(1);
+      await Future<void>.delayed(settle);
+      steps.add(sample('swiped: first paused, then second playing'));
+      // The first plays on while the second plays: it gets a player again, a second one, at its position
+      await controllers[0]!.play();
+      await Future<void>.delayed(settle);
+      steps.add(sample('both views playing'));
+
+      // Frames grabbed while both views hold their players; the highest sample is kept
+      final during = <Map<String, Object?>>[];
+      final sampler = Timer.periodic(const Duration(milliseconds: 500), (_) => during.add(sample('grabbing')));
+      final grabs = <int?>[];
+      try {
+        for (final second in [2, 6, 10]) {
+          final bytes = await VideoThumbnailGrabber.shared.grab(
+            source,
+            time: Duration(seconds: second),
+            box: (width: 320, height: 320, cover: true),
+          );
+          grabs.add(bytes?.length);
+        }
+      } finally {
+        sampler.cancel();
+      }
+      record['grabBytes'] = grabs;
+      int weight(Map<String, Object?> sample) {
+        final gpu = sample['gpuMemory'];
+        final gpuMB = gpu is Map ? ((gpu['sharedMB'] as int? ?? 0) + (gpu['dedicatedMB'] as int? ?? 0)) : 0;
+        return gpuMB + (sample['rssMB']! as int);
+      }
+
+      during.sort((a, b) => weight(b) - weight(a));
+      steps.add({...during.firstOrNull ?? sample('grabbing'), 'step': 'grabbing, highest of ${during.length} samples'});
+      await Future<void>.delayed(settle);
+      steps.add(sample('after the grabs, both views playing'));
+      if (grabs.any((bytes) => bytes == null)) {
+        record['failure'] = 'a frame grab gave nothing: $grabs';
+      }
+    } catch (error) {
+      record['failure'] = config.scrub(error);
+    } finally {
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+      controllers.clear();
+      // The views give their players back to the pool, which stops and parks them; media_kit destroys a disposed
+      // libmpv five seconds later
+      await Future<void>.delayed(const Duration(seconds: 7));
+      steps.add(sample('views closed'));
+      await bridge?.stop();
+      await fileSystem?.close();
+      VideoController.maxOutputHeight = capBefore;
+    }
+    return record;
+  }
+
   /// Spike 2: [Config.soakPlayers] players opened, played and closed one after the other in the window
   Future<Map<String, Object?>> soak(WidgetTester tester) async {
     final path = config.clips.where((clip) => clip.$1 == config.soakClip).map((clip) => clip.$2).firstOrNull;
@@ -1318,6 +1526,7 @@ class _Harness {
     Map<String, Object?> sample(int players) => {
       'players': players,
       'rssMB': ProcessInfo.currentRss ~/ (1 << 20),
+      'gpuMemory': GpuProcessMemory.sample(),
       ..._WindowsProcess.sample(),
     };
     var noFirstFrame = 0;
@@ -1500,11 +1709,14 @@ void main() {
     }
     MediaKit.ensureInitialized();
     _WindowsProcess.keepDisplayOn(true);
+    // The first read of the GPU counters loads their providers, for seconds: done here, not inside a run
+    GpuProcessMemory.sample();
     await harness.setUp();
   });
 
   tearDownAll(() async {
     if (skip == false) {
+      GpuProcessMemory.close();
       _WindowsProcess.keepDisplayOn(false);
       await harness.tearDown();
     }
@@ -1550,6 +1762,20 @@ void main() {
       expect(record['failure'], isNull, reason: '${record['failure']}');
     }, skip: skip != false);
   }
+
+  final memoryClip = config.memoryClip == null
+      ? null
+      : config.clips.where((clip) => clip.$1 == _safeLabel(config.memoryClip!)).firstOrNull;
+  testWidgets(
+    'memory: two views and frame grabs of ${memoryClip?.$1}',
+    (tester) async {
+      final record = await harness.memory(tester, memoryClip!.$1, memoryClip.$2);
+      await harness.report(record);
+      expect(record['failure'], isNull, reason: '${record['failure']}');
+    },
+    skip: skip != false || memoryClip == null,
+    timeout: const Timeout(Duration(minutes: 10)),
+  );
 
   testWidgets(
     'soak of ${config.soakPlayers} players',

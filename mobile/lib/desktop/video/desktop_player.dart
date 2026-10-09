@@ -7,6 +7,11 @@
 // and the server through ImmichServerFileSystem). Never the server's address, a cookie, a token or a header: the
 // bridge reads those in Dart. Its own URLs carry the bridge's token, so every line of mpv's log and every error the
 // app records goes through redactPlayerText first.
+//
+// What libmpv opens by itself: nothing a file refers to. A file of a share or a folder is not trusted, and an M3U
+// list or a DASH manifest named clip.mp4 would make mpv or FFmpeg fetch its entries from any address, without a click
+// since the thumbnails open every video of a folder; the phones' players follow no such reference. So
+// access-references is off for the file played (see DesktopPlayer.open).
 
 import 'dart:async';
 import 'dart:ffi';
@@ -20,6 +25,7 @@ import 'package:flutter/scheduler.dart';
 // ignore: depend_on_referenced_packages
 import 'package:image/image.dart' as img;
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as mpv;
 import 'package:media_kit/media_kit.dart';
@@ -121,6 +127,10 @@ abstract class PlaybackEngine {
 
   /// The end of the file was reached (and the file does not loop)
   ValueListenable<bool> get completed;
+
+  /// The texture can no longer show a picture: its graphics device was lost (a driver update, a GPU reset, the
+  /// computer waking up). Only a new player shows the video again (PlayerLease.discard).
+  ValueListenable<bool> get textureLost;
   ValueListenable<VideoFrameSize?> get videoSize;
 
   /// Whether the open file has a video track, null until it is open
@@ -182,9 +192,9 @@ abstract final class DesktopPlayerOptions {
   /// The frame grab reads a few seconds around one frame
   static const thumbnailMaxBytes = 16 * 1024 * 1024;
 
-  /// What libmpv may open, also for what a file refers to (an HLS list, a "concat:" name): the files of this computer
-  /// and the bridge over http on 127.0.0.1. No https, rtsp or udp: no player of this phase reads anything else, and a
-  /// file of a share is not trusted.
+  /// The protocols FFmpeg may use for the file it is given: a path, or the bridge over http. This list has no host
+  /// limit and does not cover mpv's own opens: what a file refers to is refused by access-references (see the top of
+  /// this file). No https, rtsp or udp: no player of this phase reads anything else.
   static const protocols = ['file', 'http', 'tcp'];
 
   /// The render height of the texture (design 2.11): a 4K panel at 200 % would ask for 8.3 Mpx a frame, four times
@@ -202,10 +212,16 @@ abstract final class DesktopPlayerOptions {
     // A URL of the bridge is never handed to youtube-dl, whose hook would start a process for any http URL
     'ytdl': 'no',
     // No other file is opened next to the video (external subtitles or audio): the decoders stay bounded, and a
-    // share is not listed for them. access-references stays on: media_kit opens every file through a playlist of
-    // one entry (loadlist), which mpv refuses to follow without it; the protocols above bound what it can reach.
+    // share is not listed for them
     'sub-auto': 'no',
     'audio-file-auto': 'no',
+    // The downscale stays media_kit's bilinear one (dscale, correct-downscaling), although a 5.7K or 8K video is then
+    // shrunk twice without a prefilter, to the render height (maxRenderHeight) then by Flutter to the view, which can
+    // shimmer on fine detail. mpv's own downscaler takes it out of its "dumb mode" into passes over a 16 bit copy of
+    // the whole video frame. Measured on an Intel UHD (profile build, 2880 x 1440 texture, 2026-10-09), a 5.7K video
+    // then took 712 to 725 MB of GPU memory instead of 319 to 326, shared with the system, and the app's frames took
+    // 22.6 to 27.4 ms at the median in all seven phases measured, never less (2.5 to 33.8 ms without it). A single
+    // downscale, to the size of the view (design 2.11), would avoid the second pass without that cost.
     if (kind == PlayerKind.thumbnail) ...{
       // media_kit leaves vid=no until a VideoController is attached; the grab has none and wants the frames
       'vid': 'auto',
@@ -321,12 +337,14 @@ class DesktopPlayer implements PlaybackEngine {
   final _playing = ValueNotifier(false);
   final _buffering = ValueNotifier(false);
   final _completed = ValueNotifier(false);
+  final _textureLost = ValueNotifier(false);
   final _videoSize = ValueNotifier<VideoFrameSize?>(null);
   final _hasVideo = ValueNotifier<bool?>(null);
   final _audioTracks = ValueNotifier<List<DesktopAudioTrack>>(const []);
   final _audioTrack = ValueNotifier<String?>(null);
   final _events = StreamController<PlayerEvent>.broadcast();
   final _subscriptions = <StreamSubscription<Object?>>[];
+  final _removers = <void Function()>[];
   bool _disposed = false;
 
   @override
@@ -339,6 +357,8 @@ class DesktopPlayer implements PlaybackEngine {
   ValueListenable<bool> get buffering => _buffering;
   @override
   ValueListenable<bool> get completed => _completed;
+  @override
+  ValueListenable<bool> get textureLost => _textureLost;
   @override
   ValueListenable<VideoFrameSize?> get videoSize => _videoSize;
   @override
@@ -384,6 +404,18 @@ class DesktopPlayer implements PlaybackEngine {
       stream.track.listen((track) => _audioTrack.value = _isPseudoTrack(track.audio.id) ? null : track.audio.id),
       stream.log.listen((log) => logPlayerLine(log.level, log.prefix, log.text)),
     ]);
+    // The vendored media_kit_video gives the texture id 0 when its graphics device was lost (its IMMUCH360-NOTE.md,
+    // patch 4); a texture id is never 0 otherwise on Windows
+    final controller = videoController;
+    if (controller != null && CurrentPlatform.isWindows) {
+      void onTexture() => _textureLost.value = controller.id.value == 0;
+      controller.id.addListener(onTexture);
+      _removers.add(() => controller.id.removeListener(onTexture));
+    }
+    // What the file refers to is not opened (see the top of this file). Turned off when mpv starts to load the file
+    // (on_load, before its demuxer exists), since media_kit hands mpv each file through a list of one entry
+    // (loadlist), which mpv does not read without it; turned on again before the next open.
+    _native.onLoadHooks.add(() => _set('access-references', 'no'));
     await _native.observeEvent(mpv.mpv_event_id.MPV_EVENT_FILE_LOADED, (_) async {
       _emit(const PlayerEvent(PlayerEventKind.loaded));
     });
@@ -438,6 +470,8 @@ class DesktopPlayer implements PlaybackEngine {
     for (final MapEntry(:key, :value) in DesktopPlayerOptions.forOpen(kind, streamed: streamed).entries) {
       await _set(key, value);
     }
+    // For media_kit's list of one entry only: off again once mpv loads the file (_setUp)
+    await _set('access-references', 'yes');
     await _player.open(Media(resource, start: start > Duration.zero ? start : null), play: false);
   }
 
@@ -490,6 +524,9 @@ class DesktopPlayer implements PlaybackEngine {
       return;
     }
     _disposed = true;
+    for (final remove in _removers) {
+      remove();
+    }
     for (final subscription in _subscriptions) {
       await subscription.cancel();
     }

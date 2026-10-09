@@ -1,6 +1,7 @@
 // libmpv for the videos of Immuch360 Desktop, loaded once by desktop_start.dart before the first page, so that the
 // first video does not pay for it and a missing library shows in the log at start rather than as a black player.
 
+import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit/media_kit.dart';
@@ -12,6 +13,11 @@ bool _available = false;
 /// Whether libmpv was loaded at start. Only Windows carries it so far (media_kit_libs_windows_video): Linux and macOS
 /// get their libs packages in phase 4, and until then their players have no library to open.
 bool get desktopVideoAvailable => _available;
+
+/// For the tests of the pages on a computer, which have no libmpv: with a pool of fake players they play as if it
+/// were loaded
+@visibleForTesting
+set desktopVideoAvailable(bool available) => _available = available;
 
 void setUpDesktopVideo() {
   if (!CurrentPlatform.isWindows) {

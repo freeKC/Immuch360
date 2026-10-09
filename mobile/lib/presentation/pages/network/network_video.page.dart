@@ -361,7 +361,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         // Read first, so that it is used up even when the video plays anyway. Back from the Spatial 2.5D player,
         // a video that it left playing but that became ready in the background waits for this to play.
         final playAfterExternalPlayer = _notifier.takePlayOnForeground();
-        if (_shouldPlayOnForeground || playAfterExternalPlayer) {
+        // A computer comes back to resumed at each focus change, never through the paused below: only what an
+        // external player left playing plays on there, not a video the user paused, never started or saw to its end
+        if ((_shouldPlayOnForeground && !CurrentPlatform.isDesktop) || playAfterExternalPlayer) {
           await _notifier.play();
         }
       case AppLifecycleState.paused:

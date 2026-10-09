@@ -21,10 +21,17 @@ Patches:
 
 1. Windows, an OpenGL ES 3.0 context (`windows/angle_surface_manager.h`, `windows/angle_surface_manager.cc`).
    Upstream asks ANGLE for an ES 2.0 context (`kEGLContextAttributes`, `EGL_CONTEXT_CLIENT_VERSION, 2`). In ES 2.0 mpv
-   runs GLSL ES 1.00, cannot import the frames of the D3D11 decoder (its `d3d11egl` interop needs
-   `GL_OES_EGL_image_external_essl3`, mpv `video/out/opengl/hwdec_d3d11egl.c`), so a hardware decoded frame is copied
-   back, and it may render in an 8 bit FBO (`rgba8` is the last format it tries), which bands; the 360 projection hook
-   and the Spatial passes of Immuch360 also want ES 3.0. `ANGLESurfaceManager` now chooses a config with
+   runs GLSL ES 1.00 and may render in an 8 bit FBO (`rgba8` is the last format it tries), which bands; the 360
+   projection hook and the Spatial passes of Immuch360 want GLSL ES 3.00, and ES 3.0 gives an `rgba16f` FBO. What the
+   context does not change: whether mpv imports the frames of the D3D11 decoder without a copy. Its `d3d11egl` interop
+   (`video/out/opengl/hwdec_d3d11egl.c`, `init`) waives `GL_OES_EGL_image_external_essl3` in ES 2.0 (`gl->es == 200`)
+   anyway, and in both versions also wants `EGL_EXT_device_query` among the extensions of the display, which the
+   ANGLE of the libs package lists only among its client extensions: so with the 2024 libmpv (mpv 0.39) every
+   hardware decoded frame is copied back (`hwdec-current` is `d3d11va-copy` in every spike). The mpv commit that
+   `.github/workflows/immuch360-libmpv.yml` builds (`0b7ed670`) also accepts the extension from the client list
+   (`hwdec_d3d11egl.c`, `init`): zero copy needs no patch of mpv, only that build switched on
+   (`IMMUCH360_LIBMPV_FROM_CI` in `media_kit_libs_windows_video`), then `hwdec-current` and the video support of the
+   ANGLE device checked by the harness. `ANGLESurfaceManager` now chooses a config with
    `EGL_RENDERABLE_TYPE` = `EGL_OPENGL_ES3_BIT` and creates an ES 3.0 context (`CreateContext(3)`), and falls back to
    upstream's ES 2.0 config and context when the display refuses (the Direct3D 11 feature level 9_3 and Direct3D 9
    displays of its fallback chain), so a machine without ES 3.0 keeps the hardware path it had. It prints which one it
@@ -55,6 +62,30 @@ Patches:
    the app (`DesktopPlayerOptions.maxRenderHeight`), Flutter scaling the texture up the rest of the way, so that an
    8K video is drawn into 2880 x 1440 rather than 7680 x 3840. The measurement harness's "window" render size relied
    on the fixed size, which upstream replaced: its runs before this patch measured the video's own size.
+
+4. Windows, a lost graphics device (`windows/angle_surface_manager.{h,cc}`, `windows/video_output.{h,cc}`). After a
+   driver update or reset, a GPU switched or gone, or some sleeps, the Direct3D 11 device of a player is removed:
+   upstream then draws nothing, and a new texture size threw inside the thread pool's task, where the exception was
+   lost with the texture already unregistered, so the video stayed black or frozen, with its sound, in every later
+   use of that player. `ANGLESurfaceManager::IsDeviceLost` asks the device (`GetDeviceRemovedReason`) before each
+   frame is drawn; `VideoOutput` stops drawing and making textures on a lost device, and tells Dart once through the
+   texture update with the id 0, which is never given otherwise. The app's player pool then disposes that player and
+   the idle ones, and the page opens its video again where it was in a new player, on a new device
+   (`mobile/lib/desktop/video/player_pool.dart`, `PlayerLease.discard`). The detection is in the code paths that ran
+   on the owner's PC; a real device loss (sleep and resume, a driver restart with `pnputil /restart-device`) is a
+   check of the owner's session (plan 2.4, DEVICE).
+
+5. Windows, a texture replaced while Flutter reads it (`windows/angle_surface_manager.cc`, `windows/video_output.cc`).
+   Each new texture size (another video in a pooled player, or the render height cap of patch 3 arriving after mpv's
+   first size) makes the two Direct3D textures again on the player's worker thread, while Flutter's raster thread may
+   be copying between them (`Read`) for the texture being replaced. Upstream released and made them without the
+   mutex `Read` holds, and gave `texture_id_` the new id before the texture was in the map its callbacks look it up
+   in (`textures_.at`, which throws inside the engine). On 2026-10-09 the measurement harness ended three times out
+   of eleven runs that way, each time just after a new texture of a 5.7K or 8K video on the Intel UHD, mostly when
+   it shrank from 5760 x 2880 to 2880 x 1440: an access violation in the Intel driver (`igd10um64xe.dll`, c0000005)
+   twice and a fail fast in `flutter_windows.dll` (c0000409) once. `SetSize` now holds the mutex while it makes the
+   textures again, and `Resize` zeroes `texture_id_` before the old texture is unregistered and gives it the new id
+   only once the texture is in the map, both under the lock the callbacks take.
 
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.

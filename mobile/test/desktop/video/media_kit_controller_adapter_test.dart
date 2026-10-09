@@ -1,7 +1,8 @@
 // The controller of the desktop player against a fake player (plan 2.5): the same notifications as the phones'
 // NativeVideoPlayerController for what VideoPlayerNotifier and the two pages do (load, play, pause, stop, seek, loop,
 // volume, speed, ended, error), the readiness that waits for a frame of the new file, the suspension by the pool and
-// the resume at the position, the audio tracks.
+// the resume at the position, a file that can no longer be read, a page that goes while its video opens, a lost
+// picture, the audio tracks.
 
 import 'dart:async';
 
@@ -108,9 +109,69 @@ void main() {
     await video.play();
     final engine = players.made.single;
 
+    // mpv's last frame, a little before the duration the container declares
+    engine.position.value = const Duration(milliseconds: 9960);
     engine.completed.value = true;
     expect(ended, 1);
     expect(video.onPlaybackStatusChanged.value, PlaybackStatus.stopped);
+    expect(video.onError.value, isNull);
+  });
+
+  test('a file that can no longer be read halfway is an error, not the end; loaded again, it starts there', () async {
+    players = FakePlayers(onCreate: (engine) => engine.autoLoad = const Duration(seconds: 60));
+    final video = controller();
+    var ended = 0;
+    var ready = 0;
+    video.onPlaybackEnded.addListener(() => ended++);
+    video.onPlaybackReady.addListener(() => ready++);
+    await video.loadVideoSource(await _network(_bridgeUrl));
+    await pumpEventQueue();
+    await video.play();
+    final engine = players.made.single;
+
+    // The share went away: mpv plays what it had, then stops there as at the end of the file
+    engine.position.value = const Duration(seconds: 30);
+    engine.completed.value = true;
+    await pumpEventQueue();
+    expect(ended, 0);
+    expect(video.onError.value, contains('could no longer be read'));
+    expect(video.onError.value, isNot(contains('Zq8secretBridgeToken')));
+    expect(video.onPlaybackStatusChanged.value, PlaybackStatus.stopped);
+    expect(video.onPlaybackPositionChanged.value, 30000, reason: 'the page shows where it stopped');
+    expect(engine.calls.last, 'stop', reason: 'the decoder and the connection let go');
+
+    // The Retry of the network page loads the same video again
+    await video.loadVideoSource(await _network(_bridgeUrl));
+    await pumpEventQueue();
+    expect(engine.calls.where((call) => call.startsWith('open')).last, 'open $_bridgeUrl at 30000 streamed');
+    expect(video.onError.value, isNull);
+    expect(ready, 2);
+    expect(
+      video.onPlaybackStatusChanged.value,
+      PlaybackStatus.paused,
+      reason: 'play goes on from there, where "ended" would replay from the start',
+    );
+
+    // Another video, or the same one played to its end, starts at 0 again
+    await video.seekTo(0);
+    await video.loadVideoSource(await _network(_bridgeUrl));
+    expect(engine.calls.where((call) => call.startsWith('open')).last, 'open $_bridgeUrl at 0 streamed');
+  });
+
+  test('a duration FFmpeg estimates: an end within a hundredth of it is still the end', () async {
+    players = FakePlayers(onCreate: (engine) => engine.autoLoad = const Duration(minutes: 10));
+    final video = controller();
+    var ended = 0;
+    video.onPlaybackEnded.addListener(() => ended++);
+    await video.loadVideoSource(await _network(_bridgeUrl));
+    await pumpEventQueue();
+    await video.play();
+    final engine = players.made.single;
+
+    engine.position.value = const Duration(minutes: 9, seconds: 55);
+    engine.completed.value = true;
+    expect(ended, 1);
+    expect(video.onError.value, isNull);
   });
 
   test('seek: clamped to the video, the position follows at once while paused', () async {
@@ -222,6 +283,128 @@ void main() {
     expect(engine.playing.value, isTrue);
     expect(first.onPlaybackStatusChanged.value, PlaybackStatus.playing);
     expect(second.onPlaybackStatusChanged.value, isNot(PlaybackStatus.playing));
+  });
+
+  test('a seek while the pool has the player opens the video again at the place asked', () async {
+    players = FakePlayers(
+      maxPlayers: {PlayerKind.playback: 1},
+      onCreate: (engine) => engine.autoLoad = const Duration(seconds: 60),
+    );
+    final first = controller();
+    await first.loadVideoSource(await _network(_bridgeUrl));
+    await pumpEventQueue();
+    await first.play();
+    final engine = players.made.single;
+    engine.position.value = const Duration(seconds: 42);
+    final second = controller();
+    await second.loadVideoSource(await _file('/videos/b.mp4'));
+    expect(engine.resource, '/videos/b.mp4');
+
+    await first.seekTo(10000);
+    expect(engine.calls.where((call) => call.startsWith('open')).last, 'open $_bridgeUrl at 10000 streamed');
+    expect(engine.calls.where((call) => call.startsWith('seek')), isEmpty, reason: 'opened there, not sought');
+    expect(first.onPlaybackStatusChanged.value, PlaybackStatus.playing, reason: 'it played when it was taken');
+  });
+
+  test('the page a swipe left (paused) gives its player to the next one, and gets it back where it was', () async {
+    players = FakePlayers(onCreate: (engine) => engine.autoLoad = const Duration(seconds: 60));
+    final left = controller();
+    await left.loadVideoSource(await _network(_bridgeUrl));
+    await pumpEventQueue();
+    await left.play();
+    final engine = players.made.single;
+    engine.position.value = const Duration(seconds: 12);
+    await left.pause();
+
+    final next = controller();
+    await next.loadVideoSource(await _file('/videos/b.mp4'));
+    expect(players.made, hasLength(1), reason: 'one decoder for the viewer, not two');
+    expect(engine.resource, '/videos/b.mp4');
+    expect(left.videoController.value, isNull);
+
+    await left.play();
+    expect(engine.calls.where((call) => call.startsWith('open')).last, 'open $_bridgeUrl at 12000 streamed');
+  });
+
+  test('a page that goes while its video opens: the file is not opened after the player is stopped', () async {
+    final hold = Completer<void>();
+    players = FakePlayers(onCreate: (engine) => engine.holdVolume = hold);
+    final video = controller();
+    final loading = video.loadVideoSource(await _file('/videos/a.mp4'));
+    await pumpEventQueue();
+    final engine = players.made.single;
+    expect(engine.calls, isEmpty, reason: 'the open waits for its volume');
+
+    video.dispose();
+    await pumpEventQueue();
+    expect(engine.calls, isEmpty, reason: 'the pool waits for the open before it stops the player');
+    hold.complete();
+    await loading;
+    await pumpEventQueue();
+    expect(engine.calls.where((call) => call.startsWith('open')), isEmpty);
+    expect(engine.calls.last, 'stop');
+    expect(players.pool.idleCount(PlayerKind.playback), 1);
+  });
+
+  test('a stop while the video opens: no file is left open', () async {
+    final hold = Completer<void>();
+    players = FakePlayers(onCreate: (engine) => engine.holdVolume = hold);
+    final video = controller();
+    final loading = video.loadVideoSource(await _file('/videos/a.mp4'));
+    await pumpEventQueue();
+    final engine = players.made.single;
+
+    final stopping = video.stop();
+    hold.complete();
+    await loading;
+    await stopping;
+    expect(engine.calls.where((call) => call.startsWith('open')), isEmpty);
+    expect(engine.resource, isNull);
+    expect(video.onPlaybackStatusChanged.value, PlaybackStatus.stopped);
+  });
+
+  test('a lost picture: a new player takes over, and the video goes on where it was', () async {
+    players = FakePlayers(onCreate: (engine) => engine.autoLoad = const Duration(seconds: 60));
+    final video = controller();
+    await video.loadVideoSource(await _network(_bridgeUrl));
+    await pumpEventQueue();
+    await video.play();
+    final lost = players.made.single;
+    lost.position.value = const Duration(seconds: 20);
+
+    lost.textureLost.value = true;
+    await pumpEventQueue();
+    expect(lost.disposed, isTrue);
+    final fresh = players.made.last;
+    expect(fresh, isNot(same(lost)));
+    expect(fresh.calls, ['open $_bridgeUrl at 20000 streamed', 'play']);
+    expect(video.onPlaybackStatusChanged.value, PlaybackStatus.playing);
+    expect(video.engine, same(fresh));
+  });
+
+  test('a player whose picture is lost while it changes hands is replaced before the next page plays', () async {
+    players = FakePlayers(onCreate: (engine) => engine.autoLoad = const Duration(seconds: 60));
+    final left = controller();
+    await left.loadVideoSource(await _file('/videos/a.mp4'));
+    await pumpEventQueue();
+    final lost = players.made.single;
+    lost.position.value = const Duration(seconds: 12);
+    // The device goes as the pool stops the player for the next page, when no page listens to it
+    lost.position.addListener(() {
+      if (lost.position.value == Duration.zero) {
+        lost.textureLost.value = true;
+      }
+    });
+
+    final next = controller();
+    await next.loadVideoSource(await _file('/videos/b.mp4'));
+    await pumpEventQueue();
+
+    expect(lost.disposed, isTrue);
+    final fresh = players.made.last;
+    expect(fresh, isNot(same(lost)));
+    expect(fresh.calls.where((call) => call.startsWith('open')).single, 'open /videos/b.mp4 at 0');
+    expect(next.engine, same(fresh));
   });
 
   test('dispose gives the player back to the pool, stopped, for the next page', () async {

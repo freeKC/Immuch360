@@ -1,6 +1,7 @@
 // The flat player at its two call sites (design 2.2): on a computer the viewer builds DesktopVideoView where the
 // phones build NativeVideoPlayerView, and the view hands the pages a controller of the same type; without libmpv
-// (Linux and macOS until phase 4) it shows the placeholder of phase 1, and the load is an error, not a crash.
+// (Linux and macOS until phase 4) the viewer shows the placeholder of phase 1, without a spinner, and the load is an
+// error, not a crash. A computer reports "resumed" at each focus change: the video the user paused stays paused.
 
 import 'dart:io';
 
@@ -11,13 +12,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
+import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:mocktail/mocktail.dart';
@@ -55,6 +59,19 @@ class _Decoder extends VideoDecoderApi {
   }) async => DecodeVerdict(supported: true, hardware: true, maxWidth: 4096, maxHeight: 4096);
 }
 
+/// Records what the viewer asks of its player, which has no player behind it here
+class _RecordingPlayer extends VideoPlayerNotifier {
+  _RecordingPlayer(this.calls);
+
+  final List<String> calls;
+
+  @override
+  Future<void> play() async => calls.add('play');
+
+  @override
+  Future<void> pause() async => calls.add('pause');
+}
+
 void main() {
   late PresentationContext context;
   late MockStorageRepository storage;
@@ -69,38 +86,110 @@ void main() {
 
   tearDown(() async {
     debugDefaultTargetPlatformOverride = null;
+    desktopVideoAvailable = false;
+    desktopPlayerPool = null;
     await context.dispose();
   });
 
-  for (final platform in const [TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]) {
-    testWidgets('${platform.name}: the viewer builds the desktop player, never the native view', (tester) async {
-      debugDefaultTargetPlatformOverride = platform;
-      await tester.pumpTestWidget(
-        context,
-        NativeVideoViewer(
-          asset: video,
-          isCurrent: true,
-          image: const SizedBox(key: Key('poster')),
-        ),
-        overrides: [
-          storageRepositoryProvider.overrideWithValue(storage),
-          sphericalProbeServiceProvider.overrideWithValue(_NoProbes()),
-          videoSourceServiceProvider.overrideWithValue(VideoSourceService(_Decoder())),
-        ],
-        expectSettle: false,
-      );
-      await tester.pump(const Duration(milliseconds: 300));
+  Future<void> pumpViewer(WidgetTester tester, {List<String>? calls}) async {
+    await tester.pumpTestWidget(
+      context,
+      NativeVideoViewer(
+        asset: video,
+        isCurrent: true,
+        image: const SizedBox(key: Key('poster')),
+      ),
+      overrides: [
+        storageRepositoryProvider.overrideWithValue(storage),
+        sphericalProbeServiceProvider.overrideWithValue(_NoProbes()),
+        videoSourceServiceProvider.overrideWithValue(VideoSourceService(_Decoder())),
+        if (calls != null) videoPlayerProvider(video.id).overrideWith((ref) => _RecordingPlayer(calls)),
+      ],
+      expectSettle: false,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+  }
 
-      expect(find.byKey(const Key('poster')), findsOneWidget, reason: 'the poster stays until the video is ready');
-      expect(find.byType(DesktopVideoView), findsOneWidget);
+  for (final platform in const [TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]) {
+    testWidgets('${platform.name} without libmpv: the viewer shows the placeholder over the poster, no spinner', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = platform;
+      await pumpViewer(tester);
+
+      expect(find.byKey(const Key('poster')), findsOneWidget);
       expect(find.byType(NativeVideoPlayerView), findsNothing);
-      // No libmpv under flutter test: the placeholder of phase 1, hidden behind the poster
-      expect(find.byType(DesktopVideoPlaceholder), findsOneWidget);
-      // The buffering timer of the notifier runs out before the tree goes
+      expect(find.byType(DesktopVideoView), findsNothing, reason: 'no player that would never get ready');
+      expect(find.text('Video playback comes to Immuch360 Desktop in a later version'), findsOneWidget);
+      expect(
+        find.ancestor(of: find.byType(DesktopVideoPlaceholder), matching: find.byType(Visibility)),
+        findsNothing,
+        reason: 'not hidden until a video is ready, which never comes',
+      );
+      // Longer than the buffering timer of the notifier, which no load started
+      await tester.pump(const Duration(seconds: 2));
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+
+  testWidgets('windows with libmpv: the viewer builds the desktop player, which opens the file', (tester) async {
+    final players = (await tester.runAsync(() async => FakePlayers()))!;
+    desktopPlayerPool = players.pool;
+    desktopVideoAvailable = true;
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    await pumpViewer(tester);
+    for (var i = 0; i < 5 && players.made.isEmpty; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+
+    expect(find.byKey(const Key('poster')), findsOneWidget, reason: 'the poster stays until the video is ready');
+    expect(find.byType(DesktopVideoView), findsOneWidget);
+    expect(find.byType(NativeVideoPlayerView), findsNothing);
+    expect(find.byType(DesktopVideoPlaceholder), findsNothing);
+    expect(players.made.single.calls.first, startsWith('open '));
+    // The buffering timer of the notifier runs out before the tree goes
+    await tester.pump(const Duration(seconds: 2));
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  for (final platform in const [TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]) {
+    testWidgets('${platform.name}: the focus coming back to the window plays nothing', (tester) async {
+      final calls = <String>[];
+      debugDefaultTargetPlatformOverride = platform;
+      await pumpViewer(tester, calls: calls);
+
+      // Another window, a file dialog, the window minimised and restored: inactive (or hidden), then resumed
+      for (final state in const [AppLifecycleState.inactive, AppLifecycleState.resumed]) {
+        tester.binding.handleAppLifecycleStateChanged(state);
+        await tester.pump();
+      }
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      await tester.pump();
+      for (final state in const [AppLifecycleState.inactive, AppLifecycleState.resumed]) {
+        tester.binding.handleAppLifecycleStateChanged(state);
+        await tester.pump();
+      }
+
+      expect(calls, isNot(contains('play')), reason: 'a video paused, not started or ended stays so');
       await tester.pump(const Duration(seconds: 2));
       debugDefaultTargetPlatformOverride = null;
     });
   }
+
+  testWidgets('a phone still plays on when it comes back to the foreground', (tester) async {
+    final calls = <String>[];
+    await pumpViewer(tester, calls: calls);
+
+    for (final state in const [AppLifecycleState.inactive, AppLifecycleState.resumed]) {
+      tester.binding.handleAppLifecycleStateChanged(state);
+      await tester.pump();
+    }
+
+    expect(calls, contains('play'));
+    await tester.pump(const Duration(seconds: 2));
+  });
 
   testWidgets('the view hands its controller after its first frame, plays through the pool, gives it back', (
     tester,

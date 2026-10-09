@@ -14,14 +14,25 @@ start on a clean PC is never handed out. With --file-version, the executable mus
 version resource: the fork's build number reaches it through flutter build --build-number, and a build made without
 it would show the pubspec's numbers in the file properties.
 
+The video player's files (libmpv-2.dll, under the LGPL; ANGLE, BSD-3-Clause; SwiftShader and the Vulkan loader,
+Apache-2.0) must travel with their licences, and the README is not in the ZIP: when the folder holds them, NOTICES.md
+and the licence texts next to it (--notices, by default mobile/packages/media_kit_video/windows) go into licenses/.
+When libmpv-2.dll is a build of the fork's workflow (immuch360-libmpv.yml: its archive, extracted by the Windows build
+in build/windows/<arch>/libmpv, holds the same DLL with BUILDINFO.txt and licenses/), those go into licenses/libmpv/.
+Any other libmpv-2.dll, media-kit's archive of 2024 by default, has no corresponding source the fork can give, so a ZIP
+for a release (--public, or a version info that is a release label such as 3.3.0-rc.0-20, which desktop_version.py
+gives a release tag only) is refused with it, unless the owner decides otherwise with --accept-2024-libmpv.
+
   windows_bundle.py --release DIR --out DIR [--name "Immuch360 Desktop"] [--arch x64] [--crt-dir DIR]
                     [--system-dir DIR] [--zip FILE] [--symbols DIR] [--info KEY=VALUE ...]
-                    [--file-version A.B.C.D]
+                    [--file-version A.B.C.D] [--notices DIR] [--libmpv DIR] [--public] [--accept-2024-libmpv]
   windows_bundle.py --imports FILE ...      print the imports of PE files as JSON
 
 --crt-dir defaults to the newest Microsoft.VC*.CRT folder of the Visual Studio found by vswhere (Windows only);
 --system-dir defaults to %SystemRoot%\\System32. Both can point at copies elsewhere (the tests use fixtures).
-Exit codes: 0 good, 1 the folder would not run on a clean Windows, 2 bad arguments or missing inputs.
+--libmpv defaults to build/windows/<arch>/libmpv, two levels above --release.
+Exit codes: 0 good, 1 the folder would not run on a clean Windows or a release ZIP is refused, 2 bad arguments or
+missing inputs.
 """
 from __future__ import annotations
 
@@ -37,6 +48,7 @@ import subprocess
 import sys
 import zipfile
 
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 MACHINES = {0x8664: 'x64', 0xAA64: 'arm64', 0x014C: 'x86'}
 # The runtime the Flutter documentation asks to ship next to the executable
 ALWAYS_SHIPPED = ('msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll')
@@ -51,6 +63,15 @@ DEBUG_RUNTIME = re.compile(r'(?i)^((msvcp|vcruntime|concrt|vccorlib)\d{3}(_\w+?)
 API_SET = re.compile(r'(?i)^(api|ext)-ms-')
 # VS_FIXEDFILEINFO of the version resource: its signature, then the structure version 1.0
 FIXED_FILE_INFO = struct.pack('<II', 0xFEEF04BD, 0x00010000)
+# The files media_kit_libs_windows_video bundles for the video player, which its notices cover
+VIDEO_FILES = ('libmpv-2.dll', 'libegl.dll', 'libglesv2.dll', 'vk_swiftshader.dll', 'vulkan-1.dll')
+NOTICES_DIR = ROOT / 'mobile' / 'packages' / 'media_kit_video' / 'windows'
+LICENCE_TEXTS = ('NOTICES.md', 'licenses/LGPL-3.0.txt', 'licenses/GPL-3.0.txt', 'licenses/Apache-2.0.txt',
+                 'licenses/ANGLE-BSD-3-Clause.txt')
+# The label desktop_version.py gives a build of a release tag; every other build has its commit after it. The build
+# number fits a Windows version field (at most 65535, five digits) and the commit has seven characters or more, so the
+# label of a version without a pre-release part and an all-digit commit (3.3.0-20-1234567) is not taken for a release
+RELEASE_LABEL = re.compile(r'^\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?-\d{1,5}$')
 
 
 class NotPe(Exception):
@@ -201,16 +222,48 @@ def check(folder: pathlib.Path, arch: str, crt: dict, system: set, copied: list)
     return problems
 
 
+def sha256(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with open(path, 'rb') as stream:
+        for block in iter(lambda: stream.read(1 << 20), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def fork_libmpv(folder: pathlib.Path, libmpv_dir: pathlib.Path | None) -> pathlib.Path | None:
+    """The extracted archive of the fork's workflow when the folder's libmpv-2.dll is the one it holds, else None."""
+    if libmpv_dir is None:
+        return None
+    dll, ours = folder / 'libmpv-2.dll', libmpv_dir / 'libmpv-2.dll'
+    if not (dll.is_file() and ours.is_file() and (libmpv_dir / 'BUILDINFO.txt').is_file()
+            and (libmpv_dir / 'licenses').is_dir()):
+        return None
+    return libmpv_dir if sha256(dll) == sha256(ours) else None
+
+
+def copy_notices(folder: pathlib.Path, notices: pathlib.Path, fork: pathlib.Path | None) -> list:
+    """Copies the notices of the video player into licenses/; the names of the texts it could not find."""
+    target = folder / 'licenses'
+    missing = []
+    for relative in LICENCE_TEXTS:
+        source = notices / relative
+        if not source.is_file():
+            missing.append(str(source))
+            continue
+        target.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target / source.name)
+    if fork is not None:
+        shutil.copytree(fork / 'licenses', target / 'libmpv')
+        shutil.copy2(fork / 'BUILDINFO.txt', target / 'libmpv' / 'BUILDINFO.txt')
+    return missing
+
+
 def write_zip(folder: pathlib.Path, zip_path: pathlib.Path) -> str:
     zip_path.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for path in sorted(p for p in folder.rglob('*') if p.is_file()):
             archive.write(path, f'{folder.name}/{path.relative_to(folder).as_posix()}')
-    digest = hashlib.sha256()
-    with open(zip_path, 'rb') as stream:
-        for block in iter(lambda: stream.read(1 << 20), b''):
-            digest.update(block)
-    return digest.hexdigest()
+    return sha256(zip_path)
 
 
 def bundle(args) -> int:
@@ -262,12 +315,33 @@ def bundle(args) -> int:
             else:
                 print(f'{exe.name}: file version {found}')
 
+    names = {p.name.lower() for p in folder.iterdir() if p.is_file()}
+    fork = None
+    notes = []
+    if names & set(VIDEO_FILES):
+        libmpv_dir = args.libmpv
+        if libmpv_dir is None and len(args.release.resolve().parents) > 1:
+            libmpv_dir = args.release.resolve().parents[1] / 'libmpv'
+        fork = fork_libmpv(folder, libmpv_dir) if 'libmpv-2.dll' in names else None
+        missing = copy_notices(folder, args.notices, fork)
+        if missing:
+            print('the licences of the video player must travel with it, not found: ' + ', '.join(missing))
+            return 2
+        notes.append('The licences of the video player (libmpv, ANGLE, SwiftShader) are in licenses/NOTICES.md.')
+        if fork is not None:
+            notes.append('libmpv-2.dll: built by the fork, see licenses/libmpv/BUILDINFO.txt; its sources are on the')
+            notes.append('release named there.')
+        elif 'libmpv-2.dll' in names:
+            notes.append("libmpv-2.dll: not a build of the fork's workflow (media-kit's archive of 2024-10-21 unless")
+            notes.append('replaced); licenses/NOTICES.md says where its sources are.')
+        print('licences of the video player copied to licenses/' + (" with those of the fork's libmpv" if fork else ''))
+
     info = ['Immuch360 Desktop'] + [line.replace('=', ': ', 1) for line in args.info] + [
         '',
         'Start immuch360.exe from this folder and keep the folder whole: the program needs the files next to it.',
         'This build is not signed: Windows SmartScreen may ask for a confirmation at the first start, and Smart App',
         'Control, where it is on, blocks it.',
-    ]
+    ] + notes
     (folder / 'BUILD-INFO.txt').write_text('\r\n'.join(info) + '\r\n', encoding='utf-8')
 
     files = [p for p in folder.rglob('*') if p.is_file()]
@@ -279,6 +353,15 @@ def bundle(args) -> int:
         print('This folder would not start on a clean Windows; no ZIP made')
         return 1
     print(f'every import of the {len(pe_files(folder))} DLL and EXE files resolves in the folder or in Windows')
+    versions = [line.split('=', 1)[1].strip() for line in args.info if line.split('=', 1)[0].strip() == 'version']
+    public = args.public or any(RELEASE_LABEL.match(version) for version in versions)
+    if args.zip and public and 'libmpv-2.dll' in names and fork is None:
+        if not args.accept_2024_libmpv:
+            print("no ZIP: a release ZIP would carry a libmpv-2.dll (LGPL) that is not a build of the fork's workflow, "
+                  'whose corresponding source the fork cannot give. Build with IMMUCH360_LIBMPV_FROM_CI on (a pinned '
+                  'release of immuch360-libmpv.yml), or pass --accept-2024-libmpv if the owner decided to publish it')
+            return 1
+        print("warning: release ZIP with a libmpv-2.dll that is not the fork's build (--accept-2024-libmpv)")
     if args.zip:
         digest = write_zip(folder, args.zip)
         print(f'zip: {args.zip} ({args.zip.stat().st_size / 1e6:.1f} MB), SHA-256 {digest}')
@@ -298,6 +381,13 @@ def main(argv=None) -> int:
     parser.add_argument('--symbols', type=pathlib.Path, help='move the .pdb files here instead of dropping them')
     parser.add_argument('--info', action='append', default=[], metavar='KEY=VALUE', help='a line of BUILD-INFO.txt')
     parser.add_argument('--file-version', help='the version each executable must carry, A.B.C.D (3.3.0.20)')
+    parser.add_argument('--notices', type=pathlib.Path, default=NOTICES_DIR,
+                        help='the folder of NOTICES.md and licenses/ of the video player')
+    parser.add_argument('--libmpv', type=pathlib.Path,
+                        help='the extracted libmpv archive of the build (default build/windows/<arch>/libmpv)')
+    parser.add_argument('--public', action='store_true', help='the ZIP is for a release, whatever its version')
+    parser.add_argument('--accept-2024-libmpv', action='store_true',
+                        help="the owner's decision to publish a release ZIP with a libmpv that is not the fork's build")
     args = parser.parse_args(argv)
 
     if args.imports:

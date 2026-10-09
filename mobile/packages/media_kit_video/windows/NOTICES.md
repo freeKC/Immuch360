@@ -15,6 +15,12 @@ in each package); Immuch360 itself is AGPL-3.0 (`LICENSE` at the root of the rep
 The ANGLE files come from `ANGLE.7z` v1.0.1 of `alexmercerind/flutter-windows-ANGLE-OpenGL-ES` (SHA-256
 `cc5911bb15d596fd5a2b362613ad35b7093b427117269a7359054a65746a5f9a`), built for x64 only.
 
+The folder and the ZIP of the Windows build carry this file and the licence texts it refers to, in `licenses/`:
+`LGPL-3.0.txt` and `GPL-3.0.txt` (`libmpv-2.dll`), `Apache-2.0.txt` (SwiftShader, the Vulkan loader and the Apache-2.0
+libraries inside `libmpv-2.dll`) and `ANGLE-BSD-3-Clause.txt` (ANGLE). `.github/desktop/windows_bundle.py` copies them
+from the `licenses/` folder next to this file. With the fork's build of libmpv, the archive's own `licenses/` (one folder
+per library) and its `BUILDINFO.txt` go into `licenses/libmpv/` as well.
+
 ## libmpv-2.dll
 
 ### Which build the app carries
@@ -49,12 +55,14 @@ https://www.gnu.org/licenses/gpl-3.0.html), each part keeping its own licence an
   - Build of the fork (switch on): each `libmpv-windows-*` release carries `<tag>-sources.tar.xz`, the
     sources of every library built for the DLL at the commits listed in `BUILDINFO-<arch>.txt`, together with the
     build recipe at its commit and the two files of `.github/desktop/libmpv/` that set the options of FFmpeg and mpv.
-    Running the workflow again, or the same commands on a Linux machine with the container it names, rebuilds the DLL.
+    Every library is built at the commit pinned in `.github/desktop/libmpv/sources.lock`, so running the workflow
+    again, or the same commands on a Linux machine with the container it names, rebuilds the DLL from the same code.
   - media-kit's 2024 archive (switch off): mpv at commit `0f78584518` (https://github.com/mpv-player/mpv) and FFmpeg at
     commit `8d940a07d` (https://github.com/FFmpeg/FFmpeg), built by the recipe `media-kit/libmpv-win32-video-cmake` at
     commit `8ddbe54` (tag `20241021`); that recipe took the other libraries from their repositories as they were on
     2024-10-21 and media-kit published no list of their commits. The fork keeps no copy of those sources, one of the
-    reasons the fork's own build is meant to replace this archive before a public release.
+    reasons the fork's own build is meant to replace this archive before a public release: `windows_bundle.py`
+    refuses a ZIP for a release that carries it, unless the owner decides otherwise (`--accept-2024-libmpv`).
 
 ### Libraries built into the DLL
 
@@ -129,3 +137,36 @@ archives), which the fork's build leaves out.
 
 These two sentences go into the documentation of the app (its about box or the README of the package) when the
 Windows build is published.
+
+## Dart code compiled into the app
+
+`media_kit` (MIT, `mobile/packages/media_kit/LICENSE`) carries a copy of `package:ffi` 1.2.1 in its `lib/ffi/`, compiled
+into `data/app.so` with the rest of the app's Dart code. Its licence, also in `mobile/packages/media_kit/lib/ffi/LICENSE`:
+
+    Copyright 2019, the Dart project authors.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above
+          copyright notice, this list of conditions and the following
+          disclaimer in the documentation and/or other materials provided
+          with the distribution.
+        * Neither the name of Google LLC nor the names of its
+          contributors may be used to endorse or promote products derived
+          from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

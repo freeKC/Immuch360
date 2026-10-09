@@ -66,6 +66,12 @@ class ANGLESurfaceManager {
   // device or the display could not give 3), for the logs and the probes.
   const int32_t client_version() const { return client_version_; }
 
+  // Immuch360: whether the Direct3D 11 device was removed (a driver update or
+  // reset, a GPU switched or gone): nothing drawn or made on it shows any more,
+  // and only a new surface manager, on a new device, does (IMMUCH360-NOTE.md,
+  // patch 4).
+  bool IsDeviceLost() const;
+
  private:
   // Immuch360: chooses |config_| and creates |context_| for |client_version|.
   bool CreateContext(int32_t client_version);
@@ -111,13 +117,16 @@ class ANGLESurfaceManager {
       2,
       EGL_NONE,
   };
-  // Immuch360: an OpenGL ES 3.0 context first. In ES 2.0 mpv runs GLSL ES 1.00,
-  // cannot import the D3D11 decoder frames (its d3d11egl interop needs
-  // GL_OES_EGL_image_external_essl3), so every hardware decoded frame is
-  // copied back, and it may render in an 8 bit FBO (rgba8 is the last format
-  // it tries), which bands. ANGLE implements ES 3.0 over Direct3D 11 at
-  // feature level 10_0 and above; the ES 2.0 attributes above stay the
-  // fallback for the 9_3 and Direct3D 9 displays.
+  // Immuch360: an OpenGL ES 3.0 context first. In ES 2.0 mpv runs GLSL ES 1.00
+  // and may render in an 8 bit FBO (rgba8 is the last format it tries), which
+  // bands; in ES 3.0 it gets GLSL ES 3.00, which the 360 and Spatial shaders
+  // want, and an rgba16f FBO. The context does not bring zero copy decoding:
+  // mpv 0.39's d3d11egl interop also asks the display for EGL_EXT_device_query,
+  // which this ANGLE lists as a client extension only, so the decoder frames
+  // are copied back in either version (IMMUCH360-NOTE.md, patch 1). ANGLE
+  // implements ES 3.0 over Direct3D 11 at feature level 10_0 and above; the
+  // ES 2.0 attributes above stay the fallback for the 9_3 and Direct3D 9
+  // displays.
   static constexpr EGLint kEGLConfigurationAttributesES3[] = {
       EGL_RED_SIZE,        8,
       EGL_GREEN_SIZE,      8,
