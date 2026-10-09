@@ -1038,7 +1038,7 @@ You need Windows 10 or 11 on x64, Flutter 3.47.2 for Windows, Visual Studio 2022
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-The CI of Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) runs on the `desktop` branch, which follows `immuch360`: the phone gates (nothing changes in the phone builds) and the whole test suite on Linux, the desktop tests on Windows, and the same ZIP; its Linux and macOS jobs (`flutter build linux` and `flutter build macos`, with the same `-t lib/main_desktop.dart`) have not run on those systems yet.
+The CI of Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) runs on the `desktop` branch, which follows `immuch360`: the phone gates (nothing changes in the phone builds) and the whole test suite on Linux, the desktop tests on Windows, and the same ZIP; its Linux job builds the app on Ubuntu and its macOS job compiles it with the macOS 26 SDK (both with the same `-t lib/main_desktop.dart`), as compile checks only: neither has been started on those systems yet. A second workflow (`.github/workflows/immuch360-libmpv.yml`) rebuilds libmpv for Windows x64 and arm64 from pinned sources and publishes the archives with their SHA-256; the ZIPs still carry the media-kit archive until that build is switched on.
 
 ## Where to get it
 
