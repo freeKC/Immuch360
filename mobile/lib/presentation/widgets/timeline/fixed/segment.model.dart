@@ -26,6 +26,7 @@ import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:openapi/api.dart';
 
 class FixedSegment extends Segment {
   final double tileHeight;
@@ -95,18 +96,52 @@ class FixedSegment extends Segment {
 /// The size to ask the device for the thumbnail of [asset] in a tile of [tile] physical pixels, in the remote control
 /// layout. Android fits the thumbnail inside the size asked, aspect kept, and the tile crops it: a 360° photo (2:1)
 /// asked 320 x 320 came 320 x 160 and was stretched to twice that in a TV tile, blurred. A square of the tile's side
-/// times the aspect covers the tile whichever way the photo turns, its rotation included. At most 768 px, the largest
-/// the device makes as a thumbnail rather than by decoding the whole file.
+/// times the aspect covers the tile whichever way the photo turns, its rotation included.
+///
+/// Twice that ([_tvOversampling]), so that the tile draws the thumbnail smaller with mipmaps (FilterQuality.medium):
+/// Android shrinks a photo into a thumbnail mostly by skipping pixels, and a thumbnail shown at its own size kept the
+/// speckles of that on fine detail, the branches of a snowy wood for one. At most 768 px, the largest the device makes
+/// as a thumbnail (LocalImagesImpl.decodeImage decodes the whole file above that, into a bitmap of several times the
+/// size asked): a 2:1 photo comes 768 x 384 in a tile of 286 px, 1.3 times its height rather than twice.
+///
+/// Memory: at most 768 x 576 px, 1.8 MB a tile in the image cache of the thumbnails (100 MB: close to 60 tiles, more
+/// than two screens of a 1080p TV), against 0.9 MB at most before; a square photo in a tile of 286 px takes 572 x 572
+/// px, 1.3 MB.
 @visibleForTesting
 Size tvThumbnailDecodeSize(BaseAsset asset, Size tile) {
-  final width = asset.width;
-  final height = asset.height;
-  final aspect = width != null && height != null && width > 0 && height > 0 ? width / height : 1.0;
-  final side = math.max(tile.width, tile.height) * math.max(aspect, 1 / aspect);
+  final side = _tvOversampling * math.max(tile.width, tile.height) * _longAspect(asset);
   return Size.square(math.min(side, _maxThumbnailSide).ceilToDouble());
 }
 
+/// The long side of [asset] over its short side, 1 when its size is unknown
+double _longAspect(BaseAsset asset) {
+  final width = asset.width;
+  final height = asset.height;
+  final aspect = width != null && height != null && width > 0 && height > 0 ? width / height : 1.0;
+  return math.max(aspect, 1 / aspect);
+}
+
+/// The size to decode the preview of the server to, for [asset] in a tile of [tile] physical pixels, in the remote
+/// control layout: the thumbnail of the server, about 250 px on its short side, was stretched up in a tile of 286 px.
+/// The preview (1440 px by default) is decoded to cover a square of twice the tile's side, as the device thumbnails
+/// are asked (see [tvThumbnailDecodeSize]): Android shrinks it by skipping pixels too when the factor is not a power of
+/// two. At most 1024 px on the long side: a 2:1 photo comes 1024 x 512.
+///
+/// Memory: at most 1024 x 640 px (a tile of 320 px), 2.6 MB a tile in the image cache of the thumbnails, about 40
+/// tiles in its 100 MB; a 4:3 photo in a tile of 286 px takes 763 x 572 px, 1.7 MB. A preview weighs some hundred KB
+/// on the network against some ten for a thumbnail.
+@visibleForTesting
+Size tvPreviewDecodeSize(BaseAsset asset, Size tile) {
+  final side = (_tvOversampling * math.max(tile.width, tile.height)).ceilToDouble();
+  return Size.square(math.min(side, (_maxPreviewDecodeSide / _longAspect(asset)).floorToDouble()));
+}
+
+/// How many times the tile the thumbnails of a TV are decoded, see [tvThumbnailDecodeSize]
+const _tvOversampling = 2.0;
+
 const _maxThumbnailSide = 768.0;
+
+const _maxPreviewDecodeSide = 1024.0;
 
 class _FixedSegmentRow extends ConsumerWidget {
   final int assetIndex;
@@ -379,7 +414,9 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
           asset,
           // The device thumbnails of a phone are 320 px; the tiles of a TV are larger on its screen
           size: tvMode ? tvThumbnailDecodeSize(asset, remoteSize) : kThumbnailResolution,
-          remoteSize: remoteSize,
+          remoteSize: tvMode ? tvPreviewDecodeSize(asset, remoteSize) : remoteSize,
+          // The thumbnail of the server is smaller than a tile of a TV
+          remoteType: tvMode ? AssetMediaSize.preview : AssetMediaSize.thumbnail,
           lockSelection: lockSelection,
           showStorageIndicator: showStorageIndicator,
           showStackIndicator: showStackIndicator,

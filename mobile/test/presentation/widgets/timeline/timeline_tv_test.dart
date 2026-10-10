@@ -21,6 +21,7 @@ import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/pages/common/tab_shell.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
@@ -49,14 +50,37 @@ void main() {
   List<BaseAsset> panoramas(int count) =>
       List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: 'pano$i', width: 5760, height: 2880));
 
-  /// The timeline of [count] panoramas on its own page, or as the Photos tab of the tab shell when [inTabShell]
+  /// [count] 360° photos of the server only, 2:1
+  List<BaseAsset> serverPanoramas(int count) => List<BaseAsset>.generate(
+    count,
+    (i) => RemoteAsset(
+      id: 'remote$i',
+      name: 'remote$i.jpg',
+      ownerId: 'owner',
+      checksum: 'checksum$i',
+      type: AssetType.image,
+      createdAt: DateTime(2026, 10, 5),
+      updatedAt: DateTime(2026, 10, 5),
+      width: 5760,
+      height: 2880,
+      isEdited: false,
+    ),
+  );
+
+  /// [count] square photos of the device
+  List<BaseAsset> squarePhotos(int count) =>
+      List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: 'square$i', width: 4000, height: 4000));
+
+  /// The timeline of [count] panoramas (or of [assets]) on its own page, or as the Photos tab of the tab shell when
+  /// [inTabShell]
   Future<void> pumpTimeline(
     WidgetTester tester, {
     required bool tvMode,
     int count = 12,
     bool inTabShell = false,
+    List<BaseAsset>? assets,
   }) async {
-    final assets = panoramas(count);
+    final shown = assets ?? panoramas(count);
     if (tvMode) {
       // A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
       tester.view
@@ -70,8 +94,8 @@ void main() {
     addTearDown(tester.view.reset);
 
     final service = TimelineService((
-      assetSource: (i, n) async => assets.sublist(i, math.min(i + n, assets.length)),
-      bucketSource: () => Stream.value([TimeBucket(date: DateTime(2026, 10, 5), assetCount: assets.length)]),
+      assetSource: (i, n) async => shown.sublist(i, math.min(i + n, shown.length)),
+      bucketSource: () => Stream.value([TimeBucket(date: DateTime(2026, 10, 5), assetCount: shown.length)]),
       origin: TimelineOrigin.main,
     ));
     addTearDown(service.dispose);
@@ -148,6 +172,13 @@ void main() {
   }
 
   Finder tiles() => find.byType(ThumbnailTile);
+
+  /// The picture of the server the first tile asks for, and the size it is decoded to
+  RemoteImageProvider firstServerThumbnail(WidgetTester tester) =>
+      tester
+              .widget<Thumbnail>(find.descendant(of: tiles().first, matching: find.byType(Thumbnail)).first)
+              .imageProvider!
+          as RemoteImageProvider;
 
   group('on a 1080p TV', () {
     testWidgets('a header of one bar, and a whole row of tiles on the first screen inside the margins', (tester) async {
@@ -254,6 +285,55 @@ void main() {
       );
       expect(fitted.height, greaterThanOrEqualTo(physical.height - 1), reason: 'not stretched up, so not blurred');
       expect(fitted.width, greaterThanOrEqualTo(physical.width - 1));
+      expect(local.size, const Size.square(768), reason: 'larger than the tile, at most a thumbnail of the device');
+    });
+
+    testWidgets('a device thumbnail is asked twice the size of its tile, drawn smaller with mipmaps', (tester) async {
+      await pumpTimeline(tester, tvMode: true, assets: squarePhotos(12));
+
+      final tile = tiles().first;
+      final physical = tester.getSize(tile) * 2;
+      final thumbnail = tester.widget<Thumbnail>(find.descendant(of: tile, matching: find.byType(Thumbnail)).first);
+      final asked = (thumbnail.imageProvider! as LocalThumbProvider).size;
+      expect(asked.width, closeTo(physical.width * 2, 1), reason: 'the speckles of Android averaged away');
+      expect(asked.height, closeTo(physical.height * 2, 1));
+      expect(thumbnail.filterQuality, FilterQuality.medium);
+    });
+  });
+
+  group('a photo of the server', () {
+    testWidgets('on a TV: the preview of the server, decoded at twice the tile and drawn smaller', (tester) async {
+      await pumpTimeline(tester, tvMode: true, assets: serverPanoramas(12));
+
+      final physical = tester.getSize(tiles().first) * 2;
+      final provider = firstServerThumbnail(tester);
+      expect(provider.url, contains('size=preview'), reason: 'the thumbnail of the server is smaller than the tile');
+      expect(provider.url, isNot(contains('size=thumbnail')));
+      // Decoded to cover a square box, aspect kept: a 2:1 photo at most 1024 px on its long side
+      expect(provider.decodeSize, Size.square((1024 / 2).floorToDouble()));
+      expect(provider.decodeSize!.height, greaterThan(physical.height * 1.5), reason: 'larger than the tile');
+    });
+
+    testWidgets('on a phone: the thumbnail of the server, decoded at the size of the tile', (tester) async {
+      await pumpTimeline(tester, tvMode: false, assets: serverPanoramas(12));
+
+      final physical = tester.getSize(tiles().first) * 3;
+      final provider = firstServerThumbnail(tester);
+      expect(provider.url, contains('size=thumbnail'));
+      expect(provider.decodeSize!.width, closeTo(physical.width, 0.01));
+      expect(provider.decodeSize!.height, closeTo(physical.height, 0.01));
+    });
+  });
+
+  group('tvPreviewDecodeSize', () {
+    LocalAsset photo(int? width, int? height) => LocalAssetStub.image1.copyWith(width: width, height: height);
+
+    test('twice the tile on the short side, at most 1024 px on the long side', () {
+      const tile = Size.square(286);
+      expect(tvPreviewDecodeSize(photo(4000, 3000), tile), const Size.square(572), reason: '763 x 572');
+      expect(tvPreviewDecodeSize(photo(null, null), tile), const Size.square(572));
+      expect(tvPreviewDecodeSize(photo(5760, 2880), tile), const Size.square(512), reason: '1024 x 512');
+      expect(tvPreviewDecodeSize(photo(3000, 4500), tile), const Size.square(572), reason: '572 x 858, upright');
     });
   });
 
@@ -300,14 +380,17 @@ void main() {
   group('tvThumbnailDecodeSize', () {
     LocalAsset photo(int? width, int? height) => LocalAssetStub.image1.copyWith(width: width, height: height);
 
-    test('covers a square tile with a wide photo, an upright one, and one of unknown size', () {
+    test('twice the tile, so that the tile draws it smaller with mipmaps: an upright photo, one of unknown size', () {
       const tile = Size.square(286);
-      expect(tvThumbnailDecodeSize(photo(5760, 2880), tile), const Size.square(572));
-      expect(tvThumbnailDecodeSize(photo(3000, 4000), tile), const Size.square(382));
-      expect(tvThumbnailDecodeSize(photo(null, null), tile), const Size.square(286));
+      // Android fits the thumbnail inside the square: 763 x 572 for a 3:4 photo, twice the tile on its short side
+      expect(tvThumbnailDecodeSize(photo(3000, 4000), tile), const Size.square(763));
+      expect(tvThumbnailDecodeSize(photo(4000, 4000), tile), const Size.square(572));
+      expect(tvThumbnailDecodeSize(photo(null, null), tile), const Size.square(572));
     });
 
-    test('stays a thumbnail of the device, at most 768 px', () {
+    test('stays a thumbnail of the device, at most 768 px: a 2:1 photo still covers its tile', () {
+      const tile = Size.square(286);
+      expect(tvThumbnailDecodeSize(photo(5760, 2880), tile), const Size.square(768), reason: '768 x 384, not 1144');
       expect(tvThumbnailDecodeSize(photo(8000, 1000), const Size.square(300)), const Size.square(768));
     });
   });

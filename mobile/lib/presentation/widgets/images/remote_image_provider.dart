@@ -18,12 +18,15 @@ class RemoteImageProvider extends ImageProvider<RemoteImageProvider> {
 
   const RemoteImageProvider({required this.url, this.edited = true, this.decodeSize});
 
+  /// The picture the server made for [assetId]: its small thumbnail, or the [type] asked (the larger preview for the
+  /// tiles of a TV)
   RemoteImageProvider.thumbnail({
     required String assetId,
     required String thumbhash,
     this.edited = true,
     this.decodeSize,
-  }) : url = getThumbnailUrlForRemoteId(assetId, thumbhash: thumbhash, edited: edited);
+    AssetMediaSize type = AssetMediaSize.thumbnail,
+  }) : url = getThumbnailUrlForRemoteId(assetId, type: type, thumbhash: thumbhash, edited: edited);
 
   @override
   Future<RemoteImageProvider> obtainKey(ImageConfiguration configuration) {

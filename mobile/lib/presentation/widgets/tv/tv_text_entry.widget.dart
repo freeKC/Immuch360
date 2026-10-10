@@ -101,7 +101,12 @@ class _TvTextEntryState extends ConsumerState<TvTextEntry> {
           focusNode: widget.focusNode,
           // A field is as wide as the page: the focus ring tells the focus, a scale would push it past the edges
           focusScale: 1,
-          child: ExcludeFocus(child: AbsorbPointer(child: widget.child)),
+          // Room for the floating label inside the focus: the ring, drawn around the focus, passes above the label
+          // rather than across it
+          child: Padding(
+            padding: EdgeInsets.only(top: _floatingLabelRise(context)),
+            child: ExcludeFocus(child: AbsorbPointer(child: widget.child)),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 12, top: 4),
@@ -113,4 +118,12 @@ class _TvTextEntryState extends ConsumerState<TvTextEntry> {
       ],
     );
   }
+}
+
+/// How far the floating label of an outlined field rises above the field: InputDecorator draws it at three quarters of
+/// the font size of the field (bodyLarge), its line as high as that size, centred on the top line of the outline. 6 dp
+/// at 16 sp. The focus ring of a TV, drawn a few dp around the focused widget, crossed the label (Name, Port, Email).
+double _floatingLabelRise(BuildContext context) {
+  final fontSize = Theme.of(context).textTheme.bodyLarge?.fontSize ?? 16;
+  return (MediaQuery.textScalerOf(context).scale(fontSize) * 0.75 / 2).ceilToDouble();
 }

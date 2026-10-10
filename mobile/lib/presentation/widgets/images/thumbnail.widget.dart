@@ -10,6 +10,7 @@ import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.
 import 'package:immich_mobile/presentation/widgets/images/thumb_hash_provider.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:logging/logging.dart';
+import 'package:openapi/api.dart';
 
 final log = Logger('ThumbnailWidget');
 
@@ -52,6 +53,9 @@ class Thumbnail extends StatefulWidget {
 
     /// Physical size to decode for remote thumbnails.
     Size? remoteSize,
+
+    /// The picture of the server for a remote asset: its thumbnail, or its preview for the larger tiles of a TV.
+    AssetMediaSize remoteType = AssetMediaSize.thumbnail,
     super.key,
   }) : thumbhashProvider = switch (asset) {
          RemoteAsset() when asset.thumbHash != null && asset.localId == null => ThumbHashProvider(
@@ -59,7 +63,9 @@ class Thumbnail extends StatefulWidget {
          ),
          _ => null,
        },
-       imageProvider = asset == null ? null : getThumbnailImageProvider(asset, size: size, remoteSize: remoteSize);
+       imageProvider = asset == null
+           ? null
+           : getThumbnailImageProvider(asset, size: size, remoteSize: remoteSize, remoteType: remoteType);
 
   @override
   State<Thumbnail> createState() => _ThumbnailState();
