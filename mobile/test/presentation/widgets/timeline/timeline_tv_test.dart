@@ -1,20 +1,25 @@
 // A timeline on a 1080p TV, the 360° list among others: a header of one bar instead of the tall picture header, tiles
 // sized so that a whole row shows on the first screen inside the overscan margins, and device thumbnails asked large
-// enough to cover their tile. Out of the remote control layout the timeline is the one of a phone.
+// enough to cover their tile. The same in the Photos tab, under the tab shell. Out of the remote control layout the
+// timeline is the one of a phone.
 
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
+import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/pages/common/tab_shell.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
@@ -23,9 +28,11 @@ import 'package:immich_mobile/presentation/widgets/timeline/fixed/segment.model.
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/mesmerizing_sliver_app_bar.dart';
 
 import '../../../fixtures/asset.stub.dart';
@@ -42,7 +49,13 @@ void main() {
   List<BaseAsset> panoramas(int count) =>
       List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: 'pano$i', width: 5760, height: 2880));
 
-  Future<void> pumpTimeline(WidgetTester tester, {required bool tvMode, int count = 12}) async {
+  /// The timeline of [count] panoramas on its own page, or as the Photos tab of the tab shell when [inTabShell]
+  Future<void> pumpTimeline(
+    WidgetTester tester, {
+    required bool tvMode,
+    int count = 12,
+    bool inTabShell = false,
+  }) async {
     final assets = panoramas(count);
     if (tvMode) {
       // A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
@@ -63,34 +76,68 @@ void main() {
     ));
     addTearDown(service.dispose);
 
+    const timeline = Timeline(
+      withScrubber: false,
+      groupBy: GroupAssetsBy.day,
+      appBar: MesmerizingSliverAppBar(title: '360°'),
+    );
+    // The other tabs build lazily, never in these tests
+    AutoRoute tab(String name, String path, {bool initial = false}) => AutoRoute(
+      path: path,
+      initial: initial,
+      page: PageInfo(name, builder: (_) => initial ? timeline : const SizedBox.shrink()),
+    );
     final router = RootStackRouter.build(
       routes: [
-        AutoRoute(
-          initial: true,
-          page: PageInfo(
-            'Panorama360',
-            builder: (_) => const Timeline(
-              withScrubber: false,
-              groupBy: GroupAssetsBy.day,
-              appBar: MesmerizingSliverAppBar(title: '360°'),
-            ),
-          ),
-        ),
+        if (inTabShell)
+          AutoRoute(
+            path: '/',
+            initial: true,
+            page: PageInfo(TabShellRoute.name, builder: (_) => const TabShellPage()),
+            children: [
+              tab(MainTimelineRoute.name, 'photos', initial: true),
+              tab(SearchRoute.name, 'search'),
+              tab(AlbumsRoute.name, 'albums'),
+              tab(LibraryRoute.name, 'library'),
+            ],
+          )
+        else
+          AutoRoute(initial: true, page: PageInfo('Panorama360', builder: (_) => timeline)),
       ],
     );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          timelineServiceProvider.overrideWithValue(service),
-          appConfigProvider.overrideWithValue(const AppConfig()),
-          tvModeProvider.overrideWithValue(tvMode),
-        ],
-        child: MaterialApp.router(
+    final Widget app = ProviderScope(
+      overrides: [
+        timelineServiceProvider.overrideWithValue(service),
+        appConfigProvider.overrideWithValue(const AppConfig()),
+        tvModeProvider.overrideWithValue(tvMode),
+        if (inTabShell) readonlyModeProvider.overrideWith(_NotReadOnly.new),
+      ],
+      child: Builder(
+        builder: (context) => MaterialApp.router(
           routerConfig: router.config(),
+          // As main.dart does
           builder: (context, child) => tvMode ? TvShell(child: child!) : child!,
+          // The labels of the tabs come through EasyLocalization
+          localizationsDelegates: inTabShell ? context.localizationDelegates : null,
+          supportedLocales: inTabShell ? context.supportedLocales : const [Locale('en', 'US')],
+          locale: inTabShell ? context.locale : null,
         ),
       ),
+    );
+    await tester.pumpWidget(
+      inTabShell
+          ? EasyLocalization(
+              supportedLocales: locales.values.toList(),
+              path: translationsPath,
+              startLocale: locales.values.first,
+              fallbackLocale: locales.values.first,
+              saveLocale: false,
+              useFallbackTranslations: true,
+              assetLoader: const CodegenLoader(),
+              child: app,
+            )
+          : app,
     );
     // Segments, then the assets of the rows
     await tester.pump();
@@ -122,10 +169,8 @@ void main() {
       }
     });
 
-    testWidgets('the arrows keep the focused tile and its ring inside the overscan margins, down and up', (
-      tester,
-    ) async {
-      await pumpTimeline(tester, tvMode: true, count: 48);
+    /// Down five rows, then up again: the focused tile and its ring stay inside the overscan margins
+    Future<void> expectArrowsKeepFocusInsideMargins(WidgetTester tester) async {
       const screenHeight = 540.0;
       // How far the ring reaches out of the tile, its dark outline included
       const ring = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
@@ -159,6 +204,23 @@ void main() {
         );
       }
       expect(scrollable.position.pixels, lessThan(scrolled), reason: 'the rows above came back into view');
+    }
+
+    testWidgets('the arrows keep the focused tile and its ring inside the overscan margins, down and up', (
+      tester,
+    ) async {
+      await pumpTimeline(tester, tvMode: true, count: 48);
+      await expectArrowsKeepFocusInsideMargins(tester);
+    });
+
+    testWidgets('in the Photos tab too, where the empty bottom bar of the tab shell takes the bottom padding away', (
+      tester,
+    ) async {
+      await pumpTimeline(tester, tvMode: true, count: 48, inTabShell: true);
+      expect(find.byType(NavigationRail), findsOneWidget, reason: 'landscape: the rail, and an empty bottom bar');
+      final tab = tester.element(find.byType(Timeline));
+      expect(MediaQuery.paddingOf(tab).bottom, 0, reason: 'what the Scaffold of the tab shell hands down');
+      await expectArrowsKeepFocusInsideMargins(tester);
     });
 
     testWidgets('a thumbnail is smoothed as it is drawn smaller than decoded, fine detail without speckles', (
@@ -256,6 +318,11 @@ void main() {
       expect(tvTimelineColumnCount(0, 4), 4, reason: 'the zero sized first frame');
     });
   });
+}
+
+class _NotReadOnly extends ReadOnlyModeNotifier {
+  @override
+  bool build() => false;
 }
 
 /// [image] at once, as a decoded thumbnail in the cache

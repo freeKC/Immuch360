@@ -22,6 +22,7 @@ import 'package:immich_mobile/presentation/widgets/timeline/timeline.state.dart'
 import 'package:immich_mobile/presentation/widgets/timeline/timeline_drag_selection.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline_pinch_zoom.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -139,6 +140,11 @@ const kTvTimelineTileExtent = 160.0;
 
 /// How far the focus ring of a TV reaches out of the focused tile, its dark outline included
 const kTvFocusRingReach = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
+
+/// The margin a timeline keeps at the bottom of a TV: the bottom padding, never less than the overscan margin of the
+/// TV shell. The Scaffold of the tab shell takes the bottom padding away from the tabs for its bottom bar, which is
+/// empty in landscape: the Photos tab saw none, and its focused row stopped flush with the bottom of the screen.
+double _tvBottomMargin(BuildContext context) => math.max(MediaQuery.paddingOf(context).bottom, TvShell.overscan.bottom);
 
 class _AlwaysReadOnlyNotifier extends ReadOnlyModeNotifier {
   @override
@@ -322,7 +328,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
         0,
         -padding.top - kTvFocusRingReach,
         object.size.width,
-        object.size.height + padding.bottom + kTvFocusRingReach,
+        object.size.height + _tvBottomMargin(context) + kTvFocusRingReach,
       ),
     );
   }
@@ -527,9 +533,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                 const bottomSheetOpenModifier = 120.0;
                 // On a TV the last row may stop as far from the bottom as the others (see _keepFocusInsideTvMargins)
                 final contentBottomPadding =
-                    context.padding.bottom +
-                    (isMultiSelectEnabled ? bottomSheetOpenModifier : 0) +
-                    (tvMode ? kTvFocusRingReach : 0);
+                    (tvMode ? _tvBottomMargin(context) + kTvFocusRingReach : context.padding.bottom) +
+                    (isMultiSelectEnabled ? bottomSheetOpenModifier : 0);
                 final scrubberBottomPadding = contentBottomPadding + kScrubberThumbHeight;
 
                 return TimelinePinchZoom(
