@@ -25,6 +25,7 @@ import 'package:immich_mobile/domain/models/album/local_album.model.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/memory.model.dart';
 import 'package:immich_mobile/domain/models/user.model.dart';
+import 'package:immich_mobile/utils/datetime_helpers.dart';
 import 'package:immich_mobile/utils/option.dart';
 import 'package:uuid/uuid.dart';
 
@@ -128,6 +129,7 @@ class MediumRepositoryContext {
   }) async {
     id ??= TestUtils.uuid();
     createdAt ??= TestUtils.date();
+    final date = localDateTime ?? createdAt.toLocal();
     return db
         .into(db.remoteAssetEntity)
         .insertReturning(
@@ -148,7 +150,8 @@ class MediumRepositoryContext {
             isEdited: .new(isEdited ?? false),
             livePhotoVideoId: .new(livePhotoVideoId),
             stackId: .new(stackId),
-            localDateTime: .new(localDateTime ?? createdAt.toLocal()),
+            localDateTime: .new(date),
+            groupDate: .new(timelineGroupDate(date)),
             thumbHash: .new(TestUtils.uuid(thumbHash)),
             libraryId: .new(TestUtils.uuid(libraryId)),
           ),
@@ -319,6 +322,7 @@ class MediumRepositoryContext {
     DateTime? updatedAt,
   }) async {
     id ??= TestUtils.uuid();
+    createdAt ??= TestUtils.date();
     return db
         .into(db.localAssetEntity)
         .insertReturning(
@@ -332,7 +336,8 @@ class MediumRepositoryContext {
             updatedAt: .new(TestUtils.date(updatedAt)),
             checksum: _resolveUndefined(checksum, checksumOption, const Uuid().v4()),
             previousChecksum: .new(previousChecksum),
-            createdAt: .new(TestUtils.date(createdAt)),
+            createdAt: .new(createdAt),
+            groupDate: .new(timelineGroupDate(createdAt.toLocal())),
             type: .new(type ?? .image),
             isFavorite: .new(isFavorite ?? false),
             iCloudId: _resolveUndefined(iCloudId, iCloudIdOption, TestUtils.uuid()),
@@ -404,6 +409,7 @@ class MediumRepositoryContext {
     String? ownerId,
     MemoryTypeEnum? type,
     int? year,
+    String? personName,
     DateTime? memoryAt,
     DateTime? showAt,
     DateTime? hideAt,
@@ -418,7 +424,7 @@ class MediumRepositoryContext {
             id: .new(id),
             ownerId: .new(TestUtils.uuid(ownerId)),
             type: .new(type ?? MemoryTypeEnum.onThisDay),
-            data: .new(MemoryData(year: year ?? 2020).toJson()),
+            data: .new(MemoryData(year: year ?? 2020, personName: personName).toJson()),
             isSaved: .new(isSaved ?? false),
             memoryAt: .new(TestUtils.date(memoryAt)),
             showAt: .new(showAt),

@@ -103,7 +103,11 @@ class _BulkSelectIconButton extends ConsumerWidget {
 
     // The read only mode, or a TV, where the app is a viewer: no selection
     final isViewOnly = ref.watch(viewOnlyProvider);
-    final isAllSelected = ref.watch(bucketSelectionProvider(bucketAssets));
+    final isAllSelected = ref.watch(
+      multiSelectProvider.select(
+        (state) => bucketAssets.isNotEmpty && bucketAssets.every(state.selectedAssets.contains),
+      ),
+    );
 
     return isViewOnly
         ? const SizedBox.shrink()
