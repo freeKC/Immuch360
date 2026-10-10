@@ -91,6 +91,9 @@ workflows:
       cache_paths:
         - $HOME/.pub-cache
         - $HOME/.local/share/mise
+        # Rust 1.98.0 and its iOS targets, which mise installs for the native core of Immich (native/)
+        - $HOME/.rustup
+        - $HOME/.cargo
         - $HOME/Library/Caches/CocoaPods
     scripts:
       - name: Toolchains via mise (Flutter 3.47.2, Java 21, OpenAPI generator)
