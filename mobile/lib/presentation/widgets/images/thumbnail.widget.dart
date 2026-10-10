@@ -18,12 +18,23 @@ class Thumbnail extends StatefulWidget {
   final ImageProvider? thumbhashProvider;
   final BoxFit fit;
 
-  const Thumbnail({this.imageProvider, this.fit = BoxFit.cover, this.thumbhashProvider, super.key});
+  /// How the image is sampled when drawn: low on a phone; medium (mipmaps) on a TV, whose thumbnails come larger than
+  /// their tile (see tvThumbnailDecodeSize) and sparkled at low on fine detail, the branches of a snowy wood for one
+  final FilterQuality filterQuality;
+
+  const Thumbnail({
+    this.imageProvider,
+    this.fit = BoxFit.cover,
+    this.thumbhashProvider,
+    this.filterQuality = FilterQuality.low,
+    super.key,
+  });
 
   Thumbnail.remote({
     required String remoteId,
     required String thumbhash,
     this.fit = BoxFit.cover,
+    this.filterQuality = FilterQuality.low,
 
     /// Physical size to decode, or null for the source size.
     Size? decodeSize,
@@ -34,6 +45,7 @@ class Thumbnail extends StatefulWidget {
   Thumbnail.fromAsset({
     required BaseAsset? asset,
     this.fit = BoxFit.cover,
+    this.filterQuality = FilterQuality.low,
 
     /// Decode size for local thumbnails. This does not affect the widget size.
     Size size = kThumbnailResolution,
@@ -236,6 +248,7 @@ class _ThumbnailState extends State<Thumbnail> with SingleTickerProviderStateMix
           fadeValue: _fadeAnimation.value,
           fit: widget.fit,
           placeholderGradient: gradient,
+          filterQuality: widget.filterQuality,
         );
       },
     );
@@ -258,6 +271,7 @@ class _ThumbnailLeaf extends LeafRenderObjectWidget {
   final double fadeValue;
   final BoxFit fit;
   final Gradient placeholderGradient;
+  final FilterQuality filterQuality;
 
   const _ThumbnailLeaf({
     required this.image,
@@ -265,6 +279,7 @@ class _ThumbnailLeaf extends LeafRenderObjectWidget {
     required this.fadeValue,
     required this.fit,
     required this.placeholderGradient,
+    required this.filterQuality,
   });
 
   @override
@@ -275,6 +290,7 @@ class _ThumbnailLeaf extends LeafRenderObjectWidget {
       fadeValue: fadeValue,
       fit: fit,
       placeholderGradient: placeholderGradient,
+      filterQuality: filterQuality,
     );
   }
 
@@ -285,7 +301,8 @@ class _ThumbnailLeaf extends LeafRenderObjectWidget {
       ..previousImage = previousImage
       ..fadeValue = fadeValue
       ..fit = fit
-      ..placeholderGradient = placeholderGradient;
+      ..placeholderGradient = placeholderGradient
+      ..filterQuality = filterQuality;
   }
 }
 
@@ -295,6 +312,7 @@ class _ThumbnailRenderBox extends RenderBox {
   double _fadeValue;
   BoxFit _fit;
   Gradient _placeholderGradient;
+  FilterQuality _filterQuality;
 
   @override
   bool isRepaintBoundary = true;
@@ -305,6 +323,7 @@ class _ThumbnailRenderBox extends RenderBox {
     required this._fadeValue,
     required this._fit,
     required this._placeholderGradient,
+    required this._filterQuality,
   });
 
   @override
@@ -318,7 +337,7 @@ class _ThumbnailRenderBox extends RenderBox {
         rect: rect,
         image: _previousImage!,
         fit: _fit,
-        filterQuality: FilterQuality.low,
+        filterQuality: _filterQuality,
         opacity: 1.0,
       );
     } else if (_image == null || _fadeValue < 1.0) {
@@ -332,7 +351,7 @@ class _ThumbnailRenderBox extends RenderBox {
         rect: rect,
         image: _image!,
         fit: _fit,
-        filterQuality: FilterQuality.low,
+        filterQuality: _filterQuality,
         opacity: _fadeValue,
       );
     }
@@ -374,6 +393,13 @@ class _ThumbnailRenderBox extends RenderBox {
   set placeholderGradient(Gradient value) {
     if (_placeholderGradient != value) {
       _placeholderGradient = value;
+      markNeedsPaint();
+    }
+  }
+
+  set filterQuality(FilterQuality value) {
+    if (_filterQuality != value) {
+      _filterQuality = value;
       markNeedsPaint();
     }
   }

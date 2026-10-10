@@ -11,6 +11,7 @@ import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 
 class ThumbnailTile extends ConsumerStatefulWidget {
@@ -111,7 +112,13 @@ class _ThumbnailTileState extends ConsumerState<ThumbnailTile> {
                     // but other solutions have failed thus far.
                     key: ValueKey(isCurrentAsset),
                     tag: '${asset?.heroTag}_$heroIndex',
-                    child: Thumbnail.fromAsset(asset: asset, size: widget.size, remoteSize: widget.remoteSize),
+                    child: Thumbnail.fromAsset(
+                      asset: asset,
+                      size: widget.size,
+                      remoteSize: widget.remoteSize,
+                      // The thumbnails of a TV are decoded larger than their tile (see tvThumbnailDecodeSize)
+                      filterQuality: ref.watch(tvModeProvider) ? FilterQuality.medium : FilterQuality.low,
+                    ),
                     // Placeholderbuilder used to hide indicators on first hero animation, since flightShuttleBuilder isn't called until both source and destination hero exist in widget tree.
                     placeholderBuilder: (context, heroSize, child) {
                       if (!_hideIndicators) {
