@@ -4,6 +4,11 @@
 // PlatformPlayer (libmpv's place) is faked: its open writes that list file the way media_kit's does, so a DesktopPlayer
 // that went back to it fails here. The temporary folder is Dart's Directory.systemTemp, the %TEMP% of Windows.
 //
+// The check looks at the top level of that folder only (media_kit's list file is Directory.systemTemp/<uuid v4>) and
+// reads only the regular files that appeared or changed during the open: a machine's temporary folder may hold tens of
+// thousands of files, and on Linux named pipes that Directory.list gives as files and whose read waits for a writer
+// forever (the 30 second timeouts of these tests on the Ubuntu CI).
+//
 // With the libmpv of a Windows build, desktop_player_windows_test.dart watches %TEMP% from the open to the first frame.
 
 import 'dart:async';
@@ -15,6 +20,7 @@ import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as mpv;
 import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart' as p;
+import 'package:uuid/uuid.dart';
 
 const _token = 'BridgeToken7f3a9c51e2';
 const _bridgeUrl = 'http://127.0.0.1:52011/$_token/smb-nas/Videos/clip.mp4';
@@ -93,16 +99,14 @@ class _FakeNativePlayer extends Fake implements NativePlayer {
     calls.add('stop');
   }
 
-  /// What media_kit's open does with a Media (real.dart): every address in a list file of the temporary folder, for
-  /// mpv's loadlist
+  /// What media_kit's open does with a Media (real.dart and TempFile): every address in a list file of the temporary
+  /// folder named by a v4 UUID, for mpv's loadlist
   @override
   Future<void> open(Playable playable, {bool play = true, bool synchronized = true}) async {
     calls.add('open');
     opens++;
     final medias = playable is Media ? [playable] : (playable as Playlist).medias;
-    final file = File(
-      p.join(Directory.systemTemp.path, 'immuch360-fake-media-kit-${DateTime.now().microsecondsSinceEpoch}'),
-    );
+    final file = File(p.join(Directory.systemTemp.path, const Uuid().v4()));
     await file.writeAsString(medias.map((media) => '${media.uri}\n').join());
     listFiles.add(file);
   }
@@ -129,28 +133,39 @@ final class _FileWatch extends IOOverrides {
   }
 }
 
-/// The files of the temporary folder that hold [secret] now, with what [watch] saw made there
-Future<List<String>> _tempFilesHolding(String secret, _FileWatch watch) async {
-  final temp = p.canonicalize(Directory.systemTemp.path);
-  final found = <String>{
-    for (final path in watch.paths)
-      if (p.isWithin(temp, p.canonicalize(path))) path,
-  };
-  await for (final entity in Directory.systemTemp.list(followLinks: false)) {
-    if (entity is! File) {
+/// The entries of the top level of the temporary folder that are files, with their state: names and metadata only,
+/// nothing below that level and no file opened
+Map<String, FileStat> _tempTopLevel() => {
+  for (final entity in Directory.systemTemp.listSync(followLinks: false))
+    if (entity is File) entity.path: entity.statSync(),
+};
+
+/// The names of the regular files of the top level of the temporary folder that appeared or changed since [before]
+/// (taken by [_tempTopLevel] as the test started) and hold [secret]: only those are read
+List<String> _tempFilesHolding(String secret, Map<String, FileStat> before) {
+  final found = <String>[];
+  for (final MapEntry(key: path, value: stat) in _tempTopLevel().entries) {
+    final earlier = before[path];
+    final changed = earlier == null || earlier.modified != stat.modified || earlier.size != stat.size;
+    // A named pipe or a socket is listed as a file too: a read of a pipe waits for a writer. A list file holds a few
+    // addresses
+    if (!changed || stat.type != FileSystemEntityType.file || stat.size > 64 * 1024) {
       continue;
     }
     try {
-      // A list file holds a few addresses
-      if (await entity.length() < 64 * 1024 && (await entity.readAsString()).contains(secret)) {
-        found.add(entity.path);
+      if (File(path).readAsStringSync().contains(secret)) {
+        found.add(p.basename(path));
       }
     } catch (_) {
-      // Another program's file, binary or locked: not one of this test
+      // Another program's file, binary, locked or already gone: not one of this test
     }
   }
-  return found.toList();
+  return found;
 }
+
+/// A check of the temporary folder takes well under a second even with tens of thousands of files there: one that
+/// hangs fails in 10 seconds, not 30
+const _tempCheckTimeout = Timeout(Duration(seconds: 10));
 
 void main() {
   late List<File> listFiles;
@@ -178,6 +193,7 @@ void main() {
     test('${kind.name}: opening writes no file in the temporary folder, mpv gets the address itself', () async {
       final player = await DesktopPlayer.withPlatform(kind, native);
       final watch = _FileWatch();
+      final before = _tempTopLevel();
       native.calls.clear();
       await IOOverrides.runWithIOOverrides(
         () => player.open(address, start: const Duration(seconds: 3), streamed: true),
@@ -185,7 +201,7 @@ void main() {
       );
 
       expect(watch.paths, isEmpty, reason: 'DesktopPlayer.open makes no file at all');
-      expect(await _tempFilesHolding(secret, watch), isEmpty);
+      expect(_tempFilesHolding(secret, before), isEmpty);
       expect(native.opens, 0, reason: "media_kit's open, and its list file, are never used");
       expect(native.commands, [
         ['loadfile', address, 'replace'],
@@ -195,19 +211,24 @@ void main() {
       expect(native.calls.last, 'loadfile $address replace');
       expect(native.calls.where((call) => call.startsWith('set access-references')), isEmpty);
       await player.dispose();
-    });
+    }, timeout: _tempCheckTimeout);
   }
 
   test(
     "the check of the temporary folder sees media_kit's list file (the open DesktopPlayer no longer uses)",
     () async {
       final watch = _FileWatch();
+      final before = _tempTopLevel();
       await IOOverrides.runWithIOOverrides(
         () => Player(platformPlayer: native).open(Media(_bridgeUrl), play: false),
         watch,
       );
-      expect(await _tempFilesHolding(_token, watch), isNotEmpty);
+      final listFile = listFiles.single.path;
+      // Each check sees it on its own: the watch as the open makes it, the look at the folder once it is there
+      expect(watch.paths, contains(listFile));
+      expect(_tempFilesHolding(_token, before), [p.basename(listFile)]);
     },
+    timeout: _tempCheckTimeout,
   );
 
   test('a path of this computer opens as itself, a second open replaces the first', () async {
