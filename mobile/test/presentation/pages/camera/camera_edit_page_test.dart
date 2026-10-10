@@ -3,6 +3,8 @@
 // with it, the certificate pinned at a save without a test, the secrets stored for this device only, the certificate
 // change asked to the user, and the fields reached with a remote.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -12,6 +14,7 @@ import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/presentation/pages/camera/camera_edit.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/routing/router.dart';
 
 import 'camera_fakes.dart';
 
@@ -272,5 +275,64 @@ void main() {
     expect(focused!.context?.findAncestorWidgetOfExactType<CameraEditPage>(), isNotNull);
     // The discovery ends
     await tester_.pump(const Duration(seconds: 2));
+  });
+
+  group('leaving with unsaved changes', () {
+    final discardTitle = find.text('Discard the changes?');
+
+    /// The page over a stub, so that leaving it can be seen
+    Future<void> pumpOver(WidgetTester tester_, {NetworkSource? source}) async {
+      final router = await pumpCameraApp(
+        tester_,
+        home: const Scaffold(body: Text('cameras list')),
+        overrides: [
+          ...storage.overrides,
+          ...cameraOverrides(tester: tester, found: const []),
+        ],
+        pages: {
+          CameraEditRoute.name: (data) {
+            final args = data.argsAs<CameraEditRouteArgs>(orElse: () => const CameraEditRouteArgs());
+            return CameraEditPage(source: args.source, server: args.server);
+          },
+        },
+      );
+      unawaited(router.push(CameraEditRoute(source: source)));
+      await tester_.pumpAndSettle();
+    }
+
+    Future<void> close(WidgetTester tester_) async {
+      await tester_.tap(find.byType(CloseButton));
+      await tester_.pumpAndSettle();
+    }
+
+    testWidgets('asks before a typed address is lost', (tester_) async {
+      storage = await CameraTestStorage.create();
+      await pumpOver(tester_);
+      await tester_.enterText(find.byKey(const Key('camera_host')), '192.0.2.99');
+      await tester_.pump();
+
+      await close(tester_);
+      expect(discardTitle, findsOneWidget);
+      await tester_.tap(find.byKey(const Key('form_discard_changes_keep')));
+      await tester_.pumpAndSettle();
+      expect(find.widgetWithText(TextField, '192.0.2.99'), findsOneWidget);
+
+      await close(tester_);
+      await tester_.tap(find.byKey(const Key('form_discard_changes_discard')));
+      await tester_.pumpAndSettle();
+      expect(find.text('cameras list'), findsOneWidget);
+      expect(storage.storedSources, isEmpty);
+    });
+
+    testWidgets('a stored camera left as it was, its passwords read, leaves at once', (tester_) async {
+      final source = cameraSource();
+      storage = await CameraTestStorage.create(sources: [source]);
+      await pumpOver(tester_, source: source);
+
+      await close(tester_);
+
+      expect(discardTitle, findsNothing);
+      expect(find.text('cameras list'), findsOneWidget);
+    });
   });
 }

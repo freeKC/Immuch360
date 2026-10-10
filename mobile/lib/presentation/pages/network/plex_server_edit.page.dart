@@ -17,6 +17,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart'
 import 'package:immich_mobile/infrastructure/network/plex/plex_pairing.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_token.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/forms/discard_changes.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/found_servers.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -29,6 +30,9 @@ import 'package:immich_mobile/widgets/common/immich_toast.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('PlexServerEditPage');
+
+/// What the fields of the Plex page hold, the token apart (it is read later for a server already added)
+typedef _PlexFormFields = ({String address, String name, String publicHost, String publicPort, String rootPath});
 
 /// Adds a Plex Media Server, or edits or removes one when [source] is given. [server] is a Plex server found on the
 /// network, which fills the page; [focusToken] puts the focus on the token field (the "Paste a new token" action of a
@@ -56,6 +60,15 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
   late final _name = TextEditingController(text: widget.source?.name ?? '');
   late final _publicHost = TextEditingController(text: widget.source?.plex?.publicHost ?? '');
   late final _publicPort = TextEditingController(text: widget.source?.plex?.publicPort?.toString() ?? '');
+  late final _fieldChanges = Listenable.merge([_address, _token, _name, _publicHost, _publicPort]);
+
+  /// What the page held once open (a server found filled in, the stored token once read): leaving with other values
+  /// asks first
+  late final _PlexFormFields _openedWith;
+  String _openedWithToken = '';
+
+  /// The page is going away on purpose (saved, removed)
+  bool _leaving = false;
   final _addressFocus = FocusNode();
   final _tokenFocus = FocusNode();
   final _publicHostFocus = FocusNode();
@@ -108,6 +121,16 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
 
   bool get _isNew => widget.source == null;
 
+  _PlexFormFields _fields() => (
+    address: _address.text,
+    name: _name.text,
+    publicHost: _publicHost.text,
+    publicPort: _publicPort.text,
+    rootPath: _rootPath,
+  );
+
+  bool get _hasUnsavedChanges => !_saving && !_leaving && (_fields() != _openedWith || _token.text != _openedWithToken);
+
   /// The found list shows for a server added from scratch
   bool get _showsDiscovery => _isNew && widget.server == null;
 
@@ -143,6 +166,8 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
     } else if (_showsDiscovery) {
       _scan();
     }
+    // A server tapped in the share form came filled in: no change of the user yet
+    _openedWith = _fields();
     if (source != null) {
       unawaited(_loadToken(source));
       try {
@@ -194,6 +219,7 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
         // "Paste a new token" starts from an empty field: the stored token is the one the server refused
         if (_token.text.isEmpty && !widget.focusToken) {
           _token.text = token ?? '';
+          _openedWithToken = _token.text;
         }
       });
     } catch (error, stackTrace) {
@@ -770,6 +796,7 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
     }
     await ref.read(networkSourcesProvider.notifier).remove(source.id);
     if (mounted) {
+      _leaving = true;
       await context.maybePop();
     }
   }
@@ -861,241 +888,247 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
     final showsRemote = _testSucceeded || !_isNew;
     final sectionPaths = _sectionPaths;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isNew ? context.t.plex_server_add : context.t.plex_server_edit),
-        elevation: 0,
-        leading: const CloseButton(),
-        centerTitle: false,
-      ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          children: [
-            const SizedBox(height: 20),
-            if (_showsDiscovery) ...[
-              FoundServersList(
-                servers: _servers,
-                scanning: _scanning,
-                scanned: _scanned,
-                onScan: _scan,
-                onSelected: _fillFrom,
-                filter: (server) => server.type == NetworkSourceType.plex,
-                scanningText: context.t.plex_scan_scanning,
-                noneFoundText: context.t.plex_scan_none_found,
+    return DiscardChangesScope(
+      listenable: _fieldChanges,
+      hasChanges: () => _hasUnsavedChanges,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_isNew ? context.t.plex_server_add : context.t.plex_server_edit),
+          elevation: 0,
+          leading: const CloseButton(),
+          centerTitle: false,
+        ),
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            children: [
+              const SizedBox(height: 20),
+              if (_showsDiscovery) ...[
+                FoundServersList(
+                  servers: _servers,
+                  scanning: _scanning,
+                  scanned: _scanned,
+                  onScan: _scan,
+                  onSelected: _fillFrom,
+                  filter: (server) => server.type == NetworkSourceType.plex,
+                  scanningText: context.t.plex_scan_scanning,
+                  noneFoundText: context.t.plex_scan_none_found,
+                ),
+                const SizedBox(height: 4),
+              ],
+              Focus(
+                focusNode: _addressEntry,
+                child: _field(
+                  _address,
+                  context.t.plex_server_address,
+                  TvTextKind.url,
+                  key: const Key('plex_server_address'),
+                  hint: context.t.plex_server_address_hint,
+                  focusNode: _addressFocus,
+                  keyboardType: TextInputType.url,
+                  onChanged: _addressChanged,
+                ),
               ),
               const SizedBox(height: 4),
-            ],
-            Focus(
-              focusNode: _addressEntry,
-              child: _field(
-                _address,
-                context.t.plex_server_address,
-                TvTextKind.url,
-                key: const Key('plex_server_address'),
-                hint: context.t.plex_server_address_hint,
-                focusNode: _addressFocus,
-                keyboardType: TextInputType.url,
-                onChanged: _addressChanged,
+              Row(
+                children: [
+                  TextButton.icon(
+                    key: const Key('plex_server_look_up'),
+                    onPressed: _address.text.trim().isEmpty || _lookingUp ? null : () => unawaited(_lookUp()),
+                    icon: _lookingUp
+                        ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.search_rounded),
+                    label: Text(context.t.plex_server_look_up, style: buttonText),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                TextButton.icon(
-                  key: const Key('plex_server_look_up'),
-                  onPressed: _address.text.trim().isEmpty || _lookingUp ? null : () => unawaited(_lookUp()),
-                  icon: _lookingUp
-                      ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.search_rounded),
-                  label: Text(context.t.plex_server_look_up, style: buttonText),
+              if (_lookupError != null)
+                _ResultLine(key: const Key('plex_server_lookup_error'), message: _lookupError!, succeeded: false)
+              else if (server != null)
+                _ServerCard(
+                  key: const Key('plex_server_card'),
+                  name:
+                      server.name ??
+                      _check?.serverName ??
+                      (_name.text.trim().isEmpty ? server.addressText : _name.text),
+                  version: _check?.version ?? server.version,
+                  id: server.shortId,
+                  address: server.addressText,
+                )
+              else if (source != null && _address.text.trim() == _initialAddress)
+                _ServerCard(
+                  key: const Key('plex_server_card'),
+                  name: source.name,
+                  version: source.plex?.version,
+                  id: _shortId(source.discoveryId),
+                  address: _initialAddress,
                 ),
-              ],
-            ),
-            if (_lookupError != null)
-              _ResultLine(key: const Key('plex_server_lookup_error'), message: _lookupError!, succeeded: false)
-            else if (server != null)
-              _ServerCard(
-                key: const Key('plex_server_card'),
-                name:
-                    server.name ?? _check?.serverName ?? (_name.text.trim().isEmpty ? server.addressText : _name.text),
-                version: _check?.version ?? server.version,
-                id: server.shortId,
-                address: server.addressText,
-              )
-            else if (source != null && _address.text.trim() == _initialAddress)
-              _ServerCard(
-                key: const Key('plex_server_card'),
-                name: source.name,
-                version: source.plex?.version,
-                id: _shortId(source.discoveryId),
-                address: _initialAddress,
-              ),
-            const SizedBox(height: 16),
-            KeyedSubtree(
-              key: _tokenKey,
-              child: Focus(
-                focusNode: _tokenEntry,
-                child: _field(
-                  _token,
-                  context.t.plex_token,
-                  TvTextKind.password,
-                  key: const Key('plex_token'),
-                  focusNode: _tokenFocus,
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: !_showToken,
-                  onChanged: _tokenChanged,
-                  suffixIcon: IconButton(
-                    key: const Key('plex_token_show'),
-                    tooltip: _showToken ? context.t.hide_password : context.t.show_password,
-                    icon: Icon(_showToken ? Icons.visibility_off_outlined : Icons.visibility_outlined),
-                    onPressed: () => setState(() => _showToken = !_showToken),
+              const SizedBox(height: 16),
+              KeyedSubtree(
+                key: _tokenKey,
+                child: Focus(
+                  focusNode: _tokenEntry,
+                  child: _field(
+                    _token,
+                    context.t.plex_token,
+                    TvTextKind.password,
+                    key: const Key('plex_token'),
+                    focusNode: _tokenFocus,
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: !_showToken,
+                    onChanged: _tokenChanged,
+                    suffixIcon: IconButton(
+                      key: const Key('plex_token_show'),
+                      tooltip: _showToken ? context.t.hide_password : context.t.show_password,
+                      icon: Icon(_showToken ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                      onPressed: () => setState(() => _showToken = !_showToken),
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (formatLine != null) ...[
-              const SizedBox(height: 4),
-              Text(
-                formatLine,
-                key: const Key('plex_token_format'),
-                style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.error),
-              ),
-            ],
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                key: const Key('plex_token_paste'),
-                onPressed: () => unawaited(_paste()),
-                icon: const Icon(Icons.content_paste_rounded),
-                label: Text(context.t.plex_token_paste, style: buttonText),
-              ),
-            ),
-            Text(context.t.plex_token_rights, style: hintStyle),
-            ExpansionTile(
-              key: const Key('plex_token_how'),
-              tilePadding: EdgeInsets.zero,
-              childrenPadding: const EdgeInsets.only(bottom: 8),
-              expandedCrossAxisAlignment: CrossAxisAlignment.start,
-              shape: const Border(),
-              collapsedShape: const Border(),
-              title: Text(context.t.plex_token_how, style: labelStyle),
-              children: [
-                Text(context.t.plex_token_guide, style: hintStyle),
-                const SizedBox(height: 8),
-                Text(context.t.plex_token_guide_admin, style: hintStyle),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton.icon(
-                key: const Key('plex_test'),
-                onPressed: canTest ? () => unawaited(_test()) : null,
-                icon: _testing
-                    ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.network_check_rounded),
-                label: Text(context.t.network_share_test, style: buttonText),
-              ),
-            ),
-            if (_testMessage != null) ...[
-              const SizedBox(height: 12),
-              _ResultLine(key: const Key('plex_test_result'), message: _testMessage!, succeeded: _testSucceeded),
-            ],
-            if (showsRemote) ...[
-              const SizedBox(height: 24),
-              Text(context.t.plex_remote_title, key: const Key('plex_remote_title'), style: labelStyle),
-              const SizedBox(height: 4),
-              if (askedLearned)
+              if (formatLine != null) ...[
+                const SizedBox(height: 4),
                 Text(
-                  learned == null
-                      ? context.t.plex_remote_unknown
-                      : context.t.plex_remote_learned(address: learned.host, port: '${learned.port}'),
-                  key: const Key('plex_remote_learned'),
-                  style: hintStyle,
+                  formatLine,
+                  key: const Key('plex_token_format'),
+                  style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.error),
                 ),
-              const SizedBox(height: 12),
+              ],
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  key: const Key('plex_token_paste'),
+                  onPressed: () => unawaited(_paste()),
+                  icon: const Icon(Icons.content_paste_rounded),
+                  label: Text(context.t.plex_token_paste, style: buttonText),
+                ),
+              ),
+              Text(context.t.plex_token_rights, style: hintStyle),
+              ExpansionTile(
+                key: const Key('plex_token_how'),
+                tilePadding: EdgeInsets.zero,
+                childrenPadding: const EdgeInsets.only(bottom: 8),
+                expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                shape: const Border(),
+                collapsedShape: const Border(),
+                title: Text(context.t.plex_token_how, style: labelStyle),
+                children: [
+                  Text(context.t.plex_token_guide, style: hintStyle),
+                  const SizedBox(height: 8),
+                  Text(context.t.plex_token_guide_admin, style: hintStyle),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton.icon(
+                  key: const Key('plex_test'),
+                  onPressed: canTest ? () => unawaited(_test()) : null,
+                  icon: _testing
+                      ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(Icons.network_check_rounded),
+                  label: Text(context.t.network_share_test, style: buttonText),
+                ),
+              ),
+              if (_testMessage != null) ...[
+                const SizedBox(height: 12),
+                _ResultLine(key: const Key('plex_test_result'), message: _testMessage!, succeeded: _testSucceeded),
+              ],
+              if (showsRemote) ...[
+                const SizedBox(height: 24),
+                Text(context.t.plex_remote_title, key: const Key('plex_remote_title'), style: labelStyle),
+                const SizedBox(height: 4),
+                if (askedLearned)
+                  Text(
+                    learned == null
+                        ? context.t.plex_remote_unknown
+                        : context.t.plex_remote_learned(address: learned.host, port: '${learned.port}'),
+                    key: const Key('plex_remote_learned'),
+                    style: hintStyle,
+                  ),
+                const SizedBox(height: 12),
+                _field(
+                  _publicHost,
+                  context.t.plex_remote_address,
+                  TvTextKind.url,
+                  key: const Key('plex_remote_address'),
+                  hint: used?.host,
+                  errorText: _publicAddressError,
+                  focusNode: _publicHostFocus,
+                  keyboardType: TextInputType.url,
+                  onEntered: _splitPublicAddress,
+                ),
+                const SizedBox(height: 16),
+                _field(
+                  _publicPort,
+                  context.t.plex_remote_port,
+                  TvTextKind.number,
+                  key: const Key('plex_remote_port'),
+                  // The port used when none is typed: the one written in the address, else the one the server told
+                  // (see plexPublicAddress)
+                  hint: '${_publicAddressTyped?.port ?? used?.port ?? plexDefaultPort}',
+                  errorText: _publicPortIsValid ? null : '1-65535',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
+              ],
+              const SizedBox(height: 24),
               _field(
-                _publicHost,
-                context.t.plex_remote_address,
-                TvTextKind.url,
-                key: const Key('plex_remote_address'),
-                hint: used?.host,
-                errorText: _publicAddressError,
-                focusNode: _publicHostFocus,
-                keyboardType: TextInputType.url,
-                onEntered: _splitPublicAddress,
+                _name,
+                context.t.network_share_name,
+                TvTextKind.text,
+                key: const Key('plex_name'),
+                hint: _check?.serverName ?? server?.name,
               ),
               const SizedBox(height: 16),
-              _field(
-                _publicPort,
-                context.t.plex_remote_port,
-                TvTextKind.number,
-                key: const Key('plex_remote_port'),
-                // The port used when none is typed: the one written in the address, else the one the server told
-                // (see plexPublicAddress)
-                hint: '${_publicAddressTyped?.port ?? used?.port ?? plexDefaultPort}',
-                errorText: _publicPortIsValid ? null : '1-65535',
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
-            ],
-            const SizedBox(height: 24),
-            _field(
-              _name,
-              context.t.network_share_name,
-              TvTextKind.text,
-              key: const Key('plex_name'),
-              hint: _check?.serverName ?? server?.name,
-            ),
-            const SizedBox(height: 16),
-            // Built again when its items change: the field keeps its own value, which must stay one of them
-            KeyedSubtree(
-              key: ValueKey(sectionPaths.join('\n')),
-              child: DropdownButtonFormField<String>(
-                key: const Key('plex_root_path'),
-                initialValue: _shownRootPath,
-                decoration: _decoration(context.t.network_share_root_path),
-                items: [
-                  for (final path in sectionPaths)
-                    DropdownMenuItem(
-                      value: path,
-                      child: Text(path, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ),
-                ],
-                onChanged: (path) => setState(() => _rootPath = path ?? '/'),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Wrap(
-                alignment: WrapAlignment.end,
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  if (!_isNew)
-                    OutlinedButton.icon(
-                      key: const Key('plex_remove'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: context.colorScheme.error,
-                        side: BorderSide(color: context.colorScheme.error),
+              // Built again when its items change: the field keeps its own value, which must stay one of them
+              KeyedSubtree(
+                key: ValueKey(sectionPaths.join('\n')),
+                child: DropdownButtonFormField<String>(
+                  key: const Key('plex_root_path'),
+                  initialValue: _shownRootPath,
+                  decoration: _decoration(context.t.network_share_root_path),
+                  items: [
+                    for (final path in sectionPaths)
+                      DropdownMenuItem(
+                        value: path,
+                        child: Text(path, maxLines: 1, overflow: TextOverflow.ellipsis),
                       ),
-                      onPressed: _saving ? null : () => unawaited(_remove()),
-                      icon: const Icon(Icons.delete_outline),
-                      label: Text(context.t.network_share_remove, style: buttonText),
-                    ),
-                  ElevatedButton.icon(
-                    key: const Key('plex_save'),
-                    onPressed: _canSave ? () => unawaited(_save()) : null,
-                    icon: const Icon(Icons.check),
-                    label: Text(context.t.network_share_save, style: buttonText),
-                  ),
-                ],
+                  ],
+                  onChanged: (path) => setState(() => _rootPath = path ?? '/'),
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 24),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    if (!_isNew)
+                      OutlinedButton.icon(
+                        key: const Key('plex_remove'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: context.colorScheme.error,
+                          side: BorderSide(color: context.colorScheme.error),
+                        ),
+                        onPressed: _saving ? null : () => unawaited(_remove()),
+                        icon: const Icon(Icons.delete_outline),
+                        label: Text(context.t.network_share_remove, style: buttonText),
+                      ),
+                    ElevatedButton.icon(
+                      key: const Key('plex_save'),
+                      onPressed: _canSave ? () => unawaited(_save()) : null,
+                      icon: const Icon(Icons.check),
+                      label: Text(context.t.network_share_save, style: buttonText),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );

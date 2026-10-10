@@ -188,6 +188,7 @@ void main() {
     NetworkSource? source,
     bool settle = true,
     bool tvMode = false,
+    TvApi? tvApi,
   }) async {
     // Tall enough for the whole form
     tester.view.physicalSize = const Size(2400, 4800);
@@ -198,7 +199,7 @@ void main() {
       home: const Scaffold(body: Text('shares list')),
       builder: tvMode ? (context, child) => TvShell(child: child!) : null,
       overrides: [
-        if (tvMode) ...[tvModeProvider.overrideWithValue(true), tvApiProvider.overrideWithValue(_MockTvApi())],
+        if (tvMode) ...[tvModeProvider.overrideWithValue(true), tvApiProvider.overrideWithValue(tvApi ?? _MockTvApi())],
         storeServiceProvider.overrideWithValue(store),
         secureStorageServiceProvider.overrideWithValue(secureStorage),
         mediaBridgeProvider.overrideWithValue(bridge),
@@ -1008,6 +1009,123 @@ void main() {
     });
   });
 
+  group('NetworkShareEditPage, leaving with unsaved changes', () {
+    final discardTitle = find.text('Discard the changes?');
+    final keepEditing = find.byKey(const Key('form_discard_changes_keep'));
+    final discard = find.byKey(const Key('form_discard_changes_discard'));
+
+    Future<void> close(WidgetTester tester) async {
+      await tester.tap(find.byType(CloseButton));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('asks before a filled form is closed, and keeps it when the user keeps editing', (tester) async {
+      await pumpEditPage(tester);
+      await enter(tester, 'name', 'My NAS');
+
+      await close(tester);
+      expect(discardTitle, findsOneWidget);
+      expect(find.text('Add a share'), findsOneWidget);
+
+      await tester.tap(keepEditing);
+      await tester.pumpAndSettle();
+      expect(discardTitle, findsNothing);
+      expect(textOf(tester, 'name'), 'My NAS');
+
+      await close(tester);
+      await tester.tap(discard);
+      await tester.pumpAndSettle();
+      expect(find.text('shares list'), findsOneWidget);
+      expect(storedSources(), isEmpty);
+    });
+
+    testWidgets('asks on the Back of the system too', (tester) async {
+      await pumpEditPage(tester);
+      await enter(tester, 'host', 'nas.local');
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(discardTitle, findsOneWidget);
+    });
+
+    testWidgets('leaves at once when nothing was changed, or when the change was undone', (tester) async {
+      await pumpEditPage(tester);
+      await enter(tester, 'name', 'My NAS');
+      await enter(tester, 'name', '');
+
+      await close(tester);
+
+      expect(discardTitle, findsNothing);
+      expect(find.text('shares list'), findsOneWidget);
+    });
+
+    testWidgets('an existing share left as it was, its stored password read, leaves at once', (tester) async {
+      await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [smbSource]));
+      secureStorage.values[smbSource.secretKey] = 'stored';
+      await pumpEditPage(tester, source: smbSource);
+      expect(textOf(tester, 'password'), 'stored');
+
+      await close(tester);
+
+      expect(discardTitle, findsNothing);
+      expect(find.text('shares list'), findsOneWidget);
+    });
+
+    testWidgets('an existing share whose type changed asks', (tester) async {
+      await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [smbSource]));
+      await pumpEditPage(tester, source: smbSource);
+
+      await tapButton(tester, find.byKey(const Key('network_share_type_webdav')));
+      await close(tester);
+
+      expect(discardTitle, findsOneWidget);
+    });
+
+    testWidgets('a saved form leaves without asking', (tester) async {
+      await pumpEditPage(tester);
+      await enter(tester, 'host', 'nas.local');
+      await enter(tester, 'share', 'media');
+
+      await tapButton(tester, saveButton);
+
+      expect(discardTitle, findsNothing);
+      expect(find.text('shares list'), findsOneWidget);
+      expect(storedSources(), hasLength(1));
+    });
+
+    testWidgets('Plex asks before the typed form gives way to the Plex page', (tester) async {
+      await pumpEditPage(tester);
+      await enter(tester, 'name', 'My NAS');
+
+      await tapButton(tester, find.byKey(const Key('network_share_type_plex')));
+      expect(discardTitle, findsOneWidget);
+      await tester.tap(keepEditing);
+      await tester.pumpAndSettle();
+      expect(find.text('Add a share'), findsOneWidget);
+      expect(find.text('plex edit new'), findsNothing);
+
+      await tapButton(tester, find.byKey(const Key('network_share_type_plex')));
+      await tester.tap(discard);
+      await tester.pumpAndSettle();
+      expect(find.text('plex edit new'), findsOneWidget);
+    });
+
+    testWidgets('a camera found asks too before it replaces a typed form', (tester) async {
+      discovery.keepOpen = true;
+      await pumpEditPage(tester, settle: false);
+      discovery.scans.single.add(const [_tapo]);
+      await discovery.scans.single.close();
+      await tester.pumpAndSettle();
+      await enter(tester, 'name', 'My NAS');
+
+      await tapButton(tester, find.byKey(const Key('network_share_found_tapo_192.0.2.30_443')));
+
+      expect(discardTitle, findsOneWidget);
+      expect(find.text('camera edit 192.0.2.30'), findsNothing);
+    });
+  });
+
   group('NetworkShareEditPage on a TV', () {
     Finder type(String name) => find.byKey(Key('network_share_type_$name'));
 
@@ -1086,6 +1204,33 @@ void main() {
 
       expect(find.text('plex edit new'), findsOneWidget);
       expect(find.text('Add a share'), findsNothing);
+    });
+
+    testWidgets('Back on a filled form asks, Keep editing has the focus, the arrows reach Discard', (tester) async {
+      final tvApi = _MockTvApi();
+      registerFallbackValue(TvTextRequest(title: '', text: '', kind: TvTextKind.text, okLabel: '', cancelLabel: ''));
+      when(() => tvApi.editText(any())).thenAnswer((_) async => 'My NAS');
+      await pumpEditPage(tester, tvMode: true, tvApi: tvApi);
+      final nameEntry = find.ancestor(of: field('name'), matching: find.byType(TvTextEntry));
+      await tester.tap(nameEntry);
+      await tester.pumpAndSettle();
+      expect(textOf(tester, 'name'), 'My NAS');
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Discard the changes?'), findsOneWidget);
+      expect(focusedIn(find.byKey(const Key('form_discard_changes_keep'))), isTrue, reason: 'the safe answer first');
+
+      await press(tester, LogicalKeyboardKey.select);
+      expect(find.text('Discard the changes?'), findsNothing);
+      expect(textOf(tester, 'name'), 'My NAS');
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focusedIn(find.byKey(const Key('form_discard_changes_discard'))), isTrue);
+      await press(tester, LogicalKeyboardKey.select);
+      expect(find.text('shares list'), findsOneWidget);
     });
   });
 
