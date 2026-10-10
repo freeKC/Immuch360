@@ -8,12 +8,14 @@ import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 /// Pumps [home] under a real router whose network routes render a stub telling where they were opened, or the real
-/// page for the routes in [pages]; returns the router so a test can push more
+/// page for the routes in [pages]; returns the router so a test can push more. [builder] wraps the navigator, as the
+/// TV shell does in the app.
 Future<RootStackRouter> pumpNetworkTestApp(
   WidgetTester tester, {
   required Widget home,
   required List<Override> overrides,
   Map<String, Widget Function(RouteData data)> pages = const {},
+  TransitionBuilder? builder,
 }) async {
   AutoRoute route(String path, String name, Widget Function(RouteData data) stub) => AutoRoute(
     path: path,
@@ -67,6 +69,7 @@ Future<RootStackRouter> pumpNetworkTestApp(
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             routerConfig: router.config(),
+            builder: builder,
           ),
         ),
       ),

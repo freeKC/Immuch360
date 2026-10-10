@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -12,16 +13,23 @@ import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_share_edit.page.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/secure_storage.service.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../../../providers/network/fakes.dart';
 import 'network_test_app.dart';
+
+class _MockTvApi extends Mock implements TvApi {}
 
 /// Each discovery is a stream the test drives; it ends at once unless [keepOpen]
 class _FakeDiscovery implements NetworkDiscoveryService {
@@ -173,8 +181,14 @@ void main() {
 
   List<NetworkSource> storedSources() => NetworkSource.decodeList(store.tryGet(StoreKey.networkSources));
 
-  /// Opens the form over a stub page, so that leaving it can be seen
-  Future<void> pumpEditPage(WidgetTester tester, {NetworkSource? source, bool settle = true}) async {
+  /// Opens the form over a stub page, so that leaving it can be seen; in the remote control layout of a TV with
+  /// [tvMode]
+  Future<void> pumpEditPage(
+    WidgetTester tester, {
+    NetworkSource? source,
+    bool settle = true,
+    bool tvMode = false,
+  }) async {
     // Tall enough for the whole form
     tester.view.physicalSize = const Size(2400, 4800);
     addTearDown(tester.view.resetPhysicalSize);
@@ -182,7 +196,9 @@ void main() {
     final router = await pumpNetworkTestApp(
       tester,
       home: const Scaffold(body: Text('shares list')),
+      builder: tvMode ? (context, child) => TvShell(child: child!) : null,
       overrides: [
+        if (tvMode) ...[tvModeProvider.overrideWithValue(true), tvApiProvider.overrideWithValue(_MockTvApi())],
         storeServiceProvider.overrideWithValue(store),
         secureStorageServiceProvider.overrideWithValue(secureStorage),
         mediaBridgeProvider.overrideWithValue(bridge),
@@ -989,6 +1005,87 @@ void main() {
 
       expect(plexRadio, findsNothing);
       expect(find.byKey(const Key('network_share_type_dlna')), findsOneWidget);
+    });
+  });
+
+  group('NetworkShareEditPage on a TV', () {
+    Finder type(String name) => find.byKey(Key('network_share_type_$name'));
+
+    NetworkSourceType? chosenType(WidgetTester tester) =>
+        tester.widget<RadioGroup<NetworkSourceType>>(find.byType(RadioGroup<NetworkSourceType>)).groupValue;
+
+    bool focusedIn(Finder finder) {
+      final focused = FocusManager.instance.primaryFocus?.context;
+      if (focused == null) {
+        return false;
+      }
+      final targets = finder.evaluate().toSet();
+      var found = targets.contains(focused);
+      focused.visitAncestorElements((element) {
+        found = found || targets.contains(element);
+        return !found;
+      });
+      return found;
+    }
+
+    Future<void> press(WidgetTester tester, LogicalKeyboardKey key) async {
+      await tester.sendKeyEvent(key);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('the arrows move the focus through the types and on to the name, OK picks a type', (tester) async {
+      await pumpEditPage(tester, tvMode: true);
+      Focus.of(tester.element(find.descendant(of: type('smb'), matching: find.byType(Text)).first)).requestFocus();
+      await tester.pumpAndSettle();
+      expect(focusedIn(type('smb')), isTrue);
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focusedIn(type('webdav')), isTrue);
+      expect(chosenType(tester), NetworkSourceType.smb, reason: 'moving is not choosing');
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focusedIn(type('plex')), isTrue);
+      expect(find.text('Add a share'), findsOneWidget, reason: 'passing over Plex does not open its page');
+      expect(find.text('plex edit new'), findsNothing);
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(
+        focusedIn(find.ancestor(of: field('name'), matching: find.byType(TvTextEntry))),
+        isTrue,
+        reason: 'the focus goes on to the next field',
+      );
+      expect(chosenType(tester), NetworkSourceType.smb);
+
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(focusedIn(type('plex')), isTrue, reason: 'Up goes back into the group');
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(focusedIn(type('dlna')), isTrue, reason: 'and through it');
+      await press(tester, LogicalKeyboardKey.select);
+      expect(chosenType(tester), NetworkSourceType.dlna, reason: 'OK picks the type that has the focus');
+      expect(find.byKey(const Key('network_share_dlna_hint')), findsOneWidget);
+
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(focusedIn(type('smb')), isTrue);
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(
+        focusedIn(find.byKey(const Key('network_share_scan_again'))),
+        isTrue,
+        reason: 'the focus leaves the group upwards too',
+      );
+      expect(chosenType(tester), NetworkSourceType.dlna);
+    });
+
+    testWidgets('OK on Plex opens the Plex page in place of the form', (tester) async {
+      await pumpEditPage(tester, tvMode: true);
+      Focus.of(tester.element(find.descendant(of: type('plex'), matching: find.byType(Text)).first)).requestFocus();
+      await tester.pumpAndSettle();
+
+      await press(tester, LogicalKeyboardKey.select);
+
+      expect(find.text('plex edit new'), findsOneWidget);
+      expect(find.text('Add a share'), findsNothing);
     });
   });
 

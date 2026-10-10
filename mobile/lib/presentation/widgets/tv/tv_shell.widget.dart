@@ -13,6 +13,8 @@ import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart'
 ///   the screen;
 /// - channel up and down scroll a page, and up and down leave a text field (a single line field keeps them for its
 ///   caret otherwise, and the focus would be stuck in it);
+/// - the arrows move the focus out of a group of radio buttons too, and OK picks a choice (see
+///   [radioArrowMovesFocus]);
 /// - the focus highlight of Material widgets shown at all times, under the one ring of [TvFocusRing].
 class TvShell extends StatefulWidget {
   const TvShell({super.key, required this.child});
@@ -55,10 +57,12 @@ class _TvShellState extends State<TvShell> {
     // cursor, from the first frame on
     _previousStrategy = FocusManager.instance.highlightStrategy;
     FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    FocusManager.instance.addEarlyKeyEventHandler(radioArrowMovesFocus);
   }
 
   @override
   void dispose() {
+    FocusManager.instance.removeEarlyKeyEventHandler(radioArrowMovesFocus);
     FocusManager.instance.highlightStrategy = _previousStrategy;
     super.dispose();
   }
@@ -87,3 +91,60 @@ EdgeInsets _atLeast(EdgeInsets insets, EdgeInsets minimum) => EdgeInsets.fromLTR
   max(insets.right, minimum.right),
   max(insets.bottom, minimum.bottom),
 );
+
+final _arrowDirections = {
+  LogicalKeyboardKey.arrowUp: TraversalDirection.up,
+  LogicalKeyboardKey.arrowDown: TraversalDirection.down,
+  LogicalKeyboardKey.arrowLeft: TraversalDirection.left,
+  LogicalKeyboardKey.arrowRight: TraversalDirection.right,
+};
+
+/// How far above the focused node a radio button may be: the focus node of a RadioListTile sits about fifteen widgets
+/// under it
+const _radioSearchDepth = 40;
+
+/// An arrow pressed on a radio button moves the focus, as on any other control of a TV page. Flutter's RadioGroup
+/// takes the arrows to move the choice instead (the keyboard convention of the web): with a remote, whose only way down
+/// is an arrow, the focus never left the group, each press changed the choice on the way, and a choice that opens
+/// another page (Plex in the share form) or changes the layout (the remote control layout setting) acted at once. OK
+/// still picks the choice that has the focus. Called before the focus tree sees the key, since the group's own
+/// shortcuts sit under the TV shell.
+///
+/// The move goes through the traversal policy around the group, the one the controls next to it use: the group's own
+/// policy keeps a history of its moves that the moves of the other controls do not update, and Up from the field
+/// under the group then Up again would bounce back to the field.
+@visibleForTesting
+KeyEventResult radioArrowMovesFocus(KeyEvent event) {
+  final direction = _arrowDirections[event.logicalKey];
+  final node = FocusManager.instance.primaryFocus;
+  final context = node?.context;
+  if (direction == null || node == null || context == null || event is KeyUpEvent) {
+    return KeyEventResult.ignored;
+  }
+  final group = _radioGroupOf(context);
+  if (group == null) {
+    return KeyEventResult.ignored;
+  }
+  (FocusTraversalGroup.maybeOf(group) ?? ReadingOrderTraversalPolicy()).inDirection(node, direction);
+  // Handled even at the edge of the page: the group would move the choice otherwise
+  return KeyEventResult.handled;
+}
+
+/// The RadioGroup around [context] when it is the focus of a radio button of that group, else null
+BuildContext? _radioGroupOf(BuildContext context) {
+  var radio = false;
+  BuildContext? group;
+  var depth = 0;
+  context.visitAncestorElements((element) {
+    final widget = element.widget;
+    if (widget is RadioGroup) {
+      group = radio ? element : null;
+      return false;
+    }
+    radio = radio || widget is RadioListTile || widget is Radio || widget is RawRadio;
+    depth++;
+    // Past the depth without a radio button: some other control, which the group leaves alone anyway
+    return radio || depth < _radioSearchDepth;
+  });
+  return group;
+}

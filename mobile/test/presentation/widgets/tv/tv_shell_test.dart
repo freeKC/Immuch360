@@ -1,5 +1,6 @@
 // The remote control layout around the app: Flutter's directional navigation, the overscan margins of the TV
-// guidelines, channel up and down for pages, up and down out of a text field, and the focus always highlighted.
+// guidelines, channel up and down for pages, up and down out of a text field and out of a group of radio buttons, and
+// the focus always highlighted.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -140,5 +141,75 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(field.hasFocus, isTrue);
+  });
+
+  group('a group of radio buttons', () {
+    late String? picked;
+
+    Widget radios() => StatefulBuilder(
+      builder: (context, setState) => Scaffold(
+        body: Column(
+          children: [
+            RadioGroup<String>(
+              groupValue: picked,
+              onChanged: (value) => setState(() => picked = value),
+              child: const Column(
+                children: [
+                  RadioListTile<String>(key: Key('first'), value: 'first', title: Text('first')),
+                  RadioListTile<String>(key: Key('second'), value: 'second', title: Text('second')),
+                  RadioListTile<String>(key: Key('third'), value: 'third', title: Text('third')),
+                ],
+              ),
+            ),
+            ElevatedButton(onPressed: () {}, child: const Text('below')),
+          ],
+        ),
+      ),
+    );
+
+    bool focused(WidgetTester tester, String text) => Focus.of(tester.element(find.text(text))).hasFocus;
+
+    setUp(() => picked = 'first');
+
+    testWidgets('the arrows move the focus through the choices and out of the group, OK picks one', (tester) async {
+      await pump(tester, radios());
+      Focus.of(tester.element(find.text('first'))).requestFocus();
+      await tester.pumpAndSettle();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      expect(focused(tester, 'second'), isTrue);
+      expect(picked, 'first', reason: 'a move is no choice');
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(picked, 'first', reason: 'nor are left and right');
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      expect(focused(tester, 'below'), isTrue, reason: 'the focus leaves the group');
+      expect(picked, 'first');
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.pumpAndSettle();
+      expect(focused(tester, 'third'), isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
+      expect(picked, 'third', reason: 'OK picks the choice that has the focus');
+      expect(focused(tester, 'third'), isTrue);
+    });
+
+    testWidgets('out of the remote control layout the arrows keep choosing, as Flutter does', (tester) async {
+      await pump(tester, radios(), tvMode: false);
+      Focus.of(tester.element(find.text('first'))).requestFocus();
+      await tester.pumpAndSettle();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+
+      expect(picked, 'second');
+    });
   });
 }

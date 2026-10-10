@@ -601,7 +601,7 @@ From build 20 the same Android app runs on Android TV and Google TV, with the re
 
 ### Move around with the remote
 
-- The arrows move the frame, OK opens what it is on, Back goes back. From a tab, Back goes to the side menu, then to Photos, then out of the app.
+- The arrows move the frame, OK opens what it is on, Back goes back. From a tab, Back goes to the side menu, then to Photos, then out of the app. In a list of choices, such as the type of a share or a setting, the arrows only move the frame and OK picks the choice (from build 22; before, the arrows changed the choice).
 - Channel up and down scroll a page at a time.
 - In the viewers, the play and pause, fast forward, rewind, next and previous keys of the remote work, and the info key shows the details of a photo or video.
 
