@@ -15,6 +15,7 @@ import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_share_edit.page.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
@@ -1240,6 +1241,17 @@ void main() {
       expect(tester.getRect(outcome).bottom, lessThanOrEqualTo(view.bottom), reason: 'shown without a press of Down');
       expect(focusedIn(testButton), isTrue, reason: 'the focus stays on the button, in view too');
       expect(tester.getRect(testButton).top, greaterThanOrEqualTo(view.top));
+    });
+
+    testWidgets('on a 1080p TV the focus ring of the first type leaves the Type label above it whole', (tester) async {
+      await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [smbSource]));
+      await pumpEditPage(tester, source: smbSource, tvMode: true, tvScreen: true);
+      expect(focusedIn(type('smb')), isTrue, reason: 'the first item of the form of a share');
+
+      final focused = tester.state<TvFocusRingState>(find.byType(TvFocusRing)).ringRect!;
+      // How far the ring reaches out of the focused row, its dark outline included
+      const reach = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
+      expect(focused.top - reach, greaterThanOrEqualTo(tester.getRect(find.text('Type')).bottom));
     });
 
     testWidgets('OK on Plex opens the Plex page in place of the form', (tester) async {
