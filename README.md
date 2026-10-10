@@ -1027,7 +1027,6 @@ When it is the decoding of a server video that does not keep up, not the drawing
 
 ### Not there yet
 
-- **The libmpv of the fork's own build**: the ZIPs carry media-kit's 2024 libmpv until the fork's own build is switched on, and `BUILD-INFO.txt` in the ZIP says which one it carries. With the 2024 one, the two lenses of a raw video with one lens per track or per file never play at once (it lacks the filter that stacks them), so those videos show one lens, half of the sphere black; and the graphics chip copies each frame back from its decoder, which slows the 360° player on an integrated chip. The libmpv of the fork's own workflow, a 2026 version, is meant to replace it before the first public release; a 2026 build of libmpv tried on the test laptop does both.
 - **Two lens raw videos on a laptop**: even with a 2026 libmpv, the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only; on its Intel chip, and for an X4 file (two 3840x3840 HEVC tracks) on both chips, the video plays one lens, half of the sphere black, as on a phone that cannot run two decoders.
 - **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
 - **Spatial 2.5D**, later with the webcam; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.

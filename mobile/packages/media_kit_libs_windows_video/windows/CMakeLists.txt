@@ -66,25 +66,25 @@ function(check_directory_exists_and_not_empty dir result_var)
 endfunction()
 
 # Immuch360: which libmpv the app bundles.
-#   OFF (the default): media-kit's 2024 archive, the one media_kit_libs_windows_video 1.0.12 downloads (mpv
-#       v0.39.0-179-g0f78584518, FFmpeg N-117622-g8d940a07d), now checked by SHA-256.
-#   ON: the libmpv the fork rebuilds with .github/workflows/immuch360-libmpv.yml, with a recent FFmpeg and its
-#       sources published next to it, pinned by the release and the SHA-256 values below.
-# It stays OFF until that workflow has published a release and the values below are filled from the release's
-# SHA256SUMS.txt (the run summary prints these lines); then the default here turns ON. The environment variable of the
+#   ON (the default from desktop build 4): the libmpv the fork rebuilds with .github/workflows/immuch360-libmpv.yml,
+#       with a recent FFmpeg and its sources published next to it, pinned by the release and the SHA-256 values below
+#       (from the release's SHA256SUMS.txt). It has the filter that stacks the two lenses of a raw video and the
+#       d3d11 interop the 360° renderer uses without copying frames back.
+#   OFF: media-kit's 2024 archive, the one media_kit_libs_windows_video 1.0.12 downloads (mpv
+#       v0.39.0-179-g0f78584518, FFmpeg N-117622-g8d940a07d), checked by SHA-256. The environment variable of the
 # same name turns it on or off for one build without editing this file (win_flutter.sh --env IMMUCH360_LIBMPV_FROM_CI).
 # The licences of both are in ../../media_kit_video/windows/NOTICES.md.
 if(DEFINED ENV{IMMUCH360_LIBMPV_FROM_CI})
   set(IMMUCH360_LIBMPV_FROM_CI "$ENV{IMMUCH360_LIBMPV_FROM_CI}")
 elseif(NOT DEFINED IMMUCH360_LIBMPV_FROM_CI)
-  set(IMMUCH360_LIBMPV_FROM_CI OFF)
+  set(IMMUCH360_LIBMPV_FROM_CI ON)
 endif()
 set(IMMUCH360_LIBMPV_RELEASES "https://github.com/freeKC/Immuch360/releases/download")
-set(IMMUCH360_LIBMPV_TAG "")
-set(IMMUCH360_LIBMPV_X64 "")
-set(IMMUCH360_LIBMPV_X64_SHA256 "")
-set(IMMUCH360_LIBMPV_ARM64 "")
-set(IMMUCH360_LIBMPV_ARM64_SHA256 "")
+set(IMMUCH360_LIBMPV_TAG "libmpv-windows-20261009-3")
+set(IMMUCH360_LIBMPV_X64 "mpv-dev-x86_64-20261009-git-0b7ed67.7z")
+set(IMMUCH360_LIBMPV_X64_SHA256 "9a1a156553f0b004d89791eb39e5f6c61f4f87cb9711ff0ab978031ac9063f82")
+set(IMMUCH360_LIBMPV_ARM64 "mpv-dev-aarch64-20261009-git-0b7ed67.7z")
+set(IMMUCH360_LIBMPV_ARM64_SHA256 "230eac0a94453456617f124636512abc7dc584998c1911f98cdd83aede96c33a")
 
 # Detect architecture and set appropriate libmpv archive
 if(${FLUTTER_TARGET_PLATFORM} STREQUAL "windows-x64")
