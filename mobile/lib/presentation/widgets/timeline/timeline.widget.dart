@@ -531,9 +531,13 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                 final topPadding = context.padding.top + (widget.appBar == null ? 0 : kToolbarHeight) + 10;
 
                 const bottomSheetOpenModifier = 120.0;
-                // On a TV the last row may stop as far from the bottom as the others (see _keepFocusInsideTvMargins)
+                // On a TV the last row may stop as far from the bottom as the others (see _keepFocusInsideTvMargins).
+                // The rows of a segment start a spacing under its header, a spacing the extent of the segment leaves
+                // out: the last row reaches that far into this padding.
                 final contentBottomPadding =
-                    (tvMode ? _tvBottomMargin(context) + kTvFocusRingReach : context.padding.bottom) +
+                    (tvMode
+                        ? _tvBottomMargin(context) + kTvFocusRingReach + kTimelineSpacing
+                        : context.padding.bottom) +
                     (isMultiSelectEnabled ? bottomSheetOpenModifier : 0);
                 final scrubberBottomPadding = contentBottomPadding + kScrubberThumbHeight;
 

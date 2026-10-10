@@ -169,7 +169,7 @@ void main() {
       }
     });
 
-    /// Down five rows, then up again: the focused tile and its ring stay inside the overscan margins
+    /// Down to the last row, then up five rows: the focused tile and its ring stay inside the overscan margins
     Future<void> expectArrowsKeepFocusInsideMargins(WidgetTester tester) async {
       const screenHeight = 540.0;
       // How far the ring reaches out of the tile, its dark outline included
@@ -179,28 +179,29 @@ void main() {
       await tester.pumpAndSettle();
       final scrollable = tester.state<ScrollableState>(find.byType(Scrollable).first);
 
-      for (var row = 1; row <= 5; row++) {
+      // 48 tiles make fewer rows than presses: the last ones stay on the last row
+      for (var press = 1; press <= 12; press++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
         await tester.pumpAndSettle();
         final rect = FocusManager.instance.primaryFocus!.rect;
         expect(
           rect.bottom + ring,
           lessThanOrEqualTo(screenHeight - TvShell.overscan.bottom + 0.5),
-          reason: 'row $row and its ring above the bottom margin, not flush with the screen',
+          reason: 'Down $press times: the row and its ring above the bottom margin, not flush with the screen',
         );
-        expect(rect.top - ring, greaterThanOrEqualTo(barBottom - 0.5), reason: 'row $row under the bar');
+        expect(rect.top - ring, greaterThanOrEqualTo(barBottom - 0.5), reason: 'Down $press times: under the bar');
       }
       final scrolled = scrollable.position.pixels;
-      expect(scrolled, greaterThan(0), reason: 'the rows below came into view');
+      expect(scrolled, scrollable.position.maxScrollExtent, reason: 'down to the end of the grid');
 
-      for (var row = 4; row >= 0; row--) {
+      for (var press = 1; press <= 5; press++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
         await tester.pumpAndSettle();
         final rect = FocusManager.instance.primaryFocus!.rect;
         expect(
           rect.top - ring,
           greaterThanOrEqualTo(barBottom + TvShell.overscan.top - 0.5),
-          reason: 'row $row and its ring a margin under the bar, not flush with it',
+          reason: 'Up $press times: the row and its ring a margin under the bar, not flush with it',
         );
       }
       expect(scrollable.position.pixels, lessThan(scrolled), reason: 'the rows above came back into view');
