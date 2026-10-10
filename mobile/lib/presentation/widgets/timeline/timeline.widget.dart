@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
@@ -67,9 +68,11 @@ class Timeline extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final columnCount = ref.watch(appConfigProvider.select((config) => config.timeline.tilesPerRow));
-    return LayoutBuilder(
+    final tilesPerRow = ref.watch(appConfigProvider.select((config) => config.timeline.tilesPerRow));
+    final tvMode = ref.watch(tvModeProvider);
+    final timeline = LayoutBuilder(
       builder: (_, constraints) {
+        final columnCount = tvMode ? tvTimelineColumnCount(constraints.maxWidth, tilesPerRow) : tilesPerRow;
         return ProviderScope(
           overrides: [
             // overrideWithValue keeps the scoped args in sync with the latest constraints on rebuilds,
@@ -101,8 +104,31 @@ class Timeline extends ConsumerWidget {
         );
       },
     );
+    if (!tvMode) {
+      return timeline;
+    }
+    // The overscan margins of the TV shell on the sides too: the tiles of the grid ran to the edges of the screen,
+    // which a TV may cut. The bars inside get the margins from here rather than from the padding.
+    final padding = MediaQuery.paddingOf(context);
+    return ColoredBox(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Padding(
+        padding: EdgeInsets.only(left: padding.left, right: padding.right),
+        child: MediaQuery.removePadding(context: context, removeLeft: true, removeRight: true, child: timeline),
+      ),
+    );
   }
 }
+
+/// The tiles per row of a timeline in the remote control layout: the setting (4 by default) is meant for a phone held
+/// upright, and gave tiles of 240 dp on a TV of 960 x 540 dp, half the height of the screen, a single row cut by its
+/// bottom. Tiles of at most [kTvTimelineTileExtent] dp instead, or more per row when the setting asks for more.
+@visibleForTesting
+int tvTimelineColumnCount(double width, int tilesPerRow) =>
+    width <= 0 ? tilesPerRow : math.max(tilesPerRow, (width / kTvTimelineTileExtent).ceil());
+
+/// The widest tile of a timeline on a TV, in dp: six per row on a 1080p TV, two whole rows under the headers
+const kTvTimelineTileExtent = 160.0;
 
 class _AlwaysReadOnlyNotifier extends ReadOnlyModeNotifier {
   @override

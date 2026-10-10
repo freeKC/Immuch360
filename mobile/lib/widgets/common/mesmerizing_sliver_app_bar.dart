@@ -7,6 +7,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/sliver_app_bar/item_count_text.widget.dart';
 import 'package:immich_mobile/presentation/widgets/sliver_app_bar/random_asset_background_image.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 
 class MesmerizingSliverAppBar extends ConsumerStatefulWidget {
@@ -35,6 +36,23 @@ class _MesmerizingSliverAppBarState extends ConsumerState<MesmerizingSliverAppBa
 
   @override
   Widget build(BuildContext context) {
+    // The remote control layout (Android TV): a TV of 960 x 540 dp has no room for a header of 300 dp, which left one
+    // row of tiles cut by the bottom of the screen. One bar with the title and the count instead.
+    if (ref.watch(tvModeProvider)) {
+      return SliverAppBar(
+        pinned: true,
+        elevation: 0,
+        centerTitle: false,
+        title: Row(
+          children: [
+            Flexible(child: Text(widget.title, overflow: TextOverflow.ellipsis)),
+            const SizedBox(width: 16),
+            ItemCountText(style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSurfaceVariant)),
+          ],
+        ),
+      );
+    }
+
     final isMultiSelectEnabled = ref.watch(multiSelectProvider.select((s) => s.isEnabled));
 
     return isMultiSelectEnabled

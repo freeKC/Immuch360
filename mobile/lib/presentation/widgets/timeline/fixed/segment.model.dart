@@ -10,6 +10,7 @@ import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/fixed/row.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/header.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/segment.model.dart';
@@ -90,6 +91,22 @@ class FixedSegment extends Segment {
     );
   }
 }
+
+/// The size to ask the device for the thumbnail of [asset] in a tile of [tile] physical pixels, in the remote control
+/// layout. Android fits the thumbnail inside the size asked, aspect kept, and the tile crops it: a 360° photo (2:1)
+/// asked 320 x 320 came 320 x 160 and was stretched to twice that in a TV tile, blurred. A square of the tile's side
+/// times the aspect covers the tile whichever way the photo turns, its rotation included. At most 768 px, the largest
+/// the device makes as a thumbnail rather than by decoding the whole file.
+@visibleForTesting
+Size tvThumbnailDecodeSize(BaseAsset asset, Size tile) {
+  final width = asset.width;
+  final height = asset.height;
+  final aspect = width != null && height != null && width > 0 && height > 0 ? width / height : 1.0;
+  final side = math.max(tile.width, tile.height) * math.max(aspect, 1 / aspect);
+  return Size.square(math.min(side, _maxThumbnailSide).ceilToDouble());
+}
+
+const _maxThumbnailSide = 768.0;
 
 class _FixedSegmentRow extends ConsumerWidget {
   final int assetIndex;
@@ -336,6 +353,7 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
   @override
   Widget build(BuildContext context) {
     final remoteSize = size * MediaQuery.devicePixelRatioOf(context);
+    final tvMode = ref.watch(tvModeProvider);
 
     final heroOffset = TabsRouterScope.of(context)?.controller.activeIndex ?? 0;
 
@@ -344,7 +362,7 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
     // The read only mode, or a TV: no selection (a long press has no equivalent on a remote anyway)
     final isViewOnly = ref.watch(viewOnlyProvider);
     final showStackIndicator = ref.watch(timelineServiceProvider).origin != TimelineOrigin.trash;
-    if (ref.watch(tvModeProvider) && ref.watch(assetViewerProvider.select((state) => state.currentAsset == asset))) {
+    if (tvMode && ref.watch(assetViewerProvider.select((state) => state.currentAsset == asset))) {
       _focusWhenBackFromViewer(context);
     }
 
@@ -356,6 +374,8 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
         onLongPress: () => lockSelection || isViewOnly ? null : _handleOnLongPress(ref, asset),
         child: ThumbnailTile(
           asset,
+          // The device thumbnails of a phone are 320 px; the tiles of a TV are larger on its screen
+          size: tvMode ? tvThumbnailDecodeSize(asset, remoteSize) : kThumbnailResolution,
           remoteSize: remoteSize,
           lockSelection: lockSelection,
           showStorageIndicator: showStorageIndicator,
