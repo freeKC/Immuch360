@@ -568,6 +568,35 @@ abstract class SyncEvents {
       expect(run.output, contains('Flutter 3.47.2, mobile/mise.toml has 3.48.0'));
     });
 
+    test('an Xcode named by XCODE_VERSION passes; the newest a pattern finds, or none named, fails', () {
+      const macos = '''
+  macos:
+    runs-on: macos-15
+    env:
+      XCODE_VERSION: '26.3'
+    steps:
+      - run: |
+          xcode="/Applications/Xcode_\$XCODE_VERSION.app"
+          sudo xcode-select -s "\$xcode/Contents/Developer"
+''';
+      final named = check('$_goodWorkflow$macos');
+      expect(named.exitCode, 0, reason: '$named');
+
+      // A weekly image update may add a beta that sorts after the releases
+      final newest = check(
+        '$_goodWorkflow$macos'.replaceFirst(
+          r'xcode="/Applications/Xcode_$XCODE_VERSION.app"',
+          r'xcode=$(ls -d /Applications/Xcode_26.*.app | sort -V | tail -1)',
+        ),
+      );
+      expect(newest.exitCode, 1, reason: '$newest');
+      expect(newest.output, contains('an Xcode found by a pattern'));
+
+      final unnamed = check('$_goodWorkflow$macos'.replaceFirst("      XCODE_VERSION: '26.3'\n", ''));
+      expect(unnamed.exitCode, 1, reason: '$unnamed');
+      expect(unnamed.output, contains('xcode-select without an XCODE_VERSION'));
+    });
+
     test('fails on a secret, a write access, a kept token or pull_request_target', () {
       expect(
         check(_goodWorkflow.replaceFirst('run: flutter', r'run: echo ${{ secrets.KEY_JKS }} && flutter')).exitCode,

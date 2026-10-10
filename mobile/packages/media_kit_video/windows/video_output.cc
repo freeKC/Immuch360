@@ -749,7 +749,9 @@ flutter::EncodableMap VideoOutput::SetProjection(
     }
     result[flutter::EncodableValue("clientVersion")] =
         flutter::EncodableValue(surface_manager_->client_version());
-    if (!setup.has_value()) {
+    // Back to upstream's texture at the size of the video, and the frame
+    // drawn into it at once, also when the video is paused
+    const auto to_flat = [&]() {
       {
         std::lock_guard<std::mutex> lock(projection_mutex_);
         projection_ = nullptr;
@@ -761,10 +763,11 @@ flutter::EncodableMap VideoOutput::SetProjection(
         projection_renderer_.reset();
       }
       surface_manager_->SetDoubleBuffered(false);
-      // Back to upstream's texture at the size of the video, and the frame
-      // drawn into it at once, also when the video is paused
       CheckAndResize();
       Render();
+    };
+    if (!setup.has_value()) {
+      to_flat();
       result[flutter::EncodableValue("ok")] = flutter::EncodableValue(true);
       return;
     }
@@ -772,17 +775,28 @@ flutter::EncodableMap VideoOutput::SetProjection(
       projection_renderer_ = std::make_unique<ProjectionRenderer>();
     }
     surface_manager_->MakeCurrent(true);
+    // The pass of this kind compiled and linked now: a driver that refuses it
+    // refuses the projection with the shader's log, and the page plays the
+    // video flat with its message, rather than a view that stays black while
+    // the video plays (the draws would only count as failed)
     const auto ready =
-        projection_renderer_->Prepare(surface_manager_->client_version());
-    if (!ready) {
-      projection_renderer_->Release();
-    }
+        projection_renderer_->Prepare(surface_manager_->client_version()) &&
+        projection_renderer_->PrepareProgram(setup->kind);
     surface_manager_->MakeCurrent(false);
     result[flutter::EncodableValue("glRenderer")] =
         flutter::EncodableValue(projection_renderer_->gl_renderer());
     if (!ready) {
       fail(projection_renderer_->error());
-      projection_renderer_.reset();
+      if (CurrentProjection() != nullptr) {
+        // Without its renderer a projection still on would leave the texture
+        // as it is: the player is flat again, as before its first projection
+        to_flat();
+      } else {
+        surface_manager_->MakeCurrent(true);
+        projection_renderer_->Release();
+        surface_manager_->MakeCurrent(false);
+        projection_renderer_.reset();
+      }
       return;
     }
     // Drawn into one of two internal textures while Flutter copies the
@@ -793,6 +807,13 @@ flutter::EncodableMap VideoOutput::SetProjection(
         (previous->max_frame_width != setup->max_frame_width ||
          previous->max_frame_pixels != setup->max_frame_pixels)) {
       // Another tier: mpv draws its current frame again at the new size
+      projection_renderer_->set_has_frame(false);
+    } else if (previous != nullptr && !previous->SameFrameLayout(*setup)) {
+      // Another frame layout for the same player, given before the next file
+      // of a raw video's fallback chain opens (one lens, the LRV copy): the
+      // frame kept is the previous file's, and read with the new lens regions
+      // it would show a wrong picture, at once and at each view change, until
+      // the new file's first frame. The output keeps its last view instead.
       projection_renderer_->set_has_frame(false);
     }
     const auto projection =

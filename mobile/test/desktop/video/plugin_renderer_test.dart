@@ -1,7 +1,8 @@
 // Renderer C of the 360 player (plugin_renderer.dart, DP1 of 2026-10-09): what the plugin is given, without the
 // plugin. The uniforms of the stitch from the rawProjection JSON, against the values RawStitchUniforms.kt computes
-// for the phones; the eye and the part of the sphere of each layout and coverage; the start tier per GPU; and the
-// rules for the player: one view per Flutter frame however many events come, never a second view while the plugin has
+// for the phones; the eye and the part of the sphere of each layout and coverage; the start tier per GPU, from what
+// DXGI says of the GPU in use when it is the one ANGLE draws on (an Intel Arc built into the processor is not a card),
+// else from its name; and the rules for the player: one view per Flutter frame however many events come, never a second view while the plugin has
 // not answered the first, the sharper filter once the view rests, window sizes merged, a tier change at most once a
 // second, mpv's keepaspect set and given back.
 
@@ -14,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
 // Example A of the projections design (an X3 file, both lenses side by side), as raw_video_plan_test.dart has it
@@ -50,6 +52,16 @@ const _exampleE =
 
 const _intel = 'ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)';
 const _nvidia = 'ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)';
+// The GPU of a Core Ultra 7 155H (Meteor Lake), built into the processor
+const _arcIntegrated = 'ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)';
+
+GpuAdapter _adapter(String name, int deviceId, {required bool integrated}) => GpuAdapter.fromJson({
+  'name': name,
+  'vendorId': 0x8086,
+  'deviceId': deviceId,
+  'integrated': integrated,
+  'dedicatedMB': integrated ? 128 : 16384,
+});
 
 class _Call {
   _Call(this.name, [this.setup, this.view, this.sharp]);
@@ -67,7 +79,9 @@ class _FakeChannel implements PluginChannel {
   _FakeChannel({this.glRenderer = _intel, this.refuse});
 
   final String glRenderer;
-  final String? refuse;
+
+  /// Why the plugin refuses an enable, null while it accepts
+  String? refuse;
   final calls = <_Call>[];
 
   /// When set, setView waits for it: the plugin has not answered yet
@@ -225,9 +239,39 @@ void main() {
       PluginTier.w2880,
     );
     expect(PluginTier.startFor(null), PluginTier.w2880);
+    // Without DXGI's answer, the names: an Arc is a card only with a card's model number
+    expect(PluginTier.startFor(_arcIntegrated), PluginTier.w2880);
+    expect(PluginTier.startFor('ANGLE (Intel, Intel(R) Arc(TM) 140V GPU (0x000064A0) Direct3D11)'), PluginTier.w2880);
+    expect(
+      PluginTier.startFor('ANGLE (Intel, Intel(R) Arc(TM) B580 Graphics (0x0000E20B) Direct3D11)'),
+      PluginTier.full,
+    );
+    expect(PluginTier.startFor('ANGLE (Intel, Intel(R) Arc(TM) A370M Graphics Direct3D11)'), PluginTier.full);
+    expect(PluginTier.startFor('ANGLE (Intel, Intel(R) Arc(TM) Pro A60 Graphics Direct3D11)'), PluginTier.full);
     expect(PluginTier.full.lower, PluginTier.w4096);
     expect(PluginTier.w2880.lower, isNull);
     expect(PluginTier.w4096.maxFramePixels * 4 / (1 << 20), closeTo(32, 0.1), reason: '33.5 MB, 32 MiB');
+  });
+
+  test('DXGI decides when its GPU is the one ANGLE draws on', () {
+    final integratedArc = _adapter('Intel(R) Arc(TM) Graphics', 0x7d55, integrated: true);
+    expect(PluginTier.startFor(_arcIntegrated, adapter: integratedArc), PluginTier.w2880);
+    final card = _adapter('Intel(R) Arc(TM) A770 Graphics', 0x56a0, integrated: false);
+    expect(
+      PluginTier.startFor('ANGLE (Intel, Intel(R) Arc(TM) A770 Graphics (0x000056A0) Direct3D11)', adapter: card),
+      PluginTier.full,
+    );
+    // An unknown name DXGI calls dedicated
+    expect(
+      PluginTier.startFor(
+        'ANGLE (Moore, MTT S80 (0x00000100) Direct3D11)',
+        adapter: _adapter('MTT S80', 0x100, integrated: false),
+      ),
+      PluginTier.full,
+    );
+    // Another GPU than ANGLE's (the per app preference changed since the app started): the names decide
+    expect(PluginTier.startFor(_nvidia, adapter: integratedArc), PluginTier.full);
+    expect(PluginTier.startFor(_intel, adapter: card), PluginTier.w2880);
   });
 
   group('the player', () {
@@ -235,7 +279,7 @@ void main() {
     late List<String> mpv;
     late DateTime clock;
 
-    PluginRenderer renderer({String glRenderer = _intel, String? refuse}) {
+    PluginRenderer renderer({String glRenderer = _intel, String? refuse, GpuAdapter? adapter}) {
       channel = _FakeChannel(glRenderer: glRenderer, refuse: refuse);
       mpv = [];
       clock = DateTime(2026, 10, 9, 12);
@@ -243,6 +287,7 @@ void main() {
         handle: () async => 42,
         setMpvProperty: (name, value) async => mpv.add('$name=$value'),
         channel: channel,
+        adapter: adapter == null ? null : () async => adapter,
         now: () => clock,
       );
     }
@@ -274,6 +319,31 @@ void main() {
       final attached = await plugin.attach(projection: PluginProjection.equirect(), outputSize: const Size(1920, 1080));
       expect(attached.tier, PluginTier.full);
       expect(channel.named('enable').map((call) => call.setup!.maxFrameWidth), [2880, 8192]);
+    });
+
+    testWidgets('a Core Ultra laptop: its Arc built into the processor starts at 2880, as DXGI says', (tester) async {
+      final plugin = renderer(
+        glRenderer: _arcIntegrated,
+        adapter: _adapter('Intel(R) Arc(TM) Graphics', 0x7d55, integrated: true),
+      );
+      final attached = await plugin.attach(projection: PluginProjection.equirect(), outputSize: const Size(1920, 1080));
+      expect(attached.tier, PluginTier.w2880);
+      expect(channel.named('enable').map((call) => call.setup!.maxFrameWidth), [2880]);
+    });
+
+    testWidgets('a refused attach of the next file: the plugin is flat again, and no view is sent', (tester) async {
+      final plugin = renderer();
+      await plugin.attach(projection: PluginProjection.equirect(), outputSize: const Size(800, 600));
+      expect(plugin.attached, isTrue);
+      channel.refuse = 'program: link failed';
+      final again = await plugin.attach(projection: PluginProjection.equirect(), outputSize: const Size(800, 600));
+      expect(again.ok, isFalse);
+      expect(plugin.attached, isFalse);
+      await tester.pump();
+      channel.calls.clear();
+      plugin.setView(const PluginView(yaw: 10));
+      await tester.pump();
+      expect(channel.named('view'), isEmpty);
     });
 
     testWidgets('a refused attach leaves the player as it was', (tester) async {

@@ -20,16 +20,21 @@ void main() {
   late ThumbnailCache cache;
   late Map<String, File> files;
   late List<String> asked;
+  late List<DesktopLocalImageApi> made;
   var nextRequest = 1000;
 
-  DesktopLocalImageApi api({int concurrentDecodes = 3}) => DesktopLocalImageApi(
-    fileForAsset: (id) async {
-      asked.add(id);
-      return files[id];
-    },
-    thumbnails: cache,
-    concurrentDecodes: concurrentDecodes,
-  );
+  DesktopLocalImageApi api({int concurrentDecodes = 3}) {
+    final images = DesktopLocalImageApi(
+      fileForAsset: (id) async {
+        asked.add(id);
+        return files[id];
+      },
+      thumbnails: cache,
+      concurrentDecodes: concurrentDecodes,
+    );
+    made.add(images);
+    return images;
+  }
 
   /// The bytes of an encoded answer, the buffer freed with malloc as the image request does
   Uint8List takeEncoded(Map<String, int>? answer) {
@@ -95,9 +100,15 @@ void main() {
     cache = ThumbnailCache(directory: () async => Directory(p.join(root.path, 'thumbs')));
     files = {};
     asked = [];
+    made = [];
   });
 
-  tearDown(() => root.deleteSync(recursive: true));
+  tearDown(() async {
+    // A thumbnail written in the background may still be open when a test ends, and Windows refuses to delete an
+    // open file: the folder goes once every write is done
+    await Future.wait([for (final images in made) images.idle()]);
+    root.deleteSync(recursive: true);
+  });
 
   group('thumbnails', () {
     test('a photo turned by its EXIF orientation is cut to cover the box, upright', () async {

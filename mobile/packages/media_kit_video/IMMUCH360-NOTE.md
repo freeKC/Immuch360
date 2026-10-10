@@ -116,8 +116,13 @@ Patches:
    (`mpv_render_context_report_swap`): once one is, vo_libmpv waits for the next before it hands over each frame, which
    put 30 to 53 frame intervals over 50 ms in 10 s into an 8K video on the RTX 4060.
    `VideoOutputManager.ProjectionStats` gives the counts and times of the draws and, on request, five pixels of the
-   output read back. A context without OpenGL ES 3.0 (patch 1's fallback) refuses the projection with the reason;
-   turning it off gives upstream's drawing back, the current frame drawn at once. The view convention is the app's photo
+   output read back. A context without OpenGL ES 3.0 (patch 1's fallback) refuses the projection with the reason, and
+   so does a driver that does not compile or link the pass of the projection's kind, which is built when the
+   projection is set rather than at the first frame, with the shader's log as the reason (the player is then flat
+   again, a projection that was on included); turning it off gives upstream's drawing back, the current frame drawn at
+   once. A new projection whose frame layout differs (the kind, the streams, the lens or face uniforms: the next file
+   of a raw video's fallback chain) does not draw the frame kept from the previous file: the output keeps its last view
+   until the new file's first frame. The view convention is the app's photo
    sphere: yaw positive to the right of the frame's centre column, pitch positive up; the first row of the output is the
    top of the view, as mpv draws into the pbuffer (`MPV_RENDER_PARAM_FLIP_Y` left at 0). Checked without a window by
    `mobile/test/desktop/video/plugin_shaders_windows_test.dart` (the three programs compile and link in ANGLE's ES 3.0,

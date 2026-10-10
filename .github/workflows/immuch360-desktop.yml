@@ -10,7 +10,8 @@ name: Immuch360 Desktop
 #   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists
 #   linux, macos   compile the desktop app (Linux on the oldest supported Ubuntu, for its glibc)
 #   windows        desktop tests on a real Windows, the release build, and the ZIP for the owner as an artifact
-#                  named Immuch360-Desktop-<version>-windows-x64.zip (unsigned, internal until the first release)
+#                  named Immuch360-Desktop-<version>-windows-x64.zip (unsigned, internal until the first release),
+#                  then the desktop tests that need the DLLs of that build (libmpv, ANGLE)
 #   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
 #                  point 7 in the run summary. An upstream sync reaches the desktop branch through the phone branch;
 #                  an upstream-sync/* branch is made from the desktop branch to see the effect of a sync before it lands.
@@ -313,12 +314,33 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      # The desktop tests of the first step skip what needs the DLLs of a build (libmpv, ANGLE, the decoder probe),
+      # which did not exist yet. Run here on the build itself, after the ZIP was made from it, so that the libmpv the
+      # ZIP ships is the one checked: FFmpeg's answer to a camera's Digest challenge with the percent-encoded account,
+      # no account or rtsp:// address in mpv's lines (camera_live_windows_test), the references a file may not open
+      # (mpv_references_test), the app's player on a path and through the media bridge (desktop_player_windows_test),
+      # the GLSL of renderer C compiled and drawn by ANGLE (plugin_shaders_windows_test: the hosted runners have no GPU,
+      # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software). The tests that need a
+      # GPU's video decoder or mpv drawing into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
+      - name: Desktop tests on the build (libmpv, ANGLE)
+        working-directory: mobile
+        env:
+          IMMUCH360_BUILD_DIR: build/windows/x64/runner/Release
+        run: |
+          flutter test test/desktop/video/camera_live_windows_test.dart test/desktop/video/mpv_references_test.dart \
+            test/desktop/video/desktop_player_windows_test.dart test/desktop/video/plugin_shaders_windows_test.dart
+
   macos:
     name: macOS build (compile only)
     runs-on: macos-15
     needs: codegen
     if: github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')
     timeout-minutes: 60
+    env:
+      # One Xcode, named here rather than the newest the image carries: the images change every week and may add a
+      # beta or a release candidate, and a pinned toolchain keeps a failure of this compile check the code's (design
+      # 6.6). check_workflow.py refuses an Xcode picked by a pattern.
+      XCODE_VERSION: '26.3'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -328,14 +350,14 @@ jobs:
         run: |
           # connectivity_plus 7.3 reads NWPath.isUltraConstrained (behind #available(macOS 26.0, *)), which only the
           # macOS 26 SDK declares; the default Xcode of macos-15 is 16.4, with the macOS 15.5 SDK. The image also has
-          # Xcode 26 (26.0.1 to 26.3 in its readme, images/macos/macos-15-Readme.md of actions/runner-images): the newest
-          shopt -s nullglob
-          found=(/Applications/Xcode_26.*.app)
-          if [ ${#found[@]} = 0 ]; then
-            echo "::error::No Xcode 26 on this runner image; move the job to macos-26"
+          # Xcode 26: 26.0.1, 26.1.1, 26.2 and 26.3 in its readme (images/macos/macos-15-Readme.md of
+          # actions/runner-images, 2026-10-10), 26.3 with the macOS 26.2 SDK.
+          xcode="/Applications/Xcode_$XCODE_VERSION.app"
+          if [ ! -d "$xcode" ]; then
+            echo "::error::No Xcode $XCODE_VERSION on this runner image: set XCODE_VERSION to one its readme lists"
+            ls /Applications | grep "^Xcode" || true
             exit 1
           fi
-          xcode=$(printf '%s\n' "${found[@]}" | sort -V | tail -1)
           sudo xcode-select -s "$xcode/Contents/Developer"
           xcodebuild -version
           sdk=$(xcrun --sdk macosx --show-sdk-version)

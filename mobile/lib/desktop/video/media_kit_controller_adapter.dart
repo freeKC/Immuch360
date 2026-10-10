@@ -342,7 +342,9 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     // controller leaves them, since the pages remove their listeners after the view that disposes this
     unawaited(() async {
       if (engine != null) {
-        await _undoPrepare(engine);
+        // After an open still running: its prepare may turn the 360° renderer on or set mpv's options for a raw file
+        // once this was called, and undone before it, they would stay on the player the pool parks for the next page
+        await _lease.guard(() => _undoPrepare(engine));
       }
       await _lease.release();
     }());

@@ -1,7 +1,8 @@
 // "360° video renderer" in Settings, Advanced, on the computers with the troubleshooting on (design 2.3, DP1 section
 // 4.3 "Sonde et dépannage"): which renderer draws the 360° videos, Automatic by default, and what the probe measured
-// last on this computer, so that a report says which GPU and which tier played. The choice "mpv shader" of the design
-// is not offered: DP1 dropped renderer A.
+// last on this computer, so that a report says which GPU and which tier played. Picking Automatic, even when it is
+// the choice already, forgets what the probe kept, so that the next 360° videos are measured again. The choice "mpv
+// shader" of the design is not offered: DP1 dropped renderer A.
 
 import 'dart:async';
 
@@ -76,7 +77,8 @@ class _SphereRendererTileState extends State<SphereRendererTile> {
         children: [
           RadioGroup<SphereRendererChoice>(
             groupValue: current,
-            onChanged: (choice) => Navigator.of(context).pop(choice),
+            // The choice already made, tapped again, comes back as null (toggleable): it is picked again
+            onChanged: (choice) => Navigator.of(context).pop(choice ?? current),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -84,6 +86,7 @@ class _SphereRendererTileState extends State<SphereRendererTile> {
                   RadioListTile<SphereRendererChoice>(
                     key: Key('desktop_video_renderer_${choice.name}'),
                     value: choice,
+                    toggleable: true,
                     title: Text(sphereRendererChoiceLabel(context.t, choice)),
                   ),
               ],
@@ -92,7 +95,8 @@ class _SphereRendererTileState extends State<SphereRendererTile> {
         ],
       ),
     );
-    if (picked == null || picked == current || !mounted) {
+    // Automatic again is not nothing: it measures again (see the top of this file)
+    if (picked == null || (picked == current && picked != SphereRendererChoice.automatic) || !mounted) {
       return;
     }
     await SphereRendererStore.saveChoice(picked);

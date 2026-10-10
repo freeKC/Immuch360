@@ -346,6 +346,38 @@ void main() {
     expect(players.pool.idleCount(PlayerKind.playback), 1);
   });
 
+  test('a page that goes while its player is prepared: what the prepare did is undone after it, not before', () async {
+    final log = <String>[];
+    final preparing = Completer<void>();
+    final video = MediaKitVideoPlayerController(
+      pool: players.pool,
+      resolve: _asIs,
+      positionInterval: Duration.zero,
+      // The 360° page: renderer C attached and a raw file's options set while the prepare awaits (a resolver, mpv)
+      prepare: (engine) async {
+        log.add('prepare');
+        await preparing.future;
+        log.add('renderer on');
+      },
+      unprepare: (engine) async => log.add('unprepare'),
+    );
+    final loading = video.loadVideoSource(await _file('/videos/pair.insv'));
+    await pumpEventQueue();
+    expect(log, ['prepare']);
+
+    video.dispose();
+    await pumpEventQueue();
+    expect(log, ['prepare'], reason: 'the undo waits for the prepare under way');
+    preparing.complete();
+    await loading;
+    await pumpEventQueue();
+    expect(log, ['prepare', 'renderer on', 'unprepare']);
+    final engine = players.made.single;
+    expect(engine.calls.where((call) => call.startsWith('open')), isEmpty);
+    expect(engine.calls.last, 'stop');
+    expect(players.pool.idleCount(PlayerKind.playback), 1);
+  });
+
   test('a stop while the video opens: no file is left open', () async {
     final hold = Completer<void>();
     players = FakePlayers(onCreate: (engine) => engine.holdVolume = hold);

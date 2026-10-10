@@ -52,6 +52,11 @@ struct ProjectionSetup {
 
   // The output size once capped, each side at least 1 and even
   void OutputSize(int32_t* width, int32_t* height) const;
+
+  // Whether |other| reads the frame the same way: the kind, the streams and
+  // the uniforms of the lenses or faces. The eye and the part of the sphere
+  // may differ: the 3D cycle and the 180 and 360 switch change only them.
+  bool SameFrameLayout(const ProjectionSetup& other) const;
 };
 
 // The view: yaw and pitch in degrees (yaw positive to the right of the
@@ -72,6 +77,11 @@ class ProjectionRenderer {
   // Loads the OpenGL ES 3.0 entry points and makes the vertex array; false
   // (with |error|) on an ES 2.0 context or a driver without them.
   bool Prepare(int32_t client_version);
+
+  // Compiles and links the pass of |kind| now rather than at the first frame;
+  // false with |error| (the shader's or the program's log) when the driver
+  // refuses it, kept until |Release|.
+  bool PrepareProgram(int32_t kind) { return Program(kind) != 0; }
 
   // The intermediate texture and its FBO for a video of |video_width| x
   // |video_height| under |setup|'s tier, made again only when that size

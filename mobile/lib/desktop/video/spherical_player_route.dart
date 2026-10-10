@@ -9,9 +9,11 @@
 // plugin's pass only, at most once per Flutter frame however fast the mouse moves (DP1: nothing of mpv changes while
 // the view moves, so no 30 a second cap is needed); a paused video is redrawn by the plugin alone.
 //
-// What draws, in order (render/sphere_renderer.dart): renderer C at the tier the probe kept or its GPU's start tier, a
-// tier down when the probe measures that it does not keep up, then the flat frame with a message. Renderer B is not in
-// the chain yet.
+// What draws, in order (render/sphere_renderer.dart): renderer C at its GPU's start tier, then at the tier the probe
+// kept for this kind of video once its first frame tells what it is, a tier down when the probe measures that it does
+// not keep up, then the flat frame with a message. Renderer B is not in the chain yet. A video whose decoding, not its
+// drawing, falls short (the processor decodes it, or the plugin waits for its frames) plays the server's transcoded
+// stream instead when there is one, with the phones' message, and nothing is kept for the renderer.
 //
 // What the page does that the phones' players do too: the 3D cycle and the 180 and 360 switch, the audio track, the
 // buffering with its percentage, the switch to the server's transcoded stream when the original fails, and for a raw
@@ -198,6 +200,15 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   String? _stepDownReason;
   String? _appVersion;
 
+  /// The start tier of the GPU, from the first attach under Automatic; null under a forced tier
+  PluginTier? _startTier;
+
+  /// The kind of video playing (sphereVideoClass), known once its first frame shows
+  String? _videoClass;
+
+  /// When the view last moved (a drag, its inertia, the wheel, a held key): the probe watches the memory then
+  DateTime? _movedAt;
+
   /// What tells the user why the view is flat, or that one lens shows: under the controls
   String? _notice;
 
@@ -216,6 +227,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   /// The other file of a stacked pair, as the player reads it (a path, or a bridge URL)
   String? _externalResolved;
   bool _stepping = false;
+
+  /// The step being loaded failed while [_goTo] still waited for its load: taken up once the load returned
+  bool _failedWhileStepping = false;
 
   /// The physical size of the output, the window's
   Size? _outputSize;
@@ -256,6 +270,11 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
 
   SphericalPlayerDependencies get _deps => widget.dependencies;
 
+  DateTime _now() => (_deps.now ?? DateTime.now)();
+
+  /// How long after its last move the view counts as moving for the probe: it reads the memory once a second
+  static const _movingFor = Duration(milliseconds: 1500);
+
   @override
   void initState() {
     super.initState();
@@ -281,7 +300,11 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       },
       memoryMB: _deps.memoryMB ?? () => ProcessInfo.currentRss ~/ (1 << 20),
       measuring: () =>
-          _controller.onPlaybackStatusChanged.value == PlaybackStatus.playing && !_controller.buffering.value,
+          _ready && _controller.onPlaybackStatusChanged.value == PlaybackStatus.playing && !_controller.buffering.value,
+      moving: () {
+        final moved = _movedAt;
+        return moved != null && _now().difference(moved) < _movingFor;
+      },
     );
     _controller = MediaKitVideoPlayerController(
       pool: _deps.pool ?? desktopPlayerPool,
@@ -392,10 +415,14 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
 
   /// Before each open of the file in a player: renderer C on, or the flat frame (see the top of this file)
   Future<void> _prepare(PlaybackEngine engine) async {
+    if (!mounted) {
+      // An open that was on its way when the page closed: nothing of this page goes on the player
+      return;
+    }
     final step = _step;
     if (step != null) {
       await _prepareRawStep(engine, step);
-      if (_step?.mode == RawMode.unstitched) {
+      if (!mounted || _step?.mode == RawMode.unstitched) {
         return;
       }
     }
@@ -431,30 +458,23 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       tier: first?.tier ?? rendering?.tier,
       view: _view.toPlugin(),
     );
+    if (!mounted) {
+      // The page closed during the attach, after the adapter's unprepare: renderer C off again, so that the pool does
+      // not keep the player with the projection on
+      await _unprepare(engine);
+      return;
+    }
     if (!attached.ok) {
       _log.info('Renderer C refused: ${attached.reason}');
       _showFlat(FlatReason.refused);
       return;
     }
-    var now = SphereRendering.plugin(attached.tier!);
     if (first == null && rendering == null) {
-      // Automatic, first open: what the probe kept for this GPU and this version, else the GPU's start tier
-      now = tierAfterAttach(
-        _settings,
-        startTier: attached.tier!,
-        glRenderer: attached.glRenderer,
-        appVersion: _appVersion ?? '',
-      );
-      if (now.isFlat) {
-        await renderer.detach();
-        _showFlat(FlatReason.tooSlow);
-        return;
-      }
-      if (now.tier != attached.tier && !await renderer.setTier(now.tier!)) {
-        now = SphereRendering.plugin(attached.tier!);
-      }
+      // Automatic, first open: the GPU's start tier until the first frame tells what kind of video this is, then the
+      // tier the probe kept for that kind (_tierForThisVideo)
+      _startTier = attached.tier;
     }
-    _setRendering(now);
+    _setRendering(SphereRendering.plugin(attached.tier!));
     if (_step?.mode == RawMode.stacked) {
       // Two stacked streams are measured first: a computer that does not decode them in time would take the
       // renderer's tier down for every 360° video (the renderer probe starts once the stack keeps up)
@@ -502,6 +522,18 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     final raw = _raw;
     _stopStackWatch();
     _rawOptionsSet[engine] = true;
+    // The page closed while this step was being prepared: the adapter's unprepare may have run before some of these
+    // options were set, so they are undone once more, and the pool does not keep the player with a stack, another
+    // file or another decoding path
+    Future<bool> abandoned() async {
+      if (mounted) {
+        return false;
+      }
+      _rawOptionsSet[engine] = true;
+      await _unprepare(engine);
+      return true;
+    }
+
     try {
       var hwdec = DesktopPlayerOptions.hwdec;
       var graph = '';
@@ -510,6 +542,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       switch (step.mode) {
         case RawMode.stacked:
           final path = step.hwdec ?? await _switch.startPath();
+          if (await abandoned()) {
+            return;
+          }
           if (step.hwdec == null) {
             _step = step.withHwdec(path);
           }
@@ -552,7 +587,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     } catch (error) {
       _log.warning('mpv refused the options of $step: ${redactPlayerText('$error')}');
     }
-    if (!mounted) {
+    if (await abandoned() || !mounted) {
       return;
     }
     final t = context.t;
@@ -647,7 +682,13 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   Future<void> _onRawFailure() async {
     final step = _step;
     final chain = _chain;
-    if (step == null || chain == null || _stepping) {
+    if (step == null || chain == null) {
+      return;
+    }
+    if (_stepping) {
+      // The load of the next step failed before it returned (its source refused, mpv refused it): taken up by _goTo
+      // once the load is over, rather than lost
+      _failedWhileStepping = true;
       return;
     }
     var externalReadable = true;
@@ -672,6 +713,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     _log.info('Raw file: $next');
     _stopStackWatch();
     _stepping = true;
+    _failedWhileStepping = false;
     try {
       final position = Duration(milliseconds: _controller.onPlaybackPositionChanged.value);
       _step = next;
@@ -680,6 +722,10 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       await _controller.loadVideoSource(sphericalVideoSource(next.url), startAt: position);
     } finally {
       _stepping = false;
+    }
+    if (_failedWhileStepping && mounted && identical(_step, next)) {
+      _failedWhileStepping = false;
+      await _onRawFailure();
     }
   }
 
@@ -752,34 +798,52 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   Future<void> _onProbe(ProbeVerdict verdict, ProbeSample sample) async {
     final current = _rendering;
     final renderer = _renderer;
+    final engine = _rendererEngine;
     if (current == null || current.isFlat || renderer == null || !mounted) {
       return;
     }
     _log.info('Renderer probe at ${current.tier!.name}: $sample, ${verdict.name}');
+    String? hwdec;
+    try {
+      hwdec = engine == null ? null : await (_deps.hwdecCurrent ?? _mpvHwdec)(engine);
+    } catch (_) {
+      // For the troubleshooting page and the decoding question only
+    }
+    if (!mounted || !identical(renderer, _renderer)) {
+      return;
+    }
+    final memory = (sample.memoryGrowthMB ?? 0) > RendererProbeLimits.memoryGrowthMB;
+    if (verdict != ProbeVerdict.refused &&
+        !memory &&
+        decodeLimited(sample, hwdec: hwdec) &&
+        await _playTranscodedInstead(engine, sample, hwdec)) {
+      // The decoder's limit, not the renderer's: nothing is kept for the renderer
+      return;
+    }
     final automatic = _settings.choice == SphereRendererChoice.automatic;
+    // Kept for this page at once, written to the disk in the background: the view does not wait for the disk
     Future<void> remember(PluginTier? tier, String? reason) async {
       final gpu = renderer.glRenderer;
-      final engine = _rendererEngine;
       if (!automatic || gpu == null) {
         return;
       }
-      String? hwdec;
-      try {
-        hwdec = engine == null ? null : await (_deps.hwdecCurrent ?? _mpvHwdec)(engine);
-      } catch (_) {
-        // Only for the troubleshooting page
+      final videoClass = _videoClass ?? (engine == null ? null : await _videoClassOf(engine));
+      if (videoClass == null) {
+        // A video of no known size: nothing to tell the next videos
+        return;
       }
       final remembered = RememberedRendering(
         appVersion: _appVersion ?? '',
         glRenderer: gpu,
         tier: tier,
+        videoClass: videoClass,
         reason: reason,
         framesPerSecond: double.parse(sample.framesPerSecond.toStringAsFixed(1)),
         targetFramesPerSecond: sample.targetFramesPerSecond,
         hwdec: hwdec,
       );
-      _settings = _settings.copyWith(remembered: remembered);
-      await SphereRendererStore.remember(remembered);
+      _settings = _settings.remembering(remembered);
+      unawaited(SphereRendererStore.remember(remembered));
     }
 
     switch (verdict) {
@@ -789,6 +853,23 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
         if (slowAtLowestTier(sample, lowestTier: current.tier!.lower == null) && mounted) {
           _setNotice(context.t.desktop_video_360_slow_gpu);
         }
+      case ProbeVerdict.refused:
+        _log.warning('Renderer C draws nothing at ${current.tier!.name}: ${sample.error ?? 'no error given'}');
+        final lower = current.tier!.lower;
+        // An intermediate texture the driver refused (too large for its memory) may fit a tier down; a pass it does
+        // not compile fits nowhere
+        if ((sample.error ?? '').contains('FBO') &&
+            lower != null &&
+            _settings.choice.forcedTier == null &&
+            await renderer.setTier(lower)) {
+          _stepDownReason = '${current.tier!.name}: intermediate texture refused';
+          _setRendering(SphereRendering.plugin(lower));
+          await remember(lower, _stepDownReason);
+          _startProbe();
+          return;
+        }
+        await renderer.detach();
+        _showFlat(FlatReason.refused);
       case ProbeVerdict.stepDown || ProbeVerdict.fail:
         final next = verdict == ProbeVerdict.fail
             ? const SphereRendering.flat(FlatReason.tooSlow)
@@ -797,13 +878,15 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
           // A forced tier: the user asked for it
           return;
         }
-        final reason = (sample.memoryGrowthMB ?? 0) > RendererProbeLimits.memoryGrowthMB
+        final reason = memory
             ? 'memory +${sample.memoryGrowthMB} MiB'
             : '${sample.framesPerSecond.toStringAsFixed(1)} of ${sample.targetFramesPerSecond} fps';
         if (next.isFlat) {
           await renderer.detach();
-          await remember(null, reason);
           _showFlat(FlatReason.tooSlow);
+          // Kept for the troubleshooting page and as where the next video of this kind starts: never as flat, so
+          // that it is measured again (sphere_renderer.dart)
+          await remember(null, reason);
           return;
         }
         // The plugin allows one tier change a second, and the probe measured for 5 s at least; refused, the same
@@ -817,6 +900,107 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     }
   }
 
+  /// The decoder does not keep up with the original: the server's transcoded stream from where the video is, as the
+  /// phones' players do when the original exceeds their decoders (design 2.8 point 2, DP1 section 5), with their
+  /// message. False when there is none, when it plays already, or for a raw file of two streams, whose chain has
+  /// its own transcoded step.
+  Future<bool> _playTranscodedInstead(PlaybackEngine? engine, ProbeSample sample, String? hwdec) async {
+    final fallback = widget.args.fallbackUrl;
+    if (fallback == null || _usingFallback || _step != null) {
+      return false;
+    }
+    _usingFallback = true;
+    var codec = '?';
+    try {
+      final name = engine == null ? '' : (await _readMpv(engine, 'current-tracks/video/codec')).trim();
+      final mime = mimeOfMpvCodec(name);
+      codec = mime != null ? videoCodecLabel(mime) : (name.isEmpty ? '?' : name.toUpperCase());
+    } catch (_) {
+      // Only for the message
+    }
+    if (!mounted) {
+      return true;
+    }
+    _log.info('The decoding of the original does not keep up ($sample, hwdec ${hwdec ?? '?'}): transcoded stream');
+    final info = _controller.videoInfo;
+    _probe.stop();
+    _ready = false;
+    _setNotice(
+      context.t.video_source_switched(codec: codec, width: '${info?.width ?? '?'}', height: '${info?.height ?? '?'}'),
+    );
+    final position = Duration(milliseconds: _controller.onPlaybackPositionChanged.value);
+    unawaited(_controller.loadVideoSource(sphericalVideoSource(fallback), startAt: position));
+    return true;
+  }
+
+  /// The kind of video [engine] plays (sphereVideoClass), null when its size is not known yet
+  Future<String?> _videoClassOf(PlaybackEngine engine) async {
+    final info = _controller.videoInfo;
+    String? codec;
+    double? rate;
+    String? hwdec;
+    try {
+      codec = await _readMpv(engine, 'current-tracks/video/codec');
+      rate = await (_deps.framesPerSecond ?? _mpvFramesPerSecond)(engine);
+      hwdec = await (_deps.hwdecCurrent ?? _mpvHwdec)(engine);
+    } catch (error) {
+      _log.fine('The kind of video was not read whole: $error');
+    }
+    return sphereVideoClass(
+      codec: codec,
+      width: info?.width,
+      height: info?.height,
+      framesPerSecond: rate,
+      hwdec: hwdec,
+    );
+  }
+
+  /// Once the first frame tells what kind of video plays: under Automatic, the tier the probe kept for that kind on
+  /// this GPU (sphere_renderer.dart), the probe measuring again from there
+  Future<void> _tierForThisVideo() async {
+    final renderer = _renderer;
+    final engine = _rendererEngine;
+    final current = _rendering;
+    _videoClass = null;
+    if (renderer == null || engine == null || current == null || current.isFlat || !renderer.attached) {
+      return;
+    }
+    final videoClass = await _videoClassOf(engine);
+    if (!mounted || !identical(renderer, _renderer) || _rendering != current) {
+      return;
+    }
+    _videoClass = videoClass;
+    final start = _startTier;
+    if (start == null) {
+      // A forced tier stays as it is
+      return;
+    }
+    final glRenderer = renderer.glRenderer;
+    final appVersion = _appVersion ?? '';
+    final wanted = tierForVideo(
+      _settings,
+      startTier: start,
+      glRenderer: glRenderer,
+      appVersion: appVersion,
+      videoClass: videoClass,
+    );
+    if (wanted == current.tier || !await renderer.setTier(wanted)) {
+      return;
+    }
+    if (!mounted || !identical(renderer, _renderer)) {
+      return;
+    }
+    _log.info('Renderer C at ${wanted.name} for $videoClass, as measured before on this GPU');
+    _stepDownReason = _settings
+        .rememberedFor(appVersion: appVersion, glRenderer: glRenderer, videoClass: videoClass)
+        ?.reason;
+    _setRendering(SphereRendering.plugin(wanted));
+    // Measured again at the new tier; two stacked streams start the probe once they keep up (_onStackMeasure)
+    if (_probe.running) {
+      _startProbe();
+    }
+  }
+
   void _onReady() {
     if (_ready) {
       return;
@@ -826,6 +1010,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     _firstFrameTimer = null;
     // The 360° players of the phones start playing at once
     unawaited(_controller.play());
+    unawaited(_tierForThisVideo());
     if (mounted) {
       setState(() {});
     }
@@ -886,6 +1071,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
 
   void _setView(ViewAngles view, {required bool moving}) {
     _view = view;
+    if (moving) {
+      _movedAt = _now();
+    }
     _renderer?.setView(view.toPlugin(), moving: moving);
   }
 

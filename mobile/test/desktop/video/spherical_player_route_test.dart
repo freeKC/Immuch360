@@ -5,6 +5,10 @@
 // viewer behind that it can take its video back (externalPlayerClosedProvider); a failure of the original plays the
 // transcoded stream; a refused plugin plays flat with the message; a pair of raw files plays both lenses stacked by
 // lavfi-complex when the switch says this computer keeps up, else the phones' fallback chain with their messages.
+// The renderer probe on the page: what it kept applies to the same kind of video once its first frame shows and never
+// as flat, a decoding that falls short plays the transcoded stream instead, a renderer that draws nothing goes flat
+// (or a tier down for its intermediate texture); a step of the chain that fails while it loads is not lost; a page
+// closed while a raw file is prepared leaves nothing of it on the pooled player.
 
 import 'dart:async';
 import 'dart:io';
@@ -18,6 +22,7 @@ import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
+import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
 import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
@@ -34,6 +39,21 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'fake_playback_engine.dart';
 
 const _intel = 'ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)';
+const _nvidia = 'ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)';
+
+/// What the plugin counted over one second of the probe
+ProjectionStats _second({int frames = 30, double drawMs = 8, int failed = 0, String? error}) => ProjectionStats(
+  enabled: true,
+  frames: frames,
+  redraws: 0,
+  failed: failed,
+  frameMs: List.filled(frames, drawMs),
+  redrawMs: const [],
+  lockedMs: const [],
+  frameWidth: 1920,
+  frameHeight: 1080,
+  error: error,
+);
 
 // An X3 pair (example C of raw_video_plan_test.dart, its lenses shortened to what the stitch reads)
 const _pair =
@@ -51,10 +71,14 @@ const _pair =
     '"viewToLens":[1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0]}]}';
 
 class _Channel implements PluginChannel {
-  _Channel(this.players, {this.refuse});
+  _Channel(this.players, {this.refuse, this.glRenderer = _intel});
 
   final FakePlayers players;
   final String? refuse;
+  final String glRenderer;
+
+  /// What the plugin counted since the previous call, null for nothing
+  ProjectionStats? Function()? counts;
   final calls = <String>[];
   final setups = <ProjectionSetup>[];
   final views = <(PluginView, bool)>[];
@@ -68,12 +92,12 @@ class _Channel implements PluginChannel {
     setups.add(setup);
     playerCallsAtEnable ??= [...players.made.first.calls];
     if (refuse != null) {
-      return ProjectionResult(ok: false, reason: refuse, clientVersion: 2, glRenderer: _intel);
+      return ProjectionResult(ok: false, reason: refuse, clientVersion: 2, glRenderer: glRenderer);
     }
     return ProjectionResult(
       ok: true,
       clientVersion: 3,
-      glRenderer: _intel,
+      glRenderer: glRenderer,
       outputWidth: setup.outputWidth,
       outputHeight: setup.outputHeight,
     );
@@ -92,7 +116,7 @@ class _Channel implements PluginChannel {
   }
 
   @override
-  Future<ProjectionStats?> stats(int handle, {bool probe = false}) async => null;
+  Future<ProjectionStats?> stats(int handle, {bool probe = false}) async => counts?.call();
 }
 
 class _Session implements SphericalVideoEvents {
@@ -133,7 +157,14 @@ void main() {
     folder.deleteSync(recursive: true);
   });
 
-  SphericalPlayerDependencies dependencies({String? refuse, bool silent = false, bool integrated = true}) {
+  SphericalPlayerDependencies dependencies({
+    String? refuse,
+    bool silent = false,
+    bool integrated = true,
+    String glRenderer = _intel,
+    String? hwdec,
+    DesktopVideoSourceResolver? resolve,
+  }) {
     // Made in the test's own zone: the pool's futures then complete as the test pumps
     players = FakePlayers(onCreate: (engine) => engine.autoLoad = silent ? null : const Duration(seconds: 60));
     // The measures stay in memory: a folder that cannot be had, so that no file of the app is touched
@@ -143,10 +174,10 @@ void main() {
       'vendorId': integrated ? 0x8086 : 0x10de,
       'integrated': integrated,
     });
-    channel = _Channel(players, refuse: refuse);
+    channel = _Channel(players, refuse: refuse, glRenderer: glRenderer);
     return SphericalPlayerDependencies(
       pool: players.pool,
-      resolve: (source) async => source.path,
+      resolve: resolve ?? (source) async => source.path,
       pluginFor: (engine) => PluginRenderer(
         handle: () async => 42,
         setMpvProperty: (name, value) async => mpv.add('$name=$value'),
@@ -167,6 +198,7 @@ void main() {
       appVersion: () async => 'test',
       pluginSupported: true,
       memoryMB: () => 100,
+      hwdecCurrent: (_) async => hwdec,
     );
   }
 
@@ -177,11 +209,21 @@ void main() {
     String? refuse,
     bool silent = false,
     bool integrated = true,
+    String glRenderer = _intel,
+    String? hwdec,
+    DesktopVideoSourceResolver? resolve,
   }) async {
     tester.view.physicalSize = const Size(1600, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final deps = dependencies(refuse: refuse, silent: silent, integrated: integrated);
+    final deps = dependencies(
+      refuse: refuse,
+      silent: silent,
+      integrated: integrated,
+      glRenderer: glRenderer,
+      hwdec: hwdec,
+      resolve: resolve,
+    );
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
@@ -469,5 +511,236 @@ void main() {
     expect(find.textContaining('hvc1 3840x3840'), findsOneWidget);
     await close(tester);
     expect(mpv.last, 'vid=auto');
+  });
+
+  /// The probe's 5 s of playback after the second in which the first frame was drawn, and its verdict
+  Future<void> probe(WidgetTester tester) async {
+    for (var i = 0; i < 7; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+  }
+
+  /// What the probe kept, as the store holds it (its file is written in the background)
+  Future<SphereRendererSettings> settings(WidgetTester tester) async =>
+      (await tester.runAsync(SphereRendererStore.load))!;
+
+  testWidgets('the decoding of the original falls short: the transcoded stream from where it was, nothing kept', (
+    tester,
+  ) async {
+    mpvValues['current-tracks/video/codec'] = 'h264';
+    await pumpLauncher(
+      tester,
+      const SphericalPlayerArgs(url: '/videos/original.mp4', title: 'x.mp4', fallbackUrl: '/videos/transcoded.mp4'),
+      hwdec: 'no',
+    );
+    final engine = players.made.single;
+    // 20 frames a second of 30, each drawn in 5 ms: the plugin waits for the processor's frames
+    channel.counts = () => _second(frames: 20, drawMs: 5);
+    engine.position.value = const Duration(seconds: 4);
+    await probe(tester);
+    expect(engine.calls.where((call) => call.startsWith('open /videos/transcoded.mp4 at ')), hasLength(1));
+    expect(engine.calls.last, isNot('open /videos/transcoded.mp4 at 0'), reason: 'from where the video was');
+    expect(
+      find.text('Playing the transcoded stream: the original (H.264 1920 x 1080) exceeds what this device decodes'),
+      findsOneWidget,
+    );
+    expect(
+      (await settings(tester)).measured,
+      isEmpty,
+      reason: 'nothing of the renderer is kept for a decoder\'s limit',
+    );
+    expect(page(tester).rendering, const SphereRendering.plugin(PluginTier.w2880));
+    channel.counts = null;
+    await close(tester);
+  });
+
+  testWidgets('a renderer that falls short without a transcoded stream goes down, kept for that kind of video only', (
+    tester,
+  ) async {
+    mpvValues['current-tracks/video/codec'] = 'hevc';
+    await pumpLauncher(
+      tester,
+      const SphericalPlayerArgs(url: '/videos/8k.mp4', title: '8k.mp4'),
+      glRenderer: _nvidia,
+      hwdec: 'd3d11va',
+    );
+    expect(page(tester).rendering, const SphereRendering.plugin(PluginTier.full));
+    // 22 of 30 with draws of 40 ms: the drawing is the limit
+    channel.counts = () => _second(frames: 22, drawMs: 40);
+    await probe(tester);
+    expect(page(tester).rendering, const SphereRendering.plugin(PluginTier.w4096));
+    final kept = (await settings(tester)).measured.single;
+    expect(
+      (kept.videoClass, kept.tier, kept.glRenderer),
+      ('hevc 1920x1080 30 fps hardware', PluginTier.w4096, _nvidia),
+    );
+    channel.counts = null;
+    await close(tester);
+  });
+
+  testWidgets('what the probe kept for a kind of video applies once its first frame shows; another kind starts at the '
+      'GPU\'s tier', (tester) async {
+    // Kept in memory only: the file would be written in the background by real I/O that the widget test's pumps
+    // do not finish, so it is still open when the test ends and Windows refuses to delete the test's folder
+    SphereRendererStore.folder = () => Future.error(const FileSystemException('no folder in this test'));
+    // In the test's own zone, as the page reads it
+    unawaited(
+      SphereRendererStore.remember(
+        const RememberedRendering(
+          appVersion: 'test',
+          glRenderer: _nvidia,
+          tier: PluginTier.w4096,
+          videoClass: 'hevc 1920x1080 30 fps hardware',
+        ),
+      ),
+    );
+    await tester.pump();
+    mpvValues['current-tracks/video/codec'] = 'hevc';
+    await pumpLauncher(
+      tester,
+      const SphericalPlayerArgs(url: '/videos/8k.mp4', title: '8k.mp4'),
+      glRenderer: _nvidia,
+      hwdec: 'd3d11va',
+    );
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(page(tester).rendering, const SphereRendering.plugin(PluginTier.w4096));
+    expect(channel.setups.map((setup) => setup.maxFrameWidth), [
+      2880,
+      8192,
+      4096,
+    ], reason: 'the GPU\'s start tier until the kind is known, then the tier kept for it');
+    await close(tester);
+
+    // The same GPU, another kind of video: the start tier
+    mpvValues['current-tracks/video/codec'] = 'h264';
+    await tester.tap(find.text('open'));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(page(tester).rendering, const SphereRendering.plugin(PluginTier.full));
+    await close(tester);
+  });
+
+  testWidgets(
+    'nothing keeps up at the lowest tier: flat with the message for this video, measured again for the next',
+    (tester) async {
+      await pumpLauncher(
+        tester,
+        const SphericalPlayerArgs(url: '/videos/8k.mp4', title: '8k.mp4'),
+        hwdec: 'd3d11va',
+      );
+      // 10 frames a second of 30, each drawn in 40 ms
+      channel.counts = () => _second(frames: 10, drawMs: 40);
+      await probe(tester);
+      expect(page(tester).rendering, const SphereRendering.flat(FlatReason.tooSlow));
+      expect(find.textContaining('The graphics card cannot keep up with the 360° view of this video'), findsOneWidget);
+      final kept = (await settings(tester)).measured.single;
+      expect((kept.tier, kept.videoClass), (null, '? 1920x1080 30 fps hardware'));
+      await close(tester);
+
+      // The next video of that kind opens in 360° at the lowest tier, and is measured again
+      channel.counts = null;
+      await tester.tap(find.text('open'));
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      expect(page(tester).rendering, const SphereRendering.plugin(PluginTier.w2880));
+      expect(find.textContaining('The graphics card cannot keep up'), findsNothing);
+      await close(tester);
+    },
+  );
+
+  testWidgets('renderer C attached but draws nothing while the video plays: flat with the message', (tester) async {
+    await pumpLauncher(tester, const SphericalPlayerArgs(url: '/videos/sphere.mp4', title: 'sphere.mp4'));
+    channel.counts = () => _second(frames: 0, failed: 30, error: 'shader: ERROR: 0:12: syntax error');
+    await probe(tester);
+    expect(page(tester).rendering, const SphereRendering.flat(FlatReason.refused));
+    expect(find.text('This computer cannot show the 360° view of this video: it plays flat.'), findsOneWidget);
+    expect(channel.calls.where((call) => call.startsWith('disable')), hasLength(1));
+    channel.counts = null;
+    await close(tester);
+  });
+
+  testWidgets('an intermediate texture the driver refuses: a tier down, kept for that kind of video', (tester) async {
+    await pumpLauncher(
+      tester,
+      const SphericalPlayerArgs(url: '/videos/8k.mp4', title: '8k.mp4'),
+      glRenderer: _nvidia,
+      hwdec: 'd3d11va',
+    );
+    // The driver refuses the 118 MB texture of the full tier, and takes the one of the 4096 tier
+    channel.counts = () => channel.setups.last.maxFrameWidth > 4096
+        ? _second(frames: 0, failed: 30, error: 'intermediate FBO incomplete (36054)')
+        : _second();
+    await probe(tester);
+    expect(page(tester).rendering, const SphereRendering.plugin(PluginTier.w4096));
+    expect(channel.setups.last.maxFrameWidth, 4096);
+    expect((await settings(tester)).measured.single.tier, PluginTier.w4096);
+    channel.counts = null;
+    await close(tester);
+  });
+
+  testWidgets('the next step of the chain fails while it loads: the chain goes on to the end, with the error', (
+    tester,
+  ) async {
+    var resolves = 0;
+    await pumpLauncher(
+      tester,
+      SphericalPlayerArgs(url: first, title: 'x3.insv', rawProjection: pair),
+      resolve: (source) async {
+        resolves++;
+        // The file opened resolves at the first open; afterwards the resolver refuses it (the bridge went down)
+        if (source.path == first && resolves > 2) {
+          throw UnsupportedError('Only the files of this computer, the shares and the server are played here');
+        }
+        return source.path;
+      },
+    );
+    final engine = players.made.single;
+    expect(page(tester).rawStep?.mode, RawMode.stacked);
+    // mpv cannot build the stack: one lens of the file opened, whose load fails, then the frame unstitched, which
+    // fails the same way, then the error
+    engine.emit(PlayerEventKind.failed, 'libmpv: loading failed');
+    for (var i = 0; i < 20; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(page(tester).rawStep?.mode, RawMode.unstitched);
+    expect(find.text('Unable to play video'), findsOneWidget);
+    await close(tester);
+  });
+
+  testWidgets('the page closes while a raw file is prepared: nothing of it stays on the player the pool keeps', (
+    tester,
+  ) async {
+    final second = Completer<void>();
+    await pumpLauncher(
+      tester,
+      SphericalPlayerArgs(url: first, title: 'x3.insv', rawProjection: pair),
+      resolve: (source) async {
+        if (source.path != first) {
+          // The other file of the pair: a share that takes its time to answer
+          await second.future;
+        }
+        return source.path;
+      },
+    );
+    expect(mpv, isEmpty, reason: 'still waiting for the other file');
+    tester.state<NavigatorState>(find.byType(Navigator)).pop();
+    await tester.pumpAndSettle();
+    expect(find.byType(DesktopSphericalPlayerPage), findsNothing);
+    second.complete();
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    await tester.pumpAndSettle();
+    expect(channel.calls.where((call) => call == 'enable'), isEmpty, reason: 'renderer C never turned on');
+    expect(mpv.sublist(mpv.length - 4), ['lavfi-complex=', 'external-files=', 'hwdec=auto-safe', 'vid=auto']);
+    expect(mpv, isNot(contains('keepaspect=no')));
+    expect(players.pool.idleCount(PlayerKind.playback), 1);
   });
 }

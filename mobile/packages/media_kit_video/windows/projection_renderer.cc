@@ -62,6 +62,12 @@ void ProjectionSetup::OutputSize(int32_t* width, int32_t* height) const {
   *height = Even(h);
 }
 
+bool ProjectionSetup::SameFrameLayout(const ProjectionSetup& other) const {
+  return kind == other.kind && tracks == other.tracks &&
+         enabled[0] == other.enabled[0] && enabled[1] == other.enabled[1] &&
+         uniforms == other.uniforms;
+}
+
 bool ProjectionRenderer::Prepare(int32_t client_version) {
   if (prepared_) {
     return true;

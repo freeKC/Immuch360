@@ -28,8 +28,10 @@ import 'dart:ui' show Size;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -66,8 +68,16 @@ enum PluginTier {
   /// DP1 assumed [w4096] for an integrated GPU; the skeleton measured on the Intel UHD of the owner's PC (2026-10-09)
   /// 22 frames a second at rest and 17 while dragging for a 5.7K video at [w4096], 27 and 19 at [w2880], and for an
   /// 8K video 21 at [w4096] against 29 at [w2880]. The RTX 4060 holds 30 at [full] for both.
-  static PluginTier startFor(String? glRenderer) {
+  ///
+  /// [adapter], the GPU in use as DXGI describes it (gpu_decoders.dart), decides when it is the GPU ANGLE draws on:
+  /// DXGI says whether it shares the system memory, where a name cannot (the integrated GPUs of the Intel Core Ultra
+  /// call themselves "Intel(R) Arc(TM) Graphics" or "Intel(R) Arc(TM) 140V GPU", as the dedicated Arc cards do). The
+  /// names decide otherwise, an Arc counted as dedicated only with the model number of a card (A770, B580, Pro A60).
+  static PluginTier startFor(String? glRenderer, {GpuAdapter? adapter}) {
     final name = (glRenderer ?? '').toLowerCase();
+    if (adapter != null && !adapter.software && _sameGpu(adapter, name)) {
+      return adapter.integrated ? PluginTier.w2880 : PluginTier.full;
+    }
     final dedicated =
         name.contains('nvidia') ||
         name.contains('geforce') ||
@@ -75,9 +85,15 @@ enum PluginTier {
         name.contains('rtx') ||
         name.contains('radeon rx') ||
         name.contains('radeon pro') ||
-        name.contains('intel(r) arc') ||
-        RegExp(r'\barc\b').hasMatch(name);
+        RegExp(r'\barc(\(tm\))?\s+(pro\s+)?[ab]\d{2,3}m?\b').hasMatch(name);
     return dedicated ? PluginTier.full : PluginTier.w2880;
+  }
+
+  // ANGLE's renderer string holds the adapter's description and its device id ("... UHD Graphics (0x0000A788) ...")
+  static bool _sameGpu(GpuAdapter adapter, String glRenderer) {
+    final device = adapter.deviceId > 0 ? '(0x${adapter.deviceId.toRadixString(16).padLeft(8, '0')})' : null;
+    final name = adapter.name.trim().toLowerCase();
+    return (device != null && glRenderer.contains(device)) || (name.isNotEmpty && glRenderer.contains(name));
   }
 }
 
@@ -321,6 +337,7 @@ class PluginRenderer {
     required this._handle,
     this._setMpvProperty,
     PluginChannel? channel,
+    this._adapter,
     this.maxOutputHeight = defaultMaxOutputHeight,
     this.settleDelay = const Duration(milliseconds: 150),
     this.resizeDelay = const Duration(milliseconds: 100),
@@ -344,6 +361,7 @@ class PluginRenderer {
           await native.setProperty(name, value);
         }
       },
+      adapter: DesktopGpuDecoders.adapter,
       maxOutputHeight: maxOutputHeight,
     );
   }
@@ -357,6 +375,12 @@ class PluginRenderer {
   final Future<int> Function() _handle;
   final Future<void> Function(String name, String value)? _setMpvProperty;
   final PluginChannel _channel;
+
+  /// The GPU in use as DXGI describes it, for the start tier (PluginTier.startFor); none in the tests
+  final Future<GpuAdapter?> Function()? _adapter;
+
+  /// The longest wait for [_adapter] at an attach: read at the app's start, it is there long before a 360° video
+  static const adapterTimeout = Duration(seconds: 2);
   final DateTime Function() _now;
 
   /// The most lines of the output; the window's shape is kept
@@ -428,7 +452,7 @@ class PluginRenderer {
       if (result.ok && tier == null) {
         // The GPU is known once the plugin made its context: a dedicated one starts at the full size. No frame is
         // drawn yet, so the change costs nothing.
-        final start = PluginTier.startFor(result.glRenderer);
+        final start = PluginTier.startFor(result.glRenderer, adapter: await _gpuAdapter());
         if (start != chosen) {
           chosen = start;
           result = await _channel.enable(handle, _setup(projection, chosen, outputSize));
@@ -436,6 +460,8 @@ class PluginRenderer {
       }
       if (!result.ok) {
         _log.warning('renderer C refused: ${result.reason}');
+        // The plugin draws the player flat again, a projection that was on before included
+        _attached = false;
         await _setMpvProperty?.call('keepaspect', 'yes');
         done.complete(PluginAttach(ok: false, reason: result.reason, glRenderer: result.glRenderer));
         return;
@@ -581,6 +607,19 @@ class PluginRenderer {
     outputHeight: math.max(1, outputSize.height.round()),
     maxOutputHeight: maxOutputHeight,
   );
+
+  Future<GpuAdapter?> _gpuAdapter() async {
+    final adapter = _adapter;
+    if (adapter == null) {
+      return null;
+    }
+    try {
+      return await adapter().timeout(adapterTimeout, onTimeout: () => null);
+    } catch (error) {
+      _log.fine('GPU adapter not known, the start tier follows the name: $error');
+      return null;
+    }
+  }
 
   Future<bool> _enable() async {
     final handle = _handleValue;

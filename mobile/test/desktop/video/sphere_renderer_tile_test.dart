@@ -1,6 +1,6 @@
 // "360° video renderer" in Settings, Advanced (sphere_renderer_tile.dart): Automatic and "not measured yet" at first,
-// what the probe kept with the GPU's name and the decoder, and a choice saved for the next 360° videos. No "mpv
-// shader" among the choices: DP1 dropped renderer A.
+// what the probe kept with the GPU's name and the decoder, a choice saved for the next 360° videos, and Automatic
+// picked again forgetting what the probe kept. No "mpv shader" among the choices: DP1 dropped renderer A.
 
 import 'dart:io';
 
@@ -98,5 +98,35 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('Automatic picked again forgets what the probe kept: the next 360° videos are measured again', (
+    tester,
+  ) async {
+    await tester.runAsync(
+      () => SphereRendererStore.remember(
+        const RememberedRendering(
+          appVersion: '3.3.0+21',
+          glRenderer: 'ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+          tier: null,
+          videoClass: 'hevc 7680x3840 30 fps copy',
+          framesPerSecond: 11,
+          targetFramesPerSecond: 30,
+        ),
+      ),
+    );
+    await pumpTile(tester);
+    expect(find.textContaining('Measured last: Flat, without the 360° view (11.0 / 30 fps)'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('desktop_video_renderer')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('desktop_video_renderer_automatic')));
+    // The settings read at first come from the real event loop (written above): one more round to land
+    await settle(tester);
+    await settle(tester);
+    expect(find.textContaining('Not measured yet'), findsOneWidget);
+    SphereRendererStore.forget();
+    final saved = (await tester.runAsync(SphereRendererStore.load))!;
+    expect(saved.choice, SphereRendererChoice.automatic);
+    expect(saved.measured, isEmpty);
   });
 }

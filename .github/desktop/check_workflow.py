@@ -8,6 +8,8 @@
   - every action pinned to a full commit, with its version in a comment;
   - the Flutter of the Windows job (the Flutter action, mise does not install Flutter on Windows hosts) equal to the one
     of mobile/mise.toml, which every other job uses;
+  - an Xcode chosen by its version (XCODE_VERSION), never the newest one a pattern finds on the image, which may be a
+    beta or a release candidate added by the weekly image update (design 6.6: pinned toolchains);
   - read-only permissions, no secret, no pull_request_target, and checkouts that do not keep the token, since the
     code it runs comes from pull requests (signing, when it comes, goes to a workflow that runs on tags only).
 
@@ -56,6 +58,14 @@ def findings(workflow: str, mise: str) -> list:
         if version and flutter and version.group(1) != flutter.group(1):
             found.append(f'line {number}: Flutter {version.group(1)}, mobile/mise.toml has {flutter.group(1)}')
 
+    for number, line in enumerate(lines, 1):
+        if re.search(r'Xcode_[^/\s"\']*[*?\[]', line):
+            found.append(f'line {number}: an Xcode found by a pattern, not named by XCODE_VERSION')
+    if any(re.search(r'\bxcode-select\s+(?:-s|--switch)\b', line) for line in lines) and not any(
+        re.match(r'^\s*XCODE_VERSION:\s*[\'"]?\d+(?:\.\d+)+[\'"]?\s*(?:#.*)?$', line) for line in lines
+    ):
+        found.append('xcode-select without an XCODE_VERSION: the Xcode of the job is not pinned')
+
     checkouts = sum(1 for line in lines if re.match(r'^\s*(?:-\s*)?uses:\s*actions/checkout@', line))
     kept = sum(1 for line in lines if re.match(r'^\s*persist-credentials:\s*false\s*$', line))
     if checkouts != kept:
@@ -81,7 +91,7 @@ def main(argv=None) -> int:
         print(f'{args.workflow.name}: {line}')
     if found:
         return 1
-    print(f'{args.workflow.name}: runners and actions pinned, Flutter as in mise.toml, read-only, no secret')
+    print(f'{args.workflow.name}: runners, actions and Xcode pinned, Flutter as in mise.toml, read-only, no secret')
     return 0
 
 
