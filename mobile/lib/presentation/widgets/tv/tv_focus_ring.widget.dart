@@ -39,6 +39,9 @@ class TvFocusRing extends StatefulWidget {
   /// Space between the focused widget and the inner edge of the line
   static const gap = 2.0;
 
+  /// How far the ring reaches out of the focused widget, its dark outline included
+  static const reach = gap + strokeWidth + 1;
+
   static const radius = 8.0;
 
   /// Above this share of the screen, a focused widget gets no ring

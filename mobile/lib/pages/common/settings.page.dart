@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
@@ -6,7 +8,10 @@ import 'package:immich_mobile/desktop/settings/computer_settings.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
 import 'package:immich_mobile/widgets/settings/asset_list_settings/asset_list_settings.dart';
@@ -174,8 +179,9 @@ class _TabletLayout extends HookConsumerWidget {
     final sections = _visibleSections(hasServer);
     final selectedSection = useState<SettingSection>(sections.first);
     final shownSection = sections.contains(selectedSection.value) ? selectedSection.value : sections.first;
+    final tvMode = ref.watch(tvModeProvider);
 
-    return Row(
+    final panes = Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Expanded(
@@ -216,7 +222,36 @@ class _TabletLayout extends HookConsumerWidget {
         Expanded(flex: 4, child: shownSection.widget),
       ],
     );
+    if (!tvMode) {
+      return panes;
+    }
+    return Padding(
+      padding: _tvPaneMargins(context),
+      // The margins are taken: the list tiles would add the side padding again inside them
+      child: MediaQuery.removePadding(
+        context: context,
+        removeLeft: true,
+        removeRight: true,
+        removeBottom: true,
+        child: panes,
+      ),
+    );
   }
+}
+
+/// The margins of the two panes in the remote control layout: the padding of the screen, never less than the
+/// overscan margins of the TV shell, plus the reach of the focus ring. The rows of the panes went to the edges of the
+/// screen (the bottom, the right one, the left one for the list of the sections), where a TV may cut them, and the
+/// ring of the focused row was cut; a pane ends that far from the edges, and the arrows scroll the focused row inside
+/// it, its ring inside the margins.
+EdgeInsets _tvPaneMargins(BuildContext context) {
+  final padding = MediaQuery.paddingOf(context);
+  return EdgeInsets.fromLTRB(
+    math.max(padding.left, TvShell.overscan.left) + TvFocusRing.reach,
+    0,
+    math.max(padding.right, TvShell.overscan.right) + TvFocusRing.reach,
+    math.max(padding.bottom, TvShell.overscan.bottom) + TvFocusRing.reach,
+  );
 }
 
 @RoutePage()

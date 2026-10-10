@@ -139,7 +139,7 @@ int tvTimelineColumnCount(double width, int tilesPerRow) =>
 const kTvTimelineTileExtent = 160.0;
 
 /// How far the focus ring of a TV reaches out of the focused tile, its dark outline included
-const kTvFocusRingReach = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
+const kTvFocusRingReach = TvFocusRing.reach;
 
 /// The margin a timeline keeps at the bottom of a TV: the bottom padding, never less than the overscan margin of the
 /// TV shell. The Scaffold of the tab shell takes the bottom padding away from the tabs for its bottom bar, which is

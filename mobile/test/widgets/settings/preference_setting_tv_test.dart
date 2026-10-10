@@ -10,6 +10,7 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/pages/common/settings.page.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -150,5 +151,62 @@ void main() {
 
     await press(tester, LogicalKeyboardKey.select);
     expect(container.read(appConfigProvider).tvLayout, TvLayoutMode.off);
+  });
+
+  testWidgets('the focused setting and its ring stay inside the right and bottom margins of the screen', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    await openPreferences(tester);
+    Focus.of(tester.element(find.text(settings.first))).requestFocus();
+    await tester.pumpAndSettle();
+    const screen = Size(960, 540);
+    // How far the ring reaches out of the focused widget, its dark outline included
+    const reach = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
+    final ring = tester.state<TvFocusRingState>(find.byType(TvFocusRing));
+
+    for (var i = 0; i < settings.length; i++) {
+      if (i > 0) {
+        await press(tester, LogicalKeyboardKey.arrowDown);
+      }
+      expect(focusedLabel(), settings[i]);
+      final outer = ring.ringRect!.inflate(reach);
+      expect(
+        outer.right,
+        lessThanOrEqualTo(screen.width - TvShell.overscan.right),
+        reason: '${settings[i]}: inside the right margin, not cut by the edge of the screen',
+      );
+      expect(
+        outer.bottom,
+        lessThanOrEqualTo(screen.height - TvShell.overscan.bottom),
+        reason: '${settings[i]}: scrolled above the bottom margin, not flush with the bottom of the screen',
+      );
+    }
+  });
+
+  testWidgets('down the list of the sections too, the focused row and its ring stay inside the margins', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    Focus.of(tester.element(find.text('Preferences'))).requestFocus();
+    await tester.pumpAndSettle();
+    const screen = Size(960, 540);
+    const reach = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
+    final ring = tester.state<TvFocusRingState>(find.byType(TvFocusRing));
+
+    for (var press = 0; press < 12 && focusedLabel() != "What's new"; press++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      final outer = ring.ringRect!.inflate(reach);
+      final label = focusedLabel();
+      expect(outer.left, greaterThanOrEqualTo(TvShell.overscan.left), reason: '$label: inside the left margin');
+      expect(outer.right, lessThan(screen.width / 2), reason: '$label: a row of the list of the sections');
+      expect(
+        outer.bottom,
+        lessThanOrEqualTo(screen.height - TvShell.overscan.bottom),
+        reason: '$label: scrolled above the bottom margin',
+      );
+    }
+    expect(focusedLabel(), "What's new", reason: 'down to the last row of the list');
   });
 }
