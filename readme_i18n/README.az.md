@@ -17,10 +17,10 @@ Immuch360 içində ətrafa baxa biləcəyiniz 360° foto və videoları olan Imm
 
 | Platforma | Haradan əldə etmək olar | 10 oktyabr 2026 tarixinə status |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon və planşetləri | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub-da 22-ci yığım, 10 oktyabr 2026-da Google Play-ə göndərilib (orada 7 oktyabrdan 20-ci yığım dərc olunub) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon və planşetləri | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub-da 23-cü yığım, 10 oktyabr 2026-da Google Play-ə göndərilib (orada 7 oktyabrdan 20-ci yığım dərc olunub) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone və iPad** | App Store | 3.3.0 versiyası Apple-ın yoxlamasını gözləyir; hələlik [özünüz yığın](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 və 3S | [APK](#meta-quest-3) · Horizon Store | səhifə təsdiqlənib, 21-ci yığım Meta tərəfindən yoxlanılır, 22-ci yığım Alpha kanalındadır |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV və Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub-da 22-ci yığım; televizorlar üçün Google Play səhifəsi 9 oktyabr 2026-dan Google tərəfindən yoxlanılır |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 və 3S | [APK](#meta-quest-3) · Horizon Store | səhifə təsdiqlənib, 21-ci yığım Meta tərəfindən yoxlanılır, 23-cü yığım Alpha kanalındadır |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV və Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub-da 23-cü yığım; televizorlar üçün Google Play səhifəsi 9 oktyabr 2026-dan Google tərəfindən yoxlanılır |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Sınaq ZIP-i](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows-da masaüstü yığımı 4: fotolar, düz və 360° videolar; macOS və Linux daha sonra |
 
 *Statuslar hər buraxılışda yenilənir; təfərrüatlar [Haradan əldə etmək olar](#where-to-get-it) bölməsindədir.*
@@ -612,14 +612,14 @@ Onu sağ coystiklə (və ya məlumat panelinin Döndər düyməsi ilə) mərkəz
 
 ### İlk başlanğıc
 
-1. Telefonda olduğu kimi daxil olun: oxlar çərçivəni sahədən sahəyə keçirir, sahədə OK ("Yazmaq üçün OK basın") isə server ünvanı, e-poçt və parol üçün televizorun klaviaturasını dialoqda açır.
+1. Telefonda olduğu kimi daxil olun: oxlar çərçivəni sahədən sahəyə keçirir (23-cü yığımdan o, doldurulmuş sahənin etiketini kəsmədən onun üstündən keçir), sahədə OK ("Yazmaq üçün OK basın") isə server ünvanı, e-poçt və parol üçün televizorun klaviaturasını dialoqda açır.
 2. Və ya "Serversiz istifadə et"-i seçin. Televizorun öz fotoları yoxdur, ona görə Fotolar bölməsi Şəbəkə paylaşımları düyməsi ilə "Bu televizorun öz foto və videoları yoxdur: Kitabxanadan şəbəkə paylaşımı açın." deyir. Orada telefonda olduğu kimi paylaşım, Plex serveri və ya kamera əlavə edin (baxın: [Şəbəkə paylaşımları](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Pultla hərəkət edin
 
 - Oxlar çərçivəni hərəkət etdirir, OK onun üzərində olanı açır, Geri geri qayıdır. Bölmədən Geri yan menyuya, sonra Fotolara, sonra tətbiqdən çıxışa aparır. Seçimlər siyahısında, məsələn paylaşımın növündə və ya bir ayarda, oxlar yalnız çərçivəni hərəkət etdirir, OK isə seçimi edir (22-ci yığımdan; əvvəllər oxlar seçimi dəyişirdi).
-- Kanal yuxarı və aşağı düymələri bir dəfəyə bir səhifə sürüşdürür. 22-ci yığımdan foto şəbəkələri ekranın kənar boşluqları daxilində hər sırada təxminən altı plitə göstərir, cihazın öz fayllarının miniatürləri daha kəskindir və incə detallarda hamar qalır, telefonda şəkilli başlığı olan səhifələr (360° siyahısı, Favorites (Sevimlilər), cihazın albomları) isə onun yerinə tək bir zolaq göstərir.
-- 22-ci yığımdan çərçivə hər səhifənin ilk elementindən başlayır (360° siyahısının ilk plitəsi, server ünvanı təsdiqləndikdən sonra e-poçt sahəsi), miniatür şəbəkəsi sürüşdükcə ekranın kənar boşluqları daxilində qalır və şəbəkədən Geri düyməsinə deyil, onun üstündəki sıraya və ya filtrlərə qalxır. Şəbəkə paylaşımından və ya kameradan sağa basmaq onun redaktə düyməsinə aparır, "Bağlantını yoxla"-nın nəticəsi isə görünən yerə sürüşür.
+- Kanal yuxarı və aşağı düymələri bir dəfəyə bir səhifə sürüşdürür. 22-ci yığımdan foto şəbəkələri ekranın kənar boşluqları daxilində hər sırada təxminən altı plitə göstərir, cihazın öz fayllarının miniatürləri daha kəskindir, telefonda şəkilli başlığı olan səhifələr (360° siyahısı, Favorites (Sevimlilər), cihazın albomları) isə onun yerinə tək bir zolaq göstərir. 23-cü yığımdan bu miniatürlər plitələrinin iki misli ölçüsündə hazırlanır və hamar şəkildə kiçildilir, beləliklə qarlı budaqlar kimi incə detallar artıq parıldamır, serverin fotoları isə plitəyə qədər uzadılmış kiçik miniatürü yox, onun daha böyük önizləmə şəklini eyni kəskinlikdə göstərir.
+- 22-ci yığımdan çərçivə hər səhifənin ilk elementindən başlayır (360° siyahısının ilk plitəsi, server ünvanı təsdiqləndikdən sonra e-poçt sahəsi), miniatür şəbəkəsi sürüşdükcə ekranın kənar boşluqları daxilində qalır (23-cü yığımdan Settings-in iki panelində də) və şəbəkədən Geri düyməsinə deyil, onun üstündəki sıraya və ya filtrlərə qalxır. Şəbəkə paylaşımından və ya kameradan sağa basmaq onun redaktə düyməsinə aparır, "Bağlantını yoxla"-nın nəticəsi isə görünən yerə sürüşür.
 - Görüntüləyicilərdə pultun oynatma və fasilə, irəli sarıma, geri sarıma, növbəti və əvvəlki düymələri işləyir, məlumat düyməsi isə foto və ya videonun təfərrüatlarını göstərir.
 
 ### Pultla foto və videolar
@@ -733,7 +733,7 @@ Rəsmi Immich mobil tətbiqinin etdiyi hər şey buradadır: ehtiyat nüsxə, za
 
 360° fotonu tətbiqi olmayan birinə göstərmək üçün onu Immich paylaşılan linki ilə paylaşın: Immich veb tətbiqi 360° fotonu onun brauzerində sfera kimi göstərir.
 
-Cari yığım, 22-ci yığım (versiya 3.3.0-rc.0, yığım nömrəsi 3030020), 10 oktyabr 2026 tarixli Immich `main` üzərində qurulub (versiya 3.3.0-rc.0, hələ stabil buraxılış deyil). 22-ci yığım Immich 3.2.4 serveri ilə və həmin Immich `main`-dən yığılmış server ilə sınaqdan keçirilib: giriş, zaman xətti, albomlar, 360° foto və videolar, video oynatma və yükləmələr, heç bir API xətası olmadan. Problemləri Immich layihəsinə yox, [Issues](https://github.com/freeKC/Immuch360/issues) bölməsinə bildirin. Immich-in özünün tam sənədləri üçün baxın: [immich.app](https://immich.app).
+Cari yığım, 23-cü yığım (versiya 3.3.0-rc.0, yığım nömrəsi 3030021), 10 oktyabr 2026 tarixli Immich `main` üzərində qurulub (versiya 3.3.0-rc.0, hələ stabil buraxılış deyil). 22-ci yığım, eyni Immich bazası üzərində, Immich 3.2.4 serveri ilə və həmin Immich `main`-dən yığılmış server ilə sınaqdan keçirilib: giriş, zaman xətti, albomlar, 360° foto və videolar, video oynatma və yükləmələr, heç bir API xətası olmadan. Problemləri Immich layihəsinə yox, [Issues](https://github.com/freeKC/Immuch360/issues) bölməsinə bildirin. Immich-in özünün tam sənədləri üçün baxın: [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich tətbiqi və digər tətbiqlərlə müqayisə
@@ -1112,7 +1112,7 @@ Tətbiq telefon və planşetlər üçün Google Play-dədir; App Store versiyas�
 
 - **Android telefon və planşetləri**
   - Bu gün: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) və ya [Releases](https://github.com/freeKC/Immuch360/releases) səhifəsindəki APK: telefon üçün `Immuch360-v<version>-arm64-v8a-release.apk` (universal `Immuch360-v<version>-release.apk` hər yerdə işləyir, `-armeabi-v7a` köhnə 32 bitlik telefonlar üçündür, `.aab` faylı isə əl ilə quraşdırma üçün yox, Google Play üçündür). GitHub yığımı adətən mağazadan qabaqdadır. Hər iki halda rəsmi Immich tətbiqinin yanında quraşdırılır (paket `com.aprogsys.immuch360`).
-  - Tezliklə: Google Play-də 22-ci yığım 10 oktyabr 2026-da 20-ci yığımın yerinə göndərilib (o, 7 oktyabrdan dərc olunub); oktyabrın Immich dəyişikliklərini və televizor düzəlişlərini gətirir.
+  - Tezliklə: Google Play-də 23-cü yığım 10 oktyabr 2026-da 20-ci yığımın yerinə göndərilib (o, 7 oktyabrdan dərc olunub); oktyabrın Immich dəyişikliklərini və 22-ci və 23-cü yığımların televizor düzəlişlərini gətirir.
 - **iPhone və iPad**
   - Bu gün: Apple-ın yoxlamasını gözləyir. Yoxlanılan versiya 11-ci yığımın funksiyalarını daşıyır: Immich-ə yükləmə və "Video mənbəyi" seçimi (15-ci yığım), həmçinin xam Insta360 faylları (16-cı yığım) sonrakı App Store yeniləməsi ilə gələcək. Mənbə kodu Xcode ilə və ya Codemagic-də yığılır, baxın: [Özünüz yığın](#build-it-yourself).
   - Tezliklə: App Store, yoxlanılır.

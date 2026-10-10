@@ -17,10 +17,10 @@ Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, D
 
 | Alusta | Mistä sen saa | Tilanne 10. lokakuuta 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | koontiversio 22 GitHubissa, lähetetty Google Playhin 10. lokakuuta 2026 (siellä koontiversio 20 julkaistuna 7. lokakuuta lähtien) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | koontiversio 23 GitHubissa, lähetetty Google Playhin 10. lokakuuta 2026 (siellä koontiversio 20 julkaistuna 7. lokakuuta lähtien) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versio 3.3.0 odottaa Applen tarkastusta; sillä välin [kokoa se itse](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | sivu hyväksytty, koontiversio 21 Metan tarkastettavana, koontiversio 22 alfakanavalla |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | koontiversio 22 GitHubissa; Google Playn TV-sivu on Googlen tarkastettavana 9. lokakuuta 2026 lähtien |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | sivu hyväksytty, koontiversio 21 Metan tarkastettavana, koontiversio 23 alfakanavalla |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | koontiversio 23 GitHubissa; Google Playn TV-sivu on Googlen tarkastettavana 9. lokakuuta 2026 lähtien |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Esiversion ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | työpöydän koontiversio 4 Windowsissa: kuvat, tavalliset ja 360°-videot; macOS ja Linux myöhemmin |
 
 *Tilanteet päivitetään jokaisen julkaisun yhteydessä; tarkemmat tiedot ovat kohdassa [Mistä sen saa](#where-to-get-it).*
@@ -612,14 +612,14 @@ Koontiversiosta 20 alkaen sama Android-sovellus toimii Android TV:ssä ja Google
 
 ### Ensimmäinen käynnistys
 
-1. Kirjaudu kuten puhelimessa: nuolet siirtävät kehystä kentästä toiseen, ja OK kentässä ("Paina OK kirjoittaaksesi") avaa television näppäimistön ikkunaan palvelimen osoitetta, sähköpostia ja salasanaa varten.
+1. Kirjaudu kuten puhelimessa: nuolet siirtävät kehystä kentästä toiseen (koontiversiosta 23 alkaen se kulkee täytetyn kentän otsikon yläpuolelta eikä sen poikki), ja OK kentässä ("Paina OK kirjoittaaksesi") avaa television näppäimistön ikkunaan palvelimen osoitetta, sähköpostia ja salasanaa varten.
 2. Tai valitse "Käytä ilman palvelinta". Televisiolla ei ole omia kuvia, joten Kuvat-välilehdellä lukee "Tällä televisiolla ei ole omia kuvia tai videoita: avaa verkkojako Kirjastosta." ja siinä on Verkkojaot-painike. Lisää siellä jako, Plex-palvelin tai kamera kuten puhelimessa (katso [Verkkojaot](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Liikkuminen kaukosäätimellä
 
 - Nuolet siirtävät kehystä, OK avaa sen, minkä kohdalla kehys on, Takaisin palaa. Välilehdeltä Takaisin siirtyy sivuvalikkoon, sitten Kuviin ja sitten ulos sovelluksesta. Valintaluettelossa, kuten jaon tyypissä tai asetuksessa, nuolet vain siirtävät kehystä ja OK valitsee vaihtoehdon (koontiversiosta 22 alkaen; aiemmin nuolet vaihtoivat valintaa).
-- Kanava ylös ja alas vierittävät sivun kerrallaan. Koontiversiosta 22 alkaen kuvaruudukoissa on noin kuusi ruutua rivillä näytön marginaalien sisällä, laitteen omien tiedostojen pikkukuvat ovat terävämpiä ja pysyvät tasaisina hienoissa yksityiskohdissa, ja sivut, joilla on puhelimessa kuvallinen otsake (360°-luettelo, Suosikit, laitteen albumit), näyttävät sen sijaan yksinkertaisen palkin.
-- Koontiversiosta 22 alkaen kehys alkaa kunkin sivun ensimmäisestä kohteesta (360°-luettelon ensimmäinen ruutu, sähköpostikenttä, kun palvelimen osoite on vahvistettu), pysyy näytön marginaalien sisällä ruudukkoa vieritettäessä ja siirtyy ruudukosta ylös sen yläpuolella olevaan riviin tai suodattimiin eikä Takaisin-painikkeeseen. Oikea nuoli verkkojaosta tai kamerasta vie sen muokkauspainikkeeseen, ja "Testaa yhteys" -toiminnon tulos vierittyy näkyviin.
+- Kanava ylös ja alas vierittävät sivun kerrallaan. Koontiversiosta 22 alkaen kuvaruudukoissa on noin kuusi ruutua rivillä näytön marginaalien sisällä, laitteen omien tiedostojen pikkukuvat ovat terävämpiä, ja sivut, joilla on puhelimessa kuvallinen otsake (360°-luettelo, Suosikit, laitteen albumit), näyttävät sen sijaan yksinkertaisen palkin. Koontiversiosta 23 alkaen nämä pikkukuvat tehdään kaksi kertaa ruutunsa kokoisiksi ja pienennetään pehmeästi, joten hienot yksityiskohdat, kuten lumiset oksat, eivät enää kimmellä, ja palvelimen kuvat näyttävät sen suuremman esikatselukuvan, yhtä terävänä, eivätkä sen pientä ruutuun venytettyä pikkukuvaa.
+- Koontiversiosta 22 alkaen kehys alkaa kunkin sivun ensimmäisestä kohteesta (360°-luettelon ensimmäinen ruutu, sähköpostikenttä, kun palvelimen osoite on vahvistettu), pysyy näytön marginaalien sisällä ruudukkoa vieritettäessä (koontiversiosta 23 alkaen myös Asetusten kahdessa paneelissa) ja siirtyy ruudukosta ylös sen yläpuolella olevaan riviin tai suodattimiin eikä Takaisin-painikkeeseen. Oikea nuoli verkkojaosta tai kamerasta vie sen muokkauspainikkeeseen, ja "Testaa yhteys" -toiminnon tulos vierittyy näkyviin.
 - Katselimissa kaukosäätimen toisto ja tauko, pikakelaus eteen, taaksepäin kelaus, seuraava ja edellinen -näppäimet toimivat, ja tietonäppäin näyttää kuvan tai videon tiedot.
 
 ### Kuvat ja videot kaukosäätimellä
@@ -733,7 +733,7 @@ Kaikki, mitä virallinen Immich-mobiilisovellus tekee, on täällä: varmuuskopi
 
 Jos haluat näyttää 360°-kuvan jollekulle, jolla ei ole sovellusta, jaa se Immichin jakolinkillä: Immichin verkkosovellus näyttää 360°-kuvan pallona hänen selaimessaan.
 
-Nykyinen koontiversio, koontiversio 22 (versio 3.3.0-rc.0, koontinumero 3030020), perustuu Immichin `main`-haaraan 10. lokakuuta 2026 (versio 3.3.0-rc.0, ei vielä vakaa julkaisu). Koontiversiota 22 testattiin Immich 3.2.4 -palvelimella ja samasta Immichin `main`-haarasta käännetyllä palvelimella: kirjautuminen, aikajana, albumit, 360°-kuvat ja -videot, videoiden toisto ja lähetykset, ilman API-virheitä. Ilmoita ongelmista kohdassa [Issues](https://github.com/freeKC/Immuch360/issues), älä Immich-projektille. Immichin oma täydellinen dokumentaatio on osoitteessa [immich.app](https://immich.app).
+Nykyinen koontiversio, koontiversio 23 (versio 3.3.0-rc.0, koontinumero 3030021), perustuu Immichin `main`-haaraan 10. lokakuuta 2026 (versio 3.3.0-rc.0, ei vielä vakaa julkaisu). Koontiversiota 22, samalla Immich-pohjalla, testattiin Immich 3.2.4 -palvelimella ja samasta Immichin `main`-haarasta käännetyllä palvelimella: kirjautuminen, aikajana, albumit, 360°-kuvat ja -videot, videoiden toisto ja lähetykset, ilman API-virheitä. Ilmoita ongelmista kohdassa [Issues](https://github.com/freeKC/Immuch360/issues), älä Immich-projektille. Immichin oma täydellinen dokumentaatio on osoitteessa [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Vertailu Immich-sovellukseen ja muihin sovelluksiin
@@ -1112,7 +1112,7 @@ Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa
 
 - **Android-puhelimet ja -tabletit**
   - Nyt: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) tai APK [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta: puhelimelle `Immuch360-v<version>-arm64-v8a-release.apk` (yleinen `Immuch360-v<version>-release.apk` toimii kaikkialla, `-armeabi-v7a` on vanhemmille 32-bittisille puhelimille, ja `.aab`-tiedosto on Google Playta varten, ei sivulataamiseen). GitHubin koontiversio on yleensä kauppaa edellä. Kummassakin tapauksessa se asentuu virallisen Immich-sovelluksen rinnalle (paketti `com.aprogsys.immuch360`).
-  - Pian: Google Playhin lähetettiin 10. lokakuuta 2026 koontiversio 22 koontiversion 20 tilalle (julkaistuna 7. lokakuuta lähtien); siinä ovat Immichin lokakuun muutokset ja TV-korjaukset.
+  - Pian: Google Playhin lähetettiin 10. lokakuuta 2026 koontiversio 23 koontiversion 20 tilalle (julkaistuna 7. lokakuuta lähtien); siinä ovat Immichin lokakuun muutokset ja koontiversioiden 22 ja 23 TV-korjaukset.
 - **iPhone ja iPad**
   - Nyt: odottaa Applen tarkastusta. Tarkastettavana olevassa versiossa on koontiversion 11 ominaisuudet: lähetys Immichiin ja "Videon lähde" -valinta (koontiversio 15) sekä käsittelemättömät Insta360-tiedostot (koontiversio 16) tulevat myöhemmässä App Store -päivityksessä. Lähdekoodin voi koota Xcodella tai Codemagicissa, katso [Kokoa se itse](#build-it-yourself).
   - Pian: App Store, tarkastettavana.

@@ -17,10 +17,10 @@ Den er laget for deg som fotograferer med et 360°-kamera (Insta360, GoPro MAX, 
 
 | Plattform | Hvor du får den | Status 10. oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoner og nettbrett | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 på GitHub, sendt til Google Play 10. oktober 2026 (build 20 publisert der siden 7. oktober) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoner og nettbrett | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 på GitHub, sendt til Google Play 10. oktober 2026 (build 20 publisert der siden 7. oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | versjon 3.3.0 venter på Apples gjennomgang; [bygg den selv](#build-it-yourself) i mellomtiden |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | oppføringen er godkjent, build 21 til gjennomgang hos Meta, build 22 på alfakanalen |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 på GitHub; Google Play-oppføringen for TV-er har vært til gjennomgang hos Google siden 9. oktober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | oppføringen er godkjent, build 21 til gjennomgang hos Meta, build 23 på alfakanalen |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 på GitHub; Google Play-oppføringen for TV-er har vært til gjennomgang hos Google siden 9. oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Forhåndsversjon som ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | skrivebordsbuild 4 på Windows: bilder, flate videoer og 360°-videoer; macOS og Linux senere |
 
 *Statusene oppdateres ved hver utgivelse; detaljene står i [Hvor du får den](#where-to-get-it).*
@@ -612,14 +612,14 @@ Fra build 20 kjører den samme Android-appen på Android TV og Google TV, med fj
 
 ### Første oppstart
 
-1. Logg inn som på en telefon: piltastene flytter en ramme fra felt til felt, og OK på et felt ("Trykk på OK for å skrive") åpner TV-ens tastatur i en dialog, for serveradressen, e-postadressen og passordet.
+1. Logg inn som på en telefon: piltastene flytter en ramme fra felt til felt (fra build 23 går den over etiketten på et utfylt felt i stedet for tvers gjennom den), og OK på et felt ("Trykk på OK for å skrive") åpner TV-ens tastatur i en dialog, for serveradressen, e-postadressen og passordet.
 2. Eller velg "Bruk uten server". En TV har ingen egne bilder, så Bilder-fanen sier "Denne TV-en har ingen egne bilder eller videoer: åpne en nettverksdeling fra Biblioteket." med en Nettverksdelinger-knapp. Legg til en deling, en Plex-server eller et kamera der, som på en telefon (se [Nettverksdelinger](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Naviger med fjernkontrollen
 
 - Piltastene flytter rammen, OK åpner det den står på, Tilbake går tilbake. Fra en fane går Tilbake til sidemenyen, deretter til Bilder, deretter ut av appen. I en liste med valg, for eksempel typen deling eller en innstilling, flytter piltastene bare rammen, og OK velger alternativet (fra build 22; før endret piltastene valget).
-- Kanal opp og ned blar en side om gangen. Fra build 22 viser bilderutenettene omtrent seks fliser per rad innenfor skjermens marger, med skarpere miniatyrbilder av enhetens egne filer som forblir jevne i fine detaljer, og sidene som har et bildehode på en telefon (360°-listen, Favoritter, albumene på enheten) viser i stedet én enkelt linje.
-- Fra build 22 starter rammen på det første elementet på hver side (den første flisen i 360°-listen, e-postfeltet når serveradressen er bekreftet), holder seg innenfor skjermens marger når et rutenett rulles, og går fra et rutenett opp til raden eller filtrene over det i stedet for til Tilbake-knappen. Høyre fra en nettverksdeling eller et kamera når redigeringsknappen dens, og resultatet av "Test tilkoblingen" rulles inn i synsfeltet.
+- Kanal opp og ned blar en side om gangen. Fra build 22 viser bilderutenettene omtrent seks fliser per rad innenfor skjermens marger, med skarpere miniatyrbilder av enhetens egne filer, og sidene som har et bildehode på en telefon (360°-listen, Favoritter, albumene på enheten) viser i stedet én enkelt linje. Fra build 23 lages disse miniatyrbildene i dobbel størrelse av flisen sin og skaleres mykt ned, så fine detaljer som snødekte greiner ikke lenger glitrer, og bildene fra serveren viser den større forhåndsvisningen dens, like skarp, i stedet for det lille miniatyrbildet dens strukket ut til flisen.
+- Fra build 22 starter rammen på det første elementet på hver side (den første flisen i 360°-listen, e-postfeltet når serveradressen er bekreftet), holder seg innenfor skjermens marger når et rutenett rulles (fra build 23 også i de to rutene i Innstillinger), og går fra et rutenett opp til raden eller filtrene over det i stedet for til Tilbake-knappen. Høyre fra en nettverksdeling eller et kamera når redigeringsknappen dens, og resultatet av "Test tilkoblingen" rulles inn i synsfeltet.
 - I visningene fungerer fjernkontrollens taster for spill av og pause, spol fremover, spol bakover, neste og forrige, og infotasten viser detaljene for et bilde eller en video.
 
 ### Bilder og videoer med fjernkontrollen
@@ -733,7 +733,7 @@ Alt den offisielle Immich-mobilappen gjør, finnes her: sikkerhetskopiering, tid
 
 For å vise et 360°-bilde til noen som ikke har appen, deler du det med en delt lenke i Immich: Immich-nettappen viser et 360°-bilde som en kule i nettleseren deres.
 
-Den gjeldende builden, build 22 (versjon 3.3.0-rc.0, buildnummer 3030020), er basert på Immich `main` fra 10. oktober 2026 (versjon 3.3.0-rc.0, ikke en stabil utgivelse ennå). Build 22 ble testet mot en Immich 3.2.4-server og mot en server bygget fra den samme Immich `main`: innlogging, tidslinje, album, 360°-bilder og -videoer, videoavspilling og opplastinger, uten noen API-feil. Rapporter problemer under [Issues](https://github.com/freeKC/Immuch360/issues), ikke til Immich-prosjektet. Den fullstendige dokumentasjonen for selve Immich finner du på [immich.app](https://immich.app).
+Den gjeldende builden, build 23 (versjon 3.3.0-rc.0, buildnummer 3030021), er basert på Immich `main` fra 10. oktober 2026 (versjon 3.3.0-rc.0, ikke en stabil utgivelse ennå). Build 22, på samme Immich-grunnlag, ble testet mot en Immich 3.2.4-server og mot en server bygget fra den samme Immich `main`: innlogging, tidslinje, album, 360°-bilder og -videoer, videoavspilling og opplastinger, uten noen API-feil. Rapporter problemer under [Issues](https://github.com/freeKC/Immuch360/issues), ikke til Immich-prosjektet. Den fullstendige dokumentasjonen for selve Immich finner du på [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Sammenlignet med Immich-appen og andre apper
@@ -1112,7 +1112,7 @@ Appen finnes på Google Play for telefoner og nettbrett; App Store-versjonen ven
 
 - **Android-telefoner og -nettbrett**
   - I dag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eller APK-en på siden [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` for en telefon (den universelle `Immuch360-v<version>-release.apk` fungerer overalt, `-armeabi-v7a` er for eldre 32-bits telefoner, og `.aab`-filen er for Google Play, ikke for sideloading). GitHub-builden ligger vanligvis foran butikken. Uansett installeres den ved siden av den offisielle Immich-appen (pakke `com.aprogsys.immuch360`).
-  - Snart: på Google Play ble build 22 sendt inn 10. oktober 2026 i stedet for build 20 (publisert siden 7. oktober); den har Immich-endringene fra oktober og TV-rettelsene.
+  - Snart: på Google Play ble build 23 sendt inn 10. oktober 2026 i stedet for build 20 (publisert siden 7. oktober); den har Immich-endringene fra oktober og TV-rettelsene fra build 22 og 23.
 - **iPhone og iPad**
   - I dag: venter på gjennomgang hos Apple. Versjonen under gjennomgang har funksjonene fra build 11: opplasting til Immich og valget Videokilde (build 15) og de rå Insta360-filene (build 16) kommer med en senere App Store-oppdatering. Kildekoden bygges med Xcode eller på Codemagic, se [Bygg den selv](#build-it-yourself).
   - Snart: App Store, under gjennomgang.

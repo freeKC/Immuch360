@@ -17,10 +17,10 @@ Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI
 
 | Platforma | Kur iegūt | Statuss 2026. gada 10. oktobrī |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 22. būvējums GitHub, nosūtīts uz Google Play 2026. gada 10. oktobrī (20. būvējums tur pieejams kopš 7. oktobra) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 23. būvējums GitHub, nosūtīts uz Google Play 2026. gada 10. oktobrī (20. būvējums tur pieejams kopš 7. oktobra) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone un iPad** | App Store | versija 3.3.0 gaida Apple pārskatīšanu; pa to laiku [izveidojiet to paši](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 un 3S | [APK](#meta-quest-3) · Horizon Store | ieraksts apstiprināts, 21. būvējums Meta pārskatīšanā, 22. būvējums alfa kanālā |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV un Google TV** | [APK](#install-it-on-the-tv) · Google Play | 22. būvējums GitHub; Google Play ieraksts televizoriem ir Google pārskatīšanā kopš 2026. gada 9. oktobra |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 un 3S | [APK](#meta-quest-3) · Horizon Store | ieraksts apstiprināts, 21. būvējums Meta pārskatīšanā, 23. būvējums alfa kanālā |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV un Google TV** | [APK](#install-it-on-the-tv) · Google Play | 23. būvējums GitHub; Google Play ieraksts televizoriem ir Google pārskatīšanā kopš 2026. gada 9. oktobra |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Priekšskatījuma ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | darbvirsmas būvējums 4 operētājsistēmā Windows: foto, plakani un 360° video; macOS un Linux vēlāk |
 
 *Statusi tiek atjaunināti katrā laidienā; sīkāka informācija sadaļā [Kur to iegūt](#where-to-get-it).*
@@ -612,14 +612,14 @@ No 20. būvējuma tā pati Android lietotne darbojas Android TV un Google TV, ar
 
 ### Pirmā palaišana
 
-1. Pierakstieties kā tālrunī: bultiņas pārvieto rāmi no lauka uz lauku, un OK uz lauka („Nospiediet OK, lai rakstītu”) atver televizora tastatūru dialogā, servera adresei, e-pastam un parolei.
+1. Pierakstieties kā tālrunī: bultiņas pārvieto rāmi no lauka uz lauku (no 23. būvējuma tas iet pāri aizpildīta lauka etiķetei, nevis tai cauri), un OK uz lauka („Nospiediet OK, lai rakstītu”) atver televizora tastatūru dialogā, servera adresei, e-pastam un parolei.
 2. Vai izvēlieties „Lietot bez servera”. Televizoram nav savu foto, tāpēc cilnē „Fotoattēli” rakstīts „Šim televizoram nav savu fotoattēlu vai video: atveriet tīkla koplietojumu no Bibliotēkas.” ar pogu „Tīkla koplietojumi”. Pievienojiet tur koplietojumu, Plex serveri vai kameru, kā tālrunī (skatiet [Tīkla koplietojumi](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Pārvietošanās ar tālvadības pulti
 
 - Bultiņas pārvieto rāmi, OK atver to, uz kā tas ir, Atpakaļ iet atpakaļ. No cilnes Atpakaļ pāriet uz sānu izvēlni, tad uz „Fotoattēli”, tad iziet no lietotnes. Izvēļu sarakstā, piemēram, koplietojuma veidam vai iestatījumam, bultiņas tikai pārvieto rāmi, un OK izvēlas iespēju (no 22. būvējuma; agrāk bultiņas mainīja izvēli).
-- Kanāls augšup un lejup ritina pa vienai lapai. No 22. būvējuma fotoattēlu režģi rāda apmēram sešas flīzes rindā ekrāna malu robežās, ar asākiem pašas ierīces failu sīktēliem, kas smalkās detaļās paliek gludi, un lapas, kurām tālrunī ir galvene ar attēlu (360° saraksts, „Izlase”, ierīces albumi), tā vietā rāda vienu joslu.
-- No 22. būvējuma rāmis sākas uz katras lapas pirmā elementa (360° saraksta pirmās flīzes, e-pasta lauka, kad servera adrese ir apstiprināta), paliek ekrāna malu robežās, kamēr režģis ritinās, un no režģa pāriet augšup uz rindu vai filtriem virs tā, nevis uz pogu Atpakaļ. Pa labi no tīkla koplietojuma vai kameras nonāk pie tā rediģēšanas pogas, un „Pārbaudīt savienojumu” rezultāts tiek ieritināts redzamajā daļā.
+- Kanāls augšup un lejup ritina pa vienai lapai. No 22. būvējuma fotoattēlu režģi rāda apmēram sešas flīzes rindā ekrāna malu robežās, ar asākiem pašas ierīces failu sīktēliem, un lapas, kurām tālrunī ir galvene ar attēlu (360° saraksts, „Izlase”, ierīces albumi), tā vietā rāda vienu joslu. No 23. būvējuma šie sīktēli tiek veidoti divreiz lielāki par savu flīzi un vienmērīgi samazināti, tāpēc smalkas detaļas, piemēram, sniegoti zari, vairs nemirgo, un servera foto rāda tā lielāko priekšskatījuma attēlu, tikpat asu, nevis tā mazo sīktēlu, izstieptu līdz flīzei.
+- No 22. būvējuma rāmis sākas uz katras lapas pirmā elementa (360° saraksta pirmās flīzes, e-pasta lauka, kad servera adrese ir apstiprināta), paliek ekrāna malu robežās, kamēr režģis ritinās (no 23. būvējuma arī abās „Iestatījumi” rūtīs), un no režģa pāriet augšup uz rindu vai filtriem virs tā, nevis uz pogu Atpakaļ. Pa labi no tīkla koplietojuma vai kameras nonāk pie tā rediģēšanas pogas, un „Pārbaudīt savienojumu” rezultāts tiek ieritināts redzamajā daļā.
 - Skatītājos darbojas tālvadības pults atskaņošanas un pauzes, ātrās pārtīšanas uz priekšu, attīšanas, nākamā un iepriekšējā taustiņi, un informācijas taustiņš rāda foto vai video informāciju.
 
 ### Foto un video ar tālvadības pulti
@@ -733,7 +733,7 @@ Viss, ko dara oficiālā Immich mobilā lietotne, ir šeit: dublēšana, laika s
 
 Lai parādītu 360° foto kādam, kam nav lietotnes, kopīgojiet to ar Immich kopīgotu saiti: Immich tīmekļa lietotne viņa pārlūkā rāda 360° foto kā sfēru.
 
-Pašreizējais būvējums, 22. būvējums (versija 3.3.0-rc.0, būvējuma numurs 3030020), balstās uz Immich `main` 2026. gada 10. oktobra stāvoklī (versija 3.3.0-rc.0, vēl ne stabils laidiens). 22. būvējums tika testēts ar Immich 3.2.4 serveri un ar serveri, kas būvēts no tā paša Immich `main`: pieteikšanās, laika skala, albumi, 360° foto un video, video atskaņošana un augšupielādes, bez nevienas API kļūdas. Lūdzu, ziņojiet par problēmām [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam. Pilnu paša Immich dokumentāciju skatiet [immich.app](https://immich.app).
+Pašreizējais būvējums, 23. būvējums (versija 3.3.0-rc.0, būvējuma numurs 3030021), balstās uz Immich `main` 2026. gada 10. oktobra stāvoklī (versija 3.3.0-rc.0, vēl ne stabils laidiens). 22. būvējums, uz tās pašas Immich bāzes, tika testēts ar Immich 3.2.4 serveri un ar serveri, kas būvēts no tā paša Immich `main`: pieteikšanās, laika skala, albumi, 360° foto un video, video atskaņošana un augšupielādes, bez nevienas API kļūdas. Lūdzu, ziņojiet par problēmām [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam. Pilnu paša Immich dokumentāciju skatiet [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Salīdzinājums ar Immich lietotni un citām lietotnēm
@@ -1112,7 +1112,7 @@ Lietotne ir Google Play tālruņiem un planšetdatoriem; App Store versija gaida
 
 - **Android tālruņi un planšetdatori**
   - Šodien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) vai APK lapā [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` tālrunim (universālais `Immuch360-v<version>-release.apk` darbojas visur, `-armeabi-v7a` ir vecākiem 32 bitu tālruņiem, un `.aab` fails ir paredzēts Google Play, ne instalēšanai no sāniem). GitHub būvējums parasti ir priekšā veikalam. Jebkurā gadījumā tā instalējas blakus oficiālajai Immich lietotnei (pakotne `com.aprogsys.immuch360`).
-  - Drīzumā: Google Play veikalā 22. būvējums tika nosūtīts 2026. gada 10. oktobrī 20. būvējuma vietā (pieejams kopš 7. oktobra); tajā ir Immich oktobra izmaiņas un televizora labojumi.
+  - Drīzumā: Google Play veikalā 23. būvējums tika nosūtīts 2026. gada 10. oktobrī 20. būvējuma vietā (pieejams kopš 7. oktobra); tajā ir Immich oktobra izmaiņas un 22. un 23. būvējuma televizora labojumi.
 - **iPhone un iPad**
   - Šodien: gaida Apple pārskatīšanu. Pārskatāmajai versijai ir 11. būvējuma funkcijas: augšupielāde uz Immich un izvēle „Video avots” (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar vēlāku App Store atjauninājumu. Pirmkods kompilējas ar Xcode vai Codemagic, skatiet [Izveidojiet to paši](#build-it-yourself).
   - Drīzumā: App Store, tiek pārskatīts.

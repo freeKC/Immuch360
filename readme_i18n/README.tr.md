@@ -17,10 +17,10 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
 
 | Platform | Nereden edinilir | 10 Ekim 2026 itibarıyla durum |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon ve tabletler | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub'da derleme 22, 10 Ekim 2026'da Google Play'e gönderildi (orada 7 Ekim'den beri derleme 20 yayında) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon ve tabletler | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub'da derleme 23, 10 Ekim 2026'da Google Play'e gönderildi (orada 7 Ekim'den beri derleme 20 yayında) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ve iPad** | App Store | 3.3.0 sürümü Apple incelemesini bekliyor; bu arada [kendiniz derleyin](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ve 3S | [APK](#meta-quest-3) · Horizon Store | liste onaylandı, derleme 21 Meta incelemesinde, derleme 22 alfa kanalında |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ve Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub'da derleme 22; televizyonlar için Google Play kaydı 9 Ekim 2026'dan beri Google incelemesinde |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ve 3S | [APK](#meta-quest-3) · Horizon Store | liste onaylandı, derleme 21 Meta incelemesinde, derleme 23 alfa kanalında |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ve Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub'da derleme 23; televizyonlar için Google Play kaydı 9 Ekim 2026'dan beri Google incelemesinde |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Önizleme ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows'ta masaüstü derlemesi 4: fotoğraflar, düz ve 360° videolar; macOS ve Linux daha sonra |
 
 *Durumlar her sürümde güncellenir; ayrıntılar [Nereden edinilir](#where-to-get-it) bölümünde.*
@@ -612,14 +612,14 @@ Derleme 20'den itibaren aynı Android uygulaması, tek giriş olarak kumandayla 
 
 ### İlk başlatma
 
-1. Telefondaki gibi oturum açın: oklar bir çerçeveyi alandan alana taşır ve bir alanda OK ("Yazmak için OK'e basın") sunucu adresi, e-posta ve şifre için televizyonun klavyesini bir iletişim kutusunda açar.
+1. Telefondaki gibi oturum açın: oklar bir çerçeveyi alandan alana taşır (derleme 23'ten itibaren çerçeve, dolu bir alanın etiketinin üzerinden geçer, içinden değil) ve bir alanda OK ("Yazmak için OK'e basın") sunucu adresi, e-posta ve şifre için televizyonun klavyesini bir iletişim kutusunda açar.
 2. Ya da "Sunucu olmadan kullan"ı seçin. Bir televizyonun kendi fotoğrafı yoktur, bu yüzden Fotoğraflar sekmesi bir Ağ paylaşımları düğmesiyle birlikte "Bu televizyonun kendi fotoğrafı veya videosu yok: Kütüphane'den bir ağ paylaşımı açın." der. Oraya telefondaki gibi bir paylaşım, bir Plex sunucusu veya bir kamera ekleyin (bkz. [Ağ paylaşımları](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Kumandayla gezinin
 
 - Oklar çerçeveyi taşır, OK üzerinde olduğu öğeyi açar, Geri geri gider. Bir sekmeden Geri yan menüye, ardından Fotoğraflar'a, ardından uygulamanın dışına gider. Bir paylaşımın türü veya bir ayar gibi bir seçenek listesinde oklar yalnızca çerçeveyi taşır ve OK seçeneği seçer (derleme 22'den itibaren; önceden oklar seçeneği değiştiriyordu).
-- Kanal yukarı ve aşağı tuşları sayfa sayfa kaydırır. Derleme 22'den itibaren fotoğraf ızgaraları ekranın kenar boşluklarının içinde satır başına yaklaşık altı kutucuk gösterir; cihazın kendi dosyalarının küçük resimleri daha keskindir ve ince ayrıntılarda pürüzsüz kalır; telefonda resimli bir başlığı olan sayfalar (360° listesi, Favoriler, cihazın albümleri) ise bunun yerine tek bir çubuk gösterir.
-- Derleme 22'den itibaren çerçeve her sayfanın ilk öğesinde başlar (360° listesinin ilk kutucuğu, sunucu adresi onaylandıktan sonra e-posta alanı), bir ızgara kaydırılırken ekranın kenar boşluklarının içinde kalır ve bir ızgaradan Geri düğmesine değil, üstündeki satıra veya filtrelere çıkar. Bir ağ paylaşımından veya kameradan Sağ, onun düzenleme düğmesine ulaşır ve "Bağlantıyı test et" sonucu görünür olana kadar kaydırılır.
+- Kanal yukarı ve aşağı tuşları sayfa sayfa kaydırır. Derleme 22'den itibaren fotoğraf ızgaraları ekranın kenar boşluklarının içinde satır başına yaklaşık altı kutucuk gösterir; cihazın kendi dosyalarının küçük resimleri daha keskindir; telefonda resimli bir başlığı olan sayfalar (360° listesi, Favoriler, cihazın albümleri) ise bunun yerine tek bir çubuk gösterir. Derleme 23'ten itibaren bu küçük resimler kutucuklarının iki katı boyutta oluşturulup yumuşakça küçültülür, böylece karlı dallar gibi ince ayrıntılar artık parıldamaz, sunucunun fotoğrafları ise kutucuğa gerilmiş küçük resmi yerine sunucunun daha büyük önizleme resmini aynı keskinlikte gösterir.
+- Derleme 22'den itibaren çerçeve her sayfanın ilk öğesinde başlar (360° listesinin ilk kutucuğu, sunucu adresi onaylandıktan sonra e-posta alanı), bir ızgara kaydırılırken ekranın kenar boşluklarının içinde kalır (derleme 23'ten itibaren Ayarlar'ın iki bölmesinde de) ve bir ızgaradan Geri düğmesine değil, üstündeki satıra veya filtrelere çıkar. Bir ağ paylaşımından veya kameradan Sağ, onun düzenleme düğmesine ulaşır ve "Bağlantıyı test et" sonucu görünür olana kadar kaydırılır.
 - Görüntüleyicilerde kumandanın oynat ve duraklat, ileri sar, geri sar, sonraki ve önceki tuşları çalışır ve bilgi tuşu bir fotoğrafın veya videonun ayrıntılarını gösterir.
 
 ### Kumandayla fotoğraflar ve videolar
@@ -733,7 +733,7 @@ Resmi Immich mobil uygulamasının yaptığı her şey burada: yedekleme, zaman 
 
 Bir 360° fotoğrafı uygulaması olmayan birine göstermek için onu bir Immich paylaşılan bağlantısıyla paylaşın: Immich web uygulaması bir 360° fotoğrafı onun tarayıcısında küre olarak gösterir.
 
-Güncel derleme, derleme 22 (sürüm 3.3.0-rc.0, derleme numarası 3030020), 10 Ekim 2026 tarihli Immich `main`'i (sürüm 3.3.0-rc.0, henüz kararlı bir sürüm değil) temel alır. Derleme 22, bir Immich 3.2.4 sunucusuyla ve aynı Immich `main`'den derlenmiş bir sunucuyla test edildi: oturum açma, zaman çizelgesi, albümler, 360° fotoğraf ve videolar, video oynatma ve yüklemeler, hiçbir API hatası olmadan. Lütfen sorunları Immich projesine değil, [Issues](https://github.com/freeKC/Immuch360/issues) bölümüne bildirin. Immich'in kendisinin tam belgeleri için bkz. [immich.app](https://immich.app).
+Güncel derleme, derleme 23 (sürüm 3.3.0-rc.0, derleme numarası 3030021), 10 Ekim 2026 tarihli Immich `main`'i (sürüm 3.3.0-rc.0, henüz kararlı bir sürüm değil) temel alır. Derleme 22, aynı Immich tabanı üzerinde, bir Immich 3.2.4 sunucusuyla ve aynı Immich `main`'den derlenmiş bir sunucuyla test edildi: oturum açma, zaman çizelgesi, albümler, 360° fotoğraf ve videolar, video oynatma ve yüklemeler, hiçbir API hatası olmadan. Lütfen sorunları Immich projesine değil, [Issues](https://github.com/freeKC/Immuch360/issues) bölümüne bildirin. Immich'in kendisinin tam belgeleri için bkz. [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich uygulaması ve diğer uygulamalarla karşılaştırma
@@ -1112,7 +1112,7 @@ Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple
 
 - **Android telefon ve tabletler**
   - Bugün: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ya da [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki APK: telefon için `Immuch360-v<version>-arm64-v8a-release.apk` (evrensel `Immuch360-v<version>-release.apk` her yerde çalışır, `-armeabi-v7a` eski 32 bit telefonlar içindir, `.aab` dosyası ise yandan yükleme için değil Google Play içindir). GitHub derlemesi genellikle mağazadakinden ileridedir. Her iki durumda da resmi Immich uygulamasının yanına kurulur (paket `com.aprogsys.immuch360`).
-  - Yakında: Google Play'e derleme 22, derleme 20'nin (7 Ekim'den beri yayında) yerine 10 Ekim 2026'da gönderildi; Immich'in ekim ayı değişikliklerini ve televizyon düzeltmelerini getiriyor.
+  - Yakında: Google Play'e derleme 23, derleme 20'nin (7 Ekim'den beri yayında) yerine 10 Ekim 2026'da gönderildi; Immich'in ekim ayı değişikliklerini ve derleme 22 ile 23'ün televizyon düzeltmelerini getiriyor.
 - **iPhone ve iPad**
   - Bugün: Apple'ın incelemesini bekliyor. İncelenen sürüm derleme 11'in özelliklerini taşır: Immich'e yükleme ve Video kaynağı seçimi (derleme 15) ile ham Insta360 dosyaları (derleme 16) daha sonraki bir App Store güncellemesiyle gelecek. Kaynak kod Xcode ile veya Codemagic üzerinde derlenir, bkz. [Kendiniz derleyin](#build-it-yourself).
   - Yakında: App Store, inceleniyor.

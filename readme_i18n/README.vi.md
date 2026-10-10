@@ -17,10 +17,10 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 
 | Nền tảng | Tải ở đâu | Trạng thái ngày 10 tháng 10 năm 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** điện thoại và máy tính bảng | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bản dựng 22 trên GitHub, đã gửi lên Google Play ngày 10 tháng 10 năm 2026 (bản dựng 20 phát hành trên đó từ ngày 7 tháng 10) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** điện thoại và máy tính bảng | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bản dựng 23 trên GitHub, đã gửi lên Google Play ngày 10 tháng 10 năm 2026 (bản dựng 20 phát hành trên đó từ ngày 7 tháng 10) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone và iPad** | App Store | phiên bản 3.3.0 đang chờ Apple xét duyệt; trong lúc chờ, hãy [tự dựng ứng dụng](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 và 3S | [APK](#meta-quest-3) · Horizon Store | trang ứng dụng đã duyệt, bản dựng 21 đang chờ Meta xét duyệt, bản dựng 22 trên kênh alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV và Google TV** | [APK](#install-it-on-the-tv) · Google Play | bản dựng 22 trên GitHub; trang Google Play cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 và 3S | [APK](#meta-quest-3) · Horizon Store | trang ứng dụng đã duyệt, bản dựng 21 đang chờ Meta xét duyệt, bản dựng 23 trên kênh alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV và Google TV** | [APK](#install-it-on-the-tv) · Google Play | bản dựng 23 trên GitHub; trang Google Play cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP bản xem trước](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | bản dựng máy tính 4 trên Windows: ảnh, video phẳng và video 360°; macOS và Linux sau này |
 
 *Trạng thái được cập nhật ở mỗi bản phát hành; chi tiết xem ở [Tải ở đâu](#where-to-get-it).*
@@ -612,14 +612,14 @@ Từ bản dựng 20, cùng một ứng dụng Android chạy trên Android TV v
 
 ### Lần khởi động đầu tiên
 
-1. Đăng nhập như trên điện thoại: các phím mũi tên di chuyển khung tiêu điểm từ trường này sang trường khác, và OK trên một trường ("Nhấn OK để nhập") mở bàn phím của TV trong một hộp thoại, để nhập địa chỉ máy chủ, email và mật khẩu.
+1. Đăng nhập như trên điện thoại: các phím mũi tên di chuyển khung tiêu điểm từ trường này sang trường khác (từ bản dựng 23, khung đi phía trên nhãn của trường đã điền thay vì cắt ngang qua nhãn), và OK trên một trường ("Nhấn OK để nhập") mở bàn phím của TV trong một hộp thoại, để nhập địa chỉ máy chủ, email và mật khẩu.
 2. Hoặc chọn "Sử dụng không cần máy chủ". TV không có ảnh riêng, nên thẻ Ảnh ghi "TV này không có ảnh hoặc video riêng: hãy mở một chia sẻ mạng từ Thư viện." với nút Chia sẻ mạng. Hãy thêm chia sẻ, máy chủ Plex hoặc camera ở đó, như trên điện thoại (xem [Chia sẻ mạng](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Di chuyển bằng điều khiển từ xa
 
 - Các phím mũi tên di chuyển khung tiêu điểm, OK mở mục đang được chọn, Quay lại để trở về. Từ một thẻ, Quay lại chuyển tới menu bên, rồi tới Ảnh, rồi thoát ứng dụng. Trong một danh sách lựa chọn, như loại chia sẻ hoặc một cài đặt, các phím mũi tên chỉ di chuyển khung tiêu điểm và OK chọn lựa chọn đó (từ bản dựng 22; trước đó, các phím mũi tên thay đổi lựa chọn).
-- Phím kênh lên và xuống cuộn từng trang một. Từ bản dựng 22, lưới ảnh hiển thị khoảng sáu ô mỗi hàng bên trong lề màn hình, với hình thu nhỏ sắc nét hơn cho các tệp của chính thiết bị mà vẫn mượt ở các chi tiết nhỏ, và các trang có ảnh đầu trang trên điện thoại (danh sách 360°, Yêu thích, album của thiết bị) thay vào đó chỉ hiển thị một thanh duy nhất.
-- Từ bản dựng 22, khung tiêu điểm bắt đầu ở mục đầu tiên của mỗi trang (ô đầu tiên của danh sách 360°, trường email khi địa chỉ máy chủ đã được xác nhận), nằm bên trong lề màn hình khi lưới cuộn, và từ lưới đi lên hàng hoặc các bộ lọc phía trên thay vì tới nút Quay lại. Phím phải từ một chia sẻ mạng hoặc một camera đi tới nút chỉnh sửa của nó, và kết quả của "Kiểm tra kết nối" được cuộn vào tầm nhìn.
+- Phím kênh lên và xuống cuộn từng trang một. Từ bản dựng 22, lưới ảnh hiển thị khoảng sáu ô mỗi hàng bên trong lề màn hình, với hình thu nhỏ sắc nét hơn cho các tệp của chính thiết bị, và các trang có ảnh đầu trang trên điện thoại (danh sách 360°, Yêu thích, album của thiết bị) thay vào đó chỉ hiển thị một thanh duy nhất. Từ bản dựng 23, các hình thu nhỏ đó được tạo với kích thước gấp đôi ô của chúng rồi thu nhỏ mượt mà, nên các chi tiết nhỏ như cành cây phủ tuyết không còn lấp lánh nữa, và ảnh của máy chủ hiển thị ảnh xem trước lớn hơn của máy chủ, sắc nét như vậy, thay vì hình thu nhỏ bé của nó bị kéo giãn cho vừa ô.
+- Từ bản dựng 22, khung tiêu điểm bắt đầu ở mục đầu tiên của mỗi trang (ô đầu tiên của danh sách 360°, trường email khi địa chỉ máy chủ đã được xác nhận), nằm bên trong lề màn hình khi lưới cuộn (từ bản dựng 23, cả trong hai ngăn của Cài đặt), và từ lưới đi lên hàng hoặc các bộ lọc phía trên thay vì tới nút Quay lại. Phím phải từ một chia sẻ mạng hoặc một camera đi tới nút chỉnh sửa của nó, và kết quả của "Kiểm tra kết nối" được cuộn vào tầm nhìn.
 - Trong các trình xem, các phím phát và tạm dừng, tua nhanh, tua lại, tiếp theo và trước đó của điều khiển từ xa đều hoạt động, và phím thông tin hiển thị chi tiết của ảnh hoặc video.
 
 ### Ảnh và video với điều khiển từ xa
@@ -733,7 +733,7 @@ Mọi thứ ứng dụng di động Immich chính thức làm được đều c�
 
 Để cho người không có ứng dụng xem một ảnh 360°, hãy chia sẻ nó bằng liên kết chia sẻ của Immich: ứng dụng web Immich hiển thị ảnh 360° dạng hình cầu trong trình duyệt của họ.
 
-Bản dựng hiện tại, bản dựng 22 (phiên bản 3.3.0-rc.0, số bản dựng 3030020), dựa trên Immich `main` ngày 10 tháng 10 năm 2026 (phiên bản 3.3.0-rc.0, chưa phải bản phát hành ổn định). Bản dựng 22 đã được kiểm thử với máy chủ Immich 3.2.4 và với một máy chủ được dựng từ chính Immich `main` đó: đăng nhập, dòng thời gian, album, ảnh và video 360°, phát video và tải lên, không có lỗi API nào. Vui lòng báo lỗi tại [Issues](https://github.com/freeKC/Immuch360/issues), không báo cho dự án Immich. Tài liệu đầy đủ của chính Immich có tại [immich.app](https://immich.app).
+Bản dựng hiện tại, bản dựng 23 (phiên bản 3.3.0-rc.0, số bản dựng 3030021), dựa trên Immich `main` ngày 10 tháng 10 năm 2026 (phiên bản 3.3.0-rc.0, chưa phải bản phát hành ổn định). Bản dựng 22, trên cùng nền Immich, đã được kiểm thử với máy chủ Immich 3.2.4 và với một máy chủ được dựng từ chính Immich `main` đó: đăng nhập, dòng thời gian, album, ảnh và video 360°, phát video và tải lên, không có lỗi API nào. Vui lòng báo lỗi tại [Issues](https://github.com/freeKC/Immuch360/issues), không báo cho dự án Immich. Tài liệu đầy đủ của chính Immich có tại [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## So sánh với ứng dụng Immich và các ứng dụng khác
@@ -1112,7 +1112,7 @@ CI của Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) chạy tr
 
 - **Điện thoại và máy tính bảng Android**
   - Hiện nay: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), hoặc APK trên trang [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` cho điện thoại (bản phổ thông `Immuch360-v<version>-release.apk` chạy ở mọi nơi, `-armeabi-v7a` dành cho điện thoại 32 bit đời cũ, và tệp `.aab` dành cho Google Play, không dùng để cài thủ công). Bản dựng trên GitHub thường đi trước cửa hàng. Dù cách nào, ứng dụng cũng cài song song với ứng dụng Immich chính thức (gói `com.aprogsys.immuch360`).
-  - Sắp tới: trên Google Play, bản dựng 22 đã được gửi ngày 10 tháng 10 năm 2026 thay cho bản dựng 20 (phát hành từ ngày 7 tháng 10); bản này mang các thay đổi của Immich trong tháng 10 và các bản sửa lỗi cho TV.
+  - Sắp tới: trên Google Play, bản dựng 23 đã được gửi ngày 10 tháng 10 năm 2026 thay cho bản dựng 20 (phát hành từ ngày 7 tháng 10); bản này mang các thay đổi của Immich trong tháng 10 và các bản sửa lỗi cho TV của bản dựng 22 và 23.
 - **iPhone và iPad**
   - Hiện nay: đang chờ Apple xét duyệt. Phiên bản đang xét duyệt có các tính năng của bản dựng 11: tải lên Immich và lựa chọn Nguồn video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong một bản cập nhật App Store sau này. Mã nguồn được dựng bằng Xcode hoặc trên Codemagic, xem [Tự dựng ứng dụng](#build-it-yourself).
   - Sắp tới: App Store, đang xét duyệt.

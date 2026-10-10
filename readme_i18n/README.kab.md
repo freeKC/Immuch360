@@ -17,10 +17,10 @@ Yettwaxdem i wid yettṣewwiren s tkamirat 360° (Insta360, GoPro MAX, DJI Osmo 
 
 | Tagrumma | Anda ara t-id-tafeḍ | Addad ass n 10 Tubeṛ 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tiliɣriyin d ttablit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | lebni 22 ɣef GitHub, yettwazen ɣer Google Play ass n 10 Tubeṛ 2026 (lebni 20 yella dinna seg 7 Tubeṛ) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tiliɣriyin d ttablit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | lebni 23 ɣef GitHub, yettwazen ɣer Google Play ass n 10 Tubeṛ 2026 (lebni 20 yella dinna seg 7 Tubeṛ) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone d iPad** | App Store | lqem 3.3.0 yettraju asenqed n Apple; alamma d imir, [bnu-t s yiman-ik](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 d 3S | [APK](#meta-quest-3) · Horizon Store | asebter yettwaqbel, lebni 21 deg usenqed n Meta, lebni 22 ɣef ubrid Alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV d Google TV** | [APK](#install-it-on-the-tv) · Google Play | lebni 22 ɣef GitHub; tabdart n Google Play i tiliẓriyin deg usenqed n Google seg 9 Tubeṛ 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 d 3S | [APK](#meta-quest-3) · Horizon Store | asebter yettwaqbel, lebni 21 deg usenqed n Meta, lebni 23 ɣef ubrid Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV d Google TV** | [APK](#install-it-on-the-tv) · Google Play | lebni 23 ɣef GitHub; tabdart n Google Play i tiliẓriyin deg usenqed n Google seg 9 Tubeṛ 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP n tirmit](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 ɣef Windows: tiwlafin, tividyutin timsawin d 360°; macOS d Linux ar zdat |
 
 *Addaden ttwaleqqmen di yal asiẓreg; talqayt deg [Anda ara t-id-tafeḍ](#where-to-get-it).*
@@ -612,14 +612,14 @@ Seg lebni 20 asnas-nni n Android yetteddu ɣef Android TV d Google TV, s tilikum
 
 ### Asekker amezwaru
 
-1. Qqen am ɣef tiliɣri: ineccaben ssenkazen akatar seg wurti ɣer wayeḍ, u OK ɣef wurti («Sit ɣef OK akken ad taruḍ») yeldi anasiw n tiliẓri deg udiwenni, i tansa n uqeddac, imayl d wawal uffir.
+1. Qqen am ɣef tiliɣri: ineccaben ssenkazen akatar seg wurti ɣer wayeḍ (seg lebni 23 yettɛeddi nnig tecreḍt n wurti yeččuren deg wadeg ad t-yezger), u OK ɣef wurti («Sit ɣef OK akken ad taruḍ») yeldi anasiw n tiliẓri deg udiwenni, i tansa n uqeddac, imayl d wawal uffir.
 2. Neɣ fren «Seqdec war aqeddac». Tiliẓri ur tesɛi ara tiwlafin-is, ihi iccer Photos (Tiwlafin) yenna-d «Tiliẓri-a ur tesɛi ara tugniwin neɣ tividyutin-is: ldi afaylu n uẓeṭṭa seg Temkarḍit.» s teqffalt Ifuyla n uẓeṭṭa. Rnu dinna afaylu yettwabḍan, aqeddac Plex neɣ takamiṛat, am ɣef tiliɣri (wali [Ifuyla n uẓeṭṭa](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Inig s tilikumand
 
 - Ineccaben ssenkazen akatar, OK yeldi ayen ɣef yella, Tuɣalin tettuɣal. Seg yiccer, Tuɣalin tettawi ɣer wumuɣ n tama, syin ɣer Photos (Tiwlafin), syin ad teffeɣ seg usnas. Deg tebdart n yifranen, am wanaw n ufaylu yettwabḍan neɣ aɣewwar, ineccaben ssenkazen akatar kan, u OK yefren afran (seg lebni 22; uqbel, ineccaben beddlen afran).
-- Tiqeffalin n ubadu ɣer d asawen d wadda ssenkazent yiwen usebter yal tikkelt. Seg lebni 22, iẓeṭṭa n tewlafin sskanayen-d azal n sḍis n tmkarḍiyin timecṭuḥin i yal izirig daxel n yiran n ugdil, s tugniwin timecṭuḥin yettbanen akter i yifuyla n yibenk s yiman-is, i yeqqimen ttbanen akken iwata ula ɣef talqayin timeẓyanin, u isebtar s tugna deg uqerru ɣef tiliɣri (tabdart 360°, Favorites (Ismenyifen), ilbumen n yibenk) sskanayen-d yiwen ufeggag kan deg wadeg-is.
-- Seg lebni 22, akatar yebda ɣef uferdis amezwaru n yal asebter (tamkarḍit tamecṭuḥt tamezwarut n tebdart 360°, urti n imayl mi ara tettwasentem tansa n uqeddac), yeqqim daxel n yiran n ugdil mi ara yeddu uẓeṭṭa, u seg uẓeṭṭa yettali ɣer yizirig neɣ ɣer yimsizedgen yellan nnig-s deg wadeg n teqeffalt Tuɣalin. Ayeffus seg ufaylu n uẓeṭṭa neɣ seg tkamiṛat yettawi ɣer teqeffalt-is n usiẓreg, u agmuḍ n «Sekyed tuqqna» yettendaz armi d-iban.
+- Tiqeffalin n ubadu ɣer d asawen d wadda ssenkazent yiwen usebter yal tikkelt. Seg lebni 22, iẓeṭṭa n tewlafin sskanayen-d azal n sḍis n tmkarḍiyin timecṭuḥin i yal izirig daxel n yiran n ugdil, s tugniwin timecṭuḥin yettbanen akter i yifuyla n yibenk s yiman-is, u isebtar s tugna deg uqerru ɣef tiliɣri (tabdart 360°, Favorites (Ismenyifen), ilbumen n yibenk) sskanayen-d yiwen ufeggag kan deg wadeg-is. Seg lebni 23, tugniwin-nni timecṭuḥin ttwaxdament meqqrit snat n tikkal ɣef tmkarḍit-nsent, syin ttwasemẓint s leɛqel, ihi talqayin timeẓyanin am yifurkawen yeččuren d adfel ur ttfeǧǧiǧen ara, u tiwlafin n uqeddac sskanayent-d tamuɣli-ines tazwarut tameqqrant, s yiwet n tbanit, deg wadeg n tugna-ines tamecṭuḥt yettwazelgen ɣer tmkarḍit.
+- Seg lebni 22, akatar yebda ɣef uferdis amezwaru n yal asebter (tamkarḍit tamecṭuḥt tamezwarut n tebdart 360°, urti n imayl mi ara tettwasentem tansa n uqeddac), yeqqim daxel n yiran n ugdil mi ara yeddu uẓeṭṭa (seg lebni 23 ula deg sin yiḥricen n Settings), u seg uẓeṭṭa yettali ɣer yizirig neɣ ɣer yimsizedgen yellan nnig-s deg wadeg n teqeffalt Tuɣalin. Ayeffus seg ufaylu n uẓeṭṭa neɣ seg tkamiṛat yettawi ɣer teqeffalt-is n usiẓreg, u agmuḍ n «Sekyed tuqqna» yettendaz armi d-iban.
 - Deg yimeskanen, tiqeffalin n tilikumand n tɣuri d usteɛfu, n uzwir arurad, n tuɣalin ɣer deffir, n win d-iteddun d win yezrin teddunt, u taqeffalt n talɣut tesskanay-d talqayin n tewlaft neɣ n tvidyut.
 
 ### Tiwlafin d tvidyutin s tilikumand
@@ -733,7 +733,7 @@ Ayen akk i yexeddem usnas aziraz unṣib n Immich yella dagi: aḥraz, tasnakudt
 
 Akken ad tesskneḍ tawlaft 360° i walbaɛḍ ur nesɛi ara asnas, bḍu-tt s useɣwen yettwabḍan n Immich: asnas web n Immich yesskanay tawlaft 360° am tsfirt deg yiminig-is.
 
-Lebni n tura, lebni 22 (lqem 3.3.0-rc.0, uṭṭun n lebni 3030020), yebna ɣef Immich `main` n 10 tubeṛ 2026 (lqem 3.3.0-rc.0, mačči d lqem urkid yakan). Lebni 22 yettwarem s uqeddac Immich 3.2.4 d uqeddac yettwabnan seg Immich `main` n wass-nni: tuqqna, tasnakudt, ilbumen, tiwlafin d tvidyutin 360°, taɣuri n tvidyutin d usali, war tuccḍa n API. Ma ulac aɣilif, mmel-d uguren deg [Uguren](https://github.com/freeKC/Immuch360/issues), mačči i usenfar Immich. I tsemlit tummidt n Immich s yiman-is, wali [immich.app](https://immich.app).
+Lebni n tura, lebni 23 (lqem 3.3.0-rc.0, uṭṭun n lebni 3030021), yebna ɣef Immich `main` n 10 tubeṛ 2026 (lqem 3.3.0-rc.0, mačči d lqem urkid yakan). Lebni 22, ɣef yiwen n lsas n Immich, yettwarem s uqeddac Immich 3.2.4 d uqeddac yettwabnan seg Immich `main` n wass-nni: tuqqna, tasnakudt, ilbumen, tiwlafin d tvidyutin 360°, taɣuri n tvidyutin d usali, war tuccḍa n API. Ma ulac aɣilif, mmel-d uguren deg [Uguren](https://github.com/freeKC/Immuch360/issues), mačči i usenfar Immich. I tsemlit tummidt n Immich s yiman-is, wali [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Asemres ɣer usnas Immich d yisnasen nniḍen
@@ -1112,7 +1112,7 @@ Asnas yella deg Google Play i tiliɣriyin d ttablit; lqem n App Store yettraǧu 
 
 - **Tiliɣriyin d ttablit Android**
   - Ass-a: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), neɣ APK deg usebter [Isiẓrigen](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` i tiliɣri (`Immuch360-v<version>-release.apk` amatu yetteddu anda yebɣu yili, `-armeabi-v7a` i tiliɣriyin tiqburin s 32 bit, u afaylu `.aab` d win n Google Play, mačči i usebded s ufus). Lebni n GitHub s umata yezwar taḥanutt. Akken yebɣu yili, yettwasbedd ɣer tama n usnas unṣib Immich (akemmus `com.aprogsys.immuch360`).
-  - Ticki: deg Google Play, lebni 22 yettwazen ass n 10 tubeṛ 2026 deg wadeg n lebni 20 (yella seg 7 tubeṛ); yesɛa ibeddilen n Immich n tubeṛ d yiseɣtiyen n tiliẓri.
+  - Ticki: deg Google Play, lebni 23 yettwazen ass n 10 tubeṛ 2026 deg wadeg n lebni 20 (yella seg 7 tubeṛ); yesɛa ibeddilen n Immich n tubeṛ d yiseɣtiyen n tiliẓri n lebni 22 d 23.
 - **iPhone d iPad**
   - Ass-a: yettraǧu asenqed n Apple. Lqem yettwasenqaden yesɛa timahilin n lebni 11: asali ɣer Immich d ufran «Aɣbalu n tvidyut» (lebni 15) d yifuyla RAW n Insta360 (lebni 16) ad d-asen s uleqqem n App Store i d-iteddun. Aɣbalu yettwabna s Xcode neɣ ɣef Codemagic, wali [Bnu-t s yiman-ik](#build-it-yourself).
   - Ticki: App Store, deg usenqed.

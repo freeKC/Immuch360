@@ -17,10 +17,10 @@ Immuch360 は、見回せる 360° の写真と動画に対応した Immich モ�
 
 | プラットフォーム | 入手方法 | 2026 年 10 月 10 日時点の状況 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** スマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub にビルド 22、2026 年 10 月 10 日に Google Play へ提出（Google Play ではビルド 20 が 10 月 7 日から公開中） |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** スマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub にビルド 23、2026 年 10 月 10 日に Google Play へ提出（Google Play ではビルド 20 が 10 月 7 日から公開中） |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone と iPad** | App Store | バージョン 3.3.0 は Apple の審査待ち、それまでは[自分でビルドする](#build-it-yourself)ことができます |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 と 3S | [APK](#meta-quest-3) · Horizon Store | ストアページは承認済み、ビルド 21 は Meta の審査中、ビルド 22 はアルファチャンネルで配信中 |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV と Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub にビルド 22、テレビ向け Google Play のストアページは 2026 年 10 月 9 日から Google の審査中 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 と 3S | [APK](#meta-quest-3) · Horizon Store | ストアページは承認済み、ビルド 21 は Meta の審査中、ビルド 23 はアルファチャンネルで配信中 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV と Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub にビルド 23、テレビ向け Google Play のストアページは 2026 年 10 月 9 日から Google の審査中 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [プレビュー版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 は Windows 用：写真、平面動画と 360° 動画、macOS と Linux は後日対応 |
 
 *状況はリリースごとに更新します。詳しくは[入手方法](#where-to-get-it)をご覧ください。*
@@ -612,14 +612,14 @@ Quest 3 を買うのは自分の 360° 写真や動画を見るためなのに�
 
 ### 初回起動
 
-1. スマートフォンと同じようにログインします：矢印キーで枠を項目から項目へ動かし、項目の上で OK を押す（「OK を押して入力」）と、サーバーのアドレス、メールアドレス、パスワード用のテレビのキーボードがダイアログで開きます。
+1. スマートフォンと同じようにログインします：矢印キーで枠を項目から項目へ動かし（ビルド 23 からは、入力済みの項目ではラベルを横切らずにその上を通ります）、項目の上で OK を押す（「OK を押して入力」）と、サーバーのアドレス、メールアドレス、パスワード用のテレビのキーボードがダイアログで開きます。
 2. または「サーバーなしで使用」を選びます。テレビには自身の写真がないため、写真タブには「このテレビには自身の写真や動画がありません: ライブラリからネットワーク共有を開いてください。」とネットワーク共有のボタンが表示されます。そこからスマートフォンと同じように、共有、Plex サーバー、カメラを追加します（[ネットワーク共有](#network-shares-a-nas-a-computer-or-a-media-server) を参照）。
 
 ### リモコンでの移動
 
 - 矢印キーで枠を動かし、OK で枠のある項目を開き、戻るで前に戻ります。タブからは、戻るでサイドメニュー、次に写真、次にアプリの終了へと進みます。共有の種類や設定などの選択肢のリストでは、矢印キーは枠を動かすだけで、OK で選びます（ビルド 22 から。以前は矢印キーで選択が変わっていました）。
-- チャンネルの上下キーで 1 ページずつスクロールします。ビルド 22 から、写真のグリッドは画面の余白の内側に 1 行あたり約 6 枚のタイルを表示し、デバイス自身のファイルのサムネイルはより鮮明になり、細かい部分もなめらかに表示されます。また、スマートフォンでは画像のヘッダーがある画面（360° リスト、お気に入り、デバイスのアルバム）は、代わりにシンプルなバーを表示します。
-- ビルド 22 から、枠は各画面の最初の項目から始まり（360° リストの最初のタイル、サーバーのアドレスを確定した後はメールアドレスの欄）、グリッドをスクロールしても画面の余白の内側にとどまり、グリッドから上に移ると戻るボタンではなく、その上の行やフィルターに移ります。ネットワーク共有やカメラの上で右を押すと編集ボタンに移り、「接続をテスト」の結果は画面内にスクロールして表示されます。
+- チャンネルの上下キーで 1 ページずつスクロールします。ビルド 22 から、写真のグリッドは画面の余白の内側に 1 行あたり約 6 枚のタイルを表示し、デバイス自身のファイルのサムネイルはより鮮明に表示されます。また、スマートフォンでは画像のヘッダーがある画面（360° リスト、お気に入り、デバイスのアルバム）は、代わりにシンプルなバーを表示します。ビルド 23 からは、これらのサムネイルをタイルの倍の大きさで作ってからなめらかに縮小するため、雪の積もった枝のような細かい部分がちらつかなくなり、サーバーの写真は、タイルに引き伸ばした小さなサムネイルではなく、サーバーのより大きなプレビュー画像を同じ鮮明さで表示します。
+- ビルド 22 から、枠は各画面の最初の項目から始まり（360° リストの最初のタイル、サーバーのアドレスを確定した後はメールアドレスの欄）、グリッドをスクロールしても画面の余白の内側にとどまり（ビルド 23 からは設定画面の両方のペインでも）、グリッドから上に移ると戻るボタンではなく、その上の行やフィルターに移ります。ネットワーク共有やカメラの上で右を押すと編集ボタンに移り、「接続をテスト」の結果は画面内にスクロールして表示されます。
 - ビューアーでは、リモコンの再生と一時停止、早送り、巻き戻し、次、前のキーが使え、情報キーで写真や動画の詳細を表示します。
 
 ### リモコンで写真と動画を見る
@@ -733,7 +733,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 アプリを持っていない人に 360° 写真を見せるには、Immich の共有リンクで共有してください：Immich のウェブアプリは、その人のブラウザーで 360° 写真を球体として表示します。
 
-現在のビルド、ビルド 22（バージョン 3.3.0-rc.0、ビルド番号 3030020）は、2026 年 10 月 10 日時点の Immich の `main`（バージョン 3.3.0-rc.0、まだ安定版ではありません）をベースにしています。ビルド 22 は、Immich 3.2.4 サーバーと、同じ Immich の `main` からビルドしたサーバーでテストし、ログイン、タイムライン、アルバム、360° 写真と動画、動画の再生、アップロードで API エラーは出ませんでした。問題は Immich プロジェクトではなく、[Issues](https://github.com/freeKC/Immuch360/issues) に報告してください。Immich 自体の詳しいドキュメントは [immich.app](https://immich.app) を参照してください。
+現在のビルド、ビルド 23（バージョン 3.3.0-rc.0、ビルド番号 3030021）は、2026 年 10 月 10 日時点の Immich の `main`（バージョン 3.3.0-rc.0、まだ安定版ではありません）をベースにしています。同じ Immich をベースにしたビルド 22 は、Immich 3.2.4 サーバーと、同じ Immich の `main` からビルドしたサーバーでテストし、ログイン、タイムライン、アルバム、360° 写真と動画、動画の再生、アップロードで API エラーは出ませんでした。問題は Immich プロジェクトではなく、[Issues](https://github.com/freeKC/Immuch360/issues) に報告してください。Immich 自体の詳しいドキュメントは [immich.app](https://immich.app) を参照してください。
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich アプリや他のアプリとの比較
@@ -1112,7 +1112,7 @@ Immuch360 Desktop の CI（`.github/workflows/immuch360-desktop.yml`）は、`im
 
 - **Android のスマートフォンとタブレット**
   - 現在：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)、または [Releases](https://github.com/freeKC/Immuch360/releases) ページの APK：スマートフォンには `Immuch360-v<version>-arm64-v8a-release.apk`（ユニバーサル版の `Immuch360-v<version>-release.apk` はどこでも動作し、`-armeabi-v7a` は古い 32 ビットのスマートフォン用、`.aab` ファイルは Google Play 用でサイドロード用ではありません）。GitHub のビルドは通常ストアより先行しています。どちらの場合も、公式の Immich アプリと並べてインストールできます（パッケージ `com.aprogsys.immuch360`）。
-  - 今後：Google Play では、ビルド 20（10 月 7 日から公開中）に代えてビルド 22 を 2026 年 10 月 10 日に提出しました。10 月の Immich の変更とテレビ向けの修正が含まれます。
+  - 今後：Google Play では、ビルド 20（10 月 7 日から公開中）に代えてビルド 23 を 2026 年 10 月 10 日に提出しました。10 月の Immich の変更とビルド 22 と 23 のテレビ向けの修正が含まれます。
 - **iPhone と iPad**
   - 現在：Apple の審査待ちです。審査中のバージョンにはビルド 11 の機能が含まれています：Immich へのアップロードと「動画のソース」の選択（ビルド 15）、Insta360 の RAW ファイル（ビルド 16）は、後の App Store のアップデートで届きます。ソースは Xcode または Codemagic でビルドできます。[自分でビルドする](#build-it-yourself) を参照してください。
   - 今後：App Store、審査中。

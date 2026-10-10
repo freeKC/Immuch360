@@ -17,10 +17,10 @@ U 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360
 
 | Platforma | Qayerdan olish mumkin | 2026-yil 10-oktabr holatiga koʻra |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon va planshetlari | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub da 22-yigʻma, 2026-yil 10-oktabrda Google Play ga yuborildi (u yerda 7-oktabrdan beri 20-yigʻma faol) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon va planshetlari | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub da 23-yigʻma, 2026-yil 10-oktabrda Google Play ga yuborildi (u yerda 7-oktabrdan beri 20-yigʻma faol) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone va iPad** | App Store | 3.3.0 versiyasi Apple koʻrib chiqishini kutmoqda; hozircha [oʻzingiz yigʻing](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 va 3S | [APK](#meta-quest-3) · Horizon Store | sahifa tasdiqlandi, 21-yigʻma Meta koʻrib chiqishida, 22-yigʻma alfa kanalida |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV va Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub da 22-yigʻma; televizorlar uchun Google Play sahifasi 2026-yil 9-oktabrdan beri Google koʻrib chiqishida |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 va 3S | [APK](#meta-quest-3) · Horizon Store | sahifa tasdiqlandi, 21-yigʻma Meta koʻrib chiqishida, 23-yigʻma alfa kanalida |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV va Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub da 23-yigʻma; televizorlar uchun Google Play sahifasi 2026-yil 9-oktabrdan beri Google koʻrib chiqishida |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Dastlabki ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows da kompyuter 4-yigʻmasi: suratlar, tekis va 360° videolar; macOS va Linux keyinroq |
 
 *Holatlar har bir relizda yangilanadi; tafsilotlar [Qayerdan olish mumkin](#where-to-get-it) boʻlimida.*
@@ -612,14 +612,14 @@ Siz 360° suratlar va videolarni, albomlaringizni va NAS yoki Plex serveringizda
 
 ### Birinchi ishga tushirish
 
-1. Telefondagi kabi kiring: strelkalar ramkani maydondan maydonga oʻtkazadi, maydondagi OK ("Yozish uchun OK ni bosing") server manzili, elektron pochta va parol uchun televizor klaviaturasini oynada ochadi.
+1. Telefondagi kabi kiring: strelkalar ramkani maydondan maydonga oʻtkazadi (23-yigʻmadan boshlab u toʻldirilgan maydon yorligʻining ustidan oʻtadi, uni kesib oʻtmaydi), maydondagi OK ("Yozish uchun OK ni bosing") server manzili, elektron pochta va parol uchun televizor klaviaturasini oynada ochadi.
 2. Yoki "Serversiz foydalanish" ni tanlang. Televizorning oʻz suratlari yoʻq, shuning uchun Photos (Suratlar) yorligʻi Tarmoq ulashmalari tugmasi bilan "Bu televizorda o'z rasm yoki videolari yo'q: Kutubxonadan tarmoq ulashmasini oching." deydi. U yerda telefondagi kabi ulashma, Plex serveri yoki kamera qoʻshing (qarang: [Tarmoq ulashmalari](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Pult bilan harakatlanish
 
 - Strelkalar ramkani siljitadi, OK u turgan narsani ochadi, Orqaga orqaga qaytaradi. Yorliqdan Orqaga yon menyuga, keyin Photos ga, keyin ilovadan tashqariga oʻtadi. Tanlovlar roʻyxatida, masalan ulashma turi yoki sozlamada, strelkalar faqat ramkani siljitadi, OK esa tanlovni tanlaydi (22-yigʻmadan; avval strelkalar tanlovni oʻzgartirardi).
-- Kanal yuqoriga va pastga bir vaqtda bir sahifa aylantiradi. 22-yigʻmadan surat toʻrlari ekran chegaralari ichida har bir qatorda oltitaga yaqin katakcha koʻrsatadi, qurilmaning oʻz fayllari miniatyuralari aniqroq boʻlib, mayda detallarda ham silliq qoladi, telefonda rasmli sarlavhaga ega sahifalar (360° roʻyxati, Favorites, qurilma albomlari) esa uning oʻrniga bitta panel koʻrsatadi.
-- 22-yigʻmadan ramka har bir sahifaning birinchi elementidan boshlanadi (360° roʻyxatining birinchi katakchasi, server manzili tasdiqlangach elektron pochta maydoni), toʻr aylantirilganda ekran chegaralari ichida qoladi va toʻrdan Orqaga tugmasiga emas, uning ustidagi qator yoki filtrlarga koʻtariladi. Tarmoq ulashmasi yoki kameradan oʻngga bosish uning tahrirlash tugmasiga yetkazadi, "Ulanishni tekshirish" natijasi esa koʻrinadigan joyga aylanadi.
+- Kanal yuqoriga va pastga bir vaqtda bir sahifa aylantiradi. 22-yigʻmadan surat toʻrlari ekran chegaralari ichida har bir qatorda oltitaga yaqin katakcha koʻrsatadi, qurilmaning oʻz fayllari miniatyuralari aniqroq boʻladi, telefonda rasmli sarlavhaga ega sahifalar (360° roʻyxati, Favorites, qurilma albomlari) esa uning oʻrniga bitta panel koʻrsatadi. 23-yigʻmadan boshlab bu miniatyuralar oʻz katakchasidan ikki baravar katta qilib yaratiladi va silliq kichraytiriladi, shuning uchun qorli shoxlar kabi mayda detallar endi yiltillamaydi, server suratlari esa katakchagacha choʻzilgan kichik miniatyurasi oʻrniga serverning kattaroq oldindan koʻrish rasmini xuddi shunday aniq koʻrsatadi.
+- 22-yigʻmadan ramka har bir sahifaning birinchi elementidan boshlanadi (360° roʻyxatining birinchi katakchasi, server manzili tasdiqlangach elektron pochta maydoni), toʻr aylantirilganda ekran chegaralari ichida qoladi (23-yigʻmadan boshlab Settings ning ikki panelida ham) va toʻrdan Orqaga tugmasiga emas, uning ustidagi qator yoki filtrlarga koʻtariladi. Tarmoq ulashmasi yoki kameradan oʻngga bosish uning tahrirlash tugmasiga yetkazadi, "Ulanishni tekshirish" natijasi esa koʻrinadigan joyga aylanadi.
 - Koʻruvchilarda pultning ijro va pauza, oldinga oʻtkazish, orqaga oʻtkazish, keyingi va oldingi tugmalari ishlaydi, maʼlumot tugmasi esa surat yoki videoning tafsilotlarini koʻrsatadi.
 
 ### Pult bilan suratlar va videolar
@@ -733,7 +733,7 @@ Rasmiy Immich mobil ilovasi qiladigan hamma narsa shu yerda: zaxira nusxa, vaqt 
 
 360° suratni ilovasi yoʻq odamga koʻrsatish uchun uni Immich ulashilgan havolasi orqali ulashing: Immich veb ilovasi 360° suratni uning brauzerida sfera sifatida koʻrsatadi.
 
-Joriy yigʻma, 22-yigʻma (versiya 3.3.0-rc.0, yigʻma raqami 3030020), Immich ning 2026-yil 10-oktabrdagi `main` iga asoslangan (versiya 3.3.0-rc.0, hali barqaror reliz emas). 22-yigʻma Immich 3.2.4 serveri bilan va oʻsha Immich `main` idan yigʻilgan server bilan sinovdan oʻtkazildi: kirish, vaqt chizigʻi, albomlar, 360° suratlar va videolar, video ijrosi va yuklashlar, birorta ham API xatosisiz. Iltimos, muammolar haqida Immich loyihasiga emas, [Issues](https://github.com/freeKC/Immuch360/issues) boʻlimiga xabar bering. Immich ning oʻzi haqidagi toʻliq hujjatlar uchun qarang: [immich.app](https://immich.app).
+Joriy yigʻma, 23-yigʻma (versiya 3.3.0-rc.0, yigʻma raqami 3030021), Immich ning 2026-yil 10-oktabrdagi `main` iga asoslangan (versiya 3.3.0-rc.0, hali barqaror reliz emas). 22-yigʻma, Immich ning oʻsha asosida, Immich 3.2.4 serveri bilan va oʻsha Immich `main` idan yigʻilgan server bilan sinovdan oʻtkazildi: kirish, vaqt chizigʻi, albomlar, 360° suratlar va videolar, video ijrosi va yuklashlar, birorta ham API xatosisiz. Iltimos, muammolar haqida Immich loyihasiga emas, [Issues](https://github.com/freeKC/Immuch360/issues) boʻlimiga xabar bering. Immich ning oʻzi haqidagi toʻliq hujjatlar uchun qarang: [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich ilovasi va boshqa ilovalar bilan taqqoslash
@@ -1112,7 +1112,7 @@ Ilova telefonlar va planshetlar uchun Google Play da bor; App Store versiyasi Ap
 
 - **Android telefon va planshetlari**
   - Bugun: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) yoki [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi APK: telefon uchun `Immuch360-v<version>-arm64-v8a-release.apk` (universal `Immuch360-v<version>-release.apk` hamma joyda ishlaydi, `-armeabi-v7a` eski 32 bitli telefonlar uchun, `.aab` fayli esa qoʻlda oʻrnatish uchun emas, Google Play uchun). GitHub yigʻmasi odatda doʻkondan oldinda boʻladi. Har qanday holatda u rasmiy Immich ilovasi yoniga oʻrnatiladi (paket `com.aprogsys.immuch360`).
-  - Tez orada: Google Play ga 2026-yil 10-oktabrda 20-yigʻma (7-oktabrdan beri faol) oʻrniga 22-yigʻma yuborildi; unda Immich ning oktabr oʻzgarishlari va televizor tuzatishlari bor.
+  - Tez orada: Google Play ga 2026-yil 10-oktabrda 20-yigʻma (7-oktabrdan beri faol) oʻrniga 23-yigʻma yuborildi; unda Immich ning oktabr oʻzgarishlari va 22 hamda 23-yigʻmalarning televizor tuzatishlari bor.
 - **iPhone va iPad**
   - Bugun: Apple ning koʻrib chiqishini kutmoqda. Koʻrib chiqilayotgan versiyada 11-yigʻmaning funksiyalari bor: Immich ga yuklash va Video manbasi tanlovi (15-yigʻma) hamda xom Insta360 fayllari (16-yigʻma) keyingi App Store yangilanishi bilan keladi. Manba kodi Xcode yoki Codemagic da yigʻiladi, qarang: [Oʻzingiz yigʻing](#build-it-yourself).
   - Tez orada: App Store, koʻrib chiqilmoqda.

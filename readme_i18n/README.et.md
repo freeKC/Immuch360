@@ -17,10 +17,10 @@ See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI
 
 | Platvorm | Kust seda saada | Olek 10. oktoobril 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonid ja tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | järk 22 GitHubis, saadetud Google Playsse 10. oktoobril 2026 (seal on alates 7. oktoobrist avaldatud järk 20) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonid ja tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | järk 23 GitHubis, saadetud Google Playsse 10. oktoobril 2026 (seal on alates 7. oktoobrist avaldatud järk 20) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versioon 3.3.0 ootab Apple'i ülevaatust; seni [ehita see ise](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | kirje heaks kiidetud, järk 21 Meta ülevaatusel, järk 22 alfakanalis |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | järk 22 GitHubis; Google Play kirje teleritele on Google'i ülevaatusel alates 9. oktoobrist 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | kirje heaks kiidetud, järk 21 Meta ülevaatusel, järk 23 alfakanalis |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | järk 23 GitHubis; Google Play kirje teleritele on Google'i ülevaatusel alates 9. oktoobrist 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Eelvaate ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | töölauajärk 4 Windowsis: fotod, tasapinnalised ja 360° videod; macOS ja Linux hiljem |
 
 *Olekuid uuendatakse iga väljalaskega; üksikasjad on jaotises [Kust seda saada](#where-to-get-it).*
@@ -612,14 +612,14 @@ Alates järgust 20 töötab sama Androidi rakendus Android TV-s ja Google TV-s, 
 
 ### Esimene käivitus
 
-1. Logi sisse nagu telefonis: nooled liigutavad raami väljalt väljale ja OK väljal ("Kirjutamiseks vajuta OK") avab teleri klaviatuuri dialoogis serveri aadressi, e-posti ja parooli jaoks.
+1. Logi sisse nagu telefonis: nooled liigutavad raami väljalt väljale (alates järgust 23 liigub see täidetud välja sildi kohalt üle, mitte sellest läbi) ja OK väljal ("Kirjutamiseks vajuta OK") avab teleri klaviatuuri dialoogis serveri aadressi, e-posti ja parooli jaoks.
 2. Või vali "Kasuta ilma serverita". Teleril pole oma fotosid, nii et vahekaardil Fotod on kirjas "Sellel teleril pole oma fotosid ega videoid: ava võrgujagu Kogust." koos nupuga Võrgujaod. Lisa sinna jagu, Plex server või kaamera, nagu telefonis (vaata [Võrgujaod](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Puldiga liikumine
 
 - Nooled liigutavad raami, OK avab selle, millel raam on, Tagasi läheb tagasi. Vahekaardilt läheb Tagasi külgmenüüsse, seejärel Fotode juurde, seejärel rakendusest välja. Valikute loendis, näiteks jao tüübi või seade puhul, liigutavad nooled ainult raami ja OK teeb valiku (alates järgust 22; varem muutsid nooled valikut).
-- Kanal üles ja alla kerivad lehekülje kaupa. Alates järgust 22 näitavad fotoruudustikud ekraani veeriste sees umbes kuut paani reas, seadme enda failide teravamate pisipiltidega, mis jäävad peente detailide juures rahulikuks, ja lehed, millel on telefonis pildiga päis (360° loend, Lemmikud, seadme albumid), näitavad selle asemel ühte riba.
-- Alates järgust 22 alustab raam iga lehe esimesel elemendil (360° loendi esimene paan, e-posti väli pärast serveri aadressi kinnitamist), püsib ruudustiku kerimisel ekraani veeriste sees ja liigub ruudustikust üles selle kohal olevale reale või filtritele, mitte nupule Tagasi. Paremale võrgujaolt või kaameralt jõuab selle muutmisnupuni ning "Testi ühendust" tulemus keritakse nähtavale.
+- Kanal üles ja alla kerivad lehekülje kaupa. Alates järgust 22 näitavad fotoruudustikud ekraani veeriste sees umbes kuut paani reas, seadme enda failide teravamate pisipiltidega, ja lehed, millel on telefonis pildiga päis (360° loend, Lemmikud, seadme albumid), näitavad selle asemel ühte riba. Alates järgust 23 tehakse need pisipildid oma paanist kaks korda suuremad ja vähendatakse sujuvalt, nii et peened detailid, näiteks lumised oksad, enam ei sädele, ja serveri fotod näitavad selle suuremat eelvaadet, sama teravat, mitte selle väikest paanini venitatud pisipilti.
+- Alates järgust 22 alustab raam iga lehe esimesel elemendil (360° loendi esimene paan, e-posti väli pärast serveri aadressi kinnitamist), püsib ruudustiku kerimisel ekraani veeriste sees (alates järgust 23 ka jaotise Seaded kahel paanil) ja liigub ruudustikust üles selle kohal olevale reale või filtritele, mitte nupule Tagasi. Paremale võrgujaolt või kaameralt jõuab selle muutmisnupuni ning "Testi ühendust" tulemus keritakse nähtavale.
 - Vaaturites töötavad puldi esitamise ja pausi, edasikerimise, tagasikerimise, järgmise ja eelmise klahvid ning infoklahv näitab foto või video üksikasju.
 
 ### Fotod ja videod puldiga
@@ -733,7 +733,7 @@ Kõik, mida ametlik Immichi mobiilirakendus teeb, on siin olemas: varundus, ajaj
 
 Et näidata 360° fotot kellelegi, kellel rakendust pole, jaga seda Immichi jagatud lingiga: Immichi veebirakendus näitab 360° fotot tema brauseris sfäärina.
 
-Praegune järk, järk 22 (versioon 3.3.0-rc.0, järgu number 3030020), põhineb Immichi 10. oktoobri 2026 `main` harul (versioon 3.3.0-rc.0, veel mitte stabiilne väljalase). Järku 22 testiti Immich 3.2.4 serveriga ja samast Immichi `main` harust ehitatud serveriga: sisselogimine, ajajoon, albumid, 360° fotod ja videod, video esitamine ja üleslaadimised, ilma ühegi API veata. Palun teata probleemidest jaotises [Issues](https://github.com/freeKC/Immuch360/issues), mitte Immichi projektile. Immichi enda täieliku dokumentatsiooni leiad aadressilt [immich.app](https://immich.app).
+Praegune järk, järk 23 (versioon 3.3.0-rc.0, järgu number 3030021), põhineb Immichi 10. oktoobri 2026 `main` harul (versioon 3.3.0-rc.0, veel mitte stabiilne väljalase). Järku 22, samal Immichi alusel, testiti Immich 3.2.4 serveriga ja samast Immichi `main` harust ehitatud serveriga: sisselogimine, ajajoon, albumid, 360° fotod ja videod, video esitamine ja üleslaadimised, ilma ühegi API veata. Palun teata probleemidest jaotises [Issues](https://github.com/freeKC/Immuch360/issues), mitte Immichi projektile. Immichi enda täieliku dokumentatsiooni leiad aadressilt [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Võrdlus Immichi rakenduse ja teiste rakendustega
@@ -1112,7 +1112,7 @@ Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon 
 
 - **Android-telefonid ja -tahvelarvutid**
   - Täna: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) või APK lehelt [Releases](https://github.com/freeKC/Immuch360/releases): telefoni jaoks `Immuch360-v<version>-arm64-v8a-release.apk` (universaalne `Immuch360-v<version>-release.apk` töötab kõikjal, `-armeabi-v7a` on vanematele 32-bitistele telefonidele ja fail `.aab` on Google Play jaoks, mitte käsitsi installimiseks). GitHubi järk on tavaliselt poest ees. Mõlemal juhul installitakse see ametliku Immichi rakenduse kõrvale (pakett `com.aprogsys.immuch360`).
-  - Varsti: Google Playsse saadeti 10. oktoobril 2026 järk 22 järgu 20 asemel (avaldatud alates 7. oktoobrist); see sisaldab Immichi oktoobri muudatusi ja teleriparandusi.
+  - Varsti: Google Playsse saadeti 10. oktoobril 2026 järk 23 järgu 20 asemel (avaldatud alates 7. oktoobrist); see sisaldab Immichi oktoobri muudatusi ja järkude 22 ja 23 teleriparandusi.
 - **iPhone ja iPad**
   - Täna: ootab Apple'i ülevaatust. Ülevaatusel olev versioon sisaldab järgu 11 funktsioone: üleslaadimine Immichisse ja valik "Video allikas" (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad hilisema App Store'i uuendusega. Lähtekoodi saab ehitada Xcode'iga või Codemagicus, vaata [Ehita see ise](#build-it-yourself).
   - Varsti: App Store, ülevaatusel.

@@ -17,10 +17,10 @@ Je určena těm, kdo fotí 360° kamerou (Insta360, GoPro MAX, DJI Osmo 360, Ric
 
 | Platforma | Kde aplikaci získat | Stav k 10. říjnu 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**, telefony a tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 na GitHubu, odeslán na Google Play 10. října 2026 (tam je od 7. října dostupný build 20) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**, telefony a tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 na GitHubu, odeslán na Google Play 10. října 2026 (tam je od 7. října dostupný build 20) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone a iPad** | App Store | verze 3.3.0 čeká na schválení společností Apple; mezitím [sestavení vlastními silami](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [APK](#meta-quest-3) · Horizon Store | záznam schválen, build 21 ve schvalování u společnosti Meta, build 22 v kanálu Alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 na GitHubu; záznam na Google Play pro televize je ve schvalování u Googlu od 9. října 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [APK](#meta-quest-3) · Horizon Store | záznam schválen, build 21 ve schvalování u společnosti Meta, build 23 v kanálu Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 na GitHubu; záznam na Google Play pro televize je ve schvalování u Googlu od 9. října 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Předběžný ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktopový build 4 na Windows: fotky, plochá a 360° videa; macOS a Linux později |
 
 *Stavy se aktualizují s každým vydáním; podrobnosti jsou v části [Kde aplikaci získat](#where-to-get-it).*
@@ -612,14 +612,14 @@ Od buildu 20 běží stejná aplikace pro Android na Android TV a Google TV, s d
 
 ### První spuštění
 
-1. Přihlaste se jako na telefonu: šipky posouvají rámeček z pole na pole a OK na poli („Stiskněte OK pro psaní“) otevře klávesnici televize v dialogu, pro adresu serveru, e-mail a heslo.
+1. Přihlaste se jako na telefonu: šipky posouvají rámeček z pole na pole (od buildu 23 přechází nad popiskem vyplněného pole, ne přes něj) a OK na poli („Stiskněte OK pro psaní“) otevře klávesnici televize v dialogu, pro adresu serveru, e-mail a heslo.
 2. Nebo zvolte „Použít bez serveru“. Televize nemá vlastní fotky, takže karta Fotky říká „Tato televize nemá vlastní fotky ani videa: otevřete síťové úložiště z Knihovny.“ s tlačítkem Síťová úložiště. Tam přidejte sdílení, server Plex nebo kameru, jako na telefonu (viz [Síťová úložiště](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Pohyb s dálkovým ovladačem
 
 - Šipky posouvají rámeček, OK otevře to, na čem je, Zpět jde zpět. Z karty jde Zpět do bočního menu, pak na Fotky, pak z aplikace ven. V seznamu možností, například u typu sdílení nebo u nastavení, šipky jen posouvají rámeček a OK možnost vybere (od buildu 22; dříve šipky volbu měnily).
-- Kanál nahoru a dolů posouvá o stránku. Od buildu 22 ukazují mřížky fotek asi šest dlaždic na řádek uvnitř okrajů obrazovky, s ostřejšími náhledy vlastních souborů zařízení, které zůstávají hladké i v jemných detailech, a stránky, které mají na telefonu záhlaví s obrázkem (seznam 360°, Oblíbené, alba zařízení), místo něj ukazují jedinou lištu.
-- Od buildu 22 začíná rámeček na první položce každé stránky (první dlaždice seznamu 360°, pole pro e-mail po potvrzení adresy serveru), drží se uvnitř okrajů obrazovky, když se mřížka posouvá, a z mřížky jde nahoru na řádek nebo filtry nad ní, ne na tlačítko Zpět. Šipka doprava ze síťového úložiště nebo kamery přejde na jejich tlačítko úprav a výsledek „Otestovat připojení“ se posune do zobrazení.
+- Kanál nahoru a dolů posouvá o stránku. Od buildu 22 ukazují mřížky fotek asi šest dlaždic na řádek uvnitř okrajů obrazovky, s ostřejšími náhledy vlastních souborů zařízení, a stránky, které mají na telefonu záhlaví s obrázkem (seznam 360°, Oblíbené, alba zařízení), místo něj ukazují jedinou lištu. Od buildu 23 se tyto náhledy vytvářejí v dvojnásobné velikosti své dlaždice a plynule zmenšují, takže jemné detaily, jako zasněžené větve, už nejiskří, a fotky ze serveru ukazují jeho větší náhled, stejně ostrý, místo jeho malé miniatury roztažené na dlaždici.
+- Od buildu 22 začíná rámeček na první položce každé stránky (první dlaždice seznamu 360°, pole pro e-mail po potvrzení adresy serveru), drží se uvnitř okrajů obrazovky, když se mřížka posouvá (od buildu 23 i ve dvou panelech Nastavení), a z mřížky jde nahoru na řádek nebo filtry nad ní, ne na tlačítko Zpět. Šipka doprava ze síťového úložiště nebo kamery přejde na jejich tlačítko úprav a výsledek „Otestovat připojení“ se posune do zobrazení.
 - V prohlížečích fungují tlačítka dálkového ovladače pro přehrávání a pozastavení, přetáčení vpřed, přetáčení vzad, další a předchozí a tlačítko info ukáže podrobnosti fotky nebo videa.
 
 ### Fotky a videa s dálkovým ovladačem
@@ -733,7 +733,7 @@ Vše, co umí oficiální mobilní aplikace Immich, je zde: zálohování, časo
 
 Chcete-li ukázat 360° fotku někomu, kdo aplikaci nemá, sdílejte ji sdíleným odkazem Immich: webová aplikace Immich zobrazí 360° fotku v jeho prohlížeči jako kouli.
 
-Aktuální build, build 22 (verze 3.3.0-rc.0, číslo buildu 3030020), vychází z Immich `main` z 10. října 2026 (verze 3.3.0-rc.0, zatím ne stabilní vydání). Build 22 byl testován se serverem Immich 3.2.4 a se serverem sestaveným z téhož Immich `main`: přihlášení, časová osa, alba, 360° fotky a videa, přehrávání videa a nahrávání, bez jediné chyby API. Problémy prosím hlaste v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Úplnou dokumentaci samotného Immich najdete na [immich.app](https://immich.app).
+Aktuální build, build 23 (verze 3.3.0-rc.0, číslo buildu 3030021), vychází z Immich `main` z 10. října 2026 (verze 3.3.0-rc.0, zatím ne stabilní vydání). Build 22, na stejném základu Immich, byl testován se serverem Immich 3.2.4 a se serverem sestaveným z téhož Immich `main`: přihlášení, časová osa, alba, 360° fotky a videa, přehrávání videa a nahrávání, bez jediné chyby API. Problémy prosím hlaste v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Úplnou dokumentaci samotného Immich najdete na [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Srovnání s aplikací Immich a dalšími aplikacemi
@@ -1112,7 +1112,7 @@ Aplikace je na Google Play pro telefony a tablety; verze pro App Store čeká na
 
 - **Telefony a tablety s Androidem**
   - Dnes: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), nebo APK na stránce [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pro telefon (univerzální `Immuch360-v<version>-release.apk` funguje všude, `-armeabi-v7a` je pro starší 32bitové telefony a soubor `.aab` je pro Google Play, ne pro ruční instalaci). Build na GitHubu bývá před obchodem napřed. Tak či tak se instaluje vedle oficiální aplikace Immich (balíček `com.aprogsys.immuch360`).
-  - Brzy: na Google Play byl 10. října 2026 odeslán build 22 místo buildu 20 (dostupného od 7. října); přináší říjnové změny Immich a opravy pro televize.
+  - Brzy: na Google Play byl 10. října 2026 odeslán build 23 místo buildu 20 (dostupného od 7. října); přináší říjnové změny Immich a opravy pro televize z buildů 22 a 23.
 - **iPhone a iPad**
   - Dnes: čeká na schválení společností Apple. Verze ve schvalování obsahuje funkce buildu 11: nahrávání do Immich a volba Zdroj videa (build 15) a nezpracované soubory Insta360 (build 16) přijdou s pozdější aktualizací v App Store. Ze zdrojového kódu se dá sestavit v Xcode nebo na Codemagic, viz [Sestavení vlastními silami](#build-it-yourself).
   - Brzy: App Store, ve schvalování.

@@ -17,10 +17,10 @@ Immuch360 是加入了可环顾四周的 360° 照片和视频的 Immich 移动�
 
 | 平台 | 获取方式 | 2026 年 10 月 10 日状态 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手机和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub 上为构建 22，已于 2026 年 10 月 10 日提交到 Google Play（Google Play 上自 10 月 7 日起为构建 20） |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手机和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub 上为构建 23，已于 2026 年 10 月 10 日提交到 Google Play（Google Play 上自 10 月 7 日起为构建 20） |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 版本 3.3.0 正在等待 Apple 审核；在此期间可[自行构建](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [APK](#meta-quest-3) · Horizon Store | 商店页面已获批，构建 21 正在接受 Meta 审核，构建 22 已在 alpha 频道 |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上为构建 22；面向电视的 Google Play 商店页面自 2026 年 10 月 9 日起由 Google 审核中 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [APK](#meta-quest-3) · Horizon Store | 商店页面已获批，构建 21 正在接受 Meta 审核，构建 23 已在 alpha 频道 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上为构建 23；面向电视的 Google Play 商店页面自 2026 年 10 月 9 日起由 Google 审核中 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [预览版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows 上的桌面构建 4：照片、普通视频和 360° 视频；macOS 和 Linux 稍后推出 |
 
 *状态在每次发布时更新；详情见[获取方式](#where-to-get-it)。*
@@ -612,14 +612,14 @@ iPhone 可以拍摄空间照片和视频，而 Immich 服务器对此一无所�
 
 ### 首次启动
 
-1. 像在手机上一样登录：方向键会在字段之间移动焦点框，在字段上按 OK（「按 OK 输入」）会在对话框中打开电视键盘，用于输入服务器地址、电子邮件和密码。
+1. 像在手机上一样登录：方向键会在字段之间移动焦点框（从构建 23 起，经过已填写的字段时从标签上方通过，而不是横穿标签），在字段上按 OK（「按 OK 输入」）会在对话框中打开电视键盘，用于输入服务器地址、电子邮件和密码。
 2. 或者选择「不连接服务器使用」。电视没有自己的照片，因此「照片」标签页会显示「这台电视没有自己的照片或视频：请从资源库打开网络共享。」并带有「网络共享」按钮。在那里添加共享、Plex 服务器或摄像头，与在手机上一样（参见[网络共享](#network-shares-a-nas-a-computer-or-a-media-server)）。
 
 ### 用遥控器移动
 
 - 方向键移动焦点框，OK 打开焦点所在的内容，返回键返回。在标签页上，返回键会先转到侧边菜单，再转到「照片」，然后退出应用。在选项列表中（例如共享类型或某项设置），方向键只移动焦点框，OK 选择该选项（从构建 22 起；之前方向键会直接更改选项）。
-- 频道加和频道减一次滚动一页。从构建 22 起，照片网格在屏幕边距内每行显示约六个图块，设备自身文件的缩略图更清晰，在细密的细节上也保持平滑；在手机上顶部带大图的页面（360° 列表、「收藏夹」、设备相册）则改为只显示一条标题栏。
-- 从构建 22 起，焦点框从每个页面的第一项开始（360° 列表的第一个图块；确认服务器地址后则是电子邮件字段），网格滚动时保持在屏幕边距内，并且从网格向上会移到其上方的行或筛选条件，而不是返回按钮。在网络共享或相机上按右键可到达其编辑按钮，「测试连接」的结果会滚动到可见位置。
+- 频道加和频道减一次滚动一页。从构建 22 起，照片网格在屏幕边距内每行显示约六个图块，设备自身文件的缩略图更清晰；在手机上顶部带大图的页面（360° 列表、「收藏夹」、设备相册）则改为只显示一条标题栏。从构建 23 起，这些缩略图以图块两倍的尺寸生成，再平滑缩小，因此积雪树枝这类细密的细节不再闪烁，而服务器的照片会显示服务器更大的预览图，同样清晰，而不是拉伸到图块大小的小缩略图。
+- 从构建 22 起，焦点框从每个页面的第一项开始（360° 列表的第一个图块；确认服务器地址后则是电子邮件字段），网格滚动时保持在屏幕边距内（从构建 23 起，在「设置」的两个窗格中也是如此），并且从网格向上会移到其上方的行或筛选条件，而不是返回按钮。在网络共享或相机上按右键可到达其编辑按钮，「测试连接」的结果会滚动到可见位置。
 - 在查看器中，遥控器的播放和暂停、快进、快退、下一个和上一个按键都可以使用，信息键会显示照片或视频的详情。
 
 ### 用遥控器看照片和视频
@@ -733,7 +733,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 要把 360° 照片展示给没有安装应用的人，请通过 Immich 共享链接分享：Immich 网页版会在对方的浏览器中把 360° 照片显示为球面。
 
-当前构建为构建 22（版本 3.3.0-rc.0，构建号 3030020），基于 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0，尚非稳定版）。构建 22 已在一台 Immich 3.2.4 服务器和一台用同一 Immich `main` 构建的服务器上测试：登录、时间线、相册、360° 照片和视频、视频播放和上传，均无 API 错误。请在 [Issues](https://github.com/freeKC/Immuch360/issues) 中报告问题，而不是向 Immich 项目报告。Immich 本身的完整文档请见 [immich.app](https://immich.app)。
+当前构建为构建 23（版本 3.3.0-rc.0，构建号 3030021），基于 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0，尚非稳定版）。基于同一 Immich 的构建 22 已在一台 Immich 3.2.4 服务器和一台用同一 Immich `main` 构建的服务器上测试：登录、时间线、相册、360° 照片和视频、视频播放和上传，均无 API 错误。请在 [Issues](https://github.com/freeKC/Immuch360/issues) 中报告问题，而不是向 Immich 项目报告。Immich 本身的完整文档请见 [immich.app](https://immich.app)。
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## 与 Immich 应用及其他应用的比较
@@ -1112,7 +1112,7 @@ Immuch360 Desktop 的 CI（`.github/workflows/immuch360-desktop.yml`）运行在
 
 - **Android 手机和平板**
   - 现在：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或 [Releases](https://github.com/freeKC/Immuch360/releases) 页面上的 APK：手机请用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用的 `Immuch360-v<version>-release.apk` 到处都能用，`-armeabi-v7a` 适用于较旧的 32 位手机，`.aab` 文件用于 Google Play，不用于侧载）。GitHub 构建通常领先于商店。无论哪种方式，它都可与官方 Immich 应用并存安装（包名 `com.aprogsys.immuch360`）。
-  - 即将：在 Google Play 上，构建 22 已于 2026 年 10 月 10 日提交，取代构建 20（自 10 月 7 日起上线）；它包含 Immich 10 月的更改和电视修复。
+  - 即将：在 Google Play 上，构建 23 已于 2026 年 10 月 10 日提交，取代构建 20（自 10 月 7 日起上线）；它包含 Immich 10 月的更改和构建 22 与 23 的电视修复。
 - **iPhone 和 iPad**
   - 现在：正在等待 Apple 审核。审核中的版本包含构建 11 的功能：上传到 Immich 和「视频来源」选项（构建 15）以及 Insta360 RAW 文件（构建 16）将随后续的 App Store 更新提供。源代码可用 Xcode 或在 Codemagic 上构建，参见[自行构建](#build-it-yourself)。
   - 即将：App Store，审核中。

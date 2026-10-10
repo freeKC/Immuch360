@@ -17,10 +17,10 @@ L'è per chi el fotografa con ona fotocamera 360° (Insta360, GoPro MAX, DJI Osm
 
 | Piattaforma | Indove trovall | Stat al 10 de otober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon e tablet **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 su GitHub, mandada a Google Play el 10 de otober 2026 (la build 20 l'è pubblicada lì del 7 de otober) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon e tablet **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 su GitHub, mandada a Google Play el 10 de otober 2026 (la build 20 l'è pubblicada lì del 7 de otober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone e iPad** | App Store | version 3.3.0 che la speta la revision de Apple; intant [compilall de per ti](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [APK](#meta-quest-3) · Horizon Store | scheda aprovada, build 21 in revision de Meta, build 22 sul canal Alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 su GitHub; la scheda de Google Play per la TV l'è in revision de Google del 9 de otober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [APK](#meta-quest-3) · Horizon Store | scheda aprovada, build 21 in revision de Meta, build 23 sul canal Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 su GitHub; la scheda de Google Play per la TV l'è in revision de Google del 9 de otober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP de l'anteprima](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | build desktop 4 su Windows: foto, video piatt e a 360°; macOS e Linux pussee tard |
 
 *I stat vegnen aggiornaa a ogni release; i detaj hinn in [Indove trovall](#where-to-get-it).*
@@ -612,14 +612,14 @@ De la build 20 la medesima app Android la va su Android TV e Google TV, col tele
 
 ### La prima partenza
 
-1. Fà l'access come su on telefon: i frecce sposten on quader de on camp a l'alter, e OK su on camp ("Schiscia OK per scriv") el derv la tastera de la TV in d'on dialogh, per l'indirizz del server, l'email e la password.
+1. Fà l'access come su on telefon: i frecce sposten on quader de on camp a l'alter (de la build 23 el passa sora l'etichetta de on camp compilaa invece de traversala), e OK su on camp ("Schiscia OK per scriv") el derv la tastera de la TV in d'on dialogh, per l'indirizz del server, l'email e la password.
 2. O sceglie "Dovra senza server". Ona TV la gh'ha minga foto soe, donca la scheda Foto la dis "Sta TV la gh'ha minga foto o video soeu: derviss ona condivision de ret de la Biblioteca." con on boton Condivision de ret. Gionta lì ona condivision, on server Plex o ona telecamera, come su on telefon (varda [Condivision de ret](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Moverse col telecomand
 
 - I frecce sposten el quader, OK el derv quell che gh'è sota, Indree el torna indree. De ona scheda, Indree el va al menù de fianch, poeu a Foto, poeu foeura de l'app. In d'ona lista de scelte, come el tipo de ona condivision o on'impostazion, i frecce sposten domà el quader e OK el fa la scelta (de la build 22; prima, i frecce cambiaven la scelta).
-- Canal su e giò fan scorr ona pagina a la volta. De la build 22 i grij di foto mostren circa ses riquader per riga dent in di margin del scherm, con miniadure pussee nett di file del dispositiv istess che resten lissi anca sui detali fin, e i pagin che su on telefon gh'hann on'imagin in cima (la lista 360°, Favorites (Preferii), i album del dispositiv) mostren invece ona barra sola.
-- De la build 22 el quader el parte del primm element de ogni pagina (el primm riquader de la lista 360°, el camp de l'email quand l'indirizz del server l'è confermaa), el resta dent in di margin del scherm intanta che ona grija la scorr, e de ona grija el va su a la riga o ai filter de sora invece che al boton Indree. Drita de ona condivision de ret o de ona telecamera la riva al sò boton de modifica, e el resultaa de "Provà la conession" el scorr fin che el se ved.
+- Canal su e giò fan scorr ona pagina a la volta. De la build 22 i grij di foto mostren circa ses riquader per riga dent in di margin del scherm, con miniadure pussee nett di file del dispositiv istess, e i pagin che su on telefon gh'hann on'imagin in cima (la lista 360°, Favorites (Preferii), i album del dispositiv) mostren invece ona barra sola. De la build 23 quij miniadure chì vegnen fàa al dopi de la grandezza del sò riquader e poeu ridotte in manera lissa, inscì i detali fin come i ram con la nev fan pù el sbarlusc, e i foto del server mostren la soa previsualizzazion pussee granda, nett istess, invece de la soa miniadura piscinina tirada fin al riquader.
+- De la build 22 el quader el parte del primm element de ogni pagina (el primm riquader de la lista 360°, el camp de l'email quand l'indirizz del server l'è confermaa), el resta dent in di margin del scherm intanta che ona grija la scorr (de la build 23 anca in di dò pann de Impostazion), e de ona grija el va su a la riga o ai filter de sora invece che al boton Indree. Drita de ona condivision de ret o de ona telecamera la riva al sò boton de modifica, e el resultaa de "Provà la conession" el scorr fin che el se ved.
 - In di visualizador, i tast play e pausa, avanti svelt, indree svelt, seguent e precedent del telecomand funzionen, e el tast info el mostra i detali de ona foto o de on video.
 
 ### Foto e video col telecomand
@@ -733,7 +733,7 @@ Tutt quell che l'app mobil ufficial de Immich la fa l'è chì: backup, timeline,
 
 Per mostrà ona foto a 360° a quaivun che el gh'ha minga l'app, condividila con on link condivis de Immich: l'app web de Immich la mostra ona foto a 360° come ona sfera in del sò browser.
 
-La build de adess, la build 22 (version 3.3.0-rc.0, numer de build 3030020), la se basa su Immich `main` del 10 de otober 2026 (version 3.3.0-rc.0, anmò minga ona release stabil). La build 22 l'è stada provada contra on server Immich 3.2.4 e contra on server compilaa de quell Immich `main` istess: access, timeline, album, foto e video a 360°, riproduzion di video e caricament, senza nissun error de API. Per piasè, segnala i problema in [Issues](https://github.com/freeKC/Immuch360/issues), minga al progett Immich. Per la documentazion completa de Immich istess, varda [immich.app](https://immich.app).
+La build de adess, la build 23 (version 3.3.0-rc.0, numer de build 3030021), la se basa su Immich `main` del 10 de otober 2026 (version 3.3.0-rc.0, anmò minga ona release stabil). La build 22, su la stessa base de Immich, l'è stada provada contra on server Immich 3.2.4 e contra on server compilaa de quell Immich `main` istess: access, timeline, album, foto e video a 360°, riproduzion di video e caricament, senza nissun error de API. Per piasè, segnala i problema in [Issues](https://github.com/freeKC/Immuch360/issues), minga al progett Immich. Per la documentazion completa de Immich istess, varda [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## A confront con l'app Immich e cont alter app
@@ -1112,7 +1112,7 @@ L'app l'è su Google Play per telefon e tablet; la version per l'App Store la sp
 
 - **Telefon e tablet Android**
   - Incoeu: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o l'APK in la pagina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` per on telefon (l'universal `Immuch360-v<version>-release.apk` el va dappertutt, `-armeabi-v7a` l'è per i telefon vegg a 32 bit, e el file `.aab` l'è per Google Play, minga per installà a man). La build de GitHub de solit l'è inanz al store. In tutt i duu i cas la se installa visin a l'app ufficial de Immich (pacchett `com.aprogsys.immuch360`).
-  - Prest: su Google Play, la build 22 l'è stada mandada el 10 de otober 2026 al post de la build 20 (pubblicada del 7 de otober); la porta i modifich de Immich de otober e i coregiment per la TV.
+  - Prest: su Google Play, la build 23 l'è stada mandada el 10 de otober 2026 al post de la build 20 (pubblicada del 7 de otober); la porta i modifich de Immich de otober e i coregiment per la TV di build 22 e 23.
 - **iPhone e iPad**
   - Incoeu: la speta la revision de Apple. La version in revision la gh'ha i funzion de la build 11: el caregament su Immich e la scelta "Sorgent del video" (build 15) e i file gregg Insta360 (build 16) vegnaran con on aggiornament de l'App Store pussee tard. El codes el se compila con Xcode o su Codemagic, varda [Compilall de per ti](#build-it-yourself).
   - Prest: App Store, in revision.

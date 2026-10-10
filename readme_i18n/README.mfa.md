@@ -17,10 +17,10 @@ Dio untuk ore hok ambik gambo nga kamera 360° (Insta360, GoPro MAX, DJI Osmo 36
 
 | Platform | Mano nok dapat | Status pado 10 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon nga tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 22 kat GitHub, doh hanta ko Google Play pado 10 Oktober 2026 (situ binaan 20 doh ado sejak 7 Oktober) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon nga tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 23 kat GitHub, doh hanta ko Google Play pado 10 Oktober 2026 (situ binaan 20 doh ado sejak 7 Oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone nga iPad** | App Store | versi 3.3.0 tengoh tunggu semakan Apple; sementaro tu, [bina sendiri](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [APK](#meta-quest-3) · Horizon Store | senarai doh diluluske, binaan 21 dalam semakan Meta, binaan 22 kat saluran Alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV nga Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 22 kat GitHub; senarai Google Play untuk TV dale semaka Google sejak 9 Oktober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [APK](#meta-quest-3) · Horizon Store | senarai doh diluluske, binaan 21 dalam semakan Meta, binaan 23 kat saluran Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV nga Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 23 kat GitHub; senarai Google Play untuk TV dale semaka Google sejak 9 Oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | binaan desktop 4 kat Windows: gambo, video rata nga video 360°; macOS nga Linux kemudie |
 
 *Status dikemas kini tiap kali keluaran baru; butirannyo ado dalam [Mano nok dapat](#where-to-get-it).*
@@ -612,14 +612,14 @@ Dari binaan 20 aplikasi Android samo jale kat Android TV nga Google TV, nga alat
 
 ### Mulo pertamo
 
-1. Log masuk macey kat fon: anak panah gerak bingkai dari ruange ko ruange, nga OK kat satu ruange ("Tekan OK untuk menaip") bukak papan kekunci TV dale dialog, untuk alamat server, e-mel nga kato lalue.
+1. Log masuk macey kat fon: anak panah gerak bingkai dari ruange ko ruange (dari binaan 23 dio lalu atah label ruange hok doh diisi, buke melintang dio), nga OK kat satu ruange ("Tekan OK untuk menaip") bukak papan kekunci TV dale dialog, untuk alamat server, e-mel nga kato lalue.
 2. Ke pilih "Guno tanpo server". TV takdok gambo sendiri, jadi tab "Photos" (Gambo) kato "TV ni takdok foto atau video sendiri: buka perkongsian rangkaie dari Pustako." nga butang "Kongsi rangkaie". Tamboh kongsi, server Plex ke kamera situ, macey kat fon (tengok [Kongsi rangkaie](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Gerak nga alat kawalan jauh
 
 - Anak panah gerak bingkai, OK bukak gapo hok dio ado atas, Kembali pegi balik. Dari satu tab, Kembali pegi ko menu tepi, lepah tu ko "Photos" (Gambo), lepah tu keluar dari aplikasi. Dale senarai pilihe, macey jenih kongsi ke satu tetapa, anak panah gerak bingkai jah nga OK pilih pilihe tu (dari binaan 22; dulu, anak panah tukar pilihe).
-- Saluran naik nga turun tatal satu muko satu kali. Dari binaan 22 grid gambo tunjuk lebih kurang enam jubin satu baris dale margin skrin, nga lakare kecik fail peranti sendiri hok lagi tajey nga kekal licin kat butir halus, nga muko hok ado kepalo bergambo kat fon (senarai 360°, "Favorites" (Kegemara), album peranti) tunjuk satu bar jah ganti dio.
-- Dari binaan 22 bingkai mulo kat bendo pertamo tiap muko (jubin pertamo senarai 360°, ruange e-mel lepah alamat server doh disahke), kekal dale margin skrin bilo grid tatal, nga naik dari grid ko baris ke penapis atah dio, buke ko butang Kembali. Kanan dari satu kongsi rangkaie ke kamera sampai ko butang sunting dio, nga hasil "Uji sambunge" tatal sampai nampak.
+- Saluran naik nga turun tatal satu muko satu kali. Dari binaan 22 grid gambo tunjuk lebih kurang enam jubin satu baris dale margin skrin, nga lakare kecik fail peranti sendiri hok lagi tajey, nga muko hok ado kepalo bergambo kat fon (senarai 360°, "Favorites" (Kegemara), album peranti) tunjuk satu bar jah ganti dio. Dari binaan 23 lakare kecik tu dibuat duo kali besa jubin dio lepah tu dikecikke nga licin, jadi butir halus macey dahan hok ado salji tak berkelip doh, nga gambo server tunjuk gambo pratonton dio hok lagi besa, samo tajey, buke lakare kecik dio hok ditarik sampai penoh jubin.
+- Dari binaan 22 bingkai mulo kat bendo pertamo tiap muko (jubin pertamo senarai 360°, ruange e-mel lepah alamat server doh disahke), kekal dale margin skrin bilo grid tatal (dari binaan 23 dale duo panel "Settings" jugok), nga naik dari grid ko baris ke penapis atah dio, buke ko butang Kembali. Kanan dari satu kongsi rangkaie ke kamera sampai ko butang sunting dio, nga hasil "Uji sambunge" tatal sampai nampak.
 - Dale pemapar, kekunci maing nga jeda, laju ke depe, undur, lepah nga sebelum alat kawalan jauh jale, nga kekunci info tunjuk butir gambo ke video.
 
 ### Gambo nga video nga alat kawalan jauh
@@ -733,7 +733,7 @@ Semuo gapo hok aplikasi mudoh alih Immich rasmi buat ado sini: sandare, garis ma
 
 Nok tunjuk gambo 360° ko ore hok takdok aplikasi, kongsi dio nga pauta kongsi Immich: aplikasi web Immich tunjuk gambo 360° jadi sfera dale pelayar dio.
 
-Binaan skang, binaan 22 (versi 3.3.0-rc.0, nombor binaan 3030020), berasas Immich `main` 10 Oktober 2026 (versi 3.3.0-rc.0, belum keluare stabil lagi). Binaan 22 doh diuji nga server Immich 3.2.4 pah nga server hok dibina dari Immich `main` hok samo tu: log masuk, garis maso, album, gambo nga video 360°, maing video nga muat naik, takdok saloh API. Tolong lapor masalah dale [Issues](https://github.com/freeKC/Immuch360/issues), buke ko projek Immich. Untuk dokumentasi penoh Immich sendiri, tengok [immich.app](https://immich.app).
+Binaan skang, binaan 23 (versi 3.3.0-rc.0, nombor binaan 3030021), berasas Immich `main` 10 Oktober 2026 (versi 3.3.0-rc.0, belum keluare stabil lagi). Binaan 22, atah asas Immich hok samo, doh diuji nga server Immich 3.2.4 pah nga server hok dibina dari Immich `main` hok samo tu: log masuk, garis maso, album, gambo nga video 360°, maing video nga muat naik, takdok saloh API. Tolong lapor masalah dale [Issues](https://github.com/freeKC/Immuch360/issues), buke ko projek Immich. Untuk dokumentasi penoh Immich sendiri, tengok [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Banding nga aplikasi Immich nga aplikasi lain
@@ -1112,7 +1112,7 @@ Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tun
 
 - **Fon nga tablet Android**
   - Hari ni: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ke APK kat muko [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk fon (`Immuch360-v<version>-release.apk` universal jale kat mano-mano, `-armeabi-v7a` untuk fon 32 bit lamo, nga fail `.aab` untuk Google Play, buke untuk sideload). Binaan GitHub biasonyo lagi dulu dari kedai. Mano-mano pong, dio pasang sebeloh aplikasi Immich rasmi (pakej `com.aprogsys.immuch360`).
-  - Tak lamo lagi: kat Google Play, binaan 22 doh hanta pado 10 Oktober 2026 ganti binaan 20 (doh ado sejak 7 Oktober); dio bawok ubaha Immich bule Oktober nga pembaika untuk TV.
+  - Tak lamo lagi: kat Google Play, binaan 23 doh hanta pado 10 Oktober 2026 ganti binaan 20 (doh ado sejak 7 Oktober); dio bawok ubaha Immich bule Oktober nga pembaika untuk TV dari binaan 22 nga 23.
 - **iPhone nga iPad**
   - Hari ni: tengoh tunggu semaka Apple. Versi hok tengoh disemak ado ciri binaan 11: muat naik ko Immich nga pilihe "Sumber video" (binaan 15) nga fail Insta360 mentoh (binaan 16) akan mari nga kemas kini App Store kemudie. Kod sumber dibina nga Xcode ke kat Codemagic, tengok [Bina sendiri](#build-it-yourself).
   - Tak lamo lagi: App Store, tengoh disemak.

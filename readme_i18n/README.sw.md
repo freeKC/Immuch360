@@ -17,10 +17,10 @@ Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, D
 
 | Jukwaa | Mahali pa kuipata | Hali tarehe 10 Oktoba 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 kwenye GitHub, imetumwa kwa Google Play tarehe 10 Oktoba 2026 (huko build 20 imechapishwa tangu tarehe 7 Oktoba) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 kwenye GitHub, imetumwa kwa Google Play tarehe 10 Oktoba 2026 (huko build 20 imechapishwa tangu tarehe 7 Oktoba) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone na iPad** | App Store | toleo 3.3.0 linasubiri ukaguzi wa Apple; kwa sasa [ijenge mwenyewe](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [APK](#meta-quest-3) · Horizon Store | ukurasa umeidhinishwa, build 21 inakaguliwa na Meta, build 22 kwenye chaneli ya Alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 kwenye GitHub; ukurasa wa Google Play kwa TV unakaguliwa na Google tangu tarehe 9 Oktoba 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [APK](#meta-quest-3) · Horizon Store | ukurasa umeidhinishwa, build 21 inakaguliwa na Meta, build 23 kwenye chaneli ya Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 kwenye GitHub; ukurasa wa Google Play kwa TV unakaguliwa na Google tangu tarehe 9 Oktoba 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP ya majaribio](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | build ya kompyuta 4 kwenye Windows: picha, video bapa na za 360°; macOS na Linux baadaye |
 
 *Hali husasishwa kila toleo jipya; maelezo yako katika [Mahali pa kuipata](#where-to-get-it).*
@@ -612,14 +612,14 @@ Kuanzia build 20 programu ileile ya Android inaendeshwa kwenye Android TV na Goo
 
 ### Kuanza kwa mara ya kwanza
 
-1. Ingia kama kwenye simu: mishale inasogeza fremu kutoka sehemu moja hadi nyingine, na OK kwenye sehemu ("Bonyeza OK ili kuandika") inafungua kibodi ya televisheni kwenye kidirisha, kwa anwani ya seva, barua pepe na nenosiri.
+1. Ingia kama kwenye simu: mishale inasogeza fremu kutoka sehemu moja hadi nyingine (kuanzia build 23 inapita juu ya lebo ya sehemu iliyojazwa badala ya kuikata), na OK kwenye sehemu ("Bonyeza OK ili kuandika") inafungua kibodi ya televisheni kwenye kidirisha, kwa anwani ya seva, barua pepe na nenosiri.
 2. Au chagua "Tumia bila seva". Televisheni haina picha zake yenyewe, kwa hiyo kichupo cha Photos (Picha) kinasema "Televisheni hii haina picha au video zake: fungua hifadhi ya mtandao kutoka Maktaba." pamoja na kitufe cha Hifadhi za mtandao. Ongeza hifadhi, seva ya Plex au kamera hapo, kama kwenye simu (tazama [Hifadhi za mtandao](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Sogea kwa rimoti
 
 - Mishale inasogeza fremu, OK inafungua kile ilichopo, Nyuma inarudi nyuma. Kutoka kichupo, Nyuma inaenda kwenye menyu ya pembeni, kisha kwenye Photos (Picha), kisha nje ya programu. Katika orodha ya machaguo, kama aina ya hifadhi au mpangilio, mishale inasogeza fremu tu na OK inachagua chaguo (kuanzia build 22; awali, mishale ilibadilisha chaguo).
-- Chaneli juu na chini zinasogeza ukurasa mmoja kwa wakati. Kuanzia build 22 gridi za picha zinaonyesha takriban vigae sita kwa kila safu ndani ya pambizo za skrini, pamoja na vijipicha vikali zaidi vya faili za kifaa chenyewe ambavyo vinabaki laini kwenye maelezo madogo, na kurasa zenye kichwa chenye picha kwenye simu (orodha ya 360°, Favorites (Vipendwa), albamu za kifaa) zinaonyesha upau mmoja tu badala yake.
-- Kuanzia build 22 fremu inaanzia kwenye kipengee cha kwanza cha kila ukurasa (kigae cha kwanza cha orodha ya 360°, sehemu ya barua pepe mara anwani ya seva inapothibitishwa), inabaki ndani ya pambizo za skrini gridi inaposogezwa, na inapanda kutoka gridi hadi safu au vichujio vilivyo juu yake badala ya kwenda kwenye kitufe cha Nyuma. Kulia kutoka hifadhi ya mtandao au kamera kunafika kwenye kitufe chake cha kuhariri, na matokeo ya "Jaribu muunganisho" yanasogezwa hadi yaonekane.
+- Chaneli juu na chini zinasogeza ukurasa mmoja kwa wakati. Kuanzia build 22 gridi za picha zinaonyesha takriban vigae sita kwa kila safu ndani ya pambizo za skrini, pamoja na vijipicha vikali zaidi vya faili za kifaa chenyewe, na kurasa zenye kichwa chenye picha kwenye simu (orodha ya 360°, Favorites (Vipendwa), albamu za kifaa) zinaonyesha upau mmoja tu badala yake. Kuanzia build 23 vijipicha hivyo vinatengenezwa kwa ukubwa mara mbili ya kigae chake na kupunguzwa kwa ulaini, kwa hiyo maelezo madogo kama matawi yenye theluji hayametameti tena, na picha za seva zinaonyesha picha yake kubwa zaidi ya onyesho la awali, kali vilevile, badala ya kijipicha chake kidogo kilichonyooshwa hadi kwenye kigae.
+- Kuanzia build 22 fremu inaanzia kwenye kipengee cha kwanza cha kila ukurasa (kigae cha kwanza cha orodha ya 360°, sehemu ya barua pepe mara anwani ya seva inapothibitishwa), inabaki ndani ya pambizo za skrini gridi inaposogezwa (kuanzia build 23 pia katika vidirisha viwili vya Settings), na inapanda kutoka gridi hadi safu au vichujio vilivyo juu yake badala ya kwenda kwenye kitufe cha Nyuma. Kulia kutoka hifadhi ya mtandao au kamera kunafika kwenye kitufe chake cha kuhariri, na matokeo ya "Jaribu muunganisho" yanasogezwa hadi yaonekane.
 - Katika vitazamaji, vitufe vya rimoti vya kucheza na kusitisha, kusonga mbele haraka, kurudisha nyuma, kinachofuata na kilichotangulia vinafanya kazi, na kitufe cha taarifa kinaonyesha maelezo ya picha au video.
 
 ### Picha na video kwa rimoti
@@ -733,7 +733,7 @@ Kila kitu ambacho programu rasmi ya simu ya Immich inafanya kipo hapa: uhifadhi 
 
 Kuonyesha picha ya 360° kwa mtu asiye na programu, ishiriki kwa kiungo kilichoshirikiwa cha Immich: programu ya wavuti ya Immich inaonyesha picha ya 360° kama tufe kwenye kivinjari chake.
 
-Build ya sasa, build 22 (toleo 3.3.0-rc.0, nambari ya build 3030020), inategemea Immich `main` ya tarehe 10 Oktoba 2026 (toleo 3.3.0-rc.0, bado si toleo thabiti). Build 22 ilijaribiwa na seva ya Immich 3.2.4 na seva iliyojengwa kutoka Immich `main` hiyohiyo: kuingia, rekodi ya matukio, albamu, picha na video za 360°, uchezaji wa video na upakiaji, bila hitilafu yoyote ya API. Tafadhali ripoti matatizo katika [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich. Kwa nyaraka kamili za Immich yenyewe, tazama [immich.app](https://immich.app).
+Build ya sasa, build 23 (toleo 3.3.0-rc.0, nambari ya build 3030021), inategemea Immich `main` ya tarehe 10 Oktoba 2026 (toleo 3.3.0-rc.0, bado si toleo thabiti). Build 22, kwa msingi uleule wa Immich, ilijaribiwa na seva ya Immich 3.2.4 na seva iliyojengwa kutoka Immich `main` hiyohiyo: kuingia, rekodi ya matukio, albamu, picha na video za 360°, uchezaji wa video na upakiaji, bila hitilafu yoyote ya API. Tafadhali ripoti matatizo katika [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich. Kwa nyaraka kamili za Immich yenyewe, tazama [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Ikilinganishwa na programu ya Immich na programu nyingine
@@ -1112,7 +1112,7 @@ Programu iko kwenye Google Play kwa simu na kompyuta kibao; toleo la App Store l
 
 - **Simu na kompyuta kibao za Android**
   - Leo: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), au APK kwenye ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` kwa simu (`Immuch360-v<version>-release.apk` ya jumla inafanya kazi kila mahali, `-armeabi-v7a` ni kwa simu za zamani za biti 32, na faili ya `.aab` ni kwa Google Play, si kwa sideload). Build ya GitHub kwa kawaida iko mbele ya duka. Kwa njia yoyote inasakinishwa kando ya programu rasmi ya Immich (kifurushi `com.aprogsys.immuch360`).
-  - Hivi karibuni: kwenye Google Play, build 22 ilitumwa tarehe 10 Oktoba 2026 badala ya build 20 (iliyochapishwa tangu tarehe 7 Oktoba); inaleta mabadiliko ya Immich ya Oktoba na marekebisho ya televisheni.
+  - Hivi karibuni: kwenye Google Play, build 23 ilitumwa tarehe 10 Oktoba 2026 badala ya build 20 (iliyochapishwa tangu tarehe 7 Oktoba); inaleta mabadiliko ya Immich ya Oktoba na marekebisho ya televisheni ya build 22 na 23.
 - **iPhone na iPad**
   - Leo: inasubiri ukaguzi wa Apple. Toleo linalokaguliwa lina vipengele vya build 11: upakiaji kwenye Immich na chaguo la Chanzo cha video (build 15) na faili ghafi za Insta360 (build 16) vitakuja na sasisho la baadaye la App Store. Msimbo chanzo unajengwa kwa Xcode au kwenye Codemagic, tazama [Ijenge mwenyewe](#build-it-yourself).
   - Hivi karibuni: App Store, inakaguliwa.

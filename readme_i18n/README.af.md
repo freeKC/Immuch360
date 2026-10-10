@@ -17,10 +17,10 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
 
 | Platform | Waar om dit te kry | Status op 10 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-fone en -tablette | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bou 22 op GitHub, op 10 Oktober 2026 na Google Play gestuur (bou 20 is daar sedert 7 Oktober regstreeks) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-fone en -tablette | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bou 23 op GitHub, op 10 Oktober 2026 na Google Play gestuur (bou 20 is daar sedert 7 Oktober regstreeks) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone en iPad** | App Store | weergawe 3.3.0 wag vir Apple se nagaan; [bou dit self](#build-it-yourself) intussen |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | inskrywing goedgekeur, bou 21 word deur Meta nagegaan, bou 22 op die alfakanaal |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | bou 22 op GitHub; die Google Play-inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | inskrywing goedgekeur, bou 21 word deur Meta nagegaan, bou 23 op die alfakanaal |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | bou 23 op GitHub; die Google Play-inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Voorskou-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | rekenaarbou 4 op Windows: foto's, plat en 360°-video's; macOS en Linux later |
 
 *Statusse word by elke vrystelling bygewerk; die besonderhede is in [Waar om dit te kry](#where-to-get-it).*
@@ -612,14 +612,14 @@ Vanaf bou 20 loop dieselfde Android-app op Android TV en Google TV, met die afst
 
 ### Eerste begin
 
-1. Meld aan soos op 'n foon: die pyltjies skuif 'n raam van veld tot veld, en OK op 'n veld ("Druk OK om te tik") maak die sleutelbord van die TV in 'n dialoog oop, vir die bedieneradres, die e-pos en die wagwoord.
+1. Meld aan soos op 'n foon: die pyltjies skuif 'n raam van veld tot veld (vanaf bou 23 beweeg dit bo-oor die etiket van 'n ingevulde veld eerder as dwarsdeur dit), en OK op 'n veld ("Druk OK om te tik") maak die sleutelbord van die TV in 'n dialoog oop, vir die bedieneradres, die e-pos en die wagwoord.
 2. Of kies "Gebruik sonder ’n bediener". 'n TV het geen eie foto's nie, so die Foto's-oortjie sê "Hierdie TV het geen eie foto's of video's nie: maak 'n netwerkdeelplek vanuit die Biblioteek oop." met 'n Netwerkdeelplekke-knoppie. Voeg daar 'n deelplek, 'n Plex-bediener of 'n kamera by, soos op 'n foon (sien [Netwerkdeelplekke](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Beweeg rond met die afstandbeheer
 
 - Die pyltjies skuif die raam, OK maak oop waarop dit is, Terug gaan terug. Vanaf 'n oortjie gaan Terug na die kantkieslys, dan na Foto's, dan uit die app. In 'n lys keuses, soos die soort deelplek of 'n instelling, skuif die pyltjies net die raam en OK kies die keuse (vanaf bou 22; voorheen het die pyltjies die keuse verander).
-- Kanaal op en af blaai 'n bladsy op 'n slag. Vanaf bou 22 wys die fotoroosters sowat ses teëls per ry binne die kantlyne van die skerm, met skerper duimnaelskets van die toestel se eie lêers wat glad bly op fyn detail, en die bladsye met 'n prentkop op 'n foon (die 360°-lys, Favorites (Gunstelinge), die albums van die toestel) wys eerder 'n enkele balk.
-- Vanaf bou 22 begin die raam op die eerste item van elke bladsy (die eerste teël van die 360°-lys, die e-posveld sodra die bedieneradres bevestig is), bly binne die kantlyne van die skerm terwyl 'n rooster rol, en gaan van 'n rooster op na die ry of die filters daarbo eerder as na die Terug-knoppie. Regs vanaf 'n netwerkdeelplek of 'n kamera bereik sy wysigknoppie, en die uitslag van "Toets die verbinding" rol in sig.
+- Kanaal op en af blaai 'n bladsy op 'n slag. Vanaf bou 22 wys die fotoroosters sowat ses teëls per ry binne die kantlyne van die skerm, met skerper duimnaelskets van die toestel se eie lêers, en die bladsye met 'n prentkop op 'n foon (die 360°-lys, Favorites (Gunstelinge), die albums van die toestel) wys eerder 'n enkele balk. Vanaf bou 23 word daardie duimnaelskets twee keer so groot as hul teël gemaak en glad verklein, sodat fyn detail soos sneeubedekte takke nie meer flikker nie, en die foto's van die bediener wys sy groter voorskou, ewe skerp, eerder as sy klein duimnaelskets wat tot die teël uitgerek is.
+- Vanaf bou 22 begin die raam op die eerste item van elke bladsy (die eerste teël van die 360°-lys, die e-posveld sodra die bedieneradres bevestig is), bly binne die kantlyne van die skerm terwyl 'n rooster rol (vanaf bou 23 ook in die twee panele van Settings), en gaan van 'n rooster op na die ry of die filters daarbo eerder as na die Terug-knoppie. Regs vanaf 'n netwerkdeelplek of 'n kamera bereik sy wysigknoppie, en die uitslag van "Toets die verbinding" rol in sig.
 - In die kykers werk die speel-en-pouse-, vorentoe-, terugspoel-, volgende- en vorige-knoppies van die afstandbeheer, en die inligtingknoppie wys die besonderhede van 'n foto of video.
 
 ### Foto's en video's met die afstandbeheer
@@ -733,7 +733,7 @@ Alles wat die amptelike Immich-mobiele app doen, is hier: rugsteun, tydlyn, albu
 
 Om 'n 360°-foto te wys aan iemand wat nie die app het nie, deel dit met 'n gedeelde Immich-skakel: die Immich-webapp wys 'n 360°-foto as 'n sfeer in hul blaaier.
 
-Die huidige bou, bou 22 (weergawe 3.3.0-rc.0, bounommer 3030020), is gebaseer op Immich `main` van 10 Oktober 2026 (weergawe 3.3.0-rc.0, nog nie 'n stabiele vrystelling nie). Bou 22 is getoets teen 'n Immich 3.2.4-bediener en teen 'n bediener wat uit daardie selfde Immich `main` gebou is: aanmelding, tydlyn, albums, 360°-foto's en -video's, videoterugspeel en oplaaie, sonder enige API-fout. Rapporteer asseblief probleme in [Issues](https://github.com/freeKC/Immuch360/issues), nie aan die Immich-projek nie. Vir die volledige dokumentasie van Immich self, sien [immich.app](https://immich.app).
+Die huidige bou, bou 23 (weergawe 3.3.0-rc.0, bounommer 3030021), is gebaseer op Immich `main` van 10 Oktober 2026 (weergawe 3.3.0-rc.0, nog nie 'n stabiele vrystelling nie). Bou 22, op dieselfde Immich-basis, is getoets teen 'n Immich 3.2.4-bediener en teen 'n bediener wat uit daardie selfde Immich `main` gebou is: aanmelding, tydlyn, albums, 360°-foto's en -video's, videoterugspeel en oplaaie, sonder enige API-fout. Rapporteer asseblief probleme in [Issues](https://github.com/freeKC/Immuch360/issues), nie aan die Immich-projek nie. Vir die volledige dokumentasie van Immich self, sien [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Vergeleke met die Immich-app en ander apps
@@ -1112,7 +1112,7 @@ Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir A
 
 - **Android-fone en -tablette**
   - Vandag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), of die APK op die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy: `Immuch360-v<version>-arm64-v8a-release.apk` vir 'n foon (die universele `Immuch360-v<version>-release.apk` werk oral, `-armeabi-v7a` is vir ouer 32-bis-fone, en die `.aab`-lêer is vir Google Play, nie vir installering met die hand nie). Die GitHub-bou is gewoonlik voor die winkel. Hoe ook al, dit installeer langs die amptelike Immich-app (pakket `com.aprogsys.immuch360`).
-  - Binnekort: op Google Play is bou 22 op 10 Oktober 2026 gestuur in die plek van bou 20 (regstreeks sedert 7 Oktober); dit bevat die Immich-veranderinge van Oktober en die TV-regstellings.
+  - Binnekort: op Google Play is bou 23 op 10 Oktober 2026 gestuur in die plek van bou 20 (regstreeks sedert 7 Oktober); dit bevat die Immich-veranderinge van Oktober en die TV-regstellings van bou 22 en 23.
 - **iPhone en iPad**
   - Vandag: wag vir Apple se nagaan. Die weergawe wat nagegaan word, dra die funksies van bou 11: die oplaai na Immich en die Videobron-keuse (bou 15) en die rou Insta360-lêers (bou 16) sal met 'n latere App Store-opdatering kom. Die bronkode bou met Xcode of op Codemagic, sien [Bou dit self](#build-it-yourself).
   - Binnekort: App Store, word nagegaan.

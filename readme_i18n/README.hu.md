@@ -17,10 +17,10 @@ Azoknak szól, akik 360°-os kamerával (Insta360, GoPro MAX, DJI Osmo 360, Rico
 
 | Platform | Honnan szerezhető be | Állapot 2026. október 10-én |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 22-es build a GitHubon, 2026. október 10-én elküldve a Google Playre (ott a 20-as build október 7. óta élő) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 23-as build a GitHubon, 2026. október 10-én elküldve a Google Playre (ott a 20-as build október 7. óta élő) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone és iPad** | App Store | a 3.3.0-s verzió az Apple ellenőrzésére vár; addig is [saját fordítás](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 és 3S | [APK](#meta-quest-3) · Horizon Store | az adatlap jóváhagyva, a 21-es build a Meta ellenőrzésén, a 22-es build az alfa csatornán |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV és Google TV** | [APK](#install-it-on-the-tv) · Google Play | 22-es build a GitHubon; a tévés Google Play-bejegyzés 2026. október 9. óta a Google ellenőrzése alatt |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 és 3S | [APK](#meta-quest-3) · Horizon Store | az adatlap jóváhagyva, a 21-es build a Meta ellenőrzésén, a 23-as build az alfa csatornán |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV és Google TV** | [APK](#install-it-on-the-tv) · Google Play | 23-as build a GitHubon; a tévés Google Play-bejegyzés 2026. október 9. óta a Google ellenőrzése alatt |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Előzetes ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 Windowson: fotók, sík és 360°-os videók; macOS és Linux később |
 
 *Az állapotok minden kiadásnál frissülnek; a részletek: [Honnan szerezhető be](#where-to-get-it).*
@@ -612,14 +612,14 @@ A 20-as buildtől ugyanaz az androidos alkalmazás fut Android TV-n és Google T
 
 ### Első indítás
 
-1. Jelentkezzen be, mint egy telefonon: a nyilak egy keretet mozgatnak mezőről mezőre, és az OK egy mezőn („Nyomja meg az OK gombot a gépeléshez”) egy párbeszédablakban megnyitja a tévé billentyűzetét a szerver címéhez, az e-mail-címhez és a jelszóhoz.
+1. Jelentkezzen be, mint egy telefonon: a nyilak egy keretet mozgatnak mezőről mezőre (a 23-as buildtől egy kitöltött mező címkéje fölött halad el, nem keresztül rajta), és az OK egy mezőn („Nyomja meg az OK gombot a gépeléshez”) egy párbeszédablakban megnyitja a tévé billentyűzetét a szerver címéhez, az e-mail-címhez és a jelszóhoz.
 2. Vagy válassza a „Használat szerver nélkül” lehetőséget. A tévének nincsenek saját fotói, ezért a Fotók lapon ez áll: „Ezen a tévén nincsenek saját fotók vagy videók: nyisson meg egy hálózati megosztást a Képtárból.”, egy Hálózati megosztások gombbal. Ott adjon hozzá egy megosztást, egy Plex szervert vagy egy kamerát, mint egy telefonon (lásd [Hálózati megosztások](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Mozgás a távirányítóval
 
 - A nyilak a keretet mozgatják, az OK megnyitja, amin a keret áll, a Vissza visszalép. Egy lapról a Vissza az oldalsó menübe visz, majd a Fotókhoz, majd ki az alkalmazásból. Egy választási listában, például egy megosztás típusánál vagy egy beállításnál, a nyilak csak a keretet mozgatják, és az OK választja ki az elemet (a 22-es buildtől; korábban a nyilak megváltoztatták a választást).
-- A csatorna fel és le gombok egyszerre egy oldalt görgetnek. A 22-es buildtől a fotórácsok soronként körülbelül hat csempét mutatnak a képernyő margóin belül, az eszköz saját fájljainak élesebb bélyegképeivel, amelyek a finom részleteken is simák maradnak, a telefonon képes fejléccel rendelkező oldalak (a 360° lista, a Kedvencek, az eszköz albumai) pedig helyette egyetlen sávot mutatnak.
-- A 22-es buildtől a keret minden oldal első elemén kezd (a 360° lista első csempéjén, az e-mail-mezőn, miután a szervercím meg lett erősítve), a képernyő margóin belül marad, amíg egy rács görget, és egy rácsból a fölötte lévő sorra vagy szűrőkre lép fel a Vissza gomb helyett. Egy hálózati megosztásról vagy kameráról a jobbra gomb a szerkesztés gombjához visz, a „Kapcsolat tesztelése” eredménye pedig a látható részre görget.
+- A csatorna fel és le gombok egyszerre egy oldalt görgetnek. A 22-es buildtől a fotórácsok soronként körülbelül hat csempét mutatnak a képernyő margóin belül, az eszköz saját fájljainak élesebb bélyegképeivel, a telefonon képes fejléccel rendelkező oldalak (a 360° lista, a Kedvencek, az eszköz albumai) pedig helyette egyetlen sávot mutatnak. A 23-as buildtől ezek a bélyegképek a csempéjük kétszeres méretében készülnek, és simán kicsinyítődnek, így a finom részletek, például a havas ágak, már nem szikráznak, a szerver fotói pedig a szerver nagyobb előnézeti képét mutatják, ugyanolyan élesen, a csempére nyújtott kis bélyegkép helyett.
+- A 22-es buildtől a keret minden oldal első elemén kezd (a 360° lista első csempéjén, az e-mail-mezőn, miután a szervercím meg lett erősítve), a képernyő margóin belül marad, amíg egy rács görget (a 23-as buildtől a Beállítások két paneljén is), és egy rácsból a fölötte lévő sorra vagy szűrőkre lép fel a Vissza gomb helyett. Egy hálózati megosztásról vagy kameráról a jobbra gomb a szerkesztés gombjához visz, a „Kapcsolat tesztelése” eredménye pedig a látható részre görget.
 - A nézegetőkben a távirányító lejátszás és szünet, előretekerés, visszatekerés, következő és előző gombjai működnek, az info gomb pedig egy fotó vagy videó részleteit mutatja.
 
 ### Fotók és videók a távirányítóval
@@ -733,7 +733,7 @@ Minden, amit a hivatalos Immich mobilalkalmazás tud, itt is megvan: biztonsági
 
 Ha valakinek, akinek nincs meg az alkalmazás, 360°-os fotót szeretne mutatni, ossza meg egy Immich megosztási linkkel: az Immich webalkalmazása a böngészőjében gömbként mutatja a 360°-os fotót.
 
-A jelenlegi build, a 22-es (3.3.0-rc.0 verzió, 3030020-as buildszám), az Immich 2026. október 10-i `main` ágán alapul (3.3.0-rc.0 verzió, még nem stabil kiadás). A 22-es build egy Immich 3.2.4 szerverrel és egy ugyanabból az Immich `main` ágból épített szerverrel lett tesztelve: bejelentkezés, idővonal, albumok, 360°-os fotók és videók, videolejátszás és feltöltések, API-hiba nélkül. A problémákat az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon jelezze, ne az Immich projektnek. Magának az Immichnek a teljes dokumentációja az [immich.app](https://immich.app) oldalon található.
+A jelenlegi build, a 23-as (3.3.0-rc.0 verzió, 3030021-es buildszám), az Immich 2026. október 10-i `main` ágán alapul (3.3.0-rc.0 verzió, még nem stabil kiadás). A 22-es build, ugyanazon az Immich-alapon, egy Immich 3.2.4 szerverrel és egy ugyanabból az Immich `main` ágból épített szerverrel lett tesztelve: bejelentkezés, idővonal, albumok, 360°-os fotók és videók, videolejátszás és feltöltések, API-hiba nélkül. A problémákat az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon jelezze, ne az Immich projektnek. Magának az Immichnek a teljes dokumentációja az [immich.app](https://immich.app) oldalon található.
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Összehasonlítás az Immich alkalmazással és más alkalmazásokkal
@@ -1112,7 +1112,7 @@ Az alkalmazás elérhető a Google Playen telefonokra és táblagépekre; az App
 
 - **Android telefonok és táblagépek**
   - Ma: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), vagy az APK a [Releases](https://github.com/freeKC/Immuch360/releases) oldalon: telefonhoz `Immuch360-v<version>-arm64-v8a-release.apk` (az univerzális `Immuch360-v<version>-release.apk` mindenhol működik, a `-armeabi-v7a` a régebbi 32 bites telefonokhoz való, a `.aab` fájl pedig a Google Playnek szól, nem oldalról telepítéshez). A GitHub-build általában előrébb jár, mint az áruház. Mindkét esetben a hivatalos Immich alkalmazás mellé települ (csomag: `com.aprogsys.immuch360`).
-  - Hamarosan: a Google Playre 2026. október 10-én el lett küldve a 22-es build a 20-as helyett (amely október 7. óta élő); ez hozza az Immich októberi változásait és a tévés javításokat.
+  - Hamarosan: a Google Playre 2026. október 10-én el lett küldve a 23-as build a 20-as helyett (amely október 7. óta élő); ez hozza az Immich októberi változásait és a 22-es és 23-as build tévés javításait.
 - **iPhone és iPad**
   - Ma: az Apple jóváhagyására vár. Az ellenőrzés alatt álló verzió a 11-es build funkcióit tartalmazza: az Immichbe való feltöltés és a Videóforrás választás (15-ös build), valamint a nyers Insta360 fájlok (16-os build) egy későbbi App Store-frissítéssel érkeznek. A forráskód Xcode-dal vagy Codemagicen fordítható, lásd [Saját fordítás](#build-it-yourself).
   - Hamarosan: App Store, ellenőrzés alatt.

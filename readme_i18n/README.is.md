@@ -17,10 +17,10 @@ Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hæg
 
 | Kerfi | Hvar á að sækja það | Staða 10. október 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | smíð 22 á GitHub, send til Google Play 10. október 2026 (smíð 20 í boði þar síðan 7. október) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | smíð 23 á GitHub, send til Google Play 10. október 2026 (smíð 20 í boði þar síðan 7. október) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | útgáfa 3.3.0 bíður yfirferðar Apple; á meðan er [eigin smíð](#build-it-yourself) möguleg |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | skráning samþykkt, smíð 21 í yfirferð hjá Meta, smíð 22 á alfa-rásinni |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | smíð 22 á GitHub; færslan á Google Play fyrir sjónvörp er í yfirferð hjá Google síðan 9. október 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | skráning samþykkt, smíð 21 í yfirferð hjá Meta, smíð 23 á alfa-rásinni |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | smíð 23 á GitHub; færslan á Google Play fyrir sjónvörp er í yfirferð hjá Google síðan 9. október 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP-forútgáfa](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 á Windows: myndir, flöt og 360° myndskeið; macOS og Linux síðar |
 
 *Staðan er uppfærð við hverja útgáfu; nánar í [Hvar á að sækja það](#where-to-get-it).*
@@ -612,14 +612,14 @@ Frá smíð 20 keyrir sama Android-forritið á Android TV og Google TV, með fj
 
 ### Fyrsta ræsing
 
-1. Skráðu þig inn eins og í síma: örvarnar færa ramma milli reita, og OK á reit („Ýttu á OK til að skrifa“) opnar lyklaborð sjónvarpsins í glugga, fyrir vistfang vélþjónsins, netfangið og lykilorðið.
+1. Skráðu þig inn eins og í síma: örvarnar færa ramma milli reita (frá smíð 23 fer hann yfir merki útfyllts reits í stað þess að fara þvert yfir það), og OK á reit („Ýttu á OK til að skrifa“) opnar lyklaborð sjónvarpsins í glugga, fyrir vistfang vélþjónsins, netfangið og lykilorðið.
 2. Eða veldu „Nota án vélþjóns“. Sjónvarp á engar eigin myndir, svo Ljósmyndir-flipinn segir „Þetta sjónvarp á engar eigin myndir eða myndskeið: opnaðu netdeilingu úr Safninu.“ með Netdeilingar-hnappi. Bættu þar við deilingu, Plex-þjóni eða myndavél, eins og í síma (sjá [Netdeilingar](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Farðu um með fjarstýringunni
 
 - Örvarnar færa rammann, OK opnar það sem hann er á, Til baka fer til baka. Úr flipa fer Til baka í hliðarvalmyndina, síðan í Ljósmyndir, síðan út úr forritinu. Í lista með valkostum, svo sem tegund deilingar eða stillingu, færa örvarnar aðeins rammann og OK velur valkostinn (frá smíð 22; áður breyttu örvarnar valinu).
-- Rás upp og niður fletta einni síðu í einu. Frá smíð 22 sýna smámyndanetin um sex reiti í röð innan spássía skjásins, með skarpari smámyndum af eigin skrám tækisins sem haldast rólegar í fínum smáatriðum, og síðurnar sem eru með myndhaus í síma (360° listinn, Uppáhalds, albúm tækisins) sýna í staðinn eina stiku.
-- Frá smíð 22 byrjar ramminn á fyrsta atriði hverrar síðu (fyrsta reit 360° listans, netfangsreitnum þegar vistfang vélþjónsins hefur verið staðfest), helst innan spássía skjásins þegar smámyndanet flettist, og fer úr smámyndaneti upp í röðina eða síurnar fyrir ofan það frekar en á Til baka hnappinn. Hægri frá netdeilingu eða myndavél nær breytingarhnappi hennar, og niðurstaða „Prófa tenginguna“ flettist inn í sýn.
+- Rás upp og niður fletta einni síðu í einu. Frá smíð 22 sýna smámyndanetin um sex reiti í röð innan spássía skjásins, með skarpari smámyndum af eigin skrám tækisins, og síðurnar sem eru með myndhaus í síma (360° listinn, Uppáhalds, albúm tækisins) sýna í staðinn eina stiku. Frá smíð 23 eru þessar smámyndir gerðar tvöfalt stærri en reiturinn þeirra og minnkaðar mjúklega, svo fín smáatriði eins og snævi þaktar greinar glitra ekki lengur, og myndir vélþjónsins sýna stærri forskoðunarmynd hans, jafnskarpa, í stað litlu smámyndarinnar hans sem er teygð yfir reitinn.
+- Frá smíð 22 byrjar ramminn á fyrsta atriði hverrar síðu (fyrsta reit 360° listans, netfangsreitnum þegar vistfang vélþjónsins hefur verið staðfest), helst innan spássía skjásins þegar smámyndanet flettist (frá smíð 23 líka í tveimur gluggahlutum Settings), og fer úr smámyndaneti upp í röðina eða síurnar fyrir ofan það frekar en á Til baka hnappinn. Hægri frá netdeilingu eða myndavél nær breytingarhnappi hennar, og niðurstaða „Prófa tenginguna“ flettist inn í sýn.
 - Í skoðurunum virka spila- og hlé-, hraðspólunar-, tilbakaspólunar-, næsta- og fyrra-hnappar fjarstýringarinnar, og upplýsingahnappurinn sýnir upplýsingar um mynd eða myndskeið.
 
 ### Myndir og myndskeið með fjarstýringunni
@@ -733,7 +733,7 @@ Allt sem opinbera Immich-farsímaforritið gerir er hér: afritun, tímalína, m
 
 Til að sýna einhverjum sem er ekki með forritið 360° mynd skaltu deila henni með deilitengli Immich: vefforrit Immich sýnir 360° mynd sem kúlu í vafranum hans.
 
-Núverandi smíð, smíð 22 (útgáfa 3.3.0-rc.0, smíðanúmer 3030020), byggir á `main` hjá Immich frá 10. október 2026 (útgáfa 3.3.0-rc.0, ekki enn stöðug útgáfa). Smíð 22 var prófuð með Immich 3.2.4 vélþjóni og með vélþjóni sem var smíðaður úr sama `main` hjá Immich: innskráning, tímalína, albúm, 360° myndir og myndskeið, spilun myndskeiða og upphleðslur, án nokkurrar API-villu. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich-verkefnisins. Fyrir fullkomin skjöl um Immich sjálft, sjá [immich.app](https://immich.app).
+Núverandi smíð, smíð 23 (útgáfa 3.3.0-rc.0, smíðanúmer 3030021), byggir á `main` hjá Immich frá 10. október 2026 (útgáfa 3.3.0-rc.0, ekki enn stöðug útgáfa). Smíð 22, á sama Immich-grunni, var prófuð með Immich 3.2.4 vélþjóni og með vélþjóni sem var smíðaður úr sama `main` hjá Immich: innskráning, tímalína, albúm, 360° myndir og myndskeið, spilun myndskeiða og upphleðslur, án nokkurrar API-villu. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich-verkefnisins. Fyrir fullkomin skjöl um Immich sjálft, sjá [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Samanburður við Immich-forritið og önnur forrit
@@ -1112,7 +1112,7 @@ Forritið er á Google Play fyrir síma og spjaldtölvur; App Store útgáfan b�
 
 - **Android-símar og spjaldtölvur**
   - Í dag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eða APK-skráin á síðunni [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fyrir síma (alhliða `Immuch360-v<version>-release.apk` virkar alls staðar, `-armeabi-v7a` er fyrir eldri 32 bita síma, og `.aab` skráin er fyrir Google Play, ekki til hliðhleðslu). Smíðin á GitHub er yfirleitt á undan versluninni. Hvort heldur sem er sest hún upp við hlið opinbera Immich-forritsins (pakki `com.aprogsys.immuch360`).
-  - Bráðum: á Google Play var smíð 22 send 10. október 2026 í stað smíðar 20 (í boði síðan 7. október); hún inniheldur breytingar Immich frá október og lagfæringarnar fyrir sjónvörp.
+  - Bráðum: á Google Play var smíð 23 send 10. október 2026 í stað smíðar 20 (í boði síðan 7. október); hún inniheldur breytingar Immich frá október og lagfæringarnar fyrir sjónvörp úr smíðum 22 og 23.
 - **iPhone og iPad**
   - Í dag: bíður yfirferðar Apple. Útgáfan í yfirferð er með eiginleika smíðar 11: upphleðsla í Immich og valið Uppruni myndskeiðs (smíð 15) og óunnar Insta360-skrár (smíð 16) koma með síðari uppfærslu í App Store. Frumkóðinn er smíðaður með Xcode eða á Codemagic, sjá [Smíðaðu það sjálf(ur)](#build-it-yourself).
   - Bráðum: App Store, í yfirferð.

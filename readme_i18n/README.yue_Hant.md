@@ -17,10 +17,10 @@ Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 
 
 | 平台 | 喺邊度攞 | 2026 年 10 月 10 日狀態 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機同平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub 上面係建置 22，2026 年 10 月 10 日已經送去 Google Play（Google Play 上面由 10 月 7 日開始係建置 20） |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機同平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub 上面係建置 23，2026 年 10 月 10 日已經送去 Google Play（Google Play 上面由 10 月 7 日開始係建置 20） |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 同 iPad** | App Store | 版本 3.3.0 等緊 Apple 審批；期間可以[自己建置](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 同 3S | [APK](#meta-quest-3) · Horizon Store | 上架頁面已批，建置 21 等緊 Meta 審批，建置 22 喺 alpha 頻道 |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 同 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上面係建置 22；電視用嘅 Google Play 上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 同 3S | [APK](#meta-quest-3) · Horizon Store | 上架頁面已批，建置 21 等緊 Meta 審批，建置 23 喺 alpha 頻道 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 同 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上面係建置 23；電視用嘅 Google Play 上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [預覽版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows 上面嘅桌面建置 4：相片、平面同 360° 影片；macOS 同 Linux 遲啲推出 |
 
 *狀態會喺每次發佈更新；詳情睇[喺邊度攞](#where-to-get-it)。*
@@ -612,14 +612,14 @@ iPhone 可以影空間相片同影片，但 Immich 伺服器對佢哋乜都唔�
 
 ### 第一次開
 
-1. 好似喺電話噉登入：方向鍵會將焦點框喺欄位之間移動，喺欄位上面撳 OK（「撳 OK 輸入」）會喺對話框打開電視鍵盤，用嚟輸入伺服器地址、電郵同密碼。
+1. 好似喺電話噉登入：方向鍵會將焦點框喺欄位之間移動（由建置 23 開始，經過已填欄位嗰陣會喺標籤上面行過，而唔係橫過標籤），喺欄位上面撳 OK（「撳 OK 輸入」）會喺對話框打開電視鍵盤，用嚟輸入伺服器地址、電郵同密碼。
 2. 或者揀「唔連伺服器使用」。電視冇自己嘅相片，所以「相」分頁會顯示「呢部電視冇自己嘅相或者影片：請喺媒體庫打開網絡共享。」同一個「網絡共享」掣。喺嗰度加共享、Plex 伺服器或者鏡頭，同喺電話一樣（睇[網絡共享](#network-shares-a-nas-a-computer-or-a-media-server)）。
 
 ### 用遙控器移動
 
 - 方向鍵移動焦點框，OK 打開焦點所在嘅嘢，返回鍵返回。喺分頁度，返回鍵會先去側邊選單，再去「相」，然後離開 App。喺選項清單入面，例如共享類型或者某個設定，方向鍵只會移動焦點框，撳 OK 先會揀選項（由建置 22 開始；之前方向鍵會直接改咗選擇）。
-- 頻道上同頻道下一次捲一頁。由建置 22 開始，相片格仔喺螢幕邊界以內每行顯示大約六格，裝置自己檔案嘅縮圖更清晰，細節位都保持順滑；喺電話上面頂部有圖片嘅頁面（360° 清單、「收藏夾」、裝置嘅相簿）會改為顯示一條簡單嘅列。
-- 由建置 22 開始，焦點框會由每頁嘅第一項開始（360° 清單嘅第一格、確認咗伺服器地址之後嘅電郵欄位），格仔捲動時會留喺螢幕邊界以內，由格仔向上會去上面嗰行或者篩選，而唔係去返回掣。喺網絡共享或者鏡頭上面撳右鍵會去到佢嘅編輯掣，而「測試連線」嘅結果會自動捲入畫面。
+- 頻道上同頻道下一次捲一頁。由建置 22 開始，相片格仔喺螢幕邊界以內每行顯示大約六格，裝置自己檔案嘅縮圖更清晰；喺電話上面頂部有圖片嘅頁面（360° 清單、「收藏夾」、裝置嘅相簿）會改為顯示一條簡單嘅列。由建置 23 開始，呢啲縮圖會用格仔兩倍嘅大細整，再順滑噉縮細，所以好似積雪樹枝咁嘅細節唔會再閃爍，而伺服器嘅相片會顯示伺服器較大嘅預覽圖，一樣咁清晰，而唔係拉闊到成格嘅細縮圖。
+- 由建置 22 開始，焦點框會由每頁嘅第一項開始（360° 清單嘅第一格、確認咗伺服器地址之後嘅電郵欄位），格仔捲動時會留喺螢幕邊界以內（由建置 23 開始，「設定」嘅兩個窗格都係），由格仔向上會去上面嗰行或者篩選，而唔係去返回掣。喺網絡共享或者鏡頭上面撳右鍵會去到佢嘅編輯掣，而「測試連線」嘅結果會自動捲入畫面。
 - 喺查閱器入面，遙控器嘅播放同暫停、快進、倒帶、下一個同上一個按鍵都用得，資訊鍵會顯示相片或者影片嘅詳情。
 
 ### 用遙控器睇相片同影片
@@ -733,7 +733,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 想畀冇呢個 App 嘅人睇 360° 相片，可以用 Immich 共享連結分享：Immich 網頁版會喺佢哋嘅瀏覽器入面用球面顯示 360° 相片。
 
-目前嘅建置係建置 22（版本 3.3.0-rc.0，建置編號 3030020），基於 2026 年 10 月 10 日嘅 Immich `main`（版本 3.3.0-rc.0，仲未係穩定版）。建置 22 用 Immich 3.2.4 伺服器同埋由同一個 Immich `main` 建置出嚟嘅伺服器測試過：登入、時間線、相簿、360° 相片同影片、影片播放同上傳，冇任何 API 錯誤。有問題請喺 [Issues](https://github.com/freeKC/Immuch360/issues) 回報，唔好報去 Immich 項目。Immich 本身嘅完整文件，請睇 [immich.app](https://immich.app)。
+目前嘅建置係建置 23（版本 3.3.0-rc.0，建置編號 3030021），基於 2026 年 10 月 10 日嘅 Immich `main`（版本 3.3.0-rc.0，仲未係穩定版）。基於同一個 Immich 嘅建置 22 用 Immich 3.2.4 伺服器同埋由同一個 Immich `main` 建置出嚟嘅伺服器測試過：登入、時間線、相簿、360° 相片同影片、影片播放同上傳，冇任何 API 錯誤。有問題請喺 [Issues](https://github.com/freeKC/Immuch360/issues) 回報，唔好報去 Immich 項目。Immich 本身嘅完整文件，請睇 [immich.app](https://immich.app)。
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## 同 Immich App 同其他 App 比較
@@ -1112,7 +1112,7 @@ Immuch360 Desktop 嘅 CI（`.github/workflows/immuch360-desktop.yml`）喺跟住
 
 - **Android 手機同平板**
   - 而家：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或者 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅 APK：電話用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用嘅 `Immuch360-v<version>-release.apk` 邊度都用到，`-armeabi-v7a` 係畀舊款 32 位元電話用，`.aab` 檔案係畀 Google Play 用，唔係用嚟側載）。GitHub 建置通常行得比商店前。兩種都會同官方 Immich App 並排安裝（套件 `com.aprogsys.immuch360`）。
-  - 就快：喺 Google Play，建置 22 喺 2026 年 10 月 10 日送咗去，取代建置 20（由 10 月 7 日開始上架）；佢包括 Immich 十月嘅改動同電視方面嘅修正。
+  - 就快：喺 Google Play，建置 23 喺 2026 年 10 月 10 日送咗去，取代建置 20（由 10 月 7 日開始上架）；佢包括 Immich 十月嘅改動同建置 22 同 23 電視方面嘅修正。
 - **iPhone 同 iPad**
   - 而家：等緊 Apple 審批。審批緊嘅版本有建置 11 嘅功能：上傳去 Immich 同「影片來源」選擇（建置 15），同埋 Insta360 RAW 檔案（建置 16），會喺之後嘅 App Store 更新推出。原始碼可以用 Xcode 或者喺 Codemagic 上面建置，睇[自己建置](#build-it-yourself)。
   - 就快：App Store，審批緊。

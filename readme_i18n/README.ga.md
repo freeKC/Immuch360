@@ -17,10 +17,10 @@ Tá sé dóibh siúd a ghlacann pictiúir le ceamara 360° (Insta360, GoPro MAX,
 
 | Ardán | Cá bhfaighidh tú í | Stádas ar 10 Deireadh Fómhair 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Gutháin agus táibléid **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | tógáil 22 ar GitHub, seolta chuig Google Play ar 10 Deireadh Fómhair 2026 (tógáil 20 beo ansin ó 7 Deireadh Fómhair) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Gutháin agus táibléid **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | tógáil 23 ar GitHub, seolta chuig Google Play ar 10 Deireadh Fómhair 2026 (tógáil 20 beo ansin ó 7 Deireadh Fómhair) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone agus iPad** | App Store | leagan 3.3.0 ag fanacht ar athbhreithniú Apple; idir an dá linn, [tóg tú féin í](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 agus 3S | [APK](#meta-quest-3) · Horizon Store | liostú ceadaithe, tógáil 21 á hathbhreithniú ag Meta, tógáil 22 ar an gcainéal alfa |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV agus Google TV** | [APK](#install-it-on-the-tv) · Google Play | tógáil 22 ar GitHub; tá liostú Google Play do theilifíseáin á athbhreithniú ag Google ó 9 Deireadh Fómhair 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 agus 3S | [APK](#meta-quest-3) · Horizon Store | liostú ceadaithe, tógáil 21 á hathbhreithniú ag Meta, tógáil 23 ar an gcainéal alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV agus Google TV** | [APK](#install-it-on-the-tv) · Google Play | tógáil 23 ar GitHub; tá liostú Google Play do theilifíseáin á athbhreithniú ag Google ó 9 Deireadh Fómhair 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP an réamhamhairc](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | tógáil deisce 4 ar Windows: grianghraif, físeáin chothroma agus 360°; macOS agus Linux níos déanaí |
 
 *Nuashonraítear na stádais le gach eisiúint; tá na sonraí in [Cá bhfaighidh tú í](#where-to-get-it).*
@@ -612,14 +612,14 @@ Teastaíonn na grianghraif agus na físeáin 360°, d'albaim agus físeáin do N
 
 ### An chéad tosú
 
-1. Sínigh isteach mar ar ghuthán: bogann na saigheada fráma ó réimse go réimse, agus osclaíonn OK ar réimse (“Brúigh OK chun clóscríobh”) méarchlár na teilifíse i ndialóg, do sheoladh an fhreastalaí, an ríomhphost agus an pasfhocal.
+1. Sínigh isteach mar ar ghuthán: bogann na saigheada fráma ó réimse go réimse (ó thógáil 23 téann sé os cionn lipéad réimse líonta seachas trasna air), agus osclaíonn OK ar réimse (“Brúigh OK chun clóscríobh”) méarchlár na teilifíse i ndialóg, do sheoladh an fhreastalaí, an ríomhphost agus an pasfhocal.
 2. Nó roghnaigh “Úsáid gan freastalaí”. Níl grianghraif dá cuid féin ag teilifís, mar sin deir an cluaisín Grianghraif “Níl grianghraif ná físeáin dá chuid féin ag an teilifís seo: oscail comhroinnt líonra ón Leabharlann.” le cnaipe Comhroinnt líonra. Cuir comhroinnt, freastalaí Plex nó ceamara leis ansin, mar ar ghuthán (féach [Comhroinnt líonra](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Bogadh timpeall leis an gcianrialtán
 
 - Bogann na saigheada an fráma, osclaíonn OK an rud a bhfuil sé air, téann Siar siar. Ó chluaisín, téann Siar chuig an roghchlár taoibh, ansin chuig Grianghraif, ansin amach as an aip. I liosta roghanna, mar shampla cineál comhroinnte nó socrú, ní dhéanann na saigheada ach an fráma a bhogadh agus roghnaíonn OK an rogha (ó thógáil 22; roimhe sin, d'athraigh na saigheada an rogha).
-- Scrollaíonn cainéal suas agus síos leathanach ag an am. Ó thógáil 22 taispeánann na greillí grianghraf thart ar shé thíl in aghaidh an ró laistigh d'imill an scáileáin, le mionsamhlacha níos géire de chomhaid an ghléis féin a fhanann mín ar mhionsonraí, agus taispeánann na leathanaigh a bhfuil ceanntásc pictiúir orthu ar ghuthán (an liosta 360°, Ceanáin, albaim an ghléis) barra amháin ina ionad.
-- Ó thógáil 22 tosaíonn an fráma ar an gcéad mhír de gach leathanach (an chéad tíl den liosta 360°, an réimse ríomhphoist nuair a bheidh seoladh an fhreastalaí deimhnithe), fanann sé laistigh d'imill an scáileáin agus greille á scrollú, agus téann sé suas ó ghreille go dtí an ró nó na scagairí os a cionn seachas go dtí an cnaipe Siar. Ó chomhroinnt líonra nó ó cheamara, téann Deas chuig an gcnaipe eagarthóireachta in aice leis, agus scrollaítear toradh “Tástáil an nasc” go dtí go mbíonn sé le feiceáil.
+- Scrollaíonn cainéal suas agus síos leathanach ag an am. Ó thógáil 22 taispeánann na greillí grianghraf thart ar shé thíl in aghaidh an ró laistigh d'imill an scáileáin, le mionsamhlacha níos géire de chomhaid an ghléis féin, agus taispeánann na leathanaigh a bhfuil ceanntásc pictiúir orthu ar ghuthán (an liosta 360°, Ceanáin, albaim an ghléis) barra amháin ina ionad. Ó thógáil 23 déantar na mionsamhlacha sin faoi dhó mhéid a dtíl agus laghdaítear go réidh iad, ionas nach ndéanann mionsonraí mar chraobhacha clúdaithe le sneachta drithliú a thuilleadh, agus taispeánann grianghraif an fhreastalaí a réamhamharc níos mó, chomh géar céanna, seachas a mhionsamhail bheag sínte go dtí an tíl.
+- Ó thógáil 22 tosaíonn an fráma ar an gcéad mhír de gach leathanach (an chéad tíl den liosta 360°, an réimse ríomhphoist nuair a bheidh seoladh an fhreastalaí deimhnithe), fanann sé laistigh d'imill an scáileáin agus greille á scrollú (ó thógáil 23 i dhá phána Socruithe freisin), agus téann sé suas ó ghreille go dtí an ró nó na scagairí os a cionn seachas go dtí an cnaipe Siar. Ó chomhroinnt líonra nó ó cheamara, téann Deas chuig an gcnaipe eagarthóireachta in aice leis, agus scrollaítear toradh “Tástáil an nasc” go dtí go mbíonn sé le feiceáil.
 - Sna hamharcóirí, oibríonn eochracha seinn agus sos, mearchasadh ar aghaidh, atochras, ar aghaidh agus roimhe seo an chianrialtáin, agus taispeánann an eochair eolais sonraí grianghraif nó físeáin.
 
 ### Grianghraif agus físeáin leis an gcianrialtán
@@ -733,7 +733,7 @@ Tá gach rud a dhéanann aip shoghluaiste oifigiúil Immich anseo: cúltaca, aml
 
 Chun grianghraf 360° a thaispeáint do dhuine nach bhfuil an aip aige, comhroinn é le nasc comhroinnte Immich: taispeánann aip ghréasáin Immich grianghraf 360° mar sféar ina bhrabhsálaí.
 
-Tá an tógáil reatha, tógáil 22 (leagan 3.3.0-rc.0, uimhir tógála 3030020), bunaithe ar Immich `main` an 10 Deireadh Fómhair 2026 (leagan 3.3.0-rc.0, ní eisiúint chobhsaí fós). Tástáladh tógáil 22 in aghaidh freastalaí Immich 3.2.4 agus in aghaidh freastalaí a tógadh ón Immich `main` céanna sin: síniú isteach, amlíne, albaim, grianghraif agus físeáin 360°, seinm físeán agus uaslódálacha, gan aon earráid API. Tuairiscigh fadhbanna in [Issues](https://github.com/freeKC/Immuch360/issues), le do thoil, ní don tionscadal Immich. Le haghaidh doiciméadú iomlán Immich féin, féach [immich.app](https://immich.app).
+Tá an tógáil reatha, tógáil 23 (leagan 3.3.0-rc.0, uimhir tógála 3030021), bunaithe ar Immich `main` an 10 Deireadh Fómhair 2026 (leagan 3.3.0-rc.0, ní eisiúint chobhsaí fós). Tástáladh tógáil 22, ar an mbonn Immich céanna, in aghaidh freastalaí Immich 3.2.4 agus in aghaidh freastalaí a tógadh ón Immich `main` céanna sin: síniú isteach, amlíne, albaim, grianghraif agus físeáin 360°, seinm físeán agus uaslódálacha, gan aon earráid API. Tuairiscigh fadhbanna in [Issues](https://github.com/freeKC/Immuch360/issues), le do thoil, ní don tionscadal Immich. Le haghaidh doiciméadú iomlán Immich féin, féach [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## I gcomparáid le haip Immich agus aipeanna eile
@@ -1112,7 +1112,7 @@ Tá an aip ar Google Play do ghutháin agus do tháibléid; tá leagan an App St
 
 - **Gutháin agus táibléid Android**
   - Inniu: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), nó an APK ar an leathanach [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` do ghuthán (oibríonn an `Immuch360-v<version>-release.apk` uilíoch i ngach áit, tá `-armeabi-v7a` do ghutháin 32 giotán níos sine, agus tá an comhad `.aab` do Google Play, ní le haghaidh taobhlódála). Bíonn tógáil GitHub chun tosaigh ar an siopa de ghnáth. Ar aon nós suiteáiltear í in aice le haip oifigiúil Immich (pacáiste `com.aprogsys.immuch360`).
-  - Go luath: ar Google Play, seoladh tógáil 22 ar 10 Deireadh Fómhair 2026 in ionad thógáil 20 (beo ó 7 Deireadh Fómhair); tá athruithe Immich ó mhí Dheireadh Fómhair agus na ceartúcháin don teilifís inti.
+  - Go luath: ar Google Play, seoladh tógáil 23 ar 10 Deireadh Fómhair 2026 in ionad thógáil 20 (beo ó 7 Deireadh Fómhair); tá athruithe Immich ó mhí Dheireadh Fómhair agus na ceartúcháin don teilifís ó thógálacha 22 agus 23 inti.
 - **iPhone agus iPad**
   - Inniu: ag fanacht ar athbhreithniú Apple. Tá gnéithe thógáil 11 sa leagan atá á athbhreithniú: tiocfaidh an uaslódáil chuig Immich agus an rogha Foinse físe (tógáil 15) agus na comhaid amha Insta360 (tógáil 16) le nuashonrú App Store níos déanaí. Tógtar an cód foinseach le Xcode nó ar Codemagic, féach [Tóg tú féin í](#build-it-yourself).
   - Go luath: App Store, á athbhreithniú.

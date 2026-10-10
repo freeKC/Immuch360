@@ -17,10 +17,10 @@ Hem i blong ol man we oli tekem foto wetem wan 360° kamera (Insta360, GoPro MAX
 
 | Platfom | Wea blong kasem | Stejes long 10 Oktoba 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Ol **Android** fon mo tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 long GitHub, oli sendem i go long Google Play long 10 Oktoba 2026 (build 20 i stap long ples ia stat long 7 Oktoba) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Ol **Android** fon mo tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 long GitHub, oli sendem i go long Google Play long 10 Oktoba 2026 (build 20 i stap long ples ia stat long 7 Oktoba) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone mo iPad** | App Store | vesen 3.3.0 i stap wet blong Apple i jekem; naoia yu save [buildim yu wan](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 mo 3S | [APK](#meta-quest-3) · Horizon Store | Meta i talem oraet long pej, Meta i stap jekem build 21, build 22 i stap long Alpha janel |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV mo Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 long GitHub; Google i stap jekem Google Play pej blong ol TV stat long 9 Oktoba 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 mo 3S | [APK](#meta-quest-3) · Horizon Store | Meta i talem oraet long pej, Meta i stap jekem build 21, build 23 i stap long Alpha janel |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV mo Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 long GitHub; Google i stap jekem Google Play pej blong ol TV stat long 9 Oktoba 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 long Windows: ol foto, ol flat video mo ol 360° video; macOS mo Linux biaen |
 
 *Mifala i apdetem ol stejes long evri release; ol ditel oli stap long [Wea blong kasem](#where-to-get-it).*
@@ -612,14 +612,14 @@ Stat long build 20, sem Android app i ron long Android TV mo Google TV, wetem ri
 
 ### Fas stat
 
-1. Saen in olsem long wan fon: ol aro oli muvum wan fren long wan ples i go long narawan, mo OK long wan ples ("Presem OK blong raet") i openem kibod blong TV long wan dialog, blong adres blong seva, imel mo pasword.
+1. Saen in olsem long wan fon: ol aro oli muvum wan fren long wan ples i go long narawan (stat long build 23, hem i pas antap long leibel blong wan ples we i gat raeting finis, i no krosem hem), mo OK long wan ples ("Presem OK blong raet") i openem kibod blong TV long wan dialog, blong adres blong seva, imel mo pasword.
 2. O jusum "Yusum wetaot wan server". Wan TV i no gat ol foto blong hem, olsem nao Photos (Ol foto) tab i talem "TV ia i no gat ol foto o video blong hem: openem wan netwok sea long Laebri." wetem wan baten Ol netwok sea. Ademap wan sea, wan Plex seva o wan kamera long ples ia, olsem long wan fon (luk [Ol netwok sea](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Muv raon wetem rimot
 
 - Ol aro oli muvum fren, OK i openem samting we fren i stap long hem, Bak i go bak. Long wan tab, Bak i go long saed menu, afta long Photos (Ol foto), afta i aot long app. Long wan lis blong ol jus, olsem kaen blong wan sea o wan seting, ol aro oli muvum fren nomo mo OK i jusum (stat long build 22; bifo, ol aro oli jenisim jus).
-- Janel antap mo daon i skrol wan pej long wan taem. Stat long build 22, ol grid blong foto oli soem kolosap sikis smol pikja long wan laen, insaed long ol maegin blong skrin, wetem ol smol pikja we oli klia moa blong ol fael blong divaes hem wan, we oli stap smut nomata i gat ol smol ditel, mo ol pej we oli gat wan pikja antap long wan fon (lis blong 360°, Favorites (Ol favorit), ol album blong divaes) oli soem wan ba nomo.
-- Stat long build 22, fren i stat long fas samting blong evri pej (fas smol pikja blong lis blong 360°, ples blong imel taem adres blong seva i oraet finis), i stap insaed long ol maegin blong skrin taem wan grid i skrol, mo long wan grid Antap i go long laen o ol filta we oli stap antap long hem, i no long Bak baten. Raet long wan netwok sea o wan kamera i go long edit baten blong hem, mo ansa blong "Testem konekson" i skrol i kam long skrin.
+- Janel antap mo daon i skrol wan pej long wan taem. Stat long build 22, ol grid blong foto oli soem kolosap sikis smol pikja long wan laen, insaed long ol maegin blong skrin, wetem ol smol pikja we oli klia moa blong ol fael blong divaes hem wan, mo ol pej we oli gat wan pikja antap long wan fon (lis blong 360°, Favorites (Ol favorit), ol album blong divaes) oli soem wan ba nomo. Stat long build 23, oli mekem ol smol pikja ia tu taem bigwan olsem ples blong olgeta long grid, afta oli mekem olgeta i kam smol long wan smut fasin, olsem nao ol smol ditel olsem ol branj we sno i kavremap oli no moa flas flas, mo ol foto blong seva oli soem bigfala preview pikja blong hem, we i klia olsem, i no smol pikja blong hem we oli pulum i kam bigwan blong fulumap ples ia.
+- Stat long build 22, fren i stat long fas samting blong evri pej (fas smol pikja blong lis blong 360°, ples blong imel taem adres blong seva i oraet finis), i stap insaed long ol maegin blong skrin taem wan grid i skrol (stat long build 23, long tu pan blong Settings tu), mo long wan grid Antap i go long laen o ol filta we oli stap antap long hem, i no long Bak baten. Raet long wan netwok sea o wan kamera i go long edit baten blong hem, mo ansa blong "Testem konekson" i skrol i kam long skrin.
 - Long ol vyua, ol baten blong rimot blong plei mo stop smol, go fored kwik, go bak kwik, nekis mo bifo oli wok, mo info baten i soem tekniko saed blong wan foto o video.
 
 ### Ol foto mo video wetem rimot
@@ -733,7 +733,7 @@ Evri samting we ofisol Immich mobael app i mekem i stap long ples ia: sevem kopi
 
 Blong soem wan 360° foto long wan man we i no gat app, serem wetem wan Immich link: Immich web app i soem wan 360° foto olsem wan sfia long braosa blong hem.
 
-Build naoia, build 22 (vesen 3.3.0-rc.0, build namba 3030020), i stanap long Immich `main` blong 10 Oktoba 2026 (vesen 3.3.0-rc.0, i no wan stedi release yet). Oli testem build 22 wetem wan Immich 3.2.4 seva mo wetem wan seva we oli bildim long sem Immich `main` ia: saen in, taemlaen, ol album, ol 360° foto mo video, plei video mo ol aplod, i no gat API eror. Plis talem ol problem long [Issues](https://github.com/freeKC/Immuch360/issues), i no long Immich projek. Blong ful dokumen blong Immich hem wan, luk [immich.app](https://immich.app).
+Build naoia, build 23 (vesen 3.3.0-rc.0, build namba 3030021), i stanap long Immich `main` blong 10 Oktoba 2026 (vesen 3.3.0-rc.0, i no wan stedi release yet). Oli testem build 22, long sem Immich bes, wetem wan Immich 3.2.4 seva mo wetem wan seva we oli bildim long sem Immich `main` ia: saen in, taemlaen, ol album, ol 360° foto mo video, plei video mo ol aplod, i no gat API eror. Plis talem ol problem long [Issues](https://github.com/freeKC/Immuch360/issues), i no long Immich projek. Blong ful dokumen blong Immich hem wan, luk [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Lukluk wetem Immich app mo ol narafala app
@@ -1112,7 +1112,7 @@ App i stap long Google Play blong ol fon mo tablet; App Store vesen i stap wet b
 
 - **Ol Android fon mo tablet**
   - Tede: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o APK long [Releases](https://github.com/freeKC/Immuch360/releases) pej: `Immuch360-v<version>-arm64-v8a-release.apk` blong wan fon (yunivesel `Immuch360-v<version>-release.apk` i wok long evri ples, `-armeabi-v7a` i blong ol olfala 32 bit fon, mo `.aab` fael i blong Google Play, i no blong instolem wetem han). GitHub build i stap fored long stoa plante taem. Long tufala fasin, hem i instol klosap long ofisol Immich app (pakej `com.aprogsys.immuch360`).
-  - I no longtaem: long Google Play, oli sendem build 22 long 10 Oktoba 2026 long ples blong build 20 (we i stap stat long 7 Oktoba); hem i karem ol jenis blong Immich blong Oktoba mo ol stretem blong TV.
+  - I no longtaem: long Google Play, oli sendem build 23 long 10 Oktoba 2026 long ples blong build 20 (we i stap stat long 7 Oktoba); hem i karem ol jenis blong Immich blong Oktoba mo ol stretem blong TV blong build 22 mo 23.
 - **iPhone mo iPad**
   - Tede: i stap wet blong Apple i jekem. Vesen we oli stap jekem i gat ol samting blong build 11: aplod i go long Immich mo Sos blong video (build 15) mo ol raw Insta360 fael (build 16) bambae oli kam wetem wan App Store apdet afta. Sos kod i save build wetem Xcode o long Codemagic, luk [Buildim yu wan](#build-it-yourself).
   - I no longtaem: App Store, oli stap jekem.

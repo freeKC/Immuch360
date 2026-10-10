@@ -17,10 +17,10 @@ Ia untuk mereka yang merakam dengan kamera 360° (Insta360, GoPro MAX, DJI Osmo 
 
 | Platform | Di mana untuk mendapatkannya | Status pada 10 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 22 di GitHub, dihantar ke Google Play pada 10 Oktober 2026 (binaan 20 tersedia di sana sejak 7 Oktober) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 23 di GitHub, dihantar ke Google Play pada 10 Oktober 2026 (binaan 20 tersedia di sana sejak 7 Oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.0 menunggu semakan Apple; sementara itu, [bina sendiri](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | penyenaraian diluluskan, binaan 21 dalam semakan Meta, binaan 22 di saluran alfa |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 22 di GitHub; penyenaraian Google Play untuk TV dalam semakan Google sejak 9 Oktober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | penyenaraian diluluskan, binaan 21 dalam semakan Meta, binaan 23 di saluran alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 23 di GitHub; penyenaraian Google Play untuk TV dalam semakan Google sejak 9 Oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | binaan desktop 4 pada Windows: foto, video rata dan video 360°; macOS dan Linux kemudian |
 
 *Status dikemas kini pada setiap keluaran; butirannya ada di [Di mana untuk mendapatkannya](#where-to-get-it).*
@@ -612,14 +612,14 @@ Dari binaan 20 aplikasi Android yang sama berjalan pada Android TV dan Google TV
 
 ### Permulaan pertama
 
-1. Log masuk seperti pada telefon: anak panah menggerakkan bingkai dari medan ke medan, dan OK pada medan ("Tekan OK untuk menaip") membuka papan kekunci TV dalam dialog, untuk alamat pelayan, e-mel dan kata laluan.
+1. Log masuk seperti pada telefon: anak panah menggerakkan bingkai dari medan ke medan (dari binaan 23 bingkai melalui di atas label medan yang telah diisi, bukan melintanginya), dan OK pada medan ("Tekan OK untuk menaip") membuka papan kekunci TV dalam dialog, untuk alamat pelayan, e-mel dan kata laluan.
 2. Atau pilih "Guna tanpa pelayan". TV tidak mempunyai foto sendiri, jadi tab Photos (Foto) menyatakan "TV ini tiada foto atau video sendiri: buka perkongsian rangkaian dari Pustaka." dengan butang Perkongsian rangkaian. Tambah perkongsian, pelayan Plex atau kamera di situ, seperti pada telefon (lihat [Perkongsian rangkaian](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Bergerak dengan alat kawalan jauh
 
 - Anak panah menggerakkan bingkai, OK membuka apa yang dipilihnya, Kembali pergi ke belakang. Dari tab, Kembali pergi ke menu sisi, kemudian ke Photos (Foto), kemudian keluar daripada aplikasi. Dalam senarai pilihan, seperti jenis perkongsian atau tetapan, anak panah hanya menggerakkan bingkai dan OK memilih pilihan itu (dari binaan 22; sebelum ini, anak panah menukar pilihan).
-- Saluran atas dan bawah menatal satu halaman pada satu masa. Dari binaan 22 grid foto menunjukkan kira-kira enam jubin setiap baris di dalam margin skrin, dengan lakaran kecil yang lebih tajam bagi fail peranti itu sendiri yang kekal licin pada butiran halus, dan halaman yang mempunyai pengepala bergambar pada telefon (senarai 360°, Favorites (Kegemaran), album peranti) sebaliknya menunjukkan satu bar sahaja.
-- Dari binaan 22 bingkai bermula pada item pertama setiap halaman (jubin pertama senarai 360°, medan e-mel setelah alamat pelayan disahkan), kekal di dalam margin skrin semasa grid ditatal, dan naik dari grid ke baris atau penapis di atasnya dan bukannya ke butang Kembali. Kanan dari perkongsian rangkaian atau kamera sampai ke butang editnya, dan hasil "Uji sambungan" ditatal sehingga kelihatan.
+- Saluran atas dan bawah menatal satu halaman pada satu masa. Dari binaan 22 grid foto menunjukkan kira-kira enam jubin setiap baris di dalam margin skrin, dengan lakaran kecil yang lebih tajam bagi fail peranti itu sendiri, dan halaman yang mempunyai pengepala bergambar pada telefon (senarai 360°, Favorites (Kegemaran), album peranti) sebaliknya menunjukkan satu bar sahaja. Dari binaan 23 lakaran kecil itu dibuat dua kali ganda saiz jubinnya lalu dikecilkan dengan lancar, jadi butiran halus seperti dahan bersalji tidak lagi berkelip, dan foto pelayan menunjukkan gambar pratonton pelayan yang lebih besar, sama tajam, bukannya lakaran kecilnya yang diregangkan memenuhi jubin.
+- Dari binaan 22 bingkai bermula pada item pertama setiap halaman (jubin pertama senarai 360°, medan e-mel setelah alamat pelayan disahkan), kekal di dalam margin skrin semasa grid ditatal (dari binaan 23 juga dalam dua anak tetingkap Settings), dan naik dari grid ke baris atau penapis di atasnya dan bukannya ke butang Kembali. Kanan dari perkongsian rangkaian atau kamera sampai ke butang editnya, dan hasil "Uji sambungan" ditatal sehingga kelihatan.
 - Dalam pemapar, kekunci main dan jeda, ke hadapan pantas, undur, seterusnya dan sebelumnya pada alat kawalan jauh berfungsi, dan kekunci info menunjukkan butiran foto atau video.
 
 ### Foto dan video dengan alat kawalan jauh
@@ -733,7 +733,7 @@ Semua yang dilakukan oleh aplikasi mudah alih rasmi Immich ada di sini: sandaran
 
 Untuk menunjukkan foto 360° kepada seseorang yang tiada aplikasi ini, kongsikannya dengan pautan kongsi Immich: aplikasi web Immich memaparkan foto 360° sebagai sfera dalam pelayar mereka.
 
-Binaan semasa, binaan 22 (versi 3.3.0-rc.0, nombor binaan 3030020), berasaskan Immich `main` bertarikh 10 Oktober 2026 (versi 3.3.0-rc.0, belum keluaran stabil). Binaan 22 telah diuji dengan pelayan Immich 3.2.4 dan dengan pelayan yang dibina daripada Immich `main` yang sama itu: log masuk, garis masa, album, foto dan video 360°, main balik video dan muat naik, tanpa sebarang ralat API. Sila laporkan masalah dalam [Issues](https://github.com/freeKC/Immuch360/issues), bukan kepada projek Immich. Untuk dokumentasi penuh Immich sendiri, lihat [immich.app](https://immich.app).
+Binaan semasa, binaan 23 (versi 3.3.0-rc.0, nombor binaan 3030021), berasaskan Immich `main` bertarikh 10 Oktober 2026 (versi 3.3.0-rc.0, belum keluaran stabil). Binaan 22, atas asas Immich yang sama, telah diuji dengan pelayan Immich 3.2.4 dan dengan pelayan yang dibina daripada Immich `main` yang sama itu: log masuk, garis masa, album, foto dan video 360°, main balik video dan muat naik, tanpa sebarang ralat API. Sila laporkan masalah dalam [Issues](https://github.com/freeKC/Immuch360/issues), bukan kepada projek Immich. Untuk dokumentasi penuh Immich sendiri, lihat [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Perbandingan dengan aplikasi Immich dan aplikasi lain
@@ -1112,7 +1112,7 @@ Aplikasi ini ada di Google Play untuk telefon dan tablet; versi App Store sedang
 
 - **Telefon dan tablet Android**
   - Hari ini: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), atau APK pada halaman [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk telefon (`Immuch360-v<version>-release.apk` universal berfungsi di mana-mana, `-armeabi-v7a` untuk telefon 32 bit yang lebih lama, dan fail `.aab` untuk Google Play, bukan untuk sideload). Binaan GitHub biasanya lebih awal daripada gedung. Walau bagaimanapun, ia dipasang di sebelah aplikasi rasmi Immich (pakej `com.aprogsys.immuch360`).
-  - Tidak lama lagi: di Google Play, binaan 22 telah dihantar pada 10 Oktober 2026 menggantikan binaan 20 (tersedia sejak 7 Oktober); ia membawa perubahan Immich bulan Oktober dan pembaikan untuk TV.
+  - Tidak lama lagi: di Google Play, binaan 23 telah dihantar pada 10 Oktober 2026 menggantikan binaan 20 (tersedia sejak 7 Oktober); ia membawa perubahan Immich bulan Oktober dan pembaikan untuk TV daripada binaan 22 dan 23.
 - **iPhone dan iPad**
   - Hari ini: menunggu semakan Apple. Versi yang sedang disemak membawa ciri binaan 11: muat naik ke Immich dan pilihan Sumber video (binaan 15) serta fail Insta360 mentah (binaan 16) akan datang bersama kemas kini App Store yang kemudian. Kod sumber dibina dengan Xcode atau pada Codemagic, lihat [Bina sendiri](#build-it-yourself).
   - Tidak lama lagi: App Store, sedang disemak.

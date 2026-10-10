@@ -17,10 +17,10 @@ Je určená ľuďom, ktorí fotia kamerou 360° (Insta360, GoPro MAX, DJI Osmo 3
 
 | Platforma | Kde ju získať | Stav k 10. októbru 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefóny a tablety s **Androidom** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | zostava 22 na GitHube, odoslaná do Google Play 10. októbra 2026 (zostava 20 je tam zverejnená od 7. októbra) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefóny a tablety s **Androidom** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | zostava 23 na GitHube, odoslaná do Google Play 10. októbra 2026 (zostava 20 je tam zverejnená od 7. októbra) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone a iPad** | App Store | verzia 3.3.0 čaká na posúdenie spoločnosťou Apple; zatiaľ si ju [zostavte sami](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [APK](#meta-quest-3) · Horizon Store | záznam schválený, zostava 21 v posudzovaní spoločnosťou Meta, zostava 22 v kanáli alfa |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | zostava 22 na GitHube; záznam v Google Play pre televízory je v posudzovaní spoločnosťou Google od 9. októbra 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [APK](#meta-quest-3) · Horizon Store | záznam schválený, zostava 21 v posudzovaní spoločnosťou Meta, zostava 23 v kanáli alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | zostava 23 na GitHube; záznam v Google Play pre televízory je v posudzovaní spoločnosťou Google od 9. októbra 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP ukážkovej verzie](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | zostava 4 pre počítač na Windows: fotky, ploché videá a videá 360°; macOS a Linux neskôr |
 
 *Stavy sa aktualizujú pri každom vydaní; podrobnosti nájdete v časti [Kde ju získať](#where-to-get-it).*
@@ -612,14 +612,14 @@ Od zostavy 20 beží tá istá aplikácia pre Android na Android TV a Google TV,
 
 ### Prvé spustenie
 
-1. Prihláste sa ako na telefóne: šípky presúvajú rámček z poľa na pole a OK na poli („Stlačte OK na písanie“) otvorí klávesnicu televízora v dialógu, pre adresu servera, e-mail a heslo.
+1. Prihláste sa ako na telefóne: šípky presúvajú rámček z poľa na pole (od zostavy 23 prechádza nad popisom vyplneného poľa, nie cezeň) a OK na poli („Stlačte OK na písanie“) otvorí klávesnicu televízora v dialógu, pre adresu servera, e-mail a heslo.
 2. Alebo vyberte „Používať bez servera“. Televízor nemá vlastné fotky, takže karta Fotky zobrazí „Tento televízor nemá vlastné fotky ani videá: otvorte sieťové úložisko z Knižnice.“ s tlačidlom Sieťové úložiská. Pridajte tam zdieľanie, server Plex alebo kameru, ako na telefóne (pozrite si [Sieťové úložiská](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Ovládanie diaľkovým ovládačom
 
 - Šípky presúvajú rámček, OK otvorí to, na čom je, Späť sa vráti. Z karty Späť prejde do bočnej ponuky, potom na Fotky, potom ukončí aplikáciu. V zozname možností, napríklad pri type zdieľania alebo pri nastavení, šípky iba presúvajú rámček a OK vyberie možnosť (od zostavy 22; predtým šípky menili výber).
-- Kanál hore a dole posúvajú po stránkach. Od zostavy 22 mriežky fotiek zobrazujú približne šesť dlaždíc na riadok vnútri okrajov obrazovky, s ostrejšími miniatúrami vlastných súborov zariadenia, ktoré zostávajú hladké aj pri jemných detailoch, a stránky, ktoré majú na telefóne záhlavie s obrázkom (zoznam 360°, Obľúbené, albumy zariadenia), namiesto toho zobrazujú jednoduchú lištu.
-- Od zostavy 22 rámček začína na prvej položke každej stránky (prvá dlaždica zoznamu 360°, pole e-mailu po potvrdení adresy servera), zostáva vnútri okrajov obrazovky, keď sa mriežka posúva, a z mriežky ide hore na riadok alebo filtre nad ňou, nie na tlačidlo Späť. Doprava zo sieťového úložiska alebo z kamery sa dostane na tlačidlo na jeho úpravu a výsledok „Otestovať pripojenie“ sa posunie do zobrazenia.
+- Kanál hore a dole posúvajú po stránkach. Od zostavy 22 mriežky fotiek zobrazujú približne šesť dlaždíc na riadok vnútri okrajov obrazovky, s ostrejšími miniatúrami vlastných súborov zariadenia, a stránky, ktoré majú na telefóne záhlavie s obrázkom (zoznam 360°, Obľúbené, albumy zariadenia), namiesto toho zobrazujú jednoduchú lištu. Od zostavy 23 sa tieto miniatúry vytvárajú v dvojnásobnej veľkosti svojej dlaždice a plynulo zmenšujú, takže jemné detaily, ako zasnežené konáre, už neiskria, a fotky zo servera zobrazujú jeho väčší náhľad, rovnako ostrý, namiesto jeho malej miniatúry roztiahnutej na dlaždicu.
+- Od zostavy 22 rámček začína na prvej položke každej stránky (prvá dlaždica zoznamu 360°, pole e-mailu po potvrdení adresy servera), zostáva vnútri okrajov obrazovky, keď sa mriežka posúva (od zostavy 23 aj v dvoch paneloch Nastavení), a z mriežky ide hore na riadok alebo filtre nad ňou, nie na tlačidlo Späť. Doprava zo sieťového úložiska alebo z kamery sa dostane na tlačidlo na jeho úpravu a výsledok „Otestovať pripojenie“ sa posunie do zobrazenia.
 - V zobrazeniach fungujú tlačidlá diaľkového ovládača prehrať a pozastaviť, pretočiť dopredu, pretočiť dozadu, ďalej a späť a tlačidlo informácií zobrazí podrobnosti fotky alebo videa.
 
 ### Fotky a videá s diaľkovým ovládačom
@@ -733,7 +733,7 @@ Všetko, čo robí oficiálna mobilná aplikácia Immich, je tu: zálohovanie, �
 
 Ak chcete ukázať fotku 360° niekomu, kto aplikáciu nemá, zdieľajte ju zdieľaným odkazom Immich: webová aplikácia Immich zobrazí fotku 360° ako guľu v jeho prehliadači.
 
-Aktuálna zostava, zostava 22 (verzia 3.3.0-rc.0, číslo zostavy 3030020), vychádza z Immich `main` z 10. októbra 2026 (verzia 3.3.0-rc.0, zatiaľ nie stabilné vydanie). Zostava 22 bola testovaná so serverom Immich 3.2.4 a so serverom zostaveným z toho istého Immich `main`: prihlásenie, časová os, albumy, fotky a videá 360°, prehrávanie videa a nahrávanie, bez jedinej chyby API. Problémy prosím hláste v [Issues](https://github.com/freeKC/Immuch360/issues), nie projektu Immich. Úplnú dokumentáciu samotného Immich nájdete na [immich.app](https://immich.app).
+Aktuálna zostava, zostava 23 (verzia 3.3.0-rc.0, číslo zostavy 3030021), vychádza z Immich `main` z 10. októbra 2026 (verzia 3.3.0-rc.0, zatiaľ nie stabilné vydanie). Zostava 22, na rovnakom základe Immich, bola testovaná so serverom Immich 3.2.4 a so serverom zostaveným z toho istého Immich `main`: prihlásenie, časová os, albumy, fotky a videá 360°, prehrávanie videa a nahrávanie, bez jedinej chyby API. Problémy prosím hláste v [Issues](https://github.com/freeKC/Immuch360/issues), nie projektu Immich. Úplnú dokumentáciu samotného Immich nájdete na [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Porovnanie s aplikáciou Immich a inými aplikáciami
@@ -1112,7 +1112,7 @@ Aplikácia je na Google Play pre telefóny a tablety; verzia pre App Store čak�
 
 - **Telefóny a tablety s Androidom**
   - Dnes: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) alebo APK na stránke [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pre telefón (univerzálny `Immuch360-v<version>-release.apk` funguje všade, `-armeabi-v7a` je pre staršie 32-bitové telefóny a súbor `.aab` je pre Google Play, nie na sideload). Zostava na GitHube je zvyčajne pred obchodom. V každom prípade sa inštaluje vedľa oficiálnej aplikácie Immich (balík `com.aprogsys.immuch360`).
-  - Čoskoro: na Google Play bola zostava 22 odoslaná 10. októbra 2026 namiesto zostavy 20 (zverejnenej od 7. októbra); prináša zmeny Immich z októbra a opravy pre televízory.
+  - Čoskoro: na Google Play bola zostava 23 odoslaná 10. októbra 2026 namiesto zostavy 20 (zverejnenej od 7. októbra); prináša zmeny Immich z októbra a opravy pre televízory zo zostáv 22 a 23.
 - **iPhone a iPad**
   - Dnes: čaká na posúdenie spoločnosťou Apple. Posudzovaná verzia obsahuje funkcie zostavy 11: nahrávanie do Immich a voľba Zdroj videa (zostava 15) a nespracované súbory Insta360 (zostava 16) prídu s neskoršou aktualizáciou v App Store. Zdrojový kód sa zostavuje v Xcode alebo na Codemagic, pozrite si [Zostavte si ju sami](#build-it-yourself).
   - Čoskoro: App Store, v posudzovaní.

@@ -17,10 +17,10 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
 
 | Platforma | Kur gauti | Būsena 2026 m. spalio 10 d. |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 22 surinkimas GitHub, 2026 m. spalio 10 d. išsiųstas į Google Play (ten 20 surinkimas veikia nuo spalio 7 d.) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 23 surinkimas GitHub, 2026 m. spalio 10 d. išsiųstas į Google Play (ten 20 surinkimas veikia nuo spalio 7 d.) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ir iPad** | App Store | 3.3.0 versija laukia Apple peržiūros; tuo metu [susikurkite patys](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [APK](#meta-quest-3) · Horizon Store | įrašas patvirtintas, 21 surinkimas Meta peržiūroje, 22 surinkimas alfa kanale |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#install-it-on-the-tv) · Google Play | 22 surinkimas GitHub; Google Play įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [APK](#meta-quest-3) · Horizon Store | įrašas patvirtintas, 21 surinkimas Meta peržiūroje, 23 surinkimas alfa kanale |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#install-it-on-the-tv) · Google Play | 23 surinkimas GitHub; Google Play įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Peržiūros ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | darbalaukio surinkimas 4 Windows sistemoje: nuotraukos, plokšti ir 360° vaizdo įrašai; macOS ir Linux vėliau |
 
 *Būsenos atnaujinamos su kiekvienu leidimu; išsami informacija skyriuje [Kur ją gauti](#where-to-get-it).*
@@ -612,14 +612,14 @@ Nuo 20 surinkimo ta pati Android programa veikia Android TV ir Google TV, o vien
 
 ### Pirmas paleidimas
 
-1. Prisijunkite kaip telefone: rodyklės perkelia rėmelį iš lauko į lauką, o OK ant lauko („Paspauskite OK, kad rašytumėte“) atveria televizoriaus klaviatūrą dialoge, serverio adresui, el. paštui ir slaptažodžiui.
+1. Prisijunkite kaip telefone: rodyklės perkelia rėmelį iš lauko į lauką (nuo 23 surinkimo jis eina virš užpildyto lauko etiketės, o ne per ją), o OK ant lauko („Paspauskite OK, kad rašytumėte“) atveria televizoriaus klaviatūrą dialoge, serverio adresui, el. paštui ir slaptažodžiui.
 2. Arba pasirinkite „Naudoti be serverio“. Televizorius neturi savų nuotraukų, todėl skirtuke „Nuotraukos“ rašoma „Šis televizorius neturi savų nuotraukų ar vaizdo įrašų: atidarykite tinklo bendrinimą iš Bibliotekos.“ su mygtuku „Tinklo bendrinimai“. Ten pridėkite bendrinimą, Plex serverį ar kamerą, kaip telefone (žr. [Tinklo bendrinimai](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Judėjimas pulteliu
 
 - Rodyklės perkelia rėmelį, OK atveria tai, ant ko jis yra, Atgal grįžta atgal. Iš skirtuko Atgal pereina į šoninį meniu, tada į „Nuotraukos“, tada išeina iš programos. Pasirinkimų sąraše, pavyzdžiui, renkantis bendrinimo tipą ar nustatymą, rodyklės tik perkelia rėmelį, o OK parenka pasirinkimą (nuo 22 surinkimo; anksčiau rodyklės keisdavo pasirinkimą).
-- Kanalo aukštyn ir žemyn mygtukai slenka po vieną puslapį. Nuo 22 surinkimo nuotraukų tinkleliai rodo maždaug šešias plyteles eilutėje ekrano paraščių viduje, su ryškesnėmis paties įrenginio failų miniatiūromis, kurios lieka glotnios smulkiose detalėse, o puslapiai, kurie telefone turi antraštę su paveikslėliu (360° sąrašas, „Mėgstamiausi“, įrenginio albumai), vietoj jos rodo vieną juostą.
-- Nuo 22 surinkimo rėmelis pradeda nuo pirmo kiekvieno puslapio elemento (pirmos 360° sąrašo plytelės, el. pašto lauko, kai serverio adresas patvirtintas), lieka ekrano paraščių viduje, kai tinklelis slenka, ir iš tinklelio kyla į virš jo esančią eilutę ar filtrus, o ne į mygtuką Atgal. Dešinėn nuo tinklo bendrinimo ar kameros pasiekia jo redagavimo mygtuką, o „Išbandyti ryšį“ rezultatas paslenkamas į matomą sritį.
+- Kanalo aukštyn ir žemyn mygtukai slenka po vieną puslapį. Nuo 22 surinkimo nuotraukų tinkleliai rodo maždaug šešias plyteles eilutėje ekrano paraščių viduje, su ryškesnėmis paties įrenginio failų miniatiūromis, o puslapiai, kurie telefone turi antraštę su paveikslėliu (360° sąrašas, „Mėgstamiausi“, įrenginio albumai), vietoj jos rodo vieną juostą. Nuo 23 surinkimo šios miniatiūros sukuriamos dvigubai didesnės už savo plytelę ir sklandžiai sumažinamos, todėl smulkios detalės, pavyzdžiui, apsnigtos šakos, nebemirguliuoja, o serverio nuotraukos rodo didesnį jo peržiūros vaizdą, tokį pat ryškų, o ne mažą jo miniatiūrą, ištemptą iki plytelės.
+- Nuo 22 surinkimo rėmelis pradeda nuo pirmo kiekvieno puslapio elemento (pirmos 360° sąrašo plytelės, el. pašto lauko, kai serverio adresas patvirtintas), lieka ekrano paraščių viduje, kai tinklelis slenka (nuo 23 surinkimo ir dviejuose „Nustatymai“ skydeliuose), ir iš tinklelio kyla į virš jo esančią eilutę ar filtrus, o ne į mygtuką Atgal. Dešinėn nuo tinklo bendrinimo ar kameros pasiekia jo redagavimo mygtuką, o „Išbandyti ryšį“ rezultatas paslenkamas į matomą sritį.
 - Peržiūrose veikia pultelio paleidimo ir pristabdymo, prasukimo pirmyn, atsukimo, kito ir ankstesnio mygtukai, o informacijos mygtukas rodo nuotraukos ar vaizdo įrašo informaciją.
 
 ### Nuotraukos ir vaizdo įrašai su pulteliu
@@ -733,7 +733,7 @@ Viskas, ką daro oficiali Immich mobilioji programa, yra čia: atsarginės kopij
 
 Kad parodytumėte 360° nuotrauką žmogui, kuris neturi programos, bendrinkite ją Immich bendrinama nuoroda: Immich žiniatinklio programa jo naršyklėje rodo 360° nuotrauką kaip sferą.
 
-Dabartinis surinkimas, 22 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030020), paremtas 2026 m. spalio 10 d. Immich `main` (versija 3.3.0-rc.0, dar ne stabili laida). 22 surinkimas buvo išbandytas su Immich 3.2.4 serveriu ir su serveriu, sukurtu iš to paties Immich `main`: prisijungimas, laiko skalė, albumai, 360° nuotraukos ir vaizdo įrašai, vaizdo įrašų atkūrimas ir įkėlimai, be jokių API klaidų. Problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui. Visa paties Immich dokumentacija yra [immich.app](https://immich.app).
+Dabartinis surinkimas, 23 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030021), paremtas 2026 m. spalio 10 d. Immich `main` (versija 3.3.0-rc.0, dar ne stabili laida). 22 surinkimas, tuo pačiu Immich pagrindu, buvo išbandytas su Immich 3.2.4 serveriu ir su serveriu, sukurtu iš to paties Immich `main`: prisijungimas, laiko skalė, albumai, 360° nuotraukos ir vaizdo įrašai, vaizdo įrašų atkūrimas ir įkėlimai, be jokių API klaidų. Problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui. Visa paties Immich dokumentacija yra [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Palyginimas su Immich programa ir kitomis programomis
@@ -1112,7 +1112,7 @@ Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Ap
 
 - **Android telefonai ir planšetės**
   - Šiandien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`).
-  - Netrukus: į Google Play 22 surinkimas išsiųstas 2026 m. spalio 10 d. vietoj 20 surinkimo (veikiančio nuo spalio 7 d.); jame yra spalio mėnesio Immich pakeitimai ir televizorių pataisymai.
+  - Netrukus: į Google Play 23 surinkimas išsiųstas 2026 m. spalio 10 d. vietoj 20 surinkimo (veikiančio nuo spalio 7 d.); jame yra spalio mėnesio Immich pakeitimai ir 22 bei 23 surinkimų televizorių pataisymai.
 - **iPhone ir iPad**
   - Šiandien: laukia Apple peržiūros. Peržiūrima versija turi 11 surinkimo funkcijas: įkėlimas į Immich ir „Vaizdo įrašo šaltinis“ pasirinkimas (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su vėlesniu App Store atnaujinimu. Šaltinio kodas kompiliuojamas su Xcode arba Codemagic, žr. [Susikurkite patys](#build-it-yourself).
   - Netrukus: App Store, peržiūrima.

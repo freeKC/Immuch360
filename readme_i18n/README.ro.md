@@ -17,10 +17,10 @@ Este pentru cei care filmează cu o cameră 360° (Insta360, GoPro MAX, DJI Osmo
 
 | Platformă | De unde o obțineți | Stare la 10 octombrie 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefoane și tablete **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build-ul 22 pe GitHub, trimis la Google Play pe 10 octombrie 2026 (build-ul 20 publicat acolo din 7 octombrie) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefoane și tablete **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build-ul 23 pe GitHub, trimis la Google Play pe 10 octombrie 2026 (build-ul 20 publicat acolo din 7 octombrie) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone și iPad** | App Store | versiunea 3.3.0 așteaptă evaluarea Apple; între timp, [compilați singur](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 și 3S | [APK](#meta-quest-3) · Horizon Store | pagină aprobată, build-ul 21 în evaluare la Meta, build-ul 22 pe canalul alfa |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV și Google TV** | [APK](#install-it-on-the-tv) · Google Play | build-ul 22 pe GitHub; pagina Google Play pentru televizoare este în evaluare la Google din 9 octombrie 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 și 3S | [APK](#meta-quest-3) · Horizon Store | pagină aprobată, build-ul 21 în evaluare la Meta, build-ul 23 pe canalul alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV și Google TV** | [APK](#install-it-on-the-tv) · Google Play | build-ul 23 pe GitHub; pagina Google Play pentru televizoare este în evaluare la Google din 9 octombrie 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP previzualizare](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | build-ul desktop 4 pe Windows: fotografii, videoclipuri plate și 360°; macOS și Linux mai târziu |
 
 *Stările sunt actualizate la fiecare versiune; detaliile sunt în [De unde o obțineți](#where-to-get-it).*
@@ -612,14 +612,14 @@ Vreți fotografiile și videoclipurile 360°, albumele dvs. și videoclipurile d
 
 ### Prima pornire
 
-1. Conectați-vă ca pe un telefon: săgețile mută un cadru de la un câmp la altul, iar OK pe un câmp („Apăsați OK pentru a scrie”) deschide tastatura televizorului într-un dialog, pentru adresa serverului, e-mail și parolă.
+1. Conectați-vă ca pe un telefon: săgețile mută un cadru de la un câmp la altul (începând cu build-ul 23, trece deasupra etichetei unui câmp completat în loc să o traverseze), iar OK pe un câmp („Apăsați OK pentru a scrie”) deschide tastatura televizorului într-un dialog, pentru adresa serverului, e-mail și parolă.
 2. Sau alegeți „Folosește fără server”. Un televizor nu are fotografii proprii, așa că fila Fotografii afișează „Acest televizor nu are fotografii sau videoclipuri proprii: deschideți o partajare de rețea din Bibliotecă.” cu un buton Partajări de rețea. Adăugați acolo o partajare, un server Plex sau o cameră, ca pe un telefon (vedeți [Partajări de rețea](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Navigați cu telecomanda
 
 - Săgețile mută cadrul, OK deschide ce se află sub el, Înapoi revine. Dintr-o filă, Înapoi duce la meniul lateral, apoi la Fotografii, apoi iese din aplicație. Într-o listă de opțiuni, cum ar fi tipul unei partajări sau o setare, săgețile doar mută cadrul, iar OK alege opțiunea (începând cu build-ul 22; înainte, săgețile schimbau opțiunea).
-- Canal sus și jos derulează câte o pagină. Începând cu build-ul 22, grilele de fotografii afișează aproximativ șase casete pe rând în interiorul marginilor ecranului, cu miniaturi mai clare ale fișierelor proprii ale dispozitivului, care rămân netede la detaliile fine, iar paginile care pe telefon au un antet cu imagine (lista 360°, Favorite, albumele dispozitivului) afișează în schimb o singură bară.
-- Începând cu build-ul 22, cadrul pornește de la primul element al fiecărei pagini (prima casetă a listei 360°, câmpul de e-mail după confirmarea adresei serverului), rămâne în interiorul marginilor ecranului când o grilă se derulează și urcă dintr-o grilă la rândul sau la filtrele de deasupra ei, nu la butonul Înapoi. Dreapta de pe o partajare de rețea sau de pe o cameră ajunge la butonul ei de editare, iar rezultatul lui „Testați conexiunea” se derulează până devine vizibil.
+- Canal sus și jos derulează câte o pagină. Începând cu build-ul 22, grilele de fotografii afișează aproximativ șase casete pe rând în interiorul marginilor ecranului, cu miniaturi mai clare ale fișierelor proprii ale dispozitivului, iar paginile care pe telefon au un antet cu imagine (lista 360°, Favorite, albumele dispozitivului) afișează în schimb o singură bară. Începând cu build-ul 23, aceste miniaturi sunt create la dublul dimensiunii casetei lor și micșorate lin, astfel încât detaliile fine, precum crengile înzăpezite, nu mai sclipesc, iar fotografiile serverului afișează previzualizarea lui mai mare, la fel de clară, în locul miniaturii lui mici întinse pe casetă.
+- Începând cu build-ul 22, cadrul pornește de la primul element al fiecărei pagini (prima casetă a listei 360°, câmpul de e-mail după confirmarea adresei serverului), rămâne în interiorul marginilor ecranului când o grilă se derulează (începând cu build-ul 23 și în cele două panouri din Setări) și urcă dintr-o grilă la rândul sau la filtrele de deasupra ei, nu la butonul Înapoi. Dreapta de pe o partajare de rețea sau de pe o cameră ajunge la butonul ei de editare, iar rezultatul lui „Testați conexiunea” se derulează până devine vizibil.
 - În vizualizatoare funcționează tastele de redare și pauză, derulare înainte, derulare înapoi, următor și anterior ale telecomenzii, iar tasta de informații afișează detaliile unei fotografii sau ale unui videoclip.
 
 ### Fotografii și videoclipuri cu telecomanda
@@ -733,7 +733,7 @@ Tot ce face aplicația mobilă oficială Immich se găsește aici: backup, crono
 
 Pentru a arăta o fotografie 360° cuiva care nu are aplicația, distribuiți-o printr-un link distribuit Immich: aplicația web Immich afișează o fotografie 360° ca o sferă în browserul persoanei respective.
 
-Build-ul curent, build-ul 22 (versiunea 3.3.0-rc.0, numărul de build 3030020), se bazează pe `main` din Immich din 10 octombrie 2026 (versiunea 3.3.0-rc.0, încă nu o versiune stabilă). Build-ul 22 a fost testat cu un server Immich 3.2.4 și cu un server construit din același `main` din Immich: autentificare, cronologie, albume, fotografii și videoclipuri 360°, redare video și încărcări, fără nicio eroare de API. Vă rugăm să raportați problemele în [Issues](https://github.com/freeKC/Immuch360/issues), nu proiectului Immich. Pentru documentația completă a Immich, vedeți [immich.app](https://immich.app).
+Build-ul curent, build-ul 23 (versiunea 3.3.0-rc.0, numărul de build 3030021), se bazează pe `main` din Immich din 10 octombrie 2026 (versiunea 3.3.0-rc.0, încă nu o versiune stabilă). Build-ul 22, pe aceeași bază Immich, a fost testat cu un server Immich 3.2.4 și cu un server construit din același `main` din Immich: autentificare, cronologie, albume, fotografii și videoclipuri 360°, redare video și încărcări, fără nicio eroare de API. Vă rugăm să raportați problemele în [Issues](https://github.com/freeKC/Immuch360/issues), nu proiectului Immich. Pentru documentația completă a Immich, vedeți [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Comparație cu aplicația Immich și cu alte aplicații
@@ -1112,7 +1112,7 @@ Aplicația este pe Google Play pentru telefoane și tablete; versiunea pentru Ap
 
 - **Telefoane și tablete Android**
   - Astăzi: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) sau APK-ul de pe pagina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pentru un telefon (`Immuch360-v<version>-release.apk` universal merge peste tot, `-armeabi-v7a` este pentru telefoanele mai vechi pe 32 de biți, iar fișierul `.aab` este pentru Google Play, nu pentru sideload). Build-ul de pe GitHub este de obicei înaintea celui din magazin. În ambele cazuri se instalează alături de aplicația oficială Immich (pachetul `com.aprogsys.immuch360`).
-  - În curând: pe Google Play, build-ul 22 a fost trimis pe 10 octombrie 2026 în locul build-ului 20 (publicat din 7 octombrie); aduce modificările Immich din octombrie și corecturile pentru televizoare.
+  - În curând: pe Google Play, build-ul 23 a fost trimis pe 10 octombrie 2026 în locul build-ului 20 (publicat din 7 octombrie); aduce modificările Immich din octombrie și corecturile pentru televizoare din build-urile 22 și 23.
 - **iPhone și iPad**
   - Astăzi: în așteptarea evaluării Apple. Versiunea aflată în evaluare are funcțiile build-ului 11: încărcarea în Immich și alegerea Sursa video (build 15) și fișierele Insta360 brute (build 16) vor veni cu o actualizare ulterioară din App Store. Codul sursă se compilează cu Xcode sau pe Codemagic, vedeți [Compilați singur](#build-it-yourself).
   - În curând: App Store, în evaluare.

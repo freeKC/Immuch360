@@ -17,10 +17,10 @@ O Immuch360 é a aplicação móvel do Immich com fotos e vídeos 360° em que p
 
 | Plataforma | Onde a obter | Estado a 10 de outubro de 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telemóveis e tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 no GitHub, enviada para o Google Play a 10 de outubro de 2026 (lá, a build 20 está publicada desde 7 de outubro) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telemóveis e tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 no GitHub, enviada para o Google Play a 10 de outubro de 2026 (lá, a build 20 está publicada desde 7 de outubro) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone e iPad** | App Store | versão 3.3.0 à espera da análise da Apple; entretanto, [compile por si](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [APK](#meta-quest-3) · Horizon Store | ficha aprovada, build 21 em análise pela Meta, build 22 no canal Alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 no GitHub; a página do Google Play para TV está em análise pela Google desde 9 de outubro de 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [APK](#meta-quest-3) · Horizon Store | ficha aprovada, build 21 em análise pela Meta, build 23 no canal Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 no GitHub; a página do Google Play para TV está em análise pela Google desde 9 de outubro de 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP de pré-visualização](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | build desktop 4 no Windows: fotos, vídeos planos e 360°; macOS e Linux mais tarde |
 
 *Os estados são atualizados a cada versão; os detalhes estão em [Onde a obter](#where-to-get-it).*
@@ -612,14 +612,14 @@ A partir da build 20, a mesma aplicação Android corre na Android TV e na Googl
 
 ### Primeiro arranque
 
-1. Inicie sessão como num telemóvel: as setas movem uma moldura de campo em campo, e OK num campo ("Prima OK para escrever") abre o teclado da TV numa caixa de diálogo, para o endereço do servidor, o e-mail e a palavra-passe.
+1. Inicie sessão como num telemóvel: as setas movem uma moldura de campo em campo (a partir da build 23 passa por cima da etiqueta de um campo preenchido em vez de a atravessar), e OK num campo ("Prima OK para escrever") abre o teclado da TV numa caixa de diálogo, para o endereço do servidor, o e-mail e a palavra-passe.
 2. Ou escolha "Utilizar sem servidor". Uma TV não tem fotos próprias, por isso o separador Fotos diz "Esta TV não tem fotos nem vídeos próprios: abra uma partilha de rede a partir da Biblioteca." com um botão Partilhas de rede. Adicione lá uma partilha, um servidor Plex ou uma câmara, como num telemóvel (veja [Partilhas de rede](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Navegar com o comando
 
 - As setas movem a moldura, OK abre aquilo em que está, Voltar volta atrás. A partir de um separador, Voltar vai para o menu lateral, depois para Fotos, depois sai da aplicação. Numa lista de opções, como o tipo de uma partilha ou uma definição, as setas só movem a moldura e o OK escolhe a opção (a partir da build 22; antes, as setas mudavam a opção).
-- Canal acima e abaixo deslocam uma página de cada vez. A partir da build 22, as grelhas de fotos mostram cerca de seis mosaicos por linha dentro das margens do ecrã, com miniaturas mais nítidas dos ficheiros do próprio dispositivo, que se mantêm suaves nos pormenores finos, e as páginas que num telemóvel têm um cabeçalho com imagem (a lista 360°, Favoritos, os álbuns do dispositivo) mostram em vez disso uma única barra.
-- A partir da build 22, a moldura começa no primeiro elemento de cada página (o primeiro mosaico da lista 360°, o campo do e-mail assim que o endereço do servidor é confirmado), fica dentro das margens do ecrã enquanto uma grelha se desloca, e sobe de uma grelha para a linha ou para os filtros acima dela em vez de ir para o botão Voltar. Direita a partir de uma partilha de rede ou de uma câmara chega ao seu botão de edição, e o resultado de "Testar a ligação" desloca-se até ficar visível.
+- Canal acima e abaixo deslocam uma página de cada vez. A partir da build 22, as grelhas de fotos mostram cerca de seis mosaicos por linha dentro das margens do ecrã, com miniaturas mais nítidas dos ficheiros do próprio dispositivo, e as páginas que num telemóvel têm um cabeçalho com imagem (a lista 360°, Favoritos, os álbuns do dispositivo) mostram em vez disso uma única barra. A partir da build 23, essas miniaturas são criadas com o dobro do tamanho do seu mosaico e reduzidas suavemente, pelo que os pormenores finos, como ramos com neve, já não cintilam, e as fotos do servidor mostram a sua pré-visualização maior, igualmente nítida, em vez da sua pequena miniatura esticada até ao mosaico.
+- A partir da build 22, a moldura começa no primeiro elemento de cada página (o primeiro mosaico da lista 360°, o campo do e-mail assim que o endereço do servidor é confirmado), fica dentro das margens do ecrã enquanto uma grelha se desloca (a partir da build 23, também nos dois painéis de Definições), e sobe de uma grelha para a linha ou para os filtros acima dela em vez de ir para o botão Voltar. Direita a partir de uma partilha de rede ou de uma câmara chega ao seu botão de edição, e o resultado de "Testar a ligação" desloca-se até ficar visível.
 - Nos visualizadores, as teclas de reproduzir e pausa, avançar, recuar, seguinte e anterior do comando funcionam, e a tecla de informação mostra os detalhes de uma foto ou de um vídeo.
 
 ### Fotos e vídeos com o comando
@@ -733,7 +733,7 @@ Tudo o que a aplicação móvel oficial do Immich faz está aqui: cópia de segu
 
 Para mostrar uma foto 360° a alguém que não tem a aplicação, partilhe-a com uma ligação partilhada do Immich: a aplicação web do Immich mostra uma foto 360° como esfera no navegador dessa pessoa.
 
-A build atual, a build 22 (versão 3.3.0-rc.0, número de build 3030020), é baseada no Immich `main` de 10 de outubro de 2026 (versão 3.3.0-rc.0, ainda não uma versão estável). A build 22 foi testada com um servidor Immich 3.2.4 e com um servidor compilado a partir desse mesmo Immich `main`: início de sessão, cronologia, álbuns, fotos e vídeos 360°, reprodução de vídeo e carregamentos, sem nenhum erro de API. Por favor, comunique problemas em [Issues](https://github.com/freeKC/Immuch360/issues), não ao projeto Immich. Para a documentação completa do próprio Immich, veja [immich.app](https://immich.app).
+A build atual, a build 23 (versão 3.3.0-rc.0, número de build 3030021), é baseada no Immich `main` de 10 de outubro de 2026 (versão 3.3.0-rc.0, ainda não uma versão estável). A build 22, sobre a mesma base do Immich, foi testada com um servidor Immich 3.2.4 e com um servidor compilado a partir desse mesmo Immich `main`: início de sessão, cronologia, álbuns, fotos e vídeos 360°, reprodução de vídeo e carregamentos, sem nenhum erro de API. Por favor, comunique problemas em [Issues](https://github.com/freeKC/Immuch360/issues), não ao projeto Immich. Para a documentação completa do próprio Immich, veja [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Comparação com a aplicação Immich e outras aplicações
@@ -1112,7 +1112,7 @@ A aplicação está no Google Play para telemóveis e tablets; a versão da App 
 
 - **Telemóveis e tablets Android**
   - Hoje: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ou o APK na página [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` para um telemóvel (o `Immuch360-v<version>-release.apk` universal funciona em todo o lado, `-armeabi-v7a` é para telemóveis mais antigos de 32 bits, e o ficheiro `.aab` é para o Google Play, não para sideload). A build do GitHub está normalmente à frente da loja. Em qualquer caso, instala-se ao lado da aplicação oficial do Immich (pacote `com.aprogsys.immuch360`).
-  - Em breve: no Google Play, a build 22 foi enviada a 10 de outubro de 2026 em vez da build 20 (publicada desde 7 de outubro); traz as alterações do Immich de outubro e as correções para TV.
+  - Em breve: no Google Play, a build 23 foi enviada a 10 de outubro de 2026 em vez da build 20 (publicada desde 7 de outubro); traz as alterações do Immich de outubro e as correções para TV das builds 22 e 23.
 - **iPhone e iPad**
   - Hoje: a aguardar a análise da Apple. A versão em análise tem as funcionalidades da build 11: o carregamento para o Immich e a escolha Origem do vídeo (build 15) e os ficheiros Insta360 em bruto (build 16) chegarão com uma atualização posterior da App Store. O código-fonte compila com o Xcode ou no Codemagic, veja [Compilar por si](#build-it-yourself).
   - Em breve: App Store, em análise.

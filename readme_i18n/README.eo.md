@@ -17,10 +17,10 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
 
 | Platformo | Kie akiri ĝin | Stato je la 10-a de oktobro 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilaĵo 22 en GitHub, sendita al Google Play la 10-an de oktobro 2026 (kompilaĵo 20 tie publika ekde la 7-a de oktobro) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilaĵo 23 en GitHub, sendita al Google Play la 10-an de oktobro 2026 (kompilaĵo 20 tie publika ekde la 7-a de oktobro) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone kaj iPad** | App Store | versio 3.3.0 atendas la kontrolon de Apple; intertempe [konstruu ĝin mem](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [APK](#meta-quest-3) · Horizon Store | listero aprobita, kompilaĵo 21 en la kontrolo de Meta, kompilaĵo 22 en la alfa-kanalo |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilaĵo 22 en GitHub; la Google-Play-listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [APK](#meta-quest-3) · Horizon Store | listero aprobita, kompilaĵo 21 en la kontrolo de Meta, kompilaĵo 23 en la alfa-kanalo |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilaĵo 23 en GitHub; la Google-Play-listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP de la antaŭversio](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | labortabla kompilaĵo 4 en Windows: fotoj, ebenaj kaj 360°-videoj; macOS kaj Linux pli malfrue |
 
 *La statoj estas ĝisdatigataj ĉe ĉiu eldono; la detaloj estas en [Kie akiri ĝin](#where-to-get-it).*
@@ -612,14 +612,14 @@ Ekde kompilaĵo 20 la sama Android-aplikaĵo funkcias en Android TV kaj Google T
 
 ### Unua starto
 
-1. Ensalutu kiel en telefono: la sagoj movas kadron de kampo al kampo, kaj OK sur kampo ("Premu OK por tajpi") malfermas la klavaron de la televidilo en dialogo, por la servila adreso, la retpoŝtadreso kaj la pasvorto.
+1. Ensalutu kiel en telefono: la sagoj movas kadron de kampo al kampo (ekde kompilaĵo 23 ĝi pasas super la etikedo de plenigita kampo anstataŭ trans ĝi), kaj OK sur kampo ("Premu OK por tajpi") malfermas la klavaron de la televidilo en dialogo, por la servila adreso, la retpoŝtadreso kaj la pasvorto.
 2. Aŭ elektu "Uzi sen servilo". Televidilo ne havas proprajn fotojn, do la langeto Fotoj diras "Ĉi tiu televidilo ne havas proprajn fotojn aŭ videojn: malfermu retan kunhavigon el la Biblioteko." kun butono Retaj kunhavigoj. Aldonu tie kunhavigon, Plex-servilon aŭ kameraon, kiel en telefono (vidu [Retaj kunhavigoj](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Moviĝi per la teleregilo
 
 - La sagoj movas la kadron, OK malfermas tion, sur kio ĝi estas, Reen iras reen. El langeto, Reen iras al la flanka menuo, poste al Fotoj, poste el la aplikaĵo. En listo de ebloj, ekzemple la tipo de kunhavigo aŭ agordo, la sagoj nur movas la kadron kaj OK elektas la eblon (ekde kompilaĵo 22; antaŭe la sagoj ŝanĝis la eblon).
-- Kanalo supren kaj malsupren rulumas po unu paĝo. Ekde kompilaĵo 22 la fotokradoj montras ĉirkaŭ ses kahelojn po vico ene de la marĝenoj de la ekrano, kun pli akraj miniaturoj de la propraj dosieroj de la aparato, kiuj restas glataj ĉe fajnaj detaloj, kaj la paĝoj kun bilda kapo en telefono (la 360°-listo, Preferataĵoj, la albumoj de la aparato) montras anstataŭe unu solan breton.
-- Ekde kompilaĵo 22 la kadro komenciĝas sur la unua ero de ĉiu paĝo (la unua kahelo de la 360°-listo, la retpoŝta kampo post kiam la servila adreso estas konfirmita), restas ene de la marĝenoj de la ekrano dum krado rulumas, kaj iras de krado supren al la vico aŭ la filtriloj super ĝi anstataŭ al la butono Reen. Dekstren el reta kunhavigo aŭ kamerao atingas ĝian redaktan butonon, kaj la rezulto de "Testi la konekton" rulumiĝas en la videblan parton.
+- Kanalo supren kaj malsupren rulumas po unu paĝo. Ekde kompilaĵo 22 la fotokradoj montras ĉirkaŭ ses kahelojn po vico ene de la marĝenoj de la ekrano, kun pli akraj miniaturoj de la propraj dosieroj de la aparato, kaj la paĝoj kun bilda kapo en telefono (la 360°-listo, Preferataĵoj, la albumoj de la aparato) montras anstataŭe unu solan breton. Ekde kompilaĵo 23 tiuj miniaturoj estas faritaj duoble pli grandaj ol ilia kahelo kaj glate malgrandigitaj, tiel ke fajnaj detaloj kiel neĝkovritaj branĉoj ne plu briletas, kaj la fotoj de la servilo montras ĝian pli grandan antaŭvidon, same akran, anstataŭ ĝian malgrandan miniaturon etenditan al la kahelo.
+- Ekde kompilaĵo 22 la kadro komenciĝas sur la unua ero de ĉiu paĝo (la unua kahelo de la 360°-listo, la retpoŝta kampo post kiam la servila adreso estas konfirmita), restas ene de la marĝenoj de la ekrano dum krado rulumas (ekde kompilaĵo 23 ankaŭ en la du panoj de Agordoj), kaj iras de krado supren al la vico aŭ la filtriloj super ĝi anstataŭ al la butono Reen. Dekstren el reta kunhavigo aŭ kamerao atingas ĝian redaktan butonon, kaj la rezulto de "Testi la konekton" rulumiĝas en la videblan parton.
 - En la montriloj funkcias la klavoj de la teleregilo por ludi kaj paŭzi, rapide antaŭen, rebobeni, sekva kaj antaŭa, kaj la informa klavo montras la detalojn de foto aŭ video.
 
 ### Fotoj kaj videoj per la teleregilo
@@ -733,7 +733,7 @@ Kiam la servilo ignoras HTTP-Range-petojn ĉe la originalo kaj la MP4-indekso (m
 
 Por montri 360°-foton al iu, kiu ne havas la aplikaĵon, kunhavigu ĝin per kunhavigita ligilo de Immich: la TTT-aplikaĵo de Immich montras 360°-foton kiel sferon en ties retumilo.
 
-La nuna kompilaĵo, kompilaĵo 22 (versio 3.3.0-rc.0, kompilaĵa numero 3030020), baziĝas sur Immich `main` de la 10-a de oktobro 2026 (versio 3.3.0-rc.0, ankoraŭ ne stabila eldono). Kompilaĵo 22 estis testita kontraŭ Immich-3.2.4-servilo kaj kontraŭ servilo kompilita el tiu sama Immich `main`: ensaluto, templinio, albumoj, 360°-fotoj kaj -videoj, ludado de videoj kaj alŝutoj, sen ia API-eraro. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la projekto Immich. Por la plena dokumentaro de Immich mem, vidu [immich.app](https://immich.app).
+La nuna kompilaĵo, kompilaĵo 23 (versio 3.3.0-rc.0, kompilaĵa numero 3030021), baziĝas sur Immich `main` de la 10-a de oktobro 2026 (versio 3.3.0-rc.0, ankoraŭ ne stabila eldono). Kompilaĵo 22, sur la sama Immich-bazo, estis testita kontraŭ Immich-3.2.4-servilo kaj kontraŭ servilo kompilita el tiu sama Immich `main`: ensaluto, templinio, albumoj, 360°-fotoj kaj -videoj, ludado de videoj kaj alŝutoj, sen ia API-eraro. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la projekto Immich. Por la plena dokumentaro de Immich mem, vidu [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Kompare kun la aplikaĵo de Immich kaj aliaj aplikaĵoj
@@ -1112,7 +1112,7 @@ La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Stor
 
 - **Android-telefonoj kaj -tabulkomputiloj**
   - Hodiaŭ: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), aŭ la APK en la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` por telefono (la universala `Immuch360-v<version>-release.apk` funkcias ĉie, `-armeabi-v7a` estas por pli malnovaj 32-bitaj telefonoj, kaj la dosiero `.aab` estas por Google Play, ne por flankinstalado). La GitHub-kompilaĵo kutime estas antaŭ la vendejo. Ĉiuokaze ĝi instaliĝas apud la oficiala aplikaĵo de Immich (pakaĵo `com.aprogsys.immuch360`).
-  - Baldaŭ: en Google Play, kompilaĵo 22 estis sendita la 10-an de oktobro 2026 anstataŭ kompilaĵo 20 (publika ekde la 7-a de oktobro); ĝi portas la oktobrajn ŝanĝojn de Immich kaj la televidilajn korektojn.
+  - Baldaŭ: en Google Play, kompilaĵo 23 estis sendita la 10-an de oktobro 2026 anstataŭ kompilaĵo 20 (publika ekde la 7-a de oktobro); ĝi portas la oktobrajn ŝanĝojn de Immich kaj la televidilajn korektojn de kompilaĵoj 22 kaj 23.
 - **iPhone kaj iPad**
   - Hodiaŭ: atendas la kontrolon de Apple. La kontrolata versio portas la funkciojn de kompilaĵo 11: la alŝuto al Immich kaj la elekto "Videofonto" (kompilaĵo 15) kaj la krudaj Insta360-dosieroj (kompilaĵo 16) venos kun posta App-Store-ĝisdatigo. La fontkodo konstruiĝas per Xcode aŭ en Codemagic, vidu [Konstrui ĝin mem](#build-it-yourself).
   - Baldaŭ: App Store, en kontrolado.

@@ -18,10 +18,10 @@ It is for people who shoot with a 360° camera (Insta360, GoPro MAX, DJI Osmo 36
 
 | Platform | Where to get it | Status on 10 October 2026 |
 |---|---|---|
-| <img src=".github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 on GitHub, sent to Google Play on 10 October 2026 (build 20 live there since 7 October) |
+| <img src=".github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 on GitHub, sent to Google Play on 10 October 2026 (build 20 live there since 7 October) |
 | <img src=".github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.0 waiting for Apple's review; [build it yourself](#build-it-yourself) meanwhile |
-| <img src=".github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [APK](#meta-quest-3) · Horizon Store | listing approved, build 21 under Meta's review, build 22 on the Alpha channel |
-| <img src=".github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 on GitHub; the Google Play listing for TVs is under Google's review since 9 October 2026 |
+| <img src=".github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [APK](#meta-quest-3) · Horizon Store | listing approved, build 21 under Meta's review, build 23 on the Alpha channel |
+| <img src=".github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 on GitHub; the Google Play listing for TVs is under Google's review since 9 October 2026 |
 | <img src=".github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src=".github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src=".github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 on Windows: photos, flat and 360° videos; macOS and Linux later |
 
 *Statuses are updated at each release; the details are in [Where to get it](#where-to-get-it).*
@@ -714,7 +714,7 @@ Everything the official Immich mobile app does is here: backup, timeline, albums
 
 To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows a 360° photo as a sphere in their browser.
 
-The current build, build 22 (version 3.3.0-rc.0, build number 3030020), is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0, not a stable release yet). Build 22 was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
+The current build, build 23 (version 3.3.0-rc.0, build number 3030021), is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0, not a stable release yet). Build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
 
 ## Compared with the Immich app and other apps
 
@@ -1083,7 +1083,7 @@ The app is on Google Play for phones and tablets; the App Store version is waiti
 
 - **Android phones and tablets**
   - Today: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone (the universal `Immuch360-v<version>-release.apk` works everywhere, `-armeabi-v7a` is for older 32 bit phones, and the `.aab` file is for Google Play, not for sideloading). The GitHub build is usually ahead of the store. Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`).
-  - Soon: on Google Play, build 22 was sent on 10 October 2026 in place of build 20 (live since 7 October); it carries the Immich changes of October and the TV fixes.
+  - Soon: on Google Play, build 23 was sent on 10 October 2026 in place of build 20 (live since 7 October); it carries the Immich changes of October and the TV fixes of builds 22 and 23.
 - **iPhone and iPad**
   - Today: waiting for Apple's review. The version under review carries the features of build 11: the upload to Immich and the Video source choice (build 15) and the raw Insta360 files (build 16) will come with a later App Store update. The source builds with Xcode or on Codemagic, see [Build it yourself](#build-it-yourself).
   - Soon: App Store, under review.

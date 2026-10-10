@@ -17,10 +17,10 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
 
 | 플랫폼 | 받는 곳 | 2026년 10월 10일 기준 상태 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub에 빌드 22, 2026년 10월 10일 Google Play에 제출(Google Play에는 10월 7일부터 빌드 20 공개 중) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub에 빌드 23, 2026년 10월 10일 Google Play에 제출(Google Play에는 10월 7일부터 빌드 20 공개 중) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.0이 Apple의 심사를 기다리는 중; 그동안은 [직접 빌드하기](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3와 3S | [APK](#meta-quest-3) · Horizon Store | 등록 승인됨, 빌드 21은 Meta 심사 중, 빌드 22는 알파 채널에 있음 |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub에 빌드 22; TV용 Google Play 등록 정보는 2026년 10월 9일부터 Google 심사 중 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3와 3S | [APK](#meta-quest-3) · Horizon Store | 등록 승인됨, 빌드 21은 Meta 심사 중, 빌드 23은 알파 채널에 있음 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub에 빌드 23; TV용 Google Play 등록 정보는 2026년 10월 9일부터 Google 심사 중 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [미리 보기 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows용 데스크톱 빌드 4: 사진, 평면 동영상과 360° 동영상; macOS와 Linux는 나중에 |
 
 *상태는 릴리스마다 갱신됩니다. 자세한 내용은 [받는 곳](#where-to-get-it)에 있습니다.*
@@ -612,14 +612,14 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 ### 처음 시작
 
-1. 휴대폰에서처럼 로그인합니다: 화살표가 칸에서 칸으로 테두리를 옮기고, 칸에서 OK를 누르면("OK를 눌러 입력") 서버 주소, 이메일, 비밀번호를 입력할 TV 키보드가 대화 상자로 열립니다.
+1. 휴대폰에서처럼 로그인합니다: 화살표가 칸에서 칸으로 테두리를 옮기고(빌드 23부터는 채워진 칸의 라벨을 가로지르지 않고 그 위로 지나갑니다), 칸에서 OK를 누르면("OK를 눌러 입력") 서버 주소, 이메일, 비밀번호를 입력할 TV 키보드가 대화 상자로 열립니다.
 2. 또는 "서버 없이 사용"을 고릅니다. TV에는 자체 사진이 없으므로 사진 탭에 네트워크 공유 버튼과 함께 "이 TV에는 자체 사진이나 동영상이 없습니다: 라이브러리에서 네트워크 공유를 여세요."라고 표시됩니다. 거기서 휴대폰에서처럼 공유, Plex 서버 또는 카메라를 추가하세요([네트워크 공유](#network-shares-a-nas-a-computer-or-a-media-server) 참조).
 
 ### 리모컨으로 이동하기
 
 - 화살표는 테두리를 옮기고, OK는 테두리가 놓인 것을 열고, 뒤로는 뒤로 갑니다. 탭에서 뒤로를 누르면 사이드 메뉴로, 그다음 사진으로, 그다음 앱 밖으로 나갑니다. 공유 종류나 설정 같은 선택지 목록에서는 화살표가 테두리만 옮기고 OK가 선택지를 고릅니다(빌드 22부터이며, 이전에는 화살표가 선택을 바꿨습니다).
-- 채널 위와 아래는 한 페이지씩 스크롤합니다. 빌드 22부터 사진 격자는 화면 여백 안에서 한 줄에 타일을 약 6개 보여 주고, 기기 자체 파일의 썸네일은 더 선명하면서도 세밀한 부분에서 매끄럽게 유지되며, 휴대폰에서 이미지 헤더가 있는 페이지(360° 목록, 즐겨찾기, 기기의 앨범)는 대신 막대 하나만 보여 줍니다.
-- 빌드 22부터 테두리는 각 페이지의 첫 항목(360° 목록의 첫 타일, 서버 주소를 확인한 뒤의 이메일 칸)에서 시작하고, 격자가 스크롤되는 동안 화면 여백 안에 머물며, 격자에서 위로 갈 때 뒤로 버튼이 아니라 그 위의 줄이나 필터로 갑니다. 네트워크 공유나 카메라에서 오른쪽을 누르면 그 편집 버튼으로 가고, "연결 테스트" 결과는 보이도록 스크롤됩니다.
+- 채널 위와 아래는 한 페이지씩 스크롤합니다. 빌드 22부터 사진 격자는 화면 여백 안에서 한 줄에 타일을 약 6개 보여 주고, 기기 자체 파일의 썸네일은 더 선명하며, 휴대폰에서 이미지 헤더가 있는 페이지(360° 목록, 즐겨찾기, 기기의 앨범)는 대신 막대 하나만 보여 줍니다. 빌드 23부터는 이 썸네일을 타일의 두 배 크기로 만든 뒤 부드럽게 줄이므로 눈 덮인 나뭇가지 같은 세밀한 부분이 더 이상 반짝거리지 않고, 서버의 사진은 타일에 맞게 늘린 작은 썸네일 대신 서버의 더 큰 미리 보기 이미지를 똑같이 선명하게 보여 줍니다.
+- 빌드 22부터 테두리는 각 페이지의 첫 항목(360° 목록의 첫 타일, 서버 주소를 확인한 뒤의 이메일 칸)에서 시작하고, 격자가 스크롤되는 동안 화면 여백 안에 머물며(빌드 23부터는 설정의 두 창에서도), 격자에서 위로 갈 때 뒤로 버튼이 아니라 그 위의 줄이나 필터로 갑니다. 네트워크 공유나 카메라에서 오른쪽을 누르면 그 편집 버튼으로 가고, "연결 테스트" 결과는 보이도록 스크롤됩니다.
 - 뷰어에서는 리모컨의 재생과 일시 정지, 빨리 감기, 되감기, 다음, 이전 키가 동작하고, 정보 키는 사진이나 동영상의 상세 정보를 보여 줍니다.
 
 ### 리모컨으로 보는 사진과 동영상
@@ -733,7 +733,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 앱이 없는 사람에게 360° 사진을 보여 주려면 Immich 공유 링크로 공유하세요. Immich 웹 앱이 상대방의 브라우저에서 360° 사진을 구 형태로 보여 줍니다.
 
-현재 빌드인 빌드 22(버전 3.3.0-rc.0, 빌드 번호 3030020)는 2026년 10월 10일의 Immich `main`(버전 3.3.0-rc.0, 아직 안정 릴리스가 아님)을 기반으로 합니다. 빌드 22는 Immich 3.2.4 서버와, 같은 Immich `main`으로 빌드한 서버에서 테스트했으며, 로그인, 타임라인, 앨범, 360° 사진과 동영상, 동영상 재생, 업로드에서 API 오류가 없었습니다. 문제는 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려 주세요. Immich 자체의 전체 문서는 [immich.app](https://immich.app)을 보세요.
+현재 빌드인 빌드 23(버전 3.3.0-rc.0, 빌드 번호 3030021)은 2026년 10월 10일의 Immich `main`(버전 3.3.0-rc.0, 아직 안정 릴리스가 아님)을 기반으로 합니다. 같은 Immich를 기반으로 한 빌드 22는 Immich 3.2.4 서버와, 같은 Immich `main`으로 빌드한 서버에서 테스트했으며, 로그인, 타임라인, 앨범, 360° 사진과 동영상, 동영상 재생, 업로드에서 API 오류가 없었습니다. 문제는 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려 주세요. Immich 자체의 전체 문서는 [immich.app](https://immich.app)을 보세요.
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich 앱 및 다른 앱과의 비교
@@ -1112,7 +1112,7 @@ Immuch360 Desktop의 CI(`.github/workflows/immuch360-desktop.yml`)는 `immuch360
 
 - **Android 휴대폰과 태블릿**
   - 지금: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), 또는 [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 APK: 휴대폰용은 `Immuch360-v<version>-arm64-v8a-release.apk`(범용 `Immuch360-v<version>-release.apk`는 어디서나 동작, `-armeabi-v7a`는 오래된 32비트 휴대폰용, `.aab` 파일은 Google Play용이며 사이드로드용이 아님). GitHub 빌드가 보통 스토어보다 앞서 있습니다. 어느 쪽이든 공식 Immich 앱 옆에 따로 설치됩니다(패키지 `com.aprogsys.immuch360`).
-  - 곧: Google Play에는 2026년 10월 10일에 빌드 20(10월 7일부터 공개 중) 대신 빌드 22를 제출함. 10월의 Immich 변경 사항과 TV 수정 사항이 들어 있음.
+  - 곧: Google Play에는 2026년 10월 10일에 빌드 20(10월 7일부터 공개 중) 대신 빌드 23을 제출함. 10월의 Immich 변경 사항과 빌드 22와 23의 TV 수정 사항이 들어 있음.
 - **iPhone과 iPad**
   - 지금: Apple의 심사를 기다리는 중입니다. 심사 중인 버전에는 빌드 11의 기능이 들어 있으며, Immich로 업로드와 동영상 소스 선택(빌드 15), Insta360 RAW 파일(빌드 16)은 이후 App Store 업데이트와 함께 옵니다. 소스는 Xcode나 Codemagic에서 빌드됩니다. [직접 빌드하기](#build-it-yourself)를 보세요.
   - 곧: App Store, 심사 중.

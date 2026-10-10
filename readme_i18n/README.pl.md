@@ -17,10 +17,10 @@ Jest dla osób, które fotografują kamerą 360° (Insta360, GoPro MAX, DJI Osmo
 
 | Platforma | Gdzie ją pobrać | Stan na 10 października 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefony i tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilacja 22 na GitHubie, wysłana do Google Play 10 października 2026 (tam kompilacja 20 dostępna od 7 października) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefony i tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilacja 23 na GitHubie, wysłana do Google Play 10 października 2026 (tam kompilacja 20 dostępna od 7 października) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | wersja 3.3.0 czeka na weryfikację Apple; tymczasem [zbuduj ją samodzielnie](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | wpis zatwierdzony, kompilacja 21 w weryfikacji Meta, kompilacja 22 w kanale alfa |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilacja 22 na GitHubie; strona w Google Play dla telewizorów jest w weryfikacji Google od 9 października 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | wpis zatwierdzony, kompilacja 21 w weryfikacji Meta, kompilacja 23 w kanale alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilacja 23 na GitHubie; strona w Google Play dla telewizorów jest w weryfikacji Google od 9 października 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP wersji zapoznawczej](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | kompilacja na komputery 4 na Windows: zdjęcia, płaskie filmy i filmy 360°; macOS i Linux później |
 
 *Stany są aktualizowane przy każdym wydaniu; szczegóły w sekcji [Gdzie ją pobrać](#where-to-get-it).*
@@ -612,14 +612,14 @@ Od kompilacji 20 ta sama aplikacja na Androida działa na Android TV i Google TV
 
 ### Pierwsze uruchomienie
 
-1. Zaloguj się jak na telefonie: strzałki przesuwają ramkę z pola na pole, a OK na polu ("Naciśnij OK, aby pisać") otwiera klawiaturę telewizora w oknie dialogowym, dla adresu serwera, adresu e-mail i hasła.
+1. Zaloguj się jak na telefonie: strzałki przesuwają ramkę z pola na pole (od kompilacji 23 przechodzi nad etykietą wypełnionego pola zamiast przez nią), a OK na polu ("Naciśnij OK, aby pisać") otwiera klawiaturę telewizora w oknie dialogowym, dla adresu serwera, adresu e-mail i hasła.
 2. Albo wybierz "Używaj bez serwera". Telewizor nie ma własnych zdjęć, więc karta Zdjęcia mówi "Ten telewizor nie ma własnych zdjęć ani filmów: otwórz udział sieciowy z Biblioteki." z przyciskiem Udziały sieciowe. Dodaj tam udział, serwer Plex lub kamerę, jak na telefonie (zobacz [Udziały sieciowe](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Poruszanie się pilotem
 
 - Strzałki przesuwają ramkę, OK otwiera to, na czym jest, Wstecz cofa. Z karty Wstecz przechodzi do menu bocznego, potem do Zdjęć, a potem wychodzi z aplikacji. Na liście wyboru, takiej jak typ udziału albo ustawienie, strzałki tylko przesuwają ramkę, a OK wybiera opcję (od kompilacji 22; wcześniej strzałki zmieniały wybór).
-- Kanał w górę i w dół przewijają o stronę. Od kompilacji 22 siatki zdjęć pokazują około sześciu kafelków w rzędzie w obrębie marginesów ekranu, z ostrzejszymi miniaturami własnych plików urządzenia, które pozostają gładkie przy drobnych szczegółach, a strony, które na telefonie mają nagłówek z obrazem (lista 360°, Ulubione, albumy urządzenia), pokazują zamiast tego zwykły pasek.
-- Od kompilacji 22 ramka zaczyna od pierwszego elementu każdej strony (pierwszy kafelek listy 360°, pole e-mail po potwierdzeniu adresu serwera), pozostaje w obrębie marginesów ekranu podczas przewijania siatki i przechodzi z siatki w górę do rzędu lub filtrów nad nią zamiast do przycisku Wstecz. Strzałka w prawo z udziału sieciowego lub kamery dochodzi do jego przycisku edycji, a wynik "Testuj połączenie" przewija się do widoku.
+- Kanał w górę i w dół przewijają o stronę. Od kompilacji 22 siatki zdjęć pokazują około sześciu kafelków w rzędzie w obrębie marginesów ekranu, z ostrzejszymi miniaturami własnych plików urządzenia, a strony, które na telefonie mają nagłówek z obrazem (lista 360°, Ulubione, albumy urządzenia), pokazują zamiast tego zwykły pasek. Od kompilacji 23 te miniatury są tworzone w dwukrotnym rozmiarze swojego kafelka i płynnie zmniejszane, więc drobne szczegóły, takie jak ośnieżone gałęzie, już nie migoczą, a zdjęcia z serwera pokazują jego większy obraz podglądu, równie ostry, zamiast jego małej miniatury rozciągniętej do kafelka.
+- Od kompilacji 22 ramka zaczyna od pierwszego elementu każdej strony (pierwszy kafelek listy 360°, pole e-mail po potwierdzeniu adresu serwera), pozostaje w obrębie marginesów ekranu podczas przewijania siatki (od kompilacji 23 także w dwóch panelach Ustawień) i przechodzi z siatki w górę do rzędu lub filtrów nad nią zamiast do przycisku Wstecz. Strzałka w prawo z udziału sieciowego lub kamery dochodzi do jego przycisku edycji, a wynik "Testuj połączenie" przewija się do widoku.
 - W przeglądarkach działają klawisze pilota odtwarzania i pauzy, przewijania do przodu i do tyłu, następnego i poprzedniego, a klawisz informacji pokazuje szczegóły zdjęcia lub filmu.
 
 ### Zdjęcia i filmy z pilotem
@@ -733,7 +733,7 @@ Wszystko, co robi oficjalna aplikacja mobilna Immich, jest tutaj: kopia zapasowa
 
 Aby pokazać zdjęcie 360° komuś, kto nie ma aplikacji, udostępnij je linkiem udostępniania Immich: aplikacja webowa Immich pokaże zdjęcie 360° jako sferę w jego przeglądarce.
 
-Bieżąca kompilacja, kompilacja 22 (wersja 3.3.0-rc.0, numer kompilacji 3030020), jest oparta na Immich `main` z 10 października 2026 (wersja 3.3.0-rc.0, jeszcze nie wydanie stabilne). Kompilację 22 przetestowano z serwerem Immich 3.2.4 oraz z serwerem zbudowanym z tego samego Immich `main`: logowanie, oś czasu, albumy, zdjęcia i filmy 360°, odtwarzanie filmów i przesyłanie, bez błędów API. Problemy zgłaszaj w [Issues](https://github.com/freeKC/Immuch360/issues), nie w projekcie Immich. Pełna dokumentacja samego Immich jest na [immich.app](https://immich.app).
+Bieżąca kompilacja, kompilacja 23 (wersja 3.3.0-rc.0, numer kompilacji 3030021), jest oparta na Immich `main` z 10 października 2026 (wersja 3.3.0-rc.0, jeszcze nie wydanie stabilne). Kompilację 22, na tej samej bazie Immich, przetestowano z serwerem Immich 3.2.4 oraz z serwerem zbudowanym z tego samego Immich `main`: logowanie, oś czasu, albumy, zdjęcia i filmy 360°, odtwarzanie filmów i przesyłanie, bez błędów API. Problemy zgłaszaj w [Issues](https://github.com/freeKC/Immuch360/issues), nie w projekcie Immich. Pełna dokumentacja samego Immich jest na [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Porównanie z aplikacją Immich i innymi aplikacjami
@@ -1112,7 +1112,7 @@ Aplikacja jest w Google Play na telefony i tablety; wersja dla App Store czeka n
 
 - **Telefony i tablety z Androidem**
   - Dziś: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) albo APK na stronie [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` dla telefonu (uniwersalny `Immuch360-v<version>-release.apk` działa wszędzie, `-armeabi-v7a` jest dla starszych telefonów 32-bitowych, a plik `.aab` jest dla Google Play, nie do ręcznej instalacji). Kompilacja z GitHuba zwykle wyprzedza sklep. W obu przypadkach instaluje się obok oficjalnej aplikacji Immich (pakiet `com.aprogsys.immuch360`).
-  - Wkrótce: do Google Play wysłano 10 października 2026 kompilację 22 w miejsce kompilacji 20 (dostępnej od 7 października); zawiera zmiany Immich z października i poprawki dla telewizorów.
+  - Wkrótce: do Google Play wysłano 10 października 2026 kompilację 23 w miejsce kompilacji 20 (dostępnej od 7 października); zawiera zmiany Immich z października i poprawki dla telewizorów z kompilacji 22 i 23.
 - **iPhone i iPad**
   - Dziś: czeka na weryfikację przez Apple. Wersja w trakcie weryfikacji ma funkcje kompilacji 11: przesyłanie do Immich i wybór Źródło wideo (kompilacja 15) oraz surowe pliki Insta360 (kompilacja 16) przyjdą z późniejszą aktualizacją w App Store. Kod źródłowy kompiluje się w Xcode lub na Codemagic, zobacz [Zbuduj ją samodzielnie](#build-it-yourself).
   - Wkrótce: App Store, w trakcie weryfikacji.

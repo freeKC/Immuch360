@@ -17,10 +17,10 @@ Aplikasi ini untuk orang yang memotret dengan kamera 360° (Insta360, GoPro MAX,
 
 | Platform | Tempat mendapatkannya | Status per 10 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ponsel dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 di GitHub, dikirim ke Google Play pada 10 Oktober 2026 (di sana build 20 tayang sejak 7 Oktober) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ponsel dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 di GitHub, dikirim ke Google Play pada 10 Oktober 2026 (di sana build 20 tayang sejak 7 Oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.0 menunggu peninjauan Apple; sementara itu [buat sendiri](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | listing disetujui, build 21 dalam peninjauan Meta, build 22 di kanal Alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 di GitHub; listing Google Play untuk TV dalam peninjauan Google sejak 9 Oktober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | listing disetujui, build 21 dalam peninjauan Meta, build 23 di kanal Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 di GitHub; listing Google Play untuk TV dalam peninjauan Google sejak 9 Oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratinjau](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 di Windows: foto, video datar dan 360°; macOS dan Linux nanti |
 
 *Status diperbarui di setiap rilis; detailnya ada di [Tempat mendapatkannya](#where-to-get-it).*
@@ -612,14 +612,14 @@ Sejak build 20 aplikasi Android yang sama berjalan di Android TV dan Google TV, 
 
 ### Mulai pertama kali
 
-1. Masuk seperti di ponsel: tombol panah memindahkan bingkai dari kolom ke kolom, dan OK pada sebuah kolom ("Tekan OK untuk mengetik") membuka keyboard TV dalam dialog, untuk alamat server, email, dan kata sandi.
+1. Masuk seperti di ponsel: tombol panah memindahkan bingkai dari kolom ke kolom (sejak build 23 bingkai lewat di atas label kolom yang sudah terisi, bukan melintanginya), dan OK pada sebuah kolom ("Tekan OK untuk mengetik") membuka keyboard TV dalam dialog, untuk alamat server, email, dan kata sandi.
 2. Atau pilih "Gunakan tanpa server". TV tidak punya foto sendiri, jadi tab Foto menampilkan "TV ini tidak punya foto atau video sendiri: buka berbagi jaringan dari Pustaka." dengan tombol Berbagi jaringan. Tambahkan berbagi, server Plex, atau kamera di sana, seperti di ponsel (lihat [Berbagi jaringan](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Bergerak dengan remote
 
 - Tombol panah memindahkan bingkai, OK membuka apa yang sedang dipilih, Kembali kembali. Dari sebuah tab, Kembali menuju menu samping, lalu ke Foto, lalu keluar dari aplikasi. Dalam daftar pilihan, seperti jenis berbagi atau sebuah pengaturan, tombol panah hanya memindahkan bingkai dan OK memilih pilihannya (sejak build 22; sebelumnya, tombol panah mengubah pilihan).
-- Channel naik dan turun menggulir satu halaman sekaligus. Sejak build 22 kisi foto menampilkan sekitar enam petak per baris di dalam margin layar, dengan gambar mini file milik perangkat sendiri yang lebih tajam dan tetap halus pada detail kecil, dan halaman yang di ponsel memiliki header bergambar (daftar 360°, Favorit, album perangkat) menampilkan satu bilah saja sebagai gantinya.
-- Sejak build 22 bingkai dimulai pada item pertama setiap halaman (petak pertama daftar 360°, kolom email setelah alamat server dikonfirmasi), tetap di dalam margin layar saat kisi digulir, dan naik dari kisi ke baris atau filter di atasnya, bukan ke tombol Kembali. Kanan dari sebuah berbagi jaringan atau kamera menuju tombol editnya, dan hasil "Uji koneksi" bergulir hingga terlihat.
+- Channel naik dan turun menggulir satu halaman sekaligus. Sejak build 22 kisi foto menampilkan sekitar enam petak per baris di dalam margin layar, dengan gambar mini file milik perangkat sendiri yang lebih tajam, dan halaman yang di ponsel memiliki header bergambar (daftar 360°, Favorit, album perangkat) menampilkan satu bilah saja sebagai gantinya. Sejak build 23 gambar mini itu dibuat dua kali ukuran petaknya lalu diperkecil dengan halus, sehingga detail kecil seperti ranting bersalju tidak lagi berkilauan, dan foto dari server menampilkan gambar pratinjau server yang lebih besar, sama tajamnya, bukan gambar mini kecilnya yang direntangkan ke ukuran petak.
+- Sejak build 22 bingkai dimulai pada item pertama setiap halaman (petak pertama daftar 360°, kolom email setelah alamat server dikonfirmasi), tetap di dalam margin layar saat kisi digulir (sejak build 23 juga di dua panel Pengaturan), dan naik dari kisi ke baris atau filter di atasnya, bukan ke tombol Kembali. Kanan dari sebuah berbagi jaringan atau kamera menuju tombol editnya, dan hasil "Uji koneksi" bergulir hingga terlihat.
 - Di penampil, tombol putar dan jeda, maju cepat, mundur, berikutnya, dan sebelumnya pada remote berfungsi, dan tombol info menampilkan detail foto atau video.
 
 ### Foto dan video dengan remote
@@ -733,7 +733,7 @@ Semua yang dilakukan aplikasi seluler resmi Immich ada di sini: pencadangan, lin
 
 Untuk menunjukkan foto 360° kepada seseorang yang tidak memiliki aplikasinya, bagikan dengan tautan berbagi Immich: aplikasi web Immich menampilkan foto 360° sebagai bola di peramban mereka.
 
-Build saat ini, build 22 (versi 3.3.0-rc.0, nomor build 3030020), berbasis `main` Immich tanggal 10 Oktober 2026 (versi 3.3.0-rc.0, belum rilis stabil). Build 22 diuji dengan server Immich 3.2.4 dan dengan server yang dibangun dari `main` Immich yang sama: masuk, linimasa, album, foto dan video 360°, pemutaran video, dan unggahan, tanpa galat API. Laporkan masalah di [Issues](https://github.com/freeKC/Immuch360/issues), bukan ke proyek Immich. Untuk dokumentasi lengkap Immich itu sendiri, lihat [immich.app](https://immich.app).
+Build saat ini, build 23 (versi 3.3.0-rc.0, nomor build 3030021), berbasis `main` Immich tanggal 10 Oktober 2026 (versi 3.3.0-rc.0, belum rilis stabil). Build 22, dengan basis Immich yang sama, diuji dengan server Immich 3.2.4 dan dengan server yang dibangun dari `main` Immich yang sama: masuk, linimasa, album, foto dan video 360°, pemutaran video, dan unggahan, tanpa galat API. Laporkan masalah di [Issues](https://github.com/freeKC/Immuch360/issues), bukan ke proyek Immich. Untuk dokumentasi lengkap Immich itu sendiri, lihat [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Perbandingan dengan aplikasi Immich dan aplikasi lain
@@ -1112,7 +1112,7 @@ Aplikasi ini ada di Google Play untuk ponsel dan tablet; versi App Store sedang 
 
 - **Ponsel dan tablet Android**
   - Saat ini: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), atau APK di halaman [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk ponsel (`Immuch360-v<version>-release.apk` universal berjalan di mana saja, `-armeabi-v7a` untuk ponsel 32 bit yang lebih lama, dan file `.aab` untuk Google Play, bukan untuk sideload). Build GitHub biasanya lebih baru daripada di toko. Bagaimanapun juga, aplikasi ini terpasang berdampingan dengan aplikasi resmi Immich (paket `com.aprogsys.immuch360`).
-  - Segera: di Google Play, build 22 dikirim pada 10 Oktober 2026 untuk menggantikan build 20 (tayang sejak 7 Oktober); build ini membawa perubahan Immich bulan Oktober dan perbaikan untuk TV.
+  - Segera: di Google Play, build 23 dikirim pada 10 Oktober 2026 untuk menggantikan build 20 (tayang sejak 7 Oktober); build ini membawa perubahan Immich bulan Oktober dan perbaikan untuk TV dari build 22 dan 23.
 - **iPhone dan iPad**
   - Saat ini: menunggu tinjauan Apple. Versi yang sedang ditinjau membawa fitur build 11: unggah ke Immich dan pilihan "Sumber video" (build 15) serta file Insta360 mentah (build 16) akan hadir dengan pembaruan App Store berikutnya. Kode sumbernya bisa dibuat dengan Xcode atau di Codemagic, lihat [Membuatnya sendiri](#build-it-yourself).
   - Segera: App Store, sedang ditinjau.

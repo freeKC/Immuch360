@@ -17,10 +17,10 @@ Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh T
 
 | Platform | Ji ku derê bistînî | Rewş di 10ê Cotmeha 2026an de |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon û tabletên **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 li ser GitHub, di 10ê Cotmeha 2026an de ji Google Play re hatiye şandin (li wir build 20 ji 7ê Cotmehê ve zindî ye) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon û tabletên **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 li ser GitHub, di 10ê Cotmeha 2026an de ji Google Play re hatiye şandin (li wir build 20 ji 7ê Cotmehê ve zindî ye) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.0 li benda nirxandina Apple ye; heta wê demê [bi xwe ava bike](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [APK](#meta-quest-3) · Horizon Store | tomar hat pejirandin, build 21 di nirxandina Meta de ye, build 22 li ser kanala Alpha ye |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 li ser GitHub; tomara Google Play ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [APK](#meta-quest-3) · Horizon Store | tomar hat pejirandin, build 21 di nirxandina Meta de ye, build 23 li ser kanala Alpha ye |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 li ser GitHub; tomara Google Play ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP a pêşdîtinê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | build a desktop 4 li ser Windows: wêne, vîdyoyên dûz û 360°; macOS û Linux paşê |
 
 *Rewş di her weşanê de tên nûkirin; hûrgilî di [Ji ku derê bistînî](#where-to-get-it) de ne.*
@@ -612,14 +612,14 @@ Ji build 20 heman sepana Android li ser Android TV û Google TV dimeşe, bi kont
 
 ### Destpêka yekem
 
-1. Wek li ser telefonê têkeve: tîr çarçoveyekê ji qadekê bo qadeke din dibin, û OK li ser qadekê ("Ji bo nivîsandinê OK bitikîne") klavyeya televizyonê di diyalogekê de vedike, ji bo navnîşana serverê, e-name û şîfreyê.
+1. Wek li ser telefonê têkeve: tîr çarçoveyekê ji qadekê bo qadeke din dibin (ji build 23 ew di ser etîketa qadeke tijîkirî re derbas dibe, ne di nav wê re), û OK li ser qadekê ("Ji bo nivîsandinê OK bitikîne") klavyeya televizyonê di diyalogekê de vedike, ji bo navnîşana serverê, e-name û şîfreyê.
 2. An "Bêyî server bi kar bîne" hilbijêre. Wêneyên televizyonê yên xwe tune ne, ji ber vê yekê tabloya Wêne dibêje "Wêne an vîdyoyên vê televizyonê yên xwe tune ne: ji Kitêbxaneyê parvekirineke torê veke." bi bişkoka Parvekirinên torê. Li wir parvekirinek, serverekî Plex an kamerayek lê zêde bike, wek li ser telefonê (binêre [Parvekirinên torê](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Bi kontrola ji dûr ve tevgerîn
 
 - Tîr çarçoveyê dibin, OK tiştê ku li ser e vedike, Paş vedigere. Ji tabloyekê, Paş diçe menûya kêlekê, paşê Wêne, paşê ji sepanê derdikeve. Di lîsteyeke vebijarkan de, wek cureyê parvekirinekê an eyarekê, tîr tenê çarçoveyê dibin û OK vebijarkê hildibijêre (ji build 22; berê, tîran vebijark diguherand).
-- Kanal jor û jêr rûpelekê bi carekê dikişînin. Ji build 22 torên wêneyan di nav kenarên dîmenderê de li her rêzê nêzîkî şeş kaşiyan nîşan didin, bi wêneyên biçûk ên zelaltir ên pelên cîhazê bi xwe ku di hûrguliyên zirav de nerm dimînin, û rûpelên ku li ser telefonê sernavekî bi wêne hene (lîsteya 360°, Favorites (Bijare), albûmên cîhazê) li şûna wê tenê xetekê nîşan didin.
-- Ji build 22 çarçove li ser hêmana yekem a her rûpelê dest pê dike (kaşiya yekem a lîsteya 360°, qada e-nameyê piştî ku navnîşana serverê hat pejirandin), dema torek dikişe di nav kenarên dîmenderê de dimîne, û ji torê ber bi rêz an parzûnên li jorê wê ve diçe, ne ber bi bişkoka Paş ve. Rast ji parvekirineke torê an kamerayekê digihe bişkoka wê ya sererastkirinê, û encama "Girêdanê biceribîne" dikişe heta ku xuya bibe.
+- Kanal jor û jêr rûpelekê bi carekê dikişînin. Ji build 22 torên wêneyan di nav kenarên dîmenderê de li her rêzê nêzîkî şeş kaşiyan nîşan didin, bi wêneyên biçûk ên zelaltir ên pelên cîhazê bi xwe, û rûpelên ku li ser telefonê sernavekî bi wêne hene (lîsteya 360°, Favorites (Bijare), albûmên cîhazê) li şûna wê tenê xetekê nîşan didin. Ji build 23 ew wêneyên biçûk du qat ji kaşiya xwe mezintir têne çêkirin û bi nermî têne biçûkkirin, ji ber vê yekê hûrguliyên zirav wek şaxên bi berf ve êdî naçirûsin, û wêneyên serverê pêşdîtina wê ya mezintir, bi heman zelalî, nîşan didin, li şûna wêneyê wê yê biçûk ê ku heta kaşiyê hatiye kişandin.
+- Ji build 22 çarçove li ser hêmana yekem a her rûpelê dest pê dike (kaşiya yekem a lîsteya 360°, qada e-nameyê piştî ku navnîşana serverê hat pejirandin), dema torek dikişe di nav kenarên dîmenderê de dimîne (ji build 23 di du panelên Mîhengê de jî), û ji torê ber bi rêz an parzûnên li jorê wê ve diçe, ne ber bi bişkoka Paş ve. Rast ji parvekirineke torê an kamerayekê digihe bişkoka wê ya sererastkirinê, û encama "Girêdanê biceribîne" dikişe heta ku xuya bibe.
 - Di dîtinvanan de, bişkokên lîstin û rawestandin, pêşdebirina bilez, paşvebirin, ya din û ya berê yên kontrola ji dûr ve dixebitin, û bişkoka agahiyê hûrguliyên wêne an vîdyoyekê nîşan dide.
 
 ### Wêne û vîdyo bi kontrola ji dûr ve
@@ -733,7 +733,7 @@ Her tiştê ku sepana mobîl a fermî ya Immich dike li vir e: paşeke, demjimê
 
 Ji bo nîşandana wêneyekî 360° ji kesekî ku sepan tune, wê bi girêdaneke parvekirî ya Immich parve bike: sepana webê ya Immich wêneyekî 360° di geroka wan de wekî gogekê nîşan dide.
 
-Build a niha, build 22 (guhertoya 3.3.0-rc.0, hejmara build 3030020), li ser Immich `main` a 10ê Cotmeha 2026an (guhertoya 3.3.0-rc.0, hîn ne weşaneke stabîl) ava bûye. Build 22 bi servereke Immich 3.2.4 û bi serverekî ku ji heman Immich `main` hatiye avakirin hatiye ceribandin: têketin, xeta demê, albûm, wêne û vîdyoyên 360°, lîstina vîdyoyan û barkirin, bêyî tu çewtiya API. Ji kerema xwe pirsgirêkan di [Issues](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re. Ji bo belgekirina tevahî ya Immich bi xwe, binêre [immich.app](https://immich.app).
+Build a niha, build 23 (guhertoya 3.3.0-rc.0, hejmara build 3030021), li ser Immich `main` a 10ê Cotmeha 2026an (guhertoya 3.3.0-rc.0, hîn ne weşaneke stabîl) ava bûye. Build 22, li ser heman bingeha Immich, bi servereke Immich 3.2.4 û bi serverekî ku ji heman Immich `main` hatiye avakirin hatiye ceribandin: têketin, xeta demê, albûm, wêne û vîdyoyên 360°, lîstina vîdyoyan û barkirin, bêyî tu çewtiya API. Ji kerema xwe pirsgirêkan di [Issues](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re. Ji bo belgekirina tevahî ya Immich bi xwe, binêre [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Berhevdan bi sepana Immich û sepanên din re
@@ -1112,7 +1112,7 @@ Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li be
 
 - **Telefon û tabletên Android**
   - Îro: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), an APK li ser rûpela [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` ji bo telefonekê (`Immuch360-v<version>-release.apk` a gerdûnî li her derê dixebite, `-armeabi-v7a` ji bo telefonên kevin ên 32 bit e, û pela `.aab` ji bo Google Play ye, ne ji bo sideloadkirinê). Build a GitHub bi gelemperî li pêş firoşgehê ye. Bi her awayî ew li kêleka sepana fermî ya Immich tê sazkirin (pakêta `com.aprogsys.immuch360`).
-  - Di demeke nêzîk de: li ser Google Play, build 22 di 10ê Cotmeha 2026an de li şûna build 20 (ku ji 7ê Cotmehê ve zindî ye) hatiye şandin; ew guhertinên Immich ên Cotmehê û çareseriyên ji bo televizyonan tîne.
+  - Di demeke nêzîk de: li ser Google Play, build 23 di 10ê Cotmeha 2026an de li şûna build 20 (ku ji 7ê Cotmehê ve zindî ye) hatiye şandin; ew guhertinên Immich ên Cotmehê û çareseriyên ji bo televizyonan ên build 22 û 23 tîne.
 - **iPhone û iPad**
   - Îro: li benda nirxandina Apple ye. Guhertoya di nirxandinê de taybetmendiyên build 11 hene: barkirina li Immich û bijartina Çavkaniya vîdyoyê (build 15) û pelên xav ên Insta360 (build 16) dê bi nûkirineke paşê ya App Store bên. Çavkanî bi Xcode an li ser Codemagic tê avakirin, binêre [Bi xwe ava bike](#build-it-yourself).
   - Di demeke nêzîk de: App Store, di nirxandinê de.

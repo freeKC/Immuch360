@@ -17,10 +17,10 @@ Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 3
 
 | Platforma | Gdje je nabaviti | Stanje 10. listopada 2026. |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 na GitHubu, poslan na Google Play 10. listopada 2026. (ondje je build 20 objavljen od 7. listopada) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 na GitHubu, poslan na Google Play 10. listopada 2026. (ondje je build 20 objavljen od 7. listopada) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | verzija 3.3.0 čeka Appleov pregled; dotad [izgradite je sami](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | stranica odobrena, build 21 u Metinom pregledu, build 22 na kanalu Alpha |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 na GitHubu; stranica na Google Playu za televizore u Googleovu je pregledu od 9. listopada 2026. |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | stranica odobrena, build 21 u Metinom pregledu, build 23 na kanalu Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 na GitHubu; stranica na Google Playu za televizore u Googleovu je pregledu od 9. listopada 2026. |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pretpregleda](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 na Windowsu: fotografije, ravni i 360° videozapisi; macOS i Linux kasnije |
 
 *Stanja se ažuriraju sa svakim izdanjem; detalji su u [Gdje je nabaviti](#where-to-get-it).*
@@ -612,14 +612,14 @@ Od builda 20 ista Android aplikacija radi na Android TV-u i Google TV-u, s dalji
 
 ### Prvo pokretanje
 
-1. Prijavite se kao na telefonu: strelice pomiču okvir s polja na polje, a OK na polju („Pritisnite OK za tipkanje“) otvara tipkovnicu televizora u dijalogu, za adresu poslužitelja, e-poštu i zaporku.
+1. Prijavite se kao na telefonu: strelice pomiču okvir s polja na polje (od builda 23 prelazi iznad oznake popunjenog polja umjesto preko nje), a OK na polju („Pritisnite OK za tipkanje“) otvara tipkovnicu televizora u dijalogu, za adresu poslužitelja, e-poštu i zaporku.
 2. Ili odaberite „Koristi bez poslužitelja“. Televizor nema vlastitih fotografija, pa kartica Fotografije kaže „Ovaj televizor nema vlastitih fotografija ni videozapisa: otvorite mrežni dijeljeni resurs iz Knjižnice.“ s gumbom Mrežni dijeljeni resursi. Ondje dodajte dijeljeni resurs, Plex poslužitelj ili kameru, kao na telefonu (pogledajte [Mrežni dijeljeni resursi](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Kretanje daljinskim upravljačem
 
 - Strelice pomiču okvir, OK otvara ono na čemu se nalazi, Natrag vraća natrag. S kartice Natrag vodi na bočni izbornik, zatim na Fotografije, zatim izvan aplikacije. Na popisu izbora, primjerice za vrstu dijeljenog resursa ili za postavku, strelice samo pomiču okvir, a OK odabire izbor (od builda 22; prije su strelice mijenjale izbor).
-- Tipke za kanal gore i dolje pomiču za jednu stranicu. Od builda 22 mreže fotografija prikazuju oko šest pločica po retku unutar margina zaslona, s oštrijim sličicama vlastitih datoteka uređaja koje ostaju glatke na sitnim detaljima, a stranice koje na telefonu imaju zaglavlje sa slikom (popis 360°, Omiljene, albumi uređaja) umjesto toga prikazuju samo jednu traku.
-- Od builda 22 okvir počinje na prvoj stavci svake stranice (prva pločica popisa 360°, polje e-pošte čim je adresa poslužitelja potvrđena), ostaje unutar margina zaslona dok se mreža pomiče, a iz mreže ide gore na redak ili filtre iznad nje umjesto na gumb Natrag. Desno s mrežnog dijeljenog resursa ili kamere dolazi do gumba za uređivanje, a rezultat „Testiraj vezu“ pomiče se tako da bude vidljiv.
+- Tipke za kanal gore i dolje pomiču za jednu stranicu. Od builda 22 mreže fotografija prikazuju oko šest pločica po retku unutar margina zaslona, s oštrijim sličicama vlastitih datoteka uređaja, a stranice koje na telefonu imaju zaglavlje sa slikom (popis 360°, Omiljene, albumi uređaja) umjesto toga prikazuju samo jednu traku. Od builda 23 te se sličice izrađuju dvostruko veće od svoje pločice i glatko smanjuju, pa sitni detalji poput zasniježenih grana više ne trepere, a fotografije poslužitelja prikazuju njegov veći pretpregled, jednako oštar, umjesto njegove male sličice razvučene na pločicu.
+- Od builda 22 okvir počinje na prvoj stavci svake stranice (prva pločica popisa 360°, polje e-pošte čim je adresa poslužitelja potvrđena), ostaje unutar margina zaslona dok se mreža pomiče (od builda 23 i u dva okna Postavki), a iz mreže ide gore na redak ili filtre iznad nje umjesto na gumb Natrag. Desno s mrežnog dijeljenog resursa ili kamere dolazi do gumba za uređivanje, a rezultat „Testiraj vezu“ pomiče se tako da bude vidljiv.
 - U preglednicima rade tipke daljinskog upravljača za reprodukciju i pauzu, premotavanje naprijed, premotavanje natrag, sljedeće i prethodno, a tipka za informacije prikazuje detalje fotografije ili videozapisa.
 
 ### Fotografije i videozapisi s daljinskim upravljačem
@@ -733,7 +733,7 @@ Sve što radi službena mobilna aplikacija Immich nalazi se ovdje: sigurnosno ko
 
 Da biste 360° fotografiju pokazali nekome tko nema aplikaciju, podijelite je Immich dijeljenom poveznicom: Immich web aplikacija prikazuje 360° fotografiju kao sferu u njegovom pregledniku.
 
-Trenutačni build, build 22 (verzija 3.3.0-rc.0, broj builda 3030020), temelji se na Immichu `main` od 10. listopada 2026. (verzija 3.3.0-rc.0, još nije stabilno izdanje). Build 22 testiran je s Immich 3.2.4 poslužiteljem i s poslužiteljem izgrađenim iz istog Immicha `main`: prijava, vremenska crta, albumi, 360° fotografije i videozapisi, reprodukcija videozapisa i prijenosi, bez ijedne pogreške API-ja. Probleme prijavite u [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Za potpunu dokumentaciju samog Immicha pogledajte [immich.app](https://immich.app).
+Trenutačni build, build 23 (verzija 3.3.0-rc.0, broj builda 3030021), temelji se na Immichu `main` od 10. listopada 2026. (verzija 3.3.0-rc.0, još nije stabilno izdanje). Build 22, na istoj Immich osnovi, testiran je s Immich 3.2.4 poslužiteljem i s poslužiteljem izgrađenim iz istog Immicha `main`: prijava, vremenska crta, albumi, 360° fotografije i videozapisi, reprodukcija videozapisa i prijenosi, bez ijedne pogreške API-ja. Probleme prijavite u [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Za potpunu dokumentaciju samog Immicha pogledajte [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Usporedba s aplikacijom Immich i drugim aplikacijama
@@ -1112,7 +1112,7 @@ Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka 
 
 - **Android telefoni i tableti**
   - Danas: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi posvuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za ručnu instalaciju). GitHub build obično je ispred trgovine. U svakom slučaju instalira se pokraj službene aplikacije Immich (paket `com.aprogsys.immuch360`).
-  - Uskoro: na Google Playu, build 22 poslan je 10. listopada 2026. umjesto builda 20 (objavljen od 7. listopada); donosi Immichove promjene iz listopada i ispravke za televizore.
+  - Uskoro: na Google Playu, build 23 poslan je 10. listopada 2026. umjesto builda 20 (objavljen od 7. listopada); donosi Immichove promjene iz listopada i ispravke za televizore iz buildova 22 i 23.
 - **iPhone i iPad**
   - Danas: čeka Appleov pregled. Verzija u pregledu ima značajke builda 11: prijenos na Immich i odabir Izvor videozapisa (build 15) te neobrađene Insta360 datoteke (build 16) stići će s kasnijim ažuriranjem u App Storeu. Izvorni kod se gradi u Xcodeu ili na Codemagicu, pogledajte [Izgradite je sami](#build-it-yourself).
   - Uskoro: App Store, u pregledu.

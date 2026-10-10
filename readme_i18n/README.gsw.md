@@ -17,10 +17,10 @@ Si isch für Lüüt, wo mit ere 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360,
 
 | Plattform | Wo du si überchunsch | Stand am 10. Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Telefon und -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 22 uf GitHub, am 10. Oktober 2026 a Google Play gschickt (det isch sit em 7. Oktober Build 20 online) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Telefon und -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 23 uf GitHub, am 10. Oktober 2026 a Google Play gschickt (det isch sit em 7. Oktober Build 20 online) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone und iPad** | App Store | Version 3.3.0 wartet uf d Prüefig vo Apple; bis dänn [sälber baue](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 und 3S | [APK](#meta-quest-3) · Horizon Store | Iitrag freigä, Build 21 i de Prüefig vo Meta, Build 22 im Alpha-Kanal |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV und Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 22 uf GitHub; de Google-Play-Iitrag für Fernseh isch sit em 9. Oktober 2026 i de Prüefig vo Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 und 3S | [APK](#meta-quest-3) · Horizon Store | Iitrag freigä, Build 21 i de Prüefig vo Meta, Build 23 im Alpha-Kanal |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV und Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 23 uf GitHub; de Google-Play-Iitrag für Fernseh isch sit em 9. Oktober 2026 i de Prüefig vo Google |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Vorschau-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Desktop-Build 4 uf Windows: Fotos, flachi und 360°-Videos; macOS und Linux spöter |
 
 *D Ständ wärded bi jedem Release aktualisiert; d Details sind under [Wo du si überchunsch](#where-to-get-it).*
@@ -612,14 +612,14 @@ Ab Build 20 lauft di glych Android-App uf Android TV und Google TV, mit de Fernb
 
 ### Erschte Start
 
-1. Mäld dich aa wie uf emne Telefon: d Pfiil verschiebed en Rahme vo Fäld zu Fäld, und OK uf emne Fäld («OK drücke zum Tippe») macht d Tastatur vom Fernseh imne Dialog uf, für d Serveradrässe, d E-Mail und s Passwort.
+1. Mäld dich aa wie uf emne Telefon: d Pfiil verschiebed en Rahme vo Fäld zu Fäld (ab Build 23 gaht er über d Bschriftig vomne usgfüllte Fäld statt quer dur si dur), und OK uf emne Fäld («OK drücke zum Tippe») macht d Tastatur vom Fernseh imne Dialog uf, für d Serveradrässe, d E-Mail und s Passwort.
 2. Oder wähl «Ohni Server bruuche». En Fernseh hät kei eigeti Fotos, drum seit de Tab «Photos» (Fotos) «De Fernseh het kei eigeti Fotos oder Videos: Mach e Netzwerkfreigab us de Bibliothek uf.» mit emne Chnopf Netzwerkfreigabe. Füeg det e Freigab, en Plex-Server oder e Kamera hinzue, wie uf emne Telefon (lueg [Netzwerkfreigabe](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Mit de Fernbedienig umenand
 
 - D Pfiil verschiebed de Rahme, OK macht uf, was drunder isch, Zrugg gaht zrugg. Vo emne Tab us gaht Zrugg is Siitemenü, dänn zu «Photos» (Fotos), dänn us de App. I ere Lischte vo Uswahle, wie de Typ vo ere Freigab oder e Iistellig, verschiebed d Pfiil nume de Rahme und OK wählt d Uswahl (ab Build 22; vorher händ d Pfiil d Uswahl gänderet).
-- Kanal uf und ab scrolled e Siite uf eimal. Ab Build 22 zeiged d Fotoraster öppe sächs Kachle pro Reihe innerhalb vo de Ränder vom Bildschirm, mit schärfere Vorschaubilder vo de eigete Dateie vom Grät, wo bi feine Details ruhig bliibed, und d Siite, wo uf emne Telefon en Bildchopf händ (d 360°-Lischte, Favorite, d Alben vom Grät), zeiged stattdesse en einzige Balke.
-- Ab Build 22 fangt de Rahme bim erschte Element vo jedere Siite aa (di erscht Kachle vo de 360°-Lischte, s E-Mail-Fäld, sobald d Serveradrässe bestätigt isch), bliibt innerhalb vo de Ränder vom Bildschirm, wänn en Raster scrollt, und gaht vomne Raster ufe zu de Reihe oder de Filter drüber statt zum Zrugg-Chnopf. Rächts vo ere Netzwerkfreigab oder ere Kamera chunnt mer zu ihrem Bearbeite-Chnopf, und s Resultat vo «Verbindig teste» scrollt is Bild.
+- Kanal uf und ab scrolled e Siite uf eimal. Ab Build 22 zeiged d Fotoraster öppe sächs Kachle pro Reihe innerhalb vo de Ränder vom Bildschirm, mit schärfere Vorschaubilder vo de eigete Dateie vom Grät, und d Siite, wo uf emne Telefon en Bildchopf händ (d 360°-Lischte, Favorite, d Alben vom Grät), zeiged stattdesse en einzige Balke. Ab Build 23 wärded die Vorschaubilder doppelt so gross wie ihri Kachle gmacht und sanft verchliineret, so dass feini Details wie verschneiti Äscht nüme flimmered, und d Fotos vom Server zeiged sini grösseri Vorschau, gliich scharf, statt sim chliine Vorschaubild, wo uf d Kachle zoge wird.
+- Ab Build 22 fangt de Rahme bim erschte Element vo jedere Siite aa (di erscht Kachle vo de 360°-Lischte, s E-Mail-Fäld, sobald d Serveradrässe bestätigt isch), bliibt innerhalb vo de Ränder vom Bildschirm, wänn en Raster scrollt (ab Build 23 au i de zwei Bereich vo Settings), und gaht vomne Raster ufe zu de Reihe oder de Filter drüber statt zum Zrugg-Chnopf. Rächts vo ere Netzwerkfreigab oder ere Kamera chunnt mer zu ihrem Bearbeite-Chnopf, und s Resultat vo «Verbindig teste» scrollt is Bild.
 - I de Viewer gönd d Taste Abspiele und Pause, Vorspule, Zruggspule, Nächschts und Vorhärigs vo de Fernbedienig, und d Info-Taste zeigt d Details vo emne Foto oder Video.
 
 ### Fotos und Videos mit de Fernbedienig
@@ -733,7 +733,7 @@ Alles, wo di offiziell Immich-Handy-App macht, isch da: Sicherig, Zitachse, Albe
 
 Zum emne Mänsch, wo d App nöd hät, es 360°-Foto zeige, teil's mit emne Immich-Link: d Immich-Web-App zeigt es 360°-Foto i sim Browser als Kugle.
 
-De aktuell Build, Build 22 (Version 3.3.0-rc.0, Buildnummere 3030020), basiert uf Immich `main` vom 10. Oktober 2026 (Version 3.3.0-rc.0, no kei stabils Release). Build 22 isch mit emne Immich-3.2.4-Server prüeft worde und mit emne Server, wo us em gliiche Immich `main` baut isch: Aamälde, Zitachse, Alben, 360°-Fotos und -Videos, Video abspile und Uploads, ohni en einzige API-Fähler. Bitte mäld Problem i de [Issues](https://github.com/freeKC/Immuch360/issues), nöd bim Immich-Projekt. Für di ganz Dokumentation vo Immich sälber, lueg [immich.app](https://immich.app).
+De aktuell Build, Build 23 (Version 3.3.0-rc.0, Buildnummere 3030021), basiert uf Immich `main` vom 10. Oktober 2026 (Version 3.3.0-rc.0, no kei stabils Release). Build 22 isch, uf de gliiche Immich-Basis, mit emne Immich-3.2.4-Server prüeft worde und mit emne Server, wo us em gliiche Immich `main` baut isch: Aamälde, Zitachse, Alben, 360°-Fotos und -Videos, Video abspile und Uploads, ohni en einzige API-Fähler. Bitte mäld Problem i de [Issues](https://github.com/freeKC/Immuch360/issues), nöd bim Immich-Projekt. Für di ganz Dokumentation vo Immich sälber, lueg [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Im Vergliich mit de Immich-App und andere Apps
@@ -1112,7 +1112,7 @@ D App isch uf Google Play für Telefon und Tablets; d Version für de App Store 
 
 - **Android-Telefon und -Tablets**
   - Hüt: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder s APK uf de Siite [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` für es Telefon (s universelle `Immuch360-v<version>-release.apk` gaht überall, `-armeabi-v7a` isch für älteri 32-Bit-Telefon, und d `.aab`-Datei isch für Google Play, nöd zum Sideloade). De GitHub-Build isch meischtens em Store vorus. So oder so wird er näbed de offizielle Immich-App installiert (Paket `com.aprogsys.immuch360`).
-  - Bald: uf Google Play isch Build 22 am 10. Oktober 2026 anstatt Build 20 (sit em 7. Oktober online) gschickt worde; er bringt d Immich-Änderige vom Oktober und d Fernseh-Korrekture.
+  - Bald: uf Google Play isch Build 23 am 10. Oktober 2026 anstatt Build 20 (sit em 7. Oktober online) gschickt worde; er bringt d Immich-Änderige vom Oktober und d Fernseh-Korrekture vo Build 22 und 23.
 - **iPhone und iPad**
   - Hüt: wartet uf d Prüefig vo Apple. D Version i de Prüefig hät d Funktione vo Build 11: s Ufelade uf Immich und d Wahl Videoquälle (Build 15) und d rohe Insta360-Dateie (Build 16) chömed mit emne spötere Update im App Store. De Quellcode lat sich mit Xcode oder uf Codemagic baue, lueg [Sälber baue](#build-it-yourself).
   - Bald: App Store, i de Prüefig.

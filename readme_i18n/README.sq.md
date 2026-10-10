@@ -17,10 +17,10 @@ Immuch360 është aplikacioni celular i Immich me foto dhe video 360° në të c
 
 | Platforma | Ku ta merrni | Gjendja më 10 tetor 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefona dhe tableta **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ndërtimi 22 në GitHub, i dërguar në Google Play më 10 tetor 2026 (atje ndërtimi 20 është i publikuar që nga 7 tetor) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefona dhe tableta **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ndërtimi 23 në GitHub, i dërguar në Google Play më 10 tetor 2026 (atje ndërtimi 20 është i publikuar që nga 7 tetor) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dhe iPad** | App Store | versioni 3.3.0 në pritje të shqyrtimit të Apple; ndërkohë, [ndërtojeni vetë](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [APK](#meta-quest-3) · Horizon Store | faqja e miratuar, ndërtimi 21 në shqyrtim te Meta, ndërtimi 22 në kanalin alfa |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#install-it-on-the-tv) · Google Play | ndërtimi 22 në GitHub; faqja e Google Play për televizorë është në shqyrtim te Google që nga 9 tetor 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [APK](#meta-quest-3) · Horizon Store | faqja e miratuar, ndërtimi 21 në shqyrtim te Meta, ndërtimi 23 në kanalin alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#install-it-on-the-tv) · Google Play | ndërtimi 23 në GitHub; faqja e Google Play për televizorë është në shqyrtim te Google që nga 9 tetor 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP i versionit paraprak](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | ndërtimi 4 për desktop në Windows: foto, video të sheshta dhe 360°; macOS dhe Linux më vonë |
 
 *Gjendjet përditësohen me çdo publikim; hollësitë janë te [Ku ta merrni](#where-to-get-it).*
@@ -612,14 +612,14 @@ Nga ndërtimi 20 i njëjti aplikacion Android punon në Android TV dhe Google TV
 
 ### Nisja e parë
 
-1. Identifikohuni si në një telefon: shigjetat lëvizin një kornizë nga fusha në fushë, dhe OK mbi një fushë (“Shtypni OK për të shkruar”) hap tastierën e televizorit në një dialog, për adresën e serverit, email-in dhe fjalëkalimin.
+1. Identifikohuni si në një telefon: shigjetat lëvizin një kornizë nga fusha në fushë (nga ndërtimi 23 ajo kalon sipër etiketës së një fushe të plotësuar në vend që ta përshkojë), dhe OK mbi një fushë (“Shtypni OK për të shkruar”) hap tastierën e televizorit në një dialog, për adresën e serverit, email-in dhe fjalëkalimin.
 2. Ose zgjidhni “Përdor pa server”. Një televizor nuk ka foto të vetat, prandaj skeda Fotot thotë “Ky televizor nuk ka foto ose video të vetat: hapni një ndarje rrjeti nga Biblioteka.” me një buton Ndarjet e rrjetit. Shtoni aty një ndarje, një server Plex ose një kamerë, si në një telefon (shihni [Ndarjet e rrjetit](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Lëvizni me telekomandë
 
 - Shigjetat lëvizin kornizën, OK hap atë mbi të cilën është, Prapa kthehet prapa. Nga një skedë, Prapa shkon te menyja anësore, pastaj te Fotot, pastaj del nga aplikacioni. Në një listë zgjedhjesh, si lloji i një ndarjeje ose një cilësim, shigjetat vetëm lëvizin kornizën dhe OK zgjedh opsionin (nga ndërtimi 22; më parë shigjetat ndryshonin zgjedhjen).
-- Kanali lart dhe poshtë lëvizin një faqe në një kohë. Nga ndërtimi 22 rrjetat e fotove shfaqin rreth gjashtë pllakëza për rresht brenda kufijve të ekranit, me miniatura më të qarta të skedarëve të vetë pajisjes që mbeten të lëmuara edhe në detaje të imta, dhe faqet që në telefon kanë një kokë me figurë (lista 360°, Të preferuarat, albumet e pajisjes) shfaqin në vend të saj një shirit të thjeshtë.
-- Nga ndërtimi 22 korniza nis te elementi i parë i çdo faqeje (pllakëza e parë e listës 360°, fusha e email-it pasi të jetë konfirmuar adresa e serverit), qëndron brenda kufijve të ekranit ndërsa një rrjetë lëviz, dhe nga një rrjetë ngjitet te rreshti ose filtrat sipër saj në vend që të shkojë te butoni Prapa. Shigjeta djathtas nga një ndarje rrjeti ose një kamerë arrin te butoni i saj i modifikimit, dhe rezultati i “Testo lidhjen” lëviz derisa të duket.
+- Kanali lart dhe poshtë lëvizin një faqe në një kohë. Nga ndërtimi 22 rrjetat e fotove shfaqin rreth gjashtë pllakëza për rresht brenda kufijve të ekranit, me miniatura më të qarta të skedarëve të vetë pajisjes, dhe faqet që në telefon kanë një kokë me figurë (lista 360°, Të preferuarat, albumet e pajisjes) shfaqin në vend të saj një shirit të thjeshtë. Nga ndërtimi 23 këto miniatura krijohen sa dyfishi i madhësisë së pllakëzës së tyre dhe zvogëlohen butësisht, kështu që detajet e imta, si degët me borë, nuk vezullojnë më, dhe fotot e serverit shfaqin parapamjen e tij më të madhe, po aq të qartë, në vend të miniaturës së tij të vogël të zgjeruar deri te pllakëza.
+- Nga ndërtimi 22 korniza nis te elementi i parë i çdo faqeje (pllakëza e parë e listës 360°, fusha e email-it pasi të jetë konfirmuar adresa e serverit), qëndron brenda kufijve të ekranit ndërsa një rrjetë lëviz (nga ndërtimi 23 edhe në dy panelet e Cilësimeve), dhe nga një rrjetë ngjitet te rreshti ose filtrat sipër saj në vend që të shkojë te butoni Prapa. Shigjeta djathtas nga një ndarje rrjeti ose një kamerë arrin te butoni i saj i modifikimit, dhe rezultati i “Testo lidhjen” lëviz derisa të duket.
 - Në shikuesit, funksionojnë tastet e telekomandës për luaj dhe pauzë, përpara, prapa, i radhës dhe i mëparshëm, dhe tasti i informacionit shfaq detajet e një fotoje ose videoje.
 
 ### Foto dhe video me telekomandë
@@ -733,7 +733,7 @@ Gjithçka që bën aplikacioni zyrtar celular i Immich është këtu: kopja reze
 
 Për t'i treguar një foto 360° dikujt që nuk e ka aplikacionin, ndajeni me një lidhje të ndarë Immich: aplikacioni web i Immich e shfaq një foto 360° si sferë në shfletuesin e tij.
 
-Ndërtimi aktual, ndërtimi 22 (versioni 3.3.0-rc.0, numri i ndërtimit 3030020), bazohet në `main` të Immich të 10 tetorit 2026 (versioni 3.3.0-rc.0, ende jo një publikim i qëndrueshëm). Ndërtimi 22 u testua me një server Immich 3.2.4 dhe me një server të ndërtuar nga i njëjti `main` i Immich: identifikimi, kronologjia, albumet, fotot dhe videot 360°, luajtja e videove dhe ngarkimet, pa asnjë gabim API. Ju lutemi raportoni problemet te [Issues](https://github.com/freeKC/Immuch360/issues), jo te projekti Immich. Për dokumentacionin e plotë të vetë Immich, shihni [immich.app](https://immich.app).
+Ndërtimi aktual, ndërtimi 23 (versioni 3.3.0-rc.0, numri i ndërtimit 3030021), bazohet në `main` të Immich të 10 tetorit 2026 (versioni 3.3.0-rc.0, ende jo një publikim i qëndrueshëm). Ndërtimi 22, mbi të njëjtën bazë Immich, u testua me një server Immich 3.2.4 dhe me një server të ndërtuar nga i njëjti `main` i Immich: identifikimi, kronologjia, albumet, fotot dhe videot 360°, luajtja e videove dhe ngarkimet, pa asnjë gabim API. Ju lutemi raportoni problemet te [Issues](https://github.com/freeKC/Immuch360/issues), jo te projekti Immich. Për dokumentacionin e plotë të vetë Immich, shihni [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Krahasimi me aplikacionin Immich dhe aplikacione të tjera
@@ -1112,7 +1112,7 @@ Aplikacioni është në Google Play për telefona dhe tableta; versioni i App St
 
 - **Telefona dhe tableta Android**
   - Sot: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ose APK-ja në faqen [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` për një telefon (`Immuch360-v<version>-release.apk` universal funksionon kudo, `-armeabi-v7a` është për telefona më të vjetër 32 bit, dhe skedari `.aab` është për Google Play, jo për sideload). Ndërtimi i GitHub zakonisht është përpara dyqanit. Në çdo rast instalohet pranë aplikacionit zyrtar Immich (paketa `com.aprogsys.immuch360`).
-  - Së shpejti: në Google Play, ndërtimi 22 u dërgua më 10 tetor 2026 në vend të ndërtimit 20 (i publikuar që nga 7 tetor); ai sjell ndryshimet e Immich të tetorit dhe rregullimet për televizorin.
+  - Së shpejti: në Google Play, ndërtimi 23 u dërgua më 10 tetor 2026 në vend të ndërtimit 20 (i publikuar që nga 7 tetor); ai sjell ndryshimet e Immich të tetorit dhe rregullimet për televizorin nga ndërtimet 22 dhe 23.
 - **iPhone dhe iPad**
   - Sot: në pritje të shqyrtimit të Apple. Versioni në shqyrtim ka veçoritë e ndërtimit 11: ngarkimi në Immich dhe zgjedhja Burimi i videos (ndërtimi 15) dhe skedarët Insta360 të papërpunuar (ndërtimi 16) do të vijnë me një përditësim të mëvonshëm të App Store. Kodi burimor ndërtohet me Xcode ose në Codemagic, shihni [Ndërtojeni vetë](#build-it-yourself).
   - Së shpejti: App Store, në shqyrtim.
