@@ -121,7 +121,9 @@ class DesktopLocalImageApi implements LocalImageApi {
   }
 
   /// {pointer, width, height, rowBytes} of the RGBA pixels of [thumbhash] (base64) in a malloc buffer, the shape the phones
-  /// answer with, decoded by the same pure Dart package the app uses elsewhere; ThumbhashImageRequest frees it
+  /// answer with; ThumbhashImageRequest frees it. The phones decode in the Rust native core (native/, since upstream
+  /// c0d1dc923), the computers with the same algorithm in the pure Dart thumbhash package: the native core's buffer
+  /// comes from the C runtime's calloc, which malloc.free of package:ffi (CoTaskMemFree on Windows) cannot free
   @override
   Future<Map<String, int>> getThumbhash(String thumbhash) async {
     final image = thumbhash_codec.thumbHashToRGBA(base64Decode(thumbhash));

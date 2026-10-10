@@ -42,6 +42,7 @@ abstract class ImageRequest {
     int address,
     int length, {
     ui.Size? decodeSize,
+    int? maxLongSide,
   }) async {
     final pointer = Pointer<Uint8>.fromAddress(address);
     if (_isCancelled) {
@@ -68,7 +69,12 @@ abstract class ImageRequest {
       return null;
     }
 
-    final target = _targetSize(descriptor.width, descriptor.height, decodeSize);
+    final target = _boundLongSide(
+      descriptor.width,
+      descriptor.height,
+      _targetSize(descriptor.width, descriptor.height, decodeSize),
+      maxLongSide,
+    );
     final codec = await descriptor.instantiateCodec(targetWidth: target?.$1, targetHeight: target?.$2);
     if (_isCancelled) {
       descriptor.dispose();
@@ -79,8 +85,18 @@ abstract class ImageRequest {
     return (codec, descriptor);
   }
 
-  Future<ui.FrameInfo?> _fromEncodedPlatformImage(int address, int length, {ui.Size? decodeSize}) async {
-    final result = await _codecFromEncodedPlatformImage(address, length, decodeSize: decodeSize);
+  Future<ui.FrameInfo?> _fromEncodedPlatformImage(
+    int address,
+    int length, {
+    ui.Size? decodeSize,
+    int? maxLongSide,
+  }) async {
+    final result = await _codecFromEncodedPlatformImage(
+      address,
+      length,
+      decodeSize: decodeSize,
+      maxLongSide: maxLongSide,
+    );
     if (result == null) {
       return null;
     }
@@ -114,6 +130,19 @@ abstract class ImageRequest {
     }
 
     return ((width * scale).ceil(), (height * scale).ceil());
+  }
+
+  /// Immuch360 Desktop: [target] (null for the full size) bounded to [maxLongSide] pixels on its long side, the aspect
+  /// ratio kept, as the phones bound their decodes (Impeller fits each side to the texture limit on its own, which
+  /// squishes long images). Null [maxLongSide]: [target] as it is
+  (int, int)? _boundLongSide(int width, int height, (int, int)? target, int? maxLongSide) {
+    final (targetWidth, targetHeight) = target ?? (width, height);
+    if (maxLongSide == null || width <= 0 || height <= 0 || math.max(targetWidth, targetHeight) <= maxLongSide) {
+      return target;
+    }
+
+    final bound = maxLongSide / math.max(width, height);
+    return (math.max(1, (width * bound).round()), math.max(1, (height * bound).round()));
   }
 
   Future<ui.FrameInfo?> _fromDecodedPlatformImage(int address, int width, int height, int rowBytes) async {

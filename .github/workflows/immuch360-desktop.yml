@@ -256,6 +256,17 @@ jobs:
           name: generated-dart
           path: mobile
 
+      # The build hook of upstream's native core (native/native_core) compiles its Rust in every flutter test and build
+      # here. The toolchain of rust-toolchain.toml with the runner's own target only, named for the hook through
+      # RUSTUP_TOOLCHAIN as mise does on the other jobs, so that rustup does not add the twelve targets of the file; a
+      # runner without rustup fails here rather than in the middle of the tests
+      - name: Rust toolchain
+        run: |
+          channel=$(sed -n 's/^channel = "\([^"]*\)".*/\1/p' native/crates/native_core_ffi/rust-toolchain.toml)
+          rustup --version
+          rustup toolchain install "$channel" --profile minimal --target x86_64-pc-windows-msvc
+          echo "RUSTUP_TOOLCHAIN=$channel" >> "$GITHUB_ENV"
+
       - name: Flutter dependencies
         working-directory: mobile
         run: |
@@ -380,6 +391,15 @@ jobs:
         with:
           name: generated-dart
           path: mobile
+
+      # The build hook of upstream's native core (native/native_core) compiles its Rust for each slice of the release
+      # build, arm64 and x86_64. mise sets RUSTUP_TOOLCHAIN, so rustup ignores the targets of rust-toolchain.toml, and
+      # the hook adds a target for Android and iOS only: the slice that is not the runner's own needs its target here.
+      - name: Rust targets of the macOS slices
+        working-directory: mobile
+        run: |
+          channel=$(sed -n 's/^channel = "\([^"]*\)".*/\1/p' ../native/crates/native_core_ffi/rust-toolchain.toml)
+          mise exec -- rustup target add --toolchain "$channel" aarch64-apple-darwin x86_64-apple-darwin
 
       - name: Build without signing
         working-directory: mobile
