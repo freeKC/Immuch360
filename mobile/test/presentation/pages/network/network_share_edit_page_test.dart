@@ -15,6 +15,7 @@ import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_share_edit.page.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
@@ -182,17 +183,26 @@ void main() {
   List<NetworkSource> storedSources() => NetworkSource.decodeList(store.tryGet(StoreKey.networkSources));
 
   /// Opens the form over a stub page, so that leaving it can be seen; in the remote control layout of a TV with
-  /// [tvMode]
+  /// [tvMode], on the screen of a 1080p TV with [tvScreen]
   Future<void> pumpEditPage(
     WidgetTester tester, {
     NetworkSource? source,
     bool settle = true,
     bool tvMode = false,
+    bool tvScreen = false,
     TvApi? tvApi,
   }) async {
-    // Tall enough for the whole form
-    tester.view.physicalSize = const Size(2400, 4800);
-    addTearDown(tester.view.resetPhysicalSize);
+    if (tvScreen) {
+      // A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
+      tester.view
+        ..physicalSize = const Size(1920, 1080)
+        ..devicePixelRatio = 2;
+      addTearDown(tester.view.reset);
+    } else {
+      // Tall enough for the whole form
+      tester.view.physicalSize = const Size(2400, 4800);
+      addTearDown(tester.view.resetPhysicalSize);
+    }
 
     final router = await pumpNetworkTestApp(
       tester,
@@ -1193,6 +1203,55 @@ void main() {
         reason: 'the focus leaves the group upwards too',
       );
       expect(chosenType(tester), NetworkSourceType.dlna);
+    });
+
+    testWidgets('on a 1080p TV the outcome of a first connection test comes into view', (tester) async {
+      final tvApi = _MockTvApi();
+      registerFallbackValue(TvTextRequest(title: '', text: '', kind: TvTextKind.text, okLabel: '', cancelLabel: ''));
+      when(() => tvApi.editText(any())).thenAnswer((invocation) async {
+        final request = invocation.positionalArguments.single as TvTextRequest;
+        return switch (request.title) {
+          'Server name or address' => 'nas.local',
+          'Share' => 'media',
+          _ => null,
+        };
+      });
+      await pumpEditPage(tester, tvMode: true, tvScreen: true, tvApi: tvApi);
+      Finder entry(String key) => find.ancestor(of: field(key), matching: find.byType(TvTextEntry));
+      // Down until [target] has the focus, as a remote goes: each press scrolls the next item just into view
+      Future<void> downTo(Finder target) async {
+        for (var i = 0; i < 30 && !focusedIn(target); i++) {
+          await press(tester, LogicalKeyboardKey.arrowDown);
+        }
+        expect(focusedIn(target), isTrue);
+      }
+
+      for (final key in ['host', 'share']) {
+        await downTo(entry(key));
+        await press(tester, LogicalKeyboardKey.select);
+      }
+      expect(textOf(tester, 'share'), 'media');
+      await downTo(testButton);
+
+      await press(tester, LogicalKeyboardKey.select);
+
+      final outcome = find.text('Connected, 3 entries in the start folder', skipOffstage: false);
+      expect(outcome, findsOneWidget);
+      final view = tester.getRect(find.byType(ListView));
+      expect(tester.getRect(outcome).bottom, lessThanOrEqualTo(view.bottom), reason: 'shown without a press of Down');
+      expect(focusedIn(testButton), isTrue, reason: 'the focus stays on the button, in view too');
+      expect(tester.getRect(testButton).top, greaterThanOrEqualTo(view.top));
+    });
+
+    testWidgets('on a 1080p TV the focus ring of the first type leaves the Type label above it whole', (tester) async {
+      await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [smbSource]));
+      await pumpEditPage(tester, source: smbSource, tvMode: true, tvScreen: true);
+      expect(focusedIn(type('smb')), isTrue, reason: 'the first item of the form of a share');
+
+      final focused = tester.state<TvFocusRingState>(find.byType(TvFocusRing)).ringRect!;
+      // How far the ring reaches out of the focused row, its dark outline included
+      const reach = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
+      expect(focused.top - reach, greaterThanOrEqualTo(tester.getRect(find.text('Type')).bottom));
     });
 
     testWidgets('OK on Plex opens the Plex page in place of the form', (tester) async {

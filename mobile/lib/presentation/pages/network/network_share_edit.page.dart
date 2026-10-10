@@ -13,6 +13,7 @@ import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/forms/discard_changes.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/found_servers.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -174,6 +175,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   /// The outcome of the last connection test, null when there was none since the last change
   String? _testMessage;
   bool _testSucceeded = false;
+  final _testOutcomeKey = GlobalKey();
 
   /// The servers found on the network, for a new share only
   List<DiscoveredServer> _servers = const [];
@@ -536,6 +538,22 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       _testMessage = message;
       _testSucceeded = succeeded;
     });
+    // A remote scrolls with the arrows only: on a TV the line, which comes under the button that has the focus, stayed
+    // below the screen until Down was pressed
+    if (ref.read(tvModeProvider)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final outcome = _testOutcomeKey.currentContext;
+        if (outcome != null && outcome.mounted) {
+          unawaited(
+            Scrollable.ensureVisible(
+              outcome,
+              alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              duration: const Duration(milliseconds: 200),
+            ),
+          );
+        }
+      });
+    }
   }
 
   Future<void> _save() async {
@@ -688,6 +706,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
     final canSubmit = _formSource() != null && !_testing && !_saving;
     final canListShares = _host.text.trim().isNotEmpty && _username.text.trim().isNotEmpty && !_listingShares;
     final labelStyle = context.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold);
+    final tvMode = ref.watch(tvModeProvider);
 
     return DiscardChangesScope(
       listenable: _fieldChanges,
@@ -701,7 +720,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
         ),
         // A remote control starts on the first item: a server found, or the first choice of the form
         body: RemoteInitialFocus(
-          enabled: ref.watch(tvModeProvider),
+          enabled: tvMode,
           child: SafeArea(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -718,6 +737,8 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                   const SizedBox(height: 20),
                 ],
                 Text(context.t.network_share_type, style: labelStyle),
+                // The focus ring of a TV reaches out of the focused row, and covered the bottom of the label on arrival
+                if (tvMode) const SizedBox(height: _tvFocusRingReach),
                 RadioGroup<NetworkSourceType>(
                   groupValue: _type,
                   onChanged: (type) {
@@ -909,7 +930,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                 ),
                 if (_testMessage != null) ...[
                   const SizedBox(height: 12),
-                  _TestResult(message: _testMessage!, succeeded: _testSucceeded),
+                  _TestResult(key: _testOutcomeKey, message: _testMessage!, succeeded: _testSucceeded),
                 ],
                 const SizedBox(height: 24),
                 Align(
@@ -953,8 +974,11 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   }
 }
 
+/// How far the focus ring of a TV reaches out of the focused item, its dark outline included
+const _tvFocusRingReach = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
+
 class _TestResult extends StatelessWidget {
-  const _TestResult({required this.message, required this.succeeded});
+  const _TestResult({super.key, required this.message, required this.succeeded});
 
   final String message;
   final bool succeeded;

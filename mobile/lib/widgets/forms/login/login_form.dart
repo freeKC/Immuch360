@@ -86,6 +86,8 @@ class LoginForm extends HookConsumerWidget {
     // Not checked on a computer yet: the localhost redirect the desktop needs must be accepted by the server
     final hasOauth = ref.watch(deviceFeaturesProvider.select((features) => features.oauth));
     final passwordEntryFocus = useFocusNode(debugLabel: 'Password entry');
+    // Kept across the builds of the form, whose key changes at each one: a new entry would lose the focus
+    final emailEntryFocus = useFocusNode(debugLabel: 'Email entry');
     // A TV that never reached a server is most likely there for the network shares: it starts on "Use without a
     // server" rather than on the address
     final neverConnected = useMemoized(() => getServerUrl() == null);
@@ -557,6 +559,7 @@ class LoginForm extends HookConsumerWidget {
                           label: context.t.email,
                           kind: TvTextKind.email,
                           autofocus: true,
+                          focusNode: emailEntryFocus,
                           onSubmitted: (_) => passwordEntryFocus.requestFocus(),
                           child: ImmichEmailInput(
                             controller: emailController,
@@ -665,7 +668,15 @@ class LoginForm extends HookConsumerWidget {
 
                   // Note: This used to have an AnimatedSwitcher, but was removed
                   // because of https://github.com/flutter/flutter/issues/120874
-                  Form(key: loginFormKey, child: serverSelectionOrLogin),
+                  // The credentials step replaces the address or Next, which had the focus: Flutter then gives it
+                  // back to the item focused before on the page (Logs under the form, once visited), and the
+                  // autofocus of the email gives way. Keyed by the step, so that it acts once each time the step
+                  // shows.
+                  RemoteInitialFocus(
+                    key: ValueKey(serverEndpoint.value != null),
+                    enabled: tvMode && serverEndpoint.value != null,
+                    child: Form(key: loginFormKey, child: serverSelectionOrLogin),
+                  ),
                 ],
               ),
             ),

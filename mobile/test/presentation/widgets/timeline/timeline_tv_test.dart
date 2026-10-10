@@ -3,9 +3,12 @@
 // enough to cover their tile. Out of the remote control layout the timeline is the one of a phone.
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -18,6 +21,7 @@ import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/fixed/segment.model.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
@@ -34,13 +38,12 @@ void main() {
   setUp(() async => context = await PresentationContext.create());
   tearDown(() => context.dispose());
 
-  /// Twelve 360° photos of the device, 2:1
-  final assets = List<BaseAsset>.generate(
-    12,
-    (i) => LocalAssetStub.image1.copyWith(id: 'pano$i', width: 5760, height: 2880),
-  );
+  /// [count] 360° photos of the device, 2:1
+  List<BaseAsset> panoramas(int count) =>
+      List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: 'pano$i', width: 5760, height: 2880));
 
-  Future<void> pumpTimeline(WidgetTester tester, {required bool tvMode}) async {
+  Future<void> pumpTimeline(WidgetTester tester, {required bool tvMode, int count = 12}) async {
+    final assets = panoramas(count);
     if (tvMode) {
       // A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
       tester.view
@@ -119,6 +122,60 @@ void main() {
       }
     });
 
+    testWidgets('the arrows keep the focused tile and its ring inside the overscan margins, down and up', (
+      tester,
+    ) async {
+      await pumpTimeline(tester, tvMode: true, count: 48);
+      const screenHeight = 540.0;
+      // How far the ring reaches out of the tile, its dark outline included
+      const ring = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
+      final barBottom = tester.getRect(find.byType(AppBar)).bottom;
+      Focus.of(tester.element(tiles().first)).requestFocus();
+      await tester.pumpAndSettle();
+      final scrollable = tester.state<ScrollableState>(find.byType(Scrollable).first);
+
+      for (var row = 1; row <= 5; row++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pumpAndSettle();
+        final rect = FocusManager.instance.primaryFocus!.rect;
+        expect(
+          rect.bottom + ring,
+          lessThanOrEqualTo(screenHeight - TvShell.overscan.bottom + 0.5),
+          reason: 'row $row and its ring above the bottom margin, not flush with the screen',
+        );
+        expect(rect.top - ring, greaterThanOrEqualTo(barBottom - 0.5), reason: 'row $row under the bar');
+      }
+      final scrolled = scrollable.position.pixels;
+      expect(scrolled, greaterThan(0), reason: 'the rows below came into view');
+
+      for (var row = 4; row >= 0; row--) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+        await tester.pumpAndSettle();
+        final rect = FocusManager.instance.primaryFocus!.rect;
+        expect(
+          rect.top - ring,
+          greaterThanOrEqualTo(barBottom + TvShell.overscan.top - 0.5),
+          reason: 'row $row and its ring a margin under the bar, not flush with it',
+        );
+      }
+      expect(scrollable.position.pixels, lessThan(scrolled), reason: 'the rows above came back into view');
+    });
+
+    testWidgets('a thumbnail is smoothed as it is drawn smaller than decoded, fine detail without speckles', (
+      tester,
+    ) async {
+      await pumpTimeline(tester, tvMode: true);
+
+      final thumbnail = tester.widget<Thumbnail>(
+        find.descendant(of: tiles().first, matching: find.byType(Thumbnail)).first,
+      );
+      expect(
+        thumbnail.filterQuality,
+        FilterQuality.medium,
+        reason: 'mipmaps: the thumbnails of a TV come larger than their tile',
+      );
+    });
+
     testWidgets('a device thumbnail is asked large enough to cover its tile, a 2:1 photo included', (tester) async {
       await pumpTimeline(tester, tvMode: true);
 
@@ -150,7 +207,31 @@ void main() {
       expect(firstRow.first.left, 0, reason: 'from the edge of the screen');
       final provider = tester.widget<Thumbnail>(find.descendant(of: tiles().first, matching: find.byType(Thumbnail)));
       expect((provider.imageProvider! as LocalThumbProvider).size, kThumbnailResolution);
+      expect(provider.filterQuality, FilterQuality.low, reason: 'as before');
     });
+  });
+
+  testWidgets('a thumbnail paints its image with the filter quality asked', (tester) async {
+    final image = (await tester.runAsync(() => createTestImage(width: 64, height: 32)))!;
+    addTearDown(image.dispose);
+    Future<void> pumpThumbnail(FilterQuality? quality) => tester.pumpWidget(
+      Center(
+        child: SizedBox.square(
+          dimension: 16,
+          child: quality == null
+              ? Thumbnail(key: UniqueKey(), imageProvider: _ImageOf(image))
+              : Thumbnail(key: UniqueKey(), imageProvider: _ImageOf(image), filterQuality: quality),
+        ),
+      ),
+    );
+    PaintPattern paintsWith(FilterQuality quality) => paints
+      ..something((method, arguments) => method == #drawImageRect && (arguments[3] as Paint).filterQuality == quality);
+
+    await pumpThumbnail(FilterQuality.medium);
+    expect(find.byType(Thumbnail), paintsWith(FilterQuality.medium));
+
+    await pumpThumbnail(null);
+    expect(find.byType(Thumbnail), paintsWith(FilterQuality.low), reason: 'the default, a phone');
   });
 
   group('tvThumbnailDecodeSize', () {
@@ -175,4 +256,18 @@ void main() {
       expect(tvTimelineColumnCount(0, 4), 4, reason: 'the zero sized first frame');
     });
   });
+}
+
+/// [image] at once, as a decoded thumbnail in the cache
+class _ImageOf extends ImageProvider<_ImageOf> {
+  const _ImageOf(this.image);
+
+  final ui.Image image;
+
+  @override
+  Future<_ImageOf> obtainKey(ImageConfiguration configuration) => SynchronousFuture(this);
+
+  @override
+  ImageStreamCompleter loadImage(_ImageOf key, ImageDecoderCallback decode) =>
+      OneFrameImageStreamCompleter(SynchronousFuture(ImageInfo(image: image.clone())));
 }

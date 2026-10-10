@@ -21,6 +21,7 @@ import 'package:immich_mobile/presentation/widgets/timeline/sliver_segmented_lis
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.state.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline_drag_selection.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline_pinch_zoom.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -50,6 +51,7 @@ class Timeline extends ConsumerWidget {
     this.readOnly = false,
     this.persistentBottomBar = false,
     this.loadingWidget,
+    this.tvFocusFirstAsset = false,
   });
 
   final Widget? topSliverWidget;
@@ -65,6 +67,10 @@ class Timeline extends ConsumerWidget {
   final bool readOnly;
   final bool persistentBottomBar;
   final Widget? loadingWidget;
+
+  /// The remote control layout: the first tile asks for the focus, so that a page arrives on its first photo rather
+  /// than on a chip of a bar above the grid (the 360° list)
+  final bool tvFocusFirstAsset;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -85,6 +91,7 @@ class Timeline extends ConsumerWidget {
                 showStorageIndicator: showStorageIndicator,
                 withStack: withStack,
                 groupBy: groupBy,
+                tvFocusFirstAsset: tvFocusFirstAsset,
               ),
             ),
             if (readOnly) readonlyModeProvider.overrideWith(() => _AlwaysReadOnlyNotifier()),
@@ -129,6 +136,9 @@ int tvTimelineColumnCount(double width, int tilesPerRow) =>
 
 /// The widest tile of a timeline on a TV, in dp: six per row on a 1080p TV, two whole rows under the headers
 const kTvTimelineTileExtent = 160.0;
+
+/// How far the focus ring of a TV reaches out of the focused tile, its dark outline included
+const kTvFocusRingReach = TvFocusRing.gap + TvFocusRing.strokeWidth + 1;
 
 class _AlwaysReadOnlyNotifier extends ReadOnlyModeNotifier {
   @override
@@ -184,6 +194,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     WidgetsBinding.instance.addObserver(this);
     _scrollController = ScrollController(onAttach: _restoreAssetPosition);
     _eventSubscription = EventStream.shared.listen(_onEvent);
+    FocusManager.instance.addListener(_keepFocusInsideTvMargins);
 
     ref.listenManual(multiSelectProvider.select((s) => s.isEnabled), _onMultiSelectionToggled);
   }
@@ -281,10 +292,129 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    FocusManager.instance.removeListener(_keepFocusInsideTvMargins);
     _fastScrollDebouncer.dispose();
     _scrollController.dispose();
     unawaited(_eventSubscription?.cancel());
     super.dispose();
+  }
+
+  /// The remote control layout: the item of the grid that has the focus, a tile most of all, stays with its ring
+  /// inside the overscan margins of the TV. The arrows scroll it just into view, flush with the bottom of the screen
+  /// (or with the bar going up), where a TV may cut it and the ring was cut. Called once the focus moved, after that
+  /// first scroll and before the frame; a scroll in an animation (back from a viewer, the tile centred) is left alone.
+  void _keepFocusInsideTvMargins() {
+    if (!mounted || _scrollController.positions.length != 1 || !ref.read(tvModeProvider)) {
+      return;
+    }
+    final focused = FocusManager.instance.primaryFocus?.context;
+    if (focused == null || !focused.mounted || !_scrollsWithGrid(focused)) {
+      return;
+    }
+    final position = _scrollController.position;
+    final object = focused.findRenderObject();
+    if (position.isScrollingNotifier.value || object is! RenderBox || !object.attached || !object.hasSize) {
+      return;
+    }
+    final padding = MediaQuery.paddingOf(context);
+    object.showOnScreen(
+      rect: Rect.fromLTRB(
+        0,
+        -padding.top - kTvFocusRingReach,
+        object.size.width,
+        object.size.height + padding.bottom + kTvFocusRingReach,
+      ),
+    );
+  }
+
+  /// The arrows of a remote on the items of the grid, the TV only. Up from an item of the content goes to the nearest
+  /// item above it that scrolls with the grid, the row above first: Flutter takes the item whose middle is the
+  /// nearest, and the Back button of the pinned bar won over the chips or the row above once they had scrolled under
+  /// the bar. The bar comes when no item of the content is above. The other arrows as Flutter moves them.
+  late final _tvArrows = CallbackAction<DirectionalFocusIntent>(
+    onInvoke: (intent) {
+      final focused = FocusManager.instance.primaryFocus;
+      if (focused != null && (intent.direction != TraversalDirection.up || !_focusUpInGrid(focused))) {
+        focused.focusInDirection(intent.direction);
+      }
+      return null;
+    },
+  );
+
+  bool _focusUpInGrid(FocusNode focused) {
+    final context = focused.context;
+    final scope = focused.nearestScope;
+    if (context == null || scope == null || !_isContentItem(focused)) {
+      return false;
+    }
+    final from = focused.rect;
+    FocusNode? best;
+    (bool, double, double)? bestDistance;
+    for (final node in scope.traversalDescendants) {
+      if (node == focused || !_isContentItem(node)) {
+        continue;
+      }
+      final rect = node.rect;
+      if (rect.center.dy > from.top) {
+        continue;
+      }
+      // Above the focused item first, then the nearest row, then the nearest across
+      final inBand = rect.right > from.left && rect.left < from.right;
+      final across = inBand ? 0.0 : math.max(rect.left - from.right, from.left - rect.right);
+      final distance = (!inBand, from.center.dy - rect.center.dy, across);
+      if (bestDistance == null || _closer(distance, bestDistance)) {
+        best = node;
+        bestDistance = distance;
+      }
+    }
+    if (best == null) {
+      return false;
+    }
+    // Flutter's memory of the moves, to come back the way one went, no longer fits
+    FocusTraversalGroup.maybeOf(context)?.invalidateScopeData(scope);
+    best.requestFocus();
+    unawaited(
+      Scrollable.ensureVisible(best.context!, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart),
+    );
+    return true;
+  }
+
+  static bool _closer((bool, double, double) a, (bool, double, double) b) {
+    if (a.$1 != b.$1) {
+      return !a.$1;
+    }
+    if (a.$2 != b.$2) {
+      return a.$2 < b.$2;
+    }
+    return a.$3 < b.$3;
+  }
+
+  /// An item of the content of the grid, laid out, outside its bar
+  bool _isContentItem(FocusNode node) {
+    final context = node.context;
+    final object = context?.findRenderObject();
+    return context != null &&
+        object is RenderBox &&
+        object.attached &&
+        object.hasSize &&
+        context.findAncestorWidgetOfExactType<AppBar>() == null &&
+        _scrollsWithGrid(context);
+  }
+
+  /// Whether [context] sits in the grid's scroll view, maybe through a row that scrolls across (the network shares of
+  /// the 360° list), rather than in a bar or a dialog over it
+  bool _scrollsWithGrid(BuildContext context) {
+    final grid = _scrollController.position.context;
+    for (
+      var scrollable = context.findAncestorStateOfType<ScrollableState>();
+      scrollable != null;
+      scrollable = scrollable.context.findAncestorStateOfType<ScrollableState>()
+    ) {
+      if (scrollable == grid) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Track whether the timeline is moving fast enough to defer per-row asset loading
@@ -358,8 +488,9 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     final isMultiSelectStatusVisible = !isSelectionMode && isMultiSelectEnabled;
     final isBottomWidgetVisible =
         widget.bottomSheet != null && (isMultiSelectStatusVisible || widget.persistentBottomBar);
+    final tvMode = ref.watch(tvModeProvider);
     // A TV without a server has no photos of its own: the page says where they are instead of staying empty
-    final tvWithoutServer = ref.watch(tvModeProvider) && !ref.watch(hasServerProvider);
+    final tvWithoutServer = tvMode && !ref.watch(hasServerProvider);
 
     return PopScope(
       canPop: !isMultiSelectEnabled,
@@ -394,8 +525,11 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                 final topPadding = context.padding.top + (widget.appBar == null ? 0 : kToolbarHeight) + 10;
 
                 const bottomSheetOpenModifier = 120.0;
+                // On a TV the last row may stop as far from the bottom as the others (see _keepFocusInsideTvMargins)
                 final contentBottomPadding =
-                    context.padding.bottom + (isMultiSelectEnabled ? bottomSheetOpenModifier : 0);
+                    context.padding.bottom +
+                    (isMultiSelectEnabled ? bottomSheetOpenModifier : 0) +
+                    (tvMode ? kTvFocusRingReach : 0);
                 final scrubberBottomPadding = contentBottomPadding + kScrubberThumbHeight;
 
                 return TimelinePinchZoom(
@@ -461,7 +595,9 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                         children: [
                           NotificationListener<ScrollNotification>(
                             onNotification: _onScrollVelocityNotification,
-                            child: timeline,
+                            child: tvMode
+                                ? Actions(actions: {DirectionalFocusIntent: _tvArrows}, child: timeline)
+                                : timeline,
                           ),
                           if (isBottomWidgetVisible)
                             Positioned(
