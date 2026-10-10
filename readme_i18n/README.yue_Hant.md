@@ -21,7 +21,7 @@ Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 同 iPad** | App Store | 版本 3.3.0 等緊 Apple 審批；期間可以[自己建置](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 同 3S | [APK](#meta-quest-3) · Horizon Store | 上架頁面已批，建置 21 等緊 Meta 審批，建置 22 喺 alpha 頻道 |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 同 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上面係建置 22；電視用嘅 Google Play 上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [預覽版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows 上面嘅桌面建置 3：相片、平面同 360° 影片；macOS 同 Linux 遲啲推出 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [預覽版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows 上面嘅桌面建置 4：相片、平面同 360° 影片；macOS 同 Linux 遲啲推出 |
 
 *狀態會喺每次發佈更新；詳情睇[喺邊度攞](#where-to-get-it)。*
 
@@ -760,7 +760,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | 直接播 Plex Media Server 媒體庫入面嘅原檔，喺屋企同出面都得，唔使 plex.tv | ❌ | ✅ 由建置 20 開始，所有查閱器，電話、平板、Quest 同電視都得 |
 | Tapo 鏡頭：直播畫面，同埋按你揀嘅傳去 Immich 嘅記憶卡錄影 | ❌ | ✅ 由建置 20 開始：錄影所有平台都得，直播畫面喺 Android、Android TV、Quest，由桌面建置 3 開始仲有 Windows |
 | Android TV 同 Google TV，用遙控器操作，同一個 APK | ❌ 唔係電視 App | ✅ 由建置 20 開始 |
-| Windows 電腦上面嘅同一個 App | ❌ 淨係電話同平板 | ✅ 預覽版：相片、平面同 360° 影片（桌面建置 3） |
+| Windows 電腦上面嘅同一個 App | ❌ 淨係電話同平板 | ✅ 預覽版：相片、平面同 360° 影片（桌面建置 4） |
 | Insta360 .insp RAW 相片同單軌道 .insv 影片 | ❌ 平面 | ✅ 由建置 16 開始 |
 | 每條軌道或者每個檔案一個鏡頭嘅 RAW 影片（Insta360 X4、X4 Air、X5、X6、X3 一對檔案、GoPro .360、DJI .osv） | ❌ 平面或者錯誤 | ✅ 由建置 18 開始 |
 | 雙魚眼 .dng | ❌ 平面 | ❌ 未支援 |
@@ -984,7 +984,7 @@ Meta 喺 2026 年 10 月 7 日批咗連同建置 14 交嘅 Horizon Store 上架�
 <a id="download-and-install-on-windows"></a>
 ### 喺 Windows 下載同安裝
 
-目前嘅建置係 GitHub 預發佈版本 [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)。檔案係 `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`（大約 57 MB，解壓之後 79 個檔案，包括影片播放器同佢嘅 `licenses` 資料夾），仲有用嚟核對嘅 `SHA256SUMS.txt`。佢由主分支 `immuch360` 建置，時間係電腦嘅 360° 影片播放器合併入去之後，commit 喺佢嘅發佈說明度有寫：電話建置 21 嘅原始碼加埋電腦版本。要用 64 位元嘅 Windows 10 或者 11。
+目前嘅建置係 GitHub 預發佈版本 [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)。檔案係 `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`（大約 58 MB，解壓之後 173 個檔案，包括影片播放器同佢嘅 `licenses` 資料夾），仲有用嚟核對嘅 `SHA256SUMS.txt`。佢由主分支 `immuch360` 建置，commit 喺佢嘅發佈說明度有寫：基於 2026 年 10 月 10 日 Immich 嘅電話建置 22 嘅原始碼加埋電腦版本。由桌面建置 4 開始，影片播放器嘅程式庫 `libmpv-2.dll` 係項目自己 2026 年嘅建置，原始碼同佢一齊公開；佢將每條軌道或者每個檔案一個鏡頭咁儲存嘅原始影片嘅兩個鏡頭並排，等顯示晶片唔使將每一格畫面複製返出嚟都可以畫出 360° 畫面。要用 64 位元嘅 Windows 10 或者 11。
 
 1. 下載個 ZIP，解壓去任何地方，例如「文件」。要換走桌面建置 2，就刪除佢個資料夾或者解壓去一個新資料夾：你嘅登入、你嘅資料夾同你嘅設定都喺你嘅 Windows 使用者設定檔入面，唔係喺嗰個資料夾。
 2. 喺解壓咗嘅資料夾度啟動 `immuch360.exe`。成個資料夾要保持完整：程式要用到佢旁邊嘅檔案，當中包括影片播放器 `libmpv-2.dll`，同埋讀取顯示晶片解碼器嘅 `immuch_desktop_video.dll`。
@@ -1054,7 +1054,6 @@ App 會量度每個 360° 影片頭幾秒，再揀晶片處理幾大嘅畫格：
 <a id="not-there-yet"></a>
 ### 暫時未有
 
-- **呢個分支自己建置嘅 libmpv**：喺呢個分支自己嘅建置開啟之前，ZIP 帶住嘅係 media-kit 嘅 2024 年 libmpv，ZIP 入面嘅 `BUILD-INFO.txt` 會講係邊個。用 2024 年嗰個，每條軌道或者每個檔案一個鏡頭嘅原始影片，兩個鏡頭永遠唔會同時播（佢冇將兩個並排嘅濾鏡），所以呢啲影片只會顯示一個鏡頭，球面一半係黑色；而且顯示晶片會將每一格畫面由佢嘅解碼器複製返出嚟，令 360° 播放器喺內建晶片上面慢咗。呢個分支自己工作流程建置嘅 libmpv 係 2026 年版本，打算喺第一個公開版本之前取代佢；喺測試用手提電腦試過嘅 2026 年 libmpv 建置兩樣都做到。
 - **手提電腦上面嘅雙鏡頭原始影片**：就算用 2026 年嘅 libmpv，測試用手提電腦都淨係喺佢嘅 NVIDIA 晶片上面以每秒 30 格並排播到 X3 一對檔案（兩個 2880x2880 嘅 H.264 檔案）；喺佢嘅 Intel 晶片上面，同埋 X4 檔案（兩條 3840x3840 嘅 HEVC 軌道）喺兩粒晶片上面，影片都只係播一個鏡頭，球面一半係黑色，同行唔到兩個解碼器嘅電話一樣。
 - **3D 只限螢幕**：3D 影片顯示左眼，同電話一樣；電腦上面冇陀螺儀，亦都冇頭戴裝置檢視。想睇真 3D，就將部電腦分享俾 Meta Quest。
 - **Spatial 2.5D**，之後會配合網絡攝影機；**地圖**同「地點」檢視；**用 OAuth 登入**（請改用電郵同密碼登入）；**Google Cast**；**通知**。
@@ -1124,7 +1123,7 @@ Immuch360 Desktop 嘅 CI（`.github/workflows/immuch360-desktop.yml`）喺跟住
   - 而家：[Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅通用 `Immuch360-v<version>-release.apk`，用 adb 側載，睇[喺電視上面安裝](#install-it-on-the-tv)。佢同電話上面係同一個 App。
   - 就快：電視用嘅 Google Play，佢嘅上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批。
 - **Windows 10 同 11，64 位元（預覽版）**
-  - 而家：Immuch360 Desktop 桌面建置 3，即係[桌面預發佈版本](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)嘅 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`，照[喺 Windows 下載同安裝](#download-and-install-on-windows)講嘅方法解壓同啟動。有相片、平面影片、360°、3D、VR180 同原始 360° 影片（喺獨立顯示晶片上面流暢，喺內建晶片上面有限制）同埋 Tapo 直播畫面。
+  - 而家：Immuch360 Desktop 桌面建置 4，即係[桌面預發佈版本](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)嘅 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`，照[喺 Windows 下載同安裝](#download-and-install-on-windows)講嘅方法解壓同啟動。有相片、平面影片、360°、3D、VR180 同原始 360° 影片（喺獨立顯示晶片上面流暢，喺內建晶片上面有限制）同埋 Tapo 直播畫面。
   - 就快：配合網絡攝影機嘅 Spatial 2.5D，然後係 Linux 同 macOS；安裝程式、已簽署嘅建置同更新遲啲先有。
 
 App Store 同 Meta Horizon Store 嘅連結一上架就會加喺呢度。用你平時嘅 Immich 伺服器網址同帳戶登入，或者喺登入頁撳「唔連伺服器使用」，由裝置自己嘅相片同影片開始。GitHub 嘅 APK 唔會自己更新：留意 Releases 頁面；如果你係由商店安裝個 App，就由嗰個商店攞更新。
@@ -1162,7 +1161,7 @@ Immuch360 Desktop，即係 Windows 版本，用 Windows 版 Flutter 由同一套
 
 - **`main`**：Immich `main`，停喺 `immuch360` 所基於嘅 commit（目前嘅建置係 2026 年 10 月 10 日），永遠唔會改；分支重新建基於較新嘅 Immich 時佢先會向前移。
 - **`immuch360`**：呢個分支喺 Immich 之上嘅改動，由 2026 年 10 月 9 日開始包括 Immuch360 Desktop。每個發佈版本都會講明基於邊個 Immich 版本。
-- **`desktop`**：Immuch360 Desktop，即係電腦版本，以前喺呢度建基於 `immuch360` 開發，直至 2026 年 10 月 9 日合併入 `immuch360`，等電話、頭戴裝置、電視同電腦都由同一套原始碼推出。而家佢跟住 `immuch360`，並帶住桌面預發佈版本嘅標籤（[桌面建置 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 嚟自 commit 21f285c34，[桌面建置 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 嚟自 5b723bd25，[桌面建置 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 嚟自 2026 年 10 月 10 日 360° 影片播放器嘅合併）。新嘅桌面工作會先嚟呢度，再隨住推出佢嘅桌面建置加入 `immuch360`。電腦版本唔會改 `mobile/android` 同 `mobile/ios` 下面任何嘢。
+- **`desktop`**：Immuch360 Desktop，即係電腦版本，以前喺呢度建基於 `immuch360` 開發，直至 2026 年 10 月 9 日合併入 `immuch360`，等電話、頭戴裝置、電視同電腦都由同一套原始碼推出。而家佢跟住 `immuch360`，並帶住桌面預發佈版本嘅標籤（[桌面建置 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 嚟自 commit 21f285c34，[桌面建置 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 嚟自 5b723bd25，[桌面建置 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 嚟自 2026 年 10 月 10 日 360° 影片播放器嘅合併，[桌面建置 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) 嚟自 99113354a，包括建置 22 同項目自己嘅 libmpv）。新嘅桌面工作會先嚟呢度，再隨住推出佢嘅桌面建置加入 `immuch360`。電腦版本唔會改 `mobile/android` 同 `mobile/ios` 下面任何嘢。
 
 <a id="logs"></a>
 ## 紀錄

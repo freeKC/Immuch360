@@ -21,7 +21,7 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.0이 Apple의 심사를 기다리는 중; 그동안은 [직접 빌드하기](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3와 3S | [APK](#meta-quest-3) · Horizon Store | 등록 승인됨, 빌드 21은 Meta 심사 중, 빌드 22는 알파 채널에 있음 |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub에 빌드 22; TV용 Google Play 등록 정보는 2026년 10월 9일부터 Google 심사 중 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [미리 보기 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows용 데스크톱 빌드 3: 사진, 평면 동영상과 360° 동영상; macOS와 Linux는 나중에 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [미리 보기 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows용 데스크톱 빌드 4: 사진, 평면 동영상과 360° 동영상; macOS와 Linux는 나중에 |
 
 *상태는 릴리스마다 갱신됩니다. 자세한 내용은 [받는 곳](#where-to-get-it)에 있습니다.*
 
@@ -760,7 +760,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | plex.tv 없이 원본 파일로 재생하는 Plex Media Server 라이브러리, 집에서도 밖에서도 | ❌ | ✅ 빌드 20부터, 모든 뷰어, 휴대폰, 태블릿, Quest, TV에서 |
 | Tapo 카메라: 실시간 화면, 그리고 원할 때 Immich로 보내는 메모리 카드의 녹화 | ❌ | ✅ 빌드 20부터: 녹화는 모든 곳에서, 실시간은 Android, Android TV, Quest, 그리고 데스크톱 빌드 3부터 Windows에서 |
 | 리모컨으로 조작하는 Android TV와 Google TV, 같은 APK로 | ❌ TV 앱이 아님 | ✅ 빌드 20부터 |
-| Windows 컴퓨터에서 쓰는 같은 앱 | ❌ 휴대폰과 태블릿만 | ✅ 미리 보기: 사진, 평면 동영상과 360° 동영상(데스크톱 빌드 3) |
+| Windows 컴퓨터에서 쓰는 같은 앱 | ❌ 휴대폰과 태블릿만 | ✅ 미리 보기: 사진, 평면 동영상과 360° 동영상(데스크톱 빌드 4) |
 | Insta360 RAW .insp 사진과 한 트랙 .insv 동영상 | ❌ 평면 | ✅ 빌드 16부터 |
 | 렌즈마다 트랙이나 파일이 하나씩인 RAW 동영상(Insta360 X4, X4 Air, X5, X6, X3 두 파일, GoPro .360, DJI .osv) | ❌ 평면 또는 잘못된 표시 | ✅ 빌드 18부터 |
 | 듀얼 어안 .dng | ❌ 평면 | ❌ 아직 없음 |
@@ -984,7 +984,7 @@ Immich 라이브러리는 서버에 있고, 다른 사진과 동영상은 PC의 
 <a id="download-and-install-on-windows"></a>
 ### Windows에서 다운로드와 설치
 
-현재 빌드는 GitHub 사전 릴리스 [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)입니다. 파일은 `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`(약 57 MB, 압축을 풀면 동영상 플레이어와 그 `licenses` 폴더를 포함해 파일 79개)이고, 확인용 `SHA256SUMS.txt`가 함께 있습니다. 컴퓨터의 360° 동영상 플레이어가 기본 브랜치인 `immuch360`에 병합된 뒤, 릴리스 노트에 적힌 커밋에서 그 브랜치로 빌드했으며, 휴대폰 빌드 21의 소스에 컴퓨터 버전을 더한 것입니다. Windows 10 또는 11, 64비트가 필요합니다.
+현재 빌드는 GitHub 사전 릴리스 [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)입니다. 파일은 `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`(약 58 MB, 압축을 풀면 동영상 플레이어와 그 `licenses` 폴더를 포함해 파일 173개)이고, 확인용 `SHA256SUMS.txt`가 함께 있습니다. 기본 브랜치인 `immuch360`의, 릴리스 노트에 적힌 커밋에서 빌드했으며, 2026년 10월 10일의 Immich를 기반으로 한 휴대폰 빌드 22의 소스에 컴퓨터 버전을 더한 것입니다. 데스크톱 빌드 4부터 동영상 플레이어 라이브러리인 `libmpv-2.dll`은 프로젝트가 직접 빌드한 2026년 빌드이며, 그 소스도 함께 공개됩니다. 이 라이브러리는 렌즈가 트랙마다 또는 파일마다 하나씩 저장된 원본 동영상의 두 렌즈를 나란히 쌓고, 그래픽 칩이 각 프레임을 다시 복사해 오지 않고도 360° 화면을 그리게 합니다. Windows 10 또는 11, 64비트가 필요합니다.
 
 1. ZIP을 다운로드하고 원하는 곳, 예를 들어 문서 폴더에 압축을 풉니다. 데스크톱 빌드 2를 대체하려면 그 폴더를 지우거나 새 폴더에 압축을 푸세요. 로그인, 폴더, 설정은 그 폴더가 아니라 Windows 프로필에 남아 있습니다.
 2. 압축을 푼 폴더에서 `immuch360.exe`를 실행합니다. 폴더는 통째로 두세요. 프로그램은 옆에 있는 파일들이 필요하며, 그중에는 동영상 플레이어인 `libmpv-2.dll`과 그래픽 칩의 디코더를 읽는 `immuch_desktop_video.dll`이 있습니다.
@@ -1054,7 +1054,6 @@ ZIP을 확인하려면 다운로드한 폴더에서 명령 프롬프트로 `cert
 <a id="not-there-yet"></a>
 ### 아직 없는 것
 
-- **포크 자체 빌드의 libmpv**: 포크 자체 빌드를 켜기 전까지 ZIP에는 media-kit의 2024년 libmpv가 들어 있으며, ZIP 안의 `BUILD-INFO.txt`에 어느 것이 들어 있는지 적혀 있습니다. 2024년 버전으로는 렌즈가 트랙마다 또는 파일마다 하나씩인 원본 동영상의 두 렌즈를 동시에 재생할 수 없어서(두 렌즈를 나란히 쌓는 필터가 없음), 이런 동영상은 렌즈 하나만 보여 주고 구의 절반이 검게 나옵니다. 또 그래픽 칩이 각 프레임을 디코더에서 다시 복사해 와서, 내장 칩에서는 360° 플레이어가 느려집니다. 포크 자체 워크플로의 libmpv(2026년 버전)가 첫 공개 릴리스 전에 이를 대체할 예정이며, 테스트용 노트북에서 시험한 2026년 libmpv 빌드는 두 가지를 모두 해냅니다.
 - **노트북에서 두 렌즈 원본 동영상**: 2026년 libmpv로도 테스트용 노트북은 X3 한 쌍(2880x2880 H.264 파일 두 개)을 NVIDIA 칩에서만 초당 30프레임으로 나란히 쌓았습니다. Intel 칩에서, 그리고 X4 파일(3840x3840 HEVC 트랙 두 개)은 두 칩 모두에서, 디코더 두 개를 돌릴 수 없는 휴대폰처럼 렌즈 하나로 재생되고 구의 절반이 검게 나옵니다.
 - **화면에서만 보는 3D**: 3D 동영상은 휴대폰처럼 왼쪽 눈을 보여 줍니다. 컴퓨터에는 자이로스코프도 헤드셋 화면도 없습니다. 진짜 3D로 보려면 컴퓨터를 Meta Quest와 공유하세요.
 - **Spatial 2.5D**, 나중에 웹캠과 함께. **지도**와 장소 보기, **OAuth 로그인**(대신 이메일과 비밀번호로 로그인), **Google Cast**, **알림**.
@@ -1124,7 +1123,7 @@ Immuch360 Desktop의 CI(`.github/workflows/immuch360-desktop.yml`)는 `immuch360
   - 지금: [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 범용 `Immuch360-v<version>-release.apk`를 adb로 사이드로드합니다. [TV에 설치하기](#install-it-on-the-tv)를 보세요. 휴대폰과 같은 앱입니다.
   - 곧: TV용 Google Play, TV용 등록 정보는 2026년 10월 9일부터 Google 심사 중.
 - **Windows 10과 11, 64비트(미리 보기)**
-  - 지금: Immuch360 Desktop 데스크톱 빌드 3, [데스크톱 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)의 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`을 [Windows에서 다운로드와 설치](#download-and-install-on-windows)의 설명대로 압축을 풀고 실행합니다. 사진, 평면 동영상, 360°, 3D, VR180, 원본 360° 동영상(별도 그래픽 칩에서는 부드럽고 내장 칩에서는 제한이 있음), Tapo 실시간 화면이 됩니다.
+  - 지금: Immuch360 Desktop 데스크톱 빌드 4, [데스크톱 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)의 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`을 [Windows에서 다운로드와 설치](#download-and-install-on-windows)의 설명대로 압축을 풀고 실행합니다. 사진, 평면 동영상, 360°, 3D, VR180, 원본 360° 동영상(별도 그래픽 칩에서는 부드럽고 내장 칩에서는 제한이 있음), Tapo 실시간 화면이 됩니다.
   - 곧: 웹캠을 쓰는 Spatial 2.5D, 그다음 Linux와 macOS. 설치 프로그램, 서명된 빌드, 업데이트는 그 뒤에.
 
 App Store와 Meta Horizon Store 링크는 등록이 공개되는 대로 여기에 추가하겠습니다. 평소의 Immich 서버 URL과 계정으로 로그인하거나, 로그인 화면에서 "서버 없이 사용"을 탭해 기기 자체의 사진과 동영상으로 시작하세요. GitHub에서 받은 APK는 스스로 업데이트되지 않으니 Releases 페이지를 확인하세요. 스토어에서 앱을 설치했다면 업데이트도 그 스토어에서 받으세요.
@@ -1162,7 +1161,7 @@ Windows 버전인 Immuch360 Desktop은 같은 소스인 `immuch360` 브랜치에
 
 - **`main`**: `immuch360`이 기반으로 하는 커밋의 Immich `main`(현재 빌드는 2026년 10월 10일)으로, 수정하지 않습니다. 포크를 더 새로운 Immich로 리베이스할 때 앞으로 이동합니다.
 - **`immuch360`**: Immich 위에 얹은 이 포크의 변경 사항이며, 2026년 10월 9일부터 Immuch360 Desktop도 포함합니다. 각 릴리스에 어느 Immich 버전을 기반으로 하는지 적혀 있습니다.
-- **`desktop`**: 컴퓨터 버전인 Immuch360 Desktop을 `immuch360` 위에서 빌드하던 곳으로, 휴대폰, 헤드셋, TV, 컴퓨터가 같은 소스에서 나오도록 2026년 10월 9일에 그 브랜치에 병합되었습니다. 지금은 `immuch360`을 따라가며 데스크톱 사전 릴리스 태그를 담고 있습니다([데스크톱 빌드 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1)은 커밋 21f285c34에서, [데스크톱 빌드 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2)는 5b723bd25에서, [데스크톱 빌드 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)은 2026년 10월 10일 360° 동영상 플레이어 병합에서). 새로운 데스크톱 작업은 먼저 이곳에 들어오고, 그 작업을 담은 데스크톱 빌드와 함께 `immuch360`에 합류합니다. 컴퓨터 버전은 `mobile/android`와 `mobile/ios` 아래를 바꾸지 않습니다.
+- **`desktop`**: 컴퓨터 버전인 Immuch360 Desktop을 `immuch360` 위에서 빌드하던 곳으로, 휴대폰, 헤드셋, TV, 컴퓨터가 같은 소스에서 나오도록 2026년 10월 9일에 그 브랜치에 병합되었습니다. 지금은 `immuch360`을 따라가며 데스크톱 사전 릴리스 태그를 담고 있습니다([데스크톱 빌드 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1)은 커밋 21f285c34에서, [데스크톱 빌드 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2)는 5b723bd25에서, [데스크톱 빌드 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)은 2026년 10월 10일 360° 동영상 플레이어 병합에서, [데스크톱 빌드 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)는 99113354a에서, 빌드 22와 프로젝트 자체 libmpv 포함). 새로운 데스크톱 작업은 먼저 이곳에 들어오고, 그 작업을 담은 데스크톱 빌드와 함께 `immuch360`에 합류합니다. 컴퓨터 버전은 `mobile/android`와 `mobile/ios` 아래를 바꾸지 않습니다.
 
 <a id="logs"></a>
 ## 로그

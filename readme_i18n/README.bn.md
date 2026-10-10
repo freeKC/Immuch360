@@ -21,7 +21,7 @@ Immuch360 হলো Immich-এর মোবাইল অ্যাপ, যেখ�
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ও iPad** | App Store | সংস্করণ 3.3.0 Apple-এর পর্যালোচনার অপেক্ষায়; ততক্ষণ [নিজে বিল্ড করুন](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ও 3S | [APK](#meta-quest-3) · Horizon Store | তালিকা অনুমোদিত, বিল্ড 21 Meta-র পর্যালোচনাধীন, আলফা চ্যানেলে বিল্ড 22 |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ও Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub-এ বিল্ড 22; টিভির জন্য Google Play তালিকা 9 অক্টোবর 2026 থেকে Google-এর পর্যালোচনাধীন |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [প্রিভিউ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows-এ ডেস্কটপ বিল্ড 3: ছবি, সমতল ও 360° ভিডিও; macOS ও Linux পরে |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [প্রিভিউ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows-এ ডেস্কটপ বিল্ড 4: ছবি, সমতল ও 360° ভিডিও; macOS ও Linux পরে |
 
 *প্রতিটি রিলিজে অবস্থা হালনাগাদ করা হয়; বিস্তারিত আছে [কোথায় পাবেন](#where-to-get-it) অংশে।*
 
@@ -760,7 +760,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | মূল ফাইল থেকে চালানো Plex Media Server লাইব্রেরি, বাড়িতে ও বাইরে, plex.tv ছাড়া | ❌ | ✅ বিল্ড 20 থেকে, প্রতিটি ভিউয়ার, ফোন, ট্যাবলেট, Quest ও টিভিতে |
 | Tapo ক্যামেরা: লাইভ ভিউ, এবং আপনি চাইলে Immich-এ পাঠানো মেমরি কার্ডের রেকর্ডিং | ❌ | ✅ বিল্ড 20 থেকে: রেকর্ডিং সব জায়গায়, লাইভ Android, Android TV, Quest-এ এবং ডেস্কটপ বিল্ড 3 থেকে Windows-এ |
 | রিমোট দিয়ে চালানো Android TV ও Google TV, একই APK-তে | ❌ টিভি অ্যাপ নয় | ✅ বিল্ড 20 থেকে |
-| একটি Windows কম্পিউটারে একই অ্যাপ | ❌ শুধু ফোন ও ট্যাবলেট | ✅ প্রিভিউ: ছবি, সমতল ও 360° ভিডিও (ডেস্কটপ বিল্ড 3) |
+| একটি Windows কম্পিউটারে একই অ্যাপ | ❌ শুধু ফোন ও ট্যাবলেট | ✅ প্রিভিউ: ছবি, সমতল ও 360° ভিডিও (ডেস্কটপ বিল্ড 4) |
 | RAW Insta360 .insp ছবি ও এক ট্র্যাকের .insv ভিডিও | ❌ সমতল | ✅ বিল্ড 16 থেকে |
 | প্রতি ট্র্যাক বা প্রতি ফাইলে একটি লেন্সের RAW ভিডিও (Insta360 X4, X4 Air, X5, X6, X3 জোড়া, GoPro .360, DJI .osv) | ❌ সমতল বা ভুল | ✅ বিল্ড 18 থেকে |
 | ডুয়াল ফিশআই .dng | ❌ সমতল | ❌ এখনও নয় |
@@ -984,7 +984,7 @@ Meta 7 অক্টোবর 2026-এ বিল্ড 14 দিয়ে Horizon
 <a id="download-and-install-on-windows"></a>
 ### Windows-এ ডাউনলোড ও ইনস্টল করুন
 
-বর্তমান বিল্ডটি হলো GitHub প্রি-রিলিজ [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)। এর ফাইল হলো `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (প্রায় 57 MB, আনজিপ করার পর 79টি ফাইল, ভিডিও প্লেয়ার ও এর `licenses` ফোল্ডারসহ), যাচাই করার জন্য `SHA256SUMS.txt`-সহ। এটি মূল ব্রাঞ্চ `immuch360` থেকে বিল্ড করা, কম্পিউটারের 360° ভিডিও প্লেয়ার তাতে মার্জ হওয়ার পর, সেই কমিটে যার নাম এর রিলিজ নোটে আছে: ফোনের বিল্ড 21-এর সোর্স সাথে কম্পিউটার সংস্করণ। এর জন্য Windows 10 বা 11, 64 বিট দরকার।
+বর্তমান বিল্ডটি হলো GitHub প্রি-রিলিজ [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)। এর ফাইল হলো `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` (প্রায় 58 MB, আনজিপ করার পর 173টি ফাইল, ভিডিও প্লেয়ার ও এর `licenses` ফোল্ডারসহ), যাচাই করার জন্য `SHA256SUMS.txt`-সহ। এটি মূল ব্রাঞ্চ `immuch360` থেকে বিল্ড করা, সেই কমিটে যার নাম এর রিলিজ নোটে আছে: ফোনের বিল্ড 22-এর সোর্স, 10 অক্টোবর 2026-এর Immich-এর উপর, সাথে কম্পিউটার সংস্করণ। ডেস্কটপ বিল্ড 4 থেকে ভিডিও প্লেয়ারের লাইব্রেরি, `libmpv-2.dll`, হলো প্রকল্পের নিজস্ব 2026 বিল্ড, যার সোর্স এর সাথেই প্রকাশিত হয়; এটি প্রতি ট্র্যাকে বা প্রতি ফাইলে একটি করে রাখা raw ভিডিওর দুটি লেন্স একসাথে সাজায়, এবং গ্রাফিক্স চিপকে প্রতিটি ফ্রেম আবার কপি না করেই 360° দৃশ্য আঁকতে দেয়। এর জন্য Windows 10 বা 11, 64 বিট দরকার।
 
 1. ZIP ডাউনলোড করুন এবং যেকোনো জায়গায় আনজিপ করুন, যেমন Documents-এ। ডেস্কটপ বিল্ড 2 বদলাতে, এর ফোল্ডারটি মুছে দিন বা একটি নতুন ফোল্ডারে আনজিপ করুন: আপনার সাইন ইন, আপনার ফোল্ডার ও আপনার সেটিংস আপনার Windows প্রোফাইলে থাকে, সেই ফোল্ডারে নয়।
 2. আনজিপ করা ফোল্ডার থেকে `immuch360.exe` চালু করুন। ফোল্ডারটি পুরো রাখুন: প্রোগ্রামের পাশের ফাইলগুলো এর দরকার, তাদের মধ্যে `libmpv-2.dll`, ভিডিও প্লেয়ার, এবং `immuch_desktop_video.dll`, যা গ্রাফিক্স চিপের ডিকোডারগুলো পড়ে।
@@ -1054,7 +1054,6 @@ ZIP যাচাই করতে, ডাউনলোডের ফোল্ডা
 <a id="not-there-yet"></a>
 ### এখনও নেই
 
-- **ফর্কের নিজস্ব বিল্ডের libmpv**: ফর্কের নিজস্ব বিল্ড চালু না হওয়া পর্যন্ত ZIP-গুলো media-kit-এর 2024 libmpv বহন করে, এবং ZIP-এর `BUILD-INFO.txt` বলে কোনটি বহন করছে। 2024-এরটি দিয়ে, প্রতি ট্র্যাকে বা প্রতি ফাইলে একটি লেন্সসহ raw ভিডিওর দুটি লেন্স কখনো একসাথে চলে না (এতে সেগুলো সাজানোর ফিল্টারটি নেই), তাই সেই ভিডিওগুলো একটি লেন্স দেখায়, গোলকের অর্ধেক কালো; এবং গ্রাফিক্স চিপ প্রতিটি ফ্রেম তার ডিকোডার থেকে আবার কপি করে, যা অন্তর্নির্মিত চিপে 360° প্লেয়ারকে ধীর করে। ফর্কের নিজস্ব ওয়ার্কফ্লোর libmpv, একটি 2026 সংস্করণ, প্রথম পাবলিক রিলিজের আগে এটিকে বদলানোর কথা; পরীক্ষার ল্যাপটপে চেষ্টা করা libmpv-এর একটি 2026 বিল্ড দুটিই করে।
 - **একটি ল্যাপটপে দুই লেন্সের raw ভিডিও**: এমনকি একটি 2026 libmpv দিয়েও, পরীক্ষার ল্যাপটপ একটি X3 জোড়া (দুটি 2880x2880 H.264 ফাইল) সেকেন্ডে 30 ফ্রেমে সাজিয়েছে শুধু এর NVIDIA চিপে; এর Intel চিপে, এবং একটি X4 ফাইলের জন্য (দুটি 3840x3840 HEVC ট্র্যাক) দুটি চিপেই, ভিডিওটি একটি লেন্স চালায়, গোলকের অর্ধেক কালো, যেমন একটি ফোনে যা দুটি ডিকোডার চালাতে পারে না।
 - **শুধু পর্দায় 3D**: একটি 3D ভিডিও তার বাম চোখ দেখায়, ফোনের মতো; কম্পিউটারে কোনো জাইরোস্কোপ ও হেডসেট ভিউ নেই। আসল 3D-তে দেখতে, কম্পিউটারটি একটি Meta Quest-এর সাথে শেয়ার করুন।
 - **Spatial 2.5D**, পরে ওয়েবক্যাম দিয়ে; **মানচিত্র** ও Places ভিউ; **OAuth দিয়ে সাইন ইন** (তার বদলে একটি ইমেল ও পাসওয়ার্ড দিয়ে সাইন ইন করুন); **Google Cast**; **নোটিফিকেশন**।
@@ -1124,7 +1123,7 @@ Immuch360 Desktop-এর CI (`.github/workflows/immuch360-desktop.yml`) `desktop
   - আজ: [Releases](https://github.com/freeKC/Immuch360/releases) পেজের ইউনিভার্সাল `Immuch360-v<version>-release.apk`, adb দিয়ে সাইডলোড করা, দেখুন [টিভিতে ইনস্টল করুন](#install-it-on-the-tv)। এটি ফোনের মতোই একই অ্যাপ।
   - শীঘ্রই: টিভিতে Google Play, যার তালিকা 9 অক্টোবর 2026 থেকে Google-এর পর্যালোচনাধীন।
 - **Windows 10 ও 11, 64 বিট (প্রিভিউ)**
-  - আজ: Immuch360 Desktop, ডেস্কটপ বিল্ড 3, [ডেস্কটপ প্রি-রিলিজের](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`, আনজিপ করে চালু করুন, যেমন [Windows-এ ডাউনলোড ও ইনস্টল করুন](#download-and-install-on-windows) বলে। ছবি, সমতল ভিডিও, 360°, 3D, VR180 ও raw 360° ভিডিও (আলাদা গ্রাফিক্স চিপে মসৃণ, অন্তর্নির্মিত চিপে সীমাবদ্ধতাসহ) এবং Tapo লাইভ ভিউ।
+  - আজ: Immuch360 Desktop, ডেস্কটপ বিল্ড 4, [ডেস্কটপ প্রি-রিলিজের](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`, আনজিপ করে চালু করুন, যেমন [Windows-এ ডাউনলোড ও ইনস্টল করুন](#download-and-install-on-windows) বলে। ছবি, সমতল ভিডিও, 360°, 3D, VR180 ও raw 360° ভিডিও (আলাদা গ্রাফিক্স চিপে মসৃণ, অন্তর্নির্মিত চিপে সীমাবদ্ধতাসহ) এবং Tapo লাইভ ভিউ।
   - শীঘ্রই: ওয়েবক্যাম দিয়ে Spatial 2.5D, তারপর Linux ও macOS; পরে একটি ইনস্টলার, একটি স্বাক্ষরিত বিল্ড এবং আপডেট।
 
 তালিকাগুলো প্রকাশিত হওয়ার সাথে সাথে App Store ও Meta Horizon Store-এর লিংক এখানে যোগ করা হবে। আপনার সাধারণ Immich সার্ভার URL ও অ্যাকাউন্ট দিয়ে লগইন করুন, অথবা ডিভাইসের নিজস্ব ছবি ও ভিডিও দিয়ে শুরু করতে লগইন পেজে "সার্ভার ছাড়াই ব্যবহার করুন"-এ ট্যাপ করুন। GitHub-এর APK নিজে থেকে আপডেট হয় না: Releases পেজে নজর রাখুন, আর কোনো স্টোর থেকে অ্যাপটি ইনস্টল করার পরে সেই স্টোর থেকেই আপডেট নিন।
@@ -1162,7 +1161,7 @@ Immuch360 Desktop, Windows সংস্করণ, একই সোর্স থ�
 
 - **`main`**: `immuch360` যে কমিটের উপর ভিত্তি করে সেই কমিটে Immich `main` (বর্তমান বিল্ডগুলোর জন্য 10 অক্টোবর 2026), কখনো পরিবর্তন করা হয় না; ফর্কটি নতুন কোনো Immich-এর উপর রিবেস করা হলে এটি এগিয়ে যায়।
 - **`immuch360`**: Immich-এর উপরে এই ফর্কের পরিবর্তনগুলো, 9 অক্টোবর 2026 থেকে Immuch360 Desktop-সহ। প্রতিটি রিলিজ জানায় এটি কোন Immich সংস্করণের উপর ভিত্তি করে তৈরি।
-- **`desktop`**: যেখানে Immuch360 Desktop, কম্পিউটার সংস্করণ, `immuch360`-এর উপরে তৈরি হতো, যতক্ষণ না 9 অক্টোবর 2026-এ এটি তাতে মার্জ করা হয়, যাতে ফোন, হেডসেট, টিভি ও কম্পিউটার একই সোর্স থেকে প্রকাশিত হয়। এটি এখন `immuch360` অনুসরণ করে এবং ডেস্কটপ প্রি-রিলিজের ট্যাগ বহন করে ([ডেস্কটপ বিল্ড 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) কমিট 21f285c34 থেকে, [ডেস্কটপ বিল্ড 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25 থেকে, [ডেস্কটপ বিল্ড 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 10 অক্টোবর 2026-এ 360° ভিডিও প্লেয়ারের মার্জ থেকে)। নতুন ডেস্কটপ কাজ প্রথমে সেখানে আসে এবং যে ডেস্কটপ বিল্ড তা প্রকাশ করে তার সাথে `immuch360`-এ যোগ দেয়। কম্পিউটার সংস্করণ `mobile/android` ও `mobile/ios`-এর অধীনে কিছুই বদলায় না।
+- **`desktop`**: যেখানে Immuch360 Desktop, কম্পিউটার সংস্করণ, `immuch360`-এর উপরে তৈরি হতো, যতক্ষণ না 9 অক্টোবর 2026-এ এটি তাতে মার্জ করা হয়, যাতে ফোন, হেডসেট, টিভি ও কম্পিউটার একই সোর্স থেকে প্রকাশিত হয়। এটি এখন `immuch360` অনুসরণ করে এবং ডেস্কটপ প্রি-রিলিজের ট্যাগ বহন করে ([ডেস্কটপ বিল্ড 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) কমিট 21f285c34 থেকে, [ডেস্কটপ বিল্ড 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25 থেকে, [ডেস্কটপ বিল্ড 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 10 অক্টোবর 2026-এ 360° ভিডিও প্লেয়ারের মার্জ থেকে, [ডেস্কটপ বিল্ড 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) 99113354a থেকে, বিল্ড 22 ও প্রকল্পের নিজস্ব libmpv-সহ)। নতুন ডেস্কটপ কাজ প্রথমে সেখানে আসে এবং যে ডেস্কটপ বিল্ড তা প্রকাশ করে তার সাথে `immuch360`-এ যোগ দেয়। কম্পিউটার সংস্করণ `mobile/android` ও `mobile/ios`-এর অধীনে কিছুই বদলায় না।
 
 <a id="logs"></a>
 ## লগসমূহ

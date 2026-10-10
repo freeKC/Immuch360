@@ -21,7 +21,7 @@ Immuch360 は、見回せる 360° の写真と動画に対応した Immich モ�
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone と iPad** | App Store | バージョン 3.3.0 は Apple の審査待ち、それまでは[自分でビルドする](#build-it-yourself)ことができます |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 と 3S | [APK](#meta-quest-3) · Horizon Store | ストアページは承認済み、ビルド 21 は Meta の審査中、ビルド 22 はアルファチャンネルで配信中 |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV と Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub にビルド 22、テレビ向け Google Play のストアページは 2026 年 10 月 9 日から Google の審査中 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [プレビュー版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktop build 3 は Windows 用：写真、平面動画と 360° 動画、macOS と Linux は後日対応 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [プレビュー版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 は Windows 用：写真、平面動画と 360° 動画、macOS と Linux は後日対応 |
 
 *状況はリリースごとに更新します。詳しくは[入手方法](#where-to-get-it)をご覧ください。*
 
@@ -760,7 +760,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | Plex Media Server のライブラリを元のファイルから、自宅でも外出先でも、plex.tv なしで再生 | ❌ | ✅ ビルド 20 から、すべてのビューアーで、スマートフォン、タブレット、Quest、テレビ |
 | Tapo カメラ：ライブ映像と、選んだときに Immich へ送れるメモリーカードの録画 | ❌ | ✅ ビルド 20 から：録画はすべての環境、ライブ映像は Android、Android TV、Quest、そして desktop build 3 からは Windows |
 | Android TV と Google TV、リモコン操作、同じ APK で | ❌ テレビ用アプリではない | ✅ ビルド 20 から |
-| Windows パソコンで動く同じアプリ | ❌ スマートフォンとタブレットのみ | ✅ プレビュー版：写真、平面の動画と 360° 動画（desktop build 3） |
+| Windows パソコンで動く同じアプリ | ❌ スマートフォンとタブレットのみ | ✅ プレビュー版：写真、平面の動画と 360° 動画（desktop build 4） |
 | Insta360 の RAW の .insp 写真とシングルトラックの .insv 動画 | ❌ 平面 | ✅ ビルド 16 から |
 | トラックごとまたはファイルごとにレンズが 1 つの RAW 動画（Insta360 X4、X4 Air、X5、X6、X3 ペア、GoPro .360、DJI .osv） | ❌ 平面または誤った表示 | ✅ ビルド 18 から |
 | デュアル魚眼の .dng | ❌ 平面 | ❌ 未対応 |
@@ -984,7 +984,7 @@ Immich ライブラリはサーバーにあり、ほかの写真や動画はパ�
 <a id="download-and-install-on-windows"></a>
 ### Windows でのダウンロードとインストール
 
-現在のビルドは GitHub のプレリリース [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) です。ファイルは `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`（約 57 MB、展開すると 79 ファイル、動画プレーヤーとその `licenses` フォルダーを含む）で、確認用の `SHA256SUMS.txt` が付いています。パソコンの 360° 動画プレーヤーをメインブランチ `immuch360` にマージした後、リリースノートに記載のコミットからビルドしました：スマートフォンのビルド 21 のソースにパソコン版を加えたものです。Windows 10 または 11（64 ビット）が必要です。
+現在のビルドは GitHub のプレリリース [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) です。ファイルは `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`（約 58 MB、展開すると 173 ファイル、動画プレーヤーとその `licenses` フォルダーを含む）で、確認用の `SHA256SUMS.txt` が付いています。メインブランチ `immuch360` の、リリースノートに記載のコミットからビルドしました：2026 年 10 月 10 日時点の Immich をベースにしたスマートフォンのビルド 22 のソースにパソコン版を加えたものです。desktop build 4 から、動画プレーヤーのライブラリ `libmpv-2.dll` はプロジェクト独自の 2026 年のビルドで、そのソースも一緒に公開しています。このライブラリは、トラックごと、またはファイルごとに 1 つずつ保存された未加工動画の 2 つのレンズを並べ、グラフィックチップが各フレームをコピーし戻さずに 360° の表示を描画できるようにします。Windows 10 または 11（64 ビット）が必要です。
 
 1. ZIP をダウンロードし、どこにでも展開します（例えばドキュメント）。desktop build 2 を置き換えるには、そのフォルダーを削除するか、新しいフォルダーに展開してください：サインイン、フォルダー、設定は、そのフォルダーではなく Windows のユーザープロファイルに保存されています。
 2. 展開したフォルダーから `immuch360.exe` を起動します。フォルダーはそのまま残してください：プログラムは隣にあるファイルを必要とします。その中には、動画プレーヤーの `libmpv-2.dll` と、グラフィックチップのデコーダーを読み取る `immuch_desktop_video.dll` があります。
@@ -1054,7 +1054,6 @@ ZIP を確認するには、ダウンロードしたフォルダーでコマン�
 <a id="not-there-yet"></a>
 ### まだできないこと
 
-- **フォーク独自のビルドの libmpv**：フォーク独自のビルドに切り替えるまで、ZIP には media-kit の 2024 年の libmpv が入っており、どちらが入っているかは ZIP 内の `BUILD-INFO.txt` に書かれています。2024 年版では、トラックごと、またはファイルごとにレンズが 1 つの未加工動画の 2 つのレンズを同時に再生できません（並べるためのフィルターがない）。そのため、それらの動画は 1 つのレンズを表示し、球の半分は黒になります。また、グラフィックチップがデコーダーから各フレームをコピーし戻すため、内蔵チップでは 360° プレーヤーが遅くなります。フォーク独自のワークフローの libmpv（2026 年版）が、最初の正式リリースの前にこれを置き換える予定です。テスト用ノートパソコンで試した 2026 年の libmpv のビルドは、その両方ができます。
 - **ノートパソコンでの 2 レンズの未加工動画**：2026 年の libmpv でも、テスト用ノートパソコンが X3 のペア（2880x2880 の H.264 ファイル 2 つ）を毎秒 30 フレームで並べられたのは NVIDIA チップだけでした。Intel チップでは、また X4 のファイル（3840x3840 の HEVC トラック 2 つ）では両方のチップで、2 つのデコーダーを動かせないスマートフォンと同じく、動画は 1 つのレンズを再生し、球の半分は黒になります。
 - **3D は画面上のみ**：3D 動画はスマートフォンと同じく左目を表示します。パソコンにはジャイロスコープもヘッドセットのビューもありません。本物の 3D で見るには、パソコンを Meta Quest と共有してください。
 - **Spatial 2.5D**（後にウェブカメラで）、**地図**と場所のビュー、**OAuth でのサインイン**（代わりにメールアドレスとパスワードでサインインしてください）、**Google Cast**、**通知**。
@@ -1124,7 +1123,7 @@ Immuch360 Desktop の CI（`.github/workflows/immuch360-desktop.yml`）は、`im
   - 現在：[Releases](https://github.com/freeKC/Immuch360/releases) ページのユニバーサル版 `Immuch360-v<version>-release.apk` を adb でサイドロードします。[テレビにインストールする](#install-it-on-the-tv) を参照してください。スマートフォンと同じアプリです。
   - 今後：テレビ向けの Google Play、そのストアページは 2026 年 10 月 9 日から Google の審査中。
 - **Windows 10 と 11、64 ビット（プレビュー版）**
-  - 現在：Immuch360 Desktop、desktop build 3、[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) の ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` を、[Windows でのダウンロードとインストール](#download-and-install-on-windows) のとおりに展開して起動します。写真、平面の動画、360°、3D、VR180、未加工の 360° 動画（専用のグラフィックチップでは滑らか、内蔵チップでは制限あり）、そして Tapo のライブ映像。
+  - 現在：Immuch360 Desktop、desktop build 4、[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) の ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` を、[Windows でのダウンロードとインストール](#download-and-install-on-windows) のとおりに展開して起動します。写真、平面の動画、360°、3D、VR180、未加工の 360° 動画（専用のグラフィックチップでは滑らか、内蔵チップでは制限あり）、そして Tapo のライブ映像。
   - 今後：ウェブカメラを使った Spatial 2.5D、次に Linux と macOS。その後、インストーラー、署名済みビルド、更新。
 
 App Store と Meta Horizon Store のリンクは、掲載が公開され次第ここに追加します。いつもの Immich サーバーの URL とアカウントでログインするか、ログイン画面で「サーバーなしで使用」をタップして、デバイス本体の写真と動画で始めてください。GitHub の APK は自動では更新されません：Releases ページを確認してください。ストアからアプリをインストールした後は、そのストアから更新を受け取ってください。
@@ -1162,7 +1161,7 @@ Windows 版の Immuch360 Desktop は、同じソース、つまり `immuch360` �
 
 - **`main`**：`immuch360` のベースとなっているコミット時点の Immich の `main`（現在のビルドでは 2026 年 10 月 10 日）で、変更は加えていません。フォークを新しい Immich にリベースすると進みます。
 - **`immuch360`**：Immich の上に重ねたこのフォークの変更で、2026 年 10 月 9 日からは Immuch360 Desktop も含みます。各リリースに、ベースとなっている Immich のバージョンを記載しています。
-- **`desktop`**：パソコン版の Immuch360 Desktop を `immuch360` の上に重ねて作っていたブランチです。スマートフォン、ヘッドセット、テレビ、パソコンを同じソースからリリースするため、2026 年 10 月 9 日にそこへマージしました。現在は `immuch360` に追従し、デスクトップのプレリリースのタグを持っています（[desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) はコミット 21f285c34 から、[desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) は 5b723bd25 から、[desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) は 2026 年 10 月 10 日の 360° 動画プレーヤーのマージから）。新しいデスクトップの作業はまずここに入り、それを含む desktop build とともに `immuch360` に合流します。パソコン版は `mobile/android` と `mobile/ios` の下を何も変えません。
+- **`desktop`**：パソコン版の Immuch360 Desktop を `immuch360` の上に重ねて作っていたブランチです。スマートフォン、ヘッドセット、テレビ、パソコンを同じソースからリリースするため、2026 年 10 月 9 日にそこへマージしました。現在は `immuch360` に追従し、デスクトップのプレリリースのタグを持っています（[desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) はコミット 21f285c34 から、[desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) は 5b723bd25 から、[desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) は 2026 年 10 月 10 日の 360° 動画プレーヤーのマージから、[desktop build 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) は 99113354a から、ビルド 22 とプロジェクト独自の libmpv を含む）。新しいデスクトップの作業はまずここに入り、それを含む desktop build とともに `immuch360` に合流します。パソコン版は `mobile/android` と `mobile/ios` の下を何も変えません。
 
 <a id="logs"></a>
 ## ログ

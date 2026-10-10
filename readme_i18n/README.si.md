@@ -21,7 +21,7 @@ Immuch360 යනු ඔබට වටපිට බැලිය හැකි 360°
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone සහ iPad** | App Store | 3.3.0 අනුවාදය Apple හි සමාලෝචනය සඳහා රැඳී සිටී; ඒ අතරතුර [ඔබම එය ගොඩනඟන්න](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 සහ 3S | [APK](#meta-quest-3) · Horizon Store | ලැයිස්තුගත කිරීම අනුමතයි, බිල්ඩ් 21 Meta හි සමාලෝචනයේ, බිල්ඩ් 22 ඇල්ෆා නාලිකාවේ |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV සහ Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub හි බිල්ඩ් 22; රූපවාහිනී සඳහා Google Play ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [පෙරදසුන ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows මත desktop බිල්ඩ් 3: ඡායාරූප, පැතලි සහ 360° වීඩියෝ; macOS සහ Linux පසුව |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [පෙරදසුන ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows මත desktop බිල්ඩ් 4: ඡායාරූප, පැතලි සහ 360° වීඩියෝ; macOS සහ Linux පසුව |
 
 *සෑම නිකුතුවකදීම තත්ත්වයන් යාවත්කාලීන කෙරේ; විස්තර [එය ලබා ගන්නේ කොහෙන්ද](#where-to-get-it) හි ඇත.*
 
@@ -760,7 +760,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | මුල් ගොනුවලින් වාදනය කරන Plex Media Server පුස්තකාල, නිවසේදී සහ පිටතදී, plex.tv නොමැතිව | ❌ | ✅ බිල්ඩ් 20 සිට, සියලුම දර්ශක, දුරකථන, ටැබ්ලට්, Quest සහ රූපවාහිනී මත |
 | Tapo කැමරා: සජීවී දර්ශනය, සහ ඔබ තෝරන විට Immich වෙත යවන මතක කාඩ්පතේ පටිගත කිරීම් | ❌ | ✅ බිල්ඩ් 20 සිට: පටිගත කිරීම් සෑම තැනකම, සජීවී Android, Android TV, Quest මත සහ, desktop build 3 සිට, Windows මත |
 | Android TV සහ Google TV, දුරස්ථ පාලකයෙන් පාලනය කරන, එකම APK එකේ | ❌ රූපවාහිනී යෙදුමක් නොවේ | ✅ බිල්ඩ් 20 සිට |
-| Windows පරිගණකයක ඇති එම යෙදුමම | ❌ දුරකථන සහ ටැබ්ලට් පමණි | ✅ පෙරදසුන: ඡායාරූප, පැතලි සහ 360° වීඩියෝ (desktop build 3) |
+| Windows පරිගණකයක ඇති එම යෙදුමම | ❌ දුරකථන සහ ටැබ්ලට් පමණි | ✅ පෙරදසුන: ඡායාරූප, පැතලි සහ 360° වීඩියෝ (desktop build 4) |
 | RAW Insta360 .insp ඡායාරූප සහ එක් ධාවන පථ .insv වීඩියෝ | ❌ පැතලි | ✅ බිල්ඩ් 16 සිට |
 | ධාවන පථයකට හෝ ගොනුවකට එක් කාචයක් සහිත RAW වීඩියෝ (Insta360 X4, X4 Air, X5, X6, X3 යුගල, GoPro .360, DJI .osv) | ❌ පැතලි හෝ වැරදි | ✅ බිල්ඩ් 18 සිට |
 | dual fisheye .dng | ❌ පැතලි | ❌ තවම නැත |
@@ -984,7 +984,7 @@ Quest 3 එකක, යෙදුම ප්‍රංශ භාෂාවෙන් �
 <a id="download-and-install-on-windows"></a>
 ### Windows මත බාගත කර ස්ථාපනය කරන්න
 
-වත්මන් බිල්ඩ් එක GitHub පූර්ව නිකුතුව වන [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) වේ. එහි ගොනුව `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (57 MB පමණ, දිග හැරි පසු ගොනු 79, වීඩියෝ වාදකය සහ එහි `licenses` ෆෝල්ඩරය ද ඇතුළුව), එය පරීක්ෂා කිරීමට `SHA256SUMS.txt` සමඟ. එය ප්‍රධාන ශාඛාව වන `immuch360` වෙතින්, පරිගණකයේ 360° වීඩියෝ වාදකය එයට ඒකාබද්ධ කළ පසු, නිකුතු සටහන් නම් කරන commit එකේදී ගොඩනඟන ලදී: දුරකථන බිල්ඩ් 21 හි මූලාශ්‍ර සහ පරිගණක අනුවාදය. එයට Windows 10 හෝ 11, 64 bit අවශ්‍ය වේ.
+වත්මන් බිල්ඩ් එක GitHub පූර්ව නිකුතුව වන [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) වේ. එහි ගොනුව `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` (58 MB පමණ, දිග හැරි පසු ගොනු 173, වීඩියෝ වාදකය සහ එහි `licenses` ෆෝල්ඩරය ද ඇතුළුව), එය පරීක්ෂා කිරීමට `SHA256SUMS.txt` සමඟ. එය ප්‍රධාන ශාඛාව වන `immuch360` වෙතින්, නිකුතු සටහන් නම් කරන commit එකේදී ගොඩනඟන ලදී: 2026 ඔක්තෝබර් 10 දින Immich මත දුරකථන බිල්ඩ් 22 හි මූලාශ්‍ර සහ පරිගණක අනුවාදය. desktop build 4 සිට, වීඩියෝ වාදකයේ පුස්තකාලය, `libmpv-2.dll`, ව්‍යාපෘතියේම 2026 බිල්ඩ් එකකි, එහි මූලාශ්‍ර එය සමඟ ප්‍රකාශයට පත් කෙරේ; එය ධාවන පථයකට හෝ ගොනුවකට එක බැගින් ගබඩා කළ අමු වීඩියෝවල කාච දෙක එකට තබයි, සහ එක් එක් රාමුව ආපසු පිටපත් නොකර 360° දර්ශනය ඇඳීමට ග්‍රැෆික් චිපයට ඉඩ දෙයි. එයට Windows 10 හෝ 11, 64 bit අවශ්‍ය වේ.
 
 1. ZIP එක බාගත කර ඕනෑම තැනක දිග හරින්න, උදාහරණයක් ලෙස Documents තුළ. desktop build 2 ප්‍රතිස්ථාපනය කිරීමට, එහි ෆෝල්ඩරය මකන්න හෝ අලුත් එකකට දිග හරින්න: ඔබේ පුරනය, ඔබේ ෆෝල්ඩර සහ ඔබේ සැකසුම් ඔබේ Windows පැතිකඩේ රැඳේ, එම ෆෝල්ඩරයේ නොවේ.
 2. දිග හැරි ෆෝල්ඩරයෙන් `immuch360.exe` ආරම්භ කරන්න. ෆෝල්ඩරය සම්පූර්ණයෙන්ම තබා ගන්න: වැඩසටහනට එය අසල ඇති ගොනු අවශ්‍ය වේ, ඒ අතර වීඩියෝ වාදකය වන `libmpv-2.dll` සහ ග්‍රැෆික් චිපයේ විකේතක කියවන `immuch_desktop_video.dll`.
@@ -1054,7 +1054,6 @@ ZIP එක පරීක්ෂා කිරීමට, බාගත කළ ෆෝ�
 <a id="not-there-yet"></a>
 ### තවම නැති දේ
 
-- **fork එකේම බිල්ඩ් එකේ libmpv**: fork එකේම බිල්ඩ් එක සක්‍රිය කරන තුරු ZIP වල media-kit හි 2024 libmpv ඇත, සහ ZIP එකේ `BUILD-INFO.txt` එහි ඇත්තේ කුමක්දැයි පවසයි. 2024 එක සමඟ, ධාවන පථයකට හෝ ගොනුවකට එක් කාචයක් ඇති අමු වීඩියෝවක කාච දෙක කිසි විටෙක එකවර වාදනය නොවේ (ඒවා එකට තබන පෙරහන එහි නැත), එබැවින් එම වීඩියෝ එක් කාචයක් පෙන්වයි, ගෝලයෙන් අඩක් කළු; සහ ග්‍රැෆික් චිපය එක් එක් රාමුව එහි විකේතකයෙන් ආපසු පිටපත් කරයි, එය ඒකාබද්ධ චිපයක 360° වාදකය මන්දගාමී කරයි. fork එකේම workflow එකේ libmpv, 2026 අනුවාදයක්, පළමු පොදු නිකුතුවට පෙර එය ප්‍රතිස්ථාපනය කිරීමට නියමිතය; පරීක්ෂණ ලැප්ටොප් එකේ උත්සාහ කළ libmpv හි 2026 බිල්ඩ් එකක් දෙකම කරයි.
 - **ලැප්ටොප් එකක කාච දෙකේ අමු වීඩියෝ**: 2026 libmpv එකක් සමඟ වුවද, පරීක්ෂණ ලැප්ටොප් එක X3 යුගලයක් (2880x2880 H.264 ගොනු දෙකක්) තත්පරයට රාමු 30කින් එකට තැබුවේ එහි NVIDIA චිපය මත පමණි; එහි Intel චිපය මත, සහ X4 ගොනුවක් (3840x3840 HEVC ධාවන පථ දෙකක්) සඳහා චිප දෙකෙහිම, වීඩියෝව එක් කාචයක් වාදනය කරයි, ගෝලයෙන් අඩක් කළු, විකේතක දෙකක් ධාවනය කළ නොහැකි දුරකථනයක මෙන්.
 - **තිරයේ පමණක් 3D**: 3D වීඩියෝවක් දුරකථනවල මෙන් එහි වම් ඇස පෙන්වයි; පරිගණකයේ ගයිරොස්කෝපයක් හෝ හෙඩ්සෙට් දර්ශනයක් නැත. සැබෑ 3D වලින් නැරඹීමට, පරිගණකය Meta Quest එකක් සමඟ බෙදාගන්න.
 - **Spatial 2.5D**, පසුව වෙබ්කැමය සමඟ; **සිතියම** සහ Places දර්ශනය; **OAuth සමඟ පුරනය වීම** (ඒ වෙනුවට ඊමේල් සහ මුරපදයක් සමඟ පුරනය වන්න); **Google Cast**; **දැනුම්දීම්**.
@@ -1124,7 +1123,7 @@ Immuch360 Desktop හි CI (`.github/workflows/immuch360-desktop.yml`) `immuch3
   - අද: [Releases](https://github.com/freeKC/Immuch360/releases) පිටුවේ සාර්වත්‍ර `Immuch360-v<version>-release.apk`, adb සමඟ sideload කර, බලන්න [එය රූපවාහිනියේ ස්ථාපනය කරන්න](#install-it-on-the-tv). එය දුරකථනවල ඇති එම යෙදුමම වේ.
   - ළඟදීම: රූපවාහිනී මත Google Play, එහි රූපවාහිනී ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත.
 - **Windows 10 සහ 11, 64 bit (පෙරදසුන)**
-  - අද: Immuch360 Desktop, desktop build 3, [desktop පූර්ව නිකුතුවේ](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` ZIP එක, [Windows මත බාගත කර ස්ථාපනය කරන්න](#download-and-install-on-windows) පවසන පරිදි දිග හැර ආරම්භ කර ඇත. ඡායාරූප, පැතලි වීඩියෝ, 360°, 3D, VR180 සහ අමු 360° වීඩියෝ (කැපවූ ග්‍රැෆික් චිපයක සුමටයි, ඒකාබද්ධ එකක සීමා සහිතයි) සහ Tapo සජීවී දර්ශනය.
+  - අද: Immuch360 Desktop, desktop build 4, [desktop පූර්ව නිකුතුවේ](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ZIP එක, [Windows මත බාගත කර ස්ථාපනය කරන්න](#download-and-install-on-windows) පවසන පරිදි දිග හැර ආරම්භ කර ඇත. ඡායාරූප, පැතලි වීඩියෝ, 360°, 3D, VR180 සහ අමු 360° වීඩියෝ (කැපවූ ග්‍රැෆික් චිපයක සුමටයි, ඒකාබද්ධ එකක සීමා සහිතයි) සහ Tapo සජීවී දර්ශනය.
   - ළඟදීම: වෙබ්කැමය සමඟ Spatial 2.5D, ඉන්පසු Linux සහ macOS; ස්ථාපකයක්, අත්සන් කළ බිල්ඩ් එකක් සහ යාවත්කාලීන පසුව.
 
 ලැයිස්තුගත කිරීම් ප්‍රකාශයට පත් වූ වහාම App Store සහ Meta Horizon Store සබැඳි මෙහි එක් කෙරේ. ඔබේ සුපුරුදු Immich සේවාදායක URL සහ ගිණුමෙන් පිවිසෙන්න, නැතහොත් උපාංගයේම ඡායාරූප සහ වීඩියෝ මත ආරම්භ කිරීමට පිවිසුම් පිටුවේ "සේවාදායකයක් නොමැතිව භාවිතා කරන්න" තට්ටු කරන්න. GitHub වෙතින් ලැබෙන APK එක තනිවම යාවත්කාලීන නොවේ: Releases පිටුව නිරීක්ෂණය කරන්න, ඔබ ගබඩාවකින් යෙදුම ස්ථාපනය කළ පසු, යාවත්කාලීන එම ගබඩාවෙන් ලබා ගන්න.
@@ -1162,7 +1161,7 @@ Windows අනුවාදය වන Immuch360 Desktop, Windows සඳහා Flu
 
 - **`main`**: `immuch360` පදනම් වී ඇති commit එකේ Immich `main` (වත්මන් බිල්ඩ් සඳහා 2026 ඔක්තෝබර් 10), කිසි විටෙකත් වෙනස් නොකෙරේ; fork එක නවතම Immich එකක් මත rebase කරන විට එය ඉදිරියට යයි.
 - **`immuch360`**: Immich මත මෙම fork එකේ වෙනස්කම්, 2026 ඔක්තෝබර් 9 සිට Immuch360 Desktop ද ඇතුළුව. සෑම නිකුතුවක්ම එය පදනම් වී ඇත්තේ කුමන Immich අනුවාදය මතද යන්න පවසයි.
-- **`desktop`**: පරිගණක අනුවාදය වන Immuch360 Desktop, `immuch360` මත ගොඩනැඟුණු තැන, දුරකථන, හෙඩ්සෙට්, TV සහ පරිගණක එකම මූලාශ්‍රවලින් නිකුත් වන පරිදි 2026 ඔක්තෝබර් 9 දින එයට ඒකාබද්ධ කරන තුරු. දැන් එය `immuch360` අනුගමනය කරන අතර desktop පූර්ව නිකුතු ටැග් දරයි ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) commit 21f285c34 වෙතින්, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25 වෙතින්, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 2026 ඔක්තෝබර් 10 දින 360° වීඩියෝ වාදකයේ ඒකාබද්ධ කිරීමෙන්). නව desktop වැඩ පළමුව එහි පැමිණ, එය නිකුත් කරන desktop බිල්ඩ් එක සමඟ `immuch360` හා එක් වේ. පරිගණක අනුවාදය `mobile/android` සහ `mobile/ios` යටතේ කිසිවක් වෙනස් නොකරයි.
+- **`desktop`**: පරිගණක අනුවාදය වන Immuch360 Desktop, `immuch360` මත ගොඩනැඟුණු තැන, දුරකථන, හෙඩ්සෙට්, TV සහ පරිගණක එකම මූලාශ්‍රවලින් නිකුත් වන පරිදි 2026 ඔක්තෝබර් 9 දින එයට ඒකාබද්ධ කරන තුරු. දැන් එය `immuch360` අනුගමනය කරන අතර desktop පූර්ව නිකුතු ටැග් දරයි ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) commit 21f285c34 වෙතින්, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25 වෙතින්, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 2026 ඔක්තෝබර් 10 දින 360° වීඩියෝ වාදකයේ ඒකාබද්ධ කිරීමෙන්, [desktop build 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) 99113354a වෙතින්, බිල්ඩ් 22 සහ ව්‍යාපෘතියේම libmpv සමඟ). නව desktop වැඩ පළමුව එහි පැමිණ, එය නිකුත් කරන desktop බිල්ඩ් එක සමඟ `immuch360` හා එක් වේ. පරිගණක අනුවාදය `mobile/android` සහ `mobile/ios` යටතේ කිසිවක් වෙනස් නොකරයි.
 
 <a id="logs"></a>
 ## ලොග

@@ -21,7 +21,7 @@ Immuch360 وہ Immich موبائل ایپ ہے جس میں 360° تصاویر ا
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone اور iPad** | App Store | ورژن 3.3.0 Apple کے جائزے کا منتظر؛ تب تک [خود بنائیں](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2، Pro، 3 اور 3S | [APK](#meta-quest-3) · Horizon Store | لسٹنگ منظور شدہ، بلڈ 21 Meta کے جائزے میں، بلڈ 22 Alpha چینل پر |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV اور Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub پر بلڈ 22؛ TV کے لیے Google Play لسٹنگ 9 اکتوبر 2026 سے Google کے جائزے میں |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [پیش نظارہ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows پر ڈیسک ٹاپ بلڈ 3: تصاویر، سادہ اور 360° ویڈیوز؛ macOS اور Linux بعد میں |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [پیش نظارہ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows پر ڈیسک ٹاپ بلڈ 4: تصاویر، سادہ اور 360° ویڈیوز؛ macOS اور Linux بعد میں |
 
 *ہر ریلیز پر صورتحال اپ ڈیٹ ہوتی ہے؛ تفصیلات [یہ کہاں سے ملے](#where-to-get-it) میں ہیں۔*
 
@@ -760,7 +760,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | Plex Media Server کی لائبریریاں اصل فائلوں سے چلائی گئیں، گھر پر اور باہر، plex.tv کے بغیر | ❌ | ✅ بلڈ 20 سے، ہر ناظر، فونز، ٹیبلٹس، Quest اور ٹی وی پر |
 | Tapo کیمرے: براہ راست منظر، اور میموری کارڈ کی ریکارڈنگز جب آپ چاہیں Immich کو بھیجی جائیں | ❌ | ✅ بلڈ 20 سے: ریکارڈنگز ہر جگہ، براہ راست Android، Android TV، Quest اور، ڈیسک ٹاپ بلڈ 3 سے، Windows پر |
 | Android TV اور Google TV، ریموٹ سے چلتے ہوئے، اسی APK میں | ❌ ٹی وی ایپ نہیں | ✅ بلڈ 20 سے |
-| Windows کمپیوٹر پر یہی ایپ | ❌ صرف فونز اور ٹیبلٹس | ✅ پیش نظارہ: تصاویر، سادہ اور 360° ویڈیوز (ڈیسک ٹاپ بلڈ 3) |
+| Windows کمپیوٹر پر یہی ایپ | ❌ صرف فونز اور ٹیبلٹس | ✅ پیش نظارہ: تصاویر، سادہ اور 360° ویڈیوز (ڈیسک ٹاپ بلڈ 4) |
 | Insta360 کی RAW .insp تصاویر اور ایک ٹریک والی .insv ویڈیوز | ❌ سادہ | ✅ بلڈ 16 سے |
 | ہر ٹریک یا ہر فائل میں ایک لینز والی RAW ویڈیوز (Insta360 X4، X4 Air، X5، X6، X3 جوڑیاں، GoPro .360، DJI .osv) | ❌ سادہ یا غلط | ✅ بلڈ 18 سے |
 | ڈوئل فش آئی .dng | ❌ سادہ | ❌ ابھی نہیں |
@@ -984,7 +984,7 @@ Meta نے 7 اکتوبر 2026 کو بلڈ 14 کے ساتھ Horizon Store کی ل
 <a id="download-and-install-on-windows"></a>
 ### Windows پر ڈاؤن لوڈ اور انسٹال کریں
 
-موجودہ بلڈ GitHub کی پری ریلیز [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ہے۔ اس کی فائل `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` ہے (تقریباً 57 MB، ان زپ کرنے پر 79 فائلیں، ویڈیو پلیئر اور اس کے `licenses` فولڈر سمیت)، اسے جانچنے کے لیے `SHA256SUMS.txt` کے ساتھ۔ یہ مرکزی برانچ `immuch360` سے بنایا گیا، کمپیوٹر کا 360° ویڈیو پلیئر اس میں ضم ہونے کے بعد، اس کمٹ پر جس کا نام اس کے ریلیز نوٹس میں ہے: فون کے بلڈ 21 کا سورس اور کمپیوٹر ورژن۔ اسے Windows 10 یا 11، 64 بٹ چاہیے۔
+موجودہ بلڈ GitHub کی پری ریلیز [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) ہے۔ اس کی فائل `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ہے (تقریباً 58 MB، ان زپ کرنے پر 173 فائلیں، ویڈیو پلیئر اور اس کے `licenses` فولڈر سمیت)، اسے جانچنے کے لیے `SHA256SUMS.txt` کے ساتھ۔ یہ مرکزی برانچ `immuch360` سے بنایا گیا، اس کمٹ پر جس کا نام اس کے ریلیز نوٹس میں ہے: 10 اکتوبر 2026 کے Immich پر فون کے بلڈ 22 کا سورس اور کمپیوٹر ورژن۔ ڈیسک ٹاپ بلڈ 4 سے ویڈیو پلیئر کی لائبریری، `libmpv-2.dll`، پروجیکٹ کا اپنا 2026 کا بلڈ ہے، جس کا سورس اس کے ساتھ شائع ہوتا ہے؛ یہ ہر ٹریک یا ہر فائل میں ایک ایک کر کے رکھی گئی خام ویڈیوز کے دونوں لینس جوڑ کر رکھتی ہے، اور گرافکس چپ کو ہر فریم واپس کاپی کیے بغیر 360° منظر بنانے دیتی ہے۔ اسے Windows 10 یا 11، 64 بٹ چاہیے۔
 
 1. ZIP ڈاؤن لوڈ کریں اور اسے کہیں بھی ان زپ کریں، مثلاً Documents میں۔ ڈیسک ٹاپ بلڈ 2 کی جگہ لینے کے لیے اس کا فولڈر حذف کریں یا نئے فولڈر میں ان زپ کریں: آپ کا سائن ان، آپ کے فولڈرز اور آپ کی ترتیبات آپ کے Windows پروفائل میں رہتی ہیں، اس فولڈر میں نہیں۔
 2. ان زپ کیے گئے فولڈر سے `immuch360.exe` شروع کریں۔ فولڈر کو پورا رکھیں: پروگرام کو اپنے ساتھ والی فائلیں چاہییں، ان میں `libmpv-2.dll`، یعنی ویڈیو پلیئر، اور `immuch_desktop_video.dll`، جو گرافکس چپ کے ڈی کوڈرز پڑھتی ہے۔
@@ -1054,7 +1054,6 @@ ZIP کو جانچنے کے لیے ڈاؤن لوڈ والے فولڈر میں ک�
 <a id="not-there-yet"></a>
 ### ابھی موجود نہیں
 
-- **فورک کے اپنے بلڈ کا libmpv**: جب تک فورک کا اپنا بلڈ چالو نہیں ہوتا، ZIPs میں media-kit کا 2024 کا libmpv ہوتا ہے، اور ZIP میں `BUILD-INFO.txt` بتاتی ہے کہ اس میں کون سا ہے۔ 2024 والے کے ساتھ، ہر ٹریک یا ہر فائل میں ایک لینس والی خام ویڈیو کے دونوں لینس کبھی ایک ساتھ نہیں چلتے (اس میں وہ فلٹر نہیں جو انہیں جوڑ کر رکھتا ہے)، اس لیے یہ ویڈیوز ایک لینس دکھاتی ہیں، کرے کا آدھا حصہ سیاہ؛ اور گرافکس چپ ہر فریم کو اپنے ڈی کوڈر سے واپس کاپی کرتی ہے، جو مربوط چپ پر 360° پلیئر کو سست کرتا ہے۔ فورک کے اپنے ورک فلو کا libmpv، 2026 کا ورژن، پہلی عوامی ریلیز سے پہلے اس کی جگہ لینے کے لیے ہے؛ ٹیسٹ لیپ ٹاپ پر آزمایا گیا libmpv کا 2026 کا ایک بلڈ دونوں کام کرتا ہے۔
 - **لیپ ٹاپ پر دو لینس والی خام ویڈیوز**: 2026 کے libmpv کے ساتھ بھی، ٹیسٹ لیپ ٹاپ نے X3 کی جوڑی (دو 2880x2880 H.264 فائلیں) کو 30 فریم فی سیکنڈ پر صرف اپنی NVIDIA چپ پر جوڑا؛ اس کی Intel چپ پر، اور X4 فائل (دو 3840x3840 HEVC ٹریکس) کے لیے دونوں چپس پر، ویڈیو ایک لینس چلاتی ہے، کرے کا آدھا حصہ سیاہ، جیسے اس فون پر جو دو ڈی کوڈر نہیں چلا سکتا۔
 - **3D صرف اسکرین پر**: 3D ویڈیو اپنی بائیں آنکھ دکھاتی ہے، فونز کی طرح؛ کمپیوٹر پر نہ جائروسکوپ ہے نہ ہیڈسیٹ منظر۔ اصلی 3D میں دیکھنے کے لیے کمپیوٹر کو Meta Quest کے ساتھ شیئر کریں۔
 - **Spatial 2.5D**، بعد میں ویب کیم کے ساتھ؛ **نقشہ** اور Places منظر؛ **OAuth سے سائن ان** (اس کی جگہ ای میل اور پاس ورڈ سے سائن ان کریں)؛ **Google Cast**؛ **اطلاعات**۔
@@ -1124,7 +1123,7 @@ Immuch360 Desktop کا CI (`.github/workflows/immuch360-desktop.yml`) `desktop` 
   - آج: [Releases](https://github.com/freeKC/Immuch360/releases) صفحے کی یونیورسل `Immuch360-v<version>-release.apk`، adb سے سائیڈ لوڈ کی گئی، دیکھیں [اسے ٹی وی پر انسٹال کریں](#install-it-on-the-tv)۔ یہ وہی ایپ ہے جو فونز پر ہے۔
   - جلد: ٹی وی پر Google Play، جس کی لسٹنگ 9 اکتوبر 2026 سے Google کے جائزے میں ہے۔
 - **Windows 10 اور 11، 64 بٹ (پیش نظارہ)**
-  - آج: Immuch360 Desktop، ڈیسک ٹاپ بلڈ 3، [ڈیسک ٹاپ پری ریلیز](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) کی ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`، ان زپ کر کے ویسے شروع کی گئی جیسے [Windows پر ڈاؤن لوڈ اور انسٹال کریں](#download-and-install-on-windows) بتاتا ہے۔ تصاویر، سادہ ویڈیوز، 360°، 3D، VR180 اور خام 360° ویڈیوز (الگ گرافکس چپ پر ہموار، مربوط چپ پر حدود کے ساتھ) اور Tapo کا براہ راست منظر۔
+  - آج: Immuch360 Desktop، ڈیسک ٹاپ بلڈ 4، [ڈیسک ٹاپ پری ریلیز](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) کی ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`، ان زپ کر کے ویسے شروع کی گئی جیسے [Windows پر ڈاؤن لوڈ اور انسٹال کریں](#download-and-install-on-windows) بتاتا ہے۔ تصاویر، سادہ ویڈیوز، 360°، 3D، VR180 اور خام 360° ویڈیوز (الگ گرافکس چپ پر ہموار، مربوط چپ پر حدود کے ساتھ) اور Tapo کا براہ راست منظر۔
   - جلد: ویب کیم کے ساتھ Spatial 2.5D، پھر Linux اور macOS؛ ایک انسٹالر، سائن شدہ بلڈ اور اپ ڈیٹس بعد میں۔
 
 App Store اور Meta Horizon Store کے لنکس لسٹنگز شائع ہوتے ہی یہاں شامل کیے جائیں گے۔ اپنے معمول کے Immich سرور URL اور اکاؤنٹ سے لاگ ان کریں، یا آلے کی اپنی تصاویر اور ویڈیوز سے شروع کرنے کے لیے لاگ ان صفحے پر "سرور کے بغیر استعمال کریں" پر ٹیپ کریں۔ GitHub کی APK خود اپ ڈیٹ نہیں ہوتی: Releases صفحے پر نظر رکھیں، اور اگر آپ نے ایپ کسی اسٹور سے انسٹال کی ہے تو اپ ڈیٹس اسی اسٹور سے لیں۔
@@ -1162,7 +1161,7 @@ Immuch360 Desktop، یعنی Windows ورژن، اسی سورس سے، `immuch36
 
 - **`main`**: اس کمٹ پر Immich `main` جس پر `immuch360` مبنی ہے (موجودہ بلڈز کے لیے 10 اکتوبر 2026)، کبھی نہیں بدلتی؛ یہ تب آگے بڑھتی ہے جب فورک کو نئے Immich پر ری بیس کیا جائے۔
 - **`immuch360`**: Immich کے اوپر اس فورک کی تبدیلیاں، 9 اکتوبر 2026 سے Immuch360 Desktop سمیت۔ ہر ریلیز بتاتی ہے کہ وہ کس Immich ورژن پر مبنی ہے۔
-- **`desktop`**: جہاں Immuch360 Desktop، یعنی کمپیوٹر ورژن، `immuch360` کے اوپر بنایا گیا، یہاں تک کہ 9 اکتوبر 2026 کو اسے اس میں ضم کر دیا گیا تاکہ فونز، ہیڈسیٹس، ٹی وی اور کمپیوٹرز ایک ہی سورس سے جاری ہوں۔ اب یہ `immuch360` کے پیچھے چلتی ہے اور ڈیسک ٹاپ پری ریلیز کے ٹیگ رکھتی ہے ([ڈیسک ٹاپ بلڈ 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) کمٹ 21f285c34 سے، [ڈیسک ٹاپ بلڈ 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25 سے، [ڈیسک ٹاپ بلڈ 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 10 اکتوبر 2026 کو 360° ویڈیو پلیئر کے ضم ہونے سے)۔ ڈیسک ٹاپ کا نیا کام پہلے یہاں آتا ہے اور اس ڈیسک ٹاپ بلڈ کے ساتھ `immuch360` میں شامل ہوتا ہے جو اسے جاری کرتا ہے۔ کمپیوٹر ورژن `mobile/android` اور `mobile/ios` کے تحت کچھ نہیں بدلتا۔
+- **`desktop`**: جہاں Immuch360 Desktop، یعنی کمپیوٹر ورژن، `immuch360` کے اوپر بنایا گیا، یہاں تک کہ 9 اکتوبر 2026 کو اسے اس میں ضم کر دیا گیا تاکہ فونز، ہیڈسیٹس، ٹی وی اور کمپیوٹرز ایک ہی سورس سے جاری ہوں۔ اب یہ `immuch360` کے پیچھے چلتی ہے اور ڈیسک ٹاپ پری ریلیز کے ٹیگ رکھتی ہے ([ڈیسک ٹاپ بلڈ 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) کمٹ 21f285c34 سے، [ڈیسک ٹاپ بلڈ 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25 سے، [ڈیسک ٹاپ بلڈ 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 10 اکتوبر 2026 کو 360° ویڈیو پلیئر کے ضم ہونے سے، [ڈیسک ٹاپ بلڈ 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) 99113354a سے، بلڈ 22 اور پروجیکٹ کے اپنے libmpv کے ساتھ)۔ ڈیسک ٹاپ کا نیا کام پہلے یہاں آتا ہے اور اس ڈیسک ٹاپ بلڈ کے ساتھ `immuch360` میں شامل ہوتا ہے جو اسے جاری کرتا ہے۔ کمپیوٹر ورژن `mobile/android` اور `mobile/ios` کے تحت کچھ نہیں بدلتا۔
 
 <a id="logs"></a>
 ## لاگز

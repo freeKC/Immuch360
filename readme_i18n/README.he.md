@@ -21,7 +21,7 @@ Immuch360 היא אפליקציית Immich לנייד עם תמונות וסרט
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ו-iPad** | App Store | גרסה 3.3.0 ממתינה לבדיקה של Apple; בינתיים [בנו אותה בעצמכם](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ו-3S | [APK](#meta-quest-3) · Horizon Store | הדף אושר, בילד 21 בבדיקה של Meta, בילד 22 בערוץ האלפא |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ו-Google TV** | [APK](#install-it-on-the-tv) · Google Play | בילד 22 ב-GitHub; הדף ב-Google Play לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP של התצוגה המקדימה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | בילד מחשב 3 ב-Windows: תמונות, סרטונים שטוחים וסרטוני 360°; macOS ו-Linux מאוחר יותר |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP של התצוגה המקדימה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | בילד מחשב 4 ב-Windows: תמונות, סרטונים שטוחים וסרטוני 360°; macOS ו-Linux מאוחר יותר |
 
 *המצב מתעדכן בכל גרסה; הפרטים ב[איפה להשיג](#where-to-get-it).*
 
@@ -760,7 +760,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | ספריות Plex Media Server שמתנגנות מהקבצים המקוריים, בבית ומחוץ לבית, בלי plex.tv | ❌ | ✅ מבילד 20, כל המציגים, בטלפונים, בטאבלטים, ב-Quest ובטלוויזיות |
 | מצלמות Tapo: התצוגה החיה, וההקלטות שבכרטיס הזיכרון נשלחות ל-Immich כשאתם בוחרים | ❌ | ✅ מבילד 20: הקלטות בכל מקום, שידור חי ב-Android, ‏Android TV, ב-Quest ומבילד מחשב 3 גם ב-Windows |
 | ‏Android TV ו-Google TV, בשליטת השלט, באותו APK | ❌ לא אפליקציית טלוויזיה | ✅ מבילד 20 |
-| אותה אפליקציה במחשב Windows | ❌ רק טלפונים וטאבלטים | ✅ תצוגה מקדימה: תמונות, סרטונים שטוחים וסרטוני 360° (בילד מחשב 3) |
+| אותה אפליקציה במחשב Windows | ❌ רק טלפונים וטאבלטים | ✅ תצוגה מקדימה: תמונות, סרטונים שטוחים וסרטוני 360° (בילד מחשב 4) |
 | תמונות Insta360 ‏‎.insp גולמיות וסרטוני ‎.insv גולמיים עם רצועה אחת | ❌ שטוח | ✅ מבילד 16 |
 | סרטונים גולמיים עם עדשה אחת לכל רצועה או לכל קובץ (Insta360 X4, ‏X4 Air, ‏X5, ‏X6, זוגות X3, ‏GoPro ‏‎.360, ‏DJI ‏‎.osv) | ❌ שטוח או שגוי | ✅ מבילד 18 |
 | ‏.dng עם עין דג כפולה | ❌ שטוח | ❌ עדיין לא |
@@ -984,7 +984,7 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
 <a id="download-and-install-on-windows"></a>
 ### הורדה והתקנה ב-Windows
 
-הבילד הנוכחי הוא גרסת הקדם ב-GitHub ‏[Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). הקובץ שלו הוא `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` ‏(כ-57 MB, ‏79 קבצים אחרי החילוץ, כולל נגן הווידאו ותיקיית ה-`licenses` שלו), עם `SHA256SUMS.txt` כדי לבדוק אותו. הוא נבנה מהענף הראשי, `immuch360`, אחרי שנגן סרטוני ה-360° של המחשב מוזג לתוכו, ב-commit שמופיע בהערות הגרסה שלו: המקורות של בילד 21 של הטלפונים ועוד גרסת המחשב. הוא דורש Windows 10 או 11, ‏64 ביט.
+הבילד הנוכחי הוא גרסת הקדם ב-GitHub ‏[Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4). הקובץ שלו הוא `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ‏(כ-58 MB, ‏173 קבצים אחרי החילוץ, כולל נגן הווידאו ותיקיית ה-`licenses` שלו), עם `SHA256SUMS.txt` כדי לבדוק אותו. הוא נבנה מהענף הראשי, `immuch360`, ב-commit שמופיע בהערות הגרסה שלו: המקורות של בילד 22 של הטלפונים, על Immich מ-10 באוקטובר 2026, ועוד גרסת המחשב. מבילד מחשב 4, ספריית נגן הווידאו, `libmpv-2.dll`, היא הבילד של הפרויקט עצמו מ-2026, שהמקורות שלו מתפרסמים יחד איתו; היא מציבה זו לצד זו את שתי העדשות של סרטונים גולמיים שנשמרו עדשה אחת לכל רצועה או לכל קובץ, ומאפשרת לשבב הגרפי לצייר את תצוגת ה-360° בלי להעתיק כל פריים בחזרה. הוא דורש Windows 10 או 11, ‏64 ביט.
 
 1. הורידו את ה-ZIP וחלצו אותו לאן שתרצו, למשל ל-Documents. כדי להחליף את בילד מחשב 2, מחקו את התיקייה שלו או חלצו לתיקייה חדשה: ההתחברות, התיקיות וההגדרות שלכם נשמרים בפרופיל ה-Windows שלכם, לא בתיקייה הזו.
 2. הפעילו את `immuch360.exe` מתוך התיקייה שחולצה. שמרו על התיקייה שלמה: התוכנה צריכה את הקבצים שלידה, ביניהם `libmpv-2.dll`, נגן הווידאו, ו-`immuch_desktop_video.dll`, שקורא את המפענחים של השבב הגרפי.
@@ -1054,7 +1054,6 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
 <a id="not-there-yet"></a>
 ### עדיין לא קיים
 
-- **ה-libmpv של הבילד של הפורק עצמו**: קובצי ה-ZIP נושאים את ה-libmpv של media-kit מ-2024 עד שהבילד של הפורק עצמו יופעל, ו-`BUILD-INFO.txt` שב-ZIP אומר איזה מהם הוא נושא. עם זה של 2024, שתי העדשות של סרטון גולמי עם עדשה אחת לכל רצועה או לכל קובץ אף פעם לא מתנגנות יחד (חסר לו המסנן שמציב אותן זו לצד זו), ולכן הסרטונים האלה מציגים עדשה אחת, חצי מהכדור שחור; והשבב הגרפי מעתיק כל פריים בחזרה מהמפענח שלו, מה שמאט את נגן ה-360° על שבב משולב. ה-libmpv של ה-workflow של הפורק עצמו, גרסה מ-2026, אמור להחליף אותו לפני הגרסה הציבורית הראשונה; בילד של libmpv מ-2026 שנוסה במחשב הנייד של הבדיקות עושה את שניהם.
 - **סרטונים גולמיים עם שתי עדשות במחשב נייד**: גם עם libmpv מ-2026, המחשב הנייד של הבדיקות הציב זוג X3 (שני קובצי H.264 של 2880x2880) ב-30 פריימים לשנייה רק על השבב של NVIDIA; על השבב של Intel, ולקובץ X4 (שתי רצועות HEVC של 3840x3840) על שני השבבים, הסרטון מנגן עדשה אחת, חצי מהכדור שחור, כמו בטלפון שלא יכול להריץ שני מפענחים.
 - **3D רק על המסך**: סרטון 3D מציג את עין שמאל שלו, כמו בטלפונים; אין ג'ירוסקופ ואין תצוגת משקפת במחשב. כדי לצפות ב-3D אמיתי, שתפו את המחשב עם Meta Quest.
 - **Spatial 2.5D**, בהמשך עם מצלמת הרשת; **המפה** ותצוגת המקומות; **התחברות עם OAuth** (התחברו במקום זאת עם אימייל וסיסמה); **Google Cast**; **התראות**.
@@ -1124,7 +1123,7 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
   - היום: ה-`Immuch360-v<version>-release.apk` האוניברסלי מדף [Releases](https://github.com/freeKC/Immuch360/releases), מותקן ידנית עם adb, ראו [התקנה בטלוויזיה](#install-it-on-the-tv). זו אותה אפליקציה כמו בטלפונים.
   - בקרוב: Google Play בטלוויזיות, שהדף שלו לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026.
 - **Windows 10 ו-11, ‏64 ביט (תצוגה מקדימה)**
-  - היום: Immuch360 Desktop, בילד מחשב 3, קובץ ה-ZIP ‏`Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` של [גרסת הקדם למחשב](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), מחולץ ומופעל כמו שמתואר ב[הורדה והתקנה ב-Windows](#download-and-install-on-windows). תמונות, סרטונים שטוחים, סרטוני 360°, ‏3D, ‏VR180 וסרטוני 360° גולמיים (חלקים על שבב גרפי ייעודי, עם מגבלות על שבב משולב) והתצוגה החיה של Tapo.
+  - היום: Immuch360 Desktop, בילד מחשב 4, קובץ ה-ZIP ‏`Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` של [גרסת הקדם למחשב](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), מחולץ ומופעל כמו שמתואר ב[הורדה והתקנה ב-Windows](#download-and-install-on-windows). תמונות, סרטונים שטוחים, סרטוני 360°, ‏3D, ‏VR180 וסרטוני 360° גולמיים (חלקים על שבב גרפי ייעודי, עם מגבלות על שבב משולב) והתצוגה החיה של Tapo.
   - בקרוב: Spatial 2.5D עם מצלמת הרשת, ואז Linux ו-macOS; מתקין, בילד חתום ועדכונים בהמשך.
 
 הקישורים ל-App Store ול-Meta Horizon Store יתווספו כאן ברגע שהדפים יפורסמו. התחברו עם כתובת ה-URL והחשבון של שרת ה-Immich הרגיל שלכם, או הקישו על "שימוש ללא שרת" בדף ההתחברות כדי להתחיל עם התמונות והסרטונים של המכשיר עצמו. ה-APK מ-GitHub לא מתעדכן מעצמו: עקבו אחרי דף ה-Releases, ואחרי שהתקנתם את האפליקציה מחנות, קבלו את העדכונים מהחנות הזו.
@@ -1162,7 +1161,7 @@ flutter build ios --release                                                  # i
 
 - **`main`**: ‏Immich `main` ב-commit ש-`immuch360` מבוסס עליו (10 באוקטובר 2026 לבילדים הנוכחיים), אף פעם לא משתנה; הוא מתקדם כשהפורק עובר rebase על Immich חדש יותר.
 - **`immuch360`**: השינויים של הפורק הזה מעל Immich, כולל Immuch360 Desktop מאז 9 באוקטובר 2026. כל גרסה מציינת על איזו גרסת Immich היא מבוססת.
-- **`desktop`**: המקום שבו נבנתה Immuch360 Desktop, גרסת המחשב, מעל `immuch360`, עד שמוזגה לתוכו ב-9 באוקטובר 2026 כדי שטלפונים, משקפות, טלוויזיות ומחשבים ייצאו מאותם מקורות. עכשיו הוא עוקב אחרי `immuch360` ונושא את התגים של גרסאות הקדם למחשב ([בילד מחשב 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) מה-commit ‏21f285c34, [בילד מחשב 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) מ-5b723bd25, [בילד מחשב 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) מהמיזוג של נגן סרטוני ה-360° ב-10 באוקטובר 2026). עבודה חדשה על גרסת המחשב נוחתת שם קודם ומצטרפת ל-`immuch360` עם בילד המחשב שמוציא אותה. גרסת המחשב לא משנה שום דבר תחת `mobile/android` ו-`mobile/ios`.
+- **`desktop`**: המקום שבו נבנתה Immuch360 Desktop, גרסת המחשב, מעל `immuch360`, עד שמוזגה לתוכו ב-9 באוקטובר 2026 כדי שטלפונים, משקפות, טלוויזיות ומחשבים ייצאו מאותם מקורות. עכשיו הוא עוקב אחרי `immuch360` ונושא את התגים של גרסאות הקדם למחשב ([בילד מחשב 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) מה-commit ‏21f285c34, [בילד מחשב 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) מ-5b723bd25, [בילד מחשב 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) מהמיזוג של נגן סרטוני ה-360° ב-10 באוקטובר 2026, [בילד מחשב 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) מ-99113354a, עם בילד 22 וה-libmpv של הפרויקט עצמו). עבודה חדשה על גרסת המחשב נוחתת שם קודם ומצטרפת ל-`immuch360` עם בילד המחשב שמוציא אותה. גרסת המחשב לא משנה שום דבר תחת `mobile/android` ו-`mobile/ios`.
 
 <a id="logs"></a>
 ## יומן

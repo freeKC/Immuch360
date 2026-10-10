@@ -21,7 +21,7 @@ Immuch360 是加入了可环顾四周的 360° 照片和视频的 Immich 移动�
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 版本 3.3.0 正在等待 Apple 审核；在此期间可[自行构建](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [APK](#meta-quest-3) · Horizon Store | 商店页面已获批，构建 21 正在接受 Meta 审核，构建 22 已在 alpha 频道 |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上为构建 22；面向电视的 Google Play 商店页面自 2026 年 10 月 9 日起由 Google 审核中 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [预览版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows 上的桌面构建 3：照片、普通视频和 360° 视频；macOS 和 Linux 稍后推出 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [预览版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows 上的桌面构建 4：照片、普通视频和 360° 视频；macOS 和 Linux 稍后推出 |
 
 *状态在每次发布时更新；详情见[获取方式](#where-to-get-it)。*
 
@@ -760,7 +760,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 | 直接播放 Plex Media Server 资源库中的原始文件，在家和在外都可以，无需 plex.tv | ❌ | ✅ 从构建 20 起，所有查看器，手机、平板、Quest 和电视上均可 |
 | Tapo 摄像头：实时画面，以及按你的选择发送到 Immich 的存储卡录像 | ❌ | ✅ 从构建 20 起：录像所有平台可用，实时画面在 Android、Android TV、Quest 上可用，从桌面构建 3 起 Windows 上也可用 |
 | Android TV 和 Google TV，用遥控器操作，同一个 APK | ❌ 不是电视应用 | ✅ 从构建 20 起 |
-| Windows 电脑上的同一款应用 | ❌ 仅限手机和平板 | ✅ 预览版：照片、普通视频和 360° 视频（桌面构建 3） |
+| Windows 电脑上的同一款应用 | ❌ 仅限手机和平板 | ✅ 预览版：照片、普通视频和 360° 视频（桌面构建 4） |
 | Insta360 RAW .insp 照片和单轨道 .insv 视频 | ❌ 平面 | ✅ 从构建 16 起 |
 | 每个镜头一条轨道或一个文件的 RAW 视频（Insta360 X4、X4 Air、X5、X6、X3 文件对、GoPro .360、DJI .osv） | ❌ 平面或错误 | ✅ 从构建 18 起 |
 | 双鱼眼 .dng | ❌ 平面 | ❌ 暂不支持 |
@@ -984,7 +984,7 @@ Meta 已于 2026 年 10 月 7 日批准随构建 14 提交的 Horizon Store 上�
 <a id="download-and-install-on-windows"></a>
 ### 在 Windows 上下载和安装
 
-当前构建是 GitHub 预发布版本 [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)。文件为 `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`（约 57 MB，解压后 79 个文件，包括视频播放器及其 `licenses` 文件夹），并附有用于校验的 `SHA256SUMS.txt`。它基于主分支 `immuch360` 构建，时间在电脑的 360° 视频播放器并入之后，提交号见其发布说明：手机构建 21 的源代码加上电脑版本。需要 64 位的 Windows 10 或 11。
+当前构建是 GitHub 预发布版本 [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)。文件为 `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`（约 58 MB，解压后 173 个文件，包括视频播放器及其 `licenses` 文件夹），并附有用于校验的 `SHA256SUMS.txt`。它基于主分支 `immuch360` 构建，提交号见其发布说明：基于 2026 年 10 月 10 日 Immich 的手机构建 22 的源代码加上电脑版本。从桌面构建 4 起，视频播放器的库 `libmpv-2.dll` 是本项目自己 2026 年的构建，其源代码随之公开；它把每条轨道或每个文件各存一个镜头的原始视频的两个镜头并排排列，并让显卡芯片无需把每一帧复制回来即可绘制 360° 画面。需要 64 位的 Windows 10 或 11。
 
 1. 下载 ZIP 并解压到任意位置，例如“文档”。要替换桌面构建 2，请删除它的文件夹或解压到新文件夹：你的登录信息、文件夹和设置保存在你的 Windows 用户配置文件中，不在那个文件夹里。
 2. 从解压后的文件夹启动 `immuch360.exe`。请保持文件夹完整：程序需要它旁边的文件，其中包括视频播放器 `libmpv-2.dll`，以及读取显卡芯片解码器的 `immuch_desktop_video.dll`。
@@ -1054,7 +1054,6 @@ Meta 已于 2026 年 10 月 7 日批准随构建 14 提交的 Horizon Store 上�
 <a id="not-there-yet"></a>
 ### 尚未支持
 
-- **本分支自行构建的 libmpv**：在本分支自己的构建启用之前，ZIP 中带的是 media-kit 的 2024 年 libmpv，ZIP 中的 `BUILD-INFO.txt` 会说明带的是哪一个。使用 2024 年的版本时，每条轨道或每个文件一个镜头的原始视频的两个镜头永远不会同时播放（它缺少把两者并排排列的滤镜），因此这些视频只显示一个镜头，球面的一半为黑色；而且显卡芯片会把每一帧从其解码器复制回来，这会让 360° 播放器在集成芯片上变慢。本分支自己工作流构建的 libmpv 是 2026 年的版本，计划在第一个正式版本之前替换它；在测试用笔记本电脑上试过的 2026 年 libmpv 构建两者都能做到。
 - **笔记本电脑上的双镜头原始视频**：即使使用 2026 年的 libmpv，测试用笔记本电脑也只能在其 NVIDIA 芯片上以每秒 30 帧并排播放 X3 双文件（两个 2880x2880 的 H.264 文件）；在其 Intel 芯片上，以及对于 X4 文件（两条 3840x3840 的 HEVC 轨道）在两块芯片上，视频都只播放一个镜头，球面的一半为黑色，与无法运行两个解码器的手机相同。
 - **3D 仅限屏幕显示**：3D 视频显示左眼，与手机相同；电脑上没有陀螺仪，也没有头显视图。要观看真 3D，请把电脑共享给 Meta Quest。
 - **Spatial 2.5D**，之后将配合网络摄像头；**地图**和「地点」视图；**使用 OAuth 登录**（请改用电子邮件和密码登录）；**Google Cast**；**通知**。
@@ -1124,7 +1123,7 @@ Immuch360 Desktop 的 CI（`.github/workflows/immuch360-desktop.yml`）运行在
   - 现在：[Releases](https://github.com/freeKC/Immuch360/releases) 页面上的通用 `Immuch360-v<version>-release.apk`，用 adb 侧载，参见[在电视上安装](#install-it-on-the-tv)。它与手机上的应用是同一个应用。
   - 即将：面向电视的 Google Play，其商店页面自 2026 年 10 月 9 日起由 Google 审核中。
 - **Windows 10 和 11，64 位（预览版）**
-  - 现在：Immuch360 Desktop 桌面构建 3，即[桌面预发布版本](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)的 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`，按[在 Windows 上下载和安装](#download-and-install-on-windows)所述解压并启动。支持照片、普通视频，360°、3D、VR180 和原始 360° 视频（在独立显卡芯片上流畅，在集成芯片上有限制）以及 Tapo 实时画面。
+  - 现在：Immuch360 Desktop 桌面构建 4，即[桌面预发布版本](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)的 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`，按[在 Windows 上下载和安装](#download-and-install-on-windows)所述解压并启动。支持照片、普通视频，360°、3D、VR180 和原始 360° 视频（在独立显卡芯片上流畅，在集成芯片上有限制）以及 Tapo 实时画面。
   - 即将推出：配合网络摄像头的 Spatial 2.5D，然后是 Linux 和 macOS；安装程序、签名构建和更新稍后推出。
 
 App Store 和 Meta Horizon Store 的链接会在上架后第一时间添加到这里。用你平常的 Immich 服务器 URL 和账户登录，或在登录页上点按「不连接服务器使用」，从设备自身的照片和视频开始。从 GitHub 下载的 APK 不会自动更新：请关注 Releases 页面；如果你是从商店安装的应用，请从该商店获取更新。
@@ -1162,7 +1161,7 @@ Immuch360 Desktop，即 Windows 版本，使用 Windows 版 Flutter 从同一套
 
 - **`main`**：`immuch360` 所基于的那个提交上的 Immich `main`（当前构建为 2026 年 10 月 10 日），从不修改；当分支变基到更新的 Immich 时它才会前移。
 - **`immuch360`**：本分支在 Immich 之上的修改，自 2026 年 10 月 9 日起包括 Immuch360 Desktop。每个发布版本都会注明基于哪个 Immich 版本。
-- **`desktop`**：Immuch360 Desktop，即电脑版本，曾在此基于 `immuch360` 开发，直到 2026 年 10 月 9 日并入 `immuch360`，使手机、头显、电视和电脑都由同一套源代码发布。现在它跟随 `immuch360`，并带有桌面预发布版本的标签（[桌面构建 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 来自提交 21f285c34，[桌面构建 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 来自 5b723bd25，[桌面构建 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 来自 2026 年 10 月 10 日 360° 视频播放器的合并）。新的桌面工作先进入这里，再随发布它的桌面构建并入 `immuch360`。电脑版本不会改动 `mobile/android` 和 `mobile/ios` 下的任何内容。
+- **`desktop`**：Immuch360 Desktop，即电脑版本，曾在此基于 `immuch360` 开发，直到 2026 年 10 月 9 日并入 `immuch360`，使手机、头显、电视和电脑都由同一套源代码发布。现在它跟随 `immuch360`，并带有桌面预发布版本的标签（[桌面构建 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 来自提交 21f285c34，[桌面构建 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 来自 5b723bd25，[桌面构建 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 来自 2026 年 10 月 10 日 360° 视频播放器的合并，[桌面构建 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) 来自 99113354a，包含构建 22 和本项目自己的 libmpv）。新的桌面工作先进入这里，再随发布它的桌面构建并入 `immuch360`。电脑版本不会改动 `mobile/android` 和 `mobile/ios` 下的任何内容。
 
 <a id="logs"></a>
 ## 日志
