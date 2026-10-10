@@ -21,6 +21,7 @@ import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/pages/common/tab_shell.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
@@ -48,6 +49,23 @@ void main() {
   /// [count] 360° photos of the device, 2:1
   List<BaseAsset> panoramas(int count) =>
       List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: 'pano$i', width: 5760, height: 2880));
+
+  /// [count] 360° photos of the server only, 2:1
+  List<BaseAsset> serverPanoramas(int count) => List<BaseAsset>.generate(
+    count,
+    (i) => RemoteAsset(
+      id: 'remote$i',
+      name: 'remote$i.jpg',
+      ownerId: 'owner',
+      checksum: 'checksum$i',
+      type: AssetType.image,
+      createdAt: DateTime(2026, 10, 5),
+      updatedAt: DateTime(2026, 10, 5),
+      width: 5760,
+      height: 2880,
+      isEdited: false,
+    ),
+  );
 
   /// [count] square photos of the device
   List<BaseAsset> squarePhotos(int count) =>
@@ -154,6 +172,13 @@ void main() {
   }
 
   Finder tiles() => find.byType(ThumbnailTile);
+
+  /// The picture of the server the first tile asks for, and the size it is decoded to
+  RemoteImageProvider firstServerThumbnail(WidgetTester tester) =>
+      tester
+              .widget<Thumbnail>(find.descendant(of: tiles().first, matching: find.byType(Thumbnail)).first)
+              .imageProvider!
+          as RemoteImageProvider;
 
   group('on a 1080p TV', () {
     testWidgets('a header of one bar, and a whole row of tiles on the first screen inside the margins', (tester) async {
@@ -273,6 +298,42 @@ void main() {
       expect(asked.width, closeTo(physical.width * 2, 1), reason: 'the speckles of Android averaged away');
       expect(asked.height, closeTo(physical.height * 2, 1));
       expect(thumbnail.filterQuality, FilterQuality.medium);
+    });
+  });
+
+  group('a photo of the server', () {
+    testWidgets('on a TV: the preview of the server, decoded at twice the tile and drawn smaller', (tester) async {
+      await pumpTimeline(tester, tvMode: true, assets: serverPanoramas(12));
+
+      final physical = tester.getSize(tiles().first) * 2;
+      final provider = firstServerThumbnail(tester);
+      expect(provider.url, contains('size=preview'), reason: 'the thumbnail of the server is smaller than the tile');
+      expect(provider.url, isNot(contains('size=thumbnail')));
+      // Decoded to cover a square box, aspect kept: a 2:1 photo at most 1024 px on its long side
+      expect(provider.decodeSize, Size.square((1024 / 2).floorToDouble()));
+      expect(provider.decodeSize!.height, greaterThan(physical.height * 1.5), reason: 'larger than the tile');
+    });
+
+    testWidgets('on a phone: the thumbnail of the server, decoded at the size of the tile', (tester) async {
+      await pumpTimeline(tester, tvMode: false, assets: serverPanoramas(12));
+
+      final physical = tester.getSize(tiles().first) * 3;
+      final provider = firstServerThumbnail(tester);
+      expect(provider.url, contains('size=thumbnail'));
+      expect(provider.decodeSize!.width, closeTo(physical.width, 0.01));
+      expect(provider.decodeSize!.height, closeTo(physical.height, 0.01));
+    });
+  });
+
+  group('tvPreviewDecodeSize', () {
+    LocalAsset photo(int? width, int? height) => LocalAssetStub.image1.copyWith(width: width, height: height);
+
+    test('twice the tile on the short side, at most 1024 px on the long side', () {
+      const tile = Size.square(286);
+      expect(tvPreviewDecodeSize(photo(4000, 3000), tile), const Size.square(572), reason: '763 x 572');
+      expect(tvPreviewDecodeSize(photo(null, null), tile), const Size.square(572));
+      expect(tvPreviewDecodeSize(photo(5760, 2880), tile), const Size.square(512), reason: '1024 x 512');
+      expect(tvPreviewDecodeSize(photo(3000, 4500), tile), const Size.square(572), reason: '572 x 858, upright');
     });
   });
 

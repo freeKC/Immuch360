@@ -13,12 +13,14 @@ import 'package:immich_mobile/providers/backup/asset_upload_progress.provider.da
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
+import 'package:openapi/api.dart';
 
 class ThumbnailTile extends ConsumerStatefulWidget {
   const ThumbnailTile(
     this.asset, {
     this.size = kThumbnailResolution,
     this.remoteSize,
+    this.remoteType = AssetMediaSize.thumbnail,
     this.showStorageIndicator = false,
     this.lockSelection = false,
     this.heroOffset,
@@ -31,6 +33,9 @@ class ThumbnailTile extends ConsumerStatefulWidget {
 
   /// Physical size to decode for remote thumbnails.
   final Size? remoteSize;
+
+  /// The picture of the server for a remote asset: its thumbnail, or its preview for the larger tiles of a TV.
+  final AssetMediaSize remoteType;
   final bool showStorageIndicator;
   final bool lockSelection;
   final int? heroOffset;
@@ -116,6 +121,7 @@ class _ThumbnailTileState extends ConsumerState<ThumbnailTile> {
                       asset: asset,
                       size: widget.size,
                       remoteSize: widget.remoteSize,
+                      remoteType: widget.remoteType,
                       // The thumbnails of a TV are decoded larger than their tile (see tvThumbnailDecodeSize)
                       filterQuality: ref.watch(tvModeProvider) ? FilterQuality.medium : FilterQuality.low,
                     ),

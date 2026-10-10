@@ -11,6 +11,7 @@ import 'package:immich_mobile/presentation/widgets/images/local_image_provider.d
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:logging/logging.dart';
+import 'package:openapi/api.dart';
 
 // The provider is also the cache key and can be resolved more than once.
 // Keep mutable state per load so cancelling one cannot affect the next load.
@@ -209,6 +210,9 @@ ImageProvider? getThumbnailImageProvider(
 
   /// Physical size to decode for remote thumbnails, or null for the source size.
   Size? remoteSize,
+
+  /// The picture of the server for a remote asset: its thumbnail, or its preview for the larger tiles of a TV.
+  AssetMediaSize remoteType = AssetMediaSize.thumbnail,
   bool edited = true,
 }) {
   if (_shouldUseLocalAsset(asset)) {
@@ -219,7 +223,13 @@ ImageProvider? getThumbnailImageProvider(
   final assetId = asset is RemoteAsset ? asset.id : (asset as LocalAsset).remoteId;
   final thumbhash = asset is RemoteAsset ? asset.thumbHash ?? "" : "";
   return assetId != null
-      ? RemoteImageProvider.thumbnail(assetId: assetId, thumbhash: thumbhash, edited: edited, decodeSize: remoteSize)
+      ? RemoteImageProvider.thumbnail(
+          assetId: assetId,
+          thumbhash: thumbhash,
+          edited: edited,
+          decodeSize: remoteSize,
+          type: remoteType,
+        )
       : null;
 }
 
