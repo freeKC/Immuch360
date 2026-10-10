@@ -284,6 +284,15 @@ Future<void> _until(bool Function() condition) async {
   }
 }
 
+/// Waits until the bridge holds nothing read ahead, its clients gone, and gives what it holds then. The bridge learns
+/// that a client left from its socket, and gets back what a read under way holds when that read ends: [_settled] could
+/// look before, the count still for 100 ms on a loaded machine, and "the bridge holds at most 32 MiB read ahead"
+/// failed now and then in the whole suite (32 MiB still held).
+Future<int> _released(LocalMediaBridge bridge) async {
+  await _until(() => bridge.bufferedSize == 0);
+  return bridge.bufferedSize;
+}
+
 // Waits until [count] stops changing
 Future<int> _settled(int Function() count) async {
   var last = count();
@@ -677,7 +686,7 @@ void main() {
       // 1 MiB, then 2 MiB sent, the read of the next 4 MiB failed and none was asked after it
       expect(share.reads.map((read) => read.length), [_minChunk, 2 * _mib, _maxChunk]);
       expect(share.reads.last.offset + share.reads.last.length, greaterThan(failFrom));
-      expect(await _settled(() => bridge.bufferedSize), 0);
+      expect(await _released(bridge), 0);
 
       final next = await _send(bridge.urlFor('nas1', '/photo.jpg'));
       expect(next.body, photo);
@@ -755,7 +764,7 @@ void main() {
         // Gone: what was read ahead is dropped
         await subscription.cancel();
         socket.destroy();
-        expect(await _settled(() => bridge.bufferedSize), 0);
+        expect(await _released(bridge), 0);
       } finally {
         socket.destroy();
       }
@@ -795,7 +804,7 @@ void main() {
       } finally {
         await first.close();
       }
-      expect(await _settled(() => bridge.bufferedSize), 0);
+      expect(await _released(bridge), 0);
     });
 
     test('a short request elsewhere in the file leaves the reading ahead to the stream', () async {
@@ -821,7 +830,7 @@ void main() {
       } finally {
         await stream.close();
       }
-      expect(await _settled(() => bridge.bufferedSize), 0);
+      expect(await _released(bridge), 0);
     });
 
     test('the bridge holds at most 32 MiB read ahead, all files together', () async {
@@ -848,6 +857,9 @@ void main() {
         await _settled(() => share.reads.length + bridge.bufferedSize);
         expect(bridge.bufferedSize, greaterThan(16 * _mib));
         expect(bridge.bufferedSize, lessThanOrEqualTo(LocalMediaBridge.defaultMaxBufferedSize));
+        // The share answers slowly as the clients leave, as on a loaded machine: a read under way gives its bytes back
+        // only when it ends, which a pause of the test cannot wait for
+        share.readDelay = const Duration(milliseconds: 300);
       } finally {
         for (final subscription in subscriptions) {
           await subscription.cancel();
@@ -856,7 +868,7 @@ void main() {
           socket.destroy();
         }
       }
-      expect(await _settled(() => bridge.bufferedSize), 0);
+      expect(await _released(bridge), 0);
     });
 
     test('a client that leaves stops the reading, and the bridge keeps serving the others', () async {
