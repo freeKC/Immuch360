@@ -174,6 +174,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
   /// The outcome of the last connection test, null when there was none since the last change
   String? _testMessage;
   bool _testSucceeded = false;
+  final _testOutcomeKey = GlobalKey();
 
   /// The servers found on the network, for a new share only
   List<DiscoveredServer> _servers = const [];
@@ -536,6 +537,22 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       _testMessage = message;
       _testSucceeded = succeeded;
     });
+    // A remote scrolls with the arrows only: on a TV the line, which comes under the button that has the focus, stayed
+    // below the screen until Down was pressed
+    if (ref.read(tvModeProvider)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final outcome = _testOutcomeKey.currentContext;
+        if (outcome != null && outcome.mounted) {
+          unawaited(
+            Scrollable.ensureVisible(
+              outcome,
+              alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              duration: const Duration(milliseconds: 200),
+            ),
+          );
+        }
+      });
+    }
   }
 
   Future<void> _save() async {
@@ -909,7 +926,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                 ),
                 if (_testMessage != null) ...[
                   const SizedBox(height: 12),
-                  _TestResult(message: _testMessage!, succeeded: _testSucceeded),
+                  _TestResult(key: _testOutcomeKey, message: _testMessage!, succeeded: _testSucceeded),
                 ],
                 const SizedBox(height: 24),
                 Align(
@@ -954,7 +971,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
 }
 
 class _TestResult extends StatelessWidget {
-  const _TestResult({required this.message, required this.succeeded});
+  const _TestResult({super.key, required this.message, required this.succeeded});
 
   final String message;
   final bool succeeded;
