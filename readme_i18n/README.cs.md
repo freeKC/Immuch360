@@ -17,10 +17,10 @@ Je určena těm, kdo fotí 360° kamerou (Insta360, GoPro MAX, DJI Osmo 360, Ric
 
 | Platforma | Kde aplikaci získat | Stav k 10. říjnu 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**, telefony a tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 na Google Play od 7. října 2026, build 21 na GitHubu |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**, telefony a tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 na GitHubu, odeslán na Google Play 10. října 2026 (tam je od 7. října dostupný build 20) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone a iPad** | App Store | verze 3.3.0 čeká na schválení společností Apple; mezitím [sestavení vlastními silami](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [APK](#meta-quest-3) · Horizon Store | záznam schválen, build 21 ve schvalování u společnosti Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 na GitHubu; záznam na Google Play pro televize je ve schvalování u Googlu od 9. října 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [APK](#meta-quest-3) · Horizon Store | záznam schválen, build 21 ve schvalování u společnosti Meta, build 22 v kanálu Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 na GitHubu; záznam na Google Play pro televize je ve schvalování u Googlu od 9. října 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Předběžný ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktopový build 3 na Windows: fotky, plochá a 360° videa; macOS a Linux později |
 
 *Stavy se aktualizují s každým vydáním; podrobnosti jsou v části [Kde aplikaci získat](#where-to-get-it).*
@@ -196,7 +196,7 @@ Servery ve vaší síti najde sama a soubory přehrává živě ve stejných pro
 4. Není v seznamu? Vyplňte formulář ručně. Typ: „SMB (Samba, sdílení Windows)“, „WebDAV (Nextcloud, Synology a další)“, „Mediální server DLNA (Jellyfin, NAS, TV box)“ nebo od buildu 20 „Plex Media Server“, který otevře stránku z [Plex Media Server bez plex.tv](#plex-media-server-without-plextv). Pak Název, „Název nebo adresa serveru“ (název nebo adresa; úplná adresa jako `smb://nas/photos`, `\\nas\photos` nebo `https://nas:5006/photos` vyplní ostatní pole), „Port (volitelné)“, pokud není obvyklý, „Sdílená složka“ pro SMB nebo „Cesta adresy WebDAV“ pro WebDAV, „Počáteční složka (volitelné)“, „Uživatelské jméno“ a „Heslo“ a pro WebDAV „Zabezpečené připojení (HTTPS)“.
 5. SMB: jakmile zadáte server a uživatelské jméno, „Vyberte sdílenou složku“ vypíše sdílené složky serveru.
 6. DLNA: mediální server nemá uživatelské jméno ani heslo. Zadejte server, port a „Cesta k popisu“ jeho popisu zařízení (`/rootDesc.xml` u minidlna), nebo vložte celou adresu, například `http://192.168.1.10:8200/rootDesc.xml`, do pole serveru.
-7. Klepněte na „Otestovat připojení“. Odpoví „Připojeno, počet položek v počáteční složce: N“, nebo řekne, proč se to nezdařilo. Pak klepněte na Uložit dole ve formuláři.
+7. Klepněte na „Otestovat připojení“. Odpoví „Připojeno, N položek v počáteční složce“, nebo řekne, proč se to nezdařilo. Pak klepněte na Uložit dole ve formuláři. Od buildu 22 se zavření formuláře, do kterého jste něco napsali (X, Zpět), nejdřív zeptá „Zahodit změny?“, a to i na stránkách Plex a kamer; stejně tak výběr nalezeného serveru Plex nebo kamery, když už je něco napsáno.
 
 Uživatelské jméno s prázdným heslem se odešle tak, jak je: Freebox Server chce pro své disky `freebox` a žádné heslo. Chcete-li sdílení později změnit nebo odebrat, použijte tužku vedle něj na stránce Síťová úložiště.
 
@@ -617,8 +617,9 @@ Od buildu 20 běží stejná aplikace pro Android na Android TV a Google TV, s d
 
 ### Pohyb s dálkovým ovladačem
 
-- Šipky posouvají rámeček, OK otevře to, na čem je, Zpět jde zpět. Z karty jde Zpět do bočního menu, pak na Fotky, pak z aplikace ven.
-- Kanál nahoru a dolů posouvá o stránku.
+- Šipky posouvají rámeček, OK otevře to, na čem je, Zpět jde zpět. Z karty jde Zpět do bočního menu, pak na Fotky, pak z aplikace ven. V seznamu možností, například u typu sdílení nebo u nastavení, šipky jen posouvají rámeček a OK možnost vybere (od buildu 22; dříve šipky volbu měnily).
+- Kanál nahoru a dolů posouvá o stránku. Od buildu 22 ukazují mřížky fotek asi šest dlaždic na řádek uvnitř okrajů obrazovky, s ostřejšími náhledy vlastních souborů zařízení, které zůstávají hladké i v jemných detailech, a stránky, které mají na telefonu záhlaví s obrázkem (seznam 360°, Oblíbené, alba zařízení), místo něj ukazují jedinou lištu.
+- Od buildu 22 začíná rámeček na první položce každé stránky (první dlaždice seznamu 360°, pole pro e-mail po potvrzení adresy serveru), drží se uvnitř okrajů obrazovky, když se mřížka posouvá, a z mřížky jde nahoru na řádek nebo filtry nad ní, ne na tlačítko Zpět. Šipka doprava ze síťového úložiště nebo kamery přejde na jejich tlačítko úprav a výsledek „Otestovat připojení“ se posune do zobrazení.
 - V prohlížečích fungují tlačítka dálkového ovladače pro přehrávání a pozastavení, přetáčení vpřed, přetáčení vzad, další a předchozí a tlačítko info ukáže podrobnosti fotky nebo videa.
 
 ### Fotky a videa s dálkovým ovladačem
@@ -632,7 +633,7 @@ Od buildu 20 běží stejná aplikace pro Android na Android TV a Google TV, s d
 
 ### Nastavení Rozložení pro dálkový ovladač
 
-Nastavení, Předvolby, „Rozložení pro dálkový ovladač“: „Velké rámečky výběru a tlačítka dálkového ovladače, bez ovládacích prvků vyžadujících dotykovou obrazovku. Automaticky jej zapne na Android TV a Google TV.“ Automaticky je výchozí; Zapnuto se hodí pro tablet ovládaný klávesnicí nebo herním ovladačem; Vypnuto ho na televizi vypne. Nastavení existuje jen na Androidu. Šipky a OK fungují v prohlížečích s klávesnicí nebo herním ovladačem bez ohledu na nastavení.
+Nastavení, Předvolby, „Rozložení pro dálkový ovladač“: „Velké rámečky výběru a tlačítka dálkového ovladače, bez ovládacích prvků vyžadujících dotykovou obrazovku. Automaticky jej zapne na Android TV a Google TV.“ Automaticky je výchozí; Zapnuto se hodí pro tablet ovládaný klávesnicí nebo herním ovladačem; Vypnuto ho na televizi vypne. Nastavení existuje jen na Androidu. Od buildu 22 se změna projeví hned na otevřené stránce, která zůstane, kde byla (dříve se Nastavení znovu otevřelo na Pokročilé, nad úvodní obrazovkou, kterou bylo nutné projít tlačítkem Zpět). Šipky a OK fungují v prohlížečích s klávesnicí nebo herním ovladačem bez ohledu na nastavení.
 
 ### Omezení
 
@@ -650,7 +651,7 @@ Nastavení, Předvolby, „Rozložení pro dálkový ovladač“: „Velké rám
 
 360° záběry jsou promíchané se všemi ostatními fotkami a lidé žádají Immich o způsob, jak filtrovat koule a panoramata ([diskuse #12824](https://github.com/immich-app/immich/discussions/12824)). Aplikace Immich žádný takový seznam nemá.
 
-Immuch360 dává štítek 360° na náhledy 360° fotek (ve složce síťového úložiště i na 360° videa) a položku 360° nahoru do karty Knihovna. Od buildu 18 tento seznam se serverem obsahuje fotky a videa, které server označuje jako 360°, nezpracované soubory Insta360 podle názvu, fotky, které spojila sama 360° kamera, a ty, které jste se rozhodli zobrazit jako 360°, a k tomu to, co našlo prohledání zařízení; bez serveru to, co našlo prohledání zařízení, a ty, které jste se rozhodli zobrazit jako 360°. Každá položka se objeví jednou, ať jsou její kopie kdekoli, nejnovější první.
+Immuch360 dává štítek 360° na náhledy 360° fotek (ve složce síťového úložiště i na 360° videa) a položku 360° nahoru do karty Knihovna. Od buildu 18 tento seznam se serverem obsahuje fotky a videa, které server označuje jako 360°, nezpracované soubory Insta360 podle názvu, fotky, které spojila sama 360° kamera, a ty, které jste se rozhodli zobrazit jako 360°, a k tomu to, co našlo prohledání zařízení; bez serveru to, co našlo prohledání zařízení, a ty, které jste se rozhodli zobrazit jako 360°. Každá položka se objeví jednou, ať jsou její kopie kdekoli, nejnovější první. Od buildu 22 je nad mřížkou řádek „Na síťových úložištích“ s 360° fotkami a videi z vašich sdílení, nejnovější první: aplikace se o nich dozví, když ukáže jejich složku nebo je otevře (sama sdílení neprohledává), pamatuje si je od jednoho spuštění k dalšímu a zapomene je spolu s jejich sdílením. Na televizi, která nemá vlastní fotky, plní seznam 360° právě tento řádek.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Seznam 360°, 4 položky, s otevřeným panelem Datum: Vše, rok 2026 s počtem, Celý rok, srpen 2026 a duben 2026 s počty, rok 2025 a Vlastní">
 
@@ -661,7 +662,7 @@ Immuch360 dává štítek 360° na náhledy 360° fotek (ve složce síťového 
 3. Se serverem zvolte, kde média jsou: „Na serveru“, „V tomto zařízení“ a „Sdílené se mnou“, pokud nějaká jsou.
 4. Zvolte druh: Fotky, Videa, 3D, VR180.
 5. Když seznam obsahuje dvě nebo více kamer, druhý řádek je vypíše podle výrobce a modelu z EXIF, s jejich počty. Nezpracovaný soubor bez těchto údajů se pojmenuje podle značky své přípony (Insta360, GoPro, DJI), cokoli jiného je „Neznámá kamera“.
-6. V rámci skupiny (místa, Fotky a Videa, 3D a VR180, kamery) se čipy sčítají; mezi skupinami seznam zužují. Vymazat vše vynuluje; „Těmto filtrům neodpovídá žádná 360° fotka ani video“ znamená, že filtry nic nenechávají.
+6. V rámci skupiny (místa, Fotky a Videa, 3D a VR180, kamery) se čipy sčítají; mezi skupinami seznam zužují. Čipy Datum, Fotky a Videa platí i pro řádek síťových úložišť; 3D, VR180 a kamery ho skryjí, protože u souboru ze sdílení aplikace nic z toho nezná. Vymazat vše vynuluje; „Těmto filtrům neodpovídá žádná 360° fotka ani video“ znamená, že filtry nic nenechávají.
 7. Otevřete fotku nebo video. V imerzivním zobrazení na Questu předchozí a další sledují filtrovaný seznam.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Vše, co umí oficiální mobilní aplikace Immich, je zde: zálohování, časo
 
 Chcete-li ukázat 360° fotku někomu, kdo aplikaci nemá, sdílejte ji sdíleným odkazem Immich: webová aplikace Immich zobrazí 360° fotku v jeho prohlížeči jako kouli.
 
-Aktuální build, build 21 (verze 3.3.0-rc.0, číslo buildu 3030019), vychází z Immich 3.3.0-rc.0 (Immich `main`, zatím ne stabilní vydání). Build 19 byl testován se serverem Immich 3.2 a buildy 20 a 21 nemění nic na tom, co aplikace od serveru žádá. Problémy prosím hlaste v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Úplnou dokumentaci samotného Immich najdete na [immich.app](https://immich.app).
+Aktuální build, build 22 (verze 3.3.0-rc.0, číslo buildu 3030020), vychází z Immich `main` z 10. října 2026 (verze 3.3.0-rc.0, zatím ne stabilní vydání). Build 22 byl testován se serverem Immich 3.2.4 a se serverem sestaveným z téhož Immich `main`: přihlášení, časová osa, alba, 360° fotky a videa, přehrávání videa a nahrávání, bez jediné chyby API. Problémy prosím hlaste v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich. Úplnou dokumentaci samotného Immich najdete na [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Srovnání s aplikací Immich a dalšími aplikacemi
@@ -1037,6 +1038,8 @@ Když nestačí dekódování videa ze serveru, ne vykreslování (video, které
 - **Zvolte vykreslovač sami.** V Nastavení, Pokročilé zapněte „Řešení problémů“: objeví se položka „Vykreslovač 360° videa“, ve výchozím stavu „Automaticky“. Nabízí také „Plugin, plná velikost“, „Plugin, nejvýše 4096 na šířku“, „Plugin, nejvýše 2880 na šířku“ a „Plošně, bez 360° pohledu“, pro další 360° video, které otevřete. Pod ní „Naposledy změřeno“ uvádí velikost, ve které bylo vykresleno poslední 360° video, jeho snímky za sekundu, grafický čip a dekodér: zkopírujte to do hlášení o chybě. Opětovné zvolení „Automaticky“, i když už je zvoleno, zapomene, co bylo změřeno, a další 360° videa se změří znovu.
 - **Co čip dekóduje.** Nastavení, Pokročilé, „Video dekodéry tohoto zařízení“ vypisuje, co dekóduje používaný grafický čip, jak to hlásí Direct3D 11, a aplikace tento seznam opravuje podle toho, co naměřila při přehrávání: řídí se jím nastavení „Zdroj videa“ i kontrola dvou objektivů u surových videí. H.264 širší než 4096 pixelů (5,7K u 360° kamer) dekóduje procesor, protože ho nepřijme ani jeden čip testovacího notebooku.
 
+**Pro vývojáře.** 360° přehrávač kreslí přes vlastní vykreslovač postavený na libmpv a upraveném pluginu media_kit_video: mpv kreslí každý snímek do textury na grafickém čipu a průchod OpenGL ES 3.0 kreslí pohled do textury, kterou zobrazuje Flutter, bez kopírování přes procesor. Proč byl postaven takto, jak funguje, co bylo změřeno a co lze doladit: [desktopový vykreslovač 360° videa](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Ve srovnání s aplikacemi pro telefony
 
 - **Zálohování běží, dokud je aplikace otevřená** (nebo minimalizovaná), ne na pozadí se zavřeným oknem. Zavření okna během nahrávání nebo během sdílení počítače se nejdřív zeptá.
@@ -1110,7 +1113,7 @@ Aplikace je na Google Play pro telefony a tablety; verze pro App Store čeká na
 
 - **Telefony a tablety s Androidem**
   - Dnes: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), nebo APK na stránce [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` pro telefon (univerzální `Immuch360-v<version>-release.apk` funguje všude, `-armeabi-v7a` je pro starší 32bitové telefony a soubor `.aab` je pro Google Play, ne pro ruční instalaci). Build na GitHubu bývá před obchodem napřed. Tak či tak se instaluje vedle oficiální aplikace Immich (balíček `com.aprogsys.immuch360`).
-  - Brzy: na Google Play je build 20 dostupný od 7. října 2026, místo buildu 18; build 21 na telefonech a tabletech nic nemění.
+  - Brzy: na Google Play byl 10. října 2026 odeslán build 22 místo buildu 20 (dostupného od 7. října); přináší říjnové změny Immich a opravy pro televize.
 - **iPhone a iPad**
   - Dnes: čeká na schválení společností Apple. Verze ve schvalování obsahuje funkce buildu 11: nahrávání do Immich a volba Zdroj videa (build 15) a nezpracované soubory Insta360 (build 16) přijdou s pozdější aktualizací v App Store. Ze zdrojového kódu se dá sestavit v Xcode nebo na Codemagic, viz [Sestavení vlastními silami](#build-it-yourself).
   - Brzy: App Store, ve schvalování.
@@ -1157,7 +1160,7 @@ V tomto repozitáři není žádné tajemství: podpisový klíč pro Android je
 
 ### Větve
 
-- **`main`**: Immich `main` v commitu, ze kterého `immuch360` vychází (29. září 2026 pro aktuální buildy), nikdy neupravovaný; posune se dopředu, když se fork přeskládá (rebase) na novější Immich.
+- **`main`**: Immich `main` v commitu, ze kterého `immuch360` vychází (10. října 2026 pro aktuální buildy), nikdy neupravovaný; posune se dopředu, když se fork přeskládá (rebase) na novější Immich.
 - **`immuch360`**: změny tohoto forku nad Immich, od 9. října 2026 včetně Immuch360 Desktop. Každé vydání uvádí, ze které verze Immich vychází.
 - **`desktop`**: zde se Immuch360 Desktop, verze pro počítač, stavěl nad `immuch360`, dokud do ní nebyl 9. října 2026 sloučen, aby telefony, headsety, televize i počítače vycházely ze stejných zdrojů. Nyní sleduje `immuch360` a nese značky předběžných desktopových vydání ([desktopový build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) z commitu 21f285c34, [desktopový build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) z 5b723bd25, [desktopový build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ze sloučení 360° přehrávače videa 10. října 2026). Nová desktopová práce přistává nejdřív tam a do `immuch360` se dostane s desktopovým buildem, který ji vydá. Verze pro počítač nic nemění pod `mobile/android` a `mobile/ios`.
 

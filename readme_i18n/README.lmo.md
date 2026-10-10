@@ -17,10 +17,10 @@ L'è per chi el fotografa con ona fotocamera 360° (Insta360, GoPro MAX, DJI Osm
 
 | Piattaforma | Indove trovall | Stat al 10 de otober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon e tablet **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 su Google Play del 7 de otober 2026, build 21 su GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon e tablet **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 su GitHub, mandada a Google Play el 10 de otober 2026 (la build 20 l'è pubblicada lì del 7 de otober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone e iPad** | App Store | version 3.3.0 che la speta la revision de Apple; intant [compilall de per ti](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [APK](#meta-quest-3) · Horizon Store | scheda aprovada, build 21 in revision de Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 su GitHub; la scheda de Google Play per la TV l'è in revision de Google del 9 de otober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [APK](#meta-quest-3) · Horizon Store | scheda aprovada, build 21 in revision de Meta, build 22 sul canal Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 su GitHub; la scheda de Google Play per la TV l'è in revision de Google del 9 de otober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP de l'anteprima](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | build desktop 3 su Windows: foto, video piatt e a 360°; macOS e Linux pussee tard |
 
 *I stat vegnen aggiornaa a ogni release; i detaj hinn in [Indove trovall](#where-to-get-it).*
@@ -196,7 +196,7 @@ El troeuva de per lù i server de la toa ret, e el fa andà i file dal viv in di
 4. Minga in la lista? Compila el modul a man. Tipo: "SMB (Samba, condivision Windows)", "WebDAV (Nextcloud, Synology e alter)", "Server multimedial DLNA (Jellyfin, NAS, box TV)" o, de la build 20, "Plex Media Server", che el derv la pagina de [Plex Media Server, senza plex.tv](#plex-media-server-without-plextv). Poeu Nom, "Nom o indirizz del server" (on nom o on indirizz; on indirizz intreg come `smb://nas/photos`, `\\nas\photos` o `https://nas:5006/photos` el compila i alter camp), "Porta (facoltativa)" quand l'è minga quella solita, "Condivision" per SMB o "Percors de l'indirizz WebDAV" per WebDAV, "Cartella de partenza (facoltativa)", "Nom utent" e "Password", e "Conession sicura (HTTPS)" per WebDAV.
 5. SMB: quand el server e el nom utent hinn scritt, "Sceglie ona condivision" el mostra i condivision del server.
 6. DLNA: on server multimedial el gh'ha nè nom utent nè password. Dà el server, la porta e el "Percors de la descrizion" de la descrizion del sò dispositiv (`/rootDesc.xml` per minidlna), o incolla l'indirizz intreg, come `http://192.168.1.10:8200/rootDesc.xml`, in del camp del server.
-7. Tocca "Provà la conession". El respond "Conèss, N element in la cartella de partenza", o el dis perché l'è minga andada. Poeu tocca Salvà, in fond al modul.
+7. Tocca "Provà la conession". El respond "Connetuu, N element in la cartella de partenza", o el dis perché l'è minga andada. Poeu tocca Salvà, in fond al modul. De la build 22, a serrà on modul indove t'hee scrivuu quaicoss (X, Indree) el domanda prima "Scartà i modifich?", anca in di pagin de Plex e de la telecamera, e l'istess quand te scegliet Plex o ona telecamera trovada dopo havè scrivuu quaicoss.
 
 On nom utent con ona password voeuda el vegn mandaa inscì: on Freebox Server el voeur `freebox` e nissuna password per i sò disch. Per cambià o tirà via ona condivision pussee tard, dovra la matita visin a lee in la pagina Condivision de ret.
 
@@ -617,8 +617,9 @@ De la build 20 la medesima app Android la va su Android TV e Google TV, col tele
 
 ### Moverse col telecomand
 
-- I frecce sposten el quader, OK el derv quell che gh'è sota, Indree el torna indree. De ona scheda, Indree el va al menù de fianch, poeu a Foto, poeu foeura de l'app.
-- Canal su e giò fan scorr ona pagina a la volta.
+- I frecce sposten el quader, OK el derv quell che gh'è sota, Indree el torna indree. De ona scheda, Indree el va al menù de fianch, poeu a Foto, poeu foeura de l'app. In d'ona lista de scelte, come el tipo de ona condivision o on'impostazion, i frecce sposten domà el quader e OK el fa la scelta (de la build 22; prima, i frecce cambiaven la scelta).
+- Canal su e giò fan scorr ona pagina a la volta. De la build 22 i grij di foto mostren circa ses riquader per riga dent in di margin del scherm, con miniadure pussee nett di file del dispositiv istess che resten lissi anca sui detali fin, e i pagin che su on telefon gh'hann on'imagin in cima (la lista 360°, Favorites (Preferii), i album del dispositiv) mostren invece ona barra sola.
+- De la build 22 el quader el parte del primm element de ogni pagina (el primm riquader de la lista 360°, el camp de l'email quand l'indirizz del server l'è confermaa), el resta dent in di margin del scherm intanta che ona grija la scorr, e de ona grija el va su a la riga o ai filter de sora invece che al boton Indree. Drita de ona condivision de ret o de ona telecamera la riva al sò boton de modifica, e el resultaa de "Provà la conession" el scorr fin che el se ved.
 - In di visualizador, i tast play e pausa, avanti svelt, indree svelt, seguent e precedent del telecomand funzionen, e el tast info el mostra i detali de ona foto o de on video.
 
 ### Foto e video col telecomand
@@ -632,7 +633,7 @@ De la build 20 la medesima app Android la va su Android TV e Google TV, col tele
 
 ### L'impostazion Disposizion per telecomand
 
-Impostazion, Preferences (Preferenze), "Disposizion per telecomand": "Quader de focus grand e tast del telecomand, senza i comand che gh'hann bisogn de on scherm touch. Automatich el le pizza su Android TV e Google TV." Automatich l'è el predefinii; Pizzaa el va ben per on tablet comandaa de ona tastera o de on gamepad; Smorzaa el la smorza su ona TV. L'impostazion la gh'è domà su Android. I frecce e OK funzionen in di visualizador con ona tastera o on gamepad, qualsessia l'impostazion.
+Impostazion, Preferences (Preferenze), "Disposizion per telecomand": "Quader de focus grand e tast del telecomand, senza i comand che gh'hann bisogn de on scherm touch. Automatich el le pizza su Android TV e Google TV." Automatich l'è el predefinii; Pizzaa el va ben per on tablet comandaa de ona tastera o de on gamepad; Smorzaa el la smorza su ona TV. L'impostazion la gh'è domà su Android. De la build 22 ona modifica la val subit per la pagina averta, che la resta indove l'era (prima, Impostazion la se derviva anmò su Advanced (Avanzaa), sora a ona schermada de partenza che Indree el doveva traversà). I frecce e OK funzionen in di visualizador con ona tastera o on gamepad, qualsessia l'impostazion.
 
 ### Limit
 
@@ -650,7 +651,7 @@ Impostazion, Preferences (Preferenze), "Disposizion per telecomand": "Quader de 
 
 I scatt a 360° hinn mes'ciaa con tucc i alter foto, e la gent la domanda a Immich ona manera de filtrà sfere e panorama ([discussion #12824](https://github.com/immich-app/immich/discussions/12824)). L'app Immich la gh'ha nissuna lista inscì.
 
-Immuch360 el mett on distintiv 360° sui miniadure di foto a 360° (in ona cartella de condivision de ret, anca sui video a 360°), e ona voce 360° in cima a la scheda Biblioteca. De la build 18 quella lista la gh'ha, con on server, i foto e i video che el server el segna come 360°, i file gregg Insta360 del sò nom, i foto che ona fotocamera 360° l'ha giontaa de per lee e quei che t'hee sceglii de vardà 'me 360°, pussee quell che la ricerca sul dispositiv l'ha trovaa; senza server, quell che la ricerca sul dispositiv l'ha trovaa e quei che t'hee sceglii de vardà 'me 360°. Ognun el compar ona volta domà, indove che sien i sò còpie, el pussee noeuv prima.
+Immuch360 el mett on distintiv 360° sui miniadure di foto a 360° (in ona cartella de condivision de ret, anca sui video a 360°), e ona voce 360° in cima a la scheda Biblioteca. De la build 18 quella lista la gh'ha, con on server, i foto e i video che el server el segna come 360°, i file gregg Insta360 del sò nom, i foto che ona fotocamera 360° l'ha giontaa de per lee e quei che t'hee sceglii de vardà 'me 360°, pussee quell che la ricerca sul dispositiv l'ha trovaa; senza server, quell che la ricerca sul dispositiv l'ha trovaa e quei che t'hee sceglii de vardà 'me 360°. Ognun el compar ona volta domà, indove che sien i sò còpie, el pussee noeuv prima. De la build 22 ona riga "In di condivision de ret" la compar sora la grija coi foto e i video a 360° di toeu condivision, el pussee noeuv prima: l'app la i impara quand la mostra la soa cartella o quand la i derv (la cerca minga de per lee in d'ona condivision), la i ten de on avvi a l'alter e la i desmentega insema a la soa condivision. Su ona TV, che la gh'ha minga foto soe, l'è quella riga lì che la impieniss la lista 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="La lista 360°, 4 element, col sò pannell Date avert: All, l'ann 2026 col sò cunt, Tutt l'ann, agost 2026 e april 2026 coi sò cunt, l'ann 2025, e Custom">
 
@@ -661,7 +662,7 @@ Immuch360 el mett on distintiv 360° sui miniadure di foto a 360° (in ona carte
 3. Con on server, sceglie indove hinn i media: "Sul server", "On this device", e "Shared with me" (Condivis con mi) quand ghe n'è.
 4. Sceglie el tipo: Photos, Videos, 3D, VR180.
 5. Quand la lista la gh'ha dò fotocamere o pussee, ona segonda riga la i elenca de la marca e del model EXIF, coi sò cunt. On file gregg senza quei dati lì el vegn ciamaa con la marca de la soa estension (Insta360, GoPro, DJI), tutt el rest l'è "Fotocamera sconossuda".
-6. Dent in on grupp (i post, Photos e Videos, 3D e VR180, i fotocamere) i chip se sommen; tra grupp diversi stringen la lista. Clear (Netta) el mett a zero tutt; "Nissuna foto o video 360° la corrispond a sti filter" el voeur dì che i filter lassen nient.
+6. Dent in on grupp (i post, Photos e Videos, 3D e VR180, i fotocamere) i chip se sommen; tra grupp diversi stringen la lista. I chip Date (Data), Photos e Videos valen anca per la riga di condivision de ret; 3D, VR180 e i fotocamere la sconden, perché l'app la sa nient de sti robb chì per on file de ona condivision. Clear (Netta) el mett a zero tutt; "Nissuna foto o video 360° la corrispond a sti filter" el voeur dì che i filter lassen nient.
 7. Derv ona foto o on video. In la vista immersiva del Quest, precedent e seguent seguen la lista filtrada.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Tutt quell che l'app mobil ufficial de Immich la fa l'è chì: backup, timeline,
 
 Per mostrà ona foto a 360° a quaivun che el gh'ha minga l'app, condividila con on link condivis de Immich: l'app web de Immich la mostra ona foto a 360° come ona sfera in del sò browser.
 
-La build de adess, la build 21 (version 3.3.0-rc.0, numer de build 3030019), la se basa su Immich 3.3.0-rc.0 (Immich `main`, anmò minga ona release stabil). La build 19 l'è stada provada con on server Immich 3.2, e i build 20 e 21 cambien nient de quell che l'app la domanda al server. Per piasè, segnala i problema in [Issues](https://github.com/freeKC/Immuch360/issues), minga al progett Immich. Per la documentazion completa de Immich istess, varda [immich.app](https://immich.app).
+La build de adess, la build 22 (version 3.3.0-rc.0, numer de build 3030020), la se basa su Immich `main` del 10 de otober 2026 (version 3.3.0-rc.0, anmò minga ona release stabil). La build 22 l'è stada provada contra on server Immich 3.2.4 e contra on server compilaa de quell Immich `main` istess: access, timeline, album, foto e video a 360°, riproduzion di video e caricament, senza nissun error de API. Per piasè, segnala i problema in [Issues](https://github.com/freeKC/Immuch360/issues), minga al progett Immich. Per la documentazion completa de Immich istess, varda [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## A confront con l'app Immich e cont alter app
@@ -1037,6 +1038,8 @@ Quand l'è la decodifica de on video del server che la ten minga el pass, minga 
 - **Sceglie ti el renderer.** In Settings, Advanced (Avanzaa), pizza Troubleshooting (Soluzion di problema): la compar ona voce "360° video renderer" (Renderer di video a 360°), Automatic (Automatich) de default. La offriss anca "Plugin, full size" (Plugin, dimension intrega), "Plugin, at most 4096 wide" (Plugin, al massim 4096 de largh), "Plugin, at most 2880 wide" (Plugin, al massim 2880 de largh) e "Flat, without the 360° view" (Piatt, senza la vista a 360°), per el pròssim video a 360° che te dervet. Sota, "Measured last" (Ultima misura) el dis la dimension in la quala l'ultim video a 360° l'è staa disegnaa, i sò fotogramma al second, el chip grafich e el decoder: copiel in d'on rapport de error. Sceglie anmò "Automatic", anca quand l'è giamò sceglii, el desmentega quell che l'è staa misuraa, e i pròssim video a 360° vegnen misuraa anmò.
 - **Quell che el chip el decodifica.** Settings, Advanced, "Decoder video de sto dispositiv" el elenca quell che el chip grafich in uso el decodifica, come el le dis Direct3D 11, e l'app la corregg quella lista con quell che l'ha misuraa intanta che la fa andà i video: l'impostazion Sorgent video e el control di duu obiettiv di video grezz ghe vann adree. L'H.264 pussee largh de 4096 pixel (el 5.7K di fotocamere 360°) el vegn decodificaa del processor, perché nissun di duu chip del portatil de prova el le ciapa.
 
+**Per i svilupador.** El lettor a 360° el disegna attravers on renderer tutt sò, faa su libmpv e su on plugin media_kit_video modificaa: mpv el disegna ogni fotogramma in d'ona texture sul chip grafich, e on passagg OpenGL ES 3.0 el disegna la vista in de la texture che Flutter el mostra, senza nissuna còpia attravers el processor. Perché l'è staa faa inscì, come el funziona, cosa l'è staa misuraa e cosa se po regolà: [el renderer di video a 360° del desktop](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### A confront cont i app per telefon
 
 - **El backup el va intanta che l'app l'è averta** (o ridotta), minga in background con la finestra sarada. Sarà la finestra intanta che i caregament vann, o intanta che el computer l'è condivis, el domanda prima.
@@ -1110,7 +1113,7 @@ L'app l'è su Google Play per telefon e tablet; la version per l'App Store la sp
 
 - **Telefon e tablet Android**
   - Incoeu: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o l'APK in la pagina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` per on telefon (l'universal `Immuch360-v<version>-release.apk` el va dappertutt, `-armeabi-v7a` l'è per i telefon vegg a 32 bit, e el file `.aab` l'è per Google Play, minga per installà a man). La build de GitHub de solit l'è inanz al store. In tutt i duu i cas la se installa visin a l'app ufficial de Immich (pacchett `com.aprogsys.immuch360`).
-  - Prest: su Google Play, la build 20 l'è pubblicada del 7 de otober 2026, al post de la build 18; la build 21 la cambia nient sui telefon e sui tablet.
+  - Prest: su Google Play, la build 22 l'è stada mandada el 10 de otober 2026 al post de la build 20 (pubblicada del 7 de otober); la porta i modifich de Immich de otober e i coregiment per la TV.
 - **iPhone e iPad**
   - Incoeu: la speta la revision de Apple. La version in revision la gh'ha i funzion de la build 11: el caregament su Immich e la scelta "Sorgent del video" (build 15) e i file gregg Insta360 (build 16) vegnaran con on aggiornament de l'App Store pussee tard. El codes el se compila con Xcode o su Codemagic, varda [Compilall de per ti](#build-it-yourself).
   - Prest: App Store, in revision.
@@ -1157,7 +1160,7 @@ In sto repository gh'è nissun segrett: la ciav de firma Android l'è salvada co
 
 ### Branch
 
-- **`main`**: Immich `main` al commit su cui `immuch360` el se basa (29 de setember 2026 per i build de adess), mai modificaa; el va inanz quand el fork el vegn ribasaa su on Immich pussee noeuv.
+- **`main`**: Immich `main` al commit su cui `immuch360` el se basa (10 de otober 2026 per i build de adess), mai modificaa; el va inanz quand el fork el vegn ribasaa su on Immich pussee noeuv.
 - **`immuch360`**: i modifiche de sto fork sora Immich, compres Immuch360 Desktop del 9 de ottober 2026. Ogni release la dis su che version de Immich la se basa.
 - **`desktop`**: indove Immuch360 Desktop, la version per computer, l'è stada fada sora `immuch360`, fin che l'è stada unida denter el 9 de ottober 2026 perché telefon, visor, TV e computer vegnen foeura di medesim sorgent. Adess el segue `immuch360` e el porta i tag di pre-release desktop ([build desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) del commit 21f285c34, [build desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) del 5b723bd25, [build desktop 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) de l'union del lettor video a 360° el 10 de ottober 2026). El lavor desktop noeuv el riva prima lì e el va in `immuch360` con la build desktop che la le porta foeura. La version per computer la cambia nagott sota `mobile/android` e `mobile/ios`.
 

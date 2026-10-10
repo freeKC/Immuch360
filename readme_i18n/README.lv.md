@@ -17,10 +17,10 @@ Tā ir paredzēta tiem, kas fotografē ar 360° kameru (Insta360, GoPro MAX, DJI
 
 | Platforma | Kur iegūt | Statuss 2026. gada 10. oktobrī |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20. būvējums Google Play kopš 2026. gada 7. oktobra, 21. būvējums GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tālruņi un planšetdatori | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 22. būvējums GitHub, nosūtīts uz Google Play 2026. gada 10. oktobrī (20. būvējums tur pieejams kopš 7. oktobra) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone un iPad** | App Store | versija 3.3.0 gaida Apple pārskatīšanu; pa to laiku [izveidojiet to paši](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 un 3S | [APK](#meta-quest-3) · Horizon Store | ieraksts apstiprināts, 21. būvējums Meta pārskatīšanā |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV un Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21. būvējums GitHub; Google Play ieraksts televizoriem ir Google pārskatīšanā kopš 2026. gada 9. oktobra |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 un 3S | [APK](#meta-quest-3) · Horizon Store | ieraksts apstiprināts, 21. būvējums Meta pārskatīšanā, 22. būvējums alfa kanālā |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV un Google TV** | [APK](#install-it-on-the-tv) · Google Play | 22. būvējums GitHub; Google Play ieraksts televizoriem ir Google pārskatīšanā kopš 2026. gada 9. oktobra |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Priekšskatījuma ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | darbvirsmas būvējums 3 operētājsistēmā Windows: foto, plakani un 360° video; macOS un Linux vēlāk |
 
 *Statusi tiek atjaunināti katrā laidienā; sīkāka informācija sadaļā [Kur to iegūt](#where-to-get-it).*
@@ -196,7 +196,7 @@ Tā pati atrod jūsu tīkla serverus un atskaņo failus tieši tajos pašos skat
 4. Nav sarakstā? Aizpildiet veidlapu manuāli. Veids: „SMB (Samba, Windows koplietojums)”, „WebDAV (Nextcloud, Synology un citi)”, „DLNA multivides serveris (Jellyfin, NAS, TV kaste)” vai, no 20. būvējuma, „Plex Media Server”, kas atver sadaļas [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv) lapu. Tad „Nosaukums”, „Servera nosaukums vai adrese” (nosaukums vai adrese; pilna adrese, piemēram, `smb://nas/photos`, `\\nas\photos` vai `https://nas:5006/photos`, aizpilda pārējos laukus), „Ports (neobligāts)”, ja tas nav parastais, „Koplietojums” SMB gadījumā vai „WebDAV adreses ceļš” WebDAV gadījumā, „Sākuma mape (neobligāta)”, „Lietotājvārds” un „Parole”, un WebDAV gadījumā „Drošs savienojums (HTTPS)”.
 5. SMB: kad serveris un lietotājvārds ir ievadīti, „Izvēlieties koplietojumu” uzskaita servera koplietojumus.
 6. DLNA: multivides serverim nav lietotājvārda un paroles. Norādiet serveri, portu un tā ierīces apraksta „Apraksta ceļš” (`/rootDesc.xml` minidlna gadījumā) vai ielīmējiet visu adresi, piemēram, `http://192.168.1.10:8200/rootDesc.xml`, servera laukā.
-7. Pieskarieties „Pārbaudīt savienojumu”. Atbilde ir „Savienots, sākuma mapē ir N ieraksti”, vai arī tiek pateikts, kāpēc neizdevās. Tad pieskarieties „Saglabāt” veidlapas apakšā.
+7. Pieskarieties „Pārbaudīt savienojumu”. Atbilde ir „Savienots, sākuma mapē ir N ieraksti”, vai arī tiek pateikts, kāpēc neizdevās. Tad pieskarieties „Saglabāt” veidlapas apakšā. No 22. būvējuma, aizverot veidlapu, kurā kaut kas ievadīts (X, Atpakaļ), vispirms tiek jautāts „Atmest izmaiņas?”, arī Plex un kameras lapās, un tāpat notiek, ja pēc kaut kā ievadīšanas izvēlaties tīklā atrastu Plex serveri vai kameru.
 
 Lietotājvārds ar tukšu paroli tiek nosūtīts tieši tā: Freebox Server saviem diskiem prasa `freebox` un nekādu paroli. Lai vēlāk mainītu vai noņemtu koplietojumu, izmantojiet zīmuli blakus tam lapā „Tīkla koplietojumi”.
 
@@ -617,8 +617,9 @@ No 20. būvējuma tā pati Android lietotne darbojas Android TV un Google TV, ar
 
 ### Pārvietošanās ar tālvadības pulti
 
-- Bultiņas pārvieto rāmi, OK atver to, uz kā tas ir, Atpakaļ iet atpakaļ. No cilnes Atpakaļ pāriet uz sānu izvēlni, tad uz „Fotoattēli”, tad iziet no lietotnes.
-- Kanāls augšup un lejup ritina pa vienai lapai.
+- Bultiņas pārvieto rāmi, OK atver to, uz kā tas ir, Atpakaļ iet atpakaļ. No cilnes Atpakaļ pāriet uz sānu izvēlni, tad uz „Fotoattēli”, tad iziet no lietotnes. Izvēļu sarakstā, piemēram, koplietojuma veidam vai iestatījumam, bultiņas tikai pārvieto rāmi, un OK izvēlas iespēju (no 22. būvējuma; agrāk bultiņas mainīja izvēli).
+- Kanāls augšup un lejup ritina pa vienai lapai. No 22. būvējuma fotoattēlu režģi rāda apmēram sešas flīzes rindā ekrāna malu robežās, ar asākiem pašas ierīces failu sīktēliem, kas smalkās detaļās paliek gludi, un lapas, kurām tālrunī ir galvene ar attēlu (360° saraksts, „Izlase”, ierīces albumi), tā vietā rāda vienu joslu.
+- No 22. būvējuma rāmis sākas uz katras lapas pirmā elementa (360° saraksta pirmās flīzes, e-pasta lauka, kad servera adrese ir apstiprināta), paliek ekrāna malu robežās, kamēr režģis ritinās, un no režģa pāriet augšup uz rindu vai filtriem virs tā, nevis uz pogu Atpakaļ. Pa labi no tīkla koplietojuma vai kameras nonāk pie tā rediģēšanas pogas, un „Pārbaudīt savienojumu” rezultāts tiek ieritināts redzamajā daļā.
 - Skatītājos darbojas tālvadības pults atskaņošanas un pauzes, ātrās pārtīšanas uz priekšu, attīšanas, nākamā un iepriekšējā taustiņi, un informācijas taustiņš rāda foto vai video informāciju.
 
 ### Foto un video ar tālvadības pulti
@@ -632,7 +633,7 @@ No 20. būvējuma tā pati Android lietotne darbojas Android TV un Google TV, ar
 
 ### Iestatījums „Izkārtojums tālvadības pultij”
 
-„Iestatījumi”, „Iestatījumi” (Preferences), „Izkārtojums tālvadības pultij”: „Lieli fokusa rāmji un tālvadības pults taustiņi, bez vadīklām, kurām vajadzīgs skārienekrāns. Automātiski to ieslēdz Android TV un Google TV.” „Automātiski” ir noklusējums; „Ieslēgts” der planšetdatoram, ko vada ar tastatūru vai spēļu kontrolieri; „Izslēgts” to izslēdz televizorā. Iestatījums pastāv tikai Android. Bultiņas un OK skatītājos darbojas ar tastatūru vai spēļu kontrolieri neatkarīgi no iestatījuma.
+„Iestatījumi”, „Iestatījumi” (Preferences), „Izkārtojums tālvadības pultij”: „Lieli fokusa rāmji un tālvadības pults taustiņi, bez vadīklām, kurām vajadzīgs skārienekrāns. Automātiski to ieslēdz Android TV un Google TV.” „Automātiski” ir noklusējums; „Ieslēgts” der planšetdatoram, ko vada ar tastatūru vai spēļu kontrolieri; „Izslēgts” to izslēdz televizorā. Iestatījums pastāv tikai Android. No 22. būvējuma izmaiņas uzreiz attiecas uz atvērto lapu, kas paliek turpat, kur bija (agrāk „Iestatījumi” atvērās no jauna sadaļā „Papildu”, virs sākuma ekrāna, caur kuru bija jāiet ar Atpakaļ). Bultiņas un OK skatītājos darbojas ar tastatūru vai spēļu kontrolieri neatkarīgi no iestatījuma.
 
 ### Ierobežojumi
 
@@ -650,7 +651,7 @@ No 20. būvējuma tā pati Android lietotne darbojas Android TV un Google TV, ar
 
 360° uzņēmumi ir sajaukti ar visiem pārējiem foto, un cilvēki lūdz Immich veidu, kā filtrēt sfēras un panorāmas ([diskusija #12824](https://github.com/immich-app/immich/discussions/12824)). Immich lietotnei šāda saraksta nav.
 
-Immuch360 liek 360° nozīmīti uz 360° foto sīktēliem (tīkla koplietojuma mapē arī uz 360° video) un 360° ierakstu cilnes „Bibliotēka” augšā. No 18. būvējuma šajā sarakstā ar serveri ir foto un video, ko serveris atzīmē kā 360°, neapstrādātie Insta360 faili pēc nosaukuma, foto, ko 360° kamera sašuva pati, un tie, ko izvēlējāties skatīt kā 360°, kā arī tas, ko atrada ierīces meklēšana; bez servera tas, ko atrada ierīces meklēšana, un tie, ko izvēlējāties skatīt kā 360°. Katrs parādās vienreiz, lai kur būtu tā kopijas, jaunākie vispirms.
+Immuch360 liek 360° nozīmīti uz 360° foto sīktēliem (tīkla koplietojuma mapē arī uz 360° video) un 360° ierakstu cilnes „Bibliotēka” augšā. No 18. būvējuma šajā sarakstā ar serveri ir foto un video, ko serveris atzīmē kā 360°, neapstrādātie Insta360 faili pēc nosaukuma, foto, ko 360° kamera sašuva pati, un tie, ko izvēlējāties skatīt kā 360°, kā arī tas, ko atrada ierīces meklēšana; bez servera tas, ko atrada ierīces meklēšana, un tie, ko izvēlējāties skatīt kā 360°. Katrs parādās vienreiz, lai kur būtu tā kopijas, jaunākie vispirms. No 22. būvējuma virs režģa ir rinda „Tīkla koplietojumos” ar jūsu koplietojumu 360° foto un video, jaunākie vispirms: lietotne tos uzzina, kad parāda to mapi vai tos atver (pati tā koplietojumā nemeklē), patur tos no vienas palaišanas līdz nākamajai un aizmirst tos kopā ar to koplietojumu. Televizorā, kuram nav savu foto, tieši šī rinda aizpilda 360° sarakstu.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="360° saraksts, 4 vienumi, ar atvērtu lapu Datums: Visi, 2026. gads ar skaitu, Viss gads, 2026. gada augusts un aprīlis ar skaitiem, 2025. gads un Custom">
 
@@ -661,7 +662,7 @@ Immuch360 liek 360° nozīmīti uz 360° foto sīktēliem (tīkla koplietojuma m
 3. Ar serveri izvēlieties, kur atrodas multivide: „Serverī”, „Šajā ierīcē” un „Kopīgots ar mani”, ja tādi ir.
 4. Izvēlieties veidu: „Fotoattēli”, „Videoklipi”, 3D, VR180.
 5. Ja sarakstā ir divas vai vairāk kameras, otrā rindā tās tiek uzskaitītas pēc EXIF ražotāja un modeļa, ar skaitiem. Neapstrādāts fails bez tiem tiek nosaukts pēc sava paplašinājuma zīmola (Insta360, GoPro, DJI), viss pārējais ir „Nezināma kamera”.
-6. Grupas iekšienē (vietas, „Fotoattēli” un „Videoklipi”, 3D un VR180, kameras) atlases summējas; starp grupām tās sašaurina sarakstu. „Notīrīt” atiestata visu; „Šiem filtriem neatbilst neviens 360° foto vai video” nozīmē, ka filtri neko neatstāj.
+6. Grupas iekšienē (vietas, „Fotoattēli” un „Videoklipi”, 3D un VR180, kameras) atlases summējas; starp grupām tās sašaurina sarakstu. Atlases „Datums”, „Fotoattēli” un „Videoklipi” attiecas arī uz tīkla koplietojumu rindu; 3D, VR180 un kameras to paslēpj, jo lietotne nevienu no tiem nezina koplietojuma failam. „Notīrīt” atiestata visu; „Šiem filtriem neatbilst neviens 360° foto vai video” nozīmē, ka filtri neko neatstāj.
 7. Atveriet foto vai video. Quest imersīvajā skatā iepriekšējais un nākamais seko filtrētajam sarakstam.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Viss, ko dara oficiālā Immich mobilā lietotne, ir šeit: dublēšana, laika s
 
 Lai parādītu 360° foto kādam, kam nav lietotnes, kopīgojiet to ar Immich kopīgotu saiti: Immich tīmekļa lietotne viņa pārlūkā rāda 360° foto kā sfēru.
 
-Pašreizējais būvējums, 21. būvējums (versija 3.3.0-rc.0, būvējuma numurs 3030019), balstās uz Immich 3.3.0-rc.0 (Immich `main`, vēl ne stabils laidiens). 19. būvējums tika testēts ar Immich 3.2 serveri, un 20. un 21. būvējums neko nemaina tajā, ko lietotne prasa serverim. Lūdzu, ziņojiet par problēmām [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam. Pilnu paša Immich dokumentāciju skatiet [immich.app](https://immich.app).
+Pašreizējais būvējums, 22. būvējums (versija 3.3.0-rc.0, būvējuma numurs 3030020), balstās uz Immich `main` 2026. gada 10. oktobra stāvoklī (versija 3.3.0-rc.0, vēl ne stabils laidiens). 22. būvējums tika testēts ar Immich 3.2.4 serveri un ar serveri, kas būvēts no tā paša Immich `main`: pieteikšanās, laika skala, albumi, 360° foto un video, video atskaņošana un augšupielādes, bez nevienas API kļūdas. Lūdzu, ziņojiet par problēmām [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam. Pilnu paša Immich dokumentāciju skatiet [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Salīdzinājums ar Immich lietotni un citām lietotnēm
@@ -1037,6 +1038,8 @@ Kad līdzi netiek servera video dekodēšana, nevis zīmēšana (video, ko dekod
 - **Izvēlieties renderētāju paši.** Sadaļā „Iestatījumi”, „Papildu” ieslēdziet „Problēmas novēršana”: parādās ieraksts „360° video renderer” (360° video renderētājs), pēc noklusējuma „Automatic” (Automātiski). Tas piedāvā arī „Plugin, full size” (Spraudnis, pilns izmērs), „Plugin, at most 4096 wide” (Spraudnis, ne platāk par 4096), „Plugin, at most 2880 wide” (Spraudnis, ne platāk par 2880) un „Flat, without the 360° view” (Plakani, bez 360° skata), nākamajam 360° video, ko atverat. Zem tā „Measured last” (Pēdējais mērījums) nosauc izmēru, kādā tika zīmēts pēdējais 360° video, tā kadrus sekundē, grafikas mikroshēmu un dekoderi: iekopējiet to kļūdas ziņojumā. Atkārtoti izvēloties „Automatic”, pat ja tā jau ir izvēle, tiek aizmirsts, kas tika izmērīts, un nākamie 360° video tiek izmērīti atkal.
 - **Ko mikroshēma dekodē.** „Iestatījumi”, „Papildu”, „Šīs ierīces video dekoderi” uzskaita, ko dekodē izmantotā grafikas mikroshēma, kā to ziņo Direct3D 11, un lietotne šo sarakstu labo ar to, ko tā izmērīja atskaņošanas laikā: iestatījums „Video avots” un neapstrādāto video divu objektīvu pārbaude tam seko. H.264, kas platāks par 4096 pikseļiem (360° kameru 5.7K), dekodē procesors, jo neviena testa klēpjdatora mikroshēma to nepieņem.
 
+**Izstrādātājiem.** 360° atskaņotājs zīmē caur savu renderētāju, kas veidots uz libmpv un labota media_kit_video spraudņa bāzes: mpv zīmē katru kadru tekstūrā grafikas mikroshēmā, un OpenGL ES 3.0 posms zīmē skatu tekstūrā, ko rāda Flutter, bez kopēšanas caur procesoru. Kāpēc tas tika veidots tā, kā tas darbojas, kas tika mērīts un ko var pielāgot: [datora versijas 360° video renderētājs](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Salīdzinājumā ar tālruņu lietotnēm
 
 - **Dublēšana notiek, kamēr lietotne ir atvērta** (vai minimizēta), nevis fonā ar aizvērtu logu. Loga aizvēršana, kamēr notiek augšupielādes vai kamēr dators tiek koplietots, vispirms tiek apstiprināta.
@@ -1110,7 +1113,7 @@ Lietotne ir Google Play tālruņiem un planšetdatoriem; App Store versija gaida
 
 - **Android tālruņi un planšetdatori**
   - Šodien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) vai APK lapā [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` tālrunim (universālais `Immuch360-v<version>-release.apk` darbojas visur, `-armeabi-v7a` ir vecākiem 32 bitu tālruņiem, un `.aab` fails ir paredzēts Google Play, ne instalēšanai no sāniem). GitHub būvējums parasti ir priekšā veikalam. Jebkurā gadījumā tā instalējas blakus oficiālajai Immich lietotnei (pakotne `com.aprogsys.immuch360`).
-  - Drīzumā: Google Play veikalā 20. būvējums ir pieejams kopš 2026. gada 7. oktobra, 18. būvējuma vietā; 21. būvējums tālruņos un planšetdatoros neko nemaina.
+  - Drīzumā: Google Play veikalā 22. būvējums tika nosūtīts 2026. gada 10. oktobrī 20. būvējuma vietā (pieejams kopš 7. oktobra); tajā ir Immich oktobra izmaiņas un televizora labojumi.
 - **iPhone un iPad**
   - Šodien: gaida Apple pārskatīšanu. Pārskatāmajai versijai ir 11. būvējuma funkcijas: augšupielāde uz Immich un izvēle „Video avots” (15. būvējums) un neapstrādātie Insta360 faili (16. būvējums) nāks ar vēlāku App Store atjauninājumu. Pirmkods kompilējas ar Xcode vai Codemagic, skatiet [Izveidojiet to paši](#build-it-yourself).
   - Drīzumā: App Store, tiek pārskatīts.
@@ -1157,7 +1160,7 @@ Immuch360 Desktop, Windows versija, tiek būvēta no tiem pašiem pirmkodiem, za
 
 ### Zari
 
-- **`main`**: Immich `main` pie revīzijas, uz kuras balstās `immuch360` (pašreizējiem būvējumiem 2026. gada 29. septembris), nekad netiek mainīts; tas virzās uz priekšu, kad atzarojums tiek pārbāzēts uz jaunāku Immich.
+- **`main`**: Immich `main` pie revīzijas, uz kuras balstās `immuch360` (pašreizējiem būvējumiem 2026. gada 10. oktobris), nekad netiek mainīts; tas virzās uz priekšu, kad atzarojums tiek pārbāzēts uz jaunāku Immich.
 - **`immuch360`**: šī atzarojuma izmaiņas virs Immich, kopš 2026. gada 9. oktobra ieskaitot Immuch360 Desktop. Katrā laidienā norādīts, uz kuras Immich versijas tas balstās.
 - **`desktop`**: šeit Immuch360 Desktop, datora versija, tika būvēta virs `immuch360`, līdz 2026. gada 9. oktobrī tā tika sapludināta tajā, lai tālruņi, brilles, televizori un datori tiktu izlaisti no tiem pašiem pirmkodiem. Tagad tas seko `immuch360` un nes darbvirsmas pirmslaidienu birkas ([darbvirsmas būvējums 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) no revīzijas 21f285c34, [darbvirsmas būvējums 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) no 5b723bd25, [darbvirsmas būvējums 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) no 360° video atskaņotāja sapludināšanas 2026. gada 10. oktobrī). Jauns darbvirsmas darbs vispirms nonāk šeit un pievienojas `immuch360` ar darbvirsmas būvējumu, kas to piegādā. Datora versija neko nemaina zem `mobile/android` un `mobile/ios`.
 

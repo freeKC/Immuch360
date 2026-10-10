@@ -17,10 +17,10 @@ Immuch360 是加入了可環顧四周的 360° 相片和影片的 Immich 行動�
 
 | 平台 | 取得方式 | 2026 年 10 月 10 日狀態 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 自 2026 年 10 月 7 日起 Google Play 上為建置 20，GitHub 上為建置 21 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub 上為建置 22，已於 2026 年 10 月 10 日送交 Google Play（自 10 月 7 日起該處上線的是建置 20） |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 版本 3.3.0 正在等待 Apple 審核；在此期間可[自行建置](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [APK](#meta-quest-3) · Horizon Store | 商店頁面已通過，建置 21 正在接受 Meta 審核 |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上為建置 21；電視用的 Google Play 商店頁面自 2026 年 10 月 9 日起由 Google 審核中 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [APK](#meta-quest-3) · Horizon Store | 商店頁面已通過，建置 21 正在接受 Meta 審核，建置 22 在 Alpha 頻道上 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上為建置 22；電視用的 Google Play 商店頁面自 2026 年 10 月 9 日起由 Google 審核中 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [預覽版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows 上的桌面建置 3：相片、一般影片和 360° 影片；macOS 和 Linux 稍後推出 |
 
 *狀態在每次發布時更新；詳情見[取得方式](#where-to-get-it)。*
@@ -196,7 +196,7 @@ Immuch360 可以直接從共用瀏覽並播放任何支援 SMB（Samba、Windows
 4. 清單中沒有？手動填寫表單。類型：「SMB（Samba，Windows 共用）」、「WebDAV（Nextcloud、Synology 等）」、「DLNA 媒體伺服器（Jellyfin、NAS、電視盒）」，或從建置 20 起的「Plex Media Server」，它會開啟 [Plex Media Server，不需要 plex.tv](#plex-media-server-without-plextv) 中介紹的頁面。接著是「名稱」、「伺服器名稱或位址」（名稱或位址；像 `smb://nas/photos`、`\\nas\photos` 或 `https://nas:5006/photos` 這樣的完整位址會填好其他欄位）、非一般連接埠時填寫「連接埠（選填）」、SMB 填「共用名稱」或 WebDAV 填「WebDAV 位址的路徑」、「起始資料夾（選填）」、「使用者名稱」和「密碼」，以及 WebDAV 的「安全連線（HTTPS）」。
 5. SMB：輸入伺服器和使用者名稱後，「選擇共用」會列出伺服器上的共用。
 6. DLNA：媒體伺服器沒有使用者名稱和密碼。填寫伺服器、連接埠及其裝置描述的「描述路徑」（minidlna 為 `/rootDesc.xml`），或把完整位址（例如 `http://192.168.1.10:8200/rootDesc.xml`）貼到伺服器欄位中。
-7. 點選「測試連線」。結果會是「已連線，起始資料夾中有 N 個項目」，或說明失敗原因。接著點選表單底部的「儲存」。
+7. 點選「測試連線」。結果會是「已連線，起始資料夾中有 N 個項目」，或說明失敗原因。接著點選表單底部的「儲存」。從建置 22 起，關閉已輸入內容的表單（X、返回鍵）時會先詢問「要捨棄變更嗎？」，在 Plex 和攝影機頁面上也是如此；在已輸入內容後選擇 Plex 或找到的攝影機時也會詢問。
 
 使用者名稱搭配空白密碼會照原樣傳送：Freebox Server 的磁碟需要使用者名稱 `freebox` 且不需要密碼。之後若要修改或移除共用，請使用「網路共用」頁面中該共用旁的鉛筆圖示。
 
@@ -617,8 +617,9 @@ iPhone 可以拍攝空間相片和影片，而 Immich 伺服器對此一無所�
 
 ### 用遙控器移動
 
-- 方向鍵移動焦點框，OK 開啟焦點所在的項目，返回鍵返回。在分頁上，返回鍵會先移到側邊選單，再移到「相片」，然後離開應用程式。
-- 頻道上和頻道下一次捲動一頁。
+- 方向鍵移動焦點框，OK 開啟焦點所在的項目，返回鍵返回。在分頁上，返回鍵會先移到側邊選單，再移到「相片」，然後離開應用程式。在選項清單中（例如共用的類型或某個設定），方向鍵只會移動焦點框，按 OK 才會選取該選項（從建置 22 起；之前方向鍵會直接變更選項）。
+- 頻道上和頻道下一次捲動一頁。從建置 22 起，相片格線會在螢幕邊界內每列顯示約六個圖塊，裝置本身檔案的縮圖更清晰，細節處也保持平滑；而在手機上有圖片標題的頁面（360° 清單、「收藏」、裝置的相簿）則改為只顯示一條橫列。
+- 從建置 22 起，焦點框會從每個頁面的第一個項目開始（360° 清單的第一個圖塊；確認伺服器位址後則是電子郵件欄位），在格線捲動時保持在螢幕邊界內，並從格線往上移到上方的列或篩選器，而不是移到返回按鈕。在網路共用或攝影機上按向右鍵會移到它的編輯按鈕，「測試連線」的結果也會自動捲動到可見位置。
 - 在檢視器中，遙控器的播放和暫停、快轉、倒轉、下一個和上一個按鍵都可以使用，資訊鍵會顯示相片或影片的詳細資訊。
 
 ### 用遙控器看相片和影片
@@ -632,7 +633,7 @@ iPhone 可以拍攝空間相片和影片，而 Immich 伺服器對此一無所�
 
 ### 「遙控器版面」設定
 
-「設定」、「偏好設定」、「遙控器版面」：「大型焦點框和遙控器按鍵，不顯示需要觸控螢幕的控制項。自動會在 Android TV 和 Google TV 上開啟。」預設為「自動」；「開啟」適合用鍵盤或遊戲控制器操作的平板；「關閉」會在電視上關閉它。這個設定只在 Android 上提供。無論這個設定為何，在檢視器中用鍵盤或遊戲控制器都可以使用方向鍵和 OK。
+「設定」、「偏好設定」、「遙控器版面」：「大型焦點框和遙控器按鍵，不顯示需要觸控螢幕的控制項。自動會在 Android TV 和 Google TV 上開啟。」預設為「自動」；「開啟」適合用鍵盤或遊戲控制器操作的平板；「關閉」會在電視上關閉它。這個設定只在 Android 上提供。從建置 22 起，變更會立即套用到目前開啟的頁面，且頁面停留在原處（之前「設定」會重新開啟在「進階」，疊在一個必須用返回鍵穿過的開始畫面之上）。無論這個設定為何，在檢視器中用鍵盤或遊戲控制器都可以使用方向鍵和 OK。
 
 ### 限制
 
@@ -650,7 +651,7 @@ iPhone 可以拍攝空間相片和影片，而 Immich 伺服器對此一無所�
 
 360° 相片和其他所有相片混在一起，很多人希望 Immich 能篩選球面相片和全景相片（[討論 #12824](https://github.com/immich-app/immich/discussions/12824)）。Immich 應用程式沒有這樣的清單。
 
-Immuch360 會在 360° 相片的縮圖上加上 360° 標記（在網路共用資料夾中，360° 影片也有），並在「媒體庫」分頁頂端放一個 360° 項目。從建置 18 起，有伺服器時，這個清單包含伺服器標記為 360° 的相片和影片、依檔名找到的 Insta360 RAW 檔案、由 360° 相機自行拼接的相片，以及你選擇以 360° 檢視的檔案，再加上裝置掃描找到的內容；沒有伺服器時，則包含裝置掃描找到的內容以及你選擇以 360° 檢視的檔案。每項只會出現一次，不論其副本在哪裡，最新的在前。
+Immuch360 會在 360° 相片的縮圖上加上 360° 標記（在網路共用資料夾中，360° 影片也有），並在「媒體庫」分頁頂端放一個 360° 項目。從建置 18 起，有伺服器時，這個清單包含伺服器標記為 360° 的相片和影片、依檔名找到的 Insta360 RAW 檔案、由 360° 相機自行拼接的相片，以及你選擇以 360° 檢視的檔案，再加上裝置掃描找到的內容；沒有伺服器時，則包含裝置掃描找到的內容以及你選擇以 360° 檢視的檔案。每項只會出現一次，不論其副本在哪裡，最新的在前。從建置 22 起，格線上方會出現「在網路共用中」一列，顯示你的共用中的 360° 相片和影片，最新的在前：應用程式會在顯示其資料夾或開啟它們時認得它們（不會自行搜尋共用），在每次啟動之間保留它們，並在移除共用時一併忘記。在沒有自己相片的電視上，360° 清單的內容就來自這一列。
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="360° 清單，4 個項目，日期面板已開啟：全部、2026 年及其數量、全年、2026 年 8 月和 2026 年 4 月及其數量、2025 年，以及 Custom">
 
@@ -661,7 +662,7 @@ Immuch360 會在 360° 相片的縮圖上加上 360° 標記（在網路共用�
 3. 有伺服器時，選擇媒體所在的位置：「在伺服器上」、「在此裝置」，以及有內容時的「與我共享」。
 4. 選擇類型：「相片」、「影片」、3D、VR180。
 5. 清單中有兩台以上的相機時，第二列會依 EXIF 品牌和型號列出它們，並附上數量。沒有這些資訊的 RAW 檔案會以其副檔名對應的品牌命名（Insta360、GoPro、DJI），其他檔案則顯示為「未知相機」。
-6. 同一組內（位置、「相片」和「影片」、3D 和 VR180、相機）的選項會相加；不同組之間則會縮小清單範圍。「清空」會重設所有篩選；「沒有符合這些篩選條件的 360° 照片或影片」表示篩選後沒有剩下任何內容。
+6. 同一組內（位置、「相片」和「影片」、3D 和 VR180、相機）的選項會相加；不同組之間則會縮小清單範圍。「日期」、「相片」和「影片」選項也會套用到網路共用那一列；3D、VR180 和相機則會隱藏該列，因為應用程式無法得知共用中的檔案是否具有這些屬性。「清空」會重設所有篩選；「沒有符合這些篩選條件的 360° 照片或影片」表示篩選後沒有剩下任何內容。
 7. 開啟相片或影片。在 Quest 沉浸式檢視中，上一個和下一個會依篩選後的清單切換。
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 若要把 360° 相片給沒有安裝應用程式的人看，請用 Immich 分享連結分享：Immich 網頁版會在對方的瀏覽器中把 360° 相片顯示為球面。
 
-目前的建置為建置 21（版本 3.3.0-rc.0，建置編號 3030019），以 Immich 3.3.0-rc.0 為基礎（Immich `main`，尚非穩定版）。建置 19 已用 Immich 3.2 伺服器測試，而建置 20 和 21 對應用程式向伺服器要求的內容沒有任何變更。請在 [Issues](https://github.com/freeKC/Immuch360/issues) 中回報問題，而不是向 Immich 專案回報。Immich 本身的完整文件請參閱 [immich.app](https://immich.app)。
+目前的建置為建置 22（版本 3.3.0-rc.0，建置編號 3030020），以 2026 年 10 月 10 日的 Immich `main` 為基礎（版本 3.3.0-rc.0，尚非穩定版）。建置 22 已針對 Immich 3.2.4 伺服器，以及用同一個 Immich `main` 建置的伺服器進行測試：登入、時間軸、相簿、360° 相片和影片、影片播放和上傳，沒有任何 API 錯誤。請在 [Issues](https://github.com/freeKC/Immuch360/issues) 中回報問題，而不是向 Immich 專案回報。Immich 本身的完整文件請參閱 [immich.app](https://immich.app)。
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## 與 Immich 應用程式及其他應用程式的比較
@@ -1037,6 +1038,8 @@ Meta 已於 2026 年 10 月 7 日核准隨建置 14 提交的 Horizon Store 上�
 - **自行選擇轉譯器。** 在「設定」、「進階」中開啟「疑難排解」：會出現「360° 影片轉譯器」選項，預設為「自動」。它還提供「外掛程式，完整尺寸」、「外掛程式，寬度最多 4096」、「外掛程式，寬度最多 2880」和「平面，不使用 360° 視角」，用於你開啟的下一部 360° 影片。其下方的「最近一次測量」會顯示上一部 360° 影片的繪製尺寸、每秒畫格數、顯示晶片和解碼器：請把它複製到錯誤回報中。再次選擇「自動」，即使它已經是目前的選項，也會清除測量結果，之後的 360° 影片會重新測量。
 - **晶片能解碼什麼。** 「設定」、「進階」、「此裝置的影片解碼器」會依 Direct3D 11 的回報列出目前使用的顯示晶片能解碼的內容，應用程式還會用播放時的測量結果修正這份清單：「影片來源」設定和原始影片的雙鏡頭檢查都以它為準。寬度超過 4096 像素的 H.264（360° 相機的 5.7K）由處理器解碼，因為測試用筆記型電腦的兩個晶片都不支援它。
 
+**給開發人員。** 360° 播放器透過自己的轉譯器繪製，建立在 libmpv 和經過修補的 media_kit_video 外掛程式之上：mpv 將每一格畫面繪製到顯示晶片上的紋理，再由一個 OpenGL ES 3.0 繪製程序把視角繪製到 Flutter 顯示的紋理中，完全不經過處理器複製。為什麼這樣設計、如何運作、測量了什麼以及可以調整什麼：[桌面版 360° 影片轉譯器](../docs/immuch360/desktop-360-video-renderer.md)。
+
 ### 與手機應用程式的比較
 
 - **備份在應用程式開啟時執行**（或最小化時），而不是在視窗關閉後於背景執行。在上傳進行中或電腦正在分享時關閉視窗，會先詢問你。
@@ -1110,7 +1113,7 @@ Immuch360 Desktop 的 CI（`.github/workflows/immuch360-desktop.yml`）在跟隨
 
 - **Android 手機和平板**
   - 目前：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面上的 APK：手機請用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用的 `Immuch360-v<version>-release.apk` 到處都能用，`-armeabi-v7a` 適用於較舊的 32 位元手機，`.aab` 檔案用於 Google Play，不用於側載）。GitHub 建置通常領先商店。無論哪種方式，它都可與官方 Immich 應用程式並存安裝（套件名稱 `com.aprogsys.immuch360`）。
-  - 即將推出：在 Google Play 上，建置 20 自 2026 年 10 月 7 日起已上線，取代建置 18；建置 21 在手機和平板上沒有任何變更。
+  - 即將推出：在 Google Play 上，建置 22 已於 2026 年 10 月 10 日送交，取代建置 20（自 10 月 7 日起上線）；它包含 Immich 10 月的變更以及電視相關修正。
 - **iPhone 和 iPad**
   - 目前：正在等待 Apple 審核。審核中的版本包含建置 11 的功能：上傳至 Immich 和「影片來源」選項（建置 15）以及 Insta360 RAW 檔案（建置 16）將隨後續的 App Store 更新提供。原始碼可用 Xcode 或在 Codemagic 上建置，請參閱[自行建置](#build-it-yourself)。
   - 即將推出：App Store，審核中。
@@ -1157,7 +1160,7 @@ Immuch360 Desktop，也就是 Windows 版本，使用 Windows 版 Flutter 從同
 
 ### 分支
 
-- **`main`**：`immuch360` 所依據的那個提交上的 Immich `main`（目前的建置為 2026 年 9 月 29 日），從不修改；當分支重新定基到更新的 Immich 時才會往前移。
+- **`main`**：`immuch360` 所依據的那個提交上的 Immich `main`（目前的建置為 2026 年 10 月 10 日），從不修改；當分支重新定基到更新的 Immich 時才會往前移。
 - **`immuch360`**：本分支在 Immich 之上的變更，自 2026 年 10 月 9 日起包括 Immuch360 Desktop。每個發布版本都會註明以哪個 Immich 版本為基礎。
 - **`desktop`**：Immuch360 Desktop，也就是電腦版本，曾在此以 `immuch360` 為基礎開發，直到 2026 年 10 月 9 日併入 `immuch360`，讓手機、頭戴裝置、電視和電腦都由同一套原始碼發布。現在它跟隨 `immuch360`，並帶有桌面預先發行版本的標籤（[桌面建置 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 來自提交 21f285c34，[桌面建置 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 來自 5b723bd25，[桌面建置 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 來自 2026 年 10 月 10 日 360° 影片播放器的合併）。新的桌面工作先進入這裡，再隨發布它的桌面建置併入 `immuch360`。電腦版本不會變更 `mobile/android` 和 `mobile/ios` 下的任何內容。
 

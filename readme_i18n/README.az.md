@@ -17,10 +17,10 @@ Immuch360 içində ətrafa baxa biləcəyiniz 360° foto və videoları olan Imm
 
 | Platforma | Haradan əldə etmək olar | 10 oktyabr 2026 tarixinə status |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon və planşetləri | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play-də 7 oktyabr 2026-dan 20-ci yığım, GitHub-da 21-ci yığım |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon və planşetləri | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub-da 22-ci yığım, 10 oktyabr 2026-da Google Play-ə göndərilib (orada 7 oktyabrdan 20-ci yığım dərc olunub) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone və iPad** | App Store | 3.3.0 versiyası Apple-ın yoxlamasını gözləyir; hələlik [özünüz yığın](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 və 3S | [APK](#meta-quest-3) · Horizon Store | səhifə təsdiqlənib, 21-ci yığım Meta tərəfindən yoxlanılır |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV və Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub-da 21-ci yığım; televizorlar üçün Google Play səhifəsi 9 oktyabr 2026-dan Google tərəfindən yoxlanılır |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 və 3S | [APK](#meta-quest-3) · Horizon Store | səhifə təsdiqlənib, 21-ci yığım Meta tərəfindən yoxlanılır, 22-ci yığım Alpha kanalındadır |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV və Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub-da 22-ci yığım; televizorlar üçün Google Play səhifəsi 9 oktyabr 2026-dan Google tərəfindən yoxlanılır |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Sınaq ZIP-i](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows-da masaüstü yığımı 3: fotolar, düz və 360° videolar; macOS və Linux daha sonra |
 
 *Statuslar hər buraxılışda yenilənir; təfərrüatlar [Haradan əldə etmək olar](#where-to-get-it) bölməsindədir.*
@@ -196,7 +196,7 @@ Immuch360 SMB (Samba, Windows), WebDAV və ya 19-cu yığımdan DLNA/UPnP (media
 4. Siyahıda yoxdur? Formanı əl ilə doldurun. Növ: "SMB (Samba, Windows paylaşımı)", "WebDAV (Nextcloud, Synology və digərləri)", "DLNA media serveri (Jellyfin, NAS, TV qutusu)" və ya, 20-ci yığımdan, [Plex Media Server, plex.tv olmadan](#plex-media-server-without-plextv) səhifəsini açan "Plex Media Server". Sonra Ad, "Serverin adı və ya ünvanı" (ad və ya ünvan; `smb://nas/photos`, `\\nas\photos` və ya `https://nas:5006/photos` kimi tam ünvan digər sahələri doldurur), adi port deyilsə "Port (məcburi deyil)", SMB üçün "Paylaşım" və ya WebDAV üçün "WebDAV ünvanının yolu", "Başlanğıc qovluğu (məcburi deyil)", "İstifadəçi adı" və "Parol", WebDAV üçün isə "Təhlükəsiz bağlantı (HTTPS)".
 5. SMB: server və istifadəçi adı yazıldıqdan sonra "Paylaşım seçin" serverin paylaşımlarını sıralayır.
 6. DLNA: media serverin istifadəçi adı və parolu olmur. Serveri, portu və cihaz təsvirinin "Təsvir yolu"-nu (minidlna üçün `/rootDesc.xml`) daxil edin, ya da `http://192.168.1.10:8200/rootDesc.xml` kimi bütün ünvanı server sahəsinə yapışdırın.
-7. "Bağlantını yoxla"-ya toxunun. Cavab "Qoşuldu, başlanğıc qovluğunda N element" olur, ya da uğursuzluğun səbəbi göstərilir. Sonra formanın aşağısındakı "Yadda saxla"-ya toxunun.
+7. "Bağlantını yoxla"-ya toxunun. Cavab "Qoşuldu, başlanğıc qovluğunda N element" olur, ya da uğursuzluğun səbəbi göstərilir. Sonra formanın aşağısındakı "Yadda saxla"-ya toxunun. 22-ci yığımdan içinə nəsə yazdığınız formanı bağlamaq (X, Geri) əvvəlcə "Dəyişikliklərdən imtina edilsin?" soruşur, Plex və kamera səhifələrində də; nəsə yazıldıqdan sonra tapılmış Plex serverini və ya kameranı seçmək də eyni sualı verir.
 
 Boş parollu istifadəçi adı olduğu kimi göndərilir: Freebox Server diskləri üçün `freebox` adını və parolsuz girişi tələb edir. Paylaşımı sonra dəyişmək və ya silmək üçün Şəbəkə paylaşımları səhifəsində onun yanındakı qələmdən istifadə edin.
 
@@ -617,8 +617,9 @@ Onu sağ coystiklə (və ya məlumat panelinin Döndər düyməsi ilə) mərkəz
 
 ### Pultla hərəkət edin
 
-- Oxlar çərçivəni hərəkət etdirir, OK onun üzərində olanı açır, Geri geri qayıdır. Bölmədən Geri yan menyuya, sonra Fotolara, sonra tətbiqdən çıxışa aparır.
-- Kanal yuxarı və aşağı düymələri bir dəfəyə bir səhifə sürüşdürür.
+- Oxlar çərçivəni hərəkət etdirir, OK onun üzərində olanı açır, Geri geri qayıdır. Bölmədən Geri yan menyuya, sonra Fotolara, sonra tətbiqdən çıxışa aparır. Seçimlər siyahısında, məsələn paylaşımın növündə və ya bir ayarda, oxlar yalnız çərçivəni hərəkət etdirir, OK isə seçimi edir (22-ci yığımdan; əvvəllər oxlar seçimi dəyişirdi).
+- Kanal yuxarı və aşağı düymələri bir dəfəyə bir səhifə sürüşdürür. 22-ci yığımdan foto şəbəkələri ekranın kənar boşluqları daxilində hər sırada təxminən altı plitə göstərir, cihazın öz fayllarının miniatürləri daha kəskindir və incə detallarda hamar qalır, telefonda şəkilli başlığı olan səhifələr (360° siyahısı, Favorites (Sevimlilər), cihazın albomları) isə onun yerinə tək bir zolaq göstərir.
+- 22-ci yığımdan çərçivə hər səhifənin ilk elementindən başlayır (360° siyahısının ilk plitəsi, server ünvanı təsdiqləndikdən sonra e-poçt sahəsi), miniatür şəbəkəsi sürüşdükcə ekranın kənar boşluqları daxilində qalır və şəbəkədən Geri düyməsinə deyil, onun üstündəki sıraya və ya filtrlərə qalxır. Şəbəkə paylaşımından və ya kameradan sağa basmaq onun redaktə düyməsinə aparır, "Bağlantını yoxla"-nın nəticəsi isə görünən yerə sürüşür.
 - Görüntüləyicilərdə pultun oynatma və fasilə, irəli sarıma, geri sarıma, növbəti və əvvəlki düymələri işləyir, məlumat düyməsi isə foto və ya videonun təfərrüatlarını göstərir.
 
 ### Pultla foto və videolar
@@ -632,7 +633,7 @@ Onu sağ coystiklə (və ya məlumat panelinin Döndər düyməsi ilə) mərkəz
 
 ### Pult üçün düzən ayarı
 
-Settings (Ayarlar), Preferences (Tərcihlər), "Pult üçün düzən": "Böyük fokus çərçivələri və pult düymələri, toxunma ekranı tələb edən idarəetmə elementləri olmadan. Avtomatik, onu Android TV və Google TV-də yandırır." Avtomatik standartdır; Yandırılıb klaviatura və ya oyun pultu ilə idarə olunan planşet üçün uyğundur; Söndürülüb onu televizorda söndürür. Bu ayar yalnız Android-də var. Oxlar və OK, ayardan asılı olmayaraq, görüntüləyicilərdə klaviatura və ya oyun pultu ilə işləyir.
+Settings (Ayarlar), Preferences (Tərcihlər), "Pult üçün düzən": "Böyük fokus çərçivələri və pult düymələri, toxunma ekranı tələb edən idarəetmə elementləri olmadan. Avtomatik, onu Android TV və Google TV-də yandırır." Avtomatik standartdır; Yandırılıb klaviatura və ya oyun pultu ilə idarə olunan planşet üçün uyğundur; Söndürülüb onu televizorda söndürür. Bu ayar yalnız Android-də var. 22-ci yığımdan dəyişiklik açıq səhifəyə dərhal tətbiq olunur və səhifə olduğu yerdə qalır (əvvəllər Settings yenidən Advanced (Qabaqcıl) bölməsində, Geri ilə keçilməli olan başlanğıc ekranının üzərində açılırdı). Oxlar və OK, ayardan asılı olmayaraq, görüntüləyicilərdə klaviatura və ya oyun pultu ilə işləyir.
 
 ### Məhdudiyyətlər
 
@@ -650,7 +651,7 @@ Settings (Ayarlar), Preferences (Tərcihlər), "Pult üçün düzən": "Böyük 
 
 360° çəkilişlər bütün digər fotolarla qarışıqdır və insanlar Immich-dən sferaları və panoramaları filtrləmək yolu istəyirlər ([müzakirə #12824](https://github.com/immich-app/immich/discussions/12824)). Immich tətbiqində belə siyahı yoxdur.
 
-Immuch360 360° fotoların miniatürlərinə (şəbəkə paylaşımı qovluğunda 360° videolara da) 360° nişanı, Kitabxana bölməsinin yuxarısına isə 360° elementi qoyur. 18-ci yığımdan bu siyahıda, serverlə, serverin 360° kimi işarələdiyi foto və videolar, adlarına görə xam Insta360 faylları, 360° kameranın özünün birləşdirdiyi fotolar və 360° kimi baxmağı seçdikləriniz, üstəgəl cihazın skanının tapdıqları olur; serversiz isə cihazın skanının tapdıqları və 360° kimi baxmağı seçdikləriniz. Hər biri, nüsxələri harada olursa olsun, bir dəfə görünür, ən yenisi əvvəl.
+Immuch360 360° fotoların miniatürlərinə (şəbəkə paylaşımı qovluğunda 360° videolara da) 360° nişanı, Kitabxana bölməsinin yuxarısına isə 360° elementi qoyur. 18-ci yığımdan bu siyahıda, serverlə, serverin 360° kimi işarələdiyi foto və videolar, adlarına görə xam Insta360 faylları, 360° kameranın özünün birləşdirdiyi fotolar və 360° kimi baxmağı seçdikləriniz, üstəgəl cihazın skanının tapdıqları olur; serversiz isə cihazın skanının tapdıqları və 360° kimi baxmağı seçdikləriniz. Hər biri, nüsxələri harada olursa olsun, bir dəfə görünür, ən yenisi əvvəl. 22-ci yığımdan miniatür şəbəkəsinin üstündə paylaşımlarınızın 360° foto və videoları ilə "Şəbəkə paylaşımlarında" sırası görünür, ən yenisi əvvəl: tətbiq onları qovluğunu göstərəndə və ya onları açanda öyrənir (paylaşımda özü axtarış aparmır), bir işə salınmadan növbətisinə saxlayır və paylaşımla birlikdə unudur. Öz fotoları olmayan televizorda 360° siyahısını dolduran məhz bu sıradır.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="360° siyahısı, 4 element, Date vərəqi açıqdır: All, sayı ilə 2026-cı il, Bütün il, sayları ilə 2026 avqust və 2026 aprel, 2025-ci il və Custom">
 
@@ -661,7 +662,7 @@ Immuch360 360° fotoların miniatürlərinə (şəbəkə paylaşımı qovluğund
 3. Serverlə medianın harada olduğunu seçin: "Serverdə", "On this device", varsa "Shared with me" (Mənimlə paylaşılanlar).
 4. Növü seçin: Photos, Videos, 3D, VR180.
 5. Siyahıda iki və ya daha çox kamera olduqda, ikinci sətir onları EXIF istehsalçısı və modelindən, sayları ilə göstərir. Bunlar olmayan xam fayl uzantısının brendi ilə (Insta360, GoPro, DJI) adlandırılır, qalan hər şey "Naməlum kamera" olur.
-6. Qrup daxilində (yerlər, Photos və Videos, 3D və VR180, kameralar) çiplər toplanır; qruplar arasında siyahını daraldır. Clear (Təmizlə) hər şeyi sıfırlayır; "Bu filtrlərə uyğun 360° foto və ya video yoxdur" filtrlərin heç nə saxlamadığını bildirir.
+6. Qrup daxilində (yerlər, Photos və Videos, 3D və VR180, kameralar) çiplər toplanır; qruplar arasında siyahını daraldır. Date, Photos və Videos çipləri şəbəkə paylaşımları sırasına da tətbiq olunur; 3D, VR180 və kameralar onu gizlədir, çünki tətbiq paylaşımdakı fayl üçün bunların heç birini bilmir. Clear (Təmizlə) hər şeyi sıfırlayır; "Bu filtrlərə uyğun 360° foto və ya video yoxdur" filtrlərin heç nə saxlamadığını bildirir.
 7. Foto və ya videonu açın. Quest-in immersiv görünüşündə əvvəlki və növbəti filtrlənmiş siyahını izləyir.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Rəsmi Immich mobil tətbiqinin etdiyi hər şey buradadır: ehtiyat nüsxə, za
 
 360° fotonu tətbiqi olmayan birinə göstərmək üçün onu Immich paylaşılan linki ilə paylaşın: Immich veb tətbiqi 360° fotonu onun brauzerində sfera kimi göstərir.
 
-Cari yığım, 21-ci yığım (versiya 3.3.0-rc.0, yığım nömrəsi 3030019), Immich 3.3.0-rc.0 üzərində qurulub (Immich `main`, hələ stabil buraxılış deyil). 19-cu yığım Immich 3.2 serveri ilə sınaqdan keçirilib, 20-ci və 21-ci yığımlar isə tətbiqin serverdən istədiklərində heç nəyi dəyişmir. Problemləri Immich layihəsinə yox, [Issues](https://github.com/freeKC/Immuch360/issues) bölməsinə bildirin. Immich-in özünün tam sənədləri üçün baxın: [immich.app](https://immich.app).
+Cari yığım, 22-ci yığım (versiya 3.3.0-rc.0, yığım nömrəsi 3030020), 10 oktyabr 2026 tarixli Immich `main` üzərində qurulub (versiya 3.3.0-rc.0, hələ stabil buraxılış deyil). 22-ci yığım Immich 3.2.4 serveri ilə və həmin Immich `main`-dən yığılmış server ilə sınaqdan keçirilib: giriş, zaman xətti, albomlar, 360° foto və videolar, video oynatma və yükləmələr, heç bir API xətası olmadan. Problemləri Immich layihəsinə yox, [Issues](https://github.com/freeKC/Immuch360/issues) bölməsinə bildirin. Immich-in özünün tam sənədləri üçün baxın: [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich tətbiqi və digər tətbiqlərlə müqayisə
@@ -1037,6 +1038,8 @@ Tətbiq hər 360° videonun ilk saniyələrini ölçür və çipin nə qədər b
 - **Renderləyicini özünüz seçin.** Settings, Advanced (Qabaqcıl) bölməsində Troubleshooting (Problemlərin həlli) açın: "360° video renderləyicisi" elementi görünür, standart olaraq Avtomatik. O, həmçinin açacağınız növbəti 360° video üçün "Plagin, tam ölçü", "Plagin, ən çoxu 4096 en", "Plagin, ən çoxu 2880 en" və "Düz, 360° görünüşsüz" təklif edir. Onun altında "Son ölçülən" son 360° videonun çəkildiyi ölçünü, onun saniyədəki kadrlarını, qrafik çipi və dekoderi göstərir: onu xəta hesabatına köçürün. "Avtomatik"i yenidən seçmək, hətta artıq seçilmiş olsa belə, ölçülənləri unudur və növbəti 360° videolar yenidən ölçülür.
 - **Çip nəyi dekod edir.** Settings, Advanced, "Bu cihazın video dekoderləri" istifadə olunan qrafik çipin nəyi dekod etdiyini Direct3D 11-in bildirdiyi kimi sadalayır, tətbiq isə bu siyahını oynatma zamanı ölçdükləri ilə düzəldir: Video mənbəyi parametri və xam videoların iki linza yoxlaması ona əsaslanır. 4096 pikseldən enli H.264 (360° kameraların 5.7K-sı) prosessor tərəfindən dekod edilir, çünki test noutbukunun heç bir çipi onu qəbul etmir.
 
+**Tərtibatçılar üçün.** 360° pleyer öz renderləyicisi ilə çəkir; bu renderləyici libmpv və yamaqlanmış media_kit_video plagini üzərində qurulub: mpv hər kadrı qrafik çipdəki teksturaya çəkir, OpenGL ES 3.0 mərhələsi isə görünüşü Flutter-in göstərdiyi teksturaya çəkir, prosessor vasitəsilə heç bir köçürmə olmadan. Niyə belə qurulub, necə işləyir, nə ölçülüb və nəyi tənzimləmək olar: [masaüstü 360° video renderləyicisi](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Telefon tətbiqləri ilə müqayisə
 
 - **Ehtiyat nüsxə tətbiq açıq olduqca işləyir** (və ya kiçildilmiş olduqda), pəncərə bağlı ikən arxa planda deyil. Yükləmələr gedərkən və ya kompüter paylaşılarkən pəncərəni bağlamaq əvvəlcə təsdiq istəyir.
@@ -1110,7 +1113,7 @@ Tətbiq telefon və planşetlər üçün Google Play-dədir; App Store versiyas�
 
 - **Android telefon və planşetləri**
   - Bu gün: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) və ya [Releases](https://github.com/freeKC/Immuch360/releases) səhifəsindəki APK: telefon üçün `Immuch360-v<version>-arm64-v8a-release.apk` (universal `Immuch360-v<version>-release.apk` hər yerdə işləyir, `-armeabi-v7a` köhnə 32 bitlik telefonlar üçündür, `.aab` faylı isə əl ilə quraşdırma üçün yox, Google Play üçündür). GitHub yığımı adətən mağazadan qabaqdadır. Hər iki halda rəsmi Immich tətbiqinin yanında quraşdırılır (paket `com.aprogsys.immuch360`).
-  - Tezliklə: Google Play-də 18-ci yığımın yerinə 20-ci yığım 7 oktyabr 2026-dan dərc olunub; 21-ci yığım telefon və planşetlərdə heç nəyi dəyişmir.
+  - Tezliklə: Google Play-də 22-ci yığım 10 oktyabr 2026-da 20-ci yığımın yerinə göndərilib (o, 7 oktyabrdan dərc olunub); oktyabrın Immich dəyişikliklərini və televizor düzəlişlərini gətirir.
 - **iPhone və iPad**
   - Bu gün: Apple-ın yoxlamasını gözləyir. Yoxlanılan versiya 11-ci yığımın funksiyalarını daşıyır: Immich-ə yükləmə və "Video mənbəyi" seçimi (15-ci yığım), həmçinin xam Insta360 faylları (16-cı yığım) sonrakı App Store yeniləməsi ilə gələcək. Mənbə kodu Xcode ilə və ya Codemagic-də yığılır, baxın: [Özünüz yığın](#build-it-yourself).
   - Tezliklə: App Store, yoxlanılır.
@@ -1157,7 +1160,7 @@ Bu repozitoriyada heç bir sirr yoxdur: Android imzalama açarı şifrələnmiş
 
 ### Budaqlar
 
-- **`main`**: `immuch360`-ın əsaslandığı commit-dəki Immich `main` (cari yığımlar üçün 29 sentyabr 2026), heç vaxt dəyişdirilmir; fork daha yeni Immich üzərinə rebase edildikdə irəli gedir.
+- **`main`**: `immuch360`-ın əsaslandığı commit-dəki Immich `main` (cari yığımlar üçün 10 oktyabr 2026), heç vaxt dəyişdirilmir; fork daha yeni Immich üzərinə rebase edildikdə irəli gedir.
 - **`immuch360`**: bu forkun Immich üzərindəki dəyişiklikləri, 9 oktyabr 2026-dan Immuch360 Desktop da daxil olmaqla. Hər buraxılış hansı Immich versiyasına əsaslandığını göstərir.
 - **`desktop`**: Immuch360 Desktop, kompüter versiyası, burada `immuch360` üzərində yığılırdı, ta ki 9 oktyabr 2026-da telefonlar, VR eynəkləri, televizorlar və kompüterlər eyni mənbə kodundan buraxılsın deyə ona birləşdirilənə qədər. İndi o, `immuch360`-ı izləyir və masaüstü ilkin buraxılışlarının teqlərini daşıyır ([masaüstü yığımı 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 21f285c34 commit-indən, [masaüstü yığımı 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25-dən, [masaüstü yığımı 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 10 oktyabr 2026-da 360° video pleyerin birləşdirilməsindən). Yeni masaüstü işləri əvvəlcə ora düşür və onu buraxan masaüstü yığımı ilə `immuch360`-a qoşulur. Kompüter versiyası `mobile/android` və `mobile/ios` altında heç nəyi dəyişmir.
 

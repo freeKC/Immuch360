@@ -17,10 +17,10 @@ Graet eo evit an dud a denn skeudennoù gant ur c'hamera 360° (Insta360, GoPro 
 
 | Platform | Pelec'h e kaout | Stad d'an 10 a viz Here 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Pellgomzerioù ha tabletennoù **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 war Google Play abaoe ar 7 a viz Here 2026, build 21 war GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Pellgomzerioù ha tabletennoù **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 war GitHub, kaset da Google Play d'an 10 a viz Here 2026 (build 20 enlinenn eno abaoe ar 7 a viz Here) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone hag iPad** | App Store | stumm 3.3.0 o c'hortoz gwiriadur Apple; [e sevel hoc'h-unan](#build-it-yourself) e-keit-se |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ha 3S | [APK](#meta-quest-3) · Horizon Store | fichenn aprouet, build 21 o vezañ gwiriet gant Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ha Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 war GitHub; fichenn Google Play evit ar skinwelioù o vezañ gwiriet gant Google abaoe an 9 a viz Here 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ha 3S | [APK](#meta-quest-3) · Horizon Store | fichenn aprouet, build 21 o vezañ gwiriet gant Meta, build 22 war ar c'hanol Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ha Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 war GitHub; fichenn Google Play evit ar skinwelioù o vezañ gwiriet gant Google abaoe an 9 a viz Here 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP rakwel](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | build urzhiataer 3 war Windows: luc'hskeudennoù, videoioù plat ha 360°; macOS ha Linux diwezhatoc'h |
 
 *Ar stadoù a vez hizivaet gant pep embannadur; ar munudoù a zo e [Pelec'h e kaout](#where-to-get-it).*
@@ -196,7 +196,7 @@ Kavout a ra servijerioù ho rouedad e-unan, hag e lenn ar restroù war-eeun en h
 4. N'emañ ket er roll? Leuniit ar furmskrid gant an dorn. Seurt: "SMB (Samba, rannadenn Windows)", "WebDAV (Nextcloud, Synology hag all)", "Servijer media DLNA (Jellyfin, NAS, boest TV)" pe, adalek ar build 20, "Plex Media Server", a zigor pajenn [Plex Media Server, hep plex.tv](#plex-media-server-without-plextv). Goude Anv, "Anv pe chomlec'h ar servijer" (un anv pe ur chomlec'h; ur chomlec'h klok evel `smb://nas/photos`, `\\nas\photos` pe `https://nas:5006/photos` a leugn ar maeziennoù all), "Porzh (diret)" pa n'eo ket an hini boas, "Rannadenn" evit SMB pe "Hent ar chomlec'h WebDAV" evit WebDAV, "Teuliad loc'hañ (diret)", "Anv implijer" ha "Ger-tremen", ha "Kevreadur suraet (HTTPS)" evit WebDAV.
 5. SMB: kerkent ha ma vez skrivet ar servijer hag an anv implijer, "Dibabit ur rannadenn" a ziskouez roll rannadennoù ar servijer.
 6. DLNA: ur servijer media n'en deus anv implijer na ger-tremen ebet. Roit ar servijer, ar porzh hag "Hent an deskrivadur" eus deskrivadur e venveg (`/rootDesc.xml` evit minidlna), pe pegit ar chomlec'h a-bezh, evel `http://192.168.1.10:8200/rootDesc.xml`, e maezienn ar servijer.
-7. Stokit "Amprouiñ ar c'hevreadur". Respont a ra "Kevreet, N elfenn en teuliad loc'hañ", pe e lavar perak eo c'hwitet. Goude stokit Enrollañ, e traoñ ar furmskrid.
+7. Stokit "Amprouiñ ar c'hevreadur". Respont a ra "Kevreet, N elfenn en teuliad loc'hañ", pe e lavar perak eo c'hwitet. Goude stokit Enrollañ, e traoñ ar furmskrid. Adalek ar build 22, serriñ ur furmskrid ma ho peus skrivet ennañ (X, Distreiñ) a c'houlenn da gentañ "Dilezel ar c'hemmoù?", war pajennoù Plex hag ar c'hamera ivez, hag evel-se ivez pa zibabit Plex pe ur c'hamera kavet ur wech ma'z eus bet skrivet un dra bennak.
 
 Un anv implijer gant ur ger-tremen goullo a vez kaset evel m'emañ: ur Freebox Server a c'houlenn `freebox` ha ger-tremen ebet evit e bladennoù. Evit kemmañ pe dilemel ur rannadenn diwezhatoc'h, implijit ar c'hreion e-kichen anezhi war ar bajenn Rannadennoù rouedad.
 
@@ -617,8 +617,9 @@ Adalek ar build 20 an hevelep arload Android a dro war Android TV ha Google TV, 
 
 ### Fiñval gant ar pellureer
 
-- Ar biroù a zilec'h ar stern, OK a zigor ar pezh m'emañ warnañ, Distreiñ a ya war-gil. Diwar un ivinell e kas Distreiñ d'al lañser a-gostez, goude da Photos (Luc'hskeudennoù), goude er-maez eus an arload.
-- Ar chadenn d'an nec'h ha d'an traoñ a ruilh ur bajenn bep tro.
+- Ar biroù a zilec'h ar stern, OK a zigor ar pezh m'emañ warnañ, Distreiñ a ya war-gil. Diwar un ivinell e kas Distreiñ d'al lañser a-gostez, goude da Photos (Luc'hskeudennoù), goude er-maez eus an arload. En ur roll dibaboù, evel seurt ur rannadenn pe un arventenn, ar biroù ne reont nemet dilec'hiañ ar stern hag OK a zibab (adalek ar build 22; a-raok e cheñche ar biroù an dibab).
+- Ar chadenn d'an nec'h ha d'an traoñ a ruilh ur bajenn bep tro. Adalek ar build 22 e tiskouez kaelioù al luc'hskeudennoù war-dro c'hwec'h karrezenn dre renkennad e-barzh marzoù ar skramm, gant skeudennigoù spisoc'h evit restroù ar benveg e-unan, a chom flour war ar munudoù fin, hag ar pajennoù gant ur skeudenn e penn war ur pellgomzer (ar roll 360°, Favorites (Muiañ-karet), albomoù ar benveg) a ziskouez ur varrenn hepken en o lec'h.
+- Adalek ar build 22 e krog ar stern war an elfenn gentañ eus pep pajenn (karrezenn gentañ ar roll 360°, ar vaezienn bostel kerkent ha ma vez kadarnaet chomlec'h ar servijer), e chom e-barzh marzoù ar skramm pa ruilh ur gael, hag ez a eus ur gael d'an nec'h betek ar renkennad pe ar siloù a-us dezhi kentoc'h eget betek ar bouton Distreiñ. Dehou diwar ur rannadenn rouedad pe ur c'hamera a dizh e vouton aozañ, ha disoc'h "Amprouiñ ar c'hevreadur" a ruilh betek dont war wel.
 - Er gwelerioù ez a en-dro boutonoù lenn hag ehan, mont buan war-raok, mont buan war-gil, da-heul ha kent ar pellureer, hag ar bouton titouroù a ziskouez munudoù ul luc'hskeudenn pe ur video.
 
 ### Luc'hskeudennoù ha videoioù gant ar pellureer
@@ -632,7 +633,7 @@ Adalek ar build 20 an hevelep arload Android a dro war Android TV ha Google TV, 
 
 ### An arventenn Aozadur evit ar pellureer
 
-Settings (Arventennoù), Preferences (Gwellvezioù), "Aozadur evit ar pellureer": "Frammoù fokus bras ha stokelloù ar pellureer, hep an elfennoù reoliñ ezhomm ur skramm stekiñ dezho. Emgefre a weredeka anezhañ war Android TV ha Google TV." Emgefre eo an dibab dre ziouer; Gweredekaet a zere ouzh un dabletenn renet gant ur c'hlavier pe ur pad c'hoari; Lazhet a lazh anezhañ war ur skinwel. An arventenn n'eus anezhi nemet war Android. Ar biroù hag OK a ya en-dro er gwelerioù gant ur c'hlavier pe ur pad c'hoari forzh petra eo an arventenn.
+Settings (Arventennoù), Preferences (Gwellvezioù), "Aozadur evit ar pellureer": "Frammoù fokus bras ha stokelloù ar pellureer, hep an elfennoù reoliñ ezhomm ur skramm stekiñ dezho. Emgefre a weredeka anezhañ war Android TV ha Google TV." Emgefre eo an dibab dre ziouer; Gweredekaet a zere ouzh un dabletenn renet gant ur c'hlavier pe ur pad c'hoari; Lazhet a lazh anezhañ war ur skinwel. An arventenn n'eus anezhi nemet war Android. Adalek ar build 22 e talvez ur c'hemm diouzhtu war ar bajenn digor, a chom el lec'h ma oa (a-raok e veze digoret Settings en-dro war Advanced (Araokaet), a-us d'ur skramm loc'hañ a ranke Distreiñ tremen drezañ). Ar biroù hag OK a ya en-dro er gwelerioù gant ur c'hlavier pe ur pad c'hoari forzh petra eo an arventenn.
 
 ### Bevennoù
 
@@ -650,7 +651,7 @@ Settings (Arventennoù), Preferences (Gwellvezioù), "Aozadur evit ar pellureer"
 
 Ar skeudennoù 360° a vez kemmesket gant an holl luc'hskeudennoù all, hag an dud a c'houlenn digant Immich un doare da silañ ar sferennoù hag ar panoramaoù ([kaozeadenn #12824](https://github.com/immich-app/immich/discussions/12824)). An arload Immich n'en deus roll ebet evel-se.
 
-Immuch360 a laka ur merk 360° war skeudennigoù al luc'hskeudennoù 360° (en un teuliad rannadenn rouedad, war ar videoioù 360° ivez), hag un elfenn 360° e-krec'h an ivinell Levraoueg. Adalek ar build 18 e talc'h ar roll-se, gant ur servijer, al luc'hskeudennoù hag ar videoioù a verk ar servijer evel 360°, ar restroù kriz Insta360 diouzh o anv, al luc'hskeudennoù gwriet gant ur c'hamera 360° hec'h-unan hag ar re ho peus dibabet gwelet evel 360°, ouzhpenn ar pezh en deus kavet ar furchadenn er benveg; hep servijer, ar pezh en deus kavet ar furchadenn er benveg hag ar re ho peus dibabet gwelet evel 360°. Pep hini a zeu war wel ur wech, n'eus forzh pelec'h emañ e eilskouerennoù, an nevesañ da gentañ.
+Immuch360 a laka ur merk 360° war skeudennigoù al luc'hskeudennoù 360° (en un teuliad rannadenn rouedad, war ar videoioù 360° ivez), hag un elfenn 360° e-krec'h an ivinell Levraoueg. Adalek ar build 18 e talc'h ar roll-se, gant ur servijer, al luc'hskeudennoù hag ar videoioù a verk ar servijer evel 360°, ar restroù kriz Insta360 diouzh o anv, al luc'hskeudennoù gwriet gant ur c'hamera 360° hec'h-unan hag ar re ho peus dibabet gwelet evel 360°, ouzhpenn ar pezh en deus kavet ar furchadenn er benveg; hep servijer, ar pezh en deus kavet ar furchadenn er benveg hag ar re ho peus dibabet gwelet evel 360°. Pep hini a zeu war wel ur wech, n'eus forzh pelec'h emañ e eilskouerennoù, an nevesañ da gentañ. Adalek ar build 22 e teu ur renkennad "Er rannadennoù rouedad" a-us d'ar gael, gant al luc'hskeudennoù hag ar videoioù 360° eus ho rannadennoù, an nevesañ da gentañ: an arload a zesk anezho pa ziskouez o zeuliad pe pa zigor anezho (ne glask ket en ur rannadenn hec'h-unan), o mir eus ul loc'hañ d'egile hag o ankounac'ha gant o rannadenn. War ur skinwel, n'en deus luc'hskeudenn ebet dezhañ e-unan, ar renkennad-se eo a leun ar roll 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Ar roll 360°, 4 elfenn, gant e follenn Date digor: All, ar bloaz 2026 gant e niver, Ar bloaz a-bezh, Eost 2026 hag Ebrel 2026 gant o niveroù, ar bloaz 2025, ha Custom">
 
@@ -661,7 +662,7 @@ Immuch360 a laka ur merk 360° war skeudennigoù al luc'hskeudennoù 360° (en u
 3. Gant ur servijer, dibabit pelec'h emañ ar media: "War ar servijer", "On this device", ha "Shared with me" (Rannet ganin) pa vez re.
 4. Dibabit ar seurt: Photos, Videos, 3D, VR180.
 5. Pa'z eus daou gamera pe muioc'h er roll, un eil renkennad a ziskouez anezho diouzh merk ha patrom EXIF, gant o niveroù. Ur restr kriz hepto a vez anvet diouzh merk he askouezhadenn (Insta360, GoPro, DJI), an holl re all a zo "Kamera dianav".
-6. En ur strollad (al lec'hioù, Photos ha Videos, 3D ha VR180, ar c'hameraoù) en em ouzhpenn an tikedennoù; etre strolladoù e strizhont ar roll. Clear (Skarzhañ) a adlaka pep tra; "Luc'hskeudenn pe video 360° ebet ne glot gant ar siloù-mañ" a dalvez ne chom netra gant ar siloù.
+6. En ur strollad (al lec'hioù, Photos ha Videos, 3D ha VR180, ar c'hameraoù) en em ouzhpenn an tikedennoù; etre strolladoù e strizhont ar roll. An tikedennoù Date (Deiziad), Photos ha Videos a dalvez evit renkennad ar rannadennoù rouedad ivez; 3D, VR180 hag ar c'hameraoù a guzh anezhi, rak an arload ne oar netra eus an traoù-se evit ur restr eus ur rannadenn. Clear (Skarzhañ) a adlaka pep tra; "Luc'hskeudenn pe video 360° ebet ne glot gant ar siloù-mañ" a dalvez ne chom netra gant ar siloù.
 7. Digorit ul luc'hskeudenn pe ur video. E gwel soubus ar Quest, kent ha da-heul a heuilh ar roll silet.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Kement tra a ra an arload hezoug Immich ofisiel a zo amañ: gwarez, linenn-amzer
 
 Evit diskouez ul luc'hskeudenn 360° da unan bennak n'en deus ket an arload, rannit anezhi gant ul liamm rannet Immich: arload web Immich a ziskouez ul luc'hskeudenn 360° evel ur sferenn en e verdeer.
 
-Ar build bremanel, ar build 21 (stumm 3.3.0-rc.0, niverenn build 3030019), a zo diazezet war Immich 3.3.0-rc.0 (Immich `main`, n'eo ket c'hoazh un embannadur stabil). Ar build 19 a zo bet amprouet gant ur servijer Immich 3.2, hag ar builds 20 ha 21 ne cheñchont netra er pezh a c'houlenn an arload digant ar servijer. Danevellit ar c'hudennoù e [Kudennoù](https://github.com/freeKC/Immuch360/issues), mar plij, ha n'eo ket d'ar raktres Immich. Evit teuliadur klok Immich e-unan, gwelit [immich.app](https://immich.app).
+Ar build bremanel, ar build 22 (stumm 3.3.0-rc.0, niverenn build 3030020), a zo diazezet war Immich `main` eus an 10 a viz Here 2026 (stumm 3.3.0-rc.0, n'eo ket c'hoazh un embannadur stabil). Ar build 22 a zo bet amprouet ouzh ur servijer Immich 3.2.4 hag ouzh ur servijer savet diwar an hevelep Immich `main`: kevreañ, linenn-amzer, albomoù, luc'hskeudennoù ha videoioù 360°, lenn videoioù ha pellgasadennoù, hep fazi API ebet. Danevellit ar c'hudennoù e [Kudennoù](https://github.com/freeKC/Immuch360/issues), mar plij, ha n'eo ket d'ar raktres Immich. Evit teuliadur klok Immich e-unan, gwelit [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Keñveriet gant an arload Immich hag arloadoù all
@@ -1037,6 +1038,8 @@ Pa'z eo diskodañ ur video eus ar servijer na zalc'h ket ar ritmo, ket an tresa�
 - **Dibabit an daskorer hoc'h-unan.** E Settings, Advanced (Araokaet), enaouit Troubleshooting (Diskoulmañ kudennoù): un elfenn "Daskorer video 360°" a zeu war wel, "Emgefre" dre ziouer. Kinnig a ra ivez "Lugent, ment leun", "Lugent, 4096 ledander d'ar muiañ", "Lugent, 2880 ledander d'ar muiañ" ha "Plat, hep ar gwel 360°", evit ar video 360° da-heul a zigorot. Dindanañ, "Muzuliet da ziwezhañ" a ro ar ment ma voe treset ar video 360° diwezhañ, e skeudennoù dre eilenn, ar c'hip grafek hag an diskoder: eilskrivit se en un danevell fazi. Dibab "Emgefre" en-dro, zoken pa'z eo an dibab dija, a ankounac'ha ar pezh a oa bet muzuliet, hag ar videoioù 360° da-heul a vez muzuliet en-dro.
 - **Ar pezh a ziskod ar c'hip.** Settings, Advanced, "Diskoderioù video ar benveg-mañ" a ziskouez ar pezh a ziskod ar c'hip grafek implijet, evel ma lavar Direct3D 11, hag an arload a reizh ar roll-se gant ar pezh en deus muzuliet e-pad al lenn: an arventenn Mammenn video hag amprouenn an div lunedenn evit ar videoioù kriz a heul anezhañ. H.264 ledanoc'h eget 4096 piksel (ar 5.7K eus ar c'hameraoù 360°) a vez diskodet gant an araezer, rak hini ebet eus kipoù an urzhiataer hezoug amprouiñ n'her degemer.
 
+**Evit an diorroerien.** Al lenner 360° a dres dre un daskorer dezhañ e-unan, savet war libmpv hag ul lugent media_kit_video kemmet: mpv a dres pep skeudenn en ur gwiadur war ar c'hip grafek, hag un dremenadenn OpenGL ES 3.0 a dres ar gwel er gwiadur a ziskouez Flutter, hep eilañ netra dre an araezer. Perak eo bet savet evel-se, penaos ez a en-dro, petra zo bet muzuliet ha petra a c'haller reizhañ: [daskorer video 360° an urzhiataer](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### E-keñver an arloadoù pellgomzer
 
 - **Ar gwareziñ a ya en-dro e-keit ha ma vez digor an arload** (pe bihanaet), ha n'eo ket en drekleur gant ar prenestr serret. Serriñ ar prenestr e-pad ma ya pellgasadennoù en-dro, pe e-pad ma vez rannet an urzhiataer, a c'houlenn da gentañ.
@@ -1110,7 +1113,7 @@ Emañ an arload war Google Play evit ar pellgomzerioù hag an tabletennoù; stum
 
 - **Pellgomzerioù ha tabletennoù Android**
   - Hiziv: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), pe an APK war ar bajenn [Embannadurioù (Releases)](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` evit ur pellgomzer (an `Immuch360-v<version>-release.apk` hollek a ya en-dro e pep lec'h, `-armeabi-v7a` a zo evit ar pellgomzerioù kozh 32 bit, hag ar restr `.aab` a zo evit Google Play, n'eo ket evit staliañ gant an dorn). Build GitHub a zo alies war-raok ar stal. N'eus forzh penaos, e vez staliet e-kichen an arload Immich ofisiel (pakad `com.aprogsys.immuch360`).
-  - A-benn nebeut: war Google Play, ar build 20 a zo enlinenn abaoe ar 7 a viz Here 2026, e-lec'h ar build 18; ar build 21 ne cheñch netra war ar pellgomzerioù hag an tabletennoù.
+  - A-benn nebeut: war Google Play, ar build 22 a zo bet kaset d'an 10 a viz Here 2026 e-lec'h ar build 20 (enlinenn abaoe ar 7 a viz Here); degas a ra kemmoù Immich miz Here ha reizhadennoù ar skinwel.
 - **iPhone hag iPad**
   - Hiziv: o c'hortoz gwiriadur Apple. Ar stumm o vezañ gwiriet en deus arc'hwelioù ar build 11: ar pellgas da Immich hag an dibab Mammenn ar video (build 15) hag ar restroù kriz Insta360 (build 16) a zeuio gant un hizivadenn diwezhatoc'h eus an App Store. Ar c'hod mammenn a vez savet gant Xcode pe war Codemagic, gwelit [E sevel hoc'h-unan](#build-it-yourself).
   - A-benn nebeut: App Store, o vezañ gwiriet.
@@ -1157,7 +1160,7 @@ Sekred ebet n'emañ er c'havlec'h-mañ: alc'hwez sinañ Android a zo miret evel 
 
 ### Skourroù
 
-- **`main`**: Immich `main` d'ar commit ma'z eo diazezet `immuch360` warnañ (29 a viz Gwengolo 2026 evit ar builds bremanel), morse kemmet; mont a ra war-raok pa vez adlakaet ar forc'h war un Immich nevesoc'h.
+- **`main`**: Immich `main` d'ar commit ma'z eo diazezet `immuch360` warnañ (10 a viz Here 2026 evit ar builds bremanel), morse kemmet; mont a ra war-raok pa vez adlakaet ar forc'h war un Immich nevesoc'h.
 - **`immuch360`**: kemmoù ar forc'h-mañ a-us da Immich, Immuch360 Desktop e-barzh abaoe an 9 a viz Here 2026. Pep embannadur a lavar war beseurt stumm Immich eo diazezet.
 - **`desktop`**: el lec'h ma veze savet Immuch360 Desktop, stumm an urzhiataer, a-us da `immuch360`, betek ma voe kendeuzet ennañ d'an 9 a viz Here 2026 evit ma teufe ar pellgomzerioù, ar c'haskedoù, ar skinwelioù hag an urzhiataerioù eus an hevelep mammennoù. Bremañ e heul `immuch360` hag e tougen tikedennoù ar rak-embannadurioù urzhiataer ([build urzhiataer 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) eus ar commit 21f285c34, [build urzhiataer 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) eus 5b723bd25, [build urzhiataer 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) eus kendeuzadur al lenner video 360° d'an 10 a viz Here 2026). Al labour urzhiataer nevez a erru eno da gentañ hag a ya da `immuch360` gant ar build urzhiataer a embann anezhañ. Stumm an urzhiataer ne cheñch netra dindan `mobile/android` ha `mobile/ios`.
 

@@ -17,10 +17,10 @@ De app is bedoeld voor wie fotografeert met een 360°-camera (Insta360, GoPro MA
 
 | Platform | Waar je de app krijgt | Status op 10 oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoons en tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 op Google Play sinds 7 oktober 2026, build 21 op GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoons en tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 op GitHub, op 10 oktober 2026 naar Google Play verzonden (build 20 staat daar live sinds 7 oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone en iPad** | App Store | versie 3.3.0 wacht op de beoordeling van Apple; intussen kun je [zelf bouwen](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | vermelding goedgekeurd, build 21 in beoordeling bij Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 op GitHub; de vermelding op Google Play voor tv's is sinds 9 oktober 2026 in beoordeling bij Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | vermelding goedgekeurd, build 21 in beoordeling bij Meta, build 22 op het alfakanaal |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 op GitHub; de vermelding op Google Play voor tv's is sinds 9 oktober 2026 in beoordeling bij Google |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktopbuild 3 op Windows: foto's, platte en 360°-video's; macOS en Linux later |
 
 *De statussen worden bij elke release bijgewerkt; de details staan in [Waar je de app krijgt](#where-to-get-it).*
@@ -196,7 +196,7 @@ De app vindt de servers in je netwerk zelf, en speelt de bestanden live af in de
 4. Staat hij niet in de lijst? Vul het formulier met de hand in. Type: "SMB (Samba, Windows-share)", "WebDAV (Nextcloud, Synology en andere)", "DLNA-mediaserver (Jellyfin, NAS, tv-box)" of, vanaf build 20, "Plex Media Server", dat de pagina van [Plex Media Server, zonder plex.tv](#plex-media-server-without-plextv) opent. Daarna Naam, "Servernaam of adres" (een naam of een adres; een volledig adres zoals `smb://nas/photos`, `\\nas\photos` of `https://nas:5006/photos` vult de andere velden in), "Poort (optioneel)" als het niet de gebruikelijke is, "Share" voor SMB of "Pad van het WebDAV-adres" voor WebDAV, "Startmap (optioneel)", "Gebruikersnaam" en "Wachtwoord", en "Beveiligde verbinding (HTTPS)" voor WebDAV.
 5. SMB: zodra de server en de gebruikersnaam zijn ingevuld, toont "Kies een share" de shares van de server.
 6. DLNA: een mediaserver heeft geen gebruikersnaam of wachtwoord. Geef de server, de poort en het "Beschrijvingspad" van zijn apparaatbeschrijving op (`/rootDesc.xml` voor minidlna), of plak het hele adres, zoals `http://192.168.1.10:8200/rootDesc.xml`, in het serverveld.
-7. Tik op "Verbinding testen". Het antwoord is "Verbonden, N items in de startmap", of de reden waarom het mislukte. Tik dan op Opslaan, onderaan het formulier.
+7. Tik op "Verbinding testen". Het antwoord is "Verbonden, N items in de startmap", of de reden waarom het mislukte. Tik dan op Opslaan, onderaan het formulier. Vanaf build 22 vraagt het sluiten van een formulier waarin je iets hebt getypt (X, Terug) eerst "Wijzigingen weggooien?", ook op de pagina's van Plex en van de camera's, en dat doet ook het kiezen van een gevonden Plex-server of camera zodra er iets is getypt.
 
 Een gebruikersnaam met een leeg wachtwoord wordt zo verzonden: een Freebox Server wil `freebox` zonder wachtwoord voor zijn schijven. Om een share later te wijzigen of te verwijderen, gebruik je het potlood ernaast op de pagina Netwerkshares.
 
@@ -617,8 +617,9 @@ Vanaf build 20 draait dezelfde Android-app op Android TV en Google TV, met de af
 
 ### Navigeren met de afstandsbediening
 
-- De pijltjestoetsen verplaatsen het kader, OK opent waar het op staat, Terug gaat terug. Vanuit een tabblad gaat Terug naar het zijmenu, dan naar Foto's, dan uit de app.
-- Kanaal omhoog en omlaag scrollen een pagina tegelijk.
+- De pijltjestoetsen verplaatsen het kader, OK opent waar het op staat, Terug gaat terug. Vanuit een tabblad gaat Terug naar het zijmenu, dan naar Foto's, dan uit de app. In een lijst met keuzes, zoals het type van een share of een instelling, verplaatsen de pijltjestoetsen alleen het kader en kiest OK de keuze (vanaf build 22; daarvoor veranderden de pijltjestoetsen de keuze).
+- Kanaal omhoog en omlaag scrollen een pagina tegelijk. Vanaf build 22 tonen de fotorasters ongeveer zes tegels per rij binnen de marges van het scherm, met scherpere miniaturen van de eigen bestanden van het apparaat die bij fijne details rustig blijven, en de pagina's die op een telefoon een kop met een afbeelding hebben (de 360°-lijst, Favorieten, de albums van het apparaat) tonen in plaats daarvan één balk.
+- Vanaf build 22 begint het kader op het eerste item van elke pagina (de eerste tegel van de 360°-lijst, het e-mailveld zodra het serveradres is bevestigd), blijft het binnen de marges van het scherm terwijl een raster scrollt, en gaat het vanuit een raster omhoog naar de rij of de filters erboven in plaats van naar de knop Terug. Rechts vanaf een netwerkshare of een camera bereikt de bewerkknop ervan, en de uitkomst van "Verbinding testen" scrollt in beeld.
 - In de viewers werken de toetsen afspelen en pauzeren, vooruitspoelen, terugspoelen, volgende en vorige van de afstandsbediening, en de infotoets toont de details van een foto of video.
 
 ### Foto's en video's met de afstandsbediening
@@ -632,7 +633,7 @@ Vanaf build 20 draait dezelfde Android-app op Android TV en Google TV, met de af
 
 ### De instelling Indeling voor afstandsbediening
 
-Instellingen, Voorkeuren, "Indeling voor afstandsbediening": "Grote focuskaders en toetsen van de afstandsbediening, zonder de bediening die een aanraakscherm nodig heeft. Automatisch zet het aan op Android TV en Google TV." Automatisch is de standaard; Aan past bij een tablet die met een toetsenbord of een gamepad wordt bediend; Uit zet het uit op een tv. De instelling bestaat alleen op Android. De pijltjestoetsen en OK werken in de viewers met een toetsenbord of een gamepad, wat de instelling ook is.
+Instellingen, Voorkeuren, "Indeling voor afstandsbediening": "Grote focuskaders en toetsen van de afstandsbediening, zonder de bediening die een aanraakscherm nodig heeft. Automatisch zet het aan op Android TV en Google TV." Automatisch is de standaard; Aan past bij een tablet die met een toetsenbord of een gamepad wordt bediend; Uit zet het uit op een tv. De instelling bestaat alleen op Android. Vanaf build 22 geldt een wijziging meteen voor de open pagina, die blijft waar ze was (daarvoor ging Instellingen opnieuw open op Geavanceerd, boven een startscherm waar je met Terug doorheen moest). De pijltjestoetsen en OK werken in de viewers met een toetsenbord of een gamepad, wat de instelling ook is.
 
 ### Beperkingen
 
@@ -650,7 +651,7 @@ Instellingen, Voorkeuren, "Indeling voor afstandsbediening": "Grote focuskaders 
 
 360°-opnamen staan tussen alle andere foto's, en mensen vragen Immich om een manier om bollen en panorama's te filteren ([discussie #12824](https://github.com/immich-app/immich/discussions/12824)). De Immich-app heeft zo'n lijst niet.
 
-Immuch360 zet een 360°-badge op de miniaturen van 360°-foto's (in een map van een netwerkshare ook op 360°-video's), en een item 360° bovenaan het tabblad Bibliotheek. Vanaf build 18 bevat die lijst, met een server, de foto's en video's die de server als 360° markeert, de onbewerkte Insta360-bestanden aan hun naam, de foto's die een 360°-camera zelf heeft samengevoegd en de bestanden die je als 360° wilde bekijken, plus wat het doorzoeken van het apparaat heeft gevonden; zonder server, wat het doorzoeken van het apparaat heeft gevonden en de bestanden die je als 360° wilde bekijken. Elk bestand verschijnt één keer, waar zijn kopieën ook staan, de nieuwste eerst.
+Immuch360 zet een 360°-badge op de miniaturen van 360°-foto's (in een map van een netwerkshare ook op 360°-video's), en een item 360° bovenaan het tabblad Bibliotheek. Vanaf build 18 bevat die lijst, met een server, de foto's en video's die de server als 360° markeert, de onbewerkte Insta360-bestanden aan hun naam, de foto's die een 360°-camera zelf heeft samengevoegd en de bestanden die je als 360° wilde bekijken, plus wat het doorzoeken van het apparaat heeft gevonden; zonder server, wat het doorzoeken van het apparaat heeft gevonden en de bestanden die je als 360° wilde bekijken. Elk bestand verschijnt één keer, waar zijn kopieën ook staan, de nieuwste eerst. Vanaf build 22 staat boven het raster een rij "In de netwerkshares" met de 360°-foto's en -video's van je shares, de nieuwste eerst: de app leert ze kennen wanneer hij hun map toont of ze opent (hij doorzoekt een share niet uit zichzelf), onthoudt ze van de ene start tot de volgende en vergeet ze samen met hun share. Op een tv, die geen eigen foto's heeft, is het die rij die de 360°-lijst vult.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="De 360°-lijst, 4 items, met het blad Datum open: Alle, het jaar 2026 met zijn aantal, Heel het jaar, augustus 2026 en april 2026 met hun aantal, het jaar 2025, en Aangepast">
 
@@ -661,7 +662,7 @@ Immuch360 zet een 360°-badge op de miniaturen van 360°-foto's (in een map van 
 3. Kies met een server waar de media staan: "Op de server", "Op dit apparaat", en "Gedeeld met mij" als die er zijn.
 4. Kies het soort: Foto's, Video's, 3D, VR180.
 5. Als de lijst twee of meer camera's bevat, toont een tweede rij ze op basis van het EXIF-merk en -model, met hun aantal. Een onbewerkt bestand zonder die gegevens krijgt de naam van het merk van zijn extensie (Insta360, GoPro, DJI), al het andere is "Onbekende camera".
-6. Binnen een groep (de plaatsen, Foto's en Video's, 3D en VR180, de camera's) tellen de chips op; tussen groepen verkleinen ze de lijst. Wissen zet alles terug; "Geen 360°-foto of -video komt overeen met deze filters" betekent dat de filters niets overlaten.
+6. Binnen een groep (de plaatsen, Foto's en Video's, 3D en VR180, de camera's) tellen de chips op; tussen groepen verkleinen ze de lijst. De chips Datum, Foto's en Video's gelden ook voor de rij van de netwerkshares; 3D, VR180 en de camera's verbergen die rij, omdat de app geen van die gegevens kent voor een bestand van een share. Wissen zet alles terug; "Geen 360°-foto of -video komt overeen met deze filters" betekent dat de filters niets overlaten.
 7. Open een foto of video. In de immersieve weergave van de Quest volgen vorige en volgende de gefilterde lijst.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Alles wat de officiële mobiele Immich-app doet, zit erin: back-up, tijdlijn, al
 
 Om een 360°-foto te laten zien aan iemand die de app niet heeft, deel je hem met een gedeelde link van Immich: de Immich-webapp toont een 360°-foto als bol in diens browser.
 
-De huidige build, build 21 (versie 3.3.0-rc.0, buildnummer 3030019), is gebaseerd op Immich 3.3.0-rc.0 (Immich `main`, nog geen stabiele release). Build 19 is getest met een Immich 3.2-server, en builds 20 en 21 veranderen niets aan wat de app van de server vraagt. Meld problemen in [Issues](https://github.com/freeKC/Immuch360/issues), niet bij het Immich-project. Voor de volledige documentatie van Immich zelf, zie [immich.app](https://immich.app).
+De huidige build, build 22 (versie 3.3.0-rc.0, buildnummer 3030020), is gebaseerd op Immich `main` van 10 oktober 2026 (versie 3.3.0-rc.0, nog geen stabiele release). Build 22 is getest met een Immich 3.2.4-server en met een server die is gebouwd vanuit diezelfde Immich `main`: inloggen, tijdlijn, albums, 360°-foto's en -video's, video's afspelen en uploads, zonder één API-fout. Meld problemen in [Issues](https://github.com/freeKC/Immuch360/issues), niet bij het Immich-project. Voor de volledige documentatie van Immich zelf, zie [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Vergeleken met de Immich-app en andere apps
@@ -1037,6 +1038,8 @@ Als het het decoderen van een servervideo is dat niet bijhoudt, niet het tekenen
 - **Kies zelf de renderer.** Zet in Instellingen, Geavanceerd, "Probleemoplossing" aan: er verschijnt een item "Renderer voor 360°-video", standaard Automatisch. Het biedt ook "Plug-in, volledig formaat", "Plug-in, hooguit 4096 breed", "Plug-in, hooguit 2880 breed" en "Plat, zonder het 360°-beeld", voor de volgende 360°-video die je opent. Daaronder noemt "Laatst gemeten" het formaat waarin de laatste 360°-video werd getekend, zijn beelden per seconde, de grafische chip en de decoder: kopieer het in een bugmelding. Opnieuw "Automatisch" kiezen, ook als dat al de keuze is, vergeet wat er gemeten was, en de volgende 360°-video's worden opnieuw gemeten.
 - **Wat de chip decodeert.** Instellingen, Geavanceerd, "Videodecoders van dit apparaat" toont wat de gebruikte grafische chip decodeert, zoals Direct3D 11 het meldt, en de app corrigeert die lijst met wat hij tijdens het afspelen heeft gemeten: de instelling Videobron en de controle van twee lenzen bij ruwe video's volgen hem. H.264 breder dan 4096 pixels (de 5,7K van 360°-camera's) wordt door de processor gedecodeerd, omdat geen van beide chips van de testlaptop het aankan.
 
+**Voor ontwikkelaars.** De 360°-speler tekent via een eigen renderer, gebouwd op libmpv en een gepatchte media_kit_video-plug-in: mpv tekent elk frame in een textuur op de grafische chip, en een OpenGL ES 3.0-pass tekent de weergave in de textuur die Flutter toont, zonder kopie via de processor. Waarom het zo is gebouwd, hoe het werkt, wat er is gemeten en wat er kan worden afgesteld: [de 360°-videorenderer van de computerversie](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Vergeleken met de telefoonapps
 
 - **De back-up draait terwijl de app open is** (of geminimaliseerd), niet op de achtergrond met het venster gesloten. Het venster sluiten terwijl er uploads lopen, of terwijl de computer gedeeld wordt, vraagt eerst om bevestiging.
@@ -1110,7 +1113,7 @@ De app staat op Google Play voor telefoons en tablets; de versie voor de App Sto
 
 - **Android-telefoons en -tablets**
   - Nu: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), of de APK op de pagina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` voor een telefoon (de universele `Immuch360-v<version>-release.apk` werkt overal, `-armeabi-v7a` is voor oudere 32-bit-telefoons, en het `.aab`-bestand is voor Google Play, niet om te sideloaden). De GitHub-build loopt meestal voor op de store. Hoe dan ook installeert hij naast de officiële Immich-app (pakket `com.aprogsys.immuch360`).
-  - Binnenkort: op Google Play staat build 20 sinds 7 oktober 2026 live, in plaats van build 18; build 21 verandert niets op telefoons en tablets.
+  - Binnenkort: op Google Play is build 22 op 10 oktober 2026 verzonden in plaats van build 20 (live sinds 7 oktober); hij bevat de Immich-wijzigingen van oktober en de tv-correcties.
 - **iPhone en iPad**
   - Nu: wacht op de beoordeling van Apple. De versie in beoordeling heeft de functies van build 11: de upload naar Immich en de keuze Videobron (build 15) en de onbewerkte Insta360-bestanden (build 16) komen met een latere update in de App Store. De broncode bouwt met Xcode of op Codemagic, zie [Zelf bouwen](#build-it-yourself).
   - Binnenkort: App Store, in beoordeling.
@@ -1157,7 +1160,7 @@ Er staat geen geheim in deze repository: de Android-ondertekeningssleutel is opg
 
 ### Branches
 
-- **`main`**: Immich `main` op de commit waarop `immuch360` is gebaseerd (29 september 2026 voor de huidige builds), nooit gewijzigd; hij schuift op als de fork op een nieuwere Immich wordt gerebased.
+- **`main`**: Immich `main` op de commit waarop `immuch360` is gebaseerd (10 oktober 2026 voor de huidige builds), nooit gewijzigd; hij schuift op als de fork op een nieuwere Immich wordt gerebased.
 - **`immuch360`**: de wijzigingen van deze fork bovenop Immich, Immuch360 Desktop inbegrepen sinds 9 oktober 2026. Elke release vermeldt op welke Immich-versie hij is gebaseerd.
 - **`desktop`**: waar Immuch360 Desktop, de computerversie, werd gebouwd bovenop `immuch360`, tot het op 9 oktober 2026 erin werd samengevoegd, zodat telefoons, headsets, tv's en computers uit dezelfde broncode komen. Hij volgt nu `immuch360` en draagt de tags van de desktop-pre-releases ([desktopbuild 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) vanaf commit 21f285c34, [desktopbuild 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) vanaf 5b723bd25, [desktopbuild 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) vanaf de samenvoeging van de 360°-videospeler op 10 oktober 2026). Nieuw desktopwerk komt daar eerst terecht en gaat naar `immuch360` met de desktopbuild die het levert. De computerversie verandert niets onder `mobile/android` en `mobile/ios`.
 

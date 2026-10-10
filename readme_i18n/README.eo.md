@@ -17,10 +17,10 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
 
 | Platformo | Kie akiri ĝin | Stato je la 10-a de oktobro 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilaĵo 20 en Google Play ekde la 7-a de oktobro 2026, kompilaĵo 21 en GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilaĵo 22 en GitHub, sendita al Google Play la 10-an de oktobro 2026 (kompilaĵo 20 tie publika ekde la 7-a de oktobro) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone kaj iPad** | App Store | versio 3.3.0 atendas la kontrolon de Apple; intertempe [konstruu ĝin mem](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [APK](#meta-quest-3) · Horizon Store | listero aprobita, kompilaĵo 21 en la kontrolo de Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilaĵo 21 en GitHub; la Google-Play-listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [APK](#meta-quest-3) · Horizon Store | listero aprobita, kompilaĵo 21 en la kontrolo de Meta, kompilaĵo 22 en la alfa-kanalo |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilaĵo 22 en GitHub; la Google-Play-listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP de la antaŭversio](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | labortabla kompilaĵo 3 en Windows: fotoj, ebenaj kaj 360°-videoj; macOS kaj Linux pli malfrue |
 
 *La statoj estas ĝisdatigataj ĉe ĉiu eldono; la detaloj estas en [Kie akiri ĝin](#where-to-get-it).*
@@ -196,7 +196,7 @@ Immuch360 foliumas kaj ludas la fotojn kaj videojn de iu ajn servilo, kiu parola
 4. Ĉu ne en la listo? Plenigu la formularon permane. Tipo: "SMB (Samba, Windows-kunhavigo)", "WebDAV (Nextcloud, Synology kaj aliaj)", "DLNA-aŭdvida servilo (Jellyfin, NAS, televida skatolo)" aŭ, ekde kompilaĵo 20, "Plex Media Server", kiu malfermas la paĝon de [Plex Media Server, sen plex.tv](#plex-media-server-without-plextv). Poste Nomo, "Nomo aŭ adreso de la servilo" (nomo aŭ adreso; plena adreso kiel `smb://nas/photos`, `\\nas\photos` aŭ `https://nas:5006/photos` plenigas la aliajn kampojn), "Pordo (nedeviga)" kiam ĝi ne estas la kutima, "Kunhavigo" por SMB aŭ "Vojo de la WebDAV-adreso" por WebDAV, "Komenca dosierujo (nedeviga)", "Uzantnomo" kaj "Pasvorto", kaj "Sekura konekto (HTTPS)" por WebDAV.
 5. SMB: tuj kiam la servilo kaj la uzantnomo estas tajpitaj, "Elektu kunhavigon" listigas la kunhavigojn de la servilo.
 6. DLNA: aŭdvida servilo havas nek uzantnomon nek pasvorton. Donu la servilon, la pordon kaj la "Vojo de la priskribo" de ĝia aparata priskribo (`/rootDesc.xml` por minidlna), aŭ algluu la tutan adreson, kiel `http://192.168.1.10:8200/rootDesc.xml`, en la servilan kampon.
-7. Tuŝetu "Testi la konekton". Ĝi respondas "Konektita, N eroj en la komenca dosierujo", aŭ diras, kial ĝi malsukcesis. Poste tuŝetu "Konservi", ĉe la fino de la formularo.
+7. Tuŝetu "Testi la konekton". Ĝi respondas "Konektita, N eroj en la komenca dosierujo", aŭ diras, kial ĝi malsukcesis. Poste tuŝetu "Konservi", ĉe la fino de la formularo. Ekde kompilaĵo 22, fermi formularon, en kiu vi tajpis (X, Reen), unue demandas "Ĉu forĵeti la ŝanĝojn?", ankaŭ en la paĝoj de Plex kaj de la kamerao, kaj same faras elekti Plex-servilon aŭ kameraon trovitan en la reto, post kiam io estas tajpita.
 
 Uzantnomo kun malplena pasvorto estas sendata tia: Freebox Server volas `freebox` kaj neniun pasvorton por siaj diskoj. Por ŝanĝi aŭ forigi kunhavigon poste, uzu la krajonon apud ĝi en la paĝo Retaj kunhavigoj.
 
@@ -617,8 +617,9 @@ Ekde kompilaĵo 20 la sama Android-aplikaĵo funkcias en Android TV kaj Google T
 
 ### Moviĝi per la teleregilo
 
-- La sagoj movas la kadron, OK malfermas tion, sur kio ĝi estas, Reen iras reen. El langeto, Reen iras al la flanka menuo, poste al Fotoj, poste el la aplikaĵo.
-- Kanalo supren kaj malsupren rulumas po unu paĝo.
+- La sagoj movas la kadron, OK malfermas tion, sur kio ĝi estas, Reen iras reen. El langeto, Reen iras al la flanka menuo, poste al Fotoj, poste el la aplikaĵo. En listo de ebloj, ekzemple la tipo de kunhavigo aŭ agordo, la sagoj nur movas la kadron kaj OK elektas la eblon (ekde kompilaĵo 22; antaŭe la sagoj ŝanĝis la eblon).
+- Kanalo supren kaj malsupren rulumas po unu paĝo. Ekde kompilaĵo 22 la fotokradoj montras ĉirkaŭ ses kahelojn po vico ene de la marĝenoj de la ekrano, kun pli akraj miniaturoj de la propraj dosieroj de la aparato, kiuj restas glataj ĉe fajnaj detaloj, kaj la paĝoj kun bilda kapo en telefono (la 360°-listo, Preferataĵoj, la albumoj de la aparato) montras anstataŭe unu solan breton.
+- Ekde kompilaĵo 22 la kadro komenciĝas sur la unua ero de ĉiu paĝo (la unua kahelo de la 360°-listo, la retpoŝta kampo post kiam la servila adreso estas konfirmita), restas ene de la marĝenoj de la ekrano dum krado rulumas, kaj iras de krado supren al la vico aŭ la filtriloj super ĝi anstataŭ al la butono Reen. Dekstren el reta kunhavigo aŭ kamerao atingas ĝian redaktan butonon, kaj la rezulto de "Testi la konekton" rulumiĝas en la videblan parton.
 - En la montriloj funkcias la klavoj de la teleregilo por ludi kaj paŭzi, rapide antaŭen, rebobeni, sekva kaj antaŭa, kaj la informa klavo montras la detalojn de foto aŭ video.
 
 ### Fotoj kaj videoj per la teleregilo
@@ -632,7 +633,7 @@ Ekde kompilaĵo 20 la sama Android-aplikaĵo funkcias en Android TV kaj Google T
 
 ### La agordo Aranĝo por teleregilo
 
-Agordoj, Preferoj, "Aranĝo por teleregilo": "Grandaj fokusaj kadroj kaj teleregilaj klavoj, sen la regiloj, kiuj bezonas tuŝekranon. Aŭtomata ŝaltas ĝin en Android TV kaj Google TV." Aŭtomata estas la defaŭlto; Ŝaltita konvenas al tabulkomputilo regata per klavaro aŭ ludregilo; Malŝaltita malŝaltas ĝin en televidilo. La agordo ekzistas nur en Android. La sagoj kaj OK funkcias en la montriloj per klavaro aŭ ludregilo, kia ajn estas la agordo.
+Agordoj, Preferoj, "Aranĝo por teleregilo": "Grandaj fokusaj kadroj kaj teleregilaj klavoj, sen la regiloj, kiuj bezonas tuŝekranon. Aŭtomata ŝaltas ĝin en Android TV kaj Google TV." Aŭtomata estas la defaŭlto; Ŝaltita konvenas al tabulkomputilo regata per klavaro aŭ ludregilo; Malŝaltita malŝaltas ĝin en televidilo. La agordo ekzistas nur en Android. Ekde kompilaĵo 22 ŝanĝo tuj validas por la malfermita paĝo, kiu restas kie ĝi estis (antaŭe Agordoj remalfermiĝis ĉe Altnivelaj agordoj, super komenca ekrano, tra kiu Reen devis trairi). La sagoj kaj OK funkcias en la montriloj per klavaro aŭ ludregilo, kia ajn estas la agordo.
 
 ### Limigoj
 
@@ -650,7 +651,7 @@ Agordoj, Preferoj, "Aranĝo por teleregilo": "Grandaj fokusaj kadroj kaj telereg
 
 360°-bildoj estas miksitaj kun ĉiuj aliaj fotoj, kaj homoj petas de Immich manieron filtri sferojn kaj panoramojn ([diskuto #12824](https://github.com/immich-app/immich/discussions/12824)). La aplikaĵo de Immich ne havas tian liston.
 
-Immuch360 metas 360°-insignon sur la miniaturojn de 360°-fotoj (en dosierujo de reta kunhavigo, ankaŭ sur 360°-videoj), kaj eron 360° supre de la langeto Bibliteko. Ekde kompilaĵo 18 tiu listo enhavas, kun servilo, la fotojn kaj videojn, kiujn la servilo markas kiel 360°, la krudajn Insta360-dosierojn laŭ sia nomo, la fotojn, kiujn 360°-fotilo mem kunkudris, kaj tiujn, kiujn vi elektis vidi kiel 360°, plus tion, kion trovis la skano de la aparato; sen servilo, tion, kion trovis la skano de la aparato, kaj tiujn, kiujn vi elektis vidi kiel 360°. Ĉiu aperas unufoje, kie ajn estas ĝiaj kopioj, la plej novaj unue.
+Immuch360 metas 360°-insignon sur la miniaturojn de 360°-fotoj (en dosierujo de reta kunhavigo, ankaŭ sur 360°-videoj), kaj eron 360° supre de la langeto Bibliteko. Ekde kompilaĵo 18 tiu listo enhavas, kun servilo, la fotojn kaj videojn, kiujn la servilo markas kiel 360°, la krudajn Insta360-dosierojn laŭ sia nomo, la fotojn, kiujn 360°-fotilo mem kunkudris, kaj tiujn, kiujn vi elektis vidi kiel 360°, plus tion, kion trovis la skano de la aparato; sen servilo, tion, kion trovis la skano de la aparato, kaj tiujn, kiujn vi elektis vidi kiel 360°. Ĉiu aperas unufoje, kie ajn estas ĝiaj kopioj, la plej novaj unue. Ekde kompilaĵo 22 vico "En la retaj kunhavigoj" venas super la krado kun la 360°-fotoj kaj -videoj de viaj kunhavigoj, la plej novaj unue: la aplikaĵo ekkonas ilin, kiam ĝi montras ilian dosierujon aŭ malfermas ilin (ĝi ne traserĉas kunhavigon memstare), konservas ilin de unu starto al la sekva kaj forgesas ilin kun ilia kunhavigo. En televidilo, kiu ne havas proprajn fotojn, tiu vico estas tio, kio plenigas la 360°-liston.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="La 360°-listo, 4 eroj, kun sia folio Dato malfermita: Ĉiuj, la jaro 2026 kun sia nombro, Tuta jaro, aŭgusto 2026 kaj aprilo 2026 kun siaj nombroj, la jaro 2025, kaj Custom">
 
@@ -661,7 +662,7 @@ Immuch360 metas 360°-insignon sur la miniaturojn de 360°-fotoj (en dosierujo d
 3. Kun servilo, elektu, kie estas la aŭdvidaĵoj: "En la servilo", "Ĉe tiu ĉi aparato", kaj "Dividitaj kun mi" kiam ekzistas tiaj.
 4. Elektu la specon: Fotoj, Videos (Videoj), 3D, VR180.
 5. Kiam la listo enhavas du aŭ pli da fotiloj, dua vico listigas ilin laŭ la EXIF-marko kaj -modelo, kun iliaj nombroj. Kruda dosiero sen ili estas nomata laŭ la marko de sia finaĵo (Insta360, GoPro, DJI), ĉio alia estas "Nekonata fotilo".
-6. Ene de grupo (la lokoj, Fotoj kaj Videoj, 3D kaj VR180, la fotiloj) la filtriloj adiciiĝas; inter grupoj ili malvastigas la liston. "Forviŝi" restarigas ĉion; "Neniu 360°-foto aŭ -video kongruas kun ĉi tiuj filtriloj" signifas, ke la filtriloj lasas nenion.
+6. Ene de grupo (la lokoj, Fotoj kaj Videoj, 3D kaj VR180, la fotiloj) la filtriloj adiciiĝas; inter grupoj ili malvastigas la liston. La filtriloj Dato, Fotoj kaj Videoj validas ankaŭ por la vico de la retaj kunhavigoj; 3D, VR180 kaj la fotiloj kaŝas ĝin, ĉar la aplikaĵo konas neniun el tiuj por dosiero de kunhavigo. "Forviŝi" restarigas ĉion; "Neniu 360°-foto aŭ -video kongruas kun ĉi tiuj filtriloj" signifas, ke la filtriloj lasas nenion.
 7. Malfermu foton aŭ videon. En la enmergiĝa vido de la Quest, antaŭa kaj sekva sekvas la filtritan liston.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Kiam la servilo ignoras HTTP-Range-petojn ĉe la originalo kaj la MP4-indekso (m
 
 Por montri 360°-foton al iu, kiu ne havas la aplikaĵon, kunhavigu ĝin per kunhavigita ligilo de Immich: la TTT-aplikaĵo de Immich montras 360°-foton kiel sferon en ties retumilo.
 
-La nuna kompilaĵo, kompilaĵo 21 (versio 3.3.0-rc.0, kompilaĵa numero 3030019), baziĝas sur Immich 3.3.0-rc.0 (Immich `main`, ankoraŭ ne stabila eldono). Kompilaĵo 19 estis testita kun Immich-3.2-servilo, kaj kompilaĵoj 20 kaj 21 ŝanĝas nenion en tio, kion la aplikaĵo petas de la servilo. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la projekto Immich. Por la plena dokumentaro de Immich mem, vidu [immich.app](https://immich.app).
+La nuna kompilaĵo, kompilaĵo 22 (versio 3.3.0-rc.0, kompilaĵa numero 3030020), baziĝas sur Immich `main` de la 10-a de oktobro 2026 (versio 3.3.0-rc.0, ankoraŭ ne stabila eldono). Kompilaĵo 22 estis testita kontraŭ Immich-3.2.4-servilo kaj kontraŭ servilo kompilita el tiu sama Immich `main`: ensaluto, templinio, albumoj, 360°-fotoj kaj -videoj, ludado de videoj kaj alŝutoj, sen ia API-eraro. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la projekto Immich. Por la plena dokumentaro de Immich mem, vidu [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Kompare kun la aplikaĵo de Immich kaj aliaj aplikaĵoj
@@ -1037,6 +1038,8 @@ Kiam estas la malkodado de servila video, kiu ne sukcesas sekvi, ne la desegnado
 - **Elektu la bildigilon mem.** En Agordoj, Altnivelaj agordoj, ŝaltu "Problemsolvi": aperas ero "360°-videa bildigilo", defaŭlte "Aŭtomata". Ĝi ankaŭ proponas "Kromprogramo, plena grandeco", "Kromprogramo, maksimume 4096 larĝa", "Kromprogramo, maksimume 2880 larĝa" kaj "Ebena, sen la 360°-vido", por la sekva 360°-video, kiun vi malfermas. Sub ĝi, "Laste mezurita" nomas la grandecon, en kiu la lasta 360°-video estis desegnita, ĝiajn kadrojn sekunde, la grafikan ĉipon kaj la malkodilon: kopiu ĝin en cimraporton. Elekti "Aŭtomata" denove, eĉ kiam ĝi jam estas la elekto, forgesas tion, kio estis mezurita, kaj la sekvaj 360°-videoj estas mezurataj denove.
 - **Kion la ĉipo malkodas.** Agordoj, Altnivelaj agordoj, "Videomalkodiloj de ĉi tiu aparato" listigas, kion la uzata grafika ĉipo malkodas, kiel Direct3D 11 raportas ĝin, kaj la aplikaĵo korektas tiun liston per tio, kion ĝi mezuris dum ludado: la agordo "Videofonto" kaj la duobjektiva kontrolo de krudaj videoj sekvas ĝin. H.264 pli larĝa ol 4096 rastrumeroj (la 5.7K de 360°-fotiloj) estas malkodata de la procesoro, ĉar neniu ĉipo de la testa tekkomputilo akceptas ĝin.
 
+**Por programistoj.** La 360°-ludilo desegnas per propra bildigilo, konstruita sur libmpv kaj flikita kromprogramo media_kit_video: mpv desegnas ĉiun kadron en teksturon sur la grafika ĉipo, kaj paŝo de OpenGL ES 3.0 desegnas la vidon en la teksturon, kiun Flutter montras, sen ia kopio tra la procesoro. Kial ĝi estis konstruita tiel, kiel ĝi funkcias, kio estis mezurita kaj kio estas agordebla: [la 360°-videa bildigilo de la komputila versio](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Kompare kun la telefonaj aplikaĵoj
 
 - **Savkopio funkcias dum la aplikaĵo estas malfermita** (aŭ minimumigita), ne fone kun la fenestro fermita. Fermi la fenestron dum alŝutoj funkcias, aŭ dum la komputilo estas kunhavigita, unue demandas.
@@ -1110,7 +1113,7 @@ La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Stor
 
 - **Android-telefonoj kaj -tabulkomputiloj**
   - Hodiaŭ: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), aŭ la APK en la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` por telefono (la universala `Immuch360-v<version>-release.apk` funkcias ĉie, `-armeabi-v7a` estas por pli malnovaj 32-bitaj telefonoj, kaj la dosiero `.aab` estas por Google Play, ne por flankinstalado). La GitHub-kompilaĵo kutime estas antaŭ la vendejo. Ĉiuokaze ĝi instaliĝas apud la oficiala aplikaĵo de Immich (pakaĵo `com.aprogsys.immuch360`).
-  - Baldaŭ: en Google Play, kompilaĵo 20 estas publika ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 18; kompilaĵo 21 ŝanĝas nenion en telefonoj kaj tabulkomputiloj.
+  - Baldaŭ: en Google Play, kompilaĵo 22 estis sendita la 10-an de oktobro 2026 anstataŭ kompilaĵo 20 (publika ekde la 7-a de oktobro); ĝi portas la oktobrajn ŝanĝojn de Immich kaj la televidilajn korektojn.
 - **iPhone kaj iPad**
   - Hodiaŭ: atendas la kontrolon de Apple. La kontrolata versio portas la funkciojn de kompilaĵo 11: la alŝuto al Immich kaj la elekto "Videofonto" (kompilaĵo 15) kaj la krudaj Insta360-dosieroj (kompilaĵo 16) venos kun posta App-Store-ĝisdatigo. La fontkodo konstruiĝas per Xcode aŭ en Codemagic, vidu [Konstrui ĝin mem](#build-it-yourself).
   - Baldaŭ: App Store, en kontrolado.
@@ -1157,7 +1160,7 @@ Neniu sekreto loĝas en ĉi tiu deponejo: la Android-subskriba ŝlosilo estas ko
 
 ### Branĉoj
 
-- **`main`**: Immich `main` ĉe la enmeto, sur kiu `immuch360` baziĝas (29-a de septembro 2026 por la nunaj kompilaĵoj), neniam modifita; ĝi antaŭeniras kiam la forko estas rebazita sur pli nova Immich.
+- **`main`**: Immich `main` ĉe la enmeto, sur kiu `immuch360` baziĝas (10-a de oktobro 2026 por la nunaj kompilaĵoj), neniam modifita; ĝi antaŭeniras kiam la forko estas rebazita sur pli nova Immich.
 - **`immuch360`**: la ŝanĝoj de ĉi tiu forko super Immich, inkluzive de Immuch360 Desktop ekde la 9-a de oktobro 2026. Ĉiu eldono diras, sur kiu Immich-versio ĝi baziĝas.
 - **`desktop`**: kie Immuch360 Desktop, la komputila versio, estis konstruata super `immuch360`, ĝis ĝi estis kunfandita en ĝin la 9-an de oktobro 2026, por ke telefonoj, kaskoj, televidiloj kaj komputiloj eliru el la sama fontkodo. Nun ĝi sekvas `immuch360` kaj portas la etikedojn de la labortablaj antaŭeldonoj ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) el la enmeto 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) el 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) el la kunfando de la 360°-videoludilo la 10-an de oktobro 2026). Nova labortabla laboro alvenas tie unue kaj aliĝas al `immuch360` kun la labortabla kompilaĵo, kiu liveras ĝin. La komputila versio ŝanĝas nenion sub `mobile/android` kaj `mobile/ios`.
 

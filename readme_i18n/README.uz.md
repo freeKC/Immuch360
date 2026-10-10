@@ -17,10 +17,10 @@ U 360° kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360
 
 | Platforma | Qayerdan olish mumkin | 2026-yil 10-oktabr holatiga koʻra |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon va planshetlari | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play da 2026-yil 7-oktabrdan beri 20-yigʻma, GitHub da 21-yigʻma |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon va planshetlari | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub da 22-yigʻma, 2026-yil 10-oktabrda Google Play ga yuborildi (u yerda 7-oktabrdan beri 20-yigʻma faol) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone va iPad** | App Store | 3.3.0 versiyasi Apple koʻrib chiqishini kutmoqda; hozircha [oʻzingiz yigʻing](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 va 3S | [APK](#meta-quest-3) · Horizon Store | sahifa tasdiqlandi, 21-yigʻma Meta koʻrib chiqishida |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV va Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub da 21-yigʻma; televizorlar uchun Google Play sahifasi 2026-yil 9-oktabrdan beri Google koʻrib chiqishida |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 va 3S | [APK](#meta-quest-3) · Horizon Store | sahifa tasdiqlandi, 21-yigʻma Meta koʻrib chiqishida, 22-yigʻma alfa kanalida |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV va Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub da 22-yigʻma; televizorlar uchun Google Play sahifasi 2026-yil 9-oktabrdan beri Google koʻrib chiqishida |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Dastlabki ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows da kompyuter 3-yigʻmasi: suratlar, tekis va 360° videolar; macOS va Linux keyinroq |
 
 *Holatlar har bir relizda yangilanadi; tafsilotlar [Qayerdan olish mumkin](#where-to-get-it) boʻlimida.*
@@ -196,7 +196,7 @@ U tarmogʻingizdagi serverlarni oʻzi topadi va fayllarni ilovaning qolgan qismi
 4. Roʻyxatda yoʻqmi? Shaklni qoʻlda toʻldiring. Tur: "SMB (Samba, Windows ulashmasi)", "WebDAV (Nextcloud, Synology va boshqalar)", "DLNA media server (Jellyfin, NAS, TV pristavka)" yoki 20-yigʻmadan "Plex Media Server", u [Plex Media Server, plex.tv siz](#plex-media-server-without-plextv) boʻlimidagi sahifani ochadi. Keyin Nomi, "Server nomi yoki manzili" (nom yoki manzil; `smb://nas/photos`, `\\nas\photos` yoki `https://nas:5006/photos` kabi toʻliq manzil boshqa maydonlarni toʻldiradi), odatdagi port boʻlmasa "Port (ixtiyoriy)", SMB uchun "Ulashma" yoki WebDAV uchun "WebDAV manzilining yo'li", "Boshlang'ich jild (ixtiyoriy)", "Foydalanuvchi nomi" va "Parol", WebDAV uchun esa "Xavfsiz ulanish (HTTPS)".
 5. SMB: server va foydalanuvchi nomi kiritilgach, "Ulashmani tanlang" serverdagi ulashmalarni roʻyxatlaydi.
 6. DLNA: media serverning foydalanuvchi nomi yoki paroli boʻlmaydi. Serverni, portni va uning qurilma tavsifining "Tavsif yo'li" ni kiriting (minidlna uchun `/rootDesc.xml`), yoki toʻliq manzilni, masalan `http://192.168.1.10:8200/rootDesc.xml`, server maydoniga joylang.
-7. "Ulanishni tekshirish" ga bosing. U "Ulandi, boshlang'ich jildda N ta element" deb javob beradi yoki nima uchun muvaffaqiyatsiz boʻlganini aytadi. Keyin shakl pastidagi Saqlash ga bosing.
+7. "Ulanishni tekshirish" ga bosing. U "Ulandi, boshlang'ich jildda N ta element" deb javob beradi yoki nima uchun muvaffaqiyatsiz boʻlganini aytadi. Keyin shakl pastidagi Saqlash ga bosing. 22-yigʻmadan boshlab, biror narsa yozgan shaklingizni yopganingizda (X, Orqaga) ilova avval "O'zgarishlardan voz kechilsinmi?" deb soʻraydi, Plex va kamera sahifalarida ham, biror narsa yozilgandan keyin topilgan Plex yoki kamerani tanlaganingizda ham xuddi shunday soʻraydi.
 
 Boʻsh parolli foydalanuvchi nomi shundayligicha yuboriladi: Freebox Server disklari uchun `freebox` va parolsiz kirishni talab qiladi. Ulashmani keyinroq oʻzgartirish yoki oʻchirish uchun Tarmoq ulashmalari sahifasida uning yonidagi qalamdan foydalaning.
 
@@ -617,8 +617,9 @@ Siz 360° suratlar va videolarni, albomlaringizni va NAS yoki Plex serveringizda
 
 ### Pult bilan harakatlanish
 
-- Strelkalar ramkani siljitadi, OK u turgan narsani ochadi, Orqaga orqaga qaytaradi. Yorliqdan Orqaga yon menyuga, keyin Photos ga, keyin ilovadan tashqariga oʻtadi.
-- Kanal yuqoriga va pastga bir vaqtda bir sahifa aylantiradi.
+- Strelkalar ramkani siljitadi, OK u turgan narsani ochadi, Orqaga orqaga qaytaradi. Yorliqdan Orqaga yon menyuga, keyin Photos ga, keyin ilovadan tashqariga oʻtadi. Tanlovlar roʻyxatida, masalan ulashma turi yoki sozlamada, strelkalar faqat ramkani siljitadi, OK esa tanlovni tanlaydi (22-yigʻmadan; avval strelkalar tanlovni oʻzgartirardi).
+- Kanal yuqoriga va pastga bir vaqtda bir sahifa aylantiradi. 22-yigʻmadan surat toʻrlari ekran chegaralari ichida har bir qatorda oltitaga yaqin katakcha koʻrsatadi, qurilmaning oʻz fayllari miniatyuralari aniqroq boʻlib, mayda detallarda ham silliq qoladi, telefonda rasmli sarlavhaga ega sahifalar (360° roʻyxati, Favorites, qurilma albomlari) esa uning oʻrniga bitta panel koʻrsatadi.
+- 22-yigʻmadan ramka har bir sahifaning birinchi elementidan boshlanadi (360° roʻyxatining birinchi katakchasi, server manzili tasdiqlangach elektron pochta maydoni), toʻr aylantirilganda ekran chegaralari ichida qoladi va toʻrdan Orqaga tugmasiga emas, uning ustidagi qator yoki filtrlarga koʻtariladi. Tarmoq ulashmasi yoki kameradan oʻngga bosish uning tahrirlash tugmasiga yetkazadi, "Ulanishni tekshirish" natijasi esa koʻrinadigan joyga aylanadi.
 - Koʻruvchilarda pultning ijro va pauza, oldinga oʻtkazish, orqaga oʻtkazish, keyingi va oldingi tugmalari ishlaydi, maʼlumot tugmasi esa surat yoki videoning tafsilotlarini koʻrsatadi.
 
 ### Pult bilan suratlar va videolar
@@ -632,7 +633,7 @@ Siz 360° suratlar va videolarni, albomlaringizni va NAS yoki Plex serveringizda
 
 ### Pult uchun joylashuv sozlamasi
 
-Settings (Sozlamalar), Preferences (Afzalliklar), "Pult uchun joylashuv": "Katta fokus ramkalari va pult tugmalari, sensorli ekran talab qiladigan boshqaruv elementlarisiz. Avtomatik uni Android TV va Google TV'da yoqadi." Standart qiymat Avtomatik; Yoqiq klaviatura yoki geympad bilan boshqariladigan planshetga mos keladi; O'chiq uni televizorda oʻchiradi. Sozlama faqat Android da bor. Strelkalar va OK sozlamadan qatʼi nazar koʻruvchilarda klaviatura yoki geympad bilan ishlaydi.
+Settings (Sozlamalar), Preferences (Afzalliklar), "Pult uchun joylashuv": "Katta fokus ramkalari va pult tugmalari, sensorli ekran talab qiladigan boshqaruv elementlarisiz. Avtomatik uni Android TV va Google TV'da yoqadi." Standart qiymat Avtomatik; Yoqiq klaviatura yoki geympad bilan boshqariladigan planshetga mos keladi; O'chiq uni televizorda oʻchiradi. Sozlama faqat Android da bor. 22-yigʻmadan oʻzgarish ochiq sahifaga darhol qoʻllanadi va sahifa qayerda boʻlsa, oʻsha yerda qoladi (avval Settings yana Advanced da, Orqaga bilan oʻtib ketish kerak boʻlgan boshlangʻich ekran ustida ochilardi). Strelkalar va OK sozlamadan qatʼi nazar koʻruvchilarda klaviatura yoki geympad bilan ishlaydi.
 
 ### Cheklovlar
 
@@ -650,7 +651,7 @@ Settings (Sozlamalar), Preferences (Afzalliklar), "Pult uchun joylashuv": "Katta
 
 360° suratlar boshqa barcha suratlar bilan aralashib ketgan va odamlar Immich dan sferalar va panoramalarni filtrlash yoʻlini soʻraydi ([#12824 muhokamasi](https://github.com/immich-app/immich/discussions/12824)). Immich ilovasida bunday roʻyxat yoʻq.
 
-Immuch360 360° suratlarning miniatyuralariga (tarmoq ulashmasi jildida 360° videolarga ham) 360° belgisini, Kutubxona yorligʻining eng yuqorisiga esa 360° bandini qoʻyadi. 18-yigʻmadan bu roʻyxatda, server bilan, server 360° deb belgilagan suratlar va videolar, nomi boʻyicha xom Insta360 fayllari, 360° kameraning oʻzi tikkan suratlar va siz 360° sifatida ko‘rishni tanlaganlar, qoʻshimcha ravishda qurilmani qidirish topganlari boʻladi; serversiz esa qurilmani qidirish topganlari va siz 360° sifatida ko‘rishni tanlaganlar. Har biri nusxalari qayerda boʻlishidan qatʼi nazar bir marta, eng yangisi birinchi boʻlib koʻrinadi.
+Immuch360 360° suratlarning miniatyuralariga (tarmoq ulashmasi jildida 360° videolarga ham) 360° belgisini, Kutubxona yorligʻining eng yuqorisiga esa 360° bandini qoʻyadi. 18-yigʻmadan bu roʻyxatda, server bilan, server 360° deb belgilagan suratlar va videolar, nomi boʻyicha xom Insta360 fayllari, 360° kameraning oʻzi tikkan suratlar va siz 360° sifatida ko‘rishni tanlaganlar, qoʻshimcha ravishda qurilmani qidirish topganlari boʻladi; serversiz esa qurilmani qidirish topganlari va siz 360° sifatida ko‘rishni tanlaganlar. Har biri nusxalari qayerda boʻlishidan qatʼi nazar bir marta, eng yangisi birinchi boʻlib koʻrinadi. 22-yigʻmadan toʻr ustida ulashmalaringizdagi 360° suratlar va videolar bilan "Tarmoq ulashmalarida" qatori chiqadi, eng yangisi birinchi: ilova ularni jildini koʻrsatganda yoki ularni ochganda bilib oladi (u ulashmani oʻzi qidirmaydi), bir ishga tushirishdan keyingisigacha eslab qoladi va ulashmasi bilan birga unutadi. Oʻz suratlari boʻlmagan televizorda 360° roʻyxati aynan shu qator orqali toʻladi.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="360° roʻyxati, 4 ta element, Date varagʻi ochiq: All, soni bilan 2026-yil, Butun yil, soni bilan 2026-yil avgust va 2026-yil aprel, 2025-yil va Custom">
 
@@ -661,7 +662,7 @@ Immuch360 360° suratlarning miniatyuralariga (tarmoq ulashmasi jildida 360° vi
 3. Server bilan media qayerdaligini tanlang: "Serverda", "On this device" va boʻlsa "Shared with me" (Men bilan ulashilgan).
 4. Turini tanlang: Photos, Videos, 3D, VR180.
 5. Roʻyxatda ikki yoki undan ortiq kamera boʻlsa, ikkinchi qator ularni EXIF ishlab chiqaruvchisi va modeli boʻyicha, soni bilan koʻrsatadi. Bularsiz xom fayl kengaytmasining brendi bilan nomlanadi (Insta360, GoPro, DJI), qolgan hammasi "Nomaʼlum kamera".
-6. Guruh ichida (joylar, Photos va Videos, 3D va VR180, kameralar) tanlovlar qoʻshiladi; guruhlar orasida ular roʻyxatni toraytiradi. Clear (Tozalash) hammasini tiklaydi; "Bu filtrlarga mos 360° surat yoki video yoʻq" filtrlar hech narsa qoldirmaganini bildiradi.
+6. Guruh ichida (joylar, Photos va Videos, 3D va VR180, kameralar) tanlovlar qoʻshiladi; guruhlar orasida ular roʻyxatni toraytiradi. Date, Photos va Videos tanlovlari tarmoq ulashmalari qatoriga ham taʼsir qiladi; 3D, VR180 va kameralar uni yashiradi, chunki ilova ulashmadagi fayl uchun bularning hech birini bilmaydi. Clear (Tozalash) hammasini tiklaydi; "Bu filtrlarga mos 360° surat yoki video yoʻq" filtrlar hech narsa qoldirmaganini bildiradi.
 7. Surat yoki videoni oching. Quest ning immersiv koʻrinishida oldingi va keyingi filtrlangan roʻyxatga amal qiladi.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Rasmiy Immich mobil ilovasi qiladigan hamma narsa shu yerda: zaxira nusxa, vaqt 
 
 360° suratni ilovasi yoʻq odamga koʻrsatish uchun uni Immich ulashilgan havolasi orqali ulashing: Immich veb ilovasi 360° suratni uning brauzerida sfera sifatida koʻrsatadi.
 
-Joriy yigʻma, 21-yigʻma (versiya 3.3.0-rc.0, yigʻma raqami 3030019), Immich 3.3.0-rc.0 ga asoslangan (Immich `main`, hali barqaror reliz emas). 19-yigʻma Immich 3.2 serveri bilan sinovdan oʻtkazilgan, 20 va 21-yigʻmalar esa ilova serverdan soʻraydigan narsalarda hech narsani oʻzgartirmaydi. Iltimos, muammolar haqida Immich loyihasiga emas, [Issues](https://github.com/freeKC/Immuch360/issues) boʻlimiga xabar bering. Immich ning oʻzi haqidagi toʻliq hujjatlar uchun qarang: [immich.app](https://immich.app).
+Joriy yigʻma, 22-yigʻma (versiya 3.3.0-rc.0, yigʻma raqami 3030020), Immich ning 2026-yil 10-oktabrdagi `main` iga asoslangan (versiya 3.3.0-rc.0, hali barqaror reliz emas). 22-yigʻma Immich 3.2.4 serveri bilan va oʻsha Immich `main` idan yigʻilgan server bilan sinovdan oʻtkazildi: kirish, vaqt chizigʻi, albomlar, 360° suratlar va videolar, video ijrosi va yuklashlar, birorta ham API xatosisiz. Iltimos, muammolar haqida Immich loyihasiga emas, [Issues](https://github.com/freeKC/Immuch360/issues) boʻlimiga xabar bering. Immich ning oʻzi haqidagi toʻliq hujjatlar uchun qarang: [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich ilovasi va boshqa ilovalar bilan taqqoslash
@@ -1037,6 +1038,8 @@ Ulgurmayotgan narsa chizish emas, server videosini dekodlash boʻlsa (5.7K H.264
 - **Renderni oʻzingiz tanlang.** Settings, Advanced (Kengaytirilgan) da Troubleshooting (Nosozliklarni bartaraf etish) ni yoqing: standart holatda "Avtomatik" boʻlgan "360° video renderi" bandi paydo boʻladi. U siz ochadigan keyingi 360° video uchun "Plagin, toʻliq oʻlcham", "Plagin, koʻpi bilan 4096 kenglik", "Plagin, koʻpi bilan 2880 kenglik" va "Tekis, 360° koʻrinishsiz" variantlarini ham taklif qiladi. Uning ostida "Oxirgi oʻlchov" oxirgi 360° video qaysi oʻlchamda chizilganini, uning soniyadagi kadrlarini, grafik chipni va dekoderni aytadi: buni xato hisobotiga nusxalang. "Avtomatik" ni qayta tanlash, u allaqachon tanlangan boʻlsa ham, oʻlchanganlarni unutadi va keyingi 360° videolar qayta oʻlchanadi.
 - **Chip nimani dekodlaydi.** Settings, Advanced, "Shu qurilmaning video dekoderlari" ishlatilayotgan grafik chip nimani dekodlashini Direct3D 11 bildirganidek roʻyxatlaydi, ilova esa bu roʻyxatni ijro paytida oʻlchagani bilan tuzatadi: "Video manbasi" sozlamasi va xom videolarning ikki linza tekshiruvi unga amal qiladi. 4096 pikseldan keng H.264 (360° kameralarning 5.7K i) protsessor tomonidan dekodlanadi, chunki sinov noutbukining hech bir chipi uni qabul qilmaydi.
 
+**Dasturchilar uchun.** 360° pleyer oʻzining renderi orqali chizadi, u libmpv va yamalgan media_kit_video plagini asosida qurilgan: mpv har bir kadrni grafik chipdagi teksturaga chizadi, OpenGL ES 3.0 chizish bosqichi esa koʻrinishni Flutter koʻrsatadigan teksturaga chizadi, protsessor orqali nusxa olinmaydi. Nega u shunday qurilgani, qanday ishlashi, nima oʻlchangani va nimani sozlash mumkinligi: [kompyuter versiyasining 360° video renderi](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Telefon ilovalari bilan taqqoslash
 
 - **Zaxiralash ilova ochiq turganda ishlaydi** (yoki yigʻilganda), oyna yopiq holda fonda emas. Yuklashlar ketayotganda yoki kompyuter ulashilayotganda oynani yopish avval soʻraydi.
@@ -1110,7 +1113,7 @@ Ilova telefonlar va planshetlar uchun Google Play da bor; App Store versiyasi Ap
 
 - **Android telefon va planshetlari**
   - Bugun: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) yoki [Releases](https://github.com/freeKC/Immuch360/releases) sahifasidagi APK: telefon uchun `Immuch360-v<version>-arm64-v8a-release.apk` (universal `Immuch360-v<version>-release.apk` hamma joyda ishlaydi, `-armeabi-v7a` eski 32 bitli telefonlar uchun, `.aab` fayli esa qoʻlda oʻrnatish uchun emas, Google Play uchun). GitHub yigʻmasi odatda doʻkondan oldinda boʻladi. Har qanday holatda u rasmiy Immich ilovasi yoniga oʻrnatiladi (paket `com.aprogsys.immuch360`).
-  - Tez orada: Google Play da 18-yigʻma oʻrniga 20-yigʻma 2026-yil 7-oktabrdan beri faol; 21-yigʻma telefon va planshetlarda hech narsani oʻzgartirmaydi.
+  - Tez orada: Google Play ga 2026-yil 10-oktabrda 20-yigʻma (7-oktabrdan beri faol) oʻrniga 22-yigʻma yuborildi; unda Immich ning oktabr oʻzgarishlari va televizor tuzatishlari bor.
 - **iPhone va iPad**
   - Bugun: Apple ning koʻrib chiqishini kutmoqda. Koʻrib chiqilayotgan versiyada 11-yigʻmaning funksiyalari bor: Immich ga yuklash va Video manbasi tanlovi (15-yigʻma) hamda xom Insta360 fayllari (16-yigʻma) keyingi App Store yangilanishi bilan keladi. Manba kodi Xcode yoki Codemagic da yigʻiladi, qarang: [Oʻzingiz yigʻing](#build-it-yourself).
   - Tez orada: App Store, koʻrib chiqilmoqda.
@@ -1157,7 +1160,7 @@ Bu repozitoriyda hech qanday maxfiy maʼlumot yoʻq: Android imzolash kaliti shi
 
 ### Tarmoqlar
 
-- **`main`**: `immuch360` asoslangan kommitdagi Immich `main` (joriy yigʻmalar uchun 2026-yil 29-sentabr), hech qachon oʻzgartirilmaydi; fork yangiroq Immich ga qayta asoslanganda u oldinga siljiydi.
+- **`main`**: `immuch360` asoslangan kommitdagi Immich `main` (joriy yigʻmalar uchun 2026-yil 10-oktabr), hech qachon oʻzgartirilmaydi; fork yangiroq Immich ga qayta asoslanganda u oldinga siljiydi.
 - **`immuch360`**: bu forkning Immich ustidagi oʻzgarishlari, 2026-yil 9-oktabrdan beri Immuch360 Desktop ham. Har bir reliz qaysi Immich versiyasiga asoslanganini aytadi.
 - **`desktop`**: Immuch360 Desktop, ya'ni kompyuter versiyasi, `immuch360` ustida yigʻilgan tarmoq; 2026-yil 9-oktabrda telefonlar, shlemlar, televizorlar va kompyuterlar bir xil manba kodidan chiqishi uchun u unga birlashtirildi. Endi u `immuch360` ga ergashadi va kompyuter oldindan relizlari teglarini saqlaydi ([kompyuter 1-yigʻmasi](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 21f285c34 kommitidan, [kompyuter 2-yigʻmasi](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 5b723bd25 dan, [kompyuter 3-yigʻmasi](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 2026-yil 10-oktabrda 360° video pleyerning birlashtirilishidan). Yangi kompyuter ishlari avval shu yerga tushadi va uni chiqaradigan kompyuter yigʻmasi bilan `immuch360` ga qoʻshiladi. Kompyuter versiyasi `mobile/android` va `mobile/ios` ostida hech narsani oʻzgartirmaydi.
 

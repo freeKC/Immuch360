@@ -17,10 +17,10 @@ Se isch fir Leit, die mit ra 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360, Ri
 
 | Plattform | Wo mr's kriagt | Stand am 10. Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** Telefon ond Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 20 uff Google Play seit em 7. Oktober 2026, Build 21 uff GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** Telefon ond Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 22 uff GitHub, am 10. Oktober 2026 an Google Play gschickt (dort isch seit em 7. Oktober Build 20 online) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ond iPad** | App Store | Version 3.3.0 wartet uff d Prüfong vo Apple; bis dahin [selber baua](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ond 3S | [APK](#meta-quest-3) · Horizon Store | Eitrag freigeba, Build 21 en dr Prüfong bei Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ond Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 21 uff GitHub; dr Google-Play-Eitrag für Fernseher isch seit em 9. Oktober 2026 en dr Prüfong vo Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ond 3S | [APK](#meta-quest-3) · Horizon Store | Eitrag freigeba, Build 21 en dr Prüfong bei Meta, Build 22 em Alpha-Kanal |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ond Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 22 uff GitHub; dr Google-Play-Eitrag für Fernseher isch seit em 9. Oktober 2026 en dr Prüfong vo Google |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Vorschau-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Desktop-Build 3 uff Windows: Fotos, flache ond 360°-Videos; macOS ond Linux schpäter |
 
 *D Stände werdet bei jedem Release aktualisiert; d Einzelheita stehet onter [Wo mr's kriagt](#where-to-get-it).*
@@ -196,7 +196,7 @@ D App findet d Server en deim Netzwerk selber ond spielt d Dateia direkt en de g
 4. Ned en dr Lischte? Füll s Formular vo Hand aus. Typ: "SMB (Samba, Windows-Freigab)", "WebDAV (Nextcloud, Synology ond andre)", "DLNA-Medieserver (Jellyfin, NAS, TV-Box)" oder, ab Build 20, "Plex Media Server", des d Seite vo [Plex Media Server, ohne plex.tv](#plex-media-server-without-plextv) aufmacht. Dann Nama, "Servername oder Adress" (a Nama oder a Adress; a vollschtändige Adress wia `smb://nas/photos`, `\\nas\photos` oder `https://nas:5006/photos` füllt d andre Felder aus), "Port (optional)", wenn's ned dr übliche isch, "Freigab" fir SMB oder "Pfad vo dr WebDAV-Adress" fir WebDAV, "Startordner (optional)", "Benutzernama" ond "Passwort", ond "Sichere Verbindong (HTTPS)" fir WebDAV.
 5. SMB: sobald Server ond Benutzernama eitippt send, listet "A Freigab aussuacha" d Freigaba vom Server auf.
 6. DLNA: a Medieserver hot koin Benutzernama ond koi Passwort. Gib da Server, da Port ond da "Beschreibungspfad" vo seiner Gerätebeschreibong aa (`/rootDesc.xml` fir minidlna), oder füg die ganze Adress, wia `http://192.168.1.10:8200/rootDesc.xml`, ens Serverfeld ei.
-7. Tipp uff "Verbindong teschta". D Antwort isch "Verbonda, N Eiträg em Startordner", oder es schtoht do, warom's ned klappt hot. Dann tipp onda em Formular uff Speichera.
+7. Tipp uff "Verbindong teschta". D Antwort isch "Verbonda, N Eiträg em Startordner", oder es schtoht do, warom's ned klappt hot. Dann tipp onda em Formular uff Speichera. Ab Build 22 frogt d App zerscht "Änderonga verwerfa?", wenn du a Formular zumachsch, en des du ebbes neidippt hosch (X, Zrück), au uff de Seita vo Plex ond vo dr Kamera, ond grad so isch's, wenn du an gfondena Plex oder a gfondene Kamera wählsch, sobald ebbes neidippt isch.
 
 A Benutzernama mit ma leera Passwort wird so gschickt: a Freebox Server will fir seine Platta `freebox` ond koi Passwort. Om a Freigab schpäter zom ändera oder zom lösche, nemm dr Bleistift drneba uff dr Seite Netzwerkfreigaba.
 
@@ -617,8 +617,9 @@ Ab Build 20 lauft die gleiche Android-App uff Android TV ond Google TV, mit dr F
 
 ### Mit dr Fernbedienong navigiera
 
-- D Pfeil schiebet da Rahma, OK macht des auf, wo er drauf isch, Zrück goht zrück. Vo ma Reiter aus goht Zrück zom Seitamenü, dann zu Photos (Fotos), dann aus dr App naus.
-- Kanal hoch ond ronter blätteret a Seite uff oimol.
+- D Pfeil schiebet da Rahma, OK macht des auf, wo er drauf isch, Zrück goht zrück. Vo ma Reiter aus goht Zrück zom Seitamenü, dann zu Photos (Fotos), dann aus dr App naus. En ra Lischte vo Auswahla, wie dr Typ vo ra Freigab oder a Eistellong, schiebet d Pfeil bloß da Rahma ond OK wählt d Auswahl (ab Build 22; vorher hen d Pfeil d Auswahl gändert).
+- Kanal hoch ond ronter blätteret a Seite uff oimol. Ab Build 22 zeiget d Fotoraster ungefähr sechs Kachla pro Reih innerhalb vo de Ränder vom Bildschirm, mit schärfere Vorschaubildla vo de eigene Dateia vom Gerät, die bei feine Details ruhig bleibet, ond d Seita, die uffm Telefon an Bildkopf hen (d 360°-Lischte, Favorites, d Alben vom Gerät), zeiget stattdessa a oizige Leischt.
+- Ab Build 22 fangt dr Rahma beim erschte Element vo jeder Seite aa (d erschte Kachel vo dr 360°-Lischte, s E-Mail-Feld, sobald d Serveradress bschtätigt isch), bleibt innerhalb vo de Ränder vom Bildschirm, wenn a Raster blätteret, ond goht vo ma Raster nauf zu dr Reih oder de Filter drüber statt zom Zrück-Knopf. Rechts vo ra Netzwerkfreigab oder ra Kamera kommt mr zu ihrem Bearbeita-Knopf, ond s Ergebnis vo "Verbindong teschta" rutscht ens Bild.
 - En de Aasichta gangat d Tasta vo dr Fernbedienong fir Abspiela ond Pause, Vorspula, Zrückspula, nägschts ond vorigs, ond d Info-Taste zeigt d Details vo ma Foto oder Video.
 
 ### Fotos ond Videos mit dr Fernbedienong
@@ -632,7 +633,7 @@ Ab Build 20 lauft die gleiche Android-App uff Android TV ond Google TV, mit dr F
 
 ### D Eistellong Layout für d Fernbedienong
 
-Settings (Eistellunga), Preferences (Vorlieba), "Layout für d Fernbedienong": "Große Fokusrahma ond Tasta vo dr Fernbedienong, ohne d Bedienelement, wo an Touchscreen brauchat. Automatisch schaltet's auf Android TV ond Google TV ei." Automatisch isch dr Standard; Ei passt fir a Tablet, des mr mit ra Tastatur oder ma Gamepad bedient; Aus schaltet's uffm Fernseher aus. D Eistellong gibt's bloß uff Android. D Pfeil ond OK gangat en de Aasichta mit ra Tastatur oder ma Gamepad, egal wia d Eistellong isch.
+Settings (Eistellunga), Preferences (Vorlieba), "Layout für d Fernbedienong": "Große Fokusrahma ond Tasta vo dr Fernbedienong, ohne d Bedienelement, wo an Touchscreen brauchat. Automatisch schaltet's auf Android TV ond Google TV ei." Automatisch isch dr Standard; Ei passt fir a Tablet, des mr mit ra Tastatur oder ma Gamepad bedient; Aus schaltet's uffm Fernseher aus. D Eistellong gibt's bloß uff Android. Ab Build 22 gilt a Änderong sofort fir d offene Seite, ond die bleibt, wo se gwä isch (vorher send d Settings wieder uff Advanced aufganga, iber ma Startbildschirm, durch den mr mit Zrück durch hot müssa). D Pfeil ond OK gangat en de Aasichta mit ra Tastatur oder ma Gamepad, egal wia d Eistellong isch.
 
 ### Grenza
 
@@ -650,7 +651,7 @@ Settings (Eistellunga), Preferences (Vorlieba), "Layout für d Fernbedienong": "
 
 360°-Aufnahma send mit älle andre Fotos vermischt, ond d Leit wünschet sich vo Immich a Möglichkeit, Kugla ond Panoramas zom filtera ([Diskussion #12824](https://github.com/immich-app/immich/discussions/12824)). D Immich-App hot so a Lischte ned.
 
-Immuch360 macht a 360°-Abzeicha uff d Vorschaubildla vo 360°-Fotos (en ma Ordner vo ra Netzwerkfreigab au uff 360°-Videos), ond an 360°-Eintrag ganz oba em Reiter Bibliothek. Ab Build 18 hot die Lischte, mit ma Server, d Fotos ond Videos, die dr Server als 360° markiert, d rohe Insta360-Dateia am Nama, d Fotos, die a 360°-Kamera selber zammagsetzt hot, ond die, die du als 360° aazeiga lasch, dazu des, was d Suche uffm Gerät gfonda hot; ohne Server des, was d Suche uffm Gerät gfonda hot, ond die, die du als 360° aazeiga lasch. Jedes taucht oimol auf, egal wo seine Kopien send, s Neischte zerscht.
+Immuch360 macht a 360°-Abzeicha uff d Vorschaubildla vo 360°-Fotos (en ma Ordner vo ra Netzwerkfreigab au uff 360°-Videos), ond an 360°-Eintrag ganz oba em Reiter Bibliothek. Ab Build 18 hot die Lischte, mit ma Server, d Fotos ond Videos, die dr Server als 360° markiert, d rohe Insta360-Dateia am Nama, d Fotos, die a 360°-Kamera selber zammagsetzt hot, ond die, die du als 360° aazeiga lasch, dazu des, was d Suche uffm Gerät gfonda hot; ohne Server des, was d Suche uffm Gerät gfonda hot, ond die, die du als 360° aazeiga lasch. Jedes taucht oimol auf, egal wo seine Kopien send, s Neischte zerscht. Ab Build 22 kommt iber em Raster a Reih "En de Netzwerkfreigaba" mit de 360°-Fotos ond -Videos vo deine Freigaba, s Neischte zerscht: d App lernt se kenna, wenn se ihren Ordner aazeigt oder se aufmacht (se durchsucht koi Freigab vo selber), merkt se sich vo oim Start zom nächschta ond vergisst se mitsamt ihrer Freigab. Uffm Fernseher, der koine eigene Fotos hot, füllt sich d 360°-Lischte grad mit dera Reih.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="D 360°-Lischte, 4 Eiträg, mit offenem Blatt Date: All, s Johr 2026 mit seiner Anzahl, S ganze Johr, August 2026 ond April 2026 mit ihre Anzahla, s Johr 2025, ond Custom">
 
@@ -661,7 +662,7 @@ Immuch360 macht a 360°-Abzeicha uff d Vorschaubildla vo 360°-Fotos (en ma Ordn
 3. Mit Server wähl aus, wo d Medien send: "Uff em Server", "On this device", ond "Shared with me" (Mit mir teilt), wenn's welche gibt.
 4. Wähl d Art: Photos, Videos, 3D, VR180.
 5. Wenn d Lischte zwoi oder meh Kameras hot, listet a zwoite Zeil se nach EXIF-Hersteller ond -Modell auf, mit ihre Anzahla. A Rohdatei ohne die kriagt da Nama vo dr Marke vo ihrer Endong (Insta360, GoPro, DJI), älles andre isch "Unbekannte Kamera".
-6. Innerhalb vo oiner Gruppe (d Orte, Photos ond Videos, 3D ond VR180, d Kameras) zählet d Chips zamma; zwischa de Gruppa schränket se d Lischte ei. Clear (Leera) setzt älles zrück; "Koi 360°-Foto oder -Video passt zu dene Filter" hoißt, dass d Filter nix übrig lasset.
+6. Innerhalb vo oiner Gruppe (d Orte, Photos ond Videos, 3D ond VR180, d Kameras) zählet d Chips zamma; zwischa de Gruppa schränket se d Lischte ei. D Chips Date, Photos ond Videos geltet au fir d Reih vo de Netzwerkfreigaba; 3D, VR180 ond d Kameras verschtecket se, weil d App nix davo woiß fir a Datei vo ra Freigab. Clear (Leera) setzt älles zrück; "Koi 360°-Foto oder -Video passt zu dene Filter" hoißt, dass d Filter nix übrig lasset.
 7. Mach a Foto oder Video auf. En dr immersive Aasicht vo dr Quest folgat vorigs ond nägschts dr gfilterte Lischte.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Wenn dr Server HTTP-Range-Aafroga fürs Original ignoriert ond dr MP4-Index (moo
 
 Om a 360°-Foto ebber zom zeiga, der d App ned hot, teil's mit ma gteilte Immich-Link: d Immich-Web-App zeigt a 360°-Foto en seim Browser als Kugl.
 
-Dr aktuelle Build, Build 21 (Version 3.3.0-rc.0, Buildnummer 3030019), basiert uff Immich 3.3.0-rc.0 (Immich `main`, no koi stabile Version). Build 19 isch mit ma Immich-3.2-Server teschtet worra, ond Build 20 ond 21 änderet nix an dem, was d App vom Server will. Meld Probleme bitte onder [Issues](https://github.com/freeKC/Immuch360/issues), ned beim Immich-Projekt. D vollschtändige Doku vo Immich selber fendsch onder [immich.app](https://immich.app).
+Dr aktuelle Build, Build 22 (Version 3.3.0-rc.0, Buildnummer 3030020), basiert uff Immich `main` vom 10. Oktober 2026 (Version 3.3.0-rc.0, no koi stabile Version). Build 22 isch mit ma Immich-3.2.4-Server teschtet worra ond mit ma Server, der aus em gleicha Immich `main` baut isch: Aamelda, Zeitleischte, Alben, 360°-Fotos ond -Videos, Video abschpiela ond Uploads, ohne oin oiziga API-Fehler. Meld Probleme bitte onder [Issues](https://github.com/freeKC/Immuch360/issues), ned beim Immich-Projekt. D vollschtändige Doku vo Immich selber fendsch onder [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Im Vergleich mit dr Immich-App ond andre Apps
@@ -1037,6 +1038,8 @@ Wenn s Dekodiera vo ma Server-Video ned mitkommt, ned s Zeichna (a Video, des dr
 - **Da Renderer selber wähla.** En Settings, Advanced, schalt "Troubleshooting" (Fehlersuach) ei: a Eitrag "360°-Video-Renderer" taucht auf, standardmäßig Automatisch. Er bietet au "Plugin, volle Größe", "Plugin, höchschtens 4096 broit", "Plugin, höchschtens 2880 broit" ond "Flach, ohne 360°-Aasicht" a, fir s nägschte 360°-Video, des du aufmachsch. Drunter nennt "Zletscht gmessa" d Größe, en dera s letschte 360°-Video zeichnet wora isch, seine Bilder en dr Sekond, da Grafikchip ond da Decoder: kopier des en a Fehlerbericht. Wenn du "Automatisch" nomol wählsch, au wenn's scho gwählt isch, vergisst d App, was gmessa wora isch, ond d nägschte 360°-Videos werdet nomol gmessa.
 - **Was dr Chip dekodiert.** Settings, Advanced, "Videodecoder vo dem Gerät" listet auf, was dr Grafikchip, der grad benutzt wird, dekodiert, so wia's Direct3D 11 meldet, ond d App korrigiert die Lischte mit dem, was se beim Abspiela gmessa hot: d Eischtellong Videoquelle ond d Prüfong vo de zwoi Objektiv bei Rohvideos richtet sich drnoch. H.264 broiter als 4096 Pixel (s 5,7K vo 360°-Kameras) dekodiert dr Prozessor, weil koiner vo de zwoi Chips vom Tescht-Laptop des nemmt.
 
+**Fir Entwickler.** Dr 360°-Player zeichnet iber an eigena Renderer, baut uff libmpv ond ma patchta media_kit_video-Plugin: mpv zeichnet jedes Bild en a Textur uffm Grafikchip, ond a Durchgang mit OpenGL ES 3.0 zeichnet d Aasicht en d Textur, die Flutter zeigt, ohne Kopie iber da Prozessor. Warom er so baut isch, wia er funktioniert, was gmessa worra isch ond was mr eistella ka: [dr 360°-Video-Renderer vo dr Rechner-Version](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Im Vergleich mit de Telefon-Apps
 
 - **D Sicherong lauft, solang d App offa isch** (oder minimiert), ned em Hintergrund mit zuam Fenschter. Wenn du s Fenschter zuamachsch, während Uploads laufet oder dr Rechner freigeba isch, frogt d App vorher.
@@ -1110,7 +1113,7 @@ D App gibt's uff Google Play fir Telefon ond Tablets; d Version fürn App Store 
 
 - **Android-Telefon ond -Tablets**
   - Heit: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder d APK uff dr Seite [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fir a Telefon (d universelle `Immuch360-v<version>-release.apk` goht überall, `-armeabi-v7a` isch fir ältere 32-Bit-Telefon, ond d Datei `.aab` isch fir Google Play, ned zom seitlich Lada). Dr GitHub-Build isch meischtens em Store voraus. So oder so wird er nebe dr offizielle Immich-App installiert (Paket `com.aprogsys.immuch360`).
-  - Bald: uff Google Play isch Build 20 seit em 7. Oktober 2026 online, anstatt vo Build 18; Build 21 ändert nix uffm Telefon ond uffm Tablet.
+  - Bald: uff Google Play isch Build 22 am 10. Oktober 2026 anstatt vo Build 20 (seit em 7. Oktober online) gschickt worra; er bringt d Immich-Änderonga vom Oktober ond d Fernseher-Korrekture.
 - **iPhone ond iPad**
   - Heit: wartet uff d Prüfong vo Apple. D Version en dr Prüfong hot d Funktiona vo Build 11: s Hochlada zu Immich ond d Wahl Videoquelle (Build 15) ond d rohe Insta360-Dateia (Build 16) kommet mit ma schpätera Update em App Store. Dr Quellcode baut sich mit Xcode oder uff Codemagic, guck bei [Selber baua](#build-it-yourself).
   - Bald: App Store, en dr Prüfong.
@@ -1157,7 +1160,7 @@ En dem Repository liegt koi Geheimnis: dr Android-Signierschlüssel isch als ver
 
 ### Zweig
 
-- **`main`**: Immich `main` bei dem Commit, uff dem `immuch360` basiert (29. September 2026 fir d aktuelle Builds), nie verändert; er rückt vor, wenn dr Fork uff a neiers Immich rebased wird.
+- **`main`**: Immich `main` bei dem Commit, uff dem `immuch360` basiert (10. Oktober 2026 fir d aktuelle Builds), nie verändert; er rückt vor, wenn dr Fork uff a neiers Immich rebased wird.
 - **`immuch360`**: d Änderonga vo dem Fork uff Immich drauf, Immuch360 Desktop seit em 9. Oktober 2026 mitgrechnet. Jedes Release sagt, uff welcher Immich-Version es basiert.
 - **`desktop`**: do isch Immuch360 Desktop, d Rechner-Version, uff `immuch360` drauf baut wora, bis's am 9. Oktober 2026 neigmerged wora isch, dass Telefon, Headsets, Fernseher ond Rechner aus de gleiche Quella kommet. Jetzt folgt er `immuch360` ond trägt d Tags vo de Desktop-Pre-Releases ([Desktop-Build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) ausm Commit 21f285c34, [Desktop-Build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) aus 5b723bd25, [Desktop-Build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ausm Merge vom 360°-Videoplayer am 10. Oktober 2026). Neue Desktop-Arbeit landet zerscht do ond kommt mit em Desktop-Build, der se ausliefert, en `immuch360`. D Rechner-Version ändert nix onder `mobile/android` ond `mobile/ios`.
 

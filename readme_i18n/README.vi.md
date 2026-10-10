@@ -17,10 +17,10 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 
 | Nền tảng | Tải ở đâu | Trạng thái ngày 10 tháng 10 năm 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** điện thoại và máy tính bảng | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bản dựng 20 trên Google Play từ ngày 7 tháng 10 năm 2026, bản dựng 21 trên GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** điện thoại và máy tính bảng | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bản dựng 22 trên GitHub, đã gửi lên Google Play ngày 10 tháng 10 năm 2026 (bản dựng 20 phát hành trên đó từ ngày 7 tháng 10) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone và iPad** | App Store | phiên bản 3.3.0 đang chờ Apple xét duyệt; trong lúc chờ, hãy [tự dựng ứng dụng](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 và 3S | [APK](#meta-quest-3) · Horizon Store | trang ứng dụng đã duyệt, bản dựng 21 đang chờ Meta xét duyệt |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV và Google TV** | [APK](#install-it-on-the-tv) · Google Play | bản dựng 21 trên GitHub; trang Google Play cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 và 3S | [APK](#meta-quest-3) · Horizon Store | trang ứng dụng đã duyệt, bản dựng 21 đang chờ Meta xét duyệt, bản dựng 22 trên kênh alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV và Google TV** | [APK](#install-it-on-the-tv) · Google Play | bản dựng 22 trên GitHub; trang Google Play cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP bản xem trước](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | bản dựng máy tính 3 trên Windows: ảnh, video phẳng và video 360°; macOS và Linux sau này |
 
 *Trạng thái được cập nhật ở mỗi bản phát hành; chi tiết xem ở [Tải ở đâu](#where-to-get-it).*
@@ -196,7 +196,7 @@ Immuch360 duyệt và phát ảnh, video của bất kỳ máy chủ nào hỗ t
 4. Không có trong danh sách? Điền biểu mẫu thủ công. Loại: "SMB (Samba, chia sẻ Windows)", "WebDAV (Nextcloud, Synology và các loại khác)", "Máy chủ đa phương tiện DLNA (Jellyfin, NAS, TV box)" hoặc, từ bản dựng 20, "Plex Media Server", mục này mở trang của [Plex Media Server, không cần plex.tv](#plex-media-server-without-plextv). Sau đó Tên, "Tên hoặc địa chỉ máy chủ" (tên hoặc địa chỉ; một địa chỉ đầy đủ như `smb://nas/photos`, `\\nas\photos` hay `https://nas:5006/photos` sẽ điền các trường khác), "Cổng (không bắt buộc)" khi không phải cổng thông thường, "Chia sẻ" cho SMB hoặc "Đường dẫn của địa chỉ WebDAV" cho WebDAV, "Thư mục bắt đầu (không bắt buộc)", "Tên người dùng" và "Mật khẩu", và "Kết nối an toàn (HTTPS)" cho WebDAV.
 5. SMB: khi đã nhập máy chủ và tên người dùng, "Chọn một chia sẻ" liệt kê các chia sẻ của máy chủ.
 6. DLNA: máy chủ đa phương tiện không có tên người dùng hay mật khẩu. Nhập máy chủ, cổng và "Đường dẫn mô tả" của bản mô tả thiết bị (`/rootDesc.xml` với minidlna), hoặc dán toàn bộ địa chỉ, ví dụ `http://192.168.1.10:8200/rootDesc.xml`, vào trường máy chủ.
-7. Chạm "Kiểm tra kết nối". Kết quả là "Đã kết nối, N mục trong thư mục bắt đầu", hoặc lý do thất bại. Sau đó chạm Lưu ở cuối biểu mẫu.
+7. Chạm "Kiểm tra kết nối". Kết quả là "Đã kết nối, N mục trong thư mục bắt đầu", hoặc lý do thất bại. Sau đó chạm Lưu ở cuối biểu mẫu. Từ bản dựng 22, khi đóng một biểu mẫu bạn đã nhập gì đó (X, Quay lại), ứng dụng sẽ hỏi "Bỏ các thay đổi?" trước, cả trên trang Plex và trang camera, và cũng hỏi như vậy khi chọn một máy chủ Plex hoặc một camera được tìm thấy sau khi đã nhập gì đó.
 
 Tên người dùng với mật khẩu trống được gửi đúng như vậy: Freebox Server cần `freebox` và không mật khẩu cho các ổ đĩa của nó. Để sửa hoặc xóa một chia sẻ sau này, dùng biểu tượng bút chì bên cạnh nó trong trang Chia sẻ mạng.
 
@@ -617,8 +617,9 @@ Từ bản dựng 20, cùng một ứng dụng Android chạy trên Android TV v
 
 ### Di chuyển bằng điều khiển từ xa
 
-- Các phím mũi tên di chuyển khung tiêu điểm, OK mở mục đang được chọn, Quay lại để trở về. Từ một thẻ, Quay lại chuyển tới menu bên, rồi tới Ảnh, rồi thoát ứng dụng.
-- Phím kênh lên và xuống cuộn từng trang một.
+- Các phím mũi tên di chuyển khung tiêu điểm, OK mở mục đang được chọn, Quay lại để trở về. Từ một thẻ, Quay lại chuyển tới menu bên, rồi tới Ảnh, rồi thoát ứng dụng. Trong một danh sách lựa chọn, như loại chia sẻ hoặc một cài đặt, các phím mũi tên chỉ di chuyển khung tiêu điểm và OK chọn lựa chọn đó (từ bản dựng 22; trước đó, các phím mũi tên thay đổi lựa chọn).
+- Phím kênh lên và xuống cuộn từng trang một. Từ bản dựng 22, lưới ảnh hiển thị khoảng sáu ô mỗi hàng bên trong lề màn hình, với hình thu nhỏ sắc nét hơn cho các tệp của chính thiết bị mà vẫn mượt ở các chi tiết nhỏ, và các trang có ảnh đầu trang trên điện thoại (danh sách 360°, Yêu thích, album của thiết bị) thay vào đó chỉ hiển thị một thanh duy nhất.
+- Từ bản dựng 22, khung tiêu điểm bắt đầu ở mục đầu tiên của mỗi trang (ô đầu tiên của danh sách 360°, trường email khi địa chỉ máy chủ đã được xác nhận), nằm bên trong lề màn hình khi lưới cuộn, và từ lưới đi lên hàng hoặc các bộ lọc phía trên thay vì tới nút Quay lại. Phím phải từ một chia sẻ mạng hoặc một camera đi tới nút chỉnh sửa của nó, và kết quả của "Kiểm tra kết nối" được cuộn vào tầm nhìn.
 - Trong các trình xem, các phím phát và tạm dừng, tua nhanh, tua lại, tiếp theo và trước đó của điều khiển từ xa đều hoạt động, và phím thông tin hiển thị chi tiết của ảnh hoặc video.
 
 ### Ảnh và video với điều khiển từ xa
@@ -632,7 +633,7 @@ Từ bản dựng 20, cùng một ứng dụng Android chạy trên Android TV v
 
 ### Cài đặt Bố cục cho điều khiển từ xa
 
-Cài đặt, Cá nhân hóa, "Bố cục cho điều khiển từ xa": "Khung tiêu điểm lớn và các phím điều khiển từ xa, không có các điều khiển cần màn hình cảm ứng. Tự động sẽ bật trên Android TV và Google TV." Tự động là mặc định; Bật phù hợp với máy tính bảng điều khiển bằng bàn phím hoặc tay cầm chơi game; Tắt sẽ tắt nó trên TV. Cài đặt này chỉ có trên Android. Các phím mũi tên và OK hoạt động trong các trình xem với bàn phím hoặc tay cầm chơi game bất kể cài đặt này.
+Cài đặt, Cá nhân hóa, "Bố cục cho điều khiển từ xa": "Khung tiêu điểm lớn và các phím điều khiển từ xa, không có các điều khiển cần màn hình cảm ứng. Tự động sẽ bật trên Android TV và Google TV." Tự động là mặc định; Bật phù hợp với máy tính bảng điều khiển bằng bàn phím hoặc tay cầm chơi game; Tắt sẽ tắt nó trên TV. Cài đặt này chỉ có trên Android. Từ bản dựng 22, thay đổi được áp dụng ngay cho trang đang mở, và trang vẫn ở nguyên vị trí (trước đó, Cài đặt mở lại ở mục Nâng cao, phía trên một màn hình khởi đầu mà Quay lại phải đi qua). Các phím mũi tên và OK hoạt động trong các trình xem với bàn phím hoặc tay cầm chơi game bất kể cài đặt này.
 
 ### Giới hạn
 
@@ -650,7 +651,7 @@ Cài đặt, Cá nhân hóa, "Bố cục cho điều khiển từ xa": "Khung ti
 
 Ảnh 360° nằm lẫn với mọi ảnh khác, và nhiều người yêu cầu Immich có cách lọc ảnh cầu và ảnh toàn cảnh ([thảo luận #12824](https://github.com/immich-app/immich/discussions/12824)). Ứng dụng Immich không có danh sách như vậy.
 
-Immuch360 gắn huy hiệu 360° lên hình thu nhỏ của ảnh 360° (trong thư mục chia sẻ mạng, cả video 360°), và một mục 360° ở đầu thẻ Thư viện. Từ bản dựng 18, danh sách đó chứa, khi có máy chủ, ảnh và video mà máy chủ đánh dấu là 360°, tệp thô Insta360 theo tên, ảnh do chính máy ảnh 360° ghép và những tệp bạn chọn xem dạng 360°, cộng với những gì quá trình quét thiết bị tìm được; khi không có máy chủ, là những gì quá trình quét thiết bị tìm được và những tệp bạn chọn xem dạng 360°. Mỗi mục chỉ xuất hiện một lần, bất kể bản sao nằm ở đâu, mới nhất trước.
+Immuch360 gắn huy hiệu 360° lên hình thu nhỏ của ảnh 360° (trong thư mục chia sẻ mạng, cả video 360°), và một mục 360° ở đầu thẻ Thư viện. Từ bản dựng 18, danh sách đó chứa, khi có máy chủ, ảnh và video mà máy chủ đánh dấu là 360°, tệp thô Insta360 theo tên, ảnh do chính máy ảnh 360° ghép và những tệp bạn chọn xem dạng 360°, cộng với những gì quá trình quét thiết bị tìm được; khi không có máy chủ, là những gì quá trình quét thiết bị tìm được và những tệp bạn chọn xem dạng 360°. Mỗi mục chỉ xuất hiện một lần, bất kể bản sao nằm ở đâu, mới nhất trước. Từ bản dựng 22, một hàng "Trong các chia sẻ mạng" xuất hiện phía trên lưới với ảnh và video 360° trong các chia sẻ của bạn, mới nhất trước: ứng dụng biết đến chúng khi hiển thị thư mục của chúng hoặc khi mở chúng (ứng dụng không tự tìm kiếm trong một chia sẻ), ghi nhớ chúng từ lần khởi động này sang lần sau và quên chúng cùng với chia sẻ của chúng. Trên TV, vốn không có ảnh riêng, chính hàng đó lấp đầy danh sách 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Danh sách 360°, 4 mục, bảng Ngày đang mở: Tất cả, năm 2026 kèm số lượng, Cả năm, tháng 8 năm 2026 và tháng 4 năm 2026 kèm số lượng, năm 2025, và Tùy chỉnh">
 
@@ -661,7 +662,7 @@ Immuch360 gắn huy hiệu 360° lên hình thu nhỏ của ảnh 360° (trong t
 3. Khi có máy chủ, chọn nơi chứa nội dung: "Trên máy chủ", "Trên thiết bị này", và "Chia sẻ với tôi" khi có.
 4. Chọn loại: Ảnh, Video, 3D, VR180.
 5. Khi danh sách có từ hai máy ảnh trở lên, hàng thứ hai liệt kê chúng theo hãng và mẫu EXIF, kèm số lượng. Tệp thô không có các thông tin này được đặt tên theo thương hiệu của phần mở rộng (Insta360, GoPro, DJI), mọi tệp khác là "Máy ảnh không xác định".
-6. Trong cùng một nhóm (vị trí, Ảnh và Video, 3D và VR180, máy ảnh) các lựa chọn được cộng dồn; giữa các nhóm, chúng thu hẹp danh sách. Xóa đặt lại tất cả; "Không có ảnh hoặc video 360° nào khớp với các bộ lọc này" nghĩa là bộ lọc không để lại gì.
+6. Trong cùng một nhóm (vị trí, Ảnh và Video, 3D và VR180, máy ảnh) các lựa chọn được cộng dồn; giữa các nhóm, chúng thu hẹp danh sách. Các lựa chọn Ngày, Ảnh và Video cũng áp dụng cho hàng chia sẻ mạng; 3D, VR180 và máy ảnh sẽ ẩn hàng đó, vì ứng dụng không biết thông tin nào trong số này cho một tệp của chia sẻ. Xóa đặt lại tất cả; "Không có ảnh hoặc video 360° nào khớp với các bộ lọc này" nghĩa là bộ lọc không để lại gì.
 7. Mở một ảnh hoặc video. Trong chế độ xem nhập vai trên Quest, trước và tiếp theo đi theo danh sách đã lọc.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Mọi thứ ứng dụng di động Immich chính thức làm được đều c�
 
 Để cho người không có ứng dụng xem một ảnh 360°, hãy chia sẻ nó bằng liên kết chia sẻ của Immich: ứng dụng web Immich hiển thị ảnh 360° dạng hình cầu trong trình duyệt của họ.
 
-Bản dựng hiện tại, bản dựng 21 (phiên bản 3.3.0-rc.0, số bản dựng 3030019), dựa trên Immich 3.3.0-rc.0 (Immich `main`, chưa phải bản phát hành ổn định). Bản dựng 19 đã được kiểm thử với máy chủ Immich 3.2, và các bản dựng 20 và 21 không thay đổi gì trong những gì ứng dụng yêu cầu từ máy chủ. Vui lòng báo lỗi tại [Issues](https://github.com/freeKC/Immuch360/issues), không báo cho dự án Immich. Tài liệu đầy đủ của chính Immich có tại [immich.app](https://immich.app).
+Bản dựng hiện tại, bản dựng 22 (phiên bản 3.3.0-rc.0, số bản dựng 3030020), dựa trên Immich `main` ngày 10 tháng 10 năm 2026 (phiên bản 3.3.0-rc.0, chưa phải bản phát hành ổn định). Bản dựng 22 đã được kiểm thử với máy chủ Immich 3.2.4 và với một máy chủ được dựng từ chính Immich `main` đó: đăng nhập, dòng thời gian, album, ảnh và video 360°, phát video và tải lên, không có lỗi API nào. Vui lòng báo lỗi tại [Issues](https://github.com/freeKC/Immuch360/issues), không báo cho dự án Immich. Tài liệu đầy đủ của chính Immich có tại [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## So sánh với ứng dụng Immich và các ứng dụng khác
@@ -1037,6 +1038,8 @@ Khi thứ không theo kịp là việc giải mã một video của máy chủ, 
 - **Tự chọn bộ kết xuất.** Trong Cài đặt, Nâng cao, bật "Xử lý sự cố": một mục "Bộ kết xuất video 360°" xuất hiện, mặc định là "Tự động". Nó cũng có "Plugin, kích thước đầy đủ", "Plugin, tối đa 4096 chiều ngang", "Plugin, tối đa 2880 chiều ngang" và "Phẳng, không có khung nhìn 360°", cho video 360° tiếp theo bạn mở. Bên dưới, "Lần đo gần nhất" nêu kích thước mà video 360° gần nhất được vẽ, số khung hình mỗi giây, chip đồ họa và bộ giải mã: hãy sao chép nó vào báo cáo lỗi. Chọn lại "Tự động", kể cả khi nó đang được chọn, sẽ xóa những gì đã đo, và các video 360° tiếp theo được đo lại.
 - **Chip giải mã được gì.** Cài đặt, Nâng cao, "Bộ giải mã video của thiết bị này" liệt kê những gì chip đồ họa đang dùng giải mã được, theo báo cáo của Direct3D 11, và ứng dụng hiệu chỉnh danh sách đó bằng những gì nó đo được khi phát: cài đặt "Nguồn video" và việc kiểm tra hai ống kính của video thô dựa theo nó. H.264 rộng hơn 4096 điểm ảnh (5.7K của máy ảnh 360°) được bộ xử lý giải mã, vì không chip nào của máy tính xách tay thử nghiệm nhận nó.
 
+**Dành cho nhà phát triển.** Trình phát 360° vẽ thông qua bộ kết xuất riêng, xây dựng trên libmpv và một plugin media_kit_video đã được vá: mpv vẽ từng khung hình vào một texture trên chip đồ họa, và một lượt OpenGL ES 3.0 vẽ góc nhìn vào texture mà Flutter hiển thị, không sao chép qua bộ xử lý. Vì sao nó được xây dựng như vậy, nó hoạt động thế nào, những gì đã được đo và những gì có thể tinh chỉnh: [bộ kết xuất video 360° trên máy tính](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### So với các ứng dụng điện thoại
 
 - **Sao lưu chạy khi ứng dụng đang mở** (hoặc thu nhỏ), không chạy nền khi cửa sổ đã đóng. Đóng cửa sổ khi đang tải lên, hoặc khi máy tính đang được chia sẻ, sẽ hỏi trước.
@@ -1110,7 +1113,7 @@ CI của Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) chạy tr
 
 - **Điện thoại và máy tính bảng Android**
   - Hiện nay: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), hoặc APK trên trang [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` cho điện thoại (bản phổ thông `Immuch360-v<version>-release.apk` chạy ở mọi nơi, `-armeabi-v7a` dành cho điện thoại 32 bit đời cũ, và tệp `.aab` dành cho Google Play, không dùng để cài thủ công). Bản dựng trên GitHub thường đi trước cửa hàng. Dù cách nào, ứng dụng cũng cài song song với ứng dụng Immich chính thức (gói `com.aprogsys.immuch360`).
-  - Sắp tới: trên Google Play, bản dựng 20 đã phát hành từ ngày 7 tháng 10 năm 2026, thay cho bản dựng 18; bản dựng 21 không thay đổi gì trên điện thoại và máy tính bảng.
+  - Sắp tới: trên Google Play, bản dựng 22 đã được gửi ngày 10 tháng 10 năm 2026 thay cho bản dựng 20 (phát hành từ ngày 7 tháng 10); bản này mang các thay đổi của Immich trong tháng 10 và các bản sửa lỗi cho TV.
 - **iPhone và iPad**
   - Hiện nay: đang chờ Apple xét duyệt. Phiên bản đang xét duyệt có các tính năng của bản dựng 11: tải lên Immich và lựa chọn Nguồn video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong một bản cập nhật App Store sau này. Mã nguồn được dựng bằng Xcode hoặc trên Codemagic, xem [Tự dựng ứng dụng](#build-it-yourself).
   - Sắp tới: App Store, đang xét duyệt.
@@ -1157,7 +1160,7 @@ Không có bí mật nào nằm trong kho mã này: khóa ký Android được l
 
 ### Nhánh
 
-- **`main`**: Immich `main` tại commit mà `immuch360` dựa trên (ngày 29 tháng 9 năm 2026 cho các bản dựng hiện tại), không bao giờ bị sửa đổi; nhánh này tiến lên khi bản fork được rebase lên Immich mới hơn.
+- **`main`**: Immich `main` tại commit mà `immuch360` dựa trên (ngày 10 tháng 10 năm 2026 cho các bản dựng hiện tại), không bao giờ bị sửa đổi; nhánh này tiến lên khi bản fork được rebase lên Immich mới hơn.
 - **`immuch360`**: các thay đổi của bản fork này trên nền Immich, bao gồm Immuch360 Desktop từ ngày 9 tháng 10 năm 2026. Mỗi bản phát hành ghi rõ nó dựa trên phiên bản Immich nào.
 - **`desktop`**: nơi Immuch360 Desktop, phiên bản máy tính, được phát triển trên nền `immuch360`, cho đến khi được hợp nhất vào đó ngày 9 tháng 10 năm 2026 để điện thoại, kính, TV và máy tính đều phát hành từ cùng mã nguồn. Giờ nó đi theo `immuch360` và mang các thẻ của bản phát hành trước cho máy tính ([bản dựng máy tính 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) từ commit 21f285c34, [bản dựng máy tính 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) từ 5b723bd25, [bản dựng máy tính 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) từ lần hợp nhất trình phát video 360° ngày 10 tháng 10 năm 2026). Công việc mới cho máy tính đến đó trước và nhập vào `immuch360` cùng với bản dựng máy tính phát hành nó. Phiên bản máy tính không thay đổi gì trong `mobile/android` và `mobile/ios`.
 

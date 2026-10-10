@@ -17,10 +17,10 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
 
 | Platforma | Kur gauti | Būsena 2026 m. spalio 10 d. |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20 surinkimas Google Play nuo 2026 m. spalio 7 d., 21 surinkimas GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 22 surinkimas GitHub, 2026 m. spalio 10 d. išsiųstas į Google Play (ten 20 surinkimas veikia nuo spalio 7 d.) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ir iPad** | App Store | 3.3.0 versija laukia Apple peržiūros; tuo metu [susikurkite patys](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [APK](#meta-quest-3) · Horizon Store | įrašas patvirtintas, 21 surinkimas Meta peržiūroje |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21 surinkimas GitHub; Google Play įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [APK](#meta-quest-3) · Horizon Store | įrašas patvirtintas, 21 surinkimas Meta peržiūroje, 22 surinkimas alfa kanale |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#install-it-on-the-tv) · Google Play | 22 surinkimas GitHub; Google Play įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Peržiūros ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | darbalaukio surinkimas 3 Windows sistemoje: nuotraukos, plokšti ir 360° vaizdo įrašai; macOS ir Linux vėliau |
 
 *Būsenos atnaujinamos su kiekvienu leidimu; išsami informacija skyriuje [Kur ją gauti](#where-to-get-it).*
@@ -196,7 +196,7 @@ Ji pati randa jūsų tinklo serverius ir leidžia failus tiesiogiai tose pačios
 4. Nėra sąraše? Užpildykite formą rankiniu būdu. Tipas: „SMB (Samba, Windows bendrinimas)“, „WebDAV (Nextcloud, Synology ir kiti)“, „DLNA medijos serveris (Jellyfin, NAS, TV priedėlis)“ arba, nuo 20 surinkimo, „Plex Media Server“, kuris atveria skyriaus [Plex Media Server, be plex.tv](#plex-media-server-without-plextv) puslapį. Tada „Pavadinimas“, „Serverio pavadinimas arba adresas“ (pavadinimas arba adresas; visas adresas, pvz., `smb://nas/photos`, `\\nas\photos` ar `https://nas:5006/photos`, užpildo kitus laukus), „Prievadas (neprivaloma)“, kai jis ne įprastas, „Bendrinimas“ SMB atveju arba „WebDAV adreso kelias“ WebDAV atveju, „Pradinis aplankas (neprivaloma)“, „Naudotojo vardas“ ir „Slaptažodis“, o WebDAV atveju „Saugus ryšys (HTTPS)“.
 5. SMB: įvedus serverį ir naudotojo vardą, „Pasirinkite bendrinimą“ išvardija serverio bendrinimus.
 6. DLNA: medijos serveris neturi naudotojo vardo ir slaptažodžio. Nurodykite serverį, prievadą ir jo įrenginio aprašo „Aprašo kelias“ (`/rootDesc.xml` minidlna atveju) arba įklijuokite visą adresą, pvz., `http://192.168.1.10:8200/rootDesc.xml`, į serverio lauką.
-7. Bakstelėkite „Išbandyti ryšį“. Atsakymas būna „Prisijungta, pradiniame aplanke įrašų: N“ arba nurodoma, kodėl nepavyko. Tada bakstelėkite „Išsaugoti“ formos apačioje.
+7. Bakstelėkite „Išbandyti ryšį“. Atsakymas būna „Prisijungta, pradiniame aplanke N įrašų“ arba nurodoma, kodėl nepavyko. Tada bakstelėkite „Išsaugoti“ formos apačioje. Nuo 22 surinkimo uždarant formą, kurioje kažką įvedėte (X, Atgal), pirmiausia klausiama „Atmesti pakeitimus?“, taip pat Plex ir kameros puslapiuose; tas pats klausimas pateikiamas ir pasirinkus rastą Plex serverį ar kamerą, kai jau kažkas įvesta.
 
 Naudotojo vardas su tuščiu slaptažodžiu siunčiamas būtent taip: Freebox Server savo diskams nori `freebox` ir jokio slaptažodžio. Kad vėliau pakeistumėte ar pašalintumėte bendrinimą, naudokite pieštuką šalia jo puslapyje „Tinklo bendrinimai“.
 
@@ -617,8 +617,9 @@ Nuo 20 surinkimo ta pati Android programa veikia Android TV ir Google TV, o vien
 
 ### Judėjimas pulteliu
 
-- Rodyklės perkelia rėmelį, OK atveria tai, ant ko jis yra, Atgal grįžta atgal. Iš skirtuko Atgal pereina į šoninį meniu, tada į „Nuotraukos“, tada išeina iš programos.
-- Kanalo aukštyn ir žemyn mygtukai slenka po vieną puslapį.
+- Rodyklės perkelia rėmelį, OK atveria tai, ant ko jis yra, Atgal grįžta atgal. Iš skirtuko Atgal pereina į šoninį meniu, tada į „Nuotraukos“, tada išeina iš programos. Pasirinkimų sąraše, pavyzdžiui, renkantis bendrinimo tipą ar nustatymą, rodyklės tik perkelia rėmelį, o OK parenka pasirinkimą (nuo 22 surinkimo; anksčiau rodyklės keisdavo pasirinkimą).
+- Kanalo aukštyn ir žemyn mygtukai slenka po vieną puslapį. Nuo 22 surinkimo nuotraukų tinkleliai rodo maždaug šešias plyteles eilutėje ekrano paraščių viduje, su ryškesnėmis paties įrenginio failų miniatiūromis, kurios lieka glotnios smulkiose detalėse, o puslapiai, kurie telefone turi antraštę su paveikslėliu (360° sąrašas, „Mėgstamiausi“, įrenginio albumai), vietoj jos rodo vieną juostą.
+- Nuo 22 surinkimo rėmelis pradeda nuo pirmo kiekvieno puslapio elemento (pirmos 360° sąrašo plytelės, el. pašto lauko, kai serverio adresas patvirtintas), lieka ekrano paraščių viduje, kai tinklelis slenka, ir iš tinklelio kyla į virš jo esančią eilutę ar filtrus, o ne į mygtuką Atgal. Dešinėn nuo tinklo bendrinimo ar kameros pasiekia jo redagavimo mygtuką, o „Išbandyti ryšį“ rezultatas paslenkamas į matomą sritį.
 - Peržiūrose veikia pultelio paleidimo ir pristabdymo, prasukimo pirmyn, atsukimo, kito ir ankstesnio mygtukai, o informacijos mygtukas rodo nuotraukos ar vaizdo įrašo informaciją.
 
 ### Nuotraukos ir vaizdo įrašai su pulteliu
@@ -632,7 +633,7 @@ Nuo 20 surinkimo ta pati Android programa veikia Android TV ir Google TV, o vien
 
 ### Nustatymas „Išdėstymas nuotolinio valdymo pulteliui“
 
-„Nustatymai“, „Nuostatos“, „Išdėstymas nuotolinio valdymo pulteliui“: „Dideli fokusavimo rėmeliai ir pultelio mygtukai, be valdiklių, kuriems reikia jutiklinio ekrano. Automatinis įjungia jį Android TV ir Google TV.“ „Automatinis“ yra numatytasis; „Įjungta“ tinka planšetei, valdomai klaviatūra ar žaidimų pulteliu; „Išjungta“ jį išjungia televizoriuje. Nustatymas yra tik Android. Rodyklės ir OK peržiūrose veikia su klaviatūra ar žaidimų pulteliu, nepriklausomai nuo nustatymo.
+„Nustatymai“, „Nuostatos“, „Išdėstymas nuotolinio valdymo pulteliui“: „Dideli fokusavimo rėmeliai ir pultelio mygtukai, be valdiklių, kuriems reikia jutiklinio ekrano. Automatinis įjungia jį Android TV ir Google TV.“ „Automatinis“ yra numatytasis; „Įjungta“ tinka planšetei, valdomai klaviatūra ar žaidimų pulteliu; „Išjungta“ jį išjungia televizoriuje. Nustatymas yra tik Android. Nuo 22 surinkimo pakeitimas iškart pritaikomas atvertam puslapiui, kuris lieka ten, kur buvo (anksčiau „Nustatymai“ vėl atsiverdavo ties „Sudėtingesnis“, virš pradžios ekrano, per kurį turėjo pereiti Atgal). Rodyklės ir OK peržiūrose veikia su klaviatūra ar žaidimų pulteliu, nepriklausomai nuo nustatymo.
 
 ### Apribojimai
 
@@ -650,7 +651,7 @@ Nuo 20 surinkimo ta pati Android programa veikia Android TV ir Google TV, o vien
 
 360° kadrai sumaišyti su visomis kitomis nuotraukomis, ir žmonės prašo Immich būdo filtruoti sferas ir panoramas ([diskusija #12824](https://github.com/immich-app/immich/discussions/12824)). Immich programa tokio sąrašo neturi.
 
-Immuch360 deda 360° ženklelį ant 360° nuotraukų miniatiūrų (tinklo bendrinimo aplanke ir ant 360° vaizdo įrašų), o skirtuko „Biblioteka“ viršuje yra punktas 360°. Nuo 18 surinkimo tame sąraše, su serveriu, yra nuotraukos ir vaizdo įrašai, kuriuos serveris pažymi kaip 360°, neapdoroti Insta360 failai pagal pavadinimą, nuotraukos, kurias sujungė pati 360° kamera, ir tos, kurias pasirinkote žiūrėti kaip 360°, taip pat tai, ką rado įrenginio paieška; be serverio, tai, ką rado įrenginio paieška, ir tos, kurias pasirinkote žiūrėti kaip 360°. Kiekviena rodoma vieną kartą, kad ir kur būtų jos kopijos, naujausios pirma.
+Immuch360 deda 360° ženklelį ant 360° nuotraukų miniatiūrų (tinklo bendrinimo aplanke ir ant 360° vaizdo įrašų), o skirtuko „Biblioteka“ viršuje yra punktas 360°. Nuo 18 surinkimo tame sąraše, su serveriu, yra nuotraukos ir vaizdo įrašai, kuriuos serveris pažymi kaip 360°, neapdoroti Insta360 failai pagal pavadinimą, nuotraukos, kurias sujungė pati 360° kamera, ir tos, kurias pasirinkote žiūrėti kaip 360°, taip pat tai, ką rado įrenginio paieška; be serverio, tai, ką rado įrenginio paieška, ir tos, kurias pasirinkote žiūrėti kaip 360°. Kiekviena rodoma vieną kartą, kad ir kur būtų jos kopijos, naujausios pirma. Nuo 22 surinkimo virš tinklelio atsiranda eilutė „Tinklo bendrinimuose“ su jūsų bendrinimų 360° nuotraukomis ir vaizdo įrašais, naujausi pirma: programa juos sužino, kai parodo jų aplanką arba juos atveria (pati bendrinimo neieško), išsaugo nuo vieno paleidimo iki kito ir pamiršta kartu su jų bendrinimu. Televizoriuje, kuris neturi savo nuotraukų, būtent ši eilutė užpildo 360° sąrašą.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="360° sąrašas, 4 elementai, su atverta lapine Data: Visi, 2026 metai su skaičiumi, Visi metai, 2026 m. rugpjūtis ir balandis su skaičiais, 2025 metai ir Custom">
 
@@ -661,7 +662,7 @@ Immuch360 deda 360° ženklelį ant 360° nuotraukų miniatiūrų (tinklo bendri
 3. Su serveriu pasirinkite, kur yra medija: „Serveryje“, „Šiame įrenginyje“ ir „Bendrinama su manimi“, kai tokių yra.
 4. Pasirinkite rūšį: „Nuotraukos“, „Video“, 3D, VR180.
 5. Kai sąraše yra dvi ar daugiau kamerų, antroje eilutėje jos išvardijamos pagal EXIF gamintoją ir modelį, su skaičiais. Neapdorotas failas be jų pavadinamas pagal plėtinio prekės ženklą (Insta360, GoPro, DJI), visa kita yra „Nežinoma kamera“.
-6. Grupės viduje (vietos, „Nuotraukos“ ir „Video“, 3D ir VR180, kameros) žymos sumuojasi; tarp grupių jos siaurina sąrašą. „Išvalyti“ atstato viską; „Šiuos filtrus atitinkančių 360° nuotraukų ar vaizdo įrašų nėra“ reiškia, kad filtrai nieko nepalieka.
+6. Grupės viduje (vietos, „Nuotraukos“ ir „Video“, 3D ir VR180, kameros) žymos sumuojasi; tarp grupių jos siaurina sąrašą. Žymos „Data“, „Nuotraukos“ ir „Video“ taikomos ir tinklo bendrinimų eilutei; 3D, VR180 ir kameros ją paslepia, nes programa nieko iš to nežino apie bendrinimo failą. „Išvalyti“ atstato viską; „Šiuos filtrus atitinkančių 360° nuotraukų ar vaizdo įrašų nėra“ reiškia, kad filtrai nieko nepalieka.
 7. Atverkite nuotrauką ar vaizdo įrašą. Quest įtraukiančioje peržiūroje ankstesnis ir kitas seka filtruotą sąrašą.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Viskas, ką daro oficiali Immich mobilioji programa, yra čia: atsarginės kopij
 
 Kad parodytumėte 360° nuotrauką žmogui, kuris neturi programos, bendrinkite ją Immich bendrinama nuoroda: Immich žiniatinklio programa jo naršyklėje rodo 360° nuotrauką kaip sferą.
 
-Dabartinis surinkimas, 21 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030019), paremtas Immich 3.3.0-rc.0 (Immich `main`, dar ne stabili laida). 19 surinkimas buvo išbandytas su Immich 3.2 serveriu, o 20 ir 21 surinkimai nieko nekeičia tame, ko programa prašo iš serverio. Problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui. Visa paties Immich dokumentacija yra [immich.app](https://immich.app).
+Dabartinis surinkimas, 22 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030020), paremtas 2026 m. spalio 10 d. Immich `main` (versija 3.3.0-rc.0, dar ne stabili laida). 22 surinkimas buvo išbandytas su Immich 3.2.4 serveriu ir su serveriu, sukurtu iš to paties Immich `main`: prisijungimas, laiko skalė, albumai, 360° nuotraukos ir vaizdo įrašai, vaizdo įrašų atkūrimas ir įkėlimai, be jokių API klaidų. Problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui. Visa paties Immich dokumentacija yra [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Palyginimas su Immich programa ir kitomis programomis
@@ -1037,6 +1038,8 @@ Kai nespėja serverio vaizdo įrašo dekodavimas, o ne piešimas (vaizdo įraša
 - **Pasirinkite atvaizdavimo būdą patys.** „Nustatymai“, „Sudėtingesnis“ įjunkite „Trikčių šalinimas“: atsiranda įrašas „360° video renderer“ (360° vaizdo įrašų atvaizdavimas), pagal numatymą „Automatic“ (Automatinis). Jis taip pat siūlo „Plugin, full size“ (Įskiepis, visas dydis), „Plugin, at most 4096 wide“ (Įskiepis, ne platesnis nei 4096), „Plugin, at most 2880 wide“ (Įskiepis, ne platesnis nei 2880) ir „Flat, without the 360° view“ (Plokščiai, be 360° vaizdo) kitam atvertam 360° vaizdo įrašui. Po juo „Measured last“ (Paskutinis matavimas) nurodo dydį, kuriuo buvo nupieštas paskutinis 360° vaizdo įrašas, jo kadrus per sekundę, vaizdo plokštę ir dekoderį: nukopijuokite tai į klaidos pranešimą. Vėl pasirinkus „Automatic“, net kai jis jau pasirinktas, pamirštama, kas buvo išmatuota, ir kiti 360° vaizdo įrašai vėl matuojami.
 - **Ką dekoduoja plokštė.** „Nustatymai“, „Sudėtingesnis“, „Šio įrenginio vaizdo dekoderiai“ išvardija, ką dekoduoja naudojama vaizdo plokštė, kaip praneša Direct3D 11, o programa tą sąrašą pataiso pagal tai, ką išmatavo leisdama: nustatymas „Vaizdo įrašo šaltinis“ ir neapdorotų vaizdo įrašų dviejų objektyvų patikra jo laikosi. H.264, platesnį nei 4096 taškai (360° kamerų 5.7K), dekoduoja procesorius, nes jo nepriima nė viena bandomojo nešiojamojo kompiuterio plokštė.
 
+**Kūrėjams.** 360° grotuvas piešia per savo atvaizdavimo modulį, sukurtą ant libmpv ir pataisyto media_kit_video įskiepio: mpv kiekvieną kadrą nupiešia į tekstūrą vaizdo plokštėje, o OpenGL ES 3.0 etapas nupiešia vaizdą į tekstūrą, kurią rodo Flutter, nekopijuojant per procesorių. Kodėl jis taip sukurtas, kaip jis veikia, kas buvo išmatuota ir ką galima derinti: [darbalaukio 360° vaizdo įrašų atvaizdavimas](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Palyginimas su telefonų programomis
 
 - **Atsarginės kopijos daromos, kol programa atidaryta** (arba sumažinta), o ne fone uždarius langą. Uždarant langą, kol vyksta įkėlimai arba kol kompiuteris bendrinamas, pirmiausia paklausiama.
@@ -1110,7 +1113,7 @@ Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Ap
 
 - **Android telefonai ir planšetės**
   - Šiandien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`).
-  - Netrukus: Google Play parduotuvėje 20 surinkimas veikia nuo 2026 m. spalio 7 d., vietoj 18 surinkimo; 21 surinkimas telefonuose ir planšetėse nieko nekeičia.
+  - Netrukus: į Google Play 22 surinkimas išsiųstas 2026 m. spalio 10 d. vietoj 20 surinkimo (veikiančio nuo spalio 7 d.); jame yra spalio mėnesio Immich pakeitimai ir televizorių pataisymai.
 - **iPhone ir iPad**
   - Šiandien: laukia Apple peržiūros. Peržiūrima versija turi 11 surinkimo funkcijas: įkėlimas į Immich ir „Vaizdo įrašo šaltinis“ pasirinkimas (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su vėlesniu App Store atnaujinimu. Šaltinio kodas kompiliuojamas su Xcode arba Codemagic, žr. [Susikurkite patys](#build-it-yourself).
   - Netrukus: App Store, peržiūrima.
@@ -1157,7 +1160,7 @@ Immuch360 Desktop, Windows versija, kuriama iš tų pačių šaltinių, šakos `
 
 ### Šakos
 
-- **`main`**: Immich `main` ties įsipareigojimu, kuriuo paremta `immuch360` (dabartiniams surinkimams 2026 m. rugsėjo 29 d.), niekada nekeičiama; ji pajuda į priekį, kai atšaka perbazuojama ant naujesnio Immich.
+- **`main`**: Immich `main` ties įsipareigojimu, kuriuo paremta `immuch360` (dabartiniams surinkimams 2026 m. spalio 10 d.), niekada nekeičiama; ji pajuda į priekį, kai atšaka perbazuojama ant naujesnio Immich.
 - **`immuch360`**: šios atšakos pakeitimai ant Immich, nuo 2026 m. spalio 9 d. įskaitant Immuch360 Desktop. Kiekviename leidime nurodoma, kokia Immich versija jis paremtas.
 - **`desktop`**: čia Immuch360 Desktop, kompiuterio versija, buvo kuriama ant `immuch360`, kol 2026 m. spalio 9 d. buvo į ją sulieta, kad telefonai, akiniai, televizoriai ir kompiuteriai būtų leidžiami iš tų pačių šaltinių. Dabar ji seka `immuch360` ir turi darbalaukio išankstinių leidimų žymes ([darbalaukio surinkimas 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) iš įsipareigojimo 21f285c34, [darbalaukio surinkimas 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) iš 5b723bd25, [darbalaukio surinkimas 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) iš 360° vaizdo grotuvo suliejimo 2026 m. spalio 10 d.). Naujas darbalaukio darbas pirmiausia patenka čia ir prisijungia prie `immuch360` su jį pateikiančiu darbalaukio surinkimu. Kompiuterio versija nieko nekeičia po `mobile/android` ir `mobile/ios`.
 

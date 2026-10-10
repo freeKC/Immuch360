@@ -17,10 +17,10 @@ Immuch360 Immich-en mugikorreko aplikazioa da, inguruan begiratu daitezkeen 360�
 
 | Plataforma | Non lortu | Egoera 2026ko urriaren 10ean |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefono eta tabletak | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20. konpilazioa Google Play-n 2026ko urriaren 7tik, 21. konpilazioa GitHub-en |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefono eta tabletak | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 22. konpilazioa GitHub-en, Google Play-ra bidalia 2026ko urriaren 10ean (han 20. konpilazioa argitaratuta dago urriaren 7tik) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone eta iPad** | App Store | 3.3.0 bertsioa Apple-ren berrikuspenaren zain; bitartean, [konpilatu zuk zeuk](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 eta 3S | [APK](#meta-quest-3) · Horizon Store | fitxa onartuta, 21. konpilazioa Meta-ren berrikuspenean |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV eta Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21. konpilazioa GitHub-en; telebistetarako Google Play-ko fitxa Google-ren berrikuspenean dago 2026ko urriaren 9tik |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 eta 3S | [APK](#meta-quest-3) · Horizon Store | fitxa onartuta, 21. konpilazioa Meta-ren berrikuspenean, 22. konpilazioa alfa kanalean |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV eta Google TV** | [APK](#install-it-on-the-tv) · Google Play | 22. konpilazioa GitHub-en; telebistetarako Google Play-ko fitxa Google-ren berrikuspenean dago 2026ko urriaren 9tik |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Aurrebistaren ZIPa](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | 3. mahaigaineko konpilazioa Windows-en: argazkiak, bideo lauak eta 360° bideoak; macOS eta Linux geroago |
 
 *Egoerak bertsio bakoitzean eguneratzen dira; xehetasunak [Non lortu](#where-to-get-it) atalean daude.*
@@ -196,7 +196,7 @@ Zure sareko zerbitzariak berak aurkitzen ditu, eta fitxategiak zuzenean erreprod
 4. Ez dago zerrendan? Bete inprimakia eskuz. Mota: "SMB (Samba, Windows partekatzea)", "WebDAV (Nextcloud, Synology eta beste batzuk)", "DLNA multimedia zerbitzaria (Jellyfin, NAS, TB kutxa)" edo, 20. konpilaziotik aurrera, "Plex Media Server", [Plex Media Server, plex.tv gabe](#plex-media-server-without-plextv) orria irekitzen duena. Ondoren Izena, "Zerbitzariaren izena edo helbidea" (izen bat edo helbide bat; `smb://nas/photos`, `\\nas\photos` edo `https://nas:5006/photos` bezalako helbide oso batek gainerako eremuak betetzen ditu), "Ataka (aukerakoa)" ohikoa ez denean, "Partekatzea" SMBrako edo "WebDAV helbidearen bidea" WebDAVerako, "Hasierako karpeta (aukerakoa)", "Erabiltzaile izena" eta "Pasahitza", eta "Konexio segurua (HTTPS)" WebDAVerako.
 5. SMB: zerbitzaria eta erabiltzaile-izena idatzi ondoren, "Aukeratu partekatze bat" aukerak zerbitzariaren partekatzeak zerrendatzen ditu.
 6. DLNA: multimedia-zerbitzari batek ez du erabiltzaile-izenik ez pasahitzik. Eman zerbitzaria, ataka eta bere gailu-deskribapenaren "Deskribapenaren bidea" (`/rootDesc.xml` minidlna-rako), edo itsatsi helbide osoa, `http://192.168.1.10:8200/rootDesc.xml` bezalakoa, zerbitzariaren eremuan.
-7. Sakatu "Probatu konexioa". "Konektatuta, N elementu hasierako karpetan" erantzuten du, edo zergatik huts egin duen esaten du. Ondoren sakatu "Gorde", inprimakiaren behealdean.
+7. Sakatu "Probatu konexioa". "Konektatuta, N elementu hasierako karpetan" erantzuten du, edo zergatik huts egin duen esaten du. Ondoren sakatu "Gorde", inprimakiaren behealdean. 22. konpilaziotik aurrera, zerbait idatzi duzun inprimaki bat ixteak (X, Atzera) "Aldaketak baztertu?" galdetzen du lehenik, Plex eta kameren orrietan ere bai, eta gauza bera gertatzen da aurkitutako Plex zerbitzari bat edo kamera bat aukeratzean zerbait idatzita dagoenean.
 
 Pasahitz hutseko erabiltzaile-izen bat horrela bidaltzen da: Freebox Server batek `freebox` eta pasahitzik ez du nahi bere diskoetarako. Partekatze bat geroago aldatzeko edo kentzeko, erabili Sareko partekatzeak orrian ondoan duen arkatza.
 
@@ -617,8 +617,9 @@ Biratu eskuineko joystick-arekin (edo informazio-paneleko "Biratu" botoiarekin) 
 
 ### Mugitu urruneko agintearekin
 
-- Geziek markoa mugitzen dute, OK botoiak markoa dagoen lekua irekitzen du, Atzera botoiak atzera egiten du. Fitxa batetik, Atzera botoiak alboko menura eramaten du, ondoren Argazkiak-era, ondoren aplikaziotik kanpora.
-- Kanala gora eta behera orrialde bat aldi berean korritzen dute.
+- Geziek markoa mugitzen dute, OK botoiak markoa dagoen lekua irekitzen du, Atzera botoiak atzera egiten du. Fitxa batetik, Atzera botoiak alboko menura eramaten du, ondoren Argazkiak-era, ondoren aplikaziotik kanpora. Aukera-zerrenda batean, hala nola partekatze baten motan edo ezarpen batean, geziek markoa soilik mugitzen dute eta OK botoiak aukera hautatzen du (22. konpilaziotik aurrera; lehen, geziek aukera aldatzen zuten).
+- Kanala gora eta behera orrialde bat aldi berean korritzen dute. 22. konpilaziotik aurrera argazki-saretek sei lauza inguru erakusten dituzte errenkada bakoitzeko pantailaren marjinen barruan, gailuaren beraren fitxategien miniatura zorrotzagoekin, xehetasun finetan leun mantentzen direnak, eta telefonoan irudi-goiburua duten orriek (360° zerrenda, Gogokoenak, gailuaren albumak) barra bakar bat erakusten dute horren ordez.
+- 22. konpilaziotik aurrera markoa orrialde bakoitzeko lehen elementuan hasten da (360° zerrendako lehen lauzan, helbide elektronikoaren eremuan zerbitzariaren helbidea berretsi ondoren), pantailaren marjinen barruan geratzen da sareta bat korritzen den bitartean, eta sareta batetik haren gaineko errenkadara edo iragazkietara igotzen da, ez Atzera botoira. Sareko partekatze batetik edo kamera batetik eskuinera sakatuta haren edizio-botoira iristen da, eta "Probatu konexioa" ekintzaren emaitza ikusgai geratzen da korrituz.
 - Ikustaileetan urruneko agintearen erreproduzitu eta pausatu, aurrera azkar, atzera azkar, hurrengoa eta aurrekoa teklek funtzionatzen dute, eta informazio-teklak argazki edo bideo baten xehetasunak erakusten ditu.
 
 ### Argazkiak eta bideoak urruneko agintearekin
@@ -632,7 +633,7 @@ Biratu eskuineko joystick-arekin (edo informazio-paneleko "Biratu" botoiarekin) 
 
 ### Urruneko agintearen diseinua ezarpena
 
-Ezarpenak, Ezarpenak (Preferences), "Urruneko agintearen diseinua": "Foku-marko handiak eta urruneko agintearen teklak, ukipen-pantaila behar duten kontrolik gabe. Automatikoak Android TV eta Google TV-n aktibatzen du." Automatikoa da lehenetsia; Aktibatuta egokia da teklatu edo joko-komandagailu batekin gidatutako tableta baterako; Desaktibatuta aukerak telebista batean desaktibatzen du. Ezarpena Android-en bakarrik dago. Geziek eta OK botoiak ikustaileetan funtzionatzen dute teklatu edo joko-komandagailu batekin, ezarpena edozein dela ere.
+Ezarpenak, Ezarpenak (Preferences), "Urruneko agintearen diseinua": "Foku-marko handiak eta urruneko agintearen teklak, ukipen-pantaila behar duten kontrolik gabe. Automatikoak Android TV eta Google TV-n aktibatzen du." Automatikoa da lehenetsia; Aktibatuta egokia da teklatu edo joko-komandagailu batekin gidatutako tableta baterako; Desaktibatuta aukerak telebista batean desaktibatzen du. Ezarpena Android-en bakarrik dago. 22. konpilaziotik aurrera aldaketa bat berehala aplikatzen da irekita dagoen orrian, eta orria zegoen tokian geratzen da (lehen, Ezarpenak berriro irekitzen zen Aurreratua atalean, Atzera botoiak zeharkatu behar zuen hasierako pantaila baten gainean). Geziek eta OK botoiak ikustaileetan funtzionatzen dute teklatu edo joko-komandagailu batekin, ezarpena edozein dela ere.
 
 ### Mugak
 
@@ -650,7 +651,7 @@ Ezarpenak, Ezarpenak (Preferences), "Urruneko agintearen diseinua": "Foku-marko 
 
 360° argazkiak beste argazki guztiekin nahastuta daude, eta jendeak esferak eta panoramikak iragazteko modu bat eskatzen dio Immich-i ([#12824 eztabaida](https://github.com/immich-app/immich/discussions/12824)). Immich aplikazioak ez du horrelako zerrendarik.
 
-Immuch360-k 360° ikurra jartzen du 360° argazkien miniaturetan (sareko partekatze-karpeta batean, 360° bideoetan ere bai), eta 360° sarrera bat Liburutegia fitxaren goialdean. 18. konpilaziotik aurrera zerrenda horrek, zerbitzariarekin, zerbitzariak 360° gisa markatzen dituen argazki eta bideoak, Insta360 fitxategi gordinak beren izenagatik, 360° kamera batek berak josi dituen argazkiak eta 360° gisa ikustea aukeratu dituzunak ditu, gehi gailuaren eskaneatzeak aurkitu duena; zerbitzaririk gabe, gailuaren eskaneatzeak aurkitu duena eta 360° gisa ikustea aukeratu dituzunak. Bakoitza behin agertzen da, bere kopiak non dauden ere, berrienak lehenik.
+Immuch360-k 360° ikurra jartzen du 360° argazkien miniaturetan (sareko partekatze-karpeta batean, 360° bideoetan ere bai), eta 360° sarrera bat Liburutegia fitxaren goialdean. 18. konpilaziotik aurrera zerrenda horrek, zerbitzariarekin, zerbitzariak 360° gisa markatzen dituen argazki eta bideoak, Insta360 fitxategi gordinak beren izenagatik, 360° kamera batek berak josi dituen argazkiak eta 360° gisa ikustea aukeratu dituzunak ditu, gehi gailuaren eskaneatzeak aurkitu duena; zerbitzaririk gabe, gailuaren eskaneatzeak aurkitu duena eta 360° gisa ikustea aukeratu dituzunak. Bakoitza behin agertzen da, bere kopiak non dauden ere, berrienak lehenik. 22. konpilaziotik aurrera "Sareko partekatzeetan" errenkada bat agertzen da saretaren gainean, zure partekatzeetako 360° argazki eta bideoekin, berrienak lehenik: aplikazioak haien karpeta erakusten duenean edo irekitzen dituenean ezagutzen ditu (ez du partekatze bat bere kabuz arakatzen), abiarazte batetik hurrengora gogoratzen ditu eta haien partekatzearekin batera ahazten ditu. Telebista batean, argazki propiorik ez duenez, errenkada horrek betetzen du 360° zerrenda.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="360° zerrenda, 4 elementu, Data orria irekita: Denak, 2026 urtea bere kopuruarekin, Urte osoa, 2026ko abuztua eta 2026ko apirila beren kopuruekin, 2025 urtea, eta Custom">
 
@@ -661,7 +662,7 @@ Immuch360-k 360° ikurra jartzen du 360° argazkien miniaturetan (sareko parteka
 3. Zerbitzariarekin, aukeratu non dauden multimedia-elementuak: "Zerbitzarian", "Gailu honetan", eta "Nirekin partekatutakoak" baldin badaude.
 4. Aukeratu mota: Argazkiak, Bideoak, 3D, VR180.
 5. Zerrendak bi kamera edo gehiago dituenean, bigarren errenkada batek EXIF marka eta modelotik zerrendatzen ditu, beren kopuruekin. Horiek ez dituen fitxategi gordin batek bere luzapenaren markaren izena hartzen du (Insta360, GoPro, DJI), beste edozein "Kamera ezezaguna" da.
-6. Talde baten barruan (lekuak, Argazkiak eta Bideoak, 3D eta VR180, kamerak) iragazkiak batu egiten dira; taldeen artean zerrenda murrizten dute. "Garbitu" aukerak dena berrezartzen du; "Ez dago iragazki hauekin bat datorren 360° argazki edo bideorik" esan nahi du iragazkiek ez dutela ezer uzten.
+6. Talde baten barruan (lekuak, Argazkiak eta Bideoak, 3D eta VR180, kamerak) iragazkiak batu egiten dira; taldeen artean zerrenda murrizten dute. "Data", Argazkiak eta Bideoak iragazkiak sareko partekatzeen errenkadari ere aplikatzen zaizkio; 3D, VR180 eta kamerek ezkutatu egiten dute, aplikazioak horietako ezer ez dakielako partekatze bateko fitxategi bati buruz. "Garbitu" aukerak dena berrezartzen du; "Ez dago iragazki hauekin bat datorren 360° argazki edo bideorik" esan nahi du iragazkiek ez dutela ezer uzten.
 7. Ireki argazki edo bideo bat. Quest-eko ikuspegi murgiltzailean, aurrekoak eta hurrengoak zerrenda iragazia jarraitzen dute.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Immich-en aplikazio mugikor ofizialak egiten duen guztia hemen dago: babes-kopia
 
 Aplikazioa ez duen norbaiti 360° argazki bat erakusteko, partekatu Immich-en partekatutako esteka batekin: Immich-en web aplikazioak 360° argazki bat esfera gisa erakusten du bere nabigatzailean.
 
-Uneko konpilazioa, 21. konpilazioa (3.3.0-rc.0 bertsioa, 3030019 konpilazio-zenbakia), Immich 3.3.0-rc.0 bertsioan oinarrituta dago (Immich `main`, oraindik ez bertsio egonkorra). 19. konpilazioa Immich 3.2 zerbitzari batekin probatu zen, eta 20. eta 21. konpilazioek ez dute aldatzen aplikazioak zerbitzariari eskatzen diona. Mesedez, jakinarazi arazoak [Issues](https://github.com/freeKC/Immuch360/issues) atalean, ez Immich proiektuari. Immich-en beraren dokumentazio osoa ikusteko, ikusi [immich.app](https://immich.app).
+Uneko konpilazioa, 22. konpilazioa (3.3.0-rc.0 bertsioa, 3030020 konpilazio-zenbakia), 2026ko urriaren 10eko Immich `main`-ean oinarrituta dago (3.3.0-rc.0 bertsioa, oraindik ez bertsio egonkorra). 22. konpilazioa Immich 3.2.4 zerbitzari batekin eta Immich `main` horretatik bertatik konpilatutako zerbitzari batekin probatu zen: saio-hasiera, denbora-lerroa, albumak, 360° argazki eta bideoak, bideo-erreprodukzioa eta igoerak, API errorerik gabe. Mesedez, jakinarazi arazoak [Issues](https://github.com/freeKC/Immuch360/issues) atalean, ez Immich proiektuari. Immich-en beraren dokumentazio osoa ikusteko, ikusi [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich aplikazioarekin eta beste aplikazio batzuekin alderatuta
@@ -1037,6 +1038,8 @@ Erritmoari eusten ez diona zerbitzariko bideo baten deskodetzea denean, ez marra
 - **Aukeratu zuk zeuk errendatzailea.** Ezarpenak, Aurreratua atalean, aktibatu "Arazoak detektatzea eta konpontzea": "360° bideo-errendatzailea" sarrera bat agertzen da, lehenespenez "Automatikoa". "Plugina, tamaina osoa", "Plugina, gehienez 4096 zabal", "Plugina, gehienez 2880 zabal" eta "Laua, 360° ikuspegirik gabe" ere eskaintzen ditu, irekitzen duzun hurrengo 360° bideorako. Haren azpian, "Azken neurketa" atalak azken 360° bideoa marraztu zen tamaina, bere segundoko fotogramak, txip grafikoa eta deskodetzailea izendatzen ditu: kopiatu akats-txosten batean. "Automatikoa" berriro aukeratzeak, jada aukera hori denean ere, neurtutakoa ahazten du, eta hurrengo 360° bideoak berriro neurtzen dira.
 - **Txipak zer deskodetzen duen.** Ezarpenak, Aurreratua, "Gailu honen bideo-deskodetzaileak" atalak erabiltzen ari den txip grafikoak zer deskodetzen duen zerrendatzen du, Direct3D 11-k jakinarazten duen bezala, eta aplikazioak zerrenda hori zuzentzen du erreproduzitzean neurtu duenarekin: "Bideoaren iturria" ezarpenak eta bideo gordinen bi objektiboen egiaztapenak hari jarraitzen diote. 4096 pixel baino zabalagoa den H.264 (360° kameren 5.7K-a) prozesadoreak deskodetzen du, probako eramangarriaren bi txipetako batek ere ez baitu onartzen.
 
+**Garatzaileentzat.** 360° erreproduzitzaileak bere errendatzaile propioaren bidez marrazten du, libmpv-n eta adabakitutako media_kit_video plugin batean oinarrituta: mpv-k fotograma bakoitza txip grafikoko testura batean marrazten du, eta OpenGL ES 3.0 pasaldi batek ikuspegia Flutter-ek erakusten duen testuran marrazten du, prozesadorearen bidezko kopiarik gabe. Zergatik eraiki zen horrela, nola funtzionatzen duen, zer neurtu zen eta zer doi daitekeen: [mahaigaineko 360° bideo-errendatzailea](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Telefonoko aplikazioekin alderatuta
 
 - **Babeskopia aplikazioa irekita dagoen bitartean egiten da** (edo minimizatuta), ez atzeko planoan leihoa itxita dagoela. Igoerak abian direnean edo ordenagailua partekatuta dagoenean leihoa ixteak lehenik galdetzen du.
@@ -1110,7 +1113,7 @@ Aplikazioa Google Play-n dago telefono eta tabletetarako; App Store-ko bertsioa 
 
 - **Android telefonoak eta tabletak**
   - Gaur: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), edo [Releases](https://github.com/freeKC/Immuch360/releases) orriko APKa: `Immuch360-v<version>-arm64-v8a-release.apk` telefono baterako (`Immuch360-v<version>-release.apk` unibertsalak leku guztietan funtzionatzen du, `-armeabi-v7a` 32 biteko telefono zaharragoetarako da, eta `.aab` fitxategia Google Play-rako da, ez eskuz instalatzeko). GitHub-eko konpilazioa dendaren aurretik egon ohi da. Edonola ere Immich aplikazio ofizialaren ondoan instalatzen da (`com.aprogsys.immuch360` paketea).
-  - Laster: Google Play-n, 20. konpilazioa argitaratuta dago 2026ko urriaren 7tik, 18. konpilazioaren ordez; 21. konpilazioak ez du ezer aldatzen telefono eta tabletetan.
+  - Laster: Google Play-n, 22. konpilazioa 2026ko urriaren 10ean bidali zen 20. konpilazioaren ordez (urriaren 7tik argitaratuta); urriko Immich-en aldaketak eta telebistarako zuzenketak dakartza.
 - **iPhone eta iPad**
   - Gaur: Apple-ren berrikuspenaren zain. Berrikuspenean dagoen bertsioak 11. konpilazioaren funtzioak ditu: Immich-era igotzea eta "Bideoaren iturria" aukera (15. konpilazioa) eta Insta360 fitxategi gordinak (16. konpilazioa) App Store-ko geroko eguneratze batekin iritsiko dira. Iturburu-kodea Xcode-rekin edo Codemagic-en konpilatzen da, ikusi [Konpilatu zuk zeuk](#build-it-yourself).
   - Laster: App Store, berrikuspenean.
@@ -1157,7 +1160,7 @@ Ez dago sekreturik biltegi honetan: Android-eko sinatze-gakoa GitHub Actions-eko
 
 ### Adarrak
 
-- **`main`**: Immich `main`, `immuch360` oinarritzen den commit-ean (2026ko irailaren 29a uneko konpilazioetarako), inoiz aldatu gabea; aurrera egiten du fork-a Immich berriago baten gainean birbaseatzen denean.
+- **`main`**: Immich `main`, `immuch360` oinarritzen den commit-ean (2026ko urriaren 10a uneko konpilazioetarako), inoiz aldatu gabea; aurrera egiten du fork-a Immich berriago baten gainean birbaseatzen denean.
 - **`immuch360`**: fork honen aldaketak Immich-en gainean, Immuch360 Desktop barne 2026ko urriaren 9az geroztik. Bertsio bakoitzak zein Immich bertsiotan oinarritzen den esaten du.
 - **`desktop`**: Immuch360 Desktop, ordenagailuko bertsioa, `immuch360`-ren gainean eraiki zen tokia, 2026ko urriaren 9an hartan batu zen arte, telefonoak, betaurrekoak, telebistak eta ordenagailuak iturburu-kode beretik atera daitezen. Orain `immuch360` jarraitzen du eta mahaigaineko aurre-bertsioen etiketak ditu ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), 21f285c34 commit-etik, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), 5b723bd25-etik, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), 360° bideo-erreproduzitzailearen batzetik 2026ko urriaren 10ean). Mahaigaineko lan berria hor iristen da lehenik eta `immuch360`-ra batzen da hura dakarren mahaigaineko konpilazioarekin. Ordenagailuko bertsioak ez du ezer aldatzen `mobile/android` eta `mobile/ios` azpian.
 

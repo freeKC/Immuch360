@@ -17,10 +17,10 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
 
 | Platform | Waar om dit te kry | Status op 10 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-fone en -tablette | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bou 20 sedert 7 Oktober 2026 op Google Play, bou 21 op GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-fone en -tablette | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bou 22 op GitHub, op 10 Oktober 2026 na Google Play gestuur (bou 20 is daar sedert 7 Oktober regstreeks) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone en iPad** | App Store | weergawe 3.3.0 wag vir Apple se nagaan; [bou dit self](#build-it-yourself) intussen |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | inskrywing goedgekeur, bou 21 word deur Meta nagegaan |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | bou 21 op GitHub; die Google Play-inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | inskrywing goedgekeur, bou 21 word deur Meta nagegaan, bou 22 op die alfakanaal |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | bou 22 op GitHub; die Google Play-inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Voorskou-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | rekenaarbou 3 op Windows: foto's, plat en 360°-video's; macOS en Linux later |
 
 *Statusse word by elke vrystelling bygewerk; die besonderhede is in [Waar om dit te kry](#where-to-get-it).*
@@ -196,7 +196,7 @@ Dit vind self die bedieners op jou netwerk, en speel die lêers regstreeks in di
 4. Nie in die lys nie? Vul die vorm met die hand in. Tipe: "SMB (Samba, Windows-deelplek)", "WebDAV (Nextcloud, Synology en ander)", "DLNA-mediabediener (Jellyfin, NAS, TV-kassie)" of, vanaf bou 20, "Plex Media Server", wat die bladsy van [Plex Media Server, sonder plex.tv](#plex-media-server-without-plextv) oopmaak. Dan Naam, "Bedienernaam of -adres" ('n naam of 'n adres; 'n volledige adres soos `smb://nas/photos`, `\\nas\photos` of `https://nas:5006/photos` vul die ander velde in), "Poort (opsioneel)" wanneer dit nie die gewone een is nie, "Deelplek" vir SMB of "Pad van die WebDAV-adres" vir WebDAV, "Beginvouer (opsioneel)", "Gebruikersnaam" en "Wagwoord", en "Veilige verbinding (HTTPS)" vir WebDAV.
 5. SMB: sodra die bediener en die gebruikersnaam ingetik is, lys "Kies 'n deelplek" die deelplekke van die bediener.
 6. DLNA: 'n mediabediener het geen gebruikersnaam of wagwoord nie. Gee die bediener, die poort en die "Beskrywingspad" van sy toestelbeskrywing (`/rootDesc.xml` vir minidlna), of plak die hele adres, soos `http://192.168.1.10:8200/rootDesc.xml`, in die bedienerveld.
-7. Tik op "Toets die verbinding". Dit antwoord "Gekoppel, N items in die beginvouer", of sê waarom dit misluk het. Tik dan op Stoor, onderaan die vorm.
+7. Tik op "Toets die verbinding". Dit antwoord "Gekoppel, N items in die beginvouer", of sê waarom dit misluk het. Tik dan op Stoor, onderaan die vorm. Vanaf bou 22 vra die app eers "Gooi die veranderinge weg?" wanneer jy 'n vorm toemaak waarin jy iets getik het (X, Terug), ook op die Plex- en kamerabladsye, en net so wanneer jy 'n gevonde Plex-bediener of kamera kies nadat iets reeds getik is.
 
 'n Gebruikersnaam met 'n leë wagwoord word as sodanig gestuur: 'n Freebox Server wil `freebox` en geen wagwoord vir sy skywe hê nie. Om 'n deelplek later te verander of te verwyder, gebruik die potlood langsaan op die Netwerkdeelplekke-bladsy.
 
@@ -617,8 +617,9 @@ Vanaf bou 20 loop dieselfde Android-app op Android TV en Google TV, met die afst
 
 ### Beweeg rond met die afstandbeheer
 
-- Die pyltjies skuif die raam, OK maak oop waarop dit is, Terug gaan terug. Vanaf 'n oortjie gaan Terug na die kantkieslys, dan na Foto's, dan uit die app.
-- Kanaal op en af blaai 'n bladsy op 'n slag.
+- Die pyltjies skuif die raam, OK maak oop waarop dit is, Terug gaan terug. Vanaf 'n oortjie gaan Terug na die kantkieslys, dan na Foto's, dan uit die app. In 'n lys keuses, soos die soort deelplek of 'n instelling, skuif die pyltjies net die raam en OK kies die keuse (vanaf bou 22; voorheen het die pyltjies die keuse verander).
+- Kanaal op en af blaai 'n bladsy op 'n slag. Vanaf bou 22 wys die fotoroosters sowat ses teëls per ry binne die kantlyne van die skerm, met skerper duimnaelskets van die toestel se eie lêers wat glad bly op fyn detail, en die bladsye met 'n prentkop op 'n foon (die 360°-lys, Favorites (Gunstelinge), die albums van die toestel) wys eerder 'n enkele balk.
+- Vanaf bou 22 begin die raam op die eerste item van elke bladsy (die eerste teël van die 360°-lys, die e-posveld sodra die bedieneradres bevestig is), bly binne die kantlyne van die skerm terwyl 'n rooster rol, en gaan van 'n rooster op na die ry of die filters daarbo eerder as na die Terug-knoppie. Regs vanaf 'n netwerkdeelplek of 'n kamera bereik sy wysigknoppie, en die uitslag van "Toets die verbinding" rol in sig.
 - In die kykers werk die speel-en-pouse-, vorentoe-, terugspoel-, volgende- en vorige-knoppies van die afstandbeheer, en die inligtingknoppie wys die besonderhede van 'n foto of video.
 
 ### Foto's en video's met die afstandbeheer
@@ -632,7 +633,7 @@ Vanaf bou 20 loop dieselfde Android-app op Android TV en Google TV, met die afst
 
 ### Die instelling Uitleg vir afstandbeheer
 
-Settings (Instellings), Preferences (Voorkeure), "Uitleg vir afstandbeheer": "Groot fokusrame en afstandbeheerknoppies, sonder die kontroles wat 'n raakskerm nodig het. Outomaties skakel dit aan op Android TV en Google TV." Outomaties is die verstek; Aan pas by 'n tablet wat met 'n sleutelbord of 'n speelpaneel bestuur word; Af skakel dit op 'n TV af. Die instelling bestaan slegs op Android. Die pyltjies en OK werk in die kykers met 'n sleutelbord of 'n speelpaneel, ongeag die instelling.
+Settings (Instellings), Preferences (Voorkeure), "Uitleg vir afstandbeheer": "Groot fokusrame en afstandbeheerknoppies, sonder die kontroles wat 'n raakskerm nodig het. Outomaties skakel dit aan op Android TV en Google TV." Outomaties is die verstek; Aan pas by 'n tablet wat met 'n sleutelbord of 'n speelpaneel bestuur word; Af skakel dit op 'n TV af. Die instelling bestaan slegs op Android. Vanaf bou 22 geld 'n verandering dadelik vir die oop bladsy, wat bly waar dit was (voorheen het Settings weer op Gevorderd oopgemaak, bo-oor 'n beginskerm waardeur Terug moes gaan). Die pyltjies en OK werk in die kykers met 'n sleutelbord of 'n speelpaneel, ongeag die instelling.
 
 ### Beperkings
 
@@ -650,7 +651,7 @@ Settings (Instellings), Preferences (Voorkeure), "Uitleg vir afstandbeheer": "Gr
 
 360°-opnames is gemeng met al die ander foto's, en mense vra Immich vir 'n manier om sfere en panoramas te filtreer ([bespreking #12824](https://github.com/immich-app/immich/discussions/12824)). Die Immich-app het nie so 'n lys nie.
 
-Immuch360 sit 'n 360°-kenteken op die duimnaelskets van 360°-foto's (in 'n netwerkdeelplekvouer ook op 360°-video's), en 'n 360°-inskrywing bo-aan die Biblioteek-oortjie. Vanaf bou 18 bevat daardie lys, met 'n bediener, die foto's en video's wat die bediener as 360° merk, die rou Insta360-lêers volgens hul naam, die foto's wat 'n 360°-kamera self aanmekaargewerk het en dié wat jy gekies het om as 360° te bekyk, plus wat die skandering van die toestel gevind het; sonder 'n bediener, wat die skandering van die toestel gevind het en dié wat jy gekies het om as 360° te bekyk. Elkeen verskyn een keer, waar ook al sy kopieë is, die nuutste eerste.
+Immuch360 sit 'n 360°-kenteken op die duimnaelskets van 360°-foto's (in 'n netwerkdeelplekvouer ook op 360°-video's), en 'n 360°-inskrywing bo-aan die Biblioteek-oortjie. Vanaf bou 18 bevat daardie lys, met 'n bediener, die foto's en video's wat die bediener as 360° merk, die rou Insta360-lêers volgens hul naam, die foto's wat 'n 360°-kamera self aanmekaargewerk het en dié wat jy gekies het om as 360° te bekyk, plus wat die skandering van die toestel gevind het; sonder 'n bediener, wat die skandering van die toestel gevind het en dié wat jy gekies het om as 360° te bekyk. Elkeen verskyn een keer, waar ook al sy kopieë is, die nuutste eerste. Vanaf bou 22 kom 'n ry "In die netwerkdeelplekke" bo die rooster met die 360°-foto's en -video's van jou deelplekke, die nuutste eerste: die app leer hulle ken wanneer dit hul vouer wys of hulle oopmaak (dit deursoek nie self 'n deelplek nie), hou hulle van een begin tot die volgende en vergeet hulle saam met hul deelplek. Op 'n TV, wat geen eie foto's het nie, is dit daardie ry wat die 360°-lys vul.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Die 360°-lys, 4 items, met sy Date-blad oop: Alle, die jaar 2026 met sy telling, Hele jaar, Augustus 2026 en April 2026 met hul tellings, die jaar 2025, en Custom">
 
@@ -661,7 +662,7 @@ Immuch360 sit 'n 360°-kenteken op die duimnaelskets van 360°-foto's (in 'n net
 3. Met 'n bediener, kies waar die media is: "Op die bediener", "On this device", en "Shared with me" (Met my gedeel) wanneer daar sulkes is.
 4. Kies die soort: Photos, Video’s, 3D, VR180.
 5. Wanneer die lys twee of meer kameras bevat, lys 'n tweede ry hulle volgens die EXIF-fabrikaat en -model, met hul tellings. 'n Rou lêer daarsonder word vernoem na die handelsmerk van sy uitbreiding (Insta360, GoPro, DJI), enigiets anders is "Onbekende kamera".
-6. Binne 'n groep (die plekke, Photos en Video’s, 3D en VR180, die kameras) tel die skyfies op; tussen groepe vernou hulle die lys. Clear (Vee uit) stel alles terug; "Geen 360°-foto of -video pas by hierdie filters nie" beteken die filters laat niks oor nie.
+6. Binne 'n groep (die plekke, Photos en Video’s, 3D en VR180, die kameras) tel die skyfies op; tussen groepe vernou hulle die lys. Die skyfies Date, Photos en Video’s geld ook vir die ry van die netwerkdeelplekke; 3D, VR180 en die kameras versteek dit, aangesien die app niks daarvan weet vir 'n lêer van 'n deelplek nie. Clear (Vee uit) stel alles terug; "Geen 360°-foto of -video pas by hierdie filters nie" beteken die filters laat niks oor nie.
 7. Maak 'n foto of video oop. In die Quest se meevoerende aansig volg vorige en volgende die gefiltreerde lys.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Alles wat die amptelike Immich-mobiele app doen, is hier: rugsteun, tydlyn, albu
 
 Om 'n 360°-foto te wys aan iemand wat nie die app het nie, deel dit met 'n gedeelde Immich-skakel: die Immich-webapp wys 'n 360°-foto as 'n sfeer in hul blaaier.
 
-Die huidige bou, bou 21 (weergawe 3.3.0-rc.0, bounommer 3030019), is gebaseer op Immich 3.3.0-rc.0 (Immich `main`, nog nie 'n stabiele vrystelling nie). Bou 19 is getoets met 'n Immich 3.2-bediener, en boue 20 en 21 verander niks aan wat die app van die bediener vra nie. Rapporteer asseblief probleme in [Issues](https://github.com/freeKC/Immuch360/issues), nie aan die Immich-projek nie. Vir die volledige dokumentasie van Immich self, sien [immich.app](https://immich.app).
+Die huidige bou, bou 22 (weergawe 3.3.0-rc.0, bounommer 3030020), is gebaseer op Immich `main` van 10 Oktober 2026 (weergawe 3.3.0-rc.0, nog nie 'n stabiele vrystelling nie). Bou 22 is getoets teen 'n Immich 3.2.4-bediener en teen 'n bediener wat uit daardie selfde Immich `main` gebou is: aanmelding, tydlyn, albums, 360°-foto's en -video's, videoterugspeel en oplaaie, sonder enige API-fout. Rapporteer asseblief probleme in [Issues](https://github.com/freeKC/Immuch360/issues), nie aan die Immich-projek nie. Vir die volledige dokumentasie van Immich self, sien [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Vergeleke met die Immich-app en ander apps
@@ -1037,6 +1038,8 @@ Wanneer dit die dekodering van 'n bedienervideo is wat nie byhou nie, nie die te
 - **Kies self die weergawer.** In Settings, Gevorderd, skakel Troubleshooting (Probleemoplossing) aan: 'n inskrywing "360°-videoweergawer" verskyn, by verstek Outomaties. Dit bied ook "Prop-in, volle grootte", "Prop-in, hoogstens 4096 breed", "Prop-in, hoogstens 2880 breed" en "Plat, sonder die 360°-aansig", vir die volgende 360°-video wat jy oopmaak. Daaronder noem "Laaste gemeet" die grootte waarteen die laaste 360°-video geteken is, sy rame per sekonde, die grafiese skyfie en die dekodeerder: kopieer dit in 'n foutverslag. Om "Outomaties" weer te kies, selfs wanneer dit reeds die keuse is, vergeet wat gemeet is, en die volgende 360°-video's word weer gemeet.
 - **Wat die skyfie dekodeer.** Settings, Gevorderd, "Videodekodeerders van hierdie toestel" lys wat die grafiese skyfie in gebruik dekodeer, soos Direct3D 11 dit rapporteer, en die app korrigeer daardie lys met wat dit tydens afspeel gemeet het: die Videobron-instelling en die tweelenstoets van rou video's volg dit. H.264 wyer as 4096 pieksels (die 5.7K van 360°-kameras) word deur die verwerker gedekodeer, aangesien geen van die skyfies van die toetsskootrekenaar dit aanvaar nie.
 
+**Vir ontwikkelaars.** Die 360°-speler teken deur 'n eie weergawer, gebou op libmpv en 'n gepatchte media_kit_video-inprop: mpv teken elke raam in 'n tekstuur op die grafiese skyfie, en 'n OpenGL ES 3.0-deurgang teken die aansig in die tekstuur wat Flutter wys, sonder 'n kopie deur die verwerker. Waarom dit so gebou is, hoe dit werk, wat gemeet is en wat ingestel kan word: [die 360°-videoweergawer van die rekenaarweergawe](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Vergeleke met die foonapps
 
 - **Rugsteun loop terwyl die app oop is** (of geminimeer), nie in die agtergrond met die venster gesluit nie. Om die venster te sluit terwyl oplaaie loop, of terwyl die rekenaar gedeel word, vra eers.
@@ -1110,7 +1113,7 @@ Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir A
 
 - **Android-fone en -tablette**
   - Vandag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), of die APK op die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy: `Immuch360-v<version>-arm64-v8a-release.apk` vir 'n foon (die universele `Immuch360-v<version>-release.apk` werk oral, `-armeabi-v7a` is vir ouer 32-bis-fone, en die `.aab`-lêer is vir Google Play, nie vir installering met die hand nie). Die GitHub-bou is gewoonlik voor die winkel. Hoe ook al, dit installeer langs die amptelike Immich-app (pakket `com.aprogsys.immuch360`).
-  - Binnekort: op Google Play is bou 20 sedert 7 Oktober 2026 regstreeks, in die plek van bou 18; bou 21 verander niks op fone en tablette nie.
+  - Binnekort: op Google Play is bou 22 op 10 Oktober 2026 gestuur in die plek van bou 20 (regstreeks sedert 7 Oktober); dit bevat die Immich-veranderinge van Oktober en die TV-regstellings.
 - **iPhone en iPad**
   - Vandag: wag vir Apple se nagaan. Die weergawe wat nagegaan word, dra die funksies van bou 11: die oplaai na Immich en die Videobron-keuse (bou 15) en die rou Insta360-lêers (bou 16) sal met 'n latere App Store-opdatering kom. Die bronkode bou met Xcode of op Codemagic, sien [Bou dit self](#build-it-yourself).
   - Binnekort: App Store, word nagegaan.
@@ -1157,7 +1160,7 @@ Geen geheim woon in hierdie bewaarplek nie: die Android-ondertekeningsleutel wor
 
 ### Takke
 
-- **`main`**: Immich `main` by die commit waarop `immuch360` gebaseer is (29 September 2026 vir die huidige boue), nooit verander nie; dit skuif vorentoe wanneer die vurk op 'n nuwer Immich herbaseer word.
+- **`main`**: Immich `main` by die commit waarop `immuch360` gebaseer is (10 Oktober 2026 vir die huidige boue), nooit verander nie; dit skuif vorentoe wanneer die vurk op 'n nuwer Immich herbaseer word.
 - **`immuch360`**: die veranderinge van hierdie vurk bo-op Immich, Immuch360 Desktop ingesluit sedert 9 Oktober 2026. Elke vrystelling sê op watter Immich-weergawe dit gebaseer is.
 - **`desktop`**: waar Immuch360 Desktop, die rekenaarweergawe, bo-op `immuch360` gebou is, totdat dit op 9 Oktober 2026 daarin saamgevoeg is sodat fone, kopstukke, TV's en rekenaars uit dieselfde bronne vrygestel word. Dit volg nou `immuch360` en dra die etikette van die rekenaar-voorvrystellings ([rekenaarbou 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) vanaf commit 21f285c34, [rekenaarbou 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) vanaf 5b723bd25, [rekenaarbou 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) vanaf die samevoeging van die 360°-videospeler op 10 Oktober 2026). Nuwe rekenaarwerk land eers daar en sluit by `immuch360` aan met die rekenaarbou wat dit vrystel. Die rekenaarweergawe verander niks onder `mobile/android` en `mobile/ios` nie.
 

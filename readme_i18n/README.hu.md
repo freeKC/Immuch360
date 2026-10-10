@@ -17,10 +17,10 @@ Azoknak szól, akik 360°-os kamerával (Insta360, GoPro MAX, DJI Osmo 360, Rico
 
 | Platform | Honnan szerezhető be | Állapot 2026. október 10-én |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20-as build a Google Playen 2026. október 7. óta, 21-es build a GitHubon |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 22-es build a GitHubon, 2026. október 10-én elküldve a Google Playre (ott a 20-as build október 7. óta élő) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone és iPad** | App Store | a 3.3.0-s verzió az Apple ellenőrzésére vár; addig is [saját fordítás](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 és 3S | [APK](#meta-quest-3) · Horizon Store | az adatlap jóváhagyva, a 21-es build a Meta ellenőrzésén |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV és Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21-es build a GitHubon; a tévés Google Play-bejegyzés 2026. október 9. óta a Google ellenőrzése alatt |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 és 3S | [APK](#meta-quest-3) · Horizon Store | az adatlap jóváhagyva, a 21-es build a Meta ellenőrzésén, a 22-es build az alfa csatornán |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV és Google TV** | [APK](#install-it-on-the-tv) · Google Play | 22-es build a GitHubon; a tévés Google Play-bejegyzés 2026. október 9. óta a Google ellenőrzése alatt |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Előzetes ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktop build 3 Windowson: fotók, sík és 360°-os videók; macOS és Linux később |
 
 *Az állapotok minden kiadásnál frissülnek; a részletek: [Honnan szerezhető be](#where-to-get-it).*
@@ -196,7 +196,7 @@ Magától megtalálja a hálózat szervereit, és a fájlokat élőben játssza 
 4. Nincs a listában? Töltse ki kézzel az űrlapot. Típus: „SMB (Samba, Windows-megosztás)”, „WebDAV (Nextcloud, Synology és mások)”, „DLNA médiaszerver (Jellyfin, NAS, TV-okosdoboz)” vagy a 20-as buildtől „Plex Media Server”, amely a [Plex Media Server, plex.tv nélkül](#plex-media-server-without-plextv) oldalát nyitja meg. Majd Név, „Szerver neve vagy címe” (név vagy cím; egy teljes cím, például `smb://nas/photos`, `\\nas\photos` vagy `https://nas:5006/photos` a többi mezőt is kitölti), „Port (opcionális)”, ha nem a szokásos, SMB esetén „Megosztás”, WebDAV esetén „A WebDAV-cím útvonala”, „Kezdőmappa (opcionális)”, „Felhasználónév” és „Jelszó”, valamint WebDAV esetén „Biztonságos kapcsolat (HTTPS)”.
 5. SMB: miután beírta a szervert és a felhasználónevet, a „Válasszon megosztást” felsorolja a szerver megosztásait.
 6. DLNA: a médiaszervernek nincs felhasználóneve és jelszava. Adja meg a szervert, a portot és az eszközleírás „Leírás elérési útja” mezőjét (minidlna esetén `/rootDesc.xml`), vagy illessze be a teljes címet, például `http://192.168.1.10:8200/rootDesc.xml`, a szerver mezőbe.
-7. Koppintson a „Kapcsolat tesztelése” gombra. A válasz „Kapcsolódva, N elem a kezdőmappában”, vagy a hiba oka. Ezután koppintson az űrlap alján lévő Mentés gombra.
+7. Koppintson a „Kapcsolat tesztelése” gombra. A válasz „Csatlakozva, N elem a kezdőmappában”, vagy a hiba oka. Ezután koppintson az űrlap alján lévő Mentés gombra. A 22-es buildtől egy olyan űrlap bezárása, amelybe gépelt valamit (X, Vissza), előbb megkérdezi: „Elveti a módosításokat?”, a Plex és a kamera oldalán is, és ugyanígy kérdez egy talált Plex vagy kamera kiválasztása is, ha már be van írva valami.
 
 Az üres jelszavú felhasználónevet az alkalmazás így küldi el: egy Freebox Server a lemezeihez `freebox` felhasználót kér jelszó nélkül. Egy megosztás későbbi módosításához vagy törléséhez használja a mellette lévő ceruzát a Hálózati megosztások oldalon.
 
@@ -617,8 +617,9 @@ A 20-as buildtől ugyanaz az androidos alkalmazás fut Android TV-n és Google T
 
 ### Mozgás a távirányítóval
 
-- A nyilak a keretet mozgatják, az OK megnyitja, amin a keret áll, a Vissza visszalép. Egy lapról a Vissza az oldalsó menübe visz, majd a Fotókhoz, majd ki az alkalmazásból.
-- A csatorna fel és le gombok egyszerre egy oldalt görgetnek.
+- A nyilak a keretet mozgatják, az OK megnyitja, amin a keret áll, a Vissza visszalép. Egy lapról a Vissza az oldalsó menübe visz, majd a Fotókhoz, majd ki az alkalmazásból. Egy választási listában, például egy megosztás típusánál vagy egy beállításnál, a nyilak csak a keretet mozgatják, és az OK választja ki az elemet (a 22-es buildtől; korábban a nyilak megváltoztatták a választást).
+- A csatorna fel és le gombok egyszerre egy oldalt görgetnek. A 22-es buildtől a fotórácsok soronként körülbelül hat csempét mutatnak a képernyő margóin belül, az eszköz saját fájljainak élesebb bélyegképeivel, amelyek a finom részleteken is simák maradnak, a telefonon képes fejléccel rendelkező oldalak (a 360° lista, a Kedvencek, az eszköz albumai) pedig helyette egyetlen sávot mutatnak.
+- A 22-es buildtől a keret minden oldal első elemén kezd (a 360° lista első csempéjén, az e-mail-mezőn, miután a szervercím meg lett erősítve), a képernyő margóin belül marad, amíg egy rács görget, és egy rácsból a fölötte lévő sorra vagy szűrőkre lép fel a Vissza gomb helyett. Egy hálózati megosztásról vagy kameráról a jobbra gomb a szerkesztés gombjához visz, a „Kapcsolat tesztelése” eredménye pedig a látható részre görget.
 - A nézegetőkben a távirányító lejátszás és szünet, előretekerés, visszatekerés, következő és előző gombjai működnek, az info gomb pedig egy fotó vagy videó részleteit mutatja.
 
 ### Fotók és videók a távirányítóval
@@ -632,7 +633,7 @@ A 20-as buildtől ugyanaz az androidos alkalmazás fut Android TV-n és Google T
 
 ### A Távirányítós elrendezés beállítás
 
-Beállítások, Beállítások (Preferences), „Távirányítós elrendezés”: „Nagy fókuszkeretek és távirányító-gombok, az érintőképernyőt igénylő vezérlők nélkül. Az Automatikus Android TV-n és Google TV-n kapcsolja be.” Az Automatikus az alapértelmezett; a Be egy billentyűzettel vagy játékvezérlővel használt táblagéphez illik; a Ki kikapcsolja tévén. A beállítás csak Androidon létezik. A nyilak és az OK a nézegetőkben billentyűzettel vagy játékvezérlővel a beállítástól függetlenül működnek.
+Beállítások, Beállítások (Preferences), „Távirányítós elrendezés”: „Nagy fókuszkeretek és távirányító-gombok, az érintőképernyőt igénylő vezérlők nélkül. Az Automatikus Android TV-n és Google TV-n kapcsolja be.” Az Automatikus az alapértelmezett; a Be egy billentyűzettel vagy játékvezérlővel használt táblagéphez illik; a Ki kikapcsolja tévén. A beállítás csak Androidon létezik. A 22-es buildtől egy módosítás azonnal érvényes a nyitott oldalra, amely ott marad, ahol volt (korábban a Beállítások újra a Haladó résznél nyílt meg, egy kezdőképernyő fölött, amelyen a Vissza gombnak át kellett haladnia). A nyilak és az OK a nézegetőkben billentyűzettel vagy játékvezérlővel a beállítástól függetlenül működnek.
 
 ### Korlátok
 
@@ -650,7 +651,7 @@ Beállítások, Beállítások (Preferences), „Távirányítós elrendezés”
 
 A 360°-os felvételek keverednek az összes többi fotóval, és a felhasználók egy módot kérnek az Immichtől a gömbök és panorámák szűrésére ([#12824-es beszélgetés](https://github.com/immich-app/immich/discussions/12824)). Az Immich alkalmazásban nincs ilyen lista.
 
-Az Immuch360 360° jelvényt tesz a 360°-os fotók bélyegképére (hálózati megosztás mappájában a 360°-os videókéra is), és egy 360° elemet a Képtár lap tetejére. A 18-as buildtől ez a lista szerverrel tartalmazza a szerver által 360°-osnak jelölt fotókat és videókat, a nevük alapján a nyers Insta360 fájlokat, a 360°-os kamera által saját maga összeillesztett fotókat és azokat, amelyeket 360°-ként szeretne megtekinteni, valamint amit az eszköz átvizsgálása talált; szerver nélkül azt, amit az eszköz átvizsgálása talált, és azokat, amelyeket 360°-ként szeretne megtekinteni. Mindegyik egyszer jelenik meg, bárhol is legyenek a másolatai, a legújabbal kezdve.
+Az Immuch360 360° jelvényt tesz a 360°-os fotók bélyegképére (hálózati megosztás mappájában a 360°-os videókéra is), és egy 360° elemet a Képtár lap tetejére. A 18-as buildtől ez a lista szerverrel tartalmazza a szerver által 360°-osnak jelölt fotókat és videókat, a nevük alapján a nyers Insta360 fájlokat, a 360°-os kamera által saját maga összeillesztett fotókat és azokat, amelyeket 360°-ként szeretne megtekinteni, valamint amit az eszköz átvizsgálása talált; szerver nélkül azt, amit az eszköz átvizsgálása talált, és azokat, amelyeket 360°-ként szeretne megtekinteni. Mindegyik egyszer jelenik meg, bárhol is legyenek a másolatai, a legújabbal kezdve. A 22-es buildtől egy „A hálózati megosztásokban” sor jelenik meg a rács fölött a megosztásai 360°-os fotóival és videóival, a legújabbal kezdve: az alkalmazás akkor ismeri meg őket, amikor megjeleníti a mappájukat vagy megnyitja őket (magától nem keres át egy megosztást), megőrzi őket egyik indítástól a másikig, és a megosztásukkal együtt elfelejti őket. Tévén, amelynek nincsenek saját fotói, ez a sor tölti meg a 360° listát.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="A 360°-os lista 4 elemmel, megnyitott Dátum lappal: Mind, a 2026-os év a darabszámával, Egész év, 2026. augusztus és 2026. április a darabszámukkal, a 2025-ös év és Egyedi">
 
@@ -661,7 +662,7 @@ Az Immuch360 360° jelvényt tesz a 360°-os fotók bélyegképére (hálózati 
 3. Szerverrel válassza ki, hol vannak a médiák: „A szerveren”, „Ezen az eszközön”, és „Velem megosztva”, ha vannak ilyenek.
 4. Válassza ki a fajtát: Fotók, Videók, 3D, VR180.
 5. Ha a listában két vagy több kamera szerepel, egy második sor felsorolja őket az EXIF gyártó és típus alapján, a darabszámukkal. Az ezek nélküli nyers fájl a kiterjesztése szerinti márkanevet kapja (Insta360, GoPro, DJI), minden más „Ismeretlen kamera”.
-6. Egy csoporton belül (a helyek, Fotók és Videók, 3D és VR180, a kamerák) a szűrők összeadódnak; a csoportok között szűkítik a listát. A Törlés mindent visszaállít; „Egyetlen 360°-os fotó vagy videó sem felel meg ezeknek a szűrőknek” azt jelenti, hogy a szűrők után semmi sem marad.
+6. Egy csoporton belül (a helyek, Fotók és Videók, 3D és VR180, a kamerák) a szűrők összeadódnak; a csoportok között szűkítik a listát. A Dátum, Fotók és Videók szűrők a hálózati megosztások sorára is érvényesek; a 3D, a VR180 és a kamerák elrejtik ezt a sort, mivel az alkalmazás ezek egyikét sem ismeri egy megosztás fájljánál. A Törlés mindent visszaállít; „Egyetlen 360°-os fotó vagy videó sem felel meg ezeknek a szűrőknek” azt jelenti, hogy a szűrők után semmi sem marad.
 7. Nyisson meg egy fotót vagy videót. A Quest immerzív nézetében az előző és a következő a szűrt listát követi.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Minden, amit a hivatalos Immich mobilalkalmazás tud, itt is megvan: biztonsági
 
 Ha valakinek, akinek nincs meg az alkalmazás, 360°-os fotót szeretne mutatni, ossza meg egy Immich megosztási linkkel: az Immich webalkalmazása a böngészőjében gömbként mutatja a 360°-os fotót.
 
-A jelenlegi build, a 21-es (3.3.0-rc.0 verzió, 3030019-es buildszám), az Immich 3.3.0-rc.0-n alapul (az Immich `main` ága, még nem stabil kiadás). A 19-es build egy Immich 3.2 szerverrel lett tesztelve, és a 20-as és 21-es build semmit sem változtat azon, amit az alkalmazás a szervertől kér. A problémákat az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon jelezze, ne az Immich projektnek. Magának az Immichnek a teljes dokumentációja az [immich.app](https://immich.app) oldalon található.
+A jelenlegi build, a 22-es (3.3.0-rc.0 verzió, 3030020-as buildszám), az Immich 2026. október 10-i `main` ágán alapul (3.3.0-rc.0 verzió, még nem stabil kiadás). A 22-es build egy Immich 3.2.4 szerverrel és egy ugyanabból az Immich `main` ágból épített szerverrel lett tesztelve: bejelentkezés, idővonal, albumok, 360°-os fotók és videók, videolejátszás és feltöltések, API-hiba nélkül. A problémákat az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon jelezze, ne az Immich projektnek. Magának az Immichnek a teljes dokumentációja az [immich.app](https://immich.app) oldalon található.
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Összehasonlítás az Immich alkalmazással és más alkalmazásokkal
@@ -1037,6 +1038,8 @@ Ha nem a rajzolás, hanem egy szerveres videó dekódolása nem bírja (egy vide
 - **Válassza ki saját maga a megjelenítőt.** A Beállítások, Haladó alatt kapcsolja be a „Hibaelhárítás” lehetőséget: megjelenik egy „360°-os videó megjelenítője” bejegyzés, alapértelmezés szerint Automatikus. Felkínálja még a „Bővítmény, teljes méret”, a „Bővítmény, legfeljebb 4096 széles”, a „Bővítmény, legfeljebb 2880 széles” és a „Sík, 360°-os nézet nélkül” lehetőséget, a következő megnyitott 360°-os videóhoz. Alatta a „Legutóbbi mérés” megadja, milyen méretben rajzolódott az utolsó 360°-os videó, a másodpercenkénti képkockáit, a grafikus chipet és a dekódert: ezt másolja be egy hibajelentésbe. Az „Automatikus” újbóli kiválasztása, akkor is, ha már az a választás, elfelejti a mérteket, és a következő 360°-os videókat újra méri.
 - **Mit dekódol a chip.** A Beállítások, Haladó, „Az eszköz videodekóderei” felsorolja, mit dekódol a használt grafikus chip, ahogy a Direct3D 11 jelenti, és az alkalmazás ezt a listát a lejátszás közben mértekkel javítja: a Videóforrás beállítás és a nyers videók kétobjektíves ellenőrzése ezt követi. A 4096 pixelnél szélesebb H.264-et (a 360°-os kamerák 5.7K-ját) a processzor dekódolja, mert a tesztlaptop egyik chipje sem fogadja.
 
+**Fejlesztőknek.** A 360°-os lejátszó saját megjelenítőn keresztül rajzol, amely a libmpv-re és egy módosított media_kit_video bővítményre épül: az mpv minden képkockát egy textúrába rajzol a grafikus chipen, egy OpenGL ES 3.0 menet pedig a nézetet abba a textúrába rajzolja, amelyet a Flutter megjelenít, a processzoron át történő másolás nélkül. Hogy miért készült így, hogyan működik, mit mértek és mit lehet hangolni: [a számítógépes 360°-os videó megjelenítője](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Összevetés a telefonos alkalmazásokkal
 
 - **A biztonsági mentés akkor fut, amikor az alkalmazás nyitva van** (vagy kis méretre van állítva), nem a háttérben, bezárt ablakkal. Ha feltöltés közben, vagy amíg a számítógép meg van osztva, bezárja az ablakot, előbb rákérdez.
@@ -1110,7 +1113,7 @@ Az alkalmazás elérhető a Google Playen telefonokra és táblagépekre; az App
 
 - **Android telefonok és táblagépek**
   - Ma: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), vagy az APK a [Releases](https://github.com/freeKC/Immuch360/releases) oldalon: telefonhoz `Immuch360-v<version>-arm64-v8a-release.apk` (az univerzális `Immuch360-v<version>-release.apk` mindenhol működik, a `-armeabi-v7a` a régebbi 32 bites telefonokhoz való, a `.aab` fájl pedig a Google Playnek szól, nem oldalról telepítéshez). A GitHub-build általában előrébb jár, mint az áruház. Mindkét esetben a hivatalos Immich alkalmazás mellé települ (csomag: `com.aprogsys.immuch360`).
-  - Hamarosan: a Google Playen a 20-as build 2026. október 7. óta élő, a 18-as helyett; a 21-es build semmit sem változtat a telefonokon és a táblagépeken.
+  - Hamarosan: a Google Playre 2026. október 10-én el lett küldve a 22-es build a 20-as helyett (amely október 7. óta élő); ez hozza az Immich októberi változásait és a tévés javításokat.
 - **iPhone és iPad**
   - Ma: az Apple jóváhagyására vár. Az ellenőrzés alatt álló verzió a 11-es build funkcióit tartalmazza: az Immichbe való feltöltés és a Videóforrás választás (15-ös build), valamint a nyers Insta360 fájlok (16-os build) egy későbbi App Store-frissítéssel érkeznek. A forráskód Xcode-dal vagy Codemagicen fordítható, lásd [Saját fordítás](#build-it-yourself).
   - Hamarosan: App Store, ellenőrzés alatt.
@@ -1157,7 +1160,7 @@ Ebben a tárolóban nincs titok: az androidos aláírókulcs titkosított GitHub
 
 ### Ágak
 
-- **`main`**: az Immich `main` ága abban a commitban, amelyre az `immuch360` épül (a jelenlegi buildeknél 2026. szeptember 29.), soha nem módosítva; akkor lép előre, amikor a fork egy újabb Immichre kerül át (rebase).
+- **`main`**: az Immich `main` ága abban a commitban, amelyre az `immuch360` épül (a jelenlegi buildeknél 2026. október 10.), soha nem módosítva; akkor lép előre, amikor a fork egy újabb Immichre kerül át (rebase).
 - **`immuch360`**: ennek a forknak a változtatásai az Immich fölött, 2026. október 9. óta az Immuch360 Desktoppal együtt. Minden kiadás megadja, melyik Immich-verzión alapul.
 - **`desktop`**: itt készült az Immuch360 Desktop, a számítógépes verzió, az `immuch360` fölött, amíg 2026. október 9-én bele nem olvadt, hogy a telefonok, a headsetek, a tévék és a számítógépek ugyanazokból a forrásokból kapják a kiadásaikat. Most az `immuch360` ágat követi, és az asztali előzetes kiadások címkéit hordozza ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) a 21f285c34 commitból, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) az 5b723bd25 commitból, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) a 360°-os videolejátszó 2026. október 10-i beolvasztásából). Az új asztali munka először ide kerül, és azzal a desktop builddel jut be az `immuch360` ágba, amely kiadja. A számítógépes verzió semmit nem változtat a `mobile/android` és `mobile/ios` alatt.
 

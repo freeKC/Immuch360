@@ -17,10 +17,10 @@ Ni kwa ajili ya watu wanaopiga picha kwa kamera ya 360° (Insta360, GoPro MAX, D
 
 | Jukwaa | Mahali pa kuipata | Hali tarehe 10 Oktoba 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 kwenye Google Play tangu tarehe 7 Oktoba 2026, build 21 kwenye GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 kwenye GitHub, imetumwa kwa Google Play tarehe 10 Oktoba 2026 (huko build 20 imechapishwa tangu tarehe 7 Oktoba) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone na iPad** | App Store | toleo 3.3.0 linasubiri ukaguzi wa Apple; kwa sasa [ijenge mwenyewe](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [APK](#meta-quest-3) · Horizon Store | ukurasa umeidhinishwa, build 21 inakaguliwa na Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 kwenye GitHub; ukurasa wa Google Play kwa TV unakaguliwa na Google tangu tarehe 9 Oktoba 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [APK](#meta-quest-3) · Horizon Store | ukurasa umeidhinishwa, build 21 inakaguliwa na Meta, build 22 kwenye chaneli ya Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 kwenye GitHub; ukurasa wa Google Play kwa TV unakaguliwa na Google tangu tarehe 9 Oktoba 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP ya majaribio](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | build ya kompyuta 3 kwenye Windows: picha, video bapa na za 360°; macOS na Linux baadaye |
 
 *Hali husasishwa kila toleo jipya; maelezo yako katika [Mahali pa kuipata](#where-to-get-it).*
@@ -196,7 +196,7 @@ Inapata yenyewe seva za mtandao wako, na inacheza faili moja kwa moja katika vit
 4. Haipo kwenye orodha? Jaza fomu kwa mkono. Aina: "SMB (Samba, hifadhi ya Windows)", "WebDAV (Nextcloud, Synology na zingine)", "Seva ya midia ya DLNA (Jellyfin, NAS, kisanduku cha TV)" au, kuanzia build 20, "Plex Media Server", inayofungua ukurasa wa [Plex Media Server, bila plex.tv](#plex-media-server-without-plextv). Kisha Jina, "Jina au anwani ya seva" (jina au anwani; anwani kamili kama `smb://nas/photos`, `\\nas\photos` au `https://nas:5006/photos` inajaza sehemu nyingine), "Lango (si lazima)" lisipokuwa la kawaida, "Hifadhi" kwa SMB au "Njia ya anwani ya WebDAV" kwa WebDAV, "Folda ya kuanzia (si lazima)", "Jina la mtumiaji" na "Nenosiri", na "Muunganisho salama (HTTPS)" kwa WebDAV.
 5. SMB: seva na jina la mtumiaji vikishaandikwa, "Chagua hifadhi" inaorodhesha hifadhi za seva.
 6. DLNA: seva ya midia haina jina la mtumiaji wala nenosiri. Weka seva, lango na "Njia ya maelezo" ya maelezo ya kifaa chake (`/rootDesc.xml` kwa minidlna), au bandika anwani nzima, kama `http://192.168.1.10:8200/rootDesc.xml`, kwenye sehemu ya seva.
-7. Gusa "Jaribu muunganisho". Linajibu "Imeunganishwa, vipengee N kwenye folda ya kuanzia", au linasema kwa nini limeshindwa. Kisha gusa Hifadhi, chini ya fomu.
+7. Gusa "Jaribu muunganisho". Linajibu "Imeunganishwa, vipengee N kwenye folda ya kuanzia", au linasema kwa nini limeshindwa. Kisha gusa Hifadhi, chini ya fomu. Kuanzia build 22, kufunga fomu uliyoandika ndani yake (X, Nyuma) kunauliza kwanza "Tupa mabadiliko?", kwenye kurasa za Plex na za kamera pia, na vivyo hivyo kuchagua Plex au kamera iliyopatikana baada ya kitu kuandikwa.
 
 Jina la mtumiaji lenye nenosiri tupu linatumwa hivyo hivyo: Freebox Server inataka `freebox` na bila nenosiri kwa diski zake. Kubadilisha au kuondoa hifadhi baadaye, tumia penseli iliyo kando yake kwenye ukurasa wa Hifadhi za mtandao.
 
@@ -617,8 +617,9 @@ Kuanzia build 20 programu ileile ya Android inaendeshwa kwenye Android TV na Goo
 
 ### Sogea kwa rimoti
 
-- Mishale inasogeza fremu, OK inafungua kile ilichopo, Nyuma inarudi nyuma. Kutoka kichupo, Nyuma inaenda kwenye menyu ya pembeni, kisha kwenye Photos (Picha), kisha nje ya programu.
-- Chaneli juu na chini zinasogeza ukurasa mmoja kwa wakati.
+- Mishale inasogeza fremu, OK inafungua kile ilichopo, Nyuma inarudi nyuma. Kutoka kichupo, Nyuma inaenda kwenye menyu ya pembeni, kisha kwenye Photos (Picha), kisha nje ya programu. Katika orodha ya machaguo, kama aina ya hifadhi au mpangilio, mishale inasogeza fremu tu na OK inachagua chaguo (kuanzia build 22; awali, mishale ilibadilisha chaguo).
+- Chaneli juu na chini zinasogeza ukurasa mmoja kwa wakati. Kuanzia build 22 gridi za picha zinaonyesha takriban vigae sita kwa kila safu ndani ya pambizo za skrini, pamoja na vijipicha vikali zaidi vya faili za kifaa chenyewe ambavyo vinabaki laini kwenye maelezo madogo, na kurasa zenye kichwa chenye picha kwenye simu (orodha ya 360°, Favorites (Vipendwa), albamu za kifaa) zinaonyesha upau mmoja tu badala yake.
+- Kuanzia build 22 fremu inaanzia kwenye kipengee cha kwanza cha kila ukurasa (kigae cha kwanza cha orodha ya 360°, sehemu ya barua pepe mara anwani ya seva inapothibitishwa), inabaki ndani ya pambizo za skrini gridi inaposogezwa, na inapanda kutoka gridi hadi safu au vichujio vilivyo juu yake badala ya kwenda kwenye kitufe cha Nyuma. Kulia kutoka hifadhi ya mtandao au kamera kunafika kwenye kitufe chake cha kuhariri, na matokeo ya "Jaribu muunganisho" yanasogezwa hadi yaonekane.
 - Katika vitazamaji, vitufe vya rimoti vya kucheza na kusitisha, kusonga mbele haraka, kurudisha nyuma, kinachofuata na kilichotangulia vinafanya kazi, na kitufe cha taarifa kinaonyesha maelezo ya picha au video.
 
 ### Picha na video kwa rimoti
@@ -632,7 +633,7 @@ Kuanzia build 20 programu ileile ya Android inaendeshwa kwenye Android TV na Goo
 
 ### Chaguo la Mpangilio wa rimoti
 
-Settings (Mipangilio), Preferences (Mapendeleo), "Mpangilio wa rimoti": "Fremu kubwa za kulenga na vitufe vya rimoti, bila vidhibiti vinavyohitaji skrini ya kugusa. Kiotomatiki huuwasha kwenye Android TV na Google TV." Kiotomatiki ndicho chaguomsingi; Imewashwa inafaa kompyuta kibao inayoendeshwa kwa kibodi au kidhibiti cha michezo; Imezimwa inauzima kwenye televisheni. Chaguo hili lipo kwenye Android pekee. Mishale na OK vinafanya kazi katika vitazamaji kwa kibodi au kidhibiti cha michezo bila kujali chaguo hili.
+Settings (Mipangilio), Preferences (Mapendeleo), "Mpangilio wa rimoti": "Fremu kubwa za kulenga na vitufe vya rimoti, bila vidhibiti vinavyohitaji skrini ya kugusa. Kiotomatiki huuwasha kwenye Android TV na Google TV." Kiotomatiki ndicho chaguomsingi; Imewashwa inafaa kompyuta kibao inayoendeshwa kwa kibodi au kidhibiti cha michezo; Imezimwa inauzima kwenye televisheni. Chaguo hili lipo kwenye Android pekee. Kuanzia build 22 badiliko linatumika mara moja kwenye ukurasa ulio wazi, ambao unabaki pale ulipokuwa (awali, Settings ilifunguka tena kwenye Advanced, juu ya skrini ya kuanzia ambayo Nyuma ililazimika kuipita). Mishale na OK vinafanya kazi katika vitazamaji kwa kibodi au kidhibiti cha michezo bila kujali chaguo hili.
 
 ### Mipaka
 
@@ -650,7 +651,7 @@ Settings (Mipangilio), Preferences (Mapendeleo), "Mpangilio wa rimoti": "Fremu k
 
 Picha za 360° zimechanganyika na picha nyingine zote, na watu wanaomba Immich njia ya kuchuja matufe na panorama ([mjadala #12824](https://github.com/immich-app/immich/discussions/12824)). Programu ya Immich haina orodha kama hiyo.
 
-Immuch360 inaweka beji ya 360° kwenye vijipicha vya picha za 360° (katika folda ya hifadhi ya mtandao, kwenye video za 360° pia), na kipengee cha 360° juu ya kichupo cha Maktaba. Kuanzia build 18 orodha hiyo ina, ukiwa na seva, picha na video ambazo seva inaziwekea alama ya 360°, faili ghafi za Insta360 kwa jina lake, picha ambazo kamera ya 360° iliunganisha yenyewe na zile ulizochagua kutazama kama 360°, pamoja na kile ambacho uchanganuzi wa kifaa ulipata; bila seva, kile ambacho uchanganuzi wa kifaa ulipata na zile ulizochagua kutazama kama 360°. Kila moja inaonekana mara moja, popote nakala zake zilipo, mpya zaidi kwanza.
+Immuch360 inaweka beji ya 360° kwenye vijipicha vya picha za 360° (katika folda ya hifadhi ya mtandao, kwenye video za 360° pia), na kipengee cha 360° juu ya kichupo cha Maktaba. Kuanzia build 18 orodha hiyo ina, ukiwa na seva, picha na video ambazo seva inaziwekea alama ya 360°, faili ghafi za Insta360 kwa jina lake, picha ambazo kamera ya 360° iliunganisha yenyewe na zile ulizochagua kutazama kama 360°, pamoja na kile ambacho uchanganuzi wa kifaa ulipata; bila seva, kile ambacho uchanganuzi wa kifaa ulipata na zile ulizochagua kutazama kama 360°. Kila moja inaonekana mara moja, popote nakala zake zilipo, mpya zaidi kwanza. Kuanzia build 22 safu ya "Kwenye hifadhi za mtandao" inakuja juu ya gridi ikiwa na picha na video za 360° za hifadhi zako, mpya zaidi kwanza: programu inazitambua inapoonyesha folda yake au inapozifungua (haitafuti ndani ya hifadhi yenyewe), inazikumbuka kutoka uzinduzi mmoja hadi mwingine na inazisahau pamoja na hifadhi yake. Kwenye televisheni, ambayo haina picha zake yenyewe, safu hiyo ndiyo inayojaza orodha ya 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Orodha ya 360°, vipengee 4, karatasi ya Date ikiwa wazi: All, mwaka 2026 pamoja na idadi yake, Mwaka mzima, Agosti 2026 na Aprili 2026 pamoja na idadi zake, mwaka 2025, na Custom">
 
@@ -661,7 +662,7 @@ Immuch360 inaweka beji ya 360° kwenye vijipicha vya picha za 360° (katika fold
 3. Ukiwa na seva, chagua midia ilipo: "Kwenye seva", "On this device", na "Shared with me" (Zilizoshirikiwa nami) zinapokuwepo.
 4. Chagua aina: Photos, Videos, 3D, VR180.
 5. Orodha inapokuwa na kamera mbili au zaidi, safu ya pili inaziorodhesha kutoka mtengenezaji na modeli ya EXIF, pamoja na idadi zake. Faili ghafi isiyo nazo inapewa jina la chapa ya kiendelezi chake (Insta360, GoPro, DJI), kitu kingine chochote ni "Kamera isiyojulikana".
-6. Ndani ya kikundi (mahali, Photos na Videos, 3D na VR180, kamera) chipu zinajumlishwa; kati ya vikundi zinapunguza orodha. Clear (Futa) inaweka upya kila kitu; "Hakuna picha wala video ya 360° inayolingana na vichujio hivi" inamaanisha vichujio havibakizi kitu.
+6. Ndani ya kikundi (mahali, Photos na Videos, 3D na VR180, kamera) chipu zinajumlishwa; kati ya vikundi zinapunguza orodha. Chipu za Date, Photos na Videos zinatumika pia kwa safu ya hifadhi za mtandao; 3D, VR180 na kamera zinaificha, kwa kuwa programu haijui lolote kati ya hayo kwa faili ya hifadhi. Clear (Futa) inaweka upya kila kitu; "Hakuna picha wala video ya 360° inayolingana na vichujio hivi" inamaanisha vichujio havibakizi kitu.
 7. Fungua picha au video. Katika mwonekano wa uhalisia pepe wa Quest, iliyotangulia na inayofuata zinafuata orodha iliyochujwa.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Kila kitu ambacho programu rasmi ya simu ya Immich inafanya kipo hapa: uhifadhi 
 
 Kuonyesha picha ya 360° kwa mtu asiye na programu, ishiriki kwa kiungo kilichoshirikiwa cha Immich: programu ya wavuti ya Immich inaonyesha picha ya 360° kama tufe kwenye kivinjari chake.
 
-Build ya sasa, build 21 (toleo 3.3.0-rc.0, nambari ya build 3030019), inategemea Immich 3.3.0-rc.0 (Immich `main`, bado si toleo thabiti). Build 19 ilijaribiwa na seva ya Immich 3.2, na build 20 na 21 hazibadilishi chochote katika kile ambacho programu inaomba kutoka kwa seva. Tafadhali ripoti matatizo katika [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich. Kwa nyaraka kamili za Immich yenyewe, tazama [immich.app](https://immich.app).
+Build ya sasa, build 22 (toleo 3.3.0-rc.0, nambari ya build 3030020), inategemea Immich `main` ya tarehe 10 Oktoba 2026 (toleo 3.3.0-rc.0, bado si toleo thabiti). Build 22 ilijaribiwa na seva ya Immich 3.2.4 na seva iliyojengwa kutoka Immich `main` hiyohiyo: kuingia, rekodi ya matukio, albamu, picha na video za 360°, uchezaji wa video na upakiaji, bila hitilafu yoyote ya API. Tafadhali ripoti matatizo katika [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich. Kwa nyaraka kamili za Immich yenyewe, tazama [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Ikilinganishwa na programu ya Immich na programu nyingine
@@ -1037,6 +1038,8 @@ Kinachoshindwa kwenda na kasi kikiwa ni usimbuaji wa video ya seva, si uchoraji 
 - **Chagua kichoraji mwenyewe.** Katika Settings, Advanced, washa "Troubleshooting" (Utatuzi): kipengee "Kichoraji cha video za 360°" kinaonekana, Kiotomatiki kwa chaguomsingi. Pia kinatoa "Programu-jalizi, ukubwa kamili", "Programu-jalizi, upana wa 4096 zaidi", "Programu-jalizi, upana wa 2880 zaidi" na "Bapa, bila mwonekano wa 360°", kwa video inayofuata ya 360° unayoifungua. Chini yake, "Kilichopimwa mwisho" kinataja ukubwa ambao video ya mwisho ya 360° ilichorwa nao, fremu zake kwa sekunde, chipu ya michoro na kisimbuzi: kinakili kwenye ripoti ya hitilafu. Kuchagua "Kiotomatiki" tena, hata kikiwa tayari ndicho kilichochaguliwa, kunasahau kilichopimwa, na video zinazofuata za 360° zinapimwa tena.
 - **Kile chipu inachosimbua.** Settings, Advanced, "Visimbuzi vya video vya kifaa hiki" kinaorodhesha kile ambacho chipu ya michoro inayotumika inasimbua, kama Direct3D 11 inavyoripoti, na programu inarekebisha orodha hiyo kwa kile ilichopima wakati wa kucheza: mipangilio ya Chanzo cha video na ukaguzi wa lenzi mbili wa video ghafi vinaifuata. H.264 yenye upana zaidi ya pikseli 4096 (5.7K ya kamera za 360°) inasimbuliwa na kichakataji, kwa kuwa hakuna chipu yoyote ya kompyuta mpakato ya majaribio inayoikubali.
 
+**Kwa wasanidi programu.** Kicheza cha 360° kinachora kupitia kichoraji chake chenyewe, kilichojengwa juu ya libmpv na programu-jalizi ya media_kit_video iliyorekebishwa: mpv inachora kila fremu ndani ya umbile kwenye chipu ya michoro, na mzunguko wa OpenGL ES 3.0 unachora mwonekano ndani ya umbile ambalo Flutter inaonyesha, bila kunakili kupitia kichakataji. Kwa nini kilijengwa hivyo, jinsi kinavyofanya kazi, kilichopimwa na kinachoweza kurekebishwa: [kichoraji cha video za 360° cha toleo la kompyuta](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Ikilinganishwa na programu za simu
 
 - **Kuhifadhi nakala kunaendelea wakati programu iko wazi** (au imepunguzwa), si chinichini dirisha likiwa limefungwa. Kufunga dirisha wakati upakiaji unaendelea, au wakati kompyuta inashirikiwa, kunauliza kwanza.
@@ -1110,7 +1113,7 @@ Programu iko kwenye Google Play kwa simu na kompyuta kibao; toleo la App Store l
 
 - **Simu na kompyuta kibao za Android**
   - Leo: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), au APK kwenye ukurasa wa [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` kwa simu (`Immuch360-v<version>-release.apk` ya jumla inafanya kazi kila mahali, `-armeabi-v7a` ni kwa simu za zamani za biti 32, na faili ya `.aab` ni kwa Google Play, si kwa sideload). Build ya GitHub kwa kawaida iko mbele ya duka. Kwa njia yoyote inasakinishwa kando ya programu rasmi ya Immich (kifurushi `com.aprogsys.immuch360`).
-  - Hivi karibuni: kwenye Google Play, build 20 imechapishwa tangu tarehe 7 Oktoba 2026, badala ya build 18; build 21 haibadilishi chochote kwenye simu na kompyuta kibao.
+  - Hivi karibuni: kwenye Google Play, build 22 ilitumwa tarehe 10 Oktoba 2026 badala ya build 20 (iliyochapishwa tangu tarehe 7 Oktoba); inaleta mabadiliko ya Immich ya Oktoba na marekebisho ya televisheni.
 - **iPhone na iPad**
   - Leo: inasubiri ukaguzi wa Apple. Toleo linalokaguliwa lina vipengele vya build 11: upakiaji kwenye Immich na chaguo la Chanzo cha video (build 15) na faili ghafi za Insta360 (build 16) vitakuja na sasisho la baadaye la App Store. Msimbo chanzo unajengwa kwa Xcode au kwenye Codemagic, tazama [Ijenge mwenyewe](#build-it-yourself).
   - Hivi karibuni: App Store, inakaguliwa.
@@ -1157,7 +1160,7 @@ Hakuna siri iliyo katika hazina hii: ufunguo wa kusaini wa Android umehifadhiwa 
 
 ### Matawi
 
-- **`main`**: Immich `main` kwenye commit ambayo `immuch360` inategemea (29 Septemba 2026 kwa build za sasa), haibadilishwi kamwe; inasogea mbele fork inapofanyiwa rebase juu ya Immich mpya zaidi.
+- **`main`**: Immich `main` kwenye commit ambayo `immuch360` inategemea (10 Oktoba 2026 kwa build za sasa), haibadilishwi kamwe; inasogea mbele fork inapofanyiwa rebase juu ya Immich mpya zaidi.
 - **`immuch360`**: mabadiliko ya fork hii juu ya Immich, pamoja na Immuch360 Desktop tangu tarehe 9 Oktoba 2026. Kila toleo linasema linategemea toleo gani la Immich.
 - **`desktop`**: mahali ambapo Immuch360 Desktop, toleo la kompyuta, lilijengwa juu ya `immuch360`, hadi lilipounganishwa ndani yake tarehe 9 Oktoba 2026 ili simu, headset, televisheni na kompyuta zitoke kwenye msimbo uleule. Sasa linafuata `immuch360` na linabeba lebo za matoleo ya awali ya kompyuta ([build ya kompyuta 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) kutoka commit 21f285c34, [build ya kompyuta 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) kutoka 5b723bd25, [build ya kompyuta 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) kutoka kuunganishwa kwa kicheza video cha 360° tarehe 10 Oktoba 2026). Kazi mpya ya kompyuta inafika hapo kwanza na kujiunga na `immuch360` pamoja na build ya kompyuta inayoitoa. Toleo la kompyuta halibadilishi chochote chini ya `mobile/android` na `mobile/ios`.
 

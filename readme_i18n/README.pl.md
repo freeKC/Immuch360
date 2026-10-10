@@ -17,10 +17,10 @@ Jest dla osób, które fotografują kamerą 360° (Insta360, GoPro MAX, DJI Osmo
 
 | Platforma | Gdzie ją pobrać | Stan na 10 października 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefony i tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilacja 20 w Google Play od 7 października 2026, kompilacja 21 na GitHubie |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefony i tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilacja 22 na GitHubie, wysłana do Google Play 10 października 2026 (tam kompilacja 20 dostępna od 7 października) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | wersja 3.3.0 czeka na weryfikację Apple; tymczasem [zbuduj ją samodzielnie](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | wpis zatwierdzony, kompilacja 21 w weryfikacji Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilacja 21 na GitHubie; strona w Google Play dla telewizorów jest w weryfikacji Google od 9 października 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | wpis zatwierdzony, kompilacja 21 w weryfikacji Meta, kompilacja 22 w kanale alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilacja 22 na GitHubie; strona w Google Play dla telewizorów jest w weryfikacji Google od 9 października 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP wersji zapoznawczej](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | kompilacja na komputery 3 na Windows: zdjęcia, płaskie filmy i filmy 360°; macOS i Linux później |
 
 *Stany są aktualizowane przy każdym wydaniu; szczegóły w sekcji [Gdzie ją pobrać](#where-to-get-it).*
@@ -196,7 +196,7 @@ Sama znajduje serwery w Twojej sieci i odtwarza pliki na żywo w tych samych prz
 4. Nie ma go na liście? Wypełnij formularz ręcznie. Typ: "SMB (Samba, udział Windows)", "WebDAV (Nextcloud, Synology i inne)", "Serwer multimediów DLNA (Jellyfin, NAS, przystawka TV)" lub, od kompilacji 20, "Plex Media Server", który otwiera stronę z sekcji [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv). Następnie Nazwa, "Nazwa lub adres serwera" (nazwa albo adres; pełny adres, taki jak `smb://nas/photos`, `\\nas\photos` lub `https://nas:5006/photos`, wypełnia pozostałe pola), "Port (opcjonalnie)", jeśli nie jest standardowy, "Udział" dla SMB lub "Ścieżka adresu WebDAV" dla WebDAV, "Folder początkowy (opcjonalnie)", "Nazwa użytkownika" i "Hasło" oraz "Bezpieczne połączenie (HTTPS)" dla WebDAV.
 5. SMB: po wpisaniu serwera i nazwy użytkownika "Wybierz udział" wyświetla udziały serwera.
 6. DLNA: serwer multimediów nie ma nazwy użytkownika ani hasła. Podaj serwer, port i "Ścieżka opisu" jego opisu urządzenia (`/rootDesc.xml` dla minidlna) albo wklej cały adres, np. `http://192.168.1.10:8200/rootDesc.xml`, w polu serwera.
-7. Dotknij "Testuj połączenie". Odpowiedź to "Połączono, elementy w folderze początkowym: N" albo przyczyna niepowodzenia. Następnie dotknij Zapisz na dole formularza.
+7. Dotknij "Testuj połączenie". Odpowiedź to "Połączono, N elementów w folderze początkowym" albo przyczyna niepowodzenia. Następnie dotknij Zapisz na dole formularza. Od kompilacji 22 zamknięcie formularza, w którym coś wpisano (X, Wstecz), najpierw wyświetla pytanie "Odrzucić zmiany?", także na stronach Plex i kamer; to samo dzieje się przy wyborze Plex lub znalezionej kamery, gdy coś jest już wpisane.
 
 Nazwa użytkownika z pustym hasłem jest wysyłana w takiej postaci: Freebox Server wymaga dla swoich dysków `freebox` bez hasła. Aby później zmienić lub usunąć udział, użyj ołówka obok niego na stronie Udziały sieciowe.
 
@@ -617,8 +617,9 @@ Od kompilacji 20 ta sama aplikacja na Androida działa na Android TV i Google TV
 
 ### Poruszanie się pilotem
 
-- Strzałki przesuwają ramkę, OK otwiera to, na czym jest, Wstecz cofa. Z karty Wstecz przechodzi do menu bocznego, potem do Zdjęć, a potem wychodzi z aplikacji.
-- Kanał w górę i w dół przewijają o stronę.
+- Strzałki przesuwają ramkę, OK otwiera to, na czym jest, Wstecz cofa. Z karty Wstecz przechodzi do menu bocznego, potem do Zdjęć, a potem wychodzi z aplikacji. Na liście wyboru, takiej jak typ udziału albo ustawienie, strzałki tylko przesuwają ramkę, a OK wybiera opcję (od kompilacji 22; wcześniej strzałki zmieniały wybór).
+- Kanał w górę i w dół przewijają o stronę. Od kompilacji 22 siatki zdjęć pokazują około sześciu kafelków w rzędzie w obrębie marginesów ekranu, z ostrzejszymi miniaturami własnych plików urządzenia, które pozostają gładkie przy drobnych szczegółach, a strony, które na telefonie mają nagłówek z obrazem (lista 360°, Ulubione, albumy urządzenia), pokazują zamiast tego zwykły pasek.
+- Od kompilacji 22 ramka zaczyna od pierwszego elementu każdej strony (pierwszy kafelek listy 360°, pole e-mail po potwierdzeniu adresu serwera), pozostaje w obrębie marginesów ekranu podczas przewijania siatki i przechodzi z siatki w górę do rzędu lub filtrów nad nią zamiast do przycisku Wstecz. Strzałka w prawo z udziału sieciowego lub kamery dochodzi do jego przycisku edycji, a wynik "Testuj połączenie" przewija się do widoku.
 - W przeglądarkach działają klawisze pilota odtwarzania i pauzy, przewijania do przodu i do tyłu, następnego i poprzedniego, a klawisz informacji pokazuje szczegóły zdjęcia lub filmu.
 
 ### Zdjęcia i filmy z pilotem
@@ -632,7 +633,7 @@ Od kompilacji 20 ta sama aplikacja na Androida działa na Android TV i Google TV
 
 ### Ustawienie Układ dla pilota
 
-Ustawienia, sekcja Ustawienia (Preferences), "Układ dla pilota": "Duże ramki fokusu i klawisze pilota, bez elementów sterujących wymagających ekranu dotykowego. Automatyczny włącza go na Android TV i Google TV." Automatyczny to wartość domyślna; Włączony pasuje do tabletu obsługiwanego klawiaturą lub gamepadem; Wyłączony wyłącza go na telewizorze. Ustawienie istnieje tylko na Androidzie. Strzałki i OK działają w przeglądarkach z klawiaturą lub gamepadem niezależnie od ustawienia.
+Ustawienia, sekcja Ustawienia (Preferences), "Układ dla pilota": "Duże ramki fokusu i klawisze pilota, bez elementów sterujących wymagających ekranu dotykowego. Automatyczny włącza go na Android TV i Google TV." Automatyczny to wartość domyślna; Włączony pasuje do tabletu obsługiwanego klawiaturą lub gamepadem; Wyłączony wyłącza go na telewizorze. Ustawienie istnieje tylko na Androidzie. Od kompilacji 22 zmiana działa od razu na otwartej stronie, która zostaje tam, gdzie była (wcześniej Ustawienia otwierały się ponownie w sekcji Zaawansowane, nad ekranem startowym, przez który trzeba było przejść klawiszem Wstecz). Strzałki i OK działają w przeglądarkach z klawiaturą lub gamepadem niezależnie od ustawienia.
 
 ### Ograniczenia
 
@@ -650,7 +651,7 @@ Ustawienia, sekcja Ustawienia (Preferences), "Układ dla pilota": "Duże ramki f
 
 Ujęcia 360° są wymieszane ze wszystkimi innymi zdjęciami, a ludzie proszą Immich o sposób filtrowania sfer i panoram ([dyskusja #12824](https://github.com/immich-app/immich/discussions/12824)). Aplikacja Immich nie ma takiej listy.
 
-Immuch360 dodaje plakietkę 360° do miniatur zdjęć 360° (w folderze udziału sieciowego także do filmów 360°) i pozycję 360° na górze karty Biblioteka. Od kompilacji 18 ta lista zawiera, z serwerem, zdjęcia i filmy oznaczone przez serwer jako 360°, surowe pliki Insta360 rozpoznane po nazwie, zdjęcia połączone przez samą kamerę 360° i te, które postanowiłeś wyświetlać jako 360°, a do tego to, co znalazło przeszukanie urządzenia; bez serwera to, co znalazło przeszukanie urządzenia, i te, które postanowiłeś wyświetlać jako 360°. Każdy element pojawia się raz, niezależnie od tego, gdzie są jego kopie, od najnowszych.
+Immuch360 dodaje plakietkę 360° do miniatur zdjęć 360° (w folderze udziału sieciowego także do filmów 360°) i pozycję 360° na górze karty Biblioteka. Od kompilacji 18 ta lista zawiera, z serwerem, zdjęcia i filmy oznaczone przez serwer jako 360°, surowe pliki Insta360 rozpoznane po nazwie, zdjęcia połączone przez samą kamerę 360° i te, które postanowiłeś wyświetlać jako 360°, a do tego to, co znalazło przeszukanie urządzenia; bez serwera to, co znalazło przeszukanie urządzenia, i te, które postanowiłeś wyświetlać jako 360°. Każdy element pojawia się raz, niezależnie od tego, gdzie są jego kopie, od najnowszych. Od kompilacji 22 nad siatką pojawia się rząd "W udziałach sieciowych" ze zdjęciami i filmami 360° z Twoich udziałów, od najnowszych: aplikacja poznaje je, gdy pokazuje ich folder lub je otwiera (sama nie przeszukuje udziału), pamięta je między uruchomieniami i zapomina razem z ich udziałem. Na telewizorze, który nie ma własnych zdjęć, to właśnie ten rząd wypełnia listę 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Lista 360°, 4 elementy, z otwartym arkuszem Data: Wszystkie, rok 2026 z liczbą elementów, Cały rok, sierpień 2026 i kwiecień 2026 z liczbami, rok 2025 i Niestandardowa">
 
@@ -661,7 +662,7 @@ Immuch360 dodaje plakietkę 360° do miniatur zdjęć 360° (w folderze udziału
 3. Z serwerem wybierz, gdzie są multimedia: "Na serwerze", "Na tym urządzeniu" oraz "Udostępniono mi", gdy takie istnieją.
 4. Wybierz rodzaj: Zdjęcia, Filmy, 3D, VR180.
 5. Gdy lista zawiera co najmniej dwie kamery, drugi rząd wymienia je według marki i modelu z EXIF, z liczbą elementów. Surowy plik bez tych danych dostaje nazwę marki odpowiadającej jego rozszerzeniu (Insta360, GoPro, DJI), a każdy inny to "Nieznana kamera".
-6. W obrębie grupy (miejsca, Zdjęcia i Filmy, 3D i VR180, kamery) chipy się sumują; między grupami zawężają listę. Wyczyść resetuje wszystko; "Żadne zdjęcie ani film 360° nie pasuje do tych filtrów" oznacza, że filtry niczego nie zostawiają.
+6. W obrębie grupy (miejsca, Zdjęcia i Filmy, 3D i VR180, kamery) chipy się sumują; między grupami zawężają listę. Chipy Data, Zdjęcia i Filmy dotyczą także rzędu udziałów sieciowych; 3D, VR180 i kamery go ukrywają, bo aplikacja nie zna żadnej z tych cech dla pliku z udziału. Wyczyść resetuje wszystko; "Żadne zdjęcie ani film 360° nie pasuje do tych filtrów" oznacza, że filtry niczego nie zostawiają.
 7. Otwórz zdjęcie lub film. W widoku immersyjnym na Queście poprzedni i następny podążają za przefiltrowaną listą.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Wszystko, co robi oficjalna aplikacja mobilna Immich, jest tutaj: kopia zapasowa
 
 Aby pokazać zdjęcie 360° komuś, kto nie ma aplikacji, udostępnij je linkiem udostępniania Immich: aplikacja webowa Immich pokaże zdjęcie 360° jako sferę w jego przeglądarce.
 
-Bieżąca kompilacja, kompilacja 21 (wersja 3.3.0-rc.0, numer kompilacji 3030019), jest oparta na Immich 3.3.0-rc.0 (Immich `main`, jeszcze nie wydanie stabilne). Kompilacja 19 była testowana z serwerem Immich 3.2, a kompilacje 20 i 21 nie zmieniają niczego w tym, czego aplikacja wymaga od serwera. Problemy zgłaszaj w [Issues](https://github.com/freeKC/Immuch360/issues), nie w projekcie Immich. Pełna dokumentacja samego Immich jest na [immich.app](https://immich.app).
+Bieżąca kompilacja, kompilacja 22 (wersja 3.3.0-rc.0, numer kompilacji 3030020), jest oparta na Immich `main` z 10 października 2026 (wersja 3.3.0-rc.0, jeszcze nie wydanie stabilne). Kompilację 22 przetestowano z serwerem Immich 3.2.4 oraz z serwerem zbudowanym z tego samego Immich `main`: logowanie, oś czasu, albumy, zdjęcia i filmy 360°, odtwarzanie filmów i przesyłanie, bez błędów API. Problemy zgłaszaj w [Issues](https://github.com/freeKC/Immuch360/issues), nie w projekcie Immich. Pełna dokumentacja samego Immich jest na [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Porównanie z aplikacją Immich i innymi aplikacjami
@@ -1037,6 +1038,8 @@ Gdy nie nadąża dekodowanie filmu z serwera, a nie rysowanie (film dekodowany p
 - **Wybierz renderer samodzielnie.** W Ustawieniach, Zaawansowane, włącz "Rozwiązywanie problemów": pojawia się pozycja "Renderer filmów 360°", domyślnie Automatycznie. Oferuje też "Wtyczka, pełny rozmiar", "Wtyczka, najwyżej 4096 szerokości", "Wtyczka, najwyżej 2880 szerokości" i "Płasko, bez widoku 360°", dla następnego filmu 360°, który otworzysz. Pod nią "Ostatni pomiar" podaje rozmiar, w jakim narysowano ostatni film 360°, jego liczbę klatek na sekundę, układ graficzny i dekoder: skopiuj to do zgłoszenia błędu. Ponowny wybór "Automatycznie", nawet gdy jest już wybrane, zapomina to, co zmierzono, a kolejne filmy 360° są mierzone ponownie.
 - **Co dekoduje układ.** Ustawienia, Zaawansowane, "Dekodery wideo tego urządzenia" wymienia, co dekoduje używany układ graficzny, tak jak zgłasza to Direct3D 11, a aplikacja poprawia tę listę tym, co zmierzyła podczas odtwarzania: ustawienie Źródło wideo i sprawdzanie dwóch obiektywów surowych filmów się do niej stosują. H.264 szersze niż 4096 pikseli (5,7K kamer 360°) jest dekodowane przez procesor, ponieważ żaden z układów testowego laptopa go nie przyjmuje.
 
+**Dla programistów.** Odtwarzacz 360° rysuje przez własny renderer, zbudowany na libmpv i poprawionej wtyczce media_kit_video: mpv rysuje każdą klatkę do tekstury w układzie graficznym, a przebieg OpenGL ES 3.0 rysuje widok do tekstury, którą pokazuje Flutter, bez kopiowania przez procesor. Dlaczego zbudowano go w ten sposób, jak działa, co zmierzono i co można dostroić: [desktopowy renderer filmów 360°](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### W porównaniu z aplikacjami na telefony
 
 - **Kopia zapasowa działa, gdy aplikacja jest otwarta** (lub zminimalizowana), a nie w tle przy zamkniętym oknie. Zamknięcie okna w trakcie przesyłania lub gdy komputer jest udostępniany wymaga najpierw potwierdzenia.
@@ -1110,7 +1113,7 @@ Aplikacja jest w Google Play na telefony i tablety; wersja dla App Store czeka n
 
 - **Telefony i tablety z Androidem**
   - Dziś: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) albo APK na stronie [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` dla telefonu (uniwersalny `Immuch360-v<version>-release.apk` działa wszędzie, `-armeabi-v7a` jest dla starszych telefonów 32-bitowych, a plik `.aab` jest dla Google Play, nie do ręcznej instalacji). Kompilacja z GitHuba zwykle wyprzedza sklep. W obu przypadkach instaluje się obok oficjalnej aplikacji Immich (pakiet `com.aprogsys.immuch360`).
-  - Wkrótce: w Google Play kompilacja 20 jest dostępna od 7 października 2026, zamiast kompilacji 18; kompilacja 21 nie zmienia niczego na telefonach i tabletach.
+  - Wkrótce: do Google Play wysłano 10 października 2026 kompilację 22 w miejsce kompilacji 20 (dostępnej od 7 października); zawiera zmiany Immich z października i poprawki dla telewizorów.
 - **iPhone i iPad**
   - Dziś: czeka na weryfikację przez Apple. Wersja w trakcie weryfikacji ma funkcje kompilacji 11: przesyłanie do Immich i wybór Źródło wideo (kompilacja 15) oraz surowe pliki Insta360 (kompilacja 16) przyjdą z późniejszą aktualizacją w App Store. Kod źródłowy kompiluje się w Xcode lub na Codemagic, zobacz [Zbuduj ją samodzielnie](#build-it-yourself).
   - Wkrótce: App Store, w trakcie weryfikacji.
@@ -1157,7 +1160,7 @@ W tym repozytorium nie ma żadnych sekretów: klucz podpisywania Androida jest p
 
 ### Gałęzie
 
-- **`main`**: Immich `main` na commicie, na którym opiera się `immuch360` (29 września 2026 dla bieżących kompilacji), nigdy nie modyfikowany; przesuwa się do przodu, gdy fork jest przenoszony (rebase) na nowszą wersję Immich.
+- **`main`**: Immich `main` na commicie, na którym opiera się `immuch360` (10 października 2026 dla bieżących kompilacji), nigdy nie modyfikowany; przesuwa się do przodu, gdy fork jest przenoszony (rebase) na nowszą wersję Immich.
 - **`immuch360`**: zmiany tego forka na wierzchu Immich, od 9 października 2026 razem z Immuch360 Desktop. Każde wydanie podaje, na której wersji Immich się opiera.
 - **`desktop`**: tu powstawała Immuch360 Desktop, wersja na komputery, na wierzchu `immuch360`, dopóki 9 października 2026 nie została do niej scalona, aby telefony, gogle, telewizory i komputery powstawały z tych samych źródeł. Teraz podąża za `immuch360` i nosi tagi wydań wstępnych na komputery ([kompilacja na komputery 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) z commita 21f285c34, [kompilacja na komputery 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) z 5b723bd25, [kompilacja na komputery 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ze scalenia odtwarzacza filmów 360° 10 października 2026). Nowa praca nad wersją na komputery trafia najpierw tutaj i dołącza do `immuch360` z kompilacją na komputery, która ją dostarcza. Wersja na komputery nie zmienia niczego w `mobile/android` i `mobile/ios`.
 

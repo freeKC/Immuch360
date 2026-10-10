@@ -17,10 +17,10 @@ Para ito sa mga kumukuha gamit ang 360° camera (Insta360, GoPro MAX, DJI Osmo 3
 
 | Platform | Saan ito makukuha | Status noong 10 Oktubre 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** na telepono at tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 sa Google Play mula Oktubre 7, 2026, build 21 sa GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** na telepono at tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 sa GitHub, ipinadala sa Google Play noong Oktubre 10, 2026 (live doon ang build 20 mula Oktubre 7) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone at iPad** | App Store | bersyon 3.3.0 naghihintay ng pagsusuri ng Apple; habang hinihintay, [i-build ito mismo](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 at 3S | [APK](#meta-quest-3) · Horizon Store | aprubado ang listing, build 21 sinusuri ng Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV at Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 sa GitHub; sinusuri ng Google ang listing sa Google Play para sa TV mula Oktubre 9, 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 at 3S | [APK](#meta-quest-3) · Horizon Store | aprubado ang listing, build 21 sinusuri ng Meta, build 22 sa Alpha channel |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV at Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 sa GitHub; sinusuri ng Google ang listing sa Google Play para sa TV mula Oktubre 9, 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview na ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktop build 3 sa Windows: mga larawan, flat at 360° na video; mamaya ang macOS at Linux |
 
 *Ina-update ang mga status sa bawat release; nasa [Saan ito makukuha](#where-to-get-it) ang mga detalye.*
@@ -196,7 +196,7 @@ Kusa nitong hinahanap ang mga server sa network mo, at pinapatugtog nang live an
 4. Wala sa listahan? Punan nang manu-mano ang form. Uri: "SMB (Samba, Windows share)", "WebDAV (Nextcloud, Synology at iba pa)", "Server ng media na DLNA (Jellyfin, NAS, TV box)" o, mula build 20, "Plex Media Server", na nagbubukas ng page ng [Plex Media Server, nang walang plex.tv](#plex-media-server-without-plextv). Sunod ang Pangalan, "Pangalan o address ng server" (isang pangalan o address; pinupunan ng buong address gaya ng `smb://nas/photos`, `\\nas\photos` o `https://nas:5006/photos` ang iba pang field), "Port (opsyonal)" kapag hindi ito ang karaniwan, "Share" para sa SMB o "Path ng WebDAV address" para sa WebDAV, "Panimulang folder (opsyonal)", "Username" at "Password", at "Secure na koneksyon (HTTPS)" para sa WebDAV.
 5. SMB: kapag na-type na ang server at username, inililista ng "Pumili ng share" ang mga share ng server.
 6. DLNA: walang username o password ang media server. Ibigay ang server, ang port at ang "Path ng paglalarawan" ng device description nito (`/rootDesc.xml` para sa minidlna), o i-paste ang buong address, gaya ng `http://192.168.1.10:8200/rootDesc.xml`, sa field ng server.
-7. I-tap ang "Subukan ang koneksyon". Sasagot ito ng "Nakakonekta, N entry sa panimulang folder", o sasabihin kung bakit nabigo. Pagkatapos ay i-tap ang "I-save", sa ibaba ng form.
+7. I-tap ang "Subukan ang koneksyon". Sasagot ito ng "Nakakonekta, N entry sa panimulang folder", o sasabihin kung bakit nabigo. Pagkatapos ay i-tap ang "I-save", sa ibaba ng form. Mula build 22, kapag isinara mo ang isang form na may na-type ka na (X, Back), itatanong muna nito ang "Itapon ang mga pagbabago?", pati sa mga page ng Plex at ng camera, at ganoon din kapag pumili ka ng Plex o ng nahanap na camera matapos may ma-type.
 
 Ipinapadala nang ganoon ang username na walang laman ang password: gusto ng Freebox Server ang `freebox` at walang password para sa mga disk nito. Para baguhin o alisin ang isang share sa ibang pagkakataon, gamitin ang lapis sa tabi nito sa page na Mga network share.
 
@@ -617,8 +617,9 @@ Mula build 20, tumatakbo ang parehong Android app sa Android TV at Google TV, na
 
 ### Gumalaw gamit ang remote
 
-- Inililipat ng mga arrow ang frame, binubuksan ng OK ang kinalalagyan nito, bumabalik ang Back. Mula sa isang tab, pumupunta ang Back sa side menu, pagkatapos ay sa Photos (Mga larawan), pagkatapos ay palabas ng app.
-- Nag-i-scroll nang isang page bawat pindot ang channel up at down.
+- Inililipat ng mga arrow ang frame, binubuksan ng OK ang kinalalagyan nito, bumabalik ang Back. Mula sa isang tab, pumupunta ang Back sa side menu, pagkatapos ay sa Photos (Mga larawan), pagkatapos ay palabas ng app. Sa isang listahan ng mga pagpipilian, gaya ng uri ng isang share o isang setting, ang frame lang ang inililipat ng mga arrow at pinipili ng OK ang pagpipilian (mula build 22; dati, binabago ng mga arrow ang pagpipilian).
+- Nag-i-scroll nang isang page bawat pindot ang channel up at down. Mula build 22, nagpapakita ang mga grid ng larawan ng mga anim na tile bawat row sa loob ng mga margin ng screen, na may mas malinaw na mga thumbnail ng sariling mga file ng device na nananatiling makinis sa pinong detalye, at isang bar na lang ang ipinapakita ng mga page na may larawan sa header sa telepono (ang 360° na listahan, Favorites (Mga paborito), ang mga album ng device).
+- Mula build 22, nagsisimula ang frame sa unang item ng bawat page (ang unang tile ng 360° na listahan, ang email field kapag nakumpirma na ang address ng server), nananatili sa loob ng mga margin ng screen habang nag-i-scroll ang isang grid, at umaakyat mula sa isang grid papunta sa row o sa mga filter sa itaas nito sa halip na sa Back button. Inaabot ng kanan mula sa isang network share o camera ang edit button nito, at nag-i-scroll papasok sa view ang resulta ng "Subukan ang koneksyon".
 - Sa mga viewer, gumagana ang mga play at pause, fast forward, rewind, next at previous na key ng remote, at ipinapakita ng info key ang mga detalye ng larawan o video.
 
 ### Mga larawan at video gamit ang remote
@@ -632,7 +633,7 @@ Mula build 20, tumatakbo ang parehong Android app sa Android TV at Google TV, na
 
 ### Ang setting na Layout para sa remote control
 
-Settings (Mga setting), Preferences (Mga kagustuhan), "Layout para sa remote control": "Malalaking focus frame at mga key ng remote control, nang wala ang mga control na nangangailangan ng touch screen. Ino-on ito ng Awtomatiko sa Android TV at Google TV." Awtomatiko ang default; angkop ang Naka-on para sa tablet na kinokontrol ng keyboard o game pad; ino-off ito ng Naka-off sa TV. Sa Android lang mayroon ang setting na ito. Gumagana ang mga arrow at OK sa mga viewer gamit ang keyboard o game pad anuman ang setting.
+Settings (Mga setting), Preferences (Mga kagustuhan), "Layout para sa remote control": "Malalaking focus frame at mga key ng remote control, nang wala ang mga control na nangangailangan ng touch screen. Ino-on ito ng Awtomatiko sa Android TV at Google TV." Awtomatiko ang default; angkop ang Naka-on para sa tablet na kinokontrol ng keyboard o game pad; ino-off ito ng Naka-off sa TV. Sa Android lang mayroon ang setting na ito. Mula build 22, agad na nalalapat ang isang pagbabago sa nakabukas na page, na nananatili kung nasaan ito (dati, muling bumubukas ang Settings sa Advanced, sa ibabaw ng isang start screen na kailangang daanan ng Back). Gumagana ang mga arrow at OK sa mga viewer gamit ang keyboard o game pad anuman ang setting.
 
 ### Mga limitasyon
 
@@ -650,7 +651,7 @@ Settings (Mga setting), Preferences (Mga kagustuhan), "Layout para sa remote con
 
 Halo-halo ang mga 360° na kuha kasama ng lahat ng iba pang larawan, at humihingi ang mga tao sa Immich ng paraan para i-filter ang mga sphere at panorama ([discussion #12824](https://github.com/immich-app/immich/discussions/12824)). Walang ganitong listahan ang Immich app.
 
-Naglalagay ang Immuch360 ng 360° badge sa mga thumbnail ng mga 360° na larawan (sa isang network share folder, pati sa mga 360° na video), at ng 360° na item sa itaas ng Library tab. Mula build 18, laman ng listahang iyon, kapag may server, ang mga larawan at video na minamarkahan ng server bilang 360°, ang mga raw na Insta360 file ayon sa pangalan nila, ang mga larawang pinagdugtong ng 360° camera mismo at ang mga pinili mong tingnan bilang 360°, kasama ang nahanap ng scan ng device; kapag walang server, ang nahanap ng scan ng device at ang mga pinili mong tingnan bilang 360°. Isang beses lumalabas ang bawat isa, saanman naroon ang mga kopya nito, nauuna ang pinakabago.
+Naglalagay ang Immuch360 ng 360° badge sa mga thumbnail ng mga 360° na larawan (sa isang network share folder, pati sa mga 360° na video), at ng 360° na item sa itaas ng Library tab. Mula build 18, laman ng listahang iyon, kapag may server, ang mga larawan at video na minamarkahan ng server bilang 360°, ang mga raw na Insta360 file ayon sa pangalan nila, ang mga larawang pinagdugtong ng 360° camera mismo at ang mga pinili mong tingnan bilang 360°, kasama ang nahanap ng scan ng device; kapag walang server, ang nahanap ng scan ng device at ang mga pinili mong tingnan bilang 360°. Isang beses lumalabas ang bawat isa, saanman naroon ang mga kopya nito, nauuna ang pinakabago. Mula build 22, may row na "Sa mga network share" sa itaas ng grid na may mga 360° na larawan at video ng mga share mo, nauuna ang pinakabago: nalalaman ng app ang mga ito kapag ipinapakita nito ang folder nila o binubuksan sila (hindi ito kusang naghahanap sa isang share), iniingatan ang mga ito mula sa isang pagbukas ng app hanggang sa susunod at kinakalimutan kasama ng share nila. Sa TV, na walang sariling mga larawan, ang row na iyon ang pumupuno sa 360° na listahan.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Ang 360° na listahan, 4 na item, bukas ang Date sheet nito: All, ang taong 2026 kasama ang bilang nito, Buong taon, Agosto 2026 at Abril 2026 kasama ang mga bilang nila, ang taong 2025, at Custom">
 
@@ -661,7 +662,7 @@ Naglalagay ang Immuch360 ng 360° badge sa mga thumbnail ng mga 360° na larawan
 3. Kapag may server, piliin kung nasaan ang media: "Nasa server", "On this device", at "Shared with me" (Ibinahagi sa akin) kapag mayroon.
 4. Piliin ang uri: Photos, Videos, 3D, VR180.
 5. Kapag dalawa o higit pa ang camera sa listahan, inililista ng ikalawang row ang mga ito mula sa EXIF make at model, kasama ang mga bilang nila. Ang raw na file na wala ng mga ito ay pinapangalanan ayon sa brand ng extension nito (Insta360, GoPro, DJI), at "Hindi kilalang camera" ang iba pa.
-6. Sa loob ng isang grupo (ang mga lugar, Photos at Videos, 3D at VR180, ang mga camera) nagdaragdag ang mga chip; sa pagitan ng mga grupo, pinapakitid nila ang listahan. Ibinabalik ng "Clear" (I-clear) ang lahat; ang "Walang 360° na larawan o video na tumutugma sa mga filter na ito" ay nangangahulugang walang natitira sa mga filter.
+6. Sa loob ng isang grupo (ang mga lugar, Photos at Videos, 3D at VR180, ang mga camera) nagdaragdag ang mga chip; sa pagitan ng mga grupo, pinapakitid nila ang listahan. Nalalapat din ang mga chip na "Date" (Petsa), Photos at Videos sa row ng mga network share; itinatago ito ng 3D, VR180 at ng mga camera, dahil wala sa mga iyon ang alam ng app para sa isang file ng share. Ibinabalik ng "Clear" (I-clear) ang lahat; ang "Walang 360° na larawan o video na tumutugma sa mga filter na ito" ay nangangahulugang walang natitira sa mga filter.
 7. Magbukas ng larawan o video. Sa immersive view ng Quest, sinusundan ng nakaraan at susunod ang na-filter na listahan.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Narito ang lahat ng ginagawa ng opisyal na Immich mobile app: backup, timeline, 
 
 Para ipakita ang 360° na larawan sa taong walang app, ibahagi ito gamit ang isang Immich shared link: ipinapakita ng Immich web app ang 360° na larawan bilang sphere sa browser nila.
 
-Ang kasalukuyang build, build 21 (bersyon 3.3.0-rc.0, build number 3030019), ay nakabatay sa Immich 3.3.0-rc.0 (Immich `main`, hindi pa stable na release). Sinubukan ang build 19 gamit ang isang Immich 3.2 server, at walang binabago ang mga build 20 at 21 sa hinihingi ng app sa server. Pakiulat ang mga problema sa [Issues](https://github.com/freeKC/Immuch360/issues), hindi sa Immich project. Para sa buong dokumentasyon ng Immich mismo, tingnan ang [immich.app](https://immich.app).
+Ang kasalukuyang build, build 22 (bersyon 3.3.0-rc.0, build number 3030020), ay nakabatay sa Immich `main` ng Oktubre 10, 2026 (bersyon 3.3.0-rc.0, hindi pa stable na release). Sinubukan ang build 22 laban sa isang Immich 3.2.4 server at laban sa isang server na binuo mula sa parehong Immich `main` na iyon: login, timeline, mga album, mga 360° na larawan at video, pag-play ng video at mga upload, nang walang anumang API error. Pakiulat ang mga problema sa [Issues](https://github.com/freeKC/Immuch360/issues), hindi sa Immich project. Para sa buong dokumentasyon ng Immich mismo, tingnan ang [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Paghahambing sa Immich app at sa ibang app
@@ -1037,6 +1038,8 @@ Kapag ang pag-decode ng isang video ng server ang hindi nakakasabay, hindi ang p
 - **Ikaw ang pumili ng renderer.** Sa Settings, Advanced, i-on ang "Troubleshooting" (Pag-troubleshoot): lalabas ang entry na "360° video renderer", Awtomatiko bilang default. Inaalok din nito ang "Plugin, buong laki", "Plugin, hanggang 4096 ang lapad", "Plugin, hanggang 2880 ang lapad" at "Flat, walang 360° na view", para sa susunod na 360° na video na bubuksan mo. Sa ilalim nito, binabanggit ng "Huling nasukat" ang laki kung saan iginuhit ang huling 360° na video, ang frame bawat segundo nito, ang graphics chip at ang decoder: kopyahin ito sa isang bug report. Ang pagpili ulit sa "Awtomatiko", kahit iyon na ang napili, ay kinakalimutan ang nasukat, at susukatin ulit ang mga susunod na 360° na video.
 - **Ano ang dine-decode ng chip.** Ang Settings, Advanced, "Mga video decoder ng device na ito" ay naglilista ng dine-decode ng graphics chip na ginagamit, gaya ng iniuulat ng Direct3D 11, at itinatama ng app ang listahang iyon gamit ang nasukat nito habang nagpe-play: sinusunod ito ng setting na "Pinagmulan ng video" at ng pagsusuri ng dalawang lens ng mga raw na video. Ang H.264 na mas malapad sa 4096 pixel (ang 5.7K ng mga 360° camera) ay dine-decode ng processor, dahil hindi ito tinatanggap ng alinmang chip ng test laptop.
 
+**Para sa mga developer.** Gumuguhit ang 360° player sa pamamagitan ng sarili nitong renderer, na nakabatay sa libmpv at sa isang na-patch na media_kit_video plugin: iginuguhit ng mpv ang bawat frame sa isang texture sa graphics chip, at iginuguhit ng isang OpenGL ES 3.0 pass ang view sa texture na ipinapakita ng Flutter, nang walang kopyang dumaraan sa processor. Kung bakit ito ginawa nang ganoon, paano ito gumagana, ano ang nasukat at ano ang maaaring i-tune: [ang 360° na video renderer ng desktop](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Kumpara sa mga phone app
 
 - **Tumatakbo ang backup habang nakabukas ang app** (o naka-minimize), hindi sa background kapag sarado ang window. Nagtatanong muna kapag isinara ang window habang may upload, o habang ibinabahagi ang computer.
@@ -1110,7 +1113,7 @@ Nasa Google Play ang app para sa mga telepono at tablet; naghihintay ng review n
 
 - **Mga Android na telepono at tablet**
   - Ngayon: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o ang APK sa page na [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` para sa telepono (gumagana kahit saan ang universal na `Immuch360-v<version>-release.apk`, para sa mas lumang 32 bit na telepono ang `-armeabi-v7a`, at para sa Google Play ang `.aab` na file, hindi para sa sideloading). Kadalasang mas nauuna ang GitHub build kaysa sa store. Sa alinmang paraan, nag-i-install ito katabi ng opisyal na Immich app (package `com.aprogsys.immuch360`).
-  - Malapit na: sa Google Play, live na ang build 20 mula Oktubre 7, 2026, kapalit ng build 18; walang binabago ang build 21 sa mga telepono at tablet.
+  - Malapit na: sa Google Play, ipinadala ang build 22 noong Oktubre 10, 2026 kapalit ng build 20 (live mula Oktubre 7); dala nito ang mga pagbabago ng Immich noong Oktubre at ang mga pag-aayos para sa TV.
 - **iPhone at iPad**
   - Ngayon: naghihintay ng review ng Apple. Taglay ng bersyong nire-review ang mga feature ng build 11: darating sa susunod na update sa App Store ang pag-upload sa Immich at ang pagpili ng "Pinagmulan ng video" (build 15) at ang mga raw na Insta360 file (build 16). Nabi-build ang source gamit ang Xcode o sa Codemagic, tingnan ang [I-build ito mismo](#build-it-yourself).
   - Malapit na: App Store, sinusuri pa.
@@ -1157,7 +1160,7 @@ Walang sikretong nakatira sa repository na ito: naka-store ang Android signing k
 
 ### Mga branch
 
-- **`main`**: Immich `main` sa commit na pinagbabatayan ng `immuch360` (Setyembre 29, 2026 para sa kasalukuyang mga build), hindi kailanman binabago; umuusad ito kapag na-rebase ang fork sa mas bagong Immich.
+- **`main`**: Immich `main` sa commit na pinagbabatayan ng `immuch360` (Oktubre 10, 2026 para sa kasalukuyang mga build), hindi kailanman binabago; umuusad ito kapag na-rebase ang fork sa mas bagong Immich.
 - **`immuch360`**: ang mga pagbabago ng fork na ito sa ibabaw ng Immich, kasama ang Immuch360 Desktop mula 9 Oktubre 2026. Sinasabi ng bawat release kung aling bersyon ng Immich ang pinagbabatayan nito.
 - **`desktop`**: kung saan binuo ang Immuch360 Desktop, ang bersyon para sa computer, sa ibabaw ng `immuch360`, hanggang pinagsama ito roon noong 9 Oktubre 2026 para mula sa parehong source mailabas ang para sa mga telepono, headset, TV at computer. Sinusundan na nito ngayon ang `immuch360` at dala nito ang mga tag ng mga desktop pre-release ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) mula sa commit 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) mula sa 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) mula sa pagsasama ng 360° video player noong 10 Oktubre 2026). Doon unang dumarating ang bagong gawain para sa desktop at sumasama ito sa `immuch360` kasama ng desktop build na naglalabas nito. Walang binabago ang bersyon para sa computer sa ilalim ng `mobile/android` at `mobile/ios`.
 

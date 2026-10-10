@@ -17,10 +17,10 @@ Sie ist für alle gedacht, die mit einer 360°-Kamera (Insta360, GoPro MAX, DJI 
 
 | Plattform | Wo es die App gibt | Stand am 10. Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Telefone und -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 20 bei Google Play seit dem 7. Oktober 2026, Build 21 auf GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Telefone und -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 22 auf GitHub, am 10. Oktober 2026 bei Google Play eingereicht (dort ist Build 20 seit dem 7. Oktober live) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone und iPad** | App Store | Version 3.3.0 wartet auf die Prüfung durch Apple; bis dahin [selbst bauen](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 und 3S | [APK](#meta-quest-3) · Horizon Store | Eintrag genehmigt, Build 21 in Prüfung bei Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV und Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 21 auf GitHub; der Eintrag bei Google Play für Fernseher ist seit dem 9. Oktober 2026 in Prüfung bei Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 und 3S | [APK](#meta-quest-3) · Horizon Store | Eintrag genehmigt, Build 21 in Prüfung bei Meta, Build 22 im Alpha-Kanal |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV und Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 22 auf GitHub; der Eintrag bei Google Play für Fernseher ist seit dem 9. Oktober 2026 in Prüfung bei Google |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Vorschau-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Desktop-Build 3 unter Windows: Fotos, flache und 360°-Videos; macOS und Linux später |
 
 *Der Stand wird bei jedem Release aktualisiert; die Einzelheiten stehen unter [Wo es die App gibt](#where-to-get-it).*
@@ -196,7 +196,7 @@ Die App findet die Server deines Netzwerks selbst und spielt die Dateien live in
 4. Nicht in der Liste? Fülle das Formular von Hand aus. Typ: «SMB (Samba, Windows-Freigabe)», «WebDAV (Nextcloud, Synology und andere)», «DLNA-Medienserver (Jellyfin, NAS, TV-Box)» oder ab Build 20 «Plex Media Server», das die Seite aus [Plex Media Server, ohne plex.tv](#plex-media-server-without-plextv) öffnet. Dann Name, «Servername oder Adresse» (ein Name oder eine Adresse; eine vollständige Adresse wie `smb://nas/photos`, `\\nas\photos` oder `https://nas:5006/photos` füllt die übrigen Felder aus), «Port (optional)», wenn es nicht der übliche ist, «Freigabe» für SMB oder «Pfad der WebDAV-Adresse» für WebDAV, «Startordner (optional)», «Nutzername» und «Passwort» sowie «Sichere Verbindung (HTTPS)» für WebDAV.
 5. SMB: Sobald Server und Nutzername eingegeben sind, listet «Freigabe auswählen» die Freigaben des Servers.
 6. DLNA: Ein Medienserver hat weder Nutzername noch Passwort. Gib den Server, den Port und den «Beschreibungspfad» seiner Gerätebeschreibung an (`/rootDesc.xml` bei minidlna) oder füge die ganze Adresse, etwa `http://192.168.1.10:8200/rootDesc.xml`, in das Serverfeld ein.
-7. Tippe auf «Verbindung testen». Die Antwort lautet «Verbunden, N Einträge im Startordner», oder die App sagt, warum es fehlgeschlagen ist. Tippe dann unten im Formular auf Speichern.
+7. Tippe auf «Verbindung testen». Die Antwort lautet «Verbunden, N Einträge im Startordner», oder die App sagt, warum es fehlgeschlagen ist. Tippe dann unten im Formular auf Speichern. Ab Build 22 fragt das Schliessen eines Formulars, in das du etwas eingegeben hast (X, Zurück), zuerst «Änderungen verwerfen?», auch auf den Seiten für Plex und Kameras, und ebenso die Wahl von Plex oder einer gefundenen Kamera, sobald etwas eingegeben ist.
 
 Ein Nutzername mit leerem Passwort wird genau so gesendet: Ein Freebox Server erwartet `freebox` und kein Passwort für seine Festplatten. Um eine Freigabe später zu ändern oder zu entfernen, nutze den Stift daneben auf der Seite Netzwerkfreigaben.
 
@@ -617,8 +617,9 @@ Ab Build 20 läuft dieselbe Android-App auf Android TV und Google TV, mit der Fe
 
 ### Mit der Fernbedienung bewegen
 
-- Die Pfeiltasten bewegen den Rahmen, OK öffnet, worauf er steht, Zurück geht zurück. Von einem Tab aus geht Zurück zum Seitenmenü, dann zu Fotos, dann aus der App hinaus.
-- Kanal hoch und runter blättern jeweils eine Seite weiter.
+- Die Pfeiltasten bewegen den Rahmen, OK öffnet, worauf er steht, Zurück geht zurück. Von einem Tab aus geht Zurück zum Seitenmenü, dann zu Fotos, dann aus der App hinaus. In einer Auswahlliste, etwa beim Typ einer Freigabe oder bei einer Einstellung, bewegen die Pfeiltasten nur den Rahmen, und OK wählt die Option aus (ab Build 22; vorher änderten die Pfeiltasten die Auswahl).
+- Kanal hoch und runter blättern jeweils eine Seite weiter. Ab Build 22 zeigen die Fotoraster etwa sechs Kacheln pro Zeile innerhalb der Bildschirmränder, mit schärferen Vorschaubildern der eigenen Dateien des Geräts, die auch bei feinen Details ruhig bleiben, und die Seiten, die auf einem Telefon einen Bildkopf haben (die 360°-Liste, Favoriten, die Alben des Geräts), zeigen stattdessen eine einfache Leiste.
+- Ab Build 22 beginnt der Rahmen beim ersten Element jeder Seite (die erste Kachel der 360°-Liste, das E-Mail-Feld, sobald die Serveradresse bestätigt ist), bleibt beim Scrollen eines Rasters innerhalb der Bildschirmränder und geht von einem Raster nach oben zur Zeile oder zu den Filtern darüber statt zur Schaltfläche Zurück. Die Rechtstaste auf einer Netzwerkfreigabe oder einer Kamera erreicht deren Schaltfläche Bearbeiten, und das Ergebnis von «Verbindung testen» wird ins Bild gescrollt.
 - In den Ansichten funktionieren die Tasten Wiedergabe und Pause, Vorspulen, Zurückspulen, Nächster und Vorheriger der Fernbedienung, und die Info-Taste zeigt die Details eines Fotos oder Videos.
 
 ### Fotos und Videos mit der Fernbedienung
@@ -632,7 +633,7 @@ Ab Build 20 läuft dieselbe Android-App auf Android TV und Google TV, mit der Fe
 
 ### Die Einstellung Layout für Fernbedienung
 
-Einstellungen, Voreinstellungen, «Layout für Fernbedienung»: «Grosse Fokusrahmen und Fernbedienungstasten, ohne die Bedienelemente, die einen Touchscreen brauchen. Automatisch schaltet es auf Android TV und Google TV ein.» Automatisch ist die Vorgabe; Ein passt zu einem Tablet, das mit einer Tastatur oder einem Gamepad bedient wird; Aus schaltet es auf einem Fernseher aus. Die Einstellung gibt es nur auf Android. Die Pfeiltasten und OK funktionieren in den Ansichten mit einer Tastatur oder einem Gamepad, unabhängig von der Einstellung.
+Einstellungen, Voreinstellungen, «Layout für Fernbedienung»: «Grosse Fokusrahmen und Fernbedienungstasten, ohne die Bedienelemente, die einen Touchscreen brauchen. Automatisch schaltet es auf Android TV und Google TV ein.» Automatisch ist die Vorgabe; Ein passt zu einem Tablet, das mit einer Tastatur oder einem Gamepad bedient wird; Aus schaltet es auf einem Fernseher aus. Die Einstellung gibt es nur auf Android. Ab Build 22 wirkt eine Änderung sofort auf die geöffnete Seite, die dort bleibt, wo sie war (vorher öffneten sich die Einstellungen wieder bei Erweitert, über einem Startbildschirm, durch den man mit Zurück hindurch musste). Die Pfeiltasten und OK funktionieren in den Ansichten mit einer Tastatur oder einem Gamepad, unabhängig von der Einstellung.
 
 ### Grenzen
 
@@ -650,7 +651,7 @@ Einstellungen, Voreinstellungen, «Layout für Fernbedienung»: «Grosse Fokusra
 
 360°-Aufnahmen sind mit allen anderen Fotos vermischt, und Nutzer bitten Immich um eine Möglichkeit, Kugeln und Panoramen zu filtern ([Diskussion #12824](https://github.com/immich-app/immich/discussions/12824)). Die Immich-App hat keine solche Liste.
 
-Immuch360 setzt ein 360°-Kennzeichen auf die Vorschaubilder von 360°-Fotos (in einem Ordner einer Netzwerkfreigabe auch auf 360°-Videos) und einen Eintrag 360° oben in den Tab Bibliothek. Ab Build 18 enthält diese Liste mit einem Server die Fotos und Videos, die der Server als 360° markiert, die rohen Insta360-Dateien anhand ihres Namens, die Fotos, die eine 360°-Kamera selbst zusammengefügt hat, und jene, die du als 360° ansehen wolltest, dazu, was die Suche auf dem Gerät gefunden hat; ohne Server, was die Suche auf dem Gerät gefunden hat und jene, die du als 360° ansehen wolltest. Jedes Element erscheint einmal, wo auch immer seine Kopien liegen, die neuesten zuerst.
+Immuch360 setzt ein 360°-Kennzeichen auf die Vorschaubilder von 360°-Fotos (in einem Ordner einer Netzwerkfreigabe auch auf 360°-Videos) und einen Eintrag 360° oben in den Tab Bibliothek. Ab Build 18 enthält diese Liste mit einem Server die Fotos und Videos, die der Server als 360° markiert, die rohen Insta360-Dateien anhand ihres Namens, die Fotos, die eine 360°-Kamera selbst zusammengefügt hat, und jene, die du als 360° ansehen wolltest, dazu, was die Suche auf dem Gerät gefunden hat; ohne Server, was die Suche auf dem Gerät gefunden hat und jene, die du als 360° ansehen wolltest. Jedes Element erscheint einmal, wo auch immer seine Kopien liegen, die neuesten zuerst. Ab Build 22 erscheint über dem Raster eine Zeile «In den Netzwerkfreigaben» mit den 360°-Fotos und -Videos deiner Freigaben, die neuesten zuerst: Die App lernt sie kennen, wenn sie ihren Ordner zeigt oder sie öffnet (sie durchsucht eine Freigabe nicht von selbst), behält sie von einem Start zum nächsten und vergisst sie zusammen mit ihrer Freigabe. Auf einem Fernseher, der keine eigenen Fotos hat, füllt sich die 360°-Liste über diese Zeile.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Die 360°-Liste, 4 Elemente, mit geöffnetem Blatt Datum: Alle, das Jahr 2026 mit seiner Anzahl, Ganzes Jahr, August 2026 und April 2026 mit ihren Anzahlen, das Jahr 2025 und Benutzerdefiniert">
 
@@ -661,7 +662,7 @@ Immuch360 setzt ein 360°-Kennzeichen auf die Vorschaubilder von 360°-Fotos (in
 3. Wähle mit einem Server, wo die Medien liegen: «Auf dem Server», «Auf diesem Gerät» und «Mit mir geteilt», wenn es welche gibt.
 4. Wähle die Art: Fotos, Videos, 3D, VR180.
 5. Enthält die Liste zwei oder mehr Kameras, listet eine zweite Zeile sie nach Hersteller und Modell aus den EXIF-Daten auf, mit ihren Anzahlen. Eine Rohdatei ohne diese Angaben wird nach der Marke ihrer Endung benannt (Insta360, GoPro, DJI), alles andere ist «Unbekannte Kamera».
-6. Innerhalb einer Gruppe (die Orte, Fotos und Videos, 3D und VR180, die Kameras) addieren sich die Chips; zwischen Gruppen schränken sie die Liste ein. Leeren setzt alles zurück; «Kein 360°-Foto oder -Video entspricht diesen Filtern» bedeutet, dass die Filter nichts übrig lassen.
+6. Innerhalb einer Gruppe (die Orte, Fotos und Videos, 3D und VR180, die Kameras) addieren sich die Chips; zwischen Gruppen schränken sie die Liste ein. Die Chips Datum, Fotos und Videos gelten auch für die Zeile der Netzwerkfreigaben; 3D, VR180 und die Kameras blenden sie aus, da die App nichts davon für eine Datei einer Freigabe kennt. Leeren setzt alles zurück; «Kein 360°-Foto oder -Video entspricht diesen Filtern» bedeutet, dass die Filter nichts übrig lassen.
 7. Öffne ein Foto oder Video. In der immersiven Ansicht der Quest folgen Vorheriges und Nächstes der gefilterten Liste.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Alles, was die offizielle mobile Immich-App kann, ist hier: Sicherung, Zeitleist
 
 Um jemandem ohne die App ein 360°-Foto zu zeigen, teile es über einen geteilten Immich-Link: Die Immich-Web-App zeigt ein 360°-Foto in seinem Browser als Kugel.
 
-Der aktuelle Build, Build 21 (Version 3.3.0-rc.0, Build-Nummer 3030019), basiert auf Immich 3.3.0-rc.0 (Immich `main`, noch keine stabile Version). Build 19 wurde mit einem Immich-3.2-Server getestet, und die Builds 20 und 21 ändern nichts an dem, was die App vom Server verlangt. Bitte melde Probleme unter [Issues](https://github.com/freeKC/Immuch360/issues), nicht beim Immich-Projekt. Die vollständige Dokumentation von Immich selbst findest du unter [immich.app](https://immich.app).
+Der aktuelle Build, Build 22 (Version 3.3.0-rc.0, Build-Nummer 3030020), basiert auf Immich `main` vom 10. Oktober 2026 (Version 3.3.0-rc.0, noch keine stabile Version). Build 22 wurde mit einem Immich-3.2.4-Server und mit einem aus demselben Immich `main` gebauten Server getestet: Anmeldung, Zeitleiste, Alben, 360°-Fotos und -Videos, Videowiedergabe und Uploads, ohne API-Fehler. Bitte melde Probleme unter [Issues](https://github.com/freeKC/Immuch360/issues), nicht beim Immich-Projekt. Die vollständige Dokumentation von Immich selbst findest du unter [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Im Vergleich mit der Immich-App und anderen Apps
@@ -1037,6 +1038,8 @@ Wenn es das Dekodieren eines Server-Videos ist, das nicht mithält, nicht das Ze
 - **Wähle den Renderer selbst.** Schalte unter Einstellungen, Erweitert «Fehlersuche» ein: Ein Eintrag «360°-Video-Renderer» erscheint, standardmässig «Automatisch». Er bietet auch «Plugin, volle Grösse», «Plugin, höchstens 4096 breit», «Plugin, höchstens 2880 breit» und «Flach, ohne die 360°-Ansicht», für das nächste 360°-Video, das du öffnest. Darunter nennt «Zuletzt gemessen» die Grösse, in der das letzte 360°-Video gezeichnet wurde, seine Bilder pro Sekunde, den Grafikchip und den Decoder: Kopiere es in einen Fehlerbericht. Wählst du erneut «Automatisch», auch wenn es schon die Wahl ist, vergisst die App, was gemessen wurde, und die nächsten 360°-Videos werden erneut gemessen.
 - **Was der Chip dekodiert.** Unter Einstellungen, Erweitert listet «Videodecoder dieses Geräts» auf, was der verwendete Grafikchip dekodiert, wie Direct3D 11 es meldet, und die App korrigiert diese Liste mit dem, was sie beim Abspielen gemessen hat: Die Einstellung «Videoquelle» und die Prüfung der zwei Objektive bei Rohvideos richten sich danach. H.264 breiter als 4096 Pixel (die 5,7K der 360°-Kameras) wird vom Prozessor dekodiert, da keiner der beiden Chips des Testlaptops es annimmt.
 
+**Für Entwickler.** Der 360°-Player zeichnet über einen eigenen Renderer, gebaut auf libmpv und einem gepatchten Plugin media_kit_video: mpv zeichnet jedes Bild in eine Textur auf dem Grafikchip, und ein Durchgang mit OpenGL ES 3.0 zeichnet die Ansicht in die Textur, die Flutter anzeigt, ohne Kopie über den Prozessor. Warum er so gebaut wurde, wie er funktioniert, was gemessen wurde und was sich einstellen lässt: [der 360°-Video-Renderer der Desktop-App](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Im Vergleich zu den Telefon-Apps
 
 - **Die Sicherung läuft, solange die App geöffnet ist** (oder minimiert), nicht im Hintergrund bei geschlossenem Fenster. Das Schliessen des Fensters, während Uploads laufen oder der Computer freigegeben ist, fragt zuerst nach.
@@ -1110,7 +1113,7 @@ Die App ist bei Google Play für Telefone und Tablets; die App-Store-Version war
 
 - **Android-Telefone und -Tablets**
   - Heute: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) oder die APK auf der Seite [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` für ein Telefon (die universelle `Immuch360-v<version>-release.apk` läuft überall, `-armeabi-v7a` ist für ältere 32-Bit-Telefone, und die Datei `.aab` ist für Google Play, nicht zum Sideloading). Der GitHub-Build ist dem Store meist voraus. So oder so wird sie neben der offiziellen Immich-App installiert (Paket `com.aprogsys.immuch360`).
-  - Bald: bei Google Play ist Build 20 seit dem 7. Oktober 2026 live, anstelle von Build 18; Build 21 ändert nichts auf Telefonen und Tablets.
+  - Bald: bei Google Play wurde Build 22 am 10. Oktober 2026 eingereicht, anstelle von Build 20 (live seit dem 7. Oktober); er bringt die Änderungen von Immich aus dem Oktober und die Korrekturen für Fernseher.
 - **iPhone und iPad**
   - Heute: wartet auf die Prüfung durch Apple. Die geprüfte Version enthält die Funktionen von Build 11: Der Upload zu Immich und die Wahl der Videoquelle (Build 15) sowie die rohen Insta360-Dateien (Build 16) kommen mit einem späteren App-Store-Update. Der Quellcode lässt sich mit Xcode oder auf Codemagic bauen, siehe [Selbst bauen](#build-it-yourself).
   - Bald: App Store, in Prüfung.
@@ -1157,7 +1160,7 @@ In diesem Repository liegt kein Geheimnis: Der Android-Signaturschlüssel ist al
 
 ### Branches
 
-- **`main`**: Immich `main` bei dem Commit, auf dem `immuch360` basiert (29. September 2026 für die aktuellen Builds), nie verändert; er rückt vor, wenn der Fork auf ein neueres Immich rebased wird.
+- **`main`**: Immich `main` bei dem Commit, auf dem `immuch360` basiert (10. Oktober 2026 für die aktuellen Builds), nie verändert; er rückt vor, wenn der Fork auf ein neueres Immich rebased wird.
 - **`immuch360`**: die Änderungen dieses Forks auf Immich, seit dem 9. Oktober 2026 einschliesslich Immuch360 Desktop. Jedes Release nennt die Immich-Version, auf der es basiert.
 - **`desktop`**: Hier wurde Immuch360 Desktop, die Computerversion, auf `immuch360` gebaut, bis es am 9. Oktober 2026 in ihn gemergt wurde, damit Telefone, Headsets, Fernseher und Computer aus denselben Quellen erscheinen. Er folgt jetzt `immuch360` und trägt die Tags der Desktop-Pre-Releases ([Desktop-Build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) aus Commit 21f285c34, [Desktop-Build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) aus 5b723bd25, [Desktop-Build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) aus dem Merge des 360°-Videoplayers am 10. Oktober 2026). Neue Desktop-Arbeit landet zuerst dort und kommt mit dem Desktop-Build, der sie ausliefert, zu `immuch360`. Die Computerversion ändert nichts unter `mobile/android` und `mobile/ios`.
 

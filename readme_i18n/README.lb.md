@@ -17,10 +17,10 @@ Si ass fir Leit, déi mat enger 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360,
 
 | Plattform | Wou kritt een et | Status den 10. Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Telefonen an -Tabletten | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 20 op Google Play zënter dem 7. Oktober 2026, Build 21 op GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Telefonen an -Tabletten | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 22 op GitHub, den 10. Oktober 2026 op Google Play geschéckt (do ass de Build 20 zënter dem 7. Oktober online) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone an iPad** | App Store | Versioun 3.3.0 waart op d'Préiwung vun Apple; bis dohin [selwer bauen](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 an 3S | [APK](#meta-quest-3) · Horizon Store | Fiche guttgeheescht, Build 21 gëtt vu Meta gepréift |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 21 op GitHub; d'Fiche op Google Play fir Fernseher gëtt zënter dem 9. Oktober 2026 vu Google gepréift |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 an 3S | [APK](#meta-quest-3) · Horizon Store | Fiche guttgeheescht, Build 21 gëtt vu Meta gepréift, Build 22 um Alpha-Kanal |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 22 op GitHub; d'Fiche op Google Play fir Fernseher gëtt zënter dem 9. Oktober 2026 vu Google gepréift |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Desktop-Build 3 op Windows: Fotoen, flaach an 360°-Videoen; macOS a Linux méi spéit |
 
 *D'Statuse ginn bei all Release aktualiséiert; d'Detailer stinn ënner [Wou kritt een et](#where-to-get-it).*
@@ -196,7 +196,7 @@ Et fënnt d'Serveren an Ärem Netzwierk eleng a spillt d'Fichieren live an deene
 4. Net an der Lëscht? Fëllt de Formulaire mat der Hand aus. Typ: "SMB (Samba, Windows-Freeginn)", "WebDAV (Nextcloud, Synology an anerer)", "DLNA-Medieserver (Jellyfin, NAS, TV-Box)" oder, ab dem Build 20, "Plex Media Server", deen d'Säit vu [Plex Media Server, ouni plex.tv](#plex-media-server-without-plextv) opmécht. Dann Numm, "Servernumm oder Adress" (en Numm oder eng Adress; eng vollstänneg Adress wéi `smb://nas/photos`, `\\nas\photos` oder `https://nas:5006/photos` fëllt déi aner Felder aus), "Port (optional)", wann et net deen üblechen ass, "Freeginn" fir SMB oder "Wee vun der WebDAV-Adress" fir WebDAV, "Startdossier (optional)", "Benotzernumm" a "Passwuert", an "Séchert Verbindung (HTTPS)" fir WebDAV.
 5. SMB: soubal de Server an de Benotzernumm agi sinn, weist "Eng Freeginn auswielen" d'Freeginne vum Server.
 6. DLNA: e Medieserver huet kee Benotzernumm a kee Passwuert. Gitt de Server, de Port an de "Beschreiwungswee" vu senger Apparatbeschreiwung un (`/rootDesc.xml` fir minidlna), oder setzt déi ganz Adress, wéi `http://192.168.1.10:8200/rootDesc.xml`, an d'Serverfeld.
-7. Tippt op "Verbindung testen". Et äntwert "Verbonnen, N Elementer am Startdossier", oder seet, firwat et net geklappt huet. Tippt dann op Späicheren, ënnen um Formulaire.
+7. Tippt op "Verbindung testen". Et äntwert "Verbonnen, N Elementer am Startdossier", oder seet, firwat et net geklappt huet. Tippt dann op Späicheren, ënnen um Formulaire. Ab dem Build 22 freet d'Zoumaache vun engem Formulaire, an deem Dir eppes getippt hutt (X, Zréck), fir d'éischt "D'Ännerunge verwerfen?", och op de Säite vu Plex a vun de Kameraen, an dat selwecht geschitt, wann Dir Plex oder eng fonnte Kamera auswielt, soubal eppes getippt ass.
 
 E Benotzernumm mat engem eidele Passwuert gëtt esou geschéckt: e Freebox Server wëll `freebox` a kee Passwuert fir seng Disken. Fir eng Freeginn méi spéit z'änneren oder ze läschen, benotzt de Bläistëft dernieft op der Säit Netzwierkfreeginn.
 
@@ -617,8 +617,9 @@ Ab dem Build 20 leeft déi selwecht Android-App op Android TV a Google TV, mat d
 
 ### Mat der Fernbedienung navigéieren
 
-- D'Feiler réckelen de Rumm, OK mécht op, wat drënner ass, Zréck geet zréck. Vun engem Tab aus geet Zréck an de Säitemenü, dann op Fotoen, dann aus der App eraus.
-- Kanal erop an erof scrollen eng Säit op eemol.
+- D'Feiler réckelen de Rumm, OK mécht op, wat drënner ass, Zréck geet zréck. Vun engem Tab aus geet Zréck an de Säitemenü, dann op Fotoen, dann aus der App eraus. An enger Lëscht vu Méiglechkeeten, wéi dem Typ vun enger Freeginn oder enger Astellung, réckelen d'Feiler just de Rumm, an OK wielt d'Méiglechkeet aus (ab dem Build 22; virdru hunn d'Feiler d'Wiel geännert).
+- Kanal erop an erof scrollen eng Säit op eemol. Ab dem Build 22 weisen d'Fotogitter ongeféier sechs Kachelen pro Rei bannent de Ränner vum Bildschierm, mat méi schaarfe Miniaturbiller vun den eegene Fichiere vum Apparat, déi och bei feinen Detailer roueg bleiwen, an d'Säiten, déi op engem Telefon e Bildkapp hunn (d'360°-Lëscht, Favorites (Favoritten), d'Alben vum Apparat), weisen amplaz eng einfach Leescht.
+- Ab dem Build 22 fänkt de Rumm um éischten Element vun all Säit un (déi éischt Kachel vun der 360°-Lëscht, d'E-Mail-Feld, soubal d'Serveradress confirméiert ass), bleift bannent de Ränner vum Bildschierm, wann e Gitter scrollt, a geet vun engem Gitter erop op d'Rei oder d'Filteren driwwer amplaz op de Knäppchen Zréck. D'Feil no riets op enger Netzwierkfreeginn oder enger Kamera erreecht hire Knäppchen fir z'änneren, an d'Resultat vu "Verbindung testen" gëtt an d'Vue gescrollt.
 - An de Betruechter funktionéieren d'Knäppercher fir Ofspillen a Paus, Virspullen, Zréckspullen, Nächst a Viregt vun der Fernbedienung, an d'Infotast weist d'Detailer vun enger Foto oder engem Video.
 
 ### Fotoen a Videoe mat der Fernbedienung
@@ -632,7 +633,7 @@ Ab dem Build 20 leeft déi selwecht Android-App op Android TV a Google TV, mat d
 
 ### D'Astellung Layout fir d'Fernbedienung
 
-Astellungen, Preferences (Astellungen), "Layout fir d'Fernbedienung": "Grouss Fokusrumme an d'Knäppercher vun der Fernbedienung, ouni d'Bedingelementer, déi en Touchscreen brauchen. Automatesch schalt et op Android TV a Google TV un." Automatesch ass de Standard; Un passt fir en Tablet, deen mat enger Tastatur oder engem Gamepad bedéngt gëtt; Aus schalt et op engem Fernseh aus. D'Astellung gëtt et nëmmen op Android. D'Feiler an OK funktionéieren an de Betruechter mat enger Tastatur oder engem Gamepad, egal wéi d'Astellung ass.
+Astellungen, Preferences (Astellungen), "Layout fir d'Fernbedienung": "Grouss Fokusrumme an d'Knäppercher vun der Fernbedienung, ouni d'Bedingelementer, déi en Touchscreen brauchen. Automatesch schalt et op Android TV a Google TV un." Automatesch ass de Standard; Un passt fir en Tablet, deen mat enger Tastatur oder engem Gamepad bedéngt gëtt; Aus schalt et op engem Fernseh aus. D'Astellung gëtt et nëmmen op Android. Ab dem Build 22 gëllt eng Ännerung direkt fir déi oppe Säit, déi do bleift, wou se war (virdru sinn d'Astellungen erëm op Advanced (Erweidert) opgaang, iwwer engem Startbildschierm, duerch deen een mat Zréck huet missen duerchgoen). D'Feiler an OK funktionéieren an de Betruechter mat enger Tastatur oder engem Gamepad, egal wéi d'Astellung ass.
 
 ### Grenzen
 
@@ -650,7 +651,7 @@ Astellungen, Preferences (Astellungen), "Layout fir d'Fernbedienung": "Grouss Fo
 
 360°-Biller si mat all deenen anere Fotoe vermëscht, an d'Leit froen Immich no enger Méiglechkeet, Kugelen a Panoramaen ze filteren ([discussion #12824](https://github.com/immich-app/immich/discussions/12824)). D'Immich-App huet keng esou eng Lëscht.
 
-Immuch360 setzt en 360°-Badge op d'Miniaturbiller vun 360°-Fotoen (an engem Dossier vun enger Netzwierkfreeginn och op 360°-Videoen), an en 360°-Element uewen am Tab Bibliothéik. Ab dem Build 18 enthält déi Lëscht, mat engem Server, d'Fotoen a Videoen, déi de Server als 360° markéiert, déi rau Insta360-Fichieren un hirem Numm, d'Fotoen, déi eng 360°-Kamera selwer zesummegesat huet, an déi, déi Dir als 360° weise gelooss hutt, plus dat, wat d'Sich um Apparat fonnt huet; ouni Server dat, wat d'Sich um Apparat fonnt huet, an déi, déi Dir als 360° weise gelooss hutt. Jiddwereen erschéngt eemol, egal wou seng Kopië sinn, dat Neist als éischt.
+Immuch360 setzt en 360°-Badge op d'Miniaturbiller vun 360°-Fotoen (an engem Dossier vun enger Netzwierkfreeginn och op 360°-Videoen), an en 360°-Element uewen am Tab Bibliothéik. Ab dem Build 18 enthält déi Lëscht, mat engem Server, d'Fotoen a Videoen, déi de Server als 360° markéiert, déi rau Insta360-Fichieren un hirem Numm, d'Fotoen, déi eng 360°-Kamera selwer zesummegesat huet, an déi, déi Dir als 360° weise gelooss hutt, plus dat, wat d'Sich um Apparat fonnt huet; ouni Server dat, wat d'Sich um Apparat fonnt huet, an déi, déi Dir als 360° weise gelooss hutt. Jiddwereen erschéngt eemol, egal wou seng Kopië sinn, dat Neist als éischt. Ab dem Build 22 kënnt iwwer dem Gitter eng Rei "An den Netzwierkfreeginnen" mat den 360°-Fotoen a -Videoe vun Äre Freeginnen, dat Neist als éischt: d'App léiert se kennen, wann se hiren Dossier weist oder se opmécht (si duerchsicht eng Freeginn net vun eleng), behält se vun engem Start zum nächsten a vergiess se mat hirer Freeginn. Op engem Fernseh, deen keng eege Fotoen huet, fëllt sech d'360°-Lëscht iwwer dës Rei.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="D'360°-Lëscht, 4 Elementer, mat hirem Blat Date op: All, d'Joer 2026 mat senger Zuel, Dat ganzt Joer, August 2026 an Abrëll 2026 mat hiren Zuelen, d'Joer 2025, a Custom">
 
@@ -661,7 +662,7 @@ Immuch360 setzt en 360°-Badge op d'Miniaturbiller vun 360°-Fotoen (an engem Do
 3. Mat engem Server, wielt aus, wou d'Medie sinn: "Um Server", "On this device", an "Shared with me" (Mat mir gedeelt), wann et där gëtt.
 4. Wielt d'Aart: Photos, Videos, 3D, VR180.
 5. Wann d'Lëscht zwou oder méi Kameraen enthält, weist eng zweet Zeil se no EXIF-Hiersteller a -Modell, mat hiren Zuelen. E raue Fichier ouni dës Informatioune gëtt no der Mark vu senger Extensioun benannt (Insta360, GoPro, DJI), alles anescht ass "Onbekannt Kamera".
-6. Bannent enger Grupp (d'Plazen, Photos a Videos, 3D a VR180, d'Kameraen) addéiere sech d'Chips; tëscht de Gruppe verklengeren se d'Lëscht. Clear (Läschen) setzt alles zréck; "Keng 360°-Foto oder -Video passt op dës Filteren" heescht, datt d'Filteren näischt iwwreg loossen.
+6. Bannent enger Grupp (d'Plazen, Photos a Videos, 3D a VR180, d'Kameraen) addéiere sech d'Chips; tëscht de Gruppe verklengeren se d'Lëscht. D'Chips Date, Photos a Videos gëllen och fir d'Rei vun den Netzwierkfreeginnen; 3D, VR180 an d'Kameraen verstoppen se, well d'App näischt dovun fir e Fichier vun enger Freeginn weess. Clear (Läschen) setzt alles zréck; "Keng 360°-Foto oder -Video passt op dës Filteren" heescht, datt d'Filteren näischt iwwreg loossen.
 7. Maacht eng Foto oder e Video op. An der immersiver Usiicht vun der Quest follegen Viregt an Nächst der gefilterter Lëscht.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Alles, wat déi offiziell Immich-App fir den Handy mécht, ass hei: Sécherung, 
 
 Fir enger Persoun, déi d'App net huet, eng 360°-Foto ze weisen, deelt se mat engem gedeelte Link vun Immich: d'Immich-Web-App weist eng 360°-Foto als Kugel an hirem Browser.
 
-Den aktuelle Build, de Build 21 (Versioun 3.3.0-rc.0, Buildnummer 3030019), baséiert op Immich 3.3.0-rc.0 (Immich `main`, nach keng stabil Versioun). De Build 19 gouf mat engem Immich-3.2-Server getest, an d'Builds 20 an 21 änneren näischt un deem, wat d'App vum Server freet. Mellt Problemer w.e.g. an den [Issues](https://github.com/freeKC/Immuch360/issues), net beim Immich-Projet. Fir déi komplett Dokumentatioun vun Immich selwer, kuckt [immich.app](https://immich.app).
+Den aktuelle Build, de Build 22 (Versioun 3.3.0-rc.0, Buildnummer 3030020), baséiert op Immich `main` vum 10. Oktober 2026 (Versioun 3.3.0-rc.0, nach keng stabil Versioun). De Build 22 gouf mat engem Immich-3.2.4-Server a mat engem Server getest, deen aus deemselwechten Immich `main` gebaut gouf: Umeldung, Timeline, Alben, 360°-Fotoen a -Videoen, Ofspille vu Videoen an Eroplueden, ouni API-Feeler. Mellt Problemer w.e.g. an den [Issues](https://github.com/freeKC/Immuch360/issues), net beim Immich-Projet. Fir déi komplett Dokumentatioun vun Immich selwer, kuckt [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Am Verglach mat der Immich-App an aneren Appen
@@ -1037,6 +1038,8 @@ Wann et d'Dekodéiere vun engem Servervideo ass, dat net nokënnt, net d'Zeechne
 - **Wielt de Renderer selwer.** An de Settings, Advanced (Erweidert), maacht Troubleshooting (Feelersich) un: en Element "360° video renderer" (360°-Videorenderer) erschéngt, standardméisseg Automatic (Automatesch). Et bitt och "Plugin, full size" (Plugin, voll Gréisst), "Plugin, at most 4096 wide" (Plugin, héchstens 4096 breet), "Plugin, at most 2880 wide" (Plugin, héchstens 2880 breet) an "Flat, without the 360° view" (Flaach, ouni 360°-Vue) un, fir den nächsten 360°-Video, deen Dir opmaacht. Drënner nennt "Measured last" (Lescht Moossung) d'Gréisst, a där de leschten 360°-Video gezeechent gouf, seng Biller pro Sekonn, de Grafikchip an den Decoder: kopéiert dat an e Feelerbericht. "Automatic" nees wielen, och wann et schonn ausgewielt ass, vergësst dat Gemoosst, an déi nächst 360°-Videoe ginn nees gemooss.
 - **Wat de Chip dekodéiert.** Settings, Advanced, "Videodecoderen vun dësem Apparat" lëscht op, wat de benotzte Grafikchip dekodéiert, sou wéi Direct3D 11 et mellt, an d'App korrigéiert dës Lëscht mat deem, wat se beim Ofspille gemooss huet: d'Astellung Videoquell an den Test mat zwee Objektiver vu raue Videoe riichte sech dono. H.264 méi breet wéi 4096 Pixel (déi 5.7K vun 360°-Kameraen) gëtt vum Prozessor dekodéiert, well kee vun de Chips vum Test-Laptop et iwwerhëlt.
 
+**Fir Entwéckler.** Den 360°-Player zeechent iwwer en eegene Renderer, gebaut op libmpv an engem gepatchte Plugin media_kit_video: mpv zeechent all Bild an eng Textur um Grafikchip, an en Duerchgang mat OpenGL ES 3.0 zeechent d'Vue an d'Textur, déi Flutter weist, ouni Kopie iwwer de Prozessor. Firwat en esou gebaut gouf, wéi en funktionéiert, wat gemooss gouf a wat ee kann astellen: [den 360°-Videorenderer vun der Desktop-App](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Am Verglach mat den Telefon-Apps
 
 - **D'Sécherung leeft, soulaang d'App op ass** (oder miniméiert), net am Hannergrond bei zouener Fënster. D'Fënster zoumaachen, wärend Uploads lafen, oder wärend de Computer gedeelt gëtt, freet als éischt.
@@ -1110,7 +1113,7 @@ D'App ass op Google Play fir Telefonen an Tabletten; d'Versioun am App Store waa
 
 - **Android-Telefonen an -Tabletten**
   - Haut: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), oder d'APK op der Säit [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fir en Telefon (déi universell `Immuch360-v<version>-release.apk` funktionéiert iwwerall, `-armeabi-v7a` ass fir méi al 32-Bit-Telefonen, an de Fichier `.aab` ass fir Google Play, net fir ze sideloaden). De GitHub-Build ass normalerweis virum Store. Esou oder esou gëtt se nieft der offizieller Immich-App installéiert (Package `com.aprogsys.immuch360`).
-  - Geschwënn: op Google Play ass de Build 20 zënter dem 7. Oktober 2026 online, amplaz vum Build 18; de Build 21 ännert näischt op Telefonen an Tabletten.
+  - Geschwënn: op Google Play gouf de Build 22 den 10. Oktober 2026 geschéckt, amplaz vum Build 20 (online zënter dem 7. Oktober); en bréngt d'Ännerunge vun Immich vum Oktober an d'Korrekture fir de Fernseh.
 - **iPhone an iPad**
   - Haut: waart op d'Préiwung vun Apple. D'Versioun, déi gepréift gëtt, huet d'Funktioune vum Build 11: d'Eroplueden op Immich an d'Wiel Videoquell (Build 15) an déi rau Insta360-Fichieren (Build 16) kommen mat engem spéideren Update am App Store. De Quellcode gëtt mat Xcode oder op Codemagic gebaut, kuckt [Selwer bauen](#build-it-yourself).
   - Geschwënn: App Store, gëtt gepréift.
@@ -1157,7 +1160,7 @@ Keen Geheimnis ass an dësem Repository: den Android-Signaturschlëssel ass als 
 
 ### Brancher
 
-- **`main`**: Immich `main` um Commit, op deem `immuch360` baséiert (29. September 2026 fir déi aktuell Builds), ni geännert; e geet virun, wann d'Fork op eng méi nei Immich-Versioun rebaséiert gëtt.
+- **`main`**: Immich `main` um Commit, op deem `immuch360` baséiert (10. Oktober 2026 fir déi aktuell Builds), ni geännert; e geet virun, wann d'Fork op eng méi nei Immich-Versioun rebaséiert gëtt.
 - **`immuch360`**: d'Ännerunge vun dëser Fork iwwer Immich, Immuch360 Desktop zënter dem 9. Oktober 2026 mat dran. All Release seet, op wéi enger Immich-Versioun se baséiert.
 - **`desktop`**: do gouf Immuch360 Desktop, d'Computerversioun, iwwer `immuch360` gebaut, bis et den 9. Oktober 2026 dran zesummegefouert gouf, sou datt Telefonen, Headsets, Fernseher a Computeren aus deene selwechte Quelle kommen. Elo follegt se `immuch360` an dréit d'Tags vun den Desktop-Pre-Releases ([Desktop-Build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) vum Commit 21f285c34, [Desktop-Build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) vum 5b723bd25, [Desktop-Build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) vum Zesummeféiere vum 360°-Videoplayer den 10. Oktober 2026). Nei Desktop-Aarbecht kënnt do als éischt un a geet mam Desktop-Build, deen se ausliwwert, an `immuch360` eran. D'Computerversioun ännert näischt ënner `mobile/android` an `mobile/ios`.
 

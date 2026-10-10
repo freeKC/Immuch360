@@ -17,10 +17,10 @@ Aplikasi ini untuk orang yang memotret dengan kamera 360° (Insta360, GoPro MAX,
 
 | Platform | Tempat mendapatkannya | Status per 10 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ponsel dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 di Google Play sejak 7 Oktober 2026, build 21 di GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ponsel dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 di GitHub, dikirim ke Google Play pada 10 Oktober 2026 (di sana build 20 tayang sejak 7 Oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.0 menunggu peninjauan Apple; sementara itu [buat sendiri](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | listing disetujui, build 21 dalam peninjauan Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 di GitHub; listing Google Play untuk TV dalam peninjauan Google sejak 9 Oktober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | listing disetujui, build 21 dalam peninjauan Meta, build 22 di kanal Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 di GitHub; listing Google Play untuk TV dalam peninjauan Google sejak 9 Oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratinjau](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktop build 3 di Windows: foto, video datar dan 360°; macOS dan Linux nanti |
 
 *Status diperbarui di setiap rilis; detailnya ada di [Tempat mendapatkannya](#where-to-get-it).*
@@ -196,7 +196,7 @@ Aplikasi menemukan sendiri server di jaringan Anda, dan memutar file secara lang
 4. Tidak ada di daftar? Isi formulir secara manual. Jenis: "SMB (Samba, berbagi Windows)", "WebDAV (Nextcloud, Synology, dan lainnya)", "Server media DLNA (Jellyfin, NAS, TV box)", atau, sejak build 20, "Plex Media Server", yang membuka halaman [Plex Media Server, tanpa plex.tv](#plex-media-server-without-plextv). Lalu Nama, "Nama atau alamat server" (nama atau alamat; alamat lengkap seperti `smb://nas/photos`, `\\nas\photos`, atau `https://nas:5006/photos` akan mengisi kolom lainnya), "Port (opsional)" jika bukan port yang biasa, "Berbagi" untuk SMB atau "Jalur alamat WebDAV" untuk WebDAV, "Folder awal (opsional)", "Nama pengguna" dan "Sandi", serta "Koneksi aman (HTTPS)" untuk WebDAV.
 5. SMB: setelah server dan nama pengguna diketik, "Pilih berbagi" mencantumkan berbagi yang ada di server.
 6. DLNA: server media tidak memiliki nama pengguna atau sandi. Masukkan server, port, dan "Jalur deskripsi" dari deskripsi perangkatnya (`/rootDesc.xml` untuk minidlna), atau tempelkan alamat lengkapnya, seperti `http://192.168.1.10:8200/rootDesc.xml`, di kolom server.
-7. Ketuk "Uji koneksi". Hasilnya "Terhubung, N entri di folder awal", atau penjelasan mengapa gagal. Lalu ketuk Simpan, di bagian bawah formulir.
+7. Ketuk "Uji koneksi". Hasilnya "Terhubung, N entri di folder awal", atau penjelasan mengapa gagal. Lalu ketuk Simpan, di bagian bawah formulir. Sejak build 22, menutup formulir yang sudah Anda isi (X, Kembali) lebih dulu menanyakan "Buang perubahan?", juga di halaman Plex dan kamera, begitu pula saat memilih server Plex atau kamera yang ditemukan setelah ada yang diketik.
 
 Nama pengguna dengan sandi kosong dikirim apa adanya: Freebox Server meminta `freebox` tanpa sandi untuk disknya. Untuk mengubah atau menghapus berbagi nanti, gunakan ikon pensil di sebelahnya di halaman Berbagi jaringan.
 
@@ -617,8 +617,9 @@ Sejak build 20 aplikasi Android yang sama berjalan di Android TV dan Google TV, 
 
 ### Bergerak dengan remote
 
-- Tombol panah memindahkan bingkai, OK membuka apa yang sedang dipilih, Kembali kembali. Dari sebuah tab, Kembali menuju menu samping, lalu ke Foto, lalu keluar dari aplikasi.
-- Channel naik dan turun menggulir satu halaman sekaligus.
+- Tombol panah memindahkan bingkai, OK membuka apa yang sedang dipilih, Kembali kembali. Dari sebuah tab, Kembali menuju menu samping, lalu ke Foto, lalu keluar dari aplikasi. Dalam daftar pilihan, seperti jenis berbagi atau sebuah pengaturan, tombol panah hanya memindahkan bingkai dan OK memilih pilihannya (sejak build 22; sebelumnya, tombol panah mengubah pilihan).
+- Channel naik dan turun menggulir satu halaman sekaligus. Sejak build 22 kisi foto menampilkan sekitar enam petak per baris di dalam margin layar, dengan gambar mini file milik perangkat sendiri yang lebih tajam dan tetap halus pada detail kecil, dan halaman yang di ponsel memiliki header bergambar (daftar 360°, Favorit, album perangkat) menampilkan satu bilah saja sebagai gantinya.
+- Sejak build 22 bingkai dimulai pada item pertama setiap halaman (petak pertama daftar 360°, kolom email setelah alamat server dikonfirmasi), tetap di dalam margin layar saat kisi digulir, dan naik dari kisi ke baris atau filter di atasnya, bukan ke tombol Kembali. Kanan dari sebuah berbagi jaringan atau kamera menuju tombol editnya, dan hasil "Uji koneksi" bergulir hingga terlihat.
 - Di penampil, tombol putar dan jeda, maju cepat, mundur, berikutnya, dan sebelumnya pada remote berfungsi, dan tombol info menampilkan detail foto atau video.
 
 ### Foto dan video dengan remote
@@ -632,7 +633,7 @@ Sejak build 20 aplikasi Android yang sama berjalan di Android TV dan Google TV, 
 
 ### Pengaturan Tata letak remote
 
-Pengaturan, Preferensi, "Tata letak remote": "Bingkai fokus besar dan tombol remote, tanpa kontrol yang memerlukan layar sentuh. Otomatis menyalakannya di Android TV dan Google TV." Otomatis adalah bawaan; Nyala cocok untuk tablet yang dikendalikan dengan keyboard atau gamepad; Mati mematikannya di TV. Pengaturan ini hanya ada di Android. Tombol panah dan OK berfungsi di penampil dengan keyboard atau gamepad apa pun pengaturannya.
+Pengaturan, Preferensi, "Tata letak remote": "Bingkai fokus besar dan tombol remote, tanpa kontrol yang memerlukan layar sentuh. Otomatis menyalakannya di Android TV dan Google TV." Otomatis adalah bawaan; Nyala cocok untuk tablet yang dikendalikan dengan keyboard atau gamepad; Mati mematikannya di TV. Pengaturan ini hanya ada di Android. Sejak build 22 perubahan langsung berlaku pada halaman yang terbuka, yang tetap di tempatnya (sebelumnya, Pengaturan terbuka lagi di Tingkat lanjut, di atas layar awal yang harus dilewati dengan Kembali). Tombol panah dan OK berfungsi di penampil dengan keyboard atau gamepad apa pun pengaturannya.
 
 ### Batasan
 
@@ -650,7 +651,7 @@ Pengaturan, Preferensi, "Tata letak remote": "Bingkai fokus besar dan tombol rem
 
 Jepretan 360° bercampur dengan semua foto lainnya, dan orang meminta Immich menyediakan cara untuk menyaring bola dan panorama ([diskusi #12824](https://github.com/immich-app/immich/discussions/12824)). Aplikasi Immich tidak memiliki daftar seperti itu.
 
-Immuch360 memberi lencana 360° pada gambar mini foto 360° (di folder berbagi jaringan, juga pada video 360°), dan entri 360° di bagian atas tab Pustaka. Sejak build 18 daftar itu berisi, jika ada server, foto dan video yang ditandai server sebagai 360°, file Insta360 mentah berdasarkan namanya, foto yang digabungkan sendiri oleh kamera 360°, dan yang Anda pilih untuk dilihat sebagai 360°, ditambah apa yang ditemukan pemindaian perangkat; tanpa server, apa yang ditemukan pemindaian perangkat dan yang Anda pilih untuk dilihat sebagai 360°. Setiap item muncul sekali, di mana pun salinannya berada, terbaru lebih dulu.
+Immuch360 memberi lencana 360° pada gambar mini foto 360° (di folder berbagi jaringan, juga pada video 360°), dan entri 360° di bagian atas tab Pustaka. Sejak build 18 daftar itu berisi, jika ada server, foto dan video yang ditandai server sebagai 360°, file Insta360 mentah berdasarkan namanya, foto yang digabungkan sendiri oleh kamera 360°, dan yang Anda pilih untuk dilihat sebagai 360°, ditambah apa yang ditemukan pemindaian perangkat; tanpa server, apa yang ditemukan pemindaian perangkat dan yang Anda pilih untuk dilihat sebagai 360°. Setiap item muncul sekali, di mana pun salinannya berada, terbaru lebih dulu. Sejak build 22 sebuah baris "Di berbagi jaringan" muncul di atas kisi dengan foto dan video 360° dari berbagi Anda, terbaru lebih dulu: aplikasi mengenalinya saat menampilkan foldernya atau membukanya (aplikasi tidak menelusuri berbagi dengan sendirinya), menyimpannya dari satu peluncuran ke peluncuran berikutnya, dan melupakannya bersama berbaginya. Di TV, yang tidak punya foto sendiri, baris itulah yang mengisi daftar 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Daftar 360°, 4 item, dengan lembar Tanggal terbuka: Semua, tahun 2026 dengan jumlahnya, Sepanjang tahun, Agustus 2026 dan April 2026 dengan jumlahnya, tahun 2025, dan Kustom">
 
@@ -661,7 +662,7 @@ Immuch360 memberi lencana 360° pada gambar mini foto 360° (di folder berbagi j
 3. Jika ada server, pilih lokasi media: "Di server", "Di perangkat ini", dan "Dibagikan kepada saya" jika ada.
 4. Pilih jenisnya: Foto, Video, 3D, VR180.
 5. Jika daftar berisi dua kamera atau lebih, baris kedua mencantumkannya berdasarkan merek dan model EXIF, beserta jumlahnya. File mentah tanpa data itu dinamai sesuai merek ekstensinya (Insta360, GoPro, DJI), selebihnya "Kamera tidak dikenal".
-6. Dalam satu kelompok (lokasi, Foto dan Video, 3D dan VR180, kamera) pilihan saling menambah; antarkelompok pilihan mempersempit daftar. Hapus mengatur ulang semuanya; "Tidak ada foto atau video 360° yang cocok dengan filter ini" berarti filter tidak menyisakan apa pun.
+6. Dalam satu kelompok (lokasi, Foto dan Video, 3D dan VR180, kamera) pilihan saling menambah; antarkelompok pilihan mempersempit daftar. Pilihan Tanggal, Foto, dan Video juga berlaku untuk baris berbagi jaringan; 3D, VR180, dan kamera menyembunyikannya, karena aplikasi tidak mengetahui hal itu untuk file dari berbagi. Hapus mengatur ulang semuanya; "Tidak ada foto atau video 360° yang cocok dengan filter ini" berarti filter tidak menyisakan apa pun.
 7. Buka foto atau video. Di tampilan imersif Quest, sebelumnya dan berikutnya mengikuti daftar yang disaring.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Semua yang dilakukan aplikasi seluler resmi Immich ada di sini: pencadangan, lin
 
 Untuk menunjukkan foto 360° kepada seseorang yang tidak memiliki aplikasinya, bagikan dengan tautan berbagi Immich: aplikasi web Immich menampilkan foto 360° sebagai bola di peramban mereka.
 
-Build saat ini, build 21 (versi 3.3.0-rc.0, nomor build 3030019), berbasis Immich 3.3.0-rc.0 (`main` Immich, belum rilis stabil). Build 19 diuji dengan server Immich 3.2, dan build 20 dan 21 tidak mengubah apa pun dalam hal yang diminta aplikasi dari server. Laporkan masalah di [Issues](https://github.com/freeKC/Immuch360/issues), bukan ke proyek Immich. Untuk dokumentasi lengkap Immich itu sendiri, lihat [immich.app](https://immich.app).
+Build saat ini, build 22 (versi 3.3.0-rc.0, nomor build 3030020), berbasis `main` Immich tanggal 10 Oktober 2026 (versi 3.3.0-rc.0, belum rilis stabil). Build 22 diuji dengan server Immich 3.2.4 dan dengan server yang dibangun dari `main` Immich yang sama: masuk, linimasa, album, foto dan video 360°, pemutaran video, dan unggahan, tanpa galat API. Laporkan masalah di [Issues](https://github.com/freeKC/Immuch360/issues), bukan ke proyek Immich. Untuk dokumentasi lengkap Immich itu sendiri, lihat [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Perbandingan dengan aplikasi Immich dan aplikasi lain
@@ -1037,6 +1038,8 @@ Jika yang tidak mampu mengikuti adalah pendekodean video dari server, bukan peng
 - **Pilih renderer sendiri.** Di Pengaturan, Tingkat lanjut, aktifkan "Pemecahan masalah": muncul entri "Renderer video 360°", Otomatis secara bawaan. Entri itu juga menawarkan "Plugin, ukuran penuh", "Plugin, lebar paling banyak 4096", "Plugin, lebar paling banyak 2880", dan "Datar, tanpa tampilan 360°", untuk video 360° berikutnya yang Anda buka. Di bawahnya, "Pengukuran terakhir" menyebutkan ukuran penggambaran video 360° terakhir, bingkai per detiknya, chip grafis, dan dekodernya: salin itu ke laporan bug. Memilih "Otomatis" lagi, bahkan jika itu sudah pilihannya, menghapus hasil pengukuran, dan video 360° berikutnya diukur lagi.
 - **Apa yang didekode chip.** Pengaturan, Tingkat lanjut, "Dekoder video perangkat ini" mencantumkan apa yang didekode chip grafis yang sedang dipakai, sebagaimana dilaporkan Direct3D 11, dan aplikasi mengoreksi daftar itu dengan apa yang diukurnya selama pemutaran: pengaturan Sumber video dan pemeriksaan dua lensa untuk video mentah mengikutinya. H.264 yang lebih lebar dari 4096 piksel (5.7K dari kamera 360°) didekode oleh prosesor, karena tidak ada chip di laptop uji yang menerimanya.
 
+**Untuk pengembang.** Pemutar 360° menggambar melalui renderer miliknya sendiri, yang dibangun di atas libmpv dan plugin media_kit_video yang ditambal: mpv menggambar setiap bingkai ke dalam tekstur di chip grafis, dan satu tahap OpenGL ES 3.0 menggambar tampilan ke dalam tekstur yang ditampilkan Flutter, tanpa salinan melalui prosesor. Mengapa dibuat begitu, cara kerjanya, apa yang diukur, dan apa yang bisa disetel: [renderer video 360° versi desktop](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Dibandingkan dengan aplikasi ponsel
 
 - **Pencadangan berjalan selama aplikasi terbuka** (atau diminimalkan), tidak di latar belakang saat jendela ditutup. Menutup jendela saat unggahan berjalan, atau saat komputer sedang dibagikan, akan meminta konfirmasi terlebih dahulu.
@@ -1110,7 +1113,7 @@ Aplikasi ini ada di Google Play untuk ponsel dan tablet; versi App Store sedang 
 
 - **Ponsel dan tablet Android**
   - Saat ini: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), atau APK di halaman [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk ponsel (`Immuch360-v<version>-release.apk` universal berjalan di mana saja, `-armeabi-v7a` untuk ponsel 32 bit yang lebih lama, dan file `.aab` untuk Google Play, bukan untuk sideload). Build GitHub biasanya lebih baru daripada di toko. Bagaimanapun juga, aplikasi ini terpasang berdampingan dengan aplikasi resmi Immich (paket `com.aprogsys.immuch360`).
-  - Segera: di Google Play, build 20 sudah tayang sejak 7 Oktober 2026, menggantikan build 18; build 21 tidak mengubah apa pun di ponsel dan tablet.
+  - Segera: di Google Play, build 22 dikirim pada 10 Oktober 2026 untuk menggantikan build 20 (tayang sejak 7 Oktober); build ini membawa perubahan Immich bulan Oktober dan perbaikan untuk TV.
 - **iPhone dan iPad**
   - Saat ini: menunggu tinjauan Apple. Versi yang sedang ditinjau membawa fitur build 11: unggah ke Immich dan pilihan "Sumber video" (build 15) serta file Insta360 mentah (build 16) akan hadir dengan pembaruan App Store berikutnya. Kode sumbernya bisa dibuat dengan Xcode atau di Codemagic, lihat [Membuatnya sendiri](#build-it-yourself).
   - Segera: App Store, sedang ditinjau.
@@ -1157,7 +1160,7 @@ Tidak ada rahasia yang disimpan di repositori ini: kunci penandatanganan Android
 
 ### Cabang
 
-- **`main`**: `main` Immich pada commit yang menjadi dasar `immuch360` (29 September 2026 untuk build saat ini), tidak pernah diubah; cabang ini maju saat fork di-rebase ke Immich yang lebih baru.
+- **`main`**: `main` Immich pada commit yang menjadi dasar `immuch360` (10 Oktober 2026 untuk build saat ini), tidak pernah diubah; cabang ini maju saat fork di-rebase ke Immich yang lebih baru.
 - **`immuch360`**: perubahan fork ini di atas Immich, termasuk Immuch360 Desktop sejak 9 Oktober 2026. Setiap rilis menyebutkan versi Immich yang menjadi dasarnya.
 - **`desktop`**: tempat Immuch360 Desktop, versi komputer, dibangun di atas `immuch360`, sampai digabungkan ke dalamnya pada 9 Oktober 2026 agar ponsel, headset, TV, dan komputer dirilis dari sumber yang sama. Kini cabang ini mengikuti `immuch360` dan membawa tag pra-rilis desktop ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) dari commit 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) dari 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) dari penggabungan pemutar video 360° pada 10 Oktober 2026). Pekerjaan desktop baru masuk ke sana lebih dulu dan bergabung ke `immuch360` bersama desktop build yang merilisnya. Versi komputer tidak mengubah apa pun di bawah `mobile/android` dan `mobile/ios`.
 

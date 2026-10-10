@@ -17,10 +17,10 @@ See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI
 
 | Platvorm | Kust seda saada | Olek 10. oktoobril 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonid ja tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | järk 20 Google Plays alates 7. oktoobrist 2026, järk 21 GitHubis |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonid ja tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | järk 22 GitHubis, saadetud Google Playsse 10. oktoobril 2026 (seal on alates 7. oktoobrist avaldatud järk 20) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versioon 3.3.0 ootab Apple'i ülevaatust; seni [ehita see ise](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | kirje heaks kiidetud, järk 21 Meta ülevaatusel |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | järk 21 GitHubis; Google Play kirje teleritele on Google'i ülevaatusel alates 9. oktoobrist 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | kirje heaks kiidetud, järk 21 Meta ülevaatusel, järk 22 alfakanalis |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | järk 22 GitHubis; Google Play kirje teleritele on Google'i ülevaatusel alates 9. oktoobrist 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Eelvaate ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | töölauajärk 3 Windowsis: fotod, tasapinnalised ja 360° videod; macOS ja Linux hiljem |
 
 *Olekuid uuendatakse iga väljalaskega; üksikasjad on jaotises [Kust seda saada](#where-to-get-it).*
@@ -196,7 +196,7 @@ See leiab sinu võrgu serverid ise üles ja esitab failid otse samades vaaturite
 4. Pole loendis? Täida vorm käsitsi. Tüüp: "SMB (Samba, Windowsi jagu)", "WebDAV (Nextcloud, Synology ja teised)", "DLNA meediaserver (Jellyfin, NAS, telerikast)" või alates järgust 20 "Plex Media Server", mis avab lehe [Plex Media Server, ilma plex.tv-ta](#plex-media-server-without-plextv). Seejärel Nimi, "Serveri nimi või aadress" (nimi või aadress; täisaadress nagu `smb://nas/photos`, `\\nas\photos` või `https://nas:5006/photos` täidab teised väljad), "Port (valikuline)", kui see pole tavapärane, SMB puhul "Jagu" või WebDAV-i puhul "WebDAV-aadressi rada", "Alguskaust (valikuline)", "Kasutajanimi" ja "Parool" ning WebDAV-i puhul "Turvaline ühendus (HTTPS)".
 5. SMB: kui server ja kasutajanimi on sisestatud, loetleb "Vali jagu" serveri jaod.
 6. DLNA: meediaserveril pole kasutajanime ega parooli. Sisesta server, port ja seadme kirjelduse "Kirjelduse tee" (minidlna puhul `/rootDesc.xml`) või kleebi kogu aadress, näiteks `http://192.168.1.10:8200/rootDesc.xml`, serveri väljale.
-7. Puuduta "Testi ühendust". Vastus on "Ühendatud, alguskaustas on N kirjet" või selgitus, miks see ebaõnnestus. Seejärel puuduta vormi allosas "Salvesta".
+7. Puuduta "Testi ühendust". Vastus on "Ühendatud, alguskaustas on N kirjet" või selgitus, miks see ebaõnnestus. Seejärel puuduta vormi allosas "Salvesta". Alates järgust 22 küsib vormi sulgemine, kuhu oled midagi sisestanud (X, Tagasi), kõigepealt "Kas loobuda muudatustest?", ka Plexi ja kaamera lehtedel, ning sama küsib ka leitud Plexi või kaamera valimine, kui midagi on juba sisestatud.
 
 Tühja parooliga kasutajanimi saadetakse nii, nagu see on: Freebox Server tahab oma ketaste jaoks `freebox` ja parooli mitte. Jao hilisemaks muutmiseks või eemaldamiseks kasuta lehel Võrgujaod selle kõrval olevat pliiatsit.
 
@@ -617,8 +617,9 @@ Alates järgust 20 töötab sama Androidi rakendus Android TV-s ja Google TV-s, 
 
 ### Puldiga liikumine
 
-- Nooled liigutavad raami, OK avab selle, millel raam on, Tagasi läheb tagasi. Vahekaardilt läheb Tagasi külgmenüüsse, seejärel Fotode juurde, seejärel rakendusest välja.
-- Kanal üles ja alla kerivad lehekülje kaupa.
+- Nooled liigutavad raami, OK avab selle, millel raam on, Tagasi läheb tagasi. Vahekaardilt läheb Tagasi külgmenüüsse, seejärel Fotode juurde, seejärel rakendusest välja. Valikute loendis, näiteks jao tüübi või seade puhul, liigutavad nooled ainult raami ja OK teeb valiku (alates järgust 22; varem muutsid nooled valikut).
+- Kanal üles ja alla kerivad lehekülje kaupa. Alates järgust 22 näitavad fotoruudustikud ekraani veeriste sees umbes kuut paani reas, seadme enda failide teravamate pisipiltidega, mis jäävad peente detailide juures rahulikuks, ja lehed, millel on telefonis pildiga päis (360° loend, Lemmikud, seadme albumid), näitavad selle asemel ühte riba.
+- Alates järgust 22 alustab raam iga lehe esimesel elemendil (360° loendi esimene paan, e-posti väli pärast serveri aadressi kinnitamist), püsib ruudustiku kerimisel ekraani veeriste sees ja liigub ruudustikust üles selle kohal olevale reale või filtritele, mitte nupule Tagasi. Paremale võrgujaolt või kaameralt jõuab selle muutmisnupuni ning "Testi ühendust" tulemus keritakse nähtavale.
 - Vaaturites töötavad puldi esitamise ja pausi, edasikerimise, tagasikerimise, järgmise ja eelmise klahvid ning infoklahv näitab foto või video üksikasju.
 
 ### Fotod ja videod puldiga
@@ -632,7 +633,7 @@ Alates järgust 20 töötab sama Androidi rakendus Android TV-s ja Google TV-s, 
 
 ### Seade Kaugjuhtimispuldi paigutus
 
-Seaded, Eelistused, "Kaugjuhtimispuldi paigutus": "Suured fookusraamid ja puldi klahvid, ilma puuteekraani vajavate juhtnuppudeta. Automaatne lülitab selle sisse Android TV-s ja Google TV-s." Automaatne on vaikimisi; Sees sobib klaviatuuri või mängupuldiga juhitavale tahvelarvutile; Väljas lülitab selle teleris välja. Seade on olemas ainult Androidis. Nooled ja OK töötavad vaaturites klaviatuuri või mängupuldiga sõltumata seadest.
+Seaded, Eelistused, "Kaugjuhtimispuldi paigutus": "Suured fookusraamid ja puldi klahvid, ilma puuteekraani vajavate juhtnuppudeta. Automaatne lülitab selle sisse Android TV-s ja Google TV-s." Automaatne on vaikimisi; Sees sobib klaviatuuri või mängupuldiga juhitavale tahvelarvutile; Väljas lülitab selle teleris välja. Seade on olemas ainult Androidis. Alates järgust 22 rakendub muudatus kohe avatud lehele, mis jääb sinna, kus see oli (varem avanesid Seaded uuesti jaotises Täpsemad, avakuva peal, millest tuli Tagasi abil läbi minna). Nooled ja OK töötavad vaaturites klaviatuuri või mängupuldiga sõltumata seadest.
 
 ### Piirangud
 
@@ -650,7 +651,7 @@ Seaded, Eelistused, "Kaugjuhtimispuldi paigutus": "Suured fookusraamid ja puldi 
 
 360° kaadrid on segamini kõigi teiste fotodega ja inimesed paluvad Immichilt võimalust sfääre ja panoraame filtreerida ([arutelu #12824](https://github.com/immich-app/immich/discussions/12824)). Immichi rakenduses sellist loendit pole.
 
-Immuch360 lisab 360° fotode pisipiltidele 360° märgi (võrgujao kaustas ka 360° videotele) ja vahekaardi Kogu ülaossa kirje 360°. Alates järgust 18 sisaldab see loend serveriga kasutades fotosid ja videoid, mille server märgib 360° failiks, töötlemata Insta360 faile nime järgi, fotosid, mille 360° kaamera ise kokku õmbles, ja neid, mille otsustasid vaadata 360° vaatena, pluss seda, mida seadme skannimine leidis; ilma serverita seda, mida seadme skannimine leidis, ja neid, mille otsustasid vaadata 360° vaatena. Iga fail ilmub üks kord, ükskõik kus selle koopiad on, uusimad eespool.
+Immuch360 lisab 360° fotode pisipiltidele 360° märgi (võrgujao kaustas ka 360° videotele) ja vahekaardi Kogu ülaossa kirje 360°. Alates järgust 18 sisaldab see loend serveriga kasutades fotosid ja videoid, mille server märgib 360° failiks, töötlemata Insta360 faile nime järgi, fotosid, mille 360° kaamera ise kokku õmbles, ja neid, mille otsustasid vaadata 360° vaatena, pluss seda, mida seadme skannimine leidis; ilma serverita seda, mida seadme skannimine leidis, ja neid, mille otsustasid vaadata 360° vaatena. Iga fail ilmub üks kord, ükskõik kus selle koopiad on, uusimad eespool. Alates järgust 22 on ruudustiku kohal rida "Võrgujagudes" sinu jagude 360° fotode ja videotega, uusimad eespool: rakendus saab neist teada, kui ta näitab nende kausta või avab need (ise ta jagu läbi ei otsi), jätab need ühest käivitusest teiseni meelde ja unustab need koos nende jaoga. Teleris, millel pole oma fotosid, täitub 360° loend just selle reaga.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="360° loend, 4 üksust, avatud Kuupäeva lehega: Kõik, aasta 2026 koos arvuga, Terve aasta, august 2026 ja aprill 2026 koos arvudega, aasta 2025 ja Kohandatud">
 
@@ -661,7 +662,7 @@ Immuch360 lisab 360° fotode pisipiltidele 360° märgi (võrgujao kaustas ka 36
 3. Serveriga vali, kus meedia asub: "Serveris", "Sellel seadmel" ja "Minuga jagatud", kui selliseid on.
 4. Vali liik: Fotod, Videod, 3D, VR180.
 5. Kui loendis on kaks või rohkem kaamerat, loetleb teine rida need EXIF-i tootja ja mudeli järgi koos arvudega. Töötlemata fail ilma nendeta nimetatakse oma laiendi brändi järgi (Insta360, GoPro, DJI), kõik muu on "Tundmatu kaamera".
-6. Rühma sees (asukohad, Fotod ja Videod, 3D ja VR180, kaamerad) valikud liituvad; rühmade vahel kitsendavad need loendit. "Tühjenda" lähtestab kõik; "Nendele filtritele ei vasta ükski 360° foto ega video" tähendab, et filtrid ei jäta midagi järele.
+6. Rühma sees (asukohad, Fotod ja Videod, 3D ja VR180, kaamerad) valikud liituvad; rühmade vahel kitsendavad need loendit. Valikud Kuupäev, Fotod ja Videod kehtivad ka võrgujagude reale; 3D, VR180 ja kaamerad peidavad selle, sest rakendus ei tea jao faili kohta ühtki neist. "Tühjenda" lähtestab kõik; "Nendele filtritele ei vasta ükski 360° foto ega video" tähendab, et filtrid ei jäta midagi järele.
 7. Ava foto või video. Questi kaasahaaravas vaates järgivad eelmine ja järgmine filtreeritud loendit.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Kõik, mida ametlik Immichi mobiilirakendus teeb, on siin olemas: varundus, ajaj
 
 Et näidata 360° fotot kellelegi, kellel rakendust pole, jaga seda Immichi jagatud lingiga: Immichi veebirakendus näitab 360° fotot tema brauseris sfäärina.
 
-Praegune järk, järk 21 (versioon 3.3.0-rc.0, järgu number 3030019), põhineb Immich 3.3.0-rc.0 versioonil (Immich `main`, veel mitte stabiilne väljalase). Järku 19 testiti Immich 3.2 serveriga ja järgud 20 ja 21 ei muuda midagi selles, mida rakendus serverilt küsib. Palun teata probleemidest jaotises [Issues](https://github.com/freeKC/Immuch360/issues), mitte Immichi projektile. Immichi enda täieliku dokumentatsiooni leiad aadressilt [immich.app](https://immich.app).
+Praegune järk, järk 22 (versioon 3.3.0-rc.0, järgu number 3030020), põhineb Immichi 10. oktoobri 2026 `main` harul (versioon 3.3.0-rc.0, veel mitte stabiilne väljalase). Järku 22 testiti Immich 3.2.4 serveriga ja samast Immichi `main` harust ehitatud serveriga: sisselogimine, ajajoon, albumid, 360° fotod ja videod, video esitamine ja üleslaadimised, ilma ühegi API veata. Palun teata probleemidest jaotises [Issues](https://github.com/freeKC/Immuch360/issues), mitte Immichi projektile. Immichi enda täieliku dokumentatsiooni leiad aadressilt [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Võrdlus Immichi rakenduse ja teiste rakendustega
@@ -1037,6 +1038,8 @@ Kui järele ei jõua serveri video dekodeerimine, mitte joonistamine (video, mid
 - **Vali renderdaja ise.** Lülita sisse Seaded, Täpsemad valikud, "Tõrkeotsing": ilmub kirje "360° video renderdaja", vaikimisi "Automaatne". See pakub ka valikuid "Pistikprogramm, täissuurus", "Pistikprogramm, kõige rohkem 4096 lai", "Pistikprogramm, kõige rohkem 2880 lai" ja "Tasapinnaline, ilma 360° vaateta", järgmise avatava 360° video jaoks. Selle all nimetab "Viimati mõõdetud" suurust, millega viimane 360° video joonistati, selle kaadreid sekundis, graafikakiipi ja dekoodrit: kopeeri see veateatesse. "Automaatne" uuesti valimine, isegi kui see on juba valitud, unustab mõõdetu ja järgmised 360° videod mõõdetakse uuesti.
 - **Mida kiip dekodeerib.** Seaded, Täpsemad valikud, "Selle seadme videodekoodrid" loetleb, mida kasutusel olev graafikakiip dekodeerib, nii nagu Direct3D 11 sellest teatab, ja rakendus parandab seda loendit selle järgi, mida ta esitamise ajal mõõtis: seade "Video allikas" ja töötlemata videote kahe objektiivi kontroll järgivad seda. H.264, mis on laiem kui 4096 pikslit (360° kaamerate 5.7K), dekodeerib protsessor, sest kumbki testsülearvuti kiip seda ei võta.
 
+**Arendajatele.** 360° mängija joonistab oma renderdaja kaudu, mis on ehitatud libmpv ja paigatud media_kit_video plugina peale: mpv joonistab iga kaadri graafikakiibil olevasse tekstuuri ja OpenGL ES 3.0 läbimine joonistab vaate tekstuuri, mida Flutter näitab, ilma protsessori kaudu kopeerimata. Miks see nii ehitati, kuidas see töötab, mida mõõdeti ja mida saab häälestada: [töölauaversiooni 360° video renderdaja](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Võrreldes telefonirakendustega
 
 - **Varundamine töötab, kuni rakendus on avatud** (või minimeeritud), mitte taustal suletud aknaga. Akna sulgemine üleslaadimiste ajal või siis, kui arvuti on jagatud, küsib enne kinnitust.
@@ -1110,7 +1113,7 @@ Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon 
 
 - **Android-telefonid ja -tahvelarvutid**
   - Täna: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) või APK lehelt [Releases](https://github.com/freeKC/Immuch360/releases): telefoni jaoks `Immuch360-v<version>-arm64-v8a-release.apk` (universaalne `Immuch360-v<version>-release.apk` töötab kõikjal, `-armeabi-v7a` on vanematele 32-bitistele telefonidele ja fail `.aab` on Google Play jaoks, mitte käsitsi installimiseks). GitHubi järk on tavaliselt poest ees. Mõlemal juhul installitakse see ametliku Immichi rakenduse kõrvale (pakett `com.aprogsys.immuch360`).
-  - Varsti: Google Plays on järk 20 avaldatud alates 7. oktoobrist 2026, järgu 18 asemel; järk 21 ei muuda telefonides ja tahvelarvutites midagi.
+  - Varsti: Google Playsse saadeti 10. oktoobril 2026 järk 22 järgu 20 asemel (avaldatud alates 7. oktoobrist); see sisaldab Immichi oktoobri muudatusi ja teleriparandusi.
 - **iPhone ja iPad**
   - Täna: ootab Apple'i ülevaatust. Ülevaatusel olev versioon sisaldab järgu 11 funktsioone: üleslaadimine Immichisse ja valik "Video allikas" (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad hilisema App Store'i uuendusega. Lähtekoodi saab ehitada Xcode'iga või Codemagicus, vaata [Ehita see ise](#build-it-yourself).
   - Varsti: App Store, ülevaatusel.
@@ -1157,7 +1160,7 @@ Selles hoidlas pole ühtegi saladust: Androidi allkirjastamisvõti on salvestatu
 
 ### Harud
 
-- **`main`**: Immichi `main` sellel commitil, millel `immuch360` põhineb (praeguste järkude puhul 29. september 2026), mida kunagi ei muudeta; see liigub edasi, kui haru baseeritakse ümber uuemale Immichile.
+- **`main`**: Immichi `main` sellel commitil, millel `immuch360` põhineb (praeguste järkude puhul 10. oktoober 2026), mida kunagi ei muudeta; see liigub edasi, kui haru baseeritakse ümber uuemale Immichile.
 - **`immuch360`**: selle haru muudatused Immichi peal, alates 9. oktoobrist 2026 koos Immuch360 Desktopiga. Iga väljalase ütleb, millisel Immichi versioonil see põhineb.
 - **`desktop`**: koht, kus Immuch360 Desktop, arvutiversioon, ehitati haru `immuch360` peal, kuni see 9. oktoobril 2026 sellesse ühendati, et telefonid, peakomplektid, telerid ja arvutid tuleksid samadest lähtekoodidest. Nüüd järgib see haru `immuch360` ja kannab töölaua eelväljalasete silte ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) commitist 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) commitist 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 360° videomängija ühendamisest 10. oktoobril 2026). Uus töölauatöö jõuab kõigepealt sinna ja liitub harusse `immuch360` töölauajärguga, mis selle välja annab. Arvutiversioon ei muuda midagi kaustades `mobile/android` ja `mobile/ios`.
 

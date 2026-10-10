@@ -17,10 +17,10 @@ Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hæg
 
 | Kerfi | Hvar á að sækja það | Staða 10. október 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | smíð 20 á Google Play síðan 7. október 2026, smíð 21 á GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | smíð 22 á GitHub, send til Google Play 10. október 2026 (smíð 20 í boði þar síðan 7. október) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | útgáfa 3.3.0 bíður yfirferðar Apple; á meðan er [eigin smíð](#build-it-yourself) möguleg |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | skráning samþykkt, smíð 21 í yfirferð hjá Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | smíð 21 á GitHub; færslan á Google Play fyrir sjónvörp er í yfirferð hjá Google síðan 9. október 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | skráning samþykkt, smíð 21 í yfirferð hjá Meta, smíð 22 á alfa-rásinni |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | smíð 22 á GitHub; færslan á Google Play fyrir sjónvörp er í yfirferð hjá Google síðan 9. október 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP-forútgáfa](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktop build 3 á Windows: myndir, flöt og 360° myndskeið; macOS og Linux síðar |
 
 *Staðan er uppfærð við hverja útgáfu; nánar í [Hvar á að sækja það](#where-to-get-it).*
@@ -196,7 +196,7 @@ Immuch360 vafrar um og spilar myndir og myndskeið hvaða vélþjóns sem er sem
 4. Ekki á listanum? Fylltu eyðublaðið út handvirkt. Tegund: „SMB (Samba, Windows-deiling)“, „WebDAV (Nextcloud, Synology og fleiri)“, „DLNA-miðlaþjónn (Jellyfin, NAS, sjónvarpsbox)“ eða, frá smíð 20, „Plex Media Server“, sem opnar síðuna í [Plex Media Server, án plex.tv](#plex-media-server-without-plextv). Síðan Nafn, „Heiti eða vistfang þjóns“ (heiti eða vistfang; heilt vistfang eins og `smb://nas/photos`, `\\nas\photos` eða `https://nas:5006/photos` fyllir út hina reitina), „Gátt (valfrjálst)“ þegar hún er ekki sú venjulega, „Deiling“ fyrir SMB eða „Slóð WebDAV-vistfangsins“ fyrir WebDAV, „Upphafsmappa (valfrjálst)“, „Notandanafn“ og „Lykilorð“, og „Örugg tenging (HTTPS)“ fyrir WebDAV.
 5. SMB: þegar vélþjónninn og notandanafnið hafa verið slegin inn listar „Veldu deilingu“ deilingar vélþjónsins.
 6. DLNA: miðlaþjónn hefur hvorki notandanafn né lykilorð. Gefðu upp vélþjóninn, gáttina og „Slóð lýsingar“ á tækjalýsingu hans (`/rootDesc.xml` fyrir minidlna), eða límdu allt vistfangið, eins og `http://192.168.1.10:8200/rootDesc.xml`, í reit vélþjónsins.
-7. Ýttu á „Prófa tenginguna“. Svarið er „Tengt, N færslur í upphafsmöppunni“, eða skýring á því hvers vegna það mistókst. Ýttu síðan á Vista, neðst á eyðublaðinu.
+7. Ýttu á „Prófa tenginguna“. Svarið er „Tengt, N færslur í upphafsmöppunni“, eða skýring á því hvers vegna það mistókst. Ýttu síðan á Vista, neðst á eyðublaðinu. Frá smíð 22 spyr forritið fyrst „Henda breytingunum?“ þegar þú lokar eyðublaði sem þú hefur skrifað í (X, Til baka), einnig á síðum Plex og myndavéla, og það sama gerist þegar þú velur Plex eða myndavél sem fannst eftir að eitthvað hefur verið skrifað.
 
 Notandanafn með tómu lykilorði er sent eins og það er: Freebox Server vill fá `freebox` og ekkert lykilorð fyrir diskana sína. Til að breyta eða fjarlægja deilingu síðar skaltu nota blýantinn við hlið hennar á síðunni Netdeilingar.
 
@@ -617,8 +617,9 @@ Frá smíð 20 keyrir sama Android-forritið á Android TV og Google TV, með fj
 
 ### Farðu um með fjarstýringunni
 
-- Örvarnar færa rammann, OK opnar það sem hann er á, Til baka fer til baka. Úr flipa fer Til baka í hliðarvalmyndina, síðan í Ljósmyndir, síðan út úr forritinu.
-- Rás upp og niður fletta einni síðu í einu.
+- Örvarnar færa rammann, OK opnar það sem hann er á, Til baka fer til baka. Úr flipa fer Til baka í hliðarvalmyndina, síðan í Ljósmyndir, síðan út úr forritinu. Í lista með valkostum, svo sem tegund deilingar eða stillingu, færa örvarnar aðeins rammann og OK velur valkostinn (frá smíð 22; áður breyttu örvarnar valinu).
+- Rás upp og niður fletta einni síðu í einu. Frá smíð 22 sýna smámyndanetin um sex reiti í röð innan spássía skjásins, með skarpari smámyndum af eigin skrám tækisins sem haldast rólegar í fínum smáatriðum, og síðurnar sem eru með myndhaus í síma (360° listinn, Uppáhalds, albúm tækisins) sýna í staðinn eina stiku.
+- Frá smíð 22 byrjar ramminn á fyrsta atriði hverrar síðu (fyrsta reit 360° listans, netfangsreitnum þegar vistfang vélþjónsins hefur verið staðfest), helst innan spássía skjásins þegar smámyndanet flettist, og fer úr smámyndaneti upp í röðina eða síurnar fyrir ofan það frekar en á Til baka hnappinn. Hægri frá netdeilingu eða myndavél nær breytingarhnappi hennar, og niðurstaða „Prófa tenginguna“ flettist inn í sýn.
 - Í skoðurunum virka spila- og hlé-, hraðspólunar-, tilbakaspólunar-, næsta- og fyrra-hnappar fjarstýringarinnar, og upplýsingahnappurinn sýnir upplýsingar um mynd eða myndskeið.
 
 ### Myndir og myndskeið með fjarstýringunni
@@ -632,7 +633,7 @@ Frá smíð 20 keyrir sama Android-forritið á Android TV og Google TV, með fj
 
 ### Stillingin Útlit fyrir fjarstýringu
 
-Settings (Stillingar), Preferences (Kjörstillingar), „Útlit fyrir fjarstýringu“: „Stórir fókusrammar og fjarstýringarhnappar, án stjórntækjanna sem þurfa snertiskjá. Sjálfvirkt kveikir á því á Android TV og Google TV.“ Sjálfvirkt er sjálfgefið; Kveikt hentar spjaldtölvu sem stýrt er með lyklaborði eða leikjastýringu; Slökkt slekkur á því í sjónvarpi. Stillingin er aðeins til á Android. Örvarnar og OK virka í skoðurunum með lyklaborði eða leikjastýringu hver sem stillingin er.
+Settings (Stillingar), Preferences (Kjörstillingar), „Útlit fyrir fjarstýringu“: „Stórir fókusrammar og fjarstýringarhnappar, án stjórntækjanna sem þurfa snertiskjá. Sjálfvirkt kveikir á því á Android TV og Google TV.“ Sjálfvirkt er sjálfgefið; Kveikt hentar spjaldtölvu sem stýrt er með lyklaborði eða leikjastýringu; Slökkt slekkur á því í sjónvarpi. Stillingin er aðeins til á Android. Frá smíð 22 tekur breyting strax gildi á opnu síðunni, sem helst þar sem hún var (áður opnuðust Settings aftur á Fyrir lengra komna, ofan á upphafsskjá sem þurfti að fara í gegnum með Til baka). Örvarnar og OK virka í skoðurunum með lyklaborði eða leikjastýringu hver sem stillingin er.
 
 ### Takmarkanir
 
@@ -650,7 +651,7 @@ Settings (Stillingar), Preferences (Kjörstillingar), „Útlit fyrir fjarstýri
 
 360° myndir eru blandaðar öllum hinum myndunum, og fólk biður Immich um leið til að sía kúlur og víðmyndir ([umræða #12824](https://github.com/immich-app/immich/discussions/12824)). Immich-forritið hefur engan slíkan lista.
 
-Immuch360 setur 360° merki á smámyndir 360° mynda (í möppu á netdeilingu, einnig á 360° myndskeið), og 360° atriði efst í Safn-flipann. Frá smíð 18 inniheldur sá listi, með vélþjóni, myndirnar og myndskeiðin sem vélþjónninn merkir sem 360°, óunnar Insta360-skrár eftir heiti, myndirnar sem 360° myndavél skeytti sjálf saman og þær sem þú valdir að skoða sem 360°, auk þess sem leit í tækinu fann; án vélþjóns, það sem leit í tækinu fann og þær sem þú valdir að skoða sem 360°. Hvert atriði birtist einu sinni, hvar sem afrit þess eru, það nýjasta fyrst.
+Immuch360 setur 360° merki á smámyndir 360° mynda (í möppu á netdeilingu, einnig á 360° myndskeið), og 360° atriði efst í Safn-flipann. Frá smíð 18 inniheldur sá listi, með vélþjóni, myndirnar og myndskeiðin sem vélþjónninn merkir sem 360°, óunnar Insta360-skrár eftir heiti, myndirnar sem 360° myndavél skeytti sjálf saman og þær sem þú valdir að skoða sem 360°, auk þess sem leit í tækinu fann; án vélþjóns, það sem leit í tækinu fann og þær sem þú valdir að skoða sem 360°. Hvert atriði birtist einu sinni, hvar sem afrit þess eru, það nýjasta fyrst. Frá smíð 22 kemur röðin „Í netdeilingunum“ fyrir ofan smámyndanetið með 360° myndum og myndskeiðum deilinganna þinna, það nýjasta fyrst: forritið kynnist þeim þegar það sýnir möppuna þeirra eða opnar þau (það leitar ekki sjálft í deilingu), man þau frá einni ræsingu til þeirrar næstu og gleymir þeim ásamt deilingunni þeirra. Í sjónvarpi, sem hefur engar eigin myndir, er það þessi röð sem fyllir 360° listann.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="360° listinn, 4 atriði, með Date-spjaldið opið: Allt, árið 2026 með fjölda, Allt árið, ágúst 2026 og apríl 2026 með fjölda, árið 2025, og Custom">
 
@@ -661,7 +662,7 @@ Immuch360 setur 360° merki á smámyndir 360° mynda (í möppu á netdeilingu,
 3. Með vélþjóni, veldu hvar efnið er: „Á þjóninum“, „On this device“, og „Shared with me“ (Deilt með mér) þegar eitthvað slíkt er til.
 4. Veldu tegundina: Ljósmyndir, Videos, 3D, VR180.
 5. Þegar listinn inniheldur tvær myndavélar eða fleiri listar önnur röð þær eftir EXIF-framleiðanda og gerð, með fjölda. Óunnin skrá án þeirra upplýsinga fær nafn vörumerkis endingarinnar (Insta360, GoPro, DJI), allt annað er „Óþekkt myndavél“.
-6. Innan hóps (staðirnir, Ljósmyndir og Videos, 3D og VR180, myndavélarnar) leggjast valkostirnir saman; á milli hópa þrengja þeir listann. Hreinsa núllstillir allt; „Engin 360° mynd eða myndskeið passar við þessar síur“ þýðir að síurnar skilja ekkert eftir.
+6. Innan hóps (staðirnir, Ljósmyndir og Videos, 3D og VR180, myndavélarnar) leggjast valkostirnir saman; á milli hópa þrengja þeir listann. Valkostirnir Date, Ljósmyndir og Videos gilda líka um röð netdeilinganna; 3D, VR180 og myndavélarnar fela hana, þar sem forritið veit ekkert af þessu um skrá á deilingu. Hreinsa núllstillir allt; „Engin 360° mynd eða myndskeið passar við þessar síur“ þýðir að síurnar skilja ekkert eftir.
 7. Opnaðu mynd eða myndskeið. Í umlykjandi sýn Quest fylgja fyrra og næsta síaða listanum.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Allt sem opinbera Immich-farsímaforritið gerir er hér: afritun, tímalína, m
 
 Til að sýna einhverjum sem er ekki með forritið 360° mynd skaltu deila henni með deilitengli Immich: vefforrit Immich sýnir 360° mynd sem kúlu í vafranum hans.
 
-Núverandi smíð, smíð 21 (útgáfa 3.3.0-rc.0, smíðanúmer 3030019), byggir á Immich 3.3.0-rc.0 (`main` hjá Immich, ekki enn stöðug útgáfa). Smíð 19 var prófuð með Immich 3.2 vélþjóni, og smíðar 20 og 21 breyta engu í því sem forritið biður vélþjóninn um. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich-verkefnisins. Fyrir fullkomin skjöl um Immich sjálft, sjá [immich.app](https://immich.app).
+Núverandi smíð, smíð 22 (útgáfa 3.3.0-rc.0, smíðanúmer 3030020), byggir á `main` hjá Immich frá 10. október 2026 (útgáfa 3.3.0-rc.0, ekki enn stöðug útgáfa). Smíð 22 var prófuð með Immich 3.2.4 vélþjóni og með vélþjóni sem var smíðaður úr sama `main` hjá Immich: innskráning, tímalína, albúm, 360° myndir og myndskeið, spilun myndskeiða og upphleðslur, án nokkurrar API-villu. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich-verkefnisins. Fyrir fullkomin skjöl um Immich sjálft, sjá [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Samanburður við Immich-forritið og önnur forrit
@@ -1037,6 +1038,8 @@ Forritið mælir fyrstu sekúndur hvers 360° myndskeiðs og velur hversu stóra
 - **Veldu teiknarann handvirkt.** Í Settings, Fyrir lengra komna, kveiktu á „Bilanaleit“: færslan „Teiknari 360° myndskeiða“ birtist, Sjálfvirkt sjálfgefið. Hún býður einnig „Viðbót, full stærð“, „Viðbót, í mesta lagi 4096 á breidd“, „Viðbót, í mesta lagi 2880 á breidd“ og „Flatt, án 360° sýnar“, fyrir næsta 360° myndskeið sem þú opnar. Undir henni nefnir „Síðast mælt“ stærðina sem síðasta 360° myndskeið var teiknað í, ramma þess á sekúndu, skjákubbinn og afkóðarann: afritaðu það í villuskýrslu. Að velja „Sjálfvirkt“ aftur, jafnvel þegar það er þegar valið, gleymir því sem var mælt, og næstu 360° myndskeið eru mæld aftur.
 - **Hvað kubburinn afkóðar.** Settings, Fyrir lengra komna, „Myndskeiðsafkóðarar þessa tækis“ telur upp hvað skjákubburinn í notkun afkóðar, eins og Direct3D 11 greinir frá því, og forritið leiðréttir þann lista með því sem það mældi við spilun: stillingin „Uppruni myndskeiðs“ og tveggja linsu athugun óunninna myndskeiða fylgja honum. H.264 breiðara en 4096 dílar (5.7K 360° myndavéla) er afkóðað af örgjörvanum, þar sem hvorugur kubbur prófunarfartölvunnar tekur við því.
 
+**Fyrir forritara.** 360° spilarinn teiknar í gegnum eigin teiknara, byggðan á libmpv og lagfærðri media_kit_video viðbót: mpv teiknar hvern ramma í áferð á skjákubbnum, og teikniumferð í OpenGL ES 3.0 teiknar sýnina í áferðina sem Flutter sýnir, án afritunar í gegnum örgjörvann. Hvers vegna hann var smíðaður svona, hvernig hann virkar, hvað var mælt og hvað má stilla: [360° myndskeiðsteiknari tölvuútgáfunnar](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Samanburður við símaforritin
 
 - **Öryggisafritun keyrir á meðan forritið er opið** (eða lágmarkað), ekki í bakgrunni með lokaðan glugga. Ef glugganum er lokað á meðan upphleðslur eru í gangi, eða á meðan tölvunni er deilt, er fyrst spurt.
@@ -1110,7 +1113,7 @@ Forritið er á Google Play fyrir síma og spjaldtölvur; App Store útgáfan b�
 
 - **Android-símar og spjaldtölvur**
   - Í dag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eða APK-skráin á síðunni [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fyrir síma (alhliða `Immuch360-v<version>-release.apk` virkar alls staðar, `-armeabi-v7a` er fyrir eldri 32 bita síma, og `.aab` skráin er fyrir Google Play, ekki til hliðhleðslu). Smíðin á GitHub er yfirleitt á undan versluninni. Hvort heldur sem er sest hún upp við hlið opinbera Immich-forritsins (pakki `com.aprogsys.immuch360`).
-  - Bráðum: á Google Play hefur smíð 20 verið í boði síðan 7. október 2026, í stað smíðar 18; smíð 21 breytir engu í símum og spjaldtölvum.
+  - Bráðum: á Google Play var smíð 22 send 10. október 2026 í stað smíðar 20 (í boði síðan 7. október); hún inniheldur breytingar Immich frá október og lagfæringarnar fyrir sjónvörp.
 - **iPhone og iPad**
   - Í dag: bíður yfirferðar Apple. Útgáfan í yfirferð er með eiginleika smíðar 11: upphleðsla í Immich og valið Uppruni myndskeiðs (smíð 15) og óunnar Insta360-skrár (smíð 16) koma með síðari uppfærslu í App Store. Frumkóðinn er smíðaður með Xcode eða á Codemagic, sjá [Smíðaðu það sjálf(ur)](#build-it-yourself).
   - Bráðum: App Store, í yfirferð.
@@ -1157,7 +1160,7 @@ Ekkert leyndarmál er í þessari geymslu: undirritunarlykill Android er geymdur
 
 ### Greinar
 
-- **`main`**: `main` hjá Immich við commit-ið sem `immuch360` byggir á (29. september 2026 fyrir núverandi smíðar), aldrei breytt; hún færist fram þegar afleiðan er endurgrunnuð (rebase) á nýrra Immich.
+- **`main`**: `main` hjá Immich við commit-ið sem `immuch360` byggir á (10. október 2026 fyrir núverandi smíðar), aldrei breytt; hún færist fram þegar afleiðan er endurgrunnuð (rebase) á nýrra Immich.
 - **`immuch360`**: breytingar þessarar afleiðu ofan á Immich, Immuch360 Desktop meðtalið frá 9. október 2026. Hver útgáfa segir á hvaða útgáfu Immich hún byggir.
 - **`desktop`**: þar sem Immuch360 Desktop, tölvuútgáfan, var smíðuð ofan á `immuch360`, þar til hún var sameinuð inn í hana 9. október 2026 svo að símar, gleraugu, sjónvörp og tölvur séu gefin út úr sama frumkóða. Hún fylgir nú `immuch360` og ber merki forútgáfanna fyrir tölvu ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) úr commit 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) úr 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) úr sameiningu 360° myndskeiðsspilarans 10. október 2026). Ný vinna við tölvuútgáfuna lendir þar fyrst og bætist við `immuch360` með þeirri desktop build sem gefur hana út. Tölvuútgáfan breytir engu undir `mobile/android` og `mobile/ios`.
 

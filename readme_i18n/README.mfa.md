@@ -17,10 +17,10 @@ Dio untuk ore hok ambik gambo nga kamera 360° (Insta360, GoPro MAX, DJI Osmo 36
 
 | Platform | Mano nok dapat | Status pado 10 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon nga tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 20 kat Google Play sejak 7 Oktober 2026, binaan 21 kat GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon nga tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 22 kat GitHub, doh hanta ko Google Play pado 10 Oktober 2026 (situ binaan 20 doh ado sejak 7 Oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone nga iPad** | App Store | versi 3.3.0 tengoh tunggu semakan Apple; sementaro tu, [bina sendiri](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [APK](#meta-quest-3) · Horizon Store | senarai doh diluluske, binaan 21 dalam semakan Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV nga Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 21 kat GitHub; senarai Google Play untuk TV dale semaka Google sejak 9 Oktober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [APK](#meta-quest-3) · Horizon Store | senarai doh diluluske, binaan 21 dalam semakan Meta, binaan 22 kat saluran Alpha |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV nga Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 22 kat GitHub; senarai Google Play untuk TV dale semaka Google sejak 9 Oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | binaan desktop 3 kat Windows: gambo, video rata nga video 360°; macOS nga Linux kemudie |
 
 *Status dikemas kini tiap kali keluaran baru; butirannyo ado dalam [Mano nok dapat](#where-to-get-it).*
@@ -196,7 +196,7 @@ Dio cari server dale rangkaie demo sendiri, pah maing fail teruh dale pemapar sa
 4. Takdok dale senarai? Isi borang sendiri. Jenih: "SMB (Samba, kongsi Windows)", "WebDAV (Nextcloud, Synology nga lain-lain)", "Server media DLNA (Jellyfin, NAS, kotak TV)" ke, dari binaan 20, "Plex Media Server", hok bukak muko [Plex Media Server, tanpo plex.tv](#plex-media-server-without-plextv). Lepah tu "Namo", "Namo ke alamat server" (namo ke alamat; alamat penoh macey `smb://nas/photos`, `\\nas\photos` ke `https://nas:5006/photos` isi ruange lain), "Port (kalu nok)" bilo dio buke hok biaso, "Kongsi" untuk SMB ke "Jale alamat WebDAV" untuk WebDAV, "Folder mulo (kalu nok)", "Namo pengguno" nga "Kato lalue", nga "Sambunge selamat (HTTPS)" untuk WebDAV.
 5. SMB: lepah server nga namo pengguno ditaip, "Pilih kongsi" senarai kongsi dale server tu.
 6. DLNA: server media takdok namo pengguno ke kato lalue. Bui server, port nga "Jale penerange" untuk penerange peranti dio (`/rootDesc.xml` untuk minidlna), ke tampal alamat penoh, macey `http://192.168.1.10:8200/rootDesc.xml`, dale ruange server.
-7. Ketuk "Uji sambunge". Dio jawab "Doh sambung, N bendo dale folder mulo", ke kato bakpo dio gagal. Lepah tu ketuk "Simpang", kat bawoh borang.
+7. Ketuk "Uji sambunge". Dio jawab "Doh sambung, N bendo dale folder mulo", ke kato bakpo dio gagal. Lepah tu ketuk "Simpang", kat bawoh borang. Dari binaan 22, tutup borang hok demo doh taip (X, Kembali) tanyo dulu "Buang perubahe?", kat muko Plex nga kamera pong, nga samo jugok bilo pilih Plex ke kamera hok dijumpo lepah ado bendo doh ditaip.
 
 Namo pengguno nga kato lalue kosong dihanta macey tu jugok: Freebox Server nok `freebox` nga takdok kato lalue untuk cakera dio. Nok ubah ke buang kongsi kemudie, guno pensel sebeloh dio dale muko "Kongsi rangkaie".
 
@@ -617,8 +617,9 @@ Dari binaan 20 aplikasi Android samo jale kat Android TV nga Google TV, nga alat
 
 ### Gerak nga alat kawalan jauh
 
-- Anak panah gerak bingkai, OK bukak gapo hok dio ado atas, Kembali pegi balik. Dari satu tab, Kembali pegi ko menu tepi, lepah tu ko "Photos" (Gambo), lepah tu keluar dari aplikasi.
-- Saluran naik nga turun tatal satu muko satu kali.
+- Anak panah gerak bingkai, OK bukak gapo hok dio ado atas, Kembali pegi balik. Dari satu tab, Kembali pegi ko menu tepi, lepah tu ko "Photos" (Gambo), lepah tu keluar dari aplikasi. Dale senarai pilihe, macey jenih kongsi ke satu tetapa, anak panah gerak bingkai jah nga OK pilih pilihe tu (dari binaan 22; dulu, anak panah tukar pilihe).
+- Saluran naik nga turun tatal satu muko satu kali. Dari binaan 22 grid gambo tunjuk lebih kurang enam jubin satu baris dale margin skrin, nga lakare kecik fail peranti sendiri hok lagi tajey nga kekal licin kat butir halus, nga muko hok ado kepalo bergambo kat fon (senarai 360°, "Favorites" (Kegemara), album peranti) tunjuk satu bar jah ganti dio.
+- Dari binaan 22 bingkai mulo kat bendo pertamo tiap muko (jubin pertamo senarai 360°, ruange e-mel lepah alamat server doh disahke), kekal dale margin skrin bilo grid tatal, nga naik dari grid ko baris ke penapis atah dio, buke ko butang Kembali. Kanan dari satu kongsi rangkaie ke kamera sampai ko butang sunting dio, nga hasil "Uji sambunge" tatal sampai nampak.
 - Dale pemapar, kekunci maing nga jeda, laju ke depe, undur, lepah nga sebelum alat kawalan jauh jale, nga kekunci info tunjuk butir gambo ke video.
 
 ### Gambo nga video nga alat kawalan jauh
@@ -632,7 +633,7 @@ Dari binaan 20 aplikasi Android samo jale kat Android TV nga Google TV, nga alat
 
 ### Tetapa "Susun atur alat kawalan jauh"
 
-"Settings" (Tetapa), "Preferences" (Keutamaa), "Susun atur alat kawalan jauh": "Bingkai fokus besar nga kekunci alat kawalan jauh, tanpa kawalan hok memerlukan skrin sentuh. Automatik menghidupkannya pada Android TV nga Google TV." "Automatik" tu lalai; "Hidup" sesuai untuk tablet hok dikawal nga papan kekunci ke alat kawalan permainan; "Mati" matike dio kat TV. Tetapa ni ado kat Android jah. Anak panah nga OK jale dale pemapar nga papan kekunci ke alat kawalan permainan tak kiro tetapa.
+"Settings" (Tetapa), "Preferences" (Keutamaa), "Susun atur alat kawalan jauh": "Bingkai fokus besar nga kekunci alat kawalan jauh, tanpa kawalan hok memerlukan skrin sentuh. Automatik menghidupkannya pada Android TV nga Google TV." "Automatik" tu lalai; "Hidup" sesuai untuk tablet hok dikawal nga papan kekunci ke alat kawalan permainan; "Mati" matike dio kat TV. Tetapa ni ado kat Android jah. Dari binaan 22 ubaha terus kena kat muko hok tengah bukak, hok kekal kat tempat dio (dulu, "Settings" bukak balik kat "Advanced", atah skrin mulo hok keno lalu nga Kembali). Anak panah nga OK jale dale pemapar nga papan kekunci ke alat kawalan permainan tak kiro tetapa.
 
 ### Had
 
@@ -650,7 +651,7 @@ Dari binaan 20 aplikasi Android samo jale kat Android TV nga Google TV, nga alat
 
 Gambo 360° bercampur nga semuo gambo lain, nga ore mintak Immich caro nok tapis sfera nga panorama ([perbincange #12824](https://github.com/immich-app/immich/discussions/12824)). Aplikasi Immich takdok senarai macey tu.
 
-Immuch360 letak lencana 360° kat lakare kecik gambo 360° (dale folder kongsi rangkaie, kat video 360° pong), nga menu 360° kat atah tab "Pustako". Dari binaan 18 senarai tu ado, nga server, gambo nga video hok server tando 360°, fail Insta360 mentoh ikut namo dio, gambo hok kamera 360° cantum sendiri nga hok demo pilih nok tengok sebagai 360°, tambah gapo hok imbase peranti jumpo; tanpo server, gapo hok imbase peranti jumpo nga hok demo pilih nok tengok sebagai 360°. Tiap satu kelua sekali jah, mano-mano pong salina dio, hok baru dulu.
+Immuch360 letak lencana 360° kat lakare kecik gambo 360° (dale folder kongsi rangkaie, kat video 360° pong), nga menu 360° kat atah tab "Pustako". Dari binaan 18 senarai tu ado, nga server, gambo nga video hok server tando 360°, fail Insta360 mentoh ikut namo dio, gambo hok kamera 360° cantum sendiri nga hok demo pilih nok tengok sebagai 360°, tambah gapo hok imbase peranti jumpo; tanpo server, gapo hok imbase peranti jumpo nga hok demo pilih nok tengok sebagai 360°. Tiap satu kelua sekali jah, mano-mano pong salina dio, hok baru dulu. Dari binaan 22 satu baris "Dale kongsi rangkaie" kelua atah grid nga gambo nga video 360° dari kongsi demo, hok baru dulu: aplikasi kenal dio bilo tunjuk folder dio ke bukak dio (dio tok cari dale kongsi sendiri), simpang dio dari satu mulo ko mulo lepah tu, pah lupo dio samo-samo nga kongsi dio. Kat TV, hok takdok gambo sendiri, baris tu lah hok isi senarai 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Senarai 360°, 4 bendo, nga helai Date dio terbukak: All, tahung 2026 nga kiroa dio, Satu tahung, Ogos 2026 nga April 2026 nga kiroa dio, tahung 2025, nga Custom">
 
@@ -661,7 +662,7 @@ Immuch360 letak lencana 360° kat lakare kecik gambo 360° (dale folder kongsi r
 3. Nga server, pilih mano media tu ado: "Dale server", "On this device", nga "Shared with me" (Dikongsi nga ambo) bilo ado.
 4. Pilih jenih: "Photos", "Videos", 3D, VR180.
 5. Bilo senarai ado duo kamera ke lebih, baris keduo senarai dio dari jenama nga model EXIF, nga kiroa dio. Fail mentoh hok takdok tu diberi namo ikut jenama sambunge dio (Insta360, GoPro, DJI), hok lain "Kamera tak kenal".
-6. Dale satu kumpula (tempat, "Photos" nga "Videos", 3D nga VR180, kamera) cip ditamboh; antaro kumpula dio sempitke senarai. "Clear" (Kosongke) set semulo semuo; "Takdok gambo ke video 360° hok samo nga penapis ni" maksud penapis tok tinggal gapo-gapo.
+6. Dale satu kumpula (tempat, "Photos" nga "Videos", 3D nga VR180, kamera) cip ditamboh; antaro kumpula dio sempitke senarai. Cip "Date", "Photos" nga "Videos" kena kat baris kongsi rangkaie jugok; 3D, VR180 nga kamera sorok dio, sebab aplikasi tok tahu satu pong bendo tu untuk fail dari kongsi. "Clear" (Kosongke) set semulo semuo; "Takdok gambo ke video 360° hok samo nga penapis ni" maksud penapis tok tinggal gapo-gapo.
 7. Bukak gambo ke video. Dale paparan imersif Quest, sebelum nga lepah ikut senarai hok doh ditapis.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Semuo gapo hok aplikasi mudoh alih Immich rasmi buat ado sini: sandare, garis ma
 
 Nok tunjuk gambo 360° ko ore hok takdok aplikasi, kongsi dio nga pauta kongsi Immich: aplikasi web Immich tunjuk gambo 360° jadi sfera dale pelayar dio.
 
-Binaan skang, binaan 21 (versi 3.3.0-rc.0, nombor binaan 3030019), berasas Immich 3.3.0-rc.0 (Immich `main`, belum keluare stabil lagi). Binaan 19 doh diuji nga server Immich 3.2, nga binaan 20 nga 21 tok ubah gapo-gapo dale gapo hok aplikasi mintak dari server. Tolong lapor masalah dale [Issues](https://github.com/freeKC/Immuch360/issues), buke ko projek Immich. Untuk dokumentasi penoh Immich sendiri, tengok [immich.app](https://immich.app).
+Binaan skang, binaan 22 (versi 3.3.0-rc.0, nombor binaan 3030020), berasas Immich `main` 10 Oktober 2026 (versi 3.3.0-rc.0, belum keluare stabil lagi). Binaan 22 doh diuji nga server Immich 3.2.4 pah nga server hok dibina dari Immich `main` hok samo tu: log masuk, garis maso, album, gambo nga video 360°, maing video nga muat naik, takdok saloh API. Tolong lapor masalah dale [Issues](https://github.com/freeKC/Immuch360/issues), buke ko projek Immich. Untuk dokumentasi penoh Immich sendiri, tengok [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Banding nga aplikasi Immich nga aplikasi lain
@@ -1037,6 +1038,8 @@ Bilo hok tok sempat tu nyahkod video server, buke lukis (video hok pemproses nya
 - **Pilih perender sendiri.** Dale "Settings", "Advanced", buka "Troubleshooting" (Selesai masalah): satu entri "360° video renderer" (Perender video 360°) keluar, "Automatic" (Automatik) secaro lalai. Dio jugok bui "Plugin, full size" (Pemalam, saiz penoh), "Plugin, at most 4096 wide" (Pemalam, paling lebar 4096), "Plugin, at most 2880 wide" (Pemalam, paling lebar 2880) nga "Flat, without the 360° view" (Rata, tanpo paparan 360°), untuk video 360° lepah ni hok demo bukak. Bawoh dio, "Measured last" (Ukura terakhir) sebut saiz video 360° terakhir dilukis, bingkai sesaat dio, cip grafik nga penyahkod: salin ko laporan pepijat. Pilih "Automatic" balik, walaupun dio doh pilihan, lupo gapo hok doh diukur, nga video 360° lepah ni diukur balik.
 - **Gapo hok cip nyahkod.** "Settings", "Advanced", "Penyahkod video peranti ni" senarai gapo hok cip grafik hok diguno nyahkod, macey Direct3D 11 lapor, nga aplikasi betulke senarai tu nga gapo hok dio ukur maso maing: tetapa "Sumber video" nga semaka duo kanta video mentah ikut dio. H.264 lebih lebar dari 4096 piksel (5.7K kamera 360°) dinyahkod dek pemproses, sebab duo-duo cip laptop uji tok terimo dio.
 
+**Untuk pembangun.** Pemain 360° lukis guno perender dio sendiri, hok dibina atah libmpv nga pemalam media_kit_video hok ditampal: mpv lukis tiap bingkai ko dale tekstur kat cip grafik, nga satu langkah OpenGL ES 3.0 lukis paparan ko dale tekstur hok Flutter tunjuk, tanpo salin lalu pemproses. Bakpo dio dibina macey tu, macey mano dio jale, gapo hok doh diukur nga gapo hok buleh dilaras: [perender video 360° desktop](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Banding nga aplikasi fon
 
 - **Sandare jale maso aplikasi bukak** (ke dikecikke), buke kat belakang nga tetingkap tutup. Tutup tetingkap maso muat naik jale, ke maso komputer dikongsi, tanyo dulu.
@@ -1110,7 +1113,7 @@ Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tun
 
 - **Fon nga tablet Android**
   - Hari ni: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ke APK kat muko [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk fon (`Immuch360-v<version>-release.apk` universal jale kat mano-mano, `-armeabi-v7a` untuk fon 32 bit lamo, nga fail `.aab` untuk Google Play, buke untuk sideload). Binaan GitHub biasonyo lagi dulu dari kedai. Mano-mano pong, dio pasang sebeloh aplikasi Immich rasmi (pakej `com.aprogsys.immuch360`).
-  - Tak lamo lagi: kat Google Play, binaan 20 doh ado sejak 7 Oktober 2026, ganti binaan 18; binaan 21 tok ubah gapo-gapo kat fon nga tablet.
+  - Tak lamo lagi: kat Google Play, binaan 22 doh hanta pado 10 Oktober 2026 ganti binaan 20 (doh ado sejak 7 Oktober); dio bawok ubaha Immich bule Oktober nga pembaika untuk TV.
 - **iPhone nga iPad**
   - Hari ni: tengoh tunggu semaka Apple. Versi hok tengoh disemak ado ciri binaan 11: muat naik ko Immich nga pilihe "Sumber video" (binaan 15) nga fail Insta360 mentoh (binaan 16) akan mari nga kemas kini App Store kemudie. Kod sumber dibina nga Xcode ke kat Codemagic, tengok [Bina sendiri](#build-it-yourself).
   - Tak lamo lagi: App Store, tengoh disemak.
@@ -1157,7 +1160,7 @@ Takdok rahsio dale repositori ni: kunci tandatange Android disimpang sebagai rah
 
 ### Cawange
 
-- **`main`**: Immich `main` kat commit hok `immuch360` berasas (29 September 2026 untuk binaan skang), tok penah diubah; dio maju bilo cabang ni di-rebase atah Immich hok lagi baru.
+- **`main`**: Immich `main` kat commit hok `immuch360` berasas (10 Oktober 2026 untuk binaan skang), tok penah diubah; dio maju bilo cabang ni di-rebase atah Immich hok lagi baru.
 - **`immuch360`**: ubaha cabang ni atah Immich, termasuk Immuch360 Desktop sejak 9 Oktober 2026. Tiap keluare sebut versi Immich mano dio berasas.
 - **`desktop`**: tempat Immuch360 Desktop, versi komputer, dibina atah `immuch360`, sampa dio digabung masuk `immuch360` pado 9 Oktober 2026 supayo fon, headset, TV nga komputer kelua dari sumber samo. Kini dio ikut `immuch360` nga bawo tag pra-keluare desktop ([binaan desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) dari commit 21f285c34, [binaan desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) dari 5b723bd25, [binaan desktop 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) dari gabunga pemain video 360° pado 10 Oktober 2026). Kijo desktop baru masuk situ dulu nga masuk `immuch360` nga binaan desktop hok hanta dio. Versi komputer tok ubah gapo-gapo bawoh `mobile/android` nga `mobile/ios`.
 

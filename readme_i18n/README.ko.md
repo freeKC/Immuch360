@@ -17,10 +17,10 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
 
 | 플랫폼 | 받는 곳 | 2026년 10월 10일 기준 상태 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 2026년 10월 7일부터 Google Play에 빌드 20, GitHub에 빌드 21 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub에 빌드 22, 2026년 10월 10일 Google Play에 제출(Google Play에는 10월 7일부터 빌드 20 공개 중) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.0이 Apple의 심사를 기다리는 중; 그동안은 [직접 빌드하기](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3와 3S | [APK](#meta-quest-3) · Horizon Store | 등록 승인됨, 빌드 21은 Meta 심사 중 |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub에 빌드 21; TV용 Google Play 등록 정보는 2026년 10월 9일부터 Google 심사 중 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3와 3S | [APK](#meta-quest-3) · Horizon Store | 등록 승인됨, 빌드 21은 Meta 심사 중, 빌드 22는 알파 채널에 있음 |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub에 빌드 22; TV용 Google Play 등록 정보는 2026년 10월 9일부터 Google 심사 중 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [미리 보기 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows용 데스크톱 빌드 3: 사진, 평면 동영상과 360° 동영상; macOS와 Linux는 나중에 |
 
 *상태는 릴리스마다 갱신됩니다. 자세한 내용은 [받는 곳](#where-to-get-it)에 있습니다.*
@@ -196,7 +196,7 @@ Immuch360은 SMB(Samba, Windows), WebDAV, 그리고 빌드 19부터 DLNA/UPnP(�
 4. 목록에 없나요? 직접 입력합니다. 형식: "SMB (Samba, Windows 공유)", "WebDAV (Nextcloud, Synology 등)", "DLNA 미디어 서버 (Jellyfin, NAS, TV 박스)" 또는 빌드 20부터 "Plex Media Server"이며, 마지막 것은 [Plex Media Server, plex.tv 없이](#plex-media-server-without-plextv)의 화면을 엽니다. 그다음 이름, "서버 이름 또는 주소"(이름이나 주소. `smb://nas/photos`, `\\nas\photos`, `https://nas:5006/photos` 같은 전체 주소를 넣으면 다른 칸이 채워짐), 일반 포트가 아니면 "포트 (선택 사항)", SMB는 "공유 이름", WebDAV는 "WebDAV 주소의 경로", "시작 폴더 (선택 사항)", "계정명"과 "비밀번호", 그리고 WebDAV라면 "보안 연결 (HTTPS)"을 입력합니다.
 5. SMB: 서버와 계정명을 입력하면 "공유 선택"이 서버의 공유 목록을 보여 줍니다.
 6. DLNA: 미디어 서버에는 계정명이나 비밀번호가 없습니다. 서버, 포트, 장치 설명의 "설명 경로"(minidlna는 `/rootDesc.xml`)를 입력하거나, `http://192.168.1.10:8200/rootDesc.xml` 같은 전체 주소를 서버 칸에 붙여 넣습니다.
-7. "연결 테스트"를 탭합니다. "연결됨, 시작 폴더에 항목 N개"라고 답하거나 실패한 이유를 알려 줍니다. 그다음 양식 맨 아래의 저장을 탭합니다.
+7. "연결 테스트"를 탭합니다. "연결됨, 시작 폴더에 항목 N개"라고 답하거나 실패한 이유를 알려 줍니다. 그다음 양식 맨 아래의 저장을 탭합니다. 빌드 22부터는 무언가 입력한 양식을 닫으면(X, 뒤로) 먼저 "변경 사항을 삭제할까요?"라고 묻습니다. Plex와 카메라 페이지에서도 마찬가지이고, 무언가 입력한 뒤에 찾은 Plex 서버나 카메라를 고를 때도 같습니다.
 
 비밀번호가 빈 계정명은 그대로 전송됩니다. Freebox Server는 디스크에 대해 `freebox`와 빈 비밀번호를 요구합니다. 나중에 공유를 바꾸거나 지우려면 네트워크 공유 화면에서 옆에 있는 연필을 쓰세요.
 
@@ -617,8 +617,9 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 ### 리모컨으로 이동하기
 
-- 화살표는 테두리를 옮기고, OK는 테두리가 놓인 것을 열고, 뒤로는 뒤로 갑니다. 탭에서 뒤로를 누르면 사이드 메뉴로, 그다음 사진으로, 그다음 앱 밖으로 나갑니다.
-- 채널 위와 아래는 한 페이지씩 스크롤합니다.
+- 화살표는 테두리를 옮기고, OK는 테두리가 놓인 것을 열고, 뒤로는 뒤로 갑니다. 탭에서 뒤로를 누르면 사이드 메뉴로, 그다음 사진으로, 그다음 앱 밖으로 나갑니다. 공유 종류나 설정 같은 선택지 목록에서는 화살표가 테두리만 옮기고 OK가 선택지를 고릅니다(빌드 22부터이며, 이전에는 화살표가 선택을 바꿨습니다).
+- 채널 위와 아래는 한 페이지씩 스크롤합니다. 빌드 22부터 사진 격자는 화면 여백 안에서 한 줄에 타일을 약 6개 보여 주고, 기기 자체 파일의 썸네일은 더 선명하면서도 세밀한 부분에서 매끄럽게 유지되며, 휴대폰에서 이미지 헤더가 있는 페이지(360° 목록, 즐겨찾기, 기기의 앨범)는 대신 막대 하나만 보여 줍니다.
+- 빌드 22부터 테두리는 각 페이지의 첫 항목(360° 목록의 첫 타일, 서버 주소를 확인한 뒤의 이메일 칸)에서 시작하고, 격자가 스크롤되는 동안 화면 여백 안에 머물며, 격자에서 위로 갈 때 뒤로 버튼이 아니라 그 위의 줄이나 필터로 갑니다. 네트워크 공유나 카메라에서 오른쪽을 누르면 그 편집 버튼으로 가고, "연결 테스트" 결과는 보이도록 스크롤됩니다.
 - 뷰어에서는 리모컨의 재생과 일시 정지, 빨리 감기, 되감기, 다음, 이전 키가 동작하고, 정보 키는 사진이나 동영상의 상세 정보를 보여 줍니다.
 
 ### 리모컨으로 보는 사진과 동영상
@@ -632,7 +633,7 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 ### 리모컨 레이아웃 설정
 
-설정, 개인 설정, "리모컨 레이아웃": "큰 포커스 테두리와 리모컨 키를 사용하며, 터치스크린이 필요한 컨트롤은 표시하지 않습니다. 자동은 Android TV와 Google TV에서 켜집니다." 자동이 기본값입니다. 켬은 키보드나 게임패드로 조작하는 태블릿에 맞고, 끔은 TV에서 이 레이아웃을 끕니다. 이 설정은 Android에만 있습니다. 화살표와 OK는 설정과 관계없이 키보드나 게임패드로 뷰어에서 동작합니다.
+설정, 개인 설정, "리모컨 레이아웃": "큰 포커스 테두리와 리모컨 키를 사용하며, 터치스크린이 필요한 컨트롤은 표시하지 않습니다. 자동은 Android TV와 Google TV에서 켜집니다." 자동이 기본값입니다. 켬은 키보드나 게임패드로 조작하는 태블릿에 맞고, 끔은 TV에서 이 레이아웃을 끕니다. 이 설정은 Android에만 있습니다. 빌드 22부터는 변경 사항이 열려 있는 페이지에 바로 적용되고, 페이지는 있던 자리에 그대로 머뭅니다(이전에는 설정이 고급에서 다시 열렸고, 그 밑에 뒤로를 눌러 지나가야 하는 시작 화면이 있었습니다). 화살표와 OK는 설정과 관계없이 키보드나 게임패드로 뷰어에서 동작합니다.
 
 ### 제한 사항
 
@@ -650,7 +651,7 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 360° 사진은 다른 모든 사진과 섞여 있고, 사람들은 Immich에 구형 사진과 파노라마를 걸러 내는 방법을 요청하고 있습니다([discussion #12824](https://github.com/immich-app/immich/discussions/12824)). Immich 앱에는 이런 목록이 없습니다.
 
-Immuch360은 360° 사진의 썸네일에 360° 배지를 붙이고(네트워크 공유 폴더에서는 360° 동영상에도), 라이브러리 탭 맨 위에 360° 항목을 둡니다. 빌드 18부터 이 목록에는, 서버가 있을 때는 서버가 360°로 표시한 사진과 동영상, 이름으로 찾은 Insta360 RAW 파일, 360° 카메라가 직접 스티칭한 사진, 360°로 보기로 고른 파일, 그리고 기기 검색에서 찾은 파일이 들어가고, 서버가 없을 때는 기기 검색에서 찾은 파일과 360°로 보기로 고른 파일이 들어갑니다. 각 항목은 사본이 어디에 있든 한 번만, 최신순으로 나옵니다.
+Immuch360은 360° 사진의 썸네일에 360° 배지를 붙이고(네트워크 공유 폴더에서는 360° 동영상에도), 라이브러리 탭 맨 위에 360° 항목을 둡니다. 빌드 18부터 이 목록에는, 서버가 있을 때는 서버가 360°로 표시한 사진과 동영상, 이름으로 찾은 Insta360 RAW 파일, 360° 카메라가 직접 스티칭한 사진, 360°로 보기로 고른 파일, 그리고 기기 검색에서 찾은 파일이 들어가고, 서버가 없을 때는 기기 검색에서 찾은 파일과 360°로 보기로 고른 파일이 들어갑니다. 각 항목은 사본이 어디에 있든 한 번만, 최신순으로 나옵니다. 빌드 22부터는 격자 위에 "네트워크 공유에 있음" 줄이 나타나 내 공유의 360° 사진과 동영상을 최신순으로 보여 줍니다. 앱은 폴더를 보여 주거나 파일을 열 때 이를 알게 되고(공유를 스스로 검색하지는 않음), 앱을 다시 시작해도 기억하며, 해당 공유와 함께 잊습니다. 자체 사진이 없는 TV에서는 이 줄이 360° 목록을 채웁니다.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="항목 4개가 있는 360° 목록과 열린 날짜 시트: 모두, 개수가 표시된 2026년, 한 해 전체, 개수가 표시된 2026년 8월과 2026년 4월, 2025년, 사용자 지정">
 
@@ -661,7 +662,7 @@ Immuch360은 360° 사진의 썸네일에 360° 배지를 붙이고(네트워크
 3. 서버가 있으면 미디어가 있는 곳을 고릅니다. "서버에 있음", "이 장치에서", 그리고 해당 항목이 있으면 "나와 공유됨"입니다.
 4. 종류를 고릅니다. 사진, 동영상, 3D, VR180.
 5. 목록에 카메라가 두 대 이상 있으면, 두 번째 줄에 EXIF 제조사와 모델로 카메라가 개수와 함께 나열됩니다. 이 정보가 없는 RAW 파일은 확장자에 해당하는 브랜드(Insta360, GoPro, DJI)로, 나머지는 "알 수 없는 카메라"로 표시됩니다.
-6. 같은 그룹(위치, 사진과 동영상, 3D와 VR180, 카메라) 안의 칩은 더해지고, 그룹 사이에서는 목록을 좁힙니다. 지우기는 모두 초기화합니다. "이 필터와 일치하는 360° 사진이나 동영상이 없습니다"는 필터에 맞는 항목이 없다는 뜻입니다.
+6. 같은 그룹(위치, 사진과 동영상, 3D와 VR180, 카메라) 안의 칩은 더해지고, 그룹 사이에서는 목록을 좁힙니다. 날짜, 사진, 동영상 칩은 네트워크 공유 줄에도 적용되고, 3D, VR180, 카메라 칩은 이 줄을 숨깁니다. 앱이 공유의 파일에 대해서는 이 정보를 하나도 알지 못하기 때문입니다. 지우기는 모두 초기화합니다. "이 필터와 일치하는 360° 사진이나 동영상이 없습니다"는 필터에 맞는 항목이 없다는 뜻입니다.
 7. 사진이나 동영상을 엽니다. Quest 몰입형 보기에서는 이전과 다음이 필터링된 목록을 따릅니다.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 앱이 없는 사람에게 360° 사진을 보여 주려면 Immich 공유 링크로 공유하세요. Immich 웹 앱이 상대방의 브라우저에서 360° 사진을 구 형태로 보여 줍니다.
 
-현재 빌드인 빌드 21(버전 3.3.0-rc.0, 빌드 번호 3030019)은 Immich 3.3.0-rc.0(Immich `main`, 아직 안정 릴리스가 아님)을 기반으로 합니다. 빌드 19는 Immich 3.2 서버로 테스트했고, 빌드 20과 21은 앱이 서버에 요청하는 내용을 전혀 바꾸지 않습니다. 문제는 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려 주세요. Immich 자체의 전체 문서는 [immich.app](https://immich.app)을 보세요.
+현재 빌드인 빌드 22(버전 3.3.0-rc.0, 빌드 번호 3030020)는 2026년 10월 10일의 Immich `main`(버전 3.3.0-rc.0, 아직 안정 릴리스가 아님)을 기반으로 합니다. 빌드 22는 Immich 3.2.4 서버와, 같은 Immich `main`으로 빌드한 서버에서 테스트했으며, 로그인, 타임라인, 앨범, 360° 사진과 동영상, 동영상 재생, 업로드에서 API 오류가 없었습니다. 문제는 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려 주세요. Immich 자체의 전체 문서는 [immich.app](https://immich.app)을 보세요.
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Immich 앱 및 다른 앱과의 비교
@@ -1037,6 +1038,8 @@ ZIP을 확인하려면 다운로드한 폴더에서 명령 프롬프트로 `cert
 - **렌더러를 직접 고르세요.** 설정, 고급에서 문제 해결을 켜면 "360° 동영상 렌더러" 항목이 나타나며, 기본값은 "자동"입니다. 다음에 여는 360° 동영상에 쓸 "플러그인, 원래 크기", "플러그인, 최대 너비 4096", "플러그인, 최대 너비 2880", "평면, 360° 화면 없이"도 고를 수 있습니다. 그 아래 "마지막 측정"에는 마지막 360° 동영상을 그린 크기, 초당 프레임 수, 그래픽 칩, 디코더가 나옵니다. 버그 신고에 복사해 넣으세요. "자동"을 다시 고르면, 이미 선택되어 있더라도, 측정한 결과를 지우고 다음 360° 동영상들을 다시 측정합니다.
 - **칩이 디코딩하는 것.** 설정, 고급, "이 기기의 동영상 디코더"는 사용 중인 그래픽 칩이 디코딩하는 것을 Direct3D 11이 알려 주는 대로 나열하고, 앱은 재생하면서 측정한 결과로 그 목록을 바로잡습니다. 동영상 소스 설정과 원본 동영상의 두 렌즈 검사가 이 목록을 따릅니다. 너비가 4096픽셀보다 큰 H.264(360° 카메라의 5.7K)는 테스트용 노트북의 어느 칩도 받아들이지 않으므로 프로세서가 디코딩합니다.
 
+**개발자를 위한 정보.** 360° 플레이어는 libmpv와 패치한 media_kit_video 플러그인 위에 만든 자체 렌더러로 그립니다. mpv가 각 프레임을 그래픽 칩의 텍스처에 그리고, OpenGL ES 3.0 패스가 화면을 Flutter가 보여 주는 텍스처에 그리므로, 프로세서를 거치는 복사가 없습니다. 왜 이렇게 만들었는지, 어떻게 동작하는지, 무엇을 측정했고 무엇을 조정할 수 있는지는 [데스크톱 360° 동영상 렌더러](../docs/immuch360/desktop-360-video-renderer.md)에 있습니다.
+
 ### 휴대폰 앱과 비교
 
 - **백업은 앱이 열려 있는 동안 실행됩니다**(최소화 포함). 창을 닫은 채 백그라운드에서는 실행되지 않습니다. 업로드 중이거나 컴퓨터를 공유하는 중에 창을 닫으면 먼저 묻습니다.
@@ -1110,7 +1113,7 @@ Immuch360 Desktop의 CI(`.github/workflows/immuch360-desktop.yml`)는 `immuch360
 
 - **Android 휴대폰과 태블릿**
   - 지금: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), 또는 [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 APK: 휴대폰용은 `Immuch360-v<version>-arm64-v8a-release.apk`(범용 `Immuch360-v<version>-release.apk`는 어디서나 동작, `-armeabi-v7a`는 오래된 32비트 휴대폰용, `.aab` 파일은 Google Play용이며 사이드로드용이 아님). GitHub 빌드가 보통 스토어보다 앞서 있습니다. 어느 쪽이든 공식 Immich 앱 옆에 따로 설치됩니다(패키지 `com.aprogsys.immuch360`).
-  - 곧: Google Play에서는 2026년 10월 7일부터 빌드 18 대신 빌드 20 공개 중, 빌드 21은 휴대폰과 태블릿에서 아무것도 바꾸지 않음.
+  - 곧: Google Play에는 2026년 10월 10일에 빌드 20(10월 7일부터 공개 중) 대신 빌드 22를 제출함. 10월의 Immich 변경 사항과 TV 수정 사항이 들어 있음.
 - **iPhone과 iPad**
   - 지금: Apple의 심사를 기다리는 중입니다. 심사 중인 버전에는 빌드 11의 기능이 들어 있으며, Immich로 업로드와 동영상 소스 선택(빌드 15), Insta360 RAW 파일(빌드 16)은 이후 App Store 업데이트와 함께 옵니다. 소스는 Xcode나 Codemagic에서 빌드됩니다. [직접 빌드하기](#build-it-yourself)를 보세요.
   - 곧: App Store, 심사 중.
@@ -1157,7 +1160,7 @@ Windows 버전인 Immuch360 Desktop은 같은 소스인 `immuch360` 브랜치에
 
 ### 브랜치
 
-- **`main`**: `immuch360`이 기반으로 하는 커밋의 Immich `main`(현재 빌드는 2026년 9월 29일)으로, 수정하지 않습니다. 포크를 더 새로운 Immich로 리베이스할 때 앞으로 이동합니다.
+- **`main`**: `immuch360`이 기반으로 하는 커밋의 Immich `main`(현재 빌드는 2026년 10월 10일)으로, 수정하지 않습니다. 포크를 더 새로운 Immich로 리베이스할 때 앞으로 이동합니다.
 - **`immuch360`**: Immich 위에 얹은 이 포크의 변경 사항이며, 2026년 10월 9일부터 Immuch360 Desktop도 포함합니다. 각 릴리스에 어느 Immich 버전을 기반으로 하는지 적혀 있습니다.
 - **`desktop`**: 컴퓨터 버전인 Immuch360 Desktop을 `immuch360` 위에서 빌드하던 곳으로, 휴대폰, 헤드셋, TV, 컴퓨터가 같은 소스에서 나오도록 2026년 10월 9일에 그 브랜치에 병합되었습니다. 지금은 `immuch360`을 따라가며 데스크톱 사전 릴리스 태그를 담고 있습니다([데스크톱 빌드 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1)은 커밋 21f285c34에서, [데스크톱 빌드 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2)는 5b723bd25에서, [데스크톱 빌드 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)은 2026년 10월 10일 360° 동영상 플레이어 병합에서). 새로운 데스크톱 작업은 먼저 이곳에 들어오고, 그 작업을 담은 데스크톱 빌드와 함께 `immuch360`에 합류합니다. 컴퓨터 버전은 `mobile/android`와 `mobile/ios` 아래를 바꾸지 않습니다.
 

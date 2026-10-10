@@ -17,10 +17,10 @@ Immuch360 és l'aplicació mòbil de l'Immich amb fotos i vídeos 360° on pots 
 
 | Plataforma | On aconseguir-la | Estat a 10 d'octubre de 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**, telèfons i tauletes | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | compilació 20 a Google Play des del 7 d'octubre de 2026, compilació 21 a GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**, telèfons i tauletes | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | compilació 22 a GitHub, enviada a Google Play el 10 d'octubre de 2026 (la compilació 20 hi és publicada des del 7 d'octubre) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | versió 3.3.0 a l'espera de la revisió d'Apple; mentrestant, [compila-la tu mateix](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | fitxa aprovada, compilació 21 en revisió de Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | compilació 21 a GitHub; la fitxa de Google Play per a televisors és en revisió de Google des del 9 d'octubre de 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | fitxa aprovada, compilació 21 en revisió de Meta, compilació 22 al canal alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | compilació 22 a GitHub; la fitxa de Google Play per a televisors és en revisió de Google des del 9 d'octubre de 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP preliminar](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | compilació d'escriptori 3 a Windows: fotos, vídeos plans i 360°; macOS i Linux més endavant |
 
 *Els estats s'actualitzen a cada versió; els detalls són a [On aconseguir-la](#where-to-get-it).*
@@ -196,7 +196,7 @@ Troba sola els servidors de la teva xarxa i reprodueix els fitxers en directe al
 4. No és a la llista? Omple el formulari a mà. Tipus: «SMB (Samba, recurs compartit de Windows)», «WebDAV (Nextcloud, Synology i altres)», «Servidor multimèdia DLNA (Jellyfin, NAS, caixa de TV)» o, des de la compilació 20, «Plex Media Server», que obre la pàgina de [Plex Media Server, sense plex.tv](#plex-media-server-without-plextv). Després Nom, «Nom o adreça del servidor» (un nom o una adreça; una adreça completa com `smb://nas/photos`, `\\nas\photos` o `https://nas:5006/photos` omple els altres camps), «Port (opcional)» quan no és l'habitual, «Recurs compartit» per a SMB o «Camí de l'adreça WebDAV» per a WebDAV, «Carpeta inicial (opcional)», «Nom d’usuari» i «Contrasenya», i «Connexió segura (HTTPS)» per a WebDAV.
 5. SMB: un cop escrits el servidor i el nom d'usuari, «Tria un recurs compartit» llista els recursos compartits del servidor.
 6. DLNA: un servidor multimèdia no té nom d'usuari ni contrasenya. Indica el servidor, el port i el «Camí de la descripció» de la seva descripció de dispositiu (`/rootDesc.xml` per a minidlna), o enganxa l'adreça sencera, com ara `http://192.168.1.10:8200/rootDesc.xml`, al camp del servidor.
-7. Toca «Prova la connexió». Respon «Connectat, N elements a la carpeta inicial», o diu per què ha fallat. Després toca Desa, a la part inferior del formulari.
+7. Toca «Prova la connexió». Respon «Connectat, N elements a la carpeta inicial», o diu per què ha fallat. Després toca Desa, a la part inferior del formulari. Des de la compilació 22, tancar un formulari on has escrit (X, Enrere) pregunta primer «Vols descartar els canvis?», també a les pàgines de Plex i de la càmera, i el mateix passa si tries un servidor Plex o una càmera trobats a la xarxa un cop has escrit alguna cosa.
 
 Un nom d'usuari amb la contrasenya buida s'envia tal qual: un Freebox Server vol `freebox` i cap contrasenya per als seus discos. Per canviar o eliminar un recurs compartit més endavant, fes servir el llapis que hi ha al costat a la pàgina Recursos compartits de xarxa.
 
@@ -617,8 +617,9 @@ Des de la compilació 20, la mateixa aplicació d'Android funciona a Android TV 
 
 ### Mou-te amb el comandament
 
-- Les fletxes mouen el marc, OK obre allò on és, Enrere torna enrere. Des d'una pestanya, Enrere va al menú lateral, després a Fotos, després fora de l'aplicació.
-- Canal amunt i avall desplacen una pàgina cada vegada.
+- Les fletxes mouen el marc, OK obre allò on és, Enrere torna enrere. Des d'una pestanya, Enrere va al menú lateral, després a Fotos, després fora de l'aplicació. En una llista d'opcions, com el tipus d'un recurs compartit o un paràmetre, les fletxes només mouen el marc i OK tria l'opció (des de la compilació 22; abans, les fletxes canviaven l'opció).
+- Canal amunt i avall desplacen una pàgina cada vegada. Des de la compilació 22 les graelles de fotos mostren uns sis mosaics per fila dins dels marges de la pantalla, amb miniatures més nítides dels fitxers del mateix dispositiu que es mantenen suaus en els detalls fins, i les pàgines que en un telèfon tenen una capçalera amb imatge (la llista 360°, Preferits, els àlbums del dispositiu) mostren en canvi una sola barra.
+- Des de la compilació 22 el marc comença al primer element de cada pàgina (el primer mosaic de la llista 360°, el camp del correu un cop confirmada l'adreça del servidor), es manté dins dels marges de la pantalla quan una graella es desplaça, i puja d'una graella a la fila o als filtres que té a sobre en lloc d'anar al botó Enrere. Dreta des d'un recurs compartit de xarxa o d'una càmera arriba al seu botó d'edició, i el resultat de «Prova la connexió» es desplaça fins que és visible.
 - Als visualitzadors funcionen les tecles de reproducció i pausa, avançament ràpid, rebobinat, següent i anterior del comandament, i la tecla d'informació mostra els detalls d'una foto o d'un vídeo.
 
 ### Fotos i vídeos amb el comandament
@@ -632,7 +633,7 @@ Des de la compilació 20, la mateixa aplicació d'Android funciona a Android TV 
 
 ### El paràmetre Disposició per a comandament a distància
 
-Configuració, Preferències, «Disposició per a comandament a distància»: «Marcs de focus grans i tecles del comandament, sense els controls que necessiten pantalla tàctil. Automàtica l'activa a Android TV i Google TV.» Automàtica és el valor per defecte; Activada va bé per a una tauleta controlada amb un teclat o un comandament de joc; Desactivada la desactiva en un televisor. El paràmetre només existeix a Android. Les fletxes i OK funcionen als visualitzadors amb un teclat o un comandament de joc sigui quin sigui el paràmetre.
+Configuració, Preferències, «Disposició per a comandament a distància»: «Marcs de focus grans i tecles del comandament, sense els controls que necessiten pantalla tàctil. Automàtica l'activa a Android TV i Google TV.» Automàtica és el valor per defecte; Activada va bé per a una tauleta controlada amb un teclat o un comandament de joc; Desactivada la desactiva en un televisor. El paràmetre només existeix a Android. Des de la compilació 22 un canvi s'aplica de seguida a la pàgina oberta, que es queda on era (abans, Configuració es tornava a obrir a Avançat, damunt d'una pantalla d'inici per on Enrere havia de passar). Les fletxes i OK funcionen als visualitzadors amb un teclat o un comandament de joc sigui quin sigui el paràmetre.
 
 ### Limitacions
 
@@ -650,7 +651,7 @@ Configuració, Preferències, «Disposició per a comandament a distància»: «
 
 Les preses 360° es barregen amb totes les altres fotos, i la gent demana a l'Immich una manera de filtrar esferes i panorames ([discussió #12824](https://github.com/immich-app/immich/discussions/12824)). L'aplicació Immich no té cap llista així.
 
-Immuch360 posa un distintiu 360° a les miniatures de les fotos 360° (en una carpeta d'un recurs compartit de xarxa, també als vídeos 360°) i una entrada 360° a dalt de la pestanya Biblioteca. Des de la compilació 18 aquesta llista conté, amb un servidor, les fotos i vídeos que el servidor marca com a 360°, els fitxers en brut d'Insta360 pel seu nom, les fotos que una càmera 360° ha unit ella mateixa i les que has triat veure com a 360°, més el que ha trobat l'escaneig del dispositiu; sense servidor, el que ha trobat l'escaneig del dispositiu i les que has triat veure com a 360°. Cada element apareix una sola vegada, siguin on siguin les seves còpies, els més recents primer.
+Immuch360 posa un distintiu 360° a les miniatures de les fotos 360° (en una carpeta d'un recurs compartit de xarxa, també als vídeos 360°) i una entrada 360° a dalt de la pestanya Biblioteca. Des de la compilació 18 aquesta llista conté, amb un servidor, les fotos i vídeos que el servidor marca com a 360°, els fitxers en brut d'Insta360 pel seu nom, les fotos que una càmera 360° ha unit ella mateixa i les que has triat veure com a 360°, més el que ha trobat l'escaneig del dispositiu; sense servidor, el que ha trobat l'escaneig del dispositiu i les que has triat veure com a 360°. Cada element apareix una sola vegada, siguin on siguin les seves còpies, els més recents primer. Des de la compilació 22 una fila «Als recursos compartits de xarxa» apareix sobre la graella amb les fotos i els vídeos 360° dels teus recursos compartits, els més recents primer: l'aplicació els coneix quan en mostra la carpeta o els obre (no explora cap recurs compartit pel seu compte), els conserva d'un inici al següent i els oblida amb el seu recurs compartit. En un televisor, que no té fotos pròpies, és aquesta fila la que omple la llista 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="La llista 360°, 4 elements, amb el full Data obert: Tots, l'any 2026 amb el seu recompte, Tot l'any, agost de 2026 i abril de 2026 amb els seus recomptes, l'any 2025 i Personalitzat">
 
@@ -661,7 +662,7 @@ Immuch360 posa un distintiu 360° a les miniatures de les fotos 360° (en una ca
 3. Amb un servidor, tria on és el contingut: «Al servidor», «En aquest dispositiu» i «Compartit amb mi» quan n'hi ha.
 4. Tria el tipus: Fotos, Vídeos, 3D, VR180.
 5. Quan la llista conté dues càmeres o més, una segona fila les llista per la marca i el model EXIF, amb els seus recomptes. Un fitxer en brut sense aquestes dades rep el nom de la marca de la seva extensió (Insta360, GoPro, DJI); qualsevol altre és «Càmera desconeguda».
-6. Dins d'un grup (els llocs, Fotos i Vídeos, 3D i VR180, les càmeres) els xips se sumen; entre grups, restringeixen la llista. Neteja ho restableix tot; «Cap foto ni vídeo 360° coincideix amb aquests filtres» vol dir que els filtres no deixen res.
+6. Dins d'un grup (els llocs, Fotos i Vídeos, 3D i VR180, les càmeres) els xips se sumen; entre grups, restringeixen la llista. Els xips Data, Fotos i Vídeos també s'apliquen a la fila dels recursos compartits de xarxa; 3D, VR180 i les càmeres l'amaguen, ja que l'aplicació no coneix cap d'aquestes dades per a un fitxer d'un recurs compartit. Neteja ho restableix tot; «Cap foto ni vídeo 360° coincideix amb aquests filtres» vol dir que els filtres no deixen res.
 7. Obre una foto o un vídeo. A la vista immersiva de les Quest, anterior i següent segueixen la llista filtrada.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Tot el que fa l'aplicació mòbil oficial de l'Immich és aquí: còpia de segur
 
 Per ensenyar una foto 360° a algú que no té l'aplicació, comparteix-la amb un enllaç compartit de l'Immich: l'aplicació web de l'Immich mostra una foto 360° com una esfera al seu navegador.
 
-La compilació actual, la compilació 21 (versió 3.3.0-rc.0, número de compilació 3030019), es basa en l'Immich 3.3.0-rc.0 (Immich `main`, encara no és una versió estable). La compilació 19 es va provar amb un servidor Immich 3.2, i les compilacions 20 i 21 no canvien res del que l'aplicació demana al servidor. Informa dels problemes a [Issues](https://github.com/freeKC/Immuch360/issues), no al projecte Immich. Per a la documentació completa de l'Immich, consulta [immich.app](https://immich.app).
+La compilació actual, la compilació 22 (versió 3.3.0-rc.0, número de compilació 3030020), es basa en l'Immich `main` del 10 d'octubre de 2026 (versió 3.3.0-rc.0, encara no és una versió estable). La compilació 22 es va provar amb un servidor Immich 3.2.4 i amb un servidor compilat a partir d'aquest mateix Immich `main`: inici de sessió, cronologia, àlbums, fotos i vídeos 360°, reproducció de vídeo i pujades, sense cap error de l'API. Informa dels problemes a [Issues](https://github.com/freeKC/Immuch360/issues), no al projecte Immich. Per a la documentació completa de l'Immich, consulta [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Comparat amb l'aplicació Immich i altres aplicacions
@@ -1037,6 +1038,8 @@ Quan el que no ho aguanta és la descodificació d'un vídeo del servidor, no el
 - **Tria tu mateix el renderitzador.** A Configuració, Avançat, activa «Resolució de problemes»: apareix una entrada «Renderitzador de vídeo 360°», en «Automàtic» per defecte. També ofereix «Connector, mida completa», «Connector, com a màxim 4096 d'amplada», «Connector, com a màxim 2880 d'amplada» i «Pla, sense la vista 360°», per al proper vídeo 360° que obris. A sota, «Última mesura» indica la mida a què es va dibuixar l'últim vídeo 360°, els seus fotogrames per segon, el xip gràfic i el descodificador: copia-ho en un informe d'error. Tornar a triar «Automàtic», fins i tot quan ja és l'opció triada, oblida el que s'havia mesurat, i els propers vídeos 360° es tornen a mesurar.
 - **Què descodifica el xip.** Configuració, Avançat, «Descodificadors de vídeo d’aquest dispositiu» llista el que descodifica el xip gràfic en ús, tal com ho informa Direct3D 11, i l'aplicació corregeix aquesta llista amb el que ha mesurat durant la reproducció: l'opció «Font del vídeo» i la comprovació dels dos objectius dels vídeos en brut la segueixen. L'H.264 de més de 4096 píxels d'amplada (el 5,7K de les càmeres 360°) el descodifica el processador, perquè cap dels dos xips del portàtil de proves l'accepta.
 
+**Per als desenvolupadors.** El reproductor 360° dibuixa a través d'un renderitzador propi, construït sobre libmpv i un connector media_kit_video modificat: mpv dibuixa cada fotograma en una textura del xip gràfic, i una passada d'OpenGL ES 3.0 dibuixa la vista a la textura que mostra Flutter, sense cap còpia a través del processador. Per què es va construir així, com funciona, què s'ha mesurat i què es pot ajustar: [el renderitzador de vídeo 360° d'escriptori](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Comparada amb les aplicacions de telèfon
 
 - **La còpia de seguretat funciona mentre l'aplicació és oberta** (o minimitzada), no en segon pla amb la finestra tancada. Tancar la finestra mentre hi ha pujades en curs, o mentre l'ordinador està compartit, demana confirmació primer.
@@ -1110,7 +1113,7 @@ L'aplicació és a Google Play per a telèfons i tauletes; la versió de l'App S
 
 - **Telèfons i tauletes Android**
   - Avui: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o l'APK de la pàgina [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` per a un telèfon (l'universal `Immuch360-v<version>-release.apk` funciona a tot arreu, `-armeabi-v7a` és per a telèfons antics de 32 bits, i el fitxer `.aab` és per a Google Play, no per instal·lar manualment). La compilació de GitHub sol anar per davant de la botiga. En tots dos casos s'instal·la al costat de l'aplicació oficial de l'Immich (paquet `com.aprogsys.immuch360`).
-  - Aviat: a Google Play, la compilació 20 està publicada des del 7 d'octubre de 2026, en lloc de la compilació 18; la compilació 21 no canvia res en telèfons i tauletes.
+  - Aviat: a Google Play, la compilació 22 es va enviar el 10 d'octubre de 2026 en lloc de la compilació 20 (publicada des del 7 d'octubre); porta els canvis de l'Immich del mes d'octubre i les correccions per a televisor.
 - **iPhone i iPad**
   - Avui: espera la revisió d'Apple. La versió en revisió té les funcions de la compilació 11: la pujada a l'Immich i l'elecció Font del vídeo (compilació 15) i els fitxers en brut d'Insta360 (compilació 16) arribaran amb una actualització posterior de l'App Store. El codi font es compila amb Xcode o a Codemagic, consulta [Compila-la tu mateix](#build-it-yourself).
   - Aviat: App Store, en revisió.
@@ -1157,7 +1160,7 @@ En aquest repositori no hi ha cap secret: la clau de signatura d'Android es desa
 
 ### Branques
 
-- **`main`**: l'Immich `main` al commit on es basa `immuch360` (29 de setembre de 2026 per a les compilacions actuals), mai modificat; avança quan el fork es rebasa sobre un Immich més nou.
+- **`main`**: l'Immich `main` al commit on es basa `immuch360` (10 d'octubre de 2026 per a les compilacions actuals), mai modificat; avança quan el fork es rebasa sobre un Immich més nou.
 - **`immuch360`**: els canvis d'aquest fork sobre l'Immich, inclòs Immuch360 Desktop des del 9 d'octubre de 2026. Cada publicació indica en quina versió de l'Immich es basa.
 - **`desktop`**: on es va construir Immuch360 Desktop, la versió per a ordinador, sobre `immuch360`, fins que s'hi va fusionar el 9 d'octubre de 2026 perquè telèfons, cascos, televisors i ordinadors surtin de les mateixes fonts. Ara segueix `immuch360` i porta les etiquetes de les versions prèvies d'escriptori ([compilació d'escriptori 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) a partir del commit 21f285c34, [compilació d'escriptori 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) a partir de 5b723bd25, [compilació d'escriptori 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) a partir de la fusió del reproductor de vídeo 360° el 10 d'octubre de 2026). La nova feina d'escriptori hi arriba primer i s'incorpora a `immuch360` amb la compilació d'escriptori que la publica. La versió per a ordinador no canvia res a `mobile/android` ni a `mobile/ios`.
 

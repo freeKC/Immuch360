@@ -17,10 +17,10 @@ Ia untuk mereka yang merakam dengan kamera 360° (Insta360, GoPro MAX, DJI Osmo 
 
 | Platform | Di mana untuk mendapatkannya | Status pada 10 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 20 di Google Play sejak 7 Oktober 2026, binaan 21 di GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 22 di GitHub, dihantar ke Google Play pada 10 Oktober 2026 (binaan 20 tersedia di sana sejak 7 Oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.0 menunggu semakan Apple; sementara itu, [bina sendiri](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | penyenaraian diluluskan, binaan 21 dalam semakan Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 21 di GitHub; penyenaraian Google Play untuk TV dalam semakan Google sejak 9 Oktober 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | penyenaraian diluluskan, binaan 21 dalam semakan Meta, binaan 22 di saluran alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 22 di GitHub; penyenaraian Google Play untuk TV dalam semakan Google sejak 9 Oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | binaan desktop 3 pada Windows: foto, video rata dan video 360°; macOS dan Linux kemudian |
 
 *Status dikemas kini pada setiap keluaran; butirannya ada di [Di mana untuk mendapatkannya](#where-to-get-it).*
@@ -196,7 +196,7 @@ Ia menemui pelayan dalam rangkaian anda dengan sendirinya, dan memainkan fail se
 4. Tiada dalam senarai? Isi borang secara manual. Jenis: "SMB (Samba, perkongsian Windows)", "WebDAV (Nextcloud, Synology dan lain-lain)", "Pelayan media DLNA (Jellyfin, NAS, kotak TV)" atau, dari binaan 20, "Plex Media Server", yang membuka halaman [Plex Media Server, tanpa plex.tv](#plex-media-server-without-plextv). Kemudian Nama, "Nama atau alamat pelayan" (nama atau alamat; alamat penuh seperti `smb://nas/photos`, `\\nas\photos` atau `https://nas:5006/photos` mengisi medan lain), "Port (pilihan)" apabila ia bukan port biasa, "Perkongsian" untuk SMB atau "Laluan alamat WebDAV" untuk WebDAV, "Folder permulaan (pilihan)", "Nama pengguna" dan "Kata laluan", serta "Sambungan selamat (HTTPS)" untuk WebDAV.
 5. SMB: setelah pelayan dan nama pengguna ditaip, "Pilih perkongsian" menyenaraikan perkongsian pada pelayan.
 6. DLNA: pelayan media tiada nama pengguna atau kata laluan. Berikan pelayan, port dan "Laluan perihalan" bagi perihalan perantinya (`/rootDesc.xml` untuk minidlna), atau tampal seluruh alamat, seperti `http://192.168.1.10:8200/rootDesc.xml`, dalam medan pelayan.
-7. Ketik "Uji sambungan". Jawapannya ialah "Disambungkan, N entri dalam folder permulaan", atau sebab kegagalannya. Kemudian ketik Simpan, di bahagian bawah borang.
+7. Ketik "Uji sambungan". Jawapannya ialah "Disambungkan, N entri dalam folder permulaan", atau sebab kegagalannya. Kemudian ketik Simpan, di bahagian bawah borang. Dari binaan 22, menutup borang yang telah anda isi (X, Kembali) bertanya "Buang perubahan?" dahulu, pada halaman Plex dan kamera juga, dan begitu juga apabila memilih Plex atau kamera yang ditemui setelah sesuatu ditaip.
 
 Nama pengguna dengan kata laluan kosong dihantar sebegitu: Freebox Server memerlukan `freebox` tanpa kata laluan untuk cakeranya. Untuk menukar atau mengalih keluar perkongsian kemudian, gunakan ikon pensel di sebelahnya pada halaman Perkongsian rangkaian.
 
@@ -617,8 +617,9 @@ Dari binaan 20 aplikasi Android yang sama berjalan pada Android TV dan Google TV
 
 ### Bergerak dengan alat kawalan jauh
 
-- Anak panah menggerakkan bingkai, OK membuka apa yang dipilihnya, Kembali pergi ke belakang. Dari tab, Kembali pergi ke menu sisi, kemudian ke Photos (Foto), kemudian keluar daripada aplikasi.
-- Saluran atas dan bawah menatal satu halaman pada satu masa.
+- Anak panah menggerakkan bingkai, OK membuka apa yang dipilihnya, Kembali pergi ke belakang. Dari tab, Kembali pergi ke menu sisi, kemudian ke Photos (Foto), kemudian keluar daripada aplikasi. Dalam senarai pilihan, seperti jenis perkongsian atau tetapan, anak panah hanya menggerakkan bingkai dan OK memilih pilihan itu (dari binaan 22; sebelum ini, anak panah menukar pilihan).
+- Saluran atas dan bawah menatal satu halaman pada satu masa. Dari binaan 22 grid foto menunjukkan kira-kira enam jubin setiap baris di dalam margin skrin, dengan lakaran kecil yang lebih tajam bagi fail peranti itu sendiri yang kekal licin pada butiran halus, dan halaman yang mempunyai pengepala bergambar pada telefon (senarai 360°, Favorites (Kegemaran), album peranti) sebaliknya menunjukkan satu bar sahaja.
+- Dari binaan 22 bingkai bermula pada item pertama setiap halaman (jubin pertama senarai 360°, medan e-mel setelah alamat pelayan disahkan), kekal di dalam margin skrin semasa grid ditatal, dan naik dari grid ke baris atau penapis di atasnya dan bukannya ke butang Kembali. Kanan dari perkongsian rangkaian atau kamera sampai ke butang editnya, dan hasil "Uji sambungan" ditatal sehingga kelihatan.
 - Dalam pemapar, kekunci main dan jeda, ke hadapan pantas, undur, seterusnya dan sebelumnya pada alat kawalan jauh berfungsi, dan kekunci info menunjukkan butiran foto atau video.
 
 ### Foto dan video dengan alat kawalan jauh
@@ -632,7 +633,7 @@ Dari binaan 20 aplikasi Android yang sama berjalan pada Android TV dan Google TV
 
 ### Tetapan Susun atur alat kawalan jauh
 
-Settings, Preferences (Keutamaan), "Susun atur alat kawalan jauh": "Bingkai fokus besar dan kekunci alat kawalan jauh, tanpa kawalan yang memerlukan skrin sentuh. Automatik menghidupkannya pada Android TV dan Google TV." Automatik ialah lalai; Hidup sesuai untuk tablet yang dikawal dengan papan kekunci atau pad permainan; Mati mematikannya pada TV. Tetapan ini hanya wujud pada Android. Anak panah dan OK berfungsi dalam pemapar dengan papan kekunci atau pad permainan tanpa mengira tetapan.
+Settings, Preferences (Keutamaan), "Susun atur alat kawalan jauh": "Bingkai fokus besar dan kekunci alat kawalan jauh, tanpa kawalan yang memerlukan skrin sentuh. Automatik menghidupkannya pada Android TV dan Google TV." Automatik ialah lalai; Hidup sesuai untuk tablet yang dikawal dengan papan kekunci atau pad permainan; Mati mematikannya pada TV. Tetapan ini hanya wujud pada Android. Dari binaan 22 perubahan terpakai serta-merta pada halaman yang terbuka, yang kekal di tempatnya (sebelum ini, Settings dibuka semula pada Lanjutan, di atas skrin mula yang perlu dilalui oleh Kembali). Anak panah dan OK berfungsi dalam pemapar dengan papan kekunci atau pad permainan tanpa mengira tetapan.
 
 ### Had
 
@@ -650,7 +651,7 @@ Settings, Preferences (Keutamaan), "Susun atur alat kawalan jauh": "Bingkai foku
 
 Rakaman 360° bercampur dengan semua foto lain, dan orang meminta Immich menyediakan cara untuk menapis sfera dan panorama ([perbincangan #12824](https://github.com/immich-app/immich/discussions/12824)). Aplikasi Immich tiada senarai sebegitu.
 
-Immuch360 meletakkan lencana 360° pada lakaran kecil foto 360° (dalam folder perkongsian rangkaian, pada video 360° juga), dan entri 360° di bahagian atas tab Pustaka. Dari binaan 18 senarai itu mengandungi, dengan pelayan, foto dan video yang ditandakan oleh pelayan sebagai 360°, fail Insta360 mentah melalui namanya, foto yang dicantumkan sendiri oleh kamera 360° dan yang anda pilih untuk dilihat sebagai 360°, serta apa yang ditemui oleh imbasan peranti; tanpa pelayan, apa yang ditemui oleh imbasan peranti dan yang anda pilih untuk dilihat sebagai 360°. Setiap satu muncul sekali, di mana pun salinannya berada, yang terbaharu dahulu.
+Immuch360 meletakkan lencana 360° pada lakaran kecil foto 360° (dalam folder perkongsian rangkaian, pada video 360° juga), dan entri 360° di bahagian atas tab Pustaka. Dari binaan 18 senarai itu mengandungi, dengan pelayan, foto dan video yang ditandakan oleh pelayan sebagai 360°, fail Insta360 mentah melalui namanya, foto yang dicantumkan sendiri oleh kamera 360° dan yang anda pilih untuk dilihat sebagai 360°, serta apa yang ditemui oleh imbasan peranti; tanpa pelayan, apa yang ditemui oleh imbasan peranti dan yang anda pilih untuk dilihat sebagai 360°. Setiap satu muncul sekali, di mana pun salinannya berada, yang terbaharu dahulu. Dari binaan 22 baris "Dalam perkongsian rangkaian" muncul di atas grid dengan foto dan video 360° daripada perkongsian anda, yang terbaharu dahulu: aplikasi mengenalinya apabila ia menunjukkan foldernya atau membukanya (ia tidak menggeledah perkongsian dengan sendirinya), menyimpannya dari satu permulaan ke permulaan seterusnya dan melupakannya bersama perkongsiannya. Pada TV, yang tidak mempunyai foto sendiri, baris itulah yang mengisi senarai 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Senarai 360°, 4 item, dengan helaian Date dibuka: Semua, tahun 2026 dengan bilangannya, Sepanjang tahun, Ogos 2026 dan April 2026 dengan bilangannya, tahun 2025, dan Custom">
 
@@ -661,7 +662,7 @@ Immuch360 meletakkan lencana 360° pada lakaran kecil foto 360° (dalam folder p
 3. Dengan pelayan, pilih di mana media berada: "Pada pelayan", "On this device", dan "Shared with me" (Dikongsi dengan saya) apabila ada.
 4. Pilih jenis: Photos, Video, 3D, VR180.
 5. Apabila senarai mengandungi dua kamera atau lebih, baris kedua menyenaraikannya mengikut jenama dan model EXIF, dengan bilangannya. Fail mentah tanpa maklumat itu dinamakan mengikut jenama sambungannya (Insta360, GoPro, DJI), selain itu ialah "Kamera tidak diketahui".
-6. Dalam satu kumpulan (lokasi, Photos dan Video, 3D dan VR180, kamera) cip dijumlahkan; antara kumpulan ia mengecilkan senarai. Bersihkan menetapkan semula semuanya; "Tiada foto atau video 360° yang sepadan dengan penapis ini" bermaksud penapis tidak meninggalkan apa-apa.
+6. Dalam satu kumpulan (lokasi, Photos dan Video, 3D dan VR180, kamera) cip dijumlahkan; antara kumpulan ia mengecilkan senarai. Cip Date, Photos dan Video terpakai pada baris perkongsian rangkaian juga; 3D, VR180 dan kamera menyembunyikannya, kerana aplikasi tidak mengetahui satu pun maklumat itu bagi fail perkongsian. Bersihkan menetapkan semula semuanya; "Tiada foto atau video 360° yang sepadan dengan penapis ini" bermaksud penapis tidak meninggalkan apa-apa.
 7. Buka foto atau video. Dalam paparan imersif Quest, sebelumnya dan seterusnya mengikut senarai yang ditapis.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Semua yang dilakukan oleh aplikasi mudah alih rasmi Immich ada di sini: sandaran
 
 Untuk menunjukkan foto 360° kepada seseorang yang tiada aplikasi ini, kongsikannya dengan pautan kongsi Immich: aplikasi web Immich memaparkan foto 360° sebagai sfera dalam pelayar mereka.
 
-Binaan semasa, binaan 21 (versi 3.3.0-rc.0, nombor binaan 3030019), berasaskan Immich 3.3.0-rc.0 (Immich `main`, belum keluaran stabil). Binaan 19 telah diuji dengan pelayan Immich 3.2, dan binaan 20 dan 21 tidak mengubah apa-apa dalam apa yang diminta oleh aplikasi daripada pelayan. Sila laporkan masalah dalam [Issues](https://github.com/freeKC/Immuch360/issues), bukan kepada projek Immich. Untuk dokumentasi penuh Immich sendiri, lihat [immich.app](https://immich.app).
+Binaan semasa, binaan 22 (versi 3.3.0-rc.0, nombor binaan 3030020), berasaskan Immich `main` bertarikh 10 Oktober 2026 (versi 3.3.0-rc.0, belum keluaran stabil). Binaan 22 telah diuji dengan pelayan Immich 3.2.4 dan dengan pelayan yang dibina daripada Immich `main` yang sama itu: log masuk, garis masa, album, foto dan video 360°, main balik video dan muat naik, tanpa sebarang ralat API. Sila laporkan masalah dalam [Issues](https://github.com/freeKC/Immuch360/issues), bukan kepada projek Immich. Untuk dokumentasi penuh Immich sendiri, lihat [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Perbandingan dengan aplikasi Immich dan aplikasi lain
@@ -1037,6 +1038,8 @@ Apabila penyahkodan video pelayan yang tidak mampu mengikuti, bukan lukisan (vid
 - **Pilih pemapar sendiri.** Dalam Settings, Lanjutan, hidupkan "Menyelesaikan masalah": entri "Pemapar video 360°" muncul, Automatik secara lalai. Ia juga menawarkan "Plugin, saiz penuh", "Plugin, paling lebar 4096", "Plugin, paling lebar 2880" dan "Rata, tanpa paparan 360°", untuk video 360° seterusnya yang anda buka. Di bawahnya, "Ukuran terakhir" menamakan saiz video 360° terakhir dilukis, bingkai sesaatnya, cip grafik dan penyahkod: salinnya ke dalam laporan pepijat. Memilih "Automatik" sekali lagi, walaupun ia sudah pilihan semasa, melupakan apa yang telah diukur, dan video 360° seterusnya diukur semula.
 - **Apa yang dinyahkod oleh cip.** Settings, Lanjutan, "Penyahkod video peranti ini" menyenaraikan apa yang dinyahkod oleh cip grafik yang digunakan, seperti yang dilaporkan oleh Direct3D 11, dan aplikasi membetulkan senarai itu dengan apa yang diukurnya semasa main balik: tetapan Sumber video dan semakan dua lensa video mentah mengikutinya. H.264 yang lebih lebar daripada 4096 piksel (5.7K kamera 360°) dinyahkod oleh pemproses, kerana kedua-dua cip komputer riba ujian tidak menerimanya.
 
+**Untuk pembangun.** Pemain 360° melukis melalui pemaparnya sendiri, dibina atas libmpv dan pemalam media_kit_video yang ditampal: mpv melukis setiap bingkai ke dalam tekstur pada cip grafik, dan satu laluan OpenGL ES 3.0 melukis paparan ke dalam tekstur yang ditunjukkan oleh Flutter, tanpa salinan melalui pemproses. Mengapa ia dibina sedemikian, cara ia berfungsi, apa yang diukur dan apa yang boleh dilaras: [pemapar video 360° desktop](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Berbanding dengan aplikasi telefon
 
 - **Sandaran berjalan semasa aplikasi dibuka** (atau diminimumkan), bukan di latar belakang dengan tetingkap ditutup. Menutup tetingkap semasa muat naik berjalan, atau semasa komputer dikongsi, akan bertanya dahulu.
@@ -1110,7 +1113,7 @@ Aplikasi ini ada di Google Play untuk telefon dan tablet; versi App Store sedang
 
 - **Telefon dan tablet Android**
   - Hari ini: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), atau APK pada halaman [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk telefon (`Immuch360-v<version>-release.apk` universal berfungsi di mana-mana, `-armeabi-v7a` untuk telefon 32 bit yang lebih lama, dan fail `.aab` untuk Google Play, bukan untuk sideload). Binaan GitHub biasanya lebih awal daripada gedung. Walau bagaimanapun, ia dipasang di sebelah aplikasi rasmi Immich (pakej `com.aprogsys.immuch360`).
-  - Tidak lama lagi: di Google Play, binaan 20 tersedia sejak 7 Oktober 2026, menggantikan binaan 18; binaan 21 tidak mengubah apa-apa pada telefon dan tablet.
+  - Tidak lama lagi: di Google Play, binaan 22 telah dihantar pada 10 Oktober 2026 menggantikan binaan 20 (tersedia sejak 7 Oktober); ia membawa perubahan Immich bulan Oktober dan pembaikan untuk TV.
 - **iPhone dan iPad**
   - Hari ini: menunggu semakan Apple. Versi yang sedang disemak membawa ciri binaan 11: muat naik ke Immich dan pilihan Sumber video (binaan 15) serta fail Insta360 mentah (binaan 16) akan datang bersama kemas kini App Store yang kemudian. Kod sumber dibina dengan Xcode atau pada Codemagic, lihat [Bina sendiri](#build-it-yourself).
   - Tidak lama lagi: App Store, sedang disemak.
@@ -1157,7 +1160,7 @@ Tiada rahsia disimpan dalam repositori ini: kunci penandatanganan Android disimp
 
 ### Cabang
 
-- **`main`**: Immich `main` pada komit yang menjadi asas `immuch360` (29 September 2026 untuk binaan semasa), tidak pernah diubah; ia bergerak ke hadapan apabila fork diasaskan semula (rebase) pada Immich yang lebih baharu.
+- **`main`**: Immich `main` pada komit yang menjadi asas `immuch360` (10 Oktober 2026 untuk binaan semasa), tidak pernah diubah; ia bergerak ke hadapan apabila fork diasaskan semula (rebase) pada Immich yang lebih baharu.
 - **`immuch360`**: perubahan fork ini di atas Immich, termasuk Immuch360 Desktop sejak 9 Oktober 2026. Setiap keluaran menyatakan versi Immich yang menjadi asasnya.
 - **`desktop`**: tempat Immuch360 Desktop, versi komputer, dibina di atas `immuch360`, sehingga ia digabungkan ke dalamnya pada 9 Oktober 2026 supaya telefon, set kepala, TV dan komputer dihantar daripada sumber yang sama. Kini ia mengikuti `immuch360` dan membawa tag pra-keluaran desktop ([binaan desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) daripada komit 21f285c34, [binaan desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) daripada 5b723bd25, [binaan desktop 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) daripada penggabungan pemain video 360° pada 10 Oktober 2026). Kerja desktop baharu sampai di situ dahulu dan menyertai `immuch360` bersama binaan desktop yang menghantarnya. Versi komputer tidak mengubah apa-apa di bawah `mobile/android` dan `mobile/ios`.
 

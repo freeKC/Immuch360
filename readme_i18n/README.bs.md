@@ -17,10 +17,10 @@ Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 3
 
 | Platforma | Gdje je nabaviti | Stanje na dan 10. oktobra 2026. |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 na Google Playu od 7. oktobra 2026., build 21 na GitHubu |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 na GitHubu, poslan na Google Play 10. oktobra 2026. (build 20 je tamo objavljen od 7. oktobra) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | verzija 3.3.0 čeka Appleov pregled; u međuvremenu [napravite je sami](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | unos odobren, build 21 na Metinom pregledu |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 na GitHubu; unos na Google Playu za televizore je na Googleovom pregledu od 9. oktobra 2026. |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | unos odobren, build 21 na Metinom pregledu, build 22 na alfa kanalu |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 na GitHubu; unos na Google Playu za televizore je na Googleovom pregledu od 9. oktobra 2026. |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Pregledni ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktop build 3 na Windowsu: fotografije, ravni i 360° videozapisi; macOS i Linux kasnije |
 
 *Stanja se ažuriraju sa svakim izdanjem; detalji su u odjeljku [Gdje je nabaviti](#where-to-get-it).*
@@ -196,7 +196,7 @@ Sama pronalazi servere na vašoj mreži i reproducira datoteke uživo u istim pr
 4. Nije na listi? Popunite obrazac ručno. Tip: „SMB (Samba, Windows share)“ (Samba, Windows dijeljenje), „WebDAV (Nextcloud, Synology and others)“ (Nextcloud, Synology i drugi), „DLNA media server (Jellyfin, NAS, TV box)“ (DLNA medijski server) ili, od builda 20, „Plex Media Server“, koji otvara stranicu iz [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv). Zatim Name (Naziv), „Server name or address“ (Naziv ili adresa servera; naziv ili adresa, a puna adresa kao `smb://nas/photos`, `\\nas\photos` ili `https://nas:5006/photos` popunjava ostala polja), „Port (optional)“ (Port, opcionalno) kada nije uobičajeni, „Share“ (Dijeljeni resurs) za SMB ili „Path of the WebDAV address“ (Putanja WebDAV adrese) za WebDAV, „Start folder (optional)“ (Početni folder, opcionalno), „User name“ (Korisničko ime) i „Password“ (Lozinka), te „Secure connection (HTTPS)“ (Sigurna veza) za WebDAV.
 5. SMB: kada su server i korisničko ime upisani, „Choose a share“ (Odaberite dijeljeni resurs) navodi dijeljene resurse servera.
 6. DLNA: medijski server nema korisničko ime ni lozinku. Unesite server, port i „Description path“ (Putanja opisa) njegovog opisa uređaja (`/rootDesc.xml` za minidlna), ili zalijepite cijelu adresu, npr. `http://192.168.1.10:8200/rootDesc.xml`, u polje servera.
-7. Dodirnite „Test the connection“ (Testiraj vezu). Odgovor je „Connected, N entries in the start folder“ (Povezano, broj stavki u početnom folderu: N), ili aplikacija kaže zašto nije uspjelo. Zatim dodirnite Save (Sačuvaj), na dnu obrasca.
+7. Dodirnite „Test the connection“ (Testiraj vezu). Odgovor je „Connected, N entries in the start folder“ (Povezano, N stavki u početnom folderu), ili aplikacija kaže zašto nije uspjelo. Zatim dodirnite Save (Sačuvaj), na dnu obrasca. Od builda 22 zatvaranje obrasca u koji ste nešto upisali (X, Back) prvo pita „Discard the changes?“ (Odbaciti promjene?), i na stranicama za Plex i kameru, a isto pita i odabir pronađenog Plexa ili kamere nakon što je nešto upisano.
 
 Korisničko ime s praznom lozinkom šalje se tako kakvo jeste: Freebox Server traži `freebox` i nikakvu lozinku za svoje diskove. Da kasnije promijenite ili uklonite dijeljeni resurs, koristite olovku pored njega na stranici Network shares.
 
@@ -617,8 +617,9 @@ Od builda 20 ista Android aplikacija radi na Android TV-u i Google TV-u, s dalji
 
 ### Kretanje daljinskim upravljačem
 
-- Strelice pomjeraju okvir, OK otvara ono na čemu je, Back (Natrag) vraća nazad. Iz kartice Back ide u bočni meni, zatim na Photos, zatim izlazi iz aplikacije.
-- Kanal gore i dolje pomjeraju po jednu stranicu.
+- Strelice pomjeraju okvir, OK otvara ono na čemu je, Back (Natrag) vraća nazad. Iz kartice Back ide u bočni meni, zatim na Photos, zatim izlazi iz aplikacije. U listi izbora, kao što je vrsta dijeljenog resursa ili postavka, strelice samo pomjeraju okvir, a OK bira izbor (od builda 22; ranije su strelice mijenjale izbor).
+- Kanal gore i dolje pomjeraju po jednu stranicu. Od builda 22 mreže fotografija prikazuju oko šest pločica po redu unutar margina ekrana, s oštrijim sličicama vlastitih datoteka uređaja koje ostaju glatke na sitnim detaljima, a stranice koje na telefonu imaju zaglavlje sa slikom (lista 360°, Favorites (Omiljeno), albumi uređaja) umjesto toga prikazuju jednu traku.
+- Od builda 22 okvir počinje na prvoj stavci svake stranice (prva pločica liste 360°, polje e-pošte kada je adresa servera potvrđena), ostaje unutar margina ekrana dok se mreža pomjera, i ide iz mreže gore na red ili filtere iznad nje umjesto na dugme Back. Desno s mrežnog dijeljenog resursa ili kamere dolazi do dugmeta za uređivanje te stavke, a rezultat „Test the connection“ se pomjera u vidno polje.
 - U preglednicima rade tipke daljinskog upravljača za reprodukciju i pauzu, premotavanje naprijed, premotavanje nazad, sljedeće i prethodno, a tipka za informacije prikazuje detalje fotografije ili videa.
 
 ### Fotografije i videozapisi s daljinskim upravljačem
@@ -632,7 +633,7 @@ Od builda 20 ista Android aplikacija radi na Android TV-u i Google TV-u, s dalji
 
 ### Postavka Remote control layout (Raspored za daljinski upravljač)
 
-Settings (Postavke), Preferences (Preferencije), „Remote control layout“ (Raspored za daljinski upravljač): „Large focus frames and remote control keys, without the controls that need a touch screen. Automatic turns it on on Android TV and Google TV.“ (Veliki okviri fokusa i tipke daljinskog upravljača, bez kontrola kojima treba ekran osjetljiv na dodir. Automatski ga uključuje na Android TV-u i Google TV-u.) Automatic (Automatski) je zadana vrijednost; On (Uključeno) odgovara tabletu kojim se upravlja tastaturom ili gamepadom; Off (Isključeno) ga isključuje na televizoru. Postavka postoji samo na Androidu. Strelice i OK rade u preglednicima s tastaturom ili gamepadom bez obzira na postavku.
+Settings (Postavke), Preferences (Preferencije), „Remote control layout“ (Raspored za daljinski upravljač): „Large focus frames and remote control keys, without the controls that need a touch screen. Automatic turns it on on Android TV and Google TV.“ (Veliki okviri fokusa i tipke daljinskog upravljača, bez kontrola kojima treba ekran osjetljiv na dodir. Automatski ga uključuje na Android TV-u i Google TV-u.) Automatic (Automatski) je zadana vrijednost; On (Uključeno) odgovara tabletu kojim se upravlja tastaturom ili gamepadom; Off (Isključeno) ga isključuje na televizoru. Postavka postoji samo na Androidu. Od builda 22 promjena se odmah primjenjuje na otvorenu stranicu, koja ostaje gdje je bila (ranije su se Settings ponovo otvarale na Advanced (Napredno), preko početnog ekrana kroz koji je Back morao proći). Strelice i OK rade u preglednicima s tastaturom ili gamepadom bez obzira na postavku.
 
 ### Ograničenja
 
@@ -650,7 +651,7 @@ Settings (Postavke), Preferences (Preferencije), „Remote control layout“ (Ra
 
 360° snimci su pomiješani sa svim ostalim fotografijama, a ljudi traže od Immicha način da filtriraju sfere i panorame ([diskusija #12824](https://github.com/immich-app/immich/discussions/12824)). Aplikacija Immich nema takvu listu.
 
-Immuch360 stavlja oznaku 360° na sličice 360° fotografija (u folderu mrežnog dijeljenog resursa i na 360° videozapise) i stavku 360° na vrh kartice Library. Od builda 18 ta lista, sa serverom, sadrži fotografije i videozapise koje server označava kao 360°, sirove Insta360 datoteke po nazivu, fotografije koje je 360° kamera sama spojila i one koje ste odlučili gledati kao 360°, plus ono što je pronašlo skeniranje uređaja; bez servera, ono što je pronašlo skeniranje uređaja i one koje ste odlučili gledati kao 360°. Svaka stavka pojavljuje se jednom, gdje god bile njene kopije, najnovije prve.
+Immuch360 stavlja oznaku 360° na sličice 360° fotografija (u folderu mrežnog dijeljenog resursa i na 360° videozapise) i stavku 360° na vrh kartice Library. Od builda 18 ta lista, sa serverom, sadrži fotografije i videozapise koje server označava kao 360°, sirove Insta360 datoteke po nazivu, fotografije koje je 360° kamera sama spojila i one koje ste odlučili gledati kao 360°, plus ono što je pronašlo skeniranje uređaja; bez servera, ono što je pronašlo skeniranje uređaja i one koje ste odlučili gledati kao 360°. Svaka stavka pojavljuje se jednom, gdje god bile njene kopije, najnovije prve. Od builda 22 iznad mreže se pojavljuje red „In the network shares“ (U mrežnim dijeljenim resursima) s 360° fotografijama i videozapisima vaših dijeljenih resursa, najnovije prve: aplikacija ih upoznaje kada prikaže njihov folder ili ih otvori (ne pretražuje dijeljeni resurs sama od sebe), čuva ih od jednog pokretanja do sljedećeg i zaboravlja ih zajedno s njihovim dijeljenim resursom. Na televizoru, koji nema vlastitih fotografija, upravo taj red puni listu 360°.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Lista 360°, 4 stavke, s otvorenim listom Date: All, godina 2026 s brojem, Whole year, august 2026 i april 2026 s brojevima, godina 2025 i Custom">
 
@@ -661,7 +662,7 @@ Immuch360 stavlja oznaku 360° na sličice 360° fotografija (u folderu mrežnog
 3. Sa serverom odaberite gdje su mediji: „On the server“ (Na serveru), „On this device“ i „Shared with me“ (Podijeljeno sa mnom) kada ih ima.
 4. Odaberite vrstu: Photos, Videos, 3D, VR180.
 5. Kada lista sadrži dvije ili više kamera, drugi red ih navodi po EXIF proizvođaču i modelu, s njihovim brojem. Sirova datoteka bez tih podataka dobija naziv po marki svoje ekstenzije (Insta360, GoPro, DJI), a sve ostalo je „Unknown camera“ (Nepoznata kamera).
-6. Unutar grupe (mjesta, Photos i Videos, 3D i VR180, kamere) čipovi se sabiraju; između grupa sužavaju listu. Clear (Očisti) vraća sve na početno; „No 360° photo or video matches these filters“ (Nijedna 360° fotografija ili video ne odgovara ovim filterima) znači da filteri ne ostavljaju ništa.
+6. Unutar grupe (mjesta, Photos i Videos, 3D i VR180, kamere) čipovi se sabiraju; između grupa sužavaju listu. Čipovi Date, Photos i Videos važe i za red mrežnih dijeljenih resursa; 3D, VR180 i kamere ga skrivaju, jer aplikacija ništa od toga ne zna za datoteku s dijeljenog resursa. Clear (Očisti) vraća sve na početno; „No 360° photo or video matches these filters“ (Nijedna 360° fotografija ili video ne odgovara ovim filterima) znači da filteri ne ostavljaju ništa.
 7. Otvorite fotografiju ili video. U imerzivnom prikazu na Questu prethodno i sljedeće prate filtriranu listu.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Sve što radi zvanična mobilna aplikacija Immich nalazi se ovdje: sigurnosne ko
 
 Da biste 360° fotografiju pokazali nekome ko nema aplikaciju, podijelite je putem dijeljenog Immich linka: web aplikacija Immich prikazuje 360° fotografiju kao sferu u njegovom pregledniku.
 
-Trenutni build, build 21 (verzija 3.3.0-rc.0, broj builda 3030019), zasnovan je na Immichu 3.3.0-rc.0 (Immich `main`, još nije stabilno izdanje). Build 19 je testiran sa Immich 3.2 serverom, a buildovi 20 i 21 ne mijenjaju ništa u onome što aplikacija traži od servera. Probleme prijavite u [Issues](https://github.com/freeKC/Immuch360/issues), a ne projektu Immich. Za punu dokumentaciju samog Immicha pogledajte [immich.app](https://immich.app).
+Trenutni build, build 22 (verzija 3.3.0-rc.0, broj builda 3030020), zasnovan je na Immich `main` od 10. oktobra 2026. (verzija 3.3.0-rc.0, još nije stabilno izdanje). Build 22 je testiran sa Immich 3.2.4 serverom i sa serverom izgrađenim iz tog istog Immich `main`: prijava, vremenska linija, albumi, 360° fotografije i videozapisi, reprodukcija videa i otpremanja, bez ijedne API greške. Probleme prijavite u [Issues](https://github.com/freeKC/Immuch360/issues), a ne projektu Immich. Za punu dokumentaciju samog Immicha pogledajte [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Poređenje s aplikacijom Immich i drugim aplikacijama
@@ -1037,6 +1038,8 @@ Kada dekodiranje videozapisa sa servera ne stiže, a ne iscrtavanje (videozapis 
 - **Sami odaberite renderer.** U Settings, Advanced (Napredno), uključite „Troubleshooting“ (Rješavanje problema): pojavljuje se stavka „360° video renderer“ (renderer 360° videozapisa), po zadanom „Automatic“ (Automatski). Nudi i „Plugin, full size“ (Dodatak, puna veličina), „Plugin, at most 4096 wide“ (Dodatak, najviše 4096 širine), „Plugin, at most 2880 wide“ (Dodatak, najviše 2880 širine) i „Flat, without the 360° view“ (Ravno, bez 360° prikaza), za sljedeći 360° videozapis koji otvorite. Ispod nje „Measured last“ (Posljednje izmjereno) navodi veličinu u kojoj je iscrtan posljednji 360° videozapis, njegove kadrove u sekundi, grafički čip i dekoder: kopirajte to u prijavu greške. Ponovni odabir „Automatic“, čak i kada je to već odabrano, zaboravlja ono što je izmjereno, a sljedeći 360° videozapisi se ponovo mjere.
 - **Šta čip dekodira.** Settings, Advanced, „Video decoders of this device“ navodi šta dekodira grafički čip koji se koristi, kako to javlja Direct3D 11, a aplikacija ispravlja tu listu onim što je izmjerila tokom reprodukcije: postavka „Video source“ i provjera dva objektiva sirovih videozapisa prate je. H.264 širi od 4096 piksela (5,7K 360° kamera) dekodira procesor, jer ga nijedan čip testnog laptopa ne prihvata.
 
+**Za programere.** 360° plejer crta kroz vlastiti renderer, izgrađen na libmpv i zakrpljenom media_kit_video dodatku: mpv crta svaki kadar u teksturu na grafičkom čipu, a OpenGL ES 3.0 prolaz crta prikaz u teksturu koju Flutter prikazuje, bez kopiranja kroz procesor. Zašto je tako izgrađen, kako radi, šta je izmjereno i šta se može podesiti: [desktop renderer 360° videozapisa](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### U poređenju s aplikacijama za telefone
 
 - **Sigurnosna kopija radi dok je aplikacija otvorena** (ili minimizirana), ne u pozadini sa zatvorenim prozorom. Zatvaranje prozora dok traje otpremanje, ili dok je računar dijeljen, prvo traži potvrdu.
@@ -1110,7 +1113,7 @@ Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka 
 
 - **Android telefoni i tableti**
   - Danas: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi svuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za ručnu instalaciju). Build s GitHuba obično je ispred trgovine. U svakom slučaju instalira se pored zvanične aplikacije Immich (paket `com.aprogsys.immuch360`).
-  - Uskoro: na Google Playu je build 20 objavljen od 7. oktobra 2026., umjesto builda 18; build 21 ne mijenja ništa na telefonima i tabletima.
+  - Uskoro: na Google Play je build 22 poslan 10. oktobra 2026. umjesto builda 20 (objavljen od 7. oktobra); donosi Immichove promjene iz oktobra i ispravke za TV.
 - **iPhone i iPad**
   - Danas: čeka Appleov pregled. Verzija na pregledu ima funkcije builda 11: otpremanje u Immich i izbor Video source (build 15) te sirove Insta360 datoteke (build 16) doći će s kasnijim ažuriranjem u App Storeu. Izvorni kod se gradi u Xcodeu ili na Codemagicu, pogledajte [Napravite je sami](#build-it-yourself).
   - Uskoro: App Store, na pregledu.
@@ -1157,7 +1160,7 @@ U ovom repozitoriju nema nikakvih tajni: Android ključ za potpisivanje čuva se
 
 ### Grane
 
-- **`main`**: Immich `main` na commitu na kojem se zasniva `immuch360` (29. septembar 2026. za trenutne buildove), nikada mijenjan; pomjera se naprijed kada se fork rebasira na noviji Immich.
+- **`main`**: Immich `main` na commitu na kojem se zasniva `immuch360` (10. oktobar 2026. za trenutne buildove), nikada mijenjan; pomjera se naprijed kada se fork rebasira na noviji Immich.
 - **`immuch360`**: promjene ovog forka povrh Immicha, uključujući Immuch360 Desktop od 9. oktobra 2026. Svako izdanje navodi na kojoj se verziji Immicha zasniva.
 - **`desktop`**: gdje je Immuch360 Desktop, verzija za računar, građen povrh `immuch360`, dok nije spojen u nju 9. oktobra 2026. kako bi telefoni, headseti, TV-i i računari izlazili iz istih izvora. Sada prati `immuch360` i nosi oznake desktop predizdanja ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) iz commita 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) iz 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) iz spajanja 360° video plejera 10. oktobra 2026.). Novi desktop rad prvo stiže tamo i pridružuje se `immuch360` s desktop buildom koji ga isporučuje. Verzija za računar ne mijenja ništa pod `mobile/android` i `mobile/ios`.
 

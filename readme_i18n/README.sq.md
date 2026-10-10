@@ -17,10 +17,10 @@ Immuch360 është aplikacioni celular i Immich me foto dhe video 360° në të c
 
 | Platforma | Ku ta merrni | Gjendja më 10 tetor 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefona dhe tableta **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ndërtimi 20 në Google Play që nga 7 tetor 2026, ndërtimi 21 në GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefona dhe tableta **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ndërtimi 22 në GitHub, i dërguar në Google Play më 10 tetor 2026 (atje ndërtimi 20 është i publikuar që nga 7 tetor) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dhe iPad** | App Store | versioni 3.3.0 në pritje të shqyrtimit të Apple; ndërkohë, [ndërtojeni vetë](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [APK](#meta-quest-3) · Horizon Store | faqja e miratuar, ndërtimi 21 në shqyrtim te Meta |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#install-it-on-the-tv) · Google Play | ndërtimi 21 në GitHub; faqja e Google Play për televizorë është në shqyrtim te Google që nga 9 tetor 2026 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [APK](#meta-quest-3) · Horizon Store | faqja e miratuar, ndërtimi 21 në shqyrtim te Meta, ndërtimi 22 në kanalin alfa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#install-it-on-the-tv) · Google Play | ndërtimi 22 në GitHub; faqja e Google Play për televizorë është në shqyrtim te Google që nga 9 tetor 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP i versionit paraprak](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | ndërtimi 3 për desktop në Windows: foto, video të sheshta dhe 360°; macOS dhe Linux më vonë |
 
 *Gjendjet përditësohen me çdo publikim; hollësitë janë te [Ku ta merrni](#where-to-get-it).*
@@ -196,7 +196,7 @@ I gjen vetë serverët e rrjetit tuaj dhe i luan skedarët drejtpërdrejt në t�
 4. Nuk është në listë? Plotësojeni formularin me dorë. Lloji: “SMB (Samba, ndarje Windows)”, “WebDAV (Nextcloud, Synology dhe të tjerë)”, “Server medias DLNA (Jellyfin, NAS, kuti TV)” ose, nga ndërtimi 20, “Plex Media Server”, që hap faqen e [Plex Media Server, pa plex.tv](#plex-media-server-without-plextv). Pastaj Emri, “Emri ose adresa e serverit” (një emër ose një adresë; një adresë e plotë si `smb://nas/photos`, `\\nas\photos` ose `https://nas:5006/photos` plotëson fushat e tjera), “Porta (opsionale)” kur nuk është ajo e zakonshmja, “Ndarja” për SMB ose “Shtegu i adresës WebDAV” për WebDAV, “Dosja fillestare (opsionale)”, “Emri i përdoruesit” dhe “Fjalëkalimi”, si dhe “Lidhje e sigurt (HTTPS)” për WebDAV.
 5. SMB: pasi të shkruhen serveri dhe emri i përdoruesit, “Zgjidhni një ndarje” liston ndarjet e serverit.
 6. DLNA: një server medias nuk ka emër përdoruesi apo fjalëkalim. Jepni serverin, portën dhe “Shtegu i përshkrimit” të përshkrimit të pajisjes (`/rootDesc.xml` për minidlna), ose ngjitni gjithë adresën, si `http://192.168.1.10:8200/rootDesc.xml`, në fushën e serverit.
-7. Prekni “Testo lidhjen”. Përgjigjja është “U lidh, N elemente në dosjen fillestare”, ose arsyeja e dështimit. Pastaj prekni Ruaj, në fund të formularit.
+7. Prekni “Testo lidhjen”. Përgjigjja është “U lidh, N elemente në dosjen fillestare”, ose arsyeja e dështimit. Pastaj prekni Ruaj, në fund të formularit. Nga ndërtimi 22, mbyllja e një formulari ku keni shkruar diçka (X, Prapa) pyet fillimisht “Të hidhen ndryshimet?”, edhe në faqet e Plex dhe të kamerave, dhe po ashtu ndodh kur zgjidhni Plex ose një kamerë të gjetur pasi është shkruar diçka.
 
 Një emër përdoruesi me fjalëkalim bosh dërgohet ashtu siç është: një Freebox Server kërkon `freebox` dhe asnjë fjalëkalim për disqet e tij. Për ta ndryshuar ose hequr një ndarje më vonë, përdorni lapsin pranë saj në faqen Ndarjet e rrjetit.
 
@@ -617,8 +617,9 @@ Nga ndërtimi 20 i njëjti aplikacion Android punon në Android TV dhe Google TV
 
 ### Lëvizni me telekomandë
 
-- Shigjetat lëvizin kornizën, OK hap atë mbi të cilën është, Prapa kthehet prapa. Nga një skedë, Prapa shkon te menyja anësore, pastaj te Fotot, pastaj del nga aplikacioni.
-- Kanali lart dhe poshtë lëvizin një faqe në një kohë.
+- Shigjetat lëvizin kornizën, OK hap atë mbi të cilën është, Prapa kthehet prapa. Nga një skedë, Prapa shkon te menyja anësore, pastaj te Fotot, pastaj del nga aplikacioni. Në një listë zgjedhjesh, si lloji i një ndarjeje ose një cilësim, shigjetat vetëm lëvizin kornizën dhe OK zgjedh opsionin (nga ndërtimi 22; më parë shigjetat ndryshonin zgjedhjen).
+- Kanali lart dhe poshtë lëvizin një faqe në një kohë. Nga ndërtimi 22 rrjetat e fotove shfaqin rreth gjashtë pllakëza për rresht brenda kufijve të ekranit, me miniatura më të qarta të skedarëve të vetë pajisjes që mbeten të lëmuara edhe në detaje të imta, dhe faqet që në telefon kanë një kokë me figurë (lista 360°, Të preferuarat, albumet e pajisjes) shfaqin në vend të saj një shirit të thjeshtë.
+- Nga ndërtimi 22 korniza nis te elementi i parë i çdo faqeje (pllakëza e parë e listës 360°, fusha e email-it pasi të jetë konfirmuar adresa e serverit), qëndron brenda kufijve të ekranit ndërsa një rrjetë lëviz, dhe nga një rrjetë ngjitet te rreshti ose filtrat sipër saj në vend që të shkojë te butoni Prapa. Shigjeta djathtas nga një ndarje rrjeti ose një kamerë arrin te butoni i saj i modifikimit, dhe rezultati i “Testo lidhjen” lëviz derisa të duket.
 - Në shikuesit, funksionojnë tastet e telekomandës për luaj dhe pauzë, përpara, prapa, i radhës dhe i mëparshëm, dhe tasti i informacionit shfaq detajet e një fotoje ose videoje.
 
 ### Foto dhe video me telekomandë
@@ -632,7 +633,7 @@ Nga ndërtimi 20 i njëjti aplikacion Android punon në Android TV dhe Google TV
 
 ### Cilësimi Paraqitje për telekomandë
 
-Cilësimet, Preferencat, “Paraqitje për telekomandë”: “Korniza të mëdha fokusi dhe tastet e telekomandës, pa kontrollet që kërkojnë ekran me prekje. Automatike e aktivizon në Android TV dhe Google TV.” Automatike është parazgjedhja; Aktive i përshtatet një tablete të drejtuar me tastierë ose me levë lojërash; Joaktive e çaktivizon në një televizor. Cilësimi ekziston vetëm në Android. Shigjetat dhe OK funksionojnë në shikuesit me tastierë ose me levë lojërash, cilido qoftë cilësimi.
+Cilësimet, Preferencat, “Paraqitje për telekomandë”: “Korniza të mëdha fokusi dhe tastet e telekomandës, pa kontrollet që kërkojnë ekran me prekje. Automatike e aktivizon në Android TV dhe Google TV.” Automatike është parazgjedhja; Aktive i përshtatet një tablete të drejtuar me tastierë ose me levë lojërash; Joaktive e çaktivizon në një televizor. Cilësimi ekziston vetëm në Android. Nga ndërtimi 22 një ndryshim zbatohet menjëherë në faqen e hapur, e cila mbetet aty ku ishte (më parë Cilësimet hapeshin sërish te Të avancuara, mbi një ekran nisjeje që duhej kapërcyer me Prapa). Shigjetat dhe OK funksionojnë në shikuesit me tastierë ose me levë lojërash, cilido qoftë cilësimi.
 
 ### Kufizimet
 
@@ -650,7 +651,7 @@ Cilësimet, Preferencat, “Paraqitje për telekomandë”: “Korniza të mëdh
 
 Pamjet 360° janë të përziera me gjithë fotot e tjera, dhe njerëzit i kërkojnë Immich një mënyrë për të filtruar sferat dhe panoramat ([diskutimi #12824](https://github.com/immich-app/immich/discussions/12824)). Aplikacioni Immich nuk ka një listë të tillë.
 
-Immuch360 vendos një distinktiv 360° në miniaturat e fotove 360° (në një dosje ndarjeje rrjeti, edhe në videot 360°), dhe një zë 360° në krye të skedës Biblioteka. Nga ndërtimi 18 kjo listë përmban, me server, fotot dhe videot që serveri i shënon si 360°, skedarët Insta360 të papërpunuar sipas emrit, fotot që i ka bashkuar vetë një kamerë 360° dhe ato që zgjodhët t'i shihni si 360°, plus atë që gjeti skanimi i pajisjes; pa server, atë që gjeti skanimi i pajisjes dhe ato që zgjodhët t'i shihni si 360°. Secila shfaqet një herë, kudo që të jenë kopjet e saj, më të rejat të parat.
+Immuch360 vendos një distinktiv 360° në miniaturat e fotove 360° (në një dosje ndarjeje rrjeti, edhe në videot 360°), dhe një zë 360° në krye të skedës Biblioteka. Nga ndërtimi 18 kjo listë përmban, me server, fotot dhe videot që serveri i shënon si 360°, skedarët Insta360 të papërpunuar sipas emrit, fotot që i ka bashkuar vetë një kamerë 360° dhe ato që zgjodhët t'i shihni si 360°, plus atë që gjeti skanimi i pajisjes; pa server, atë që gjeti skanimi i pajisjes dhe ato që zgjodhët t'i shihni si 360°. Secila shfaqet një herë, kudo që të jenë kopjet e saj, më të rejat të parat. Nga ndërtimi 22 sipër rrjetës shfaqet një rresht “Në ndarjet e rrjetit” me fotot dhe videot 360° të ndarjeve tuaja, më të rejat të parat: aplikacioni i mëson kur shfaq dosjen e tyre ose kur i hap (nuk kërkon vetë në një ndarje), i mban nga një nisje në tjetrën dhe i harron bashkë me ndarjen e tyre. Në një televizor, që nuk ka foto të vetat, lista 360° mbushet pikërisht nga ky rresht.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Lista 360°, 4 elemente, me fletën Data të hapur: Të gjithë, viti 2026 me numrin e tij, I gjithë viti, gusht 2026 dhe prill 2026 me numrat e tyre, viti 2025, dhe Custom">
 
@@ -661,7 +662,7 @@ Immuch360 vendos një distinktiv 360° në miniaturat e fotove 360° (në një d
 3. Me server, zgjidhni ku janë mediat: “Në server”, “On this device”, dhe “Shared with me” (Ndarë me mua) kur ka të tilla.
 4. Zgjidhni llojin: Photos, Videos, 3D, VR180.
 5. Kur lista përmban dy ose më shumë kamera, një rresht i dytë i liston sipas markës dhe modelit EXIF, me numrat e tyre. Një skedar i papërpunuar pa to emërtohet sipas markës së shtesës së tij (Insta360, GoPro, DJI), çdo gjë tjetër është “Kamerë e panjohur”.
-6. Brenda një grupi (vendet, Photos dhe Videos, 3D dhe VR180, kamerat) çipat mblidhen; midis grupeve e ngushtojnë listën. Pastro i rivendos të gjitha; “Asnjë foto apo video 360° nuk përputhet me këta filtra” do të thotë se filtrat nuk lënë asgjë.
+6. Brenda një grupi (vendet, Photos dhe Videos, 3D dhe VR180, kamerat) çipat mblidhen; midis grupeve e ngushtojnë listën. Çipat Data, Photos dhe Videos vlejnë edhe për rreshtin e ndarjeve të rrjetit; 3D, VR180 dhe kamerat e fshehin atë, pasi aplikacioni nuk di asnjërën prej tyre për një skedar të një ndarjeje. Pastro i rivendos të gjitha; “Asnjë foto apo video 360° nuk përputhet me këta filtra” do të thotë se filtrat nuk lënë asgjë.
 7. Hapni një foto ose video. Në pamjen zhytëse të Quest-it, i mëparshmi dhe i radhës ndjekin listën e filtruar.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Gjithçka që bën aplikacioni zyrtar celular i Immich është këtu: kopja reze
 
 Për t'i treguar një foto 360° dikujt që nuk e ka aplikacionin, ndajeni me një lidhje të ndarë Immich: aplikacioni web i Immich e shfaq një foto 360° si sferë në shfletuesin e tij.
 
-Ndërtimi aktual, ndërtimi 21 (versioni 3.3.0-rc.0, numri i ndërtimit 3030019), bazohet në Immich 3.3.0-rc.0 (`main` i Immich, ende jo një publikim i qëndrueshëm). Ndërtimi 19 u testua me një server Immich 3.2, dhe ndërtimet 20 dhe 21 nuk ndryshojnë asgjë në atë që aplikacioni i kërkon serverit. Ju lutemi raportoni problemet te [Issues](https://github.com/freeKC/Immuch360/issues), jo te projekti Immich. Për dokumentacionin e plotë të vetë Immich, shihni [immich.app](https://immich.app).
+Ndërtimi aktual, ndërtimi 22 (versioni 3.3.0-rc.0, numri i ndërtimit 3030020), bazohet në `main` të Immich të 10 tetorit 2026 (versioni 3.3.0-rc.0, ende jo një publikim i qëndrueshëm). Ndërtimi 22 u testua me një server Immich 3.2.4 dhe me një server të ndërtuar nga i njëjti `main` i Immich: identifikimi, kronologjia, albumet, fotot dhe videot 360°, luajtja e videove dhe ngarkimet, pa asnjë gabim API. Ju lutemi raportoni problemet te [Issues](https://github.com/freeKC/Immuch360/issues), jo te projekti Immich. Për dokumentacionin e plotë të vetë Immich, shihni [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Krahasimi me aplikacionin Immich dhe aplikacione të tjera
@@ -1037,6 +1038,8 @@ Kur nuk ia del dekodimi i një videoje të serverit, jo vizatimi (një video që
 - **Zgjidhni vetë mënyrën e vizatimit.** Te Cilësimet, Të avancuara, aktivizoni “Zgjidhja e problemeve”: shfaqet një hyrje “Vizatuesi i videove 360°”, Automatik si parazgjedhje. Ajo ofron gjithashtu “Shtojca, madhësi e plotë”, “Shtojca, më së shumti 4096 e gjerë”, “Shtojca, më së shumti 2880 e gjerë” dhe “E sheshtë, pa pamjen 360°”, për videon e radhës 360° që hapni. Poshtë saj, “Matja e fundit” emërton madhësinë në të cilën u vizatua videoja e fundit 360°, kuadrot e saj në sekondë, çipin grafik dhe dekoderin: kopjojeni këtë në një raport defekti. Zgjedhja sërish e “Automatik”, edhe kur është tashmë zgjedhja, harron atë që u mat, dhe videot e radhës 360° maten sërish.
 - **Çfarë dekodon çipi.** Cilësimet, Të avancuara, “Dekoderët e videos së kësaj pajisjeje” liston atë që dekodon çipi grafik në përdorim, siç e raporton Direct3D 11, dhe aplikacioni e korrigjon atë listë me atë që ka matur gjatë luajtjes: cilësimi Burimi i videos dhe kontrolli i dy lenteve i videove të papërpunuara e ndjekin atë. H.264 më i gjerë se 4096 piksel (5.7K i kamerave 360°) dekodohet nga procesori, pasi asnjëri çip i laptopit të testimit nuk e pranon.
 
+**Për zhvilluesit.** Luajtësi 360° vizaton përmes një vizatuesi të vetin, të ndërtuar mbi libmpv dhe një shtojcë media_kit_video të arnuar: mpv vizaton çdo kuadër në një teksturë në çipin grafik, dhe një kalim OpenGL ES 3.0 vizaton pamjen në teksturën që shfaq Flutter, pa asnjë kopje përmes procesorit. Pse u ndërtua kështu, si funksionon, çfarë u mat dhe çfarë mund të rregullohet: [vizatuesi i videove 360° në desktop](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Krahasuar me aplikacionet e telefonit
 
 - **Kopja rezervë punon ndërsa aplikacioni është i hapur** (ose i minimizuar), jo në sfond me dritaren të mbyllur. Mbyllja e dritares ndërsa ngarkimet janë në vazhdim, ose ndërsa kompjuteri ndahet, pyet më parë.
@@ -1110,7 +1113,7 @@ Aplikacioni është në Google Play për telefona dhe tableta; versioni i App St
 
 - **Telefona dhe tableta Android**
   - Sot: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ose APK-ja në faqen [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` për një telefon (`Immuch360-v<version>-release.apk` universal funksionon kudo, `-armeabi-v7a` është për telefona më të vjetër 32 bit, dhe skedari `.aab` është për Google Play, jo për sideload). Ndërtimi i GitHub zakonisht është përpara dyqanit. Në çdo rast instalohet pranë aplikacionit zyrtar Immich (paketa `com.aprogsys.immuch360`).
-  - Së shpejti: në Google Play, ndërtimi 20 është i publikuar që nga 7 tetor 2026, në vend të ndërtimit 18; ndërtimi 21 nuk ndryshon asgjë në telefona dhe tableta.
+  - Së shpejti: në Google Play, ndërtimi 22 u dërgua më 10 tetor 2026 në vend të ndërtimit 20 (i publikuar që nga 7 tetor); ai sjell ndryshimet e Immich të tetorit dhe rregullimet për televizorin.
 - **iPhone dhe iPad**
   - Sot: në pritje të shqyrtimit të Apple. Versioni në shqyrtim ka veçoritë e ndërtimit 11: ngarkimi në Immich dhe zgjedhja Burimi i videos (ndërtimi 15) dhe skedarët Insta360 të papërpunuar (ndërtimi 16) do të vijnë me një përditësim të mëvonshëm të App Store. Kodi burimor ndërtohet me Xcode ose në Codemagic, shihni [Ndërtojeni vetë](#build-it-yourself).
   - Së shpejti: App Store, në shqyrtim.
@@ -1157,7 +1160,7 @@ Asnjë sekret nuk ndodhet në këtë depo: çelësi i nënshkrimit Android ruhet
 
 ### Degët
 
-- **`main`**: `main` i Immich në commit-in mbi të cilin bazohet `immuch360` (29 shtator 2026 për ndërtimet aktuale), nuk ndryshohet kurrë; ecën përpara kur fork-u rebazohet mbi një Immich më të ri.
+- **`main`**: `main` i Immich në commit-in mbi të cilin bazohet `immuch360` (10 tetor 2026 për ndërtimet aktuale), nuk ndryshohet kurrë; ecën përpara kur fork-u rebazohet mbi një Immich më të ri.
 - **`immuch360`**: ndryshimet e këtij fork-u mbi Immich, përfshirë Immuch360 Desktop që nga 9 tetori 2026. Çdo publikim tregon mbi cilin version të Immich bazohet.
 - **`desktop`**: aty ku Immuch360 Desktop, versioni për kompjuter, u ndërtua mbi `immuch360`, derisa u bashkua në të më 9 tetor 2026, që telefonat, kufjet VR, televizorët dhe kompjuterët të dalin nga të njëjtat burime. Tani ajo ndjek `immuch360` dhe mban etiketat e publikimeve paraprake për desktop ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) nga commit-i 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) nga 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) nga bashkimi i luajtësit të videove 360° më 10 tetor 2026). Puna e re për desktop mbërrin aty fillimisht dhe i bashkohet `immuch360` me ndërtimin për desktop që e sjell. Versioni për kompjuter nuk ndryshon asgjë nën `mobile/android` dhe `mobile/ios`.
 

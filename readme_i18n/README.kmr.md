@@ -17,10 +17,10 @@ Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh T
 
 | Platform | Ji ku derê bistînî | Rewş di 10ê Cotmeha 2026an de |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon û tabletên **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 ji 7ê Cotmeha 2026an ve li ser Google Play, build 21 li ser GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon û tabletên **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 22 li ser GitHub, di 10ê Cotmeha 2026an de ji Google Play re hatiye şandin (li wir build 20 ji 7ê Cotmehê ve zindî ye) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.0 li benda nirxandina Apple ye; heta wê demê [bi xwe ava bike](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [APK](#meta-quest-3) · Horizon Store | tomar hat pejirandin, build 21 di nirxandina Meta de ye |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 li ser GitHub; tomara Google Play ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [APK](#meta-quest-3) · Horizon Store | tomar hat pejirandin, build 21 di nirxandina Meta de ye, build 22 li ser kanala Alpha ye |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 22 li ser GitHub; tomara Google Play ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP a pêşdîtinê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | build a desktop 3 li ser Windows: wêne, vîdyoyên dûz û 360°; macOS û Linux paşê |
 
 *Rewş di her weşanê de tên nûkirin; hûrgilî di [Ji ku derê bistînî](#where-to-get-it) de ne.*
@@ -196,7 +196,7 @@ Ew bi xwe serverên tora te dibîne, û pelan rasterast di heman dîtinvanên ma
 4. Ne di lîsteyê de ye? Formê bi destan tije bike. Cure: "SMB (Samba, parvekirina Windows)", "WebDAV (Nextcloud, Synology û yên din)", "Serverê medyayê yê DLNA (Jellyfin, NAS, qutiya TV)" an, ji build 20, "Plex Media Server", ku rûpela [Plex Media Server, bêyî plex.tv](#plex-media-server-without-plextv) vedike. Paşê Nav, "Nav an navnîşana serverê" (nav an navnîşan; navnîşaneke tevahî wek `smb://nas/photos`, `\\nas\photos` an `https://nas:5006/photos` qadên din tije dike), "Port (bijarte)" dema ne ya asayî be, "Parvekirin" ji bo SMB an "Rêya navnîşana WebDAV" ji bo WebDAV, "Peldanka destpêkê (bijarte)", "Navê bikarhêner" û "Şîfre", û "Girêdana ewle (HTTPS)" ji bo WebDAV.
 5. SMB: gava server û navê bikarhêner hatin nivîsandin, "Parvekirinekê hilbijêre" parvekirinên serverê rêz dike.
 6. DLNA: serverê medyayê navê bikarhêner an şîfre tune. Server, port û "Rêya danasînê" ya danasîna cîhaza wê bide (`/rootDesc.xml` ji bo minidlna), an navnîşana tevahî, wek `http://192.168.1.10:8200/rootDesc.xml`, di qada serverê de bişidîne.
-7. Li "Girêdanê biceribîne" bixe. Ew bersiv dide "Girêdayî ye, N hêman di peldanka destpêkê de", an dibêje çima bi ser neket. Paşê li Qeyd bike, li binê formê, bixe.
+7. Li "Girêdanê biceribîne" bixe. Ew bersiv dide "Girêdayî ye, N hêman di peldanka destpêkê de", an dibêje çima bi ser neket. Paşê li Qeyd bike, li binê formê, bixe. Ji build 22, girtina formeke ku te tê de nivîsandiye (X, Paş) pêşî dipirse "Guhertin bên avêtin?", li ser rûpelên Plex û kamerayan jî; hilbijartina serverekî Plex an kamerayeke dîtî dema ku tiştek hatibe nivîsandin jî heman pirsê dike.
 
 Navê bikarhênerekî bi şîfreyeke vala wisa tê şandin: Freebox Server ji bo dîskên xwe `freebox` û bê şîfre dixwaze. Ji bo paşê guhertin an rakirina parvekirinê, qelema li kêleka wê di rûpela Parvekirinên torê de bi kar bîne.
 
@@ -617,8 +617,9 @@ Ji build 20 heman sepana Android li ser Android TV û Google TV dimeşe, bi kont
 
 ### Bi kontrola ji dûr ve tevgerîn
 
-- Tîr çarçoveyê dibin, OK tiştê ku li ser e vedike, Paş vedigere. Ji tabloyekê, Paş diçe menûya kêlekê, paşê Wêne, paşê ji sepanê derdikeve.
-- Kanal jor û jêr rûpelekê bi carekê dikişînin.
+- Tîr çarçoveyê dibin, OK tiştê ku li ser e vedike, Paş vedigere. Ji tabloyekê, Paş diçe menûya kêlekê, paşê Wêne, paşê ji sepanê derdikeve. Di lîsteyeke vebijarkan de, wek cureyê parvekirinekê an eyarekê, tîr tenê çarçoveyê dibin û OK vebijarkê hildibijêre (ji build 22; berê, tîran vebijark diguherand).
+- Kanal jor û jêr rûpelekê bi carekê dikişînin. Ji build 22 torên wêneyan di nav kenarên dîmenderê de li her rêzê nêzîkî şeş kaşiyan nîşan didin, bi wêneyên biçûk ên zelaltir ên pelên cîhazê bi xwe ku di hûrguliyên zirav de nerm dimînin, û rûpelên ku li ser telefonê sernavekî bi wêne hene (lîsteya 360°, Favorites (Bijare), albûmên cîhazê) li şûna wê tenê xetekê nîşan didin.
+- Ji build 22 çarçove li ser hêmana yekem a her rûpelê dest pê dike (kaşiya yekem a lîsteya 360°, qada e-nameyê piştî ku navnîşana serverê hat pejirandin), dema torek dikişe di nav kenarên dîmenderê de dimîne, û ji torê ber bi rêz an parzûnên li jorê wê ve diçe, ne ber bi bişkoka Paş ve. Rast ji parvekirineke torê an kamerayekê digihe bişkoka wê ya sererastkirinê, û encama "Girêdanê biceribîne" dikişe heta ku xuya bibe.
 - Di dîtinvanan de, bişkokên lîstin û rawestandin, pêşdebirina bilez, paşvebirin, ya din û ya berê yên kontrola ji dûr ve dixebitin, û bişkoka agahiyê hûrguliyên wêne an vîdyoyekê nîşan dide.
 
 ### Wêne û vîdyo bi kontrola ji dûr ve
@@ -632,7 +633,7 @@ Ji build 20 heman sepana Android li ser Android TV û Google TV dimeşe, bi kont
 
 ### Eyara Xêzkirina ji bo kontrola ji dûr ve
 
-Mîheng, Tercîḧ, "Xêzkirina ji bo kontrola ji dûr ve": "Çarçoveyên balê yên mezin û bişkokên kontrola ji dûr ve, bê kontrolên ku dîmendera destlêdanê dixwazin. Xweber wê li ser Android TV û Google TV vedixe." Xweber ya pêşdanasîn e; Vekirî ji bo tabletek ku bi klavye an gamepadekê tê bikaranîn baş e; Girtî wê li ser televizyonê digire. Eyar tenê li ser Android heye. Tîr û OK di dîtinvanan de bi klavye an gamepadekê dixebitin, eyar çi dibe bila bibe.
+Mîheng, Tercîḧ, "Xêzkirina ji bo kontrola ji dûr ve": "Çarçoveyên balê yên mezin û bişkokên kontrola ji dûr ve, bê kontrolên ku dîmendera destlêdanê dixwazin. Xweber wê li ser Android TV û Google TV vedixe." Xweber ya pêşdanasîn e; Vekirî ji bo tabletek ku bi klavye an gamepadekê tê bikaranîn baş e; Girtî wê li ser televizyonê digire. Eyar tenê li ser Android heye. Ji build 22 guhertinek yekser li rûpela vekirî tê sepandin, ku li cihê xwe dimîne (berê, Mîheng dîsa li ser Pêşketî vedibû, li ser dîmendereke destpêkê ku diviya Paş di nav wê re derbas bibe). Tîr û OK di dîtinvanan de bi klavye an gamepadekê dixebitin, eyar çi dibe bila bibe.
 
 ### Sînor
 
@@ -650,7 +651,7 @@ Mîheng, Tercîḧ, "Xêzkirina ji bo kontrola ji dûr ve": "Çarçoveyên balê
 
 Wêneyên 360° bi hemû wêneyên din re tevlihev in, û mirov ji Immich riyekê dixwazin ji bo parzûnkirina gog û panoramayan ([discussion #12824](https://github.com/immich-app/immich/discussions/12824)). Sepana Immich lîsteyeke wisa tune.
 
-Immuch360 nîşaneyeke 360° li ser wêneyên biçûk ên wêneyên 360° datîne (di peldankeke parvekirineke torê de, li ser vîdyoyên 360° jî), û hêmaneke 360° li jorê tabloya Kitêbxane. Ji build 18 ew lîste, bi serverekê, wêne û vîdyoyên ku server wekî 360° nîşan dike, pelên xav ên Insta360 bi navê wan, wêneyên ku kameraya 360° bi xwe dirûtine û yên ku te hilbijartine wek 360° bibînî dihewîne, û her wiha tiştên ku lêgerîna cîhazê dîtine; bêyî server, tiştên ku lêgerîna cîhazê dîtine û yên ku te hilbijartine wek 360° bibînî. Her yek carekê xuya dibe, kopiyên wê li ku dibin bila bibin, ya herî nû pêşî.
+Immuch360 nîşaneyeke 360° li ser wêneyên biçûk ên wêneyên 360° datîne (di peldankeke parvekirineke torê de, li ser vîdyoyên 360° jî), û hêmaneke 360° li jorê tabloya Kitêbxane. Ji build 18 ew lîste, bi serverekê, wêne û vîdyoyên ku server wekî 360° nîşan dike, pelên xav ên Insta360 bi navê wan, wêneyên ku kameraya 360° bi xwe dirûtine û yên ku te hilbijartine wek 360° bibînî dihewîne, û her wiha tiştên ku lêgerîna cîhazê dîtine; bêyî server, tiştên ku lêgerîna cîhazê dîtine û yên ku te hilbijartine wek 360° bibînî. Her yek carekê xuya dibe, kopiyên wê li ku dibin bila bibin, ya herî nû pêşî. Ji build 22 rêzeke "Di parvekirinên torê de" li jorê torê bi wêne û vîdyoyên 360° yên parvekirinên te xuya dibe, ya herî nû pêşî: sepan wan nas dike dema peldanka wan nîşan dide an wan vedike (ew bi xwe di parvekirinekê de nagere), wan ji destpêkekê heta ya din diparêze û bi parvekirina wan re ji bîr dike. Li ser televizyonekê, ku wêneyên wê yên xwe tune ne, lîsteya 360° bi vê rêzê tije dibe.
 
 <img src="../.github/readme/b19-360-list.png" width="260" alt="Lîsteya 360°, 4 hêman, bi pela xwe ya Date vekirî: All, sala 2026 bi hejmara xwe, Tevahiya salê, Tebax 2026 û Nîsan 2026 bi hejmarên xwe, sala 2025, û Custom">
 
@@ -661,7 +662,7 @@ Immuch360 nîşaneyeke 360° li ser wêneyên biçûk ên wêneyên 360° datîn
 3. Bi serverekê, hilbijêre medya li ku ne: "Li ser serverê", "On this device", û "Shared with me" (Bi min re hatiye parvekirin) dema hebin.
 4. Cureyê hilbijêre: Sûret, Videos, 3D, VR180.
 5. Dema lîste du an zêdetir kamerayan bihewîne, rêzeke duyem wan li gorî çêker û modela EXIF, bi hejmarên wan, rêz dike. Pelekî xav bêyî wan bi navê marqeya dirêjkirina xwe tê binavkirin (Insta360, GoPro, DJI), her tiştê din "Kamerayek nenas" e.
-6. Di nav komekê de (cih, Sûret û Videos, 3D û VR180, kamera) çîp li hev zêde dibin; di navbera koman de ew lîsteyê teng dikin. Clear (Paqij bike) her tiştî vedigerîne; "Tu wêneyek an vîdyoyek 360° bi van parzûnan re li hev nayê" tê wê wateyê ku parzûn tiştekî nahêlin.
+6. Di nav komekê de (cih, Sûret û Videos, 3D û VR180, kamera) çîp li hev zêde dibin; di navbera koman de ew lîsteyê teng dikin. Çîpên Tarîx, Sûret û Videos li ser rêza parvekirinên torê jî derbas dibin; 3D, VR180 û kamera wê vedişêrin, ji ber ku sepan ji bo pelekî parvekirinekê yek ji wan jî nizane. Clear (Paqij bike) her tiştî vedigerîne; "Tu wêneyek an vîdyoyek 360° bi van parzûnan re li hev nayê" tê wê wateyê ku parzûn tiştekî nahêlin.
 7. Wêneyek an vîdyoyekê veke. Di dîmena binavbûyî ya Quest de, ya berê û ya din li pey lîsteya parzûnkirî diçin.
 
 <a id="video-details-decoders-and-why-a-video-stutters"></a>
@@ -732,7 +733,7 @@ Her tiştê ku sepana mobîl a fermî ya Immich dike li vir e: paşeke, demjimê
 
 Ji bo nîşandana wêneyekî 360° ji kesekî ku sepan tune, wê bi girêdaneke parvekirî ya Immich parve bike: sepana webê ya Immich wêneyekî 360° di geroka wan de wekî gogekê nîşan dide.
 
-Build a niha, build 21 (guhertoya 3.3.0-rc.0, hejmara build 3030019), li ser Immich 3.3.0-rc.0 (Immich `main`, hîn ne weşaneke stabîl) ava bûye. Build 19 bi servereke Immich 3.2 hatiye ceribandin, û build 20 û 21 tiştekî di tiştên ku sepan ji serverê dipirse de naguherînin. Ji kerema xwe pirsgirêkan di [Issues](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re. Ji bo belgekirina tevahî ya Immich bi xwe, binêre [immich.app](https://immich.app).
+Build a niha, build 22 (guhertoya 3.3.0-rc.0, hejmara build 3030020), li ser Immich `main` a 10ê Cotmeha 2026an (guhertoya 3.3.0-rc.0, hîn ne weşaneke stabîl) ava bûye. Build 22 bi servereke Immich 3.2.4 û bi serverekî ku ji heman Immich `main` hatiye avakirin hatiye ceribandin: têketin, xeta demê, albûm, wêne û vîdyoyên 360°, lîstina vîdyoyan û barkirin, bêyî tu çewtiya API. Ji kerema xwe pirsgirêkan di [Issues](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re. Ji bo belgekirina tevahî ya Immich bi xwe, binêre [immich.app](https://immich.app).
 
 <a id="compared-with-the-immich-app-and-other-apps"></a>
 ## Berhevdan bi sepana Immich û sepanên din re
@@ -1037,6 +1038,8 @@ Dema ku dekodkirina vîdyoyeke serverê nagihîje, ne xêzkirin (vîdyoyeke ku p
 - **Renderer bi xwe hilbijêre.** Di Settings, Pêşketî de, Troubleshooting (Çareserkirina pirsgirêkan) veke: hêmaneke "360° video renderer" (Rendererê vîdyoyên 360°) xuya dibe, bi xwerû Automatic (Otomatîk). Ew her weha "Plugin, full size" (Pêvek, mezinahiya tevahî), "Plugin, at most 4096 wide" (Pêvek, herî zêde 4096 fireh), "Plugin, at most 2880 wide" (Pêvek, herî zêde 2880 fireh) û "Flat, without the 360° view" (Dûz, bêyî dîtina 360°) pêşkêş dike, ji bo vîdyoya 360° ya din a ku tu vedikî. Di bin wê de, "Measured last" (Pîvana dawî) mezinahiya ku vîdyoya 360° ya dawî pê hatiye xêzkirin, çarçoveyên wê di çirkeyê de, çîpa grafîkê û dekoderê dibêje: wê di raporeke çewtiyê de kopî bike. Dîsa hilbijartina "Automatic", heta dema ku ew jixwe hilbijartî be, tiştê hatiye pîvandin ji bîr dike, û vîdyoyên 360° yên din dîsa tên pîvandin.
 - **Çîp çi dekod dike.** Settings, Pêşketî, "Dekoderên vîdyoyê yên vê cîhazê" tiştê ku çîpa grafîkê ya di karanînê de dekod dike rêz dike, wek ku Direct3D 11 radigihîne, û sepan wê lîsteyê bi tiştê ku dema lêdanê pîvandiye rast dike: mîhenga Çavkaniya vîdyoyê û kontrola du-lensî ya vîdyoyên xav li pey wê diçin. H.264 ji 4096 pîkselan firehtir (5.7K a kamerayên 360°) ji aliyê pêvajoyê ve tê dekodkirin, ji ber ku tu çîpeke laptopa ceribandinê wê nagire.
 
+**Ji bo pêşdebiran.** Lîstikvanê 360° bi rendererekî xwe xêz dike, ku li ser libmpv û pêveka media_kit_video ya pînekirî hatiye avakirin: mpv her çarçoveyê di teksturekê de li ser çîpa grafîkê xêz dike, û derbaseke OpenGL ES 3.0 dîtinê di wê teksturê de xêz dike ku Flutter nîşan dide, bêyî tu kopîkirinê di ser pêvajoyê re. Çima wisa hatiye avakirin, çawa dixebite, çi hatiye pîvandin û çi dikare were eyarkirin: [rendererê vîdyoyên 360° yê desktopê](../docs/immuch360/desktop-360-video-renderer.md).
+
 ### Li gorî sepanên telefonê
 
 - **Paşeke dema ku sepan vekirî ye dixebite** (an biçûkkirî), ne di paşxanê de dema pencere girtî ye. Girtina pencereyê dema ku barkirin dixebitin, an dema ku komputer tê parvekirin, pêşî dipirse.
@@ -1110,7 +1113,7 @@ Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li be
 
 - **Telefon û tabletên Android**
   - Îro: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), an APK li ser rûpela [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` ji bo telefonekê (`Immuch360-v<version>-release.apk` a gerdûnî li her derê dixebite, `-armeabi-v7a` ji bo telefonên kevin ên 32 bit e, û pela `.aab` ji bo Google Play ye, ne ji bo sideloadkirinê). Build a GitHub bi gelemperî li pêş firoşgehê ye. Bi her awayî ew li kêleka sepana fermî ya Immich tê sazkirin (pakêta `com.aprogsys.immuch360`).
-  - Di demeke nêzîk de: li ser Google Play, build 20 ji 7ê Cotmeha 2026an ve zindî ye, li şûna build 18; build 21 li ser telefon û tabletan tiştekî naguherîne.
+  - Di demeke nêzîk de: li ser Google Play, build 22 di 10ê Cotmeha 2026an de li şûna build 20 (ku ji 7ê Cotmehê ve zindî ye) hatiye şandin; ew guhertinên Immich ên Cotmehê û çareseriyên ji bo televizyonan tîne.
 - **iPhone û iPad**
   - Îro: li benda nirxandina Apple ye. Guhertoya di nirxandinê de taybetmendiyên build 11 hene: barkirina li Immich û bijartina Çavkaniya vîdyoyê (build 15) û pelên xav ên Insta360 (build 16) dê bi nûkirineke paşê ya App Store bên. Çavkanî bi Xcode an li ser Codemagic tê avakirin, binêre [Bi xwe ava bike](#build-it-yourself).
   - Di demeke nêzîk de: App Store, di nirxandinê de.
@@ -1157,7 +1160,7 @@ Tu veşartî di vê depoyê de tune: mifteya îmzekirina Android wekî veşartiy
 
 ### Şax
 
-- **`main`**: Immich `main` li commita ku `immuch360` li ser hatiye avakirin (29ê Îlona 2026an ji bo build ên niha), qet nayê guhertin; ew pêş ve diçe dema fork li ser Immich a nûtir tê rebasekirin.
+- **`main`**: Immich `main` li commita ku `immuch360` li ser hatiye avakirin (10ê Cotmeha 2026an ji bo build ên niha), qet nayê guhertin; ew pêş ve diçe dema fork li ser Immich a nûtir tê rebasekirin.
 - **`immuch360`**: guhertinên vê forkê li ser Immich, ji 9ê Cotmeha 2026an ve Immuch360 Desktop jî tê de. Her weşan dibêje li ser kîjan guhertoya Immich hatiye avakirin.
 - **`desktop`**: cihê ku Immuch360 Desktop, guhertoya komputerê, li ser `immuch360` hat avakirin, heta ku di 9ê Cotmeha 2026an de tê de hat yekkirin da ku telefon, kask, televizyon û komputer ji heman çavkaniyan derkevin. Niha ew `immuch360` dişopîne û etîketên pêş-weşanên desktop hildigire ([build a desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) ji commit 21f285c34, [build a desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ji 5b723bd25, [build a desktop 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ji yekkirina lîstikvanê vîdyoyên 360° di 10ê Cotmeha 2026an de). Karê nû yê desktop pêşî li wir dadikeve û bi build a desktop a ku wê diweşîne tevlî `immuch360` dibe. Guhertoya komputerê tiştek di bin `mobile/android` û `mobile/ios` de naguherîne.
 
