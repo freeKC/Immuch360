@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 /// A tap target that the remote control of a TV, a keyboard or a game pad also reaches: it takes the focus with the
@@ -71,7 +73,8 @@ class _RemoteFocusableState extends State<RemoteFocusable> {
 /// Gives the focus once to the first item of [child] that takes it, when [enabled]: the first item of a page in the
 /// remote control layout, when that item has no autofocus of its own (a button of immich_ui for instance). The first
 /// is the top one on screen, the left one of a row: the order of the focus tree puts the buttons inside a list tile
-/// before the tile itself.
+/// before the tile itself. A page that scrolls brings that item into view: a focus given this way does not scroll by
+/// itself, unlike a move of the arrows, and the focused item could sit below the screen.
 class RemoteInitialFocus extends StatefulWidget {
   const RemoteInitialFocus({super.key, this.enabled = true, required this.child});
 
@@ -116,12 +119,24 @@ class _RemoteInitialFocusState extends State<RemoteInitialFocus> {
       if (first != null) {
         _done = true;
         first.requestFocus();
+        _bringIntoView(first);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) => Focus(focusNode: _node, child: widget.child);
+}
+
+/// Scrolls the scroll views around [node] the least that shows it whole, as a move of the arrows does
+void _bringIntoView(FocusNode node) {
+  final context = node.context;
+  if (context == null) {
+    return;
+  }
+  // Each one scrolls only when the item is past that edge
+  unawaited(Scrollable.ensureVisible(context, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart));
+  unawaited(Scrollable.ensureVisible(context, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd));
 }
 
 /// The node of [nodes] at the top of the screen, the left one of a row: the first item for a remote control. Nodes

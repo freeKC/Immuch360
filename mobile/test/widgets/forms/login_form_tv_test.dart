@@ -16,17 +16,21 @@ import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/models/server_info/server_config.model.dart';
 import 'package:immich_mobile/models/server_info/server_features.model.dart';
+import 'package:immich_mobile/pages/login/login.page.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/widgets/common/immich_logo.dart';
 import 'package:immich_mobile/widgets/forms/login/login_form.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../providers/infrastructure/local_session.fake.dart';
 import '../../service.mocks.dart';
@@ -83,13 +87,21 @@ void main() {
     await context.dispose();
   });
 
-  Future<void> pumpLoginForm(WidgetTester tester, {required bool tvMode}) async {
+  /// The login form alone, or the whole login page with [page] (the version and the Logs link under the form); in
+  /// the TV shell of the app with [tvShell]
+  Future<void> pumpLoginForm(
+    WidgetTester tester, {
+    required bool tvMode,
+    bool page = false,
+    bool tvShell = false,
+    TextScaler? textScaler,
+  }) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           path: '/',
           initial: true,
-          page: PageInfo(LoginRoute.name, builder: (_) => Scaffold(body: LoginForm())),
+          page: PageInfo(LoginRoute.name, builder: (_) => page ? const LoginPage() : Scaffold(body: LoginForm())),
         ),
       ],
     );
@@ -121,6 +133,15 @@ void main() {
               supportedLocales: context.supportedLocales,
               locale: context.locale,
               routerConfig: router.config(),
+              builder: (context, child) {
+                final scaled = textScaler == null
+                    ? child!
+                    : MediaQuery(
+                        data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+                        child: child!,
+                      );
+                return tvShell ? TvShell(child: scaled) : scaled;
+              },
             ),
           ),
         ),
@@ -246,5 +267,77 @@ void main() {
 
     expect(find.text('Sign in with SSO'), findsOneWidget);
     verifyNever(() => tvApi.editText(any()));
+  });
+
+  group('the login page on a 1080p TV', () {
+    setUp(() async {
+      PackageInfo.setMockInitialValues(
+        appName: 'Immuch360',
+        packageName: 'app.alextran.immich',
+        version: '3.3.0',
+        buildNumber: '3030022',
+        buildSignature: '',
+      );
+      // A TV that never reached a server: the page starts on "Use without a server", the last action of the form
+      await StoreService.I.delete(StoreKey.serverEndpoint);
+    });
+
+    tearDown(() => StoreService.I.put(StoreKey.serverEndpoint, PresentationContext.serverEndpoint));
+
+    /// A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
+    void tvScreen(WidgetTester tester) {
+      tester.view
+        ..physicalSize = const Size(1920, 1080)
+        ..devicePixelRatio = 2;
+      addTearDown(tester.view.reset);
+    }
+
+    /// Where the form shows: the body of the page above the version line, inside the top margin of the TV shell
+    Rect visibleArea(WidgetTester tester, {double margin = 0}) {
+      final screen = tester.getRect(find.byType(LoginPage));
+      final bar = tester.getRect(find.ancestor(of: find.text('Logs'), matching: find.byType(SafeArea)).first);
+      return Rect.fromLTRB(screen.left, screen.top + margin, screen.right, bar.top);
+    }
+
+    bool shows(WidgetTester tester, Finder finder, Rect area) {
+      final rect = tester.getRect(finder);
+      return rect.top >= area.top - 0.5 && rect.bottom <= area.bottom + 0.5;
+    }
+
+    testWidgets('every action of the server step shows at once, "Use without a server" with the focus', (tester) async {
+      tvScreen(tester);
+      await pumpLoginForm(tester, tvMode: true, page: true, tvShell: true);
+      final useWithoutServer = find.widgetWithText(ImmichTextButton, 'Use without a server');
+      expect(focusedIn(useWithoutServer), isTrue);
+
+      final area = visibleArea(tester, margin: TvShell.overscan.top);
+      for (final (name, finder) in [
+        ('the logo', find.byType(ImmichLogo)),
+        ('the address', entryOf(ImmichURLInput)),
+        ('Next', find.text('Next')),
+        ('Settings', find.widgetWithText(ImmichTextButton, 'Settings')),
+        ('Use without a server', useWithoutServer),
+      ]) {
+        expect(shows(tester, finder, area), isTrue, reason: '$name between ${area.top} and ${area.bottom}');
+      }
+      expect(tester.getRect(find.text('Logs')).bottom, lessThanOrEqualTo(540 - TvShell.overscan.bottom));
+    });
+
+    testWidgets('with large text the page scrolls to the action that has the focus', (tester) async {
+      tvScreen(tester);
+      await pumpLoginForm(tester, tvMode: true, page: true, tvShell: true, textScaler: const TextScaler.linear(2.5));
+      final useWithoutServer = find.widgetWithText(ImmichTextButton, 'Use without a server');
+
+      expect(focusedIn(useWithoutServer), isTrue);
+      expect(shows(tester, useWithoutServer, visibleArea(tester, margin: TvShell.overscan.top)), isTrue);
+    });
+
+    testWidgets('a phone keeps its layout: the logo a fifth of the height down', (tester) async {
+      await pumpLoginForm(tester, tvMode: false, page: true);
+
+      final body = visibleArea(tester);
+      expect(tester.getRect(find.byType(ImmichLogo)).top, closeTo(body.top + body.height / 5, 1));
+      expect(tester.getSize(find.byType(ImmichLogo)), const Size.square(100));
+    });
   });
 }
