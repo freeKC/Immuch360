@@ -616,7 +616,7 @@ From build 20 the same Android app runs on Android TV and Google TV, with the re
 
 ### The Remote control layout setting
 
-Settings, Preferences, "Remote control layout": "Large focus frames and remote control keys, without the controls that need a touch screen. Automatic turns it on on Android TV and Google TV." Automatic is the default; On suits a tablet driven by a keyboard or a game pad; Off turns it off on a TV. The setting exists on Android only. The arrows and OK work in the viewers with a keyboard or a game pad whatever the setting.
+Settings, Preferences, "Remote control layout": "Large focus frames and remote control keys, without the controls that need a touch screen. Automatic turns it on on Android TV and Google TV." Automatic is the default; On suits a tablet driven by a keyboard or a game pad; Off turns it off on a TV. The setting exists on Android only. From build 22 a change applies at once to the open page, which stays where it was (before, Settings opened again on Advanced, over a start screen that Back had to go through). The arrows and OK work in the viewers with a keyboard or a game pad whatever the setting.
 
 ### Limits
 

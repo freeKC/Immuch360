@@ -22,8 +22,14 @@ class NoFocusRing extends InheritedWidget {
 ///
 /// It never asks for frames of its own except while it moves: the position of the focused widget is read after each
 /// frame the app draws anyway.
+///
+/// Off ([enabled] false), it draws nothing and follows nothing, and keeps the same widgets around [child]: the app
+/// keeps its routes when the remote control layout is turned on or off (see TvShell).
 class TvFocusRing extends StatefulWidget {
-  const TvFocusRing({super.key, required this.child});
+  const TvFocusRing({super.key, this.enabled = true, required this.child});
+
+  /// Whether the ring is drawn
+  final bool enabled;
 
   final Widget child;
 
@@ -52,21 +58,56 @@ class TvFocusRingState extends State<TvFocusRing> with SingleTickerProviderState
   FocusNode? _node;
   Rect? _from;
   Rect? _target;
-  bool _listening = true;
+  bool _listening = false;
+  bool _frameCallbackPending = false;
 
   @override
   void initState() {
     super.initState();
-    FocusManager.instance.addListener(_onFocusChange);
-    SchedulerBinding.instance.addPostFrameCallback(_afterFrame);
+    if (widget.enabled) {
+      _listen();
+    }
+  }
+
+  @override
+  void didUpdateWidget(TvFocusRing oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.enabled && !_listening) {
+      _listen();
+    } else if (!widget.enabled && _listening) {
+      _stopListening();
+      _node = null;
+      _target = null;
+      _from = null;
+      _move.stop();
+    }
   }
 
   @override
   void dispose() {
-    _listening = false;
-    FocusManager.instance.removeListener(_onFocusChange);
+    _stopListening();
     _move.dispose();
     super.dispose();
+  }
+
+  void _listen() {
+    _listening = true;
+    FocusManager.instance.addListener(_onFocusChange);
+    _scheduleAfterFrame();
+  }
+
+  void _stopListening() {
+    _listening = false;
+    FocusManager.instance.removeListener(_onFocusChange);
+  }
+
+  /// One pending callback at most, even when the ring is turned off and on again within a frame
+  void _scheduleAfterFrame() {
+    if (_frameCallbackPending) {
+      return;
+    }
+    _frameCallbackPending = true;
+    SchedulerBinding.instance.addPostFrameCallback(_afterFrame);
   }
 
   void _onFocusChange() {
@@ -76,11 +117,12 @@ class TvFocusRingState extends State<TvFocusRing> with SingleTickerProviderState
   }
 
   void _afterFrame(Duration _) {
+    _frameCallbackPending = false;
     if (!_listening) {
       return;
     }
     _update();
-    SchedulerBinding.instance.addPostFrameCallback(_afterFrame);
+    _scheduleAfterFrame();
   }
 
   /// Reads where the focused widget is now, and moves the ring there: in an ease when the focus went to another
@@ -166,12 +208,13 @@ class TvFocusRingState extends State<TvFocusRing> with SingleTickerProviderState
       fit: StackFit.expand,
       children: [
         widget.child,
-        IgnorePointer(
-          child: CustomPaint(
-            key: _paintKey,
-            painter: _RingPainter(rect: _shownRect, color: colorScheme.primary, repaint: _move),
+        if (widget.enabled)
+          IgnorePointer(
+            child: CustomPaint(
+              key: _paintKey,
+              painter: _RingPainter(rect: _shownRect, color: colorScheme.primary, repaint: _move),
+            ),
           ),
-        ),
       ],
     );
   }

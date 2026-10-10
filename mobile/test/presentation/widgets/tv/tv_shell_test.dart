@@ -2,6 +2,9 @@
 // guidelines, channel up and down for pages, up and down out of a text field and out of a group of radio buttons, and
 // the focus always highlighted.
 
+import 'dart:async';
+
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +15,8 @@ void main() {
   Future<void> pump(WidgetTester tester, Widget home, {bool tvMode = true}) async {
     await tester.pumpWidget(
       MaterialApp(
-        builder: (context, child) => tvMode ? TvShell(child: child!) : child!,
+        // As main.dart does
+        builder: (context, child) => TvShell(enabled: tvMode, child: child!),
         home: home,
       ),
     );
@@ -35,6 +39,30 @@ void main() {
     expect(media.padding, const EdgeInsets.symmetric(horizontal: 48, vertical: 27));
     expect(media.viewPadding, const EdgeInsets.symmetric(horizontal: 48, vertical: 27));
     expect(find.byType(TvFocusRing), findsOneWidget);
+  });
+
+  testWidgets('off, it hands the screen, the keys and the focus down as they are, without a ring', (tester) async {
+    const system = MediaQueryData(size: Size(960, 540), padding: EdgeInsets.only(top: 40));
+    late MediaQueryData media;
+    final before = FocusManager.instance.highlightStrategy;
+    await tester.pumpWidget(
+      MediaQuery(
+        data: system,
+        child: TvShell(
+          enabled: false,
+          child: Builder(
+            builder: (context) {
+              media = MediaQuery.of(context);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(media, system);
+    expect(FocusManager.instance.highlightStrategy, before);
+    expect(find.byType(CustomPaint), findsNothing, reason: 'no ring painter');
   });
 
   testWidgets('keeps a larger system padding', (tester) async {
@@ -212,4 +240,122 @@ void main() {
       expect(picked, 'second');
     });
   });
+
+  group('turning the remote control layout on or off', () {
+    late int splashStarts;
+
+    setUp(() => splashStarts = 0);
+
+    /// An app with a splash screen that starts the session and leaves for Home, and a settings page with a state
+    Future<RootStackRouter> pumpApp(WidgetTester tester, ValueNotifier<bool> tvMode) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            initial: true,
+            page: PageInfo('Splash', builder: (_) => _Splash(onStart: () => splashStarts++)),
+          ),
+          AutoRoute(
+            path: '/home',
+            page: PageInfo('Home', builder: (_) => const Scaffold(body: Text('home'))),
+          ),
+          AutoRoute(
+            path: '/settings',
+            page: PageInfo('Settings', builder: (_) => const _Settings()),
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        ValueListenableBuilder<bool>(
+          valueListenable: tvMode,
+          builder: (context, tv, _) => MaterialApp.router(
+            // As main.dart does
+            builder: (context, child) => TvShell(enabled: tv, child: child!),
+            // As main.dart does with a link that is not one of Immich: to its path
+            routerConfig: router.config(deepLinkBuilder: (link) => DeepLink.path(link.path)),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return router;
+    }
+
+    for (final start in [false, true]) {
+      testWidgets('${start ? 'on a TV' : 'on a phone'} the open page takes the other layout, nothing starts again', (
+        tester,
+      ) async {
+        final tvMode = ValueNotifier(start);
+        addTearDown(tvMode.dispose);
+        final strategy = FocusManager.instance.highlightStrategy;
+        final router = await pumpApp(tester, tvMode);
+        expect(splashStarts, 1);
+        unawaited(router.push(const PageRouteInfo('Settings')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Preferences'));
+        await tester.pumpAndSettle();
+        final routes = router.stackData.map((route) => route.name).toList();
+        expect(routes, ['Home', 'Settings']);
+
+        for (final on in [!start, start, !start]) {
+          tvMode.value = on;
+          await tester.pumpAndSettle();
+
+          expect(router.stackData.map((route) => route.name), routes, reason: 'no splash screen pushed');
+          expect(splashStarts, 1, reason: 'no second start of the session');
+          expect(find.text('Preferences shown'), findsOneWidget, reason: 'the page keeps its state');
+          expect(find.text(on ? 'directional' : 'traditional'), findsOneWidget, reason: 'in the other layout');
+          expect(FocusManager.instance.highlightStrategy, on ? FocusHighlightStrategy.alwaysTraditional : strategy);
+        }
+      });
+    }
+  });
+}
+
+/// Starts the session once, then leaves for Home as the splash screen of the app does
+class _Splash extends StatefulWidget {
+  const _Splash({required this.onStart});
+
+  final VoidCallback onStart;
+
+  @override
+  State<_Splash> createState() => _SplashState();
+}
+
+class _SplashState extends State<_Splash> {
+  @override
+  void initState() {
+    super.initState();
+    widget.onStart();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(context.router.replace(const PageRouteInfo('Home')));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const Scaffold(body: Text('splash'));
+}
+
+/// Shows its first section until Preferences is picked, as the two panes of the settings do, and the navigation mode
+class _Settings extends StatefulWidget {
+  const _Settings();
+
+  @override
+  State<_Settings> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<_Settings> {
+  var _preferences = false;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: Column(
+      children: [
+        TextButton(onPressed: () => setState(() => _preferences = true), child: const Text('Preferences')),
+        Text(_preferences ? 'Preferences shown' : 'Advanced shown'),
+        Text(MediaQuery.navigationModeOf(context).name),
+      ],
+    ),
+  );
 }

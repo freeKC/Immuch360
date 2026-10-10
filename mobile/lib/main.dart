@@ -156,10 +156,6 @@ class ImmichApp extends ConsumerStatefulWidget {
 }
 
 class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserver {
-  /// Keeps the navigator and its routes when the remote control layout is turned on or off: TvShell comes and goes
-  /// around it
-  final _appKey = GlobalKey(debugLabel: 'app');
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
@@ -321,19 +317,19 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         darkTheme: getThemeData(colorScheme: immichTheme.dark, locale: context.locale, tvMode: tvMode),
         theme: getThemeData(colorScheme: immichTheme.light, locale: context.locale, tvMode: tvMode),
         builder: (context, child) {
-          final keyed = KeyedSubtree(key: _appKey, child: child!);
           // The keys and the close guard of the window on a computer, see DesktopShell
-          final app = CurrentPlatform.isDesktop ? desktopAppShell(keyed) : keyed;
+          final app = CurrentPlatform.isDesktop ? desktopAppShell(child!) : child!;
           return ImmichTranslationProvider(
             translations: ImmichTranslations(
               submit: context.t.submit,
               password: context.t.password,
               undo: context.t.undo,
             ),
-            // The remote control layout (Android TV): margins, focus ring and remote keys, see TvShell
+            // The remote control layout (Android TV): margins, focus ring and remote keys, see TvShell. Always there,
+            // turned on and off in place, so that the open page takes the other layout without a new start of the app
             child: ImmichThemeProvider(
               colorScheme: context.colorScheme,
-              child: tvMode ? TvShell(child: app) : app,
+              child: TvShell(enabled: tvMode, child: app),
             ),
           );
         },

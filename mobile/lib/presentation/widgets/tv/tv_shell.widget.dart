@@ -16,8 +16,15 @@ import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart'
 /// - the arrows move the focus out of a group of radio buttons too, and OK picks a choice (see
 ///   [radioArrowMovesFocus]);
 /// - the focus highlight of Material widgets shown at all times, under the one ring of [TvFocusRing].
+///
+/// Off ([enabled] false), it hands everything down as it is. It stays in the tree when the setting changes so that the
+/// widgets above the navigator keep their shape: the router would otherwise replay its current address as a new deep
+/// link, which pushed the splash screen and started the session again on top of the open page.
 class TvShell extends StatefulWidget {
-  const TvShell({super.key, required this.child});
+  const TvShell({super.key, this.enabled = true, required this.child});
+
+  /// Whether the remote control layout is on
+  final bool enabled;
 
   final Widget child;
 
@@ -48,38 +55,75 @@ class TvShell extends StatefulWidget {
 }
 
 class _TvShellState extends State<TvShell> {
-  late final FocusHighlightStrategy _previousStrategy;
+  /// The highlight strategy of the app before the remote control layout, given back when it is turned off
+  FocusHighlightStrategy? _previousStrategy;
+
+  /// Whether the highlight strategy and the radio key handler of the layout are in place
+  var _on = false;
 
   @override
   void initState() {
     super.initState();
-    // Material widgets draw their focus overlay only after a key was pressed, by default: on a TV the focus is the only
-    // cursor, from the first frame on
-    _previousStrategy = FocusManager.instance.highlightStrategy;
-    FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
-    FocusManager.instance.addEarlyKeyEventHandler(radioArrowMovesFocus);
+    _apply();
+  }
+
+  @override
+  void didUpdateWidget(TvShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.enabled != oldWidget.enabled) {
+      // After the frame: the widgets that follow the highlight mode rebuild then, not in the middle of this build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _apply();
+        }
+      });
+    }
   }
 
   @override
   void dispose() {
-    FocusManager.instance.removeEarlyKeyEventHandler(radioArrowMovesFocus);
-    FocusManager.instance.highlightStrategy = _previousStrategy;
+    if (_on) {
+      _turnOff();
+    }
     super.dispose();
+  }
+
+  void _apply() {
+    if (widget.enabled && !_on) {
+      // Material widgets draw their focus overlay only after a key was pressed, by default: on a TV the focus is the
+      // only cursor, from the first frame on
+      _previousStrategy = FocusManager.instance.highlightStrategy;
+      FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+      FocusManager.instance.addEarlyKeyEventHandler(radioArrowMovesFocus);
+      _on = true;
+    } else if (!widget.enabled && _on) {
+      _turnOff();
+    }
+  }
+
+  void _turnOff() {
+    FocusManager.instance.removeEarlyKeyEventHandler(radioArrowMovesFocus);
+    FocusManager.instance.highlightStrategy = _previousStrategy ?? FocusHighlightStrategy.automatic;
+    _on = false;
   }
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
+    final enabled = widget.enabled;
+    // The same widgets on and off, see [TvShell]
     return MediaQuery(
-      data: media.copyWith(
-        navigationMode: NavigationMode.directional,
-        padding: _atLeast(media.padding, TvShell.overscan),
-        viewPadding: _atLeast(media.viewPadding, TvShell.overscan),
-      ),
+      data: enabled
+          ? media.copyWith(
+              navigationMode: NavigationMode.directional,
+              padding: _atLeast(media.padding, TvShell.overscan),
+              viewPadding: _atLeast(media.viewPadding, TvShell.overscan),
+            )
+          : media,
       child: Shortcuts(
         debugLabel: 'TV remote',
-        shortcuts: TvShell.shortcuts,
-        child: TvFocusRing(child: widget.child),
+        shortcuts: enabled ? TvShell.shortcuts : const <ShortcutActivator, Intent>{},
+        child: TvFocusRing(enabled: enabled, child: widget.child),
       ),
     );
   }
