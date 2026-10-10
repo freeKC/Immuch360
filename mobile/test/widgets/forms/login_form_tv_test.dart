@@ -16,6 +16,7 @@ import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/models/server_info/server_config.model.dart';
 import 'package:immich_mobile/models/server_info/server_features.model.dart';
+import 'package:immich_mobile/models/server_info/server_version.model.dart';
 import 'package:immich_mobile/pages/login/login.page.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
@@ -330,6 +331,34 @@ void main() {
 
       expect(focusedIn(useWithoutServer), isTrue);
       expect(shows(tester, useWithoutServer, visibleArea(tester, margin: TvShell.overscan.top)), isTrue);
+    });
+
+    testWidgets('the credentials step starts on the email, even once Logs had the focus', (tester) async {
+      tvScreen(tester);
+      when(() => tvApi.editText(any())).thenAnswer((_) async => 'https://photos.example.org');
+      // A server two major versions behind: the warning shows once the credentials are asked, a rebuild of the form
+      when(
+        () => context.service.serverInfo.getServerVersion(),
+      ).thenAnswer((_) async => const ServerVersion(major: 1, minor: 0, patch: 0));
+      await pumpLoginForm(tester, tvMode: true, page: true, tvShell: true);
+      final logs = find.ancestor(of: find.text('Logs'), matching: find.byType(RemoteFocusable));
+
+      // Down from "Use without a server" to Logs under the form, then up to the address
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      expect(focusedIn(logs), isTrue);
+      for (var i = 0; i < 4; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+        await tester.pumpAndSettle();
+      }
+      expect(focusedIn(entryOf(ImmichURLInput)), isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Your server version is not compatible'), findsOneWidget);
+      expect(focusedIn(entryOf(ImmichEmailInput)), isTrue, reason: 'not Logs, the item focused before the address');
+      expect(focusedIn(logs), isFalse);
     });
 
     testWidgets('a phone keeps its layout: the logo a fifth of the height down', (tester) async {
