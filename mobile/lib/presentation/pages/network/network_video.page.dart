@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
+import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -126,6 +127,17 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     WidgetsBinding.instance.addObserver(this);
     // Back on a TV depends on where the focus is
     _appBarFocus.addListener(_onAppBarFocus);
+    if (CurrentPlatform.isDesktop) {
+      ref.listenManual(externalPlayerClosedProvider, (_, _) => unawaited(_onExternalPlayerClosed()));
+    }
+  }
+
+  /// A computer's 360° player closed: what resumed does on a phone
+  Future<void> _onExternalPlayerClosed() async {
+    await _notifier.resumeAfterExternalPlayer();
+    if (_notifier.takePlayOnForeground()) {
+      await _notifier.play();
+    }
   }
 
   @override
@@ -356,8 +368,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        // Back from the native 360° player or the immersive viewer, if one was opened on this video
-        await _notifier.resumeAfterExternalPlayer();
+        // Back from the native 360° player or the immersive viewer, if one was opened on this video. A computer's
+        // 360° player is a route of the window, which may still be open at a focus change: its closing ends the
+        // suspension there (externalPlayerClosedProvider)
+        if (!CurrentPlatform.isDesktop) {
+          await _notifier.resumeAfterExternalPlayer();
+        }
         // Read first, so that it is used up even when the video plays anyway. Back from the Spatial 2.5D player,
         // a video that it left playing but that became ready in the background waits for this to play.
         final playAfterExternalPlayer = _notifier.takePlayOnForeground();

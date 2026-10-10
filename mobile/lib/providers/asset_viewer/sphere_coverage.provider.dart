@@ -5,6 +5,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/player_events_hub.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:logging/logging.dart';
@@ -158,9 +159,10 @@ class SphericalVideoSession implements SphericalVideoEvents {
 /// handler, which openPanoramaVideo does before it opens the player.
 final sphericalVideoSessionProvider = Provider<SphericalVideoSession>((ref) {
   final session = SphericalVideoSession(ref.read(sphereCoverageOverridesProvider.notifier));
-  SphericalVideoEvents.setUp(session);
+  // Through the hub, which the 360° player of the computers calls when it closes
+  PlayerEventsHub.setUpSpherical(session);
   ref.onDispose(() {
-    SphericalVideoEvents.setUp(null);
+    PlayerEventsHub.setUpSpherical(null);
     session.cancel();
   });
   return session;

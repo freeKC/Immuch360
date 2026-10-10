@@ -53,7 +53,7 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
     _controller = MediaKitVideoPlayerController(
       pool: widget.pool ?? desktopPlayerPool,
       label: 'video view',
-      resolve: widget.resolve ?? (_playable ? _appResolver() : _unavailable),
+      resolve: widget.resolve ?? (_playable ? desktopAppVideoResolver(ref) : _unavailable),
     );
     // After the first frame, as the platform view calls back once it exists
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -61,18 +61,6 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
         widget.onViewReady?.call(_controller);
       }
     });
-  }
-
-  DesktopVideoSourceResolver _appResolver() {
-    final bridge = ref.read(mediaBridgeProvider);
-    String? endpoint() => Store.tryGet(StoreKey.serverEndpoint);
-    return (source) => resolveDesktopVideoSource(
-      source,
-      bridge: bridge,
-      serverEndpoint: endpoint(),
-      // The app's client at each request: it changes with the network settings
-      serverFileSystem: () => ImmichServerFileSystem(endpoint: endpoint, client: () => NetworkRepository.client),
-    );
   }
 
   static Future<String> _unavailable(VideoSource source) async =>
@@ -110,4 +98,18 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
       ),
     );
   }
+}
+
+/// What the app's players are given for a source: through the app's media bridge and the server the app uses (see
+/// desktop_video_sources.dart)
+DesktopVideoSourceResolver desktopAppVideoResolver(WidgetRef ref) {
+  final bridge = ref.read(mediaBridgeProvider);
+  String? endpoint() => Store.tryGet(StoreKey.serverEndpoint);
+  return (source) => resolveDesktopVideoSource(
+    source,
+    bridge: bridge,
+    serverEndpoint: endpoint(),
+    // The app's client at each request: it changes with the network settings
+    serverFileSystem: () => ImmichServerFileSystem(endpoint: endpoint, client: () => NetworkRepository.client),
+  );
 }

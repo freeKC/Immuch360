@@ -43,6 +43,22 @@ class VideoOutputManager {
   // Destroys the |VideoOutput| with given handle.
   void Dispose(int64_t handle);
 
+  // Immuch360: turns renderer C on or off for a player (IMMUCH360-NOTE.md,
+  // patch 6); |done| gets |VideoOutput::SetProjection|'s answer, on another
+  // thread.
+  void SetProjection(int64_t handle,
+                     std::optional<ProjectionSetup> setup,
+                     std::function<void(flutter::EncodableMap)> done);
+
+  // Immuch360: the view of renderer C. Called on the platform thread for
+  // every frame of a drag: it neither starts a thread nor waits for one.
+  // False when the player has no video output.
+  bool SetView(int64_t handle, const ProjectionView& view);
+
+  // Immuch360: |VideoOutput::ProjectionStats|, null without a video output.
+  std::optional<flutter::EncodableMap> ProjectionStats(int64_t handle,
+                                                       bool probe);
+
   ~VideoOutputManager();
 
  private:
@@ -80,6 +96,13 @@ class VideoOutputManager {
   std::unique_ptr<ThreadPool> thread_pool_ = std::make_unique<ThreadPool>(1);
   flutter::PluginRegistrarWindows* registrar_ = nullptr;
   std::unordered_map<int64_t, std::unique_ptr<VideoOutput>> video_outputs_ = {};
+  // Immuch360: the outputs again, for the calls of the platform thread that
+  // must not wait for |mutex_|, which |Create| holds while a player's
+  // context and render context are made. An entry is added once its output
+  // is made and removed before it is destroyed, under |lookup_mutex_|, which
+  // the calls hold while they use it.
+  std::mutex lookup_mutex_ = std::mutex();
+  std::unordered_map<int64_t, VideoOutput*> lookup_ = {};
 };
 
 #endif  // VIDEO_OUTPUT_MANAGER_H_

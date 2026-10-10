@@ -37,8 +37,10 @@ class PlayerPool {
     : maxPlayers = {...defaultMaxPlayers, ...?maxPlayers};
 
   /// The players at once per kind: the page on screen and one more that plays too (a page opened over a video that
-  /// plays on), and one frame grabber. A player that does not play is taken before a second one is made.
-  static const defaultMaxPlayers = {PlayerKind.playback: 2, PlayerKind.thumbnail: 1};
+  /// plays on), and one frame grabber. A player that does not play is taken before a second one is made. Two live
+  /// views (two camera pages open, one over the other); a camera serves two viewers at most, the Tapo app included,
+  /// so a page never holds more than one stream of the same camera.
+  static const defaultMaxPlayers = {PlayerKind.playback: 2, PlayerKind.thumbnail: 1, PlayerKind.live: 2};
 
   final PlayerFactory _create;
   final Map<PlayerKind, int> maxPlayers;

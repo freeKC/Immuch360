@@ -2,7 +2,8 @@
 // the sound, the Live badge, Back leaving full screen first), the model and the memory card, the days by month, the
 // cache, what a login learned saved with the camera, a new certificate asked to the user, a camera found again at a new
 // address (asked to the user when no certificate was pinned yet), Retry asking the camera again after a refusal,
-// nothing read without the TP-Link password, and the live view announced for later on iPhone and on a computer.
+// nothing read without the TP-Link password, and the live view announced for later on iPhone and on a computer without
+// libmpv (a computer with it plays the stream: test/desktop/video/camera_live_view_test.dart).
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -138,7 +139,7 @@ void main() {
     }
   });
 
-  testWidgets('tells that the live view comes later on a computer, without an Android view', (tester) async {
+  testWidgets('tells that the live view comes later on a computer without libmpv, and no Android view', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;
     try {
       await pump(tester);

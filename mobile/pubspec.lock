@@ -940,6 +940,13 @@ packages:
       relative: true
     source: path
     version: "0.0.0"
+  immuch_desktop_video:
+    dependency: "direct main"
+    description:
+      path: "packages/immuch_desktop_video"
+      relative: true
+    source: path
+    version: "1.0.0"
   integration_test:
     dependency: "direct dev"
     description: flutter

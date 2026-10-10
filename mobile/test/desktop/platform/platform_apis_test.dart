@@ -136,10 +136,13 @@ void main() {
     });
 
     test('the static decoder answer: up to 8K', () async {
+      // Without the probe of the GPU (the tests, Linux and macOS): software up to 8192 x 8192, one row per codec
       final api = DesktopVideoDecoderApi();
       expect((await api.canDecode('video/hevc', null, 7680, 3840, 30, 10, 16)).supported, isTrue);
       expect((await api.canDecode('video/hevc', null, 16384, 8192, 30, 8, 1)).supported, isFalse);
-      expect(await api.listDecoders(), isEmpty);
+      final rows = await api.listDecoders();
+      expect(rows.every((row) => !row.hardware), isTrue);
+      expect(rows.map((row) => row.codec), containsAll(DesktopVideoDecoderApi.softwareCodecs));
     });
 
     test('command line files come out one by one, with a type from their extension', () async {

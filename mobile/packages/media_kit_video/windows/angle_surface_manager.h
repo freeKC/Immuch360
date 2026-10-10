@@ -72,7 +72,28 @@ class ANGLESurfaceManager {
   // patch 4).
   bool IsDeviceLost() const;
 
+  // Immuch360: renderer C (IMMUCH360-NOTE.md, patch 6) draws into a second
+  // internal texture while Flutter copies the first, and swaps them once its
+  // GPU work is finished: the lock |Read| takes is then held for the swap
+  // only, never while a GPU finishes a frame (14 to 16 ms per glFinish on an
+  // RTX 4060 between the draws of a paused video, 2026-10-09). |Draw| keeps
+  // upstream's single internal texture; with the second one on, use
+  // |MakeBackCurrent| and |SwapBack| instead.
+  void SetDoubleBuffered(bool value);
+
+  // Makes the context current on the internal texture that |Read| does not
+  // copy from: what is drawn into its FBO 0 shows after |SwapBack|.
+  void MakeBackCurrent();
+
+  // Once the GPU finished drawing the back texture (glFinish): |Read| copies
+  // from it from now on.
+  void SwapBack();
+
  private:
+  // Immuch360: the second internal texture and its pbuffer (patch 6).
+  bool CreateBack();
+  void ReleaseBack();
+
   // Immuch360: chooses |config_| and creates |context_| for |client_version|.
   bool CreateContext(int32_t client_version);
 
@@ -100,6 +121,13 @@ class ANGLESurfaceManager {
   ID3D11DeviceContext* d3d_11_device_context_ = nullptr;
   Microsoft::WRL::ComPtr<ID3D11Texture2D> internal_d3d_11_texture_2D_;
   Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d_11_texture_2D_;
+  // Immuch360: the second internal texture of renderer C, and whether |Read|
+  // copies from it (patch 6)
+  bool double_buffered_ = false;
+  bool front_is_back_ = false;
+  HANDLE back_handle_ = nullptr;
+  Microsoft::WRL::ComPtr<ID3D11Texture2D> back_d3d_11_texture_2D_;
+  EGLSurface back_surface_ = EGL_NO_SURFACE;
   // ANGLE
   EGLSurface surface_ = EGL_NO_SURFACE;
   EGLDisplay display_ = EGL_NO_DISPLAY;

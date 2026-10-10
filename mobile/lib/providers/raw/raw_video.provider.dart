@@ -9,11 +9,13 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/local_asset.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/remote_asset.repository.dart';
@@ -36,13 +38,17 @@ final _log = Logger('RawVideo');
 /// they do not open rather than showing one lens as both.
 const rawTwoStreamPlayback = (android: true, quest: true, ios: true);
 
-/// Which layouts of two streams the players of this device play (see [rawTwoStreamPlayback])
+/// Which layouts of two streams the players of this device play (see [rawTwoStreamPlayback]). A computer plays them
+/// in the 360° player route wherever libmpv loaded: both streams stacked in one player, or the phones' fallbacks
+/// (desktop/video/raw_two_streams.dart).
 final rawVideoPlaybackSupportProvider = Provider<RawVideoPlaybackSupport>((ref) {
   final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
   return RawVideoPlaybackSupport(
-    twoStreams: Platform.isIOS
-        ? rawTwoStreamPlayback.ios
-        : Platform.isAndroid && (isHorizonOs ? rawTwoStreamPlayback.quest : rawTwoStreamPlayback.android),
+    twoStreams:
+        (Platform.isIOS
+            ? rawTwoStreamPlayback.ios
+            : Platform.isAndroid && (isHorizonOs ? rawTwoStreamPlayback.quest : rawTwoStreamPlayback.android)) ||
+        (CurrentPlatform.isDesktop && desktopVideoAvailable),
   );
 });
 

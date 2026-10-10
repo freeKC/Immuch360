@@ -5,8 +5,10 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/render/sphere_renderer_tile.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
@@ -82,6 +84,8 @@ class AdvancedSettings extends HookConsumerWidget {
         onTap: () =>
             unawaited(Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const VideoDecodersPage()))),
       ),
+      // With the troubleshooting on a computer: which renderer draws the 360° videos, and what it measured
+      if (CurrentPlatform.isDesktop && advancedTroubleshooting.value) const SphereRendererTile(),
       if (isManageMediaSupported.value)
         Column(
           children: [

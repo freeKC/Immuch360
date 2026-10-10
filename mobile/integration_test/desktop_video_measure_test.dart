@@ -28,6 +28,39 @@
 //                                  built-in probe hook (MAINPRESUB at OUTPUT size, one float parameter)
 //   IMMUCH360_MEASURE_PARAM        name:min:max of the shader parameter changed while measuring (default yaw:-180:180)
 //   IMMUCH360_MEASURE_PARAM_RATES  changes a second, one phase each (default "0", or "0,15,30,60" with a shader)
+//   IMMUCH360_MEASURE_PARAM_FIXED  other parameters sent with each change ("fov=100,pitch=10"): a change of
+//                                  glsl-shader-opts replaces the whole list
+//   IMMUCH360_MEASURE_PARAM_PROPERTY  what a change sets (default glsl-shader-opts): another mpv property takes the
+//                                  bare value (video-pan-x: the panscan path, which feeds tex_offset to the hooks);
+//                                  "glsl-shaders" writes a copy of the shader with @VALUE@ replaced by the value under
+//                                  a new name and loads it, the only way to move a view where the libmpv has no
+//                                  //!PARAM (mpv added it to vo_gpu on 2026-04-17)
+//   IMMUCH360_MEASURE_REDRAW       seconds of a last phase, paused, where the view changes 60 times a second: with
+//                                  IMMUCH360_MEASURE_MPV_STATS, the cost of a redraw of a paused frame
+//   IMMUCH360_MEASURE_MPV_STATS    "on": mpv's own timing events (dump-stats) per phase: the frames handed to the
+//                                  renderer and their intervals, the render calls (frames and redraws), frames
+//                                  dropped or late in mpv's output; a stall shows as a long interval
+//   IMMUCH360_MEASURE_MPV_SET      mpv properties set before each clip opens, "name=value" entries separated by "|"
+//                                  or new lines ("keepaspect=no|lavfi-complex=[vid1] [vid2] hstack [vo]")
+//   IMMUCH360_MEASURE_EXTERNAL     label=path entries: the clip of that label opens with this second file as an
+//                                  external track (external-files), as the second file of an X3 pair (design 2.5)
+//   IMMUCH360_MEASURE_REFERENCE    "off": no reference runs before the clips
+//   IMMUCH360_MEASURE_CLIP_RATES   label=rates entries ("p15=0,15;p30=0,30"): the parameter rates of that clip
+//   IMMUCH360_MEASURE_CLIP_SCREENS label=screens entries ("p15=primary;e15=secondary"): the screens of that clip
+//   IMMUCH360_MEASURE_CLIP_REDRAW  label=seconds entries: the paused redraw phase of that clip (0: none). With the
+//                                  same file under several labels, each rate gets a player of its own, and the memory
+//                                  a player keeps from one phase does not weigh on the next
+//   IMMUCH360_MEASURE_MEMORY_GUARD_MB  growth in MiB of the working set plus the GPU memory of the process, from the
+//                                  start of a clip's first phase, that ends a phase early and skips the clip's other
+//                                  phases: each change of glsl-shader-opts kept about 40 MB until the player closed
+//                                  on 2026-10-09, and the PC ran out of memory (the owner's desktop crashed)
+//   IMMUCH360_MEASURE_RENDERER     "c": renderer C of the vendored media_kit_video draws an equirectangular view
+//                                  (render/plugin_renderer.dart, DP1); the view changes of each phase go through the
+//                                  plugin (yaw from IMMUCH360_MEASURE_PARAM, pitch and fov from _PARAM_FIXED), and each
+//                                  phase records the plugin's draws (with a new frame of mpv, or the view alone) and
+//                                  their times; with IMMUCH360_MEASURE_REDRAW, the paused phase shows whether a view
+//                                  change reaches mpv at all. Five pixels of the output are read back once
+//   IMMUCH360_MEASURE_C_TIER       full, w4096 or w2880 (default: the start tier of the GPU, PluginTier.startFor)
 //   IMMUCH360_MEASURE_SOAK         number of players opened, played and closed one after the other (spike 2: 200)
 //   IMMUCH360_MEASURE_SOAK_CLIP    label of a clip of IMMUCH360_MEASURE_CLIPS for the soak (default the reference)
 //   IMMUCH360_MEASURE_SOAK_MODE    "bare" (default): a media_kit player made and disposed each time, what #1449
@@ -85,6 +118,7 @@ import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
+import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
@@ -128,6 +162,9 @@ const _properties = [
   'demuxer-cache-duration',
   'cache-speed',
   'vo-passes',
+  'mpv-version',
+  'lavfi-complex',
+  'keepaspect',
 ];
 
 /// The built-in probe hook: the shape of the projection hook (MAINPRESUB, drawn at the output size while sampling
@@ -199,12 +236,43 @@ class _Config {
       ],
       phase = _safeLabel(env['IMMUCH360_MEASURE_PHASE'] ?? '2a'),
       gpuLabel = env['IMMUCH360_MEASURE_GPU'],
-      screenLabel = env['IMMUCH360_MEASURE_SCREEN'] {
+      screenLabel = env['IMMUCH360_MEASURE_SCREEN'],
+      paramFixed = env['IMMUCH360_MEASURE_PARAM_FIXED'] ?? '',
+      paramProperty = (env['IMMUCH360_MEASURE_PARAM_PROPERTY'] ?? '').isEmpty
+          ? 'glsl-shader-opts'
+          : env['IMMUCH360_MEASURE_PARAM_PROPERTY']!,
+      redrawChanges = int.tryParse(env['IMMUCH360_MEASURE_REDRAW'] ?? '') ?? 0,
+      pluginRenderer = env['IMMUCH360_MEASURE_RENDERER'] == 'c',
+      pluginTier = PluginTier.values.where((tier) => tier.name == env['IMMUCH360_MEASURE_C_TIER']).firstOrNull,
+      mpvStats = env['IMMUCH360_MEASURE_MPV_STATS'] == 'on',
+      mpvSet = [
+        for (final entry in (env['IMMUCH360_MEASURE_MPV_SET'] ?? '').split(RegExp(r'[|\n]')))
+          if (entry.indexOf('=') > 0)
+            (entry.substring(0, entry.indexOf('=')).trim(), entry.substring(entry.indexOf('=') + 1)),
+      ],
+      external = _entries(env['IMMUCH360_MEASURE_EXTERNAL']),
+      reference = env['IMMUCH360_MEASURE_REFERENCE'] != 'off',
+      memoryGuardMB = int.tryParse(env['IMMUCH360_MEASURE_MEMORY_GUARD_MB'] ?? '') ?? 0,
+      clipRates = {
+        for (final (label, rates) in _entries(env['IMMUCH360_MEASURE_CLIP_RATES']))
+          label: [for (final rate in rates.split(',')) ?int.tryParse(rate.trim())],
+      },
+      clipScreens = {
+        for (final (label, screens) in _entries(env['IMMUCH360_MEASURE_CLIP_SCREENS']))
+          label: [
+            for (final screen in screens.split(','))
+              if (screen.trim().isNotEmpty) screen.trim(),
+          ],
+      },
+      clipRedraw = {
+        for (final (label, seconds) in _entries(env['IMMUCH360_MEASURE_CLIP_REDRAW']))
+          label: int.tryParse(seconds) ?? 0,
+      } {
     final param = (env['IMMUCH360_MEASURE_PARAM'] ?? 'yaw:-180:180').split(':');
     paramName = param.first;
     paramMin = param.length > 1 ? double.tryParse(param[1]) ?? -180 : -180;
     paramMax = param.length > 2 ? double.tryParse(param[2]) ?? 180 : 180;
-    final rates = env['IMMUCH360_MEASURE_PARAM_RATES'] ?? (shader == null ? '0' : '0,15,30,60');
+    final rates = env['IMMUCH360_MEASURE_PARAM_RATES'] ?? (shader == null && !pluginRenderer ? '0' : '0,15,30,60');
     paramRates = [for (final rate in rates.split(',')) ?int.tryParse(rate.trim())];
     final size = RegExp(r'^(\d+)x(\d+)$').firstMatch(env['IMMUCH360_MEASURE_WINDOW_SIZE'] ?? '');
     windowSize = size == null ? (1600, 900) : (int.parse(size.group(1)!), int.parse(size.group(2)!));
@@ -240,10 +308,41 @@ class _Config {
   late final double paramMax;
   late final List<int> paramRates;
   late final String outDir;
+  final String paramFixed;
+  final String paramProperty;
+  final int redrawChanges;
+  final bool pluginRenderer;
+  final PluginTier? pluginTier;
+  final bool mpvStats;
+  final List<(String, String)> mpvSet;
+  final List<(String, String)> external;
+  final bool reference;
+  final int memoryGuardMB;
+  final Map<String, List<int>> clipRates;
+  final Map<String, List<String>> clipScreens;
+  final Map<String, int> clipRedraw;
+
+  List<int> ratesOf(String label) => clipRates[label] ?? paramRates;
+  List<String> screensOf(String label) => clipScreens[label] ?? screens;
+  int redrawOf(String label) => clipRedraw[label] ?? redrawChanges;
+
+  /// The view of renderer C for a value of the parameter that changes, the others from [paramFixed]
+  PluginView pluginView(double value) {
+    final fixed = {
+      for (final entry in paramFixed.split(','))
+        if (entry.contains('=')) entry.split('=').first.trim(): double.tryParse(entry.split('=').last.trim()),
+    };
+    double of(String name, double fallback) => name == paramName ? value : fixed[name] ?? fallback;
+    return PluginView(yaw: of('yaw', 0), pitch: of('pitch', 0), fov: of('fov', 90));
+  }
+
+  /// The external file of the clip [label], null when it has none
+  String? externalOf(String label) => external.where((entry) => entry.$1 == label).firstOrNull?.$2;
 
   /// The values a record must never show: the clip paths, and the share and server settings
   List<String> get secrets => [
     for (final (_, path) in clips) path,
+    for (final (_, path) in external) path,
     for (final (_, entry) in bridge) entry.substring(entry.indexOf(':') + 1),
     for (final name in [
       'IMMUCH360_MEASURE_SMB_HOST',
@@ -326,6 +425,168 @@ class _FrameTimes {
 
 double _round(double value) => (value * 100).round() / 100;
 
+/// What renderer C drew over a phase: its draws with a new frame of mpv and of the view alone, their times on the
+/// plugin's render thread (and the part Flutter's raster thread could wait for), the sizes
+Map<String, Object?>? _pluginSummary(ProjectionStats? stats) {
+  if (stats == null) {
+    return null;
+  }
+  Map<String, Object?>? times(List<double> values) {
+    if (values.isEmpty) {
+      return null;
+    }
+    final sorted = [...values]..sort();
+    double at(double q) => sorted[min(sorted.length - 1, (sorted.length * q).floor())];
+    return {'count': sorted.length, 'p50': _round(at(0.5)), 'p99': _round(at(0.99)), 'max': _round(sorted.last)};
+  }
+
+  return {
+    'frames': stats.frames,
+    'redraws': stats.redraws,
+    'failed': stats.failed,
+    'frameMs': ?times(stats.frameMs),
+    'redrawMs': ?times(stats.redrawMs),
+    'lockedMs': ?times(stats.lockedMs),
+    'sizeMs': ?times(stats.sizeMs),
+    'mpvMs': ?times(stats.mpvMs),
+    'viewMs': ?times(stats.viewMs),
+    'frame': [stats.frameWidth, stats.frameHeight],
+    'output': [stats.outputWidth, stats.outputHeight],
+    'error': ?stats.error,
+  };
+}
+
+/// mpv's timing events of one phase (its dump-stats file: one line each, the time in nanoseconds then the event).
+/// Flutter's frame times do not show the video: the texture is drawn by mpv on its own thread and Flutter only
+/// composes the last one.
+/// The frames mpv hands to the renderer do: "video-flip" ends when media_kit's render thread takes the frame
+/// (vo_libmpv's flip_page waits for it), so a render that stalls, for example while mpv rebuilds its passes after an
+/// option change, lengthens the interval between two ends. "glcb-render" is each render call, frames and redraws
+/// alike (a parameter change while paused or between two frames is a redraw); "drop-vo" a frame dropped because it
+/// came too late; "vo-delayed" a frame shown late.
+class _MpvStats {
+  static Map<String, Object?> summarize(String text) {
+    final flipStarts = <String, int>{};
+    final frames = <int>[];
+    final flips = <double>[];
+    final renders = <int>[];
+    var dropped = 0;
+    var delayed = 0;
+    var lines = 0;
+    final events = <String, int>{};
+    for (final line in const LineSplitter().convert(text)) {
+      final space = line.indexOf(' ');
+      final time = space > 0 ? int.tryParse(line.substring(0, space)) : null;
+      if (time == null) {
+        continue;
+      }
+      lines++;
+      final event = line.substring(space + 1).trim();
+      // "value" lines carry a number before their name
+      final name = event.startsWith('value ') ? 'value ${event.split(' ').last}' : event;
+      events[name] = (events[name] ?? 0) + 1;
+      switch (event) {
+        case 'start video-flip':
+          flipStarts['flip'] = time;
+        case 'end video-flip':
+          frames.add(time);
+          final start = flipStarts.remove('flip');
+          if (start != null) {
+            flips.add((time - start) / 1e6);
+          }
+        case 'glcb-render':
+          renders.add(time);
+        case 'drop-vo':
+          dropped++;
+        case 'vo-delayed':
+          delayed++;
+      }
+    }
+    List<double> intervals(List<int> times) => [for (var i = 1; i < times.length; i++) (times[i] - times[i - 1]) / 1e6];
+    final frameIntervals = intervals(frames);
+    final renderIntervals = intervals(renders);
+    final seconds = frames.length > 1 ? (frames.last - frames.first) / 1e9 : 0.0;
+    return {
+      'lines': lines,
+      'frames': frames.length,
+      'framesPerSecond': seconds > 0 ? _round((frames.length - 1) / seconds) : null,
+      'frameIntervalMs': _FrameTimes._stats([...frameIntervals]),
+      'frameIntervalsOver50': frameIntervals.where((ms) => ms > 50).length,
+      'frameIntervalsOver100': frameIntervals.where((ms) => ms > 100).length,
+      'flipWaitMs': _FrameTimes._stats(flips),
+      'renders': renders.length,
+      'redraws': max(0, renders.length - frames.length),
+      'renderIntervalMs': _FrameTimes._stats([...renderIntervals]),
+      'renderGapsOver50': renderIntervals.where((ms) => ms > 50).length,
+      'dropVo': dropped,
+      'voDelayed': delayed,
+      'events': Map.fromEntries((events.entries.toList()..sort((a, b) => b.value - a.value)).take(12)),
+    };
+  }
+}
+
+/// Ends a measured wait early when the process grows past [_Config.memoryGuardMB] over its level at [arm]: the larger of
+/// its private bytes and of its working set plus the GPU memory the driver holds for it (on the Intel UHD that is
+/// system memory too)
+class _MemoryGuard {
+  _MemoryGuard(this.limitMB);
+
+  final int limitMB;
+  int? _baseMB;
+  Map<String, Object?>? tripped;
+
+  static int? _totalMB() {
+    final gpu = GpuProcessMemory.sample();
+    final shared = gpu?['sharedMB'];
+    final dedicated = gpu?['dedicatedMB'];
+    if (shared is! int || dedicated is! int) {
+      return null;
+    }
+    return max(ProcessInfo.currentRss ~/ (1 << 20) + shared + dedicated, _WindowsProcess.privateMB() ?? 0);
+  }
+
+  void arm() {
+    if (limitMB > 0 && _baseMB == null) {
+      _baseMB = _totalMB();
+    }
+  }
+
+  /// Waits [duration], or less when the guard trips; [onTrip] stops what grows
+  Future<void> wait(Duration duration, Stopwatch watch, int Function() changes, void Function() onTrip) async {
+    final base = _baseMB;
+    if (limitMB <= 0 || base == null || tripped != null) {
+      await Future<void>.delayed(duration);
+      return;
+    }
+    final done = Completer<void>();
+    final end = Timer(duration, () {
+      if (!done.isCompleted) {
+        done.complete();
+      }
+    });
+    final check = Timer.periodic(const Duration(milliseconds: 200), (_) {
+      final total = _totalMB();
+      if (done.isCompleted || total == null || total - base <= limitMB) {
+        return;
+      }
+      onTrip();
+      tripped = {
+        'atSeconds': _round(watch.elapsedMilliseconds / 1000),
+        'changes': changes(),
+        'baseMB': base,
+        'totalMB': total,
+        'rssMB': ProcessInfo.currentRss ~/ (1 << 20),
+        'privateMB': _WindowsProcess.privateMB(),
+        'gpuMemory': GpuProcessMemory.sample(),
+      };
+      done.complete();
+    });
+    await done.future;
+    end.cancel();
+    check.cancel();
+  }
+}
+
 /// Frames the framework built since the run started, to tell "no frame" from "no timing reported"
 int _frameworkFrames = 0;
 
@@ -346,6 +607,31 @@ class _WindowsProcess {
   static final _guiResources = _user32.lookupFunction<Uint32 Function(IntPtr, Uint32), int Function(int, int)>(
     'GetGuiResources',
   );
+  static final _memoryInfo = _kernel32
+      .lookupFunction<Int32 Function(IntPtr, Pointer<Uint8>, Uint32), int Function(int, Pointer<Uint8>, int)>(
+        'K32GetProcessMemoryInfo',
+      );
+
+  /// The private bytes of this process in MiB (its commit charge), null off Windows. The graphics driver commits
+  /// memory for the textures of a discrete GPU too, so this grows where the working set does not, and the commit
+  /// limit of the PC is what ran out on 2026-10-09.
+  static int? privateMB() {
+    if (!Platform.isWindows) {
+      return null;
+    }
+    // PROCESS_MEMORY_COUNTERS_EX on 64 bit Windows: 80 bytes, PrivateUsage last
+    final counters = calloc<Uint8>(80);
+    try {
+      counters.cast<Uint32>().value = 80;
+      if (_memoryInfo(_currentProcess(), counters, 80) == 0) {
+        return null;
+      }
+      return (counters + 72).cast<Uint64>().value ~/ (1 << 20);
+    } finally {
+      calloc.free(counters);
+    }
+  }
+
   static final _findWindowEx = _user32
       .lookupFunction<
         IntPtr Function(IntPtr, IntPtr, Pointer<Utf16>, Pointer<Utf16>),
@@ -376,6 +662,16 @@ class _WindowsProcess {
       // ES_CONTINUOUS, plus ES_SYSTEM_REQUIRED and ES_DISPLAY_REQUIRED while on
       _setThreadExecutionState(on ? 0x80000003 : 0x80000000);
     }
+  }
+
+  /// Whether the owner's session shows the lock screen (LogonUI runs): the app still draws and the timings hold, but
+  /// what the screen shows is the lock screen, so the pixel reads say nothing then; null off Windows
+  static bool? sessionLocked() {
+    if (!Platform.isWindows) {
+      return null;
+    }
+    final result = Process.runSync('tasklist', ['/FI', 'IMAGENAME eq LogonUI.exe', '/NH']);
+    return '${result.stdout}'.toLowerCase().contains('logonui.exe');
   }
 
   /// Kernel and user processor time of this process so far, in milliseconds, null off Windows
@@ -958,7 +1254,7 @@ class _Harness {
     List<String> secrets = const [],
     bool streamed = false,
   }) async {
-    final screens = Platform.isWindows ? config.screens : const <String>[];
+    final screens = Platform.isWindows ? config.screensOf(label) : const <String>[];
     if (screens.isNotEmpty) {
       // On the first screen before the texture is made: the render size follows the window there
       await _Screens.moveTo(screens.first, config.windowSize);
@@ -1001,8 +1297,10 @@ class _Harness {
       'hwdecOption': config.hwdec,
       'options': config.appOptions ? 'app' : 'mediakit',
       'ticker': config.ticker,
+      'sessionLocked': _WindowsProcess.sessionLocked(),
     };
     final frameTimes = _FrameTimes();
+    PluginRenderer? plugin;
     try {
       await tester.pumpWidget(_VideoPage(controller, ticker: config.ticker));
       // media_kit turns cache-on-disk on, and mpv has no cache folder without a config folder
@@ -1016,11 +1314,88 @@ class _Harness {
           await native.setProperty(key, value);
         }
       }
+      for (final (name, value) in config.mpvSet) {
+        await native.setProperty(name, value);
+      }
+      if (config.mpvSet.isNotEmpty) {
+        record['mpvSet'] = [for (final (name, value) in config.mpvSet) config.scrub('$name=$value')];
+      }
       final shader = await shaderFile();
       if (shader != null) {
         await native.setProperty('glsl-shaders', shader);
-        record['shader'] = config.shader == 'probe' ? 'probe' : 'given';
+        record['shader'] = config.shader == 'probe' ? 'probe' : p.basename(shader);
+        record['paramProperty'] = config.paramProperty;
       }
+      if (config.pluginRenderer) {
+        // Attached before the file opens, as the 360 page does, so that the first texture already is the view
+        plugin = PluginRenderer.forController(controller, maxOutputHeight: config.maxRenderHeight);
+        final attached = await plugin.attach(
+          projection: PluginProjection.equirect(),
+          outputSize: tester.view.physicalSize,
+          tier: config.pluginTier,
+          view: config.pluginView((config.paramMin + config.paramMax) / 2),
+        );
+        record['plugin'] = {
+          'ok': attached.ok,
+          'reason': attached.reason,
+          'tier': attached.tier?.name,
+          'glRenderer': attached.glRenderer,
+          'output': attached.outputSize == null ? null : [attached.outputSize!.width, attached.outputSize!.height],
+        };
+        if (!attached.ok) {
+          throw StateError('renderer C refused: ${attached.reason}');
+        }
+      }
+      // The template of the "glsl-shaders" channel: the shader text, written again for each value
+      final template = shader != null && config.paramProperty == 'glsl-shaders'
+          ? await File(shader).readAsString()
+          : null;
+      var reloads = 0;
+      // One change of the view, through the channel the run measures
+      void change(double value) {
+        final text = value.toStringAsFixed(3);
+        if (plugin != null) {
+          // A uniform of the plugin's pass: nothing of mpv changes
+          plugin.setView(config.pluginView(value));
+        } else if (template != null) {
+          final file = File(p.join(work.path, 'reload-${reloads++}.glsl'));
+          file.writeAsStringSync(template.replaceAll('@VALUE@', text));
+          unawaited(native.setProperty('glsl-shaders', file.path, waitForInitialization: false));
+        } else if (config.paramProperty == 'glsl-shader-opts') {
+          final opts = config.paramFixed.isEmpty
+              ? '${config.paramName}=$text'
+              : '${config.paramName}=$text,${config.paramFixed}';
+          unawaited(native.setProperty('glsl-shader-opts', opts, waitForInitialization: false));
+        } else {
+          unawaited(native.setProperty(config.paramProperty, text, waitForInitialization: false));
+        }
+      }
+
+      var statsFiles = 0;
+      // mpv's timing events go to a new file for each phase; an empty name closes the file, which flushes it
+      Future<File?> startStats() async {
+        if (!config.mpvStats) {
+          return null;
+        }
+        final file = File(p.join(work.path, 'mpv-stats-${statsFiles++}.txt'));
+        await native.setProperty('dump-stats', file.path);
+        return file;
+      }
+
+      Future<Map<String, Object?>?> endStats(File? file) async {
+        if (file == null) {
+          return null;
+        }
+        await native.setProperty('dump-stats', '');
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        if (!file.existsSync()) {
+          return {'error': 'no stats file'};
+        }
+        final summary = _MpvStats.summarize(await file.readAsString());
+        await file.delete();
+        return summary;
+      }
+
       // The phases of a run with several screens outlast a 30 s clip: it plays again from the start
       await native.setProperty('loop-file', 'inf');
       final rssBefore = ProcessInfo.currentRss;
@@ -1036,6 +1411,7 @@ class _Harness {
       record['mpv'] = await read(native, _properties);
       final refreshRate = tester.view.display.refreshRate;
       final phases = <Map<String, Object?>>[];
+      final guard = _MemoryGuard(config.memoryGuardMB)..arm();
       for (final (index, screenName) in (screens.isEmpty ? const <String?>[null] : screens).indexed) {
         if (index > 0) {
           // Moved while the video plays, as a user drags the window from one screen to the other
@@ -1043,8 +1419,8 @@ class _Harness {
           await tester.pump();
           await Future<void>.delayed(const Duration(seconds: 2));
         }
-        for (final rate in config.paramRates) {
-          if (rate > 0 && shader == null) {
+        for (final rate in config.ratesOf(label)) {
+          if (rate > 0 && shader == null && plugin == null || guard.tripped != null) {
             continue;
           }
           final before = await read(native, _counters);
@@ -1052,21 +1428,18 @@ class _Harness {
           final bufferingBefore = buffering;
           var changes = 0;
           final watch = Stopwatch()..start();
-          final timer = rate <= 0
+          final statsFile = await startStats();
+          Timer? timer;
+          timer = rate <= 0
               ? null
               : Timer.periodic(Duration(microseconds: 1000000 ~/ rate), (_) {
                   // A sweep over the parameter's range every four seconds, as a drag would do
                   final t = (watch.elapsedMilliseconds % 4000) / 4000;
                   final value = config.paramMin + (config.paramMax - config.paramMin) * (0.5 - 0.5 * cos(2 * pi * t));
                   changes++;
-                  unawaited(
-                    native.setProperty(
-                      'glsl-shader-opts',
-                      '${config.paramName}=${value.toStringAsFixed(3)}',
-                      waitForInitialization: false,
-                    ),
-                  );
+                  change(value);
                 });
+          await plugin?.stats();
           final frameworkBefore = _frameworkFrames;
           // How late a 10 ms timer of this isolate fires: the bridge and the HTTP reads run on it, as the widgets do,
           // so a late timer tells a busy UI isolate from a slow raster thread
@@ -1078,16 +1451,21 @@ class _Harness {
           });
           frameTimes.start();
           final cpuBefore = _WindowsProcess.cpuMs();
-          await Future<void>.delayed(Duration(seconds: config.seconds));
+          await guard.wait(Duration(seconds: config.seconds), watch, () => changes, () => timer?.cancel());
           final cpuAfter = _WindowsProcess.cpuMs();
           frameTimes.pause();
           isolateTimer.cancel();
           lateness.sort();
           timer?.cancel();
           final after = await read(native, _counters);
+          final pluginStats = await plugin?.stats();
+          final mpvStats = await endStats(statsFile);
           phases.add({
             'changesPerSecond': rate,
             'changes': changes,
+            'memoryGuard': ?guard.tripped,
+            'mpvStats': ?mpvStats,
+            'plugin': ?_pluginSummary(pluginStats),
             'seconds': _round(watch.elapsedMilliseconds / 1000),
             for (final name in _counters)
               name: (int.tryParse(after[name] ?? '') ?? 0) - (int.tryParse(before[name] ?? '') ?? 0),
@@ -1107,6 +1485,7 @@ class _Harness {
             'hwdecCurrent': config.scrub(await native.getProperty('hwdec-current', waitForInitialization: false)),
             'voPasses': (await native.getProperty('vo-passes', waitForInitialization: false)).length,
             'rssMB': ProcessInfo.currentRss ~/ (1 << 20),
+            'privateMB': _WindowsProcess.privateMB(),
             'gpuMemory': GpuProcessMemory.sample(),
             'texture': textureOf(controller),
             // Processor time of the whole process over the phase, in logical processors busy (24 on the owner's PC):
@@ -1122,6 +1501,34 @@ class _Harness {
         }
       }
       record['phases'] = phases;
+      if (plugin != null) {
+        // Five pixels of the plugin's output, read back after its next draw: the frame reached the texture
+        // Flutter shows (the screen's own pixels are in each phase)
+        await plugin.stats(probe: true);
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+        final probed = await plugin.stats();
+        record['pluginProbe'] = probed?.probe == null
+            ? null
+            : {
+                for (final (index, name) in const ['centre', 'top', 'bottom', 'left', 'right'].indexed)
+                  name: '#${(probed!.probe![index] & 0xffffff).toRadixString(16).padLeft(6, '0')}',
+              };
+      }
+      if (config.redrawOf(label) > 0 &&
+          (shader != null || plugin != null) &&
+          Platform.isWindows &&
+          guard.tripped == null) {
+        record['redraw'] = await pausedRedraw(
+          tester,
+          player,
+          config.redrawOf(label),
+          change,
+          startStats,
+          endStats,
+          guard,
+          plugin,
+        );
+      }
       record['buffering'] = {'count': bufferingCount, 'ms': buffering.inMilliseconds};
       record['memory'] = {
         'rssBeforeMB': rssBefore ~/ (1 << 20),
@@ -1131,22 +1538,77 @@ class _Harness {
         'gpuAfter': GpuProcessMemory.sample(),
       };
       record['process'] = _WindowsProcess.sample();
-    } catch (error) {
+    } catch (error, stack) {
       record['failure'] = config.scrub(error);
+      // Where it failed, without paths (scrubbed): the first frames of the harness and the app
+      record['failureAt'] = [for (final line in '$stack'.split('\n').take(6)) config.scrub(line)];
     } finally {
       frameTimes.stop();
       record['errors'] = errors;
       record['logMarkers'] = logs.markers;
       record['log'] = logs.lines;
       record['logLinesDropped'] = logs.dropped;
+      await plugin?.dispose();
       await tester.pumpWidget(const _VideoPage(null));
       await bufferingSubscription.cancel();
       await errorSubscription.cancel();
       await logSubscription.cancel();
       await player.dispose();
       VideoController.maxOutputHeight = capBefore;
+      if (config.memoryGuardMB > 0) {
+        // A closed player's textures go back to the driver a moment later; the next clip opens once they have, so
+        // that two players' memory never adds up
+        await Future<void>.delayed(const Duration(seconds: 5));
+        record['privateAfterCloseMB'] = _WindowsProcess.privateMB();
+      }
     }
     return record;
+  }
+
+  /// Spike 3: a paused frame redrawn after changes of the view (design 2.10). While paused every render is a redraw
+  /// that a change asked for, and changes come faster (60 a second) than a redraw that rebuilds mpv's passes can
+  /// follow, so the render calls in mpv's timing events give the cost of one redraw: the interval between two of them
+  /// is the time media_kit's render thread spent on the previous one. The screen itself is not read: the owner's
+  /// session may be locked while the harness runs, and the screen then shows the lock screen.
+  Future<Map<String, Object?>> pausedRedraw(
+    WidgetTester tester,
+    Player player,
+    int redrawSeconds,
+    void Function(double value) change,
+    Future<File?> Function() startStats,
+    Future<Map<String, Object?>?> Function(File? file) endStats,
+    _MemoryGuard guard,
+    PluginRenderer? plugin,
+  ) async {
+    await player.pause();
+    await Future<void>.delayed(const Duration(milliseconds: 800));
+    await plugin?.stats();
+    final frameTimes = _FrameTimes()..start();
+    final statsFile = await startStats();
+    var changes = 0;
+    final watch = Stopwatch()..start();
+    final timer = Timer.periodic(const Duration(microseconds: 1000000 ~/ 60), (_) {
+      changes++;
+      change(changes.isEven ? config.paramMin : config.paramMax);
+    });
+    await guard.wait(Duration(seconds: redrawSeconds), watch, () => changes, timer.cancel);
+    timer.cancel();
+    frameTimes.pause();
+    final pluginStats = await plugin?.stats();
+    final stats = await endStats(statsFile);
+    final seconds = watch.elapsedMilliseconds / 1000;
+    final flutter = frameTimes.summary(tester.view.display.refreshRate);
+    frameTimes.stop();
+    final renders = (stats?['renders'] as int?) ?? 0;
+    return {
+      'changes': changes,
+      'seconds': _round(seconds),
+      'rendersPerSecond': _round(renders / max(0.001, seconds)),
+      'memoryGuard': ?guard.tripped,
+      'mpvStats': stats,
+      'plugin': ?_pluginSummary(pluginStats),
+      'flutter': flutter,
+    };
   }
 
   /// Spike 1: the raw throughput of the bridge for one file, then the same file played through it
@@ -1722,6 +2184,7 @@ void main() {
     }
   });
 
+  final noReference = skip != false || !config.reference;
   testWidgets('reference video at window size', (tester) async {
     final record = await harness.playAndMeasure(
       tester,
@@ -1731,13 +2194,13 @@ void main() {
     );
     await harness.report(record);
     expect(record['failure'], isNull, reason: '${record['failure']}');
-  }, skip: skip != false);
+  }, skip: noReference);
 
   testWidgets('app player: the reference through the media bridge, and a frame grab', (tester) async {
     final record = await harness.appPlayer(tester);
     await harness.report(record);
     expect(record['failure'], isNull, reason: '${record['failure']}');
-  }, skip: skip != false);
+  }, skip: noReference);
 
   for (final (label, path) in config.clips) {
     testWidgets('clip $label', (tester) async {
@@ -1746,8 +2209,13 @@ void main() {
         kind: 'clip',
         label: label,
         open: (player) async {
+          final second = config.externalOf(label);
+          if (second != null) {
+            // Loaded with the next file: the pair's second lens as a second video track (design 2.5)
+            await (player.platform! as NativePlayer).setProperty('external-files', second);
+          }
           await player.open(Media(path));
-          return 'file';
+          return second == null ? 'file' : 'file and external file';
         },
       );
       await harness.report(record);

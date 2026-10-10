@@ -8,6 +8,7 @@ import 'package:immich_mobile/desktop/library/desktop_file_media_repository.dart
 import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
+import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
@@ -16,6 +17,7 @@ import 'package:immich_mobile/repositories/file_media.repository.dart';
 import 'package:immich_mobile/repositories/permission.repository.dart';
 import 'package:immich_mobile/repositories/share_handler.repository.dart';
 import 'package:immich_mobile/repositories/widget.repository.dart';
+import 'package:immich_mobile/routing/router.dart';
 
 /// The overrides of the computers, added to the root scope by main.dart on Windows, macOS and Linux only
 List<Override> desktopOverrides() => [
@@ -31,6 +33,10 @@ List<Override> desktopOverrides() => [
   permissionRepositoryProvider.overrideWith((ref) => DesktopPermissionRepository(ref.watch(permissionApiProvider))),
   // Files shared to the app come from the share sheet of a phone; a computer has none
   shareHandlerRepositoryProvider.overrideWith((ref) => _NoShareHandlerRepository()),
+  // The 360° player is a route of the window: open pushes it on the router's navigator
+  sphericalVideoApiProvider.overrideWith(
+    (ref) => DesktopSphericalVideoApi(navigator: () => ref.read(appRouterProvider).navigatorKey),
+  ),
   // home_widget has no computer implementation and throws at each call; the sign in writes the credentials of the
   // home screen widget, so it failed every time
   widgetRepositoryProvider.overrideWith((ref) => const _NoHomeWidgetRepository()),

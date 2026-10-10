@@ -31,6 +31,7 @@ if(MEDIA_KIT_LIBS_AVAILABLE)
     "angle_surface_manager.cc"
     "media_kit_video_plugin_c_api.cc"
     "media_kit_video_plugin.cc"
+    "projection_renderer.cc"
     "video_output_manager.cc"
     "video_output.cc"
     "utils.cc"

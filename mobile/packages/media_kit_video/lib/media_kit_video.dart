@@ -8,6 +8,8 @@ export 'package:media_kit_video/src/video_controller/platform_video_controller.d
 export 'package:media_kit_video/src/video_controller/video_controller.dart';
 export 'package:media_kit_video/src/video_view_parameters.dart';
 export 'package:media_kit_video/src/video/video.dart';
+// Immuch360: renderer C on Windows (IMMUCH360-NOTE.md, patch 6)
+export 'package:media_kit_video/src/projection_output.dart';
 
 export 'package:media_kit_video/src/subtitle/subtitle_view.dart';
 

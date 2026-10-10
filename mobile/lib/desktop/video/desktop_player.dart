@@ -1,12 +1,14 @@
 // One video engine for every player of Immuch360 Desktop (design 2.2): a media_kit Player (libmpv) and, for a player
 // that shows its video, the VideoController whose texture the Video widget draws. The viewer's flat player, the
-// network page and the thumbnail grabber all go through it, through the pool (player_pool.dart), so that the mpv
-// options below are set in one place.
+// network page, the thumbnail grabber and the camera live view all go through it, through the pool
+// (player_pool.dart), so that the mpv options below are set in one place.
 //
 // What libmpv is given: a path of this computer, or an http URL of the app's media bridge on 127.0.0.1 (the shares,
 // and the server through ImmichServerFileSystem). Never the server's address, a cookie, a token or a header: the
 // bridge reads those in Dart. Its own URLs carry the bridge's token, so every line of mpv's log and every error the
-// app records goes through redactPlayerText first.
+// app records goes through redactPlayerText first. The one exception is the live view's RTSP address, which holds
+// the camera account because FFmpeg's RTSP client answers the camera's Digest challenge itself: that account is
+// registered with hidePlayerSecret before the address reaches libmpv.
 //
 // What libmpv opens by itself: nothing a file refers to. A file of a share or a folder is not trusted, and an M3U
 // list or a DASH manifest named clip.mp4 would make mpv or FFmpeg fetch its entries from any address, without a click
@@ -25,6 +27,7 @@ import 'package:flutter/scheduler.dart';
 // ignore: depend_on_referenced_packages
 import 'package:image/image.dart' as img;
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
+import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as mpv;
@@ -44,6 +47,10 @@ enum PlayerKind {
 
   /// Takes one frame of a video for a thumbnail: muted, without texture or audio decoding
   thumbnail,
+
+  /// Shows the live stream of a camera over RTSP (camera_live_view.dart): with a texture, muted until the user turns
+  /// the sound on
+  live,
 }
 
 /// An audio track of the video, as the audio track menu lists it
@@ -142,8 +149,8 @@ abstract class PlaybackEngine {
 
   Stream<PlayerEvent> get events;
 
-  /// Opens [resource], a path of this computer or a media bridge URL, paused at [start]. [streamed]: read over the
-  /// network, with the larger cache.
+  /// Opens [resource], a path of this computer or a media bridge URL (for [PlayerKind.live], the RTSP address of a
+  /// camera), paused at [start]. [streamed]: read over the network, with the larger cache.
   Future<void> open(String resource, {Duration start = Duration.zero, bool streamed = false});
   Future<void> play();
   Future<void> pause();
@@ -197,6 +204,23 @@ abstract final class DesktopPlayerOptions {
   /// this file). No https, rtsp or udp: no player of this phase reads anything else.
   static const protocols = ['file', 'http', 'tcp'];
 
+  /// The live view's: the RTSP connection to the camera and nothing else. FFmpeg's RTSP client opens its connection
+  /// through tcp; with the RTP packets inside it (rtsp-transport) it opens no rtp or udp socket, so neither is listed.
+  static const liveProtocols = ['rtsp', 'tcp'];
+
+  static List<String> protocolsFor(PlayerKind kind) => kind == PlayerKind.live ? liveProtocols : protocols;
+
+  /// A camera that stops sending is given up after this long and the live view opens its stream again: the timeout
+  /// the phones give Media3 for the same streams (CameraLiveView.kt)
+  static const liveTimeoutSeconds = 8;
+
+  /// A live stream cannot be read ahead of the camera: the cache only holds what came while the player waited, a few
+  /// seconds of a 2K stream at most, and keeps nothing behind
+  static const liveMaxBytes = 16 * 1024 * 1024;
+
+  /// How much of a live stream FFmpeg reads before it plays (see forOpen)
+  static const liveAnalyzeSeconds = 0.5;
+
   /// The render height of the texture (design 2.11): a 4K panel at 200 % would ask for 8.3 Mpx a frame, four times
   /// the 1080p budget; Flutter scales the texture up the rest of the way. 1440 lines is an assumption of the design,
   /// to be measured by the harness on the 3200 x 2000 panel.
@@ -207,8 +231,9 @@ abstract final class DesktopPlayerOptions {
   static Map<String, String> common(PlayerKind kind) => {
     // The cache stays in memory, bounded per open (below); nothing of a private video is written to the disk
     'cache-on-disk': 'no',
-    // The bridge may wait for a share that answers in bursts (HttpRangeReader waits 30 s); media_kit sets 5 s
-    'network-timeout': '30',
+    // The bridge may wait for a share that answers in bursts (HttpRangeReader waits 30 s); media_kit sets 5 s. A
+    // camera is local and sends all the time: a silence means it is gone (liveTimeoutSeconds).
+    'network-timeout': kind == PlayerKind.live ? '$liveTimeoutSeconds' : '30',
     // A URL of the bridge is never handed to youtube-dl, whose hook would start a process for any http URL
     'ytdl': 'no',
     // No other file is opened next to the video (external subtitles or audio): the decoders stay bounded, and a
@@ -229,10 +254,28 @@ abstract final class DesktopPlayerOptions {
       'sid': 'no',
       'hwdec': thumbnailHwdec,
     },
+    if (kind == PlayerKind.live) ...{
+      // RTP inside the RTSP connection, as on the phones (setForceUseRtpTcp): nothing lost on a busy Wi-Fi, no UDP
+      // port for the firewall to open. mpv's default, set so that another default never opens UDP sockets.
+      'rtsp-transport': 'tcp',
+      'sid': 'no',
+    },
   };
 
   /// mpv properties set before each open
   static Map<String, String> forOpen(PlayerKind kind, {required bool streamed}) {
+    if (kind == PlayerKind.live) {
+      return {
+        'cache': 'yes',
+        'demuxer-max-bytes': '$liveMaxBytes',
+        'demuxer-max-back-bytes': '0',
+        // FFmpeg reads up to 5 s of the stream to learn its tracks, and mpv then plays from the first packet read:
+        // the picture stayed that far behind the camera for as long as it played (1.1 s ahead in mpv's cache with
+        // the default, none with 0.5 s, and the first frame 1.7 s after the open instead of 3.1 s, measured on a
+        // synthetic 720p stream of H.264 and G.711 on 2026-10-10). The cameras describe both tracks in their SDP.
+        'demuxer-lavf-analyzeduration': '$liveAnalyzeSeconds',
+      };
+    }
     if (kind == PlayerKind.thumbnail) {
       return {
         'cache': 'yes',
@@ -251,11 +294,12 @@ abstract final class DesktopPlayerOptions {
   }
 }
 
-// Every URL whatever its scheme: the bridge's carry its token in the path, an rtsp one a password before the host
+// Every URL whatever its scheme: the bridge's carry its token in the path, an rtsp one a password before the host.
+// A secret already hidden inside it (<hidden>, see hidePlayerSecret) does not end it.
 final _url = RegExp(
-  r'\b[a-zA-Z][a-zA-Z0-9+.-]*://[^\s"'
+  r'\b[a-zA-Z][a-zA-Z0-9+.-]*://(?:[^\s"'
   "'"
-  r'<>]+',
+  r'<>]|<hidden>)+',
 );
 
 // A request header that carries a credential, as mpv prints it at the verbose levels ("Set property:
@@ -266,10 +310,35 @@ final _credentialHeader = RegExp(
   caseSensitive: false,
 );
 
-/// [text] (a line of mpv's log, an error of the player) without what could open a file or a session to whoever reads
-/// the logs: every URL, and every header that carries a credential, are replaced
-String redactPlayerText(String text) =>
-    text.replaceAll(_url, '<url>').replaceAllMapped(_credentialHeader, (match) => '${match[1]}${match[2]}<hidden>');
+// The secrets given to libmpv outside a header (hidePlayerSecret), longest first so that one holding another is
+// hidden whole
+final _secrets = <String>[];
+
+/// Hides [secret] in every text [redactPlayerText] gives back from now on, for the life of the app: the camera
+/// account that the live view puts in its RTSP address (camera_live_view.dart). The URL rule hides the whole address;
+/// this one hides the account where a line quotes it on its own, or decoded, or cut by a space the URL rule stops at.
+/// Kept after the stream stops, since mpv's lines arrive after the stop.
+void hidePlayerSecret(String secret) {
+  if (secret.isEmpty || _secrets.contains(secret)) {
+    return;
+  }
+  _secrets
+    ..add(secret)
+    ..sort((a, b) => b.length.compareTo(a.length));
+}
+
+/// [text] (a line of mpv's log, an error of the player) without what could open a file, a session or a camera to
+/// whoever reads the logs: every secret of [hidePlayerSecret], every URL, and every header that carries a credential,
+/// are replaced. The secrets go first: a password with a space would end the URL rule's match inside it.
+String redactPlayerText(String text) {
+  var redacted = text;
+  for (final secret in _secrets) {
+    redacted = redacted.replaceAll(secret, '<hidden>');
+  }
+  return redacted
+      .replaceAll(_url, '<url>')
+      .replaceAllMapped(_credentialHeader, (match) => '${match[1]}${match[2]}<hidden>');
+}
 
 /// Writes a line of mpv's log to the app's log, redacted. mpv's errors are warnings of the app (a bad frame, a
 /// share that stalls): a file that cannot be played at all reaches the user through [PlayerEventKind.failed].
@@ -295,21 +364,21 @@ void logPlayerLine(String level, String prefix, String text) {
 class DesktopPlayer implements PlaybackEngine {
   DesktopPlayer._(this.kind, this._player, this.videoController);
 
-  /// Makes a player of [kind]: the libmpv instance, and for [PlayerKind.playback] its texture
+  /// Makes a player of [kind]: the libmpv instance, and for [PlayerKind.playback] and [PlayerKind.live] its texture
   static Future<DesktopPlayer> create(PlayerKind kind) async {
     // Read by the vendored media_kit_video when it sizes each texture (its IMMUCH360-NOTE.md, patch 3)
     VideoController.maxOutputHeight ??= DesktopPlayerOptions.maxRenderHeight;
     final player = Player(
       configuration: PlayerConfiguration(
         title: 'Immuch360',
-        muted: kind == PlayerKind.thumbnail,
+        muted: kind != PlayerKind.playback,
         // Warnings and errors only: the verbose levels print the request headers and every URL opened
         logLevel: MPVLogLevel.warn,
-        bufferSize: DesktopPlayerOptions.localMaxBytes,
-        protocolWhitelist: DesktopPlayerOptions.protocols,
+        bufferSize: kind == PlayerKind.live ? DesktopPlayerOptions.liveMaxBytes : DesktopPlayerOptions.localMaxBytes,
+        protocolWhitelist: DesktopPlayerOptions.protocolsFor(kind),
       ),
     );
-    final controller = kind == PlayerKind.playback
+    final controller = kind != PlayerKind.thumbnail
         ? VideoController(player, configuration: const VideoControllerConfiguration(hwdec: DesktopPlayerOptions.hwdec))
         : null;
     if (controller != null) {
@@ -319,6 +388,10 @@ class DesktopPlayer implements PlaybackEngine {
     }
     final desktopPlayer = DesktopPlayer._(kind, player, controller);
     await desktopPlayer._setUp();
+    if (kind == PlayerKind.playback) {
+      // What this computer keeps up with, for the next questions about the same kind of video (decoder_measure.dart)
+      desktopPlayer._removers.add(watchDecoding(desktopPlayer, desktopPlayer.mpvProperty));
+    }
     return desktopPlayer;
   }
 
@@ -346,6 +419,10 @@ class DesktopPlayer implements PlaybackEngine {
   final _subscriptions = <StreamSubscription<Object?>>[];
   final _removers = <void Function()>[];
   bool _disposed = false;
+
+  /// FFmpeg's last error since the open, redacted: for a live stream, the reason of a failure ("method DESCRIBE
+  /// failed: 401 Unauthorized"), which mpv's own error code does not tell
+  String? _openError;
 
   @override
   ValueListenable<Duration> get position => _position;
@@ -402,7 +479,14 @@ class DesktopPlayer implements PlaybackEngine {
         ];
       }),
       stream.track.listen((track) => _audioTrack.value = _isPseudoTrack(track.audio.id) ? null : track.audio.id),
-      stream.log.listen((log) => logPlayerLine(log.level, log.prefix, log.text)),
+      stream.log.listen((log) {
+        logPlayerLine(log.level, log.prefix, log.text);
+        if (kind == PlayerKind.live &&
+            (log.level == 'error' || log.level == 'fatal') &&
+            log.prefix.startsWith('ffmpeg')) {
+          _openError = redactPlayerText(log.text);
+        }
+      }),
     ]);
     // The vendored media_kit_video gives the texture id 0 when its graphics device was lost (its IMMUCH360-NOTE.md,
     // patch 4); a texture id is never 0 otherwise on Windows
@@ -425,7 +509,7 @@ class DesktopPlayer implements PlaybackEngine {
     await _native.observeEvent(mpv.mpv_event_id.MPV_EVENT_END_FILE, (event) async {
       final endFile = event.ref.data.cast<mpv.mpv_event_end_file>().ref;
       if (endFile.reason == mpv.mpv_end_file_reason.MPV_END_FILE_REASON_ERROR) {
-        _emit(PlayerEvent(PlayerEventKind.failed, _errorText(endFile.error)));
+        _emit(PlayerEvent(PlayerEventKind.failed, _openError ?? _errorText(endFile.error)));
       }
     });
     for (final MapEntry(:key, :value) in DesktopPlayerOptions.common(kind).entries) {
@@ -451,6 +535,10 @@ class DesktopPlayer implements PlaybackEngine {
     }
   }
 
+  /// mpv's property [name] as text, empty when mpv has none: what the decoder measure reads (hwdec-current, the drop
+  /// counters), and the troubleshooting page
+  Future<String> mpvProperty(String name) => _native.getProperty(name);
+
   Future<void> _set(String name, String value) async {
     try {
       await _native.setProperty(name, value);
@@ -463,12 +551,23 @@ class DesktopPlayer implements PlaybackEngine {
   @override
   Future<void> open(String resource, {Duration start = Duration.zero, bool streamed = false}) async {
     _completed.value = false;
+    _openError = null;
     _videoSize.value = null;
     _hasVideo.value = null;
     _audioTracks.value = const [];
     _audioTrack.value = null;
     for (final MapEntry(:key, :value) in DesktopPlayerOptions.forOpen(kind, streamed: streamed).entries) {
       await _set(key, value);
+    }
+    if (kind == PlayerKind.live) {
+      // media_kit's open writes what it plays to a list file in the temporary folder and deletes it five seconds
+      // later (TempFile in its real.dart). A live address holds the camera account, which stays in memory: mpv gets
+      // the address itself, as the only entry of its list, so access-references stays off. media_kit's stop first
+      // resets its own state, as its open does.
+      await _player.stop();
+      await _set('pause', 'yes');
+      await _native.command(['loadfile', resource, 'replace']);
+      return;
     }
     // For media_kit's list of one entry only: off again once mpv loads the file (_setUp)
     await _set('access-references', 'yes');

@@ -45,6 +45,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     required this._resolve,
     String label = 'video',
     this.positionInterval = const Duration(milliseconds: 200),
+    this._prepare,
+    this._unprepare,
   }) {
     _lease = pool.lease(PlayerKind.playback, label: label, onSuspend: _onSuspend);
   }
@@ -63,6 +65,13 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
 
   final DesktopVideoSourceResolver _resolve;
   late final PlayerLease _lease;
+
+  /// Run on the player before each open of a file, once the player is this controller's: the 360° player turns its
+  /// renderer on there, so that the first frame of the file is already drawn by it (spherical_player_route.dart).
+  /// [_unprepare] undoes it before the player leaves this controller (the pool takes it, the controller is
+  /// disposed), so that the next page gets a player as the pool gives it.
+  final Future<void> Function(PlaybackEngine engine)? _prepare;
+  final Future<void> Function(PlaybackEngine engine)? _unprepare;
 
   @override
   final onPlaybackReady = ChangeNotifier();
@@ -168,11 +177,15 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     );
   }
 
+  /// Loads [videoSource] paused at its start, or at [startAt]: the 360° player opens another file of the same video
+  /// where the previous one was (the next step of a raw file's fallback chain, raw_two_streams.dart)
   @override
-  Future<void> loadVideoSource(VideoSource videoSource) async {
+  Future<void> loadVideoSource(VideoSource videoSource, {Duration? startAt}) async {
     final stoppedEarly = _stoppedEarly;
     _stoppedEarly = null;
-    final start = stoppedEarly != null && stoppedEarly.path == videoSource.path ? stoppedEarly.position : Duration.zero;
+    final start =
+        startAt ??
+        (stoppedEarly != null && stoppedEarly.path == videoSource.path ? stoppedEarly.position : Duration.zero);
     await stop();
     final generation = ++_generation;
     _videoSource = null;
@@ -320,13 +333,19 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _generation++;
     _readyTimer?.cancel();
     _positionTimer?.cancel();
+    final engine = _engine;
     _unbind();
     if (identical(activeDesktopVideo.value, this)) {
       activeDesktopVideo.value = null;
     }
-    // The player goes back to the pool, stopped; the notifiers stay, as the phones' controller leaves them, since the
-    // pages remove their listeners after the view that disposes this
-    unawaited(_lease.release());
+    // The player goes back to the pool, stopped, and as the pool gave it; the notifiers stay, as the phones'
+    // controller leaves them, since the pages remove their listeners after the view that disposes this
+    unawaited(() async {
+      if (engine != null) {
+        await _undoPrepare(engine);
+      }
+      await _lease.release();
+    }());
     super.dispose();
   }
 
@@ -394,6 +413,10 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
         if (!current()) {
           return _openDropped(engine, generation, start);
         }
+        await _prepare?.call(engine);
+        if (!current()) {
+          return _openDropped(engine, generation, start);
+        }
         await engine.open(resource, start: start, streamed: resource.startsWith('http'));
         return true;
       } catch (error) {
@@ -428,9 +451,20 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
       // An open the pool cut short already noted where it was to start
       _resumeAt ??= (position: engine.position.value, playing: _status == PlaybackStatus.playing);
     }
+    if (engine != null) {
+      await _undoPrepare(engine);
+    }
     _unbind();
     if (_status == PlaybackStatus.playing) {
       onPlaybackStatusChanged.value = PlaybackStatus.paused;
+    }
+  }
+
+  Future<void> _undoPrepare(PlaybackEngine engine) async {
+    try {
+      await _unprepare?.call(engine);
+    } catch (error, stackTrace) {
+      _log.warning('Could not give the player back as the pool gave it', error, stackTrace);
     }
   }
 

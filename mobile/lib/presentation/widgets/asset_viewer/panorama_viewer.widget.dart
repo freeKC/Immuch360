@@ -18,6 +18,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -59,8 +60,11 @@ import 'package:openapi/api.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-/// 360° videos play in a native player: SphericalVideoActivity on Android, SphericalVideoViewController on iOS
-final panorama360VideoSupportedProvider = Provider<bool>((_) => !kIsWeb && (Platform.isAndroid || Platform.isIOS));
+/// 360° videos play in a native player: SphericalVideoActivity on Android, SphericalVideoViewController on iOS; on a
+/// computer, in the 360° player route of the app wherever libmpv loaded (desktop/video/spherical_player_route.dart)
+final panorama360VideoSupportedProvider = Provider<bool>(
+  (_) => !kIsWeb && (Platform.isAndroid || Platform.isIOS || (CurrentPlatform.isDesktop && desktopVideoAvailable)),
+);
 
 final _log = Logger('PanoramaViewer');
 

@@ -93,6 +93,10 @@ dependencies:
   media_kit: ^1.2.6
   media_kit_video: ^2.0.1
   media_kit_libs_windows_video: ^1.0.11
+  # Immuch360 Desktop: the decoders of the GPU in use (Direct3D 11 on Windows, through dart:ffi), the fork's own
+  # package; its plugin declares windows only, used under lib/desktop/ only
+  immuch_desktop_video:
+    path: packages/immuch_desktop_video
   socket_io_client:
     git:
       url: https://github.com/mertalev/socket.io-client-dart

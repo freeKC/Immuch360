@@ -10,7 +10,127 @@
 
 #include <Windows.h>
 
+#include <algorithm>
+#include <memory>
+
 namespace media_kit_video {
+
+namespace {
+
+// Immuch360: the arguments of the renderer C calls (IMMUCH360-NOTE.md, patch
+// 6), whatever number type the standard codec chose for them.
+
+const flutter::EncodableValue* Find(const flutter::EncodableMap& map,
+                                    const char* key) {
+  auto entry = map.find(flutter::EncodableValue(key));
+  return entry == map.end() ? nullptr : &entry->second;
+}
+
+int64_t ToInt64(const flutter::EncodableValue* value, int64_t fallback) {
+  if (value == nullptr) {
+    return fallback;
+  }
+  if (auto v = std::get_if<int32_t>(value)) {
+    return *v;
+  }
+  if (auto v = std::get_if<int64_t>(value)) {
+    return *v;
+  }
+  if (auto v = std::get_if<double>(value)) {
+    return static_cast<int64_t>(*v);
+  }
+  if (auto v = std::get_if<std::string>(value)) {
+    try {
+      return std::stoll(*v);
+    } catch (...) {
+      return fallback;
+    }
+  }
+  return fallback;
+}
+
+double ToDouble(const flutter::EncodableValue* value, double fallback) {
+  if (value == nullptr) {
+    return fallback;
+  }
+  if (auto v = std::get_if<double>(value)) {
+    return *v;
+  }
+  if (auto v = std::get_if<int32_t>(value)) {
+    return *v;
+  }
+  if (auto v = std::get_if<int64_t>(value)) {
+    return static_cast<double>(*v);
+  }
+  return fallback;
+}
+
+bool ToBool(const flutter::EncodableValue* value, bool fallback) {
+  if (value == nullptr) {
+    return fallback;
+  }
+  if (auto v = std::get_if<bool>(value)) {
+    return *v;
+  }
+  return fallback;
+}
+
+std::vector<float> ToFloats(const flutter::EncodableValue* value) {
+  std::vector<float> floats;
+  if (value == nullptr) {
+    return floats;
+  }
+  if (auto list = std::get_if<flutter::EncodableList>(value)) {
+    for (const auto& item : *list) {
+      floats.push_back(static_cast<float>(ToDouble(&item, 0.0)));
+    }
+  } else if (auto doubles = std::get_if<std::vector<double>>(value)) {
+    for (const auto item : *doubles) {
+      floats.push_back(static_cast<float>(item));
+    }
+  } else if (auto singles = std::get_if<std::vector<float>>(value)) {
+    floats = *singles;
+  }
+  return floats;
+}
+
+void CopyFloats(const flutter::EncodableValue* value, float* out, size_t size) {
+  const auto floats = ToFloats(value);
+  if (floats.size() == size) {
+    std::copy(floats.begin(), floats.end(), out);
+  }
+}
+
+ProjectionSetup ToProjectionSetup(const flutter::EncodableMap& arguments) {
+  ProjectionSetup setup;
+  setup.kind = static_cast<int32_t>(ToInt64(Find(arguments, "kind"), 0));
+  CopyFloats(Find(arguments, "eye"), setup.eye, 4);
+  CopyFloats(Find(arguments, "crop"), setup.crop, 4);
+  setup.tracks = static_cast<int32_t>(ToInt64(Find(arguments, "tracks"), 1));
+  CopyFloats(Find(arguments, "streamsEnabled"), setup.enabled, 2);
+  if (auto uniforms = Find(arguments, "uniforms")) {
+    if (auto map = std::get_if<flutter::EncodableMap>(uniforms)) {
+      for (const auto& [key, values] : *map) {
+        if (auto name = std::get_if<std::string>(&key)) {
+          setup.uniforms[*name] = ToFloats(&values);
+        }
+      }
+    }
+  }
+  setup.max_frame_width = static_cast<int32_t>(
+      ToInt64(Find(arguments, "maxFrameWidth"), setup.max_frame_width));
+  setup.max_frame_pixels =
+      ToInt64(Find(arguments, "maxFramePixels"), setup.max_frame_pixels);
+  setup.output_width =
+      static_cast<int32_t>(ToInt64(Find(arguments, "outputWidth"), 1));
+  setup.output_height =
+      static_cast<int32_t>(ToInt64(Find(arguments, "outputHeight"), 1));
+  setup.max_output_height = static_cast<int32_t>(
+      ToInt64(Find(arguments, "maxOutputHeight"), setup.max_output_height));
+  return setup;
+}
+
+}  // namespace
 
 MediaKitVideoPlugin* MediaKitVideoPlugin::instance_ = nullptr;
 
@@ -197,6 +317,50 @@ void MediaKitVideoPlugin::HandleMethodCall(
     }
     video_output_manager_->SetSize(handle_value, width_value, height_value);
     result->Success(flutter::EncodableValue(std::monostate{}));
+  } else if (method_call.method_name().compare(
+                 "VideoOutputManager.SetProjection") == 0) {
+    // Immuch360: renderer C on or off (IMMUCH360-NOTE.md, patch 6). The
+    // answer comes once the thread pool made the change, on the platform
+    // thread as Flutter wants it.
+    const auto& arguments =
+        std::get<flutter::EncodableMap>(*method_call.arguments());
+    const auto handle = ToInt64(Find(arguments, "handle"), 0);
+    std::optional<ProjectionSetup> setup;
+    if (ToBool(Find(arguments, "enabled"), false)) {
+      setup = ToProjectionSetup(arguments);
+    }
+    std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>> reply =
+        std::move(result);
+    video_output_manager_->SetProjection(
+        handle, setup, [this, reply](flutter::EncodableMap answer) {
+          RunOnMainThread([reply, answer]() {
+            reply->Success(flutter::EncodableValue(answer));
+          });
+        });
+  } else if (method_call.method_name().compare(
+                 "VideoOutputManager.SetView") == 0) {
+    const auto& arguments =
+        std::get<flutter::EncodableMap>(*method_call.arguments());
+    ProjectionView view;
+    view.yaw = static_cast<float>(ToDouble(Find(arguments, "yaw"), 0.0));
+    view.pitch = static_cast<float>(ToDouble(Find(arguments, "pitch"), 0.0));
+    view.fov = static_cast<float>(ToDouble(Find(arguments, "fov"), 90.0));
+    view.sharp = ToBool(Find(arguments, "sharp"), true);
+    const auto known = video_output_manager_->SetView(
+        ToInt64(Find(arguments, "handle"), 0), view);
+    result->Success(flutter::EncodableValue(known));
+  } else if (method_call.method_name().compare(
+                 "VideoOutputManager.ProjectionStats") == 0) {
+    const auto& arguments =
+        std::get<flutter::EncodableMap>(*method_call.arguments());
+    const auto stats = video_output_manager_->ProjectionStats(
+        ToInt64(Find(arguments, "handle"), 0),
+        ToBool(Find(arguments, "probe"), false));
+    if (stats.has_value()) {
+      result->Success(flutter::EncodableValue(stats.value()));
+    } else {
+      result->Success(flutter::EncodableValue(std::monostate{}));
+    }
   } else if (method_call.method_name().compare("Utils.EnterNativeFullscreen") ==
              0) {
     auto window =

@@ -1,5 +1,6 @@
 {
   "flutter_secure_storage_windows": "The Windows side of flutter_secure_storage, vendored in mobile/packages (DPAPI in Dart, without the C++ plugin that needs ATL): a federated implementation for windows only",
+  "immuch_desktop_video": "The fork's decoder probe for Immuch360 Desktop (Direct3D 11 decoder profiles through dart:ffi), in mobile/packages; its plugin platform is windows only, imported under mobile/lib/desktop only",
   "media_kit": "Video through libmpv for Immuch360 Desktop: a copy in mobile/packages (pure Dart, no plugin platforms, its web asset removed so that no build bundles it), imported under mobile/lib/desktop only",
   "media_kit_libs_windows_video": "The libmpv and ANGLE libraries of media_kit for Windows, a copy in mobile/packages whose plugin platform is windows only",
   "media_kit_video": "The video texture plugin of media_kit, a copy in mobile/packages whose plugin platforms are linux, macos and windows only; imported under mobile/lib/desktop only",

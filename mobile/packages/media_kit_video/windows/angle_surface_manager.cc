@@ -70,11 +70,91 @@ void ANGLESurfaceManager::Draw(std::function<void()> callback) {
 void ANGLESurfaceManager::Read() {
   ::WaitForSingleObject(mutex_, INFINITE);
   if (d3d_11_device_context_ != nullptr) {
-    d3d_11_device_context_->CopyResource(d3d_11_texture_2D_.Get(),
-                                         internal_d3d_11_texture_2D_.Get());
+    // Immuch360: the front texture of renderer C's pair (patch 6)
+    auto* source = front_is_back_ && back_d3d_11_texture_2D_
+                       ? back_d3d_11_texture_2D_.Get()
+                       : internal_d3d_11_texture_2D_.Get();
+    d3d_11_device_context_->CopyResource(d3d_11_texture_2D_.Get(), source);
     d3d_11_device_context_->Flush();
   }
   ::ReleaseMutex(mutex_);
+}
+
+void ANGLESurfaceManager::SetDoubleBuffered(bool value) {
+  if (value == double_buffered_) {
+    return;
+  }
+  ::WaitForSingleObject(mutex_, INFINITE);
+  double_buffered_ = value;
+  front_is_back_ = false;
+  if (value) {
+    if (!CreateBack()) {
+      ReleaseBack();
+      double_buffered_ = false;
+    }
+  } else {
+    ReleaseBack();
+  }
+  ::ReleaseMutex(mutex_);
+}
+
+void ANGLESurfaceManager::MakeBackCurrent() {
+  if (!double_buffered_ || back_surface_ == EGL_NO_SURFACE) {
+    MakeCurrent(true);
+    return;
+  }
+  const auto back = front_is_back_ ? surface_ : back_surface_;
+  eglMakeCurrent(display_, back, back, context_);
+}
+
+void ANGLESurfaceManager::SwapBack() {
+  if (!double_buffered_ || back_surface_ == EGL_NO_SURFACE) {
+    return;
+  }
+  ::WaitForSingleObject(mutex_, INFINITE);
+  front_is_back_ = !front_is_back_;
+  ::ReleaseMutex(mutex_);
+}
+
+bool ANGLESurfaceManager::CreateBack() {
+  if (d3d_11_device_ == nullptr || display_ == EGL_NO_DISPLAY ||
+      config_ == nullptr) {
+    return false;
+  }
+  auto desc = D3D11_TEXTURE2D_DESC{0};
+  internal_d3d_11_texture_2D_->GetDesc(&desc);
+  auto hr =
+      d3d_11_device_->CreateTexture2D(&desc, nullptr, &back_d3d_11_texture_2D_);
+  CHECK_HRESULT("ID3D11Device::CreateTexture2D (back)");
+  auto resource = Microsoft::WRL::ComPtr<IDXGIResource>{};
+  hr = back_d3d_11_texture_2D_.As(&resource);
+  CHECK_HRESULT("ID3D11Texture2D::As (back)");
+  hr = resource->GetSharedHandle(&back_handle_);
+  CHECK_HRESULT("IDXGIResource::GetSharedHandle (back)");
+  EGLint buffer_attributes[] = {
+      EGL_WIDTH,          width_,         EGL_HEIGHT,         height_,
+      EGL_TEXTURE_TARGET, EGL_TEXTURE_2D, EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
+      EGL_NONE,
+  };
+  back_surface_ = eglCreatePbufferFromClientBuffer(
+      display_, EGL_D3D_TEXTURE_2D_SHARE_HANDLE_ANGLE, back_handle_, config_,
+      buffer_attributes);
+  if (back_surface_ == EGL_NO_SURFACE) {
+    FAIL("eglCreatePbufferFromClientBuffer (back)");
+  }
+  return true;
+}
+
+void ANGLESurfaceManager::ReleaseBack() {
+  if (back_surface_ != EGL_NO_SURFACE) {
+    // The context may be current on it: move it to the first texture's
+    eglMakeCurrent(display_, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    eglDestroySurface(display_, back_surface_);
+    back_surface_ = EGL_NO_SURFACE;
+  }
+  back_d3d_11_texture_2D_ = nullptr;
+  back_handle_ = nullptr;
+  front_is_back_ = false;
 }
 
 bool ANGLESurfaceManager::IsDeviceLost() const {
@@ -114,9 +194,17 @@ void ANGLESurfaceManager::Create() {
     throw std::runtime_error("Unable to retrieve Direct3D shared HANDLE.");
     return;
   }
+  // Immuch360: renderer C's second texture at the new size (patch 6)
+  front_is_back_ = false;
+  if (double_buffered_ && !CreateBack()) {
+    ReleaseBack();
+    double_buffered_ = false;
+  }
 }
 
 void ANGLESurfaceManager::CleanUp(bool release_context) {
+  // Immuch360: renderer C's second texture (patch 6), made again by |Create|
+  ReleaseBack();
   if (release_context) {
     if (display_ != EGL_NO_DISPLAY && surface_ != EGL_NO_SURFACE) {
       eglReleaseTexImage(display_, surface_, EGL_BACK_BUFFER);

@@ -87,5 +87,45 @@ Patches:
    textures again, and `Resize` zeroes `texture_id_` before the old texture is unregistered and gives it the new id
    only once the texture is in the map, both under the lock the callbacks take.
 
+6. Windows, renderer C: the 360 view drawn by the plugin (`windows/projection_renderer.{h,cc}`,
+   `windows/projection_shaders.h`, `windows/video_output.{h,cc}`, `windows/video_output_manager.{h,cc}`,
+   `windows/angle_surface_manager.{h,cc}`, `windows/media_kit_video_plugin.cc`, `windows/CMakeLists.txt`,
+   `lib/src/projection_output.dart`, exported by `lib/media_kit_video.dart`). Decision DP1 of Immuch360 Desktop
+   (2026-10-09): the 360 view as an mpv user shader changed through `glsl-shader-opts` rebuilt mpv's passes at every
+   change, kept 40 to 200 MB of GPU memory per change on an RTX 4060 until the PC ran out of memory, and gave 11 frames
+   a second on an Intel UHD. With this patch a player may be switched to a projection
+   (`VideoOutputManager.SetProjection`): mpv then draws each frame, exactly as for a flat video, into an intermediate
+   RGBA 8 texture of the video's size, capped by the tier Dart asks (at most so wide and so many pixels, the shape kept,
+   rounded to even sizes), and one GLSL ES 3.00 pass draws the view from it into the player's own texture, which keeps
+   its id, its `VideoController` and its `Video` widget; the texture is then the output size Dart gives (capped at
+   `maxOutputHeight` lines) from its first frame, not the video's. Three passes: an equirectangular frame (one eye of a
+   stereo layout, the whole sphere or its front half), a fisheye pair (Mei, equidistant, Kannala-Brandt) and a GoPro EAC
+   pair, both stitches being the GLSL of the phones (`RawStitchShaders.kt` of the app) reading the decoded streams side
+   by side in the one frame; bilinear while the view moves, Catmull-Rom (or four reads per pixel when the view shrinks
+   the frame) once it rests. The view (`VideoOutputManager.SetView`, yaw, pitch, vertical field of view, sharp) is kept
+   by the output and drawn by at most one waiting task of the thread pool, so that views coming faster than the pass are
+   merged; it is answered on the platform thread without waiting for `VideoOutputManager`'s mutex (a lookup map of its
+   own, filled once an output is made and emptied before it is destroyed). Each draw asks mpv
+   (`mpv_render_context_update`) whether it has a frame: mpv draws into the intermediate texture only then, and a paused
+   video is redrawn from the texture kept without any call into mpv. The player's `ANGLESurfaceManager` gets a second
+   internal texture while a projection is on (`SetDoubleBuffered`, `MakeBackCurrent`, `SwapBack`, and `Read` copying
+   from the front one): mpv's frame and the view are drawn into the texture Flutter does not copy from and finished
+   (`glFinish`), then the two are swapped under the lock that `Read` takes on Flutter's raster thread, which is thus
+   held for the swap only (0.01 ms at the 99th percentile on both GPUs, against up to 16 ms per draw when the drawing
+   happened under it: the RTX 4060 takes 14 to 16 ms to finish each draw of a paused video). No swap is reported to mpv
+   (`mpv_render_context_report_swap`): once one is, vo_libmpv waits for the next before it hands over each frame, which
+   put 30 to 53 frame intervals over 50 ms in 10 s into an 8K video on the RTX 4060.
+   `VideoOutputManager.ProjectionStats` gives the counts and times of the draws and, on request, five pixels of the
+   output read back. A context without OpenGL ES 3.0 (patch 1's fallback) refuses the projection with the reason;
+   turning it off gives upstream's drawing back, the current frame drawn at once. The view convention is the app's photo
+   sphere: yaw positive to the right of the frame's centre column, pitch positive up; the first row of the output is the
+   top of the view, as mpv draws into the pbuffer (`MPV_RENDER_PARAM_FLIP_Y` left at 0). Checked without a window by
+   `mobile/test/desktop/video/plugin_shaders_windows_test.dart` (the three programs compile and link in ANGLE's ES 3.0,
+   the equirectangular pass looks where the view looks) and with the player by the measurement harness
+   (`IMMUCH360_MEASURE_RENDERER=c`). Also fixed on the way, in `VideoOutput::~VideoOutput`: when no texture was
+   registered (after a lost device of patch 4, or a failed `Resize`), the destructor waited for a promise that nothing
+   would fulfil, holding `VideoOutputManager`'s mutex, so that every later player of the app hung; the cleanup is now
+   posted to the thread pool in that case too.
+
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.
