@@ -49,14 +49,20 @@ void main() {
   List<BaseAsset> panoramas(int count) =>
       List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: 'pano$i', width: 5760, height: 2880));
 
-  /// The timeline of [count] panoramas on its own page, or as the Photos tab of the tab shell when [inTabShell]
+  /// [count] square photos of the device
+  List<BaseAsset> squarePhotos(int count) =>
+      List<BaseAsset>.generate(count, (i) => LocalAssetStub.image1.copyWith(id: 'square$i', width: 4000, height: 4000));
+
+  /// The timeline of [count] panoramas (or of [assets]) on its own page, or as the Photos tab of the tab shell when
+  /// [inTabShell]
   Future<void> pumpTimeline(
     WidgetTester tester, {
     required bool tvMode,
     int count = 12,
     bool inTabShell = false,
+    List<BaseAsset>? assets,
   }) async {
-    final assets = panoramas(count);
+    final shown = assets ?? panoramas(count);
     if (tvMode) {
       // A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
       tester.view
@@ -70,8 +76,8 @@ void main() {
     addTearDown(tester.view.reset);
 
     final service = TimelineService((
-      assetSource: (i, n) async => assets.sublist(i, math.min(i + n, assets.length)),
-      bucketSource: () => Stream.value([TimeBucket(date: DateTime(2026, 10, 5), assetCount: assets.length)]),
+      assetSource: (i, n) async => shown.sublist(i, math.min(i + n, shown.length)),
+      bucketSource: () => Stream.value([TimeBucket(date: DateTime(2026, 10, 5), assetCount: shown.length)]),
       origin: TimelineOrigin.main,
     ));
     addTearDown(service.dispose);
@@ -254,6 +260,19 @@ void main() {
       );
       expect(fitted.height, greaterThanOrEqualTo(physical.height - 1), reason: 'not stretched up, so not blurred');
       expect(fitted.width, greaterThanOrEqualTo(physical.width - 1));
+      expect(local.size, const Size.square(768), reason: 'larger than the tile, at most a thumbnail of the device');
+    });
+
+    testWidgets('a device thumbnail is asked twice the size of its tile, drawn smaller with mipmaps', (tester) async {
+      await pumpTimeline(tester, tvMode: true, assets: squarePhotos(12));
+
+      final tile = tiles().first;
+      final physical = tester.getSize(tile) * 2;
+      final thumbnail = tester.widget<Thumbnail>(find.descendant(of: tile, matching: find.byType(Thumbnail)).first);
+      final asked = (thumbnail.imageProvider! as LocalThumbProvider).size;
+      expect(asked.width, closeTo(physical.width * 2, 1), reason: 'the speckles of Android averaged away');
+      expect(asked.height, closeTo(physical.height * 2, 1));
+      expect(thumbnail.filterQuality, FilterQuality.medium);
     });
   });
 
@@ -300,14 +319,17 @@ void main() {
   group('tvThumbnailDecodeSize', () {
     LocalAsset photo(int? width, int? height) => LocalAssetStub.image1.copyWith(width: width, height: height);
 
-    test('covers a square tile with a wide photo, an upright one, and one of unknown size', () {
+    test('twice the tile, so that the tile draws it smaller with mipmaps: an upright photo, one of unknown size', () {
       const tile = Size.square(286);
-      expect(tvThumbnailDecodeSize(photo(5760, 2880), tile), const Size.square(572));
-      expect(tvThumbnailDecodeSize(photo(3000, 4000), tile), const Size.square(382));
-      expect(tvThumbnailDecodeSize(photo(null, null), tile), const Size.square(286));
+      // Android fits the thumbnail inside the square: 763 x 572 for a 3:4 photo, twice the tile on its short side
+      expect(tvThumbnailDecodeSize(photo(3000, 4000), tile), const Size.square(763));
+      expect(tvThumbnailDecodeSize(photo(4000, 4000), tile), const Size.square(572));
+      expect(tvThumbnailDecodeSize(photo(null, null), tile), const Size.square(572));
     });
 
-    test('stays a thumbnail of the device, at most 768 px', () {
+    test('stays a thumbnail of the device, at most 768 px: a 2:1 photo still covers its tile', () {
+      const tile = Size.square(286);
+      expect(tvThumbnailDecodeSize(photo(5760, 2880), tile), const Size.square(768), reason: '768 x 384, not 1144');
       expect(tvThumbnailDecodeSize(photo(8000, 1000), const Size.square(300)), const Size.square(768));
     });
   });

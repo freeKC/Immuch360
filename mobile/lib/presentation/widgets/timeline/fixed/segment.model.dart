@@ -95,16 +95,33 @@ class FixedSegment extends Segment {
 /// The size to ask the device for the thumbnail of [asset] in a tile of [tile] physical pixels, in the remote control
 /// layout. Android fits the thumbnail inside the size asked, aspect kept, and the tile crops it: a 360° photo (2:1)
 /// asked 320 x 320 came 320 x 160 and was stretched to twice that in a TV tile, blurred. A square of the tile's side
-/// times the aspect covers the tile whichever way the photo turns, its rotation included. At most 768 px, the largest
-/// the device makes as a thumbnail rather than by decoding the whole file.
+/// times the aspect covers the tile whichever way the photo turns, its rotation included.
+///
+/// Twice that ([_tvOversampling]), so that the tile draws the thumbnail smaller with mipmaps (FilterQuality.medium):
+/// Android shrinks a photo into a thumbnail mostly by skipping pixels, and a thumbnail shown at its own size kept the
+/// speckles of that on fine detail, the branches of a snowy wood for one. At most 768 px, the largest the device makes
+/// as a thumbnail (LocalImagesImpl.decodeImage decodes the whole file above that, into a bitmap of several times the
+/// size asked): a 2:1 photo comes 768 x 384 in a tile of 286 px, 1.3 times its height rather than twice.
+///
+/// Memory: at most 768 x 576 px, 1.8 MB a tile in the image cache of the thumbnails (100 MB: close to 60 tiles, more
+/// than two screens of a 1080p TV), against 0.9 MB at most before; a square photo in a tile of 286 px takes 572 x 572
+/// px, 1.3 MB.
 @visibleForTesting
 Size tvThumbnailDecodeSize(BaseAsset asset, Size tile) {
+  final side = _tvOversampling * math.max(tile.width, tile.height) * _longAspect(asset);
+  return Size.square(math.min(side, _maxThumbnailSide).ceilToDouble());
+}
+
+/// The long side of [asset] over its short side, 1 when its size is unknown
+double _longAspect(BaseAsset asset) {
   final width = asset.width;
   final height = asset.height;
   final aspect = width != null && height != null && width > 0 && height > 0 ? width / height : 1.0;
-  final side = math.max(tile.width, tile.height) * math.max(aspect, 1 / aspect);
-  return Size.square(math.min(side, _maxThumbnailSide).ceilToDouble());
+  return math.max(aspect, 1 / aspect);
 }
+
+/// How many times the tile the thumbnails of a TV are decoded, see [tvThumbnailDecodeSize]
+const _tvOversampling = 2.0;
 
 const _maxThumbnailSide = 768.0;
 
