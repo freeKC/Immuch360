@@ -11,6 +11,7 @@
   "screen_retriever_platform_interface": "The Dart interface of screen_retriever, imported by it only",
   "screen_retriever_windows": "Brought by window_manager through screen_retriever; windows only",
   "synchronized": "Brought by media_kit and media_kit_video; pure Dart, no plugin platforms",
+  "thumbhash": "The thumbhash decoder of DesktopLocalImageApi, pure Dart, no plugin platforms, imported under mobile/lib/desktop only: upstream moved the phones to the decoder of the native core (native/), called from Kotlin and Swift",
   "uri_parser": "Brought by media_kit; pure Dart, no plugin platforms, imported by media_kit only",
   "window_manager": "The window of Immuch360 Desktop; plugin platforms linux, macos and windows only, imported under mobile/lib/desktop only"
 }

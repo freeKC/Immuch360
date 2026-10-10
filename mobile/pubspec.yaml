@@ -98,6 +98,10 @@ dependencies:
   # package; its plugin declares windows only, used under lib/desktop/ only
   immuch_desktop_video:
     path: packages/immuch_desktop_video
+  # Immuch360 Desktop: the thumbhash decoder of the computers, pure Dart, used under lib/desktop/ only. The phones
+  # decode thumbhashes in the native core (native/), whose buffer the computers could not free with malloc.free on
+  # Windows (another heap)
+  thumbhash: 0.1.0+1
   socket_io_client:
     git:
       url: https://github.com/mertalev/socket.io-client-dart

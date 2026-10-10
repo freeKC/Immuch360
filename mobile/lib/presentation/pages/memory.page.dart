@@ -25,11 +25,7 @@ class MemoryPage extends HookConsumerWidget {
   final List<Memory> memories;
   final int memoryIndex;
 
-  const MemoryPage({
-    required this.memories,
-    required this.memoryIndex,
-    super.key,
-  });
+  const MemoryPage({required this.memories, required this.memoryIndex, super.key});
 
   static void setMemory(WidgetRef ref, Memory memory) {
     if (memory.assets.isNotEmpty) {
@@ -42,17 +38,12 @@ class MemoryPage extends HookConsumerWidget {
     final currentMemory = useState(memories[memoryIndex]);
     final currentAssetPage = useState(0);
     final currentMemoryIndex = useState(memoryIndex);
-    final assetProgress = useState(
-      "${currentAssetPage.value + 1}|${currentMemory.value.assets.length}",
-    );
+    final assetProgress = useState("${currentAssetPage.value + 1}|${currentMemory.value.assets.length}");
     const bgColor = Colors.black;
     final currentAsset = useState<RemoteAsset?>(null);
 
     /// The list of all of the asset page controllers
-    final memoryAssetPageControllers = List.generate(
-      memories.length,
-      (i) => usePageController(),
-    );
+    final memoryAssetPageControllers = List.generate(memories.length, (i) => usePageController());
 
     /// The main vertically scrolling page controller with each list of memories
     final memoryPageController = usePageController(initialPage: memoryIndex);
@@ -67,42 +58,27 @@ class MemoryPage extends HookConsumerWidget {
     }, const []);
 
     void toNextMemory() {
-      unawaited(
-        memoryPageController.nextPage(
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeIn,
-        ),
-      );
+      unawaited(memoryPageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeIn));
     }
 
     void toPreviousMemory() {
       if (currentMemoryIndex.value > 0) {
         // Move to the previous memory page
-        unawaited(
-          memoryPageController.previousPage(
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeIn,
-          ),
-        );
+        unawaited(memoryPageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeIn));
 
         // Wait for the next frame to ensure the page is built
         SchedulerBinding.instance.addPostFrameCallback((_) {
           final previousIndex = currentMemoryIndex.value - 1;
-          final previousMemoryController =
-              memoryAssetPageControllers[previousIndex];
+          final previousMemoryController = memoryAssetPageControllers[previousIndex];
 
           // Ensure the controller is attached
           if (previousMemoryController.hasClients) {
-            previousMemoryController.jumpToPage(
-              memories[previousIndex].assets.length - 1,
-            );
+            previousMemoryController.jumpToPage(memories[previousIndex].assets.length - 1);
           } else {
             // Wait for the next frame until it is attached
             SchedulerBinding.instance.addPostFrameCallback((_) {
               if (previousMemoryController.hasClients) {
-                previousMemoryController.jumpToPage(
-                  memories[previousIndex].assets.length - 1,
-                );
+                previousMemoryController.jumpToPage(memories[previousIndex].assets.length - 1);
               }
             });
           }
@@ -113,15 +89,9 @@ class MemoryPage extends HookConsumerWidget {
     void toNextAsset(int currentAssetIndex) {
       if (currentAssetIndex + 1 < currentMemory.value.assets.length) {
         // Go to the next asset
-        final PageController controller =
-            memoryAssetPageControllers[currentMemoryIndex.value];
+        final PageController controller = memoryAssetPageControllers[currentMemoryIndex.value];
 
-        unawaited(
-          controller.nextPage(
-            curve: Curves.easeInOut,
-            duration: const Duration(milliseconds: 500),
-          ),
-        );
+        unawaited(controller.nextPage(curve: Curves.easeInOut, duration: const Duration(milliseconds: 500)));
       } else {
         // Go to the next memory since we are at the end of our assets
         toNextMemory();
@@ -131,15 +101,9 @@ class MemoryPage extends HookConsumerWidget {
     void toPreviousAsset(int currentAssetIndex) {
       if (currentAssetIndex > 0) {
         // Go to the previous asset
-        final PageController controller =
-            memoryAssetPageControllers[currentMemoryIndex.value];
+        final PageController controller = memoryAssetPageControllers[currentMemoryIndex.value];
 
-        unawaited(
-          controller.previousPage(
-            curve: Curves.easeInOut,
-            duration: const Duration(milliseconds: 500),
-          ),
-        );
+        unawaited(controller.previousPage(curve: Curves.easeInOut, duration: const Duration(milliseconds: 500)));
       } else {
         // Go to the previous memory since we are at the end of our assets
         toPreviousMemory();
@@ -147,8 +111,7 @@ class MemoryPage extends HookConsumerWidget {
     }
 
     void updateProgressText() {
-      assetProgress.value =
-          "${currentAssetPage.value + 1}|${currentMemory.value.assets.length}";
+      assetProgress.value = "${currentAssetPage.value + 1}|${currentMemory.value.assets.length}";
     }
 
     /// Downloads and caches the image for the asset at this [currentMemory]'s index
@@ -188,19 +151,12 @@ class MemoryPage extends HookConsumerWidget {
 
       // Precache the asset
       final size = MediaQuery.sizeOf(context);
-      await precacheImage(
-        getFullImageProvider(asset, size: Size(size.width, size.height)),
-        context,
-        size: size,
-      );
+      await precacheImage(getFullImageProvider(asset, size: Size(size.width, size.height)), context, size: size);
     }
 
     // Precache the next page right away if we are on the first page
     if (currentAssetPage.value == 0) {
-      unawaited(
-        Future.delayed(const Duration(milliseconds: 200))
-            .then((_) => precacheAsset(1)),
-      );
+      unawaited(Future.delayed(const Duration(milliseconds: 200)).then((_) => precacheAsset(1)));
     }
 
     Future<void> onAssetChanged(int otherIndex) async {
@@ -235,11 +191,8 @@ class MemoryPage extends HookConsumerWidget {
     /// over on the last page), which the taps of a phone need no focus for
     void focusButton(FocusNode root, {required bool top}) {
       final screen = root.rect;
-      final buttons =
-          root.traversalDescendants
-              .where((button) => screen.contains(button.rect.center))
-              .toList()
-            ..sort((a, b) => a.rect.center.dy.compareTo(b.rect.center.dy));
+      final buttons = root.traversalDescendants.where((button) => screen.contains(button.rect.center)).toList()
+        ..sort((a, b) => a.rect.center.dy.compareTo(b.rect.center.dy));
       if (buttons.isNotEmpty) {
         (top ? buttons.first : buttons.last).requestFocus();
       }
@@ -256,19 +209,14 @@ class MemoryPage extends HookConsumerWidget {
       final assets = currentMemory.value.assets;
       final index = currentAssetPage.value;
       final ok = remoteOkKeys.contains(key);
-      if (remoteNextItemKeys.contains(key) ||
-          remotePreviousItemKeys.contains(key)) {
+      if (remoteNextItemKeys.contains(key) || remotePreviousItemKeys.contains(key)) {
         if (press) {
-          remoteNextItemKeys.contains(key)
-              ? toNextMemory()
-              : toPreviousMemory();
+          remoteNextItemKeys.contains(key) ? toNextMemory() : toPreviousMemory();
         }
         return KeyEventResult.handled;
       }
       // The last page has no photo: Start over
-      final onEpilogue =
-          memoryPageController.hasClients &&
-          memoryPageController.page?.round() == memories.length;
+      final onEpilogue = memoryPageController.hasClients && memoryPageController.page?.round() == memories.length;
       if (ok && node.hasPrimaryFocus && onEpilogue) {
         if (press) {
           focusButton(node, top: false);
@@ -278,16 +226,10 @@ class MemoryPage extends HookConsumerWidget {
       // OK belongs to the focused button, if any (Close); the play keys work from anywhere
       if ((ok && node.hasPrimaryFocus) || remotePlayPauseKeys.contains(key)) {
         if (press && index < assets.length && assets[index].isVideo) {
-          final player = ref.read(
-            videoPlayerProvider(assets[index].id).notifier,
-          );
+          final player = ref.read(videoPlayerProvider(assets[index].id).notifier);
           final status = ref.read(videoPlayerProvider(assets[index].id)).status;
-          final isPlaying =
-              status == VideoPlaybackStatus.playing ||
-              status == VideoPlaybackStatus.buffering;
-          final play = ok
-              ? !isPlaying
-              : remotePlayPauseWantsPlay(key, isPlaying: isPlaying);
+          final isPlaying = status == VideoPlaybackStatus.playing || status == VideoPlaybackStatus.buffering;
+          final play = ok ? !isPlaying : remotePlayPauseWantsPlay(key, isPlaying: isPlaying);
           unawaited(play ? player.play() : player.pause());
         }
         return KeyEventResult.handled;
@@ -296,9 +238,7 @@ class MemoryPage extends HookConsumerWidget {
         // A button has the focus: Down from Close and Up from the bottom ones come back to the photo, where the
         // traversal would go from one button to the other
         final button = FocusManager.instance.primaryFocus;
-        final vertical =
-            key == LogicalKeyboardKey.arrowUp ||
-            key == LogicalKeyboardKey.arrowDown;
+        final vertical = key == LogicalKeyboardKey.arrowUp || key == LogicalKeyboardKey.arrowDown;
         if (button != null && vertical) {
           final above = button.rect.center.dy < node.rect.center.dy;
           if (above == (key == LogicalKeyboardKey.arrowDown)) {
@@ -310,17 +250,13 @@ class MemoryPage extends HookConsumerWidget {
         }
         return KeyEventResult.ignored;
       }
-      if (key == LogicalKeyboardKey.arrowLeft ||
-          key == LogicalKeyboardKey.arrowRight) {
+      if (key == LogicalKeyboardKey.arrowLeft || key == LogicalKeyboardKey.arrowRight) {
         if (press) {
-          key == LogicalKeyboardKey.arrowRight
-              ? toNextAsset(index)
-              : toPreviousAsset(index);
+          key == LogicalKeyboardKey.arrowRight ? toNextAsset(index) : toPreviousAsset(index);
         }
         return KeyEventResult.handled;
       }
-      if (key == LogicalKeyboardKey.arrowUp ||
-          key == LogicalKeyboardKey.arrowDown) {
+      if (key == LogicalKeyboardKey.arrowUp || key == LogicalKeyboardKey.arrowDown) {
         if (press) {
           focusButton(node, top: key == LogicalKeyboardKey.arrowUp);
         }
@@ -339,12 +275,10 @@ class MemoryPage extends HookConsumerWidget {
         // maxScrollExtend contains the sum of horizontal pixels of all assets for depth = 1
         // or sum of vertical pixels of all memories for depth = 0
         if (notification is ScrollUpdateNotification) {
-          final isEpiloguePage =
-              (memoryPageController.page?.floor() ?? 0) >= memories.length;
+          final isEpiloguePage = (memoryPageController.page?.floor() ?? 0) >= memories.length;
 
           final offset = notification.metrics.pixels;
-          if (isEpiloguePage &&
-              (offset > notification.metrics.maxScrollExtent + 150)) {
+          if (isEpiloguePage && (offset > notification.metrics.maxScrollExtent + 150)) {
             unawaited(context.maybePop());
             return true;
           }
@@ -359,9 +293,7 @@ class MemoryPage extends HookConsumerWidget {
           backgroundColor: bgColor,
           body: SafeArea(
             child: PageView.builder(
-              physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
+              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               scrollDirection: Axis.vertical,
               controller: memoryPageController,
               onPageChanged: (pageNumber) {
@@ -402,12 +334,7 @@ class MemoryPage extends HookConsumerWidget {
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(
-                        left: 24.0,
-                        right: 24.0,
-                        top: 8.0,
-                        bottom: 2.0,
-                      ),
+                      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0, bottom: 2.0),
                       child: AnimatedBuilder(
                         animation: assetController,
                         builder: (context, child) {
@@ -427,9 +354,7 @@ class MemoryPage extends HookConsumerWidget {
                       child: Stack(
                         children: [
                           PageView.builder(
-                            physics: const BouncingScrollPhysics(
-                              parent: AlwaysScrollableScrollPhysics(),
-                            ),
+                            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                             controller: assetController,
                             onPageChanged: onAssetChanged,
                             scrollDirection: Axis.horizontal,
@@ -444,9 +369,7 @@ class MemoryPage extends HookConsumerWidget {
                                       asset: asset,
                                       memory: memories[mIndex],
                                       showTitle: index == 0,
-                                      isCurrent:
-                                          mIndex == currentMemoryIndex.value &&
-                                          index == currentAssetPage.value,
+                                      isCurrent: mIndex == currentMemoryIndex.value && index == currentAssetPage.value,
                                     ),
                                   ),
                                   Positioned.fill(
@@ -455,8 +378,7 @@ class MemoryPage extends HookConsumerWidget {
                                         // Left side of the screen
                                         Expanded(
                                           child: GestureDetector(
-                                            behavior:
-                                                HitTestBehavior.translucent,
+                                            behavior: HitTestBehavior.translucent,
                                             onTap: () {
                                               toPreviousAsset(index);
                                             },
@@ -466,8 +388,7 @@ class MemoryPage extends HookConsumerWidget {
                                         // Right side of the screen
                                         Expanded(
                                           child: GestureDetector(
-                                            behavior:
-                                                HitTestBehavior.translucent,
+                                            behavior: HitTestBehavior.translucent,
                                             onTap: () {
                                               toNextAsset(index);
                                             },
@@ -495,21 +416,14 @@ class MemoryPage extends HookConsumerWidget {
                               shape: const CircleBorder(),
                               color: Colors.white.withValues(alpha: 0.2),
                               elevation: 0,
-                              child: const Icon(
-                                Icons.close_rounded,
-                                color: Colors.white,
-                              ),
+                              child: const Icon(Icons.close_rounded, color: Colors.white),
                             ),
                           ),
-                          if (currentAsset.value != null &&
-                              currentAsset.value!.isVideo)
+                          if (currentAsset.value != null && currentAsset.value!.isVideo)
                             Positioned(
                               bottom: 24,
                               right: 32,
-                              child: Icon(
-                                Icons.videocam_outlined,
-                                color: Colors.grey[200],
-                              ),
+                              child: Icon(Icons.videocam_outlined, color: Colors.grey[200]),
                             ),
                         ],
                       ),
@@ -519,14 +433,9 @@ class MemoryPage extends HookConsumerWidget {
                       builder: (context, child) {
                         int assetIndex = 0;
                         if (assetController.hasClients) {
-                          assetIndex = (assetController.page ?? 0)
-                              .round()
-                              .clamp(0, memories[mIndex].assets.length - 1);
+                          assetIndex = (assetController.page ?? 0).round().clamp(0, memories[mIndex].assets.length - 1);
                         }
-                        return MemoryBottomInfo(
-                          memory: memories[mIndex],
-                          asset: memories[mIndex].assets[assetIndex],
-                        );
+                        return MemoryBottomInfo(memory: memories[mIndex], asset: memories[mIndex].assets[assetIndex]);
                       },
                     ),
                   ],

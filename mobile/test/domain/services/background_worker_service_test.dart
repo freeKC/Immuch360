@@ -10,11 +10,15 @@ import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/data/data_controller.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/background_worker.service.dart';
 import 'package:immich_mobile/domain/services/hash.service.dart';
 import 'package:immich_mobile/domain/services/local_sync.service.dart';
+import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/sync_stream.service.dart';
+import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/providers/infrastructure/sync.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/services/background_upload.service.dart';
@@ -34,6 +38,8 @@ class MockHashService extends Mock implements HashService {}
 
 void main() {
   late BackgroundWorkerBgService sut;
+  late MockLocalSyncService mockLocalSyncService;
+  late MockHashService mockHashService;
   late MockSyncStreamService mockRemoteSyncService;
   late MockBackgroundUploadService mockBackgroundUploadService;
   late Drift db;
@@ -45,6 +51,9 @@ void main() {
     db = Drift(drift.DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true));
     await SettingsRepository.ensureInitialized(db);
     await SettingsRepository.instance.write(SettingsKey.backupEnabled, true);
+    // Immuch360 runs the remote sync, the hashing and the backup with a server session only
+    await StoreService.init(storeRepository: StoreRepository(db), listenUpdates: false);
+    await Store.put(StoreKey.accessToken, 'token');
   });
 
   tearDownAll(() async {
@@ -53,8 +62,8 @@ void main() {
   });
 
   setUp(() {
-    final mockLocalSyncService = MockLocalSyncService();
-    final mockHashService = MockHashService();
+    mockLocalSyncService = MockLocalSyncService();
+    mockHashService = MockHashService();
     final mockUserService = MockUserService();
     mockRemoteSyncService = MockSyncStreamService();
     mockBackgroundUploadService = MockBackgroundUploadService();
@@ -131,6 +140,18 @@ void main() {
 
       remoteSync.complete(true);
       await upload;
+    });
+
+    test('without a server session indexes the device only', () async {
+      await Store.delete(StoreKey.accessToken);
+      addTearDown(() => Store.put(StoreKey.accessToken, 'token'));
+
+      await sut.onIosUpload(true, 20);
+
+      verify(() => mockLocalSyncService.sync()).called(1);
+      verifyNever(() => mockRemoteSyncService.sync());
+      verifyNever(() => mockHashService.hashAssets());
+      verifyNever(() => mockBackgroundUploadService.getActiveTasks(any()));
     });
   });
 }

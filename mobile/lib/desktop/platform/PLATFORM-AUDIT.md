@@ -65,6 +65,7 @@ the gate is per desktop and is noted.
 | `lib/main.dart:253` | Android notification texts | right |
 | `lib/pages/backup/backup.page.dart:203` | Android battery dialog on resume | right |
 | `lib/pages/backup/backup.page.dart:271` | Android background options | right |
+| `lib/pages/common/splash_screen.page.dart:431` | iOS background launch: the foreground backup waits for the first resume (upstream, October 2026) | right: the computers never start in the background, their splash starts the foreground backup at once |
 | `lib/presentation/actions/delete.action.dart:245` | Android custom delete prompt | right; "Delete from device" hidden on the computers (G1) |
 | `lib/presentation/actions/lock.action.dart:63` | Android dialog text, else iOS text | iOS text on the computers; harmless (local files are not deleted on the computers), UX may add a computer text |
 | `lib/presentation/actions/share.action.dart:32` | Android share icon, else the iOS one | cosmetic: the iOS share icon on the computers; UX |
@@ -82,6 +83,7 @@ the gate is per desktop and is noted.
 | `lib/providers/app_life_cycle.provider.dart:155` | Android full sync on resume | iOS like partial sync on the computers; LIB adds the folder rescan on resume after five minutes (Design 1.8) |
 | `lib/providers/app_life_cycle.provider.dart:165` | idem | idem |
 | `lib/providers/asset_viewer/local_panorama.provider.dart:123` | iOS local availability check | right: files are local (placeholders are never published) |
+| `lib/providers/backup/backup.provider.dart:139` | iOS: the foreground backup cancels the background uploads, whose temporary files it cleans up (upstream, October 2026) | right: no background upload on the computers |
 | `lib/providers/infrastructure/immersive.provider.dart:16` | Quest only | right |
 | `lib/providers/infrastructure/tv.provider.dart:26` | Android TV only | right |
 | `lib/providers/network/phone_share.provider.dart:256` | Android device name | wired (G1): desktopShareDeviceName |
