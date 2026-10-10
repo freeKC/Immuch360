@@ -1691,7 +1691,7 @@
   "network_requirements": "Network Requirements",
   "network_requirements_updated": "Network requirements changed, resetting backup queue",
   "network_share_add": "Add a share",
-  "network_share_connected": "Connected, {count} entries in the start folder",
+  "network_share_connected": "{count, plural, one {Connected, # entry in the start folder} other {Connected, # entries in the start folder}}",
   "network_share_description_path": "Description path",
   "network_share_dlna_hint": "Media servers ask for no password. Pick one above, or paste its description address, for example http://192.168.1.10:8200/rootDesc.xml. On iPhone and iPad, some servers such as minidlna on Linux are not found: add them this way.",
   "network_share_edit": "Edit the share",

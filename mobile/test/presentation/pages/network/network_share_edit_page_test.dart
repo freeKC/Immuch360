@@ -130,6 +130,9 @@ void main() {
   late List<FakeFileSystem> opened;
   Exception? openError;
 
+  /// How many of the three entries of the start folder the share holds
+  late int startFolderEntries;
+
   setUp(() async {
     db = Drift(DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true));
     store = await StoreService.create(storeRepository: StoreRepository(db), listenUpdates: false);
@@ -140,6 +143,7 @@ void main() {
     listAnswer = () async => const ['media', 'photos'];
     opened = [];
     openError = null;
+    startFolderEntries = 3;
   });
 
   tearDown(() async {
@@ -156,7 +160,11 @@ void main() {
       source,
       password: password,
       entries: {
-        '/': [fakeEntry(source.id, '/a.jpg'), fakeEntry(source.id, '/b.mp4'), fakeEntry(source.id, '/sub')],
+        '/': [
+          fakeEntry(source.id, '/a.jpg'),
+          fakeEntry(source.id, '/b.mp4'),
+          fakeEntry(source.id, '/sub'),
+        ].take(startFolderEntries).toList(),
       },
     );
     opened.add(fileSystem);
@@ -363,6 +371,18 @@ void main() {
       // A change of the fields clears the outcome
       await enter(tester, 'share', 'other');
       expect(find.text('Connected, 3 entries in the start folder'), findsNothing);
+    });
+
+    testWidgets('tells one entry in the singular', (tester) async {
+      startFolderEntries = 1;
+      await pumpEditPage(tester);
+      await enter(tester, 'host', 'nas.local');
+      await enter(tester, 'share', 'media');
+
+      await tapButton(tester, testButton);
+
+      expect(find.text('Connected, 1 entry in the start folder'), findsOneWidget);
+      expect(find.textContaining('1 entries'), findsNothing);
     });
 
     testWidgets('tells why the connection failed', (tester) async {
