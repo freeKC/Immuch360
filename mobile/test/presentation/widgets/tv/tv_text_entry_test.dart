@@ -9,8 +9,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/theme/theme_data.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockTvApi extends Mock implements TvApi {}
@@ -201,5 +204,84 @@ void main() {
 
     expect(controller.text, 'user@example.org');
     expect(nextEntry.hasPrimaryFocus, isTrue);
+  });
+
+  testWidgets('the focus ring passes around the floating label of an outlined field, never across it', (tester) async {
+    tester.view
+      ..physicalSize = const Size(1920, 1080)
+      ..devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final port = TextEditingController(text: '445');
+    addTearDown(port.dispose);
+    // The fields of the share form: the label floats on the top line of the outline once the field holds a value
+    Widget field(TextEditingController controller, String label) => TextField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+    );
+    await tester.pumpWidget(
+      EasyLocalization(
+        supportedLocales: locales.values.toList(),
+        path: translationsPath,
+        startLocale: locales.values.first,
+        fallbackLocale: locales.values.first,
+        saveLocale: false,
+        useFallbackTranslations: true,
+        assetLoader: const CodegenLoader(),
+        child: ProviderScope(
+          overrides: [tvModeProvider.overrideWithValue(true), tvApiProvider.overrideWithValue(api)],
+          child: Builder(
+            builder: (context) => MaterialApp(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              theme: getThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo, brightness: Brightness.dark),
+                locale: const Locale('en'),
+                tvMode: true,
+              ),
+              builder: (context, child) => TvShell(child: child!),
+              home: Scaffold(
+                body: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    TvTextEntry(
+                      controller: controller,
+                      label: 'Name',
+                      kind: TvTextKind.text,
+                      autofocus: true,
+                      child: field(controller, 'Name'),
+                    ),
+                    const SizedBox(height: 16),
+                    TvTextEntry(controller: port, label: 'Port', kind: TvTextKind.number, child: field(port, 'Port')),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ringState = tester.state<TvFocusRingState>(find.byType(TvFocusRing));
+    for (final label in ['Name', 'Port']) {
+      if (label == 'Port') {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pumpAndSettle();
+      }
+      final focused = ringState.ringRect!;
+      // The coloured line runs between these two, its dark outline included
+      final inner = focused.inflate(TvFocusRing.gap);
+      final outer = focused.inflate(TvFocusRing.gap + TvFocusRing.strokeWidth + 1);
+      final labelRect = tester.getRect(find.text(label));
+      expect(outer.overlaps(labelRect), isTrue, reason: '$label: the ring is around the field of the label');
+      expect(
+        labelRect.top,
+        greaterThanOrEqualTo(inner.top),
+        reason: '$label: the label under the top line of the ring, not across it',
+      );
+      expect(labelRect.left, greaterThanOrEqualTo(inner.left));
+      expect(labelRect.right, lessThanOrEqualTo(inner.right));
+    }
   });
 }

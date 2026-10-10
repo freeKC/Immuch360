@@ -596,7 +596,7 @@ From build 20 the same Android app runs on Android TV and Google TV, with the re
 
 ### First start
 
-1. Sign in as on a phone: the arrows move a frame from field to field, and OK on a field ("Press OK to type") opens the keyboard of the TV in a dialog, for the server address, the email and the password.
+1. Sign in as on a phone: the arrows move a frame from field to field (from build 23 it passes above the label of a filled field rather than across it), and OK on a field ("Press OK to type") opens the keyboard of the TV in a dialog, for the server address, the email and the password.
 2. Or choose "Use without a server". A TV has no photos of its own, so the Photos tab says "This TV has no photos or videos of its own: open a network share from the Library." with a Network shares button. Add a share, a Plex server or a camera there, as on a phone (see [Network shares](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Move around with the remote
