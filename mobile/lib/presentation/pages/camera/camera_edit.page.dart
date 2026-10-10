@@ -11,6 +11,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/camera/camera_badges.widget.dart';
+import 'package:immich_mobile/presentation/widgets/forms/discard_changes.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/found_servers.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -22,6 +23,9 @@ import 'package:immich_mobile/widgets/common/immich_toast.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('CameraEditPage');
+
+/// What the fields of the camera page hold, the passwords apart (they are read later for a camera already added)
+typedef _CameraFormFields = ({String host, String name, String user});
 
 /// Adds a Tapo camera, or edits or removes one when [source] is given. [server] is a camera found on the network,
 /// which fills the page.
@@ -48,7 +52,17 @@ class _CameraEditPageState extends ConsumerState<CameraEditPage> {
   final _cloudPassword = TextEditingController();
   late final _user = TextEditingController(text: widget.source?.username ?? '');
   final _cameraPassword = TextEditingController();
+  late final _fieldChanges = Listenable.merge([_host, _name, _cloudPassword, _user, _cameraPassword]);
   final _body = FocusScopeNode(debugLabel: 'camera_edit_body');
+
+  /// What the page held when it opened (a camera found filled in, the stored passwords once read): leaving with
+  /// other values asks first
+  late final _CameraFormFields _openedWith;
+  String _openedWithCloudPassword = '';
+  String _openedWithCameraPassword = '';
+
+  /// The page is going away on purpose (saved, removed)
+  bool _leaving = false;
 
   /// What the name field holds from a find or a test, replaced by the next one unless the user typed another
   late String? _filledName = widget.source == null ? widget.server?.displayName : null;
@@ -74,9 +88,20 @@ class _CameraEditPageState extends ConsumerState<CameraEditPage> {
 
   bool get _isNew => widget.source == null;
 
+  _CameraFormFields _fields() => (host: _host.text, name: _name.text, user: _user.text);
+
+  bool get _hasUnsavedChanges =>
+      !_saving &&
+      !_leaving &&
+      (_fields() != _openedWith ||
+          _cloudPassword.text != _openedWithCloudPassword ||
+          _cameraPassword.text != _openedWithCameraPassword);
+
   @override
   void initState() {
     super.initState();
+    // Before anything fills a field
+    _openedWith = _fields();
     if (_isNew) {
       _scan();
     } else {
@@ -111,9 +136,11 @@ class _CameraEditPageState extends ConsumerState<CameraEditPage> {
       setState(() {
         if (_cloudPassword.text.isEmpty) {
           _cloudPassword.text = cloud ?? '';
+          _openedWithCloudPassword = _cloudPassword.text;
         }
         if (_cameraPassword.text.isEmpty) {
           _cameraPassword.text = camera ?? '';
+          _openedWithCameraPassword = _cameraPassword.text;
         }
         _secretsLoaded = true;
       });
@@ -346,6 +373,7 @@ class _CameraEditPageState extends ConsumerState<CameraEditPage> {
     }
     await ref.read(networkSourcesProvider.notifier).remove(source.id);
     if (mounted) {
+      _leaving = true;
       await context.maybePop();
     }
   }
@@ -411,178 +439,192 @@ class _CameraEditPageState extends ConsumerState<CameraEditPage> {
     final result = _result;
     final host = _host.text.trim();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isNew ? context.t.camera_add : context.t.camera_edit),
-        elevation: 0,
-        leading: const CloseButton(),
-        centerTitle: false,
-      ),
-      body: SafeArea(
-        child: FocusScope(
-          node: _body,
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            children: [
-              const SizedBox(height: 20),
-              if (_isNew) ...[
-                FoundServersList(
-                  servers: _servers,
-                  scanning: _scanning,
-                  scanned: _scanned,
-                  onScan: _scan,
-                  onSelected: _fillFrom,
-                  filter: (server) => server.type == NetworkSourceType.tapo,
-                  scanningText: context.t.camera_scan_scanning,
-                  noneFoundText: context.t.camera_scan_none_found,
-                ),
-                const SizedBox(height: 12),
-              ],
-              _field(
-                _host,
-                context.t.camera_host,
-                key: const Key('camera_host'),
-                kind: TvTextKind.url,
-                hint: '192.168.1.30',
-                keyboardType: TextInputType.url,
-                autofillHints: const [AutofillHints.url],
-              ),
-              const SizedBox(height: 16),
-              _field(_name, context.t.network_share_name, key: const Key('camera_name'), kind: TvTextKind.text),
-              const SizedBox(height: 24),
-              Text(context.t.camera_recordings, style: labelStyle),
-              const SizedBox(height: 8),
-              _field(
-                _cloudPassword,
-                context.t.camera_cloud_password,
-                key: const Key('camera_cloud_password'),
-                kind: TvTextKind.password,
-                obscure: !_showCloudPassword,
-                autofillHints: const [AutofillHints.password],
-                suffix: _visibility(_showCloudPassword, () => setState(() => _showCloudPassword = !_showCloudPassword)),
-              ),
-              _hint(context.t.camera_cloud_password_hint),
-              const SizedBox(height: 24),
-              Text(context.t.camera_live, style: labelStyle),
-              const SizedBox(height: 8),
-              _field(
-                _user,
-                context.t.camera_account_user,
-                key: const Key('camera_account_user'),
-                kind: TvTextKind.text,
-                autofillHints: const [AutofillHints.username],
-              ),
-              const SizedBox(height: 16),
-              _field(
-                _cameraPassword,
-                context.t.camera_account_password,
-                key: const Key('camera_account_password'),
-                kind: TvTextKind.password,
-                obscure: !_showCameraPassword,
-                suffix: _visibility(
-                  _showCameraPassword,
-                  () => setState(() => _showCameraPassword = !_showCameraPassword),
-                ),
-              ),
-              _hint(context.t.camera_account_hint),
-              const SizedBox(height: 16),
-              _hint(context.t.camera_third_party_hint, key: const Key('camera_third_party_hint')),
-              if (_missingSecret) ...[
-                const SizedBox(height: 12),
-                _Line(key: const Key('camera_needs_a_password'), message: context.t.camera_needs_a_password, ok: false),
-              ],
-              const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: OutlinedButton.icon(
-                  key: const Key('camera_test'),
-                  onPressed: canSubmit ? _test : null,
-                  icon: _testing
-                      ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.network_check_rounded),
-                  label: Text(context.t.camera_test, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                ),
-              ),
-              if (result != null) ...[
-                if (result.details case final details?) ...[
-                  const SizedBox(height: 12),
-                  _Line(
-                    key: const Key('camera_test_recordings'),
-                    message: context.t.camera_test_recordings_ok(model: details.model, firmware: details.firmware),
-                    ok: true,
+    return DiscardChangesScope(
+      listenable: _fieldChanges,
+      hasChanges: () => _hasUnsavedChanges,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_isNew ? context.t.camera_add : context.t.camera_edit),
+          elevation: 0,
+          leading: const CloseButton(),
+          centerTitle: false,
+        ),
+        body: SafeArea(
+          child: FocusScope(
+            node: _body,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              children: [
+                const SizedBox(height: 20),
+                if (_isNew) ...[
+                  FoundServersList(
+                    servers: _servers,
+                    scanning: _scanning,
+                    scanned: _scanned,
+                    onScan: _scan,
+                    onSelected: _fillFrom,
+                    filter: (server) => server.type == NetworkSourceType.tapo,
+                    scanningText: context.t.camera_scan_scanning,
+                    noneFoundText: context.t.camera_scan_none_found,
                   ),
-                  if (result.card case final card?)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 28, top: 4),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: CameraCardBadge(card: card),
-                      ),
-                    ),
+                  const SizedBox(height: 12),
                 ],
-                if (result.recordingsError case final error? when error.kind != TapoErrorKind.cancelled) ...[
+                _field(
+                  _host,
+                  context.t.camera_host,
+                  key: const Key('camera_host'),
+                  kind: TvTextKind.url,
+                  hint: '192.168.1.30',
+                  keyboardType: TextInputType.url,
+                  autofillHints: const [AutofillHints.url],
+                ),
+                const SizedBox(height: 16),
+                _field(_name, context.t.network_share_name, key: const Key('camera_name'), kind: TvTextKind.text),
+                const SizedBox(height: 24),
+                Text(context.t.camera_recordings, style: labelStyle),
+                const SizedBox(height: 8),
+                _field(
+                  _cloudPassword,
+                  context.t.camera_cloud_password,
+                  key: const Key('camera_cloud_password'),
+                  kind: TvTextKind.password,
+                  obscure: !_showCloudPassword,
+                  autofillHints: const [AutofillHints.password],
+                  suffix: _visibility(
+                    _showCloudPassword,
+                    () => setState(() => _showCloudPassword = !_showCloudPassword),
+                  ),
+                ),
+                _hint(context.t.camera_cloud_password_hint),
+                const SizedBox(height: 24),
+                Text(context.t.camera_live, style: labelStyle),
+                const SizedBox(height: 8),
+                _field(
+                  _user,
+                  context.t.camera_account_user,
+                  key: const Key('camera_account_user'),
+                  kind: TvTextKind.text,
+                  autofillHints: const [AutofillHints.username],
+                ),
+                const SizedBox(height: 16),
+                _field(
+                  _cameraPassword,
+                  context.t.camera_account_password,
+                  key: const Key('camera_account_password'),
+                  kind: TvTextKind.password,
+                  obscure: !_showCameraPassword,
+                  suffix: _visibility(
+                    _showCameraPassword,
+                    () => setState(() => _showCameraPassword = !_showCameraPassword),
+                  ),
+                ),
+                _hint(context.t.camera_account_hint),
+                const SizedBox(height: 16),
+                _hint(context.t.camera_third_party_hint, key: const Key('camera_third_party_hint')),
+                if (_missingSecret) ...[
                   const SizedBox(height: 12),
                   _Line(
-                    key: const Key('camera_test_recordings'),
-                    message: context.t.camera_test_recordings_failed(
-                      error: cameraErrorText(context, error, host: host),
-                    ),
+                    key: const Key('camera_needs_a_password'),
+                    message: context.t.camera_needs_a_password,
                     ok: false,
                   ),
                 ],
-                if (result.live case final live?) ...[
-                  const SizedBox(height: 12),
-                  _Line(
-                    key: const Key('camera_test_live'),
-                    message: context.t.camera_test_live_ok(video: live.video ?? '-', audio: live.audio ?? '-'),
-                    ok: true,
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton.icon(
+                    key: const Key('camera_test'),
+                    onPressed: canSubmit ? _test : null,
+                    icon: _testing
+                        ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.network_check_rounded),
+                    label: Text(
+                      context.t.camera_test,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ],
-                if (result.liveError case final error?) ...[
-                  const SizedBox(height: 12),
-                  _Line(
-                    key: const Key('camera_test_live'),
-                    message: context.t.camera_test_live_failed(error: cameraErrorText(context, error, host: host)),
-                    ok: false,
-                  ),
-                ],
-              ],
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    if (!_isNew)
-                      OutlinedButton.icon(
-                        key: const Key('camera_remove'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: context.colorScheme.error,
-                          side: BorderSide(color: context.colorScheme.error),
+                ),
+                if (result != null) ...[
+                  if (result.details case final details?) ...[
+                    const SizedBox(height: 12),
+                    _Line(
+                      key: const Key('camera_test_recordings'),
+                      message: context.t.camera_test_recordings_ok(model: details.model, firmware: details.firmware),
+                      ok: true,
+                    ),
+                    if (result.card case final card?)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 28, top: 4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: CameraCardBadge(card: card),
                         ),
-                        onPressed: _saving ? null : _remove,
-                        icon: const Icon(Icons.delete_outline),
+                      ),
+                  ],
+                  if (result.recordingsError case final error? when error.kind != TapoErrorKind.cancelled) ...[
+                    const SizedBox(height: 12),
+                    _Line(
+                      key: const Key('camera_test_recordings'),
+                      message: context.t.camera_test_recordings_failed(
+                        error: cameraErrorText(context, error, host: host),
+                      ),
+                      ok: false,
+                    ),
+                  ],
+                  if (result.live case final live?) ...[
+                    const SizedBox(height: 12),
+                    _Line(
+                      key: const Key('camera_test_live'),
+                      message: context.t.camera_test_live_ok(video: live.video ?? '-', audio: live.audio ?? '-'),
+                      ok: true,
+                    ),
+                  ],
+                  if (result.liveError case final error?) ...[
+                    const SizedBox(height: 12),
+                    _Line(
+                      key: const Key('camera_test_live'),
+                      message: context.t.camera_test_live_failed(error: cameraErrorText(context, error, host: host)),
+                      ok: false,
+                    ),
+                  ],
+                ],
+                const SizedBox(height: 24),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Wrap(
+                    alignment: WrapAlignment.end,
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (!_isNew)
+                        OutlinedButton.icon(
+                          key: const Key('camera_remove'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: context.colorScheme.error,
+                            side: BorderSide(color: context.colorScheme.error),
+                          ),
+                          onPressed: _saving ? null : _remove,
+                          icon: const Icon(Icons.delete_outline),
+                          label: Text(
+                            context.t.camera_remove,
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ElevatedButton.icon(
+                        key: const Key('camera_save'),
+                        onPressed: canSubmit ? _save : null,
+                        icon: const Icon(Icons.check),
                         label: Text(
-                          context.t.camera_remove,
+                          context.t.network_share_save,
                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                         ),
                       ),
-                    ElevatedButton.icon(
-                      key: const Key('camera_save'),
-                      onPressed: canSubmit ? _save : null,
-                      icon: const Icon(Icons.check),
-                      label: Text(
-                        context.t.network_share_save,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-            ],
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),

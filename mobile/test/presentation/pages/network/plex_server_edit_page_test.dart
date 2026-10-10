@@ -597,4 +597,58 @@ void main() {
       findsOneWidget,
     );
   });
+
+  group('leaving with unsaved changes', () {
+    final discardTitle = find.text('Discard the changes?');
+
+    Future<void> close(WidgetTester tester) async {
+      await tester.tap(find.byType(CloseButton));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('asks before a typed token is lost, and leaves once the user agrees', (tester) async {
+      await pumpPage(tester);
+      await enter(tester, 'plex_token', _token);
+
+      await close(tester);
+      expect(discardTitle, findsOneWidget);
+      await tester.tap(find.byKey(const Key('form_discard_changes_discard')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('shares list'), findsOneWidget);
+      expect(storedSources(), isEmpty);
+    });
+
+    testWidgets('a server tapped in the share form, left as it came, leaves at once', (tester) async {
+      await pumpPage(tester, server: _plex);
+      expect(textOf(tester, 'plex_server_address'), isNotEmpty);
+
+      await close(tester);
+
+      expect(discardTitle, findsNothing);
+      expect(find.text('shares list'), findsOneWidget);
+    });
+
+    testWidgets('a server already added, its token read and left as it was, leaves at once', (tester) async {
+      const source = NetworkSource(
+        id: 'plex1',
+        type: NetworkSourceType.plex,
+        name: 'Test Plex',
+        host: '192.168.1.20',
+        port: 32400,
+        useTls: true,
+        discoveryId: _machine,
+        plex: PlexServerInfo(hash: _hash),
+      );
+      await store.put(StoreKey.networkSourcesExtra, NetworkSource.encodeStored([source], const []));
+      secureStorage.values[source.secretKey] = _token;
+      await pumpPage(tester, source: source);
+      expect(textOf(tester, 'plex_token'), _token);
+
+      await close(tester);
+
+      expect(discardTitle, findsNothing);
+      expect(find.text('shares list'), findsOneWidget);
+    });
+  });
 }

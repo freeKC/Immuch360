@@ -68,6 +68,10 @@ enum StoreKey<T> {
   /// source id to {host, port, mapping, at}. Apart from the sources, whose change closes the open connection
   plexLearnedAddresses<String>._(5024),
 
+  /// The photos and videos of the network shares found 360° when the app read them (the 360° badge of a share folder,
+  /// a viewer), for the 360° list: a JSON list of NetworkPanoramaFile, the latest found last
+  networkPanoramaFiles<String>._(5025),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

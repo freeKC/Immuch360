@@ -620,9 +620,16 @@ class LoginForm extends HookConsumerWidget {
             ),
           );
 
+    // A TV of 1080p shows 960 x 540 dp, less its overscan margins and the version line: the phone layout (the logo a
+    // fifth of the height down, 100 dp tall) pushed "Use without a server" below the screen. The TV gets a small logo
+    // at the top, under the margin of the TV shell.
+    final logoSize = tvMode ? 56.0 : 100.0;
+    final titleSize = tvMode ? 28.0 : 48.0;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
+          padding: tvMode ? EdgeInsets.only(top: MediaQuery.paddingOf(context).top) : null,
           child: Center(
             child: Container(
               constraints: const BoxConstraints(maxWidth: 300),
@@ -630,7 +637,7 @@ class LoginForm extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: constraints.maxHeight / 5),
+                  SizedBox(height: tvMode ? ImmichSpacing.sm : constraints.maxHeight / 5),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -638,10 +645,21 @@ class LoginForm extends HookConsumerWidget {
                       GestureDetector(
                         onDoubleTap: () => populateTestLoginInfo(),
                         onLongPress: () => populateTestLoginInfo1(),
-                        // The Immuch360 icon carries text, so it is not spun like the Immich logo.
-                        child: const ImmichLogo(),
+                        // The Immuch360 icon carries text, so it is not spun like the Immich logo. Sized before the
+                        // picture is decoded, so that nothing moves when it shows.
+                        child: SizedBox.square(
+                          dimension: logoSize,
+                          child: ImmichLogo(size: logoSize),
+                        ),
                       ),
-                      const Padding(padding: EdgeInsets.only(top: 8.0, bottom: 16), child: ImmichTitleText()),
+                      Padding(
+                        padding: EdgeInsets.only(top: 8.0, bottom: tvMode ? 8 : 16),
+                        // The title picture is about four times as wide as high
+                        child: SizedBox(
+                          height: titleSize,
+                          child: ImmichTitleText(fontSize: titleSize),
+                        ),
+                      ),
                     ],
                   ),
 

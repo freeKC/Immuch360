@@ -193,6 +193,10 @@
   "errors": {
     "page_not_found": "Rûpel nehat dîtin"
   },
+  "form_discard_changes_body": "Tiştên ku te di vê formê de nivîsandine nehatine qeydkirin û dê winda bibin.",
+  "form_discard_changes_discard": "Biavêje",
+  "form_discard_changes_keep": "Guherandinê bidomîne",
+  "form_discard_changes_title": "Guhertin bên avêtin?",
   "hour": "Se'et",
   "hours": "Se'et",
   "id": "ID",
@@ -208,6 +212,8 @@
   "library_360_filter_vr180": "VR180",
   "library_360_no_match": "Tu wêneyek an vîdyoyek 360° bi van parzûnan re li hev nayê",
   "library_360_on_server": "Li ser serverê",
+  "library_360_shares": "Di parvekirinên torê de",
+  "library_360_shares_hint": "Pelên 360° yên parvekirinekê piştî ku peldanka wê hat vekirin li vir xuya dibin.",
   "library_360_unknown_camera": "Kamerayek nenas",
   "library_360_whole_year": "Tevahiya salê",
   "licenses": "Lîsans",
@@ -251,7 +257,7 @@
   "network_add_choose_plex": "Plex Media Server",
   "network_add_choose_share": "Parvekirina torê (NAS, komputer, serverê medyayê)",
   "network_share_add": "Parvekirinekê lê zêde bike",
-  "network_share_connected": "Girêdayî ye, {count} hêman di peldanka destpêkê de",
+  "network_share_connected": "{count, plural, one {Girêdayî ye, # hêman di peldanka destpêkê de} other {Girêdayî ye, # hêman di peldanka destpêkê de}}",
   "network_share_description_path": "Rêya danasînê",
   "network_share_dlna_hint": "Serverên medyayê şîfreyê naxwazin. Yekê li jor hilbijêre, an navnîşana danasîna wê bizeliqîne, mînak http://192.168.1.10:8200/rootDesc.xml.",
   "network_share_edit": "Parvekirinê biguherîne",
