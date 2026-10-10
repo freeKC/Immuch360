@@ -11,6 +11,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_panoramas.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
@@ -28,6 +29,8 @@ class Panorama360SharesSection extends ConsumerWidget {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
     final args = ref.watch(timelineArgsProvider);
+    // A remote arrives on the first file of the row, the first item of the list (see Panorama360Page)
+    final tvMode = ref.watch(tvModeProvider);
     final columns = math.max(args.columnCount, 1);
     final extent = ((args.maxWidth - args.spacing * (columns - 1)) / columns).clamp(80.0, 240.0);
 
@@ -59,7 +62,12 @@ class Panorama360SharesSection extends ConsumerWidget {
                 separatorBuilder: (_, _) => SizedBox(width: args.spacing),
                 itemBuilder: (context, index) => SizedBox.square(
                   dimension: extent,
-                  child: _ShareFileTile(key: ValueKey(files[index]), file: files[index], files: files),
+                  child: _ShareFileTile(
+                    key: ValueKey(files[index]),
+                    file: files[index],
+                    files: files,
+                    autofocus: tvMode && index == 0,
+                  ),
                 ),
               ),
             ),
@@ -71,9 +79,10 @@ class Panorama360SharesSection extends ConsumerWidget {
 }
 
 class _ShareFileTile extends ConsumerWidget {
-  const _ShareFileTile({super.key, required this.file, required this.files});
+  const _ShareFileTile({super.key, required this.file, required this.files, this.autofocus = false});
 
   final NetworkPanoramaFile file;
+  final bool autofocus;
 
   /// Every file of the row, for previous and next in the page that opens
   final List<NetworkPanoramaFile> files;
@@ -105,6 +114,6 @@ class _ShareFileTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final url = ref.watch(networkFileUrlProvider((sourceId: file.sourceId, path: file.path))).valueOrNull;
-    return NetworkMediaTile(entry: file.entry, url: url, onTap: () => _open(context, ref));
+    return NetworkMediaTile(entry: file.entry, url: url, autofocus: autofocus, onTap: () => _open(context, ref));
   }
 }

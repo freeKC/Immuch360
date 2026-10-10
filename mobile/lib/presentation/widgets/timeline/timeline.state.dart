@@ -22,6 +22,9 @@ abstract class TimelineArgs with _$TimelineArgs {
     @Default(false) bool showStorageIndicator,
     @Default(false) bool withStack,
     GroupAssetsBy? groupBy,
+
+    /// The remote control layout: the first tile asks for the focus (see [Timeline.tvFocusFirstAsset])
+    @Default(false) bool tvFocusFirstAsset,
   }) = _TimelineArgs;
 }
 

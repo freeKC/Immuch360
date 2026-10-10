@@ -359,6 +359,8 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
 
     final lockSelection = _getLockSelectionStatus(ref);
     final showStorageIndicator = ref.watch(timelineArgsProvider.select((args) => args.showStorageIndicator));
+    final askFocus =
+        tvMode && assetIndex == 0 && ref.watch(timelineArgsProvider.select((args) => args.tvFocusFirstAsset));
     // The read only mode, or a TV: no selection (a long press has no equivalent on a remote anyway)
     final isViewOnly = ref.watch(viewOnlyProvider);
     final showStackIndicator = ref.watch(timelineServiceProvider).origin != TimelineOrigin.trash;
@@ -370,6 +372,7 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
       // The remote of a TV reaches the tile: the arrows focus it, OK opens it
       child: RemoteFocusable(
         focusNode: _focusNode,
+        autofocus: askFocus,
         onTap: () => lockSelection ? null : _handleOnTap(context, ref, assetIndex, asset, heroOffset, remoteSize),
         onLongPress: () => lockSelection || isViewOnly ? null : _handleOnLongPress(ref, asset),
         child: ThumbnailTile(

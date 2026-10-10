@@ -51,6 +51,7 @@ class Timeline extends ConsumerWidget {
     this.readOnly = false,
     this.persistentBottomBar = false,
     this.loadingWidget,
+    this.tvFocusFirstAsset = false,
   });
 
   final Widget? topSliverWidget;
@@ -66,6 +67,10 @@ class Timeline extends ConsumerWidget {
   final bool readOnly;
   final bool persistentBottomBar;
   final Widget? loadingWidget;
+
+  /// The remote control layout: the first tile asks for the focus, so that a page arrives on its first photo rather
+  /// than on a chip of a bar above the grid (the 360° list)
+  final bool tvFocusFirstAsset;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -86,6 +91,7 @@ class Timeline extends ConsumerWidget {
                 showStorageIndicator: showStorageIndicator,
                 withStack: withStack,
                 groupBy: groupBy,
+                tvFocusFirstAsset: tvFocusFirstAsset,
               ),
             ),
             if (readOnly) readonlyModeProvider.overrideWith(() => _AlwaysReadOnlyNotifier()),
@@ -321,6 +327,80 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     );
   }
 
+  /// The arrows of a remote on the items of the grid, the TV only. Up from an item of the content goes to the nearest
+  /// item above it that scrolls with the grid, the row above first: Flutter takes the item whose middle is the
+  /// nearest, and the Back button of the pinned bar won over the chips or the row above once they had scrolled under
+  /// the bar. The bar comes when no item of the content is above. The other arrows as Flutter moves them.
+  late final _tvArrows = CallbackAction<DirectionalFocusIntent>(
+    onInvoke: (intent) {
+      final focused = FocusManager.instance.primaryFocus;
+      if (focused != null && (intent.direction != TraversalDirection.up || !_focusUpInGrid(focused))) {
+        focused.focusInDirection(intent.direction);
+      }
+      return null;
+    },
+  );
+
+  bool _focusUpInGrid(FocusNode focused) {
+    final context = focused.context;
+    final scope = focused.nearestScope;
+    if (context == null || scope == null || !_isContentItem(focused)) {
+      return false;
+    }
+    final from = focused.rect;
+    FocusNode? best;
+    (bool, double, double)? bestDistance;
+    for (final node in scope.traversalDescendants) {
+      if (node == focused || !_isContentItem(node)) {
+        continue;
+      }
+      final rect = node.rect;
+      if (rect.center.dy > from.top) {
+        continue;
+      }
+      // Above the focused item first, then the nearest row, then the nearest across
+      final inBand = rect.right > from.left && rect.left < from.right;
+      final across = inBand ? 0.0 : math.max(rect.left - from.right, from.left - rect.right);
+      final distance = (!inBand, from.center.dy - rect.center.dy, across);
+      if (bestDistance == null || _closer(distance, bestDistance)) {
+        best = node;
+        bestDistance = distance;
+      }
+    }
+    if (best == null) {
+      return false;
+    }
+    // Flutter's memory of the moves, to come back the way one went, no longer fits
+    FocusTraversalGroup.maybeOf(context)?.invalidateScopeData(scope);
+    best.requestFocus();
+    unawaited(
+      Scrollable.ensureVisible(best.context!, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart),
+    );
+    return true;
+  }
+
+  static bool _closer((bool, double, double) a, (bool, double, double) b) {
+    if (a.$1 != b.$1) {
+      return !a.$1;
+    }
+    if (a.$2 != b.$2) {
+      return a.$2 < b.$2;
+    }
+    return a.$3 < b.$3;
+  }
+
+  /// An item of the content of the grid, laid out, outside its bar
+  bool _isContentItem(FocusNode node) {
+    final context = node.context;
+    final object = context?.findRenderObject();
+    return context != null &&
+        object is RenderBox &&
+        object.attached &&
+        object.hasSize &&
+        context.findAncestorWidgetOfExactType<AppBar>() == null &&
+        _scrollsWithGrid(context);
+  }
+
   /// Whether [context] sits in the grid's scroll view, maybe through a row that scrolls across (the network shares of
   /// the 360° list), rather than in a bar or a dialog over it
   bool _scrollsWithGrid(BuildContext context) {
@@ -515,7 +595,9 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                         children: [
                           NotificationListener<ScrollNotification>(
                             onNotification: _onScrollVelocityNotification,
-                            child: timeline,
+                            child: tvMode
+                                ? Actions(actions: {DirectionalFocusIntent: _tvArrows}, child: timeline)
+                                : timeline,
                           ),
                           if (isBottomWidgetVisible)
                             Positioned(

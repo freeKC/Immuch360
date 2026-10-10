@@ -69,7 +69,10 @@ void focusFirstItemIfNone(ModalRoute route) {
     return;
   }
   final policy = FocusTraversalGroup.maybeOf(context) ?? ReadingOrderTraversalPolicy();
-  final first = policy.findFirstFocus(scope, ignoreCurrentFocus: true);
+  // Flutter gives the scope itself while the page shows no item yet (a grid still loading, under no app bar): the
+  // focus stayed on the scope, nothing showed it, and the first Down went to the Back button once the grid came
+  final found = policy.findFirstFocus(scope, ignoreCurrentFocus: true);
+  final first = found == scope ? null : found;
   if (first != null && !_inAppBar(first)) {
     first.requestFocus();
     return;

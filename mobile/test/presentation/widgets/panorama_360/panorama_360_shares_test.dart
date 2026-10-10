@@ -176,6 +176,19 @@ void main() {
     expect(find.byType(NetworkMediaTile), findsNothing);
   });
 
+  testWidgets('a remote arrives on the first file of the row, a phone on nothing', (tester) async {
+    await remember(['/beach.jpg', '/pano.jpg']);
+    FocusNode focusOf(String name) =>
+        Focus.of(tester.element(find.descendant(of: tileOf(name), matching: find.byType(ClipRRect))));
+
+    await pumpSection(tester, tvMode: true);
+    expect(focusOf('pano.jpg').hasPrimaryFocus, isTrue, reason: 'the first of the row');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pumpSection(tester);
+    expect(focusOf('pano.jpg').hasFocus, isFalse);
+  });
+
   testWidgets('a remote goes along the row with the arrows and opens a file with OK', (tester) async {
     await remember(['/beach.jpg', '/pano.jpg']);
     await pumpSection(tester, tvMode: true);

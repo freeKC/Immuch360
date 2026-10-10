@@ -10,6 +10,7 @@ import 'package:immich_mobile/presentation/widgets/panorama_360/panorama_360_sha
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/network/network_panoramas.provider.dart';
 import 'package:immich_mobile/providers/panorama_360.provider.dart';
 import 'package:immich_mobile/widgets/common/mesmerizing_sliver_app_bar.dart';
 
@@ -48,6 +49,9 @@ class _Panorama360PageState extends ConsumerState<Panorama360Page> {
         }),
       ],
       child: Timeline(
+        // A remote arrives on the first tile of the list: the first file of the network shares when they have one
+        // (that row asks for it), else the first of the grid. Not on the Date chip, and not on nothing.
+        tvFocusFirstAsset: ref.watch(panorama360ShareFilesProvider).isEmpty,
         appBar: MesmerizingSliverAppBar(title: context.t.library_360),
         topSliverWidget: const SliverMainAxisGroup(slivers: [Panorama360FilterBar(), Panorama360SharesSection()]),
         topSliverWidgetHeight: Panorama360FilterBar.estimatedHeight,

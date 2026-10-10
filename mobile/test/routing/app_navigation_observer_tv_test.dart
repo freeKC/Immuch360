@@ -67,6 +67,28 @@ class _LoadingPage extends StatelessWidget {
   );
 }
 
+/// A page without an app bar whose list comes once [list] completes, like the 360° list: nothing to focus meanwhile
+class _BarelessLoadingPage extends StatelessWidget {
+  const _BarelessLoadingPage({required this.list});
+
+  final Future<void> list;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: FutureBuilder<void>(
+      future: list,
+      builder: (context, snapshot) => snapshot.connectionState == ConnectionState.done
+          ? Column(
+              children: [
+                ListTile(title: const Text('first item'), onTap: () {}),
+                ListTile(title: const Text('second item'), onTap: () {}),
+              ],
+            )
+          : const Center(child: CircularProgressIndicator()),
+    ),
+  );
+}
+
 void main() {
   Future<ModalRoute<void>> pushPage(WidgetTester tester, {bool autofocusSecond = false}) async {
     late ModalRoute<void> route;
@@ -167,6 +189,19 @@ void main() {
       await tester.pump();
 
       expect(hasFocus(tester, find.text('first folder')), isTrue);
+    });
+
+    testWidgets('a page with nothing to focus while it loads, not even a bar, gets its first item once it shows', (
+      tester,
+    ) async {
+      final list = Completer<void>();
+      await open(tester, _BarelessLoadingPage(list: list.future));
+
+      list.complete();
+      await tester.pump();
+      await tester.pump();
+
+      expect(hasFocus(tester, find.text('first item')), isTrue, reason: 'not the page itself, which nothing shows');
     });
 
     testWidgets('an item of the page is focused rather than the Back button of its app bar', (tester) async {
