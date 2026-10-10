@@ -1,7 +1,9 @@
 // The app's player over the libmpv of the Windows build (REV-SEC and REV-GPU of phase 2a): with what a file refers to
-// refused (access-references, turned off as mpv loads each file and on again for media_kit's list of one entry), a
-// real video still opens, from its path and through the media bridge, and the same player opens the next one. What a
-// crafted file must not open is checked by mpv_references_test.dart.
+// refused (access-references, off from the creation of the player), a real video still opens, from its path and
+// through the media bridge, given to mpv by loadfile, and the same player opens the next one. What a crafted file must
+// not open is checked by mpv_references_test.dart. From the open to the first frame, no file of %TEMP% holds the
+// address (media_kit's own open writes it to a list file there for five seconds; desktop_player_open_test.dart checks
+// DesktopPlayer without libmpv).
 //
 // Windows only, after a Windows build of the app (it holds libmpv-2.dll):
 //   flutter build windows --debug -t lib/main_desktop.dart
@@ -131,9 +133,63 @@ void main() {
           );
           expect(_isJpeg(frame), isTrue, reason: 'a frame of ${resource == url ? 'the bridge URL' : 'the path'}');
         }
-        expect(pool.created, 1, reason: 'one player, its references turned on and off at each open');
+        expect(pool.created, 1, reason: 'one player for the three opens');
       } finally {
         await pool.dispose();
+      }
+    },
+    skip: skip,
+    timeout: const Timeout(Duration(seconds: 90)),
+  );
+
+  test(
+    'from the open to the first frame, no file of the temporary folder holds the address',
+    () async {
+      final url = bridge.urlFor(share.source.id, '/${p.basename(video.path)}').toString();
+      final token = Uri.parse(url).pathSegments.first;
+      final temp = Directory.systemTemp;
+      final made = <String>{};
+      final watch = temp.watch(events: FileSystemEvent.create | FileSystemEvent.modify).listen((event) {
+        made.add(event.path);
+      });
+      final player = await DesktopPlayer.create(PlayerKind.thumbnail);
+      try {
+        for (final (resource, secret) in [(url, token), (video.path, p.basename(video.path))]) {
+          made.clear();
+          final started = DateTime.now().subtract(const Duration(seconds: 1));
+          final firstFrame = player.events.firstWhere((event) => event.kind != PlayerEventKind.loaded);
+          await player.open(resource, streamed: resource == url);
+          final event = await firstFrame.timeout(const Duration(seconds: 30));
+          expect(
+            event.kind,
+            PlayerEventKind.restarted,
+            reason: 'the first frame of ${resource == url ? 'the URL' : 'the path'}',
+          );
+          // media_kit's list file would still be there: it is deleted five seconds after the open
+          final holding = <String>[];
+          final candidates = {
+            ...made,
+            await for (final entity in temp.list(followLinks: false))
+              if (entity is File) entity.path,
+          };
+          for (final path in candidates) {
+            final file = File(path);
+            try {
+              if (!file.existsSync() || file.lengthSync() > 64 * 1024 || file.lastModifiedSync().isBefore(started)) {
+                continue;
+              }
+              if (file.readAsStringSync().contains(secret)) {
+                holding.add(path);
+              }
+            } catch (_) {
+              // Another program's file, binary or locked
+            }
+          }
+          expect(holding, isEmpty, reason: 'files of %TEMP% that hold the address');
+        }
+      } finally {
+        await watch.cancel();
+        await player.dispose();
       }
     },
     skip: skip,

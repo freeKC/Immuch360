@@ -10,13 +10,18 @@
 // the camera account because FFmpeg's RTSP client answers the camera's Digest challenge itself: that account is
 // registered with hidePlayerSecret before the address reaches libmpv.
 //
+// How libmpv is given it: by mpv's loadfile command (DesktopPlayer.open), never through a file. media_kit's own open
+// writes what it plays to a list file in the temporary folder and deletes it five seconds later (TempFile in its
+// real.dart), which would leave each bridge URL, its token with it, on the disk for five seconds at every open.
+//
 // What libmpv opens by itself: nothing a file refers to. A file of a share or a folder is not trusted, and an M3U
 // list or a DASH manifest named clip.mp4 would make mpv or FFmpeg fetch its entries from any address, without a click
 // since the thumbnails open every video of a folder; the phones' players follow no such reference. So
-// access-references is off for the file played (see DesktopPlayer.open).
+// access-references is off on every player from its creation (DesktopPlayerOptions.common).
 
 import 'dart:async';
 import 'dart:ffi';
+import 'dart:io' show Platform;
 import 'dart:isolate';
 import 'dart:math' as math;
 
@@ -37,6 +42,7 @@ import 'package:media_kit/media_kit.dart';
 // ignore: implementation_imports
 import 'package:media_kit/src/player/native/core/native_library.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:path/path.dart' as p;
 
 final _log = Logger('DesktopPlayer');
 
@@ -231,6 +237,9 @@ abstract final class DesktopPlayerOptions {
   static Map<String, String> common(PlayerKind kind) => {
     // The cache stays in memory, bounded per open (below); nothing of a private video is written to the disk
     'cache-on-disk': 'no',
+    // What the file played refers to is not opened (see the top of this file). Off from the start: the address
+    // reaches mpv through loadfile, not as the entry of a list, which mpv would not read with it off.
+    'access-references': 'no',
     // The bridge may wait for a share that answers in bursts (HttpRangeReader waits 30 s); media_kit sets 5 s. A
     // camera is local and sends all the time: a silence means it is gone (liveTimeoutSeconds).
     'network-timeout': kind == PlayerKind.live ? '$liveTimeoutSeconds' : '30',
@@ -395,6 +404,15 @@ class DesktopPlayer implements PlaybackEngine {
     return desktopPlayer;
   }
 
+  /// A player of [kind] over [platform] instead of libmpv, without texture: for the tests, which check what
+  /// DesktopPlayer asks of media_kit and of mpv
+  @visibleForTesting
+  static Future<DesktopPlayer> withPlatform(PlayerKind kind, PlatformPlayer platform) async {
+    final desktopPlayer = DesktopPlayer._(kind, Player(platformPlayer: platform), null);
+    await desktopPlayer._setUp();
+    return desktopPlayer;
+  }
+
   @override
   final PlayerKind kind;
 
@@ -423,6 +441,9 @@ class DesktopPlayer implements PlaybackEngine {
   /// FFmpeg's last error since the open, redacted: for a live stream, the reason of a failure ("method DESCRIBE
   /// failed: 401 Unauthorized"), which mpv's own error code does not tell
   String? _openError;
+
+  /// Where the file of the last open starts, null for its beginning
+  Duration? _openStart;
 
   @override
   ValueListenable<Duration> get position => _position;
@@ -496,10 +517,14 @@ class DesktopPlayer implements PlaybackEngine {
       controller.id.addListener(onTexture);
       _removers.add(() => controller.id.removeListener(onTexture));
     }
-    // What the file refers to is not opened (see the top of this file). Turned off when mpv starts to load the file
-    // (on_load, before its demuxer exists), since media_kit hands mpv each file through a list of one entry
-    // (loadlist), which mpv does not read without it; turned on again before the next open.
-    _native.onLoadHooks.add(() => _set('access-references', 'no'));
+    // Where the file opened starts: set as mpv loads it (on_load, before its demuxer reads anything), as media_kit
+    // does for a Media's start; media_kit's on_unload sets it back to none once the file is closed
+    _native.onLoadHooks.add(() async {
+      final start = _openStart;
+      if (start != null) {
+        await _set('start', (start.inMilliseconds / 1000).toStringAsFixed(3));
+      }
+    });
     await _native.observeEvent(mpv.mpv_event_id.MPV_EVENT_FILE_LOADED, (_) async {
       _emit(const PlayerEvent(PlayerEventKind.loaded));
     });
@@ -559,19 +584,14 @@ class DesktopPlayer implements PlaybackEngine {
     for (final MapEntry(:key, :value) in DesktopPlayerOptions.forOpen(kind, streamed: streamed).entries) {
       await _set(key, value);
     }
-    if (kind == PlayerKind.live) {
-      // media_kit's open writes what it plays to a list file in the temporary folder and deletes it five seconds
-      // later (TempFile in its real.dart). A live address holds the camera account, which stays in memory: mpv gets
-      // the address itself, as the only entry of its list, so access-references stays off. media_kit's stop first
-      // resets its own state, as its open does.
-      await _player.stop();
-      await _set('pause', 'yes');
-      await _native.command(['loadfile', resource, 'replace']);
-      return;
-    }
-    // For media_kit's list of one entry only: off again once mpv loads the file (_setUp)
-    await _set('access-references', 'yes');
-    await _player.open(Media(resource, start: start > Duration.zero ? start : null), play: false);
+    _openStart = kind != PlayerKind.live && start > Duration.zero ? start : null;
+    // Not media_kit's open, which writes the address to a list file in the temporary folder for five seconds (see the
+    // top of this file): a bridge URL holds its token, a live address the camera account, and both stay in memory.
+    // mpv gets the address itself, as the only entry of its playlist. media_kit's stop first resets its own state, as
+    // its open does; the file then loads paused, as its open(play: false) leaves it.
+    await _player.stop();
+    await _set('pause', 'yes');
+    await _native.command(['loadfile', mpvAddress(resource), 'replace']);
   }
 
   @override
@@ -582,6 +602,7 @@ class DesktopPlayer implements PlaybackEngine {
 
   @override
   Future<void> stop() async {
+    _openStart = null;
     await _player.stop();
     _videoSize.value = null;
     _hasVideo.value = null;
@@ -632,6 +653,23 @@ class DesktopPlayer implements PlaybackEngine {
     await _events.close();
     await _player.dispose();
   }
+}
+
+/// What mpv's loadfile is given for [resource]: a URL as it is (a bridge URL, a camera's RTSP address); a path of
+/// this computer as media_kit gave it when its open still went through a list file (its _sanitizeUri), which on
+/// Windows ([windows], this computer's system by default) is the normalized path behind the \\?\ prefix of long
+/// paths, a UNC path being left without it
+@visibleForTesting
+String mpvAddress(String resource, {bool? windows}) {
+  if (resource.contains('://') || !(windows ?? Platform.isWindows)) {
+    return resource;
+  }
+  const longPathPrefix = r'\\?\';
+  if (resource.startsWith(longPathPrefix)) {
+    return resource;
+  }
+  final path = p.windows.normalize(resource.replaceAll('/', r'\'));
+  return RegExp(r'^[A-Za-z]:\\').hasMatch(path) ? '$longPathPrefix$path' : path;
 }
 
 /// What the isolate of a frame grab needs: plain values only
