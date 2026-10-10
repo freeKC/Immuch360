@@ -31,6 +31,7 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/providers/network/network_panoramas.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('NetworkMediaService');
@@ -143,7 +144,13 @@ class NetworkMediaService {
     this.maxEntries = 2000,
     this.maxConcurrent = 2,
     this.quickMoovLength = 1024 * 1024,
+    this.onRead,
   });
+
+  /// Told what a file declares each time one is read: whether it is 360°, or no longer, for the 360° list (see
+  /// NetworkPanoramaFile). Not told that a video is not 360° after a quick read, which may stop short of what it
+  /// declares.
+  final void Function(NetworkEntry entry, {required bool is360})? onRead;
 
   /// Longest wait for a file
   final Duration timeout;
@@ -219,7 +226,11 @@ class NetworkMediaService {
         return null;
       }
       final info = await _read(entry, read, thorough: thorough).timeout(timeout);
-      _remember(networkMediaKey(entry), _Detected(info, thorough: thorough || !entry.isVideo));
+      final conclusive = thorough || !entry.isVideo;
+      _remember(networkMediaKey(entry), _Detected(info, thorough: conclusive));
+      if (info.is360 || conclusive) {
+        _tell(entry, is360: info.is360);
+      }
       if (info.is360) {
         _log.fine('${entry.name} is 360°: $info');
       }
@@ -277,6 +288,14 @@ class NetworkMediaService {
       );
     }
     return NetworkMediaInfo(gpano: gpano, cameraEquirect: cameraEquirect, stereoPair: stereoPair);
+  }
+
+  void _tell(NetworkEntry entry, {required bool is360}) {
+    try {
+      onRead?.call(entry, is360: is360);
+    } catch (error, stackTrace) {
+      _log.warning('Could not record what ${entry.name} declares', error, stackTrace);
+    }
   }
 
   void _remember(NetworkMediaKey key, _Detected detected) {
@@ -346,7 +365,12 @@ class _LastReadReader {
 }
 
 /// What the files of the shares declare, kept as long as the app runs
-final networkMediaServiceProvider = Provider<NetworkMediaService>((_) => NetworkMediaService());
+final networkMediaServiceProvider = Provider<NetworkMediaService>(
+  // The 360° files found go to the 360° list
+  (ref) => NetworkMediaService(
+    onRead: (entry, {required is360}) => ref.read(networkPanoramasProvider.notifier).record(entry, is360: is360),
+  ),
+);
 
 /// The HTTP client the viewers read the media bridge with, for the GPano tags and the spherical metadata of a file
 /// (range requests). A plain one: the bridge is on this device. Tests replace it.

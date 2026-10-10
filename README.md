@@ -633,7 +633,7 @@ Settings, Preferences, "Remote control layout": "Large focus frames and remote c
 
 360° shots are mixed with all the other photos, and people ask Immich for a way to filter spheres and panoramas ([discussion #12824](https://github.com/immich-app/immich/discussions/12824)). The Immich app has no such list.
 
-Immuch360 puts a 360° badge on the thumbnails of 360° photos (in a network share folder, on 360° videos too), and a 360° entry at the top of the Library tab. From build 18 that list holds, with a server, the photos and videos the server flags as 360°, the raw Insta360 files by their name, the photos a 360° camera stitched itself and the ones you chose to view as 360°, plus what the scan of the device found; without a server, what the scan of the device found and the ones you chose to view as 360°. Each appears once, wherever its copies are, newest first.
+Immuch360 puts a 360° badge on the thumbnails of 360° photos (in a network share folder, on 360° videos too), and a 360° entry at the top of the Library tab. From build 18 that list holds, with a server, the photos and videos the server flags as 360°, the raw Insta360 files by their name, the photos a 360° camera stitched itself and the ones you chose to view as 360°, plus what the scan of the device found; without a server, what the scan of the device found and the ones you chose to view as 360°. Each appears once, wherever its copies are, newest first. From build 22 a row "In the network shares" comes above the grid with the 360° photos and videos of your shares, newest first: the app learns them when it shows their folder or opens them (it does not search a share by itself), keeps them from one start to the next and forgets them with their share. On a TV, which has no photos of its own, that row is where the 360° list fills.
 
 <img src=".github/readme/b19-360-list.png" width="260" alt="The 360° list, 4 items, with its Date sheet open: All, the year 2026 with its count, Whole year, August 2026 and April 2026 with their counts, the year 2025, and Custom">
 
@@ -644,7 +644,7 @@ Immuch360 puts a 360° badge on the thumbnails of 360° photos (in a network sha
 3. With a server, pick where the media are: "On the server", "On this device", and "Shared with me" when there are any.
 4. Pick the kind: Photos, Videos, 3D, VR180.
 5. When the list holds two cameras or more, a second row lists them from the EXIF make and model, with their counts. A raw file without them is named after the brand of its extension (Insta360, GoPro, DJI), anything else is "Unknown camera".
-6. Within a group (the places, Photos and Videos, 3D and VR180, the cameras) the chips add up; between groups they narrow the list down. Clear resets everything; "No 360° photo or video matches these filters" means the filters leave nothing.
+6. Within a group (the places, Photos and Videos, 3D and VR180, the cameras) the chips add up; between groups they narrow the list down. The Date, Photos and Videos chips apply to the row of the network shares too; 3D, VR180 and the cameras hide it, the app knowing none of those for a file of a share. Clear resets everything; "No 360° photo or video matches these filters" means the filters leave nothing.
 7. Open a photo or video. In the Quest immersive view, previous and next follow the filtered list.
 
 ## Video details, decoders and why a video stutters

@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/panorama_360/panorama_360_filter_bar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/panorama_360/panorama_360_shares.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
@@ -15,7 +16,9 @@ import 'package:immich_mobile/widgets/common/mesmerizing_sliver_app_bar.dart';
 /// Every 360° photo and video the app knows of, newest first, opened from the Library tab: those the server flags,
 /// the raw files of 360° cameras, those the user chose to view as 360°, and those of this device whose files declare
 /// it, each once wherever its copies are (see Panorama360ListService). The bar above the grid narrows the list down,
-/// and the immersive viewer of the Meta Quest moves through the list as filtered.
+/// and the immersive viewer of the Meta Quest moves through the list as filtered. The 360° files of the network shares
+/// the app read come in a row of their own between the bar and the grid (see Panorama360SharesSection): a TV, which
+/// has no photos of its own, finds there what it showed of the shares.
 @RoutePage()
 class Panorama360Page extends ConsumerStatefulWidget {
   const Panorama360Page({super.key});
@@ -46,7 +49,7 @@ class _Panorama360PageState extends ConsumerState<Panorama360Page> {
       ],
       child: Timeline(
         appBar: MesmerizingSliverAppBar(title: context.t.library_360),
-        topSliverWidget: const Panorama360FilterBar(),
+        topSliverWidget: const SliverMainAxisGroup(slivers: [Panorama360FilterBar(), Panorama360SharesSection()]),
         topSliverWidgetHeight: Panorama360FilterBar.estimatedHeight,
       ),
     );

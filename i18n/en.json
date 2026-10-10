@@ -1455,6 +1455,8 @@
   "library_360_filter_vr180": "VR180",
   "library_360_no_match": "No 360° photo or video matches these filters",
   "library_360_on_server": "On the server",
+  "library_360_shares": "In the network shares",
+  "library_360_shares_hint": "The 360° files of a share show here once its folder has been opened.",
   "library_360_unknown_camera": "Unknown camera",
   "library_360_whole_year": "Whole year",
   "library_add_folder": "Add folder",

@@ -478,4 +478,34 @@ void main() {
     expect(networkMediaKey(entry), isNot(networkMediaKey(_entry('/b.jpg', size: 10))));
     expect(networkMediaKey(entry), isNot(networkMediaKey(_entry('/a.jpg', size: 10, modified: DateTime.utc(2027)))));
   });
+
+  group('what is read is told, for the 360° list', () {
+    test('a 360° photo and a flat one are told once each, a cached answer not again', () async {
+      final told = <(String, bool)>[];
+      final service = NetworkMediaService(onRead: (entry, {required is360}) => told.add((entry.path, is360)));
+
+      await detect(service, '/pano.jpg', bytes: _photo(_equirectangular));
+      await detect(service, '/flat.jpg', bytes: _photo('no tags'));
+      await detect(service, '/pano.jpg');
+
+      expect(told, [('/pano.jpg', true), ('/flat.jpg', false)]);
+    });
+
+    test('a quick read of a video that finds nothing tells nothing: the end of its header was not read', () async {
+      final told = <(String, bool)>[];
+      final service = NetworkMediaService(onRead: (entry, {required is360}) => told.add((entry.path, is360)));
+
+      await detect(service, '/clip.mp4', bytes: Uint8List(4096));
+
+      expect(told, isEmpty);
+    });
+
+    test('a failing listener does not fail the read', () async {
+      final service = NetworkMediaService(onRead: (_, {required is360}) => throw StateError('no store'));
+
+      final info = await detect(service, '/pano.jpg', bytes: _photo(_equirectangular));
+
+      expect(info?.is360, isTrue);
+    });
+  });
 }
