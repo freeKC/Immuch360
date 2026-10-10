@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
@@ -12,7 +13,9 @@ import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/secure_storage.service.dart';
@@ -56,7 +59,19 @@ void main() {
     await db.close();
   });
 
-  Future<RootStackRouter> pumpSharesPage(WidgetTester tester, {List<NetworkSource> sources = const []}) async {
+  /// The page with [sources]; on a 1080p TV, in the remote control layout, with [tvMode]
+  Future<RootStackRouter> pumpSharesPage(
+    WidgetTester tester, {
+    List<NetworkSource> sources = const [],
+    bool tvMode = false,
+  }) async {
+    if (tvMode) {
+      // A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
+      tester.view
+        ..physicalSize = const Size(1920, 1080)
+        ..devicePixelRatio = 2;
+      addTearDown(tester.view.reset);
+    }
     final legacy = sources.where((source) => source.type.inLegacyList).toList();
     final extra = sources.where((source) => !source.type.inLegacyList).toList();
     if (legacy.isNotEmpty) {
@@ -68,9 +83,11 @@ void main() {
     return pumpNetworkTestApp(
       tester,
       home: const NetworkSharesPage(),
+      builder: tvMode ? (context, child) => TvShell(child: child!) : null,
       overrides: [
         storeServiceProvider.overrideWithValue(store),
         secureStorageServiceProvider.overrideWithValue(secureStorage),
+        if (tvMode) tvModeProvider.overrideWithValue(true),
       ],
     );
   }
@@ -305,6 +322,59 @@ void main() {
 
       expect(find.text('NAS'), findsNothing);
       expect(find.text('Cloud'), findsOneWidget);
+    });
+  });
+
+  group('NetworkSharesPage on a TV', () {
+    bool focusedIn(Finder finder) {
+      final focused = FocusManager.instance.primaryFocus?.context;
+      if (focused == null) {
+        return false;
+      }
+      final targets = finder.evaluate().toSet();
+      var found = targets.contains(focused);
+      focused.visitAncestorElements((element) {
+        found = found || targets.contains(element);
+        return !found;
+      });
+      return found;
+    }
+
+    Future<void> press(WidgetTester tester, LogicalKeyboardKey key) async {
+      await tester.sendKeyEvent(key);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('Right from a share goes to its edit button, Left comes back, OK there edits the share', (
+      tester,
+    ) async {
+      await pumpSharesPage(tester, sources: const [smbSource, webDavSource, _camera], tvMode: true);
+      final nas = find.widgetWithText(ListTile, 'NAS');
+      final editNas = find.byTooltip('Edit the share').first;
+      expect(focusedIn(nas), isTrue, reason: 'the first share');
+
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focusedIn(editNas), isTrue, reason: 'the edit button of the same row');
+      await press(tester, LogicalKeyboardKey.arrowLeft);
+      expect(focusedIn(nas), isTrue);
+
+      // The same for a camera
+      final garden = find.widgetWithText(ListTile, 'Garden');
+      for (var i = 0; i < 5 && !focusedIn(garden); i++) {
+        await press(tester, LogicalKeyboardKey.arrowDown);
+      }
+      expect(focusedIn(garden), isTrue);
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focusedIn(find.byTooltip('Edit the camera')), isTrue);
+      await press(tester, LogicalKeyboardKey.arrowLeft);
+      expect(focusedIn(garden), isTrue);
+
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(focusedIn(nas), isTrue);
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      await press(tester, LogicalKeyboardKey.select);
+      expect(find.text('edit NAS'), findsOneWidget);
     });
   });
 }

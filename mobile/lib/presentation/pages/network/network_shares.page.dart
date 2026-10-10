@@ -117,7 +117,7 @@ class NetworkSharesPage extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    for (final source in shares) _NetworkShareTile(source: source),
+                    for (final source in shares) _NetworkShareTile(source: source, tvMode: tvMode),
                     if (cameras.isNotEmpty) ...[
                       Padding(
                         key: const Key('network_shares_cameras_header'),
@@ -130,7 +130,7 @@ class NetworkSharesPage extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      for (final camera in cameras) _CameraTile(source: camera),
+                      for (final camera in cameras) _CameraTile(source: camera, tvMode: tvMode),
                     ],
                   ],
                 ),
@@ -141,18 +141,19 @@ class NetworkSharesPage extends ConsumerWidget {
 }
 
 class _NetworkShareTile extends StatelessWidget {
-  const _NetworkShareTile({required this.source});
+  const _NetworkShareTile({required this.source, required this.tvMode});
 
   final NetworkSource source;
+  final bool tvMode;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.only(left: 20, right: 8),
+    return _SourceRow(
+      tvMode: tvMode,
       leading: Icon(networkSourceIcon(source.type), color: context.primaryColor, size: 28),
       title: Text(source.name, style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500)),
       subtitle: Text(networkSourceAddress(source), maxLines: 1, overflow: TextOverflow.ellipsis),
-      trailing: IconButton(
+      edit: IconButton(
         icon: const Icon(Icons.edit_outlined),
         tooltip: context.t.network_share_edit,
         onPressed: () => context.pushRoute(networkSourceEditRoute(source)),
@@ -162,23 +163,66 @@ class _NetworkShareTile extends StatelessWidget {
   }
 }
 
+/// A row of the list, which opens its source, with the edit button at its end. On a TV the button sits next to the
+/// row rather than inside it: the arrows go to what lies beyond the edge of the focused item, and Right from a row
+/// found nothing, its button being within the row; the button was reached only with Down from the add button.
+class _SourceRow extends StatelessWidget {
+  const _SourceRow({
+    required this.tvMode,
+    required this.leading,
+    required this.title,
+    required this.subtitle,
+    required this.edit,
+    required this.onTap,
+  });
+
+  final bool tvMode;
+  final Widget leading;
+  final Widget title;
+  final Widget subtitle;
+  final Widget edit;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tile = ListTile(
+      contentPadding: EdgeInsets.only(left: 20, right: tvMode ? 0 : 8),
+      leading: leading,
+      title: title,
+      subtitle: subtitle,
+      trailing: tvMode ? null : edit,
+      onTap: onTap,
+    );
+    if (!tvMode) {
+      return tile;
+    }
+    return Row(
+      children: [
+        Expanded(child: tile),
+        Padding(padding: const EdgeInsets.only(right: 8), child: edit),
+      ],
+    );
+  }
+}
+
 /// A Tapo camera in the list: its name, its model when known and its address. Nothing read from the camera here:
 /// the list would call each camera every time it shows.
 class _CameraTile extends StatelessWidget {
-  const _CameraTile({required this.source});
+  const _CameraTile({required this.source, required this.tvMode});
 
   final NetworkSource source;
+  final bool tvMode;
 
   @override
   Widget build(BuildContext context) {
     final model = source.camera?.model;
     final address = networkSourceAddress(source);
-    return ListTile(
-      contentPadding: const EdgeInsets.only(left: 20, right: 8),
+    return _SourceRow(
+      tvMode: tvMode,
       leading: Icon(networkSourceIcon(source.type), color: context.primaryColor, size: 28),
       title: Text(source.name, style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500)),
       subtitle: Text(model == null ? address : '$model, $address', maxLines: 1, overflow: TextOverflow.ellipsis),
-      trailing: IconButton(
+      edit: IconButton(
         icon: const Icon(Icons.edit_outlined),
         tooltip: context.t.camera_edit,
         onPressed: () => context.pushRoute(networkSourceEditRoute(source)),
